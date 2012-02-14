@@ -7,13 +7,20 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MODEL_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace model
 	{
 
@@ -83,6 +90,13 @@ void T_DLLCLASS flattenDoubleSided(Model& model);
  * \param model Source model.
  */
 void T_DLLCLASS bakeVertexOcclusion(Model& model);
+
+/*! \brief Bake pixel occlusion.
+ * \ingroup Model
+ *
+ * \param model Source model.
+ */
+Ref< drawing::Image > T_DLLCLASS bakePixelOcclusion(Model& model, int32_t width, int32_t height);
 
 /*! \brief Cull distant faces.
  * \ingroup Model.

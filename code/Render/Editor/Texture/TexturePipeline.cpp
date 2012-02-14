@@ -116,7 +116,7 @@ void TexturePipeline::destroy()
 TypeInfoSet TexturePipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< TextureAsset >());
+	typeSet.insert(&type_of< TextureAssetBase >());
 	return typeSet;
 }
 
@@ -127,7 +127,7 @@ bool TexturePipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
-	Ref< const TextureAsset > textureAsset = checked_type_cast< const TextureAsset* >(sourceAsset);
+	Ref< const TextureAssetBase > textureAsset = checked_type_cast< const TextureAssetBase* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
 	pipelineDepends->addDependency(fileName);
 	return true;
@@ -143,16 +143,12 @@ bool TexturePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< const TextureAsset > textureAsset = checked_type_cast< const TextureAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, textureAsset->getFileName());
+	Ref< const TextureAssetBase > textureAsset = checked_type_cast< const TextureAssetBase* >(sourceAsset);
 
 	// Load source image.
-	Ref< drawing::Image > image = drawing::Image::load(fileName);
+	Ref< drawing::Image > image = textureAsset->load(m_assetPath);
 	if (!image)
-	{
-		log::error << L"Unable to read source texture image \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
-	}
 
 	int32_t width = image->getWidth();
 	int32_t height = image->getHeight();
