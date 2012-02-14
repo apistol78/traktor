@@ -153,6 +153,8 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	// Collect possible split positions.
 	AlignedVector< SplitCandidate > splitCandidates;
 	AlignedVector< std::pair< Scalar, Scalar > > spatialRanges;
+
+	spatialRanges.reserve(node->indices.size());
 	for (std::vector< int32_t >::const_iterator i = node->indices.begin(); i != node->indices.end(); ++i)
 	{
 		const Winding3& polygon = m_polygons[*i];
@@ -166,8 +168,8 @@ void SahTree::buildNode(Node* node, int32_t depth)
 			Scalar e = polygon.points[j][node->axis];
 			
 			if (
-				e >= node->aabb.mn[node->axis] &&
-				e <= node->aabb.mx[node->axis]
+				e >= node->aabb.mn[node->axis] + FUZZY_EPSILON &&
+				e <= node->aabb.mx[node->axis] - FUZZY_EPSILON
 			)
 			{
 				SplitCandidate candidate = { e, 0, 0 };
@@ -184,9 +186,9 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	// Determine left- and right count for each split position.
 	for (AlignedVector< SplitCandidate >::iterator i = splitCandidates.begin(); i != splitCandidates.end(); ++i)
 	{
-		for (std::vector< int32_t >::iterator j = node->indices.begin(); j != node->indices.end(); ++j)
+		for (uint32_t j = 0; j < node->indices.size(); ++j)
 		{
-			const std::pair< Scalar, Scalar >& range = spatialRanges[std::distance(node->indices.begin(), j)];
+			const std::pair< Scalar, Scalar >& range = spatialRanges[j];
 			if (range.first <= i->position)
 				i->countLeft++;
 			if (range.second >= i->position)
@@ -198,7 +200,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	Vector4 extent = node->aabb.getExtent(); 
 	Scalar surfaceArea = dot3(extent.shuffle< 0, 0, 1, 3 >(), extent.shuffle< 1, 2, 2, 3 >()) * Scalar(2.0f);
 
-	Scalar leafCost(node->indices.size());
+	Scalar leafCost(float(node->indices.size()));
 	Scalar lowestCost(std::numeric_limits< float >::max());
 	SplitCandidate* bestCandidate = 0;
 	Aabb3 bestLeftAabb;
@@ -220,8 +222,8 @@ void SahTree::buildNode(Node* node, int32_t depth)
 
 		Scalar splitCost =
 			Scalar(0.3f) +
-			surfaceAreaLeft * Scalar(i->countLeft) / surfaceArea +
-			surfaceAreaRight * Scalar(i->countRight) / surfaceArea;
+			surfaceAreaLeft * Scalar(float(i->countLeft)) / surfaceArea +
+			surfaceAreaRight * Scalar(float(i->countRight)) / surfaceArea;
 
 		if (splitCost < lowestCost)
 		{
