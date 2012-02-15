@@ -63,6 +63,8 @@ public:
 
 	void deleteResources();
 
+	Semaphore& getLock() { return m_lock; }
+
 	ID3D11Device* getD3DDevice() { return m_d3dDevice; }
 
 	ID3D11DeviceContext* getD3DDeviceContext() { return m_d3dDeviceContext; }
@@ -92,11 +94,11 @@ public:
 	}
 
 private:
+	Semaphore m_lock;
 	ComRef< ID3D11Device > m_d3dDevice;
 	ComRef< ID3D11DeviceContext > m_d3dDeviceContext;
 	ComRef< IDXGIFactory1 > m_dxgiFactory;
 	ComRef< IDXGIOutput > m_dxgiOutput;
-	Semaphore m_deleteResourcesLock;
 	std::vector< DeleteCallback* > m_deleteResources;
 };
 

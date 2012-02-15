@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/CubeTextureDx11.h"
 #include "Render/Dx11/IndexBufferDynamicDx11.h"
@@ -204,6 +205,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 
 Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< VertexElement >& vertexElements, uint32_t bufferSize, bool dynamic)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	if (!dynamic)
 		return VertexBufferStaticDx11::create(m_context, bufferSize, vertexElements);
 	else
@@ -212,6 +214,7 @@ Ref< VertexBuffer > RenderSystemDx11::createVertexBuffer(const std::vector< Vert
 
 Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	if (!dynamic)
 		return IndexBufferStaticDx11::create(m_context, indexType, bufferSize);
 	else
@@ -220,6 +223,7 @@ Ref< IndexBuffer > RenderSystemDx11::createIndexBuffer(IndexType indexType, uint
 
 Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	Ref< SimpleTextureDx11 > texture = new SimpleTextureDx11(m_context);
 	if (!texture->create(desc))
 		return 0;
@@ -228,6 +232,7 @@ Ref< ISimpleTexture > RenderSystemDx11::createSimpleTexture(const SimpleTextureC
 
 Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	Ref< CubeTextureDx11 > texture = new CubeTextureDx11(m_context);
 	if (!texture->create(desc))
 		return 0;
@@ -236,11 +241,13 @@ Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateD
 
 Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	return new VolumeTextureDx11();
 }
 
 Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
 	Ref< RenderTargetSetDx11 > renderTargetSet = new RenderTargetSetDx11(m_context);
 	if (!renderTargetSet->create(m_context->getD3DDevice(), desc))
 		return 0;
@@ -249,6 +256,8 @@ Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTarge
 
 Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programResource)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
+
 	Ref< const ProgramResourceDx11 > resource = dynamic_type_cast< const ProgramResourceDx11* >(programResource);
 	if (!resource)
 		return 0;
