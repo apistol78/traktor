@@ -39,7 +39,7 @@ public:
 	
 	virtual void unlock();
 
-	virtual void activate(const GLint* attributeLocs);
+	virtual void activate(StateCacheOpenGL* stateCache, const GLint* attributeLocs);
 
 private:
 	struct AttributeDesc

@@ -23,6 +23,7 @@ class ContextOpenGL;
 class GlslProgram;
 class ITextureBinding;
 class ProgramResource;
+class StateCacheOpenGL;
 
 /*!
  * \ingroup OGL
@@ -56,7 +57,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate(float targetSize[2]);
+	bool activate(StateCacheOpenGL* stateCache, float targetSize[2]);
 
 	const GLint* getAttributeLocs() const;
 
@@ -88,7 +89,6 @@ private:
 	Ref< ContextOpenGL > m_resourceContext;
 	GLhandleARB m_program;
 	RenderState m_renderState;
-	GLint m_state;
 	GLint m_locationTargetSize;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
 	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
@@ -97,7 +97,6 @@ private:
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
 	float m_targetSize[2];
-	GLint m_stencilRef;
 	bool m_textureDirty;
 	static ProgramOpenGL* ms_activeProgram;
 	

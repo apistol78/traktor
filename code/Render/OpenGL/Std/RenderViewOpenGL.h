@@ -28,6 +28,7 @@ class ProgramOpenGL;
 class RenderSystemOpenGL;
 class RenderTargetOpenGL;
 class RenderTargetSetOpenGL;
+class StateCacheOpenGL;
 class VertexBufferOpenGL;
 
 /*!
@@ -120,6 +121,7 @@ private:
 #endif
 	Ref< ContextOpenGL > m_context;
 	Ref< ContextOpenGL > m_resourceContext;
+	Ref< StateCacheOpenGL > m_stateCache;
 	Ref< BlitHelper > m_blitHelper;
 #if defined(__APPLE__)
 	void* m_windowHandle;

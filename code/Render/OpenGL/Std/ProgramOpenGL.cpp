@@ -15,6 +15,7 @@
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
+#include "Render/OpenGL/Std/StateCacheOpenGL.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 
 namespace traktor
@@ -36,22 +37,6 @@ struct DeleteObjectCallback : public IContext::IDeleteCallback
 	virtual void deleteResource()
 	{
 		T_OGL_SAFE(glDeleteObjectARB(m_objectName));
-		delete this;
-	}
-};
-
-struct DeleteListCallback : public IContext::IDeleteCallback
-{
-	GLuint m_listName;
-
-	DeleteListCallback(GLuint listName)
-	:	m_listName(listName)
-	{
-	}
-
-	virtual void deleteResource()
-	{
-		T_OGL_SAFE(glDeleteLists(m_listName, 1));
 		delete this;
 	}
 };
@@ -296,10 +281,10 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 
 void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 {
-	m_stencilRef = stencilReference;
+	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGL::activate(float targetSize[2])
+bool ProgramOpenGL::activate(StateCacheOpenGL* stateCache, float targetSize[2])
 {
 	if (!m_program)
 		return false;
@@ -307,12 +292,7 @@ bool ProgramOpenGL::activate(float targetSize[2])
 	// Bind program and set state display list.
 	if (ms_activeProgram != this)
 	{
-		m_resourceContext->callStateList(m_state);
-		
-		// Manually set stencil reference value if different from state.
-		if (m_renderState.stencilTestEnable && m_stencilRef != m_renderState.stencilRef)
-			T_OGL_SAFE(glStencilFunc(m_renderState.stencilFunc, m_stencilRef, ~0UL));
-
+		stateCache->setRenderState(m_renderState);
 		T_OGL_SAFE(glUseProgramObjectARB(m_program));
 	}
 	
@@ -412,9 +392,7 @@ const GLint* ProgramOpenGL::getAttributeLocs() const
 ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, const ProgramResource* resource)
 :	m_resourceContext(resourceContext)
 ,	m_program(program)
-,	m_state(0)
 ,	m_locationTargetSize(0)
-,	m_stencilRef(0)
 ,	m_textureDirty(true)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
@@ -537,8 +515,6 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 
 	// Create a display list from the render states.
 	m_renderState = resourceOpenGL->getRenderState();
-	m_state = m_resourceContext->createStateList(m_renderState);
-	m_stencilRef = m_renderState.stencilRef;
 }
 
 	}

@@ -21,6 +21,7 @@ namespace traktor
 
 class BlitHelper;
 class IContext;
+class StateCacheOpenGL;
 
 /*!
  * \ingroup OGL
@@ -52,9 +53,9 @@ public:
 
 	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
-	bool bind(GLuint depthBuffer);
+	bool bind(StateCacheOpenGL* stateCache, GLuint depthBuffer);
 
-	void enter(GLuint depthBuffer);
+	void enter();
 	
 	void resolveTarget();
 
@@ -62,8 +63,6 @@ public:
 	
 	bool read(void* buffer) const;
 	
-	GLuint clearMask() const;
-
 private:
 	Ref< IContext > m_resourceContext;
 	Ref< BlitHelper > m_blitHelper;

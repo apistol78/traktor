@@ -173,7 +173,6 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 		ss << Endl;
 	}
 #else
-	ss << L"#version 120" << Endl;
 	ss << Endl;
 
 	if (m_shaderType == StVertex)

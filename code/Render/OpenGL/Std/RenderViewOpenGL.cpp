@@ -9,6 +9,7 @@
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
+#include "Render/OpenGL/Std/StateCacheOpenGL.h"
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWindow.h"
@@ -53,6 +54,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 :	m_window(window)
 ,	m_context(context)
 ,	m_resourceContext(resourceContext)
+,	m_stateCache(new StateCacheOpenGL())
 ,	m_blitHelper(blitHelper)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
@@ -74,6 +76,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 )
 :	m_context(context)
 ,	m_resourceContext(resourceContext)
+,	m_stateCache(new StateCacheOpenGL())
 ,	m_blitHelper(blitHelper)
 ,	m_windowHandle(windowHandle)
 {
@@ -310,18 +313,18 @@ bool RenderViewOpenGL::begin(EyeType eye)
 
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
-	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT | GL_DEPTH_BUFFER_BIT));
+	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT));
 
 	RenderTargetSetOpenGL* rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
 	
-	if (!rt->bind(m_primaryTarget->getDepthBuffer()))
+	if (!rt->bind(m_stateCache, m_primaryTarget->getDepthBuffer()))
 	{
 		T_OGL_SAFE(glPopAttrib());
 		return false;
 	}
 	
-	rt->enter(m_primaryTarget->getDepthBuffer());
+	rt->enter();
 
 	m_renderTargetStack.push_back(rt);
 
@@ -345,22 +348,22 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 	};
 	
 	RenderTargetOpenGL* rt = m_renderTargetStack.back();
-	GLuint cm = c_clearMask[clearMask]; // & rt->clearMask();
+	GLuint cm = c_clearMask[clearMask];
 
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
+		m_stateCache->setColorMask(RenderState::CmAll);
 		float r = color[0];
 		float g = color[1];
 		float b = color[2];
 		float a = color[3];
 		T_OGL_SAFE(glClearColor(r, g, b, a));
-		T_OGL_SAFE(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 	}
 
 	if (cm & GL_DEPTH_BUFFER_BIT)
 	{
+		m_stateCache->setDepthMask(GL_TRUE);
 		T_OGL_SAFE(glClearDepth(depth));
-		T_OGL_SAFE(glDepthMask(GL_TRUE));
 	}
 
 	if (cm & GL_STENCIL_BUFFER_BIT)
@@ -392,10 +395,11 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 	const RenderTargetOpenGL* rt = m_renderTargetStack.back();
 	float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
 		
-	if (!m_currentProgram->activate(targetSize))
+	if (!m_currentProgram->activate(m_stateCache, targetSize))
 		return;
 
 	m_currentVertexBuffer->activate(
+		m_stateCache,
 		m_currentProgram->getAttributeLocs()
 	);
 
@@ -452,7 +456,7 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 			break;
 		}
 
-		m_currentIndexBuffer->bind();
+		m_currentIndexBuffer->bind(m_stateCache);
 
 #if 0
 		if (!cglwCheckHardwarePath())
@@ -504,7 +508,7 @@ void RenderViewOpenGL::end()
 
 		// Rebind parent target.
 		RenderTargetOpenGL* rt = m_renderTargetStack.back();
-		rt->bind(false);
+		rt->bind(m_stateCache, false);
 	}
 
 	T_OGL_SAFE(glPopAttrib());

@@ -4,6 +4,7 @@
 #include "Render/OpenGL/Std/BlitHelper.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
+#include "Render/OpenGL/Std/StateCacheOpenGL.h"
 
 namespace traktor
 {
@@ -425,7 +426,7 @@ void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLi
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
 }
 
-bool RenderTargetOpenGL::bind(GLuint depthBuffer)
+bool RenderTargetOpenGL::bind(StateCacheOpenGL* stateCache, GLuint depthBuffer)
 {
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO));
 
@@ -446,24 +447,20 @@ bool RenderTargetOpenGL::bind(GLuint depthBuffer)
 	}
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
-	return status == GL_FRAMEBUFFER_COMPLETE_EXT;
-}
-
-void RenderTargetOpenGL::enter(GLuint depthBuffer)
-{
-	T_OGL_SAFE(glViewport(0, 0, m_targetWidth, m_targetHeight));
+	if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+		return false;
 
 	if (m_haveDepth || m_usingPrimaryDepthBuffer)
-	{
-		T_OGL_SAFE(glEnable(GL_DEPTH_TEST));
-		T_OGL_SAFE(glDepthFunc(GL_LEQUAL));
-		T_OGL_SAFE(glDepthMask(GL_TRUE));
-	}
+		stateCache->setPermitDepth(true);
 	else
-	{
-		T_OGL_SAFE(glDisable(GL_DEPTH_TEST));
-		T_OGL_SAFE(glDepthMask(GL_FALSE));
-	}
+		stateCache->setPermitDepth(false);
+
+	return true;
+}
+
+void RenderTargetOpenGL::enter()
+{
+	T_OGL_SAFE(glViewport(0, 0, m_targetWidth, m_targetHeight));
 }
 
 void RenderTargetOpenGL::resolveTarget()
@@ -510,14 +507,6 @@ bool RenderTargetOpenGL::read(void* buffer) const
 		buffer
 	));
 	return true;
-}
-
-GLuint RenderTargetOpenGL::clearMask() const
-{
-	if (m_haveDepth)
-		return GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT;
-	else
-		return GL_COLOR_BUFFER_BIT;
 }
 
 	}
