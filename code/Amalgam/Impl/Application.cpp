@@ -64,6 +64,7 @@
 #	include <Input/Binding/KeyboardInputSourceData.h>
 #	include <Input/Binding/IfInclusiveExclusive.h>
 #	include <Input/Binding/InBoolean.h>
+#	include <Input/Binding/InClamp.h>
 #	include <Input/Binding/InCombine.h>
 #	include <Input/Binding/InConst.h>
 #	include <Input/Binding/InHysteresis.h>
@@ -228,6 +229,7 @@ bool Application::create(
 	T_FORCE_LINK_REF(input::KeyboardInputSourceData);
 	T_FORCE_LINK_REF(input::IfInclusiveExclusive);
 	T_FORCE_LINK_REF(input::InBoolean);
+	T_FORCE_LINK_REF(input::InClamp);
 	T_FORCE_LINK_REF(input::InCombine);
 	T_FORCE_LINK_REF(input::InConst);
 	T_FORCE_LINK_REF(input::InHysteresis);

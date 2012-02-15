@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
-				<first>1741</first>
-				<second>369</second>
+				<first>1860</first>
+				<second>367</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<cullMode>CmClockWise</cullMode>
@@ -38,8 +38,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>1654</first>
-				<second>369</second>
+				<first>1773</first>
+				<second>367</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
@@ -215,8 +215,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1478</first>
-				<second>366</second>
+				<first>1597</first>
+				<second>364</second>
 			</position>
 			<fragmentGuid>{AFD5FE57-FE20-134A-9C0F-5E25CAB9B3F2}</fragmentGuid>
 			<inputPins>
@@ -257,8 +257,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1258</first>
-				<second>287</second>
+				<first>1377</first>
+				<second>285</second>
 			</position>
 			<fragmentGuid>{9F5649E4-3234-3B4F-BFA9-E124110B9969}</fragmentGuid>
 			<inputPins>
@@ -320,8 +320,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-57</first>
-				<second>650</second>
+				<first>-49</first>
+				<second>758</second>
 			</position>
 			<name>Reflection</name>
 			<connectable>true</connectable>
@@ -331,8 +331,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-61</first>
-				<second>694</second>
+				<first>-70</first>
+				<second>802</second>
 			</position>
 			<name>ReflectionMap</name>
 			<connectable>true</connectable>
@@ -386,6 +386,13 @@
 			<position>
 				<first>1021</first>
 				<second>423</second>
+			</position>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>1199</first>
+				<second>509</second>
 			</position>
 		</item>
 	</nodes>
@@ -672,16 +679,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Color</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[26]"/>
 				<name>Output</name>
 			</source>
@@ -748,6 +745,36 @@
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<name>Intensity</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Color</name>
 			</destination>
 		</item>
 	</edges>

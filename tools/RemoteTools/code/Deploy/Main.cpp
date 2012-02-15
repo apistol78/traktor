@@ -23,7 +23,7 @@ const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
 const uint8_t c_errUnknown = 255;
 
-bool deployFile(net::Socket* clientSocket, const Path& sourceFile)
+bool deployFile(net::Socket* clientSocket, const Path& sourceFile, const Path& targetBase)
 {
 	net::SocketStream clientStream(clientSocket, true, true, 1000);
 
@@ -40,6 +40,9 @@ bool deployFile(net::Socket* clientSocket, const Path& sourceFile)
 		traktor::log::error << L"Unable to resolve relative path of file \"" << sourceFile.getPathName() << L"\"" << Endl;
 		return false;
 	}
+
+	if (!targetBase.getPathName().empty())
+		targetFile = targetBase + targetFile;
 
 	traktor::log::info << L"\ttarget \"" << targetFile.getPathName() << L"\"" << Endl;
 
@@ -111,10 +114,13 @@ bool deployFile(net::Socket* clientSocket, const Path& sourceFile)
 	return ret == c_errNone;
 }
 
-bool deployFiles(net::Socket* clientSocket, const Path& sourcePath, bool recursive)
+bool deployFiles(net::Socket* clientSocket, const Path& sourcePath, const Path& targetBase, bool recursive)
 {
 	RefArray< File > files;
+
 	FileSystem::getInstance().find(sourcePath, files);
+	traktor::log::info << L"Found " << files.size() << L" file(s) matching \"" << sourcePath.getPathName() << L"\"" << Endl;
+
 	for (RefArray< File >::iterator i = files.begin(); i != files.end(); ++i)
 	{
 		Path sourceFile = (*i)->getPath();
@@ -122,16 +128,20 @@ bool deployFiles(net::Socket* clientSocket, const Path& sourcePath, bool recursi
 		{
 			if (recursive)
 			{
-				if (sourceFile.getPathName() != L"." && sourceFile.getPathName() != L"..")
+				if (sourceFile.getFileName() != L"." && sourceFile.getFileName() != L"..")
 				{
-					if (!deployFiles(clientSocket, sourceFile, true))
+					traktor::log::info << L"Enter directory \"" << sourceFile.getPathName() << L"\"" << Endl;
+					if (!deployFiles(clientSocket, sourceFile.getPathName() + L"/" + sourcePath.getFileName(), targetBase, true))
 						return false;
+					traktor::log::info << L"Leaving directory \"" << sourceFile.getPathName() << L"\"" << Endl;
 				}
 			}
+			else
+				traktor::log::info << L"Directory \"" << sourceFile.getPathName() << L"\" skipped" << Endl;
 		}
 		else
 		{
-			if (!deployFile(clientSocket, sourceFile))
+			if (!deployFile(clientSocket, sourceFile, targetBase))
 				return false;
 		}
 	}
@@ -146,29 +156,48 @@ int main(int argc, const char** argv)
 	
 	if (cmdLine.getCount() < 2)
 	{
-		traktor::log::info << L"Usage: RemoteDeploy (-r) host file(s)" << Endl;
+		traktor::log::info << L"Usage: RemoteDeploy (-r, -recursive) host file(s)" << Endl;
+		traktor::log::info << L"   -r, -recursive   Recursive deploy files in directories." << Endl;
+		traktor::log::info << L"   -t, -target-base Target base path." << Endl;
 		return 0;
 	}
+
+	log::info << L"RemoteDeploy; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
 	net::Network::initialize();
 
 	std::wstring host = cmdLine.getString(0);
-	bool recursive = cmdLine.hasOption('r');
+	bool recursive = cmdLine.hasOption('r', L"recursive");
+	bool base = cmdLine.hasOption('t', L"target-base");
+	Path targetBase = base ? cmdLine.getOption('t', L"target-base").getString() : L"";
+
+	if (!targetBase.isRelative())
+	{
+		traktor::log::info << L"Target base must be a relative path" << Endl;
+		return 1;
+	}
+
+	log::info << L"Host \"" << host << L"\"" << Endl;
+	log::info << L"Recursive " << (recursive ? L"YES" : L"NO") << Endl;
+	log::info << cmdLine.getCount() << L" command line value(s)" << Endl;
+	log::info << L"Target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
 	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();
 	if (!clientSocket->connect(net::SocketAddressIPv4(host, c_serverPort)))
 	{
-		traktor::log::error << L"Unable to connect to \"" << host << L"\"" << Endl;
-		return 1;
+		traktor::log::info << L"Unable to connect to \"" << host << L"\"" << Endl;
+		return 2;
 	}
+
+	traktor::log::info << L"Successfully connected to server" << Endl;
 
 	int32_t ret = 0;
 	for (int i = 1; i < cmdLine.getCount(); ++i)
 	{
 		Path sourcePath = cmdLine.getString(i);
-		if (!deployFiles(clientSocket, sourcePath, recursive))
+		if (!deployFiles(clientSocket, sourcePath, targetBase, recursive))
 		{
-			ret = 2;
+			ret = 3;
 			break;
 		}
 	}
