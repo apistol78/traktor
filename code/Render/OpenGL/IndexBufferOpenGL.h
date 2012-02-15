@@ -7,15 +7,17 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_OPENGL_EXPORT) || defined(T_RENDER_OPENGL_ES2_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace render
 	{
+
+class StateCacheOpenGL;
 
 /*!
  * \ingroup OGL
@@ -28,7 +30,7 @@ public:
 	IndexBufferOpenGL(IndexType indexType, uint32_t bufferSize);
 
 #if defined(T_OPENGL_STD)
-	virtual void bind() = 0;
+	virtual void bind(StateCacheOpenGL* stateCache) = 0;
 
 	virtual const GLvoid* getIndexData() const = 0;
 #endif

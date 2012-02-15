@@ -152,7 +152,7 @@ void VertexBufferVAR::unlock()
 	setContentValid(true);
 }
 
-void VertexBufferVAR::activate(const GLint* attributeLocs)
+void VertexBufferVAR::activate(StateCacheOpenGL* stateCache, const GLint* attributeLocs)
 {
 	T_ASSERT (m_data);
 	for (int i = 0; i < T_OGL_MAX_USAGE_INDEX; ++i)

@@ -36,7 +36,7 @@ public:
 	
 	virtual void unlock();
 
-	virtual void bind();
+	virtual void bind(StateCacheOpenGL* stateCache);
 
 	virtual const GLvoid* getIndexData() const;
 

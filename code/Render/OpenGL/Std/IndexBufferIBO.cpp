@@ -80,7 +80,7 @@ void IndexBufferIBO::unlock()
 	m_locked = false;
 }
 
-void IndexBufferIBO::bind()
+void IndexBufferIBO::bind(StateCacheOpenGL* stateCache)
 {
 	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
 }

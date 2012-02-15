@@ -42,7 +42,7 @@ void IndexBufferIAR::unlock()
 	T_ASSERT_M (*(GLuint*)&m_data[getBufferSize()] == 0xe1e1e1e1, L"Buffer overrun");
 }
 
-void IndexBufferIAR::bind()
+void IndexBufferIAR::bind(StateCacheOpenGL* stateCache)
 {
 }
 
