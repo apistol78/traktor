@@ -26,6 +26,8 @@ class ContextOpenGLES2 : public IContext
 	T_RTTI_CLASS;
 
 public:
+	static bool initialize();
+
 	static Ref< ContextOpenGLES2 > createResourceContext();
 
 	static Ref< ContextOpenGLES2 > createContext(
@@ -62,7 +64,11 @@ private:
 #if defined(TARGET_OS_IPHONE)
 	EAGLContextWrapper* m_context;
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-	EGLDisplay m_display;
+#	if defined(_WIN32)
+	static HWND ms_hWnd;
+#	endif
+	static EGLDisplay ms_display;
+	static EGLConfig ms_config;
 	EGLSurface m_surface;
 	EGLContext m_context;
 #endif
@@ -73,7 +79,7 @@ private:
 #if defined(TARGET_OS_IPHONE)
 	ContextOpenGLES2(EAGLContextWrapper* context);
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-	ContextOpenGLES2(EGLDisplay display, EGLSurface surface, EGLConfig context);
+	ContextOpenGLES2(EGLSurface surface, EGLContext context);
 #endif
 };
 

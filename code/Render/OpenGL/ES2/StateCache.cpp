@@ -164,8 +164,6 @@ void StateCache::setVertexArrayObject(GLint vertexArrayObject)
 		T_OGL_SAFE(glBindVertexArrayOES(vertexArrayObject));
 		m_vertexArrayObject = vertexArrayObject;
 	}
-#else
-	T_ASSERT (vertexArrayObject != 0);
 #endif
 }
 

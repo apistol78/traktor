@@ -58,6 +58,9 @@ bool RenderSystemOpenGLES2::create(const RenderSystemCreateDesc& desc)
 
 #if !defined(T_OFFLINE_ONLY)
 
+	if (!ContextOpenGLES2::initialize())
+		return false;
+
 	m_globalContext = ContextOpenGLES2::createResourceContext();
 	if (!m_globalContext)
 		return false;
@@ -107,7 +110,24 @@ DisplayMode RenderSystemOpenGLES2::getDisplayMode(uint32_t index) const
 
 DisplayMode RenderSystemOpenGLES2::getCurrentDisplayMode() const
 {
+#if defined(_WIN32)
+
+	DEVMODE dmgl;
+	std::memset(&dmgl, 0, sizeof(dmgl));
+	dmgl.dmSize = sizeof(dmgl);
+
+	EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &dmgl);
+
+	DisplayMode dm;
+	dm.width = dmgl.dmPelsWidth;
+	dm.height = dmgl.dmPelsHeight;
+	dm.refreshRate = (uint16_t)dmgl.dmDisplayFrequency;
+	dm.colorBits = (uint16_t)dmgl.dmBitsPerPel;
+	return dm;
+
+#else
 	return DisplayMode();
+#endif
 }
 
 float RenderSystemOpenGLES2::getDisplayAspectRatio() const
