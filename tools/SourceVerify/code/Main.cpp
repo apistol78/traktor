@@ -14,6 +14,7 @@
 #include "Conditions/Macros.h"
 #include "Conditions/StatementDisposition.h"
 #include "Conditions/ClassName.h"
+#include "Conditions/Casts.h"
 
 using namespace traktor;
 
@@ -86,6 +87,7 @@ void verify(ReportLogTarget& report, const Path& pathName)
 			Macros().check(pathName, source, isHeader, reportLog);
 			StatementDisposition().check(pathName, source, isHeader, reportLog);
 			ClassName().check(pathName, source, isHeader, reportLog);
+			Casts().check(pathName, source, isHeader, reportLog);
 		}
 		else
 			log::error << L"Unable to read file \"" << pathName.getPathName() << L"\"" << Endl;
