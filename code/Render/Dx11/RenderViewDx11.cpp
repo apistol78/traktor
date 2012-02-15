@@ -421,6 +421,9 @@ bool RenderViewDx11::begin(EyeType eye)
 	if (!m_context)
 		return false;
 
+	if (!m_context->getLock().wait(1000))
+		return false;
+
 	RenderState rs =
 	{
 		m_d3dViewport,
@@ -586,6 +589,7 @@ void RenderViewDx11::present()
 {
 	m_dxgiSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
 	m_context->deleteResources();
+	m_context->getLock().release();
 }
 
 void RenderViewDx11::pushMarker(const char* const marker)
