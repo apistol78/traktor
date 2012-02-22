@@ -9,11 +9,13 @@ namespace traktor
 	namespace hf
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldAsset", 0, HeightfieldAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.HeightfieldAsset", 1, HeightfieldAsset, editor::Asset)
 
 HeightfieldAsset::HeightfieldAsset()
 :	m_worldExtent(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_patchDim(129)
+,	m_invertX(false)
+,	m_invertZ(false)
 {
 }
 
@@ -30,6 +32,12 @@ bool HeightfieldAsset::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"worldExtent", m_worldExtent, AttributeDirection());
 	s >> Member< uint32_t >(L"patchDim", m_patchDim);
 	s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
+
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< bool >(L"invertX", m_invertX);
+		s >> Member< bool >(L"invertZ", m_invertZ);
+	}
 
 	return true;
 }

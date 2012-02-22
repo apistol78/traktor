@@ -10,6 +10,7 @@
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Heightfield/Editor/Convert.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
@@ -68,6 +69,14 @@ Ref< HeightfieldCompositor > HeightfieldCompositor::createFromAsset(const Height
 	{
 		log::error << L"Unable to read heightfield source \"" << fileName.getPathName() << L"\"" << Endl;
 		return 0;
+	}
+
+	// Flip base image.
+	if (asset->getInvertX() || asset->getInvertZ())
+	{
+		drawing::MirrorFilter mirrorFilter(asset->getInvertX(), asset->getInvertZ());
+		baseImage = baseImage->applyFilter(&mirrorFilter);
+		T_ASSERT (baseImage);
 	}
 
 	uint32_t size = baseImage->getWidth();

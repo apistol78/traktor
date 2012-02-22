@@ -34,10 +34,16 @@ public:
 
 	uint32_t getDetailSkip() const { return m_detailSkip; }
 
+	bool getInvertX() const { return m_invertX; }
+
+	bool getInvertZ() const { return m_invertZ; }
+
 private:
 	Vector4 m_worldExtent;
 	uint32_t m_patchDim;
 	uint32_t m_detailSkip;
+	bool m_invertX;
+	bool m_invertZ;
 };
 
 	}
