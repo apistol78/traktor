@@ -114,7 +114,7 @@
 				<first>-108</first>
 				<second>490</second>
 			</position>
-			<value>-1, 0, -1, 0</value>
+			<value>-1, 0, 1, 0</value>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -189,7 +189,7 @@
 			<comment/>
 			<position>
 				<first>-1272</first>
-				<second>62</second>
+				<second>61</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
@@ -302,16 +302,6 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			<destination>
 				<node ref="/object/nodes/item[13]"/>
 				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Input3</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -582,6 +572,16 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Input3</name>
 			</destination>
 		</item>
 	</edges>
