@@ -691,7 +691,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			);
 
 		// Render entities.
-		worldRenderView.setTimes(scaledTime, deltaTime, 0.0f);
+		worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 		worldRenderView.setView(view);
 
 		if (rootEntity)

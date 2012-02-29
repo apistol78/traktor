@@ -753,7 +753,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			);
 
 		// Render entities.
-		m_worldRenderView.setTimes(scaledTime, deltaTime, 0.0f);
+		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 		m_worldRenderView.setView(view);
 
 		if (rootEntity)
