@@ -88,6 +88,11 @@ bool GraphicsSystemDdWm5::getDisplayModes(std::vector< DisplayMode >& outDisplay
 	return true;
 }
 
+bool GraphicsSystemDdWm5::getCurrentDisplayMode(DisplayMode& outDisplayMode) const
+{
+	return false;
+}
+
 bool GraphicsSystemDdWm5::create(const CreateDesc& createDesc)
 {
 	DDSURFACEDESC ddsd;
