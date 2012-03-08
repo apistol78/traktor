@@ -34,7 +34,7 @@ ApplyReflector::ApplyReflector(AutoPropertyList* propertyList)
 	m_propertyItemIterator = m_propertyItems.begin();
 }
 
-Serializer::Direction ApplyReflector::getDirection()
+Serializer::Direction ApplyReflector::getDirection() const
 {
 	return Serializer::SdRead;
 }

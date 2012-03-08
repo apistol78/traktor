@@ -1,6 +1,5 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/PropertyKey.h"
 #include "Editor/App/ShortcutsSettingsPage.h"
 #include "I18N/Text.h"
@@ -23,7 +22,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ShortcutsSettingsPage", 0, ShortcutsSettingsPage, ISettingsPage)
 
-bool ShortcutsSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool ShortcutsSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 4)))
@@ -69,7 +68,7 @@ void ShortcutsSettingsPage::destroy()
 {
 }
 
-bool ShortcutsSettingsPage::apply(Settings* settings)
+bool ShortcutsSettingsPage::apply(PropertyGroup* settings)
 {
 	const RefArray< ui::custom::GridRow >& rows = m_gridShortcuts->getRows();
 	for (RefArray< ui::custom::GridRow >::const_iterator i = rows.begin(); i != rows.end(); ++i)

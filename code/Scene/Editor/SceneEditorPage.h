@@ -100,7 +100,6 @@ private:
 	Ref< ui::Bitmap > m_imageLocked;
 	Ref< ui::Bitmap > m_imageUnlocked;
 	Ref< ui::custom::GridView > m_instanceGrid;
-	Ref< ui::Font > m_instanceGridFontItalic;
 	Ref< ui::Font > m_instanceGridFontBold;
 	Guid m_currentGuid;
 	uint32_t m_currentHash;
@@ -111,17 +110,17 @@ private:
 
 	void updateScene();
 
-	Ref< ui::custom::GridRow > createEntityListRow(EntityAdapter* entityAdapter);
+	Ref< ui::custom::GridRow > createInstanceGridRow(EntityAdapter* entityAdapter);
+
+	void createInstanceGrid();
+
+	void updateInstanceGridRow(ui::custom::GridRow* row);
 
 	void updateInstanceGrid();
 
 	void updatePropertyObject();
 
 	bool addEntity();
-
-	bool moveToSelectedEntity();
-
-	bool moveSelectedEntityIntoView();
 
 	bool updateLookAtEntity();
 

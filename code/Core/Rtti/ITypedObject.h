@@ -76,6 +76,17 @@ namespace traktor
 	);																\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
+#define T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(ID, VERSION, CLASS, SUPER)	\
+	traktor::TypeInfo CLASS::ms_typeInfo(									\
+		ID,																	\
+		sizeof(CLASS),														\
+		VERSION,															\
+		false,																\
+		&traktor::type_of< SUPER >(),										\
+		new traktor::ClonableInstanceFactory< CLASS >()						\
+	);																		\
+	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
+
 #define T_IMPLEMENT_RTTI_EDIT_CLASS_ROOT(ID, VERSION, CLASS)	\
 	traktor::TypeInfo CLASS::ms_typeInfo(						\
 		ID,														\
@@ -83,7 +94,7 @@ namespace traktor
 		VERSION,												\
 		true,													\
 		0,														\
-		new traktor::InstanceFactory< CLASS >()					\
+		new traktor::ClonableInstanceFactory< CLASS >()			\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -94,7 +105,7 @@ namespace traktor
 		VERSION,												\
 		true,													\
 		&traktor::type_of< SUPER >(),							\
-		new traktor::InstanceFactory< CLASS >()					\
+		new traktor::ClonableInstanceFactory< CLASS >()			\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 

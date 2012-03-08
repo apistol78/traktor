@@ -4,14 +4,13 @@
 #include <btBulletDynamicsCommon.h>
 #include "Core/Ref.h"
 #include "Core/Misc/InvokeOnce.h"
+#include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/Types.h"
 
 namespace traktor
 {
 	namespace physics
 	{
-
-class Body;
 
 /*!
  * \ingroup Bullet
@@ -32,7 +31,7 @@ class JointBullet
 ,	public JointSolver
 {
 public:
-	JointBullet(IWorldCallback* callback, Constraint* constraint, Body* body1, Body* body2)
+	JointBullet(IWorldCallback* callback, Constraint* constraint, BodyBullet* body1, BodyBullet* body2)
 	:	m_callback(callback)
 	,	m_constraint(constraint)
 	,	m_body1(body1)
@@ -49,9 +48,19 @@ public:
 	virtual void destroy()
 	{
 		invokeOnce< IWorldCallback, Joint*, btTypedConstraint* >(m_callback, &IWorldCallback::destroyConstraint, this, m_constraint);
+
+		if (m_enable)
+		{
+			if (m_body1)
+				m_body1->removeJoint(this);
+			if (m_body2)
+				m_body2->removeJoint(this);
+		}
+
 		m_constraint = 0;
 		m_body1 = 0;
 		m_body2 = 0;
+
 		m_enable = false;
 	}
 
@@ -73,9 +82,17 @@ public:
 			return;
 
 		if (enable)
+		{
+			m_body1->addJoint(this);
+			m_body2->addJoint(this);
 			m_callback->insertConstraint(m_constraint);
+		}
 		else
+		{
+			m_body1->removeJoint(this);
+			m_body2->removeJoint(this);
 			m_callback->removeConstraint(m_constraint);
+		}
 
 		m_enable = enable;
 	}
@@ -88,8 +105,8 @@ public:
 protected:
 	IWorldCallback* m_callback;
 	Constraint* m_constraint;
-	Ref< Body > m_body1;
-	Ref< Body > m_body2;
+	Ref< BodyBullet > m_body1;
+	Ref< BodyBullet > m_body2;
 	bool m_enable;
 };
 

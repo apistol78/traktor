@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Hinge2JointBullet", Hinge2JointBullet, Hinge2Joint)
 
-Hinge2JointBullet::Hinge2JointBullet(IWorldCallback* callback, btHinge2Constraint* constraint, Body* body1, Body* body2)
+Hinge2JointBullet::Hinge2JointBullet(IWorldCallback* callback, btHinge2Constraint* constraint, BodyBullet* body1, BodyBullet* body2)
 :	JointBullet< Hinge2Joint, btHinge2Constraint >(callback, constraint, body1, body2)
 {
 }

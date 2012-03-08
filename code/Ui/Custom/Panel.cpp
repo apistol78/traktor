@@ -20,16 +20,33 @@ bool Panel::create(Widget* parent, const std::wstring& text, Layout* layout)
 
 	addPaintEventHandler(createMethodHandler(this, &Panel::eventPaint));
 
-	m_titleHeight = 16;
-
 	return true;
+}
+
+Size Panel::getMinimumSize() const
+{
+	Size titleSize = getTextExtent(getText());
+	Size sz = Container::getMinimumSize();
+	sz.cx += 2;
+	sz.cy += 1 + titleSize.cy;
+	return sz;
+}
+
+Size Panel::getPreferedSize() const
+{
+	Size titleSize = getTextExtent(getText());
+	Size sz = Container::getPreferedSize();
+	sz.cx += 2;
+	sz.cy += 1 + titleSize.cy;
+	return sz;
 }
 
 Rect Panel::getInnerRect() const
 {
+	Size titleSize = getTextExtent(getText());
 	Rect rc = Container::getInnerRect();
 	rc.left += 1;
-	rc.top += m_titleHeight + 1;
+	rc.top += titleSize.cy + 1;
 	rc.right -= 1;
 	rc.bottom -= 1;
 	return rc;
@@ -41,10 +58,10 @@ void Panel::eventPaint(Event* event)
 	Canvas& canvas = p->getCanvas();
 
 	Rect rcInner = Widget::getInnerRect();
-	std::wstring text = getText();
+	canvas.fillRect(rcInner);
 
+	std::wstring text = getText();
 	Size extent = canvas.getTextExtent(text);
-	m_titleHeight = extent.cy + 4;
 
 	Rect rcTitle(rcInner.left, rcInner.top, rcInner.right, rcInner.top + extent.cy + 4);
 

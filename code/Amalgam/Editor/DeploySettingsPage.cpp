@@ -4,7 +4,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Ui/Container.h"
 #include "Ui/NumericEditValidator.h"
 #include "Ui/Static.h"
@@ -28,7 +27,7 @@ const uint16_t c_targetConnectionPort = 36000;
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.DeploySettingsPage", 0, DeploySettingsPage, editor::ISettingsPage)
 
-bool DeploySettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,*,100%", 0, 4)))
@@ -98,7 +97,7 @@ void DeploySettingsPage::destroy()
 {
 }
 
-bool DeploySettingsPage::apply(Settings* settings)
+bool DeploySettingsPage::apply(PropertyGroup* settings)
 {
 	int32_t remoteDatabasePort = parseString< int32_t >(m_editRemoteDatabasePort->getText());
 	settings->setProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", remoteDatabasePort);

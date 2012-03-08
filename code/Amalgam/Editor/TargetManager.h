@@ -9,8 +9,6 @@ namespace traktor
 	namespace amalgam
 	{
 
-class Target;
-class TargetConnection;
 class TargetInstance;
 
 class TargetManager : public Object
@@ -22,9 +20,11 @@ public:
 
 	void destroy();
 
-	TargetInstance* createInstance(const std::wstring& name, const Target* target);
+	void addInstance(TargetInstance* targetInstance);
 
-	void update();
+	void removeInstance(TargetInstance* targetInstance);
+
+	bool update();
 
 private:
 	Ref< net::TcpSocket > m_listenSocket;

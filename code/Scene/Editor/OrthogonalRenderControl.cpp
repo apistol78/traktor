@@ -4,7 +4,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
@@ -21,6 +20,7 @@
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/OrthogonalRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/TransformChain.h"
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
@@ -65,11 +65,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRend
 OrthogonalRenderControl::OrthogonalRenderControl()
 :	m_gridEnable(true)
 ,	m_guideEnable(true)
-,	m_mousePosition(0, 0)
-,	m_mouseButton(0)
-,	m_modifyCamera(false)
-,	m_modifyAlternative(false)
-,	m_modifyBegun(false)
 ,	m_multiSample(0)
 ,	m_viewPlane(PositiveX)
 ,	m_viewFarZ(0.0f)
@@ -237,6 +232,37 @@ bool OrthogonalRenderControl::hitTest(const ui::Point& position) const
 	return m_renderWidget->hitTest(position);
 }
 
+bool OrthogonalRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
+{
+	const float c_viewFarOffset = 1.0f;
+	const ui::Rect innerRect = m_renderWidget->getInnerRect();
+
+	Matrix44 projection = getProjectionTransform();
+	Matrix44 projectionInverse = projection.inverse();
+
+	Matrix44 view = getViewTransform();
+	Matrix44 viewInverse = view.inverse();
+
+	Scalar fx( float(position.x * 2.0f) / innerRect.getWidth() - 1.0f);
+	Scalar fy(-float(position.y * 2.0f) / innerRect.getHeight() + 1.0f);
+
+	Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
+	Vector4 viewPosition = projectionInverse * clipPosition + Vector4(0.0f, 0.0f, -(m_viewFarZ - c_viewFarOffset));
+	outWorldRayOrigin = viewInverse * viewPosition;
+	outWorldRayDirection = viewInverse.axisZ();
+
+	return true;
+}
+
+void OrthogonalRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
+{
+	if (mode == McmMoveXY || mode == McmMoveXZ)
+	{
+		m_cameraX += viewDelta.x();
+		m_cameraY += viewDelta.y();
+	}
+}
+
 void OrthogonalRenderControl::updateSettings()
 {
 	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
@@ -281,224 +307,36 @@ Matrix44 OrthogonalRenderControl::getViewTransform() const
 	return Matrix44::identity();
 }
 
-void OrthogonalRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
-{
-	const float c_viewFarOffset = 1.0f;
-	const ui::Rect innerRect = m_renderWidget->getInnerRect();
-
-	Matrix44 projection = getProjectionTransform();
-	Matrix44 projectionInverse = projection.inverse();
-
-	Matrix44 view = getViewTransform();
-	Matrix44 viewInverse = view.inverse();
-
-	Scalar fx( float(position.x * 2.0f) / innerRect.getWidth() - 1.0f);
-	Scalar fy(-float(position.y * 2.0f) / innerRect.getHeight() + 1.0f);
-
-	Vector4 clipPosition(fx, fy, 0.0f, 1.0f);
-	Vector4 viewPosition = projectionInverse * clipPosition + Vector4(0.0f, 0.0f, -(m_viewFarZ - c_viewFarOffset));
-	outWorldRayOrigin = viewInverse * viewPosition;
-	outWorldRayDirection = viewInverse.axisZ();
-}
-
-Ref< EntityAdapter > OrthogonalRenderControl::pickEntity(const ui::Point& position) const
-{
-	Vector4 worldRayOrigin, worldRayDirection;
-	calculateRay(position, worldRayOrigin, worldRayDirection);
-	return m_context->queryRay(worldRayOrigin, worldRayDirection, true);
-}
-
 void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
 {
-	m_mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
-	m_modifyCamera = (event->getKeyState() & ui::KsControl) == ui::KsControl;
-	m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
-
-	// Are we already captured then we abort.
-	if (m_renderWidget->hasCapture())
-		return;
-
-	if (m_modifyCamera)
-	{
-		m_renderWidget->setCapture();
-	}
-	else
-	{
-		// Handle entity picking if enabled.
-		if (!m_modifyAlternative && m_context->getPickEnable())
-		{
-			Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
-
-			// De-select all other if shift isn't held.
-			if ((event->getKeyState() & ui::KsShift) == 0)
-				m_context->selectAllEntities(false);
-
-			m_context->selectEntity(entityAdapter);
-			m_context->raiseSelect(this);
-		}
-
-		m_context->setPlaying(false);
-		m_context->setPhysicsEnable(false);
-
-		m_modifyBegun = false;
-		m_renderWidget->setCapture();
-	}
-
-	m_renderWidget->setFocus();
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventButtonDown(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void OrthogonalRenderControl::eventButtonUp(ui::Event* event)
 {
-	int32_t mouseButton = translateMouseButton(static_cast< ui::MouseEvent* >(event)->getButton());
-	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
-	Matrix44 view = getViewTransform();
-
-	// Issue finished modification event.
-	if (!m_modifyCamera)
-	{
-		if (m_modifyBegun)
-		{
-			m_context->raisePostModify();
-
-			// Leave modify mode in entity editors.
-			IEntityEditor::ApplyParams params;
-			params.viewTransform = view;
-			calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
-			params.mouseButton = mouseButton;
-
-			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-			{
-				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->endModifier(params);
-			}
-		}
-	}
-
-	m_modifyEntities.resize(0);
-	m_modifyCamera = false;
-	m_modifyAlternative = false;
-	m_modifyBegun = false;
-
-	if (m_renderWidget->hasCapture())
-		m_renderWidget->releaseCapture();
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventButtonUp(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void OrthogonalRenderControl::eventDoubleClick(ui::Event* event)
 {
-	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
-
-	Ref< EntityAdapter > entityAdapter = pickEntity(mousePosition);
-	if (entityAdapter && entityAdapter->isExternal())
-	{
-		Guid externalGuid;
-		entityAdapter->getExternalGuid(externalGuid);
-
-		Ref< db::Instance > instance = m_context->getEditor()->getSourceDatabase()->getInstance(externalGuid);
-		if (instance)
-			m_context->getEditor()->openEditor(instance);
-	}
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventDoubleClick(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void OrthogonalRenderControl::eventMouseMove(ui::Event* event)
 {
-	if (!m_renderWidget->hasCapture())
-		return;
-
-	int mouseButton = translateMouseButton(static_cast< ui::MouseEvent* >(event)->getButton());
-	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
-
-	Vector4 screenDelta(
-		float(m_mousePosition.x - mousePosition.x),
-		float(m_mousePosition.y - mousePosition.y),
-		0.0f,
-		0.0f
-	);
-
-	if (!m_modifyCamera)
-	{
-		if (!m_modifyBegun)
-		{
-			// Clone selection set.
-			if (m_modifyAlternative)
-				m_context->cloneSelected();
-
-			// Get selected entities.
-			m_context->getEntities(
-				m_modifyEntities,
-				SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
-			);
-
-			// Enter modify mode in entity editors.
-			IEntityEditor::ApplyParams params;
-			params.viewTransform = getViewTransform();
-			params.screenDelta = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-			params.viewDelta = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-			params.worldDelta = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
-			calculateRay(m_mousePosition, params.worldRayOrigin, params.worldRayDirection);
-			params.mouseButton = mouseButton;
-
-			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-			{
-				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->beginModifier(params);
-			}
-
-			// Issue begin modification event.
-			m_context->raisePreModify();
-
-			m_modifyBegun = true;
-		}
-
-		// Apply modifier on selected entities.
-		Ref< IModifier > modifier = m_context->getModifier();
-		T_ASSERT (modifier);
-
-		Matrix44 projection = getProjectionTransform();
-		Matrix44 projectionInverse = projection.inverse();
-
-		Matrix44 view = getViewTransform();
-		Matrix44 viewInverse = view.inverse();
-
-		ui::Rect innerRect = m_renderWidget->getInnerRect();
-		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
-
-		IEntityEditor::ApplyParams params;
-		params.viewTransform = view;
-		params.screenDelta = screenDelta;
-		params.mouseButton = mouseButton;
-
-		calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
-
-		for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-		{
-			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-			if (entityEditor)
-			{
-				// Transform screen delta into world delta at entity's position.
-				params.viewDelta = clipDelta;
-				params.worldDelta = viewInverse * params.viewDelta;
-
-				// Apply modifier through entity editor.
-				entityEditor->applyModifier(params);
-			}
-		}
-	}
-	else
-	{
-		Matrix44 projection = getProjectionTransform();
-		Matrix44 projectionInverse = projection.inverse();
-
-		ui::Rect innerRect = m_renderWidget->getInnerRect();
-		Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
-
-		m_cameraX += clipDelta.x();
-		m_cameraY += clipDelta.y();
-	}
-
-	m_mousePosition = mousePosition;
-	m_mouseButton = mouseButton;
-
-	m_renderWidget->update();
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventMouseMove(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void OrthogonalRenderControl::eventMouseWheel(ui::Event* event)
@@ -546,7 +384,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 	// Get entities.
 	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfExternals);
+	m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
 
 	// Get root entity.
 	Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
@@ -627,27 +465,6 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 		m_primitiveRenderer->pushView(view);
 
-		// Draw selection marker(s).
-		Ref< IModifier > modifier = m_context->getModifier();
-		for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-		{
-			// Draw modifier and reference arrows; only applicable to spatial entities we must first check if it's a spatial entity.
-			if (modifier && (*i)->isSpatial() && (*i)->isSelected() && !(*i)->isChildOfExternal())
-			{
-				modifier->draw(
-					m_context,
-					view,
-					(*i)->getTransform(),
-					m_primitiveRenderer,
-					m_mouseButton
-				);
-			}
-
-			// Draw entity guides.
-			if (m_guideEnable)
-				m_context->drawGuide(m_primitiveRenderer, *i);
-		}
-
 		// Draw cameras.
 		for (int i = 0; i < 4; ++i)
 		{
@@ -683,12 +500,22 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			m_primitiveRenderer->popView();
 		}
 
+		// Draw modifier.
+		IModifier* modifier = m_context->getModifier();
+		if (modifier)
+			modifier->draw(m_primitiveRenderer);
+
+		// Draw guides.
+		if (m_guideEnable)
+		{
+			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+				m_context->drawGuide(m_primitiveRenderer, *i);
+		}
+
 		// Draw controller guides.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
 		if (controllerEditor && m_guideEnable)
-			controllerEditor->draw(
-				m_primitiveRenderer
-			);
+			controllerEditor->draw(m_primitiveRenderer);
 
 		// Render entities.
 		worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);

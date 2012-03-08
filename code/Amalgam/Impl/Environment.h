@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace amalgam
 	{
@@ -26,7 +26,7 @@ class Environment : public IEnvironment
 
 public:
 	Environment(
-		Settings* settings,
+		PropertyGroup* settings,
 		db::Database* database,
 		AudioServer* audioServer,
 		InputServer* inputServer,
@@ -56,7 +56,7 @@ public:
 
 	virtual IWorldServer* getWorld();
 
-	virtual Settings* getSettings();
+	virtual PropertyGroup* getSettings();
 
 	virtual bool reconfigure();
 
@@ -65,7 +65,7 @@ public:
 	bool shouldReconfigure() const { return m_shouldReconfigure; }
 
 private:
-	Ref< Settings > m_settings;
+	Ref< PropertyGroup > m_settings;
 	Ref< db::Database > m_database;
 	Ref< AudioServer > m_audioServer;
 	Ref< InputServer > m_inputServer;

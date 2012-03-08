@@ -483,8 +483,11 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	if (!desc)
 		return 0;
 
-	btRigidBody* b1 = body1 ? checked_type_cast< BodyBullet* >(body1)->getBtRigidBody() : 0;
-	btRigidBody* b2 = body2 ? checked_type_cast< BodyBullet* >(body2)->getBtRigidBody() : 0;
+	BodyBullet* bb1 = checked_type_cast< BodyBullet* >(body1);
+	BodyBullet* bb2 = checked_type_cast< BodyBullet* >(body2);
+
+	btRigidBody* b1 = body1 ? bb1->getBtRigidBody() : 0;
+	btRigidBody* b2 = body2 ? bb2->getBtRigidBody() : 0;
 	
 	Ref< Joint > joint;
 
@@ -528,7 +531,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 
 		hingeConstraint->setAngularOnly(true);
 
-		joint = new AxisJointBullet(this, hingeConstraint, body1, body2);
+		joint = new AxisJointBullet(this, hingeConstraint, bb1, bb2);
 	}
 	else if (const BallJointDesc* ballDesc = dynamic_type_cast< const BallJointDesc* >(desc))
 	{
@@ -558,7 +561,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			);
 		}
 
-		joint = new BallJointBullet(this, pointConstraint, body1, body2);
+		joint = new BallJointBullet(this, pointConstraint, bb1, bb2);
 	}
 	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
 	{
@@ -572,8 +575,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 				this,
 				jointConstraint,
 				transform,
-				body1,
-				body2,
+				bb1,
+				bb2,
 				coneTwistDesc
 			);
 
@@ -588,7 +591,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 				this,
 				jointConstraint,
 				transform,
-				body1,
+				bb1,
 				coneTwistDesc
 			);
 
@@ -639,7 +642,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		if (abs(maxAngle - minAngle) > FUZZY_EPSILON)
 			hingeConstraint->setLimit(minAngle, maxAngle);
 
-		joint = new HingeJointBullet(this, hingeConstraint, body1, body2);
+		joint = new HingeJointBullet(this, hingeConstraint, bb1, bb2);
 	}
 	else if (const Hinge2JointDesc* hinge2Desc = dynamic_type_cast< const Hinge2JointDesc* >(desc))
 	{
@@ -675,7 +678,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		else
 			return 0;
 
-		joint = new Hinge2JointBullet(this, hinge2Constraint, body1, body2);
+		joint = new Hinge2JointBullet(this, hinge2Constraint, bb1, bb2);
 	}
 
 	if (!joint)
@@ -703,57 +706,69 @@ void PhysicsManagerBullet::update()
 	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime, 0);
 
 	// Issue collision events.
-	int manifoldCount = m_dispatcher->getNumManifolds();
-	for (int i = 0; i < manifoldCount; ++i)
+	if (haveCollisionListeners())
 	{
-		btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
-		T_ASSERT (manifold);
-
-		// Only call to listeners when a new manifold has been created.
-		if (!manifold->m_fresh)
-			continue;
-
-		const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
-		const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
-
-		Body* wrapperBody0 = body0 ? static_cast< Body* >(body0->getUserPointer()) : 0;
-		Body* wrapperBody1 = body1 ? static_cast< Body* >(body1->getUserPointer()) : 0;
-
-		// Don't issue collision events between joined bodies.
-		if (wrapperBody0 && wrapperBody1)
-		{
-			for (RefArray< Joint >::const_iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-			{
-				if (
-					((*i)->getBody1() == wrapperBody0 && (*i)->getBody2() == wrapperBody1) ||
-					((*i)->getBody1() == wrapperBody1 && (*i)->getBody2() == wrapperBody0)
-				)
-					return;
-			}
-		}
-
 		CollisionInfo info;
-		info.body1 = wrapperBody0;
-		info.body2 = wrapperBody1;
 
-		int contacts = manifold->getNumContacts();
-		for (int j = 0; j < contacts; ++j)
+		int manifoldCount = m_dispatcher->getNumManifolds();
+		for (int i = 0; i < manifoldCount; ++i)
 		{
-			const btManifoldPoint& pt = manifold->getContactPoint(j);
-			if (pt.getDistance() < 0.0f)
-			{
-				CollisionContact cc;
-				cc.depth = -pt.getDistance();
-				cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
-				cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
-				info.contacts.push_back(cc);
-			}
-		}
-		if (info.contacts.empty())
-			continue;
+			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
+			T_ASSERT (manifold);
 
-		notifyCollisionListeners(info);
-		manifold->m_fresh = false;
+			// Only call to listeners when a new manifold has been created.
+			if (!manifold->m_fresh)
+				continue;
+
+			const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
+			const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
+
+			BodyBullet* wrapperBody0 = body0 ? static_cast< BodyBullet* >(body0->getUserPointer()) : 0;
+			BodyBullet* wrapperBody1 = body1 ? static_cast< BodyBullet* >(body1->getUserPointer()) : 0;
+
+			// Don't issue collision events between joined bodies.
+			if (wrapperBody0 && wrapperBody1)
+			{
+				bool jointConnected = false;
+
+				// Skip bodies which are directly connected through a joint.
+				const std::vector< Joint* >& joints = wrapperBody0->getJoints();
+				for (std::vector< Joint* >::const_iterator i = joints.begin(); i != joints.end(); ++i)
+				{
+					if ((*i)->getBody1() == wrapperBody1 || (*i)->getBody2() == wrapperBody1)
+					{
+						jointConnected = true;
+						break;
+					}
+				}
+
+				if (jointConnected)
+					continue;
+			}
+
+			info.body1 = wrapperBody0;
+			info.body2 = wrapperBody1;
+			info.contacts.resize(0);
+
+			int contacts = manifold->getNumContacts();
+			for (int j = 0; j < contacts; ++j)
+			{
+				const btManifoldPoint& pt = manifold->getContactPoint(j);
+				if (pt.getDistance() < 0.0f)
+				{
+					CollisionContact cc;
+					cc.depth = -pt.getDistance();
+					cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
+					cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
+					info.contacts.push_back(cc);
+				}
+			}
+			if (info.contacts.empty())
+				continue;
+
+			notifyCollisionListeners(info);
+			manifold->m_fresh = false;
+		}
 	}
 }
 
@@ -1032,6 +1047,7 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	BodyBullet* body2 = colObj1 ? static_cast< BodyBullet* >(colObj1->getUserPointer()) : 0;
 	if (body1 && body2)
 	{
+		// Filter collision on collision group and mask first.
 		uint32_t group1 = body1->getCollisionGroup();
 		uint32_t mask1 = body1->getCollisionMask();
 
@@ -1042,13 +1058,10 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 			return;
 
 		// Skip bodies which are directly connected through a joint.
-		// \fixme Doesn't scale whatsoever..
-		for (RefArray< Joint >::const_iterator i = ms_this->m_joints.begin(); i != ms_this->m_joints.end(); ++i)
+		const std::vector< Joint* >& joints = body1->getJoints();
+		for (std::vector< Joint* >::const_iterator i = joints.begin(); i != joints.end(); ++i)
 		{
-			if (
-				((*i)->getBody1() == body1 && (*i)->getBody2() == body2) ||
-				((*i)->getBody1() == body2 && (*i)->getBody2() == body1)
-			)
+			if ((*i)->getBody1() == body2 || (*i)->getBody2() == body2)
 				return;
 		}
 	}

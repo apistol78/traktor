@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.PropertyObject", 0, PropertyObject, IPropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(L"traktor.PropertyObject", 0, PropertyObject, IPropertyValue)
 
 PropertyObject::PropertyObject()
 {
@@ -21,14 +21,14 @@ PropertyObject::value_type_t PropertyObject::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyObject* >(value)->m_value : value_type_t(0);
 }
 
-IPropertyValue* PropertyObject::merge(IPropertyValue* right, bool join)
-{
-	return right;
-}
-
 bool PropertyObject::serialize(ISerializer& s)
 {
 	return s >> MemberRef< ISerializable >(L"value", m_value);
+}
+
+Ref< IPropertyValue > PropertyObject::join(const IPropertyValue* right) const
+{
+	return clone_instance(right);
 }
 
 }

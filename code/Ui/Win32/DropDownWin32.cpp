@@ -57,6 +57,12 @@ int DropDownWin32::count() const
 	return int(m_hWnd.sendMessage(CB_GETCOUNT, 0, 0));
 }
 
+void DropDownWin32::set(int index, const std::wstring& item)
+{
+	remove(index);
+	m_hWnd.sendMessage(CB_INSERTSTRING, (WPARAM)index, (LPARAM)wstots(item).c_str());
+}
+
 std::wstring DropDownWin32::get(int index) const
 {
 	TCHAR tmp[256];
@@ -84,7 +90,16 @@ void DropDownWin32::setRect(const Rect& rect)
 
 Size DropDownWin32::getPreferedSize() const
 {
-	return Size(128, 24);
+	Size sz(128, 24);
+
+	int32_t c = count();
+	for (int32_t i = 0; i < c; ++i)
+	{
+		std::wstring s = get(i);
+		sz.cx = std::max< int32_t >(getTextExtent(s).cx + 32, sz.cx);
+	}
+
+	return sz;
 }
 
 LRESULT DropDownWin32::eventCommand(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass)

@@ -8,10 +8,10 @@
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
+#include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/IModifier.h"
-#include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/SceneAsset.h"
@@ -110,8 +110,8 @@ SceneEditorContext::SceneEditorContext(
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
+,	m_guideSize(2.0f)
 ,	m_pickEnable(true)
-,	m_axisEnable(AeXYZ)
 ,	m_snapMode(SmNone)
 ,	m_snapSpacing(0.0f)
 ,	m_physicsEnable(false)
@@ -174,12 +174,23 @@ void SceneEditorContext::setControllerEditor(ISceneControllerEditor* controllerE
 
 void SceneEditorContext::setModifier(IModifier* modifier)
 {
-	m_modifier = modifier;
+	if ((m_modifier = modifier) != 0)
+		m_modifier->selectionChanged();
 }
 
 IModifier* SceneEditorContext::getModifier() const
 {
 	return m_modifier;
+}
+
+void SceneEditorContext::setGuideSize(float guideSize)
+{
+	m_guideSize = guideSize;
+}
+
+float SceneEditorContext::getGuideSize() const
+{
+	return m_guideSize;
 }
 
 void SceneEditorContext::setPickEnable(bool pickEnable)
@@ -190,16 +201,6 @@ void SceneEditorContext::setPickEnable(bool pickEnable)
 bool SceneEditorContext::getPickEnable() const
 {
 	return m_pickEnable;
-}
-
-void SceneEditorContext::setAxisEnable(uint32_t axisEnable)
-{
-	m_axisEnable = axisEnable;
-}
-
-uint32_t SceneEditorContext::getAxisEnable() const
-{
-	return m_axisEnable;
 }
 
 void SceneEditorContext::setSnapMode(SnapMode snapMode)
@@ -385,24 +386,38 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 		range_t& r = stack.top();
 		if (r.first != r.second)
 		{
-			Ref< EntityAdapter > entityAdapter = *r.first++;
+			EntityAdapter* entityAdapter = *r.first++;
+
+			bool include = true;
 
 			if (flags & GfSelectedOnly)
-			{
-				if (entityAdapter->isSelected())
-					outEntityAdapters.push_back(entityAdapter);
-			}
-			else
+				include &= entityAdapter->isSelected();
+			if (flags & GfNoSelected)
+				include &= !entityAdapter->isSelected();
+
+			if (flags & GfSpatialOnly)
+				include &= entityAdapter->isSpatial();
+			if (flags & GfNoSpatial)
+				include &= !entityAdapter->isSpatial();
+
+			if (flags & GfExternalOnly)
+				include &= entityAdapter->isExternal();
+			if (flags & GfNoExternal)
+				include &= !entityAdapter->isExternal();
+
+			if (flags & GfExternalChildOnly)
+				include &= entityAdapter->isChildOfExternal();
+			if (flags & GfNoExternalChild)
+				include &= !entityAdapter->isChildOfExternal();
+
+			if (include)
 				outEntityAdapters.push_back(entityAdapter);
 
 			if (flags & GfDescendants)
 			{
-				if (!entityAdapter->isExternal() || (flags & GfExternals) != 0)
-				{
-					const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
-					if (!children.empty())
-						stack.push(std::make_pair(children.begin(), children.end()));
-				}
+				const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
+				if (!children.empty())
+					stack.push(std::make_pair(children.begin(), children.end()));
 			}
 		}
 		else
@@ -432,8 +447,8 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		// Must be unlocked and visible.
-		if ((*i)->isLocked() || !(*i)->isVisible())
+		// Must be unlocked, visible and no child of external.
+		if ((*i)->isLocked() || !(*i)->isVisible() || (*i)->isChildOfExternal())
 			continue;
 
 		IEntityEditor* entityEditor = (*i)->getEntityEditor();
@@ -475,7 +490,8 @@ void SceneEditorContext::cloneSelected()
 		Ref< world::EntityData > clonedEntityData = DeepClone((*i)->getEntityData()).create< world::EntityData >();
 		T_ASSERT (clonedEntityData);
 
-		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter(clonedEntityData);
+		Ref< EntityAdapter > clonedEntityAdapter = new EntityAdapter();
+		clonedEntityAdapter->setEntityData(clonedEntityData);
 		parentContainerGroup->addChild(clonedEntityAdapter);
 
 		(*i)->m_selected = false;
@@ -560,6 +576,11 @@ void SceneEditorContext::raisePostBuild()
 
 void SceneEditorContext::raiseSelect(Object* item)
 {
+	// Notify modifier about selection change.
+	if (m_modifier)
+		m_modifier->selectionChanged();
+
+	// Notify selection change event listeners.
 	ui::Event event(this, item);
 	raiseEvent(EiSelect, &event);
 }

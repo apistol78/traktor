@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace amalgam
 	{
@@ -20,13 +20,13 @@ class AudioServer : public IAudioServer
 public:
 	AudioServer();
 
-	bool create(const Settings* settings);
+	bool create(const PropertyGroup* settings);
 
 	void destroy();
 
 	void createResourceFactories(IEnvironment* environment);
 
-	int32_t reconfigure(const Settings* settings);
+	int32_t reconfigure(const PropertyGroup* settings);
 
 	void update(float dT, bool renderViewActive);
 

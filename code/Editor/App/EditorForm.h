@@ -82,7 +82,7 @@ public:
 	/*! \name IEditor implementation */
 	//@{
 
-	virtual Ref< Settings > getSettings() const;
+	virtual Ref< PropertyGroup > getSettings() const;
 
 	virtual Ref< db::Database > getSourceDatabase() const;
 
@@ -145,7 +145,7 @@ private:
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
 	Ref< LogView > m_logView;
-	Ref< Settings > m_settings;
+	Ref< PropertyGroup > m_settings;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IEditorPage > m_activeEditorPage;
@@ -192,7 +192,7 @@ private:
 
 	void activateNextEditor();
 
-	Ref< Settings > loadSettings(const std::wstring& settingsFile);
+	Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile);
 
 	void saveSettings(const std::wstring& settingsFile);
 

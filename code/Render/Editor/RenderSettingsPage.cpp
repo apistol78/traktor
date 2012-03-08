@@ -1,8 +1,8 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "I18N/Text.h"
 #include "Render/IProgramCompiler.h"
 #include "Render/IRenderSystem.h"
@@ -21,7 +21,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSettingsPage", 0, RenderSettingsPage, editor::ISettingsPage)
 
-bool RenderSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool RenderSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4)))
@@ -95,7 +95,7 @@ void RenderSettingsPage::destroy()
 {
 }
 
-bool RenderSettingsPage::apply(Settings* settings)
+bool RenderSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.RenderSystem", m_dropRenderSystem->getSelectedItem());
 	settings->setProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler", m_dropCompiler->getSelectedItem());

@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class IAchievementsProvider;
+class IGameConfiguration;
 class ILeaderboardsProvider;
 class IMatchMakingProvider;
 class ISaveDataProvider;
@@ -28,6 +29,8 @@ class T_DLLCLASS ISessionManagerProvider : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual bool create(const IGameConfiguration* configuration) = 0;
+
 	virtual void destroy() = 0;
 
 	virtual bool update() = 0;

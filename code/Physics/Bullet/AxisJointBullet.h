@@ -25,7 +25,7 @@ class T_DLLCLASS AxisJointBullet : public JointBullet< AxisJoint, btHingeConstra
 	T_RTTI_CLASS;
 
 public:
-	AxisJointBullet(IWorldCallback* callback, btHingeConstraint* constraint, Body* body1, Body* body2);
+	AxisJointBullet(IWorldCallback* callback, btHingeConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
 
 	virtual Vector4 getAxis() const;
 };

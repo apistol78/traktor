@@ -17,7 +17,7 @@ class StateCache : public Object
 public:
 	StateCache();
 	
-	void setRenderState(const RenderState& renderState);
+	void setRenderState(const RenderState& renderState, bool invertCull);
 	
 	void setColorMask(uint32_t colorMask);
 	

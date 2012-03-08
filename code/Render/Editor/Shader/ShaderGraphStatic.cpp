@@ -1,3 +1,4 @@
+#include <cctype>
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
@@ -591,6 +592,73 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 
 	T_ASSERT (ShaderGraphValidator(visitor.m_shaderGraph).validateIntegrity());
 	return visitor.m_shaderGraph;
+}
+
+Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
+{
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+
+	RefArray< Swizzle > swizzleNodes;
+	shaderGraph->findNodesOf< Swizzle >(swizzleNodes);
+
+	for (RefArray< Swizzle >::iterator i = swizzleNodes.begin(); i != swizzleNodes.end(); )
+	{
+		Swizzle* swizzleRightNode = *i;
+		T_ASSERT (swizzleRightNode);
+
+		const InputPin* swizzleInput = swizzleRightNode->getInputPin(0);
+		T_ASSERT (swizzleInput);
+
+		const OutputPin* swizzleOutput = swizzleRightNode->getOutputPin(0);
+		T_ASSERT (swizzleOutput);
+
+		Edge* sourceEdge = shaderGraph->findEdge(swizzleInput);
+		T_ASSERT (sourceEdge);
+
+		// Get left swizzle; cast to null if input ain't a swizzle node.
+		Swizzle* swizzleLeftNode = dynamic_type_cast< Swizzle* >(sourceEdge->getSource()->getNode());
+		if (!swizzleLeftNode)
+		{
+			++i;
+			continue;
+		}
+
+		// Merge swizzle patterns.
+		std::wstring swizzleRight = swizzleRightNode->get();
+		std::wstring swizzleLeft = swizzleLeftNode->get();
+
+		int32_t swizzleRightWidth = swizzleRight.length();
+		int32_t swizzleLeftWidth = swizzleLeft.length();
+
+		std::wstring swizzle = swizzleRight;
+
+		for (int32_t j = 0; j < swizzleRightWidth; ++j)
+		{
+			wchar_t sr = std::tolower(swizzleRight[j]);
+			size_t sri = std::wstring(L"xyzw").find(sr);
+			if (sri != std::wstring::npos)
+			{
+				wchar_t s = sri < swizzleLeftWidth ? std::tolower(swizzleLeft[sri]) : L'0';
+				swizzle[j] = s;
+			}
+		}
+
+		swizzleRightNode->set(swizzle);
+
+		// Replace input edge with edge from left's source.
+		shaderGraph->removeEdge(sourceEdge);
+		shaderGraph->addEdge(new Edge(
+			shaderGraph->findSourcePin(swizzleLeftNode->getInputPin(0)),
+			swizzleRightNode->getInputPin(0)
+		));
+
+		T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
+
+		// Restart iteration as it's possible we have rewired to another swizzler.
+		i = swizzleNodes.begin();
+	}
+
+	return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 }
 
 	}

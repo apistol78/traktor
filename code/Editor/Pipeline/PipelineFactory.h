@@ -16,7 +16,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace editor
 	{
@@ -26,7 +26,7 @@ class T_DLLCLASS PipelineFactory : public Object
 	T_RTTI_CLASS;
 
 public:
-	PipelineFactory(const Settings* settings);
+	PipelineFactory(const PropertyGroup* settings);
 
 	virtual ~PipelineFactory();
 

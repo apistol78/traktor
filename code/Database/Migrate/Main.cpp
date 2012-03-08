@@ -4,9 +4,9 @@
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/PropertyStringArray.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -116,9 +116,9 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 	return true;
 }
 
-Ref< Settings > loadSettings(const std::wstring& settingsFile)
+Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 {
-	Ref< Settings > settings;
+	Ref< PropertyGroup > settings;
 	Ref< traktor::IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
@@ -126,7 +126,7 @@ Ref< Settings > loadSettings(const std::wstring& settingsFile)
 
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
-		settings = Settings::read< xml::XmlDeserializer >(file);
+		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 	}
 
@@ -138,7 +138,7 @@ Ref< Settings > loadSettings(const std::wstring& settingsFile)
 
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
-		settings = Settings::read< xml::XmlDeserializer >(file);
+		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 	}
 
@@ -173,15 +173,15 @@ int main(int argc, const char** argv)
 	{
 		std::wstring settingsFile = cmdLine.getOption('s', L"settings").getString();
 
-		Ref< Settings > settings = loadSettings(settingsFile);
+		Ref< PropertyGroup > settings = loadSettings(settingsFile);
 		if (!settings)
 		{
 			traktor::log::error << L"Unable to load migrate settings \"" << settingsFile << L"\"" << Endl;
 			return 1;
 		}
 
-		std::vector< std::wstring > modules = settings->getProperty< PropertyStringArray >(L"Migrate.Modules");
-		for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+		std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Migrate.Modules");
+		for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 		{
 			Library library;
 			if (!library.open(*i))

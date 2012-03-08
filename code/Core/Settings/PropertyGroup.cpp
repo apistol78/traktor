@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.PropertyGroup", 0, PropertyGroup, IPropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(L"traktor.PropertyGroup", 0, PropertyGroup, IPropertyValue)
 
 PropertyGroup::PropertyGroup()
 {
@@ -21,43 +21,134 @@ PropertyGroup::value_type_t PropertyGroup::get(const IPropertyValue* value)
 
 void PropertyGroup::setProperty(const std::wstring& propertyName, IPropertyValue* value)
 {
-	if (value)
-		m_value[propertyName] = value;
+	size_t pos = propertyName.find(L'/');
+	if (pos == propertyName.npos)
+	{
+		if (value)
+			m_value[propertyName] = value;
+		else
+			m_value.erase(propertyName);
+	}
 	else
-		m_value.erase(propertyName);
+	{
+		std::wstring groupName = propertyName.substr(0, pos);
+		Ref< PropertyGroup > group;
+
+		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(groupName);
+		if (it != m_value.end())
+		{
+			group = dynamic_type_cast< PropertyGroup* >(it->second);
+			if (!group)
+				return;
+		}
+		else
+		{
+			group = new PropertyGroup();
+			m_value[groupName] = group;
+		}
+
+		group->setProperty(propertyName.substr(pos + 1), value);
+	}
 }
 
 Ref< IPropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName)
 {
-	std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(propertyName);
-	return it != m_value.end() ? it->second.ptr() : 0;
+	size_t pos = propertyName.find(L'/');
+	if (pos == propertyName.npos)
+	{
+		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(propertyName);
+		return it != m_value.end() ? it->second.ptr() : 0;
+	}
+	else
+	{
+		std::wstring groupName = propertyName.substr(0, pos);
+
+		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(groupName);
+		if (it == m_value.end())
+			return 0;
+
+		PropertyGroup* group = dynamic_type_cast< PropertyGroup* >(it->second);
+		if (!group)
+			return 0;
+
+		return group->getProperty(propertyName.substr(pos + 1));
+	}
 }
 
 Ref< const IPropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName) const
 {
-	std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(propertyName);
-	return it != m_value.end() ? it->second.ptr() : 0;
+	size_t pos = propertyName.find(L'/');
+	if (pos == propertyName.npos)
+	{
+		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(propertyName);
+		return it != m_value.end() ? it->second.ptr() : 0;
+	}
+	else
+	{
+		std::wstring groupName = propertyName.substr(0, pos);
+
+		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = m_value.find(groupName);
+		if (it == m_value.end())
+			return 0;
+
+		PropertyGroup* group = dynamic_type_cast< PropertyGroup* >(it->second);
+		if (!group)
+			return 0;
+
+		return group->getProperty(propertyName.substr(pos + 1));
+	}
 }
 
-IPropertyValue* PropertyGroup::merge(IPropertyValue* right, bool join)
+Ref< PropertyGroup > PropertyGroup::mergeJoin(const PropertyGroup* rightGroup) const
 {
-	if (join)
+	const std::map< std::wstring, Ref< IPropertyValue > >& leftValues = getValues();
+	const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = rightGroup->getValues();
+
+	Ref< PropertyGroup > joinedGroup = new PropertyGroup();
+
+	// Insert values from left group.
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = leftValues.begin(); i != leftValues.end(); ++i)
 	{
-		if (PropertyGroup* rightGroup = dynamic_type_cast< PropertyGroup* >(right))
-		{
-			const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = rightGroup->getValues();
-			for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
-			{
-				Ref< IPropertyValue > leftValue = getProperty(i->first);
-				if (leftValue)
-					setProperty(i->first, leftValue->merge(i->second, join));
-				else
-					setProperty(i->first, i->second);
-			}
-			return this;
-		}
+		if (rightValues.find(i->first) != rightValues.end())
+			continue;
+
+		joinedGroup->setProperty(i->first, DeepClone(i->second).create< IPropertyValue >());
 	}
-	return right;
+
+	// Insert values from right group.
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
+	{
+		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = leftValues.find(i->first);
+		if (it != leftValues.end())
+			joinedGroup->setProperty(i->first, it->second->join(i->second));
+		else
+			joinedGroup->setProperty(i->first, DeepClone(i->second).create< IPropertyValue >());
+	}
+
+	return joinedGroup;
+}
+
+Ref< PropertyGroup > PropertyGroup::mergeReplace(const PropertyGroup* rightGroup) const
+{
+	const std::map< std::wstring, Ref< IPropertyValue > >& leftValues = getValues();
+	const std::map< std::wstring, Ref< IPropertyValue > >& rightValues = rightGroup->getValues();
+
+	Ref< PropertyGroup > joinedGroup = new PropertyGroup();
+
+	// Insert values from left group.
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = leftValues.begin(); i != leftValues.end(); ++i)
+	{
+		if (rightValues.find(i->first) != rightValues.end())
+			continue;
+
+		joinedGroup->setProperty(i->first, DeepClone(i->second).create< IPropertyValue >());
+	}
+
+	// Insert values from right group.
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
+		joinedGroup->setProperty(i->first, DeepClone(i->second).create< IPropertyValue >());
+
+	return joinedGroup;
 }
 
 bool PropertyGroup::serialize(ISerializer& s)
@@ -72,6 +163,14 @@ bool PropertyGroup::serialize(ISerializer& s)
 			MemberRef< IPropertyValue >
 		>
 	>(L"value", m_value);
+}
+
+Ref< IPropertyValue > PropertyGroup::join(const IPropertyValue* right) const
+{
+	if (const PropertyGroup* rightGroup = dynamic_type_cast< const PropertyGroup* >(right))
+		return mergeJoin(rightGroup);
+	else
+		return clone_instance(right);
 }
 
 }

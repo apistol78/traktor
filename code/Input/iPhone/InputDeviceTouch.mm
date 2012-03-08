@@ -1,8 +1,8 @@
 #import <UIKit/UIKit.h>
 
-#include "Input/iPhone/InputDeviceTouch.h"
-#include "Core/Math/MathUtils.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
+#include "Input/iPhone/InputDeviceTouch.h"
 
 namespace traktor
 {
@@ -12,7 +12,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceTouch", InputDeviceTouch, IInputDevice)
 
 InputDeviceTouch::InputDeviceTouch()
-:	m_landscape(false)
+:	m_landscape(true)
 {
 }
 
@@ -20,15 +20,7 @@ bool InputDeviceTouch::create(void* nativeWindowHandle)
 {
 	UIView* view = (UIView*)nativeWindowHandle;
 	CGRect frame = [view frame];
-	
-	UITouchView* touchView = [[UITouchView alloc] initWithFrame: frame];
-	[touchView setCallback: this];
-	touchView.multipleTouchEnabled = YES;
-	
-	[view addSubview: touchView];
-	
-	m_landscape = true;
-	
+
 	float cx = frame.origin.x + frame.size.width / 2.0f;
 	float cy = frame.origin.y + frame.size.height / 2.0f;
 	

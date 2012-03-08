@@ -71,6 +71,8 @@ public:
 
 	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild);
 
+	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset);
+
 	virtual bool buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid);
 
 	virtual Ref< db::Database > getSourceDatabase() const;
@@ -93,7 +95,9 @@ private:
 	bool m_threadedBuildEnable;
 	Semaphore m_createOutputLock;
 	Semaphore m_readCacheLock;
+	Semaphore m_builtCacheLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
+	std::map< uint32_t, Ref< ISerializable > > m_builtCache;
 	ThreadLocal m_buildInstances;
 	uint32_t m_progress;
 	uint32_t m_progressEnd;

@@ -35,6 +35,8 @@ public:
 	uint32_t heapObjects;
 	uint32_t drawCalls;
 	uint32_t primitiveCount;
+	uint32_t bodyCount;
+	uint32_t activeBodyCount;
 
 	TargetPerformance();
 

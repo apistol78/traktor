@@ -103,13 +103,12 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamLeaderboards", SteamLeaderboards, ILeaderboardsProvider)
 
-SteamLeaderboards::SteamLeaderboards(SteamSessionManager* sessionManager, const wchar_t** leaderboardIds)
+SteamLeaderboards::SteamLeaderboards(SteamSessionManager* sessionManager, const std::list< std::wstring >& leaderboardIds)
 :	m_sessionManager(sessionManager)
 ,	m_uploadedScore(false)
 ,	m_uploadedScoreSucceeded(false)
 {
-	for (const wchar_t** leaderboardId = leaderboardIds; leaderboardId && *leaderboardId; ++leaderboardId)
-		m_leaderboardIds.insert(*leaderboardId);
+	m_leaderboardIds.insert(leaderboardIds.begin(), leaderboardIds.end());
 }
 
 bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& outLeaderboards)

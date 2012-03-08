@@ -15,8 +15,7 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/PropertyStringArray.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -98,9 +97,9 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 	return database;
 }
 
-Ref< Settings > loadSettings(const std::wstring& settingsFile)
+Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 {
-	Ref< Settings > settings;
+	Ref< PropertyGroup > settings;
 	Ref< traktor::IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
@@ -108,7 +107,7 @@ Ref< Settings > loadSettings(const std::wstring& settingsFile)
 
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
-		settings = Settings::read< xml::XmlDeserializer >(file);
+		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 	}
 
@@ -117,7 +116,7 @@ Ref< Settings > loadSettings(const std::wstring& settingsFile)
 
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
-		settings = Settings::read< xml::XmlDeserializer >(file);
+		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 	}
 
@@ -185,7 +184,7 @@ int main(int argc, const char** argv)
 	if (cmdLine.hasOption('s', L"settings"))
 		settingsFile = cmdLine.getOption('s', L"settings").getString();
 
-	Ref< Settings > settings = loadSettings(settingsFile);
+	Ref< PropertyGroup > settings = loadSettings(settingsFile);
 	if (!settings)
 	{
 		traktor::log::error << L"Unable to load pipeline settings \"" << settingsFile << L"\"" << Endl;
@@ -198,13 +197,13 @@ int main(int argc, const char** argv)
 		settings->setProperty< PropertyBoolean >(L"Pipeline.FileCache", false);
 	}
 
-	std::vector< std::wstring > modules = settings->getProperty< PropertyStringArray >(L"Editor.Modules");
-	for (uint32_t i = 0; i < modules.size(); ++i)
+	std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Editor.Modules");
+	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		Library library;
-		if (!library.open(modules[i]))
+		if (!library.open(*i))
 		{
-			traktor::log::error << L"Unable to load module \"" << modules[i] << L"\"" << Endl;
+			traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 			return 6;
 		}
 		library.detach();

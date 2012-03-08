@@ -104,7 +104,7 @@ void BlitHelper::blit(StateCache* stateCache, GLint sourceTextureHandle)
 	const GLint attribLocs[] = { m_attribPosition, m_attribTexCoord };
 	
 	stateCache->setProgram(m_programObject);
-	stateCache->setRenderState(m_renderState);
+	stateCache->setRenderState(m_renderState, false);
 	stateCache->setVertexArrayObject(0);
 	stateCache->setArrayBuffer(m_vertexBuffer);
 

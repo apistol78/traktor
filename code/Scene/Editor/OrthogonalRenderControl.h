@@ -6,6 +6,7 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
+#include "Scene/Editor/RenderControlModel.h"
 #include "Ui/Point.h"
 
 namespace traktor
@@ -37,7 +38,6 @@ class IWorldRenderer;
 	{
 
 class SceneEditorContext;
-class EntityAdapter;
 
 class OrthogonalRenderControl : public ISceneRenderControl
 {
@@ -70,26 +70,25 @@ public:
 
 	virtual bool hitTest(const ui::Point& position) const;
 
+	virtual bool calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const;
+
+	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta);
+
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::IWorldRenderer > m_worldRenderer;
+	RenderControlModel m_model;
 	bool m_gridEnable;
 	bool m_guideEnable;
 	Color4ub m_colorClear;
 	Color4ub m_colorGrid;
 	Color4ub m_colorRef;
 	Color4ub m_colorCamera;
-	Timer m_timer;
-	ui::Point m_mousePosition;
-	int m_mouseButton;
-	bool m_modifyCamera;
-	bool m_modifyAlternative;
-	bool m_modifyBegun;
-	RefArray< EntityAdapter > m_modifyEntities;
 	int32_t m_multiSample;
+	Timer m_timer;
 	ViewPlane m_viewPlane;
 	float m_viewFarZ;
 	float m_magnification;
@@ -102,10 +101,6 @@ private:
 	Matrix44 getProjectionTransform() const;
 
 	Matrix44 getViewTransform() const;
-
-	void calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const;
-
-	Ref< EntityAdapter > pickEntity(const ui::Point& position) const;
 
 	void eventButtonDown(ui::Event* event);
 

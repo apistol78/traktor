@@ -34,7 +34,7 @@ public:
 
 	virtual ~MemCachedPipelineCache();
 
-	virtual bool create(const Settings* settings);
+	virtual bool create(const PropertyGroup* settings);
 
 	virtual void destroy();
 

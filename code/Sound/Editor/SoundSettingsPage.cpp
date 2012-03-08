@@ -1,7 +1,7 @@
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "I18N/Text.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/Editor/SoundSettingsPage.h"
@@ -19,7 +19,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundSettingsPage", 0, SoundSettingsPage, editor::ISettingsPage)
 
-bool SoundSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool SoundSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4)))
@@ -132,7 +132,7 @@ void SoundSettingsPage::destroy()
 {
 }
 
-bool SoundSettingsPage::apply(Settings* settings)
+bool SoundSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.SoundDriver", m_dropSoundDriver->getSelectedItem());
 	settings->setProperty< PropertyInteger >(L"Editor.SoundVirtualChannels", parseString< int32_t >(m_editVirtualChannels->getText()));

@@ -6,7 +6,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyStringArray.h"
-#include "Core/Settings/Settings.h"
 #include "Core/System/OS.h"
 #include "Database/Database.h"
 #include "Database/Group.h"

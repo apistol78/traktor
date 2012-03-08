@@ -2,8 +2,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
@@ -65,9 +65,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolTogglePick = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_PICK"), ui::Command(1, L"Scene.Editor.TogglePick"), 10, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleTranslate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TRANSLATE"), ui::Command(L"Scene.Editor.Translate"), 0, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleRotate = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_ROTATE"), ui::Command(L"Scene.Editor.Rotate"), 1, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleX = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_X"), ui::Command(1, L"Scene.Editor.ToggleX"), 2, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleY = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Y"), ui::Command(1, L"Scene.Editor.ToggleY"), 3, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleZ = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_Z"), ui::Command(1, L"Scene.Editor.ToggleZ"), 4, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleSnap = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP"), ui::Command(1, L"Scene.Editor.ToggleSnap"), 7, ui::custom::ToolBarButton::BsDefaultToggle);
 
 	m_toolSnapSpacing = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), 60, i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
@@ -79,15 +76,12 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolSnapSpacing->add(L"4");
 	m_toolSnapSpacing->select(0);
 
-	Ref< Settings > settings = context->getEditor()->getSettings();
+	Ref< PropertyGroup > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	m_toolTogglePick->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.TogglePick", true));
 	m_toolToggleTranslate->setToggled(true);
 	m_toolToggleRotate->setToggled(false);
-	m_toolToggleX->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleX", true));
-	m_toolToggleY->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleY", true));
-	m_toolToggleZ->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleZ", true));
 	m_toolToggleSnap->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.ToggleSnap", true));
 
 	m_toolBarActions = new ui::custom::ToolBar();
@@ -98,10 +92,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleTranslate);
 	m_toolBarActions->addItem(m_toolToggleRotate);
-	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarActions->addItem(m_toolToggleX);
-	m_toolBarActions->addItem(m_toolToggleY);
-	m_toolBarActions->addItem(m_toolToggleZ);
 	m_toolBarActions->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBarActions->addItem(m_toolToggleSnap);
 	m_toolBarActions->addItem(m_toolSnapSpacing);
@@ -120,10 +110,11 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	for (RefArray< ISceneEditorPlugin >::const_iterator i = editorPlugins.begin(); i != editorPlugins.end(); ++i)
 		(*i)->create(this, m_toolBarActions);
 
-	m_modifierTranslate = new TranslateModifier();
-	m_modifierRotate = new RotateModifier();
-
 	m_context = context;
+
+	// Create modifiers.
+	m_modifierTranslate = new TranslateModifier(m_context);
+	m_modifierRotate = new RotateModifier(m_context);
 	m_context->setModifier(m_modifierTranslate);
 
 	m_splitCount = settings->getProperty< PropertyInteger >(L"SceneEditor.SplitCount", 4);
@@ -149,13 +140,10 @@ void ScenePreviewControl::destroy()
 	}
 
 	// Save editor configuration.
-	Ref< Settings > settings = m_context->getEditor()->getSettings();
+	Ref< PropertyGroup > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.TogglePick", m_toolTogglePick->isToggled());
-	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleX", m_toolToggleX->isToggled());
-	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleY", m_toolToggleY->isToggled());
-	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleZ", m_toolToggleZ->isToggled());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.SplitCount", m_splitCount);
 
@@ -183,7 +171,11 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 {
 	bool result = true;
 
-	if (command == L"Scene.Editor.Translate")
+	if (command == L"Scene.Editor.SnapSpacing")
+	{
+		result = true;
+	}
+	else if (command == L"Scene.Editor.Translate")
 	{
 		m_context->setModifier(m_modifierTranslate);
 		m_toolToggleTranslate->setToggled(true);
@@ -199,18 +191,6 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	{
 		if (command.getId() == 0)
 			m_toolTogglePick->setToggled(!m_toolTogglePick->isToggled());
-	}
-	else if (command == L"Scene.Editor.ToggleX" || command == L"Scene.Editor.ToggleY" || command == L"Scene.Editor.ToggleZ")
-	{
-		if (command.getId() == 0)
-		{
-			if (command == L"Scene.Editor.ToggleX")
-				m_toolToggleX->setToggled(!m_toolToggleX->isToggled());
-			else if (command == L"Scene.Editor.ToggleY")
-				m_toolToggleY->setToggled(!m_toolToggleY->isToggled());
-			else if (command == L"Scene.Editor.ToggleZ")
-				m_toolToggleZ->setToggled(!m_toolToggleZ->isToggled());
-		}
 	}
 	else if (command == L"Scene.Editor.ToggleSnap")
 	{
@@ -271,6 +251,14 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 				if (result)
 					break;
 			}
+		}
+
+		// Propagate command to active modifier.
+		if (!result)
+		{
+			IModifier* modifier = m_context->getModifier();
+			if (modifier)
+				result = modifier->handleCommand(command);
 		}
 
 		// Update settings in all entity editors.
@@ -401,16 +389,6 @@ void ScenePreviewControl::updateEditState()
 {
 	// Enable picking.
 	m_context->setPickEnable(m_toolTogglePick->isToggled());
-
-	// Enabled axis.
-	uint32_t axisEnabled = 0;
-	if (m_toolToggleX->isToggled())
-		axisEnabled |= SceneEditorContext::AeX;
-	if (m_toolToggleY->isToggled())
-		axisEnabled |= SceneEditorContext::AeY;
-	if (m_toolToggleZ->isToggled())
-		axisEnabled |= SceneEditorContext::AeZ;
-	m_context->setAxisEnable(axisEnabled);
 
 	// Snap mode.
 	if (m_toolToggleSnap->isToggled())

@@ -22,15 +22,15 @@ class RenderServerEmbedded : public RenderServer
 public:
 	RenderServerEmbedded();
 
-	bool create(Settings* settings, void* nativeWindowHandle);
+	bool create(PropertyGroup* settings, void* nativeWindowHandle);
 
 	virtual void destroy();
 
 	virtual void createResourceFactories(IEnvironment* environment);
 
-	virtual int32_t reconfigure(const Settings* settings);
+	virtual int32_t reconfigure(const PropertyGroup* settings);
 
-	virtual UpdateResult update(Settings* settings);
+	virtual UpdateResult update(PropertyGroup* settings);
 
 	virtual render::IRenderSystem* getRenderSystem();
 

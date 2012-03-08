@@ -1,7 +1,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"

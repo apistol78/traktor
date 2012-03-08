@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace editor
 	{
 
@@ -13,14 +16,14 @@ class PipelineSettings : public IPipelineSettings
 	T_RTTI_CLASS;
 
 public:
-	PipelineSettings(const Settings* settings);
+	PipelineSettings(const PropertyGroup* settings);
 
 	virtual Ref< const IPropertyValue > getProperty(const std::wstring& propertyName) const;
 
 	uint32_t getHash() const;
 
 private:
-	Ref< const Settings > m_settings;
+	Ref< const PropertyGroup > m_settings;
 	mutable uint32_t m_hash;
 };
 

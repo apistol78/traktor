@@ -31,10 +31,13 @@ public:
 	virtual Ref< ITexture > read(const Guid& textureGuid)
 	{
 		resource::Proxy< ITexture > texture(textureGuid);
-		if (m_resourceManager->bind(texture))
-			return new TextureProxy(texture);
-		else
+		if (!m_resourceManager->bind(texture))
 			return (ITexture*)0;
+			
+		if (!texture.validate())
+			return (ITexture*)0;
+			
+		return new TextureProxy(texture);
 	}
 
 private:

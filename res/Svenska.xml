@@ -1350,6 +1350,10 @@
       <second>Invertera mushjul</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_INVERT_PAN_Y</first>
+      <second>Invertera Y axel vid panorering</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_SETTINGS_WORLDRENDERER_TYPE</first>
       <second>Världsrenderare</second>
     </item>

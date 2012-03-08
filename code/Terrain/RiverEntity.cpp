@@ -151,7 +151,7 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 		0,
 		triangleCount,
 		0,
-		triangleCount * 3 - 1
+		silouette.size() - 1
 	);
 
 	m_shader = data.getShader();
@@ -177,7 +177,7 @@ void RiverEntity::render(
 	if (!program)
 		return;
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("River");
 
 	renderBlock->distance = 0.0f;
 	renderBlock->program = program;

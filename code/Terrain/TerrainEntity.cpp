@@ -31,16 +31,24 @@ namespace traktor
 const Guid c_guidTerrainShaderVFetch(L"{480B7C64-5494-A74A-8485-F2CA15A900E6}");
 const Guid c_guidTerrainShaderStatic(L"{557537A0-F1E3-AF4C-ACB9-FD862FC3265C}");
 
-#if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
+#if !defined(TARGET_OS_IPHONE)
+#	if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 const uint32_t c_skipHeightTexture = 1;
-#else
+#	else
 const uint32_t c_skipHeightTexture = 4;
-#endif
+#	endif
 const uint32_t c_skipNormalTexture = 2;
 const uint32_t c_skipMaterialMaskTexture = 1;
+#else
+const uint32_t c_skipHeightTexture = 4;
+const uint32_t c_skipNormalTexture = 4;
+const uint32_t c_skipMaterialMaskTexture = 4;
+#endif
+
 const uint32_t c_skipHeightTextureEditor = 4;
 const uint32_t c_skipNormalTextureEditor = 2;
 const uint32_t c_skipMaterialMaskTextureEditor = 1;
+
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
 
@@ -181,8 +189,13 @@ void TerrainEntity::render(
 	if (!program)
 		return;
 
+#if !defined(TARGET_OS_IPHONE)
 	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
 	bool updateCache = bool(worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DepthWrite"));
+#else
+	// Only using a single pass on iOS.
+	bool updateCache = true;
+#endif
 
 	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
@@ -1088,7 +1101,6 @@ bool TerrainEntity::createTextures()
 	safeDestroy(m_normalTexture);
 	safeDestroy(m_heightTexture);
 	m_materialMaskTextures.clear();
-
 
 	{
 		uint32_t size = m_heightfield->getResource().getSize();

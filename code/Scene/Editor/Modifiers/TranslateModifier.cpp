@@ -1,133 +1,247 @@
-#include "Scene/Editor/Modifiers/TranslateModifier.h"
-#include "Scene/Editor/SceneEditorContext.h"
+#include "Core/Math/Line2.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/TransformChain.h"
+#include "Scene/Editor/Modifiers/TranslateModifier.h"
 
 namespace traktor
 {
 	namespace scene
 	{
+		namespace
+		{
+
+const float c_guideThickness(0.015f);
+const Scalar c_guideScale(0.15f);
+const Scalar c_guideMinLength(1.0f);
+const float c_infinite = 1e4f;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.TranslateModifier", TranslateModifier, IModifier)
 
-void TranslateModifier::draw(
-	SceneEditorContext* context,
-	const Matrix44& viewTransform,
-	const Transform& worldTransform,
-	render::PrimitiveRenderer* primitiveRenderer,
-	int button
-)
+TranslateModifier::TranslateModifier(SceneEditorContext* context)
+:	m_context(context)
+,	m_axisEnable(0)
 {
-	const Scalar c_guideScale(0.1f);
-	const Scalar c_guideMinLength(1.0f);
-	const float c_infinite = 1e4f;
-
-	Scalar cameraDistance = (viewTransform * worldTransform.toMatrix44()).translation().length();
-	Scalar guideLength = max(cameraDistance * c_guideScale, c_guideMinLength);
-	Scalar arrowLength = guideLength * Scalar(1.0f / 8.0f);
-
-	primitiveRenderer->pushView(viewTransform);
-	primitiveRenderer->pushWorld(translate(worldTransform.translation()));
-
-	uint32_t axisEnable = context->getAxisEnable();
-
-	primitiveRenderer->pushDepthEnable(true);
-
-	primitiveRenderer->drawLine(
-		Vector4(-c_infinite, 0.0f, 0.0f, 1.0f),
-		Vector4(c_infinite, 0.0f, 0.0f, 1.0f),
-		1.0f,
-		Color4ub(255, 0, 0, 100)
-	);
-	primitiveRenderer->drawLine(
-		Vector4(0.0f, -c_infinite, 0.0f, 1.0f),
-		Vector4(0.0f, c_infinite, 0.0f, 1.0f),
-		1.0f,
-		Color4ub(0, 255, 0, 100)
-	);
-	primitiveRenderer->drawLine(
-		Vector4(0.0f, 0.0f, -c_infinite, 1.0f),
-		Vector4(0.0f, 0.0f, c_infinite, 1.0f),
-		1.0f,
-		Color4ub(0, 0, 255, 100)
-	);
-
-	primitiveRenderer->popDepthEnable();
-	primitiveRenderer->pushDepthEnable(false);
-
-	if (axisEnable & SceneEditorContext::AeX)
-	{
-		primitiveRenderer->drawLine(
-			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-			Vector4(guideLength, 0.0f, 0.0f, 1.0f),
-			3.0f,
-			Color4ub(255, 0, 0, 255)
-		);
-		primitiveRenderer->drawArrowHead(
-			Vector4(guideLength, 0.0f, 0.0f, 1.0f),
-			Vector4(guideLength + arrowLength, 0.0f, 0.0f, 1.0f),
-			0.5f,
-			Color4ub(255, 0, 0, 255)
-		);
-	}
-
-	if (axisEnable & SceneEditorContext::AeY)
-	{
-		primitiveRenderer->drawLine(
-			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-			Vector4(0.0f, guideLength, 0.0f, 1.0f),
-			3.0f,
-			Color4ub(0, 255, 0, 255)
-		);
-		primitiveRenderer->drawArrowHead(
-			Vector4(0.0f, guideLength, 0.0f, 1.0f),
-			Vector4(0.0f, guideLength + arrowLength, 0.0f, 1.0f),
-			0.5f,
-			Color4ub(0, 255, 0, 255)
-		);
-	}
-
-	if (axisEnable & SceneEditorContext::AeZ)
-	{
-		primitiveRenderer->drawLine(
-			Vector4(0.0f, 0.0f, 0.0f, 1.0f),
-			Vector4(0.0f, 0.0f, guideLength, 1.0f),
-			3.0f,
-			Color4ub(0, 0, 255, 255)
-		);
-		primitiveRenderer->drawArrowHead(
-			Vector4(0.0f, 0.0f, guideLength, 1.0f),
-			Vector4(0.0f, 0.0f, guideLength + arrowLength, 1.0f),
-			0.5f,
-			Color4ub(0, 0, 255, 255)
-		);
-	}
-
-	primitiveRenderer->popDepthEnable();
-	primitiveRenderer->popWorld();
-	primitiveRenderer->popView();
 }
 
-void TranslateModifier::adjust(
-	SceneEditorContext* context,
-	const Matrix44& viewTransform,
-	const Vector4& screenDelta,
-	const Vector4& viewDelta,
-	const Vector4& worldDelta,
-	int button,
-	Transform& outTransform
-)
+void TranslateModifier::selectionChanged()
 {
-	uint32_t axisEnable = context->getAxisEnable();
+	m_entityAdapters.clear();
+	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSpatialOnly | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
 
-	Vector4 worldDeltaAdjust = worldDelta;
-	if ((axisEnable & SceneEditorContext::AeX) == 0)
-		worldDeltaAdjust *= Vector4(0.0f, 1.0f, 1.0f);
-	if ((axisEnable & SceneEditorContext::AeY) == 0)
-		worldDeltaAdjust *= Vector4(1.0f, 0.0f, 1.0f);
-	if ((axisEnable & SceneEditorContext::AeZ) == 0)
-		worldDeltaAdjust *= Vector4(1.0f, 1.0f, 0.0f);
+	m_baseTranslations.clear();
+	for (RefArray< EntityAdapter >::const_iterator i = m_entityAdapters.begin(); i != m_entityAdapters.end(); ++i)
+	{
+		Transform T = (*i)->getTransform();
+		m_baseTranslations.push_back(T.translation());
+	}
 
-	outTransform = Transform(worldDeltaAdjust) * outTransform;
+	m_center = Vector4::zero();
+	if (!m_entityAdapters.empty())
+	{
+		for (RefArray< EntityAdapter >::const_iterator i = m_entityAdapters.begin(); i != m_entityAdapters.end(); ++i)
+			m_center += (*i)->getTransform().translation();
+
+		m_center /= Scalar(float(m_entityAdapters.size()));
+		m_center = m_center.xyz1();
+	}
+
+	m_axisEnable = 0;
+}
+
+bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition)
+{
+	if (m_entityAdapters.empty())
+		return false;
+
+	Scalar axisLength = Scalar(m_context->getGuideSize());
+	Scalar arrowLength = axisLength * Scalar(1.0f / 8.0f);
+
+	Vector4 snappedCenter = m_center;
+	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
+	{
+		float spacing = m_context->getSnapSpacing();
+		if (spacing > 0.0f)
+		{
+			snappedCenter.set(
+				floor(snappedCenter[0] / spacing + 0.5f) * spacing,
+				floor(snappedCenter[1] / spacing + 0.5f) * spacing,
+				floor(snappedCenter[2] / spacing + 0.5f) * spacing,
+				1.0f
+			);
+		}
+	}
+
+	TransformChain tc = transformChain;
+	tc.pushWorld(translate(snappedCenter));
+
+	Vector2 center, axis[3];
+	tc.objectToScreen(Vector4(0.0f, 0.0f, 0.0f, 1.0f), center);
+	tc.objectToScreen(Vector4(axisLength, 0.0f, 0.0f, 1.0f), axis[0]);
+	tc.objectToScreen(Vector4(0.0f, axisLength, 0.0f, 1.0f), axis[1]);
+	tc.objectToScreen(Vector4(0.0f, 0.0f, axisLength, 1.0f), axis[2]);
+
+	tc.popWorld();
+
+	m_axisEnable = 0;
+	if (Line2(center, axis[0]).classify(cursorPosition, c_guideThickness))
+		m_axisEnable |= 1;
+	if (Line2(center, axis[1]).classify(cursorPosition, c_guideThickness))
+		m_axisEnable |= 2;
+	if (Line2(center, axis[2]).classify(cursorPosition, c_guideThickness))
+		m_axisEnable |= 4;
+
+	return m_axisEnable != 0;
+}
+
+bool TranslateModifier::handleCommand(const ui::Command& command)
+{
+	return false;
+}
+
+void TranslateModifier::begin(const TransformChain& transformChain)
+{
+}
+
+void TranslateModifier::apply(const TransformChain& transformChain, const Vector4& screenDelta, const Vector4& viewDelta)
+{
+	Vector4 cp = transformChain.worldToClip(m_center);
+	Vector4 worldDelta = transformChain.getView().inverse() * viewDelta * cp.w();
+
+	if (!(m_axisEnable & 1))
+		worldDelta *= Vector4(0.0f, 1.0f, 1.0f);
+	if (!(m_axisEnable & 2))
+		worldDelta *= Vector4(1.0f, 0.0f, 1.0f);
+	if (!(m_axisEnable & 4))
+		worldDelta *= Vector4(1.0f, 1.0f, 0.0f);
+
+	for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+	{
+		m_baseTranslations[i] += worldDelta;
+
+		Vector4 translation = m_baseTranslations[i];
+
+		if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
+		{
+			float spacing = m_context->getSnapSpacing();
+			if (spacing > 0.0f)
+			{
+				translation.set(
+					floor(translation[0] / spacing + 0.5f) * spacing,
+					floor(translation[1] / spacing + 0.5f) * spacing,
+					floor(translation[2] / spacing + 0.5f) * spacing,
+					1.0f
+				);
+			}
+		}
+
+		Transform T = m_entityAdapters[i]->getTransform();
+
+		m_entityAdapters[i]->setTransform(Transform(
+			translation,
+			T.rotation()
+		));
+	}
+
+	m_center += worldDelta;
+}
+
+void TranslateModifier::end(const TransformChain& transformChain)
+{
+}
+
+void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+{
+	if (m_entityAdapters.empty())
+		return;
+
+	Scalar axisLength = Scalar(m_context->getGuideSize());
+	Scalar arrowLength = axisLength * Scalar(1.0f / 8.0f);
+
+	Vector4 center = m_center;
+	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
+	{
+		float spacing = m_context->getSnapSpacing();
+		if (spacing > 0.0f)
+		{
+			center.set(
+				floor(center[0] / spacing + 0.5f) * spacing,
+				floor(center[1] / spacing + 0.5f) * spacing,
+				floor(center[2] / spacing + 0.5f) * spacing,
+				1.0f
+			);
+		}
+	}
+
+	primitiveRenderer->pushWorld(translate(center));
+
+	primitiveRenderer->pushDepthEnable(true);
+	if (m_axisEnable & 1)
+		primitiveRenderer->drawLine(
+			Vector4(-c_infinite, 0.0f, 0.0f, 1.0f),
+			Vector4(c_infinite, 0.0f, 0.0f, 1.0f),
+			1.0f,
+			Color4ub(255, 0, 0, 100)
+		);
+	if (m_axisEnable & 2)
+		primitiveRenderer->drawLine(
+			Vector4(0.0f, -c_infinite, 0.0f, 1.0f),
+			Vector4(0.0f, c_infinite, 0.0f, 1.0f),
+			1.0f,
+			Color4ub(0, 255, 0, 100)
+		);
+	if (m_axisEnable & 4)
+		primitiveRenderer->drawLine(
+			Vector4(0.0f, 0.0f, -c_infinite, 1.0f),
+			Vector4(0.0f, 0.0f, c_infinite, 1.0f),
+			1.0f,
+			Color4ub(0, 0, 255, 100)
+		);
+	primitiveRenderer->popDepthEnable();
+
+	primitiveRenderer->pushDepthEnable(false);
+	primitiveRenderer->drawLine(
+		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(axisLength, 0.0f, 0.0f, 1.0f),
+		(m_axisEnable & 1) ? 3.0f : 1.0f,
+		Color4ub(255, 0, 0, 255)
+	);
+	primitiveRenderer->drawArrowHead(
+		Vector4(axisLength, 0.0f, 0.0f, 1.0f),
+		Vector4(axisLength + arrowLength, 0.0f, 0.0f, 1.0f),
+		0.5f,
+		Color4ub(255, 0, 0, 255)
+	);
+	primitiveRenderer->drawLine(
+		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(0.0f, axisLength, 0.0f, 1.0f),
+		(m_axisEnable & 2) ? 3.0f : 1.0f,
+		Color4ub(0, 255, 0, 255)
+	);
+	primitiveRenderer->drawArrowHead(
+		Vector4(0.0f, axisLength, 0.0f, 1.0f),
+		Vector4(0.0f, axisLength + arrowLength, 0.0f, 1.0f),
+		0.5f,
+		Color4ub(0, 255, 0, 255)
+	);
+	primitiveRenderer->drawLine(
+		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(0.0f, 0.0f, axisLength, 1.0f),
+		(m_axisEnable & 4) ? 3.0f : 1.0f,
+		Color4ub(0, 0, 255, 255)
+	);
+	primitiveRenderer->drawArrowHead(
+		Vector4(0.0f, 0.0f, axisLength, 1.0f),
+		Vector4(0.0f, 0.0f, axisLength + arrowLength, 1.0f),
+		0.5f,
+		Color4ub(0, 0, 255, 255)
+	);
+	primitiveRenderer->popDepthEnable();
+
+	primitiveRenderer->popWorld();
 }
 
 	}

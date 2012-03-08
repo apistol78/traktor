@@ -1314,6 +1314,10 @@
       <second>Invert mouse wheel</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_INVERT_PAN_Y</first>
+      <second>Invert mouse Y when panning</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_SETTINGS_WORLDRENDERER_TYPE</first>
       <second>World renderer</second>
     </item>

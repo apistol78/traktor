@@ -59,6 +59,9 @@ public:
 	 */
 	bool isNull() const;
 
+	/*! \brief Check if guid is valid and not null. */
+	bool isNotNull() const;
+
 	/*! \brief Convert guid into 16 bytes. */
 	operator const uint8_t* () const;
 

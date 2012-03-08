@@ -1,11 +1,9 @@
 #ifndef traktor_MemberRef_H
 #define traktor_MemberRef_H
 
-#include "Core/Ref.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -27,7 +25,7 @@ public:
 
 	virtual bool serialize(ISerializer& s) const
 	{
-		ISerializable* object = const_cast< ISerializable* >(static_cast< const ISerializable* >(m_ref.ptr()));
+		Ref< ISerializable > object = (ISerializable*)m_ref.ptr();
 		if (!(s >> Member< ISerializable* >(
 			getName(),
 			object,

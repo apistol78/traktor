@@ -42,7 +42,7 @@ private:
 	Ref< world::IEntitySchema > m_entitySchema;
 	RefArray< world::IEntityFactory > m_entityFactories;
 	std::map< const world::EntityData*, Ref< world::Entity > > m_entities;
-	std::map< const world::EntityData*, RefArray< EntityAdapter > > m_cachedAdapters;
+	std::map< const TypeInfo*, RefArray< EntityAdapter > > m_cachedAdapters;
 	Ref< EntityAdapter > m_currentAdapter;
 	Ref< EntityAdapter > m_rootAdapter;
 };

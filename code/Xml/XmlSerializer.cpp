@@ -47,7 +47,7 @@ XmlSerializer::XmlSerializer(IStream* stream)
 	m_indent = L"";
 }
 
-Serializer::Direction XmlSerializer::getDirection()
+Serializer::Direction XmlSerializer::getDirection() const
 {
 	return ISerializer::SdWrite;
 }
@@ -257,7 +257,7 @@ bool XmlSerializer::operator >> (const Member< ISerializable >& m)
 
 bool XmlSerializer::operator >> (const Member< ISerializable* >& m)
 {
-	ISerializable* o = m;
+	ISerializable* o = *m;
 	bool result = true;
 
 	std::map< ISerializable*, std::wstring >::iterator i = m_refs.find(o);

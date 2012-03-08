@@ -1,6 +1,6 @@
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/SoundSystem.h"
@@ -21,7 +21,7 @@ SoundSystemFactory::SoundSystemFactory(editor::IEditor* editor)
 
 Ref< SoundSystem > SoundSystemFactory::createSoundSystem() const
 {
-	Ref< Settings > settings = m_editor->getSettings();
+	Ref< PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
 	std::wstring soundDriverTypeName = settings->getProperty< PropertyString >(L"Editor.SoundDriver");

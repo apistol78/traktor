@@ -2,7 +2,7 @@
 #define traktor_editor_IPipelineSettings_H
 
 #include "Core/Object.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/IPropertyValue.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

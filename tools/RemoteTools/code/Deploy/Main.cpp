@@ -119,7 +119,7 @@ bool deployFiles(net::Socket* clientSocket, const Path& sourcePath, const Path& 
 	RefArray< File > files;
 
 	FileSystem::getInstance().find(sourcePath, files);
-	traktor::log::info << L"Found " << files.size() << L" file(s) matching \"" << sourcePath.getPathName() << L"\"" << Endl;
+	traktor::log::info << L"Found " << int32_t(files.size()) << L" file(s) matching \"" << sourcePath.getPathName() << L"\"" << Endl;
 
 	for (RefArray< File >::iterator i = files.begin(); i != files.end(); ++i)
 	{
@@ -179,7 +179,7 @@ int main(int argc, const char** argv)
 
 	log::info << L"Host \"" << host << L"\"" << Endl;
 	log::info << L"Recursive " << (recursive ? L"YES" : L"NO") << Endl;
-	log::info << cmdLine.getCount() << L" command line value(s)" << Endl;
+	log::info << int32_t(cmdLine.getCount()) << L" command line value(s)" << Endl;
 	log::info << L"Target base \"" << targetBase.getPathName() << L"\"" << Endl;
 
 	Ref< net::TcpSocket > clientSocket = new net::TcpSocket();

@@ -1,6 +1,5 @@
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/App/ColorSettingsPage.h"
 #include "I18N/Text.h"
 #include "Ui/Container.h"
@@ -41,7 +40,7 @@ c_propertyColors[] =
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ColorSettingsPage", 0, ColorSettingsPage, ISettingsPage)
 
-bool ColorSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool ColorSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 4)))
@@ -74,7 +73,7 @@ void ColorSettingsPage::destroy()
 {
 }
 
-bool ColorSettingsPage::apply(Settings* settings)
+bool ColorSettingsPage::apply(PropertyGroup* settings)
 {
 	Ref< PropertyGroup > colorGroup = settings->getProperty< PropertyGroup >(L"Editor.Colors");
 	T_ASSERT (colorGroup);

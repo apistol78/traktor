@@ -44,7 +44,7 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 	m_resourceManager->addFactory(new weather::CloudMaskFactory(database));
 }
 
-int32_t ResourceServer::reconfigure(const Settings* settings)
+int32_t ResourceServer::reconfigure(const PropertyGroup* settings)
 {
 	return CrUnaffected;
 }

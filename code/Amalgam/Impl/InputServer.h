@@ -6,7 +6,14 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
+
+	namespace db
+	{
+
+class Database;
+
+	}
 
 	namespace input
 	{
@@ -27,13 +34,13 @@ class InputServer : public IInputServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const Settings* defaultSettings, const Settings* settings, void* nativeWindowHandle);
+	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db, void* nativeWindowHandle);
 
 	void destroy();
 
 	void createResourceFactories(IEnvironment* environment);
 
-	int32_t reconfigure(const Settings* settings);
+	int32_t reconfigure(const PropertyGroup* settings);
 
 	void update(float deltaTime, bool renderViewActive);
 

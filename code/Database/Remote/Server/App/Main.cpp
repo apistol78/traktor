@@ -89,10 +89,14 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
 	if (discoveryManager->create(true))
 	{
-		RefArray< net::SocketAddressIPv4 > interfaces = net::SocketAddressIPv4::getInterfaces();
-		T_ASSERT (!interfaces.empty());
+		net::SocketAddressIPv4::Interface itf;
+		if (!net::SocketAddressIPv4::getBestInterface(itf))
+		{
+			traktor::log::error << L"Unable to get interfaces" << Endl;
+			return 1;
+		}
 
-		std::wstring host = interfaces[0]->getHostName();
+		std::wstring host = itf.addr->getHostName();
 
 		Ref< db::RemoteDatabaseService > service = new db::RemoteDatabaseService(
 			host,

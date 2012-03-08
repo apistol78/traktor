@@ -5,9 +5,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/ISoundDriver.h"
 #include "Sound/SoundSystem.h"
@@ -27,14 +27,8 @@ AudioServer::AudioServer()
 {
 }
 
-bool AudioServer::create(const Settings* settings)
+bool AudioServer::create(const PropertyGroup* settings)
 {
-	if (!settings->getProperty< PropertyBoolean >(L"Audio.Enabled", true))
-	{
-		log::info << L"Audio disabled; audio server initialization skipped" << Endl;
-		return true;
-	}
-
 	std::wstring audioType = settings->getProperty< PropertyString >(L"Audio.Type");
 
 	Ref< sound::ISoundDriver > soundDriver = loadAndInstantiate< sound::ISoundDriver >(audioType);
@@ -130,7 +124,7 @@ void AudioServer::update(float dT, bool renderViewActive)
 	}
 }
 
-int32_t AudioServer::reconfigure(const Settings* settings)
+int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 {
 	if (!m_soundSystem)
 		return CrUnaffected;

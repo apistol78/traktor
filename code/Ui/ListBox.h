@@ -72,6 +72,18 @@ public:
 
 	void addSelectEventHandler(EventHandler* eventHandler);
 
+	template < typename T >
+	Ref< T > getData(int index) const
+	{
+		return dynamic_type_cast< T* >(getData(index));
+	}
+
+	template < typename T >
+	Ref< T > getSelectedData() const
+	{
+		return dynamic_type_cast< T* >(getSelectedData());
+	}
+
 private:
 	std::map< int, Ref< Object > > m_data;
 };

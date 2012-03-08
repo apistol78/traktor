@@ -1,6 +1,7 @@
 #ifndef traktor_online_SteamStatistics_H
 #define traktor_online_SteamStatistics_H
 
+#include <list>
 #include <steam/steam_api.h>
 #include "Online/Provider/IStatisticsProvider.h"
 #include "Online/Steam/SteamTypes.h"
@@ -17,7 +18,7 @@ class SteamStatistics : public IStatisticsProvider
 	T_RTTI_CLASS;
 
 public:
-	SteamStatistics(SteamSessionManager* sessionManager, const wchar_t** statIds);
+	SteamStatistics(SteamSessionManager* sessionManager, const std::list< std::wstring >& statIds);
 
 	virtual bool enumerate(std::map< std::wstring, float >& outStats);
 

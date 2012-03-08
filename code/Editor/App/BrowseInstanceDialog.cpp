@@ -1,6 +1,5 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/Settings.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -36,7 +35,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseInstanceDialog", BrowseInstanceDialog, ui::ConfigDialog)
 
-BrowseInstanceDialog::BrowseInstanceDialog(const IEditor* editor, Settings* settings)
+BrowseInstanceDialog::BrowseInstanceDialog(const IEditor* editor, PropertyGroup* settings)
 :	m_editor(editor)
 ,	m_settings(settings)
 ,	m_threadGeneratePreview(0)

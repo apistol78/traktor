@@ -81,6 +81,7 @@ bool ContextOpenGLES2::initialize()
 		EGL_SURFACE_TYPE, EGL_WINDOW_BIT,
 		EGL_RENDERABLE_TYPE, EGL_OPENGL_ES2_BIT,
 		EGL_NATIVE_RENDERABLE, EGL_FALSE,
+		EGL_DEPTH_SIZE, 16,
 		EGL_NONE
 	};
 
@@ -406,6 +407,13 @@ void ContextOpenGLES2::bindPrimary()
 #else
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 #endif
+
+	T_OGL_SAFE(glViewport(
+		0,
+		0,
+		getWidth(),
+		getHeight()
+	));
 }
 
 #if defined(TARGET_OS_IPHONE)

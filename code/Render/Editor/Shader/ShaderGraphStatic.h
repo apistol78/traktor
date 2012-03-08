@@ -37,6 +37,8 @@ public:
 
 	Ref< ShaderGraph > getConstantFolded() const;
 
+	Ref< ShaderGraph > cleanupRedundantSwizzles() const;
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 };

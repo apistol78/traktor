@@ -3,7 +3,7 @@
 
 #include "Core/RefArray.h"
 #include "Core/Serialization/MemberArray.h"
-#include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberInplaceRef.h"
 
 namespace traktor
 {
@@ -11,7 +11,7 @@ namespace traktor
 /*! \brief Array of objects member.
  * \ingroup Core
  */
-template < typename Class, typename MemberType = MemberRef< Class > >
+template < typename Class >
 class MemberRefArray : public MemberArray
 {
 public:
@@ -42,23 +42,13 @@ public:
 
 	virtual bool read(ISerializer& s) const
 	{
-		Ref< Class > object;
-		if (!(s >> MemberType(L"item", object)))
-			return false;
-
-		if (m_index < m_ref.size())
-			m_ref[m_index] = object;
-		else
-			m_ref.push_back(object);
-
-		++m_index;
-		return true;
+		m_ref.resize(m_index + 1);
+		return s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool write(ISerializer& s) const
 	{
-		Ref< Class > object = m_ref[m_index++];
-		return s >> MemberType(L"item", object);
+		return s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool insert() const

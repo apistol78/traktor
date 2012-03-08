@@ -28,7 +28,7 @@ class T_DLLCLASS BinarySerializer : public Serializer
 public:
 	BinarySerializer(IStream* stream);
 	
-	virtual Direction getDirection();
+	virtual Direction getDirection() const;
 	
 	virtual bool operator >> (const Member< bool >& m);
 	

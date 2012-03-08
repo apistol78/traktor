@@ -24,11 +24,11 @@ class GeneralSettingsPage : public ISettingsPage
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands);
+	virtual bool create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands);
 
 	virtual void destroy();
 
-	virtual bool apply(Settings* settings);
+	virtual bool apply(PropertyGroup* settings);
 
 private:
 	Ref< ui::Edit > m_editSourceDatabase;

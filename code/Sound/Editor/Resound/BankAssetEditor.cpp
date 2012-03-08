@@ -137,6 +137,7 @@ void BankAssetEditor::destroy()
 
 void BankAssetEditor::apply()
 {
+	m_instance->setObject(m_asset);
 }
 
 void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGrain >& grains)

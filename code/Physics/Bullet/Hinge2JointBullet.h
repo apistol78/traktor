@@ -25,7 +25,7 @@ class T_DLLCLASS Hinge2JointBullet : public JointBullet< Hinge2Joint, btHinge2Co
 	T_RTTI_CLASS;
 
 public:
-	Hinge2JointBullet(IWorldCallback* callback, btHinge2Constraint* constraint, Body* body1, Body* body2);
+	Hinge2JointBullet(IWorldCallback* callback, btHinge2Constraint* constraint, BodyBullet* body1, BodyBullet* body2);
 
 	virtual void addTorques(float torqueAxis1, float torqueAxis2);
 

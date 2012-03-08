@@ -47,6 +47,15 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.SingleView"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.DoubleView"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.QuadrupleView"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.EnlargeGuide"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ShrinkGuide"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.ResetGuide"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.RotatePlus30"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.RotatePlus45"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.RotatePlus90"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.RotateMinus30"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.RotateMinus45"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.RotateMinus90"));
 
 	// Add profile commands.
 	std::vector< const TypeInfo* > profileTypes;

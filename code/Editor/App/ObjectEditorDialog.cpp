@@ -1,7 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Instance.h"
 #include "Editor/IObjectEditor.h"
 #include "Editor/App/ObjectEditorDialog.h"
@@ -18,7 +17,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ObjectEditorDialog", ObjectEditorDialog, ui::ConfigDialog)
 
-ObjectEditorDialog::ObjectEditorDialog(Settings* settings, IObjectEditor* objectEditor)
+ObjectEditorDialog::ObjectEditorDialog(PropertyGroup* settings, IObjectEditor* objectEditor)
 :	m_settings(settings)
 ,	m_objectEditor(objectEditor)
 {
@@ -81,9 +80,6 @@ void ObjectEditorDialog::destroy()
 bool ObjectEditorDialog::apply(bool keep)
 {
 	m_objectEditor->apply();
-	
-	m_instance->setObject(m_object);
-
 	if (m_instance->commit(keep ? db::CfKeepCheckedOut : db::CfDefault))
 		return true;
 	else
@@ -96,7 +92,6 @@ bool ObjectEditorDialog::apply(bool keep)
 void ObjectEditorDialog::cancel()
 {
 	destroy();
-
 	if (m_instance)
 	{
 		m_instance->revert();

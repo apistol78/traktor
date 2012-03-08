@@ -886,6 +886,7 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	
 	if (cx.inVertex())
 	{
+#if defined(T_OPENGL_STD)
 		switch (node->getLookup())
 		{
 		case Sampler::LuSimple:
@@ -900,6 +901,22 @@ void emitSampler(GlslContext& cx, Sampler* node)
 			assign(f, out) << L"texture3DLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
 		}
+#else
+		switch (node->getLookup())
+		{
+		case Sampler::LuSimple:
+			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+			break;
+
+		case Sampler::LuCube:
+			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+			break;
+
+		case Sampler::LuVolume:
+			assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+			break;
+		}
+#endif
 	}
 }
 

@@ -1,6 +1,7 @@
 #ifndef traktor_online_SteamLeaderboards_H
 #define traktor_online_SteamLeaderboards_H
 
+#include <list>
 #include <steam/steam_api.h>
 #include "Online/Provider/ILeaderboardsProvider.h"
 
@@ -16,7 +17,7 @@ class SteamLeaderboards : public ILeaderboardsProvider
 	T_RTTI_CLASS;
 
 public:
-	SteamLeaderboards(SteamSessionManager* sessionManager, const wchar_t** leaderboardIds);
+	SteamLeaderboards(SteamSessionManager* sessionManager, const std::list< std::wstring >& leaderboardIds);
 
 	virtual bool enumerate(std::map< std::wstring, LeaderboardData >& outLeaderboards);
 

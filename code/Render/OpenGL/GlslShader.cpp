@@ -151,9 +151,18 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 	if (m_shaderType == StVertex)
 	{
 		// Add post-orientation transform function.
+		
+		ss << L"uniform vec4 _gl_postTransform;" << Endl;
+		ss << Endl;
+		
 		ss << L"vec4 PV(in vec4 cp0)" << Endl;
 		ss << L"{" << Endl;
-		ss << L"\treturn vec4(cp0.x, -cp0.y, cp0.z, cp0.w);" << Endl;
+		ss << L"\treturn vec4(" << Endl;
+		ss << L"\t\tcp0.x * _gl_postTransform.x + cp0.y * _gl_postTransform.y," << Endl;
+		ss << L"\t\tcp0.x * _gl_postTransform.z + cp0.y * _gl_postTransform.w," << Endl;
+		ss << L"\t\tcp0.z," << Endl;
+		ss << L"\t\tcp0.w" << Endl;
+		ss << L"\t);" << Endl;
 		ss << L"}" << Endl;
 		ss << Endl;
 	}

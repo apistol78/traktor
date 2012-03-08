@@ -23,7 +23,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace db
 	{
@@ -73,7 +73,7 @@ public:
 	/*! \name Settings. */
 	/*! \{ */
 
-	virtual Settings* getSettings() = 0;
+	virtual PropertyGroup* getSettings() = 0;
 
 	virtual bool reconfigure() = 0;
 

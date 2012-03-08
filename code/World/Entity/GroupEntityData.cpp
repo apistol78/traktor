@@ -1,7 +1,7 @@
 #include <algorithm>
-#include "World/Entity/GroupEntityData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "World/Entity/GroupEntityData.h"
 
 namespace traktor
 {
@@ -12,6 +12,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.GroupEntityData", 0, GroupEntityData
 
 void GroupEntityData::addEntityData(EntityData* entityData)
 {
+	T_ASSERT (std::find(m_entityData.begin(), m_entityData.end(), entityData) == m_entityData.end());
 	m_entityData.push_back(entityData);
 }
 

@@ -3,8 +3,8 @@
 #include "Amalgam/Impl/ScriptServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
 #include "Script/ScriptContextFactory.h"
@@ -16,7 +16,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ScriptServer", ScriptServer, IScriptServer)
 
-bool ScriptServer::create(const Settings* settings, bool debugger)
+bool ScriptServer::create(const PropertyGroup* settings, bool debugger)
 {
 	std::wstring scriptType = settings->getProperty< PropertyString >(L"Script.Type");
 
@@ -48,7 +48,7 @@ void ScriptServer::createResourceFactories(IEnvironment* environment)
 	resourceManager->addFactory(new script::ScriptContextFactory(database, m_scriptManager));
 }
 
-int32_t ScriptServer::reconfigure(const Settings* settings)
+int32_t ScriptServer::reconfigure(const PropertyGroup* settings)
 {
 	return CrUnaffected;
 }

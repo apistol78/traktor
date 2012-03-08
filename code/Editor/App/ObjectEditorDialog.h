@@ -7,7 +7,7 @@ namespace traktor
 {
 
 class ISerializable;
-class Settings;
+class PropertyGroup;
 
 	namespace db
 	{
@@ -26,7 +26,7 @@ class ObjectEditorDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	ObjectEditorDialog(Settings* settings, IObjectEditor* objectEditor);
+	ObjectEditorDialog(PropertyGroup* settings, IObjectEditor* objectEditor);
 
 	bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
 
@@ -37,7 +37,7 @@ public:
 	void cancel();
 
 private:
-	Ref< Settings > m_settings;
+	Ref< PropertyGroup > m_settings;
 	Ref< IObjectEditor > m_objectEditor;
 	Ref< db::Instance > m_instance;
 	Ref< ISerializable > m_object;

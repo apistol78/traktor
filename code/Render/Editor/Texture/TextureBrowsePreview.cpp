@@ -1,6 +1,6 @@
 #include "Core/Io/FileSystem.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IThumbnailGenerator.h"

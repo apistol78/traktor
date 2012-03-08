@@ -33,7 +33,7 @@ class T_DLLCLASS ApplyReflector : public Serializer
 public:
 	ApplyReflector(AutoPropertyList* propertyList);
 	
-	virtual Serializer::Direction getDirection();
+	virtual Direction getDirection() const;
 
 	virtual bool operator >> (const Member< bool >& m);
 	

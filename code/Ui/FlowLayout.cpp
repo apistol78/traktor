@@ -67,8 +67,6 @@ void FlowLayout::calculateRects(Widget* widget, std::vector< WidgetRect >& outRe
 			max = ext.y;
 		
 		ext.x = std::min< int >(ext.x, innerRect.right - m_margin.cx);
-		ext.y = std::min< int >(ext.y, innerRect.bottom - m_margin.cy);
-
 		outRects.push_back(WidgetRect(child, Rect(pos, ext)));
 		
 		pos.x = ext.x + m_pad.cx;

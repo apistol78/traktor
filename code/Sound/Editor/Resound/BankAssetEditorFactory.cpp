@@ -7,7 +7,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BankAssetEditorFactory", 0, BankAssetEditorFactory, editor::IObjectEditorFactory)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankAssetEditorFactory", 0, BankAssetEditorFactory, editor::IObjectEditorFactory)
 
 const TypeInfoSet BankAssetEditorFactory::getEditableTypes() const
 {

@@ -1,6 +1,6 @@
 #include <algorithm>
-#include "World/Entity/SpatialGroupEntity.h"
 #include "Core/Misc/Save.h"
+#include "World/Entity/SpatialGroupEntity.h"
 
 namespace traktor
 {
@@ -35,6 +35,7 @@ void SpatialGroupEntity::addEntity(SpatialEntity* entity)
 {
 	T_ASSERT_M (entity, L"Null entity");
 	T_ASSERT_M (!m_update, L"Not allowed to add entity during update");
+	T_ASSERT_M (std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end(), L"Entity already added");
 	m_entities.push_back(entity);
 }
 

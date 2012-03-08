@@ -101,5 +101,14 @@ bool PostProcessPipeline::buildOutput(
 	return true;
 }
 
+Ref< ISerializable > PostProcessPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const ISerializable* sourceAsset
+) const
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
 	}
 }

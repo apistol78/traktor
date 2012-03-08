@@ -122,7 +122,8 @@ enum KeyStates
 	KsControl	= 1 << 0,
 	KsMenu		= 1 << 1,
 	KsShift		= 1 << 2,
-	KsCommand	= 1 << 3
+	KsCommand	= 1 << 3,
+	KsAll		= (KsControl | KsMenu | KsShift | KsCommand)
 };
 
 enum EventId

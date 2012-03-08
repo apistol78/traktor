@@ -79,5 +79,14 @@ bool ReferencesRenderControl::hitTest(const ui::Point& position) const
 	return false;
 }
 
+bool ReferencesRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
+{
+	return false;
+}
+
+void ReferencesRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
+{
+}
+
 	}
 }

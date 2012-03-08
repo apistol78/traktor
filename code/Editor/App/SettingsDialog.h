@@ -8,7 +8,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace ui
 	{
@@ -27,12 +27,12 @@ class SettingsDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	bool create(ui::Widget* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands);
+	bool create(ui::Widget* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands);
 
 	void destroy();
 
 private:
-	Ref< Settings > m_settings;
+	Ref< PropertyGroup > m_settings;
 	RefArray< ISettingsPage > m_settingPages;
 
 	void eventDialogClick(ui::Event* event);

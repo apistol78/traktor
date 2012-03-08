@@ -25,11 +25,13 @@ class T_DLLCLASS MeshEntityData : public AbstractMeshEntityData
 	T_RTTI_CLASS;
 
 public:
+	void setMesh(const resource::Proxy< IMesh >& mesh);
+
+	const resource::Proxy< IMesh >& getMesh() const;
+
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(ISerializer& s);
-
-	const resource::Proxy< IMesh >& getMesh() const { return m_mesh; }
 
 private:
 	mutable resource::Proxy< IMesh > m_mesh;

@@ -1,8 +1,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
@@ -42,6 +42,8 @@ ScriptEditor::ScriptEditor(editor::IEditor* editor)
 
 bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
+	m_instance = instance;
+
 	m_script = dynamic_type_cast< Script* >(object);
 	if (!m_script)
 		return false;
@@ -131,6 +133,7 @@ void ScriptEditor::destroy()
 void ScriptEditor::apply()
 {
 	m_script->setText(m_edit->getText());
+	m_instance->setObject(m_script);
 }
 
 void ScriptEditor::syntaxError(uint32_t line, const std::wstring& message)

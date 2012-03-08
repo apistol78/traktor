@@ -1,7 +1,6 @@
 #include "Core/Misc/Split.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
@@ -44,7 +43,7 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewInstanceDialog", NewInstanceDialog, ui::ConfigDialog)
 
-NewInstanceDialog::NewInstanceDialog(Settings* settings)
+NewInstanceDialog::NewInstanceDialog(PropertyGroup* settings)
 :	m_settings(settings)
 ,	m_type(0)
 {

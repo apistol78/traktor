@@ -19,11 +19,11 @@ bool TextureLinker::link(const ShaderResource::Combination& shaderCombination, I
 	for (std::vector< Guid >::const_iterator i = textures.begin(); i != textures.end(); ++i)
 	{
 		Ref< ITexture > texture = m_textureReader.read(*i);
-		if (texture)
-		{
-			std::wstring parameterName = getParameterNameFromGuid(*i);
-			program->setTextureParameter(parameterName, texture);
-		}
+		if (!texture)
+			return false;
+
+		std::wstring parameterName = getParameterNameFromGuid(*i);
+		program->setTextureParameter(parameterName, texture);
 	}
 	return true;
 }

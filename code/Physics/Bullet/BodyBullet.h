@@ -12,8 +12,9 @@
 #endif
 
 // Bullet forward declarations.
-class btRigidBody;
 class btCollisionShape;
+class btDynamicsWorld;
+class btRigidBody;
 
 namespace traktor
 {
@@ -21,6 +22,7 @@ namespace traktor
 	{
 
 struct IWorldCallback;
+class Joint;
 
 /*!
  * \ingroup Bullet
@@ -87,6 +89,10 @@ public:
 
 	virtual BodyState getState() const;
 
+	void addJoint(Joint* joint);
+
+	void removeJoint(Joint* joint);
+
 	btDynamicsWorld* getBtDynamicsWorld() const { return m_dynamicsWorld; }
 
 	btRigidBody* getBtRigidBody() const { return m_body; }
@@ -97,6 +103,8 @@ public:
 
 	uint32_t getCollisionMask() const { return m_collisionMask; }
 
+	const std::vector< Joint* >& getJoints() const { return m_joints; }
+
 private:
 	IWorldCallback* m_callback;
 	btDynamicsWorld* m_dynamicsWorld;
@@ -104,6 +112,7 @@ private:
 	btCollisionShape* m_shape;
 	uint32_t m_collisionGroup;
 	uint32_t m_collisionMask;
+	std::vector< Joint* > m_joints;
 	bool m_enable;
 };
 

@@ -1,6 +1,7 @@
 #ifndef traktor_net_SocketAddressIPv4_H
 #define traktor_net_SocketAddressIPv4_H
 
+#include <list>
 #include <string>
 #include "Core/RefArray.h"
 #include "Net/Network.h"
@@ -27,6 +28,19 @@ class T_DLLCLASS SocketAddressIPv4 : public SocketAddress
 	T_RTTI_CLASS;
 
 public:
+	enum InterfaceType
+	{
+		ItDefault = 0,
+		ItWiFi = 1,
+		ItVPN = 2
+	};
+
+	struct Interface
+	{
+		InterfaceType type;
+		Ref< SocketAddressIPv4 > addr;
+	};
+
 	SocketAddressIPv4();
 
 	SocketAddressIPv4(const sockaddr_in& sockaddr);
@@ -51,7 +65,9 @@ public:
 
 	const sockaddr_in& getSockAddr() const;
 
-	static RefArray< SocketAddressIPv4 > getInterfaces();
+	static bool getInterfaces(std::list< Interface >& outInterfaces);
+
+	static bool getBestInterface(Interface& outInterface);
 	
 private:
 	sockaddr_in m_sockaddr;

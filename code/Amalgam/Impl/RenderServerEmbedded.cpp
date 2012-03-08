@@ -3,9 +3,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -48,7 +48,7 @@ RenderServerEmbedded::RenderServerEmbedded()
 {
 }
 
-bool RenderServerEmbedded::create(Settings* settings, void* nativeWindowHandle)
+bool RenderServerEmbedded::create(PropertyGroup* settings, void* nativeWindowHandle)
 {
 	std::wstring renderType = settings->getProperty< PropertyString >(L"Render.Type");
 
@@ -129,7 +129,7 @@ void RenderServerEmbedded::createResourceFactories(IEnvironment* environment)
 	resourceManager->addFactory(new render::ShaderFactory(database, m_renderSystem));
 }
 
-int32_t RenderServerEmbedded::reconfigure(const Settings* settings)
+int32_t RenderServerEmbedded::reconfigure(const PropertyGroup* settings)
 {
 	int32_t result = CrUnaffected;
 
@@ -144,7 +144,7 @@ int32_t RenderServerEmbedded::reconfigure(const Settings* settings)
 	return result;
 }
 
-RenderServer::UpdateResult RenderServerEmbedded::update(Settings* settings)
+RenderServer::UpdateResult RenderServerEmbedded::update(PropertyGroup* settings)
 {
 	return UrSuccess;
 }

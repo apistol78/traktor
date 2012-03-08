@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace ui
 	{
@@ -30,14 +30,14 @@ class BrowseTypeDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	BrowseTypeDialog(Settings* settings);
+	BrowseTypeDialog(PropertyGroup* settings);
 
 	bool create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable);
 
 	const TypeInfo* getSelectedType() const;
 
 private:
-	Ref< Settings > m_settings;
+	Ref< PropertyGroup > m_settings;
 	Ref< ui::TreeView > m_categoryTree;
 	Ref< ui::custom::PreviewList > m_typeList;
 	const TypeInfo* m_type;

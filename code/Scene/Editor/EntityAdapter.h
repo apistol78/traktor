@@ -40,10 +40,12 @@ class T_DLLCLASS EntityAdapter : public Object
 	T_RTTI_CLASS;
 
 public:
-	EntityAdapter(world::EntityData* entityData);
+	EntityAdapter();
 
 	/*! \name Accessors */
 	//@{
+
+	void setEntityData(world::EntityData* entityData);
 
 	world::EntityData* getEntityData() const;
 

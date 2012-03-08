@@ -42,23 +42,23 @@ Size ListBox::getPreferedSize() const
 int ListBox::add(const std::wstring& item, Object* data)
 {
 	T_ASSERT (m_widget);
+	
 	int index = static_cast< IListBox* >(m_widget)->add(item);
-	if (index >= 0 && data)
+	if (index >= 0)
 		m_data[index] = data;
+
 	return index;
 }
 
 bool ListBox::remove(int index)
 {
 	T_ASSERT (m_widget);
-	if (static_cast< IListBox* >(m_widget)->remove(index))
-	{
-		std::map< int, Ref< Object > >::iterator i = m_data.find(index);
-		if (i != m_data.end())
-			m_data.erase(i);
-		return true;
-	}
-	return false;
+
+	if (!static_cast< IListBox* >(m_widget)->remove(index))
+		return false;
+
+	m_data[index] = 0;
+	return true;
 }
 
 void ListBox::removeAll()

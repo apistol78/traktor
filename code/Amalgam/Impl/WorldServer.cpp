@@ -9,9 +9,9 @@
 #include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Mesh/MeshEntityFactory.h"
 #include "Mesh/MeshEntityRenderer.h"
 #include "Mesh/Instance/InstanceMeshEntityRenderer.h"
@@ -42,7 +42,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer)
 
-bool WorldServer::create(const Settings* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
+bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
@@ -94,9 +94,9 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 
 void WorldServer::createEntityFactories(IEnvironment* environment)
 {
-	physics::PhysicsManager* physicsManager = environment->getPhysics()->getPhysicsManager();
-	sound::SoundSystem* soundSystem = environment->getAudio()->getSoundSystem();
-	sound::SurroundEnvironment* surroundEnvironment = environment->getAudio()->getSurroundEnvironment();
+	physics::PhysicsManager* physicsManager = environment->getPhysics() ? environment->getPhysics()->getPhysicsManager() : 0;
+	sound::SoundSystem* soundSystem = environment->getAudio() ? environment->getAudio()->getSoundSystem() : 0;
+	sound::SurroundEnvironment* surroundEnvironment = environment->getAudio() ? environment->getAudio()->getSurroundEnvironment() : 0;
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
@@ -110,7 +110,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
 }
 
-int32_t WorldServer::reconfigure(const Settings* settings)
+int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
 	int32_t shadowQuality = settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::WorldRenderSettings::SqHigh);
 	if (shadowQuality != m_sceneFactory->getShadowQuality())

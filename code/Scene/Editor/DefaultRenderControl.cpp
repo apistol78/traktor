@@ -1,7 +1,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/DebugRenderControl.h"
@@ -39,7 +39,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_index = index;
 
-	Ref< Settings > settings = context->getEditor()->getSettings();
+	Ref< PropertyGroup > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	int32_t viewType = settings->getProperty< PropertyInteger >(L"SceneEditor.View" + toString(index), 0);
@@ -116,7 +116,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 void DefaultRenderControl::destroy()
 {
-	Ref< Settings > settings = m_context->getEditor()->getSettings();
+	Ref< PropertyGroup > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_index), m_toolToggleGrid->isToggled());
@@ -167,6 +167,17 @@ void DefaultRenderControl::update()
 bool DefaultRenderControl::hitTest(const ui::Point& position) const
 {
 	return m_renderControl ? m_renderControl->hitTest(position) : false;
+}
+
+bool DefaultRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
+{
+	return m_renderControl ? m_renderControl->calculateRay(position, outWorldRayOrigin, outWorldRayDirection) : false;
+}
+
+void DefaultRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
+{
+	if (m_renderControl)
+		m_renderControl->moveCamera(mode, mouseDelta, viewDelta);
 }
 
 void DefaultRenderControl::createRenderControl(int32_t type)
@@ -272,7 +283,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	else
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
 
-	Ref< Settings > settings = m_context->getEditor()->getSettings();
+	Ref< PropertyGroup > settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_index), type);

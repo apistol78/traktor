@@ -1,5 +1,5 @@
-#include "Core/Settings/PropertyStringArray.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Editor/App/ModulesSettingsPage.h"
 #include "I18N/Text.h"
@@ -17,7 +17,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ModulesSettingsPage", 0, ModulesSettingsPage, ISettingsPage)
 
-bool ModulesSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool ModulesSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 4)))
@@ -37,8 +37,8 @@ bool ModulesSettingsPage::create(ui::Container* parent, Settings* settings, cons
 	buttonRemoveModule->create(containerModulesTools, i18n::Text(L"EDITOR_SETTINGS_REMOVE_MODULE"));
 	buttonRemoveModule->addClickEventHandler(ui::createMethodHandler(this, &ModulesSettingsPage::eventButtonRemoveModuleClick));
 
-	const std::vector< std::wstring >& modules = settings->getProperty< PropertyStringArray >(L"Editor.Modules");
-	for (std::vector< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	const std::set< std::wstring >& modules = settings->getProperty< PropertyStringSet >(L"Editor.Modules");
+	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 		m_listModules->add(*i);
 
 	parent->setText(i18n::Text(L"EDITOR_SETTINGS_MODULES"));
@@ -49,12 +49,12 @@ void ModulesSettingsPage::destroy()
 {
 }
 
-bool ModulesSettingsPage::apply(Settings* settings)
+bool ModulesSettingsPage::apply(PropertyGroup* settings)
 {
-	std::vector< std::wstring > modules;
+	std::set< std::wstring > modules;
 	for (int32_t i = 0; i < m_listModules->count(); ++i)
-		modules.push_back(m_listModules->getItem(i));
-	settings->setProperty< PropertyStringArray >(L"Editor.Modules", modules);
+		modules.insert(m_listModules->getItem(i));
+	settings->setProperty< PropertyStringSet >(L"Editor.Modules", modules);
 	return true;
 }
 

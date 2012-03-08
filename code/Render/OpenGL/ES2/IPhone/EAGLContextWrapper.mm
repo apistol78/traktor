@@ -14,6 +14,7 @@ EAGLContextWrapper::EAGLContextWrapper()
 ,	m_context(0)
 ,	m_frameBuffer(0)
 ,	m_renderBuffer(0)
+,	m_depthBuffer(0)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_landscape(false)
@@ -39,7 +40,7 @@ bool EAGLContextWrapper::create(EAGLContextWrapper* shareContext, void* nativeHa
 	layer.drawableProperties = [NSDictionary dictionaryWithObjectsAndKeys:
 		[NSNumber numberWithBool:NO],
 		kEAGLDrawablePropertyRetainedBacking,
-		kEAGLColorFormatRGBA8,
+		kEAGLColorFormatRGB565,
 		kEAGLDrawablePropertyColorFormat,
 		nil];
 	
@@ -113,6 +114,12 @@ void EAGLContextWrapper::createFrameBuffer()
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_WIDTH, &m_width);
 	glGetRenderbufferParameteriv(GL_RENDERBUFFER, GL_RENDERBUFFER_HEIGHT, &m_height);
 	
+	// Create depth buffer.
+	glGenRenderbuffers(1, &m_depthBuffer);
+	glBindRenderbuffer(GL_RENDERBUFFER, m_depthBuffer);
+	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT16, m_width, m_height);
+	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, m_depthBuffer);
+	
 	if(glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
 		NSLog(@"failed to make complete framebuffer object %x", glCheckFramebufferStatus(GL_FRAMEBUFFER));
 }
@@ -124,6 +131,9 @@ void EAGLContextWrapper::destroyFrameBuffer()
 	
 	glDeleteRenderbuffers(1, &m_renderBuffer);
 	m_renderBuffer = 0;
+	
+	glDeleteRenderbuffers(1, &m_depthBuffer);
+	m_depthBuffer = 0;
 }
 
 	}

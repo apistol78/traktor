@@ -24,6 +24,8 @@ public:
 
 	virtual int count() const = 0;
 
+	virtual void set(int index, const std::wstring& item) = 0;
+
 	virtual std::wstring get(int index) const = 0;
 	
 	virtual void select(int index) = 0;

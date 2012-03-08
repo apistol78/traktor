@@ -86,18 +86,17 @@ class T_DLLCLASS SceneEditorContext : public ui::EventSubject
 public:
 	enum GetEntitiesFlags
 	{
+		GfNoDescendants = 0,
 		GfDescendants = 1 << 0,
 		GfSelectedOnly = 1 << 1,
-		GfExternals = 1 << 2,
+		GfNoSelected = 1 << 2,
+		GfSpatialOnly = 1 << 3,
+		GfNoSpatial = 1 << 4,
+		GfExternalOnly = 1 << 5,
+		GfNoExternal = 1 << 6,
+		GfExternalChildOnly = 1 << 7,
+		GfNoExternalChild = 1 << 8,
 		GfDefault = (GfDescendants)
-	};
-
-	enum AxisEnable
-	{
-		AeX = 1,
-		AeY = 2,
-		AeZ = 4,
-		AeXYZ = AeX | AeY | AeZ
 	};
 
 	enum SnapMode
@@ -134,13 +133,13 @@ public:
 
 	IModifier* getModifier() const;
 
+	void setGuideSize(float guideSize);
+
+	float getGuideSize() const;
+
 	void setPickEnable(bool pickEnable);
 
 	bool getPickEnable() const;
-
-	void setAxisEnable(uint32_t axisEnable);
-
-	uint32_t getAxisEnable() const;
 
 	void setSnapMode(SnapMode snapMode);
 
@@ -324,8 +323,8 @@ private:
 	RefArray< ISceneEditorPlugin > m_editorPlugins;
 	Ref< ISceneControllerEditor > m_controllerEditor;
 	Ref< IModifier > m_modifier;
+	float m_guideSize;
 	bool m_pickEnable;
-	uint32_t m_axisEnable;
 	SnapMode m_snapMode;
 	float m_snapSpacing;
 	bool m_physicsEnable;

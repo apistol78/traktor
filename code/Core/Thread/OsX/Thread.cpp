@@ -61,6 +61,7 @@ bool Thread::start(Priority priority)
 
 	pthread_attr_init(&attr);
 	pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+	pthread_attr_setinheritsched(&attr, PTHREAD_EXPLICIT_SCHED);
 	
 	std::memset(&param, 0, sizeof(param));
 	switch (priority)

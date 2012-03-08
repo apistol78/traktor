@@ -64,8 +64,6 @@ public:
 	}
 	
 private:
-	friend class WorldEntityFactory;
-
 	Transform m_transform;
 	RefArray< SpatialEntity > m_entities;
 	bool m_update;

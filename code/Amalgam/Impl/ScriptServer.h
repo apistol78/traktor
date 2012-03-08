@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace script
 	{
@@ -25,13 +25,13 @@ class ScriptServer : public IScriptServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const Settings* settings, bool debugger);
+	bool create(const PropertyGroup* settings, bool debugger);
 
 	void destroy();
 
 	void createResourceFactories(IEnvironment* environment);
 
-	int32_t reconfigure(const Settings* settings);
+	int32_t reconfigure(const PropertyGroup* settings);
 
 	void update();
 

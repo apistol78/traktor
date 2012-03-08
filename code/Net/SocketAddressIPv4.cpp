@@ -1,7 +1,14 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Memory/Alloc.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/TString.h"
 #include "Net/SocketAddressIPv4.h"
+
+#if defined(_WIN32)
+#	include <ws2ipdef.h>
+#	include <iphlpapi.h>
+#endif
 
 namespace traktor
 {
@@ -102,19 +109,51 @@ const sockaddr_in& SocketAddressIPv4::getSockAddr() const
 	return m_sockaddr;
 }
 
-RefArray< SocketAddressIPv4 > SocketAddressIPv4::getInterfaces()
+bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 {
-	RefArray< SocketAddressIPv4 > interfaces;
+#if defined(_WIN32)
 
-#if defined(_WIN32) || TARGET_OS_MAC
+	ULONG bufLen = 0;
+	GetAdaptersInfo(0, &bufLen);
+
+	AutoPtr< _IP_ADAPTER_INFO, AllocFreeAlign > info ((PIP_ADAPTER_INFO)Alloc::acquireAlign(bufLen, 16, T_FILE_LINE));
+	if (!info.ptr())
+		return false;
+
+	if (GetAdaptersInfo(info.ptr(), &bufLen) != NO_ERROR)
+		return false;
+
+	for (PIP_ADAPTER_INFO ii = info.ptr(); ii; ii = ii->Next)
+	{
+		Interface itf;
+
+		if (ii->Type == MIB_IF_TYPE_PPP)
+			itf.type = ItVPN;
+		else if (ii->Type == IF_TYPE_IEEE80211)
+			itf.type = ItWiFi;
+		else
+			itf.type = ItDefault;
+
+		sockaddr_in addr;
+		addr.sin_port = 0;
+		addr.sin_addr.s_addr = inet_addr(ii->IpAddressList.IpAddress.String);
+
+		itf.addr = new SocketAddressIPv4(addr);
+
+		outInterfaces.push_back(itf);
+	}
+
+#else
+
+#	if defined(_WIN32) || TARGET_OS_MAC
 	char hostName[200];
 	if (gethostname(hostName, sizeof(hostName)) == 0)
 	{
-#	if defined(_WIN32)
+#		if defined(_WIN32)
 		LPHOSTENT host;
-#	else
+#		else
 		hostent* host;
-#endif
+#	endif
 		host = gethostbyname(hostName);
 		if (host && host->h_addr)
 		{
@@ -124,20 +163,59 @@ RefArray< SocketAddressIPv4 > SocketAddressIPv4::getInterfaces()
 			addr.sin_port = 0;
 			addr.sin_addr = *ptr;
 
-			interfaces.push_back(new SocketAddressIPv4(addr));
+			Interface itf;
+			itf.type = ItDefault;
+			itf.addr = new SocketAddressIPv4(addr);
+
+			outInterfaces.push_back(itf);
 		}
 		else
 		{
 			log::error << L"Unable to get network interface(s); gethostbyname failed." << Endl;
+			return false;
 		}
 	}
 	else
 	{
 		log::error << L"Unable to get network interface(s); gethostname failed." << Endl;
+		return false;
 	}
+#	endif
+
 #endif
 
-	return interfaces;
+	return true;
+}
+
+bool SocketAddressIPv4::getBestInterface(Interface& outInterface)
+{
+	std::list< Interface > interfaces;
+	if (!getInterfaces(interfaces) || interfaces.empty())
+		return false;
+
+	// Prefer wired, default interfaces.
+	for (std::list< net::SocketAddressIPv4::Interface >::iterator i = interfaces.begin(); i != interfaces.end(); ++i)
+	{
+		if (i->type == net::SocketAddressIPv4::ItDefault)
+		{
+			outInterface = *i;
+			return true;
+		}
+	}
+
+	// Prefer wifi over vpn.
+	for (std::list< net::SocketAddressIPv4::Interface >::iterator i = interfaces.begin(); i != interfaces.end(); ++i)
+	{
+		if (i->type == net::SocketAddressIPv4::ItWiFi)
+		{
+			outInterface = *i;
+			return true;
+		}
+	}
+
+	// No one left except vpn.
+	outInterface = interfaces.front();
+	return true;
 }
 
 	}

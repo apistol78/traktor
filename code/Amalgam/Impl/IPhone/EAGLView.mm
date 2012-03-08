@@ -5,7 +5,8 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Xml/XmlDeserializer.h"
@@ -19,7 +20,6 @@ namespace traktor
 	
 extern const CommandLine* g_cmdLine;
 extern std::wstring g_settingsFileName;
-extern traktor::online::ISessionManagerProvider* g_sessionManagerProvider;
 extern traktor::amalgam::IStateFactory* g_stateFactory;
 
 	}
@@ -28,13 +28,13 @@ extern traktor::amalgam::IStateFactory* g_stateFactory;
 namespace
 {
 
-Ref< Settings > loadSettings(const Path& settingsPath)
+Ref< PropertyGroup > loadSettings(const Path& settingsPath)
 {
-	Ref< Settings > settings;
+	Ref< PropertyGroup > settings;
 	Ref< IStream > file = FileSystem::getInstance().open(settingsPath, File::FmRead);
 	if (file)
 	{
-		settings = Settings::read< xml::XmlDeserializer >(file);
+		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 	}
 	return settings;
@@ -70,14 +70,14 @@ void updateApplicationThread(amalgam::Application* app)
 
 		// Load settings.
 		Path settingsPath = traktor::amalgam::g_settingsFileName;
-		Ref< Settings > defaultSettings = loadSettings(settingsPath);
+		Ref< PropertyGroup > defaultSettings = loadSettings(settingsPath);
 		if (!defaultSettings)
 		{
 			traktor::log::error << L"Unable to read application settings \"" << settingsPath.getPathName() << L"\"" << Endl;
 			return 0;
 		}
 		
-		Ref< Settings > settings = defaultSettings->clone();
+		Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
 		T_FATAL_ASSERT (settings);
 
 		// Create application.
@@ -85,7 +85,6 @@ void updateApplicationThread(amalgam::Application* app)
 		if (!m_application->create(
 			defaultSettings,
 			settings,
-			traktor::amalgam::g_sessionManagerProvider,
 			traktor::amalgam::g_stateFactory,
 			(void*)self
 		))

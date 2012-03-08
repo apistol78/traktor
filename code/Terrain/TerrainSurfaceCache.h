@@ -92,6 +92,7 @@ private:
 	Ref< render::RenderTargetSet > m_pool;
 	std::vector< Entry > m_entries;
 	int32_t m_updateAllowedCount;
+	bool m_clearCache;
 	render::handle_t m_handleHeightfield;
 	render::handle_t m_handleHeightfieldSize;
 	render::handle_t m_handleMaterialMask;

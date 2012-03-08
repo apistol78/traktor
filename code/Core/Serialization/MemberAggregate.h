@@ -26,7 +26,7 @@ public:
 
 	virtual bool serialize(ISerializer& s) const
 	{
-		ISerializable* rf = m_ref;
+		Ref< ISerializable > rf = m_ref;
 		if (!(s >> Member< ISerializable* >(
 			getName(),
 			rf, 

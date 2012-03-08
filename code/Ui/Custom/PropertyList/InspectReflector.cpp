@@ -83,7 +83,7 @@ InspectReflector::InspectReflector(AutoPropertyList* propertyList, PropertyItem*
 		m_propertyItemStack.push_back(parentPropertyItem);
 }
 
-Serializer::Direction InspectReflector::getDirection()
+Serializer::Direction InspectReflector::getDirection() const
 {
 	return Serializer::SdWrite;
 }
@@ -469,7 +469,7 @@ bool InspectReflector::operator >> (const Member< ISerializable* >& m)
 {
 	const AttributeType* memberType = findAttribute< AttributeType >(m);
 
-	ISerializable* object = m;
+	ISerializable* object = *m;
 
 	Ref< ObjectPropertyItem > propertyItem = new ObjectPropertyItem(
 		stylizeMemberName(m.getName()),

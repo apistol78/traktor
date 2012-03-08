@@ -3,6 +3,7 @@
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
@@ -138,6 +139,31 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		log::info << L"Build finished; aborted" << Endl;
 
 	return m_failed == 0;
+}
+
+Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAsset)
+{
+	if (!sourceAsset)
+		return 0;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
+
+	uint32_t sourceHash = DeepHash(sourceAsset).get();
+
+	std::map< uint32_t, Ref< ISerializable > >::const_iterator i = m_builtCache.find(sourceHash);
+	if (i != m_builtCache.end())
+		return DeepClone(i->second).create();
+
+	Ref< IPipeline > pipeline;
+	uint32_t pipelineHash;
+
+	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
+		return 0;
+
+	Ref< ISerializable > output = pipeline->buildOutput(this, sourceAsset);
+	m_builtCache.insert(std::make_pair(sourceHash, output));
+
+	return output;
 }
 
 bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid)

@@ -326,19 +326,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		return 3;
 	}
 
-	RefArray< net::SocketAddressIPv4 > interfaces = net::SocketAddressIPv4::getInterfaces();
-	if (interfaces.empty())
+	net::SocketAddressIPv4::Interface itf;
+	if (!net::SocketAddressIPv4::getBestInterface(itf))
 	{
-		traktor::log::error << L"Unable to get nic interfaces" << Endl;
+		traktor::log::error << L"Unable to get interfaces" << Endl;
 		return 4;
 	}
 
 	discoveryManager->addService(new net::NetworkService(
 		L"RemoteTools/Server",
-		interfaces[0]->getHostName(),
+		itf.addr->getHostName(),
 		OS::getInstance().getComputerName()
 	));
 
+	traktor::log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
 	traktor::log::info << L"Waiting for client(s)..." << Endl;
 
 	std::list< Thread* > clientThreads;

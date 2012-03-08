@@ -1,20 +1,21 @@
-#include "Editor/App/DefaultObjectEditor.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/ITypedAsset.h"
 #include "Editor/TypeBrowseFilter.h"
+#include "Editor/App/DefaultObjectEditor.h"
+#include "I18N/Text.h"
+#include "Ui/Event.h"
 #include "Ui/FileDialog.h"
 #include "Ui/MethodHandler.h"
-#include "Ui/Event.h"
-#include "Ui/Events/CommandEvent.h"
-#include "Ui/Custom/PropertyList/FilePropertyItem.h"
-#include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
-#include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
-#include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
-#include "Ui/Custom/PropertyList/ColorPropertyItem.h"
 #include "Ui/Custom/ColorPicker/ColorDialog.h"
-#include "I18N/Text.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
+#include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
+#include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
+#include "Ui/Custom/PropertyList/ColorPropertyItem.h"
+#include "Ui/Custom/PropertyList/FilePropertyItem.h"
+#include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
+#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -30,25 +31,31 @@ DefaultObjectEditor::DefaultObjectEditor(IEditor* editor)
 
 bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
+	m_instance = instance;
+	m_object = object;
+
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(parent, ui::WsClientBorder | ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
 	m_propertyList->addCommandEventHandler(ui::createMethodHandler(this, &DefaultObjectEditor::eventPropertyCommand));
 	m_propertyList->setSeparator(200);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
-	m_propertyList->bind(object, 0);
+	m_propertyList->bind(m_object, 0);
 
 	return true;
 }
 
 void DefaultObjectEditor::destroy()
 {
-	m_propertyList->destroy();
+	safeDestroy(m_propertyList);
+	m_instance = 0;
+	m_object = 0;
 }
 
 void DefaultObjectEditor::apply()
 {
 	m_propertyList->apply();
+	m_instance->setObject(m_object);
 }
 
 bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
@@ -57,7 +64,7 @@ bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& re
 	if (!instance)
 		return false;
 
-	resolved = instance->getName();
+	resolved = instance->getPath();
 	return true;
 }
 

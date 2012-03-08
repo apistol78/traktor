@@ -1,6 +1,8 @@
 #ifndef traktor_db_Traverse_H
 #define traktor_db_Traverse_H
 
+#include "Core/RefArray.h"
+
 namespace traktor
 {
 	namespace db

@@ -1,7 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
@@ -90,7 +90,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Effect.Editor.ToggleGuide"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleMove = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), ui::Command(L"Effect.Editor.ToggleMove"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
 
-	Ref< Settings > settings = m_editor->getSettings();
+	Ref< PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
 	m_guideVisible = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
@@ -137,7 +137,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 void EffectEditorPage::destroy()
 {
-	Ref< Settings > settings = m_editor->getSettings();
+	Ref< PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);

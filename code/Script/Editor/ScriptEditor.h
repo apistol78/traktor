@@ -61,6 +61,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
+	Ref< db::Instance > m_instance;
 	Ref< Script > m_script;
 	Ref< IScriptManager > m_scriptManager;
 	Ref< ui::custom::Splitter > m_splitter;

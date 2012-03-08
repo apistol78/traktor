@@ -52,6 +52,11 @@ public:
 		const Guid& outputGuid,
 		uint32_t reason
 	) const;
+
+	virtual Ref< ISerializable > buildOutput(
+		IPipelineBuilder* pipelineBuilder,
+		const ISerializable* sourceAsset
+	) const;
 };
 
 	}

@@ -23,7 +23,7 @@ class T_DLLCLASS FilePipelineCache : public IPipelineCache
 public:
 	FilePipelineCache();
 
-	virtual bool create(const Settings* settings);
+	virtual bool create(const PropertyGroup* settings);
 
 	virtual void destroy();
 

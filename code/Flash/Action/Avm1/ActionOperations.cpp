@@ -28,6 +28,36 @@ namespace traktor
 		namespace
 		{
 
+#if defined(TARGET_OS_IPHONE)
+
+template < int Size >
+struct UnalignedView {};
+
+template < >
+struct UnalignedView< 1 > { uint8_t value; };
+
+template < >
+struct UnalignedView< 2 > { uint16_t value __attribute__(( packed )); };
+	
+template < >
+struct UnalignedView< 4 > { uint32_t value __attribute__(( packed )); };
+	
+template < typename T >
+T unalignedRead(const void* ptr)
+{
+	return ((UnalignedView< sizeof(T) >*)ptr)->value;
+}
+
+#else
+
+template < typename T >
+T unalignedRead(const void *ptr)
+{
+	return *(T T_UNALIGNED *)(ptr);
+}
+
+#endif
+
 //#define T_IF_TRACE(x) \
 //	{ if (state.trace) { x } }
 
@@ -1801,14 +1831,14 @@ void opp_pushData(PreparationState& state)
 {
 #if defined(T_BIG_ENDIAN)
 	{
-		uint8_t* data = state.data;
-		uint8_t* end = data + state.length;
+		uint8_t T_UNALIGNED * data = state.data;
+		uint8_t T_UNALIGNED * end = data + state.length;
 		while (data < end)
 		{
 			uint8_t type = *data++;
 			if (type == 0)		// String
 			{
-				uint32_t length = uint32_t(strlen(reinterpret_cast< const char* >(data)));
+				uint32_t length = uint32_t(strlen(reinterpret_cast< const char T_UNALIGNED * >(data)));
 				data += length + 1;
 			}
 			else if (type == 1)	// Number
@@ -1824,14 +1854,14 @@ void opp_pushData(PreparationState& state)
 				data += sizeof(double);
 			else if (type == 7)	// Integer (32bit)
 			{
-				swap8in32(*(int32_t*)data);
+				swap8in32(*(int32_t T_UNALIGNED *)data);
 				data += sizeof(int32_t);
 			}
 			else if (type == 8)	// Dictionary (8bit index)
 				data += sizeof(uint8_t);
 			else if (type == 9)	// Dictionary (16bit index)
 			{
-				swap8in32(*(uint16_t*)data);
+				swap8in32(*(uint16_t T_UNALIGNED *)data);
 				data += sizeof(uint16_t);
 			}
 		}
@@ -1851,8 +1881,8 @@ void opp_pushData(PreparationState& state)
 
 			if (type == 0)		// String
 			{
-				uint32_t length = uint32_t(strlen((const char*)data));
-				uint16_t index = state.image->addConstData(ActionValue((const char*)data));
+				uint32_t length = uint32_t(strlen((const char T_UNALIGNED *)data));
+				uint16_t index = state.image->addConstData(ActionValue((const char T_UNALIGNED *)data));
 				
 				*ndp++ = 100;
 				*(uint16_t*)ndp = index;
@@ -1862,7 +1892,7 @@ void opp_pushData(PreparationState& state)
 			}
 			else if (type == 1)	// Number
 			{
-				uint16_t index = state.image->addConstData(ActionValue(*(const float*)data));
+				uint16_t index = state.image->addConstData(ActionValue(*(const float T_UNALIGNED *)data));
 
 				*ndp++ = 100;
 				*(uint16_t*)ndp = index;
@@ -1893,8 +1923,8 @@ void opp_pushData(PreparationState& state)
 				union { double d; uint8_t b[8]; uint32_t dw[2]; } w;
 
 #if defined(T_LITTLE_ENDIAN)
-				w.dw[0] = *(const uint32_t*)&data[4];
-				w.dw[1] = *(const uint32_t*)&data[0];
+				w.dw[0] = *(const uint32_t T_UNALIGNED *)&data[4];
+				w.dw[1] = *(const uint32_t T_UNALIGNED *)&data[0];
 #elif defined(T_BIG_ENDIAN)
 				w.b[0] = data[3];
 				w.b[1] = data[2];
@@ -1916,7 +1946,8 @@ void opp_pushData(PreparationState& state)
 			}
 			else if (type == 7)	// Integer (32bit)
 			{
-				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(*(const int32_t*)data)));
+				int32_t n = unalignedRead< int32_t >(data);
+				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(n)));
 
 				*ndp++ = 100;
 				*(uint16_t*)ndp = index;
@@ -1932,7 +1963,7 @@ void opp_pushData(PreparationState& state)
 			else if (type == 9)	// Dictionary (16bit index)
 			{
 				*ndp++ = 9;
-				*(uint16_t*)ndp = *(const uint16_t*)data;
+				*(uint16_t*)ndp = *(const uint16_t T_UNALIGNED *)data;
 				ndp += sizeof(uint16_t);
 
 				data += sizeof(uint16_t);
@@ -1955,8 +1986,8 @@ void opx_pushData(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 
-	const uint8_t* data = state.data;
-	const uint8_t* end = data + state.length;
+	const uint8_t T_UNALIGNED * data = state.data;
+	const uint8_t T_UNALIGNED * end = data + state.length;
 	while (data < end)
 	{
 		ActionValue value;
@@ -2013,7 +2044,8 @@ void opx_pushData(ExecutionState& state)
 		}
 		else if (type == 7)	// Integer (32bit)
 		{
-			value = ActionValue(avm_number_t(*reinterpret_cast< const int32_t* >(data)));
+			int32_t n = unalignedRead< int32_t >(data);
+			value = ActionValue(avm_number_t(n));
 			data += sizeof(int32_t);
 		}
 		else if (type == 8)	// Dictionary (8bit index)
