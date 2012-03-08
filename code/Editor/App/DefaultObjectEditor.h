@@ -28,6 +28,8 @@ public:
 
 private:
 	IEditor* m_editor;
+	Ref< db::Instance > m_instance;
+	Ref< ISerializable > m_object;
 	Ref< ui::custom::AutoPropertyList > m_propertyList;
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;

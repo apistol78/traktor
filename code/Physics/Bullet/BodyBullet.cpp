@@ -240,5 +240,18 @@ BodyState BodyBullet::getState() const
 	return state;
 }
 
+void BodyBullet::addJoint(Joint* joint)
+{
+	m_joints.push_back(joint);
+}
+
+void BodyBullet::removeJoint(Joint* joint)
+{
+	std::vector< Joint* >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);
+	T_ASSERT (i != m_joints.end());
+
+	m_joints.erase(i);
+}
+
 	}
 }

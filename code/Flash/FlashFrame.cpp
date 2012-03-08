@@ -1,6 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Flash/FlashFrame.h"

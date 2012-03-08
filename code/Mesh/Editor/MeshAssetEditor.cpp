@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Core/Io/FileSystem.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Database/Group.h"
@@ -215,6 +215,8 @@ void MeshAssetEditor::apply()
 		}
 	}
 	m_asset->setMaterialTextures(materialTextures);
+
+	m_instance->setObject(m_asset);
 }
 
 void MeshAssetEditor::updateModel()

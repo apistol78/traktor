@@ -236,7 +236,7 @@ void AccGlyph::render(
 	renderBlock->offset = 0;
 	renderBlock->count = m_count * 2;
 	renderBlock->minIndex = 0;
-	renderBlock->maxIndex = c_glyphCount * 4;
+	renderBlock->maxIndex = c_glyphCount * 4 - 1;
 
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->programParams->beginParameters(renderContext);

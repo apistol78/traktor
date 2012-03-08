@@ -98,6 +98,12 @@ public:
 	 */
 	void notifyCollisionListeners(const CollisionInfo& collisionInfo);
 
+	/*! \brief Return true if any collision listener registered.
+	 *
+	 * \return True if collision listener registered.
+	 */
+	bool haveCollisionListeners() const;
+
 	/*! \brief Create physics manager.
 	 *
 	 * \param simulationDeltaTime Fixed simulation delta time.

@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace amalgam
 	{
@@ -18,7 +18,7 @@ class PhysicsServer : public IPhysicsServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const Settings* settings, float simulationDeltaTime);
+	bool create(const PropertyGroup* settings, float simulationDeltaTime);
 
 	void destroy();
 
@@ -26,7 +26,7 @@ public:
 
 	void createEntityFactories(IEnvironment* environment);
 
-	int32_t reconfigure(const Settings* settings);
+	int32_t reconfigure(const PropertyGroup* settings);
 
 	void update();
 

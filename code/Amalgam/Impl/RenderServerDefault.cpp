@@ -4,9 +4,9 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -110,7 +110,7 @@ RenderServerDefault::RenderServerDefault()
 {
 }
 
-bool RenderServerDefault::create(Settings* settings)
+bool RenderServerDefault::create(PropertyGroup* settings)
 {
 	std::wstring renderType = settings->getProperty< PropertyString >(L"Render.Type");
 
@@ -268,7 +268,7 @@ void RenderServerDefault::createResourceFactories(IEnvironment* environment)
 	resourceManager->addFactory(new render::ShaderFactory(database, m_renderSystem));
 }
 
-int32_t RenderServerDefault::reconfigure(const Settings* settings)
+int32_t RenderServerDefault::reconfigure(const PropertyGroup* settings)
 {
 	int32_t result = CrUnaffected;
 
@@ -376,7 +376,7 @@ int32_t RenderServerDefault::reconfigure(const Settings* settings)
 	return result;
 }
 
-RenderServer::UpdateResult RenderServerDefault::update(Settings* settings)
+RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 {
 #if !defined(_PS3)
 

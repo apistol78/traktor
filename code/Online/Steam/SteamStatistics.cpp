@@ -11,12 +11,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamStatistics", SteamStatistics, IStatisticsProvider)
 
-SteamStatistics::SteamStatistics(SteamSessionManager* sessionManager, const wchar_t** statIds)
+SteamStatistics::SteamStatistics(SteamSessionManager* sessionManager, const std::list< std::wstring >& statIds)
 :	m_sessionManager(sessionManager)
 ,	m_callbackUserStatsStored(this, &SteamStatistics::OnUserStatsStored)
 {
-	for (const wchar_t** statId = statIds; statId && *statId; ++statId)
-		m_statIds.insert(*statId);
+	m_statIds.insert(statIds.begin(), statIds.end());
 }
 
 bool SteamStatistics::enumerate(std::map< std::wstring, float >& outStats)

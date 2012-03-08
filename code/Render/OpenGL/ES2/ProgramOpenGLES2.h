@@ -57,7 +57,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate(StateCache* stateCache, float targetSize[2]);
+	bool activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull);
 
 private:
 	struct Uniform
@@ -84,17 +84,18 @@ private:
 		float offset[4];
 	};
 
+	static ProgramOpenGLES2* ms_current;
 	Ref< ContextOpenGLES2 > m_resourceContext;
 	GLuint m_program;
 	RenderState m_renderState;
 	GLint m_locationTargetSize;
+	GLint m_locationPostTransform;
 	std::map< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
 	std::vector< Sampler > m_samplers;						//!< Samplers.
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
 	float m_targetSize[2];
-	bool m_textureDirty;
 	
 	ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint program, const ProgramResource* resource);
 };

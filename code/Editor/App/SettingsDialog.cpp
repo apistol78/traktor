@@ -1,4 +1,3 @@
-#include "Core/Settings/Settings.h"
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/ISettingsPage.h"
 #include "I18N/Text.h"
@@ -15,7 +14,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.SettingsDialog", SettingsDialog, ui::ConfigDialog)
 
-bool SettingsDialog::create(ui::Widget* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container;
 

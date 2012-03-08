@@ -38,6 +38,7 @@ private:
 	void* m_context;
 	GLuint m_frameBuffer;
 	GLuint m_renderBuffer;
+	GLuint m_depthBuffer;
 	GLint m_width;
 	GLint m_height;
 	bool m_landscape;

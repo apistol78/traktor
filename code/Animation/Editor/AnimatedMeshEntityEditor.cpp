@@ -6,7 +6,7 @@
 #include "Animation/Bone.h"
 #include "Animation/IPoseController.h"
 #include "Core/Settings/PropertyColor.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"

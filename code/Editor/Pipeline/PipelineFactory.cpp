@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineFactory", PipelineFactory, Object)
 
-PipelineFactory::PipelineFactory(const Settings* settings)
+PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 {
 	std::vector< const TypeInfo* > pipelineTypes;
 	type_of< IPipeline >().findAllOf(pipelineTypes, false);

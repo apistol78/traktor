@@ -10,7 +10,6 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
@@ -90,21 +89,21 @@ private:
 	Ref< ILogTarget > m_target2;
 };
 
-Ref< Settings > loadSettings(const Path& settingsFile)
+Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 {
-	Ref< Settings > settings;
+	Ref< PropertyGroup > settings;
 
 	Ref< traktor::IStream > file = FileSystem::getInstance().open(settingsFile, File::FmRead);
 	if (file)
 	{
-		settings = Settings::read< xml::XmlDeserializer >(file);
+		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 	}
 
 	return settings;
 }
 
-bool saveSettings(const Settings* settings, const Path& settingsFile)
+bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 {
 	T_ASSERT (settings);
 
@@ -112,7 +111,7 @@ bool saveSettings(const Settings* settings, const Path& settingsFile)
 	if (!file)
 		return false;
 
-	bool result = settings->write< xml::XmlSerializer >(file);
+	bool result = xml::XmlSerializer(file).writeObject(settings);
 	file->close();
 	
 	return result;
@@ -154,7 +153,6 @@ bool checkPreconditions()
 int32_t amalgamMain(
 	const CommandLine& cmdLine,
 	const std::wstring& settingsFileName,
-	online::ISessionManagerProvider* sessionManagerProvider,
 	IStateFactory* stateFactory
 )
 {
@@ -224,7 +222,7 @@ int32_t amalgamMain(
 	}
 #endif
 
-	Ref< Settings > defaultSettings = loadSettings(settingsPath);
+	Ref< PropertyGroup > defaultSettings = loadSettings(settingsPath);
 	if (!defaultSettings)
 	{
 		log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
@@ -233,14 +231,14 @@ int32_t amalgamMain(
 		return 1;
 	}
 
-	Ref< Settings > settings = defaultSettings->clone();
+	Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
 	T_FATAL_ASSERT (settings);
 
 	// Merge user settings into application settings.
 	if (!cmdLine.hasOption('s', L"no-settings"))
 	{
 		Path userSettingsPath;
-		Ref< Settings > userSettings;
+		Ref< PropertyGroup > userSettings;
 
 #if !defined(__APPLE__)
 		// First try to load user settings from current working directory; ie. same directory as
@@ -250,7 +248,7 @@ int32_t amalgamMain(
 #endif
 	
 		// Try to load user settings from user's application data path; sometimes it's not possible
-		// to store user settings alongside executable due to restrictive priviledges.
+		// to store user settings alongside executable due to restrictive privileges.
 		if (!userSettings)
 		{
 			userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
@@ -258,7 +256,7 @@ int32_t amalgamMain(
 		}
 
 		if (userSettings)
-			settings->merge(userSettings, false);
+			settings = settings->mergeReplace(userSettings);
 	}
 
 	if (!settings)
@@ -293,7 +291,6 @@ int32_t amalgamMain(
 	if (application->create(
 		defaultSettings,
 		settings,
-		sessionManagerProvider,
 		stateFactory,
 		0
 	))

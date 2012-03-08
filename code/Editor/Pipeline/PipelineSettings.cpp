@@ -1,5 +1,6 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/IPropertyValue.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Editor/Pipeline/PipelineSettings.h"
 
 namespace traktor
@@ -9,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineSettings", PipelineSettings, IPipelineSettings)
 
-PipelineSettings::PipelineSettings(const Settings* settings)
+PipelineSettings::PipelineSettings(const PropertyGroup* settings)
 :	m_settings(settings)
 ,	m_hash(0)
 {

@@ -224,8 +224,11 @@ void GridView::eventButtonDown(Event* event)
 		}
 		else
 		{
-			// Select single row.
-			row->setState(row->getState() | GridRow::RsSelected);
+			// Toggle selection on row.
+			if ((row->getState() & GridRow::RsSelected) != 0)
+				row->setState(row->getState() & ~GridRow::RsSelected);
+			else
+				row->setState(row->getState() | GridRow::RsSelected);
 		}
 
 		// Save column index.

@@ -12,6 +12,7 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.SpatialGroupEntityData", 0, SpatialG
 
 void SpatialGroupEntityData::addEntityData(SpatialEntityData* entityData)
 {
+	T_ASSERT (std::find(m_entityData.begin(), m_entityData.end(), entityData) == m_entityData.end());
 	m_entityData.push_back(entityData);
 }
 
@@ -53,7 +54,10 @@ bool SpatialGroupEntityData::serialize(ISerializer& s)
 	if (!SpatialEntityData::serialize(s))
 		return false;
 
-	return s >> MemberRefArray< SpatialEntityData >(L"entityData", m_entityData);
+	if (!(s >> MemberRefArray< SpatialEntityData >(L"entityData", m_entityData)))
+		return false;
+
+	return true;
 }
 	
 	}

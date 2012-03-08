@@ -6,17 +6,17 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_INPUT_IPHONE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
 	namespace input
 	{
-	
-class InputDeviceTouch;
+
+class InputDriverIPhoneImpl;
 	
 class T_DLLCLASS InputDriverIPhone : public IInputDriver
 {
@@ -34,7 +34,7 @@ public:
 	virtual UpdateResult update();
 
 private:
-	Ref< InputDeviceTouch > m_inputDeviceTouch;
+	Ref< InputDriverIPhoneImpl > m_impl;
 };
 	
 	}

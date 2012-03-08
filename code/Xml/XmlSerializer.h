@@ -29,7 +29,7 @@ class T_DLLCLASS XmlSerializer : public Serializer
 public:
 	XmlSerializer(IStream* stream);
 	
-	virtual Direction getDirection();
+	virtual Direction getDirection() const;
 
 	virtual bool operator >> (const Member< bool >& m);
 	

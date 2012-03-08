@@ -33,22 +33,33 @@ bool DropDown::create(Widget* parent, const std::wstring& text, int style)
 	return Widget::create(parent);
 }
 
-int DropDown::add(const std::wstring& item)
+int DropDown::add(const std::wstring& item, Object* data)
 {
 	T_ASSERT (m_widget);
-	return static_cast< IDropDown* >(m_widget)->add(item.c_str());
+
+	int index = static_cast< IDropDown* >(m_widget)->add(item.c_str());
+	if (index >= 0)
+		m_data[index] = data;
+
+	return index;
 }
 
 bool DropDown::remove(int index)
 {
 	T_ASSERT (m_widget);
-	return static_cast< IDropDown* >(m_widget)->remove(index);
+
+	if (!static_cast< IDropDown* >(m_widget)->remove(index))
+		return false;
+
+	m_data[index] = 0;
+	return true;
 }
 
 void DropDown::removeAll()
 {
 	T_ASSERT (m_widget);
 	static_cast< IDropDown* >(m_widget)->removeAll();
+	m_data.clear();
 }
 
 int DropDown::count() const
@@ -57,10 +68,28 @@ int DropDown::count() const
 	return static_cast< IDropDown* >(m_widget)->count();
 }
 
-std::wstring DropDown::get(int index) const
+void DropDown::setItem(int index, const std::wstring& item)
+{
+	T_ASSERT (m_widget);
+	static_cast< IDropDown* >(m_widget)->set(index, item);
+}
+
+void DropDown::setData(int index, Object* data)
+{
+	T_ASSERT (m_widget);
+	m_data[index] = data;
+}
+
+std::wstring DropDown::getItem(int index) const
 {
 	T_ASSERT (m_widget);
 	return static_cast< IDropDown* >(m_widget)->get(index);
+}
+
+Ref< Object > DropDown::getData(int index) const
+{
+	std::map< int, Ref< Object > >::const_iterator i = m_data.find(index);
+	return (i != m_data.end()) ? i->second.ptr() : 0;
 }
 
 void DropDown::select(int index)
@@ -79,7 +108,14 @@ std::wstring DropDown::getSelectedItem() const
 {
 	T_ASSERT (m_widget);
 	int index = getSelected();
-	return (index >= 0) ? get(index) : std::wstring();
+	return index >= 0 ? getItem(index) : std::wstring();
+}
+
+Ref< Object > DropDown::getSelectedData() const
+{
+	T_ASSERT (m_widget);
+	int index = getSelected();
+	return index >= 0 ? getData(index) : 0;
 }
 
 void DropDown::addSelectEventHandler(EventHandler* eventHandler)

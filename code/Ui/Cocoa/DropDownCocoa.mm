@@ -51,9 +51,21 @@ int DropDownCocoa::count() const
 	return int(m_items.size());
 }
 
+void DropDownCocoa::set(int index, const std::wstring& item)
+{
+	if (index >= 0 && index < int(m_items.size()))
+	{
+		m_items[index] = item;
+		[m_control reloadData];
+	}
+}
+
 std::wstring DropDownCocoa::get(int index) const
 {
-	return m_items[index];
+	if (index >= 0 && index < int(m_items.size()))
+		return m_items[index];
+	else
+		return L"";
 }
 
 void DropDownCocoa::select(int index)

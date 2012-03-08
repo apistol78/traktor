@@ -11,6 +11,8 @@
 #include "World/Entity/IEntityFactory.h"
 #include "World/Entity/IEntitySchema.h"
 
+#include "Core/Math/Format.h"
+
 namespace traktor
 {
 	namespace scene
@@ -81,7 +83,7 @@ void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 	m_entitySchema = entitySchema;
 
 	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants | SceneEditorContext::GfExternals);
+	m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants);
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
@@ -101,7 +103,10 @@ void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 			parent->unlink(entityAdapter);
 
 		// Insert into map from instance guid to adapters.
-		m_cachedAdapters[entityAdapter->getEntityData()].push_back(entityAdapter);
+		m_cachedAdapters[&type_of(entityAdapter->getEntityData())].push_back(entityAdapter);
+
+		// Release entity data reference.
+		entityAdapter->setEntityData(0);
 	}
 
 	T_ASSERT (!m_rootAdapter);
@@ -115,17 +120,16 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		return 0;
 
 	// Get adapter; reuse adapters containing same type of entity.
-	RefArray< EntityAdapter >& cachedAdapters = m_cachedAdapters[entityData];
+	RefArray< EntityAdapter >& cachedAdapters = m_cachedAdapters[&type_of(entityData)];
 	if (!cachedAdapters.empty())
 	{
 		entityAdapter = cachedAdapters.front();
 		cachedAdapters.pop_front();
 	}
 	else
-	{
-		entityAdapter = new EntityAdapter(const_cast< world::EntityData* >(entityData));
-	}
+		entityAdapter = new EntityAdapter();
 
+	// Setup relationship with parent.
 	if (m_currentAdapter)
 		m_currentAdapter->link(entityAdapter);
 	else
@@ -171,6 +175,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		}
 	}
 
+	entityAdapter->setEntityData(const_cast< world::EntityData* >(entityData));
 	entityAdapter->setEntity(entity);
 
 	if (!entityAdapter->getEntityEditor())

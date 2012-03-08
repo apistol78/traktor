@@ -521,6 +521,9 @@ protected:
 		m_hWnd.registerMessageHandler(WM_LBUTTONDOWN,   new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
 		m_hWnd.registerMessageHandler(WM_LBUTTONUP,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
 		m_hWnd.registerMessageHandler(WM_LBUTTONDBLCLK, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDblClk));
+		m_hWnd.registerMessageHandler(WM_MBUTTONDOWN,   new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
+		m_hWnd.registerMessageHandler(WM_MBUTTONUP,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
+		m_hWnd.registerMessageHandler(WM_MBUTTONDBLCLK, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDblClk));
 		m_hWnd.registerMessageHandler(WM_RBUTTONDOWN,   new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDown));
 		m_hWnd.registerMessageHandler(WM_RBUTTONUP,     new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonUp));
 		m_hWnd.registerMessageHandler(WM_RBUTTONDBLCLK, new MethodMessageHandler< WidgetWin32Impl >(this, &WidgetWin32Impl::eventButtonDblClk));

@@ -1,6 +1,7 @@
 #include <Core/RefSet.h>
 #include <Core/Log/Log.h>
 #include <Core/Misc/MD5.h>
+#include <Core/Misc/String.h>
 #include <Core/Io/AnsiEncoding.h>
 #include <Core/Io/FileOutputStream.h>
 #include <Core/Io/FileSystem.h>
@@ -37,6 +38,14 @@ namespace
 	{
 		return replaceAll< std::wstring >(str, L"\"", L"&quot;");
 	}
+
+	struct ProjectNamePredicate
+	{
+		bool operator () (const Project* p0, const Project* p1) const
+		{
+			return compareIgnoreCase(p0->getName(), p1->getName()) < 0;
+		}
+	};
 
 }
 
@@ -274,7 +283,9 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 			os << L"Project(\"{2150E333-8FDC-42A3-9474-1A3956D46DE8}\") = \"" << externalSolution->getName() << L"\", \"" << externalSolution->getName() << L"\", \"{3E0BD3A9-E831-4928-9EAA-B07D1ED32784}\"" << Endl;
 			os << L"EndProject" << Endl;
 
-			const RefArray< Project >& externalProjects = externalSolution->getProjects();
+			RefArray< Project > externalProjects = externalSolution->getProjects();
+			externalProjects.sort(ProjectNamePredicate());
+
 			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
 			{
 				Project* externalProject = *j;
@@ -399,7 +410,9 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		{
 			Solution* solution = *i;
 
-			const RefArray< Project >& externalProjects = solution->getProjects();
+			RefArray< Project > externalProjects = solution->getProjects();
+			externalProjects.sort(ProjectNamePredicate());
+
 			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
 			{
 				Project* project = *j;
@@ -440,7 +453,9 @@ bool SolutionBuilderMsvc::generate(Solution* solution)
 		{
 			Solution* solution = *i;
 
-			const RefArray< Project >& externalProjects = solution->getProjects();
+			RefArray< Project > externalProjects = solution->getProjects();
+			externalProjects.sort(ProjectNamePredicate());
+
 			for (RefArray< Project >::const_iterator j = externalProjects.begin(); j != externalProjects.end(); ++j)
 			{
 				Project* project = *j;

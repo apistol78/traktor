@@ -2,8 +2,8 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/FilePipelinePutStream.h"
 
@@ -20,7 +20,7 @@ FilePipelineCache::FilePipelineCache()
 {
 }
 
-bool FilePipelineCache::create(const Settings* settings)
+bool FilePipelineCache::create(const PropertyGroup* settings)
 {
 	m_accessRead = settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", true);
 	m_accessWrite = settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", true);	

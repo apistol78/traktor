@@ -9,7 +9,7 @@ namespace traktor
 {
 
 class Functor;
-class Settings;
+class PropertyGroup;
 class Thread;
 
 	namespace ui
@@ -48,7 +48,7 @@ class BrowseInstanceDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	BrowseInstanceDialog(const IEditor* editor, Settings* settings);
+	BrowseInstanceDialog(const IEditor* editor, PropertyGroup* settings);
 
 	bool create(ui::Widget* parent, db::Database* database, const IBrowseFilter* filter);
 
@@ -58,7 +58,7 @@ public:
 
 private:
 	const IEditor* m_editor;
-	Ref< Settings > m_settings;
+	Ref< PropertyGroup > m_settings;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::custom::PreviewList > m_listInstances;
 	RefArray< const IBrowsePreview > m_browsePreview;

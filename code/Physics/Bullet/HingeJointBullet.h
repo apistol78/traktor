@@ -25,7 +25,7 @@ class T_DLLCLASS HingeJointBullet : public JointBullet< HingeJoint, btHingeConst
 	T_RTTI_CLASS;
 
 public:
-	HingeJointBullet(IWorldCallback* callback, btHingeConstraint* constraint, Body* body1, Body* body2);
+	HingeJointBullet(IWorldCallback* callback, btHingeConstraint* constraint, BodyBullet* body1, BodyBullet* body2);
 
 	virtual Vector4 getAnchor() const;
 

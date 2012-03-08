@@ -57,8 +57,6 @@ private:
 	std::vector< InputPin* > m_inputPins;
 	std::vector< OutputPin* > m_outputPins;
 
-	ImmutableNode(const ImmutableNode&) { T_FATAL_ERROR; }
-
 	ImmutableNode& operator = (const ImmutableNode&) { T_FATAL_ERROR; return *this; }
 };
 

@@ -3,8 +3,8 @@
 #include "Amalgam/Impl/PhysicsServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Physics/MeshFactory.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/EntityFactory.h"
@@ -18,7 +18,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.PhysicsServer", PhysicsServer, IPhysicsServer)
 
-bool PhysicsServer::create(const Settings* settings, float simulationDeltaTime)
+bool PhysicsServer::create(const PropertyGroup* settings, float simulationDeltaTime)
 {
 	std::wstring physicsType = settings->getProperty< PropertyString >(L"Physics.Type");
 
@@ -57,7 +57,7 @@ void PhysicsServer::createEntityFactories(IEnvironment* environment)
 	entityBuilder->addFactory(new physics::EntityFactory(resourceManager, m_physicsManager));
 }
 
-int32_t PhysicsServer::reconfigure(const Settings* settings)
+int32_t PhysicsServer::reconfigure(const PropertyGroup* settings)
 {
 	return CrUnaffected;
 }

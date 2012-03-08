@@ -10,14 +10,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Platform", 0, Platform, ISerializable)
 
-const std::wstring& Platform::getPipelineConfiguration() const
+Platform::Platform()
+:	m_iconIndex(0)
 {
-	return m_pipelineConfiguration;
 }
 
-const std::wstring& Platform::getApplicationConfiguration() const
+int32_t Platform::getIconIndex() const
 {
-	return m_applicationConfiguration;
+	return m_iconIndex;
 }
 
 const DeployTool& Platform::getDeployTool() const
@@ -31,8 +31,7 @@ const DeployTool& Platform::getDeployTool() const
 
 bool Platform::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"pipelineConfiguration", m_pipelineConfiguration);
-	s >> Member< std::wstring >(L"applicationConfiguration", m_applicationConfiguration);
+	s >> Member< int32_t >(L"iconIndex", m_iconIndex);
 	s >> MemberComposite< DeployTool >(L"deployToolWin32", m_deployToolWin32);
 	s >> MemberComposite< DeployTool >(L"deployToolOsX", m_deployToolOsX);
 	return true;

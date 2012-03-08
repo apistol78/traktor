@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_Application_H
 #define traktor_amalgam_Application_H
 
+#include "Core/RefArray.h"
 #include "Core/Library/Library.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
@@ -12,20 +13,13 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 class Thread;
 
 	namespace db
 	{
 
 class Database;
-
-	}
-
-	namespace online
-	{
-
-class ISessionManagerProvider;
 
 	}
 
@@ -59,9 +53,8 @@ public:
 	Application();
 
 	bool create(
-		const Settings* defaultSettings,
-		Settings* settings,
-		online::ISessionManagerProvider* sessionManagerProvider,
+		const PropertyGroup* defaultSettings,
+		PropertyGroup* settings,
 		IStateFactory* stateFactory,
 		void* nativeWindowHandle
 	);
@@ -75,8 +68,8 @@ public:
 	virtual Ref< IStateManager > getStateManager();
 
 private:
-	Ref< Settings > m_settings;
-	std::vector< Library > m_libraries;
+	Ref< PropertyGroup > m_settings;
+	RefArray< Library > m_libraries;
 	Ref< TargetManagerConnection > m_targetManagerConnection;
 	Ref< db::Database > m_database;
 	Ref< AudioServer > m_audioServer;

@@ -33,7 +33,7 @@ class T_DLLCLASS InspectReflector : public Serializer
 public:
 	InspectReflector(AutoPropertyList* propertyList, PropertyItem* parentPropertyItem = 0);
 	
-	virtual Serializer::Direction getDirection();
+	virtual Direction getDirection() const;
 
 	virtual bool operator >> (const Member< bool >& m);
 	

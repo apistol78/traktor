@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace ui
 	{
@@ -31,7 +31,7 @@ class NewInstanceDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	NewInstanceDialog(Settings* settings);
+	NewInstanceDialog(PropertyGroup* settings);
 
 	bool create(ui::Widget* parent);
 
@@ -40,7 +40,7 @@ public:
 	const std::wstring& getInstanceName() const;
 
 private:
-	Ref< Settings > m_settings;
+	Ref< PropertyGroup > m_settings;
 	Ref< ui::TreeView > m_categoryTree;
 	Ref< ui::custom::PreviewList > m_typeList;
 	Ref< ui::Edit > m_editInstanceName;

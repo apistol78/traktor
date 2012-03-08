@@ -1,6 +1,6 @@
 #include "Core/Io/FileSystem.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/Editor/Texture/TextureAsset.h"

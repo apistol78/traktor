@@ -19,7 +19,11 @@ Socket::Socket(SOCKET socket_)
 
 Socket::~Socket()
 {
-	close();
+	if (m_socket != INVALID_SOCKET)
+	{
+		CLOSE_SOCKET(m_socket);
+		m_socket = INVALID_SOCKET;
+	}
 }
 
 void Socket::close()

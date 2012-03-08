@@ -15,7 +15,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace ui
 	{
@@ -36,11 +36,11 @@ class T_DLLCLASS ISettingsPage : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands) = 0;
+	virtual bool create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands) = 0;
 
 	virtual void destroy() = 0;
 
-	virtual bool apply(Settings* settings) = 0;
+	virtual bool apply(PropertyGroup* settings) = 0;
 };
 
 	}

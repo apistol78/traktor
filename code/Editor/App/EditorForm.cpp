@@ -10,7 +10,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringArray.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/System/IProcess.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
@@ -145,7 +145,7 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 	return database;
 }
 
-bool findShortcutCommandMapping(const Settings* settings, const std::wstring& command, int& outKeyState, ui::VirtualKey& outVirtualKey)
+bool findShortcutCommandMapping(const PropertyGroup* settings, const std::wstring& command, int& outKeyState, ui::VirtualKey& outVirtualKey)
 {
 	const PropertyGroup* shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
 	if (!shortcutGroup)
@@ -189,18 +189,18 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Load dependent modules.
 #if !defined(T_STATIC)
-	const std::vector< std::wstring >& modules = m_settings->getProperty< PropertyStringArray >(L"Editor.Modules");
-	for (uint32_t i = 0; i < modules.size(); ++i)
+	const std::set< std::wstring >& modules = m_settings->getProperty< PropertyStringSet >(L"Editor.Modules");
+	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
-		Library library;
-		log::info << L"Loading module \"" << modules[i] << L"\"..." << Endl;
-		if (library.open(modules[i]))
+		log::info << L"Loading module \"" << *i << L"\"..." << Endl;
+		Ref< Library > library = new Library();
+		if (library->open(*i))
 		{
-			log::info << L"Module \"" << modules[i] << L"\" loaded successfully" << Endl;
-			library.detach();
+			log::info << L"Module \"" << *i << L"\" loaded successfully" << Endl;
+			library->detach();
 		}
 		else
-			log::error << L"Unable to load module \"" << modules[i] << L"\"" << Endl;
+			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 	}
 #endif
 
@@ -301,7 +301,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	Ref< ui::DockPane > paneCenter, paneLog;
 
-	pane->split(false, 280, m_paneWest, paneCenter);
+	pane->split(false, 320, m_paneWest, paneCenter);
 	paneCenter->split(false, -250, paneCenter, m_paneEast);
 	paneCenter->split(true, -140, paneCenter, paneLog);
 	paneCenter->split(true, -200, paneCenter, m_paneSouth);
@@ -543,7 +543,7 @@ void EditorForm::destroy()
 	Form::destroy();
 }
 
-Ref< Settings > EditorForm::getSettings() const
+Ref< PropertyGroup > EditorForm::getSettings() const
 {
 	return m_settings;
 }
@@ -1454,9 +1454,9 @@ void EditorForm::activateNextEditor()
 	}
 }
 
-Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
+Ref< PropertyGroup > EditorForm::loadSettings(const std::wstring& settingsFile)
 {
-	Ref< Settings > settings;
+	Ref< PropertyGroup > settings;
 	Ref< IStream > file;
 
 	std::wstring globalConfig = settingsFile + L".config";
@@ -1464,19 +1464,19 @@ Ref< Settings > EditorForm::loadSettings(const std::wstring& settingsFile)
 
 	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
 	{
-		settings = Settings::read< xml::XmlDeserializer >(file);
+		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 	}
 
 	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
 	{
-		Ref< Settings > userSettings = Settings::read< xml::XmlDeserializer >(file);
+		Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
 
 		if (userSettings)
 		{
 			if (settings)
-				settings->merge(userSettings, false);
+				settings = settings->mergeReplace(userSettings);
 			else
 				settings = userSettings;
 		}
@@ -1492,7 +1492,7 @@ void EditorForm::saveSettings(const std::wstring& settingsFile)
 	Ref< IStream > file = FileSystem::getInstance().open(userConfig, File::FmWrite);
 	if (file)
 	{
-		m_settings->write< xml::XmlSerializer >(file);
+		xml::XmlSerializer(file).writeObject(m_settings);
 		file->close();
 	}
 	else

@@ -46,6 +46,10 @@ public:
 
 	virtual bool hitTest(const ui::Point& position) const;
 
+	virtual bool calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const;
+
+	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta);
+
 private:
 	Ref< SceneEditorContext > m_context;
 	int32_t m_index;

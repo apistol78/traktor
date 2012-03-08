@@ -35,7 +35,7 @@ void LogTargetDebug::log(const std::wstring& str)
 	StringOutputStream ss;
 	ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
 	OutputDebugString(wstots(ss.str()).c_str());
-#elif defined(_DEBUG)
+#elif defined(_DEBUG) || defined(TARGET_OS_IPHONE)
 	std::wcout << L"(DEBUG) " << str << std::endl;
 #endif
 }

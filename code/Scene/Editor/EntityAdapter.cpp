@@ -16,14 +16,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapter", EntityAdapter, Object)
 
-EntityAdapter::EntityAdapter(world::EntityData* entityData)
-:	m_entityData(entityData)
-,	m_parent(0)
+EntityAdapter::EntityAdapter()
+:	m_parent(0)
 ,	m_selected(false)
 ,	m_expanded(false)
 ,	m_visible(true)
 ,	m_locked(false)
 {
+}
+
+void EntityAdapter::setEntityData(world::EntityData* entityData)
+{
+	m_entityData = entityData;
 }
 
 world::EntityData* EntityAdapter::getEntityData() const
@@ -43,28 +47,28 @@ world::Entity* EntityAdapter::getEntity() const
 
 std::wstring EntityAdapter::getName() const
 {
-	return m_entityData->getName();
+	return m_entityData ? m_entityData->getName() : L"< Null >";
 }
 
 std::wstring EntityAdapter::getTypeName() const
 {
-	return type_name(getEntityData());
+	return m_entityData ? type_name(m_entityData) : L"< void >";
 }
 
 bool EntityAdapter::isSpatial() const
 {
-	return is_a< world::SpatialEntityData >(getEntityData());
+	return is_a< world::SpatialEntityData >(m_entityData);
 }
 
 void EntityAdapter::setTransform0(const Transform& transform)
 {
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
+	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
 		spatialEntityData->setTransform(transform);
 }
 
 Transform EntityAdapter::getTransform0() const
 {
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
+	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
 		return spatialEntityData->getTransform();
 	else
 		return Transform::identity();
@@ -72,7 +76,7 @@ Transform EntityAdapter::getTransform0() const
 
 void EntityAdapter::setTransform(const Transform& transform)
 {
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
+	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
 		spatialEntityData->setTransform(transform);
 	if (world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity))
 		spatialEntity->setTransform(transform);
@@ -87,7 +91,7 @@ Transform EntityAdapter::getTransform() const
 			return transform;
 	}
 
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(getEntityData()))
+	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
 		return spatialEntityData->getTransform();
 
 	return Transform::identity();
@@ -117,12 +121,12 @@ bool EntityAdapter::isChildOfExternal() const
 
 bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 {
-	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(getEntityData()))
+	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(m_entityData))
 	{
 		outGuid = externalEntityData->getGuid();
 		return true;
 	}
-	if (const world::ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const world::ExternalSpatialEntityData* >(getEntityData()))
+	if (const world::ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const world::ExternalSpatialEntityData* >(m_entityData))
 	{
 		outGuid = externalSpatialEntityData->getGuid();
 		return true;

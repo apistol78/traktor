@@ -17,6 +17,7 @@ namespace traktor
 	namespace online
 	{
 
+class IGameConfiguration;
 class ISessionManagerProvider;
 class IUser;
 class TaskQueue;
@@ -27,7 +28,7 @@ class T_DLLCLASS SessionManager : public ISessionManager
 	T_RTTI_CLASS;
 
 public:
-	bool create(ISessionManagerProvider* provider);
+	bool create(ISessionManagerProvider* provider, const IGameConfiguration* configuration);
 
 	virtual void destroy();
 

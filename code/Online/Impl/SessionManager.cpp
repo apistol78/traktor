@@ -45,9 +45,12 @@ ServiceType waitUntilReady(const ServiceType& service)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SessionManager", SessionManager, ISessionManager)
 
-bool SessionManager::create(ISessionManagerProvider* provider)
+bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfiguration* configuration)
 {
 	if (!(m_provider = provider))
+		return false;
+
+	if (!m_provider->create(configuration))
 		return false;
 
 	m_taskQueues[0] = new TaskQueue();

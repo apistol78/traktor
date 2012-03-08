@@ -5,7 +5,7 @@
 			<comment/>
 			<position>
 				<first>1202</first>
-				<second>291</second>
+				<second>290</second>
 			</position>
 			<technique>Default</technique>
 			<cullMode>CmNever</cullMode>
@@ -22,7 +22,7 @@
 			<depthEnable>false</depthEnable>
 			<depthWriteEnable>false</depthWriteEnable>
 			<depthFunction>CfLessEqual</depthFunction>
-			<alphaTestEnable>true</alphaTestEnable>
+			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfGreater</alphaTestFunction>
 			<alphaTestReference>0</alphaTestReference>
 			<wireframe>false</wireframe>
@@ -49,8 +49,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>788</first>
-				<second>246</second>
+				<first>893</first>
+				<second>268</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>
@@ -58,7 +58,7 @@
 			<comment/>
 			<position>
 				<first>626</first>
-				<second>217</second>
+				<second>216</second>
 			</position>
 			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
@@ -532,22 +532,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[27]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

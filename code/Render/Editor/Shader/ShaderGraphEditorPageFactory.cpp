@@ -24,15 +24,22 @@ Ref< editor::IEditorPage > ShaderGraphEditorPageFactory::createEditorPage(editor
 
 void ShaderGraphEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.AlignBottom"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.AlignLeft"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.AlignRight"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.AlignTop"));
-	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.AlignBottom"));
-	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically"));
-	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.EventSpaceHorizontally"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.Center"));
-	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.QuickMenu"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.CleanupSwizzles"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.ConstantFold"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.EvenSpaceHorizontally"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.EvenSpaceVertically"));
 	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.FindInDatabase"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.OpenReferee"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.PlatformPermutation"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.QuickMenu"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.RemoveUnusedNodes"));
+	outCommands.push_back(ui::Command(L"ShaderGraph.Editor.UpdateFragments"));
 }
 
 	}

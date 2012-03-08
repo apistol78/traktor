@@ -6,12 +6,12 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
-	namespace online
+	namespace db
 	{
 
-class ISessionManagerProvider;
+class Database;
 
 	}
 
@@ -23,11 +23,11 @@ class OnlineServer : public IOnlineServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(online::ISessionManagerProvider* provider);
+	bool create(const PropertyGroup* settings, db::Database* db);
 
 	void destroy();
 
-	int32_t reconfigure(const Settings* settings);
+	int32_t reconfigure(const PropertyGroup* settings);
 
 	virtual online::ISessionManager* getSessionManager();
 

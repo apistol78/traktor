@@ -1,8 +1,8 @@
 #include <limits>
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Const.h"
-#include "Physics/Body.h"
 #include "Physics/ConeTwistJointDesc.h"
+#include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/ConeTwistJointBullet.h"
 #include "Physics/Bullet/Conversion.h"
 
@@ -24,7 +24,7 @@ const Vector4 c_axis[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ConeTwistJointBullet", ConeTwistJointBullet, ConeTwistJoint)
 
-ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, Body* body1, const ConeTwistJointDesc* desc)
+ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, BodyBullet* body1, const ConeTwistJointDesc* desc)
 :	JointBullet< ConeTwistJoint, JointConstraint >(callback, constraint, body1, 0)
 ,	m_desc(desc)
 {
@@ -43,7 +43,7 @@ ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstr
 	m_dynamicBody1 = body1;
 }
 
-ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, Body* body1, Body* body2, const ConeTwistJointDesc* desc)
+ConeTwistJointBullet::ConeTwistJointBullet(IWorldCallback* callback, JointConstraint* constraint, const Transform& transform, BodyBullet* body1, BodyBullet* body2, const ConeTwistJointDesc* desc)
 :	JointBullet< ConeTwistJoint, JointConstraint >(callback, constraint, body1, body2)
 ,	m_desc(desc)
 {

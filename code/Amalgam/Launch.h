@@ -14,13 +14,6 @@
 
 namespace traktor
 {
-	namespace online
-	{
-
-class ISessionManagerProvider;
-
-	}
-
 	namespace amalgam
 	{
 
@@ -34,14 +27,12 @@ class IStateFactory;
  *
  * \param cmdLine Command line.
  * \param settingsFileName File name of settings file.
- * \param sessionManagerProvider Online session manager provider.
  * \param stateFactory State factory implementation for initial state.
  * \return Error code.
  */
 int32_t T_DLLCLASS amalgamMain(
 	const CommandLine& cmdLine,
 	const std::wstring& settingsFileName,
-	online::ISessionManagerProvider* sessionManagerProvider,
 	amalgam::IStateFactory* stateFactory
 );
 

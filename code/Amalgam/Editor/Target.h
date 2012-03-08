@@ -1,7 +1,7 @@
 #ifndef traktor_amalgam_Target_H
 #define traktor_amalgam_Target_H
 
-#include "Core/Guid.h"
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -17,29 +17,30 @@ namespace traktor
 	namespace amalgam
 	{
 
+class TargetConfiguration;
+
 class T_DLLCLASS Target : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	const std::wstring& getPipelineConfiguration() const;
+	void setIdentifier(const std::wstring& identifier);
 
-	const std::wstring& getApplicationConfiguration() const;
+	const std::wstring& getIdentifier() const;
 
-	const std::wstring& getExecutable() const;
+	void addConfiguration(TargetConfiguration* configuration);
 
-	const Guid& getRootAsset() const;
+	void removeConfiguration(TargetConfiguration* configuration);
 
-	const Guid& getStartupInstance() const;
+	void removeAllConfigurations();
+
+	const RefArray< TargetConfiguration >& getConfigurations() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	std::wstring m_pipelineConfiguration;
-	std::wstring m_applicationConfiguration;
-	std::wstring m_executable;
-	Guid m_rootAsset;
-	Guid m_startupInstance;
+	std::wstring m_identifier;
+	RefArray< TargetConfiguration > m_configurations; 
 };
 
 	}

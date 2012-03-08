@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -46,10 +46,16 @@ public:
 		uint32_t reason
 	) const;
 
+	virtual Ref< ISerializable > buildOutput(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const ISerializable* sourceAsset
+	) const;
+
 private:
 	bool m_suppressDepthPass;
 	bool m_suppressShadows;
 	bool m_suppressPostProcess;
+	bool m_suppressPreLit;
 	int32_t m_shadowMapSizeDenom;
 };
 

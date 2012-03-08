@@ -98,6 +98,15 @@ bool DebugRenderControl::hitTest(const ui::Point& position) const
 	return m_renderWidget->hitTest(position);
 }
 
+bool DebugRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
+{
+	return false;
+}
+
+void DebugRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
+{
+}
+
 void DebugRenderControl::eventSize(ui::Event* event)
 {
 	if (!m_renderView || !m_renderWidget->isVisible(true))

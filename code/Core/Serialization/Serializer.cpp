@@ -8,7 +8,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.Serializer", Serializer, ISerializer);
 
 Ref< ISerializable > Serializer::readObject()
 {
-	ISerializable* object = 0;
+	Ref< ISerializable > object;
 
 	if (getDirection() != SdRead)
 		return 0;
@@ -21,7 +21,7 @@ Ref< ISerializable > Serializer::readObject()
 
 bool Serializer::writeObject(const ISerializable* o)
 {
-	ISerializable* mutableObject = const_cast< ISerializable* >(o);
+	Ref< ISerializable > mutableObject = const_cast< ISerializable* >(o);
 
 	if (getDirection() != SdWrite)
 		return false;

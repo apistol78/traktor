@@ -4,9 +4,9 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix44.h"
-#include "Core/Math/Vector4.h"
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
+#include "Scene/Editor/RenderControlModel.h"
 #include "Ui/Point.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
@@ -43,9 +43,8 @@ class Entity;
 	namespace scene
 	{
 
-class SceneEditorContext;
 class Camera;
-class EntityAdapter;
+class SceneEditorContext;
 
 class PerspectiveRenderControl : public ISceneRenderControl
 {
@@ -68,6 +67,10 @@ public:
 
 	virtual bool hitTest(const ui::Point& position) const;
 
+	virtual bool calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const;
+
+	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta);
+
 private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_containerAspect;
@@ -79,6 +82,7 @@ private:
 	Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
+	RenderControlModel m_model;
 	int32_t m_index;
 	bool m_gridEnable;
 	bool m_guideEnable;
@@ -88,25 +92,18 @@ private:
 	Color4ub m_colorRef;
 	float m_fieldOfView;
 	int32_t m_multiSample;
+	bool m_invertPanY;
 	Timer m_timer;
-	ui::Point m_mousePosition;
-	int m_mouseButton;
-	bool m_modifyCamera;
-	bool m_modifyAlternative;
-	bool m_modifyBegun;
 	Ref< Camera > m_camera;
-	RefArray< EntityAdapter > m_modifyEntities;
 	ui::Size m_dirtySize;
 
 	void updateSettings();
 
 	void updateWorldRenderView();
 
-	void calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const;
+	Matrix44 getProjectionTransform() const;
 
-	Ref< EntityAdapter > pickEntity(const ui::Point& position) const;
-
-	Matrix44 getView() const;
+	Matrix44 getViewTransform() const;
 
 	void eventButtonDown(ui::Event* event);
 

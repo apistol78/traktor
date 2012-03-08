@@ -39,7 +39,7 @@ XmlDeserializer::XmlDeserializer(IStream* stream)
 	m_values.reserve(16);
 }
 
-Serializer::Direction XmlDeserializer::getDirection()
+Serializer::Direction XmlDeserializer::getDirection() const
 {
 	return Serializer::SdRead;
 }

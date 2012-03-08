@@ -7,7 +7,7 @@
 			<width>0</width>
 			<height>0</height>
 			<screenDenom>8</screenDenom>
-			<format>TfR32F</format>
+			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
@@ -17,7 +17,7 @@
 			<width>64</width>
 			<height>64</height>
 			<screenDenom>0</screenDenom>
-			<format>TfR32F</format>
+			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
@@ -27,7 +27,7 @@
 			<width>16</width>
 			<height>16</height>
 			<screenDenom>0</screenDenom>
-			<format>TfR32F</format>
+			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
@@ -37,7 +37,7 @@
 			<width>4</width>
 			<height>4</height>
 			<screenDenom>0</screenDenom>
-			<format>TfR32F</format>
+			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
@@ -47,7 +47,7 @@
 			<width>1</width>
 			<height>1</height>
 			<screenDenom>0</screenDenom>
-			<format>TfR32F</format>
+			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
@@ -57,7 +57,7 @@
 			<width>1</width>
 			<height>1</height>
 			<screenDenom>0</screenDenom>
-			<format>TfR32F</format>
+			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>
@@ -67,7 +67,7 @@
 			<width>1</width>
 			<height>1</height>
 			<screenDenom>0</screenDenom>
-			<format>TfR32F</format>
+			<format>TfR16F</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>false</preferTiled>
 			<multiSample>0</multiSample>

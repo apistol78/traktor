@@ -94,11 +94,28 @@ bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 	return false;
 }
 
+void bindAttribute(GLuint programObject, DataUsage usage, int32_t index)
+{
+	std::string attributeName = wstombs(glsl_vertex_attr_name(usage, index));	
+
+	int32_t attributeLocation = glsl_vertex_attr_location(usage, index);
+	if (attributeLocation < 0)
+		return;
+	
+	T_OGL_SAFE(glBindAttribLocation(
+		programObject,
+		attributeLocation,
+		attributeName.c_str()
+	));
+}
+
 std::map< uint32_t, ProgramOpenGLES2* > s_programCache;
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGLES2", ProgramOpenGLES2, IProgram)
+
+ProgramOpenGLES2* ProgramOpenGLES2::ms_current = 0;
 
 ProgramOpenGLES2::~ProgramOpenGLES2()
 {
@@ -120,21 +137,6 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 	resource->setHash(hash);
 
 	return resource;
-}
-
-void bindAttribute(GLuint programObject, DataUsage usage, int32_t index)
-{
-	std::string attributeName = wstombs(glsl_vertex_attr_name(usage, index));	
-
-	int32_t attributeLocation = glsl_vertex_attr_location(usage, index);
-	if (attributeLocation < 0)
-		return;
-	
-	T_OGL_SAFE(glBindAttribLocation(
-		programObject,
-		attributeLocation,
-		attributeName.c_str()
-	));
 }
 
 Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceContext, const ProgramResource* resource)
@@ -212,6 +214,9 @@ Ref< ProgramOpenGLES2 > ProgramOpenGLES2::create(ContextOpenGLES2* resourceConte
 void ProgramOpenGLES2::destroy()
 {
 #if !defined(T_OFFLINE_ONLY)
+
+	if (ms_current == this)
+		ms_current = 0;
 
 	for (std::map< uint32_t, ProgramOpenGLES2* >::iterator i = s_programCache.begin(); i != s_programCache.end(); ++i)
 	{
@@ -307,8 +312,6 @@ void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 		m_textureBindings[i->second] = static_cast< ITextureBinding* >(rt);
 	else
 		m_textureBindings[i->second] = 0;
-
-	m_textureDirty = true;
 	
 #endif
 }
@@ -318,12 +321,12 @@ void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2])
+bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull)
 {
 #if !defined(T_OFFLINE_ONLY)
 
 	// Bind program and set state display list.
-	stateCache->setRenderState(m_renderState);
+	stateCache->setRenderState(m_renderState, invertCull);
 	stateCache->setProgram(m_program);
 	
 	// Update dirty uniforms.
@@ -364,33 +367,37 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2])
 			m_targetSize[1] = targetSize[1];
 		}
 	}
+	
+	// Update post transform.
+	if (m_locationPostTransform != -1)
+	{
+		T_OGL_SAFE(glUniform4fv(m_locationPostTransform, 1, postTransform));
+	}
 
 	// Bind textures.
-	if (m_textureDirty)
+	T_ASSERT (m_samplers.size() <= 8);
+	uint32_t nsamplers = m_samplers.size();
+	for (uint32_t i = 0; i < nsamplers; ++i)
 	{
-		T_ASSERT (m_samplers.size() <= 8);
-		uint32_t nsamplers = m_samplers.size();
-		for (uint32_t i = 0; i < nsamplers; ++i)
-		{
-			const Sampler& sampler = m_samplers[i];
-			const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
+		const Sampler& sampler = m_samplers[i];
+		const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
 
-			ITextureBinding* tb = m_textureBindings[sampler.texture];
-			T_ASSERT (tb);
+		ITextureBinding* tb = m_textureBindings[sampler.texture];
+		T_ASSERT (tb);
 			
-			if (tb)
-			{
-				tb->bind(
-					i,
-					samplerState,
-					sampler.locationTexture
-				);
-			}
+		if (tb)
+		{
+			tb->bind(
+				i,
+				samplerState,
+				sampler.locationTexture
+			);
 		}
-		m_textureDirty = false;
 	}
 	
 #endif
+
+	ms_current = this;
 	return true;
 }
 
@@ -398,7 +405,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 :	m_resourceContext(resourceContext)
 ,	m_program(program)
 ,	m_locationTargetSize(0)
-,	m_textureDirty(true)
+,	m_locationPostTransform(0)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 
@@ -407,6 +414,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 	
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
+	m_locationPostTransform = glGetUniformLocation(m_program, "_gl_postTransform");
 
 	// Map texture parameters.
 	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();

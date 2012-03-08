@@ -30,6 +30,15 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 {
 	switch (textureFormat)
 	{
+#if defined(__APPLE__) && defined(GL_RED_EXT)
+	case TfR8:
+		outPixelSize = 1;
+		outComponents = GL_RED_EXT;
+		outFormat = GL_RED_EXT;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+#endif
+
 	case TfR8G8B8A8:
 		outPixelSize = 4;
 		outComponents = GL_RGBA;
@@ -43,6 +52,24 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outFormat = GL_RGBA;
 		outType = GL_FLOAT;
 		break;
+		
+#if defined(__APPLE__) && defined(GL_RED_EXT)
+	case TfR16F:
+		outPixelSize = 2;
+		outComponents = GL_RED_EXT;
+		outFormat = GL_RED_EXT;
+		outType = GL_HALF_FLOAT_OES;
+		break;
+#endif
+	
+#if defined(__APPLE__) && defined(GL_RED_EXT)
+	case TfR32F:
+		outPixelSize = 4;
+		outComponents = GL_RED_EXT;
+		outFormat = GL_RED_EXT;
+		outType = GL_FLOAT;
+		break;
+#endif
 
 #if defined(GL_IMG_texture_compression_pvrtc)
 	case TfPVRTC1:
@@ -112,20 +139,19 @@ bool SimpleTextureOpenGLES2::create(const SimpleTextureCreateDesc& desc)
 	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
+	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+
+	// Set default parameters as its might help driver.
+	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
+	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
+	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
+	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
 
 	// Allocate data buffer.
 	uint32_t texturePitch = getTextureMipPitch(desc.format, desc.width, desc.height);
 	if (desc.immutable)
 	{
-		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-		T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-
-		// Set default parameters as its might help driver.
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR));
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR));
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT));
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT));
-	
 		for (int i = 0; i < desc.mipCount; ++i)
 		{
 			uint32_t width = std::max(m_width >> i, 1);
@@ -200,7 +226,7 @@ int SimpleTextureOpenGLES2::getHeight() const
 
 bool SimpleTextureOpenGLES2::lock(int level, Lock& lock)
 {
-	if (m_data.empty())
+	if (m_data.empty() || level >= m_mipCount)
 		return false;
 
 	lock.pitch = std::max(m_width >> level, 1) * m_pixelSize;
@@ -211,11 +237,11 @@ bool SimpleTextureOpenGLES2::lock(int level, Lock& lock)
 void SimpleTextureOpenGLES2::unlock(int level)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
-	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
+	T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
 	T_OGL_SAFE(glTexImage2D(
 		GL_TEXTURE_2D,
-		0,
+		level,
 		m_components,
 		std::max(m_width >> level, 1),
 		std::max(m_height >> level, 1),
@@ -237,9 +263,11 @@ void SimpleTextureOpenGLES2::bind(GLuint unit, const SamplerState& samplerState,
 		minFilter = samplerState.minFilter;
 	else
 	{
+	/*
 		if (samplerState.minFilter != GL_NEAREST)
 			minFilter = GL_LINEAR;
 		else
+	*/
 			minFilter = GL_NEAREST;
 	}
 

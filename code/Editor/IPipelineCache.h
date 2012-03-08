@@ -16,7 +16,7 @@ namespace traktor
 {
 
 class IStream;
-class Settings;
+class PropertyGroup;
 
 	namespace editor
 	{
@@ -26,7 +26,7 @@ class T_DLLCLASS IPipelineCache : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool create(const Settings* settings) = 0;
+	virtual bool create(const PropertyGroup* settings) = 0;
 
 	virtual void destroy() = 0;
 

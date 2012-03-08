@@ -28,6 +28,8 @@ public:
 	virtual void removeAll();
 
 	virtual int count() const;
+	
+	virtual void set(int index, const std::wstring& item);
 
 	virtual std::wstring get(int index) const;
 	

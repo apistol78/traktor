@@ -1,14 +1,15 @@
 #ifndef traktor_ui_DropDown_H
 #define traktor_ui_DropDown_H
 
+#include <map>
 #include "Ui/Widget.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,7 +27,7 @@ class T_DLLCLASS DropDown : public Widget
 public:
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsBorder);
 	
-	int add(const std::wstring& item);
+	int add(const std::wstring& item, Object* data = 0);
 
 	bool remove(int index);
 
@@ -34,7 +35,13 @@ public:
 
 	int count() const;
 
-	std::wstring get(int index) const;
+	void setItem(int index, const std::wstring& item);
+
+	void setData(int index, Object* data);
+
+	std::wstring getItem(int index) const;
+
+	Ref< Object > getData(int index) const;
 
 	void select(int index);
 
@@ -42,7 +49,24 @@ public:
 
 	std::wstring getSelectedItem() const;
 
+	Ref< Object > getSelectedData() const;
+
 	void addSelectEventHandler(EventHandler* eventHandler);
+
+	template < typename T >
+	Ref< T > getData(int index) const
+	{
+		return dynamic_type_cast< T* >(getData(index));
+	}
+
+	template < typename T >
+	Ref< T > getSelectedData() const
+	{
+		return dynamic_type_cast< T* >(getSelectedData());
+	}
+
+private:
+	std::map< int, Ref< Object > > m_data;
 };
 
 	}

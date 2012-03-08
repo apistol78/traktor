@@ -26,6 +26,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshEntityData", 0, MeshEntityData, AbstractMeshEntityData)
 
+void MeshEntityData::setMesh(const resource::Proxy< IMesh >& mesh)
+{
+	m_mesh = mesh;
+}
+
+const resource::Proxy< IMesh >& MeshEntityData::getMesh() const
+{
+	return m_mesh;
+}
+
 Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
 {
 	if (!resourceManager->bind(m_mesh))

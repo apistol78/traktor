@@ -1,3 +1,4 @@
+#include "Database/Instance.h"
 #include "Ui/Container.h"
 #include "Ui/Event.h"
 #include "Ui/FloodLayout.h"
@@ -101,6 +102,7 @@ void PostProcessEditor::destroy()
 
 void PostProcessEditor::apply()
 {
+	m_instance->setObject(m_asset);
 }
 
 void PostProcessEditor::updateStepView(PostProcessStepItem* parent, const RefArray< PostProcessStep >& steps)

@@ -39,6 +39,8 @@ class T_DLLCLASS IPipelineBuilder : public Object
 public:
 	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild) = 0;
 
+	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset) = 0;
+
 	virtual bool buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid) = 0;
 
 	virtual Ref< db::Database > getSourceDatabase() const = 0;

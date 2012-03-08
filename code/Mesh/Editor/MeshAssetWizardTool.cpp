@@ -1,12 +1,13 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
+#include "Mesh/MeshEntityData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetWizardTool.h"
 #include "Ui/FileDialog.h"
@@ -63,6 +64,24 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	assetInstance->setObject(asset);
 
 	if (!assetInstance->commit())
+		return false;
+
+	// Create mesh entity data.
+	Ref< MeshEntityData > entityData = new MeshEntityData();
+	entityData->setName(fileName.getFileNameNoExtension());
+	entityData->setMesh(resource::Proxy< IMesh >(assetInstance->getGuid()));
+
+	// Create mesh entity data instance.
+	Ref< db::Instance > entityDataInstance = group->createInstance(
+		fileName.getFileNameNoExtension() + L"-Entity",
+		db::CifReplaceExisting | db::CifKeepExistingGuid
+	);
+	if (!entityDataInstance)
+		return false;
+
+	entityDataInstance->setObject(entityData);
+
+	if (!entityDataInstance->commit())
 		return false;
 
 	return true;

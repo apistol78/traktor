@@ -63,6 +63,28 @@ String transform(const String& str, int (*func)(int c))
 	return cpy;
 }
 
+/*! \brief Implode set of strings into a single string.
+ * \ingroup Core
+ *
+ * \param begin From iterator.
+ * \param end To iterator.
+ * \param delim Delimiter string.
+ * \return Merged string.
+ */
+template < typename Iterator >
+typename Iterator::value_type implode(const Iterator& begin, const Iterator& end, const typename Iterator::value_type& delim)
+{
+	typename Iterator::value_type tmp;
+	Iterator i = begin;
+	if (i != end)
+	{
+		tmp = *i++;
+		for (; i != end; ++i)
+			tmp += delim + *i;
+	}
+	return tmp;
+}
+
 /*! \brief Transform a string to all uppercase.
  * \ingroup Core
  *

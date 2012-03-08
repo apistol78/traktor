@@ -9,7 +9,7 @@ namespace traktor
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.PropertyKey", 0, PropertyKey, IPropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(L"traktor.editor.PropertyKey", 0, PropertyKey, IPropertyValue)
 
 PropertyKey::PropertyKey(const value_type_t& value)
 :	m_value(value)
@@ -19,11 +19,6 @@ PropertyKey::PropertyKey(const value_type_t& value)
 PropertyKey::value_type_t PropertyKey::get(const IPropertyValue* value)
 {
 	return value ? checked_type_cast< const PropertyKey* >(value)->m_value : value_type_t(0, ui::VkNull);
-}
-
-IPropertyValue* PropertyKey::merge(IPropertyValue* right, bool join)
-{
-	return right;
 }
 
 bool PropertyKey::serialize(ISerializer& s)
@@ -100,6 +95,11 @@ bool PropertyKey::serialize(ISerializer& s)
 		s >> Member< std::wstring >(L"key", keydesc);
 	}
 	return true;
+}
+
+Ref< IPropertyValue > PropertyKey::join(const IPropertyValue* right) const
+{
+	return clone_instance(right);
 }
 
 	}

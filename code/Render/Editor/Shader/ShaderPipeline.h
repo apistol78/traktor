@@ -49,6 +49,11 @@ public:
 		uint32_t reason
 	) const;
 
+	virtual Ref< ISerializable > buildOutput(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const ISerializable* sourceAsset
+	) const;
+
 private:
 	Ref< IProgramCompiler > m_programCompiler;
 	Ref< IProgramHints > m_programHints;

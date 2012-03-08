@@ -1,22 +1,22 @@
-#include "Amalgam/Editor/BuildTargetAction.h"
-#include "Amalgam/Editor/DeployTargetAction.h"
 #include "Amalgam/Editor/EditorPlugin.h"
-#include "Amalgam/Editor/LaunchTargetAction.h"
-#include "Amalgam/Editor/MigrateTargetAction.h"
 #include "Amalgam/Editor/HostEnumerator.h"
 #include "Amalgam/Editor/Platform.h"
-#include "Amalgam/Editor/PlatformInstance.h"
-#include "Amalgam/Editor/PostTargetAction.h"
 #include "Amalgam/Editor/Target.h"
+#include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/TargetInstance.h"
-#include "Amalgam/Editor/TargetListControl.h"
 #include "Amalgam/Editor/TargetManager.h"
+#include "Amalgam/Editor/Tool/BuildTargetAction.h"
+#include "Amalgam/Editor/Tool/DeployTargetAction.h"
+#include "Amalgam/Editor/Tool/LaunchTargetAction.h"
+#include "Amalgam/Editor/Tool/MigrateTargetAction.h"
+#include "Amalgam/Editor/Ui/TargetListControl.h"
+#include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/Settings.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
@@ -35,6 +35,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
+#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -45,6 +46,30 @@ namespace traktor
 
 const uint16_t c_remoteDatabasePort = 35000;
 const uint16_t c_targetConnectionPort = 36000;
+
+class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
+{
+public:
+	TargetInstanceProgressListener(TargetListControl* targetListControl, TargetInstance* targetInstance, TargetState targetState)
+	:	m_targetListControl(targetListControl)
+	,	m_targetInstance(targetInstance)
+	,	m_targetState(targetState)
+	{
+	}
+
+	void notifyTargetActionProgress(int32_t currentStep, int32_t maxStep)
+	{
+		m_targetInstance->setState(m_targetState);
+		m_targetInstance->setBuildProgress((currentStep * 100) / maxStep);
+		m_targetListControl->requestLayout();
+		m_targetListControl->requestUpdate();
+	}
+
+private:
+	Ref< TargetListControl > m_targetListControl;
+	Ref< TargetInstance > m_targetInstance;
+	TargetState m_targetState;
+};
 
 		}
 
@@ -65,15 +90,17 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_parent = parent;
 	m_site = site;
 
-	// Get defined platforms.
-	collectPlatforms();
+	collectTargets();
 
 	// Create target manager.
 	m_targetManager = new TargetManager();
 	if (m_targetManager->create(
 		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
 	))
-		collectTargets();
+	{
+		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+			m_targetManager->addInstance(*i);
+	}
 	else
 	{
 		log::error << L"Unable to create target manager; target manager disabled" << Endl;
@@ -87,27 +114,27 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_hostEnumerator = new HostEnumerator(m_discoveryManager);
 
-	// Create interface.
+	// Create panel.
 	Ref< ui::Container > container = new ui::Container();
 	container->create(m_parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 	container->setText(L"Targets");
 
+	// Create toolbar; add all targets as drop down items.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
+	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventToolBarClick));
 
-	m_toolPlatforms = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.View"), 150, i18n::Text(L"AMALGAM_PLATFORMS"));
-	for (RefArray< PlatformInstance >::const_iterator i = m_platformInstances.begin(); i != m_platformInstances.end(); ++i)
-		m_toolPlatforms->add((*i)->getName());
-	m_toolPlatforms->select(0);
-	m_toolBar->addItem(m_toolPlatforms);
+	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), 150, i18n::Text(L"AMALGAM_TARGETS"));
+	for (std::vector< EditTarget >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+		m_toolTargets->add(i->name);
 
-	m_targetList = new TargetListControl(m_hostEnumerator);
+	m_toolBar->addItem(m_toolTargets);
+
+	// Create target configuration list control.
+	m_targetList = new TargetListControl();
 	m_targetList->create(container);
-	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-		m_targetList->add(*i);
-
-	m_targetList->addPlayEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetPlay));
-	m_targetList->addStopEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetStop));
+	m_targetList->addPlayEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListPlay));
+	//m_targetList->addStopEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetStop));
 
 	m_site->createAdditionalPanel(container, 200, false);
 
@@ -119,21 +146,10 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
 	{
-		std::wstring targetName = (*i)->getName();
-		const Target* target = (*i)->getTarget();
-
-		for (RefArray< PlatformInstance >::const_iterator j = m_platformInstances.begin(); j != m_platformInstances.end(); ++j)
-		{
-			std::wstring platformName = (*j)->getName();
-			const Platform* platform = (*j)->getPlatform();
-
-			std::wstring remoteId = targetName + L"|" + platformName;
-			std::wstring outputPath = L"output/" + targetName + L"/" + platformName;
-			std::wstring databasePath = outputPath + L"/db";
-			std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
-
-			configuration->setConnectionString(remoteId, databaseCs);
-		}
+		std::wstring remoteId = (*i)->getDatabaseName();
+		std::wstring databasePath = (*i)->getOutputPath() + L"/db";
+		std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
+		configuration->setConnectionString(remoteId, databaseCs);
 	}
 
 	m_connectionManager = new db::ConnectionManager();
@@ -144,11 +160,17 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	}
 
 	// Create communication threads.
-	m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
-	m_threadTargetManager->start();
+	if (m_hostEnumerator || m_targetManager)
+	{
+		m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
+		m_threadTargetManager->start();
+	}
 
-	m_threadConnectionManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadConnectionManager), L"Connection manager");
-	m_threadConnectionManager->start();
+	if (m_connectionManager)
+	{
+		m_threadConnectionManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadConnectionManager), L"Connection manager");
+		m_threadConnectionManager->start();
+	}
 
 	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
 	m_threadTargetActions->start();
@@ -189,7 +211,6 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 	if (command == L"Editor.Build")
 	{
-		/*
 		// Refresh all running targets.
 		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
 		{
@@ -205,14 +226,29 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 
 			{
 				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
-				m_targetActionQueue.push_back(new BuildTargetAction(m_editor, targetInstance));
-				m_targetActionQueue.push_back(new PostTargetAction(targetInstance, TsIdle));
+
+				ActionChain chain;
+				chain.targetInstance = targetInstance;
+
+				Action action;
+
+				// Add build output data action.
+				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
+				action.action = new BuildTargetAction(
+					m_editor->getSourceDatabase(),
+					m_editor->getSettings(),
+					targetInstance->getTarget(),
+					targetInstance->getTargetConfiguration(),
+					targetInstance->getOutputPath()
+				);
+				chain.actions.push_back(action);
+
+				m_targetActionQueue.push_back(chain);
 				m_targetActionQueueSignal.set();
 			}
 		}
 
 		m_targetList->update();
-		*/
 	}
 	else
 		result = false;
@@ -224,28 +260,9 @@ void EditorPlugin::handleDatabaseEvent(const Guid& eventId)
 {
 }
 
-void EditorPlugin::collectPlatforms()
-{
-	m_platformInstances.clear();
-
-	Ref< db::Database > sourceDatabase = m_editor->getSourceDatabase();
-	if (sourceDatabase)
-	{
-		RefArray< db::Instance > platformInstances;
-		db::recursiveFindChildInstances(sourceDatabase->getRootGroup(), db::FindInstanceByType(type_of< Platform >()), platformInstances);
-
-		for (RefArray< db::Instance >::iterator i = platformInstances.begin(); i != platformInstances.end(); ++i)
-		{
-			Ref< const Platform > platform = (*i)->getObject< Platform >();
-			T_ASSERT (platform);
-
-			m_platformInstances.push_back(new PlatformInstance((*i)->getName(), platform));
-		}
-	}
-}
-
 void EditorPlugin::collectTargets()
 {
+	m_targets.resize(0);
 	m_targetInstances.resize(0);
 
 	Ref< db::Database > sourceDatabase = m_editor->getSourceDatabase();
@@ -256,52 +273,106 @@ void EditorPlugin::collectTargets()
 
 		for (RefArray< db::Instance >::iterator i = targetInstances.begin(); i != targetInstances.end(); ++i)
 		{
-			Ref< const Target > target = (*i)->getObject< Target >();
-			T_ASSERT (target);
+			EditTarget et;
 
-			Ref< TargetInstance > targetInstance = m_targetManager->createInstance((*i)->getName(), target);
-			if (targetInstance)
+			et.name = (*i)->getName();
+			et.target = (*i)->getObject< Target >();
+			T_ASSERT (et.target);
+
+			m_targets.push_back(et);
+
+			const RefArray< TargetConfiguration >& targetConfigurations = et.target->getConfigurations();
+			for (RefArray< TargetConfiguration >::const_iterator j = targetConfigurations.begin(); j != targetConfigurations.end(); ++j)
+			{
+				TargetConfiguration* targetConfiguration = *j;
+				T_ASSERT (targetConfiguration);
+
+				Ref< const Platform > platform = sourceDatabase->getObjectReadOnly< Platform >(targetConfiguration->getPlatform());
+				T_ASSERT (platform);
+
+				Ref< TargetInstance > targetInstance = new TargetInstance(et.name, et.target, targetConfiguration, platform);
+				T_ASSERT (targetInstance);
+
 				m_targetInstances.push_back(targetInstance);
+			}
 		}
 	}
 }
 
-void EditorPlugin::eventTargetPlay(ui::Event* event)
+void EditorPlugin::eventTargetListPlay(ui::Event* event)
 {
-	int32_t platformIndex = m_toolPlatforms->getSelected();
-	if (platformIndex < 0)
-		return;
-
-	PlatformInstance* platformInstance = m_platformInstances[platformIndex];
-	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(event->getItem());
-
-	if (targetInstance->getState() != TsIdle)
-		return;
-
-	targetInstance->setState(TsPending);
-	targetInstance->setBuildProgress(0);
+	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
+	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
 
 	std::wstring deployHost = L"";
 	m_hostEnumerator->getHost(targetInstance->getDeployHostId(), deployHost);
+
+	// Set target's state to pending as actions can be queued up to be performed much later.
+	targetInstance->setState(TsPending);
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
 
 		ActionChain chain;
-		chain.actions.push_back(new BuildTargetAction(m_editor, platformInstance, targetInstance));
+		chain.targetInstance = targetInstance;
+
+		Action action;
+
+		// Add build output data action.
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
+		action.action = new BuildTargetAction(
+			m_editor->getSourceDatabase(),
+			m_editor->getSettings(),
+			targetInstance->getTarget(),
+			targetInstance->getTargetConfiguration(),
+			targetInstance->getOutputPath()
+		);
+		chain.actions.push_back(action);
 
 		if (event->getKeyState() == 0)
 		{
-			chain.actions.push_back(new DeployTargetAction(m_editor, platformInstance, targetInstance, deployHost));
-			chain.actions.push_back(new LaunchTargetAction(m_editor, platformInstance, targetInstance, deployHost));
-		}
-		else if ((event->getKeyState() & (ui::KsControl | ui::KsCommand)) != 0)
-		{
-			chain.actions.push_back(new MigrateTargetAction(m_editor, platformInstance, targetInstance));
-		}
+			// Add deploy and launch actions.
+			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
+			action.action = new DeployTargetAction(
+				m_editor->getSourceDatabase(),
+				m_editor->getSettings(),
+				targetInstance->getName(),
+				targetInstance->getTarget(),
+				targetInstance->getTargetConfiguration(),
+				deployHost,
+				targetInstance->getDatabaseName(),
+				targetInstance->getId(),
+				targetInstance->getOutputPath()
+			);
+			chain.actions.push_back(action);
 
-		chain.postSuccess =
-		chain.postFailure = new PostTargetAction(targetInstance, TsIdle);
+			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsPending);
+			action.action = new LaunchTargetAction(
+				m_editor->getSourceDatabase(),
+				m_editor->getSettings(),
+				targetInstance->getName(),
+				targetInstance->getTarget(),
+				targetInstance->getTargetConfiguration(),
+				deployHost,
+				targetInstance->getOutputPath()
+			);
+			chain.actions.push_back(action);
+		}
+		else if ((event->getKeyState() & ui::KsControl) != 0)
+		{
+			// Add migrate actions.
+			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
+			action.action = new MigrateTargetAction(
+				m_editor->getSourceDatabase(),
+				m_editor->getSettings(),
+				targetInstance->getName(),
+				targetInstance->getTarget(),
+				targetInstance->getTargetConfiguration(),
+				deployHost,
+				targetInstance->getOutputPath()
+			);
+			chain.actions.push_back(action);
+		}
 
 		m_targetActionQueue.push_back(chain);
 		m_targetActionQueueSignal.set();
@@ -310,9 +381,29 @@ void EditorPlugin::eventTargetPlay(ui::Event* event)
 	m_targetList->update();
 }
 
-void EditorPlugin::eventTargetStop(ui::Event* event)
+//void EditorPlugin::eventTargetStop(ui::Event* event)
+//{
+//	// \fixme
+//}
+
+void EditorPlugin::eventToolBarClick(ui::Event* event)
 {
-	// \fixme
+	int32_t selectedTargetIndex = m_toolTargets->getSelected();
+	if (selectedTargetIndex < 0 || selectedTargetIndex > m_targetInstances.size())
+		return;
+
+	const EditTarget& et = m_targets[selectedTargetIndex];
+	T_ASSERT (et.target);
+
+	m_targetList->removeAll();
+
+	for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+	{
+		if ((*i)->getTarget() == et.target)
+			m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, *i));
+	}
+
+	m_targetList->update();
 }
 
 void EditorPlugin::threadTargetManager()
@@ -321,7 +412,13 @@ void EditorPlugin::threadTargetManager()
 	while (!m_threadTargetManager->stopped())
 	{
 		if (m_targetManager)
-			m_targetManager->update();
+		{
+			if (m_targetManager->update())
+			{
+				m_targetList->requestLayout();
+				m_targetList->requestUpdate();
+			}
+		}
 		if (m_hostEnumerator)
 			m_hostEnumerator->update();
 	}
@@ -355,23 +452,24 @@ void EditorPlugin::threadTargetActions()
 		}
 
 		bool success = true;
-		for (RefArray< ITargetAction >::const_iterator i = chain.actions.begin(); i != chain.actions.end(); ++i)
+		for (std::list< Action >::const_iterator i = chain.actions.begin(); i != chain.actions.end(); ++i)
 		{
-			success &= (*i)->execute();
+			success &= i->action->execute(i->listener);
 			if (!success)
 			{
-				log::error << L"Deploy action \"" << type_name(*i) << L"\" failed; unable to continue." << Endl;
+				log::error << L"Deploy action \"" << type_name(i->action) << L"\" failed; unable to continue." << Endl;
 				break;
 			}
-
-			m_targetList->requestLayout();
-			m_targetList->requestUpdate();
 		}
 
-		if (success && chain.postSuccess)
-			chain.postSuccess->execute();
-		else if (!success && chain.postFailure)
-			chain.postFailure->execute();
+		if (chain.targetInstance)
+			chain.targetInstance->setState(TsIdle);
+
+		m_targetList->requestLayout();
+		m_targetList->requestUpdate();
+
+		chain.actions.resize(0);
+		chain.targetInstance = 0;
 	}
 }
 

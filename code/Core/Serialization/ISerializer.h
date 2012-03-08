@@ -41,7 +41,7 @@ public:
 
 	virtual int getVersion() const = 0;
 
-	virtual Direction getDirection() = 0;
+	virtual Direction getDirection() const = 0;
 
 	virtual ISerializable* getCurrentObject() = 0;
 

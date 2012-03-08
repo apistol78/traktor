@@ -102,7 +102,8 @@ bool AutoPropertyList::addObject(PropertyItem* parent, ISerializable* object)
 
 	InspectReflector reflector(this, parent);
 
-	if (!(reflector >> Member< ISerializable* >(L"item", object)))
+	Ref< ISerializable > mutableObject = object;
+	if (!(reflector >> Member< ISerializable* >(L"item", mutableObject)))
 		return false;
 
 	update();

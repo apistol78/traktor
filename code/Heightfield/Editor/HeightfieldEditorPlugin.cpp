@@ -1,5 +1,5 @@
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"

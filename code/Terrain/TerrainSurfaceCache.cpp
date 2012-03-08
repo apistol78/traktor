@@ -24,12 +24,14 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 	render::RenderTargetSet* renderTargetSet;
 	TerrainSurfaceRenderBlock* next;
 	bool top;
+	bool clear;
 
 	TerrainSurfaceRenderBlock()
 	:	screenRenderer(0)
 	,	renderTargetSet(0)
 	,	next(0)
 	,	top(false)
+	,	clear(false)
 	{
 	}
 
@@ -41,8 +43,16 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 			globalParameters->fixup(program);
 
 		if (top)
+		{
 			renderView->begin(renderTargetSet, 0);
-
+			
+			if (clear)
+			{
+				float cc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				renderView->clear(render::CfColor, cc, 1.0f, 0);
+			}
+		}
+		
 		screenRenderer->draw(renderView, program);
 
 		if (next)
@@ -69,6 +79,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCac
 
 TerrainSurfaceCache::TerrainSurfaceCache()
 :	m_updateAllowedCount(0)
+,	m_clearCache(true)
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
 ,	m_handleMaterialMask(render::getParameterHandle(L"MaterialMask"))
@@ -98,8 +109,13 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	render::RenderTargetSetCreateDesc desc;
 
 	desc.count = 1;
+#if !defined(TARGET_OS_IPHONE)
 	desc.width = 4096;
 	desc.height = 4096;
+#else
+	desc.width = 1024;
+	desc.height = 1024;
+#endif
 	desc.multiSample = 0;
 	desc.createDepthStencil = false;
 	desc.usingPrimaryDepthStencil = false;
@@ -108,7 +124,8 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 	m_pool = renderSystem->createRenderTargetSet(desc);
 	if (!m_pool)
 		return false;
-
+		
+	m_clearCache = true;
 	return true;
 }
 
@@ -235,7 +252,6 @@ void TerrainSurfaceCache::get(
 
 		renderBlock->screenRenderer = m_screenRenderer;
 		renderBlock->renderTargetSet = m_pool;
-
 		renderBlock->distance = 0.0f;
 		renderBlock->program = shader->getCurrentProgram();
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -262,6 +278,7 @@ void TerrainSurfaceCache::get(
 		if (!renderBlockChain)
 		{
 			renderBlock->top = true;
+			renderBlock->clear = m_clearCache;
 			renderBlockChain = renderBlock;
 			outRenderBlock = renderBlock;
 		}
@@ -272,6 +289,8 @@ void TerrainSurfaceCache::get(
 			renderBlockChain = renderBlock;
 		}
 	}
+	
+	m_clearCache = false;
 
 	// Update cache entry.
 	m_entries[patchId].lod = surfaceLod;

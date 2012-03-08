@@ -13,7 +13,7 @@ namespace traktor
 class Guid;
 class ISerializable;
 class Object;
-class Settings;
+class PropertyGroup;
 class TypeInfo;
 
 	namespace db
@@ -41,7 +41,7 @@ class T_NOVTABLE IEditor
 {
 public:
 	/*! \brief Get editor settings. */
-	virtual Ref< Settings > getSettings() const = 0;
+	virtual Ref< PropertyGroup > getSettings() const = 0;
 
 	/*! \brief Get source asset database. */
 	virtual Ref< db::Database > getSourceDatabase() const = 0;

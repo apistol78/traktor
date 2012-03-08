@@ -130,6 +130,13 @@ public:
 	 */
 	uint32_t getDestinationCount(const OutputPin* outputPin) const;
 
+	/*! \brief Rewire all edges from one output to another output.
+	 *
+	 * \param outputPin Current output pin.
+	 * \param newOutputPin New output pin.
+	 */
+	void rewire(const OutputPin* outputPin, const OutputPin* newOutputPin);
+
 	/*! \brief Serialize graph. */
 	virtual bool serialize(ISerializer& s);
 

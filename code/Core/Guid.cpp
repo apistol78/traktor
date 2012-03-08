@@ -137,6 +137,11 @@ bool Guid::isNull() const
 	return true;
 }
 
+bool Guid::isNotNull() const
+{
+	return isValid() && !isNull();
+}
+
 Guid::operator const uint8_t* () const
 {
 	return m_data;

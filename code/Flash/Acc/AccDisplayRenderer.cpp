@@ -36,7 +36,7 @@ const uint32_t c_maxCacheSize = 64;
 const uint32_t c_maxUnusedCount = 40;
 #endif
 #if TARGET_OS_IPHONE
-const uint32_t c_cacheGlyphSize = 64;
+const uint32_t c_cacheGlyphSize = 32;
 #else
 const uint32_t c_cacheGlyphSize = 128;
 #endif
@@ -114,19 +114,31 @@ bool AccDisplayRenderer::create(
 
 	m_shapeResources = new AccShapeResources();
 	if (!m_shapeResources->create(resourceManager))
+	{
+		log::error << L"Unable to create accelerated display renderer; failed to load shape resources" << Endl;
 		return false;
+	}
 
 	m_vertexPool = new AccShapeVertexPool(renderSystem, frameCount > 0 ? frameCount : 1);
 	if (!m_vertexPool->create())
+	{
+		log::error << L"Unable to create accelerated display renderer; failed to create vertex pool" << Endl;
 		return false;
+	}
 
 	m_glyph = new AccGlyph();
 	if (!m_glyph->create(resourceManager, renderSystem))
+	{
+		log::error << L"Unable to create accelerated display renderer; failed to create glyph list" << Endl;
 		return false;
+	}
 
 	m_quad = new AccQuad();
 	if (!m_quad->create(resourceManager, renderSystem))
+	{
+		log::error << L"Unable to create accelerated display renderer; failed to create quad shape" << Endl;
 		return false;
+	}
 
 	render::RenderTargetSetCreateDesc rtscd;
 	rtscd.count = 1;
@@ -139,7 +151,10 @@ bool AccDisplayRenderer::create(
 
 	m_renderTargetGlyphs = m_renderSystem->createRenderTargetSet(rtscd);
 	if (!m_renderTargetGlyphs)
+	{
+		log::error << L"Unable to create accelerated display renderer; failed to create glyph cache target" << Endl;
 		return false;
+	}
 
 	m_renderContexts.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)

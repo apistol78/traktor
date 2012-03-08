@@ -2,7 +2,7 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
@@ -150,6 +150,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 9));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), ui::Command(L"ShaderGraph.Editor.UpdateFragments"), 10));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), ui::Command(L"ShaderGraph.Editor.ConstantFold"), 11));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), ui::Command(L"ShaderGraph.Editor.CleanupSwizzles"), 11));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	
 	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), 80, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
@@ -534,7 +535,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 		m_editorGraph->evenSpace(ui::custom::GraphControl::EsVertically);
 	}
-	else if (command == L"ShaderGraph.Editor.EventSpaceHorizontally")
+	else if (command == L"ShaderGraph.Editor.EvenSpaceHorizontally")
 	{
 		m_document->push();
 		m_editorGraph->evenSpace(ui::custom::GraphControl::EsHorizontally);
@@ -620,6 +621,27 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 		m_document->push();
 
 		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).getConstantFolded();
+		T_ASSERT (m_shaderGraph);
+
+		m_document->setObject(0, m_shaderGraph);
+
+		m_editorGraph->removeAllEdges();
+		m_editorGraph->removeAllNodes();
+
+		createEditorNodes(
+			m_shaderGraph->getNodes(),
+			m_shaderGraph->getEdges()
+		);
+
+		updateGraph();
+
+		m_site->setPropertyObject(0);
+	}
+	else if (command == L"ShaderGraph.Editor.CleanupSwizzles")
+	{
+		m_document->push();
+
+		m_shaderGraph = ShaderGraphStatic(m_shaderGraph).cleanupRedundantSwizzles();
 		T_ASSERT (m_shaderGraph);
 
 		m_document->setObject(0, m_shaderGraph);

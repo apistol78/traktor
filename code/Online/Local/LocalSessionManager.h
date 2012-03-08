@@ -1,7 +1,6 @@
 #ifndef traktor_online_LocalSessionManager_H
 #define traktor_online_LocalSessionManager_H
 
-#include "Online/Local/LocalTypes.h"
 #include "Online/Provider/ISessionManagerProvider.h"
 
 // import/export mechanism.
@@ -26,15 +25,17 @@ class IConnection;
 
 class LocalAchievements;
 class LocalLeaderboards;
+class LocalMatchMaking;
 class LocalSaveData;
 class LocalStatistics;
+class LocalUser;
 
 class T_DLLCLASS LocalSessionManager : public ISessionManagerProvider
 {
 	T_RTTI_CLASS;
 
 public:
-	bool create(const LocalCreateDesc& desc);
+	virtual bool create(const IGameConfiguration* configuration);
 
 	virtual void destroy();
 
@@ -68,8 +69,10 @@ private:
 	Ref< sql::IConnection > m_db;
 	Ref< LocalAchievements > m_achievements;
 	Ref< LocalLeaderboards > m_leaderboards;
+	Ref< LocalMatchMaking > m_matchMaking;
 	Ref< LocalSaveData > m_saveData;
 	Ref< LocalStatistics > m_statistics;
+	Ref< LocalUser > m_user;
 };
 
 	}

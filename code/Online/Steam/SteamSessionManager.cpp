@@ -5,6 +5,7 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Online/Steam/SteamAchievements.h"
+#include "Online/Steam/SteamGameConfiguration.h"
 #include "Online/Steam/SteamLeaderboards.h"
 #include "Online/Steam/SteamLocalSaveData.h"
 #include "Online/Steam/SteamMatchMaking.h"
@@ -71,7 +72,7 @@ const struct { const wchar_t* steam; const wchar_t* code; } c_languageCodes[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamSessionManager", SteamSessionManager, ISessionManagerProvider)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.online.SteamSessionManager", 0, SteamSessionManager, ISessionManagerProvider)
 
 SteamSessionManager::SteamSessionManager()
 :	m_requireUserAttention(false)
@@ -86,8 +87,12 @@ SteamSessionManager::SteamSessionManager()
 {
 }
 
-bool SteamSessionManager::create(const SteamCreateDesc& desc)
+bool SteamSessionManager::create(const IGameConfiguration* configuration)
 {
+	const SteamGameConfiguration* gc = dynamic_type_cast< const SteamGameConfiguration* >(configuration);
+	if (!gc)
+		return false;
+
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 	
 	bool result = false;
@@ -115,18 +120,18 @@ bool SteamSessionManager::create(const SteamCreateDesc& desc)
 	if (allLanguages)
 		log::info << L"Steam; Available languages: " << mbstows(allLanguages) << Endl;
 
-	m_maxRequestAttempts = desc.requestAttempts;
+	m_maxRequestAttempts = gc->m_requestAttempts;
 
-	m_achievements = new SteamAchievements(this, desc.achievementIds);
-	m_leaderboards = new SteamLeaderboards(this, desc.leaderboardIds);
+	m_achievements = new SteamAchievements(this, gc->m_achievementIds);
+	m_leaderboards = new SteamLeaderboards(this, gc->m_leaderboardIds);
 	m_matchMaking = new SteamMatchMaking(this);
 	
-	if (desc.cloudEnabled)
+	if (gc->m_cloudEnabled)
 		m_saveData = new SteamCloudSaveData();
 	else
 		m_saveData = new SteamLocalSaveData();
 
-	m_statistics = new SteamStatistics(this, desc.statIds);
+	m_statistics = new SteamStatistics(this, gc->m_statsIds);
 	m_user = new SteamUser();
 
 	return true;

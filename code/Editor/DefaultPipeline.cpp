@@ -65,5 +65,14 @@ bool DefaultPipeline::buildOutput(
 	return true;
 }
 
+Ref< ISerializable > DefaultPipeline::buildOutput(
+	IPipelineBuilder* pipelineBuilder,
+	const ISerializable* sourceAsset
+) const
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
 	}
 }

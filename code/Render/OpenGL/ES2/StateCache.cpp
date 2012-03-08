@@ -15,7 +15,7 @@ StateCache::StateCache()
 {
 }
 
-void StateCache::setRenderState(const RenderState& renderState)
+void StateCache::setRenderState(const RenderState& renderState, bool invertCull)
 {
 	if (renderState.cullFaceEnable)
 	{
@@ -25,7 +25,7 @@ void StateCache::setRenderState(const RenderState& renderState)
 			m_renderState.cullFaceEnable = true;
 		}
 		GLuint cullFace = renderState.cullFace;
-		if (true)
+		if (invertCull)
 		{
 			if (cullFace == GL_FRONT)
 				cullFace = GL_BACK;
@@ -140,7 +140,7 @@ void StateCache::setDepthMask(GLboolean depthMask)
 
 void StateCache::setArrayBuffer(GLint arrayBuffer)
 {
-	if (m_arrayBuffer != arrayBuffer)
+	//if (m_arrayBuffer != arrayBuffer)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, arrayBuffer));
 		m_arrayBuffer = arrayBuffer;
@@ -149,7 +149,7 @@ void StateCache::setArrayBuffer(GLint arrayBuffer)
 
 void StateCache::setElementArrayBuffer(GLint elemArrayBuffer)
 {
-	if (m_elemArrayBuffer != elemArrayBuffer)
+	//if (m_elemArrayBuffer != elemArrayBuffer)
 	{
 		T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, elemArrayBuffer));
 		m_elemArrayBuffer = elemArrayBuffer;
@@ -159,7 +159,7 @@ void StateCache::setElementArrayBuffer(GLint elemArrayBuffer)
 void StateCache::setVertexArrayObject(GLint vertexArrayObject)
 {
 #if defined(GL_OES_vertex_array_object)
-	if (m_vertexArrayObject != vertexArrayObject)
+	//if (m_vertexArrayObject != vertexArrayObject)
 	{
 		T_OGL_SAFE(glBindVertexArrayOES(vertexArrayObject));
 		m_vertexArrayObject = vertexArrayObject;

@@ -35,5 +35,10 @@ void PhysicsManager::notifyCollisionListeners(const CollisionInfo& collisionInfo
 		collisionInfo.body2->notifyCollisionListeners(collisionInfo);
 }
 
+bool PhysicsManager::haveCollisionListeners() const
+{
+	return !m_collisionListeners.empty();
+}
+
 	}
 }

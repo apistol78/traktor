@@ -1,6 +1,8 @@
 #include "Amalgam/Editor/Target.h"
+#include "Amalgam/Editor/TargetConfiguration.h"
 #include "Core/Serialization/Serializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRefArray.h"
 
 namespace traktor
 {
@@ -9,38 +11,40 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Target", 0, Target, ISerializable)
 
-const std::wstring& Target::getPipelineConfiguration() const
+void Target::setIdentifier(const std::wstring& identifier)
 {
-	return m_pipelineConfiguration;
+	m_identifier = identifier;
 }
 
-const std::wstring& Target::getApplicationConfiguration() const
+const std::wstring& Target::getIdentifier() const
 {
-	return m_applicationConfiguration;
+	return m_identifier;
 }
 
-const std::wstring& Target::getExecutable() const
+void Target::addConfiguration(TargetConfiguration* configuration)
 {
-	return m_executable;
+	m_configurations.push_back(configuration);
 }
 
-const Guid& Target::getRootAsset() const
+void Target::removeConfiguration(TargetConfiguration* configuration)
 {
-	return m_rootAsset;
+	m_configurations.remove(configuration);
 }
 
-const Guid& Target::getStartupInstance() const
+void Target::removeAllConfigurations()
 {
-	return m_startupInstance;
+	m_configurations.resize(0);
+}
+
+const RefArray< TargetConfiguration >& Target::getConfigurations() const
+{
+	return m_configurations;
 }
 
 bool Target::serialize(ISerializer& s)
 {
-	s >> Member< std::wstring >(L"pipelineConfiguration", m_pipelineConfiguration);
-	s >> Member< std::wstring >(L"applicationConfiguration", m_applicationConfiguration);
-	s >> Member< std::wstring >(L"executable", m_executable);
-	s >> Member< Guid >(L"rootAsset", m_rootAsset);
-	s >> Member< Guid >(L"startupInstance", m_startupInstance);
+	s >> Member< std::wstring >(L"identifier", m_identifier);
+	s >> MemberRefArray< TargetConfiguration>(L"configurations", m_configurations);
 	return true;
 }
 

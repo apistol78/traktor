@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace scene
 	{
@@ -27,7 +27,7 @@ class WorldServer : public IWorldServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const Settings* settings, IRenderServer* renderServer, IResourceServer* resourceServer);
+	bool create(const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer);
 
 	void destroy();
 
@@ -35,7 +35,7 @@ public:
 
 	void createEntityFactories(IEnvironment* environment);
 
-	int32_t reconfigure(const Settings* settings);
+	int32_t reconfigure(const PropertyGroup* settings);
 
 	virtual void addEntityFactory(world::IEntityFactory* entityFactory);
 

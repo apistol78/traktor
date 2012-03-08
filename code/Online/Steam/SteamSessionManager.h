@@ -33,7 +33,7 @@ class T_DLLCLASS SteamSessionManager : public ISessionManagerProvider
 public:
 	SteamSessionManager();
 
-	bool create(const SteamCreateDesc& desc);
+	virtual bool create(const IGameConfiguration* configuration);
 
 	virtual void destroy();
 

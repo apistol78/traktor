@@ -3,8 +3,10 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyObject.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
 #if defined(_WIN32) || defined(_XBOX)
 #	if !defined(WINCE)
 #		include "Input/Xi/InputDriverXi.h"
@@ -65,7 +67,7 @@ bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory dev
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.InputServer", InputServer, IInputServer)
 
-bool InputServer::create(const Settings* defaultSettings, const Settings* settings, void* nativeWindowHandle)
+bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db, void* nativeWindowHandle)
 {
 	m_inputSystem = new input::InputSystem();
 
@@ -102,8 +104,20 @@ bool InputServer::create(const Settings* defaultSettings, const Settings* settin
 
 #endif
 
-	m_inputMappingDefaultSourceData = dynamic_type_cast< input::InputMappingSourceData* >(defaultSettings->getProperty< PropertyObject >(L"Input.Sources"));
+	Guid defaultSourceDataGuid(defaultSettings->getProperty< PropertyString >(L"Input.Default"));
+	if (defaultSourceDataGuid.isNotNull())
+	{
+		m_inputMappingDefaultSourceData = db->getObjectReadOnly< input::InputMappingSourceData >(defaultSourceDataGuid);
+		if (!m_inputMappingDefaultSourceData)
+		{
+			log::error << L"Input server failed; unable to read default input mapping" << Endl;
+			return false;
+		}
+	}
+
 	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< PropertyObject >(L"Input.Sources"));
+	if (!m_inputMappingSourceData)
+		m_inputMappingSourceData = m_inputMappingDefaultSourceData;
 
 	if (settings->getProperty< PropertyBoolean >(L"Input.Rumble", true))
 		m_rumbleEffectPlayer = new input::RumbleEffectPlayer();
@@ -128,7 +142,7 @@ void InputServer::createResourceFactories(IEnvironment* environment)
 	resourceManager->addFactory(new input::RumbleEffectFactory(database));
 }
 
-int32_t InputServer::reconfigure(const Settings* settings)
+int32_t InputServer::reconfigure(const PropertyGroup* settings)
 {
 	int32_t result = CrUnaffected;
 

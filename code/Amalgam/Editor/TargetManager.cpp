@@ -30,10 +30,6 @@ bool TargetManager::create(uint16_t port)
 
 void TargetManager::destroy()
 {
-	// Destroy instances.
-	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-		(*i)->destroy();
-
 	m_instances.clear();
 
 	// Close server socket.
@@ -44,15 +40,17 @@ void TargetManager::destroy()
 	}
 }
 
-TargetInstance* TargetManager::createInstance(const std::wstring& name, const Target* target)
+void TargetManager::addInstance(TargetInstance* targetInstance)
 {
-	// Create target instance; add to our list of instances.
-	Ref< TargetInstance > instance = new TargetInstance(name, target);
-	m_instances.push_back(instance);
-	return instance;
+	m_instances.push_back(targetInstance);
 }
 
-void TargetManager::update()
+void TargetManager::removeInstance(TargetInstance* targetInstance)
+{
+	m_instances.remove(targetInstance);
+}
+
+bool TargetManager::update()
 {
 	net::SocketSet socketSet, socketSetResult;
 
@@ -67,7 +65,7 @@ void TargetManager::update()
 
 	// Wait on all sockets.
 	if (socketSet.select(true, false, false, 100, socketSetResult) <= 0)
-		return;
+		return false;
 
 	// Check if any pending connection available.
 	if (m_listenSocket->select(true, false, false, 0))
@@ -102,7 +100,7 @@ void TargetManager::update()
 				{
 					// Unknown target; refusing connection.
 					socket->close();
-					log::error << L"Unknown target; connection refused" << Endl;
+					log::error << L"Unknown target ID " << targetId->getId().format() << L"; connection refused" << Endl;
 				}
 			}
 			else
@@ -117,6 +115,8 @@ void TargetManager::update()
 	// Update all targets.
 	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 		(*i)->update();
+
+	return true;
 }
 
 	}

@@ -64,7 +64,7 @@ public:
 		return m_ref;
 	}
 	
-	InplaceRef& operator = (const InplaceRef& ref)
+	const InplaceRef& operator = (const InplaceRef& ref) const
 	{
 		T_SAFE_ADDREF(ref.m_ref);
 		T_SAFE_RELEASE(m_ref);
@@ -72,7 +72,7 @@ public:
 		return *this;
 	}
 	
-	InplaceRef& operator = (pointer ptr)
+	const InplaceRef& operator = (pointer ptr) const
 	{
 		T_SAFE_ADDREF(ptr);
 		T_SAFE_RELEASE(m_ref);

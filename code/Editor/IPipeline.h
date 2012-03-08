@@ -88,6 +88,19 @@ public:
 		const Guid& outputGuid,
 		uint32_t reason
 	) const = 0;
+
+	/*! \brief Build output instance.
+	 *
+	 * Build output instance from source asset.
+	 *
+	 * \param pipelineBuilder Pipeline builder.
+	 * \param sourceAsset Source asset object.
+	 * \return Output instance.
+	 */
+	virtual Ref< ISerializable > buildOutput(
+		IPipelineBuilder* pipelineBuilder,
+		const ISerializable* sourceAsset
+	) const = 0;
 };
 
 	}

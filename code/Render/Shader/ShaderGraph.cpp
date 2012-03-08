@@ -142,6 +142,17 @@ uint32_t ShaderGraph::getDestinationCount(const OutputPin* outputPin) const
 	return i != m_outputPinEdges.end() ? uint32_t(i->second->size()) : 0;
 }
 
+void ShaderGraph::rewire(const OutputPin* outputPin, const OutputPin* newOutputPin)
+{
+	RefSet< Edge > outputEdges;
+	findEdges(outputPin, outputEdges);
+
+	for (RefSet< Edge >::const_iterator j = outputEdges.begin(); j != outputEdges.end(); ++j)
+		(*j)->setSource(newOutputPin);
+
+	updateAdjacency();
+}
+
 bool ShaderGraph::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);

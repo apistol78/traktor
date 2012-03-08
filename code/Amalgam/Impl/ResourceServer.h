@@ -6,7 +6,7 @@
 namespace traktor
 {
 
-class Settings;
+class PropertyGroup;
 
 	namespace amalgam
 	{
@@ -24,7 +24,7 @@ public:
 
 	void createResourceFactories(IEnvironment* environment);
 
-	int32_t reconfigure(const Settings* settings);
+	int32_t reconfigure(const PropertyGroup* settings);
 	
 	void dumpStatistics();
 

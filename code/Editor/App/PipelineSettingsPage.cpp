@@ -9,9 +9,9 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 
 namespace traktor
 {
@@ -20,7 +20,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.PipelineSettingsPage", 0, PipelineSettingsPage, ISettingsPage)
 
-bool PipelineSettingsPage::create(ui::Container* parent, Settings* settings, const std::list< ui::Command >& shortcutCommands)
+bool PipelineSettingsPage::create(ui::Container* parent, PropertyGroup* settings, const std::list< ui::Command >& shortcutCommands)
 {
 	Ref< ui::Container > container = new ui::Container();
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
@@ -88,7 +88,7 @@ void PipelineSettingsPage::destroy()
 {
 }
 
-bool PipelineSettingsPage::apply(Settings* settings)
+bool PipelineSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", m_checkBuildThreads->isChecked());
 

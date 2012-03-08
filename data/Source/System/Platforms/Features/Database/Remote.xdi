@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.Feature">
+	<description>Remote Database Support</description>
+	<platforms>
+		<ios>true</ios>
+		<linux>true</linux>
+		<osx>true</osx>
+		<ps3>true</ps3>
+		<win32>true</win32>
+		<win64>true</win64>
+		<xbox360>true</xbox360>
+	</platforms>
+	<pipelineProperties/>
+	<runtimeProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Amalgam.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Database</item>
+						<item>Traktor.Database.Remote</item>
+						<item>Traktor.Database.Remote.Client</item>
+					</value>
+				</second>
+			</item>
+		</value>
+	</runtimeProperties>
+</object>

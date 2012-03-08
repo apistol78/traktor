@@ -64,11 +64,16 @@ public:
 		return PropertyType::get(value);
 	}
 
-	virtual IPropertyValue* merge(IPropertyValue* right, bool join);
+	Ref< PropertyGroup > mergeJoin(const PropertyGroup* rightGroup) const;
+
+	Ref< PropertyGroup > mergeReplace(const PropertyGroup* rightGroup) const;
 
 	virtual bool serialize(ISerializer& s);
 
 	const std::map< std::wstring, Ref< IPropertyValue > >& getValues() const { return m_value; }
+
+protected:
+	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const;
 
 private:
 	std::map< std::wstring, Ref< IPropertyValue > > m_value;

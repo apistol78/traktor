@@ -306,7 +306,7 @@ BinarySerializer::BinarySerializer(IStream* stream)
 {
 }
 
-Serializer::Direction BinarySerializer::getDirection()
+Serializer::Direction BinarySerializer::getDirection() const
 {
 	return m_direction;
 }
@@ -797,7 +797,7 @@ bool BinarySerializer::operator >> (const MemberComplex& m)
 
 bool BinarySerializer::operator >> (const MemberEnumBase& m)
 {
-	return this->operator >> (*(MemberComplex*)(&m));
+	return m.serialize(*this);
 }
 
 /*lint -restore*/

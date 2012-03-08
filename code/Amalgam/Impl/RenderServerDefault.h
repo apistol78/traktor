@@ -22,15 +22,15 @@ class RenderServerDefault : public RenderServer
 public:
 	RenderServerDefault();
 
-	bool create(Settings* settings);
+	bool create(PropertyGroup* settings);
 
 	virtual void destroy();
 
 	virtual void createResourceFactories(IEnvironment* environment);
 
-	virtual int32_t reconfigure(const Settings* settings);
+	virtual int32_t reconfigure(const PropertyGroup* settings);
 
-	virtual UpdateResult update(Settings* settings);
+	virtual UpdateResult update(PropertyGroup* settings);
 
 	virtual render::IRenderSystem* getRenderSystem();
 

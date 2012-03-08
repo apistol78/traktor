@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.AxisJointBullet", AxisJointBullet, AxisJoint)
 
-AxisJointBullet::AxisJointBullet(IWorldCallback* callback, btHingeConstraint* constraint, Body* body1, Body* body2)
+AxisJointBullet::AxisJointBullet(IWorldCallback* callback, btHingeConstraint* constraint, BodyBullet* body1, BodyBullet* body2)
 :	JointBullet< AxisJoint, btHingeConstraint >(callback, constraint, body1, body2)
 {
 }

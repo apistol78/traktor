@@ -30,9 +30,10 @@ public:
 
 	static value_type_t get(const IPropertyValue* value);
 
-	virtual IPropertyValue* merge(IPropertyValue* right, bool join);
-
 	virtual bool serialize(ISerializer& s);
+
+protected:
+	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const;
 
 private:
 	value_type_t m_value;

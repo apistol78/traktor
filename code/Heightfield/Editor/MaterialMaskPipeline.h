@@ -44,6 +44,11 @@ public:
 		uint32_t reason
 	) const;
 
+	virtual Ref< ISerializable > buildOutput(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const ISerializable* sourceAsset
+	) const;
+
 private:
 	std::wstring m_assetPath;
 };

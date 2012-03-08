@@ -104,5 +104,14 @@ bool SkeletonPipeline::buildOutput(
 	return true;
 }
 
+Ref< ISerializable > SkeletonPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const ISerializable* sourceAsset
+) const
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
 	}
 }

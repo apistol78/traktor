@@ -44,6 +44,36 @@ struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 	}
 };
 
+bool haveExtension(const char* extension)
+{
+	int32_t extensionLength = strlen(extension);
+	const char* supported = (const char*)glGetString(GL_EXTENSIONS);
+	while (supported && *supported)
+	{
+		const char* end = supported;
+		while (*end && *end != ' ')
+		{
+			if ((++end - supported) >= 200)
+				break;
+		}
+		
+		int32_t length = end - supported;
+		if (
+			length == extensionLength &&
+			strncmp(supported, extension, length) == 0
+		)
+			return true;
+			
+		supported = end;
+		while (*supported == ' ')
+		{
+			if ((++supported - end) >= 10)
+				break;
+		}
+	}
+	return false;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGLES2", RenderTargetOpenGLES2, ISimpleTexture)
@@ -79,9 +109,25 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	switch (desc.format)
 	{
 	case TfR8:
+#if defined(__APPLE__) && defined(GL_RED_EXT)
+		if (haveExtension("GL_EXT_texture_rg"))
+		{
+			internalFormat = GL_RED_EXT;
+			format = GL_RED_EXT;
+			type = GL_UNSIGNED_BYTE;
+		}
+		else
+		{
+			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues" << Endl;
+			internalFormat = GL_RGBA;
+			format = GL_RGBA;
+			type = GL_UNSIGNED_SHORT_4_4_4_4;
+		}
+#else
 		internalFormat = GL_RGBA;
 		format = GL_RGBA;
 		type = GL_UNSIGNED_SHORT_4_4_4_4;
+#endif
 		m_textureTarget = GL_TEXTURE_2D;
 		break;
 
@@ -91,6 +137,40 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 		type = GL_UNSIGNED_BYTE;
 		m_textureTarget = GL_TEXTURE_2D;
 		break;
+		
+#if defined(__APPLE__) && defined(GL_HALF_FLOAT_OES)
+	case TfR16G16B16A16F:
+		internalFormat = GL_RGBA;
+		format = GL_RGBA;
+		type = GL_HALF_FLOAT_OES;
+		m_textureTarget = GL_TEXTURE_2D;
+		break;
+#endif
+		
+	case TfR32G32B32A32F:
+		internalFormat = GL_RGBA;
+		format = GL_RGBA;
+		type = GL_FLOAT;
+		m_textureTarget = GL_TEXTURE_2D;
+		break;
+		
+#if defined(__APPLE__) && defined(GL_RED_EXT)
+	case TfR16F:
+		internalFormat = GL_RED_EXT;
+		format = GL_RED_EXT;
+		type = GL_HALF_FLOAT_OES;
+		m_textureTarget = GL_TEXTURE_2D;
+		break;
+#endif
+	
+#if defined(__APPLE__) && defined(GL_RED_EXT)
+	case TfR32F:
+		internalFormat = GL_RED_EXT;
+		format = GL_RED_EXT;
+		type = GL_FLOAT;
+		m_textureTarget = GL_TEXTURE_2D;
+		break;
+#endif
 
 	default:
 		log::error << L"Unable to create render target, unsupported format" << Endl;

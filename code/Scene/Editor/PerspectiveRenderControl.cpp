@@ -4,12 +4,12 @@
 #include "Core/Math/Format.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/Settings.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "Render/IRenderSystem.h"
@@ -28,6 +28,7 @@
 #include "Scene/Editor/PerspectiveRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SelectEvent.h"
+#include "Scene/Editor/TransformChain.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/FloodLayout.h"
@@ -53,28 +54,14 @@ namespace traktor
 		namespace
 		{
 
-const float c_defaultFieldOfView = 45.0f;
+const float c_defaultFieldOfView = 80.0f;
 const int32_t c_defaultMultiSample = 4;
 const float c_minFieldOfView = 4.0f;
-const float c_maxFieldOfView = 90.0f;
+const float c_maxFieldOfView = 160.0f;
 const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
-
-int32_t translateMouseButton(int32_t uimb)
-{
-	if (uimb == ui::MouseEvent::BtLeft)
-		return 0;
-	else if (uimb == ui::MouseEvent::BtRight)
-		return 1;
-	else if (uimb == ui::MouseEvent::BtMiddle)
-		return 2;
-	else if (uimb == (ui::MouseEvent::BtLeft | ui::MouseEvent::BtRight))
-		return 2;
-	else
-		return 0;
-}
 
 		}
 
@@ -87,11 +74,7 @@ PerspectiveRenderControl::PerspectiveRenderControl()
 ,	m_postProcessEnable(true)
 ,	m_fieldOfView(c_defaultFieldOfView)
 ,	m_multiSample(c_defaultMultiSample)
-,	m_mousePosition(0, 0)
-,	m_mouseButton(0)
-,	m_modifyCamera(false)
-,	m_modifyAlternative(false)
-,	m_modifyBegun(false)
+,	m_invertPanY(false)
 ,	m_dirtySize(0, 0)
 {
 }
@@ -103,8 +86,11 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 
 	m_index = index;
 
-	m_fieldOfView = m_context->getEditor()->getSettings()->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView" + toString(index), c_defaultFieldOfView);
-	m_multiSample = m_context->getEditor()->getSettings()->getProperty< PropertyInteger >(L"Editor.MultiSample", c_defaultMultiSample);
+	PropertyGroup* settings = m_context->getEditor()->getSettings();
+	T_ASSERT (settings);
+
+	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView" + toString(index), c_defaultFieldOfView);
+	m_multiSample = settings->getProperty< PropertyInteger >(L"Editor.MultiSample", c_defaultMultiSample);
 
 	m_containerAspect = new ui::Container();
 	m_containerAspect->create(parent, ui::WsNone, new ui::FloodLayout());
@@ -323,32 +309,7 @@ void PerspectiveRenderControl::update()
 	m_renderWidget->update();
 }
 
-bool PerspectiveRenderControl::hitTest(const ui::Point& position) const
-{
-	return m_renderWidget->hitTest(position);
-}
-
-void PerspectiveRenderControl::updateSettings()
-{
-	Ref< PropertyGroup > colors = m_context->getEditor()->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
-	m_colorClear = colors->getProperty< PropertyColor >(L"Background");
-	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
-	m_colorRef = colors->getProperty< PropertyColor >(L"ReferenceEdge");
-}
-
-void PerspectiveRenderControl::updateWorldRenderView()
-{
-	ui::Size sz = m_renderWidget->getInnerRect().getSize();
-
-	world::WorldViewPerspective worldView;
-	worldView.width = sz.cx;
-	worldView.height = sz.cy;
-	worldView.aspect = float(sz.cx) / sz.cy;
-	worldView.fov = deg2rad(m_fieldOfView);
-	m_worldRenderer->createRenderView(worldView, m_worldRenderView);
-}
-
-void PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
+bool PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const
 {
 	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
 	ui::Rect innerRect = m_renderWidget->getInnerRect();
@@ -370,16 +331,69 @@ void PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& 
 	Matrix44 viewInv = m_worldRenderView.getView().inverseOrtho();
 	outWorldRayOrigin = viewInv.translation().xyz1();
 	outWorldRayDirection = viewInv * viewRayDirection;
+
+	return true;
 }
 
-Ref< EntityAdapter > PerspectiveRenderControl::pickEntity(const ui::Point& position) const
+bool PerspectiveRenderControl::hitTest(const ui::Point& position) const
 {
-	Vector4 worldRayOrigin, worldRayDirection;
-	calculateRay(position, worldRayOrigin, worldRayDirection);
-	return m_context->queryRay(worldRayOrigin, worldRayDirection, true);
+	return m_renderWidget->hitTest(position);
 }
 
-Matrix44 PerspectiveRenderControl::getView() const
+void PerspectiveRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
+{
+	Vector4 delta = mouseDelta;
+	switch (mode)
+	{
+	case McmRotate:
+		delta *= Scalar(c_cameraRotateDeltaScale);
+		m_camera->rotate(delta.y(), delta.x());
+		break;
+
+	case McmMoveXZ:
+		delta *= Scalar(c_cameraTranslateDeltaScale);
+		m_camera->move(delta.shuffle< 0, 2, 1, 3 >());
+		break;
+
+	case McmMoveXY:
+		if (!m_invertPanY)
+			delta *= Vector4(c_cameraTranslateDeltaScale, -c_cameraTranslateDeltaScale, 0.0f, 0.0f);
+		else
+			delta *= Vector4(c_cameraTranslateDeltaScale, c_cameraTranslateDeltaScale, 0.0f, 0.0f);
+		m_camera->move(delta.shuffle< 0, 1, 2, 3 >());
+		break;
+	}
+}
+
+void PerspectiveRenderControl::updateSettings()
+{
+	PropertyGroup* settings = m_context->getEditor()->getSettings();
+	T_ASSERT (settings);
+
+	m_colorClear = settings->getProperty< PropertyColor >(L"Editor.Colors/Background");
+	m_colorGrid = settings->getProperty< PropertyColor >(L"Editor.Colors/Grid");
+	m_colorRef = settings->getProperty< PropertyColor >(L"Editor.Colors/ReferenceEdge");
+	m_invertPanY = settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertPanY");
+}
+
+void PerspectiveRenderControl::updateWorldRenderView()
+{
+	ui::Size sz = m_renderWidget->getInnerRect().getSize();
+
+	world::WorldViewPerspective worldView;
+	worldView.width = sz.cx;
+	worldView.height = sz.cy;
+	worldView.aspect = float(sz.cx) / sz.cy;
+	worldView.fov = deg2rad(m_fieldOfView);
+	m_worldRenderer->createRenderView(worldView, m_worldRenderView);
+}
+
+Matrix44 PerspectiveRenderControl::getProjectionTransform() const
+{
+	return m_worldRenderView.getProjection();
+}
+
+Matrix44 PerspectiveRenderControl::getViewTransform() const
 {
 	Matrix44 view = m_camera->getCurrentView();
 	Ref< EntityAdapter > followEntityAdapter = m_context->getFollowEntityAdapter();
@@ -391,233 +405,34 @@ Matrix44 PerspectiveRenderControl::getView() const
 
 void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
 {
-	m_mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
-	m_modifyCamera = (event->getKeyState() & ui::KsControl) == ui::KsControl;
-	m_modifyAlternative = (event->getKeyState() & ui::KsMenu) == ui::KsMenu;
-
-	// Are we already captured then we abort.
-	if (m_renderWidget->hasCapture())
-		return;
-
-	if (m_modifyCamera)
-	{
-		m_renderWidget->setCapture();
-	}
-	else
-	{
-		// Handle entity picking if enabled.
-		if (!m_modifyAlternative && m_context->getPickEnable())
-		{
-			Ref< EntityAdapter > entityAdapter = pickEntity(m_mousePosition);
-			
-			// De-select all other if shift isn't held.
-			if ((event->getKeyState() & ui::KsShift) == 0)
-				m_context->selectAllEntities(false);
-
-			m_context->selectEntity(entityAdapter);
-			m_context->raiseSelect(this);
-		}
-
-		m_context->setPlaying(false);
-		m_context->setPhysicsEnable(false);
-
-		m_modifyBegun = false;
-		m_renderWidget->setCapture();
-	}
-
-	m_renderWidget->setFocus();
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventButtonDown(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void PerspectiveRenderControl::eventButtonUp(ui::Event* event)
 {
-	int32_t mouseButton = translateMouseButton(static_cast< ui::MouseEvent* >(event)->getButton());
-	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
-	Matrix44 view = getView();
-
-	// Issue finished modification event.
-	if (!m_modifyCamera)
-	{
-		if (m_modifyBegun)
-		{
-			m_context->raisePostModify();
-
-			// Leave modify mode in entity editors.
-			IEntityEditor::ApplyParams params;
-			params.viewTransform = view;
-			calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
-			params.mouseButton = mouseButton;
-
-			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-			{
-				if ((*i)->getEntityEditor())
-					(*i)->getEntityEditor()->endModifier(params);
-			}
-		}
-	}
-
-	m_modifyEntities.resize(0);
-	m_modifyCamera = false;
-	m_modifyAlternative = false;
-	m_modifyBegun = false;
-
-	if (m_renderWidget->hasCapture())
-		m_renderWidget->releaseCapture();
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventButtonUp(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void PerspectiveRenderControl::eventDoubleClick(ui::Event* event)
 {
-	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
-	
-	Ref< EntityAdapter > entityAdapter = pickEntity(mousePosition);
-	if (entityAdapter && entityAdapter->isExternal())
-	{
-		Guid externalGuid;
-		entityAdapter->getExternalGuid(externalGuid);
-
-		Ref< db::Instance > instance = m_context->getEditor()->getSourceDatabase()->getInstance(externalGuid);
-		if (instance)
-			m_context->getEditor()->openEditor(instance);
-	}
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventDoubleClick(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 {
-	bool hasCapture = m_renderWidget->hasCapture();
-	int32_t mouseButton = translateMouseButton(static_cast< ui::MouseEvent* >(event)->getButton());
-	ui::Point mousePosition = checked_type_cast< ui::MouseEvent* >(event)->getPosition();
-
-	Vector4 screenDelta(
-		float(m_mousePosition.x - mousePosition.x),
-		float(m_mousePosition.y - mousePosition.y),
-		0.0f,
-		0.0f
-	);
-
-	Matrix44 projection = m_worldRenderView.getProjection();
-	Matrix44 projectionInverse = projection.inverse();
-
-	Matrix44 view = getView();
-	Matrix44 viewInverse = view.inverse();
-
-	ui::Rect innerRect = m_renderWidget->getInnerRect();
-	Vector4 clipDelta = projectionInverse * (screenDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f));
-
-	if (hasCapture)
-	{
-		if (!m_modifyCamera)
-		{
-			if (!m_modifyBegun)
-			{
-				// Clone selection set.
-				if (m_modifyAlternative)
-					m_context->cloneSelected();
-
-				// Get selected entities.
-				m_context->getEntities(
-					m_modifyEntities,
-					SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
-				);
-
-				// Enter modify mode in entity editors.
-				IEntityEditor::ApplyParams params;
-				params.viewTransform = view;
-				params.screenDelta = screenDelta;
-				calculateRay(m_mousePosition, params.worldRayOrigin, params.worldRayDirection);
-				params.mouseButton = mouseButton;
-
-				for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-				{
-					Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-					if (entityEditor)
-					{
-						// Transform screen delta into world delta at entity's position.
-						Vector4 viewPosition = view * (*i)->getTransform().translation().xyz1();
-						params.viewDelta = clipDelta * viewPosition.z();
-						params.worldDelta = viewInverse * params.viewDelta;
-
-						entityEditor->beginModifier(params);
-					}
-				}
-
-				// Issue begin modification event.
-				m_context->raisePreModify();
-
-				m_modifyBegun = true;
-			}
-
-			// Apply modifier on selected entities.
-			IEntityEditor::ApplyParams params;
-			params.viewTransform = view;
-			params.screenDelta = screenDelta;
-			calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
-			params.mouseButton = mouseButton;
-
-			for (RefArray< EntityAdapter >::iterator i = m_modifyEntities.begin(); i != m_modifyEntities.end(); ++i)
-			{
-				Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-				if (entityEditor)
-				{
-					// Transform screen delta into world delta at entity's position.
-					Vector4 viewPosition = view * (*i)->getTransform().translation().xyz1();
-					params.viewDelta = clipDelta * viewPosition.z();
-					params.worldDelta = viewInverse * params.viewDelta;
-
-					entityEditor->applyModifier(params);
-				}
-			}
-		}
-		else
-		{
-			if (mouseButton == 0)
-			{
-				screenDelta *= Scalar(c_cameraTranslateDeltaScale);
-				if (m_modifyAlternative)
-					m_camera->move(screenDelta.shuffle< 0, 1, 2, 3 >());
-				else
-					m_camera->move(screenDelta.shuffle< 0, 2, 1, 3 >());
-			}
-			else
-			{
-				screenDelta *= Scalar(c_cameraRotateDeltaScale);
-				m_camera->rotate(screenDelta.y(), screenDelta.x());
-			}
-		}
-	}
-	else	// No capture, ie. not modifying anything.
-	{
-		// Get selected entities.
-		RefArray< EntityAdapter > selectedEntities;
-		m_context->getEntities(
-			selectedEntities,
-			SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants
-		);
-
-		// Notify entity editors about cursor moved.
-		IEntityEditor::ApplyParams params;
-		params.viewTransform = view;
-		params.screenDelta = screenDelta;
-		calculateRay(mousePosition, params.worldRayOrigin, params.worldRayDirection);
-		params.mouseButton = mouseButton;
-
-		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
-		{
-			Ref< IEntityEditor > entityEditor = (*i)->getEntityEditor();
-			if (entityEditor)
-			{
-				// Transform screen delta into world delta at entity's position.
-				Vector4 viewPosition = view * (*i)->getTransform().translation().xyz1();
-				params.viewDelta = clipDelta * viewPosition.z();
-				params.worldDelta = viewInverse * params.viewDelta;
-
-				entityEditor->cursorMoved(params);
-			}
-		}
-	}
-
-	m_mousePosition = mousePosition;
-	m_mouseButton = mouseButton;
-
-	m_renderWidget->update();
+	TransformChain transformChain;
+	transformChain.pushProjection(getProjectionTransform());
+	transformChain.pushView(getViewTransform());
+	m_model.eventMouseMove(this, m_renderWidget, event, m_context, transformChain);
 }
 
 void PerspectiveRenderControl::eventMouseWheel(ui::Event* event)
@@ -665,20 +480,18 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
 
-	// Convert color to fp.
 	m_colorClear.getRGBA32F(colorClear);
-
-	// Update camera.
 	m_camera->update(deltaTime);
 
 	if (!m_renderView || !m_primitiveRenderer || !m_worldRenderer)
 		return;
 
-	Matrix44 view = getView();
+	Matrix44 projection = getProjectionTransform();
+	Matrix44 view = getViewTransform();
 
 	// Get entities.
 	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfExternals);
+	m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
 
 	// Get root entity.
 	Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
@@ -696,7 +509,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 		m_primitiveRenderer->begin(m_renderView);
 		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
-		m_primitiveRenderer->pushProjection(m_worldRenderView.getProjection());
+		m_primitiveRenderer->pushProjection(projection);
 		m_primitiveRenderer->pushView(view);
 
 		// Render XZ grid.
@@ -724,33 +537,22 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			}
 		}
 
-		// Draw selection marker(s).
-		Ref< IModifier > modifier = m_context->getModifier();
-		for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-		{
-			// Draw modifier and reference arrows; only applicable to spatial entities we must first check if it's a spatial entity.
-			if (modifier && (*i)->isSpatial() && (*i)->isSelected() && !(*i)->isChildOfExternal())
-			{
-				modifier->draw(
-					m_context,
-					view,
-					(*i)->getTransform(),
-					m_primitiveRenderer,
-					m_mouseButton
-				);
-			}
+		// Draw modifier.
+		IModifier* modifier = m_context->getModifier();
+		if (modifier)
+			modifier->draw(m_primitiveRenderer);
 
-			// Draw entity guides.
-			if (m_guideEnable)
+		// Draw guides.
+		if (m_guideEnable)
+		{
+			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 				m_context->drawGuide(m_primitiveRenderer, *i);
 		}
 
 		// Draw controller guides.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
 		if (controllerEditor && m_guideEnable)
-			controllerEditor->draw(
-				m_primitiveRenderer
-			);
+			controllerEditor->draw(m_primitiveRenderer);
 
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
@@ -791,7 +593,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				params.viewFrustum = m_worldRenderView.getViewFrustum();
 				params.viewToLight = Matrix44::identity();
 				params.view = view;
-				params.projection = m_worldRenderView.getProjection();
+				params.projection = projection;
 				params.deltaTime = deltaTime;
 
 				m_postProcess->render(
@@ -803,47 +605,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 				);
 			}
 		}
-
-		// HACK; render TSM shadow debugging.
-		/*
-		m_primitiveRenderer->pushProjection(orthoLh(10.0, 10.0f, 0.0f, 1.0));
-		m_primitiveRenderer->pushView(translate(0.0f, 0.0f, 1.0f));
-		m_primitiveRenderer->pushWorld(Matrix44::identity());
-		m_primitiveRenderer->pushDepthEnable(false);
-
-		m_primitiveRenderer->drawWireQuad(
-			Vector4(-1.0f, -1.0f, 0.0f, 0.0f),
-			Vector4( 1.0f, -1.0f, 0.0f, 0.0f),
-			Vector4( 1.0f,  1.0f, 0.0f, 0.0f),
-			Vector4(-1.0f,  1.0f, 0.0f, 0.0f),
-			Color4ub(255, 255, 255, 255)
-		);
-		m_primitiveRenderer->drawLine(Vector4(-10.0f, 0.0f, 0.0f, 1.0f), Vector4(10.0f, 0.0f, 0.0f, 1.0f), 1, Color4ub(255, 255, 255, 255));
-		m_primitiveRenderer->drawLine(Vector4(0.0f, -10.0f, 0.0f, 1.0f), Vector4(0.0f, 10.0f, 0.0f, 1.0f), 1, Color4ub(255, 255, 255, 255));
-
-		Ref< scene::Scene > sceneInstance = m_context->getScene();
-		Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
-		Matrix44 lightView, lightProjection, lightSquareProjection;
-		Frustum shadowFrustum;
-		world::calculateTSMProj(
-			*worldRenderSettings,
-			view.inverse(),
-			m_worldRenderView.getLight(0).position,
-			m_worldRenderView.getLight(0).direction,
-			m_worldRenderView.getViewFrustum(),
-			lightView,
-			lightProjection,
-			lightSquareProjection,
-			shadowFrustum,
-
-			m_primitiveRenderer
-		);
-
-		m_primitiveRenderer->popDepthEnable();
-		m_primitiveRenderer->popWorld();
-		m_primitiveRenderer->popView();
-		m_primitiveRenderer->popProjection();
-		*/
 
 		m_primitiveRenderer->end(m_renderView);
 

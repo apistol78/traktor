@@ -31,11 +31,13 @@ class T_DLLCLASS Panel : public Container
 public:
 	bool create(Widget* parent, const std::wstring& text, Layout* layout);
 
+	virtual Size getMinimumSize() const;
+
+	virtual Size getPreferedSize() const;
+
 	virtual Rect getInnerRect() const;
 
 private:
-	int m_titleHeight;
-
 	void eventPaint(Event* event);
 };
 

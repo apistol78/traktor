@@ -1,8 +1,14 @@
+#include "Amalgam/Types.h"
+#include "Amalgam/Impl/LibraryHelper.h"
+#include "Amalgam/Impl/OnlineServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
+#include "Online/IGameConfiguration.h"
 #include "Online/Impl/SessionManager.h"
-#include "Amalgam/Types.h"
-#include "Amalgam/Impl/OnlineServer.h"
+#include "Online/Provider/ISessionManagerProvider.h"
 
 namespace traktor
 {
@@ -11,13 +17,33 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.OnlineServer", OnlineServer, IOnlineServer)
 
-bool OnlineServer::create(online::ISessionManagerProvider* provider)
+bool OnlineServer::create(const PropertyGroup* settings, db::Database* db)
 {
-	if (!provider)
+	Guid configGuid(settings->getProperty< PropertyString >(L"Online.Config"));
+	if (!configGuid.isValid() || configGuid.isNull())
+	{
+		log::error << L"Online server failed; invalid game guid" << Endl;
 		return false;
+	}
+
+	Ref< online::IGameConfiguration > gameConfiguration = db->getObjectReadOnly< online::IGameConfiguration >(configGuid);
+	if (!gameConfiguration)
+	{
+		log::error << L"Online server failed; no such game configuration" << Endl;
+		return false;
+	}
+
+	std::wstring providerType = settings->getProperty< PropertyString >(L"Online.Type");
+
+	Ref< online::ISessionManagerProvider > sessionManagerProvider = loadAndInstantiate< online::ISessionManagerProvider >(providerType);
+	if (!sessionManagerProvider)
+	{
+		log::error << L"Online server failed; no such type \"" << providerType << L"\"" << Endl;
+		return false;
+	}
 
 	Ref< online::SessionManager > sessionManager = new online::SessionManager();
-	if (!sessionManager->create(provider))
+	if (!sessionManager->create(sessionManagerProvider, gameConfiguration))
 	{
 		log::error << L"Online server failed; unable to create session manager" << Endl;
 		return false;
@@ -32,7 +58,7 @@ void OnlineServer::destroy()
 	safeDestroy(m_sessionManager);
 }
 
-int32_t OnlineServer::reconfigure(const Settings* settings)
+int32_t OnlineServer::reconfigure(const PropertyGroup* settings)
 {
 	return CrUnaffected;
 }

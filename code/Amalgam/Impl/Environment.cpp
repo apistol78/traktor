@@ -16,7 +16,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Environment", Environment, IEnvironment)
 
 Environment::Environment(
-	Settings* settings,
+	PropertyGroup* settings,
 	db::Database* database,
 	AudioServer* audioServer,
 	InputServer* inputServer,
@@ -86,7 +86,7 @@ IWorldServer* Environment::getWorld()
 	return m_worldServer;
 }
 
-Settings* Environment::getSettings()
+PropertyGroup* Environment::getSettings()
 {
 	return m_settings;
 }

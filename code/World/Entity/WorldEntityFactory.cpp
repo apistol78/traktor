@@ -88,7 +88,7 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 		{
 			Ref< Entity > childEntity = builder->create(*i);
 			if (childEntity)
-				groupEntity->m_entities.push_back(childEntity);
+				groupEntity->addEntity(childEntity);
 		}
 
 		return groupEntity;
@@ -103,7 +103,7 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 		{
 			Ref< SpatialEntity > childEntity = dynamic_type_cast< SpatialEntity* >(builder->create(*i));
 			if (childEntity)
-				spatialGroupEntity->m_entities.push_back(childEntity);
+				spatialGroupEntity->addEntity(childEntity);
 		}
 
 		return spatialGroupEntity;

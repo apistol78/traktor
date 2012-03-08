@@ -9,12 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamAchievements", SteamAchievements, IAchievementsProvider)
 
-SteamAchievements::SteamAchievements(SteamSessionManager* sessionManager, const wchar_t** achievementIds)
+SteamAchievements::SteamAchievements(SteamSessionManager* sessionManager, const std::list< std::wstring >& achievementIds)
 :	m_sessionManager(sessionManager)
 ,	m_callbackAchievementStored(this, &SteamAchievements::OnAchievementStored)
 {
-	for (const wchar_t** achievementId = achievementIds; achievementId && *achievementId; ++achievementId)
-		m_achievementIds.insert(*achievementId);
+	m_achievementIds.insert(achievementIds.begin(), achievementIds.end());
 }
 
 bool SteamAchievements::enumerate(std::map< std::wstring, bool >& outAchievements)

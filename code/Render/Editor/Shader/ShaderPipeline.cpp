@@ -126,6 +126,14 @@ struct BuildCombinationTask : public Object
 			return;
 		}
 
+		// Remove redundant swizzle patterns.
+		programGraph = ShaderGraphStatic(programGraph).cleanupRedundantSwizzles();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles" << Endl;
+			return;
+		}
+
 		// Compile shader program.
 		Ref< ProgramResource > programResource = programCompiler->compile(
 			programGraph,
@@ -271,7 +279,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 43, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 44, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -544,6 +552,15 @@ bool ShaderPipeline::buildOutput(
 	}
 
 	return true;
+}
+
+Ref< ISerializable > ShaderPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const ISerializable* sourceAsset
+) const
+{
+	T_FATAL_ERROR;
+	return 0;
 }
 
 	}

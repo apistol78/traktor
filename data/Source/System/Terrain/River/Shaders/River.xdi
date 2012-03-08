@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
-				<first>2353</first>
-				<second>911</second>
+				<first>2578</first>
+				<second>781</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<cullMode>CmNever</cullMode>
@@ -623,6 +623,21 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>2399</first>
+				<second>744</second>
+			</position>
+		</item>
+		<item type="traktor.render.Color">
+			<comment/>
+			<position>
+				<first>2151</first>
+				<second>797</second>
+			</position>
+			<color>75, 219, 255, 166</color>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -1227,16 +1242,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
@@ -1293,6 +1298,36 @@
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[58]"/>
+				<name>Other</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[58]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[58]"/>
+				<name>OpenGL ES2</name>
 			</destination>
 		</item>
 	</edges>

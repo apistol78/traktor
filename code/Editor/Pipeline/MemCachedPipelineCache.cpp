@@ -2,8 +2,8 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
-#include "Core/Settings/Settings.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
@@ -45,7 +45,7 @@ MemCachedPipelineCache::~MemCachedPipelineCache()
 	net::Network::finalize();
 }
 
-bool MemCachedPipelineCache::create(const Settings* settings)
+bool MemCachedPipelineCache::create(const PropertyGroup* settings)
 {
 	std::wstring host = settings->getProperty< PropertyString >(L"Pipeline.MemCached.Host");
 	int32_t port = settings->getProperty< PropertyInteger >(L"Pipeline.MemCached.Port", 11211);

@@ -2,6 +2,7 @@
 #define traktor_amalgam_Platform_H
 
 #include "Amalgam/Editor/DeployTool.h"
+#include "Core/Guid.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,17 +22,16 @@ class T_DLLCLASS Platform : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	const std::wstring& getPipelineConfiguration() const;
+	Platform();
 
-	const std::wstring& getApplicationConfiguration() const;
+	int32_t getIconIndex() const;
 
 	const DeployTool& getDeployTool() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	std::wstring m_pipelineConfiguration;
-	std::wstring m_applicationConfiguration;
+	int32_t m_iconIndex;
 	DeployTool m_deployToolWin32;
 	DeployTool m_deployToolOsX;
 };

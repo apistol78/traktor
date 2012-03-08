@@ -87,8 +87,6 @@ public:
 	//@}
 
 private:
-	friend class WorldEntityFactory;
-
 	RefArray< Entity > m_entities;
 	bool m_update;
 	RefArray< Entity > m_remove;

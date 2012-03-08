@@ -1,6 +1,5 @@
 #include "Core/Misc/Split.h"
 #include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
@@ -42,7 +41,7 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseTypeDialog", BrowseTypeDialog, ui::ConfigDialog)
 
-BrowseTypeDialog::BrowseTypeDialog(Settings* settings)
+BrowseTypeDialog::BrowseTypeDialog(PropertyGroup* settings)
 :	m_settings(settings)
 ,	m_type(0)
 {

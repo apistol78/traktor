@@ -25,10 +25,10 @@ Vector2 convertVector2(const KFbxVector2& v)
 Vector4 convertVector4(const KFbxVector4& v)
 {
 	return Vector4(
-		float(v[0]),
-		float(v[1]),
-		float(v[2]),
-		float(v[3])
+		float( v[0]),
+		float( v[1]),
+		float(-v[2]),
+		float( v[3])
 	);
 }
 
@@ -63,6 +63,70 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 
 			Material mm;
 			mm.setName(mbstows(material->GetName()));
+
+			if (material->GetClassId().Is(KFbxSurfaceLambert::ClassId))
+			{
+				KFbxSurfaceLambert* lambertMaterial = (KFbxSurfaceLambert*)material;
+
+				KFbxPropertyDouble3 lambertDiffuse = lambertMaterial->GetDiffuseColor();
+				if (lambertDiffuse.IsValid())
+				{
+					fbxDouble3 diffuse = lambertDiffuse.Get();
+					mm.setColor(Color4ub(
+						uint8_t(diffuse[0] * 255),
+						uint8_t(diffuse[1] * 255),
+						uint8_t(diffuse[2] * 255),
+						255
+					));
+				}
+
+				KFbxPropertyDouble1 lambertDiffuseFactor = lambertMaterial->GetDiffuseFactor();
+				if (lambertDiffuseFactor.IsValid())
+				{
+					fbxDouble1 diffuseFactor = lambertDiffuseFactor.Get();
+					mm.setDiffuseTerm(float(diffuseFactor));
+				}
+
+				mm.setSpecularTerm(0.0f);
+			}
+			else if (material->GetClassId().Is(KFbxSurfacePhong::ClassId))
+			{
+				KFbxSurfacePhong* phongMaterial = (KFbxSurfacePhong*)material;
+
+				KFbxPropertyDouble3 phongDiffuse = phongMaterial->GetDiffuseColor();
+				if (phongDiffuse.IsValid())
+				{
+					fbxDouble3 diffuse = phongDiffuse.Get();
+					mm.setColor(Color4ub(
+						uint8_t(diffuse[0] * 255),
+						uint8_t(diffuse[1] * 255),
+						uint8_t(diffuse[2] * 255),
+						255
+					));
+				}
+
+				KFbxPropertyDouble1 phongDiffuseFactor = phongMaterial->GetDiffuseFactor();
+				if (phongDiffuseFactor.IsValid())
+				{
+					fbxDouble1 diffuseFactor = phongDiffuseFactor.Get();
+					mm.setDiffuseTerm(float(diffuseFactor));
+				}
+
+				KFbxPropertyDouble1 phongSpecularFactor = phongMaterial->GetSpecularFactor();
+				if (phongSpecularFactor.IsValid())
+				{
+					fbxDouble1 specularFactor = phongSpecularFactor.Get();
+					mm.setSpecularTerm(float(specularFactor));
+				}
+
+				KFbxPropertyDouble1 phongShininess = phongMaterial->GetShininess();
+				if (phongShininess.IsValid())
+				{
+					fbxDouble1 shininess = phongShininess.Get();
+					mm.setSpecularRoughness(float(shininess / 16.0));
+				}
+			}
+
 			outModel.addMaterial(mm);
 		}
 	}
@@ -271,9 +335,6 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 
 				polygon.addVertex(outModel.addUniqueVertex(vertex));
 			}
-
-			// FBX winding is inverse to what we expect so we need to flip every polygon.
-			polygon.flipWinding();
 
 			outModel.addPolygon(polygon);
 		}

@@ -2,7 +2,6 @@
 #include "Core/Math/Const.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
-#include "Core/Settings/Settings.h"
 #include "Editor/IEditor.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/DefaultEntityEditor.h"
@@ -32,7 +31,7 @@ DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context, EntityAdap
 
 bool DefaultEntityEditor::isPickable() const
 {
-	return true;
+	return !isGroup();
 }
 
 bool DefaultEntityEditor::isGroup() const
@@ -131,102 +130,102 @@ void DefaultEntityEditor::applyModifier(const ApplyParams& params)
 {
 	T_ASSERT (m_inModify);
 
-	if (!m_entityAdapter->isSpatial())
-		return;
+	//if (!m_entityAdapter->isSpatial())
+	//	return;
 
-	Ref< IModifier > modifier = m_context->getModifier();
-	if (!modifier)
-		return;
+	//Ref< IModifier > modifier = m_context->getModifier();
+	//if (!modifier)
+	//	return;
 
-	Transform transform = m_modifyTransform;
-	
-	modifier->adjust(
-		m_context,
-		params.viewTransform,
-		params.screenDelta,
-		params.viewDelta,
-		params.worldDelta,
-		params.mouseButton,
-		transform
-	);
+	//Transform transform = m_modifyTransform;
+	//
+	//modifier->adjust(
+	//	m_context,
+	//	params.viewTransform,
+	//	params.screenDelta,
+	//	params.viewDelta,
+	//	params.worldDelta,
+	//	params.mouseButton,
+	//	transform
+	//);
 
-	// Save "unsnapped" transform.
-	m_modifyTransform = transform;
+	//// Save "unsnapped" transform.
+	//m_modifyTransform = transform;
 
-	// Snap to grid.
-	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
-	{
-		float spacing = m_context->getSnapSpacing();
-		if (spacing > 0.0f)
-		{
-			Vector4 t = transform.translation();
-			t.set(
-				floor(t[0] / spacing + 0.5f) * spacing,
-				floor(t[1] / spacing + 0.5f) * spacing,
-				floor(t[2] / spacing + 0.5f) * spacing,
-				1.0f
-			);
-			transform = Transform(t, transform.rotation());
-		}
-	}
-	// Snap to neighbour entity.
-	else if (m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
-	{
-		AlignedVector< EntityAdapter::SnapPoint > snapPoints = m_entityAdapter->getSnapPoints();
+	//// Snap to grid.
+	//if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
+	//{
+	//	float spacing = m_context->getSnapSpacing();
+	//	if (spacing > 0.0f)
+	//	{
+	//		Vector4 t = transform.translation();
+	//		t.set(
+	//			floor(t[0] / spacing + 0.5f) * spacing,
+	//			floor(t[1] / spacing + 0.5f) * spacing,
+	//			floor(t[2] / spacing + 0.5f) * spacing,
+	//			1.0f
+	//		);
+	//		transform = Transform(t, transform.rotation());
+	//	}
+	//}
+	//// Snap to neighbour entity.
+	//else if (m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
+	//{
+	//	AlignedVector< EntityAdapter::SnapPoint > snapPoints = m_entityAdapter->getSnapPoints();
 
-		float minDistance = std::numeric_limits< float >::max();
-		Vector4 minTranslate;
+	//	float minDistance = std::numeric_limits< float >::max();
+	//	Vector4 minTranslate;
 
-		RefArray< EntityAdapter > otherEntities;
-		m_context->getEntities(otherEntities);
+	//	RefArray< EntityAdapter > otherEntities;
+	//	m_context->getEntities(otherEntities);
 
-		for (RefArray< EntityAdapter >::const_iterator i = otherEntities.begin(); i != otherEntities.end(); ++i)
-		{
-			// Snap only to leafs.
-			if (!(*i)->getChildren().empty())
-				continue;
+	//	for (RefArray< EntityAdapter >::const_iterator i = otherEntities.begin(); i != otherEntities.end(); ++i)
+	//	{
+	//		// Snap only to leafs.
+	//		if (!(*i)->getChildren().empty())
+	//			continue;
 
-			// Ensure we're not snapping to ourself.
-			bool sameEntity = false;
-			for (EntityAdapter* check = *i; check; check = check->getParent())
-			{
-				if (check == m_entityAdapter)
-				{
-					sameEntity = true;
-					break;
-				}
-			}
-			if (sameEntity)
-				continue;
+	//		// Ensure we're not snapping to ourself.
+	//		bool sameEntity = false;
+	//		for (EntityAdapter* check = *i; check; check = check->getParent())
+	//		{
+	//			if (check == m_entityAdapter)
+	//			{
+	//				sameEntity = true;
+	//				break;
+	//			}
+	//		}
+	//		if (sameEntity)
+	//			continue;
 
-			// Get snap points from other entity.
-			AlignedVector< EntityAdapter::SnapPoint > otherSnapPoints = (*i)->getSnapPoints();
+	//		// Get snap points from other entity.
+	//		AlignedVector< EntityAdapter::SnapPoint > otherSnapPoints = (*i)->getSnapPoints();
 
-			// Find closest snap point.
-			for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator j = snapPoints.begin(); j != snapPoints.end(); ++j)
-			{
-				for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator k = otherSnapPoints.begin(); k != otherSnapPoints.end(); ++k)
-				{
-					// Snap points must face each other.
-					if (dot3(k->direction, j->direction) >= 0.0f)
-						continue;
+	//		// Find closest snap point.
+	//		for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator j = snapPoints.begin(); j != snapPoints.end(); ++j)
+	//		{
+	//			for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator k = otherSnapPoints.begin(); k != otherSnapPoints.end(); ++k)
+	//			{
+	//				// Snap points must face each other.
+	//				if (dot3(k->direction, j->direction) >= 0.0f)
+	//					continue;
 
-					// Remember closest snap point.
-					float distance = (k->position - j->position).length();
-					if (distance < minDistance)
-					{
-						minTranslate = k->position - j->position;
-						minDistance = distance;
-					}
-				}
-			}
-		}
-		
-		if (minDistance <= 0.2f)
-			transform = transform * Transform(minTranslate);
-	}
+	//				// Remember closest snap point.
+	//				float distance = (k->position - j->position).length();
+	//				if (distance < minDistance)
+	//				{
+	//					minTranslate = k->position - j->position;
+	//					minDistance = distance;
+	//				}
+	//			}
+	//		}
+	//	}
+	//	
+	//	if (minDistance <= 0.2f)
+	//		transform = transform * Transform(minTranslate);
+	//}
 
-	m_entityAdapter->setTransform(transform);
+	//m_entityAdapter->setTransform(transform);
 }
 
 void DefaultEntityEditor::endModifier(const ApplyParams& params)

@@ -6,10 +6,11 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
-#include "Core/Settings/PropertyStringArray.h"
-#include "Core/Settings/Settings.h"
+#include "Core/Settings/PropertyStringSet.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
@@ -38,95 +39,6 @@
 #include "Amalgam/Impl/WorldServer.h"
 #include "Amalgam/IState.h"
 #include "Amalgam/IStateFactory.h"
-
-// Static symbols.
-#if defined(T_STATIC)
-#	include <Animation/Animation/Animation.h>
-#	include <Animation/Animation/StateNodeAnimation.h>
-#	include <Animation/Animation/StatePoseControllerData.h>
-#	include <Animation/IK/IKPoseControllerData.h>
-#	include <Animation/PathEntity/PathEntityData.h>
-#	include <Animation/RagDoll/RagDollPoseControllerData.h>
-#	include <Animation/AnimatedMeshEntityData.h>
-#	include <Core/Settings/PropertyBoolean.h>
-#	include <Core/Settings/PropertyColor.h>
-#	include <Core/Settings/PropertyFloat.h>
-#	include <Core/Settings/PropertyGroup.h>
-#	include <Core/Settings/PropertyInteger.h>
-#	include <Core/Settings/PropertyString.h>
-#	include <Core/Settings/PropertyStringArray.h>
-#	include <Database/Compact/CompactDatabase.h>
-#	include <Database/Local/LocalDatabase.h>
-#	include <Database/Remote/Client/RemoteDatabase.h>
-#	include <Input/Binding/CombinedInputSourceData.h>
-#	include <Input/Binding/ConstantInputSourceData.h>
-#	include <Input/Binding/GenericInputSourceData.h>
-#	include <Input/Binding/KeyboardInputSourceData.h>
-#	include <Input/Binding/IfInclusiveExclusive.h>
-#	include <Input/Binding/InBoolean.h>
-#	include <Input/Binding/InClamp.h>
-#	include <Input/Binding/InCombine.h>
-#	include <Input/Binding/InConst.h>
-#	include <Input/Binding/InHysteresis.h>
-#	include <Input/Binding/InPulse.h>
-#	include <Input/Binding/InReadValue.h>
-#	include <Input/Binding/InRemapAxis.h>
-#	include <Input/Binding/InThreshold.h>
-#	include <Input/Binding/InTrigger.h>
-#	include <Mesh/MeshEntityData.h>
-#	include <Mesh/Composite/CompositeMeshEntityData.h>
-#	include <Mesh/Blend/BlendMeshResource.h>
-#	include <Mesh/Indoor/IndoorMeshResource.h>
-#	include <Mesh/Instance/InstanceMeshResource.h>
-#	include <Mesh/Lod/LodMeshEntityData.h>
-#	include <Mesh/Partition/PartitionMeshResource.h>
-#	include <Mesh/Partition/OctreePartitionData.h>
-#	include <Mesh/Skinned/SkinnedMeshResource.h>
-#	include <Mesh/Static/StaticMeshResource.h>
-#	include <Mesh/Stream/StreamMeshResource.h>
-#	include <Script/Lua/ScriptResourceLua.h>
-#	include <Sound/StaticSoundResource.h>
-#	include <Sound/StreamSoundResource.h>
-#	include <Sound/Decoders/FlacStreamDecoder.h>
-#	include <Sound/Decoders/Mp3StreamDecoder.h>
-#	include <Sound/Decoders/OggStreamDecoder.h>
-#	include <Sound/Decoders/WavStreamDecoder.h>
-#	include <Sound/Resound/BankResource.h>
-#	include <Sound/Resound/MuteGrain.h>
-#	include <Sound/Resound/PlayGrain.h>
-#	include <Sound/Resound/RandomGrain.h>
-#	include <Sound/Resound/RepeatGrain.h>
-#	include <Sound/Resound/SequenceGrain.h>
-#	include <Spray/Modifiers/DragModifier.h>
-#	include <Spray/Modifiers/GravityModifier.h>
-#	include <Spray/Modifiers/IntegrateModifier.h>
-#	include <Spray/Modifiers/PlaneCollisionModifier.h>
-#	include <Spray/Modifiers/SizeModifier.h>
-#	include <Spray/Modifiers/VortexModifier.h>
-#	include <Spray/Sources/BoxSource.h>
-#	include <Spray/Sources/ConeSource.h>
-#	include <Spray/Sources/DiscSource.h>
-#	include <Spray/Sources/PointSetSource.h>
-#	include <Spray/Sources/PointSource.h>
-#	include <Spray/Sources/QuadSource.h>
-#	include <Spray/Sources/SphereSource.h>
-#	include <Spray/Sources/SplineSource.h>
-#	include <Theater/TheaterControllerData.h>
-#	include <World/Entity/NullEntityData.h>
-#	include <World/Forward/WorldRendererForward.h>
-#	include <World/PostProcess/PostProcessDefineTarget.h>
-#	include <World/PostProcess/PostProcessStepBlur.h>
-#	include <World/PostProcess/PostProcessStepBokeh.h>
-#	include <World/PostProcess/PostProcessStepChain.h>
-#	include <World/PostProcess/PostProcessStepLuminance.h>
-#	include <World/PostProcess/PostProcessStepRepeat.h>
-#	include <World/PostProcess/PostProcessStepSetTarget.h>
-#	include <World/PostProcess/PostProcessStepSimple.h>
-#	include <World/PostProcess/PostProcessStepSmProj.h>
-#	include <World/PostProcess/PostProcessStepSsao.h>
-#	include <World/PostProcess/PostProcessStepSwapTargets.h>
-#	include <World/PreLit/WorldRendererPreLit.h>
-#endif
 
 namespace traktor
 {
@@ -173,9 +85,8 @@ Application::Application()
 }
 
 bool Application::create(
-	const Settings* defaultSettings,
-	Settings* settings,
-	online::ISessionManagerProvider* sessionManagerProvider,
+	const PropertyGroup* defaultSettings,
+	PropertyGroup* settings,
 	IStateFactory* stateFactory,
 	void* nativeWindowHandle
 )
@@ -188,126 +99,47 @@ bool Application::create(
 		m_targetManagerConnection = new TargetManagerConnection();
 		if (!m_targetManagerConnection->connect(targetManagerHost, targetManagerPort, targetManagerId))
 		{
-			log::warning << L"Unable to connect to Target Manager; unable to debug" << Endl;
+			log::warning << L"Unable to connect to target manager at \"" << targetManagerHost << L"\"; unable to debug" << Endl;
 			m_targetManagerConnection = 0;
 		}
 	}
 
 #if !defined(T_STATIC)
-	std::vector< std::wstring > modules = settings->getProperty< PropertyStringArray >(L"Amalgam.Modules");
-	m_libraries.resize(modules.size());
-	for (uint32_t i = 0; i < modules.size(); ++i)
+	std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
+	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
-		if (!m_libraries[i].open(modules[i]))
+		Ref< Library > library = new Library();
+		if (!library->open(*i))
 		{
-			log::error << L"Application failed; unable to load module \"" << modules[i] << L"\"" << Endl;
+			log::error << L"Application failed; unable to load module \"" << *i << L"\"" << Endl;
 			return false;
 		}
+		m_libraries.push_back(library);
 	}
-#else
-	// Ensure symbols are linked.
-	T_FORCE_LINK_REF(PropertyBoolean);
-	T_FORCE_LINK_REF(PropertyColor);
-	T_FORCE_LINK_REF(PropertyFloat);
-	T_FORCE_LINK_REF(PropertyGroup);
-	T_FORCE_LINK_REF(PropertyInteger);
-	T_FORCE_LINK_REF(PropertyString);
-	T_FORCE_LINK_REF(PropertyStringArray);
-	T_FORCE_LINK_REF(db::CompactDatabase);
-	T_FORCE_LINK_REF(db::LocalDatabase);
-	T_FORCE_LINK_REF(db::RemoteDatabase);
-	T_FORCE_LINK_REF(animation::Animation);
-	T_FORCE_LINK_REF(animation::AnimatedMeshEntityData);
-	T_FORCE_LINK_REF(animation::IKPoseControllerData);
-	T_FORCE_LINK_REF(animation::PathEntityData);
-	T_FORCE_LINK_REF(animation::RagDollPoseControllerData);
-	T_FORCE_LINK_REF(animation::StateNodeAnimation);
-	T_FORCE_LINK_REF(animation::StatePoseControllerData);
-	T_FORCE_LINK_REF(input::CombinedInputSourceData);
-	T_FORCE_LINK_REF(input::ConstantInputSourceData);
-	T_FORCE_LINK_REF(input::GenericInputSourceData);
-	T_FORCE_LINK_REF(input::KeyboardInputSourceData);
-	T_FORCE_LINK_REF(input::IfInclusiveExclusive);
-	T_FORCE_LINK_REF(input::InBoolean);
-	T_FORCE_LINK_REF(input::InClamp);
-	T_FORCE_LINK_REF(input::InCombine);
-	T_FORCE_LINK_REF(input::InConst);
-	T_FORCE_LINK_REF(input::InHysteresis);
-	T_FORCE_LINK_REF(input::InPulse);
-	T_FORCE_LINK_REF(input::InReadValue);
-	T_FORCE_LINK_REF(input::InRemapAxis);
-	T_FORCE_LINK_REF(input::InThreshold);
-	T_FORCE_LINK_REF(input::InTrigger);
-	T_FORCE_LINK_REF(mesh::CompositeMeshEntityData);
-	T_FORCE_LINK_REF(mesh::MeshEntityData);
-	T_FORCE_LINK_REF(mesh::BlendMeshResource);
-	T_FORCE_LINK_REF(mesh::IndoorMeshResource);
-	T_FORCE_LINK_REF(mesh::InstanceMeshResource);
-	T_FORCE_LINK_REF(mesh::LodMeshEntityData);
-	T_FORCE_LINK_REF(mesh::PartitionMeshResource);
-	T_FORCE_LINK_REF(mesh::OctreePartitionData);
-	T_FORCE_LINK_REF(mesh::SkinnedMeshResource);
-	T_FORCE_LINK_REF(mesh::StaticMeshResource);
-	T_FORCE_LINK_REF(mesh::StreamMeshResource);
-	T_FORCE_LINK_REF(script::ScriptResourceLua);
-	T_FORCE_LINK_REF(sound::StaticSoundResource);
-	T_FORCE_LINK_REF(sound::StreamSoundResource);
-	T_FORCE_LINK_REF(sound::BankResource);
-	T_FORCE_LINK_REF(sound::MuteGrain);
-	T_FORCE_LINK_REF(sound::PlayGrain);
-	T_FORCE_LINK_REF(sound::RandomGrain);
-	T_FORCE_LINK_REF(sound::RepeatGrain);
-	T_FORCE_LINK_REF(sound::SequenceGrain);
-	T_FORCE_LINK_REF(sound::FlacStreamDecoder);
-	T_FORCE_LINK_REF(sound::Mp3StreamDecoder);
-	T_FORCE_LINK_REF(sound::OggStreamDecoder);
-	T_FORCE_LINK_REF(sound::WavStreamDecoder);
-	T_FORCE_LINK_REF(spray::DragModifier);
-	T_FORCE_LINK_REF(spray::GravityModifier);
-	T_FORCE_LINK_REF(spray::IntegrateModifier);
-	T_FORCE_LINK_REF(spray::PlaneCollisionModifier);
-	T_FORCE_LINK_REF(spray::SizeModifier);
-	T_FORCE_LINK_REF(spray::VortexModifier);
-	T_FORCE_LINK_REF(spray::BoxSource);
-	T_FORCE_LINK_REF(spray::ConeSource);
-	T_FORCE_LINK_REF(spray::DiscSource);
-	T_FORCE_LINK_REF(spray::PointSetSource);
-	T_FORCE_LINK_REF(spray::PointSource);
-	T_FORCE_LINK_REF(spray::QuadSource);
-	T_FORCE_LINK_REF(spray::SphereSource);
-	T_FORCE_LINK_REF(spray::SplineSource);
-	T_FORCE_LINK_REF(world::NullEntityData);
-	T_FORCE_LINK_REF(theater::TheaterControllerData);
-	T_FORCE_LINK_REF(world::WorldRendererForward);
-	T_FORCE_LINK_REF(world::WorldRendererPreLit);
-	T_FORCE_LINK_REF(world::PostProcessDefineTarget);
-	T_FORCE_LINK_REF(world::PostProcessStepBlur);
-	T_FORCE_LINK_REF(world::PostProcessStepBokeh);
-	T_FORCE_LINK_REF(world::PostProcessStepChain);
-	T_FORCE_LINK_REF(world::PostProcessStepLuminance);
-	T_FORCE_LINK_REF(world::PostProcessStepRepeat);
-	T_FORCE_LINK_REF(world::PostProcessStepSetTarget);
-	T_FORCE_LINK_REF(world::PostProcessStepSimple);
-	T_FORCE_LINK_REF(world::PostProcessStepSmProj);
-	T_FORCE_LINK_REF(world::PostProcessStepSsao);
-	T_FORCE_LINK_REF(world::PostProcessStepSwapTargets);
 #endif
 
 	m_stateManager = new StateManager();
 
-	if (sessionManagerProvider)
+	// Database
+	log::debug << L"Creating database..." << Endl;
+	m_database = new db::Database ();
+	std::wstring connectionString = settings->getProperty< PropertyString >(L"Amalgam.Database");
+	if (!m_database->open(connectionString))
+	{
+		log::error << L"Application failed; unable to open database \"" << connectionString << L"\"" << Endl;
+		return false;
+	}
+
+	// Online
+	if (settings->getProperty(L"Online.Type"))
 	{
 		log::debug << L"Creating online server..." << Endl;
 		m_onlineServer = new OnlineServer();
-		if (!m_onlineServer->create(sessionManagerProvider))
+		if (!m_onlineServer->create(settings, m_database))
 			return false;
 	}
 
-	log::debug << L"Creating resource server..." << Endl;
-	m_resourceServer = new ResourceServer();
-	if (!m_resourceServer->create())
-		return false;
-
+	// Render
 	log::debug << L"Creating render server..." << Endl;
 	if (nativeWindowHandle)
 	{
@@ -324,40 +156,52 @@ bool Application::create(
 		m_renderServer = renderServer;
 	}
 
+	// Resource
+	log::debug << L"Creating resource server..." << Endl;
+	m_resourceServer = new ResourceServer();
+	if (!m_resourceServer->create())
+		return false;
+
+	// Input
 	log::debug << L"Creating input server..." << Endl;
 	m_inputServer = new InputServer();
-	if (!m_inputServer->create(defaultSettings, settings, nativeWindowHandle))
+	if (!m_inputServer->create(defaultSettings, settings, m_database, nativeWindowHandle))
 		return false;
 
-	log::debug << L"Creating physics server..." << Endl;
-	m_physicsServer = new PhysicsServer();
-	if (!m_physicsServer->create(settings, c_simulationDeltaTime))
-		return false;
+	// Physics
+	if (settings->getProperty(L"Physics.Type"))
+	{
+		log::debug << L"Creating physics server..." << Endl;
+		m_physicsServer = new PhysicsServer();
+		if (!m_physicsServer->create(settings, c_simulationDeltaTime))
+			return false;
+	}
 
-	log::debug << L"Creating script server..." << Endl;
-	m_scriptServer = new ScriptServer();
-	if (!m_scriptServer->create(settings, m_targetManagerConnection != 0))
-		return false;
+	// Script
+	if (settings->getProperty(L"Script.Type"))
+	{
+		log::debug << L"Creating script server..." << Endl;
+		m_scriptServer = new ScriptServer();
+		if (!m_scriptServer->create(settings, /*m_targetManagerConnection != 0*/false))
+			return false;
+	}
 
+	// World
 	log::debug << L"Creating world server..." << Endl;
 	m_worldServer = new WorldServer();
 	if (!m_worldServer->create(settings, m_renderServer, m_resourceServer))
 		return false;
 
+	// Audio
 	log::debug << L"Creating audio server..." << Endl;
-	m_audioServer = new AudioServer();
-	if (!m_audioServer->create(settings))
-		return false;
-
-	log::debug << L"Creating database..." << Endl;
-	m_database = new db::Database ();
-	std::wstring connectionString = settings->getProperty< PropertyString >(L"Amalgam.Database");
-	if (!m_database->open(connectionString))
+	if (settings->getProperty(L"Audio.Type"))
 	{
-		log::error << L"Application failed; unable to open database \"" << connectionString << L"\"" << Endl;
-		return false;
+		m_audioServer = new AudioServer();
+		if (!m_audioServer->create(settings))
+			return false;
 	}
 
+	// Environment
 	log::debug << L"Creating environment..." << Endl;
 	m_environment = new Environment(
 		settings,
@@ -372,24 +216,39 @@ bool Application::create(
 		m_worldServer
 	);
 
-	m_audioServer->createResourceFactories(m_environment);
-	m_inputServer->createResourceFactories(m_environment);
-	m_physicsServer->createResourceFactories(m_environment);
-	m_renderServer->createResourceFactories(m_environment);
-	m_resourceServer->createResourceFactories(m_environment);
-	m_scriptServer->createResourceFactories(m_environment);
-	m_worldServer->createResourceFactories(m_environment);
+	// Resource factories
+	log::debug << L"Creating resource factories..." << Endl;
+	if (m_audioServer)
+		m_audioServer->createResourceFactories(m_environment);
+	if (m_inputServer)
+		m_inputServer->createResourceFactories(m_environment);
+	if (m_physicsServer)
+		m_physicsServer->createResourceFactories(m_environment);
+	if (m_renderServer)
+		m_renderServer->createResourceFactories(m_environment);
+	if (m_resourceServer)
+		m_resourceServer->createResourceFactories(m_environment);
+	if (m_scriptServer)
+		m_scriptServer->createResourceFactories(m_environment);
+	if (m_worldServer)
+		m_worldServer->createResourceFactories(m_environment);
 
-	m_physicsServer->createEntityFactories(m_environment);
+	// Entity factories.
+	log::debug << L"Creating entity factories..." << Endl;
+	if (m_physicsServer)
+		m_physicsServer->createEntityFactories(m_environment);
 	m_worldServer->createEntityFactories(m_environment);
 
-	if (settings->getProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", false))
+	// Database monitoring thread.
+	if (settings->getProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", false) || m_targetManagerConnection)
 	{
+		log::debug << L"Creating database monitoring thread..." << Endl;
 		m_threadDatabase = ThreadManager::getInstance().create(makeFunctor(this, &Application::threadDatabase), L"Database events");
 		if (m_threadDatabase)
 			m_threadDatabase->start(Thread::Highest);
 	}
 
+	// Initial, startup, state.
 	log::debug << L"Creating initial state..." << Endl;
 	Ref< IState > state = stateFactory->create(m_environment);
 	if (!state)
@@ -405,7 +264,10 @@ bool Application::create(
 
 	log::info << L"Initial state ready; enter main loop..." << Endl;
 
-	if (settings->getProperty< PropertyBoolean >(L"Amalgam.RenderThread", true))
+	if (
+		OS::getInstance().getCPUCoreCount() >= 2 &&
+		settings->getProperty< PropertyBoolean >(L"Amalgam.RenderThread", true)
+	)
 	{
 		m_threadRender = ThreadManager::getInstance().create(makeFunctor(this, &Application::threadRender), L"Render");
 		if (m_threadRender)
@@ -417,6 +279,8 @@ bool Application::create(
 				log::warning << L"Unable to synchronize render thread" << Endl;
 		}
 	}
+	else
+		log::info << L"Using single threaded rendering" << Endl;
 
 	m_settings = settings;
 	return true;
@@ -459,8 +323,8 @@ void Application::destroy()
 		m_database = 0;
 	}
 	
-	for (std::vector< Library >::iterator i = m_libraries.begin(); i != m_libraries.end(); ++i)
-		i->close();
+	for (RefArray< Library >::iterator i = m_libraries.begin(); i != m_libraries.end(); ++i)
+		(*i)->close();
 }
 
 bool Application::update()
@@ -531,7 +395,8 @@ bool Application::update()
 	}
 
 	// Update scripting language runtime.
-	m_scriptServer->update();
+	if (m_scriptServer)
+		m_scriptServer->update();
 
 	if ((currentState = m_stateManager->getCurrent()) != 0)
 	{
@@ -556,10 +421,12 @@ bool Application::update()
 		m_updateInfo.m_frameDeltaTime = deltaTime * c_deltaTimeFilterCoeff + m_updateInfo.m_frameDeltaTime * (1.0f - c_deltaTimeFilterCoeff);
 
 		// Update audio.
-		m_audioServer->update(m_updateInfo.m_frameDeltaTime, m_renderViewActive);
+		if (m_audioServer)
+			m_audioServer->update(m_updateInfo.m_frameDeltaTime, m_renderViewActive);
 
 		// Update rumble.
-		m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
+		if (m_inputServer)
+			m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
 
 		// Update active state; fixed time step if physics manager is available.
 		double updateDuration = 0.0;
@@ -568,7 +435,7 @@ bool Application::update()
 		float updateInterval = 0.0f;
 		int32_t updateCount = 0;
 
-		physics::PhysicsManager* physicsManager = m_physicsServer->getPhysicsManager();
+		physics::PhysicsManager* physicsManager = m_physicsServer ? m_physicsServer->getPhysicsManager() : 0;
 		if (physicsManager && !m_updateControl.m_pause)
 		{
 			m_updateInfo.m_simulationDeltaTime = c_simulationDeltaTime;
@@ -608,7 +475,8 @@ bool Application::update()
 
 				// Update input.
 				double inputTimeStart = m_timer.getElapsedTime();
-				m_inputServer->update(m_updateInfo.m_simulationDeltaTime, inputEnabled);
+				if (m_inputServer)
+					m_inputServer->update(m_updateInfo.m_simulationDeltaTime, inputEnabled);
 				double inputTimeEnd = m_timer.getElapsedTime();
 				inputDuration += inputTimeEnd - inputTimeStart;
 
@@ -636,7 +504,8 @@ bool Application::update()
 		else
 		{
 			// Update input.
-			m_inputServer->update(m_updateInfo.m_frameDeltaTime, inputEnabled);
+			if (m_inputServer)
+				m_inputServer->update(m_updateInfo.m_frameDeltaTime, inputEnabled);
 
 			// No physics; update in same rate as rendering.
 			m_updateInfo.m_simulationTime = m_updateInfo.m_stateTime;
@@ -794,6 +663,8 @@ bool Application::update()
 			performance.steps = float(updateCount);
 			performance.interval = updateInterval;
 			performance.collisions = m_renderCollisions;
+			performance.memInUse = Alloc::allocated();
+			performance.heapObjects = Object::getHeapObjectCount();
 			performance.build = float(buildTimeEnd - buildTimeStart);
 #	if !defined(_PS3)
 			performance.render = m_renderDuration;
@@ -802,8 +673,15 @@ bool Application::update()
 #	endif
 			performance.drawCalls = statistics.drawCalls;
 			performance.primitiveCount = statistics.primitiveCount;
-			performance.memInUse = Alloc::allocated();
-			performance.heapObjects = Object::getHeapObjectCount();
+
+			if (m_physicsServer)
+			{
+				m_physicsServer->getPhysicsManager()->getBodyCount(
+					performance.bodyCount,
+					performance.activeBodyCount
+				);
+			}
+
 			m_targetManagerConnection->setPerformance(performance);
 		}
 #endif
@@ -858,7 +736,10 @@ void Application::threadDatabase()
 			if (resourceManager)
 			{
 				for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)
+				{
+					log::debug << L"External database event; flushing resource \"" << i->format() << L"\"" << Endl;
 					resourceManager->update(*i, true);
+				}
 			}
 		}
 	}
