@@ -150,9 +150,31 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 
 	uint32_t sourceHash = DeepHash(sourceAsset).get();
 
-	std::map< uint32_t, Ref< ISerializable > >::const_iterator i = m_builtCache.find(sourceHash);
+	std::map< uint32_t, built_cache_list_t >::iterator i = m_builtCache.find(sourceHash);
 	if (i != m_builtCache.end())
-		return DeepClone(i->second).create();
+	{
+		built_cache_list_t& bcl = i->second;
+		T_ASSERT (!bcl.empty());
+
+		// Return same instance as before if pointer and hash match.
+		for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
+		{
+			if (j->sourceAsset == sourceAsset)
+				return j->product;
+		}
+
+		// Hash matching but no product found; need to clone a product.
+		Ref< ISerializable > product = DeepClone(i->second.front().product).create();
+		if (!product)
+			return 0;
+
+		BuiltCacheEntry bce;
+		bce.sourceAsset = sourceAsset;
+		bce.product = product;
+		bcl.push_back(bce);
+
+		return product;
+	}
 
 	Ref< IPipeline > pipeline;
 	uint32_t pipelineHash;
@@ -160,10 +182,16 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 		return 0;
 
-	Ref< ISerializable > output = pipeline->buildOutput(this, sourceAsset);
-	m_builtCache.insert(std::make_pair(sourceHash, output));
+	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
+	if (!product)
+		return 0;
 
-	return output;
+	BuiltCacheEntry bce;
+	bce.sourceAsset = sourceAsset;
+	bce.product = product;
+	m_builtCache[sourceHash].push_back(bce);
+
+	return product;
 }
 
 bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid)

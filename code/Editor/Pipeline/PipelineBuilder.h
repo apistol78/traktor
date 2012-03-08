@@ -1,6 +1,7 @@
 #ifndef traktor_editor_PipelineBuilder_H
 #define traktor_editor_PipelineBuilder_H
 
+#include <list>
 #include <map>
 #include "Core/Io/Path.h"
 #include "Core/Thread/Event.h"
@@ -86,6 +87,14 @@ public:
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 
 private:
+	struct BuiltCacheEntry
+	{
+		const ISerializable* sourceAsset;
+		Ref< ISerializable > product;
+	};
+
+	typedef std::list< BuiltCacheEntry > built_cache_list_t;
+
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
@@ -97,7 +106,7 @@ private:
 	Semaphore m_readCacheLock;
 	Semaphore m_builtCacheLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
-	std::map< uint32_t, Ref< ISerializable > > m_builtCache;
+	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	ThreadLocal m_buildInstances;
 	uint32_t m_progress;
 	uint32_t m_progressEnd;
