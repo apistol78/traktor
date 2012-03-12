@@ -54,7 +54,7 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 
 	m_progressCell = new ProgressCell();
 	m_hostsCell = new DropListCell(hostEnumerator, instance);
-	m_playCell = new ButtonCell(s_bitmapTargetControl, 0, true, ui::EiUser + 1, instance);
+	m_playCell = new ButtonCell(s_bitmapTargetControl, 0, true, ui::EiUser + 1, instance, ui::Command(L"Amalgam.Play"));
 }
 
 ui::Size TargetInstanceListItem::getSize() const
@@ -65,6 +65,8 @@ ui::Size TargetInstanceListItem::getSize() const
 
 void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect)
 {
+	const RefArray< TargetConnection >& connections = m_instance->getConnections();
+
 	ui::Rect controlRect = rect;
 	controlRect.bottom = rect.top + 28;
 
@@ -103,6 +105,28 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 			controlRect.bottom
 		)
 	);
+
+	controlRect.top = controlRect.bottom;
+	controlRect.bottom = controlRect.top + c_performanceHeight;
+
+	m_stopCells.resize(connections.size());
+	for (uint32_t i = 0; i < connections.size(); ++i)
+	{
+		if (!m_stopCells[i])
+			m_stopCells[i] = new ButtonCell(s_bitmapTargetControl, 2, true, ui::EiUser + 2, m_instance, ui::Command(i, L"Amalgam.Stop"));
+
+		widget->placeCell(
+			m_stopCells[i],
+			ui::Rect(
+				controlRect.right - 24 * 1 - 4,
+				controlRect.top,
+				controlRect.right - 24 * 0 - 4,
+				controlRect.bottom
+			)
+		);
+
+		controlRect = controlRect.offset(0, controlRect.getHeight());
+	}
 }
 
 void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
@@ -215,6 +239,19 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 
 		bottomRect.left += 100;
 		canvas.drawText(bottomRect, L"Obj: " + toString(uint32_t(performance.heapObjects)), ui::AnLeft, ui::AnCenter);
+
+
+
+
+		canvas.drawBitmap(
+			ui::Point(performanceRect.right - 24 * 1 - 4, performanceRect.getCenter().y - 10),
+			ui::Point(2 * 19, 0),
+			ui::Size(19, 19),
+			s_bitmapTargetControl,
+			ui::BmAlpha
+		);
+
+
 
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}

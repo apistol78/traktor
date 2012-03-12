@@ -7,6 +7,7 @@
 #include <Core/Misc/Adler32.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Misc/SafeDestroy.h>
+#include <Core/Settings/PropertyString.h>
 #include <Core/System/IProcess.h>
 #include <Core/System/OS.h>
 #include <Core/Thread/Thread.h>
@@ -281,7 +282,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #endif
 
-	traktor::log::info << L"Traktor RemoteServer 1.1" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.2" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -298,7 +299,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.1 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.2 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
 #endif
 
@@ -333,11 +334,16 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		return 4;
 	}
 
-	discoveryManager->addService(new net::NetworkService(
-		L"RemoteTools/Server",
-		itf.addr->getHostName(),
-		OS::getInstance().getComputerName()
-	));
+	Ref< PropertyGroup > properties = new PropertyGroup();
+	properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
+	properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
+#if defined(_WIN32)
+	properties->setProperty< PropertyString >(L"OS", L"win32");
+#elif defined(__APPLE__)
+	properties->setProperty< PropertyString >(L"OS", L"osx");
+#endif
+
+	discoveryManager->addService(new net::NetworkService(L"RemoteTools/Server", properties));
 
 	traktor::log::info << L"Discoverable as \"RemoteTools/Server\", host \"" << itf.addr->getHostName() << L"\"" << Endl;
 	traktor::log::info << L"Waiting for client(s)..." << Endl;

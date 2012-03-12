@@ -21,15 +21,16 @@ ObjectEditorDialog::ObjectEditorDialog(PropertyGroup* settings, IObjectEditor* o
 :	m_settings(settings)
 ,	m_objectEditor(objectEditor)
 {
+	T_ASSERT (m_objectEditor);
 }
 
 bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
-	int32_t width = 500, height = 400;
+	ui::Size preferredSize = m_objectEditor->getPreferredSize();
 
 	// Get instance's editor dimensions from settings.
-	width = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Width", 500);
-	height = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", 400);
+	int32_t width = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Width", preferredSize.cx);
+	int32_t height = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", preferredSize.cy);
 
 	StringOutputStream ss;
 	ss << L"Edit \"" << instance->getName() << L"\"";

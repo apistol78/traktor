@@ -2,6 +2,7 @@
 #define traktor_amalgam_ButtonCell_H
 
 #include "Ui/Bitmap.h"
+#include "Ui/Command.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
 namespace traktor
@@ -17,7 +18,8 @@ public:
 		int32_t index,
 		bool enable,
 		int32_t eventId,
-		Object* eventItem
+		Object* eventItem,
+		const ui::Command& eventCommand
 	);
 
 	void setEnable(bool enable);
@@ -35,6 +37,7 @@ private:
 	bool m_down;
 	int32_t m_eventId;
 	Ref< Object > m_eventItem;
+	ui::Command m_eventCommand;
 };
 
 	}

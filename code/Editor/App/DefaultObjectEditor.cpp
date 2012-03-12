@@ -58,6 +58,11 @@ void DefaultObjectEditor::apply()
 	m_instance->setObject(m_object);
 }
 
+ui::Size DefaultObjectEditor::getPreferredSize() const
+{
+	return ui::Size(500, 400);
+}
+
 bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);

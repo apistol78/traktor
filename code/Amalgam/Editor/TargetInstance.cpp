@@ -118,6 +118,11 @@ void TargetInstance::addConnection(TargetConnection* connection)
 	m_connections.push_back(connection);
 }
 
+void TargetInstance::removeConnection(TargetConnection* connection)
+{
+	m_connections.remove(connection);
+}
+
 const RefArray< TargetConnection>& TargetInstance::getConnections() const
 {
 	return m_connections;

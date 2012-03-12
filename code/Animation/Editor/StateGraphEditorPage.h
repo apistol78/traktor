@@ -71,8 +71,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< editor::IEditorPageSite > m_site;
-	Ref< editor::IDocument > m_document;
+	editor::IEditorPageSite* m_site;
+	editor::IDocument* m_document;
 	Ref< StateGraph > m_stateGraph;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::GraphControl > m_editorGraph;

@@ -180,6 +180,11 @@ void TargetEditor::apply()
 	m_editInstance->setObject(m_editTarget);
 }
 
+ui::Size TargetEditor::getPreferredSize() const
+{
+	return ui::Size(1000, 600);
+}
+
 void TargetEditor::updateTargetConfigurations()
 {
 	m_listBoxTargetConfigurations->removeAll();

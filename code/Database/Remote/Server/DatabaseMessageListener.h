@@ -22,8 +22,8 @@ public:
 	DatabaseMessageListener(const Configuration* configuration, Connection* connection);
 
 private:
-	Ref< const Configuration > m_configuration;
-	Ref< Connection > m_connection;
+	const Configuration* m_configuration;
+	Connection* m_connection;
 
 	bool messageOpen(const class DbmOpen* message);
 

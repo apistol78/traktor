@@ -21,7 +21,7 @@ public:
 	GroupMessageListener(Connection* connection);
 
 private:
-	Ref< Connection > m_connection;
+	Connection* m_connection;
 
 	bool messageGetGroupName(const class DbmGetGroupName* message);
 

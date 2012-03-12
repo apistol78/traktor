@@ -122,6 +122,9 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	applicationConfiguration->setProperty< PropertyString >(L"Input.Default", m_targetConfiguration->getDefaultInput().format());
 	applicationConfiguration->setProperty< PropertyString >(L"Online.Config", m_targetConfiguration->getOnlineConfig().format());
 
+	// Append application title.
+	applicationConfiguration->setProperty< PropertyString >(L"Render.Title", m_targetName);
+
 	// Write generated application configuration in output directory.
 	Ref< IStream > file = FileSystem::getInstance().open(
 		m_outputPath + L"/Application.config",

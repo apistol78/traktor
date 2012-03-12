@@ -24,6 +24,14 @@ class T_DLLCLASS Object : public ITypedObject
 	T_RTTI_CLASS;
 
 public:
+	Object()
+	{
+	}
+
+	Object(const Object& object)
+	{
+	}
+
 	virtual void addRef(void* owner) const
 #if !defined(_DEBUG)
 	{
@@ -43,10 +51,6 @@ public:
 	;
 #endif
 
-	void* operator new (size_t size);
-
-	void operator delete (void* ptr);
-
 	int32_t getReferenceCount() const
 #if !defined(_DEBUG)
 	{
@@ -55,6 +59,15 @@ public:
 #else
 	;
 #endif
+
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
+	Object& operator = (const Object& object)
+	{
+		return *this;
+	}
 
 	static void setReferenceDebugger(IObjectRefDebugger* refDebugger);
 

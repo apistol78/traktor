@@ -254,7 +254,7 @@ bool RenderViewDx10::reset(const RenderViewDefaultDesc& desc)
 	m_fullScreen = desc.fullscreen;
 	m_waitVBlank = desc.waitVBlank;
 
-	m_window->setTitle(desc.title ? desc.title : L"Traktor - DirectX 10 Renderer");
+	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - DirectX 10 Renderer");
 	m_window->addListener(this);
 
 	return true;

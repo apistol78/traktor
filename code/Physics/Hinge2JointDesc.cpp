@@ -19,8 +19,9 @@ Hinge2JointDesc::Hinge2JointDesc()
 ,	m_axis2(1.0f, 0.0f, 0.0f, 0.0f)
 ,	m_lowStop(0.0f)
 ,	m_highStop(0.0f)
-,	m_suspensionErp(0.4f)
-,	m_suspensionCfm(0.8f)
+,	m_suspensionEnable(false)
+,	m_suspensionDamping(0.0f)
+,	m_suspensionStiffness(0.0f)
 {
 }
 
@@ -74,24 +75,34 @@ float Hinge2JointDesc::getHighStop() const
 	return m_highStop;
 }
 
-void Hinge2JointDesc::setSuspensionErp(float suspensionErp)
+void Hinge2JointDesc::setSuspensionEnable(bool suspensionEnable)
 {
-	m_suspensionErp = suspensionErp;
+	m_suspensionEnable = suspensionEnable;
 }
 
-float Hinge2JointDesc::getSuspensionErp() const
+bool Hinge2JointDesc::getSuspensionEnable() const
 {
-	return m_suspensionErp;
+	return m_suspensionEnable;
 }
 
-void Hinge2JointDesc::setSuspensionCfm(float suspensionCfm)
+void Hinge2JointDesc::setSuspensionDamping(float suspensionDamping)
 {
-	m_suspensionCfm = suspensionCfm;
+	m_suspensionDamping = suspensionDamping;
 }
 
-float Hinge2JointDesc::getSuspensionCfm() const
+float Hinge2JointDesc::getSuspensionDamping() const
 {
-	return m_suspensionCfm;
+	return m_suspensionDamping;
+}
+
+void Hinge2JointDesc::setSuspensionStiffness(float suspensionStiffness)
+{
+	m_suspensionStiffness = suspensionStiffness;
+}
+
+float Hinge2JointDesc::getSuspensionStiffness() const
+{
+	return m_suspensionStiffness;
 }
 
 bool Hinge2JointDesc::serialize(ISerializer& s)
@@ -101,8 +112,9 @@ bool Hinge2JointDesc::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"axis2", m_axis2, AttributeDirection());
 	s >> Member< float >(L"lowStop", m_lowStop, AttributeRange(-PI, PI));
 	s >> Member< float >(L"highStop", m_highStop, AttributeRange(-PI, PI));
-	s >> Member< float >(L"suspensionErp", m_suspensionErp, AttributeRange(0.0f, 1.0f));
-	s >> Member< float >(L"suspensionCfm", m_suspensionCfm, AttributeRange(0.0f, 1.0f));
+	s >> Member< bool >(L"suspensionEnable", m_suspensionEnable);
+	s >> Member< float >(L"suspensionDamping", m_suspensionDamping, AttributeRange(0.0f));
+	s >> Member< float >(L"suspensionStiffness", m_suspensionStiffness, AttributeRange(0.0f));
 	return true;
 }
 

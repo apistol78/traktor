@@ -91,8 +91,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< editor::IEditorPageSite > m_site;
-	Ref< editor::IDocument > m_document;
+	editor::IEditorPageSite* m_site;
+	editor::IDocument* m_document;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< ui::PopupMenu > m_boneMenu;

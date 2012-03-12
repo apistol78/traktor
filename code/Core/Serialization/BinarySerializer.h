@@ -89,7 +89,7 @@ public:
 private:
 	Ref< IStream > m_stream;
 	Direction m_direction;
-	std::map< uint64_t, ISerializable* > m_readCache;
+	std::map< uint64_t, Ref< ISerializable > > m_readCache;
 	std::map< ISerializable*, uint64_t > m_writeCache;
 	uint64_t m_nextCacheId;
 	std::vector< std::wstring > m_typeReadCache;

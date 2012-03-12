@@ -31,9 +31,9 @@ public:
 
 	void setProperty(const std::wstring& propertyName, IPropertyValue* value);
 
-	Ref< IPropertyValue > getProperty(const std::wstring& propertyName);
+	IPropertyValue* getProperty(const std::wstring& propertyName);
 
-	Ref< const IPropertyValue > getProperty(const std::wstring& propertyName) const;
+	const IPropertyValue* getProperty(const std::wstring& propertyName) const;
 
 	/*! \brief Set user property.
 	 *

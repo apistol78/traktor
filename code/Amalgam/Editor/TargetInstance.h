@@ -65,6 +65,8 @@ public:
 
 	void addConnection(TargetConnection* connection);
 
+	void removeConnection(TargetConnection* connection);
+
 	const RefArray< TargetConnection >& getConnections() const;
 
 	std::wstring getOutputPath() const;

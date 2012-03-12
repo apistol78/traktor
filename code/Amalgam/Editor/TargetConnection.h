@@ -25,6 +25,8 @@ public:
 
 	void destroy();
 
+	void shutdown();
+
 	bool update();
 
 	net::TcpSocket* getSocket() const { return m_socket; }

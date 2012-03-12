@@ -1,6 +1,7 @@
 #ifndef traktor_net_NetworkService_H
 #define traktor_net_NetworkService_H
 
+#include "Core/Settings/PropertyGroup.h"
 #include "Net/Discovery/IService.h"
 
 // import/export mechanism.
@@ -28,22 +29,18 @@ public:
 
 	NetworkService(
 		const std::wstring& type,
-		const std::wstring& host,
-		const std::wstring& description
+		const PropertyGroup* properties
 	);
 
 	const std::wstring& getType() const;
 
-	const std::wstring& getHost() const;
-
-	virtual std::wstring getDescription() const;
+	const PropertyGroup* getProperties() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	std::wstring m_type;
-	std::wstring m_host;
-	std::wstring m_description;
+	Ref< const PropertyGroup > m_properties;
 };
 
 	}

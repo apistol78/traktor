@@ -60,6 +60,8 @@ public:
 
 	virtual void apply();
 
+	virtual ui::Size getPreferredSize() const;
+
 private:
 	struct EditFeature : public Object
 	{

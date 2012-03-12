@@ -54,6 +54,10 @@ bool TargetManager::update()
 {
 	net::SocketSet socketSet, socketSetResult;
 
+	// Update all targets.
+	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
+		(*i)->update();
+
 	// Gather all sockets so we can wait on all simultaneously.
 	socketSet.add(m_listenSocket);
 	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
@@ -111,10 +115,6 @@ bool TargetManager::update()
 			}
 		}
 	}
-
-	// Update all targets.
-	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-		(*i)->update();
 
 	return true;
 }

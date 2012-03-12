@@ -103,7 +103,11 @@ void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 			parent->unlink(entityAdapter);
 
 		// Insert into map from instance guid to adapters.
-		m_cachedAdapters[&type_of(entityAdapter->getEntityData())].push_back(entityAdapter);
+		if (entityAdapter->getEntityData())
+		{
+			const TypeInfo& entityDataType = type_of(entityAdapter->getEntityData());
+			m_cachedAdapters[&entityDataType].push_back(entityAdapter);
+		}
 
 		// Release entity data reference.
 		entityAdapter->setEntityData(0);

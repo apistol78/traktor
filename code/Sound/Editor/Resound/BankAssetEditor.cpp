@@ -140,6 +140,11 @@ void BankAssetEditor::apply()
 	m_instance->setObject(m_asset);
 }
 
+ui::Size BankAssetEditor::getPreferredSize() const
+{
+	return ui::Size(500, 400);
+}
+
 void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGrain >& grains)
 {
 	for (RefArray< IGrain >::const_iterator i = grains.begin(); i != grains.end(); ++i)

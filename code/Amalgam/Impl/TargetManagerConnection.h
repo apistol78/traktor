@@ -19,9 +19,11 @@ public:
 
 	bool connect(const std::wstring& host, uint16_t port, const Guid& id);
 
+	bool connected() const;
+
 	void setPerformance(const TargetPerformance& performance);
 
-	void update();
+	bool update();
 
 private:
 	Ref< net::TcpSocket > m_socket;

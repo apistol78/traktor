@@ -243,7 +243,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		return 0;
 	}
 
-	m_window->setTitle(desc.title ? desc.title : L"Traktor - OpenGL Renderer");
+	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
 
 	if (desc.fullscreen)
 		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
@@ -343,7 +343,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 #elif defined(__APPLE__)
 
 	m_windowHandle = cglwCreateWindow(
-		desc.title ? desc.title : L"Traktor - OpenGL Renderer",
+		!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer",
 		desc.displayMode,
 		desc.fullscreen
 	);

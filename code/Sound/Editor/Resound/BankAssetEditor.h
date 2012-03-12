@@ -73,6 +73,8 @@ public:
 
 	virtual void apply();
 
+	virtual ui::Size getPreferredSize() const;
+
 private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;

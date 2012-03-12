@@ -648,6 +648,10 @@ bool Application::update()
 		// Publish performance to target manager.
 		if (m_targetManagerConnection)
 		{
+			// First ensure target manager still connected.
+			if (!m_targetManagerConnection->connected())
+				return false;
+
 			render::RenderViewStatistics statistics;
 			m_renderServer->getRenderView()->getStatistics(statistics);
 

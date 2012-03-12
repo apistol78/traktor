@@ -67,10 +67,9 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	Block block;
 	block.tag = tag;
 	block.size = size;
-	block.at[0] =
-	block.at[1] =
-	block.at[2] =
-	block.at[3] = 0;
+
+	for (int i = 0; i < sizeof_array(block.at); ++i)
+		block.at[i] = 0;
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
@@ -82,12 +81,10 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	);
 #	endif
 #elif !defined(_PS3)
-
 	backtrace(
 		block.at,
 		sizeof_array(block.at)
 	);
-
 #endif
 
 	m_aliveBlocks.insert(std::make_pair(ptr, block));

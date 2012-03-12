@@ -51,7 +51,7 @@ void PropertyGroup::setProperty(const std::wstring& propertyName, IPropertyValue
 	}
 }
 
-Ref< IPropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName)
+IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName)
 {
 	size_t pos = propertyName.find(L'/');
 	if (pos == propertyName.npos)
@@ -75,7 +75,7 @@ Ref< IPropertyValue > PropertyGroup::getProperty(const std::wstring& propertyNam
 	}
 }
 
-Ref< const IPropertyValue > PropertyGroup::getProperty(const std::wstring& propertyName) const
+const IPropertyValue* PropertyGroup::getProperty(const std::wstring& propertyName) const
 {
 	size_t pos = propertyName.find(L'/');
 	if (pos == propertyName.npos)

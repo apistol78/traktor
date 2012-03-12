@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberRef.h"
 #include "Net/Discovery/NetworkService.h"
 
 namespace traktor
@@ -7,7 +8,7 @@ namespace traktor
 	namespace net
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.NetworkService", 0, NetworkService, IService)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.NetworkService", 1, NetworkService, IService)
 
 NetworkService::NetworkService()
 {
@@ -15,12 +16,10 @@ NetworkService::NetworkService()
 
 NetworkService::NetworkService(
 	const std::wstring& type,
-	const std::wstring& host,
-	const std::wstring& description
+	const PropertyGroup* properties
 )
 :	m_type(type)
-,	m_host(host)
-,	m_description(description)
+,	m_properties(properties)
 {
 }
 
@@ -29,21 +28,19 @@ const std::wstring& NetworkService::getType() const
 	return m_type;
 }
 
-const std::wstring& NetworkService::getHost() const
+const PropertyGroup* NetworkService::getProperties() const
 {
-	return m_host;
-}
-
-std::wstring NetworkService::getDescription() const
-{
-	return m_description;
+	return m_properties;
 }
 
 bool NetworkService::serialize(ISerializer& s)
 {
+	if (s.getVersion() < 1)
+		return false;
+
 	s >> Member< std::wstring >(L"type", m_type);
-	s >> Member< std::wstring >(L"host", m_host);
-	s >> Member< std::wstring >(L"description", m_description);
+	s >> MemberRef< const PropertyGroup >(L"properties", m_properties);
+
 	return true;
 }
 

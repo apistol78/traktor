@@ -21,7 +21,7 @@ public:
 	BusMessageListener(Connection* connection);
 
 private:
-	Ref< Connection > m_connection;
+	Connection* m_connection;
 
 	bool messagePutEvent(const class DbmPutEvent* message);
 
