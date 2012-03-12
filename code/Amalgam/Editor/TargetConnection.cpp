@@ -24,6 +24,11 @@ void TargetConnection::destroy()
 	}
 }
 
+void TargetConnection::shutdown()
+{
+	destroy();
+}
+
 bool TargetConnection::update()
 {
 	if (!m_socket)

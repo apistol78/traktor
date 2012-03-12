@@ -73,6 +73,11 @@ void InputMappingEditor::apply()
 	m_instance->setObject(m_mapping);
 }
 
+ui::Size InputMappingEditor::getPreferredSize() const
+{
+	return ui::Size(500, 400);
+}
+
 void InputMappingEditor::eventButtonImportInput(ui::Event* event)
 {
 	ui::FileDialog fileDialog;

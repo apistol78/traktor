@@ -4,14 +4,16 @@
 #include "Database/Local/LocalDatabase.h"
 #include "Database/Remote/Server/ConnectionManager.h"
 #include "Database/Remote/Server/Configuration.h"
-#include "Database/Remote/Server/RemoteDatabaseService.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/DiscoveryManager.h"
+#include "Net/Discovery/NetworkService.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
 
 using namespace traktor;
 
@@ -96,12 +98,10 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 			return 1;
 		}
 
-		std::wstring host = itf.addr->getHostName();
-
-		Ref< db::RemoteDatabaseService > service = new db::RemoteDatabaseService(
-			host,
-			configuration->getListenPort()
-		);
+		Ref< PropertyGroup > properties = new PropertyGroup();
+		properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
+		properties->setProperty< PropertyInteger >(L"Port", configuration->getListenPort());
+		Ref< net::NetworkService > service = new net::NetworkService(L"Database/Server", properties);
 
 		discoveryManager->addService(service);
 	}

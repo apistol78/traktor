@@ -3,6 +3,7 @@
 #include "Amalgam/Editor/Platform.h"
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetConfiguration.h"
+#include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/TargetManager.h"
 #include "Amalgam/Editor/Tool/BuildTargetAction.h"
@@ -134,7 +135,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_targetList = new TargetListControl();
 	m_targetList->create(container);
 	m_targetList->addPlayEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListPlay));
-	//m_targetList->addStopEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetStop));
+	m_targetList->addStopEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListStop));
 
 	m_site->createAdditionalPanel(container, 200, false);
 
@@ -198,9 +199,22 @@ void EditorPlugin::destroy()
 		ThreadManager::getInstance().destroy(m_threadTargetManager);
 	}
 
+	m_hostEnumerator = 0;
+	m_toolTargets = 0;
+
 	safeDestroy(m_connectionManager);
-	safeDestroy(m_targetManager);
 	safeDestroy(m_discoveryManager);
+	safeDestroy(m_targetManager);
+
+	m_targetInstances.clear();
+	m_targets.clear();
+
+	safeDestroy(m_targetList);
+	safeDestroy(m_toolBar);
+
+	m_site = 0;
+	m_parent = 0;
+	m_editor = 0;
 
 	net::Network::finalize();
 }
@@ -378,13 +392,30 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 		m_targetActionQueueSignal.set();
 	}
 
-	m_targetList->update();
+	m_targetList->requestLayout();
+	m_targetList->requestUpdate();
 }
 
-//void EditorPlugin::eventTargetStop(ui::Event* event)
-//{
-//	// \fixme
-//}
+void EditorPlugin::eventTargetListStop(ui::Event* event)
+{
+	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
+	
+	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
+	int32_t connectionId = cmdEvent->getCommand().getId();
+
+	const RefArray< TargetConnection >& connections = targetInstance->getConnections();
+	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
+	{
+		TargetConnection* connection = connections[connectionId];
+		T_ASSERT (connection);
+
+		connection->shutdown();
+		targetInstance->removeConnection(connection);
+	}
+
+	m_targetList->requestLayout();
+	m_targetList->requestUpdate();
+}
 
 void EditorPlugin::eventToolBarClick(ui::Event* event)
 {
@@ -403,11 +434,14 @@ void EditorPlugin::eventToolBarClick(ui::Event* event)
 			m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, *i));
 	}
 
-	m_targetList->update();
+	m_targetList->requestLayout();
+	m_targetList->requestUpdate();
 }
 
 void EditorPlugin::threadTargetManager()
 {
+	int32_t count = 0;
+
 	// Update target connection manager and host enumerator.
 	while (!m_threadTargetManager->stopped())
 	{
@@ -419,8 +453,14 @@ void EditorPlugin::threadTargetManager()
 				m_targetList->requestUpdate();
 			}
 		}
-		if (m_hostEnumerator)
-			m_hostEnumerator->update();
+
+		if (++count >= 10)
+		{
+			if (m_hostEnumerator)
+				m_hostEnumerator->update();
+
+			count = 0;
+		}
 	}
 }
 

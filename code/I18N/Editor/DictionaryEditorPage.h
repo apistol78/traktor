@@ -63,8 +63,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< editor::IEditorPageSite > m_site;
-	Ref< editor::IDocument > m_document;
+	editor::IEditorPageSite* m_site;
+	editor::IDocument* m_document;
 	Ref< ui::custom::GridView > m_gridDictionary;
 	Ref< Dictionary > m_dictionary;
 

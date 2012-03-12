@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -39,6 +39,10 @@ public:
 
 	void getAngles(float& outMinAngle, float& outMaxAngle) const;
 
+	void setAngularOnly(bool angularOnly);
+
+	bool getAngularOnly() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -46,6 +50,7 @@ private:
 	Vector4 m_axis;
 	float m_minAngle;
 	float m_maxAngle;
+	bool m_angularOnly;
 };
 
 	}

@@ -219,6 +219,11 @@ void MeshAssetEditor::apply()
 	m_instance->setObject(m_asset);
 }
 
+ui::Size MeshAssetEditor::getPreferredSize() const
+{
+	return ui::Size(500, 400);
+}
+
 void MeshAssetEditor::updateModel()
 {
 	Path assetPath = FileSystem::getInstance().getAbsolutePath(m_assetPath, m_asset->getFileName());

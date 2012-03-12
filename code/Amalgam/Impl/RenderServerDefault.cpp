@@ -146,7 +146,7 @@ bool RenderServerDefault::create(PropertyGroup* settings)
 	m_renderViewDesc.stencilBits = settings->getProperty< PropertyInteger >(L"Render.StencilBits", 4);
 	m_renderViewDesc.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
 	m_renderViewDesc.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
-	m_renderViewDesc.title = L"Puzzle Dimension";
+	m_renderViewDesc.title = settings->getProperty< PropertyString >(L"Render.Title", L"Traktor");
 	m_renderViewDesc.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
 
 #if defined(_PS3)

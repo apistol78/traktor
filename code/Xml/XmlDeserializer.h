@@ -97,7 +97,7 @@ private:
 	};
 
 	std::list< Entry > m_stack;
-	std::map< std::wstring, ISerializable* > m_refs;
+	std::map< std::wstring, Ref< ISerializable > > m_refs;
 	std::vector< float > m_values;
 
 	std::wstring stackPath();

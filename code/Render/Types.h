@@ -285,12 +285,11 @@ struct RenderViewDefaultDesc : public RenderViewDesc
 {
 	DisplayMode displayMode;
 	bool fullscreen;
-	const wchar_t* title;
+	std::wstring title;
 
 	RenderViewDefaultDesc()
 	:	RenderViewDesc()
 	,	fullscreen(true)
-	,	title(0)
 	{
 	}
 };

@@ -120,7 +120,7 @@ private:
 
 	void eventTargetListPlay(ui::Event* event);
 
-	//void eventTargetStop(ui::Event* event);
+	void eventTargetListStop(ui::Event* event);
 
 	void threadTargetManager();
 

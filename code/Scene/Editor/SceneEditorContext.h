@@ -312,7 +312,7 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< editor::IDocument > m_document;
+	editor::IDocument* m_document;
 	Ref< db::Database > m_resourceDb;
 	Ref< db::Database > m_sourceDb;
 	Ref< resource::IResourceManager > m_resourceManager;

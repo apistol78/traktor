@@ -173,7 +173,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 #if defined(_WIN32)
 
-	m_window->setTitle(desc.title ? desc.title : L"Traktor - OpenGL Renderer");
+	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
 
 	if (desc.fullscreen)
 		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);

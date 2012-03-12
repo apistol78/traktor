@@ -1815,9 +1815,12 @@ void EditorForm::eventTabClose(ui::Event* event)
 
 	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
 	T_ASSERT (document);
+	T_ASSERT (m_activeDocument == document);
 
 	document->close();
 	document = 0;
+
+	m_activeDocument = 0;
 
 	tabPage->destroy();
 	tabPage = 0;

@@ -19,9 +19,8 @@ namespace traktor
 class BuildDependenciesVisitor : public EntityDataTraverser::IVisitor
 {
 public:
-	BuildDependenciesVisitor(editor::IPipelineDepends* pipelineDepends, const EntityData* currentEntityData)
+	BuildDependenciesVisitor(editor::IPipelineDepends* pipelineDepends)
 	:	m_pipelineDepends(pipelineDepends)
-	,	m_currentEntityData(currentEntityData)
 	{
 	}
 
@@ -38,7 +37,6 @@ public:
 
 private:
 	editor::IPipelineDepends* m_pipelineDepends;
-	const EntityData* m_currentEntityData;
 };
 
 class BuildOutputVisitor : public EntityDataTraverser::IVisitor
@@ -94,8 +92,8 @@ bool EntityPipeline::buildDependencies(
 	const EntityData* entityData = checked_type_cast< const EntityData*, false >(sourceAsset);
 	
 	// Add dependencies from child entity data.
+	BuildDependenciesVisitor visitor(pipelineDepends);
 	EntityDataTraverser traverser(entityData);
-	BuildDependenciesVisitor visitor(pipelineDepends, entityData);
 	traverser.visit(visitor);
 
 	// Add external entity data dependencies.
@@ -152,8 +150,8 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 	}
 
 	// Build child entity data of entity.
-	EntityDataTraverser traverser(entityData);
 	BuildOutputVisitor visitor(pipelineBuilder);
+	EntityDataTraverser traverser(entityData);
 	traverser.visit(visitor);
 
 	return entityData;

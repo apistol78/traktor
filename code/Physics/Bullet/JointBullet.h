@@ -83,14 +83,18 @@ public:
 
 		if (enable)
 		{
-			m_body1->addJoint(this);
-			m_body2->addJoint(this);
+			if (m_body1)
+				m_body1->addJoint(this);
+			if (m_body2)
+				m_body2->addJoint(this);
 			m_callback->insertConstraint(m_constraint);
 		}
 		else
 		{
-			m_body1->removeJoint(this);
-			m_body2->removeJoint(this);
+			if (m_body1)
+				m_body1->removeJoint(this);
+			if (m_body2)
+				m_body2->removeJoint(this);
 			m_callback->removeConstraint(m_constraint);
 		}
 

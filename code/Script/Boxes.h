@@ -135,6 +135,10 @@ public:
 	Quaternion concat(const Quaternion& q) const;
 
 	Vector4 transform(const Vector4& v) const;
+
+	Vector4 getEulerAngles() const;
+
+	Vector4 getAxisAngle() const;
 	
 	const Quaternion& unbox() const { return m_value; }
 

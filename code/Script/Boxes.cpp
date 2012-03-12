@@ -164,6 +164,16 @@ Vector4 BoxedQuaternion::transform(const Vector4& v) const
 	return m_value * v;
 }
 
+Vector4 BoxedQuaternion::getEulerAngles() const
+{
+	return m_value.toEulerAngles();
+}
+
+Vector4 BoxedQuaternion::getAxisAngle() const
+{
+	return m_value.toAxisAngle();
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Transform", BoxedTransform, Object)
 
 BoxedTransform::BoxedTransform()
@@ -319,6 +329,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedQuaternion->addMethod(L"inverse", &BoxedQuaternion::inverse);
 	classBoxedQuaternion->addMethod(L"concat", &BoxedQuaternion::concat);
 	classBoxedQuaternion->addMethod(L"transform", &BoxedQuaternion::transform);
+	classBoxedQuaternion->addMethod(L"getEulerAngles", &BoxedQuaternion::getEulerAngles);
+	classBoxedQuaternion->addMethod(L"getAxisAngle", &BoxedQuaternion::getAxisAngle);
 	scriptManager->registerClass(classBoxedQuaternion);
 	
 	Ref< AutoScriptClass< BoxedTransform > > classBoxedTransform = new AutoScriptClass< BoxedTransform >();

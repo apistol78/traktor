@@ -358,7 +358,7 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 
 	if ((a = findAttribute(attr, L"ref")) != attr.end())
 	{
-		std::map< std::wstring, ISerializable* >::iterator i = m_refs.find(a->second);
+		std::map< std::wstring, Ref< ISerializable > >::iterator i = m_refs.find(a->second);
 		if (i == m_refs.end())
 		{
 			log::error << L"No such reference, \"" << a->second << L"\"" << Endl;
@@ -377,7 +377,7 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 			return false;
 		}
 
-		ISerializable* o = checked_type_cast< ISerializable* >(type->createInstance());
+		Ref< ISerializable > o = checked_type_cast< ISerializable* >(type->createInstance());
 		if (!o)
 		{
 			log::error << L"Unable to instanciate type \"" << typeName << L"\"" << Endl;

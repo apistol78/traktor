@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_TargetInstanceListItem_H
 #define traktor_amalgam_TargetInstanceListItem_H
 
+#include "Core/RefArray.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
 namespace traktor
@@ -29,6 +30,7 @@ private:
 	Ref< ProgressCell > m_progressCell;
 	Ref< DropListCell > m_hostsCell;
 	Ref< ButtonCell > m_playCell;
+	RefArray< ButtonCell > m_stopCells;
 	Ref< TargetInstance > m_instance;
 };
 

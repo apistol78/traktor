@@ -626,7 +626,7 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 		if (!read_primitive< uint64_t >(m_stream, hash))
 			return false;
 
-		ISerializable* object = 0;
+		Ref< ISerializable > object;
 
 		if (hash)
 		{
@@ -682,7 +682,7 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 	}
 	else
 	{
-		ISerializable* object = *m;
+		Ref< ISerializable > object = *m;
 
 		if (object)
 		{

@@ -1,6 +1,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/Save.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
@@ -30,6 +31,11 @@ PipelineDependsParallel::PipelineDependsParallel(
 {
 	m_jobQueue = new JobQueue();
 	m_jobQueue->create(4);
+}
+
+PipelineDependsParallel::~PipelineDependsParallel()
+{
+	safeDestroy(m_jobQueue);
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
@@ -217,13 +223,17 @@ void PipelineDependsParallel::addUniqueDependency(
 
 	// Scan child dependencies.
 	{
+		Ref< PipelineDependency > previousDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 		m_currentDependency.set(currentDependency);
+
 		result = pipeline->buildDependencies(
 			this,
 			sourceInstance,
 			sourceAsset,
 			currentDependency->buildParams
 		);
+
+		m_currentDependency.set(previousDependency);
 	}
 
 	if (!result)

@@ -32,7 +32,7 @@ private:
 	{
 		const char* tag;
 		size_t size;
-		void* at[4];
+		void* at[8];
 	};
 
 	mutable Semaphore m_lock;

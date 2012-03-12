@@ -100,8 +100,6 @@ void DiscoveryManager::destroy()
 void DiscoveryManager::addService(IService* service)
 {
 	m_services.push_back(service);
-	if (m_verbose)
-		log::info << L"Discovery manager: Service \"" << service->getDescription() << L" added" << Endl;
 }
 
 void DiscoveryManager::removeService(IService* service)
@@ -182,10 +180,18 @@ void DiscoveryManager::threadMulticastListener()
 		{
 			if (serviceInfo->getSessionGuid() == m_sessionGuid)
 			{
-				if (m_verbose)
-					log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
+				if (serviceInfo->getService())
+				{
+					if (m_verbose)
+						log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
 
-				m_foundServices.push_back(serviceInfo->getService());
+					m_foundServices.push_back(serviceInfo->getService());
+				}
+				else
+				{
+					if (m_verbose)
+						log::warning << L"Discovery manager: Got invalid \"service info\" from " << fromAddress << Endl;
+				}
 			}
 		}
 		else

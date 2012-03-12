@@ -94,8 +94,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< editor::IEditorPageSite > m_site;
-	Ref< editor::IDocument > m_document;
+	editor::IEditorPageSite* m_site;
+	editor::IDocument* m_document;
 	Ref< Animation > m_animation;
 	Ref< Skeleton > m_skeleton;
 	Ref< ui::Widget > m_renderWidgets[4];

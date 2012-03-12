@@ -37,6 +37,8 @@ public:
 		db::Database* sourceDatabase
 	);
 
+	virtual ~PipelineDependsParallel();
+
 	virtual void addDependency(
 		const ISerializable* sourceAsset
 	);

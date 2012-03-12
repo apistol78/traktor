@@ -201,7 +201,7 @@ bool ApplyReflector::operator >> (const Member< ISerializable >& m)
 bool ApplyReflector::operator >> (const Member< ISerializable* >& m)
 {
 	ObjectPropertyItem* propertyItem = checked_type_cast< ObjectPropertyItem*, false >(*m_propertyItemIterator++);
-	ISerializable* object = checked_type_cast< ISerializable* >(propertyItem->getObject());
+	Ref< ISerializable > object = checked_type_cast< ISerializable* >(propertyItem->getObject());
 	if (object)
 	{
 		int version = type_of(object).getVersion();

@@ -49,6 +49,11 @@ bool TargetManagerConnection::connect(const std::wstring& host, uint16_t port, c
 	return true;
 }
 
+bool TargetManagerConnection::connected() const
+{
+	return m_socket != 0;
+}
+
 void TargetManagerConnection::setPerformance(const TargetPerformance& performance)
 {
 	const float c_filterCoeff = 0.1f;
@@ -69,13 +74,27 @@ void TargetManagerConnection::setPerformance(const TargetPerformance& performanc
 	m_performance = performance;
 }
 
-void TargetManagerConnection::update()
+bool TargetManagerConnection::update()
 {
-	if (m_socketStream)
+	if (!m_socket || !m_socketStream)
+		return false;
+
+	// Check for connection terminate.
+	if (m_socket->select(true, false, false, 0) > 0)
 	{
-		BinarySerializer(m_socketStream).writeObject(&m_performance);
-		BinarySerializer(m_socketStream).writeObject(&m_deltaPerformance);
+		if (m_socket->recv() < 0)
+		{
+			m_socketStream = 0;
+			m_socket->close();
+			m_socket = 0;
+			return false;
+		}
 	}
+
+	BinarySerializer(m_socketStream).writeObject(&m_performance);
+	BinarySerializer(m_socketStream).writeObject(&m_deltaPerformance);
+	
+	return true;
 }
 
 	}

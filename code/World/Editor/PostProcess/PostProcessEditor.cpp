@@ -105,6 +105,11 @@ void PostProcessEditor::apply()
 	m_instance->setObject(m_asset);
 }
 
+ui::Size PostProcessEditor::getPreferredSize() const
+{
+	return ui::Size(500, 400);
+}
+
 void PostProcessEditor::updateStepView(PostProcessStepItem* parent, const RefArray< PostProcessStep >& steps)
 {
 	for (RefArray< PostProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)

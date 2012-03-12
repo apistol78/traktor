@@ -498,7 +498,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		if (b1 && b2)
 		{
 			Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
-			Vector4 axis = transform * axisDesc->getAxis().xyz0();
+			Vector4 axis = transform * axisDesc->getAxis().xyz0().normalized();
 
 			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
 			btVector3 anchorIn2 = toBtVector3(body2->getTransform().inverse() * anchor);
@@ -517,7 +517,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		else
 		{
 			Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
-			Vector4 axis = transform * axisDesc->getAxis().xyz0();
+			Vector4 axis = transform * axisDesc->getAxis().xyz0().normalized();
 
 			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
 			btVector3 axisIn1 = toBtVector3(body1->getTransform().inverse() * axis);
@@ -606,7 +606,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		if (b1 && b2)
 		{
 			Vector4 anchor = transform * hingeDesc->getAnchor().xyz1();
-			Vector4 axis = transform * hingeDesc->getAxis().xyz0();
+			Vector4 axis = transform * hingeDesc->getAxis().xyz0().normalized();
 
 			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
 			btVector3 anchorIn2 = toBtVector3(body2->getTransform().inverse() * anchor);
@@ -642,6 +642,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		if (abs(maxAngle - minAngle) > FUZZY_EPSILON)
 			hingeConstraint->setLimit(minAngle, maxAngle);
 
+		hingeConstraint->setAngularOnly(hingeDesc->getAngularOnly());
+
 		joint = new HingeJointBullet(this, hingeConstraint, bb1, bb2);
 	}
 	else if (const Hinge2JointDesc* hinge2Desc = dynamic_type_cast< const Hinge2JointDesc* >(desc))
@@ -651,8 +653,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		if (b1 && b2)
 		{
 			Vector4 anchor = transform * hinge2Desc->getAnchor().xyz1();
-			Vector4 axis1 = transform * hinge2Desc->getAxis1().xyz0();
-			Vector4 axis2 = transform * hinge2Desc->getAxis2().xyz0();
+			Vector4 axis1 = transform * hinge2Desc->getAxis1().xyz0().normalized();
+			Vector4 axis2 = transform * hinge2Desc->getAxis2().xyz0().normalized();
 
 			btVector3 _anchor = toBtVector3(anchor);
 			btVector3 _axis1 = toBtVector3(axis1);
@@ -667,13 +669,24 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			);
 
 			// Disable spring.
-			hinge2Constraint->enableSpring(2, false);
-			hinge2Constraint->setDamping(2, 0.0f);
-			hinge2Constraint->setStiffness(2, 0.0f);
+			if (hinge2Desc->getSuspensionEnable())
+			{
+				hinge2Constraint->enableSpring(2, true);
+				hinge2Constraint->setDamping(2, hinge2Desc->getSuspensionDamping());
+				hinge2Constraint->setStiffness(2, hinge2Desc->getSuspensionStiffness());
+			}
+			else
+			{
+				hinge2Constraint->enableSpring(2, false);
+				hinge2Constraint->setDamping(2, 0.0f);
+				hinge2Constraint->setStiffness(2, 0.0f);
+			}
 
 			// Setup rotation range allowed around axis1.
 			hinge2Constraint->setLowerLimit(hinge2Desc->getLowStop());
 			hinge2Constraint->setUpperLimit(hinge2Desc->getHighStop()); 
+
+			hinge2Constraint->setEquilibriumPoint();
 		}
 		else
 			return 0;

@@ -132,7 +132,7 @@ bool RenderViewDefaultWin32::reset(const RenderViewDefaultDesc& desc)
 
 	if (m_d3dPresent.Windowed)
 	{
-		m_window->setTitle(desc.title ? desc.title : L"Traktor - DirectX 9.0c Renderer");
+		m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - DirectX 9.0c Renderer");
 		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 	}
 

@@ -12,7 +12,8 @@ ButtonCell::ButtonCell(
 	int32_t index,
 	bool enable,
 	int32_t eventId,
-	Object* eventItem
+	Object* eventItem,
+	const ui::Command& eventCommand
 )
 :	m_bitmap(bitmap)
 ,	m_index(index)
@@ -20,6 +21,7 @@ ButtonCell::ButtonCell(
 ,	m_down(false)
 ,	m_eventId(eventId)
 ,	m_eventItem(eventItem)
+,	m_eventCommand(eventCommand)
 {
 }
 
@@ -39,7 +41,7 @@ void ButtonCell::mouseUp(ui::custom::AutoWidget* widget, const ui::Point& positi
 	if (m_enable)
 	{
 		m_down = false;
-		ui::CommandEvent commandEvent(widget, m_eventItem);
+		ui::CommandEvent commandEvent(widget, m_eventItem, m_eventCommand);
 		widget->raiseEvent(m_eventId, &commandEvent);
 	}
 }

@@ -80,8 +80,8 @@ public:
 
 private:
 	editor::IEditor* m_editor;
-	Ref< editor::IEditorPageSite > m_site;
-	Ref< editor::IDocument > m_document;
+	editor::IEditorPageSite* m_site;
+	editor::IDocument* m_document;
 	Ref< Effect > m_effect;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;

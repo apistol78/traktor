@@ -469,7 +469,7 @@ bool InspectReflector::operator >> (const Member< ISerializable* >& m)
 {
 	const AttributeType* memberType = findAttribute< AttributeType >(m);
 
-	ISerializable* object = *m;
+	Ref< ISerializable > object = *m;
 
 	Ref< ObjectPropertyItem > propertyItem = new ObjectPropertyItem(
 		stylizeMemberName(m.getName()),

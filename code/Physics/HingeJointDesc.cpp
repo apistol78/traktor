@@ -11,13 +11,14 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HingeJointDesc", 0, HingeJointDesc, JointDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HingeJointDesc", 1, HingeJointDesc, JointDesc)
 
 HingeJointDesc::HingeJointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_axis(1.0f, 0.0f, 0.0f, 0.0f)
 ,	m_minAngle(0.0f)
 ,	m_maxAngle(0.0f)
+,	m_angularOnly(false)
 {
 }
 
@@ -53,12 +54,26 @@ void HingeJointDesc::getAngles(float& outMinAngle, float& outMaxAngle) const
 	outMaxAngle = m_maxAngle;
 }
 
+void HingeJointDesc::setAngularOnly(bool angularOnly)
+{
+	m_angularOnly = angularOnly;
+}
+
+bool HingeJointDesc::getAngularOnly() const
+{
+	return m_angularOnly;
+}
+
 bool HingeJointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
 	s >> Member< float >(L"minAngle", m_minAngle, AttributeRange(-PI, PI));
 	s >> Member< float >(L"maxAngle", m_maxAngle, AttributeRange(-PI, PI));
+
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"angularOnly", m_angularOnly);
+
 	return true;
 }
 

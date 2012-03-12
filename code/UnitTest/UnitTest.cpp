@@ -3,6 +3,7 @@
 #endif
 #include "UnitTest/CaseAtomic.h"
 #include "UnitTest/CaseBitReader.h"
+#include "UnitTest/CaseClone.h"
 #include "UnitTest/CaseCycleDebugger.h"
 #include "UnitTest/CaseMeta.h"
 #include "UnitTest/CaseProcess.h"
@@ -37,71 +38,74 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	Case::Context context;
 
-	log::info << L"Case cycle debugger" << Endl;
-	traktor::CaseCycleDebugger().execute(context);
+	log::info << L"Case clone" << Endl;
+	traktor::CaseClone().execute(context);
 
-	log::info << L"Case atomic" << Endl;
-	traktor::CaseAtomic().execute(context);
+	//log::info << L"Case cycle debugger" << Endl;
+	//traktor::CaseCycleDebugger().execute(context);
 
-	log::info << L"Case bitreader" << Endl;
-	traktor::CaseBitReader().execute(context);
+	//log::info << L"Case atomic" << Endl;
+	//traktor::CaseAtomic().execute(context);
 
-	log::info << L"Case meta" << Endl;
-	traktor::CaseMeta().execute(context);
+	//log::info << L"Case bitreader" << Endl;
+	//traktor::CaseBitReader().execute(context);
 
-	//log::info << L"Case process" << Endl;
-	//traktor::CaseProcess().execute(context);
+	//log::info << L"Case meta" << Endl;
+	//traktor::CaseMeta().execute(context);
 
-	log::info << L"Case thread" << Endl;
-	traktor::CaseThread().execute(context);
+	////log::info << L"Case process" << Endl;
+	////traktor::CaseProcess().execute(context);
 
-	log::info << L"Case job" << Endl;
-	traktor::CaseJob().execute(context);
+	//log::info << L"Case thread" << Endl;
+	//traktor::CaseThread().execute(context);
 
-	log::info << L"Case math" << Endl;
-	traktor::CaseMath().execute(context);
+	//log::info << L"Case job" << Endl;
+	//traktor::CaseJob().execute(context);
 
-	log::info << L"Case matrix 3x3" << Endl;
-	traktor::CaseMatrix33().execute(context);
+	//log::info << L"Case math" << Endl;
+	//traktor::CaseMath().execute(context);
 
-	log::info << L"Case matrix 4x4" << Endl;
-	traktor::CaseMatrix44().execute(context);
+	//log::info << L"Case matrix 3x3" << Endl;
+	//traktor::CaseMatrix33().execute(context);
 
-	log::info << L"Case quaternion" << Endl;
-	traktor::CaseQuaternion().execute(context);
+	//log::info << L"Case matrix 4x4" << Endl;
+	//traktor::CaseMatrix44().execute(context);
 
-	//log::info << L"Case small map" << Endl;
-	//traktor::CaseSmallMap().execute(context);
+	//log::info << L"Case quaternion" << Endl;
+	//traktor::CaseQuaternion().execute(context);
 
-	log::info << L"Case transform" << Endl;
-	traktor::CaseTransform().execute(context);
+	////log::info << L"Case small map" << Endl;
+	////traktor::CaseSmallMap().execute(context);
 
-	log::info << L"Case winding" << Endl;
-	traktor::CaseWinding().execute(context);
+	//log::info << L"Case transform" << Endl;
+	//traktor::CaseTransform().execute(context);
 
-	log::info << L"Case path" << Endl;
-	traktor::CasePath().execute(context);
+	//log::info << L"Case winding" << Endl;
+	//traktor::CaseWinding().execute(context);
 
-	log::info << L"Case xml pull parser" << Endl;
-	traktor::CaseXmlPullParser().execute(context);
+	//log::info << L"Case path" << Endl;
+	//traktor::CasePath().execute(context);
 
-	//log::info << L"Case xml document" << Endl;
-	//traktor::CaseXmlDocument().execute(context);
+	//log::info << L"Case xml pull parser" << Endl;
+	//traktor::CaseXmlPullParser().execute(context);
 
-	log::info << L"Case zip" << Endl;
-	traktor::CaseZip().execute(context);
+	////log::info << L"Case xml document" << Endl;
+	////traktor::CaseXmlDocument().execute(context);
 
-	log::info << L"Case spatial hash array" << Endl;
-	traktor::CaseSpatialHashArray().execute(context);
+	//log::info << L"Case zip" << Endl;
+	//traktor::CaseZip().execute(context);
 
-	log::info << L"Case software renderer" << Endl;
-	traktor::CaseRenderSw().execute(context);
+	//log::info << L"Case spatial hash array" << Endl;
+	//traktor::CaseSpatialHashArray().execute(context);
 
-	//log::info << L"Case sound" << Endl;
-	//traktor::CaseSound().execute(context);
+	//log::info << L"Case software renderer" << Endl;
+	//traktor::CaseRenderSw().execute(context);
 
-	//log::info << L"Case stream copy" << Endl;
-	//traktor::CaseStreamCopy().execute(context);
+	////log::info << L"Case sound" << Endl;
+	////traktor::CaseSound().execute(context);
+
+	////log::info << L"Case stream copy" << Endl;
+	////traktor::CaseStreamCopy().execute(context);
 
 	log::info << L"Finished" << Endl;
 	log::info << IncreaseIndent;

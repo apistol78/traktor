@@ -24,6 +24,8 @@ ArticulatedEntityEditor::ArticulatedEntityEditor(scene::SceneEditorContext* cont
 void ArticulatedEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 	ArticulatedEntityData* articulatedEntityData = checked_type_cast< ArticulatedEntityData* >(getEntityAdapter()->getEntityData());
+	if (!articulatedEntityData)
+		return;
 
 	const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
 	Transform transform = articulatedEntityData->getTransform();

@@ -1,6 +1,7 @@
 #include "Amalgam/Editor/HostEnumerator.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Settings/PropertyString.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/NetworkService.h"
 
@@ -59,9 +60,13 @@ void HostEnumerator::update()
 			if ((*i)->getType() != L"RemoteTools/Server")
 				continue;
 
+			const PropertyGroup* properties = (*i)->getProperties();
+			if (!properties)
+				continue;
+
 			Host h;
-			h.host = (*i)->getHost();
-			h.description = (*i)->getDescription();
+			h.host = properties->getProperty< PropertyString >(L"Host");
+			h.description = properties->getProperty< PropertyString >(L"Description");
 			m_hosts.push_back(h);
 		}
 

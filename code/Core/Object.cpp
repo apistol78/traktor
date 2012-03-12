@@ -54,6 +54,11 @@ void Object::release(void* owner) const
 	if (--m_refCount == 0)
 		finalRelease();
 }
+
+int32_t Object::getReferenceCount() const
+{
+	return m_refCount;
+}
 #endif
 
 void* Object::operator new (size_t size)
@@ -97,13 +102,6 @@ void Object::operator delete (void* ptr)
 		Atomic::decrement(s_heapObjectCount);
 	}
 }
-
-#if defined(_DEBUG)
-int32_t Object::getReferenceCount() const
-{
-	return m_refCount;
-}
-#endif
 
 void Object::setReferenceDebugger(IObjectRefDebugger* refDebugger)
 {

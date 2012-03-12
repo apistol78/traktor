@@ -24,6 +24,8 @@ public:
 
 	void addPlayEventHandler(ui::EventHandler* eventHandler);
 
+	void addStopEventHandler(ui::EventHandler* eventHandler);
+
 private:
 	RefArray< TargetInstanceListItem > m_items;
 

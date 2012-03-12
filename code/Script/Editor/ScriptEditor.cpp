@@ -136,6 +136,11 @@ void ScriptEditor::apply()
 	m_instance->setObject(m_script);
 }
 
+ui::Size ScriptEditor::getPreferredSize() const
+{
+	return ui::Size(600, 500);
+}
+
 void ScriptEditor::syntaxError(uint32_t line, const std::wstring& message)
 {
 	StringOutputStream ss;

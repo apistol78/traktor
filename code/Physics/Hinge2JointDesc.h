@@ -47,13 +47,17 @@ public:
 
 	float getHighStop() const;
 
-	void setSuspensionErp(float suspensionErp);
+	void setSuspensionEnable(bool suspensionEnable);
 
-	float getSuspensionErp() const;
+	bool getSuspensionEnable() const;
 
-	void setSuspensionCfm(float suspensionCfm);
+	void setSuspensionDamping(float suspensionDamping);
 
-	float getSuspensionCfm() const;
+	float getSuspensionDamping() const;
+
+	void setSuspensionStiffness(float suspensionStiffness);
+
+	float getSuspensionStiffness() const;
 
 	virtual bool serialize(ISerializer& s);
 
@@ -63,8 +67,9 @@ private:
 	Vector4 m_axis2;
 	float m_lowStop;
 	float m_highStop;
-	float m_suspensionErp;
-	float m_suspensionCfm;
+	bool m_suspensionEnable;
+	float m_suspensionDamping;
+	float m_suspensionStiffness;
 };
 
 	}
