@@ -1322,6 +1322,14 @@
       <second>World renderer</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_FOV</first>
+      <second>Field of view</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_MOUSE_WHEEL_RATE</first>
+      <second>Mouse wheel rate</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Add dependency</second>
     </item>

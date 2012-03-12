@@ -91,6 +91,7 @@ private:
 	Color4ub m_colorGrid;
 	Color4ub m_colorRef;
 	float m_fieldOfView;
+	float m_mouseWheelRate;
 	int32_t m_multiSample;
 	bool m_invertPanY;
 	Timer m_timer;
