@@ -1,4 +1,5 @@
 #include "Core/Math/Line2.h"
+#include "Core/Math/Winding2.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -57,8 +58,9 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 	if (m_entityAdapters.empty())
 		return false;
 
-	Scalar axisLength = Scalar(m_context->getGuideSize());
-	Scalar arrowLength = axisLength * Scalar(1.0f / 8.0f);
+	float axisLength = m_context->getGuideSize();
+	float arrowLength = axisLength / 8.0f;
+	float squareLength = axisLength / 3.0f;
 
 	Vector4 snappedCenter = m_center;
 	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
@@ -78,15 +80,62 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 	TransformChain tc = transformChain;
 	tc.pushWorld(translate(snappedCenter));
 
-	Vector2 center, axis[3];
+	Vector2 center, axis[3], square[6];
 	tc.objectToScreen(Vector4(0.0f, 0.0f, 0.0f, 1.0f), center);
-	tc.objectToScreen(Vector4(axisLength, 0.0f, 0.0f, 1.0f), axis[0]);
-	tc.objectToScreen(Vector4(0.0f, axisLength, 0.0f, 1.0f), axis[1]);
-	tc.objectToScreen(Vector4(0.0f, 0.0f, axisLength, 1.0f), axis[2]);
+	tc.objectToScreen(Vector4(axisLength + arrowLength, 0.0f, 0.0f, 1.0f), axis[0]);
+	tc.objectToScreen(Vector4(0.0f, axisLength + arrowLength, 0.0f, 1.0f), axis[1]);
+	tc.objectToScreen(Vector4(0.0f, 0.0f, axisLength + arrowLength, 1.0f), axis[2]);
+	tc.objectToScreen(Vector4(squareLength, 0.0f, 0.0f, 1.0f), square[0]);
+	tc.objectToScreen(Vector4(0.0f, squareLength, 0.0f, 1.0f), square[1]);
+	tc.objectToScreen(Vector4(0.0f, 0.0f, squareLength, 1.0f), square[2]);
+	tc.objectToScreen(Vector4(squareLength, squareLength, 0.0f, 1.0f), square[3]);
+	tc.objectToScreen(Vector4(squareLength, 0.0f, squareLength, 1.0f), square[4]);
+	tc.objectToScreen(Vector4(0.0f, squareLength, squareLength, 1.0f), square[5]);
 
 	tc.popWorld();
 
 	m_axisEnable = 0;
+
+	// First check squares.
+	{
+		Winding2 w;
+		w.p.resize(4);
+
+		// XY
+		w.p[0] = center;
+		w.p[1] = square[0];
+		w.p[2] = square[3];
+		w.p[3] = square[1];
+		if (w.inside(cursorPosition))
+		{
+			m_axisEnable |= 1 | 2;
+			return true;
+		}
+
+		// XZ
+		w.p[0] = center;
+		w.p[1] = square[0];
+		w.p[2] = square[4];
+		w.p[3] = square[2];
+		if (w.inside(cursorPosition))
+		{
+			m_axisEnable |= 1 | 4;
+			return true;
+		}
+
+		// YZ
+		w.p[0] = center;
+		w.p[1] = square[1];
+		w.p[2] = square[5];
+		w.p[3] = square[2];
+		if (w.inside(cursorPosition))
+		{
+			m_axisEnable |= 2 | 4;
+			return true;
+		}
+	}
+
+	// If no square hit; check each line.
 	if (Line2(center, axis[0]).classify(cursorPosition, c_guideThickness))
 		m_axisEnable |= 1;
 	if (Line2(center, axis[1]).classify(cursorPosition, c_guideThickness))
@@ -158,8 +207,9 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	if (m_entityAdapters.empty())
 		return;
 
-	Scalar axisLength = Scalar(m_context->getGuideSize());
-	Scalar arrowLength = axisLength * Scalar(1.0f / 8.0f);
+	float axisLength = m_context->getGuideSize();
+	float arrowLength = axisLength / 8.0f;
+	float squareLength = axisLength / 3.0f;
 
 	Vector4 center = m_center;
 	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
@@ -178,6 +228,7 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 
 	primitiveRenderer->pushWorld(translate(center));
 
+	// Infinite "trace" lines.
 	primitiveRenderer->pushDepthEnable(true);
 	if (m_axisEnable & 1)
 		primitiveRenderer->drawLine(
@@ -203,16 +254,49 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->popDepthEnable();
 
 	primitiveRenderer->pushDepthEnable(false);
+
+	// Guide fill squares.
+	// XY
+	primitiveRenderer->drawSolidQuad(
+		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(squareLength, 0.0f, 0.0f, 1.0f),
+		Vector4(squareLength, squareLength, 0.0f, 1.0f),
+		Vector4(0.0f, squareLength, 0.0f, 1.0f),
+		Color4ub(255, 255, 0, 70)
+	);
+	// XZ
+	primitiveRenderer->drawSolidQuad(
+		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(squareLength, 0.0f, 0.0f, 1.0f),
+		Vector4(squareLength, 0.0f, squareLength, 1.0f),
+		Vector4(0.0f, 0.0f, squareLength, 1.0f),
+		Color4ub(255, 255, 0, 70)
+	);
+	// YZ
+	primitiveRenderer->drawSolidQuad(
+		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(0.0f, squareLength, 0.0f, 1.0f),
+		Vector4(0.0f, squareLength, squareLength, 1.0f),
+		Vector4(0.0f, 0.0f, squareLength, 1.0f),
+		Color4ub(255, 255, 0, 70)
+	);
+
+	// Guide square lines.
+	// XY
+	primitiveRenderer->drawLine(Vector4(squareLength, 0.0f, 0.0f, 1.0f), Vector4(squareLength, squareLength, 0.0f, 1.0f), ((m_axisEnable & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
+	primitiveRenderer->drawLine(Vector4(squareLength, 0.0f, 0.0f, 1.0f), Vector4(squareLength, 0.0f, squareLength, 1.0f), ((m_axisEnable & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
+	// XZ
+	primitiveRenderer->drawLine(Vector4(0.0f, squareLength, 0.0f, 1.0f), Vector4(squareLength, squareLength, 0.0f, 1.0f), ((m_axisEnable & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, squareLength, 0.0f, 1.0f), Vector4(0.0f, squareLength, squareLength, 1.0f), ((m_axisEnable & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
+	// YZ
+	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, squareLength, 1.0f), Vector4(squareLength, 0.0f, squareLength, 1.0f), ((m_axisEnable & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, squareLength, 1.0f), Vector4(0.0f, squareLength, squareLength, 1.0f), ((m_axisEnable & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
+
+	// Guide axis lines.
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(axisLength, 0.0f, 0.0f, 1.0f),
 		(m_axisEnable & 1) ? 3.0f : 1.0f,
-		Color4ub(255, 0, 0, 255)
-	);
-	primitiveRenderer->drawArrowHead(
-		Vector4(axisLength, 0.0f, 0.0f, 1.0f),
-		Vector4(axisLength + arrowLength, 0.0f, 0.0f, 1.0f),
-		0.5f,
 		Color4ub(255, 0, 0, 255)
 	);
 	primitiveRenderer->drawLine(
@@ -221,17 +305,25 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		(m_axisEnable & 2) ? 3.0f : 1.0f,
 		Color4ub(0, 255, 0, 255)
 	);
-	primitiveRenderer->drawArrowHead(
-		Vector4(0.0f, axisLength, 0.0f, 1.0f),
-		Vector4(0.0f, axisLength + arrowLength, 0.0f, 1.0f),
-		0.5f,
-		Color4ub(0, 255, 0, 255)
-	);
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, 0.0f, axisLength, 1.0f),
 		(m_axisEnable & 4) ? 3.0f : 1.0f,
 		Color4ub(0, 0, 255, 255)
+	);
+
+	// Guide arrows.
+	primitiveRenderer->drawArrowHead(
+		Vector4(axisLength, 0.0f, 0.0f, 1.0f),
+		Vector4(axisLength + arrowLength, 0.0f, 0.0f, 1.0f),
+		0.5f,
+		Color4ub(255, 0, 0, 255)
+	);
+	primitiveRenderer->drawArrowHead(
+		Vector4(0.0f, axisLength, 0.0f, 1.0f),
+		Vector4(0.0f, axisLength + arrowLength, 0.0f, 1.0f),
+		0.5f,
+		Color4ub(0, 255, 0, 255)
 	);
 	primitiveRenderer->drawArrowHead(
 		Vector4(0.0f, 0.0f, axisLength, 1.0f),
@@ -239,6 +331,7 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 		0.5f,
 		Color4ub(0, 0, 255, 255)
 	);
+
 	primitiveRenderer->popDepthEnable();
 
 	primitiveRenderer->popWorld();

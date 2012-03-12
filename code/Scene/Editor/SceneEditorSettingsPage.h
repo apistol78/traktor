@@ -17,6 +17,9 @@ namespace traktor
 	{
 
 class CheckBox;
+class Event;
+class Slider;
+class Static;
 
 	}
 
@@ -38,8 +41,16 @@ public:
 	virtual bool apply(PropertyGroup* settings);
 
 private:
+	Ref< ui::Slider > m_sliderFov;
+	Ref< ui::Slider > m_sliderMouseWheelRate;
+	Ref< ui::Static > m_staticFovValue;
+	Ref< ui::Static > m_staticMouseWheelRateValue;
 	Ref< ui::CheckBox > m_checkInvertMouseWheel;
 	Ref< ui::CheckBox > m_checkInvertPanY;
+
+	void updateValues();
+
+	void eventValueChange(ui::Event* event);
 };
 
 	}

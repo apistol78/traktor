@@ -55,6 +55,7 @@ namespace traktor
 		{
 
 const float c_defaultFieldOfView = 80.0f;
+const float c_defaultMouseWheelRate = 10.0f;
 const int32_t c_defaultMultiSample = 4;
 const float c_minFieldOfView = 4.0f;
 const float c_maxFieldOfView = 160.0f;
@@ -73,6 +74,7 @@ PerspectiveRenderControl::PerspectiveRenderControl()
 ,	m_guideEnable(true)
 ,	m_postProcessEnable(true)
 ,	m_fieldOfView(c_defaultFieldOfView)
+,	m_mouseWheelRate(c_defaultMouseWheelRate)
 ,	m_multiSample(c_defaultMultiSample)
 ,	m_invertPanY(false)
 ,	m_dirtySize(0, 0)
@@ -89,7 +91,8 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView" + toString(index), c_defaultFieldOfView);
+	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
+	m_mouseWheelRate = settings->getProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
 	m_multiSample = settings->getProperty< PropertyInteger >(L"Editor.MultiSample", c_defaultMultiSample);
 
 	m_containerAspect = new ui::Container();
@@ -374,6 +377,10 @@ void PerspectiveRenderControl::updateSettings()
 	m_colorGrid = settings->getProperty< PropertyColor >(L"Editor.Colors/Grid");
 	m_colorRef = settings->getProperty< PropertyColor >(L"Editor.Colors/ReferenceEdge");
 	m_invertPanY = settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertPanY");
+	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
+	m_mouseWheelRate = settings->getProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", c_defaultMouseWheelRate);
+
+	updateWorldRenderView();
 }
 
 void PerspectiveRenderControl::updateWorldRenderView()
@@ -385,7 +392,9 @@ void PerspectiveRenderControl::updateWorldRenderView()
 	worldView.height = sz.cy;
 	worldView.aspect = float(sz.cx) / sz.cy;
 	worldView.fov = deg2rad(m_fieldOfView);
-	m_worldRenderer->createRenderView(worldView, m_worldRenderView);
+
+	if (m_worldRenderer)
+		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 }
 
 Matrix44 PerspectiveRenderControl::getProjectionTransform() const
@@ -437,21 +446,12 @@ void PerspectiveRenderControl::eventMouseMove(ui::Event* event)
 
 void PerspectiveRenderControl::eventMouseWheel(ui::Event* event)
 {
-	int rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
-
-	const float delta = 1.0f;
+	int32_t rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
 
 	if (m_context->getEditor()->getSettings()->getProperty(L"SceneEditor.InvertMouseWheel"))
-		m_fieldOfView -= rotation * delta;
-	else
-		m_fieldOfView += rotation * delta;
+		rotation = -rotation;
 
-	m_fieldOfView = max(m_fieldOfView, c_minFieldOfView);
-	m_fieldOfView = min(m_fieldOfView, c_maxFieldOfView);
-
-	m_context->getEditor()->getSettings()->setProperty< PropertyFloat >(L"SceneEditor.FieldOfView" + toString(m_index), m_fieldOfView);
-
-	updateWorldRenderView();
+	m_camera->move(Vector4(0.0f, 0.0f, rotation * -m_mouseWheelRate, 0.0f));
 }
 
 void PerspectiveRenderControl::eventSize(ui::Event* event)

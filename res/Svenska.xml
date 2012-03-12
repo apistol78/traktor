@@ -1346,6 +1346,14 @@
       <second>Scene</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_FOV</first>
+      <second>Synfält</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_SETTINGS_MOUSE_WHEEL_RATE</first>
+      <second>Mushjulskala</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_SETTINGS_INVERT_MOUSE_WHEEL</first>
       <second>Invertera mushjul</second>
     </item>
