@@ -97,9 +97,15 @@ void Dock::destroy()
 	ui::Widget::destroy();
 }
 
-Ref< DockPane > Dock::getPane()
+DockPane* Dock::getPane()
 {
 	return m_pane;
+}
+
+void Dock::dumpLayout()
+{
+	if (m_pane)
+		m_pane->dump();
 }
 
 void Dock::update(const Rect* rc, bool immediate)
@@ -132,7 +138,8 @@ void Dock::eventButtonDown(Event* event)
 	{
 		if (pane->hitGripperClose(position))
 		{
-			pane->m_widget->hide();
+			if (pane->m_widget)
+				pane->m_widget->hide();
 			update();
 		}
 		else if (pane->hitSplitter(position))
@@ -143,7 +150,8 @@ void Dock::eventButtonDown(Event* event)
 		}
 		else
 		{
-			pane->m_widget->setFocus();
+			if (pane->m_widget)
+				pane->m_widget->setFocus();
 		}
 
 		event->consume();
@@ -191,13 +199,13 @@ void Dock::eventDoubleClick(Event* event)
 		pane->detach();
 
 		// Create floating form.
-		Size preferedSize = widget->getPreferedSize();
+		Size preferedSize = widget ? widget->getPreferedSize() : Size(100, 100);
 
 		Ref< ToolForm > form = new ToolForm();
 
 		form->create(
 			this,
-			widget->getText(),
+			widget ? widget->getText() : L"",
 			preferedSize.cx,
 			preferedSize.cy,
 			ToolForm::WsDefault,
@@ -208,7 +216,8 @@ void Dock::eventDoubleClick(Event* event)
 		form->addNcButtonUpEventHandler(createMethodHandler(this, &Dock::eventFormNcButtonUp));
 
 		// Reparent widget into floating form.
-		widget->setParent(form);
+		if (widget)
+			widget->setParent(form);
 
 		form->setData(L"WIDGET", widget);
 		form->update();
@@ -292,7 +301,8 @@ void Dock::eventFormNcButtonUp(Event* event)
 		Ref< Widget > widget = form->getData< Widget >(L"WIDGET");
 
 		// Reparent widget back to dock.
-		widget->setParent(this);
+		if (widget)
+			widget->setParent(this);
 
 		form->destroy();
 		form = 0;
@@ -334,7 +344,8 @@ void Dock::eventHintButtonUp(Event* event)
 	Ref< Widget > widget = m_hintDockForm->getData< Widget >(L"WIDGET");
 
 	// Reparent widget back to dock.
-	widget->setParent(this);
+	if (widget)
+		widget->setParent(this);
 
 	m_hintDockForm->destroy();
 	m_hintDockForm = 0;

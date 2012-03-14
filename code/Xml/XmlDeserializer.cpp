@@ -324,30 +324,6 @@ bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
 	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< ISerializable >& m)
-{
-	ISerializable* o = &static_cast< ISerializable& >(m);
-
-	if (!enterElement(m.getName()))
-		return false;
-
-	const XmlPullParser::Attributes& attr = m_xpp.getEvent().attr;
-	XmlPullParser::Attributes::const_iterator a = findAttribute(attr, L"version");
-	int32_t version = a != attr.end() ? parseString< int >(a->second) : 0;
-
-	int32_t typeVersion = type_of(o).getVersion();
-	T_ASSERT_M (version <= typeVersion, L"Serialized data has a higher version number than supported by the code");
-	
-	rememberObject(o);
-	if (!serialize(o, version, 0))
-		return false;
-
-	if (!leaveElement(m.getName()))
-		return false;
-
-	return true;
-}
-
 bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 {
 	if (!enterElement(m.getName()))

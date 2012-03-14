@@ -447,24 +447,6 @@ bool InspectReflector::operator >> (const Member< Quaternion >& m)
 	return true;
 }
 
-bool InspectReflector::operator >> (const Member< ISerializable >& m)
-{
-	const AttributeType* memberType = findAttribute< AttributeType >(m);
-
-	Ref< ObjectPropertyItem > propertyItem = new ObjectPropertyItem(
-		stylizeMemberName(m.getName()),
-		memberType ? &(memberType->getMemberType()) : 0,
-		&(*m)
-	);
-	addPropertyItem(propertyItem);
-
-	m_propertyItemStack.push_back(propertyItem);
-	m->serialize(*this);
-	m_propertyItemStack.pop_back();
-
-	return true;
-}
-
 bool InspectReflector::operator >> (const Member< ISerializable* >& m)
 {
 	const AttributeType* memberType = findAttribute< AttributeType >(m);

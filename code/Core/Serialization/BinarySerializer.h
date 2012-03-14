@@ -73,8 +73,6 @@ public:
 	virtual bool operator >> (const Member< Matrix44 >& m);
 
 	virtual bool operator >> (const Member< Quaternion >& m);
-
-	virtual bool operator >> (const Member< ISerializable >& m);
 	
 	virtual bool operator >> (const Member< ISerializable* >& m);
 

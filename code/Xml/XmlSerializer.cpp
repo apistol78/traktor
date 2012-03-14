@@ -232,29 +232,6 @@ bool XmlSerializer::operator >> (const Member< Quaternion >& m)
 	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< ISerializable >& m)
-{
-	ISerializable* o = &static_cast< ISerializable& >(m);
-	bool result;
-
-	int32_t version = type_of(o).getVersion();
-	if (version > 0)
-		m_xml << m_indent << L"<" << m.getName() << L" version=\"" << version << L"\">" << Endl;
-	else
-		m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
-
-	enterElement(m.getName());
-
-	rememberObject(o);
-	result = serialize(o, version, 0);
-
-	leaveElement();
-	
-	m_xml << m_indent << L"</" << m.getName() << L">" << Endl;
-
-	return result;
-}
-
 bool XmlSerializer::operator >> (const Member< ISerializable* >& m)
 {
 	ISerializable* o = *m;

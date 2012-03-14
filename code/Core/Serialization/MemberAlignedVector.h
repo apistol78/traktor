@@ -28,7 +28,7 @@ public:
 	virtual void reserve(size_t size, size_t capacity) const
 	{
 		m_ref.resize(size);
-		m_ref.reserve(size);
+		m_ref.reserve(capacity);
 	}
 
 	virtual size_t size() const

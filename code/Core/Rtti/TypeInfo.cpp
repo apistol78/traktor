@@ -27,6 +27,8 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 	}
 
 	const wchar_t* typeName = typeInfo->getName();
+	if (!typeName)
+		return;
 
 	uint32_t index = 0;
 	while (index < s_typeInfoCount)
@@ -64,6 +66,8 @@ void __unregisterTypeInfo(const TypeInfo* typeInfo)
 	T_ASSERT_M (s_typeInfoRegistry != 0, L"Types never been registered");
 
 	const wchar_t* typeName = typeInfo->getName();
+	if (!typeName)
+		return;
 
 	uint32_t index = 0;
 	while (index < s_typeInfoCount)

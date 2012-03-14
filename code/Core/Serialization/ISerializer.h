@@ -91,8 +91,6 @@ public:
 
 	virtual bool operator >> (const Member< Quaternion >& m) = 0;
 
-	virtual bool operator >> (const Member< ISerializable >& m) = 0;
-
 	virtual bool operator >> (const Member< ISerializable* >& m) = 0;
 
 	virtual bool operator >> (const Member< void* >& m) = 0;

@@ -28,7 +28,11 @@ public:
 	
 	virtual void setTransform(const Transform& transform);
 
-	inline const RefArray< AbstractMeshEntityData >& getEntityData() const { return m_entityData; }
+	void addEntityData(AbstractMeshEntityData* entityData);
+
+	void removeEntityData(AbstractMeshEntityData* entityData);
+
+	const RefArray< AbstractMeshEntityData >& getEntityData() const { return m_entityData; }
 
 private:
 	RefArray< AbstractMeshEntityData > m_entityData;

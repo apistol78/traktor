@@ -1,5 +1,6 @@
-#include "Ui/DockPane.h"
+#include "Core/Log/Log.h"
 #include "Ui/Application.h"
+#include "Ui/DockPane.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/FocusEvent.h"
 
@@ -201,12 +202,57 @@ void DockPane::undock(Widget* widget)
 		m_child[1] = 0;
 		m_detachable = false;
 	}
-	else
+	else if (m_child[0])
 	{
-		if (m_child[0])
-			m_child[0]->undock(widget);
-		if (m_child[1])
-			m_child[1]->undock(widget);
+		T_ASSERT (m_child[1]);
+		T_ASSERT (!m_widget);
+
+		m_child[0]->undock(widget);
+		m_child[1]->undock(widget);
+
+		if (
+			m_child[0]->m_widget == 0 &&
+			m_child[1]->m_widget == 0 &&
+			m_child[0]->m_child[0] == 0 &&
+			m_child[1]->m_child[0] == 0
+		)
+		{
+			T_ASSERT (m_child[0]->m_child[1] == 0);
+			T_ASSERT (m_child[1]->m_child[1] == 0);
+
+			m_detachable = false;
+
+			m_child[0] = 0;
+			m_child[1] = 0;
+		}
+		else if (
+			m_child[1]->m_widget &&
+			m_child[0]->m_widget == 0 &&
+			m_child[0]->m_child[0] == 0
+		)
+		{
+			T_ASSERT (m_child[0]->m_child[1] == 0);
+
+			m_widget = m_child[1]->m_widget;
+			m_detachable = m_child[1]->m_detachable;
+
+			m_child[0] = 0;
+			m_child[1] = 0;
+		}
+		else if (
+			m_child[0]->m_widget &&
+			m_child[1]->m_widget == 0 &&
+			m_child[1]->m_child[0] == 0
+		)
+		{
+			T_ASSERT (m_child[1]->m_child[1] == 0);
+
+			m_widget = m_child[0]->m_widget;
+			m_detachable = m_child[0]->m_detachable;
+
+			m_child[0] = 0;
+			m_child[1] = 0;
+		}
 	}
 }
 
@@ -436,6 +482,31 @@ bool DockPane::isVisible() const
 		return m_child[0]->isVisible() || m_child[1]->isVisible();
 
 	return m_widget ? m_widget->isVisible(false) : false;
+}
+
+void DockPane::dump()
+{
+	log::info << L"Pane \"" << (m_widget ? m_widget->getText().c_str() : L"null") << L"\"" << Endl;
+	log::info << L" \"" << (m_widget ? type_name(m_widget) : L"NA") << L"\"" << Endl;
+	log::info << L" m_detachable " << m_detachable << Endl;
+	log::info << L" m_vertical " << m_vertical << Endl;
+	log::info << L" m_split " << m_split << Endl;
+	log::info << L" m_focus " << m_focus << Endl;
+	log::info << L" m_child[0]" << Endl;
+	log::info << IncreaseIndent;
+	if (m_child[0])
+		m_child[0]->dump();
+	else
+		log::info << L"<null>" << Endl;
+	log::info << DecreaseIndent;
+
+	log::info << L" m_child[1]" << Endl;
+	log::info << IncreaseIndent;
+	if (m_child[1])
+		m_child[1]->dump();
+	else
+		log::info << L"<null>" << Endl;
+	log::info << DecreaseIndent;
 }
 
 void DockPane::eventFocus(Event* event)
