@@ -5719,6 +5719,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Reflection</name>
+								<items>
+									<item type="File">
+										<fileName>Reflection/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies/>
 					</project>
@@ -10832,6 +10841,15 @@
 					<items>
 						<item type="File">
 							<fileName>Stream/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Batch</name>
+					<items>
+						<item type="File">
+							<fileName>Batch/*.*</fileName>
 							<items/>
 						</item>
 					</items>

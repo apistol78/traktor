@@ -13,6 +13,7 @@
 
 // Entity factories
 #include "Mesh/MeshEntityFactory.h"
+#include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
 #include "Weather/WeatherEntityFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
 
@@ -70,6 +71,7 @@ void DefaultEditorProfile::createEntityFactories(
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager()));
 	outEntityFactories.push_back(new mesh::MeshEntityFactory(context->getResourceManager()));
+	//outEntityFactories.push_back(new mesh::BatchMeshEntityFactory(context->getResourceManager()));
 	outEntityFactories.push_back(new weather::WeatherEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 }
 

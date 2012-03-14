@@ -191,13 +191,6 @@ bool ApplyReflector::operator >> (const Member< Quaternion >& m)
 	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< ISerializable >& m)
-{
-	T_ASSERT (is_a< ObjectPropertyItem >(*m_propertyItemIterator));
-	m_propertyItemIterator++;
-	return m->serialize(*this);
-}
-
 bool ApplyReflector::operator >> (const Member< ISerializable* >& m)
 {
 	ObjectPropertyItem* propertyItem = checked_type_cast< ObjectPropertyItem*, false >(*m_propertyItemIterator++);

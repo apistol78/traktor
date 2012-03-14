@@ -201,11 +201,11 @@ bool MeshPipeline::buildDependencies(
 bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
-	uint32_t sourceAssetHash,
+	uint32_t /*sourceAssetHash*/,
 	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
-	uint32_t reason
+	uint32_t /*reason*/
 ) const
 {
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
@@ -214,29 +214,55 @@ bool MeshPipeline::buildOutput(
 	RefArray< model::Model > models;
 	uint32_t polygonCount = 0;
 
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-	
-	// Locate source model(s).
-	RefArray< File > files;
-	if (!FileSystem::getInstance().find(fileName, files))
+	// We allow models to be passed as build parameters in case models
+	// are procedurally generated.
+	if (buildParams)
 	{
-		log::error << L"Mesh pipeline failed; unable to locate source model(s) (" << fileName.getPathName() << L")" << Endl;
+		log::info << L"Using parameter model" << Endl;
+		models.push_back(checked_type_cast< model::Model* >(
+			const_cast< Object* >(buildParams)
+		));
+	}
+	else
+	{
+		Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
+		
+		// Locate source model(s).
+		RefArray< File > files;
+		if (!FileSystem::getInstance().find(fileName, files))
+		{
+			log::error << L"Mesh pipeline failed; unable to locate source model(s) (" << fileName.getPathName() << L")" << Endl;
+			return false;
+		}
+
+		// Import source model(s); merge all materials into a single list (duplicates will be overridden).
+		for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+		{
+			Path path = (*i)->getPath();
+
+			log::info << L"Loading model \"" << path.getFileName() << L"\"..." << Endl;
+
+			Ref< model::Model > model = model::ModelFormat::readAny(path);
+			if (!model)
+			{
+				log::error << L"Mesh pipeline failed; unable to read source model (" << path.getPathName() << L")" << Endl;
+				return false;
+			}
+
+			models.push_back(model);
+		}
+	}
+
+	if (models.empty())
+	{
+		log::error << L"Mesh pipeline failed; no models" << Endl;
 		return false;
 	}
 
-	// Import source model(s); merge all materials into a single list (duplicates will be overridden).
-	for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+	// Merge all materials into a single list (duplicates will be overridden).
+	for (RefArray< model::Model >::const_iterator i = models.begin(); i != models.end(); ++i)
 	{
-		Path path = (*i)->getPath();
-
-		log::info << L"Loading model \"" << path.getFileName() << L"\"..." << Endl;
-
-		Ref< model::Model > model = model::ModelFormat::readAny(path);
-		if (!model)
-		{
-			log::error << L"Mesh pipeline failed; unable to read source model (" << path.getPathName() << L")" << Endl;
-			return false;
-		}
+		Ref< model::Model > model = *i;
 
 		if (m_enableBakeOcclusion && asset->getBakeOcclusion())
 		{
@@ -253,22 +279,14 @@ bool MeshPipeline::buildOutput(
 		const std::vector< model::Material >& modelMaterials = model->getMaterials();
 		if (model->getMaterials().empty())
 		{
-			log::error << L"Mesh pipeline failed; no materials in source model (" << path.getPathName() << L")" << Endl;
+			log::error << L"Mesh pipeline failed; no materials in source model(s)" << Endl;
 			return false;
 		}
 
 		for (std::vector< model::Material >::const_iterator j = modelMaterials.begin(); j != modelMaterials.end(); ++j)
 			materials[j->getName()] = *j;
 
-		models.push_back(model);
-
 		polygonCount += model->getPolygonCount();
-	}
-
-	if (models.empty())
-	{
-		log::error << L"Mesh pipeline failed; no models" << Endl;
-		return false;
 	}
 
 	// Build materials.

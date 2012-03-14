@@ -75,8 +75,6 @@ public:
 
 	virtual bool operator >> (const Member< Quaternion >& m);
 	
-	virtual bool operator >> (const Member< ISerializable >& m);
-
 	virtual bool operator >> (const Member< ISerializable* >& m);
 
 	virtual bool operator >> (const Member< void* >& m);

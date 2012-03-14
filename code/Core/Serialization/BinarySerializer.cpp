@@ -595,25 +595,6 @@ bool BinarySerializer::operator >> (const Member< Quaternion >& m)
 	return result;	
 }
 
-bool BinarySerializer::operator >> (const Member< ISerializable >& m)
-{
-	ISerializable* object = static_cast< ISerializable* >(&(*m));
-	if (m_direction == SdRead)
-	{
-		int32_t version;
-		if (!read_primitive< int32_t >(m_stream, version))
-			return false;
-		return serialize(object, version, 0);
-	}
-	else
-	{
-		int32_t version = type_of(object).getVersion();
-		if (!write_primitive< int32_t >(m_stream, version))
-			return false;
-		return serialize(object, version, 0);
-	}
-}
-
 bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 {
 	if (m_direction == SdRead)

@@ -44,5 +44,15 @@ bool CompositeMeshEntityData::serialize(ISerializer& s)
 	return s >> MemberRefArray< AbstractMeshEntityData >(L"entityData", m_entityData);
 }
 
+void CompositeMeshEntityData::addEntityData(AbstractMeshEntityData* entityData)
+{
+	m_entityData.push_back(entityData);
+}
+
+void CompositeMeshEntityData::removeEntityData(AbstractMeshEntityData* entityData)
+{
+	m_entityData.remove(entityData);
+}
+
 	}
 }

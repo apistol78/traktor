@@ -105,6 +105,15 @@ Ref< drawing::Image > T_DLLCLASS bakePixelOcclusion(Model& model, int32_t width,
  */
 void T_DLLCLASS cullDistantFaces(Model& model);
 
+/*! \brief Merge models.
+ * \ingroup Model.
+ *
+ * \param model Merge into model.
+ * \param sourceModel Merge from model.
+ * \param sourceModelTransform Transform of source model.
+ */
+void T_DLLCLASS mergeModels(Model& model, const Model& sourceModel, const Transform& sourceModelTransform);
+
 	}
 }
 

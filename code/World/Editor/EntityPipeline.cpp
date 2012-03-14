@@ -1,9 +1,10 @@
 #include "Core/Log/Log.h"
-#include "Core/Serialization/DeepClone.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmObject.h"
+#include "Core/Reflection/RfpMemberType.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
-#include "World/Editor/EntityDataTraverser.h"
 #include "World/Editor/EntityPipeline.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -16,51 +17,32 @@ namespace traktor
 		namespace
 		{
 
-class BuildDependenciesVisitor : public EntityDataTraverser::IVisitor
+Ref< ISerializable > recursiveBuildOutput(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* sourceObject)
 {
-public:
-	BuildDependenciesVisitor(editor::IPipelineDepends* pipelineDepends)
-	:	m_pipelineDepends(pipelineDepends)
+	Ref< Reflection > reflection = Reflection::create(sourceObject);
+	if (!reflection)
+		return 0;
+
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+
+	while (!objectMembers.empty())
 	{
+		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+		objectMembers.pop_front();
+
+		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
+		{
+			objectMember->set(pipelineBuilder->buildOutput(entityData));
+		}
+		else if (objectMember->get())
+		{
+			objectMember->set(recursiveBuildOutput(pipelineBuilder, objectMember->get()));
+		}
 	}
 
-	virtual EntityDataTraverser::VisitorResult enter (const std::wstring& memberName, EntityData* entityData, Ref< EntityData >& outEntityDataSubst)
-	{
-		m_pipelineDepends->addDependency(entityData);
-		return EntityDataTraverser::VrSkip;
-	}
-
-	virtual EntityDataTraverser::VisitorResult leave (const std::wstring& memberName, EntityData* entityData, Ref< EntityData >& outEntityDataSubst)
-	{
-		return EntityDataTraverser::VrSkip;
-	}
-
-private:
-	editor::IPipelineDepends* m_pipelineDepends;
-};
-
-class BuildOutputVisitor : public EntityDataTraverser::IVisitor
-{
-public:
-	BuildOutputVisitor(editor::IPipelineBuilder* pipelineBuilder)
-	:	m_pipelineBuilder(pipelineBuilder)
-	{
-	}
-
-	virtual EntityDataTraverser::VisitorResult enter (const std::wstring& memberName, EntityData* entityData, Ref< EntityData >& outEntityDataSubst)
-	{
-		outEntityDataSubst = checked_type_cast< EntityData* >(m_pipelineBuilder->buildOutput(entityData));
-		return EntityDataTraverser::VrReplace;
-	}
-
-	virtual EntityDataTraverser::VisitorResult leave (const std::wstring& memberName, EntityData* entityData, Ref< EntityData >& outEntityDataSubst)
-	{
-		return EntityDataTraverser::VrSkip;
-	}
-
-private:
-	editor::IPipelineBuilder* m_pipelineBuilder;
-};
+	return reflection->clone();
+}
 
 		}
 
@@ -90,11 +72,30 @@ bool EntityPipeline::buildDependencies(
 ) const
 {
 	const EntityData* entityData = checked_type_cast< const EntityData*, false >(sourceAsset);
-	
-	// Add dependencies from child entity data.
-	BuildDependenciesVisitor visitor(pipelineDepends);
-	EntityDataTraverser traverser(entityData);
-	traverser.visit(visitor);
+
+	Ref< Reflection > reflection = Reflection::create(entityData);
+	if (!reflection)
+		return false;
+
+	// Find all members which reference child entities.
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+
+	while (!objectMembers.empty())
+	{
+		Ref< const RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+		objectMembers.pop_front();
+
+		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
+		{
+			pipelineDepends->addDependency(entityData);
+		}
+		else if (objectMember->get())
+		{
+			Ref< Reflection > childReflection = Reflection::create(objectMember->get());
+			childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+		}
+	}
 
 	// Add external entity data dependencies.
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(entityData))
@@ -118,7 +119,7 @@ bool EntityPipeline::buildOutput(
 	if ((reason & (editor::PbrSourceModified | editor::PbrForced)) == 0)
 		return true;
 
-	Ref< EntityData > entityData = checked_type_cast< EntityData*, true >(buildOutput(pipelineBuilder, sourceAsset));
+	Ref< EntityData > entityData = checked_type_cast< EntityData*, true >(pipelineBuilder->buildOutput(sourceAsset));
 	if (!entityData)
 		return false;
 
@@ -139,22 +140,7 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	const EntityData* sourceEntityData = checked_type_cast< const EntityData*, false >(sourceAsset);
-	
-	// Create a mutable clone of source entity data.
-	Ref< EntityData > entityData = clone_instance(sourceEntityData);
-	if (!entityData)
-	{
-		log::error << L"Unable to clone entity data of type \"" << type_name(sourceEntityData) << L"\"" << Endl;
-		return 0;
-	}
-
-	// Build child entity data of entity.
-	BuildOutputVisitor visitor(pipelineBuilder);
-	EntityDataTraverser traverser(entityData);
-	traverser.visit(visitor);
-
-	return entityData;
+	return recursiveBuildOutput(pipelineBuilder, sourceAsset);
 }
 
 	}

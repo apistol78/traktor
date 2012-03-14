@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -60,11 +60,13 @@ public:
 
 	void setSplitterPosition(const Point& position);
 
-	inline bool isSplitter() const { return m_child[0] != 0 && m_child[1] != 0; }
+	bool isSplitter() const { return m_child[0] != 0 && m_child[1] != 0; }
 
-	inline const Rect& getPaneRect() const { return m_rect; }
+	const Rect& getPaneRect() const { return m_rect; }
 
 	bool isVisible() const;
+
+	void dump();
 
 private:
 	friend class Dock;

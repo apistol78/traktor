@@ -920,5 +920,75 @@ void cullDistantFaces(Model& model)
 	log::info << L"Culled " << uint32_t(originalCount - polygons.size()) << L" polygon(s)" << Endl;
 }
 
+void mergeModels(Model& model, const Model& sourceModel, const Transform& sourceModelTransform)
+{
+	int32_t materialBase = model.getMaterials().size();
+
+	// Merge materials.
+	const std::vector< Material >& sourceMaterials = sourceModel.getMaterials();
+	for (std::vector< Material >::const_iterator i = sourceMaterials.begin(); i != sourceMaterials.end(); ++i)
+		model.addMaterial(*i);
+
+	// Merge geometry.
+	const std::vector< Vertex >& sourceVertices = sourceModel.getVertices();
+
+	std::vector< uint32_t > vertexMap;
+	vertexMap.resize(sourceVertices.size(), c_InvalidIndex);
+
+	for (size_t i = 0; i < sourceVertices.size(); ++i)
+	{
+		const Vertex& sourceVertex = sourceVertices[i];
+
+		uint32_t position = sourceVertex.getPosition();
+		if (position != c_InvalidIndex)
+			position = model.addUniquePosition(sourceModelTransform * sourceModel.getPosition(position).xyz1());
+		
+		uint32_t color = sourceVertex.getColor();
+		if (color != c_InvalidIndex)
+			color = model.addUniqueColor(sourceModel.getColor(color));
+
+		uint32_t normal = sourceVertex.getNormal();
+		if (normal != c_InvalidIndex)
+			normal = model.addUniqueNormal(sourceModelTransform * sourceModel.getNormal(normal).xyz0());
+
+		uint32_t tangent = sourceVertex.getTangent();
+		if (tangent != c_InvalidIndex)
+			tangent = model.addUniqueNormal(sourceModelTransform * sourceModel.getNormal(tangent).xyz0());
+
+		uint32_t binormal = sourceVertex.getBinormal();
+		if (binormal != c_InvalidIndex)
+			binormal = model.addUniqueNormal(sourceModelTransform * sourceModel.getNormal(binormal).xyz0());
+
+		Vertex v;
+		v.setPosition(position);
+		v.setColor(color);
+		v.setNormal(normal);
+		v.setTangent(tangent);
+		v.setBinormal(binormal);
+
+		vertexMap[i] = model.addUniqueVertex(v);
+	}
+
+	// Merge polygons.
+	const std::vector< Polygon >& sourcePolygons = sourceModel.getPolygons();
+	for (std::vector< Polygon >::const_iterator i = sourcePolygons.begin(); i != sourcePolygons.end(); ++i)
+	{
+		Polygon p;
+		p.setMaterial(materialBase + i->getMaterial());
+
+		const std::vector< uint32_t >& sourceVertices = i->getVertices();
+		for (uint32_t j = 0; j < sourceVertices.size(); ++j)
+			p.addVertex(vertexMap[sourceVertices[j]]);
+
+		if (i->getNormal() != c_InvalidIndex)
+		{
+			uint32_t normal = model.addUniqueNormal(sourceModelTransform * sourceModel.getNormal(i->getNormal()).xyz0());
+			p.setNormal(normal);
+		}
+
+		model.addUniquePolygon(p);
+	}
+}
+
 	}
 }

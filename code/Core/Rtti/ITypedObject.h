@@ -32,6 +32,10 @@ namespace traktor
 	const traktor::TypeInfo& CLASS::getClassTypeInfo() { return ms_typeInfo; }	\
 	const traktor::TypeInfo& CLASS::getTypeInfo() const { return ms_typeInfo; }
 
+#define T_IMPLEMENT_RTTI_TEMPLATE_CLASS_COMMON(CLASS, TARGS)											\
+	template TARGS const traktor::TypeInfo& CLASS TARGS::getClassTypeInfo() { return ms_typeInfo; }		\
+	template TARGS const traktor::TypeInfo& CLASS TARGS::getTypeInfo() const { return ms_typeInfo; }
+
 #define T_IMPLEMENT_RTTI_CLASS_ROOT(ID, CLASS)	\
 	traktor::TypeInfo CLASS::ms_typeInfo(		\
 		ID,										\
@@ -108,6 +112,17 @@ namespace traktor
 		new traktor::ClonableInstanceFactory< CLASS >()			\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
+
+#define T_IMPLEMENT_RTTI_TEMPLATE_CLASS(CLASS, TARGS, SUPER)	\
+	template TARGS traktor::TypeInfo CLASS TARGS::ms_typeInfo(	\
+		0,														\
+		sizeof(CLASS TARGS),									\
+		0,														\
+		false,													\
+		&traktor::type_of< SUPER >(),							\
+		0														\
+	);															\
+	T_IMPLEMENT_RTTI_TEMPLATE_CLASS_COMMON(CLASS, TARGS)
 
 //@}
 
