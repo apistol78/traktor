@@ -2,7 +2,7 @@
 #define traktor_world_PointLightEntity_H
 
 #include "Core/Math/Random.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief Point light entity.
  * \ingroup World
  */
-class T_DLLCLASS PointLightEntity : public SpatialEntity
+class T_DLLCLASS PointLightEntity : public Entity
 {
 	T_RTTI_CLASS;
 

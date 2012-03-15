@@ -1,16 +1,16 @@
-#include "Physics/World/RigidEntity.h"
 #include "Physics/Body.h"
+#include "Physics/World/RigidEntity.h"
 
 namespace traktor
 {
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidEntity", RigidEntity, world::SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.RigidEntity", RigidEntity, world::Entity)
 
 RigidEntity::RigidEntity(
 	Body* body,
-	world::SpatialEntity* entity
+	world::Entity* entity
 )
 :	m_body(body)
 ,	m_entity(entity)

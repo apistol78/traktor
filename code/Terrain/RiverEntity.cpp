@@ -195,6 +195,11 @@ void RiverEntity::render(
 	renderContext->draw(render::RfAlphaBlend, renderBlock);
 }
 
+Aabb3 RiverEntity::getBoundingBox() const
+{
+	return Aabb3();
+}
+
 void RiverEntity::update(const world::EntityUpdate* update)
 {
 }

@@ -25,6 +25,12 @@ class T_DLLCLASS HierarchicalState : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	HierarchicalState();
+
+	void setScrollPosition(int32_t scrollPosition);
+
+	int32_t getScrollPosition() const;
+
 	void addState(const std::wstring& path, bool expanded, bool selected);
 
 	bool getExpanded(const std::wstring& path) const;
@@ -45,6 +51,7 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
+	int32_t m_scrollPosition;
 	std::map< std::wstring, std::pair< bool, bool > > m_states;
 };
 

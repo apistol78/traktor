@@ -15,8 +15,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-209</first>
-				<second>100</second>
+				<first>-283</first>
+				<second>97</second>
 			</position>
 			<name>Color</name>
 			<usage>DuColor</usage>
@@ -31,7 +31,7 @@
 			</position>
 			<technique>Wire</technique>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>148</first>
@@ -63,8 +63,9 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>148</first>
@@ -96,6 +97,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>
@@ -121,7 +123,7 @@
 			</position>
 			<technique>WireDepth</technique>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>148</first>
@@ -153,8 +155,9 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>148</first>
@@ -186,6 +189,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
@@ -228,7 +232,7 @@
 			</position>
 			<technique>Texture</technique>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>415</first>
@@ -260,8 +264,9 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>415</first>
@@ -293,6 +298,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>2147483648</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -301,7 +307,7 @@
 				<second>231</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>-167</first>
@@ -309,6 +315,27 @@
 			</position>
 			<parameterName>Texture</parameterName>
 			<type>PtTexture</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>-105</first>
+				<second>77</second>
+			</position>
+			<fragmentGuid>{0F359947-AADA-6748-B492-44CE56038205}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -428,13 +455,23 @@
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -444,7 +481,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -454,7 +491,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -464,7 +501,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[1]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>

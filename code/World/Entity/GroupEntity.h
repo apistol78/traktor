@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-/*! \brief Group entity.
+/*! \brief Group of entities.
  * \ingroup World
  */
 class T_DLLCLASS GroupEntity : public Entity
@@ -25,7 +25,7 @@ class T_DLLCLASS GroupEntity : public Entity
 	T_RTTI_CLASS;
 
 public:
-	GroupEntity();
+	GroupEntity(const Transform& transform = Transform::identity());
 
 	virtual ~GroupEntity();
 
@@ -42,51 +42,29 @@ public:
 	int getEntitiesOf(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
 	
 	Ref< Entity > getFirstEntityOf(const TypeInfo& entityType) const;
-
-	int getEntitiesOfRecursive(const TypeInfo& entityType, RefArray< Entity >& outEntities) const;
 	
-	Ref< Entity > getFirstEntityOfRecursive(const TypeInfo& entityType) const;
+	virtual void update(const EntityUpdate* update);
 
-	virtual void update(const EntityUpdate* update);	
+	virtual void setTransform(const Transform& transform);
 
-	/*! \name Template helpers. */
-	//@{
+	virtual bool getTransform(Transform& outTransform) const;
+
+	virtual Aabb3 getBoundingBox() const;
 
 	template < typename EntityType >
 	int getEntitiesOf(RefArray< EntityType >& outEntities) const
 	{
-		return getEntitiesOf(
-			type_of< EntityType >(),
-			*reinterpret_cast< RefArray< Entity >* >(&outEntities)
-		);
+		return getEntitiesOf(EntityType::getClassType(), *reinterpret_cast< RefArray< Entity >* >(&outEntities));
 	}
 
 	template < typename EntityType >
 	Ref< EntityType > getFirstEntityOf() const
 	{
-		Ref< Entity > entity = getFirstEntityOf(type_of< EntityType >());
-		return static_cast< EntityType* >(entity.ptr());
+		return static_cast< EntityType* >(getFirstEntityOf(EntityType::getClassType()));
 	}
 	
-	template < typename EntityType >
-	int getEntitiesOfRecursive(RefArray< EntityType >& outEntities) const
-	{
-		return getEntitiesOfRecursive(
-			type_of< EntityType >(),
-			*reinterpret_cast< RefArray< Entity >* >(&outEntities)
-		);
-	}
-
-	template < typename EntityType >
-	Ref< EntityType > getFirstEntityOfRecursive() const
-	{
-		Ref< Entity > entity = getFirstEntityOfRecursive(type_of< EntityType >());
-		return static_cast< EntityType* >(entity.ptr());
-	}
-
-	//@}
-
 private:
+	Transform m_transform;
 	RefArray< Entity > m_entities;
 	bool m_update;
 	RefArray< Entity > m_remove;

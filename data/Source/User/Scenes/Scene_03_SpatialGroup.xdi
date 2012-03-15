@@ -17,7 +17,11 @@
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
-		<entityData>
+    <transform>
+      <translation>0, 0, 0, 0</translation>
+      <rotation>0, 0, 0, 1</rotation>
+    </transform>
+    <entityData>
 			<item type="traktor.world.DirectionalLightEntityData">
 				<name>Light</name>
 				<transform>
@@ -28,7 +32,7 @@
 				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
 				<shadowColor>0, 0, 0, 0</shadowColor>
 			</item>
-			<item type="traktor.world.ExternalSpatialEntityData">
+			<item type="traktor.world.ExternalEntityData">
 				<name>MyGroupEntity</name>
 				<transform>
 					<translation>0, 0, 0, 0</translation>

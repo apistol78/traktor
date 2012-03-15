@@ -6,7 +6,7 @@
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
 #include "Spray/Types.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -43,7 +43,7 @@ class PointRenderer;
 /*! \brief Effect entity.
  * \ingroup Spray
  */
-class T_DLLCLASS EffectEntity : public world::SpatialEntity
+class T_DLLCLASS EffectEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 

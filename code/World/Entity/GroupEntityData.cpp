@@ -37,13 +37,27 @@ const RefArray< EntityData >& GroupEntityData::getEntityData() const
 {
 	return m_entityData;
 }
-	
+
+void GroupEntityData::setTransform(const Transform& transform)
+{
+	Transform deltaTransform = transform * getTransform().inverse();
+	for (RefArray< EntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
+	{
+		Transform currentTransform = (*i)->getTransform();
+		(*i)->setTransform(deltaTransform * currentTransform);
+	}
+	EntityData::setTransform(transform);
+}
+
 bool GroupEntityData::serialize(ISerializer& s)
 {
 	if (!EntityData::serialize(s))
 		return false;
 
-	return s >> MemberRefArray< EntityData >(L"entityData", m_entityData);
+	if (!(s >> MemberRefArray< EntityData >(L"entityData", m_entityData)))
+		return false;
+
+	return true;
 }
 	
 	}

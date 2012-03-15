@@ -1,16 +1,16 @@
 #ifndef traktor_weather_CloudEntityData_H
 #define traktor_weather_CloudEntityData_H
 
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 #include "Resource/Proxy.h"
 #include "Weather/Clouds/CloudParticleData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WEATHER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -37,7 +37,7 @@ class Shader;
 class CloudEntity;
 class CloudMask;
 
-class T_DLLCLASS CloudEntityData : public world::SpatialEntityData
+class T_DLLCLASS CloudEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 

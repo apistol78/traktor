@@ -1,15 +1,15 @@
 #ifndef traktor_world_ExternalEntityData_H
 #define traktor_world_ExternalEntityData_H
 
-#include "World/Entity/EntityData.h"
 #include "Core/Guid.h"
+#include "World/Entity/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_WORLD_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

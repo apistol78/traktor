@@ -5,7 +5,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.SpotLightEntity", SpotLightEntity, SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.SpotLightEntity", SpotLightEntity, Entity)
 
 SpotLightEntity::SpotLightEntity(
 	const Transform& transform,

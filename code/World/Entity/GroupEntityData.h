@@ -34,6 +34,8 @@ public:
 	RefArray< EntityData >& getEntityData();
 
 	const RefArray< EntityData >& getEntityData() const;
+
+	virtual void setTransform(const Transform& transform);
 	
 	virtual bool serialize(ISerializer& s);
 	

@@ -73,7 +73,7 @@ bool VertexBufferDynamicDx9::activate(IDirect3DDevice9* d3dDevice)
 	if (m_dirtyRegion[0] != m_dirtyRegion[1])
 	{
 		VOID* ptr;
-		DWORD flags = D3DLOCK_NOOVERWRITE;
+		DWORD flags = 0;
 
 #if !(defined(_XBOX) || defined(T_USE_XDK))
 		flags |= D3DLOCK_NOSYSLOCK;
@@ -86,7 +86,10 @@ bool VertexBufferDynamicDx9::activate(IDirect3DDevice9* d3dDevice)
 		T_ASSERT (size > 0);
 
 		if (FAILED(m_d3dVertexBuffer->Lock(offset, size, &ptr, flags)))
+		{
+			log::error << L"Unable to transfer data to dynamic vertex buffer, lock failed." << Endl;
 			return 0;
+		}
 
 		std::memcpy(ptr, &m_buffer[offset], size);
 

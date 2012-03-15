@@ -16,7 +16,11 @@
 	<postProcessSettings>{04C6D46A-74B8-A445-A906-4B0AC92A1A75}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
-		<entityData>
+    <transform>
+      <translation>0, 0, 0, 0</translation>
+      <rotation>0, 0, 0, 1</rotation>
+    </transform>
+    <entityData>
 			<item type="traktor.world.DirectionalLightEntityData">
 				<name>Light</name>
 				<transform>

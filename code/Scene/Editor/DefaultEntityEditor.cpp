@@ -11,8 +11,6 @@
 #include "Ui/Command.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/SpatialEntityData.h"
-#include "World/Entity/SpatialGroupEntityData.h"
 
 namespace traktor
 {
@@ -37,7 +35,7 @@ bool DefaultEntityEditor::isPickable() const
 bool DefaultEntityEditor::isGroup() const
 {
 	const world::EntityData* entityData = m_entityAdapter->getEntityData();
-	return is_a< world::GroupEntityData >(entityData) || is_a< world::SpatialGroupEntityData >(entityData);
+	return is_a< world::GroupEntityData >(entityData);
 }
 
 bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) const
@@ -49,15 +47,6 @@ bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) cons
 	{
 		groupEntityData->addEntityData(childEntityData);
 		return true;
-	}
-	
-	if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(entityData))
-	{
-		if (world::SpatialEntityData* spatialChildEntityData = dynamic_type_cast< world::SpatialEntityData* >(childEntityData))
-		{
-			spatialGroupEntityData->addEntityData(spatialChildEntityData);
-			return true;
-		}
 	}
 
 	return false;
@@ -74,23 +63,11 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 		return true;
 	}
 
-	if (world::SpatialGroupEntityData* spatialGroupEntityData = dynamic_type_cast< world::SpatialGroupEntityData* >(entityData))
-	{
-		if (world::SpatialEntityData* spatialChildEntityData = dynamic_type_cast< world::SpatialEntityData* >(childEntityData))
-		{
-			spatialGroupEntityData->removeEntityData(spatialChildEntityData);
-			return true;
-		}
-	}
-
 	return false;
 }
 
 bool DefaultEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const
 {
-	if (!m_entityAdapter->isSpatial())
-		return false;
-
 	// Transform ray into object space.
 	Transform worldInv = m_entityAdapter->getTransform().inverse();
 	Vector4 objectRayOrigin = worldInv * worldRayOrigin;

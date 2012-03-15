@@ -121,6 +121,11 @@ void UndergrowthEntity::render(
 	);
 }
 
+Aabb3 UndergrowthEntity::getBoundingBox() const
+{
+	return Aabb3();
+}
+
 void UndergrowthEntity::update(const world::EntityUpdate* update)
 {
 	if (!m_heightfield.validate() || !m_materialMask.validate())

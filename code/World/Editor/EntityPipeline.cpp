@@ -8,7 +8,6 @@
 #include "World/Editor/EntityPipeline.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/ExternalSpatialEntityData.h"
 
 namespace traktor
 {
@@ -100,8 +99,6 @@ bool EntityPipeline::buildDependencies(
 	// Add external entity data dependencies.
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(entityData))
 		pipelineDepends->addDependency(externalEntityData->getGuid(), editor::PdfBuild);
-	else if (const ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const ExternalSpatialEntityData* >(entityData))
-		pipelineDepends->addDependency(externalSpatialEntityData->getGuid(), editor::PdfBuild);
 
 	return true;
 }

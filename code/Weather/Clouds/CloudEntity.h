@@ -4,7 +4,7 @@
 #include "Core/RefArray.h"
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 #include "Weather/Clouds/CloudParticleCluster.h"
 #include "Weather/Clouds/CloudParticleData.h"
 
@@ -44,7 +44,7 @@ class WorldRenderView;
 
 class CloudMask;
 
-class T_DLLCLASS CloudEntity : public world::SpatialEntity
+class T_DLLCLASS CloudEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 

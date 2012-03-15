@@ -31,7 +31,7 @@ TranslateModifier::TranslateModifier(SceneEditorContext* context)
 void TranslateModifier::selectionChanged()
 {
 	m_entityAdapters.clear();
-	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSpatialOnly | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
+	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
 
 	m_baseTranslations.clear();
 	for (RefArray< EntityAdapter >::const_iterator i = m_entityAdapters.begin(); i != m_entityAdapters.end(); ++i)

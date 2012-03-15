@@ -998,7 +998,7 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 			}
 		}
 
-		m_primitiveRenderer->end(data->renderView);
+		m_primitiveRenderer->end();
 	}
 
 	data->renderView->end();

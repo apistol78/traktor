@@ -4,10 +4,7 @@
 #include "Scene/Editor/IEntityEditor.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
-#include "World/Entity/SpatialEntityData.h"
-#include "World/Entity/SpatialEntity.h"
 #include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/ExternalSpatialEntityData.h"
 
 namespace traktor
 {
@@ -55,60 +52,41 @@ std::wstring EntityAdapter::getTypeName() const
 	return m_entityData ? type_name(m_entityData) : L"< void >";
 }
 
-bool EntityAdapter::isSpatial() const
-{
-	return is_a< world::SpatialEntityData >(m_entityData);
-}
-
 void EntityAdapter::setTransform0(const Transform& transform)
 {
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
-		spatialEntityData->setTransform(transform);
+	m_entityData->setTransform(transform);
 }
 
 Transform EntityAdapter::getTransform0() const
 {
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
-		return spatialEntityData->getTransform();
-	else
-		return Transform::identity();
+	return m_entityData->getTransform();
 }
 
 void EntityAdapter::setTransform(const Transform& transform)
 {
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
-		spatialEntityData->setTransform(transform);
-	if (world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity))
-		spatialEntity->setTransform(transform);
+	m_entityData->setTransform(transform);
+	m_entity->setTransform(transform);
 }
 
 Transform EntityAdapter::getTransform() const
 {
-	if (world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity))
-	{
-		Transform transform;
-		if (spatialEntity->getTransform(transform))
-			return transform;
-	}
-
-	if (world::SpatialEntityData* spatialEntityData = dynamic_type_cast< world::SpatialEntityData* >(m_entityData))
-		return spatialEntityData->getTransform();
-
-	return Transform::identity();
+	Transform transform;
+	if (m_entity->getTransform(transform))
+		return transform;
+	else
+		return m_entityData->getTransform();
 }
 
 Aabb3 EntityAdapter::getBoundingBox() const
 {
-	if (world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity))
-		return spatialEntity->getBoundingBox();
-	return Aabb3();
+	return m_entity->getBoundingBox();
 }
 
 bool EntityAdapter::isExternal() const
 {
 	for (const EntityAdapter* entityAdapter = this; entityAdapter; entityAdapter = entityAdapter->m_parent)
 	{
-		if (is_a< world::ExternalEntityData >(entityAdapter->getEntityData()) || is_a< world::ExternalSpatialEntityData >(entityAdapter->getEntityData()))
+		if (is_a< world::ExternalEntityData >(entityAdapter->getEntityData()))
 			return true;
 	}
 	return false;
@@ -124,11 +102,6 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(m_entityData))
 	{
 		outGuid = externalEntityData->getGuid();
-		return true;
-	}
-	if (const world::ExternalSpatialEntityData* externalSpatialEntityData = dynamic_type_cast< const world::ExternalSpatialEntityData* >(m_entityData))
-	{
-		outGuid = externalSpatialEntityData->getGuid();
 		return true;
 	}
 	return false;
@@ -277,34 +250,30 @@ AlignedVector< EntityAdapter::SnapPoint > EntityAdapter::getSnapPoints() const
 {
 	AlignedVector< SnapPoint > snapPoints;
 
-	world::SpatialEntity* spatialEntity = dynamic_type_cast< world::SpatialEntity* >(m_entity);
-	if (spatialEntity)
+	Transform transform = getTransform();
+	Aabb3 boundingBox = m_entity->getBoundingBox();
+	if (!boundingBox.empty())
 	{
-		Transform transform = getTransform();
-		Aabb3 boundingBox = spatialEntity->getBoundingBox();
-		if (!boundingBox.empty())
+		Vector4 extents[8];
+		boundingBox.getExtents(extents);
+
+		const Vector4* normals = Aabb3::getNormals();
+		const int* faces = Aabb3::getFaces();
+
+		for (int i = 0; i < 6; ++i)
 		{
-			Vector4 extents[8];
-			boundingBox.getExtents(extents);
+			Vector4 faceCenter =
+				extents[faces[i * 4 + 0]] +
+				extents[faces[i * 4 + 1]] +
+				extents[faces[i * 4 + 2]] +
+				extents[faces[i * 4 + 3]];
 
-			const Vector4* normals = Aabb3::getNormals();
-			const int* faces = Aabb3::getFaces();
+			faceCenter /= Scalar(4.0f);
 
-			for (int i = 0; i < 6; ++i)
-			{
-				Vector4 faceCenter =
-					extents[faces[i * 4 + 0]] +
-					extents[faces[i * 4 + 1]] +
-					extents[faces[i * 4 + 2]] +
-					extents[faces[i * 4 + 3]];
-
-				faceCenter /= Scalar(4.0f);
-
-				SnapPoint sp;
-				sp.position = transform * faceCenter;
-				sp.direction = transform * normals[i];
-				snapPoints.push_back(sp);
-			}
+			SnapPoint sp;
+			sp.position = transform * faceCenter;
+			sp.direction = transform * normals[i];
+			snapPoints.push_back(sp);
 		}
 	}
 

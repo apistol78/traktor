@@ -535,6 +535,12 @@ void TerrainEntity::render(
 #endif
 }
 
+Aabb3 TerrainEntity::getBoundingBox() const
+{
+	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
+	return Aabb3(-worldExtent, worldExtent);
+}
+
 void TerrainEntity::update(const world::EntityUpdate* update)
 {
 }

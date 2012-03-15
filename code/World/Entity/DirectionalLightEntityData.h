@@ -1,7 +1,7 @@
 #ifndef traktor_world_DirectionalLightEntityData_H
 #define traktor_world_DirectionalLightEntityData_H
 
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Directional light entity data.
  * \ingroup World
  */
-class T_DLLCLASS DirectionalLightEntityData : public SpatialEntityData
+class T_DLLCLASS DirectionalLightEntityData : public EntityData
 {
 	T_RTTI_CLASS;
 

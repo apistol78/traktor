@@ -13,7 +13,7 @@
 
 // Entity factories
 #include "Mesh/MeshEntityFactory.h"
-#include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
+//#include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
 #include "Weather/WeatherEntityFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
 

@@ -36,14 +36,13 @@ IAllocator* getAllocator()
 		s_stdAllocator->addRef(0);
 
 #if !defined(_DEBUG)
-	s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
-#else
-#	if defined(_PS3)
+		s_allocator = allocConstruct< FastAllocator >(s_stdAllocator);
+#elif defined(_PS3)
 		s_allocator = s_stdAllocator;
-#	else
+#else
 		s_allocator = allocConstruct< TrackAllocator >(s_stdAllocator);
-#	endif
 #endif
+
 		s_allocator->addRef(0);
 
 #if !defined(_PS3)

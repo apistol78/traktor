@@ -8,8 +8,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.Track", Track, Object)
 
 Track::Track(
-	world::SpatialEntity* entity,
-	world::SpatialEntity* lookAtEntity,
+	world::Entity* entity,
+	world::Entity* lookAtEntity,
 	const TransformPath& path,
 	float loopStart,
 	float loopEnd,
@@ -24,22 +24,22 @@ Track::Track(
 {
 }
 
-void Track::setEntity(world::SpatialEntity* entity)
+void Track::setEntity(world::Entity* entity)
 {
 	m_entity = entity;
 }
 
-Ref< world::SpatialEntity > Track::getEntity() const
+Ref< world::Entity > Track::getEntity() const
 {
 	return m_entity;
 }
 
-void Track::setLookAtEntity(world::SpatialEntity* entity)
+void Track::setLookAtEntity(world::Entity* entity)
 {
 	m_lookAtEntity = entity;
 }
 
-Ref< world::SpatialEntity > Track::getLookAtEntity() const
+Ref< world::Entity > Track::getLookAtEntity() const
 {
 	return m_lookAtEntity;
 }

@@ -5,7 +5,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.NullEntity", NullEntity, SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.NullEntity", NullEntity, Entity)
 
 NullEntity::NullEntity(const Transform& transform)
 :	m_transform(transform)

@@ -23,7 +23,7 @@ struct ClothVertex
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntity", ClothEntity, world::SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntity", ClothEntity, world::Entity)
 
 ClothEntity::ClothEntity(physics::PhysicsManager* physicsManager)
 :	m_physicsManager(physicsManager)

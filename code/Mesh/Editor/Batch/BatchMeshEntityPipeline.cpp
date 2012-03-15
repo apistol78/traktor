@@ -15,7 +15,6 @@
 #include "Model/Utilities.h"
 #include "Model/Formats/ModelFormat.h"
 #include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/ExternalSpatialEntityData.h"
 
 namespace traktor
 {

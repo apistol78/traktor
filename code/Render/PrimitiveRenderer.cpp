@@ -17,7 +17,7 @@ namespace traktor
 		{
 
 const Guid c_guidPrimitiveShader(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}");
-const int c_bufferCount = 64 * 1024;
+const int c_bufferCount = 16 * 1024;
 
 enum ShaderId
 {
@@ -46,7 +46,7 @@ struct Vertex
 	T_FORCE_INLINE void set(const Vector4& pos_, const Color4ub& rgb_)
 	{
 		pos_.storeUnaligned(pos);
-		rgb = rgb_;
+		rgb = rgb_.getABGR();
 	}
 
 	T_FORCE_INLINE void set(const Vector4& pos_, const Vector2& texCoord_, const Color4ub& rgb_)
@@ -54,13 +54,14 @@ struct Vertex
 		pos_.storeUnaligned(pos);
 		texCoord[0] = texCoord_.x;
 		texCoord[1] = texCoord_.y;
-		rgb = rgb_;
+		rgb = rgb_.getABGR();
 	}
 };
 #pragma pack()
 
 PrimitiveRenderer::PrimitiveRenderer()
-:	m_currentBuffer(0)
+:	m_renderView(0)
+,	m_currentBuffer(0)
 ,	m_vertexStart(0)
 ,	m_vertex(0)
 ,	m_viewNearZ(1.0f)
@@ -219,7 +220,7 @@ void PrimitiveRenderer::drawLine(
 )
 {
 	if (int(m_vertex - m_vertexStart + 2) >= c_bufferCount)
-		return;
+		flush();
 
 	Vector4 v1 = m_worldViewProj * start.xyz1();
 	Vector4 v2 = m_worldViewProj * end.xyz1();
@@ -349,7 +350,7 @@ void PrimitiveRenderer::drawArrowHead(
 )
 {
 	if (int(m_vertex - m_vertexStart + 3) >= c_bufferCount)
-		return;
+		flush();
 
 	Vector4 vs1 = m_worldView * start.xyz1();
 	Vector4 vs2 = m_worldView * end.xyz1();
@@ -602,7 +603,7 @@ void PrimitiveRenderer::drawSolidPoint(
 )
 {
 	if (int(m_vertex - m_vertexStart + 6) >= c_bufferCount)
-		return;
+		flush();
 
 	Vector4 cv = m_worldView * center.xyz1();
 	Vector4 cc = m_projection.back() * cv;
@@ -712,7 +713,7 @@ void PrimitiveRenderer::drawSolidTriangle(
 )
 {
 	if (int(m_vertex - m_vertexStart + 3) >= c_bufferCount)
-		return;
+		flush();
 
 	Vector4 v1 = m_worldViewProj * Vector4(vert1.x(), vert1.y(), vert1.z(), 1.0f);
 	Vector4 v2 = m_worldViewProj * Vector4(vert2.x(), vert2.y(), vert2.z(), 1.0f);
@@ -782,7 +783,7 @@ void PrimitiveRenderer::drawTextureTriangle(
 )
 {
 	if (int(m_vertex - m_vertexStart + 3) >= c_bufferCount)
-		return;
+		flush();
 
 	Vector4 v1 = m_worldViewProj * Vector4(vert1.x(), vert1.y(), vert1.z(), 1.0f);
 	Vector4 v2 = m_worldViewProj * Vector4(vert2.x(), vert2.y(), vert2.z(), 1.0f);
@@ -981,6 +982,9 @@ bool PrimitiveRenderer::begin(IRenderView* renderView)
 {
 	T_ASSERT (!m_vertex);
 
+	m_renderView = renderView;
+	T_ASSERT (m_renderView);
+
 	m_vertexStart =
 	m_vertex = static_cast< Vertex* >(m_vertexBuffers[m_currentBuffer]->lock());
 	if (!m_vertex)
@@ -993,27 +997,27 @@ bool PrimitiveRenderer::begin(IRenderView* renderView)
 
 	updateTransforms();
 
-	m_viewWidth = float(renderView->getViewport().width);
-	m_viewHeight = float(renderView->getViewport().height);
+	m_viewWidth = float(m_renderView->getViewport().width);
+	m_viewHeight = float(m_renderView->getViewport().height);
 
 	return true;
 }
 
-void PrimitiveRenderer::end(IRenderView* renderView)
+void PrimitiveRenderer::end()
 {
 	T_ASSERT (m_vertex);
 
 	m_vertexBuffers[m_currentBuffer]->unlock();
 	if (m_shader.validate())
 	{
-		renderView->setVertexBuffer(m_vertexBuffers[m_currentBuffer]);
+		m_renderView->setVertexBuffer(m_vertexBuffers[m_currentBuffer]);
 
 		for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 		{
 			m_shader->setTechnique(s_handles[i->shaderId]);
 			if (i->texture)
 				m_shader->setTextureParameter(s_textureHandle, i->texture);
-			m_shader->draw(renderView, i->primitives);
+			m_shader->draw(m_renderView, i->primitives);
 		}
 	}
 
@@ -1027,6 +1031,31 @@ void PrimitiveRenderer::end(IRenderView* renderView)
 	m_view.resize(0);
 	m_world.resize(0);
 	m_depthEnable.resize(0);
+}
+
+void PrimitiveRenderer::flush()
+{
+	T_ASSERT (m_vertex);
+
+	m_vertexBuffers[m_currentBuffer]->unlock();
+	if (m_shader.validate())
+	{
+		m_renderView->setVertexBuffer(m_vertexBuffers[m_currentBuffer]);
+
+		for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
+		{
+			m_shader->setTechnique(s_handles[i->shaderId]);
+			if (i->texture)
+				m_shader->setTextureParameter(s_textureHandle, i->texture);
+			m_shader->draw(m_renderView, i->primitives);
+		}
+	}
+
+	m_currentBuffer = (m_currentBuffer + 1) % sizeof_array(m_vertexBuffers);
+	m_batches.resize(0);
+
+	m_vertexStart =
+	m_vertex = static_cast< Vertex* >(m_vertexBuffers[m_currentBuffer]->lock());
 }
 
 void PrimitiveRenderer::updateTransforms()

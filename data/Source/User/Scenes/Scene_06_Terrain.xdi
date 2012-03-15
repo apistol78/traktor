@@ -17,7 +17,11 @@
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
-		<entityData>
+    <transform>
+      <translation>0, 0, 0, 0</translation>
+      <rotation>0, 0, 0, 1</rotation>
+    </transform>
+    <entityData>
 			<item type="traktor.world.DirectionalLightEntityData">
 				<name>Light</name>
 				<transform>
@@ -30,7 +34,11 @@
 			</item>
 			<item type="traktor.terrain.TerrainEntityData">
 				<name>Terrain</name>
-				<heightfield>{03E35B06-EE2A-6644-B4FE-B2A3A15F4B1C}</heightfield>
+        <transform>
+          <translation>0, 0, 0, 0</translation>
+          <rotation>0, 0, 0, 1</rotation>
+        </transform>
+        <heightfield>{03E35B06-EE2A-6644-B4FE-B2A3A15F4B1C}</heightfield>
 				<shader>{557537A0-F1E3-AF4C-ACB9-FD862FC3265C}</shader>
 				<surface type="traktor.terrain.TerrainSurface">
 					<layers>

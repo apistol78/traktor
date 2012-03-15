@@ -230,12 +230,12 @@ void PropertyList::setColumnName(int column, const std::wstring& name)
 
 Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& position)
 {
-	int scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
+	int32_t scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
 
 	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
-	int y = position.y;
+	int32_t y = position.y;
 	if (m_columnHeader)
 	{
 		y -= c_columnsHeight;
@@ -243,7 +243,7 @@ Ref< PropertyItem > PropertyList::getPropertyItemFromPosition(const Point& posit
 			return 0;
 	}
 
-	int id = (y + scrollBarOffset) / c_propertyItemHeight;
+	int32_t id = (y + scrollBarOffset) / c_propertyItemHeight;
 	for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 	{
 		if (id-- <= 0)
@@ -264,8 +264,11 @@ bool PropertyList::resolvePropertyGuid(const Guid& guid, std::wstring& resolved)
 Ref< HierarchicalState > PropertyList::captureState() const
 {
 	Ref< HierarchicalState > state = new HierarchicalState();
+	
+	state->setScrollPosition(m_scrollBar->getPosition());
 	for (RefArray< PropertyItem >::const_iterator i = m_propertyItems.begin(); i != m_propertyItems.end(); ++i)
 		recursiveCaptureState(*i, state);
+
 	return state;
 }
 
@@ -273,6 +276,9 @@ void PropertyList::applyState(const HierarchicalState* state)
 {
 	for (RefArray< PropertyItem >::iterator i = m_propertyItems.begin(); i != m_propertyItems.end(); ++i)
 		recursiveApplyState(*i, state);
+
+	updateScrollBar();
+	m_scrollBar->setPosition(state->getScrollPosition());
 }
 
 void PropertyList::addSelectEventHandler(EventHandler* eventHandler)
@@ -315,23 +321,28 @@ void PropertyList::updateScrollBar()
 	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
-	int height = rc.getHeight();
+	int32_t height = rc.getHeight();
 	if (m_columnHeader)
 		height -= c_columnsHeight;
 
-	int itemCount = int(propertyItems.size());
-	int pageCount = height / c_propertyItemHeight;
+	int32_t itemCount = int(propertyItems.size());
+	int32_t pageCount = height / c_propertyItemHeight;
+
+	int32_t position = m_scrollBar->getPosition();
+	if (position > itemCount)
+		position = itemCount;
 
 	m_scrollBar->setRange(itemCount);
 	m_scrollBar->setPage(pageCount);
 	m_scrollBar->setVisible(itemCount > pageCount);
+	m_scrollBar->setPosition(position);
 }
 
 void PropertyList::placeItems()
 {
-	int scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
-	int scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
-	int top = m_columnHeader ? c_columnsHeight : 0;
+	int32_t scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
+	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
+	int32_t top = m_columnHeader ? c_columnsHeight : 0;
 
 	RefArray< PropertyItem > propertyItems;
 	getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
@@ -380,9 +391,9 @@ void PropertyList::eventButtonDown(Event* event)
 	}
 	else
 	{
-		int scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
+		int32_t scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
 
-		int y = mouseEvent->getPosition().y;
+		int32_t y = mouseEvent->getPosition().y;
 		if (m_columnHeader)
 		{
 			if ((y -= c_columnsHeight) < 0)
@@ -392,7 +403,7 @@ void PropertyList::eventButtonDown(Event* event)
 		RefArray< PropertyItem > propertyItems;
 		getPropertyItems(propertyItems, GfDescendants | GfExpandedOnly);
 
-		int id = (y + scrollBarOffset) / c_propertyItemHeight;
+		int32_t id = (y + scrollBarOffset) / c_propertyItemHeight;
 		for (RefArray< PropertyItem >::iterator i = propertyItems.begin(); i != propertyItems.end(); ++i)
 		{
 			if (int(std::distance(propertyItems.begin(), i)) == id)
@@ -507,7 +518,7 @@ void PropertyList::eventMouseWheel(Event* event)
 {
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 
-	int position = m_scrollBar->getPosition();
+	int32_t position = m_scrollBar->getPosition();
 	position -= mouseEvent->getWheelRotation() * c_wheelRotationFactor;
 	m_scrollBar->setPosition(position);
 
@@ -519,8 +530,8 @@ void PropertyList::eventSize(Event* event)
 {
 	Rect rc = getInnerRect();
 
-	int scrollWidth = m_scrollBar->getPreferedSize().cx;
-	int top = m_columnHeader ? c_columnsHeight : 0;
+	int32_t scrollWidth = m_scrollBar->getPreferedSize().cx;
+	int32_t top = m_columnHeader ? c_columnsHeight : 0;
 
 	m_scrollBar->setRect(Rect(
 		rc.right - scrollWidth,
@@ -542,9 +553,9 @@ void PropertyList::eventPaint(Event* event)
 	Canvas& canvas = paintEvent->getCanvas();
 	Rect rcInner = getInnerRect();
 
-	int scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
-	int scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
-	int top = m_columnHeader ? c_columnsHeight : 0;
+	int32_t scrollBarOffset = m_scrollBar->getPosition() * c_propertyItemHeight;
+	int32_t scrollBarWidth = m_scrollBar->isVisible(false) ? m_scrollBar->getPreferedSize().cx : 0;
+	int32_t top = m_columnHeader ? c_columnsHeight : 0;
 
 	// Clear widget background.
 	canvas.setBackground(getSystemColor(ScButtonFace));

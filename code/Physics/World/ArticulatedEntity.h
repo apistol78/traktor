@@ -2,13 +2,13 @@
 #define traktor_physics_ArticulatedEntity_H
 
 #include "Core/RefArray.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -22,7 +22,7 @@ class Joint;
 /*! \brief Articulated entity.
  * \ingroup Physics
  */
-class T_DLLCLASS ArticulatedEntity : public world::SpatialEntity
+class T_DLLCLASS ArticulatedEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 

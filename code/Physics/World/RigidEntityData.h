@@ -1,7 +1,7 @@
 #ifndef traktor_physics_RigidEntityData_H
 #define traktor_physics_RigidEntityData_H
 
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
@@ -36,7 +36,7 @@ class RigidEntity;
 /*! \brief Rigid body entity data.
  * \ingroup Physics
  */
-class T_DLLCLASS RigidEntityData : public world::SpatialEntityData
+class T_DLLCLASS RigidEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 
@@ -49,13 +49,13 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline Ref< const BodyDesc > getBodyDesc() const { return m_bodyDesc; }
+	const BodyDesc* getBodyDesc() const { return m_bodyDesc; }
 
-	inline Ref< const world::SpatialEntityData > getEntityData() const { return m_entityData; }
+	const world::EntityData* getEntityData() const { return m_entityData; }
 
 private:
 	Ref< BodyDesc > m_bodyDesc;
-	Ref< world::SpatialEntityData > m_entityData;
+	Ref< world::EntityData > m_entityData;
 };
 
 	}

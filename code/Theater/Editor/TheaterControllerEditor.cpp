@@ -283,9 +283,6 @@ void TheaterControllerEditor::captureEntities()
 	RefArray< TrackData >& trackData = controllerData->getTrackData();
 	for (RefArray< scene::EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 	{
-		if (!(*i)->isSpatial())
-			continue;
-
 		Transform transform = (*i)->getTransform();
 
 		Ref< world::EntityData > entityData = (*i)->getEntityData();

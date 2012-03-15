@@ -2,7 +2,6 @@
 #include "World/WorldRenderView.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityRenderer.h"
-#include "World/Entity/SpatialGroupEntity.h"
 
 namespace traktor
 {
@@ -15,7 +14,6 @@ const TypeInfoSet GroupEntityRenderer::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< GroupEntity >());
-	typeSet.insert(&type_of< SpatialGroupEntity >());
 	return typeSet;
 }
 
@@ -26,18 +24,11 @@ void GroupEntityRenderer::render(
 	Entity* entity
 )
 {
-	if (GroupEntity* groupEntity = dynamic_type_cast< GroupEntity* >(entity))
-	{
-		const RefArray< Entity >& childEntities = groupEntity->getEntities();
-		for (RefArray< Entity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)
-			worldContext.build(worldRenderView, worldRenderPass, *i);
-	}
-	else if (SpatialGroupEntity* spatialGroupEntity = dynamic_type_cast< SpatialGroupEntity* >(entity))
-	{
-		const RefArray< SpatialEntity >& childEntities = spatialGroupEntity->getEntities();
-		for (RefArray< SpatialEntity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)
-			worldContext.build(worldRenderView, worldRenderPass, *i);
-	}
+	GroupEntity* groupEntity = checked_type_cast< GroupEntity*, false >(entity);
+
+	const RefArray< Entity >& childEntities = groupEntity->getEntities();
+	for (RefArray< Entity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)
+		worldContext.build(worldRenderView, worldRenderPass, *i);
 }
 
 void GroupEntityRenderer::flush(

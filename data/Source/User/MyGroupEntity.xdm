@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.db.LocalInstanceMeta">
 	<guid>{1C8568DB-3C11-314B-AF1D-BD80486B45BE}</guid>
-	<primaryType>traktor.world.SpatialGroupEntityData</primaryType>
+	<primaryType>traktor.world.GroupEntityData</primaryType>
 	<blobs/>
 </object>

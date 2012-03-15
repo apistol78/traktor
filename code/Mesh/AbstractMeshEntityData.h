@@ -2,7 +2,7 @@
 #define traktor_mesh_AbstractMeshEntityData_H
 
 #include "Core/Math/Matrix44.h"
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -36,7 +36,7 @@ class MeshEntity;
 /*! \brief Abstract mesh entity data.
  * \ingroup Mesh
  */
-class T_DLLCLASS AbstractMeshEntityData : public world::SpatialEntityData
+class T_DLLCLASS AbstractMeshEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 

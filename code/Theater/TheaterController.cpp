@@ -3,7 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Theater/TheaterController.h"
 #include "Theater/Track.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 namespace traktor
 {
@@ -34,7 +34,7 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	// Calculate transforms.
 	for (uint32_t i = 0; i < ntracks; ++i)
 	{
-		Ref< world::SpatialEntity > entity = m_tracks[i]->getEntity();
+		Ref< world::Entity > entity = m_tracks[i]->getEntity();
 		T_ASSERT (entity);
 
 		const TransformPath& path = m_tracks[i]->getPath();
@@ -77,13 +77,13 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 	// Fixup orientation of "looking" entities.
 	for (uint32_t i = 0; i < ntracks; ++i)
 	{
-		Ref< world::SpatialEntity > entity = m_tracks[i]->getEntity();
+		Ref< world::Entity > entity = m_tracks[i]->getEntity();
 		T_ASSERT (entity);
 
 		if (!entity->getTransform(transform))
 			continue;
 
-		Ref< world::SpatialEntity > lookAtEntity = m_tracks[i]->getLookAtEntity();
+		Ref< world::Entity > lookAtEntity = m_tracks[i]->getLookAtEntity();
 		if (!lookAtEntity || !lookAtEntity->getTransform(lookAtTransform))
 			continue;
 		

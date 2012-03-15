@@ -263,13 +263,13 @@ public:
 
 	bool begin(IRenderView* renderView);
 
-	void end(IRenderView* renderView);
+	void end();
 
-	inline const Matrix44& getProjection() const { return m_projection.back(); }
+	const Matrix44& getProjection() const { return m_projection.back(); }
 
-	inline const Matrix44& getView() const { return m_view.back(); }
+	const Matrix44& getView() const { return m_view.back(); }
 
-	inline const Matrix44& getWorld() const { return m_world.back(); }
+	const Matrix44& getWorld() const { return m_world.back(); }
 
 private:
 	struct Batch
@@ -280,7 +280,8 @@ private:
 	};
 
 	resource::Proxy< Shader > m_shader;
-	Ref< VertexBuffer > m_vertexBuffers[3];
+	render::IRenderView* m_renderView;
+	Ref< VertexBuffer > m_vertexBuffers[2];
 	int m_currentBuffer;
 	struct Vertex* m_vertexStart;
 	struct Vertex* m_vertex;
@@ -294,6 +295,8 @@ private:
 	float m_viewNearZ;
 	float m_viewWidth;
 	float m_viewHeight;
+
+	void flush();
 
 	void updateTransforms();
 };

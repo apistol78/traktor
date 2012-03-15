@@ -1,7 +1,7 @@
 #include "Mesh/Editor/Batch/BatchMeshEntityData.h"
 #include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
+#include "World/Entity/GroupEntity.h"
 #include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/SpatialGroupEntity.h"
 
 namespace traktor
 {
@@ -26,12 +26,12 @@ Ref< world::Entity > BatchMeshEntityFactory::createEntity(world::IEntityBuilder*
 {
 	const BatchMeshEntityData* batchMeshEntityData = checked_type_cast< const BatchMeshEntityData* >(&entityData);
 	
-	Ref< world::SpatialGroupEntity > batchEntity = new world::SpatialGroupEntity(batchMeshEntityData->getTransform());
+	Ref< world::GroupEntity > batchEntity = new world::GroupEntity(batchMeshEntityData->getTransform());
 
-	const RefArray< world::SpatialEntityData >& childEntityData = batchMeshEntityData->getEntityData();
-	for (RefArray< world::SpatialEntityData >::const_iterator i = childEntityData.begin(); i != childEntityData.end(); ++i)
+	const RefArray< world::EntityData >& childEntityData = batchMeshEntityData->getEntityData();
+	for (RefArray< world::EntityData >::const_iterator i = childEntityData.begin(); i != childEntityData.end(); ++i)
 	{
-		Ref< world::SpatialEntity > childEntity = dynamic_type_cast< world::SpatialEntity* >(builder->create(*i));
+		Ref< world::Entity > childEntity = builder->create(*i);
 		if (childEntity)
 			batchEntity->addEntity(childEntity);
 	}

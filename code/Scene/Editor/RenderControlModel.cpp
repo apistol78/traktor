@@ -61,7 +61,7 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 	if (!m_modifyCamera)
 	{
 		// Handle entity picking if enabled.
-		if (!m_modifyAlternative && context->getPickEnable())
+		if (!m_modifyAlternative && m_mouseButton == 1 && context->getPickEnable())
 		{
 			IModifier* modifier = context->getModifier();
 			bool modifierHit = false;
@@ -144,6 +144,9 @@ void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui
 {
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
 	ui::Point mousePosition = mouseEvent->getPosition();
+
+	if (mouseEvent->getButton() != ui::MouseEvent::BtLeft)
+		return;
 	
 	Vector4 worldRayOrigin, worldRayDirection;
 	if (renderControl->calculateRay(m_mousePosition, worldRayOrigin, worldRayDirection))

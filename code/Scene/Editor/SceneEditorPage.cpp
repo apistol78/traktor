@@ -51,11 +51,10 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/InputDialog.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/SpatialEntity.h"
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/Entity.h"
+#include "World/Entity/EntityData.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
-#include "World/Entity/ExternalSpatialEntityData.h"
 
 // Resources
 #include "Resources/EntityEdit.h"
@@ -300,13 +299,8 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 				return false;
 		}
 
-		Ref< world::EntityData > entityData;
-
 		// Create external reference to entity data.
-		if (is_type_of< world::SpatialEntityData >(*primaryType))
-			entityData = new world::ExternalSpatialEntityData(instance->getGuid());
-		else
-			entityData = new world::ExternalEntityData(instance->getGuid());
+		Ref< world::EntityData > entityData = new world::ExternalEntityData(instance->getGuid());
 
 		// Use name of instance as external entity's name.
 		entityData->setName(instance->getName());
@@ -820,7 +814,7 @@ bool SceneEditorPage::updateLookAtEntity()
 	if (m_toolLookAtEntity->isToggled())
 	{
 		RefArray< EntityAdapter > selectedEntities;
-		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1 && selectedEntities[0]->isSpatial())
+		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
 		{
 			Vector4 lookAtPosition = selectedEntities[0]->getTransform().translation().xyz1();
 			for (int32_t i = 0; i < 4; ++i)
@@ -838,7 +832,7 @@ bool SceneEditorPage::updateFollowEntity()
 	if (m_toolFollowEntity->isToggled())
 	{
 		RefArray< EntityAdapter > selectedEntities;
-		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1 && selectedEntities[0]->isSpatial())
+		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
 		{
 			m_context->setFollowEntityAdapter(selectedEntities[0]);
 			return true;

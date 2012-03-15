@@ -6,7 +6,7 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 namespace traktor
 {
@@ -155,7 +155,7 @@ void PathEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) c
 	}
 
 	// Draw attached entity's bounding box.
-	if (world::SpatialEntity* attachedEntity = pathEntity->getEntity())
+	if (world::Entity* attachedEntity = pathEntity->getEntity())
 	{
 		Transform transform;
 		if (!attachedEntity->getTransform(transform))

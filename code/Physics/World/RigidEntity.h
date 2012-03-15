@@ -1,13 +1,13 @@
 #ifndef traktor_physics_RigidEntity_H
 #define traktor_physics_RigidEntity_H
 
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -20,14 +20,14 @@ class Body;
 /*! \brief Rigid body entity.
  * \ingroup Physics
  */
-class T_DLLCLASS RigidEntity : public world::SpatialEntity
+class T_DLLCLASS RigidEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 
 public:
 	RigidEntity(
 		Body* body,
-		world::SpatialEntity* entity
+		world::Entity* entity
 	);
 
 	virtual ~RigidEntity();
@@ -42,13 +42,13 @@ public:
 
 	virtual Aabb3 getBoundingBox() const;
 
-	inline Body* getBody() const { return m_body; }
+	Body* getBody() const { return m_body; }
 
-	inline world::SpatialEntity* getEntity() const { return m_entity; }
+	world::Entity* getEntity() const { return m_entity; }
 
 private:
 	Ref< Body > m_body;
-	Ref< world::SpatialEntity > m_entity;
+	Ref< world::Entity > m_entity;
 };
 
 	}
