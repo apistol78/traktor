@@ -9,7 +9,7 @@
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Resource/Proxy.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,7 +33,7 @@ class WorldRenderView;
 	namespace animation
 	{
 
-class T_DLLCLASS ClothEntity : public world::SpatialEntity
+class T_DLLCLASS ClothEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 

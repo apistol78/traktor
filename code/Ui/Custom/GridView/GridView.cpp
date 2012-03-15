@@ -191,6 +191,10 @@ void GridView::eventButtonDown(Event* event)
 	const Point& position = mouseEvent->getPosition();
 	int32_t state = mouseEvent->getKeyState();
 
+	// Only allow selection with left mouse button.
+	if (mouseEvent->getButton() != MouseEvent::BtLeft)
+		return;
+
 	// De-select all rows if no modifier key.
 	bool modifier = bool((state & (KsShift | KsControl)) != 0);
 	if (!modifier)
@@ -250,6 +254,10 @@ void GridView::eventButtonUp(Event* event)
 {
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
 	const Point& position = mouseEvent->getPosition();
+
+	// Only allow click with left mouse button.
+	if (mouseEvent->getButton() != MouseEvent::BtLeft)
+		return;
 
 	AutoWidgetCell* cell = hitTest(position);
 	if (cell != 0 && is_a< GridRow >(cell))

@@ -25,14 +25,12 @@ bool RigidEntityPipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
+	if (!world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outBuildParams))
+		return false;
+
 	if (const RigidEntityData* rigidEntityData = dynamic_type_cast< const RigidEntityData* >(sourceAsset))
-	{
 		pipelineDepends->addDependency(rigidEntityData->getBodyDesc());
 
-		const world::SpatialEntityData* entityData = rigidEntityData->getEntityData();
-		if (entityData)
-			pipelineDepends->addDependency(entityData);
-	}
 	return true;
 }
 

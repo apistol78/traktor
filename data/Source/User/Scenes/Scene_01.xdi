@@ -20,7 +20,11 @@
 	<postProcessSettings>{AB647E69-849D-7F43-972D-D33EF6B566BD}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
-		<entityData>
+    <transform>
+      <translation>0, 0, 0, 0</translation>
+      <rotation>0, 0, 0, 1</rotation>
+    </transform>
+    <entityData>
 			<item type="traktor.mesh.MeshEntityData">
 				<name>Instance Mesh</name>
 				<transform>

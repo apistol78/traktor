@@ -2,7 +2,7 @@
 #define traktor_animation_AnimatedMeshEntityData_H
 
 #include "Resource/Proxy.h"
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -45,7 +45,7 @@ class IPoseControllerData;
 /*! \brief Animated mesh entity data.
  * \ingroup Animation
  */
-class T_DLLCLASS AnimatedMeshEntityData : public world::SpatialEntityData
+class T_DLLCLASS AnimatedMeshEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 
@@ -56,11 +56,11 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< mesh::SkinnedMesh >& getMesh() const { return m_mesh; }
+	const resource::Proxy< mesh::SkinnedMesh >& getMesh() const { return m_mesh; }
 
-	inline const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
+	const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
 
-	inline const Ref< IPoseControllerData >& getPoseControllerData() const { return m_poseController; }
+	IPoseControllerData* getPoseControllerData() const { return m_poseController; }
 
 private:
 	mutable resource::Proxy< mesh::SkinnedMesh > m_mesh;

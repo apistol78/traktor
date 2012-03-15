@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectEntityData", 0, EffectEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectEntityData", 0, EffectEntityData, world::EntityData)
 
 Ref< EffectEntity > EffectEntityData::createEntity(resource::IResourceManager* resourceManager, sound::SoundSystem* soundSystem, sound::SurroundEnvironment* surroundEnvironment) const
 {
@@ -27,7 +27,7 @@ Ref< EffectEntity > EffectEntityData::createEntity(resource::IResourceManager* r
 
 bool EffectEntityData::serialize(ISerializer& s)
 {
-	if (!world::SpatialEntityData::serialize(s))
+	if (!world::EntityData::serialize(s))
 		return false;
 
 	return s >> resource::Member< Effect >(L"effect", m_effect);

@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "World/Entity/EntityData.h"
 
 namespace traktor
@@ -19,9 +20,21 @@ const std::wstring& EntityData::getName() const
 	return m_name;
 }
 
+void EntityData::setTransform(const Transform& transform)
+{
+	m_transform = transform;
+}
+
+const Transform& EntityData::getTransform() const
+{
+	return m_transform;
+}
+
 bool EntityData::serialize(ISerializer& s)
 {
-	return s >> Member< std::wstring >(L"name", m_name);
+	s >> Member< std::wstring >(L"name", m_name);
+	s >> MemberComposite< Transform >(L"transform", m_transform);
+	return true;
 }
 
 	}

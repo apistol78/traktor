@@ -34,7 +34,9 @@ public:
 
 	virtual void end();
 
-	Ref< EntityAdapter > getRootAdapter() const;
+	EntityAdapter* getRootAdapter() const;
+
+	uint32_t getAdapterCount() const;
 
 private:
 	Ref< SceneEditorContext > m_context;
@@ -45,6 +47,7 @@ private:
 	std::map< const TypeInfo*, RefArray< EntityAdapter > > m_cachedAdapters;
 	Ref< EntityAdapter > m_currentAdapter;
 	Ref< EntityAdapter > m_rootAdapter;
+	uint32_t m_adapterCount;
 };
 
 	}

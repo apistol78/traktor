@@ -413,6 +413,21 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 		Matrix44 view = getViewTransform();
 
+		// Render entities.
+		worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
+		worldRenderView.setView(view);
+
+		if (rootEntity)
+		{
+			m_worldRenderer->build(worldRenderView, rootEntity, 0);
+			m_worldRenderer->render(
+				world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
+				0,
+				render::EtCyclop
+			);
+		}
+
+		// Draw wire guides.
 		m_primitiveRenderer->begin(m_renderView);
 		m_primitiveRenderer->setClipDistance(worldRenderView.getViewFrustum().getNearZ());
 		m_primitiveRenderer->pushProjection(worldRenderView.getProjection());
@@ -517,21 +532,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		if (controllerEditor && m_guideEnable)
 			controllerEditor->draw(m_primitiveRenderer);
 
-		// Render entities.
-		worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
-		worldRenderView.setView(view);
-
-		if (rootEntity)
-		{
-			m_worldRenderer->build(worldRenderView, rootEntity, 0);
-			m_worldRenderer->render(
-				world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
-				0,
-				render::EtCyclop
-			);
-		}
-
-		m_primitiveRenderer->end(m_renderView);
+		m_primitiveRenderer->end();
 
 		m_renderView->end();
 		m_renderView->present();

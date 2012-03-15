@@ -2,7 +2,7 @@
 #define traktor_spray_EffectEntityData_H
 
 #include "Resource/Proxy.h"
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -38,7 +38,7 @@ class Effect;
 /*! \brief Effect entity data.
  * \ingroup Spray
  */
-class T_DLLCLASS EffectEntityData : public world::SpatialEntityData
+class T_DLLCLASS EffectEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 

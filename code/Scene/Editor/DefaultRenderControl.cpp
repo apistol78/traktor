@@ -8,7 +8,6 @@
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/OrthogonalRenderControl.h"
 #include "Scene/Editor/PerspectiveRenderControl.h"
-#include "Scene/Editor/ReferencesRenderControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
@@ -65,7 +64,6 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_BOTTOM"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_LEFT"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_RIGHT"));
-	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_REFERENCES"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_DEBUG"));
 	m_toolView->select(viewType);
 
@@ -246,15 +244,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 		}
 		break;
 
-	case 7:	// References
-		{
-			Ref< ReferencesRenderControl > renderControl = new ReferencesRenderControl();
-			if (renderControl->create(m_container, m_context))
-				m_renderControl = renderControl;
-		}
-		break;
-
-	case 8:	// Debug
+	case 7:	// Debug
 		{
 			Ref< DebugRenderControl > renderControl = new DebugRenderControl();
 			if (renderControl->create(m_container, m_context))

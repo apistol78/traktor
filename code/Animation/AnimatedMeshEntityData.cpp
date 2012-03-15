@@ -16,7 +16,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshEntityData", 1, AnimatedMeshEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshEntityData", 1, AnimatedMeshEntityData, world::EntityData)
 
 AnimatedMeshEntityData::AnimatedMeshEntityData()
 :	m_normalizePose(false)
@@ -72,7 +72,7 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 
 bool AnimatedMeshEntityData::serialize(ISerializer& s)
 {
-	if (!world::SpatialEntityData::serialize(s))
+	if (!world::EntityData::serialize(s))
 		return false;
 	
 	s >> resource::Member< mesh::SkinnedMesh, mesh::IMeshResource >(L"mesh", m_mesh);

@@ -7,7 +7,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DirectionalLightEntityData", 1, DirectionalLightEntityData, SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DirectionalLightEntityData", 1, DirectionalLightEntityData, EntityData)
 
 DirectionalLightEntityData::DirectionalLightEntityData()
 :	m_sunColor(1.0f, 1.0f, 1.0f, 0.0f)
@@ -19,7 +19,7 @@ DirectionalLightEntityData::DirectionalLightEntityData()
 
 bool DirectionalLightEntityData::serialize(ISerializer& s)
 {
-	if (!SpatialEntityData::serialize(s))
+	if (!EntityData::serialize(s))
 		return false;
 
 	s >> Member< Vector4 >(L"sunColor", m_sunColor);

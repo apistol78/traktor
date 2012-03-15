@@ -173,6 +173,11 @@ void OceanEntity::render(
 	renderContext->draw(render::RfAlphaBlend, renderBlock);
 }
 
+Aabb3 OceanEntity::getBoundingBox() const
+{
+	return Aabb3();
+}
+
 void OceanEntity::update(const world::EntityUpdate* update)
 {
 }

@@ -1,7 +1,7 @@
 #ifndef traktor_world_TransientEntity_H
 #define traktor_world_TransientEntity_H
 
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,14 +29,14 @@ class WorldRenderView;
  * remove itself from parent group as soon as it
  * has expired.
  */
-class T_DLLCLASS TransientEntity : public SpatialEntity
+class T_DLLCLASS TransientEntity : public Entity
 {
 	T_RTTI_CLASS;
 
 public:
 	TransientEntity(
 		GroupEntity* effectGroup,
-		SpatialEntity* otherEntity,
+		Entity* otherEntity,
 		float duration
 	);
 
@@ -56,7 +56,7 @@ public:
 
 private:
 	Ref< GroupEntity > m_parentGroup;
-	Ref< SpatialEntity > m_otherEntity;
+	Ref< Entity > m_otherEntity;
 	float m_duration;
 };
 

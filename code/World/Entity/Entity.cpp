@@ -17,5 +17,26 @@ void Entity::destroy()
 	// Nothing to destroy.
 }
 
+void Entity::setTransform(const Transform& transform)
+{
+	// Don't do anything.
+}
+
+bool Entity::getTransform(Transform& outTransform) const
+{
+	// Doesn't have a transform.
+	return false;
+}
+
+Aabb3 Entity::getWorldBoundingBox() const
+{
+	Aabb3 boundingBox = getBoundingBox();
+	if (boundingBox.empty())
+		return Aabb3();
+
+	Transform transform;
+	return getTransform(transform) ? boundingBox.transform(transform) : boundingBox;
+}
+
 	}
 }

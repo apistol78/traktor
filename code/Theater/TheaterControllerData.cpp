@@ -5,7 +5,7 @@
 #include "Theater/Track.h"
 #include "Theater/TrackData.h"
 #include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 namespace traktor
 {
@@ -25,11 +25,11 @@ Ref< scene::ISceneController > TheaterControllerData::createController(world::IE
 	RefArray< Track > tracks(m_trackData.size());
 	for (size_t i = 0; i < m_trackData.size(); ++i)
 	{
-		Ref< world::SpatialEntity > entity = dynamic_type_cast< world::SpatialEntity* >(entityBuilder->get(m_trackData[i]->getEntityData()));
+		Ref< world::Entity > entity = entityBuilder->get(m_trackData[i]->getEntityData());
 		if (!entity)
 			return 0;
 
-		Ref< world::SpatialEntity > lookAtEntity = dynamic_type_cast< world::SpatialEntity* >(entityBuilder->get(m_trackData[i]->getLookAtEntityData()));
+		Ref< world::Entity > lookAtEntity = entityBuilder->get(m_trackData[i]->getLookAtEntityData());
 
 		tracks[i] = new Track(
 			entity,

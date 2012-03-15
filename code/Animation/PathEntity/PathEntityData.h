@@ -1,7 +1,7 @@
 #ifndef traktor_animation_PathEntityData_H
 #define traktor_animation_PathEntityData_H
 
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 #include "Animation/PathEntity/PathEntity.h"
 
 // import/export mechanism.
@@ -27,7 +27,7 @@ class IEntityBuilder;
 /*! \brief Movement path entity data.
  * \ingroup Animation
  */
-class T_DLLCLASS PathEntityData : public world::SpatialEntityData
+class T_DLLCLASS PathEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 
@@ -44,12 +44,12 @@ public:
 
 	const PathEntity::TimeMode getTimeMode() const { return m_timeMode; }
 
-	const Ref< world::SpatialEntityData >& getEntityData() const { return m_entityData; }
+	world::EntityData* getEntityData() const { return m_entityData; }
 
 private:
 	TransformPath m_path;
 	PathEntity::TimeMode m_timeMode;
-	Ref< world::SpatialEntityData > m_entityData;
+	Ref< world::EntityData > m_entityData;
 };
 
 	}

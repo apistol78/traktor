@@ -19,7 +19,7 @@ const uint32_t c_updateDenom = 1;
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntity", EffectEntity, world::SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntity", EffectEntity, world::Entity)
 
 EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::SoundSystem* soundSystem, sound::SurroundEnvironment* surroundEnvironment)
 :	m_transform(transform)

@@ -5,7 +5,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.AbstractMeshEntityData", AbstractMeshEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.AbstractMeshEntityData", AbstractMeshEntityData, world::EntityData)
 
 	}
 }

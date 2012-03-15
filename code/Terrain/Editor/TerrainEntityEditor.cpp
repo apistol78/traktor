@@ -137,8 +137,8 @@ bool TerrainEntityEditor::handleCommand(const ui::Command& command)
 
 void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
+#if defined(T_TERRAIN_DRAW_PATCH_BOUNDINGBOXES)
 	// Draw patch bounding boxes.
-
 	const TerrainEntity* terrainEntity = checked_type_cast< const TerrainEntity*, true >(getEntityAdapter()->getEntity());
 	if (terrainEntity)
 	{
@@ -174,7 +174,7 @@ void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 			patchTopLeft += patchDeltaZ;
 		}
 	}
-
+#endif
 
 	// Draw cursor
 	const int32_t c_segments = 30;

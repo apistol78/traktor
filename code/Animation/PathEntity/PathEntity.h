@@ -2,7 +2,7 @@
 #define traktor_animation_PathEntity_H
 
 #include "Core/Math/TransformPath.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ class WorldRenderView;
 /*! \brief Movement path entity.
  * \ingroup Animation
  */
-class T_DLLCLASS PathEntity : public world::SpatialEntity
+class T_DLLCLASS PathEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 
@@ -42,7 +42,7 @@ public:
 		TmPingPong
 	};
 
-	PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::SpatialEntity* entity);
+	PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::Entity* entity);
 
 	virtual ~PathEntity();
 
@@ -78,13 +78,13 @@ public:
 
 	float getTime() const { return m_time; }
 
-	Ref< world::SpatialEntity > getEntity() { return m_entity; }
+	world::Entity* getEntity() { return m_entity; }
 
 private:
 	Transform m_transform;
 	TransformPath m_path;
 	TimeMode m_timeMode;
-	Ref< world::SpatialEntity > m_entity;
+	Ref< world::Entity > m_entity;
 	float m_timeScale;
 	float m_timeDeltaSign;
 	float m_time;

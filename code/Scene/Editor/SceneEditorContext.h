@@ -90,8 +90,6 @@ public:
 		GfDescendants = 1 << 0,
 		GfSelectedOnly = 1 << 1,
 		GfNoSelected = 1 << 2,
-		GfSpatialOnly = 1 << 3,
-		GfNoSpatial = 1 << 4,
 		GfExternalOnly = 1 << 5,
 		GfNoExternal = 1 << 6,
 		GfExternalChildOnly = 1 << 7,

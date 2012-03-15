@@ -38,7 +38,7 @@ RotateModifier::RotateModifier(SceneEditorContext* context)
 void RotateModifier::selectionChanged()
 {
 	m_entityAdapters.clear();
-	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSpatialOnly | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
+	m_context->getEntities(m_entityAdapters, SceneEditorContext::GfDefault | SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfNoExternalChild);
 
 	m_baseTransforms.clear();
 	m_center = Vector4::zero();

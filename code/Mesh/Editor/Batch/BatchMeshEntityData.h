@@ -3,7 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,7 +18,7 @@ namespace traktor
 	namespace mesh
 	{
 
-class T_DLLCLASS BatchMeshEntityData : public world::SpatialEntityData
+class T_DLLCLASS BatchMeshEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 
@@ -31,11 +31,11 @@ public:
 
 	const Guid& getOutputGuid() const { return m_outputGuid; }
 
-	const RefArray< world::SpatialEntityData >& getEntityData() const { return m_entityData; }
+	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 
 private:
 	Guid m_outputGuid;
-	RefArray< world::SpatialEntityData > m_entityData;
+	RefArray< world::EntityData > m_entityData;
 };
 
 	}

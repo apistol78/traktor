@@ -17,7 +17,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.ArticulatedEntityData", 0, ArticulatedEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.ArticulatedEntityData", 0, ArticulatedEntityData, world::EntityData)
 
 Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 	world::IEntityBuilder* builder,
@@ -80,20 +80,20 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 void ArticulatedEntityData::setTransform(const Transform& transform)
 {
 	Transform deltaTransform = transform * getTransform().inverse();
-	for (RefArray< world::SpatialEntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
+	for (RefArray< world::EntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
 	{
 		Transform currentTransform = (*i)->getTransform();
 		(*i)->setTransform(deltaTransform * currentTransform);
 	}
-	SpatialEntityData::setTransform(transform);
+	EntityData::setTransform(transform);
 }
 
 bool ArticulatedEntityData::serialize(ISerializer& s)
 {
-	if (!world::SpatialEntityData::serialize(s))
+	if (!world::EntityData::serialize(s))
 		return false;
 
-	s >> MemberRefArray< world::SpatialEntityData >(L"entityData", m_entityData);
+	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 	s >> MemberStlVector< Constraint, MemberComposite< Constraint > >(L"constraints", m_constraints);
 
 	return true;

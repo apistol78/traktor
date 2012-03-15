@@ -517,7 +517,7 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			}
 		}
 
-		m_primitiveRenderer->end(m_renderView);
+		m_primitiveRenderer->end();
 	}
 
 	m_renderView->end();

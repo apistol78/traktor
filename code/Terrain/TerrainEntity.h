@@ -99,6 +99,8 @@ public:
 
 	uint32_t getPatchCount() const { return m_patchCount; }
 
+	virtual Aabb3 getBoundingBox() const;
+
 	virtual void update(const world::EntityUpdate* update);
 
 private:

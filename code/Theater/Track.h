@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_THEATER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,7 +17,7 @@ namespace traktor
 	namespace world
 	{
 
-class SpatialEntity;
+class Entity;
 
 	}
 
@@ -30,21 +30,21 @@ class T_DLLCLASS Track : public Object
 
 public:
 	Track(
-		world::SpatialEntity* entity,
-		world::SpatialEntity* lookAtEntity,
+		world::Entity* entity,
+		world::Entity* lookAtEntity,
 		const TransformPath& path,
 		float loopStart,
 		float loopEnd,
 		float loopEase
 	);
 
-	void setEntity(world::SpatialEntity* entity);
+	void setEntity(world::Entity* entity);
 
-	Ref< world::SpatialEntity > getEntity() const;
+	Ref< world::Entity > getEntity() const;
 
-	void setLookAtEntity(world::SpatialEntity* entity);
+	void setLookAtEntity(world::Entity* entity);
 
-	Ref< world::SpatialEntity > getLookAtEntity() const;
+	Ref< world::Entity > getLookAtEntity() const;
 
 	const TransformPath& getPath() const;
 
@@ -57,8 +57,8 @@ public:
 	float getLoopEase() const;
 
 private:
-	Ref< world::SpatialEntity > m_entity;
-	Ref< world::SpatialEntity > m_lookAtEntity;
+	Ref< world::Entity > m_entity;
+	Ref< world::Entity > m_lookAtEntity;
 	TransformPath m_path;
 	float m_loopStart;
 	float m_loopEnd;

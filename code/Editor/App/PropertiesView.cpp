@@ -53,27 +53,31 @@ void PropertiesView::destroy()
 
 void PropertiesView::setPropertyObject(ISerializable* object, ISerializable* outer)
 {
-	// Capture state of current property object.
-	if (m_propertyObject)
-		m_states[&type_of(m_propertyObject)] = m_propertyList->captureState();
-
-	m_propertyList->hide();
-	
-	// Bind property object.
-	m_propertyList->bind(object, outer);
-
-	// Restore state of last property object of same type.
-	if (object)
+	if (object != m_propertyObject)
 	{
-		std::map< const TypeInfo*, Ref< ui::HierarchicalState > >::iterator i = m_states.find(&type_of(object));
-		if (i != m_states.end())
-			m_propertyList->applyState(i->second);
+		// Capture state of current property object.
+		if (m_propertyObject)
+			m_states[&type_of(m_propertyObject)] = m_propertyList->captureState();
+
+		m_propertyList->hide();
+
+		// Bind property object.
+		m_propertyList->bind(object, outer);
+
+		// Restore state of last property object of same type.
+		if (object)
+		{
+			std::map< const TypeInfo*, Ref< ui::HierarchicalState > >::iterator i = m_states.find(&type_of(object));
+			if (i != m_states.end())
+				m_propertyList->applyState(i->second);
+		}
+
+		m_propertyList->show();
+
+		m_propertyObject = object;
 	}
 	
 	m_propertyList->update();
-	m_propertyList->show();
-
-	m_propertyObject = object;
 }
 
 Ref< ISerializable > PropertiesView::getPropertyObject()

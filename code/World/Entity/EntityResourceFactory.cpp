@@ -1,6 +1,6 @@
 #include "Database/Database.h"
+#include "World/Entity/EntityData.h"
 #include "World/Entity/EntityResourceFactory.h"
-#include "World/Entity/SpatialEntityData.h"
 
 namespace traktor
 {
@@ -18,7 +18,6 @@ const TypeInfoSet EntityResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< EntityData >());
-	typeSet.insert(&type_of< SpatialEntityData >());
 	return typeSet;
 }
 

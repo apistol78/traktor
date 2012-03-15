@@ -6,7 +6,7 @@
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Proxy.h"
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 #include "World/Entity/EntityBuilder.h"
 
 // import/export mechanism.
@@ -24,7 +24,7 @@ namespace traktor
 
 class ClothEntity;
 
-class T_DLLCLASS ClothEntityData : public world::SpatialEntityData
+class T_DLLCLASS ClothEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 

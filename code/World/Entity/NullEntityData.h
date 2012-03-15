@@ -1,7 +1,7 @@
 #ifndef traktor_world_NullEntityData_H
 #define traktor_world_NullEntityData_H
 
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Null entity data.
  * \ingroup World
  */
-class T_DLLCLASS NullEntityData : public SpatialEntityData
+class T_DLLCLASS NullEntityData : public EntityData
 {
 	T_RTTI_CLASS;
 };

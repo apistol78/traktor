@@ -172,7 +172,7 @@ struct ImpostorUpdateRenderBlock : public render::RenderBlock
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudEntity", CloudEntity, world::SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.weather.CloudEntity", CloudEntity, world::Entity)
 
 CloudEntity::CloudEntity()
 :	m_handleBillboardView(render::getParameterHandle(L"BillboardView"))

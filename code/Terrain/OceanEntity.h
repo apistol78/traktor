@@ -72,6 +72,8 @@ public:
 		world::IWorldRenderPass& worldRenderPass
 	);
 
+	virtual Aabb3 getBoundingBox() const;
+
 	virtual void update(const world::EntityUpdate* update);
 
 private:

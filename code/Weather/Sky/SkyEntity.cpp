@@ -79,6 +79,12 @@ void SkyEntity::render(
 	renderContext->draw(render::RfAlphaBlend, renderBlock);
 }
 
+Aabb3 SkyEntity::getBoundingBox() const
+{
+	const float c_radius = 1e4f;
+	return Aabb3(Vector4(-c_radius, -c_radius, -c_radius, 1.0f), Vector4(c_radius, c_radius, c_radius, 1.0f));
+}
+
 void SkyEntity::update(const world::EntityUpdate* update)
 {
 }

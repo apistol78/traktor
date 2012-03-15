@@ -64,10 +64,8 @@ public:
 
 	//@}
 
-	/*! \name Spatial entity accessors. */
+	/*! \name Spatial accessors. */
 	//@{
-
-	bool isSpatial() const;
 
 	void setTransform0(const Transform& transform);
 

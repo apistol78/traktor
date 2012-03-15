@@ -12,7 +12,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothEntityData", 0, ClothEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.ClothEntityData", 0, ClothEntityData, world::EntityData)
 
 ClothEntityData::ClothEntityData()
 :	m_resolutionX(10)
@@ -56,7 +56,7 @@ Ref< ClothEntity > ClothEntityData::createEntity(
 
 bool ClothEntityData::serialize(ISerializer& s)
 {
-	if (!world::SpatialEntityData::serialize(s))
+	if (!world::EntityData::serialize(s))
 		return false;
 
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);

@@ -11,8 +11,6 @@
 #include "World/Entity/IEntityFactory.h"
 #include "World/Entity/IEntitySchema.h"
 
-#include "Core/Math/Format.h"
-
 namespace traktor
 {
 	namespace scene
@@ -65,6 +63,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuild
 EntityAdapterBuilder::EntityAdapterBuilder(SceneEditorContext* context, const RefArray< IEntityEditorFactory >& entityEditorFactories)
 :	m_context(context)
 ,	m_entityEditorFactories(entityEditorFactories)
+,	m_adapterCount(0)
 {
 }
 
@@ -112,6 +111,8 @@ void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 		// Release entity data reference.
 		entityAdapter->setEntityData(0);
 	}
+
+	m_adapterCount = 0;
 
 	T_ASSERT (!m_rootAdapter);
 }
@@ -199,6 +200,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	if (m_entitySchema)
 		m_entitySchema->insertEntity(0, entityData->getName(), entity);
 
+	++m_adapterCount;
 	return entity;
 }
 
@@ -214,9 +216,14 @@ void EntityAdapterBuilder::end()
 	m_cachedAdapters.clear();
 }
 
-Ref< EntityAdapter > EntityAdapterBuilder::getRootAdapter() const
+EntityAdapter* EntityAdapterBuilder::getRootAdapter() const
 {
 	return m_rootAdapter;
+}
+
+uint32_t EntityAdapterBuilder::getAdapterCount() const
+{
+	return m_adapterCount;
 }
 
 	}

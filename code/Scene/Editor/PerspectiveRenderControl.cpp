@@ -507,53 +507,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			128
 		);
 
-		m_primitiveRenderer->begin(m_renderView);
-		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
-		m_primitiveRenderer->pushProjection(projection);
-		m_primitiveRenderer->pushView(view);
-
-		// Render XZ grid.
-		if (m_gridEnable)
-		{
-			Vector4 viewPosition = view.inverse().translation();
-			float vx = floorf(viewPosition.x());
-			float vz = floorf(viewPosition.z());
-
-			for (int x = -20; x <= 20; ++x)
-			{
-				float fx = float(x);
-				m_primitiveRenderer->drawLine(
-					Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
-					Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
-					(int(fx + vx) == 0) ? 2.0f : 0.0f,
-					m_colorGrid
-				);
-				m_primitiveRenderer->drawLine(
-					Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
-					Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
-					(int(fx + vz) == 0) ? 2.0f : 0.0f,
-					m_colorGrid
-				);
-			}
-		}
-
-		// Draw modifier.
-		IModifier* modifier = m_context->getModifier();
-		if (modifier)
-			modifier->draw(m_primitiveRenderer);
-
-		// Draw guides.
-		if (m_guideEnable)
-		{
-			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-				m_context->drawGuide(m_primitiveRenderer, *i);
-		}
-
-		// Draw controller guides.
-		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
-		if (controllerEditor && m_guideEnable)
-			controllerEditor->draw(m_primitiveRenderer);
-
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 		m_worldRenderView.setView(view);
@@ -606,7 +559,55 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			}
 		}
 
-		m_primitiveRenderer->end(m_renderView);
+		// Render wire guides.
+		m_primitiveRenderer->begin(m_renderView);
+		m_primitiveRenderer->setClipDistance(m_worldRenderView.getViewFrustum().getNearZ());
+		m_primitiveRenderer->pushProjection(projection);
+		m_primitiveRenderer->pushView(view);
+
+		// Render XZ grid.
+		if (m_gridEnable)
+		{
+			Vector4 viewPosition = view.inverse().translation();
+			float vx = floorf(viewPosition.x());
+			float vz = floorf(viewPosition.z());
+
+			for (int x = -20; x <= 20; ++x)
+			{
+				float fx = float(x);
+				m_primitiveRenderer->drawLine(
+					Vector4(fx + vx, 0.0f, -20.0f + vz, 1.0f),
+					Vector4(fx + vx, 0.0f, 20.0f + vz, 1.0f),
+					(int(fx + vx) == 0) ? 2.0f : 0.0f,
+					m_colorGrid
+				);
+				m_primitiveRenderer->drawLine(
+					Vector4(-20.0f + vx, 0.0f, fx + vz, 1.0f),
+					Vector4(20.0f + vx, 0.0f, fx + vz, 1.0f),
+					(int(fx + vz) == 0) ? 2.0f : 0.0f,
+					m_colorGrid
+				);
+			}
+		}
+
+		// Draw modifier.
+		IModifier* modifier = m_context->getModifier();
+		if (modifier)
+			modifier->draw(m_primitiveRenderer);
+
+		// Draw guides.
+		if (m_guideEnable)
+		{
+			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+				m_context->drawGuide(m_primitiveRenderer, *i);
+		}
+
+		// Draw controller guides.
+		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+		if (controllerEditor && m_guideEnable)
+			controllerEditor->draw(m_primitiveRenderer);
+
+		m_primitiveRenderer->end();
 
 		m_renderView->end();
 		m_renderView->present();

@@ -1,7 +1,7 @@
 #ifndef traktor_world_SpotLightEntity_H
 #define traktor_world_SpotLightEntity_H
 
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 /*! \brief Spot light entity.
  * \ingroup World
  */
-class T_DLLCLASS SpotLightEntity : public SpatialEntity
+class T_DLLCLASS SpotLightEntity : public Entity
 {
 	T_RTTI_CLASS;
 

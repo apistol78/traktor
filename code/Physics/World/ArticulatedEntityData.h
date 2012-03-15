@@ -2,7 +2,7 @@
 #define traktor_physics_ArticulatedEntityData_H
 
 #include "Core/RefArray.h"
-#include "World/Entity/SpatialEntityData.h"
+#include "World/Entity/EntityData.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
@@ -30,7 +30,7 @@ class PhysicsManager;
 /*! \brief Articulated entity data.
  * \ingroup Physics
  */
-class T_DLLCLASS ArticulatedEntityData : public world::SpatialEntityData
+class T_DLLCLASS ArticulatedEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
 
@@ -55,12 +55,12 @@ public:
 	
 	virtual bool serialize(ISerializer& s);
 
-	const RefArray< world::SpatialEntityData >& getEntityData() const { return m_entityData; }
+	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 
 	const std::vector< Constraint >& getConstraints() const { return m_constraints; }
 
 private:
-	RefArray< world::SpatialEntityData > m_entityData;
+	RefArray< world::EntityData > m_entityData;
 	std::vector< Constraint > m_constraints;
 };
 

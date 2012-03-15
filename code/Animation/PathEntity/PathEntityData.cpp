@@ -10,7 +10,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.PathEntityData", 0, PathEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.PathEntityData", 0, PathEntityData, world::EntityData)
 
 PathEntityData::PathEntityData()
 :	m_timeMode(PathEntity::TmManual)
@@ -19,7 +19,7 @@ PathEntityData::PathEntityData()
 
 Ref< PathEntity > PathEntityData::createEntity(world::IEntityBuilder* builder) const
 {
-	Ref< world::SpatialEntity > entity = dynamic_type_cast< world::SpatialEntity* >(builder->create(m_entityData));
+	Ref< world::Entity > entity = builder->create(m_entityData);
 	return new PathEntity(
 		getTransform(),
 		m_path,
@@ -39,12 +39,12 @@ bool PathEntityData::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	if (!world::SpatialEntityData::serialize(s))
+	if (!world::EntityData::serialize(s))
 		return false;
 
 	s >> MemberComposite< TransformPath >(L"path", m_path);
 	s >> MemberEnum< PathEntity::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
-	s >> MemberRef< world::SpatialEntityData >(L"entityData", m_entityData);
+	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 
 	return true;
 }

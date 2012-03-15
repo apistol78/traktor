@@ -4,7 +4,7 @@
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/IntervalTransform.h"
 #include "Render/Types.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,7 +37,7 @@ class IMeshParameterCallback;
  * parameter to be passed to the shader system when
  * the mesh is rendered.
  */
-class T_DLLCLASS MeshEntity : public world::SpatialEntity
+class T_DLLCLASS MeshEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 

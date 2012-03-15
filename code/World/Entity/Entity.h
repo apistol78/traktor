@@ -2,6 +2,8 @@
 #define traktor_world_Entity_H
 
 #include "Core/Object.h"
+#include "Core/Math/Aabb3.h"
+#include "Core/Math/Transform.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,10 +22,6 @@ class EntityUpdate;
 
 /*! \brief World entity base class.
  * \ingroup World
- *
- * All accessible entities must be derived from this class.
- * Not all entities must be "renderable", it's also
- * designed to be able to handle "non-renderables" such as triggers etc.
  */
 class T_DLLCLASS Entity : public Object
 {
@@ -43,6 +41,33 @@ public:
 	 * performing the destruction.
 	 */
 	virtual void destroy();
+
+	/*! \brief Set entity transform.
+	 *
+	 * \param transform Entity transform.
+	 */
+	virtual void setTransform(const Transform& transform);
+
+	/*! \brief Get entity transform.
+	 *
+	 * \param outTransform Returning entity transform.
+	 * \return True if entity have a transform.
+	 */
+	virtual bool getTransform(Transform& outTransform) const;
+
+	/*! \brief Get entity bounding box.
+	 * Return entity bounding box in entity space.
+	 *
+	 * \return Entity bounding box.
+	 */
+	virtual Aabb3 getBoundingBox() const = 0;
+
+	/*! \brief Get entity bounding box.
+	 * Return entity bounding box in world space.
+	 *
+	 * \return Entity bounding box.
+	 */
+	virtual Aabb3 getWorldBoundingBox() const;
 
 	/*! \brief Update entity.
 	 *

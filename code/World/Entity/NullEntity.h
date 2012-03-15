@@ -2,7 +2,7 @@
 #define traktor_world_NullEntity_H
 
 #include "Core/Math/IntervalTransform.h"
-#include "World/Entity/SpatialEntity.h"
+#include "World/Entity/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief Null entity.
  * \ingroup World
  */
-class T_DLLCLASS NullEntity : public SpatialEntity
+class T_DLLCLASS NullEntity : public Entity
 {
 	T_RTTI_CLASS;
 

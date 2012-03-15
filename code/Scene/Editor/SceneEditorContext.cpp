@@ -321,6 +321,7 @@ void SceneEditorContext::buildEntities()
 			controller = m_sceneAsset->getControllerData()->createController(entityBuilder, entitySchema);
 
 		entityBuilder->end();
+		log::debug << entityBuilder->getAdapterCount() << L" entity adapter(s) built" << Endl;
 
 		// Save new root entity adapter.
 		m_rootEntityAdapter = entityBuilder->getRootAdapter();
@@ -394,11 +395,6 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 				include &= entityAdapter->isSelected();
 			if (flags & GfNoSelected)
 				include &= !entityAdapter->isSelected();
-
-			if (flags & GfSpatialOnly)
-				include &= entityAdapter->isSpatial();
-			if (flags & GfNoSpatial)
-				include &= !entityAdapter->isSpatial();
 
 			if (flags & GfExternalOnly)
 				include &= entityAdapter->isExternal();

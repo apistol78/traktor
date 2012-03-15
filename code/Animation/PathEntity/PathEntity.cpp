@@ -7,9 +7,9 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntity", PathEntity, world::SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.PathEntity", PathEntity, world::Entity)
 
-PathEntity::PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::SpatialEntity* entity)
+PathEntity::PathEntity(const Transform& transform, const TransformPath& path, TimeMode timeMode, world::Entity* entity)
 :	m_transform(transform)
 ,	m_path(path)
 ,	m_timeMode(timeMode)

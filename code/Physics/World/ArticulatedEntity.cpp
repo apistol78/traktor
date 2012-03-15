@@ -1,13 +1,13 @@
+#include "Physics/Joint.h"
 #include "Physics/World/ArticulatedEntity.h"
 #include "Physics/World/RigidEntity.h"
-#include "Physics/Joint.h"
 
 namespace traktor
 {
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ArticulatedEntity", ArticulatedEntity, world::SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ArticulatedEntity", ArticulatedEntity, world::Entity)
 
 ArticulatedEntity::ArticulatedEntity(
 	const Transform& transform,
@@ -36,7 +36,7 @@ void ArticulatedEntity::destroy()
 	}
 	m_entities.resize(0);
 
-	world::SpatialEntity::destroy();
+	world::Entity::destroy();
 }
 
 void ArticulatedEntity::update(const world::EntityUpdate* update)

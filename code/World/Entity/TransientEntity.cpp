@@ -8,11 +8,11 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.world.TransientEntity", TransientEntity, SpatialEntity)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.world.TransientEntity", TransientEntity, Entity)
 
 TransientEntity::TransientEntity(
 	GroupEntity* parentGroup,
-	SpatialEntity* visualEntity,
+	Entity* visualEntity,
 	float duration
 )
 :	m_parentGroup(parentGroup)

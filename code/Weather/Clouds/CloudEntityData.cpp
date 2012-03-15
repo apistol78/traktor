@@ -18,7 +18,7 @@ namespace traktor
 	namespace weather
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudEntityData", 1, CloudEntityData, world::SpatialEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.weather.CloudEntityData", 1, CloudEntityData, world::EntityData)
 
 CloudEntityData::CloudEntityData()
 :	m_impostorTargetResolution(256)
@@ -64,7 +64,7 @@ Ref< CloudEntity > CloudEntityData::createEntity(resource::IResourceManager* res
 
 bool CloudEntityData::serialize(ISerializer& s)
 {
-	if (!world::SpatialEntityData::serialize(s))
+	if (!world::EntityData::serialize(s))
 		return false;
 
 	s >> resource::Member< render::Shader, render::ShaderGraph >(L"particleShader", m_particleShader);
