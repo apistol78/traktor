@@ -22,6 +22,7 @@ void UniformShadowProjection::calculate(
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
 	const Aabb3& shadowBox,
+	bool quantizeProjection,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
 	Matrix44& outLightSquareProjection,
@@ -31,9 +32,18 @@ void UniformShadowProjection::calculate(
 	// Calculate light axises.
 	Vector4 lightAxisX, lightAxisY, lightAxisZ;
 
-	lightAxisZ = -lightDirection.normalized();
-	lightAxisX = cross(lightAxisZ, Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();
-	lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
+	if (quantizeProjection)
+	{
+		lightAxisZ = -lightDirection.normalized();
+		lightAxisX = cross(lightAxisZ, Vector4(0.0f, 1.0f, 0.0f, 0.0f)).normalized();
+		lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
+	}
+	else
+	{
+		lightAxisZ = -lightDirection.normalized();
+		lightAxisX = cross(viewInverse.axisZ(), lightAxisZ).normalized();
+		lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
+	}
 
 	// Calculate bounding box of view frustum in light space.
 	Aabb3 viewFrustumBox;
@@ -55,14 +65,14 @@ void UniformShadowProjection::calculate(
 
 	const float c_extentStep = 8.0f;
 
-	Scalar ex = Scalar(std::ceil(extent.x() / c_extentStep) * c_extentStep);
-	Scalar ey = Scalar(std::ceil(extent.y() / c_extentStep) * c_extentStep);
+	Scalar ex = quantizeProjection ? Scalar(std::ceil(extent.x() / c_extentStep) * c_extentStep) : extent.x();
+	Scalar ey = quantizeProjection ? Scalar(std::ceil(extent.y() / c_extentStep) * c_extentStep) : extent.y();
 
 	Scalar smx = ex / Scalar(m_realShadowMapSize);
 	Scalar smy = ey / Scalar(m_realShadowMapSize);
 
-	Scalar cx = Scalar(std::floor(center.x() / smx) * smx);
-	Scalar cy = Scalar(std::floor(center.y() / smy) * smy);
+	Scalar cx = quantizeProjection ? Scalar(std::floor(center.x() / smx) * smx) : center.x();
+	Scalar cy = quantizeProjection ? Scalar(std::floor(center.y() / smy) * smy) : center.y();
 
 	// Calculate world center of view frustum's bounding box.
 	Vector4 worldCenter =
@@ -71,29 +81,29 @@ void UniformShadowProjection::calculate(
 		lightAxisZ * center.z() +
 		Vector4::origo();
 
-	Scalar lightDistance = Scalar(m_settings.shadowFarZ * 2.0f);
+	Scalar lightDistance = Scalar(m_settings.shadowFarZ);
 
 	outLightView = Matrix44(
 		lightAxisX,
 		lightAxisY,
 		lightAxisZ,
-		worldCenter - lightAxisZ * lightDistance
+		worldCenter - lightAxisZ * (lightDistance + extent.z())
 	);
 
-	outLightView = outLightView.inverseOrtho();
+	outLightView = outLightView.inverse();
 
 	outLightProjection = orthoLh(
 		ex,
 		ey,
 		0.0f,
-		lightDistance + extent.z()
+		lightDistance + extent.z() * Scalar(2.0f)
 	);
 
 	outShadowFrustum.buildOrtho(
 		ex,
 		ey,
 		0.0f,
-		lightDistance + extent.z()
+		lightDistance + extent.z() * Scalar(2.0f)
 	);
 
 	// Add part of view frustum to shadow frustum.

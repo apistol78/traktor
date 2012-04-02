@@ -74,7 +74,7 @@ void CompositeMeshEntity::render(
 	}
 }
 
-void CompositeMeshEntity::update(const world::EntityUpdate* update)
+void CompositeMeshEntity::update(const UpdateParams& update)
 {
 	for (std::map< std::wstring, Ref< MeshEntity > >::iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
 		i->second->update(update);

@@ -27,24 +27,6 @@ bool GeneralSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 	if (!containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 0, 4)))
 		return false;
 
-	Ref< ui::Static > staticSourceDatabase = new ui::Static();
-	staticSourceDatabase->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_SOURCE_DATABASE"));
-
-	m_editSourceDatabase = new ui::Edit();
-	m_editSourceDatabase->create(containerInner, settings->getProperty< PropertyString >(L"Editor.SourceDatabase", L""));
-
-	Ref< ui::Static > staticOutputDatabase = new ui::Static();
-	staticOutputDatabase->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_OUTPUT_DATABASE"));
-
-	m_editOutputDatabase = new ui::Edit();
-	m_editOutputDatabase->create(containerInner, settings->getProperty< PropertyString >(L"Editor.OutputDatabase", L""));
-
-	Ref< ui::Static > staticAssetPath = new ui::Static();
-	staticAssetPath->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_ASSET_PATH"));
-
-	m_editAssetPath = new ui::Edit();
-	m_editAssetPath->create(containerInner, settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L""));
-
 	Ref< ui::Static > staticDictionary = new ui::Static();
 	staticDictionary->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_DICTIONARY"));
 
@@ -73,10 +55,7 @@ void GeneralSettingsPage::destroy()
 
 bool GeneralSettingsPage::apply(PropertyGroup* settings)
 {
-	settings->setProperty< PropertyString >(L"Editor.SourceDatabase", m_editSourceDatabase->getText());
-	settings->setProperty< PropertyString >(L"Editor.OutputDatabase", m_editOutputDatabase->getText());
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
-	settings->setProperty< PropertyString >(L"Pipeline.AssetPath", m_editAssetPath->getText());
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoSave", m_checkAutoSave->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified", m_checkBuildWhenSourceModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified", m_checkBuildWhenAssetModified->isChecked());

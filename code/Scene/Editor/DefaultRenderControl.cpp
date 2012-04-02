@@ -38,7 +38,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_index = index;
 
-	Ref< PropertyGroup > settings = context->getEditor()->getSettings();
+	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	int32_t viewType = settings->getProperty< PropertyInteger >(L"SceneEditor.View" + toString(index), 0);
@@ -114,13 +114,14 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 void DefaultRenderControl::destroy()
 {
-	Ref< PropertyGroup > settings = m_context->getEditor()->getSettings();
+	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_index), m_toolToggleGrid->isToggled());
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_index), m_toolToggleGuide->isToggled());
 	settings->setProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(m_index), m_toolTogglePostProcess->isToggled());
 
+	m_context->getEditor()->commitGlobalSettings();
 	m_toolView = 0;
 
 	if (m_renderControl)
@@ -273,10 +274,12 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	else
 		m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
 
-	Ref< PropertyGroup > settings = m_context->getEditor()->getSettings();
+	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_index), type);
+
+	m_context->getEditor()->commitGlobalSettings();
 }
 
 void DefaultRenderControl::eventToolClick(ui::Event* event)

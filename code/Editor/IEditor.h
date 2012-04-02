@@ -40,8 +40,37 @@ class PipelineDependency;
 class T_NOVTABLE IEditor
 {
 public:
-	/*! \brief Get editor settings. */
-	virtual Ref< PropertyGroup > getSettings() const = 0;
+	/*! \name Settings */
+	/*! \{ */
+
+	/*! \brief Get read-only settings; contain merged workspace and global settings. */
+	virtual Ref< const PropertyGroup > getSettings() const = 0;
+
+	/*! \brief Get read-only global settings. */
+	virtual Ref< const PropertyGroup > getGlobalSettings() const = 0;
+
+	/*! \brief Get read-only workspace settings. */
+	virtual Ref< const PropertyGroup > getWorkspaceSettings() const = 0;
+
+	/*! \brief Checkout writable global settings. */
+	virtual Ref< PropertyGroup > checkoutGlobalSettings() = 0;
+
+	/*! \brief Commit global settings. */
+	virtual void commitGlobalSettings() = 0;
+
+	/*! \brief Revert global settings. */
+	virtual void revertGlobalSettings() = 0;
+
+	/*! \brief Checkout writable workspace settings. */
+	virtual Ref< PropertyGroup > checkoutWorkspaceSettings() = 0;
+
+	/*! \brief Commit workspace settings. */
+	virtual void commitWorkspaceSettings() = 0;
+
+	/*! \brief Revert workspace settings. */
+	virtual void revertWorkspaceSettings() = 0;
+
+	/*! \} */
 
 	/*! \brief Get source asset database. */
 	virtual Ref< db::Database > getSourceDatabase() const = 0;

@@ -37,6 +37,10 @@ public:
 
 	void handleDatabaseEvent(const Guid& eventId);
 
+	void handleWorkspaceOpened();
+
+	void handleWorkspaceClosed();
+
 	virtual void setPropertyObject(Object* properties);
 
 	virtual void createAdditionalPanel(ui::Widget* widget, int size, bool south);

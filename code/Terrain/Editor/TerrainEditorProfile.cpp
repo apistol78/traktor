@@ -78,5 +78,13 @@ void TerrainEditorProfile::createEntityEditorFactories(
 	outEntityEditorFactories.push_back(new TerrainEntityEditorFactory());
 }
 
+Ref< world::EntityData > TerrainEditorProfile::createEntityData(
+	scene::SceneEditorContext* context,
+	db::Instance* instance
+) const
+{
+	return 0;
+}
+
 	}
 }

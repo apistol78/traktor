@@ -59,7 +59,6 @@ public:
 	float viewNearZ;
 	float viewFarZ;
 	bool depthPassEnabled;
-	bool velocityPassEnable;
 	bool shadowsEnabled;
 	ShadowProjection shadowsProjection;
 	ShadowQuality shadowsQuality;
@@ -68,6 +67,7 @@ public:
 	float shadowMapBias;
 	int32_t shadowCascadingSlices;
 	float shadowCascadingLambda;
+	bool shadowQuantizeProjection;
 	bool fogEnabled;
 	float fogDistance;
 	float fogRange;

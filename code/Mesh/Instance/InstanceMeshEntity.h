@@ -28,7 +28,7 @@ public:
 	
 	virtual Aabb3 getBoundingBox() const;
 
-	virtual void update(const world::EntityUpdate* update);
+	virtual void update(const UpdateParams& update);
 
 	virtual bool supportTechnique(render::handle_t technique) const;
 

@@ -88,7 +88,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 
 	m_index = index;
 
-	PropertyGroup* settings = m_context->getEditor()->getSettings();
+	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	m_fieldOfView = settings->getProperty< PropertyFloat >(L"SceneEditor.FieldOfView", c_defaultFieldOfView);
@@ -370,7 +370,7 @@ void PerspectiveRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mo
 
 void PerspectiveRenderControl::updateSettings()
 {
-	PropertyGroup* settings = m_context->getEditor()->getSettings();
+	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	m_colorClear = settings->getProperty< PropertyColor >(L"Editor.Colors/Background");

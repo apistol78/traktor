@@ -67,5 +67,13 @@ void HeightfieldEditorProfile::createEntityEditorFactories(
 {
 }
 
+Ref< world::EntityData > HeightfieldEditorProfile::createEntityData(
+	scene::SceneEditorContext* context,
+	db::Instance* instance
+) const
+{
+	return 0;
+}
+
 	}
 }

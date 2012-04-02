@@ -1,7 +1,6 @@
 #include "Mesh/Stream/StreamMeshEntity.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/EntityUpdate.h"
 
 namespace traktor
 {

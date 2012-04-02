@@ -69,5 +69,13 @@ void PhysicsEditorProfile::createEntityEditorFactories(
 	outEntityEditorFactories.push_back(new PhysicsEntityEditorFactory());
 }
 
+Ref< world::EntityData > PhysicsEditorProfile::createEntityData(
+	scene::SceneEditorContext* context,
+	db::Instance* instance
+) const
+{
+	return 0;
+}
+
 	}
 }

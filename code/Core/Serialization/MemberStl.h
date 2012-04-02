@@ -24,7 +24,14 @@ public:
 	typedef std::vector< ValueType > value_type;
 
 	MemberStlVector(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name)
+	:	MemberArray(name, 0)
+	,	m_ref(ref)
+	,	m_index(0)
+	{
+	}
+
+	MemberStlVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_index(0)
 	{
@@ -50,10 +57,16 @@ public:
 		}
 		else
 		{
-			ValueType item;
-			if (!(s >> ValueMember(L"item", item)))
+			uint8_t zero[sizeof(ValueType)];
+			std::memset(zero, 0, sizeof(zero));
+
+			ValueType* item = new (zero) ValueType();
+
+			if (!(s >> ValueMember(L"item", *item)))
 				return false;
-			m_ref.push_back(item);
+
+			m_ref.push_back(*item);
+			item->~ValueType();
 		}
 		++m_index;
 		return true;
@@ -66,12 +79,12 @@ public:
 
 	virtual bool insert() const
 	{
-		uint8_t value[sizeof(ValueType)];
-		std::memset(value, 0, sizeof(value));
+		uint8_t zero[sizeof(ValueType)];
+		std::memset(zero, 0, sizeof(zero));
 
-		ValueType* v = new (value) ValueType();
-		m_ref.push_back(*v);
-		v->~ValueType();
+		ValueType* item = new (zero) ValueType();
+		m_ref.push_back(*item);
+		item->~ValueType();
 
 		return true;
 	}
@@ -89,12 +102,19 @@ public:
 	typedef std::list< ValueType > value_type;
 
 	MemberStlList(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name)
+	:	MemberArray(name, 0)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{
 	}
 	
+	MemberStlList(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberArray(name, &attributes)
+	,	m_ref(ref)
+	,	m_iter(m_ref.begin())
+	{
+	}
+
 	virtual void reserve(size_t size, size_t capacity) const
 	{
 		m_ref.clear();
@@ -141,7 +161,14 @@ public:
 	typedef std::set< ValueType > value_type;
 
 	MemberStlSet(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name)
+	:	MemberArray(name, 0)
+	,	m_ref(ref)
+	,	m_iter(m_ref.begin())
+	{
+	}
+
+	MemberStlSet(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{
@@ -217,7 +244,14 @@ public:
 	typedef std::map< KeyType, ValueType > value_type;
 
 	MemberStlMap(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name)
+	:	MemberArray(name, 0)
+	,	m_ref(ref)
+	,	m_iter(m_ref.begin())
+	{
+	}
+
+	MemberStlMap(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{

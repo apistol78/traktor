@@ -76,7 +76,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolSnapSpacing->add(L"4");
 	m_toolSnapSpacing->select(0);
 
-	Ref< PropertyGroup > settings = context->getEditor()->getSettings();
+	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
 	m_toolTogglePick->setToggled(settings->getProperty< PropertyBoolean >(L"SceneEditor.TogglePick", true));
@@ -140,12 +140,14 @@ void ScenePreviewControl::destroy()
 	}
 
 	// Save editor configuration.
-	Ref< PropertyGroup > settings = m_context->getEditor()->getSettings();
+	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.TogglePick", m_toolTogglePick->isToggled());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.ToggleSnap", m_toolToggleSnap->isToggled());
 	settings->setProperty< PropertyInteger >(L"SceneEditor.SplitCount", m_splitCount);
+
+	m_context->getEditor()->commitGlobalSettings();
 
 	// Destroy render controls.
 	for (RefArray< ISceneRenderControl >::iterator i = m_renderControls.begin(); i != m_renderControls.end(); ++i)

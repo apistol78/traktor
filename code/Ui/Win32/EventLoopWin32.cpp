@@ -1,7 +1,8 @@
 #include "Ui/Enums.h"
 #include "Ui/EventSubject.h"
-#include "Ui/Events/KeyEvent.h"
+#include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/IdleEvent.h"
+#include "Ui/Events/KeyEvent.h"
 #if defined(T_USE_DIRECT2D)
 #	include "Ui/Win32/CanvasDirect2DWin32.h"
 #endif
@@ -71,8 +72,16 @@ bool EventLoopWin32::process(EventSubject* owner)
 		bool dispatch = !preTranslateMessage(owner, msg);
 		if (dispatch)
 		{
+			HWND hwndFocus = GetFocus();
+
 			TranslateMessage(&msg);
 			DispatchMessage(&msg);
+
+			if (hwndFocus != GetFocus())
+			{
+				FocusEvent focusEvent(owner, 0, true);
+				owner->raiseEvent(EiFocus, &focusEvent);
+			}
 		}
 	}
 
@@ -91,8 +100,16 @@ int EventLoopWin32::execute(EventSubject* owner)
 			bool dispatch = !preTranslateMessage(owner, msg);
 			if (dispatch)
 			{
+				HWND hwndFocus = GetFocus();
+
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);
+
+				if (hwndFocus != GetFocus())
+				{
+					FocusEvent focusEvent(owner, 0, true);
+					owner->raiseEvent(EiFocus, &focusEvent);
+				}
 			}
 			m_idle = false;
 			continue;
@@ -142,15 +159,15 @@ bool EventLoopWin32::preTranslateMessage(EventSubject* owner, const MSG& msg)
 	bool consumed = false;
 	if (msg.message == WM_KEYDOWN)
 	{
-		KeyEvent k(owner, 0, translateKeyCode(int(msg.wParam)), int(msg.wParam), 0);
-		owner->raiseEvent(EiKeyDown, &k);
-		consumed = k.consumed();
+		KeyEvent keyEvent(owner, 0, translateKeyCode(int(msg.wParam)), int(msg.wParam), 0);
+		owner->raiseEvent(EiKeyDown, &keyEvent);
+		consumed = keyEvent.consumed();
 	}
 	else if (msg.message == WM_KEYUP)
 	{
-		KeyEvent k(owner, 0, translateKeyCode(int(msg.wParam)), int(msg.wParam), 0);
-		owner->raiseEvent(EiKeyUp, &k);
-		consumed = k.consumed();
+		KeyEvent keyEvent(owner, 0, translateKeyCode(int(msg.wParam)), int(msg.wParam), 0);
+		owner->raiseEvent(EiKeyUp, &keyEvent);
+		consumed = keyEvent.consumed();
 	}
 	return consumed;
 }

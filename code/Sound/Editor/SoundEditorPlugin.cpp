@@ -34,5 +34,13 @@ void SoundEditorPlugin::handleDatabaseEvent(const Guid& eventId)
 {
 }
 
+void SoundEditorPlugin::handleWorkspaceOpened()
+{
+}
+
+void SoundEditorPlugin::handleWorkspaceClosed()
+{
+}
+
 	}
 }

@@ -59,7 +59,7 @@ bool InputMappingEditor::create(ui::Widget* parent, db::Instance* instance, ISer
 	buttonExportInput->create(containerImportExportInput, L"Export...");
 	buttonExportInput->addClickEventHandler(ui::createMethodHandler(this, &InputMappingEditor::eventButtonExportInput));
 
-	m_propertyListInput->bind(m_mapping, 0);
+	m_propertyListInput->bind(m_mapping);
 
 	return true;
 }
@@ -98,7 +98,7 @@ void InputMappingEditor::eventButtonImportInput(ui::Event* event)
 				{
 					m_mapping = importedInput;
 					m_instance->setObject(m_mapping);
-					m_propertyListInput->bind(m_mapping, 0);
+					m_propertyListInput->bind(m_mapping);
 				}
 				else
 					log::error << L"Unable to import input mapping; no \"Input.Sources\" entry found in imported settings" << Endl;

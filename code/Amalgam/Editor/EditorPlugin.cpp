@@ -78,6 +78,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.EditorPlugin", EditorPlugin, editor::IE
 
 EditorPlugin::EditorPlugin(editor::IEditor* editor)
 :	m_editor(editor)
+,	m_threadHostEnumerator(0)
 ,	m_threadTargetManager(0)
 ,	m_threadConnectionManager(0)
 ,	m_threadTargetActions(0)
@@ -90,23 +91,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_parent = parent;
 	m_site = site;
-
-	collectTargets();
-
-	// Create target manager.
-	m_targetManager = new TargetManager();
-	if (m_targetManager->create(
-		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
-	))
-	{
-		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-			m_targetManager->addInstance(*i);
-	}
-	else
-	{
-		log::error << L"Unable to create target manager; target manager disabled" << Endl;
-		m_targetManager = 0;
-	}
 
 	// Create host enumerator.
 	m_discoveryManager = new net::DiscoveryManager();
@@ -126,9 +110,6 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventToolBarClick));
 
 	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), 150, i18n::Text(L"AMALGAM_TARGETS"));
-	for (std::vector< EditTarget >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-		m_toolTargets->add(i->name);
-
 	m_toolBar->addItem(m_toolTargets);
 
 	// Create target configuration list control.
@@ -139,39 +120,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_site->createAdditionalPanel(container, 200, false);
 
-	// Create database server; create configuration from targets.
-	Ref< db::Configuration > configuration = new db::Configuration();
-	configuration->setListenPort(
-		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", c_remoteDatabasePort)
-	);
-
-	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-	{
-		std::wstring remoteId = (*i)->getDatabaseName();
-		std::wstring databasePath = (*i)->getOutputPath() + L"/db";
-		std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
-		configuration->setConnectionString(remoteId, databaseCs);
-	}
-
-	m_connectionManager = new db::ConnectionManager();
-	if (!m_connectionManager->create(configuration))
-	{
-		log::warning << L"Unable to create connection manager; remote database server disabled" << Endl;
-		m_connectionManager = 0;
-	}
-
-	// Create communication threads.
-	if (m_hostEnumerator || m_targetManager)
-	{
-		m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
-		m_threadTargetManager->start();
-	}
-
-	if (m_connectionManager)
-	{
-		m_threadConnectionManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadConnectionManager), L"Connection manager");
-		m_threadConnectionManager->start();
-	}
+	// Create threads.
+	m_threadHostEnumerator = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadHostEnumerator), L"Host enumerator");
+	m_threadHostEnumerator->start();
 
 	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
 	m_threadTargetActions->start();
@@ -187,16 +138,10 @@ void EditorPlugin::destroy()
 		ThreadManager::getInstance().destroy(m_threadTargetActions);
 	}
 
-	if (m_threadConnectionManager)
+	if (m_threadHostEnumerator)
 	{
-		m_threadConnectionManager->stop();
-		ThreadManager::getInstance().destroy(m_threadConnectionManager);
-	}
-
-	if (m_threadTargetManager)
-	{
-		m_threadTargetManager->stop();
-		ThreadManager::getInstance().destroy(m_threadTargetManager);
+		m_threadHostEnumerator->stop();
+		ThreadManager::getInstance().destroy(m_threadHostEnumerator);
 	}
 
 	m_hostEnumerator = 0;
@@ -274,11 +219,9 @@ void EditorPlugin::handleDatabaseEvent(const Guid& eventId)
 {
 }
 
-void EditorPlugin::collectTargets()
+void EditorPlugin::handleWorkspaceOpened()
 {
-	m_targets.resize(0);
-	m_targetInstances.resize(0);
-
+	// Get targets from source database.
 	Ref< db::Database > sourceDatabase = m_editor->getSourceDatabase();
 	if (sourceDatabase)
 	{
@@ -311,6 +254,83 @@ void EditorPlugin::collectTargets()
 			}
 		}
 	}
+
+	// Add to target drop down.
+	for (std::vector< EditTarget >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+		m_toolTargets->add(i->name);
+
+	// Create target manager.
+	m_targetManager = new TargetManager();
+	if (m_targetManager->create(
+		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
+	))
+	{
+		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+			m_targetManager->addInstance(*i);
+	}
+	else
+	{
+		log::error << L"Unable to create target manager; target manager disabled" << Endl;
+		m_targetManager = 0;
+	}
+
+	// Create database server; create configuration from targets.
+	Ref< db::Configuration > configuration = new db::Configuration();
+	configuration->setListenPort(
+		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", c_remoteDatabasePort)
+	);
+
+	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+	{
+		std::wstring remoteId = (*i)->getDatabaseName();
+		std::wstring databasePath = (*i)->getOutputPath() + L"/db";
+		std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
+		configuration->setConnectionString(remoteId, databaseCs);
+	}
+
+	m_connectionManager = new db::ConnectionManager();
+	if (!m_connectionManager->create(configuration))
+	{
+		log::warning << L"Unable to create connection manager; remote database server disabled" << Endl;
+		m_connectionManager = 0;
+	}
+
+	// Create communication threads.
+	if (m_targetManager)
+	{
+		m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
+		m_threadTargetManager->start();
+	}
+
+	if (m_connectionManager)
+	{
+		m_threadConnectionManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadConnectionManager), L"Connection manager");
+		m_threadConnectionManager->start();
+	}
+}
+
+void EditorPlugin::handleWorkspaceClosed()
+{
+	// Terminate communication threads.
+	if (m_threadConnectionManager)
+	{
+		m_threadConnectionManager->stop();
+		ThreadManager::getInstance().destroy(m_threadConnectionManager);
+	}
+
+	if (m_threadTargetManager)
+	{
+		m_threadTargetManager->stop();
+		ThreadManager::getInstance().destroy(m_threadTargetManager);
+	}
+
+	m_toolTargets->removeAll();
+
+	safeDestroy(m_connectionManager);
+	safeDestroy(m_targetManager);
+
+	m_targets.resize(0);
+	m_targetInstances.resize(0);
 }
 
 void EditorPlugin::eventTargetListPlay(ui::Event* event)
@@ -438,35 +458,29 @@ void EditorPlugin::eventToolBarClick(ui::Event* event)
 	m_targetList->requestUpdate();
 }
 
+void EditorPlugin::threadHostEnumerator()
+{
+	while (!m_threadHostEnumerator->stopped())
+	{
+		m_hostEnumerator->update();
+		m_threadHostEnumerator->sleep(1000);
+	}
+}
+
 void EditorPlugin::threadTargetManager()
 {
-	int32_t count = 0;
-
-	// Update target connection manager and host enumerator.
 	while (!m_threadTargetManager->stopped())
 	{
-		if (m_targetManager)
+		if (m_targetManager->update())
 		{
-			if (m_targetManager->update())
-			{
-				m_targetList->requestLayout();
-				m_targetList->requestUpdate();
-			}
-		}
-
-		if (++count >= 10)
-		{
-			if (m_hostEnumerator)
-				m_hostEnumerator->update();
-
-			count = 0;
+			m_targetList->requestLayout();
+			m_targetList->requestUpdate();
 		}
 	}
 }
 
 void EditorPlugin::threadConnectionManager()
 {
-	// Update remote database connection manager.
 	while (!m_threadConnectionManager->stopped())
 		m_connectionManager->update(100);
 }

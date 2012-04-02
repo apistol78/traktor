@@ -56,6 +56,11 @@ public:
 		scene::SceneEditorContext* context,
 		RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
 	) const;
+
+	virtual Ref< world::EntityData > createEntityData(
+		scene::SceneEditorContext* context,
+		db::Instance* instance
+	) const;
 };
 
 	}

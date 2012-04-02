@@ -198,7 +198,7 @@ bool ApplyReflector::operator >> (const Member< ISerializable* >& m)
 	if (object)
 	{
 		int version = type_of(object).getVersion();
-		if (!serialize(object, version, 0))
+		if (!serialize(object, version))
 			return false;
 	}
 	m = object;

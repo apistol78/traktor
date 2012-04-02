@@ -3,7 +3,6 @@
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/Entity.h"
-#include "World/Entity/EntityUpdate.h"
 
 namespace traktor
 {
@@ -57,8 +56,10 @@ void Scene::update(float time, float deltaTime, bool updateController)
 
 	if (m_rootEntity)
 	{
-		world::EntityUpdate entityUpdate(deltaTime);
-		m_rootEntity->update(&entityUpdate);
+		world::Entity::UpdateParams up;
+		up.totalTime = time;
+		up.deltaTime = deltaTime;
+		m_rootEntity->update(up);
 	}
 }
 

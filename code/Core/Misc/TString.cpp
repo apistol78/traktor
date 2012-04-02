@@ -8,17 +8,14 @@ namespace traktor
 std::wstring mbstows(const IEncoding& encoding, const std::string& s)
 {
 	StringOutputStream ss;
-	uint8_t buf[IEncoding::MaxEncodingSize];
 	wchar_t ec;
 	int32_t r;
 
 	const char* cs = s.c_str();
 	for (uint32_t i = 0; i < s.length(); )
 	{
-		uint32_t nb = std::min(sizeof_array(buf), s.length() - i);
-
-		std::memcpy(buf, &cs[i], nb);
-		if ((r = encoding.translate(buf, nb, ec)) < 0)
+		uint32_t nb = std::min< uint32_t >(IEncoding::MaxEncodingSize, s.length() - i);
+		if ((r = encoding.translate((const uint8_t*)&cs[i], nb, ec)) < 0)
 			break;
 
 		ss << ec;

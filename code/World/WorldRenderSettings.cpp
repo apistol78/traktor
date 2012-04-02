@@ -12,14 +12,13 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 10, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 11, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	renderType(RtForward)
 ,	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
 ,	depthPassEnabled(true)
-,	velocityPassEnable(false)
 ,	shadowsEnabled(false)
 ,	shadowsProjection(SpUniform)
 ,	shadowsQuality(SqMedium)
@@ -28,6 +27,7 @@ WorldRenderSettings::WorldRenderSettings()
 ,	shadowMapBias(0.001f)
 ,	shadowCascadingSlices(1)
 ,	shadowCascadingLambda(1.0f)
+,	shadowQuantizeProjection(true)
 ,	fogEnabled(false)
 ,	fogDistance(90.0f)
 ,	fogRange(10.0f)
@@ -40,7 +40,6 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 ,	viewNearZ(settings.viewNearZ)
 ,	viewFarZ(settings.viewFarZ)
 ,	depthPassEnabled(settings.depthPassEnabled)
-,	velocityPassEnable(settings.velocityPassEnable)
 ,	shadowsEnabled(settings.shadowsEnabled)
 ,	shadowsProjection(settings.shadowsProjection)
 ,	shadowsQuality(settings.shadowsQuality)
@@ -49,6 +48,7 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 ,	shadowMapBias(settings.shadowMapBias)
 ,	shadowCascadingSlices(settings.shadowCascadingSlices)
 ,	shadowCascadingLambda(settings.shadowCascadingLambda)
+,	shadowQuantizeProjection(settings.shadowQuantizeProjection)
 ,	fogEnabled(settings.fogEnabled)
 ,	fogDistance(settings.fogDistance)
 ,	fogRange(settings.fogRange)
@@ -97,8 +97,11 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		s >> Member< float >(L"depthRange", depthRange);
 	}
 	
-	if (s.getVersion() >= 1)
+	if (s.getVersion() >= 1 && s.getVersion() < 11)
+	{
+		bool velocityPassEnable = false;
 		s >> Member< bool >(L"velocityPassEnable", velocityPassEnable);
+	}
 
 	s >> Member< bool >(L"shadowsEnabled", shadowsEnabled);
 
@@ -130,6 +133,9 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		s >> Member< int32_t >(L"shadowCascadingSlices", shadowCascadingSlices, AttributeRange(1, MaxSliceCount));
 		s >> Member< float >(L"shadowCascadingLambda", shadowCascadingLambda, AttributeRange(0.0f));
 	}
+
+	if (s.getVersion() >= 11)
+		s >> Member< bool >(L"shadowQuantizeProjection", shadowQuantizeProjection);
 
 	if (s.getVersion() >= 9)
 	{

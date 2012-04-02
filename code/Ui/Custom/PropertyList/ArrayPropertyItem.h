@@ -31,7 +31,7 @@ class T_DLLCLASS ArrayPropertyItem : public PropertyItem
 	T_RTTI_CLASS;
 	
 public:
-	ArrayPropertyItem(const std::wstring& text, const TypeInfo* elementType);
+	ArrayPropertyItem(const std::wstring& text, const TypeInfo* elementType, bool readOnly);
 
 	void setElementType(const TypeInfo* objectType);
 
@@ -48,6 +48,7 @@ protected:
 
 private:
 	const TypeInfo* m_elementType;
+	bool m_readOnly;
 	Ref< MiniButton > m_buttonEdit;
 	Ref< MiniButton > m_buttonRemove;
 

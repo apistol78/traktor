@@ -62,6 +62,14 @@ public:
 	 * \param eventId Instance guid.
 	 */
 	virtual void handleDatabaseEvent(const Guid& eventId) = 0;
+
+	/*! \brief Workspace opened.
+	 */
+	virtual void handleWorkspaceOpened() = 0;
+
+	/*! \brief Workspace closed.
+	 */
+	virtual void handleWorkspaceClosed() = 0;
 };
 
 	}

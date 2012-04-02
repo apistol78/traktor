@@ -15,7 +15,6 @@
 #include "Weather/Clouds/CloudMask.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/EntityUpdate.h"
 
 namespace traktor
 {
@@ -292,10 +291,10 @@ void CloudEntity::render(
 	renderCluster(renderContext, worldRenderView, worldRenderPass, primitiveRenderer, m_cluster);
 }
 
-void CloudEntity::update(const world::EntityUpdate* update)
+void CloudEntity::update(const UpdateParams& update)
 {
-	m_cluster.update(m_particleData, update->getDeltaTime());
-	m_timeUntilUpdate -= update->getDeltaTime();
+	m_cluster.update(m_particleData, update.deltaTime);
+	m_timeUntilUpdate -= update.deltaTime;
 }
 
 void CloudEntity::renderCluster(

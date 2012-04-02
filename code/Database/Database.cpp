@@ -5,6 +5,7 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
+#include "Database/Events/EvtGroupRenamed.h"
 #include "Database/Events/EvtInstanceCommitted.h"
 #include "Database/Events/EvtInstanceCreated.h"
 #include "Database/Events/EvtInstanceGuidChanged.h"
@@ -53,7 +54,7 @@ bool Database::open(IProviderDatabase* providerDatabase)
 	m_providerDatabase = providerDatabase;
 	m_providerBus = m_providerDatabase->getBus();
 
-	m_rootGroup = new Group(this);
+	m_rootGroup = new Group(this, this);
 	if (!m_rootGroup->internalCreate(m_providerDatabase->getRootGroup(), 0))
 		return false;
 
@@ -248,7 +249,13 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-		if (const EvtInstanceCreated* created = dynamic_type_cast< const EvtInstanceCreated* >(outEvent))
+		if (const EvtGroupRenamed* groupRenamed = dynamic_type_cast< const EvtGroupRenamed* >(outEvent))
+		{
+			m_instanceMap.clear();
+			buildInstanceMap(m_rootGroup, m_instanceMap);
+		}
+
+		else if (const EvtInstanceCreated* created = dynamic_type_cast< const EvtInstanceCreated* >(outEvent))
 		{
 			Ref< Group > group = m_rootGroup;
 
@@ -272,14 +279,14 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 			buildInstanceMap(m_rootGroup, m_instanceMap);
 		}
 
-		if (const EvtInstanceRemoved* removed = dynamic_type_cast< const EvtInstanceRemoved* >(outEvent))
+		else if (const EvtInstanceRemoved* removed = dynamic_type_cast< const EvtInstanceRemoved* >(outEvent))
 		{
 			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(removed->getInstanceGuid());
 			if (i != m_instanceMap.end())
 				m_instanceMap.erase(i);
 		}
 
-		if (const EvtInstanceGuidChanged* guidChanged = dynamic_type_cast< const EvtInstanceGuidChanged* >(outEvent))
+		else if (const EvtInstanceGuidChanged* guidChanged = dynamic_type_cast< const EvtInstanceGuidChanged* >(outEvent))
 		{
 			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(guidChanged->getInstancePreviousGuid());
 			if (i != m_instanceMap.end())
@@ -289,7 +296,7 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 			buildInstanceMap(m_rootGroup, m_instanceMap);
 		}
 
-		if (const EvtInstanceRenamed* renamed = dynamic_type_cast< const EvtInstanceRenamed* >(outEvent))
+		else if (const EvtInstanceRenamed* renamed = dynamic_type_cast< const EvtInstanceRenamed* >(outEvent))
 		{
 			std::map< Guid, Ref< Instance > >::iterator i = m_instanceMap.find(renamed->getInstanceGuid());
 			if (i != m_instanceMap.end())
@@ -358,6 +365,13 @@ void Database::instanceEventCommitted(Instance* instance)
 	// Notify others about instance committed.
 	if (m_providerBus)
 		m_providerBus->putEvent(new EvtInstanceCommitted(instance->getGuid()));
+}
+
+void Database::groupEventRenamed(Group* group, const std::wstring& previousPath)
+{
+	// Notify others about group change.
+	if (m_providerBus)
+		m_providerBus->putEvent(new EvtGroupRenamed(group->getName(), previousPath));
 }
 
 	}

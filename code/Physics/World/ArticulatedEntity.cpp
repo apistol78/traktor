@@ -39,7 +39,7 @@ void ArticulatedEntity::destroy()
 	world::Entity::destroy();
 }
 
-void ArticulatedEntity::update(const world::EntityUpdate* update)
+void ArticulatedEntity::update(const UpdateParams& update)
 {
 	for (RefArray< RigidEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 		(*i)->update(update);
@@ -47,12 +47,16 @@ void ArticulatedEntity::update(const world::EntityUpdate* update)
 
 void ArticulatedEntity::setTransform(const Transform& transform)
 {
-	Transform deltaTransform = transform * m_transform.inverse();
+	Transform invTransform = m_transform.inverse();
 	for (RefArray< RigidEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
 		Transform currentTransform;
 		if ((*i)->getTransform(currentTransform))
-			(*i)->setTransform(deltaTransform * currentTransform);
+		{
+			Transform Tlocal = invTransform * currentTransform;
+			Transform Tworld = transform * Tlocal;
+			(*i)->setTransform(Tworld);
+		}
 	}
 	m_transform = transform;
 }

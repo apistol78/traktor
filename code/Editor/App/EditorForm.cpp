@@ -49,6 +49,7 @@
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/ThumbnailGenerator.h"
+#include "Editor/App/WorkspaceDialog.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
@@ -134,6 +135,55 @@ struct StatusListener : public PipelineBuilder::IListener
 	}
 };
 
+Ref< PropertyGroup > loadProperties(const Path& pathName)
+{
+	Ref< PropertyGroup > settings;
+	Ref< IStream > file;
+
+	std::wstring globalFile = pathName.getPathName();
+	std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
+
+	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != 0)
+	{
+		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		file->close();
+	}
+
+	if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != 0)
+	{
+		Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+		file->close();
+
+		if (userSettings)
+		{
+			if (settings)
+				settings = settings->mergeReplace(userSettings);
+			else
+				settings = userSettings;
+		}
+	}
+
+	return settings;
+}
+
+bool saveProperties(const Path& pathName, const PropertyGroup* properties, bool saveGlobal)
+{
+	std::wstring globalFile = pathName.getPathName();
+	std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
+
+	Ref< IStream > file = FileSystem::getInstance().open(saveGlobal ? globalFile : userFile, File::FmWrite);
+	if (!file)
+	{
+		log::warning << L"Unable to save properties; changes will be lost" << Endl;
+		return false;
+	}
+
+	bool result = xml::XmlSerializer(file).writeObject(properties);
+	file->close();
+
+	return result;
+}
+
 Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
 {
 	Ref< db::Database > database = new db::Database();
@@ -174,22 +224,24 @@ EditorForm::EditorForm()
 bool EditorForm::create(const CommandLine& cmdLine)
 {
 #if !defined(__APPLE__)
-	std::wstring settingsPath = L"Traktor.Editor";
+	std::wstring settingsPath = L"Traktor.Editor.config";
 #else
-	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor";
+	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
 
-	// Load settings.
-	m_settings = loadSettings(settingsPath);
-	if (!m_settings)
+	// Load settings; use only global settings as merged settings until workspace has been loaded.
+	m_globalSettings = loadProperties(settingsPath);
+	if (!m_globalSettings)
 	{
-		log::error << L"Unable to load settings" << Endl;
+		log::error << L"Unable to load global settings" << Endl;
 		return false;
 	}
 
+	m_mergedSettings = m_globalSettings;
+
 	// Load dependent modules.
 #if !defined(T_STATIC)
-	const std::set< std::wstring >& modules = m_settings->getProperty< PropertyStringSet >(L"Editor.Modules");
+	const std::set< std::wstring >& modules = m_mergedSettings->getProperty< PropertyStringSet >(L"Editor.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		log::info << L"Loading module \"" << *i << L"\"..." << Endl;
@@ -203,22 +255,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 			log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 	}
 #endif
-
-	// Open databases.
-	std::wstring sourceDatabase = m_settings->getProperty< PropertyString >(L"Editor.SourceDatabase");
-	std::wstring outputDatabase = m_settings->getProperty< PropertyString >(L"Editor.OutputDatabase");
-
-	m_sourceDatabase = openDatabase(sourceDatabase, false);
-	m_outputDatabase = openDatabase(outputDatabase, true);
-
-	if (!m_sourceDatabase || !m_outputDatabase)
-	{
-		if (!m_sourceDatabase)
-			log::error << L"Unable to open source database \"" << sourceDatabase << L"\"" << Endl;
-		if (!m_outputDatabase)
-			log::error << L"Unable to open output database \"" << outputDatabase << L"\"" << Endl;
-		return false;
-	}
 
 	// Load dictionary.
 	loadDictionary();
@@ -236,12 +272,15 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutTable->create();
 	m_shortcutTable->addShortcutEventHandler(ui::createMethodHandler(this, &EditorForm::eventShortcut));
 	
-	// Create menubar.
+	// Create menu bar.
 	m_menuBar = new ui::MenuBar();
 	m_menuBar->create(this);
 	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventMenuClick));
 
 	Ref< ui::MenuItem > menuFile = new ui::MenuItem(i18n::Text(L"MENU_FILE"));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.NewWorkspace"), i18n::Text(L"MENU_FILE_NEW_WORKSPACE")));
+	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenWorkspace"), i18n::Text(L"MENU_FILE_OPEN_WORKSPACE")));
+	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
 	menuFile->add(new ui::MenuItem(L"-"));
@@ -257,6 +296,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"MENU_EDIT_DELETE")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.SelectAll"), i18n::Text(L"MENU_EDIT_SELECT_ALL")));
 	menuEdit->add(new ui::MenuItem(L"-"));
+	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Workspace"), i18n::Text(L"MENU_EDIT_WORKSPACE")));
 	menuEdit->add(new ui::MenuItem(ui::Command(L"Editor.Settings"), i18n::Text(L"MENU_EDIT_SETTINGS")));
 	m_menuBar->add(menuEdit);
 
@@ -298,7 +338,6 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Define docking panes.
 	Ref< ui::DockPane > pane = m_dock->getPane();
-
 	Ref< ui::DockPane > paneCenter, paneLog;
 
 	pane->split(false, 320, m_paneWest, paneCenter);
@@ -310,8 +349,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_dataBaseView = new DatabaseView(this);
 	m_dataBaseView->create(m_dock);
 	m_dataBaseView->setText(i18n::Text(L"TITLE_DATABASE"));
-	m_dataBaseView->setDatabase(m_sourceDatabase);
-	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.DatabaseVisible"))
+	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.DatabaseVisible"))
 		m_dataBaseView->hide();
 
 	m_paneWest->dock(m_dataBaseView, true);
@@ -319,7 +357,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_propertiesView = new PropertiesView(this);
 	m_propertiesView->create(m_dock);
 	m_propertiesView->setText(i18n::Text(L"TITLE_PROPERTIES"));
-	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.PropertiesVisible"))
+	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.PropertiesVisible"))
 		m_propertiesView->hide();
 
 	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, 300);
@@ -327,7 +365,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_logView = new LogView();
 	m_logView->create(m_dock);
 	m_logView->setText(i18n::Text(L"TITLE_LOG"));
-	if (!m_settings->getProperty< PropertyBoolean >(L"Editor.LogVisible"))
+	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.LogVisible"))
 		m_logView->hide();
 
 	paneLog->dock(m_logView, true);
@@ -477,17 +515,17 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	updateShortcutTable();
 
 	// Create auxiliary tools.
-	Path thumbsPath = m_settings->getProperty< PropertyString >(L"Editor.ThumbsPath");
+	Path thumbsPath = m_mergedSettings->getProperty< PropertyString >(L"Editor.ThumbsPath");
 	setStoreObject(L"ThumbnailGenerator", new ThumbnailGenerator(thumbsPath));
 
 	// Restore last used form settings.
-	int x = m_settings->getProperty< PropertyInteger >(L"Editor.PositionX");
-	int y = m_settings->getProperty< PropertyInteger >(L"Editor.PositionY");
-	int width = m_settings->getProperty< PropertyInteger >(L"Editor.SizeWidth");
-	int height = m_settings->getProperty< PropertyInteger >(L"Editor.SizeHeight");
+	int x = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionX");
+	int y = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.PositionY");
+	int width = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeWidth");
+	int height = m_mergedSettings->getProperty< PropertyInteger >(L"Editor.SizeHeight");
 	setRect(ui::Rect(x, y, x + width, y + height));
 
-	if (m_settings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.Maximized"))
 		maximize();
 
 	// Show form.
@@ -505,25 +543,15 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 void EditorForm::destroy()
 {
-	closeAllEditors();
-
-	// Stop threads.
+	// Stop asset monitor thread.
 	if (m_threadAssetMonitor)
 	{
 		while (!m_threadAssetMonitor->stop());
 		ThreadManager::getInstance().destroy(m_threadAssetMonitor);
 		m_threadAssetMonitor = 0;
 	}
-	if (m_threadBuild)
-	{
-		while (!m_threadBuild->stop());
-		ThreadManager::getInstance().destroy(m_threadBuild);
-		m_threadBuild = 0;
-	}
 
-	// Close databases.
-	m_outputDatabase->close();
-	m_sourceDatabase->close();
+	closeWorkspace();
 
 	// Destroy all plugins.
 	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
@@ -543,9 +571,56 @@ void EditorForm::destroy()
 	Form::destroy();
 }
 
-Ref< PropertyGroup > EditorForm::getSettings() const
+Ref< const PropertyGroup > EditorForm::getSettings() const
 {
-	return m_settings;
+	return m_mergedSettings;
+}
+
+Ref< const PropertyGroup > EditorForm::getGlobalSettings() const
+{
+	return m_globalSettings;
+}
+
+Ref< const PropertyGroup > EditorForm::getWorkspaceSettings() const
+{
+	return m_workspaceSettings;
+}
+
+Ref< PropertyGroup > EditorForm::checkoutGlobalSettings()
+{
+	return m_globalSettings;
+}
+
+void EditorForm::commitGlobalSettings()
+{
+	if (m_workspaceSettings)
+		m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+	else
+		m_mergedSettings = m_globalSettings;
+}
+
+void EditorForm::revertGlobalSettings()
+{
+}
+
+Ref< PropertyGroup > EditorForm::checkoutWorkspaceSettings()
+{
+	return m_workspaceSettings;
+}
+
+void EditorForm::commitWorkspaceSettings()
+{
+	if (m_workspaceSettings)
+	{
+		m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+		saveProperties(m_workspacePath, m_workspaceSettings, true);
+	}
+	else
+		m_mergedSettings = m_globalSettings;
+}
+
+void EditorForm::revertWorkspaceSettings()
+{
 }
 
 Ref< db::Database > EditorForm::getSourceDatabase() const
@@ -574,7 +649,7 @@ const TypeInfo* EditorForm::browseType(const TypeInfo* base)
 {
 	const TypeInfo* type = 0;
 
-	BrowseTypeDialog dlgBrowse(m_settings);
+	BrowseTypeDialog dlgBrowse(m_mergedSettings);
 	if (dlgBrowse.create(this, base, false))
 	{
 		if (dlgBrowse.showModal() == ui::DrOk)
@@ -589,7 +664,7 @@ Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)
 {
 	Ref< db::Instance > instance;
 
-	BrowseInstanceDialog dlgBrowse(this, m_settings);
+	BrowseInstanceDialog dlgBrowse(this, m_mergedSettings);
 	if (dlgBrowse.create(this, m_sourceDatabase, filter))
 	{
 		if (dlgBrowse.showModal() == ui::DrOk)
@@ -696,7 +771,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		T_ASSERT (editorPage);
 
 		// Find icon index.
-		Ref< PropertyGroup > iconsGroup = m_settings->getProperty< PropertyGroup >(L"Editor.Icons");
+		Ref< PropertyGroup > iconsGroup = m_mergedSettings->getProperty< PropertyGroup >(L"Editor.Icons");
 		T_ASSERT (iconsGroup);
 
 		const std::map< std::wstring, Ref< IPropertyValue > >& icons = iconsGroup->getValues();
@@ -752,7 +827,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		T_ASSERT (objectEditor);
 
 		// Create object editor dialog.
-		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_settings, objectEditor);
+		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditor);
 		if (!objectEditorDialog->create(this, instance, object))
 		{
 			log::error << L"Failed to create editor" << Endl;
@@ -799,7 +874,7 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 	T_ASSERT (objectEditor);
 
 	// Open editor dialog.
-	Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_settings, objectEditor);
+	Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditor);
 	if (!objectEditorDialog->create(this, instance, object))
 	{
 		log::error << L"Failed to create editor" << Endl;
@@ -864,16 +939,180 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 	updateAdditionalPanelMenu();
 }
 
+bool EditorForm::createWorkspace()
+{
+	// Query workspace filename.
+	ui::FileDialog fileDialog;
+	if (!fileDialog.create(this, i18n::Text(L"EDITOR_BROWSE_WORKSPACE"), L"Workspace files (*.workspace);*.workspace;All files (*.*);*.*", true))
+		return false;
+
+	Path path;
+	if (fileDialog.showModal(path) != ui::DrOk)
+	{
+		fileDialog.destroy();
+		return false;
+	}
+
+	// Create blank workspace.
+	Ref< PropertyGroup > workspaceSettings = new PropertyGroup();
+	workspaceSettings->setProperty< PropertyString >(L"Editor.TargetTitle", path.getFileNameNoExtension());
+
+	// Show workspace dialog to let user specify details.
+	WorkspaceDialog workspaceDialog;
+	if (!workspaceDialog.create(this, workspaceSettings))
+		return false;
+
+	if (workspaceDialog.showModal() != ui::DrOk)
+	{
+		workspaceDialog.destroy();
+		return false;
+	}
+
+	// Save workspace.
+	if (!saveProperties(path, workspaceSettings, true))
+		return false;
+
+	// Replace current workspace with created workspace.
+	if (m_workspaceSettings)
+		closeWorkspace();
+
+	m_workspacePath = path.getPathName();
+	m_workspaceSettings = workspaceSettings;
+
+	// Create merged settings.
+	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+	T_ASSERT (m_mergedSettings);
+
+	// Open databases.
+	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	std::wstring outputDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.OutputDatabase");
+
+	m_sourceDatabase = openDatabase(sourceDatabase, false);
+	m_outputDatabase = openDatabase(outputDatabase, true);
+
+	if (!m_sourceDatabase || !m_outputDatabase)
+	{
+		if (!m_sourceDatabase)
+			log::error << L"Unable to open source database \"" << sourceDatabase << L"\"" << Endl;
+
+		if (!m_outputDatabase)
+			log::error << L"Unable to open output database \"" << outputDatabase << L"\"" << Endl;
+
+		closeWorkspace();
+		return false;
+	}
+
+	// Update UI views.
+	updateTitle();
+	m_dataBaseView->setDatabase(m_sourceDatabase);
+
+	// Notify plugins about opened workspace.
+	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
+		(*i)->handleWorkspaceOpened();
+
+	return true;
+}
+
+bool EditorForm::openWorkspace()
+{
+	ui::FileDialog fileDialog;
+	if (!fileDialog.create(this, i18n::Text(L"EDITOR_BROWSE_WORKSPACE"), L"Workspace files (*.workspace);*.workspace;All files (*.*);*.*"))
+		return false;
+
+	Path path;
+	if (fileDialog.showModal(path) != ui::DrOk)
+	{
+		fileDialog.destroy();
+		return false;
+	}
+
+	bool result = openWorkspace(path.getPathName());
+
+	fileDialog.destroy();
+
+	return result;
+}
+
+bool EditorForm::openWorkspace(const std::wstring& workspacePath)
+{
+	if (m_workspaceSettings)
+		closeWorkspace();
+
+	m_workspaceSettings = loadProperties(workspacePath);
+	if (!m_workspaceSettings)
+		return false;
+
+	// Create merged settings.
+	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+	T_ASSERT (m_mergedSettings);
+
+	// Open databases.
+	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
+	std::wstring outputDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.OutputDatabase");
+
+	m_sourceDatabase = openDatabase(sourceDatabase, false);
+	m_outputDatabase = openDatabase(outputDatabase, true);
+
+	if (!m_sourceDatabase || !m_outputDatabase)
+	{
+		if (!m_sourceDatabase)
+			log::error << L"Unable to open source database \"" << sourceDatabase << L"\"" << Endl;
+
+		if (!m_outputDatabase)
+			log::error << L"Unable to open output database \"" << outputDatabase << L"\"" << Endl;
+
+		closeWorkspace();
+		return false;
+	}
+
+	m_workspacePath = workspacePath;
+
+	// Update UI views.
+	updateTitle();
+	m_dataBaseView->setDatabase(m_sourceDatabase);
+
+	// Notify plugins about opened workspace.
+	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
+		(*i)->handleWorkspaceOpened();
+
+	return true;
+}
+
+void EditorForm::closeWorkspace()
+{
+	// Notify plugins about workspace closing.
+	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
+		(*i)->handleWorkspaceClosed();
+
+	buildCancel();
+	closeAllEditors();
+
+	// Close databases.
+	if (m_outputDatabase)
+	{
+		m_outputDatabase->close();
+		m_outputDatabase = 0;
+	}
+	if (m_sourceDatabase)
+	{
+		m_sourceDatabase->close();
+		m_sourceDatabase = 0;
+	}
+
+	// Close settings; restore merged as being global.
+	m_workspacePath = L"";
+	m_workspaceSettings = 0;
+	m_mergedSettings = m_globalSettings;
+
+	// Update UI views.
+	updateTitle();
+	m_dataBaseView->setDatabase(0);
+}
+
 void EditorForm::setPropertyObject(Object* properties)
 {
-	// Use active editor's data object as outer object in serialization;
-	// we do this as some objects rely on outer object being part of the data object
-	// with serialization; most probaly the shader graph as external nodes might reconstruct it's pins.
-	Ref< Object > outer = m_activeDocument ? m_activeDocument->getObject(0) : 0;
-
 	m_propertiesView->setPropertyObject(
-		dynamic_type_cast< ISerializable* >(properties),
-		dynamic_type_cast< ISerializable* >(outer)
+		dynamic_type_cast< ISerializable* >(properties)
 	);
 	
 	if (properties)
@@ -973,7 +1212,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	m_buildProgress->setVisible(true);
 	m_buildProgress->setProgress(0);
 
-	std::wstring pipelineDbConnectionStr = m_settings->getProperty< PropertyString >(L"Pipeline.Db");
+	std::wstring pipelineDbConnectionStr = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.Db");
 
 	Ref< PipelineDb > pipelineDb = new PipelineDb();
 	if (!pipelineDb->open(pipelineDbConnectionStr))
@@ -986,19 +1225,19 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
-	if (m_settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false))
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false))
 	{
 		pipelineCache = new editor::MemCachedPipelineCache();
-		if (!pipelineCache->create(m_settings))
+		if (!pipelineCache->create(m_mergedSettings))
 		{
 			traktor::log::warning << L"Unable to create pipeline memcached cache; cache disabled" << Endl;
 			pipelineCache = 0;
 		}
 	}
-	if (m_settings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false))
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache", false))
 	{
 		pipelineCache = new editor::FilePipelineCache();
-		if (!pipelineCache->create(m_settings))
+		if (!pipelineCache->create(m_mergedSettings))
 		{
 			traktor::log::warning << L"Unable to create pipeline file cache; cache disabled" << Endl;
 			pipelineCache = 0;
@@ -1006,11 +1245,11 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	}
 
 	// Create pipeline factory.
-	PipelineFactory pipelineFactory(m_settings);
+	PipelineFactory pipelineFactory(m_mergedSettings);
 
 	// Build dependencies.
 	Ref< IPipelineDepends > pipelineDepends;
-	if (m_settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true))
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true))
 	{
 		pipelineDepends = new PipelineDependsParallel(
 			&pipelineFactory,
@@ -1052,7 +1291,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		pipelineCache,
 		pipelineDb,
 		&listener,
-		m_settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
+		m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
 	);
 
 	if (rebuild)
@@ -1096,11 +1335,14 @@ void EditorForm::buildCancel()
 
 void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild)
 {
+	if (!m_workspaceSettings)
+		return;
+
 	// Stop current build if any.
 	buildCancel();
 
 	// Automatically save all opened instances.
-	if (m_settings->getProperty< PropertyBoolean >(L"Editor.AutoSave", false))
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.AutoSave", false))
 		saveAllDocuments();
 
 	// Create build thread.
@@ -1138,11 +1380,14 @@ void EditorForm::buildAssets(bool rebuild)
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
 
+	if (!m_workspaceSettings)
+		return;
+
 	log::info << L"Collecting assets..." << Endl;
 	log::info << IncreaseIndent;
 
 	std::vector< Guid > assetGuids;
-	std::vector< std::wstring > rootInstances = m_settings->getProperty< PropertyStringArray >(L"Editor.RootInstances");
+	std::vector< std::wstring > rootInstances = m_workspaceSettings->getProperty< PropertyStringArray >(L"Editor.RootInstances");
 	for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
 		assetGuids.push_back(Guid(*i));
 
@@ -1153,7 +1398,9 @@ void EditorForm::buildAssets(bool rebuild)
 
 bool EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies)
 {
-	PipelineFactory pipelineFactory(m_settings);
+	T_ASSERT (m_sourceDatabase);
+
+	PipelineFactory pipelineFactory(m_mergedSettings);
 	PipelineDependsIncremental pipelineDepends(
 		&pipelineFactory,
 		m_sourceDatabase,
@@ -1182,7 +1429,7 @@ void EditorForm::updateTitle()
 {
 	std::wstringstream ss;
 
-	std::wstring targetTitle = m_settings->getProperty< PropertyString >(L"Editor.TargetTitle");
+	std::wstring targetTitle = m_mergedSettings->getProperty< PropertyString >(L"Editor.TargetTitle");
 	if (!targetTitle.empty())
 		ss << targetTitle << L" - ";
 
@@ -1200,7 +1447,7 @@ void EditorForm::updateShortcutTable()
 		int keyState;
 		ui::VirtualKey virtualKey;
 		
-		if (!findShortcutCommandMapping(m_settings, i->getName(), keyState, virtualKey))
+		if (!findShortcutCommandMapping(m_mergedSettings, i->getName(), keyState, virtualKey))
 		{
 #if defined(_DEBUG)
 			log::info << L"No shortcut mapping for \"" << i->getName() << L"\"" << Endl;
@@ -1356,7 +1603,7 @@ void EditorForm::closeCurrentEditor()
 
 void EditorForm::closeAllEditors()
 {
-	EnterLeave cursor(
+	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
@@ -1385,11 +1632,13 @@ void EditorForm::closeAllEditors()
 	m_activeEditorPage = 0;
 	m_activeEditorPageSite = 0;
 	m_activeDocument = 0;
+
+	setPropertyObject(0);
 }
 
 void EditorForm::closeAllOtherEditors()
 {
-	EnterLeave cursor(
+	T_ANONYMOUS_VAR(EnterLeave)(
 		makeFunctor(this, &EditorForm::setCursor, ui::CrWait),
 		makeFunctor(this, &EditorForm::resetCursor)
 	);
@@ -1454,54 +1703,9 @@ void EditorForm::activateNextEditor()
 	}
 }
 
-Ref< PropertyGroup > EditorForm::loadSettings(const std::wstring& settingsFile)
-{
-	Ref< PropertyGroup > settings;
-	Ref< IStream > file;
-
-	std::wstring globalConfig = settingsFile + L".config";
-	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
-
-	if ((file = FileSystem::getInstance().open(globalConfig, File::FmRead)) != 0)
-	{
-		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
-		file->close();
-	}
-
-	if ((file = FileSystem::getInstance().open(userConfig, File::FmRead)) != 0)
-	{
-		Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
-		file->close();
-
-		if (userSettings)
-		{
-			if (settings)
-				settings = settings->mergeReplace(userSettings);
-			else
-				settings = userSettings;
-		}
-	}
-
-	return settings;
-}
-
-void EditorForm::saveSettings(const std::wstring& settingsFile)
-{
-	std::wstring userConfig = settingsFile + L"." + OS::getInstance().getCurrentUser() + L".config";
-
-	Ref< IStream > file = FileSystem::getInstance().open(userConfig, File::FmWrite);
-	if (file)
-	{
-		xml::XmlSerializer(file).writeObject(m_settings);
-		file->close();
-	}
-	else
-		log::warning << L"Unable to save settings, changes will be lost" << Endl;
-}
-
 void EditorForm::loadDictionary()
 {
-	std::wstring dictionaryFile = m_settings->getProperty< PropertyString >(L"Editor.Dictionary");
+	std::wstring dictionaryFile = m_mergedSettings->getProperty< PropertyString >(L"Editor.Dictionary");
 
 	Ref< IStream > file = FileSystem::getInstance().open(dictionaryFile, File::FmRead);
 	if (!file)
@@ -1595,7 +1799,11 @@ bool EditorForm::handleCommand(const ui::Command& command)
 {
 	bool result = true;
 
-	if (command == L"Editor.Save")
+	if (command == L"Editor.NewWorkspace")
+		createWorkspace();
+	else if (command == L"Editor.OpenWorkspace")
+		openWorkspace();
+	else if (command == L"Editor.Save")
 		saveCurrentDocument();
 	else if (command == L"Editor.SaveAll")
 		saveAllDocuments();
@@ -1615,28 +1823,70 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		activatePreviousEditor();
 	else if (command == L"Editor.ActivateNextEditor")
 		activateNextEditor();
+	else if (command == L"Editor.Workspace")
+	{
+		if (!m_workspacePath.empty())
+		{
+			WorkspaceDialog workspaceDialog;
+			if (workspaceDialog.create(this, m_workspaceSettings))
+			{
+				if (workspaceDialog.showModal() == ui::DrOk)
+				{
+					// Create merged settings.
+					if (m_workspaceSettings)
+					{
+						m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+						T_ASSERT (m_mergedSettings);
+					}
+					else
+						m_mergedSettings = m_globalSettings;
+
+					// Save modified workspace.
+					if (saveProperties(m_workspacePath, m_workspaceSettings, true))
+					{
+						// Re-open workspace.
+						std::wstring workspacePath = m_workspacePath;
+						closeWorkspace();
+						openWorkspace(workspacePath);
+					}
+				}
+				workspaceDialog.destroy();
+			}
+		}
+	}
 	else if (command == L"Editor.Settings")
 	{
 		SettingsDialog settingsDialog;
-		if (settingsDialog.create(this, m_settings, m_shortcutCommands))
+		if (settingsDialog.create(this, m_globalSettings, m_shortcutCommands))
 		{
 			if (settingsDialog.showModal() == ui::DrOk)
 			{
-#if !defined(__APPLE__)
-				std::wstring settingsPath = L"Traktor.Editor";
-#else
-				std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor";
-#endif
-				saveSettings(settingsPath);
-				updateShortcutTable();
-
-				// Notify editor pages about changed settings.
-				for (int i = 0; i < m_tab->getPageCount(); ++i)
+				// Create merged settings.
+				if (m_workspaceSettings)
 				{
-					Ref< ui::TabPage > tabPage = m_tab->getPage(i);
-					Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-					if (editorPage)
-						editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
+					m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
+					T_ASSERT (m_mergedSettings);
+				}
+				else
+					m_mergedSettings = m_globalSettings;
+
+				// Save modified settings; do this here as well as at termination
+				// as we want to make sure changes doesn't get lost in case of a crash.
+#if !defined(__APPLE__)
+				std::wstring settingsPath = L"Traktor.Editor.config";
+#else
+				std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
+#endif
+				if (saveProperties(settingsPath, m_globalSettings, false))
+				{
+					updateShortcutTable();
+					for (int i = 0; i < m_tab->getPageCount(); ++i)
+					{
+						Ref< ui::TabPage > tabPage = m_tab->getPage(i);
+						Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+						if (editorPage)
+							editorPage->handleCommand(ui::Command(L"Editor.SettingsChanged"));
+					}
 				}
 			}
 
@@ -1879,25 +2129,25 @@ void EditorForm::eventClose(ui::Event* event)
 	}
 
 	// Save panes visible.
-	m_settings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));
-	m_settings->setProperty< PropertyBoolean >(L"Editor.PropertiesVisible", m_propertiesView->isVisible(false));
-	m_settings->setProperty< PropertyBoolean >(L"Editor.LogVisible", m_logView->isVisible(false));
+	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.DatabaseVisible", m_dataBaseView->isVisible(false));
+	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.PropertiesVisible", m_propertiesView->isVisible(false));
+	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.LogVisible", m_logView->isVisible(false));
 
 	// Save form placement.
 	ui::Rect rc = getNormalRect();
-	m_settings->setProperty< PropertyBoolean >(L"Editor.Maximized", isMaximized());
-	m_settings->setProperty< PropertyInteger >(L"Editor.PositionX", rc.left);
-	m_settings->setProperty< PropertyInteger >(L"Editor.PositionY", rc.top);
-	m_settings->setProperty< PropertyInteger >(L"Editor.SizeWidth", rc.getWidth());
-	m_settings->setProperty< PropertyInteger >(L"Editor.SizeHeight", rc.getHeight());
+	m_globalSettings->setProperty< PropertyBoolean >(L"Editor.Maximized", isMaximized());
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PositionX", rc.left);
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.PositionY", rc.top);
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.SizeWidth", rc.getWidth());
+	m_globalSettings->setProperty< PropertyInteger >(L"Editor.SizeHeight", rc.getHeight());
 
 	// Save settings and pipeline hash.
 #if !defined(__APPLE__)
-	std::wstring settingsPath = L"Traktor.Editor";
+	std::wstring settingsPath = L"Traktor.Editor.config";
 #else
-	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor";
+	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
-	saveSettings(settingsPath);
+	saveProperties(settingsPath, m_globalSettings, false);
 
 	ui::Application::getInstance()->exit(0);
 }
@@ -1910,34 +2160,43 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 
 	updateView = false;
 
-	// Check if there is any commited instances into
+	// Check if there is any committed instances into
 	// source database.
-	bool committed = false;
-	while (m_sourceDatabase->getEvent(event, remote))
+	if (m_sourceDatabase)
 	{
-		if (remote == false && is_a< db::EvtInstanceCommitted >(event))
-			committed = true;
+		bool committed = false;
+		while (m_sourceDatabase->getEvent(event, remote))
+		{
+			if (remote == false && is_a< db::EvtInstanceCommitted >(event))
+				committed = true;
 
-		if (remote)
-			updateView = true;
+			if (remote)
+				updateView = true;
+		}
+		if (committed && m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
+			buildAssets(false);
 	}
-	if (committed && m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified"))
-		buildAssets(false);
 
 	// Gather events from output database; used to notify
 	// editors what to reload.
-	while (m_outputDatabase->getEvent(event, remote))
+	if (m_outputDatabase)
 	{
-		const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);
-		if (!committed)
-			continue;
+		while (m_outputDatabase->getEvent(event, remote))
+		{
+			// Always update view if we receive a remote event
+			// thus instances or groups may have been removed, renamed etc.
+			if (remote)
+				updateView = true;
 
-		log::debug << (remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages..." << Endl;
-
-		m_eventIds.push_back(committed->getInstanceGuid());
-
-		if (remote)
-			updateView = true;
+			// Gather guids of commited instances; so we can know
+			// which has been modified and thus needs to be rebuilt.
+			const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);
+			if (committed)
+			{
+				log::debug << (remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages..." << Endl;
+				m_eventIds.push_back(committed->getInstanceGuid());
+			}
+		}
 	}
 
 	// Only propagate events when build is finished.
@@ -1992,7 +2251,7 @@ void EditorForm::threadAssetMonitor()
 	{
 		if (
 			m_sourceDatabase &&
-			m_settings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified") &&
+			m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified") &&
 			m_lockBuild.wait(0)
 		)
 		{
@@ -2008,7 +2267,7 @@ void EditorForm::threadAssetMonitor()
 				std::vector< Guid > modifiedAssets;
 				RefArray< const File > modifiedFiles;
 
-				std::wstring assetPath = m_settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+				std::wstring assetPath = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 
 				for (RefArray< db::Instance >::const_iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
 				{

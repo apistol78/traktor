@@ -9,7 +9,6 @@
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/EntityUpdate.h"
 
 //#define T_USE_UPDATE_JOBS
 
@@ -107,7 +106,7 @@ void AnimatedMeshEntity::render(
 	m_updateController = true;
 }
 
-void AnimatedMeshEntity::update(const world::EntityUpdate* update)
+void AnimatedMeshEntity::update(const UpdateParams& update)
 {
 	if (m_skeleton.validate() && m_updateController)
 	{
@@ -123,10 +122,10 @@ void AnimatedMeshEntity::update(const world::EntityUpdate* update)
 		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshEntity, float >(
 			this,
 			&AnimatedMeshEntity::updatePoseController,
-			update->getDeltaTime()
+			update.deltaTime
 		));
 #else
-		updatePoseController(update->getDeltaTime());
+		updatePoseController(update.deltaTime);
 #endif
 	}
 

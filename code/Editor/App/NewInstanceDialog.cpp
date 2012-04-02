@@ -43,7 +43,7 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewInstanceDialog", NewInstanceDialog, ui::ConfigDialog)
 
-NewInstanceDialog::NewInstanceDialog(PropertyGroup* settings)
+NewInstanceDialog::NewInstanceDialog(const PropertyGroup* settings)
 :	m_settings(settings)
 ,	m_type(0)
 {

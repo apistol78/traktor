@@ -1,5 +1,4 @@
 #include "World/WorldContext.h"
-#include "World/Entity/EntityUpdate.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/TransientEntity.h"
 
@@ -30,9 +29,9 @@ void TransientEntity::render(
 	worldContext.build(worldRenderView, worldRenderPass, m_otherEntity);
 }
 
-void TransientEntity::update(const EntityUpdate* update)
+void TransientEntity::update(const UpdateParams& update)
 {
-	if ((m_duration -= update->getDeltaTime()) <= 0.0f)
+	if ((m_duration -= update.deltaTime) <= 0.0f)
 		m_parentGroup->removeEntity(this);
 	
 	m_otherEntity->update(update);

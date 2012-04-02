@@ -90,7 +90,7 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 void SceneEditorSettingsPage::updateValues()
 {
 	int32_t fov = m_sliderFov->getValue();
-	m_staticFovValue->setText(toString(fov) + L"°");
+	m_staticFovValue->setText(toString(fov) + L" degree(s)");
 
 	int32_t mouseWheelRate = m_sliderMouseWheelRate->getValue();
 	m_staticMouseWheelRateValue->setText(toString(mouseWheelRate));

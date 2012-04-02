@@ -4,6 +4,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 #include "Model/Model.h"
 #include "Model/Formats/ModelFormatFbx.h"
 
@@ -347,6 +348,8 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatFbx", 0, ModelFormatFbx, ModelFormat)
 
+Semaphore ModelFormatFbx::ms_lock;
+
 void ModelFormatFbx::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {
 	outDescription = L"Autodesk FBX";
@@ -360,6 +363,8 @@ bool ModelFormatFbx::supportFormat(const Path& filePath) const
 
 Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(ms_lock);
+
 	KFbxSdkManager* sdkManager = KFbxSdkManager::Create();
 	if (!sdkManager)
 	{

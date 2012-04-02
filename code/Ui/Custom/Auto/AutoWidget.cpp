@@ -246,15 +246,6 @@ void AutoWidget::eventPaint(Event* event)
 	PaintEvent* paintEvent = checked_type_cast< PaintEvent*, false >(event);
 	Canvas& canvas = paintEvent->getCanvas();
 
-	// Ensure there are no deferred updates pending.
-	if (m_deferredLayout)
-	{
-		m_deferredLayout = false;
-		updateLayout();
-	}
-
-	m_deferredUpdate = false;
-
 	Rect innerRect = getInnerRect();
 	canvas.setBackground(m_backgroundColor);
 	canvas.fillRect(innerRect);

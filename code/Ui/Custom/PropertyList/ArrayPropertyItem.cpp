@@ -23,9 +23,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.", ArrayPropertyItem, PropertyItem)
 
-ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* elementType)
+ArrayPropertyItem::ArrayPropertyItem(const std::wstring& text, const TypeInfo* elementType, bool readOnly)
 :	PropertyItem(text)
 ,	m_elementType(elementType)
+,	m_readOnly(readOnly)
 {
 }
 
@@ -41,21 +42,24 @@ const TypeInfo* ArrayPropertyItem::getElementType() const
 
 void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 {
-	m_buttonEdit = new MiniButton();
-	m_buttonEdit->create(
-		parent,
-		m_elementType ? 
-			ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") : 
-			ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png")
-	);
-	m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
+	if (!m_readOnly)
+	{
+		m_buttonEdit = new MiniButton();
+		m_buttonEdit->create(
+			parent,
+			m_elementType ? 
+				ui::Bitmap::load(c_ResourceSmallDots, sizeof(c_ResourceSmallDots), L"png") : 
+				ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png")
+		);
+		m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
 
-	m_buttonRemove = new MiniButton();
-	m_buttonRemove->create(
-		parent,
-		ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
-	);
-	m_buttonRemove->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
+		m_buttonRemove = new MiniButton();
+		m_buttonRemove->create(
+			parent,
+			ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
+		);
+		m_buttonRemove->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
+	}
 }
 
 void ArrayPropertyItem::destroyInPlaceControls()
@@ -66,9 +70,8 @@ void ArrayPropertyItem::destroyInPlaceControls()
 
 void ArrayPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< WidgetRect >& outChildRects)
 {
+	int32_t dim = rc.getHeight();
 	if (m_buttonEdit)
-	{
-		int32_t dim = rc.getHeight();
 		outChildRects.push_back(WidgetRect(
 			m_buttonEdit,
 			Rect(
@@ -78,6 +81,7 @@ void ArrayPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widge
 				rc.bottom
 			)
 		));
+	if (m_buttonRemove)
 		outChildRects.push_back(WidgetRect(
 			m_buttonRemove,
 			Rect(
@@ -87,7 +91,6 @@ void ArrayPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widge
 				rc.bottom
 			)
 		));
-	}
 }
 
 void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)

@@ -23,7 +23,14 @@ public:
 	typedef MemberStlPair< KeyType, ValueType, KeyMember, ValueMember > pair_member;
 
 	MemberSmallMap(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name)
+	:	MemberArray(name, 0)
+	,	m_ref(ref)
+	,	m_iter(m_ref.begin())
+	{
+	}
+
+	MemberSmallMap(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_iter(m_ref.begin())
 	{

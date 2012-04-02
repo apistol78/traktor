@@ -798,6 +798,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 					light.direction,
 					sliceViewFrustum,
 					shadowBox,
+					m_settings.shadowQuantizeProjection,
 					shadowLightView,
 					shadowLightProjection,
 					shadowLightSquareProjection,

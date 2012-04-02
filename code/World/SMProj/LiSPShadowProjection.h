@@ -19,6 +19,7 @@ public:
 		const Vector4& lightDirection,
 		const Frustum& viewFrustum,
 		const Aabb3& shadowBox,
+		bool quantizeProjection,
 		Matrix44& outLightView,
 		Matrix44& outLightProjection,
 		Matrix44& outLightSquareProjection,

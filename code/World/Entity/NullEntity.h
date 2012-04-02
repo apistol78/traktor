@@ -27,7 +27,7 @@ class T_DLLCLASS NullEntity : public Entity
 public:
 	NullEntity(const Transform& transform);
 
-	virtual void update(const EntityUpdate* update);
+	virtual void update(const UpdateParams& update);
 
 	virtual void setTransform(const Transform& transform);
 

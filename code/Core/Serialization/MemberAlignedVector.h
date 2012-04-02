@@ -19,7 +19,14 @@ public:
 	typedef AlignedVector< ValueType > value_type;
 
 	MemberAlignedVector(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name)
+	:	MemberArray(name, 0)
+	,	m_ref(ref)
+	,	m_index(0)
+	{
+	}
+
+	MemberAlignedVector(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberArray(name, &attributes)
 	,	m_ref(ref)
 	,	m_index(0)
 	{

@@ -36,7 +36,7 @@ PointLightEntity::PointLightEntity(
 {
 }
 
-void PointLightEntity::update(const EntityUpdate* update)
+void PointLightEntity::update(const UpdateParams& update)
 {
 	m_randomFlickerValue = m_random.nextFloat() * (1.0f - m_randomFlickerFilter) + m_randomFlickerValue * m_randomFlickerFilter;
 	m_randomFlicker = 1.0f - m_randomFlickerValue * m_randomFlickerAmount;

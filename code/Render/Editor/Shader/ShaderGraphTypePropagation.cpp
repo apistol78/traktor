@@ -14,7 +14,7 @@ namespace traktor
 
 struct EvalInitialOutputTypes
 {
-	const ShaderGraph* m_shaderGraph;
+	Ref< const ShaderGraph > m_shaderGraph;
 	std::map< const OutputPin*, PinType >& m_outputPinTypes;
 
 	EvalInitialOutputTypes(
@@ -28,8 +28,9 @@ struct EvalInitialOutputTypes
 
 	bool operator () (const Node* node)
 	{
-		const INodeTraits* nodeTraits = INodeTraits::find(node);
-		T_ASSERT (nodeTraits);
+		Ref< const INodeTraits > nodeTraits = INodeTraits::find(node);
+		if (!nodeTraits)
+			return true;
 
 		PinType inputPinTypes[16];
 

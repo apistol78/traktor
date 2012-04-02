@@ -1,10 +1,11 @@
+#include "Database/Instance.h"
 #include "Scene/Editor/DefaultEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Ui/Command.h"
+#include "World/Entity/ExternalEntityData.h"
 
 // Resource factories
-#include "Mesh/MeshFactory.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
@@ -12,8 +13,6 @@
 #include "World/PostProcess/PostProcessFactory.h"
 
 // Entity factories
-#include "Mesh/MeshEntityFactory.h"
-//#include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
 #include "Weather/WeatherEntityFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
 
@@ -21,8 +20,6 @@
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/GroupEntityRenderer.h"
 #include "Weather/WeatherEntityRenderer.h"
-#include "Mesh/MeshEntityRenderer.h"
-#include "Mesh/Instance/InstanceMeshEntityRenderer.h"
 
 // Entity editor factories
 #include "Scene/Editor/DefaultEntityEditorFactory.h"
@@ -56,7 +53,6 @@ void DefaultEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
-	outResourceFactories.push_back(new mesh::MeshFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
 	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
@@ -70,8 +66,6 @@ void DefaultEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager()));
-	outEntityFactories.push_back(new mesh::MeshEntityFactory(context->getResourceManager()));
-	//outEntityFactories.push_back(new mesh::BatchMeshEntityFactory(context->getResourceManager()));
 	outEntityFactories.push_back(new weather::WeatherEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 }
 
@@ -85,8 +79,6 @@ void DefaultEditorProfile::createEntityRenderers(
 	outEntityRenderers.push_back(new world::LightEntityRenderer());
 	outEntityRenderers.push_back(new world::GroupEntityRenderer());
 	outEntityRenderers.push_back(new weather::WeatherEntityRenderer(primitiveRenderer));
-	outEntityRenderers.push_back(new mesh::MeshEntityRenderer());
-	outEntityRenderers.push_back(new mesh::InstanceMeshEntityRenderer());
 }
 
 void DefaultEditorProfile::createControllerEditorFactories(
@@ -102,6 +94,25 @@ void DefaultEditorProfile::createEntityEditorFactories(
 ) const
 {
 	outEntityEditorFactories.push_back(new DefaultEntityEditorFactory());
+}
+
+Ref< world::EntityData > DefaultEditorProfile::createEntityData(
+	SceneEditorContext* context,
+	db::Instance* instance
+) const
+{
+	const TypeInfo* primaryType = instance->getPrimaryType();
+	if (!primaryType)
+		return 0;
+
+	if (!is_type_of< world::EntityData >(*primaryType))
+		return 0;
+
+	// Create external reference to entity data.
+	Ref< world::EntityData > entityData = new world::ExternalEntityData(instance->getGuid());
+	entityData->setName(instance->getName());
+
+	return entityData;
 }
 
 	}

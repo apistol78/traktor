@@ -30,6 +30,10 @@ public:
 
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
+	virtual void handleWorkspaceOpened();
+
+	virtual void handleWorkspaceClosed();
+
 private:
 	editor::IEditor* m_editor;
 };

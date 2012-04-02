@@ -44,7 +44,7 @@ void GrainProperties::destroy()
 
 void GrainProperties::set(IGrain* grain)
 {
-	m_grainPropertyList->bind(grain, 0);
+	m_grainPropertyList->bind(grain);
 }
 
 bool GrainProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const

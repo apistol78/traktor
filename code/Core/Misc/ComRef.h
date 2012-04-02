@@ -44,19 +44,21 @@ public:
 
 	inline ComRef< T >& operator = (T* ptr)
 	{
+		if (ptr != 0)
+			ptr->AddRef();
 		if (m_ptr != 0)
 			m_ptr->Release();
-		if ((m_ptr = ptr) != 0)
-			m_ptr->AddRef();
+		m_ptr = ptr;
 		return *this;
 	}
 	
 	inline ComRef< T >& operator = (const ComRef< T >& src)
 	{
+		if (src.m_ptr != 0)
+			src.m_ptr->AddRef();
 		if (m_ptr != 0)
 			m_ptr->Release();
-		if ((m_ptr = src.m_ptr) != 0)
-			m_ptr->AddRef();
+		m_ptr = src.m_ptr;
 		return *this;
 	}
 
@@ -128,13 +130,13 @@ public:
 
 		element& operator = (T* ptr)
 		{
+			if (ptr)
+				ptr->AddRef();
+
 			if (m_array[m_index])
 				m_array[m_index]->Release();
 
 			m_array[m_index] = ptr;
-
-			if (m_array[m_index])
-				m_array[m_index]->AddRef();
 
 			return *this;
 		}

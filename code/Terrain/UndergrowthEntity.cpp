@@ -126,7 +126,7 @@ Aabb3 UndergrowthEntity::getBoundingBox() const
 	return Aabb3();
 }
 
-void UndergrowthEntity::update(const world::EntityUpdate* update)
+void UndergrowthEntity::update(const UpdateParams& update)
 {
 	if (!m_heightfield.validate() || !m_materialMask.validate())
 		return;
@@ -167,8 +167,11 @@ void UndergrowthEntity::updateTask(int start, int end, Vertex* outVertex)
 	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
 	Scalar dw = worldExtent.x() / Scalar(m_heightfield->getResource().getSize());
 
+	Scalar mmszs(m_materialMask->getSize());
+	int32_t mmszf = int32_t(m_materialMask->getSize());
+
 	Matrix44 inverseView = m_lastView.inverseOrtho();
-	for (int i = start; i < end; ++i)
+	for (int32_t i = start; i < end; ++i)
 	{
 		Vector4 position = m_lastView * m_cells[i].position;
 		if (m_lastFrustum.inside(position, Scalar(m_settings.cellRadius)) != Frustum::IrOutside)
@@ -184,11 +187,11 @@ void UndergrowthEntity::updateTask(int start, int end, Vertex* outVertex)
 		seed = inverseView * seed;
 
 		// Check plant type from material mask.
-		int mx = int(Scalar(m_materialMask->getSize()) * (seed.x() / worldExtent.x() + Scalar(0.5f)));
-		int my = int(Scalar(m_materialMask->getSize()) * (seed.z() / worldExtent.z() + Scalar(0.5f)));
-		if (mx < 0 || my < 0 || mx >= int(m_materialMask->getSize()) || my >= int(m_materialMask->getSize()))
+		int32_t mx = int32_t(Scalar(m_materialMask->getSize()) * (0.5f - seed.x() / worldExtent.x()));
+		int32_t my = int32_t(Scalar(m_materialMask->getSize()) * (seed.z() / worldExtent.z() + 0.5f));
+		if (mx < 0 || my < 0 || mx >= int32_t(m_materialMask->getSize()) || my >= int32_t(m_materialMask->getSize()))
 			continue;
-		if (!m_materialMask->getId(mx, my))
+		if (m_materialMask->getId(mx, my))
 			continue;
 
 		m_cells[i].position = seed;

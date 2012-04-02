@@ -26,7 +26,7 @@ SpotLightEntity::SpotLightEntity(
 {
 }
 
-void SpotLightEntity::update(const EntityUpdate* update)
+void SpotLightEntity::update(const UpdateParams& update)
 {
 }
 

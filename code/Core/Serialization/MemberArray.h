@@ -15,6 +15,7 @@
 namespace traktor
 {
 
+class Attribute;
 class TypeInfo;
 class ISerializer;
 
@@ -24,20 +25,23 @@ class ISerializer;
 class T_DLLCLASS MemberArray
 {
 public:
-	MemberArray(const wchar_t* const name);
+	MemberArray(const wchar_t* const name, const Attribute* attributes);
 
-	virtual ~MemberArray();
+	virtual ~MemberArray() {}
 
 	/*! \brief Get name of member.
 	 *
 	 * \return Member's name.
 	 */
-	const wchar_t* const getName() const;
+	const wchar_t* const getName() const { return m_name; }
 
-	/*!
-	 * Return element type if available.
+	/*! \brief Get member attributes.
+	 *
+	 * Get member attributes if applicable.
+	 *
+	 * \return Member attributes.
 	 */
-	virtual const TypeInfo* getType() const;
+	virtual const Attribute* getAttributes() const { return m_attributes; }
 
 	/*!
 	 * Reserve size for X number of elements.
@@ -69,6 +73,7 @@ public:
 
 private:
 	const wchar_t* const m_name;
+	const Attribute* m_attributes;
 };
 
 }

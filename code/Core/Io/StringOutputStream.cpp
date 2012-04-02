@@ -3,6 +3,11 @@
 namespace traktor
 {
 
+StringOutputStreamBuffer::StringOutputStreamBuffer()
+{
+	m_internal.reserve(1024);
+}
+
 int StringOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 {
 	m_internal.insert(m_internal.end(), &buffer[0], &buffer[count]);

@@ -99,7 +99,7 @@ int32_t TargetInstance::getBuildProgress() const
 	return m_buildProgress;
 }
 
-void TargetInstance::update()
+bool TargetInstance::update()
 {
 	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); )
 	{
@@ -111,6 +111,7 @@ void TargetInstance::update()
 		else
 			++i;
 	}
+	return !m_connections.empty();
 }
 
 void TargetInstance::addConnection(TargetConnection* connection)

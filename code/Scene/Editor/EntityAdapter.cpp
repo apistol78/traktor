@@ -65,13 +65,14 @@ Transform EntityAdapter::getTransform0() const
 void EntityAdapter::setTransform(const Transform& transform)
 {
 	m_entityData->setTransform(transform);
-	m_entity->setTransform(transform);
+	if (m_entity)
+		m_entity->setTransform(transform);
 }
 
 Transform EntityAdapter::getTransform() const
 {
 	Transform transform;
-	if (m_entity->getTransform(transform))
+	if (m_entity && m_entity->getTransform(transform))
 		return transform;
 	else
 		return m_entityData->getTransform();
@@ -79,7 +80,7 @@ Transform EntityAdapter::getTransform() const
 
 Aabb3 EntityAdapter::getBoundingBox() const
 {
-	return m_entity->getBoundingBox();
+	return m_entity ? m_entity->getBoundingBox() : Aabb3();
 }
 
 bool EntityAdapter::isExternal() const

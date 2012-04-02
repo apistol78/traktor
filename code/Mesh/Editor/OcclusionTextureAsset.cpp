@@ -11,7 +11,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.OcclusionTextureAsset", 4, OcclusionTextureAsset, render::TextureAssetBase)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.OcclusionTextureAsset", 5, OcclusionTextureAsset, render::TextureAssetBase)
 
 Ref< drawing::Image > OcclusionTextureAsset::load(const std::wstring& assetPath) const
 {

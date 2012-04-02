@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 4, TextureAsset, TextureAssetBase)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 5, TextureAsset, TextureAssetBase)
 
 Ref< drawing::Image > TextureAsset::load(const std::wstring& assetPath) const
 {
