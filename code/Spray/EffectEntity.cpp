@@ -5,7 +5,6 @@
 #include "Spray/EffectInstance.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/Emitter.h"
-#include "World/Entity/EntityUpdate.h"
 
 namespace traktor
 {
@@ -69,7 +68,7 @@ Aabb3 EffectEntity::getWorldBoundingBox() const
 	return m_effectInstance ? m_effectInstance->getBoundingBox() : Aabb3();
 }
 
-void EffectEntity::update(const world::EntityUpdate* update)
+void EffectEntity::update(const UpdateParams& update)
 {
 	if ((m_counter++ % c_updateDenom) != 0)
 		return;
@@ -103,7 +102,7 @@ void EffectEntity::update(const world::EntityUpdate* update)
 
 	if (m_effectInstance)
 	{
-		m_context.deltaTime = update->getDeltaTime();
+		m_context.deltaTime = update.deltaTime;
 		m_context.deltaTime = min(m_context.deltaTime, c_maxDeltaTime);
 		m_context.deltaTime *= c_updateDenom;
 

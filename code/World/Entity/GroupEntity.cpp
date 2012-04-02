@@ -86,7 +86,7 @@ Ref< Entity > GroupEntity::getFirstEntityOf(const TypeInfo& entityType) const
 	return 0;
 }
 	
-void GroupEntity::update(const EntityUpdate* update)
+void GroupEntity::update(const UpdateParams& update)
 {
 	// Update child entities; set flag to indicate we're
 	// updating 'em.

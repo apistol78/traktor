@@ -41,7 +41,7 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseTypeDialog", BrowseTypeDialog, ui::ConfigDialog)
 
-BrowseTypeDialog::BrowseTypeDialog(PropertyGroup* settings)
+BrowseTypeDialog::BrowseTypeDialog(const PropertyGroup* settings)
 :	m_settings(settings)
 ,	m_type(0)
 {

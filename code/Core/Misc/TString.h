@@ -1,6 +1,9 @@
 #ifndef traktor_TString_H
 #define traktor_TString_H
 
+#if defined(_PS3)
+#	include <calloca>
+#endif
 #include <cstdlib>
 #include <string>
 #include <vector>
@@ -38,9 +41,9 @@ class IEncoding;
 	{
 		if (!mbs.empty())
 		{
-			std::vector< wchar_t > buf(mbs.length() + 1);
-			std::mbstowcs(&buf[0], mbs.c_str(), mbs.length());
-			return std::wstring(&buf[0], mbs.length());
+			wchar_t* buf = (wchar_t*)alloca((mbs.length() + 1) * sizeof(wchar_t));
+			std::mbstowcs(buf, mbs.c_str(), mbs.length());
+			return std::wstring(buf, mbs.length());
 		}
 		else
 			return std::wstring();
@@ -51,9 +54,9 @@ class IEncoding;
 	{
 		if (!ws.empty())
 		{
-			std::vector< char > buf(ws.length() + 1);
-			std::wcstombs(&buf[0], ws.c_str(), ws.length());
-			return std::string(&buf[0], ws.length());
+			char* buf = (char*)alloca((ws.length() + 1) * sizeof(char));
+			std::wcstombs(buf, ws.c_str(), ws.length());
+			return std::string(buf, ws.length());
 		}
 		else
 			return std::string();

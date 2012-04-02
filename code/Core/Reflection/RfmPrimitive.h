@@ -36,7 +36,7 @@ private:
 	type_t T_ALIGN16 m_value;
 };
 
-T_IMPLEMENT_RTTI_TEMPLATE_CLASS(RfmPrimitive, < typename PrimitiveType >, Object)
+T_IMPLEMENT_RTTI_TEMPLATE_CLASS(RfmPrimitive< T >, typename T, Object)
 
 }
 

@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -51,11 +52,22 @@ public:
 			if (s.getVersion() >= 1)
 				s >> Member< bool >(L"optional", optional);
 
-			m_pin = new InputPin(
-				s.getCurrentObject< Node >(),
-				name,
-				optional
-			);
+			if (m_pin)
+			{
+				*m_pin = InputPin(
+					s.getCurrentObject< Node >(),
+					name,
+					optional
+				);
+			}
+			else
+			{
+				m_pin = new InputPin(
+					s.getCurrentObject< Node >(),
+					name,
+					optional
+				);
+			}
 		}
 		return true;
 	}
@@ -86,13 +98,76 @@ public:
 		{
 			std::wstring name;
 			s >> Member< std::wstring >(L"name", name);
-			m_pin = new OutputPin(s.getCurrentObject< Node >(), name);
+			if (m_pin)
+			{
+				*m_pin = OutputPin(
+					s.getCurrentObject< Node >(),
+					name
+				);
+			}
+			else
+			{
+				m_pin = new OutputPin(
+					s.getCurrentObject< Node >(),
+					name
+				);
+			}
 		}
 		return true;
 	}
 
 private:
 	value_type& m_pin;
+};
+
+template < typename PinMember >
+class MemberPinArray : public MemberArray
+{
+public:
+	typedef typename PinMember::value_type pin_type;
+	typedef std::vector< pin_type > value_type;
+
+	MemberPinArray(const wchar_t* const name, value_type& pins)
+	:	MemberArray(name, &m_attribute)
+	,	m_pins(pins)
+	,	m_index(0)
+	{
+	}
+
+	virtual void reserve(size_t size, size_t capacity) const
+	{
+		m_pins.reserve(capacity);
+	}
+
+	virtual size_t size() const
+	{
+		return m_pins.size();
+	}
+
+	virtual bool read(ISerializer& s) const
+	{
+		if (m_index >= m_pins.size())
+			m_pins.push_back(0);
+		return s >> PinMember(L"item", m_pins[m_index++]);
+	}
+
+	virtual bool write(ISerializer& s) const
+	{
+		if (m_index < m_pins.size())
+			return s >> PinMember(L"item", m_pins[m_index++]);
+		else
+			return false;
+	}
+
+	virtual bool insert() const
+	{
+		return false;
+	}
+
+private:
+	AttributeReadOnly m_attribute;
+	value_type& m_pins;
+	mutable size_t m_index;
 };
 
 struct SortInputPinPredicate
@@ -258,36 +333,11 @@ bool External::serialize(ISerializer& s)
 		return false;
 
 	s >> Member< Guid >(L"fragmentGuid", m_fragmentGuid, AttributeType(type_of< ShaderGraph >()));
-	s >> MemberStlVector< InputPin*, MemberInputPin >(L"inputPins", m_inputPins);
-	s >> MemberStlVector< OutputPin*, MemberOutputPin >(L"outputPins", m_outputPins);
+	s >> MemberPinArray< MemberInputPin >(L"inputPins", m_inputPins);
+	s >> MemberPinArray< MemberOutputPin >(L"outputPins", m_outputPins);
 
 	if (s.getVersion() >= 1)
-		s >> MemberStlMap< std::wstring, float >(L"values", m_values);
-	
-	if (s.getDirection() == ISerializer::SdRead)
-	{
-		// Update edges; we have created new pins but the shader graph might still
-		// have edges which reference our old pins.
-		const ShaderGraph* shaderGraph = s.getOuterObject< ShaderGraph >();
-		if (shaderGraph)
-		{
-			const RefArray< Edge >& edges = shaderGraph->getEdges();
-			for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
-			{
-				const OutputPin* sourcePin = (*i)->getSource();
-				const InputPin* destinationPin = (*i)->getDestination();
-
-				if (sourcePin->getNode() == this)
-					sourcePin = findOutputPin(sourcePin->getName());
-
-				if (destinationPin->getNode() == this)
-					destinationPin = findInputPin(destinationPin->getName());
-
-				(*i)->setSource(sourcePin);
-				(*i)->setDestination(destinationPin);
-			}
-		}
-	}
+		s >> MemberStlMap< std::wstring, float >(L"values", m_values, AttributeReadOnly());
 
 	return true;
 }

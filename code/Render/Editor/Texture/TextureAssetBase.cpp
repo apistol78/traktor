@@ -26,6 +26,8 @@ TextureAssetBase::TextureAssetBase()
 ,	m_inverseNormalMapY(false)
 ,	m_linearGamma(true)
 ,	m_generateSphereMap(false)
+,	m_preserveAlphaCoverage(false)
+,	m_alphaCoverageReference(0.5f)
 {
 }
 
@@ -61,6 +63,12 @@ bool TextureAssetBase::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"generateSphereMap", m_generateSphereMap);
+
+	if (s.getVersion() >= 5)
+	{
+		s >> Member< bool >(L"preserveAlphaCoverage", m_preserveAlphaCoverage);
+		s >> Member< float >(L"alphaCoverageReference", m_alphaCoverageReference);
+	}
 
 	return true;
 }

@@ -35,7 +35,7 @@ public:
 		float randomFlickerFilter
 	);
 
-	virtual void update(const EntityUpdate* update);
+	virtual void update(const UpdateParams& update);
 
 	virtual void setTransform(const Transform& transform);
 

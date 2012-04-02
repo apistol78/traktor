@@ -797,6 +797,10 @@
 			<first>MENU_EDIT_UNDO</first>
 			<second>Ångra</second>
 		</item>
+    <item>
+      <first>MENU_EDIT_WORKSPACE</first>
+      <second>Arbetsyta...</second>
+    </item>
 		<item>
 			<first>MENU_FILE</first>
 			<second>Fil</second>
@@ -814,12 +818,20 @@
       <second>Nytt projekt...</second>
     </item>
     <item>
+      <first>MENU_FILE_NEW_WORKSPACE</first>
+      <second>Ny arbetsyta...</second>
+    </item>
+    <item>
       <first>MENU_FILE_OPEN_PROJECT</first>
       <second>Öppna projekt...</second>
     </item>
     <item>
       <first>MENU_FILE_OPEN_RECENT</first>
       <second>Öppna tidigare projekt...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_OPEN_WORKSPACE</first>
+      <second>Öppna arbetsyta...</second>
     </item>
     <item>
 			<first>MENU_FILE_SAVE</first>

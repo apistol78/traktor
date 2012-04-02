@@ -635,6 +635,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			shadowLight->direction,
 			sliceViewFrustum,
 			shadowBox,
+			m_settings.shadowQuantizeProjection,
 			shadowLightView,
 			shadowLightProjection,
 			shadowLightSquareProjection,

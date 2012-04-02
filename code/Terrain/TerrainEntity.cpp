@@ -541,7 +541,7 @@ Aabb3 TerrainEntity::getBoundingBox() const
 	return Aabb3(-worldExtent, worldExtent);
 }
 
-void TerrainEntity::update(const world::EntityUpdate* update)
+void TerrainEntity::update(const UpdateParams& update)
 {
 }
 

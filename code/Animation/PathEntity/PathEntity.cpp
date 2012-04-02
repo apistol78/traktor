@@ -1,6 +1,5 @@
 #include "Animation/PathEntity/PathEntity.h"
 #include "World/WorldContext.h"
-#include "World/Entity/EntityUpdate.h"
 
 namespace traktor
 {
@@ -50,14 +49,14 @@ Aabb3 PathEntity::getBoundingBox() const
 	return m_entity ? m_entity->getBoundingBox() : Aabb3();
 }
 
-void PathEntity::update(const world::EntityUpdate* update)
+void PathEntity::update(const UpdateParams& update)
 {
 	if (!m_entity)
 		return;
 
 	if (m_timeMode != TmManual)
 	{
-		m_time += update->getDeltaTime() * m_timeDeltaSign;
+		m_time += update.deltaTime * m_timeDeltaSign;
 
 		switch (m_timeMode)
 		{

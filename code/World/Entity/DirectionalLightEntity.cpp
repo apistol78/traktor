@@ -22,7 +22,7 @@ DirectionalLightEntity::DirectionalLightEntity(
 {
 }
 
-void DirectionalLightEntity::update(const EntityUpdate* update)
+void DirectionalLightEntity::update(const UpdateParams& update)
 {
 }
 

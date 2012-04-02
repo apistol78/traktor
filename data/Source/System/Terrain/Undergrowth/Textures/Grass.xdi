@@ -1,10 +1,10 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.TextureAsset">
+<object type="traktor.render.TextureAsset" version="5">
 	<fileName>$(TRAKTOR_HOME)/data/Assets/System/Terrain/Undergrowth/Textures/Grass.png</fileName>
 	<generateNormalMap>false</generateNormalMap>
 	<scaleDepth>0</scaleDepth>
 	<generateMips>true</generateMips>
-	<keepZeroAlpha>true</keepZeroAlpha>
+	<keepZeroAlpha>false</keepZeroAlpha>
 	<isCubeMap>false</isCubeMap>
 	<hasAlpha>true</hasAlpha>
 	<ignoreAlpha>false</ignoreAlpha>
@@ -12,5 +12,10 @@
 	<scaleWidth>0</scaleWidth>
 	<scaleHeight>0</scaleHeight>
 	<enableCompression>true</enableCompression>
+	<enableNormalMapCompression>false</enableNormalMapCompression>
+	<inverseNormalMapY>false</inverseNormalMapY>
 	<linearGamma>true</linearGamma>
+	<generateSphereMap>false</generateSphereMap>
+	<preserveAlphaCoverage>true</preserveAlphaCoverage>
+	<alphaCoverageReference>0.55</alphaCoverageReference>
 </object>

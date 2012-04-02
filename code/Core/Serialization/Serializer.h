@@ -32,8 +32,6 @@ public:
 
 	virtual ISerializable* getCurrentObject();
 
-	virtual ISerializable* getOuterObject();
-
 	template < typename T >
 	Ref< T > readObject()
 	{
@@ -42,7 +40,7 @@ public:
 	}
 
 protected:
-	bool serialize(ISerializable* inner, int version, ISerializable* outer);
+	bool serialize(ISerializable* inner, int version);
 
 private:
 	std::list< std::pair< ISerializable*, int > > m_constructing;

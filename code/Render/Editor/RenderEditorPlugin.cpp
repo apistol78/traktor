@@ -68,5 +68,13 @@ void RenderEditorPlugin::handleDatabaseEvent(const Guid& eventId)
 {
 }
 
+void RenderEditorPlugin::handleWorkspaceOpened()
+{
+}
+
+void RenderEditorPlugin::handleWorkspaceClosed()
+{
+}
+
 	}
 }

@@ -103,21 +103,21 @@ int32_t Environment::executeReconfigure()
 
 	int32_t result = CrUnaffected;
 
-	if ((result |= m_audioServer->reconfigure(m_settings)) == CrFailed)
+	if (m_audioServer && (result |= m_audioServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
-	if ((result |= m_inputServer->reconfigure(m_settings)) == CrFailed)
+	if (m_inputServer && (result |= m_inputServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
-	if ((result |= m_onlineServer->reconfigure(m_settings)) == CrFailed)
+	if (m_onlineServer && (result |= m_onlineServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
-	if ((result |= m_physicsServer->reconfigure(m_settings)) == CrFailed)
+	if (m_physicsServer && (result |= m_physicsServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
-	if ((result |= m_renderServer->reconfigure(m_settings)) == CrFailed)
+	if (m_renderServer && (result |= m_renderServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
-	if ((result |= m_resourceServer->reconfigure(m_settings)) == CrFailed)
+	if (m_resourceServer && (result |= m_resourceServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
-	if ((result |= m_scriptServer->reconfigure(m_settings)) == CrFailed)
+	if (m_scriptServer && (result |= m_scriptServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
-	if ((result |= m_worldServer->reconfigure(m_settings)) == CrFailed)
+	if (m_worldServer && (result |= m_worldServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
 
 	return result;

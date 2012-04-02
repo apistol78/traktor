@@ -43,6 +43,8 @@ public:
 	bool m_inverseNormalMapY;
 	bool m_linearGamma;
 	bool m_generateSphereMap;
+	bool m_preserveAlphaCoverage;
+	float m_alphaCoverageReference;
 
 	TextureAssetBase();
 

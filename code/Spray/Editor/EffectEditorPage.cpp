@@ -90,7 +90,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Effect.Editor.ToggleGuide"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleMove = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), ui::Command(L"Effect.Editor.ToggleMove"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
 
-	Ref< PropertyGroup > settings = m_editor->getSettings();
+	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
 	m_guideVisible = settings->getProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
@@ -137,11 +137,13 @@ bool EffectEditorPage::create(ui::Container* parent)
 
 void EffectEditorPage::destroy()
 {
-	Ref< PropertyGroup > settings = m_editor->getSettings();
+	Ref< PropertyGroup > settings = m_editor->checkoutGlobalSettings();
 	T_ASSERT (settings);
 
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleGuide", m_guideVisible);
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
+
+	m_editor->commitGlobalSettings();
 
 	safeDestroy(m_previewControl);
 	safeDestroy(m_soundSystem);

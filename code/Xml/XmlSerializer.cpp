@@ -256,7 +256,7 @@ bool XmlSerializer::operator >> (const Member< ISerializable* >& m)
 		enterElement(m.getName());
 
 		rememberObject(o);
-		result = serialize(o, version, 0);
+		result = serialize(o, version);
 
 		leaveElement();
 

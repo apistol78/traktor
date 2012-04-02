@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -29,7 +29,11 @@ class T_DLLCLASS Panel : public Container
 	T_RTTI_CLASS;
 
 public:
+	Panel();
+
 	bool create(Widget* parent, const std::wstring& text, Layout* layout);
+
+	virtual void destroy();
 
 	virtual Size getMinimumSize() const;
 
@@ -38,7 +42,11 @@ public:
 	virtual Rect getInnerRect() const;
 
 private:
+	Ref< EventHandler > m_focusHandler;
+
 	void eventPaint(Event* event);
+
+	void eventFocus(Event* event);
 };
 
 		}

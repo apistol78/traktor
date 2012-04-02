@@ -44,7 +44,7 @@ void PostProcessStepProperties::destroy()
 
 void PostProcessStepProperties::set(PostProcessStep* step)
 {
-	m_propertyList->bind(step, 0);
+	m_propertyList->bind(step);
 }
 
 bool PostProcessStepProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const

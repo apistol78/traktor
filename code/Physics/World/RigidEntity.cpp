@@ -36,7 +36,7 @@ void RigidEntity::destroy()
 	}
 }
 
-void RigidEntity::update(const world::EntityUpdate* update)
+void RigidEntity::update(const UpdateParams& update)
 {
 	if (m_entity)
 	{

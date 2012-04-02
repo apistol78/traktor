@@ -108,8 +108,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.bullet-2.77</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
+			<name>Extern.bullet-2.80</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -117,8 +117,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -135,8 +135,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -153,8 +153,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -171,8 +171,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -8321,10 +8321,6 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
@@ -8554,7 +8550,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -8687,7 +8683,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -9618,7 +9614,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -10380,7 +10376,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -10700,7 +10696,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -10838,7 +10834,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -10868,7 +10864,7 @@
 		<item ref="/object/projects/item[29]/dependencies/item[8]/project"/>
 		<item ref="/object/projects/item[29]/dependencies/item[9]/project"/>
 		<item ref="/object/projects/item[28]/dependencies/item[6]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.I18N.Editor</name>
@@ -10960,7 +10956,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -11684,7 +11680,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -11888,7 +11884,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -11917,6 +11913,10 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[40]/dependencies/item[5]/project"/>
@@ -11934,8 +11934,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
@@ -11953,8 +11953,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
@@ -11972,8 +11972,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -11991,8 +11991,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -12140,7 +12140,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -13824,7 +13824,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -14578,7 +14578,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -14925,7 +14925,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -15183,7 +15183,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -15478,7 +15478,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[9]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Weather.Editor</name>
@@ -15575,7 +15575,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[9]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[8]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -17043,7 +17043,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -17206,7 +17206,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -17290,7 +17290,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[9]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[8]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -17314,6 +17314,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[35]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -17618,7 +17622,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>

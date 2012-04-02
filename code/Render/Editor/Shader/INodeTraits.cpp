@@ -21,7 +21,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.INodeTraits", INodeTraits, Object)
 
 const INodeTraits* INodeTraits::find(const Node* node)
 {
-	// Allow a race to initializing traits; lock at write.
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
+
 	if (s_traits.empty())
 	{
 		SmallMap< const TypeInfo*, Ref< INodeTraits > > traits;
@@ -42,10 +43,7 @@ const INodeTraits* INodeTraits::find(const Node* node)
 		}
 
 		// Update global traits.
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
-			s_traits = traits;
-		}
+		s_traits = traits;
 	}
 
 	// Find traits from node type.

@@ -57,6 +57,10 @@ public:
 
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
+	virtual void handleWorkspaceOpened();
+
+	virtual void handleWorkspaceClosed();
+
 private:
 	struct EditTarget
 	{
@@ -110,17 +114,18 @@ private:
 	action_queue_t m_targetActionQueue;
 	// \}
 
+	Thread* m_threadHostEnumerator;
 	Thread* m_threadTargetManager;
 	Thread* m_threadConnectionManager;
 	Thread* m_threadTargetActions;
-
-	void collectTargets();
 
 	void eventToolBarClick(ui::Event* event);
 
 	void eventTargetListPlay(ui::Event* event);
 
 	void eventTargetListStop(ui::Event* event);
+
+	void threadHostEnumerator();
 
 	void threadTargetManager();
 

@@ -2,6 +2,7 @@
 #define traktor_MemberRefArray_H
 
 #include "Core/RefArray.h"
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberInplaceRef.h"
 
@@ -18,15 +19,18 @@ public:
 	typedef RefArray< Class > value_type;
 
 	MemberRefArray(const wchar_t* const name, value_type& ref)
-	:	MemberArray(name)
+	:	MemberArray(name, &m_attribute)
+	,	m_attribute(type_of< Class >())
 	,	m_ref(ref)
 	,	m_index(0)
 	{
 	}
 
-	virtual const TypeInfo* getType() const
+	MemberRefArray(const wchar_t* const name, value_type& ref, const Attribute& attributes)
+	:	MemberArray(name, &attributes)
+	,	m_ref(ref)
+	,	m_index(0)
 	{
-		return &Class::getClassTypeInfo();
 	}
 
 	virtual void reserve(size_t size, size_t capacity) const
@@ -57,6 +61,7 @@ public:
 	}
 
 private:
+	AttributeType m_attribute;
 	value_type& m_ref;
 	mutable size_t m_index;
 };

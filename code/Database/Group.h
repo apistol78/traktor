@@ -23,6 +23,7 @@ class Guid;
 	namespace db
 	{
 
+class IGroupEventListener;
 class IInstanceEventListener;
 class IProviderGroup;
 class Instance;
@@ -66,14 +67,15 @@ private:
 	friend class Database;
 
 	mutable Semaphore m_lock;
-	IInstanceEventListener* m_eventListener;
+	IGroupEventListener* m_groupEventListener;
+	IInstanceEventListener* m_instanceEventListener;
 	Ref< IProviderGroup > m_providerGroup;
 	Group* m_parent;
 	std::wstring m_name;
 	RefArray< Group > m_childGroups;
 	RefArray< Instance > m_childInstances;
 
-	Group(IInstanceEventListener* eventListener);
+	Group(IGroupEventListener* groupEventListener, IInstanceEventListener* instanceEventListener);
 
 	bool internalCreate(IProviderGroup* providerGroup, Group* parent);
 

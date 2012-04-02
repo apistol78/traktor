@@ -7,6 +7,7 @@
 #include "Core/Serialization/AttributeMultiLine.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
+#include "Core/Serialization/AttributeReadOnly.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
@@ -465,7 +466,7 @@ bool InspectReflector::operator >> (const Member< ISerializable* >& m)
 		m_propertyItemStack.push_back(propertyItem);
 
 		int32_t version = type_of(object).getVersion();
-		if (!serialize(object, version, 0))
+		if (!serialize(object, version))
 			return false;
 
 		m_propertyItemStack.pop_back();
@@ -481,7 +482,14 @@ bool InspectReflector::operator >> (const Member< void* >& m)
 
 bool InspectReflector::operator >> (const MemberArray& m)
 {
-	Ref< ArrayPropertyItem > propertyItem = new ArrayPropertyItem(stylizeMemberName(m.getName()), m.getType());
+	const AttributeType* memberType = findAttribute< AttributeType >(m);
+	const AttributeReadOnly* memberReadOnly = findAttribute< AttributeReadOnly >(m);
+
+	Ref< ArrayPropertyItem > propertyItem = new ArrayPropertyItem(
+		stylizeMemberName(m.getName()),
+		memberType ? &(memberType->getMemberType()) : 0,
+		memberReadOnly ? true : false
+	);
 	addPropertyItem(propertyItem);
 	
 	m_propertyItemStack.push_back(propertyItem);

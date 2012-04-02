@@ -51,7 +51,7 @@ void PropertiesView::destroy()
 	ui::Container::destroy();
 }
 
-void PropertiesView::setPropertyObject(ISerializable* object, ISerializable* outer)
+void PropertiesView::setPropertyObject(ISerializable* object)
 {
 	if (object != m_propertyObject)
 	{
@@ -62,7 +62,7 @@ void PropertiesView::setPropertyObject(ISerializable* object, ISerializable* out
 		m_propertyList->hide();
 
 		// Bind property object.
-		m_propertyList->bind(object, outer);
+		m_propertyList->bind(object);
 
 		// Restore state of last property object of same type.
 		if (object)

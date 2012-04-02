@@ -85,7 +85,7 @@ void LodMeshEntity::render(
 	worldContext.build(worldRenderView, worldRenderPass, m_lods[lod]);
 }
 
-void LodMeshEntity::update(const world::EntityUpdate* update)
+void LodMeshEntity::update(const UpdateParams& update)
 {
 	for (RefArray< MeshEntity >::iterator i = m_lods.begin(); i != m_lods.end(); ++i)
 		(*i)->update(update);

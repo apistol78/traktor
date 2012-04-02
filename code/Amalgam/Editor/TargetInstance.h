@@ -61,7 +61,7 @@ public:
 
 	int32_t getBuildProgress() const;
 
-	void update();
+	bool update();
 
 	void addConnection(TargetConnection* connection);
 

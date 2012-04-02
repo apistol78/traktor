@@ -178,7 +178,7 @@ Aabb3 OceanEntity::getBoundingBox() const
 	return Aabb3();
 }
 
-void OceanEntity::update(const world::EntityUpdate* update)
+void OceanEntity::update(const UpdateParams& update)
 {
 }
 

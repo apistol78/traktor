@@ -39,7 +39,7 @@ LD_MODULES="
 	$FORCE libTraktor.Video.a
 	$FORCE libTraktor.Online.a
 	$FORCE libTraktor.Amalgam.a
-	libExtern.bullet-2.77.a
+	libExtern.bullet-2.80.a
 	libExtern.expat-2.0.0.a
 	libExtern.jpeg-6b.a
 	libExtern.libflac-1.2.1.a

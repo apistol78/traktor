@@ -305,10 +305,13 @@ void SoundSystem::threadMixer()
 			
 			for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 			{
+				if (!m_requestBlocks[i].samples[k])
+					continue;
+
 				for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
 				{
 					float strength = m_desc.cm[j][k] * m_volume;
-					if (m_requestBlocks[i].samples[k] && abs(strength) >= FUZZY_EPSILON)
+					if (abs(strength) >= FUZZY_EPSILON)
 					{
 						m_mixer->addMulConst(
 							frameBlock.samples[j],
@@ -318,6 +321,7 @@ void SoundSystem::threadMixer()
 						);
 					}
 				}
+
 				m_mixer->synchronize();
 			}
 		}

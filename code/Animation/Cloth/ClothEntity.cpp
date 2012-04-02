@@ -5,7 +5,6 @@
 #include "Render/Context/RenderContext.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
-#include "World/Entity/EntityUpdate.h"
 
 namespace traktor
 {
@@ -275,7 +274,7 @@ Aabb3 ClothEntity::getBoundingBox() const
 	return m_aabb;
 }
 
-void ClothEntity::update(const world::EntityUpdate* update)
+void ClothEntity::update(const UpdateParams& update)
 {
 #if !TARGET_OS_IPHONE
 	const float c_updateDeltaTime = 1.0f / 30.0f;
@@ -289,7 +288,7 @@ void ClothEntity::update(const world::EntityUpdate* update)
 	Vector4 gravity = transformInv * Vector4(0.0f, -0.5f, 0.0f, 0.0f);
 	Vector4 wind = transformInv * Vector4(0.0f, 0.0f, -0.6f, 0.0f) * Scalar(traktor::cosf(m_time * 0.25f));
 
-	for (m_time += update->getDeltaTime() * c_timeScale; m_updateTime < m_time; m_updateTime += c_updateDeltaTime)
+	for (m_time += update.deltaTime * c_timeScale; m_updateTime < m_time; m_updateTime += c_updateDeltaTime)
 	{
 		m_aabb = Aabb3();
 		for (AlignedVector< Node >::iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)

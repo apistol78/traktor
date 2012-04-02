@@ -36,7 +36,7 @@ public:
 
 	void destroy();
 
-	void setPropertyObject(ISerializable* object, ISerializable* outer);
+	void setPropertyObject(ISerializable* object);
 
 	Ref< ISerializable > getPropertyObject();
 

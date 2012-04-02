@@ -29,6 +29,7 @@
 #include "Input/RumbleEffectFactory.h"
 #include "Input/RumbleEffectPlayer.h"
 #include "Input/Binding/InputMapping.h"
+#include "Input/Binding/InputMappingResource.h"
 #include "Input/Binding/InputMappingSourceData.h"
 #include "Input/Binding/InputMappingStateData.h"
 #include "Input/Binding/InputSourceFabricator.h"
@@ -107,12 +108,15 @@ bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 	Guid defaultSourceDataGuid(defaultSettings->getProperty< PropertyString >(L"Input.Default"));
 	if (defaultSourceDataGuid.isNotNull())
 	{
-		m_inputMappingDefaultSourceData = db->getObjectReadOnly< input::InputMappingSourceData >(defaultSourceDataGuid);
-		if (!m_inputMappingDefaultSourceData)
+		Ref< input::InputMappingResource > inputMappingResource = db->getObjectReadOnly< input::InputMappingResource >(defaultSourceDataGuid);
+		if (!inputMappingResource)
 		{
-			log::error << L"Input server failed; unable to read default input mapping" << Endl;
+			log::error << L"Input server failed; unable to read default input configuration" << Endl;
 			return false;
 		}
+
+		m_inputMappingDefaultSourceData = inputMappingResource->getSourceData();
+		m_inputMappingStateData = inputMappingResource->getStateData();
 	}
 
 	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< PropertyObject >(L"Input.Sources"));
@@ -124,6 +128,12 @@ bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 	m_inputFabricatorAborted = false;
 	m_inputActive = false;
+
+	if (m_inputMappingSourceData && m_inputMappingStateData)
+	{
+		m_inputMapping = new input::InputMapping();
+		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+	}
 	
 	return true;
 }

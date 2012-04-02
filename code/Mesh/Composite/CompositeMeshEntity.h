@@ -37,7 +37,7 @@ public:
 		float distance
 	);
 
-	virtual void update(const world::EntityUpdate* update);
+	virtual void update(const UpdateParams& update);
 
 	void addMeshEntity(const std::wstring& name, MeshEntity* meshEntity);
 

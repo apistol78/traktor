@@ -9,17 +9,17 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SCENE_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
 {
-	namespace ui
+	namespace db
 	{
 
-class Command;
+class Instance;
 
 	}
 
@@ -38,9 +38,17 @@ class IResourceFactory;
 
 	}
 
+	namespace ui
+	{
+
+class Command;
+
+	}
+
 	namespace world
 	{
 
+class EntityData;
 class IEntityFactory;
 class IEntityRenderer;
 
@@ -136,6 +144,16 @@ public:
 	virtual void createEntityEditorFactories(
 		SceneEditorContext* context,
 		RefArray< IEntityEditorFactory >& outEntityEditorFactories
+	) const = 0;
+
+	/*! \brief Create entity from database instance.
+	 *
+	 * \param instance Database instance.
+	 * \return Entity data from instance.
+	 */
+	virtual Ref< world::EntityData > createEntityData(
+		SceneEditorContext* context,
+		db::Instance* instance
 	) const = 0;
 };
 

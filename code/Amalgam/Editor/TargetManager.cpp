@@ -53,10 +53,15 @@ void TargetManager::removeInstance(TargetInstance* targetInstance)
 bool TargetManager::update()
 {
 	net::SocketSet socketSet, socketSetResult;
+	bool needUpdate = false;
 
-	// Update all targets.
+	// Update all targets; if any has been disconnected then we return true in order
+	// to update user interface.
 	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
-		(*i)->update();
+	{
+		if ((*i)->update())
+			needUpdate |= true;
+	}
 
 	// Gather all sockets so we can wait on all simultaneously.
 	socketSet.add(m_listenSocket);
@@ -69,7 +74,7 @@ bool TargetManager::update()
 
 	// Wait on all sockets.
 	if (socketSet.select(true, false, false, 100, socketSetResult) <= 0)
-		return false;
+		return needUpdate;
 
 	// Check if any pending connection available.
 	if (m_listenSocket->select(true, false, false, 0))
@@ -98,6 +103,7 @@ bool TargetManager::update()
 				{
 					// Create connection object and add to instance.
 					instance->addConnection(new TargetConnection(socket));
+					needUpdate |= true;
 					log::info << L"New target connection accepted; ID " << targetId->getId().format() << Endl;
 				}
 				else
@@ -116,7 +122,7 @@ bool TargetManager::update()
 		}
 	}
 
-	return true;
+	return needUpdate;
 }
 
 	}

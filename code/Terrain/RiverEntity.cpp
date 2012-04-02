@@ -200,7 +200,7 @@ Aabb3 RiverEntity::getBoundingBox() const
 	return Aabb3();
 }
 
-void RiverEntity::update(const world::EntityUpdate* update)
+void RiverEntity::update(const UpdateParams& update)
 {
 }
 

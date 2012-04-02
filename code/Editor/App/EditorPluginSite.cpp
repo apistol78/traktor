@@ -36,6 +36,16 @@ void EditorPluginSite::handleDatabaseEvent(const Guid& eventId)
 	m_editorPlugin->handleDatabaseEvent(eventId);
 }
 
+void EditorPluginSite::handleWorkspaceOpened()
+{
+	m_editorPlugin->handleWorkspaceOpened();
+}
+
+void EditorPluginSite::handleWorkspaceClosed()
+{
+	m_editorPlugin->handleWorkspaceClosed();
+}
+
 void EditorPluginSite::setPropertyObject(Object* properties)
 {
 }

@@ -21,7 +21,7 @@ SoundSystemFactory::SoundSystemFactory(editor::IEditor* editor)
 
 Ref< SoundSystem > SoundSystemFactory::createSoundSystem() const
 {
-	Ref< PropertyGroup > settings = m_editor->getSettings();
+	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
 
 	std::wstring soundDriverTypeName = settings->getProperty< PropertyString >(L"Editor.SoundDriver");

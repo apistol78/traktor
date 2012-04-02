@@ -22,6 +22,8 @@ namespace traktor
 class StringOutputStreamBuffer : public IOutputStreamBuffer
 {
 public:
+	StringOutputStreamBuffer();
+
 	virtual int overflow(const wchar_t* buffer, int count);
 
 private:

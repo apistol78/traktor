@@ -165,6 +165,9 @@ Size ToolBar::getPreferedSize() const
 
 void ToolBar::eventMouseMove(Event* event)
 {
+	if (!isEnable())
+		return;
+
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 	ToolBarItem* item = getItem(mouseEvent->getPosition());
 	if (item != m_trackItem)
@@ -205,6 +208,9 @@ void ToolBar::eventMouseMove(Event* event)
 
 void ToolBar::eventButtonDown(Event* event)
 {
+	if (!isEnable())
+		return;
+
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 	ToolBarItem* item = getItem(mouseEvent->getPosition());
 	if (item)
@@ -216,6 +222,9 @@ void ToolBar::eventButtonDown(Event* event)
 
 void ToolBar::eventButtonUp(Event* event)
 {
+	if (!isEnable())
+		return;
+
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 	ToolBarItem* item = getItem(mouseEvent->getPosition());
 	if (item)

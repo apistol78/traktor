@@ -3,23 +3,10 @@
 namespace traktor
 {
 
-MemberArray::MemberArray(const wchar_t* const name)
+MemberArray::MemberArray(const wchar_t* const name, const Attribute* attributes)
 :	m_name(name)
+,	m_attributes(attributes)
 {
-}
-
-MemberArray::~MemberArray()
-{
-}
-
-const wchar_t* const MemberArray::getName() const
-{
-	return m_name;
-}
-
-const TypeInfo* MemberArray::getType() const
-{
-	return 0;
 }
 
 }

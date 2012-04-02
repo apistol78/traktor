@@ -45,8 +45,6 @@ public:
 
 	virtual ISerializable* getCurrentObject() = 0;
 
-	virtual ISerializable* getOuterObject() = 0;
-
 	virtual bool operator >> (const Member< bool >& m) = 0;
 
 	virtual bool operator >> (const Member< int8_t >& m) = 0;
@@ -105,12 +103,6 @@ public:
 	T* getCurrentObject()
 	{
 		return dynamic_type_cast< T* >(getCurrentObject());
-	}
-
-	template < typename T >
-	T* getOuterObject()
-	{
-		return dynamic_type_cast< T* >(getOuterObject());
 	}
 };
 

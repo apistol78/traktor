@@ -27,18 +27,16 @@ void removeAllChildren(PropertyList* list, PropertyItem* item)
 		
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.AutoPropertyList", AutoPropertyList, PropertyList)
 
-bool AutoPropertyList::bind(ISerializable* object, ISerializable* outer)
+bool AutoPropertyList::bind(ISerializable* object)
 {
 	removeAllPropertyItems();
 	if (!(m_object = object))
 		return true;
 
-	m_outer = outer;
-
 	int32_t version = type_of(m_object).getVersion();
 
 	InspectReflector reflector(this);
-	if (!reflector.serialize(m_object, version, m_outer))
+	if (!reflector.serialize(m_object, version))
 		return false;
 
 	update();
@@ -54,7 +52,7 @@ bool AutoPropertyList::refresh()
 	int32_t version = type_of(m_object).getVersion();
 
 	InspectReflector reflector(this);
-	if (!reflector.serialize(m_object, version, m_outer))
+	if (!reflector.serialize(m_object, version))
 		return false;
 
 	update();
@@ -71,7 +69,7 @@ bool AutoPropertyList::refresh(PropertyItem* parent, ISerializable* object)
 		int32_t version = type_of(object).getVersion();
 
 		InspectReflector reflector(this, parent);
-		if (!reflector.serialize(object, version, m_outer))
+		if (!reflector.serialize(object, version))
 			return false;
 	}
 
@@ -89,8 +87,7 @@ bool AutoPropertyList::apply()
 	ApplyReflector reflector(this);
 	return reflector.serialize(
 		m_object,
-		version,
-		m_outer
+		version
 	);
 }
 

@@ -12,7 +12,7 @@ NullEntity::NullEntity(const Transform& transform)
 {
 }
 
-void NullEntity::update(const EntityUpdate* update)
+void NullEntity::update(const UpdateParams& update)
 {
 	m_transform.step();
 }

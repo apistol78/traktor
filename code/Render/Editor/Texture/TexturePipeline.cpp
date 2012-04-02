@@ -5,6 +5,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/String.h"
@@ -66,11 +67,59 @@ struct ScaleTextureTask : public Object
 	Ref< const drawing::Image > image;
 	Ref< drawing::ScaleFilter > filter;
 	Ref< drawing::Image > output;
+	float alphaCoverageDesired;
+	float alphaCoverageRef;
 
 	void execute()
 	{
 		output = image->applyFilter(filter);
 		T_ASSERT (output);
+
+		if (alphaCoverageDesired > 0.0f)
+		{
+			float alphaRefMin = 0.0f;
+			float alphaRefMax = 1.0f;
+			float alphaRefMid = 0.5f;
+
+			for (int32_t i = 0; i < 10; ++i)
+			{
+				float alphaCoverageMip = 0.0f;
+
+				for (int32_t y = 0; y < output->getHeight(); ++y)
+				{
+					for (int32_t x = 0; x < output->getWidth(); ++x)
+					{
+						Color4f color;
+						output->getPixelUnsafe(x, y, color);
+						alphaCoverageMip += (color.getAlpha() > alphaRefMid) ? 1.0f : 0.0f;
+					}
+				}
+
+				alphaCoverageMip /= float(output->getWidth() * output->getHeight());
+
+				if (alphaCoverageMip > alphaCoverageDesired + FUZZY_EPSILON)
+					alphaRefMin = alphaRefMid;
+				else if (alphaCoverageMip < alphaCoverageDesired - FUZZY_EPSILON)
+					alphaRefMax = alphaRefMid;
+				else
+					break;
+
+				alphaRefMid = (alphaRefMin + alphaRefMax) / 2.0f;
+			}
+
+			float alphaScale = alphaCoverageRef / alphaRefMid;
+
+			for (int32_t y = 0; y < output->getHeight(); ++y)
+			{
+				for (int32_t x = 0; x < output->getWidth(); ++x)
+				{
+					Color4f color;
+					output->getPixelUnsafe(x, y, color);
+					color.setAlpha(clamp(color.getAlpha() * Scalar(alphaScale), Scalar(0.0f), Scalar(1.0f)));
+					output->setPixelUnsafe(x, y, color);
+				}
+			}
+		}
 	}
 };
 
@@ -381,6 +430,25 @@ bool TexturePipeline::buildOutput(
 
 			log::info << L"Executing mip generation task(s)..." << Endl;
 
+			// Estimate alpha coverage if desired.
+			float alphaCoverage = -1.0f;
+			if (textureAsset->m_preserveAlphaCoverage)
+			{
+				alphaCoverage = 0.0f;
+				for (int32_t y = 0; y < image->getHeight(); ++y)
+				{
+					for (int32_t x = 0; x < image->getWidth(); ++x)
+					{
+						Color4f color;
+						image->getPixelUnsafe(x, y, color);
+						alphaCoverage += (color.getAlpha() > textureAsset->m_alphaCoverageReference) ? 1.0f : 0.0f;
+					}
+				}
+				alphaCoverage /= float(image->getWidth() * image->getHeight());
+				log::info << L"Estimated alpha coverage " << toString(alphaCoverage * 100.0f, 2) << L"%" << Endl;
+			}
+
+			// Create task for each mip level.
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
 				int32_t mipWidth = std::max(width >> i, 1);
@@ -398,6 +466,8 @@ bool TexturePipeline::buildOutput(
 						drawing::ScaleFilter::MgLinear,
 						textureAsset->m_keepZeroAlpha
 					);
+				task->alphaCoverageDesired = alphaCoverage;
+				task->alphaCoverageRef = textureAsset->m_alphaCoverageReference;
 
 				Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
 

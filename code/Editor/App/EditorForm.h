@@ -82,7 +82,23 @@ public:
 	/*! \name IEditor implementation */
 	//@{
 
-	virtual Ref< PropertyGroup > getSettings() const;
+	virtual Ref< const PropertyGroup > getSettings() const;
+
+	virtual Ref< const PropertyGroup > getGlobalSettings() const;
+
+	virtual Ref< const PropertyGroup > getWorkspaceSettings() const;
+
+	virtual Ref< PropertyGroup > checkoutGlobalSettings();
+
+	virtual void commitGlobalSettings();
+
+	virtual void revertGlobalSettings();
+
+	virtual Ref< PropertyGroup > checkoutWorkspaceSettings();
+
+	virtual void commitWorkspaceSettings();
+
+	virtual void revertWorkspaceSettings();
 
 	virtual Ref< db::Database > getSourceDatabase() const;
 
@@ -145,7 +161,6 @@ private:
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
 	Ref< LogView > m_logView;
-	Ref< PropertyGroup > m_settings;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IEditorPage > m_activeEditorPage;
@@ -155,6 +170,18 @@ private:
 	Thread* m_threadAssetMonitor;
 	Thread* m_threadBuild;
 	Semaphore m_lockBuild;
+	std::wstring m_workspacePath;
+	Ref< PropertyGroup > m_globalSettings;
+	Ref< PropertyGroup > m_workspaceSettings;
+	Ref< PropertyGroup > m_mergedSettings;
+
+	bool createWorkspace();
+
+	bool openWorkspace();
+
+	bool openWorkspace(const std::wstring& workspacePath);
+
+	void closeWorkspace();
 
 	void setPropertyObject(Object* properties);
 
@@ -191,10 +218,6 @@ private:
 	void activatePreviousEditor();
 
 	void activateNextEditor();
-
-	Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile);
-
-	void saveSettings(const std::wstring& settingsFile);
 
 	void loadDictionary();
 

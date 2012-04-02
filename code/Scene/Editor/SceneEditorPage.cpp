@@ -54,7 +54,6 @@
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/GroupEntityData.h"
-#include "World/Entity/ExternalEntityData.h"
 
 // Resources
 #include "Resources/EntityEdit.h"
@@ -269,15 +268,22 @@ void SceneEditorPage::deactivate()
 
 bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& position)
 {
-	const TypeInfo* primaryType = instance->getPrimaryType();
-	T_ASSERT (primaryType);
-
 	// Get index of view where user dropped instance.
 	uint32_t viewIndex;
 	if (!m_editControl->getViewIndex(position, viewIndex))
 		return false;
 
-	if (is_type_of< world::EntityData >(*primaryType))
+	Ref< world::EntityData > entityData;
+
+	// Check profiles if any can convert instance into an entity data.
+	const RefArray< ISceneEditorProfile >& editorProfiles = m_context->getEditorProfiles();
+	for (RefArray< ISceneEditorProfile >::const_iterator i = editorProfiles.begin(); i != editorProfiles.end(); ++i)
+	{
+		if ((entityData = (*i)->createEntityData(m_context, instance)) != 0)
+			break;
+	}
+
+	if (entityData)
 	{
 		Ref< EntityAdapter > parentGroupAdapter;
 
@@ -298,12 +304,6 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 			if (!parentGroupAdapter)
 				return false;
 		}
-
-		// Create external reference to entity data.
-		Ref< world::EntityData > entityData = new world::ExternalEntityData(instance->getGuid());
-
-		// Use name of instance as external entity's name.
-		entityData->setName(instance->getName());
 
 		m_context->getDocument()->push();
 

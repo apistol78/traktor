@@ -14,7 +14,14 @@ class MemberStaticArray : public MemberArray
 {
 public:
 	MemberStaticArray(const wchar_t* const name, ValueType* arr)
-	:	MemberArray(name)
+	:	MemberArray(name, 0)
+	,	m_arr(arr)
+	,	m_index(0)
+	{
+	}
+
+	MemberStaticArray(const wchar_t* const name, ValueType* arr, const Attribute& attributes)
+	:	MemberArray(name, &attributes)
 	,	m_arr(arr)
 	,	m_index(0)
 	{

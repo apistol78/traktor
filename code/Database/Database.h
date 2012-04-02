@@ -6,6 +6,7 @@
 #include "Core/Guid.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/ConnectionString.h"
+#include "Database/IGroupEventListener.h"
 #include "Database/IInstanceEventListener.h"
 #include "Database/Types.h"
 
@@ -40,6 +41,7 @@ class Instance;
 class T_DLLCLASS Database
 :	public Object
 ,	public IInstanceEventListener
+,	public IGroupEventListener
 {
 	T_RTTI_CLASS;
 
@@ -141,6 +143,13 @@ private:
 	virtual void instanceEventRenamed(Instance* instance, const std::wstring& previousName);
 
 	virtual void instanceEventCommitted(Instance* instance);
+
+	// \}
+
+	// \name IGroupEventListener
+	// \{
+
+	virtual void groupEventRenamed(Group* group, const std::wstring& previousName);
 
 	// \}
 };

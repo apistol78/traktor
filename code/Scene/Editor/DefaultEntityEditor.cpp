@@ -254,6 +254,9 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	}
 	else
 	{
+		if (!m_entityAdapter->getParent())
+			return;
+
 		primitiveRenderer->pushWorld(transform.toMatrix44());
 		if (m_entityAdapter->isSelected())
 		{

@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Database/Group.h"
+#include "Database/IGroupEventListener.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Database/Provider/IProviderGroup.h"
@@ -44,7 +45,13 @@ bool Group::rename(const std::wstring& name)
 	if (!m_providerGroup->rename(name))
 		return false;
 
+	std::wstring previousName = m_name;
+
 	m_name = name;
+
+	if (m_groupEventListener)
+		m_groupEventListener->groupEventRenamed(this, previousName);
+
 	return true;
 }
 
@@ -80,7 +87,7 @@ Ref< Group > Group::createGroup(const std::wstring& groupName)
 	if (!providerGroup)
 		return 0;
 
-	group = new Group(m_eventListener);
+	group = new Group(m_groupEventListener, m_instanceEventListener);
 	if (!group->internalCreate(providerGroup, this))
 		return 0;
 
@@ -172,8 +179,9 @@ bool Group::getChildInstances(RefArray< Instance >& outChildInstances)
 	return true;
 }
 
-Group::Group(IInstanceEventListener* eventListener)
-:	m_eventListener(eventListener)
+Group::Group(IGroupEventListener* groupEventListener, IInstanceEventListener* instanceEventListener)
+:	m_groupEventListener(groupEventListener)
+,	m_instanceEventListener(instanceEventListener)
 ,	m_parent(0)
 {
 }
@@ -195,7 +203,7 @@ bool Group::internalCreate(IProviderGroup* providerGroup, Group* parent)
 	m_childGroups.reserve(providerChildGroups.size());
 	for (RefArray< IProviderGroup >::iterator i = providerChildGroups.begin(); i != providerChildGroups.end(); ++i)
 	{
-		Ref< Group > childGroup = new Group(m_eventListener);
+		Ref< Group > childGroup = new Group(m_groupEventListener, m_instanceEventListener);
 		if (!childGroup->internalCreate(*i, this))
 			return false;
 
@@ -222,7 +230,7 @@ void Group::internalDestroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	m_eventListener = 0;
+	m_instanceEventListener = 0;
 	m_providerGroup = 0;
 	m_parent = 0;
 	m_name = L"";
@@ -249,7 +257,7 @@ bool Group::internalAddExtGroup(const std::wstring& groupName)
 	{
 		if ((*i)->getName() == groupName)
 		{
-			Ref< Group > childGroup = new Group(m_eventListener);
+			Ref< Group > childGroup = new Group(m_groupEventListener, m_instanceEventListener);
 			if (!childGroup->internalCreate(*i, this))
 				return false;
 
@@ -291,7 +299,7 @@ void Group::instanceEventCreated(Instance* instance)
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		m_childInstances.push_back(instance);
 	}
-	m_eventListener->instanceEventCreated(instance);
+	m_instanceEventListener->instanceEventCreated(instance);
 }
 
 void Group::instanceEventRemoved(Instance* instance)
@@ -303,22 +311,22 @@ void Group::instanceEventRemoved(Instance* instance)
 		T_ASSERT (i != m_childInstances.end());
 		m_childInstances.erase(i);
 	}
-	m_eventListener->instanceEventRemoved(instance);
+	m_instanceEventListener->instanceEventRemoved(instance);
 }
 
 void Group::instanceEventGuidChanged(Instance* instance, const Guid& previousGuid)
 {
-	m_eventListener->instanceEventGuidChanged(instance, previousGuid);
+	m_instanceEventListener->instanceEventGuidChanged(instance, previousGuid);
 }
 
 void Group::instanceEventRenamed(Instance* instance, const std::wstring& previousName)
 {
-	m_eventListener->instanceEventRenamed(instance, previousName);
+	m_instanceEventListener->instanceEventRenamed(instance, previousName);
 }
 
 void Group::instanceEventCommitted(Instance* instance)
 {
-	m_eventListener->instanceEventCommitted(instance);
+	m_instanceEventListener->instanceEventCommitted(instance);
 }
 
 	}

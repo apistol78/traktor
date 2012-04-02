@@ -31,10 +31,7 @@ public:
 	virtual bool apply(PropertyGroup* settings);
 
 private:
-	Ref< ui::Edit > m_editSourceDatabase;
-	Ref< ui::Edit > m_editOutputDatabase;
 	Ref< ui::Edit > m_editDictionary;
-	Ref< ui::Edit > m_editAssetPath;
 	Ref< ui::CheckBox > m_checkAutoSave;
 	Ref< ui::CheckBox > m_checkBuildWhenSourceModified;
 	Ref< ui::CheckBox > m_checkBuildWhenAssetModified;

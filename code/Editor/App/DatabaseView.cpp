@@ -309,11 +309,9 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
-	std::vector< std::wstring > rootInstances = m_editor->getSettings()->getProperty< PropertyStringArray >(L"Editor.RootInstances");
-	for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
-		m_rootInstances.insert(Guid(*i));
-
 	addTimerEventHandler(createMethodHandler(this, &DatabaseView::eventTimer));
+
+	setEnable(false);
 	return true;
 }
 
@@ -340,11 +338,17 @@ void DatabaseView::updateView()
 
 	if (m_db)
 	{
+		m_rootInstances.clear();
+
+		std::vector< std::wstring > rootInstances = m_editor->getSettings()->getProperty< PropertyStringArray >(L"Editor.RootInstances");
+		for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
+			m_rootInstances.insert(Guid(*i));
+
 		buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
-		m_treeDatabase->setEnable(true);
+		setEnable(true);
 	}
 	else
-		m_treeDatabase->setEnable(false);
+		setEnable(false);
 
 	m_treeDatabase->applyState(m_treeState);
 	m_treeDatabase->update();
@@ -520,7 +524,9 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 			for (std::set< Guid >::iterator i = m_rootInstances.begin(); i != m_rootInstances.end(); ++i)
 				rootInstances.push_back(i->format());
 
-			m_editor->getSettings()->setProperty< PropertyStringArray >(L"Editor.RootInstances", rootInstances);
+			Ref< PropertyGroup > workspaceSettings = m_editor->checkoutWorkspaceSettings();
+			workspaceSettings->setProperty< PropertyStringArray >(L"Editor.RootInstances", rootInstances);
+			m_editor->commitWorkspaceSettings();
 
 			updateView();
 		}

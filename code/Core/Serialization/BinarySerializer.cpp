@@ -646,7 +646,7 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				if (!read_primitive< int32_t >(m_stream, version))
 					return false;
 
-				if (!serialize(object, version, 0))
+				if (!serialize(object, version))
 					return false;
 
 				m_readCache[hash] = object;
@@ -700,7 +700,7 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 					return false;
 
 				m_writeCache[object] = hash;
-				if (!serialize(object, version, 0))
+				if (!serialize(object, version))
 					return false;
 			}
 		}

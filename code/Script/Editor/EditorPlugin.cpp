@@ -30,5 +30,13 @@ void EditorPlugin::handleDatabaseEvent(const Guid& eventId)
 {
 }
 
+void EditorPlugin::handleWorkspaceOpened()
+{
+}
+
+void EditorPlugin::handleWorkspaceClosed()
+{
+}
+
 	}
 }

@@ -3,7 +3,6 @@
 #include "Weather/Sky/SkyEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/EntityUpdate.h"
 
 namespace traktor
 {
@@ -85,7 +84,7 @@ Aabb3 SkyEntity::getBoundingBox() const
 	return Aabb3(Vector4(-c_radius, -c_radius, -c_radius, 1.0f), Vector4(c_radius, c_radius, c_radius, 1.0f));
 }
 
-void SkyEntity::update(const world::EntityUpdate* update)
+void SkyEntity::update(const UpdateParams& update)
 {
 }
 

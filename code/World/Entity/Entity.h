@@ -18,8 +18,6 @@ namespace traktor
 	namespace world
 	{
 
-class EntityUpdate;
-
 /*! \brief World entity base class.
  * \ingroup World
  */
@@ -28,6 +26,13 @@ class T_DLLCLASS Entity : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Entity update parameters. */
+	struct UpdateParams
+	{
+		float totalTime;	/*! \brief Total time since first update. */
+		float deltaTime;	/*! \brief Delta time since last update. */
+	};
+
 	virtual ~Entity();
 
 	/*! \brief Destroy entity resources.
@@ -71,9 +76,9 @@ public:
 
 	/*! \brief Update entity.
 	 *
-	 * \param update Update state.
+	 * \param update Update parameters.
 	 */
-	virtual void update(const EntityUpdate* update) = 0;
+	virtual void update(const UpdateParams& update) = 0;
 };
 
 	}

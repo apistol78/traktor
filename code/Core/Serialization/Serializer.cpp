@@ -37,26 +37,15 @@ ISerializable* Serializer::getCurrentObject()
 	return !m_constructing.empty() ? m_constructing.back().first : 0;
 }
 
-ISerializable* Serializer::getOuterObject()
-{
-	return !m_constructing.empty() ? m_constructing.front().first : 0;
-}
-
 int Serializer::getVersion() const
 {
 	return !m_constructing.empty() ? m_constructing.back().second : 0;
 }
 
-bool Serializer::serialize(ISerializable* inner, int version, ISerializable* outer)
+bool Serializer::serialize(ISerializable* inner, int version)
 {
 	if (!inner)
 		return false;
-
-	if (outer)
-		m_constructing.push_back(std::make_pair(
-			outer,
-			type_of(outer).getVersion()
-		));
 
 	m_constructing.push_back(std::make_pair(
 		inner,
@@ -66,9 +55,6 @@ bool Serializer::serialize(ISerializable* inner, int version, ISerializable* out
 	bool result = inner->serialize(*this);
 
 	m_constructing.pop_back();
-	if (outer)
-		m_constructing.pop_back();
-
 	return result;
 }
 

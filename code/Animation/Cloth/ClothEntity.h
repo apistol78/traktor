@@ -79,7 +79,7 @@ public:
 
 	virtual Aabb3 getBoundingBox() const;
 
-	virtual void update(const world::EntityUpdate* update);
+	virtual void update(const UpdateParams& update);
 
 	void reset();
 

@@ -60,7 +60,7 @@ public:
 
 	virtual Aabb3 getWorldBoundingBox() const;
 
-	virtual void update(const world::EntityUpdate* update);
+	virtual void update(const UpdateParams& update);
 
 	inline resource::Proxy< Effect >& getEffect() { return m_effect; }
 

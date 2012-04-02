@@ -40,7 +40,7 @@ bool DefaultObjectEditor::create(ui::Widget* parent, db::Instance* instance, ISe
 	m_propertyList->setSeparator(200);
 	m_propertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_propertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
-	m_propertyList->bind(m_object, 0);
+	m_propertyList->bind(m_object);
 
 	return true;
 }
