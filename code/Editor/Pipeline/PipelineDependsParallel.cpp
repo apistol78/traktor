@@ -138,7 +138,7 @@ Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_dependencyMapLock);
 
-	std::map< Guid, PipelineDependency* >::const_iterator i = m_dependencyMap.find(guid);
+	std::map< Guid, Ref< PipelineDependency > >::const_iterator i = m_dependencyMap.find(guid);
 	if (i != m_dependencyMap.end())
 	{
 		i->second->flags |= flags;

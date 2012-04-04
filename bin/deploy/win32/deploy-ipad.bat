@@ -17,8 +17,8 @@ if "%1"=="build" (
 	popd
 
 	rem Deploy iPad resources.
-	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\iPad\Info.plist .
-	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\iPad\Default.png Default.png
+	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\deploy\iPad\Info.plist .
+	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\deploy\iPad\Default.png Default.png
 	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\%DEPLOY_PROJECT_ICON:/=\% Icon.png
 	%TRAKTOR_HOME%\bin\Replace -e=utf8 Info.plist "$DEPLOY_PROJECT_NAME" "%DEPLOY_PROJECT_NAME%" "$DEPLOY_EXECUTABLE" "%DEPLOY_EXECUTABLE%" "$DEPLOY_PROJECT_IDENTIFIER" "%DEPLOY_PROJECT_IDENTIFIER%" >> %DEPLOY_PROJECT_ROOT%\deploy.log
 	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST% *.plist >> %DEPLOY_PROJECT_ROOT%\deploy.log
@@ -52,8 +52,8 @@ if "%1"=="build" (
 	popd
 
 	rem Deploy iPad resources.
-	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\iPad\Info.plist .
-	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\iPad\Default.png Default.png
+	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\deploy\iPad\Info.plist .
+	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\deploy\iPad\Default.png Default.png
 	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\%DEPLOY_PROJECT_ICON:/=\% Icon.png
 	%TRAKTOR_HOME%\bin\Replace -e=utf8 Info.plist "$DEPLOY_PROJECT_NAME" "%DEPLOY_PROJECT_NAME%" "$DEPLOY_EXECUTABLE" "%DEPLOY_EXECUTABLE%" "$DEPLOY_PROJECT_IDENTIFIER" "%DEPLOY_PROJECT_IDENTIFIER%" >> %DEPLOY_PROJECT_ROOT%\migrate.log
 	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST% *.plist >> %DEPLOY_PROJECT_ROOT%\migrate.log

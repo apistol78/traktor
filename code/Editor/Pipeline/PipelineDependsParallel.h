@@ -83,7 +83,7 @@ private:
 	Semaphore m_dependencyMapLock;
 	Semaphore m_dependenciesLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
-	std::map< Guid, PipelineDependency* > m_dependencyMap;
+	std::map< Guid, Ref< PipelineDependency > > m_dependencyMap;
 
 	Ref< PipelineDependency > findOrCreateDependency(
 		const Guid& guid,

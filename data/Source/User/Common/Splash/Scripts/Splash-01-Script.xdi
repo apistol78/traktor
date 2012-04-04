@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.script.Script" version="1">
+	<dependencies/>
+	<text>
+	<![CDATA[
+-- Splash common script
+-- Will exit to "NEXT" stage after 5 seconds.
+
+local _timeUntilNext
+
+function layerInit(stage)
+	_timeUntilNext = 5
+end
+
+function layerUpdate(stage, info)
+	_timeUntilNext = _timeUntilNext - info:getSimulationDeltaTime()
+	if _timeUntilNext < 0 then
+		stage:gotoStage("NEXT", nil)
+	end
+end
+
+	]]>
+	</text>
+</object>

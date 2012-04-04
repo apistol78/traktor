@@ -4,6 +4,7 @@
 	<platforms>
 		<ios>false</ios>
 		<linux>false</linux>
+		<mobile6>true</mobile6>
 		<osx>false</osx>
 		<ps3>false</ps3>
 		<win32>true</win32>

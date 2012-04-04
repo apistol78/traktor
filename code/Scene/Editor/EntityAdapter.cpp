@@ -54,17 +54,18 @@ std::wstring EntityAdapter::getTypeName() const
 
 void EntityAdapter::setTransform0(const Transform& transform)
 {
-	m_entityData->setTransform(transform);
+	if (m_entityData)
+		m_entityData->setTransform(transform);
 }
 
 Transform EntityAdapter::getTransform0() const
 {
-	return m_entityData->getTransform();
+	return m_entityData ? m_entityData->getTransform() : Transform::identity();
 }
 
 void EntityAdapter::setTransform(const Transform& transform)
 {
-	m_entityData->setTransform(transform);
+	setTransform0(transform);
 	if (m_entity)
 		m_entity->setTransform(transform);
 }
@@ -75,7 +76,7 @@ Transform EntityAdapter::getTransform() const
 	if (m_entity && m_entity->getTransform(transform))
 		return transform;
 	else
-		return m_entityData->getTransform();
+		return getTransform0();
 }
 
 Aabb3 EntityAdapter::getBoundingBox() const

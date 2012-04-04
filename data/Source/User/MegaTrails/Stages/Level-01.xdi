@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.parade.StageData">
+	<layers>
+		<item type="traktor.parade.WorldLayerData">
+			<name>World</name>
+			<script>{0E685E37-57E4-3B45-9F19-1641FBAD243C}</script>
+			<scene>{A61E2B68-377C-0D44-863E-24A8C7FCA9A4}</scene>
+			<entities/>
+		</item>
+	</layers>
+	<transitions/>
+</object>
