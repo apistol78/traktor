@@ -1,4 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.terrain.MaterialMaskAsset">
-	<fileName>$(TRAKTOR_HOME)/Data/Assets/User/Objects/Heightfield_01/Heightfield_01_Mask.png</fileName>
-</object>

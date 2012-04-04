@@ -1,0 +1,76 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.scene.SceneAsset" version="3">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="11">
+		<renderType>RtForward</renderType>
+		<viewNearZ>0.1</viewNearZ>
+		<viewFarZ>100</viewFarZ>
+		<depthPassEnabled>true</depthPassEnabled>
+		<shadowsEnabled>true</shadowsEnabled>
+		<shadowsProjection>SpUniform</shadowsProjection>
+		<shadowsQuality>SqNoFilter</shadowsQuality>
+		<shadowFarZ>10</shadowFarZ>
+		<shadowMapResolution>1024</shadowMapResolution>
+		<shadowMapBias>0.035</shadowMapBias>
+		<shadowCascadingSlices>1</shadowCascadingSlices>
+		<shadowCascadingLambda>0.25</shadowCascadingLambda>
+		<shadowQuantizeProjection>false</shadowQuantizeProjection>
+		<fogEnabled>false</fogEnabled>
+		<fogDistance>90</fogDistance>
+		<fogRange>10</fogRange>
+		<fogColor>255, 255, 255, 255</fogColor>
+	</worldRenderSettings>
+	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
+	<entityData type="traktor.world.GroupEntityData">
+		<name>Root</name>
+		<transform>
+			<translation>0, 0, 0, 0</translation>
+			<rotation>0, 0, 0, 1</rotation>
+		</transform>
+		<entityData>
+			<item type="traktor.world.DirectionalLightEntityData" version="1">
+				<name>Sun</name>
+				<transform>
+					<translation>0, 2.535147, 0, 0</translation>
+					<rotation>-0.363218, -0.926433, -0.004367, 0.09887</rotation>
+				</transform>
+				<sunColor>1, 1, 1, 0</sunColor>
+				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+				<shadowColor>0, 0, 0, 0</shadowColor>
+				<castShadow>true</castShadow>
+			</item>
+			<item type="traktor.world.NullEntityData">
+				<name>Camera</name>
+				<transform>
+					<translation>7.949873, 3.521351, -0.80417, 0</translation>
+					<rotation>0.100852, -0.729644, 0.110275, 0.667299</rotation>
+				</transform>
+			</item>
+			<item type="traktor.world.ExternalEntityData">
+				<name>Track-01-Entity</name>
+				<transform>
+					<translation>0, 0, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+				<guid>{98C91642-A5FB-174D-928B-26540990A7E2}</guid>
+			</item>
+			<item type="traktor.weather.SkyEntityData" version="1">
+				<name>Sky</name>
+				<transform>
+					<translation>0, 0, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+				<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
+				<sunDirection>0, 1, 0, 0</sunDirection>
+			</item>
+			<item type="traktor.world.ExternalEntityData">
+				<name>Player</name>
+				<transform>
+					<translation>1.723229, -0.460355, -1.690599, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+				<guid>{A33323FA-FCFA-A84F-A3C1-1243299FFC48}</guid>
+			</item>
+		</entityData>
+	</entityData>
+	<controllerData/>
+</object>

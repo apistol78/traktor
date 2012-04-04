@@ -10,6 +10,7 @@
 #include "World/Entity/EntityData.h"
 #include "World/Entity/IEntityFactory.h"
 #include "World/Entity/IEntitySchema.h"
+#include "World/Entity/NullEntity.h"
 
 namespace traktor
 {
@@ -175,8 +176,10 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
 		if (!(entity = entityFactory->createEntity(this, *entityData)))
 		{
-			log::error << L"Unable to create entity from \"" << type_name(entityData) << L"\"" << Endl;
-			return 0;
+			log::warning << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using null entity as placeholder" << Endl;
+			//return 0;
+
+			entity = new world::NullEntity(entityData->getTransform());
 		}
 	}
 

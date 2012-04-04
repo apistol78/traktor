@@ -4,6 +4,7 @@
 	<platforms>
 		<ios>true</ios>
 		<linux>true</linux>
+		<mobile6>true</mobile6>
 		<osx>true</osx>
 		<ps3>true</ps3>
 		<win32>true</win32>
@@ -16,8 +17,8 @@
 				<first>Editor.Modules</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
-						<item>Parade.Editor</item>
-						<item>Parade.Shared</item>
+						<item>Traktor.Parade</item>
+						<item>Traktor.Parade.Editor</item>
 					</value>
 				</second>
 			</item>
@@ -29,7 +30,7 @@
 				<first>Amalgam.Modules</first>
 				<second type="traktor.PropertyStringSet">
 					<value>
-						<item>Parade.Shared</item>
+						<item>Traktor.Parade</item>
 					</value>
 				</second>
 			</item>

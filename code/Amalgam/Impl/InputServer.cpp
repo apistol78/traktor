@@ -12,7 +12,9 @@
 #		include "Input/Xi/InputDriverXi.h"
 #	endif
 #	if !defined(_XBOX)
-#		include "Input/Di8/InputDriverDi8.h"
+#		if !defined(WINCE)
+#			include "Input/Di8/InputDriverDi8.h"
+#		endif
 #		include "Input/Win32/InputDriverWin32.h"
 #	endif
 #elif defined(_PS3)
@@ -79,9 +81,11 @@ bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 #	endif
 
+#	if !defined(WINCE)
 	Ref< input::InputDriverDi8 > inputDriverDi8 = new input::InputDriverDi8();
 	if (inputDriverDi8->create(0, input::CtMouse | input::CtJoystick))
 		m_inputSystem->addDriver(inputDriverDi8);
+#	endif
 
 	m_inputSystem->addDriver(new input::InputDriverWin32(input::CtKeyboard));
 	

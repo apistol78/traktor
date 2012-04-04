@@ -1,0 +1,346 @@
+#include "Amalgam/IEnvironment.h"
+#include "Amalgam/IUpdateInfo.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Parade/WorldLayer.h"
+#include "Render/IRenderView.h"
+#include "Scene/Scene.h"
+#include "World/IWorldRenderer.h"
+#include "World/WorldRenderSettings.h"
+#include "World/Entity/Entity.h"
+#include "World/Entity/EntityData.h"
+#include "World/Entity/GroupEntity.h"
+#include "World/Entity/NullEntity.h"
+#include "World/Entity/TransientEntity.h"
+#include "World/Entity/IEntityBuilder.h"
+#include "World/Entity/IEntitySchema.h"
+#include "World/PostProcess/PostProcess.h"
+
+namespace traktor
+{
+	namespace parade
+	{
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.WorldLayer", WorldLayer, Layer)
+
+WorldLayer::WorldLayer(
+	const std::wstring& name,
+	amalgam::IEnvironment* environment,
+	const resource::Proxy< script::IScriptContext >& scriptContext,
+	const resource::Proxy< scene::Scene >& scene,
+	const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
+)
+:	Layer(name, scriptContext)
+,	m_environment(environment)
+,	m_scene(scene)
+,	m_entities(entities)
+,	m_dynamicEntities(new world::GroupEntity())
+,	m_deltaTime(0.0f)
+,	m_controllerEnable(true)
+{
+	T_ASSERT (m_scene.valid());
+
+	// Add our dynamic entity group to scene root.
+	world::GroupEntity* rootGroupEntity = dynamic_type_cast< world::GroupEntity* >(m_scene->getRootEntity());
+	if (rootGroupEntity)
+		rootGroupEntity->addEntity(m_dynamicEntities);
+}
+
+void WorldLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
+{
+	if (!m_scene.valid())
+	{
+		// In case scene being revalidated due to resource been flushed we must
+		// remove our dynamic entity group first to prevent it from being destroyed.
+		if (m_scene)
+		{
+			world::GroupEntity* rootGroupEntity = dynamic_type_cast< world::GroupEntity* >(m_scene->getRootEntity());
+			if (rootGroupEntity)
+				rootGroupEntity->removeEntity(m_dynamicEntities);
+		}
+
+		// Re-validate scene; ie will replace scene instance with new instance
+		// from resource manager.
+		if (!m_scene.validate())
+			return;
+
+		// Add our dynamic entity group to scene root.
+		world::GroupEntity* rootGroupEntity = dynamic_type_cast< world::GroupEntity* >(m_scene->getRootEntity());
+		if (rootGroupEntity)
+			rootGroupEntity->addEntity(m_dynamicEntities);
+
+		// Scene has been successfully validated; drop existing world renderer if we've been flushed.
+		m_worldRenderer = 0;
+	}
+
+	// Re-create world renderer.
+	if (!m_worldRenderer)
+	{
+		createWorldRenderer();
+		if (!m_worldRenderer)
+			return;
+	}
+
+	// We're about to initialize script; ensure dynamic factories and renderers are cleared.
+	if (!isInitialized())
+	{
+		for (RefArray< world::IEntityFactory >::iterator i = m_dynamicFactories.begin(); i != m_dynamicFactories.end(); ++i)
+			m_environment->getWorld()->removeEntityFactory(*i);
+
+		for (RefArray< world::IEntityRenderer >::iterator i = m_dynamicRenderers.begin(); i != m_dynamicRenderers.end(); ++i)
+			m_environment->getWorld()->removeEntityRenderer(*i);
+
+		m_dynamicFactories.clear();
+		m_dynamicRenderers.clear();
+	}
+
+	// Issue script update method.
+	invokeScriptUpdate(stage, info);
+
+	// Update scene.
+	m_scene->update(
+		info.getSimulationTime(),
+		info.getSimulationDeltaTime(),
+		m_controllerEnable
+	);
+}
+
+void WorldLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
+{
+	if (!m_scene.valid() || !m_worldRenderer)
+		return;
+
+	// Get camera entity and extract view transform.
+	world::NullEntity* cameraEntity = m_scene->getEntitySchema()->getEntity< world::NullEntity >(L"Camera");
+	if (cameraEntity)
+	{
+		Transform view = cameraEntity->getTransform(info.getInterval());
+		m_worldRenderView.setView(view.inverse().toMatrix44());
+	}
+
+	// Build frame through world renderer.
+	m_worldRenderView.setTimes(
+		info.getStateTime(),
+		info.getFrameDeltaTime(),
+		info.getInterval()
+	);
+	m_worldRenderer->build(
+		m_worldRenderView,
+		m_scene->getRootEntity(),
+		frame
+	);
+
+	m_deltaTime = info.getFrameDeltaTime();
+}
+
+void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
+{
+	if (!m_scene.valid() || !m_worldRenderer)
+		return;
+
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	T_ASSERT (renderView);
+
+	// Render previously built frame.
+	m_worldRenderer->render(
+		world::WrfDepthMap | world::WrfShadowMap,
+		frame,
+		eye
+	);
+
+	if (m_worldTarget && m_postProcess)
+	{
+		renderView->begin(m_worldTarget, 0);
+
+		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+		renderView->clear(render::CfColor | render::CfDepth, clearColor, 1.0f, 0);
+	}
+
+	m_worldRenderer->render(
+		world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
+		frame,
+		eye
+	);
+
+	if (m_worldTarget && m_postProcess)
+	{
+		renderView->end();
+
+		world::PostProcessStep::Instance::RenderParams params;
+		params.viewFrustum = m_worldRenderView.getViewFrustum();
+		params.projection = m_worldRenderView.getProjection();
+		params.deltaTime = m_deltaTime;
+
+		m_postProcess->render(
+			renderView,
+			m_worldTarget,
+			m_worldRenderer->getDepthTargetSet(),
+			m_worldRenderer->getShadowMaskTargetSet(),
+			params
+		);
+	}
+}
+
+void WorldLayer::leave(Stage* stage)
+{
+	for (RefArray< world::IEntityFactory >::iterator i = m_dynamicFactories.begin(); i != m_dynamicFactories.end(); ++i)
+		m_environment->getWorld()->removeEntityFactory(*i);
+
+	for (RefArray< world::IEntityRenderer >::iterator i = m_dynamicRenderers.begin(); i != m_dynamicRenderers.end(); ++i)
+		m_environment->getWorld()->removeEntityRenderer(*i);
+
+	m_dynamicFactories.clear();
+	m_dynamicRenderers.clear();
+}
+
+void WorldLayer::reconfigured(Stage* stage)
+{
+	createWorldRenderer();
+}
+
+void WorldLayer::addEntityFactory(world::IEntityFactory* entityFactory)
+{
+	m_environment->getWorld()->addEntityFactory(entityFactory);
+	m_dynamicFactories.push_back(entityFactory);
+}
+
+void WorldLayer::addEntityRenderer(world::IEntityRenderer* entityRenderer)
+{
+	m_environment->getWorld()->addEntityRenderer(entityRenderer);
+	m_dynamicRenderers.push_back(entityRenderer);
+}
+
+world::Entity* WorldLayer::getEntity(const std::wstring& name) const
+{
+	return m_scene->getEntitySchema()->getEntity(name);
+}
+
+RefArray< world::Entity > WorldLayer::getEntities(const std::wstring& name) const
+{
+	RefArray< world::Entity > entities;
+	m_scene->getEntitySchema()->getEntities(name, entities);
+	return entities;
+}
+
+RefArray< world::Entity > WorldLayer::getEntitiesOf(const TypeInfo& entityType) const
+{
+	RefArray< world::Entity > entities;
+	m_scene->getEntitySchema()->getEntities(entityType, entities);
+	return entities;
+}
+
+Ref< world::Entity > WorldLayer::createEntity(const std::wstring& name, world::IEntitySchema* entitySchema)
+{
+	std::map< std::wstring, resource::Proxy< world::EntityData > >::iterator i = m_entities.find(name);
+	if (i == m_entities.end())
+		return 0;
+
+	if (!i->second.validate())
+		return 0;
+
+	world::IEntityBuilder* entityBuilder = m_environment->getWorld()->getEntityBuilder();
+	T_ASSERT (entityBuilder);
+
+	entityBuilder->begin(entitySchema);
+	Ref< world::Entity > entity = entityBuilder->create(i->second);
+	entityBuilder->end();
+
+	return entity;
+}
+
+void WorldLayer::addEntity(world::Entity* entity)
+{
+	if (m_dynamicEntities)
+		m_dynamicEntities->addEntity(entity);
+}
+
+void WorldLayer::addTransientEntity(world::Entity* entity, float duration)
+{
+	if (m_dynamicEntities)
+		m_dynamicEntities->addEntity(new world::TransientEntity(m_dynamicEntities, entity, duration));
+}
+
+void WorldLayer::removeEntity(world::Entity* entity)
+{
+	if (m_dynamicEntities)
+		m_dynamicEntities->removeEntity(entity);
+}
+
+world::IEntitySchema* WorldLayer::getEntitySchema() const
+{
+	return m_scene->getEntitySchema();
+}
+
+void WorldLayer::setControllerEnable(bool controllerEnable)
+{
+	m_controllerEnable = controllerEnable;
+}
+
+bool WorldLayer::getViewPosition(const Vector4& worldPosition, Vector4& outViewPosition) const
+{
+	outViewPosition = m_worldRenderView.getView() * worldPosition.xyz1();
+	return true;
+}
+
+bool WorldLayer::getScreenPosition(const Vector4& viewPosition, Vector2& outScreenPosition) const
+{
+	Vector4 clipPosition = m_worldRenderView.getProjection() * viewPosition.xyz1();
+	if (clipPosition.w() <= 0.0f)
+		return false;
+	clipPosition /= clipPosition.w();
+	outScreenPosition = Vector2(clipPosition.x(), clipPosition.y());
+	return true;
+}
+
+void WorldLayer::createWorldRenderer()
+{
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+
+	// Destroy previous instances.
+	safeDestroy(m_worldRenderer);
+	safeDestroy(m_postProcess);
+
+	// Get render view dimensions.
+	int32_t width = renderView->getWidth();
+	int32_t height = renderView->getHeight();
+
+	// Create world renderer.
+	m_worldRenderer = m_environment->getWorld()->createWorldRenderer(
+		m_scene->getWorldRenderSettings()
+	);
+	if (!m_worldRenderer)
+		return;
+
+	// Create world render view.
+	world::WorldViewPerspective worldViewPort;
+	worldViewPort.width = width;
+	worldViewPort.height = height;
+	worldViewPort.aspect = m_environment->getRender()->getAspectRatio();
+	worldViewPort.fov = deg2rad(80.0f);
+	m_worldRenderer->createRenderView(worldViewPort, m_worldRenderView);
+
+	// Create post frame process.
+	const world::PostProcessSettings* postProcessSettings = m_scene->getPostProcessSettings();
+	if (postProcessSettings)
+	{
+		m_postProcess = new world::PostProcess();
+		if (m_postProcess->create(
+			postProcessSettings,
+			m_environment->getResource()->getResourceManager(),
+			m_environment->getRender()->getRenderSystem(),
+			width,
+			height
+		))
+		{
+			m_worldTarget = m_environment->getRender()->createOffscreenTarget(
+				m_postProcess->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8,
+				false,
+				true
+			);
+		}
+		else
+			m_postProcess = 0;
+	}
+}
+
+	}
+}

@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.parade.StageData">
+	<layers>
+		<item type="traktor.parade.WorldLayerData">
+			<name>World</name>
+			<script>{D0A70A29-5EEE-2D43-9F95-F424902510BC}</script>
+			<scene>{E4C43C70-FAAD-E74D-A765-68E38CCEC765}</scene>
+			<entities>
+				<item>
+					<first>Player</first>
+					<second>{5A7C0D9E-F221-BB44-A235-5F453B3560A6}</second>
+				</item>
+			</entities>
+		</item>
+	</layers>
+	<transitions/>
+</object>

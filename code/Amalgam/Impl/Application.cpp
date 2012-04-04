@@ -1,3 +1,20 @@
+#include "Amalgam/IRuntimePlugin.h"
+#include "Amalgam/IState.h"
+#include "Amalgam/Actions/ActivationAction.h"
+#include "Amalgam/Actions/ReconfiguredAction.h"
+#include "Amalgam/Impl/Application.h"
+#include "Amalgam/Impl/AudioServer.h"
+#include "Amalgam/Impl/Environment.h"
+#include "Amalgam/Impl/StateManager.h"
+#include "Amalgam/Impl/InputServer.h"
+#include "Amalgam/Impl/OnlineServer.h"
+#include "Amalgam/Impl/PhysicsServer.h"
+#include "Amalgam/Impl/RenderServerDefault.h"
+#include "Amalgam/Impl/RenderServerEmbedded.h"
+#include "Amalgam/Impl/ResourceServer.h"
+#include "Amalgam/Impl/ScriptServer.h"
+#include "Amalgam/Impl/TargetManagerConnection.h"
+#include "Amalgam/Impl/WorldServer.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
@@ -22,23 +39,6 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
-#include "Amalgam/Actions/ActivationAction.h"
-#include "Amalgam/Actions/ReconfiguredAction.h"
-#include "Amalgam/Impl/Application.h"
-#include "Amalgam/Impl/AudioServer.h"
-#include "Amalgam/Impl/Environment.h"
-#include "Amalgam/Impl/StateManager.h"
-#include "Amalgam/Impl/InputServer.h"
-#include "Amalgam/Impl/OnlineServer.h"
-#include "Amalgam/Impl/PhysicsServer.h"
-#include "Amalgam/Impl/RenderServerDefault.h"
-#include "Amalgam/Impl/RenderServerEmbedded.h"
-#include "Amalgam/Impl/ResourceServer.h"
-#include "Amalgam/Impl/ScriptServer.h"
-#include "Amalgam/Impl/TargetManagerConnection.h"
-#include "Amalgam/Impl/WorldServer.h"
-#include "Amalgam/IState.h"
-#include "Amalgam/IStateFactory.h"
 
 namespace traktor
 {
@@ -87,7 +87,6 @@ Application::Application()
 bool Application::create(
 	const PropertyGroup* defaultSettings,
 	PropertyGroup* settings,
-	IStateFactory* stateFactory,
 	void* nativeWindowHandle
 )
 {
@@ -239,6 +238,72 @@ bool Application::create(
 		m_physicsServer->createEntityFactories(m_environment);
 	m_worldServer->createEntityFactories(m_environment);
 
+	// Create plugins.
+	log::debug << L"Creating plugins..." << Endl;
+
+	std::vector< const TypeInfo* > pluginTypes;
+	type_of< IRuntimePlugin >().findAllOf(pluginTypes, false);
+
+	for (std::vector< const TypeInfo* >::const_iterator i = pluginTypes.begin(); i != pluginTypes.end(); ++i)
+	{
+		T_ASSERT (*i);
+
+		Ref< IRuntimePlugin > plugin = dynamic_type_cast< IRuntimePlugin* >((*i)->createInstance());
+		if (!plugin)
+		{
+			log::error << L"Application failed; unable to instantiate plugin \"" << (*i)->getName() << L"\"" << Endl;
+			return false;
+		}
+
+		m_plugins.push_back(plugin);
+	}
+
+	for (uint32_t i = 0; i < m_plugins.size(); )
+	{
+		TypeInfoSet dependencies;
+		m_plugins[i]->getDependencies(dependencies);
+
+		bool satisfied = true;
+
+		for (TypeInfoSet::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
+		{
+			satisfied = false;
+			for (uint32_t k = 0; k < i; ++k)
+			{
+				if (*j == &type_of(m_plugins[k]))
+				{
+					satisfied = true;
+					break;
+				}
+			}
+			if (!satisfied)
+				break;
+		}
+
+		if (!satisfied)
+		{
+			if (i < m_plugins.size() - 1)
+			{
+				m_plugins.push_back(m_plugins[i]);
+				m_plugins.erase(m_plugins.begin() + i);
+			}
+			else
+			{
+				log::error << L"Application failed; unable to resolve plugin \"" << type_name(m_plugins[i]) << L"\" dependencies" << Endl;
+				return false;
+			}
+		}
+		else
+		{
+			if (!m_plugins[i]->startup(m_environment))
+			{
+				log::error << L"Application failed; unable to start plugin \"" << type_name(m_plugins[i]) << L"\"" << Endl;
+				return false;
+			}
+			++i;
+		}
+	}
+
 	// Database monitoring thread.
 	if (settings->getProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", false) || m_targetManagerConnection)
 	{
@@ -250,7 +315,15 @@ bool Application::create(
 
 	// Initial, startup, state.
 	log::debug << L"Creating initial state..." << Endl;
-	Ref< IState > state = stateFactory->create(m_environment);
+
+	Ref< IState > state;
+	for (RefArray< IRuntimePlugin >::const_iterator i = m_plugins.begin(); i != m_plugins.end(); ++i)
+	{
+		state = (*i)->createInitialState(m_environment);
+		if (state)
+			break;
+	}
+
 	if (!state)
 	{
 		log::error << L"Application failed; unable to create initial state" << Endl;
@@ -264,6 +337,7 @@ bool Application::create(
 
 	log::info << L"Initial state ready; enter main loop..." << Endl;
 
+	// Create render thread if enabled and we're running on a multi core system.
 	if (
 		OS::getInstance().getCPUCoreCount() >= 2 &&
 		settings->getProperty< PropertyBoolean >(L"Amalgam.RenderThread", true)
@@ -288,6 +362,11 @@ bool Application::create(
 
 void Application::destroy()
 {
+	for (RefArray< IRuntimePlugin >::iterator i = m_plugins.begin(); i != m_plugins.end(); ++i)
+		(*i)->shutdown(m_environment);
+
+	m_plugins.resize(0);
+
 	if (m_threadRender)
 	{
 		m_threadRender->stop();

@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.mesh.MeshAsset" version="1">
-	<fileName>User/Objects/Ground_01/Ground_01.lwo</fileName>
-	<meshType>MtStatic</meshType>
-	<materialShaders/>
-</object>

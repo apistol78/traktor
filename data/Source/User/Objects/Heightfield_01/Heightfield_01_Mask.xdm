@@ -1,6 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.db.LocalInstanceMeta">
-	<guid>{09919C7A-98FB-FB4B-82D2-37A8C6E9C4A0}</guid>
-	<primaryType>traktor.terrain.MaterialMaskAsset</primaryType>
-	<blobs/>
-</object>

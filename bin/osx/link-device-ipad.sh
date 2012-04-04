@@ -11,7 +11,7 @@ FORCE="-Xlinker -force_load -Xlinker "
 
 # Mandatory modules.
 LD_MODULES="
-	$FORCE libParade.App.a
+	$FORCE libTraktor.Amalgam.App.a
 	$FORCE libTraktor.Animation.a
 	$FORCE libTraktor.Core.a
 	$FORCE libTraktor.World.a

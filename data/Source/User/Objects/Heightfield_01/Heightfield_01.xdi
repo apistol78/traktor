@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.terrain.HeightfieldAsset">
-	<fileName>User\Objects\Heightfield_01\Heightfield_01.raw</fileName>
-	<worldExtent>1024, 64, 1024, 0</worldExtent>
-	<patchDim>65</patchDim>
-	<detailSkip>4</detailSkip>
-</object>

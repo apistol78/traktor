@@ -2,11 +2,11 @@
 <object type="traktor.amalgam.Platform">
 	<iconIndex>1</iconIndex>
 	<deployToolWin32>
-		<executable>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-win32.bat</executable>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-win64.bat</executable>
 		<environment/>
 	</deployToolWin32>
 	<deployToolOsX>
-		<executable>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-win32.sh</executable>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-win64.sh</executable>
 		<environment/>
 	</deployToolOsX>
 </object>

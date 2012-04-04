@@ -21,6 +21,7 @@ public:
 	{
 		bool ios;
 		bool linux;
+		bool mobile6;
 		bool osx;
 		bool ps3;
 		bool win32;

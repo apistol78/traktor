@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.scene.SceneAsset" version="3">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="10">
+		<renderType>RtForward</renderType>
+		<viewNearZ>0.2</viewNearZ>
+		<viewFarZ>200</viewFarZ>
+		<depthPassEnabled>true</depthPassEnabled>
+		<velocityPassEnable>false</velocityPassEnable>
+		<shadowsEnabled>true</shadowsEnabled>
+		<shadowsProjection>SpUniform</shadowsProjection>
+		<shadowsQuality>SqHigh</shadowsQuality>
+		<shadowFarZ>70.050003</shadowFarZ>
+		<shadowMapResolution>1024</shadowMapResolution>
+		<shadowMapBias>0.7</shadowMapBias>
+		<shadowCascadingSlices>3</shadowCascadingSlices>
+		<shadowCascadingLambda>1.799999</shadowCascadingLambda>
+		<fogEnabled>false</fogEnabled>
+		<fogDistance>50</fogDistance>
+		<fogRange>40</fogRange>
+		<fogColor>115, 85, 30, 255</fogColor>
+	</worldRenderSettings>
+	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
+	<entityData type="traktor.world.GroupEntityData">
+		<name>Root</name>
+    <transform>
+      <translation>0, 0, 0, 0</translation>
+      <rotation>0, 0, 0, 1</rotation>
+    </transform>
+    <entityData>
+			<item type="traktor.world.NullEntityData">
+				<name>Camera</name>
+				<transform>
+					<translation>0, 1.081872, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+			</item>
+			<item type="traktor.world.DirectionalLightEntityData" version="1">
+				<name>Sun</name>
+				<transform>
+					<translation>0, 6.982499, -1.593794, 0</translation>
+					<rotation>0.142149, 0.430774, 0.018117, 0.89101</rotation>
+				</transform>
+				<sunColor>1, 1, 1, 0</sunColor>
+				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+				<shadowColor>0.22, 0.2, 0.1, 0</shadowColor>
+				<castShadow>true</castShadow>
+			</item>
+			<item type="traktor.world.ExternalEntityData">
+				<name>Level</name>
+				<transform>
+					<translation>0, 0, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+				<guid>{FDBA1D6F-57B4-5F46-AA76-ED81DDF8DDE1}</guid>
+			</item>
+			<item type="traktor.animation.PathEntityData">
+				<name>Elevator path</name>
+				<transform>
+					<translation>0, 0, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+				<path>
+					<keys>
+						<item>
+							<T>0</T>
+							<tcb>0, 0, 0, 0</tcb>
+							<value>
+								<position>-16.598, -2.126, -15.648, 1</position>
+								<orientation>0, 0, 0, 0</orientation>
+							</value>
+						</item>
+						<item>
+							<T>10</T>
+							<tcb>0, 0, 0, 0</tcb>
+							<value>
+								<position>-16.598, -20, -15.648, 1</position>
+								<orientation>0, 0, 0, 0</orientation>
+							</value>
+						</item>
+					</keys>
+				</path>
+				<timeMode>TmPingPong</timeMode>
+				<entityData type="traktor.world.ExternalEntityData">
+					<name>Elevator</name>
+					<transform>
+						<translation>0, 0, 0, 0</translation>
+						<rotation>0, 0, 0, 1</rotation>
+					</transform>
+					<guid>{3C2DE218-C2EF-944D-8F50-FE52212182C6}</guid>
+				</entityData>
+			</item>
+			<item type="traktor.world.GroupEntityData">
+				<name>Spawn points</name>
+        <transform>
+          <translation>0, 0, 0, 0</translation>
+          <rotation>0, 0, 0, 1</rotation>
+        </transform>
+        <entityData>
+					<item type="traktor.world.NullEntityData">
+						<name>Spawn</name>
+						<transform>
+							<translation>-21.986256, 9.768331, 18.018002, 0</translation>
+							<rotation>0, 0, 0, 1</rotation>
+						</transform>
+					</item>
+					<item type="traktor.world.NullEntityData">
+						<name>Spawn</name>
+						<transform>
+							<translation>23.380489, 9.768331, 25.525515, 0</translation>
+							<rotation>0, 0, 0, 1</rotation>
+						</transform>
+					</item>
+					<item type="traktor.world.NullEntityData">
+						<name>Spawn</name>
+						<transform>
+							<translation>23.165995, 9.768331, -28.206738, 0</translation>
+							<rotation>0, 0, 0, 1</rotation>
+						</transform>
+					</item>
+					<item type="traktor.world.NullEntityData">
+						<name>Spawn</name>
+						<transform>
+							<translation>-21.771761, 9.768331, -25.73999, 0</translation>
+							<rotation>0, 0, 0, 1</rotation>
+						</transform>
+					</item>
+					<item type="traktor.world.NullEntityData">
+						<name>Spawn</name>
+						<transform>
+							<translation>0.10724, 0, -26.276241, 0</translation>
+							<rotation>0, 0, 0, 1</rotation>
+						</transform>
+					</item>
+				</entityData>
+			</item>
+			<item type="traktor.world.GroupEntityData">
+				<name>Props</name>
+        <transform>
+          <translation>0, 0, 0, 0</translation>
+          <rotation>0, 0, 0, 1</rotation>
+        </transform>
+        <entityData>
+					<item type="traktor.world.ExternalEntityData">
+						<name>Box</name>
+						<transform>
+							<translation>0, 0.808266, 0, 0</translation>
+							<rotation>0, 0, 0, 1</rotation>
+						</transform>
+						<guid>{266FFEB1-48CF-654F-8E2D-880E74D8AAA1}</guid>
+					</item>
+					<item type="traktor.world.ExternalEntityData">
+						<name>Box</name>
+						<transform>
+							<translation>0, 2.832491, 0, 0</translation>
+							<rotation>0, 0, 0, 1</rotation>
+						</transform>
+						<guid>{266FFEB1-48CF-654F-8E2D-880E74D8AAA1}</guid>
+					</item>
+					<item type="traktor.world.ExternalEntityData">
+						<name>Box</name>
+						<transform>
+							<translation>-21.51609, 7.522348, 22.778152, 0</translation>
+							<rotation>0, -0.703281, 0, 0.710912</rotation>
+						</transform>
+						<guid>{266FFEB1-48CF-654F-8E2D-880E74D8AAA1}</guid>
+					</item>
+				</entityData>
+			</item>
+			<item type="traktor.world.ExternalEntityData">
+				<name>Sky-Earth-01</name>
+				<transform>
+					<translation>0, 0, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+    			<guid>{966653CF-D9F6-5D4C-90CF-53FBFCE492E5}</guid>
+			</item>
+		</entityData>
+	</entityData>
+	<controllerData/>
+</object>

@@ -1,14 +1,22 @@
 #ifndef traktor_amalgam_Application_H
 #define traktor_amalgam_Application_H
 
+#include "Amalgam/IApplication.h"
+#include "Amalgam/Impl/UpdateControl.h"
+#include "Amalgam/Impl/UpdateInfo.h"
 #include "Core/RefArray.h"
 #include "Core/Library/Library.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
 #include "Core/Timer/Timer.h"
-#include "Amalgam/IApplication.h"
-#include "Amalgam/Impl/UpdateControl.h"
-#include "Amalgam/Impl/UpdateInfo.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_AMALGAM_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
 
 namespace traktor
 {
@@ -39,13 +47,13 @@ class ScriptServer;
 class WorldServer;
 
 class Environment;
+class IRuntimePlugin;
 class IState;
-class IStateFactory;
 class StateManager;
 class TargetManagerConnection;
 
 /*! \brief Amalgam application implementation. */
-class Application : public IApplication
+class T_DLLCLASS Application : public IApplication
 {
 	T_RTTI_CLASS;
 
@@ -55,7 +63,6 @@ public:
 	bool create(
 		const PropertyGroup* defaultSettings,
 		PropertyGroup* settings,
-		IStateFactory* stateFactory,
 		void* nativeWindowHandle
 	);
 
@@ -82,6 +89,7 @@ private:
 	Ref< WorldServer > m_worldServer;
 	Ref< Environment > m_environment;
 	Ref< StateManager > m_stateManager;
+	RefArray< IRuntimePlugin > m_plugins;
 	Semaphore m_lockUpdate;
 	Thread* m_threadDatabase;
 	Thread* m_threadRender;

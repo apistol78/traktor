@@ -1,0 +1,64 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.input.InputMappingAsset">
+	<sourceData type="traktor.input.InputMappingSourceData">
+		<sourceData>
+			<item>
+				<first>VID_MOUSE_CURSOR_DOWN</first>
+				<second type="traktor.input.GenericInputSourceData">
+					<category>CtMouse</category>
+					<controlType>DtButton1</controlType>
+					<analogue>false</analogue>
+					<index>-1</index>
+				</second>
+			</item>
+			<item>
+				<first>VID_MOUSE_CURSOR_X</first>
+				<second type="traktor.input.GenericInputSourceData">
+					<category>CtMouse</category>
+					<controlType>DtPositionX</controlType>
+					<analogue>true</analogue>
+					<index>-1</index>
+				</second>
+			</item>
+			<item>
+				<first>VID_MOUSE_CURSOR_Y</first>
+				<second type="traktor.input.GenericInputSourceData">
+					<category>CtMouse</category>
+					<controlType>DtPositionY</controlType>
+					<analogue>true</analogue>
+					<index>-1</index>
+				</second>
+			</item>
+		</sourceData>
+	</sourceData>
+	<stateData type="traktor.input.InputMappingStateData" version="1">
+		<filters/>
+		<stateData>
+			<item>
+				<first>STATE_CURSOR_DOWN</first>
+				<second type="traktor.input.InputStateData">
+					<source type="traktor.input.InReadValue">
+						<valueId>VID_MOUSE_CURSOR_DOWN</valueId>
+					</source>
+				</second>
+			</item>
+			<item>
+				<first>STATE_CURSOR_X</first>
+				<second type="traktor.input.InputStateData">
+					<source type="traktor.input.InReadValue">
+						<valueId>VID_MOUSE_CURSOR_X</valueId>
+					</source>
+				</second>
+			</item>
+			<item>
+				<first>STATE_CURSOR_Y</first>
+				<second type="traktor.input.InputStateData">
+					<source type="traktor.input.InReadValue">
+						<valueId>VID_MOUSE_CURSOR_Y</valueId>
+					</source>
+				</second>
+			</item>
+		</stateData>
+	</stateData>
+	<dependencies/>
+</object>
