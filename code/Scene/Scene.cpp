@@ -49,12 +49,12 @@ void Scene::destroy()
 	m_postProcessSettings = 0;
 }
 
-void Scene::update(float time, float deltaTime, bool updateController)
+void Scene::update(float time, float deltaTime, bool updateController, bool updateEntity)
 {
 	if (m_controller && updateController)
 		m_controller->update(this, time, deltaTime);
 
-	if (m_rootEntity)
+	if (m_rootEntity && updateEntity)
 	{
 		world::Entity::UpdateParams up;
 		up.totalTime = time;

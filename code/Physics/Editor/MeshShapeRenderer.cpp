@@ -26,8 +26,8 @@ void MeshShapeRenderer::draw(
 {
 	const MeshShapeDesc* meshShapeDesc = checked_type_cast< const MeshShapeDesc*, false >(shapeDesc);
 
-	resource::Proxy< Mesh > mesh = meshShapeDesc->getMesh();
-	if (resourceManager->bind(mesh) && mesh.validate())
+	resource::Proxy< Mesh > mesh;
+	if (resourceManager->bind(meshShapeDesc->getMesh(), mesh))
 	{
 		primitiveRenderer->pushWorld((body1Transform * shapeDesc->getLocalTransform()).toMatrix44());
 

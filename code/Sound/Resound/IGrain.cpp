@@ -5,7 +5,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.IGrain", IGrain, ISerializable)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.IGrain", IGrain, Object)
 
 	}
 }

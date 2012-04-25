@@ -12,7 +12,7 @@
 			<comment/>
 			<position>
 				<first>392</first>
-				<second>645</second>
+				<second>650</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -58,7 +58,7 @@
 			<comment/>
 			<position>
 				<first>395</first>
-				<second>521</second>
+				<second>522</second>
 			</position>
 			<name>DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -76,7 +76,7 @@
 			<comment/>
 			<position>
 				<first>387</first>
-				<second>552</second>
+				<second>554</second>
 			</position>
 			<name>SpecularTerm</name>
 			<connectable>true</connectable>
@@ -87,7 +87,7 @@
 			<comment/>
 			<position>
 				<first>393</first>
-				<second>707</second>
+				<second>714</second>
 			</position>
 			<name>EyeDirection</name>
 			<connectable>true</connectable>
@@ -98,7 +98,7 @@
 			<comment/>
 			<position>
 				<first>420</first>
-				<second>583</second>
+				<second>586</second>
 			</position>
 			<name>Normal</name>
 			<connectable>true</connectable>
@@ -109,7 +109,7 @@
 			<comment/>
 			<position>
 				<first>417</first>
-				<second>614</second>
+				<second>618</second>
 			</position>
 			<name>Position</name>
 			<connectable>true</connectable>
@@ -135,7 +135,7 @@
 			<comment/>
 			<position>
 				<first>356</first>
-				<second>676</second>
+				<second>682</second>
 			</position>
 			<name>SpecularRoughness</name>
 			<connectable>true</connectable>

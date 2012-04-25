@@ -1,8 +1,7 @@
 #ifndef traktor_terrain_TerrainEntityData_H
 #define traktor_terrain_TerrainEntityData_H
 
-#include "Core/Math/Vector4.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.
@@ -15,18 +14,10 @@
 
 namespace traktor
 {
-	namespace hf
-	{
-
-class Heightfield;
-class MaterialMask;
-
-	}
-
 	namespace terrain
 	{
 
-class TerrainSurface;
+class Terrain;
 
 class T_DLLCLASS TerrainEntityData : public world::EntityData
 {
@@ -44,11 +35,11 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
+	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
-	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
+	uint32_t getDetailSkip() const { return m_detailSkip; }
 
-	TerrainSurface* getSurface() const { return m_surface; }
+	uint32_t getPatchDim() const { return m_patchDim; }
 
 	float getPatchLodDistance() const { return m_patchLodDistance; }
 
@@ -65,9 +56,9 @@ public:
 	VisualizeMode getVisualizeMode() const { return m_visualizeMode; }
 
 private:
-	resource::Proxy< hf::Heightfield > m_heightfield;
-	resource::Proxy< hf::MaterialMask > m_materialMask;
-	Ref< TerrainSurface > m_surface;
+	resource::Id< Terrain > m_terrain;
+	uint32_t m_detailSkip;
+	uint32_t m_patchDim;
 	float m_patchLodDistance;
 	float m_patchLodBias;
 	float m_patchLodExponent;

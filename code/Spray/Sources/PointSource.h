@@ -26,9 +26,17 @@ class T_DLLCLASS PointSource : public Source
 	T_RTTI_CLASS;
 
 public:
-	PointSource();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	PointSource(
+		float constantRate,
+		float velocityRate,
+		const Vector4& position,
+		const Range< float >& velocity,
+		const Range< float >& orientation,
+		const Range< float >& angularVelocity,
+		const Range< float >& age,
+		const Range< float >& mass,
+		const Range< float >& size
+	);
 
 	virtual void emit(
 		Context& context,
@@ -37,9 +45,7 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(ISerializer& s);
-
-	inline const Vector4& getPosition() const { return m_position; }
+	const Vector4& getPosition() const { return m_position; }
 
 private:
 	Vector4 m_position;

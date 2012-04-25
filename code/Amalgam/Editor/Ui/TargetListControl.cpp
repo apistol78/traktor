@@ -20,13 +20,13 @@ bool TargetListControl::create(ui::Widget* parent)
 void TargetListControl::add(TargetInstanceListItem* item)
 {
 	m_items.push_back(item);
-	requestLayout();
+	requestUpdate();
 }
 
 void TargetListControl::removeAll()
 {
 	m_items.resize(0);
-	requestLayout();
+	requestUpdate();
 }
 
 void TargetListControl::addPlayEventHandler(ui::EventHandler* eventHandler)

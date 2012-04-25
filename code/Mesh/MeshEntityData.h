@@ -3,7 +3,7 @@
 
 #include "Core/Math/Matrix44.h"
 #include "Mesh/AbstractMeshEntityData.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,16 +25,16 @@ class T_DLLCLASS MeshEntityData : public AbstractMeshEntityData
 	T_RTTI_CLASS;
 
 public:
-	void setMesh(const resource::Proxy< IMesh >& mesh);
+	void setMesh(const resource::Id< IMesh >& mesh);
 
-	const resource::Proxy< IMesh >& getMesh() const;
+	const resource::Id< IMesh >& getMesh() const;
 
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	mutable resource::Proxy< IMesh > m_mesh;
+	resource::Id< IMesh > m_mesh;
 };
 
 	}

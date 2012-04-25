@@ -33,6 +33,8 @@ public:
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
+		const std::wstring& outputPath,
+		const Guid& outputGuid,
 		Ref< const Object >& outBuildParams
 	) const;
 
@@ -57,6 +59,7 @@ private:
 	bool m_suppressPostProcess;
 	bool m_suppressPreLit;
 	int32_t m_shadowMapSizeDenom;
+	int32_t m_shadowMapMaxSlices;
 };
 
 	}

@@ -26,10 +26,10 @@ void HeightfieldShapeRenderer::draw(
 {
 	const HeightfieldShapeDesc* heightfieldShapeDesc = checked_type_cast< const HeightfieldShapeDesc*, false >(shapeDesc);
 
-	resource::Proxy< hf::Heightfield > heightfield = heightfieldShapeDesc->getHeightfield();
-	if (resourceManager->bind(heightfield) && heightfield.validate())
+	resource::Proxy< hf::Heightfield > heightfield;
+	if (resourceManager->bind(heightfieldShapeDesc->getHeightfield(), heightfield))
 	{
-		const Vector4& extent = heightfield->getResource().getWorldExtent();
+		const Vector4& extent = heightfield->getWorldExtent();
 		Aabb3 boundingBox(-extent / Scalar(2.0f), extent / Scalar(2.0f));
 		primitiveRenderer->drawWireAabb(boundingBox, Color4ub(0, 255, 255, 180));
 	}

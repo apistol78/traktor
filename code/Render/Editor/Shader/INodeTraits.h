@@ -94,6 +94,16 @@ public:
 		const OutputPin*& foldOutputPin
 	) const = 0;
 
+	/*! \brief Evaluate order of output pin.
+	 */
+	virtual PinOrderType evaluateOrder(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const OutputPin* nodeOutputPin,
+		const PinOrderType* inputPinOrders,
+		bool frequentAsLinear
+	) const = 0;
+
 	/*! \brief Get node traits.
 	 */
 	static const INodeTraits* find(const Node* node);

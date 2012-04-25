@@ -2,7 +2,7 @@
 #define traktor_weather_SkyEntityData_H
 
 #include "Core/Math/Vector4.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.
@@ -46,10 +46,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	mutable resource::Proxy< render::Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 	Vector4 m_sunDirection;
 };
 

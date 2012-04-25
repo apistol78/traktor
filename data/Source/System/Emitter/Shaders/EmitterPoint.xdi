@@ -221,7 +221,7 @@ Alpha
 				<first>1015</first>
 				<second>681</second>
 			</position>
-			<value>2</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>

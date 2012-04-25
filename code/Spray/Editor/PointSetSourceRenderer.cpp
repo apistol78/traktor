@@ -1,3 +1,4 @@
+#include "Spray/PointSet.h"
 #include "Spray/Editor/PointSetSourceRenderer.h"
 #include "Spray/Sources/PointSetSource.h"
 #include "Render/PrimitiveRenderer.h"
@@ -9,12 +10,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointSetSourceRenderer", PointSetSourceRenderer, SourceRenderer)
 
-void PointSetSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const
+void PointSetSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
 {
-	PointSetSource* pointSetSource = checked_type_cast< PointSetSource* >(source);
+	const PointSetSource* pointSetSource = checked_type_cast< const PointSetSource* >(source);
 
-	resource::Proxy< PointSet > pointSet = pointSetSource->getPointSet();
-	if (!pointSet.validate())
+	const resource::Proxy< PointSet >& pointSet = pointSetSource->getPointSet();
+	if (!pointSet)
 		return;
 
 	const AlignedVector< PointSet::Point >& points = pointSet->get();

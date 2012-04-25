@@ -13,7 +13,7 @@ class PointSourceRenderer : public SourceRenderer
 	T_RTTI_CLASS;
 
 public:
-	virtual void render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const;
+	virtual void render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const;
 };
 
 	}

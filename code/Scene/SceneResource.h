@@ -2,7 +2,7 @@
 #define traktor_scene_SceneResource_H
 
 #include "Core/Serialization/ISerializable.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/WorldRenderSettings.h"
 
 // import/export mechanism.
@@ -68,9 +68,9 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcess);
+	void setPostProcessSettings(const resource::Id< world::PostProcessSettings >& postProcess);
 
-	const resource::Proxy< world::PostProcessSettings >& getPostProcessSettings() const;
+	const resource::Id< world::PostProcessSettings >& getPostProcessSettings() const;
 
 	void setEntityData(world::EntityData* entityData);
 
@@ -84,7 +84,7 @@ public:
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	mutable resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
+	resource::Id< world::PostProcessSettings > m_postProcessSettings;
 	Ref< world::EntityData > m_entityData;
 	Ref< ISceneControllerData > m_controllerData;
 };

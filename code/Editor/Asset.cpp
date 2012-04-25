@@ -1,13 +1,13 @@
-#include "Editor/Asset.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Editor/Asset.h"
 
 namespace traktor
 {
 	namespace editor
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Asset", Asset, ITypedAsset)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.Asset", Asset, ISerializable)
 
 Asset::Asset()
 {

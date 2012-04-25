@@ -14165,6 +14165,14 @@
 								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[35]/dependencies/item[8]/project"/>
+							</item>
 						</dependencies>
 					</project>
 				</item>

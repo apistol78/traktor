@@ -24,11 +24,13 @@ bool PoseControllerPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const StatePoseControllerData* statePoseControllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
-		pipelineDepends->addDependency(statePoseControllerData->getStateGraph().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(statePoseControllerData->getStateGraph(), editor::PdfBuild);
 	else if (const IKPoseControllerData* ikPoseContollerData = dynamic_type_cast< const IKPoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(ikPoseContollerData->getNeutralPoseController());
 	else if (const RagDollPoseControllerData* ragDollPoseContollerData = dynamic_type_cast< const RagDollPoseControllerData* >(sourceAsset))

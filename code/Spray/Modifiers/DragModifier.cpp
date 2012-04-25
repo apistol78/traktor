@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/DragModifier.h"
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
@@ -30,11 +28,11 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.DragModifier", 0, DragModifier, Modifier)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.DragModifier", DragModifier, Modifier)
 
-DragModifier::DragModifier()
-:	m_linearDrag(0.0f)
-,	m_angularDrag(0.0f)
+DragModifier::DragModifier(float linearDrag, float angularDrag)
+:	m_linearDrag(linearDrag)
+,	m_angularDrag(angularDrag)
 {
 }
 
@@ -69,13 +67,6 @@ void DragModifier::update(const Scalar& deltaTime, const Transform& transform, P
 	}
 }
 #endif
-
-bool DragModifier::serialize(ISerializer& s)
-{
-	s >> Member< Scalar >(L"linearDrag", m_linearDrag);
-	s >> Member< float >(L"angularDrag", m_angularDrag);
-	return true;
-}
 
 	}
 }

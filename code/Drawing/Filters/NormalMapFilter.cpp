@@ -9,6 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.NormalMapFilter", NormalMapFilter, IImageFilter)
 
 NormalMapFilter::NormalMapFilter(float scale)
+:	m_scale(scale)
 {
 }
 
@@ -31,8 +32,8 @@ Ref< Image > NormalMapFilter::apply(const Image* image) const
 
 			Vector4 normal =
 				Vector4(
-					c[1] - c[0],
-					c[2] - c[0],
+					(c[1] - c[0]) * m_scale,
+					(c[2] - c[0]) * m_scale,
 					1.0f
 				).normalized();
 

@@ -111,29 +111,14 @@ public:
 	 */
 	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil) = 0;
 
-	/*! \brief Set active vertex buffer.
-	 *
-	 * \param vertexBuffer Vertex buffer to set as active.
-	 */
-	virtual void setVertexBuffer(VertexBuffer* vertexBuffer) = 0;
-	
-	/*! \brief Set active index buffer. 
-	 *
-	 * \param indexBuffer Index buffer to set as active.
-	 */
-	virtual void setIndexBuffer(IndexBuffer* indexBuffer) = 0;
-	
-	/*! \brief Set active program.
-	 *
-	 * \param program Program to set as active.
-	 */
-	virtual void setProgram(IProgram* program) = 0;
-
 	/*! \brief Draw primitives.
 	 *
+	 * \param vertexBuffer Vertex buffer containing geometry.
+	 * \param indexBuffer Index buffer to be used; null if no indices should be used.
+	 * \param program Program to be used.
 	 * \param primitives Set of primitives to render.
 	 */
-	virtual void draw(const Primitives& primitives) = 0;
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) = 0;
 	
 	/*! \brief End rendering. */
 	virtual void end() = 0;

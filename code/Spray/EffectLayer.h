@@ -1,7 +1,7 @@
 #ifndef traktor_spray_EffectLayer_H
 #define traktor_spray_EffectLayer_H
 
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace spray
 	{
 
@@ -30,30 +23,27 @@ class Sequence;
 /*! \brief
  * \ingroup Spray
  */
-class T_DLLCLASS EffectLayer : public ISerializable
+class T_DLLCLASS EffectLayer : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	EffectLayer();
-
-	bool bind(resource::IResourceManager* resourceManager);
+	EffectLayer(
+		float time,
+		float duration,
+		Emitter* emitter,
+		Sequence* sequence
+	);
 
 	Ref< EffectLayerInstance > createInstance() const;
 
-	virtual bool serialize(ISerializer& s);
-
-	void setTime(float time) { m_time = time; }
-
 	float getTime() const { return m_time; }
-
-	void setDuration(float duration) { m_duration = duration; }
 
 	float getDuration() const { return m_duration; }
 
-	Emitter* getEmitter() const { return m_emitter; }
+	const Emitter* getEmitter() const { return m_emitter; }
 
-	Sequence* getSequence() const { return m_sequence; }
+	const Sequence* getSequence() const { return m_sequence; }
 
 private:
 	float m_time;

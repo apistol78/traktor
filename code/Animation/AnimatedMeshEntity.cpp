@@ -56,7 +56,7 @@ Aabb3 AnimatedMeshEntity::getBoundingBox() const
 {
 	synchronize();
 
-	Aabb3 boundingBox = m_mesh.valid() ? m_mesh->getBoundingBox() : Aabb3();
+	Aabb3 boundingBox = m_mesh->getBoundingBox();
 
 	if (!m_poseTransforms.empty())
 	{
@@ -79,7 +79,7 @@ Aabb3 AnimatedMeshEntity::getBoundingBox() const
 
 bool AnimatedMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+	return m_mesh->supportTechnique(technique);
 }
 
 void AnimatedMeshEntity::render(
@@ -89,9 +89,6 @@ void AnimatedMeshEntity::render(
 	float distance
 )
 {
-	if (!m_mesh.validate())
-		return;
-
 	synchronize();
 
 	m_mesh->render(
@@ -108,7 +105,7 @@ void AnimatedMeshEntity::render(
 
 void AnimatedMeshEntity::update(const UpdateParams& update)
 {
-	if (m_skeleton.validate() && m_updateController)
+	if (m_updateController)
 	{
 		synchronize();
 
@@ -147,7 +144,7 @@ bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Transfor
 
 	synchronize();
 
-	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
+	if (!m_skeleton->findBone(boneName, index))
 		return false;
 	if (index >= m_boneTransforms.size())
 		return false;
@@ -162,7 +159,7 @@ bool AnimatedMeshEntity::getPoseTransform(const std::wstring& boneName, Transfor
 
 	synchronize();
 
-	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
+	if (!m_skeleton->findBone(boneName, index))
 		return false;
 	if (index >= m_poseTransforms.size())
 		return false;
@@ -177,7 +174,7 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Transfor
 
 	synchronize();
 
-	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
+	if (!m_skeleton->findBone(boneName, index))
 		return false;
 	if (index >= m_poseTransforms.size())
 		return false;
@@ -203,7 +200,7 @@ bool AnimatedMeshEntity::setNeutralPoseTransform(const std::wstring& boneName, c
 	if (!m_neutralPose)
 		m_neutralPose = new Pose();
 
-	if (!m_skeleton.validate() || !m_skeleton->findBone(boneName, index))
+	if (!m_skeleton->findBone(boneName, index))
 		return false;
 
 	if (index >= m_boneTransforms.size())
@@ -213,7 +210,7 @@ bool AnimatedMeshEntity::setNeutralPoseTransform(const std::wstring& boneName, c
 	Transform poseTransform = m_boneTransforms[index].inverse() * transform;
 
 	m_neutralPose->setBoneOffset(index, poseTransform.translation());
-	m_neutralPose->setBoneOrientation(index, poseTransform.rotation());
+	m_neutralPose->setBoneOrientation(index, poseTransform.rotation().toEulerAngles());
 
 	return true;
 }

@@ -112,5 +112,16 @@ bool ConstantNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType ConstantNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	return PotConstant;
+}
+
 	}
 }

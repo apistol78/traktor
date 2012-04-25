@@ -149,5 +149,16 @@ bool MixNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType MixNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	return pinOrderMax(inputPinOrders, node->getInputPinCount());
+}
+
 	}
 }

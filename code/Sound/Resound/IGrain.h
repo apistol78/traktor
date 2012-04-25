@@ -1,7 +1,7 @@
 #ifndef traktor_sound_IGrain_H
 #define traktor_sound_IGrain_H
 
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Object.h"
 #include "Sound/Types.h"
 
 // import/export mechanism.
@@ -14,13 +14,6 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace sound
 	{
 
@@ -29,13 +22,11 @@ class ISoundBufferCursor;
 /*! \brief
  * \ingroup Sound
  */
-class T_DLLCLASS IGrain : public ISerializable
+class T_DLLCLASS IGrain : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
-
 	virtual Ref< ISoundBufferCursor > createCursor() const = 0;
 
 	virtual void updateCursor(ISoundBufferCursor* cursor) const = 0;

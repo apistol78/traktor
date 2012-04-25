@@ -32,7 +32,9 @@ class DefaultRenderControl : public ISceneRenderControl
 	T_RTTI_CLASS;
 
 public:
-	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t index);
+	DefaultRenderControl();
+
+	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId, int32_t viewId);
 
 	virtual void destroy();
 
@@ -52,7 +54,8 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
-	int32_t m_index;
+	int32_t m_cameraId;
+	int32_t m_viewId;
 	Ref< ui::Container > m_container;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGrid;

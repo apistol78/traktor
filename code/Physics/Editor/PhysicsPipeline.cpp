@@ -31,15 +31,17 @@ bool PhysicsPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const BodyDesc* bodyDesc = dynamic_type_cast< const BodyDesc* >(sourceAsset))
 	{
 		if (const MeshShapeDesc* meshShapeDesc = dynamic_type_cast< const MeshShapeDesc* >(bodyDesc->getShape()))
-			pipelineDepends->addDependency(meshShapeDesc->getMesh().getGuid(), editor::PdfBuild);
+			pipelineDepends->addDependency(meshShapeDesc->getMesh(), editor::PdfBuild);
 		else if (const HeightfieldShapeDesc* heightfieldShapeDesc = dynamic_type_cast< const HeightfieldShapeDesc* >(bodyDesc->getShape()))
-			pipelineDepends->addDependency(heightfieldShapeDesc->getHeightfield().getGuid(), editor::PdfBuild);
+			pipelineDepends->addDependency(heightfieldShapeDesc->getHeightfield(), editor::PdfBuild);
 	}
 	return true;
 }

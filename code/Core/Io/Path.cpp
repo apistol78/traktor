@@ -39,6 +39,11 @@ Path::Path(const wchar_t* path)
 	resolve();
 }
 
+bool Path::empty() const
+{
+	return m_original.empty();
+}
+
 std::wstring Path::getOriginal() const
 {
 	return m_original;

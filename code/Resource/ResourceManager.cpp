@@ -1,39 +1,20 @@
 #include <algorithm>
-#include "Resource/CachedResourceHandle.h"
-#include "Resource/ResourceManager.h"
-#include "Resource/IResourceFactory.h"
-#include "Resource/UncachedResourceHandle.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Timer/Timer.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Timer/Timer.h"
+#include "Resource/CachedResourceHandle.h"
+#include "Resource/IResourceFactory.h"
+#include "Resource/ResourceManager.h"
+#include "Resource/UncachedResourceHandle.h"
 
 namespace traktor
 {
 	namespace resource
 	{
-		namespace
-		{
-
-class NullResourceHandle : public IResourceHandle
-{
-public:
-	virtual void replace(Object* object) { T_BREAKPOINT; }
-
-	virtual Object* get() const { return 0; }
-
-	virtual void flush() {}
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, IResourceManager)
-
-ResourceManager::ResourceManager()
-:	m_nullHandle(new NullResourceHandle())
-{
-}
 
 ResourceManager::~ResourceManager()
 {
@@ -43,7 +24,6 @@ ResourceManager::~ResourceManager()
 void ResourceManager::destroy()
 {
 	m_factories.clear();
-	m_nullHandle = 0;
 	m_cachedHandles.clear();
 	m_uncachedHandles.clear();
 	m_times.clear();
@@ -72,11 +52,11 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	Ref< IResourceHandle > handle;
 
 	if (guid.isNull() || !guid.isValid())
-		return m_nullHandle;
+		return 0;
 
 	Ref< IResourceFactory > factory = findFactory(type);
 	if (!factory)
-		return m_nullHandle;
+		return 0;
 
 	bool cacheable = factory->isCacheable();
 	if (cacheable)
@@ -119,12 +99,16 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	T_ASSERT (handle);
 
 	if (!handle->get())
+	{
 		load(guid, factory, type, handle);
+		if (!handle->get())
+			return 0;
+	}
 
 	return handle;
 }
 
-void ResourceManager::update(const Guid& guid, bool force)
+void ResourceManager::reload(const Guid& guid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
@@ -134,11 +118,7 @@ void ResourceManager::update(const Guid& guid, bool force)
 		const RefArray< UncachedResourceHandle >& handles = i0->second;
 		for (RefArray< UncachedResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
 		{
-			if (!force && (*i)->get())
-				continue;
-
 			const TypeInfo& resourceType = (*i)->getResourceType();
-
 			Ref< IResourceFactory > factory = findFactory(resourceType);
 			if (factory)
 				load(guid, factory, resourceType, *i);
@@ -149,15 +129,10 @@ void ResourceManager::update(const Guid& guid, bool force)
 	std::map< Guid, Ref< CachedResourceHandle > >::iterator i1 = m_cachedHandles.find(guid);
 	if (i1 != m_cachedHandles.end())
 	{
-		if (!force && i1->second->get())
-			return;
-
 		const TypeInfo& resourceType = i1->second->getResourceType();
-
 		Ref< IResourceFactory > factory = findFactory(resourceType);
 		if (factory)
 			load(guid, factory, resourceType, i1->second);
-
 		return;
 	}
 }

@@ -8,6 +8,7 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "Render/Types.h"
 
@@ -62,7 +63,7 @@ public:
 	bool create(
 		resource::IResourceManager* resourceManager,
 		IRenderSystem* renderSystem,
-		const resource::Proxy< Shader >& shader
+		const resource::Id< Shader >& shader
 	);
 
 	void destroy();

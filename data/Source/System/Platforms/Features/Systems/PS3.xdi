@@ -28,6 +28,30 @@
 					<value>fileName=temp/Pipeline.db</value>
 				</second>
 			</item>
+			<item>
+				<first>ScenePipeline.ShadowMapMaxSlices</first>
+				<second type="traktor.PropertyInteger">
+					<value>3</value>
+				</second>
+			</item>
+			<item>
+				<first>ScenePipeline.ShadowMapSizeDenom</first>
+				<second type="traktor.PropertyInteger">
+					<value>2</value>
+				</second>
+			</item>
+			<item>
+				<first>ScenePipeline.SuppressPostProcess</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>ScenePipeline.SuppressPreLit</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<runtimeProperties/>

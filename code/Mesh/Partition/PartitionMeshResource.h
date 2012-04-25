@@ -4,6 +4,7 @@
 #include "Core/Guid.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Mesh/IMeshResource.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,6 +16,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class Shader;
+
+	}
+
 	namespace mesh
 	{
 
@@ -50,7 +58,7 @@ public:
 private:
 	friend class PartitionMeshConverter;
 
-	Guid m_shader;
+	resource::Id< render::Shader > m_shader;
 	AlignedVector< Part > m_parts;
 	Ref< IPartitionData > m_partitionData;
 };

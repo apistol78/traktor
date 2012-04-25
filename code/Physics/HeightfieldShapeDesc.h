@@ -2,7 +2,7 @@
 #define traktor_physics_HeightfieldShapeDesc_H
 
 #include "Physics/ShapeDesc.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,19 +33,19 @@ class T_DLLCLASS HeightfieldShapeDesc : public ShapeDesc
 	T_RTTI_CLASS;
 
 public:
-	void setHeightfield(const resource::Proxy< hf::Heightfield >& heightfield);
+	void setHeightfield(const resource::Id< hf::Heightfield >& heightfield);
 
-	const resource::Proxy< hf::Heightfield >& getHeightfield() const;
+	const resource::Id< hf::Heightfield >& getHeightfield() const;
 
-	void setMaterialMask(const resource::Proxy< hf::MaterialMask >& materialMask);
+	void setMaterialMask(const resource::Id< hf::MaterialMask >& materialMask);
 
-	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const;
+	const resource::Id< hf::MaterialMask >& getMaterialMask() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	resource::Proxy< hf::Heightfield > m_heightfield;
-	resource::Proxy< hf::MaterialMask > m_materialMask;
+	resource::Id< hf::Heightfield > m_heightfield;
+	resource::Id< hf::MaterialMask > m_materialMask;
 };
 
 	}

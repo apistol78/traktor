@@ -1,7 +1,7 @@
-#include "Animation/Editor/StatePipeline.h"
 #include "Animation/Animation/StateNodeAnimation.h"
 #include "Animation/Animation/StateGraph.h"
 #include "Animation/Animation/StatePoseControllerData.h"
+#include "Animation/Editor/StatePipeline.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor
@@ -24,11 +24,13 @@ bool StatePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const StateNodeAnimation* state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
-		pipelineDepends->addDependency(state->getAnimation().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(state->getAnimation().getId(), editor::PdfBuild);
 	else if (const StateGraph* stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 	{
 		const RefArray< StateNode >& states = stateGraph->getStates();
@@ -36,7 +38,7 @@ bool StatePipeline::buildDependencies(
 			pipelineDepends->addDependency(*i);
 	}
 	else if (const StatePoseControllerData* controllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
-		pipelineDepends->addDependency(controllerData->getStateGraph().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(controllerData->getStateGraph(), editor::PdfBuild);
 
 	return true;
 }

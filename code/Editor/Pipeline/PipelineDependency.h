@@ -39,7 +39,6 @@ class T_DLLCLASS PipelineDependency : public Object
 public:
 	PipelineDependency();
 
-	std::wstring name;							/*!< Name of output dependency. */
 	Ref< IPipeline > pipeline;					/*!< Associated pipeline, must be used to build output. */
 	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */
 	Ref< const ISerializable > sourceAsset;		/*!< Source asset. */

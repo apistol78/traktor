@@ -195,9 +195,6 @@ void BlendMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	if (!m_shader.validate())
-		return;
-
 	// Build render-able mesh by weighting in each blend shape's vertices.
 	T_ASSERT (blendWeights.size() == getBlendTargetCount());
 

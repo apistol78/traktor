@@ -1,7 +1,7 @@
 #ifndef traktor_spray_Sequence_H
 #define traktor_spray_Sequence_H
 
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ class SequenceInstance;
 /*! \brief Trigger sequence.
  * \ingroup Spray
  */
-class T_DLLCLASS Sequence : public ISerializable
+class T_DLLCLASS Sequence : public Object
 {
 	T_RTTI_CLASS;
 
@@ -38,17 +38,11 @@ public:
 	{
 		float T;
 		Ref< ITrigger > trigger;
-
-		bool serialize(ISerializer& s);
 	};
 
-	bool bind(resource::IResourceManager* resourceManager);
+	Sequence(const std::vector< Key >& keys);
 
-	Ref< SequenceInstance > createInstance();
-
-	virtual bool serialize(ISerializer& s);
-
-	const std::vector< Key >& getKeys() const { return m_keys; }
+	Ref< SequenceInstance > createInstance() const;
 
 private:
 	std::vector< Key > m_keys;

@@ -11,7 +11,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>392</first>
+				<first>396</first>
 				<second>645</second>
 			</position>
 			<name>ViewPosition</name>
@@ -46,7 +46,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>392</first>
+				<first>396</first>
 				<second>490</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -57,7 +57,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>395</first>
+				<first>399</first>
 				<second>521</second>
 			</position>
 			<name>DiffuseTerm</name>
@@ -75,7 +75,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>387</first>
+				<first>391</first>
 				<second>552</second>
 			</position>
 			<name>SpecularTerm</name>
@@ -86,7 +86,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>393</first>
+				<first>397</first>
 				<second>707</second>
 			</position>
 			<name>EyeDirection</name>
@@ -97,7 +97,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>420</first>
+				<first>424</first>
 				<second>583</second>
 			</position>
 			<name>Normal</name>
@@ -108,7 +108,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>417</first>
+				<first>421</first>
 				<second>614</second>
 			</position>
 			<name>Position</name>
@@ -134,7 +134,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>356</first>
+				<first>360</first>
 				<second>676</second>
 			</position>
 			<name>SpecularRoughness</name>

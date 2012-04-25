@@ -2,7 +2,7 @@
 #define traktor_parade_LayerData_H
 
 #include "Core/Serialization/ISerializable.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -46,7 +46,7 @@ protected:
 	friend class StagePipeline;
 
 	std::wstring m_name;
-	resource::Proxy< script::IScriptContext > m_script;
+	resource::Id< script::IScriptContext > m_script;
 };
 
 	}

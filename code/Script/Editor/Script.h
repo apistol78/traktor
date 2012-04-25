@@ -2,7 +2,7 @@
 #define traktor_script_Script_H
 
 #include "Core/Guid.h"
-#include "Editor/ITypedAsset.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,7 +20,7 @@ namespace traktor
 /*! \brief Persistent script.
  * \ingroup Script
  */
-class T_DLLCLASS Script : public editor::ITypedAsset
+class T_DLLCLASS Script : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -38,8 +38,6 @@ public:
 	void setText(const std::wstring& text);
 
 	const std::wstring& getText() const;
-
-	virtual const TypeInfo* getOutputType() const;
 
 	virtual bool serialize(ISerializer& s);
 

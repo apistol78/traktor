@@ -170,7 +170,7 @@ private:
 	Thread* m_threadAssetMonitor;
 	Thread* m_threadBuild;
 	Semaphore m_lockBuild;
-	std::wstring m_workspacePath;
+	Path m_workspacePath;
 	Ref< PropertyGroup > m_globalSettings;
 	Ref< PropertyGroup > m_workspaceSettings;
 	Ref< PropertyGroup > m_mergedSettings;
@@ -179,7 +179,7 @@ private:
 
 	bool openWorkspace();
 
-	bool openWorkspace(const std::wstring& workspacePath);
+	bool openWorkspace(const Path& workspacePath);
 
 	void closeWorkspace();
 

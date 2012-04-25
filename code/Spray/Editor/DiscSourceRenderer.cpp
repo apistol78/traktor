@@ -9,9 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.DiscSourceRenderer", DiscSourceRenderer, SourceRenderer)
 
-void DiscSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const
+void DiscSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
 {
-	DiscSource* discSource = checked_type_cast< DiscSource* >(source);
+	const DiscSource* discSource = checked_type_cast< const DiscSource* >(source);
 
 	Vector4 position = discSource->getPosition();
 	Vector4 normal = discSource->getNormal();

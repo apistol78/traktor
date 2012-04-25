@@ -29,20 +29,20 @@ StatePoseControllerData::StatePoseControllerData()
 
 Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const Skeleton* skeleton, const Transform& worldTransform)
 {
-	if (!resourceManager->bind(m_stateGraph))
+	// Load state graph through resource manager.
+	resource::Proxy< StateGraph > stateGraph;
+	if (!resourceManager->bind(m_stateGraph, stateGraph))
 		return 0;
 
-	if (!m_stateGraph.validate())
-		return 0;
-
-	const RefArray< StateNode >& states = m_stateGraph->getStates();
+	// Ensure state node resources are loaded as well.
+	const RefArray< StateNode >& states = stateGraph->getStates();
 	for (RefArray< StateNode >::const_iterator i = states.begin(); i != states.end(); ++i)
 	{
 		if (!(*i)->bind(resourceManager))
 			return 0;
 	}
 
-	Ref< StatePoseController > poseController = new StatePoseController(m_stateGraph);
+	Ref< StatePoseController > poseController = new StatePoseController(stateGraph);
 
 	// Randomize time offset; pre-evaluate controller until offset reached.
 	float timeOffset = m_randomTimeOffset.random(s_random);

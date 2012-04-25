@@ -2,16 +2,16 @@
 #define traktor_animation_Pose_H
 
 #include "Animation/BitSet.h"
-#include "Core/Serialization/ISerializable.h"
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Math/Quaternion.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Math/Vector4.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -31,9 +31,9 @@ public:
 
 	Vector4 getBoneOffset(uint32_t boneIndex) const;
 
-	void setBoneOrientation(uint32_t boneIndex, const Quaternion& boneOrientation);
+	void setBoneOrientation(uint32_t boneIndex, const Vector4& boneOrientation);
 
-	Quaternion getBoneOrientation(uint32_t boneIndex) const;
+	Vector4 getBoneOrientation(uint32_t boneIndex) const;
 
 	void getIndexMask(BitSet& outIndices) const;
 
@@ -44,12 +44,12 @@ private:
 	{
 		uint32_t index;
 		Vector4 offset;
-		Quaternion orientation;
+		Vector4 orientation;
 
 		Bone(uint32_t index_ = 0)
 		:	index(index_)
 		,	offset(0.0f, 0.0f, 0.0f, 0.0f)
-		,	orientation(Quaternion::identity())
+		,	orientation(0.0f, 0.0f, 0.0f, 0.0f)
 		{
 		}
 

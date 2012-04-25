@@ -20,9 +20,11 @@ namespace traktor
 	namespace render
 	{
 
-class ITexture;
+class IndexBuffer;
 class IProgram;
 class IRenderView;
+class ITexture;
+class VertexBuffer;
 
 /*! \brief Shader
  * \ingroup Render
@@ -95,7 +97,7 @@ public:
 	 * \param renderView Render primitives view.
 	 * \param primitives Primitives.
 	 */
-	void draw(IRenderView* renderView, const Primitives& primitives);
+	void draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, const Primitives& primitives);
 
 	/*! \name Program access
 	 */

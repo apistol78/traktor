@@ -1,3 +1,5 @@
+#include "Input/IInputDevice.h"
+#include "Input/IInputDriver.h"
 #include "Input/InputSystem.h"
 #include "Input/Binding/IInputSource.h"
 #include "Input/Binding/InputMapping.h"
@@ -13,7 +15,30 @@ namespace traktor
 
 void registerInputClasses(script::IScriptManager* scriptManager)
 {
+	Ref< script::AutoScriptClass< input::IInputDriver > > classInputDriver = new script::AutoScriptClass< input::IInputDriver >();
+	classInputDriver->addMethod(L"getDeviceCount", &input::IInputDriver::getDeviceCount);
+	classInputDriver->addMethod(L"getDevice", &input::IInputDriver::getDevice);
+	scriptManager->registerClass(classInputDriver);
+
+	Ref< script::AutoScriptClass< input::IInputDevice > > classInputDevice = new script::AutoScriptClass< input::IInputDevice >();
+	classInputDevice->addMethod(L"getName", &input::IInputDevice::getName);
+	classInputDevice->addMethod(L"isConnected", &input::IInputDevice::isConnected);
+	classInputDevice->addMethod(L"getControlCount", &input::IInputDevice::getControlCount);
+	classInputDevice->addMethod(L"getControlName", &input::IInputDevice::getControlName);
+	classInputDevice->addMethod(L"isControlAnalogue", &input::IInputDevice::isControlAnalogue);
+	classInputDevice->addMethod(L"isControlStable", &input::IInputDevice::isControlStable);
+	classInputDevice->addMethod(L"getControlValue", &input::IInputDevice::getControlValue);
+	classInputDevice->addMethod(L"resetState", &input::IInputDevice::resetState);
+	classInputDevice->addMethod(L"readState", &input::IInputDevice::readState);
+	classInputDevice->addMethod(L"supportRumble", &input::IInputDevice::supportRumble);
+	scriptManager->registerClass(classInputDevice);
+
 	Ref< script::AutoScriptClass< input::InputSystem > > classInputSystem = new script::AutoScriptClass< input::InputSystem >();
+	classInputSystem->addMethod(L"addDriver", &input::InputSystem::addDriver);
+	classInputSystem->addMethod(L"removeDriver", &input::InputSystem::removeDriver);
+	classInputSystem->addMethod(L"addDevice", &input::InputSystem::addDevice);
+	classInputSystem->addMethod(L"removeDevice", &input::InputSystem::removeDevice);
+	classInputSystem->addMethod(L"update", &input::InputSystem::update);
 	scriptManager->registerClass(classInputSystem);
 
 	Ref< script::AutoScriptClass< input::InputMapping > > classInputMapping = new script::AutoScriptClass< input::InputMapping >();

@@ -31,20 +31,27 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.DefaultRenderControl", DefaultRenderControl, ISceneRenderControl)
 
-bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t index)
+DefaultRenderControl::DefaultRenderControl()
+:	m_cameraId(0)
+,	m_viewId(0)
+{
+}
+
+bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId, int32_t viewId)
 {
 	m_context = context;
 	T_ASSERT (m_context);
 
-	m_index = index;
+	m_cameraId = cameraId;
+	m_viewId = viewId;
 
 	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
 	T_ASSERT (settings);
 
-	int32_t viewType = settings->getProperty< PropertyInteger >(L"SceneEditor.View" + toString(index), 0);
-	bool gridEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_index), true);
-	bool guideEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_index), true);
-	bool postProcessEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(index), true);
+	int32_t viewType = settings->getProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_viewId), 0);
+	bool gridEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_viewId), true);
+	bool guideEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), true);
+	bool postProcessEnable = settings->getProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(m_viewId), true);
 
 	m_container = new ui::Container();
 	if (!m_container->create(parent, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -117,9 +124,9 @@ void DefaultRenderControl::destroy()
 	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
 	T_ASSERT (settings);
 
-	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_index), m_toolToggleGrid->isToggled());
-	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_index), m_toolToggleGuide->isToggled());
-	settings->setProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(m_index), m_toolTogglePostProcess->isToggled());
+	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GridEnable" + toString(m_viewId), m_toolToggleGrid->isToggled());
+	settings->setProperty< PropertyBoolean >(L"Scene.Editor.GuideEnable" + toString(m_viewId), m_toolToggleGuide->isToggled());
+	settings->setProperty< PropertyBoolean >(L"Scene.Editor.PostProcessEnable" + toString(m_viewId), m_toolTogglePostProcess->isToggled());
 
 	m_context->getEditor()->commitGlobalSettings();
 	m_toolView = 0;
@@ -192,7 +199,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 0:
 		{
 			Ref< PerspectiveRenderControl > renderControl = new PerspectiveRenderControl();
-			if (renderControl->create(m_container, m_context, m_index))
+			if (renderControl->create(m_container, m_context, m_cameraId))
 				m_renderControl = renderControl;
 		}
 		break;
@@ -277,7 +284,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	Ref< PropertyGroup > settings = m_context->getEditor()->checkoutGlobalSettings();
 	T_ASSERT (settings);
 
-	settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_index), type);
+	settings->setProperty< PropertyInteger >(L"SceneEditor.View" + toString(m_viewId), type);
 
 	m_context->getEditor()->commitGlobalSettings();
 }

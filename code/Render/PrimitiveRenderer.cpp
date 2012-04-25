@@ -16,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_guidPrimitiveShader(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}");
+const resource::Id< Shader > c_idPrimitiveShader(Guid(L"{5B786C6B-8818-A24A-BD1C-EE113B79BCE2}"));
 const int c_bufferCount = 16 * 1024;
 
 enum ShaderId
@@ -82,18 +82,16 @@ bool PrimitiveRenderer::create(
 	IRenderSystem* renderSystem
 )
 {
-	resource::Proxy< Shader > shader(c_guidPrimitiveShader);
-	return create(resourceManager, renderSystem, shader);
+	return create(resourceManager, renderSystem, c_idPrimitiveShader);
 }
 
 bool PrimitiveRenderer::create(
 	resource::IResourceManager* resourceManager,
 	IRenderSystem* renderSystem,
-	const resource::Proxy< Shader >& shader
+	const resource::Id< Shader >& shader
 )
 {
-	m_shader = shader;
-	if (!resourceManager->bind(m_shader))
+	if (!resourceManager->bind(shader, m_shader))
 		return 0;
 
 	std::vector< VertexElement > vertexElements;
@@ -1008,17 +1006,18 @@ void PrimitiveRenderer::end()
 	T_ASSERT (m_vertex);
 
 	m_vertexBuffers[m_currentBuffer]->unlock();
-	if (m_shader.validate())
-	{
-		m_renderView->setVertexBuffer(m_vertexBuffers[m_currentBuffer]);
 
-		for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
-		{
-			m_shader->setTechnique(s_handles[i->shaderId]);
-			if (i->texture)
-				m_shader->setTextureParameter(s_textureHandle, i->texture);
-			m_shader->draw(m_renderView, i->primitives);
-		}
+	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
+	{
+		m_shader->setTechnique(s_handles[i->shaderId]);
+		if (i->texture)
+			m_shader->setTextureParameter(s_textureHandle, i->texture);
+		m_shader->draw(
+			m_renderView,
+			m_vertexBuffers[m_currentBuffer],
+			0,
+			i->primitives
+		);
 	}
 
 	m_currentBuffer = (m_currentBuffer + 1) % sizeof_array(m_vertexBuffers);
@@ -1038,17 +1037,18 @@ void PrimitiveRenderer::flush()
 	T_ASSERT (m_vertex);
 
 	m_vertexBuffers[m_currentBuffer]->unlock();
-	if (m_shader.validate())
-	{
-		m_renderView->setVertexBuffer(m_vertexBuffers[m_currentBuffer]);
 
-		for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
-		{
-			m_shader->setTechnique(s_handles[i->shaderId]);
-			if (i->texture)
-				m_shader->setTextureParameter(s_textureHandle, i->texture);
-			m_shader->draw(m_renderView, i->primitives);
-		}
+	for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
+	{
+		m_shader->setTechnique(s_handles[i->shaderId]);
+		if (i->texture)
+			m_shader->setTextureParameter(s_textureHandle, i->texture);
+		m_shader->draw(
+			m_renderView,
+			m_vertexBuffers[m_currentBuffer],
+			0,
+			i->primitives
+		);
 	}
 
 	m_currentBuffer = (m_currentBuffer + 1) % sizeof_array(m_vertexBuffers);

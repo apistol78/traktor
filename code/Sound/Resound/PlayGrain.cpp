@@ -1,10 +1,4 @@
 #include "Core/Math/Const.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberComposite.h"
-#include "Core/Serialization/MemberRefArray.h"
-#include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/ISoundMixer.h"
@@ -35,24 +29,23 @@ struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayGrain", 2, PlayGrain, IGrain)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.PlayGrain", PlayGrain, IGrain)
 
-PlayGrain::PlayGrain()
-:	m_gain(0.0f, 0.0f)
-,	m_pitch(1.0f, 1.0f)
+PlayGrain::PlayGrain(
+	const resource::Proxy< Sound >& sound,
+	const RefArray< IFilter >& filters,
+	const Range< float >& gain,
+	const Range< float >& pitch
+)
+:	m_sound(sound)
+,	m_filters(filters)
+,	m_gain(gain)
+,	m_pitch(pitch)
 {
-}
-
-bool PlayGrain::bind(resource::IResourceManager* resourceManager)
-{
-	return resourceManager->bind(m_sound);
 }
 
 Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 {
-	if (!m_sound.validate())
-		return 0;
-
 	Ref< ISoundBuffer > soundBuffer = m_sound->getSoundBuffer();
 	T_ASSERT (soundBuffer);
 
@@ -129,25 +122,6 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 	if (abs(1.0f - playCursor->m_pitch) > FUZZY_EPSILON)
 		outBlock.sampleRate = uint32_t(outBlock.sampleRate * playCursor->m_pitch);
 
-	return true;
-}
-
-bool PlayGrain::serialize(ISerializer& s)
-{
-	s >> resource::Member< Sound, ISoundResource >(L"sound", m_sound);
-	if (s.getVersion() >= 1)
-		s >> MemberRefArray< IFilter >(L"filters", m_filters);
-	if (s.getVersion() >= 2)
-	{
-		s >> MemberComposite< Range< float > >(L"gain", m_gain);
-		s >> MemberComposite< Range< float > >(L"pitch", m_pitch);
-	}
-	else
-	{
-		float gain = 0.0f;
-		s >> Member< float >(L"gain", gain);
-		m_gain = Range< float >(gain, gain);
-	}
 	return true;
 }
 

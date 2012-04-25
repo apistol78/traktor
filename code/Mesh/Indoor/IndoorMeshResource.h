@@ -5,6 +5,7 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Mesh/IMeshResource.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,6 +17,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class Shader;
+
+	}
+
 	namespace mesh
 	{
 
@@ -68,7 +76,7 @@ public:
 private:
 	friend class IndoorMeshConverter;
 
-	Guid m_shader;
+	resource::Id< render::Shader > m_shader;
 	AlignedVector< Sector > m_sectors;
 	AlignedVector< Portal > m_portals;
 };

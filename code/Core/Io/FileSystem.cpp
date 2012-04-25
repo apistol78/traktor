@@ -93,6 +93,19 @@ Ref< IVolume > FileSystem::getCurrentVolume() const
 	return m_currentVolume;
 }
 
+bool FileSystem::setCurrentVolumeAndDirectory(const Path& directory)
+{
+	Ref< IVolume > nextCurrentVolume = getVolume(directory);
+	if (!nextCurrentVolume)
+		return false;
+
+	if (!nextCurrentVolume->setCurrentDirectory(directory))
+		return false;
+
+	setCurrentVolume(nextCurrentVolume);
+	return true;
+}
+
 Ref< File > FileSystem::get(const Path& fileName)
 {
 	Ref< IVolume > volume = getVolume(fileName);

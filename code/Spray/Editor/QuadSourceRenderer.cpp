@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.QuadSourceRenderer", QuadSourceRenderer, SourceRenderer)
 
-void QuadSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const
+void QuadSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
 {
 	const QuadSource* quadSource = checked_type_cast< const QuadSource* >(source);
 

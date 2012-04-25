@@ -3,7 +3,6 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Render/RenderTargetSet.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -24,7 +23,8 @@ Ref< PostProcessStep::Instance > PostProcessStepSimple::create(
 	uint32_t height
 ) const
 {
-	if (!resourceManager->bind(m_shader))
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
 	std::vector< InstanceSimple::Source > sources(m_sources.size());
@@ -36,12 +36,12 @@ Ref< PostProcessStep::Instance > PostProcessStepSimple::create(
 		sources[i].index = m_sources[i].index;
 	}
 
-	return new InstanceSimple(this, sources);
+	return new InstanceSimple(this, shader, sources);
 }
 
 bool PostProcessStepSimple::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 	return true;
 }
@@ -61,8 +61,9 @@ bool PostProcessStepSimple::Source::serialize(ISerializer& s)
 
 // Instance
 
-PostProcessStepSimple::InstanceSimple::InstanceSimple(const PostProcessStepSimple* step, const std::vector< Source >& sources)
+PostProcessStepSimple::InstanceSimple::InstanceSimple(const PostProcessStepSimple* step, const resource::Proxy< render::Shader >& shader, const std::vector< Source >& sources)
 :	m_step(step)
+,	m_shader(shader)
 ,	m_sources(sources)
 ,	m_time(0.0f)
 {
@@ -81,22 +82,18 @@ void PostProcessStepSimple::InstanceSimple::render(
 	const RenderParams& params
 )
 {
-	resource::Proxy< render::Shader > shader = m_step->m_shader;
-	if (!shader.validate())
-		return;
+	postProcess->prepareShader(m_shader);
 
-	postProcess->prepareShader(shader);
-
-	shader->setFloatParameter(m_handleTime, m_time);
-	shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
+	m_shader->setFloatParameter(m_handleTime, m_time);
+	m_shader->setFloatParameter(m_handleDeltaTime, params.deltaTime);
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
 		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
 		if (source)
 		{
-			shader->setTextureParameter(i->param, source->getColorTexture(i->index));
-			shader->setVectorParameter(i->paramSize, Vector4(
+			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
+			m_shader->setVectorParameter(i->paramSize, Vector4(
 				float(source->getWidth()),
 				float(source->getHeight()),
 				0.0f,
@@ -105,7 +102,7 @@ void PostProcessStepSimple::InstanceSimple::render(
 		}
 	}
 
-	screenRenderer->draw(renderView, shader);
+	screenRenderer->draw(renderView, m_shader);
 
 	m_time += params.deltaTime;
 }

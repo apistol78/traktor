@@ -1,7 +1,7 @@
+#include "Editor/IPipelineDepends.h"
+#include "Weather/Clouds/CloudEntityData.h"
 #include "Weather/Editor/WeatherEntityPipeline.h"
 #include "Weather/Sky/SkyEntityData.h"
-#include "Weather/Clouds/CloudEntityData.h"
-#include "Editor/IPipelineDepends.h"
 
 namespace traktor
 {
@@ -22,17 +22,19 @@ bool WeatherEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(skyEntityData->getShader().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(skyEntityData->getShader(), editor::PdfBuild);
 	if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(cloudEntityData->getParticleShader().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(cloudEntityData->getParticleTexture().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(cloudEntityData->getImpostorShader().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(cloudEntityData->getMask().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(cloudEntityData->getParticleShader(), editor::PdfBuild);
+		pipelineDepends->addDependency(cloudEntityData->getParticleTexture(), editor::PdfBuild);
+		pipelineDepends->addDependency(cloudEntityData->getImpostorShader(), editor::PdfBuild);
+		pipelineDepends->addDependency(cloudEntityData->getMask(), editor::PdfBuild);
 	}
 	return true;
 }

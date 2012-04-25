@@ -524,7 +524,7 @@ void SceneEditorPage::handleDatabaseEvent(const Guid& eventId)
 	if (!m_context)
 		return;
 
-	m_context->getResourceManager()->update(eventId, true);
+	m_context->getResourceManager()->reload(eventId);
 
 	RefArray< EntityAdapter > entityAdapters;
 	m_context->getEntities(entityAdapters);
@@ -638,10 +638,10 @@ void SceneEditorPage::updateScene()
 		// Check if any scene settings has changed.
 		bool needUpdate = false;
 
-		if (m_currentGuid != sceneAsset->getPostProcessSettings().getGuid())
+		if (m_currentGuid != sceneAsset->getPostProcessSettings())
 		{
 			needUpdate = true;
-			m_currentGuid = sceneAsset->getPostProcessSettings().getGuid();
+			m_currentGuid = sceneAsset->getPostProcessSettings();
 		}
 
 		DeepHash hash(sceneAsset->getWorldRenderSettings());

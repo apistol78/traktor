@@ -62,7 +62,6 @@ public:
 	{
 		m_targetInstance->setState(m_targetState);
 		m_targetInstance->setBuildProgress((currentStep * 100) / maxStep);
-		m_targetListControl->requestLayout();
 		m_targetListControl->requestUpdate();
 	}
 
@@ -338,8 +337,13 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
 	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
 
+	// Get selected target host.
 	std::wstring deployHost = L"";
 	m_hostEnumerator->getHost(targetInstance->getDeployHostId(), deployHost);
+	
+	// Resolve absolut output path.
+	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
+	log::debug << L"Resolved output path \"" << outputPath << L"\"" << Endl;
 
 	// Set target's state to pending as actions can be queued up to be performed much later.
 	targetInstance->setState(TsPending);
@@ -359,7 +363,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 			m_editor->getSettings(),
 			targetInstance->getTarget(),
 			targetInstance->getTargetConfiguration(),
-			targetInstance->getOutputPath()
+			outputPath
 		);
 		chain.actions.push_back(action);
 
@@ -376,7 +380,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				deployHost,
 				targetInstance->getDatabaseName(),
 				targetInstance->getId(),
-				targetInstance->getOutputPath()
+				outputPath
 			);
 			chain.actions.push_back(action);
 
@@ -388,7 +392,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				targetInstance->getTarget(),
 				targetInstance->getTargetConfiguration(),
 				deployHost,
-				targetInstance->getOutputPath()
+				outputPath
 			);
 			chain.actions.push_back(action);
 		}
@@ -403,7 +407,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				targetInstance->getTarget(),
 				targetInstance->getTargetConfiguration(),
 				deployHost,
-				targetInstance->getOutputPath()
+				outputPath
 			);
 			chain.actions.push_back(action);
 		}
@@ -412,7 +416,6 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 		m_targetActionQueueSignal.set();
 	}
 
-	m_targetList->requestLayout();
 	m_targetList->requestUpdate();
 }
 
@@ -433,7 +436,6 @@ void EditorPlugin::eventTargetListStop(ui::Event* event)
 		targetInstance->removeConnection(connection);
 	}
 
-	m_targetList->requestLayout();
 	m_targetList->requestUpdate();
 }
 
@@ -454,7 +456,6 @@ void EditorPlugin::eventToolBarClick(ui::Event* event)
 			m_targetList->add(new TargetInstanceListItem(m_hostEnumerator, *i));
 	}
 
-	m_targetList->requestLayout();
 	m_targetList->requestUpdate();
 }
 
@@ -472,10 +473,7 @@ void EditorPlugin::threadTargetManager()
 	while (!m_threadTargetManager->stopped())
 	{
 		if (m_targetManager->update())
-		{
-			m_targetList->requestLayout();
 			m_targetList->requestUpdate();
-		}
 	}
 }
 
@@ -519,7 +517,6 @@ void EditorPlugin::threadTargetActions()
 		if (chain.targetInstance)
 			chain.targetInstance->setState(TsIdle);
 
-		m_targetList->requestLayout();
 		m_targetList->requestUpdate();
 
 		chain.actions.resize(0);

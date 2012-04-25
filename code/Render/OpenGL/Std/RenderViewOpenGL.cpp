@@ -372,35 +372,21 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 	T_OGL_SAFE(glClear(cm));
 }
 
-void RenderViewOpenGL::setVertexBuffer(VertexBuffer* vertexBuffer)
+void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	m_currentVertexBuffer = checked_type_cast< VertexBufferOpenGL* >(vertexBuffer);
-}
-
-void RenderViewOpenGL::setIndexBuffer(IndexBuffer* indexBuffer)
-{
-	m_currentIndexBuffer = checked_type_cast< IndexBufferOpenGL* >(indexBuffer);
-}
-
-void RenderViewOpenGL::setProgram(IProgram* program)
-{
-	m_currentProgram = checked_type_cast< ProgramOpenGL * >(program);
-}
-
-void RenderViewOpenGL::draw(const Primitives& primitives)
-{
-	if (!m_currentProgram || !m_currentVertexBuffer)
-		return;
+	VertexBufferOpenGL* vertexBufferGL = checked_type_cast< VertexBufferOpenGL* >(vertexBuffer);
+	IndexBufferOpenGL* indexBufferGL = checked_type_cast< IndexBufferOpenGL* >(indexBuffer);
+	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
 
 	const RenderTargetOpenGL* rt = m_renderTargetStack.back();
 	float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
 		
-	if (!m_currentProgram->activate(m_stateCache, targetSize))
+	if (!programGL->activate(m_stateCache, targetSize))
 		return;
 
-	m_currentVertexBuffer->activate(
+	vertexBufferGL->activate(
 		m_stateCache,
-		m_currentProgram->getAttributeLocs()
+		programGL->getAttributeLocs()
 	);
 
 	GLenum primitiveType;
@@ -438,12 +424,12 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 
 	if (primitives.indexed)
 	{
-		T_ASSERT_M (m_currentIndexBuffer, L"No index buffer");
+		T_ASSERT_M (indexBufferGL, L"No index buffer");
 
 		GLenum indexType;
 		GLint offsetMultiplier;
 
-		switch (m_currentIndexBuffer->getIndexType())
+		switch (indexBufferGL->getIndexType())
 		{
 		case ItUInt16:
 			indexType = GL_UNSIGNED_SHORT;
@@ -456,14 +442,14 @@ void RenderViewOpenGL::draw(const Primitives& primitives)
 			break;
 		}
 
-		m_currentIndexBuffer->bind(m_stateCache);
+		indexBufferGL->bind(m_stateCache);
 
 #if 0
 		if (!cglwCheckHardwarePath())
 			log::error << L"Software path detected; serious performance issue" << Endl;
 #endif
 
-		const GLubyte* indices = static_cast< const GLubyte* >(m_currentIndexBuffer->getIndexData()) + primitives.offset * offsetMultiplier;
+		const GLubyte* indices = static_cast< const GLubyte* >(indexBufferGL->getIndexData()) + primitives.offset * offsetMultiplier;
 		T_OGL_SAFE(glDrawRangeElements(
 			primitiveType,
 			primitives.minIndex,

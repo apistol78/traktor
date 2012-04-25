@@ -80,6 +80,10 @@ public:
 		int pixelCount
 	) const;
 
+	/*! \brief Get endian swapped format.
+	 */
+	PixelFormat endianSwapped() const;
+
 	const bool isPalettized() const {
 		return m_palettized;
 	}
@@ -163,6 +167,14 @@ public:
 		return ms_pfR5G6B5;
 	}
 
+	static const PixelFormat& getR5G5B5A1() {
+		return ms_pfR5G5B5A1;
+	}
+
+	static const PixelFormat& getR4G4B4A4() {
+		return ms_pfR4G4B4A4;
+	}
+
 	static const PixelFormat& getR8G8B8() {
 		return ms_pfR8G8B8;
 	}
@@ -207,6 +219,18 @@ public:
 		return ms_pfB8G8R8A8;
 	}
 
+	static const PixelFormat& getR16F() {
+		return ms_pfR16F;
+	}
+
+	static const PixelFormat& getR32F() {
+		return ms_pfR32F;
+	}
+
+	static const PixelFormat& getRGBAF16() {
+		return ms_pfRGBAF16;
+	}
+
 	static const PixelFormat& getRGBAF32() {
 		return ms_pfRGBAF32;
 	}
@@ -236,6 +260,8 @@ private:
 	static const PixelFormat ms_pfR16;
 	static const PixelFormat ms_pfR5G5B5;
 	static const PixelFormat ms_pfR5G6B5;
+	static const PixelFormat ms_pfR5G5B5A1;
+	static const PixelFormat ms_pfR4G4B4A4;
 	static const PixelFormat ms_pfR8G8B8;
 	static const PixelFormat ms_pfB8G8R8;
 	static const PixelFormat ms_pfA1R5G5B5;
@@ -247,6 +273,9 @@ private:
 	static const PixelFormat ms_pfA8B8G8R8;
 	static const PixelFormat ms_pfR8G8B8A8;
 	static const PixelFormat ms_pfB8G8R8A8;
+	static const PixelFormat ms_pfR16F;
+	static const PixelFormat ms_pfR32F;
+	static const PixelFormat ms_pfRGBAF16;
 	static const PixelFormat ms_pfRGBAF32;
 };
 	

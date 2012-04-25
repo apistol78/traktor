@@ -1,0 +1,41 @@
+#ifndef traktor_spray_DragModifierData_H
+#define traktor_spray_DragModifierData_H
+
+#include "Spray/ModifierData.h"
+
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SPRAY_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
+namespace traktor
+{
+	namespace spray
+	{
+
+/*! \brief Drag modifier persistent data.
+ * \ingroup Spray
+ */
+class T_DLLCLASS DragModifierData : public ModifierData
+{
+	T_RTTI_CLASS;
+
+public:
+	DragModifierData();
+
+	virtual Ref< Modifier > createModifier(resource::IResourceManager* resourceManager) const;
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	float m_linearDrag;
+	float m_angularDrag;
+};
+
+	}
+}
+
+#endif	// traktor_spray_DragModifierData_H

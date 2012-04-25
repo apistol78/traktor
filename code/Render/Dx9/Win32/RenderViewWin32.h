@@ -58,13 +58,7 @@ public:
 
 	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
 
-	virtual void setVertexBuffer(VertexBuffer* vertexBuffer);
-	
-	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
-
-	virtual void setProgram(IProgram* program);
-	
-	virtual void draw(const Primitives& primitives);
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives);
 
 	virtual void end();
 
@@ -104,9 +98,6 @@ protected:
 	ComRef< IDirect3DQuery9 > m_d3dSyncQueries[1];
 	D3DVIEWPORT9 m_d3dViewport;
 	std::list< RenderState > m_renderStateStack;
-	Ref< VertexBufferDx9 > m_currentVertexBuffer;
-	Ref< IndexBufferDx9 > m_currentIndexBuffer;
-	Ref< ProgramWin32 > m_currentProgram;
 	uint32_t m_frameCount;
 	bool m_targetDirty;
 	uint32_t m_drawCalls;

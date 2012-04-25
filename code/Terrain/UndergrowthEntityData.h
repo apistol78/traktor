@@ -1,7 +1,7 @@
 #ifndef traktor_terrain_UndergrowthEntityData_H
 #define traktor_terrain_UndergrowthEntityData_H
 
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "Terrain/UndergrowthEntity.h"
 #include "World/Entity/EntityData.h"
 
@@ -50,16 +50,16 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
+	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
+	const resource::Id< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
 
-	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	mutable resource::Proxy< hf::Heightfield > m_heightfield;
-	mutable resource::Proxy< hf::MaterialMask > m_materialMask;
-	mutable resource::Proxy< render::Shader > m_shader;
+	resource::Id< hf::Heightfield > m_heightfield;
+	resource::Id< hf::MaterialMask > m_materialMask;
+	resource::Id< render::Shader > m_shader;
 	UndergrowthEntity::Settings m_settings;
 };
 

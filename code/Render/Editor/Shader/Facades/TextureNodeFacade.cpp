@@ -123,7 +123,7 @@ void TextureNodeFacade::updateThumb(editor::IEditor* editor, ui::custom::Node* e
 			Ref< editor::IThumbnailGenerator > thumbnailGenerator = editor->getStoreObject< editor::IThumbnailGenerator >(L"ThumbnailGenerator");
 			if (thumbnailGenerator)
 			{
-				bool visibleAlpha = (textureAsset->m_hasAlpha == true && textureAsset->m_ignoreAlpha == false);
+				bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
 				Ref< drawing::Image > thumbnail = thumbnailGenerator->get(fileName, 64, 64, visibleAlpha);
 				if (thumbnail)
 				{

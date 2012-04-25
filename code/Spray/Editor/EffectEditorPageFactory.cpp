@@ -1,4 +1,4 @@
-#include "Spray/Effect.h"
+#include "Spray/EffectData.h"
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectEditorPageFactory.h"
 #include "Ui/Command.h"
@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEditorPageFactory", 0, Effe
 const TypeInfoSet EffectEditorPageFactory::getEditableTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Effect >());
+	typeSet.insert(&type_of< EffectData >());
 	return typeSet;
 }
 

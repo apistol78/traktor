@@ -281,13 +281,6 @@ void CloudEntity::render(
 	render::PrimitiveRenderer* primitiveRenderer
 )
 {
-	// Ensure all proxies are validated.
-	if (!m_particleShader.validate() || !m_particleTexture.validate() || !m_impostorShader.validate())
-		return;
-
-	// Validate optional mask.
-	m_mask.validate();
-
 	renderCluster(renderContext, worldRenderView, worldRenderPass, primitiveRenderer, m_cluster);
 }
 
@@ -358,7 +351,7 @@ void CloudEntity::renderCluster(
 		std::sort(particles.begin(), particles.end(), ParticlePredicate< std::greater< float > >(cameraPosition));
 
 		// Sample opacity from mask.
-		if (m_mask.valid())
+		if (m_mask)
 		{
 			for (AlignedVector< CloudParticle >::iterator i = particles.begin(); i != particles.end(); ++i)
 			{

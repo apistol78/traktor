@@ -1,9 +1,8 @@
 #ifndef traktor_spray_Source_H
 #define traktor_spray_Source_H
 
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Object.h"
 #include "Core/Math/Transform.h"
-#include "Spray/Point.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,13 +14,6 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace spray
 	{
 
@@ -31,14 +23,15 @@ class EmitterInstance;
 /*! \brief Particle source.
  * \ingroup Spray
  */
-class T_DLLCLASS Source : public ISerializable
+class T_DLLCLASS Source : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Source();
-
-	virtual bool bind(resource::IResourceManager* resourceManager) = 0;
+	Source(
+		float constantRate,
+		float velocityRate
+	);
 
 	virtual void emit(
 		Context& context,
@@ -47,11 +40,9 @@ public:
 		EmitterInstance& emitterInstance
 	) const = 0;
 
-	virtual bool serialize(ISerializer& s);
+	float getConstantRate() const { return m_constantRate; }
 
-	inline float getConstantRate() const { return m_constantRate; }
-
-	inline float getVelocityRate() const { return m_velocityRate; }
+	float getVelocityRate() const { return m_velocityRate; }
 
 private:
 	float m_constantRate;

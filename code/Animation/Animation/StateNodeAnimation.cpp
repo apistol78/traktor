@@ -3,7 +3,7 @@
 #include "Animation/Animation/StateContext.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
+#include "Resource/MemberIdProxy.h"
 
 namespace traktor
 {
@@ -16,7 +16,7 @@ StateNodeAnimation::StateNodeAnimation()
 {
 }
 
-StateNodeAnimation::StateNodeAnimation(const std::wstring& name, const resource::Proxy< Animation >& animation)
+StateNodeAnimation::StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation)
 :	StateNode(name)
 ,	m_animation(animation)
 {
@@ -29,9 +29,6 @@ bool StateNodeAnimation::bind(resource::IResourceManager* resourceManager)
 
 bool StateNodeAnimation::prepareContext(StateContext& outContext)
 {
-	if (!m_animation.validate())
-		return false;
-
 	int poseCount = m_animation->getKeyPoseCount();
 	if (poseCount <= 0)
 		return false;
@@ -49,9 +46,6 @@ void StateNodeAnimation::evaluate(
 	Pose& outPose
 )
 {
-	if (!m_animation.validate())
-		return;
-
 	float time = context.getTime();
 	m_animation->getPose(time, outPose);
 }
@@ -60,7 +54,7 @@ bool StateNodeAnimation::serialize(ISerializer& s)
 {
 	if (!StateNode::serialize(s))
 		return false;
-	s >> resource::Member< Animation >(L"animation", m_animation);
+	s >> resource::MemberIdProxy< Animation >(L"animation", m_animation);
 	return true;
 }
 

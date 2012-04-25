@@ -5,6 +5,7 @@
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BankResource.h"
 #include "Sound/Resound/IGrain.h"
+#include "Sound/Resound/IGrainData.h"
 #include "Sound/Sound.h"
 
 namespace traktor
@@ -18,26 +19,29 @@ BankResource::BankResource()
 {
 }
 
-BankResource::BankResource(const RefArray< IGrain >& grains)
+BankResource::BankResource(const RefArray< IGrainData >& grains)
 :	m_grains(grains)
 {
 }
 
 Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const
 {
-	for (RefArray< IGrain >::const_iterator i = m_grains.begin(); i != m_grains.end(); ++i)
+	RefArray< IGrain > grains;
+
+	grains.resize(m_grains.size());
+	for (uint32_t i = 0; i < m_grains.size(); ++i)
 	{
-		if (!(*i)->bind(resourceManager))
+		grains[i] = m_grains[i]->createInstance(resourceManager);
+		if (!grains[i])
 			return 0;
 	}
 
-	Ref< BankBuffer > bankBuffer = new BankBuffer(m_grains);
-	return new Sound(bankBuffer);
+	return new Sound(new BankBuffer(grains));
 }
 
 bool BankResource::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< IGrain >(L"grains", m_grains);
+	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }
 
 	}

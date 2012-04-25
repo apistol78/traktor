@@ -235,6 +235,8 @@ bool SceneEditorContext::getPhysicsEnable() const
 
 Camera* SceneEditorContext::getCamera(int index) const
 {
+	T_ASSERT (index >= 0)
+	T_ASSERT (index < sizeof_array(m_cameras));
 	return m_cameras[index];
 }
 
@@ -327,8 +329,8 @@ void SceneEditorContext::buildEntities()
 		m_rootEntityAdapter = entityBuilder->getRootAdapter();
 
 		// Bind post process settings.
-		resource::Proxy< world::PostProcessSettings > postProcessSettings = m_sceneAsset->getPostProcessSettings();
-		m_resourceManager->bind(postProcessSettings);
+		resource::Proxy< world::PostProcessSettings > postProcessSettings;
+		m_resourceManager->bind(m_sceneAsset->getPostProcessSettings(), postProcessSettings);
 
 		// Create our scene.
 		m_scene = new Scene(

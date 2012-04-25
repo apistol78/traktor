@@ -1,4 +1,5 @@
 #include "Animation/Pose.h"
+#include "Core/Serialization/AttributeAngles.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -23,16 +24,16 @@ Vector4 Pose::getBoneOffset(uint32_t boneIndex) const
 	return bone ? bone->offset : Vector4::zero();
 }
 
-void Pose::setBoneOrientation(uint32_t boneIndex, const Quaternion& boneOrientation)
+void Pose::setBoneOrientation(uint32_t boneIndex, const Vector4& boneOrientation)
 {
 	Bone& bone = getEditBone(boneIndex);
 	bone.orientation = boneOrientation;
 }
 
-Quaternion Pose::getBoneOrientation(uint32_t boneIndex) const
+Vector4 Pose::getBoneOrientation(uint32_t boneIndex) const
 {
 	const Bone* bone = getBone(boneIndex);
-	return bone ? bone->orientation : Quaternion::identity();
+	return bone ? bone->orientation : Vector4::zero();
 }
 
 void Pose::getIndexMask(BitSet& outIndices) const
@@ -88,7 +89,7 @@ bool Pose::Bone::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"index", index);
 	s >> Member< Vector4 >(L"offset", offset, AttributeDirection());
-	s >> Member< Quaternion >(L"orientation", orientation);
+	s >> Member< Vector4 >(L"orientation", orientation, AttributeAngles());
 	return true;
 }
 

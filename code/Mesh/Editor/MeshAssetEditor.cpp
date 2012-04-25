@@ -13,7 +13,7 @@
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
-#include "Render/Editor/Texture/TextureAssetBase.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
@@ -429,7 +429,7 @@ void MeshAssetEditor::browseMaterialTexture()
 	if (!selectedItem)
 		return;
 
-	editor::TypeBrowseFilter filter(type_of< render::TextureAssetBase >());
+	editor::TypeBrowseFilter filter(type_of< render::TextureAsset >());
 	Ref< db::Instance > materialTextureInstance = m_editor->browseInstance(&filter);
 	if (materialTextureInstance)
 	{

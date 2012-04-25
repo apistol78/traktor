@@ -2,7 +2,7 @@
 #define traktor_parade_WorldLayerData_H
 
 #include <map>
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "Parade/LayerData.h"
 
 // import/export mechanism.
@@ -44,8 +44,8 @@ public:
 private:
 	friend class StagePipeline;
 
-	resource::Proxy< scene::Scene > m_scene;
-	std::map< std::wstring, resource::Proxy< world::EntityData > > m_entities;
+	resource::Id< scene::Scene > m_scene;
+	std::map< std::wstring, resource::Id< world::EntityData > > m_entities;
 };
 
 	}

@@ -12,7 +12,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 11, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 12, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	renderType(RtForward)
@@ -25,6 +25,7 @@ WorldRenderSettings::WorldRenderSettings()
 ,	shadowFarZ(100.0f)
 ,	shadowMapResolution(1024)
 ,	shadowMapBias(0.001f)
+,	shadowMapBiasCoeff(0.1f)
 ,	shadowCascadingSlices(1)
 ,	shadowCascadingLambda(1.0f)
 ,	shadowQuantizeProjection(true)
@@ -46,6 +47,7 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 ,	shadowFarZ(settings.shadowFarZ)
 ,	shadowMapResolution(settings.shadowMapResolution)
 ,	shadowMapBias(settings.shadowMapBias)
+,	shadowMapBiasCoeff(settings.shadowMapBiasCoeff)
 ,	shadowCascadingSlices(settings.shadowCascadingSlices)
 ,	shadowCascadingLambda(settings.shadowCascadingLambda)
 ,	shadowQuantizeProjection(settings.shadowQuantizeProjection)
@@ -127,6 +129,9 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"shadowFarZ", shadowFarZ, AttributeRange(0.0f));
 	s >> Member< int32_t >(L"shadowMapResolution", shadowMapResolution);
 	s >> Member< float >(L"shadowMapBias", shadowMapBias);
+
+	if (s.getVersion() >= 12)
+		s >> Member< float >(L"shadowMapBiasCoeff", shadowMapBiasCoeff);
 
 	if (s.getVersion() >= 7)
 	{

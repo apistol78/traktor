@@ -155,7 +155,7 @@ bool FlashEditorPage::handleCommand(const ui::Command& command)
 void FlashEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->update(eventId, true);
+		m_resourceManager->reload(eventId);
 }
 
 void FlashEditorPage::eventToolClick(ui::Event* event)

@@ -19,7 +19,7 @@ void TextureProxy::destroy()
 
 ITexture* TextureProxy::resolve()
 {
-	return m_texture.validate() ? m_texture->resolve() : 0;
+	return m_texture->resolve();
 }
 
 	}

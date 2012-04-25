@@ -1,5 +1,5 @@
-#include "Mesh/Skinned/SkinnedMeshEntity.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
+#include "Mesh/Skinned/SkinnedMeshEntity.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -37,12 +37,12 @@ void SkinnedMeshEntity::setBoneTransforms(const AlignedVector< Matrix44 >& boneT
 
 Aabb3 SkinnedMeshEntity::getBoundingBox() const
 {
-	return validate() ? m_mesh->getBoundingBox() : Aabb3();
+	return m_mesh->getBoundingBox();
 }
 
 bool SkinnedMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+	return m_mesh->supportTechnique(technique);
 }
 
 void SkinnedMeshEntity::render(
@@ -52,8 +52,14 @@ void SkinnedMeshEntity::render(
 	float distance
 )
 {
-	if (!validate())
-		return;
+	// Ensure bone transform array is at least enough size.
+	const std::map< std::wstring, int >& boneMap = m_mesh->getBoneMap();
+	if (m_boneTransforms.size() < boneMap.size() * 2)
+	{
+		m_boneTransforms.resize(boneMap.size() * 2);
+		for (uint32_t i = 0; i < uint32_t(m_boneTransforms.size()); ++i)
+			m_boneTransforms[i] = Vector4::origo();
+	}
 
 	m_mesh->render(
 		worldContext.getRenderContext(),
@@ -63,23 +69,6 @@ void SkinnedMeshEntity::render(
 		distance,
 		getParameterCallback()
 	);
-}
-
-bool SkinnedMeshEntity::validate() const
-{
-	if (m_mesh.valid())
-		return true;
-
-	if (!m_mesh.validate())
-		return false;
-
-	const std::map< std::wstring, int >& boneMap = m_mesh->getBoneMap();
-
-	m_boneTransforms.resize(boneMap.size() * 2);
-	for (uint32_t i = 0; i < uint32_t(m_boneTransforms.size()); ++i)
-		m_boneTransforms[i] = Vector4::origo();
-
-	return true;
 }
 
 	}

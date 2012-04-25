@@ -67,6 +67,8 @@ bool EntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -98,7 +100,7 @@ bool EntityPipeline::buildDependencies(
 
 	// Add external entity data dependencies.
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(entityData))
-		pipelineDepends->addDependency(externalEntityData->getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
 
 	return true;
 }

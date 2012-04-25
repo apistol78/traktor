@@ -10,6 +10,7 @@
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -35,9 +36,8 @@ Ref< IMesh > IndoorMeshResource::createMesh(
 
 	Ref< IndoorMesh > indoorMesh = new IndoorMesh();
 	indoorMesh->m_mesh = mesh;
-	indoorMesh->m_shader = m_shader;
 
-	if (!resourceManager->bind(indoorMesh->m_shader))
+	if (!resourceManager->bind(m_shader, indoorMesh->m_shader))
 		return 0;
 
 	indoorMesh->m_sectors.resize(m_sectors.size());
@@ -75,7 +75,7 @@ Ref< IMesh > IndoorMeshResource::createMesh(
 bool IndoorMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
-	s >> Member< Guid >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Sector, MemberComposite< Sector > >(L"sectors", m_sectors);
 	s >> MemberAlignedVector< Portal, MemberComposite< Portal > >(L"portals", m_portals);
 	return true;

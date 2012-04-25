@@ -1,7 +1,7 @@
 #ifndef traktor_animation_AnimatedMeshEntityData_H
 #define traktor_animation_AnimatedMeshEntityData_H
 
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.
@@ -56,15 +56,15 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Proxy< mesh::SkinnedMesh >& getMesh() const { return m_mesh; }
+	const resource::Id< mesh::SkinnedMesh >& getMesh() const { return m_mesh; }
 
-	const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
+	const resource::Id< Skeleton >& getSkeleton() const { return m_skeleton; }
 
 	IPoseControllerData* getPoseControllerData() const { return m_poseController; }
 
 private:
-	mutable resource::Proxy< mesh::SkinnedMesh > m_mesh;
-	mutable resource::Proxy< Skeleton > m_skeleton;
+	resource::Id< mesh::SkinnedMesh > m_mesh;
+	resource::Id< Skeleton > m_skeleton;
 	Ref< IPoseControllerData > m_poseController;
 	bool m_normalizePose;
 	bool m_normalizeTransform;

@@ -1,7 +1,3 @@
-#include "Core/Serialization/AttributePoint.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberComposite.h"
 #include "Spray/EmitterInstance.h"
 #include "Spray/Types.h"
 #include "Spray/Sources/SphereSource.h"
@@ -11,23 +7,30 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SphereSource", 0, SphereSource, Source)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SphereSource", SphereSource, Source)
 
-SphereSource::SphereSource()
-:	m_position(0.0f, 0.0f, 0.0f, 1.0f)
-,	m_radius(1.0f, 2.0f)
-,	m_velocity(0.0f, 0.0f)
-,	m_orientation(0.0f, 2.0f * PI)
-,	m_angularVelocity(0.0f, 0.0f)
-,	m_age(1.0f, 1.0f)
-,	m_mass(1.0f, 1.0f)
-,	m_size(1.0f, 1.0f)
+SphereSource::SphereSource(
+	float constantRate,
+	float velocityRate,
+	const Vector4& position,
+	const Range< float >& radius,
+	const Range< float >& velocity,
+	const Range< float >& orientation,
+	const Range< float >& angularVelocity,
+	const Range< float >& age,
+	const Range< float >& mass,
+	const Range< float >& size
+)
+:	Source(constantRate, velocityRate)
+,	m_position(position)
+,	m_radius(radius)
+,	m_velocity(velocity)
+,	m_orientation(orientation)
+,	m_angularVelocity(angularVelocity)
+,	m_age(age)
+,	m_mass(mass)
+,	m_size(size)
 {
-}
-
-bool SphereSource::bind(resource::IResourceManager* resourceManager)
-{
-	return true;
 }
 
 void SphereSource::emit(
@@ -58,23 +61,6 @@ void SphereSource::emit(
 
 		++point;
 	}
-}
-
-bool SphereSource::serialize(ISerializer& s)
-{
-	if (!Source::serialize(s))
-		return false;
-
-	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
-	s >> MemberComposite< Range< float > >(L"radius", m_radius);
-	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
-	s >> MemberComposite< Range< float > >(L"orientation", m_orientation);
-	s >> MemberComposite< Range< float > >(L"angularVelocity", m_angularVelocity);
-	s >> MemberComposite< Range< float > >(L"age", m_age);
-	s >> MemberComposite< Range< float > >(L"mass", m_mass);
-	s >> MemberComposite< Range< float > >(L"size", m_size);
-
-	return true;
 }
 
 	}

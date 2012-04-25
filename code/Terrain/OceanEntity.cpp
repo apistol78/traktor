@@ -100,13 +100,11 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 	if (!m_screenRenderer->create(renderSystem))
 		return 0;
 
-	m_heightfield = data.m_heightfield;
-	m_shader = data.m_shader;
 	m_altitude = data.m_altitude;
 
-	if (!resourceManager->bind(m_heightfield))
+	if (!resourceManager->bind(data.m_heightfield, m_heightfield))
 		return false;
-	if (!resourceManager->bind(m_shader))
+	if (!resourceManager->bind(data.m_shader, m_shader))
 		return false;
 
 	for (int i = 0; i < MaxWaves; ++i)
@@ -121,9 +119,6 @@ void OceanEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (!m_shader.validate())
-		return;
-
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(m_shader);
 
@@ -161,10 +156,10 @@ void OceanEntity::render(
 	renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInverse);
 	renderBlock->programParams->setFloatParameter(L"ViewRatio", worldRenderView.getViewSize().x / worldRenderView.getViewSize().y);
 
-	if (m_heightfield.validate())
+	if (m_heightfield)
 	{
-		renderBlock->programParams->setVectorParameter(L"WorldOrigin", -(m_heightfield->getResource().getWorldExtent() * Scalar(0.5f)).xyz1());
-		renderBlock->programParams->setVectorParameter(L"WorldExtent", m_heightfield->getResource().getWorldExtent().xyz0());
+		renderBlock->programParams->setVectorParameter(L"WorldOrigin", -(m_heightfield->getWorldExtent() * Scalar(0.5f)).xyz1());
+		renderBlock->programParams->setVectorParameter(L"WorldExtent", m_heightfield->getWorldExtent().xyz0());
 		//renderBlock->programParams->setTextureParameter(L"Heightfield", m_heightfield->getHeightTexture());
 	}
 

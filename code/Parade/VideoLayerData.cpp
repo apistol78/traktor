@@ -21,17 +21,17 @@ Ref< Layer > VideoLayerData::createInstance(amalgam::IEnvironment* environment) 
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	// Create a copy of all immutable proxies.
-	resource::Proxy< script::IScriptContext > script = m_script;
-	resource::Proxy< video::Video > video = m_video;
-	resource::Proxy< render::Shader > shader = m_shader;
+	resource::Proxy< script::IScriptContext > script;
+	resource::Proxy< video::Video > video;
+	resource::Proxy< render::Shader > shader;
 
 	// Bind proxies to resource manager.
 	if (
-		!resourceManager->bind(script) ||
-		!resourceManager->bind(video) ||
-		!resourceManager->bind(shader)
+		!resourceManager->bind(m_video, video) ||
+		!resourceManager->bind(m_shader, shader)
 	)
+		return 0;
+	if (m_script && !resourceManager->bind(m_script, script))
 		return 0;
 
 	// Create layer instance.
@@ -49,8 +49,8 @@ bool VideoLayerData::serialize(ISerializer& s)
 	if (!LayerData::serialize(s))
 		return false;
 
-	s >> resource::Member< video::Video, video::VideoResource >(L"video", m_video);
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< video::Video >(L"video", m_video);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 
 	return true;
 }

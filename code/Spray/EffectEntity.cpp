@@ -73,11 +73,8 @@ void EffectEntity::update(const UpdateParams& update)
 	if ((m_counter++ % c_updateDenom) != 0)
 		return;
 
-	if (!m_effect.valid() || !m_effectInstance)
+	if (m_effect.changed() || !m_effectInstance)
 	{
-		if (!m_effect.validate())
-			return;
-
 		m_effectInstance = m_effect->createInstance();
 		if (m_effectInstance)
 		{
@@ -94,10 +91,11 @@ void EffectEntity::update(const UpdateParams& update)
 					continue;
 
 				const resource::Proxy< render::Shader >& shader = emitter->getShader();
-				if (shader.valid())
+				if (shader)
 					shader->getTechniques(m_techniques);
 			}
 		}
+		m_effect.consume();
 	}
 
 	if (m_effectInstance)

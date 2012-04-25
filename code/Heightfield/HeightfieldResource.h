@@ -31,17 +31,11 @@ public:
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
-	uint32_t getPatchDim() const { return m_patchDim; }
-
-	uint32_t getDetailSkip() const { return m_detailSkip; }
-
 private:
 	friend class HeightfieldPipeline;
 
 	uint32_t m_size;
 	Vector4 m_worldExtent;
-	uint32_t m_patchDim;
-	uint32_t m_detailSkip;
 };
 
 	}

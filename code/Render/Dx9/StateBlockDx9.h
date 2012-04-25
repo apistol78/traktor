@@ -3,8 +3,8 @@
 
 #include <vector>
 #include <map>
-#include "Render/Dx9/Platform.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Render/Dx9/Platform.h"
 
 namespace traktor
 {
@@ -27,7 +27,9 @@ public:
 
 	void setRenderState(D3DRENDERSTATETYPE state, DWORD value);
 
-	void setSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE type, DWORD value);
+	void setVertexSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE type, DWORD value);
+
+	void setPixelSamplerState(DWORD sampler, D3DSAMPLERSTATETYPE type, DWORD value);
 
 	void prepareAnisotropy(int32_t maxAnisotropy);
 
@@ -41,7 +43,8 @@ public:
 
 private:
 	std::vector< std::pair< uint32_t, uint32_t > > m_renderStates;
-	std::map< uint32_t, std::vector< std::pair< uint32_t, uint32_t > > > m_samplerStates;
+	std::map< uint32_t, std::vector< std::pair< uint32_t, uint32_t > > > m_vertexSamplerStates;
+	std::map< uint32_t, std::vector< std::pair< uint32_t, uint32_t > > > m_pixelSamplerStates;
 	bool m_opaque;
 };
 

@@ -17,7 +17,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 5, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 6, FlashPipeline, editor::IPipeline)
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -40,6 +40,8 @@ bool FlashPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {

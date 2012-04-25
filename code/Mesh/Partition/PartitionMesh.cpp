@@ -46,7 +46,7 @@ void PartitionMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	if (!m_shader.validate() || !m_partition)
+	if (!m_partition)
 		return;
 
 	Matrix44 world = worldTransform.toMatrix44();

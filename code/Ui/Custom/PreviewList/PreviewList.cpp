@@ -42,8 +42,7 @@ void PreviewList::setItems(PreviewItems* items)
 		for (int32_t i = 0; i < m_items->count(); ++i)
 			m_items->get(i)->setSelected(false);
 	}
-	requestLayout();
-	update();
+	requestUpdate();
 }
 
 Ref< PreviewItems > PreviewList::getItems() const

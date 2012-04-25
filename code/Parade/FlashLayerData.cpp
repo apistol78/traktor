@@ -23,15 +23,13 @@ Ref< Layer > FlashLayerData::createInstance(amalgam::IEnvironment* environment) 
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	// Create a copy of all immutable proxies.
-	resource::Proxy< script::IScriptContext > script = m_script;
-	resource::Proxy< flash::FlashMovie > movie = m_movie;
+	resource::Proxy< script::IScriptContext > script;
+	resource::Proxy< flash::FlashMovie > movie;
 
 	// Bind proxies to resource manager.
-	if (
-		!resourceManager->bind(script) ||
-		!resourceManager->bind(movie)
-	)
+	if (!resourceManager->bind(m_movie, movie))
+		return 0;
+	if (m_script && !resourceManager->bind(m_script, script))
 		return 0;
 
 	// Create layer instance.

@@ -54,7 +54,7 @@ void GridHeaderCell::mouseMove(AutoWidget* widget, const Point& position)
 		width = 16;
 
 	m_resizeColumn->setWidth(width);
-	widget->requestLayout();
+	widget->requestUpdate();
 }
 
 void GridHeaderCell::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)

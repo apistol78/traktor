@@ -32,6 +32,8 @@ bool TheaterControllerPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -58,7 +60,7 @@ Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 {
 	const TheaterControllerData* sourceControllerData = checked_type_cast< const TheaterControllerData*, false >(sourceAsset);
 	
-	Ref< TheaterControllerData > controllerData = clone_instance(sourceControllerData);
+	Ref< TheaterControllerData > controllerData = new TheaterControllerData(*sourceControllerData);
 	if (!controllerData)
 		return 0;
 
@@ -68,8 +70,7 @@ Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 		Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(pipelineBuilder->buildOutput(trackData[i]->getEntityData()));
 		Ref< world::EntityData > lookAtEntityData = checked_type_cast< world::EntityData* >(pipelineBuilder->buildOutput(trackData[i]->getLookAtEntityData()));
 
-		trackData[i] = clone_instance(trackData[i].c_ptr());
-
+		trackData[i] = new TrackData(*trackData[i]);
 		trackData[i]->setEntityData(entityData);
 		trackData[i]->setLookAtEntityData(lookAtEntityData);
 	}

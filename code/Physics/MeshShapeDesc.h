@@ -2,7 +2,7 @@
 #define traktor_physics_MeshShapeDesc_H
 
 #include "Physics/ShapeDesc.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,14 +27,14 @@ class T_DLLCLASS MeshShapeDesc : public ShapeDesc
 	T_RTTI_CLASS;
 
 public:
-	void setMesh(const resource::Proxy< Mesh >& mesh);
+	void setMesh(const resource::Id< Mesh >& mesh);
 
-	const resource::Proxy< Mesh >& getMesh() const;
+	const resource::Id< Mesh >& getMesh() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	resource::Proxy< Mesh > m_mesh;
+	resource::Id< Mesh > m_mesh;
 };
 
 	}

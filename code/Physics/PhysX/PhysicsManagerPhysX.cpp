@@ -168,8 +168,8 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 	}
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< Mesh > mesh = meshShape->getMesh();
-		if (!resourceManager->bind(mesh) || !mesh.validate())
+		resource::Proxy< Mesh > mesh;
+		if (!resourceManager->bind(meshShape->getMesh(), mesh))
 		{
 			log::error << L"Unable to load mesh resource" << Endl;
 			return 0;
@@ -246,8 +246,8 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 	}
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< hf::Heightfield > heightfield = heightfieldShape->getHeightfield();
-		if (!heightfield.validate())
+		resource::Proxy< hf::Heightfield > heightfield;
+		if (resourceManager->bind(heightfieldShape->getHeightfield(), heightfield))
 		{
 			log::error << L"Unable to load heightfield resource" << Endl;
 			return 0;
@@ -256,19 +256,19 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		const hf::height_t* heights = heightfield->getHeights();
 
 		NxHeightFieldDesc heightFieldDesc;
-		heightFieldDesc.nbColumns = heightfield->getResource().getSize();
-		heightFieldDesc.nbRows = heightfield->getResource().getSize();
+		heightFieldDesc.nbColumns = heightfield->getSize();
+		heightFieldDesc.nbRows = heightfield->getSize();
 		heightFieldDesc.convexEdgeThreshold = 0;
-		heightFieldDesc.samples = new NxU32 [heightfield->getResource().getSize() * heightfield->getResource().getSize()];
+		heightFieldDesc.samples = new NxU32 [heightfield->getSize() * heightfield->getSize()];
 		heightFieldDesc.sampleStride = sizeof(NxU32);
 		heightFieldDesc.verticalExtent = -1000;
 
 		NxU8* ptr = static_cast< NxU8* >(heightFieldDesc.samples);
-		for (uint32_t z = 0; z < heightfield->getResource().getSize(); ++z)
+		for (uint32_t z = 0; z < heightfield->getSize(); ++z)
 		{
-			for (uint32_t x = 0; x < heightfield->getResource().getSize(); ++x)
+			for (uint32_t x = 0; x < heightfield->getSize(); ++x)
 			{
-				hf::height_t height = heights[z + x * heightfield->getResource().getSize()];
+				hf::height_t height = heights[z + x * heightfield->getSize()];
 
 				NxHeightFieldSample* sample = reinterpret_cast< NxHeightFieldSample* >(ptr);
 
@@ -292,12 +292,12 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 
 		NxHeightFieldShapeDesc* heightFieldShapeDesc = new NxHeightFieldShapeDesc();
 		heightFieldShapeDesc->heightField = heightFieldData;
-		heightFieldShapeDesc->heightScale = heightfield->getResource().getWorldExtent().y() / 65536.0f;
-		heightFieldShapeDesc->rowScale = heightfield->getResource().getWorldExtent().x() / heightfield->getResource().getSize();
-		heightFieldShapeDesc->columnScale = heightfield->getResource().getWorldExtent().z() / heightfield->getResource().getSize();
+		heightFieldShapeDesc->heightScale = heightfield->getWorldExtent().y() / 65536.0f;
+		heightFieldShapeDesc->rowScale = heightfield->getWorldExtent().x() / heightfield->getSize();
+		heightFieldShapeDesc->columnScale = heightfield->getWorldExtent().z() / heightfield->getSize();
 		heightFieldShapeDesc->materialIndexHighBits = 0;
 		heightFieldShapeDesc->holeMaterial = 2;
-		heightFieldShapeDesc->localPose.t.set(-heightfield->getResource().getWorldExtent().x() * 0.5f, 0.0f, -heightfield->getResource().getWorldExtent().z() * 0.5f);
+		heightFieldShapeDesc->localPose.t.set(-heightfield->getWorldExtent().x() * 0.5f, 0.0f, -heightfield->getWorldExtent().z() * 0.5f);
 
 		actorShapeDesc = heightFieldShapeDesc;
 	}

@@ -2,7 +2,7 @@
 #define traktor_weather_CloudEntityData_H
 
 #include "World/Entity/EntityData.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "Weather/Clouds/CloudParticleData.h"
 
 // import/export mechanism.
@@ -48,19 +48,19 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< render::Shader >& getParticleShader() const { return m_particleShader; }
+	const resource::Id< render::Shader >& getParticleShader() const { return m_particleShader; }
 
-	inline const resource::Proxy< render::ITexture >& getParticleTexture() const { return m_particleTexture; }
+	const resource::Id< render::ITexture >& getParticleTexture() const { return m_particleTexture; }
 
-	inline const resource::Proxy< render::Shader >& getImpostorShader() const { return m_impostorShader; }
+	const resource::Id< render::Shader >& getImpostorShader() const { return m_impostorShader; }
 
-	inline const resource::Proxy< CloudMask >& getMask() const { return m_mask; }
+	const resource::Id< CloudMask >& getMask() const { return m_mask; }
 
 private:
-	mutable resource::Proxy< render::Shader > m_particleShader;
-	mutable resource::Proxy< render::ITexture > m_particleTexture;
-	mutable resource::Proxy< render::Shader > m_impostorShader;
-	mutable resource::Proxy< CloudMask > m_mask;
+	resource::Id< render::Shader > m_particleShader;
+	resource::Id< render::ITexture > m_particleTexture;
+	resource::Id< render::Shader > m_impostorShader;
+	resource::Id< CloudMask > m_mask;
 	uint32_t m_impostorTargetResolution;
 	uint32_t m_impostorSliceCount;
 	uint32_t m_updateFrequency;

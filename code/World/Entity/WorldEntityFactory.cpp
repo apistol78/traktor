@@ -41,12 +41,8 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 {
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(&entityData))
 	{
-		Guid entityGuid = externalEntityData->getGuid();
-
-		resource::Proxy< EntityData > resolvedEntityData(entityGuid);
-		if (!m_resourceManager->bind(resolvedEntityData))
-			return 0;
-		if (!resolvedEntityData.validate())
+		resource::Proxy< EntityData > resolvedEntityData;
+		if (!m_resourceManager->bind(externalEntityData->getEntityData(), resolvedEntityData))
 			return 0;
 
 		resolvedEntityData->setName(externalEntityData->getName());

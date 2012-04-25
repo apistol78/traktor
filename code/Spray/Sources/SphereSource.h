@@ -26,9 +26,18 @@ class T_DLLCLASS SphereSource : public Source
 	T_RTTI_CLASS;
 
 public:
-	SphereSource();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	SphereSource(
+		float constantRate,
+		float velocityRate,
+		const Vector4& position,
+		const Range< float >& radius,
+		const Range< float >& velocity,
+		const Range< float >& orientation,
+		const Range< float >& angularVelocity,
+		const Range< float >& age,
+		const Range< float >& mass,
+		const Range< float >& size
+	);
 
 	virtual void emit(
 		Context& context,
@@ -37,11 +46,9 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	const Vector4& getPosition() const { return m_position; }
 
-	inline const Vector4& getPosition() const { return m_position; }
-
-	inline const Range< float >& getRadius() const { return m_radius; }
+	const Range< float >& getRadius() const { return m_radius; }
 
 private:
 	Vector4 m_position;

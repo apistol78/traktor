@@ -1,5 +1,5 @@
 #include "I18N/Format.h"
-#include "Sound/Resound/PlayGrain.h"
+#include "Sound/Resound/PlayGrainData.h"
 #include "Sound/Editor/Resound/PlayGrainFacade.h"
 
 namespace traktor
@@ -9,14 +9,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.PlayGrainFacade", PlayGrainFacade, IGrainFacade)
 
-int32_t PlayGrainFacade::getImage(const IGrain* grain) const
+int32_t PlayGrainFacade::getImage(const IGrainData* grain) const
 {
 	return 0;
 }
 
-std::wstring PlayGrainFacade::getText(const IGrain* grain) const
+std::wstring PlayGrainFacade::getText(const IGrainData* grain) const
 {
-	const PlayGrain* playGrain = static_cast< const PlayGrain* >(grain);
+	const PlayGrainData* playGrain = static_cast< const PlayGrainData* >(grain);
 	return i18n::Format(
 		L"RESOUND_PLAY_GRAIN_TEXT",
 		int32_t((playGrain->getGain().min + 1.0f) * 100),
@@ -29,17 +29,17 @@ bool PlayGrainFacade::canHaveChildren() const
 	return false;
 }
 
-bool PlayGrainFacade::addChild(IGrain* parentGrain, IGrain* childGrain)
+bool PlayGrainFacade::addChild(IGrainData* parentGrain, IGrainData* childGrain)
 {
 	return false;
 }
 
-bool PlayGrainFacade::removeChild(IGrain* parentGrain, IGrain* childGrain)
+bool PlayGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childGrain)
 {
 	return false;
 }
 
-bool PlayGrainFacade::getChildren(IGrain* grain, RefArray< IGrain >& outChildren)
+bool PlayGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
 	return true;
 }

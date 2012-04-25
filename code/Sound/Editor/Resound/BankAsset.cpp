@@ -1,7 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Sound/ISoundResource.h"
-#include "Sound/Resound/IGrain.h"
+#include "Sound/Sound.h"
+#include "Sound/Resound/IGrainData.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 
 namespace traktor
@@ -9,31 +9,26 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 0, BankAsset, ITypedAsset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 0, BankAsset, ISerializable)
 
-void BankAsset::addGrain(IGrain* grain)
+void BankAsset::addGrain(IGrainData* grain)
 {
 	m_grains.push_back(grain);
 }
 
-void BankAsset::removeGrain(IGrain* grain)
+void BankAsset::removeGrain(IGrainData* grain)
 {
 	m_grains.remove(grain);
 }
 
-const RefArray< IGrain >& BankAsset::getGrains() const
+const RefArray< IGrainData >& BankAsset::getGrains() const
 {
 	return m_grains;
 }
 
-const TypeInfo* BankAsset::getOutputType() const
-{
-	return &type_of< ISoundResource >();
-}
-
 bool BankAsset::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< IGrain >(L"grains", m_grains);
+	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }
 
 	}

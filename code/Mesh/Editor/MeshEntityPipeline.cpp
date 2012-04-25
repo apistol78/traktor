@@ -20,14 +20,16 @@ bool MeshEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
-	if (!world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outBuildParams))
+	if (!world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid, outBuildParams))
 		return false;
 
 	if (const MeshEntityData* meshEntityData = dynamic_type_cast< const MeshEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(meshEntityData->getMesh().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(meshEntityData->getMesh(), editor::PdfBuild);
 
 	return true;
 }

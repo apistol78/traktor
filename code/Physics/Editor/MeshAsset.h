@@ -23,8 +23,6 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 public:
 	MeshAsset();
 
-	virtual const TypeInfo* getOutputType() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:

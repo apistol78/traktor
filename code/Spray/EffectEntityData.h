@@ -1,7 +1,7 @@
 #ifndef traktor_spray_EffectEntityData_H
 #define traktor_spray_EffectEntityData_H
 
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.
@@ -32,8 +32,8 @@ class SurroundEnvironment;
 	namespace spray
 	{
 
-class EffectEntity;
 class Effect;
+class EffectEntity;
 
 /*! \brief Effect entity data.
  * \ingroup Spray
@@ -47,10 +47,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< Effect >& getEffect() const { return m_effect; }
+	const resource::Id< Effect >& getEffect() const { return m_effect; }
 
 private:
-	mutable resource::Proxy< Effect > m_effect;
+	resource::Id< Effect > m_effect;
 };
 
 	}

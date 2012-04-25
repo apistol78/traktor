@@ -18,9 +18,6 @@ StreamMeshEntity::StreamMeshEntity(const Transform& transform, const resource::P
 
 uint32_t StreamMeshEntity::getFrameCount() const
 {
-	if (!validate())
-		return 0;
-
 	return m_mesh->getFrameCount();
 }
 
@@ -31,12 +28,12 @@ void StreamMeshEntity::setFrame(uint32_t frame)
 
 Aabb3 StreamMeshEntity::getBoundingBox() const
 {
-	return validate() ? m_mesh->getBoundingBox() : Aabb3();
+	return m_mesh->getBoundingBox();
 }
 
 bool StreamMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return validate() ? m_mesh->supportTechnique(technique) : false;
+	return m_mesh->supportTechnique(technique);
 }
 
 void StreamMeshEntity::render(
@@ -46,11 +43,15 @@ void StreamMeshEntity::render(
 	float distance
 )
 {
-	if (!validate())
-		return;
-
 	if (m_frame >= m_mesh->getFrameCount())
 		return;
+
+	if (!m_instance)
+	{
+		m_instance = m_mesh->createInstance();
+		if (!m_instance)
+			return;
+	}
 
 	m_mesh->render(
 		worldContext.getRenderContext(),
@@ -61,21 +62,6 @@ void StreamMeshEntity::render(
 		distance,
 		getParameterCallback()
 	);
-}
-
-bool StreamMeshEntity::validate() const
-{
-	if (m_mesh.valid() && m_instance)
-		return true;
-
-	if (!m_mesh.validate())
-		return false;
-
-	m_instance = m_mesh->createInstance();
-	if (!m_instance)
-		return false;
-
-	return true;
 }
 
 	}

@@ -2,6 +2,7 @@
 #define traktor_world_PostProcessStepSmProj_H
 
 #include "Render/Types.h"
+#include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "World/PostProcess/PostProcessStep.h"
 
@@ -39,7 +40,8 @@ public:
 	public:
 		InstanceSmProj(
 			const PostProcessStepSmProj* step,
-			Ref< render::ISimpleTexture > shadowMapDiscRotation[2]
+			Ref< render::ISimpleTexture > shadowMapDiscRotation[2],
+			const resource::Proxy< render::Shader >& shader
 		);
 
 		virtual void destroy();
@@ -54,6 +56,7 @@ public:
 	private:
 		Ref< const PostProcessStepSmProj > m_step;
 		Ref< render::ISimpleTexture > m_shadowMapDiscRotation[2];
+		resource::Proxy< render::Shader > m_shader;
 		uint32_t m_frame;
 		render::handle_t m_handleInputColor;
 		render::handle_t m_handleInputDepth;
@@ -61,8 +64,6 @@ public:
 		render::handle_t m_handleShadowMapDiscRotation;
 		render::handle_t m_handleShadowMapSizeAndBias;
 		render::handle_t m_handleShadowMapPoissonTaps;
-		render::handle_t m_handleSliceNearZ;
-		render::handle_t m_handleSliceFarZ;
 		render::handle_t m_handleDepth;
 		render::handle_t m_handleDepth_Size;
 		render::handle_t m_handleMagicCoeffs;
@@ -83,10 +84,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	mutable resource::Proxy< render::Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 };
 
 	}

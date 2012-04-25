@@ -33,6 +33,21 @@ class T_DLLCLASS FlashFrame : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	enum PlaceFlags
+	{
+		PfHasBitmapCaching = 1 << 0,
+		PfHasBlendMode = 1 << 1,
+		PfHasFilters = 1 << 2,
+		PfHasActions = 1 << 3,
+		PfHasClipDepth = 1 << 4,
+		PfHasName = 1 << 5,
+		PfHasRatio = 1 << 6,
+		PfHasCxTransform = 1 << 7,
+		PfHasMatrix = 1 << 8,
+		PfHasCharacterId = 1 << 9,
+		PfHasMove = 1 << 10
+	};
+
 	struct PlaceAction
 	{
 		uint32_t eventMask;
@@ -43,25 +58,7 @@ public:
 
 	struct PlaceObject
 	{
-		union
-		{
-			struct  
-			{
-				unsigned hasBitmapCaching : 1;
-				unsigned hasBlendMode : 1;
-				unsigned hasFilters : 1;
-				unsigned hasActions : 1;
-				unsigned hasClipDepth : 1;
-				unsigned hasName : 1;
-				unsigned hasRatio : 1;
-				unsigned hasCxTransform : 1;
-				unsigned hasMatrix : 1;
-				unsigned hasCharacterId : 1;
-				unsigned hasMove : 1;
-			};
-			uint16_t hasFlags;
-		};
-
+		uint16_t hasFlags;
 		uint16_t depth;
 		uint8_t bitmapCaching;
 		uint8_t blendMode;
@@ -77,6 +74,11 @@ public:
 		:	hasFlags(0)
 		,	depth(0)
 		{
+		}
+
+		bool has(PlaceFlags placeFlag) const
+		{
+			return (hasFlags & placeFlag) != 0;
 		}
 
 		bool serialize(ISerializer& s);

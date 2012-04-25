@@ -32,8 +32,6 @@ class T_DLLCLASS ResourceManager : public IResourceManager
 	T_RTTI_CLASS;
 
 public:
-	ResourceManager();
-
 	virtual ~ResourceManager();
 
 	virtual void destroy();
@@ -46,7 +44,7 @@ public:
 	
 	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid);
 
-	virtual void update(const Guid& guid, bool force);
+	virtual void reload(const Guid& guid);
 
 	virtual void flush(const Guid& guid);
 
@@ -68,7 +66,6 @@ private:
 	};
 
 	RefArray< IResourceFactory > m_factories;
-	Ref< IResourceHandle > m_nullHandle;
 	std::map< Guid, Ref< CachedResourceHandle > > m_cachedHandles;
 	std::map< Guid, RefArray< UncachedResourceHandle > > m_uncachedHandles;
 	std::map< const TypeInfo*, TimeCount > m_times;

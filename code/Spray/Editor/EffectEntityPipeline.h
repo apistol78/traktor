@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -27,6 +27,8 @@ public:
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
+		const std::wstring& outputPath,
+		const Guid& outputGuid,
 		Ref< const Object >& outBuildParams
 	) const;
 };

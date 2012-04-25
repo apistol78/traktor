@@ -266,7 +266,7 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 void SkeletonEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->update(eventId, true);
+		m_resourceManager->reload(eventId);
 }
 
 void SkeletonEditorPage::createSkeletonTreeNodes()

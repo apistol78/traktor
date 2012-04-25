@@ -37,9 +37,9 @@ FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRend
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
 ,	m_soundPlayer(new FlashSoundPlayer(soundRenderer))
 ,	m_intervalNextId(1)
-,	m_timeCurrent(0.0)
-,	m_timeNext(0.0)
-,	m_timeNextFrame(0.0)
+,	m_timeCurrent(0.0f)
+,	m_timeNext(0.0f)
+,	m_timeNextFrame(0.0f)
 ,	m_framesUntilCollection(c_framesBetweenCollections)
 {
 }
@@ -255,19 +255,14 @@ void FlashMoviePlayer::executeFrame()
 bool FlashMoviePlayer::progressFrame(float deltaTime)
 {
 	bool executed = false;
-
 	if (m_timeNext >= m_timeNextFrame)
 	{
 		m_timeCurrent = m_timeNext;
-		m_timeNextFrame += 1.0 / m_movie->getMovieClip()->getFrameRate();
-
+		m_timeNextFrame += 1.0f / m_movie->getMovieClip()->getFrameRate();
 		executeFrame();
-
 		executed = true;
 	}
-
 	m_timeNext += deltaTime;
-
 	return executed;
 }
 

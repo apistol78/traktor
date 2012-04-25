@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -22,8 +22,6 @@ class T_DLLCLASS SoundAsset : public editor::Asset
 
 public:
 	SoundAsset();
-
-	virtual const TypeInfo* getOutputType() const;
 
 	virtual bool serialize(ISerializer& s);
 

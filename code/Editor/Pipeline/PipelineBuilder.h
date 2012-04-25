@@ -74,7 +74,7 @@ public:
 
 	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset);
 
-	virtual bool buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid);
+	virtual bool buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& outputPath, const Guid& outputGuid);
 
 	virtual Ref< db::Database > getSourceDatabase() const;
 

@@ -30,9 +30,7 @@ void InstanceMeshEntityRenderer::render(
 	InstanceMeshEntity* meshEntity = checked_type_cast< InstanceMeshEntity* >(entity);
 	T_ASSERT_M (!meshEntity->getParameterCallback(), L"Instance mesh entities doesn't support parameter callback");
 	
-	resource::Proxy< InstanceMesh >& mesh = meshEntity->getMesh();
-	if (!mesh.validate())
-		return;
+	InstanceMesh* mesh = meshEntity->getMesh();
 
 	if (!mesh->supportTechnique(worldRenderPass.getTechnique()))
 		return;

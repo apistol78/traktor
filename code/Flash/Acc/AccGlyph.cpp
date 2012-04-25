@@ -26,8 +26,8 @@ struct Vertex
 };
 #pragma pack()
 
-const Guid c_guidShaderGlyph(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}");
-const Guid c_guidShaderGlyphMask(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}");
+const resource::Id< render::Shader > c_idShaderGlyph(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"));
+const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
 const uint32_t c_glyphCount = 400;
 const float c_minSampleDistance = 1.0f;
 const float c_maxSampleDistance = 4.0f;
@@ -78,12 +78,10 @@ bool AccGlyph::create(
 		s_handleInitialized = true;
 	}
 
-	m_shaderGlyph = c_guidShaderGlyph;
-	if (!resourceManager->bind(m_shaderGlyph))
+	if (!resourceManager->bind(c_idShaderGlyph, m_shaderGlyph))
 		return false;
 
-	m_shaderGlyphMask = c_guidShaderGlyphMask;
-	if (!resourceManager->bind(m_shaderGlyphMask))
+	if (!resourceManager->bind(c_idShaderGlyphMask, m_shaderGlyphMask))
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;
@@ -224,9 +222,6 @@ void AccGlyph::render(
 	render::VertexBuffer* vertexBuffer = m_vertexBuffers[m_currentVertexBuffer];
 
 	vertexBuffer->unlock();
-
-	if (!m_shaderGlyph.validate() || !m_shaderGlyphMask.validate())
-		return;
 
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Flash AccGlyph");
 	renderBlock->program = ((maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask)->getCurrentProgram();

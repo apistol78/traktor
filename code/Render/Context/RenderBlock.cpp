@@ -28,10 +28,12 @@ void SimpleRenderBlock::render(IRenderView* renderView, const ProgramParameters*
 	if (globalParameters)
 		globalParameters->fixup(program);
 
-	renderView->setIndexBuffer(indexBuffer);
-	renderView->setVertexBuffer(vertexBuffer);
-	renderView->setProgram(program);
-	renderView->draw(*primitives);
+	renderView->draw(
+		vertexBuffer,
+		indexBuffer,
+		program,
+		*primitives
+	);
 
 	T_RENDER_POP_MARKER(renderView);
 }
@@ -47,9 +49,12 @@ void NonIndexedRenderBlock::render(IRenderView* renderView, const ProgramParamet
 	if (globalParameters)
 		globalParameters->fixup(program);
 
-	renderView->setVertexBuffer(vertexBuffer);
-	renderView->setProgram(program);
-	renderView->draw(p);
+	renderView->draw(
+		vertexBuffer,
+		0,
+		program,
+		p
+	);
 
 	T_RENDER_POP_MARKER(renderView);
 }
@@ -65,10 +70,12 @@ void IndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters
 	if (globalParameters)
 		globalParameters->fixup(program);
 
-	renderView->setIndexBuffer(indexBuffer);
-	renderView->setVertexBuffer(vertexBuffer);
-	renderView->setProgram(program);
-	renderView->draw(p);
+	renderView->draw(
+		vertexBuffer,
+		indexBuffer,
+		program,
+		p
+	);
 
 	T_RENDER_POP_MARKER(renderView);
 }

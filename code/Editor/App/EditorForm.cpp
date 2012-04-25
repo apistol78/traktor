@@ -1026,14 +1026,14 @@ bool EditorForm::openWorkspace()
 		return false;
 	}
 
-	bool result = openWorkspace(path.getPathName());
+	bool result = openWorkspace(path);
 
 	fileDialog.destroy();
 
 	return result;
 }
 
-bool EditorForm::openWorkspace(const std::wstring& workspacePath)
+bool EditorForm::openWorkspace(const Path& workspacePath)
 {
 	if (m_workspaceSettings)
 		closeWorkspace();
@@ -1041,6 +1041,9 @@ bool EditorForm::openWorkspace(const std::wstring& workspacePath)
 	m_workspaceSettings = loadProperties(workspacePath);
 	if (!m_workspaceSettings)
 		return false;
+
+	// Change working directory to workspace file.
+	FileSystem::getInstance().setCurrentVolumeAndDirectory(workspacePath.getPathOnly());
 
 	// Create merged settings.
 	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
@@ -1845,7 +1848,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 					if (saveProperties(m_workspacePath, m_workspaceSettings, true))
 					{
 						// Re-open workspace.
-						std::wstring workspacePath = m_workspacePath;
+						Path workspacePath = m_workspacePath;
 						closeWorkspace();
 						openWorkspace(workspacePath);
 					}

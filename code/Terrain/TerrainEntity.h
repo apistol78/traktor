@@ -18,19 +18,12 @@
 
 namespace traktor
 {
-	namespace hf
-	{
-
-class Heightfield;
-class MaterialMask;
-
-	}
-
 	namespace render
 	{
 
 class IRenderSystem;
 class ISimpleTexture;
+class ITexture;
 class RenderContext;
 class VertexBuffer;
 class IndexBuffer;
@@ -56,7 +49,6 @@ class WorldRenderView;
 	{
 
 class TerrainSurfaceCache;
-class TerrainSurface;
 
 #if !defined(TARGET_OS_IPHONE)
 #	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
@@ -79,7 +71,7 @@ public:
 		Vector4 surfaceOffset;
 	};
 
-	TerrainEntity(render::IRenderSystem* renderSystem, bool editorMode);
+	TerrainEntity(render::IRenderSystem* renderSystem);
 
 	bool create(resource::IResourceManager* resourceManager, const TerrainEntityData& data);
 
@@ -89,9 +81,7 @@ public:
 		world::IWorldRenderPass& worldRenderPass
 	);
 
-	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
-
-	const resource::Proxy< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
+	const resource::Proxy< Terrain >& getTerrain() const { return m_terrain; }
 
 	TerrainSurfaceCache* getSurfaceCache() const { return m_surfaceCache; }
 
@@ -113,18 +103,12 @@ private:
 	};
 
 	Ref< render::IRenderSystem > m_renderSystem;
-	bool m_editorMode;
-	TerrainEntityData::VisualizeMode m_visualizeMode;
-	resource::Proxy< hf::Heightfield > m_heightfield;
-	resource::Proxy< hf::MaterialMask > m_materialMask;
+	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
-	Ref< TerrainSurface > m_surface;
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
-	Ref< render::ISimpleTexture > m_normalTexture;
-	Ref< render::ISimpleTexture > m_heightTexture;
-	RefArray< render::ISimpleTexture > m_materialMaskTextures;
+	
 	Ref< render::IndexBuffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	Ref< render::VertexBuffer > m_vertexBuffer;
@@ -132,12 +116,17 @@ private:
 #else
 	render::Primitives m_primitives[LodCount];
 #endif
+
+	uint32_t m_detailSkip;
+	uint32_t m_patchDim;
 	float m_patchLodDistance;
 	float m_patchLodBias;
 	float m_patchLodExponent;
 	float m_surfaceLodDistance;
 	float m_surfaceLodBias;
 	float m_surfaceLodExponent;
+	TerrainEntityData::VisualizeMode m_visualizeMode;
+
 	render::handle_t m_handleSurface;
 	render::handle_t m_handleSurfaceOffset;
 	render::handle_t m_handleHeightfield;
@@ -153,10 +142,6 @@ private:
 	bool updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int32_t maxZ);
 
 	bool createPatches();
-
-	bool updateTextures(bool normals, bool heights, bool materials);
-
-	bool createTextures();
 };
 
 	}

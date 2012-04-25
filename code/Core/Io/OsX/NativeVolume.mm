@@ -181,16 +181,9 @@ bool NativeVolume::renameDirectory(const Path& directory, const std::wstring& ne
 bool NativeVolume::setCurrentDirectory(const Path& directory)
 {
 	if (directory.isRelative())
-	{
 		m_currentDirectory = m_currentDirectory + directory;
-	}
 	else
-	{
-		if (m_currentDirectory.getVolume() != directory.getVolume())
-			return false;
-
 		m_currentDirectory = directory;
-	}
 	return true;
 }
 

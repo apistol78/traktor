@@ -31,6 +31,12 @@ public:
 
 	Path(const wchar_t* path);
 
+	/*! \brief Check if path is empty.
+	 *
+	 * \return True if path is empty.
+	 */
+	bool empty() const;
+
 	/*! \brief Get original, unresolved, path.
 	 *
 	 * \return Original path.

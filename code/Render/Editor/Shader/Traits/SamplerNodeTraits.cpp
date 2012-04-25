@@ -108,5 +108,16 @@ bool SamplerNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType SamplerNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	return PotNonLinear;
+}
+
 	}
 }

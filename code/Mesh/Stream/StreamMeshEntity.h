@@ -41,11 +41,9 @@ public:
 	);
 
 private:
-	mutable resource::Proxy< StreamMesh > m_mesh;
-	mutable Ref< StreamMesh::Instance > m_instance;
+	resource::Proxy< StreamMesh > m_mesh;
+	Ref< StreamMesh::Instance > m_instance;
 	uint32_t m_frame;
-
-	bool validate() const;
 };
 
 	}

@@ -1,6 +1,6 @@
-#include "Core/Io/FileSystem.h"
-#include "Core/Log/Log.h"
-#include "Drawing/Image.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberComposite.h"
+#include "Render/Resource/TextureResource.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 
 namespace traktor
@@ -8,20 +8,20 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 5, TextureAsset, TextureAssetBase)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 5, TextureAsset, editor::Asset)
 
-Ref< drawing::Image > TextureAsset::load(const std::wstring& assetPath) const
+const TypeInfo* TextureAsset::getOutputType() const
 {
-	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, getFileName());
-	Ref< drawing::Image > image = drawing::Image::load(fileName);
-	if (image)
-		return image;
-	else
-	{
-		log::error << L"Unable to read source texture image \"" << fileName.getPathName() << L"\"" << Endl;
-		return 0;
-	}
-		
+	return &type_of< TextureResource >();
+}
+
+bool TextureAsset::serialize(ISerializer& s)
+{
+	if (!editor::Asset::serialize(s))
+		return false;
+
+	s >> MemberComposite< TextureOutput, false >(L"output", m_output);
+	return true;
 }
 
 	}

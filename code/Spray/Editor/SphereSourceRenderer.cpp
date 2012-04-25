@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SphereSourceRenderer", SphereSourceRenderer, SourceRenderer)
 
-void SphereSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const
+void SphereSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
 {
 	const SphereSource* sphereSource = checked_type_cast< const SphereSource* >(source);
 

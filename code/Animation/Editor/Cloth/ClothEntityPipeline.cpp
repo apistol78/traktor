@@ -20,13 +20,13 @@ bool ClothEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const ClothEntityData* clothEntityData = dynamic_type_cast< const ClothEntityData* >(sourceAsset))
-	{
-		pipelineDepends->addDependency(clothEntityData->getShader().getGuid(), editor::PdfBuild);
-	}
+		pipelineDepends->addDependency(clothEntityData->getShader(), editor::PdfBuild);
 	return true;
 }
 

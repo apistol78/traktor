@@ -22,9 +22,6 @@ namespace traktor
 class T_DLLCLASS VideoAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
-
-public:
-	virtual const TypeInfo* getOutputType() const;
 };
 
 	}

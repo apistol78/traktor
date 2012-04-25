@@ -145,15 +145,7 @@ bool TypeInfo::isInstantiable() const
 ITypedObject* TypeInfo::createInstance() const
 {
 	if (m_factory)
-		return m_factory->createInstance(0);
-	else
-		return 0;
-}
-
-ITypedObject* TypeInfo::createInstance(const ITypedObject* sourceTemplate) const
-{
-	if (m_factory)
-		return m_factory->createInstance(sourceTemplate);
+		return m_factory->createInstance();
 	else
 		return 0;
 }

@@ -1,3 +1,5 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/Endian.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberAlignedVector.h"
@@ -49,7 +51,11 @@ void ActionVMImage1::prepare()
 		state.length = 1;
 		if (op & 0x80)
 		{
-			state.length = *reinterpret_cast< const uint16_t* >(state.pc + 1);
+			uint16_t& length = *reinterpret_cast< uint16_t* >(state.pc + 1);
+#if defined(T_BIG_ENDIAN)
+			swap8in32(length);
+#endif
+			state.length = length;
 			state.data = state.pc + 3;
 			state.npc = state.data + state.length;
 		}
@@ -75,6 +81,7 @@ uint16_t ActionVMImage1::addConstData(const ActionValue& cd)
 bool ActionVMImage1::serialize(ISerializer& s)
 {
 	uint32_t size = m_byteCode.size();
+
 	s >> Member< uint32_t >(L"byteCodeSize", size);
 
 	if (s.getDirection() == ISerializer::SdRead)
@@ -86,6 +93,9 @@ bool ActionVMImage1::serialize(ISerializer& s)
 		s >> Member< void* >(L"byteCode", data, size);
 
 	s >> MemberAlignedVector< ActionValue, MemberComposite< ActionValue > >(L"constData", m_constData);
+
+	if (s.getDirection() == ISerializer::SdRead)
+		prepare();
 
 	return true;
 }

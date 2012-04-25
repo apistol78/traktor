@@ -318,23 +318,12 @@ void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, 
 	}
 }
 
-void RenderViewSw::setVertexBuffer(VertexBuffer* vertexBuffer)
+void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
 	m_currentVertexBuffer = checked_type_cast< VertexBufferSw* >(vertexBuffer);
-}
-
-void RenderViewSw::setIndexBuffer(IndexBuffer* indexBuffer)
-{
 	m_currentIndexBuffer = checked_type_cast< IndexBufferSw* >(indexBuffer);
-}
-
-void RenderViewSw::setProgram(IProgram* program)
-{
 	m_currentProgram = checked_type_cast< ProgramSw * >(program);
-}
 
-void RenderViewSw::draw(const Primitives& primitives)
-{
 	if (primitives.indexed)
 		drawIndexed(primitives);
 	else

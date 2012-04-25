@@ -62,13 +62,13 @@ public:
 
 	virtual void update(const UpdateParams& update);
 
-	inline resource::Proxy< Effect >& getEffect() { return m_effect; }
+	const resource::Proxy< Effect >& getEffect() const { return m_effect; }
 
-	inline void setEnable(bool enable) { m_enable = enable; }
+	void setEnable(bool enable) { m_enable = enable; }
 
-	inline bool isEnable() const { return m_enable; }
+	bool isEnable() const { return m_enable; }
 
-	inline bool haveTechnique(render::handle_t technique) const { return m_techniques.find(technique) != m_techniques.end(); }
+	bool haveTechnique(render::handle_t technique) const { return m_techniques.find(technique) != m_techniques.end(); }
 
 private:
 	Transform m_transform;

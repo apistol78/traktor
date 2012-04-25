@@ -1,7 +1,8 @@
 #ifndef traktor_render_TextureAsset_H
 #define traktor_render_TextureAsset_H
 
-#include "Render/Editor/Texture/TextureAssetBase.h"
+#include "Editor/Asset.h"
+#include "Render/Editor/Texture/TextureOutput.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,12 +17,16 @@ namespace traktor
 	namespace render
 	{
 
-class T_DLLCLASS TextureAsset : public TextureAssetBase
+class T_DLLCLASS TextureAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< drawing::Image > load(const std::wstring& assetPath) const;
+	TextureOutput m_output;
+
+	virtual const TypeInfo* getOutputType() const;
+
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

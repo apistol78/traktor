@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Render/Types.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
@@ -56,7 +56,7 @@ public:
 			uint32_t index;
 		};
 
-		InstanceSimple(const PostProcessStepSimple* step, const std::vector< Source >& sources);
+		InstanceSimple(const PostProcessStepSimple* step, const resource::Proxy< render::Shader >& shader, const std::vector< Source >& sources);
 
 		virtual void destroy();
 
@@ -69,6 +69,7 @@ public:
 
 	private:
 		Ref< const PostProcessStepSimple > m_step;
+		resource::Proxy< render::Shader > m_shader;
 		std::vector< Source > m_sources;
 		float m_time;
 		render::handle_t m_handleTime;
@@ -84,10 +85,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	mutable resource::Proxy< render::Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 	std::vector< Source > m_sources;
 };
 

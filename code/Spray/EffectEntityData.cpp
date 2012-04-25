@@ -1,7 +1,7 @@
-#include "Spray/EffectEntityData.h"
-#include "Spray/EffectEntity.h"
-#include "Spray/Effect.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Spray/Effect.h"
+#include "Spray/EffectEntity.h"
+#include "Spray/EffectEntityData.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
@@ -14,12 +14,13 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.EffectEntityData", 0, EffectEntityDa
 
 Ref< EffectEntity > EffectEntityData::createEntity(resource::IResourceManager* resourceManager, sound::SoundSystem* soundSystem, sound::SurroundEnvironment* surroundEnvironment) const
 {
-	if (!resourceManager->bind(m_effect))
+	resource::Proxy< Effect > effect;
+	if (!resourceManager->bind(m_effect, effect))
 		return 0;
 
 	return new EffectEntity(
 		getTransform(),
-		m_effect,
+		effect,
 		soundSystem,
 		surroundEnvironment
 	);

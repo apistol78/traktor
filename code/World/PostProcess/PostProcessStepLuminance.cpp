@@ -1,12 +1,11 @@
-#include "World/PostProcess/PostProcessStepLuminance.h"
-#include "World/PostProcess/PostProcess.h"
+#include "Core/Serialization/ISerializer.h"
+#include "Render/RenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/RenderTargetSet.h"
-#include "Core/Serialization/ISerializer.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessStepLuminance.h"
 
 namespace traktor
 {
@@ -22,7 +21,8 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(
 	uint32_t height
 ) const
 {
-	if (!resourceManager->bind(m_shader))
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
 	Vector4 sampleOffsets[16];
@@ -44,6 +44,7 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(
 
 	return new InstanceLuminance(
 		this,
+		shader,
 		render::getParameterHandle(m_source),
 		sampleOffsets
 	);
@@ -51,7 +52,7 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(
 
 bool PostProcessStepLuminance::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< std::wstring >(L"source", m_source);
 	return true;
 }
@@ -60,10 +61,12 @@ bool PostProcessStepLuminance::serialize(ISerializer& s)
 
 PostProcessStepLuminance::InstanceLuminance::InstanceLuminance(
 	const PostProcessStepLuminance* step,
+	const resource::Proxy< render::Shader >& shader,
 	render::handle_t source,
 	const Vector4 sampleOffsets[16]
 )
 :	m_step(step)
+,	m_shader(shader)
 ,	m_source(source)
 {
 	for (int i = 0; i < sizeof_array(m_sampleOffsets); ++i)
@@ -81,15 +84,11 @@ void PostProcessStepLuminance::InstanceLuminance::render(
 	const RenderParams& params
 )
 {
-	resource::Proxy< render::Shader > shader = m_step->m_shader;
-	if (!shader.validate())
-		return;
-
 	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(m_source);
 	if (!source)
 		return;
 
-	postProcess->prepareShader(shader);
+	postProcess->prepareShader(m_shader);
 
 	Vector4 sampleOffsetScale(
 		1.0f / source->getWidth(),
@@ -98,11 +97,11 @@ void PostProcessStepLuminance::InstanceLuminance::render(
 		0.5f / source->getHeight()
 	);
 
-	shader->setTextureParameter(L"SourceTexture", source->getColorTexture(0));
-	shader->setVectorArrayParameter(L"SampleOffsets", m_sampleOffsets, sizeof_array(m_sampleOffsets));
-	shader->setVectorParameter(L"SampleOffsetScale", sampleOffsetScale);
+	m_shader->setTextureParameter(L"SourceTexture", source->getColorTexture(0));
+	m_shader->setVectorArrayParameter(L"SampleOffsets", m_sampleOffsets, sizeof_array(m_sampleOffsets));
+	m_shader->setVectorParameter(L"SampleOffsetScale", sampleOffsetScale);
 
-	screenRenderer->draw(renderView, shader);
+	screenRenderer->draw(renderView, m_shader);
 }
 
 	}

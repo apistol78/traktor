@@ -6,8 +6,6 @@
 #include "Resource/Member.h"
 #include "Render/ITexture.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Resource/TextureResource.h"
 #include "Weather/Clouds/CloudEntityData.h"
 #include "Weather/Clouds/CloudEntity.h"
 #include "Weather/Clouds/CloudMask.h"
@@ -31,22 +29,31 @@ CloudEntityData::CloudEntityData()
 
 Ref< CloudEntity > CloudEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	if (!resourceManager->bind(m_particleShader))
+	resource::Proxy< render::Shader > particleShader;
+	resource::Proxy< render::ITexture > particleTexture;
+	resource::Proxy< render::Shader > impostorShader;
+	resource::Proxy< CloudMask > mask;
+
+	if (!resourceManager->bind(m_particleShader, particleShader))
 		return 0;
-	if (!resourceManager->bind(m_particleTexture))
+	if (!resourceManager->bind(m_particleTexture, particleTexture))
 		return 0;
-	if (!resourceManager->bind(m_impostorShader))
+	if (!resourceManager->bind(m_impostorShader, impostorShader))
 		return 0;
 
-	resourceManager->bind(m_mask);
+	if (m_mask)
+	{
+		if (!resourceManager->bind(m_mask, mask))
+			return 0;
+	}
 
 	Ref< CloudEntity > cloudEntity = new CloudEntity();
 	if (cloudEntity->create(
 		renderSystem,
-		m_particleShader,
-		m_particleTexture,
-		m_impostorShader,
-		m_mask,
+		particleShader,
+		particleTexture,
+		impostorShader,
+		mask,
 		m_impostorTargetResolution,
 		m_impostorSliceCount,
 		m_updateFrequency,
@@ -67,12 +74,12 @@ bool CloudEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"particleShader", m_particleShader);
-	s >> resource::Member< render::ITexture, render::TextureResource >(L"particleTexture", m_particleTexture);
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"impostorShader", m_impostorShader);
+	s >> resource::Member< render::Shader >(L"particleShader", m_particleShader);
+	s >> resource::Member< render::ITexture >(L"particleTexture", m_particleTexture);
+	s >> resource::Member< render::Shader >(L"impostorShader", m_impostorShader);
 
 	if (s.getVersion() >= 1)
-		s >> resource::Member< CloudMask, CloudMaskResource >(L"mask", m_mask);
+		s >> resource::Member< CloudMask >(L"mask", m_mask);
 
 	s >> Member< uint32_t >(L"impostorTargetResolution", m_impostorTargetResolution);
 	s >> Member< uint32_t >(L"impostorSliceCount", m_impostorSliceCount);

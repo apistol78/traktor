@@ -31,12 +31,12 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_shadowMaskProject(L"{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}");
-const Guid c_shadowMaskFilterNone(L"{19222311-363F-CB45-86E5-34D376CDA8AD}");
-const Guid c_shadowMaskFilterLow(L"{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}");
-const Guid c_shadowMaskFilterMedium(L"{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}");
-const Guid c_shadowMaskFilterHigh(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}");
-const Guid c_shadowMaskFilterHighest(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}");
+const resource::Id< PostProcessSettings > c_shadowMaskProject(Guid(L"{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}"));
+const resource::Id< PostProcessSettings > c_shadowMaskFilterNone(Guid(L"{19222311-363F-CB45-86E5-34D376CDA8AD}"));
+const resource::Id< PostProcessSettings > c_shadowMaskFilterLow(Guid(L"{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}"));
+const resource::Id< PostProcessSettings > c_shadowMaskFilterMedium(Guid(L"{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}"));
+const resource::Id< PostProcessSettings > c_shadowMaskFilterHigh(Guid(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}"));
+const resource::Id< PostProcessSettings > c_shadowMaskFilterHighest(Guid(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}"));
 
 const static float c_interocularDistance = 6.5f;
 const static float c_distortionValue = 0.8f;
@@ -242,57 +242,69 @@ bool WorldRendererPreLit::create(
 			m_shadowMaskProjectTargetSet
 		)
 		{
-			resource::Proxy< PostProcessSettings > shadowMaskProject;
-			resource::Proxy< PostProcessSettings > shadowMaskFilter;
+			resource::Id< PostProcessSettings > shadowMaskProjectId;
+			resource::Id< PostProcessSettings > shadowMaskFilterId;
 
-			shadowMaskProject = c_shadowMaskProject;
+			shadowMaskProjectId = c_shadowMaskProject;
 
 			switch (m_settings.shadowsQuality)
 			{
 			case WorldRenderSettings::SqNoFilter:
-				shadowMaskFilter = c_shadowMaskFilterNone;
+				shadowMaskFilterId = c_shadowMaskFilterNone;
 				break;
 			case WorldRenderSettings::SqLow:
-				shadowMaskFilter = c_shadowMaskFilterLow;
+				shadowMaskFilterId = c_shadowMaskFilterLow;
 				break;
 			case WorldRenderSettings::SqMedium:
-				shadowMaskFilter = c_shadowMaskFilterMedium;
+				shadowMaskFilterId = c_shadowMaskFilterMedium;
 				break;
 			case WorldRenderSettings::SqHigh:
-				shadowMaskFilter = c_shadowMaskFilterHigh;
+				shadowMaskFilterId = c_shadowMaskFilterHigh;
 				break;
 			case WorldRenderSettings::SqHighest:
-				shadowMaskFilter = c_shadowMaskFilterHighest;
+				shadowMaskFilterId = c_shadowMaskFilterHighest;
 				break;
 			}
 
-			resourceManager->bind(shadowMaskProject);
-			resourceManager->bind(shadowMaskFilter);
+			resource::Proxy< PostProcessSettings > shadowMaskProject;
+			resource::Proxy< PostProcessSettings > shadowMaskFilter;
 
-			m_shadowMaskProject = new PostProcess();
-			if (!m_shadowMaskProject->create(
-				shadowMaskProject,
-				resourceManager,
-				renderSystem,
-				desc.width,
-				desc.height
-			))
+			if (
+				!resourceManager->bind(shadowMaskProjectId, shadowMaskProject) ||
+				!resourceManager->bind(shadowMaskFilterId, shadowMaskFilter)
+			)
 			{
-				log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
+				log::warning << L"Unable to create shadow project process; shadows disabled (1)" << Endl;
 				m_settings.shadowsEnabled = false;
 			}
 
-			m_shadowMaskFilter = new PostProcess();
-			if (!m_shadowMaskFilter->create(
-				shadowMaskFilter,
-				resourceManager,
-				renderSystem,
-				desc.width,
-				desc.height
-			))
+			if (m_settings.shadowsEnabled)
 			{
-				log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
-				m_settings.shadowsEnabled = false;
+				m_shadowMaskProject = new PostProcess();
+				if (!m_shadowMaskProject->create(
+					shadowMaskProject,
+					resourceManager,
+					renderSystem,
+					desc.width,
+					desc.height
+				))
+				{
+					log::warning << L"Unable to create shadow project process; shadows disabled" << Endl;
+					m_settings.shadowsEnabled = false;
+				}
+
+				m_shadowMaskFilter = new PostProcess();
+				if (!m_shadowMaskFilter->create(
+					shadowMaskFilter,
+					resourceManager,
+					renderSystem,
+					desc.width,
+					desc.height
+				))
+				{
+					log::warning << L"Unable to create shadow filter process; shadows disabled" << Endl;
+					m_settings.shadowsEnabled = false;
+				}
 			}
 		}
 		else
@@ -639,7 +651,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						params.sliceNearZ = zn;
 						params.sliceFarZ = zf;
 						params.shadowFarZ = m_settings.shadowFarZ;
-						params.shadowMapBias = m_settings.shadowMapBias;
+						params.shadowMapBias = m_settings.shadowMapBias + i * m_settings.shadowMapBiasCoeff;
 						params.deltaTime = 0.0f;
 
 						m_shadowMaskProject->render(

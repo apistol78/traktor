@@ -1,6 +1,7 @@
 #ifndef traktor_hf_MaterialMaskAsset_H
 #define traktor_hf_MaterialMaskAsset_H
 
+#include "Core/RefArray.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -24,8 +25,6 @@ class T_DLLCLASS MaterialMaskAsset : public editor::Asset
 
 public:
 	const RefArray< MaterialMaskAssetLayer >& getLayers() const;
-
-	virtual const TypeInfo* getOutputType() const;
 
 	virtual bool serialize(ISerializer& s);
 

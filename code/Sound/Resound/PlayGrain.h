@@ -30,9 +30,12 @@ class T_DLLCLASS PlayGrain : public IGrain
 	T_RTTI_CLASS;
 
 public:
-	PlayGrain();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	PlayGrain(
+		const resource::Proxy< Sound >& sound,
+		const RefArray< IFilter >& filters,
+		const Range< float >& gain,
+		const Range< float >& pitch
+	);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -42,16 +45,8 @@ public:
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
 
-	virtual bool serialize(ISerializer& s);
-
-	const resource::Proxy< Sound >& getSound() const { return m_sound; }
-
-	const Range< float >& getGain() const { return m_gain; }
-
-	const Range< float >& getPitch() const { return m_pitch; }
-
 private:
-	mutable resource::Proxy< Sound > m_sound;
+	resource::Proxy< Sound > m_sound;
 	RefArray< IFilter > m_filters;
 	Range< float > m_gain;
 	Range< float > m_pitch;

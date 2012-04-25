@@ -486,38 +486,29 @@ void RenderViewDx11::clear(uint32_t clearMask, const float color[4], float depth
 		m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, D3D11_CLEAR_DEPTH, depth, stencil);
 }
 
-void RenderViewDx11::setVertexBuffer(VertexBuffer* vertexBuffer)
+void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
+	T_ASSERT (!m_renderStateStack.empty());
+
+	const RenderState& rs = m_renderStateStack.back();
+
 	if (m_currentVertexBuffer != vertexBuffer)
 	{
 		m_currentVertexBuffer = checked_type_cast< VertexBufferDx11* >(vertexBuffer);
 		m_dirty = true;
 	}
-}
 
-void RenderViewDx11::setIndexBuffer(IndexBuffer* indexBuffer)
-{
 	if (m_currentIndexBuffer != indexBuffer)
 	{
 		m_currentIndexBuffer = checked_type_cast< IndexBufferDx11* >(indexBuffer);
 		m_dirty = true;
 	}
-}
 
-void RenderViewDx11::setProgram(IProgram* program)
-{
 	if (m_currentProgram != program)
 	{
 		m_currentProgram = checked_type_cast< ProgramDx11* >(program);
 		m_dirty = true;
 	}
-}
-
-void RenderViewDx11::draw(const Primitives& primitives)
-{
-	T_ASSERT (!m_renderStateStack.empty());
-
-	const RenderState& rs = m_renderStateStack.back();
 
 	// Prepare buffers.
 	m_currentVertexBuffer->prepare(m_context->getD3DDeviceContext());

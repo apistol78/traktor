@@ -2,6 +2,7 @@
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Ui/Custom/PropertyList/AnglesPropertyItem.h"
 #include "Ui/Custom/PropertyList/ApplyReflector.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
@@ -13,7 +14,6 @@
 #include "Ui/Custom/PropertyList/NullPropertyItem.h"
 #include "Ui/Custom/PropertyList/NumericPropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
-#include "Ui/Custom/PropertyList/QuaternionPropertyItem.h"
 #include "Ui/Custom/PropertyList/StaticPropertyItem.h"
 #include "Ui/Custom/PropertyList/TextPropertyItem.h"
 #include "Ui/Custom/PropertyList/VectorPropertyItem.h"
@@ -168,10 +168,20 @@ bool ApplyReflector::operator >> (const Member< Vector2 >& m)
 
 bool ApplyReflector::operator >> (const Member< Vector4 >& m)
 {
-	VectorPropertyItem* propertyItem = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
-	const VectorPropertyItem::vector_t& value = propertyItem->getValue();
-	m = Vector4(value[0], value[1], value[2], value[3]);
-	return true;
+	PropertyItem* propertyItem = *m_propertyItemIterator++;
+	if (VectorPropertyItem* vectorPropertyItem = dynamic_type_cast< VectorPropertyItem* >(propertyItem))
+	{
+		const VectorPropertyItem::vector_t& value = vectorPropertyItem->getValue();
+		m = Vector4(value[0], value[1], value[2], value[3]);
+		return true;
+	}
+	else if (AnglesPropertyItem* anglesPropertyItem = dynamic_type_cast< AnglesPropertyItem* >(propertyItem))
+	{
+		m = anglesPropertyItem->getValue();
+		return true;
+	}
+	else
+		return false;
 }
 
 bool ApplyReflector::operator >> (const Member< Matrix33 >& m)
@@ -186,8 +196,8 @@ bool ApplyReflector::operator >> (const Member< Matrix44 >& m)
 
 bool ApplyReflector::operator >> (const Member< Quaternion >& m)
 {
-	QuaternionPropertyItem* propertyItem = checked_type_cast< QuaternionPropertyItem*, false >(*m_propertyItemIterator++);
-	m = propertyItem->getValue();
+	AnglesPropertyItem* propertyItem = checked_type_cast< AnglesPropertyItem*, false >(*m_propertyItemIterator++);
+	m = Quaternion::fromEulerAngles(propertyItem->getValue());
 	return true;
 }
 

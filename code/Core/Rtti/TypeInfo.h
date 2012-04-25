@@ -36,7 +36,7 @@ void T_DLLCLASS __forceLinkReference(const class TypeInfo& type);
 class IInstanceFactory : public IRefCount
 {
 public:
-	virtual ITypedObject* createInstance(const ITypedObject* templateSource) const = 0;
+	virtual ITypedObject* createInstance() const = 0;
 };
 
 /*! \brief Default instance factory implementation.
@@ -46,28 +46,9 @@ template < typename T >
 class InstanceFactory : public RefCountImpl< IInstanceFactory >
 {
 public:
-	virtual ITypedObject* createInstance(const ITypedObject* templateSource) const
+	virtual ITypedObject* createInstance() const
 	{
-		if (templateSource)
-			return 0;
-		/*else*/
-			return new T();
-	}
-};
-
-/*! \brief Clonable instance factory implementation.
- * \ingroup Core
- */
-template < typename T >
-class ClonableInstanceFactory : public RefCountImpl< IInstanceFactory >
-{
-public:
-	virtual ITypedObject* createInstance(const ITypedObject* templateSource) const
-	{
-		if (templateSource)
-			return new T(*static_cast< const T* >(templateSource));
-		/*else*/
-			return new T();
+		return new T();
 	}
 };
 
@@ -120,7 +101,7 @@ public:
 
 	/*! \brief Instantiable type.
 	 *
-	 * \return True if type is instantiable.
+	 * \return True if type is Instantiable.
 	 */
 	bool isInstantiable() const;
 
@@ -129,13 +110,6 @@ public:
 	 * \return New instance.
 	 */
 	ITypedObject* createInstance() const;
-
-	/*! \brief Create new instance of type.
-	 *
-	 * \param sourceTemplate Source template; using copy constructor to copy member values.
-	 * \return New instance.
-	 */
-	ITypedObject* createInstance(const ITypedObject* sourceTemplate) const;
 
 	/*! \brief Find type from string representation.
 	 *
@@ -205,18 +179,6 @@ inline uint32_t type_difference(const TypeInfo& base, const TypeInfo& type)
 		++difference;
 
 	return difference;
-}
-
-/*! \brief Create clone of instance.
- * \ingroup Core
- */
-template < typename T >
-inline Ref< T > clone_instance(const T* sourceObject)
-{
-	if (sourceObject)
-		return checked_type_cast< T* >(type_of(sourceObject).createInstance(sourceObject));
-	else
-		return 0;
 }
 
 //@}

@@ -8,9 +8,14 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(L"traktor.PropertyGroup", 0, PropertyGroup, IPropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.PropertyGroup", 0, PropertyGroup, IPropertyValue)
 
 PropertyGroup::PropertyGroup()
+{
+}
+
+PropertyGroup::PropertyGroup(const std::map< std::wstring, Ref< IPropertyValue > >& value)
+:	m_value(value)
 {
 }
 
@@ -170,7 +175,12 @@ Ref< IPropertyValue > PropertyGroup::join(const IPropertyValue* right) const
 	if (const PropertyGroup* rightGroup = dynamic_type_cast< const PropertyGroup* >(right))
 		return mergeJoin(rightGroup);
 	else
-		return clone_instance(right);
+		return right->clone();
+}
+
+Ref< IPropertyValue > PropertyGroup::clone() const
+{
+	return new PropertyGroup(m_value);
 }
 
 }

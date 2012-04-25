@@ -53,6 +53,8 @@ public:
 
 	T_MATH_INLINE void toEulerAngles(float& outHead, float& outPitch, float& outBank) const;
 
+	static T_MATH_INLINE Quaternion fromEulerAngles(const Vector4& angles);
+
 	T_MATH_INLINE Quaternion& operator *= (const Quaternion& r);
 
 	T_MATH_INLINE bool operator == (const Quaternion& v) const;

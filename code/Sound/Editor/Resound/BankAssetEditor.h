@@ -52,7 +52,7 @@ class ToolBarButton;
 
 class BankAsset;
 class BankBuffer;
-class IGrain;
+class IGrainData;
 class IGrainFacade;
 class GrainProperties;
 class GrainView;
@@ -91,7 +91,7 @@ private:
 	Ref< SoundChannel > m_soundChannel;
 	Ref< BankBuffer > m_bankBuffer;
 
-	void updateGrainView(GrainViewItem* parent, const RefArray< IGrain >& grains);
+	void updateGrainView(GrainViewItem* parent, const RefArray< IGrainData >& grains);
 
 	void updateGrainView();
 

@@ -1,10 +1,8 @@
 #ifndef traktor_spray_Emitter_H
 #define traktor_spray_Emitter_H
 
+#include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Math/Vector4.h"
-#include "Core/Math/Matrix44.h"
-#include "Core/Serialization/ISerializable.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
@@ -17,13 +15,6 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace render
 	{
 
@@ -35,41 +26,45 @@ class Shader;
 	{
 
 class EmitterInstance;
-
-class Source;
 class Modifier;
+class Source;
 
 /*! \brief Emitter
  * \ingroup Spray
  */
-class T_DLLCLASS Emitter : public ISerializable
+class T_DLLCLASS Emitter : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Emitter();
+	Emitter(
+		Source* source,
+		const RefArray< Modifier >& modifiers,
+		const resource::Proxy< render::Shader >& shader,
+		float middleAge,
+		float cullNearDistance,
+		float fadeNearRange,
+		float warmUp,
+		bool sort
+	);
 
-	bool bind(resource::IResourceManager* resourceManager);
+	Ref< EmitterInstance > createInstance() const;
 
-	Ref< EmitterInstance > createInstance();
+	const Source* getSource() const { return m_source; }
 
-	inline Ref< Source > getSource() const { return m_source; }
+	const RefArray< Modifier >& getModifiers() const { return m_modifiers; }
 
-	inline RefArray< Modifier >& getModifiers() { return m_modifiers; }
+	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
-	inline resource::Proxy< render::Shader >& getShader() { return m_shader; }
+	float getMiddleAge() const { return m_middleAge; }
 
-	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	float getCullNearDistance() const { return m_cullNearDistance; }
 
-	inline float getMiddleAge() const { return m_middleAge; }
+	float getFadeNearRange() const { return m_fadeNearRange; }
 
-	inline float getCullNearDistance() const { return m_cullNearDistance; }
+	float getWarmUp() const { return m_warmUp; }
 
-	inline float getFadeNearRange() const { return m_fadeNearRange; }
-
-	inline float getWarmUp() const { return m_warmUp; }
-
-	virtual bool serialize(ISerializer& s);
+	bool getSort() const { return m_sort; }
 
 private:
 	Ref< Source > m_source;
@@ -79,6 +74,7 @@ private:
 	float m_cullNearDistance;
 	float m_fadeNearRange;
 	float m_warmUp;
+	bool m_sort;
 };
 
 	}

@@ -2,7 +2,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Resource/Member.h"
 #include "Scene/ISceneControllerData.h"
-#include "Scene/SceneResource.h"
+#include "Scene/Scene.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/EntityData.h"
@@ -13,7 +13,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 3, SceneAsset, editor::ITypedAsset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 3, SceneAsset, ISerializable)
 
 SceneAsset::SceneAsset()
 :	m_worldRenderSettings(new world::WorldRenderSettings())
@@ -30,12 +30,12 @@ Ref< world::WorldRenderSettings > SceneAsset::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-void SceneAsset::setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcessSettings)
+void SceneAsset::setPostProcessSettings(const resource::Id< world::PostProcessSettings >& postProcessSettings)
 {
 	m_postProcessSettings = postProcessSettings;
 }
 
-const resource::Proxy< world::PostProcessSettings >& SceneAsset::getPostProcessSettings() const
+const resource::Id< world::PostProcessSettings >& SceneAsset::getPostProcessSettings() const
 {
 	return m_postProcessSettings;
 }
@@ -58,11 +58,6 @@ void SceneAsset::setControllerData(ISceneControllerData* controllerData)
 Ref< ISceneControllerData > SceneAsset::getControllerData() const
 {
 	return m_controllerData;
-}
-
-const TypeInfo* SceneAsset::getOutputType() const
-{
-	return &type_of< SceneResource >();
 }
 
 bool SceneAsset::serialize(ISerializer& s)

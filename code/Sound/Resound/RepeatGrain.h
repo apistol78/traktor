@@ -1,7 +1,7 @@
 #ifndef traktor_sound_RepeatGrain_H
 #define traktor_sound_RepeatGrain_H
 
-#include "Core/RefArray.h"
+#include "Core/Ref.h"
 #include "Core/Math/Random.h"
 #include "Sound/Resound/IGrain.h"
 
@@ -26,9 +26,10 @@ class T_DLLCLASS RepeatGrain : public IGrain
 	T_RTTI_CLASS;
 
 public:
-	RepeatGrain();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	RepeatGrain(
+		uint32_t count,
+		IGrain* grain
+	);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -37,12 +38,6 @@ public:
 	virtual const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
-
-	virtual bool serialize(ISerializer& s);
-
-	uint32_t getCount() const { return m_count; }
-
-	const Ref< IGrain >& getGrain() const { return m_grain; }
 
 private:
 	uint32_t m_count;

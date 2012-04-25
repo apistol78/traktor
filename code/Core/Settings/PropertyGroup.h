@@ -27,6 +27,8 @@ public:
 
 	PropertyGroup();
 
+	PropertyGroup(const std::map< std::wstring, Ref< IPropertyValue > >& value);
+
 	static value_type_t get(const IPropertyValue* value);
 
 	void setProperty(const std::wstring& propertyName, IPropertyValue* value);
@@ -74,6 +76,8 @@ public:
 
 protected:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* rightGroup) const;
+
+	virtual Ref< IPropertyValue > clone() const;
 
 private:
 	std::map< std::wstring, Ref< IPropertyValue > > m_value;

@@ -22,6 +22,7 @@
 #include "Spray/EffectEntityRenderer.h"
 #include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
+#include "Terrain/TerrainFactory.h"
 #include "Weather/WeatherEntityFactory.h"
 #include "Weather/WeatherEntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
@@ -80,6 +81,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 
 	resourceManager->addFactory(new world::PostProcessFactory(database));
 	resourceManager->addFactory(new world::EntityResourceFactory(database));
+	resourceManager->addFactory(new terrain::TerrainFactory(database));
 
 	int32_t shadowQuality = environment->getSettings()->getProperty< PropertyInteger >(L"World.ShadowQuality", world::WorldRenderSettings::SqHigh);
 	m_sceneFactory = new scene::SceneFactory(
@@ -106,7 +108,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem, physicsManager));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, soundSystem, surroundEnvironment));
-	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem, false));
+	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
 }
 

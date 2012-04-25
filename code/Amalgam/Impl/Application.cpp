@@ -820,8 +820,8 @@ void Application::threadDatabase()
 			{
 				for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)
 				{
-					log::debug << L"External database event; flushing resource \"" << i->format() << L"\"" << Endl;
-					resourceManager->update(*i, true);
+					log::debug << L"External database event; reloading resource \"" << i->format() << L"\"" << Endl;
+					resourceManager->reload(*i);
 				}
 			}
 		}

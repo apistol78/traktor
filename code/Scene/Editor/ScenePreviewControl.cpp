@@ -340,6 +340,7 @@ void ScenePreviewControl::updateRenderControls()
 		if (renderControl->create(
 			this,
 			m_context,
+			0,
 			0
 		))
 			m_renderControls[0] = renderControl;
@@ -356,7 +357,8 @@ void ScenePreviewControl::updateRenderControls()
 			if (renderControl->create(
 				doubleSplitter,
 				m_context,
-				i
+				i,
+				1 + i
 			))
 				m_renderControls[i] = renderControl;
 		}
@@ -375,7 +377,8 @@ void ScenePreviewControl::updateRenderControls()
 			if (renderControl->create(
 				quadSplitter,
 				m_context,
-				i
+				i,
+				3 + i
 			))
 				m_renderControls[i] = renderControl;
 		}
@@ -466,14 +469,14 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 
 			while (m_lastPhysicsTime < scaledTime)
 			{
-				scene->update(m_lastPhysicsTime, c_updateDeltaTime);
+				scene->update(m_lastPhysicsTime, c_updateDeltaTime, true, true);
 				m_context->getPhysicsManager()->update();
 				m_lastPhysicsTime += c_updateDeltaTime;
 			}
 		}
 		else if (scene)
 		{
-			scene->update(scaledTime, scaledDeltaTime);
+			scene->update(scaledTime, scaledDeltaTime, true, true);
 		}
 
 		// Issue updates on render controls.

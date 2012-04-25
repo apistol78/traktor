@@ -1,7 +1,8 @@
 #ifndef traktor_mesh_OcclusionTextureAsset_H
 #define traktor_mesh_OcclusionTextureAsset_H
 
-#include "Render/Editor/Texture/TextureAssetBase.h"
+#include "Editor/Asset.h"
+#include "Render/Editor/Texture/TextureOutput.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,12 +17,14 @@ namespace traktor
 	namespace mesh
 	{
 
-class T_DLLCLASS OcclusionTextureAsset : public render::TextureAssetBase
+class T_DLLCLASS OcclusionTextureAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< drawing::Image > load(const std::wstring& assetPath) const;
+	render::TextureOutput m_output;
+
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

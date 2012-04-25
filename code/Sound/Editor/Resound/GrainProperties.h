@@ -23,6 +23,8 @@ class Event;
 	namespace sound
 	{
 
+class IGrainData;
+
 class GrainProperties
 :	public ui::EventSubject
 ,	public ui::custom::PropertyList::IPropertyGuidResolver
@@ -36,7 +38,7 @@ public:
 
 	void destroy();
 
-	void set(IGrain* grain);
+	void set(IGrainData* grain);
 
 private:
 	editor::IEditor* m_editor;

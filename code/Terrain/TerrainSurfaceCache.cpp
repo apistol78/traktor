@@ -7,7 +7,7 @@
 #include "Render/Shader.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "Terrain/TerrainSurface.h"
+#include "Terrain/Terrain.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
 
@@ -78,12 +78,10 @@ Vector4 offsetFromTile(const TerrainSurfaceAlloc::Tile& tile)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCache, Object)
 
 TerrainSurfaceCache::TerrainSurfaceCache()
-:	m_updateAllowedCount(0)
-,	m_clearCache(true)
+//:	m_updateAllowedCount(0)
+:	m_clearCache(true)
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
-,	m_handleMaterialMask(render::getParameterHandle(L"MaterialMask"))
-,	m_handleMaterialMaskSize(render::getParameterHandle(L"MaterialMaskSize"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
@@ -163,14 +161,12 @@ void TerrainSurfaceCache::flush()
 
 void TerrainSurfaceCache::begin()
 {
-	m_updateAllowedCount = 2;
+	//m_updateAllowedCount = 16;
 }
 
 void TerrainSurfaceCache::get(
 	render::RenderContext* renderContext,
-	TerrainSurface* surface,
-	render::ISimpleTexture* heightfieldTexture,
-	const RefArray< render::ISimpleTexture >& materialMaskTextures,
+	Terrain* terrain,
 	const Vector4& worldOrigin,
 	const Vector4& worldExtent,
 	const Vector4& patchOrigin,
@@ -185,8 +181,8 @@ void TerrainSurfaceCache::get(
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())
 	{
-		if (m_updateAllowedCount > 0)
-		{
+		//if (m_updateAllowedCount > 0)
+		//{
 			if (
 				m_entries[patchId].lod == surfaceLod &&
 				m_entries[patchId].tile.dim > 0 &&
@@ -197,22 +193,22 @@ void TerrainSurfaceCache::get(
 				outTextureOffset = offsetFromTile(m_entries[patchId].tile);
 				return;
 			}
-		}
-		else
-		{
-			// We've already consumed our budget of updates for this frame; only
-			// update if absolutely necessary.
-			if (m_pool->isContentValid())
-			{
-				outRenderBlock = 0;
-				outTextureOffset = offsetFromTile(m_entries[patchId].tile);
-				return;
-			}
-		}
+		//}
+		//else
+		//{
+		//	// We've already consumed our budget of updates for this frame; only
+		//	// update if absolutely necessary.
+		//	if (m_pool->isContentValid())
+		//	{
+		//		outRenderBlock = 0;
+		//		outTextureOffset = offsetFromTile(m_entries[patchId].tile);
+		//		return;
+		//	}
+		//}
 	
 		// Release cache as it's no longer valid.
 		flush(patchId);
-		m_updateAllowedCount--;
+		//m_updateAllowedCount--;
 	}
 	else
 	{
@@ -220,12 +216,19 @@ void TerrainSurfaceCache::get(
 		m_entries.resize(patchId + 1);
 	}
 
-	// Allocate tile for this patch.
+	// Allocate tile for this patch; first try to allocate proper size
+	// then fall back on smaller and smaller tiles.
 	TerrainSurfaceAlloc::Tile tile;
-	if (!m_alloc.alloc(surfaceLod, tile))
+	for (uint32_t i = surfaceLod; i < 4; ++i)
+	{
+		if (m_alloc.alloc(i, tile))
+			break;
+	}
+	if (!tile.dim)
 	{
 		outRenderBlock = 0;
 		outTextureOffset = Vector4::zero();
+		log::debug << L"Unable to allocate terrain surface tile; out of memory" << Endl;
 		return;
 	}
 
@@ -237,16 +240,11 @@ void TerrainSurfaceCache::get(
 	Vector4 patchExtentM = patchExtent;
 	patchExtentM += Vector4(2.0f / 4096.0f, 0.0f, 2.0f / 4096.0f, 0.0f) * Scalar(10.0f);
 
-	std::vector< resource::Proxy< render::Shader > >& layers = surface->getLayers();
+	const std::vector< resource::Proxy< render::Shader > >& layers = terrain->getSurfaceLayers();
 	for (size_t i = 0; i < layers.size(); ++i)
 	{
-		resource::Proxy< render::Shader >& shader = layers[i];
-		if (!shader.validate())
-			continue;
-
-		render::ISimpleTexture* materialMaskTexture = materialMaskTextures[i];
-		if (!materialMaskTexture)
-			continue;
+		render::Shader* shader = layers[i];
+		render::ISimpleTexture* heightMap = terrain->getHeightMap();
 
 		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
 
@@ -257,10 +255,8 @@ void TerrainSurfaceCache::get(
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 
 		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightfieldTexture);
-		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightfieldTexture->getWidth()));
-		renderBlock->programParams->setTextureParameter(m_handleMaterialMask, materialMaskTexture);
-		renderBlock->programParams->setFloatParameter(m_handleMaterialMaskSize, float(materialMaskTexture->getWidth()));
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
+		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightMap->getWidth()));
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);

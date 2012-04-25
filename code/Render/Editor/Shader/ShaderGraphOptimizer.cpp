@@ -1,3 +1,5 @@
+#include <deque>
+#include <set>
 #include "Core/Log/Log.h"
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
@@ -30,6 +32,48 @@ struct CopyVisitor
 		return true;
 	}
 };
+
+bool insideCycle(const ShaderGraph* shaderGraph, const OutputPin* outputPin)
+{
+	std::deque< const OutputPin* > scanOutputPins;
+	std::set< const OutputPin* > scannedOutputPins;
+
+	scanOutputPins.push_back(outputPin);
+	scannedOutputPins.insert(outputPin);
+
+	while (!scanOutputPins.empty())
+	{
+		const OutputPin* scanOutputPin = scanOutputPins.front();
+		T_ASSERT (scanOutputPin);
+
+		scanOutputPins.pop_front();
+
+		const Node* node = scanOutputPin->getNode();
+		T_ASSERT (node);
+		
+		int32_t inputPinCount = node->getInputPinCount();
+		for (int32_t i = 0; i < inputPinCount; ++i)
+		{
+			const InputPin* inputPin = node->getInputPin(i);
+			T_ASSERT (inputPin);
+
+			const OutputPin* sourceOutputPin = shaderGraph->findSourcePin(inputPin);
+			if (sourceOutputPin)
+			{
+				if (sourceOutputPin == outputPin)
+					return true;
+
+				if (scannedOutputPins.find(sourceOutputPin) == scannedOutputPins.end())
+				{
+					scanOutputPins.push_back(sourceOutputPin);
+					scannedOutputPins.insert(sourceOutputPin);
+				}
+			}
+		}
+	}
+
+	return false;
+}
 
 		}
 
@@ -215,14 +259,15 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 
 	m_frequentUniformsAsLinear = frequentUniformsAsLinear;
 	m_insertedCount = 0;
-	
-	updateOrderComplexity(shaderGraph);
 
 	RefArray< PixelOutput > pixelOutputNodes;
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
 
 	for (RefArray< PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
+	{
+		m_visited.clear();
 		insertInterpolators(shaderGraph, *i);
+	}
 	
 	log::debug << L"Inserted " << m_insertedCount << L" interpolator(s)" << Endl;
 	return shaderGraph;
@@ -242,7 +287,7 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 
 	m_visited.insert(node);
 
-	for (int i = 0; i < node->getInputPinCount(); ++i)
+	for (int32_t i = 0; i < node->getInputPinCount(); ++i)
 	{
 		const InputPin* inputPin = node->getInputPin(i);
 		T_ASSERT (inputPin);
@@ -254,11 +299,13 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 		Ref< Node > sourceNode = sourceOutputPin->getNode();
 		T_ASSERT (sourceNode);
 
-		int inputOrder = m_orderComplexity[sourceNode];
-		if (inputOrder <= ShaderGraphOrderEvaluator::OrLinear)
+		bool cycle = insideCycle(m_shaderGraph, sourceOutputPin);
+		PinOrderType inputOrder = ShaderGraphOrderEvaluator(m_shaderGraph, m_frequentUniformsAsLinear).evaluate(sourceOutputPin);
+
+		if (!cycle && inputOrder <= PotLinear)
 		{
 			// We've reached low enough order; insert interpolator if linear and stop.
-			if (inputOrder == ShaderGraphOrderEvaluator::OrLinear)
+			if (inputOrder == PotLinear)
 			{
 				// Remove edge; replace with interpolator.
 				Ref< Edge > edge = shaderGraph->findEdge(inputPin);
@@ -299,8 +346,6 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 
 					m_insertedCount++;
 				}
-
-				updateOrderComplexity(shaderGraph);
 			}
 		}
 		else
@@ -309,14 +354,6 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 			insertInterpolators(shaderGraph, sourceNode);
 		}
 	}
-}
-
-void ShaderGraphOptimizer::updateOrderComplexity(ShaderGraph* shaderGraph) const
-{
-	ShaderGraphOrderEvaluator evaluator(shaderGraph, m_frequentUniformsAsLinear);
-	const RefArray< Node >& nodes = shaderGraph->getNodes();
-	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
-		m_orderComplexity[*i] = evaluator.evaluate(*i);
 }
 
 	}

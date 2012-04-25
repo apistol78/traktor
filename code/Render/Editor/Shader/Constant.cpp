@@ -85,6 +85,20 @@ bool Constant::isOne() const
 	return true;
 }
 
+bool Constant::operator == (const Constant& rh) const
+{
+	if (getWidth() != rh.getWidth())
+		return false;
+
+	for (int32_t i = 0; i < getWidth(); ++i)
+	{
+		if (fabs(m_data[i] - rh.m_data[i]) >= FUZZY_EPSILON)
+			return false;
+	}
+
+	return true;
+}
+
 float& Constant::operator [] (int32_t index)
 {
 	T_ASSERT (index < sizeof_array(m_data));

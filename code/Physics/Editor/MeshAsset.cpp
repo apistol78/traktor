@@ -1,6 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Physics/MeshResource.h"
 #include "Physics/Editor/MeshAsset.h"
 
 namespace traktor
@@ -13,11 +12,6 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.MeshAsset", 1, MeshAsset, editor::
 MeshAsset::MeshAsset()
 :	m_calculateConvexHull(true)
 {
-}
-
-const TypeInfo* MeshAsset::getOutputType() const
-{
-	return &type_of< MeshResource >();
 }
 
 bool MeshAsset::serialize(ISerializer& s)

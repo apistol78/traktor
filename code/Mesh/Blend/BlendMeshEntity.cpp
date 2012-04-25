@@ -29,12 +29,12 @@ const std::vector< float >& BlendMeshEntity::getBlendWeights() const
 
 Aabb3 BlendMeshEntity::getBoundingBox() const
 {
-	return validate() ? m_mesh->getBoundingBox() : Aabb3();
+	return m_mesh->getBoundingBox();
 }
 
 bool BlendMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return validate() ? m_mesh->supportTechnique(technique) : false;
+	return m_mesh->supportTechnique(technique);
 }
 
 void BlendMeshEntity::render(
@@ -44,8 +44,17 @@ void BlendMeshEntity::render(
 	float distance
 )
 {
-	if (!validate())
-		return;
+	// \fixme Instance needs to be created if mesh has been reloaded.
+	if (!m_instance)
+	{
+		m_instance = m_mesh->createInstance();
+		if (!m_instance)
+			return;
+	}
+
+	uint32_t blendTargetCount = m_mesh->getBlendTargetCount();
+	if (blendTargetCount != m_blendWeights.size())
+		m_blendWeights.resize(blendTargetCount, 0.0f);
 
 	m_mesh->render(
 		worldContext.getRenderContext(),
@@ -56,25 +65,6 @@ void BlendMeshEntity::render(
 		distance,
 		getParameterCallback()
 	);
-}
-
-bool BlendMeshEntity::validate() const
-{
-	if (m_mesh.valid() && m_instance)
-		return true;
-
-	if (!m_mesh.validate())
-		return false;
-
-	m_instance = m_mesh->createInstance();
-	if (!m_instance)
-		return false;
-
-	uint32_t blendTargetCount = m_mesh->getBlendTargetCount();
-	if (blendTargetCount != m_blendWeights.size())
-		m_blendWeights.resize(blendTargetCount, 0.0f);
-	
-	return true;
 }
 
 	}

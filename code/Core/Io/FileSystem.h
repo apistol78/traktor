@@ -84,6 +84,13 @@ public:
 	 * \return Current volume.
 	 */
 	Ref< IVolume > getCurrentVolume() const;
+
+	/*! \brief Set current volume and directory.
+	 *
+	 * \param directory New current directory.
+	 * \return True if successfully changed.
+	 */
+	bool setCurrentVolumeAndDirectory(const Path& directory);
 	
 	/*! \brief Get file description.
 	 *

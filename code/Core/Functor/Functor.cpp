@@ -58,7 +58,7 @@ protected:
 
 private:
 #if !defined(WINCE)
-	enum { MaxFunctorCount = 4096 };
+	enum { MaxFunctorCount = 8192 };
 #else
 	enum { MaxFunctorCount = 1024 };
 #endif

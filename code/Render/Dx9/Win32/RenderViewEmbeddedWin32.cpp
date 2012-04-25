@@ -89,10 +89,6 @@ HRESULT RenderViewEmbeddedWin32::lostDevice()
 		m_d3dSyncQueries[i].release();
 
 	m_renderStateStack.clear();
-	m_currentVertexBuffer = 0;
-	m_currentIndexBuffer = 0;
-	m_currentProgram = 0;
-
 	return S_OK;
 }
 

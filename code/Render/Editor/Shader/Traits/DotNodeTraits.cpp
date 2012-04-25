@@ -87,5 +87,16 @@ bool DotNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType DotNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	return pinOrderConstantOrNonLinear(inputPinOrders, node->getInputPinCount());
+}
+
 	}
 }

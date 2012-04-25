@@ -58,6 +58,8 @@ public:
 	 * \param pipelineDepends Pipeline dependency walker.
 	 * \param sourceInstance Source asset database instance; might be null if asset doesn't originate from database.
 	 * \param sourceAsset Source asset object.
+	 * \param outputPath Output path in database.
+	 * \param outputGuid Output instance guid.
 	 * \param outBuildParams User defined parameter object; passed into buildOutput(...).
 	 * \param True if successful.
 	 */
@@ -65,6 +67,8 @@ public:
 		IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
+		const std::wstring& outputPath,
+		const Guid& outputGuid,
 		Ref< const Object >& outBuildParams
 	) const = 0;
 

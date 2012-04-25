@@ -2,7 +2,7 @@
 #define traktor_editor_Asset_H
 
 #include "Core/Io/Path.h"
-#include "Editor/ITypedAsset.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,7 +23,7 @@ namespace traktor
  * Derive from this class for assets which reference
  * source assets such as image files etc.
  */
-class T_DLLCLASS Asset : public ITypedAsset
+class T_DLLCLASS Asset : public ISerializable
 {
 	T_RTTI_CLASS;
 

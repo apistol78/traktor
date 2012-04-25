@@ -194,7 +194,7 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	return product;
 }
 
-bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid)
+bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& outputPath, const Guid& outputGuid)
 {
 	Ref< IPipeline > pipeline;
 	uint32_t pipelineHash;
@@ -345,17 +345,17 @@ void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool reb
 		IPipelineDb::DependencyHash previousDependencyHash;
 		if (!m_db->getDependency(dependency->outputGuid, previousDependencyHash))
 		{
-			log::info << L"Asset \"" << dependency->name << L"\" modified; not hashed" << Endl;
+			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
 		else if (previousDependencyHash.pipelineVersion != type_of(dependency->pipeline).getVersion())
 		{
-			log::info << L"Asset \"" << dependency->name << L"\" modified; pipeline version differ" << Endl;
+			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
 		else if (previousDependencyHash.hash != dependencyHash)
 		{
-			log::info << L"Asset \"" << dependency->name << L"\" modified; source has been modified" << Endl;
+			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
 	}
@@ -385,7 +385,7 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 	{
 		T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
-		log::info << L"Building asset \"" << dependency->name << L"\" (" << type_name(dependency->pipeline) << L")..." << Endl;
+		log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << type_name(dependency->pipeline) << L")..." << Endl;
 		log::info << IncreaseIndent;
 
 		// Get output instances from cache.

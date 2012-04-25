@@ -1,7 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Input/Binding/InputMappingResource.h"
+#include "Input/Binding/InputMapping.h"
 #include "Input/Binding/InputMappingSourceData.h"
 #include "Input/Binding/InputMappingStateData.h"
 #include "Input/Editor/InputMappingAsset.h"
@@ -11,12 +11,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.InputMappingAsset", 0, InputMappingAsset, editor::ITypedAsset)
-
-const TypeInfo* InputMappingAsset::getOutputType() const
-{
-	return &type_of< InputMappingResource >();
-}
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.InputMappingAsset", 0, InputMappingAsset, ISerializable)
 
 bool InputMappingAsset::serialize(ISerializer& s)
 {

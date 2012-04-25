@@ -44,11 +44,9 @@ public:
 	);
 
 private:
-	mutable resource::Proxy< BlendMesh > m_mesh;
-	mutable Ref< BlendMesh::Instance > m_instance;
-	mutable std::vector< float > m_blendWeights;
-
-	bool validate() const;
+	resource::Proxy< BlendMesh > m_mesh;
+	Ref< BlendMesh::Instance > m_instance;
+	std::vector< float > m_blendWeights;
 };
 
 	}

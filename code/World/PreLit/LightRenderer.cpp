@@ -1,5 +1,6 @@
 #include <limits>
 #include "Core/Math/Aabb3.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/Shader.h"
@@ -15,9 +16,9 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_lightDirectionalShader(L"{9F5076A9-A090-3242-A395-B0A75DCB2E1F}");
-const Guid c_lightPointShader(L"{6389690A-440C-364F-A5DA-5B53392F6B85}");
-const Guid c_lightSpotShader(L"{13D5E181-2B54-D94F-9ECB-01D129DA4AE3}");
+const resource::Id< render::Shader > c_lightDirectionalShader(Guid(L"{9F5076A9-A090-3242-A395-B0A75DCB2E1F}"));
+const resource::Id< render::Shader > c_lightPointShader(Guid(L"{6389690A-440C-364F-A5DA-5B53392F6B85}"));
+const resource::Id< render::Shader > c_lightSpotShader(Guid(L"{13D5E181-2B54-D94F-9ECB-01D129DA4AE3}"));
 
 const float c_pointLightScreenAreaThresholdDim = 4.0f;
 const float c_pointLightScreenAreaThreshold = 4.0f * (c_pointLightScreenAreaThresholdDim * c_pointLightScreenAreaThresholdDim) / (1280.0f * 720.0f);
@@ -50,9 +51,6 @@ struct LightVertex
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.LightRenderer", LightRenderer, Object)
 
 LightRenderer::LightRenderer()
-:	m_lightDirectionalShader(c_lightDirectionalShader)
-,	m_lightPointShader(c_lightPointShader)
-,	m_lightSpotShader(c_lightSpotShader)
 {
 	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
 	s_handleExtent = render::getParameterHandle(L"Extent");
@@ -75,11 +73,11 @@ bool LightRenderer::create(
 	render::IRenderSystem* renderSystem
 )
 {
-	if (!resourceManager->bind(m_lightDirectionalShader))
+	if (!resourceManager->bind(c_lightDirectionalShader, m_lightDirectionalShader))
 		return false;
-	if (!resourceManager->bind(m_lightPointShader))
+	if (!resourceManager->bind(c_lightPointShader, m_lightPointShader))
 		return false;
-	if (!resourceManager->bind(m_lightSpotShader))
+	if (!resourceManager->bind(c_lightSpotShader, m_lightSpotShader))
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;
@@ -110,7 +108,7 @@ bool LightRenderer::create(
 
 void LightRenderer::destroy()
 {
-	m_lightDirectionalShader.invalidate();
+	safeDestroy(m_vertexBufferQuad);
 }
 
 void LightRenderer::render(
@@ -130,12 +128,7 @@ void LightRenderer::render(
 
 	if (light.type == LtDirectional)
 	{
-		if (!m_lightDirectionalShader.validate())
-			return;
-
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
-
-		renderView->setVertexBuffer(m_vertexBufferQuad);
 
 		m_lightDirectionalShader->setCombination(s_handleShadowEnable, shadowMask != 0);
 		m_lightDirectionalShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
@@ -152,13 +145,10 @@ void LightRenderer::render(
 		m_lightDirectionalShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
 		m_lightDirectionalShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 
-		m_lightDirectionalShader->draw(renderView, m_primitivesQuad);
+		m_lightDirectionalShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
 	else if (light.type == LtPoint)
 	{
-		if (!m_lightPointShader.validate())
-			return;
-
 		Vector4 lightPosition = view * light.position.xyz1();
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
 
@@ -217,8 +207,6 @@ void LightRenderer::render(
 		mx = min(mx, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
 
 		// Render quad primitive.
-		renderView->setVertexBuffer(m_vertexBufferQuad);
-
 		m_lightPointShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
 
 		m_lightPointShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
@@ -233,13 +221,10 @@ void LightRenderer::render(
 		m_lightPointShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
 		m_lightPointShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 
-		m_lightPointShader->draw(renderView, m_primitivesQuad);
+		m_lightPointShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
 	else if (light.type == LtSpot)
 	{
-		if (!m_lightSpotShader.validate())
-			return;
-
 		Vector4 lightPositionAndRadius = (view * light.position.xyz1()).xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.radius);
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
 
@@ -298,8 +283,6 @@ void LightRenderer::render(
 		mx = min(mx, Vector4(1.0f, 1.0f, 0.0f, 0.0f));
 
 		// Render quad primitive.
-		renderView->setVertexBuffer(m_vertexBufferQuad);
-
 		m_lightSpotShader->setCombination(s_handleShadowEnable, shadowMask != 0);
 		m_lightSpotShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightSpotShader->setTextureParameter(s_handleShadowMask, shadowMask);
@@ -318,7 +301,7 @@ void LightRenderer::render(
 		m_lightSpotShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
 		m_lightSpotShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 
-		m_lightSpotShader->draw(renderView, m_primitivesQuad);
+		m_lightSpotShader->draw(renderView, m_vertexBufferQuad, 0, m_primitivesQuad);
 	}
 }
 

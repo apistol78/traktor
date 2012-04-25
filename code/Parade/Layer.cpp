@@ -28,7 +28,7 @@ Layer::~Layer()
 
 void Layer::destroy()
 {
-	if (m_scriptContext.valid())
+	if (m_scriptContext)
 	{
 		m_scriptContext->destroy();
 		m_scriptContext.clear();
@@ -42,12 +42,13 @@ void Layer::flushScript()
 
 bool Layer::validateScriptContext(Stage* stage)
 {
-	if (!m_scriptContext.valid())
-	{
-		if (!m_scriptContext.validate())
-			return false;
+	if (!m_scriptContext)
+		return false;
 
+	if (m_scriptContext.changed())
+	{
 		m_initialized = false;
+		m_scriptContext.consume();
 	}
 
 	if (!m_initialized)

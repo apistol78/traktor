@@ -166,9 +166,29 @@ void ParameterCache::setRenderState(uint32_t state, uint32_t value)
 	m_renderStates[state] = value;
 }
 
-void ParameterCache::setSamplerState(uint32_t sampler, uint32_t state, uint32_t value)
+void ParameterCache::setVertexSamplerState(uint32_t sampler, uint32_t state, uint32_t value)
 {
-	if (m_samplerStates[sampler][state] == value)
+	T_ASSERT (sampler < MaxVertexSamplerCount);
+	T_ASSERT (state < m_vertexSamplerStates[sampler].size());
+
+	if (m_vertexSamplerStates[sampler][state] == value)
+		return;
+
+#if !defined(_XBOX)
+	m_d3dDevice->SetSamplerState(sampler + D3DVERTEXTEXTURESAMPLER0, (D3DSAMPLERSTATETYPE)state, value);
+#else
+	m_d3dDevice->SetSamplerState_Inline(sampler + D3DVERTEXTEXTURESAMPLER0, (D3DSAMPLERSTATETYPE)state, value);
+#endif
+
+	m_vertexSamplerStates[sampler][state] = value;
+}
+
+void ParameterCache::setPixelSamplerState(uint32_t sampler, uint32_t state, uint32_t value)
+{
+	T_ASSERT (sampler < MaxPixelSamplerCount);
+	T_ASSERT (state < m_pixelSamplerStates[sampler].size());
+
+	if (m_pixelSamplerStates[sampler][state] == value)
 		return;
 
 #if !defined(_XBOX)
@@ -177,7 +197,7 @@ void ParameterCache::setSamplerState(uint32_t sampler, uint32_t state, uint32_t 
 	m_d3dDevice->SetSamplerState_Inline(sampler, (D3DSAMPLERSTATETYPE)state, value);
 #endif
 
-	m_samplerStates[sampler][state] = value;
+	m_pixelSamplerStates[sampler][state] = value;
 }
 
 HRESULT ParameterCache::lostDevice()
@@ -196,8 +216,10 @@ HRESULT ParameterCache::lostDevice()
 		m_pixelTextureShadow[i] = 0;
 
 	m_renderStates = std::vector< uint32_t >(256, ~0UL);
-	for (int i = 0; i < sizeof_array(m_samplerStates); ++i)
-		m_samplerStates[i] = std::vector< uint32_t >(16, ~0UL);
+	for (int i = 0; i < sizeof_array(m_vertexSamplerStates); ++i)
+		m_vertexSamplerStates[i] = std::vector< uint32_t >(16, ~0UL);
+	for (int i = 0; i < sizeof_array(m_pixelSamplerStates); ++i)
+		m_pixelSamplerStates[i] = std::vector< uint32_t >(16, ~0UL);
 
 	return S_OK;
 }
@@ -209,7 +231,7 @@ HRESULT ParameterCache::resetDevice(IDirect3DDevice9* d3dDevice)
 	m_d3dDevice->SetVertexShaderConstantF(0, m_vertexConstantsShadow.ptr(), VertexConstantCount);
 	m_d3dDevice->SetPixelShaderConstantF(0, m_pixelConstantsShadow.ptr(), PixelConstantCount);
 
-	for (int i = 0; i < MaxSamplerCount; ++i)
+	for (int i = 0; i < MaxPixelSamplerCount; ++i)
 	{
 		m_d3dDevice->SetSamplerState(i, D3DSAMP_MIPMAPLODBIAS, *(DWORD*)&m_mipBias);
 		m_d3dDevice->SetSamplerState(i, D3DSAMP_MAXANISOTROPY, m_maxAnisotropy);

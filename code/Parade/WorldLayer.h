@@ -44,8 +44,6 @@ class Scene;
 class Entity;
 class EntityData;
 class GroupEntity;
-class IEntityFactory;
-class IEntityRenderer;
 class IEntitySchema;
 class IWorldRenderer;
 class PostProcess;
@@ -78,10 +76,6 @@ public:
 
 	virtual void reconfigured(Stage* stage);
 
-	void addEntityFactory(world::IEntityFactory* entityFactory);
-
-	void addEntityRenderer(world::IEntityRenderer* entityRenderer);
-
 	world::Entity* getEntity(const std::wstring& name) const;
 
 	RefArray< world::Entity > getEntities(const std::wstring& name) const;
@@ -112,9 +106,8 @@ private:
 	world::WorldRenderView m_worldRenderView;
 	Ref< world::PostProcess > m_postProcess;
 	Ref< render::RenderTargetSet > m_worldTarget;
+	Ref< world::GroupEntity > m_renderGroup;
 	Ref< world::GroupEntity > m_dynamicEntities;
-	RefArray< world::IEntityFactory > m_dynamicFactories;
-	RefArray< world::IEntityRenderer > m_dynamicRenderers;
 	float m_deltaTime;
 	bool m_controllerEnable;
 

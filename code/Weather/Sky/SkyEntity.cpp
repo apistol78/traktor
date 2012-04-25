@@ -46,9 +46,6 @@ void SkyEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (!m_shader.validate())
-		return;
-
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(m_shader);
 

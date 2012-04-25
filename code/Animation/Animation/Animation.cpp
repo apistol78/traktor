@@ -50,7 +50,7 @@ struct KeyPoseAccessor
 				continue;
 
 			pose.setBoneOffset(i, v0.getBoneOffset(i) * w0 + v1.getBoneOffset(i) * w1 + v2.getBoneOffset(i) * w2 + v3.getBoneOffset(i) * w3);
-			pose.setBoneOrientation(i, (v0.getBoneOrientation(i) * w0 + v1.getBoneOrientation(i) * w1 + v2.getBoneOrientation(i) * w2 + v3.getBoneOrientation(i) * w3).normalized());
+			pose.setBoneOrientation(i, v0.getBoneOrientation(i) * w0 + v1.getBoneOrientation(i) * w1 + v2.getBoneOrientation(i) * w2 + v3.getBoneOrientation(i) * w3);
 		}
 
 		return pose;
@@ -114,17 +114,36 @@ const Animation::KeyPose& Animation::getLastKeyPose() const
 bool Animation::getPose(float at, Pose& outPose) const
 {
 	size_t nposes = m_poses.size();
-	if (nposes <= 1)
+	if (nposes > 2)
 	{
-		if (nposes > 0)
-		{
-			outPose = m_poses.front().pose;
-			return true;
-		}
+		outPose = Hermite< KeyPose, Scalar, Pose, KeyPoseAccessor, WrapTime< Scalar > >(&m_poses[0], nposes).evaluate(Scalar(at));
 		return true;
 	}
-	outPose = Hermite< KeyPose, Scalar, Pose, KeyPoseAccessor, WrapTime< Scalar > >(&m_poses[0], nposes).evaluate(Scalar(at));
-	return true;
+	else if (nposes > 1)
+	{
+		if (at <= m_poses[0].at)
+		{
+			outPose = m_poses[0].pose;
+			return true;
+		}
+		else if (at >= m_poses[1].at)
+		{
+			outPose = m_poses[1].pose;
+			return true;
+		}
+		else
+		{
+			blendPoses(&m_poses[0].pose, &m_poses[1].pose, Scalar((at - m_poses[0].at) / (m_poses[1].at - m_poses[0].at)), &outPose);
+			return true;
+		}
+	}
+	else if (nposes > 0)
+	{
+		outPose = m_poses[0].pose;
+		return true;
+	}
+	else
+		return false;
 }
 
 bool Animation::serialize(ISerializer& s)

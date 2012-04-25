@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Core/Timer/Timer.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Resound/MuteGrain.h"
@@ -21,16 +19,11 @@ struct MuteGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.MuteGrain", 0, MuteGrain, IGrain)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.MuteGrain", MuteGrain, IGrain)
 
-MuteGrain::MuteGrain()
-:	m_duration(0.0)
+MuteGrain::MuteGrain(double duration)
+:	m_duration(duration)
 {
-}
-
-bool MuteGrain::bind(resource::IResourceManager* resourceManager)
-{
-	return true;
 }
 
 Ref< ISoundBufferCursor > MuteGrain::createCursor() const
@@ -54,11 +47,6 @@ bool MuteGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
 {
 	MuteGrainCursor* muteCursor = static_cast< MuteGrainCursor* >(cursor);
 	return muteCursor->m_timer.getElapsedTime() <= muteCursor->m_end;
-}
-
-bool MuteGrain::serialize(ISerializer& s)
-{
-	return s >> Member< double >(L"duration", m_duration);
 }
 
 	}

@@ -209,6 +209,11 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 	);
 }
 
+T_MATH_INLINE Quaternion Quaternion::fromEulerAngles(const Vector4& angles)
+{
+	return Quaternion(angles.x(), angles.y(), angles.z());
+}
+
 T_MATH_INLINE Quaternion& Quaternion::operator *= (const Quaternion& r)
 {
 	*this = *this * r;

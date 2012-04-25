@@ -38,11 +38,26 @@ const uint32_t c_maxEmitPerUpdate = 8;
 const uint32_t c_maxEmitSingleShot = 3000;
 #endif
 
+struct PointPredicate
+{
+	const Plane& m_cameraPlane;
+
+	PointPredicate(const Plane& cameraPlane)
+	:	m_cameraPlane(cameraPlane)
+	{
+	}
+
+	bool operator () (const Point& pl, const Point& pr) const
+	{
+		return m_cameraPlane.distance(pl.position) > m_cameraPlane.distance(pr.position);
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object)
 
-EmitterInstance::EmitterInstance(Emitter* emitter)
+EmitterInstance::EmitterInstance(const Emitter* emitter)
 :	m_emitter(emitter)
 ,	m_emitted(0)
 ,	m_totalTime(0.0f)
@@ -100,7 +115,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	// Emit particles.
 	if (emit)
 	{
-		Source* source = m_emitter->getSource();
+		const Source* source = m_emitter->getSource();
 		if (source)
 		{
 			if (!singleShot)
@@ -203,19 +218,16 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 #endif
 }
 
-void EmitterInstance::render(PointRenderer* pointRenderer, const Plane& cameraPlane) const
+void EmitterInstance::render(PointRenderer* pointRenderer, const Plane& cameraPlane)
 {
-	//synchronize();
-
 	if (m_points.empty())
 		return;
 
-	resource::Proxy< render::Shader >& shader = m_emitter->getShader();
-	if (!shader.validate())
-		return;
+	if (m_emitter->getSort())
+		std::sort(m_points.begin(), m_points.end(), PointPredicate(cameraPlane));
 
 	pointRenderer->render(
-		shader,
+		m_emitter->getShader(),
 		cameraPlane,
 		m_points,
 		m_emitter->getMiddleAge(),

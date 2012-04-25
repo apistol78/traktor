@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.spray.Effect">
+<object type="traktor.spray.EffectData">
 	<duration>5</duration>
 	<loopStart>0</loopStart>
 	<loopEnd>1</loopEnd>
 	<layers>
-		<item type="traktor.spray.EffectLayer">
+		<item type="traktor.spray.EffectLayerData">
 			<time>0</time>
 			<duration>5</duration>
-			<emitter type="traktor.spray.Emitter" version="2">
-				<source type="traktor.spray.PointSource">
+			<emitter type="traktor.spray.EmitterData">
+				<source type="traktor.spray.PointSourceData">
 					<constantRate>100</constantRate>
           <velocityRate>0</velocityRate>
 					<position>0, 0, 0, 1</position>
@@ -38,18 +38,18 @@
 					</size>
 				</source>
 				<modifiers>
-					<item type="traktor.spray.GravityModifier" version="1">
+					<item type="traktor.spray.GravityModifierData">
 						<gravity>0, 1, 0, 0</gravity>
 						<world>true</world>
 					</item>
-					<item type="traktor.spray.DragModifier">
+					<item type="traktor.spray.DragModifierData">
 						<linearDrag>4.55</linearDrag>
 						<angularDrag>0</angularDrag>
 					</item>
-					<item type="traktor.spray.SizeModifier">
+					<item type="traktor.spray.SizeModifierData">
 						<adjustRate>0.35</adjustRate>
 					</item>
-					<item type="traktor.spray.IntegrateModifier">
+					<item type="traktor.spray.IntegrateModifierData">
 						<timeScale>1</timeScale>
 					</item>
 				</modifiers>
@@ -59,6 +59,7 @@
 				<fadeNearRange>1</fadeNearRange>
 				<warmUp>1</warmUp>
 			</emitter>
+      <sequence/>
 		</item>
 	</layers>
 </object>

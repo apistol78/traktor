@@ -1,6 +1,7 @@
 #ifndef traktor_hf_MaterialMaskResource_H
 #define traktor_hf_MaterialMaskResource_H
 
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

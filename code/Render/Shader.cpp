@@ -119,13 +119,17 @@ void Shader::setStencilReference(uint32_t stencilReference)
 		m_currentProgram->setStencilReference(stencilReference);
 }
 
-void Shader::draw(IRenderView* renderView, const Primitives& primitives)
+void Shader::draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, const Primitives& primitives)
 {
 	if (!m_currentProgram)
 		return;
 
-	renderView->setProgram(m_currentProgram);
-	renderView->draw(primitives);
+	renderView->draw(
+		vertexBuffer,
+		indexBuffer,
+		m_currentProgram,
+		primitives
+	);
 }
 
 IProgram* Shader::getCurrentProgram() const

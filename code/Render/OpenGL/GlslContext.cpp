@@ -31,9 +31,11 @@ GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 	GlslVariable* variable = m_currentShader->getVariable(sourcePin);
 	if (!variable)
 	{
-		m_emitter.emit(*this, sourcePin->getNode());
-		variable = m_currentShader->getVariable(sourcePin);
-		T_ASSERT (variable);
+		if (m_emitter.emit(*this, sourcePin->getNode()))
+		{
+			variable = m_currentShader->getVariable(sourcePin);
+			T_ASSERT (variable);
+		}
 	}
 
 	return variable;

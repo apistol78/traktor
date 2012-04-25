@@ -40,14 +40,11 @@ void FlashLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
 {
 	std::wstring command, args;
 
-	if (!m_movie.valid())
+	if (m_movie.changed())
 	{
-		if (!m_movie.validate())
-			return;
-
-		// Scene has been successfully validated; drop existing movie player.
 		m_displayRenderer = 0;
 		m_moviePlayer = 0;
+		m_movie.consume();
 	}
 
 	// Re-create movie player.
@@ -81,7 +78,7 @@ void FlashLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
 
 void FlashLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
 {
-	if (!m_movie.valid() || !m_displayRenderer)
+	if (!m_displayRenderer)
 		return;
 
 	m_displayRenderer->build(frame);
@@ -90,7 +87,7 @@ void FlashLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t 
 
 void FlashLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 {
-	if (!m_movie.valid() || !m_displayRenderer)
+	if (!m_displayRenderer)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -108,7 +105,7 @@ void FlashLayer::leave(Stage* stage)
 
 void FlashLayer::reconfigured(Stage* stage)
 {
-	if (!m_movie.valid() || !m_moviePlayer)
+	if (!m_moviePlayer)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();

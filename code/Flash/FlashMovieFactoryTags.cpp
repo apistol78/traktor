@@ -874,15 +874,14 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 	{
 		FlashFrame::PlaceObject placeObject;
 		
-		placeObject.hasCharacterId = true;
+		placeObject.hasFlags |= FlashFrame::PfHasCharacterId | FlashFrame::PfHasMatrix;
 		placeObject.characterId = bs.readUInt16();
 		placeObject.depth = bs.readUInt16();
-		placeObject.hasMatrix = true;
 		placeObject.matrix = Matrix33(swf->readMatrix().m);
 
 		if (uint32_t(bs.getStream()->tell()) < context.tagEndPosition)
 		{
-			placeObject.hasCxTransform = true;
+			placeObject.hasFlags |= FlashFrame::PfHasCxTransform;
 			placeObject.cxTransform = swf->readCxTransform(false);
 		}
 
@@ -893,17 +892,17 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 		FlashFrame::PlaceObject placeObject;
 
 		if (context.version >= 5)
-			placeObject.hasActions = bs.readBit();
+			placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasActions : 0;
 		else
 			bs.skip(1);
 
-		placeObject.hasClipDepth = bs.readBit();
-		placeObject.hasName = bs.readBit();
-		placeObject.hasRatio = bs.readBit();
-		placeObject.hasCxTransform = bs.readBit();
-		placeObject.hasMatrix = bs.readBit();
-		placeObject.hasCharacterId = bs.readBit();
-		placeObject.hasMove = bs.readBit();
+		placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasClipDepth : 0;
+		placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasName: 0;
+		placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasRatio : 0;
+		placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasCxTransform : 0;
+		placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasMatrix : 0;
+		placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasCharacterId : 0;
+		placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasMove : 0;
 
 		if (m_placeType == 2)
 		{
@@ -915,53 +914,55 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 
 			bool hasImage = bs.readBit();
 			bool hasClassName = bs.readBit();
-			placeObject.hasBitmapCaching = bs.readBit();
-			placeObject.hasBlendMode = bs.readBit();
-			placeObject.hasFilters = bs.readBit();
+
+			placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasBitmapCaching : 0;
+			placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasBlendMode : 0;
+			placeObject.hasFlags |= bs.readBit() ? FlashFrame::PfHasFilters : 0;
+
 			placeObject.depth = bs.readUInt16();
 
-			if (hasClassName || (hasImage && placeObject.hasCharacterId))
+			if (hasClassName || (hasImage && placeObject.has(FlashFrame::PfHasCharacterId)))
 			{
 				std::string className = swf->readString();
 				log::warning << L"Unused class name " << mbstows(className) << L" in PlaceObject" << Endl;
 			}
 		}
 	
-		if (placeObject.hasCharacterId)
+		if (placeObject.has(FlashFrame::PfHasCharacterId))
 			placeObject.characterId = bs.readUInt16();
 
-		if (placeObject.hasMatrix)
+		if (placeObject.has(FlashFrame::PfHasMatrix))
 			placeObject.matrix = Matrix33(swf->readMatrix().m);
 
-		if (placeObject.hasCxTransform)
+		if (placeObject.has(FlashFrame::PfHasCxTransform))
 			placeObject.cxTransform = swf->readCxTransform(true);
 
-		if (placeObject.hasRatio)
+		if (placeObject.has(FlashFrame::PfHasRatio))
 			placeObject.ratio = bs.readUInt16();
 
-		if (placeObject.hasName)
+		if (placeObject.has(FlashFrame::PfHasName))
 			placeObject.name = swf->readString();
 
-		if (placeObject.hasClipDepth)
+		if (placeObject.has(FlashFrame::PfHasClipDepth))
 			placeObject.clipDepth = bs.readUInt16();
 
 		if (m_placeType == 3)
 		{
-			if (placeObject.hasFilters)
+			if (placeObject.has(FlashFrame::PfHasFilters))
 			{
 				AlignedVector< SwfFilter* > filterList;
 				if (!swf->readFilterList(filterList))
 					return false;
 			}
 
-			if (placeObject.hasBlendMode)
+			if (placeObject.has(FlashFrame::PfHasBlendMode))
 				placeObject.blendMode = bs.readUInt8();
 
-			if (placeObject.hasBitmapCaching)
+			if (placeObject.has(FlashFrame::PfHasBitmapCaching))
 				placeObject.bitmapCaching = bs.readUInt8();
 		}
 
-		if (placeObject.hasActions)
+		if (placeObject.has(FlashFrame::PfHasActions))
 		{
 			uint16_t reserved = bs.readUInt16();
 			if (reserved)

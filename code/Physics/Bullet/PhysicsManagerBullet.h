@@ -1,10 +1,6 @@
 #ifndef traktor_physics_PhysicsManagerBullet_H
 #define traktor_physics_PhysicsManagerBullet_H
 
-#if defined(_PS3)
-#	define T_BULLET_USE_SPURS
-#endif
-
 #include "Core/Thread/Semaphore.h"
 #include "Physics/PhysicsManager.h"
 #include "Physics/Bullet/Types.h"

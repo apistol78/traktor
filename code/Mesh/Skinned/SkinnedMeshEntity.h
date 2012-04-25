@@ -41,10 +41,8 @@ public:
 	);
 
 private:
-	mutable resource::Proxy< SkinnedMesh > m_mesh;
-	mutable AlignedVector< Vector4 > m_boneTransforms;
-
-	bool validate() const;
+	resource::Proxy< SkinnedMesh > m_mesh;
+	AlignedVector< Vector4 > m_boneTransforms;
 };
 
 	}

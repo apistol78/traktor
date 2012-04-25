@@ -1,7 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Mesh/IMeshResource.h"
 #include "Mesh/Editor/MeshAsset.h"
 
 namespace traktor
@@ -16,11 +15,6 @@ MeshAsset::MeshAsset()
 ,	m_bakeOcclusion(false)
 ,	m_cullDistantFaces(false)
 {
-}
-
-const TypeInfo* MeshAsset::getOutputType() const
-{
-	return &type_of< IMeshResource >();
 }
 
 bool MeshAsset::serialize(ISerializer& s)

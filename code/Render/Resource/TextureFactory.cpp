@@ -51,6 +51,8 @@ int32_t TextureFactory::getSkipMips() const
 const TypeInfoSet TextureFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< ICubeTexture >());
+	typeSet.insert(&type_of< ISimpleTexture >());
 	typeSet.insert(&type_of< ITexture >());
 	return typeSet;
 }
@@ -182,14 +184,16 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 			uint8_t* data = buffer[side].ptr();
 			for (int32_t i = 0; i < mipCount; ++i)
 			{
-				int32_t mipSide = std::max(imageWidth >> i, 1);
+				uint32_t mipPitch = getTextureMipPitch(desc.format, desc.side, desc.side, i);
 
 				desc.initialData[side * mipCount + i].data = data;
-				desc.initialData[side * mipCount + i].pitch = mipSide * 4;
+				desc.initialData[side * mipCount + i].pitch = getTextureRowPitch(desc.format, desc.side, i);
 
-				readerData.read(data, mipSide * mipSide, 4);
+				int32_t nread = readerData.read(data, mipPitch);
+				T_ASSERT (nread == mipPitch);
 
-				data += mipSide * mipSide * 4;
+				data += mipPitch;
+				T_ASSERT (size_t(data - buffer[side].ptr()) <= textureDataSize);
 			}
 		}
 
