@@ -3,14 +3,16 @@
 
 #include "Core/Object.h"
 #include "Core/Guid.h"
+#include "Resource/Id.h"
+#include "Resource/IdProxy.h"
 #include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RESOURCE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -54,46 +56,66 @@ public:
 	 */
 	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid) = 0;
 
-	/*! \brief Update all handles.
+	/*! \brief Reload resource.
 	 *
 	 * \param guid Resource identifier.
-	 * \param force Force update; recreate resource even if resource is cached.
 	 */
-	virtual void update(const Guid& guid, bool force) = 0;
+	virtual void reload(const Guid& guid) = 0;
 
 	/*! \brief Flush resource from cache.
+	 *
+	 * All proxies referencing resource become null pointers
+	 * thus this must be called when it's safe and the resource
+	 * should no longer be used.
 	 *
 	 * \param guid Resource identifier.
 	 */
 	virtual void flush(const Guid& guid) = 0;
 
-	/*! \brief Flush all resources. */
+	/*! \brief Flush all resources.
+	 *
+	 * All proxies referencing any resource become null pointers
+	 * thus this must be called when it's safe and the resource
+	 * should no longer be used.
+	 */
 	virtual void flush() = 0;
 	
 	/*! \brief Dump statistics. */
 	virtual void dumpStatistics() = 0;
 
-	template < typename ResourceType >
-	Ref< IResourceHandle > bind(const Guid& guid)
+	/*! \brief Bind handle to resource identifier.
+	 *
+	 * \param id Resource identifier.
+	 * \return Resource proxy.
+	 */
+	template < 
+		typename ResourceType
+	>
+	bool bind(const Id< ResourceType >& id, Proxy< ResourceType >& outProxy)
 	{
-		return bind(type_of< ResourceType >(), guid);
-	}
-
-	template < typename ResourceType >
-	bool bind(Proxy< ResourceType >& proxy)
-	{
-		Ref< IResourceHandle > handle = bind< ResourceType >(proxy.getGuid());
+		Ref< IResourceHandle > handle = bind(type_of< ResourceType >(), id);
 		if (!handle)
 			return false;
-		proxy.replace(handle);
+
+		outProxy = Proxy< ResourceType >(handle);
 		return true;
 	}
 
-	template < typename ResourceType >
-	void flush(Proxy< ResourceType >& proxy)
+	/*! \brief Bind handle to resource identifier.
+	 *
+	 * \param proxy Resource identifier proxy.
+	 */
+	template <
+		typename ResourceType
+	>
+	bool bind(IdProxy< ResourceType >& outProxy)
 	{
-		flush(proxy.getGuid());
-		proxy.invalidate();
+		Ref< IResourceHandle > handle = bind(type_of< ResourceType >(), outProxy.getId());
+		if (!handle)
+			return false;
+
+		outProxy.replace(handle);
+		return true;
 	}
 };
 

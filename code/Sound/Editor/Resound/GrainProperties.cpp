@@ -1,11 +1,12 @@
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Editor/ITypedAsset.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
-#include "Sound/Resound/IGrain.h"
+#include "Sound/Resound/IGrainData.h"
 #include "Sound/Editor/Resound/GrainProperties.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/CommandEvent.h"
@@ -42,7 +43,7 @@ void GrainProperties::destroy()
 	safeDestroy(m_grainPropertyList);
 }
 
-void GrainProperties::set(IGrain* grain)
+void GrainProperties::set(IGrainData* grain)
 {
 	m_grainPropertyList->bind(grain);
 }
@@ -73,27 +74,30 @@ void GrainProperties::eventPropertyCommand(ui::Event* event)
 				if (browseItem->getFilterType())
 				{
 					const TypeInfo* filterType = browseItem->getFilterType();
+					TypeInfoSet browseTypes;
 
-					// Check if filter type is actually a result of a asset; in such case we should
-					// browse for the asset and not the final result.
-					TypeInfoSet filterTypes;
-
-					std::vector< const TypeInfo* > assetTypes;
-					type_of< editor::ITypedAsset >().findAllOf(assetTypes);
-					for (std::vector< const TypeInfo* >::iterator i = assetTypes.begin(); i != assetTypes.end(); ++i)
+					// Lookup which actual types to browse based on filter type; this
+					// is used for mapping resources to assets.
+					Ref< const PropertyGroup > browseTypeFilter = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.BrowseTypeFilter");
+					if (browseTypeFilter)
 					{
-						Ref< editor::ITypedAsset > asset = dynamic_type_cast< editor::ITypedAsset* >((*i)->createInstance());
-						if (asset && asset->getOutputType())
+						Ref< const IPropertyValue > browseTypesSet = browseTypeFilter->getProperty(filterType->getName());
+						if (browseTypesSet)
 						{
-							if (is_type_of(*asset->getOutputType(), *filterType))
-								filterTypes.insert(*i);
+							PropertyStringSet::value_type_t v = PropertyStringSet::get(browseTypesSet);
+							for (PropertyStringSet::value_type_t::const_iterator i = v.begin(); i != v.end(); ++i)
+							{
+								const TypeInfo* browseType = TypeInfo::find(*i);
+								if (browseType)
+									browseTypes.insert(browseType);
+							}
 						}
 					}
 
-					if (filterTypes.empty())
-						filterTypes.insert(filterType);
+					if (browseTypes.empty())
+						browseTypes.insert(filterType);
 
-					editor::TypeBrowseFilter filter(filterTypes);
+					editor::TypeBrowseFilter filter(browseTypes);
 					instance = m_editor->browseInstance(&filter);
 				}
 				else

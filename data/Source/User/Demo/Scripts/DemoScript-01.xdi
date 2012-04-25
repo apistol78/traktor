@@ -11,7 +11,6 @@ local _mode
 
 -- Initialize layer
 function layerInit(stage)
-	_camera = _self:getEntity("Camera")
 	_cameraHead = 0
 	_cameraPitch = 0
 	_cameraPosition = Vector4(0, 0, 0, 1)
@@ -58,6 +57,7 @@ function layerUpdate(stage, info)
 
 			_cameraPosition = _cameraPosition:add(motion)
 
+			_camera = _self:getEntity("Camera")
 			_camera:setTransform(Transform(
 				_cameraPosition:xyz1(),
 				orientation

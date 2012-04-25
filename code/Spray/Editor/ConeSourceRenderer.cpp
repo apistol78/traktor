@@ -9,14 +9,14 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.ConeSourceRenderer", ConeSourceRenderer, SourceRenderer)
 
-void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const
+void ConeSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
 {
-	ConeSource* coneSource = checked_type_cast< ConeSource* >(source);
+	const ConeSource* coneSource = checked_type_cast< const ConeSource* >(source);
 
 	Vector4 position = coneSource->getPosition();
 	Vector4 normal = coneSource->getNormal();
-	float angle1 = coneSource->getAngle1();
-	float angle2 = coneSource->getAngle2();
+	float angle1 = asinf(coneSource->getAngle1s());
+	float angle2 = asinf(coneSource->getAngle2s());
 
 	for (int i = 0; i < 20; ++i)
 	{

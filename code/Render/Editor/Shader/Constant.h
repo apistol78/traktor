@@ -27,6 +27,8 @@ public:
 
 	bool isOne() const;
 
+	bool operator == (const Constant& rh) const;
+
 	float& operator [] (int32_t index);
 
 	float operator [] (int32_t index) const;

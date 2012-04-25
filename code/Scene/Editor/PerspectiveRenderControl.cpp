@@ -56,7 +56,7 @@ namespace traktor
 
 const float c_defaultFieldOfView = 80.0f;
 const float c_defaultMouseWheelRate = 10.0f;
-const int32_t c_defaultMultiSample = 4;
+const int32_t c_defaultMultiSample = 0;
 const float c_minFieldOfView = 4.0f;
 const float c_maxFieldOfView = 160.0f;
 const float c_cameraTranslateDeltaScale = 0.025f;
@@ -69,8 +69,7 @@ const float c_deltaAdjustSmall = 0.01f;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_index(0)
-,	m_gridEnable(true)
+:	m_gridEnable(true)
 ,	m_guideEnable(true)
 ,	m_postProcessEnable(true)
 ,	m_fieldOfView(c_defaultFieldOfView)
@@ -81,12 +80,10 @@ PerspectiveRenderControl::PerspectiveRenderControl()
 {
 }
 
-bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t index)
+bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId)
 {
 	m_context = context;
 	T_ASSERT (m_context);
-
-	m_index = index;
 
 	const PropertyGroup* settings = m_context->getEditor()->getSettings();
 	T_ASSERT (settings);
@@ -131,7 +128,7 @@ bool PerspectiveRenderControl::create(ui::Widget* parent, SceneEditorContext* co
 	updateSettings();
 	updateWorldRenderer();
 
-	m_camera = m_context->getCamera(index);
+	m_camera = m_context->getCamera(cameraId);
 	m_camera->setEnable(true);
 	m_timer.start();
 

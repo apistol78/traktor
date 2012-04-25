@@ -1,13 +1,7 @@
 #include <algorithm>
 #include <limits>
-#include "Core/Containers/AlignedVector.h"
-#include "Core/Log/Log.h"
-#include "Core/Math/Half.h"
-#include "Core/Math/Log2.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/MaterialMask.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
@@ -15,8 +9,8 @@
 #include "Render/VertexElement.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
+#include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntity.h"
-#include "Terrain/TerrainSurface.h"
 #include "Terrain/TerrainSurfaceCache.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
@@ -28,26 +22,8 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_guidTerrainShaderVFetch(L"{480B7C64-5494-A74A-8485-F2CA15A900E6}");
-const Guid c_guidTerrainShaderStatic(L"{557537A0-F1E3-AF4C-ACB9-FD862FC3265C}");
-
-#if !defined(TARGET_OS_IPHONE)
-#	if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-const uint32_t c_skipHeightTexture = 1;
-#	else
-const uint32_t c_skipHeightTexture = 4;
-#	endif
-const uint32_t c_skipNormalTexture = 2;
-const uint32_t c_skipMaterialMaskTexture = 1;
-#else
-const uint32_t c_skipHeightTexture = 4;
-const uint32_t c_skipNormalTexture = 4;
-const uint32_t c_skipMaterialMaskTexture = 4;
-#endif
-
-const uint32_t c_skipHeightTextureEditor = 4;
-const uint32_t c_skipNormalTextureEditor = 2;
-const uint32_t c_skipMaterialMaskTextureEditor = 1;
+const resource::Id< render::Shader > c_idTerrainShaderVFetch(Guid(L"{480B7C64-5494-A74A-8485-F2CA15A900E6}"));
+const resource::Id< render::Shader > c_idTerrainShaderStatic(Guid(L"{557537A0-F1E3-AF4C-ACB9-FD862FC3265C}"));
 
 const int32_t c_patchLodSteps = 3;
 const int32_t c_surfaceLodSteps = 3;
@@ -82,9 +58,8 @@ struct PatchFrontToBackPredicate
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEntity", TerrainEntity, world::Entity)
 
-TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem, bool editorMode)
+TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 :	m_renderSystem(renderSystem)
-,	m_editorMode(editorMode)
 ,	m_visualizeMode(TerrainEntityData::VmDefault)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
 ,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
@@ -102,33 +77,23 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem, bool editorMod
 
 bool TerrainEntity::create(resource::IResourceManager* resourceManager, const TerrainEntityData& data)
 {
-	m_heightfield = data.getHeightfield();
-	if (!resourceManager->bind(m_heightfield))
-		return false;
-
-	if (!m_heightfield.validate())
-		return false;
-
-	m_materialMask = data.getMaterialMask();
-	if (!resourceManager->bind(m_materialMask))
-		return false;
-
-	if (!m_materialMask.validate())
-		return false;
+	if (!resourceManager->bind(data.getTerrain(), m_terrain))
+		return 0;
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-	m_shader = c_guidTerrainShaderVFetch;
-#else
-	m_shader = c_guidTerrainShaderStatic;
-#endif
-	if (!resourceManager->bind(m_shader))
+	if (!resourceManager->bind(c_idTerrainShaderVFetch, m_shader))
 		return false;
+#else
+	if (!resourceManager->bind(c_idTerrainShaderStatic, m_shader))
+		return false;
+#endif
 
 	m_surfaceCache = new TerrainSurfaceCache();
 	if (!m_surfaceCache->create(resourceManager, m_renderSystem))
 		return false;
 
-	m_surface = data.getSurface();
+	m_detailSkip = data.getDetailSkip();
+	m_patchDim = data.getPatchDim();
 	m_patchLodDistance = data.getPatchLodDistance();
 	m_patchLodBias = data.getPatchLodBias();
 	m_patchLodExponent = data.getPatchLodExponent();
@@ -138,19 +103,6 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 
 	if (!createPatches())
 		return false;
-
-	if (!createTextures())
-		return false;
-
-	if (m_surface)
-	{
-		std::vector< resource::Proxy< render::Shader > >& layers = m_surface->getLayers();
-		for (std::vector< resource::Proxy< render::Shader > >::iterator i = layers.begin(); i != layers.end(); ++i)
-		{
-			if (!resourceManager->bind(*i))
-				return false;
-		}
-	}
 
 	m_visualizeMode = data.getVisualizeMode();
 	if (m_visualizeMode != TerrainEntityData::VmDefault)
@@ -167,20 +119,13 @@ void TerrainEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (!m_heightfield.valid() || !m_materialMask.valid())
+	if (m_terrain.changed())
 	{
-		if (!m_heightfield.validate() || !m_materialMask.validate())
-			return;
-
 		if (!createPatches())
 			return;
 
-		if (!createTextures())
-			return;
+		m_terrain.consume();
 	}
-
-	if (!m_shader.validate() || !m_surface)
-		return;
 
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(m_shader);
@@ -197,7 +142,7 @@ void TerrainEntity::render(
 	bool updateCache = true;
 #endif
 
-	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
+	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
 
 	const Vector4& eyePosition = worldRenderView.getEyePosition();
@@ -236,7 +181,7 @@ void TerrainEntity::render(
 
 			if (worldCullFrustum.inside(patchAabb) != Frustum::IrOutside)
 			{
-				Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
+				Scalar lodDistance = ((patchCenterWorld - eyePosition) * Vector4(1.0f, 0.0f, 1.0f, 0.0f)).length();
 
 				// Project patch bounding box extents onto view plane and calculate screen area.
 				Vector4 extents[8];
@@ -344,9 +289,7 @@ void TerrainEntity::render(
 			render::RenderBlock* renderBlock = 0;
 			m_surfaceCache->get(
 				renderContext,
-				m_surface,
-				m_heightTexture,
-				m_materialMaskTextures,
+				m_terrain,
 				-worldExtent * Scalar(0.5f),
 				worldExtent,
 				patchOrigin,
@@ -424,11 +367,12 @@ void TerrainEntity::render(
 				worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 				renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-				renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
-				renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
 
-				renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
-				renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_normalTexture->getWidth()));
+				renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+				renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float( m_terrain->getHeightMap()->getWidth()));
+
+				renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+				renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_terrain->getNormalMap()->getWidth()));
 
 				renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 				renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
@@ -468,11 +412,12 @@ void TerrainEntity::render(
 			worldRenderPass.setProgramParameters(renderBlock->programParams);
 
 			renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-			renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
-			renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
 
-			renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
-			renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_normalTexture->getWidth()));
+			renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+			renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float( m_terrain->getHeightMap()->getWidth()));
+
+			renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+			renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_terrain->getNormalMap()->getWidth()));
 
 			renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 			renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
@@ -537,7 +482,7 @@ void TerrainEntity::render(
 
 Aabb3 TerrainEntity::getBoundingBox() const
 {
-	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
+	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
 	return Aabb3(-worldExtent, worldExtent);
 }
 
@@ -547,26 +492,18 @@ void TerrainEntity::update(const UpdateParams& update)
 
 bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int32_t maxZ)
 {
-	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
+	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
 
-	const hf::height_t* heights = m_heightfield->getHeights();
-	T_ASSERT (heights);
-
-	uint32_t heightfieldSize = m_heightfield->getResource().getSize();
-	T_ASSERT (heightfieldSize > 0);
-
-	uint32_t patchDim = m_heightfield->getResource().getPatchDim();
-	uint32_t detailSkip = m_heightfield->getResource().getDetailSkip();
-	T_ASSERT ((heightfieldSize / detailSkip) % patchDim == 0);
+	uint32_t heightfieldSize = m_terrain->getHeightfield()->getSize();
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
-			int32_t pminX = px * patchDim * detailSkip;
-			int32_t pminZ = pz * patchDim * detailSkip;
-			int32_t pmaxX = (px + 1) * patchDim * detailSkip;
-			int32_t pmaxZ = (pz + 1) * patchDim * detailSkip;
+			int32_t pminX = px * m_patchDim * m_detailSkip;
+			int32_t pminZ = pz * m_patchDim * m_detailSkip;
+			int32_t pmaxX = (px + 1) * m_patchDim * m_detailSkip;
+			int32_t pmaxZ = (pz + 1) * m_patchDim * m_detailSkip;
 
 			if (pmaxX < minX || pmaxZ < minZ || pminX > maxX || pminZ > maxZ)
 				continue;
@@ -581,25 +518,25 @@ bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int3
 			float minHeight =  std::numeric_limits< float >::max();
 			float maxHeight = -std::numeric_limits< float >::max();
 
-			for (uint32_t z = 0; z < patchDim; ++z)
+			for (uint32_t z = 0; z < m_patchDim; ++z)
 			{
-				for (uint32_t x = 0; x < patchDim; ++x)
+				for (uint32_t x = 0; x < m_patchDim; ++x)
 				{
-					float fx = float(x) / (patchDim - 1);
-					float fz = float(z) / (patchDim - 1);
+					float fx = float(x) / (m_patchDim - 1);
+					float fz = float(z) / (m_patchDim - 1);
 
-					uint32_t ix = uint32_t(fx * patchDim * detailSkip) + pminX;
-					uint32_t iz = uint32_t(fz * patchDim * detailSkip) + pminZ;
+					uint32_t ix = uint32_t(fx * m_patchDim * m_detailSkip) + pminX;
+					uint32_t iz = uint32_t(fz * m_patchDim * m_detailSkip) + pminZ;
 
 					ix = std::min(ix, heightfieldSize - 1);
 					iz = std::min(iz, heightfieldSize - 1);
 
-					float height = float(heights[ix + iz * heightfieldSize]) / 65535.0f;
+					float height = m_terrain->getHeightfield()->getGridHeight(ix, iz);
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-					*vertex++ = float(x) / (patchDim - 1);
+					*vertex++ = float(x) / (m_patchDim - 1);
 					*vertex++ = height;
-					*vertex++ = float(z) / (patchDim - 1);
+					*vertex++ = float(z) / (m_patchDim - 1);
 #endif
 
 					height = height * worldExtent.y() - worldExtent.y() * 0.5f;
@@ -630,18 +567,11 @@ bool TerrainEntity::createPatches()
 	safeDestroy(m_vertexBuffer);
 #endif
 
-	uint32_t heightfieldSize = m_heightfield->getResource().getSize();
+	uint32_t heightfieldSize = m_terrain->getHeightfield()->getSize();
 	T_ASSERT (heightfieldSize > 0);
 
-	const hf::height_t* heights = m_heightfield->getHeights();
-	T_ASSERT (heights);
-
-	uint32_t patchDim = m_heightfield->getResource().getPatchDim();
-	uint32_t detailSkip = m_heightfield->getResource().getDetailSkip();
-	T_ASSERT ((heightfieldSize / detailSkip) % patchDim == 0);
-	uint32_t patchVertexCount = patchDim * patchDim;
-
-	m_patchCount = heightfieldSize / (patchDim * detailSkip);
+	uint32_t patchVertexCount = m_patchDim * m_patchDim;
+	m_patchCount = heightfieldSize / (m_patchDim * m_detailSkip);
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	std::vector< render::VertexElement > vertexElements;
@@ -661,12 +591,12 @@ bool TerrainEntity::createPatches()
 
 	for (uint32_t i = 0; i < PatchInstanceCount; ++i)
 	{
-		for (uint32_t z = 0; z < patchDim; ++z)
+		for (uint32_t z = 0; z < m_patchDim; ++z)
 		{
-			for (uint32_t x = 0; x < patchDim; ++x)
+			for (uint32_t x = 0; x < m_patchDim; ++x)
 			{
-				*vertex++ = float(x) / (patchDim - 1);
-				*vertex++ = float(z) / (patchDim - 1);
+				*vertex++ = float(x) / (m_patchDim - 1);
+				*vertex++ = float(z) / (m_patchDim - 1);
 				*vertex++ = float(i + 0.1f);
 			}
 		}
@@ -685,11 +615,10 @@ bool TerrainEntity::createPatches()
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-			// Create dynamic vertex buffers if we're in editor mode.
 			Ref< render::VertexBuffer > vertexBuffer = m_renderSystem->createVertexBuffer(
 				vertexElements,
 				patchVertexCount * vertexSize,
-				m_editorMode
+				false
 			);
 			if (!vertexBuffer)
 				return false;
@@ -705,7 +634,7 @@ bool TerrainEntity::createPatches()
 
 	updatePatches(0, 0, heightfieldSize, heightfieldSize);
 
-	std::vector< uint16_t > indices;
+	std::vector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)
 	{
 		uint32_t indexOffset = uint32_t(indices.size());
@@ -713,57 +642,57 @@ bool TerrainEntity::createPatches()
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 
-		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
+		for (uint32_t y = 0; y < m_patchDim - 1; y += lodSkip)
 		{
-			uint32_t offset = y * patchDim;
-			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
+			uint32_t offset = y * m_patchDim;
+			for (uint32_t x = 0; x < m_patchDim - 1; x += lodSkip)
 			{
-				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
+				if (lod > 0 && (x == 0 || y == 0 || x == m_patchDim - 1 - lodSkip || y == m_patchDim - 1 - lodSkip))
 				{
-					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
+					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * m_patchDim;
 
 					if (x == 0)
 					{
 						indices.push_back(mid);
 						indices.push_back(lodSkip + offset);
-						indices.push_back(lodSkip + offset + lodSkip * patchDim);
+						indices.push_back(lodSkip + offset + lodSkip * m_patchDim);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(offset + i * patchDim + patchDim);
-							indices.push_back(offset + i * patchDim);
+							indices.push_back(offset + i * m_patchDim + m_patchDim);
+							indices.push_back(offset + i * m_patchDim);
 						}
 					}
-					else if (x == patchDim - 1 - lodSkip)
+					else if (x == m_patchDim - 1 - lodSkip)
 					{
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset + lodSkip * m_patchDim);
 						indices.push_back(x + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(x + offset + i * patchDim + lodSkip);
-							indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
+							indices.push_back(x + offset + i * m_patchDim + lodSkip);
+							indices.push_back(x + offset + i * m_patchDim + lodSkip + m_patchDim);
 						}
 					}
 					else
 					{
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset + lodSkip * m_patchDim);
 						indices.push_back(x + offset);
 
 						indices.push_back(mid);
 						indices.push_back(x + offset + lodSkip);
-						indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
+						indices.push_back(x + offset + lodSkip + lodSkip * m_patchDim);
 					}
 
 					if (y == 0)
 					{
 						indices.push_back(mid);
-						indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
-						indices.push_back(x + lodSkip * patchDim + offset);
+						indices.push_back(x + lodSkip * m_patchDim + offset + lodSkip);
+						indices.push_back(x + lodSkip * m_patchDim + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
@@ -772,7 +701,7 @@ bool TerrainEntity::createPatches()
 							indices.push_back(x + offset + i + 1);
 						}
 					}
-					else if (y == patchDim - 1 - lodSkip)
+					else if (y == m_patchDim - 1 - lodSkip)
 					{
 						indices.push_back(mid);
 						indices.push_back(x + offset);
@@ -781,8 +710,8 @@ bool TerrainEntity::createPatches()
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(x + offset + i + lodSkip * patchDim + 1);
-							indices.push_back(x + offset + i + lodSkip * patchDim);
+							indices.push_back(x + offset + i + lodSkip * m_patchDim + 1);
+							indices.push_back(x + offset + i + lodSkip * m_patchDim);
 						}
 					}
 					else
@@ -792,19 +721,19 @@ bool TerrainEntity::createPatches()
 						indices.push_back(x + offset + lodSkip);
 
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
-						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset + lodSkip * m_patchDim + lodSkip);
+						indices.push_back(x + offset + lodSkip * m_patchDim);
 					}
 				}
 				else
 				{
 					indices.push_back(x + offset);
 					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + x + offset);
+					indices.push_back(lodSkip * m_patchDim + x + offset);
 
 					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + x + offset);
+					indices.push_back(lodSkip * m_patchDim + lodSkip + x + offset);
+					indices.push_back(lodSkip * m_patchDim + x + offset);
 				}
 			}
 		}
@@ -817,7 +746,7 @@ bool TerrainEntity::createPatches()
 
 		T_ASSERT (minIndex < patchVertexCount);
 		T_ASSERT (maxIndex < patchVertexCount);
-		T_ASSERT (maxIndex + patchVertexCount * (PatchInstanceCount - 1) < 65536);
+		//T_ASSERT (maxIndex + patchVertexCount * (PatchInstanceCount - 1) < 65536);
 
 		// Duplicate for instances.
 		uint32_t indexBase = patchVertexCount;
@@ -840,45 +769,45 @@ bool TerrainEntity::createPatches()
 		}
 #else
 
-		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
+		for (uint32_t y = 0; y < m_patchDim - 1; y += lodSkip)
 		{
-			uint32_t offset = y * patchDim;
-			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
+			uint32_t offset = y * m_patchDim;
+			for (uint32_t x = 0; x < m_patchDim - 1; x += lodSkip)
 			{
-				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
+				if (lod > 0 && (x == 0 || y == 0 || x == m_patchDim - 1 - lodSkip || y == m_patchDim - 1 - lodSkip))
 				{
-					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
+					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * m_patchDim;
 
 					if (x == 0)
 					{
 						indices.push_back(mid);
 						indices.push_back(lodSkip + offset);
-						indices.push_back(lodSkip + offset + lodSkip * patchDim);
+						indices.push_back(lodSkip + offset + lodSkip * m_patchDim);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(offset + i * patchDim + patchDim);
-							indices.push_back(offset + i * patchDim);
+							indices.push_back(offset + i * m_patchDim + m_patchDim);
+							indices.push_back(offset + i * m_patchDim);
 						}
 					}
-					else if (x == patchDim - 1 - lodSkip)
+					else if (x == m_patchDim - 1 - lodSkip)
 					{
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset + lodSkip * m_patchDim);
 						indices.push_back(x + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(x + offset + i * patchDim + lodSkip);
-							indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
+							indices.push_back(x + offset + i * m_patchDim + lodSkip);
+							indices.push_back(x + offset + i * m_patchDim + lodSkip + m_patchDim);
 						}
 					}
 					else
 					{
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset + lodSkip * m_patchDim);
 						indices.push_back(x + offset);
 
 						indices.push_back(mid);
@@ -889,8 +818,8 @@ bool TerrainEntity::createPatches()
 					if (y == 0)
 					{
 						indices.push_back(mid);
-						indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
-						indices.push_back(x + lodSkip * patchDim + offset);
+						indices.push_back(x + lodSkip * m_patchDim + offset + lodSkip);
+						indices.push_back(x + lodSkip * m_patchDim + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
@@ -899,7 +828,7 @@ bool TerrainEntity::createPatches()
 							indices.push_back(x + offset + i + 1);
 						}
 					}
-					else if (y == patchDim - 1 - lodSkip)
+					else if (y == m_patchDim - 1 - lodSkip)
 					{
 						indices.push_back(mid);
 						indices.push_back(x + offset);
@@ -908,8 +837,8 @@ bool TerrainEntity::createPatches()
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(x + offset + i + lodSkip * patchDim + 1);
-							indices.push_back(x + offset + i + lodSkip * patchDim);
+							indices.push_back(x + offset + i + lodSkip * m_patchDim + 1);
+							indices.push_back(x + offset + i + lodSkip * m_patchDim);
 						}
 					}
 					else
@@ -919,19 +848,19 @@ bool TerrainEntity::createPatches()
 						indices.push_back(x + offset + lodSkip);
 
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
-						indices.push_back(x + offset + lodSkip * patchDim);
+						indices.push_back(x + offset + lodSkip * m_patchDim + lodSkip);
+						indices.push_back(x + offset + lodSkip * m_patchDim);
 					}
 				}
 				else
 				{
 					indices.push_back(x + offset);
 					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + x + offset);
+					indices.push_back(lodSkip * m_patchDim + x + offset);
 
 					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
-					indices.push_back(lodSkip * patchDim + x + offset);
+					indices.push_back(lodSkip * m_patchDim + lodSkip + x + offset);
+					indices.push_back(lodSkip * m_patchDim + x + offset);
 				}
 			}
 		}
@@ -953,225 +882,20 @@ bool TerrainEntity::createPatches()
 	}
 
 	m_indexBuffer = m_renderSystem->createIndexBuffer(
-		render::ItUInt16,
-		uint32_t(indices.size() * sizeof(uint16_t)),
+		render::ItUInt32,
+		uint32_t(indices.size() * sizeof(uint32_t)),
 		false
 	);
 	if (!m_indexBuffer)
 		return false;
 
-	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
+	uint32_t* index = static_cast< uint32_t* >(m_indexBuffer->lock());
 	T_ASSERT_M (index, L"Unable to lock index buffer");
 
 	for (uint32_t i = 0; i < uint32_t(indices.size()); ++i)
 		index[i] = indices[i];
 
 	m_indexBuffer->unlock();
-	return true;
-}
-
-bool TerrainEntity::updateTextures(bool normals, bool heights, bool materials)
-{
-	const float c_scaleHeight = 20.0f;
-
-	if (normals)
-	{
-		const float c_directions[] =
-		{
-			0.0f, 0.0f,
-			-1.0f, -1.0f,
-			 1.0f, -1.0f,
-			 1.0f,  1.0f,
-			-1.0f,  1.0f
-		};
-
-		const uint32_t c_pattern[] =
-		{
-			0, 1, 2,
-			0, 2, 3,
-			0, 3, 4,
-			0, 4, 1
-		};
-
-		render::ITexture::Lock lock;
-		if (!m_normalTexture->lock(0, lock))
-			return false;
-
-		uint8_t* np = static_cast< uint8_t* >(lock.bits);
-
-		const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
-		float scaleHeight = worldExtent.y() * c_scaleHeight;
-
-		int32_t size = m_heightfield->getResource().getSize();
-		int32_t dim = m_normalTexture->getWidth();
-
-		for (int32_t v = 0; v < dim; ++v)
-		{
-			float gz = float(v * size) / dim;
-			for (int32_t u = 0; u < dim; ++u)
-			{
-				float gx = float(u * size) / dim;
-
-				float h[] =
-				{
-					m_heightfield->getGridHeight(gx, gz) * scaleHeight,
-					m_heightfield->getGridHeight(gx - 1, gz - 1) * scaleHeight,
-					m_heightfield->getGridHeight(gx + 1, gz - 1) * scaleHeight,
-					m_heightfield->getGridHeight(gx + 1, gz + 1) * scaleHeight,
-					m_heightfield->getGridHeight(gx - 1, gz + 1) * scaleHeight
-				};
-
-				Vector4 normal = Vector4::zero();
-				for (uint32_t i = 0; i < 4; ++i)
-				{
-					const uint32_t* p = &c_pattern[i * 3];
-
-					Vector4 p1(c_directions[p[0] * 2 + 0], h[p[0]], c_directions[p[0] * 2 + 1], 0.0f);
-					Vector4 p2(c_directions[p[1] * 2 + 0], h[p[1]], c_directions[p[1] * 2 + 1], 0.0f);
-					Vector4 p3(c_directions[p[2] * 2 + 0], h[p[2]], c_directions[p[2] * 2 + 1], 0.0f);
-
-					normal += cross(p3 - p1, p2 - p1);
-				}
-
-				normal = normal.normalized();
-				normal = normal * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-
-				uint8_t* p = &np[(u + v * dim) * 4];
-				p[0] = uint8_t(normal.x() * 255);
-				p[1] = uint8_t(normal.y() * 255);
-				p[2] = uint8_t(normal.z() * 255);
-				p[3] = 0;
-			}
-		}
-
-		m_normalTexture->unlock(0);
-	}
-
-	if (heights)
-	{
-		render::ITexture::Lock lock;
-		if (!m_heightTexture->lock(0, lock))
-			return false;
-
-		half_t* hp = static_cast< half_t* >(lock.bits);
-
-		int32_t size = m_heightfield->getResource().getSize();
-		int32_t dim = m_heightTexture->getWidth();
-
-		for (int32_t v = 0; v < dim; ++v)
-		{
-			float gz = float(v * size) / dim;
-			for (int32_t u = 0; u < dim; ++u)
-			{
-				float gx = float(u * size) / dim;
-				float h = m_heightfield->getGridHeight(gx, gz);
-				hp[u + v * dim] = floatToHalf(h);
-			}
-		}
-
-		m_heightTexture->unlock(0);
-	}
-
-	if (materials)
-	{
-		for (uint32_t i = 0; i < m_materialMaskTextures.size(); ++i)
-		{
-			render::ITexture::Lock lock;
-			if (!m_materialMaskTextures[i]->lock(0, lock))
-				return false;
-
-			uint8_t* mp = static_cast< uint8_t* >(lock.bits);
-
-			int32_t size = m_materialMask->getSize();
-			int32_t dim = m_materialMaskTextures[i]->getWidth();
-
-			for (int32_t v = 0; v < dim; ++v)
-			{
-				int32_t gz = (v * size) / dim;
-				for (int32_t u = 0; u < dim; ++u)
-				{
-					int32_t gx = (u * size) / dim;
-					mp[u + v * dim] = (m_materialMask->getId(gx, gz) == i) ? 255 : 0;
-				}
-			}
-
-			m_materialMaskTextures[i]->unlock(0);
-		}
-	}
-
-	return true;
-}
-
-bool TerrainEntity::createTextures()
-{
-	safeDestroy(m_normalTexture);
-	safeDestroy(m_heightTexture);
-	m_materialMaskTextures.clear();
-
-	{
-		uint32_t size = m_heightfield->getResource().getSize();
-		T_ASSERT (size > 0);
-
-		uint32_t dim = nearestLog2(size);
-		dim /= m_editorMode ? c_skipNormalTextureEditor : c_skipNormalTexture;
-		T_ASSERT (dim > 0);
-
-		render::SimpleTextureCreateDesc desc;
-		desc.width = dim;
-		desc.height = dim;
-		desc.mipCount = 1;
-		desc.format = render::TfR8G8B8A8;
-		desc.immutable = false;
-
-		if (!(m_normalTexture = m_renderSystem->createSimpleTexture(desc)))
-			return false;
-	}
-
-	{
-		uint32_t size = m_heightfield->getResource().getSize();
-		T_ASSERT (size > 0);
-
-		uint32_t dim = nearestLog2(size);
-		dim /= m_editorMode ? c_skipHeightTextureEditor : c_skipHeightTexture;
-		T_ASSERT (dim > 0);
-
-		render::SimpleTextureCreateDesc desc;
-		desc.width = dim;
-		desc.height = dim;
-		desc.mipCount = 1;
-		desc.format = render::TfR16F;
-		desc.immutable = false;
-
-		if (!(m_heightTexture = m_renderSystem->createSimpleTexture(desc)))
-			return false;
-	}
-
-	{
-		uint32_t size = m_materialMask->getSize();
-		T_ASSERT (size > 0);
-
-		uint32_t dim = nearestLog2(size);
-		dim /= m_editorMode ? c_skipMaterialMaskTextureEditor : c_skipMaterialMaskTexture;
-		T_ASSERT (dim > 0);
-
-		render::SimpleTextureCreateDesc desc;
-		desc.width = dim;
-		desc.height = dim;
-		desc.mipCount = 1;
-		desc.format = render::TfR8;
-		desc.immutable = false;
-
-		m_materialMaskTextures.resize(m_surface->getLayers().size());
-		for (uint32_t i = 0; i < m_materialMaskTextures.size(); ++i)
-		{
-			m_materialMaskTextures[i] = m_renderSystem->createSimpleTexture(desc);
-			if (!m_materialMaskTextures[i])
-				return false;
-		}
-	}
-
-	updateTextures(true, true, true);
-
 	return true;
 }
 

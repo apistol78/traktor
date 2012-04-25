@@ -96,5 +96,16 @@ bool TransformNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType TransformNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	return pinOrderMax(inputPinOrders, node->getInputPinCount());
+}
+
 	}
 }

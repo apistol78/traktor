@@ -48,7 +48,6 @@ public:
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset,
-		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
 		uint32_t flags

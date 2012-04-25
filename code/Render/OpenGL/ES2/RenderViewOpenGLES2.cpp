@@ -27,7 +27,6 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(
 :	m_globalContext(globalContext)
 ,	m_context(context)
 ,	m_stateCache(new StateCache())
-,	m_currentDirty(true)
 {
 	m_viewport = Viewport(
 		0,
@@ -222,8 +221,6 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 	m_renderTargetStack.push(s);
 
 	rts->setContentValid(true);
-	m_currentDirty = true;
-
 	return true;
 }
 
@@ -273,34 +270,13 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 	T_OGL_SAFE(glClear(cm));
 }
 
-void RenderViewOpenGLES2::setVertexBuffer(VertexBuffer* vertexBuffer)
+void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	VertexBufferOpenGLES2* vb = checked_type_cast< VertexBufferOpenGLES2* >(vertexBuffer);
-	if (vb != m_currentVertexBuffer)
-	{
-		m_currentVertexBuffer = vb;
-		m_currentDirty = true;
-	}
-}
+	VertexBufferOpenGLES2* vertexBufferGL = checked_type_cast< VertexBufferOpenGLES2* >(vertexBuffer);
+	IndexBufferOpenGLES2* indexBufferGL = checked_type_cast< IndexBufferOpenGLES2* >(indexBuffer);
+	ProgramOpenGLES2* programGL = checked_type_cast< ProgramOpenGLES2 * >(program);
 
-void RenderViewOpenGLES2::setIndexBuffer(IndexBuffer* indexBuffer)
-{
-	IndexBufferOpenGLES2* ib = checked_type_cast< IndexBufferOpenGLES2* >(indexBuffer);
-	m_currentIndexBuffer = ib;
-}
-
-void RenderViewOpenGLES2::setProgram(IProgram* program)
-{
-	ProgramOpenGLES2* p = checked_type_cast< ProgramOpenGLES2 * >(program);
-	m_currentProgram = p;
-}
-
-void RenderViewOpenGLES2::draw(const Primitives& primitives)
-{
-	if (!m_currentProgram || !m_currentVertexBuffer)
-		return;
-
-	m_currentVertexBuffer->activate(m_stateCache);
+	vertexBufferGL->activate(m_stateCache);
 
 	float targetSize[2];
 	float postTransform[4];
@@ -342,7 +318,7 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 		invertCull = true;
 	}
 
-	if (!m_currentProgram->activate(m_stateCache, targetSize, postTransform, invertCull))
+	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull))
 		return;
 
 	GLenum primitiveType;
@@ -380,12 +356,12 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 
 	if (primitives.indexed)
 	{
-		T_ASSERT_M (m_currentIndexBuffer, L"No index buffer");
+		T_ASSERT_M (indexBufferGL, L"No index buffer");
 
 		GLenum indexType = 0;
 		GLint offsetMultiplier = 0;
 
-		switch (m_currentIndexBuffer->getIndexType())
+		switch (indexBufferGL->getIndexType())
 		{
 		case ItUInt16:
 			indexType = GL_UNSIGNED_SHORT;
@@ -401,7 +377,7 @@ void RenderViewOpenGLES2::draw(const Primitives& primitives)
 			return;
 		}
 
-		m_currentIndexBuffer->activate(m_stateCache);
+		indexBufferGL->activate(m_stateCache);
 
 		T_OGL_SAFE(glDrawElements(
 			primitiveType,

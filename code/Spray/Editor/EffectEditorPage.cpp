@@ -13,12 +13,14 @@
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Editor/SoundSystemFactory.h"
-#include "Spray/Effect.h"
+
+#include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
-#include "Spray/EffectLayer.h"
-#include "Spray/Sequence.h"
+#include "Spray/EffectLayerData.h"
+#include "Spray/SequenceData.h"
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectPreviewControl.h"
+
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
@@ -75,11 +77,8 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new sound::SoundFactory(database));
 	m_resourceManager->addFactory(new EffectFactory(database));
 
-	m_effect = m_document->getObject< Effect >(0);
-	if (!m_effect)
-		return false;
-
-	if (!m_effect->bind(m_resourceManager))
+	m_effectData = m_document->getObject< EffectData >(0);
+	if (!m_effectData)
 		return false;
 
 	activate();
@@ -121,7 +120,6 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem, m_soundSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
-	m_previewControl->setEffect(m_effect);
 
 	m_sequencer = new ui::custom::SequencerControl();
 	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
@@ -129,9 +127,11 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventTimeCursorMove));
 	m_sequencer->addKeyMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventKeyMove));
 
-	m_site->setPropertyObject(m_effect);
+	m_site->setPropertyObject(m_effectData);
 
+	updateEffectPreview();
 	updateSequencer();
+
 	return true;
 }
 
@@ -210,21 +210,19 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.PropertiesChanged")
 	{
-		m_previewControl->syncEffect();
+		updateEffectPreview();
 		updateSequencer();
 	}
 	else if (command == L"Editor.Undo")
 	{
 		if (m_document->undo())
 		{
-			m_effect = m_document->getObject< Effect >(0);
-			T_ASSERT (m_effect);
+			m_effectData = m_document->getObject< EffectData >(0);
+			T_ASSERT (m_effectData);
 
-			m_effect->bind(m_resourceManager);
+			m_site->setPropertyObject(m_effectData);
 
-			m_site->setPropertyObject(m_effect);
-
-			m_previewControl->syncEffect();
+			updateEffectPreview();
 			updateSequencer();
 		}
 	}
@@ -232,14 +230,12 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	{
 		if (m_document->redo())
 		{
-			m_effect = m_document->getObject< Effect >(0);
-			T_ASSERT (m_effect);
+			m_effectData = m_document->getObject< EffectData >(0);
+			T_ASSERT (m_effectData);
 
-			m_effect->bind(m_resourceManager);
+			m_site->setPropertyObject(m_effectData);
 
-			m_site->setPropertyObject(m_effect);
-
-			m_previewControl->syncEffect();
+			updateEffectPreview();
 			updateSequencer();
 		}
 	}
@@ -250,22 +246,34 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 void EffectEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->update(eventId, true);
+		m_resourceManager->reload(eventId);
+}
+
+void EffectEditorPage::updateEffectPreview()
+{
+	if (m_resourceManager)
+	{
+		Ref< Effect > effect = m_effectData->createEffect(m_resourceManager);
+		m_previewControl->setEffect(effect);
+		m_previewControl->syncEffect();
+	}
+	else
+		m_previewControl->setEffect(0);
 }
 
 void EffectEditorPage::updateSequencer()
 {
 	m_sequencer->removeAllSequenceItems();
 
-	if (!m_effect)
+	if (!m_effectData)
 	{
 		m_sequencer->setEnable(false);
 		m_sequencer->update();
 		return;
 	}
 
-	const RefArray< EffectLayer >& layers = m_effect->getLayers();
-	for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	const RefArray< EffectLayerData >& layers = m_effectData->getLayers();
+	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		StringOutputStream ss;
 		ss << L"Layer " << uint32_t(std::distance(layers.begin(), i) + 1);
@@ -283,11 +291,11 @@ void EffectEditorPage::updateSequencer()
 		layerRange->setData(L"LAYER", *i);
 		layerItem->addKey(layerRange);
 
-		Sequence* sequence = (*i)->getSequence();
+		Ref< SequenceData > sequence = (*i)->getSequence();
 		if (sequence)
 		{
-			const std::vector< Sequence::Key >& keys = sequence->getKeys();
-			for (std::vector< Sequence::Key >::const_iterator j = keys.begin(); j != keys.end(); ++j)
+			const std::vector< SequenceData::Key >& keys = sequence->getKeys();
+			for (std::vector< SequenceData::Key >::const_iterator j = keys.begin(); j != keys.end(); ++j)
 			{
 				Ref< ui::custom::Tick > sequenceTick = new ui::custom::Tick(int32_t(j->T * 1000.0f));
 				sequenceTick->setData(L"LAYER", *i);
@@ -299,7 +307,7 @@ void EffectEditorPage::updateSequencer()
 	}
 
 	m_sequencer->setEnable(true);
-	m_sequencer->setLength(int(m_effect->getDuration() * 1000.0f));
+	m_sequencer->setLength(int(m_effectData->getDuration() * 1000.0f));
 	m_sequencer->update();
 }
 
@@ -314,13 +322,13 @@ void EffectEditorPage::eventLayerSelect(ui::Event* event)
 	RefArray< ui::custom::SequenceItem > selectedItems;
 	if (m_sequencer->getSequenceItems(selectedItems, ui::custom::SequencerControl::GfSelectedOnly) == 1)
 	{
-		Ref< EffectLayer > layer = selectedItems.front()->getData< EffectLayer >(L"LAYER");
+		Ref< EffectLayerData > layer = selectedItems.front()->getData< EffectLayerData >(L"LAYER");
 		T_ASSERT (layer);
 
 		m_site->setPropertyObject(layer);
 	}
 	else
-		m_site->setPropertyObject(m_effect);
+		m_site->setPropertyObject(m_effectData);
 }
 
 void EffectEditorPage::eventTimeCursorMove(ui::Event* event)
@@ -339,7 +347,7 @@ void EffectEditorPage::eventKeyMove(ui::Event* event)
 	ui::custom::Range* movedRange = dynamic_type_cast< ui::custom::Range* >(commandEvent->getItem());
 	if (movedRange)
 	{
-		Ref< EffectLayer > layer = movedRange->getData< EffectLayer >(L"LAYER");
+		Ref< EffectLayerData > layer = movedRange->getData< EffectLayerData >(L"LAYER");
 		T_ASSERT (layer);
 
 		float start = movedRange->getStart() / 1000.0f;
@@ -353,7 +361,7 @@ void EffectEditorPage::eventKeyMove(ui::Event* event)
 		m_site->setPropertyObject(layer);
 	}
 
-	m_previewControl->syncEffect();
+	updateEffectPreview();
 }
 
 	}

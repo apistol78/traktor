@@ -50,8 +50,6 @@ public:
 
 	void requestUpdate();
 
-	void requestLayout();
-
 	void placeCell(AutoWidgetCell* cell, const Rect& rc);
 
 	virtual void layoutCells(const Rect& rc) = 0;
@@ -71,7 +69,6 @@ private:
 	Size m_scrollOffset;
 	Rect m_bounds;
 	bool m_deferredUpdate;
-	bool m_deferredLayout;
 
 	void updateLayout();
 

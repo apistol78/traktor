@@ -1,6 +1,5 @@
 #include "Terrain/Editor/TerrainEntityPipeline.h"
 #include "Terrain/TerrainEntityData.h"
-#include "Terrain/TerrainSurface.h"
 #include "Terrain/OceanEntityData.h"
 #include "Terrain/RiverEntityData.h"
 #include "Terrain/UndergrowthEntityData.h"
@@ -34,6 +33,8 @@ bool TerrainEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -41,32 +42,22 @@ bool TerrainEntityPipeline::buildDependencies(
 	{
 		pipelineDepends->addDependency(c_guidTerrainShaderVFetch, editor::PdfBuild);
 		pipelineDepends->addDependency(c_guidTerrainShaderStatic, editor::PdfBuild);
-
-		pipelineDepends->addDependency(terrainEntityData->getHeightfield().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(terrainEntityData->getMaterialMask().getGuid(), editor::PdfBuild);
-
-		const Ref< TerrainSurface >& surface = terrainEntityData->getSurface();
-		if (surface)
-		{
-			const std::vector< resource::Proxy< render::Shader > >& layers = surface->getLayers();
-			for (std::vector< resource::Proxy< render::Shader > >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-				pipelineDepends->addDependency(i->getGuid(), editor::PdfBuild);
-		}
+		pipelineDepends->addDependency(terrainEntityData->getTerrain(), editor::PdfBuild);
 	}
 	else if (const OceanEntityData* oceanEntityData = dynamic_type_cast< const OceanEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(oceanEntityData->getHeightfield().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(oceanEntityData->getShader().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(oceanEntityData->getHeightfield(), editor::PdfBuild);
+		pipelineDepends->addDependency(oceanEntityData->getShader(), editor::PdfBuild);
 	}
 	else if (const RiverEntityData* riverEntityData = dynamic_type_cast< const RiverEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(riverEntityData->getShader().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(riverEntityData->getShader(), editor::PdfBuild);
 	}
 	else if (const UndergrowthEntityData* undergrowthEntityData = dynamic_type_cast< const UndergrowthEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(undergrowthEntityData->getHeightfield().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(undergrowthEntityData->getMaterialMask().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(undergrowthEntityData->getShader().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(undergrowthEntityData->getHeightfield(), editor::PdfBuild);
+		pipelineDepends->addDependency(undergrowthEntityData->getMaterialMask(), editor::PdfBuild);
+		pipelineDepends->addDependency(undergrowthEntityData->getShader(), editor::PdfBuild);
 	}
 	return true;
 }

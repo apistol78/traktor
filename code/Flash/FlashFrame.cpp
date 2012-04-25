@@ -109,31 +109,31 @@ bool FlashFrame::PlaceObject::serialize(ISerializer& s)
 	s >> Member< uint16_t >(L"hasFlags", hasFlags);
 	s >> Member< uint16_t >(L"depth", depth);
 
-	if (hasBitmapCaching)
+	if (hasFlags & PfHasBitmapCaching)
 		s >> Member< uint8_t >(L"bitmapCaching", bitmapCaching);
 
-	if (hasBlendMode)
+	if (hasFlags & PfHasBlendMode)
 		s >> Member< uint8_t >(L"blendMode", blendMode);
 
-	if (hasActions)
+	if (hasFlags & PfHasActions)
 		s >> MemberStlVector< PlaceAction, MemberComposite< PlaceAction > >(L"actions", actions);
 
-	if (hasClipDepth)
+	if (hasFlags & PfHasClipDepth)
 		s >> Member< uint16_t >(L"clipDepth", clipDepth);
 
-	if (hasName)
+	if (hasFlags & PfHasName)
 		s >> Member< std::string >(L"name", name);
 
-	if (hasRatio)
+	if (hasFlags & PfHasRatio)
 		s >> Member< uint16_t >(L"ratio", ratio);
 
-	if (hasCxTransform)
+	if (hasFlags & PfHasCxTransform)
 		s >> MemberSwfCxTransform(L"cxTransform", cxTransform);
 
-	if (hasMatrix)
+	if (hasFlags & PfHasMatrix)
 		s >> Member< Matrix33 >(L"matrix", matrix);
 
-	if (hasCharacterId)
+	if (hasFlags & PfHasCharacterId)
 		s >> Member< uint16_t >(L"characterId", characterId);
 
 	return true;

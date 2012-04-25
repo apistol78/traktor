@@ -9,18 +9,18 @@ namespace traktor
 	namespace sound
 	{
 
-class IGrain;
+class IGrainData;
 
 class GrainViewItem : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	GrainViewItem(GrainViewItem* parent, IGrain* grain, const std::wstring& text, int32_t image);
+	GrainViewItem(GrainViewItem* parent, IGrainData* grain, const std::wstring& text, int32_t image);
 
 	GrainViewItem* getParent() const;
 
-	IGrain* getGrain() const;
+	IGrainData* getGrain() const;
 
 	int32_t getImage() const;
 
@@ -28,7 +28,7 @@ public:
 
 private:
 	GrainViewItem* m_parent;
-	Ref< IGrain > m_grain;
+	Ref< IGrainData > m_grain;
 	std::wstring m_text;
 	int32_t m_image;
 };

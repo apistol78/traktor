@@ -118,5 +118,44 @@ bool UniformNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType UniformNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	if (const IndexedUniform* indexedUniform = dynamic_type_cast< const IndexedUniform* >(node))
+	{
+		if (inputPinOrders[0] == PotConstant)
+		{
+			if (
+				frequentAsLinear &&
+				indexedUniform->getParameterType() != PtTexture &&
+				indexedUniform->getFrequency() >= UfDraw
+			)
+				return PotLinear;
+			else
+				return PotConstant;
+		}
+		else
+			return PotNonLinear;
+	}
+	else if (const Uniform* uniform = dynamic_type_cast< const Uniform* >(node))
+	{
+		if (
+			frequentAsLinear &&
+			uniform->getParameterType() != PtTexture &&
+			uniform->getFrequency() >= UfDraw
+		)
+			return PotLinear;
+		else
+			return PotConstant;
+	}
+	else
+		return PotConstant;
+}
+
 	}
 }

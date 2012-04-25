@@ -30,7 +30,7 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_guidShaderMovie(L"{71682019-EB26-234C-8B48-0638F50DA662}");
+const resource::Id< render::Shader > c_idShaderMovie(Guid(L"{71682019-EB26-234C-8B48-0638F50DA662}"));
 
 		}
 
@@ -40,7 +40,6 @@ VideoEditorPage::VideoEditorPage(editor::IEditor* editor, editor::IEditorPageSit
 :	m_editor(editor)
 ,	m_site(site)
 ,	m_document(document)
-,	m_shader(c_guidShaderMovie)
 {
 }
 
@@ -94,7 +93,7 @@ bool VideoEditorPage::create(ui::Container* parent)
 		new render::ShaderFactory(m_editor->getOutputDatabase(), renderSystem)
 	);
 
-	if (!m_resourceManager->bind(m_shader))
+	if (!m_resourceManager->bind(c_idShaderMovie, m_shader))
 		return false;
 
 	// Create video player.
@@ -150,8 +149,6 @@ bool VideoEditorPage::handleCommand(const ui::Command& command)
 
 void VideoEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
-	if (m_resourceManager)
-		m_resourceManager->flush(eventId);
 }
 
 void VideoEditorPage::eventSize(ui::Event* event)
@@ -168,7 +165,7 @@ void VideoEditorPage::eventSize(ui::Event* event)
 
 void VideoEditorPage::eventPaint(ui::Event* event)
 {
-	if (!m_renderView || !m_shader.validate())
+	if (!m_renderView)
 		return;
 
 	if (m_renderView->begin(render::EtCyclop))

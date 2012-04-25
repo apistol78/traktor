@@ -1,5 +1,5 @@
-#include "Mesh/Partition/PartitionMeshEntity.h"
 #include "Mesh/Partition/PartitionMesh.h"
+#include "Mesh/Partition/PartitionMeshEntity.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -18,12 +18,12 @@ PartitionMeshEntity::PartitionMeshEntity(const Transform& transform, const resou
 
 Aabb3 PartitionMeshEntity::getBoundingBox() const
 {
-	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
+	return m_mesh->getBoundingBox();
 }
 
 bool PartitionMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+	return m_mesh->supportTechnique(technique);
 }
 
 void PartitionMeshEntity::render(
@@ -33,9 +33,6 @@ void PartitionMeshEntity::render(
 	float distance
 )
 {
-	if (!m_mesh.validate())
-		return;
-
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderView,

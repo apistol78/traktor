@@ -9,9 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointSourceRenderer", PointSourceRenderer, SourceRenderer)
 
-void PointSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const
+void PointSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
 {
-	PointSource* pointSource = checked_type_cast< PointSource* >(source);
+	const PointSource* pointSource = checked_type_cast< const PointSource* >(source);
 
 	Vector4 position = pointSource->getPosition();
 

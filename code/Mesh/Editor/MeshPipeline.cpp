@@ -117,7 +117,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 17, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 18, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -148,6 +148,8 @@ bool MeshPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -494,7 +496,6 @@ bool MeshPipeline::buildOutput(
 	if (!pipelineBuilder->buildOutput(
 		materialShaderGraph,
 		0,
-		L"Shader",
 		materialPath,
 		materialGuid
 	))

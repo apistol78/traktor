@@ -303,8 +303,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< Mesh > mesh = meshShape->getMesh();
-		if (!resourceManager->bind(mesh) || !mesh.validate())
+		resource::Proxy< Mesh > mesh;
+		if (!resourceManager->bind(meshShape->getMesh(), mesh))
 		{
 			log::error << L"Unable to load mesh resource" << Endl;
 			return 0;
@@ -363,8 +363,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< hf::Heightfield > heightfield = heightfieldShape->getHeightfield();
-		if (!resourceManager->bind(heightfield) || !heightfield.validate())
+		resource::Proxy< hf::Heightfield > heightfield;
+		if (!resourceManager->bind(heightfieldShape->getHeightfield(), heightfield))
 		{
 			log::error << L"Unable to load heightfield resource" << Endl;
 			return 0;

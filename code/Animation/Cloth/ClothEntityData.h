@@ -1,13 +1,8 @@
 #ifndef traktor_animation_ClothEntityData_H
 #define traktor_animation_ClothEntityData_H
 
-#include "Physics/PhysicsManager.h"
-#include "Render/IRenderSystem.h"
-#include "Render/Shader.h"
-#include "Resource/IResourceManager.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/Entity/EntityData.h"
-#include "World/Entity/EntityBuilder.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,6 +14,35 @@
 
 namespace traktor
 {
+	namespace physics
+	{
+
+class PhysicsManager;
+
+	}
+
+	namespace render
+	{
+
+class IRenderSystem;
+class Shader;
+
+	}
+
+	namespace resource
+	{
+
+class IResourceManager;
+
+	}
+
+	namespace world
+	{
+
+class IEntityBuilder;
+
+	}
+
 	namespace animation
 	{
 
@@ -48,10 +72,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	mutable resource::Proxy< render::Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 	uint32_t m_resolutionX;
 	uint32_t m_resolutionY;
 	float m_scale;

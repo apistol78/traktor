@@ -1,14 +1,11 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldResource.h"
 #include "Heightfield/MaterialMask.h"
-#include "Heightfield/MaterialMaskResource.h"
 #include "Render/IRenderSystem.h"
 #include "Render/VertexElement.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Terrain/UndergrowthEntityData.h"
@@ -22,7 +19,15 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.UndergrowthEntityData", 0, Undergr
 
 UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	if (!resourceManager->bind(m_heightfield) || !resourceManager->bind(m_materialMask) || !resourceManager->bind(m_shader))
+	resource::Proxy< hf::Heightfield > heightfield;
+	resource::Proxy< hf::MaterialMask > materialMask;
+	resource::Proxy< render::Shader > shader;
+
+	if (
+		!resourceManager->bind(m_heightfield, heightfield) ||
+		!resourceManager->bind(m_materialMask, materialMask) ||
+		!resourceManager->bind(m_shader, shader)
+	)
 		return 0;
 
 	std::vector< render::VertexElement > vertexElements;
@@ -80,14 +85,13 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 	);
 
 	return new UndergrowthEntity(
-		resourceManager,
-		m_heightfield,
-		m_materialMask,
+		heightfield,
+		materialMask,
 		m_settings,
 		vertexBuffer,
 		indexBuffer,
 		primitives,
-		m_shader
+		shader
 	);
 }
 
@@ -96,9 +100,9 @@ bool UndergrowthEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 
-	s >> resource::Member< hf::Heightfield, hf::HeightfieldResource >(L"heightfield", m_heightfield);
-	s >> resource::Member< hf::MaterialMask, hf::MaterialMaskResource >(L"materialMask", m_materialMask);
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
+	s >> resource::Member< hf::MaterialMask >(L"materialMask", m_materialMask);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< int32_t >(L"density", m_settings.density);
 	s >> Member< float >(L"spreadDistance", m_settings.spreadDistance);
 	s >> Member< float >(L"cellRadius", m_settings.cellRadius);

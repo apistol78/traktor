@@ -1478,12 +1478,13 @@ GlslEmitter::~GlslEmitter()
 		delete i->second;
 }
 
-void GlslEmitter::emit(GlslContext& c, Node* node)
+bool GlslEmitter::emit(GlslContext& c, Node* node)
 {
 	std::map< const TypeInfo*, Emitter* >::iterator i = m_emitters.find(&type_of(node));
 	T_ASSERT_M (i != m_emitters.end(), L"No emitter for node");
 	T_ASSERT (i->second);
 	i->second->emit(c, node);
+	return true;
 }
 
 	}

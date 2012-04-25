@@ -46,14 +46,14 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 	if (m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 	{
 		Ref< const Object > dummyBuildParams;
-		pipeline->buildDependencies(this, 0, sourceAsset, dummyBuildParams);
+		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid(), dummyBuildParams);
 		T_ASSERT_M (!dummyBuildParams, L"Build parameters not used with non-producing dependencies");
 	}
 	else
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
 }
 
-void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
+void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
 {
 	if (!sourceAsset)
 		return;
@@ -76,7 +76,6 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset,
 	addUniqueDependency(
 		0,
 		sourceAsset,
-		name,
 		outputPath,
 		outputGuid,
 		flags
@@ -114,7 +113,6 @@ void PipelineDependsIncremental::addDependency(db::Instance* sourceAssetInstance
 	addUniqueDependency(
 		sourceAssetInstance,
 		sourceAsset,
-		sourceAssetInstance->getName(),
 		sourceAssetInstance->getPath(),
 		sourceAssetInstance->getGuid(),
 		flags
@@ -160,7 +158,6 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	addUniqueDependency(
 		sourceAssetInstance,
 		sourceAsset,
-		sourceAssetInstance->getName(),
 		sourceAssetInstance->getPath(),
 		sourceAssetInstance->getGuid(),
 		flags
@@ -215,7 +212,6 @@ Ref< PipelineDependency > PipelineDependsIncremental::findDependency(const Guid&
 void PipelineDependsIncremental::addUniqueDependency(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const std::wstring& name,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
 	uint32_t flags
@@ -227,13 +223,12 @@ void PipelineDependsIncremental::addUniqueDependency(
 	// Find appropriate pipeline.
 	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 	{
-		log::error << L"Unable to add dependency to \"" << name << L"\"; no pipeline found" << Endl;
+		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found" << Endl;
 		return;
 	}
 
 	// Register dependency, add to "parent" dependency as well.
 	Ref< PipelineDependency > dependency = new PipelineDependency();
-	dependency->name = name;
 	dependency->pipeline = pipeline;
 	dependency->pipelineHash = pipelineHash;
 	dependency->sourceAsset = sourceAsset;
@@ -286,6 +281,8 @@ void PipelineDependsIncremental::addUniqueDependency(
 			this,
 			sourceInstance,
 			sourceAsset,
+			outputPath,
+			outputGuid,
 			dependency->buildParams
 		);
 	}

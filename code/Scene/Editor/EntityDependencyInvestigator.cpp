@@ -90,7 +90,7 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 				typeGroups[assetType] = typeGroup;
 			}
 
-			Ref< ui::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, (*i)->name, 2);
+			Ref< ui::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, (*i)->outputPath, 2);
 			dependencyItem->setData(L"DEPENDENCY", (*i));
 
 			externalFiles.insert((*i)->files.begin(), (*i)->files.end());

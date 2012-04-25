@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/IntegrateModifier.h"
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
@@ -30,10 +28,10 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.IntegrateModifier", 0, IntegrateModifier, Modifier)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.IntegrateModifier", IntegrateModifier, Modifier)
 
-IntegrateModifier::IntegrateModifier()
-:	m_timeScale(1.0f)
+IntegrateModifier::IntegrateModifier(float timeScale)
+:	m_timeScale(timeScale)
 {
 }
 
@@ -65,11 +63,6 @@ void IntegrateModifier::update(const Scalar& deltaTime, const Transform& transfo
 	}
 }
 #endif
-
-bool IntegrateModifier::serialize(ISerializer& s)
-{
-	return s >> Member< Scalar >(L"timeScale", m_timeScale);
-}
 
 	}
 }

@@ -37,29 +37,29 @@ class T_DLLCLASS EmitterInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	EmitterInstance(Emitter* emitter);
+	EmitterInstance(const Emitter* emitter);
 
 	virtual ~EmitterInstance();
 
 	void update(Context& context, const Transform& transform, bool emit, bool singleShot);
 
-	void render(PointRenderer* pointRenderer, const Plane& cameraPlane) const;
+	void render(PointRenderer* pointRenderer, const Plane& cameraPlane);
 
 	void synchronize() const;
 
-	inline void setTotalTime(float totalTime) { m_totalTime = totalTime; }
+	void setTotalTime(float totalTime) { m_totalTime = totalTime; }
 
-	inline float getTotalTime() const { return m_totalTime; }
+	float getTotalTime() const { return m_totalTime; }
 
-	inline void reservePoints(uint32_t npoints) { m_points.reserve(m_points.size() + npoints); }
+	void reservePoints(uint32_t npoints) { m_points.reserve(m_points.size() + npoints); }
 
-	inline const PointVector& getPoints() const { return m_points; }
+	const PointVector& getPoints() const { return m_points; }
 
-	inline uint32_t getEmitted() const { return m_emitted; }
+	uint32_t getEmitted() const { return m_emitted; }
 
-	inline const Aabb3& getBoundingBox() const { return m_boundingBox; }
+	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
-	inline Point* addPoints(uint32_t points)
+	Point* addPoints(uint32_t points)
 	{
 		uint32_t offset = m_points.size();
 		m_points.resize(offset + points);
@@ -68,7 +68,7 @@ public:
 	}
 
 private:
-	Ref< Emitter > m_emitter;
+	Ref< const Emitter > m_emitter;
 	Vector4 m_position;
 	PointVector m_points;
 	uint32_t m_emitted;

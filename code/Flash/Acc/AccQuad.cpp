@@ -16,10 +16,10 @@ namespace traktor
 		namespace
 		{
 
-const Guid c_guidShaderSolid(L"{1EDAAA67-1E02-8A49-B857-14D7812C96D6}");
-const Guid c_guidShaderTextured(L"{10426D17-CF0A-4849-A207-24F101A78459}");
-const Guid c_guidShaderSolidMask(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}");
-const Guid c_guidShaderTexturedMask(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}");
+const resource::Id< render::Shader > c_idShaderSolid(Guid(L"{1EDAAA67-1E02-8A49-B857-14D7812C96D6}"));
+const resource::Id< render::Shader > c_idShaderTextured(Guid(L"{10426D17-CF0A-4849-A207-24F101A78459}"));
+const resource::Id< render::Shader > c_idShaderSolidMask(Guid(L"{2EDC5E1B-562D-9F46-9E3C-474729FB078E}"));
+const resource::Id< render::Shader > c_idShaderTexturedMask(Guid(L"{98A59F6A-1D90-144C-B688-4CEF382453F2}"));
 
 #pragma pack(1)
 struct Vertex
@@ -60,20 +60,13 @@ bool AccQuad::create(
 		s_handleInitialized = true;
 	}
 
-	m_shaderSolid = c_guidShaderSolid;
-	if (!resourceManager->bind(m_shaderSolid))
+	if (!resourceManager->bind(c_idShaderSolid, m_shaderSolid))
 		return false;
-
-	m_shaderTextured = c_guidShaderTextured;
-	if (!resourceManager->bind(m_shaderTextured))
+	if (!resourceManager->bind(c_idShaderTextured, m_shaderTextured))
 		return false;
-
-	m_shaderSolidMask = c_guidShaderSolidMask;
-	if (!resourceManager->bind(m_shaderSolidMask))
+	if (!resourceManager->bind(c_idShaderSolidMask, m_shaderSolidMask))
 		return false;
-
-	m_shaderTexturedMask = c_guidShaderTexturedMask;
-	if (!resourceManager->bind(m_shaderTexturedMask))
+	if (!resourceManager->bind(c_idShaderTexturedMask, m_shaderTexturedMask))
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;
@@ -136,15 +129,11 @@ void AccQuad::render(
 	Ref< render::Shader > shaderSolid, shaderTextured;
 	if (maskReference == 0)
 	{
-		if (!m_shaderSolid.validate() || !m_shaderTextured.validate())
-			return;
 		shaderSolid = m_shaderSolid;
 		shaderTextured = m_shaderTextured;
 	}
 	else
 	{
-		if (!m_shaderSolidMask.validate() || !m_shaderTexturedMask.validate())
-			return;
 		shaderSolid = m_shaderSolidMask;
 		shaderTextured = m_shaderTexturedMask;
 	}

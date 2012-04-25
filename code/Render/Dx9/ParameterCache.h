@@ -20,7 +20,8 @@ public:
 		PixelConstantCount = 224,
 		VertexTextureCount = 8,
 		PixelTextureCount = 8,
-		MaxSamplerCount = 256+4
+		MaxVertexSamplerCount = 4,
+		MaxPixelSamplerCount = 16
 	};
 
 	ParameterCache(IDirect3DDevice9* d3dDevice, float mipBias, DWORD maxAnisotropy);
@@ -45,7 +46,9 @@ public:
 
 	void setRenderState(uint32_t state, uint32_t value);
 
-	void setSamplerState(uint32_t sampler, uint32_t state, uint32_t value);
+	void setVertexSamplerState(uint32_t sampler, uint32_t state, uint32_t value);
+
+	void setPixelSamplerState(uint32_t sampler, uint32_t state, uint32_t value);
 
 	HRESULT lostDevice();
 
@@ -60,7 +63,8 @@ private:
 	IDirect3DBaseTexture9* m_vertexTextureShadow[VertexTextureCount];
 	IDirect3DBaseTexture9* m_pixelTextureShadow[PixelTextureCount];
 	std::vector< uint32_t > m_renderStates;
-	std::vector< uint32_t > m_samplerStates[MaxSamplerCount];
+	std::vector< uint32_t > m_vertexSamplerStates[MaxVertexSamplerCount];
+	std::vector< uint32_t > m_pixelSamplerStates[MaxPixelSamplerCount];
 	float m_mipBias;
 	int32_t m_maxAnisotropy;
 };

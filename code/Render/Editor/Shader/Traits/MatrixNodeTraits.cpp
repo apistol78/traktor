@@ -104,5 +104,21 @@ bool MatrixNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType MatrixNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	if (is_a< MatrixIn >(node))
+		return pinOrderConstantOrNonLinear(inputPinOrders, node->getInputPinCount());
+	else if (is_a< MatrixOut >(node))
+		return pinOrderMax(inputPinOrders, node->getInputPinCount());
+	else
+		return PotConstant;
+}
+
 	}
 }

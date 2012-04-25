@@ -4,6 +4,7 @@
 #include <set>
 #include <map>
 #include "Core/Object.h"
+#include "Render/Editor/Shader/PinType.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,6 +20,7 @@ namespace traktor
 	{
 
 class Node;
+class OutputPin;
 class ShaderGraph;
 
 /*! \brief Shader graph optimizer.
@@ -61,13 +63,10 @@ public:
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 	mutable std::set< const Node* > m_visited;
-	mutable std::map< const Node*, int > m_orderComplexity;
 	mutable int32_t m_insertedCount;
 	mutable bool m_frequentUniformsAsLinear;
 
 	void insertInterpolators(ShaderGraph* shaderGraph, Node* node) const;
-
-	void updateOrderComplexity(ShaderGraph* shaderGraph) const;
 };
 
 	}

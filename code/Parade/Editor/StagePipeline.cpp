@@ -23,6 +23,8 @@ bool StagePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -33,20 +35,20 @@ bool StagePipeline::buildDependencies(
 
 	for (RefArray< LayerData >::const_iterator i = stageData->m_layers.begin(); i != stageData->m_layers.end(); ++i)
 	{
-		pipelineDepends->addDependency((*i)->m_script.getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency((*i)->m_script, editor::PdfBuild);
 
 		if (const FlashLayerData* flashLayer = dynamic_type_cast< const FlashLayerData* >(*i))
-			pipelineDepends->addDependency(flashLayer->m_movie.getGuid(), editor::PdfBuild);
+			pipelineDepends->addDependency(flashLayer->m_movie, editor::PdfBuild);
 		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(*i))
 		{
-			pipelineDepends->addDependency(videoLayer->m_video.getGuid(), editor::PdfBuild);
-			pipelineDepends->addDependency(videoLayer->m_shader.getGuid(), editor::PdfBuild);
+			pipelineDepends->addDependency(videoLayer->m_video, editor::PdfBuild);
+			pipelineDepends->addDependency(videoLayer->m_shader, editor::PdfBuild);
 		}
 		else if (const WorldLayerData* worldLayer = dynamic_type_cast< const WorldLayerData* >(*i))
 		{
-			pipelineDepends->addDependency(worldLayer->m_scene.getGuid(), editor::PdfBuild);
-			for (std::map< std::wstring, resource::Proxy< world::EntityData > >::const_iterator j = worldLayer->m_entities.begin(); j != worldLayer->m_entities.end(); ++j)
-				pipelineDepends->addDependency(j->second.getGuid(), editor::PdfBuild);
+			pipelineDepends->addDependency(worldLayer->m_scene, editor::PdfBuild);
+			for (std::map< std::wstring, resource::Id< world::EntityData > >::const_iterator j = worldLayer->m_entities.begin(); j != worldLayer->m_entities.end(); ++j)
+				pipelineDepends->addDependency(j->second, editor::PdfBuild);
 		}
 	}
 

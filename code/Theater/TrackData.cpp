@@ -9,7 +9,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(L"traktor.theater.TrackData", 2, TrackData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 2, TrackData, ISerializable)
 
 TrackData::TrackData()
 :	m_loopStart(0.0f)

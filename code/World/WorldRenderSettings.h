@@ -65,6 +65,7 @@ public:
 	float shadowFarZ;
 	int32_t shadowMapResolution;
 	float shadowMapBias;
+	float shadowMapBiasCoeff;
 	int32_t shadowCascadingSlices;
 	float shadowCascadingLambda;
 	bool shadowQuantizeProjection;

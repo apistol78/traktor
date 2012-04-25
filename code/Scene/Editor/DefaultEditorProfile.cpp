@@ -109,7 +109,7 @@ Ref< world::EntityData > DefaultEditorProfile::createEntityData(
 		return 0;
 
 	// Create external reference to entity data.
-	Ref< world::EntityData > entityData = new world::ExternalEntityData(instance->getGuid());
+	Ref< world::EntityData > entityData = new world::ExternalEntityData(resource::Id< world::EntityData >(instance->getGuid()));
 	entityData->setName(instance->getName());
 
 	return entityData;

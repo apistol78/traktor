@@ -1,8 +1,10 @@
 #ifndef traktor_hf_Heightfield_H
 #define traktor_hf_Heightfield_H
 
+#include "Core/Object.h"
+#include "Core/Math/Vector4.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Heightfield/HeightfieldTypes.h"
-#include "Heightfield/HeightfieldResource.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -22,9 +24,10 @@ class T_DLLCLASS Heightfield : public Object
 	T_RTTI_CLASS;
 
 public:
-	Heightfield(const HeightfieldResource& resource);
-
-	virtual ~Heightfield();
+	Heightfield(
+		uint32_t size,
+		const Vector4& worldExtent
+	);
 
 	float getGridHeight(float gridX, float gridZ) const;
 
@@ -34,13 +37,18 @@ public:
 
 	void worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const;
 
-	const height_t* getHeights() const;
+	uint32_t getSize() const { return m_size; }
 
-	inline const HeightfieldResource& getResource() const { return m_resource; }
+	const Vector4& getWorldExtent() const { return m_worldExtent; }
+
+	height_t* getHeights() { return m_heights.ptr(); }
+
+	const height_t* getHeights() const { return m_heights.c_ptr(); }
 
 private:
-	HeightfieldResource m_resource;
-	height_t* m_heights;
+	uint32_t m_size;
+	Vector4 m_worldExtent;
+	AutoArrayPtr< height_t > m_heights;
 };
 
 	}

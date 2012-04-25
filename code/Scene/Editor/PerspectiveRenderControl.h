@@ -53,7 +53,7 @@ class PerspectiveRenderControl : public ISceneRenderControl
 public:
 	PerspectiveRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t index);
+	bool create(ui::Widget* parent, SceneEditorContext* context, int32_t cameraId);
 
 	virtual void destroy();
 
@@ -83,7 +83,6 @@ private:
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
 	RenderControlModel m_model;
-	int32_t m_index;
 	bool m_gridEnable;
 	bool m_guideEnable;
 	bool m_postProcessEnable;

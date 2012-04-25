@@ -2,9 +2,8 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
-#include "Terrain/Editor/TerrainEditorPlugin.h"
+#include "Terrain/TerrainFactory.h"
 #include "Terrain/Editor/TerrainEditorProfile.h"
-#include "Terrain/Editor/TerrainEntityEditorFactory.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -19,11 +18,6 @@ void TerrainEditorProfile::getCommands(
 ) const
 {
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
-	outCommands.push_back(ui::Command(L"Terrain.RaiseLowerTool"));
-	outCommands.push_back(ui::Command(L"Terrain.FlattenTool"));
-	outCommands.push_back(ui::Command(L"Terrain.SmoothTool"));
-	outCommands.push_back(ui::Command(L"Terrain.AlignSelected"));
-	outCommands.push_back(ui::Command(L"Terrain.OrientSelected"));
 }
 
 void TerrainEditorProfile::createEditorPlugins(
@@ -31,7 +25,6 @@ void TerrainEditorProfile::createEditorPlugins(
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
-	outEditorPlugins.push_back(new TerrainEditorPlugin(context));
 }
 
 void TerrainEditorProfile::createResourceFactories(
@@ -39,6 +32,7 @@ void TerrainEditorProfile::createResourceFactories(
 	RefArray< resource::IResourceFactory >& outResourceFactories
 ) const
 {
+	outResourceFactories.push_back(new TerrainFactory(context->getResourceDatabase()));
 }
 
 void TerrainEditorProfile::createEntityFactories(
@@ -48,8 +42,7 @@ void TerrainEditorProfile::createEntityFactories(
 {
 	outEntityFactories.push_back(new EntityFactory(
 		context->getResourceManager(),
-		context->getRenderSystem(),
-		true
+		context->getRenderSystem()
 	));
 }
 
@@ -75,7 +68,6 @@ void TerrainEditorProfile::createEntityEditorFactories(
 	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
-	outEntityEditorFactories.push_back(new TerrainEntityEditorFactory());
 }
 
 Ref< world::EntityData > TerrainEditorProfile::createEntityData(

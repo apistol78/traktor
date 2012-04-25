@@ -79,7 +79,7 @@ void convertKeyPose(
 
 		kp.pose.setBoneOrientation(
 			boneIndex,
-			Qref.inverse() * QlocalOrientation * Qref
+			(Qref.inverse() * QlocalOrientation * Qref).toEulerAngles()
 		);
 
 		boneIndex++;

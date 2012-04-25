@@ -5,7 +5,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,17 +20,14 @@ namespace traktor
 	namespace resource
 	{
 
-/*! \brief Resource proxy serialization member.
+/*! \brief Resource id serialization member.
  * \ingroup Resource
- *
- * A resource proxy is serialized using it's
- * associated guid.
  */
-template < typename Class, typename AssetClass = Class >
+template < typename Class >
 class Member : public MemberComplex
 {
 public:
-	typedef Proxy< Class > value_type;
+	typedef Id< Class > value_type;
 
 	Member(const wchar_t* const name, value_type& ref)
 	:	MemberComplex(name, false)
@@ -40,17 +37,17 @@ public:
 	
 	virtual bool serialize(ISerializer& s) const
 	{
-		Guid guid = m_ref.getGuid();
+		Guid id = m_ref;
 		
 		bool result = (s >> traktor::Member< traktor::Guid >(
 			getName(),
-			guid,
-			AttributeType(type_of< AssetClass >())
+			id,
+			AttributeType(type_of< Class >())
 		));
 		if (!result)
 			return false;
 
-		m_ref = guid;
+		m_ref = Id< Class >(id);
 		return true;
 	}
 	

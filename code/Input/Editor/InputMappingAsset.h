@@ -3,7 +3,7 @@
 
 #include <list>
 #include "Core/Guid.h"
-#include "Editor/ITypedAsset.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,13 +24,11 @@ class InputMappingStateData;
 /*! \brief Input mapping asset.
  * \ingroup Input
  */
-class T_DLLCLASS InputMappingAsset : public editor::ITypedAsset
+class T_DLLCLASS InputMappingAsset : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual const TypeInfo* getOutputType() const;
-
 	virtual bool serialize(ISerializer& s);
 
 	const InputMappingSourceData* getSourceData() const { return m_sourceData; }

@@ -45,9 +45,12 @@ Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceMan
 	if (!stream)
 		return 0;
 
-	uint32_t size = resource->getSize();
-	Ref< Heightfield > heightfield = new Heightfield(*resource);
+	Ref< Heightfield > heightfield = new Heightfield(
+		resource->getSize(),
+		resource->getWorldExtent()
+	);
 
+	uint32_t size = resource->getSize();
 	height_t* heights = const_cast< height_t* >(heightfield->getHeights());
 	T_ASSERT_M (heights, L"No heights in heightfield");
 	Reader(stream).read(heights, size * size, sizeof(height_t));

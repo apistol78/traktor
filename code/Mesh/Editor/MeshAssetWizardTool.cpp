@@ -69,7 +69,7 @@ bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db
 	// Create mesh entity data.
 	Ref< MeshEntityData > entityData = new MeshEntityData();
 	entityData->setName(fileName.getFileNameNoExtension());
-	entityData->setMesh(resource::Proxy< IMesh >(assetInstance->getGuid()));
+	entityData->setMesh(resource::Id< IMesh >(assetInstance->getGuid()));
 
 	// Create mesh entity data instance.
 	Ref< db::Instance > entityDataInstance = group->createInstance(

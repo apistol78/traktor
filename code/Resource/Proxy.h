@@ -1,7 +1,6 @@
 #ifndef traktor_resource_Proxy_H
 #define traktor_resource_Proxy_H
 
-#include "Core/Guid.h"
 #include "Core/Ref.h"
 #include "Resource/IResourceHandle.h"
 
@@ -22,60 +21,29 @@ class Proxy
 {
 public:
 	Proxy< ResourceType >()
+	:	m_tag(0)
 	{
 	}
 
 	Proxy< ResourceType >(const Proxy< ResourceType >& rs)
 	:	m_handle(rs.m_handle)
-	,	m_resource(rs.m_resource)
-	,	m_guid(rs.m_guid)
+	,	m_tag(0)
 	{
 	}
 
-	Proxy< ResourceType >(const Guid& guid)
-	:	m_guid(guid)
-	{
-	}
-
-	Proxy< ResourceType >(IResourceHandle* handle)
+	explicit Proxy< ResourceType >(IResourceHandle* handle)
 	:	m_handle(handle)
+	,	m_tag(0)
 	{
 	}
 
-	Proxy< ResourceType >(ResourceType* rs)
-	:	m_resource(rs)
-	{
-	}
-
-	Proxy< ResourceType >(const Ref< ResourceType >& rs)
-	:	m_resource(rs)
-	{
-	}
-
-	template < typename DerivedType >
-	Proxy< ResourceType >(const Proxy< DerivedType >& rs)
-	:	m_handle(rs.m_handle)
-	,	m_resource(rs.m_resource)
-	,	m_guid(rs.m_guid)
-	{
-	}
-
-	template < typename DerivedType >
-	Proxy< ResourceType >(const Ref< DerivedType >& rs)
-	:	m_resource(rs)
-	{
-	}
-
-	/*! \brief Get resource's handle. */
+	/*! \brief Get resource's handle.
+	 *
+	 * \return Resource handle.
+	 */
 	IResourceHandle* getHandle() const
 	{
 		return m_handle;
-	}
-
-	/*! \brief Get resource's guid. */
-	const Guid& getGuid() const
-	{
-		return m_guid;
 	}
 
 	/*! \brief Replace resource handle.
@@ -85,103 +53,86 @@ public:
 	void replace(IResourceHandle* handle)
 	{
 		m_handle = handle;
-		validate();
 	}
 
-	/*! \brief Check if proxy is valid. */
-	bool valid() const
+	/*! \brief Get resource.
+	 *
+	 * \return Resource.
+	 */
+	ResourceType* getResource() const
 	{
-		if (!m_resource)
-			return false;
-
-		if (m_handle)
-		{	
-			if (m_resource != m_handle->get())
-				return false;
-		}
-
-		return true;
-	}
-
-	/*! \brief Validate proxy; ie get resource from handle. */
-	bool validate()
-	{
-		if (m_handle)
-			m_resource = (ResourceType*)m_handle->get();
-		return m_resource != 0;
-	}
-
-	/*! \brief Invalidate proxy; reset resource. */
-	void invalidate()
-	{
-		m_resource = 0;
+		return checked_type_cast< ResourceType*, true >(m_handle ? m_handle->get() : 0);
 	}
 
 	/*! \brief Clear proxy; becoming completely unbound. */
 	void clear()
 	{
 		m_handle = 0;
-		m_resource = 0;
 	}
 
-	inline operator ResourceType* ()
+	/*! \brief Return true if resource has been changed. */
+	bool changed() const
 	{
-		return m_resource;
+		return intptr_t(getResource()) != m_tag;
 	}
 
-	inline ResourceType& operator * ()
+	/*! \brief Consume change; changed method will return false until next change. */
+	void consume()
 	{
-		T_ASSERT_M (m_resource, L"Trying to dereference null pointer");
-		return *m_resource;
+		m_tag = intptr_t(getResource());
 	}
 
-	inline ResourceType* operator -> ()
+	operator bool () const
 	{
-		T_ASSERT_M (m_resource, L"Trying to call null pointer");
-		return m_resource;
+		return getResource() != 0;
 	}
 
-	inline const ResourceType* operator -> () const
+	operator ResourceType* () const
 	{
-		T_ASSERT_M (m_resource, L"Trying to call null pointer");
-		return m_resource;
+		return getResource();
 	}
 
-	inline Proxy< ResourceType >& operator = (const Guid& guid)
+	operator const ResourceType* () const
 	{
-		if (guid != m_guid)
-		{
-			m_handle = 0;
-			m_guid = guid;
-		}
-		return *this;
+		return getResource();
 	}
 
-	inline bool operator == (const ResourceType* rs)
+	ResourceType* operator -> ()
 	{
-		return bool(m_resource == rs);
+		return getResource();
 	}
 
-	inline bool operator != (const ResourceType* rs)
+	const ResourceType* operator -> () const
 	{
-		return bool(m_resource != rs);
+		return getResource();
 	}
 
-	inline bool operator == (const Ref< ResourceType >& rs)
+	bool operator == (const ResourceType* rs) const
 	{
-		return bool(m_resource == rs);
+		return bool(getResource() == rs);
 	}
 
-	inline bool operator != (const Ref< ResourceType >& rs)
+	bool operator != (const ResourceType* rs) const
 	{
-		return bool(m_resource != rs);
+		return bool(getResource() != rs);
 	}
 
 private:
 	Ref< IResourceHandle > m_handle;
-	Ref< ResourceType > m_resource;
-	Guid m_guid;
+	intptr_t m_tag;
 };
+
+/*! \brief Dynamic cast object.
+ *
+ * \param T Cast to type.
+ * \param o Object.
+ * \return Casted value, null if object isn't of correct type.
+ */
+template < typename T, typename T0 >
+typename IsPointer< T >::base_t* dynamic_type_cast(const Proxy< T0 >& obj)
+{
+	return dynamic_type_cast< typename IsPointer< T >::base_t* >(obj.getResource());
+}
 
 	}
 }

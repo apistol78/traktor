@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -41,7 +41,7 @@ public:
 
 	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset) = 0;
 
-	virtual bool buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid) = 0;
+	virtual bool buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& outputPath, const Guid& outputGuid) = 0;
 
 	virtual Ref< db::Database > getSourceDatabase() const = 0;
 

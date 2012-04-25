@@ -137,7 +137,7 @@ void GridRow::mouseDown(AutoWidget* widget, const Point& position)
 
 			ui::Event expandEvent(widget, this);
 			widget->raiseEvent(GridView::EiExpand, &expandEvent);
-			widget->requestLayout();
+			widget->requestUpdate();
 		}
 	}
 }

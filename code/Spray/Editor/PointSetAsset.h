@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,8 +24,6 @@ public:
 	PointSetAsset();
 
 	bool fromFaces() const;
-
-	virtual const TypeInfo* getOutputType() const;
 
 	virtual bool serialize(ISerializer& s);
 

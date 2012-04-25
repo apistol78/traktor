@@ -214,7 +214,7 @@ bool BlendMeshConverter::convert(
 			return false;
 	}
 
-	checked_type_cast< BlendMeshResource* >(meshResource)->m_shader = materialGuid;
+	checked_type_cast< BlendMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< BlendMeshResource* >(meshResource)->m_parts = parts;
 
 	// Create blend shape "name to weight" mapping.

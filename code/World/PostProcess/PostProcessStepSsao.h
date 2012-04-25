@@ -2,6 +2,7 @@
 #define traktor_world_PostProcessStepSsao_H
 
 #include "World/PostProcess/PostProcessStep.h"
+#include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "Core/Math/Vector4.h"
 
@@ -60,6 +61,7 @@ public:
 			const PostProcessStepSsao* step,
 			const std::vector< Source >& sources,
 			const Vector4 offsets[32],
+			const resource::Proxy< render::Shader >& shader,
 			render::ISimpleTexture* randomNormals
 		);
 
@@ -76,6 +78,7 @@ public:
 		Ref< const PostProcessStepSsao > m_step;
 		std::vector< Source > m_sources;
 		Vector4 m_offsets[32];
+		resource::Proxy< render::Shader > m_shader;
 		Ref< render::ISimpleTexture > m_randomNormals;
 		render::handle_t m_handleInputColor;
 		render::handle_t m_handleInputDepth;
@@ -90,10 +93,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	mutable resource::Proxy< render::Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 	std::vector< Source > m_sources;
 };
 

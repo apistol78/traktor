@@ -54,7 +54,7 @@ class SoundSystem;
 	namespace spray
 	{
 
-class Effect;
+class EffectData;
 class EffectPreviewControl;
 
 class T_DLLCLASS EffectEditorPage : public editor::IEditorPage
@@ -82,7 +82,7 @@ private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
-	Ref< Effect > m_effect;
+	Ref< EffectData > m_effectData;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarButton > m_toolToggleMove;
@@ -93,6 +93,8 @@ private:
 	bool m_velocityVisible;
 	bool m_guideVisible;
 	bool m_moveEmitter;
+
+	void updateEffectPreview();
 
 	void updateSequencer();
 

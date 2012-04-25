@@ -97,13 +97,7 @@ public:
 
 	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
 
-	virtual void setVertexBuffer(VertexBuffer* vertexBuffer);
-
-	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
-
-	virtual void setProgram(IProgram* program);
-
-	virtual void draw(const Primitives& primitives);
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives);
 
 	virtual void end();
 
@@ -130,9 +124,6 @@ private:
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
 	bool m_waitVBlank;
 	std::vector< RenderTargetOpenGL* > m_renderTargetStack;
-	Ref< VertexBufferOpenGL > m_currentVertexBuffer;
-	Ref< IndexBufferOpenGL > m_currentIndexBuffer;
-	Ref< ProgramOpenGL > m_currentProgram;
 
 #if defined(_WIN32)
 

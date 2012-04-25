@@ -2,7 +2,7 @@
 #define traktor_sound_BankAsset_H
 
 #include "Core/RefArray.h"
-#include "Editor/ITypedAsset.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,25 +17,23 @@ namespace traktor
 	namespace sound
 	{
 
-class IGrain;
+class IGrainData;
 
-class T_DLLCLASS BankAsset : public editor::ITypedAsset
+class T_DLLCLASS BankAsset : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	void addGrain(IGrain* grain);
+	void addGrain(IGrainData* grain);
 
-	void removeGrain(IGrain* grain);
+	void removeGrain(IGrainData* grain);
 
-	const RefArray< IGrain >& getGrains() const;
-
-	virtual const TypeInfo* getOutputType() const;
+	const RefArray< IGrainData >& getGrains() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	RefArray< IGrain > m_grains;
+	RefArray< IGrainData > m_grains;
 };
 
 	}

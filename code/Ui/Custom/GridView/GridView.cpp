@@ -55,7 +55,7 @@ bool GridView::create(Widget* parent, uint32_t style)
 void GridView::addColumn(GridColumn* column)
 {
 	m_columns.push_back(column);
-	requestLayout();
+	requestUpdate();
 }
 
 const RefArray< GridColumn >& GridView::getColumns() const
@@ -79,13 +79,13 @@ int32_t GridView::getColumnIndex(int32_t x) const
 void GridView::addRow(GridRow* row)
 {
 	m_rows.push_back(row);
-	requestLayout();
+	requestUpdate();
 }
 
 void GridView::removeAllRows()
 {
 	m_rows.resize(0);
-	requestLayout();
+	requestUpdate();
 }
 
 const RefArray< GridRow >& GridView::getRows() const

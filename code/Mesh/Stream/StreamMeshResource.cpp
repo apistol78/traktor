@@ -5,6 +5,7 @@
 #include "Mesh/Stream/StreamMeshResource.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -22,7 +23,10 @@ Ref< IMesh > StreamMeshResource::createMesh(
 ) const
 {
 	Ref< StreamMesh > streamMesh = new StreamMesh();
-	streamMesh->m_shader = m_shader;
+	
+	if (!resourceManager->bind(m_shader, streamMesh->m_shader))
+		return 0;
+
 	streamMesh->m_stream = dataStream;
 	streamMesh->m_meshReader = new render::MeshReader(meshFactory);
 	streamMesh->m_frameOffsets = m_frameOffsets;
@@ -42,16 +46,13 @@ Ref< IMesh > StreamMeshResource::createMesh(
 		}
 	}
 
-	if (!resourceManager->bind(streamMesh->m_shader))
-		return 0;
-
 	return streamMesh;
 }
 
 bool StreamMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
-	s >> Member< Guid >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< uint32_t >(L"frameOffsets", m_frameOffsets);
 	s >> Member< Vector4 >(L"boundingBoxMin", m_boundingBox.mn);
 	s >> Member< Vector4 >(L"boundingBoxMax", m_boundingBox.mx);

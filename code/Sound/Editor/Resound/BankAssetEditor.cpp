@@ -10,11 +10,11 @@
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Resound/BankBuffer.h"
-#include "Sound/Resound/MuteGrain.h"
-#include "Sound/Resound/PlayGrain.h"
-#include "Sound/Resound/RandomGrain.h"
-#include "Sound/Resound/RepeatGrain.h"
-#include "Sound/Resound/SequenceGrain.h"
+#include "Sound/Resound/MuteGrainData.h"
+#include "Sound/Resound/PlayGrainData.h"
+#include "Sound/Resound/RandomGrainData.h"
+#include "Sound/Resound/RepeatGrainData.h"
+#include "Sound/Resound/SequenceGrainData.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundSystemFactory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
@@ -96,11 +96,11 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_menuGrains->add(new ui::MenuItem(ui::Command(L"Bank.RemoveGrain"), L"Remove grain..."));
 
 	// Create grain editor facades.
-	m_grainFacades[&type_of< MuteGrain >()] = new MuteGrainFacade();
-	m_grainFacades[&type_of< PlayGrain >()] = new PlayGrainFacade();
-	m_grainFacades[&type_of< RandomGrain >()] = new RandomGrainFacade();
-	m_grainFacades[&type_of< RepeatGrain >()] = new RepeatGrainFacade();
-	m_grainFacades[&type_of< SequenceGrain >()] = new SequenceGrainFacade();
+	m_grainFacades[&type_of< MuteGrainData >()] = new MuteGrainFacade();
+	m_grainFacades[&type_of< PlayGrainData >()] = new PlayGrainFacade();
+	m_grainFacades[&type_of< RandomGrainData >()] = new RandomGrainFacade();
+	m_grainFacades[&type_of< RepeatGrainData >()] = new RepeatGrainFacade();
+	m_grainFacades[&type_of< SequenceGrainData >()] = new SequenceGrainFacade();
 
 	// Get sound system for preview.
 	Ref< SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< SoundSystemFactory >(L"SoundSystemFactory");
@@ -145,9 +145,9 @@ ui::Size BankAssetEditor::getPreferredSize() const
 	return ui::Size(500, 400);
 }
 
-void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGrain >& grains)
+void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGrainData >& grains)
 {
-	for (RefArray< IGrain >::const_iterator i = grains.begin(); i != grains.end(); ++i)
+	for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 	{
 		IGrainFacade* grainFacade = m_grainFacades[&type_of(*i)];
 		if (!grainFacade)
@@ -161,7 +161,7 @@ void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGr
 		);
 		m_grainView->add(item);
 
-		RefArray< IGrain > childGrains;
+		RefArray< IGrainData > childGrains;
 		if (grainFacade->getChildren(*i, childGrains))
 			updateGrainView(item, childGrains);
 	}
@@ -171,7 +171,7 @@ void BankAssetEditor::updateGrainView()
 {
 	m_grainView->removeAll();
 
-	const RefArray< IGrain >& grains = m_asset->getGrains();
+	const RefArray< IGrainData >& grains = m_asset->getGrains();
 	updateGrainView(0, grains);
 
 	m_grainView->update();
@@ -181,7 +181,7 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 {
 	if (command == L"Bank.AddGrain")
 	{
-		IGrain* parentGrain = 0;
+		IGrainData* parentGrain = 0;
 		IGrainFacade* parentGrainFacade = 0;
 
 		GrainViewItem* selectedItem = m_grainView->getSelected();
@@ -195,10 +195,10 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 				return;
 		}
 
-		const TypeInfo* grainType = m_editor->browseType(&type_of< IGrain >());
+		const TypeInfo* grainType = m_editor->browseType(&type_of< IGrainData >());
 		if (grainType)
 		{
-			Ref< IGrain > grain = checked_type_cast< IGrain*, false >(grainType->createInstance());
+			Ref< IGrainData > grain = checked_type_cast< IGrainData*, false >(grainType->createInstance());
 
 			if (parentGrainFacade)
 				parentGrainFacade->addChild(parentGrain, grain);
@@ -213,12 +213,12 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 		GrainViewItem* selectedItem = m_grainView->getSelected();
 		if (selectedItem)
 		{
-			IGrain* grain = selectedItem->getGrain();
+			IGrainData* grain = selectedItem->getGrain();
 			T_ASSERT (grain);
 
 			if (selectedItem->getParent())
 			{
-				IGrain* parentGrain = selectedItem->getParent()->getGrain();
+				IGrainData* parentGrain = selectedItem->getParent()->getGrain();
 				T_ASSERT (parentGrain);
 
 				IGrainFacade* parentGrainFacade = m_grainFacades[&type_of(parentGrain)];
@@ -237,24 +237,27 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 	{
 		if (!m_soundChannel)
 		{
+			RefArray< IGrainData > grainData;
 			RefArray< IGrain > grains;
 
 			// Play only selected grain.
 			GrainViewItem* selectedItem = m_grainView->getSelected();
 			if (selectedItem)
 			{
-				IGrain* grain = selectedItem->getGrain();
+				IGrainData* grain = selectedItem->getGrain();
 				T_ASSERT (grain);
 
-				grains.push_back(grain);
+				grainData.push_back(grain);
 			}
 			else
 			{
-				grains = m_asset->getGrains();
+				grainData = m_asset->getGrains();
 			}
 
-			for (RefArray< IGrain >::iterator i = grains.begin(); i != grains.end(); ++i)
-				(*i)->bind(m_resourceManager);
+			// Create grains from data.
+			grains.resize(grainData.size());
+			for (uint32_t i = 0; i < grainData.size(); ++i)
+				grains[i] = grainData[i]->createInstance(m_resourceManager);
 
 			m_bankBuffer = new BankBuffer(grains);
 			m_soundChannel = m_soundSystem->play(

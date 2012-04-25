@@ -7,6 +7,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -31,7 +32,10 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 	}
 
 	Ref< SkinnedMesh > skinnedMesh = new SkinnedMesh();
-	skinnedMesh->m_shader = m_shader;
+
+	if (!resourceManager->bind(m_shader, skinnedMesh->m_shader))
+		return 0;
+
 	skinnedMesh->m_mesh = mesh;
 
 	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
@@ -55,16 +59,13 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 	skinnedMesh->m_boneMap = m_boneMap;
 	skinnedMesh->m_boneCount = boneMaxIndex + 1;
 
-	if (!resourceManager->bind(skinnedMesh->m_shader))
-		return 0;
-
 	return skinnedMesh;
 }
 
 bool SkinnedMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
-	s >> Member< Guid >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,
 		parts_t,

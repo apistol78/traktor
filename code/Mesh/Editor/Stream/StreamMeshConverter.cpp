@@ -165,7 +165,7 @@ bool StreamMeshConverter::convert(
 		boundingBox.contain(mesh->getBoundingBox());
 	}
 
-	streamMeshResource->m_shader = materialGuid;
+	streamMeshResource->m_shader = resource::Id< render::Shader >(materialGuid);
 	streamMeshResource->m_frameOffsets = frameOffsets;
 	streamMeshResource->m_boundingBox = boundingBox;
 

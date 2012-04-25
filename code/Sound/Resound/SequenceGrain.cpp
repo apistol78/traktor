@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRefArray.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Resound/SequenceGrain.h"
 
@@ -24,16 +22,11 @@ struct SequenceGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SequenceGrain", 0, SequenceGrain, IGrain)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SequenceGrain", SequenceGrain, IGrain)
 
-bool SequenceGrain::bind(resource::IResourceManager* resourceManager)
+SequenceGrain::SequenceGrain(const RefArray< IGrain >& grains)
+:	m_grains(grains)
 {
-	for (RefArray< IGrain >::iterator i = m_grains.begin(); i != m_grains.end(); ++i)
-	{
-		if (!(*i)->bind(resourceManager))
-			return false;
-	}
-	return true;
 }
 
 Ref< ISoundBufferCursor > SequenceGrain::createCursor() const
@@ -89,11 +82,6 @@ bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) c
 	}
 
 	return true;
-}
-
-bool SequenceGrain::serialize(ISerializer& s)
-{
-	return s >> MemberRefArray< IGrain >(L"grains", m_grains);
 }
 
 	}

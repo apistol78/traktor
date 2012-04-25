@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/SizeModifier.h"
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
@@ -30,10 +28,10 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SizeModifier", 0, SizeModifier, Modifier)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SizeModifier", SizeModifier, Modifier)
 
-SizeModifier::SizeModifier()
-:	m_adjustRate(0.0f)
+SizeModifier::SizeModifier(float adjustRate)
+:	m_adjustRate(adjustRate)
 {
 }
 
@@ -62,11 +60,6 @@ void SizeModifier::update(const Scalar& deltaTime, const Transform& transform, P
 		points[i].size += m_adjustRate * dT;
 }
 #endif
-
-bool SizeModifier::serialize(ISerializer& s)
-{
-	return s >> Member< float >(L"adjustRate", m_adjustRate);
-}
 
 	}
 }

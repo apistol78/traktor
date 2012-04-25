@@ -67,23 +67,19 @@ void ScreenRenderer::destroy()
 
 void ScreenRenderer::draw(IRenderView* renderView, IProgram* program)
 {
-	renderView->setVertexBuffer(m_vertexBuffer);
-	renderView->setProgram(program);
-	renderView->draw(m_primitives);
+	renderView->draw(m_vertexBuffer, 0, program, m_primitives);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 {
-	renderView->setVertexBuffer(m_vertexBuffer);
-	shader->draw(renderView, m_primitives);
+	shader->draw(renderView, m_vertexBuffer, 0, m_primitives);
 }
 
 void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader)
 {
 	if (renderView->begin(renderTargetSet, renderTarget))
 	{
-		renderView->setVertexBuffer(m_vertexBuffer);
-		shader->draw(renderView, m_primitives);
+		shader->draw(renderView, m_vertexBuffer, 0, m_primitives);
 		renderView->end();
 	}
 }

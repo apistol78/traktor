@@ -44,6 +44,7 @@ bool RenderTargetSetPs3::create(
 	const RenderTargetSetCreateDesc& desc
 )
 {
+	bool allowZ16 = true;
 	int32_t err;
 
 	m_width = desc.width;
@@ -56,11 +57,15 @@ bool RenderTargetSetPs3::create(
 		m_renderTargets[i] = new RenderTargetPs3(m_tileArea);
 		if (!m_renderTargets[i]->create(memoryHeap, desc, desc.targets[i]))
 			return false;
+
+		// Z16 depth buffer not allowed with FP render targets.
+		if (desc.targets[i].format >= TfR16G16B16A16F)
+			allowZ16 = false;
 	}
 
 	if (desc.createDepthStencil)
 	{
-		m_depthFormat = desc.ignoreStencil ? CELL_GCM_SURFACE_Z16 : CELL_GCM_SURFACE_Z24S8;
+		m_depthFormat = (desc.ignoreStencil && allowZ16) ? CELL_GCM_SURFACE_Z16 : CELL_GCM_SURFACE_Z24S8;
 
 		uint32_t depthWidth = m_width;
 		uint32_t depthHeight = m_height;
@@ -70,7 +75,7 @@ bool RenderTargetSetPs3::create(
 
 		m_depthTexture.format = CELL_GCM_TEXTURE_LN;
 		
-		if (desc.ignoreStencil)
+		if (desc.ignoreStencil && allowZ16)
 			m_depthTexture.format |= CELL_GCM_TEXTURE_DEPTH16;
 		else
 			m_depthTexture.format |= CELL_GCM_TEXTURE_DEPTH24_D8;
@@ -85,7 +90,7 @@ bool RenderTargetSetPs3::create(
 		m_depthTexture.location = CELL_GCM_LOCATION_LOCAL;
 		m_depthTexture.offset = 0;
 
-		uint32_t depthFragmentSize = desc.ignoreStencil ? 2 : 4;
+		uint32_t depthFragmentSize = (desc.ignoreStencil && allowZ16) ? 2 : 4;
 		if (desc.preferTiled)
 			m_depthTexture.pitch = cellGcmGetTiledPitchSize(depthWidth * depthFragmentSize);
 		else
@@ -101,7 +106,7 @@ bool RenderTargetSetPs3::create(
 			{
 				uint32_t compression = CELL_GCM_COMPMODE_DISABLED;
 
-				if (!desc.ignoreStencil)
+				if (!(desc.ignoreStencil && allowZ16))
 					compression = (desc.multiSample > 1) ?
 						CELL_GCM_COMPMODE_Z32_SEPSTENCIL_DIAGONAL :
 						CELL_GCM_COMPMODE_Z32_SEPSTENCIL;
@@ -126,7 +131,7 @@ bool RenderTargetSetPs3::create(
 #if defined(T_RENDER_PS3_USE_ZCULL)
 				if (m_zcullArea.alloc(m_depthTexture.width * m_depthTexture.height, 4096, m_zcullInfo))
 				{
-					uint32_t zcullFormat = desc.ignoreStencil ? CELL_GCM_ZCULL_Z16 : CELL_GCM_ZCULL_Z24S8;
+					uint32_t zcullFormat = (desc.ignoreStencil && allowZ16) ? CELL_GCM_ZCULL_Z16 : CELL_GCM_ZCULL_Z24S8;
 					err = cellGcmBindZcull(
 						m_zcullInfo.index,
 						m_depthTexture.offset,

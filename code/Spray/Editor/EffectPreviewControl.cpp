@@ -19,7 +19,6 @@
 #include "Spray/Editor/PointSetSourceRenderer.h"
 #include "Spray/Editor/QuadSourceRenderer.h"
 #include "Spray/Editor/SphereSourceRenderer.h"
-#include "Spray/Editor/SplineSourceRenderer.h"
 #include "Spray/Sources/BoxSource.h"
 #include "Spray/Sources/ConeSource.h"
 #include "Spray/Sources/DiscSource.h"
@@ -27,7 +26,6 @@
 #include "Spray/Sources/PointSetSource.h"
 #include "Spray/Sources/QuadSource.h"
 #include "Spray/Sources/SphereSource.h"
-#include "Spray/Sources/SplineSource.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
 #include "Ui/PopupMenu.h"
@@ -78,7 +76,6 @@ EffectPreviewControl::EffectPreviewControl()
 	m_sourceRenderers[&type_of< PointSetSource >()] = new PointSetSourceRenderer();
 	m_sourceRenderers[&type_of< QuadSource >()] = new QuadSourceRenderer();
 	m_sourceRenderers[&type_of< SphereSource >()] = new SphereSourceRenderer();
-	m_sourceRenderers[&type_of< SplineSource >()] = new SplineSourceRenderer();
 }
 
 bool EffectPreviewControl::create(
@@ -152,8 +149,10 @@ void EffectPreviewControl::destroy()
 
 void EffectPreviewControl::setEffect(Effect* effect)
 {
-	m_effect = effect;
-	m_effectInstance = m_effect->createInstance();
+	if ((m_effect = effect) != 0)
+		m_effectInstance = m_effect->createInstance();
+	else
+		m_effectInstance = 0;
 }
 
 void EffectPreviewControl::setTimeScale(float timeScale)
@@ -190,6 +189,9 @@ void EffectPreviewControl::randomizeSeed()
 
 void EffectPreviewControl::syncEffect()
 {
+	if (!m_effect || !m_effectInstance)
+		return;
+
 	Context syncContext;
 	syncContext.deltaTime = 0.0f;
 	syncContext.random = RandomGeometry(m_randomSeed);
@@ -332,11 +334,11 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			const RefArray< EffectLayer >& layers = m_effect->getLayers();
 			for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 			{
-				Ref< Emitter > emitter = (*i)->getEmitter();
+				Ref< const Emitter > emitter = (*i)->getEmitter();
 				if (!emitter)
 					continue;
 
-				Ref< Source > source = emitter->getSource();
+				Ref< const Source > source = emitter->getSource();
 				if (!source)
 					continue;
 

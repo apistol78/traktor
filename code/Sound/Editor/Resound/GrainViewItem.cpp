@@ -8,7 +8,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GrainViewItem", GrainViewItem, Object)
 
-GrainViewItem::GrainViewItem(GrainViewItem* parent, IGrain* grain, const std::wstring& text, int32_t image)
+GrainViewItem::GrainViewItem(GrainViewItem* parent, IGrainData* grain, const std::wstring& text, int32_t image)
 :	m_parent(parent)
 ,	m_grain(grain)
 ,	m_text(text)
@@ -21,7 +21,7 @@ GrainViewItem* GrainViewItem::getParent() const
 	return m_parent;
 }
 
-IGrain* GrainViewItem::getGrain() const
+IGrainData* GrainViewItem::getGrain() const
 {
 	return m_grain;
 }

@@ -1,10 +1,10 @@
 #include "Spray/Editor/EffectPipeline.h"
-#include "Spray/Effect.h"
-#include "Spray/EffectLayer.h"
-#include "Spray/Emitter.h"
-#include "Spray/Sequence.h"
-#include "Spray/SoundTrigger.h"
-#include "Spray/Sources/PointSetSource.h"
+#include "Spray/EffectData.h"
+#include "Spray/EffectLayerData.h"
+#include "Spray/EmitterData.h"
+#include "Spray/SequenceData.h"
+#include "Spray/SoundTriggerData.h"
+#include "Spray/Sources/PointSetSourceData.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Database/Instance.h"
@@ -28,7 +28,7 @@ void EffectPipeline::destroy()
 TypeInfoSet EffectPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Effect >());
+	typeSet.insert(&type_of< EffectData >());
 	return typeSet;
 }
 
@@ -36,32 +36,34 @@ bool EffectPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
-	const Effect* effect = checked_type_cast< const Effect* >(sourceAsset);
+	const EffectData* effectData = checked_type_cast< const EffectData* >(sourceAsset);
 
-	const RefArray< EffectLayer >& layers = effect->getLayers();
-	for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	const RefArray< EffectLayerData >& layers = effectData->getLayers();
+	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		const Emitter* emitter = (*i)->getEmitter();
+		const EmitterData* emitter = (*i)->getEmitter();
 		if (emitter)
 		{
-			pipelineDepends->addDependency(emitter->getShader().getGuid(), editor::PdfBuild);
+			pipelineDepends->addDependency(emitter->getShader(), editor::PdfBuild);
 
-			const PointSetSource* pointSetSource = dynamic_type_cast< const PointSetSource* >(emitter->getSource());
+			const PointSetSourceData* pointSetSource = dynamic_type_cast< const PointSetSourceData* >(emitter->getSource());
 			if (pointSetSource)
-				pipelineDepends->addDependency(pointSetSource->getPointSet().getGuid(), editor::PdfBuild);
+				pipelineDepends->addDependency(pointSetSource->getPointSet(), editor::PdfBuild);
 		}
 
-		const Sequence* sequence = (*i)->getSequence();
+		const SequenceData* sequence = (*i)->getSequence();
 		if (sequence)
 		{
-			for (std::vector< Sequence::Key >::const_iterator i = sequence->getKeys().begin(); i != sequence->getKeys().end(); ++i)
+			for (std::vector< SequenceData::Key >::const_iterator i = sequence->getKeys().begin(); i != sequence->getKeys().end(); ++i)
 			{
-				const SoundTrigger* soundTrigger = dynamic_type_cast< const SoundTrigger* >(i->trigger);
+				const SoundTriggerData* soundTrigger = dynamic_type_cast< const SoundTriggerData* >(i->trigger);
 				if (soundTrigger)
-					pipelineDepends->addDependency(soundTrigger->getSound().getGuid(), editor::PdfBuild);
+					pipelineDepends->addDependency(soundTrigger->getSound(), editor::PdfBuild);
 			}
 		}
 	}

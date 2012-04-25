@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(L"traktor.PropertyString", 0, PropertyString, IPropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.PropertyString", 0, PropertyString, IPropertyValue)
 
 PropertyString::PropertyString(value_type_t value)
 :	m_value(value)
@@ -24,7 +24,12 @@ bool PropertyString::serialize(ISerializer& s)
 
 Ref< IPropertyValue > PropertyString::join(const IPropertyValue* right) const
 {
-	return clone_instance(right);
+	return right->clone();
+}
+
+Ref< IPropertyValue > PropertyString::clone() const
+{
+	return new PropertyString(m_value);
 }
 
 }

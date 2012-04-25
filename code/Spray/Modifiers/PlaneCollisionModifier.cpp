@@ -1,6 +1,4 @@
 #include "Spray/Modifiers/PlaneCollisionModifier.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
 #	include "Core/Thread/Ps3/Spurs/SpursJobQueue.h"
@@ -30,11 +28,11 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PlaneCollisionModifier", 0, PlaneCollisionModifier, Modifier)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PlaneCollisionModifier", PlaneCollisionModifier, Modifier)
 
-PlaneCollisionModifier::PlaneCollisionModifier()
-:	m_plane(Vector4(0.0f, 1.0f, 0.0f), Scalar(0.0f))
-,	m_restitution(1.0f)
+PlaneCollisionModifier::PlaneCollisionModifier(const Plane& plane, float restitution)
+:	m_plane(plane)
+,	m_restitution(restitution)
 {
 }
 
@@ -74,13 +72,6 @@ void PlaneCollisionModifier::update(const Scalar& deltaTime, const Transform& tr
 	}
 }
 #endif
-
-bool PlaneCollisionModifier::serialize(ISerializer& s)
-{
-	// @fixme Plane
-	s >> Member< Scalar >(L"restitution", m_restitution);
-	return true;
-}
 
 	}
 }

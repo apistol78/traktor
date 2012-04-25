@@ -1,6 +1,3 @@
-#include "Core/Serialization/AttributeDirection.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/VortexModifier.h"
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
@@ -31,15 +28,22 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.VortexModifier", 1, VortexModifier, Modifier)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.VortexModifier", VortexModifier, Modifier)
 
-VortexModifier::VortexModifier()
-:	m_axis(0.0f, 1.0f, 0.0f, 0.0f)
-,	m_tangentForce(0.0f)
-,	m_normalConstantForce(0.0f)
-,	m_normalDistance(0.0f)
-,	m_normalDistanceForce(0.0f)
-,	m_world(true)
+VortexModifier::VortexModifier(
+	const Vector4& axis,
+	float tangentForce,
+	float normalConstantForce,
+	float normalDistance,
+	float normalDistanceForce,
+	bool world
+)
+:	m_axis(axis)
+,	m_tangentForce(tangentForce)
+,	m_normalConstantForce(normalConstantForce)
+,	m_normalDistance(normalDistance)
+,	m_normalDistanceForce(normalDistanceForce)
+,	m_world(world)
 {
 }
 
@@ -91,18 +95,6 @@ void VortexModifier::update(const Scalar& deltaTime, const Transform& transform,
 	}
 }
 #endif
-
-bool VortexModifier::serialize(ISerializer& s)
-{
-	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
-	s >> Member< Scalar >(L"tangentForce", m_tangentForce);
-	s >> Member< Scalar >(L"normalConstantForce", m_normalConstantForce);
-	s >> Member< Scalar >(L"normalDistance", m_normalDistance);
-	s >> Member< Scalar >(L"normalDistanceForce", m_normalDistanceForce);
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"world", m_world);
-	return true;
-}
 
 	}
 }

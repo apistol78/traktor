@@ -26,9 +26,19 @@ class T_DLLCLASS DiscSource : public Source
 	T_RTTI_CLASS;
 
 public:
-	DiscSource();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	DiscSource(
+		float constantRate,
+		float velocityRate,
+		const Vector4& position,
+		const Vector4& normal,
+		const Range< float >& radius,
+		const Range< float >& velocity,
+		const Range< float >& orientation,
+		const Range< float >& angularVelocity,
+		const Range< float >& age,
+		const Range< float >& mass,
+		const Range< float >& size
+	);
 
 	virtual void emit(
 		Context& context,
@@ -37,13 +47,11 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	const Vector4& getPosition() const { return m_position; }
 
-	inline const Vector4& getPosition() const { return m_position; }
+	const Vector4& getNormal() const { return m_normal; }
 
-	inline const Vector4& getNormal() const { return m_normal; }
-
-	inline const Range< float >& getRadius() const { return m_radius; }
+	const Range< float >& getRadius() const { return m_radius; }
 
 private:
 	Vector4 m_position;

@@ -9,9 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.BoxSourceRenderer", BoxSourceRenderer, SourceRenderer)
 
-void BoxSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, Source* source) const
+void BoxSourceRenderer::render(render::PrimitiveRenderer* primitiveRenderer, const Source* source) const
 {
-	BoxSource* boxSource = checked_type_cast< BoxSource* >(source);
+	const BoxSource* boxSource = checked_type_cast< const BoxSource* >(source);
 
 	Vector4 position = boxSource->getPosition();
 	Vector4 extent = boxSource->getExtent();

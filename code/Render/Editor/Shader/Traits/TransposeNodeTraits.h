@@ -58,6 +58,14 @@ public:
 		const Constant* inputConstants,
 		const OutputPin*& foldOutputPin
 	) const;
+
+	virtual PinOrderType evaluateOrder(
+		const ShaderGraph* shaderGraph,
+		const Node* node,
+		const OutputPin* nodeOutputPin,
+		const PinOrderType* inputPinOrders,
+		bool frequentAsLinear
+	) const;
 };
 
 	}

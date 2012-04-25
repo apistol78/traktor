@@ -26,9 +26,10 @@ class T_DLLCLASS RandomGrain : public IGrain
 	T_RTTI_CLASS;
 
 public:
-	RandomGrain();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	RandomGrain(
+		const RefArray< IGrain >& grains,
+		bool humanize
+	);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -37,14 +38,6 @@ public:
 	virtual const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
-
-	virtual bool serialize(ISerializer& s);
-
-	void addGrain(IGrain* grain) { m_grains.push_back(grain); }
-
-	void removeGrain(IGrain* grain) { m_grains.remove(grain); }
-
-	const RefArray< IGrain >& getGrains() const { return m_grains; }
 
 private:
 	RefArray< IGrain > m_grains;

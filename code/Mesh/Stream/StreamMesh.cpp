@@ -69,9 +69,6 @@ void StreamMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	if (!m_shader.validate())
-		return;
-
 	// Load mesh frame if different from instance's cached frame.
 	if (instance->frame != frame || !instance->mesh)
 	{

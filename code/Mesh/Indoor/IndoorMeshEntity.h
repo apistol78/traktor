@@ -38,7 +38,7 @@ public:
 	);
 
 private:
-	mutable resource::Proxy< IndoorMesh > m_mesh;
+	resource::Proxy< IndoorMesh > m_mesh;
 };
 
 	}

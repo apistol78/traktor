@@ -112,12 +112,12 @@ public:
 	{
 		const hf::height_t* heights = m_heightfield->getHeights();
 
-		x = max< int >(min< int >(x, m_heightfield->getResource().getSize()), 0);
-		z = max< int >(min< int >(z, m_heightfield->getResource().getSize()), 0);
+		x = max< int >(min< int >(x, m_heightfield->getSize()), 0);
+		z = max< int >(min< int >(z, m_heightfield->getSize()), 0);
 
-		int offset = x + z * m_heightfield->getResource().getSize();
+		int offset = x + z * m_heightfield->getSize();
 
-		return ((float)heights[offset] / 32767.0f - 1.0f) * m_heightfield->getResource().getWorldExtent().y() * 0.5f;
+		return ((float)heights[offset] / 32767.0f - 1.0f) * m_heightfield->getWorldExtent().y() * 0.5f;
 	}
 
 	HK_FORCE_INLINE hkBool getTriangleFlipImpl() const
@@ -282,8 +282,8 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 	}
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< Mesh > mesh = meshShape->getMesh();
-		if (!resourceManager->bind(mesh) || !mesh.validate())
+		resource::Proxy< Mesh > mesh;
+		if (!resourceManager->bind(meshShape->getMesh(), mesh))
 		{
 			log::error << L"Unable to load mesh resource" << Endl;
 			return 0;
@@ -356,16 +356,16 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 	}
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
-		resource::Proxy< hf::Heightfield > heightfield = heightfieldShape->getHeightfield();
-		if (!resourceManager->bind(heightfield) || !heightfield.validate())
+		resource::Proxy< hf::Heightfield > heightfield;
+		if (!resourceManager->bind(heightfieldShape->getHeightfield(), heightfield))
 		{
 			log::error << L"Unable to load heightfield resource" << Endl;
 			return 0;
 		}
 
 		hkpSampledHeightFieldBaseCinfo heightfieldInfo;
-		heightfieldInfo.m_xRes = heightfield->getResource().getSize();
-		heightfieldInfo.m_zRes = heightfield->getResource().getSize();
+		heightfieldInfo.m_xRes = heightfield->getSize();
+		heightfieldInfo.m_zRes = heightfield->getSize();
 
 		shape = new HeightfieldShape(heightfieldInfo, heightfield);
 
@@ -373,9 +373,9 @@ Ref< Body > PhysicsManagerHavok::createBody(resource::IResourceManager* resource
 		hkTransform transform;
 		transform.setIdentity();
 		transform.getTranslation().set(
-			-0.5f * heightfield->getResource().getWorldExtent().x(),
+			-0.5f * heightfield->getWorldExtent().x(),
 			0.0f,
-			-0.5f * heightfield->getResource().getWorldExtent().z()
+			-0.5f * heightfield->getWorldExtent().z()
 		);
 		shape = new hkpTransformShape(
 			shape,

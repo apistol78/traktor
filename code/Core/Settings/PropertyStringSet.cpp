@@ -5,7 +5,7 @@
 namespace traktor
 {
 
-T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(L"traktor.PropertyStringSet", 0, PropertyStringSet, IPropertyValue)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.PropertyStringSet", 0, PropertyStringSet, IPropertyValue)
 
 PropertyStringSet::PropertyStringSet(const value_type_t& value)
 :	m_value(value)
@@ -26,12 +26,17 @@ Ref< IPropertyValue > PropertyStringSet::join(const IPropertyValue* right) const
 {
 	if (const PropertyStringSet* rightStringSet = dynamic_type_cast< const PropertyStringSet* >(right))
 	{
-		Ref< PropertyStringSet > leftStringSet = clone_instance(this);
+		Ref< PropertyStringSet > leftStringSet = new PropertyStringSet(m_value);
 		leftStringSet->m_value.insert(rightStringSet->m_value.begin(), rightStringSet->m_value.end());
 		return leftStringSet;
 	}
 	else
-		return clone_instance(right);
+		return right->clone();
+}
+
+Ref< IPropertyValue > PropertyStringSet::clone() const
+{
+	return new PropertyStringSet(m_value);
 }
 
 }

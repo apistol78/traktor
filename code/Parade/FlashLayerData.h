@@ -1,7 +1,7 @@
 #ifndef traktor_parade_FlashLayerData_H
 #define traktor_parade_FlashLayerData_H
 
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "Parade/LayerData.h"
 
 // import/export mechanism.
@@ -38,7 +38,7 @@ public:
 private:
 	friend class StagePipeline;
 
-	resource::Proxy< flash::FlashMovie > m_movie;
+	resource::Id< flash::FlashMovie > m_movie;
 	bool m_clearBackground;
 };
 

@@ -1,7 +1,6 @@
-#include "Spray/Editor/PointSetAsset.h"
-#include "Spray/PointSet.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Spray/Editor/PointSetAsset.h"
 
 namespace traktor
 {
@@ -18,11 +17,6 @@ PointSetAsset::PointSetAsset()
 bool PointSetAsset::fromFaces() const
 {
 	return m_fromFaces;
-}
-
-const TypeInfo* PointSetAsset::getOutputType() const
-{
-	return &type_of< PointSet >();
 }
 
 bool PointSetAsset::serialize(ISerializer& s)

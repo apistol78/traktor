@@ -45,7 +45,6 @@ public:
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset,
-		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
 		uint32_t flags
@@ -97,14 +96,13 @@ private:
 		PipelineDependency* currentDependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
-		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid
 	);
 
 	void jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset);
 
-	void jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset, std::wstring name, std::wstring outputPath, Guid outputGuid, uint32_t flags);
+	void jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset, std::wstring outputPath, Guid outputGuid, uint32_t flags);
 
 	void jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< db::Instance > sourceAssetInstance, uint32_t flags);
 

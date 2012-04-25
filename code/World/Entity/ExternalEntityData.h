@@ -2,6 +2,7 @@
 #define traktor_world_ExternalEntityData_H
 
 #include "Core/Guid.h"
+#include "Resource/Id.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.
@@ -27,16 +28,16 @@ class T_DLLCLASS ExternalEntityData : public EntityData
 public:
 	ExternalEntityData();
 
-	ExternalEntityData(const Guid& guid);
+	ExternalEntityData(const resource::Id< EntityData >& entityData);
 
-	void setGuid(const Guid& guid);
+	void setEntityData(const resource::Id< EntityData >& entityData);
 
-	const Guid& getGuid() const;
+	const resource::Id< EntityData >& getEntityData() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	Guid m_guid;
+	resource::Id< EntityData > m_entityData;
 };
 
 	}

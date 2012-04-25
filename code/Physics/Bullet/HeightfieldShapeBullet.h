@@ -39,7 +39,7 @@ public:
 	virtual const char*	getName() const;
 
 private:
-	mutable resource::Proxy< hf::Heightfield > m_heightfield;
+	resource::Proxy< hf::Heightfield > m_heightfield;
 	btVector3 m_localScaling;
 };
 

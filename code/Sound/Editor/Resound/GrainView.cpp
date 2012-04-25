@@ -22,13 +22,13 @@ bool GrainView::create(ui::Widget* parent)
 void GrainView::add(GrainViewItem* item)
 {
 	m_cells.push_back(new GrainViewCell(item));
-	requestLayout();
+	requestUpdate();
 }
 
 void GrainView::removeAll()
 {
 	m_cells.clear();
-	requestLayout();
+	requestUpdate();
 }
 
 GrainViewItem* GrainView::getSelected() const

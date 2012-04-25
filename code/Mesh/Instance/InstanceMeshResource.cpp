@@ -10,6 +10,7 @@
 #include "Render/Mesh/MeshReader.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -141,7 +142,6 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	renderMesh->setBoundingBox(singleInstanceMesh->getBoundingBox());
 
 	Ref< InstanceMesh > instanceMesh = new InstanceMesh();
-	instanceMesh->m_shader = m_shader;
 	instanceMesh->m_mesh = renderMesh;
 
 	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
@@ -159,7 +159,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		}
 	}
 
-	if (!resourceManager->bind(instanceMesh->m_shader))
+	if (!resourceManager->bind(m_shader, instanceMesh->m_shader))
 		return 0;
 
 	return instanceMesh;
@@ -168,7 +168,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 bool InstanceMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
-	s >> Member< Guid >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,
 		parts_t,

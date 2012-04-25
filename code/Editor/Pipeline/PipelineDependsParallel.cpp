@@ -51,7 +51,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset)));
 }
 
-void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, const std::wstring& name, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
+void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
 {
 	if (!sourceAsset)
 		return;
@@ -61,7 +61,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset, co
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 
-	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset), name, outputPath, outputGuid, flags));
+	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset), outputPath, outputGuid, flags));
 }
 
 void PipelineDependsParallel::addDependency(db::Instance* sourceAssetInstance, uint32_t flags)
@@ -163,7 +163,6 @@ void PipelineDependsParallel::addUniqueDependency(
 	PipelineDependency* currentDependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
-	const std::wstring& name,
 	const std::wstring& outputPath,
 	const Guid& outputGuid
 )
@@ -175,12 +174,11 @@ void PipelineDependsParallel::addUniqueDependency(
 	// Find appropriate pipeline.
 	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 	{
-		log::error << L"Unable to add dependency to \"" << name << L"\"; no pipeline found" << Endl;
+		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found" << Endl;
 		return;
 	}
 
 	// Setup dependency.
-	currentDependency->name = name;
 	currentDependency->pipeline = pipeline;
 	currentDependency->pipelineHash = pipelineHash;
 	currentDependency->sourceAsset = sourceAsset;
@@ -230,6 +228,8 @@ void PipelineDependsParallel::addUniqueDependency(
 			this,
 			sourceInstance,
 			sourceAsset,
+			currentDependency->outputPath,
+			currentDependency->outputGuid,
 			currentDependency->buildParams
 		);
 
@@ -261,14 +261,14 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 	if (m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 	{
 		Ref< const Object > dummyBuildParams;
-		pipeline->buildDependencies(this, 0, sourceAsset, dummyBuildParams);
+		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid(), dummyBuildParams);
 		T_ASSERT_M (!dummyBuildParams, L"Build parameters not used with non-producing dependencies");
 	}
 	else
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
 }
 
-void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset, std::wstring name, std::wstring outputPath, Guid outputGuid, uint32_t flags)
+void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset, std::wstring outputPath, Guid outputGuid, uint32_t flags)
 {
 	Ref< PipelineDependency > currentDependency;
 	bool exists;
@@ -283,7 +283,6 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		currentDependency,
 		0,
 		sourceAsset,
-		name,
 		outputPath,
 		outputGuid
 	);
@@ -312,7 +311,6 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		currentDependency,
 		sourceAssetInstance,
 		sourceAsset,
-		sourceAssetInstance->getName(),
 		sourceAssetInstance->getPath(),
 		sourceAssetInstance->getGuid()
 	);
@@ -349,7 +347,6 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		currentDependency,
 		sourceAssetInstance,
 		sourceAsset,
-		sourceAssetInstance->getName(),
 		sourceAssetInstance->getPath(),
 		sourceAssetInstance->getGuid()
 	);

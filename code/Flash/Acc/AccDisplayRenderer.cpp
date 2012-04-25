@@ -191,7 +191,6 @@ void AccDisplayRenderer::destroy()
 
 void AccDisplayRenderer::build(uint32_t frame)
 {
-	m_shapeResources->validate();
 	m_renderContext = m_renderContexts[frame];
 	m_renderContext->flush();
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);

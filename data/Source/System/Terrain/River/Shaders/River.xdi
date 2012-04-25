@@ -1330,5 +1330,15 @@
 				<name>OpenGL ES2</name>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[59]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[58]"/>
+				<name>GCM</name>
+			</destination>
+		</item>
 	</edges>
 </object>

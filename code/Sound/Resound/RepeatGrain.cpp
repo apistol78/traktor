@@ -1,5 +1,3 @@
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRef.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Resound/RepeatGrain.h"
 
@@ -24,16 +22,15 @@ struct RepeatGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.RepeatGrain", 0, RepeatGrain, IGrain)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RepeatGrain", RepeatGrain, IGrain)
 
-RepeatGrain::RepeatGrain()
-:	m_count(1)
+RepeatGrain::RepeatGrain(
+	uint32_t count,
+	IGrain* grain
+)
+:	m_count(count)
+,	m_grain(grain)
 {
-}
-
-bool RepeatGrain::bind(resource::IResourceManager* resourceManager)
-{
-	return m_grain ? m_grain->bind(resourceManager) : true;
 }
 
 Ref< ISoundBufferCursor > RepeatGrain::createCursor() const
@@ -75,13 +72,6 @@ bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) con
 		if (!m_grain->getBlock(repeatCursor->m_cursor, outBlock))
 			return false;
 	}
-	return true;
-}
-
-bool RepeatGrain::serialize(ISerializer& s)
-{
-	s >> Member< uint32_t >(L"count", m_count);
-	s >> MemberRef< IGrain >(L"grain", m_grain);
 	return true;
 }
 

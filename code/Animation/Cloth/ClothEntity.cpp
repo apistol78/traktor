@@ -171,7 +171,7 @@ void ClothEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (!m_shader.validate() || !m_shader->hasTechnique(worldRenderPass.getTechnique()))
+	if (!m_shader->hasTechnique(worldRenderPass.getTechnique()))
 		return;
 
 	if (m_updateRequired || !m_vertexBuffer->isContentValid())

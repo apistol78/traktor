@@ -35,7 +35,7 @@ Ref< ui::Bitmap > TextureBrowsePreview::generate(const editor::IEditor* editor, 
 	std::wstring assetPath = editor->getSettings()->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, textureAsset->getFileName());
 
-	bool visibleAlpha = (textureAsset->m_hasAlpha == true && textureAsset->m_ignoreAlpha == false);
+	bool visibleAlpha = (textureAsset->m_output.m_hasAlpha == true && textureAsset->m_output.m_ignoreAlpha == false);
 	Ref< drawing::Image > textureThumb = thumbnailGenerator->get(
 		fileName,
 		64,

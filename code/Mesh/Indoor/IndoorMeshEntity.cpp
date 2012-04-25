@@ -18,12 +18,12 @@ IndoorMeshEntity::IndoorMeshEntity(const Transform& transform, const resource::P
 
 Aabb3 IndoorMeshEntity::getBoundingBox() const
 {
-	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
+	return m_mesh->getBoundingBox();
 }
 
 bool IndoorMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+	return m_mesh->supportTechnique(technique);
 }
 
 void IndoorMeshEntity::render(
@@ -33,9 +33,6 @@ void IndoorMeshEntity::render(
 	float distance
 )
 {
-	if (!m_mesh.validate())
-		return;
-
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderView,

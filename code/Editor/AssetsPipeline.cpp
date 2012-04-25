@@ -34,6 +34,8 @@ bool AssetsPipeline::buildDependencies(
 	IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -56,7 +58,6 @@ bool AssetsPipeline::buildDependencies(
 
 		pipelineDepends->addDependency(
 			object,
-			virtualPlaceholderInstance->getName(),
 			virtualPlaceholderInstance->getPath(),
 			virtualPlaceholderInstance->getGuid(),
 			editor::PdfBuild

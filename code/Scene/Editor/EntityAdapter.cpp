@@ -103,7 +103,7 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 {
 	if (const world::ExternalEntityData* externalEntityData = dynamic_type_cast< const world::ExternalEntityData* >(m_entityData))
 	{
-		outGuid = externalEntityData->getGuid();
+		outGuid = externalEntityData->getEntityData();
 		return true;
 	}
 	return false;

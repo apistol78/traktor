@@ -3,7 +3,6 @@
 
 #include "Core/Math/Range.h"
 #include "Resource/Proxy.h"
-#include "Spray/PointSet.h"
 #include "Spray/Source.h"
 
 // import/export mechanism.
@@ -19,6 +18,8 @@ namespace traktor
 	namespace spray
 	{
 
+class PointSet;
+
 /*! \brief Point set particle source.
  * \ingroup Spray
  */
@@ -27,9 +28,18 @@ class T_DLLCLASS PointSetSource : public Source
 	T_RTTI_CLASS;
 
 public:
-	PointSetSource();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	PointSetSource(
+		float constantRate,
+		float velocityRate,
+		const resource::Proxy< PointSet >& pointSet,
+		const Vector4& offset,
+		const Range< float >& velocity,
+		const Range< float >& orientation,
+		const Range< float >& angularVelocity,
+		const Range< float >& age,
+		const Range< float >& mass,
+		const Range< float >& size
+	);
 
 	virtual void emit(
 		Context& context,
@@ -38,14 +48,12 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	const resource::Proxy< PointSet >& getPointSet() const { return m_pointSet; }
 
-	inline const resource::Proxy< PointSet >& getPointSet() const { return m_pointSet; }
-
-	inline const Vector4& getOffset() const { return m_offset; }
+	const Vector4& getOffset() const { return m_offset; }
 
 private:
-	mutable resource::Proxy< PointSet > m_pointSet;
+	resource::Proxy< PointSet > m_pointSet;
 	Vector4 m_offset;
 	Range< float > m_velocity;
 	Range< float > m_orientation;

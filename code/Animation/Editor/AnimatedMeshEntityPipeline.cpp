@@ -21,13 +21,15 @@ bool AnimatedMeshEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	if (const AnimatedMeshEntityData* meshEntityData = dynamic_type_cast< const AnimatedMeshEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(meshEntityData->getMesh().getGuid(), editor::PdfBuild);
-		pipelineDepends->addDependency(meshEntityData->getSkeleton().getGuid(), editor::PdfBuild);
+		pipelineDepends->addDependency(meshEntityData->getMesh(), editor::PdfBuild);
+		pipelineDepends->addDependency(meshEntityData->getSkeleton(), editor::PdfBuild);
 		pipelineDepends->addDependency(meshEntityData->getPoseControllerData());
 	}
 	return true;

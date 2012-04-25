@@ -250,7 +250,7 @@ bool SkinnedMeshConverter::convert(
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
-	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_shader = materialGuid;
+	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_parts = parts;
 	for (uint32_t i = 0; i < model.getBoneCount(); ++i)
 		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_boneMap[model.getBone(i)] = i;

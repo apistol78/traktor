@@ -42,9 +42,10 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 	primitiveRenderer->pushWorld(getEntityAdapter()->getTransform().toMatrix44());
 	primitiveRenderer->pushDepthEnable(false);
 
-	resource::Proxy< Skeleton > skeleton = animatedEntityData->getSkeleton();
-	if (skeleton.valid() && animatedEntity)
+	if (animatedEntity)
 	{
+		const resource::Proxy< Skeleton >& skeleton = animatedEntity->getSkeleton();
+
 		AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
 		if (poseTransforms.empty())
 			calculateBoneTransforms(skeleton, poseTransforms);

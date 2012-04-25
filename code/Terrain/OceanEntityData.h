@@ -2,7 +2,7 @@
 #define traktor_terrain_OceanEntityData_H
 
 #include "Core/Math/Vector2.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.
@@ -66,15 +66,15 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Proxy< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
+	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
 	friend class OceanEntity;
 
-	resource::Proxy< hf::Heightfield > m_heightfield;
-	resource::Proxy< render::Shader > m_shader;
+	resource::Id< hf::Heightfield > m_heightfield;
+	resource::Id< render::Shader > m_shader;
 	float m_altitude;
 	Wave m_waves[MaxWaves];
 };

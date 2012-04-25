@@ -16,18 +16,12 @@ InstanceMeshEntity::InstanceMeshEntity(const Transform& transform, const resourc
 
 Aabb3 InstanceMeshEntity::getBoundingBox() const
 {
-	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
-}
-
-void InstanceMeshEntity::update(const UpdateParams& update)
-{
-	MeshEntity::update(update);
-	m_mesh.validate();
+	return m_mesh->getBoundingBox();
 }
 
 bool InstanceMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+	return m_mesh->supportTechnique(technique);
 }
 
 void InstanceMeshEntity::render(

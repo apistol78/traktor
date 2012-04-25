@@ -1,3 +1,4 @@
+#include "Sound/Sound.h"
 #include "Sound/SoundChannel.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Filters/SurroundFilter.h"
@@ -13,10 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundTriggerInstance", SoundTriggerInstan
 
 void SoundTriggerInstance::perform(Context& context, const Transform& transform)
 {
-	if (
-		!context.soundSystem ||
-		!m_sound.validate()
-	)
+	if (!context.soundSystem)
 		return;
 
 	sound::SoundChannel* channel = context.soundSystem->play(m_sound, 0, false);

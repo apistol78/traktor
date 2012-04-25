@@ -12,6 +12,7 @@
 #include "Render/Mesh/RenderMeshFactory.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -28,6 +29,10 @@ Ref< IMesh > BlendMeshResource::createMesh(
 	render::MeshFactory* meshFactory
 ) const
 {
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
+		return 0;
+
 	Reader reader(dataStream);
 
 	uint32_t meshCount;
@@ -60,7 +65,7 @@ Ref< IMesh > BlendMeshResource::createMesh(
 
 	Ref< BlendMesh > blendMesh = new BlendMesh();
 	blendMesh->m_renderSystem = renderSystem;
-	blendMesh->m_shader = m_shader;
+	blendMesh->m_shader = shader;
 	blendMesh->m_meshes = meshes;
 	blendMesh->m_vertices = meshVertices;
 
@@ -80,16 +85,13 @@ Ref< IMesh > BlendMeshResource::createMesh(
 
 	blendMesh->m_targetMap = m_targetMap;
 
-	if (!resourceManager->bind(blendMesh->m_shader))
-		return 0;
-
 	return blendMesh;
 }
 
 bool BlendMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
-	s >> Member< Guid >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,
 		parts_t,

@@ -1,7 +1,7 @@
 #ifndef traktor_parade_VideoLayerData_H
 #define traktor_parade_VideoLayerData_H
 
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "Parade/LayerData.h"
 
 // import/export mechanism.
@@ -43,8 +43,8 @@ public:
 private:
 	friend class StagePipeline;
 
-	resource::Proxy< video::Video > m_video;
-	resource::Proxy< render::Shader > m_shader;
+	resource::Id< video::Video > m_video;
+	resource::Id< render::Shader > m_shader;
 };
 
 	}

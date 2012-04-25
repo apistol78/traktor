@@ -1,5 +1,5 @@
-#include "Mesh/Static/StaticMeshEntity.h"
 #include "Mesh/Static/StaticMesh.h"
+#include "Mesh/Static/StaticMeshEntity.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
@@ -18,12 +18,12 @@ StaticMeshEntity::StaticMeshEntity(const Transform& transform, const resource::P
 
 Aabb3 StaticMeshEntity::getBoundingBox() const
 {
-	return m_mesh.validate() ? m_mesh->getBoundingBox() : Aabb3();
+	return m_mesh->getBoundingBox();
 }
 
 bool StaticMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return m_mesh.validate() ? m_mesh->supportTechnique(technique) : false;
+	return m_mesh->supportTechnique(technique);
 }
 
 void StaticMeshEntity::render(
@@ -33,9 +33,6 @@ void StaticMeshEntity::render(
 	float distance
 )
 {
-	if (!m_mesh.validate())
-		return;
-
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,

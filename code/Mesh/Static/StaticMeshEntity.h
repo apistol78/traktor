@@ -38,7 +38,7 @@ public:
 	);
 
 private:
-	mutable resource::Proxy< StaticMesh > m_mesh;
+	resource::Proxy< StaticMesh > m_mesh;
 };
 
 	}

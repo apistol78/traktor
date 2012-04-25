@@ -33,6 +33,8 @@ public:
 protected:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const;
 
+	virtual Ref< IPropertyValue > clone() const;
+
 private:
 	value_type_t m_value;
 };

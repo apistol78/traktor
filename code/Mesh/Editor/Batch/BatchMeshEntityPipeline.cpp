@@ -38,7 +38,7 @@ Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializa
 
 		if (const world::ExternalEntityData* externalEntityDataRef = dynamic_type_cast< const world::ExternalEntityData* >(objectMember->get()))
 		{
-			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getGuid());
+			Ref< const ISerializable > externalEntityData = pipeline->getObjectReadOnly(externalEntityDataRef->getEntityData());
 			if (!externalEntityData)
 				return 0;
 
@@ -101,6 +101,8 @@ bool BatchMeshEntityPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
@@ -129,7 +131,7 @@ Ref< ISerializable > BatchMeshEntityPipeline::buildOutput(
 
 	for (RefArray< MeshEntityData >::const_iterator i = meshEntityData.begin(); i != meshEntityData.end(); ++i)
 	{
-		Guid meshAssetGuid = (*i)->getMesh().getGuid();
+		Guid meshAssetGuid = (*i)->getMesh();
 
 		Ref< const MeshAsset > meshAsset = pipelineBuilder->getObjectReadOnly< MeshAsset >(meshAssetGuid);
 		if (!meshAsset)
@@ -169,7 +171,6 @@ Ref< ISerializable > BatchMeshEntityPipeline::buildOutput(
 	pipelineBuilder->buildOutput(
 		mergedMeshAsset,
 		mergedModel,
-		batchMeshEntityData->getOutputGuid().format(),
 		L"Generated/" + batchMeshEntityData->getOutputGuid().format(),
 		batchMeshEntityData->getOutputGuid()
 	);
@@ -178,7 +179,7 @@ Ref< ISerializable > BatchMeshEntityPipeline::buildOutput(
 	Ref< MeshEntityData > outputEntityData = new MeshEntityData();
 	outputEntityData->setName(batchMeshEntityData->getName());
 	outputEntityData->setTransform(batchMeshEntityData->getTransform());
-	outputEntityData->setMesh(resource::Proxy< IMesh >(batchMeshEntityData->getOutputGuid()));
+	outputEntityData->setMesh(resource::Id< IMesh >(batchMeshEntityData->getOutputGuid()));
 
 	return outputEntityData;
 }

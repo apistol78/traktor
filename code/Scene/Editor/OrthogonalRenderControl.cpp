@@ -40,7 +40,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_defaultMultiSample = 4;
+const int32_t c_defaultMultiSample = 0;
 const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_minMagnification = 0.01f;
 

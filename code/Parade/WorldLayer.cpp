@@ -37,39 +37,20 @@ WorldLayer::WorldLayer(
 ,	m_deltaTime(0.0f)
 ,	m_controllerEnable(true)
 {
-	T_ASSERT (m_scene.valid());
-
-	// Add our dynamic entity group to scene root.
-	world::GroupEntity* rootGroupEntity = dynamic_type_cast< world::GroupEntity* >(m_scene->getRootEntity());
-	if (rootGroupEntity)
-		rootGroupEntity->addEntity(m_dynamicEntities);
 }
 
 void WorldLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
 {
-	if (!m_scene.valid())
+	if (m_scene.changed())
 	{
-		// In case scene being revalidated due to resource been flushed we must
-		// remove our dynamic entity group first to prevent it from being destroyed.
-		if (m_scene)
-		{
-			world::GroupEntity* rootGroupEntity = dynamic_type_cast< world::GroupEntity* >(m_scene->getRootEntity());
-			if (rootGroupEntity)
-				rootGroupEntity->removeEntity(m_dynamicEntities);
-		}
-
-		// Re-validate scene; ie will replace scene instance with new instance
-		// from resource manager.
-		if (!m_scene.validate())
-			return;
-
-		// Add our dynamic entity group to scene root.
-		world::GroupEntity* rootGroupEntity = dynamic_type_cast< world::GroupEntity* >(m_scene->getRootEntity());
-		if (rootGroupEntity)
-			rootGroupEntity->addEntity(m_dynamicEntities);
+		// Create render entity group; contain scene root as well as dynamic entities.
+		m_renderGroup = new world::GroupEntity();
+		m_renderGroup->addEntity(m_scene->getRootEntity());
+		m_renderGroup->addEntity(m_dynamicEntities);
 
 		// Scene has been successfully validated; drop existing world renderer if we've been flushed.
 		m_worldRenderer = 0;
+		m_scene.consume();
 	}
 
 	// Re-create world renderer.
@@ -80,33 +61,28 @@ void WorldLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
 			return;
 	}
 
-	// We're about to initialize script; ensure dynamic factories and renderers are cleared.
-	if (!isInitialized())
-	{
-		for (RefArray< world::IEntityFactory >::iterator i = m_dynamicFactories.begin(); i != m_dynamicFactories.end(); ++i)
-			m_environment->getWorld()->removeEntityFactory(*i);
-
-		for (RefArray< world::IEntityRenderer >::iterator i = m_dynamicRenderers.begin(); i != m_dynamicRenderers.end(); ++i)
-			m_environment->getWorld()->removeEntityRenderer(*i);
-
-		m_dynamicFactories.clear();
-		m_dynamicRenderers.clear();
-	}
-
 	// Issue script update method.
 	invokeScriptUpdate(stage, info);
 
-	// Update scene.
+	// Update scene controller.
 	m_scene->update(
 		info.getSimulationTime(),
 		info.getSimulationDeltaTime(),
-		m_controllerEnable
+		m_controllerEnable,
+		false
 	);
+
+	// Update all entities; calling manually because we have exclusive control
+	// of dynamic entities and an explicit render root group.
+	world::Entity::UpdateParams up;
+	up.totalTime = info.getSimulationTime();
+	up.deltaTime = info.getSimulationDeltaTime();
+	m_renderGroup->update(up);
 }
 
 void WorldLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
 {
-	if (!m_scene.valid() || !m_worldRenderer)
+	if (!m_worldRenderer)
 		return;
 
 	// Get camera entity and extract view transform.
@@ -125,7 +101,7 @@ void WorldLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t 
 	);
 	m_worldRenderer->build(
 		m_worldRenderView,
-		m_scene->getRootEntity(),
+		m_renderGroup,
 		frame
 	);
 
@@ -134,7 +110,7 @@ void WorldLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t 
 
 void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 {
-	if (!m_scene.valid() || !m_worldRenderer)
+	if (!m_worldRenderer)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -182,31 +158,12 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 
 void WorldLayer::leave(Stage* stage)
 {
-	for (RefArray< world::IEntityFactory >::iterator i = m_dynamicFactories.begin(); i != m_dynamicFactories.end(); ++i)
-		m_environment->getWorld()->removeEntityFactory(*i);
-
-	for (RefArray< world::IEntityRenderer >::iterator i = m_dynamicRenderers.begin(); i != m_dynamicRenderers.end(); ++i)
-		m_environment->getWorld()->removeEntityRenderer(*i);
-
-	m_dynamicFactories.clear();
-	m_dynamicRenderers.clear();
+	m_renderGroup = 0;
 }
 
 void WorldLayer::reconfigured(Stage* stage)
 {
 	createWorldRenderer();
-}
-
-void WorldLayer::addEntityFactory(world::IEntityFactory* entityFactory)
-{
-	m_environment->getWorld()->addEntityFactory(entityFactory);
-	m_dynamicFactories.push_back(entityFactory);
-}
-
-void WorldLayer::addEntityRenderer(world::IEntityRenderer* entityRenderer)
-{
-	m_environment->getWorld()->addEntityRenderer(entityRenderer);
-	m_dynamicRenderers.push_back(entityRenderer);
 }
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name) const
@@ -232,9 +189,6 @@ Ref< world::Entity > WorldLayer::createEntity(const std::wstring& name, world::I
 {
 	std::map< std::wstring, resource::Proxy< world::EntityData > >::iterator i = m_entities.find(name);
 	if (i == m_entities.end())
-		return 0;
-
-	if (!i->second.validate())
 		return 0;
 
 	world::IEntityBuilder* entityBuilder = m_environment->getWorld()->getEntityBuilder();

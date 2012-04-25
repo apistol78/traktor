@@ -3,6 +3,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Render/Types.h"
+#include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "World/PostProcess/PostProcessStep.h"
 
@@ -93,10 +94,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	resource::Proxy< render::Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 	std::vector< Source > m_sources;
 	Vector4 m_direction;
 	int32_t m_taps;

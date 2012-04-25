@@ -501,7 +501,7 @@ void opx_getProperty(ExecutionState& state)
 	default:
 		{
 			T_IF_TRACE(
-				*state.trace << L"AopGetProperty: Unknown index " << index << Endl;
+				*state.trace << L"AopGetProperty: Unknown index " << int32_t(index.getNumber()) << Endl;
 			)
 			stack.push(ActionValue());
 		}
@@ -591,7 +591,7 @@ void opx_setProperty(ExecutionState& state)
 	default:
 		{
 			T_IF_TRACE(
-				*state.trace << L"AopSetProperty: Unknown index " << index << Endl;
+				*state.trace << L"AopSetProperty: Unknown index " << int32_t(index.getNumber()) << Endl;
 			)
 		}
 		break;
@@ -1829,49 +1829,10 @@ void opx_with(ExecutionState& state)
 
 void opp_pushData(PreparationState& state)
 {
-#if defined(T_BIG_ENDIAN)
-	{
-		uint8_t T_UNALIGNED * data = state.data;
-		uint8_t T_UNALIGNED * end = data + state.length;
-		while (data < end)
-		{
-			uint8_t type = *data++;
-			if (type == 0)		// String
-			{
-				uint32_t length = uint32_t(strlen(reinterpret_cast< const char T_UNALIGNED * >(data)));
-				data += length + 1;
-			}
-			else if (type == 1)	// Number
-			{
-				swap8in32(*(float*)data);
-				data += sizeof(float);
-			}
-			else if (type == 4)	// Register
-				data += sizeof(uint8_t);
-			else if (type == 5)	// Boolean
-				data += sizeof(uint8_t);
-			else if (type == 6)	// Double
-				data += sizeof(double);
-			else if (type == 7)	// Integer (32bit)
-			{
-				swap8in32(*(int32_t T_UNALIGNED *)data);
-				data += sizeof(int32_t);
-			}
-			else if (type == 8)	// Dictionary (8bit index)
-				data += sizeof(uint8_t);
-			else if (type == 9)	// Dictionary (16bit index)
-			{
-				swap8in32(*(uint16_t T_UNALIGNED *)data);
-				data += sizeof(uint16_t);
-			}
-		}
-	}
-#endif
-
 	// Try to convert values and replace with custom type.
 	{
-		uint8_t nd[65536];
-		uint8_t* ndp = nd;
+		AutoPtr< uint8_t > nd(new uint8_t [65536]);
+		uint8_t* ndp = nd.ptr();
 
 		uint8_t* data = state.data;
 		uint8_t* end = data + state.length;
@@ -1892,7 +1853,11 @@ void opp_pushData(PreparationState& state)
 			}
 			else if (type == 1)	// Number
 			{
-				uint16_t index = state.image->addConstData(ActionValue(*(const float T_UNALIGNED *)data));
+				float value = unalignedRead< float >(data);
+#if defined(T_BIG_ENDIAN)
+				swap8in32(value);
+#endif
+				uint16_t index = state.image->addConstData(ActionValue(value));
 
 				*ndp++ = 100;
 				*(uint16_t*)ndp = index;
@@ -1946,8 +1911,11 @@ void opp_pushData(PreparationState& state)
 			}
 			else if (type == 7)	// Integer (32bit)
 			{
-				int32_t n = unalignedRead< int32_t >(data);
-				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(n)));
+				int32_t value = unalignedRead< int32_t >(data);
+#if defined(T_BIG_ENDIAN)
+				swap8in32(value);
+#endif
+				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(value)));
 
 				*ndp++ = 100;
 				*(uint16_t*)ndp = index;
@@ -1962,8 +1930,13 @@ void opp_pushData(PreparationState& state)
 			}
 			else if (type == 9)	// Dictionary (16bit index)
 			{
+				uint16_t index = unalignedRead< uint16_t >(data);
+#if defined(T_BIG_ENDIAN)
+				swap8in32(index);
+#endif
+
 				*ndp++ = 9;
-				*(uint16_t*)ndp = *(const uint16_t T_UNALIGNED *)data;
+				*(uint16_t*)ndp = index;
 				ndp += sizeof(uint16_t);
 
 				data += sizeof(uint16_t);
@@ -1972,12 +1945,12 @@ void opp_pushData(PreparationState& state)
 				break;
 		}
 
-		if (int(ndp - nd) <= state.length)
+		if (uint32_t(ndp - nd.ptr()) <= state.length)
 		{
-			while (int(ndp - nd) < state.length)
+			while (uint32_t(ndp - nd.ptr()) < state.length)
 				*ndp++ = 200;
 
-			std::memcpy(state.data, nd, state.length);
+			std::memcpy(state.data, nd.ptr(), state.length);
 		}
 	}
 }

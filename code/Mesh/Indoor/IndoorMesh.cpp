@@ -44,9 +44,6 @@ void IndoorMesh::render(
 	const IMeshParameterCallback* parameterCallback
 )
 {
-	if (!m_shader.validate())
-		return;
-
 	Vector4 cameraPosition = worldRenderView.getView().inverse().translation();
 	
 	// Create initial clipper frustum, clipper frustums can have more than

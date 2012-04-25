@@ -2,7 +2,7 @@
 #define traktor_spray_Effect_H
 
 #include "Core/RefArray.h"
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Object.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -14,34 +14,28 @@
 
 namespace traktor
 {
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace spray
 	{
 
-class EffectLayer;
 class EffectInstance;
+class EffectLayer;
 
 /*! \brief
  * \ingroup Spray
  */
-class T_DLLCLASS Effect : public ISerializable
+class T_DLLCLASS Effect : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	Effect();
-
-	bool bind(resource::IResourceManager* resourceManager);
+	Effect(
+		float duration,
+		float loopStart,
+		float loopEnd,
+		const RefArray< EffectLayer >& layers
+	);
 
 	Ref< EffectInstance > createInstance() const;
-
-	virtual bool serialize(ISerializer& s);
 
 	float getDuration() const { return m_duration; }
 

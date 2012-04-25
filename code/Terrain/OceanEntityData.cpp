@@ -2,9 +2,7 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Heightfield/Heightfield.h"
-#include "Heightfield/HeightfieldResource.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Resource/Member.h"
 #include "Terrain/OceanEntityData.h"
 
@@ -37,8 +35,8 @@ bool OceanEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 
-	s >> resource::Member< hf::Heightfield, hf::HeightfieldResource >(L"heightfield", m_heightfield);
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< float >(L"altitude", m_altitude);
 	s >> MemberStaticArray< Wave, MaxWaves, MemberComposite< Wave > >(L"waves", m_waves);
 

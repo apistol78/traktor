@@ -26,9 +26,20 @@ class T_DLLCLASS ConeSource : public Source
 	T_RTTI_CLASS;
 
 public:
-	ConeSource();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	ConeSource(
+		float constantRate,
+		float velocityRate,
+		const Vector4& position,
+		const Vector4& normal,
+		float angle1,
+		float angle2,
+		const Range< float >& velocity,
+		const Range< float >& orientation,
+		const Range< float >& angularVelocity,
+		const Range< float >& age,
+		const Range< float >& mass,
+		const Range< float >& size
+	);
 
 	virtual void emit(
 		Context& context,
@@ -37,21 +48,19 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	const Vector4& getPosition() const { return m_position; }
 
-	inline const Vector4& getPosition() const { return m_position; }
+	const Vector4& getNormal() const { return m_normal; }
 
-	inline const Vector4& getNormal() const { return m_normal; }
+	const Scalar& getAngle1s() const { return m_angle1s; }
 
-	inline float getAngle1() const { return m_angle1; }
-
-	inline float getAngle2() const { return m_angle2; }
+	const Scalar& getAngle2s() const { return m_angle2s; }
 
 private:
 	Vector4 m_position;
 	Vector4 m_normal;
-	float m_angle1;
-	float m_angle2;
+	Scalar m_angle1s;
+	Scalar m_angle2s;
 	Range< float > m_velocity;
 	Range< float > m_orientation;
 	Range< float > m_angularVelocity;

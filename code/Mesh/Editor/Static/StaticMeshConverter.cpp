@@ -239,7 +239,7 @@ bool StaticMeshConverter::convert(
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
-	checked_type_cast< StaticMeshResource* >(meshResource)->m_shader = materialGuid;
+	checked_type_cast< StaticMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_parts = parts;
 
 	return true;

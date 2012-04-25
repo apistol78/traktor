@@ -4,7 +4,8 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
-#include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader.h"
+#include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 
 namespace traktor
@@ -30,13 +31,14 @@ Ref< ClothEntity > ClothEntityData::createEntity(
 	physics::PhysicsManager* physicsManager
 ) const
 {
-	if (!resourceManager->bind(m_shader))
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
 	Ref< ClothEntity > clothEntity = new ClothEntity(physicsManager);
 	if (!clothEntity->create(
 		renderSystem,
-		m_shader,
+		shader,
 		m_resolutionX,
 		m_resolutionY,
 		m_scale,
@@ -59,7 +61,7 @@ bool ClothEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< uint32_t >(L"resolutionX", m_resolutionX);
 	s >> Member< uint32_t >(L"resolutionY", m_resolutionY);
 	s >> Member< float >(L"scale", m_scale);

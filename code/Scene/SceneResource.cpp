@@ -31,12 +31,12 @@ Ref< Scene > SceneResource::createScene(
 	world::WorldRenderSettings::ShadowQuality shadowQuality
 ) const
 {
-	if (!m_postProcessSettings.getGuid().isNull())
+	resource::Proxy< world::PostProcessSettings > postProcessSettings;
+
+	if (!m_postProcessSettings.isNull())
 	{
-		if (!resourceManager->bind(m_postProcessSettings))
+		if (!resourceManager->bind(m_postProcessSettings, postProcessSettings))
 			log::error << L"Unable to bind post processing settings" << Endl;
-		if (!m_postProcessSettings.validate())
-			log::error << L"Unable to validate post processing settings" << Endl;
 	}
 
 	entityBuilder->begin(entitySchema);
@@ -64,7 +64,7 @@ Ref< Scene > SceneResource::createScene(
 		entitySchema,
 		rootEntity,
 		worldRenderSettings,
-		m_postProcessSettings
+		postProcessSettings
 	);
 }
 
@@ -78,12 +78,12 @@ Ref< world::WorldRenderSettings > SceneResource::getWorldRenderSettings() const
 	return m_worldRenderSettings;
 }
 
-void SceneResource::setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcessSettings)
+void SceneResource::setPostProcessSettings(const resource::Id< world::PostProcessSettings >& postProcessSettings)
 {
 	m_postProcessSettings = postProcessSettings;
 }
 
-const resource::Proxy< world::PostProcessSettings >& SceneResource::getPostProcessSettings() const
+const resource::Id< world::PostProcessSettings >& SceneResource::getPostProcessSettings() const
 {
 	return m_postProcessSettings;
 }

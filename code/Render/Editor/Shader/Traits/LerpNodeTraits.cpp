@@ -99,18 +99,46 @@ bool LerpNodeTraits::evaluatePartial(
 	const OutputPin*& foldOutputPin
 ) const
 {
+	// If both inputs are constant and the values are equal then we can ignore
+	// blend value even if it's not constant.
+	if (inputConstants[0].getWidth() > 0 && inputConstants[1].getWidth() > 0)
+	{
+		if (inputConstants[0] == inputConstants[1])
+		{
+			foldOutputPin = inputOutputPins[0];
+			return true;
+		}
+	}
+	
+	// If blend is constant zero.
 	if (inputConstants[2].isZero())
 	{
 		foldOutputPin = inputOutputPins[0];
 		return true;
 	}
-	else if (inputConstants[2].isOne())
+	
+	// If blend is constant one.
+	if (inputConstants[2].isOne())
 	{
 		foldOutputPin = inputOutputPins[1];
 		return true;
 	}
-	else
-		return false;
+
+	return false;
+}
+
+PinOrderType LerpNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	return pinOrderMax(
+		pinOrderAdd(inputPinOrders[0], inputPinOrders[2]),
+		pinOrderAdd(inputPinOrders[1], inputPinOrders[2])
+	);
 }
 
 	}

@@ -2,7 +2,7 @@
 #define traktor_animation_StateNodeAnimation_H
 
 #include "Animation/Animation/StateNode.h"
-#include "Resource/Proxy.h"
+#include "Resource/IdProxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,7 +29,7 @@ class T_DLLCLASS StateNodeAnimation : public StateNode
 public:
 	StateNodeAnimation();
 
-	StateNodeAnimation(const std::wstring& name, const resource::Proxy< Animation >& animation);
+	StateNodeAnimation(const std::wstring& name, const resource::IdProxy< Animation >& animation);
 
 	virtual bool bind(resource::IResourceManager* resourceManager);
 
@@ -39,10 +39,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Proxy< Animation >& getAnimation() const { return m_animation; }
+	const resource::IdProxy< Animation >& getAnimation() const { return m_animation; }
 
 private:
-	resource::Proxy< Animation > m_animation;
+	resource::IdProxy< Animation > m_animation;
 };
 
 	}

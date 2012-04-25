@@ -197,39 +197,26 @@ void RenderViewWin32::clear(uint32_t clearMask, const float color[4], float dept
 	}
 }
 
-void RenderViewWin32::setVertexBuffer(VertexBuffer* vertexBuffer)
+void RenderViewWin32::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
 	T_ASSERT (is_a< VertexBufferDx9 >(vertexBuffer));
-	m_currentVertexBuffer = static_cast< VertexBufferDx9* >(vertexBuffer);
-}
-
-void RenderViewWin32::setIndexBuffer(IndexBuffer* indexBuffer)
-{
 	T_ASSERT (indexBuffer == 0 || is_a< IndexBufferDx9 >(indexBuffer));
-	m_currentIndexBuffer = static_cast< IndexBufferDx9* >(indexBuffer);
-}
-
-void RenderViewWin32::setProgram(IProgram* program)
-{
 	T_ASSERT (is_a< ProgramWin32 >(program));
-	m_currentProgram = static_cast< ProgramWin32* >(program);
-}
-
-void RenderViewWin32::draw(const Primitives& primitives)
-{
 	T_ASSERT (!m_renderStateStack.empty());
-	T_ASSERT (m_currentProgram);
-	T_ASSERT (m_currentVertexBuffer);
+
+	VertexBufferDx9* vertexBufferDx9 = static_cast< VertexBufferDx9* >(vertexBuffer);
+	IndexBufferDx9* indexBufferDx9 = static_cast< IndexBufferDx9* >(indexBuffer);
+	ProgramWin32* programDx9 = static_cast< ProgramWin32* >(program);
 
 	if (m_targetDirty)
 		bindTargets();
 
-	if (!m_currentProgram->activate())
+	if (!programDx9->activate())
 		return;
 
-	m_currentVertexBuffer->activate(m_d3dDevice);
+	vertexBufferDx9->activate(m_d3dDevice);
 
-	IndexBufferDx9::activate(m_d3dDevice, m_currentIndexBuffer);
+	IndexBufferDx9::activate(m_d3dDevice, indexBufferDx9);
 
 	if (primitives.indexed)
 	{

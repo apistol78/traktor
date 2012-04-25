@@ -80,17 +80,6 @@ namespace traktor
 	);																\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
-#define T_IMPLEMENT_RTTI_FACTORY_CLONABLE_CLASS(ID, VERSION, CLASS, SUPER)	\
-	traktor::TypeInfo CLASS::ms_typeInfo(									\
-		ID,																	\
-		sizeof(CLASS),														\
-		VERSION,															\
-		false,																\
-		&traktor::type_of< SUPER >(),										\
-		new traktor::ClonableInstanceFactory< CLASS >()						\
-	);																		\
-	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
-
 #define T_IMPLEMENT_RTTI_EDIT_CLASS_ROOT(ID, VERSION, CLASS)	\
 	traktor::TypeInfo CLASS::ms_typeInfo(						\
 		ID,														\
@@ -98,7 +87,7 @@ namespace traktor
 		VERSION,												\
 		true,													\
 		0,														\
-		new traktor::ClonableInstanceFactory< CLASS >()			\
+		new traktor::InstanceFactory< CLASS >()					\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -109,7 +98,7 @@ namespace traktor
 		VERSION,												\
 		true,													\
 		&traktor::type_of< SUPER >(),							\
-		new traktor::ClonableInstanceFactory< CLASS >()			\
+		new traktor::InstanceFactory< CLASS >()					\
 	);															\
 	T_IMPLEMENT_RTTI_CLASS_COMMON(CLASS)
 
@@ -272,7 +261,7 @@ T checked_type_cast(T0* obj)
 template < typename T, bool AllowNull, typename T0 >
 T checked_type_cast(T0* obj)
 {
-	T_ASSERT ((AllowNull || obj) && is_a< T >(obj));
+	T_ASSERT ((AllowNull && !obj) || is_a< T >(obj));
 	return static_cast< T >(obj);
 }
 

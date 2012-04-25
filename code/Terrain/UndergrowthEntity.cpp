@@ -8,7 +8,6 @@
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
-#include "Resource/IResourceManager.h"
 #include "Terrain/UndergrowthEntity.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
@@ -32,7 +31,6 @@ void UndergrowthEntity::Vertex::set(const Vector4& position_, const Vector4& nor
 }
 
 UndergrowthEntity::UndergrowthEntity(
-	resource::IResourceManager* resourceManager,
 	const resource::Proxy< hf::Heightfield >& heightfield,
 	const resource::Proxy< hf::MaterialMask >& materialMask,
 	const Settings& settings,
@@ -52,9 +50,6 @@ UndergrowthEntity::UndergrowthEntity(
 ,	m_jobs(4)
 ,	m_sync(false)
 {
-	resourceManager->bind(m_heightfield);
-	resourceManager->bind(m_materialMask);
-
 	m_lastFrustum.buildPerspective(0.0f, 1.0f, 0.0f, 0.0f);
 
 	int offset = 0;
@@ -87,9 +82,6 @@ void UndergrowthEntity::render(
 {
 	m_lastView = worldRenderView.getView();
 	m_lastFrustum = worldRenderView.getViewFrustum();
-
-	if (!m_heightfield.validate() || !m_shader.validate())
-		return;
 
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(m_shader);
@@ -128,9 +120,6 @@ Aabb3 UndergrowthEntity::getBoundingBox() const
 
 void UndergrowthEntity::update(const UpdateParams& update)
 {
-	if (!m_heightfield.validate() || !m_materialMask.validate())
-		return;
-
 	synchronize();
 
 	Vertex* vertexTop = static_cast< Vertex* >(m_vertexBuffer->lock());
@@ -164,8 +153,8 @@ void UndergrowthEntity::synchronize()
 
 void UndergrowthEntity::updateTask(int start, int end, Vertex* outVertex)
 {
-	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
-	Scalar dw = worldExtent.x() / Scalar(m_heightfield->getResource().getSize());
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
+	Scalar dw = worldExtent.x() / Scalar(m_heightfield->getSize());
 
 	Scalar mmszs(m_materialMask->getSize());
 	int32_t mmszf = int32_t(m_materialMask->getSize());

@@ -26,7 +26,7 @@ public:
 
 	virtual ~GlslEmitter();
 
-	void emit(GlslContext& c, Node* node);
+	bool emit(GlslContext& c, Node* node);
 
 private:
 	std::map< const TypeInfo*, Emitter* > m_emitters;

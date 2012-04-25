@@ -21,10 +21,10 @@ class T_DLLCLASS IPropertyValue : public ISerializable
 {
 	T_RTTI_CLASS;
 
-protected:
-	friend class PropertyGroup;
-
+public:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const = 0;
+
+	virtual Ref< IPropertyValue > clone() const = 0;
 };
 
 }

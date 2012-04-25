@@ -5,6 +5,7 @@
 #include <map>
 #include "Core/Guid.h"
 #include "Mesh/IMeshResource.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,6 +17,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class Shader;
+
+	}
+
 	namespace mesh
 	{
 
@@ -49,7 +57,7 @@ private:
 	friend class SkinnedMeshConverter;
 	typedef std::list< Part > parts_t;
 
-	Guid m_shader;
+	resource::Id< render::Shader > m_shader;
 	std::map< std::wstring, parts_t > m_parts;
 	std::map< std::wstring, int > m_boneMap;
 };

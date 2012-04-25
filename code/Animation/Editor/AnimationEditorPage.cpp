@@ -487,7 +487,7 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 void AnimationEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
-		m_resourceManager->update(eventId, true);
+		m_resourceManager->reload(eventId);
 }
 
 void AnimationEditorPage::setSkeleton(Skeleton* skeleton)
@@ -760,9 +760,9 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 			{
 				if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
 				{
-					Quaternion orientation = pose.getBoneOrientation(m_selectedBone);
-					orientation *= Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), mouseDelta.x) * Quaternion(Vector4(1.0f, 0.0f, 0.0f, 0.0f), mouseDelta.y);
-					pose.setBoneOrientation(m_selectedBone, orientation.normalized());
+					Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
+					orientation += Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
+					pose.setBoneOrientation(m_selectedBone, orientation);
 
 					// Compensate for applied twist.
 					if (m_twistLock && m_haveRelativeTwist)
@@ -770,17 +770,16 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 						float relativeTwist;
 						if (calculateRelativeTwist(poseIndex, m_selectedBone, relativeTwist))
 						{
-							Quaternion orientation = pose.getBoneOrientation(m_selectedBone);
-							orientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), m_relativeTwist - relativeTwist);
-							pose.setBoneOrientation(m_selectedBone, orientation.normalized());
+							orientation += Vector4(0.0f, 0.0f, m_relativeTwist - relativeTwist);
+							pose.setBoneOrientation(m_selectedBone, orientation);
 						}
 					}
 				}
 				else
 				{
-					Quaternion orientation = pose.getBoneOrientation(m_selectedBone);
-					orientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), mouseDelta.x);
-					pose.setBoneOrientation(m_selectedBone, orientation.normalized());
+					Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
+					orientation += Vector4(0.0f, 0.0f, mouseDelta.x, 0.0f);
+					pose.setBoneOrientation(m_selectedBone, orientation);
 				}
 			}
 			else

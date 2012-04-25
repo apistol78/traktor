@@ -3,7 +3,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 #include "World/Entity/EntityData.h"
 
 // import/export mechanism.
@@ -46,14 +46,14 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 	const AlignedVector< ControlPoint >& getPath() const { return m_path; }
 
 	float getTileFactorV() const { return m_tileFactorV; }
 
 private:
-	resource::Proxy< render::Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 	AlignedVector< ControlPoint > m_path;
 	float m_tileFactorV;
 };

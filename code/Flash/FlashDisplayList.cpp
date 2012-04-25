@@ -104,12 +104,12 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 	for (SmallMap< uint16_t, FlashFrame::PlaceObject >::const_iterator i = placeObjects.begin(); i != placeObjects.end(); ++i)
 	{
 		const FlashFrame::PlaceObject& placeObject = i->second;
-		if (placeObject.hasMove || placeObject.hasCharacterId)
+		if (placeObject.has(FlashFrame::PfHasMove) || placeObject.has(FlashFrame::PfHasCharacterId))
 		{
 			uint16_t depth = placeObject.depth + c_depthOffset;
 			Layer& layer = m_layers[depth];
 
-			if (placeObject.hasCharacterId && placeObject.characterId != layer.id)
+			if (placeObject.has(FlashFrame::PfHasCharacterId) && placeObject.characterId != layer.id)
 			{
 				Ref< const FlashCharacter > character = m_context->getMovie()->getCharacter(placeObject.characterId);
 				if (character)
@@ -119,7 +119,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 					// Create new instance.
 					layer.id = placeObject.characterId;
-					layer.instance = character->createInstance(m_context, ownerInstance, placeObject.hasName ? placeObject.name : "", 0);
+					layer.instance = character->createInstance(m_context, ownerInstance, placeObject.has(FlashFrame::PfHasName) ? placeObject.name : "", 0);
 					T_ASSERT (layer.instance);
 					layer.instance->setTransform(transform);
 				}
@@ -130,13 +130,13 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			if (!layer.instance)
 				continue;
 
-			if (placeObject.hasName)
+			if (placeObject.has(FlashFrame::PfHasName))
 				layer.instance->setName(placeObject.name);
 
-			if (placeObject.hasCxTransform)
+			if (placeObject.has(FlashFrame::PfHasCxTransform))
 				layer.instance->setColorTransform(placeObject.cxTransform);
 
-			if (placeObject.hasMatrix)
+			if (placeObject.has(FlashFrame::PfHasMatrix))
 				layer.instance->setTransform(placeObject.matrix);
 
 			if (!placeObject.actions.empty())
@@ -145,7 +145,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 					layer.instance->setEvent(j->eventMask, j->script);
 			}
 
-			if (placeObject.hasClipDepth)
+			if (placeObject.has(FlashFrame::PfHasClipDepth))
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;
 
 			layer.name = m_context->getString(layer.instance->getName());
@@ -154,9 +154,9 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 		}
 		else
 		{
-			T_ASSERT (!placeObject.hasName);
-			T_ASSERT (!placeObject.hasCxTransform);
-			T_ASSERT (!placeObject.hasMatrix);
+			T_ASSERT (!placeObject.has(FlashFrame::PfHasName));
+			T_ASSERT (!placeObject.has(FlashFrame::PfHasCxTransform));
+			T_ASSERT (!placeObject.has(FlashFrame::PfHasMatrix));
 
 			layer_map_t::iterator j = m_layers.find(placeObject.depth + c_depthOffset);
 			if (j != m_layers.end())

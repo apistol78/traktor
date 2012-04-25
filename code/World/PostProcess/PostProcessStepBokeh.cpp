@@ -10,7 +10,6 @@
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/VertexElement.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "World/WorldRenderView.h"
@@ -51,8 +50,8 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(
 	uint32_t height
 ) const
 {
-	resource::Proxy< render::Shader > shader = m_shader;
-	if (!resourceManager->bind(shader))
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
 	std::vector< InstanceBokeh::Source > sources(m_sources.size());
@@ -143,7 +142,7 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(
 
 bool PostProcessStepBokeh::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
 	return true;
 }
@@ -193,9 +192,6 @@ void PostProcessStepBokeh::InstanceBokeh::render(
 	const RenderParams& params
 )
 {
-	if (!m_shader.validate())
-		return;
-
 	postProcess->prepareShader(m_shader);
 
 	m_shader->setFloatParameter(m_handleTime, m_time);
@@ -217,16 +213,18 @@ void PostProcessStepBokeh::InstanceBokeh::render(
 		}
 	}
 
-	renderView->setVertexBuffer(m_vertexBuffer);
-	renderView->setIndexBuffer(m_indexBuffer);
-
-	m_shader->draw(renderView, render::Primitives(
-		render::PtTriangles,
-		0,
-		m_quadCount * 2,
-		0,
-		m_quadCount * 4 - 1
-	));
+	m_shader->draw(
+		renderView,
+		m_vertexBuffer,
+		m_indexBuffer,
+		render::Primitives(
+			render::PtTriangles,
+			0,
+			m_quadCount * 2,
+			0,
+			m_quadCount * 4 - 1
+		)
+	);
 
 	m_time += params.deltaTime;
 }

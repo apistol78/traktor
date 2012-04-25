@@ -1,8 +1,8 @@
 #include <algorithm>
-#include "Animation/SkeletonUtils.h"
-#include "Animation/Skeleton.h"
 #include "Animation/Bone.h"
 #include "Animation/Pose.h"
+#include "Animation/Skeleton.h"
+#include "Animation/SkeletonUtils.h"
 
 namespace traktor
 {
@@ -57,7 +57,7 @@ void calculatePoseLocalTransforms(
 	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 		outBoneLocalTransforms[i] = 
 			Transform(skeleton->getBone(i)->getPosition() + pose->getBoneOffset(i)) *
-			Transform(skeleton->getBone(i)->getOrientation() * pose->getBoneOrientation(i));
+			Transform(skeleton->getBone(i)->getOrientation() * Quaternion::fromEulerAngles(pose->getBoneOrientation(i)));
 }
 
 void calculatePoseTransforms(
@@ -159,9 +159,9 @@ void blendPoses(
 		Vector4 o2 = pose2->getBoneOffset(i);
 		outPose->setBoneOffset(i, lerp(o1, o2, blend));
 
-		Quaternion q1 = pose1->getBoneOrientation(i);
-		Quaternion q2 = pose2->getBoneOrientation(i);
-		outPose->setBoneOrientation(i, slerp(q1, q2, blend));
+		Vector4 q1 = pose1->getBoneOrientation(i);
+		Vector4 q2 = pose2->getBoneOrientation(i);
+		outPose->setBoneOrientation(i, lerp(q1, q2, blend));
 	}
 }
 

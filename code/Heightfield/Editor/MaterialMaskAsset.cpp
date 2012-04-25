@@ -1,6 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
-#include "Heightfield/MaterialMaskResource.h"
 #include "Heightfield/Editor/MaterialMaskAsset.h"
 #include "Heightfield/Editor/MaterialMaskAssetLayer.h"
 
@@ -14,11 +13,6 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.hf.MaterialMaskAsset", 1, MaterialMaskAsse
 const RefArray< MaterialMaskAssetLayer >& MaterialMaskAsset::getLayers() const
 {
 	return m_layers;
-}
-
-const TypeInfo* MaterialMaskAsset::getOutputType() const
-{
-	return &type_of< MaterialMaskResource >();
 }
 
 bool MaterialMaskAsset::serialize(ISerializer& s)

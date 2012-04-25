@@ -1,6 +1,3 @@
-#include "Core/Serialization/AttributeDirection.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/GravityModifier.h"
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
@@ -31,11 +28,11 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.GravityModifier", 1, GravityModifier, Modifier)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.GravityModifier", GravityModifier, Modifier)
 
-GravityModifier::GravityModifier()
-:	m_gravity(0.0f, 0.0f, 0.0f, 0.0f)
-,	m_world(true)
+GravityModifier::GravityModifier(const Vector4& gravity, bool world)
+:	m_gravity(gravity)
+,	m_world(world)
 {
 }
 
@@ -65,14 +62,6 @@ void GravityModifier::update(const Scalar& deltaTime, const Transform& transform
 		points[i].velocity += gravity * Scalar(points[i].inverseMass);
 }
 #endif
-
-bool GravityModifier::serialize(ISerializer& s)
-{
-	s >> Member< Vector4 >(L"gravity", m_gravity, AttributeDirection());
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"world", m_world);
-	return true;
-}
 
 	}
 }

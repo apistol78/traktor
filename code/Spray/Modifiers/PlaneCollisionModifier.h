@@ -1,8 +1,8 @@
 #ifndef traktor_spray_PlaneCollisionModifier_H
 #define traktor_spray_PlaneCollisionModifier_H
 
-#include "Spray/Modifier.h"
 #include "Core/Math/Plane.h"
+#include "Spray/Modifier.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -25,15 +25,13 @@ class T_DLLCLASS PlaneCollisionModifier : public Modifier
 	T_RTTI_CLASS;
 
 public:
-	PlaneCollisionModifier();
+	PlaneCollisionModifier(const Plane& plane, float restitution);
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
 	virtual void update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const;
 #else
 	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const;
 #endif
-
-	virtual bool serialize(ISerializer& s);
 
 private:
 	Plane m_plane;

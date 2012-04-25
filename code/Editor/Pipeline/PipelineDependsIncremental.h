@@ -39,7 +39,6 @@ public:
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset,
-		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
 		uint32_t flags
@@ -89,7 +88,6 @@ private:
 	 *
 	 * \param sourceInstance Source asset database instance; null if not originate from database.
 	 * \param sourceAsset Pointer to source asset object.
-	 * \param name Name of source asset.
 	 * \param outputPath Output path of target instance.
 	 * \param outputGuid Guid of output instance.
 	 * \param build If asset needs to be built.
@@ -97,7 +95,6 @@ private:
 	void addUniqueDependency(
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
-		const std::wstring& name,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
 		uint32_t flags

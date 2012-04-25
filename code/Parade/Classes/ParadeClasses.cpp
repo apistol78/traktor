@@ -15,8 +15,6 @@
 #include "Script/Boxes.h"
 #include "Script/Delegate.h"
 #include "Script/IScriptManager.h"
-#include "World/Entity/IEntityFactory.h"
-#include "World/Entity/IEntityRenderer.h"
 #include "World/Entity/IEntitySchema.h"
 #include "World/Entity/Entity.h"
 
@@ -111,8 +109,6 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classVideoLayer);
 
 	Ref< script::AutoScriptClass< WorldLayer > > classWorldLayer = new script::AutoScriptClass< WorldLayer >();
-	classWorldLayer->addMethod(L"addEntityFactory", &WorldLayer::addEntityFactory);
-	classWorldLayer->addMethod(L"addEntityRenderer", &WorldLayer::addEntityRenderer);
 	classWorldLayer->addMethod(L"getEntity", &WorldLayer::getEntity);
 	classWorldLayer->addMethod(L"getEntities", &WorldLayer::getEntities);
 	classWorldLayer->addMethod(L"getEntitiesOf", &WorldLayer::getEntitiesOf);

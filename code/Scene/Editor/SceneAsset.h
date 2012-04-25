@@ -1,8 +1,8 @@
 #ifndef traktor_scene_SceneAsset_H
 #define traktor_scene_SceneAsset_H
 
-#include "Editor/ITypedAsset.h"
-#include "Resource/Proxy.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -28,7 +28,7 @@ class WorldRenderSettings;
 
 class ISceneControllerData;
 
-class T_DLLCLASS SceneAsset : public editor::ITypedAsset
+class T_DLLCLASS SceneAsset : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -39,9 +39,9 @@ public:
 
 	Ref< world::WorldRenderSettings > getWorldRenderSettings() const;
 
-	void setPostProcessSettings(const resource::Proxy< world::PostProcessSettings >& postProcess);
+	void setPostProcessSettings(const resource::Id< world::PostProcessSettings >& postProcess);
 
-	const resource::Proxy< world::PostProcessSettings >& getPostProcessSettings() const;
+	const resource::Id< world::PostProcessSettings >& getPostProcessSettings() const;
 
 	void setEntityData(world::EntityData* entityData);
 
@@ -51,13 +51,11 @@ public:
 
 	Ref< ISceneControllerData > getControllerData() const;
 
-	virtual const TypeInfo* getOutputType() const;
-
 	virtual bool serialize(ISerializer& s);
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	mutable resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
+	resource::Id< world::PostProcessSettings > m_postProcessSettings;
 	Ref< world::EntityData > m_entityData;
 	Ref< ISceneControllerData > m_controllerData;
 };

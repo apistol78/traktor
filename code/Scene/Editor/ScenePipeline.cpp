@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyInteger.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -17,7 +18,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 6, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 7, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_suppressDepthPass(false)
@@ -25,6 +26,7 @@ ScenePipeline::ScenePipeline()
 ,	m_suppressPostProcess(false)
 ,	m_suppressPreLit(false)
 ,	m_shadowMapSizeDenom(1)
+,	m_shadowMapMaxSlices(0)
 {
 }
 
@@ -34,7 +36,8 @@ bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 	m_suppressShadows = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressShadows");
 	m_suppressPostProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
 	m_suppressPreLit = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressPreLit");
-	m_shadowMapSizeDenom = settings->getProperty< PropertyBoolean >(L"ScenePipeline.ShadowMapSizeDenom");
+	m_shadowMapSizeDenom = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapSizeDenom", 1);
+	m_shadowMapMaxSlices = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapMaxSlices", 0);
 	return true;
 }
 
@@ -53,11 +56,13 @@ bool ScenePipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
-	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings().getGuid(), editor::PdfBuild);
+	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings(), editor::PdfBuild);
 	pipelineDepends->addDependency(sceneAsset->getEntityData());
 	pipelineDepends->addDependency(sceneAsset->getControllerData());
 	return true;
@@ -97,9 +102,9 @@ bool ScenePipeline::buildOutput(
 		sceneResource->getWorldRenderSettings()->shadowsEnabled = false;
 		log::info << L"Shadows suppressed" << Endl;
 	}
-	if (m_suppressPostProcess && !sceneResource->getPostProcessSettings().getGuid().isNull())
+	if (m_suppressPostProcess && !sceneResource->getPostProcessSettings().isNull())
 	{
-		sceneResource->setPostProcessSettings(Guid());
+		sceneResource->setPostProcessSettings(resource::Id< world::PostProcessSettings >());
 		log::info << L"Post processing suppressed" << Endl;
 	}
 	if (m_suppressPreLit && sceneResource->getWorldRenderSettings()->renderType == world::WorldRenderSettings::RtPreLit)
@@ -113,6 +118,13 @@ bool ScenePipeline::buildOutput(
 		sceneResource->getWorldRenderSettings()->shadowMapResolution =
 			sceneAsset->getWorldRenderSettings()->shadowMapResolution / m_shadowMapSizeDenom;
 		log::info << L"Reduced shadow map size " << sceneResource->getWorldRenderSettings()->shadowMapResolution << Endl;
+	}
+
+	if (m_shadowMapMaxSlices > 0)
+	{
+		sceneResource->getWorldRenderSettings()->shadowCascadingSlices =
+			std::min(sceneResource->getWorldRenderSettings()->shadowCascadingSlices, m_shadowMapMaxSlices);
+		log::info << L"Reduced shadow slices " << sceneResource->getWorldRenderSettings()->shadowCascadingSlices << Endl;
 	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);

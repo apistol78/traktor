@@ -40,13 +40,6 @@ class Shader;
 
 	}
 
-	namespace resource
-	{
-
-class IResourceManager;
-
-	}
-
 	namespace world
 	{
 
@@ -91,7 +84,6 @@ public:
 #pragma pack()
 
 	UndergrowthEntity(
-		resource::IResourceManager* resourceManager,
 		const resource::Proxy< hf::Heightfield >& heightfield,
 		const resource::Proxy< hf::MaterialMask >& materialMask,
 		const Settings& settings,

@@ -1,6 +1,5 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Sound/ISoundResource.h"
 #include "Sound/Editor/SoundAsset.h"
 
 namespace traktor
@@ -14,11 +13,6 @@ SoundAsset::SoundAsset()
 :	m_stream(false)
 ,	m_preload(true)
 {
-}
-
-const TypeInfo* SoundAsset::getOutputType() const
-{
-	return &type_of< ISoundResource >();
 }
 
 bool SoundAsset::serialize(ISerializer& s)

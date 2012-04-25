@@ -1,19 +1,16 @@
 #include <limits>
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
-#include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldResource.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/HeightfieldCompositor.h"
-#include "Heightfield/Editor/HeightfieldLayer.h"
+#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldPipeline.h"
 
 namespace traktor
@@ -21,7 +18,7 @@ namespace traktor
 	namespace hf
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 0, HeightfieldPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 1, HeightfieldPipeline, editor::IPipeline)
 
 bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -44,17 +41,14 @@ bool HeightfieldPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	Ref< const HeightfieldAsset > heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
-	
-	// Add dependency to file.
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
 	pipelineDepends->addDependency(fileName);
-
-	// Pass source instance as parameter to build output.
-	outBuildParams = sourceInstance;
 	return true;
 }
 
@@ -70,31 +64,19 @@ bool HeightfieldPipeline::buildOutput(
 {
 	Ref< const HeightfieldAsset > heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
 
-	Ref< const db::Instance > assetInstance = checked_type_cast< const db::Instance*, true >(buildParams);
-	if (!assetInstance)
+	// Load heightfield from source file.
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
+	Ref< Heightfield > heightfield = HeightfieldFormat().read(
+		fileName,
+		heightfieldAsset->getWorldExtent(),
+		heightfieldAsset->getInvertX(),
+		heightfieldAsset->getInvertZ(),
+		heightfieldAsset->getDetailSkip()
+	);
+	if (!heightfield)
 	{
-		log::error << L"Failed to build heightfield; no asset instance" << Endl;
-		return false;
-	}
-
-	Ref< HeightfieldCompositor > compositor = HeightfieldCompositor::createFromAsset(heightfieldAsset, m_assetPath);
-	if (!compositor)
-	{
-		log::error << L"Failed to build heightfield; unable to create heightfield compositor from asset" << Endl;
-		return false;
-	}
-
-	if (!compositor->readInstanceData(assetInstance))
-	{
-		log::error << L"Failed to build heightfield; unable to read asset layers" << Endl;
-		return false;
-	}
-
-	const HeightfieldLayer* mergedLayer = compositor->getMergedLayer();
-	if (!mergedLayer)
-	{
-		log::error << L"Failed to build heightfield; unable to get merged layers" << Endl;
-		return false;
+		log::error << L"Unable to read heightfield source \"" << fileName.getPathName() << L"\"" << Endl;
+		return 0;
 	}
 
 	// Create height field resource.
@@ -119,8 +101,8 @@ bool HeightfieldPipeline::buildOutput(
 		return false;
 	}
 
-	uint32_t size = compositor->getSize();
-	const height_t* heights = static_cast< const height_t* >(mergedLayer->getImage()->getData());
+	const height_t* heights = heightfield->getHeights();
+	uint32_t size = heightfield->getSize();
 
 	Writer(stream).write(
 		heights,
@@ -132,8 +114,6 @@ bool HeightfieldPipeline::buildOutput(
 	
 	resource->m_size = size;
 	resource->m_worldExtent = heightfieldAsset->getWorldExtent();
-	resource->m_patchDim = heightfieldAsset->getPatchDim();
-	resource->m_detailSkip = heightfieldAsset->getDetailSkip();
 
 	instance->setObject(resource);
 

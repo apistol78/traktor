@@ -155,7 +155,7 @@ struct BuildCombinationTask : public Object
 		for (RefArray< Texture >::iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
 		{
 			const Guid& textureGuid = (*i)->getExternal();
-			if (!textureGuid.isNull() && textureGuid.isValid())
+			if (textureGuid.isNotNull())
 				shaderResourceCombination->textures.push_back(textureGuid);
 		}
 
@@ -279,7 +279,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 44, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 46, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -337,10 +337,23 @@ bool ShaderPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	Ref< const ShaderGraph > shaderGraph = checked_type_cast< const ShaderGraph* >(sourceAsset);
+
+	// Extract platform permutation.
+	const wchar_t* platformSignature = m_programCompiler->getPlatformSignature();
+	T_ASSERT (platformSignature);
+
+	shaderGraph = ShaderGraphStatic(shaderGraph).getPlatformPermutation(platformSignature);
+	if (!shaderGraph)
+	{
+		log::error << L"ShaderPipeline failed; unable to get platform permutation" << Endl;
+		return false;
+	}
 
 	// Remove unused branches; don't want to add dependencies to lingering textures et al.
 	shaderGraph = ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
@@ -363,7 +376,7 @@ bool ShaderPipeline::buildDependencies(
 	for (RefArray< Texture >::const_iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
 	{
 		const Guid& textureGuid = (*i)->getExternal();
-		if (textureGuid.isValid() && !textureGuid.isNull())
+		if (textureGuid.isNotNull())
 			pipelineDepends->addDependency(textureGuid, editor::PdfBuild);
 	}
 
@@ -550,6 +563,39 @@ bool ShaderPipeline::buildOutput(
 		report->set(L"vertexCost", stats.vertexCost);
 		report->set(L"pixelCost", stats.pixelCost);
 	}
+
+#if defined(_DEBUG)
+	// Show resource information.
+	{
+		const std::vector< ShaderResource::Technique >& techniques = shaderResource->getTechniques();
+		log::info << uint32_t(techniques.size()) << L" technique(s)" << Endl;
+
+		for (size_t i = 0; i < techniques.size(); ++i)
+		{
+			log::info << uint32_t(i) << L": " << techniques[i].name << Endl;
+			log::info << IncreaseIndent;
+
+			const std::vector< ShaderResource::Combination >& combinations = techniques[i].combinations;
+			log::info << uint32_t(combinations.size()) << L" combination(s)" << Endl;
+
+			for (size_t j = 0; j < combinations.size(); ++j)
+			{
+				log::info << uint32_t(j) << L": " << combinations[j].parameterValue << Endl;
+				log::info << IncreaseIndent;
+
+				const std::vector< Guid >& textures = combinations[j].textures;
+				log::info << uint32_t(textures.size()) << L" texture(s)" << Endl;
+
+				for (size_t k = 0; k < textures.size(); ++k)
+					log::info << uint32_t(k) << L": " << textures[k].format() << Endl;
+
+				log::info << DecreaseIndent;
+			}
+
+			log::info << DecreaseIndent;
+		}
+	}
+#endif
 
 	return true;
 }

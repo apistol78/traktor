@@ -8,6 +8,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -32,7 +33,10 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	}
 
 	Ref< StaticMesh > staticMesh = new StaticMesh();
-	staticMesh->m_shader = m_shader;
+	
+	if (!resourceManager->bind(m_shader, staticMesh->m_shader))
+		return 0;
+
 	staticMesh->m_mesh = mesh;
 
 	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
@@ -49,9 +53,6 @@ Ref< IMesh > StaticMeshResource::createMesh(
 			staticMesh->m_parts[worldTechnique].push_back(part);
 		}
 	}
-
-	if (!resourceManager->bind(staticMesh->m_shader))
-		return 0;
 	
 #if defined(_DEBUG)
 	staticMesh->m_name = wstombs(name);
@@ -63,7 +64,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 bool StaticMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
-	s >> Member< Guid >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,
 		parts_t,

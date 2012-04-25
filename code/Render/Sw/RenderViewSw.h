@@ -75,13 +75,7 @@ public:
 
 	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
 
-	virtual void setVertexBuffer(VertexBuffer* vertexBuffer);
-
-	virtual void setIndexBuffer(IndexBuffer* indexBuffer);
-
-	virtual void setProgram(IProgram* program);
-
-	virtual void draw(const Primitives& primitives);
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives);
 
 	virtual void end();
 

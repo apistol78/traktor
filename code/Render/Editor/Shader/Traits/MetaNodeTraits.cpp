@@ -107,5 +107,16 @@ bool MetaNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType MetaNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	return pinOrderMax(inputPinOrders, node->getInputPinCount());
+}
+
 	}
 }

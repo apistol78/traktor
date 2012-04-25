@@ -110,6 +110,10 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		}
 	}
 
+	// Merge threaded build configuration from global configuration.
+	bool buildThreads = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true);
+	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", buildThreads);
+
 	// Set database connection strings.
 	db::ConnectionString sourceDatabaseCs = m_globalSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
 	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true");

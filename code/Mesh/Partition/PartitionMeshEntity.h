@@ -38,7 +38,7 @@ public:
 	);
 
 private:
-	mutable resource::Proxy< PartitionMesh > m_mesh;
+	resource::Proxy< PartitionMesh > m_mesh;
 };
 
 	}

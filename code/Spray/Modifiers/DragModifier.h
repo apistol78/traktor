@@ -24,15 +24,13 @@ class T_DLLCLASS DragModifier : public Modifier
 	T_RTTI_CLASS;
 
 public:
-	DragModifier();
+	DragModifier(float linearDrag, float angularDrag);
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
 	virtual void update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const;
 #else
 	virtual void update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const;
 #endif
-
-	virtual bool serialize(ISerializer& s);
 
 private:
 	Scalar m_linearDrag;

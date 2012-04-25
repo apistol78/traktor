@@ -26,9 +26,18 @@ class T_DLLCLASS BoxSource : public Source
 	T_RTTI_CLASS;
 
 public:
-	BoxSource();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	BoxSource(
+		float constantRate,
+		float velocityRate,
+		const Vector4& position,
+		const Vector4& extent,
+		const Range< float >& velocity,
+		const Range< float >& orientation,
+		const Range< float >& angularVelocity,
+		const Range< float >& age,
+		const Range< float >& mass,
+		const Range< float >& size
+	);
 
 	virtual void emit(
 		Context& context,
@@ -37,11 +46,9 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	const Vector4& getPosition() const { return m_position; }
 
-	inline const Vector4& getPosition() const { return m_position; }
-
-	inline const Vector4& getExtent() const { return m_extent; }
+	const Vector4& getExtent() const { return m_extent; }
 
 private:
 	Vector4 m_position;

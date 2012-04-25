@@ -3,6 +3,7 @@
 
 #include "Core/Math/Vector4.h"
 #include "Render/Types.h"
+#include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "World/PostProcess/PostProcessStep.h"
 
@@ -39,6 +40,7 @@ public:
 	public:
 		InstanceLuminance(
 			const PostProcessStepLuminance* step,
+			const resource::Proxy< render::Shader >& shader,
 			render::handle_t source,
 			const Vector4 sampleOffsets[16]
 		);
@@ -54,6 +56,7 @@ public:
 
 	private:
 		Ref< const PostProcessStepLuminance > m_step;
+		resource::Proxy< render::Shader > m_shader;
 		render::handle_t m_source;
 		Vector4 m_sampleOffsets[16];
 	};
@@ -67,10 +70,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	mutable resource::Proxy< render::Shader > m_shader;
+	resource::Id< render::Shader > m_shader;
 	std::wstring m_source;
 };
 

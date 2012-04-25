@@ -6,7 +6,6 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "World/PostProcess/PostProcess.h"
@@ -18,6 +17,8 @@ namespace traktor
 	{
 		namespace
 		{
+
+const float c_sliceBias = 0.0001f;	//!< Extra slice dimension bias; slight overlap over slices.
 
 const Vector4 c_poissonTaps[] =
 {
@@ -77,7 +78,8 @@ Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(
 	uint32_t height
 ) const
 {
-	if (!resourceManager->bind(m_shader))
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
 	// Generate screen-space random rotation textures.
@@ -87,21 +89,23 @@ Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(
 	if (!shadowMapDiscRotation[0] || !shadowMapDiscRotation[1])
 		return 0;
 
-	return new InstanceSmProj(this, shadowMapDiscRotation);
+	return new InstanceSmProj(this, shadowMapDiscRotation, shader);
 }
 
 bool PostProcessStepSmProj::serialize(ISerializer& s)
 {
-	return s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	return s >> resource::Member< render::Shader >(L"shader", m_shader);
 }
 
 // Instance
 
 PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	const PostProcessStepSmProj* step,
-	Ref< render::ISimpleTexture > shadowMapDiscRotation[2]
+	Ref< render::ISimpleTexture > shadowMapDiscRotation[2],
+	const resource::Proxy< render::Shader >& shader
 )
 :	m_step(step)
+,	m_shader(shader)
 ,	m_frame(0)
 {
 	m_shadowMapDiscRotation[0] = shadowMapDiscRotation[0];
@@ -114,8 +118,6 @@ PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_handleShadowMapDiscRotation = render::getParameterHandle(L"ShadowMapDiscRotation");
 	m_handleShadowMapSizeAndBias = render::getParameterHandle(L"ShadowMapSizeAndBias");
 	m_handleShadowMapPoissonTaps = render::getParameterHandle(L"ShadowMapPoissonTaps");
-	m_handleSliceNearZ = render::getParameterHandle(L"SliceNearZ");
-	m_handleSliceFarZ = render::getParameterHandle(L"SliceFarZ");
 	m_handleDepth = render::getParameterHandle(L"Depth");
 	m_handleDepth_Size = render::getParameterHandle(L"Depth_Size");
 	m_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
@@ -138,16 +140,12 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	const RenderParams& params
 )
 {
-	resource::Proxy< render::Shader > shader = m_step->m_shader;
-	if (!shader.validate())
-		return;
-
 	Ref< render::RenderTargetSet > sourceShMap = postProcess->getTargetRef(m_handleInputColor);
 	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(m_handleInputDepth);
 	if (!sourceShMap || !sourceDepth)
 		return;
 
-	postProcess->prepareShader(shader);
+	postProcess->prepareShader(m_shader);
 
 	float shadowMapBias = params.shadowMapBias / params.shadowFarZ;
 	float shadowFadeZ = params.shadowFarZ * 0.7f;
@@ -175,23 +173,21 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
 
-	shader->setTextureParameter(m_handleShadowMap, sourceShMap->getColorTexture(0));
-	shader->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
-	shader->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
-	shader->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
-	shader->setFloatParameter(m_handleSliceNearZ, params.sliceNearZ);
-	shader->setFloatParameter(m_handleSliceFarZ, params.sliceFarZ);
-	shader->setTextureParameter(m_handleDepth, sourceDepth->getColorTexture(0));
-	shader->setVectorParameter(m_handleDepth_Size, sourceDepthSize);	
-	shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
-	shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
-	shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
-	shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
-	shader->setMatrixParameter(m_handleViewToLight, params.viewToLight);
-	shader->setMatrixParameter(m_handleSquareProjection, params.squareProjection);
+	m_shader->setTextureParameter(m_handleShadowMap, sourceShMap->getColorTexture(0));
+	m_shader->setTextureParameter(m_handleShadowMapDiscRotation, m_shadowMapDiscRotation[m_frame & 1]);
+	m_shader->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
+	m_shader->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
+	m_shader->setTextureParameter(m_handleDepth, sourceDepth->getColorTexture(0));
+	m_shader->setVectorParameter(m_handleDepth_Size, sourceDepthSize);	
+	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, params.sliceNearZ - c_sliceBias, params.sliceFarZ + c_sliceBias));
+	m_shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
+	m_shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
+	m_shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
+	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
+	m_shader->setMatrixParameter(m_handleViewToLight, params.viewToLight);
+	m_shader->setMatrixParameter(m_handleSquareProjection, params.squareProjection);
 
-	screenRenderer->draw(renderView, shader);
+	screenRenderer->draw(renderView, m_shader);
 
 	++m_frame;
 }

@@ -9,7 +9,6 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "World/WorldRenderView.h"
@@ -30,7 +29,8 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 	uint32_t height
 ) const
 {
-	if (!resourceManager->bind(m_shader))
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
 	std::vector< InstanceSsao::Source > sources(m_sources.size());
@@ -82,12 +82,12 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 	if (!randomNormals)
 		return 0;
 
-	return new InstanceSsao(this, sources, offsets, randomNormals);
+	return new InstanceSsao(this, sources, offsets, shader, randomNormals);
 }
 
 bool PostProcessStepSsao::serialize(ISerializer& s)
 {
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	
 	if (s.getVersion() >= 1)
 		s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
@@ -114,10 +114,12 @@ PostProcessStepSsao::InstanceSsao::InstanceSsao(
 	const PostProcessStepSsao* step,
 	const std::vector< Source >& sources,
 	const Vector4 offsets[32],
+	const resource::Proxy< render::Shader >& shader,
 	render::ISimpleTexture* randomNormals
 )
 :	m_step(step)
 ,	m_sources(sources)
+,	m_shader(shader)
 ,	m_randomNormals(randomNormals)
 ,	m_handleInputColor(render::getParameterHandle(L"InputColor"))
 ,	m_handleInputDepth(render::getParameterHandle(L"InputDepth"))
@@ -138,16 +140,12 @@ void PostProcessStepSsao::InstanceSsao::render(
 	const RenderParams& params
 )
 {
-	resource::Proxy< render::Shader > shader = m_step->m_shader;
-	if (!shader.validate())
-		return;
-
 	Ref< render::RenderTargetSet > sourceColor = postProcess->getTargetRef(m_handleInputColor);
 	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(m_handleInputDepth);
 	if (!sourceColor || !sourceDepth)
 		return;
 
-	postProcess->prepareShader(shader);
+	postProcess->prepareShader(m_shader);
 
 	Vector4 sourceColorSize(
 		float(sourceColor->getWidth()),
@@ -169,22 +167,22 @@ void PostProcessStepSsao::InstanceSsao::render(
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 
-	shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
-	shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
-	shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
-	shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
-	shader->setMatrixParameter(L"Projection", params.projection);
-	shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
-	shader->setTextureParameter(L"RandomNormals", m_randomNormals);
-	shader->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	m_shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
+	m_shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
+	m_shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
+	m_shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
+	m_shader->setMatrixParameter(L"Projection", params.projection);
+	m_shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
+	m_shader->setTextureParameter(L"RandomNormals", m_randomNormals);
+	m_shader->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
 		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
 		if (source)
 		{
-			shader->setTextureParameter(i->param, source->getColorTexture(i->index));
-			shader->setVectorParameter(i->paramSize, Vector4(
+			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
+			m_shader->setVectorParameter(i->paramSize, Vector4(
 				float(source->getWidth()),
 				float(source->getHeight()),
 				0.0f,
@@ -193,7 +191,7 @@ void PostProcessStepSsao::InstanceSsao::render(
 		}
 	}
 
-	screenRenderer->draw(renderView, shader);
+	screenRenderer->draw(renderView, m_shader);
 }
 
 	}

@@ -35,7 +35,7 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, bool editorMode);
+	EntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -44,7 +44,6 @@ public:
 private:
 	resource::IResourceManager* m_resourceManager;
 	render::IRenderSystem* m_renderSystem;
-	bool m_editorMode;
 };
 
 	}

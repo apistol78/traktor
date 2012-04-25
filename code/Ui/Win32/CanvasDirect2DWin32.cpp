@@ -225,8 +225,13 @@ void CanvasDirect2DWin32::setPenThickness(int thickness)
 void CanvasDirect2DWin32::setClipRect(const Rect& rc)
 {
 	resetClipRect();
+
+	Rect rc2 = rc.getUnified();
+	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
+		return;
+
 	m_d2dRenderTarget->PushAxisAlignedClip(
-		D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom),
+		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
 		D2D1_ANTIALIAS_MODE_PER_PRIMITIVE
 	);
 	m_clip = true;
@@ -321,8 +326,12 @@ void CanvasDirect2DWin32::drawSpline(const Point* pnts, int npnts)
 
 void CanvasDirect2DWin32::fillRect(const Rect& rc)
 {
+	Rect rc2 = rc.getUnified();
+	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
+		return;
+
 	m_d2dRenderTarget->FillRectangle(
-		D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom),
+		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
 		m_d2dBackgroundBrush
 	);
 }
@@ -330,6 +339,10 @@ void CanvasDirect2DWin32::fillRect(const Rect& rc)
 void CanvasDirect2DWin32::fillGradientRect(const Rect& rc, bool vertical)
 {
 	HRESULT hr;
+
+	Rect rc2 = rc.getUnified();
+	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
+		return;
 
 	if (!m_d2dGradientStops)
 	{
@@ -343,8 +356,8 @@ void CanvasDirect2DWin32::fillGradientRect(const Rect& rc, bool vertical)
 	{
 		hr = m_d2dRenderTarget->CreateLinearGradientBrush(
 			D2D1::LinearGradientBrushProperties(
-				D2D1::Point2F(rc.left, rc.top),
-				D2D1::Point2F(rc.left, rc.bottom)
+				D2D1::Point2F(rc2.left, rc2.top),
+				D2D1::Point2F(rc2.left, rc2.bottom)
 			),
 			m_d2dGradientStops,
 			&d2dGradientBrush.getAssign()
@@ -354,8 +367,8 @@ void CanvasDirect2DWin32::fillGradientRect(const Rect& rc, bool vertical)
 	{
 		hr = m_d2dRenderTarget->CreateLinearGradientBrush(
 			D2D1::LinearGradientBrushProperties(
-				D2D1::Point2F(rc.left, rc.top),
-				D2D1::Point2F(rc.right, rc.top)
+				D2D1::Point2F(rc2.left, rc2.top),
+				D2D1::Point2F(rc2.right, rc2.top)
 			),
 			m_d2dGradientStops,
 			&d2dGradientBrush.getAssign()
@@ -365,15 +378,19 @@ void CanvasDirect2DWin32::fillGradientRect(const Rect& rc, bool vertical)
 		return;
 
 	m_d2dRenderTarget->FillRectangle(
-		D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom),
+		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
 		d2dGradientBrush
 	);
 }
 
 void CanvasDirect2DWin32::drawRect(const Rect& rc)
 {
+	Rect rc2 = rc.getUnified();
+	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
+		return;
+
 	m_d2dRenderTarget->DrawRectangle(
-		D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom),
+		D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
 		m_d2dForegroundBrush,
 		m_strokeWidth
 	);
@@ -381,9 +398,13 @@ void CanvasDirect2DWin32::drawRect(const Rect& rc)
 
 void CanvasDirect2DWin32::drawRoundRect(const Rect& rc, int radius)
 {
+	Rect rc2 = rc.getUnified();
+	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
+		return;
+
 	m_d2dRenderTarget->DrawRoundedRectangle(
 		D2D1::RoundedRect(
-			D2D1::RectF(rc.left, rc.top, rc.right, rc.bottom),
+			D2D1::RectF(rc2.left, rc2.top, rc2.right, rc2.bottom),
 			radius,
 			radius
 		),
@@ -500,6 +521,9 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 	if (!m_dwTextFormat)
 		return;
 
+	m_dwTextFormat->SetTextAlignment(DWRITE_TEXT_ALIGNMENT_LEADING);
+	m_dwTextFormat->SetParagraphAlignment(DWRITE_PARAGRAPH_ALIGNMENT_NEAR);
+
 	ComRef< IDWriteTextLayout > dwLayout;
 	s_dwFactory->CreateTextLayout(
 		text.c_str(),
@@ -521,6 +545,10 @@ void CanvasDirect2DWin32::drawText(const Point& at, const std::wstring& text)
 
 void CanvasDirect2DWin32::drawText(const Rect& rc, const std::wstring& text, Align halign, Align valign)
 {
+	Rect rc2 = rc.getUnified();
+	if (rc2.getWidth() <= 0 || rc2.getHeight() <= 0)
+		return;
+
 	if (!m_dwTextFormat)
 		return;
 
@@ -559,15 +587,15 @@ void CanvasDirect2DWin32::drawText(const Rect& rc, const std::wstring& text, Ali
 		text.c_str(),
 		text.length(),
 		m_dwTextFormat,
-		rc.getWidth(),
-		rc.getHeight(),
+		rc2.getWidth(),
+		rc2.getHeight(),
 		&dwLayout.getAssign()
 	);
 	if (!dwLayout)
 		return;
 
 	m_d2dRenderTarget->DrawTextLayout(
-		D2D1::Point2F(rc.left, rc.top),
+		D2D1::Point2F(rc2.left, rc2.top),
 		dwLayout,
 		m_d2dForegroundBrush
 	);

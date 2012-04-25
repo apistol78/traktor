@@ -26,9 +26,20 @@ class T_DLLCLASS QuadSource : public Source
 	T_RTTI_CLASS;
 
 public:
-	QuadSource();
-
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	QuadSource(
+		float constantRate,
+		float velocityRate,
+		const Vector4& center,
+		const Vector4& axis1,
+		const Vector4& axis2,
+		const Vector4& normal,
+		const Range< float >& velocity,
+		const Range< float >& orientation,
+		const Range< float >& angularVelocity,
+		const Range< float >& age,
+		const Range< float >& mass,
+		const Range< float >& size
+	);
 
 	virtual void emit(
 		Context& context,
@@ -37,15 +48,13 @@ public:
 		EmitterInstance& emitterInstance
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	const Vector4& getCenter() const { return m_center; }
 
-	inline const Vector4& getCenter() const { return m_center; }
+	const Vector4& getAxis1() const { return m_axis1; }
 
-	inline const Vector4& getAxis1() const { return m_axis1; }
+	const Vector4& getAxis2() const { return m_axis2; }
 
-	inline const Vector4& getAxis2() const { return m_axis2; }
-
-	inline const Vector4& getNormal() const { return m_normal; }
+	const Vector4& getNormal() const { return m_normal; }
 
 private:
 	Vector4 m_center;

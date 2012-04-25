@@ -6,7 +6,7 @@
 #endif
 
 #include "Core/Math/Transform.h"
-#include "Core/Serialization/ISerializable.h"
+#include "Core/Object.h"
 #include "Spray/Point.h"
 
 // import/export mechanism.
@@ -30,7 +30,7 @@ class SpursJobQueue;
 /*! \brief Emitter modifier.
  * \ingroup Spray
  */
-class T_DLLCLASS Modifier : public ISerializable
+class T_DLLCLASS Modifier : public Object
 {
 	T_RTTI_CLASS;
 

@@ -496,7 +496,7 @@ bool PartitionMeshConverter::convert(
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
-	checked_type_cast< PartitionMeshResource* >(meshResource)->m_shader = materialGuid;
+	checked_type_cast< PartitionMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< PartitionMeshResource* >(meshResource)->m_parts = partitionParts;
 	checked_type_cast< PartitionMeshResource* >(meshResource)->m_partitionData = partitionData;
 

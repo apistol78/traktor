@@ -12,6 +12,7 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshReader.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 
 namespace traktor
 {
@@ -38,7 +39,6 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 	}
 
 	Ref< PartitionMesh > partitionMesh = new PartitionMesh();
-	partitionMesh->m_shader = m_shader;
 	partitionMesh->m_mesh = mesh;
 	partitionMesh->m_parts.reserve(m_parts.size());
 
@@ -52,7 +52,7 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 		partitionMesh->m_parts.push_back(part);
 	}
 
-	if (!resourceManager->bind(partitionMesh->m_shader))
+	if (!resourceManager->bind(m_shader, partitionMesh->m_shader))
 		return 0;
 
 	partitionMesh->m_partition = m_partitionData->createPartition();
@@ -68,7 +68,7 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 
 bool PartitionMeshResource::serialize(ISerializer& s)
 {
-	s >> Member< Guid >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Part, MemberComposite< Part > >(L"parts", m_parts);
 	s >> MemberRef< IPartitionData >(L"partitionData", m_partitionData);
 	return true;

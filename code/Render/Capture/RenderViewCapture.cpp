@@ -158,24 +158,9 @@ void RenderViewCapture::clear(uint32_t clearMask, const float color[4], float de
 	m_renderView->clear(clearMask, color, depth, stencil);
 }
 
-void RenderViewCapture::setVertexBuffer(VertexBuffer* vertexBuffer)
+void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)
 {
-	m_renderView->setVertexBuffer(vertexBuffer);
-}
-
-void RenderViewCapture::setIndexBuffer(IndexBuffer* indexBuffer)
-{
-	m_renderView->setIndexBuffer(indexBuffer);
-}
-
-void RenderViewCapture::setProgram(IProgram* program)
-{
-	m_renderView->setProgram(program);
-}
-
-void RenderViewCapture::draw(const Primitives& primitives)
-{
-	m_renderView->draw(primitives);
+	m_renderView->draw(vertexBuffer, indexBuffer, program, primitives);
 	m_drawCount++;
 
 	if (m_captureFrame && m_captureDepth == 0)

@@ -27,6 +27,8 @@ public:
 		editor::IPipelineDepends* pipelineDepends,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
+		const std::wstring& outputPath,
+		const Guid& outputGuid,
 		Ref< const Object >& outBuildParams
 	) const;
 };

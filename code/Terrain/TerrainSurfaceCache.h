@@ -28,7 +28,7 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
-class ISimpleTexture;
+//class ISimpleTexture;
 class RenderTargetSet;
 class ScreenRenderer;
 class RenderContext;
@@ -39,7 +39,7 @@ class RenderBlock;
 	namespace terrain
 	{
 
-class TerrainSurface;
+class Terrain;
 
 class T_DLLCLASS TerrainSurfaceCache : public Object
 {
@@ -62,9 +62,7 @@ public:
 
 	void get(
 		render::RenderContext* renderContext,
-		TerrainSurface* surface,
-		render::ISimpleTexture* heightfieldTexture,
-		const RefArray< render::ISimpleTexture >& materialMaskTextures,
+		Terrain* terrain,
 		const Vector4& worldOrigin,
 		const Vector4& worldExtent,
 		const Vector4& patchOrigin,
@@ -91,12 +89,10 @@ private:
 	TerrainSurfaceAlloc m_alloc;
 	Ref< render::RenderTargetSet > m_pool;
 	std::vector< Entry > m_entries;
-	int32_t m_updateAllowedCount;
+	//int32_t m_updateAllowedCount;
 	bool m_clearCache;
 	render::handle_t m_handleHeightfield;
 	render::handle_t m_handleHeightfieldSize;
-	render::handle_t m_handleMaterialMask;
-	render::handle_t m_handleMaterialMaskSize;
 	render::handle_t m_handleWorldOrigin;
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;

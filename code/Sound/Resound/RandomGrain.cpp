@@ -3,8 +3,6 @@
 #else
 #	include <time_ce.h>
 #endif
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberRefArray.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/Resound/RandomGrain.h"
 
@@ -29,27 +27,21 @@ struct RandomGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.RandomGrain", 1, RandomGrain, IGrain)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RandomGrain", RandomGrain, IGrain)
 
-RandomGrain::RandomGrain()
+RandomGrain::RandomGrain(
+	const RefArray< IGrain >& grains,
+	bool humanize
+)
+:	m_grains(grains)
 #if !defined(WINCE)
-:	m_random(uint32_t(clock()))
+,	m_random(uint32_t(clock()))
 #else
-:	m_random(uint32_t(clock_ce()))
+,	m_random(uint32_t(clock_ce()))
 #endif
-,	m_humanize(false)
+,	m_humanize(humanize)
 ,	m_last(-1)
 {
-}
-
-bool RandomGrain::bind(resource::IResourceManager* resourceManager)
-{
-	for (RefArray< IGrain >::iterator i = m_grains.begin(); i != m_grains.end(); ++i)
-	{
-		if (!(*i)->bind(resourceManager))
-			return false;
-	}
-	return true;
 }
 
 Ref< ISoundBufferCursor > RandomGrain::createCursor() const
@@ -88,14 +80,6 @@ bool RandomGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) con
 		randomCursor->m_grainCursor,
 		outBlock
 	);
-}
-
-bool RandomGrain::serialize(ISerializer& s)
-{
-	s >> MemberRefArray< IGrain >(L"grains", m_grains);
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"humanize", m_humanize);
-	return true;
 }
 
 	}

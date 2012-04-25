@@ -228,9 +228,9 @@ private:
 	std::list< std::pair< std::wstring, std::wstring > > m_fsCommands;
 	std::map< uint32_t, Interval > m_interval;
 	uint32_t m_intervalNextId;
-	double m_timeCurrent;
-	double m_timeNext;
-	double m_timeNextFrame;
+	float m_timeCurrent;
+	float m_timeNext;
+	float m_timeNextFrame;
 	int32_t m_framesUntilCollection;
 
 	void Global_getUrl(CallArgs& ca);

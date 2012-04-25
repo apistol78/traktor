@@ -2,6 +2,7 @@
 #include <sstream>
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
+#include "Core/Serialization/AttributeAngles.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributeHex.h"
 #include "Core/Serialization/AttributeMultiLine.h"
@@ -12,6 +13,7 @@
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"
 #include "Core/Serialization/MemberEnum.h"
+#include "Ui/Custom/PropertyList/AnglesPropertyItem.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/AutoPropertyList.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
@@ -22,7 +24,6 @@
 #include "Ui/Custom/PropertyList/ListPropertyItem.h"
 #include "Ui/Custom/PropertyList/NumericPropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
-#include "Ui/Custom/PropertyList/QuaternionPropertyItem.h"
 #include "Ui/Custom/PropertyList/StaticPropertyItem.h"
 #include "Ui/Custom/PropertyList/TextPropertyItem.h"
 #include "Ui/Custom/PropertyList/VectorPropertyItem.h"
@@ -410,12 +411,10 @@ bool InspectReflector::operator >> (const Member< Vector2 >& m)
 
 bool InspectReflector::operator >> (const Member< Vector4 >& m)
 {
-	VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), m->w() };
-
 	const AttributeDirection* direction = findAttribute< AttributeDirection >(m);
 	if (direction)
 	{
-		value[3] = 0.0f;
+		VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), 0.0f };
 		addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 3));
 		return true;
 	}
@@ -423,11 +422,19 @@ bool InspectReflector::operator >> (const Member< Vector4 >& m)
 	const AttributePoint* point = findAttribute< AttributePoint >(m);
 	if (point)
 	{
-		value[3] = 1.0f;
+		VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), 1.0f };
 		addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 3));
 		return true;
 	}
 
+	const AttributeAngles* angles = findAttribute< AttributeAngles >(m);
+	if (angles)
+	{
+		addPropertyItem(new AnglesPropertyItem(stylizeMemberName(m.getName()), *m));
+		return true;
+	}
+
+	VectorPropertyItem::vector_t value = { m->x(), m->y(), m->z(), m->w() };
 	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4));
 	return true;
 }
@@ -444,7 +451,7 @@ bool InspectReflector::operator >> (const Member< Matrix44 >& m)
 
 bool InspectReflector::operator >> (const Member< Quaternion >& m)
 {
-	addPropertyItem(new QuaternionPropertyItem(stylizeMemberName(m.getName()), m));
+	addPropertyItem(new AnglesPropertyItem(stylizeMemberName(m.getName()), m->toEulerAngles()));
 	return true;
 }
 

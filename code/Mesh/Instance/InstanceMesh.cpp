@@ -58,9 +58,6 @@ void InstanceMesh::render(
 	if (instanceWorld.empty())
 		return;
 
-	if (!m_shader.validate())
-		return;
-
 	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 

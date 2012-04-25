@@ -1,8 +1,3 @@
-#include "Core/Serialization/AttributeDirection.h"
-#include "Core/Serialization/AttributePoint.h"
-#include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
-#include "Core/Serialization/MemberComposite.h"
 #include "Spray/EmitterInstance.h"
 #include "Spray/Types.h"
 #include "Spray/Sources/ConeSource.h"
@@ -12,19 +7,34 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.ConeSource", 0, ConeSource, Source)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.ConeSource", ConeSource, Source)
 
-ConeSource::ConeSource()
-:	m_position(0.0f, 0.0f, 0.0f, 1.0f)
-,	m_normal(0.0f, 1.0f, 0.0f, 0.0f)
-,	m_angle1(PI)
-,	m_angle2(PI)
+ConeSource::ConeSource(
+	float constantRate,
+	float velocityRate,
+	const Vector4& position,
+	const Vector4& normal,
+	float angle1,
+	float angle2,
+	const Range< float >& velocity,
+	const Range< float >& orientation,
+	const Range< float >& angularVelocity,
+	const Range< float >& age,
+	const Range< float >& mass,
+	const Range< float >& size
+)
+:	Source(constantRate, velocityRate)
+,	m_position(position)
+,	m_normal(normal)
+,	m_angle1s(sinf(angle1))
+,	m_angle2s(sinf(angle2))
+,	m_velocity(velocity)
+,	m_orientation(orientation)
+,	m_angularVelocity(angularVelocity)
+,	m_age(age)
+,	m_mass(mass)
+,	m_size(size)
 {
-}
-
-bool ConeSource::bind(resource::IResourceManager* resourceManager)
-{
-	return true;
 }
 
 void ConeSource::emit(
@@ -36,9 +46,6 @@ void ConeSource::emit(
 {
 	Vector4 position = transform * m_position;
 	Vector4 normal = transform * m_normal;
-
-	Scalar wx = Scalar(sinf(m_angle1));
-	Scalar wz = Scalar(sinf(m_angle2));
 	
 	Point* point = emitterInstance.addPoints(emitCount);
 
@@ -50,7 +57,7 @@ void ConeSource::emit(
 		Scalar x = Scalar(cosf(phi));
 		Scalar z = Scalar(sinf(phi));
 
-		Vector4 extent = transform.axisX() * wx * x + transform.axisZ() * wz * z;
+		Vector4 extent = transform.axisX() * m_angle1s * x + transform.axisZ() * m_angle2s * z;
 		Vector4 direction = (normal + extent * gamma).normalized();
 
 		point->position = position;
@@ -66,25 +73,6 @@ void ConeSource::emit(
 		
 		++point;
 	}
-}
-
-bool ConeSource::serialize(ISerializer& s)
-{
-	if (!Source::serialize(s))
-		return false;
-
-	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
-	s >> Member< Vector4 >(L"normal", m_normal, AttributeDirection());
-	s >> Member< float >(L"angle1", m_angle1);
-	s >> Member< float >(L"angle2", m_angle2);
-	s >> MemberComposite< Range< float > >(L"velocity", m_velocity);
-	s >> MemberComposite< Range< float > >(L"orientation", m_orientation);
-	s >> MemberComposite< Range< float > >(L"angularVelocity", m_angularVelocity);
-	s >> MemberComposite< Range< float > >(L"age", m_age);
-	s >> MemberComposite< Range< float > >(L"mass", m_mass);
-	s >> MemberComposite< Range< float > >(L"size", m_size);
-
-	return true;
 }
 
 	}

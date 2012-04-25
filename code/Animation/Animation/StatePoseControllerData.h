@@ -3,7 +3,7 @@
 
 #include "Core/Math/Range.h"
 #include "Animation/IPoseControllerData.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,10 +39,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const resource::Proxy< StateGraph >& getStateGraph() const { return m_stateGraph; }
+	inline const resource::Id< StateGraph >& getStateGraph() const { return m_stateGraph; }
 
 private:
-	resource::Proxy< StateGraph > m_stateGraph;
+	resource::Id< StateGraph > m_stateGraph;
 	Range< float > m_randomTimeOffset;
 };
 

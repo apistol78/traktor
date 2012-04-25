@@ -6,7 +6,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
-#include "Mesh/IMeshResource.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -26,10 +25,12 @@ AnimatedMeshEntityData::AnimatedMeshEntityData()
 
 Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const
 {
-	if (!resourceManager->bind(m_mesh) || !resourceManager->bind(m_skeleton))
+	resource::Proxy< mesh::SkinnedMesh > mesh;
+	if (!resourceManager->bind(m_mesh, mesh))
 		return 0;
 
-	if (!m_mesh.valid() || !m_skeleton.valid())
+	resource::Proxy< Skeleton > skeleton;
+	if (!resourceManager->bind(m_skeleton, skeleton))
 		return 0;
 
 	Ref< IPoseController > poseController;
@@ -37,16 +38,16 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 		poseController = m_poseController->createInstance(
 			resourceManager,
 			physicsManager,
-			m_skeleton,
+			skeleton,
 			getTransform()
 		);
 
-	std::vector< int > boneRemap(m_skeleton->getBoneCount());
+	std::vector< int > boneRemap(skeleton->getBoneCount());
 
-	const std::map< std::wstring, int >& boneMap = m_mesh->getBoneMap();
-	for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
+	const std::map< std::wstring, int >& boneMap = mesh->getBoneMap();
+	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
 	{
-		const Bone* bone = m_skeleton->getBone(i);
+		const Bone* bone = skeleton->getBone(i);
 
 		std::map< std::wstring, int >::const_iterator j = boneMap.find(bone->getName());
 		if (j == boneMap.end())
@@ -61,8 +62,8 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 
 	return new AnimatedMeshEntity(
 		getTransform(),
-		m_mesh,
-		m_skeleton,
+		mesh,
+		skeleton,
 		poseController,
 		boneRemap,
 		m_normalizePose,
@@ -75,7 +76,7 @@ bool AnimatedMeshEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 	
-	s >> resource::Member< mesh::SkinnedMesh, mesh::IMeshResource >(L"mesh", m_mesh);
+	s >> resource::Member< mesh::SkinnedMesh >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
 	s >> MemberRef< IPoseControllerData >(L"poseController", m_poseController);
 

@@ -1,5 +1,4 @@
 #include "Flash/Editor/FlashMovieAsset.h"
-#include "Flash/FlashMovie.h"
 
 namespace traktor
 {
@@ -7,11 +6,6 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.flash.FlashMovieAsset", 0, FlashMovieAsset, editor::Asset)
-
-const TypeInfo* FlashMovieAsset::getOutputType() const
-{
-	return &type_of< FlashMovie >();
-}
 
 	}
 }

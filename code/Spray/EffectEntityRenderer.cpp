@@ -48,10 +48,6 @@ void EffectEntityRenderer::render(
 	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
 		return;
 
-	resource::Proxy< Effect >& effect = effectEntity->getEffect();
-	if (!effect.validate())
-		return;
-
 	Matrix44 viewInverse = worldRenderView.getView().inverseOrtho();
 	Plane cameraPlane(
 		viewInverse.axisZ(),

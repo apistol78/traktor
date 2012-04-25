@@ -67,7 +67,7 @@
 			<dependencies/>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Extern.bullet-2.77</name>
 			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.77</sourcePath>
 			<configurations>
@@ -3889,8 +3889,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 						<item>$(SCE_PS3_ROOT)\target\ppu\include\vectormath\cpp</item>
 					</includePaths>
 					<definitions>
@@ -3909,8 +3909,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.77/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
 						<item>$(SCE_PS3_ROOT)\target\ppu\include\vectormath\cpp</item>
 					</includePaths>
 					<definitions>
@@ -3932,10 +3932,6 @@
 			<dependencies>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[1]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[12]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
@@ -3945,6 +3941,217 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[27]/dependencies/item[2]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.bullet-2.80</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>src/*.cpp</fileName>
+								<items/>
+							</item>
+							<item type="File">
+								<fileName>src/*.h</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>BulletCollision</name>
+								<items>
+									<item type="Filter">
+										<name>BroadphaseCollision</name>
+										<items>
+											<item type="File">
+												<fileName>src/BulletCollision/BroadphaseCollision/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/BulletCollision/BroadphaseCollision/*.h</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>CollisionDispatch</name>
+										<items>
+											<item type="File">
+												<fileName>src/BulletCollision/CollisionDispatch/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/BulletCollision/CollisionDispatch/*.h</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>CollisionShapes</name>
+										<items>
+											<item type="File">
+												<fileName>src/BulletCollision/CollisionShapes/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/BulletCollision/CollisionShapes/*.h</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>NarrowPhaseCollision</name>
+										<items>
+											<item type="File">
+												<fileName>src/BulletCollision/NarrowPhaseCollision/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/BulletCollision/NarrowPhaseCollision/*.h</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>BulletDynamics</name>
+								<items>
+									<item type="Filter">
+										<name>ConstraintSolver</name>
+										<items>
+											<item type="File">
+												<fileName>src/BulletDynamics/ConstraintSolver/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/BulletDynamics/ConstraintSolver/*.h</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>Dynamics</name>
+										<items>
+											<item type="File">
+												<fileName>src/BulletDynamics/Dynamics/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/BulletDynamics/Dynamics/*.h</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>Vehicle</name>
+										<items>
+											<item type="File">
+												<fileName>src/BulletDynamics/Vehicle/*.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/BulletDynamics/Vehicle/*.h</fileName>
+												<items/>
+											</item>
+										</items>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>LinearMath</name>
+								<items>
+									<item type="File">
+										<fileName>src/LinearMath/*.cpp</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>src/LinearMath/*.h</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5536,6 +5743,7 @@
 				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[28]/dependencies/item[3]/project"/>
 	</projects>
 	<aggregations/>
 </object>

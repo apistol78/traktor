@@ -1,6 +1,7 @@
 #include "Core/Io/Reader.h"
-#include "Spray/EffectFactory.h"
 #include "Spray/Effect.h"
+#include "Spray/EffectData.h"
+#include "Spray/EffectFactory.h"
 #include "Spray/PointSet.h"
 #include "Spray/PointSetResource.h"
 #include "Database/Database.h"
@@ -35,10 +36,11 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 {
 	if (is_type_a< Effect >(resourceType))
 	{
-		Ref< Effect > effect = m_db->getObjectReadOnly< Effect >(guid);
-		if (effect)
-			effect->bind(resourceManager);
-		return effect;
+		Ref< EffectData > effectData = m_db->getObjectReadOnly< EffectData >(guid);
+		if (effectData)
+			return effectData->createEffect(resourceManager);
+		else
+			return 0;
 	}
 	else if (is_type_a< PointSet >(resourceType))
 	{

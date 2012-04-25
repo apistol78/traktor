@@ -1,9 +1,9 @@
 #include "Editor/IPipelineDepends.h"
 #include "Sound/Resound/BankResource.h"
-#include "Sound/Resound/PlayGrain.h"
-#include "Sound/Resound/RepeatGrain.h"
-#include "Sound/Resound/RandomGrain.h"
-#include "Sound/Resound/SequenceGrain.h"
+#include "Sound/Resound/PlayGrainData.h"
+#include "Sound/Resound/RepeatGrainData.h"
+#include "Sound/Resound/RandomGrainData.h"
+#include "Sound/Resound/SequenceGrainData.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankPipeline.h"
 
@@ -14,27 +14,27 @@ namespace traktor
 		namespace
 		{
 
-void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGrain* grain)
+void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGrainData* grain)
 {
-	if (const RepeatGrain* repeatGrain = dynamic_type_cast< const RepeatGrain* >(grain))
+	if (const RepeatGrainData* repeatGrain = dynamic_type_cast< const RepeatGrainData* >(grain))
 		buildGrainDependencies(pipelineDepends, repeatGrain->getGrain());
 
-	if (const RandomGrain* randomGrain = dynamic_type_cast< const RandomGrain* >(grain))
+	if (const RandomGrainData* randomGrain = dynamic_type_cast< const RandomGrainData* >(grain))
 	{
-		const RefArray< IGrain >& grains = randomGrain->getGrains();
-		for (RefArray< IGrain >::const_iterator i = grains.begin(); i != grains.end(); ++i)
+		const RefArray< IGrainData >& grains = randomGrain->getGrains();
+		for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 			buildGrainDependencies(pipelineDepends, *i);
 	}
 
-	if (const SequenceGrain* sequenceGrain = dynamic_type_cast< const SequenceGrain* >(grain))
+	if (const SequenceGrainData* sequenceGrain = dynamic_type_cast< const SequenceGrainData* >(grain))
 	{
-		const RefArray< IGrain >& grains = sequenceGrain->getGrains();
-		for (RefArray< IGrain >::const_iterator i = grains.begin(); i != grains.end(); ++i)
+		const RefArray< IGrainData >& grains = sequenceGrain->getGrains();
+		for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 			buildGrainDependencies(pipelineDepends, *i);
 	}
 
-	if (const PlayGrain* playGrain = dynamic_type_cast< const PlayGrain* >(grain))
-		pipelineDepends->addDependency(playGrain->getSound().getGuid(), editor::PdfBuild);
+	if (const PlayGrainData* playGrain = dynamic_type_cast< const PlayGrainData* >(grain))
+		pipelineDepends->addDependency(playGrain->getSound(), editor::PdfBuild);
 }
 
 		}
@@ -52,12 +52,14 @@ bool BankPipeline::buildDependencies(
 	editor::IPipelineDepends* pipelineDepends,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
 	Ref< const Object >& outBuildParams
 ) const
 {
 	const BankAsset* bankAsset = checked_type_cast< const BankAsset* >(sourceAsset);
-	const RefArray< IGrain >& grains = bankAsset->getGrains();
-	for (RefArray< IGrain >::const_iterator i = grains.begin(); i != grains.end(); ++i)
+	const RefArray< IGrainData >& grains = bankAsset->getGrains();
+	for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 		buildGrainDependencies(pipelineDepends, *i);
 	return true;
 }

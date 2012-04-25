@@ -87,7 +87,7 @@ Ref< world::EntityData > MeshEditorProfile::createEntityData(
 
 	Ref< MeshEntityData > entityData = new MeshEntityData();
 	entityData->setName(instance->getName());
-	entityData->setMesh(resource::Proxy< IMesh >(instance->getGuid()));
+	entityData->setMesh(resource::Id< IMesh >(instance->getGuid()));
 
 	return entityData;
 }

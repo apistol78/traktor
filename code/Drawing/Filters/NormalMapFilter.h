@@ -31,6 +31,9 @@ public:
 
 protected:
 	virtual Ref< Image > apply(const Image* image) const;
+
+private:
+	float m_scale;
 };
 	
 	}

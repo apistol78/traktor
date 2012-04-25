@@ -9,24 +9,24 @@ namespace traktor
 	namespace sound
 	{
 
-class IGrain;
+class IGrainData;
 
 class IGrainFacade : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual int32_t getImage(const IGrain* grain) const = 0;
+	virtual int32_t getImage(const IGrainData* grain) const = 0;
 
-	virtual std::wstring getText(const IGrain* grain) const = 0;
+	virtual std::wstring getText(const IGrainData* grain) const = 0;
 
 	virtual bool canHaveChildren() const = 0;
 
-	virtual bool addChild(IGrain* parentGrain, IGrain* childGrain) = 0;
+	virtual bool addChild(IGrainData* parentGrain, IGrainData* childGrain) = 0;
 
-	virtual bool removeChild(IGrain* parentGrain, IGrain* childGrain) = 0;
+	virtual bool removeChild(IGrainData* parentGrain, IGrainData* childGrain) = 0;
 
-	virtual bool getChildren(IGrain* grain, RefArray< IGrain >& outChildren) = 0;
+	virtual bool getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren) = 0;
 };
 
 	}

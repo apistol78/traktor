@@ -32,13 +32,9 @@ class T_DLLCLASS SoundTrigger : public ITrigger
 	T_RTTI_CLASS;
 
 public:
-	virtual bool bind(resource::IResourceManager* resourceManager);
+	SoundTrigger(const resource::Proxy< sound::Sound >& sound);
 
 	virtual Ref< ITriggerInstance > createInstance() const;
-
-	virtual bool serialize(ISerializer& s);
-
-	const resource::Proxy< sound::Sound >& getSound() const { return m_sound; }
 
 private:
 	resource::Proxy< sound::Sound > m_sound;

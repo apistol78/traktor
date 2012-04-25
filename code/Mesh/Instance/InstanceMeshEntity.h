@@ -28,8 +28,6 @@ public:
 	
 	virtual Aabb3 getBoundingBox() const;
 
-	virtual void update(const UpdateParams& update);
-
 	virtual bool supportTechnique(render::handle_t technique) const;
 
 	virtual void render(
@@ -44,7 +42,7 @@ public:
 private:
 	friend class InstanceMeshEntityRenderer;
 
-	mutable resource::Proxy< InstanceMesh > m_mesh;
+	resource::Proxy< InstanceMesh > m_mesh;
 };
 
 	}

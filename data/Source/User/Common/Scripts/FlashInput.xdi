@@ -3,7 +3,6 @@
 	<dependencies/>
 	<text>
 	<![CDATA[
-
 --
 -- Process mouse input to Flash player
 --
@@ -22,7 +21,6 @@ function processFlashMouseInput(moviePlayer, inputMapping)
 		end
 	end
 end
-
 
 	]]>
 	</text>

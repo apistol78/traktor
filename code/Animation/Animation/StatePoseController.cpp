@@ -52,18 +52,16 @@ void StatePoseController::evaluate(
 {
 	Pose currentPose;
 
-	// Validate state graph.
-	if (!m_stateGraph.valid() || !m_currentState)
+	// Prepare graph evaluation context.
+	if (m_stateGraph.changed() || !m_currentState)
 	{
-		if (!m_stateGraph.validate() || !m_stateGraph->getRootState())
-			return;
-
-		// Reset evaluation of graph.
 		m_currentState = m_stateGraph->getRootState();
-		m_currentState->prepareContext(m_currentStateContext);
+		if (m_currentState)
+			m_currentState->prepareContext(m_currentStateContext);
 		m_nextState = 0;
 		m_blendState = 0.0f;
 		m_blendDuration = 0.0f;
+		m_stateGraph.consume();
 	}
 
 	if (!m_currentState)

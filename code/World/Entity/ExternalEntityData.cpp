@@ -1,6 +1,6 @@
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/Member.h"
+#include "Resource/Member.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -8,25 +8,25 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ExternalEntityData", 0, ExternalEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.ExternalEntityData", 1, ExternalEntityData, EntityData)
 
 ExternalEntityData::ExternalEntityData()
 {
 }
 
-ExternalEntityData::ExternalEntityData(const Guid& guid)
-:	m_guid(guid)
+ExternalEntityData::ExternalEntityData(const resource::Id< EntityData >& entityData)
+:	m_entityData(entityData)
 {
 }
 
-void ExternalEntityData::setGuid(const Guid& guid)
+void ExternalEntityData::setEntityData(const resource::Id< EntityData >& entityData)
 {
-	m_guid = guid;
+	m_entityData = entityData;
 }
 
-const Guid& ExternalEntityData::getGuid() const
+const resource::Id< EntityData >& ExternalEntityData::getEntityData() const
 {
-	return m_guid;
+	return m_entityData;
 }
 
 bool ExternalEntityData::serialize(ISerializer& s)
@@ -34,11 +34,10 @@ bool ExternalEntityData::serialize(ISerializer& s)
 	if (!EntityData::serialize(s))
 		return false;
 
-	return s >> Member< Guid >(
-		L"guid",
-		m_guid,
-		AttributeType(type_of< EntityData >())
-	);
+	if (s.getVersion() >= 1)
+		return s >> resource::Member< EntityData >(L"entityData", m_entityData);
+	else
+		return s >> resource::Member< EntityData >(L"guid", m_entityData);
 }
 
 	}

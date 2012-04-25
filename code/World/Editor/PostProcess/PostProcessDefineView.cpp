@@ -22,13 +22,13 @@ bool PostProcessDefineView::create(ui::Widget* parent)
 void PostProcessDefineView::add(PostProcessDefineItem* item)
 {
 	m_cells.push_back(new PostProcessDefineCell(item));
-	requestLayout();
+	requestUpdate();
 }
 
 void PostProcessDefineView::removeAll()
 {
 	m_cells.clear();
-	requestLayout();
+	requestUpdate();
 }
 
 void PostProcessDefineView::layoutCells(const ui::Rect& rc)

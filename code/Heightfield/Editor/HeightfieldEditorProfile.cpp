@@ -1,10 +1,7 @@
-#include "Core/Serialization/ISerializable.h"
 #include "Heightfield/HeightfieldFactory.h"
 #include "Heightfield/MaterialMaskFactory.h"
-#include "Heightfield/Editor/HeightfieldEditorPlugin.h"
 #include "Heightfield/Editor/HeightfieldEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "Ui/Command.h"
 
 namespace traktor
 {
@@ -17,7 +14,6 @@ void HeightfieldEditorProfile::getCommands(
 	std::list< ui::Command >& outCommands
 ) const
 {
-	outCommands.push_back(ui::Command(L"Heightfield.Save"));
 }
 
 void HeightfieldEditorProfile::createEditorPlugins(
@@ -25,7 +21,6 @@ void HeightfieldEditorProfile::createEditorPlugins(
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
-	outEditorPlugins.push_back(new HeightfieldEditorPlugin(context));
 }
 
 void HeightfieldEditorProfile::createResourceFactories(

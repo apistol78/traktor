@@ -154,8 +154,7 @@ bool RiverEntity::create(resource::IResourceManager* resourceManager, render::IR
 		silouette.size() - 1
 	);
 
-	m_shader = data.getShader();
-	if (!resourceManager->bind(m_shader))
+	if (!resourceManager->bind(data.getShader(), m_shader))
 		return false;
 
 	return true;
@@ -167,9 +166,6 @@ void RiverEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (!m_shader.validate())
-		return;
-
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(m_shader);
 

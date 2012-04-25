@@ -22,7 +22,6 @@ enum PinType
 	PntScalar4	= 4,
 	PntMatrix	= 5,
 	PntTexture	= 6,
-
 	PntAny		= (PntTexture)
 };
 
@@ -40,6 +39,45 @@ inline bool isPinTypeScalar(PinType pinType)
 inline int32_t getPinTypeWidth(PinType pinType)
 {
 	return isPinTypeScalar(pinType) ? int32_t(pinType) : 0;
+}
+
+/*! \brief Pin order type.
+ * \ingroup Render
+ */
+enum PinOrderType
+{
+	PotConstant = 0,	/*!< Constant order. */
+	PotLinear = 1,		/*!< Linear order. */
+	PotNonLinear = 2	/*!< Non-linear order, i.e. cubic or higher. */
+};
+
+inline PinOrderType pinOrderAdd(PinOrderType pinOrder1, PinOrderType pinOrder2)
+{
+	PinOrderType pinOrder = (PinOrderType)(pinOrder1 + pinOrder2);
+	return pinOrder <= PotNonLinear ? pinOrder : PotNonLinear;
+}
+
+inline PinOrderType pinOrderMax(const PinOrderType* pinOrders, int32_t pinOrdersCount)
+{
+	PinOrderType pinOrder = PotConstant;
+	for (int32_t i = 0; i < pinOrdersCount; ++i)
+		pinOrder = (pinOrders[i] > pinOrder) ? pinOrders[i] : pinOrder;
+	return pinOrder;
+}
+
+inline PinOrderType pinOrderMax(PinOrderType pinOrder1, PinOrderType pinOrder2)
+{
+	return pinOrder1 > pinOrder2 ? pinOrder1 : pinOrder2;
+}
+
+inline PinOrderType pinOrderConstantOrNonLinear(const PinOrderType* pinOrders, int32_t pinOrdersCount)
+{
+	for (int32_t i = 0; i < pinOrdersCount; ++i)
+	{
+		if (pinOrders[i] != PotConstant)
+			return PotNonLinear;
+	}
+	return PotConstant;
 }
 
 	}

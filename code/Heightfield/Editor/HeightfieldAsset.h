@@ -24,13 +24,9 @@ class T_DLLCLASS HeightfieldAsset : public editor::Asset
 public:
 	HeightfieldAsset();
 
-	virtual const TypeInfo* getOutputType() const;
-
 	virtual bool serialize(ISerializer& s);
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
-
-	uint32_t getPatchDim() const { return m_patchDim; }
 
 	uint32_t getDetailSkip() const { return m_detailSkip; }
 
@@ -40,7 +36,6 @@ public:
 
 private:
 	Vector4 m_worldExtent;
-	uint32_t m_patchDim;
 	uint32_t m_detailSkip;
 	bool m_invertX;
 	bool m_invertZ;

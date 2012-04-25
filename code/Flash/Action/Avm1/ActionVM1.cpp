@@ -9,6 +9,8 @@
 #include "Flash/Action/Avm1/ActionVMImage1.h"
 #include "Flash/Action/Avm1/ActionVMTrace1.h"
 
+#define T_TRACE_EXECUTE 0
+
 namespace traktor
 {
 	namespace flash
@@ -20,7 +22,7 @@ ActionVM1::ActionVM1()
 {
 	m_timer.start();
 
-#if defined(_DEBUG)
+#if T_TRACE_EXECUTE
 	m_trace = new ActionVMTrace1();
 #endif
 }
@@ -50,8 +52,6 @@ Ref< const IActionVMImage > ActionVM1::load(BitReader& br) const
 		if (opcode == AopEnd)
 			break;
 	}
-
-	image->prepare();
 
 	return image;
 }

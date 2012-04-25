@@ -1,36 +1,37 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="3">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="10">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="12">
 		<renderType>RtForward</renderType>
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>100</viewFarZ>
-		<depthPassEnabled>false</depthPassEnabled>
-		<velocityPassEnable>false</velocityPassEnable>
+		<depthPassEnabled>true</depthPassEnabled>
 		<shadowsEnabled>true</shadowsEnabled>
 		<shadowsProjection>SpUniform</shadowsProjection>
 		<shadowsQuality>SqHigh</shadowsQuality>
 		<shadowFarZ>49.300007</shadowFarZ>
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>0.35</shadowMapBias>
+		<shadowMapBiasCoeff>0.1</shadowMapBiasCoeff>
 		<shadowCascadingSlices>3</shadowCascadingSlices>
 		<shadowCascadingLambda>0.7</shadowCascadingLambda>
+		<shadowQuantizeProjection>true</shadowQuantizeProjection>
 		<fogEnabled>true</fogEnabled>
 		<fogDistance>10</fogDistance>
 		<fogRange>60</fogRange>
 		<fogColor>245, 205, 105, 255</fogColor>
 	</worldRenderSettings>
-	<postProcessSettings>{93BB7BDE-FAEA-3341-BDEF-B7DF5582C81A}</postProcessSettings>
+	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<entityData type="traktor.world.GroupEntityData">
 		<name>Root</name>
-    <transform>
-      <translation>0, 0, 0, 0</translation>
-      <rotation>0, 0, 0, 1</rotation>
-    </transform>
-    <entityData>
+		<transform>
+			<translation>0, 0, 0, 0</translation>
+			<rotation>0, 0, 0, 1</rotation>
+		</transform>
+		<entityData>
 			<item type="traktor.world.DirectionalLightEntityData" version="1">
 				<name>Sun</name>
 				<transform>
-					<translation>0, 0, 0, 0</translation>
+					<translation>-3.593981, 1.013193, 0, 0</translation>
 					<rotation>-0.393518, -0.146114, -0.063506, 0.905407</rotation>
 				</transform>
 				<sunColor>1.5, 1.5, 1.4, 0</sunColor>
@@ -38,13 +39,13 @@
 				<shadowColor>0.4, 0.4, 0.3, 0</shadowColor>
 				<castShadow>true</castShadow>
 			</item>
-			<item type="traktor.world.ExternalEntityData">
+			<item type="traktor.world.ExternalEntityData" version="1">
 				<name>Dea</name>
 				<transform>
-					<translation>0, 0, 0, 0</translation>
+					<translation>1.631132, 0.195384, 2.703615, 0</translation>
 					<rotation>0, 0, 0, 1</rotation>
 				</transform>
-				<guid>{014C3D74-00D4-C54A-AE38-2D3EEA44254C}</guid>
+				<entityData>{014C3D74-00D4-C54A-AE38-2D3EEA44254C}</entityData>
 			</item>
 			<item type="traktor.world.NullEntityData">
 				<name>Camera</name>
@@ -55,11 +56,11 @@
 			</item>
 			<item type="traktor.weather.SkyEntityData" version="1">
 				<name>Sky</name>
-        <transform>
-          <translation>0, 0, 0, 0</translation>
-          <rotation>0, 0, 0, 1</rotation>
-        </transform>
-        <shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
+				<transform>
+					<translation>0, 0, 0, 0</translation>
+					<rotation>0, 0, 0, 1</rotation>
+				</transform>
+				<shader>{4CF929EB-3A8B-C340-AA0A-0C5C80625BF1}</shader>
 				<sunDirection>0, 1, 0, 0</sunDirection>
 			</item>
 			<item type="traktor.mesh.MeshEntityData">
@@ -145,13 +146,13 @@
 					</keys>
 				</path>
 				<timeMode>TmLoop</timeMode>
-				<entityData type="traktor.world.ExternalEntityData">
+				<entityData type="traktor.world.ExternalEntityData" version="1">
 					<name>Smoke</name>
 					<transform>
 						<translation>0, 0, 0, 0</translation>
 						<rotation>0, 0, 0, 1</rotation>
 					</transform>
-					<guid>{60020255-D0E2-1846-AC57-D76F38F39424}</guid>
+					<entityData>{60020255-D0E2-1846-AC57-D76F38F39424}</entityData>
 				</entityData>
 			</item>
 			<item type="traktor.mesh.MeshEntityData">
@@ -236,7 +237,7 @@
 						<name>Tree</name>
 						<transform>
 							<translation>4.869059, -5.90189, 17.231747, 0</translation>
-							<rotation>-0.010016, 0.978473, 0.048944, 0.20024</rotation>
+							<rotation>-0.010016, 0.978472, 0.048944, 0.20024</rotation>
 						</transform>
 						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
 					</item>
@@ -252,7 +253,7 @@
 						<name>Tree</name>
 						<transform>
 							<translation>-11.056827, -4.105049, 7.730351, 0</translation>
-							<rotation>0.003548, -0.983977, 0.019703, 0.177165</rotation>
+							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
 						</transform>
 						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
 					</item>
@@ -260,7 +261,7 @@
 						<name>Tree</name>
 						<transform>
 							<translation>-7.391698, -3.267359, 5.052382, 0</translation>
-							<rotation>0.003548, -0.983977, 0.019703, 0.177165</rotation>
+							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
 						</transform>
 						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
 					</item>
@@ -268,7 +269,7 @@
 						<name>Tree</name>
 						<transform>
 							<translation>-6.696642, -3.714342, 9.517556, 0</translation>
-							<rotation>0.003548, -0.983977, 0.019703, 0.177165</rotation>
+							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
 						</transform>
 						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
 					</item>
@@ -300,7 +301,7 @@
 						<name>Tree</name>
 						<transform>
 							<translation>10.388918, -5.269692, 19.528147, 0</translation>
-							<rotation>0.003548, -0.983977, 0.019703, 0.177165</rotation>
+							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
 						</transform>
 						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
 					</item>
@@ -340,7 +341,7 @@
 						<name>Tree</name>
 						<transform>
 							<translation>39.989529, -5.595076, 8.043609, 0</translation>
-							<rotation>0.003548, -0.983977, 0.019703, 0.177165</rotation>
+							<rotation>0.003548, -0.983978, 0.019703, 0.177165</rotation>
 						</transform>
 						<mesh>{D70FE9E4-E271-AA40-8D90-1DDA193BDCDC}</mesh>
 					</item>

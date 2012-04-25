@@ -8,7 +8,6 @@
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
 #include "Render/Shader.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Resource/Member.h"
 #include "Weather/Sky/SkyEntity.h"
 #include "Weather/Sky/SkyEntityData.h"
@@ -37,7 +36,8 @@ SkyEntityData::SkyEntityData()
 
 Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const
 {
-	if (!resourceManager->bind(m_shader))
+	resource::Proxy< render::Shader > shader;
+	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
 	std::vector< render::VertexElement > vertexElements;
@@ -126,7 +126,7 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 		vertexBuffer,
 		indexBuffer,
 		primitives,
-		m_shader,
+		shader,
 		m_sunDirection.xyz0().normalized()
 	);
 }
@@ -136,7 +136,7 @@ bool SkyEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 
-	s >> resource::Member< render::Shader, render::ShaderGraph >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 
 	if (s.getVersion() >= 1)
 		s >> Member< Vector4 >(L"sunDirection", m_sunDirection);

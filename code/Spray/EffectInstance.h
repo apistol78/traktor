@@ -41,15 +41,15 @@ public:
 
 	void render(PointRenderer* pointRenderer, const Plane& cameraPlane) const;
 
-	inline void setTime(float time) { m_time = time; }
+	void setTime(float time) { m_time = time; }
 
-	inline float getTime() const { return m_time; }
+	float getTime() const { return m_time; }
 
-	inline void setLoopEnable(bool loopEnable) { m_loopEnable = loopEnable; }
+	void setLoopEnable(bool loopEnable) { m_loopEnable = loopEnable; }
 
-	inline bool getLoopEnable() const { return m_loopEnable; }
+	bool getLoopEnable() const { return m_loopEnable; }
 
-	inline const Aabb3& getBoundingBox() const { return m_boundingBox; }
+	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 private:
 	friend class Effect;

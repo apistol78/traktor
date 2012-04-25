@@ -192,7 +192,7 @@ bool InstanceMeshConverter::convert(
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
 
-	checked_type_cast< InstanceMeshResource* >(meshResource)->m_shader = materialGuid;
+	checked_type_cast< InstanceMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< InstanceMeshResource* >(meshResource)->m_parts = parts;
 
 	return true;

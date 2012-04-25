@@ -3,7 +3,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Script/IScriptResource.h"
+#include "Script/IScriptContext.h"
 #include "Script/Editor/Script.h"
 
 namespace traktor
@@ -24,7 +24,7 @@ public:
 
 		}
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.script.Script", 1, Script, editor::ITypedAsset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.script.Script", 1, Script, ISerializable)
 
 Script::Script()
 {
@@ -58,11 +58,6 @@ void Script::setText(const std::wstring& text)
 const std::wstring& Script::getText() const
 {
 	return m_text;
-}
-
-const TypeInfo* Script::getOutputType() const
-{
-	return &type_of< IScriptResource >();
 }
 
 bool Script::serialize(ISerializer& s)

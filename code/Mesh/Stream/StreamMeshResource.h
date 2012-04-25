@@ -4,6 +4,7 @@
 #include "Core/Guid.h"
 #include "Core/Math/Aabb3.h"
 #include "Mesh/IMeshResource.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -15,6 +16,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class Shader;
+
+	}
+
 	namespace mesh
 	{
 
@@ -48,7 +56,7 @@ private:
 	friend class StreamMeshConverter;
 	typedef std::list< Part > parts_t;
 
-	Guid m_shader;
+	resource::Id< render::Shader > m_shader;
 	std::vector< uint32_t > m_frameOffsets;
 	Aabb3 m_boundingBox;
 	std::map< std::wstring, parts_t > m_parts;

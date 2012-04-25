@@ -44,10 +44,7 @@ const btVector3& HeightfieldShapeBullet::getLocalScaling() const
 
 void HeightfieldShapeBullet::getAabb(const btTransform& t, btVector3& aabbMin, btVector3& aabbMax) const
 {
-	if (!m_heightfield.validate())
-		return;
-
-	const Vector4& worldExtent = m_heightfield->getResource().getWorldExtent();
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
 	btVector3 localAabbMin = toBtVector3(-worldExtent * Scalar(0.5f));
 	btVector3 localAabbMax = toBtVector3(worldExtent * Scalar(0.5f));
@@ -69,9 +66,6 @@ void HeightfieldShapeBullet::getAabb(const btTransform& t, btVector3& aabbMin, b
 
 void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, const btVector3& aabbMin, const btVector3& aabbMax) const
 {
-	if (!m_heightfield.validate())
-		return;
-
 	float mnx = quantizeMin(aabbMin.x());
 	float mxx = quantizeMax(aabbMax.x());
 	float mnz = quantizeMin(aabbMin.z());

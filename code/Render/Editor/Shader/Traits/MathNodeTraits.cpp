@@ -336,5 +336,52 @@ bool MathNodeTraits::evaluatePartial(
 	return false;
 }
 
+PinOrderType MathNodeTraits::evaluateOrder(
+	const ShaderGraph* shaderGraph,
+	const Node* node,
+	const OutputPin* nodeOutputPin,
+	const PinOrderType* inputPinOrders,
+	bool frequentAsLinear
+) const
+{
+	if (
+		is_a< Abs >(node) ||
+		is_a< ArcusCos >(node) ||
+		is_a< Clamp >(node) ||
+		is_a< Cos >(node) ||
+		is_a< Cross >(node) ||
+		is_a< Derivative >(node) ||
+		is_a< Exp >(node) ||
+		is_a< Fraction >(node) ||
+		is_a< Log >(node) ||
+		is_a< Max >(node) ||
+		is_a< Min >(node) ||
+		is_a< Normalize >(node) ||
+		is_a< Pow >(node) ||
+		is_a< Reflect >(node) ||
+		is_a< Sign >(node) ||
+		is_a< Sin >(node) ||
+		is_a< Sqrt >(node) ||
+		is_a< Tan >(node)
+	)
+		return pinOrderConstantOrNonLinear(inputPinOrders, node->getInputPinCount());
+	else if (is_a< Add >(node))
+		return pinOrderMax(inputPinOrders[0], inputPinOrders[1]);
+	else if (is_a< Div >(node))
+		return pinOrderAdd(inputPinOrders[0], inputPinOrders[1]);
+	else if (is_a< Interpolator >(node))
+		return inputPinOrders[0];
+	else if (is_a< Mul >(node))
+		return pinOrderAdd(inputPinOrders[0], inputPinOrders[1]);
+	else if (is_a< MulAdd >(node))
+		return pinOrderMax(pinOrderAdd(inputPinOrders[0], inputPinOrders[1]), inputPinOrders[2]);
+	else if (is_a< Neg >(node))
+		return inputPinOrders[0];
+	else if (is_a< Sub >(node))
+		return pinOrderMax(inputPinOrders[0], inputPinOrders[1]);
+	else
+		return PotConstant;
+}
+
 	}
 }

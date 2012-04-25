@@ -33,9 +33,6 @@ VideoLayer::VideoLayer(
 
 void VideoLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
 {
-	if (!m_video.validate())
-		return;
-
 	invokeScriptUpdate(stage, info);
 
 	if (!m_video->playing())
@@ -57,9 +54,6 @@ void VideoLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t 
 
 void VideoLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 {
-	if (!m_video.valid() || !m_shader.validate())
-		return;
-
 	if (!m_screenRenderer)
 	{
 		m_screenRenderer = new render::ScreenRenderer();
