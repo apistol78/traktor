@@ -31,7 +31,9 @@ void createBones(
 	Skeleton* skeleton,
 	const BvhJoint* joint,
 	int32_t parent,
-	const Quaternion& QworldParent
+	const Quaternion& QworldParent,
+	const Vector4& offset,
+	float boneRadius
 )
 {
 	std::map< std::wstring, int32_t > boneNameCount;
@@ -64,7 +66,7 @@ void createBones(
 		if (joint->getParent())
 			bone->setPosition(Vector4::origo());
 		else
-			bone->setPosition(boneP0);
+			bone->setPosition(boneP0 - offset);
 
 		Vector4 VboneDirectionInParent = QworldParent.inverse() * boneDirection;
 
@@ -86,7 +88,7 @@ void createBones(
 		bone->setOrientation(Qlocal);
 
 		bone->setLength(boneLength);
-		bone->setRadius(Scalar(0.25f));
+		bone->setRadius(Scalar(boneRadius));
 
 		/*
 		bone->setTwistLimit(0.1f);
@@ -101,7 +103,9 @@ void createBones(
 			skeleton,
 			childJoint,
 			index,
-			Qworld
+			Qworld,
+			offset,
+			boneRadius
 		);
 	}
 }
@@ -110,25 +114,33 @@ void createBones(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatBvh", SkeletonFormatBvh, ISkeletonFormat)
 
-Ref< Skeleton > SkeletonFormatBvh::create(const BvhDocument* document) const
+Ref< Skeleton > SkeletonFormatBvh::create(const BvhDocument* document, const Vector4& offset, float boneRadius) const
 {
 	Ref< Skeleton > skeleton = new Skeleton();
 	createBones(
 		skeleton,
 		document->getRootJoint(),
 		-1,
-		Quaternion::identity()
+		Quaternion::identity(),
+		offset,
+		boneRadius
 	);
 	return skeleton;
 }
 
-Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream) const
+Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream, const Vector4& offset, float boneRadius, bool invertX, bool invertZ) const
 {
-	Ref< BvhDocument > document = BvhDocument::parse(stream);
+	Vector4 jointModifier(
+		invertX ? -1.0f : 1.0f, 
+		1.0f, 
+		invertZ ? -1.0f:1.0f, 
+		1.0f);
+
+	Ref< BvhDocument > document = BvhDocument::parse(stream, jointModifier);
 	if (!document)
 		return 0;
 
-	Ref< Skeleton > skeleton = create(document);
+	Ref< Skeleton > skeleton = create(document, offset, boneRadius);
 
 	if (skeleton)
 		log::info << L"Created " << skeleton->getBoneCount() << L" bone(s) in skeleton" << Endl;

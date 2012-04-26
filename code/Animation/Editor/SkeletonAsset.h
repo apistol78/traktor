@@ -1,6 +1,7 @@
 #ifndef traktor_animation_SkeletonAsset_H
 #define traktor_animation_SkeletonAsset_H
 
+#include "Core/Math/Vector4.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -19,6 +20,25 @@ namespace traktor
 class T_DLLCLASS SkeletonAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
+
+public:
+	SkeletonAsset();
+
+	virtual bool serialize(ISerializer& s);
+
+	bool getInvertX() const { return m_invertX; }
+
+	bool getInvertZ() const { return m_invertZ; }
+
+	float getBoneRadius() const { return m_boneRadius; }
+
+	const Vector4& getOffset() const { return m_offset; }
+
+private:
+	Vector4 m_offset;
+	float m_boneRadius;
+	bool m_invertX;
+	bool m_invertZ;
 };
 
 	}
