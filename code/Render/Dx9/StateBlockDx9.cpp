@@ -117,8 +117,6 @@ StateBlockDx9& StateBlockDx9::operator = (const StateBlockDx9& stateBlock)
 
 bool StateBlockDx9::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 2);
-
 	s >> MemberStlVector< std::pair< uint32_t, uint32_t >, MemberStlPair< uint32_t, uint32_t > >(L"renderStates", m_renderStates);
 	s >> MemberStlMap< 
 			uint32_t,

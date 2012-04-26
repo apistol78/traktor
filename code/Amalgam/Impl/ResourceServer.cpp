@@ -49,9 +49,10 @@ int32_t ResourceServer::reconfigure(const PropertyGroup* settings)
 	return CrUnaffected;
 }
 
-void ResourceServer::dumpStatistics()
+void ResourceServer::performCleanup()
 {
-	m_resourceManager->dumpStatistics();
+	//m_resourceManager->dumpStatistics();
+	m_resourceManager->unloadUnusedResident();
 }
 
 resource::IResourceManager* ResourceServer::getResourceManager()

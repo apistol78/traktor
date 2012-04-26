@@ -20,9 +20,9 @@ namespace traktor
 	namespace resource
 	{
 
-class CachedResourceHandle;
+class ExclusiveResourceHandle;
+class ResidentResourceHandle;
 class ResourceHandle;
-class UncachedResourceHandle;
 
 /*! \brief Resource manager.
  * \ingroup Resource
@@ -46,9 +46,7 @@ public:
 
 	virtual void reload(const Guid& guid);
 
-	virtual void flush(const Guid& guid);
-
-	virtual void flush();
+	virtual void unloadUnusedResident();
 	
 	virtual void dumpStatistics();
 
@@ -66,8 +64,8 @@ private:
 	};
 
 	RefArray< IResourceFactory > m_factories;
-	std::map< Guid, Ref< CachedResourceHandle > > m_cachedHandles;
-	std::map< Guid, RefArray< UncachedResourceHandle > > m_uncachedHandles;
+	std::map< Guid, Ref< ResidentResourceHandle > > m_residentHandles;
+	std::map< Guid, RefArray< ExclusiveResourceHandle > > m_exclusiveHandles;
 	std::map< const TypeInfo*, TimeCount > m_times;
 	std::stack< double > m_timeStack;
 	Semaphore m_lock;

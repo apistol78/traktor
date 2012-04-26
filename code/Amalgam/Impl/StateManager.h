@@ -18,18 +18,6 @@ public:
 	/*! \brief Destroy state manager. */
 	void destroy();
 
-	/*! \brief Begin update transition.
-	 *
-	 * \return True if transition needs to be performed.
-	 */
-	bool beginTransition();
-
-	/*! \brief Perform transition.
-	 *
-	 * \return True if state transition completed.
-	 */
-	bool performTransition();
-
 	/*! \brief Enter state transition.
 	 *
 	 * \param state New state.
@@ -49,9 +37,25 @@ public:
 	IState* getNext() { return m_next; }
 
 private:
+	friend class Application;
+
 	Semaphore m_lock;
 	Ref< IState > m_current;
 	Ref< IState > m_next;
+
+	/*! \brief Begin update transition.
+	 *
+	 * \return True if transition needs to be performed.
+	 */
+	bool beginTransition();
+
+	/*! \brief Leave current state.
+	 */
+	void leaveCurrent();
+
+	/*! \brief Enter next state.
+	 */
+	void enterNext();
 };
 
 	}
