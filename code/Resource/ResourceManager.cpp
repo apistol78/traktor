@@ -4,10 +4,10 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
-#include "Resource/CachedResourceHandle.h"
+#include "Resource/ResidentResourceHandle.h"
 #include "Resource/IResourceFactory.h"
 #include "Resource/ResourceManager.h"
-#include "Resource/UncachedResourceHandle.h"
+#include "Resource/ExclusiveResourceHandle.h"
 
 namespace traktor
 {
@@ -24,8 +24,8 @@ ResourceManager::~ResourceManager()
 void ResourceManager::destroy()
 {
 	m_factories.clear();
-	m_cachedHandles.clear();
-	m_uncachedHandles.clear();
+	m_residentHandles.clear();
+	m_exclusiveHandles.clear();
 	m_times.clear();
 }
 
@@ -62,26 +62,25 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	if (cacheable)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		std::map< Guid, Ref< CachedResourceHandle > >::iterator i = m_cachedHandles.find(guid);
-		if (i != m_cachedHandles.end())
+		std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.find(guid);
+		if (i != m_residentHandles.end())
 			handle = i->second;
 		else
 		{
-			Ref< CachedResourceHandle > cachedHandle = new CachedResourceHandle(type);
-			m_cachedHandles[guid] = cachedHandle;
-			handle = cachedHandle;
+			Ref< ResidentResourceHandle > residentHandle = new ResidentResourceHandle(type);
+			m_residentHandles[guid] = residentHandle;
+			handle = residentHandle;
 		}
 	}
 	else
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		RefArray< UncachedResourceHandle >& handles = m_uncachedHandles[guid];
+		RefArray< ExclusiveResourceHandle >& handles = m_exclusiveHandles[guid];
 
-		// First try to reuse handles which are no longer in use; as final proxy reference is released resource
-		// handles becomes tagged as not being in se and thus it's safe to reuse them.
-		for (RefArray< UncachedResourceHandle >::iterator i = handles.begin(); i != handles.end(); ++i)
+		// First try to reuse handles which are no longer in use.
+		for (RefArray< ExclusiveResourceHandle >::iterator i = handles.begin(); i != handles.end(); ++i)
 		{
-			if (!(*i)->inUse())
+			if (!(*i)->get())
 			{
 				handle = *i;
 				break;
@@ -90,9 +89,9 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 
 		if (!handle)
 		{
-			Ref< UncachedResourceHandle > uncachedHandle = new UncachedResourceHandle(type);
-			handles.push_back(uncachedHandle);
-			handle = uncachedHandle;
+			Ref< ExclusiveResourceHandle > exclusiveHandle = new ExclusiveResourceHandle(type);
+			handles.push_back(exclusiveHandle);
+			handle = exclusiveHandle;
 		}
 	}
 	
@@ -112,11 +111,11 @@ void ResourceManager::reload(const Guid& guid)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::map< Guid, RefArray< UncachedResourceHandle > >::iterator i0 = m_uncachedHandles.find(guid);
-	if (i0 != m_uncachedHandles.end())
+	std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i0 = m_exclusiveHandles.find(guid);
+	if (i0 != m_exclusiveHandles.end())
 	{
-		const RefArray< UncachedResourceHandle >& handles = i0->second;
-		for (RefArray< UncachedResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+		const RefArray< ExclusiveResourceHandle >& handles = i0->second;
+		for (RefArray< ExclusiveResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
 		{
 			const TypeInfo& resourceType = (*i)->getResourceType();
 			Ref< IResourceFactory > factory = findFactory(resourceType);
@@ -126,8 +125,8 @@ void ResourceManager::reload(const Guid& guid)
 		return;
 	}
 
-	std::map< Guid, Ref< CachedResourceHandle > >::iterator i1 = m_cachedHandles.find(guid);
-	if (i1 != m_cachedHandles.end())
+	std::map< Guid, Ref< ResidentResourceHandle > >::iterator i1 = m_residentHandles.find(guid);
+	if (i1 != m_residentHandles.end())
 	{
 		const TypeInfo& resourceType = i1->second->getResourceType();
 		Ref< IResourceFactory > factory = findFactory(resourceType);
@@ -137,58 +136,37 @@ void ResourceManager::reload(const Guid& guid)
 	}
 }
 
-void ResourceManager::flush(const Guid& guid)
+void ResourceManager::unloadUnusedResident()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	std::map< Guid, RefArray< UncachedResourceHandle > >::iterator i0 = m_uncachedHandles.find(guid);
-	if (i0 != m_uncachedHandles.end())
+	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
-		const RefArray< UncachedResourceHandle >& handles = i0->second;
-		for (RefArray< UncachedResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
-			(*i)->flush();
-		return;
+		T_ASSERT (i->second);
+		if (i->second->getReferenceCount() <= 1 && i->second->get() != 0)
+		{
+			log::info << L"Unload resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")" << Endl;
+			i->second->replace(0);
+		}
 	}
-
-	std::map< Guid, Ref< CachedResourceHandle > >::iterator i1 = m_cachedHandles.find(guid);
-	if (i1 != m_cachedHandles.end())
-	{
-		i1->second->flush();
-		return;
-	}
-}
-
-void ResourceManager::flush()
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
-	for (std::map< Guid, RefArray< UncachedResourceHandle > >::iterator i = m_uncachedHandles.begin(); i != m_uncachedHandles.end(); ++i)
-	{
-		for (RefArray< UncachedResourceHandle >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
-			(*j)->flush();
-	}
-
-	for (std::map< Guid, Ref< CachedResourceHandle > >::iterator i = m_cachedHandles.begin(); i != m_cachedHandles.end(); ++i)
-		i->second->flush();
 }
 
 void ResourceManager::dumpStatistics()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	log::debug << L"Resource manager statistics:" << Endl;
-	log::debug << IncreaseIndent;
+	log::info << L"Resource manager statistics:" << Endl;
+	log::info << IncreaseIndent;
 	
-	log::debug << uint32_t(m_cachedHandles.size()) << L" persistent entries" << Endl;
-	log::debug << uint32_t(m_uncachedHandles.size()) << L" transient entries" << Endl;
+	log::info << uint32_t(m_residentHandles.size()) << L" resident entries" << Endl;
+	log::info << uint32_t(m_exclusiveHandles.size()) << L" exclusive entries" << Endl;
 	
 	double totalTime = 0.0;
 	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)
 		totalTime += i->second.time;
 	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)
-		log::debug << i->first->getName() << L" " << (i->second.time * 1000.0) << L" ms (" << i->second.count << L" resource(s), " << (i->second.time * 100.0f / totalTime) << L"%)" << Endl;
+		log::info << i->first->getName() << L" " << (i->second.time * 1000.0) << L" ms (" << i->second.count << L" resource(s), " << (i->second.time * 100.0f / totalTime) << L"%)" << Endl;
 	
-	log::debug << DecreaseIndent;
+	log::info << DecreaseIndent;
 }
 
 Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)

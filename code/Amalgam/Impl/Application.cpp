@@ -455,22 +455,32 @@ bool Application::update()
 			return false;
 		}
 
+		// Ensure state transition is safe.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 			T_FATAL_ASSERT (m_stateRender == 0);
-			m_stateManager->performTransition();
+
+			// Leave current state.
+			log::info << L"Leaving state \"" << type_name(m_stateManager->getCurrent()) << L"\"..." << Endl;
+			m_stateManager->leaveCurrent();
+
+			// Cleanup resources used by former state.
+			log::info << L"Cleaning resident resources..." << Endl;
+			m_resourceServer->performCleanup();
+
+			// Reset time data.
 			m_updateInfo.m_frameDeltaTime = c_simulationDeltaTime;
 			m_updateInfo.m_simulationTime = 0.0f;
 			m_updateInfo.m_stateTime = 0.0f;
 
+			// Enter new state.
+			log::info << L"Enter state \"" << type_name(m_stateManager->getNext()) << L"\"..." << Endl;
+			m_stateManager->enterNext();
+
 			// Assume state's active from start.
 			m_renderViewActive = true;
+			log::info << L"State transition successful" << Endl;
 		};
-		
-		// Dump resource statistics.
-#if defined(_DEBUG)
-		m_resourceServer->dumpStatistics();
-#endif
 	}
 
 	// Update scripting language runtime.

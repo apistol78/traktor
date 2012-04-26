@@ -20,6 +20,18 @@ void StateManager::destroy()
 	m_next = 0;
 }
 
+void StateManager::enter(IState* state)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	//if (m_current)
+		m_next = state;
+	//else
+	//{
+	//	m_current = state;
+	//	m_current->enter();
+	//}
+}
+
 bool StateManager::beginTransition()
 {
 	if (!m_lock.wait())
@@ -34,7 +46,7 @@ bool StateManager::beginTransition()
 	}
 }
 
-bool StateManager::performTransition()
+void StateManager::leaveCurrent()
 {
 	T_ASSERT (m_next);
 
@@ -43,6 +55,12 @@ bool StateManager::performTransition()
 		m_current->leave();
 		m_current = 0;
 	}
+}
+
+void StateManager::enterNext()
+{
+	T_ASSERT (m_next);
+	T_ASSERT (!m_current);
 
 	m_current = m_next;
 	m_next = 0;
@@ -51,19 +69,6 @@ bool StateManager::performTransition()
 		m_current->enter();
 
 	m_lock.release();
-	return true;
-}
-
-void StateManager::enter(IState* state)
-{
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	if (m_current)
-		m_next = state;
-	else
-	{
-		m_current = state;
-		m_current->enter();
-	}
 }
 
 	}

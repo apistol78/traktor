@@ -58,6 +58,74 @@ namespace traktor
 		namespace
 		{
 
+class MeshProxyIndexVertexArray : public btStridingMeshInterface
+{
+public:
+	MeshProxyIndexVertexArray(const resource::Proxy< Mesh >& mesh)
+	:	m_mesh(mesh)
+	{
+	}
+
+	virtual ~MeshProxyIndexVertexArray()
+	{
+		m_mesh.clear();
+	}
+
+	virtual void getLockedVertexIndexBase(unsigned char **vertexbase, int& numverts,PHY_ScalarType& type, int& stride,unsigned char **indexbase,int & indexstride,int& numfaces,PHY_ScalarType& indicestype,int subpart=0)
+	{
+		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
+		const std::vector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
+
+		numverts = int(vertices.size());
+		(*vertexbase) = (unsigned char *)&vertices[0];
+		type = PHY_FLOAT;
+		stride = sizeof(Vector4);
+		numfaces = int(shapeTriangles.size());
+		(*indexbase) = (unsigned char *)&shapeTriangles[0];
+		indexstride = sizeof(Mesh::Triangle);
+		indicestype = PHY_INTEGER;
+	}
+
+	virtual void getLockedReadOnlyVertexIndexBase(const unsigned char **vertexbase, int& numverts,PHY_ScalarType& type, int& stride,const unsigned char **indexbase,int & indexstride,int& numfaces,PHY_ScalarType& indicestype,int subpart=0) const
+	{
+		const AlignedVector< Vector4 >& vertices = m_mesh->getVertices();
+		const std::vector< Mesh::Triangle >& shapeTriangles = m_mesh->getShapeTriangles();
+
+		numverts = int(vertices.size());
+		(*vertexbase) = (const unsigned char *)&vertices[0];
+		type = PHY_FLOAT;
+		stride = sizeof(Vector4);
+		numfaces = int(shapeTriangles.size());
+		(*indexbase) = (const unsigned char *)&shapeTriangles[0];
+		indexstride = sizeof(Mesh::Triangle);
+		indicestype = PHY_INTEGER;
+	}
+
+	virtual void unLockVertexBase(int subpart)
+	{
+	}
+
+	virtual void unLockReadOnlyVertexBase(int subpart) const
+	{
+	}
+
+	virtual int getNumSubParts() const
+	{
+		return 1;
+	}
+
+	virtual void preallocateVertices(int numverts)
+	{
+	}
+
+	virtual void preallocateIndices(int numindices)
+	{
+	}
+
+private:
+	resource::Proxy< Mesh > m_mesh;
+};
+
 uint32_t getCollisionGroup(const btCollisionObject* collisionObject)
 {
 	if (!collisionObject)
@@ -139,6 +207,24 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 		return m_closestHitFraction;
 	}
 };
+
+void deleteShape(btCollisionShape* shape)
+{
+	if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
+	{
+		btBvhTriangleMeshShape* triangleMeshShape = static_cast< btBvhTriangleMeshShape* >(shape);
+		btStridingMeshInterface* stridingMesh = triangleMeshShape->getMeshInterface();
+		delete stridingMesh;
+	}
+	else if (shape->getShapeType() == COMPOUND_SHAPE_PROXYTYPE)
+	{
+		btCompoundShape* compoundShape = static_cast< btCompoundShape* >(shape);
+		int numChildShapes = compoundShape->getNumChildShapes();
+		for (int i = 0; i < numChildShapes; ++i)
+			deleteShape(compoundShape->getChildShape(i));
+	}
+	delete shape;
+}
 
 		}
 
@@ -345,15 +431,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		}
 		else
 		{
-			btTriangleIndexVertexArray* indexVertexArray = new btTriangleIndexVertexArray(
-				int(shapeTriangles.size()),
-				const_cast< int * >(reinterpret_cast< const int* >(&shapeTriangles[0])),
-				sizeof(Mesh::Triangle),
-				int(vertices.size()),
-				const_cast< btScalar* >(reinterpret_cast< const float* >(&vertices[0])),
-				sizeof(Vector4)
-			);
-
+			MeshProxyIndexVertexArray* indexVertexArray = new MeshProxyIndexVertexArray(mesh);
 			shape = new btBvhTriangleMeshShape(indexVertexArray, false);
 		}
 	}
@@ -1033,7 +1111,7 @@ void PhysicsManagerBullet::destroyBody(BodyBullet* body, btRigidBody* rigidBody,
 	m_bodies.erase(i);
 
 	delete rigidBody;
-	delete shape;
+	deleteShape(shape);
 }
 
 void PhysicsManagerBullet::destroyConstraint(Joint* joint, btTypedConstraint* constraint)

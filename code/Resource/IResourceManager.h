@@ -62,23 +62,12 @@ public:
 	 */
 	virtual void reload(const Guid& guid) = 0;
 
-	/*! \brief Flush resource from cache.
+	/*! \brief Unload externally unused, resident, resources.
 	 *
-	 * All proxies referencing resource become null pointers
-	 * thus this must be called when it's safe and the resource
-	 * should no longer be used.
-	 *
-	 * \param guid Resource identifier.
+	 * Call this when unused resources which are resident can
+	 * be unloaded.
 	 */
-	virtual void flush(const Guid& guid) = 0;
-
-	/*! \brief Flush all resources.
-	 *
-	 * All proxies referencing any resource become null pointers
-	 * thus this must be called when it's safe and the resource
-	 * should no longer be used.
-	 */
-	virtual void flush() = 0;
+	virtual void unloadUnusedResident() = 0;
 	
 	/*! \brief Dump statistics. */
 	virtual void dumpStatistics() = 0;

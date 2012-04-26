@@ -25,8 +25,8 @@ public:
 	void createResourceFactories(IEnvironment* environment);
 
 	int32_t reconfigure(const PropertyGroup* settings);
-	
-	void dumpStatistics();
+
+	void performCleanup();
 
 	virtual resource::IResourceManager* getResourceManager();
 

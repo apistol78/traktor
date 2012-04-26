@@ -49,9 +49,11 @@ Replicator::~Replicator()
 
 bool Replicator::create(IReplicatorPeers* replicatorPeers, const ISerializable* joinParams)
 {
+#if defined(_DEBUG)
 	m_recorder = new MessageRecorder();
 	if (!m_recorder->create())
 		m_recorder = 0;
+#endif
 
 	m_replicatorPeers = replicatorPeers;
 	m_joinParams = joinParams;

@@ -2,6 +2,7 @@
 #include "Amalgam/IStateManager.h"
 #include "Amalgam/IUpdateControl.h"
 #include "Core/Functor/Functor.h"
+#include "Core/Log/Log.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
@@ -84,15 +85,22 @@ bool LoadState::take(const amalgam::IAction* action)
 
 void LoadState::jobLoader()
 {
+	log::info << L"Loading begin" << Endl;
+
+	// Load stage data directly from database.
 	Ref< StageData > stageData = m_environment->getDatabase()->getObjectReadOnly< StageData >(m_stageGuid);
 	if (!stageData)
 		return;
 
+	// Create stage from data; this will load further resources through resource manager.
 	Ref< Stage > stage = stageData->createInstance(m_environment, m_stageParams);
 	if (!stage)
 		return;
 
+	// Successfully created stage; create managing state.
 	m_nextState = new StageState(m_environment, stage);
+
+	log::info << L"Loading finished" << Endl;
 }
 
 	}
