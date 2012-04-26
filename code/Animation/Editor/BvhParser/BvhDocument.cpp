@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
+bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint, const Vector4& jointModifier)
 {
 	std::wstring str;
 
@@ -36,7 +36,7 @@ bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 					fv[0],
 					fv[1],
 					fv[2]
-				));
+				) * jointModifier);
 			}
 		}
 		else if (startsWith< std::wstring >(str, L"CHANNELS"))
@@ -58,14 +58,14 @@ bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 		else if (startsWith< std::wstring >(str, L"JOINT"))
 		{
 			Ref< BvhJoint > childJoint = new BvhJoint(str.substr(6));
-			if (!parseGroup(sr, channelCount, childJoint))
+			if (!parseGroup(sr, channelCount, childJoint, jointModifier))
 				return false;
 			joint->addChild(childJoint);
 		}
 		else if (str == L"End Site")
 		{
 			Ref< BvhJoint > childJoint = new BvhJoint(L"");
-			if (!parseGroup(sr, channelCount, childJoint))
+			if (!parseGroup(sr, channelCount, childJoint, jointModifier))
 				return false;
 			joint->addChild(childJoint);
 		}
@@ -80,7 +80,7 @@ bool parseGroup(StringReader& sr, int32_t& channelCount, BvhJoint* joint)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.BvhDocument", BvhDocument, Object)
 
-Ref< BvhDocument > BvhDocument::parse(IStream* stream)
+Ref< BvhDocument > BvhDocument::parse(IStream* stream, const Vector4& jointModifier)
 {
 	BufferedStream bs(stream);
 	StringReader sr(&bs, new AnsiEncoding());
@@ -95,13 +95,13 @@ Ref< BvhDocument > BvhDocument::parse(IStream* stream)
 	document->m_rootJoint = new BvhJoint(str.substr(5));
 
 	int32_t channelCount = 0;
-	if (!parseGroup(sr, channelCount, document->m_rootJoint))
+	if (!parseGroup(sr, channelCount, document->m_rootJoint, jointModifier))
 		return 0;
 
 	if (sr.readLine(str) <= 0 || str != L"MOTION")
 		return 0;
 	if (sr.readLine(str) <= 0 || !startsWith< std::wstring >(str, L"Frames:"))
-		return 0;
+		return document;
 	if (sr.readLine(str) <= 0 || !startsWith< std::wstring >(str, L"Frame Time:"))
 		return 0;
 

@@ -78,7 +78,11 @@ bool SkeletonPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< Skeleton > skeleton = format->import(file);
+	Vector4 offset = skeletonAsset->getOffset();
+	float boneRadius = skeletonAsset->getBoneRadius();
+	bool invertX = skeletonAsset->getInvertX();
+	bool invertZ = skeletonAsset->getInvertZ();
+	Ref< Skeleton > skeleton = format->import(file, offset, boneRadius, invertX, invertZ);
 
 	file->close();
 

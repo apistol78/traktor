@@ -114,7 +114,7 @@ Ref< Skeleton > SkeletonFormatCollada::create(const BvhDocument* document) const
 	return skeleton;
 }
 */
-Ref< Skeleton > SkeletonFormatCollada::import(IStream* stream) const
+Ref< Skeleton > SkeletonFormatCollada::import(IStream* stream, bool invertX, bool invertZ) const
 {
 /*
 	Ref< BvhDocument > document = BvhDocument::parse(stream);

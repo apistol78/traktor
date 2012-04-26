@@ -148,8 +148,53 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 		KFbxXMatrix globalTransform = nodeTransform * geometricTransform;
 
 		int32_t controlPointsCount = mesh->GetControlPointsCount();
+
+		fbxDouble3 pivot = meshNode->RotationPivot.Get();
 		for (int32_t i = 0; i < controlPointsCount; ++i)
-			outModel.addPosition(convertVector4(globalTransform.MultT(controlPoints[i])).xyz1());
+		{
+			KFbxVector4 v = globalTransform.MultT(controlPoints[i]);
+			outModel.addPosition(convertVector4(v - pivot).xyz1());
+		}
+	}
+
+	typedef std::map< uint32_t, float > bone_influences_t;	// bone, weight
+	std::vector< bone_influences_t > vertexBones;
+	if (importFlags & ModelFormat::IfMeshBlendWeights)
+	{
+		int32_t controlPointsCount = mesh->GetControlPointsCount();
+		vertexBones.resize(controlPointsCount);
+
+		int32_t deformerCount = mesh->GetDeformerCount(KFbxDeformer::eSKIN);
+		for (int32_t i = 0; i < deformerCount; ++i)
+		{
+			KFbxSkin* skinDeformer = (KFbxSkin*) mesh->GetDeformer(i, KFbxDeformer::eSKIN);
+			if (skinDeformer)
+			{
+				int32_t clusterCount = skinDeformer->GetClusterCount();
+				for (int32_t j = 0; j < clusterCount; ++j)
+				{
+					KFbxCluster* cluster = skinDeformer->GetCluster(j);
+					if (cluster)
+					{
+						int weightCount = cluster->GetControlPointIndicesCount();
+						if (weightCount)
+						{
+							const KFbxNode* boneNode = cluster->GetLink();
+							const char* boneName = boneNode->GetName();
+							uint32_t boneIndex = outModel.addBone(mbstows(boneName));
+							const double* weights = cluster->GetControlPointWeights();
+							const int* indices = cluster->GetControlPointIndices();
+							for (int32_t k = 0; k < weightCount; ++k)
+							{
+								int32_t vertexIndex = indices[k];
+								float boneWeight = float(weights[k]);
+								vertexBones[vertexIndex].insert(std::pair< uint32_t, float >(boneIndex, boneWeight));
+							}
+						}
+					}
+				}
+			}
+		}
 	}
 
 	// Convert polygons.
@@ -184,6 +229,10 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 
 				Vertex vertex;
 				vertex.setPosition(positionBase + pointIndex);
+				for (bone_influences_t::const_iterator k = vertexBones[pointIndex].begin(); k != vertexBones[pointIndex].end(); ++k)
+				{
+					vertex.setBoneInfluence(k->first, k->second);
+				}
 
 				for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)
 				{

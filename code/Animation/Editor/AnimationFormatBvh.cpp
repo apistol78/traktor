@@ -101,14 +101,16 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.AnimationFormatBvh", AnimationFormatB
 
 Ref< Animation > AnimationFormatBvh::import(IStream* stream) const
 {
-	Ref< BvhDocument > document = BvhDocument::parse(stream);
+	Vector4 jointModifier(1.0f, 1.0f, 1.0f, 1.0f);
+	Ref< BvhDocument > document = BvhDocument::parse(stream, jointModifier);
 	if (!document)
 		return 0;
 
 	// Create reference skeleton from BVH hierarchy; use
 	// SkeletonFormatBvh class to ensure consistency with skeleton pipeline.
 	SkeletonFormatBvh skeletonFormat;
-	Ref< Skeleton > skeleton = skeletonFormat.create(document);
+	Vector4 offset(0.0f, 0.0f, 0.0f, 0.0f);
+	Ref< Skeleton > skeleton = skeletonFormat.create(document, offset, 0.25f);
 	if (!skeleton)
 		return 0;
 

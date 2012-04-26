@@ -9,6 +9,7 @@ namespace traktor
 {
 
 class IStream;
+class Vector4;
 
 	namespace animation
 	{
@@ -23,7 +24,7 @@ public:
 	typedef std::vector< float > cv_t;
 	typedef std::list< cv_t > cv_list_t;
 
-	static Ref< BvhDocument > parse(IStream* stream);
+	static Ref< BvhDocument > parse(IStream* stream, const Vector4& jointModifier);
 
 	BvhJoint* getRootJoint() const;
 
