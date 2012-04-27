@@ -26,9 +26,9 @@ Vector2 convertVector2(const KFbxVector2& v)
 Vector4 convertVector4(const KFbxVector4& v)
 {
 	return Vector4(
-		float( v[0]),
+		float(-v[0]),
 		float( v[1]),
-		float(-v[2]),
+		float( v[2]),
 		float( v[3])
 	);
 }
