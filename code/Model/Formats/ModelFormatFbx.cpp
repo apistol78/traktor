@@ -41,6 +41,29 @@ KFbxXMatrix getGeometricTransform(const KFbxNode* fbxNode)
 	return KFbxXMatrix(t, r, s);
 }
 
+std::wstring getTextureName(const KFbxSurfaceMaterial* material, const char* fbxPropertyName)
+{
+	if (material && fbxPropertyName)
+	{
+		const KFbxProperty prop = material->FindProperty(fbxPropertyName);
+		if (prop.IsValid())
+		{
+			int textureCount = prop.GetSrcObjectCount(KFbxTexture::ClassId);
+			for (int i = 0; i < textureCount; i++)
+			{
+				KFbxTexture* texture = KFbxCast< KFbxTexture >(prop.GetSrcObject(KFbxTexture::ClassId, i));
+				if (texture)
+				{
+					const Path texturePath(mbstows(texture->GetFileName()));
+					const std::wstring textureName = texturePath.getFileNameNoExtension();
+					return textureName;
+				}
+			}
+		}
+	}
+	return std::wstring();
+}
+
 bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t importFlags)
 {
 	int32_t vertexId = 0;
@@ -64,6 +87,16 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 
 			Material mm;
 			mm.setName(mbstows(material->GetName()));
+
+			std::wstring diffuseMap = getTextureName(material, KFbxSurfaceMaterial::sDiffuse);
+			if (diffuseMap.length())
+				mm.setDiffuseMap(diffuseMap);
+			std::wstring specularMap = getTextureName(material, KFbxSurfaceMaterial::sSpecular);
+			if (specularMap.length())
+				mm.setSpecularMap(specularMap);
+			std::wstring normalMap = getTextureName(material, KFbxSurfaceMaterial::sNormalMap);
+			if (normalMap.length())
+				mm.setNormalMap(normalMap);
 
 			if (material->GetClassId().Is(KFbxSurfaceLambert::ClassId))
 			{
