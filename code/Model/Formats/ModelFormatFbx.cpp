@@ -19,7 +19,7 @@ Vector2 convertVector2(const KFbxVector2& v)
 {
 	return Vector2(
 		float(v[0]),
-		float(v[1])
+		1.0f - float(v[1])
 	);
 }
 
