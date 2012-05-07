@@ -1,6 +1,6 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityRendererAdapter.h"
-#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/EntityRendererCache.h"
 
 namespace traktor
 {
@@ -9,8 +9,8 @@ namespace traktor
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityRendererAdapter", EntityRendererAdapter, world::IEntityRenderer)
 
-EntityRendererAdapter::EntityRendererAdapter(SceneEditorContext* context, world::IEntityRenderer* entityRenderer)
-:	m_context(context)
+EntityRendererAdapter::EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer)
+:	m_cache(cache)
 ,	m_entityRenderer(entityRenderer)
 {
 }
@@ -27,7 +27,7 @@ void EntityRendererAdapter::render(
 	world::Entity* entity
 )
 {
-	EntityAdapter* entityAdapter = m_context->beginRenderEntity(entity);
+	EntityAdapter* entityAdapter = m_cache->begin(entity);
 	if (!entityAdapter || entityAdapter->isVisible())
 	{
 		m_entityRenderer->render(
@@ -37,7 +37,7 @@ void EntityRendererAdapter::render(
 			entity
 		);
 	}
-	 m_context->endRenderEntity();
+	m_cache->end();
 }
 
 void EntityRendererAdapter::flush(

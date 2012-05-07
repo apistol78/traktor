@@ -61,7 +61,7 @@
 				<second>217</second>
 			</position>
 			<technique>World_ShadowWrite</technique>
-			<cullMode>CmNever</cullMode>
+			<cullMode>CmCounterClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
 			<blendSource>BfOne</blendSource>

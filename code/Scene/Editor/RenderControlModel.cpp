@@ -34,10 +34,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.RenderControlModel", RenderControlModel, 
 
 RenderControlModel::RenderControlModel()
 :	m_mouseButton(0)
-,	m_modifyCamera(false)
+,	m_modifyBegun(false)
 ,	m_modifyAlternative(false)
 ,	m_modifyClone(false)
-,	m_modifyBegun(false)
+,	m_modify(MtNothing)
 {
 }
 
@@ -45,23 +45,37 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 {
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
 
+	m_mousePosition0 =
 	m_mousePosition = mouseEvent->getPosition();
 	m_mouseButton = translateMouseButton(mouseEvent->getButton());
-	m_modifyCamera = (mouseEvent->getKeyState() & ui::KsMenu) != 0;
-	m_modifyAlternative = (mouseEvent->getKeyState() & ui::KsControl) != 0;
-	m_modifyClone = m_modifyAlternative && (mouseEvent->getKeyState() & ui::KsShift) != 0;
 
-	if (m_mouseButton == 0 || renderWidget->hasCapture())
-		return;
+	m_modify = MtNothing;
+	m_modifyAlternative = false;
+	m_modifyClone = false;
+	m_modifyBegun = false;
+
+	T_ASSERT (m_modify == MtNothing);
 
 	ui::Rect innerRect = renderWidget->getInnerRect();
-
 	Vector2 screenPosition(2.0f * float(m_mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(m_mousePosition.y) / innerRect.getHeight());
 
-	if (!m_modifyCamera)
+	if ((mouseEvent->getKeyState() & ui::KsMenu) != 0)
+		m_modify = MtCamera;
+	if ((mouseEvent->getKeyState() & ui::KsControl) != 0)
+		m_modifyAlternative = true;
+	if ((mouseEvent->getKeyState() & (ui::KsControl | ui::KsShift)) == (ui::KsControl | ui::KsShift))
+		m_modifyClone = true;
+
+	if (m_modify != MtCamera)
 	{
+		m_modify = MtModifier;
+
 		// Handle entity picking if enabled.
-		if (!m_modifyAlternative && m_mouseButton == 1 && context->getPickEnable())
+		if (
+			!m_modifyAlternative &&
+			m_mouseButton == 1 &&
+			context->getPickEnable()
+		)
 		{
 			IModifier* modifier = context->getModifier();
 			bool modifierHit = false;
@@ -78,49 +92,21 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 			}
 
 			if (!modifierHit)
-			{
-				Vector4 worldRayOrigin, worldRayDirection;
-				if (renderControl->calculateRay(m_mousePosition, worldRayOrigin, worldRayDirection))
-				{
-					Ref< EntityAdapter > entityAdapter = context->queryRay(worldRayOrigin, worldRayDirection, true);
-
-					// De-select all other if shift isn't held.
-					if ((event->getKeyState() & ui::KsShift) == 0)
-						context->selectAllEntities(false);
-
-					context->selectEntity(entityAdapter);
-					context->raiseSelect(this);
-
-					// Update modifier with cursor position again as selection has changed.
-					if (modifier)
-					{
-						modifier->cursorMoved(
-							transformChain,
-							screenPosition
-						);
-					}
-				}
-			}
+				m_modify = MtSelection;
 		}
 
 		// Ensure controller isn't playing and physics is disabled.
 		context->setPlaying(false);
 		context->setPhysicsEnable(false);
-
-		m_modifyBegun = false;
-		renderWidget->setCapture();
-	}
-	else
-	{
-		renderWidget->setCapture();
 	}
 
+	renderWidget->setCapture();
 	renderWidget->setFocus();
 }
 
 void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain)
 {
-	if (!m_modifyCamera && m_modifyBegun)
+	if (m_modify == MtModifier && m_modifyBegun)
 	{
 		IModifier* modifier = context->getModifier();
 		if (modifier)
@@ -129,9 +115,52 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 		context->raisePostModify();
 	}
 
+	if (m_modify == MtSelection)
+	{
+		ui::Rect selectionRectangle = ui::Rect(m_mousePosition0, m_mousePosition).getUnified();
+		if (selectionRectangle.area() > 0)
+		{
+			// Selection rectangle was drawn; use frustum query to find new selection set.
+			Frustum worldFrustum;
+			if (renderControl->calculateFrustum(selectionRectangle, worldFrustum))
+			{
+				RefArray< EntityAdapter > intersectingEntities;
+				context->queryFrustum(worldFrustum, intersectingEntities, true);
+
+				// De-select all other if shift isn't held.
+				if ((event->getKeyState() & ui::KsShift) == 0)
+					context->selectAllEntities(false);
+
+				for (RefArray< EntityAdapter >::iterator i = intersectingEntities.begin(); i != intersectingEntities.end(); ++i)
+					context->selectEntity(*i);
+				context->raiseSelect(this);
+			}
+		}
+		else
+		{
+			// Single clicked; use ray query to find a single entity selection.
+			Vector4 worldRayOrigin, worldRayDirection;
+			if (renderControl->calculateRay(m_mousePosition, worldRayOrigin, worldRayDirection))
+			{
+				Ref< EntityAdapter > entityAdapter = context->queryRay(worldRayOrigin, worldRayDirection, true);
+
+				// De-select all other if shift isn't held.
+				if ((event->getKeyState() & ui::KsShift) == 0)
+					context->selectAllEntities(false);
+
+				context->selectEntity(entityAdapter);
+				context->raiseSelect(this);
+			}
+		}
+
+		renderControl->showSelectionRectangle(ui::Rect());
+	}
+
+	m_mousePosition0 =
 	m_mousePosition = ui::Point(0, 0);
 	m_mouseButton = 0;
-	m_modifyCamera = false;
+
+	m_modify = MtNothing;
 	m_modifyAlternative = false;
 	m_modifyClone = false;
 	m_modifyBegun = false;
@@ -168,7 +197,6 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 {
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
 	ui::Point mousePosition = mouseEvent->getPosition();
-	bool hasCapture = renderWidget->hasCapture();
 
 	Vector4 mouseDelta(
 		float(m_mousePosition.x - mousePosition.x),
@@ -178,58 +206,56 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 	);
 
 	ui::Rect innerRect = renderWidget->getInnerRect();
-
 	Vector2 screenPosition(2.0f * float(mousePosition.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(mousePosition.y) / innerRect.getHeight());
-
 	Vector4 clipDelta = mouseDelta * Vector4(-2.0f / innerRect.getWidth(), 2.0f / innerRect.getHeight(), 0.0f, 0.0f);
 	Vector4 viewDelta = transformChain.clipToView(clipDelta);
 
-	if (hasCapture)
+	if (m_modify == MtModifier)
 	{
-		if (!m_modifyCamera)
+		IModifier* modifier = context->getModifier();
+		T_ASSERT (modifier);
+
+		if (!m_modifyBegun)
 		{
-			IModifier* modifier = context->getModifier();
+			// Clone selection set; clones will become selected.
+			if (m_modifyClone)
+				context->cloneSelected();
 
-			if (!m_modifyBegun)
-			{
-				// Clone selection set; clones will become selected.
-				if (m_modifyClone)
-					context->cloneSelected();
-
-				// Notify modifier about modification begun.
-				if (modifier)
-				{
-					modifier->cursorMoved(transformChain, screenPosition);
-					modifier->begin(transformChain);
-				}
-
-				// Issue begin modification event.
-				context->raisePreModify();
-
-				m_modifyBegun = true;
-			}
-
-			// Invoke modifier to apply changes to selection set.
+			// Notify modifier about modification begun.
 			if (modifier)
 			{
-				modifier->apply(
-					transformChain,
-					mouseDelta,
-					viewDelta
-				);
+				modifier->cursorMoved(transformChain, screenPosition);
+				modifier->begin(transformChain);
 			}
+
+			// Issue begin modification event.
+			context->raisePreModify();
+
+			m_modifyBegun = true;
 		}
-		else
-		{
-			if (m_mouseButton == 1)
-				renderControl->moveCamera(ISceneRenderControl::McmRotate, mouseDelta, viewDelta);
-			else if (m_mouseButton == 2 && !m_modifyAlternative)
-				renderControl->moveCamera(ISceneRenderControl::McmMoveXZ, mouseDelta, viewDelta);
-			else if (m_mouseButton == 3 || (m_mouseButton == 2 && m_modifyAlternative))
-				renderControl->moveCamera(ISceneRenderControl::McmMoveXY, mouseDelta, viewDelta);
-		}
+
+		modifier->apply(
+			transformChain,
+			mouseDelta,
+			viewDelta
+		);
 	}
-	else	// No capture, i.e. not modifying anything.
+	else if (m_modify == MtCamera)
+	{
+		if (m_mouseButton == 1)
+			renderControl->moveCamera(ISceneRenderControl::McmRotate, mouseDelta, viewDelta);
+		else if (m_mouseButton == 2 && !m_modifyAlternative)
+			renderControl->moveCamera(ISceneRenderControl::McmMoveXZ, mouseDelta, viewDelta);
+		else if (m_mouseButton == 3 || (m_mouseButton == 2 && m_modifyAlternative))
+			renderControl->moveCamera(ISceneRenderControl::McmMoveXY, mouseDelta, viewDelta);
+	}
+	else if (m_modify == MtSelection)
+	{
+		renderControl->showSelectionRectangle(
+			ui::Rect(m_mousePosition0, mousePosition).getUnified()
+		);
+	}
+	else
 	{
 		IModifier* modifier = context->getModifier();
 		if (modifier)

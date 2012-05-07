@@ -4,6 +4,7 @@
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -31,13 +32,15 @@ TargetInstance::TargetInstance(const std::wstring& name, const Target* target, c
 ,	m_target(target)
 ,	m_targetConfiguration(targetConfiguration)
 ,	m_platform(platform)
-,	m_deployHostId(0)
+,	m_deployHostId(-1)
 ,	m_state(TsIdle)
 {
 }
 
 void TargetInstance::destroy()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionsLock);
+
 	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
 		(*i)->destroy();
 
@@ -101,31 +104,34 @@ int32_t TargetInstance::getBuildProgress() const
 
 bool TargetInstance::update()
 {
-	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); )
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionsLock);
+	for (RefArray< TargetConnection >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
 	{
 		if (!(*i)->update())
 		{
-			i = m_connections.erase(i);
 			log::info << L"Target disconnected; connection removed" << Endl;
+			m_connections.erase(i);
+			break;
 		}
-		else
-			++i;
 	}
 	return !m_connections.empty();
 }
 
 void TargetInstance::addConnection(TargetConnection* connection)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionsLock);
 	m_connections.push_back(connection);
 }
 
 void TargetInstance::removeConnection(TargetConnection* connection)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionsLock);
 	m_connections.remove(connection);
 }
 
-const RefArray< TargetConnection>& TargetInstance::getConnections() const
+RefArray< TargetConnection> TargetInstance::getConnections() const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionsLock);
 	return m_connections;
 }
 

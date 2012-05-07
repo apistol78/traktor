@@ -64,7 +64,7 @@ bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBloc
 
 	if (m_position > position)
 	{
-		log::debug << L"Rewind stream sound decoder" << Endl;
+		T_DEBUG(L"Rewind stream sound decoder");
 		m_streamDecoder->rewind();
 		m_position = 0;
 	}

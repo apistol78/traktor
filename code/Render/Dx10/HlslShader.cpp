@@ -18,12 +18,14 @@ HlslShader::HlslShader(ShaderType shaderType)
 	pushOutputStream(BtUniform, new StringOutputStream());
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtScript, new StringOutputStream());
 	pushOutputStream(BtBody, new StringOutputStream());
 }
 
 HlslShader::~HlslShader()
 {
 	popOutputStream(BtBody);
+	popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
 	popOutputStream(BtUniform);
@@ -115,6 +117,16 @@ void HlslShader::allocateVPos()
 	m_needVPos = true;
 }
 
+bool HlslShader::defineScript(const std::wstring& signature)
+{
+	std::set< std::wstring >::iterator i = m_scripts.find(signature);
+	if (i != m_scripts.end())
+		return false;
+
+	m_scripts.insert(signature);
+	return true;
+}
+
 void HlslShader::addSampler(const std::wstring& sampler, const D3D10_SAMPLER_DESC& dsd)
 {
 	m_samplers.insert(std::make_pair(sampler, dsd));
@@ -190,6 +202,10 @@ std::wstring HlslShader::getGeneratedShader()
 		ss << L"};" << Endl;
 		ss << Endl;
 	}
+
+	std::wstring scriptText = getOutputStream(BtScript).str();
+	if (!scriptText.empty())
+		ss << scriptText;
 
 	if (m_shaderType == StVertex)
 	{

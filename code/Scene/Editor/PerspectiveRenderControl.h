@@ -7,7 +7,7 @@
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Scene/Editor/RenderControlModel.h"
-#include "Ui/Point.h"
+#include "Ui/Rect.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
 
@@ -69,7 +69,11 @@ public:
 
 	virtual bool calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const;
 
+	virtual bool calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const;
+
 	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta);
+
+	virtual void showSelectionRectangle(const ui::Rect& rect);
 
 private:
 	Ref< SceneEditorContext > m_context;
@@ -95,6 +99,7 @@ private:
 	bool m_invertPanY;
 	Timer m_timer;
 	Ref< Camera > m_camera;
+	ui::Rect m_selectionRectangle;
 	ui::Size m_dirtySize;
 
 	void updateSettings();

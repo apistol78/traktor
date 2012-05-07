@@ -147,8 +147,8 @@ void ConeTwistJointBullet::update(float deltaTime)
 	const Scalar c_tau(0.3f);
 	const Scalar c_damping(1.0f);
 
-	Transform tf1 = m_body1->getTransform();
-	Transform tf2 = m_body2 ? m_body2->getTransform() : Transform::identity();
+	Transform tf1 = m_body1->getBodyTransform();
+	Transform tf2 = m_body2 ? m_body2->getBodyTransform() : Transform::identity();
 
 	Vector4 centerOfMass1 = tf1.translation().xyz1();
 	Vector4 centerOfMass2 = tf2.translation().xyz1();

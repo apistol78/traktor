@@ -105,14 +105,14 @@ Tag_SpecularTerm
 				<second>199</second>
 			</position>
 			<external>{3D18456B-0196-2F42-961C-8C0EDF486430}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
 				<first>477</first>
 				<second>310</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>

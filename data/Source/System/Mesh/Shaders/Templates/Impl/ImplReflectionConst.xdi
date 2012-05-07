@@ -36,6 +36,7 @@ Tag_Reflection
 				<second>624</second>
 			</position>
 			<external>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</external>
+			<type>PtTextureCube</type>
 		</item>
 	</nodes>
 	<edges>

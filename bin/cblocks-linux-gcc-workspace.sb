@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_workspace_file>
+	<Workspace title="<?-- output:print(solution:getName()) --?>"><?--
+
+		local projects = solution:getProjects()
+		for i = 0, projects:length() - 1 do
+
+			local project = projects:get(i)
+			if project:getEnable() then
+
+				local dependencies = project:getDependencies()
+				if dependencies:length() == 0 then
+--?>
+		<Project filename="<?-- output:print(project:getName() .. "/" .. project:getName() .. ".cbp") --?>" /><?--
+				else
+--?>
+		<Project filename="<?-- output:print(project:getName() .. "/" .. project:getName() .. ".cbp") --?>"><?--
+					for j = 0, dependencies:length() - 1 do
+						local dep = dependencies:get(j)
+						if dep.__index == ProjectDependency then
+							local dp = dep:getProject()
+							if dp:getEnable() then
+--?>
+			<Depends filename="<?-- output:print(dp:getName() .. "/" .. dp:getName() .. ".cbp") --?>" /><?--
+							end
+						end
+					end
+--?>
+		</Project><?--
+				end
+			end
+		end
+--?>
+	</Workspace>
+</CodeBlocks_workspace_file>

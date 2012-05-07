@@ -21,7 +21,9 @@ enum HlslType
 	HtFloat3,
 	HtFloat4,
 	HtFloat4x4,
-	HtTexture
+	HtTexture2D,
+	HtTexture3D,
+	HtTextureCube
 };
 
 /*!
@@ -38,6 +40,11 @@ std::wstring hlsl_type_name(HlslType type);
  * \ingroup DX10
  */
 HlslType hlsl_from_data_type(DataType type);
+
+/*!
+ * \ingroup DX10
+ */
+HlslType hlsl_from_parameter_type(ParameterType type);
 
 	}
 }

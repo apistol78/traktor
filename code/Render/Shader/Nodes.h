@@ -791,13 +791,6 @@ class T_DLLCLASS Sampler : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	enum Lookup
-	{
-		LuSimple,
-		LuCube,
-		LuVolume
-	};
-
 	enum Filter
 	{
 		FtPoint,
@@ -813,7 +806,6 @@ public:
 	};
 
 	Sampler(
-		Lookup lookup = LuSimple,
 		Filter minFilter = FtLinear,
 		Filter mipFilter = FtLinear,
 		Filter magFilter = FtLinear,
@@ -821,10 +813,6 @@ public:
 		Address addressV = AdWrap,
 		Address addressW = AdWrap
 	);
-
-	void setLookup(Lookup lookup);
-
-	Lookup getLookup() const;
 
 	void setMinFilter(Filter minFilter);
 
@@ -853,7 +841,6 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
-	Lookup m_lookup;
 	Filter m_minFilter;
 	Filter m_mipFilter;
 	Filter m_magFilter;
@@ -907,6 +894,15 @@ class T_DLLCLASS Sqrt : public ImmutableNode
 
 public:
 	Sqrt();
+};
+
+/*! \brief Step function. */
+class T_DLLCLASS Step : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Step();
 };
 
 /*! \brief Subtract. */
@@ -1036,16 +1032,31 @@ class T_DLLCLASS Texture : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	Texture(const Guid& external = Guid());
+	Texture(const Guid& external = Guid(), ParameterType type = PtTexture2D);
 
 	void setExternal(const Guid& external);
 
 	const Guid& getExternal() const;
 
+	void setParameterType(ParameterType type);
+
+	ParameterType getParameterType() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
 	Guid m_external;
+	ParameterType m_type;
+};
+
+
+/*! \brief Texture size. */
+class T_DLLCLASS TextureSize : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	TextureSize();
 };
 
 /*! \brief Transpose matrix. */

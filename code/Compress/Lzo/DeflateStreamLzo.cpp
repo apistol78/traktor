@@ -1,3 +1,4 @@
+#include <cstring>
 #include <minilzo.h>
 #include "Compress/Lzo/DeflateStreamLzo.h"
 #include "Core/Containers/AlignedVector.h"

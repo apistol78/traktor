@@ -44,7 +44,7 @@ bool ConnectionSqlite3::connect(const std::wstring& connectionString)
 	std::wstring dbName = fileName.getPathName();
 #endif
 
-	log::debug << L"Using SQLite db \"" << dbName << L"\"" << Endl;
+	T_DEBUG(L"Using SQLite db \"" << dbName << L"\"");
 
 	sqlite3* db = 0;
 

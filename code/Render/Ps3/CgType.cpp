@@ -41,8 +41,11 @@ std::wstring cg_type_name(CgType type)
 		L"float3",
 		L"float4",
 		L"float4x4",
+		L"texture",
+		L"texture",
 		L"texture"
 	};
+	T_ASSERT (type < sizeof_array(c));
 	return c[type];
 }
 
@@ -57,8 +60,11 @@ int32_t cg_type_width(CgType type)
 		3,
 		4,
 		0,
+		0,
+		0,
 		0
 	};
+	T_ASSERT (type < sizeof_array(c_widths));
 	return c_widths[type];
 }
 
@@ -79,7 +85,24 @@ CgType cg_from_data_type(DataType type)
 		CtFloat2,
 		CtFloat4
 	};
+	T_ASSERT (type < sizeof_array(c));
 	return c[type];
+}
+
+CgType cg_from_parameter_type(ParameterType type)
+{
+	const CgType c[] =
+	{
+		CtFloat,
+		CtFloat4,
+		CtFloat4x4,
+		CtTexture2D,
+		CtTexture3D,
+		CtTextureCube
+	};
+	T_ASSERT (type < sizeof_array(c));
+	return c[type];
+
 }
 
 	}

@@ -180,10 +180,21 @@ bool DefaultRenderControl::calculateRay(const ui::Point& position, Vector4& outW
 	return m_renderControl ? m_renderControl->calculateRay(position, outWorldRayOrigin, outWorldRayDirection) : false;
 }
 
+bool DefaultRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const
+{
+	return m_renderControl ? m_renderControl->calculateFrustum(rc, outWorldFrustum) : false;
+}
+
 void DefaultRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
 {
 	if (m_renderControl)
 		m_renderControl->moveCamera(mode, mouseDelta, viewDelta);
+}
+
+void DefaultRenderControl::showSelectionRectangle(const ui::Rect& rect)
+{
+	if (m_renderControl)
+		m_renderControl->showSelectionRectangle(rect);
 }
 
 void DefaultRenderControl::createRenderControl(int32_t type)

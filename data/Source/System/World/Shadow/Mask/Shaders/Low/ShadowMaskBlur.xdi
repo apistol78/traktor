@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
 				<first>763</first>
@@ -33,6 +33,7 @@
 			<stencilFunction>CfAlways</stencilFunction>
 			<stencilReference>0</stencilReference>
 			<stencilMask>4294967295</stencilMask>
+			<registerCount>0</registerCount>
 		</item>
 		<item type="traktor.render.Sum">
 			<comment/>
@@ -88,7 +89,6 @@
 				<first>1176</first>
 				<second>249</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -135,15 +135,6 @@
 				<second>254</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform">
-			<comment/>
-			<position>
-				<first>353</first>
-				<second>309</second>
-			</position>
-			<parameterName>Source_Size</parameterName>
-			<type>PtVector</type>
-		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
@@ -152,7 +143,7 @@
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
 				<first>527</first>
@@ -160,15 +151,24 @@
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Uniform">
+		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1017</first>
-				<second>211</second>
+				<first>159</first>
+				<second>164</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.TextureSize">
+			<comment/>
+			<position>
+				<first>379</first>
+				<second>308</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -214,7 +214,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[12]"/>
+				<node ref="/object/nodes/item[11]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -264,7 +264,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -280,16 +280,6 @@
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
 				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[10]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -299,7 +289,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[8]"/>
-				<name>Input2</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -310,6 +300,26 @@
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Tap</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[12]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

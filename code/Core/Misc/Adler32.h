@@ -31,6 +31,18 @@ public:
 
 	const uint32_t get() const;
 
+	template < typename T >
+	void feed(const T& value)
+	{
+		feed(&value, sizeof(value));
+	}
+
+	void feed(const std::wstring& value)
+	{
+		if (!value.empty())
+			feed(value.c_str(), value.length());
+	}
+
 private:
 	uint32_t m_A;
 	uint32_t m_B;

@@ -41,7 +41,8 @@ public:
 		float fogRange,
 		const Vector4& fogColor,
 		render::ISimpleTexture* depthMap,
-		render::ISimpleTexture* lightMap
+		render::ISimpleTexture* lightMap,
+		render::ISimpleTexture* normalMap
 	);
 
 	WorldRenderPassPreLit(
@@ -57,9 +58,9 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, bool opaque) const;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, bool opaque, const Matrix44& world, const Aabb3& bounds) const;
 
 private:
 	render::handle_t m_technique;
@@ -71,14 +72,19 @@ private:
 	render::ISimpleTexture* m_depthMap;
 	render::ISimpleTexture* m_shadowMask;
 	render::ISimpleTexture* m_lightMap;
+	render::ISimpleTexture* m_normalMap;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
+
+	void setLightProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setLightMapProgramParameters(render::ProgramParameters* programParams) const;
+
+	void setNormalMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setFogProgramParameters(render::ProgramParameters* programParams) const;
 };

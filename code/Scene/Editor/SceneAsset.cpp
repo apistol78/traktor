@@ -1,11 +1,13 @@
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Resource/Member.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
+#include "Scene/Editor/LayerEntityData.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/EntityData.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
@@ -13,7 +15,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 3, SceneAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 4, SceneAsset, ISerializable)
 
 SceneAsset::SceneAsset()
 :	m_worldRenderSettings(new world::WorldRenderSettings())
@@ -40,14 +42,14 @@ const resource::Id< world::PostProcessSettings >& SceneAsset::getPostProcessSett
 	return m_postProcessSettings;
 }
 
-void SceneAsset::setEntityData(world::EntityData* entityData)
+void SceneAsset::setLayers(const RefArray< LayerEntityData >& layers)
 {
-	m_entityData = entityData;
+	m_layers = layers;
 }
 
-Ref< world::EntityData > SceneAsset::getEntityData() const
+const RefArray< LayerEntityData >& SceneAsset::getLayers() const
 {
-	return m_entityData;
+	return m_layers;
 }
 
 void SceneAsset::setControllerData(ISceneControllerData* controllerData)
@@ -63,10 +65,32 @@ Ref< ISceneControllerData > SceneAsset::getControllerData() const
 bool SceneAsset::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 3);
+
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
-	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
+
+	if (s.getVersion() >= 4)
+	{
+		s >> MemberRefArray< LayerEntityData >(L"layers", m_layers);
+	}
+	else
+	{
+		Ref< world::EntityData > entityData;
+		s >> MemberRef< world::EntityData >(L"entityData", entityData);
+
+		Ref< LayerEntityData > layer = new LayerEntityData();
+		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
+		{
+			layer->setName(groupEntityData->getName());
+			layer->setEntityData(groupEntityData->getEntityData());
+		}
+		else
+			layer->addEntityData(entityData);
+		m_layers.push_back(layer);
+	}
+	
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
+
 	return true;
 }
 

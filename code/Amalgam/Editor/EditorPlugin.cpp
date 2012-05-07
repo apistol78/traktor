@@ -338,12 +338,17 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
 
 	// Get selected target host.
+	int32_t deployHostId = targetInstance->getDeployHostId();
+	if (deployHostId < 0)
+		return;
+
 	std::wstring deployHost = L"";
-	m_hostEnumerator->getHost(targetInstance->getDeployHostId(), deployHost);
+	m_hostEnumerator->getHost(deployHostId, deployHost);
+	T_DEBUG(L"Deploy host \"" << deployHost << L"\"");
 	
-	// Resolve absolut output path.
+	// Resolve absolute output path.
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
-	log::debug << L"Resolved output path \"" << outputPath << L"\"" << Endl;
+	T_DEBUG(L"Resolved output path \"" << outputPath << L"\"");
 
 	// Set target's state to pending as actions can be queued up to be performed much later.
 	targetInstance->setState(TsPending);
@@ -426,7 +431,7 @@ void EditorPlugin::eventTargetListStop(ui::Event* event)
 	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
 	int32_t connectionId = cmdEvent->getCommand().getId();
 
-	const RefArray< TargetConnection >& connections = targetInstance->getConnections();
+	RefArray< TargetConnection > connections = targetInstance->getConnections();
 	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
 	{
 		TargetConnection* connection = connections[connectionId];
@@ -442,7 +447,7 @@ void EditorPlugin::eventTargetListStop(ui::Event* event)
 void EditorPlugin::eventToolBarClick(ui::Event* event)
 {
 	int32_t selectedTargetIndex = m_toolTargets->getSelected();
-	if (selectedTargetIndex < 0 || selectedTargetIndex > m_targetInstances.size())
+	if (selectedTargetIndex < 0 || selectedTargetIndex >= int32_t(m_targetInstances.size()))
 		return;
 
 	const EditTarget& et = m_targets[selectedTargetIndex];
@@ -464,6 +469,34 @@ void EditorPlugin::threadHostEnumerator()
 	while (!m_threadHostEnumerator->stopped())
 	{
 		m_hostEnumerator->update();
+
+		// Find first local host.
+		int32_t localDeployHostId = -1;
+		for (int32_t i = 0; i < m_hostEnumerator->count(); ++i)
+		{
+			if (m_hostEnumerator->isLocal(i))
+			{
+				localDeployHostId = i;
+				break;
+			}
+		}
+
+		// Auto select local remote server for those instances which have none selected yet.
+		if (localDeployHostId >= 0)
+		{
+			bool needUpdate = false;
+			for (RefArray< TargetInstance >::const_iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+			{
+				if ((*i)->getDeployHostId() < 0)
+				{
+					(*i)->setDeployHostId(localDeployHostId);
+					needUpdate = true;
+				}
+			}
+			if (needUpdate)
+				m_targetList->requestUpdate();
+		}
+
 		m_threadHostEnumerator->sleep(1000);
 	}
 }

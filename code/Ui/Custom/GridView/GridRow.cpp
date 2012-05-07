@@ -22,6 +22,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.GridRow", GridRow, GridCell)
 
 GridRow::GridRow(uint32_t initialState)
 :	m_state(initialState)
+,	m_background(255, 255, 255, 0)
+,	m_minimumHeight(0)
 ,	m_parent(0)
 {
 	m_expand[0] = Bitmap::load(c_ResourceExpand, sizeof(c_ResourceExpand), L"png");
@@ -33,9 +35,14 @@ void GridRow::setState(uint32_t state)
 	m_state = state;
 }
 
-void GridRow::setFont(Font* font)
+void GridRow::setBackground(const Color4ub& background)
 {
-	m_font = font;
+	m_background = background;
+}
+
+void GridRow::setMinimumHeight(int32_t minimumHeight)
+{
+	m_minimumHeight = minimumHeight;
 }
 
 void GridRow::add(GridCell* item)
@@ -147,11 +154,18 @@ void GridRow::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 	GridView* gridView = checked_type_cast< GridView*, false >(widget);
 	const RefArray< GridColumn >& columns = gridView->getColumns();
 
+	// Paint custom background.
+	if (m_background.a > 0)
+	{
+		canvas.setBackground(m_background);
+		canvas.fillRect(rect);
+	}
+
 	// Paint selection background.
 	if (m_state & GridRow::RsSelected)
 	{
-		canvas.setForeground(Color4ub(240, 240, 250));
-		canvas.setBackground(Color4ub(220, 220, 230));
+		canvas.setForeground(Color4ub(240, 240, 250, 180));
+		canvas.setBackground(Color4ub(220, 220, 230, 180));
 		canvas.fillGradientRect(rect);
 	}
 
@@ -185,7 +199,7 @@ void GridRow::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 
 int32_t GridRow::getHeight() const
 {
-	int32_t rowHeight = 0;
+	int32_t rowHeight = m_minimumHeight;
 	for (RefArray< GridCell >::const_iterator i = m_items.begin(); i != m_items.end(); ++i)
 		rowHeight = std::max(rowHeight, (*i)->getHeight());
 	return rowHeight;

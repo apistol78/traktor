@@ -29,6 +29,7 @@ TypeInfoSet ConditionalNodeTraits::getNodeTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Conditional >());
 	typeSet.insert(&type_of< Discard >());
+	typeSet.insert(&type_of< Step >());
 	return typeSet;
 }
 
@@ -45,6 +46,11 @@ PinType ConditionalNodeTraits::getOutputPinType(
 		);
 	else if (is_a< Discard >(node))
 		return inputPinTypes[2];	// Pass
+	else if (is_a< Step >(node))
+		return std::max< PinType >(
+			inputPinTypes[0],		// X
+			inputPinTypes[1]		// Y
+		);
 	else
 		return PntVoid;
 }
@@ -53,13 +59,16 @@ PinType ConditionalNodeTraits::getInputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
+	const PinType* inputPinTypes,
 	const PinType* outputPinTypes
 ) const
 {
-	if (inputPin->getName() == L"Input" || inputPin->getName() == L"Reference")
-		return PntScalar1;
-	else
-		return outputPinTypes[0];
+	if (is_a< Conditional >(node) || is_a< Discard >(node))
+	{
+		if (inputPin->getName() == L"Input" || inputPin->getName() == L"Reference")
+			return PntScalar1;
+	}
+	return outputPinTypes[0];
 }
 
 int32_t ConditionalNodeTraits::getInputPinGroup(
@@ -117,6 +126,12 @@ bool ConditionalNodeTraits::evaluateFull(
 		else
 			outputConstant = inputConstants[3];
 
+		return true;
+	}
+	else if (const Step* step = dynamic_type_cast< const Step* >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+			outputConstant[i] = (inputConstants[0][i] >= inputConstants[1][i]) ? 1.0f : 0.0f;
 		return true;
 	}
 

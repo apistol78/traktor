@@ -60,7 +60,6 @@
 				<first>399</first>
 				<second>113</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -152,7 +151,7 @@
 				<second>102</second>
 			</position>
 			<parameterName>Flash_Texture</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Interpolator">

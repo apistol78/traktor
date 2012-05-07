@@ -98,7 +98,6 @@
 				<first>236</first>
 				<second>235</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -121,7 +120,8 @@
 				<second>92</second>
 			</position>
 			<external>{315F162A-DF4A-284F-BC14-EFFF185578C2}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">

@@ -20,7 +20,6 @@ render::handle_t s_handleProjection;
 render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleWorld;
-render::handle_t s_handleEyePosition;
 render::handle_t s_handleLightEnableComplex;
 render::handle_t s_handleLightPositionAndType;
 render::handle_t s_handleLightDirectionAndRange;
@@ -32,7 +31,6 @@ render::handle_t s_handleFogDistanceAndRange;
 render::handle_t s_handleFogColor;
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
-render::handle_t s_handleShadowMaskSize;
 render::handle_t s_handleDepthEnable;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleTime;
@@ -48,7 +46,6 @@ void initializeHandles()
 	s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 	s_handleView = render::getParameterHandle(L"View");
 	s_handleWorld = render::getParameterHandle(L"World");
-	s_handleEyePosition = render::getParameterHandle(L"EyePosition");
 	s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
 	s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
@@ -60,7 +57,6 @@ void initializeHandles()
 	s_handleFogColor = render::getParameterHandle(L"FogColor");
 	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
 	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
-	s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
 	s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
 	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 	s_handleTime = render::getParameterHandle(L"Time");
@@ -184,7 +180,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const 
 	}
 }
 
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, bool opaque) const
 {
 	setWorldProgramParameters(programParams, Matrix44::identity());
 
@@ -198,7 +194,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	}
 }
 
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, bool opaque, const Matrix44& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
 
@@ -219,11 +215,12 @@ void WorldRenderPassForward::setWorldProgramParameters(render::ProgramParameters
 	programParams->setMatrixParameter(s_handleSquareProjection, m_worldRenderView.getSquareProjection());
 	programParams->setMatrixParameter(s_handleView, m_worldRenderView.getView());
 	programParams->setMatrixParameter(s_handleWorld, world);
-	programParams->setVectorParameter(s_handleEyePosition, m_worldRenderView.getEyePosition());
 }
 
 void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters* programParams) const
 {
+	const Matrix44& view = m_worldRenderView.getView();
+
 	// Pack light parameters.
 	Vector4 lightPositionAndType[MaxForwardLightCount], *lightPositionAndTypePtr = lightPositionAndType;
 	Vector4 lightDirectionAndRange[MaxForwardLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
@@ -235,8 +232,8 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	for (int i = 0; i < lightCount; ++i)
 	{
 		const Light& light = m_worldRenderView.getLight(i);
-		*lightPositionAndTypePtr++ = light.position.xyz0() + Vector4(0.0f, 0.0f, 0.0f, float(light.type));
-		*lightDirectionAndRangePtr++ = light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
+		*lightPositionAndTypePtr++ = (view * light.position).xyz0() + Vector4(0.0f, 0.0f, 0.0f, float(light.type));
+		*lightDirectionAndRangePtr++ = (view * light.direction).xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
 		*lightSunColorPtr++ = light.sunColor;
 		*lightBaseColorPtr++ = light.baseColor;
 		*lightShadowColorPtr++ = light.shadowColor;
@@ -285,6 +282,8 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 		}
 	}
 
+	const Matrix44& view = m_worldRenderView.getView();
+
 	// Pack light parameters.
 	Vector4 lightPositionAndType[MaxForwardLightCount], *lightPositionAndTypePtr = lightPositionAndType;
 	Vector4 lightDirectionAndRange[MaxForwardLightCount], *lightDirectionAndRangePtr = lightDirectionAndRange;
@@ -296,7 +295,7 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	{
 		const static Vector4 c_typeDirectional(0.0f, 0.0f, 0.0f, float(LtDirectional));
 		*lightPositionAndTypePtr++ = c_typeDirectional;
-		*lightDirectionAndRangePtr++ = lightDirectional[i]->direction.xyz0();
+		*lightDirectionAndRangePtr++ = (view * lightDirectional[i]->direction).xyz0();
 		*lightSunColorPtr++ = lightDirectional[i]->sunColor;
 		*lightBaseColorPtr++ = lightDirectional[i]->baseColor;
 		*lightShadowColorPtr++ = lightDirectional[i]->shadowColor;
@@ -304,7 +303,7 @@ void WorldRenderPassForward::setLightProgramParameters(render::ProgramParameters
 	for (int i = 0; i < lightPointCount; ++i)
 	{
 		const static Vector4 c_typePoint(0.0f, 0.0f, 0.0f, float(LtPoint));
-		*lightPositionAndTypePtr++ = lightPoint[i]->position.xyz0() + c_typePoint;
+		*lightPositionAndTypePtr++ = (view * lightPoint[i]->position).xyz0() + c_typePoint;
 		*lightDirectionAndRangePtr++ = Vector4(0.0f, 0.0f, 0.0f, lightPoint[i]->range);
 		*lightSunColorPtr++ = lightPoint[i]->sunColor;
 		*lightBaseColorPtr++ = lightPoint[i]->baseColor;
@@ -342,10 +341,7 @@ void WorldRenderPassForward::setFogProgramParameters(render::ProgramParameters* 
 void WorldRenderPassForward::setShadowMapProgramParameters(render::ProgramParameters* programParams) const
 {
 	if (m_shadowMask)
-	{
 		programParams->setTextureParameter(s_handleShadowMask, m_shadowMask);
-		programParams->setFloatParameter(s_handleShadowMaskSize, float(0.5f / m_shadowMask->getWidth()));
-	}
 }
 
 void WorldRenderPassForward::setDepthMapProgramParameters(render::ProgramParameters* programParams) const

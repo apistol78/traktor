@@ -67,7 +67,6 @@
 				<first>784</first>
 				<second>340</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -226,7 +225,7 @@
 				<second>340</second>
 			</position>
 			<parameterName>ImpostorTarget</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>

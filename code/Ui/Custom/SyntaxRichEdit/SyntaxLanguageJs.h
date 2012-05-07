@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,11 +26,9 @@ class T_DLLCLASS SyntaxLanguageJs : public SyntaxLanguage
 	T_RTTI_CLASS;
 
 public:
-	virtual void begin();
+	virtual bool consume(const std::wstring& text, State& outState, int& outConsumedChars) const;
 
-	virtual bool consume(const std::wstring& text, State& outState, int& outConsumedChars);
-
-	virtual void newLine();
+	virtual void outline(int32_t line, const std::wstring& text, std::list< SyntaxOutline >& outOutline) const;
 };
 
 		}

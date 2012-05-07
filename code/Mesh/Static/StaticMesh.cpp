@@ -76,6 +76,7 @@ void StaticMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
+			i->opaque,
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);

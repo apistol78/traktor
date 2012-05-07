@@ -81,9 +81,11 @@ struct WorldViewOrtho
 enum WorldRenderFlags
 {
 	WrfDepthMap = 1,
-	WrfShadowMap = 2,
-	WrfVisualOpaque = 4,
-	WrfVisualAlphaBlend = 8
+	WrfNormalMap = 2,
+	WrfShadowMap = 4,
+	WrfLightMap = 8,
+	WrfVisualOpaque = 16,
+	WrfVisualAlphaBlend = 32
 };
 
 /*! \brief World renderer.

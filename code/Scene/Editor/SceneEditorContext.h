@@ -2,7 +2,7 @@
 #define traktor_scene_SceneEditorContext_H
 
 #include "Core/RefArray.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Frustum.h"
 #include "Ui/EventSubject.h"
 
 // import/export mechanism.
@@ -208,16 +208,9 @@ public:
 
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const;
 
+	uint32_t queryFrustum(const Frustum& worldFrustum, RefArray< EntityAdapter >& outEntityAdapters, bool onlyPickable) const;
+
 	void cloneSelected();
-
-	/*! \name Render entity. */
-	//@{
-
-	EntityAdapter* beginRenderEntity(const world::Entity* entity);
-
-	void endRenderEntity();
-
-	//@}
 
 	/*! \name Debug texture view. */
 	//@{
@@ -268,7 +261,7 @@ public:
 
 	Scene* getScene() { return m_scene; }
 
-	EntityAdapter* getRootEntityAdapter() { return m_rootEntityAdapter; }
+	const RefArray< EntityAdapter > getLayerEntityAdapters() { return m_layerEntityAdapters; }
 
 	EntityAdapter* getFollowEntityAdapter() { return m_followEntityAdapter; }
 
@@ -332,9 +325,8 @@ private:
 	Ref< Camera > m_cameras[4];
 	Ref< SceneAsset > m_sceneAsset;
 	Ref< Scene > m_scene;
-	Ref< EntityAdapter > m_rootEntityAdapter;
+	RefArray< EntityAdapter > m_layerEntityAdapters;
 	Ref< EntityAdapter > m_followEntityAdapter;
-	RefArray< EntityAdapter > m_renderEntityStack;
 };
 
 	}

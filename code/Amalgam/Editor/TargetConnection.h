@@ -3,6 +3,7 @@
 
 #include "Amalgam/Impl/TargetPerformance.h"
 #include "Core/Object.h"
+#include "Core/Thread/Semaphore.h"
 
 namespace traktor
 {
@@ -39,6 +40,7 @@ private:
 	Ref< net::TcpSocket > m_socket;
 	TargetPerformance m_performance;
 	TargetPerformance m_deltaPerformance;
+	Semaphore m_lock;
 };
 
 	}

@@ -36,6 +36,7 @@ public:
 		BtUniform,
 		BtInput,
 		BtOutput,
+		BtScript,
 		BtBody,
 		BtLast
 	};
@@ -62,9 +63,15 @@ public:
 
 	void popScope();
 
-	bool defineSamplerTexture(const std::wstring& textureName, int32_t& outStage);
+	bool defineTexture(const std::wstring& textureName);
 
-	const std::map< std::wstring, int32_t >& getSamplerTextures() const;
+	bool defineSampler(uint32_t samplerHash, const std::wstring& textureName, int32_t& outStage);
+
+	bool defineScript(const std::wstring& signature);
+
+	const std::set< std::wstring >& getTextures() const;
+
+	const std::map< uint32_t, std::pair< std::wstring, int32_t > >& getSamplers() const;
 
 	uint32_t addUniform(const std::wstring& uniform, HlslType type, uint32_t count);
 
@@ -85,7 +92,9 @@ private:
 	IProgramHints* m_programHints;
 	std::set< std::wstring > m_inputs;
 	std::list< scope_t > m_variables;
-	std::map< std::wstring, int32_t > m_samplerTextures;
+	std::set< std::wstring > m_textures;
+	std::map< uint32_t, std::pair< std::wstring, int32_t > > m_samplers;
+	std::set< std::wstring > m_scripts;
 	std::set< std::wstring > m_uniforms;
 	std::vector< bool > m_uniformAllocated;
 	int32_t m_nextTemporaryVariable;

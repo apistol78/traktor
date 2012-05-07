@@ -81,7 +81,7 @@ void TrapezoidShadowProjection::calculate(
 	{
 		Vector2 p = lightFrustumProj[i] - lightFrustumProjBox.getCenter();
 		if (p.y < -0.8f * ey)
-			nw = std::max(nw, abs(p.x));
+			nw = std::max(nw, abs(p.x) * 2.0f);
 	}
 	if (nw < 1.0f)
 		nw = 1.0f;
@@ -94,7 +94,7 @@ void TrapezoidShadowProjection::calculate(
 			Vector2 p1(p.x, p.y);
 			Vector2 d = (p1 - p0).normalized();
 			float w = p.x + d.x * (ey - p.y);
-			fw = std::max(fw, w);
+			fw = std::max(fw, abs(w) * 2.0f);
 		}
 	}
 
@@ -133,7 +133,7 @@ void TrapezoidShadowProjection::calculate(
 	float nz = viewFrustum.getNearZ();
 
 	// Calculate light view and projection matrices.
-	Vector4 worldCenter = viewInverse * Vector4(0.0f, 0.0f, nz, 1.0f);
+	Vector4 worldCenter = viewInverse * Vector4(0.0f, 0.0f, -nz, 1.0f);
 	Scalar lightDistance = Scalar(m_settings.shadowFarZ * 2.0f);
 
 	outLightView = Matrix44(
@@ -143,7 +143,7 @@ void TrapezoidShadowProjection::calculate(
 		worldCenter - lightAxisZ * lightDistance
 	);
 
-	outLightView = outLightView.inverseOrtho();
+	outLightView = outLightView.inverse();
 
 	outLightProjection = orthoLh(
 		2.0f,

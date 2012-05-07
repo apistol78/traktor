@@ -48,6 +48,8 @@ public:
 
 	Frustum();
 
+	void buildFromPlanes(const Plane planes[6]);
+
 	void buildPerspective(float vfov, float aspect, float zn, float zf);
 
 	void buildOrtho(float width, float height, float zn, float zf);

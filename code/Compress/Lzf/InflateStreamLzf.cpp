@@ -1,3 +1,4 @@
+#include <cstring>
 extern "C"
 {
 	#include <lzf.h>
@@ -39,7 +40,7 @@ public:
 		if (m_decompressedBufferSize > 0)
 		{
 			int32_t ncopy = std::min< int32_t >(m_decompressedBufferSize, nbytes);
-			
+
 			std::memcpy(ptr, &m_decompressedBuffer[0], ncopy);
 			ptr += ncopy;
 
@@ -67,7 +68,7 @@ public:
 
 			bool uncompressedBlock = (compressedBlockSize & 0x80000000UL) != 0;
 			compressedBlockSize &= ~0x80000000UL;
-			
+
 			if (!compressedBlockSize)
 				break;
 
@@ -154,7 +155,7 @@ public:
 			}
 
 			int32_t ncopy = std::min< int32_t >(m_decompressedBufferSize, nbytes);
-			
+
 			std::memcpy(ptr, &m_decompressedBuffer[0], ncopy);
 			ptr += ncopy;
 

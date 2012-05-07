@@ -127,9 +127,8 @@ void OceanEntity::render(
 		return;
 
 	Matrix44 viewInverse = worldRenderView.getView().inverse();
-
-	Vector4 cameraPosition = worldRenderView.getEyePosition();
-	Matrix44 oceanWorld = translate(-cameraPosition.x(), -m_altitude, -cameraPosition.z());
+	Vector4 eyePosition = viewInverse.translation();
+	Matrix44 oceanWorld = translate(-eyePosition.x(), -m_altitude, -eyePosition.z());
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
@@ -144,6 +143,7 @@ void OceanEntity::render(
 	
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
+		false,
 		oceanWorld,
 		Aabb3()
 	);
@@ -151,7 +151,7 @@ void OceanEntity::render(
 	renderBlock->programParams->setFloatParameter(L"ViewPlane", worldRenderView.getViewFrustum().getNearZ());
 	renderBlock->programParams->setFloatParameter(L"OceanRadius", worldRenderView.getViewFrustum().getFarZ());
 	renderBlock->programParams->setFloatParameter(L"OceanAltitude", m_altitude);
-	renderBlock->programParams->setVectorParameter(L"CameraPosition", cameraPosition);
+	renderBlock->programParams->setVectorParameter(L"CameraPosition", eyePosition);
 	renderBlock->programParams->setVectorArrayParameter(L"WaveData", m_waveData, MaxWaves);
 	renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInverse);
 	renderBlock->programParams->setFloatParameter(L"ViewRatio", worldRenderView.getViewSize().x / worldRenderView.getViewSize().y);

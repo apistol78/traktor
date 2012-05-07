@@ -4,25 +4,21 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>834</first>
-				<second>331</second>
+				<first>687</first>
+				<second>350</second>
 			</position>
 			<fragmentGuid>{E30ECE69-B96F-284E-B4C7-D19819F8AE2C}</fragmentGuid>
 			<inputPins>
 				<item>
-					<name>EyeDirection</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>Normal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>Position</name>
-					<optional>false</optional>
-				</item>
-				<item>
 					<name>SurfaceColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewEyeDirection</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -61,52 +57,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>540</first>
-				<second>559</second>
-			</position>
-			<name>T_SpecularTerm</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>509</first>
-				<second>524</second>
-			</position>
-			<name>T_SpecularRoughness</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>548</first>
-				<second>489</second>
-			</position>
-			<name>T_DiffuseTerm</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>544</first>
-				<second>454</second>
-			</position>
-			<name>T_ViewPosition</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>545</first>
-				<second>384</second>
+				<first>266</first>
+				<second>409</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
@@ -116,41 +68,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>537</first>
-				<second>349</second>
-			</position>
-			<name>T_WorldPosition</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>540</first>
-				<second>314</second>
-			</position>
-			<name>T_WorldNormal</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>546</first>
-				<second>279</second>
-			</position>
-			<name>T_EyeDirection</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>547</first>
-				<second>419</second>
+				<first>268</first>
+				<second>339</second>
 			</position>
 			<name>T_ViewNormal</name>
 			<connectable>true</connectable>
@@ -160,10 +79,10 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>563</first>
-				<second>594</second>
+				<first>265</first>
+				<second>374</second>
 			</position>
-			<name>T_RimColor</name>
+			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
@@ -171,10 +90,10 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>547</first>
-				<second>629</second>
+				<first>269</first>
+				<second>444</second>
 			</position>
-			<name>T_RimIntensity</name>
+			<name>T_DiffuseTerm</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
@@ -182,8 +101,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>560</first>
-				<second>664</second>
+				<first>281</first>
+				<second>619</second>
 			</position>
 			<name>T_Reflection</name>
 			<connectable>true</connectable>
@@ -193,10 +112,54 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>536</first>
-				<second>699</second>
+				<first>257</first>
+				<second>654</second>
 			</position>
 			<name>T_ReflectionMap</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>284</first>
+				<second>549</second>
+			</position>
+			<name>T_RimColor</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>268</first>
+				<second>584</second>
+			</position>
+			<name>T_RimIntensity</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>230</first>
+				<second>479</second>
+			</position>
+			<name>T_SpecularRoughness</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>261</first>
+				<second>514</second>
+			</position>
+			<name>T_SpecularTerm</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
@@ -210,7 +173,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>SpecularTerm</name>
+				<name>SurfaceColor</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -220,7 +183,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>SpecularRoughness</name>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -230,7 +193,7 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>DiffuseTerm</name>
+				<name>ViewPosition</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -240,47 +203,27 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>ViewPosition</name>
+				<name>DiffuseTerm</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>SurfaceColor</name>
+				<name>SpecularRoughness</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[10]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Position</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Normal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>EyeDirection</name>
+				<name>SpecularTerm</name>
 			</destination>
 		</item>
 	</edges>

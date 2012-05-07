@@ -24,6 +24,8 @@ LodMeshEntity::LodMeshEntity(
 
 void LodMeshEntity::setTransform(const Transform& transform)
 {
+	m_boundingBox = Aabb3();
+
 	Transform invTransform = m_transform.get().inverse();
 	for (RefArray< MeshEntity >::iterator i = m_lods.begin(); i != m_lods.end(); ++i)
 	{
@@ -33,30 +35,18 @@ void LodMeshEntity::setTransform(const Transform& transform)
 			Transform Tlocal = invTransform * currentTransform;
 			Transform Tworld = transform * Tlocal;
 			(*i)->setTransform(Tworld);
+
+			Aabb3 childBoundingBox = (*i)->getBoundingBox();
+			m_boundingBox.contain(childBoundingBox.transform(Tlocal));
 		}
 	}
+	
 	MeshEntity::setTransform(transform);
 }
 
 Aabb3 LodMeshEntity::getBoundingBox() const
 {
-	Transform invTransform = m_transform.get().inverse();
-
-	Aabb3 boundingBox;
-	for (RefArray< MeshEntity >::const_iterator i = m_lods.begin(); i != m_lods.end(); ++i)
-	{
-		Aabb3 childBoundingBox = (*i)->getBoundingBox();
-		if (!childBoundingBox.empty())
-		{
-			Transform childTransform;
-			(*i)->getTransform(childTransform);
-
-			Transform intoParentTransform = invTransform * childTransform;
-			boundingBox.contain(childBoundingBox.transform(intoParentTransform));
-		}
-	}
-
-	return boundingBox;
+	return m_boundingBox;
 }
 
 bool LodMeshEntity::supportTechnique(render::handle_t technique) const
@@ -74,7 +64,8 @@ void LodMeshEntity::render(
 	if (m_lods.empty())
 		return;
 
-	float lodDistance = (m_transform.get().translation() - worldRenderView.getEyePosition()).length();
+	Vector4 eyePosition = worldRenderView.getView().inverse().translation();
+	float lodDistance = (m_transform.get().translation() - eyePosition).length();
 
 	if (m_lodCullDistance >= FUZZY_EPSILON && lodDistance >= m_lodCullDistance)
 		return;

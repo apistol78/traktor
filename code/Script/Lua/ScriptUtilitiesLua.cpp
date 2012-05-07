@@ -12,7 +12,7 @@ void stackDump(lua_State* luaState)
 {
 	int32_t top = lua_gettop(luaState);
 
-	log::debug << L"Total in stack " << top << Endl;
+	T_DEBUG(L"Total in stack " << top);
 
 	for (int32_t i = 1; i <= top; ++i)
 	{
@@ -20,19 +20,19 @@ void stackDump(lua_State* luaState)
 		switch (t)
 		{
 		case LUA_TSTRING:
-			log::debug << L"\tstring: \"" << mbstows(lua_tostring(luaState, i)) << L"\"" << Endl;
+			T_DEBUG(L"\tstring: \"" << mbstows(lua_tostring(luaState, i)) << L"\"");
 			break;
 
 		case LUA_TBOOLEAN:
-			log::debug << L"\tboolean: " << (lua_toboolean(luaState, i) ? L"true" : L"false") << Endl;
+			T_DEBUG(L"\tboolean: " << (lua_toboolean(luaState, i) ? L"true" : L"false"));
 			break;
 
 		case LUA_TNUMBER:
-			log::debug << L"\tnumber: " << lua_tonumber(luaState, i) << Endl;
+			T_DEBUG(L"\tnumber: " << lua_tonumber(luaState, i));
 			break;
 
 		default:  /* other values */
-			log::debug << L"\tother: " << mbstows(lua_typename(luaState, t)) << Endl;
+			T_DEBUG(L"\tother: " << mbstows(lua_typename(luaState, t)));
 			break;
 		}
 	}

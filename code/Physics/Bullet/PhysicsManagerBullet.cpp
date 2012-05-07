@@ -368,6 +368,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 	}
 
 	// Create collision shape.
+	Vector4 centerOfGravity = Vector4::origo();
 	btCollisionShape* shape = 0;
 
 	if (const BoxShapeDesc* boxShape = dynamic_type_cast< const BoxShapeDesc* >(shapeDesc))
@@ -419,6 +420,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 
 			// Build point list, only hull points.
 			AlignedVector< Vector4 > hullPoints;
+			hullPoints.reserve(hullIndices.size());
 			for (std::set< uint32_t >::iterator j = hullIndices.begin(); j != hullIndices.end(); ++j)
 				hullPoints.push_back(vertices[*j]);
 
@@ -434,6 +436,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			MeshProxyIndexVertexArray* indexVertexArray = new MeshProxyIndexVertexArray(mesh);
 			shape = new btBvhTriangleMeshShape(indexVertexArray, false);
 		}
+
+		centerOfGravity = mesh->getOffset();
 	}
 	else if (const SphereShapeDesc* sphereShape = dynamic_type_cast< const SphereShapeDesc* >(shapeDesc))
 	{
@@ -493,6 +497,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			m_dynamicsWorld,
 			rigidBody,
 			shape,
+			centerOfGravity,
 			shapeDesc->getCollisionGroup(),
 			shapeDesc->getCollisionMask()
 		);
@@ -537,6 +542,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			m_dynamicsWorld,
 			rigidBody,
 			shape,
+			centerOfGravity,
 			shapeDesc->getCollisionGroup(),
 			shapeDesc->getCollisionMask()
 		);
@@ -550,6 +556,11 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		log::error << L"Unsupported body type \"" << type_name(desc) << L"\"" << Endl;
 		return 0;
 	}
+
+	// Ensure wrapper body is placed at origo in order
+	// to set COG offset in Bullet body.
+	if (body)
+		body->setTransform(Transform::identity());
 
 	return body;
 }
@@ -578,10 +589,10 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
 			Vector4 axis = transform * axisDesc->getAxis().xyz0().normalized();
 
-			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
-			btVector3 anchorIn2 = toBtVector3(body2->getTransform().inverse() * anchor);
-			btVector3 axisIn1 = toBtVector3(body1->getTransform().inverse() * axis);
-			btVector3 axisIn2 = toBtVector3(body2->getTransform().inverse() * axis);
+			btVector3 anchorIn1 = toBtVector3(bb1->getBodyTransform().inverse() * anchor);
+			btVector3 anchorIn2 = toBtVector3(bb2->getBodyTransform().inverse() * anchor);
+			btVector3 axisIn1 = toBtVector3(bb1->getBodyTransform().inverse() * axis);
+			btVector3 axisIn2 = toBtVector3(bb2->getBodyTransform().inverse() * axis);
 
 			hingeConstraint = new btHingeConstraint(
 				*b1,
@@ -597,8 +608,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			Vector4 anchor = transform * axisDesc->getAnchor().xyz1();
 			Vector4 axis = transform * axisDesc->getAxis().xyz0().normalized();
 
-			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
-			btVector3 axisIn1 = toBtVector3(body1->getTransform().inverse() * axis);
+			btVector3 anchorIn1 = toBtVector3(bb1->getBodyTransform().inverse() * anchor);
+			btVector3 axisIn1 = toBtVector3(bb1->getBodyTransform().inverse() * axis);
 
 			hingeConstraint = new btHingeConstraint(
 				*b1,
@@ -618,8 +629,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		if (b1 && b2)
 		{
 			Vector4 anchor = transform * ballDesc->getAnchor().xyz1();
-			Vector4 anchorIn1 = body1->getTransform().inverse() * anchor;
-			Vector4 anchorIn2 = body2->getTransform().inverse() * anchor;
+			Vector4 anchorIn1 = bb1->getBodyTransform().inverse() * anchor;
+			Vector4 anchorIn2 = bb2->getBodyTransform().inverse() * anchor;
 
 			pointConstraint = new btPoint2PointConstraint(
 				*b1,
@@ -631,7 +642,7 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 		else
 		{
 			Vector4 anchor = transform * ballDesc->getAnchor().xyz1();
-			Vector4 anchorIn1 = body1->getTransform().inverse() * anchor;
+			Vector4 anchorIn1 = bb1->getBodyTransform().inverse() * anchor;
 
 			pointConstraint = new btPoint2PointConstraint(
 				*b1,
@@ -686,10 +697,10 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			Vector4 anchor = transform * hingeDesc->getAnchor().xyz1();
 			Vector4 axis = transform * hingeDesc->getAxis().xyz0().normalized();
 
-			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
-			btVector3 anchorIn2 = toBtVector3(body2->getTransform().inverse() * anchor);
-			btVector3 axisIn1 = toBtVector3(body1->getTransform().inverse() * axis);
-			btVector3 axisIn2 = toBtVector3(body2->getTransform().inverse() * axis);
+			btVector3 anchorIn1 = toBtVector3(bb1->getBodyTransform().inverse() * anchor);
+			btVector3 anchorIn2 = toBtVector3(bb2->getBodyTransform().inverse() * anchor);
+			btVector3 axisIn1 = toBtVector3(bb1->getBodyTransform().inverse() * axis);
+			btVector3 axisIn2 = toBtVector3(bb2->getBodyTransform().inverse() * axis);
 
 			hingeConstraint = new btHingeConstraint(
 				*b1,
@@ -705,8 +716,8 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 			Vector4 anchor = transform * hingeDesc->getAnchor().xyz1();
 			Vector4 axis = transform * hingeDesc->getAxis().xyz0();
 
-			btVector3 anchorIn1 = toBtVector3(body1->getTransform().inverse() * anchor);
-			btVector3 axisIn1 = toBtVector3(body1->getTransform().inverse() * axis);
+			btVector3 anchorIn1 = toBtVector3(bb1->getBodyTransform().inverse() * anchor);
+			btVector3 axisIn1 = toBtVector3(bb1->getBodyTransform().inverse() * axis);
 
 			hingeConstraint = new btHingeConstraint(
 				*b1,

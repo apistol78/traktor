@@ -35,6 +35,7 @@ public:
 		BtUniform,
 		BtInput,
 		BtOutput,
+		BtScript,
 		BtBody,
 		BtLast
 	};
@@ -61,6 +62,8 @@ public:
 
 	void popScope();
 
+	bool defineScript(const std::wstring& signature);
+
 	bool defineSamplerTexture(const std::wstring& textureName, int32_t& outStage);
 
 	const std::map< std::wstring, int32_t >& getSamplerTextures() const;
@@ -83,6 +86,7 @@ private:
 	ShaderType m_shaderType;
 	std::set< std::wstring > m_inputs;
 	std::list< scope_t > m_variables;
+	std::set< std::wstring > m_scriptSignatures;
 	std::map< std::wstring, int32_t > m_samplerTextures;
 	std::set< std::wstring > m_uniforms;
 	std::vector< bool > m_uniformAllocated;

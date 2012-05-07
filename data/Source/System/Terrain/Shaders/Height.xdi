@@ -7,7 +7,6 @@
 				<first>546</first>
 				<second>895</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -127,7 +126,7 @@
 				<second>841</second>
 			</position>
 			<parameterName>Heightfield</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 		</item>
 	</nodes>
 	<edges>

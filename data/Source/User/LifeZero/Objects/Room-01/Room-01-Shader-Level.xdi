@@ -7,7 +7,6 @@
 				<first>426</first>
 				<second>441</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -22,7 +21,8 @@
 				<second>292</second>
 			</position>
 			<external>{7F2C7137-B130-9D4F-85FB-CB67F030621B}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Scalar">
 			<comment>
 			<![CDATA[

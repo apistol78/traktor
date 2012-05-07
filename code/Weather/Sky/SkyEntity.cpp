@@ -65,7 +65,7 @@ void SkyEntity::render(
 
 	renderBlock->programParams->beginParameters(renderContext);
 
-	worldRenderPass.setProgramParameters(renderBlock->programParams);
+	worldRenderPass.setProgramParameters(renderBlock->programParams, false);
 	
 	renderBlock->programParams->setFloatParameter(s_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ());
 	renderBlock->programParams->setVectorParameter(s_handleSunDirection, m_sunDirection);

@@ -1,9 +1,11 @@
-#include "Render/Ps3/CgEmitter.h"
 #include "Render/Ps3/CgContext.h"
-#include "Render/VertexElement.h"
-#include "Render/Shader/Nodes.h"
-#include "Core/Misc/String.h"
+#include "Render/Ps3/CgEmitter.h"
+
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Render/VertexElement.h"
+#include "Render/Shader/Script.h"
+#include "Render/Shader/Nodes.h"
 
 namespace traktor
 {
@@ -907,7 +909,7 @@ bool emitSampler(CgContext& cx, Sampler* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 
 	CgVariable* texture = cx.emitInput(node, L"Texture");
-	if (!texture || texture->getType() != CtTexture)
+	if (!texture || texture->getType() < CtTexture2D)
 		return false;
 
 	CgVariable* texCoord = cx.emitInput(node, L"TexCoord");
@@ -948,35 +950,35 @@ bool emitSampler(CgContext& cx, Sampler* node)
 
 	if (cx.inPixel())
 	{
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case CtTexture2D:
 			assign(f, out) << L"tex2D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
-		case Sampler::LuCube:
-			assign(f, out) << L"texCUBE(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
+		case CtTexture3D:
+			assign(f, out) << L"tex3D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			assign(f, out) << L"tex3D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
+		case CtTextureCube:
+			assign(f, out) << L"texCUBE(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 		}
 	}
 	if (cx.inVertex())
 	{
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case CtTexture2D:
 			assign(f, out) << L"tex2Dlod(" << samplerName << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 
-		case Sampler::LuCube:
-			assign(f, out) << L"texCUBElod(" << samplerName << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
+		case CtTexture3D:
+			assign(f, out) << L"tex3Dlod(" << samplerName << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			assign(f, out) << L"tex3Dlod(" << samplerName << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
+		case CtTextureCube:
+			assign(f, out) << L"texCUBElod(" << samplerName << L", " << texCoord->cast(CtFloat4) << L");" << Endl;
 			break;
 		}
 	}
@@ -989,6 +991,101 @@ bool emitScalar(CgContext& cx, Scalar* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
 	CgVariable* out = cx.emitOutput(node, L"Output", CtFloat);
 	f << L"const float " << out->getName() << L" = " << node->get() << L";" << Endl;
+	return true;
+}
+
+bool emitScript(CgContext& cx, Script* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+
+	// Get platform specific script from node.
+	std::wstring script = node->getScript(L"DX9");
+	if (script.empty())
+		return false;
+
+	// Emit input and outputs.
+	int32_t inputPinCount = node->getInputPinCount();
+	int32_t outputPinCount = node->getOutputPinCount();
+
+	RefArray< CgVariable > in(inputPinCount);
+	RefArray< CgVariable > out(outputPinCount);
+
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
+		T_ASSERT (outputPin);
+
+		out[i] = cx.emitOutput(
+			node,
+			outputPin->getName(),
+			cg_from_parameter_type(outputPin->getType())
+		);
+	}
+
+	for (int32_t i = 0; i < inputPinCount; ++i)
+	{
+		in[i] = cx.emitInput(node->getInputPin(i));
+		if (!in[i])
+			return false;
+	}
+
+	// Define script instance.
+	if (cx.getShader().defineScript(node->getName()))
+	{
+		StringOutputStream& fs = cx.getShader().getOutputStream(CgShader::BtScript);
+
+		fs << L"void " << node->getName() << L"(";
+
+		for (int32_t i = 0; i < inputPinCount; ++i)
+		{
+			if (i > 0)
+				fs << L", ";
+			fs << cg_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
+		}
+
+		if (!in.empty())
+			fs << L", ";
+
+		for (int32_t i = 0; i < outputPinCount; ++i)
+		{
+			if (i > 0)
+				fs << L", ";
+			fs << L"out " << cg_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
+		}
+
+		fs << L")" << Endl;
+		fs << L"{" << Endl;
+		fs << IncreaseIndent;
+		fs << script << Endl;
+		fs << DecreaseIndent;
+		fs << L"}" << Endl;
+		fs << Endl;
+	}
+
+	// Emit script invocation.
+	for (int32_t i = 0; i < outputPinCount; ++i)
+		f << cg_type_name(out[i]->getType()) << L" " << out[i]->getName() << L";" << Endl;
+
+	f << node->getName() << L"(";
+
+	for (RefArray< CgVariable >::const_iterator i = in.begin(); i != in.end(); ++i)
+	{
+		if (i != in.begin())
+			f << L", ";
+		f << (*i)->getName();
+	}
+
+	if (!in.empty())
+		f << L", ";
+
+	for (RefArray< CgVariable >::const_iterator i = out.begin(); i != out.end(); ++i)
+	{
+		if (i != out.begin())
+			f << L", ";
+		f << (*i)->getName();
+	}
+
+	f << L");" << Endl;
 	return true;
 }
 
@@ -1022,6 +1119,19 @@ bool emitSqrt(CgContext& cx, Sqrt* node)
 		return false;
 	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"sqrt(" << in->getName() << L");" << Endl;
+	return true;
+}
+
+bool emitStep(CgContext& cx, Step* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in1 = cx.emitInput(node, L"X");
+	CgVariable* in2 = cx.emitInput(node, L"Y");
+	if (!in1 || !in2)
+		return false;
+	CgType type = std::max< CgType >(in1->getType(), in2->getType());
+	CgVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
@@ -1302,7 +1412,7 @@ bool emitTexture(CgContext& cx, Texture* node)
 	cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		parameterName,
-		CtTexture
+		cg_from_parameter_type(node->getParameterType())
 	);
 	return true;
 }
@@ -1332,14 +1442,13 @@ bool emitTranspose(CgContext& cx, Transpose* node)
 
 bool emitUniform(CgContext& cx, Uniform* node)
 {
-	const CgType c_parameterType[] = { CtFloat, CtFloat4, CtFloat4x4, CtTexture };
 	CgVariable* out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
-		c_parameterType[node->getParameterType()]
+		cg_from_parameter_type(node->getParameterType())
 	);
 
-	if (out->getType() != CtTexture)
+	if (out->getType() < CtTexture2D)
 	{
 		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 		if (uniforms.find(node->getParameterName()) == uniforms.end())
@@ -1548,6 +1657,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
+	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);

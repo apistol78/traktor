@@ -19,6 +19,52 @@ namespace traktor
 		namespace
 		{
 
+void resolveTextureSize(ITexture* texture, float outTextureSize[4])
+{
+	if (!texture)
+		return;
+
+	Ref< ITexture > resolved = texture->resolve();
+	if (!resolved)
+		return;
+
+	if (is_a< SimpleTextureDx9 >(resolved))
+	{
+		SimpleTextureDx9* simpleTexture = checked_type_cast< SimpleTextureDx9*, false >(resolved);
+		outTextureSize[0] = float(simpleTexture->getWidth());
+		outTextureSize[1] = float(simpleTexture->getHeight());
+		outTextureSize[2] = 0.0f;
+		outTextureSize[3] = 0.0f;
+	}
+
+	else if (is_a< CubeTextureDx9 >(resolved))
+	{
+		CubeTextureDx9* cubeTexture = checked_type_cast< CubeTextureDx9*, false >(resolved);
+		outTextureSize[0] = float(cubeTexture->getWidth());
+		outTextureSize[1] = float(cubeTexture->getHeight());
+		outTextureSize[2] = float(cubeTexture->getDepth());
+		outTextureSize[3] = 0.0f;
+	}
+
+	else if (is_a< VolumeTextureDx9 >(resolved))
+	{
+		VolumeTextureDx9* volumeTexture = checked_type_cast< VolumeTextureDx9*, false >(resolved);
+		outTextureSize[0] = float(volumeTexture->getWidth());
+		outTextureSize[1] = float(volumeTexture->getHeight());
+		outTextureSize[2] = float(volumeTexture->getDepth());
+		outTextureSize[3] = 0.0f;
+	}
+
+	else if (is_a< RenderTargetWin32 >(resolved))
+	{
+		RenderTargetWin32* renderTarget = checked_type_cast< RenderTargetWin32*, false >(resolved);
+		outTextureSize[0] = float(renderTarget->getWidth());
+		outTextureSize[1] = float(renderTarget->getHeight());
+		outTextureSize[2] = 0.0f;
+		outTextureSize[3] = 0.0f;
+	}
+}
+
 IDirect3DBaseTexture9* resolveD3DTexture(ITexture* texture)
 {
 	if (!texture)
@@ -29,13 +75,28 @@ IDirect3DBaseTexture9* resolveD3DTexture(ITexture* texture)
 		return 0;
 
 	if (is_a< SimpleTextureDx9 >(resolved))
-		return static_cast< SimpleTextureDx9* >(resolved.ptr())->getD3DBaseTexture();
-	if (is_a< CubeTextureDx9 >(resolved))
-		return static_cast< CubeTextureDx9* >(resolved.ptr())->getD3DBaseTexture();
-	if (is_a< VolumeTextureDx9 >(resolved))
-		return static_cast< VolumeTextureDx9* >(resolved.ptr())->getD3DBaseTexture();
-	if (is_a< RenderTargetWin32 >(resolved))
-		return static_cast< RenderTargetWin32* >(resolved.ptr())->getD3DBaseTexture();
+	{
+		SimpleTextureDx9* simpleTexture = checked_type_cast< SimpleTextureDx9*, false >(resolved);
+		return simpleTexture->getD3DBaseTexture();
+	}
+
+	else if (is_a< CubeTextureDx9 >(resolved))
+	{
+		CubeTextureDx9* cubeTexture = checked_type_cast< CubeTextureDx9*, false >(resolved);
+		return cubeTexture->getD3DBaseTexture();
+	}
+
+	else if (is_a< VolumeTextureDx9 >(resolved))
+	{
+		VolumeTextureDx9* volumeTexture = checked_type_cast< VolumeTextureDx9*, false >(resolved);
+		return volumeTexture->getD3DBaseTexture();
+	}
+
+	else if (is_a< RenderTargetWin32 >(resolved))
+	{
+		RenderTargetWin32* renderTarget = checked_type_cast< RenderTargetWin32*, false >(resolved);
+		return renderTarget->getD3DBaseTexture();
+	}
 
 	return 0;
 }
@@ -142,6 +203,9 @@ bool ProgramWin32::create(
 
 bool ProgramWin32::activate()
 {
+	IDirect3DBaseTexture9* d3dTexture;
+	float T_MATH_ALIGN16 textureSize[4];
+
 	if (ms_activeProgram == this && !m_dirty)
 		return true;
 
@@ -165,11 +229,29 @@ bool ProgramWin32::activate()
 		m_parameterCache->setPixelShaderConstant(i->registerIndex, i->registerCount, &m_scalarParameterData[i->offset]);
 	}
 
+	for (AlignedVector< ProgramTexture >::const_iterator i = m_resource->m_vertexTextures.begin(); i != m_resource->m_vertexTextures.end(); ++i)
+	{
+		resolveTextureSize(m_textureParameterData[i->texture], textureSize);
+		m_parameterCache->setVertexShaderConstant(i->sizeIndex, 1, textureSize);
+	}
+
+	for (AlignedVector< ProgramTexture >::const_iterator i = m_resource->m_pixelTextures.begin(); i != m_resource->m_pixelTextures.end(); ++i)
+	{
+		resolveTextureSize(m_textureParameterData[i->texture], textureSize);
+		m_parameterCache->setPixelShaderConstant(i->sizeIndex, 1, textureSize);
+	}
+
 	for (AlignedVector< ProgramSampler >::const_iterator i = m_resource->m_vertexSamplers.begin(); i != m_resource->m_vertexSamplers.end(); ++i)
-		m_parameterCache->setVertexTexture(i->stage, resolveD3DTexture(m_textureParameterData[i->texture]));
+	{
+		d3dTexture = resolveD3DTexture(m_textureParameterData[i->texture]);
+		m_parameterCache->setVertexTexture(i->stage, d3dTexture);
+	}
 
 	for (AlignedVector< ProgramSampler >::const_iterator i = m_resource->m_pixelSamplers.begin(); i != m_resource->m_pixelSamplers.end(); ++i)
-		m_parameterCache->setPixelTexture(i->stage, resolveD3DTexture(m_textureParameterData[i->texture]));
+	{
+		d3dTexture = resolveD3DTexture(m_textureParameterData[i->texture]);
+		m_parameterCache->setPixelTexture(i->stage, d3dTexture);
+	}
 
 	m_dirty = false;
 	ms_activeProgram = this;

@@ -895,7 +895,9 @@ void emitUniform(EmitterContext& cx, Uniform* node)
 		variableType = VtFloat4x4;
 		break;
 
-	case PtTexture:
+	case PtTexture2D:
+	case PtTexture3D:
+	case PtTextureCube:
 		variableType = VtTexture;
 		break;
 	}

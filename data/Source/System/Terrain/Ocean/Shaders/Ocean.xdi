@@ -71,7 +71,6 @@
 				<first>1000</first>
 				<second>388</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -389,7 +388,7 @@ View direction
 				<second>282</second>
 			</position>
 			<parameterName>Heightfield</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>

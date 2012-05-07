@@ -11204,12 +11204,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_INPUT_DI8_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>dinput8.lib</item>
 						<item>dxguid.lib</item>
@@ -11224,12 +11227,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_INPUT_DI8_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>dinput8.lib</item>
 						<item>dxguid.lib</item>
@@ -11244,12 +11250,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>dinput8.lib</item>
 						<item>dxguid.lib</item>
@@ -11264,12 +11273,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>dinput8.lib</item>
 						<item>dxguid.lib</item>
@@ -11398,12 +11410,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_INPUT_XI_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>xinput.lib</item>
 					</libraries>
@@ -11417,12 +11432,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_INPUT_XI_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>xinput.lib</item>
 					</libraries>
@@ -11436,12 +11454,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>xinput.lib</item>
 					</libraries>
@@ -11455,12 +11476,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>xinput.lib</item>
 					</libraries>
@@ -12264,12 +12288,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_DX10_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d10.lib</item>
 						<item>d3dx10d.lib</item>
@@ -12285,12 +12312,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_DX10_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d10.lib</item>
 						<item>d3dx10.lib</item>
@@ -12306,12 +12336,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d10.lib</item>
 						<item>d3dx10d.lib</item>
@@ -12327,12 +12360,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d10.lib</item>
 						<item>d3dx10.lib</item>
@@ -12371,12 +12407,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_DX9_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d9.lib</item>
 						<item>d3dx9.lib</item>
@@ -12392,12 +12431,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_DX9_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d9.lib</item>
 						<item>d3dx9.lib</item>
@@ -12413,12 +12455,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d9.lib</item>
 						<item>d3dx9.lib</item>
@@ -12434,12 +12479,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d9.lib</item>
 						<item>d3dx9.lib</item>
@@ -13241,12 +13289,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_SOUND_DS8_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>dsound.lib</item>
 						<item>dxguid.lib</item>
@@ -13261,12 +13312,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_SOUND_DS8_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>dsound.lib</item>
 						<item>dxguid.lib</item>
@@ -13281,12 +13335,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>dsound.lib</item>
 						<item>dxguid.lib</item>
@@ -13301,12 +13358,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>dsound.lib</item>
 						<item>dxguid.lib</item>
@@ -13444,12 +13504,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_SOUND_XAUDIO2_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries/>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -13461,12 +13524,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_SOUND_XAUDIO2_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries/>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -13478,12 +13544,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries/>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -13495,12 +13564,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries/>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -15447,12 +15519,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_DX11_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>d3dx11d.lib</item>
@@ -15470,12 +15545,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_DX11_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>d3dx11.lib</item>
@@ -15493,12 +15571,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>d3dx11d.lib</item>
@@ -15516,12 +15597,15 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
-					<libraryPaths/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x64</item>
+					</libraryPaths>
 					<libraries>
 						<item>d3d11.lib</item>
 						<item>d3dx11.lib</item>

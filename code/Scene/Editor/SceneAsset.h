@@ -1,6 +1,7 @@
 #ifndef traktor_scene_SceneAsset_H
 #define traktor_scene_SceneAsset_H
 
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 
@@ -17,7 +18,6 @@ namespace traktor
 	namespace world
 	{
 
-class EntityData;
 class PostProcessSettings;
 class WorldRenderSettings;
 
@@ -27,6 +27,7 @@ class WorldRenderSettings;
 	{
 
 class ISceneControllerData;
+class LayerEntityData;
 
 class T_DLLCLASS SceneAsset : public ISerializable
 {
@@ -43,9 +44,9 @@ public:
 
 	const resource::Id< world::PostProcessSettings >& getPostProcessSettings() const;
 
-	void setEntityData(world::EntityData* entityData);
+	void setLayers(const RefArray< LayerEntityData >& layers);
 
-	Ref< world::EntityData > getEntityData() const;
+	const RefArray< LayerEntityData >& getLayers() const;
 
 	void setControllerData(ISceneControllerData* controllerData);
 
@@ -56,7 +57,7 @@ public:
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	resource::Id< world::PostProcessSettings > m_postProcessSettings;
-	Ref< world::EntityData > m_entityData;
+	RefArray< LayerEntityData > m_layers;
 	Ref< ISceneControllerData > m_controllerData;
 };
 

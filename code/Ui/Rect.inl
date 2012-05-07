@@ -91,6 +91,16 @@ inline Point Rect::getTopLeft() const
 	return Point(left, top);
 }
 
+inline Point Rect::getTopRight() const
+{
+	return Point(right, top);
+}
+
+inline Point Rect::getBottomLeft() const
+{
+	return Point(left, bottom);
+}
+
 inline Point Rect::getBottomRight() const
 {
 	return Point(right, bottom);

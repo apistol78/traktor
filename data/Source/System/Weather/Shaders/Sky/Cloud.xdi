@@ -14,7 +14,6 @@
 				<first>644</first>
 				<second>268</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -228,7 +227,8 @@ Cloud dark
 				<second>59</second>
 			</position>
 			<external>{857E4DC7-8E99-0E49-A78C-36A85736DC22}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">

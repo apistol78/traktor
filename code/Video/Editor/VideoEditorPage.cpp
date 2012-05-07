@@ -182,13 +182,8 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 			render::ISimpleTexture* texture = m_video->getTexture();
 			if (texture)
 			{
-				float width = float(texture->getWidth());
-				float height = float(texture->getHeight());
-
 				m_shader->setTextureParameter(L"Texture", texture);
-				m_shader->setVectorParameter(L"TextureSize", Vector4(width, height, 0.0f, 0.0f));
 				m_shader->setFloatParameter(L"Format", float(m_video->getFormat()));
-
 				m_screenRenderer->draw(m_renderView, m_shader);
 			}
 		}

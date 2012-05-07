@@ -46,8 +46,6 @@ public:
 
 	void setViewSize(const Vector2& viewSize);
 
-	void setEyePosition(const Vector4& eyePosition);
-
 	void setShadowBox(const Aabb3& shadowBox);
 
 	void setTimes(float time, float deltaTime, float interval);
@@ -84,10 +82,6 @@ public:
 
 	T_FORCE_INLINE const Vector2& getViewSize() const {
 		return m_viewSize;
-	}
-
-	T_FORCE_INLINE const Vector4& getEyePosition() const {
-		return m_eyePosition;
 	}
 
 	T_FORCE_INLINE const Light& getLight(int index) const {
@@ -133,7 +127,6 @@ private:
 	Matrix44 m_squareProjection;
 	Matrix44 m_view;
 	Vector2 m_viewSize;
-	Vector4 m_eyePosition;
 	Light m_lights[MaxLightCount];
 	int m_lightCount;
 	Aabb3 m_shadowBox;

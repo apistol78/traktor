@@ -170,12 +170,20 @@
       <second>Filter</second>
     </item>
     <item>
+      <first>DATABASE_FILTER_ASSETS</first>
+      <second>Filtrera tillgångar</second>
+    </item>
+    <item>
       <first>DATABASE_FILTER_DEPENDENCIES</first>
       <second>Filtrera instansens beroenden</second>
     </item>
     <item>
       <first>DATABASE_FILTER_TYPE</first>
       <second>Filtrera instansens typ</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_SHOW_FILTERED</first>
+      <second>Visa filtrerade</second>
     </item>
     <item>
 			<first>DATABASE_IMPORT</first>
@@ -221,9 +229,9 @@
       <first>DATABASE_BUILD</first>
       <second>Bygg</second>
     </item>
-	<item>
-		<first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
-		<second>Redigera instans med standard editor...</second>
+    <item>
+      <first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
+      <second>Redigera instans med standard editor...</second>
     </item>
     <item>
       <first>DATABASE_REBUILD</first>
@@ -264,6 +272,10 @@
     <item>
       <first>EDITOR_BROWSE_FILE</first>
       <second>Välj fil</second>
+    </item>
+    <item>
+      <first>EDITOR_BROWSE_WORKSPACE</first>
+      <second>Välj arbetsyta</second>
     </item>
     <item>
       <first>EDITOR_OPEN_PROJECT</first>
@@ -500,6 +512,10 @@
     <item>
       <first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
       <second>Visa guide linjer</second>
+    </item>
+    <item>
+      <first>EFFECT_EDITOR_TOGGLE_MOVE</first>
+      <second>Flytta källa</second>
     </item>
     <item>
       <first>EFFECT_EDITOR_PLAY</first>
@@ -1434,6 +1450,34 @@
       <second>Externa noder matchar ej</second>
     </item>
     <item>
+      <first>SHADERGRAPH_REMOVE_UNUSED_NODES</first>
+      <second>Ta bort oanvända noder</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_AUTO_MERGE_BRANCHES</first>
+      <second>Slå ihop grenar</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_UPDATE_FRAGMENTS</first>
+      <second>Uppdatera fragment</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CONSTANT_FOLD</first>
+      <second>Beräkna konstanta uttryck</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CLEANUP_SWIZZLES</first>
+      <second>Rensa swizzle</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_INSERT_INTERPOLATORS</first>
+      <second>Inför interpolatorer</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_PLATFORM_PERMUTATION</first>
+      <second>Plattforms permutationer</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_FIND_IN_DATABASE</first>
       <second>Hitta i databas</second>
     </item>
@@ -1449,6 +1493,10 @@
 			<first>SHADERGRAPH_SAMPLER</first>
 			<second>Sampler</second>
 		</item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_EDIT</first>
+      <second>Redigera skript</second>
+    </item>
 		<item>
 			<first>SHADERGRAPH_TRIGONOMETRY</first>
 			<second>Trigonometri</second>
@@ -1634,6 +1682,10 @@
       <second>Skalär</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_SCRIPT</first>
+      <second>Skript</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_SIGN</first>
       <second>Tecken</second>
     </item>
@@ -1644,6 +1696,10 @@
     <item>
       <first>SHADERGRAPH_NODE_SQRT</first>
       <second>Roten ur</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_STEP</first>
+      <second>Steg</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_SUB</first>
@@ -1667,11 +1723,15 @@
     </item>
     <item>
       <first>SHADERGRAPH_NODE_TARGETSIZE</first>
-      <second>Mål storlek</second>
+      <second>Målstorlek</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_TEXTURE</first>
-      <second>Texture</second>
+      <second>Textur</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TEXTURESIZE</first>
+      <second>Texturstorlek</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_TRANSFORM</first>

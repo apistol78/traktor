@@ -34,7 +34,7 @@ bool MemCachedGetStream::requestEndBlock()
 	ss << "get " << m_key << ":END";
 	
 	command = ss.str();
-	log::debug << mbstows(command) << Endl;
+	T_DEBUG(mbstows(command));
 
 	if (!m_proto->sendCommand(command))
 	{
@@ -112,7 +112,7 @@ bool MemCachedGetStream::requestNextBlock()
 	ss << "get " << m_key << ":" << m_index;
 	
 	command = ss.str();
-	log::debug << mbstows(command) << Endl;
+	T_DEBUG(mbstows(command));
 
 	if (!m_proto->sendCommand(command))
 	{
@@ -148,7 +148,7 @@ bool MemCachedGetStream::requestNextBlock()
 			}
 
 			uint32_t bytes = parseString< uint32_t >(args[3]);
-			log::debug << L"\tbytes = " << bytes << Endl;
+			T_DEBUG(L"\tbytes = " << bytes);
 
 			uint32_t avail = MaxBlockSize - m_inblock;
 			if (bytes > avail)

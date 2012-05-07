@@ -23,6 +23,7 @@ CgShader::CgShader(ShaderType shaderType)
 	pushOutputStream(BtUniform, new StringOutputStream());
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtScript, new StringOutputStream());
 	pushOutputStream(BtBody, new StringOutputStream());
 
 	// Ensure internal registers are marked as allocated.
@@ -32,6 +33,7 @@ CgShader::CgShader(ShaderType shaderType)
 CgShader::~CgShader()
 {
 	popOutputStream(BtBody);
+	popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
 	popOutputStream(BtUniform);
@@ -103,6 +105,16 @@ void CgShader::popScope()
 {
 	T_ASSERT (!m_variables.empty());
 	m_variables.pop_back();
+}
+
+bool CgShader::defineScript(const std::wstring& signature)
+{
+	std::set< std::wstring >::iterator i = m_scriptSignatures.find(signature);
+	if (i != m_scriptSignatures.end())
+		return false;
+
+	m_scriptSignatures.insert(signature);
+	return true;
 }
 
 bool CgShader::defineSamplerTexture(const std::wstring& textureName, int32_t& outStage)
@@ -253,6 +265,10 @@ std::wstring CgShader::getGeneratedShader(bool needVPos)
 		ss << L"};" << Endl;
 		ss << Endl;
 	}
+
+	std::wstring scriptText = getOutputStream(BtScript).str();
+	if (!scriptText.empty())
+		ss << scriptText;
 
 	if (m_shaderType == StVertex)
 	{

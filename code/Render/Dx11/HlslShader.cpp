@@ -21,27 +21,28 @@ HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
 	pushOutputStream(BtUniform, new StringOutputStream());
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtScript, new StringOutputStream());
 	pushOutputStream(BtBody, new StringOutputStream());
 }
 
 HlslShader::~HlslShader()
 {
 	popOutputStream(BtBody);
+	popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
 	popOutputStream(BtUniform);
 	popScope();
 }
 
-void HlslShader::addInputVariable(const std::wstring& variableName, HlslVariable* variable)
+bool HlslShader::haveInput(const std::wstring& inputName) const
 {
-	assert (!m_inputVariables[variableName]);
-	m_inputVariables[variableName] = variable;
+	return m_inputs.find(inputName) != m_inputs.end();
 }
 
-HlslVariable* HlslShader::getInputVariable(const std::wstring& variableName)
+void HlslShader::addInput(const std::wstring& inputName)
 {
-	return m_inputVariables[variableName];
+	m_inputs.insert(inputName);
 }
 
 HlslVariable* HlslShader::createTemporaryVariable(const OutputPin* outputPin, HlslType type)
@@ -76,13 +77,13 @@ void HlslShader::associateVariable(const OutputPin* outputPin, HlslVariable* var
 	m_variables.back().insert(std::make_pair(outputPin, variable));
 }
 
-HlslVariable* HlslShader::getVariable(const OutputPin* outputPin)
+HlslVariable* HlslShader::getVariable(const OutputPin* outputPin) const
 {
 	T_ASSERT (!m_variables.empty());
 
-	for (std::list< scope_t >::reverse_iterator i = m_variables.rbegin(); i != m_variables.rend(); ++i)
+	for (std::list< scope_t >::const_reverse_iterator i = m_variables.rbegin(); i != m_variables.rend(); ++i)
 	{
-		scope_t::iterator j = i->find(outputPin);
+		scope_t::const_iterator j = i->find(outputPin);
 		if (j != i->end())
 			return j->second;
 	}
@@ -119,6 +120,16 @@ void HlslShader::allocateVPos()
 void HlslShader::allocateTargetSize()
 {
 	m_needTargetSize = true;
+}
+
+bool HlslShader::defineScript(const std::wstring& signature)
+{
+	std::set< std::wstring >::iterator i = m_scripts.find(signature);
+	if (i != m_scripts.end())
+		return false;
+
+	m_scripts.insert(signature);
+	return true;
 }
 
 void HlslShader::addSampler(const std::wstring& sampler, const D3D11_SAMPLER_DESC& dsd)

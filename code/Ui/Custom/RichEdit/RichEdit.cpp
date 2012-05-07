@@ -41,6 +41,7 @@ bool RichEdit::create(Widget* parent, const std::wstring& text)
 	addKeyDownEventHandler(createMethodHandler(this, &RichEdit::eventKeyDown));
 	addKeyEventHandler(createMethodHandler(this, &RichEdit::eventKey));
 	addButtonDownEventHandler(createMethodHandler(this, &RichEdit::eventButtonDown));
+	addMouseWheelEventHandler(createMethodHandler(this, &RichEdit::eventMouseWheel));
 	addPaintEventHandler(createMethodHandler(this, &RichEdit::eventPaint));
 	addSizeEventHandler(createMethodHandler(this, &RichEdit::eventSize));
 
@@ -64,6 +65,7 @@ bool RichEdit::create(Widget* parent, const std::wstring& text)
 	m_attributes.push_back(attrib);
 
 	setText(text);
+	updateScrollBars();
 
 	CHECK;
 
@@ -105,8 +107,13 @@ void RichEdit::setText(const std::wstring& text)
 	
 std::wstring RichEdit::getText() const
 {
-	const wchar_t* text = &m_text[0];
-	return std::wstring(text, text + m_text.size());
+	if (!m_text.empty())
+	{
+		const wchar_t* text = &m_text[0];
+		return std::wstring(text, text + m_text.size());
+	}
+	else
+		return L"";
 }
 
 int RichEdit::addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline)
@@ -181,7 +188,7 @@ int RichEdit::getLineFromOffset(int offset) const
 {
 	for (int i = 0; i < int(m_lines.size()) - 1; ++i)
 	{
-		if (offset >= m_lines[i].start && offset < m_lines[i].stop)
+		if (offset >= m_lines[i].start && offset <= m_lines[i].stop)
 			return i;
 	}
 	return int(m_lines.size()) - 1;
@@ -223,6 +230,23 @@ std::wstring RichEdit::getSelectedText() const
 
 	const wchar_t* text = &m_text[0];
 	return std::wstring(text + m_selectionStart, text + m_selectionStop + 1);
+}
+
+bool RichEdit::scrollToLine(int line)
+{
+	if (m_scrollBarV->isVisible(false))
+	{
+		m_scrollBarV->setPosition(line);
+		m_scrollBarV->update();
+		update();
+	}
+	return true;
+}
+
+void RichEdit::placeCaret(int offset)
+{
+	m_caret = offset;
+	update();
 }
 
 bool RichEdit::redo()
@@ -303,8 +327,11 @@ void RichEdit::deleteCharacters(bool backspace)
 	{
 		if (m_caret == i->start)
 		{
-			std::vector< Line >::iterator j = i - 1;
-			j->stop = i->stop - 1;
+			if (i != m_lines.begin())
+			{
+				std::vector< Line >::iterator j = i - 1;
+				j->stop = i->stop - 1;
+			}
 			i = m_lines.erase(i);
 			continue;
 		}
@@ -622,6 +649,19 @@ void RichEdit::eventButtonDown(Event* event)
 		m_caret = ln.stop;
 
 	update();
+}
+
+void RichEdit::eventMouseWheel(Event* event)
+{
+	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
+	if (m_scrollBarV->isVisible(false))
+	{
+		int32_t position = m_scrollBarV->getPosition();
+		position -= mouseEvent->getWheelRotation() * 4;
+		m_scrollBarV->setPosition(position);
+		m_scrollBarV->update();
+		update();
+	}
 }
 
 void RichEdit::eventPaint(Event* event)

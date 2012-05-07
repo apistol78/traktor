@@ -37,6 +37,7 @@ public:
 		btDynamicsWorld* dynamicsWorld,
 		btRigidBody* body,
 		btCollisionShape* shape,
+		const Vector4& centerOfGravity,
 		uint32_t collisionGroup,
 		uint32_t collisionMask
 	);
@@ -93,6 +94,8 @@ public:
 
 	void removeJoint(Joint* joint);
 
+	Transform getBodyTransform() const;
+
 	btDynamicsWorld* getBtDynamicsWorld() const { return m_dynamicsWorld; }
 
 	btRigidBody* getBtRigidBody() const { return m_body; }
@@ -110,6 +113,7 @@ private:
 	btDynamicsWorld* m_dynamicsWorld;
 	btRigidBody* m_body;
 	btCollisionShape* m_shape;
+	Vector4 m_centerOfGravity;
 	uint32_t m_collisionGroup;
 	uint32_t m_collisionMask;
 	std::vector< Joint* > m_joints;

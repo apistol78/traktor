@@ -117,6 +117,32 @@ bool HlslContext::inPixel() const
 	return bool(m_currentShader == &m_pixelShader);
 }
 
+bool HlslContext::allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset)
+{
+	int32_t lastId = int32_t(m_interpolatorMap.size());
+
+	for (int32_t i = 0; i < lastId; ++i)
+	{
+		uint8_t& occupied = m_interpolatorMap[i];
+		if (width <= 4 - occupied)
+		{
+			outId = i;
+			outOffset = occupied;
+
+			occupied += width;
+
+			return false;
+		}
+	}
+
+	outId = lastId;
+	outOffset = 0;
+
+	m_interpolatorMap.push_back(width);
+
+	return true;
+}
+
 HlslShader& HlslContext::getVertexShader()
 {
 	return m_vertexShader;

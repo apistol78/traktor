@@ -1,5 +1,4 @@
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageJs.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -10,11 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageJs", 0, SyntaxLanguageJs, SyntaxLanguage)
 
-void SyntaxLanguageJs::begin()
-{
-}
-
-bool SyntaxLanguageJs::consume(const std::wstring& text, State& outState, int& outConsumedChars)
+bool SyntaxLanguageJs::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());
 	T_ASSERT (ln > 0);
@@ -109,7 +104,7 @@ bool SyntaxLanguageJs::consume(const std::wstring& text, State& outState, int& o
 	return true;
 }
 
-void SyntaxLanguageJs::newLine()
+void SyntaxLanguageJs::outline(int32_t line, const std::wstring& text, std::list< SyntaxOutline >& outOutline) const
 {
 }
 

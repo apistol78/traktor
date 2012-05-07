@@ -1,3 +1,4 @@
+#include <cstring>
 extern "C"
 {
 	#include <lzf.h>

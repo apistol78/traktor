@@ -94,6 +94,8 @@ public:
 
 	void setControllerEnable(bool controllerEnable);
 
+	world::PostProcess* getPostProcess() const;
+
 	bool getViewPosition(const Vector4& worldPosition, Vector4& outViewPosition) const;
 
 	bool getScreenPosition(const Vector4& viewPosition, Vector2& outScreenPosition) const;

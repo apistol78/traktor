@@ -40,6 +40,8 @@ public:
 
 	bool inPixel() const;
 
+	bool allocateInterpolator(int32_t width, int32_t& outId, int32_t& outOffset);
+
 	HlslShader& getVertexShader();
 
 	HlslShader& getPixelShader();
@@ -64,6 +66,7 @@ private:
 	HlslShader m_pixelShader;
 	HlslShader* m_currentShader;
 	HlslEmitter m_emitter;
+	std::vector< uint8_t > m_interpolatorMap;
 	D3D11_RASTERIZER_DESC m_d3dRasterizerDesc;
 	D3D11_DEPTH_STENCIL_DESC m_d3dDepthStencilDesc;
 	D3D11_BLEND_DESC m_d3dBlendDesc;

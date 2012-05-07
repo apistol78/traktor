@@ -246,7 +246,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::mergeBranches() const
 			break;
 	}
 
-	log::debug << L"Merged " << mergedNodes << L" node(s)" << Endl;
+	T_DEBUG(L"Merged " << mergedNodes << L" node(s)");
 	return shaderGraph;
 }
 
@@ -269,7 +269,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 		insertInterpolators(shaderGraph, *i);
 	}
 	
-	log::debug << L"Inserted " << m_insertedCount << L" interpolator(s)" << Endl;
+	T_DEBUG(L"Inserted " << m_insertedCount << L" interpolator(s)");
 	return shaderGraph;
 }
 

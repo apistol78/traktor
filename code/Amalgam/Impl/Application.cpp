@@ -120,7 +120,7 @@ bool Application::create(
 	m_stateManager = new StateManager();
 
 	// Database
-	log::debug << L"Creating database..." << Endl;
+	T_DEBUG(L"Creating database...");
 	m_database = new db::Database ();
 	std::wstring connectionString = settings->getProperty< PropertyString >(L"Amalgam.Database");
 	if (!m_database->open(connectionString))
@@ -132,14 +132,14 @@ bool Application::create(
 	// Online
 	if (settings->getProperty(L"Online.Type"))
 	{
-		log::debug << L"Creating online server..." << Endl;
+		T_DEBUG(L"Creating online server...");
 		m_onlineServer = new OnlineServer();
 		if (!m_onlineServer->create(settings, m_database))
 			return false;
 	}
 
 	// Render
-	log::debug << L"Creating render server..." << Endl;
+	T_DEBUG(L"Creating render server...");
 	if (nativeWindowHandle)
 	{
 		Ref< RenderServerEmbedded > renderServer = new RenderServerEmbedded();
@@ -156,13 +156,13 @@ bool Application::create(
 	}
 
 	// Resource
-	log::debug << L"Creating resource server..." << Endl;
+	T_DEBUG(L"Creating resource server...");
 	m_resourceServer = new ResourceServer();
 	if (!m_resourceServer->create())
 		return false;
 
 	// Input
-	log::debug << L"Creating input server..." << Endl;
+	T_DEBUG(L"Creating input server...");
 	m_inputServer = new InputServer();
 	if (!m_inputServer->create(defaultSettings, settings, m_database, nativeWindowHandle))
 		return false;
@@ -170,7 +170,7 @@ bool Application::create(
 	// Physics
 	if (settings->getProperty(L"Physics.Type"))
 	{
-		log::debug << L"Creating physics server..." << Endl;
+		T_DEBUG(L"Creating physics server...");
 		m_physicsServer = new PhysicsServer();
 		if (!m_physicsServer->create(settings, c_simulationDeltaTime))
 			return false;
@@ -179,20 +179,20 @@ bool Application::create(
 	// Script
 	if (settings->getProperty(L"Script.Type"))
 	{
-		log::debug << L"Creating script server..." << Endl;
+		T_DEBUG(L"Creating script server...");
 		m_scriptServer = new ScriptServer();
 		if (!m_scriptServer->create(settings, /*m_targetManagerConnection != 0*/false))
 			return false;
 	}
 
 	// World
-	log::debug << L"Creating world server..." << Endl;
+	T_DEBUG(L"Creating world server...");
 	m_worldServer = new WorldServer();
 	if (!m_worldServer->create(settings, m_renderServer, m_resourceServer))
 		return false;
 
 	// Audio
-	log::debug << L"Creating audio server..." << Endl;
+	T_DEBUG(L"Creating audio server...");
 	if (settings->getProperty(L"Audio.Type"))
 	{
 		m_audioServer = new AudioServer();
@@ -201,7 +201,7 @@ bool Application::create(
 	}
 
 	// Environment
-	log::debug << L"Creating environment..." << Endl;
+	T_DEBUG(L"Creating environment...");
 	m_environment = new Environment(
 		settings,
 		m_database,
@@ -216,7 +216,7 @@ bool Application::create(
 	);
 
 	// Resource factories
-	log::debug << L"Creating resource factories..." << Endl;
+	T_DEBUG(L"Creating resource factories...");
 	if (m_audioServer)
 		m_audioServer->createResourceFactories(m_environment);
 	if (m_inputServer)
@@ -233,13 +233,13 @@ bool Application::create(
 		m_worldServer->createResourceFactories(m_environment);
 
 	// Entity factories.
-	log::debug << L"Creating entity factories..." << Endl;
+	T_DEBUG(L"Creating entity factories...");
 	if (m_physicsServer)
 		m_physicsServer->createEntityFactories(m_environment);
 	m_worldServer->createEntityFactories(m_environment);
 
 	// Create plugins.
-	log::debug << L"Creating plugins..." << Endl;
+	T_DEBUG(L"Creating plugins...");
 
 	std::vector< const TypeInfo* > pluginTypes;
 	type_of< IRuntimePlugin >().findAllOf(pluginTypes, false);
@@ -307,14 +307,14 @@ bool Application::create(
 	// Database monitoring thread.
 	if (settings->getProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", false) || m_targetManagerConnection)
 	{
-		log::debug << L"Creating database monitoring thread..." << Endl;
+		T_DEBUG(L"Creating database monitoring thread...");
 		m_threadDatabase = ThreadManager::getInstance().create(makeFunctor(this, &Application::threadDatabase), L"Database events");
 		if (m_threadDatabase)
 			m_threadDatabase->start(Thread::Highest);
 	}
 
 	// Initial, startup, state.
-	log::debug << L"Creating initial state..." << Endl;
+	T_DEBUG(L"Creating initial state...");
 
 	Ref< IState > state;
 	for (RefArray< IRuntimePlugin >::const_iterator i = m_plugins.begin(); i != m_plugins.end(); ++i)
@@ -830,7 +830,7 @@ void Application::threadDatabase()
 			{
 				for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)
 				{
-					log::debug << L"External database event; reloading resource \"" << i->format() << L"\"" << Endl;
+					T_DEBUG(L"External database event; reloading resource \"" << i->format() << L"\"");
 					resourceManager->reload(*i);
 				}
 			}

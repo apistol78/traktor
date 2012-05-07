@@ -75,11 +75,11 @@ void UniformShadowProjection::calculate(
 	Scalar cy = quantizeProjection ? Scalar(std::floor(center.y() / smy) * smy) : center.y();
 
 	// Calculate world center of view frustum's bounding box.
-	Vector4 worldCenter =
+	Vector4 worldCenter = (
 		lightAxisX * cx +
 		lightAxisY * cy +
-		lightAxisZ * center.z() +
-		Vector4::origo();
+		lightAxisZ * center.z()
+	).xyz1();
 
 	Scalar lightDistance = Scalar(m_settings.shadowFarZ);
 

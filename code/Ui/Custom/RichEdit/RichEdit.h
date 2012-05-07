@@ -60,6 +60,10 @@ public:
 
 	std::wstring getSelectedText() const;
 
+	bool scrollToLine(int line);
+
+	void placeCaret(int offset);
+
 	bool redo();
 
 	bool undo();
@@ -115,6 +119,8 @@ private:
 	void eventKey(Event* event);
 
 	void eventButtonDown(Event* event);
+
+	void eventMouseWheel(Event* event);
 
 	void eventPaint(Event* event);
 

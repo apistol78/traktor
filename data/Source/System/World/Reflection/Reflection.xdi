@@ -50,7 +50,6 @@
 				<first>612</first>
 				<second>551</second>
 			</position>
-			<lookup>LuCube</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -75,10 +74,10 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>104</first>
+				<first>136</first>
 				<second>439</second>
 			</position>
-			<name>WorldNormal</name>
+			<name>Normal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>

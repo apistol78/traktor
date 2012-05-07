@@ -243,6 +243,7 @@ void ClothEntity::render(
 	renderBlock->programParams->beginParameters(renderContext);
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
+		true,
 		m_transform.toMatrix44(),
 		m_aabb
 	);
@@ -286,7 +287,7 @@ void ClothEntity::update(const UpdateParams& update)
 
 	Transform transformInv = m_transform.inverse();
 	Vector4 gravity = transformInv * Vector4(0.0f, -0.5f, 0.0f, 0.0f);
-	Vector4 wind = transformInv * Vector4(0.0f, 0.0f, -0.6f, 0.0f) * Scalar(traktor::cosf(m_time * 0.25f));
+	Vector4 wind = transformInv * Vector4(1.0f, 0.0f, Scalar(traktor::cosf(m_time * 0.25f) * 0.5f + 0.5f), 0.0f).normalized();
 
 	for (m_time += update.deltaTime * c_timeScale; m_updateTime < m_time; m_updateTime += c_updateDeltaTime)
 	{
@@ -297,9 +298,9 @@ void ClothEntity::update(const UpdateParams& update)
 				continue;
 
 			Vector4 force = gravity + wind + Vector4(
+				traktor::sinf(i->position[0].x() * 2.0f * PI + m_time * 0.2f) * 0.2f,
+				traktor::cosf(i->position[0].y() * 2.0f * PI + m_time * 0.2f) * 0.2f,
 				0.0f,
-				traktor::cosf(i->position[0].y() * 2.0f * PI + m_time * 0.2f) * 0.4f,
-				traktor::sinf(i->position[0].x() * 2.0f * PI + m_time * 0.2f) * 0.4f,
 				0.0f
 			);
 

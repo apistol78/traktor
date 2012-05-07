@@ -96,7 +96,7 @@ bool RenderViewDefaultWin32::reset(const RenderViewDefaultDesc& desc)
 	D3DMULTISAMPLE_TYPE d3dMultiSample;
 	HRESULT hr;
 
-	log::debug << L"Reset implicit DX9 render view, " << desc.displayMode.width << L"*" << desc.displayMode.height << L", " << (desc.fullscreen ? L"fullscreen" : L"window") << Endl;
+	T_DEBUG(L"Reset implicit DX9 render view, " << desc.displayMode.width << L"*" << desc.displayMode.height << L", " << (desc.fullscreen ? L"fullscreen" : L"window"));
 
 	// Determine safe formats.
 	m_d3dDepthStencilFormat = determineDepthStencilFormat(m_d3d, desc.depthBits, desc.stencilBits, D3DFMT_X8R8G8B8);

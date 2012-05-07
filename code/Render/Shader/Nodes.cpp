@@ -1362,7 +1362,6 @@ const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"T
 const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
 
 Sampler::Sampler(
-	Lookup lookup,
 	Filter minFilter,
 	Filter mipFilter,
 	Filter magFilter,
@@ -1371,7 +1370,6 @@ Sampler::Sampler(
 	Address addressW
 )
 :	ImmutableNode(c_Sampler_i, c_Sampler_o)
-,	m_lookup(lookup)
 ,	m_minFilter(minFilter)
 ,	m_mipFilter(mipFilter)
 ,	m_magFilter(magFilter)
@@ -1379,16 +1377,6 @@ Sampler::Sampler(
 ,	m_addressV(addressV)
 ,	m_addressW(addressW)
 {
-}
-
-void Sampler::setLookup(Lookup lookup)
-{
-	m_lookup = lookup;
-}
-
-Sampler::Lookup Sampler::getLookup() const
-{
-	return m_lookup;
 }
 
 void Sampler::setMinFilter(Filter minFilter)
@@ -1453,14 +1441,6 @@ Sampler::Address Sampler::getAddressW()
 
 bool Sampler::serialize(ISerializer& s)
 {
-	const MemberEnum< Lookup >::Key kLookup[] =
-	{
-		{ L"LuSimple", LuSimple },
-		{ L"LuCube", LuCube },
-		{ L"LuVolume", LuVolume },
-		{ 0, 0 }
-	};
-
 	const MemberEnum< Filter >::Key kFilter[] =
 	{
 		{ L"FtPoint", FtPoint },
@@ -1480,7 +1460,6 @@ bool Sampler::serialize(ISerializer& s)
 	if (!Node::serialize(s))
 		return false;
 
-	s >> MemberEnum< Lookup >(L"lookup", m_lookup, kLookup);
 	s >> MemberEnum< Filter >(L"minFilter", m_minFilter, kFilter);
 	s >> MemberEnum< Filter >(L"mipFilter", m_mipFilter, kFilter);
 	s >> MemberEnum< Filter >(L"magFilter", m_magFilter, kFilter);
@@ -1563,6 +1542,18 @@ const ImmutableNode::OutputPinDesc c_Sqrt_o[] = { L"Output", 0 };
 
 Sqrt::Sqrt()
 :	ImmutableNode(c_Sqrt_i, c_Sqrt_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Step", 0, Step, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Step_i[] = { { L"X", false }, { L"Y", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Step_o[] = { L"Output", 0 };
+
+Step::Step()
+:	ImmutableNode(c_Step_i, c_Step_o)
 {
 }
 
@@ -1787,9 +1778,10 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Texture", 0, Texture, ImmutableN
 const ImmutableNode::InputPinDesc c_Texture_i[] = { 0 };
 const ImmutableNode::OutputPinDesc c_Texture_o[] = { L"Output", 0 };
 
-Texture::Texture(const Guid& external)
+Texture::Texture(const Guid& external, ParameterType type)
 :	ImmutableNode(c_Texture_i, c_Texture_o)
 ,	m_external(external)
+,	m_type(type)
 {
 }
 
@@ -1803,13 +1795,45 @@ const Guid& Texture::getExternal() const
 	return m_external;
 }
 
+void Texture::setParameterType(ParameterType type)
+{
+	m_type = type;
+}
+
+ParameterType Texture::getParameterType() const
+{
+	return m_type;
+}
+
 bool Texture::serialize(ISerializer& s)
 {
 	if (!Node::serialize(s))
 		return false;
 
+	const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
+	{
+		{ L"PtTexture2D", PtTexture2D },
+		{ L"PtTexture3D", PtTexture3D },
+		{ L"PtTextureCube", PtTextureCube },
+		{ 0, 0 }
+	};
+
 	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< render::TextureResource >()));
+	s >> MemberEnum< ParameterType >(L"type", m_type, c_ParameterType_Keys);
+
 	return true;
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureSize", 0, TextureSize, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_TextureSize_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_TextureSize_o[] = { L"Output", 0 };
+
+TextureSize::TextureSize()
+:	ImmutableNode(c_TextureSize_i, c_TextureSize_o)
+{
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1911,7 +1935,9 @@ bool Uniform::serialize(ISerializer& s)
 		{ L"PtScalar", PtScalar },
 		{ L"PtVector", PtVector },
 		{ L"PtMatrix", PtMatrix },
-		{ L"PtTexture", PtTexture },
+		{ L"PtTexture2D", PtTexture2D },
+		{ L"PtTexture3D", PtTexture3D },
+		{ L"PtTextureCube", PtTextureCube },
 		{ 0, 0 }
 	};
 	

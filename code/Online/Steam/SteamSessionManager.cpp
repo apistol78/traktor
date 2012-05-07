@@ -159,7 +159,7 @@ bool SteamSessionManager::update()
 		{
 			if (SteamUserStats()->RequestCurrentStats())
 			{
-				log::debug << L"Steam; Current stats requested" << Endl;
+				T_DEBUG(L"Steam; Current stats requested");
 				m_requestedStats = true;
 			}
 		}
@@ -302,7 +302,7 @@ void SteamSessionManager::OnUserStatsReceived(UserStatsReceived_t* pCallback)
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_receivedStats = true;
 	m_receivedStatsSucceeded = (pCallback->m_eResult == k_EResultOK);
-	log::debug << L"Steam; Receieved stats (eResult = " << getSteamError(pCallback->m_eResult) << L")" << Endl;
+	T_DEBUG(L"Steam; Receieved stats (eResult = " << getSteamError(pCallback->m_eResult) << L")");
 }
 
 void SteamSessionManager::OnOverlayActivated(GameOverlayActivated_t* pCallback)

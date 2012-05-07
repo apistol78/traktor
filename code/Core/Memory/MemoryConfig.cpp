@@ -45,7 +45,7 @@ IAllocator* getAllocator()
 
 		s_allocator->addRef(0);
 
-#if !defined(_PS3)
+#if !defined(__GNUC__) && !defined(_PS3)
 		std::atexit(destroyAllocator);
 #endif
 	}

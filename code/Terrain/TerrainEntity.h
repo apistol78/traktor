@@ -130,9 +130,7 @@ private:
 	render::handle_t m_handleSurface;
 	render::handle_t m_handleSurfaceOffset;
 	render::handle_t m_handleHeightfield;
-	render::handle_t m_handleHeightfieldSize;
 	render::handle_t m_handleNormals;
-	render::handle_t m_handleNormalsSize;
 	render::handle_t m_handleWorldOrigin;
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;

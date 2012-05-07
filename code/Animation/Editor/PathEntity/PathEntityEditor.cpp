@@ -37,40 +37,6 @@ void PathEntityEditor::entitySelected(bool selected)
 	}
 }
 
-void PathEntityEditor::applyModifier(const ApplyParams& params)
-{
-	//Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(getEntityAdapter()->getEntityData());
-	//Ref< PathEntity > entity = checked_type_cast< PathEntity* >(getEntityAdapter()->getEntity());
-
-	//Ref< scene::IModifier > modifier = getContext()->getModifier();
-	//if (modifier)
-	//{
-	//	TransformPath& path = entityData->getPath();
-	//	TransformPath::Frame* frame = path.getClosestKeyFrame(m_time);
-	//	if (frame)
-	//	{
-	//		// Use modifier to adjust closest key frame.
-	//		Transform transform = frame->transform();
-	//		modifier->adjust(
-	//			getContext(),
-	//			params.viewTransform,
-	//			params.screenDelta,
-	//			params.viewDelta,
-	//			params.worldDelta,
-	//			params.mouseButton,
-	//			transform
-	//		);
-	//		frame->position = transform.translation();
-	//		frame->orientation = transform.rotation().toEulerAngles();
-
-	//		// Update entity's path to reflect changes as we're editing the entity data's path
-	//		// initially.
-	//		if (entity)
-	//			entity->setPath(path);
-	//	}
-	//}
-}
-
 bool PathEntityEditor::handleCommand(const ui::Command& command)
 {
 	Ref< PathEntityData > entityData = checked_type_cast< PathEntityData* >(getEntityAdapter()->getEntityData());

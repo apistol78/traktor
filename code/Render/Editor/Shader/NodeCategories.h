@@ -1,8 +1,9 @@
 #ifndef traktor_render_NodeCategories_H
 #define traktor_render_NodeCategories_H
 
-#include "Render/Shader/Nodes.h"
 #include "Render/Shader/External.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/Script.h"
 
 namespace traktor
 {
@@ -62,9 +63,11 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Reflect >(), L"SHADERGRAPH_ALGEBRA", L"Calculate reflected vector from a input direction and an axis" },
 	{ type_of< Sampler >(), L"SHADERGRAPH_VALUE", L"Texture sampler" },
 	{ type_of< Scalar >(), L"SHADERGRAPH_VALUE", L"Scalar constant" },
+	{ type_of< Script >(), L"SHADERGRAPH_MISCELLANEOUS", L"Script" },
 	{ type_of< Sin >(), L"SHADERGRAPH_TRIGONOMETRY", L"Sine" },
 	{ type_of< Sign >(), L"SHADERGRAPH_MISCELLANEOUS", L"Sign" },
 	{ type_of< Sqrt >(), L"SHADERGRAPH_ARITHMETIC", L"Square-root" },
+	{ type_of< Step >(), L"SHADERGRAPH_CONDITIONAL", L"Step function" },
 	{ type_of< Sub >(), L"SHADERGRAPH_ARITHMETIC", L"Subtract" },
 	{ type_of< Sum >(), L"SHADERGRAPH_ARITHMETIC", L"Summarize by evaluation branch from iteration" },
 	{ type_of< Switch >(), L"SHADERGRAPH_CONDITIONAL", L"Switch" },
@@ -72,6 +75,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Tan >(), L"SHADERGRAPH_TRIGONOMETRY", L"Tangent" },
 	{ type_of< TargetSize >(), L"SHADERGRAPH_VALUE", L"Target size in pixels" },
 	{ type_of< Texture >(), L"SHADERGRAPH_VALUE", L"Texture" },
+	{ type_of< TextureSize >(), L"SHADERGRAPH_VALUE", L"Texture size in pixels" },
 	{ type_of< Transform >(), L"SHADERGRAPH_ALGEBRA", L"Transform vector by a matrix" },
 	{ type_of< Transpose >(), L"SHADERGRAPH_ALGEBRA", L"Transpose matrix, swapping rows and columns" },
 	{ type_of< Type >(), L"SHADERGRAPH_CONDITIONAL", L"Static type switch" },

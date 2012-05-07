@@ -495,8 +495,8 @@ void GraphControl::eventMouseDown(Event* e)
 	for (uint32_t i = 0; i < m_nodes.size(); ++i)
 		m_nodePositions[i] = m_nodes[i]->getPosition();
 
-	// If user holds down CTRL we should move entire graph.
-	if ((e->getKeyState() & KsControl) == KsControl)
+	// If user holds down ALT we should move entire graph.
+	if ((e->getKeyState() & KsMenu) != 0)
 	{
 		m_moveAll = true;
 		setCapture();

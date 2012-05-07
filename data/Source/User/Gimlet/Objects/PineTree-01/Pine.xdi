@@ -144,14 +144,14 @@
 				<second>164</second>
 			</position>
 			<external>{1F85D057-EE76-BF4A-8B68-B962BDB6A348}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
 				<first>603</first>
 				<second>228</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>

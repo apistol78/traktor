@@ -2,7 +2,7 @@
 #define traktor_scene_ISceneRenderControl_H
 
 #include "Core/Object.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Frustum.h"
 
 namespace traktor
 {
@@ -11,6 +11,7 @@ namespace traktor
 
 class Command;
 class Point;
+class Rect;
 
 	}
 
@@ -43,7 +44,11 @@ public:
 
 	virtual bool calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const = 0;
 
+	virtual bool calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const = 0;
+
 	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta) = 0;
+
+	virtual void showSelectionRectangle(const ui::Rect& rect) = 0;
 };
 
 	}

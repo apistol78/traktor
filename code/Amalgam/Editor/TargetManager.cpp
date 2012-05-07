@@ -67,7 +67,7 @@ bool TargetManager::update()
 	socketSet.add(m_listenSocket);
 	for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
 	{
-		const RefArray< TargetConnection>& connections = (*i)->getConnections();
+		RefArray< TargetConnection> connections = (*i)->getConnections();
 		for (RefArray< TargetConnection >::const_iterator j = connections.begin(); j != connections.end(); ++j)
 			socketSet.add((*j)->getSocket());
 	}

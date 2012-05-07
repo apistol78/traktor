@@ -13,14 +13,12 @@
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Editor/SoundSystemFactory.h"
-
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/EffectLayerData.h"
 #include "Spray/SequenceData.h"
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectPreviewControl.h"
-
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
@@ -38,7 +36,6 @@
 
 // Resources
 #include "Resources/Playback.h"
-#include "Resources/SceneEdit.h"
 #include "Resources/EffectEdit.h"
 
 namespace traktor
@@ -86,8 +83,8 @@ bool EffectEditorPage::create(ui::Container* parent)
 	Ref< ui::Container > container = new ui::Container();
 	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Effect.Editor.ToggleGuide"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleMove = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), ui::Command(L"Effect.Editor.ToggleMove"), 11, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleGuide = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_GUIDE"), ui::Command(L"Effect.Editor.ToggleGuide"), 7, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleMove = new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_TOGGLE_MOVE"), ui::Command(L"Effect.Editor.ToggleMove"), 8, ui::custom::ToolBarButton::BsDefaultToggle);
 
 	Ref< const PropertyGroup > settings = m_editor->getSettings();
 	T_ASSERT (settings);
@@ -101,15 +98,14 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 12);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceEffectEdit, sizeof(c_ResourceEffectEdit), L"png"), 1);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceEffectEdit, sizeof(c_ResourceEffectEdit), L"png"), 3);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_REWIND"), ui::Command(L"Effect.Editor.Rewind"), 0));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_PLAY"), ui::Command(L"Effect.Editor.Play"), 1));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_STOP"), ui::Command(L"Effect.Editor.Stop"), 2));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolToggleMove);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), ui::Command(L"Effect.Editor.RandomizeSeed"), 18));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), ui::Command(L"Effect.Editor.RandomizeSeed"), 6));
 
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventToolClick));
 
@@ -192,6 +188,7 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_moveEmitter = !m_moveEmitter;
 		m_previewControl->setMoveEmitter(m_moveEmitter);
+		m_previewControl->syncEffect();
 		m_toolToggleMove->setToggled(m_moveEmitter);
 	}
 	else if (command == L"Effect.Editor.ToggleVelocity")
@@ -255,6 +252,9 @@ void EffectEditorPage::updateEffectPreview()
 	{
 		Ref< Effect > effect = m_effectData->createEffect(m_resourceManager);
 		m_previewControl->setEffect(effect);
+
+		float time = m_sequencer->getCursor() / 1000.0f;
+		m_previewControl->setTotalTime(time);
 		m_previewControl->syncEffect();
 	}
 	else
@@ -334,7 +334,6 @@ void EffectEditorPage::eventLayerSelect(ui::Event* event)
 void EffectEditorPage::eventTimeCursorMove(ui::Event* event)
 {
 	float time = m_sequencer->getCursor() / 1000.0f;
-
 	m_previewControl->setTimeScale(0.0f);
 	m_previewControl->setTotalTime(time);
 	m_previewControl->syncEffect();

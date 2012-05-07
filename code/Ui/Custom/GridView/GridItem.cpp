@@ -1,6 +1,7 @@
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Canvas.h"
+#include "Ui/Custom/Auto/AutoWidget.h"
 #include "Ui/Custom/GridView/GridItem.h"
 
 namespace traktor
@@ -18,6 +19,12 @@ GridItem::GridItem()
 
 GridItem::GridItem(const std::wstring& text)
 :	m_text(text)
+{
+}
+
+GridItem::GridItem(const std::wstring& text, Font* font)
+:	m_text(text)
+,	m_font(font)
 {
 }
 
@@ -42,6 +49,16 @@ const std::wstring& GridItem::getText() const
 	return m_text;
 }
 
+void GridItem::setFont(Font* font)
+{
+	m_font = font;
+}
+
+Font* GridItem::getFont() const
+{
+	return m_font;
+}
+
 void GridItem::setImage(Bitmap* image)
 {
 	m_image = image;
@@ -56,6 +73,8 @@ int32_t GridItem::getHeight() const
 {
 	int32_t height = 18;
 
+	if (m_font)
+		height = std::max(height, m_font->getSize() + 10);
 	if (m_image)
 		height = std::max(height, m_image->getSize().cy + 4);
 
@@ -97,8 +116,14 @@ void GridItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 
 	if (!m_text.empty())
 	{
+		if (m_font)
+			canvas.setFont(*m_font);
+
 		canvas.setForeground(getSystemColor(ScWindowText));
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
+
+		if (m_font)
+			canvas.setFont(widget->getFont());
 	}
 }
 

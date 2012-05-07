@@ -100,6 +100,12 @@ extern T_DLLCLASS LogStream debug;
 
 //@}
 
+#if defined(_DEBUG)
+#	define T_DEBUG(x) traktor::log::debug << x << traktor::Endl
+#else
+#	define T_DEBUG(x) false
+#endif
+
 	}
 }
 

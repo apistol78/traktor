@@ -64,9 +64,7 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
 ,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
-,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
 ,	m_handleNormals(render::getParameterHandle(L"Normals"))
-,	m_handleNormalsSize(render::getParameterHandle(L"NormalsSize"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
@@ -145,7 +143,8 @@ void TerrainEntity::render(
 	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
 
-	const Vector4& eyePosition = worldRenderView.getEyePosition();
+	Matrix44 viewInv = worldRenderView.getView().inverse();
+	Vector4 eyePosition = viewInv.translation();
 
 	// Cull patches.
 	static AlignedVector< CullPatch > visiblePatches;
@@ -155,8 +154,6 @@ void TerrainEntity::render(
 	Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.0f, 0.5f, 0.0f);
 	Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
 	Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
-
-	Matrix44 viewInv = worldRenderView.getView().inverseOrtho();
 
 	// Calculate world frustum.
 	Frustum worldCullFrustum = worldRenderView.getCullFrustum();
@@ -364,16 +361,11 @@ void TerrainEntity::render(
 				renderBlock->primitives = &m_primitives[i][instanceCount - 1];
 
 				renderBlock->programParams->beginParameters(renderContext);
-				worldRenderPass.setProgramParameters(renderBlock->programParams);
+				worldRenderPass.setProgramParameters(renderBlock->programParams, true);
 
 				renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-
 				renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
-				renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float( m_terrain->getHeightMap()->getWidth()));
-
 				renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
-				renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_terrain->getNormalMap()->getWidth()));
-
 				renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 				renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 				renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
@@ -409,16 +401,11 @@ void TerrainEntity::render(
 			renderBlock->primitives = &m_primitives[patch.lastPatchLod][0];
 
 			renderBlock->programParams->beginParameters(renderContext);
-			worldRenderPass.setProgramParameters(renderBlock->programParams);
+			worldRenderPass.setProgramParameters(renderBlock->programParams, true);
 
 			renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-
 			renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
-			renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float( m_terrain->getHeightMap()->getWidth()));
-
 			renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
-			renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_terrain->getNormalMap()->getWidth()));
-
 			renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 			renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 			renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
@@ -455,13 +442,11 @@ void TerrainEntity::render(
 		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
 
 		renderBlock->programParams->beginParameters(renderContext);
-		worldRenderPass.setProgramParameters(renderBlock->programParams);
+		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
 		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
 		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_heightTexture);
-		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(m_heightTexture->getWidth()));
-		renderBlock->programParams->setTextureParameter(m_handleNormals, m_normalTexture);
-		renderBlock->programParams->setFloatParameter(m_handleNormalsSize, float(m_normalTexture->getWidth()));
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
@@ -812,7 +797,7 @@ bool TerrainEntity::createPatches()
 
 						indices.push_back(mid);
 						indices.push_back(x + offset + lodSkip);
-						indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
+						indices.push_back(x + offset + lodSkip + lodSkip * m_patchDim);
 					}
 
 					if (y == 0)

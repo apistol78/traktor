@@ -192,7 +192,7 @@ void CanvasGdiWin32::endPaint(Window& hWnd)
 	int32_t gdiResources = (int32_t)GetGuiResources(GetCurrentProcess(), 0);
 	int32_t gdiLeak = gdiResources - m_gdiResources;
 	if (gdiLeak > 0)
-		log::debug << L"GDI " << gdiLeak << L" objects leaked (pre: " << m_gdiResources << L", post: " << gdiResources << L")" << Endl;
+		T_DEBUG(L"GDI " << gdiLeak << L" objects leaked (pre: " << m_gdiResources << L", post: " << gdiResources << L")");
 #endif
 }
 

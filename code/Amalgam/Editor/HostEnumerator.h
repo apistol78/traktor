@@ -29,6 +29,8 @@ public:
 
 	bool getDescription(int32_t index, std::wstring& outDescription) const;
 
+	bool isLocal(int32_t index) const;
+
 	void update();
 
 private:
@@ -36,6 +38,9 @@ private:
 	{
 		std::wstring host;
 		std::wstring description;
+		bool local;
+
+		Host();
 
 		bool operator < (const Host& h) const;
 	};

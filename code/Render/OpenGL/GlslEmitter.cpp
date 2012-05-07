@@ -1,10 +1,11 @@
 #include <iomanip>
-#include "Render/OpenGL/GlslEmitter.h"
-#include "Render/OpenGL/GlslContext.h"
-#include "Render/VertexElement.h"
-#include "Render/Shader/Nodes.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Render/VertexElement.h"
+#include "Render/OpenGL/GlslContext.h"
+#include "Render/OpenGL/GlslEmitter.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/Script.h"
 
 namespace traktor
 {
@@ -790,7 +791,7 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
 	GlslVariable* texture = cx.emitInput(node, L"Texture");
-	if (!texture || texture->getType() != GtTexture)
+	if (!texture || texture->getType() < GtTexture2D)
 		return;
 
 	GlslVariable* texCoord = cx.emitInput(node, L"TexCoord");
@@ -814,9 +815,9 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		// should also consider sampler state.
 	
 		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case GtTexture2D:
 #if defined(T_OPENGL_STD)
 			fu << L"uniform sampler2D " << samplerName << L";" << Endl;
 #elif defined(T_OPENGL_ES2)
@@ -824,12 +825,12 @@ void emitSampler(GlslContext& cx, Sampler* node)
 #endif
 			break;
 
-		case Sampler::LuCube:
-			fu << L"uniform samplerCube " << samplerName << L";" << Endl;
+		case GtTexture3D:
+			fu << L"uniform sampler3D " << samplerName << L";" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			fu << L"uniform sampler3D " << samplerName << L";" << Endl;
+		case GtTextureCube:
+			fu << L"uniform samplerCube " << samplerName << L";" << Endl;
 			break;
 		}
 
@@ -868,18 +869,18 @@ void emitSampler(GlslContext& cx, Sampler* node)
 
 	if (cx.inFragment())
 	{
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case GtTexture2D:
 			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			break;
 
-		case Sampler::LuCube:
-			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+		case GtTexture3D:
+			assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+		case GtTextureCube:
+			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 		}
 	}
@@ -887,33 +888,33 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	if (cx.inVertex())
 	{
 #if defined(T_OPENGL_STD)
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case GtTexture2D:
 			assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
 			break;
 
-		case Sampler::LuCube:
-			assign(f, out) << L"textureCubeLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+		case GtTexture3D:
+			assign(f, out) << L"texture3DLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			assign(f, out) << L"texture3DLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+		case GtTextureCube:
+			assign(f, out) << L"textureCubeLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
 		}
 #else
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case GtTexture2D:
 			assign(f, out) << L"texture2D(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			break;
 
-		case Sampler::LuCube:
-			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+		case GtTexture3D:
+			assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			assign(f, out) << L"texture3D(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+		case GtTextureCube:
+			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 		}
 #endif
@@ -925,6 +926,102 @@ void emitScalar(GlslContext& cx, Scalar* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
 	f << L"const float " << out->getName() << L" = " << formatFloat(node->get()) << L";" << Endl;
+}
+
+void emitScript(GlslContext& cx, Script* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	// Get platform specific script from node.
+#if defined(T_OPENGL_STD)
+	std::wstring script = node->getScript(L"OpenGL");
+#else
+	std::wstring script = node->getScript(L"OpenGL ES2");
+#endif
+	T_ASSERT (!script.empty());
+
+	// Emit input and outputs.
+	int32_t inputPinCount = node->getInputPinCount();
+	int32_t outputPinCount = node->getOutputPinCount();
+
+	RefArray< GlslVariable > in(inputPinCount);
+	RefArray< GlslVariable > out(outputPinCount);
+
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
+		T_ASSERT (outputPin);
+
+		out[i] = cx.emitOutput(
+			node,
+			outputPin->getName(),
+			glsl_from_parameter_type(outputPin->getType())
+		);
+	}
+
+	for (int32_t i = 0; i < inputPinCount; ++i)
+	{
+		in[i] = cx.emitInput(node->getInputPin(i));
+		T_ASSERT (!in[i]);
+	}
+
+	// Define script instance.
+	if (cx.getShader().defineScript(node->getName()))
+	{
+		StringOutputStream& fs = cx.getShader().getOutputStream(GlslShader::BtScript);
+
+		fs << L"void " << node->getName() << L"(";
+
+		for (int32_t i = 0; i < inputPinCount; ++i)
+		{
+			if (i > 0)
+				fs << L", ";
+			fs << glsl_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
+		}
+
+		if (!in.empty())
+			fs << L", ";
+
+		for (int32_t i = 0; i < outputPinCount; ++i)
+		{
+			if (i > 0)
+				fs << L", ";
+			fs << L"out " << glsl_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
+		}
+
+		fs << L")" << Endl;
+		fs << L"{" << Endl;
+		fs << IncreaseIndent;
+		fs << script << Endl;
+		fs << DecreaseIndent;
+		fs << L"}" << Endl;
+		fs << Endl;
+	}
+
+	// Emit script invocation.
+	for (int32_t i = 0; i < outputPinCount; ++i)
+		f << glsl_type_name(out[i]->getType()) << L" " << out[i]->getName() << L";" << Endl;
+
+	f << node->getName() << L"(";
+
+	for (RefArray< GlslVariable >::const_iterator i = in.begin(); i != in.end(); ++i)
+	{
+		if (i != in.begin())
+			f << L", ";
+		f << (*i)->getName();
+	}
+
+	if (!in.empty())
+		f << L", ";
+
+	for (RefArray< GlslVariable >::const_iterator i = out.begin(); i != out.end(); ++i)
+	{
+		if (i != out.begin())
+			f << L", ";
+		f << (*i)->getName();
+	}
+
+	f << L");" << Endl;
 }
 
 void emitSin(GlslContext& cx, Sin* node)
@@ -942,6 +1039,16 @@ void emitSqrt(GlslContext& cx, Sqrt* node)
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"sqrt(" << in->getName() << L");" << Endl;
+}
+
+void emitStep(GlslContext& cx, Step* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* in1 = cx.emitInput(node, L"X");
+	GlslVariable* in2 = cx.emitInput(node, L"Y");
+	GlslType type = std::max< GlslType >(in1->getType(), in2->getType());
+	GlslVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 }
 
 void emitSub(GlslContext& cx, Sub* node)
@@ -1199,7 +1306,7 @@ void emitTexture(GlslContext& cx, Texture* node)
 	cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		parameterName,
-		GtTexture
+		glsl_from_parameter_type(node->getParameterType())
 	);
 }
 
@@ -1223,14 +1330,13 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 
 void emitUniform(GlslContext& cx, Uniform* node)
 {
-	const GlslType c_parameterType[] = { GtFloat, GtFloat4, GtFloat4x4, GtTexture };
 	GlslVariable* out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
-		c_parameterType[node->getParameterType()]
+		glsl_from_parameter_type(node->getParameterType())
 	);
 
-	if (out->getType() != GtTexture)
+	if (out->getType() < GtTexture2D)
 	{
 		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 		if (uniforms.find(node->getParameterName()) == uniforms.end())
@@ -1457,6 +1563,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
+	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);

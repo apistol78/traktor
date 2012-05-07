@@ -54,7 +54,7 @@ bool MessageTransport::receive(int32_t timeout, Ref< IMessage >& outMessage)
 	if (result <= 0)
 	{
 		if (result < 0)
-			log::debug << L"Transport terminated due to network event" << Endl;
+			T_DEBUG(L"Transport terminated due to network event");
 		return result == 0;
 	}
 	
@@ -62,7 +62,7 @@ bool MessageTransport::receive(int32_t timeout, Ref< IMessage >& outMessage)
 	outMessage = BinarySerializer(m_socketStream).readObject< IMessage >();
 
 	if (!outMessage)
-		log::debug << L"Transport terminated due to invalid message" << Endl;
+		T_DEBUG(L"Transport terminated due to invalid message");
 
 	return outMessage != 0;
 }

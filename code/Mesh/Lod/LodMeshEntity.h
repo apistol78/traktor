@@ -48,6 +48,7 @@ private:
 	RefArray< MeshEntity > m_lods;
 	float m_lodDistance;
 	float m_lodCullDistance;
+	Aabb3 m_boundingBox;
 };
 
 	}

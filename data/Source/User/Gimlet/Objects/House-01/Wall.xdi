@@ -58,7 +58,6 @@
 				<first>519</first>
 				<second>316</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -170,7 +169,8 @@ Tag_DiffuseTerm
 				<second>240</second>
 			</position>
 			<external>{C9E4B13A-9BC3-5549-8825-9BDC7957CD46}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">

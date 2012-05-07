@@ -57,7 +57,7 @@ Ref< ActionFunctionNative > createPolymorphicFunction(
 
 void trapInvalidCast()
 {
-	log::debug << L"Trying to call object with incorrect type" << Endl;
+	T_DEBUG(L"Trying to call object with incorrect type");
 }
 
 	}

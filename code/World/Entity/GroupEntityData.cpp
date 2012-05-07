@@ -28,6 +28,11 @@ void GroupEntityData::removeAllEntityData()
 	m_entityData.resize(0);
 }
 
+void GroupEntityData::setEntityData(const RefArray< EntityData >& entityData)
+{
+	m_entityData = entityData;
+}
+
 RefArray< EntityData >& GroupEntityData::getEntityData()
 {
 	return m_entityData;

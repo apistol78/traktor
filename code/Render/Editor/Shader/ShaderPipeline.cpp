@@ -316,7 +316,7 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 	std::wstring parametersFile = settings->getProperty< PropertyString >(L"ShaderPipeline.ParametersFile", L"data/temp/Parameters.txt");
 	m_programHints = new CachedProgramHints(parametersFile);
 
-	log::debug << L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation") << Endl;
+	T_DEBUG(L"Using optimization level " << m_optimize << (m_validate ? L" with validation" : L" without validation"));
 	return true;
 }
 
@@ -594,6 +594,10 @@ bool ShaderPipeline::buildOutput(
 
 			log::info << DecreaseIndent;
 		}
+
+		log::info << L"Estimated costs" << Endl;
+		log::info << L"  VS " << stats.vertexCost << Endl;
+		log::info << L"  PS " << stats.pixelCost << Endl;
 	}
 #endif
 

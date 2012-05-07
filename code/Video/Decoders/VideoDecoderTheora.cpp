@@ -144,7 +144,7 @@ public:
 			sizeof(pp_level)
 		);
 
-		log::debug << L"Theora decoder created, " << m_ti.pic_width << L"x" << m_ti.pic_height << L", " << float(m_ti.fps_numerator / m_ti.fps_denominator) << L" fps" << Endl;
+		T_DEBUG(L"Theora decoder created, " << m_ti.pic_width << L"x" << m_ti.pic_height << L", " << float(m_ti.fps_numerator / m_ti.fps_denominator) << L" fps");
 
 		return true;
 	}

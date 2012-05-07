@@ -12,7 +12,6 @@ WorldRenderView::WorldRenderView()
 ,	m_squareProjection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
 ,	m_viewSize(0.0f, 0.0f)
-,	m_eyePosition(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_lightCount(0)
 ,	m_time(0.0f)
 ,	m_deltaTime(0.0f)
@@ -61,11 +60,6 @@ void WorldRenderView::setView(const Matrix44& view)
 void WorldRenderView::setViewSize(const Vector2& viewSize)
 {
 	m_viewSize = viewSize;
-}
-
-void WorldRenderView::setEyePosition(const Vector4& eyePosition)
-{
-	m_eyePosition = eyePosition;
 }
 
 void WorldRenderView::setShadowBox(const Aabb3& shadowBox)

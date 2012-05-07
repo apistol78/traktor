@@ -187,7 +187,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 		{
 			inputPin = (*i)->findInputPin(L"Matrix");
 		}
-		else if (inputType == PntTexture)
+		else if (isPinTypeTexture(inputType))
 		{
 			inputPin = (*i)->findInputPin(L"Texture");
 		}

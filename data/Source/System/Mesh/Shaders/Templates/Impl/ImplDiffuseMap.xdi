@@ -63,6 +63,7 @@ Tag_DiffuseMap
 				<second>114</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
+      <type>PtTexture2D</type>
 		</item>
 		<item type="traktor.render.Sampler">
 			<comment/>
@@ -70,7 +71,6 @@ Tag_DiffuseMap
 				<first>651</first>
 				<second>133</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>

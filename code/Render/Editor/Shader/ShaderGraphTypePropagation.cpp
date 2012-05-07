@@ -110,33 +110,53 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 			const INodeTraits* nodeTraits = INodeTraits::find(node);
 			T_ASSERT (nodeTraits);
 
-			PinType outputPinTypes[4];
-
-			uint32_t outputPinCount = node->getOutputPinCount();
-			T_ASSERT (outputPinCount <= sizeof_array(outputPinTypes));
-
-			for (uint32_t j = 0; j < outputPinCount; ++j)
-			{
-				const OutputPin* outputPin = node->getOutputPin(j);
-				T_ASSERT (m_outputPinTypes.find(outputPin) != m_outputPinTypes.end());
-				
-				outputPinTypes[j] = m_outputPinTypes[outputPin];
-			}
+			PinType currentInputPinTypes[32];
+			PinType outputPinTypes[32];
 
 			uint32_t inputPinCount = node->getInputPinCount();
+			T_ASSERT (inputPinCount < sizeof_array(currentInputPinTypes));
+
+			uint32_t outputPinCount = node->getOutputPinCount();
+			T_ASSERT (outputPinCount < sizeof_array(outputPinTypes));
+
+			// Get current set of types for node's inputs.
 			for (uint32_t j = 0; j < inputPinCount; ++j)
 			{
 				const InputPin* inputPin = node->getInputPin(j);
 				T_ASSERT (inputPin);
 
-				PinType inputPinType = nodeTraits->getInputPinType(m_shaderGraph, node, inputPin, outputPinTypes);
+				const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
+				if (sourceOutputPin)
+					currentInputPinTypes[j] = m_outputPinTypes[sourceOutputPin];
+				else
+					T_ASSERT (inputPin->isOptional());
+			}
+
+			// Get set of output types for node's outputs.
+			for (uint32_t j = 0; j < outputPinCount; ++j)
+			{
+				const OutputPin* outputPin = node->getOutputPin(j);
+				T_ASSERT (m_outputPinTypes.find(outputPin) != m_outputPinTypes.end());
+
+				outputPinTypes[j] = m_outputPinTypes[outputPin];
+			}
+
+			// Evaluate possible new input type from type sets.
+			for (uint32_t j = 0; j < inputPinCount; ++j)
+			{
+				const InputPin* inputPin = node->getInputPin(j);
+				T_ASSERT (inputPin);
+
+				PinType inputPinType = nodeTraits->getInputPinType(m_shaderGraph, node, inputPin, currentInputPinTypes, outputPinTypes);
 				if (inputPinType == PntVoid)
 				{
-					const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
-					if (sourceOutputPin)
-						inputPinType = m_outputPinTypes[sourceOutputPin];
-					else
-						T_ASSERT (inputPin->isOptional());
+					//const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
+					//if (sourceOutputPin)
+					//	inputPinType = m_outputPinTypes[sourceOutputPin];
+					//else
+					//	T_ASSERT (inputPin->isOptional());
+
+					inputPinType = currentInputPinTypes[j];
 				}
 
 				if (m_inputPinTypes[inputPin] != inputPinType)
@@ -162,8 +182,8 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 			const Node* node = *i;
 			T_ASSERT (node);
 
-			const INodeTraits* nodeTraits = INodeTraits::find(node);
-			T_ASSERT (nodeTraits);
+			//const INodeTraits* nodeTraits = INodeTraits::find(node);
+			//T_ASSERT (nodeTraits);
 
 			uint32_t outputPinCount = node->getOutputPinCount();
 			for (uint32_t j = 0; j < outputPinCount; ++j)
@@ -193,7 +213,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 		++iterationCount;
 	}
 	
-	log::debug << L"Type propagation solved in " << iterationCount << L" iteration(s)" << Endl;
+	T_DEBUG(L"Type propagation solved in " << iterationCount << L" iteration(s)");
 }
 
 PinType ShaderGraphTypePropagation::evaluate(const InputPin* inputPin) const

@@ -1,3 +1,4 @@
+#include <cstring>
 #include <minilzo.h>
 #include "Compress/Lzo/InflateStreamLzo.h"
 #include "Core/Containers/AlignedVector.h"
@@ -35,7 +36,7 @@ public:
 		if (m_decompressedBufferSize > 0)
 		{
 			int32_t ncopy = std::min< int32_t >(m_decompressedBufferSize, nbytes);
-			
+
 			std::memcpy(ptr, &m_decompressedBuffer[0], ncopy);
 			ptr += ncopy;
 
@@ -60,7 +61,7 @@ public:
 		{
 			uint32_t compressedBlockSize = 0;
 			Reader(m_stream) >> compressedBlockSize;
-			
+
 			if (!compressedBlockSize || compressedBlockSize > m_compressedBlock.size())
 				break;
 
@@ -109,7 +110,7 @@ public:
 				break;
 
 			int32_t ncopy = std::min< int32_t >(m_decompressedBufferSize, nbytes);
-			
+
 			std::memcpy(ptr, &m_decompressedBuffer[0], ncopy);
 			ptr += ncopy;
 

@@ -17,7 +17,6 @@ namespace traktor
 DropListCell::DropListCell(HostEnumerator* hostEnumerator, TargetInstance* instance)
 :	m_hostEnumerator(hostEnumerator)
 ,	m_instance(instance)
-,	m_selected(0)
 {
 }
 
@@ -37,10 +36,7 @@ void DropListCell::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& po
 
 		Ref< ui::MenuItem > selectedItem = menu.show(widget, m_menuPosition);
 		if (selectedItem)
-		{
-			m_selected = selectedItem->getCommand().getId();
-			m_instance->setDeployHostId(m_selected);
-		}
+			m_instance->setDeployHostId(selectedItem->getCommand().getId());
 
 		menu.destroy();
 	}
@@ -69,12 +65,9 @@ void DropListCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, con
 	canvas.setBackground(ui::getSystemColor(ui::ScMenuBackground));
 	canvas.fillRect(rcButton);
 
-	//if (m_hover)
-	{
-		canvas.setForeground(Color4ub(128, 128, 140));
-		canvas.drawRect(rect);
-		canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom - 1);
-	}
+	canvas.setForeground(Color4ub(128, 128, 140));
+	canvas.drawRect(rect);
+	canvas.drawLine(rcButton.left - 1, rcButton.top, rcButton.left - 1, rcButton.bottom - 1);
 
 	ui::Point center = rcButton.getCenter();
 	ui::Point pnts[] =
@@ -87,11 +80,15 @@ void DropListCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, con
 	canvas.setBackground(ui::getSystemColor(ui::ScWindowText));
 	canvas.fillPolygon(pnts, 3);
 
-	std::wstring description;
-	m_hostEnumerator->getDescription(m_selected, description);
+	int32_t deployHostId = m_instance->getDeployHostId();
+	if (deployHostId >= 0)
+	{
+		std::wstring description;
+		m_hostEnumerator->getDescription(deployHostId, description);
 
-	canvas.setForeground(ui::getSystemColor(ui::ScWindowText));
-	canvas.drawText(rcText, description, ui::AnLeft, ui::AnCenter);
+		canvas.setForeground(ui::getSystemColor(ui::ScWindowText));
+		canvas.drawText(rcText, description, ui::AnLeft, ui::AnCenter);
+	}
 
 	m_menuPosition = ui::Point(rect.left, rect.bottom);
 }

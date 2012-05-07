@@ -26,6 +26,7 @@
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
 #include "Render/Editor/Shader/Facades/CommentNodeFacade.h"
 #include "Render/Editor/Shader/Facades/InterpolatorNodeFacade.h"
+#include "Render/Editor/Shader/Facades/ScriptNodeFacade.h"
 #include "Render/Editor/Shader/Facades/SwitchNodeFacade.h"
 #include "Render/Editor/Shader/Facades/SwizzleNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
@@ -134,7 +135,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	// Create our custom toolbar.
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 12);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 14);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_OPEN_REFEREE"), ui::Command(L"ShaderGraph.Editor.OpenReferee"), 6));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CENTER"), ui::Command(L"ShaderGraph.Editor.Center"), 7));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
@@ -150,8 +151,8 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_AUTO_MERGE_BRANCHES"), ui::Command(L"ShaderGraph.Editor.AutoMergeBranches"), 9));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_UPDATE_FRAGMENTS"), ui::Command(L"ShaderGraph.Editor.UpdateFragments"), 10));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CONSTANT_FOLD"), ui::Command(L"ShaderGraph.Editor.ConstantFold"), 11));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), ui::Command(L"ShaderGraph.Editor.CleanupSwizzles"), 11));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), ui::Command(L"ShaderGraph.Editor.InsertInterpolators"), 11));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_CLEANUP_SWIZZLES"), ui::Command(L"ShaderGraph.Editor.CleanupSwizzles"), 12));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SHADERGRAPH_INSERT_INTERPOLATORS"), ui::Command(L"ShaderGraph.Editor.InsertInterpolators"), 13));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	
 	m_toolPlatform = new ui::custom::ToolBarDropDown(ui::Command(), 80, i18n::Text(L"SHADERGRAPH_PLATFORM_PERMUTATION"));
@@ -226,6 +227,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_nodeFacades[&type_of< Color >()] = new ColorNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Comment >()] = new CommentNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Interpolator >()] = new InterpolatorNodeFacade();
+	m_nodeFacades[&type_of< Script >()] = new ScriptNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Switch >()] = new SwitchNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< Swizzle >()] = new SwizzleNodeFacade(m_editorGraph);
 	m_nodeFacades[&type_of< External >()] = new ExternalNodeFacade(m_editorGraph);

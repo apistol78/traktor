@@ -358,6 +358,8 @@ namespace
 						int na1 = faces[k].i[m];
 						int na2 = faces[k].i[(m + 1) % 3];
 
+						T_ASSERT_M(!(a1 == na1 && a2 == na2), L"Adjacent face with different winding");
+
 						if (a1 == na2 && a2 == na1)
 						{
 							adj.n[j] = k;
@@ -383,45 +385,48 @@ void calculateConvexHull(Model& model)
 
 	AlignedVector< Vector4 > vertices = model.getPositions();
 
-	// Find three valid vertices to build a plane.
-	uint32_t k = ~0U;
-	Plane pll((vertices[1] - vertices[0]).normalized(), vertices[0]);
-	for (uint32_t i = 2; i < uint32_t(vertices.size()); ++i)
-	{
-		Vector4 p = (pll.project(vertices[i]) - vertices[0]).xyz0();
-		if (p.length() > FUZZY_EPSILON)
-		{
-			k = i;
-			break;
-		}
-	}
-	if (k == ~0UL)
-		return;
+	// Use first polygon as basis for tetrahedron.
+	Polygon p0 = model.getPolygons().front();
+
+	uint32_t i0 = model.getVertex(p0.getVertex(0)).getPosition();
+	uint32_t i1 = model.getVertex(p0.getVertex(1)).getPosition();
+	uint32_t i2 = model.getVertex(p0.getVertex(2)).getPosition();
+
+	Plane pll(
+		vertices[i0],
+		vertices[i1],
+		vertices[i2]
+	);
 
 	// Build initial tetrahedron.
-	uint32_t t = ~0U;
-	Plane plt(vertices[0], vertices[1], vertices[k]);
-	for (uint32_t i = 2; i < uint32_t(vertices.size()); ++i)
+	uint32_t it = ~0U;
+	for (uint32_t i = 0; i < uint32_t(vertices.size()); ++i)
 	{
-		Scalar d = abs(plt.distance(vertices[i]));
-		if (i != k && d > FUZZY_EPSILON)
+		if (i == i0 || i == i1 || i == i2)
+			continue;
+
+		Scalar d = pll.distance(vertices[i]);
+		if (d < -FUZZY_EPSILON)
 		{
-			t = i;
+			it = i;
 			break;
 		}
 	}
-	if (t == ~0U)
+	if (it == ~0U)
 		return;
 
 	std::vector< HullFace > faces;
 	faces.reserve(32);
-	faces.push_back(HullFace(0, 1, k));
-	faces.push_back(HullFace(1, 0, t));
-	faces.push_back(HullFace(k, 1, t));
-	faces.push_back(HullFace(0, k, t));
+	faces.push_back(HullFace(i0, i1, i2));
+	faces.push_back(HullFace(i1, i0, it));
+	faces.push_back(HullFace(i2, i1, it));
+	faces.push_back(HullFace(i0, i2, it));
 
 	std::vector< HullFaceAdjacency > adjacency;
 	errorCount = calculateAdjacency(faces, adjacency);
+
+	if (errorCount > 0)
+		T_DEBUG(errorCount << L" adjanceny error(s)");
 
 	for (uint32_t i = 0; i < uint32_t(vertices.size()); ++i)
 	{
@@ -454,6 +459,25 @@ void calculateConvexHull(Model& model)
 		if (silouette.empty())
 			continue;
 
+		//T_ASSERT (silouette.size() >= 3);
+
+		//std::vector< std::pair< uint32_t, uint32_t > > silouette2;
+		//silouette2.push_back(silouette.front());
+
+		//while (silouette2.size() != silouette.size())
+		//{
+		//	for (std::vector< std::pair< uint32_t, uint32_t > >::const_iterator j = silouette.begin(); j != silouette.end(); ++j)
+		//	{
+		//		if (silouette2.back().second == j->first)
+		//		{
+		//			silouette2.push_back(*j);
+		//			break;
+		//		}
+		//	}
+		//}
+
+		//silouette = silouette2;
+
 		// Remove visible faces.
 		for (uint32_t j = 0; j < uint32_t(visible.size()); )
 		{
@@ -476,6 +500,8 @@ void calculateConvexHull(Model& model)
 		// Recalculate adjacency.
 		adjacency.resize(0);
 		errorCount = calculateAdjacency(faces, adjacency);
+		if (errorCount > 0)
+			T_DEBUG(errorCount << L" adjanceny error(s)");
 	}
 
 	// Clear everything except positions.

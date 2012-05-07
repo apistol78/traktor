@@ -208,7 +208,6 @@
 				<first>8</first>
 				<second>273</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -314,7 +313,7 @@
 				<second>286</second>
 			</position>
 			<parameterName>Texture</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">

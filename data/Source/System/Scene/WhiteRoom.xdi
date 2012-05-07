@@ -1,38 +1,61 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.scene.SceneAsset" version="3">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="6">
+<object type="traktor.scene.SceneAsset" version="4">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="12">
+		<renderType>RtForward</renderType>
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<depthPassEnabled>false</depthPassEnabled>
-		<depthRange>10000</depthRange>
-		<velocityPassEnable>false</velocityPassEnable>
 		<shadowsEnabled>false</shadowsEnabled>
 		<shadowsProjection>SpUniform</shadowsProjection>
 		<shadowsQuality>SqMedium</shadowsQuality>
-		<ssaoEnabled>false</ssaoEnabled>
 		<shadowFarZ>100</shadowFarZ>
 		<shadowMapResolution>1024</shadowMapResolution>
 		<shadowMapBias>1</shadowMapBias>
+		<shadowMapBiasCoeff>0.1</shadowMapBiasCoeff>
+		<shadowCascadingSlices>1</shadowCascadingSlices>
+		<shadowCascadingLambda>1</shadowCascadingLambda>
+		<shadowQuantizeProjection>true</shadowQuantizeProjection>
+		<fogEnabled>false</fogEnabled>
+		<fogDistance>90</fogDistance>
+		<fogRange>10</fogRange>
+		<fogColor>255, 255, 255, 255</fogColor>
 	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
-	<entityData type="traktor.world.GroupEntityData">
-		<name>Root</name>
-    <transform>
-      <translation>0, 0, 0, 0</translation>
-      <rotation>0, 0, 0, 1</rotation>
-    </transform>
-    <entityData>
-			<item type="traktor.world.DirectionalLightEntityData">
-				<name>Light</name>
-				<transform>
-					<translation>0, 7.8, 0, 0</translation>
-					<rotation>-0.357926, 0.283994, 0.115246, 0.882017</rotation>
-				</transform>
-				<sunColor>1, 1, 1, 0</sunColor>
-				<baseColor>0.5, 0.5, 0.5, 0</baseColor>
-				<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
-			</item>
-		</entityData>
-	</entityData>
+	<layers>
+		<item type="traktor.scene.LayerEntityData">
+			<name>Environment</name>
+			<transform>
+				<translation>0, 0, 0, 0</translation>
+				<rotation>0, 0, 0, 1</rotation>
+			</transform>
+			<entityData>
+				<item type="traktor.world.DirectionalLightEntityData" version="1">
+					<name>Light</name>
+					<transform>
+						<translation>0, 7.8, 0, 0</translation>
+						<rotation>-0.357926, 0.283994, 0.115246, 0.882017</rotation>
+					</transform>
+					<sunColor>1, 1, 1, 0</sunColor>
+					<baseColor>0.5, 0.5, 0.5, 0</baseColor>
+					<shadowColor>0.25, 0.25, 0.25, 0</shadowColor>
+					<castShadow>true</castShadow>
+				</item>
+			</entityData>
+			<visible>true</visible>
+			<locked>true</locked>
+			<include>true</include>
+		</item>
+		<item type="traktor.scene.LayerEntityData">
+			<name>Entity</name>
+			<transform>
+				<translation>0, 0, 0, 0</translation>
+				<rotation>0, 0, 0, 1</rotation>
+			</transform>
+			<entityData/>
+			<visible>true</visible>
+			<locked>false</locked>
+			<include>true</include>
+		</item>
+	</layers>
 	<controllerData/>
 </object>

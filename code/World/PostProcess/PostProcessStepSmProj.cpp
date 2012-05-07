@@ -119,7 +119,6 @@ PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_handleShadowMapSizeAndBias = render::getParameterHandle(L"ShadowMapSizeAndBias");
 	m_handleShadowMapPoissonTaps = render::getParameterHandle(L"ShadowMapPoissonTaps");
 	m_handleDepth = render::getParameterHandle(L"Depth");
-	m_handleDepth_Size = render::getParameterHandle(L"Depth_Size");
 	m_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
 	m_handleViewEdgeTopLeft = render::getParameterHandle(L"ViewEdgeTopLeft");
 	m_handleViewEdgeTopRight = render::getParameterHandle(L"ViewEdgeTopRight");
@@ -151,12 +150,6 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	float shadowFadeZ = params.shadowFarZ * 0.7f;
 	float shadowFadeRate = 1.0f / (params.shadowFarZ - shadowFadeZ);
 
-	Vector4 sourceDepthSize(
-		float(sourceDepth->getWidth()),
-		float(sourceDepth->getHeight()),
-		0.0f,
-		0.0f
-	);
 	Vector4 shadowMapSizeAndBias(
 		1.0f / float(sourceShMap->getWidth()),
 		shadowMapBias,
@@ -178,7 +171,6 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	m_shader->setVectorParameter(m_handleShadowMapSizeAndBias, shadowMapSizeAndBias);
 	m_shader->setVectorArrayParameter(m_handleShadowMapPoissonTaps, c_poissonTaps, sizeof_array(c_poissonTaps));
 	m_shader->setTextureParameter(m_handleDepth, sourceDepth->getColorTexture(0));
-	m_shader->setVectorParameter(m_handleDepth_Size, sourceDepthSize);	
 	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, params.sliceNearZ - c_sliceBias, params.sliceFarZ + c_sliceBias));
 	m_shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
 	m_shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);

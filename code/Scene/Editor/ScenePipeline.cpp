@@ -8,20 +8,21 @@
 #include "Editor/IPipelineSettings.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/SceneResource.h"
+#include "Scene/Editor/LayerEntityData.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/EntityData.h"
 
 namespace traktor
 {
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 7, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 8, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
-:	m_suppressDepthPass(false)
+:	m_targetEditor(false)
+,	m_suppressDepthPass(false)
 ,	m_suppressShadows(false)
 ,	m_suppressPostProcess(false)
 ,	m_suppressPreLit(false)
@@ -32,6 +33,7 @@ ScenePipeline::ScenePipeline()
 
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
+	m_targetEditor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor");
 	m_suppressDepthPass = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
 	m_suppressShadows = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressShadows");
 	m_suppressPostProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
@@ -63,7 +65,11 @@ bool ScenePipeline::buildDependencies(
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
 	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings(), editor::PdfBuild);
-	pipelineDepends->addDependency(sceneAsset->getEntityData());
+
+	const RefArray< LayerEntityData >& layers = sceneAsset->getLayers();
+	for (RefArray< LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		pipelineDepends->addDependency(*i);
+
 	pipelineDepends->addDependency(sceneAsset->getControllerData());
 	return true;
 }
@@ -79,17 +85,41 @@ bool ScenePipeline::buildOutput(
 ) const
 {
 	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
-	Ref< SceneResource > sceneResource = new SceneResource();
 
-	Ref< world::EntityData > entityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(sceneAsset->getEntityData()));
-	if (!entityData)
-		return false;
+	Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
 
+	// Build each layer of entity data; merge into a single output group.
+	const RefArray< LayerEntityData >& layers = sceneAsset->getLayers();
+	for (RefArray< LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		T_ASSERT (*i);
+		if ((*i)->isInclude() || m_targetEditor)
+		{
+			log::info << L"Building layer \"" << (*i)->getName() << L"\"..." << Endl;
+			const RefArray< world::EntityData >& entityData = (*i)->getEntityData();
+			for (RefArray< world::EntityData >::const_iterator j = entityData.begin(); j != entityData.end(); ++j)
+			{
+				Ref< world::EntityData > entityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(*j));
+				if (!entityData)
+				{
+					log::error << L"Scene pipeline failed; unable to build entity data." << Endl;
+					return false;
+				}
+
+				groupEntityData->addEntityData(entityData);
+			}
+		}
+		else
+			log::info << L"Layer \"" << (*i)->getName() << L"\" skipped" << Endl;
+	}
+
+	// Build controller data.
 	Ref< ISceneControllerData > controllerData = checked_type_cast< ISceneControllerData*, true >(pipelineBuilder->buildOutput(sceneAsset->getControllerData()));
 
+	Ref< SceneResource > sceneResource = new SceneResource();
 	sceneResource->setWorldRenderSettings(sceneAsset->getWorldRenderSettings());
 	sceneResource->setPostProcessSettings(sceneAsset->getPostProcessSettings());
-	sceneResource->setEntityData(entityData);
+	sceneResource->setEntityData(groupEntityData);
 	sceneResource->setControllerData(controllerData);
 
 	if (m_suppressDepthPass && sceneResource->getWorldRenderSettings()->depthPassEnabled)

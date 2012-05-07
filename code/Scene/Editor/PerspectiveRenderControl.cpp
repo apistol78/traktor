@@ -20,6 +20,7 @@
 #include "Scene/Editor/Camera.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityRendererAdapter.h"
+#include "Scene/Editor/EntityRendererCache.h"
 #include "Scene/Editor/FrameEvent.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
@@ -63,6 +64,16 @@ const float c_cameraTranslateDeltaScale = 0.025f;
 const float c_cameraRotateDeltaScale = 0.01f;
 const float c_deltaAdjust = 0.05f;
 const float c_deltaAdjustSmall = 0.01f;
+
+Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
+{
+	return Vector4(
+		2.0f * float(pnt.x - rc.left) / rc.getWidth() - 1.0f,
+		1.0f - 2.0f * float(pnt.y - rc.top) / rc.getHeight(),
+		0.0f,
+		1.0f
+	);
+}
 
 		}
 
@@ -214,6 +225,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	}
 
 	// Create entity renderers.
+	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
 	{
@@ -221,7 +233,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
 		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
 		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(m_context, *j);
+			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j);
 			worldEntityRenderers->add(entityRenderer);
 		}
 	}
@@ -335,6 +347,44 @@ bool PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& 
 	return true;
 }
 
+bool PerspectiveRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const
+{
+	Vector4 origin[4], direction[4];
+	calculateRay(rc.getTopRight(), origin[0], direction[0]);
+	calculateRay(rc.getTopLeft(), origin[1], direction[1]);
+	calculateRay(rc.getBottomLeft(), origin[2], direction[2]);
+	calculateRay(rc.getBottomRight(), origin[3], direction[3]);
+
+	Frustum viewFrustum = m_worldRenderView.getViewFrustum();
+	Scalar nz = viewFrustum.getNearZ();
+	Scalar fz = viewFrustum.getFarZ();
+
+	Vector4 corners[8] =
+	{
+		origin[0] + direction[0] * nz,
+		origin[0] + direction[1] * nz,
+		origin[0] + direction[2] * nz,
+		origin[0] + direction[3] * nz,
+		origin[0] + direction[0] * fz,
+		origin[0] + direction[1] * fz,
+		origin[0] + direction[2] * fz,
+		origin[0] + direction[3] * fz,
+	};
+
+	Plane planes[6] =
+	{
+		Plane(corners[1], corners[6], corners[5]),
+		Plane(corners[3], corners[4], corners[7]),
+		Plane(corners[2], corners[7], corners[6]),
+		Plane(corners[0], corners[5], corners[4]),
+		Plane(corners[0], corners[2], corners[1]),
+		Plane(corners[4], corners[6], corners[7])
+	};
+
+	outWorldFrustum.buildFromPlanes(planes);
+	return true;
+}
+
 bool PerspectiveRenderControl::hitTest(const ui::Point& position) const
 {
 	return m_renderWidget->hitTest(position);
@@ -363,6 +413,11 @@ void PerspectiveRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mo
 		m_camera->move(delta.shuffle< 0, 1, 2, 3 >());
 		break;
 	}
+}
+
+void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
+{
+	m_selectionRectangle = rect;
 }
 
 void PerspectiveRenderControl::updateSettings()
@@ -486,14 +541,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
 
-	// Get entities.
-	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
-
-	// Get root entity.
-	Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
-	Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
-
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))
 	{
@@ -508,52 +555,52 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 		m_worldRenderView.setView(view);
 
-		if (rootEntity)
+		Ref< scene::Scene > sceneInstance = m_context->getScene();
+		if (sceneInstance)
+			m_worldRenderer->build(m_worldRenderView, sceneInstance->getRootEntity(), 0);
+
+		m_worldRenderer->render(
+			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap,
+			0,
+			render::EtCyclop
+		);
+
+		if (m_postProcessEnable && m_renderTarget)
 		{
-			m_worldRenderer->build(m_worldRenderView, rootEntity, 0);
-			m_worldRenderer->render(
-				world::WrfDepthMap | world::WrfShadowMap,
-				0,
-				render::EtCyclop
+			m_renderView->begin(m_renderTarget, 0);
+			m_renderView->clear(
+				render::CfColor,
+				colorClear,
+				1.0f,
+				128
 			);
+		}
 
-			if (m_postProcessEnable && m_renderTarget)
-			{
-				m_renderView->begin(m_renderTarget, 0);
-				m_renderView->clear(
-					render::CfColor,
-					colorClear,
-					1.0f,
-					128
-				);
-			}
+		m_worldRenderer->render(
+			world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
+			0,
+			render::EtCyclop
+		);
 
-			m_worldRenderer->render(
-				world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
-				0,
-				render::EtCyclop
+		if (m_postProcessEnable && m_renderTarget)
+		{
+			m_renderView->end();
+
+			world::PostProcessStep::Instance::RenderParams params;
+
+			params.viewFrustum = m_worldRenderView.getViewFrustum();
+			params.viewToLight = Matrix44::identity();
+			params.view = view;
+			params.projection = projection;
+			params.deltaTime = deltaTime;
+
+			m_postProcess->render(
+				m_renderView,
+				m_renderTarget,
+				m_worldRenderer->getDepthTargetSet(),
+				m_worldRenderer->getShadowMaskTargetSet(),
+				params
 			);
-
-			if (m_postProcessEnable && m_renderTarget)
-			{
-				m_renderView->end();
-
-				world::PostProcessStep::Instance::RenderParams params;
-
-				params.viewFrustum = m_worldRenderView.getViewFrustum();
-				params.viewToLight = Matrix44::identity();
-				params.view = view;
-				params.projection = projection;
-				params.deltaTime = deltaTime;
-
-				m_postProcess->render(
-					m_renderView,
-					m_renderTarget,
-					m_worldRenderer->getDepthTargetSet(),
-					m_worldRenderer->getShadowMaskTargetSet(),
-					params
-				);
-			}
 		}
 
 		// Render wire guides.
@@ -595,14 +642,49 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		// Draw guides.
 		if (m_guideEnable)
 		{
+			RefArray< EntityAdapter > entityAdapters;
+			m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
+
 			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-				m_context->drawGuide(m_primitiveRenderer, *i);
+			{
+				if ((*i)->isVisible(true))
+					m_context->drawGuide(m_primitiveRenderer, *i);
+			}
 		}
 
 		// Draw controller guides.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
 		if (controllerEditor && m_guideEnable)
 			controllerEditor->draw(m_primitiveRenderer);
+
+		// Draw selection rectangle if non-empty.
+		if (m_selectionRectangle.area() > 0)
+		{
+			ui::Rect innerRect = m_renderWidget->getInnerRect();
+
+			m_primitiveRenderer->pushProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+			m_primitiveRenderer->pushView(Matrix44::identity());
+			m_primitiveRenderer->pushDepthEnable(false);
+
+			m_primitiveRenderer->drawSolidQuad(
+				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
+				projectUnit(innerRect, m_selectionRectangle.getTopRight()),
+				projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
+				projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
+				Color4ub(0, 64, 128, 128)
+			);
+			m_primitiveRenderer->drawWireQuad(
+				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
+				projectUnit(innerRect, m_selectionRectangle.getTopRight()),
+				projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
+				projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
+				Color4ub(120, 190, 250, 255)
+			);
+
+			m_primitiveRenderer->popDepthEnable();
+			m_primitiveRenderer->popView();
+			m_primitiveRenderer->popProjection();
+		}
 
 		m_primitiveRenderer->end();
 

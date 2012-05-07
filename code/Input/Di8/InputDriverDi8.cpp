@@ -173,7 +173,7 @@ BOOL CALLBACK enumWindowProc(HWND hWnd, LPARAM lParam)
 #if defined(_DEBUG)
 		TCHAR text[256];
 		GetWindowText(hWnd, text, sizeof_array(text));
-		log::debug << L"Using \"" << tstows(text) << L"\" as device window" << Endl;
+		T_DEBUG(L"Using \"" << tstows(text) << L"\" as device window");
 #endif
 		*outHwnd = hWnd;
 		return FALSE;

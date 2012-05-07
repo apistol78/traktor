@@ -119,7 +119,6 @@
 				<first>822</first>
 				<second>265</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -134,7 +133,7 @@
 				<second>192</second>
 			</position>
 			<parameterName>ParticleTexture</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 		</item>
 	</nodes>
 	<edges>

@@ -23,11 +23,11 @@ TaskEnumAchievements::TaskEnumAchievements(
 void TaskEnumAchievements::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
-	log::debug << L"Online; Begin enumerating achievements" << Endl;
+	T_DEBUG(L"Online; Begin enumerating achievements");
 	std::map< std::wstring, bool > achievements;
 	m_provider->enumerate(achievements);
 	(m_sinkObject->*m_sinkMethod)(achievements);
-	log::debug << L"Online; Finished enumerating achievements" << Endl;
+	T_DEBUG(L"Online; Finished enumerating achievements");
 }
 
 	}

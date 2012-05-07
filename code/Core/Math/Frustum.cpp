@@ -15,6 +15,13 @@ Frustum::Frustum()
 {
 }
 
+void Frustum::buildFromPlanes(const Plane planes_[6])
+{
+	for (int32_t i = 0; i < 6; ++i)
+		planes[i] = planes_[i];
+	update();
+}
+
 void Frustum::buildPerspective(float vfov, float aspect, float zn, float zf)
 {
 	vfov /= 2.0f;

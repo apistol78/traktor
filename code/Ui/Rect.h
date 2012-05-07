@@ -45,6 +45,10 @@ public:
 	inline Size getSize() const;
 	
 	inline Point getTopLeft() const;
+
+	inline Point getTopRight() const;
+
+	inline Point getBottomLeft() const;
 	
 	inline Point getBottomRight() const;
 

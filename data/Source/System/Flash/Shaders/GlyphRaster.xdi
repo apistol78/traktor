@@ -294,7 +294,6 @@ X
 				<first>186</first>
 				<second>596</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -309,7 +308,7 @@ X
 				<second>563</second>
 			</position>
 			<parameterName>Flash_Texture</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Vector">

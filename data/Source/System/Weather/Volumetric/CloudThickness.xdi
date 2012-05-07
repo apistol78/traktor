@@ -82,7 +82,6 @@ Opposite direction
 				<first>163</first>
 				<second>235</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>

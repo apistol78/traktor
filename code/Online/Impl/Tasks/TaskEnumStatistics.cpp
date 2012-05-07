@@ -23,11 +23,11 @@ TaskEnumStatistics::TaskEnumStatistics(
 void TaskEnumStatistics::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
-	log::debug << L"Online; Begin enumerating statistics" << Endl;
+	T_DEBUG(L"Online; Begin enumerating statistics");
 	std::map< std::wstring, float > statistics;
 	m_provider->enumerate(statistics);
 	(m_sinkObject->*m_sinkMethod)(statistics);
-	log::debug << L"Online; Finished enumerating statistics" << Endl;
+	T_DEBUG(L"Online; Finished enumerating statistics");
 }
 
 	}

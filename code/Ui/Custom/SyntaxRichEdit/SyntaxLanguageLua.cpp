@@ -1,5 +1,5 @@
+#include "Core/Misc/String.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxLanguageLua.h"
-#include "Core/Serialization/ISerializable.h"
 
 namespace traktor
 {
@@ -10,11 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageLua", 0, SyntaxLanguageLua, SyntaxLanguage)
 
-void SyntaxLanguageLua::begin()
-{
-}
-
-bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& outConsumedChars)
+bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());
 	T_ASSERT (ln > 0);
@@ -128,8 +124,25 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 	return true;
 }
 
-void SyntaxLanguageLua::newLine()
+void SyntaxLanguageLua::outline(int32_t line, const std::wstring& text, std::list< SyntaxOutline >& outOutline) const
 {
+	int ln = int(text.length());
+	T_ASSERT (ln > 0);
+
+	size_t i = text.find_first_of(L" \t\n\r");
+	if (i != text.npos)
+	{
+		std::wstring word = text.substr(0, i);
+		if (word == L"function")
+		{
+			size_t j = text.find(L'(', i + 1);
+			if (j != text.npos)
+			{
+				SyntaxOutline so = { line, text.substr(i + 1, j - i - 1) };
+				outOutline.push_back(so);
+			}
+		}
+	}
 }
 
 		}
