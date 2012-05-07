@@ -92,7 +92,7 @@
 				<first>-7</first>
 				<second>130</second>
 			</position>
-			<name>Normal</name>
+			<name>ViewNormal</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>

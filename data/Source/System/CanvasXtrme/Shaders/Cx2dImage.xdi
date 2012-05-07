@@ -42,7 +42,6 @@
 				<first>401</first>
 				<second>235</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
@@ -164,7 +163,7 @@
 				<second>194</second>
 			</position>
 			<parameterName>Texture</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 		</item>
 	</nodes>
 	<edges>

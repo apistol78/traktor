@@ -123,7 +123,7 @@ void Replicator::update(float dT)
 					// Assume peer time is correct if exceeding my time.
 					if (time > m_time)
 					{
-						log::debug << L"Peer " << peerId << L" time exceeding ours; adjusting ours" << Endl;
+						T_DEBUG(L"Peer " << peerId << L" time exceeding ours; adjusting ours");
 						m_time = time;
 					}
 
@@ -163,7 +163,7 @@ void Replicator::update(float dT)
 							float offsetAdjust = time - m_time;
 							if (offsetAdjust > c_maxOffsetAdjustError)
 							{
-								log::debug << L"Corrupt time (" << time << L") from peer " << peerId << L"; package ignored" << Endl;
+								T_DEBUG(L"Corrupt time (" << time << L") from peer " << peerId << L"; package ignored");
 								continue;
 							}
 
@@ -172,7 +172,7 @@ void Replicator::update(float dT)
 
 							m_time += offsetAdjust + latencyAdjust;
 
-							log::debug << L"Peer " << peerId << L" time exceeding ours; adjusted with " << (offsetAdjust + latencyAdjust) * 1000.0f << L" ms" << Endl;
+							T_DEBUG(L"Peer " << peerId << L" time exceeding ours; adjusted with " << (offsetAdjust + latencyAdjust) * 1000.0f << L" ms");
 						}
 
 						MemoryStream s(msg.data, sizeof(msg.data), true, false);
@@ -192,7 +192,7 @@ void Replicator::update(float dT)
 						m_eventsIn.push_back(evt);
 					}
 					else
-						log::debug << L"Too old package received from peer " << peerId << L"; package ignored" << Endl;
+						T_DEBUG(L"Too old package received from peer " << peerId << L"; package ignored");
 				}
 			}
 			else if (msg.type == MtEvent)	// Event message.

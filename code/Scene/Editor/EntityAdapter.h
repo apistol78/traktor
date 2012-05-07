@@ -90,6 +90,13 @@ public:
 
 	//@}
 
+	/*! \name Layer entity accessors. */
+	//@{
+
+	bool isLayer() const;
+
+	//@}
+
 	/*! \name Relationship. */
 	//@{
 
@@ -110,6 +117,8 @@ public:
 	void link(EntityAdapter* child);
 
 	void unlink(EntityAdapter* child);
+
+	void unlink();
 
 	//@}
 

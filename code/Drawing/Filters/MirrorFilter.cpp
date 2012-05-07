@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -53,6 +54,6 @@ Ref< Image > MirrorFilter::apply(const Image* image) const
 
 	return final;
 }
-	
+
 	}
 }

@@ -18,7 +18,7 @@
 	log::error << L"Opcode not implemented" << Endl; \
 	T_BREAKPOINT;
 #	define VM_LOG(x) \
-	log::debug << x << Endl;
+	T_DEBUG(x);
 #else
 #	define VM_BEGIN(op) \
 	case op : \

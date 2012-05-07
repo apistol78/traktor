@@ -18,6 +18,8 @@ namespace traktor
 	namespace scene
 	{
 
+class SceneEditorContext;
+
 class T_DLLCLASS DefaultEntityEditor : public IEntityEditor
 {
 	T_RTTI_CLASS;
@@ -35,15 +37,9 @@ public:
 
 	virtual bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const;
 
+	virtual bool queryFrustum(const Frustum& worldFrustum) const;
+
 	virtual void entitySelected(bool selected);
-
-	virtual void cursorMoved(const ApplyParams& params);
-
-	virtual void beginModifier(const ApplyParams& params);
-
-	virtual void applyModifier(const ApplyParams& params);
-
-	virtual void endModifier(const ApplyParams& params);
 
 	virtual bool handleCommand(const ui::Command& command);
 

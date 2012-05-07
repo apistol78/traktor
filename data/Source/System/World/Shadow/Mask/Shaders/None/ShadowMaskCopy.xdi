@@ -8,7 +8,7 @@
 				<second>396</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Sampler">
@@ -17,7 +17,6 @@
 				<first>467</first>
 				<second>434</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>

@@ -7,7 +7,7 @@
 #include "Core/Timer/Timer.h"
 #include "Scene/Editor/ISceneRenderControl.h"
 #include "Scene/Editor/RenderControlModel.h"
-#include "Ui/Point.h"
+#include "Ui/Rect.h"
 
 namespace traktor
 {
@@ -72,7 +72,11 @@ public:
 
 	virtual bool calculateRay(const ui::Point& position, Vector4& outWorldRayOrigin, Vector4& outWorldRayDirection) const;
 
+	virtual bool calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const;
+
 	virtual void moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta);
+
+	virtual void showSelectionRectangle(const ui::Rect& rect);
 
 private:
 	Ref< SceneEditorContext > m_context;
@@ -94,6 +98,7 @@ private:
 	float m_magnification;
 	float m_cameraX;
 	float m_cameraY;
+	ui::Rect m_selectionRectangle;
 	ui::Size m_dirtySize;
 
 	void updateSettings();

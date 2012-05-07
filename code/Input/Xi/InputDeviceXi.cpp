@@ -175,9 +175,9 @@ void InputDeviceXi::readState()
 
 #if defined(_DEBUG)
 		if (connected && !m_connected)
-			log::debug << L"Input device " << int32_t(m_controller) << L" disconnected" << Endl;
+			T_DEBUG(L"Input device " << int32_t(m_controller) << L" disconnected");
 		else if (!connected && m_connected)
-			log::debug << L"Input device " << int32_t(m_controller) << L" connected" << Endl;
+			T_DEBUG(L"Input device " << int32_t(m_controller) << L" connected");
 #endif
 
 		if (!m_connected)

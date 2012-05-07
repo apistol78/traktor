@@ -65,7 +65,6 @@
 				<first>286</first>
 				<second>272</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -168,7 +167,8 @@ Persistence
 				<second>350</second>
 			</position>
 			<external>{77BCAD81-66F8-A441-89DD-A789E264416C}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">

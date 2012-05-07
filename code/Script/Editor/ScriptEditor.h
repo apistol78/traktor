@@ -1,8 +1,10 @@
 #ifndef traktor_script_ScriptEditor_H
 #define traktor_script_ScriptEditor_H
 
+#include <list>
 #include "Editor/IObjectEditor.h"
 #include "Script/IScriptManager.h"
+#include "Ui/Custom/SyntaxRichEdit/SyntaxTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -67,9 +69,11 @@ private:
 	Ref< Script > m_script;
 	Ref< IScriptManager > m_scriptManager;
 	Ref< ui::custom::Splitter > m_splitter;
+	Ref< ui::ListBox > m_outlineList;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;
+	std::list< ui::custom::SyntaxOutline > m_outline;
 	int32_t m_compileCountDown;
 
 	virtual void syntaxError(uint32_t line, const std::wstring& message);
@@ -77,6 +81,8 @@ private:
 	virtual void otherError(const std::wstring& message);
 
 	void updateDependencyList();
+
+	void eventOutlineDoubleClick(ui::Event* event);
 
 	void eventDependencyToolClick(ui::Event* event);
 

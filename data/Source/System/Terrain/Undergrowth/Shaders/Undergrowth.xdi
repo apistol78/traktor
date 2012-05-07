@@ -257,7 +257,6 @@ Wave magnitude
 				<first>311</first>
 				<second>276</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -272,7 +271,8 @@ Wave magnitude
 				<second>207</second>
 			</position>
 			<external>{EE7B797B-79B4-824E-8117-B89885C4F7C3}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>

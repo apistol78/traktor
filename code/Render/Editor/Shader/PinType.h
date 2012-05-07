@@ -15,14 +15,16 @@ namespace traktor
  */
 enum PinType
 {
-	PntVoid		= 0,
-	PntScalar1	= 1,
-	PntScalar2	= 2,
-	PntScalar3	= 3,
-	PntScalar4	= 4,
-	PntMatrix	= 5,
-	PntTexture	= 6,
-	PntAny		= (PntTexture)
+	PntVoid = 0,
+	PntScalar1 = 1,
+	PntScalar2 = 2,
+	PntScalar3 = 3,
+	PntScalar4 = 4,
+	PntMatrix = 5,
+	PntTexture2D = 6,
+	PntTexture3D = 7,
+	PntTextureCube = 8,
+	PntAny = (PntTextureCube)
 };
 
 /*! \brief Return true if type is a scalar.
@@ -31,6 +33,14 @@ enum PinType
 inline bool isPinTypeScalar(PinType pinType)
 {
 	return pinType >= PntScalar1 && pinType <= PntScalar4;
+}
+
+/*! \brief Return true if type is a texture.
+ * \ingroup Render
+ */
+inline bool isPinTypeTexture(PinType pinType)
+{
+	return pinType >= PntTexture2D && pinType <= PntTextureCube;
 }
 
 /*! \brief Get width of scalar type.

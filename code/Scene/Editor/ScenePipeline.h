@@ -54,6 +54,7 @@ public:
 	) const;
 
 private:
+	bool m_targetEditor;
 	bool m_suppressDepthPass;
 	bool m_suppressShadows;
 	bool m_suppressPostProcess;

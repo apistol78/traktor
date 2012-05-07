@@ -1,15 +1,16 @@
 #ifndef _traktor_CommandLine_H
 #define _traktor_CommandLine_H
 
-#include <vector>
+#include <cstring>
 #include <string>
-#include "Core/Misc/String.h"
+#include <vector>
 #include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 
 namespace traktor
 {
-	
+
 /*! \brief Helper class for command line arguments.
  * \ingroup Core
  *
@@ -55,7 +56,7 @@ public:
 		{
 			return m_value;
 		}
-			
+
 	private:
 		std::wstring m_name;
 		std::wstring m_value;
@@ -68,7 +69,7 @@ public:
 		{
 			if (argv[i][0] == L'-')
 			{
-				const char* value = strchr(argv[i], '=');
+				const char* value = std::strchr(argv[i], '=');
 				if (value)
 					m_opts.push_back(Option(
 						mbstows(std::string(&argv[i][1], value)),
@@ -80,7 +81,7 @@ public:
 						L""
 					));
 			}
-			else 
+			else
 				m_args.push_back(mbstows(argv[i]));
 		}
 	}

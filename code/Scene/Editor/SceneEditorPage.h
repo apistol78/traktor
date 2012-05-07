@@ -101,6 +101,7 @@ private:
 	Ref< ui::Bitmap > m_imageUnlocked;
 	Ref< ui::custom::GridView > m_instanceGrid;
 	Ref< ui::Font > m_instanceGridFontBold;
+	Ref< ui::Font > m_instanceGridFontHuge;
 	Guid m_currentGuid;
 	uint32_t m_currentHash;
 

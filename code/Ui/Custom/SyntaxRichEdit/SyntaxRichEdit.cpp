@@ -18,6 +18,8 @@ SyntaxRichEdit::SyntaxRichEdit()
 ,	m_attributeString(0)
 ,	m_attributeNumber(0)
 ,	m_attributeComment(0)
+,	m_attributeFunction(0)
+,	m_attributeType(0)
 ,	m_attributeKeyword(0)
 ,	m_attributeError(0)
 {
@@ -32,7 +34,9 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
 	m_attributeString = addAttribute(Color4ub(120, 120, 120), Color4ub(255, 255, 255), false, false, false);	// String
 	m_attributeNumber = addAttribute(Color4ub(0, 0, 120), Color4ub(255, 255, 255), false, false, false);		// Number
 	m_attributeComment = addAttribute(Color4ub(40, 120, 40), Color4ub(255, 255, 255), false, true, false);	// Comment
-	m_attributeKeyword = addAttribute(Color4ub(0, 0, 255), Color4ub(255, 255, 255), false, false, false);		// Keyword
+	m_attributeFunction = addAttribute(Color4ub(120, 40, 40), Color4ub(255, 255, 255), false, false, false);	// Function
+	m_attributeType = addAttribute(Color4ub(160, 40, 255), Color4ub(255, 255, 255), false, false, false);	// Type
+	m_attributeKeyword = addAttribute(Color4ub(0, 0, 255), Color4ub(255, 255, 255), false, false, false);	// Keyword
 	m_attributeError = addAttribute(Color4ub(255, 255, 255), Color4ub(255, 0, 0), false, false, false);		// Error
 
 	addChangeEventHandler(createMethodHandler(this, &SyntaxRichEdit::eventChange));
@@ -56,12 +60,25 @@ void SyntaxRichEdit::setErrorHighlight(int line)
 	}
 }
 
-void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
+void SyntaxRichEdit::getOutline(std::list< SyntaxOutline >& outOutline) const
 {
 	if (!m_language)
 		return;
 
-	m_language->begin();
+	int32_t fromLine = 0;
+	int32_t toLine = getLineCount();
+
+	for (int32_t line = fromLine; line < toLine; ++line)
+	{
+		std::wstring text = getLine(line);
+		m_language->outline(line, text, outOutline);
+	}
+}
+
+void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
+{
+	if (!m_language)
+		return;
 
 	SyntaxLanguage::State currentState = SyntaxLanguage::StInvalid;
 	int startOffset = getLineOffset(fromLine);
@@ -100,6 +117,14 @@ void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
 						setAttribute(startOffset, endOffset - startOffset, m_attributeComment);
 						break;
 
+					case SyntaxLanguage::StFunction:
+						setAttribute(startOffset, endOffset - startOffset, m_attributeFunction);
+						break;
+
+					case SyntaxLanguage::StType:
+						setAttribute(startOffset, endOffset - startOffset, m_attributeType);
+						break;
+
 					case SyntaxLanguage::StKeyword:
 						setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
 						break;
@@ -125,8 +150,6 @@ void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
 
 			i += consumedChars;
 		}
-
-		m_language->newLine();
 	}
 
 	if (endOffset > startOffset)
@@ -147,6 +170,14 @@ void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
 
 		case SyntaxLanguage::StComment:
 			setAttribute(startOffset, endOffset - startOffset, m_attributeComment);
+			break;
+
+		case SyntaxLanguage::StFunction:
+			setAttribute(startOffset, endOffset - startOffset, m_attributeFunction);
+			break;
+
+		case SyntaxLanguage::StType:
+			setAttribute(startOffset, endOffset - startOffset, m_attributeType);
 			break;
 
 		case SyntaxLanguage::StKeyword:

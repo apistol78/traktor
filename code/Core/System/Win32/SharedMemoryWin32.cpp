@@ -109,7 +109,7 @@ bool SharedMemoryWin32::create(const std::wstring& name, uint32_t size)
 #if !defined(WINCE)
 	m_hMap = OpenFileMapping(FILE_MAP_WRITE | FILE_MAP_READ, FALSE, name.c_str());
 	if (m_hMap != NULL)
-		log::debug << L"Shared memory object \"" << name << L"\" (size " << size << L") opened" << Endl;
+		T_DEBUG(L"Shared memory object \"" << name << L"\" (size " << size << L") opened");
 	else
 #endif
 	{
@@ -125,7 +125,7 @@ bool SharedMemoryWin32::create(const std::wstring& name, uint32_t size)
 		if (m_hMap == NULL)
 			return false;
 
-		log::debug << L"Shared memory object \"" << name << L"\" (size " << size << L") created" << Endl;
+		T_DEBUG(L"Shared memory object \"" << name << L"\" (size " << size << L") created");
 
 		// We've created the mapping; need to initialize header.
 		initializeMemory = true;

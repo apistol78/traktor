@@ -35,6 +35,7 @@ public:
 		BtUniform,
 		BtInput,
 		BtOutput,
+		BtScript,
 		BtBody,
 		BtLast
 	};
@@ -67,6 +68,8 @@ public:
 
 	void allocateVPos();
 
+	bool defineScript(const std::wstring& signature);
+
 	void addSampler(const std::wstring& sampler, const D3D10_SAMPLER_DESC& dsd);
 
 	const std::map< std::wstring, D3D10_SAMPLER_DESC >& getSamplers() const;
@@ -91,6 +94,7 @@ private:
 	std::list< scope_t > m_variables;
 	int32_t m_interpolatorCount;
 	int32_t m_booleanRegisterCount;
+	std::set< std::wstring > m_scripts;
 	std::map< std::wstring, D3D10_SAMPLER_DESC > m_samplers;
 	std::set< std::wstring > m_uniforms;
 	int32_t m_nextTemporaryVariable;

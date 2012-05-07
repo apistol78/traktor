@@ -25,6 +25,7 @@ HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
 	pushOutputStream(BtUniform, new StringOutputStream());
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtScript, new StringOutputStream());
 	pushOutputStream(BtBody, new StringOutputStream());
 
 	// Ensure internal registers are marked as allocated.
@@ -34,6 +35,7 @@ HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
 HlslShader::~HlslShader()
 {
 	popOutputStream(BtBody);
+	popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
 	popOutputStream(BtUniform);
@@ -107,24 +109,47 @@ void HlslShader::popScope()
 	m_variables.pop_back();
 }
 
-bool HlslShader::defineSamplerTexture(const std::wstring& textureName, int32_t& outStage)
+bool HlslShader::defineTexture(const std::wstring& textureName)
 {
-	std::map< std::wstring, int32_t >::iterator i = m_samplerTextures.find(textureName);
-	if (i != m_samplerTextures.end())
-	{
-		outStage = i->second;
-		return false;
-	}
-
-	outStage = m_nextStage++;
-	m_samplerTextures.insert(std::make_pair(textureName, outStage));
-
+	m_textures.insert(textureName);
 	return true;
 }
 
-const std::map< std::wstring, int32_t >& HlslShader::getSamplerTextures() const
+bool HlslShader::defineSampler(uint32_t samplerHash, const std::wstring& textureName, int32_t& outStage)
 {
-	return m_samplerTextures;
+	std::map< uint32_t, std::pair< std::wstring, int32_t > >::const_iterator i = m_samplers.find(samplerHash);
+	if (i != m_samplers.end())
+	{
+		T_ASSERT (i->second.first == textureName);
+		outStage = i->second.second;
+		return false;
+	}
+	else
+	{
+		outStage = m_nextStage++;
+		m_samplers[samplerHash] = std::make_pair(textureName, outStage);
+		return true;
+	}
+}
+
+bool HlslShader::defineScript(const std::wstring& signature)
+{
+	std::set< std::wstring >::iterator i = m_scripts.find(signature);
+	if (i != m_scripts.end())
+		return false;
+
+	m_scripts.insert(signature);
+	return true;
+}
+
+const std::set< std::wstring >& HlslShader::getTextures() const
+{
+	return m_textures;
+}
+
+const std::map< uint32_t, std::pair< std::wstring, int32_t > >& HlslShader::getSamplers() const
+{
+	return m_samplers;
 }
 
 uint32_t HlslShader::addUniform(const std::wstring& uniform, HlslType type, uint32_t count)
@@ -207,7 +232,7 @@ std::wstring HlslShader::getGeneratedShader(bool needVPos)
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
-	ss << L"uniform float2 _dx9_targetSize : register(c" << c_registerInternalTargetSize << L");" << Endl;
+	ss << L"uniform float2 __private__targetSize : register(c" << c_registerInternalTargetSize << L");" << Endl;
 	ss << Endl;
 
 	std::wstring uniformText = getOutputStream(BtUniform).str();
@@ -240,6 +265,10 @@ std::wstring HlslShader::getGeneratedShader(bool needVPos)
 		ss << L"};" << Endl;
 		ss << Endl;
 	}
+
+	std::wstring scriptText = getOutputStream(BtScript).str();
+	if (!scriptText.empty())
+		ss << scriptText;
 
 	if (m_shaderType == StVertex)
 	{

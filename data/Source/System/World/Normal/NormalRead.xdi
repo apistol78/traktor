@@ -29,7 +29,7 @@
 				<second>288</second>
 			</position>
 			<parameterName>NormalMap</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">

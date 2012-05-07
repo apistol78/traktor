@@ -16,8 +16,6 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_registerInternalTargetSize = 0;
-
 const DWORD c_optimizationLevels[] =
 {
 	D3DXSHADER_SKIPOPTIMIZATION,
@@ -98,10 +96,10 @@ bool collectScalarParameters(
 		{
 			T_ASSERT (dcd.Type == D3DXPT_FLOAT);
 
-			if (dcd.RegisterIndex == c_registerInternalTargetSize)
-				continue;
-
 			std::wstring parameterName = mbstows(dcd.Name);
+
+			if (startsWith< std::wstring >(parameterName, L"__private__"))
+				continue;
 
 			ProgramScalar scalar;
 			scalar.registerIndex = dcd.RegisterIndex;
@@ -125,27 +123,74 @@ bool collectScalarParameters(
 	return true;
 }
 
+bool collectTextureParameters(
+	ID3DXConstantTable* d3dConstantTable,
+	const std::set< std::wstring >& textures,
+	AlignedVector< ProgramTexture >& outTextures,
+	std::map< std::wstring, uint32_t >& outTextureParameterMap,
+	uint32_t& outOffset
+)
+{
+	D3DXCONSTANTTABLE_DESC dctd;
+	D3DXCONSTANT_DESC dcd;
+	HRESULT hr;
+
+	hr = d3dConstantTable->GetDesc(&dctd);
+	if (FAILED(hr))
+		return false;
+
+	for (std::set< std::wstring >::const_iterator i = textures.begin(); i != textures.end(); ++i)
+	{
+		std::wstring uniformName = L"__private__" + (*i) + L"_size";
+
+		D3DXHANDLE handle = d3dConstantTable->GetConstantByName(NULL, wstombs(uniformName).c_str());
+		if (handle == NULL)
+			continue;
+
+		UINT count = 1;
+		if (FAILED(d3dConstantTable->GetConstantDesc(handle, &dcd, &count)))
+			continue;
+
+		T_ASSERT (dcd.Type == D3DXPT_FLOAT);
+		T_ASSERT (dcd.Class == D3DXPC_VECTOR);
+		T_ASSERT (dcd.RegisterCount == 1);
+
+		ProgramTexture pt;
+		pt.texture = outOffset;
+		pt.sizeIndex = dcd.RegisterIndex;
+
+		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(*i);
+		if (j != outTextureParameterMap.end())
+			pt.texture = j->second;
+		else
+			outTextureParameterMap[*i] = outOffset++;
+
+		outTextures.push_back(pt);
+	}
+	return true;
+}
+
 bool collectSamplerParameters(
 	ID3DXConstantTable* d3dConstantTable,
-	const std::map< std::wstring, int32_t >& samplerTextures,
+	const std::map< uint32_t, std::pair< std::wstring, int32_t > >& samplers,
 	AlignedVector< ProgramSampler >& outSamplers,
 	std::map< std::wstring, uint32_t >& outTextureParameterMap,
 	uint32_t& outOffset
 )
 {
-	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	for (std::map< uint32_t, std::pair< std::wstring, int32_t > >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
 	{
-		ProgramSampler sampler;
-		sampler.stage = i->second;
-		sampler.texture = outOffset;
+		ProgramSampler ps;
+		ps.texture = outOffset;
+		ps.stage = i->second.second;
 
-		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(i->first);
+		std::map< std::wstring, uint32_t >::const_iterator j = outTextureParameterMap.find(i->second.first);
 		if (j != outTextureParameterMap.end())
-			sampler.texture = j->second;
+			ps.texture = j->second;
 		else
-			outTextureParameterMap[i->first] = outOffset++;
+			outTextureParameterMap[i->second.first] = outOffset++;
 
-		outSamplers.push_back(sampler);
+		outSamplers.push_back(ps);
 	}
 
 	return true;
@@ -237,9 +282,18 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 	// Create texture parameters.
 	resource->m_textureParameterDataSize = 0;
 
-	if (!collectSamplerParameters(
+	if (!collectTextureParameters(
 		d3dVertexConstantTable,
 		program.getVertexTextures(),
+		resource->m_vertexTextures,
+		resource->m_textureParameterMap,
+		resource->m_textureParameterDataSize
+	))
+		return 0;
+
+	if (!collectSamplerParameters(
+		d3dVertexConstantTable,
+		program.getVertexSamplers(),
 		resource->m_vertexSamplers,
 		resource->m_textureParameterMap,
 		resource->m_textureParameterDataSize
@@ -252,9 +306,18 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 		return false;
 	}
 
-	if (!collectSamplerParameters(
+	if (!collectTextureParameters(
 		d3dPixelConstantTable,
 		program.getPixelTextures(),
+		resource->m_pixelTextures,
+		resource->m_textureParameterMap,
+		resource->m_textureParameterDataSize
+	))
+		return 0;
+
+	if (!collectSamplerParameters(
+		d3dPixelConstantTable,
+		program.getPixelSamplers(),
 		resource->m_pixelSamplers,
 		resource->m_textureParameterMap,
 		resource->m_textureParameterDataSize

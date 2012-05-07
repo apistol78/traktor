@@ -1,10 +1,11 @@
-#include "Render/Dx10/Platform.h"
-#include "Render/Dx10/HlslEmitter.h"
-#include "Render/Dx10/HlslContext.h"
-#include "Render/VertexElement.h"
-#include "Render/Shader/Nodes.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Render/VertexElement.h"
+#include "Render/Dx10/Platform.h"
+#include "Render/Dx10/HlslContext.h"
+#include "Render/Dx10/HlslEmitter.h"
+#include "Render/Shader/Nodes.h"
+#include "Render/Shader/Script.h"
 
 namespace traktor
 {
@@ -884,7 +885,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
 	HlslVariable* texture = cx.emitInput(node, L"Texture");
-	if (!texture || texture->getType() != HtTexture)
+	if (!texture || texture->getType() < HtTexture2D)
 		return false;
 
 	HlslVariable* texCoord = cx.emitInput(node, L"TexCoord");
@@ -898,11 +899,29 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 	if (cx.inPixel())
 	{
-		assign(f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
+		switch (texture->getType())
+		{
+		case HtTexture2D:
+			assign(f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->cast(HtFloat2) << L");" << Endl;
+			break;
+		case HtTexture3D:
+		case HtTextureCube:
+			assign(f, out) << textureName << L".Sample(" << samplerName << L", " << texCoord->cast(HtFloat3) << L");" << Endl;
+			break;
+		}
 	}
 	if (cx.inVertex())
 	{
-		assign(f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->getName() << L", 0.0f);" << Endl;
+		switch (texture->getType())
+		{
+		case HtTexture2D:
+			assign(f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat2) << L", 0.0f);" << Endl;
+			break;
+		case HtTexture3D:
+		case HtTextureCube:
+			assign(f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", 0.0f);" << Endl;
+			break;
+		}
 	}
 
 	// Define sampler class.
@@ -962,29 +981,6 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		}
 
 		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-
-		// Add texture uniform.
-		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-		if (uniforms.find(textureName) == uniforms.end())
-		{
-			switch (node->getLookup())
-			{
-			case Sampler::LuSimple:
-				fu << L"Texture2D " << textureName << L";" << Endl;
-				break;
-
-			case Sampler::LuCube:
-				fu << L"TextureCube " << textureName << L";" << Endl;
-				break;
-
-			case Sampler::LuVolume:
-				fu << L"Texture3D " << textureName << L";" << Endl;
-				break;
-			}
-			fu << Endl;
-			cx.getShader().addUniform(textureName);
-		}
-
 		fu << L"SamplerState " << samplerName << L";" << Endl;
 		
 		cx.getShader().addSampler(samplerName, dsd);
@@ -998,6 +994,101 @@ bool emitScalar(HlslContext& cx, Scalar* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
 	f << L"const float " << out->getName() << L" = " << node->get() << L";" << Endl;
+	return true;
+}
+
+bool emitScript(HlslContext& cx, Script* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+
+	// Get platform specific script from node.
+	std::wstring script = node->getScript(L"DX9");
+	if (script.empty())
+		return false;
+
+	// Emit input and outputs.
+	int32_t inputPinCount = node->getInputPinCount();
+	int32_t outputPinCount = node->getOutputPinCount();
+
+	RefArray< HlslVariable > in(inputPinCount);
+	RefArray< HlslVariable > out(outputPinCount);
+
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
+		T_ASSERT (outputPin);
+
+		out[i] = cx.emitOutput(
+			node,
+			outputPin->getName(),
+			hlsl_from_parameter_type(outputPin->getType())
+		);
+	}
+
+	for (int32_t i = 0; i < inputPinCount; ++i)
+	{
+		in[i] = cx.emitInput(node->getInputPin(i));
+		if (!in[i])
+			return false;
+	}
+
+	// Define script instance.
+	if (cx.getShader().defineScript(node->getName()))
+	{
+		StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtScript);
+
+		fs << L"void " << node->getName() << L"(";
+
+		for (int32_t i = 0; i < inputPinCount; ++i)
+		{
+			if (i > 0)
+				fs << L", ";
+			fs << hlsl_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
+		}
+
+		if (!in.empty())
+			fs << L", ";
+
+		for (int32_t i = 0; i < outputPinCount; ++i)
+		{
+			if (i > 0)
+				fs << L", ";
+			fs << L"out " << hlsl_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
+		}
+
+		fs << L")" << Endl;
+		fs << L"{" << Endl;
+		fs << IncreaseIndent;
+		fs << script << Endl;
+		fs << DecreaseIndent;
+		fs << L"}" << Endl;
+		fs << Endl;
+	}
+
+	// Emit script invocation.
+	for (int32_t i = 0; i < outputPinCount; ++i)
+		f << hlsl_type_name(out[i]->getType()) << L" " << out[i]->getName() << L";" << Endl;
+
+	f << node->getName() << L"(";
+
+	for (RefArray< HlslVariable >::const_iterator i = in.begin(); i != in.end(); ++i)
+	{
+		if (i != in.begin())
+			f << L", ";
+		f << (*i)->getName();
+	}
+
+	if (!in.empty())
+		f << L", ";
+
+	for (RefArray< HlslVariable >::const_iterator i = out.begin(); i != out.end(); ++i)
+	{
+		if (i != out.begin())
+			f << L", ";
+		f << (*i)->getName();
+	}
+
+	f << L");" << Endl;
 	return true;
 }
 
@@ -1020,6 +1111,19 @@ bool emitSqrt(HlslContext& cx, Sqrt* node)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"sqrt(" << in->getName() << L");" << Endl;
+	return true;
+}
+
+bool emitStep(HlslContext& cx, Step* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* in1 = cx.emitInput(node, L"X");
+	HlslVariable* in2 = cx.emitInput(node, L"Y");
+	if (!in1 || !in2)
+		return false;
+	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
+	HlslVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
@@ -1293,12 +1397,69 @@ bool emitTargetSize(HlslContext& cx, TargetSize* node)
 
 bool emitTexture(HlslContext& cx, Texture* node)
 {
-	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
+	std::wstring textureName = getParameterNameFromGuid(node->getExternal());
+	
 	cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
-		parameterName,
-		HtTexture
+		textureName,
+		hlsl_from_parameter_type(node->getParameterType())
 	);
+
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(textureName) == uniforms.end())
+	{
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+		switch (node->getParameterType())
+		{
+		case PtTexture2D:
+			fu << L"Texture2D " << textureName << L";" << Endl;
+			break;
+
+		case PtTexture3D:
+			fu << L"Texture3D " << textureName << L";" << Endl;
+			break;
+
+		case PtTextureCube:
+			fu << L"TextureCube " << textureName << L";" << Endl;
+			break;
+		}
+		cx.getShader().addUniform(textureName);
+	}
+
+	return true;
+}
+
+bool emitTextureSize(HlslContext& cx, TextureSize* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+
+	std::wstring textureName = in->getName();
+
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat3);
+
+	f << L"float3 " << out->getName() << L" = float3(0.0f, 0.0f, 0.0f);" << Endl;
+	switch (in->getType())
+	{
+	case HtTexture2D:
+		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y);" << Endl;
+		break;
+
+	case HtTexture3D:
+		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y, " << out->getName() << L".z);" << Endl;
+		break;
+
+	case HtTextureCube:
+		f << textureName << L".GetDimensions(" << out->getName() << L".x, " << out->getName() << L".y);" << Endl;
+		break;
+
+	default:
+		return false;
+	}
+
 	return true;
 }
 
@@ -1327,22 +1488,38 @@ bool emitTranspose(HlslContext& cx, Transpose* node)
 
 bool emitUniform(HlslContext& cx, Uniform* node)
 {
-	const HlslType c_parameterType[] = { HtFloat, HtFloat4, HtFloat4x4, HtTexture };
 	HlslVariable* out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
-		c_parameterType[node->getParameterType()]
+		hlsl_from_parameter_type(node->getParameterType())
 	);
 
-	if (out->getType() != HtTexture)
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
-		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-		if (uniforms.find(node->getParameterName()) == uniforms.end())
-		{
-			StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+
+		if (out->getType() < HtTexture2D)
 			fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
-			cx.getShader().addUniform(node->getParameterName());
+		else
+		{
+			switch (node->getParameterType())
+			{
+			case PtTexture2D:
+				fu << L"Texture2D " << node->getParameterName() << L";" << Endl;
+				break;
+
+			case PtTexture3D:
+				fu << L"Texture3D " << node->getParameterName() << L";" << Endl;
+				break;
+
+			case PtTextureCube:
+				fu << L"TextureCube " << node->getParameterName() << L";" << Endl;
+				break;
+			}
 		}
+
+		cx.getShader().addUniform(node->getParameterName());
 	}
 
 	return true;
@@ -1541,6 +1718,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
+	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
@@ -1548,6 +1726,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
+	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);

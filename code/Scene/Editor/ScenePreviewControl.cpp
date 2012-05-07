@@ -69,11 +69,14 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 
 	m_toolSnapSpacing = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.SnapSpacing"), 60, i18n::Text(L"SCENE_EDITOR_TOGGLE_SNAP_SPACING"));
 	m_toolSnapSpacing->add(L"None");
+	m_toolSnapSpacing->add(L"1/8");
+	m_toolSnapSpacing->add(L"1/4");
 	m_toolSnapSpacing->add(L"1/2");
 	m_toolSnapSpacing->add(L"1");
 	m_toolSnapSpacing->add(L"2");
 	m_toolSnapSpacing->add(L"3");
 	m_toolSnapSpacing->add(L"4");
+	m_toolSnapSpacing->add(L"8");
 	m_toolSnapSpacing->select(0);
 
 	Ref< const PropertyGroup > settings = context->getEditor()->getSettings();
@@ -176,6 +179,18 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	if (command == L"Scene.Editor.SnapSpacing")
 	{
 		result = true;
+	}
+	else if (command == L"Scene.Editor.IncreaseSnap")
+	{
+		int32_t selected = m_toolSnapSpacing->getSelected();
+		if (selected < m_toolSnapSpacing->count() - 1)
+			m_toolSnapSpacing->select(selected + 1);
+	}
+	else if (command == L"Scene.Editor.DecreaseSnap")
+	{
+		int32_t selected = m_toolSnapSpacing->getSelected();
+		if (selected > 0)
+			m_toolSnapSpacing->select(selected - 1);
 	}
 	else if (command == L"Scene.Editor.Translate")
 	{
@@ -400,33 +415,14 @@ void ScenePreviewControl::updateEditState()
 		m_context->setSnapMode(SceneEditorContext::SmNeighbour);
 	else
 	{
-		switch (m_toolSnapSpacing->getSelected())
+		const float c_snapSpacing[] = { 0.0f, 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 3.0f, 4.0f, 8.0f };
+		if (m_toolSnapSpacing->getSelected() >= 1)
 		{
-		default:
-		case 0:
-			m_context->setSnapMode(SceneEditorContext::SmNone);
-			break;
-		case 1:
-			m_context->setSnapSpacing(0.5f);
+			m_context->setSnapSpacing(c_snapSpacing[m_toolSnapSpacing->getSelected()]);
 			m_context->setSnapMode(SceneEditorContext::SmGrid);
-			break;
-		case 2:
-			m_context->setSnapSpacing(1.0f);
-			m_context->setSnapMode(SceneEditorContext::SmGrid);
-			break;
-		case 3:
-			m_context->setSnapSpacing(2.0f);
-			m_context->setSnapMode(SceneEditorContext::SmGrid);
-			break;
-		case 4:
-			m_context->setSnapSpacing(3.0f);
-			m_context->setSnapMode(SceneEditorContext::SmGrid);
-			break;
-		case 5:
-			m_context->setSnapSpacing(4.0f);
-			m_context->setSnapMode(SceneEditorContext::SmGrid);
-			break;
 		}
+		else
+			m_context->setSnapMode(SceneEditorContext::SmNone);
 	}
 
 	// Ensure toolbar is up-to-date.
@@ -454,10 +450,6 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 
 		float scaledTime = m_context->getTime();
 		float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
-
-		// Update entities.
-		Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
-		Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
 
 		// Use physics; update in steps of 1/60th of a second.
 		if (m_context->getPhysicsEnable())

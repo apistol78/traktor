@@ -19,7 +19,6 @@ namespace traktor
 	{
 
 class Bitmap;
-class Font;
 
 		namespace custom
 		{
@@ -46,9 +45,13 @@ public:
 
 	uint32_t getState() const { return m_state; }
 
-	void setFont(Font* font);
+	void setBackground(const Color4ub& background);
 
-	Ref< Font > getFont() const { return m_font; }
+	const Color4ub& getBackground() const { return m_background; }
+
+	void setMinimumHeight(int32_t minimumHeight);
+
+	const int32_t getMinimumHeight() const { return m_minimumHeight; }
 
 	void add(GridCell* item);
 
@@ -80,7 +83,8 @@ public:
 
 private:
 	uint32_t m_state;
-	Ref< Font > m_font;
+	Color4ub m_background;
+	int32_t m_minimumHeight;
 	Ref< Bitmap > m_expand[2];
 	RefArray< GridCell > m_items;
 	GridRow* m_parent;

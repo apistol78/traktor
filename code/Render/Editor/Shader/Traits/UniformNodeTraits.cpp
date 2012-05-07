@@ -55,8 +55,12 @@ PinType UniformNodeTraits::getOutputPinType(
 		return PntScalar4;
 	case PtMatrix:
 		return PntMatrix;
-	case PtTexture:
-		return PntTexture;
+	case PtTexture2D:
+		return PntTexture2D;
+	case PtTexture3D:
+		return PntTexture3D;
+	case PtTextureCube:
+		return PntTextureCube;
 	default:
 		return PntVoid;
 	}
@@ -66,6 +70,7 @@ PinType UniformNodeTraits::getInputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
+	const PinType* inputPinTypes,
 	const PinType* outputPinTypes
 ) const
 {
@@ -132,7 +137,7 @@ PinOrderType UniformNodeTraits::evaluateOrder(
 		{
 			if (
 				frequentAsLinear &&
-				indexedUniform->getParameterType() != PtTexture &&
+				indexedUniform->getParameterType() < PtTexture2D &&
 				indexedUniform->getFrequency() >= UfDraw
 			)
 				return PotLinear;
@@ -146,7 +151,7 @@ PinOrderType UniformNodeTraits::evaluateOrder(
 	{
 		if (
 			frequentAsLinear &&
-			uniform->getParameterType() != PtTexture &&
+			uniform->getParameterType() < PtTexture2D &&
 			uniform->getFrequency() >= UfDraw
 		)
 			return PotLinear;

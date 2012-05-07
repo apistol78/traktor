@@ -109,7 +109,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 #endif
 
 	default:
-		log::debug << L"Unsupported texture format used" << Endl;
+		T_DEBUG(L"Unsupported texture format used");
 		return false;
 	}
 

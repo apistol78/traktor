@@ -61,7 +61,7 @@
 				<second>288</second>
 			</position>
 			<parameterName>DepthMap</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 	</nodes>

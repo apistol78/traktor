@@ -94,13 +94,33 @@ public:
 
 	virtual bool serialize(ISerializer& s) const
 	{
-		s >> Member< uint16_t >(L"stage", m_ref.stage);
 		s >> Member< uint16_t >(L"texture", m_ref.texture);
+		s >> Member< uint16_t >(L"stage", m_ref.stage);
 		return true;
 	}
 
 private:
 	ProgramSampler& m_ref;
+};
+
+class MemberProgramTexture : public MemberComplex
+{
+public:
+	MemberProgramTexture(const wchar_t* const name, ProgramTexture& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< uint16_t >(L"texture", m_ref.texture);
+		s >> Member< uint16_t >(L"sizeIndex", m_ref.sizeIndex);
+		return true;
+	}
+
+private:
+	ProgramTexture& m_ref;
 };
 
 		}
@@ -121,6 +141,8 @@ bool ProgramResourceDx9::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"pixelShaderHash", m_pixelShaderHash);
 	s >> MemberAlignedVector< ProgramScalar, MemberProgramScalar >(L"vertexScalars", m_vertexScalars);
 	s >> MemberAlignedVector< ProgramScalar, MemberProgramScalar >(L"pixelScalars", m_pixelScalars);
+	s >> MemberAlignedVector< ProgramTexture , MemberProgramTexture >(L"vertexTextures", m_vertexTextures);
+	s >> MemberAlignedVector< ProgramTexture, MemberProgramTexture >(L"pixelTextures", m_pixelTextures);
 	s >> MemberAlignedVector< ProgramSampler, MemberProgramSampler >(L"vertexSamplers", m_vertexSamplers);
 	s >> MemberAlignedVector< ProgramSampler, MemberProgramSampler >(L"pixelSamplers", m_pixelSamplers);
 	s >> MemberStlMap< std::wstring, uint32_t >(L"scalarParameterMap", m_scalarParameterMap);

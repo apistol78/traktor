@@ -1,5 +1,6 @@
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Thread/Acquire.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 
@@ -17,6 +18,7 @@ TargetConnection::TargetConnection(net::TcpSocket* socket)
 
 void TargetConnection::destroy()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (m_socket)
 	{
 		m_socket->close();
@@ -31,6 +33,8 @@ void TargetConnection::shutdown()
 
 bool TargetConnection::update()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	if (!m_socket)
 		return false;
 

@@ -16,6 +16,7 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 	typeSet.insert(&type_of< Scalar >());
 	typeSet.insert(&type_of< TargetSize >());
 	typeSet.insert(&type_of< Texture >());
+	typeSet.insert(&type_of< TextureSize >());
 	typeSet.insert(&type_of< Vector >());
 	return typeSet;
 }
@@ -33,7 +34,22 @@ PinType ConstantNodeTraits::getOutputPinType(
 	else if (is_a< FragmentPosition >(node) || is_a< TargetSize >(node))
 		return PntScalar2;
 	else if (is_a< Texture >(node))
-		return PntTexture;
+	{
+		const Texture* textureNode = checked_type_cast< const Texture*, false >(node);
+		switch (textureNode->getParameterType())
+		{
+		case PtTexture2D:
+			return PntTexture2D;
+		case PtTexture3D:
+			return PntTexture3D;
+		case PtTextureCube:
+			return PntTextureCube;
+		default:
+			return PntVoid;
+		}
+	}
+	else if (is_a< TextureSize >(node))
+		return PntScalar3;
 	else
 		return PntVoid;
 }
@@ -42,6 +58,7 @@ PinType ConstantNodeTraits::getInputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
+	const PinType* inputPinTypes,
 	const PinType* outputPinTypes
 ) const
 {

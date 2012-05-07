@@ -993,7 +993,7 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 				if (placeAction.eventMask & EvtKeyPress)
 				{
 					/*uint8_t keyCode = */bs.readUInt8();
-					log::debug << L"PlaceObject, unused keycode in EvtKeyPress" << Endl;
+					T_DEBUG(L"PlaceObject, unused keycode in EvtKeyPress");
 				}
 
 				placeAction.script = context.movie->getVM()->load(bs);
@@ -1269,7 +1269,7 @@ bool FlashTagUnsupported::read(SwfReader* swf, ReadContext& context)
 {
 	if (!m_visited)
 	{
-		log::debug << L"Tag " << m_tagId << L" unsupported" << Endl;
+		T_DEBUG(L"Tag " << m_tagId << L" unsupported");
 		m_visited = true;
 	}
 

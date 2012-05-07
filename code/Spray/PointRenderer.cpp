@@ -187,10 +187,10 @@ void PointRenderer::render(
 
 	const float c_extents[4][2] =
 	{
-		{ -1.0f,  1.0f },
-		{  1.0f,  1.0f },
+		{ -1.0f, -1.0f },
 		{  1.0f, -1.0f },
-		{ -1.0f, -1.0f }
+		{  1.0f,  1.0f },
+		{ -1.0f,  1.0f }
 	};
 
 	for (int32_t i = 0; i < size; ++i)
@@ -278,7 +278,7 @@ void PointRenderer::flush(
 			renderBlock->maxIndex = m_vertexOffset;
 
 			renderBlock->programParams->beginParameters(renderContext);
-			worldRenderPass.setProgramParameters(renderBlock->programParams);
+			worldRenderPass.setProgramParameters(renderBlock->programParams, false);
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(render::RfAlphaBlend, renderBlock);

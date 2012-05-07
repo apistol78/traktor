@@ -2,6 +2,7 @@
 #include "Core/Math/Const.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
+#include "Scene/Editor/LayerEntityData.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -109,6 +110,11 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 	return false;
 }
 
+bool EntityAdapter::isLayer() const
+{
+	return is_a< LayerEntityData >(m_entityData);
+}
+
 bool EntityAdapter::isGroup() const
 {
 	return m_entityEditor ? m_entityEditor->isGroup() : false;
@@ -175,6 +181,12 @@ void EntityAdapter::unlink(EntityAdapter* child)
 	m_children.erase(i);
 
 	child->m_parent = 0;
+}
+
+void EntityAdapter::unlink()
+{
+	while (!m_children.empty())
+		unlink(m_children.front());
 }
 
 void EntityAdapter::setEntityEditor(IEntityEditor* entityEditor)

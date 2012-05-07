@@ -262,7 +262,7 @@ HRESULT RenderTargetSetWin32::internalCreate()
 					return hr;
 				}
 
-				log::debug << L"Render target create warning; Device doesn't support target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"; trying with \"" << getD3DFormatName(promotedFormat) << L"\"" << Endl;
+				T_DEBUG(L"Render target create warning; Device doesn't support target format \"" << getD3DFormatName(d3dFormats[i]) << L"\"; trying with \"" << getD3DFormatName(promotedFormat) << L"\"");
 				d3dFormats[i] = promotedFormat;
 			}
 		}

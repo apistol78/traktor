@@ -170,12 +170,20 @@
       <second>Filter</second>
     </item>
     <item>
+      <first>DATABASE_FILTER_ASSETS</first>
+      <second>Filter assets</second>
+    </item>
+    <item>
       <first>DATABASE_FILTER_DEPENDENCIES</first>
       <second>Filter instance's dependencies</second>
     </item>
     <item>
       <first>DATABASE_FILTER_TYPE</first>
       <second>Filter instance's type</second>
+    </item>
+    <item>
+      <first>DATABASE_FILTER_SHOW_FILTERED</first>
+      <second>Show filtered</second>
     </item>
 		<item>
 			<first>DATABASE_IMPORT</first>
@@ -256,6 +264,10 @@
     <item>
       <first>EDITOR_BROWSE_FILE</first>
       <second>Choose file</second>
+    </item>
+    <item>
+      <first>EDITOR_BROWSE_WORKSPACE</first>
+      <second>Choose workspace</second>
     </item>
     <item>
       <first>EDITOR_OPEN_PROJECT</first>
@@ -496,6 +508,10 @@
     <item>
       <first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
       <second>Show guide lines</second>
+    </item>
+    <item>
+      <first>EFFECT_EDITOR_TOGGLE_MOVE</first>
+      <second>Move emitter</second>
     </item>
     <item>
       <first>EFFECT_EDITOR_PLAY</first>
@@ -1410,6 +1426,34 @@
       <second>External mismatch</second>
     </item>
     <item>
+      <first>SHADERGRAPH_REMOVE_UNUSED_NODES</first>
+      <second>Remove unused nodes</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_AUTO_MERGE_BRANCHES</first>
+      <second>Merge branches</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_UPDATE_FRAGMENTS</first>
+      <second>Update fragments</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CONSTANT_FOLD</first>
+      <second>Constant fold</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_CLEANUP_SWIZZLES</first>
+      <second>Cleanup swizzles</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_INSERT_INTERPOLATORS</first>
+      <second>Insert interpolators</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_PLATFORM_PERMUTATION</first>
+      <second>Platform permutation</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_ALGEBRA</first>
       <second>Algebra</second>
     </item>
@@ -1444,6 +1488,10 @@
     <item>
       <first>SHADERGRAPH_SAMPLER</first>
       <second>Sampler</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_SCRIPT_EDIT</first>
+      <second>Edit script</second>
     </item>
     <item>
       <first>SHADERGRAPH_TRIGONOMETRY</first>
@@ -1630,6 +1678,10 @@
       <second>Scalar</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_SCRIPT</first>
+      <second>Script</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_SIGN</first>
       <second>Sign</second>
     </item>
@@ -1640,6 +1692,10 @@
     <item>
       <first>SHADERGRAPH_NODE_SQRT</first>
       <second>Sqrt</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_STEP</first>
+      <second>Step</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_SUB</first>
@@ -1668,6 +1724,10 @@
     <item>
       <first>SHADERGRAPH_NODE_TEXTURE</first>
       <second>Texture</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TEXTURESIZE</first>
+      <second>Texture size</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_TRANSFORM</first>

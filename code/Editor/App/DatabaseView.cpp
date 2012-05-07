@@ -661,7 +661,11 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 void DatabaseView::setEnable(bool enable)
 {
 	m_toolSelection->setEnable(enable);
+	m_toolSelection->update();
+
 	m_treeDatabase->setEnable(enable);
+	m_treeDatabase->update();
+
 	ui::Container::setEnable(enable);
 }
 

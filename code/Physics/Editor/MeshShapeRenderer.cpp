@@ -29,31 +29,39 @@ void MeshShapeRenderer::draw(
 	resource::Proxy< Mesh > mesh;
 	if (resourceManager->bind(meshShapeDesc->getMesh(), mesh))
 	{
-		primitiveRenderer->pushWorld((body1Transform * shapeDesc->getLocalTransform()).toMatrix44());
+		primitiveRenderer->pushWorld((body1Transform * Transform(mesh->getOffset()) * shapeDesc->getLocalTransform()).toMatrix44());
 
 		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 
 		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
 		const std::vector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
 
-		for (std::vector< Mesh::Triangle >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
+		if (hullTriangles.empty())
 		{
-			const Vector4& V0 = vertices[i->indices[0]];
-			const Vector4& V1 = vertices[i->indices[1]];
-			const Vector4& V2 = vertices[i->indices[2]];
+			for (std::vector< Mesh::Triangle >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
+			{
+				const Vector4& V0 = vertices[i->indices[0]];
+				const Vector4& V1 = vertices[i->indices[1]];
+				const Vector4& V2 = vertices[i->indices[2]];
 
-			primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
-			primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255));
+				primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
+				primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
+			}
+		}
+		else
+		{
+			for (std::vector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+			{
+				const Vector4& V0 = vertices[i->indices[0]];
+				const Vector4& V1 = vertices[i->indices[1]];
+				const Vector4& V2 = vertices[i->indices[2]];
+
+				primitiveRenderer->drawSolidTriangle(V0, V1, V2, Color4ub(128, 255, 255, 128));
+				primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
+			}
 		}
 
-		for (std::vector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
-		{
-			const Vector4& V0 = vertices[i->indices[0]];
-			const Vector4& V1 = vertices[i->indices[1]];
-			const Vector4& V2 = vertices[i->indices[2]];
-
-			primitiveRenderer->drawWireTriangle(V0, V1, V2, Color4ub(0, 255, 255, 180));
-		}
+		primitiveRenderer->drawSolidPoint(Vector4::origo(), 8.0f, Color4ub(255, 0, 0, 255));
 
 		primitiveRenderer->popWorld();
 	}

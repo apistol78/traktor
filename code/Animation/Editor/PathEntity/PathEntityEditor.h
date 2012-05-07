@@ -25,8 +25,6 @@ public:
 
 	virtual void entitySelected(bool selected);
 
-	virtual void applyModifier(const ApplyParams& params);
-
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;

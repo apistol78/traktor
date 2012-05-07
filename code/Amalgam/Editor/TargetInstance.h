@@ -4,6 +4,7 @@
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
 #include "Amalgam/Impl/TargetPerformance.h"
 
 namespace traktor
@@ -67,7 +68,7 @@ public:
 
 	void removeConnection(TargetConnection* connection);
 
-	const RefArray< TargetConnection >& getConnections() const;
+	RefArray< TargetConnection > getConnections() const;
 
 	std::wstring getOutputPath() const;
 
@@ -82,6 +83,7 @@ private:
 	int32_t m_deployHostId;
 	TargetState m_state;
 	int32_t m_buildProgress;
+	mutable Semaphore m_connectionsLock;
 	RefArray< TargetConnection > m_connections;
 };
 

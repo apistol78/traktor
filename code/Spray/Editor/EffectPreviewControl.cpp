@@ -207,10 +207,22 @@ void EffectPreviewControl::syncEffect()
 	const float c_deltaTime = 1.0f / 30.0f;
 	for (float T = 0.0f; T < currentTime; T += c_deltaTime)
 	{
+		Transform effectTransform = Transform::identity();
+		if (m_moveEmitter)
+		{
+			Vector4 effectPosition(
+				std::sin(T) * 8.0f,
+				0.0f,
+				std::cos(T) * 8.0f,
+				1.0f
+			);
+			effectTransform = Transform(effectPosition);
+		}
+
 		float deltaTime = min(c_deltaTime, currentTime - T);
 		syncContext.deltaTime = deltaTime;
 
-		m_effectInstance->update(syncContext, Transform::identity(), true);
+		m_effectInstance->update(syncContext, effectTransform, true);
 		m_effectInstance->synchronize();
 	}
 
@@ -235,28 +247,31 @@ void EffectPreviewControl::eventMouseMove(ui::Event* event)
 		return;
 
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
-	
-	if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+
+	if ((mouseEvent->getKeyState() & ui::KsMenu) != 0)
 	{
-		if ((mouseEvent->getKeyState() & ui::KsControl) == 0)
+		if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
 		{
-			// Move X/Y direction.
-			float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
-			float dy = -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
-			m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
+			if ((mouseEvent->getKeyState() & ui::KsControl) == 0)
+			{
+				// Move X/Z direction.
+				float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
+				float dz = -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
+				m_effectPosition += Vector4(dx, 0.0f, dz, 0.0f);
+			}
+			else
+			{
+				// Move X/Y direction.
+				float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
+				float dy =  float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
+				m_effectPosition += Vector4(dx, dy, 0.0f, 0.0f);
+			}
 		}
-		else
+		else if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
 		{
-			// Move X/Z direction.
-			float dx = -float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaMoveScale;
-			float dz = -float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaMoveScale;
-			m_effectPosition += Vector4(dx, 0.0f, dz, 0.0f);
+			m_angleHead += float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaScaleHead;
+			m_anglePitch += float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScalePitch;
 		}
-	}
-	else
-	{
-		m_angleHead += float(m_lastMousePosition.x - mouseEvent->getPosition().x) * c_deltaScaleHead;
-		m_anglePitch += float(m_lastMousePosition.y - mouseEvent->getPosition().y) * c_deltaScalePitch;
 	}
 
 	m_lastMousePosition = mouseEvent->getPosition();

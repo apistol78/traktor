@@ -139,10 +139,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	if (m_currentAdapter)
 		m_currentAdapter->link(entityAdapter);
 	else
-	{
-		T_ASSERT (!m_rootAdapter);
 		m_rootAdapter = entityAdapter;
-	}
 
 	// Find entity factory.
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();

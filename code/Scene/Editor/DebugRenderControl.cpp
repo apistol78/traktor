@@ -103,7 +103,16 @@ bool DebugRenderControl::calculateRay(const ui::Point& position, Vector4& outWor
 	return false;
 }
 
+bool DebugRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const
+{
+	return false;
+}
+
 void DebugRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
+{
+}
+
+void DebugRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 

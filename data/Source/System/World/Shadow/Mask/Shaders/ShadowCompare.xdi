@@ -32,7 +32,6 @@
 				<first>393</first>
 				<second>296</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
@@ -47,7 +46,7 @@
 				<second>299</second>
 			</position>
 			<parameterName>ShadowMap</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.InputPort" version="1">

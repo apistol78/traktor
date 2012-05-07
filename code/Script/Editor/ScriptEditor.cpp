@@ -1,6 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
@@ -13,8 +14,10 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/ListBox.h"
-#include "Ui/TableLayout.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/Tab.h"
+#include "Ui/TableLayout.h"
+#include "Ui/TabPage.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
@@ -49,15 +52,29 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 		return false;
 
 	m_splitter = new ui::custom::Splitter();
-	if (!m_splitter->create(parent, true, 150))
+	if (!m_splitter->create(parent, true, 250))
 		return false;
 
-	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(m_splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	Ref< ui::Tab > tab = new ui::Tab();
+	if (!tab->create(m_splitter, ui::WsNone))
+		return false;
+
+	Ref< ui::TabPage > tabOutline = new ui::TabPage();
+	if (!tabOutline->create(tab, L"Outline", new ui::TableLayout(L"100%", L"100%", 0, 0)))
+		return false;
+
+	m_outlineList = new ui::ListBox();
+	if (!m_outlineList->create(tabOutline))
+		return false;
+
+	m_outlineList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventOutlineDoubleClick));
+
+	Ref< ui::TabPage > tabDependencies = new ui::TabPage();
+	if (!tabDependencies->create(tab, L"Dependencies", new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	Ref< ui::custom::ToolBar > dependencyTools = new ui::custom::ToolBar();
-	if (!dependencyTools->create(container))
+	if (!dependencyTools->create(tabDependencies))
 		return false;
 
 	dependencyTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
@@ -69,10 +86,14 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	dependencyTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependencyToolClick));
 
 	m_dependencyList = new ui::ListBox();
-	if (!m_dependencyList->create(container))
+	if (!m_dependencyList->create(tabDependencies))
 		return false;
 
 	m_dependencyList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDependencyListDoubleClick));
+
+	tab->addPage(tabOutline);
+	tab->addPage(tabDependencies);
+	tab->setActivePage(tabOutline);
 
 	Ref< ui::Container > containerEdit = new ui::Container();
 	if (!containerEdit->create(m_splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
@@ -118,6 +139,7 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	{
 		parent->addTimerEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventTimer));
 		parent->startTimer(100);
+		m_compileCountDown = 1;
 	}
 
 	updateDependencyList();
@@ -138,7 +160,7 @@ void ScriptEditor::apply()
 
 ui::Size ScriptEditor::getPreferredSize() const
 {
-	return ui::Size(600, 500);
+	return ui::Size(1000, 600);
 }
 
 void ScriptEditor::syntaxError(uint32_t line, const std::wstring& message)
@@ -170,6 +192,21 @@ void ScriptEditor::updateDependencyList()
 		else
 			m_dependencyList->add(i->format());
 	}
+}
+
+void ScriptEditor::eventOutlineDoubleClick(ui::Event* event)
+{
+	int32_t selected = m_outlineList->getSelected();
+	if (selected < 0 || selected >= int32_t(m_outline.size()))
+		return;
+
+	std::list< ui::custom::SyntaxOutline >::const_iterator i = m_outline.begin();
+	std::advance(i, selected);
+
+	const ui::custom::SyntaxOutline& outline = *i;
+
+	m_edit->scrollToLine(outline.line > 4 ? outline.line - 4 : 0);
+	m_edit->placeCaret(m_edit->getLineOffset(outline.line));
 }
 
 void ScriptEditor::eventDependencyToolClick(ui::Event* event)
@@ -227,8 +264,17 @@ void ScriptEditor::eventTimer(ui::Event* event)
 		std::wstring script = m_edit->getText();
 		if (m_scriptManager->compile(script, false, this))
 		{
+			// Reset error status.
 			m_compileStatus->setText(L"");
 			m_edit->setErrorHighlight(-1);
+
+			// Get outline of script.
+			m_outline.clear();
+			m_edit->getOutline(m_outline);
+
+			m_outlineList->removeAll();
+			for (std::list< ui::custom::SyntaxOutline >::const_iterator i = m_outline.begin(); i != m_outline.end(); ++i)
+				m_outlineList->add(i->name + L" (" + toString(i->line + 1) + L")");
 		}
 	}
 }

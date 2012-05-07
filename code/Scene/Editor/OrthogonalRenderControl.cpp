@@ -14,6 +14,7 @@
 #include "Scene/Editor/CameraMesh.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/EntityRendererAdapter.h"
+#include "Scene/Editor/EntityRendererCache.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
@@ -56,6 +57,16 @@ int32_t translateMouseButton(int32_t uimb)
 		return 2;
 	else
 		return 0;
+}
+
+Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
+{
+	return Vector4(
+		2.0f * float(pnt.x - rc.left) / rc.getWidth() - 1.0f,
+		1.0f - 2.0f * float(pnt.y - rc.top) / rc.getHeight(),
+		0.0f,
+		1.0f
+	);
 }
 
 		}
@@ -166,7 +177,8 @@ void OrthogonalRenderControl::updateWorldRenderer()
 
 	Ref< const world::WorldRenderSettings > worldRenderSettings = sceneInstance->getWorldRenderSettings();
 
-	// Create entity renderers.
+	// Create entity renderers; every renderer is wrapped in a custom renderer in order to check flags etc.
+	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
 	Ref< world::WorldEntityRenderers > worldEntityRenderers = new world::WorldEntityRenderers();
 	for (RefArray< ISceneEditorProfile >::const_iterator i = m_context->getEditorProfiles().begin(); i != m_context->getEditorProfiles().end(); ++i)
 	{
@@ -174,7 +186,7 @@ void OrthogonalRenderControl::updateWorldRenderer()
 		(*i)->createEntityRenderers(m_context, m_renderView, m_primitiveRenderer, entityRenderers);
 		for (RefArray< world::IEntityRenderer >::iterator j = entityRenderers.begin(); j != entityRenderers.end(); ++j)
 		{
-			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(m_context, *j);
+			Ref< EntityRendererAdapter > entityRenderer = new EntityRendererAdapter(entityRendererCache, *j);
 			worldEntityRenderers->add(entityRenderer);
 		}
 	}
@@ -254,6 +266,43 @@ bool OrthogonalRenderControl::calculateRay(const ui::Point& position, Vector4& o
 	return true;
 }
 
+bool OrthogonalRenderControl::calculateFrustum(const ui::Rect& rc, Frustum& outWorldFrustum) const
+{
+	Vector4 origin[4], direction[4];
+	calculateRay(rc.getTopRight(), origin[0], direction[0]);
+	calculateRay(rc.getTopLeft(), origin[1], direction[1]);
+	calculateRay(rc.getBottomLeft(), origin[2], direction[2]);
+	calculateRay(rc.getBottomRight(), origin[3], direction[3]);
+
+	Scalar nz(-1e6f);
+	Scalar fz(1e6f);
+
+	Vector4 corners[8] =
+	{
+		origin[0] + direction[0] * nz,
+		origin[1] + direction[1] * nz,
+		origin[2] + direction[2] * nz,
+		origin[3] + direction[3] * nz,
+		origin[0] + direction[0] * fz,
+		origin[1] + direction[1] * fz,
+		origin[2] + direction[2] * fz,
+		origin[3] + direction[3] * fz,
+	};
+
+	Plane planes[6] =
+	{
+		Plane(corners[1], corners[6], corners[5]),
+		Plane(corners[3], corners[4], corners[7]),
+		Plane(corners[2], corners[7], corners[6]),
+		Plane(corners[0], corners[5], corners[4]),
+		Plane(corners[0], corners[2], corners[1]),
+		Plane(corners[4], corners[6], corners[7])
+	};
+
+	outWorldFrustum.buildFromPlanes(planes);
+	return true;
+}
+
 void OrthogonalRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mouseDelta, const Vector4& viewDelta)
 {
 	if (mode == McmMoveXY || mode == McmMoveXZ)
@@ -261,6 +310,11 @@ void OrthogonalRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mou
 		m_cameraX += viewDelta.x();
 		m_cameraY += viewDelta.y();
 	}
+}
+
+void OrthogonalRenderControl::showSelectionRectangle(const ui::Rect& rect)
+{
+	m_selectionRectangle = rect;
 }
 
 void OrthogonalRenderControl::updateSettings()
@@ -382,14 +436,6 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 	if (!m_renderView || !m_primitiveRenderer || !m_worldRenderer)
 		return;
 
-	// Get entities.
-	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
-
-	// Get root entity.
-	Ref< EntityAdapter > rootEntityAdapter = m_context->getRootEntityAdapter();
-	Ref< world::Entity > rootEntity = rootEntityAdapter ? rootEntityAdapter->getEntity() : 0;
-
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))
 	{
@@ -417,15 +463,15 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 		worldRenderView.setView(view);
 
-		if (rootEntity)
-		{
-			m_worldRenderer->build(worldRenderView, rootEntity, 0);
-			m_worldRenderer->render(
-				world::WrfDepthMap | world::WrfShadowMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
-				0,
-				render::EtCyclop
-			);
-		}
+		Ref< scene::Scene > sceneInstance = m_context->getScene();
+		if (sceneInstance)
+			m_worldRenderer->build(worldRenderView, sceneInstance->getRootEntity(), 0);
+
+		m_worldRenderer->render(
+			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
+			0,
+			render::EtCyclop
+		);
 
 		// Draw wire guides.
 		m_primitiveRenderer->begin(m_renderView);
@@ -523,14 +569,49 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		// Draw guides.
 		if (m_guideEnable)
 		{
+			RefArray< EntityAdapter > entityAdapters;
+			m_context->getEntities(entityAdapters, SceneEditorContext::GfDefault);
+
 			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-				m_context->drawGuide(m_primitiveRenderer, *i);
+			{
+				if ((*i)->isVisible(true))
+					m_context->drawGuide(m_primitiveRenderer, *i);
+			}
 		}
 
 		// Draw controller guides.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
 		if (controllerEditor && m_guideEnable)
 			controllerEditor->draw(m_primitiveRenderer);
+
+		// Draw selection rectangle if non-empty.
+		if (m_selectionRectangle.area() > 0)
+		{
+			ui::Rect innerRect = m_renderWidget->getInnerRect();
+
+			m_primitiveRenderer->pushProjection(orthoLh(-1.0f, -1.0f, 1.0f, 1.0f, 0.0f, 1.0f));
+			m_primitiveRenderer->pushView(Matrix44::identity());
+			m_primitiveRenderer->pushDepthEnable(false);
+
+			m_primitiveRenderer->drawSolidQuad(
+				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
+				projectUnit(innerRect, m_selectionRectangle.getTopRight()),
+				projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
+				projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
+				Color4ub(0, 64, 128, 128)
+			);
+			m_primitiveRenderer->drawWireQuad(
+				projectUnit(innerRect, m_selectionRectangle.getTopLeft()),
+				projectUnit(innerRect, m_selectionRectangle.getTopRight()),
+				projectUnit(innerRect, m_selectionRectangle.getBottomRight()),
+				projectUnit(innerRect, m_selectionRectangle.getBottomLeft()),
+				Color4ub(120, 190, 250, 255)
+			);
+
+			m_primitiveRenderer->popDepthEnable();
+			m_primitiveRenderer->popView();
+			m_primitiveRenderer->popProjection();
+		}
 
 		m_primitiveRenderer->end();
 

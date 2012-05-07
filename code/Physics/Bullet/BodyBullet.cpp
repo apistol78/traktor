@@ -32,6 +32,7 @@ BodyBullet::BodyBullet(
 	btDynamicsWorld* dynamicsWorld,
 	btRigidBody* body,
 	btCollisionShape* shape,
+	const Vector4& centerOfGravity,
 	uint32_t collisionGroup,
 	uint32_t collisionMask
 )
@@ -39,6 +40,7 @@ BodyBullet::BodyBullet(
 ,	m_dynamicsWorld(dynamicsWorld)
 ,	m_body(body)
 ,	m_shape(shape)
+,	m_centerOfGravity(centerOfGravity)
 ,	m_collisionGroup(collisionGroup)
 ,	m_collisionMask(collisionMask)
 ,	m_enable(false)
@@ -58,7 +60,7 @@ void BodyBullet::destroy()
 
 void BodyBullet::setTransform(const Transform& transform)
 {
-	btTransform bt = toBtTransform(transform);
+	btTransform bt = toBtTransform(Transform(m_centerOfGravity) * transform);
 
 	T_ASSERT (m_body);
 	m_body->setWorldTransform(bt);
@@ -71,7 +73,7 @@ void BodyBullet::setTransform(const Transform& transform)
 Transform BodyBullet::getTransform() const
 {
 	T_ASSERT (m_body);
-	return fromBtTransform(m_body->getWorldTransform());
+	return fromBtTransform(m_body->getWorldTransform()) * Transform(-m_centerOfGravity);
 }
 
 bool BodyBullet::isStatic() const
@@ -251,6 +253,12 @@ void BodyBullet::removeJoint(Joint* joint)
 	T_ASSERT (i != m_joints.end());
 
 	m_joints.erase(i);
+}
+
+Transform BodyBullet::getBodyTransform() const
+{
+	T_ASSERT (m_body);
+	return fromBtTransform(m_body->getWorldTransform());
 }
 
 	}

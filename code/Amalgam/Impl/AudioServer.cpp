@@ -97,7 +97,7 @@ void AudioServer::update(float dT, bool renderViewActive)
 		// Should we become muted?
 		if (!m_soundMuted)
 		{
-			log::debug << L"Audio server muted; application inactive" << Endl;
+			T_DEBUG(L"Audio server muted; application inactive");
 			m_soundMutedVolume = m_soundSystem->getVolume();
 			m_soundMuted = true;
 		}
@@ -115,7 +115,7 @@ void AudioServer::update(float dT, bool renderViewActive)
 		volume += dT;
 		if (volume >= m_soundMutedVolume)
 		{
-			log::debug << L"Audio server un-muted; application active" << Endl;
+			T_DEBUG(L"Audio server un-muted; application active");
 			volume = m_soundMutedVolume;
 			m_soundMuted = false;
 		}

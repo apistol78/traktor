@@ -65,7 +65,6 @@ public:
 		render::handle_t m_handleShadowMapSizeAndBias;
 		render::handle_t m_handleShadowMapPoissonTaps;
 		render::handle_t m_handleDepth;
-		render::handle_t m_handleDepth_Size;
 		render::handle_t m_handleMagicCoeffs;
 		render::handle_t m_handleViewEdgeTopLeft;
 		render::handle_t m_handleViewEdgeTopRight;

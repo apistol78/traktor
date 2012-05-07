@@ -54,7 +54,6 @@ public:
 		struct Source
 		{
 			render::handle_t param;
-			render::handle_t paramSize;
 			render::handle_t source;
 			uint32_t index;
 		};

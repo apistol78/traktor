@@ -81,7 +81,7 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 		return 0;
 	}
 
-	log::debug << L"SWF movie version " << int32_t(header->version) << Endl;
+	T_DEBUG(L"SWF movie version " << int32_t(header->version));
 
 	// Create ActionScript virtual machine.
 	Ref< IActionVM > vm;
@@ -121,7 +121,7 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 			}
 			if (uint32_t(swf->getBitReader().getStream()->tell()) < context.tagEndPosition)
 			{
-				log::debug << L"Read too few bytes (" << context.tagEndPosition - swf->getBitReader().getStream()->tell() << L" left) in tag " << int32_t(tag->id) << Endl;
+				T_DEBUG(L"Read too few bytes (" << context.tagEndPosition - swf->getBitReader().getStream()->tell() << L" left) in tag " << int32_t(tag->id));
 				if (swf->getBitReader().getStream()->seek(IStream::SeekSet, context.tagEndPosition) < 0)
 					going = false;
 			}
@@ -134,7 +134,7 @@ Ref< FlashMovie > FlashMovieFactory::createMovie(SwfReader* swf)
 		}
 		else
 		{
-			log::debug << L"No reader for tag " << int32_t(tag->id) << Endl;
+			T_DEBUG(L"No reader for tag " << int32_t(tag->id));
 			swf->getBitReader().skip(tag->length * 8);
 		}
 

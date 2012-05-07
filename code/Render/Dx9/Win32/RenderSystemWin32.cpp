@@ -100,7 +100,7 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	DWORD dwBehaviour = D3DCREATE_MULTITHREADED;
 	if (d3dCaps.DevCaps & D3DDEVCAPS_HWTRANSFORMANDLIGHT)
 	{
-		log::debug << L"Using D3DCREATE_HARDWARE_VERTEXPROCESSING" << Endl;
+		T_DEBUG(L"Using D3DCREATE_HARDWARE_VERTEXPROCESSING");
 		dwBehaviour |= D3DCREATE_HARDWARE_VERTEXPROCESSING;
 	}
 
@@ -509,7 +509,7 @@ HRESULT RenderSystemWin32::resetDevice()
 	if (FAILED(hr))
 		return hr;
 
-	log::debug << L"Device reset successful" << Endl;
+	T_DEBUG(L"Device reset successful");
 	return hr;
 }
 

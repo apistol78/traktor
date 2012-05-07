@@ -21,7 +21,9 @@ enum HlslType
 	HtFloat3,
 	HtFloat4,
 	HtFloat4x4,
-	HtTexture
+	HtTexture2D,
+	HtTexture3D,
+	HtTextureCube
 };
 
 std::wstring hlsl_semantic(DataUsage usage, int index);
@@ -31,6 +33,8 @@ std::wstring hlsl_type_name(HlslType type);
 int32_t hlsl_type_width(HlslType type);
 
 HlslType hlsl_from_data_type(DataType type);
+
+HlslType hlsl_from_parameter_type(ParameterType type);
 
 //@}
 

@@ -119,6 +119,7 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod(L"removeEntity", &WorldLayer::removeEntity);
 	classWorldLayer->addMethod(L"getEntitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addMethod(L"setControllerEnable", &WorldLayer::setControllerEnable);
+	classWorldLayer->addMethod(L"getPostProcess", &WorldLayer::getPostProcess);
 	classWorldLayer->addMethod(L"getViewPosition", &WorldLayer_getViewPosition);
 	classWorldLayer->addMethod(L"getScreenPosition", &WorldLayer_getScreenPosition);
 	scriptManager->registerClass(classWorldLayer);

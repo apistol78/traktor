@@ -19,8 +19,10 @@ public:
 	HlslProgram(
 		const std::wstring& vertexShader,
 		const std::wstring& pixelShader,
-		const std::map< std::wstring, int32_t >& vertexTextures,
-		const std::map< std::wstring, int32_t >& pixelTextures,
+		const std::set< std::wstring >& vertexTextures,
+		const std::map< uint32_t, std::pair< std::wstring, int32_t > >& vertexSamplers,
+		const std::set< std::wstring >& pixelTextures,
+		const std::map< uint32_t, std::pair< std::wstring, int32_t > >& pixelSamplers,
 		const StateBlockDx9& state
 	);
 
@@ -28,17 +30,23 @@ public:
 
 	const std::wstring& getPixelShader() const;
 
-	const std::map< std::wstring, int32_t >& getVertexTextures() const;
+	const std::set< std::wstring >& getVertexTextures() const;
 
-	const std::map< std::wstring, int32_t >& getPixelTextures() const;
+	const std::map< uint32_t, std::pair< std::wstring, int32_t > >& getVertexSamplers() const;
+
+	const std::set< std::wstring >& getPixelTextures() const;
+
+	const std::map< uint32_t, std::pair< std::wstring, int32_t > >& getPixelSamplers() const;
 
 	const StateBlockDx9& getState() const;
 
 private:
 	std::wstring m_vertexShader;
 	std::wstring m_pixelShader;
-	std::map< std::wstring, int32_t > m_vertexTextures;
-	std::map< std::wstring, int32_t > m_pixelTextures;
+	std::set< std::wstring > m_vertexTextures;
+	std::map< uint32_t, std::pair< std::wstring, int32_t > > m_vertexSamplers;
+	std::set< std::wstring > m_pixelTextures;
+	std::map< uint32_t, std::pair< std::wstring, int32_t > > m_pixelSamplers;
 	StateBlockDx9 m_state;
 };
 

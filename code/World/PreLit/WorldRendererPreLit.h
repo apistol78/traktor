@@ -114,7 +114,7 @@ private:
 		Matrix44 projection;
 		Matrix44 view;
 		Frustum viewFrustum;
-		Vector4 eyePosition;
+		//Vector4 eyePosition;
 
 		Light lights[MaxLightCount];
 		uint32_t lightCount;

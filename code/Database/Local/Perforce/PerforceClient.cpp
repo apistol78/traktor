@@ -24,14 +24,14 @@ public:
 
 	virtual void OutputInfo(char level, const char *data)
 	{
-		log::debug << L"Perforce info \"" << trim(mbstows(data)) << L"\"" << Endl;
+		T_DEBUG(L"Perforce info \"" << trim(mbstows(data)) << L"\"");
 	}
 
 	virtual void OutputError(const char* errBuf)
 	{
 		m_failed = true;
 		m_outLastError = trim(mbstows(errBuf));
-		log::debug << L"Perforce operation failed \"" << m_outLastError << L"\"" << Endl;
+		T_DEBUG(L"Perforce operation failed \"" << m_outLastError << L"\"");
 	}
 
 #if defined(_DEBUG)
@@ -43,7 +43,7 @@ public:
 			if (!varList->GetVar(i, var, val))
 				break;
 
-			log::debug << L"\"" << mbstows(var.Text()) << L"\" => \"" << mbstows(val.Text()) << L"\"" << Endl;
+			T_DEBUG(L"\"" << mbstows(var.Text()) << L"\" => \"" << mbstows(val.Text()) << L"\"");
 		}
 	}
 #endif

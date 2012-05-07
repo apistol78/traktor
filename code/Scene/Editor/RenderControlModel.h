@@ -38,12 +38,21 @@ public:
 	void eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain);
 
 private:
+	enum ModifyType
+	{
+		MtNothing,
+		MtModifier,
+		MtCamera,
+		MtSelection
+	};
+
+	ui::Point m_mousePosition0;
 	ui::Point m_mousePosition;
 	int32_t m_mouseButton;
-	bool m_modifyCamera;
+	bool m_modifyBegun;
 	bool m_modifyAlternative;
 	bool m_modifyClone;
-	bool m_modifyBegun;
+	ModifyType m_modify;
 };
 
 	}

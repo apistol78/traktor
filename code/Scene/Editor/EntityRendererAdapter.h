@@ -9,14 +9,14 @@ namespace traktor
 	namespace scene
 	{
 	
-class SceneEditorContext;
+class EntityRendererCache;
 	
 class EntityRendererAdapter : public world::IEntityRenderer
 {
 	T_RTTI_CLASS;
 
 public:
-	EntityRendererAdapter(SceneEditorContext* context, world::IEntityRenderer* entityRenderer);
+	EntityRendererAdapter(EntityRendererCache* cache, world::IEntityRenderer* entityRenderer);
 	
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -34,7 +34,7 @@ public:
 	);
 
 private:
-	Ref< SceneEditorContext > m_context;
+	Ref< EntityRendererCache > m_cache;
 	Ref< world::IEntityRenderer > m_entityRenderer;
 };
 	

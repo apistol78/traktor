@@ -2,6 +2,7 @@
 #define traktor_scene_IEntityEditor_H
 
 #include "Core/Object.h"
+#include "Core/Math/Frustum.h"
 #include "Core/Math/Matrix44.h"
 
 // import/export mechanism.
@@ -31,9 +32,7 @@ class PrimitiveRenderer;
 	namespace scene
 	{
 
-class SceneEditorContext;
 class EntityAdapter;
-class IModifier;
 
 /*! \brief Abstract entity editor class.
  *
@@ -49,17 +48,6 @@ class T_DLLCLASS IEntityEditor : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct ApplyParams
-	{
-		Matrix44 viewTransform;
-		Vector4 screenDelta;
-		Vector4 viewDelta;
-		Vector4 worldDelta;
-		Vector4 worldRayOrigin;
-		Vector4 worldRayDirection;
-		int mouseButton;
-	};
-
 	/*! \brief Is entity pickable.
 	 *
 	 * \return True if pickable.
@@ -97,29 +85,20 @@ public:
 	 */
 	virtual bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const = 0;
 
+	/*! \brief Local frustum query.
+	 *
+	 * Query intersection of frustum and entity.
+	 *
+	 * \param worldFrustum Frustum in world space.
+	 * \return True if intersection.
+	 */
+	virtual bool queryFrustum(const Frustum& worldFrustum) const = 0;
+
 	/*! \brief Entity selected.
 	 *
 	 * \param selected True if entity was selected, false if it was deselected.
 	 */
 	virtual void entitySelected(bool selected) = 0;
-
-	/*! \brief Cursor moved, not in modification state..
-	 */
-	virtual void cursorMoved(const ApplyParams& params) = 0;
-
-	/*! \brief Begin modifier on entity.
-	 */
-	virtual void beginModifier(const ApplyParams& params) = 0;
-
-	/*! \brief Apply modifier on entity.
-	 *
-	 * \param params User parameters.
-	 */
-	virtual void applyModifier(const ApplyParams& params) = 0;
-
-	/*! \brief Begin modifier on entity.
-	 */
-	virtual void endModifier(const ApplyParams& params) = 0;
 
 	/*! \brief Handle shortcut.
 	 *

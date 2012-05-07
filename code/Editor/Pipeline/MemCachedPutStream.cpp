@@ -111,7 +111,7 @@ bool MemCachedPutStream::uploadBlock()
 	ss << "set " << m_key << ":" << m_index << " 0 0 " << m_inblock;
 
 	command = ss.str();
-	log::debug << mbstows(command) << Endl;
+	T_DEBUG(mbstows(command));
 
 	if (!m_proto->sendCommand(command))
 	{
@@ -152,7 +152,7 @@ void MemCachedPutStream::uploadEndBlock()
 	ss << "set " << m_key << ":END 0 0 1";
 
 	command = ss.str();
-	log::debug << mbstows(command) << Endl;
+	T_DEBUG(mbstows(command));
 
 	if (!m_proto->sendCommand(command))
 	{

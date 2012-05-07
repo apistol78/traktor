@@ -23,7 +23,6 @@
 				<first>382</first>
 				<second>164</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
@@ -38,7 +37,7 @@
 				<second>164</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">

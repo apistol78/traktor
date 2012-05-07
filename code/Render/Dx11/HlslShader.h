@@ -36,6 +36,7 @@ public:
 		BtUniform,
 		BtInput,
 		BtOutput,
+		BtScript,
 		BtBody,
 		BtLast
 	};
@@ -44,9 +45,9 @@ public:
 
 	virtual ~HlslShader();
 
-	void addInputVariable(const std::wstring& variableName, HlslVariable* variable);
+	bool haveInput(const std::wstring& inputName) const;
 
-	HlslVariable* getInputVariable(const std::wstring& variableName);
+	void addInput(const std::wstring& inputName);
 
 	HlslVariable* createTemporaryVariable(const OutputPin* outputPin, HlslType type);
 
@@ -56,7 +57,7 @@ public:
 
 	void associateVariable(const OutputPin* outputPin, HlslVariable* variable);
 
-	HlslVariable* getVariable(const OutputPin* outputPin);
+	HlslVariable* getVariable(const OutputPin* outputPin) const;
 
 	void pushScope();
 
@@ -69,6 +70,8 @@ public:
 	void allocateVPos();
 
 	void allocateTargetSize();
+
+	bool defineScript(const std::wstring& signature);
 
 	void addSampler(const std::wstring& sampler, const D3D11_SAMPLER_DESC& dsd);
 
@@ -91,10 +94,11 @@ private:
 
 	ShaderType m_shaderType;
 	IProgramHints* m_programHints;
-	std::map< std::wstring, HlslVariable* > m_inputVariables;
+	std::set< std::wstring > m_inputs;
 	std::list< scope_t > m_variables;
 	int32_t m_interpolatorCount;
 	int32_t m_booleanRegisterCount;
+	std::set< std::wstring > m_scripts;
 	std::map< std::wstring, D3D11_SAMPLER_DESC > m_samplers;
 	std::set< std::wstring > m_uniforms;
 	int32_t m_nextTemporaryVariable;

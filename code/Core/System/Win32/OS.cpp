@@ -375,7 +375,7 @@ Ref< IProcess > OS::execute(
 		);
 		if (result == FALSE)
 		{
-			log::debug << L"Unable to create process, error = " << (int32_t)GetLastError() << Endl;
+			T_DEBUG(L"Unable to create process, error = " << (int32_t)GetLastError());
 			return 0;
 		}
 

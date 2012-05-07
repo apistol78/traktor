@@ -31,8 +31,8 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>2, 0, 0, 0</direction>
-			<taps>15</taps>
+			<direction>3, 0, 0, 0</direction>
+			<taps>8</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Output</target>
@@ -51,8 +51,8 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>0, 2, 0, 0</direction>
-			<taps>15</taps>
+			<direction>0, 3, 0, 0</direction>
+			<taps>8</taps>
 		</item>
 	</steps>
 </object>

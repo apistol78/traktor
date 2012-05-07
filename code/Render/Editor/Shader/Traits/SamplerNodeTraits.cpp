@@ -1,4 +1,5 @@
 #include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Traits/SamplerNodeTraits.h"
 
 namespace traktor
@@ -44,24 +45,49 @@ PinType SamplerNodeTraits::getInputPinType(
 	const ShaderGraph* shaderGraph,
 	const Node* node,
 	const InputPin* inputPin,
+	const PinType* inputPinTypes,
 	const PinType* outputPinTypes
 ) const
 {
 	if (inputPin->getName() == L"Texture")
-		return PntTexture;
+		return inputPinTypes[0]; //PntTexture;
 	else
 	{
-		switch (checked_type_cast< const Sampler* >(node)->getLookup())
+		switch (inputPinTypes[0])
 		{
-		case Sampler::LuSimple:
+		case PntTexture2D:
 			return PntScalar2;
-		case Sampler::LuCube:
+			break;
+
+		case PntTexture3D:
+		case PntTextureCube:
 			return PntScalar3;
-		case Sampler::LuVolume:
-			return PntScalar3;
+			break;
+
 		default:
 			return PntVoid;
 		}
+
+		//ParameterType textureType = PtTexture2D;
+		//const OutputPin* sourceOutputPin = shaderGraph->findSourcePin(inputPin);
+		//if (sourceOutputPin)
+		//{
+		//	if (const Texture* sourceTexture = dynamic_type_cast< const Texture* >(sourceOutputPin->getNode()))
+		//		textureType = sourceTexture->getParameterType();
+		//	else if (const Uniform* sourceUniform = dynamic_type_cast< const Uniform* >(sourceOutputPin->getNode()))
+		//		textureType = sourceUniform->getParameterType();
+		//}
+		//switch (textureType)
+		//{
+		//case PtTexture2D:
+		//	return PntScalar2;
+		//case PtTexture3D:
+		//	return PntScalar3;
+		//case PtTextureCube:
+		//	return PntScalar3;
+		//default:
+		//	return PntVoid;
+		//}
 	}
 }
 

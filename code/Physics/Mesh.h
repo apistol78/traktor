@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -48,6 +48,10 @@ public:
 
 	const std::vector< Triangle >& getHullTriangles() const;
 
+	void setOffset(const Vector4& offset);
+
+	const Vector4& getOffset() const;
+
 	bool read(IStream* stream);
 
 	bool write(IStream* stream);
@@ -56,6 +60,7 @@ private:
 	AlignedVector< Vector4 > m_vertices;
 	std::vector< Triangle > m_shapeTriangles;
 	std::vector< Triangle > m_hullTriangles;
+	Vector4 m_offset;
 };
 
 	}

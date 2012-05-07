@@ -67,10 +67,6 @@ void VideoLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 	render::ISimpleTexture* texture = m_video->getTexture();
 	if (texture)
 	{
-		float width = float(texture->getWidth());
-		float height = float(texture->getHeight());
-
-		m_shader->setVectorParameter(L"TextureSize", Vector4(width, height, 0.0f, 0.0f));
 		m_shader->setTextureParameter(L"Texture", texture);
 		m_shader->setFloatParameter(L"Format", float(m_video->getFormat()));
 

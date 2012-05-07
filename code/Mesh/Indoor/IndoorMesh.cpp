@@ -125,6 +125,7 @@ void IndoorMesh::render(
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
+				j->opaque,
 				worldTransform.toMatrix44(),
 				getBoundingBox()
 			);

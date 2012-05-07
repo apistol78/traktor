@@ -38,6 +38,8 @@ private:
 	uint32_t m_pixelShaderHash;
 	AlignedVector< ProgramScalar > m_vertexScalars;
 	AlignedVector< ProgramScalar > m_pixelScalars;
+	AlignedVector< ProgramTexture > m_vertexTextures;
+	AlignedVector< ProgramTexture > m_pixelTextures;
 	AlignedVector< ProgramSampler > m_vertexSamplers;
 	AlignedVector< ProgramSampler > m_pixelSamplers;
 	std::map< std::wstring, uint32_t > m_scalarParameterMap;

@@ -42,7 +42,7 @@
 				<second>220</second>
 			</position>
 			<from>0</from>
-			<to>14</to>
+			<to>7</to>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -68,7 +68,7 @@
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
-			<length>15</length>
+			<length>8</length>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>
@@ -178,16 +178,6 @@
 				<second>364</second>
 			</position>
 		</item>
-		<item type="traktor.render.Uniform" version="1">
-			<comment/>
-			<position>
-				<first>-215</first>
-				<second>419</second>
-			</position>
-			<parameterName>Source_Size</parameterName>
-			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
-		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
@@ -221,7 +211,7 @@
 				<second>-238</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
@@ -258,7 +248,6 @@ Shadow; adjusted for msaa.
 				<first>1348</first>
 				<second>202</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -273,7 +262,7 @@ Shadow; adjusted for msaa.
 				<second>186</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Sampler">
@@ -286,7 +275,6 @@ Sample shadow
 				<first>965</first>
 				<second>25</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -297,11 +285,11 @@ Sample shadow
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>757</first>
-				<second>18</second>
+				<first>-230</first>
+				<second>71</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Comment">
@@ -314,6 +302,13 @@ discontinuitites.
 			<position>
 				<first>66</first>
 				<second>-408</second>
+			</position>
+		</item>
+		<item type="traktor.render.TextureSize">
+			<comment/>
+			<position>
+				<first>-188</first>
+				<second>417</second>
 			</position>
 		</item>
 	</nodes>
@@ -380,7 +375,7 @@ discontinuitites.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -390,7 +385,7 @@ discontinuitites.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -450,7 +445,7 @@ discontinuitites.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[20]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -470,7 +465,7 @@ discontinuitites.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[20]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -490,7 +485,7 @@ discontinuitites.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[19]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -520,7 +515,7 @@ discontinuitites.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[18]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -536,16 +531,6 @@ discontinuitites.
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
 				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[15]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -555,7 +540,7 @@ discontinuitites.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
-				<name>Input2</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -564,17 +549,17 @@ discontinuitites.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[19]"/>
+				<node ref="/object/nodes/item[18]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[20]"/>
+				<node ref="/object/nodes/item[19]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[20]"/>
 				<name>DepthMap</name>
 			</destination>
 		</item>
@@ -584,17 +569,17 @@ discontinuitites.
 				<name>TexCoord</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[21]"/>
+				<node ref="/object/nodes/item[20]"/>
 				<name>DepthMapUV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[23]"/>
+				<node ref="/object/nodes/item[22]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>Texture</name>
 			</destination>
 		</item>
@@ -604,17 +589,17 @@ discontinuitites.
 				<name>TexCoord</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[22]"/>
+				<node ref="/object/nodes/item[21]"/>
 				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
+				<node ref="/object/nodes/item[24]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<name>Texture</name>
 			</destination>
 		</item>
@@ -624,8 +609,28 @@ discontinuitites.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
+				<node ref="/object/nodes/item[23]"/>
 				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

@@ -71,7 +71,9 @@ enum ParameterType
 	PtScalar	= 0,	//!< Scalar parameter.
 	PtVector	= 1,	//!< Vector parameter.
 	PtMatrix	= 2,	//!< Matrix parameter.
-	PtTexture	= 3		//!< Texture parameter.
+	PtTexture2D	= 3,	//!< 2D texture parameter.
+	PtTexture3D	= 4,	//!< 3D texture parameter.
+	PtTextureCube = 5	//!< Cube texture parameter.
 };
 
 /*! \brief Shader parameter update frequency. */

@@ -62,7 +62,7 @@ PinType ShaderGraphTypeEvaluator::evaluate(const OutputPin* outputPin) const
 		{
 			inputPin = node->findInputPin(L"Matrix");
 		}
-		else if (inputType == PntTexture)
+		else if (isPinTypeTexture(inputType))
 		{
 			inputPin = node->findInputPin(L"Texture");
 		}

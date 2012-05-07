@@ -72,8 +72,8 @@ Particle extent
 			]]>
 			</comment>
 			<position>
-				<first>257</first>
-				<second>418</second>
+				<first>118</first>
+				<second>310</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -259,7 +259,7 @@ Alpha
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>-45</first>
+				<first>-49</first>
 				<second>621</second>
 			</position>
 			<name>Random</name>
@@ -369,6 +369,14 @@ Age
 				<second>775</second>
 			</position>
 			<name>Age</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>-49</first>
+				<second>567</second>
+			</position>
+			<name>Orientation</name>
 		</item>
 	</nodes>
 	<edges>
@@ -739,6 +747,16 @@ Age
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[36]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[37]"/>
 				<name>Input</name>
 			</destination>
 		</item>

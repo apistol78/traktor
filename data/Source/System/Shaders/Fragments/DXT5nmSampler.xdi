@@ -59,8 +59,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>761</first>
-				<second>326</second>
+				<first>777</first>
+				<second>390</second>
 			</position>
 			<fragmentGuid>{1AD06988-0F76-3D4A-BE56-00F49B91863C}</fragmentGuid>
 			<inputPins>
@@ -114,7 +114,6 @@
 				<first>564</first>
 				<second>190</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -191,16 +190,6 @@
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
 				<name>TexCoord</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -300,6 +289,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[11]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>

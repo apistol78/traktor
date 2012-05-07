@@ -1,25 +1,26 @@
-#include "Physics/Editor/MeshPipeline.h"
-#include "Physics/Editor/MeshAsset.h"
-#include "Physics/MeshResource.h"
-#include "Physics/Mesh.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
-#include "Database/Instance.h"
-#include "Model/Formats/ModelFormat.h"
-#include "Model/Model.h"
-#include "Model/Utilities.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
+#include "Model/Model.h"
+#include "Model/Utilities.h"
+#include "Model/Formats/ModelFormat.h"
+#include "Physics/Mesh.h"
+#include "Physics/MeshResource.h"
+#include "Physics/Editor/MeshAsset.h"
+#include "Physics/Editor/MeshPipeline.h"
 
 namespace traktor
 {
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 1, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 2, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -73,9 +74,17 @@ bool MeshPipeline::buildOutput(
 
 	model::triangulateModel(*model);
 
+	// Calculate bounding box; used for center of gravity estimation.
+	Aabb3 boundingBox = model::calculateModelBoundingBox(*model);
+	Vector4 centerOfGravity = boundingBox.getCenter().xyz0();
+
 	// Create physics mesh.
-	std::vector< Mesh::Triangle > outShapeTriangles;
-	std::vector< Mesh::Triangle > outHullTriangles;
+	AlignedVector< Vector4 > positions = model->getPositions();
+	for (AlignedVector< Vector4 >::iterator i = positions.begin(); i != positions.end(); ++i)
+		*i -= centerOfGravity;
+
+	std::vector< Mesh::Triangle > meshShapeTriangles;
+	std::vector< Mesh::Triangle > meshHullTriangles;
 
 	const std::vector< model::Polygon >& shapeTriangles = model->getPolygons();
 	for (std::vector< model::Polygon >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
@@ -86,11 +95,13 @@ bool MeshPipeline::buildOutput(
 		for (int j = 0; j < 3; ++j)
 			shapeTriangle.indices[j] = model->getVertex(i->getVertex(j)).getPosition();
 
-		outShapeTriangles.push_back(shapeTriangle);
+		meshShapeTriangles.push_back(shapeTriangle);
 	}
 
 	if (meshAsset->m_calculateConvexHull)
 	{
+		log::info << L"Calculating convex hull..." << Endl;
+
 		model::Model hull = *model;
 		model::calculateConvexHull(hull);
 
@@ -103,14 +114,39 @@ bool MeshPipeline::buildOutput(
 			for (int j = 0; j < 3; ++j)
 				hullTriangle.indices[j] = hull.getVertex(i->getVertex(j)).getPosition();
 
-			outHullTriangles.push_back(hullTriangle);
+			meshHullTriangles.push_back(hullTriangle);
 		}
+
+		// Improve center of gravity by weighting in volumes of each hull face tetrahedron.
+		Vector4 Voffset = Vector4::zero();
+		float Vtotal = 0.0f;
+		for (std::vector< Mesh::Triangle >::const_iterator i = meshHullTriangles.begin(); i != meshHullTriangles.end(); ++i)
+		{
+			const Vector4 a = positions[i->indices[0]];
+			const Vector4 b = positions[i->indices[1]];
+			const Vector4 c = positions[i->indices[2]];
+
+			float V = abs(dot3(a, cross(b, c))) / 6.0f;
+			Vector4 C = (a + b + c) / Scalar(4.0f);
+
+			Voffset += C * Scalar(V);
+			Vtotal += V;
+		}
+
+		centerOfGravity += Voffset / Scalar(Vtotal);
 	}
 
+	// Log statistics.
+	log::info << positions.size() << L" vertex(es)" << Endl;
+	log::info << meshShapeTriangles.size() << L" shape triangle(s)" << Endl;
+	log::info << meshHullTriangles.size() << L" hull triangle(s)" << Endl;
+	log::info << L"Offset " << centerOfGravity << Endl;
+
 	Mesh mesh;
-	mesh.setVertices(model->getPositions());
-	mesh.setShapeTriangles(outShapeTriangles);
-	mesh.setHullTriangles(outHullTriangles);
+	mesh.setVertices(positions);
+	mesh.setShapeTriangles(meshShapeTriangles);
+	mesh.setHullTriangles(meshHullTriangles);
+	mesh.setOffset(centerOfGravity);
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,

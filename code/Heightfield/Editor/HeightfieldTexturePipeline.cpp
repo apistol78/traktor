@@ -72,7 +72,7 @@ Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 0, HeightfieldTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 1, HeightfieldTexturePipeline, editor::DefaultPipeline)
 
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -180,83 +180,13 @@ bool HeightfieldTexturePipeline::buildOutput(
 	}
 	else	// OtNormals
 	{
-		//const float c_offset = 0.1f;
-
-		//const float c_directions[] =
-		//{
-		//	0.0f, 0.0f,
-		//	-1.0f, -1.0f,
-		//	 1.0f, -1.0f,
-		//	 1.0f,  1.0f,
-		//	-1.0f,  1.0f
-		//};
-
-		//const uint32_t c_pattern[] =
-		//{
-		//	0, 1, 2,
-		//	0, 2, 3,
-		//	0, 3, 4,
-		//	0, 4, 1
-		//};
-
 		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getX8R8G8B8(), size, size);
-
 		for (int32_t v = 0; v < size; ++v)
 		{
 			for (int32_t u = 0; u < size; ++u)
 			{
-				//float h[3][3] =
-				//{
-				//	{
-				//		heightfield->getGridHeight(u - 1, v - 1),
-				//		heightfield->getGridHeight(u    , v - 1),
-				//		heightfield->getGridHeight(u + 2, v - 1)
-				//	},
-				//	{
-				//		heightfield->getGridHeight(u - 1, v),
-				//		heightfield->getGridHeight(u    , v),
-				//		heightfield->getGridHeight(u + 2, v)
-				//	},
-				//	{
-				//		heightfield->getGridHeight(u - 1, v + 1),
-				//		heightfield->getGridHeight(u    , v + 1),
-				//		heightfield->getGridHeight(u + 2, v + 1)
-				//	}
-				//};
-
-
-
-
-
-				//float wx, wz;
-				//heightfield->gridToWorld(u, v, wx, wz);
-
-				//float h[] =
-				//{
-				//	heightfield->getWorldHeight(wx, wz) * asset->m_scale,
-				//	heightfield->getWorldHeight(wx - c_offset, wz - c_offset) * asset->m_scale,
-				//	heightfield->getWorldHeight(wx + c_offset, wz - c_offset) * asset->m_scale,
-				//	heightfield->getWorldHeight(wx + c_offset, wz + c_offset) * asset->m_scale,
-				//	heightfield->getWorldHeight(wx - c_offset, wz + c_offset) * asset->m_scale
-				//};
-
-				//Vector4 normal = Vector4::zero();
-				//for (uint32_t i = 0; i < 4; ++i)
-				//{
-				//	const uint32_t* p = &c_pattern[i * 3];
-
-				//	Vector4 p1(c_directions[p[0] * 2 + 0] * c_offset, h[p[0]], c_directions[p[0] * 2 + 1] * c_offset, 0.0f);
-				//	Vector4 p2(c_directions[p[1] * 2 + 0] * c_offset, h[p[1]], c_directions[p[1] * 2 + 1] * c_offset, 0.0f);
-				//	Vector4 p3(c_directions[p[2] * 2 + 0] * c_offset, h[p[2]], c_directions[p[2] * 2 + 1] * c_offset, 0.0f);
-
-				//	normal += cross(p3 - p1, p2 - p1);
-				//}
-
-				//normal = normal.normalized();
-
 				Vector4 normal = normalAt(heightfield, u, v);
 				normal = normal * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-
 				outputMap->setPixelUnsafe(u, v, Color4f(
 					normal.x(),
 					normal.y(),
@@ -277,10 +207,8 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output.m_scaleImage = false;
 		output.m_scaleWidth = 0;
 		output.m_scaleHeight = 0;
-		//output.m_enableCompression = true;
-		//output.m_enableNormalMapCompression = true;
-		output.m_enableCompression = false;
-		output.m_enableNormalMapCompression = false;
+		output.m_enableCompression = true;
+		output.m_enableNormalMapCompression = true;
 		output.m_inverseNormalMapY = false;
 		output.m_linearGamma = true;
 		output.m_generateSphereMap = false;

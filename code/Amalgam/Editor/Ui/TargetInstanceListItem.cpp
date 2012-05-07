@@ -59,13 +59,13 @@ TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, T
 
 ui::Size TargetInstanceListItem::getSize() const
 {
-	const RefArray< TargetConnection >& connections = m_instance->getConnections();
+	RefArray< TargetConnection > connections = m_instance->getConnections();
 	return ui::Size(128, 28 + connections.size() * c_performanceHeight);
 }
 
 void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui::Rect& rect)
 {
-	const RefArray< TargetConnection >& connections = m_instance->getConnections();
+	RefArray< TargetConnection > connections = m_instance->getConnections();
 
 	ui::Rect controlRect = rect;
 	controlRect.bottom = rect.top + 28;
@@ -133,7 +133,7 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 {
 	const Platform* platform = m_instance->getPlatform();
 	const TargetConfiguration* targetConfiguration = m_instance->getTargetConfiguration();
-	const RefArray< TargetConnection >& connections = m_instance->getConnections();
+	RefArray< TargetConnection > connections = m_instance->getConnections();
 
 	ui::Rect controlRect = rect; controlRect.bottom = rect.top + 28;
 

@@ -7,7 +7,6 @@
 				<first>311</first>
 				<second>308</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -174,7 +173,7 @@
 				<second>257</second>
 			</position>
 			<parameterName>Heightfield</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Vector">

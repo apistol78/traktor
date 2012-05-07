@@ -97,7 +97,7 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 		}
 
 		m_bus = new LocalBus(eventPath.getPathName());
-		log::debug << L"Using shared event file \"" << eventPath.getPathName() << L"\"" << Endl;
+		T_DEBUG(L"Using shared event file \"" << eventPath.getPathName() << L"\"");
 	}
 
 	m_rootGroup = new LocalGroup(m_context, groupPath);

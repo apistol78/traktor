@@ -26,7 +26,6 @@ const float c_pointLightScreenAreaThreshold = 4.0f * (c_pointLightScreenAreaThre
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleExtent;
 render::handle_t s_handleMagicCoeffs;
-render::handle_t s_handleEyePosition;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleNormalMap;
 render::handle_t s_handleShadowMaskSize;
@@ -55,7 +54,6 @@ LightRenderer::LightRenderer()
 	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
 	s_handleExtent = render::getParameterHandle(L"Extent");
 	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
-	s_handleEyePosition = render::getParameterHandle(L"EyePosition");
 	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 	s_handleNormalMap = render::getParameterHandle(L"NormalMap");
 	s_handleShadowMaskSize = render::getParameterHandle(L"ShadowMaskSize");
@@ -115,7 +113,7 @@ void LightRenderer::render(
 	render::IRenderView* renderView,
 	const Matrix44& projection,
 	const Matrix44& view,
-	const Vector4& eyePosition,
+	//const Vector4& eyePosition,
 	const Light& light,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,
@@ -135,7 +133,6 @@ void LightRenderer::render(
 		m_lightDirectionalShader->setTextureParameter(s_handleShadowMask, shadowMask);
 
 		m_lightDirectionalShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		m_lightDirectionalShader->setVectorParameter(s_handleEyePosition, eyePosition);
 
 		m_lightDirectionalShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleNormalMap, normalMap);
@@ -210,7 +207,6 @@ void LightRenderer::render(
 		m_lightPointShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
 
 		m_lightPointShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		m_lightPointShader->setVectorParameter(s_handleEyePosition, eyePosition);
 
 		m_lightPointShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightPointShader->setTextureParameter(s_handleNormalMap, normalMap);
@@ -290,7 +286,6 @@ void LightRenderer::render(
 		m_lightSpotShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
 
 		m_lightSpotShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		m_lightSpotShader->setVectorParameter(s_handleEyePosition, eyePosition);
 
 		m_lightSpotShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightSpotShader->setTextureParameter(s_handleNormalMap, normalMap);

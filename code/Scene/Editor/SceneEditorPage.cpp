@@ -26,6 +26,7 @@
 #include "Scene/Editor/ISceneControllerEditorFactory.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
+#include "Scene/Editor/LayerEntityData.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneEditorPage.h"
@@ -53,7 +54,6 @@
 #include "World/WorldRenderSettings.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
-#include "World/Entity/GroupEntityData.h"
 
 // Resources
 #include "Resources/EntityEdit.h"
@@ -193,6 +193,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_instanceGridFontBold = new ui::Font(m_instanceGrid->getFont());
 	m_instanceGridFontBold->setBold(true);
 
+	m_instanceGridFontHuge = new ui::Font(m_instanceGrid->getFont());
+	m_instanceGridFontHuge->setSize(12);
+
 	m_site->createAdditionalPanel(m_entityPanel, 300, false);
 
 	// Create dependency panel.
@@ -295,14 +298,18 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 			T_ASSERT (selectedEntity);
 
 			parentGroupAdapter = selectedEntity->getParentGroup();
-			if (!parentGroupAdapter)
-				return false;
 		}
-		else if (m_context->getSceneAsset()->getEntityData())
+
+		// Ensure drop is valid.
+		if (!parentGroupAdapter)
 		{
-			parentGroupAdapter = m_context->getRootEntityAdapter();
-			if (!parentGroupAdapter)
-				return false;
+			log::error << L"Unable to drop entity; no layer or group selected" << Endl;
+			return false;
+		}
+		if (parentGroupAdapter->isLocked(true))
+		{
+			log::error << L"Unable to drop entity; layer or group is locked" << Endl;
+			return false;
 		}
 
 		m_context->getDocument()->push();
@@ -319,10 +326,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		entityAdapter->setTransform(Transform(Mworld.translation()));
 
 		// Finally add adapter to parent group.
-		if (parentGroupAdapter)
-			parentGroupAdapter->addChild(entityAdapter);
-		else
-			m_context->getSceneAsset()->setEntityData(entityData);
+		parentGroupAdapter->addChild(entityAdapter);
 
 		updateScene();
 		createInstanceGrid();
@@ -565,8 +569,10 @@ bool SceneEditorPage::createSceneAsset()
 		if (!sceneAsset)
 			return false;
 
-		Ref< world::GroupEntityData > rootGroup = checked_type_cast< world::GroupEntityData*, false >(sceneAsset->getEntityData());
-		rootGroup->addEntityData(entityData);
+		const RefArray< LayerEntityData >& layers = sceneAsset->getLayers();
+		T_ASSERT (layers.size() >= 2);
+
+		layers[1]->addEntityData(entityData);
 
 		m_context->setSceneAsset(sceneAsset);
 	}
@@ -623,7 +629,7 @@ void SceneEditorPage::createControllerEditor()
 					log::error << L"Unable to create controller editor; create failed" << Endl;
 			}
 			else
-				log::debug << L"Unable to find controller editor for type \"" << type_name(controllerData) << L"\"" << Endl;
+				T_DEBUG(L"Unable to find controller editor for type \"" << type_name(controllerData) << L"\"");
 		}
 	}
 }
@@ -671,9 +677,12 @@ Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter*
 		entityName = i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY");
 
 	if (entityAdapter->isExternal())
+		row->add(new ui::custom::GridItem(entityName, m_instanceGridFontBold/*, 1*/));
+	else if (entityAdapter->isLayer())
 	{
-		row->add(new ui::custom::GridItem(entityName/*, 1*/));
-		row->setFont(m_instanceGridFontBold);
+		row->add(new ui::custom::GridItem(entityName, m_instanceGridFontHuge/*, 4*/));
+		row->setBackground(Color4ub(230, 230, 230, 255));
+		row->setMinimumHeight(32);
 	}
 	else if (entityAdapter->isGroup())
 		row->add(new ui::custom::GridItem(entityName/*, 2, 3*/));
@@ -709,16 +718,10 @@ void SceneEditorPage::createInstanceGrid()
 {
 	m_instanceGrid->removeAllRows();
 
-	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters, SceneEditorContext::GfNoDescendants);
-
-	for (RefArray< EntityAdapter >::iterator j = entityAdapters.begin(); j != entityAdapters.end(); ++j)
+	const RefArray< EntityAdapter >& layerEntityAdapters = m_context->getLayerEntityAdapters();
+	for (RefArray< EntityAdapter >::const_iterator j = layerEntityAdapters.begin(); j != layerEntityAdapters.end(); ++j)
 	{
-		EntityAdapter* entityAdapter = *j;
-		if (entityAdapter->getParent())
-			continue;
-
-		Ref< ui::custom::GridRow > entityRow = createInstanceGridRow(entityAdapter);
+		Ref< ui::custom::GridRow > entityRow = createInstanceGridRow(*j);
 		if (entityRow)
 			m_instanceGrid->addRow(entityRow);
 	}
@@ -772,16 +775,15 @@ bool SceneEditorPage::addEntity()
 	// Get selected entity, must be a single item.
 	RefArray< EntityAdapter > selectedEntities;
 	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
-	{
 		parentGroupAdapter = selectedEntities[0]->getParentGroup();
-		if (!parentGroupAdapter)
-				return false;
-	}
-	else if (m_context->getSceneAsset()->getEntityData())
+
+	// Ensure add is valid.
+	if (!parentGroupAdapter)
+		return false;
+	if (parentGroupAdapter->isLocked(true))
 	{
-		parentGroupAdapter = m_context->getRootEntityAdapter();
-		if (!parentGroupAdapter)
-				return false;
+		log::error << L"Unable to add entity; layer or group is locked" << Endl;
+		return false;
 	}
 
 	// Select type of entity to create.
@@ -794,14 +796,9 @@ bool SceneEditorPage::addEntity()
 
 	m_context->getDocument()->push();
 
-	if (parentGroupAdapter)
-	{
-		Ref< EntityAdapter > entityAdapter = new EntityAdapter();
-		entityAdapter->setEntityData(entityData);
-		parentGroupAdapter->addChild(entityAdapter);
-	}
-	else
-		m_context->getSceneAsset()->setEntityData(entityData);
+	Ref< EntityAdapter > entityAdapter = new EntityAdapter();
+	entityAdapter->setEntityData(entityData);
+	parentGroupAdapter->addChild(entityAdapter);
 
 	updateScene();
 	createInstanceGrid();

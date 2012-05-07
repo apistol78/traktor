@@ -98,6 +98,7 @@ void PartitionMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
+			part.opaque,
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);

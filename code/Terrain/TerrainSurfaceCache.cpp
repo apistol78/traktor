@@ -81,7 +81,6 @@ TerrainSurfaceCache::TerrainSurfaceCache()
 //:	m_updateAllowedCount(0)
 :	m_clearCache(true)
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
-,	m_handleHeightfieldSize(render::getParameterHandle(L"HeightfieldSize"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
@@ -228,7 +227,7 @@ void TerrainSurfaceCache::get(
 	{
 		outRenderBlock = 0;
 		outTextureOffset = Vector4::zero();
-		log::debug << L"Unable to allocate terrain surface tile; out of memory" << Endl;
+		T_DEBUG(L"Unable to allocate terrain surface tile; out of memory");
 		return;
 	}
 
@@ -256,7 +255,6 @@ void TerrainSurfaceCache::get(
 
 		renderBlock->programParams->beginParameters(renderContext);
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
-		renderBlock->programParams->setFloatParameter(m_handleHeightfieldSize, float(heightMap->getWidth()));
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);

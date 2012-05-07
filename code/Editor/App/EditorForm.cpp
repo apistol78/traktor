@@ -1283,7 +1283,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	pipelineDepends->getDependencies(dependencies);
 
 	double elapsedDependencies = timerBuild.getElapsedTime();
-	log::debug << L"Scanned dependencies in " << elapsedDependencies << L" second(s)" << Endl;
+	T_DEBUG(L"Scanned dependencies in " << elapsedDependencies << L" second(s)");
 
 	// Build output.
 	StatusListener listener(m_buildProgress);
@@ -2196,7 +2196,7 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 			const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);
 			if (committed)
 			{
-				log::debug << (remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages..." << Endl;
+				T_DEBUG((remote ? L"Remotely" : L"Locally") << L" modified instance " << committed->getInstanceGuid().format() << L" detected; propagate to editor pages...");
 				m_eventIds.push_back(committed->getInstanceGuid());
 			}
 		}
@@ -2230,7 +2230,7 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 		m_eventIds.resize(0);
 		m_lockBuild.release();
 
-		log::debug << L"Database change(s) notified" << Endl;
+		T_DEBUG(L"Database change(s) notified");
 	}
 
 	// We need to update database view as another process has modified database.

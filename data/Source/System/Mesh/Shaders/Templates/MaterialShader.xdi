@@ -4,7 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>409</first>
+				<first>414</first>
 				<second>7</second>
 			</position>
 			<fragmentGuid>{4AC7418D-FF43-FE40-ADDC-33A162636FDC}</fragmentGuid>
@@ -27,7 +27,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>371</first>
+				<first>376</first>
 				<second>90</second>
 			</position>
 			<fragmentGuid>{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}</fragmentGuid>
@@ -50,7 +50,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>367</first>
+				<first>386</first>
 				<second>173</second>
 			</position>
 			<fragmentGuid>{77489017-FBE8-4A4F-B11A-FDE48C69E021}</fragmentGuid>
@@ -60,34 +60,34 @@
 					<optional>false</optional>
 				</item>
 				<item>
-					<name>T_WorldBinormal</name>
+					<name>T_ViewBinormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
-					<name>T_WorldNormal</name>
+					<name>T_ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
-					<name>T_WorldPosition</name>
+					<name>T_ViewPosition</name>
 					<optional>false</optional>
 				</item>
 				<item>
-					<name>T_WorldTangent</name>
+					<name>T_ViewTangent</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
 			<outputPins>
 				<item>
-					<name>T_WorldBinormal</name>
+					<name>T_ViewBinormal</name>
 				</item>
 				<item>
-					<name>T_WorldNormal</name>
+					<name>T_ViewNormal</name>
 				</item>
 				<item>
-					<name>T_WorldPosition</name>
+					<name>T_ViewPosition</name>
 				</item>
 				<item>
-					<name>T_WorldTangent</name>
+					<name>T_ViewTangent</name>
 				</item>
 			</outputPins>
 			<values/>
@@ -95,8 +95,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-27</first>
-				<second>359</second>
+				<first>-26</first>
+				<second>376</second>
 			</position>
 			<fragmentGuid>{AEBE83FB-68D4-9D45-A672-0A8487A197CD}</fragmentGuid>
 			<inputPins/>
@@ -119,28 +119,13 @@
 				<item>
 					<name>T_ViewTangent</name>
 				</item>
-				<item>
-					<name>T_WorldBinormal</name>
-				</item>
-				<item>
-					<name>T_WorldEyeDirection</name>
-				</item>
-				<item>
-					<name>T_WorldNormal</name>
-				</item>
-				<item>
-					<name>T_WorldPosition</name>
-				</item>
-				<item>
-					<name>T_WorldTangent</name>
-				</item>
 			</outputPins>
 			<values/>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>466</first>
+				<first>476</first>
 				<second>304</second>
 			</position>
 			<fragmentGuid>{57310F3A-FEB0-7644-B641-EC3876773470}</fragmentGuid>
@@ -158,7 +143,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>431</first>
+				<first>445</first>
 				<second>387</second>
 			</position>
 			<fragmentGuid>{859D3A98-EB16-0F4B-A766-34B6D65096AA}</fragmentGuid>
@@ -183,10 +168,6 @@
 			<inputPins>
 				<item>
 					<name>T_DiffuseTerm</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_EyeDirection</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -223,14 +204,6 @@
 				</item>
 				<item>
 					<name>T_ViewPosition</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_WorldNormal</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_WorldPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
@@ -271,62 +244,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_WorldBinormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_WorldBinormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_WorldNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_WorldNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_WorldPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_WorldPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_WorldTangent</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_WorldTangent</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item"/>
 				<name>T_DiffuseTerm</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>T_DiffuseTerm</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_WorldEyeDirection</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>T_EyeDirection</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -381,46 +304,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_ViewNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>T_ViewNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>T_ViewPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>T_ViewPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_WorldNormal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>T_WorldNormal</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>T_WorldPosition</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>T_WorldPosition</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>T_Reflection</name>
 			</source>
@@ -437,6 +320,66 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>T_ReflectionMap</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>T_ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_ViewBinormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewBinormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_ViewNormal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_ViewPosition</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>T_ViewTangent</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>T_ViewTangent</name>
 			</destination>
 		</item>
 	</edges>

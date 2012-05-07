@@ -1,117 +1,132 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.OutputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>919</first>
-				<second>472</second>
-			</position>
-			<name>T_WorldBinormal</name>
-		</item>
-		<item type="traktor.render.OutputPort">
-			<comment></comment>
-			<position>
-				<first>919</first>
-				<second>431</second>
-			</position>
-			<name>T_WorldTangent</name>
-		</item>
-		<item type="traktor.render.OutputPort">
-			<comment></comment>
-			<position>
-				<first>919</first>
-				<second>390</second>
-			</position>
-			<name>T_WorldNormal</name>
-		</item>
-		<item type="traktor.render.OutputPort">
-			<comment></comment>
-			<position>
-				<first>919</first>
-				<second>349</second>
-			</position>
-			<name>T_WorldPosition</name>
-		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
-			<position>
-				<first>552</first>
-				<second>381</second>
-			</position>
-			<name>T_WorldPosition</name>
-		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
-			<position>
-				<first>576</first>
-				<second>345</second>
+				<first>613</first>
+				<second>9</second>
 			</position>
 			<name>T_TexCoord</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>547</first>
-				<second>503</second>
+				<first>596</first>
+				<second>48</second>
 			</position>
-			<name>T_WorldBinormal</name>
+			<name>T_ViewPosition</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>551</first>
-				<second>456</second>
+				<first>599</first>
+				<second>87</second>
 			</position>
-			<name>T_WorldTangent</name>
+			<name>T_ViewNormal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
 			<position>
-				<first>555</first>
-				<second>418</second>
+				<first>596</first>
+				<second>126</second>
 			</position>
-			<name>T_WorldNormal</name>
+			<name>T_ViewTangent</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>592</first>
+				<second>165</second>
+			</position>
+			<name>T_ViewBinormal</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>893</first>
+				<second>48</second>
+			</position>
+			<name>T_ViewPosition</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>893</first>
+				<second>87</second>
+			</position>
+			<name>T_ViewNormal</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>893</first>
+				<second>126</second>
+			</position>
+			<name>T_ViewTangent</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>893</first>
+				<second>165</second>
+			</position>
+			<name>T_ViewBinormal</name>
 		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
 				<name>Input</name>
 			</destination>
 		</item>

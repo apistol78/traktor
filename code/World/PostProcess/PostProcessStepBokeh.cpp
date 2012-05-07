@@ -58,7 +58,6 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(
 	for (uint32_t i = 0; i < m_sources.size(); ++i)
 	{
 		sources[i].param = render::getParameterHandle(m_sources[i].param);
-		sources[i].paramSize = render::getParameterHandle(m_sources[i].param + L"_Size");
 		sources[i].source = render::getParameterHandle(m_sources[i].source);
 		sources[i].index = m_sources[i].index;
 	}
@@ -202,15 +201,7 @@ void PostProcessStepBokeh::InstanceBokeh::render(
 	{
 		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
 		if (source)
-		{
 			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
-			m_shader->setVectorParameter(i->paramSize, Vector4(
-				float(source->getWidth()),
-				float(source->getHeight()),
-				0.0f,
-				0.0f
-			));
-		}
 	}
 
 	m_shader->draw(

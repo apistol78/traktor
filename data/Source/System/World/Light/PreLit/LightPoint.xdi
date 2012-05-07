@@ -47,7 +47,7 @@
 				<second>27</second>
 			</position>
 			<parameterName>DepthMap</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -150,7 +150,7 @@
 				<second>53</second>
 			</position>
 			<parameterName>NormalMap</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">

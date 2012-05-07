@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_version = 2;
+const uint32_t c_version = 3;
 
 		}
 
@@ -46,6 +46,16 @@ const std::vector< Mesh::Triangle >& Mesh::getHullTriangles() const
 	return m_hullTriangles;
 }
 
+void Mesh::setOffset(const Vector4& offset)
+{
+	m_offset = offset;
+}
+
+const Vector4& Mesh::getOffset() const
+{
+	return m_offset;
+}
+
 bool Mesh::read(IStream* stream)
 {
 	Reader rd(stream);
@@ -77,6 +87,12 @@ bool Mesh::read(IStream* stream)
 	if (hullTriangleCount > 0)
 		rd.read(&m_hullTriangles[0], hullTriangleCount, sizeof(Triangle));
 
+	float offset[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
+	rd >> offset[0];
+	rd >> offset[1];
+	rd >> offset[2];
+	m_offset = Vector4::loadUnaligned(offset);
+
 	return true;
 }
 
@@ -97,6 +113,12 @@ bool Mesh::write(IStream* stream)
 
 	if (!m_hullTriangles.empty())
 		wr.write(&m_hullTriangles[0], int(m_hullTriangles.size()), sizeof(Triangle));
+
+	float offset[4];
+	m_offset.storeUnaligned(offset);
+	wr << offset[0];
+	wr << offset[1];
+	wr << offset[2];
 
 	return true;
 }

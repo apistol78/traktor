@@ -118,7 +118,7 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 
 	// Render previously built frame.
 	m_worldRenderer->render(
-		world::WrfDepthMap | world::WrfShadowMap,
+		world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap,
 		frame,
 		eye
 	);
@@ -227,6 +227,11 @@ world::IEntitySchema* WorldLayer::getEntitySchema() const
 void WorldLayer::setControllerEnable(bool controllerEnable)
 {
 	m_controllerEnable = controllerEnable;
+}
+
+world::PostProcess* WorldLayer::getPostProcess() const
+{
+	return m_postProcess;
 }
 
 bool WorldLayer::getViewPosition(const Vector4& worldPosition, Vector4& outViewPosition) const

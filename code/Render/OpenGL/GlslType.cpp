@@ -49,8 +49,11 @@ std::wstring glsl_type_name(GlslType type)
 		L"vec3",
 		L"vec4",
 		L"mat4",
+		L"tex",
+		L"tex",
 		L"tex"
 	};
+	T_ASSERT (type < sizeof_array(c));
 	return c[type];
 }
 
@@ -64,8 +67,11 @@ int32_t glsl_type_width(GlslType type)
 		3,
 		4,
 		16,
+		0,
+		0,
 		0
 	};
+	T_ASSERT (type < sizeof_array(w));
 	return w[type];
 }
 
@@ -86,6 +92,22 @@ GlslType glsl_from_data_type(DataType type)
 		GtFloat2,
 		GtFloat4
 	};
+	T_ASSERT (type < sizeof_array(c));
+	return c[type];
+}
+
+GlslType glsl_from_parameter_type(ParameterType type)
+{
+	const GlslType c[] =
+	{
+		GtFloat,
+		GtFloat4,
+		GtFloat4x4,
+		GtTexture2D,
+		GtTexture3D,
+		GtTextureCube
+	};
+	T_ASSERT (type < sizeof_array(c));
 	return c[type];
 }
 

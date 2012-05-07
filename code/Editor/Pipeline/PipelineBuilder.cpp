@@ -67,13 +67,13 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		updateLocalHashes(*i);
 
-	log::debug << L"Pipeline build; analyzed local hashes in " << int32_t(timer.getDeltaTime() * 1000) << L" ms" << Endl;
+	T_DEBUG(L"Pipeline build; analyzed local hashes in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		updateBuildReason(*i, rebuild);
 
-	log::debug << L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms" << Endl;
+	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
 	m_db->endTransaction();
 
@@ -130,7 +130,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 
 	m_db->endTransaction();
 
-	log::debug << L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms" << Endl;
+	T_DEBUG(L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms");
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())

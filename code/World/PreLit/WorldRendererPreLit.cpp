@@ -327,6 +327,7 @@ bool WorldRendererPreLit::create(
 
 			case WorldRenderSettings::SpTrapezoid:
 				m_shadowProjection = new TrapezoidShadowProjection(m_settings);
+				break;
 
 			default:
 			case WorldRenderSettings::SpUniform:
@@ -499,12 +500,8 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 	// Build depth context.
 	{
-		Matrix44 viewInverse = worldRenderView.getView().inverse();
-		Vector4 eyePosition = viewInverse.translation();
-
 		WorldRenderView depthRenderView = worldRenderView;
 		depthRenderView.resetLights();
-		depthRenderView.setEyePosition(eyePosition);
 
 		WorldRenderPassPreLit depthPass(
 			ms_techniqueDepth,
@@ -597,7 +594,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	}
 
 	// Render normal map.
-	if ((flags & WrfDepthMap) != 0)
+	if ((flags & WrfNormalMap) != 0)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Normal");
 		if (m_renderView->begin(m_normalTargetSet, 0))
@@ -611,8 +608,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
-	// Render light map.
-	if (f.lightCount > 0)
+	// Render shadow and light maps.
+	if ((flags & (WrfShadowMap | WrfLightMap)) != 0 && f.lightCount > 0)
 	{
 		for (uint32_t i = 0; i < f.lightCount; ++i)
 		{
@@ -693,54 +690,61 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 				T_RENDER_POP_MARKER(m_renderView);
 			}
 
-			T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive");
-			if (m_renderView->begin(m_lightMapTargetSet, 0))
+			if ((flags & WrfLightMap) != 0)
 			{
-				if (i == 0)
+				T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive");
+				if (m_renderView->begin(m_lightMapTargetSet, 0))
 				{
-					const float lightClear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-					m_renderView->clear(render::CfColor, lightClear, 0.0f, 0);
+					if (i == 0)
+					{
+						const float lightClear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+						m_renderView->clear(render::CfColor, lightClear, 0.0f, 0);
+					}
+					m_lightRenderer->render(
+						m_renderView,
+						f.projection,
+						f.view,
+						f.lights[i],
+						m_depthTargetSet->getColorTexture(0),
+						m_normalTargetSet->getColorTexture(0),
+						f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
+						f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getColorTexture(0) : 0
+					);
+					m_renderView->end();
 				}
-				m_lightRenderer->render(
-					m_renderView,
-					f.projection,
-					f.view,
-					f.eyePosition,
-					f.lights[i],
-					m_depthTargetSet->getColorTexture(0),
-					m_normalTargetSet->getColorTexture(0),
-					f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
-					f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getColorTexture(0) : 0
-				);
-				m_renderView->end();
+				T_RENDER_POP_MARKER(m_renderView);
 			}
-			T_RENDER_POP_MARKER(m_renderView);
 		}
 	}
 	else
 	{
 		// No active lights; ensure light map is cleared.
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Light map");
-		if (m_renderView->begin(m_lightMapTargetSet, 0))
+		if ((flags & WrfLightMap) != 0)
 		{
-			const float lightClear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-			m_renderView->clear(render::CfColor, lightClear, 0.0f, 0);
-			m_renderView->end();
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Light map");
+			if (m_renderView->begin(m_lightMapTargetSet, 0))
+			{
+				const float lightClear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
+				m_renderView->clear(render::CfColor, lightClear, 0.0f, 0);
+				m_renderView->end();
+			}
+			T_RENDER_POP_MARKER(m_renderView);
 		}
+	}
+
+	// Render opaque visuals.
+	if ((flags & WrfVisualOpaque) != 0)
+	{
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
+		f.visual->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
-	// Render visuals.
-	if ((flags & (WrfVisualOpaque | WrfVisualAlphaBlend)) != 0)
+	// Render alpha blend visuals.
+	if ((flags & (WrfVisualAlphaBlend)) != 0)
 	{
-		uint32_t renderFlags = render::RfOverlay;
-
-		if (flags & WrfVisualOpaque)
-			renderFlags |= render::RfOpaque;
-		if (flags & WrfVisualAlphaBlend)
-			renderFlags |= render::RfAlphaBlend;
-
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual");
+		uint32_t renderFlags = render::RfOverlay | render::RfAlphaBlend;
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual alpha blend");
 		f.visual->getRenderContext()->render(m_renderView, renderFlags, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
@@ -775,7 +779,6 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
 
-	f.eyePosition = worldRenderView.getEyePosition();
 	f.lightCount = worldRenderView.getLightCount();
 
 	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
@@ -823,7 +826,6 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				shadowRenderView.setProjection(shadowLightProjection);
 				shadowRenderView.setSquareProjection(shadowLightSquareProjection);
 				shadowRenderView.setView(shadowLightView);
-				shadowRenderView.setEyePosition(f.eyePosition);
 				shadowRenderView.setViewFrustum(shadowFrustum);
 				shadowRenderView.setCullFrustum(shadowFrustum);
 				shadowRenderView.setTimes(
@@ -853,7 +855,6 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
 	Frame& f = m_frames[frame];
-	f.eyePosition = worldRenderView.getEyePosition();
 	f.lightCount = worldRenderView.getLightCount();
 	for (int32_t i = 0; i < worldRenderView.getLightCount(); ++i)
 	{
@@ -866,13 +867,10 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 {
 	Frame& f = m_frames[frame];
 
-	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
-	Vector4 eyePosition = viewInverse.translation();
 
 	worldRenderView.resetLights();
-	worldRenderView.setEyePosition(eyePosition);
 
 	WorldRenderPassPreLit defaultPreLitPass(
 		ms_techniquePreLitColor,
@@ -882,7 +880,8 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 		m_settings.fogRange,
 		m_fogColor,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
-		m_lightMapTargetSet->getColorTexture(0)
+		m_lightMapTargetSet->getColorTexture(0),
+		m_normalTargetSet->getColorTexture(0)
 	);
 	f.visual->build(worldRenderView, defaultPreLitPass, entity);
 	f.visual->flush(worldRenderView, defaultPreLitPass);

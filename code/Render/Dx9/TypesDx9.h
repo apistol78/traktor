@@ -71,8 +71,14 @@ struct ProgramScalar
 
 struct ProgramSampler
 {
-	uint16_t stage;
 	uint16_t texture;
+	uint16_t stage;	//!< Stage index to bind texture into.
+};
+
+struct ProgramTexture
+{
+	uint16_t texture;
+	uint16_t sizeIndex;	//!< Constant index for texture size.
 };
 
 //@}

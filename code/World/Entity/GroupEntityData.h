@@ -31,6 +31,8 @@ public:
 
 	void removeAllEntityData();
 
+	void setEntityData(const RefArray< EntityData >& entityData);
+
 	RefArray< EntityData >& getEntityData();
 
 	const RefArray< EntityData >& getEntityData() const;

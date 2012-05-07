@@ -2,6 +2,7 @@
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
 #include "Script/IScriptManager.h"
+#include "World/PostProcess/PostProcess.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityData.h"
@@ -26,6 +27,11 @@ Transform world_Entity_getTransform(world::Entity* this_)
 	Transform transform;
 	this_->getTransform(transform);
 	return transform;
+}
+
+void world_PostProcess_setParameter(world::PostProcess* this_, const std::wstring& name, float value)
+{
+	this_->setParameter(render::getParameterHandle(name), value);
 }
 
 		}
@@ -113,6 +119,11 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< world::TransientEntity > > classTransientEntity = new script::AutoScriptClass< world::TransientEntity >();
 	classTransientEntity->addConstructor< world::GroupEntity*, world::Entity*, float >();
 	scriptManager->registerClass(classTransientEntity);
+
+	Ref< script::AutoScriptClass< world::PostProcess > > classPostProcess = new script::AutoScriptClass< world::PostProcess >();
+	classPostProcess->addMethod(L"setParameter", &world_PostProcess_setParameter);
+	classPostProcess->addMethod(L"requireHighRange", &world::PostProcess::requireHighRange);
+	scriptManager->registerClass(classPostProcess);
 }
 
 	}

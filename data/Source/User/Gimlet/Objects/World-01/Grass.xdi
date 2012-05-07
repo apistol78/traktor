@@ -65,7 +65,6 @@
 				<first>393</first>
 				<second>350</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -95,14 +94,14 @@
 				<second>245</second>
 			</position>
 			<external>{9C5939D5-4F97-0D40-9030-ED7D76197BA8}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
 				<first>333</first>
 				<second>53</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -117,7 +116,8 @@
 				<second>-17</second>
 			</position>
 			<external>{E267A91E-70C4-CE4E-B238-F2F4EA628998}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Scalar">
 			<comment>
 			<![CDATA[
@@ -245,14 +245,14 @@ Tag_DiffuseTerm
 				<second>-142</second>
 			</position>
 			<external>{63D1D132-88DA-6547-B6E1-E9E47CC75ACC}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
 				<first>738</first>
 				<second>-23</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
@@ -282,14 +282,14 @@ Tag_DiffuseTerm
 				<second>155</second>
 			</position>
 			<external>{AEDD10E7-B1EE-BC4A-8209-7CCFEAF1F2D9}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
 				<first>399</first>
 				<second>237</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>

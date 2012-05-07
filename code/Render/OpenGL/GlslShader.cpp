@@ -13,12 +13,14 @@ GlslShader::GlslShader(ShaderType shaderType)
 	pushOutputStream(BtUniform, new StringOutputStream());
 	pushOutputStream(BtInput, new StringOutputStream());
 	pushOutputStream(BtOutput, new StringOutputStream());
+	pushOutputStream(BtScript, new StringOutputStream());
 	pushOutputStream(BtBody, new StringOutputStream());
 }
 
 GlslShader::~GlslShader()
 {
 	popOutputStream(BtBody);
+	popOutputStream(BtScript);
 	popOutputStream(BtOutput);
 	popOutputStream(BtInput);
 	popOutputStream(BtUniform);
@@ -102,7 +104,17 @@ const std::set< std::wstring >& GlslShader::getUniforms() const
 {
 	return m_uniforms;
 }
-        
+
+bool GlslShader::defineScript(const std::wstring& signature)
+{
+	std::set< std::wstring >::iterator i = m_scriptSignatures.find(signature);
+	if (i != m_scriptSignatures.end())
+		return false;
+
+	m_scriptSignatures.insert(signature);
+	return true;
+}
+
 bool GlslShader::defineSamplerTexture(const std::wstring& textureName)
 {
     std::set< std::wstring >::const_iterator i = m_textures.find(textureName);
@@ -207,6 +219,8 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 	ss <<getOutputStream(BtInput).str();
 	ss << Endl;
 	ss << getOutputStream(BtOutput).str();
+	ss << Endl;
+	ss << getOutputStream(BtScript).str();
 	ss << Endl;
 	ss << L"void main()" << Endl;
 	ss << L"{" << Endl;

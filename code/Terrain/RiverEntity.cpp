@@ -184,7 +184,7 @@ void RiverEntity::render(
 
 	renderBlock->programParams->beginParameters(renderContext);
 	
-	worldRenderPass.setProgramParameters(renderBlock->programParams);
+	worldRenderPass.setProgramParameters(renderBlock->programParams, false);
 
 	renderBlock->programParams->endParameters(renderContext);
 

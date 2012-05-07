@@ -40,7 +40,7 @@ bool Transaction::create(const Guid& transactionGuid)
 	m_lock = new Mutex(transactionGuid);
 	if (!m_lock->acquire(c_transactionTimeout))
 	{
-		log::debug << L"Unable to create transaction \"" << m_transactionGuid.format() << L"\"; already exclusively locked" << Endl;
+		T_DEBUG(L"Unable to create transaction \"" << m_transactionGuid.format() << L"\"; already exclusively locked");
 		m_lock->release();
 		m_lock = 0;
 		return false;
@@ -52,7 +52,7 @@ bool Transaction::create(const Guid& transactionGuid)
 #endif
 
 	m_transactionGuid = transactionGuid;
-	log::debug << L"Transaction \"" << m_transactionGuid.format() << L"\" created successfully" << Endl;
+	T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" created successfully");
 
 	return true;
 }
@@ -73,7 +73,7 @@ void Transaction::destroy()
 	m_locked = false;
 #endif
 
-	log::debug << L"Transaction \"" << m_transactionGuid.format() << L"\" destroyed" << Endl;
+	T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" destroyed");
 }
 
 void Transaction::add(Action* action)
@@ -108,9 +108,9 @@ bool Transaction::commit(Context* context)
 		m_actions[i]->clean(context);
 
 	if (result)
-		log::debug << L"Transaction \"" << m_transactionGuid.format() << L"\" commited successfully" << Endl;
+		T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" commited successfully");
 	else
-		log::debug << L"Transaction \"" << m_transactionGuid.format() << L"\" failed to commit" << Endl;
+		T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" failed to commit");
 
 	return result;
 }

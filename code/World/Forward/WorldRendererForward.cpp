@@ -280,6 +280,7 @@ bool WorldRendererForward::create(
 
 			case WorldRenderSettings::SpTrapezoid:
 				m_shadowProjection = new TrapezoidShadowProjection(m_settings);
+				break;
 
 			default:
 			case WorldRenderSettings::SpUniform:
@@ -400,12 +401,8 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
-		Matrix44 viewInverse = worldRenderView.getView().inverse();
-		Vector4 eyePosition = viewInverse.translation();
-
 		WorldRenderView depthRenderView = worldRenderView;
 		depthRenderView.resetLights();
-		depthRenderView.setEyePosition(eyePosition);
 
 		WorldRenderPassForward pass(
 			s_techniqueDepth,
@@ -659,7 +656,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		shadowRenderView.setProjection(shadowLightProjection);
 		shadowRenderView.setSquareProjection(shadowLightSquareProjection);
 		shadowRenderView.setView(shadowLightView);
-		shadowRenderView.setEyePosition(eyePosition);
 		shadowRenderView.setViewFrustum(shadowFrustum);
 		shadowRenderView.setCullFrustum(shadowFrustum);
 		shadowRenderView.setTimes(
@@ -682,7 +678,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 
 	// Render visuals.
 	worldRenderView.resetLights();
-	worldRenderView.setEyePosition(eyePosition);
 
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
@@ -706,11 +701,7 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 {
 	Frame& f = m_frames[frame];
 
-	Matrix44 viewInverse = worldRenderView.getView().inverseOrtho();
-	Vector4 eyePosition = viewInverse.translation();
-
 	worldRenderView.resetLights();
-	worldRenderView.setEyePosition(eyePosition);
 
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,

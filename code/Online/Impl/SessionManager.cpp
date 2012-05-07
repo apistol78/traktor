@@ -29,7 +29,7 @@ ServiceType waitUntilReady(const ServiceType& service)
 
 	if (!service->ready())
 	{
-		log::debug << L"Service \"" << type_name(service) << L"\t not ready; waiting..." << Endl;
+		T_DEBUG(L"Service \"" << type_name(service) << L"\t not ready; waiting...");
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 		do 
 		{

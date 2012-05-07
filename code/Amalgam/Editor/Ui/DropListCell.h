@@ -25,7 +25,6 @@ protected:
 private:
 	Ref< HostEnumerator > m_hostEnumerator;
 	Ref< TargetInstance > m_instance;
-	int32_t m_selected;
 	ui::Point m_menuPosition;
 };
 

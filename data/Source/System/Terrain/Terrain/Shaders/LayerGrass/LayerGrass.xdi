@@ -65,7 +65,6 @@
 				<first>623</first>
 				<second>306</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
@@ -94,7 +93,6 @@
 				<first>623</first>
 				<second>445</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
@@ -108,7 +106,6 @@
 				<first>623</first>
 				<second>375</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
@@ -155,7 +152,8 @@
 				<second>71</second>
 			</position>
 			<external>{BCC53FF0-E6FB-9F45-94A7-2530ECCF8EAA}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Texture">
 			<comment/>
 			<position>
@@ -163,7 +161,8 @@
 				<second>193</second>
 			</position>
 			<external>{FD65BF9E-294E-4845-A781-694FB1A3E737}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Texture">
 			<comment/>
 			<position>
@@ -171,7 +170,8 @@
 				<second>484</second>
 			</position>
 			<external>{146E83F1-B501-DB42-9888-F1A3DD679925}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">

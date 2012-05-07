@@ -8,18 +8,20 @@
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/Editor/Camera.h"
+#include "Scene/Editor/DefaultEntityEditor.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/EntityAdapterBuilder.h"
+#include "Scene/Editor/LayerEntityData.h"
+#include "Scene/Editor/LayerEntityEditor.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Event.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/EntityData.h"
 #include "World/Entity/EntitySchema.h"
+#include "World/Entity/GroupEntity.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
@@ -31,32 +33,18 @@ namespace traktor
 
 // Find adapter by traverse entity adapter hierarchy.
 template < typename Predicate >
-EntityAdapter* findAdapter(EntityAdapter* entityAdapter, Predicate predicate)
+EntityAdapter* findAdapter(const RefArray< EntityAdapter >& entityAdapters, Predicate predicate)
 {
-	if (predicate(entityAdapter))
-		return entityAdapter;
-
-	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
-	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		EntityAdapter* foundEntityAdapter = findAdapter(*i, predicate);
+		if (predicate(*i))
+			return *i;
+
+		EntityAdapter* foundEntityAdapter = findAdapter((*i)->getChildren(), predicate);
 		if (foundEntityAdapter)
 			return foundEntityAdapter;
 	}
 
-	return 0;
-}
-
-// Find child adapter.
-template < typename Predicate >
-EntityAdapter* findChildAdapter(EntityAdapter* entityAdapter, Predicate predicate)
-{
-	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
-	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
-	{
-		if (predicate(*i))
-			return *i;
-	}
 	return 0;
 }
 
@@ -152,9 +140,8 @@ void SceneEditorContext::destroy()
 		m_cameras[i] = 0;
 	m_sceneAsset = 0;
 	m_scene = 0;
-	m_rootEntityAdapter = 0;
+	m_layerEntityAdapters.clear();
 	m_followEntityAdapter = 0;
-	m_renderEntityStack.clear();
 }
 
 void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
@@ -292,6 +279,8 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 
 void SceneEditorContext::buildEntities()
 {
+	m_scene = 0;
+
 	if (m_sceneAsset)
 	{
 		// Create entity editor factories.
@@ -311,11 +300,56 @@ void SceneEditorContext::buildEntities()
 				entityBuilder->addFactory(*j);
 		}
 
-		// Create entity schema and build root instance.
+		// Create entity schema and prepare entity builder.
 		Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
-
 		entityBuilder->begin(entitySchema);
-		Ref< world::Entity > rootEntity = entityBuilder->create(m_sceneAsset->getEntityData());
+
+		// Create root group entity as scene instances doesn't have a concept of layers.
+		Ref< world::GroupEntity > rootGroupEntity = new world::GroupEntity();
+
+		// Create entities from scene layers.
+		const RefArray< LayerEntityData >& layers = m_sceneAsset->getLayers();
+
+		m_layerEntityAdapters.resize(layers.size());
+		for (uint32_t i = 0; i < layers.size(); ++i)
+		{
+			LayerEntityData* layerEntityData = layers[i];
+			T_ASSERT (layerEntityData);
+
+			// If possible reuse layer entity adapter.
+			if (!m_layerEntityAdapters[i])
+			{
+				m_layerEntityAdapters[i] = new EntityAdapter();
+
+				// Copy initial state from data.
+				m_layerEntityAdapters[i]->setVisible(layerEntityData->isVisible());
+				m_layerEntityAdapters[i]->setLocked(layerEntityData->isLocked());
+			}
+
+			// Create a layer group entity.
+			Ref< world::GroupEntity > layerEntity = new world::GroupEntity();
+			m_layerEntityAdapters[i]->setEntityData(layerEntityData);
+			m_layerEntityAdapters[i]->setEntity(layerEntity);
+			m_layerEntityAdapters[i]->setEntityEditor(new LayerEntityEditor(layerEntityData));
+		
+			// Create layer's child entities.
+			const RefArray< world::EntityData >& layerChildEntityData = layerEntityData->getEntityData();
+			for (RefArray< world::EntityData >::const_iterator j = layerChildEntityData.begin(); j != layerChildEntityData.end(); ++j)
+			{
+				Ref< world::Entity > entity = entityBuilder->create(*j);
+				if (!entity)
+					continue;
+
+				Ref< EntityAdapter > entityAdapter = entityBuilder->getRootAdapter();
+				T_ASSERT (entityAdapter->getEntity() == entity);
+
+				layerEntity->addEntity(entity);
+				m_layerEntityAdapters[i]->link(entityAdapter);
+			}
+
+			// Add layer to root entity.
+			rootGroupEntity->addEntity(layerEntity);
+		}
 
 		// Update scene controller also.
 		Ref< ISceneController > controller;
@@ -323,10 +357,7 @@ void SceneEditorContext::buildEntities()
 			controller = m_sceneAsset->getControllerData()->createController(entityBuilder, entitySchema);
 
 		entityBuilder->end();
-		log::debug << entityBuilder->getAdapterCount() << L" entity adapter(s) built" << Endl;
-
-		// Save new root entity adapter.
-		m_rootEntityAdapter = entityBuilder->getRootAdapter();
+		T_DEBUG(entityBuilder->getAdapterCount() << L" entity adapter(s) built");
 
 		// Bind post process settings.
 		resource::Proxy< world::PostProcessSettings > postProcessSettings;
@@ -336,15 +367,10 @@ void SceneEditorContext::buildEntities()
 		m_scene = new Scene(
 			controller,
 			entitySchema,
-			rootEntity,
+			rootGroupEntity,
 			m_sceneAsset->getWorldRenderSettings(),
 			postProcessSettings
 		);
-	}
-	else
-	{
-		m_scene = 0;
-		m_rootEntityAdapter = 0;
 	}
 
 	raisePostBuild();
@@ -375,13 +401,11 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 
 	outEntityAdapters.resize(0);
 
-	if (!m_rootEntityAdapter)
+	if (m_layerEntityAdapters.empty())
 		return 0;
 
 	std::stack< range_t > stack;
-
-	RefArray< EntityAdapter > rootEntityAdapters(1);
-	rootEntityAdapters[0] = m_rootEntityAdapter;
+	RefArray< EntityAdapter > rootEntityAdapters = m_layerEntityAdapters;
 
 	stack.push(std::make_pair(rootEntityAdapters.begin(), rootEntityAdapters.end()));
 	while (!stack.empty())
@@ -427,12 +451,12 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 
 EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
 {
-	return findAdapter(m_rootEntityAdapter, FindFromEntity(entity));
+	return findAdapter(m_layerEntityAdapters, FindFromEntity(entity));
 }
 
 EntityAdapter* SceneEditorContext::findAdapterFromType(const TypeInfo& entityDataType) const
 {
-	return findAdapter(m_rootEntityAdapter, FindFromType(entityDataType));
+	return findAdapter(m_layerEntityAdapters, FindFromType(entityDataType));
 }
 
 EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const
@@ -472,6 +496,33 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 	return minEntityAdapter;
 }
 
+uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray< EntityAdapter >& outEntityAdapters, bool onlyPickable) const
+{
+	RefArray< EntityAdapter > entityAdapters;
+	getEntities(entityAdapters);
+
+	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	{
+		// Must be unlocked, visible and no child of external.
+		if ((*i)->isLocked() || !(*i)->isVisible() || (*i)->isChildOfExternal())
+			continue;
+
+		IEntityEditor* entityEditor = (*i)->getEntityEditor();
+		if (!entityEditor)
+			continue;
+
+		// Do not trace non-pickable.
+		if (onlyPickable && !entityEditor->isPickable())
+			continue;
+
+		// Query if entity inside frustum.
+		if (entityEditor->queryFrustum(worldFrustum))
+			outEntityAdapters.push_back(*i);
+	}
+
+	return outEntityAdapters.size();
+}
+
 void SceneEditorContext::cloneSelected()
 {
 	RefArray< EntityAdapter > selectedEntityAdapters;
@@ -498,38 +549,6 @@ void SceneEditorContext::cloneSelected()
 
 	buildEntities();
 	raiseSelect(this);
-}
-
-EntityAdapter* SceneEditorContext::beginRenderEntity(const world::Entity* entity)
-{
-	EntityAdapter* currentRenderAdapter = m_rootEntityAdapter;
-
-	if (!m_renderEntityStack.empty())
-		currentRenderAdapter = m_renderEntityStack.back();
-
-	if (currentRenderAdapter)
-	{
-		EntityAdapter* renderEntityAdapter = 0;
-
-		if (currentRenderAdapter->getEntity() == entity)
-			renderEntityAdapter = currentRenderAdapter;
-		else
-			renderEntityAdapter = findChildAdapter(currentRenderAdapter, FindFromEntity(entity));
-
-		m_renderEntityStack.push_back(renderEntityAdapter);
-		return renderEntityAdapter;
-	}
-	else
-	{
-		m_renderEntityStack.push_back(0);
-		return 0;
-	}
-}
-
-void SceneEditorContext::endRenderEntity()
-{
-	T_ASSERT (!m_renderEntityStack.empty());
-	m_renderEntityStack.pop_back();
 }
 
 void SceneEditorContext::setDebugTexture(uint32_t index, render::ITexture* debugTexture)

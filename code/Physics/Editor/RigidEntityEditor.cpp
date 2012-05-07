@@ -30,17 +30,6 @@ void RigidEntityEditor::entitySelected(bool selected)
 		m_showHull = false;
 }
 
-void RigidEntityEditor::applyModifier(const ApplyParams& params)
-{
-	// Apply default modifier.
-	scene::DefaultEntityEditor::applyModifier(params);
-
-	// Ensure body is enabled as it might have gone to sleep.
-	Ref< RigidEntity > rigidEntity = checked_type_cast< RigidEntity* >(getEntityAdapter()->getEntity());
-	if (rigidEntity->getBody())
-		rigidEntity->getBody()->setActive(true);
-}
-
 bool RigidEntityEditor::handleCommand(const ui::Command& command)
 {
 	if (command == L"Physics.ToggleMeshTriangles")

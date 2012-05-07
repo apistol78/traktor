@@ -1,9 +1,11 @@
-#include "Render/Dx9/HlslEmitter.h"
-#include "Render/Dx9/HlslContext.h"
-#include "Render/VertexElement.h"
-#include "Render/Shader/Nodes.h"
-#include "Core/Misc/String.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
+#include "Core/Misc/String.h"
+#include "Render/VertexElement.h"
+#include "Render/Dx9/HlslContext.h"
+#include "Render/Dx9/HlslEmitter.h"
+#include "Render/Shader/Script.h"
+#include "Render/Shader/Nodes.h"
 
 namespace traktor
 {
@@ -352,15 +354,13 @@ bool emitFragmentPosition(HlslContext& cx, FragmentPosition* node)
 
 bool emitIndexedUniform(HlslContext& cx, IndexedUniform* node)
 {
-	const HlslType c_parameterType[] = { HtFloat, HtFloat4, HtFloat4x4 };
-
 	HlslVariable* index = cx.emitInput(node, L"Index");
 	if (!index)
 		return false;
 
 	HlslVariable* out = cx.getShader().createTemporaryVariable(
 		node->findOutputPin(L"Output"),
-		c_parameterType[node->getParameterType()]
+		hlsl_from_parameter_type(node->getParameterType())
 	);
 
 	StringOutputStream& fb = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -925,7 +925,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
 	HlslVariable* texture = cx.emitInput(node, L"Texture");
-	if (!texture || texture->getType() != HtTexture)
+	if (!texture || texture->getType() < HtTexture2D)
 		return false;
 
 	HlslVariable* texCoord = cx.emitInput(node, L"TexCoord");
@@ -934,26 +934,43 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 
+	bool needAddressW = bool(texture->getType() > HtTexture2D);
+
+	// Calculate sampler hash.
+	Adler32 samplerHash;
+	samplerHash.feed(texture->getName());
+	samplerHash.feed(node->getMinFilter());
+	samplerHash.feed(node->getMipFilter());
+	samplerHash.feed(node->getMagFilter());
+	samplerHash.feed(node->getAddressU());
+	samplerHash.feed(node->getAddressV());
+	if (needAddressW)
+		samplerHash.feed(node->getAddressW());
+
+	// Register sampler, return stage index of sampler.
 	int32_t stage;
-	bool defineSampler = cx.getShader().defineSamplerTexture(texture->getName(), stage);
+	bool defineSampler = cx.getShader().defineSampler(samplerHash.get(), texture->getName(), stage);
+
+	// Generate sampler name.
 	std::wstring samplerName = L"sampler_" + toString(stage);
 
+	// Define sampler in HLSL if required.
 	if (defineSampler)
 	{
 		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
 
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case HtTexture2D:
 			fu << L"sampler " << samplerName << L" : register(s" << stage << L");" << Endl;
 			break;
 
-		case Sampler::LuCube:
-			fu << L"samplerCUBE " << samplerName << L" : register(s" << stage << L");" << Endl;
+		case HtTexture3D:
+			fu << L"sampler3D " << samplerName << L" : register(s" << stage << L");" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			fu << L"sampler3D " << samplerName << L" : register(s" << stage << L");" << Endl;
+		case HtTextureCube:
+			fu << L"samplerCUBE " << samplerName << L" : register(s" << stage << L");" << Endl;
 			break;
 		}
 
@@ -965,7 +982,8 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 			state.setPixelSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[node->getMagFilter()]);
 			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
 			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
-			state.setPixelSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
+			if (needAddressW)
+				state.setPixelSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
 			state.setPixelSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
 		}
 		else
@@ -976,42 +994,43 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 			state.setVertexSamplerState(stage, D3DSAMP_MAGFILTER, d3dMinMagFilter[node->getMagFilter()]);
 			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSU, d3dAddress[node->getAddressU()]);
 			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSV, d3dAddress[node->getAddressV()]);
-			state.setVertexSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
+			if (needAddressW)
+				state.setVertexSamplerState(stage, D3DSAMP_ADDRESSW, d3dAddress[node->getAddressW()]);
 			state.setVertexSamplerState(stage, D3DSAMP_BORDERCOLOR, 0xffffffff);
 		}
 	}
 
 	if (cx.inPixel())
 	{
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case HtTexture2D:
 			assign(f, out) << L"tex2D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
-		case Sampler::LuCube:
-			assign(f, out) << L"texCUBE(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
+		case HtTexture3D:
+			assign(f, out) << L"tex3D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			assign(f, out) << L"tex3D(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
+		case HtTextureCube:
+			assign(f, out) << L"texCUBE(" << samplerName << L", " << texCoord->getName() << L");" << Endl;
 			break;
 		}
 	}
 	if (cx.inVertex())
 	{
-		switch (node->getLookup())
+		switch (texture->getType())
 		{
-		case Sampler::LuSimple:
+		case HtTexture2D:
 			assign(f, out) << L"tex2Dlod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
 			break;
 
-		case Sampler::LuCube:
-			assign(f, out) << L"texCUBElod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
+		case HtTexture3D:
+			assign(f, out) << L"tex3Dlod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
 			break;
 
-		case Sampler::LuVolume:
-			assign(f, out) << L"tex3Dlod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
+		case HtTextureCube:
+			assign(f, out) << L"texCUBElod(" << samplerName << L", " << texCoord->cast(HtFloat4) << L");" << Endl;
 			break;
 		}
 	}
@@ -1024,6 +1043,101 @@ bool emitScalar(HlslContext& cx, Scalar* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
 	f << L"const float " << out->getName() << L" = " << node->get() << L";" << Endl;
+	return true;
+}
+
+bool emitScript(HlslContext& cx, Script* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+
+	// Get platform specific script from node.
+	std::wstring script = node->getScript(L"DX9");
+	if (script.empty())
+		return false;
+
+	// Emit input and outputs.
+	int32_t inputPinCount = node->getInputPinCount();
+	int32_t outputPinCount = node->getOutputPinCount();
+
+	RefArray< HlslVariable > in(inputPinCount);
+	RefArray< HlslVariable > out(outputPinCount);
+
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		const TypedOutputPin* outputPin = static_cast< const TypedOutputPin* >(node->getOutputPin(i));
+		T_ASSERT (outputPin);
+
+		out[i] = cx.emitOutput(
+			node,
+			outputPin->getName(),
+			hlsl_from_parameter_type(outputPin->getType())
+		);
+	}
+
+	for (int32_t i = 0; i < inputPinCount; ++i)
+	{
+		in[i] = cx.emitInput(node->getInputPin(i));
+		if (!in[i])
+			return false;
+	}
+
+	// Define script instance.
+	if (cx.getShader().defineScript(node->getName()))
+	{
+		StringOutputStream& fs = cx.getShader().getOutputStream(HlslShader::BtScript);
+
+		fs << L"void " << node->getName() << L"(";
+
+		for (int32_t i = 0; i < inputPinCount; ++i)
+		{
+			if (i > 0)
+				fs << L", ";
+			fs << hlsl_type_name(in[i]->getType()) << L" " << node->getInputPin(i)->getName();
+		}
+
+		if (!in.empty())
+			fs << L", ";
+
+		for (int32_t i = 0; i < outputPinCount; ++i)
+		{
+			if (i > 0)
+				fs << L", ";
+			fs << L"out " << hlsl_type_name(out[i]->getType()) << L" " << node->getOutputPin(i)->getName();
+		}
+
+		fs << L")" << Endl;
+		fs << L"{" << Endl;
+		fs << IncreaseIndent;
+		fs << script << Endl;
+		fs << DecreaseIndent;
+		fs << L"}" << Endl;
+		fs << Endl;
+	}
+
+	// Emit script invocation.
+	for (int32_t i = 0; i < outputPinCount; ++i)
+		f << hlsl_type_name(out[i]->getType()) << L" " << out[i]->getName() << L";" << Endl;
+
+	f << node->getName() << L"(";
+
+	for (RefArray< HlslVariable >::const_iterator i = in.begin(); i != in.end(); ++i)
+	{
+		if (i != in.begin())
+			f << L", ";
+		f << (*i)->getName();
+	}
+
+	if (!in.empty())
+		f << L", ";
+
+	for (RefArray< HlslVariable >::const_iterator i = out.begin(); i != out.end(); ++i)
+	{
+		if (i != out.begin())
+			f << L", ";
+		f << (*i)->getName();
+	}
+
+	f << L");" << Endl;
 	return true;
 }
 
@@ -1057,6 +1171,19 @@ bool emitSqrt(HlslContext& cx, Sqrt* node)
 		return false;
 	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
 	assign(f, out) << L"sqrt(" << in->getName() << L");" << Endl;
+	return true;
+}
+
+bool emitStep(HlslContext& cx, Step* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* in1 = cx.emitInput(node, L"X");
+	HlslVariable* in2 = cx.emitInput(node, L"Y");
+	if (!in1 || !in2)
+		return false;
+	HlslType type = std::max< HlslType >(in1->getType(), in2->getType());
+	HlslVariable* out = cx.emitOutput(node, L"Output", type);
+	assign(f, out) << L"step(" << in1->cast(type) << L", " << in2->cast(type) << L");" << Endl;
 	return true;
 }
 
@@ -1329,18 +1456,44 @@ bool emitTargetSize(HlslContext& cx, TargetSize* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
-	assign(f, out) << L"_dx9_targetSize;" << Endl;
+	assign(f, out) << L"__private__targetSize;" << Endl;
 	return true;
 }
 
 bool emitTexture(HlslContext& cx, Texture* node)
 {
 	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
+	cx.getShader().defineTexture(parameterName);
 	cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		parameterName,
-		HtTexture
+		hlsl_from_parameter_type(node->getParameterType())
 	);
+	return true;
+}
+
+bool emitTextureSize(HlslContext& cx, TextureSize* node)
+{
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in || in->getType() < HtTexture2D)
+		return false;
+
+	std::wstring uniformName = L"__private__" + in->getName() + L"_size";
+
+	HlslVariable* out = cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		uniformName,
+		HtFloat3
+	);
+
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(uniformName) == uniforms.end())
+	{
+		uint32_t registerIndex = cx.getShader().addUniform(uniformName, HtFloat3, 1);
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+		fu << L"uniform float3 " << uniformName << L" : register(c" << registerIndex << L");" << Endl;
+	}
+
 	return true;
 }
 
@@ -1369,14 +1522,13 @@ bool emitTranspose(HlslContext& cx, Transpose* node)
 
 bool emitUniform(HlslContext& cx, Uniform* node)
 {
-	const HlslType c_parameterType[] = { HtFloat, HtFloat4, HtFloat4x4, HtTexture };
 	HlslVariable* out = cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
 		node->getParameterName(),
-		c_parameterType[node->getParameterType()]
+		hlsl_from_parameter_type(node->getParameterType())
 	);
 
-	if (out->getType() != HtTexture)
+	if (out->getType() < HtTexture2D)
 	{
 		const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 		if (uniforms.find(node->getParameterName()) == uniforms.end())
@@ -1386,6 +1538,8 @@ bool emitUniform(HlslContext& cx, Uniform* node)
 			fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L" : register(c" << registerIndex << L");" << Endl;
 		}
 	}
+	else
+		cx.getShader().defineTexture(node->getParameterName());
 
 	return true;
 }
@@ -1581,9 +1735,11 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
+	m_emitters[&type_of< Script >()] = new EmitterCast< Script >(emitScript);
 	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
+	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
@@ -1591,6 +1747,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
+	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);

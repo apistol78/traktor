@@ -28,7 +28,6 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
-//class ISimpleTexture;
 class RenderTargetSet;
 class ScreenRenderer;
 class RenderContext;
@@ -92,7 +91,6 @@ private:
 	//int32_t m_updateAllowedCount;
 	bool m_clearCache;
 	render::handle_t m_handleHeightfield;
-	render::handle_t m_handleHeightfieldSize;
 	render::handle_t m_handleWorldOrigin;
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;

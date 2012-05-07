@@ -120,7 +120,7 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 	if (!eventLog)
 	{
 		eventLog = new EventLog();
-		log::debug << L"Event log created" << Endl;
+		T_DEBUG(L"Event log created");
 	}
 
 	// Register ourself with log.

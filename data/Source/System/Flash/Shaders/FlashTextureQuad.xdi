@@ -42,7 +42,7 @@
 				<second>145</second>
 			</position>
 			<parameterName>Flash_Texture</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.VertexInput">
@@ -103,7 +103,6 @@
 				<first>1247</first>
 				<second>130</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>

@@ -22,11 +22,11 @@ TaskEnumLeaderboards::TaskEnumLeaderboards(
 void TaskEnumLeaderboards::execute(TaskQueue* taskQueue)
 {
 	T_ASSERT (m_provider);
-	log::debug << L"Online; Begin enumerating leaderboards" << Endl;
+	T_DEBUG(L"Online; Begin enumerating leaderboards");
 	std::map< std::wstring, ILeaderboardsProvider::LeaderboardData > leaderboards;
 	m_provider->enumerate(leaderboards);
 	(m_sinkObject->*m_sinkMethod)(leaderboards);
-	log::debug << L"Online; Finished enumerating leaderboards" << Endl;
+	T_DEBUG(L"Online; Finished enumerating leaderboards");
 }
 
 	}

@@ -289,7 +289,6 @@ Clip space
 				<first>311</first>
 				<second>1008</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
@@ -340,7 +339,7 @@ Clip space
 				<second>968</second>
 			</position>
 			<parameterName>RandomNormals</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Add">
@@ -439,7 +438,7 @@ Clip space
 				<second>632</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Add">
@@ -481,7 +480,7 @@ Clip space
 				<second>1194</second>
 			</position>
 			<parameterName>Depth</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -506,7 +505,6 @@ Clip space
 				<first>1164</first>
 				<second>799</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtPoint</minFilter>
 			<mipFilter>FtPoint</mipFilter>
 			<magFilter>FtPoint</magFilter>
@@ -521,7 +519,7 @@ Clip space
 				<second>735</second>
 			</position>
 			<parameterName>Source</parameterName>
-			<type>PtTexture</type>
+			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
 	</nodes>

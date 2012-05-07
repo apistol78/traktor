@@ -125,6 +125,11 @@ bool NativeVolume::remove(const Path& filename)
 	return bool(unlink(wstombs(getSystemPath(filename)).c_str()) == 0);
 }
 
+bool NativeVolume::rename(const Path& fileName, const std::wstring& newName)
+{
+	return false;
+}
+
 bool NativeVolume::makeDirectory(const Path& directory)
 {
 	int status = mkdir(wstombs(directory.getPathName()).c_str(), S_IRWXU | S_IRWXG | S_IROTH | S_IXOTH);

@@ -4,9 +4,10 @@
 #include <Core/Io/Path.h>
 #include "SolutionBuilderLIB/SolutionBuilder.h"
 
-class Project;
-class ProjectItem;
-class Solution;
+//class Project;
+//class ProjectItem;
+//class Solution;
+class ScriptProcessor;
 
 /*! Generate solution files for Code::Blocks. */
 class SolutionBuilderCBlocks : public SolutionBuilder
@@ -23,11 +24,12 @@ public:
 	virtual void showOptions() const;
 
 private:
-	std::wstring m_compiler;
+	traktor::Ref< ScriptProcessor > m_scriptProcessor;
+	//std::wstring m_compiler;
 
-	void collectEmbedItems(const Solution* solution, const Project* project, const ProjectItem* item, std::set< traktor::Path >& outEmbedItems) const;
+	//void collectEmbedItems(const Solution* solution, const Project* project, const ProjectItem* item, std::set< traktor::Path >& outEmbedItems) const;
 
-	void addItem(const Solution* solution, const Project* project, const ProjectItem* item, traktor::OutputStream& os) const;
+	//void addItem(const Solution* solution, const Project* project, const ProjectItem* item, traktor::OutputStream& os) const;
 };
 
 #endif	// SolutionBuilderCBlocks_H

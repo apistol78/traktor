@@ -63,14 +63,14 @@ Tag_SpecularMap
 				<second>140</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-		</item>
+      <type>PtTexture2D</type>
+    </item>
 		<item type="traktor.render.Sampler">
 			<comment/>
 			<position>
 				<first>526</first>
 				<second>159</second>
 			</position>
-			<lookup>LuSimple</lookup>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
