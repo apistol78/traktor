@@ -7,13 +7,13 @@ if "%1"=="build" (
 ) else if "%1"=="deploy" (
 
 	pushd %DEPLOY_PROJECT_ROOT:/=\%\bin\latest\win64\releaseshared
-	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST% *.dll *.exe *.txt > %DEPLOY_PROJECT_ROOT%\deploy.log
+	%TRAKTOR_HOME%\bin\win32\RemoteDeploy %DEPLOY_TARGET_HOST% *.dll *.exe *.txt > %DEPLOY_PROJECT_ROOT%\deploy.log
 	popd
 	
 ) else if "%1"=="launch" (
 
-	%TRAKTOR_HOME%\bin\RemoteDeploy %DEPLOY_TARGET_HOST% Application.config
-	%TRAKTOR_HOME%\bin\RemoteLaunch %DEPLOY_TARGET_HOST% "%DEPLOY_EXECUTABLE%" "\-s Application.config"
+	%TRAKTOR_HOME%\bin\win32\RemoteDeploy %DEPLOY_TARGET_HOST% Application.config
+	%TRAKTOR_HOME%\bin\win32\RemoteLaunch %DEPLOY_TARGET_HOST% "%DEPLOY_EXECUTABLE%" "\-s Application.config"
 
 ) else if "%1"=="migrate" (
 
