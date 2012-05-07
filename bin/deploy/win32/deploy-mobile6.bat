@@ -6,13 +6,13 @@ if "%1"=="build" (
 
 ) else if "%1"=="deploy" (
 
-	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\%DEPLOY_PROJECT_NAME%" %DEPLOY_PROJECT_ROOT:/=\%\bin\latest\mobile6\releaseshared\*.dll > %DEPLOY_PROJECT_ROOT%\deploy.log
-	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\%DEPLOY_PROJECT_NAME%" %DEPLOY_PROJECT_ROOT:/=\%\bin\latest\mobile6\releaseshared\*.exe >> %DEPLOY_PROJECT_ROOT%\deploy.log
-	%TRAKTOR_HOME%bin\CeDeploy "\Program Files\%DEPLOY_PROJECT_NAME%" Application.config >> %DEPLOY_PROJECT_ROOT%\deploy.log
+	%TRAKTOR_HOME%bin\win32\CeDeploy "\Program Files\%DEPLOY_PROJECT_NAME%" %DEPLOY_PROJECT_ROOT:/=\%\bin\latest\mobile6\releaseshared\*.dll > %DEPLOY_PROJECT_ROOT%\deploy.log
+	%TRAKTOR_HOME%bin\win32\CeDeploy "\Program Files\%DEPLOY_PROJECT_NAME%" %DEPLOY_PROJECT_ROOT:/=\%\bin\latest\mobile6\releaseshared\*.exe >> %DEPLOY_PROJECT_ROOT%\deploy.log
+	%TRAKTOR_HOME%bin\win32\CeDeploy "\Program Files\%DEPLOY_PROJECT_NAME%" Application.config >> %DEPLOY_PROJECT_ROOT%\deploy.log
 
 ) else if "%1"=="launch" (
 
-	%TRAKTOR_HOME%bin\CeLaunch "\Program Files\%DEPLOY_PROJECT_NAME%\%DEPLOY_EXECUTABLE%" Application.config > %DEPLOY_PROJECT_ROOT%\launch.log
+	%TRAKTOR_HOME%bin\win32\CeLaunch "\Program Files\%DEPLOY_PROJECT_NAME%\%DEPLOY_EXECUTABLE%" Application.config > %DEPLOY_PROJECT_ROOT%\launch.log
 	
 ) else if "%1"=="migrate" (
 
