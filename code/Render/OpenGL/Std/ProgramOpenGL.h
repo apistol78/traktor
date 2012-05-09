@@ -1,7 +1,6 @@
 #ifndef traktor_render_ProgramOpenGL_H
 #define traktor_render_ProgramOpenGL_H
 
-#include <map>
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
 #include "Render/OpenGL/TypesOpenGL.h"
@@ -73,17 +72,15 @@ private:
 
 	struct Sampler
 	{
-		GLint locationTexture;
+		GLint location;
 		uint32_t texture;
 		uint32_t stage;
 	};
 
-	struct TextureData
+	struct TextureSize
 	{
-		GLenum target;
-		GLuint name;
-		GLint mipCount;
-		float offset[4];
+		GLint location;
+		uint32_t texture;
 	};
 
 	Ref< ContextOpenGL > m_resourceContext;
@@ -94,6 +91,7 @@ private:
 	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
 	std::vector< Sampler > m_samplers;						//!< Samplers.
+	std::vector< TextureSize > m_textureSize;
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
 	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
 	float m_targetSize[2];

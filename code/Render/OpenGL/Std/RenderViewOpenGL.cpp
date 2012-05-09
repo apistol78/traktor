@@ -69,16 +69,36 @@ RenderViewOpenGL::RenderViewOpenGL(
 
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
+	void* windowHandle,
 	ContextOpenGL* context,
 	ContextOpenGL* resourceContext,
-	BlitHelper* blitHelper,
-	void* windowHandle
+	BlitHelper* blitHelper
 )
-:	m_context(context)
+:	m_windowHandle(windowHandle)
+,	m_context(context)
 ,	m_resourceContext(resourceContext)
 ,	m_stateCache(new StateCacheOpenGL())
 ,	m_blitHelper(blitHelper)
-,	m_windowHandle(windowHandle)
+{
+	m_primaryTargetDesc.multiSample = desc.multiSample;
+	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_waitVBlank = desc.waitVBlank;
+}
+
+#else	// LINUX
+
+RenderViewOpenGL::RenderViewOpenGL(
+	const RenderViewDesc desc,
+	Window* window,
+	ContextOpenGL* context,
+	ContextOpenGL* resourceContext,
+	BlitHelper* blitHelper
+)
+:   m_window(window)
+,	m_context(context)
+,	m_resourceContext(resourceContext)
+,	m_stateCache(new StateCacheOpenGL())
+,	m_blitHelper(blitHelper)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
@@ -116,7 +136,7 @@ bool RenderViewOpenGL::createPrimaryTarget()
 		if (!m_primaryTarget->create(m_primaryTargetDesc, true))
 			return false;
 	}
-	
+
 	return true;
 }
 
@@ -143,7 +163,12 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 #elif defined(__APPLE__)
 
 	return cglwUpdateWindow(m_windowHandle, outEvent);
-	
+
+#else   // LINUX
+
+    if (m_window)
+        return m_window->update();
+
 #endif
 
 	return false;
@@ -199,7 +224,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 		if (!m_primaryTarget->create(m_primaryTargetDesc, true))
 			return false;
 	}
-	
+
 	m_waitVBlank = desc.waitVBlank;
 
 	return true;
@@ -238,7 +263,7 @@ bool RenderViewOpenGL::isActive() const
 #if defined(__APPLE__)
 	if (!m_windowHandle)
 		return false;
-		
+
 	return cglwIsActive(m_windowHandle);
 #else
 	return true;
@@ -250,7 +275,7 @@ bool RenderViewOpenGL::isFullScreen() const
 #if defined(__APPLE__)
 	if (!m_windowHandle)
 		return false;
-		
+
 	return cglwIsFullscreen(m_windowHandle);
 #else
 	return false;
@@ -317,19 +342,21 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 
 	RenderTargetSetOpenGL* rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
-	
+
 	if (!rt->bind(m_stateCache, m_primaryTarget->getDepthBuffer()))
 	{
 		T_OGL_SAFE(glPopAttrib());
 		return false;
 	}
-	
+
 	rt->enter();
-
-	m_renderTargetStack.push_back(rt);
-
 	rts->setContentValid(true);
 
+#if defined(_DEBUG)
+	m_stateCache->validate();
+#endif
+
+	m_renderTargetStack.push_back(rt);
 	return true;
 }
 
@@ -346,7 +373,7 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 		GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT,
 		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
 	};
-	
+
 	RenderTargetOpenGL* rt = m_renderTargetStack.back();
 	GLuint cm = c_clearMask[clearMask];
 
@@ -380,9 +407,13 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 
 	const RenderTargetOpenGL* rt = m_renderTargetStack.back();
 	float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
-		
+
 	if (!programGL->activate(m_stateCache, targetSize))
 		return;
+
+#if defined(_DEBUG)
+	m_stateCache->validate();
+#endif
 
 	vertexBufferGL->activate(
 		m_stateCache,
@@ -417,7 +448,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 		primitiveType = GL_TRIANGLES;
 		vertexCount = primitives.count * 3;
 		break;
-		
+
 	default:
 		T_ASSERT (0);
 	}

@@ -282,7 +282,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #endif
 
-	traktor::log::info << L"Traktor RemoteServer 1.2" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.2.1" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -341,6 +341,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	properties->setProperty< PropertyString >(L"OS", L"win32");
 #elif defined(__APPLE__)
 	properties->setProperty< PropertyString >(L"OS", L"osx");
+#else
+	properties->setProperty< PropertyString >(L"OS", L"linux");
 #endif
 
 	discoveryManager->addService(new net::NetworkService(L"RemoteTools/Server", properties));
@@ -416,7 +418,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 	net::Network::finalize();
-	
+
 #if defined(_WIN32)
 	ui::Application::getInstance()->finalize();
 #endif

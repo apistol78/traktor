@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include <vorbis/vorbisenc.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -104,7 +105,7 @@ private:
 		vorbis_analysis_init(&m_dspState, &m_info);
 		vorbis_block_init(&m_dspState, &m_block);
 
-		ogg_stream_init(&m_outputStream, rand());
+		ogg_stream_init(&m_outputStream, std::rand());
 
 		// Write stream header.
 		{

@@ -73,7 +73,7 @@ public:
 
 	bool getSkinTransform(const std::wstring& boneName, Transform& outTransform) const;
 
-	bool setNeutralPoseTransform(const std::wstring& boneName, const Transform& transform);
+	bool setPoseTransform(const std::wstring& boneName, const Transform& transform, bool inclusive);
 
 	const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
 
@@ -86,9 +86,8 @@ public:
 	const AlignedVector< Transform >& getPoseTransforms() const { return m_poseTransforms; }
 
 private:
-	mutable resource::Proxy< mesh::SkinnedMesh > m_mesh;
-	mutable resource::Proxy< Skeleton > m_skeleton;
-	Ref< Pose > m_neutralPose;
+	resource::Proxy< mesh::SkinnedMesh > m_mesh;
+	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
 	std::vector< int32_t > m_boneRemap;
 	bool m_normalizePose;

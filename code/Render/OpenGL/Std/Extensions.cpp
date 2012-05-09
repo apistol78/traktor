@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Render/OpenGL/Std/Extensions.h"
@@ -141,10 +142,10 @@ bool opengl_initialize_extensions()
 			}
 		}
 	}
-	
+
 	// Internal extensions.
 	s_extensions[E_T_rendertarget_non_power_of_two].have = s_extensions[E_GL_ARB_texture_non_power_of_two].have;
-	
+
 	// Work-arounds for buggy drivers etc.
 //#if defined(__APPLE__)
 //	if (
@@ -162,7 +163,7 @@ bool opengl_initialize_extensions()
 
 	for (int32_t i = 0; i < sizeof_array(s_extensions); ++i)
 		log::info << L"\"" << mbstows(s_extensions[i].name) << L"\", have: " << (s_extensions[i].have ? L"yes" : L"no") << L", use: " << ((s_extensions[i].have && s_extensions[i].use) ? L"yes" : L"no") << Endl;
-	
+
 #if !defined(__APPLE__)
 
 #	define T_WIDEN_X(x) L ## x

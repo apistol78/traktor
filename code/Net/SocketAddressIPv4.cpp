@@ -145,7 +145,7 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 
 #else
 
-#	if defined(_WIN32) || TARGET_OS_MAC
+#	if defined(_WIN32) || TARGET_OS_MAC || defined(__GNUC__)
 	char hostName[200];
 	if (gethostname(hostName, sizeof(hostName)) == 0)
 	{

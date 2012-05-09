@@ -1,3 +1,4 @@
+#include <cstring>
 
 #if defined(_MSC_VER) && !defined(WINCE)
 #	define USE_XMM_INTRINSICS

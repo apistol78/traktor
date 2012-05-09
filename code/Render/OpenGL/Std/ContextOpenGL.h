@@ -27,7 +27,7 @@ public:
 #elif defined(__APPLE__)
 	ContextOpenGL(void* context);
 #else	// LINUX
-	ContextOpenGL(Display* display, Window window, GLXContext context);
+	ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext context);
 #endif
 
 	virtual ~ContextOpenGL();
@@ -39,7 +39,7 @@ public:
 	void swapBuffers(bool waitVBlank);
 
 	void destroy();
-	
+
 	GLhandleARB createShaderObject(const char* shader, GLenum shaderType);
 
 	int32_t getWidth() const;
@@ -69,7 +69,7 @@ private:
 	void* m_context;
 #else	// LINUX
 	Display* m_display;
-	Window m_window;
+	GLXDrawable m_drawable;
 	GLXContext m_context;
 #endif
 

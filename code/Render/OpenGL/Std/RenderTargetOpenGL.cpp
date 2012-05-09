@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Render/OpenGL/IContext.h"
@@ -92,7 +93,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 			m_width = nearestLog2(m_width);
 			m_height = nearestLog2(m_height);
 		}
-		
+
 		// Only backbuffer allowed to be partially rendered; if expected
 		// to be used as texture then we need to ensure everything is renderered.
 		// \fixme SHOULD SCALE TEXTURE IN RESOLVE!
@@ -191,7 +192,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 		else
 			return false;
 		break;
-			
+
 	case TfR32F:
 		if (opengl_have_extension(E_GL_ARB_texture_float))
 		{
@@ -273,7 +274,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 			m_width,
 			m_height
 		));
-		
+
 		// Create target FBO.
 		T_OGL_SAFE(glGenFramebuffersEXT(1, &m_targetFBO));
 		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO));
@@ -298,8 +299,8 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 				depthBuffer
 			));
 			m_haveDepth = true;
-		}		
-		
+		}
+
 		// Create read-back texture.
 		T_OGL_SAFE(glGenTextures(1, &m_colorTexture));
 
@@ -322,7 +323,7 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 			type,
 			NULL
 		));
-		
+
 		// Create resolve FBO.
 		T_OGL_SAFE(glGenFramebuffersEXT(1, &m_resolveFBO));
 		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_resolveFBO));
@@ -331,9 +332,9 @@ bool RenderTargetOpenGL::create(const RenderTargetSetCreateDesc& setDesc, const 
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
-	
+
 	m_haveBlitExt = opengl_have_extension(E_GL_EXT_framebuffer_blit);
-	
+
 	std::memset(&m_shadowState, 0, sizeof(m_shadowState));
 
 	return bool(status == GL_FRAMEBUFFER_COMPLETE_EXT);
@@ -385,7 +386,7 @@ void RenderTargetOpenGL::unlock(int level)
 {
 }
 
-void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void RenderTargetOpenGL::bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
@@ -403,7 +404,7 @@ void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLi
 			T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MIN_FILTER, minFilter));
 			m_shadowState.minFilter = minFilter;
 		}
-		
+
 		if (m_shadowState.magFilter != samplerState.magFilter)
 		{
 			T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
@@ -415,15 +416,20 @@ void RenderTargetOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLi
 			T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 			m_shadowState.wrapS = samplerState.wrapS;
 		}
-		
+
 		if (m_shadowState.wrapT != samplerState.wrapT)
 		{
 			T_OGL_SAFE(glTexParameteri(m_textureTarget, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 			m_shadowState.wrapT = samplerState.wrapT;
 		}
 	}
-	
+
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+}
+
+void RenderTargetOpenGL::bindSize(GLint locationSize)
+{
+	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(0), GLfloat(0)));
 }
 
 bool RenderTargetOpenGL::bind(StateCacheOpenGL* stateCache, GLuint depthBuffer)
@@ -450,10 +456,12 @@ bool RenderTargetOpenGL::bind(StateCacheOpenGL* stateCache, GLuint depthBuffer)
 	if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 		return false;
 
-	if (m_haveDepth || m_usingPrimaryDepthBuffer)
-		stateCache->setPermitDepth(true);
-	else
-		stateCache->setPermitDepth(false);
+	//if (m_haveDepth || m_usingPrimaryDepthBuffer)
+	//	stateCache->setPermitDepth(true);
+	//else
+	//	stateCache->setPermitDepth(false);
+
+	stateCache->forceRenderState(RenderState(), true);
 
 	return true;
 }

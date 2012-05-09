@@ -51,7 +51,7 @@ bool XmlDeserializer::operator >> (const Member< bool >& m)
 		return false;
 
 	m = bool(value == L"true");
-	
+
 	return true;
 }
 
@@ -60,7 +60,7 @@ bool XmlDeserializer::operator >> (const Member< int8_t >& m)
 	std::wstring value;
 	if (!nextElementValue(m.getName(), value))
 		return false;
-	
+
 	m = parseString< int32_t >(value);
 	return true;
 }
@@ -233,14 +233,14 @@ bool XmlDeserializer::operator >> (const Member< Vector2 >& m)
 	std::wstring value;
 	if (!nextElementValue(m.getName(), value))
 		return false;
-	
+
 	m_values.resize(0); m_values.reserve(2);
 	if (Split< std::wstring, float >::any(value, L",", m_values, true, 2) != 2)
 		return false;
-		
+
 	m->x = m_values[0];
 	m->y = m_values[1];
-	
+
 	return true;
 }
 
@@ -253,7 +253,7 @@ bool XmlDeserializer::operator >> (const Member< Vector4 >& m)
 	m_values.resize(0); m_values.reserve(4);
 	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
 		return false;
-		
+
 	m->set(
 		m_values[0],
 		m_values[1],
@@ -269,7 +269,7 @@ bool XmlDeserializer::operator >> (const Member< Matrix33 >& m)
 	std::wstring value;
 	if (!nextElementValue(m.getName(), value))
 		return false;
-		
+
 	m_values.resize(0); m_values.reserve(3 * 3);
 	if (Split< std::wstring, float >::any(value, L",", m_values, true, 3 * 3) != 3 * 3)
 		return false;
@@ -313,7 +313,7 @@ bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
 	m_values.resize(0); m_values.reserve(4);
 	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
 		return false;
-		
+
 	m->e.set(
 		m_values[0],
 		m_values[1],
@@ -462,7 +462,7 @@ bool XmlDeserializer::operator >> (const MemberComplex& m)
 
 	if (!m.serialize(*this))
 		return false;
-	
+
 	if (m.getCompound() == true)
 	{
 		if (!leaveElement(m.getName()))
@@ -509,10 +509,11 @@ bool XmlDeserializer::enterElement(const std::wstring& name)
 		else if (eventType == XmlPullParser::EtInvalid)
 		{
 			log::error << L"Invalid response from parser when entering element \"" << name << L"\"" << Endl;
-			break;
+			return false;
 		}
 	}
 
+    log::error << L"No matching element \"" << name << L"\" until end of document" << Endl;
 	return false;
 }
 
@@ -557,6 +558,6 @@ bool XmlDeserializer::nextElementValue(const std::wstring& name, std::wstring& v
 
 	return true;
 }
-	
+
 	}
 }

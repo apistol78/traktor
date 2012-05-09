@@ -23,6 +23,8 @@
 #	include "macconfig.h"
 #elif defined(_PS3)
 #	include "ps3config.h"
+#else
+#   include "linuxconfig.h"
 #endif
 #include "expat.h"
 
@@ -75,7 +77,7 @@ public:
 	XmlPullParserImpl(IStream* stream);
 
 	~XmlPullParserImpl();
-	
+
 	bool get(XmlPullParser::Event& outEvent);
 
 private:
@@ -207,7 +209,7 @@ bool XmlPullParserImpl::parse()
 
 			evt->type = XmlPullParser::EtInvalid;
 			pushEvent();
-			
+
 			return true;
 		}
 	}

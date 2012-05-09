@@ -45,7 +45,7 @@ void registerAnimationClasses(script::IScriptManager* scriptManager)
 	classAnimatedMeshEntity->addMethod(L"getBoneTransform", &animation_AnimatedMeshEntity_getBoneTransform);
 	classAnimatedMeshEntity->addMethod(L"getPoseTransform", &animation_AnimatedMeshEntity_getPoseTransform);
 	classAnimatedMeshEntity->addMethod(L"getSkinTransform", &animation_AnimatedMeshEntity_getSkinTransform);
-	classAnimatedMeshEntity->addMethod(L"setNeutralPoseTransform", &animation::AnimatedMeshEntity::setNeutralPoseTransform);
+	classAnimatedMeshEntity->addMethod(L"setPoseTransform", &animation::AnimatedMeshEntity::setPoseTransform);
 	classAnimatedMeshEntity->addMethod(L"setPoseController", &animation::AnimatedMeshEntity::setPoseController);
 	classAnimatedMeshEntity->addMethod(L"getPoseController", &animation::AnimatedMeshEntity::getPoseController);
 	scriptManager->registerClass(classAnimatedMeshEntity);

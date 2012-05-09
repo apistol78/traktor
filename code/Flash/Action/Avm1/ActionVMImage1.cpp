@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Serialization/ISerializer.h"
@@ -88,7 +89,7 @@ bool ActionVMImage1::serialize(ISerializer& s)
 		m_byteCode.resize(size);
 
 	void* data = m_byteCode.ptr();
-	
+
 	if (size > 0)
 		s >> Member< void* >(L"byteCode", data, size);
 

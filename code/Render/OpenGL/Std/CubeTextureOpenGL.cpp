@@ -163,7 +163,7 @@ void CubeTextureOpenGL::unlock(int side, int level)
 {
 }
 
-void CubeTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void CubeTextureOpenGL::bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
@@ -184,7 +184,13 @@ void CubeTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLin
 	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 	
-	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));}
+	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+}
+
+void CubeTextureOpenGL::bindSize(GLint locationSize)
+{
+	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_side), GLfloat(m_side), GLfloat(m_side), GLfloat(0)));
+}
 
 	}
 }

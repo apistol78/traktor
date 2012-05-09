@@ -5,7 +5,7 @@
 #include "Core/Serialization/MemberEnum.h"
 #include "Core/Serialization/MemberBitMask.h"
 #include "Core/Serialization/MemberStl.h"
-#include "Render/Resource/TextureResource.h"
+#include "Render/ITexture.h"
 #include "Render/Shader/Nodes.h"
 
 namespace traktor
@@ -1818,7 +1818,7 @@ bool Texture::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< render::TextureResource >()));
+	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< render::ITexture >()));
 	s >> MemberEnum< ParameterType >(L"type", m_type, c_ParameterType_Keys);
 
 	return true;

@@ -1,4 +1,8 @@
-#include "limits"
+#include <cmath>
+#include <limits>
+#include "Amalgam/IEnvironment.h"
+#include "Amalgam/Impl/LibraryHelper.h"
+#include "Amalgam/Impl/RenderServerDefault.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -12,9 +16,6 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/IResourceManager.h"
-#include "Amalgam/IEnvironment.h"
-#include "Amalgam/Impl/LibraryHelper.h"
-#include "Amalgam/Impl/RenderServerDefault.h"
 
 namespace traktor
 {
@@ -61,7 +62,7 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 		}
 		return true;
 	}
-	
+
 	const uint32_t c_preferColorBits[] = { 24, 32, 16, 15 };
 	for (uint32_t i = 0; i < sizeof_array(c_preferColorBits); ++i)
 	{
@@ -73,7 +74,7 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 				check.stereoscopic != criteria.stereoscopic
 			)
 				continue;
-		
+
 			int32_t match =
 				std::abs((int32_t)(check.width - criteria.width)) +
 				std::abs((int32_t)(check.height - criteria.height));
@@ -227,7 +228,7 @@ bool RenderServerDefault::create(PropertyGroup* settings)
 		renderSystem->destroy();
 		return false;
 	}
-	
+
 	// We've successfully created the render view; update settings to reflect found display mode.
 #if !defined(_PS3)
 	if (m_renderViewDesc.fullscreen)
@@ -238,7 +239,7 @@ bool RenderServerDefault::create(PropertyGroup* settings)
 #endif
 
 	settings->setProperty< PropertyBoolean >(L"Render.Stereoscopic", m_renderViewDesc.displayMode.stereoscopic);
-	
+
 	m_renderSystem = renderSystem;
 	m_renderView = renderView;
 

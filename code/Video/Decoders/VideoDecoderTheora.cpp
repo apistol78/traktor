@@ -1,3 +1,4 @@
+#include <cstring>
 #include <theora/theoradec.h>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -59,7 +60,7 @@ public:
 				ogg_stream_init(&test, ogg_page_serialno(&m_og));
 				ogg_stream_pagein(&test, &m_og);
 				ogg_stream_packetout(&test, &m_op);
-				
+
 				// Identify the codec: try theora.
 				if (!m_theora_p && th_decode_headerin(&m_ti, &m_tc, &m_ts, &m_op) >= 0)
 				{
@@ -118,7 +119,7 @@ public:
 					return false;
 				}
 			}
-		} 
+		}
 
 		if (!m_theora_p)
 			return false;
@@ -136,7 +137,7 @@ public:
 		);
 
 		pp_level = pp_level_max;
-		
+
 		th_decode_ctl(
 			m_td,
 			TH_DECCTL_SET_PPLEVEL,

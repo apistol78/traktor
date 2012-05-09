@@ -79,6 +79,10 @@ private:
 
 	void* m_windowHandle;
 
+#else   // LINUX
+
+    Ref< Window > m_window;
+
 #endif
 
 	Ref< ContextOpenGL > m_resourceContext;

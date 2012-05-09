@@ -34,7 +34,7 @@ bool ContainerGtk::create(IWidget* parent, int style)
 
 void ContainerGtk::on_size_allocate(Gtk::Allocation& allocation)
 {
-	log::info << "ContainerGtk::on_size_allocate : " << allocation.get_width() << " x " << allocation.get_height() << Endl;
+	log::info << L"ContainerGtk::on_size_allocate : " << allocation.get_width() << L" x " << allocation.get_height() << Endl;
 
 	SizeEvent s(m_owner, 0, Size(allocation.get_width(), allocation.get_height()));
 	m_owner->raiseEvent(EiSize, &s);

@@ -193,8 +193,17 @@ public:
 
 	virtual Size getPreferedSize() const
 	{
-		Gtk::Requisition preferedSize = m_widget->size_request();
-		return Size(preferedSize.width, preferedSize.height);
+	    Size minimumSize = getMinimumSize();
+
+	    Gtk::Requisition ms;
+	    Gtk::Requisition ns;
+
+	    ms.width = minimumSize.cx;
+	    ms.height = minimumSize.cy;
+
+	    m_widget->get_preferred_size(ms, ns);
+
+		return Size(ns.width, ns.height);
 	}
 
 	virtual Size getMaximumSize() const

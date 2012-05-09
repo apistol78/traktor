@@ -252,7 +252,7 @@ void RenderTargetOpenGLES2::unlock(int level)
 {
 }
 
-void RenderTargetOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void RenderTargetOpenGLES2::bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(m_textureTarget, m_colorTexture));
@@ -288,6 +288,11 @@ void RenderTargetOpenGLES2::bind(GLuint unit, const SamplerState& samplerState, 
 	}
 
 	T_OGL_SAFE(glUniform1i(locationTexture, unit));
+}
+
+void RenderTargetOpenGLES2::bindSize(GLint locationSize)
+{
+	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(0), GLfloat(0)));
 }
 
 void RenderTargetOpenGLES2::bind(GLuint primaryDepthTarget)

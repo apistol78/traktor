@@ -128,7 +128,11 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 
 	local libraryPaths = configuration:getLibraryPaths()
 	for i = 0, libraryPaths:length() - 1 do
-		insertLibrary(outLibraryPaths, libraryPaths:get(i))
+		local libraryRelPath = fileSystem:getRelativePath(
+			Path(libraryPaths:get(i)),
+			projectPath
+		)
+		insertLibrary(outLibraryPaths, libraryRelPath:getPathName())
 	end
 
 	local productSuffix = ""
@@ -146,15 +150,16 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 			local localProject = dep:getProject()
 			local localConfig = localProject:getConfiguration(configuration:getName())
 
-			insertLibrary(outLibraries, localProject:getName() .. productSuffix)
-
-			collectLinkProducts(
-				localSolution,
-				localProject,
-				localConfig,
-				outLibraries,
-				outLibraryPaths
-			)
+			if localProject:getEnable() then
+				insertLibrary(outLibraries, localProject:getName() .. productSuffix)
+				collectLinkProducts(
+					localSolution,
+					localProject,
+					localConfig,
+					outLibraries,
+					outLibraryPaths
+				)
+			end
 
 		elseif dep.__index == ExternalDependency then
 
@@ -162,21 +167,23 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 			local externalProject = dep:getProject()
 			local externalConfig = externalProject:getConfiguration(configuration:getName())
 
-			local externalRelPath = fileSystem:getRelativePath(
-				Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
-				projectPath
-			)
+			if externalProject:getEnable() then
+				local externalRelPath = fileSystem:getRelativePath(
+					Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
+					projectPath
+				)
 
-			insertLibrary(outLibraryPaths, externalRelPath:getPathName())
-			insertLibrary(outLibraries, externalProject:getName() .. productSuffix)
+				insertLibrary(outLibraryPaths, externalRelPath:getPathName())
+				insertLibrary(outLibraries, externalProject:getName() .. productSuffix)
 
-			collectLinkProducts(
-				externalSolution,
-				externalProject,
-				externalConfig,
-				outLibraries,
-				outLibraryPaths
-			)
+				collectLinkProducts(
+					externalSolution,
+					externalProject,
+					externalConfig,
+					outLibraries,
+					outLibraryPaths
+				)
+			end
 		end
 	end
 end
@@ -213,7 +220,7 @@ end
 					-- the executable.
 					if configuration:getTargetFormat() == "Executable" or configuration:getTargetFormat() == "ExecutableConsole" then
 --?>
-					<Add option="-Wl,-rpath,." /><?--
+					<Add option="-Wl,-R\\$$ORIGIN" /><?--
 					end
 --?>
 				</Linker><?--
@@ -234,13 +241,16 @@ end
 				local files = item:getSystemFiles(project:getSourcePath())
 				for i = 0, files:length() - 1 do
 
-					local filePath = fileSystem:getAbsolutePath(files:get(i))
+					local filePath = files:get(i) -- fileSystem:getAbsolutePath(files:get(i))
 					local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
-
-					local ext = filePathRel:getExtension()
-					if ext == "png" or ext == "xdi" then
+					if filePathRel ~= nil then
+						local ext = filePathRel:getExtension()
+						if ext == "png" or ext == "xdi" then
 --?>
-			<Add before="BinaryInclude.sh <?-- output:print(filePathRel:getPathName() .. " ./Resources/" .. filePathRel:getFileNameNoExtension() .. ".h c_Resource" .. filePathRel:getFileNameNoExtension()) --?>" /><?--
+			<Add before="BinaryInclude <?-- output:print(filePathRel:getPathName() .. " ./Resources/" .. filePathRel:getFileNameNoExtension() .. ".h c_Resource" .. filePathRel:getFileNameNoExtension()) --?>" /><?--
+						end
+					else
+						print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
 					end
 				end
 			end
@@ -256,13 +266,16 @@ end
 				local files = item:getSystemFiles(project:getSourcePath())
 				for i = 0, files:length() - 1 do
 
-					local filePath = fileSystem:getAbsolutePath(files:get(i))
+					local filePath = files:get(i) -- fileSystem:getAbsolutePath(files:get(i))
 					local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
-
-					local ext = filePathRel:getExtension()
-					if ext == "c" or ext == "cc" or ext == "cpp" or ext == "h" or ext == "hh" or ext == "hpp" or ext == "inl" then
+					if filePathRel ~= nil then
+						local ext = filePathRel:getExtension()
+						if ext == "c" or ext == "cc" or ext == "cpp" or ext == "h" or ext == "hh" or ext == "hpp" or ext == "inl" then
 --?>
 		<Unit filename="<?-- output:print(filePathRel:getPathName()) --?>" /><?--
+						end
+					else
+						print("Unable to determine relative path; " .. filePath:getPathName() .. " vs " .. projectPath:getPathName())
 					end
 				end
 			end

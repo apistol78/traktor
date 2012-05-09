@@ -1,5 +1,7 @@
-#!/bin/sh
+#!/bin/bash
 
-mkdir build
+# Source environment configuration.
+. "`dirname \"$BASH_SOURCE\"`/../../config.sh"
 
-$TRAKTOR_HOME/bin/Linux/SolutionBuilder -f=cblocks -c=gcc BinaryIncludeLinux.xms
+wine $TRAKTOR_HOME/bin/win32/SolutionBuilder -f=cblocks BinaryIncludeLinux.xms
+

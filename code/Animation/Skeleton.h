@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -33,11 +33,13 @@ public:
 
 	bool findBone(const std::wstring& name, uint32_t& outIndex) const;
 
+	void findChildren(uint32_t index, std::vector< uint32_t >& outChildren) const;
+
 	virtual bool serialize(ISerializer& s);
 
-	inline uint32_t getBoneCount() const { return uint32_t(m_bones.size()); }
+	uint32_t getBoneCount() const { return uint32_t(m_bones.size()); }
 
-	inline Bone* getBone(uint32_t index) const { return m_bones[index]; }
+	Bone* getBone(uint32_t index) const { return m_bones[index]; }
 
 private:
 	RefArray< Bone > m_bones;

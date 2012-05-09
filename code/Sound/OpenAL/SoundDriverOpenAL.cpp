@@ -23,7 +23,7 @@ struct CastSample
 	}
 };
 
-#if !TARGET_OS_IPHONE
+#if !defined(__GNUC__) && !TARGET_OS_IPHONE
 
 static const __m128 c_clampMin(_mm_set1_ps(-1.0f));
 static const __m128 c_clampMax(_mm_set1_ps(1.0f));
@@ -113,21 +113,21 @@ bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMix
 	m_device = alcOpenDevice(0);
 	if (!m_device)
 		return false;
-		
+
 	m_context = alcCreateContext(m_device, NULL);
 	if (!m_context)
 		return false;
-		
+
 	alcMakeContextCurrent(m_context);
-	
+
 	// Determine data format.
 	int r = -1, c = -1;
-	
+
 	if (desc.bitsPerSample == 8)
 		r = 0;
 	else if (desc.bitsPerSample == 16)
 		r = 1;
-		
+
 	if (desc.hwChannels == 1)
 		c = 0;
 	else if (desc.hwChannels == 2)
@@ -135,21 +135,21 @@ bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMix
 
 	if (r < 0 || c < 0)
 		return false;
-	
+
 	m_desc = desc;
 	m_format = c_formats[r][c];
 	m_submitted = 0;
 	m_data.reset(
 		new uint8_t [desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8]
 	);
-	
+
 	// Disable distance model.
 	alDistanceModel(AL_NONE);
-		
+
 	// Generate buffers.
 	alGenBuffers(sizeof_array(m_buffers), m_buffers);
 	alGenSources(1, &m_source);
-	
+
 	alSource3f(m_source, AL_POSITION, 0.0f, 0.0f, 0.0f);
 	alSource3f(m_source, AL_VELOCITY, 0.0f, 0.0f, 0.0f);
 	alSource3f(m_source, AL_DIRECTION, 0.0f, 0.0f, 0.0f);
@@ -157,7 +157,7 @@ bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMix
 	alSourcei(m_source, AL_SOURCE_RELATIVE, AL_FALSE);
 	alSourcei(m_source, AL_LOOPING, AL_FALSE);
 	alSourcei(m_source, AL_SOURCE_TYPE, AL_STREAMING);
-	
+
 	alSourcePlay(m_source);
 	return true;
 }
@@ -167,7 +167,7 @@ void SoundDriverOpenAL::destroy()
 	alSourceStop(m_source);
 	alDeleteSources(1, &m_source);
 	alDeleteBuffers(sizeof_array(m_buffers), m_buffers);
-	
+
 	alcMakeContextCurrent(0);
 	alcDestroyContext(m_context);
 	alcCloseDevice(m_device);
@@ -181,17 +181,17 @@ void SoundDriverOpenAL::wait()
 	// Wait until at least one buffer has been processed by OpenAL.
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 	Timer timer; timer.start();
-	
+
 	while (timer.getElapsedTime() < 1.0)
 	{
 		ALint processed = 0;
 		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processed);
 		if (processed > 0)
 			break;
-		
+
 		// Flush pending errors.
 		alGetError();
-			
+
 		currentThread->sleep(10);
 	}
 }
@@ -212,10 +212,10 @@ void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 	}
 	else
 		buffer = m_buffers[m_submitted];
-	
+
 	T_ASSERT (soundBlock.maxChannel <= m_desc.hwChannels);
 	T_ASSERT (soundBlock.samplesCount <= m_desc.frameSamples);
-	
+
 	if (m_desc.bitsPerSample == 8)
 	{
 		for (int i = 0; i < soundBlock.maxChannel; ++i)
@@ -240,7 +240,7 @@ void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 			);
 		}
 	}
-	
+
 	// Fill buffer with sound block.
 	alBufferData(
 		buffer,
@@ -262,7 +262,7 @@ void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)
 		log::error << L"OpenAL error detected; unable to queue sound block" << Endl;
 		return;
 	}
-	
+
 	// Ensure source is still playing.
 	ALint state = AL_PLAYING;
 	alGetSourcei(m_source, AL_SOURCE_STATE, &state);

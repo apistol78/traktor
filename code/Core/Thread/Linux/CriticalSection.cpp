@@ -22,11 +22,8 @@ CriticalSection::~CriticalSection()
 bool CriticalSection::wait(int32_t timeout)
 {
 	pthread_mutex_t* mutex = reinterpret_cast< pthread_mutex_t* >(m_handle);
-
-	int rc = pthread_mutex_lock(mutex);
-	if (rc)
-		return false;
-
+	while (pthread_mutex_lock(mutex) != 0)
+		;
 	return true;
 }
 
@@ -38,4 +35,3 @@ void CriticalSection::release()
 }
 
 }
-

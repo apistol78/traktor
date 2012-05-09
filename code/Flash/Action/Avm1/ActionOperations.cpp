@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/String.h"
@@ -38,10 +39,10 @@ struct UnalignedView< 1 > { uint8_t value; };
 
 template < >
 struct UnalignedView< 2 > { uint16_t value __attribute__(( packed )); };
-	
+
 template < >
 struct UnalignedView< 4 > { uint32_t value __attribute__(( packed )); };
-	
+
 template < typename T >
 T unalignedRead(const void* ptr)
 {
@@ -1844,7 +1845,7 @@ void opp_pushData(PreparationState& state)
 			{
 				uint32_t length = uint32_t(strlen((const char T_UNALIGNED *)data));
 				uint16_t index = state.image->addConstData(ActionValue((const char T_UNALIGNED *)data));
-				
+
 				*ndp++ = 100;
 				*(uint16_t*)ndp = index;
 				ndp += sizeof(uint16_t);
@@ -1900,7 +1901,7 @@ void opp_pushData(PreparationState& state)
 				w.b[6] = data[5];
 				w.b[7] = data[4];
 #endif
-				
+
 				uint16_t index = state.image->addConstData(ActionValue(avm_number_t(w.d)));
 
 				*ndp++ = 100;
@@ -2011,7 +2012,7 @@ void opx_pushData(ExecutionState& state)
 			w.b[6] = data[5];
 			w.b[7] = data[4];
 #endif
-			
+
 			value = ActionValue(avm_number_t(w.d));
 			data += sizeof(double);
 		}

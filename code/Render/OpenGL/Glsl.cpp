@@ -1,10 +1,10 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Render/OpenGL/Glsl.h"
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/GlslContext.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Render/Shader/Nodes.h"
-#include "Core/Misc/String.h"
-#include "Core/Log/Log.h"
+#include "Render/Shader/ShaderGraph.h"
 
 namespace traktor
 {
@@ -38,7 +38,8 @@ bool Glsl::generate(
 	outProgram = GlslProgram(
 		cx.getVertexShader().getGeneratedShader(false, requireTranspose),
 		cx.getFragmentShader().getGeneratedShader(requireDerivatives, requireTranspose),
-		cx.getSamplerTextures(),
+		cx.getTextures(),
+		cx.getSamplers(),
 		cx.getRenderState()
 	);
 

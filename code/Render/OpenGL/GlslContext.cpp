@@ -1,10 +1,10 @@
 #include <sstream>
 #include "Render/OpenGL/GlslContext.h"
 #include "Render/OpenGL/GlslShader.h"
-#include "Render/Shader/ShaderGraph.h"
-#include "Render/Shader/Node.h"
 #include "Render/Shader/InputPin.h"
+#include "Render/Shader/Node.h"
 #include "Render/Shader/OutputPin.h"
+#include "Render/Shader/ShaderGraph.h"
 
 namespace traktor
 {
@@ -160,24 +160,41 @@ RenderState& GlslContext::getRenderState()
 	return m_renderState;
 }
 
-bool GlslContext::defineSamplerTexture(const std::wstring& textureName, int32_t& outStage)
+void GlslContext::defineTexture(const std::wstring& texture)
 {
-	std::map< std::wstring, int32_t >::iterator i = m_samplerTextures.find(textureName);
-	if (i != m_samplerTextures.end())
+	if (std::find(m_textures.begin(), m_textures.end(), texture) == m_textures.end())
+		m_textures.push_back(texture);
+}
+
+bool GlslContext::defineSampler(uint32_t stateHash, const std::wstring& texture, int32_t& outStage)
+{
+	std::map< uint32_t, int32_t >::const_iterator j = m_samplersMap.find(stateHash);
+	if (j != m_samplersMap.end())
 	{
-		outStage = i->second;
+		outStage = j->second;
 		return false;
 	}
 
 	outStage = m_nextStage++;
-	m_samplerTextures.insert(std::make_pair(textureName, outStage));
+	m_samplersMap[stateHash] = outStage;
+
+	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);
+	T_ASSERT (i != m_textures.end());
+
+	int32_t textureIndex = int32_t(std::distance(m_textures.begin(), i));
+	m_samplers.push_back(std::make_pair(textureIndex, outStage));
 
 	return true;
 }
 
-const std::map< std::wstring, int32_t >& GlslContext::getSamplerTextures() const
+const std::vector< std::wstring >& GlslContext::getTextures() const
 {
-	return m_samplerTextures;
+	return m_textures;
+}
+
+const std::vector< std::pair< int32_t, int32_t > >& GlslContext::getSamplers() const
+{
+	return m_samplers;
 }
 
 	}

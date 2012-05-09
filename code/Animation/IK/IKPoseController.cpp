@@ -44,7 +44,6 @@ void IKPoseController::evaluate(
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
-	const Pose* neutralPose,
 	const AlignedVector< Transform >& boneTransforms,
 	AlignedVector< Transform >& outPoseTransforms,
 	bool& outUpdateController
@@ -59,7 +58,6 @@ void IKPoseController::evaluate(
 			deltaTime,
 			worldTransform,
 			skeleton,
-			neutralPose,
 			boneTransforms,
 			outPoseTransforms,
 			outUpdateController
@@ -69,12 +67,6 @@ void IKPoseController::evaluate(
 		for (size_t i = outPoseTransforms.size(); i < boneTransforms.size(); ++i)
 			outPoseTransforms.push_back(boneTransforms[i]);
 	}
-	else if (neutralPose)
-		calculatePoseTransforms(
-			skeleton,
-			neutralPose,
-			outPoseTransforms
-		);
 	else
 		outPoseTransforms = boneTransforms;
 
