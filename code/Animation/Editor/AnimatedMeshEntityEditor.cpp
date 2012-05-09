@@ -37,7 +37,7 @@ bool AnimatedMeshEntityEditor::handleCommand(const ui::Command& command)
 void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(getEntityAdapter()->getEntityData());
-	const AnimatedMeshEntity* animatedEntity = checked_type_cast< const AnimatedMeshEntity* >(getEntityAdapter()->getEntity());
+	/*const*/ AnimatedMeshEntity* animatedEntity = dynamic_type_cast< /*const*/ AnimatedMeshEntity* >(getEntityAdapter()->getEntity());
 
 	primitiveRenderer->pushWorld(getEntityAdapter()->getTransform().toMatrix44());
 	primitiveRenderer->pushDepthEnable(false);

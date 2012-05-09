@@ -193,12 +193,11 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Transfor
 	return true;
 }
 
-bool AnimatedMeshEntity::setNeutralPoseTransform(const std::wstring& boneName, const Transform& transform)
+bool AnimatedMeshEntity::setPoseTransform(const std::wstring& boneName, const Transform& transform, bool inclusive)
 {
 	uint32_t index;
 
-	if (!m_neutralPose)
-		m_neutralPose = new Pose();
+	synchronize();
 
 	if (!m_skeleton->findBone(boneName, index))
 		return false;
@@ -206,11 +205,21 @@ bool AnimatedMeshEntity::setNeutralPoseTransform(const std::wstring& boneName, c
 	if (index >= m_boneTransforms.size())
 		return false;
 
-	//Transform poseTransform = transform * m_boneTransforms[index].inverse();
-	Transform poseTransform = m_boneTransforms[index].inverse() * transform;
+	if (m_poseTransforms.empty())
+		m_poseTransforms = m_boneTransforms;
 
-	m_neutralPose->setBoneOffset(index, poseTransform.translation());
-	m_neutralPose->setBoneOrientation(index, poseTransform.rotation().toEulerAngles());
+	m_poseTransforms[index] = transform;
+
+	if (inclusive)
+	{
+		Transform delta = transform * m_boneTransforms[index].inverse();
+
+		std::vector< uint32_t > children;
+		m_skeleton->findChildren(index, children);
+
+		for (std::vector< uint32_t >::const_iterator i = children.begin(); i != children.end(); ++i)
+			m_poseTransforms[*i] = m_boneTransforms[*i] * delta;
+	}
 
 	return true;
 }
@@ -228,23 +237,30 @@ void AnimatedMeshEntity::synchronize() const
 
 void AnimatedMeshEntity::updatePoseController(float deltaTime)
 {
-	if (m_poseController)
+	// Calculate original bone transforms in object space.
+	if (m_skeleton.changed())
 	{
 		m_boneTransforms.resize(0);
 		m_poseTransforms.resize(0);
 
-		// Calculate original bone transforms in object space.
 		calculateBoneTransforms(
 			m_skeleton,
 			m_boneTransforms
 		);
+
+		m_skeleton.consume();
+	}
+
+	// Calculate pose transforms and skinning transforms.
+	if (m_poseController)
+	{
+		m_poseTransforms.resize(0);
 
 		// Evaluate pose transforms in object space.
 		m_poseController->evaluate(
 			deltaTime,
 			m_transform.get(),
 			m_skeleton,
-			m_neutralPose,
 			m_boneTransforms,
 			m_poseTransforms,
 			m_updateController
@@ -282,12 +298,7 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 		}
 
 		// Initialize skin transforms.
-		m_skinTransforms.resize(skinBoneCount * 2);
-		for (size_t i = 0; i < skinBoneCount * 2; i += 2)
-		{
-			m_skinTransforms[i + 0] = Vector4::origo();
-			m_skinTransforms[i + 1] = Vector4::origo();
-		}
+		m_skinTransforms.resize(skinBoneCount * 2, Vector4::origo());
 
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonBoneCount; ++i)
@@ -301,34 +312,13 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			}
 		}
 	}
-	else if (m_neutralPose)
+	else if (!m_poseTransforms.empty())
 	{
-		m_boneTransforms.resize(0);
-		m_poseTransforms.resize(0);
-
-		// Calculate original bone transforms in object space.
-		calculateBoneTransforms(
-			m_skeleton,
-			m_boneTransforms
-		);
-
-		// Calculate transforms from neutral pose.
-		calculatePoseTransforms(
-			m_skeleton,
-			m_neutralPose,
-			m_poseTransforms
-		);
-
 		size_t skeletonBoneCount = m_boneTransforms.size();
 		size_t skinBoneCount = m_mesh->getBoneCount();
 
 		// Initialize skin transforms.
-		m_skinTransforms.resize(skinBoneCount * 2);
-		for (size_t i = 0; i < skinBoneCount * 2; i += 2)
-		{
-			m_skinTransforms[i + 0] = Vector4::origo();
-			m_skinTransforms[i + 1] = Vector4::origo();
-		}
+		m_skinTransforms.resize(skinBoneCount * 2, Vector4::origo());
 
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonBoneCount; ++i)
@@ -345,12 +335,7 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 	else
 	{
 		size_t skinBoneCount = m_mesh->getBoneCount();
-		m_skinTransforms.resize(skinBoneCount * 2);
-		for (size_t i = 0; i < skinBoneCount * 2; i += 2)
-		{
-			m_skinTransforms[i + 0] = Vector4::origo();
-			m_skinTransforms[i + 1] = Vector4::origo();
-		}
+		m_skinTransforms.resize(skinBoneCount * 2, Vector4::origo());
 	}
 }
 

@@ -51,7 +51,9 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+
+	virtual void bindSize(GLint locationSize);
 
 	void bind(GLuint primaryDepthTarget);
 

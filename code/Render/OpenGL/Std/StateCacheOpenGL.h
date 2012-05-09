@@ -17,31 +17,21 @@ class StateCacheOpenGL : public Object
 public:
 	StateCacheOpenGL();
 
-	void forceRenderState(const RenderState& renderState);
-	
-	void setRenderState(const RenderState& renderState);
+	void forceRenderState(const RenderState& renderState, bool invertCull);
+
+	void setRenderState(const RenderState& renderState, bool invertCull);
 	
 	void setColorMask(uint32_t colorMask);
 	
 	void setDepthMask(GLboolean depthMask);
 
 	void setPermitDepth(bool permitDepth);
+
+	void validate();
 	
-	//void setArrayBuffer(GLint arrayBuffer);
-
-	//void setElementArrayBuffer(GLint elemArrayBuffer);
-	//
-	//void setVertexArrayObject(GLint vertexArrayObject);
-	//
-	//void setProgram(GLuint program);
-
 private:
-	RenderState m_renderState;
+	RenderState m_shadowRenderState;
 	bool m_permitDepth;
-	//GLint m_arrayBuffer;
-	//GLint m_elemArrayBuffer;
-	//GLint m_vertexArrayObject;
-	//GLuint m_program;
 };
 	
 	}

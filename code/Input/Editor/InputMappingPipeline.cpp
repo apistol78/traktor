@@ -80,7 +80,7 @@ Ref< ISerializable > InputMappingPipeline::buildOutput(editor::IPipelineBuilder*
 		if (!mergeInputAsset)
 		{
 			log::error << L"Input mapping pipeline failed; unable to read dependent input asset \"" << i->format() << L"\"" << Endl;
-			return false;
+			return 0;
 		}
 
 		if (mergeInputAsset->getSourceData())

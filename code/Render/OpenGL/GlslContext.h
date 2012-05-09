@@ -61,9 +61,13 @@ public:
 
 	RenderState& getRenderState();
 
-	bool defineSamplerTexture(const std::wstring& textureName, int32_t& outStage);
+	void defineTexture(const std::wstring& texture);
 
-	const std::map< std::wstring, int32_t >& getSamplerTextures() const;
+	bool defineSampler(uint32_t stateHash, const std::wstring& texture, int32_t& outStage);
+
+	const std::vector< std::wstring >& getTextures() const;
+
+	const std::vector< std::pair< int32_t, int32_t > >& getSamplers() const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
@@ -76,7 +80,9 @@ private:
 	bool m_requireDerivatives;
 	bool m_requireTranspose;
 	std::vector< uint8_t > m_interpolatorMap;
-	std::map< std::wstring, int32_t > m_samplerTextures;
+	std::vector< std::wstring > m_textures;
+	std::vector< std::pair< int32_t, int32_t > > m_samplers;
+	std::map< uint32_t, int32_t > m_samplersMap;
 };
 
 	}

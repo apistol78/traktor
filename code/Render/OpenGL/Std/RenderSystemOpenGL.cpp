@@ -97,8 +97,31 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 #elif defined(__APPLE__)
 
 	void* resourceContext = cglwCreateContext(0, 0, 0, 0, 0);
-	m_resourceContext = new ContextOpenGL(resourceContext);
+	if (!resourceContext)
+		return false;
 
+	m_resourceContext = new ContextOpenGL(resourceContext);
+	m_resourceContext->enter();
+
+	if (!opengl_initialize_extensions())
+		return false;
+
+#else	// LINUX
+
+	Display* display = XOpenDisplay(0);
+	if (!display)
+		return false;
+
+	int attribs[] = { GLX_RGBA, None };
+	XVisualInfo* visual = glXChooseVisual(display, DefaultScreen(display), attribs);
+	if (!visual)
+		return false;
+
+	GLXContext resourceContext = glXCreateContext(display, visual, NULL, GL_TRUE);
+	if (!resourceContext)
+		return false;
+
+	m_resourceContext = new ContextOpenGL(display, None, resourceContext);
 	m_resourceContext->enter();
 
 	if (!opengl_initialize_extensions())
@@ -190,7 +213,7 @@ DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 	DisplayMode dm;
 	cglwGetDisplayMode(index, dm);
 	return dm;
-	
+
 #else
 	return DisplayMode();
 #endif
@@ -336,7 +359,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext, m_blitHelper);
 	if (renderView->createPrimaryTarget())
 		return renderView;
-		
+
 	context->destroy();
 	context = 0;
 
@@ -349,10 +372,10 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	);
 	if (!m_windowHandle)
 		return 0;
-		
+
 	void* viewHandle = cglwGetWindowView(m_windowHandle);
 	T_ASSERT (viewHandle);
-		
+
 	void* glcontext = cglwCreateContext(
 		viewHandle,
 		m_resourceContext->getGLContext(),
@@ -365,10 +388,50 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_blitHelper, m_windowHandle);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_windowHandle, context, m_resourceContext, m_blitHelper);
 	if (renderView->createPrimaryTarget())
 		return renderView;
-		
+
+	context->destroy();
+	context = 0;
+
+#else   // LINUX
+
+    if (m_window)
+        return 0;
+
+	m_window = new Window();
+	if (!m_window->create())
+	{
+		log::error << L"createRenderView failed; unable to create window" << Endl;
+		return 0;
+	}
+
+	//m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
+
+	//if (desc.fullscreen)
+	//	m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+	//else
+	//	m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+
+	Display* display = m_window->getDisplay();
+	T_ASSERT (display);
+
+	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, desc.depthBits, None };
+	XVisualInfo* visual = glXChooseVisual(display, DefaultScreen(display), attribs);
+	if (!visual)
+		return 0;
+
+	GLXContext resourceContext = glXCreateContext(display, visual, NULL, GL_TRUE);
+	if (!resourceContext)
+		return 0;
+
+	Ref< ContextOpenGL > context = new ContextOpenGL(display, (GLXDrawable)m_window->getWindow(), resourceContext);
+
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext, m_blitHelper);
+	if (renderView->createPrimaryTarget())
+		return renderView;
+
 	context->destroy();
 	context = 0;
 
@@ -449,7 +512,31 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, context, m_resourceContext, m_blitHelper, 0);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext, m_blitHelper);
+	if (renderView->createPrimaryTarget())
+		return renderView;
+
+	context->destroy();
+	context = 0;
+
+#else	// LINUX
+
+	Display* display = XOpenDisplay(0);
+	if (!display)
+		return 0;
+
+	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, desc.depthBits, None };
+	XVisualInfo* visual = glXChooseVisual(display, DefaultScreen(display), attribs);
+	if (!visual)
+		return 0;
+
+	GLXContext resourceContext = glXCreateContext(display, visual, NULL, GL_TRUE);
+	if (!resourceContext)
+		return 0;
+
+	Ref< ContextOpenGL > context = new ContextOpenGL(display, (GLXDrawable)desc.nativeWindowHandle, resourceContext);
+
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext, m_blitHelper);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 

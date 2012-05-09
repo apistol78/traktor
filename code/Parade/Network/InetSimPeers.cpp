@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/Acquire.h"

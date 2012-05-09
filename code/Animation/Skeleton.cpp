@@ -37,6 +37,18 @@ bool Skeleton::findBone(const std::wstring& name, uint32_t& outIndex) const
 	return false;
 }
 
+void Skeleton::findChildren(uint32_t index, std::vector< uint32_t >& outChildren) const
+{
+	for (uint32_t i = 0; i < uint32_t(m_bones.size()); ++i)
+	{
+		if (m_bones[i]->getParent() == index)
+		{
+			outChildren.push_back(i);
+			findChildren(i, outChildren);
+		}
+	}
+}
+
 bool Skeleton::serialize(ISerializer& s)
 {
 	return s >> MemberRefArray< Bone >(L"bones", m_bones);

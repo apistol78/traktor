@@ -140,15 +140,55 @@ Ref< PropertyGroup > loadProperties(const Path& pathName)
 	Ref< PropertyGroup > settings;
 	Ref< IStream > file;
 
+#if defined(_WIN32)
+    std::wstring system = L"win32";
+#elif defined(__APPLE__)
+    std::wstring system = L"osx";
+#else   // LINUX
+    std::wstring system = L"linux";
+#endif
+
 	std::wstring globalFile = pathName.getPathName();
+	std::wstring systemFile = pathName.getPathNameNoExtension() + L"." + system + L"." + pathName.getExtension();
 	std::wstring userFile = pathName.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + pathName.getExtension();
 
+    // Read global properties.
 	if ((file = FileSystem::getInstance().open(globalFile, File::FmRead)) != 0)
 	{
 		settings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
 		file->close();
-	}
 
+		if (!settings)
+            log::error << L"Error while parsing properties \"" << globalFile << L"\"" << Endl;
+        else
+            T_DEBUG(L"Successfully read properties from \"" << globalFile << L"\"");
+	}
+	else
+        log::warning << L"Unable to read global properties \"" << globalFile << L"\"" << Endl;
+
+    // Read system properties.
+    if ((file = FileSystem::getInstance().open(systemFile, File::FmRead)) != 0)
+    {
+        Ref< PropertyGroup > systemSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
+        file->close();
+
+        if (systemSettings)
+        {
+            if (settings)
+            {
+                settings = settings->mergeReplace(systemSettings);
+                T_ASSERT (settings);
+            }
+            else
+                settings = systemSettings;
+
+            T_DEBUG(L"Successfully read properties from \"" << systemFile << L"\"");
+        }
+		else
+            log::error << L"Error while parsing properties \"" << systemFile << L"\"" << Endl;
+    }
+
+    // Read user properties.
 	if ((file = FileSystem::getInstance().open(userFile, File::FmRead)) != 0)
 	{
 		Ref< PropertyGroup > userSettings = xml::XmlDeserializer(file).readObject< PropertyGroup >();
@@ -157,10 +197,17 @@ Ref< PropertyGroup > loadProperties(const Path& pathName)
 		if (userSettings)
 		{
 			if (settings)
+			{
 				settings = settings->mergeReplace(userSettings);
+				T_ASSERT (settings);
+			}
 			else
 				settings = userSettings;
+
+            T_DEBUG(L"Successfully read properties from \"" << userFile << L"\"");
 		}
+		else
+            log::error << L"Error while parsing properties \"" << userFile << L"\"" << Endl;
 	}
 
 	return settings;
@@ -271,7 +318,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutTable = new ui::ShortcutTable();
 	m_shortcutTable->create();
 	m_shortcutTable->addShortcutEventHandler(ui::createMethodHandler(this, &EditorForm::eventShortcut));
-	
+
 	// Create menu bar.
 	m_menuBar = new ui::MenuBar();
 	m_menuBar->create(this);
@@ -344,7 +391,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	paneCenter->split(false, -250, paneCenter, m_paneEast);
 	paneCenter->split(true, -140, paneCenter, paneLog);
 	paneCenter->split(true, -200, paneCenter, m_paneSouth);
-	
+
 	// Create panes.
 	m_dataBaseView = new DatabaseView(this);
 	m_dataBaseView->create(m_dock);
@@ -919,7 +966,7 @@ void EditorForm::setActiveEditorPage(IEditorPage* editorPage)
 			if (page->getData< IEditorPage >(L"EDITORPAGE") == m_activeEditorPage)
 			{
 				m_tab->setActivePage(page);
-				
+
 				m_activeEditorPageSite = page->getData< EditorPageSite >(L"EDITORPAGESITE");
 				T_ASSERT (m_activeEditorPageSite);
 
@@ -1117,7 +1164,7 @@ void EditorForm::setPropertyObject(Object* properties)
 	m_propertiesView->setPropertyObject(
 		dynamic_type_cast< ISerializable* >(properties)
 	);
-	
+
 	if (properties)
 	{
 		StringOutputStream ss;
@@ -1133,7 +1180,7 @@ void EditorForm::setPropertyObject(Object* properties)
 void EditorForm::createAdditionalPanel(ui::Widget* widget, int size, int32_t direction)
 {
 	T_ASSERT (widget);
-	
+
 	widget->setParent(m_dock);
 
 	if (direction == -1)
@@ -1350,7 +1397,7 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 
 	// Create build thread.
 	m_threadBuild = ThreadManager::getInstance().create(
-		makeFunctor< 
+		makeFunctor<
 			EditorForm,
 			std::vector< Guid >,
 			bool
@@ -1449,7 +1496,7 @@ void EditorForm::updateShortcutTable()
 	{
 		int keyState;
 		ui::VirtualKey virtualKey;
-		
+
 		if (!findShortcutCommandMapping(m_mergedSettings, i->getName(), keyState, virtualKey))
 		{
 #if defined(_DEBUG)
@@ -1971,7 +2018,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 				}
 			}
 
-			if (activeEditorFocus)		
+			if (activeEditorFocus)
 			{
 				if (m_activeEditorPage)
 					result = m_activeEditorPage->handleCommand(command);
@@ -2025,7 +2072,7 @@ void EditorForm::eventTabSelChange(ui::Event* event)
 {
 	Ref< ui::CommandEvent > commandEvent = checked_type_cast< ui::CommandEvent* >(event);
 	Ref< ui::TabPage > tabPage = checked_type_cast< ui::TabPage* >(commandEvent->getItem());
-	
+
 	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
 	T_ASSERT (editorPage);
 
@@ -2279,7 +2326,7 @@ void EditorForm::threadAssetMonitor()
 						continue;
 
 					Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
-					
+
 					RefArray< File > files;
 					FileSystem::getInstance().find(fileName, files);
 

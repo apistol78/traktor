@@ -64,16 +64,17 @@ public:
 
 	virtual bool isForeground() const
 	{
-		return false;
+		return m_window->get_is_toplevel();
 	}
 
 	virtual void setVisible(bool visible)
 	{
+		m_window->set_visible(visible);
 	}
 
 	virtual bool isVisible(bool includingParents) const
 	{
-		return true;
+		return m_window->get_visible();
 	}
 
 	virtual void setActive()
@@ -91,12 +92,12 @@ public:
 
 	virtual bool hasFocus() const
 	{
-		return false;
+		return m_window->has_focus();
 	}
 
 	virtual bool containFocus() const
 	{
-		return false;
+		return m_window->has_focus();
 	}
 
 	virtual void setFocus()
@@ -135,19 +136,24 @@ public:
 
 	virtual Rect getRect() const
 	{
-		gint x, y, width, height;
-		//gtk_window_get_position(GTK_WINDOW(m_widget), &x, &y);
-		//gtk_window_get_size(GTK_WINDOW(m_widget), &width, &height);
-		x = y = width = height = 0;
-		return Rect(x, y, x + width, y + height);
+		Gtk::Allocation allocation = m_window->get_allocation();
+		return Rect(
+			allocation.get_x(),
+			allocation.get_y(),
+			allocation.get_x() + allocation.get_width(),
+			allocation.get_y() + allocation.get_height()
+		);
 	}
 
 	virtual Rect getInnerRect() const
 	{
-		gint width, height;
-		//gtk_window_get_size(GTK_WINDOW(m_widget), &width, &height);
-		width = height = 0;
-		return Rect(0, 0, width, height);
+		Gtk::Allocation allocation = m_container->get_allocation();
+		return Rect(
+			0,
+			0,
+			allocation.get_width(),
+			allocation.get_height()
+		);
 	}
 
 	virtual Rect getNormalRect() const
@@ -195,6 +201,11 @@ public:
 
 	virtual void setChildRects(const std::vector< IWidgetRect >& childRects)
 	{
+		for (std::vector< IWidgetRect >::const_iterator i = childRects.begin(); i != childRects.end(); ++i)
+		{
+			if (i->widget)
+				i->widget->setRect(i->rect);
+		}
 	}
 
 	virtual Size getMinimumSize() const

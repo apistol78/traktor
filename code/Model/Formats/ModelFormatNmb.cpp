@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -240,7 +241,7 @@ uint8_t* parseTriangles(Model& model, uint8_t* ptr, int32_t materialId, const Mo
 			{
 				for (count = 0; indices[count] != 0xffff && indices[count] != 0xfffc; count++)
 					gid++;
-				
+
 				uint16_t last[3];
 				last[0] = *indices++;
 				last[1] = *indices++;
@@ -284,7 +285,7 @@ uint8_t* parseTriangles(Model& model, uint8_t* ptr, int32_t materialId, const Mo
 		}
 		else
 			log::error << L"Unknown primitive type" << Endl;
-			
+
 		ptr += chunk->nindices * sizeof(uint16_t);
 		ptr += sizeof(uint32_t);
 	}
@@ -304,7 +305,7 @@ uint8_t* parseChunk(Model& model, uint8_t* ptr)
 	ptr += nameLength;
 
 	log::info << L"Chunk \"" << mbstows(name) << L"\"" << Endl;
-	
+
 	Material material(mbstows(name));
 	int32_t materialId = model.addMaterial(material);
 
@@ -363,7 +364,7 @@ Ref< Model > ModelFormatNmb::read(const Path& filePath, uint32_t importFlags) co
 		return 0;
 
 	int32_t nbytes = stream->available();
-	
+
 	AutoPtr< uint8_t > buffer(new uint8_t [nbytes]);
 	if (stream->read(buffer.ptr(), nbytes) != nbytes)
 		return 0;

@@ -20,7 +20,7 @@ public:
 	struct Platforms
 	{
 		bool ios;
-		bool linux;
+		bool linuks;
 		bool mobile6;
 		bool osx;
 		bool ps3;

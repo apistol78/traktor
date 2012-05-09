@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -43,9 +44,9 @@ ContextOpenGL::ContextOpenGL(void* context)
 
 #else	// LINUX
 
-ContextOpenGL::ContextOpenGL(Display* display, Window window, GLXContext context)
+ContextOpenGL::ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext context)
 :	m_display(display)
-,	m_window(window)
+,	m_drawable(drawable)
 ,	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
@@ -94,7 +95,7 @@ void ContextOpenGL::swapBuffers(bool waitVBlank)
 #elif defined(__APPLE__)
 	cglwSwapBuffers(m_context, waitVBlank);
 #else	// LINUX
-	glXSwapBuffers(m_display, m_window);
+	glXSwapBuffers(m_display, m_drawable);
 #endif
 }
 
@@ -157,12 +158,15 @@ bool ContextOpenGL::enter()
 
 #else	// LINUX
 
-	if (m_window)
-		glXMakeCurrent(
+	if (m_drawable)
+	{
+		if (!glXMakeCurrent(
 			m_display,
-			m_window,
+			m_drawable,
 			m_context
-		);
+		))
+			return false;
+	}
 
 #endif
 
@@ -207,6 +211,24 @@ void ContextOpenGL::leave()
 	else
 		cglwMakeCurrent(0);
 
+#else	// LINUX
+
+	if (!stack->empty())
+	{
+		glXMakeCurrent(
+			stack->back()->m_display,
+			stack->back()->m_drawable,
+			stack->back()->m_context
+		);
+	}
+	else
+	{
+		Display* display = XOpenDisplay(0);
+		T_ASSERT (display);
+
+		glXMakeCurrent(display, None, NULL);
+	}
+
 #endif
 
 	m_lock.release();
@@ -217,14 +239,14 @@ GLhandleARB ContextOpenGL::createShaderObject(const char* shader, GLenum shaderT
 	char errorBuf[32000];
 	GLsizei errorBufLen;
 	GLint status;
-	
+
 	Adler32 adler;
 	adler.begin();
-	adler.feed(shader, strlen(shader));
+	adler.feed(shader, std::strlen(shader));
 	adler.end();
-	
+
 	uint32_t hash = adler.get();
-	
+
 	std::map< uint32_t, GLhandleARB >::const_iterator i = m_shaderObjects.find(hash);
 	if (i != m_shaderObjects.end())
 		return i->second;
@@ -246,7 +268,7 @@ GLhandleARB ContextOpenGL::createShaderObject(const char* shader, GLenum shaderT
 			return 0;
 		}
 	}
-	
+
 	m_shaderObjects.insert(std::make_pair(hash, shaderObject));
 	return shaderObject;
 }

@@ -1,8 +1,7 @@
 #ifndef traktor_render_ProgramOpenGLES2_H
 #define traktor_render_ProgramOpenGLES2_H
 
-#include <map>
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
 #include "Render/OpenGL/TypesOpenGL.h"
 
@@ -90,7 +89,7 @@ private:
 	RenderState m_renderState;
 	GLint m_locationTargetSize;
 	GLint m_locationPostTransform;
-	std::map< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
+	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
 	std::vector< Sampler > m_samplers;						//!< Samplers.
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.

@@ -111,7 +111,8 @@ Ref< ProgramResource > ProgramOpenGL::compile(const GlslProgram& glslProgram, in
 	resource = new ProgramResourceOpenGL(
 		wstombs(glslProgram.getVertexShader()),
 		wstombs(glslProgram.getFragmentShader()),
-		glslProgram.getSamplerTextures(),
+		glslProgram.getTextures(),
+		glslProgram.getSamplers(),
 		glslProgram.getRenderState()
 	);
 
@@ -292,7 +293,7 @@ bool ProgramOpenGL::activate(StateCacheOpenGL* stateCache, float targetSize[2])
 	// Bind program and set state display list.
 	if (ms_activeProgram != this)
 	{
-		stateCache->setRenderState(m_renderState);
+		stateCache->setRenderState(m_renderState, true);
 		T_OGL_SAFE(glUseProgramObjectARB(m_program));
 	}
 	
@@ -339,6 +340,7 @@ bool ProgramOpenGL::activate(StateCacheOpenGL* stateCache, float targetSize[2])
 	if (m_textureDirty || ms_activeProgram != this)
 	{
 		T_ASSERT (m_samplers.size() <= 8);
+
 		uint32_t nsamplers = m_samplers.size();
 		for (uint32_t i = 0; i < nsamplers; ++i)
 		{
@@ -350,13 +352,26 @@ bool ProgramOpenGL::activate(StateCacheOpenGL* stateCache, float targetSize[2])
 			
 			if (tb)
 			{
-				tb->bind(
+				tb->bindSampler(
 					i,
 					samplerState,
-					sampler.locationTexture
+					sampler.location
 				);
 			}
 		}
+
+		uint32_t ntextureSize = m_textureSize.size();
+		for (uint32_t i = 0; i < ntextureSize; ++i)
+		{
+			const TextureSize& textureSize = m_textureSize[i];
+
+			ITextureBinding* tb = m_textureBindings[textureSize.texture];
+			T_ASSERT (tb);
+
+			if (tb)
+				tb->bindSize(textureSize.location);
+		}
+
 		m_textureDirty = false;
 	}
 
@@ -403,11 +418,16 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocationARB(m_program, "_gl_targetSize");
 
+	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
+	const std::vector< std::pair< int32_t, int32_t > >& samplers = resourceOpenGL->getSamplers();
+
 	// Map texture parameters.
-	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();
-	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	for (std::vector< std::pair< int32_t, int32_t > >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
 	{
-		handle_t handle = getParameterHandle(i->first);
+		const std::wstring& texture = textures[i->first];
+		int32_t stage = i->second;
+
+		handle_t handle = getParameterHandle(texture);
 
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
@@ -415,14 +435,39 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 			m_textureBindings.push_back(0);
 		}
 		
-		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
+		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(stage);
 		
 		Sampler sampler;
-		sampler.locationTexture = glGetUniformLocationARB(m_program, wstombs(samplerName).c_str());
+		sampler.location = glGetUniformLocationARB(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];
-		sampler.stage = i->second;
+		sampler.stage = stage;
 
 		m_samplers.push_back(sampler);
+	}
+
+	// Map texture size parameters.
+	for (std::vector< std::wstring >::const_iterator i = textures.begin(); i != textures.end(); ++i)
+	{
+		const std::wstring& texture = *i;
+		std::wstring textureSizeName = L"_gl_textureSize_" + texture;
+
+		GLint location = glGetUniformLocationARB(m_program, wstombs(textureSizeName).c_str());
+		if (location <= 0)
+			continue;
+
+		handle_t handle = getParameterHandle(texture);
+
+		if (m_parameterMap.find(handle) == m_parameterMap.end())
+		{
+			m_parameterMap[handle] = m_textureBindings.size();
+			m_textureBindings.push_back(0);
+		}
+
+		TextureSize textureSize;
+		textureSize.location = location;
+		textureSize.texture = m_parameterMap[handle];
+
+		m_textureSize.push_back(textureSize);
 	}
 
 	// Map samplers and uniforms.

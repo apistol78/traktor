@@ -1,8 +1,8 @@
-#include "Render/OpenGL/ProgramResourceOpenGL.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStaticArray.h"
 #include "Core/Serialization/MemberStl.h"
+#include "Render/OpenGL/ProgramResourceOpenGL.h"
 
 namespace traktor
 {
@@ -72,7 +72,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 3, ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 4, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 :	m_hash(0)
@@ -82,12 +82,14 @@ ProgramResourceOpenGL::ProgramResourceOpenGL()
 ProgramResourceOpenGL::ProgramResourceOpenGL(
 	const std::string& vertexShader,
 	const std::string& fragmentShader,
-	const std::map< std::wstring, int32_t >& samplerTextures,
+	const std::vector< std::wstring >& textures,
+	const std::vector< std::pair< int32_t, int32_t > >& samplers,
 	const RenderState& renderState
 )
 :	m_vertexShader(vertexShader)
 ,	m_fragmentShader(fragmentShader)
-,	m_samplerTextures(samplerTextures)
+,	m_textures(textures)
+,	m_samplers(samplers)
 ,	m_renderState(renderState)
 ,	m_hash(0)
 {
@@ -95,11 +97,12 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 
 bool ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 3);
+	T_ASSERT (s.getVersion() >= 4);
 
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);
-	s >> MemberStlMap< std::wstring, int32_t >(L"samplerTextures", m_samplerTextures);
+	s >> MemberStlVector< std::wstring >(L"textures", m_textures);
+	s >> MemberStlVector< std::pair< int32_t, int32_t >, MemberStlPair< int32_t, int32_t > >(L"samplers", m_samplers);
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> Member< uint32_t >(L"hash", m_hash);
 

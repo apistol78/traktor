@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Render/OpenGL/Platform.h"
@@ -53,7 +54,7 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 {
 	m_width = desc.width;
 	m_height = desc.height;
-	
+
 	if (!isLog2(m_width) || !isLog2(m_height))
 	{
 		if (!opengl_have_extension(E_GL_ARB_texture_non_power_of_two))
@@ -68,7 +69,7 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-	
+
 	if (maxAnisotropy > 0.0f)
 		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
 
@@ -117,7 +118,7 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 
 	m_mipCount = desc.mipCount;
 	std::memset(&m_shadowState, 0, sizeof(m_shadowState));
-	
+
 	return true;
 }
 
@@ -178,11 +179,11 @@ void SimpleTextureOpenGL::unlock(int level)
 	));
 }
 
-void SimpleTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void SimpleTextureOpenGL::bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-	
+
 	GLenum minFilter = GL_NEAREST;
 	if (m_mipCount > 1)
 		minFilter = samplerState.minFilter;
@@ -199,7 +200,7 @@ void SimpleTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GL
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
 		m_shadowState.minFilter = minFilter;
 	}
-	
+
 	if (m_shadowState.magFilter != samplerState.magFilter)
 	{
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
@@ -211,14 +212,19 @@ void SimpleTextureOpenGL::bind(GLuint unit, const SamplerState& samplerState, GL
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
 		m_shadowState.wrapS = samplerState.wrapS;
 	}
-	
+
 	if (m_shadowState.wrapT != samplerState.wrapT)
 	{
 		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
 		m_shadowState.wrapT = samplerState.wrapT;
 	}
-	
+
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+}
+
+void SimpleTextureOpenGL::bindSize(GLint locationSize)
+{
+	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(0), GLfloat(0)));
 }
 
 	}

@@ -129,7 +129,9 @@ Ref< ProgramResource > ProgramOpenGLES2::compile(const GlslProgram& glslProgram,
 	resource = new ProgramResourceOpenGL(
 		wstombs(glslProgram.getVertexShader()),
 		wstombs(glslProgram.getFragmentShader()),
-		glslProgram.getSamplerTextures(),
+		//glslProgram.getSamplerTextures(),
+		glslProgram.getTextures(),
+		glslProgram.getSamplers(),
 		glslProgram.getRenderState()
 	);
 
@@ -244,7 +246,7 @@ void ProgramOpenGLES2::setFloatParameter(handle_t handle, float param)
 
 void ProgramOpenGLES2::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 		
@@ -262,7 +264,7 @@ void ProgramOpenGLES2::setVectorParameter(handle_t handle, const Vector4& param)
 
 void ProgramOpenGLES2::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 		
@@ -280,7 +282,7 @@ void ProgramOpenGLES2::setMatrixParameter(handle_t handle, const Matrix44& param
 
 void ProgramOpenGLES2::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 		
@@ -295,7 +297,7 @@ void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 {
 #if !defined(T_OFFLINE_ONLY)
 
-	std::map< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
 	if (i == m_parameterMap.end())
 		return;
 
@@ -387,7 +389,7 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 			
 		if (tb)
 		{
-			tb->bind(
+			tb->bindSampler(
 				i,
 				samplerState,
 				sampler.locationTexture
@@ -416,11 +418,16 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
 	m_locationPostTransform = glGetUniformLocation(m_program, "_gl_postTransform");
 
+	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
+	const std::vector< std::pair< int32_t, int32_t > >& samplers = resourceOpenGL->getSamplers();
+
 	// Map texture parameters.
-	const std::map< std::wstring, int32_t >& samplerTextures = resourceOpenGL->getSamplerTextures();
-	for (std::map< std::wstring, int32_t >::const_iterator i = samplerTextures.begin(); i != samplerTextures.end(); ++i)
+	for (std::vector< std::pair< int32_t, int32_t > >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
 	{
-		handle_t handle = getParameterHandle(i->first);
+		const std::wstring& texture = textures[i->first];
+		int32_t stage = i->second;
+
+		handle_t handle = getParameterHandle(texture);
 
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
@@ -428,12 +435,12 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 			m_textureBindings.push_back(0);
 		}
 		
-		std::wstring samplerName = L"_gl_sampler_" + toString(i->second);
+		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(stage);
 		
 		Sampler sampler;
 		sampler.locationTexture = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];
-		sampler.stage = i->second;
+		sampler.stage = stage;
 
 		m_samplers.push_back(sampler);
 	}

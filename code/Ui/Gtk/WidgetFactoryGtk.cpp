@@ -1,10 +1,15 @@
-#include "Ui/Gtk/WidgetFactoryGtk.h"
+#include "Ui/Gtk/BitmapGtk.h"
 #include "Ui/Gtk/ButtonGtk.h"
 #include "Ui/Gtk/ContainerGtk.h"
 #include "Ui/Gtk/DialogGtk.h"
 #include "Ui/Gtk/FormGtk.h"
 #include "Ui/Gtk/ListBoxGtk.h"
 #include "Ui/Gtk/MenuBarGtk.h"
+#include "Ui/Gtk/PopupMenuGtk.h"
+#include "Ui/Gtk/ScrollBarGtk.h"
+#include "Ui/Gtk/ToolFormGtk.h"
+#include "Ui/Gtk/UserWidgetGtk.h"
+#include "Ui/Gtk/WidgetFactoryGtk.h"
 
 namespace traktor
 {
@@ -88,7 +93,7 @@ IPanel* WidgetFactoryGtk::createPanel(EventSubject* owner)
 
 IPopupMenu* WidgetFactoryGtk::createPopupMenu(EventSubject* owner)
 {
-	return 0;
+	return new PopupMenuGtk();
 }
 
 IRadioButton* WidgetFactoryGtk::createRadioButton(EventSubject* owner)
@@ -103,7 +108,7 @@ IRichEdit* WidgetFactoryGtk::createRichEdit(EventSubject* owner)
 
 IScrollBar* WidgetFactoryGtk::createScrollBar(EventSubject* owner)
 {
-	return 0;
+	return new ScrollBarGtk(owner);
 }
 
 ISlider* WidgetFactoryGtk::createSlider(EventSubject* owner)
@@ -118,7 +123,7 @@ IStatic* WidgetFactoryGtk::createStatic(EventSubject* owner)
 
 IToolForm* WidgetFactoryGtk::createToolForm(EventSubject* owner)
 {
-	return 0;
+	return new ToolFormGtk(owner);
 }
 
 ITreeView* WidgetFactoryGtk::createTreeView(EventSubject* owner)
@@ -128,7 +133,7 @@ ITreeView* WidgetFactoryGtk::createTreeView(EventSubject* owner)
 
 IUserWidget* WidgetFactoryGtk::createUserWidget(EventSubject* owner)
 {
-	return 0;
+	return new UserWidgetGtk(owner);
 }
 
 INative* WidgetFactoryGtk::createNative(EventSubject* owner)
@@ -138,7 +143,7 @@ INative* WidgetFactoryGtk::createNative(EventSubject* owner)
 
 IBitmap* WidgetFactoryGtk::createBitmap()
 {
-	return 0;
+	return new BitmapGtk();
 }
 
 IClipboard* WidgetFactoryGtk::createClipboard()
@@ -146,7 +151,7 @@ IClipboard* WidgetFactoryGtk::createClipboard()
 	return 0;
 }
 
-bool WidgetFactoryGtk::getSystemColor(SystemColor systemColor, Color& outColor)
+bool WidgetFactoryGtk::getSystemColor(SystemColor systemColor, Color4ub& outColor)
 {
 	return false;
 }

@@ -115,16 +115,6 @@ bool GlslShader::defineScript(const std::wstring& signature)
 	return true;
 }
 
-bool GlslShader::defineSamplerTexture(const std::wstring& textureName)
-{
-    std::set< std::wstring >::const_iterator i = m_textures.find(textureName);
-    if (i != m_textures.end())
-        return false;
-    
-    m_textures.insert(textureName);
-    return true;
-}
-
 void GlslShader::pushOutputStream(BlockType blockType, StringOutputStream* outputStream)
 {
 	m_outputStreams[int(blockType)].push_back(outputStream);

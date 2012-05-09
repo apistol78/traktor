@@ -128,6 +128,47 @@ bool ConditionalNodeTraits::evaluateFull(
 
 		return true;
 	}
+	else if (const Discard* discard = dynamic_type_cast< const Discard* >(node))
+	{
+		bool result = false;
+		switch (conditional->getOperator())
+		{
+		case Discard::CoLess:
+			result = inputConstants[0][0] < inputConstants[1][0];
+			break;
+
+		case Discard::CoLessEqual:
+			result = inputConstants[0][0] <= inputConstants[1][0];
+			break;
+
+		case Discard::CoEqual:
+			result = inputConstants[0][0] == inputConstants[1][0];
+			break;
+
+		case Discard::CoNotEqual:
+			result = inputConstants[0][0] != inputConstants[1][0];
+			break;
+
+		case Discard::CoGreater:
+			result = inputConstants[0][0] > inputConstants[1][0];
+			break;
+
+		case Discard::CoGreaterEqual:
+			result = inputConstants[0][0] >= inputConstants[1][0];
+			break;
+
+		default:
+			return false;
+		}
+
+		if (result)
+		{
+			outputConstant = inputConstants[2];
+			return true;
+		}
+
+		return false;
+	}
 	else if (const Step* step = dynamic_type_cast< const Step* >(node))
 	{
 		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
@@ -256,6 +297,48 @@ bool ConditionalNodeTraits::evaluatePartial(
 		else
 		{
 			foldOutputPin = inputOutputPins[3];
+			return true;
+		}
+	}
+	else if (const Discard* discard = dynamic_type_cast< const Discard* >(node))
+	{
+		if (inputConstants[0].getWidth() <= 0 || inputConstants[1].getWidth() <= 0)
+			return false;
+
+		bool result = false;
+		switch (discard->getOperator())
+		{
+		case Discard::CoLess:
+			result = inputConstants[0][0] < inputConstants[1][0];
+			break;
+
+		case Discard::CoLessEqual:
+			result = inputConstants[0][0] <= inputConstants[1][0];
+			break;
+
+		case Discard::CoEqual:
+			result = inputConstants[0][0] == inputConstants[1][0];
+			break;
+
+		case Discard::CoNotEqual:
+			result = inputConstants[0][0] != inputConstants[1][0];
+			break;
+
+		case Discard::CoGreater:
+			result = inputConstants[0][0] > inputConstants[1][0];
+			break;
+
+		case Discard::CoGreaterEqual:
+			result = inputConstants[0][0] >= inputConstants[1][0];
+			break;
+
+		default:
+			return false;
+		}
+
+		if (result)
+		{
+			foldOutputPin = inputOutputPins[2];
 			return true;
 		}
 	}

@@ -68,8 +68,6 @@ public:
 
 	bool defineScript(const std::wstring& signature);
     
-    bool defineSamplerTexture(const std::wstring& textureName);
-
 	void pushOutputStream(BlockType blockType, StringOutputStream* outputStream);
 
 	void popOutputStream(BlockType blockType);
@@ -86,7 +84,6 @@ private:
 	std::list< scope_t > m_variables;
 	std::set< std::wstring > m_uniforms;
 	std::set< std::wstring > m_scriptSignatures;
-    std::set< std::wstring > m_textures;
 	int32_t m_nextTemporaryVariable;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
 };

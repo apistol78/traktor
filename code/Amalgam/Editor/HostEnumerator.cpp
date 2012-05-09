@@ -79,7 +79,7 @@ void HostEnumerator::update()
 			Host h;
 			h.host = properties->getProperty< PropertyString >(L"Host");
 			h.description = properties->getProperty< PropertyString >(L"Description");
-			h.local = bool(itf.addr->getHostName() == h.host);
+			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == h.host);
 
 			m_hosts.push_back(h);
 		}

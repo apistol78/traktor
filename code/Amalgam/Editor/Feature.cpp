@@ -23,7 +23,7 @@ bool Feature::serialize(ISerializer& s)
 
 Feature::Platforms::Platforms()
 :	ios(false)
-,	linux(false)
+,	linuks(false)
 ,	mobile6(false)
 ,	osx(false)
 ,	ps3(false)
@@ -36,7 +36,7 @@ Feature::Platforms::Platforms()
 bool Feature::Platforms::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"ios", ios);
-	s >> Member< bool >(L"linux", linux);
+	s >> Member< bool >(L"linux", linuks);
 	s >> Member< bool >(L"mobile6", mobile6);
 	s >> Member< bool >(L"osx", osx);
 	s >> Member< bool >(L"ps3", ps3);

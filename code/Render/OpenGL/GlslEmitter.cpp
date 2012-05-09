@@ -1,5 +1,6 @@
 #include <iomanip>
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/GlslContext.h"
@@ -800,40 +801,29 @@ void emitSampler(GlslContext& cx, Sampler* node)
 
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
 
+	bool needAddressW = bool(texture->getType() > GtTexture2D);
+
+	// Calculate sampler hash.
+	Adler32 samplerHash;
+	samplerHash.feed(texture->getName());
+	samplerHash.feed(node->getMinFilter());
+	samplerHash.feed(node->getMipFilter());
+	samplerHash.feed(node->getMagFilter());
+	samplerHash.feed(node->getAddressU());
+	samplerHash.feed(node->getAddressV());
+	if (needAddressW)
+		samplerHash.feed(node->getAddressW());
+
     // Use same stage index for both vertex and fragment shader.
     // Sampler name is defined by which stage it's associated with.
 	int32_t stage;
-    cx.defineSamplerTexture(texture->getName(), stage);
-	std::wstring samplerName = L"_gl_sampler_" + toString(stage);
 
-    // See if we need to define sampler texture in current shader.
-    bool defineSampler = cx.getShader().defineSamplerTexture(texture->getName());
+	// Define sampler.
+    bool defineStates = cx.defineSampler(samplerHash.get(), texture->getName(), stage);
+	std::wstring samplerName = L"_gl_sampler_" + texture->getName() + L"_" + toString(stage);
 
-	if (defineSampler)
+	if (defineStates)
 	{
-		// \fixme We only define a sampler based on texture name, we
-		// should also consider sampler state.
-	
-		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
-		switch (texture->getType())
-		{
-		case GtTexture2D:
-#if defined(T_OPENGL_STD)
-			fu << L"uniform sampler2D " << samplerName << L";" << Endl;
-#elif defined(T_OPENGL_ES2)
-			fu << L"uniform lowp sampler2D " << samplerName << L";" << Endl;
-#endif
-			break;
-
-		case GtTexture3D:
-			fu << L"uniform sampler3D " << samplerName << L";" << Endl;
-			break;
-
-		case GtTextureCube:
-			fu << L"uniform samplerCube " << samplerName << L";" << Endl;
-			break;
-		}
-
 		RenderState& rs = cx.getRenderState();
 
 		if (cx.inFragment())
@@ -865,6 +855,30 @@ void emitSampler(GlslContext& cx, Sampler* node)
 			rs.samplerStates[stage].wrapS = GL_REPEAT;
 			rs.samplerStates[stage].wrapT = GL_REPEAT;
 		}
+	}
+
+	if (cx.getShader().getUniforms().find(samplerName) == cx.getShader().getUniforms().end())
+	{
+		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+		switch (texture->getType())
+		{
+		case GtTexture2D:
+#if defined(T_OPENGL_STD)
+			fu << L"uniform sampler2D " << samplerName << L";" << Endl;
+#elif defined(T_OPENGL_ES2)
+			fu << L"uniform lowp sampler2D " << samplerName << L";" << Endl;
+#endif
+			break;
+
+		case GtTexture3D:
+			fu << L"uniform sampler3D " << samplerName << L";" << Endl;
+			break;
+
+		case GtTextureCube:
+			fu << L"uniform samplerCube " << samplerName << L";" << Endl;
+			break;
+		}
+		cx.getShader().addUniform(samplerName);
 	}
 
 	if (cx.inFragment())
@@ -1302,12 +1316,38 @@ void emitTargetSize(GlslContext& cx, TargetSize* node)
 
 void emitTexture(GlslContext& cx, Texture* node)
 {
-	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
+	std::wstring textureName = getParameterNameFromGuid(node->getExternal());
 	cx.getShader().createVariable(
 		node->findOutputPin(L"Output"),
-		parameterName,
+		textureName,
 		glsl_from_parameter_type(node->getParameterType())
 	);
+	cx.defineTexture(textureName);
+}
+
+void emitTextureSize(GlslContext& cx, TextureSize* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+
+	GlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in || in->getType() < GtTexture2D)
+		return;
+
+	std::wstring uniformName = L"_gl_textureSize_" + in->getName();
+
+	GlslVariable* out = cx.getShader().createVariable(
+		node->findOutputPin(L"Output"),
+		uniformName,
+		GtFloat4
+	);
+
+	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
+	if (uniforms.find(uniformName) == uniforms.end())
+	{
+		StringOutputStream& fu = cx.getShader().getOutputStream(GlslShader::BtUniform);
+		fu << L"uniform vec4 " << uniformName << L";" << Endl;
+		cx.getShader().addUniform(uniformName);
+	}
 }
 
 void emitTransform(GlslContext& cx, Transform* node)
@@ -1346,6 +1386,8 @@ void emitUniform(GlslContext& cx, Uniform* node)
 			cx.getShader().addUniform(node->getParameterName());
 		}
 	}
+	else
+		cx.defineTexture(node->getParameterName());
 }
 
 void emitVector(GlslContext& cx, Vector* node)
@@ -1571,6 +1613,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
+	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);

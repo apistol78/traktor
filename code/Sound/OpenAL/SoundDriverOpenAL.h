@@ -1,8 +1,13 @@
 #ifndef traktor_sound_SoundDriverOpenAL_H
 #define traktor_sound_SoundDriverOpenAL_H
 
-#include <OpenAL/al.h>
-#include <OpenAL/alc.h>
+#if defined(__APPLE__)
+#   include <OpenAL/al.h>
+#   include <OpenAL/alc.h>
+#else
+#   include <AL/al.h>
+#   include <AL/alc.h>
+#endif
 #include "Core/Misc/AutoPtr.h"
 #include "Sound/ISoundDriver.h"
 
@@ -18,25 +23,25 @@ namespace traktor
 {
 	namespace sound
 	{
-	
+
 /*!
  * \ingroup OpenAL
  */
 class T_DLLCLASS SoundDriverOpenAL : public ISoundDriver
 {
 	T_RTTI_CLASS;
-	
+
 public:
 	SoundDriverOpenAL();
-	
+
 	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
-	
+
 	virtual void destroy();
-	
+
 	virtual void wait();
-	
+
 	virtual void submit(const SoundBlock& soundBlock);
-	
+
 private:
 	ALCdevice* m_device;
 	ALCcontext* m_context;
@@ -47,7 +52,7 @@ private:
 	uint32_t m_submitted;
 	AutoArrayPtr< uint8_t > m_data;
 };
-	
+
 	}
 }
 

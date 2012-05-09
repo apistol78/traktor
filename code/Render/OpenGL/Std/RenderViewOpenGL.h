@@ -7,6 +7,8 @@
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #if defined(_WIN32)
 #	include "Render/OpenGL/Std/Win32/Window.h"
+#elif !defined(__APPLE__)
+#   include "Render/OpenGL/Std/Linux/Window.h"
 #endif
 
 // import/export mechanism.
@@ -57,10 +59,20 @@ public:
 
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
+		void* windowHandle,
 		ContextOpenGL* context,
 		ContextOpenGL* resourceContext,
-		BlitHelper* blitHelper,
-		void* windowHandle
+		BlitHelper* blitHelper
+	);
+
+#else	// LINUX
+
+	RenderViewOpenGL(
+		const RenderViewDesc desc,
+		Window* window,
+		ContextOpenGL* context,
+		ContextOpenGL* resourceContext,
+		BlitHelper* blitHelper
 	);
 
 #endif
@@ -112,14 +124,15 @@ public:
 private:
 #if defined(_WIN32)
 	Ref< Window > m_window;
+#elif defined(__APPLE__)
+	void* m_windowHandle;
+#else   // LINUX
+    Ref< Window > m_window;
 #endif
 	Ref< ContextOpenGL > m_context;
 	Ref< ContextOpenGL > m_resourceContext;
 	Ref< StateCacheOpenGL > m_stateCache;
 	Ref< BlitHelper > m_blitHelper;
-#if defined(__APPLE__)
-	void* m_windowHandle;
-#endif
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
 	bool m_waitVBlank;

@@ -10,6 +10,8 @@ namespace traktor
 	namespace
 	{
 
+const uint32_t c_broadcast = ~0UL;
+
 struct Internal
 {
 	pthread_mutex_t mutex;
@@ -17,7 +19,7 @@ struct Internal
 	uint32_t signal;
 	uint32_t waiters;
 };
-	
+
 	}
 
 Event::Event()
@@ -54,7 +56,7 @@ void Event::broadcast()
 	Internal* in = static_cast< Internal* >(m_handle);
 	pthread_mutex_lock(&in->mutex);
 
-	in->signal = std::max< uint32_t >(1, in->waiters);
+	in->signal = c_broadcast;
 	pthread_cond_broadcast(&in->cond);
 
 	pthread_mutex_unlock(&in->mutex);
@@ -74,22 +76,24 @@ bool Event::wait(int timeout)
 {
 	Internal* in = static_cast< Internal* >(m_handle);
 	int rc = 0;
-	
+
 	pthread_mutex_lock(&in->mutex);
 
 	if (in->signal == 0)
 	{
 		++in->waiters;
-		
+
 		if (timeout >= 0)
 		{
 			timeval now;
 			timespec ts;
-		
+
 			gettimeofday(&now, 0);
 			ts.tv_sec = now.tv_sec + timeout / 1000;
-			ts.tv_nsec = (now.tv_usec + timeout % 1000) * 1000;			
-			
+			ts.tv_nsec = (now.tv_usec + (timeout % 1000) * 1000) * 1000;
+			ts.tv_sec += ts.tv_nsec / 1000000000;
+			ts.tv_nsec = ts.tv_nsec % 1000000000;
+
 			while (in->signal == 0 && rc == 0)
 				rc = pthread_cond_timedwait(&in->cond, &in->mutex, &ts);
 		}
@@ -102,11 +106,16 @@ bool Event::wait(int timeout)
 		--in->waiters;
 	}
 
-	if (rc == 0 && in->signal > 0)
-		--in->signal;
+	if (rc == 0 && in->signal != 0)
+	{
+		if (in->signal != c_broadcast)
+			--in->signal;
+		else if (in->waiters == 0)
+			in->signal = 0;
+	}
 
 	pthread_mutex_unlock(&in->mutex);
-	
+
 	return bool(rc == 0);
 }
 

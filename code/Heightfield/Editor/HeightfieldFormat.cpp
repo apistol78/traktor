@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Drawing/Image.h"
@@ -88,7 +89,7 @@ Ref< Heightfield > HeightfieldFormat::read(const Path& filePath, const Vector4& 
 	// Copy heights into heightfield.
 	const height_t* sourceHeights = static_cast< const height_t* >(heightfieldImage->getData());
 	height_t* destinationHeights = heightfield->getHeights();
-	
+
 	std::memcpy(
 		destinationHeights,
 		sourceHeights,

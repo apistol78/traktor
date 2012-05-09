@@ -1,7 +1,6 @@
 #ifndef traktor_render_GlslProgram_H
 #define traktor_render_GlslProgram_H
 
-#include <map>
 #include <string>
 #include "Render/OpenGL/TypesOpenGL.h"
 
@@ -21,7 +20,8 @@ public:
 	GlslProgram(
 		const std::wstring& vertexShader,
 		const std::wstring& fragmentShader,
-		const std::map< std::wstring, int32_t >& samplerTextures,
+		const std::vector< std::wstring >& textures,
+		const std::vector< std::pair< int32_t, int32_t > >& samplers,
 		const RenderState& renderState
 	);
 
@@ -29,14 +29,17 @@ public:
 
 	const std::wstring& getFragmentShader() const;
 
-	const std::map< std::wstring, int32_t >& getSamplerTextures() const;
+	const std::vector< std::wstring >& getTextures() const;
+
+	const std::vector< std::pair< int32_t, int32_t > >& getSamplers() const;
 
 	const RenderState& getRenderState() const;
 
 private:
 	std::wstring m_vertexShader;
 	std::wstring m_fragmentShader;
-	std::map< std::wstring, int32_t > m_samplerTextures;
+	std::vector< std::wstring > m_textures;
+	std::vector< std::pair< int32_t, int32_t > > m_samplers;
 	RenderState m_renderState;
 };
 
