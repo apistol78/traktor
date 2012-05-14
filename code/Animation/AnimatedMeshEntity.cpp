@@ -218,7 +218,7 @@ bool AnimatedMeshEntity::setPoseTransform(const std::wstring& boneName, const Tr
 		m_skeleton->findChildren(index, children);
 
 		for (std::vector< uint32_t >::const_iterator i = children.begin(); i != children.end(); ++i)
-			m_poseTransforms[*i] = m_boneTransforms[*i] * delta;
+			m_poseTransforms[*i] = delta * m_boneTransforms[*i];
 	}
 
 	return true;
