@@ -8,7 +8,7 @@
 #		define _WIN32_LEAN_AND_MEAN
 #		include <windows.h>
 #	endif
-#	include <tchar.h>	
+#	include <tchar.h>
 #endif
 
 #if defined(max)
@@ -17,5 +17,40 @@
 #if defined(min)
 #	undef min
 #endif
+
+namespace traktor
+{
+
+	struct SystemWindow
+	{
+#if defined(_WIN32)
+		HWND hWnd;
+
+		SystemWindow()
+		:	hWnd(0)
+		{
+		}
+
+#elif defined(__LINUX__)
+		void* display;
+		unsigned long window;
+
+		SystemWindow()
+		:	display(0)
+		,	window(0)
+		{
+		}
+
+#else
+		void* unk;
+
+		SystemWindow()
+		:	unk(0)
+		{
+		}
+#endif
+	};
+
+}
 
 #endif	// traktor_Platform_H

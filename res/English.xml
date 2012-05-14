@@ -270,6 +270,10 @@
       <second>Choose workspace</second>
     </item>
     <item>
+      <first>EDITOR_CHECK_ASSETS</first>
+      <second>Check assets</second>
+    </item>
+    <item>
       <first>EDITOR_OPEN_PROJECT</first>
       <second>Open project</second>
     </item>

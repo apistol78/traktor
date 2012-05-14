@@ -25,6 +25,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	void setCalculateConvexHull(bool calculateConvexHull) { m_calculateConvexHull = calculateConvexHull; }
+
+	bool getCalculateConvexHull() const { return m_calculateConvexHull; }
+
 private:
 	friend class MeshPipeline;
 

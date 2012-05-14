@@ -71,6 +71,8 @@ public:
 
 	virtual Viewport getViewport();
 
+	virtual SystemWindow getSystemWindow();
+
 	virtual bool begin(EyeType eye);
 
 	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);

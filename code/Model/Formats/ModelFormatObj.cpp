@@ -167,15 +167,44 @@ bool ModelFormatObj::write(const Path& filePath, const Model* model) const
 	s << Endl;
 
 	const std::vector< Material >& materials = model->getMaterials();
-	const std::vector< Polygon >& polygons = model->getPolygons();
-	for (uint32_t material = 0; material < uint32_t(materials.size()); ++material)
+	if (!materials.empty())
 	{
-		s << L"usemtl " << materials[material].getName() << Endl;
+		const std::vector< Polygon >& polygons = model->getPolygons();
+		for (uint32_t material = 0; material < uint32_t(materials.size()); ++material)
+		{
+			s << L"usemtl " << materials[material].getName() << Endl;
+			for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
+			{
+				if (i->getMaterial() != material)
+					continue;
+
+				const std::vector< uint32_t >& vertices = i->getVertices();
+
+				s << L"f";
+				for (std::vector< uint32_t >::const_reverse_iterator j = vertices.rbegin(); j != vertices.rend(); ++j)
+				{
+					const Vertex& vertex = model->getVertex(*j);
+
+					s << L" " << vertex.getPosition() + 1;
+					if (vertex.getTexCoord(0) != c_InvalidIndex)
+						s << L"/" << vertex.getTexCoord(0) + 1;
+					else
+						s << L"/";
+					if (vertex.getNormal() != c_InvalidIndex)
+						s << L"/" << vertex.getNormal() + 1;
+					else
+						s << L"/";
+				}
+				s << Endl;
+			}
+			s << Endl;
+		}
+	}
+	else
+	{
+		const std::vector< Polygon >& polygons = model->getPolygons();
 		for (std::vector< Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 		{
-			if (i->getMaterial() != material)
-				continue;
-
 			const std::vector< uint32_t >& vertices = i->getVertices();
 
 			s << L"f";

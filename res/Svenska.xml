@@ -278,6 +278,10 @@
       <second>Välj arbetsyta</second>
     </item>
     <item>
+      <first>EDITOR_CHECK_ASSETS</first>
+      <second>Kontrollera tillgångar</second>
+    </item>
+    <item>
       <first>EDITOR_OPEN_PROJECT</first>
       <second>Öppna projekt</second>
     </item>

@@ -2,7 +2,9 @@
 #define traktor_render_Window_H
 
 #include <X11/Xlib.h>
+#include <X11/Xutil.h>
 #include "Core/Object.h"
+#include "Render/Types.h"
 
 namespace traktor
 {
@@ -12,13 +14,23 @@ namespace traktor
 class Window : public Object
 {
 public:
-    Window();
+    Window(::Display* display);
 
     virtual ~Window();
 
-    bool create();
+    bool create(int32_t width, int32_t height);
 
-    bool update();
+    void setTitle(const wchar_t* title);
+
+    void setFullScreenStyle(int32_t width, int32_t height);
+
+    void setWindowedStyle(int32_t width, int32_t height);
+
+    bool update(RenderEvent& outEvent);
+
+    int32_t getWidth() const;
+
+    int32_t getHeight() const;
 
     ::Display* getDisplay() const { return m_display; }
 

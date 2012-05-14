@@ -11,7 +11,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetOpenGL, RenderTargetSet)
 
-RenderTargetSetOpenGL::RenderTargetSetOpenGL(IContext* resourceContext, BlitHelper* blitHelper)
+RenderTargetSetOpenGL::RenderTargetSetOpenGL(ContextOpenGL* resourceContext, BlitHelper* blitHelper)
 :	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
 ,	m_width(0)
@@ -127,7 +127,7 @@ int RenderTargetSetOpenGL::getHeight() const
 
 ISimpleTexture* RenderTargetSetOpenGL::getColorTexture(int index) const
 {
-	return index < m_colorTextures.size() ? m_colorTextures[index] : 0;
+	return index < int(m_colorTextures.size()) ? m_colorTextures[index] : 0;
 }
 
 void RenderTargetSetOpenGL::swap(int index1, int index2)

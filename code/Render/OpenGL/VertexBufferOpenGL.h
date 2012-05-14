@@ -16,7 +16,6 @@ namespace traktor
 	namespace render
 	{
 
-class StateCacheOpenGL;
 class VertexElement;
 
 /*!
@@ -30,7 +29,7 @@ public:
 	VertexBufferOpenGL(uint32_t bufferSize);
 
 #if defined(T_OPENGL_STD)
-	virtual void activate(StateCacheOpenGL* stateCache, const GLint* attributeLocs) = 0;
+	virtual void activate(const GLint* attributeLocs) = 0;
 #endif
 };
 	

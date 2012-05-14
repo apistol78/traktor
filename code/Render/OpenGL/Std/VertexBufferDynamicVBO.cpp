@@ -197,7 +197,7 @@ void VertexBufferDynamicVBO::unlock()
 	setContentValid(true);
 }
 
-void VertexBufferDynamicVBO::activate(StateCacheOpenGL* stateCache, const GLint* attributeLocs)
+void VertexBufferDynamicVBO::activate(const GLint* attributeLocs)
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer still locked");
 

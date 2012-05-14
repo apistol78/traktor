@@ -16,7 +16,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonPipeline", 0, SkeletonPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonPipeline", 1, SkeletonPipeline, editor::IPipeline)
 
 bool SkeletonPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -78,11 +78,13 @@ bool SkeletonPipeline::buildOutput(
 		return false;
 	}
 
-	Vector4 offset = skeletonAsset->getOffset();
-	float boneRadius = skeletonAsset->getBoneRadius();
-	bool invertX = skeletonAsset->getInvertX();
-	bool invertZ = skeletonAsset->getInvertZ();
-	Ref< Skeleton > skeleton = format->import(file, offset, boneRadius, invertX, invertZ);
+	Ref< Skeleton > skeleton = format->import(
+		file,
+		skeletonAsset->getOffset(),
+		skeletonAsset->getBoneRadius(),
+		skeletonAsset->getInvertX(),
+		skeletonAsset->getInvertZ()
+	);
 
 	file->close();
 

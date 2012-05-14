@@ -17,6 +17,9 @@
 
 namespace traktor
 {
+
+struct SystemWindow;
+
 	namespace input
 	{
 
@@ -29,7 +32,7 @@ public:
 
 	virtual ~InputDriverDi8();
 
-	bool create(void* nativeWindowHandle, uint32_t inputCategories);
+	bool create(const SystemWindow& systemWindow, uint32_t inputCategories);
 
 	void destroy();
 

@@ -224,7 +224,7 @@ void SimpleTextureOpenGL::bindSampler(GLuint unit, const SamplerState& samplerSt
 
 void SimpleTextureOpenGL::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(0), GLfloat(0)));
+	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
 }
 
 	}

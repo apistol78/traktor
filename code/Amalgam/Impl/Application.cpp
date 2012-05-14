@@ -15,6 +15,7 @@
 #include "Amalgam/Impl/ScriptServer.h"
 #include "Amalgam/Impl/TargetManagerConnection.h"
 #include "Amalgam/Impl/WorldServer.h"
+#include "Core/Platform.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
@@ -164,7 +165,12 @@ bool Application::create(
 	// Input
 	T_DEBUG(L"Creating input server...");
 	m_inputServer = new InputServer();
-	if (!m_inputServer->create(defaultSettings, settings, m_database, nativeWindowHandle))
+	if (!m_inputServer->create(
+		defaultSettings,
+		settings,
+		m_database,
+		m_renderServer->getRenderView()->getSystemWindow()
+	))
 		return false;
 
 	// Physics
@@ -401,7 +407,7 @@ void Application::destroy()
 		m_database->close();
 		m_database = 0;
 	}
-	
+
 	for (RefArray< Library >::iterator i = m_libraries.begin(); i != m_libraries.end(); ++i)
 		(*i)->close();
 }
@@ -421,7 +427,7 @@ bool Application::update()
 	{
 		// Synchronize rendering thread first as renderer might be reconfigured.
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
-		
+
 		// Execute configuration on all servers.
 		int32_t result = m_environment->executeReconfigure();
 		if (result == CrFailed)
@@ -716,7 +722,7 @@ bool Application::update()
 				}
 			}
 		}
-		
+
 		// In case nothing has been built we yield main thread in favor of other
 		// threads created by the application.
 		if (buildResult == IState::BrNothing)
@@ -848,7 +854,7 @@ void Application::threadRender()
 		// Wait until we have a frame to render.
 		if (!m_signalRenderBegin.wait(100))
 			continue;
-		
+
 		m_signalRenderBegin.reset();
 
 		// Render frame.

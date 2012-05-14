@@ -49,7 +49,11 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	void setBodyDesc(BodyDesc* bodyDesc) { m_bodyDesc = bodyDesc; }
+
 	const BodyDesc* getBodyDesc() const { return m_bodyDesc; }
+
+	void setEntityData(world::EntityData* entityData) { m_entityData = entityData; }
 
 	const world::EntityData* getEntityData() const { return m_entityData; }
 

@@ -9,7 +9,6 @@
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetSetOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
-#include "Render/OpenGL/Std/StateCacheOpenGL.h"
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWindow.h"
@@ -47,14 +46,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewOpenGL", RenderViewOpenGL, IRe
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	Window* window,
-	ContextOpenGL* context,
+	ContextOpenGL* renderContext,
 	ContextOpenGL* resourceContext,
 	BlitHelper* blitHelper
 )
 :	m_window(window)
-,	m_context(context)
+,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
-,	m_stateCache(new StateCacheOpenGL())
 ,	m_blitHelper(blitHelper)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
@@ -70,14 +68,13 @@ RenderViewOpenGL::RenderViewOpenGL(
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	void* windowHandle,
-	ContextOpenGL* context,
+	ContextOpenGL* renderContext,
 	ContextOpenGL* resourceContext,
 	BlitHelper* blitHelper
 )
 :	m_windowHandle(windowHandle)
-,	m_context(context)
+,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
-,	m_stateCache(new StateCacheOpenGL())
 ,	m_blitHelper(blitHelper)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
@@ -85,19 +82,18 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_waitVBlank = desc.waitVBlank;
 }
 
-#else	// LINUX
+#elif defined(__LINUX__)
 
 RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	Window* window,
-	ContextOpenGL* context,
+	ContextOpenGL* renderContext,
 	ContextOpenGL* resourceContext,
 	BlitHelper* blitHelper
 )
 :   m_window(window)
-,	m_context(context)
+,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
-,	m_stateCache(new StateCacheOpenGL())
 ,	m_blitHelper(blitHelper)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
@@ -119,20 +115,20 @@ bool RenderViewOpenGL::createPrimaryTarget()
 	Viewport viewport;
 	viewport.left = 0;
 	viewport.top = 0;
-	viewport.width = m_context->getWidth();
-	viewport.height = m_context->getHeight();
+	viewport.width = m_renderContext->getWidth();
+	viewport.height = m_renderContext->getHeight();
 	viewport.nearZ = 0.0f;
 	viewport.farZ = 1.0f;
 	setViewport(viewport);
 
 	m_primaryTargetDesc.count = 1;
-	m_primaryTargetDesc.width = m_context->getWidth();
-	m_primaryTargetDesc.height = m_context->getHeight();
+	m_primaryTargetDesc.width = m_renderContext->getWidth();
+	m_primaryTargetDesc.height = m_renderContext->getHeight();
 	m_primaryTargetDesc.targets[0].format = TfR8G8B8A8;
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
+		m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
 		if (!m_primaryTarget->create(m_primaryTargetDesc, true))
 			return false;
 	}
@@ -164,10 +160,10 @@ bool RenderViewOpenGL::nextEvent(RenderEvent& outEvent)
 
 	return cglwUpdateWindow(m_windowHandle, outEvent);
 
-#else   // LINUX
+#elif defined(__LINUX__)
 
     if (m_window)
-        return m_window->update();
+        return m_window->update(outEvent);
 
 #endif
 
@@ -187,7 +183,7 @@ void RenderViewOpenGL::close()
 #endif
 
 	safeDestroy(m_primaryTarget);
-	safeDestroy(m_context);
+	safeDestroy(m_renderContext);
 }
 
 bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
@@ -209,18 +205,27 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 	cglwModifyWindow(m_windowHandle, desc.displayMode, desc.fullscreen);
 
+#elif defined(__LINUX__)
+
+	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
+
+	if (desc.fullscreen)
+		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+	else
+		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+
 #endif
 
-	m_context->update();
+	m_renderContext->update();
 
 	// Re-create primary FBO target.
-	m_primaryTargetDesc.width = m_context->getWidth();
-	m_primaryTargetDesc.height = m_context->getHeight();
+	m_primaryTargetDesc.width = m_renderContext->getWidth();
+	m_primaryTargetDesc.height = m_renderContext->getHeight();
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
+		m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
 		if (!m_primaryTarget->create(m_primaryTargetDesc, true))
 			return false;
 	}
@@ -236,13 +241,13 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 
 	safeDestroy(m_primaryTarget);
 
-	m_context->update();
+	m_renderContext->update();
 
 	// Re-create primary FBO target.
-	m_primaryTargetDesc.width = m_context->getWidth();
-	m_primaryTargetDesc.height = m_context->getHeight();
+	m_primaryTargetDesc.width = m_renderContext->getWidth();
+	m_primaryTargetDesc.height = m_renderContext->getHeight();
 
-	m_primaryTarget = new RenderTargetSetOpenGL(m_context, m_blitHelper);
+	m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
 	m_primaryTarget->create(m_primaryTargetDesc, true);
 
 	return true;
@@ -250,12 +255,12 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 
 int RenderViewOpenGL::getWidth() const
 {
-	return m_context->getWidth();
+	return m_renderContext->getWidth();
 }
 
 int RenderViewOpenGL::getHeight() const
 {
-	return m_context->getHeight();
+	return m_renderContext->getHeight();
 }
 
 bool RenderViewOpenGL::isActive() const
@@ -289,7 +294,7 @@ bool RenderViewOpenGL::setGamma(float gamma)
 
 void RenderViewOpenGL::setViewport(const Viewport& viewport)
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+	T_ANONYMOUS_VAR(IContext::Scope)(m_renderContext);
 
 	T_OGL_SAFE(glViewport(
 		viewport.left,
@@ -306,7 +311,7 @@ void RenderViewOpenGL::setViewport(const Viewport& viewport)
 
 Viewport RenderViewOpenGL::getViewport()
 {
-	T_ANONYMOUS_VAR(IContext::Scope)(m_context);
+	T_ANONYMOUS_VAR(IContext::Scope)(m_renderContext);
 
 	GLint ext[4];
 	T_OGL_SAFE(glGetIntegerv(GL_VIEWPORT, ext));
@@ -325,12 +330,24 @@ Viewport RenderViewOpenGL::getViewport()
 	return viewport;
 }
 
+SystemWindow RenderViewOpenGL::getSystemWindow()
+{
+	SystemWindow sw;
+#if defined(_WIN32)
+	sw.hWnd = *m_window;
+#elif defined(__LINUX__)
+	sw.display = m_window->getDisplay();
+	sw.window = m_window->getWindow();
+#endif
+	return sw;
+}
+
 bool RenderViewOpenGL::begin(EyeType eye)
 {
 	if (!m_primaryTarget)
 		return false;
 
-	if (!m_context->enter())
+	if (!m_renderContext->enter())
 		return false;
 
 	return begin(m_primaryTarget, 0);
@@ -343,7 +360,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	RenderTargetSetOpenGL* rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
 
-	if (!rt->bind(m_stateCache, m_primaryTarget->getDepthBuffer()))
+	if (!rt->bind(m_renderContext, m_primaryTarget->getDepthBuffer()))
 	{
 		T_OGL_SAFE(glPopAttrib());
 		return false;
@@ -351,10 +368,6 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 
 	rt->enter();
 	rts->setContentValid(true);
-
-#if defined(_DEBUG)
-	m_stateCache->validate();
-#endif
 
 	m_renderTargetStack.push_back(rt);
 	return true;
@@ -379,17 +392,19 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
-		m_stateCache->setColorMask(RenderState::CmAll);
+		//m_stateCache->setColorMask(RenderState::CmAll);
 		float r = color[0];
 		float g = color[1];
 		float b = color[2];
 		float a = color[3];
+		T_OGL_SAFE(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 		T_OGL_SAFE(glClearColor(r, g, b, a));
 	}
 
 	if (cm & GL_DEPTH_BUFFER_BIT)
 	{
-		m_stateCache->setDepthMask(GL_TRUE);
+		//m_stateCache->setDepthMask(GL_TRUE);
+		T_OGL_SAFE(glDepthMask(GL_TRUE));
 		T_OGL_SAFE(glClearDepth(depth));
 	}
 
@@ -408,15 +423,10 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	const RenderTargetOpenGL* rt = m_renderTargetStack.back();
 	float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
 
-	if (!programGL->activate(m_stateCache, targetSize))
+	if (!programGL->activate(m_renderContext, targetSize))
 		return;
 
-#if defined(_DEBUG)
-	m_stateCache->validate();
-#endif
-
 	vertexBufferGL->activate(
-		m_stateCache,
 		programGL->getAttributeLocs()
 	);
 
@@ -473,7 +483,7 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 			break;
 		}
 
-		indexBufferGL->bind(m_stateCache);
+		indexBufferGL->bind();
 
 #if 0
 		if (!cglwCheckHardwarePath())
@@ -514,6 +524,7 @@ void RenderViewOpenGL::end()
 
 	if (m_renderTargetStack.empty())
 	{
+		T_ASSERT (rt == m_primaryTarget->getColorTexture(0));
 		rt->blit();
 
 		// Unbind primary target.
@@ -525,7 +536,7 @@ void RenderViewOpenGL::end()
 
 		// Rebind parent target.
 		RenderTargetOpenGL* rt = m_renderTargetStack.back();
-		rt->bind(m_stateCache, false);
+		rt->bind(m_renderContext, 0);
 	}
 
 	T_OGL_SAFE(glPopAttrib());
@@ -533,13 +544,11 @@ void RenderViewOpenGL::end()
 
 void RenderViewOpenGL::present()
 {
-	m_context->swapBuffers(m_waitVBlank);
-	m_context->leave();
+	m_renderContext->swapBuffers(m_waitVBlank);
+	m_renderContext->leave();
 
 	// Clean pending resources.
-	m_resourceContext->enter();
 	m_resourceContext->deleteResources();
-	m_resourceContext->leave();
 }
 
 void RenderViewOpenGL::pushMarker(const char* const marker)

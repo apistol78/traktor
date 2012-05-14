@@ -25,6 +25,8 @@
 #	else
 #		include "Input/OsX/InputDriverOsX.h"
 #	endif
+#elif defined(__LINUX__)
+#	include "Input/X11/InputDriverX11.h"
 #endif
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
@@ -52,25 +54,25 @@ bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory dev
 		input::IInputDevice* device = inputSystem->getDevice(deviceCategory, i, true);
 		if (!device)
 			continue;
-		
+
 		int32_t controlCount = device->getControlCount();
 		for (int32_t j = 0; j < controlCount; ++j)
 		{
 			if (device->isControlAnalogue(j))
 				continue;
-				
+
 			if (device->getControlValue(j) > 0.5f)
 				return true;
 		}
 	}
 	return false;
-}		
-		
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.InputServer", InputServer, IInputServer)
 
-bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db, void* nativeWindowHandle)
+bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow)
 {
 	m_inputSystem = new input::InputSystem();
 
@@ -83,17 +85,17 @@ bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 #	if !defined(WINCE)
 	Ref< input::InputDriverDi8 > inputDriverDi8 = new input::InputDriverDi8();
-	if (inputDriverDi8->create(0, input::CtMouse | input::CtJoystick))
+	if (inputDriverDi8->create(systemWindow, input::CtMouse | input::CtJoystick))
 		m_inputSystem->addDriver(inputDriverDi8);
 #	endif
 
 	m_inputSystem->addDriver(new input::InputDriverWin32(input::CtKeyboard));
-	
+
 #elif TARGET_OS_MAC
 #	if TARGET_OS_IPHONE
 
 	Ref< input::InputDriverIPhone > inputDriverIPhone = new input::InputDriverIPhone();
-	if (inputDriverIPhone->create(nativeWindowHandle))
+	if (inputDriverIPhone->create(systemWindow))
 		m_inputSystem->addDriver(inputDriverIPhone);
 
 #	else
@@ -106,6 +108,12 @@ bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 #elif defined(_PS3)
 
 	m_inputSystem->addDriver(new input::InputDriverPs3(4));
+
+#elif defined(__LINUX__)
+
+	Ref< input::InputDriverX11 > inputDriverX11 = new input::InputDriverX11();
+	if (inputDriverX11->create(systemWindow, input::CtKeyboard | input::CtMouse))
+		m_inputSystem->addDriver(inputDriverX11);
 
 #endif
 
@@ -138,7 +146,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 		m_inputMapping = new input::InputMapping();
 		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 	}
-	
+
 	return true;
 }
 
@@ -208,7 +216,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 		m_inputActive = false;
 		return;
 	}
-	
+
 	if (!m_inputActive)
 	{
 		// Poll all devices.
@@ -218,11 +226,11 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 		// in case application became active with mouse.
 		if (anyControlPressed(m_inputSystem, input::CtMouse))
 			return;
-		
+
 		m_inputActive = true;
 		return;
 	}
-	
+
 	// Poll all devices.
 	m_inputSystem->update(deltaTime);
 
@@ -267,7 +275,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 		if (sourceData)
 		{
 			m_inputSourceFabricator = 0;
-			
+
 			if (m_inputMappingSourceData)
 				m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, sourceData);
 
@@ -294,7 +302,7 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 					continue;
 
 				int32_t control;
-				
+
 				if (
 					keyboardDevice->getDefaultControl(input::DtKeyEscape, false, control) &&
 					keyboardDevice->getControlValue(control) >= 0.5f

@@ -133,8 +133,9 @@ Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream, const Vector4& offset
 	Vector4 jointModifier(
 		invertX ? -1.0f : 1.0f, 
 		1.0f, 
-		invertZ ? -1.0f:1.0f, 
-		1.0f);
+		invertZ ? -1.0f : 1.0f, 
+		1.0f
+	);
 
 	Ref< BvhDocument > document = BvhDocument::parse(stream, jointModifier);
 	if (!document)

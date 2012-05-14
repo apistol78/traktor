@@ -7,7 +7,7 @@
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #if defined(_WIN32)
 #	include "Render/OpenGL/Std/Win32/Window.h"
-#elif !defined(__APPLE__)
+#elif defined(__LINUX__)
 #   include "Render/OpenGL/Std/Linux/Window.h"
 #endif
 
@@ -30,7 +30,6 @@ class ProgramOpenGL;
 class RenderSystemOpenGL;
 class RenderTargetOpenGL;
 class RenderTargetSetOpenGL;
-class StateCacheOpenGL;
 class VertexBufferOpenGL;
 
 /*!
@@ -50,7 +49,7 @@ public:
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
 		Window* window,
-		ContextOpenGL* context,
+		ContextOpenGL* renderContext,
 		ContextOpenGL* resourceContext,
 		BlitHelper* blitHelper
 	);
@@ -60,17 +59,17 @@ public:
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
 		void* windowHandle,
-		ContextOpenGL* context,
+		ContextOpenGL* renderContext,
 		ContextOpenGL* resourceContext,
 		BlitHelper* blitHelper
 	);
 
-#else	// LINUX
+#elif defined(__LINUX__)
 
 	RenderViewOpenGL(
 		const RenderViewDesc desc,
 		Window* window,
-		ContextOpenGL* context,
+		ContextOpenGL* renderContext,
 		ContextOpenGL* resourceContext,
 		BlitHelper* blitHelper
 	);
@@ -103,6 +102,8 @@ public:
 
 	virtual Viewport getViewport();
 
+	virtual SystemWindow getSystemWindow();
+
 	virtual bool begin(EyeType eye);
 
 	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);
@@ -126,12 +127,11 @@ private:
 	Ref< Window > m_window;
 #elif defined(__APPLE__)
 	void* m_windowHandle;
-#else   // LINUX
+#elif defined(__LINUX__)
     Ref< Window > m_window;
 #endif
-	Ref< ContextOpenGL > m_context;
+	Ref< ContextOpenGL > m_renderContext;
 	Ref< ContextOpenGL > m_resourceContext;
-	Ref< StateCacheOpenGL > m_stateCache;
 	Ref< BlitHelper > m_blitHelper;
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;

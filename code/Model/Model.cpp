@@ -54,6 +54,8 @@ void Model::clear(uint32_t clearFlags)
 	{
 		if (clearFlags & CfMaterials)
 			i->setMaterial(c_InvalidIndex);
+		if (clearFlags & CfNormals)
+			i->setNormal(c_InvalidIndex);
 		if (clearFlags & CfVertices)
 			i->clearVertices();
 	}
@@ -62,6 +64,11 @@ void Model::clear(uint32_t clearFlags)
 uint32_t Model::addMaterial(const Material& material)
 {
 	return addId(m_materials, material);
+}
+
+uint32_t Model::addUniqueMaterial(const Material& material)
+{
+	return addUniqueId(m_materials, material, MaterialNamePredicate());
 }
 
 const Material& Model::getMaterial(uint32_t index) const

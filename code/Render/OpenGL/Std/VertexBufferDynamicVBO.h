@@ -18,7 +18,6 @@ namespace traktor
 	{
 
 class IContext;
-class StateCacheOpenGL;
 class VertexElement;
 
 /*!
@@ -41,7 +40,7 @@ public:
 
 	virtual void unlock();
 
-	virtual void activate(StateCacheOpenGL* stateCache, const GLint* attributeLocs);
+	virtual void activate(const GLint* attributeLocs);
 
 private:
 	struct AttributeDesc

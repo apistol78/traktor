@@ -577,16 +577,16 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth");
 		if (m_renderView->begin(m_depthTargetSet, 0))
 		{
+			float farZ = m_settings.viewFarZ;
+			const float depthColor[] = { farZ, farZ, farZ, farZ };
 			if (f.haveDepth)
 			{
-				const float depthColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 				m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
 				f.depth->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
 			}
 			else
 			{
-				const float nullColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-				m_renderView->clear(render::CfDepth, nullColor, 1.0f, 0);
+				m_renderView->clear(render::CfDepth, depthColor, 1.0f, 0);
 			}
 			m_renderView->end();
 		}

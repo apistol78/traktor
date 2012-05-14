@@ -59,6 +59,8 @@ public:
 
 	virtual bool isFullScreen() const;
 
+	virtual SystemWindow getSystemWindow();
+
 	// \name Swap-chain management
 	// \{
 

@@ -1,11 +1,10 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
-#include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/BlitHelper.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
-#include "Render/OpenGL/Std/StateCacheOpenGL.h"
 
 namespace traktor
 {
@@ -50,7 +49,7 @@ struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ISimpleTexture)
 
-RenderTargetOpenGL::RenderTargetOpenGL(IContext* resourceContext, BlitHelper* blitHelper)
+RenderTargetOpenGL::RenderTargetOpenGL(ContextOpenGL* resourceContext, BlitHelper* blitHelper)
 :	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
 ,	m_width(0)
@@ -429,10 +428,10 @@ void RenderTargetOpenGL::bindSampler(GLuint unit, const SamplerState& samplerSta
 
 void RenderTargetOpenGL::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(0), GLfloat(0)));
+	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
 }
 
-bool RenderTargetOpenGL::bind(StateCacheOpenGL* stateCache, GLuint depthBuffer)
+bool RenderTargetOpenGL::bind(ContextOpenGL* renderContext, GLuint depthBuffer)
 {
 	T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_targetFBO));
 
@@ -456,12 +455,10 @@ bool RenderTargetOpenGL::bind(StateCacheOpenGL* stateCache, GLuint depthBuffer)
 	if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
 		return false;
 
-	//if (m_haveDepth || m_usingPrimaryDepthBuffer)
-	//	stateCache->setPermitDepth(true);
-	//else
-	//	stateCache->setPermitDepth(false);
-
-	stateCache->forceRenderState(RenderState(), true);
+	if (m_haveDepth || m_usingPrimaryDepthBuffer)
+		renderContext->setPermitDepth(true);
+	else
+		renderContext->setPermitDepth(false);
 
 	return true;
 }

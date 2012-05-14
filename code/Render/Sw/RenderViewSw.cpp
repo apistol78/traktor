@@ -234,6 +234,11 @@ Viewport RenderViewSw::getViewport()
 	return m_viewPort;
 }
 
+SystemWindow RenderViewSw::getSystemWindow()
+{
+	return SystemWindow();
+}
+
 bool RenderViewSw::begin(EyeType eye)
 {
 	T_ASSERT (m_renderStateStack.empty());

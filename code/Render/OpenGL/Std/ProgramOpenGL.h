@@ -1,6 +1,7 @@
 #ifndef traktor_render_ProgramOpenGL_H
 #define traktor_render_ProgramOpenGL_H
 
+#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
 #include "Render/OpenGL/TypesOpenGL.h"
@@ -20,9 +21,7 @@ namespace traktor
 
 class ContextOpenGL;
 class GlslProgram;
-class ITextureBinding;
 class ProgramResource;
-class StateCacheOpenGL;
 
 /*!
  * \ingroup OGL
@@ -56,7 +55,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate(StateCacheOpenGL* stateCache, float targetSize[2]);
+	bool activate(ContextOpenGL* renderContext, float targetSize[2]);
 
 	const GLint* getAttributeLocs() const;
 
@@ -86,6 +85,7 @@ private:
 	Ref< ContextOpenGL > m_resourceContext;
 	GLhandleARB m_program;
 	RenderState m_renderState;
+	GLuint m_renderStateList;
 	GLint m_locationTargetSize;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.
 	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
@@ -93,12 +93,12 @@ private:
 	std::vector< Sampler > m_samplers;						//!< Samplers.
 	std::vector< TextureSize > m_textureSize;
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
-	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
+	RefArray< ITexture > m_textures;
 	float m_targetSize[2];
 	bool m_textureDirty;
 	static ProgramOpenGL* ms_activeProgram;
 	
-	ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, const ProgramResource* resource);
+	ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, GLuint renderStateList, const ProgramResource* resource);
 };
 
 	}

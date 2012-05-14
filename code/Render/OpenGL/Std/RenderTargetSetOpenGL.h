@@ -19,8 +19,8 @@ namespace traktor
 	namespace render
 	{
 
-class IContext;
 class BlitHelper;
+class ContextOpenGL;
 class RenderTargetOpenGL;
 
 /*!
@@ -31,7 +31,7 @@ class T_DLLCLASS RenderTargetSetOpenGL : public RenderTargetSet
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetSetOpenGL(IContext* resourceContext, BlitHelper* blitHelper);
+	RenderTargetSetOpenGL(ContextOpenGL* resourceContext, BlitHelper* blitHelper);
 
 	virtual ~RenderTargetSetOpenGL();
 
@@ -52,7 +52,7 @@ public:
 	GLuint getDepthBuffer() const { return m_depthBuffer; }
 
 private:
-	Ref< IContext > m_resourceContext;
+	Ref< ContextOpenGL > m_resourceContext;
 	Ref< BlitHelper > m_blitHelper;
 	int32_t m_width;
 	int32_t m_height;

@@ -164,6 +164,11 @@ Viewport RenderViewOpenGLES2::getViewport()
 		return m_renderTargetStack.top().viewport;
 }
 
+SystemWindow RenderViewOpenGLES2::getSystemWindow()
+{
+	return SystemWindow();
+}
+
 bool RenderViewOpenGLES2::begin(EyeType eye)
 {
 #if !TARGET_OS_IPHONE

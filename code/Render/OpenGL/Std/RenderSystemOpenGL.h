@@ -81,6 +81,8 @@ private:
 
 #else   // LINUX
 
+	::Display* m_display;
+	Ref< Window > m_windowShared;
     Ref< Window > m_window;
 
 #endif

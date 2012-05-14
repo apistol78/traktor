@@ -32,7 +32,8 @@ public:
 	{
 		ItDefault = 0,
 		ItWiFi = 1,
-		ItVPN = 2
+		ItVPN = 2,
+		ItLoopback = 3
 	};
 
 	struct Interface
@@ -44,17 +45,17 @@ public:
 	SocketAddressIPv4();
 
 	SocketAddressIPv4(const sockaddr_in& sockaddr);
-	
+
 	SocketAddressIPv4(uint16_t port);
 
 	SocketAddressIPv4(const uint32_t addr, uint16_t port);
 
 	SocketAddressIPv4(const uint8_t add[4], uint16_t port);
-	
+
 	SocketAddressIPv4(const std::wstring& host, uint16_t port);
-	
+
 	bool valid() const;
-	
+
 	std::wstring getHostName() const;
 
 	uint32_t getAddr() const;
@@ -68,11 +69,11 @@ public:
 	static bool getInterfaces(std::list< Interface >& outInterfaces);
 
 	static bool getBestInterface(Interface& outInterface);
-	
+
 private:
 	sockaddr_in m_sockaddr;
 };
-	
+
 	}
 }
 
