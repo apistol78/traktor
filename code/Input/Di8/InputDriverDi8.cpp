@@ -1,5 +1,6 @@
 #include <wbemidl.h>
 #include <oleauto.h>
+#include "Core/Platform.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Input/Di8/InputDriverDi8.h"
@@ -205,11 +206,11 @@ InputDriverDi8::~InputDriverDi8()
 	destroy();
 }
 
-bool InputDriverDi8::create(void* nativeWindowHandle, uint32_t inputCategories)
+bool InputDriverDi8::create(const SystemWindow& systemWindow, uint32_t inputCategories)
 {
 	HRESULT hr;
 
-	if (!(m_hWnd = (HWND)nativeWindowHandle))
+	if (!(m_hWnd = systemWindow.hWnd))
 	{
 		if (!(m_hWnd = getMyProcessWindow()))
 		{

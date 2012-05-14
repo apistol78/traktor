@@ -120,6 +120,11 @@ float Vertex::getBoneInfluence(uint32_t boneIndex) const
 		return 0.0f;
 }
 
+uint32_t Vertex::getBoneInfluenceCount() const
+{
+	return m_boneInfluences.size();
+}
+
 uint32_t Vertex::getHash() const
 {
 	Adler32 adler;

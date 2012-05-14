@@ -608,58 +608,9 @@ void sortPolygonsCacheCoherent(Model& model)
 
 void cleanDuplicates(Model& model)
 {
-	std::vector< Vertex > vertices = model.getVertices();
-	std::vector< Polygon > polygons = model.getPolygons();
-
-	for (std::vector< Vertex >::iterator i = vertices.begin(); i != vertices.end() - 1; )
-	{
-		uint32_t duplicateIndex = c_InvalidIndex;
-		for (std::vector< Vertex >::iterator j = i + 1; j != vertices.end(); ++j)
-		{
-			if (*i == *j)
-			{
-				duplicateIndex = uint32_t(std::distance(vertices.begin(), j));
-				break;
-			}
-		}
-		if (duplicateIndex != c_InvalidIndex)
-		{
-			uint32_t originalIndex = uint32_t(std::distance(vertices.begin(), i));
-
-			for (std::vector< Polygon >::iterator j = polygons.begin(); j != polygons.end(); ++j)
-			{
-				for (uint32_t k = 0; k < j->getVertexCount(); ++k)
-				{
-					if (j->getVertex(k) == originalIndex)
-						j->setVertex(k, duplicateIndex);
-				}
-			}
-
-			i = vertices.erase(i);
-		}
-		else
-			i++;
-	}
-
-	for (std::vector< Polygon >::iterator i = polygons.begin(); i != polygons.end() - 1; )
-	{
-		bool duplicate = false;
-		for (std::vector< Polygon >::iterator j = i + 1; j != polygons.end(); ++j)
-		{
-			if (*i == *j)
-			{
-				duplicate = true;
-				break;
-			}
-		}
-		if (duplicate)
-			i = polygons.erase(i);
-		else
-			i++;
-	}
-
-	model.setVertices(vertices);
-	model.setPolygons(polygons);
+	Model cleaned;
+	mergeModels(cleaned, model, Transform::identity());
+	model = cleaned;
 }
 
 void flattenDoubleSided(Model& model)
@@ -948,12 +899,12 @@ void cullDistantFaces(Model& model)
 
 void mergeModels(Model& model, const Model& sourceModel, const Transform& sourceModelTransform)
 {
-	int32_t materialBase = model.getMaterials().size();
+	std::map< uint32_t, uint32_t > materialMap;
 
 	// Merge materials.
 	const std::vector< Material >& sourceMaterials = sourceModel.getMaterials();
-	for (std::vector< Material >::const_iterator i = sourceMaterials.begin(); i != sourceMaterials.end(); ++i)
-		model.addMaterial(*i);
+	for (uint32_t i = 0; i < sourceMaterials.size(); ++i)
+		materialMap[i] = model.addUniqueMaterial(sourceMaterials[i]);
 
 	// Merge geometry.
 	const std::vector< Vertex >& sourceVertices = sourceModel.getVertices();
@@ -992,6 +943,22 @@ void mergeModels(Model& model, const Model& sourceModel, const Transform& source
 		v.setTangent(tangent);
 		v.setBinormal(binormal);
 
+		for (uint32_t j = 0; j < sourceVertex.getTexCoordCount(); ++j)
+		{
+			uint32_t texCoord = sourceVertex.getTexCoord(j);
+			if (texCoord != c_InvalidIndex)
+			{
+				texCoord = model.addUniqueTexCoord(sourceModel.getTexCoord(texCoord));
+				v.setTexCoord(j, texCoord);
+			}
+		}
+
+		for (uint32_t j = 0; j < sourceVertex.getBoneInfluenceCount(); ++j)
+		{
+			float influence = sourceVertex.getBoneInfluence(j);
+			v.setBoneInfluence(j, influence);
+		}
+
 		vertexMap[i] = model.addUniqueVertex(v);
 	}
 
@@ -1000,7 +967,7 @@ void mergeModels(Model& model, const Model& sourceModel, const Transform& source
 	for (std::vector< Polygon >::const_iterator i = sourcePolygons.begin(); i != sourcePolygons.end(); ++i)
 	{
 		Polygon p;
-		p.setMaterial(materialBase + i->getMaterial());
+		p.setMaterial(materialMap[i->getMaterial()]);
 
 		const std::vector< uint32_t >& sourceVertices = i->getVertices();
 		for (uint32_t j = 0; j < sourceVertices.size(); ++j)

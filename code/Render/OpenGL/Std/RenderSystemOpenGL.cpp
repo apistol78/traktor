@@ -38,6 +38,9 @@ RenderSystemOpenGL::RenderSystemOpenGL()
 #if defined(__APPLE__)
 :	m_windowHandle(0)
 ,	m_maxAnisotrophy(1.0f)
+#elif defined(__LINUX__)
+:	m_display(0)
+,	m_maxAnisotrophy(1.0f)
 #else
 :	m_maxAnisotrophy(1.0f)
 #endif
@@ -106,26 +109,53 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 	if (!opengl_initialize_extensions())
 		return false;
 
-#else	// LINUX
+#elif defined(__LINUX__)
 
-	Display* display = XOpenDisplay(0);
-	if (!display)
-		return false;
+	XInitThreads();
 
-	int attribs[] = { GLX_RGBA, None };
-	XVisualInfo* visual = glXChooseVisual(display, DefaultScreen(display), attribs);
+	m_display = XOpenDisplay(0);
+	if (!m_display)
+	{
+		log::error << L"Unable to create OpenGL renderer; Failed to open X display" << Endl;
+		return 0;
+	}
+
+	m_windowShared = new Window(m_display);
+	if (!m_windowShared->create(16, 16))
+	{
+		log::error << L"Unable to create OpenGL renderer; Failed to create resource window" << Endl;
+		return 0;
+	}
+
+	int screen = DefaultScreen(m_windowShared->getDisplay());
+
+	static int attribs[] =
+	{
+		GLX_RGBA,
+		None
+	};
+	XVisualInfo* visual = glXChooseVisual(m_windowShared->getDisplay(), screen, attribs);
 	if (!visual)
+	{
+		log::error << L"Unable to create OpenGL renderer; No visual found" << Endl;
 		return false;
+	}
 
-	GLXContext resourceContext = glXCreateContext(display, visual, NULL, GL_TRUE);
+	GLXContext resourceContext = glXCreateContext(m_windowShared->getDisplay(), visual, NULL, GL_TRUE);
 	if (!resourceContext)
+	{
+		log::error << L"Unable to create OpenGL renderer; glXCreateContext failed" << Endl;
 		return false;
+	}
 
-	m_resourceContext = new ContextOpenGL(display, None, resourceContext);
+	m_resourceContext = new ContextOpenGL(m_windowShared->getDisplay(), m_windowShared->getWindow(), resourceContext);
 	m_resourceContext->enter();
 
 	if (!opengl_initialize_extensions())
+	{
+		log::error << L"Unable to create OpenGL renderer; Failed to initialize OpenGL extensions" << Endl;
 		return false;
+	}
 
 #endif
 
@@ -163,6 +193,10 @@ void RenderSystemOpenGL::destroy()
 		cglwDestroyWindow(m_windowHandle);
 		m_windowHandle = 0;
 	}
+
+#elif defined(__LINUX__)
+
+	m_windowShared = 0;
 
 #endif
 }
@@ -240,6 +274,15 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 
 	DisplayMode dm;
 	cglwGetCurrentDisplayMode(dm);
+	return dm;
+
+#elif defined(__LINUX__)
+
+	DisplayMode dm;
+	dm.width = 1280;
+	dm.height = 720;
+	dm.refreshRate = 60;
+	dm.colorBits = 32;
 	return dm;
 
 #else
@@ -395,24 +438,26 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	context->destroy();
 	context = 0;
 
-#else   // LINUX
+#elif defined(__LINUX__)
 
     if (m_window)
         return 0;
 
-	m_window = new Window();
-	if (!m_window->create())
+	m_window = new Window(m_display);
+	if (!m_window->create(desc.displayMode.width, desc.displayMode.height))
 	{
 		log::error << L"createRenderView failed; unable to create window" << Endl;
 		return 0;
 	}
 
-	//m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
+	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
 
-	//if (desc.fullscreen)
-	//	m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
-	//else
-	//	m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+/*
+	if (desc.fullscreen)
+		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+	else
+		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+*/
 
 	Display* display = m_window->getDisplay();
 	T_ASSERT (display);
@@ -422,11 +467,11 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (!visual)
 		return 0;
 
-	GLXContext resourceContext = glXCreateContext(display, visual, NULL, GL_TRUE);
-	if (!resourceContext)
+	GLXContext glcontext = glXCreateContext(display, visual, m_resourceContext->getGLXContext(), GL_TRUE);
+	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(display, (GLXDrawable)m_window->getWindow(), resourceContext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(display, (GLXDrawable)m_window->getWindow(), glcontext);
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext, m_blitHelper);
 	if (renderView->createPrimaryTarget())
@@ -519,7 +564,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	context->destroy();
 	context = 0;
 
-#else	// LINUX
+#elif defined(__LINUX__)
 
 	Display* display = XOpenDisplay(0);
 	if (!display)
@@ -564,7 +609,7 @@ Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< Ve
 	else
 		return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
 
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) || defined(__LINUX__)
 
 	if (opengl_have_extension(E_GL_ARB_vertex_buffer_object))
 	{
@@ -592,7 +637,7 @@ Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, ui
 	else
 		return new IndexBufferIAR(m_resourceContext, indexType, bufferSize);
 
-#elif defined(__APPLE__)
+#elif defined(__APPLE__) || defined(__LINUX__)
 
 	if (opengl_have_extension(E_GL_ARB_vertex_buffer_object))
 		return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);

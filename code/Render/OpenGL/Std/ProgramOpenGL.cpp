@@ -15,7 +15,6 @@
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
-#include "Render/OpenGL/Std/StateCacheOpenGL.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 
 namespace traktor
@@ -89,6 +88,20 @@ bool storeIfNotEqual(const Matrix44* source, int length, float* dest)
 	for (int i = 0; i < length; ++i)
 		source[i].storeAligned(&dest[i * 4 * 4]);
 	return true;
+}
+
+ITextureBinding* getTextureBinding(ITexture* texture)
+{
+	if (SimpleTextureOpenGL* st = dynamic_type_cast< SimpleTextureOpenGL* >(texture))
+		return static_cast< ITextureBinding* >(st);
+	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(texture))
+		return static_cast< ITextureBinding* >(ct);
+	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(texture))
+		return static_cast< ITextureBinding* >(vt);
+	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(texture))
+		return static_cast< ITextureBinding* >(rt);
+	else
+		return 0;
 }
 
 std::map< uint32_t, ProgramOpenGL* > s_programCache;
@@ -171,7 +184,9 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		}
 	}
 
-	Ref< ProgramOpenGL > program = new ProgramOpenGL(resourceContext, programObject, resource);
+	GLuint renderStateList = resourceContext->createStateList(resourceOpenGL->getRenderState());
+
+	Ref< ProgramOpenGL > program = new ProgramOpenGL(resourceContext, programObject, renderStateList, resource);
 	s_programCache.insert(std::make_pair(hash, program));
 	
 	return program;
@@ -266,17 +281,10 @@ void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 	if (!resolved)
 		return;
 
-	if (SimpleTextureOpenGL* st = dynamic_type_cast< SimpleTextureOpenGL* >(resolved))
-		m_textureBindings[i->second] = static_cast< ITextureBinding* >(st);
-	else if (CubeTextureOpenGL* ct = dynamic_type_cast< CubeTextureOpenGL* >(resolved))
-		m_textureBindings[i->second] = static_cast< ITextureBinding* >(ct);
-	else if (VolumeTextureOpenGL* vt = dynamic_type_cast< VolumeTextureOpenGL* >(resolved))
-		m_textureBindings[i->second] = static_cast< ITextureBinding* >(vt);
-	else if (RenderTargetOpenGL* rt = dynamic_type_cast< RenderTargetOpenGL* >(resolved))
-		m_textureBindings[i->second] = static_cast< ITextureBinding* >(rt);
-	else
-		m_textureBindings[i->second] = 0;
+	if (m_textures[i->second] == resolved)
+		return;
 
+	m_textures[i->second] = resolved;
 	m_textureDirty = true;
 }
 
@@ -285,7 +293,7 @@ void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGL::activate(StateCacheOpenGL* stateCache, float targetSize[2])
+bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 {
 	if (!m_program)
 		return false;
@@ -293,7 +301,8 @@ bool ProgramOpenGL::activate(StateCacheOpenGL* stateCache, float targetSize[2])
 	// Bind program and set state display list.
 	if (ms_activeProgram != this)
 	{
-		stateCache->setRenderState(m_renderState, true);
+		//stateCache->setRenderState(m_renderState, true);
+		renderContext->callStateList(m_renderStateList);
 		T_OGL_SAFE(glUseProgramObjectARB(m_program));
 	}
 	
@@ -347,7 +356,7 @@ bool ProgramOpenGL::activate(StateCacheOpenGL* stateCache, float targetSize[2])
 			const Sampler& sampler = m_samplers[i];
 			const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
 
-			ITextureBinding* tb = m_textureBindings[sampler.texture];
+			ITextureBinding* tb = getTextureBinding(m_textures[sampler.texture]);
 			T_ASSERT (tb);
 			
 			if (tb)
@@ -365,7 +374,7 @@ bool ProgramOpenGL::activate(StateCacheOpenGL* stateCache, float targetSize[2])
 		{
 			const TextureSize& textureSize = m_textureSize[i];
 
-			ITextureBinding* tb = m_textureBindings[textureSize.texture];
+			ITextureBinding* tb = getTextureBinding(m_textures[textureSize.texture]);
 			T_ASSERT (tb);
 
 			if (tb)
@@ -404,9 +413,10 @@ const GLint* ProgramOpenGL::getAttributeLocs() const
 	return m_attributeLocs;
 }
 
-ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, const ProgramResource* resource)
+ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, GLuint renderStateList, const ProgramResource* resource)
 :	m_resourceContext(resourceContext)
 ,	m_program(program)
+,	m_renderStateList(renderStateList)
 ,	m_locationTargetSize(0)
 ,	m_textureDirty(true)
 {
@@ -431,8 +441,8 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
-			m_parameterMap[handle] = m_textureBindings.size();
-			m_textureBindings.push_back(0);
+			m_parameterMap[handle] = m_textures.size();
+			m_textures.push_back(0);
 		}
 		
 		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(stage);
@@ -459,8 +469,8 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
-			m_parameterMap[handle] = m_textureBindings.size();
-			m_textureBindings.push_back(0);
+			m_parameterMap[handle] = m_textures.size();
+			m_textures.push_back(0);
 		}
 
 		TextureSize textureSize;

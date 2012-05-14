@@ -52,6 +52,8 @@ public:
 
 	uint32_t addMaterial(const Material& material);
 
+	uint32_t addUniqueMaterial(const Material& material);
+
 	const Material& getMaterial(uint32_t index) const;
 
 	void setMaterials(const std::vector< Material >& materials);

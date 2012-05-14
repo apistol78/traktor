@@ -20,8 +20,8 @@ namespace traktor
 	{
 
 class BlitHelper;
+class ContextOpenGL;
 class IContext;
-class StateCacheOpenGL;
 
 /*!
  * \ingroup OGL
@@ -33,7 +33,7 @@ class T_DLLCLASS RenderTargetOpenGL
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetOpenGL(IContext* resourceContext, BlitHelper* blitHelper);
+	RenderTargetOpenGL(ContextOpenGL* resourceContext, BlitHelper* blitHelper);
 
 	virtual ~RenderTargetOpenGL();
 
@@ -55,7 +55,7 @@ public:
 
 	virtual void bindSize(GLint locationSize);
 
-	bool bind(StateCacheOpenGL* stateCache, GLuint depthBuffer);
+	bool bind(ContextOpenGL* renderContext, GLuint depthBuffer);
 
 	void enter();
 	
@@ -66,7 +66,7 @@ public:
 	bool read(void* buffer) const;
 	
 private:
-	Ref< IContext > m_resourceContext;
+	Ref< ContextOpenGL > m_resourceContext;
 	Ref< BlitHelper > m_blitHelper;
 	int32_t m_width;
 	int32_t m_height;

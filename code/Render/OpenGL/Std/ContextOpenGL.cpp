@@ -4,6 +4,7 @@
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 
@@ -34,6 +35,8 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 ,	m_hRC(hRC)
 ,	m_width(0)
 ,	m_height(0)
+,	m_permitDepth(true)
+,	m_currentList(0)
 
 #elif defined(__APPLE__)
 
@@ -41,8 +44,10 @@ ContextOpenGL::ContextOpenGL(void* context)
 :	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
+,	m_permitDepth(true)
+,	m_currentList(0)
 
-#else	// LINUX
+#elif defined(__LINUX__)
 
 ContextOpenGL::ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext context)
 :	m_display(display)
@@ -50,6 +55,8 @@ ContextOpenGL::ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext 
 ,	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
+,	m_permitDepth(true)
+,	m_currentList(0)
 
 #endif
 {
@@ -62,7 +69,7 @@ ContextOpenGL::~ContextOpenGL()
 	T_ASSERT (!m_hRC);
 #elif defined(__APPLE__)
 	T_ASSERT (!m_context);
-#else	// LINUX
+#elif defined(__LINUX__)
 	T_ASSERT (!m_context);
 #endif
 }
@@ -85,6 +92,9 @@ void ContextOpenGL::update()
 #elif defined(__APPLE__)
 	cglwUpdate(m_context);
 	cglwGetSize(m_context, m_width, m_height);
+#elif defined(__LINUX__)
+	glXQueryDrawable(m_display, m_drawable, GLX_WIDTH, (uint32_t*)&m_width);
+	glXQueryDrawable(m_display, m_drawable, GLX_HEIGHT, (uint32_t*)&m_height);
 #endif
 }
 
@@ -94,7 +104,7 @@ void ContextOpenGL::swapBuffers(bool waitVBlank)
 	SwapBuffers(m_hDC);
 #elif defined(__APPLE__)
 	cglwSwapBuffers(m_context, waitVBlank);
-#else	// LINUX
+#elif defined(__LINUX__)
 	glXSwapBuffers(m_display, m_drawable);
 #endif
 }
@@ -120,7 +130,7 @@ void ContextOpenGL::destroy()
 	if (m_context)
 		m_context = 0;
 
-#else	// LINUX
+#elif defined(__LINUX__)
 
 	if (m_context)
 	{
@@ -156,7 +166,7 @@ bool ContextOpenGL::enter()
 	if (!cglwMakeCurrent(m_context))
 		return false;
 
-#else	// LINUX
+#elif defined(__LINUX__)
 
 	if (m_drawable)
 	{
@@ -178,13 +188,13 @@ bool ContextOpenGL::enter()
 	}
 
 	stack->push_back(this);
-
 	return true;
 }
 
 void ContextOpenGL::leave()
 {
 	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
+	bool result = true;
 
 	T_ASSERT (stack);
 	T_ASSERT (!stack->empty());
@@ -211,22 +221,20 @@ void ContextOpenGL::leave()
 	else
 		cglwMakeCurrent(0);
 
-#else	// LINUX
+#elif defined(__LINUX__)
 
 	if (!stack->empty())
 	{
-		glXMakeCurrent(
-			stack->back()->m_display,
+		result = (glXMakeContextCurrent(
+			m_display,
+			stack->back()->m_drawable,
 			stack->back()->m_drawable,
 			stack->back()->m_context
-		);
+		) == True);
 	}
 	else
 	{
-		Display* display = XOpenDisplay(0);
-		T_ASSERT (display);
-
-		glXMakeCurrent(display, None, NULL);
+		result = (glXMakeContextCurrent(m_display, None, None, NULL) == True);
 	}
 
 #endif
@@ -273,6 +281,118 @@ GLhandleARB ContextOpenGL::createShaderObject(const char* shader, GLenum shaderT
 	return shaderObject;
 }
 
+GLuint ContextOpenGL::createStateList(const RenderState& renderState)
+{
+	Adler32 adler;
+	adler.feed(renderState.cullFaceEnable);
+	adler.feed(renderState.cullFace);
+	adler.feed(renderState.blendEnable);
+	adler.feed(renderState.blendEquation);
+	adler.feed(renderState.blendFuncSrc);
+	adler.feed(renderState.blendFuncDest);
+	adler.feed(renderState.depthTestEnable);
+	adler.feed(renderState.colorMask);
+	adler.feed(renderState.depthMask);
+	adler.feed(renderState.depthFunc);
+	adler.feed(renderState.alphaTestEnable);
+	adler.feed(renderState.alphaFunc);
+	adler.feed(renderState.alphaRef);
+	adler.feed(renderState.stencilTestEnable);
+	adler.feed(renderState.stencilFunc);
+	adler.feed(renderState.stencilRef);
+	adler.feed(renderState.stencilOpFail);
+	adler.feed(renderState.stencilOpZFail);
+	adler.feed(renderState.stencilOpZPass);
+
+	std::map< uint32_t, GLuint >::iterator i = m_stateLists.find(adler.get());
+	if (i != m_stateLists.end())
+		return i->second;
+
+	GLuint listBase = glGenLists(2);
+
+	for (uint32_t i = 0; i < 2; ++i)
+	{
+		bool permitDepth = bool(i == 0);
+		bool invertCull = true;
+
+		RenderState rs = renderState;
+		if (!permitDepth)
+		{
+			rs.depthTestEnable = GL_FALSE;
+			rs.depthMask = GL_FALSE;
+			rs.stencilTestEnable = GL_FALSE;
+		}
+
+		if (invertCull)
+		{
+			if (rs.cullFace == GL_FRONT)
+				rs.cullFace = GL_BACK;
+			else
+				rs.cullFace = GL_FRONT;
+		}
+
+		glNewList(listBase + i, GL_COMPILE);
+
+		if (rs.cullFaceEnable)
+			{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
+		else
+			{ T_OGL_SAFE(glDisable(GL_CULL_FACE)); }
+
+		T_OGL_SAFE(glCullFace(rs.cullFace));
+
+		if (rs.blendEnable)
+			{ T_OGL_SAFE(glEnable(GL_BLEND)); }
+		else
+			{ T_OGL_SAFE(glDisable(GL_BLEND)); }
+
+		T_OGL_SAFE(glBlendFunc(rs.blendFuncSrc, rs.blendFuncDest));
+		T_OGL_SAFE(glBlendEquationEXT(rs.blendEquation));
+
+		if (rs.depthTestEnable)
+			{ T_OGL_SAFE(glEnable(GL_DEPTH_TEST)); }
+		else
+			{ T_OGL_SAFE(glDisable(GL_DEPTH_TEST)); }
+
+		T_OGL_SAFE(glDepthFunc(rs.depthFunc));
+
+		T_OGL_SAFE(glColorMask(
+			(rs.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
+			(rs.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
+			(rs.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
+			(rs.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
+		));
+
+		T_OGL_SAFE(glDepthMask(rs.depthMask));
+
+		if (rs.stencilTestEnable)
+			{ T_OGL_SAFE(glEnable(GL_STENCIL_TEST)); }
+		else
+			{ T_OGL_SAFE(glDisable(GL_STENCIL_TEST)); }
+
+		T_OGL_SAFE(glStencilFunc(rs.stencilFunc, rs.stencilRef, ~0UL));
+
+		glEndList();
+	}
+
+	m_stateLists[adler.get()] = listBase;
+	return listBase;
+}
+
+void ContextOpenGL::callStateList(GLuint listBase)
+{
+	GLuint list = listBase + (m_permitDepth ? 0 : 1);
+	if (list != m_currentList)
+	{
+		glCallList(list);
+		m_currentList = list;
+	}
+}
+
+void ContextOpenGL::setPermitDepth(bool permitDepth)
+{
+	m_permitDepth = permitDepth;
+}
+
 void ContextOpenGL::deleteResource(IDeleteCallback* callback)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -282,9 +402,17 @@ void ContextOpenGL::deleteResource(IDeleteCallback* callback)
 void ContextOpenGL::deleteResources()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
-		(*i)->deleteResource();
-	m_deleteResources.resize(0);
+
+	if (!m_deleteResources.empty())
+	{
+		if (enter())
+		{
+			for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
+				(*i)->deleteResource();
+			m_deleteResources.resize(0);
+			leave();
+		}
+	}
 }
 
 	}

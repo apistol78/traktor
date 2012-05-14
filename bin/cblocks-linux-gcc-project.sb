@@ -56,14 +56,16 @@
 					<Add option="-g" />
 					<Add option="-fPIC" />
 					<Add option="-DUNICODE" />
-					<Add option="-D_UNICODE" /><?--
+					<Add option="-D_UNICODE" />
+					<Add option="-D__LINUX__" /><?--
 					
 					else
 --?>
 					<Add option="-O3" />
 					<Add option="-fPIC" />
 					<Add option="-DUNICODE" />
-					<Add option="-D_UNICODE" /><?--
+					<Add option="-D_UNICODE" />
+					<Add option="-D__LINUX__" /><?--
 					
 					end
 

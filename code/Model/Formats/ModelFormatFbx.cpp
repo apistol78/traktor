@@ -15,7 +15,7 @@ namespace traktor
 		namespace
 		{
 
-Vector2 convertVector2(const KFbxVector2& v)
+Vector2 convertVector2(const FbxVector2& v)
 {
 	return Vector2(
 		float(v[0]),
@@ -23,35 +23,50 @@ Vector2 convertVector2(const KFbxVector2& v)
 	);
 }
 
-Vector4 convertVector4(const KFbxVector4& v)
+Vector4 convertPosition(const Matrix44& axisTransform, const FbxVector4& v)
 {
-	return Vector4(
-		float(-v[0]),
-		float( v[1]),
-		float( v[2]),
-		float( v[3])
+	return axisTransform * Vector4(float(v[0]), float(v[1]), float(v[2]), 1.0f);
+}
+
+Vector4 convertNormal(const Matrix44& axisTransform, const FbxVector4& v)
+{
+	return axisTransform * Vector4(float(v[0]), float(v[1]), float(v[2]), 0.0f);
+}
+
+Vector4 convertVector(const FbxVector4& v)
+{
+	return Vector4(float(v[0]), float(v[1]), float(v[2]), float(v[3]));
+}
+
+Matrix44 convertMatrix(const FbxMatrix& m)
+{
+	return Matrix44(
+		convertVector(m.GetRow(0)),
+		convertVector(m.GetRow(1)),
+		convertVector(m.GetRow(2)),
+		convertVector(m.GetRow(3))
 	);
 }
 
-KFbxXMatrix getGeometricTransform(const KFbxNode* fbxNode)
+FbxMatrix getGeometricTransform(const FbxNode* fbxNode)
 {
-	KFbxVector4 t = fbxNode->GetGeometricTranslation(KFbxNode::eSOURCE_SET);
-	KFbxVector4 r = fbxNode->GetGeometricRotation(KFbxNode::eSOURCE_SET);
-	KFbxVector4 s = fbxNode->GetGeometricScaling(KFbxNode::eSOURCE_SET);
-	return KFbxXMatrix(t, r, s);
+	FbxVector4 t = fbxNode->GetGeometricTranslation(FbxNode::eSourcePivot);
+	FbxVector4 r = fbxNode->GetGeometricRotation(FbxNode::eSourcePivot);
+	FbxVector4 s = fbxNode->GetGeometricScaling(FbxNode::eSourcePivot);
+	return FbxMatrix(t, r, s);
 }
 
-std::wstring getTextureName(const KFbxSurfaceMaterial* material, const char* fbxPropertyName)
+std::wstring getTextureName(const FbxSurfaceMaterial* material, const char* fbxPropertyName)
 {
 	if (material && fbxPropertyName)
 	{
-		const KFbxProperty prop = material->FindProperty(fbxPropertyName);
+		const FbxProperty prop = material->FindProperty(fbxPropertyName);
 		if (prop.IsValid())
 		{
-			int textureCount = prop.GetSrcObjectCount(KFbxTexture::ClassId);
+			int textureCount = prop.GetSrcObjectCount(FbxFileTexture::ClassId);
 			for (int i = 0; i < textureCount; i++)
 			{
-				KFbxTexture* texture = KFbxCast< KFbxTexture >(prop.GetSrcObject(KFbxTexture::ClassId, i));
+				FbxFileTexture* texture = FbxCast< FbxFileTexture >(prop.GetSrcObject(FbxFileTexture::ClassId, i));
 				if (texture)
 				{
 					const Path texturePath(mbstows(texture->GetFileName()));
@@ -64,11 +79,11 @@ std::wstring getTextureName(const KFbxSurfaceMaterial* material, const char* fbx
 	return std::wstring();
 }
 
-bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t importFlags)
+bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matrix44& axisTransform, uint32_t importFlags)
 {
 	int32_t vertexId = 0;
 
-	KFbxMesh* mesh = static_cast< KFbxMesh* >(meshNode->GetNodeAttribute());
+	FbxMesh* mesh = static_cast< FbxMesh* >(meshNode->GetNodeAttribute());
 	if (!mesh)
 		return false;
 
@@ -81,31 +96,33 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 		materialCount = meshNode->GetMaterialCount();
 		for (int32_t i = 0; i < materialCount; ++i)
 		{
-			KFbxSurfaceMaterial* material = meshNode->GetMaterial(i);
+			FbxSurfaceMaterial* material = meshNode->GetMaterial(i);
 			if (!material)
 				continue;
 
 			Material mm;
 			mm.setName(mbstows(material->GetName()));
 
-			std::wstring diffuseMap = getTextureName(material, KFbxSurfaceMaterial::sDiffuse);
-			if (diffuseMap.length())
+			std::wstring diffuseMap = getTextureName(material, FbxSurfaceMaterial::sDiffuse);
+			if (!diffuseMap.empty())
 				mm.setDiffuseMap(diffuseMap);
-			std::wstring specularMap = getTextureName(material, KFbxSurfaceMaterial::sSpecular);
-			if (specularMap.length())
+
+			std::wstring specularMap = getTextureName(material, FbxSurfaceMaterial::sSpecular);
+			if (!specularMap.empty())
 				mm.setSpecularMap(specularMap);
-			std::wstring normalMap = getTextureName(material, KFbxSurfaceMaterial::sNormalMap);
-			if (normalMap.length())
+
+			std::wstring normalMap = getTextureName(material, FbxSurfaceMaterial::sNormalMap);
+			if (!normalMap.empty())
 				mm.setNormalMap(normalMap);
 
-			if (material->GetClassId().Is(KFbxSurfaceLambert::ClassId))
+			if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
 			{
-				KFbxSurfaceLambert* lambertMaterial = (KFbxSurfaceLambert*)material;
+				FbxSurfaceLambert* lambertMaterial = (FbxSurfaceLambert*)material;
 
-				KFbxPropertyDouble3 lambertDiffuse = lambertMaterial->GetDiffuseColor();
+				FbxPropertyT<FbxDouble3> lambertDiffuse = lambertMaterial->Diffuse;
 				if (lambertDiffuse.IsValid())
 				{
-					fbxDouble3 diffuse = lambertDiffuse.Get();
+					FbxDouble3 diffuse = lambertDiffuse.Get();
 					mm.setColor(Color4ub(
 						uint8_t(diffuse[0] * 255),
 						uint8_t(diffuse[1] * 255),
@@ -114,23 +131,23 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 					));
 				}
 
-				KFbxPropertyDouble1 lambertDiffuseFactor = lambertMaterial->GetDiffuseFactor();
+				FbxPropertyT<FbxDouble> lambertDiffuseFactor = lambertMaterial->DiffuseFactor;
 				if (lambertDiffuseFactor.IsValid())
 				{
-					fbxDouble1 diffuseFactor = lambertDiffuseFactor.Get();
+					FbxDouble diffuseFactor = lambertDiffuseFactor.Get();
 					mm.setDiffuseTerm(float(diffuseFactor));
 				}
 
 				mm.setSpecularTerm(0.0f);
 			}
-			else if (material->GetClassId().Is(KFbxSurfacePhong::ClassId))
+			else if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
 			{
-				KFbxSurfacePhong* phongMaterial = (KFbxSurfacePhong*)material;
+				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)material;
 
-				KFbxPropertyDouble3 phongDiffuse = phongMaterial->GetDiffuseColor();
+				FbxPropertyT<FbxDouble3> phongDiffuse = phongMaterial->Diffuse;
 				if (phongDiffuse.IsValid())
 				{
-					fbxDouble3 diffuse = phongDiffuse.Get();
+					FbxDouble3 diffuse = phongDiffuse.Get();
 					mm.setColor(Color4ub(
 						uint8_t(diffuse[0] * 255),
 						uint8_t(diffuse[1] * 255),
@@ -139,24 +156,24 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 					));
 				}
 
-				KFbxPropertyDouble1 phongDiffuseFactor = phongMaterial->GetDiffuseFactor();
+				FbxPropertyT<FbxDouble> phongDiffuseFactor = phongMaterial->DiffuseFactor;
 				if (phongDiffuseFactor.IsValid())
 				{
-					fbxDouble1 diffuseFactor = phongDiffuseFactor.Get();
+					FbxDouble diffuseFactor = phongDiffuseFactor.Get();
 					mm.setDiffuseTerm(float(diffuseFactor));
 				}
 
-				KFbxPropertyDouble1 phongSpecularFactor = phongMaterial->GetSpecularFactor();
+				FbxPropertyT<FbxDouble> phongSpecularFactor = phongMaterial->SpecularFactor;
 				if (phongSpecularFactor.IsValid())
 				{
-					fbxDouble1 specularFactor = phongSpecularFactor.Get();
+					FbxDouble specularFactor = phongSpecularFactor.Get();
 					mm.setSpecularTerm(float(specularFactor));
 				}
 
-				KFbxPropertyDouble1 phongShininess = phongMaterial->GetShininess();
+				FbxPropertyT<FbxDouble> phongShininess = phongMaterial->Shininess;
 				if (phongShininess.IsValid())
 				{
-					fbxDouble1 shininess = phongShininess.Get();
+					FbxDouble shininess = phongShininess.Get();
 					mm.setSpecularRoughness(float(shininess / 16.0));
 				}
 			}
@@ -165,66 +182,72 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 		}
 	}
 
+	FbxAnimEvaluator* sceneEvaluator = scene->GetEvaluator();
+	FbxMatrix nodeGlobalTransform = sceneEvaluator->GetNodeGlobalTransform(meshNode);
+	FbxMatrix geometricTransform = getGeometricTransform(meshNode);
+	FbxMatrix globalTransform = nodeGlobalTransform * geometricTransform;
+	
+	Vector4 Lpivot = convertVector(meshNode->RotationPivot.Get());
+	Matrix44 Mglobal = convertMatrix(globalTransform);
+
 	// Convert vertex positions.
 	uint32_t positionBase = c_InvalidIndex;
 	if (importFlags & ModelFormat::IfMeshPositions)
 	{
-		KFbxVector4* controlPoints = mesh->GetControlPoints();
+		FbxVector4* controlPoints = mesh->GetControlPoints();
 		if (!controlPoints)
 			return false;
 
 		positionBase = outModel.getPositions().size();
 
-		KFbxAnimEvaluator* sceneEvaluator = scene->GetEvaluator();
-		KFbxXMatrix nodeTransform = sceneEvaluator->GetNodeGlobalTransform(meshNode, KTime(0));
-		KFbxXMatrix geometricTransform = getGeometricTransform(meshNode);
-		KFbxXMatrix globalTransform = nodeTransform * geometricTransform;
-
 		int32_t controlPointsCount = mesh->GetControlPointsCount();
-
-		fbxDouble3 pivot = meshNode->RotationPivot.Get();
 		for (int32_t i = 0; i < controlPointsCount; ++i)
 		{
-			KFbxVector4 v = globalTransform.MultT(controlPoints[i]);
-			outModel.addPosition(convertVector4(v - pivot).xyz1());
+			Vector4 v = Mglobal * convertVector(controlPoints[i]).xyz1();
+			outModel.addPosition(axisTransform * (v - Lpivot).xyz1());
 		}
 	}
 
-	typedef std::map< uint32_t, float > bone_influences_t;	// bone, weight
+	typedef std::map< uint32_t, float > bone_influences_t;
 	std::vector< bone_influences_t > vertexBones;
+
 	if (importFlags & ModelFormat::IfMeshBlendWeights)
 	{
 		int32_t controlPointsCount = mesh->GetControlPointsCount();
 		vertexBones.resize(controlPointsCount);
 
-		int32_t deformerCount = mesh->GetDeformerCount(KFbxDeformer::eSKIN);
+		int32_t deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
 		for (int32_t i = 0; i < deformerCount; ++i)
 		{
-			KFbxSkin* skinDeformer = (KFbxSkin*) mesh->GetDeformer(i, KFbxDeformer::eSKIN);
-			if (skinDeformer)
+			FbxSkin* skinDeformer = (FbxSkin*) mesh->GetDeformer(i, FbxDeformer::eSkin);
+			if (!skinDeformer)
+				continue;
+
+			int32_t clusterCount = skinDeformer->GetClusterCount();
+			for (int32_t j = 0; j < clusterCount; ++j)
 			{
-				int32_t clusterCount = skinDeformer->GetClusterCount();
-				for (int32_t j = 0; j < clusterCount; ++j)
+				FbxCluster* cluster = skinDeformer->GetCluster(j);
+				if (!cluster)
+					continue;
+
+				int weightCount = cluster->GetControlPointIndicesCount();
+				if (weightCount <= 0)
+					continue;
+
+				const FbxNode* boneNode = cluster->GetLink();
+				T_ASSERT (boneNode);
+				
+				const char* boneName = boneNode->GetName();
+				uint32_t boneIndex = outModel.addBone(mbstows(boneName));
+
+				const double* weights = cluster->GetControlPointWeights();
+				const int* indices = cluster->GetControlPointIndices();
+
+				for (int32_t k = 0; k < weightCount; ++k)
 				{
-					KFbxCluster* cluster = skinDeformer->GetCluster(j);
-					if (cluster)
-					{
-						int weightCount = cluster->GetControlPointIndicesCount();
-						if (weightCount)
-						{
-							const KFbxNode* boneNode = cluster->GetLink();
-							const char* boneName = boneNode->GetName();
-							uint32_t boneIndex = outModel.addBone(mbstows(boneName));
-							const double* weights = cluster->GetControlPointWeights();
-							const int* indices = cluster->GetControlPointIndices();
-							for (int32_t k = 0; k < weightCount; ++k)
-							{
-								int32_t vertexIndex = indices[k];
-								float boneWeight = float(weights[k]);
-								vertexBones[vertexIndex].insert(std::pair< uint32_t, float >(boneIndex, boneWeight));
-							}
-						}
-					}
+					int32_t vertexIndex = indices[k];
+					float boneWeight = float(weights[k]);
+					vertexBones[vertexIndex].insert(std::pair< uint32_t, float >(boneIndex, boneWeight));
 				}
 			}
 		}
@@ -243,7 +266,7 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 			{
 				for (int32_t j = 0; j < mesh->GetLayerCount(); ++j)
 				{
-					KFbxLayerElementMaterial* layerMaterials = mesh->GetLayer(j)->GetMaterials();
+					FbxLayerElementMaterial* layerMaterials = mesh->GetLayer(j)->GetMaterials();
 					if (layerMaterials)
 					{
 						int32_t materialIndex = layerMaterials->GetIndexArray().GetAt(i);
@@ -262,36 +285,38 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 
 				Vertex vertex;
 				vertex.setPosition(positionBase + pointIndex);
-				for (bone_influences_t::const_iterator k = vertexBones[pointIndex].begin(); k != vertexBones[pointIndex].end(); ++k)
+
+				if (pointIndex < int32_t(vertexBones.size()))
 				{
-					vertex.setBoneInfluence(k->first, k->second);
+					for (bone_influences_t::const_iterator k = vertexBones[pointIndex].begin(); k != vertexBones[pointIndex].end(); ++k)
+						vertex.setBoneInfluence(k->first, k->second);
 				}
 
 				for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)
 				{
 					// Vertex colors.
-					KFbxLayerElementVertexColor* layerVertexColors = mesh->GetLayer(k)->GetVertexColors();
+					FbxLayerElementVertexColor* layerVertexColors = mesh->GetLayer(k)->GetVertexColors();
 					if (layerVertexColors)
 					{
 					}
 
 					// Vertex texture UVs.
-					KFbxLayerElementUV* layerUVs = mesh->GetLayer(k)->GetUVs();
+					FbxLayerElementUV* layerUVs = mesh->GetLayer(k)->GetUVs();
 					if (layerUVs)
 					{
 						switch (layerUVs->GetMappingMode())
 						{
-						case KFbxLayerElement::eBY_CONTROL_POINT:
+						case FbxLayerElement::eByControlPoint:
 							switch (layerUVs->GetReferenceMode())
 							{
-							case KFbxLayerElement::eDIRECT:
+							case FbxLayerElement::eDirect:
 								{
 									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(pointIndex));
 									vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
 								}
 								break;
 
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
+							case FbxLayerElement::eIndexToDirect:
 								{
 									int32_t id = layerUVs->GetIndexArray().GetAt(pointIndex);
 									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(id));
@@ -304,13 +329,13 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 							}
 							break;
 
-						case KFbxLayerElement::eBY_POLYGON_VERTEX:
+						case FbxLayerElement::eByPolygonVertex:
 							{
 								int32_t textureUVIndex = mesh->GetTextureUVIndex(i, j);
 								switch (layerUVs->GetReferenceMode())
 								{
-								case KFbxLayerElement::eDIRECT:
-								case KFbxLayerElement::eINDEX_TO_DIRECT:
+								case FbxLayerElement::eDirect:
+								case FbxLayerElement::eIndexToDirect:
 									{
 										Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(textureUVIndex));
 										vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
@@ -329,24 +354,26 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 					}
 
 					// Vertex normals.
-					KFbxLayerElementNormal* layerNormals = mesh->GetLayer(k)->GetNormals();
+					FbxLayerElementNormal* layerNormals = mesh->GetLayer(k)->GetNormals();
 					if (layerNormals)
 					{
-						if (layerNormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+						if (layerNormals->GetMappingMode() == FbxLayerElement::eByPolygonVertex)
 						{
 							switch (layerNormals->GetReferenceMode())
 							{
-							case KFbxLayerElement::eDIRECT:
+							case FbxLayerElement::eDirect:
 								{
-									Vector4 normal = convertVector4(layerNormals->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
+									FbxVector4 n = layerNormals->GetDirectArray().GetAt(vertexId);
+									Vector4 normal = (axisTransform * (Mglobal * convertVector(n)).xyz0()).normalized();
 									vertex.setNormal(outModel.addUniqueNormal(normal));
 								}
 								break;
 
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
+							case FbxLayerElement::eIndexToDirect:
 								{
 									int32_t id = layerNormals->GetIndexArray().GetAt(vertexId);
-									Vector4 normal = convertVector4(layerNormals->GetDirectArray().GetAt(id)).xyz0().normalized();
+									FbxVector4 n = layerNormals->GetDirectArray().GetAt(id);
+									Vector4 normal = (axisTransform * (Mglobal * convertVector(n)).xyz0()).normalized();
 									vertex.setNormal(outModel.addUniqueNormal(normal));
 								}
 								break;
@@ -358,24 +385,26 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 					}
 
 					// Vertex tangents.
-					KFbxLayerElementTangent* layerTangents = mesh->GetLayer(k)->GetTangents();
+					FbxLayerElementTangent* layerTangents = mesh->GetLayer(k)->GetTangents();
 					if (layerTangents)
 					{
-						if (layerTangents->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+						if (layerTangents->GetMappingMode() == FbxLayerElement::eByPolygonVertex)
 						{
 							switch (layerTangents->GetReferenceMode())
 							{
-							case KFbxLayerElement::eDIRECT:
+							case FbxLayerElement::eDirect:
 								{
-									Vector4 tangent = convertVector4(layerTangents->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
+									FbxVector4 t = layerTangents->GetDirectArray().GetAt(vertexId);
+									Vector4 tangent = (axisTransform * (Mglobal * convertVector(t)).xyz0()).normalized();
 									vertex.setTangent(outModel.addUniqueNormal(tangent));
 								}
 								break;
 
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
+							case FbxLayerElement::eIndexToDirect:
 								{
 									int32_t id = layerTangents->GetIndexArray().GetAt(vertexId);
-									Vector4 tangent = convertVector4(layerTangents->GetDirectArray().GetAt(id)).xyz0().normalized();
+									FbxVector4 t = layerTangents->GetDirectArray().GetAt(id);
+									Vector4 tangent = (axisTransform * (Mglobal * convertVector(t)).xyz0()).normalized();
 									vertex.setTangent(outModel.addUniqueNormal(tangent));
 								}
 								break;
@@ -387,24 +416,26 @@ bool convertMesh(Model& outModel, KFbxScene* scene, KFbxNode* meshNode, uint32_t
 					}
 
 					// Vertex binormals.
-					KFbxLayerElementBinormal* layerBinormals = mesh->GetLayer(k)->GetBinormals();
+					FbxLayerElementBinormal* layerBinormals = mesh->GetLayer(k)->GetBinormals();
 					if (layerBinormals)
 					{
-						if (layerBinormals->GetMappingMode() == KFbxLayerElement::eBY_POLYGON_VERTEX)
+						if (layerBinormals->GetMappingMode() == FbxLayerElement::eByPolygonVertex)
 						{
-							switch (layerTangents->GetReferenceMode())
+							switch (layerBinormals->GetReferenceMode())
 							{
-							case KFbxLayerElement::eDIRECT:
+							case FbxLayerElement::eDirect:
 								{
-									Vector4 binormal = convertVector4(layerBinormals->GetDirectArray().GetAt(vertexId)).xyz0().normalized();
+									FbxVector4 b = layerBinormals->GetDirectArray().GetAt(vertexId);
+									Vector4 binormal = (axisTransform * (Mglobal * convertVector(b)).xyz0()).normalized();
 									vertex.setBinormal(outModel.addUniqueNormal(binormal));
 								}
 								break;
 
-							case KFbxLayerElement::eINDEX_TO_DIRECT:
+							case FbxLayerElement::eIndexToDirect:
 								{
 									int32_t id = layerBinormals->GetIndexArray().GetAt(vertexId);
-									Vector4 binormal = convertVector4(layerBinormals->GetDirectArray().GetAt(id)).xyz0().normalized();
+									FbxVector4 b = layerBinormals->GetDirectArray().GetAt(id);
+									Vector4 binormal = (axisTransform * (Mglobal * convertVector(b)).xyz0()).normalized();
 									vertex.setBinormal(outModel.addUniqueNormal(binormal));
 								}
 								break;
@@ -447,24 +478,24 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(ms_lock);
 
-	KFbxSdkManager* sdkManager = KFbxSdkManager::Create();
+	FbxManager* sdkManager = FbxManager::Create();
 	if (!sdkManager)
 	{
 		log::error << L"Unable to import FBX model; failed to create FBX SDK instance" << Endl;
 		return 0;
 	}
 
-	KFbxIOSettings* ios = KFbxIOSettings::Create(sdkManager, IOSROOT);
+	FbxIOSettings* ios = FbxIOSettings::Create(sdkManager, IOSROOT);
 	sdkManager->SetIOSettings(ios);
 
-	KFbxScene* scene = KFbxScene::Create(sdkManager, "");
+	FbxScene* scene = FbxScene::Create(sdkManager, "");
 	if (!scene)
 	{
 		log::error << L"Unable to import FBX model; failed to create FBX scene instance" << Endl;
 		return 0;
 	}
 
-	KFbxImporter* importer = KFbxImporter::Create(sdkManager, "");
+	FbxImporter* importer = FbxImporter::Create(sdkManager, "");
 	if (!importer)
 	{
 		log::error << L"Unable to import FBX model; failed to create FBX importer instance" << Endl;
@@ -485,22 +516,106 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 		return 0;
 	}
 
+	// Calculate axis transformation.
+	FbxAxisSystem axisSystem = scene->GetGlobalSettings().GetAxisSystem();
+	bool lightwaveExported = false;
+
+	// \hack If exported from Lightwave then we need to correct buggy exporter.
+	FbxDocumentInfo* documentInfo = scene->GetDocumentInfo();
+	if (documentInfo && documentInfo->mAuthor.Find("Lightwave") >= 0)
+		lightwaveExported = true;
+
+	Matrix44 axisTransform = Matrix44::identity();
+
+	int upSign;
+	FbxAxisSystem::EUpVector up = axisSystem.GetUpVector(upSign);
+
+	int frontSign;
+	FbxAxisSystem::EFrontVector front = axisSystem.GetFrontVector(frontSign);
+
+	bool leftHanded = bool(axisSystem.GetCoorSystem() == FbxAxisSystem::eLeftHanded);
+	if (lightwaveExported)
+		leftHanded = true;
+
+	log::info << L"Up axis: " << (upSign < 0 ? L"-" : L"");
+	switch (up)
+	{
+	case FbxAxisSystem::eXAxis:
+		log::info << L"X" << Endl;
+		break;
+	case FbxAxisSystem::eYAxis:
+		log::info << L"Y" << Endl;
+		break;
+	case FbxAxisSystem::eZAxis:
+		log::info << L"Z" << Endl;
+		break;
+	}
+
+	log::info << L"Front axis: " << (frontSign < 0 ? L"-" : L"");
+	switch (front)
+	{
+	case FbxAxisSystem::eParityEven:
+		log::info << L"Even" << Endl;
+		break;
+	case FbxAxisSystem::eParityOdd:
+		log::info << L"Odd" << Endl;
+		break;
+	}
+
+	if (leftHanded)
+		log::info << L"Left handed" << Endl;
+	else
+		log::info << L"Right handed" << Endl;
+
+	float sign = upSign < 0 ? -1.0f : 1.0f;
+	float scale = leftHanded ? 1.0f : -1.0f;
+
+	switch (up)
+	{
+	case FbxAxisSystem::eXAxis:
+		axisTransform = Matrix44(
+			0.0f, sign, 0.0f, 0.0f,
+			-sign, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, scale, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		);
+		break;
+
+	case FbxAxisSystem::eYAxis:
+		axisTransform = Matrix44(
+			sign * scale, 0.0f, 0.0f, 0.0f,
+			0.0f, sign, 0.0f, 0.0f,
+			0.0f, 0.0f, lightwaveExported ? -1.0f : 1.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		);
+		break;
+
+	case FbxAxisSystem::eZAxis:
+		axisTransform = Matrix44(
+			1.0f, 0.0f, 0.0f, 0.0f,
+			0.0f, 0.0f, -sign * scale, 0.0f,
+			0.0f, sign, 0.0f, 0.0f,
+			0.0f, 0.0f, 0.0f, 1.0f
+		);
+		break;
+	}
+
 	Ref< Model > model = new Model();
 
-	KFbxNode* node = scene->GetRootNode();
+	FbxNode* node = scene->GetRootNode();
 	if (node)
 	{
 		int32_t childCount = node->GetChildCount();
 		for (int32_t i = 0; i < childCount; ++i)
 		{
-			KFbxNode* childNode = node->GetChild(i);
+			FbxNode* childNode = node->GetChild(i);
 			if (!childNode || !childNode->GetVisibility() || !childNode->GetNodeAttribute())
 				continue;
 
-			KFbxNodeAttribute::EAttributeType attributeType = childNode->GetNodeAttribute()->GetAttributeType();
-			if (attributeType == KFbxNodeAttribute::eMESH)
+			FbxNodeAttribute::EType attributeType = childNode->GetNodeAttribute()->GetAttributeType();
+			if (attributeType == FbxNodeAttribute::eMesh)
 			{
-				if (!convertMesh(*model, scene, childNode, importFlags))
+				if (!convertMesh(*model, scene, childNode, axisTransform, importFlags))
 				{
 					log::error << L"Unable to import FBX model; failed to convert mesh" << Endl;
 					return 0;
@@ -509,7 +624,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 		}
 	}
 
-	// Create and assign default material if anonomous faces has been created.
+	// Create and assign default material if anonymous faces has been created.
 	if (importFlags & IfMaterials)
 	{
 		uint32_t defaultMaterialIndex = c_InvalidIndex;

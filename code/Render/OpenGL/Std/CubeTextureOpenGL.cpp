@@ -97,7 +97,7 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 				const uint8_t* s = static_cast< const uint8_t* >(desc.initialData[face * desc.mipCount + i].data);
 				uint8_t* d = static_cast< uint8_t* >(&m_data[0]);
 				
-				for (int y = 0; y < m_side; ++y)
+				for (int y = 0; y < side; ++y)
 				{
 					std::memcpy(d, s, side * m_pixelSize);
 					s += desc.initialData[face * desc.mipCount + i].pitch;
@@ -189,7 +189,7 @@ void CubeTextureOpenGL::bindSampler(GLuint unit, const SamplerState& samplerStat
 
 void CubeTextureOpenGL::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_side), GLfloat(m_side), GLfloat(m_side), GLfloat(0)));
+	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_side), GLfloat(m_side), GLfloat(m_side), GLfloat(1.0f)));
 }
 
 	}

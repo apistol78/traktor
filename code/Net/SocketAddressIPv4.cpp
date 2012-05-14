@@ -10,6 +10,14 @@
 #	include <iphlpapi.h>
 #endif
 
+#if defined(__LINUX__)
+#   include <sys/ioctl.h>
+#   include <sys/sysctl.h>
+//#   include <sys/sockio.h>
+#   include <net/if.h>
+#   include <netinet/if_ether.h>
+#endif
+
 namespace traktor
 {
 	namespace net
@@ -143,15 +151,14 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		outInterfaces.push_back(itf);
 	}
 
-#else
+#elif defined(_WIN32) || TARGET_OS_MAC
 
-#	if defined(_WIN32) || TARGET_OS_MAC || defined(__GNUC__)
 	char hostName[200];
 	if (gethostname(hostName, sizeof(hostName)) == 0)
 	{
-#		if defined(_WIN32)
+#	if defined(_WIN32)
 		LPHOSTENT host;
-#		else
+#	else
 		hostent* host;
 #	endif
 		host = gethostbyname(hostName);
@@ -180,7 +187,69 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		log::error << L"Unable to get network interface(s); gethostname failed." << Endl;
 		return false;
 	}
-#	endif
+
+#elif defined(__LINUX__)
+
+    uint8_t buf[1024] = { 0 };
+    struct ifconf ifc = { 0 };
+    struct ifreq* ifr = 0;
+    int32_t s;
+
+    s = socket(PF_INET, SOCK_DGRAM, 0);
+    if (s < 0)
+    {
+        log::error << L"Unable to get network interface(s); socket failed" << Endl;
+        return false;
+    }
+
+    ifc.ifc_len = sizeof(buf);
+    ifc.ifc_buf = (char*)buf;
+
+    if (ioctl(s, SIOCGIFCONF, &ifc) < 0)
+    {
+        log::error << L"Unable to get network interface(s); ioctl failed" << Endl;
+        ::close(s);
+        return false;
+    }
+
+    ifr = ifc.ifc_req;
+
+    uint32_t nnic = ifc.ifc_len / sizeof(struct ifreq);
+    T_DEBUG(L"Got " << nnic << L" interface(s)");
+
+    for (uint32_t i = 0; i < nnic; ++i)
+    {
+        struct ifreq& r = ifr[i];
+        struct sockaddr& sa = r.ifr_addr;
+        if (sa.sa_family == AF_INET)
+        {
+			Interface n;
+			n.type = ItDefault;
+			n.addr = new SocketAddressIPv4(*(sockaddr_in*)&sa);
+
+			if (ioctl(s, SIOCGIFFLAGS, &r) >= 0)
+			{
+                if (r.ifr_flags & IFF_POINTOPOINT)
+                {
+                    n.type = ItVPN;
+                    T_DEBUG(L"Interface " << i << L" is VPN");
+                }
+                if (r.ifr_flags & IFF_LOOPBACK)
+                {
+                    n.type = ItLoopback;
+                    T_DEBUG(L"Interface " << i << L" is LOOPBACK");
+                }
+			}
+			else
+                T_DEBUG(L"Unable to query interface flags; assuming wired interface");
+
+            outInterfaces.push_back(n);
+        }
+        else
+            T_DEBUG(L"Interface " << i << L" not IPv4; skipped");
+    }
+
+    ::close(s);
 
 #endif
 
@@ -213,7 +282,7 @@ bool SocketAddressIPv4::getBestInterface(Interface& outInterface)
 		}
 	}
 
-	// No one left except vpn.
+	// No one left except vpn or loopback.
 	outInterface = interfaces.front();
 	return true;
 }

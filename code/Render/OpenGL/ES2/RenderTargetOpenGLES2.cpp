@@ -292,7 +292,7 @@ void RenderTargetOpenGLES2::bindSampler(GLuint unit, const SamplerState& sampler
 
 void RenderTargetOpenGLES2::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(0), GLfloat(0)));
+	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
 }
 
 void RenderTargetOpenGLES2::bind(GLuint primaryDepthTarget)

@@ -62,6 +62,8 @@ public:
 
 	float getBoneInfluence(uint32_t boneIndex) const;
 
+	uint32_t getBoneInfluenceCount() const;
+
 	uint32_t getHash() const;
 
 	bool operator == (const Vertex& r) const;

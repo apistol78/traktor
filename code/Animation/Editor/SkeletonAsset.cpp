@@ -1,8 +1,8 @@
+#include "Animation/Editor/SkeletonAsset.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
-#include "Animation/Editor/SkeletonAsset.h"
 
 namespace traktor
 {
@@ -17,7 +17,6 @@ SkeletonAsset::SkeletonAsset()
 ,	m_invertX(false)
 ,	m_invertZ(false)
 {
-
 }
 
 bool SkeletonAsset::serialize(ISerializer& s)

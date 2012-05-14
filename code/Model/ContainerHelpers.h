@@ -3,6 +3,7 @@
 
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
+#include "Model/Material.h"
 
 namespace traktor
 {
@@ -36,6 +37,14 @@ struct DefaultPredicate
 	inline bool operator () (const ItemType& a, const ItemType& b) const
 	{
 		return a == b;
+	}
+};
+
+struct MaterialNamePredicate
+{
+	inline bool operator () (const Material& a, const Material& b) const
+	{
+		return a.getName() == b.getName();
 	}
 };
 

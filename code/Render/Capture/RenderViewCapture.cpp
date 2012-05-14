@@ -82,6 +82,11 @@ Viewport RenderViewCapture::getViewport()
 	return m_renderView->getViewport();
 }
 
+SystemWindow RenderViewCapture::getSystemWindow()
+{
+	return m_renderView->getSystemWindow();
+}
+
 bool RenderViewCapture::begin(EyeType eye)
 {
 	if (!m_renderView->begin(eye))

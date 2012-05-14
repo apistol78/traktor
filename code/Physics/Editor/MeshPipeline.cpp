@@ -65,13 +65,37 @@ bool MeshPipeline::buildOutput(
 ) const
 {
 	const MeshAsset* meshAsset = checked_type_cast< const MeshAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
+	Ref< model::Model > model;
 
-	// Import source model.
-	Ref< model::Model > model = model::ModelFormat::readAny(fileName);
+	// We allow models to be passed as build parameters in case models
+	// are procedurally generated.
+	if (buildParams)
+	{
+		log::info << L"Using parameter model" << Endl;
+		model = checked_type_cast< model::Model* >(
+			const_cast< Object* >(buildParams)
+		);
+	}
+	else
+	{
+		// Import source model.
+		Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
+		model = model::ModelFormat::readAny(fileName);
+	}
+
 	if (!model)
+	{
+		log::error << L"Phys mesh pipeline failed; no model" << Endl;
 		return false;
+	}
+	if (model->getPositions().empty() || model->getVertices().empty() || model->getPolygons().empty())
+	{
+		log::error << L"Phys mesh pipeline failed; no geometry" << Endl;
+		return false;
+	}
 
+	model->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfBones);
+	model::cleanDuplicates(*model);
 	model::triangulateModel(*model);
 
 	// Calculate bounding box; used for center of gravity estimation.

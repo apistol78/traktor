@@ -413,6 +413,13 @@ Viewport RenderViewDx10::getViewport()
 	);
 }
 
+SystemWindow RenderViewDx10::getSystemWindow()
+{
+	SystemWindow sw;
+	sw.hWnd = *m_window;
+	return sw;
+}
+
 bool RenderViewDx10::begin(EyeType eye)
 {
 	T_ASSERT (m_renderStateStack.empty());

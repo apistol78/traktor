@@ -312,6 +312,19 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 			return false;
 		}
 
+		// Ensure group is selected when editing a prefab.
+		Object* documentObject = m_context->getDocument()->getObject(0);
+		T_ASSERT (documentObject);
+		
+		if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(documentObject))
+		{
+			if (parentGroupAdapter->isLayer())
+			{
+				log::error << L"Unable to drop entity; no prefab group selected" << Endl;
+				return false;
+			}
+		}
+
 		m_context->getDocument()->push();
 
 		// Create instance and adapter.

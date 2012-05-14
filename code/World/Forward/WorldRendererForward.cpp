@@ -465,7 +465,8 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth");
 		if (m_renderView->begin(m_depthTargetSet, 0))
 		{
-			const float depthColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+			float farZ = m_settings.viewFarZ;
+			const float depthColor[] = { farZ, farZ, farZ, farZ };
 			m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
 			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
 			m_renderView->end();

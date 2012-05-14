@@ -26,13 +26,13 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	bool getInvertX() const { return m_invertX; }
-
-	bool getInvertZ() const { return m_invertZ; }
+	const Vector4& getOffset() const { return m_offset; }
 
 	float getBoneRadius() const { return m_boneRadius; }
 
-	const Vector4& getOffset() const { return m_offset; }
+	bool getInvertX() const { return m_invertX; }
+
+	bool getInvertZ() const { return m_invertZ; }
 
 private:
 	Vector4 m_offset;

@@ -2,6 +2,7 @@
 #define traktor_render_IRenderView_H
 
 #include "Core/Object.h"
+#include "Core/Platform.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -82,6 +83,8 @@ public:
 
 	virtual Viewport getViewport() = 0;
 
+	virtual SystemWindow getSystemWindow() = 0;
+
 	//@}
 
 	/*! \name Rendering methods. */
@@ -119,7 +122,7 @@ public:
 	 * \param primitives Set of primitives to render.
 	 */
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) = 0;
-	
+
 	/*! \brief End rendering. */
 	virtual void end() = 0;
 

@@ -7,6 +7,7 @@ namespace traktor
 {
 
 class PropertyGroup;
+struct SystemWindow;
 
 	namespace db
 	{
@@ -34,7 +35,7 @@ class InputServer : public IInputServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db, void* nativeWindowHandle);
+	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow);
 
 	void destroy();
 

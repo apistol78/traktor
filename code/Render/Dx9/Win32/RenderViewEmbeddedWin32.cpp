@@ -79,6 +79,13 @@ bool RenderViewEmbeddedWin32::isFullScreen() const
 	return !m_d3dPresent.Windowed;
 }
 
+SystemWindow RenderViewEmbeddedWin32::getSystemWindow()
+{
+	SystemWindow sw;
+	sw.hWnd = m_d3dPresent.hDeviceWindow;
+	return sw;
+}
+
 HRESULT RenderViewEmbeddedWin32::lostDevice()
 {
 	m_d3dSwapChain.release();
