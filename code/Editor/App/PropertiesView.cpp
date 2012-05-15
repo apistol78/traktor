@@ -1,4 +1,6 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/String.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
@@ -8,18 +10,20 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/TextEditorDialog.h"
+#include "I18N/I18N.h"
 #include "I18N/Text.h"
 #include "Ui/FileDialog.h"
-#include "Ui/FloodLayout.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/ColorPicker/ColorDialog.h"
+#include "Ui/Custom/GradientStatic/GradientStatic.h"
 #include "Ui/Custom/PropertyList/FilePropertyItem.h"
 #include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
 #include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
 #include "Ui/Custom/PropertyList/ArrayPropertyItem.h"
 #include "Ui/Custom/PropertyList/TextPropertyItem.h"
 #include "Ui/Custom/PropertyList/ColorPropertyItem.h"
-#include "Ui/Custom/ColorPicker/ColorDialog.h"
 
 namespace traktor
 {
@@ -35,13 +39,17 @@ PropertiesView::PropertiesView(IEditor* editor)
 
 bool PropertiesView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::FloodLayout()))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,50", 0, 4)))
 		return false;
 
 	m_propertyList = new ui::custom::AutoPropertyList();
 	m_propertyList->create(this, ui::WsDoubleBuffer, this);
 	m_propertyList->addCommandEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertyCommand));
 	m_propertyList->addChangeEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertyChange));
+	m_propertyList->addSelectEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertySelect));
+
+	m_staticHelp = new ui::custom::GradientStatic();
+	m_staticHelp->create(this, Color4ub(220, 220, 220), Color4ub(255, 255, 255), Color4ub(0, 0, 0), L"", ui::WsDoubleBuffer);
 
 	return true;
 }
@@ -79,6 +87,7 @@ void PropertiesView::setPropertyObject(ISerializable* object)
 	}
 	
 	m_propertyList->update();
+	updateHelp();
 }
 
 Ref< ISerializable > PropertiesView::getPropertyObject()
@@ -94,6 +103,75 @@ bool PropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolve
 
 	resolved = instance->getName();
 	return true;
+}
+
+namespace
+{
+	std::wstring lookupDocumentation(const std::wstring& id)
+	{
+		std::wstring id_;
+		
+		id_ = toUpper< std::wstring >(id);
+		id_ = replaceAll< std::wstring >(id_, L'.', L'_');
+		id_ = replaceAll< std::wstring >(id_, L' ', L'_');
+
+		std::wstring documentation = i18n::I18N::getInstance().get(id_);
+		if (documentation.empty())
+			log::debug << L"No documentation \"" << id_ << L"\"" << Endl;
+
+		return documentation;
+	}
+}
+
+void PropertiesView::updateHelp()
+{
+	const TypeInfo* helpType = m_propertyObject ? &type_of(m_propertyObject) : 0;
+	std::wstring help;
+
+	RefArray< ui::custom::PropertyItem > selectedItems;
+	if (m_propertyList->getPropertyItems(selectedItems, ui::custom::PropertyList::GfSelectedOnly | ui::custom::PropertyList::GfDescendants) == 1)
+	{
+		std::wstring helpPropId;
+
+		ui::custom::PropertyItem* parent = selectedItems[0]->getParentItem();
+		while (parent)
+		{
+			ui::custom::ObjectPropertyItem* objectItem = dynamic_type_cast< ui::custom::ObjectPropertyItem* >(parent);
+			if (objectItem)
+			{
+				helpType = objectItem->getObject() ? &type_of(objectItem->getObject()) : objectItem->getObjectType();
+				break;
+			}
+			helpPropId = L"_" + parent->getText() + helpPropId;
+			parent = parent->getParentItem();
+		}
+
+		while (helpType)
+		{
+			help = lookupDocumentation(L"HELP_" + std::wstring(helpType->getName()) + helpPropId + L"_" + selectedItems[0]->getText());
+			if (!help.empty())
+				break;
+
+			helpType = helpType->getSuper();
+		}
+
+		if (help.empty())
+			help = lookupDocumentation(L"HELP" + helpPropId + L"_" + selectedItems[0]->getText());
+	}
+	else if (helpType)
+	{
+		while (helpType)
+		{
+			help = lookupDocumentation(L"HELP_" + std::wstring(helpType->getName()));
+			if (!help.empty())
+				break;
+
+			helpType = helpType->getSuper();
+		}
+	}
+
+	m_staticHelp->setText(help);
+	m_staticHelp->update();
 }
 
 void PropertiesView::eventPropertyCommand(ui::Event* event)
@@ -298,6 +376,11 @@ void PropertiesView::eventPropertyChange(ui::Event* event)
 
 	if (activeEditorPage)
 		activeEditorPage->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+}
+
+void PropertiesView::eventPropertySelect(ui::Event* event)
+{
+	updateHelp();
 }
 
 	}

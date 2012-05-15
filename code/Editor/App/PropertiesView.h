@@ -16,6 +16,12 @@ class ISerializable;
 
 class HierarchicalState;
 
+		namespace custom
+		{
+
+class GradientStatic;
+
+		}
 	}
 
 	namespace editor
@@ -45,12 +51,17 @@ public:
 private:
 	IEditor* m_editor;
 	Ref< ui::custom::AutoPropertyList > m_propertyList;
+	Ref< ui::custom::GradientStatic > m_staticHelp;
 	Ref< ISerializable > m_propertyObject;
 	std::map< const TypeInfo*, Ref< ui::HierarchicalState > > m_states;
+
+	void updateHelp();
 
 	void eventPropertyCommand(ui::Event* event);
 
 	void eventPropertyChange(ui::Event* event);
+
+	void eventPropertySelect(ui::Event* event);
 };
 
 	}

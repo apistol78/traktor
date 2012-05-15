@@ -330,8 +330,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 #endif
 
-	// Load dictionary.
-	loadDictionary();
+	// Load dictionaries.
+	loadLanguageDictionary();
+	loadHelpDictionary();
 
 	// Load recently used files dictionary.
 	m_mru = loadRecent(L"Traktor.Editor.mru");
@@ -1806,7 +1807,7 @@ void EditorForm::activateNextEditor()
 	}
 }
 
-void EditorForm::loadDictionary()
+void EditorForm::loadLanguageDictionary()
 {
 	std::wstring dictionaryFile = m_mergedSettings->getProperty< PropertyString >(L"Editor.Dictionary");
 
@@ -1824,6 +1825,22 @@ void EditorForm::loadDictionary()
 		i18n::I18N::getInstance().appendDictionary(dictionary);
 	else
 		log::warning << L"Unable to load dictionary \"" << dictionaryFile << L"\"; possibly corrupted." << Endl;
+}
+
+void EditorForm::loadHelpDictionary()
+{
+	Ref< IStream > file = FileSystem::getInstance().open(L"$(TRAKTOR_HOME)/res/Help.xml", File::FmRead);
+	if (!file)
+	{
+		log::warning << L"Unable to open dictionary \"Help.xml\"; file missing." << Endl;
+		return;
+	}
+
+	Ref< i18n::Dictionary > dictionary = dynamic_type_cast< i18n::Dictionary* >(xml::XmlDeserializer(file).readObject());
+	file->close();
+
+	if (dictionary)
+		i18n::I18N::getInstance().appendDictionary(dictionary);
 }
 
 void EditorForm::checkModified()

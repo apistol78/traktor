@@ -431,8 +431,12 @@ void PropertyList::eventButtonDown(Event* event)
 					raiseEvent(EiSelectionChange, &cmdEvent);
 				}
 			}
-			else
+			else if ((*i)->isSelected())
+			{
 				(*i)->setSelected(false);
+				CommandEvent cmdEvent(this, *i, Command(id));
+				raiseEvent(EiSelectionChange, &cmdEvent);
+			}
 		}
 
 		if (m_mousePropertyItem)

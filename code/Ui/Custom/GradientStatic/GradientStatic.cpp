@@ -56,10 +56,10 @@ void GradientStatic::eventPaint(Event* event)
 
 	canvas.setForeground(m_colorLeft);
 	canvas.setBackground(m_colorRight);
-	canvas.fillGradientRect(innerRect, false);
+	canvas.fillGradientRect(innerRect, true);
 
 	canvas.setForeground(m_colorText);
-	canvas.drawText(innerRect.inflate(-4, -4), getText(), AnLeft, AnCenter);
+	canvas.drawText(innerRect.inflate(-4, -4), getText(), AnLeft, AnTop);
 
 	paintEvent->consume();
 }
