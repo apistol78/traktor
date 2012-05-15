@@ -84,7 +84,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 	for (std::vector< ShaderResource::Technique >::const_iterator i = techniques.begin(); i != techniques.end(); ++i)
 	{
 		Shader::Technique& technique = shader->m_techniques[getParameterHandle(i->name)];
-		technique.parameterMask = i->parameterMask;
+		technique.mask = i->mask;
 
 		for (std::vector< ShaderResource::Combination >::const_iterator j = i->combinations.begin(); j != i->combinations.end(); ++j)
 		{
@@ -107,7 +107,8 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 				return 0;
 
 			Shader::Combination combination;
-			combination.parameterValue = j->parameterValue;
+			combination.mask = j->mask;
+			combination.value = j->value;
 			combination.program = m_renderSystem->createProgram(programResource);
 			if (!combination.program)
 				return 0;

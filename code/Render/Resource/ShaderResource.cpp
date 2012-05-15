@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 0, ShaderResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 1, ShaderResource, ISerializable)
 
 const std::map< std::wstring, uint32_t >& ShaderResource::getParameterBits() const
 {
@@ -23,6 +23,7 @@ const std::vector< ShaderResource::Technique >& ShaderResource::getTechniques() 
 
 bool ShaderResource::serialize(ISerializer& s)
 {
+	T_ASSERT (s.getVersion() >= 1);
 	s >> MemberStlMap< std::wstring, uint32_t >(L"parameterBits", m_parameterBits);
 	s >> MemberStlVector< Technique, MemberComposite< Technique > >(L"techniques", m_techniques);
 	return true;
@@ -30,7 +31,8 @@ bool ShaderResource::serialize(ISerializer& s)
 
 bool ShaderResource::Combination::serialize(ISerializer& s)
 {
-	s >> Member< uint32_t >(L"parameterValue", parameterValue);
+	s >> Member< uint32_t >(L"mask", mask);
+	s >> Member< uint32_t >(L"value", value);
 	s >> MemberRef< ISerializable >(L"program", program);
 	s >> MemberStlVector< Guid >(L"textures", textures);
 	return true;
@@ -39,7 +41,7 @@ bool ShaderResource::Combination::serialize(ISerializer& s)
 bool ShaderResource::Technique::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
-	s >> Member< uint32_t >(L"parameterMask", parameterMask);
+	s >> Member< uint32_t >(L"mask", mask);
 	s >> MemberStlVector< Combination, MemberComposite< Combination > >(L"combinations", combinations);
 	return true;
 }

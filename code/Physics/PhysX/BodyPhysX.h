@@ -35,6 +35,8 @@ public:
 
 	virtual Transform getTransform() const;
 
+	virtual Transform getCenterTransform() const;
+
 	virtual bool isStatic() const;
 
 	virtual void setActive(bool active);

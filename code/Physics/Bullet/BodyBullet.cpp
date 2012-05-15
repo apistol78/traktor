@@ -60,7 +60,7 @@ void BodyBullet::destroy()
 
 void BodyBullet::setTransform(const Transform& transform)
 {
-	btTransform bt = toBtTransform(Transform(m_centerOfGravity) * transform);
+	btTransform bt = toBtTransform(transform * Transform(m_centerOfGravity));
 
 	T_ASSERT (m_body);
 	m_body->setWorldTransform(bt);
@@ -74,6 +74,12 @@ Transform BodyBullet::getTransform() const
 {
 	T_ASSERT (m_body);
 	return fromBtTransform(m_body->getWorldTransform()) * Transform(-m_centerOfGravity);
+}
+
+Transform BodyBullet::getCenterTransform() const
+{
+	T_ASSERT (m_body);
+	return fromBtTransform(m_body->getWorldTransform());
 }
 
 bool BodyBullet::isStatic() const
@@ -140,7 +146,9 @@ void BodyBullet::addForceAt(const Vector4& at, const Vector4& force, bool localS
 {
 	T_ASSERT (m_body);
 
-	Vector4 at_ = convert(this, at, localSpace);
+	Vector4 at0 = localSpace ? at - m_centerOfGravity : at;
+
+	Vector4 at_ = convert(this, at0, localSpace);
 	Vector4 force_ = convert(this, force, localSpace);
 	Vector4 relativeAt = at_ - fromBtVector3(m_body->getCenterOfMassPosition(), 1.0f);
 
@@ -175,7 +183,9 @@ void BodyBullet::addImpulse(const Vector4& at, const Vector4& impulse, bool loca
 {
 	T_ASSERT (m_body);
 
-	Vector4 at_ = convert(this, at, localSpace);
+	Vector4 at0 = localSpace ? at - m_centerOfGravity : at;
+
+	Vector4 at_ = convert(this, at0, localSpace);
 	Vector4 impulse_ = convert(this, impulse, localSpace);
 	Vector4 relativeAt = at_ - fromBtVector3(m_body->getCenterOfMassPosition(), 1.0f);
 
@@ -213,11 +223,13 @@ Vector4 BodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
 {
 	T_ASSERT (m_body);
 
+	Vector4 at0 = localSpace ? at - m_centerOfGravity : at;
+
 	btVector3 relPos;
 	if (localSpace)
-		relPos = toBtVector3(getTransform() * at - getTransform().translation());
+		relPos = toBtVector3(getTransform() * at0 - getTransform().translation());
 	else
-		relPos = toBtVector3(at - getTransform().translation());
+		relPos = toBtVector3(at0 - getTransform().translation());
 
 	return fromBtVector3(
 		m_body->getVelocityInLocalPoint(relPos),

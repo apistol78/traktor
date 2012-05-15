@@ -32,9 +32,16 @@ class T_DLLCLASS ShaderResource : public ISerializable
 public:
 	struct Combination
 	{
-		uint32_t parameterValue;
+		uint32_t mask;
+		uint32_t value;
 		Ref< ISerializable > program;
 		std::vector< Guid > textures;
+
+		Combination()
+		:	mask(0)
+		,	value(0)
+		{
+		}
 
 		bool serialize(ISerializer& s);
 	};
@@ -42,8 +49,13 @@ public:
 	struct Technique
 	{
 		std::wstring name;
-		uint32_t parameterMask;
+		uint32_t mask;
 		std::vector< Combination > combinations;
+
+		Technique()
+		:	mask(0)
+		{
+		}
 
 		bool serialize(ISerializer& s);
 	};

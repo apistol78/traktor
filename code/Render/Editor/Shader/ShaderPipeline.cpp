@@ -77,13 +77,20 @@ struct BuildCombinationTask : public Object
 	{
 		const std::map< std::wstring, uint32_t >& parameterBits = shaderResource->getParameterBits();
 
-		// Map parameter value for this combination.
-		std::vector< std::wstring > parameterCombination = combinations->getParameterCombination(combination);
-		for (std::vector< std::wstring >::iterator j = parameterCombination.begin(); j != parameterCombination.end(); ++j)
-			shaderResourceCombination->parameterValue |= parameterBits.find(*j)->second;
+		// Remap parameter mask and value for this combination as shader consist of multiple techniques.
+		uint32_t mask = combinations->getCombinationMask(combination);
+		uint32_t value = combinations->getCombinationValue(combination);
+
+		std::vector< std::wstring > maskNames = combinations->getParameterNames(mask);
+		std::vector< std::wstring > valueNames = combinations->getParameterNames(value);
+
+		for (std::vector< std::wstring >::iterator j = maskNames.begin(); j != maskNames.end(); ++j)
+			shaderResourceCombination->mask |= parameterBits.find(*j)->second;
+		for (std::vector< std::wstring >::iterator j = valueNames.begin(); j != valueNames.end(); ++j)
+			shaderResourceCombination->value |= parameterBits.find(*j)->second;
 
 		// Generate combination shader graph.
-		Ref< ShaderGraph > programGraph = combinations->generate(combination);
+		Ref< const ShaderGraph > programGraph = combinations->getCombinationShaderGraph(combination);
 		T_ASSERT (programGraph);
 
 		// Freeze type permutation.
@@ -448,19 +455,19 @@ bool ShaderPipeline::buildOutput(
 
 		ShaderResource::Technique* shaderResourceTechnique = new ShaderResource::Technique();
 		shaderResourceTechnique->name = *i;
-		shaderResourceTechnique->parameterMask = 0;
+		shaderResourceTechnique->mask = 0;
 		shaderResourceTechniques.push_back(shaderResourceTechnique);
 
 		// Map parameter name to unique bits; also build parameter mask for this technique.
-		std::vector< std::wstring > parameterNames = combinations->getParameterNames();
-		for (std::vector< std::wstring >::iterator j = parameterNames.begin(); j != parameterNames.end(); ++j)
+		const std::vector< std::wstring >& parameterNames = combinations->getParameterNames();
+		for (std::vector< std::wstring >::const_iterator j = parameterNames.begin(); j != parameterNames.end(); ++j)
 		{
 			if (shaderResource->m_parameterBits.find(*j) == shaderResource->m_parameterBits.end())
 			{
 				shaderResource->m_parameterBits.insert(std::make_pair(*j, parameterBit));
 				parameterBit <<= 1;
 			}
-			shaderResourceTechnique->parameterMask |= shaderResource->m_parameterBits[*j];
+			shaderResourceTechnique->mask |= shaderResource->m_parameterBits[*j];
 		}
 
 		// Optimize and compile all combination programs.
@@ -475,7 +482,8 @@ bool ShaderPipeline::buildOutput(
 			task->shaderResource = shaderResource;
 			task->shaderResourceTechnique = shaderResourceTechnique;
 			task->shaderResourceCombination = new ShaderResource::Combination;
-			task->shaderResourceCombination->parameterValue = 0;
+			task->shaderResourceCombination->mask = 0;
+			task->shaderResourceCombination->value = 0;
 			task->programCompiler = m_programCompiler;
 			task->programHints = m_programHints;
 			task->frequentUniformsAsLinear = m_frequentUniformsAsLinear;
@@ -580,7 +588,7 @@ bool ShaderPipeline::buildOutput(
 
 			for (size_t j = 0; j < combinations.size(); ++j)
 			{
-				log::info << uint32_t(j) << L": " << combinations[j].parameterValue << Endl;
+				log::info << uint32_t(j) << L": " << combinations[j].mask << L"|" << combinations[j].value << Endl;
 				log::info << IncreaseIndent;
 
 				const std::vector< Guid >& textures = combinations[j].textures;

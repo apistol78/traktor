@@ -26,7 +26,7 @@ const float c_maxLatencyCompensate = 2.0f;
 const float c_maxOffsetAdjustError = 1000.0f;
 const float c_maxOffsetAdjust = 30.0f;
 const float c_nearDistance = 30.0f;
-const float c_farDistance = 100.0f;
+const float c_farDistance = 400.0f;
 const float c_nearTimeUntilTx = 1.0f / 15.0f;
 const float c_farTimeUntilTx = 1.0f / 2.0f;
 

@@ -1,6 +1,8 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyFloat.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Parade/WorldLayer.h"
 #include "Render/IRenderView.h"
 #include "Scene/Scene.h"
@@ -274,7 +276,7 @@ void WorldLayer::createWorldRenderer()
 	worldViewPort.width = width;
 	worldViewPort.height = height;
 	worldViewPort.aspect = m_environment->getRender()->getAspectRatio();
-	worldViewPort.fov = deg2rad(80.0f);
+	worldViewPort.fov = deg2rad(m_environment->getSettings()->getProperty< PropertyFloat >(L"World.FieldOfView", 70.0f));
 	m_worldRenderer->createRenderView(worldViewPort, m_worldRenderView);
 
 	// Create post frame process.
