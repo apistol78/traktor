@@ -224,7 +224,9 @@ private:
 
 	void activateNextEditor();
 
-	void loadDictionary();
+	void loadLanguageDictionary();
+
+	void loadHelpDictionary();
 
 	void checkModified();
 
