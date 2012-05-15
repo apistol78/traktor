@@ -45,17 +45,20 @@ void UniformShadowProjection::calculate(
 		lightAxisY = cross(lightAxisX, lightAxisZ).normalized();
 	}
 
+	Matrix44 lightView(
+		lightAxisX,
+		lightAxisY,
+		lightAxisZ,
+		Vector4::origo()
+	);
+
+	Matrix44 viewToLight = lightView.inverse() * viewInverse;
+
 	// Calculate bounding box of view frustum in light space.
 	Aabb3 viewFrustumBox;
 	for (int i = 0; i < 8; ++i)
 	{
-		Vector4 worldCorner = viewInverse * viewFrustum.corners[i];
-		Vector4 lightCorner(
-			dot3(lightAxisX, worldCorner),
-			dot3(lightAxisY, worldCorner),
-			dot3(lightAxisZ, worldCorner),
-			1.0f
-		);
+		Vector4 lightCorner = viewToLight * viewFrustum.corners[i];
 		viewFrustumBox.contain(lightCorner);
 	}
 

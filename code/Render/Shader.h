@@ -141,13 +141,14 @@ private:
 
 	struct Combination
 	{
-		uint32_t parameterValue;
+		uint32_t mask;
+		uint32_t value;
 		Ref< IProgram > program;
 	};
 
 	struct Technique
 	{
-		uint32_t parameterMask;
+		uint32_t mask;
 		AlignedVector< Combination > combinations;
 	};
 

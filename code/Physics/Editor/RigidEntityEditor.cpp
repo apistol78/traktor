@@ -44,6 +44,7 @@ bool RigidEntityEditor::handleCommand(const ui::Command& command)
 void RigidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
 	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(getEntityAdapter()->getEntityData());
+	Ref< RigidEntity > rigidEntity = dynamic_type_cast< RigidEntity* >(getEntityAdapter()->getEntity());
 
 	const BodyDesc* bodyDesc = rigidEntityData->getBodyDesc();
 	if (bodyDesc)
@@ -61,6 +62,18 @@ void RigidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 				body1Transform,
 				shapeDesc
 			);
+		}
+	}
+
+	if (rigidEntity)
+	{
+		Body* body = rigidEntity->getBody();
+		if (body)
+		{
+			Transform bodyTransform = body->getCenterTransform();
+			primitiveRenderer->pushWorld(bodyTransform.toMatrix44());
+			primitiveRenderer->drawSolidPoint(Vector4::origo(), 8.0f, Color4ub(255, 255, 0, 255));
+			primitiveRenderer->popWorld();
 		}
 	}
 }

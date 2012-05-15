@@ -45,6 +45,12 @@ public:
 	 */
 	virtual Transform getTransform() const = 0;
 
+	/*! \brief Get rigid body world transform at center of gravity.
+	 *
+	 * \return World transform.
+	 */
+	virtual Transform getCenterTransform() const = 0;
+
 	/*! \brief Get type of body. */
 	virtual bool isStatic() const = 0;
 

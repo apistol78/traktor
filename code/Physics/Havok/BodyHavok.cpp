@@ -53,6 +53,11 @@ Transform BodyHavok::getTransform() const
 	return fromHkTransform(m_rigidBody->getTransform());
 }
 
+Transform BodyHavok::getCenterTransform() const
+{
+	return getTransform();
+}
+
 bool BodyHavok::isStatic() const
 {
 	return false;

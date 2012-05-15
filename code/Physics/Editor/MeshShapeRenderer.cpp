@@ -61,8 +61,6 @@ void MeshShapeRenderer::draw(
 			}
 		}
 
-		primitiveRenderer->drawSolidPoint(Vector4::origo(), 4.0f, Color4ub(255, 0, 0, 180));
-
 		primitiveRenderer->popWorld();
 	}
 }

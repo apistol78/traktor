@@ -846,8 +846,8 @@
       <second>Öppna projekt...</second>
     </item>
     <item>
-      <first>MENU_FILE_OPEN_RECENT</first>
-      <second>Öppna tidigare projekt...</second>
+      <first>MENU_FILE_OPEN_RECENT_WORKSPACE</first>
+      <second>Öppna tidigare arbetsyta...</second>
     </item>
     <item>
       <first>MENU_FILE_OPEN_WORKSPACE</first>

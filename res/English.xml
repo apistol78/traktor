@@ -830,8 +830,8 @@
       <second>Open project...</second>
     </item>
     <item>
-      <first>MENU_FILE_OPEN_RECENT</first>
-      <second>Open recent project...</second>
+      <first>MENU_FILE_OPEN_RECENT_WORKSPACE</first>
+      <second>Open recent workspace...</second>
     </item>
     <item>
       <first>MENU_FILE_OPEN_WORKSPACE</first>

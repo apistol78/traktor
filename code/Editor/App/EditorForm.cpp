@@ -242,6 +242,33 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 	return database;
 }
 
+Ref< MRU > loadRecent(const std::wstring& recentFile)
+{
+	Ref< MRU > mru;
+
+	Ref< IStream > file = FileSystem::getInstance().open(recentFile, File::FmRead);
+	if (file)
+	{
+		mru = xml::XmlDeserializer(file).readObject< MRU >();
+		file->close();
+	}
+
+	if (!mru)
+		mru = new MRU();
+
+	return mru;
+}
+
+void saveRecent(const std::wstring& recentFile, const MRU* mru)
+{
+	Ref< IStream > file = FileSystem::getInstance().open(recentFile, File::FmWrite);
+	if (file)
+	{
+		xml::XmlSerializer(file).writeObject(mru);
+		file->close();
+	}
+}
+
 bool findShortcutCommandMapping(const PropertyGroup* settings, const std::wstring& command, int& outKeyState, ui::VirtualKey& outVirtualKey)
 {
 	const PropertyGroup* shortcutGroup = checked_type_cast< const PropertyGroup* >(settings->getProperty(L"Editor.Shortcuts"));
@@ -306,6 +333,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	// Load dictionary.
 	loadDictionary();
 
+	// Load recently used files dictionary.
+	m_mru = loadRecent(L"Traktor.Editor.mru");
+
 	if (!ui::Form::create(c_title, 800, 600, ui::Form::WsDefault, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 		return false;
 
@@ -324,9 +354,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_menuBar->create(this);
 	m_menuBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventMenuClick));
 
+	m_menuItemRecent = new ui::MenuItem(i18n::Text(L"MENU_FILE_OPEN_RECENT_WORKSPACE"));
+
 	Ref< ui::MenuItem > menuFile = new ui::MenuItem(i18n::Text(L"MENU_FILE"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.NewWorkspace"), i18n::Text(L"MENU_FILE_NEW_WORKSPACE")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.OpenWorkspace"), i18n::Text(L"MENU_FILE_OPEN_WORKSPACE")));
+	menuFile->add(m_menuItemRecent);
 	menuFile->add(new ui::MenuItem(L"-"));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.Save"), i18n::Text(L"MENU_FILE_SAVE"), ui::Bitmap::load(c_ResourceSave, sizeof(c_ResourceSave), L"png")));
 	menuFile->add(new ui::MenuItem(ui::Command(L"Editor.SaveAll"), i18n::Text(L"MENU_FILE_SAVE_ALL")));
@@ -379,6 +412,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventToolClicked));
 
 	updateTitle();
+	updateMRU();
 
 	m_dock = new ui::Dock();
 	m_dock->create(this);
@@ -1125,6 +1159,11 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		(*i)->handleWorkspaceOpened();
 
+	m_mru->usedFile(workspacePath);
+
+	saveRecent(L"Traktor.Editor.mru", m_mru);
+	updateMRU();
+
 	return true;
 }
 
@@ -1473,6 +1512,20 @@ Object* EditorForm::getStoreObject(const std::wstring& name) const
 {
 	std::map< std::wstring, Ref< Object > >::const_iterator i = m_objectStore.find(name);
 	return i != m_objectStore.end() ? i->second : 0;
+}
+
+void EditorForm::updateMRU()
+{
+	m_menuItemRecent->removeAll();
+
+	std::vector< Path > recentFiles;
+	m_mru->getUsedFiles(recentFiles);
+
+	for (std::vector< Path >::const_iterator i = recentFiles.begin(); i != recentFiles.end(); ++i)
+	{
+		Ref< ui::MenuItem > menuItem = new ui::MenuItem(ui::Command(L"Editor.OpenRecentWorkspace", new Path(*i)), i->getPathName());
+		m_menuItemRecent->add(menuItem);
+	}
 }
 
 void EditorForm::updateTitle()
@@ -1853,6 +1906,12 @@ bool EditorForm::handleCommand(const ui::Command& command)
 		createWorkspace();
 	else if (command == L"Editor.OpenWorkspace")
 		openWorkspace();
+	else if (command == L"Editor.OpenRecentWorkspace")
+	{
+		Ref< Path > recentPath = dynamic_type_cast< Path* >(command.getData());
+		if (recentPath)
+			openWorkspace(*recentPath);
+	}
 	else if (command == L"Editor.Save")
 		saveCurrentDocument();
 	else if (command == L"Editor.SaveAll")
@@ -2198,7 +2257,6 @@ void EditorForm::eventClose(ui::Event* event)
 	std::wstring settingsPath = L"$(BUNDLE_PATH)/Contents/Resources/Traktor.Editor.config";
 #endif
 	saveProperties(settingsPath, m_globalSettings, false);
-
 	ui::Application::getInstance()->exit(0);
 }
 

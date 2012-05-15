@@ -50,6 +50,11 @@ Transform BodyPhysX::getTransform() const
 	return fromNxMat34(m_actor->getGlobalPose());
 }
 
+Transform BodyPhysX::getCenterTransform() const
+{
+	return getTransform();
+}
+
 bool BodyPhysX::isStatic() const
 {
 	return !m_actor->isDynamic();

@@ -52,6 +52,7 @@ class DatabaseView;
 class Document;
 class PropertiesView;
 class LogView;
+class MRU;
 class IEditorPageFactory;
 class IEditorPage;
 class IObjectEditorFactory;
@@ -144,6 +145,7 @@ private:
 	RefArray< IEditorTool > m_editorTools;
 	RefArray< EditorPluginSite > m_editorPluginSites;
 	std::map< std::wstring, Ref< Object > > m_objectStore;
+	Ref< MRU > m_mru;
 	std::list< ui::Command > m_shortcutCommands;
 	Ref< ui::ShortcutTable > m_shortcutTable;
 	Ref< ui::Dock > m_dock;
@@ -151,6 +153,7 @@ private:
 	Ref< ui::DockPane > m_paneEast;
 	Ref< ui::DockPane > m_paneSouth;
 	Ref< ui::MenuBar > m_menuBar;
+	Ref< ui::MenuItem > m_menuItemRecent;
 	Ref< ui::MenuItem > m_menuItemOtherPanels;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::StatusBar > m_statusBar;
@@ -198,6 +201,8 @@ private:
 	void buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild);
 
 	void buildCancel();
+
+	void updateMRU();
 
 	void updateTitle();
 

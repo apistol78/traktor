@@ -144,10 +144,9 @@ void Shader::updateCurrentProgram()
 	if (!m_currentTechnique)
 		return;
 
-	uint32_t value = m_parameterValue & m_currentTechnique->parameterMask;
 	for (AlignedVector< Combination >::iterator i = m_currentTechnique->combinations.begin(); i != m_currentTechnique->combinations.end(); ++i)
 	{
-		if (i->parameterValue == value)
+		if ((m_parameterValue & i->mask) == i->value)
 		{
 			m_currentProgram = i->program;
 			break;
