@@ -1,5 +1,5 @@
-#ifndef traktor_StaticVector_H
-#define traktor_StaticVector_H
+#ifndef traktor_CircularVector_H
+#define traktor_CircularVector_H
 
 #include "Core/Config.h"
 
