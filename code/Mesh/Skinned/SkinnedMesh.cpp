@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-render::handle_t s_handleBones = 0;
+render::handle_t s_handleJoints = 0;
 render::handle_t s_handleUserParameter = 0;
 
 		}
@@ -19,10 +19,10 @@ render::handle_t s_handleUserParameter = 0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMesh", SkinnedMesh, IMesh)
 
 SkinnedMesh::SkinnedMesh()
-:	m_boneCount(0)
+:	m_jointCount(0)
 {
-	if (!s_handleBones)
-		s_handleBones = render::getParameterHandle(L"Bones");
+	if (!s_handleJoints)
+		s_handleJoints = render::getParameterHandle(L"Joints");
 	if (!s_handleUserParameter)
 		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
 }
@@ -41,7 +41,7 @@ void SkinnedMesh::render(
 	render::RenderContext* renderContext,
 	world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
-	const AlignedVector< Vector4 >& boneTransforms,
+	const AlignedVector< Vector4 >& jointTransforms,
 	float distance,
 	const IMeshParameterCallback* parameterCallback
 )
@@ -82,8 +82,8 @@ void SkinnedMesh::render(
 		);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
-		if (!boneTransforms.empty())
-			renderBlock->programParams->setVectorArrayParameter(s_handleBones, &boneTransforms[0], int(boneTransforms.size()));
+		if (!jointTransforms.empty())
+			renderBlock->programParams->setVectorArrayParameter(s_handleJoints, &jointTransforms[0], int(jointTransforms.size()));
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
@@ -93,14 +93,14 @@ void SkinnedMesh::render(
 	}
 }
 
-int32_t SkinnedMesh::getBoneCount() const
+int32_t SkinnedMesh::getJointCount() const
 {
-	return m_boneCount;
+	return m_jointCount;
 }
 
-const std::map< std::wstring, int >& SkinnedMesh::getBoneMap() const
+const std::map< std::wstring, int >& SkinnedMesh::getJointMap() const
 {
-	return m_boneMap;
+	return m_jointMap;
 }
 
 	}

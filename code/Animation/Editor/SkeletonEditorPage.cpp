@@ -1,14 +1,22 @@
 #include <cmath>
-#include "Animation/Editor/SkeletonEditorPage.h"
+#include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
-#include "Animation/Bone.h"
 #include "Animation/SkeletonUtils.h"
+#include "Animation/Editor/SkeletonEditorPage.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/Vector2.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Database/Database.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
-#include "Database/Database.h"
+#include "I18N/Text.h"
+#include "Render/IRenderSystem.h"
+#include "Render/IRenderView.h"
+#include "Render/PrimitiveRenderer.h"
+#include "Render/Resource/TextureFactory.h"
+#include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
@@ -24,14 +32,6 @@
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Itf/IWidget.h"
-#include "I18N/Text.h"
-#include "Render/IRenderSystem.h"
-#include "Render/IRenderView.h"
-#include "Render/PrimitiveRenderer.h"
-#include "Render/Resource/TextureFactory.h"
-#include "Render/Resource/ShaderFactory.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Vector2.h"
 
 // Resources
 #include "Resources/Bones.h"
@@ -43,11 +43,11 @@ namespace traktor
 		namespace
 		{
 
-int findIndexOfBone(const Skeleton* skeleton, const Bone* bone)
+int findIndexOfJoint(const Skeleton* skeleton, const Joint* joint)
 {
-	for (int i = 0; i < int(skeleton->getBoneCount()); ++i)
+	for (int i = 0; i < int(skeleton->getJointCount()); ++i)
 	{
-		if (skeleton->getBone(i) == bone)
+		if (skeleton->getJoint(i) == joint)
 			return i;
 	}
 	return -1;
@@ -61,7 +61,7 @@ SkeletonEditorPage::SkeletonEditorPage(editor::IEditor* editor, editor::IEditorP
 :	m_editor(editor)
 ,	m_site(site)
 ,	m_document(document)
-,	m_selectedBone(-1)
+,	m_selectedJoint(-1)
 ,	m_cameraHead(0.0f)
 ,	m_cameraY(0.0f)
 ,	m_cameraZ(0.0f)
@@ -219,25 +219,25 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 
 		m_document->push();
 
-		Ref< Bone > bone = selectedTreeItem->getData< Bone >(L"BONE");
+		Ref< Joint > joint = selectedTreeItem->getData< Joint >(L"JOINT");
 
-		int boneIndex = findIndexOfBone(m_skeleton, bone);
-		T_ASSERT (boneIndex >= 0);
+		int jointIndex = findIndexOfJoint(m_skeleton, joint);
+		T_ASSERT (jointIndex >= 0);
 
-		for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
+		for (int i = 0; i < int(m_skeleton->getJointCount()); ++i)
 		{
-			if (m_skeleton->getBone(i)->getParent() == boneIndex)
-				m_skeleton->getBone(i)->setParent(-1);
+			if (m_skeleton->getJoint(i)->getParent() == jointIndex)
+				m_skeleton->getJoint(i)->setParent(-1);
 		}
 
-		m_skeleton->removeBone(bone);
+		m_skeleton->removeJoint(joint);
 
 		createSkeletonTreeNodes();
 
 		m_site->setPropertyObject(m_skeleton);
 		m_renderWidget->update();
 	}
-	else if (command == L"Skeleton.Editor.AddBone")
+	else if (command == L"Skeleton.Editor.AddJoint")
 	{
 		Ref< ui::TreeViewItem > selectedTreeItem = m_treeSkeleton->getSelectedItem();
 		if (!selectedTreeItem)
@@ -245,16 +245,16 @@ bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 
 		m_document->push();
 
-		Ref< Bone > parentBone = selectedTreeItem->getData< Bone >(L"BONE");
+		Ref< Joint > parentJoint = selectedTreeItem->getData< Joint >(L"JOINT");
 
-		Ref< Bone > bone = new Bone();
-		bone->setName(L"Bone");
-		bone->setParent(parentBone ? findIndexOfBone(m_skeleton, parentBone) : -1);
-		m_skeleton->addBone(bone);
+		Ref< Joint > joint = new Joint();
+		joint->setName(L"Joint");
+		joint->setParent(parentJoint ? findIndexOfJoint(m_skeleton, parentJoint) : -1);
+		m_skeleton->addJoint(joint);
 
 		createSkeletonTreeNodes();
 
-		m_site->setPropertyObject(bone);
+		m_site->setPropertyObject(joint);
 		m_renderWidget->update();
 	}
 	else
@@ -283,16 +283,16 @@ void SkeletonEditorPage::createSkeletonTreeNodes()
 
 void SkeletonEditorPage::createSkeletonTreeNodes(ui::TreeViewItem* parentItem, int parentNodeIndex)
 {
-	int boneCount = m_skeleton->getBoneCount();
-	for (int i = 0; i < boneCount; ++i)
+	int32_t jointCount = m_skeleton->getJointCount();
+	for (int32_t i = 0; i < jointCount; ++i)
 	{
-		Bone* bone = m_skeleton->getBone(i);
-		if (bone->getParent() == parentNodeIndex)
+		Joint* joint = m_skeleton->getJoint(i);
+		if (joint->getParent() == parentNodeIndex)
 		{
-			Ref< ui::TreeViewItem > itemBone = m_treeSkeleton->createItem(parentItem, bone->getName(), 1);
-			itemBone->setData(L"BONE", bone);
+			Ref< ui::TreeViewItem > itemJoint = m_treeSkeleton->createItem(parentItem, joint->getName(), 1);
+			itemJoint->setData(L"JOINT", joint);
 
-			createSkeletonTreeNodes(itemBone, i);
+			createSkeletonTreeNodes(itemJoint, i);
 		}
 	}
 }
@@ -331,15 +331,17 @@ void SkeletonEditorPage::eventMouseMove(ui::Event* event)
 
 	if ((mouseEvent->getKeyState() & ui::KsControl) == 0)
 	{
-		if (m_selectedBone >= 0)
+		if (m_selectedJoint >= 0)
 		{
-			Bone* bone = m_skeleton->getBone(m_selectedBone);
+			Joint* joint = m_skeleton->getJoint(m_selectedJoint);
+			T_ASSERT (joint);
 
 			mouseDelta /= 200.0f;
 
 			if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
 			{
-				Quaternion orientation = bone->getOrientation();
+				Transform T = joint->getTransform();
+				Quaternion orientation = T.rotation();
 
 				if ((mouseEvent->getKeyState() & ui::KsMenu) == 0)
 				{
@@ -349,12 +351,11 @@ void SkeletonEditorPage::eventMouseMove(ui::Event* event)
 				else
 					orientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), mouseDelta.x);
 
-				bone->setOrientation(orientation);
+				joint->setTransform(Transform(T.translation(), orientation));
 			}
 			else if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
 			{
-				float length = bone->getLength() + mouseDelta.y * m_cameraBoneScale;
-				bone->setLength(Scalar(std::max(length, 0.0f)));
+				// \fixme Translate
 			}
 		}
 	}
@@ -449,68 +450,73 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			Color4ub(64, 64, 255)
 		);
 
-		AlignedVector< Transform > boneTransforms;
-		calculateBoneTransforms(
+		AlignedVector< Transform > jointTransforms;
+		calculateJointTransforms(
 			m_skeleton,
-			boneTransforms
+			jointTransforms
 		);
 
-		for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
+		for (int32_t i = 0; i < int32_t(m_skeleton->getJointCount()); ++i)
 		{
-			const Bone* bone = m_skeleton->getBone(i);
+			const Joint* joint = m_skeleton->getJoint(i);
+			T_ASSERT (joint);
 
-			Vector4 start = boneTransforms[i].translation();
-			Vector4 end = boneTransforms[i].translation() + boneTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
+			Color4ub color = (m_selectedJoint == i) ? Color4ub(255, 128, 255, 128) : Color4ub(255, 255, 0, 128);
 
-			Color4ub color = (m_selectedBone == i) ? Color4ub(255, 128, 255, 128) : Color4ub(255, 255, 0, 128);
+			m_primitiveRenderer->drawWireFrame(jointTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
 
-			Vector4 d = boneTransforms[i].axisZ();
-			Vector4 a = boneTransforms[i].axisX();
-			Vector4 b = boneTransforms[i].axisY();
+			if (joint->getParent() >= 0)
+			{
+				const Joint* parent = m_skeleton->getJoint(joint->getParent());
+				T_ASSERT (parent);
 
-			Scalar radius = bone->getRadius();
-			d *= radius;
-			a *= radius;
-			b *= radius;
+				Vector4 start = jointTransforms[joint->getParent()].translation();
+				Vector4 end = jointTransforms[i].translation();
 
-			m_primitiveRenderer->drawLine(start, start + d + a + b, color);
-			m_primitiveRenderer->drawLine(start, start + d - a + b, color);
-			m_primitiveRenderer->drawLine(start, start + d + a - b, color);
-			m_primitiveRenderer->drawLine(start, start + d - a - b, color);
+				Vector4 z = (end - start).normalized();
+				Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+				Vector4 x = cross(y, z);
 
-			m_primitiveRenderer->drawLine(start + d + a + b, end, color);
-			m_primitiveRenderer->drawLine(start + d - a + b, end, color);
-			m_primitiveRenderer->drawLine(start + d + a - b, end, color);
-			m_primitiveRenderer->drawLine(start + d - a - b, end, color);
+				Scalar radius(parent->getRadius());
+				x *= radius;
+				y *= radius;
+				z *= radius;
 
-			m_primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
-			m_primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
-			m_primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
-			m_primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
+				m_primitiveRenderer->drawLine(start, start + z + x + y, color);
+				m_primitiveRenderer->drawLine(start, start + z - x + y, color);
+				m_primitiveRenderer->drawLine(start, start + z + x - y, color);
+				m_primitiveRenderer->drawLine(start, start + z - x - y, color);
 
-			m_primitiveRenderer->drawLine(start, end, Color4ub(255, 255, 128, 128));
-			m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color4ub(255, 0, 0, 128));
-			m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color4ub(0, 255, 0, 128));
+				m_primitiveRenderer->drawLine(start + z + x + y, end, color);
+				m_primitiveRenderer->drawLine(start + z - x + y, end, color);
+				m_primitiveRenderer->drawLine(start + z + x - y, end, color);
+				m_primitiveRenderer->drawLine(start + z - x - y, end, color);
 
-			if (bone->getEnableLimits())
+				m_primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
+				m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
+				m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
+				m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+			}
+
+			if (joint->getEnableLimits())
 			{
 				m_primitiveRenderer->drawCone(
-					boneTransforms[i].toMatrix44(),
-					bone->getConeLimit().x,
-					bone->getConeLimit().y,
-					radius,
+					jointTransforms[i].toMatrix44(),
+					joint->getConeLimit().x,
+					joint->getConeLimit().y,
+					1.0f,
 					Color4ub(255, 255, 255, 64),
 					Color4ub(0, 0, 0, 32)
 				);
 
 				m_primitiveRenderer->drawProtractor(
-					start,
-					boneTransforms[i].axisX(),
-					boneTransforms[i].axisY(),
-					-bone->getTwistLimit(),
-					bone->getTwistLimit(),
+					jointTransforms[i].translation(),
+					jointTransforms[i].axisX(),
+					jointTransforms[i].axisY(),
+					-joint->getTwistLimit(),
+					joint->getTwistLimit(),
 					deg2rad(8.0f),
-					radius,
+					1.0f,
 					Color4ub(255, 255, 255, 64),
 					Color4ub(0, 0, 0, 32)
 				);
@@ -545,11 +551,11 @@ void SkeletonEditorPage::eventTreeSelect(ui::Event* event)
 	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent* >(event);
 	ui::TreeViewItem* selectedItem = checked_type_cast< ui::TreeViewItem* >(cmdEvent->getItem());
 
-	Ref< Bone > bone = selectedItem->getData< Bone >(L"BONE");
-	m_selectedBone = findIndexOfBone(m_skeleton, bone);
+	Ref< Joint > joint = selectedItem->getData< Joint >(L"JOINT");
+	m_selectedJoint = findIndexOfJoint(m_skeleton, joint);
 
-	if (bone)
-		m_site->setPropertyObject(bone);
+	if (joint)
+		m_site->setPropertyObject(joint);
 	else
 		m_site->setPropertyObject(m_skeleton);
 
@@ -561,10 +567,10 @@ void SkeletonEditorPage::eventTreeEdited(ui::Event* event)
 	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent* >(event);
 	ui::TreeViewItem* selectedItem = checked_type_cast< ui::TreeViewItem* >(cmdEvent->getItem());
 
-	Ref< Bone > bone = selectedItem->getData< Bone >(L"BONE");
+	Ref< Joint > joint = selectedItem->getData< Joint >(L"JOINT");
 	std::wstring name = selectedItem->getText();
 
-	bone->setName(name);
+	joint->setName(name);
 }
 
 	}

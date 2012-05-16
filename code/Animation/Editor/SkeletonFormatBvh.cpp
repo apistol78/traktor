@@ -1,13 +1,9 @@
-#include <map>
-#include "Animation/Bone.h"
+#include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonFormatBvh.h"
 #include "Animation/Editor/BvhParser/BvhDocument.h"
 #include "Animation/Editor/BvhParser/BvhJoint.h"
 #include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Format.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -16,97 +12,34 @@ namespace traktor
 		namespace
 		{
 
-Vector4 getJointPosition(const BvhJoint* joint)
-{
-	Vector4 position(0.0f, 0.0f, 0.0f, 1.0f);
-
-	if (joint->getParent())
-		position = getJointPosition(joint->getParent());
-
-	position += joint->getOffset().xyz0();
-	return position;
-}
-
-void createBones(
+void createJoints(
 	Skeleton* skeleton,
-	const BvhJoint* joint,
+	const BvhJoint* bvhJoint,
 	int32_t parent,
-	const Quaternion& QworldParent,
 	const Vector4& offset,
-	float boneRadius
+	float radius
 )
 {
-	std::map< std::wstring, int32_t > boneNameCount;
+	Ref< Joint > joint = new Joint();
 
-	const RefArray< BvhJoint >& children = joint->getChildren();
+	joint->setParent(parent);
+	joint->setName(bvhJoint->getName());
+	joint->setTransform(Transform(bvhJoint->getOffset() + offset));
+	joint->setRadius(radius);
+	joint->setEnableLimits(false);
+
+	if (bvhJoint->getName().empty() && parent >= 0)
+		joint->setName(skeleton->getJoint(parent)->getName() + L"_END");
+
+	int32_t jointIndex = skeleton->addJoint(joint);
+
+	const RefArray< BvhJoint >& children = bvhJoint->getChildren();
 	for (RefArray< BvhJoint >::const_iterator i = children.begin(); i != children.end(); ++i)
 	{
-		const BvhJoint* childJoint = *i;
+		const BvhJoint* childBvhJoint = *i;
+		T_ASSERT (childBvhJoint);
 
-		std::wstring boneName = childJoint->getName();
-		if (childJoint->getChildren().empty())
-			boneName = joint->getName() + L"_END";
-
-		Vector4 boneP0 = getJointPosition(joint);
-		Vector4 boneP1 = getJointPosition(childJoint);
-
-		Vector4 boneDirection = boneP1 - boneP0;
-		Scalar boneLength = boneDirection.length();
-
-		if (boneLength > Scalar(FUZZY_EPSILON))
-			boneDirection /= boneLength;
-		else
-			boneDirection = Vector4(0.0f, 0.0f, 1.0f);
-
-		Ref< Bone > bone = new Bone();
-
-		bone->setName(boneName);
-		bone->setParent(parent);
-
-		if (joint->getParent())
-			bone->setPosition(Vector4::origo());
-		else
-			bone->setPosition(boneP0 - offset);
-
-		Vector4 VboneDirectionInParent = QworldParent.inverse() * boneDirection;
-
-		float head, pitch;
-		if (VboneDirectionInParent.z() >= 0.0f)
-		{
-			head = atan2f(VboneDirectionInParent.x(), VboneDirectionInParent.z());
-			pitch = acosf(VboneDirectionInParent.y()) - HALF_PI;
-		}
-		else
-		{
-			head = atan2f(-VboneDirectionInParent.x(), -VboneDirectionInParent.z());
-			pitch = -acosf(VboneDirectionInParent.y()) - HALF_PI;
-		}
-
-		Quaternion Qlocal = Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), head) * Quaternion(Vector4(1.0f, 0.0f, 0.0f, 0.0f), pitch);
-		Quaternion Qworld = QworldParent * Qlocal;
-
-		bone->setOrientation(Qlocal);
-
-		bone->setLength(boneLength);
-		bone->setRadius(Scalar(boneRadius));
-
-		/*
-		bone->setTwistLimit(0.1f);
-		bone->setConeLimit(Vector2(0.75f, 0.75f));
-		bone->setEnableLimits(true);
-		*/
-		bone->setEnableLimits(false);
-
-		int32_t index = skeleton->addBone(bone);
-
-		createBones(
-			skeleton,
-			childJoint,
-			index,
-			Qworld,
-			offset,
-			boneRadius
-		);
+		createJoints(skeleton, childBvhJoint, jointIndex, Vector4::zero(), radius);
 	}
 }
 
@@ -114,21 +47,20 @@ void createBones(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatBvh", SkeletonFormatBvh, ISkeletonFormat)
 
-Ref< Skeleton > SkeletonFormatBvh::create(const BvhDocument* document, const Vector4& offset, float boneRadius) const
+Ref< Skeleton > SkeletonFormatBvh::create(const BvhDocument* document, const Vector4& offset, float radius) const
 {
 	Ref< Skeleton > skeleton = new Skeleton();
-	createBones(
+	createJoints(
 		skeleton,
 		document->getRootJoint(),
 		-1,
-		Quaternion::identity(),
 		offset,
-		boneRadius
+		radius
 	);
 	return skeleton;
 }
 
-Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream, const Vector4& offset, float boneRadius, bool invertX, bool invertZ) const
+Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const
 {
 	Vector4 jointModifier(
 		invertX ? -1.0f : 1.0f, 
@@ -141,10 +73,10 @@ Ref< Skeleton > SkeletonFormatBvh::import(IStream* stream, const Vector4& offset
 	if (!document)
 		return 0;
 
-	Ref< Skeleton > skeleton = create(document, offset, boneRadius);
+	Ref< Skeleton > skeleton = create(document, offset, radius);
 
 	if (skeleton)
-		log::info << L"Created " << skeleton->getBoneCount() << L" bone(s) in skeleton" << Endl;
+		log::info << L"Created " << skeleton->getJointCount() << L" joints(s) in skeleton" << Endl;
 
 	return skeleton;
 }

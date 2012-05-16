@@ -104,34 +104,34 @@ bool SkinnedMeshConverter::convert(
 		if (i->getTexCoord(1) != model::c_InvalidIndex)
 			writeVertexData(vertexElements, vertex, render::DuCustom, 3, model.getTexCoord(i->getTexCoord(1)));
 
-		int boneCount = model.getBoneCount();
+		int jointCount = model.getJointCount();
 
-		std::vector< std::pair< int, float > > boneInfluences;
-		for (int j = 0; j < boneCount; ++j)
-			boneInfluences.push_back(std::make_pair(j, i->getBoneInfluence(j)));
+		std::vector< std::pair< int, float > > jointInfluences;
+		for (int j = 0; j < jointCount; ++j)
+			jointInfluences.push_back(std::make_pair(j, i->getJointInfluence(j)));
 
-		std::sort(boneInfluences.begin(), boneInfluences.end(), InfluencePredicate());
+		std::sort(jointInfluences.begin(), jointInfluences.end(), InfluencePredicate());
 
-		boneCount = std::min(4, boneCount);
+		jointCount = std::min(4, jointCount);
 
 		float totalInfluence = 0.0f;
-		for (int j = 0; j < boneCount; ++j)
-			totalInfluence += boneInfluences[j].second;
+		for (int j = 0; j < jointCount; ++j)
+			totalInfluence += jointInfluences[j].second;
 
 		float blendIndices[4], blendWeights[4];
 		if (std::fabs(totalInfluence) > FUZZY_EPSILON)
 		{
 			// Don't normalize single bone vertices; skinned with world.
-			if (boneCount <= 1)
+			if (jointCount <= 1)
 				totalInfluence = 1.0f;
 
-			for (int j = 0; j < boneCount; ++j)
+			for (int j = 0; j < jointCount; ++j)
 			{
-				blendIndices[j] = float(boneInfluences[j].first);
-				blendWeights[j] = boneInfluences[j].second / totalInfluence;
+				blendIndices[j] = float(jointInfluences[j].first);
+				blendWeights[j] = jointInfluences[j].second / totalInfluence;
 			}
 
-			for (int j = boneCount; j < 4; ++j)
+			for (int j = jointCount; j < 4; ++j)
 			{
 				blendIndices[j] =
 				blendWeights[j] = 0.0f;
@@ -252,8 +252,8 @@ bool SkinnedMeshConverter::convert(
 
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< SkinnedMeshResource* >(meshResource)->m_parts = parts;
-	for (uint32_t i = 0; i < model.getBoneCount(); ++i)
-		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_boneMap[model.getBone(i)] = i;
+	for (uint32_t i = 0; i < model.getJointCount(); ++i)
+		checked_type_cast< SkinnedMeshResource* >(meshResource)->m_jointMap[model.getJoint(i)] = i;
 
 	return true;
 }

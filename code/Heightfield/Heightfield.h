@@ -29,13 +29,17 @@ public:
 		const Vector4& worldExtent
 	);
 
-	float getGridHeight(float gridX, float gridZ) const;
+	float getGridHeightNearest(int32_t gridX, int32_t gridZ) const;
+
+	float getGridHeightBilinear(float gridX, float gridZ) const;
 
 	float getWorldHeight(float worldX, float worldZ) const;
 
 	void gridToWorld(float gridX, float gridZ, float& outWorldX, float& outWorldZ) const;
 
 	void worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const;
+
+	float unitToWorld(float unitY) const;
 
 	uint32_t getSize() const { return m_size; }
 

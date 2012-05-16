@@ -12,80 +12,80 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.Pose", 0, Pose, ISerializable)
 
-void Pose::setBoneOffset(uint32_t boneIndex, const Vector4& boneOffset)
+void Pose::setJointOffset(uint32_t jointIndex, const Vector4& jointOffset)
 {
-	Bone& bone = getEditBone(boneIndex);
-	bone.offset = boneOffset;
+	Joint& joint = getEditJoint(jointIndex);
+	joint.offset = jointOffset;
 }
 
-Vector4 Pose::getBoneOffset(uint32_t boneIndex) const
+Vector4 Pose::getJointOffset(uint32_t jointIndex) const
 {
-	const Bone* bone = getBone(boneIndex);
-	return bone ? bone->offset : Vector4::zero();
+	const Joint* joint = getJoint(jointIndex);
+	return joint ? joint->offset : Vector4::zero();
 }
 
-void Pose::setBoneOrientation(uint32_t boneIndex, const Vector4& boneOrientation)
+void Pose::setJointOrientation(uint32_t jointIndex, const Vector4& jointOrientation)
 {
-	Bone& bone = getEditBone(boneIndex);
-	bone.orientation = boneOrientation;
+	Joint& joint = getEditJoint(jointIndex);
+	joint.orientation = jointOrientation;
 }
 
-Vector4 Pose::getBoneOrientation(uint32_t boneIndex) const
+Vector4 Pose::getJointOrientation(uint32_t jointIndex) const
 {
-	const Bone* bone = getBone(boneIndex);
-	return bone ? bone->orientation : Vector4::zero();
+	const Joint* joint = getJoint(jointIndex);
+	return joint ? joint->orientation : Vector4::zero();
 }
 
 void Pose::getIndexMask(BitSet& outIndices) const
 {
-	for (AlignedVector< Bone >::const_iterator i = m_bones.begin(); i != m_bones.end(); ++i)
+	for (AlignedVector< Joint >::const_iterator i = m_joints.begin(); i != m_joints.end(); ++i)
 		outIndices.set(i->index);
 }
 
-const Pose::Bone* Pose::getBone(uint32_t boneIndex) const
+const Pose::Joint* Pose::getJoint(uint32_t jointIndex) const
 {
 	uint32_t s = 0;
-	uint32_t e = uint32_t(m_bones.size());
+	uint32_t e = uint32_t(m_joints.size());
 
 	while (s < e)
 	{
 		uint32_t m = s + (e - s) / 2;
-		if (boneIndex == m_bones[m].index)
-			return &m_bones[m];
-		else if (boneIndex < m_bones[m].index)
+		if (jointIndex == m_joints[m].index)
+			return &m_joints[m];
+		else if (jointIndex < m_joints[m].index)
 			e = m;
-		else if (boneIndex > m_bones[m].index)
+		else if (jointIndex > m_joints[m].index)
 			s = m + 1;
 	}
 
 	return 0;
 }
 
-Pose::Bone& Pose::getEditBone(uint32_t boneIndex)
+Pose::Joint& Pose::getEditJoint(uint32_t jointIndex)
 {
 	uint32_t s = 0;
-	uint32_t e = uint32_t(m_bones.size());
+	uint32_t e = uint32_t(m_joints.size());
 
 	while (s < e)
 	{
 		uint32_t m = s + (e - s) / 2;
-		if (boneIndex == m_bones[m].index)
-			return m_bones[m];
-		else if (boneIndex < m_bones[m].index)
+		if (jointIndex == m_joints[m].index)
+			return m_joints[m];
+		else if (jointIndex < m_joints[m].index)
 			e = m;
-		else if (boneIndex > m_bones[m].index)
+		else if (jointIndex > m_joints[m].index)
 			s = m + 1;
 	}
 
-	return *m_bones.insert(m_bones.begin() + s, Bone(boneIndex));
+	return *m_joints.insert(m_joints.begin() + s, Joint(jointIndex));
 }
 
 bool Pose::serialize(ISerializer& s)
 {
-	return s >> MemberAlignedVector< Bone, MemberComposite< Bone > >(L"bones", m_bones);
+	return s >> MemberAlignedVector< Joint, MemberComposite< Joint > >(L"joints", m_joints);
 }
 
-bool Pose::Bone::serialize(ISerializer& s)
+bool Pose::Joint::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"index", index);
 	s >> Member< Vector4 >(L"offset", offset, AttributeDirection());

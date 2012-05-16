@@ -17,7 +17,7 @@ namespace traktor
 	namespace animation
 	{
 
-class Bone;
+class Joint;
 
 /*! \brief Animation skeleton.
  * \ingroup Animation
@@ -27,22 +27,22 @@ class T_DLLCLASS Skeleton : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	uint32_t addBone(Bone* bone);
+	int32_t addJoint(Joint* joint);
 
-	void removeBone(Bone* bone);
+	void removeJoint(Joint* joint);
 
-	bool findBone(const std::wstring& name, uint32_t& outIndex) const;
+	bool findJoint(const std::wstring& name, uint32_t& outIndex) const;
 
 	void findChildren(uint32_t index, std::vector< uint32_t >& outChildren) const;
 
 	virtual bool serialize(ISerializer& s);
 
-	uint32_t getBoneCount() const { return uint32_t(m_bones.size()); }
+	uint32_t getJointCount() const { return uint32_t(m_joints.size()); }
 
-	Bone* getBone(uint32_t index) const { return m_bones[index]; }
+	Joint* getJoint(uint32_t index) const { return m_joints[index]; }
 
 private:
-	RefArray< Bone > m_bones;
+	RefArray< Joint > m_joints;
 };
 
 	}

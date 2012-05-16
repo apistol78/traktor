@@ -165,6 +165,11 @@ public:
 		const Color4ub& color
 	);
 
+	void drawWireFrame(
+		const Matrix44& frame,
+		float length
+	);
+
 	void drawSolidPoint(
 		const Vector4& center,
 		float size,

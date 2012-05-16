@@ -102,7 +102,7 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< resource::IResourceManager > m_resourceManager;
 	ui::Point m_lastMousePosition;
-	int m_selectedBone;
+	int m_selectedJoint;
 	float m_cameraHead;
 	float m_cameraY;
 	float m_cameraZ;

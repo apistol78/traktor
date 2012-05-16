@@ -412,7 +412,7 @@ bool PartitionMeshConverter::convert(
 	// Build octree of model; split triangles when necessary.
 	log::info << L"Building octree template..." << Endl;
 	std::vector< model::Polygon > polygons = model.getPolygons();
-	model.clear(model::Model::CfPolygons | model::Model::CfBones);
+	model.clear(model::Model::CfPolygons | model::Model::CfJoints);
 	Ref< OctreeNodeTemplate > nodeTemplate = buildOctreeTemplate(model, polygons, 0);
 	T_ASSERT (nodeTemplate);
 

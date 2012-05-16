@@ -2,8 +2,8 @@
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Bone.h"
 #include "Animation/IPoseController.h"
+#include "Animation/Joint.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
@@ -24,7 +24,7 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 	const resource::Proxy< mesh::SkinnedMesh >& mesh,
 	const resource::Proxy< Skeleton >& skeleton,
 	IPoseController* poseController,
-	const std::vector< int >& boneRemap,
+	const std::vector< int32_t >& jointRemap,
 	bool normalizePose,
 	bool normalizeTransform
 )
@@ -32,7 +32,7 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 ,	m_mesh(mesh)
 ,	m_skeleton(skeleton)
 ,	m_poseController(poseController)
-,	m_boneRemap(boneRemap)
+,	m_jointRemap(jointRemap)
 ,	m_normalizePose(normalizePose)
 ,	m_normalizeTransform(normalizeTransform)
 ,	m_totalTime(0.0f)
@@ -62,15 +62,13 @@ Aabb3 AnimatedMeshEntity::getBoundingBox() const
 	{
 		for (uint32_t i = 0; i < uint32_t(m_poseTransforms.size()); ++i)
 		{
-			const Bone* bone = m_skeleton->getBone(i);
+			const Joint* joint = m_skeleton->getJoint(i);
+			float radius = joint->getRadius();
 
-			float length = bone->getLength();
-			float radius = bone->getRadius();
+			Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
+			Aabb3 jointAabb = jointLocalAabb.transform(m_poseTransforms[i]);
 
-			Aabb3 boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
-			Aabb3 boneAabb = boneLocalAabb.transform(m_poseTransforms[i]);
-
-			boundingBox.contain(boneAabb);
+			boundingBox.contain(jointAabb);
 		}
 	}
 
@@ -138,28 +136,28 @@ void AnimatedMeshEntity::setTransform(const Transform& transform)
 	mesh::MeshEntity::setTransform(transform);
 }
 
-bool AnimatedMeshEntity::getBoneTransform(const std::wstring& boneName, Transform& outTransform) const
+bool AnimatedMeshEntity::getJointTransform(const std::wstring& jointName, Transform& outTransform) const
 {
 	uint32_t index;
 
 	synchronize();
 
-	if (!m_skeleton->findBone(boneName, index))
+	if (!m_skeleton->findJoint(jointName, index))
 		return false;
-	if (index >= m_boneTransforms.size())
+	if (index >= m_jointTransforms.size())
 		return false;
 
-	outTransform = m_boneTransforms[index];
+	outTransform = m_jointTransforms[index];
 	return true;
 }
 
-bool AnimatedMeshEntity::getPoseTransform(const std::wstring& boneName, Transform& outTransform) const
+bool AnimatedMeshEntity::getPoseTransform(const std::wstring& jointName, Transform& outTransform) const
 {
 	uint32_t index;
 
 	synchronize();
 
-	if (!m_skeleton->findBone(boneName, index))
+	if (!m_skeleton->findJoint(jointName, index))
 		return false;
 	if (index >= m_poseTransforms.size())
 		return false;
@@ -168,18 +166,18 @@ bool AnimatedMeshEntity::getPoseTransform(const std::wstring& boneName, Transfor
 	return true;
 }
 
-bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Transform& outTransform) const
+bool AnimatedMeshEntity::getSkinTransform(const std::wstring& jointName, Transform& outTransform) const
 {
 	uint32_t index;
 
 	synchronize();
 
-	if (!m_skeleton->findBone(boneName, index))
+	if (!m_skeleton->findJoint(jointName, index))
 		return false;
 	if (index >= m_poseTransforms.size())
 		return false;
 
-	int skinIndex = m_boneRemap[index];
+	int skinIndex = m_jointRemap[index];
 	if (skinIndex < 0)
 		return false;
 
@@ -193,32 +191,32 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& boneName, Transfor
 	return true;
 }
 
-bool AnimatedMeshEntity::setPoseTransform(const std::wstring& boneName, const Transform& transform, bool inclusive)
+bool AnimatedMeshEntity::setPoseTransform(const std::wstring& jointName, const Transform& transform, bool inclusive)
 {
 	uint32_t index;
 
 	synchronize();
 
-	if (!m_skeleton->findBone(boneName, index))
+	if (!m_skeleton->findJoint(jointName, index))
 		return false;
 
-	if (index >= m_boneTransforms.size())
+	if (index >= m_jointTransforms.size())
 		return false;
 
 	if (m_poseTransforms.empty())
-		m_poseTransforms = m_boneTransforms;
+		m_poseTransforms = m_jointTransforms;
 
 	m_poseTransforms[index] = transform;
 
 	if (inclusive)
 	{
-		Transform delta = transform * m_boneTransforms[index].inverse();
+		Transform delta = transform * m_jointTransforms[index].inverse();
 
 		std::vector< uint32_t > children;
 		m_skeleton->findChildren(index, children);
 
 		for (std::vector< uint32_t >::const_iterator i = children.begin(); i != children.end(); ++i)
-			m_poseTransforms[*i] = delta * m_boneTransforms[*i];
+			m_poseTransforms[*i] = delta * m_jointTransforms[*i];
 	}
 
 	return true;
@@ -240,12 +238,12 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 	// Calculate original bone transforms in object space.
 	if (m_skeleton.changed())
 	{
-		m_boneTransforms.resize(0);
+		m_jointTransforms.resize(0);
 		m_poseTransforms.resize(0);
 
-		calculateBoneTransforms(
+		calculateJointTransforms(
 			m_skeleton,
-			m_boneTransforms
+			m_jointTransforms
 		);
 
 		m_skeleton.consume();
@@ -261,28 +259,28 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			deltaTime,
 			m_transform.get(),
 			m_skeleton,
-			m_boneTransforms,
+			m_jointTransforms,
 			m_poseTransforms,
 			m_updateController
 		);
 
-		size_t skeletonBoneCount = m_boneTransforms.size();
-		size_t skinBoneCount = m_mesh->getBoneCount();
+		size_t skeletonJointCount = m_jointTransforms.size();
+		size_t skinJointCount = m_mesh->getJointCount();
 		
 		// Ensure we have same number of pose transforms as bones.
-		for (size_t i = m_poseTransforms.size(); i < skeletonBoneCount; ++i)
-			m_poseTransforms.push_back(m_boneTransforms[i]);
+		for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
+			m_poseTransforms.push_back(m_jointTransforms[i]);
 
 		if (m_normalizePose)
 		{
 			// Calculate pose offset in object space.
 			Vector4 poseOffset = Vector4::zero();
-			for (size_t i = 0; i < skeletonBoneCount; ++i)
+			for (size_t i = 0; i < skeletonJointCount; ++i)
 				poseOffset += m_poseTransforms[i].translation();
-			poseOffset /= Scalar(float(skeletonBoneCount));
+			poseOffset /= Scalar(float(skeletonJointCount));
 	
 			// Normalize pose transforms; update entity transform from offset.
-			for (size_t i = 0; i < skeletonBoneCount; ++i)
+			for (size_t i = 0; i < skeletonJointCount; ++i)
 			{
 				m_poseTransforms[i] = Transform(
 					m_poseTransforms[i].translation() - poseOffset.xyz0(),
@@ -298,44 +296,44 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 		}
 
 		// Initialize skin transforms.
-		m_skinTransforms.resize(skinBoneCount * 2, Vector4::origo());
+		m_skinTransforms.resize(skinJointCount * 2, Vector4::origo());
 
 		// Calculate skin transforms in delta space.
-		for (size_t i = 0; i < skeletonBoneCount; ++i)
+		for (size_t i = 0; i < skeletonJointCount; ++i)
 		{
-			int32_t boneIndex = m_boneRemap[i];
-			if (boneIndex >= 0 && boneIndex < int32_t(skinBoneCount))
+			int32_t jointIndex = m_jointRemap[i];
+			if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
 			{
-				Transform skinTransform = m_poseTransforms[i] * m_boneTransforms[i].inverse();
-				m_skinTransforms[boneIndex * 2 + 0] = skinTransform.rotation().e;
-				m_skinTransforms[boneIndex * 2 + 1] = skinTransform.translation().xyz1();
+				Transform skinTransform = m_poseTransforms[i] * m_jointTransforms[i].inverse();
+				m_skinTransforms[jointIndex * 2 + 0] = skinTransform.rotation().e;
+				m_skinTransforms[jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
 		}
 	}
 	else if (!m_poseTransforms.empty())
 	{
-		size_t skeletonBoneCount = m_boneTransforms.size();
-		size_t skinBoneCount = m_mesh->getBoneCount();
+		size_t skeletonJointCount = m_jointTransforms.size();
+		size_t skinJointCount = m_mesh->getJointCount();
 
 		// Initialize skin transforms.
-		m_skinTransforms.resize(skinBoneCount * 2, Vector4::origo());
+		m_skinTransforms.resize(skinJointCount * 2, Vector4::origo());
 
 		// Calculate skin transforms in delta space.
-		for (size_t i = 0; i < skeletonBoneCount; ++i)
+		for (size_t i = 0; i < skeletonJointCount; ++i)
 		{
-			int32_t boneIndex = m_boneRemap[i];
-			if (boneIndex >= 0 && boneIndex < int32_t(skinBoneCount))
+			int32_t jointIndex = m_jointRemap[i];
+			if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
 			{
-				Transform skinTransform = m_poseTransforms[i] * m_boneTransforms[i].inverse();
-				m_skinTransforms[boneIndex * 2 + 0] = skinTransform.rotation().e;
-				m_skinTransforms[boneIndex * 2 + 1] = skinTransform.translation().xyz1();
+				Transform skinTransform = m_poseTransforms[i] * m_jointTransforms[i].inverse();
+				m_skinTransforms[jointIndex * 2 + 0] = skinTransform.rotation().e;
+				m_skinTransforms[jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
 		}
 	}
 	else
 	{
-		size_t skinBoneCount = m_mesh->getBoneCount();
-		m_skinTransforms.resize(skinBoneCount * 2, Vector4::origo());
+		size_t skinJointCount = m_mesh->getJointCount();
+		m_skinTransforms.resize(skinJointCount * 2, Vector4::origo());
 	}
 }
 

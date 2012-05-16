@@ -56,13 +56,13 @@ public:
 
 	uint32_t getTexCoordCount() const;
 
-	void clearBoneInfluences();
+	void clearJointInfluences();
 
-	void setBoneInfluence(uint32_t boneIndex, float influence);
+	void setJointInfluence(uint32_t jointIndex, float influence);
 
-	float getBoneInfluence(uint32_t boneIndex) const;
+	float getJointInfluence(uint32_t jointIndex) const;
 
-	uint32_t getBoneInfluenceCount() const;
+	uint32_t getJointInfluenceCount() const;
 
 	uint32_t getHash() const;
 
@@ -75,7 +75,7 @@ private:
 	uint32_t m_tangent;
 	uint32_t m_binormal;
 	std::vector< uint32_t > m_texCoords;
-	std::vector< float > m_boneInfluences;
+	std::vector< float > m_jointInfluences;
 };
 
 	}

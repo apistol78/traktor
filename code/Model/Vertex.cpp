@@ -100,29 +100,29 @@ uint32_t Vertex::getTexCoordCount() const
 	return m_texCoords.size();
 }
 
-void Vertex::clearBoneInfluences()
+void Vertex::clearJointInfluences()
 {
-	m_boneInfluences.resize(0);
+	m_jointInfluences.resize(0);
 }
 
-void Vertex::setBoneInfluence(uint32_t boneIndex, float influence)
+void Vertex::setJointInfluence(uint32_t jointIndex, float influence)
 {
-	while (boneIndex >= uint32_t(m_boneInfluences.size()))
-		m_boneInfluences.push_back(0.0f);
-	m_boneInfluences[boneIndex] = influence;
+	while (jointIndex >= uint32_t(m_jointInfluences.size()))
+		m_jointInfluences.push_back(0.0f);
+	m_jointInfluences[jointIndex] = influence;
 }
 
-float Vertex::getBoneInfluence(uint32_t boneIndex) const
+float Vertex::getJointInfluence(uint32_t jointIndex) const
 {
-	if (boneIndex < uint32_t(m_boneInfluences.size()))
-		return m_boneInfluences[boneIndex];
+	if (jointIndex < uint32_t(m_jointInfluences.size()))
+		return m_jointInfluences[jointIndex];
 	else
 		return 0.0f;
 }
 
-uint32_t Vertex::getBoneInfluenceCount() const
+uint32_t Vertex::getJointInfluenceCount() const
 {
-	return m_boneInfluences.size();
+	return m_jointInfluences.size();
 }
 
 uint32_t Vertex::getHash() const
@@ -137,8 +137,8 @@ uint32_t Vertex::getHash() const
 	adler.feed(&m_binormal, sizeof(m_binormal));
 	if (!m_texCoords.empty())
 		adler.feed(&m_texCoords[0], m_texCoords.size() * sizeof(uint32_t));
-	if (!m_boneInfluences.empty())
-		adler.feed(&m_boneInfluences[0], m_boneInfluences.size() * sizeof(float));
+	if (!m_jointInfluences.empty())
+		adler.feed(&m_jointInfluences[0], m_jointInfluences.size() * sizeof(float));
 	adler.end();
 
 	return adler.get();
@@ -158,15 +158,15 @@ bool Vertex::operator == (const Vertex& r) const
 		return false;
 	if (m_texCoords.size() != m_texCoords.size())
 		return false;
-	if (m_boneInfluences.size() != r.m_boneInfluences.size())
+	if (m_jointInfluences.size() != r.m_jointInfluences.size())
 		return false;
 
 	for (size_t i = 0; i < m_texCoords.size(); ++i)
 		if (m_texCoords[i] != r.m_texCoords[i])
 			return false;
 
-	for (size_t i = 0; i < m_boneInfluences.size(); ++i)
-		if (std::fabs(m_boneInfluences[i] - r.m_boneInfluences[i]) > 0.0001f)
+	for (size_t i = 0; i < m_jointInfluences.size(); ++i)
+		if (std::fabs(m_jointInfluences[i] - r.m_jointInfluences[i]) > 0.0001f)
 			return false;
 
 	return true;

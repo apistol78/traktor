@@ -1,6 +1,6 @@
 #include <algorithm>
 #include "Animation/Skeleton.h"
-#include "Animation/Bone.h"
+#include "Animation/Joint.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 
@@ -11,24 +11,24 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.Skeleton", 0, Skeleton, ISerializable)
 
-uint32_t Skeleton::addBone(Bone* bone)
+int32_t Skeleton::addJoint(Joint* joint)
 {
-	uint32_t boneIndex = uint32_t(m_bones.size());
-	m_bones.push_back(bone);
-	return boneIndex;
+	int32_t jointIndex = int32_t(m_joints.size());
+	m_joints.push_back(joint);
+	return jointIndex;
 }
 
-void Skeleton::removeBone(Bone* bone)
+void Skeleton::removeJoint(Joint* joint)
 {
-	RefArray< Bone >::iterator i = std::find(m_bones.begin(), m_bones.end(), bone);
-	m_bones.erase(i);
+	RefArray< Joint >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);
+	m_joints.erase(i);
 }
 
-bool Skeleton::findBone(const std::wstring& name, uint32_t& outIndex) const
+bool Skeleton::findJoint(const std::wstring& name, uint32_t& outIndex) const
 {
-	for (uint32_t i = 0; i < uint32_t(m_bones.size()); ++i)
+	for (uint32_t i = 0; i < uint32_t(m_joints.size()); ++i)
 	{
-		if (m_bones[i]->getName() == name)
+		if (m_joints[i]->getName() == name)
 		{
 			outIndex = i;
 			return true;
@@ -39,9 +39,9 @@ bool Skeleton::findBone(const std::wstring& name, uint32_t& outIndex) const
 
 void Skeleton::findChildren(uint32_t index, std::vector< uint32_t >& outChildren) const
 {
-	for (uint32_t i = 0; i < uint32_t(m_bones.size()); ++i)
+	for (uint32_t i = 0; i < uint32_t(m_joints.size()); ++i)
 	{
-		if (m_bones[i]->getParent() == index)
+		if (m_joints[i]->getParent() == index)
 		{
 			outChildren.push_back(i);
 			findChildren(i, outChildren);
@@ -51,7 +51,7 @@ void Skeleton::findChildren(uint32_t index, std::vector< uint32_t >& outChildren
 
 bool Skeleton::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< Bone >(L"bones", m_bones);
+	return s >> MemberRefArray< Joint >(L"joints", m_joints);
 }
 
 	}

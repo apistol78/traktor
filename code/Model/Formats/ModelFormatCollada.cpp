@@ -597,7 +597,7 @@ public:
 	{
 		int jointCount = m_jointNames.data.size();
 		for (int i = 0; i < jointCount; i++)
-			outModel->addBone(m_jointNames.data[i]);
+			outModel->addJoint(m_jointNames.data[i]);
 	}
 
 	void setJointInfluence(Vertex& vertex, int index)
@@ -621,7 +621,7 @@ public:
 			if (jointIndex != ~0UL && weightIndex < m_weights.getCount())
 			{
 				float weight = m_weights.getDataWeight(weightIndex);
-				vertex.setBoneInfluence(jointIndex, weight);
+				vertex.setJointInfluence(jointIndex, weight);
 			}
 
 			offset += stride;

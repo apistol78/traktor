@@ -16,10 +16,10 @@ namespace traktor
 		namespace
 		{
 
-Transform animation_AnimatedMeshEntity_getBoneTransform(animation::AnimatedMeshEntity* this_, const std::wstring& boneName)
+Transform animation_AnimatedMeshEntity_getJointTransform(animation::AnimatedMeshEntity* this_, const std::wstring& boneName)
 {
 	Transform transform;
-	this_->getBoneTransform(boneName, transform);
+	this_->getJointTransform(boneName, transform);
 	return transform;
 }
 
@@ -42,7 +42,7 @@ Transform animation_AnimatedMeshEntity_getSkinTransform(animation::AnimatedMeshE
 void registerAnimationClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< animation::AnimatedMeshEntity > > classAnimatedMeshEntity = new script::AutoScriptClass< animation::AnimatedMeshEntity >();
-	classAnimatedMeshEntity->addMethod(L"getBoneTransform", &animation_AnimatedMeshEntity_getBoneTransform);
+	classAnimatedMeshEntity->addMethod(L"getJointTransform", &animation_AnimatedMeshEntity_getJointTransform);
 	classAnimatedMeshEntity->addMethod(L"getPoseTransform", &animation_AnimatedMeshEntity_getPoseTransform);
 	classAnimatedMeshEntity->addMethod(L"getSkinTransform", &animation_AnimatedMeshEntity_getSkinTransform);
 	classAnimatedMeshEntity->addMethod(L"setPoseTransform", &animation::AnimatedMeshEntity::setPoseTransform);

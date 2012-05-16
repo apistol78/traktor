@@ -1,11 +1,11 @@
 #include <cmath>
-#include "Animation/Editor/AnimationEditorPage.h"
-#include "Animation/Editor/VolumePicker.h"
+#include "Animation/Joint.h"
+#include "Animation/Skeleton.h"
+#include "Animation/SkeletonUtils.h"
 #include "Animation/Animation/Animation.h"
 #include "Animation/Animation/AnimationFactory.h"
-#include "Animation/Skeleton.h"
-#include "Animation/Bone.h"
-#include "Animation/SkeletonUtils.h"
+#include "Animation/Editor/AnimationEditorPage.h"
+#include "Animation/Editor/VolumePicker.h"
 #include "Animation/IK/IKPoseController.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -430,28 +430,28 @@ bool AnimationEditorPage::handleCommand(const ui::Command& command)
 		m_ikEnabled = !m_ikEnabled;
 		updateRenderWidgets();
 	}
-	else if (command == L"Animation.Editor.SelectPreviousBone")
-	{
-		if (m_skeleton)
-		{
-			if (m_selectedBone > 0)
-				m_selectedBone--;
-			else
-				m_selectedBone = m_skeleton->getBoneCount() - 1;
-			updateRenderWidgets();
-		}
-	}
-	else if (command == L"Animation.Editor.SelectNextBone")
-	{
-		if (m_skeleton)
-		{
-			if (m_selectedBone < int(m_skeleton->getBoneCount()) - 1)
-				m_selectedBone++;
-			else
-				m_selectedBone = 0;
-			updateRenderWidgets();
-		}
-	}
+	//else if (command == L"Animation.Editor.SelectPreviousBone")
+	//{
+	//	if (m_skeleton)
+	//	{
+	//		if (m_selectedBone > 0)
+	//			m_selectedBone--;
+	//		else
+	//			m_selectedBone = m_skeleton->getBoneCount() - 1;
+	//		updateRenderWidgets();
+	//	}
+	//}
+	//else if (command == L"Animation.Editor.SelectNextBone")
+	//{
+	//	if (m_skeleton)
+	//	{
+	//		if (m_selectedBone < int(m_skeleton->getBoneCount()) - 1)
+	//			m_selectedBone++;
+	//		else
+	//			m_selectedBone = 0;
+	//		updateRenderWidgets();
+	//	}
+	//}
 	else if (command == L"Animation.Editor.Create")
 	{
 		float time = float(m_sequencer->getCursor() / 1000.0f);
@@ -564,33 +564,33 @@ bool AnimationEditorPage::calculateRelativeTwist(int poseIndex, int boneIndex, f
 	if (!m_skeleton)
 		return false;
 
-	int parentId = m_skeleton->getBone(m_selectedBone)->getParent();
-	if (parentId < 0)
-		return false;
+	//int parentId = m_skeleton->getBone(m_selectedBone)->getParent();
+	//if (parentId < 0)
+	//	return false;
 
-	Pose& pose = m_animation->getKeyPose(poseIndex).pose;
+	//Pose& pose = m_animation->getKeyPose(poseIndex).pose;
 
-	AlignedVector< Transform > poseTransforms;
-	calculatePoseTransforms(m_skeleton, &pose, poseTransforms);
+	//AlignedVector< Transform > poseTransforms;
+	//calculatePoseTransforms(m_skeleton, &pose, poseTransforms);
 
-	Vector4 parentAxisX = poseTransforms[parentId] * Vector4(1.0f, 0.0f, 0.0f);
-	Vector4 parentAxisY = poseTransforms[parentId] * Vector4(0.0f, 1.0f, 0.0f);
-	Vector4 parentAxisZ = poseTransforms[parentId] * Vector4(0.0f, 0.0f, 1.0f);
+	//Vector4 parentAxisX = poseTransforms[parentId] * Vector4(1.0f, 0.0f, 0.0f);
+	//Vector4 parentAxisY = poseTransforms[parentId] * Vector4(0.0f, 1.0f, 0.0f);
+	//Vector4 parentAxisZ = poseTransforms[parentId] * Vector4(0.0f, 0.0f, 1.0f);
 
-	Vector4 currentAxisX = poseTransforms[m_selectedBone] * Vector4(1.0f, 0.0f, 0.0f);
-	Vector4 currentAxisZ = poseTransforms[m_selectedBone] * Vector4(0.0f, 0.0f, 1.0f);
-	Vector4 currentAxisXinParent = (currentAxisX - parentAxisZ * dot3(parentAxisZ, currentAxisX)).normalized();
+	//Vector4 currentAxisX = poseTransforms[m_selectedBone] * Vector4(1.0f, 0.0f, 0.0f);
+	//Vector4 currentAxisZ = poseTransforms[m_selectedBone] * Vector4(0.0f, 0.0f, 1.0f);
+	//Vector4 currentAxisXinParent = (currentAxisX - parentAxisZ * dot3(parentAxisZ, currentAxisX)).normalized();
 
-	float relativeDirection = dot3(currentAxisZ, parentAxisZ);
-	if (abs(relativeDirection) < FUZZY_EPSILON)
-		return false;
+	//float relativeDirection = dot3(currentAxisZ, parentAxisZ);
+	//if (abs(relativeDirection) < FUZZY_EPSILON)
+	//	return false;
 
-	float ax = dot3(currentAxisXinParent, parentAxisY);
-	float ay = dot3(currentAxisXinParent, parentAxisX);
-	outRelativeTwist = atan2f(ax, ay);
+	//float ax = dot3(currentAxisXinParent, parentAxisY);
+	//float ay = dot3(currentAxisXinParent, parentAxisX);
+	//outRelativeTwist = atan2f(ax, ay);
 
-	if (relativeDirection < 0.0f)
-		outRelativeTwist = -outRelativeTwist;
+	//if (relativeDirection < 0.0f)
+	//	outRelativeTwist = -outRelativeTwist;
 
 	return true;
 }
@@ -620,47 +620,47 @@ void AnimationEditorPage::drawSkeleton(float time, const Color4ub& defaultColor,
 		);
 	}
 
-	for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
-	{
-		const Bone* bone = m_skeleton->getBone(i);
+	//for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
+	//{
+	//	const Bone* bone = m_skeleton->getBone(i);
 
-		Vector4 start = boneTransforms[i].translation();
-		Vector4 end = boneTransforms[i].translation() + boneTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
+	//	Vector4 start = boneTransforms[i].translation();
+	//	Vector4 end = boneTransforms[i].translation() + boneTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
 
-		const Color4ub& color = (m_selectedBone == i) ? selectedColor : defaultColor;
+	//	const Color4ub& color = (m_selectedBone == i) ? selectedColor : defaultColor;
 
-		Vector4 d = boneTransforms[i].axisZ();
-		Vector4 a = boneTransforms[i].axisX();
-		Vector4 b = boneTransforms[i].axisY();
+	//	Vector4 d = boneTransforms[i].axisZ();
+	//	Vector4 a = boneTransforms[i].axisX();
+	//	Vector4 b = boneTransforms[i].axisY();
 
-		Scalar radius = bone->getRadius();
-		d *= radius;
-		a *= radius;
-		b *= radius;
+	//	Scalar radius = bone->getRadius();
+	//	d *= radius;
+	//	a *= radius;
+	//	b *= radius;
 
-		m_primitiveRenderer->drawLine(start, start + d + a + b, color);
-		m_primitiveRenderer->drawLine(start, start + d - a + b, color);
-		m_primitiveRenderer->drawLine(start, start + d + a - b, color);
-		m_primitiveRenderer->drawLine(start, start + d - a - b, color);
+	//	m_primitiveRenderer->drawLine(start, start + d + a + b, color);
+	//	m_primitiveRenderer->drawLine(start, start + d - a + b, color);
+	//	m_primitiveRenderer->drawLine(start, start + d + a - b, color);
+	//	m_primitiveRenderer->drawLine(start, start + d - a - b, color);
 
-		m_primitiveRenderer->drawLine(start + d + a + b, end, color);
-		m_primitiveRenderer->drawLine(start + d - a + b, end, color);
-		m_primitiveRenderer->drawLine(start + d + a - b, end, color);
-		m_primitiveRenderer->drawLine(start + d - a - b, end, color);
+	//	m_primitiveRenderer->drawLine(start + d + a + b, end, color);
+	//	m_primitiveRenderer->drawLine(start + d - a + b, end, color);
+	//	m_primitiveRenderer->drawLine(start + d + a - b, end, color);
+	//	m_primitiveRenderer->drawLine(start + d - a - b, end, color);
 
-		m_primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
-		m_primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
-		m_primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
-		m_primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
+	//	m_primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, color);
+	//	m_primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, color);
+	//	m_primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, color);
+	//	m_primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, color);
 
-		m_primitiveRenderer->drawLine(start, end, color);
+	//	m_primitiveRenderer->drawLine(start, end, color);
 
-		if (drawAxis)
-		{
-			m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color4ub(255, 0, 0, color.a));
-			m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color4ub(0, 255, 0, color.a));
-		}
-	}
+	//	if (drawAxis)
+	//	{
+	//		m_primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color4ub(255, 0, 0, color.a));
+	//		m_primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color4ub(0, 255, 0, color.a));
+	//	}
+	//}
 }
 
 void AnimationEditorPage::updateSettings()
@@ -748,56 +748,56 @@ void AnimationEditorPage::eventRenderMouseMove(ui::Event* event)
 
 	mouseDelta /= 60.0f;
 
-	if (m_editMode)
-	{
-		int poseIndex;
-		if (getSelectedPoseId(poseIndex))
-		{
-			Pose& pose = m_animation->getKeyPose(poseIndex).pose;
+	//if (m_editMode)
+	//{
+	//	int poseIndex;
+	//	if (getSelectedPoseId(poseIndex))
+	//	{
+	//		Pose& pose = m_animation->getKeyPose(poseIndex).pose;
 
-			if ((mouseEvent->getKeyState() & ui::KsMenu) != ui::KsMenu)
-			{
-				if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
-				{
-					Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
-					orientation += Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
-					pose.setBoneOrientation(m_selectedBone, orientation);
+	//		if ((mouseEvent->getKeyState() & ui::KsMenu) != ui::KsMenu)
+	//		{
+	//			if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+	//			{
+	//				Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
+	//				orientation += Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
+	//				pose.setBoneOrientation(m_selectedBone, orientation);
 
-					// Compensate for applied twist.
-					if (m_twistLock && m_haveRelativeTwist)
-					{
-						float relativeTwist;
-						if (calculateRelativeTwist(poseIndex, m_selectedBone, relativeTwist))
-						{
-							orientation += Vector4(0.0f, 0.0f, m_relativeTwist - relativeTwist);
-							pose.setBoneOrientation(m_selectedBone, orientation);
-						}
-					}
-				}
-				else
-				{
-					Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
-					orientation += Vector4(0.0f, 0.0f, mouseDelta.x, 0.0f);
-					pose.setBoneOrientation(m_selectedBone, orientation);
-				}
-			}
-			else
-			{
-				Vector4 delta;
-				if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
-					delta = Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
-				else
-					delta = Vector4(0.0f, 0.0f, mouseDelta.y, 0.0f);
+	//				// Compensate for applied twist.
+	//				if (m_twistLock && m_haveRelativeTwist)
+	//				{
+	//					float relativeTwist;
+	//					if (calculateRelativeTwist(poseIndex, m_selectedBone, relativeTwist))
+	//					{
+	//						orientation += Vector4(0.0f, 0.0f, m_relativeTwist - relativeTwist);
+	//						pose.setBoneOrientation(m_selectedBone, orientation);
+	//					}
+	//				}
+	//			}
+	//			else
+	//			{
+	//				Vector4 orientation = pose.getBoneOrientation(m_selectedBone);
+	//				orientation += Vector4(0.0f, 0.0f, mouseDelta.x, 0.0f);
+	//				pose.setBoneOrientation(m_selectedBone, orientation);
+	//			}
+	//		}
+	//		else
+	//		{
+	//			Vector4 delta;
+	//			if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
+	//				delta = Vector4(mouseDelta.x, mouseDelta.y, 0.0f, 0.0f);
+	//			else
+	//				delta = Vector4(0.0f, 0.0f, mouseDelta.y, 0.0f);
 
-				Vector4 offset = pose.getBoneOffset(m_selectedBone);
-				offset += delta;
-				pose.setBoneOffset(m_selectedBone, offset);
-			}
+	//			Vector4 offset = pose.getBoneOffset(m_selectedBone);
+	//			offset += delta;
+	//			pose.setBoneOffset(m_selectedBone, offset);
+	//		}
 
-			updateRenderWidgets();
-		}
-	}
-	else
+	//		updateRenderWidgets();
+	//	}
+	//}
+	//else
 	{
 		if (mouseEvent->getButton() == ui::MouseEvent::BtLeft)
 		{
@@ -980,20 +980,20 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 			);
 
 			data->picker->removeAllVolumes();
-			for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
-			{
-				const Bone* bone = m_skeleton->getBone(i);
+			//for (int i = 0; i < int(m_skeleton->getBoneCount()); ++i)
+			//{
+			//	const Bone* bone = m_skeleton->getBone(i);
 
-				Vector4 center(0.0f, 0.0f, bone->getLength() / 2.0f, 1.0f);
-				Vector4 extent(bone->getRadius(), bone->getRadius(), bone->getLength() / 2.0f, 0.0f);
+			//	Vector4 center(0.0f, 0.0f, bone->getLength() / 2.0f, 1.0f);
+			//	Vector4 extent(bone->getRadius(), bone->getRadius(), bone->getLength() / 2.0f, 0.0f);
 
-				Aabb3 boneVolume(
-					center - extent,
-					center + extent
-				);
+			//	Aabb3 boneVolume(
+			//		center - extent,
+			//		center + extent
+			//	);
 
-				data->picker->addVolume(boneTransforms[i].toMatrix44(), boneVolume, i);
-			}
+			//	data->picker->addVolume(boneTransforms[i].toMatrix44(), boneVolume, i);
+			//}
 		}
 
 		m_primitiveRenderer->end();

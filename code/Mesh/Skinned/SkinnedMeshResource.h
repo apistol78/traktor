@@ -59,7 +59,7 @@ private:
 
 	resource::Id< render::Shader > m_shader;
 	std::map< std::wstring, parts_t > m_parts;
-	std::map< std::wstring, int > m_boneMap;
+	std::map< std::wstring, int32_t > m_jointMap;
 };
 
 	}

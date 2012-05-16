@@ -94,7 +94,7 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
-	model->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfBones);
+	model->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
 	model::cleanDuplicates(*model);
 	model::triangulateModel(*model);
 

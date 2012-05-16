@@ -1,4 +1,4 @@
-#include "Animation/Bone.h"
+#include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/Animation/StateNode.h"
@@ -44,7 +44,7 @@ void StatePoseController::evaluate(
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
-	const AlignedVector< Transform >& boneTransforms,
+	const AlignedVector< Transform >& jointTransforms,
 	AlignedVector< Transform >& outPoseTransforms,
 	bool& outUpdateController
 )
@@ -221,46 +221,6 @@ void StatePoseController::estimateVelocities(
 	AlignedVector< Velocity >& outVelocities
 )
 {
-	if (!m_currentState)
-		return;
-
-	const Scalar c_deltaTime = Scalar(1.0f / 30.0f);
-	AlignedVector< Transform > poseTransforms0, poseTransforms1;
-	Pose pose0, pose1;
-
-	float time = m_currentStateContext.getTime();
-	m_currentState->evaluate(
-		m_currentStateContext,
-		pose0
-	);
-	m_currentStateContext.setTime(time + c_deltaTime);
-	m_currentState->evaluate(
-		m_currentStateContext,
-		pose1
-	);
-	m_currentStateContext.setTime(time);
-
-	calculatePoseTransforms(skeleton, &pose0, poseTransforms0);
-	calculatePoseTransforms(skeleton, &pose1, poseTransforms1);
-	T_ASSERT (poseTransforms0.size() == poseTransforms1.size());
-
-	for (uint32_t i = 0; i < uint32_t(poseTransforms0.size()); ++i)
-	{
-		Vector4 centerOfMass = Vector4(0.0f, 0.0f, skeleton->getBone(i)->getLength() / 2.0f, 1.0f);
-
-		const Vector4& p1 = poseTransforms0[i] * centerOfMass;
-		const Vector4& p2 = poseTransforms1[i] * centerOfMass;
-		const Quaternion& q1 = poseTransforms0[i].rotation();
-		const Quaternion& q2 = poseTransforms1[i].rotation();
-
-		Vector4 dp = p2 - p1;
-		Quaternion dq = (q1.inverse() * q2).normalized();
-
-		Velocity velocity;
-		velocity.linear = dp / c_deltaTime;
-		velocity.angular = dq.toAxisAngle() / c_deltaTime;
-		outVelocities.push_back(velocity);
-	}
 }
 
 	}

@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment>
 			<![CDATA[
 rotation
@@ -11,11 +11,12 @@ rotation
 				<first>533</first>
 				<second>302</second>
 			</position>
-			<parameterName>Bones</parameterName>
+			<parameterName>Joints</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>16</length>
 		</item>
-		<item type="traktor.render.IndexedUniform">
+		<item type="traktor.render.IndexedUniform" version="1">
 			<comment>
 			<![CDATA[
 translation
@@ -25,8 +26,9 @@ translation
 				<first>533</first>
 				<second>395</second>
 			</position>
-			<parameterName>Bones</parameterName>
+			<parameterName>Joints</parameterName>
 			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
 			<length>16</length>
 		</item>
 		<item type="traktor.render.InputPort" version="1">

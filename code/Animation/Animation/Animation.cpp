@@ -34,7 +34,7 @@ struct KeyPoseAccessor
 	{
 		Pose pose;
 
-		// Build mask of all used bone indices.
+		// Build mask of all used joint indices.
 		BitSet indices;
 		v0.getIndexMask(indices);
 		v1.getIndexMask(indices);
@@ -49,8 +49,8 @@ struct KeyPoseAccessor
 			if (!indices(i))
 				continue;
 
-			pose.setBoneOffset(i, v0.getBoneOffset(i) * w0 + v1.getBoneOffset(i) * w1 + v2.getBoneOffset(i) * w2 + v3.getBoneOffset(i) * w3);
-			pose.setBoneOrientation(i, v0.getBoneOrientation(i) * w0 + v1.getBoneOrientation(i) * w1 + v2.getBoneOrientation(i) * w2 + v3.getBoneOrientation(i) * w3);
+			pose.setJointOffset(i, v0.getJointOffset(i) * w0 + v1.getJointOffset(i) * w1 + v2.getJointOffset(i) * w2 + v3.getJointOffset(i) * w3);
+			pose.setJointOrientation(i, v0.getJointOrientation(i) * w0 + v1.getJointOrientation(i) * w1 + v2.getJointOrientation(i) * w2 + v3.getJointOrientation(i) * w3);
 		}
 
 		return pose;

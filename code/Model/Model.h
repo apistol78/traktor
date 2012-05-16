@@ -42,8 +42,8 @@ public:
 		CfColors = (1 << 4),
 		CfNormals = (1 << 5),
 		CfTexCoords = (1 << 6),
-		CfBones = (1 << 7),
-		CfAll = (CfMaterials | CfVertices | CfPolygons | CfPositions | CfNormals | CfTexCoords | CfBones)
+		CfJoints = (1 << 7),
+		CfAll = (CfMaterials | CfVertices | CfPolygons | CfPositions | CfNormals | CfTexCoords | CfJoints)
 	};
 
 	Model();
@@ -132,13 +132,13 @@ public:
 
 	const AlignedVector< Vector2 >& getTexCoords() const;
 
-	uint32_t addBone(const std::wstring& boneName);
+	uint32_t addJoint(const std::wstring& jointName);
 
-	uint32_t getBoneCount() const;
+	uint32_t getJointCount() const;
 
-	const std::wstring& getBone(uint32_t boneIndex) const;
+	const std::wstring& getJoint(uint32_t jointIndex) const;
 
-	uint32_t findBoneIndex(const std::wstring& boneName) const;
+	uint32_t findJointIndex(const std::wstring& jointName) const;
 
 	uint32_t addBlendTarget(const std::wstring& blendTargetName);
 
@@ -158,7 +158,7 @@ private:
 	SpatialHashArray< Vector4 > m_colors; 
 	SpatialHashArray< Vector4 > m_normals;
 	SpatialHashArray< Vector2 > m_texCoords;
-	std::vector< std::wstring > m_bones;
+	std::vector< std::wstring > m_joints;
 	std::vector< std::wstring > m_blendTargets;
 	std::map< uint32_t, SpatialHashArray< Vector4 > > m_blendTargetPositions;
 	std::map< uint32_t, uint32_t > m_verticesHash;

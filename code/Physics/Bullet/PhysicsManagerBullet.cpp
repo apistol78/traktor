@@ -1149,6 +1149,11 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 	BodyBullet* body2 = colObj1 ? static_cast< BodyBullet* >(colObj1->getUserPointer()) : 0;
 	if (body1 && body2)
 	{
+		// Filter on cluster id.
+		uint32_t clusterId1 = body1->getClusterId();
+		if (clusterId1 != ~0UL && clusterId1 == body2->getClusterId())
+			return;
+
 		// Filter collision on collision group and mask first.
 		uint32_t group1 = body1->getCollisionGroup();
 		uint32_t mask1 = body1->getCollisionMask();

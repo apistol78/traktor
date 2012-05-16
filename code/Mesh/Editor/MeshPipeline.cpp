@@ -117,7 +117,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 18, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 19, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -308,7 +308,7 @@ bool MeshPipeline::buildOutput(
 		pipelineBuilder->getSourceDatabase()
 	);
 
-	int32_t boneCount = models[0]->getBoneCount();
+	int32_t jointCount = models[0]->getJointCount();
 
 	for (std::map< std::wstring, model::Material >::const_iterator i = materials.begin(); i != materials.end(); ++i)
 	{
@@ -379,8 +379,8 @@ bool MeshPipeline::buildOutput(
 		{
 			if (render::IndexedUniform* indexedUniform = dynamic_type_cast< render::IndexedUniform* >(*j))
 			{
-				if (indexedUniform->getParameterName() == L"Bones")
-					indexedUniform->setLength(boneCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
+				if (indexedUniform->getParameterName() == L"Joints")
+					indexedUniform->setLength(jointCount * 2);		// Each bone is represented of a quaternion and a vector thus multiply by 2.
 			}
 		}
 

@@ -27,26 +27,26 @@ class T_DLLCLASS Pose : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	void setBoneOffset(uint32_t boneIndex, const Vector4& boneOffset);
+	void setJointOffset(uint32_t jointIndex, const Vector4& jointOffset);
 
-	Vector4 getBoneOffset(uint32_t boneIndex) const;
+	Vector4 getJointOffset(uint32_t jointIndex) const;
 
-	void setBoneOrientation(uint32_t boneIndex, const Vector4& boneOrientation);
+	void setJointOrientation(uint32_t jointIndex, const Vector4& jointOrientation);
 
-	Vector4 getBoneOrientation(uint32_t boneIndex) const;
+	Vector4 getJointOrientation(uint32_t jointIndex) const;
 
 	void getIndexMask(BitSet& outIndices) const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	struct Bone
+	struct Joint
 	{
 		uint32_t index;
 		Vector4 offset;
 		Vector4 orientation;
 
-		Bone(uint32_t index_ = 0)
+		Joint(uint32_t index_ = 0)
 		:	index(index_)
 		,	offset(0.0f, 0.0f, 0.0f, 0.0f)
 		,	orientation(0.0f, 0.0f, 0.0f, 0.0f)
@@ -56,11 +56,11 @@ private:
 		bool serialize(ISerializer& s);
 	};
 
-	AlignedVector< Bone > m_bones;
+	AlignedVector< Joint > m_joints;
 
-	const Bone* getBone(uint32_t boneIndex) const;
+	const Joint* getJoint(uint32_t jointIndex) const;
 
-	Bone& getEditBone(uint32_t boneIndex);
+	Joint& getEditJoint(uint32_t jointIndex);
 };
 
 	}

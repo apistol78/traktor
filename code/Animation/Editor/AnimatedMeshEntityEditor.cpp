@@ -3,8 +3,8 @@
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
-#include "Animation/Bone.h"
 #include "Animation/IPoseController.h"
+#include "Animation/Joint.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
@@ -48,44 +48,50 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 
 		AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
 		if (poseTransforms.empty())
-			calculateBoneTransforms(skeleton, poseTransforms);
+			calculateJointTransforms(skeleton, poseTransforms);
 
-		if (poseTransforms.size() == skeleton->getBoneCount())
+		if (poseTransforms.size() == skeleton->getJointCount())
 		{
-			for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
+			for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 			{
-				const Bone* bone = skeleton->getBone(i);
+				const Joint* joint = skeleton->getJoint(i);
 
-				Vector4 start = poseTransforms[i].translation();
-				Vector4 end = poseTransforms[i].translation() + poseTransforms[i] * Vector4(0.0f, 0.0f, bone->getLength(), 0.0f);
+				Color4ub color = Color4ub(255, 255, 0, 128);
 
-				Vector4 d = poseTransforms[i].axisZ();
-				Vector4 a = poseTransforms[i].axisX();
-				Vector4 b = poseTransforms[i].axisY();
+				primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
 
-				Scalar radius = bone->getRadius();
-				d *= radius;
-				a *= radius;
-				b *= radius;
+				if (joint->getParent() >= 0)
+				{
+					const Joint* parent = skeleton->getJoint(joint->getParent());
+					T_ASSERT (parent);
 
-				primitiveRenderer->drawLine(start, start + d + a + b, m_colorBone);
-				primitiveRenderer->drawLine(start, start + d - a + b, m_colorBone);
-				primitiveRenderer->drawLine(start, start + d + a - b, m_colorBone);
-				primitiveRenderer->drawLine(start, start + d - a - b, m_colorBone);
+					Vector4 start = poseTransforms[joint->getParent()].translation();
+					Vector4 end = poseTransforms[i].translation();
 
-				primitiveRenderer->drawLine(start + d + a + b, end, m_colorBone);
-				primitiveRenderer->drawLine(start + d - a + b, end, m_colorBone);
-				primitiveRenderer->drawLine(start + d + a - b, end, m_colorBone);
-				primitiveRenderer->drawLine(start + d - a - b, end, m_colorBone);
+					Vector4 z = (end - start).normalized();
+					Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+					Vector4 x = cross(y, z);
 
-				primitiveRenderer->drawLine(start + d + a + b, start + d - a + b, m_colorBone);
-				primitiveRenderer->drawLine(start + d - a + b, start + d - a - b, m_colorBone);
-				primitiveRenderer->drawLine(start + d - a - b, start + d + a - b, m_colorBone);
-				primitiveRenderer->drawLine(start + d + a - b, start + d + a + b, m_colorBone);
+					Scalar radius(parent->getRadius());
+					x *= radius;
+					y *= radius;
+					z *= radius;
 
-				primitiveRenderer->drawLine(start, end, m_colorBone);
-				primitiveRenderer->drawLine(start, start + a * Scalar(2.0f), Color4ub(255, 0, 0, 180));
-				primitiveRenderer->drawLine(start, start + b * Scalar(2.0f), Color4ub(0, 255, 0, 180));
+					primitiveRenderer->drawLine(start, start + z + x + y, color);
+					primitiveRenderer->drawLine(start, start + z - x + y, color);
+					primitiveRenderer->drawLine(start, start + z + x - y, color);
+					primitiveRenderer->drawLine(start, start + z - x - y, color);
+
+					primitiveRenderer->drawLine(start + z + x + y, end, color);
+					primitiveRenderer->drawLine(start + z - x + y, end, color);
+					primitiveRenderer->drawLine(start + z + x - y, end, color);
+					primitiveRenderer->drawLine(start + z - x - y, end, color);
+
+					primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
+					primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
+					primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
+					primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+				}
 			}
 		}
 	}

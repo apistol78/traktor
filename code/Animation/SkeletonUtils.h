@@ -25,26 +25,26 @@ class Pose;
 /*! \ingroup Animation */
 //@{
 
-void T_DLLCLASS calculateBoneLocalTransforms(
+void T_DLLCLASS calculateJointLocalTransforms(
 	const Skeleton* skeleton,
-	AlignedVector< Transform >& outBoneTransforms
+	AlignedVector< Transform >& outJointTransforms
 );
 
-void T_DLLCLASS calculateBoneTransforms(
+void T_DLLCLASS calculateJointTransforms(
 	const Skeleton* skeleton,
-	AlignedVector< Transform >& outBoneTransforms
+	AlignedVector< Transform >& outJointTransforms
 );
 
 void T_DLLCLASS calculatePoseLocalTransforms(
 	const Skeleton* skeleton,
 	const Pose* pose,
-	AlignedVector< Transform >& outBoneLocalTransforms
+	AlignedVector< Transform >& outPoseLocalTransforms
 );
 
 void T_DLLCLASS calculatePoseTransforms(
 	const Skeleton* skeleton,
 	const Pose* pose,
-	AlignedVector< Transform >& outBoneTransforms
+	AlignedVector< Transform >& outPoseTransforms
 );
 
 Aabb3 T_DLLCLASS calculateBoundingBox(const Skeleton* skeleton);
