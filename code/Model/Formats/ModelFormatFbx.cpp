@@ -219,12 +219,12 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 	}
 
 	typedef std::map< uint32_t, float > bone_influences_t;
-	std::vector< bone_influences_t > vertexBones;
+	std::vector< bone_influences_t > vertexJoints;
 
 	if (importFlags & ModelFormat::IfMeshBlendWeights)
 	{
 		int32_t controlPointsCount = mesh->GetControlPointsCount();
-		vertexBones.resize(controlPointsCount);
+		vertexJoints.resize(controlPointsCount);
 
 		int32_t deformerCount = mesh->GetDeformerCount(FbxDeformer::eSkin);
 		for (int32_t i = 0; i < deformerCount; ++i)
@@ -244,11 +244,11 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				if (weightCount <= 0)
 					continue;
 
-				const FbxNode* boneNode = cluster->GetLink();
-				T_ASSERT (boneNode);
+				const FbxNode* jointNode = cluster->GetLink();
+				T_ASSERT (jointNode);
 				
-				const char* boneName = boneNode->GetName();
-				uint32_t boneIndex = outModel.addBone(mbstows(boneName));
+				const char* jointName = jointNode->GetName();
+				uint32_t jointIndex = outModel.addJoint(mbstows(jointName));
 
 				const double* weights = cluster->GetControlPointWeights();
 				const int* indices = cluster->GetControlPointIndices();
@@ -256,8 +256,8 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				for (int32_t k = 0; k < weightCount; ++k)
 				{
 					int32_t vertexIndex = indices[k];
-					float boneWeight = float(weights[k]);
-					vertexBones[vertexIndex].insert(std::pair< uint32_t, float >(boneIndex, boneWeight));
+					float jointWeight = float(weights[k]);
+					vertexJoints[vertexIndex].insert(std::pair< uint32_t, float >(jointIndex, jointWeight));
 				}
 			}
 		}
@@ -296,10 +296,10 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				Vertex vertex;
 				vertex.setPosition(positionBase + pointIndex);
 
-				if (pointIndex < int32_t(vertexBones.size()))
+				if (pointIndex < int32_t(vertexJoints.size()))
 				{
-					for (bone_influences_t::const_iterator k = vertexBones[pointIndex].begin(); k != vertexBones[pointIndex].end(); ++k)
-						vertex.setBoneInfluence(k->first, k->second);
+					for (bone_influences_t::const_iterator k = vertexJoints[pointIndex].begin(); k != vertexJoints[pointIndex].end(); ++k)
+						vertex.setJointInfluence(k->first, k->second);
 				}
 
 				for (int32_t k = 0; k < mesh->GetLayerCount(); ++k)

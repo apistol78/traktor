@@ -34,11 +34,11 @@ Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 		{ -c_distance,        0.0f }
 	};
 
-	float h0 = heightfield->getGridHeight(u, v);
+	float h0 = heightfield->getGridHeightNearest(u, v);
 
 	float h[sizeof_array(directions)];
 	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
-		h[i] = heightfield->getGridHeight(u + directions[i][0], v + directions[i][1]);
+		h[i] = heightfield->getGridHeightNearest(u + directions[i][0], v + directions[i][1]);
 
 	const Vector4& worldExtent = heightfield->getWorldExtent();
 	float sx = worldExtent.x() / heightfield->getSize();
@@ -146,7 +146,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		{
 			for (int32_t u = 0; u < size; ++u)
 			{
-				float height = heightfield->getGridHeight(u, v) * asset->m_scale;
+				float height = heightfield->getGridHeightNearest(u, v) * asset->m_scale;
 				outputMap->setPixelUnsafe(u, v, Color4f(height, height, height, height));
 			}
 		}

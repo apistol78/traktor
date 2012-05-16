@@ -1,4 +1,4 @@
-#include "Animation/Bone.h"
+#include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IK/IKPoseController.h"
@@ -44,153 +44,123 @@ void IKPoseController::evaluate(
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
-	const AlignedVector< Transform >& boneTransforms,
+	const AlignedVector< Transform >& jointTransforms,
 	AlignedVector< Transform >& outPoseTransforms,
 	bool& outUpdateController
 )
 {
-	uint32_t boneCount = skeleton->getBoneCount();
+	//uint32_t jointCount = skeleton->getJointCount();
 
-	// Evaluate unaffected pose.
-	if (m_poseController)
-	{
-		m_poseController->evaluate(
-			deltaTime,
-			worldTransform,
-			skeleton,
-			boneTransforms,
-			outPoseTransforms,
-			outUpdateController
-		);
+	//// Evaluate unaffected pose.
+	//if (m_poseController)
+	//{
+	//	m_poseController->evaluate(
+	//		deltaTime,
+	//		worldTransform,
+	//		skeleton,
+	//		jointTransforms,
+	//		outPoseTransforms,
+	//		outUpdateController
+	//	);
 
-		// Ensure we've enough transforms.
-		for (size_t i = outPoseTransforms.size(); i < boneTransforms.size(); ++i)
-			outPoseTransforms.push_back(boneTransforms[i]);
-	}
-	else
-		outPoseTransforms = boneTransforms;
+	//	// Ensure we've enough transforms.
+	//	for (size_t i = outPoseTransforms.size(); i < jointTransforms.size(); ++i)
+	//		outPoseTransforms.push_back(jointTransforms[i]);
+	//}
+	//else
+	//	outPoseTransforms = jointTransforms;
 
-	// Calculate resting bone transforms.
-	AlignedVector< Transform > boneLocalTransforms;
-	calculateBoneLocalTransforms(skeleton, boneLocalTransforms);
+	//// Calculate resting bone transforms.
+	//AlignedVector< Transform > jointLocalTransforms;
+	//calculateJointLocalTransforms(skeleton, jointLocalTransforms);
 
-	// Build node system.
-	AlignedVector< Vector4 > nodes;
-	std::vector< std::pair< int, int > > edges(boneCount);
+	//// Build node system.
+	//AlignedVector< Vector4 > nodes;
+	//std::vector< std::pair< int, int > > edges(jointCount);
 
-	for (uint32_t i = 0; i < boneCount; ++i)
-	{
-		const Bone* bone = skeleton->getBone(i);
-		int base = int(nodes.size());
-		if (bone->getParent() >= 0)
-		{
-			T_ASSERT (bone->getParent() < int(edges.size()));
-			Vector4 n = outPoseTransforms[i].translation() + outPoseTransforms[i].axisZ() * bone->getLength();
-			nodes.push_back(n);
-			edges[i] = std::make_pair(
-				edges[bone->getParent()].second,
-				base
-			);
-		}
-		else
-		{
-			Vector4 n1 = outPoseTransforms[i].translation();
-			Vector4 n2 = n1 + outPoseTransforms[i].axisZ() * bone->getLength();
-			nodes.push_back(n1);
-			nodes.push_back(n2);
-			edges[i] = std::make_pair(
-				base,
-				base + 1
-			);
-		}
-	}
+	//for (uint32_t i = 0; i < jointCount; ++i)
+	//{
+	//	const Joint* joint = skeleton->getJoint(i);
+	//	int base = int(nodes.size());
+	//	if (joint->getParent() >= 0)
+	//	{
+	//		T_ASSERT (joint->getParent() < int(edges.size()));
+	//		
+	//		Vector4 s = outPoseTransforms[joint->getParent()].translation();
+	//		Vector4 e = outPoseTransforms[i].translation();
 
-	// Solve IK by iteratively solving each edge individually.
-	for (uint32_t i = 0; i < m_solverIterations; ++i)
-	{
-		for (uint32_t j = 0; j < boneCount; ++j)
-		{
-			const Bone* bone = skeleton->getBone(j);
+	//		nodes.push_back(n);
+	//		edges[i] = std::make_pair(
+	//			edges[bone->getParent()].second,
+	//			base
+	//		);
+	//	}
+	//}
 
-			Vector4& sp = nodes[edges[j].first];
-			Vector4& ep = nodes[edges[j].second];
+	//// Solve IK by iteratively solving each edge individually.
+	//for (uint32_t i = 0; i < m_solverIterations; ++i)
+	//{
+	//	for (uint32_t j = 0; j < jointCount; ++j)
+	//	{
+	//		const Bone* bone = skeleton->getBone(j);
 
-			//// Constraint 1; not inside any collision geometry.
-			//if (m_physicsManager)
-			//{
-			//	physics::QueryResult result;
-			//	
-			//	Vector4 d = ep - sp;
-			//	Scalar ln = d.length(); d /= ln;
-			//	
-			//	if (m_physicsManager->querySweep(
-			//		worldTransform * sp,
-			//		worldTransform * d,
-			//		ln,
-			//		bone->getRadius(),
-			//		~0UL,
-			//		m_ignoreBody,
-			//		result
-			//	))
-			//	{
-			//		ep = worldTransform.inverse() * result.position;
-			//	}
-			//}
+	//		Vector4& sp = nodes[edges[j].first];
+	//		Vector4& ep = nodes[edges[j].second];
 
-			// Constraint 2; keep length.
-			{
-				Vector4 d = ep - sp;
-				Scalar ln = d.length();
-				Scalar e = bone->getLength() - ln;
-				if (abs(e) > FUZZY_EPSILON)
-				{
-					d /= ln;
-					ep += e * d * Scalar(0.5f);
-					sp -= e * d * Scalar(0.5f);
-				}
-			}
+	//		// Constraint 1; keep length.
+	//		{
+	//			Vector4 d = ep - sp;
+	//			Scalar ln = d.length();
+	//			Scalar e = bone->getLength() - ln;
+	//			if (abs(e) > FUZZY_EPSILON)
+	//			{
+	//				d /= ln;
+	//				ep += e * d * Scalar(0.5f);
+	//				sp -= e * d * Scalar(0.5f);
+	//			}
+	//		}
 
-			// Constraint 3; keep cone angle.
-			if (bone->getEnableLimits())
-			{
-				int parent = bone->getParent();
-				if (parent >= 0)
-				{
-					const float limit = max< float >(bone->getConeLimit().x, bone->getConeLimit().y);
+	//		// Constraint 2; keep cone angle.
+	//		if (bone->getEnableLimits())
+	//		{
+	//			int parent = bone->getParent();
+	//			if (parent >= 0)
+	//			{
+	//				const float limit = max< float >(bone->getConeLimit().x, bone->getConeLimit().y);
 
-					Vector4 d1 = (ep - sp).normalized();
-					Vector4 d2 = (outPoseTransforms[parent] * boneLocalTransforms[j].axisZ()).normalized();
+	//				Vector4 d1 = (ep - sp).normalized();
+	//				Vector4 d2 = (outPoseTransforms[parent] * jointLocalTransforms[j].axisZ()).normalized();
 
-					float phi = acosf(dot3(d1, d2));
-					if (abs(phi) >= limit)
-					{
-						Vector4 t1 = cross(d1, d2);
-						Vector4 p = cross(d2, t1).normalized();
-						Vector4 d = (d2 + p * Scalar(sinf(limit))).normalized();
-						ep = sp + d * (ep - sp).length();
-					}
-				}
-			}
-		}
-	}
+	//				float phi = acosf(dot3(d1, d2));
+	//				if (abs(phi) >= limit)
+	//				{
+	//					Vector4 t1 = cross(d1, d2);
+	//					Vector4 p = cross(d2, t1).normalized();
+	//					Vector4 d = (d2 + p * Scalar(sinf(limit))).normalized();
+	//					ep = sp + d * (ep - sp).length();
+	//				}
+	//			}
+	//		}
+	//	}
+	//}
 
-	// Update pose transforms from node system.
-	for (uint32_t i = 0; i < boneCount; ++i)
-	{
-		const Vector4& sp = nodes[edges[i].first];
-		const Vector4& ep = nodes[edges[i].second];
+	//// Update pose transforms from node system.
+	//for (uint32_t i = 0; i < jointCount; ++i)
+	//{
+	//	const Vector4& sp = nodes[edges[i].first];
+	//	const Vector4& ep = nodes[edges[i].second];
 
-		Vector4 axisZ = (ep - sp).normalized();
-		Vector4 axisY = cross(axisZ, outPoseTransforms[i].axisX()).normalized();
-		Vector4 axisX = cross(axisY, axisZ).normalized();
+	//	Vector4 axisZ = (ep - sp).normalized();
+	//	Vector4 axisY = cross(axisZ, outPoseTransforms[i].axisX()).normalized();
+	//	Vector4 axisX = cross(axisY, axisZ).normalized();
 
-		outPoseTransforms[i] = Transform(Matrix44(
-			axisX,
-			axisY,
-			axisZ,
-			sp
-		));
-	}
+	//	outPoseTransforms[i] = Transform(Matrix44(
+	//		axisX,
+	//		axisY,
+	//		axisZ,
+	//		sp
+	//	));
+	//}
 }
 
 void IKPoseController::estimateVelocities(

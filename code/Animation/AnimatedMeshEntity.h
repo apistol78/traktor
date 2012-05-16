@@ -43,7 +43,7 @@ public:
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
 		const resource::Proxy< Skeleton >& skeleton,
 		IPoseController* poseController,
-		const std::vector< int >& boneRemap,
+		const std::vector< int32_t >& jointRemap,
 		bool normalizePose,
 		bool normalizeTransform
 	);
@@ -67,13 +67,13 @@ public:
 
 	virtual void setTransform(const Transform& transform);
 
-	bool getBoneTransform(const std::wstring& boneName, Transform& outTransform) const;
+	bool getJointTransform(const std::wstring& jointName, Transform& outTransform) const;
 
-	bool getPoseTransform(const std::wstring& boneName, Transform& outTransform) const;
+	bool getPoseTransform(const std::wstring& jointName, Transform& outTransform) const;
 
-	bool getSkinTransform(const std::wstring& boneName, Transform& outTransform) const;
+	bool getSkinTransform(const std::wstring& jointName, Transform& outTransform) const;
 
-	bool setPoseTransform(const std::wstring& boneName, const Transform& transform, bool inclusive);
+	bool setPoseTransform(const std::wstring& jointName, const Transform& transform, bool inclusive);
 
 	const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
 
@@ -81,7 +81,7 @@ public:
 
 	const Ref< IPoseController >& getPoseController() const { return m_poseController; }
 
-	const AlignedVector< Transform >& getBoneTransforms() const { return m_boneTransforms; }
+	const AlignedVector< Transform >& getJointTransforms() const { return m_jointTransforms; }
 
 	const AlignedVector< Transform >& getPoseTransforms() const { return m_poseTransforms; }
 
@@ -89,10 +89,10 @@ private:
 	resource::Proxy< mesh::SkinnedMesh > m_mesh;
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
-	std::vector< int32_t > m_boneRemap;
+	std::vector< int32_t > m_jointRemap;
 	bool m_normalizePose;
 	bool m_normalizeTransform;
-	AlignedVector< Transform > m_boneTransforms;
+	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
 	AlignedVector< Vector4 > m_skinTransforms;
 	float m_totalTime;

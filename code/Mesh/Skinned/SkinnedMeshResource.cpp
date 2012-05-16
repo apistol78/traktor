@@ -14,7 +14,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 2, SkinnedMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 3, SkinnedMeshResource, IMeshResource)
 
 Ref< IMesh > SkinnedMeshResource::createMesh(
 	const std::wstring& name,
@@ -52,12 +52,12 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 		}
 	}
 
-	int32_t boneMaxIndex = -1;
-	for (std::map< std::wstring, int >::const_iterator i = m_boneMap.begin(); i != m_boneMap.end(); ++i)
-		boneMaxIndex = max< int32_t >(boneMaxIndex, i->second);
+	int32_t jointMaxIndex = -1;
+	for (std::map< std::wstring, int >::const_iterator i = m_jointMap.begin(); i != m_jointMap.end(); ++i)
+		jointMaxIndex = max< int32_t >(jointMaxIndex, i->second);
 
-	skinnedMesh->m_boneMap = m_boneMap;
-	skinnedMesh->m_boneCount = boneMaxIndex + 1;
+	skinnedMesh->m_jointMap = m_jointMap;
+	skinnedMesh->m_jointCount = jointMaxIndex + 1;
 
 	return skinnedMesh;
 }
@@ -76,7 +76,7 @@ bool SkinnedMeshResource::serialize(ISerializer& s)
 			MemberStlList< Part, MemberComposite< Part > >
 		>
 	>(L"parts", m_parts);
-	s >> MemberStlMap< std::wstring, int >(L"boneMap", m_boneMap);
+	s >> MemberStlMap< std::wstring, int32_t >(L"jointMap", m_jointMap);
 	return true;
 }
 

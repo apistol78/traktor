@@ -168,9 +168,24 @@ public:
 	 */
 	Object* getUserObject() const;
 
+	/*! \brief Set cluster id.
+	 *
+	 * Bodies within same cluster will never
+	 * collide thus are useful for isolating
+	 * articulated cluster of bodies.
+	 */
+	void setClusterId(uint32_t clusterId);
+
+	/*! \brief Get cluster id.
+	 *
+	 * \return Cluster id.
+	 */
+	uint32_t getClusterId() const;
+
 private:
 	RefArray< CollisionListener > m_collisionListeners;
 	Object* m_userObject;
+	uint32_t m_clusterId;
 };
 
 	}

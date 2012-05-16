@@ -37,11 +37,11 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 {
 	Ref< IPoseController > trackPoseController;
 
-	AlignedVector< Transform > boneTransforms;
-	calculateBoneTransforms(skeleton, boneTransforms);
+	AlignedVector< Transform > jointTransforms;
+	calculateJointTransforms(skeleton, jointTransforms);
 
 	AlignedVector< IPoseController::Velocity > velocities;
-	velocities.reserve(boneTransforms.size());
+	velocities.reserve(jointTransforms.size());
 
 	if (m_trackPoseController)
 	{
@@ -57,7 +57,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		trackPoseController->estimateVelocities(skeleton, velocities);
 	}
 
-	for (uint32_t i = velocities.size(); i < boneTransforms.size(); ++i)
+	for (uint32_t i = velocities.size(); i < jointTransforms.size(); ++i)
 	{
 		IPoseController::Velocity velocity;
 		velocity.linear =
@@ -70,7 +70,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		physicsManager,
 		skeleton,
 		worldTransform,
-		boneTransforms,
+		jointTransforms,
 		velocities,
 		m_collisionGroup,
 		m_collisionMask,

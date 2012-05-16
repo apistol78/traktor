@@ -18,9 +18,9 @@ class SkeletonFormatBvh : public ISkeletonFormat
 	T_RTTI_CLASS;
 
 public:
-	Ref< Skeleton > create(const BvhDocument* document, const Vector4& offset, float boneRadius) const;
+	Ref< Skeleton > create(const BvhDocument* document, const Vector4& offset, float radius) const;
 
-	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float boneRadius, bool invertX, bool invertZ) const;
+	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const;
 };
 
 	}

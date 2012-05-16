@@ -71,30 +71,53 @@ void PreviewItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 		);
 	}
 	
-	// Ensure text fit within boundaries; if
-	// not append trailing "..."
+	// Ensure text fit within boundaries.
 	std::wstring text = m_text;
-	Size textExtent = canvas.getTextExtent(text);
 	
-	if (textExtent.cx > rect.getWidth())
+	Rect textRect = rect;
+	textRect.top += frameSize.cy;
+
+	Size textExtent = canvas.getTextExtent(text);
+	if (textExtent.cx > textRect.getWidth())
 	{
-		while (!text.empty())
+		if (!isSelected())
 		{
-			text = text.substr(0, text.length() - 1);
-			textExtent = canvas.getTextExtent(text + L"...");
-			if (textExtent.cx <= rect.getWidth())
-				break;
+			// Item not selected; cut text and add trailing ...
+			while (!text.empty())
+			{
+				text = text.substr(0, text.length() - 1);
+				textExtent = canvas.getTextExtent(text + L"...");
+				if (textExtent.cx <= rect.getWidth())
+					break;
+			}
+			text += L"...";
 		}
-		text += L"...";
+		else
+		{
+			// Item is selected; enlarge text rectangle.
+			int32_t excess = textExtent.cx - textRect.getWidth();
+			textRect.left -= excess / 2 + 5;
+			textRect.right += (excess + 1) / 2 + 5;
+		}
+	}
+
+	textRect.bottom = textRect.top + textExtent.cy + 2;
+
+	if (isSelected())
+	{
+		Color4ub background = canvas.getBackground();
+		canvas.setBackground(Color4ub(80, 90, 120));
+		canvas.fillRect(textRect);
+		canvas.setBackground(background);
 	}
 
 	canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.drawText(
 		Rect(
-			rect.left,
-			rect.top + frameSize.cy,
-			rect.right,
-			rect.bottom
+			textRect.left,
+			textRect.top,
+			textRect.right,
+			textRect.bottom
 		),
 		text,
 		AnCenter,

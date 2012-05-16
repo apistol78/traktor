@@ -505,7 +505,7 @@ void calculateConvexHull(Model& model)
 	}
 
 	// Clear everything except positions.
-	model.clear(Model::CfMaterials | Model::CfVertices | Model::CfPolygons | Model::CfNormals | Model::CfTexCoords | Model::CfBones);
+	model.clear(Model::CfMaterials | Model::CfVertices | Model::CfPolygons | Model::CfNormals | Model::CfTexCoords | Model::CfJoints);
 
 	for (std::vector< HullFace >::iterator i = faces.begin(); i != faces.end(); ++i)
 	{
@@ -953,10 +953,10 @@ void mergeModels(Model& model, const Model& sourceModel, const Transform& source
 			}
 		}
 
-		for (uint32_t j = 0; j < sourceVertex.getBoneInfluenceCount(); ++j)
+		for (uint32_t j = 0; j < sourceVertex.getJointInfluenceCount(); ++j)
 		{
-			float influence = sourceVertex.getBoneInfluence(j);
-			v.setBoneInfluence(j, influence);
+			float influence = sourceVertex.getJointInfluence(j);
+			v.setJointInfluence(j, influence);
 		}
 
 		vertexMap[i] = model.addUniqueVertex(v);

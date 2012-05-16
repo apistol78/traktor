@@ -18,20 +18,35 @@ Heightfield::Heightfield(
 	m_heights.reset(new height_t [m_size * m_size]);
 }
 
-float Heightfield::getGridHeight(float gridX, float gridZ) const
+float Heightfield::getGridHeightNearest(int32_t gridX, int32_t gridZ) const
 {
-	int igridX = int(std::floor(gridX));
-	int igridZ = int(std::floor(gridZ));
+	if (gridX < 0)
+		gridX = 0;
+	else if (gridX >= int32_t(m_size))
+		gridX = int32_t(m_size) - 1;
+
+	if (gridZ < 0)
+		gridZ = 0;
+	else if (gridZ >= int32_t(m_size))
+		gridZ = int32_t(m_size) - 1;
+
+	return m_heights[gridX + gridZ * m_size] / 65535.0f;
+}
+
+float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
+{
+	int32_t igridX = int32_t(std::floor(gridX));
+	int32_t igridZ = int32_t(std::floor(gridZ));
 
 	if (igridX < 0)
 		igridX = 0;
-	else if (igridX >= int(m_size) - 1)
-		igridX = m_size - 2;
+	else if (igridX >= int32_t(m_size) - 1)
+		igridX = int32_t(m_size) - 2;
 
 	if (igridZ < 0)
 		igridZ = 0;
-	else if (igridZ >= int(m_size) - 1)
-		igridZ = m_size - 2;
+	else if (igridZ >= int32_t(m_size) - 1)
+		igridZ = int32_t(m_size) - 2;
 
 	height_t hts[] =
 	{
@@ -54,7 +69,7 @@ float Heightfield::getWorldHeight(float worldX, float worldZ) const
 {
 	float gridX = m_size * (worldX + m_worldExtent.x() * 0.5f) / m_worldExtent.x() - 0.5f;
 	float gridZ = m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f;
-	float gridY = getGridHeight(gridX, gridZ);
+	float gridY = getGridHeightBilinear(gridX, gridZ);
 	return -m_worldExtent.y() * 0.5f + gridY * m_worldExtent.y();
 }
 
@@ -68,6 +83,11 @@ void Heightfield::worldToGrid(float worldX, float worldZ, float& outGridX, float
 {
 	outGridX = m_size * (worldX + m_worldExtent.x() * 0.5f) / m_worldExtent.x() - 0.5f;
 	outGridZ = m_size * (worldZ + m_worldExtent.z() * 0.5f) / m_worldExtent.z() - 0.5f;
+}
+
+float Heightfield::unitToWorld(float unitY) const
+{
+	return -m_worldExtent.y() * 0.5f + unitY * m_worldExtent.y();
 }
 
 	}

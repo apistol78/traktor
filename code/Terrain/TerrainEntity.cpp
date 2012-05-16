@@ -479,7 +479,7 @@ bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int3
 {
 	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
 
-	uint32_t heightfieldSize = m_terrain->getHeightfield()->getSize();
+	int32_t heightfieldSize = int32_t(m_terrain->getHeightfield()->getSize());
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
@@ -510,13 +510,13 @@ bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int3
 					float fx = float(x) / (m_patchDim - 1);
 					float fz = float(z) / (m_patchDim - 1);
 
-					uint32_t ix = uint32_t(fx * m_patchDim * m_detailSkip) + pminX;
-					uint32_t iz = uint32_t(fz * m_patchDim * m_detailSkip) + pminZ;
+					int32_t ix = int32_t(fx * m_patchDim * m_detailSkip) + pminX;
+					int32_t iz = int32_t(fz * m_patchDim * m_detailSkip) + pminZ;
 
 					ix = std::min(ix, heightfieldSize - 1);
 					iz = std::min(iz, heightfieldSize - 1);
 
-					float height = m_terrain->getHeightfield()->getGridHeight(ix, iz);
+					float height = m_terrain->getHeightfield()->getGridHeightNearest(ix, iz);
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 					*vertex++ = float(x) / (m_patchDim - 1);

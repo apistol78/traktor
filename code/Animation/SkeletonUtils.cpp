@@ -1,5 +1,5 @@
 #include <algorithm>
-#include "Animation/Bone.h"
+#include "Animation/Joint.h"
 #include "Animation/Pose.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
@@ -9,61 +9,60 @@ namespace traktor
 	namespace animation
 	{
 
-void calculateBoneLocalTransforms(
+void calculateJointLocalTransforms(
 	const Skeleton* skeleton,
-	AlignedVector< Transform >& outBoneLocalTransforms
+	AlignedVector< Transform >& outJointLocalTransforms
 )
 {
 	T_ASSERT (skeleton);
-	outBoneLocalTransforms.resize(skeleton->getBoneCount());
-	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
-		outBoneLocalTransforms[i] =
-			Transform(skeleton->getBone(i)->getPosition()) *
-			Transform(skeleton->getBone(i)->getOrientation());
+	outJointLocalTransforms.resize(skeleton->getJointCount());
+	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+		outJointLocalTransforms[i] = skeleton->getJoint(i)->getTransform();
 }
 
-void calculateBoneTransforms(
+void calculateJointTransforms(
 	const Skeleton* skeleton,
-	AlignedVector< Transform >& outBoneTransforms
+	AlignedVector< Transform >& outJointTransforms
 )
 {
 	T_ASSERT (skeleton);
 
-	AlignedVector< Transform > localBoneTransforms;
-	calculateBoneLocalTransforms(skeleton, localBoneTransforms);
+	AlignedVector< Transform > localJointTransforms;
+	calculateJointLocalTransforms(skeleton, localJointTransforms);
 
-	outBoneTransforms.resize(skeleton->getBoneCount());
-	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
+	outJointTransforms.resize(skeleton->getJointCount());
+	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
-		outBoneTransforms[i] = localBoneTransforms[i];
-		for (int32_t boneIndex = skeleton->getBone(i)->getParent(); boneIndex >= 0; boneIndex = skeleton->getBone(boneIndex)->getParent())
-		{
-			Transform localParentTransform = localBoneTransforms[boneIndex] * Transform(Vector4(0.0f, 0.0f, skeleton->getBone(boneIndex)->getLength()));
-			outBoneTransforms[i] = localParentTransform * outBoneTransforms[i];
-		}
+		outJointTransforms[i] = localJointTransforms[i];
+		for (int32_t parentIndex = skeleton->getJoint(i)->getParent(); parentIndex >= 0; parentIndex = skeleton->getJoint(parentIndex)->getParent())
+			outJointTransforms[i] = localJointTransforms[parentIndex] * outJointTransforms[i];
 	}
 }
 
 void calculatePoseLocalTransforms(
 	const Skeleton* skeleton,
 	const Pose* pose,
-	AlignedVector< Transform >& outBoneLocalTransforms
+	AlignedVector< Transform >& outJointLocalTransforms
 )
 {
 	T_ASSERT (skeleton);
 	T_ASSERT (pose);
 
-	outBoneLocalTransforms.resize(skeleton->getBoneCount());
-	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
-		outBoneLocalTransforms[i] = 
-			Transform(skeleton->getBone(i)->getPosition() + pose->getBoneOffset(i)) *
-			Transform(skeleton->getBone(i)->getOrientation() * Quaternion::fromEulerAngles(pose->getBoneOrientation(i)));
+	outJointLocalTransforms.resize(skeleton->getJointCount());
+	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+	{
+		Transform poseTransform(
+			pose->getJointOffset(i),
+			Quaternion::fromEulerAngles(pose->getJointOrientation(i))
+		);
+		outJointLocalTransforms[i] = poseTransform * skeleton->getJoint(i)->getTransform();
+	}
 }
 
 void calculatePoseTransforms(
 	const Skeleton* skeleton,
 	const Pose* pose,
-	AlignedVector< Transform >& outBoneTransforms
+	AlignedVector< Transform >& outJointTransforms
 )
 {
 	T_ASSERT (skeleton);
@@ -72,16 +71,12 @@ void calculatePoseTransforms(
 	AlignedVector< Transform > localPoseTransforms;
 	calculatePoseLocalTransforms(skeleton, pose, localPoseTransforms);
 
-	outBoneTransforms.resize(skeleton->getBoneCount());
-	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
+	outJointTransforms.resize(skeleton->getJointCount());
+	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
-		Transform boneTransform = localPoseTransforms[i];
-		for (int32_t boneIndex = skeleton->getBone(i)->getParent(); boneIndex >= 0; boneIndex = skeleton->getBone(boneIndex)->getParent())
-		{
-			Transform localParentTransform = localPoseTransforms[boneIndex] * Transform(Vector4(0.0f, 0.0f, skeleton->getBone(boneIndex)->getLength()));
-			boneTransform = localParentTransform * boneTransform;
-		}
-		outBoneTransforms[i] = boneTransform;
+		outJointTransforms[i] = localPoseTransforms[i];
+		for (int32_t parentIndex = skeleton->getJoint(i)->getParent(); parentIndex >= 0; parentIndex = skeleton->getJoint(parentIndex)->getParent())
+			outJointTransforms[i] = localPoseTransforms[parentIndex] * outJointTransforms[i];
 	}
 }
 
@@ -89,20 +84,18 @@ Aabb3 calculateBoundingBox(const Skeleton* skeleton)
 {
 	Aabb3 boundingBox;
 
-	AlignedVector< Transform > boneTransforms;
-	calculateBoneTransforms(skeleton, boneTransforms);
+	AlignedVector< Transform > jointTransforms;
+	calculateJointTransforms(skeleton, jointTransforms);
 
-	for (uint32_t i = 0; i < uint32_t(boneTransforms.size()); ++i)
+	for (uint32_t i = 0; i < uint32_t(jointTransforms.size()); ++i)
 	{
-		const Bone* bone = skeleton->getBone(i);
+		const Joint* joint = skeleton->getJoint(i);
+		float radius = joint->getRadius();
 
-		float length = bone->getLength();
-		float radius = bone->getRadius();
+		Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
+		Aabb3 jointAabb = jointLocalAabb.transform(jointTransforms[i]);
 
-		Aabb3 boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
-		Aabb3 boneAabb = boneLocalAabb.transform(boneTransforms[i]);
-
-		boundingBox.contain(boneAabb);
+		boundingBox.contain(jointAabb);
 	}
 
 	return boundingBox;
@@ -117,15 +110,13 @@ Aabb3 calculateBoundingBox(const Skeleton* skeleton, const Pose* pose)
 
 	for (uint32_t i = 0; i < uint32_t(poseTransforms.size()); ++i)
 	{
-		const Bone* bone = skeleton->getBone(i);
+		const Joint* joint = skeleton->getJoint(i);
+		float radius = joint->getRadius();
 
-		float length = bone->getLength();
-		float radius = bone->getRadius();
+		Aabb3 jointLocalAabb(Vector4(-radius, -radius, -radius), Vector4(radius, radius, radius));
+		Aabb3 jointAabb = jointLocalAabb.transform(poseTransforms[i]);
 
-		Aabb3 boneLocalAabb(Vector4(-radius, -radius, 0.0f), Vector4(radius, radius, length));
-		Aabb3 boneAabb = boneLocalAabb.transform(poseTransforms[i]);
-
-		boundingBox.contain(boneAabb);
+		boundingBox.contain(jointAabb);
 	}
 
 	return boundingBox;
@@ -142,7 +133,7 @@ void blendPoses(
 	T_ASSERT (pose2);
 	T_ASSERT (outPose);
 
-	// Build mask of all used bone indices.
+	// Build mask of all used joint indices.
 	BitSet indices;
 	pose1->getIndexMask(indices);
 	pose2->getIndexMask(indices);
@@ -155,13 +146,13 @@ void blendPoses(
 		if (!indices(i))
 			continue;
 
-		Vector4 o1 = pose1->getBoneOffset(i);
-		Vector4 o2 = pose2->getBoneOffset(i);
-		outPose->setBoneOffset(i, lerp(o1, o2, blend));
+		Vector4 o1 = pose1->getJointOffset(i);
+		Vector4 o2 = pose2->getJointOffset(i);
+		outPose->setJointOffset(i, lerp(o1, o2, blend));
 
-		Vector4 q1 = pose1->getBoneOrientation(i);
-		Vector4 q2 = pose2->getBoneOrientation(i);
-		outPose->setBoneOrientation(i, lerp(q1, q2, blend));
+		Vector4 q1 = pose1->getJointOrientation(i);
+		Vector4 q2 = pose2->getJointOrientation(i);
+		outPose->setJointOrientation(i, lerp(q1, q2, blend));
 	}
 }
 

@@ -24,7 +24,7 @@ Ref< editor::IEditorPage > SkeletonEditorPageFactory::createEditorPage(editor::I
 
 void SkeletonEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
-	outCommands.push_back(ui::Command(L"Skeleton.Editor.AddBone"));
+	outCommands.push_back(ui::Command(L"Skeleton.Editor.AddJoint"));
 }
 
 	}

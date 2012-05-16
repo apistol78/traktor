@@ -1,7 +1,7 @@
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/AnimatedMeshEntityData.h"
-#include "Animation/Bone.h"
 #include "Animation/IPoseControllerData.h"
+#include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
@@ -42,22 +42,22 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 			getTransform()
 		);
 
-	std::vector< int > boneRemap(skeleton->getBoneCount());
+	std::vector< int32_t > jointRemap(skeleton->getJointCount());
 
-	const std::map< std::wstring, int >& boneMap = mesh->getBoneMap();
-	for (uint32_t i = 0; i < skeleton->getBoneCount(); ++i)
+	const std::map< std::wstring, int32_t >& jointMap = mesh->getJointMap();
+	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
-		const Bone* bone = skeleton->getBone(i);
+		const Joint* joint = skeleton->getJoint(i);
 
-		std::map< std::wstring, int >::const_iterator j = boneMap.find(bone->getName());
-		if (j == boneMap.end())
+		std::map< std::wstring, int32_t >::const_iterator j = jointMap.find(joint->getName());
+		if (j == jointMap.end())
 		{
-			log::warning << L"No bone named \"" << bone->getName() << L"\" in skinned mesh" << Endl;
-			boneRemap[i] = -1;
+			log::warning << L"No joint named \"" << joint->getName() << L"\" in skinned mesh" << Endl;
+			jointRemap[i] = -1;
 			continue;
 		}
 
-		boneRemap[i] = j->second;
+		jointRemap[i] = j->second;
 	}
 
 	return new AnimatedMeshEntity(
@@ -65,7 +65,7 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 		mesh,
 		skeleton,
 		poseController,
-		boneRemap,
+		jointRemap,
 		m_normalizePose,
 		m_normalizeTransform
 	);

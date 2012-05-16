@@ -1,5 +1,4 @@
 #include <map>
-#include "Animation/Bone.h"
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonFormatCollada.h"
 #include "Core/Log/Log.h"

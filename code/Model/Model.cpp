@@ -29,8 +29,8 @@ void Model::clear(uint32_t clearFlags)
 		m_normals.clear();
 	if (clearFlags & CfTexCoords)
 		m_texCoords.clear();
-	if (clearFlags & CfBones)
-		m_bones.resize(0);
+	if (clearFlags & CfJoints)
+		m_joints.resize(0);
 
 	for (std::vector< Vertex >::iterator i = m_vertices.begin(); i != m_vertices.end(); ++i)
 	{
@@ -46,8 +46,8 @@ void Model::clear(uint32_t clearFlags)
 		}
 		if (clearFlags & CfTexCoords)
 			i->clearTexCoords();
-		if (clearFlags & CfBones)
-			i->clearBoneInfluences();
+		if (clearFlags & CfJoints)
+			i->clearJointInfluences();
 	}
 
 	for (std::vector< Polygon >::iterator i = m_polygons.begin(); i != m_polygons.end(); ++i)
@@ -290,25 +290,25 @@ const AlignedVector< Vector2 >& Model::getTexCoords() const
 	return m_texCoords.items();
 }
 
-uint32_t Model::addBone(const std::wstring& boneName)
+uint32_t Model::addJoint(const std::wstring& jointName)
 {
-	return addUniqueId< std::vector< std::wstring >, std::wstring, DefaultPredicate< std::wstring > >(m_bones, boneName);
+	return addUniqueId< std::vector< std::wstring >, std::wstring, DefaultPredicate< std::wstring > >(m_joints, jointName);
 }
 
-uint32_t Model::getBoneCount() const
+uint32_t Model::getJointCount() const
 {
-	return int(m_bones.size());
+	return int(m_joints.size());
 }
 
-const std::wstring& Model::getBone(uint32_t boneIndex) const
+const std::wstring& Model::getJoint(uint32_t jointIndex) const
 {
-	return m_bones[boneIndex];
+	return m_joints[jointIndex];
 }
 
-uint32_t Model::findBoneIndex(const std::wstring& boneName) const
+uint32_t Model::findJointIndex(const std::wstring& jointName) const
 {
-	std::vector< std::wstring >::const_iterator i = std::find(m_bones.begin(), m_bones.end(), boneName);
-	return i != m_bones.end() ? uint32_t(std::distance(m_bones.begin(), i)) : c_InvalidIndex;
+	std::vector< std::wstring >::const_iterator i = std::find(m_joints.begin(), m_joints.end(), jointName);
+	return i != m_joints.end() ? uint32_t(std::distance(m_joints.begin(), i)) : c_InvalidIndex;
 }
 
 uint32_t Model::addBlendTarget(const std::wstring& blendTargetName)

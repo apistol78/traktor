@@ -11,6 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Body", Body, Object)
 
 Body::Body()
 :	m_userObject(0)
+,	m_clusterId(~0UL)
 {
 }
 
@@ -50,6 +51,16 @@ void Body::setUserObject(Object* userObject)
 Object* Body::getUserObject() const
 {
 	return m_userObject;
+}
+
+void Body::setClusterId(uint32_t clusterId)
+{
+	m_clusterId = clusterId;
+}
+
+uint32_t Body::getClusterId() const
+{
+	return m_clusterId;
 }
 
 	}

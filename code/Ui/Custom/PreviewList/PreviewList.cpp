@@ -79,8 +79,12 @@ void PreviewList::layoutCells(const Rect& rc)
 	if (ncolumns <= 0)
 		return;
 
+	// First layout non selected.
 	for (int32_t i = 0; i < nitems; ++i)
 	{
+		if (m_items->get(i)->isSelected())
+			continue;
+
 		int32_t column = i % ncolumns;
 		int32_t row = i / ncolumns;
 
@@ -90,6 +94,26 @@ void PreviewList::layoutCells(const Rect& rc)
 			c_marginX + column * c_itemWidth + c_itemWidth,
 			c_marginY + row * c_itemHeight + c_itemHeight
 		);
+
+		placeCell(m_items->get(i), rcItem);
+	}
+
+	// Then layout selected items.
+	for (int32_t i = 0; i < nitems; ++i)
+	{
+		if (!m_items->get(i)->isSelected())
+			continue;
+
+		int32_t column = i % ncolumns;
+		int32_t row = i / ncolumns;
+
+		Rect rcItem(
+			c_marginX + column * c_itemWidth,
+			c_marginY + row * c_itemHeight,
+			c_marginX + column * c_itemWidth + c_itemWidth,
+			c_marginY + row * c_itemHeight + c_itemHeight
+		);
+
 		placeCell(m_items->get(i), rcItem);
 	}
 }
@@ -97,8 +121,10 @@ void PreviewList::layoutCells(const Rect& rc)
 void PreviewList::eventButtonDown(Event* event)
 {
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent*, false >(event);
-	const Point& position = mouseEvent->getPosition();
+	if (mouseEvent->getButton() != MouseEvent::BtLeft)
+		return;
 
+	const Point& position = mouseEvent->getPosition();
 	if (m_items)
 	{
 		for (int32_t i = 0; i < m_items->count(); ++i)

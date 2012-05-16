@@ -27,7 +27,7 @@ class T_DLLCLASS SkinnedMeshEntity : public MeshEntity
 public:
 	SkinnedMeshEntity(const Transform& transform, const resource::Proxy< SkinnedMesh >& mesh);
 
-	void setBoneTransforms(const AlignedVector< Matrix44 >& boneTransforms);
+	void setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms);
 
 	virtual Aabb3 getBoundingBox() const;
 
@@ -42,7 +42,7 @@ public:
 
 private:
 	resource::Proxy< SkinnedMesh > m_mesh;
-	AlignedVector< Vector4 > m_boneTransforms;
+	AlignedVector< Vector4 > m_jointTransforms;
 };
 
 	}

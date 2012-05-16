@@ -594,6 +594,24 @@ void PrimitiveRenderer::drawWireCylinder(
 	}
 }
 
+void PrimitiveRenderer::drawWireFrame(
+	const Matrix44& frame,
+	float length
+)
+{
+	pushWorld(frame);
+
+	drawLine(Vector4::origo(), Vector4(length, 0.0f, 0.0f, 1.0f), 1.0f, Color4ub(255, 0, 0, 255));
+	drawLine(Vector4::origo(), Vector4(0.0f, length, 0.0f, 1.0f), 1.0f, Color4ub(0, 255, 0, 255));
+	drawLine(Vector4::origo(), Vector4(0.0f, 0.0f, length, 1.0f), 1.0f, Color4ub(0, 0, 255, 255));
+
+	drawArrowHead(Vector4(length, 0.0f, 0.0f, 1.0f), Vector4(length * 1.2f, 0.0f, 0.0f, 1.0f), 0.8f, Color4ub(255, 0, 0, 255));
+	drawArrowHead(Vector4(0.0f, length, 0.0f, 1.0f), Vector4(0.0f, length * 1.2f, 0.0f, 1.0f), 0.8f, Color4ub(0, 255, 0, 255));
+	drawArrowHead(Vector4(0.0f, 0.0f, length, 1.0f), Vector4(0.0f, 0.0f, length * 1.2f, 1.0f), 0.8f, Color4ub(0, 0, 255, 255));
+
+	popWorld();
+}
+
 void PrimitiveRenderer::drawSolidPoint(
 	const Vector4& center,
 	float size,

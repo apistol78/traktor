@@ -353,9 +353,9 @@ bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 							// Add weights to vertex, also allocate bone index.
 							for (std::vector< lwVMapPt >::iterator i = weightRefs.begin(); i != weightRefs.end(); ++i)
 							{
-								int boneIndex = outModel->addBone(mbstows(i->vmap->name));
-								float boneInfluence = i->vmap->val[i->index][0];
-								vertex.setBoneInfluence(boneIndex, boneInfluence);
+								int jointIndex = outModel->addJoint(mbstows(i->vmap->name));
+								float jointInfluence = i->vmap->val[i->index][0];
+								vertex.setJointInfluence(jointIndex, jointInfluence);
 							}
 						}
 
