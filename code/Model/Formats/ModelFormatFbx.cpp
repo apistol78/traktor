@@ -64,7 +64,7 @@ std::wstring getTextureName(const FbxSurfaceMaterial* material, const char* fbxP
 		if (prop.IsValid())
 		{
 			int textureCount = prop.GetSrcObjectCount(FbxFileTexture::ClassId);
-			for (int i = 0; i < textureCount; i++)
+			for (int i = 0; i < textureCount; ++i)
 			{
 				FbxFileTexture* texture = FbxCast< FbxFileTexture >(prop.GetSrcObject(FbxFileTexture::ClassId, i));
 				if (texture)
@@ -72,6 +72,16 @@ std::wstring getTextureName(const FbxSurfaceMaterial* material, const char* fbxP
 					const Path texturePath(mbstows(texture->GetFileName()));
 					const std::wstring textureName = texturePath.getFileNameNoExtension();
 					return textureName;
+				}
+			}
+			int layeredTextureCount = prop.GetSrcObjectCount(FbxLayeredTexture::ClassId);
+			if (layeredTextureCount)
+			{
+				for (int i = 0; i < layeredTextureCount; ++i)
+				{
+					FbxLayeredTexture* layeredTexture = FbxCast< FbxLayeredTexture >(prop.GetSrcObject(FbxLayeredTexture::ClassId, i));
+					if (layeredTexture)
+						return std::wstring(mbstows(layeredTexture->GetName()));
 				}
 			}
 		}
