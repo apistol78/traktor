@@ -144,7 +144,7 @@ void TerrainEntity::render(
 	Vector4 patchExtent(worldExtent.x() / float(m_patchCount), worldExtent.y(), worldExtent.z() / float(m_patchCount), 0.0f);
 
 	Matrix44 viewInv = worldRenderView.getView().inverse();
-	Vector4 eyePosition = viewInv.translation();
+	Vector4 eyePosition = viewInv.translation().xyz1();
 
 	// Cull patches.
 	static AlignedVector< CullPatch > visiblePatches;
@@ -167,13 +167,15 @@ void TerrainEntity::render(
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
 			uint32_t patchId = px + pz * m_patchCount;
+			
 			const Patch& patch = m_patches[patchId];
+			T_ASSERT (patch.minHeight <= patch.maxHeight);
 
 			Vector4 patchCenterWorld = (patchOrigin + patchExtent * Scalar(0.5f)).xyz1();
 
 			Aabb3 patchAabb(
-				patchCenterWorld - patchDeltaHalf + Vector4(0.0f, patch.minHeight, 0.0f, 0.0f),
-				patchCenterWorld + patchDeltaHalf + Vector4(0.0f, patch.maxHeight, 0.0f, 0.0f)
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) - patchDeltaHalf + Vector4(0.0f, patch.minHeight, 0.0f, 0.0f),
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + patchDeltaHalf + Vector4(0.0f, patch.maxHeight, 0.0f, 0.0f)
 			);
 
 			if (worldCullFrustum.inside(patchAabb) != Frustum::IrOutside)

@@ -98,6 +98,9 @@ RenderViewOpenGL::RenderViewOpenGL(
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
+	m_primaryTargetDesc.preferTiled = false;
+	m_primaryTargetDesc.ignoreStencil = false;
 	m_waitVBlank = desc.waitVBlank;
 }
 
@@ -409,7 +412,10 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 	}
 
 	if (cm & GL_STENCIL_BUFFER_BIT)
+	{
+		T_OGL_SAFE(glStencilMask(~0UL));
 		T_OGL_SAFE(glClearStencil(stencil));
+	}
 
 	T_OGL_SAFE(glClear(cm));
 }

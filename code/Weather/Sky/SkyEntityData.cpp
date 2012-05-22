@@ -20,9 +20,9 @@ namespace traktor
 		{
 
 const int c_longitudes = 16;
-const int c_latitudes = 8;
-const int c_vertexCount = (c_longitudes * (c_latitudes - 1) + 2);
-const int c_triangleCount = (c_latitudes - 2) * (c_longitudes * 2) + c_longitudes * 2;
+const int c_latitudes = 12;
+const int c_vertexCount = (c_longitudes + 1) * c_latitudes;
+const int c_triangleCount = ((c_latitudes - 1) * ((c_longitudes + 1) * 2));
 const int c_indexCount = c_triangleCount * 3;
 
 		}
@@ -54,22 +54,16 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 	float* vertex = static_cast< float* >(vertexBuffer->lock());
 	T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
 	
-	for (int i = 1; i < c_latitudes; ++i)
+	for (int i = 0; i < c_latitudes; ++i)
 	{
 		float phi = float(i) / (c_latitudes - 1);
-		for (int j = 0; j < c_longitudes; ++j)
+		for (int j = 0; j <= c_longitudes; ++j)
 		{
 			float theta = float(j) / c_longitudes;
 			*vertex++ = phi;
 			*vertex++ = theta;
 		}
 	}
-
-	*vertex++ = 0.0f;	// Top
-	*vertex++ = 0.0f;
-
-	*vertex++ = 2.0f;	// Bottom
-	*vertex++ = 0.0f;
 
 	vertexBuffer->unlock();
 
@@ -84,32 +78,18 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 	uint16_t* index = static_cast< uint16_t* >(indexBuffer->lock());
 	T_ASSERT_M (index, L"Unable to lock index buffer");
 
-	for (int k = 0; k < c_latitudes - 2; ++k)
+	for (int k = 0; k < c_latitudes - 1; ++k)
 	{
-		int o = k * c_longitudes;
-		for (int i = 0, j = c_longitudes - 1; i < c_longitudes; j = i, ++i)
+		int o = k * (c_longitudes + 1);
+		for (int i = 0, j = c_longitudes; i <= c_longitudes; j = i, ++i)
 		{
 			*index++ = o + i;
-			*index++ = o + i + c_longitudes;
+			*index++ = o + i + c_longitudes + 1;
 			*index++ = o + j;
 			*index++ = o + j;
-			*index++ = o + i + c_longitudes;
-			*index++ = o + j + c_longitudes;
+			*index++ = o + i + c_longitudes + 1;
+			*index++ = o + j + c_longitudes + 1;
 		}
-	}
-
-	for (int i = 0, j = c_longitudes - 1; i < c_longitudes; j = i, ++i)
-	{
-		*index++ = j;
-		*index++ = c_vertexCount - 2;
-		*index++ = i;
-	}
-
-	for (int i = 0, j = c_longitudes - 1; i < c_longitudes; j = i, ++i)
-	{
-		*index++ = c_longitudes * (c_latitudes - 2) + i;
-		*index++ = c_vertexCount - 1;
-		*index++ = c_longitudes * (c_latitudes - 2) + j;
 	}
 
 	indexBuffer->unlock();

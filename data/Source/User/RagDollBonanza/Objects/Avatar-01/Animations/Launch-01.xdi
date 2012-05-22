@@ -4,7 +4,7 @@
 		<item>
 			<at>0</at>
 			<pose>
-				<bones>
+				<joints>
 					<item>
 						<index>0</index>
 						<offset>0, 0, 0, 0</offset>
@@ -65,13 +65,13 @@
 						<offset>0, 0, 0, 0</offset>
 						<orientation>-0.015893, -0.373864, -0.009308, 0.927301</orientation>
 					</item>
-				</bones>
+				</joints>
 			</pose>
 		</item>
 		<item>
 			<at>0.512</at>
 			<pose>
-				<bones>
+				<joints>
 					<item>
 						<index>0</index>
 						<offset>0, 0, 0, 0</offset>
@@ -137,7 +137,7 @@
 						<offset>0, 0, 0, 0</offset>
 						<orientation>-0.017217, -0.522519, -0.006542, 0.852429</orientation>
 					</item>
-				</bones>
+				</joints>
 			</pose>
 		</item>
 	</poses>

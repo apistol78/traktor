@@ -125,32 +125,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 			if (!normalMap.empty())
 				mm.setNormalMap(normalMap);
 
-			if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
-			{
-				FbxSurfaceLambert* lambertMaterial = (FbxSurfaceLambert*)material;
-
-				FbxPropertyT<FbxDouble3> lambertDiffuse = lambertMaterial->Diffuse;
-				if (lambertDiffuse.IsValid())
-				{
-					FbxDouble3 diffuse = lambertDiffuse.Get();
-					mm.setColor(Color4ub(
-						uint8_t(diffuse[0] * 255),
-						uint8_t(diffuse[1] * 255),
-						uint8_t(diffuse[2] * 255),
-						255
-					));
-				}
-
-				FbxPropertyT<FbxDouble> lambertDiffuseFactor = lambertMaterial->DiffuseFactor;
-				if (lambertDiffuseFactor.IsValid())
-				{
-					FbxDouble diffuseFactor = lambertDiffuseFactor.Get();
-					mm.setDiffuseTerm(float(diffuseFactor));
-				}
-
-				mm.setSpecularTerm(0.0f);
-			}
-			else if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
+			if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
 			{
 				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)material;
 
@@ -170,14 +145,14 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				if (phongDiffuseFactor.IsValid())
 				{
 					FbxDouble diffuseFactor = phongDiffuseFactor.Get();
-					mm.setDiffuseTerm(float(diffuseFactor));
+					mm.setDiffuseTerm(clamp(float(diffuseFactor), 0.0f, 1.0f));
 				}
 
 				FbxPropertyT<FbxDouble> phongSpecularFactor = phongMaterial->SpecularFactor;
 				if (phongSpecularFactor.IsValid())
 				{
 					FbxDouble specularFactor = phongSpecularFactor.Get();
-					mm.setSpecularTerm(float(specularFactor));
+					mm.setSpecularTerm(clamp(float(specularFactor), 0.0f, 1.0f));
 				}
 
 				FbxPropertyT<FbxDouble> phongShininess = phongMaterial->Shininess;
@@ -186,6 +161,57 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 					FbxDouble shininess = phongShininess.Get();
 					mm.setSpecularRoughness(float(shininess / 16.0));
 				}
+
+				FbxPropertyT<FbxDouble3> phongEmissive = phongMaterial->Emissive;
+				if (phongEmissive.IsValid())
+				{
+					FbxDouble3 emissive = phongEmissive.Get();
+					FbxDouble emissiveFactor = phongMaterial->EmissiveFactor.Get();
+
+					emissive[0] *= emissiveFactor;
+					emissive[1] *= emissiveFactor;
+					emissive[2] *= emissiveFactor;
+
+					mm.setEmissive(float(emissive[0] + emissive[1] + emissive[2]) / 3.0f);
+				}
+			}
+			else if (material->GetClassId().Is(FbxSurfaceLambert::ClassId))
+			{
+				FbxSurfaceLambert* lambertMaterial = (FbxSurfaceLambert*)material;
+
+				FbxPropertyT<FbxDouble3> lambertDiffuse = lambertMaterial->Diffuse;
+				if (lambertDiffuse.IsValid())
+				{
+					FbxDouble3 diffuse = lambertDiffuse.Get();
+					mm.setColor(Color4ub(
+						uint8_t(diffuse[0] * 255),
+						uint8_t(diffuse[1] * 255),
+						uint8_t(diffuse[2] * 255),
+						255
+					));
+				}
+
+				FbxPropertyT<FbxDouble> lambertDiffuseFactor = lambertMaterial->DiffuseFactor;
+				if (lambertDiffuseFactor.IsValid())
+				{
+					FbxDouble diffuseFactor = lambertDiffuseFactor.Get();
+					mm.setDiffuseTerm(clamp(float(diffuseFactor), 0.0f, 1.0f));
+				}
+
+				FbxPropertyT<FbxDouble3> lambertEmissive = lambertMaterial->Emissive;
+				if (lambertEmissive.IsValid())
+				{
+					FbxDouble3 emissive = lambertEmissive.Get();
+					FbxDouble emissiveFactor = lambertMaterial->EmissiveFactor.Get();
+
+					emissive[0] *= emissiveFactor;
+					emissive[1] *= emissiveFactor;
+					emissive[2] *= emissiveFactor;
+
+					mm.setEmissive(float(emissive[0] + emissive[1] + emissive[2]) / 3.0f);
+				}
+
+				mm.setSpecularTerm(0.0f);
 			}
 
 			outModel.addMaterial(mm);

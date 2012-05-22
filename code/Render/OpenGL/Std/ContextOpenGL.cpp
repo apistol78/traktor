@@ -348,12 +348,17 @@ GLuint ContextOpenGL::createStateList(const RenderState& renderState)
 		T_OGL_SAFE(glBlendFunc(rs.blendFuncSrc, rs.blendFuncDest));
 		T_OGL_SAFE(glBlendEquationEXT(rs.blendEquation));
 
-		if (rs.depthTestEnable)
+		if (rs.depthTestEnable && permitDepth)
 			{ T_OGL_SAFE(glEnable(GL_DEPTH_TEST)); }
 		else
 			{ T_OGL_SAFE(glDisable(GL_DEPTH_TEST)); }
 
 		T_OGL_SAFE(glDepthFunc(rs.depthFunc));
+
+		if (permitDepth)
+			{ T_OGL_SAFE(glDepthMask(rs.depthMask)); }
+		else
+			{ T_OGL_SAFE(glDepthMask(GL_FALSE)); }
 
 		T_OGL_SAFE(glColorMask(
 			(rs.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
@@ -362,13 +367,12 @@ GLuint ContextOpenGL::createStateList(const RenderState& renderState)
 			(rs.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
 		));
 
-		T_OGL_SAFE(glDepthMask(rs.depthMask));
-
 		if (rs.stencilTestEnable)
 			{ T_OGL_SAFE(glEnable(GL_STENCIL_TEST)); }
 		else
 			{ T_OGL_SAFE(glDisable(GL_STENCIL_TEST)); }
 
+		T_OGL_SAFE(glStencilMask(~0UL));
 		T_OGL_SAFE(glStencilFunc(rs.stencilFunc, rs.stencilRef, ~0UL));
 
 		glEndList();

@@ -298,12 +298,18 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	if (!m_program)
 		return false;
 
-	// Bind program and set state display list.
-	if (ms_activeProgram != this)
+	// Bind program.
+	T_OGL_SAFE(glUseProgramObjectARB(m_program));
+
+	// Setup our render state.
+	renderContext->callStateList(m_renderStateList);
+	if (m_renderState.stencilTestEnable)
 	{
-		//stateCache->setRenderState(m_renderState, true);
-		renderContext->callStateList(m_renderStateList);
-		T_OGL_SAFE(glUseProgramObjectARB(m_program));
+		T_OGL_SAFE(glStencilFunc(
+			m_renderState.stencilFunc,
+			m_renderState.stencilRef,
+			~0UL
+		));
 	}
 	
 	// Update dirty uniforms.

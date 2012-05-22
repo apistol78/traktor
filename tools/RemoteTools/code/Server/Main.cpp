@@ -81,7 +81,7 @@ void eventNotificationButtonDown(ui::Event* event)
 }
 #endif
 
-uint8_t handleDeploy(net::Socket* clientSocket)
+uint8_t handleDeploy(net::TcpSocket* clientSocket)
 {
 	net::SocketStream clientStream(clientSocket, true, true, 1000);
 	Reader reader(&clientStream);
@@ -108,7 +108,7 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 			// Hashes match; finally ensure file still exist, could have been manually removed.
 			if (FileSystem::getInstance().exist(path))
 			{
-				traktor::log::info << L"File up-to-date; skipping" << Endl;
+				traktor::log::info << L"File up-to-date; skipping (1)" << Endl;
 				outOfSync = false;
 			}
 		}
@@ -134,7 +134,7 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 
 			if (adler.get() == hash)
 			{
-				traktor::log::info << L"File up-to-date; skipping" << Endl;
+				traktor::log::info << L"File up-to-date; skipping (2)" << Endl;
 				outOfSync = false;
 			}
 		}
@@ -142,6 +142,8 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 
 	if (outOfSync)
 	{
+		writer << uint8_t(1);
+
 		FileSystem::getInstance().makeAllDirectories(path.getPathOnly());
 
 		Ref< traktor::IStream > fileStream = FileSystem::getInstance().open(path, File::FmWrite);
@@ -150,8 +152,6 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 			traktor::log::error << L"Unable to create file \"" << pathName << L"\"" << Endl;
 			return c_errIoFailed;
 		}
-
-		writer << uint8_t(1);
 
 		if (!StreamCopy(fileStream, &clientStream).execute(size))
 		{
@@ -163,11 +163,11 @@ uint8_t handleDeploy(net::Socket* clientSocket)
 
 		fileStream->close();
 		fileStream = 0;
-
-		g_fileHashes[path.getPathName()] = hash;
 	}
 	else
 		writer << uint8_t(0);
+
+	g_fileHashes[path.getPathName()] = hash;
 
 	return c_errNone;
 }
@@ -176,6 +176,7 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 {
 	net::SocketStream clientStream(clientSocket, true, true, 1000);
 	Reader reader(&clientStream);
+	Writer writer(&clientStream);
 	std::wstring pathName;
 	std::wstring arguments;
 	bool wait;
@@ -193,6 +194,7 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 	if (!process)
 	{
 		traktor::log::error << L"Unable to launch process \"" << pathName << L"\"" << Endl;
+		writer << uint8_t(c_errLaunchFailed);
 		return c_errLaunchFailed;
 	}
 
@@ -202,6 +204,7 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 		exitCode = process->exitCode();
 	}
 
+	writer << uint8_t(c_errNone);
 	return c_errNone;
 }
 
@@ -212,7 +215,7 @@ void threadProcessClient(Ref< net::TcpSocket > clientSocket)
 
 	while (!ThreadManager::getInstance().getCurrentThread()->stopped())
 	{
-		int32_t res = clientSocket->select(true, false, false, 100);
+		int32_t res = clientSocket->select(true, false, false, 1000);
 		if (res < 0)
 		{
 			traktor::log::info << L"Client terminated (1)" << Endl;
@@ -245,8 +248,6 @@ void threadProcessClient(Ref< net::TcpSocket > clientSocket)
 			ret = c_errUnknown;
 			break;
 		}
-
-		clientSocket->send(ret);
 
 		if (ret != c_errNone)
 			break;
@@ -282,7 +283,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #endif
 
-	traktor::log::info << L"Traktor RemoteServer 1.2.1" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.3" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -299,7 +300,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.2 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.3 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
 #endif
 
@@ -376,7 +377,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #endif
 
 		// Check for events on server socket; if none we cleanup disconnected clients.
-		if (serverSocket->select(true, false, false, 100) <= 0)
+		if (serverSocket->select(true, false, false, 1000) <= 0)
 		{
 			for (std::list< Thread* >::iterator i = clientThreads.begin(); i != clientThreads.end(); )
 			{

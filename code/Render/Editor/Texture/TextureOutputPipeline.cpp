@@ -17,8 +17,10 @@
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
+#include "Drawing/Filters/ChainFilter.h"
 #include "Drawing/Filters/GammaFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
+#include "Drawing/Filters/NormalizeFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
@@ -65,7 +67,7 @@ bool isBinaryAlpha(const drawing::Image* image)
 struct ScaleTextureTask : public Object
 {
 	Ref< const drawing::Image > image;
-	Ref< drawing::ScaleFilter > filter;
+	Ref< drawing::IImageFilter > filter;
 	Ref< drawing::Image > output;
 	float alphaCoverageDesired;
 	float alphaCoverageRef;
@@ -196,6 +198,7 @@ bool TextureOutputPipeline::buildOutput(
 	int32_t width = image->getWidth();
 	int32_t height = image->getHeight();
 	int32_t mipCount = 1;
+	bool isNormalMap = false;
 
 	drawing::PixelFormat pixelFormat;
 	TextureFormat textureFormat;
@@ -383,6 +386,7 @@ bool TextureOutputPipeline::buildOutput(
 		log::info << L"Generating normal map..." << Endl;
 		drawing::NormalMapFilter filter(textureOutput->m_scaleDepth);
 		image = image->applyFilter(&filter);
+		isNormalMap = true;
 	}
 
 	// Inverse normal map Y; assume it's a normal map to begin with.
@@ -391,7 +395,10 @@ bool TextureOutputPipeline::buildOutput(
 		log::info << L"Converting normal map..." << Endl;
 		drawing::TransformFilter transformFilter(Color4f(1.0f, -1.0f, 1.0f, 1.0f), Color4f(0.0f, 1.0f, 0.0f, 0.0f));
 		image = image->applyFilter(&transformFilter);
+		isNormalMap = true;
 	}
+
+	Ref< drawing::ChainFilter > mipFilters;
 
 	// Swizzle channels to prepare for DXT5nm compression.
 	if (
@@ -401,16 +408,18 @@ bool TextureOutputPipeline::buildOutput(
 	{
 		log::info << L"Preparing for DXT5nm compression..." << Endl;
 
+		mipFilters = new drawing::ChainFilter();
+
 		// Inverse X axis; do it here instead of in shader.
-		drawing::TransformFilter transformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f));
-		image = image->applyFilter(&transformFilter);
+		mipFilters->add(new drawing::TransformFilter(Color4f(-1.0f, 1.0f, 1.0f, 1.0f), Color4f(1.0f, 0.0f, 0.0f, 0.0f)));
 
 		// [rgba] -> [0,g,0,r] (or [a,g,0,r] if we cannot ignore alpha)
-		drawing::SwizzleFilter swizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r");
-		image = image->applyFilter(&swizzleFilter);
+		mipFilters->add(new drawing::SwizzleFilter(textureOutput->m_ignoreAlpha ? L"0g0r" : L"ag0r"));
 
 		if (!textureOutput->m_ignoreAlpha)
 			log::warning << L"Kept source alpha in red channel; compressed normals might have severe artifacts" << Endl;
+
+		isNormalMap = true;
 	}
 
 	// Rescale image.
@@ -538,20 +547,34 @@ bool TextureOutputPipeline::buildOutput(
 
 				log::info << L"Executing mip generation task " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
 
-				Ref< ScaleTextureTask > task = new ScaleTextureTask();
+				// Create chain of image filters.
+				Ref< drawing::ChainFilter > taskFilters = new drawing::ChainFilter();
 
+				// First add scaling filter to desired mip size.
+				taskFilters->add(new drawing::ScaleFilter(
+					mipWidth,
+					mipHeight,
+					drawing::ScaleFilter::MnAverage,
+					drawing::ScaleFilter::MgLinear,
+					textureOutput->m_keepZeroAlpha
+				));
+
+				// Ensure each pixel is renormalized after scaling.
+				if (isNormalMap)
+					taskFilters->add(new drawing::NormalizeFilter());
+
+				// Append mip filters for compression etc.
+				if (mipFilters)
+					taskFilters->add(mipFilters);
+
+				Ref< ScaleTextureTask > task = new ScaleTextureTask();
 				task->image = image;
-				task->filter = new drawing::ScaleFilter(
-						mipWidth,
-						mipHeight,
-						drawing::ScaleFilter::MnAverage,
-						drawing::ScaleFilter::MgLinear,
-						textureOutput->m_keepZeroAlpha
-					);
+				task->filter = taskFilters;
 				task->alphaCoverageDesired = alphaCoverage;
 				task->alphaCoverageRef = textureOutput->m_alphaCoverageReference;
 
 				Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
+				T_ASSERT (job);
 
 				tasks.push_back(task);
 				jobs.push_back(job);

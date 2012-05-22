@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>321</first>
-				<second>371</second>
+				<first>320</first>
+				<second>364</second>
 			</position>
 			<fragmentGuid>{7F2F8712-3B18-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
@@ -19,6 +19,10 @@
 				</item>
 				<item>
 					<name>DiffuseTerm</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -53,6 +57,10 @@
 					<second>1</second>
 				</item>
 				<item>
+					<first>Emissive</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>Mask</first>
 					<second>1</second>
 				</item>
@@ -81,8 +89,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>321</first>
-				<second>147</second>
+				<first>320</first>
+				<second>128</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
@@ -100,6 +108,10 @@
 				</item>
 				<item>
 					<name>DiffuseTerm</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>Emissive</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -138,6 +150,10 @@
 					<second>1</second>
 				</item>
 				<item>
+					<first>Emissive</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>Mask</first>
 					<second>1</second>
 				</item>
@@ -170,8 +186,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>321</first>
-				<second>643</second>
+				<first>320</first>
+				<second>644</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -195,8 +211,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>321</first>
-				<second>563</second>
+				<first>320</first>
+				<second>568</second>
 			</position>
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
 			<inputPins>
@@ -220,8 +236,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>321</first>
-				<second>723</second>
+				<first>320</first>
+				<second>720</second>
 			</position>
 			<fragmentGuid>{9375BC3C-8889-AC44-A5DE-AAF3B0E5574D}</fragmentGuid>
 			<inputPins>
@@ -280,7 +296,7 @@
 			<comment/>
 			<position>
 				<first>-234</first>
-				<second>488</second>
+				<second>520</second>
 			</position>
 			<name>ViewNormal</name>
 			<connectable>true</connectable>
@@ -291,7 +307,7 @@
 			<comment/>
 			<position>
 				<first>-222</first>
-				<second>520</second>
+				<second>552</second>
 			</position>
 			<name>Reflection</name>
 			<connectable>true</connectable>
@@ -302,7 +318,7 @@
 			<comment/>
 			<position>
 				<first>-246</first>
-				<second>552</second>
+				<second>584</second>
 			</position>
 			<name>ReflectionMap</name>
 			<connectable>true</connectable>
@@ -313,7 +329,7 @@
 			<comment/>
 			<position>
 				<first>-235</first>
-				<second>584</second>
+				<second>616</second>
 			</position>
 			<name>RimIntensity</name>
 			<connectable>true</connectable>
@@ -324,7 +340,7 @@
 			<comment/>
 			<position>
 				<first>-218</first>
-				<second>616</second>
+				<second>648</second>
 			</position>
 			<name>RimColor</name>
 			<connectable>true</connectable>
@@ -346,7 +362,7 @@
 			<comment/>
 			<position>
 				<first>-237</first>
-				<second>456</second>
+				<second>488</second>
 			</position>
 			<name>ViewPosition</name>
 			<connectable>true</connectable>
@@ -368,12 +384,23 @@
 			<comment/>
 			<position>
 				<first>-197</first>
-				<second>648</second>
+				<second>680</second>
 			</position>
 			<name>Mask</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-214</first>
+				<second>456</second>
+			</position>
+			<name>Emissive</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -655,6 +682,26 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Mask</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Emissive</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[16]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Emissive</name>
 			</destination>
 		</item>
 	</edges>
