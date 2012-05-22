@@ -5,6 +5,7 @@
 #include <Core/Log/Log.h>
 #include <Core/Misc/Adler32.h>
 #include <Core/Misc/CommandLine.h>
+#include <Core/Timer/Timer.h>
 #include <Net/Network.h>
 #include <Net/SocketAddressIPv4.h>
 #include <Net/SocketStream.h>
@@ -23,7 +24,7 @@ const uint8_t c_errIoFailed = 1;
 const uint8_t c_errLaunchFailed = 2;
 const uint8_t c_errUnknown = 255;
 
-bool deployFile(net::Socket* clientSocket, const Path& sourceFile, const Path& targetBase)
+bool deployFile(net::TcpSocket* clientSocket, const Path& sourceFile, const Path& targetBase)
 {
 	net::SocketStream clientStream(clientSocket, true, true, 1000);
 
@@ -72,8 +73,6 @@ bool deployFile(net::Socket* clientSocket, const Path& sourceFile, const Path& t
 	
 	adler.end();
 
-	fileStream->seek(traktor::IStream::SeekSet, 0);
-
 	Writer writer(&clientStream);
 	Reader reader(&clientStream);
 	uint8_t ret;
@@ -87,13 +86,14 @@ bool deployFile(net::Socket* clientSocket, const Path& sourceFile, const Path& t
 
 	if (ret == 1)
 	{
+		fileStream->seek(traktor::IStream::SeekSet, 0);
+
+		clientStream.setTimeout(-1);
 		if (!StreamCopy(&clientStream, fileStream).execute(int32_t(file->getSize())))
 		{
 			traktor::log::error << L"Unable to deploy file \"" << sourceFile.getPathName() << L"\"; unable to transmit" << Endl;
 			return false;
 		}
-
-		traktor::log::info << L"File transmitted successfully" << Endl;
 	}
 	else
 		traktor::log::info << L"File already up-to-date; skipped" << Endl;
@@ -101,20 +101,11 @@ bool deployFile(net::Socket* clientSocket, const Path& sourceFile, const Path& t
 	fileStream->close();
 	fileStream = 0;
 
-	if (clientSocket->select(true, false, false, 1000) > 0)
-		reader >> ret;
-	else
-		ret = c_errUnknown;
-
-	if (ret != c_errNone)
-		traktor::log::error << L"Unable to deploy file \"" << sourceFile.getPathName() << L"\"; server error " << int32_t(ret) << Endl;
-	else
-		traktor::log::info << L"File deployed successfully" << Endl;
-
-	return ret == c_errNone;
+	traktor::log::info << L"File deployed successfully" << Endl;
+	return true;
 }
 
-bool deployFiles(net::Socket* clientSocket, const Path& sourcePath, const Path& targetBase, bool recursive)
+bool deployFiles(net::TcpSocket* clientSocket, const Path& sourcePath, const Path& targetBase, bool recursive)
 {
 	RefArray< File > files;
 

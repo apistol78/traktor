@@ -26,6 +26,10 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>Mask</name>
 					<optional>true</optional>
 				</item>
@@ -61,6 +65,10 @@
 					<second>1</second>
 				</item>
 				<item>
+					<first>Emissive</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>Mask</first>
 					<second>1</second>
 				</item>
@@ -94,7 +102,7 @@
 			<comment/>
 			<position>
 				<first>473</first>
-				<second>455</second>
+				<second>490</second>
 			</position>
 			<name>T_RimIntensity</name>
 			<connectable>true</connectable>
@@ -105,7 +113,7 @@
 			<comment/>
 			<position>
 				<first>489</first>
-				<second>420</second>
+				<second>455</second>
 			</position>
 			<name>T_RimColor</name>
 			<connectable>true</connectable>
@@ -160,7 +168,7 @@
 			<comment/>
 			<position>
 				<first>486</first>
-				<second>490</second>
+				<second>525</second>
 			</position>
 			<name>T_Reflection</name>
 			<connectable>true</connectable>
@@ -171,7 +179,7 @@
 			<comment/>
 			<position>
 				<first>462</first>
-				<second>525</second>
+				<second>560</second>
 			</position>
 			<name>T_ReflectionMap</name>
 			<connectable>true</connectable>
@@ -196,6 +204,17 @@
 				<second>385</second>
 			</position>
 			<name>T_SpecularTerm</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>494</first>
+				<second>420</second>
+			</position>
+			<name>T_Emissive</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
@@ -300,6 +319,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>SpecularTerm</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Emissive</name>
 			</destination>
 		</item>
 	</edges>

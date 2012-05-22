@@ -69,6 +69,10 @@ public:
 
 	float getSpecularRoughness() const;
 
+	void setEmissive(float emissive);
+
+	float getEmissive() const;
+
 	void setReflection(float reflection);
 
 	float getReflection() const;
@@ -94,6 +98,7 @@ private:
 	float m_diffuseTerm;
 	float m_specularTerm;
 	float m_specularRoughness;
+	float m_emissive;
 	float m_reflection;
 	float m_rimLightIntensity;
 	BlendOperator m_blendOperator;

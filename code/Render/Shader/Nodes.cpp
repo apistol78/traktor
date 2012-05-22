@@ -646,7 +646,7 @@ Interpolator::Interpolator()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate", 0, Iterate, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Iterate_i[] = { { L"Input", false }, { L"Initial", true }, 0 };
+const ImmutableNode::InputPinDesc c_Iterate_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, 0 };
 const ImmutableNode::OutputPinDesc c_Iterate_o[] = { L"N", L"Output", 0 };
 
 Iterate::Iterate(int32_t from, int32_t to)

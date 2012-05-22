@@ -35,6 +35,8 @@ int main(int argc, const char** argv)
 		return 0;
 	}
 
+	log::info << L"RemoteLaunch; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+
 	net::Network::initialize();
 
 	std::wstring host = cmdLine.getString(0);
@@ -60,6 +62,8 @@ int main(int argc, const char** argv)
 		traktor::log::error << L"Unable to connect to \"" << host << L"\"" << Endl;
 		return 1;
 	}
+
+	traktor::log::info << L"Successfully connected to server" << Endl;
 
 	net::SocketStream clientStream(clientSocket);
 	Writer writer(&clientStream);

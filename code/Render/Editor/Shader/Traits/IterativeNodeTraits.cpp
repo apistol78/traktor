@@ -59,7 +59,10 @@ PinType IterativeNodeTraits::getInputPinType(
 	const PinType* outputPinTypes
 ) const
 {
-	return outputPinTypes[1];	// Output
+	if (inputPin->getName() == L"Condition")
+		return PntScalar1;
+	else
+		return outputPinTypes[1];	// Output
 }
 
 int32_t IterativeNodeTraits::getInputPinGroup(

@@ -55,6 +55,9 @@ public:
 
 	/*! \brief Get remote socket address. */
 	Ref< SocketAddress > getRemoteAddress();
+
+	/*! \brief Set "no delay" option; ie disable Nagle algorithm. */
+	void setNoDelay(bool noDelay);
 };
 
 	}

@@ -16,6 +16,7 @@ namespace traktor
 
 const Guid c_materialShader(L"{CCDB27F2-644B-0742-857D-680E846B5BA3}");
 const Guid c_tplDiffuseParams(L"{4AC7418D-FF43-FE40-ADDC-33A162636FDC}");
+const Guid c_tplEmissiveParams(L"{1E35F0A7-23A9-EA49-A518-125A77BAD564}");
 const Guid c_tplNormalParams(L"{77489017-FBE8-4A4F-B11A-FDE48C69E021}");
 const Guid c_tplOutput(L"{6DA4BE0A-BE19-4440-9B08-FC3FD1FFECDC}");
 const Guid c_tplRimParams(L"{57310F3A-FEB0-7644-B641-EC3876773470}");
@@ -24,6 +25,7 @@ const Guid c_tplSpecularParams(L"{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}");
 const Guid c_tplVertexParams(L"{AEBE83FB-68D4-9D45-A672-0A8487A197CD}");
 const Guid c_implDiffuseConst(L"{BA68E2CA-77EB-684E-AD2B-0CD4BC35608D}");
 const Guid c_implDiffuseMap(L"{EE7D62D6-B5A8-DC48-8328-A3513B998DD4}");
+const Guid c_implEmissiveConst(L"{61A41113-D9F9-964A-9D90-B7A686058A26}");
 const Guid c_implNormalConst(L"{5D881AE1-B99D-8941-B949-4E95AEF1CB7A}");
 const Guid c_implNormalMap(L"{8CA655BD-E17B-5A48-B6C6-3FDBC1D4F97D}");
 const Guid c_implRimConst(L"{449F16EF-5C14-4940-A5E1-E1ABF73CC5D7}");
@@ -92,6 +94,8 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 			else
 				(*i)->setFragmentGuid(c_implDiffuseMap);
 		}
+		else if (fragmentGuid == c_tplEmissiveParams)
+			(*i)->setFragmentGuid(c_implEmissiveConst);
 		else if (fragmentGuid == c_tplNormalParams)
 		{
 			if (normalTexture.isNull())
@@ -160,6 +164,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 			diffuseTextureNode->setComment(L"");
 			diffuseTextureNode->setExternal(diffuseTexture);
 		}
+		else if (comment == L"Tag_Emissive")
+		{
+			render::Scalar* emissiveNode = checked_type_cast< render::Scalar* >(*i);
+			emissiveNode->setComment(L"");
+			emissiveNode->set(material.getEmissive());
+		}
 		else if (comment == L"Tag_NormalMap")
 		{
 			render::Texture* normalTextureNode = checked_type_cast< render::Texture* >(*i);
@@ -205,6 +215,7 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 {
 	pipelineDepends->addDependency(c_materialShader, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
+	pipelineDepends->addDependency(c_tplEmissiveParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplNormalParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplOutput, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplRimParams, editor::PdfUse);
@@ -213,6 +224,7 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_tplVertexParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseMap, editor::PdfUse);
+	pipelineDepends->addDependency(c_implEmissiveConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implRimConst, editor::PdfUse);

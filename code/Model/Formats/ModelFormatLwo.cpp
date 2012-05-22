@@ -156,7 +156,8 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 
 		material.setDiffuseTerm(surface->diffuse.val);
 		material.setSpecularTerm(surface->specularity.val);
-		material.setSpecularTerm(surface->glossiness.val);
+		material.setSpecularRoughness(surface->glossiness.val);
+		material.setEmissive(surface->luminosity.val);
 		material.setReflection(surface->reflection.val.val);
 		material.setRimLightIntensity(surface->glow.val);
 

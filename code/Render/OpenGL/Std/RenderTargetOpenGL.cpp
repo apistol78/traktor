@@ -453,7 +453,22 @@ bool RenderTargetOpenGL::bind(ContextOpenGL* renderContext, GLuint depthBuffer)
 
 	GLenum status = glCheckFramebufferStatusEXT(GL_FRAMEBUFFER_EXT);
 	if (status != GL_FRAMEBUFFER_COMPLETE_EXT)
+	{
+		log::error << L"Unable to bind render target; framebuffer not complete" << Endl;
 		return false;
+	}
+
+	T_OGL_SAFE(glViewport(
+		0,
+		0,
+		m_width,
+		m_height
+	));
+
+	T_OGL_SAFE(glDepthRange(
+		0.0f,
+		1.0f
+	));
 
 	if (m_haveDepth || m_usingPrimaryDepthBuffer)
 		renderContext->setPermitDepth(true);
