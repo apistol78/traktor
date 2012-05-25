@@ -55,6 +55,7 @@ SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRat
 ,	m_hwSampleRate(hwSampleRate)
 ,	m_hwFrameSamples(hwFrameSamples)
 ,	m_outputSamplesIn(0)
+,	m_pitch(1.0f)
 ,	m_volume(1.0f)
 ,	m_priority(0)
 ,	m_exclusive(false)
@@ -94,6 +95,16 @@ void SoundChannel::setFilter(IFilter* filter)
 IFilter* SoundChannel::getFilter() const
 {
 	return m_currentState.filter;
+}
+
+void SoundChannel::setPitch(float pitch)
+{
+	m_pitch = pitch;
+}
+
+float SoundChannel::getPitch() const
+{
+	return m_pitch;
 }
 
 void SoundChannel::setExclusive(bool exclusive)
@@ -240,10 +251,12 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 			T_ASSERT (soundBlock.samplesCount <= m_hwFrameSamples);
 		}
 
+		uint32_t sampleRate = uint32_t(m_pitch * soundBlock.sampleRate);
+
 		// Convert sound block into hardware required sample rate.
-		if (soundBlock.sampleRate != m_hwSampleRate)
+		if (sampleRate != m_hwSampleRate)
 		{
-			uint32_t outputSamplesCount = (soundBlock.samplesCount * m_hwSampleRate) / soundBlock.sampleRate;
+			uint32_t outputSamplesCount = (soundBlock.samplesCount * m_hwSampleRate) / sampleRate;
 
 			// Ensure we produce "multiple-of-4" number of samples; slight adjust block's sample rate.
 			outputSamplesCount = alignUp(outputSamplesCount, 4);

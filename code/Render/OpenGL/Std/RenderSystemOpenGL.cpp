@@ -414,7 +414,10 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		desc.fullscreen
 	);
 	if (!m_windowHandle)
+	{
+		log::error << L"createRenderView failed; unable to create window" << Endl;
 		return 0;
+	}
 
 	void* viewHandle = cglwGetWindowView(m_windowHandle);
 	T_ASSERT (viewHandle);
@@ -427,13 +430,18 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		0
 	);
 	if (!glcontext)
+	{
+		log::error << L"createRenderView failed; unable to create GL context" << Endl;
 		return 0;
+	}
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_windowHandle, context, m_resourceContext, m_blitHelper);
 	if (renderView->createPrimaryTarget())
 		return renderView;
+
+	log::error << L"createRenderView failed; unable to create primary render target" << Endl;
 
 	context->destroy();
 	context = 0;

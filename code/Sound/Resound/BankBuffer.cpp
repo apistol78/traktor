@@ -17,6 +17,7 @@ struct BankBufferCursor : public RefCountImpl< ISoundBufferCursor >
 
 	virtual void reset()
 	{
+		m_grainIndex = 0;
 		m_grainCursor->reset();
 	}
 };

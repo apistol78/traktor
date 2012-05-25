@@ -16,6 +16,8 @@
 namespace traktor
 {
 
+class ISerializer;
+
 /*! \brief High range color.
  * \ingroup Core
  */
@@ -83,6 +85,12 @@ public:
 	T_MATH_INLINE bool operator == (const Color4f& r) const;
 
 	T_MATH_INLINE bool operator != (const Color4f& r) const;
+
+	T_MATH_INLINE operator const Vector4& () const;
+
+#if !(defined(_PS3) && defined(SPU))
+	bool serialize(ISerializer& s);
+#endif
 
 private:
 	Vector4 m_data;

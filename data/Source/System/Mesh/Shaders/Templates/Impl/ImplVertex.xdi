@@ -20,9 +20,6 @@
 					<name>TexCoord2</name>
 				</item>
 				<item>
-					<name>UserParameter</name>
-				</item>
-				<item>
 					<name>ViewBinormal</name>
 				</item>
 				<item>

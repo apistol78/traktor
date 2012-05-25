@@ -3,10 +3,11 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
-#include "Core/Math/Vector2.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
+#include "Core/Math/Vector2.h"
+#include "Core/Math/Vector4.h"
 #include "Script/Any.h"
 #include "Script/CastAny.h"
 
@@ -179,6 +180,45 @@ private:
 	Transform m_value;
 };
 
+class T_DLLCLASS BoxedColor4f : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedColor4f();
+
+	explicit BoxedColor4f(const Color4f& value);
+
+	explicit BoxedColor4f(float red, float green, float blue);
+
+	explicit BoxedColor4f(float red, float green, float blue, float alpha);
+
+	float get(int32_t channel) const { return m_value.get(channel); }
+
+	float getRed() const { return m_value.getRed(); }
+
+	float getGreen() const { return m_value.getGreen(); }
+
+	float getBlue() const { return m_value.getBlue(); }
+
+	float getAlpha() const { return m_value.getAlpha(); }
+
+	void set(int32_t channel, float value) { m_value.set(channel, Scalar(value)); }
+
+	void setRed(float red) { m_value.setRed(Scalar(red)); }
+
+	void setGreen(float green) { m_value.setGreen(Scalar(green)); }
+
+	void setBlue(float blue) { m_value.setBlue(Scalar(blue)); }
+
+	void setAlpha(float alpha) { m_value.setAlpha(Scalar(alpha)); }
+
+	const Color4f& unbox() const { return m_value; }
+
+private:
+	Color4f m_value;
+};
+
 class T_DLLCLASS BoxedRefArray : public Object
 {
 	T_RTTI_CLASS;
@@ -333,6 +373,28 @@ struct CastAny < const Transform&, false >
     static Transform get(const Any& value) {
         return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
     }
+};
+
+template < >
+struct CastAny < Color4f, false >
+{
+	static Any set(const Color4f& value) {
+		return Any(new BoxedColor4f(value));
+	}
+	static Color4f get(const Any& value) {
+		return checked_type_cast< BoxedColor4f*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Color4f&, false >
+{
+	static Any set(const Color4f& value) {
+		return Any(new BoxedColor4f(value));
+	}
+	static Color4f get(const Any& value) {
+		return checked_type_cast< BoxedColor4f*, false >(value.getObject())->unbox();
+	}
 };
 
 template < typename InnerType >

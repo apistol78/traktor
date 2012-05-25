@@ -6,6 +6,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Io/Path.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Database/Local/Perforce/PerforceTypes.h"
 #include "Database/Local/Perforce/PerforceClientDesc.h"
 
@@ -51,8 +52,7 @@ public:
 
 private:
 	PerforceClientDesc m_clientDesc;
-	ClientApi m_p4client;
-	bool m_connected;
+	AutoPtr< ClientApi > m_p4client;
 	std::wstring m_lastError;
 
 	bool establishConnection();

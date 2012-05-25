@@ -88,6 +88,9 @@ public:
 	virtual const TypeInfo* browseType(const TypeInfo* base = 0) = 0;
 
 	/*! \brief Browse database instance. */
+	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType) = 0;
+
+	/*! \brief Browse database instance. */
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter = 0) = 0;
 
 	/*! \brief Open instance in appropriate editor. */

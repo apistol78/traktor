@@ -56,8 +56,6 @@ public:
 		bool opaque;
 	};
 
-	PartitionMesh();
-
 	const Aabb3& getBoundingBox() const;
 
 	bool supportTechnique(render::handle_t technique) const;
@@ -68,7 +66,6 @@ public:
 		world::IWorldRenderPass& worldRenderPass,
 		const Transform& worldTransform,
 		float distance,
-		float userParameter,
 		const IMeshParameterCallback* parameterCallback
 	);
 

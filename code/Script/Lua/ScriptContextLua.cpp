@@ -187,7 +187,8 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 			returnValue = m_scriptManager->toAny(-1);
 		else
 		{
-			log::error << L"LUA RUNTIME ERROR; \"" << mbstows(lua_tostring(m_luaState, lua_gettop(m_luaState))) << L"\"" << Endl;
+			const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
+			log::error << L"LUA RUNTIME ERROR; \"" << mbstows(err ? err : "<null>") << L"\"" << Endl;
 			lua_pop(m_luaState, 1);
 		}
 	}

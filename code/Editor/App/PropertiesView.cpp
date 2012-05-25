@@ -7,7 +7,6 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
-#include "Editor/TypeBrowseFilter.h"
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/TextEditorDialog.h"
 #include "I18N/I18N.h"
@@ -207,31 +206,9 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 				if (browseItem->getFilterType())
 				{
 					const TypeInfo* filterType = browseItem->getFilterType();
-					TypeInfoSet browseTypes;
+					T_ASSERT (filterType);
 
-					// Lookup which actual types to browse based on filter type; this
-					// is used for mapping resources to assets.
-					Ref< const PropertyGroup > browseTypeFilter = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.BrowseTypeFilter");
-					if (browseTypeFilter)
-					{
-						Ref< const IPropertyValue > browseTypesSet = browseTypeFilter->getProperty(filterType->getName());
-						if (browseTypesSet)
-						{
-							PropertyStringSet::value_type_t v = PropertyStringSet::get(browseTypesSet);
-							for (PropertyStringSet::value_type_t::const_iterator i = v.begin(); i != v.end(); ++i)
-							{
-								const TypeInfo* browseType = TypeInfo::find(*i);
-								if (browseType)
-									browseTypes.insert(browseType);
-							}
-						}
-					}
-
-					if (browseTypes.empty())
-						browseTypes.insert(filterType);
-
-					editor::TypeBrowseFilter filter(browseTypes);
-					instance = m_editor->browseInstance(&filter);
+					instance = m_editor->browseInstance(*filterType);
 				}
 				else
 					instance = m_editor->browseInstance();
@@ -324,12 +301,14 @@ void PropertiesView::eventPropertyCommand(ui::Event* event)
 			{
 				m_propertyList->apply();
 				m_propertyList->refresh();
+				m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 			}
 		}
 		else if (cmd == L"Property.Remove")
 		{
 			m_propertyList->apply();
 			m_propertyList->refresh();
+			m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
 		}
 	}
 

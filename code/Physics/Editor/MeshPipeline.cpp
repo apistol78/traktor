@@ -161,9 +161,9 @@ bool MeshPipeline::buildOutput(
 	}
 
 	// Log statistics.
-	log::info << positions.size() << L" vertex(es)" << Endl;
-	log::info << meshShapeTriangles.size() << L" shape triangle(s)" << Endl;
-	log::info << meshHullTriangles.size() << L" hull triangle(s)" << Endl;
+	log::info << int32_t(positions.size()) << L" vertex(es)" << Endl;
+	log::info << int32_t(meshShapeTriangles.size()) << L" shape triangle(s)" << Endl;
+	log::info << int32_t(meshHullTriangles.size()) << L" hull triangle(s)" << Endl;
 	log::info << L"Offset " << centerOfGravity << Endl;
 
 	Mesh mesh;

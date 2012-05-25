@@ -168,4 +168,9 @@ T_MATH_INLINE bool Color4f::operator != (const Color4f& r) const
 	return bool(m_data != r.m_data);
 }
 
+T_MATH_INLINE Color4f::operator const Vector4& () const
+{
+	return m_data;
+}
+
 }

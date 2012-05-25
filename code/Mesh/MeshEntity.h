@@ -61,17 +61,12 @@ public:
 
 	void pushTransform();
 
-	void setUserParameter(const float userParameter) { m_userParameter = userParameter; }
-
-	float getUserParameter() const { return m_userParameter; }
-
 	void setParameterCallback(IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
 
 	IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
 protected:
 	IntervalTransform m_transform;
-	float m_userParameter;
 	IMeshParameterCallback* m_parameterCallback;
 
 	/*! \brief Calculate render transform.

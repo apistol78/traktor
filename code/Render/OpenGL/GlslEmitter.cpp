@@ -434,6 +434,14 @@ void emitIterate(GlslContext& cx, Iterate* node)
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
+	// Emit post condition if connected; break iteration if condition is false.
+	GlslVariable* condition = cx.emitInput(node, L"Condition");
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
+
 	// Insert input branch here; it's already been generated in a temporary
 	// output stream.
 	f << fs.str();
