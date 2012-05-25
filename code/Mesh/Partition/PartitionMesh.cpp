@@ -11,20 +11,8 @@ namespace traktor
 {
 	namespace mesh
 	{
-		namespace
-		{
-
-render::handle_t s_handleUserParameter = 0;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.PartitionMesh", PartitionMesh, IMesh)
-
-PartitionMesh::PartitionMesh()
-{
-	if (!s_handleUserParameter)
-		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
-}
 
 const Aabb3& PartitionMesh::getBoundingBox() const
 {
@@ -42,7 +30,6 @@ void PartitionMesh::render(
 	world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	float distance,
-	float userParameter,
 	const IMeshParameterCallback* parameterCallback
 )
 {
@@ -102,7 +89,6 @@ void PartitionMesh::render(
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);
-		renderBlock->programParams->setFloatParameter(s_handleUserParameter, userParameter);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
 		renderBlock->programParams->endParameters(renderContext);

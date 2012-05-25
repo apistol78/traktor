@@ -293,18 +293,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.db.PerforceClient", PerforceClient, Object)
 
 PerforceClient::PerforceClient(const PerforceClientDesc& clientDesc)
 :	m_clientDesc(clientDesc)
-,	m_connected(false)
 ,	m_lastError(L"No error")
 {
 }
 
 PerforceClient::~PerforceClient()
 {
-	if (m_connected)
+	if (m_p4client.ptr())
 	{
 		Error e;
-		m_p4client.Final(&e);
-		m_connected = false;
+		m_p4client->Final(&e);
+		m_p4client.release();
 	}
 }
 
@@ -323,8 +322,8 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 
 		char* const argv[] = { "-s", "pending", "-c", client };
 
-		m_p4client.SetArgv(sizeof_array(argv), argv);
-		m_p4client.Run("changes", &changeListAdapter);
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("changes", &changeListAdapter);
 
 		if (changeListAdapter.failed())
 			return false;
@@ -342,8 +341,8 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 
 			char* const argv[] = { "-s", change };
 
-			m_p4client.SetArgv(sizeof_array(argv), argv);
-			m_p4client.Run("describe", &depotFilesAdapter);
+			m_p4client->SetArgv(sizeof_array(argv), argv);
+			m_p4client->Run("describe", &depotFilesAdapter);
 
 			if (depotFilesAdapter.failed())
 				return false;
@@ -360,8 +359,8 @@ bool PerforceClient::getChangeLists(RefArray< PerforceChangeList >& outChangeLis
 				strcpy_s(depotFile, wstombs((*j)->getDepotPath()).c_str());
 
 				char* const argv[] = { depotFile };
-				m_p4client.SetArgv(sizeof_array(argv), argv);
-				m_p4client.Run("where", &changeListFileAdapter);
+				m_p4client->SetArgv(sizeof_array(argv), argv);
+				m_p4client->Run("where", &changeListFileAdapter);
 
 				if (changeListFileAdapter.failed())
 					return false;
@@ -384,8 +383,8 @@ Ref< PerforceChangeList > PerforceClient::createChangeList(const std::wstring& d
 	CreateChangeListAdapter createChangeListAdapter(m_lastError, m_clientDesc.m_client, m_clientDesc.m_user, description);
 
 	char* const argv[] = { "-i" };
-	m_p4client.SetArgv(sizeof_array(argv), argv);
-	m_p4client.Run("change", &createChangeListAdapter);
+	m_p4client->SetArgv(sizeof_array(argv), argv);
+	m_p4client->Run("change", &createChangeListAdapter);
 
 	if (createChangeListAdapter.failed())
 		return 0;
@@ -410,8 +409,8 @@ bool PerforceClient::whereIsLocalFile(const std::wstring& depotFile, std::wstrin
 
 	{
 		char* const argv[] = { file };
-		m_p4client.SetArgv(sizeof_array(argv), argv);
-		m_p4client.Run("where", &changeListFileAdapter);
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("where", &changeListFileAdapter);
 	}
 
 	if (changeListFileAdapter.failed())
@@ -432,8 +431,8 @@ bool PerforceClient::isOpened(const std::wstring& localFile, PerforceAction& out
 
 	{
 		char* const argv[] = { file };
-		m_p4client.SetArgv(sizeof_array(argv), argv);
-		m_p4client.Run("fstat", &fileStatusAdapter);
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("fstat", &fileStatusAdapter);
 	}
 
 	if (fileStatusAdapter.failed())
@@ -457,8 +456,8 @@ bool PerforceClient::addFile(const PerforceChangeList* changeList, const std::ws
 
 	{
 		char* const argv[] = { "-c", change, file };
-		m_p4client.SetArgv(sizeof_array(argv), argv);
-		m_p4client.Run("add", &userAdapter);
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("add", &userAdapter);
 	}
 
 	if (userAdapter.failed())
@@ -482,8 +481,8 @@ bool PerforceClient::openForEdit(const PerforceChangeList* changeList, const std
 
 	{
 		char* const argv[] = { "-c", change, file };
-		m_p4client.SetArgv(sizeof_array(argv), argv);
-		m_p4client.Run("edit", &userAdapter);
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("edit", &userAdapter);
 	}
 
 	if (userAdapter.failed())
@@ -507,8 +506,8 @@ bool PerforceClient::openForDelete(const PerforceChangeList* changeList, const s
 
 	{
 		char* const argv[] = { "-c", change, file };
-		m_p4client.SetArgv(sizeof_array(argv), argv);
-		m_p4client.Run("delete", &userAdapter);
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("delete", &userAdapter);
 	}
 
 	if (userAdapter.failed())
@@ -532,8 +531,8 @@ bool PerforceClient::revertFile(const PerforceChangeList* changeList, const std:
 
 	{
 		char* const argv[] = { "-c", change, file };
-		m_p4client.SetArgv(sizeof_array(argv), argv);
-		m_p4client.Run("revert", &userAdapter);
+		m_p4client->SetArgv(sizeof_array(argv), argv);
+		m_p4client->Run("revert", &userAdapter);
 	}
 
 	if (userAdapter.failed())
@@ -550,8 +549,8 @@ bool PerforceClient::synchronize()
 	SynchronizeAdapter synchronizeAdapter(m_lastError);
 
 	{
-		m_p4client.Clear();
-		m_p4client.Run("sync", &synchronizeAdapter);
+		m_p4client->Clear();
+		m_p4client->Run("sync", &synchronizeAdapter);
 	}
 
 	if (synchronizeAdapter.failed())
@@ -569,24 +568,25 @@ bool PerforceClient::establishConnection()
 {
 	Error e;
 
-	if (m_connected && !m_p4client.Dropped())
+	if (m_p4client.ptr() != 0 && !m_p4client->Dropped())
 		return true;
 
-	m_p4client.SetProtocol("tag", "");
-	m_p4client.SetProg("Traktor.Editor");
-	m_p4client.SetVersion("1.0");
+	m_p4client.reset(new ClientApi());
+	m_p4client->SetProtocol("tag", "");
+	m_p4client->SetProg("Traktor.Editor");
+	m_p4client->SetVersion("1.0");
 
 	if (!m_clientDesc.m_host.empty())
-		m_p4client.SetHost(wstombs(m_clientDesc.m_host).c_str());
+		m_p4client->SetHost(wstombs(m_clientDesc.m_host).c_str());
 
-	m_p4client.SetPort(wstombs(m_clientDesc.m_port).c_str());
-	m_p4client.SetUser(wstombs(m_clientDesc.m_user).c_str());
+	m_p4client->SetPort(wstombs(m_clientDesc.m_port).c_str());
+	m_p4client->SetUser(wstombs(m_clientDesc.m_user).c_str());
 
-	m_p4client.SetClient(wstombs(m_clientDesc.m_client).c_str());
+	m_p4client->SetClient(wstombs(m_clientDesc.m_client).c_str());
 
 	log::info << L"Perforce: Initialize client..." << Endl;
 
-	m_p4client.Init(&e);
+	m_p4client->Init(&e);
 	if (e.Test())
 	{
 		StrBuf buffer;
@@ -594,6 +594,8 @@ bool PerforceClient::establishConnection()
 
 		log::error << L"Perforce: Unable to connect, \"" << mbstows(buffer.Text()) << L"\"" << Endl;
 		m_lastError = mbstows(buffer.Text());
+
+		m_p4client.release();
 		return false;
 	}
 
@@ -607,18 +609,19 @@ bool PerforceClient::establishConnection()
 		strcpy_s(user, wstombs(m_clientDesc.m_user).c_str());
 
 		char* const argv[] = { user };
-		m_p4client.SetArgv(sizeof_array(argv), argv);
+		m_p4client->SetArgv(sizeof_array(argv), argv);
 		if (m_clientDesc.m_securityLevel == PerforceClientDesc::SlLow)
-			m_p4client.SetPassword(wstombs(m_clientDesc.m_password).c_str());
-		m_p4client.Run("login", &passwordAdapter);
+			m_p4client->SetPassword(wstombs(m_clientDesc.m_password).c_str());
+		m_p4client->Run("login", &passwordAdapter);
 
 		if (passwordAdapter.failed())
+		{
+			m_p4client.release();
 			return false;
+		}
 	}
 
 	log::info << L"Perforce: Connected successfully" << Endl;
-
-	m_connected = true;
 	return true;
 }
 

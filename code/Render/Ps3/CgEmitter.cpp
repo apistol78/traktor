@@ -461,6 +461,14 @@ bool emitIterate(CgContext& cx, Iterate* node)
 		if (!input)
 			return false;
 
+		// Emit post condition if connected; break iteration if condition is false.
+		CgVariable* condition = cx.emitInput(node, L"Condition");
+		if (condition)
+		{
+			fs << L"if (!(bool)" << condition->cast(CtFloat) << L")" << Endl;
+			fs << L"\tbreak;" << Endl;
+		}
+
 		inputName = input->getName();
 
 		// Modify output variable; need to have input variable ready as it

@@ -52,6 +52,12 @@ public:
 	/*! \brief Get currently associated filter. */
 	IFilter* getFilter() const;
 
+	/*! \brief Set pitch. */
+	void setPitch(float pitch);
+
+	/*! \brief Get current pitch. */
+	float getPitch() const;
+
 	/*! \brief Set exclusive flag.
 	 *
 	 * When channel is marked as exclusive then
@@ -100,6 +106,7 @@ private:
 	State m_activeState;
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
+	float m_pitch;
 	float m_volume;
 	uint32_t m_priority;
 	bool m_exclusive;

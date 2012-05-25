@@ -38,7 +38,6 @@ void StaticMeshEntity::render(
 		worldRenderPass,
 		getTransform(worldRenderView.getInterval()),
 		distance,
-		getUserParameter(),
 		getParameterCallback()
 	);
 }

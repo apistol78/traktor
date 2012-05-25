@@ -68,10 +68,7 @@ void CompositeMeshEntity::render(
 )
 {
 	for (std::map< std::wstring, Ref< MeshEntity > >::iterator i = m_meshEntities.begin(); i != m_meshEntities.end(); ++i)
-	{
-		i->second->setUserParameter(m_userParameter);
 		worldContext.build(worldRenderView, worldRenderPass, i->second);
-	}
 }
 
 void CompositeMeshEntity::update(const UpdateParams& update)

@@ -60,7 +60,7 @@ public:
 	template < typename EntityType >
 	Ref< EntityType > getFirstEntityOf() const
 	{
-		return static_cast< EntityType* >(getFirstEntityOf(EntityType::getClassType()));
+		return checked_type_cast< EntityType*, true >(getFirstEntityOf(type_of< EntityType >()));
 	}
 	
 private:

@@ -73,15 +73,19 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc, bool b
 		T_OGL_SAFE(glGenRenderbuffersEXT(1, &m_depthBuffer));
 		T_OGL_SAFE(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_depthBuffer));
 
+#if !defined(__APPLE__)
 		GLenum format = GL_DEPTH_COMPONENT24;
 		if (!desc.ignoreStencil)
 			format = GL_DEPTH24_STENCIL8_EXT;
+#else
+		GLenum format = GL_DEPTH_STENCIL_EXT;
+#endif
 		
 		if (desc.multiSample <= 1)
 		{
 			T_OGL_SAFE(glRenderbufferStorageEXT(
 				GL_RENDERBUFFER_EXT,
-				format/*GL_DEPTH_STENCIL_EXT*/,
+				format,
 				m_width,
 				m_height
 			));
@@ -91,7 +95,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc, bool b
 			T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(
 				GL_RENDERBUFFER_EXT,
 				desc.multiSample,
-				format/*GL_DEPTH_STENCIL_EXT*/,
+				format,
 				m_width,
 				m_height
 			));

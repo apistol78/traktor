@@ -6,14 +6,13 @@
 #include "Database/Instance.h"
 #include "Database/Group.h"
 #include "Editor/IEditor.h"
-#include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetEditor.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
-#include "Render/Editor/Texture/TextureAsset.h"
+#include "Render/ITexture.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
@@ -396,8 +395,7 @@ void MeshAssetEditor::browseMaterialShader()
 	if (!selectedItem)
 		return;
 
-	editor::TypeBrowseFilter filter(type_of< render::ShaderGraph >());
-	Ref< db::Instance > materialShaderInstance = m_editor->browseInstance(&filter);
+	Ref< db::Instance > materialShaderInstance = m_editor->browseInstance(type_of< render::ShaderGraph >());
 	if (materialShaderInstance)
 	{
 		selectedItem->setText(1, materialShaderInstance->getName());
@@ -429,8 +427,7 @@ void MeshAssetEditor::browseMaterialTexture()
 	if (!selectedItem)
 		return;
 
-	editor::TypeBrowseFilter filter(type_of< render::TextureAsset >());
-	Ref< db::Instance > materialTextureInstance = m_editor->browseInstance(&filter);
+	Ref< db::Instance > materialTextureInstance = m_editor->browseInstance(type_of< render::ITexture >());
 	if (materialTextureInstance)
 	{
 		selectedItem->setText(1, materialTextureInstance->getName());

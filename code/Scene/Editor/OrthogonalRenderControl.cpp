@@ -561,11 +561,6 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			m_primitiveRenderer->popView();
 		}
 
-		// Draw modifier.
-		IModifier* modifier = m_context->getModifier();
-		if (modifier)
-			modifier->draw(m_primitiveRenderer);
-
 		// Draw guides.
 		if (m_guideEnable)
 		{
@@ -583,6 +578,11 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
 		if (controllerEditor && m_guideEnable)
 			controllerEditor->draw(m_primitiveRenderer);
+
+		// Draw modifier.
+		IModifier* modifier = m_context->getModifier();
+		if (modifier)
+			modifier->draw(m_primitiveRenderer);
 
 		// Draw selection rectangle if non-empty.
 		if (m_selectionRectangle.area() > 0)

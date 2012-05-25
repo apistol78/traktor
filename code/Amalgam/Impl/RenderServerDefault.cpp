@@ -279,7 +279,7 @@ int32_t RenderServerDefault::reconfigure(const PropertyGroup* settings)
 	rvdd.multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 4);
 	rvdd.waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
 	rvdd.fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
-	rvdd.title = L"Puzzle Dimension";
+	rvdd.title = settings->getProperty< PropertyString >(L"Render.Title", L"Traktor");
 
 #if defined(_PS3)
 

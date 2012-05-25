@@ -27,6 +27,9 @@ EmitterData::EmitterData()
 
 Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceManager) const
 {
+	if (!m_source)
+		return 0;
+
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
 		return 0;
@@ -41,8 +44,6 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 		Ref< Modifier > modifier = (*i)->createModifier(resourceManager);
 		if (modifier)
 			modifiers.push_back(modifier);
-		else
-			return 0;
 	}
 
 	return new Emitter(

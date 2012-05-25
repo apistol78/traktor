@@ -131,8 +131,6 @@ void Replicator::update(float dT)
 					void* ghostPeerMem = getAllocator()->alloc(sizeof(GhostPeer), 16, "GhostPeer");
 					GhostPeer* ghostPeer = new (ghostPeerMem) GhostPeer();
 					ghostPeer->origin = m_origin;
-					//ghostPeer->stateTime[0] =
-					//ghostPeer->stateTime[1] = 0.0f;
 					ghostPeer->prophet = new StateProphet();
 					ghostPeer->timeUntilTx = 0.0f;
 					ghostPeer->lastTime = time;

@@ -8,20 +8,8 @@ namespace traktor
 {
 	namespace mesh
 	{
-		namespace
-		{
-
-render::handle_t s_handleUserParameter = 0;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StaticMesh", StaticMesh, IMesh)
-
-StaticMesh::StaticMesh()
-{
-	if (!s_handleUserParameter)
-		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
-}
 
 const Aabb3& StaticMesh::getBoundingBox() const
 {
@@ -38,7 +26,6 @@ void StaticMesh::render(
 	const world::IWorldRenderPass& worldRenderPass,
 	const Transform& worldTransform,
 	float distance,
-	float userParameter,
 	const IMeshParameterCallback* parameterCallback
 )
 {
@@ -80,7 +67,6 @@ void StaticMesh::render(
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);
-		renderBlock->programParams->setFloatParameter(s_handleUserParameter, userParameter);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
 		renderBlock->programParams->endParameters(renderContext);

@@ -9,7 +9,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntity", MeshEntity, world::Entity)
 
 MeshEntity::MeshEntity(const Transform& transform)
 :	m_transform(transform)
-,	m_userParameter(0.0f)
 ,	m_parameterCallback(0)
 {
 }

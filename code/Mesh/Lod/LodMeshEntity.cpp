@@ -71,8 +71,6 @@ void LodMeshEntity::render(
 		return;
 
 	int32_t lod = clamp< int32_t >(int32_t(lodDistance / m_lodDistance), 0, m_lods.size() - 1);
-	
-	m_lods[lod]->setUserParameter(m_userParameter);
 	worldContext.build(worldRenderView, worldRenderPass, m_lods[lod]);
 }
 

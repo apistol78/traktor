@@ -5,11 +5,11 @@
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/IThumbnailGenerator.h"
-#include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
+#include "Render/ITexture.h"
 #include "Render/Shader/Nodes.h"
-#include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
+#include "Render/Editor/Texture/TextureAsset.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Custom/Graph/DefaultNodeShape.h"
 #include "Ui/Custom/Graph/Node.h"
@@ -83,8 +83,7 @@ void TextureNodeFacade::editShaderNode(
 	Node* shaderNode
 )
 {
-	editor::TypeBrowseFilter filter(type_of< TextureAsset >());
-	Ref< db::Instance > instance = editor->browseInstance(&filter);
+	Ref< db::Instance > instance = editor->browseInstance(type_of< ITexture >());
 	if (instance)
 		checked_type_cast< Texture*, false >(shaderNode)->setExternal(instance->getGuid());
 }

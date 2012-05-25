@@ -39,7 +39,6 @@ void PartitionMeshEntity::render(
 		worldRenderPass,
 		getTransform(worldRenderView.getInterval()),
 		distance,
-		getUserParameter(),
 		getParameterCallback()
 	);
 }

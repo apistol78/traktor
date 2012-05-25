@@ -50,7 +50,7 @@ void InstanceMeshEntityRenderer::render(
 		return;
 
 	m_meshInstances[mesh].push_back(std::make_pair(
-		packInstanceMeshData(transform, meshEntity->getUserParameter()),
+		packInstanceMeshData(transform),
 		distance
 	));
 }

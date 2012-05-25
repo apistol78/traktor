@@ -230,6 +230,28 @@ Vector4 BoxedTransform::transform(const Vector4& v) const
 	return m_value * v;
 }
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Color4f", BoxedColor4f, Object)
+
+BoxedColor4f::BoxedColor4f(const Color4f& value)
+:	m_value(value)
+{
+}
+
+BoxedColor4f::BoxedColor4f()
+:	m_value(1.0f, 1.0f, 1.0f, 1.0f)
+{
+}
+
+BoxedColor4f::BoxedColor4f(float red, float green, float blue)
+:	m_value(red, green, blue, 1.0f)
+{
+}
+
+BoxedColor4f::BoxedColor4f(float red, float green, float blue, float alpha)
+:	m_value(red, green, blue, alpha)
+{
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedRefArray, Object)
 
 BoxedRefArray::BoxedRefArray()
@@ -345,6 +367,22 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod(L"concat", &BoxedTransform::concat);
 	classBoxedTransform->addMethod(L"transform", &BoxedTransform::transform);
 	scriptManager->registerClass(classBoxedTransform);
+
+	Ref< AutoScriptClass< BoxedColor4f > > classBoxedColor4f = new AutoScriptClass< BoxedColor4f >();
+	classBoxedColor4f->addConstructor();
+	classBoxedColor4f->addConstructor< float, float, float >();
+	classBoxedColor4f->addConstructor< float, float, float, float >();
+	classBoxedColor4f->addMethod(L"get", &BoxedColor4f::get);
+	classBoxedColor4f->addMethod(L"getRed", &BoxedColor4f::getRed);
+	classBoxedColor4f->addMethod(L"getGreen", &BoxedColor4f::getGreen);
+	classBoxedColor4f->addMethod(L"getBlue", &BoxedColor4f::getBlue);
+	classBoxedColor4f->addMethod(L"getAlpha", &BoxedColor4f::getAlpha);
+	classBoxedColor4f->addMethod(L"set", &BoxedColor4f::set);
+	classBoxedColor4f->addMethod(L"setRed", &BoxedColor4f::setRed);
+	classBoxedColor4f->addMethod(L"setGreen", &BoxedColor4f::setGreen);
+	classBoxedColor4f->addMethod(L"setBlue", &BoxedColor4f::setBlue);
+	classBoxedColor4f->addMethod(L"setAlpha", &BoxedColor4f::setAlpha);
+	scriptManager->registerClass(classBoxedColor4f);
 
 	Ref< AutoScriptClass< BoxedRefArray > > classBoxedRefArray = new AutoScriptClass< BoxedRefArray >();
 	classBoxedRefArray->addConstructor();

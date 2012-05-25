@@ -1,3 +1,4 @@
+
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Mesh/Editor/OcclusionTextureAsset.h"
@@ -7,7 +8,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.TextureAsset", 5, OcclusionTextureAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.OcclusionTextureAsset", 5, OcclusionTextureAsset, editor::Asset)
 
 bool OcclusionTextureAsset::serialize(ISerializer& s)
 {

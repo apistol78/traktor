@@ -33,6 +33,7 @@
 #include "Editor/IObjectEditorFactory.h"
 #include "Editor/IPipeline.h"
 #include "Editor/PropertyKey.h"
+#include "Editor/TypeBrowseFilter.h"
 #include "Editor/App/AboutDialog.h"
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
@@ -740,6 +741,35 @@ const TypeInfo* EditorForm::browseType(const TypeInfo* base)
 	}
 
 	return type;
+}
+
+Ref< db::Instance > EditorForm::browseInstance(const TypeInfo& filterType)
+{
+	TypeInfoSet browseTypes;
+
+	// Lookup which actual types to browse based on filter type; this
+	// is used for mapping resources to assets.
+	Ref< const PropertyGroup > browseTypeFilter = m_mergedSettings->getProperty< PropertyGroup >(L"Editor.BrowseTypeFilter");
+	if (browseTypeFilter)
+	{
+		Ref< const IPropertyValue > browseTypesSet = browseTypeFilter->getProperty(filterType.getName());
+		if (browseTypesSet)
+		{
+			PropertyStringSet::value_type_t v = PropertyStringSet::get(browseTypesSet);
+			for (PropertyStringSet::value_type_t::const_iterator i = v.begin(); i != v.end(); ++i)
+			{
+				const TypeInfo* browseType = TypeInfo::find(*i);
+				if (browseType)
+					browseTypes.insert(browseType);
+			}
+		}
+	}
+
+	if (browseTypes.empty())
+		browseTypes.insert(&filterType);
+
+	editor::TypeBrowseFilter filter(browseTypes);
+	return browseInstance(&filter);
 }
 
 Ref< db::Instance > EditorForm::browseInstance(const IBrowseFilter* filter)

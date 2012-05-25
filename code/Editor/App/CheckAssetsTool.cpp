@@ -38,7 +38,7 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor)
 		assetInstances
 	);
 
-	uint32_t errorCount = 0;
+	int32_t errorCount = 0;
 
 	for (RefArray< db::Instance >::const_iterator i = assetInstances.begin(); i != assetInstances.end(); ++i)
 	{
@@ -63,7 +63,7 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor)
 		}
 	}
 
-	log::info << L"Check asset completed; " << errorCount << L" error(s) found in " << assetInstances.size() << L" asset(s)" << Endl;
+	log::info << L"Check asset completed; " << errorCount << L" error(s) found in " << int32_t(assetInstances.size()) << L" asset(s)" << Endl;
 	return true;
 }
 

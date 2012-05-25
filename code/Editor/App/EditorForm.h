@@ -111,6 +111,8 @@ public:
 
 	virtual const TypeInfo* browseType(const TypeInfo* base);
 
+	virtual Ref< db::Instance > browseInstance(const TypeInfo& filterType);
+
 	virtual Ref< db::Instance > browseInstance(const IBrowseFilter* filter);
 
 	virtual bool openEditor(db::Instance* instance);
