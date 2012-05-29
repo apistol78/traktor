@@ -125,6 +125,10 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 			if (!normalMap.empty())
 				mm.setNormalMap(normalMap);
 
+			std::wstring transparencyMap = getTextureName(material, FbxSurfaceMaterial::sTransparentColor);
+			if (!transparencyMap.empty())
+				mm.setBlendOperator(Material::BoAlpha);
+
 			if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
 			{
 				FbxSurfacePhong* phongMaterial = (FbxSurfacePhong*)material;
