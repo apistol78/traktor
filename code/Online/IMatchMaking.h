@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class ILobby;
+class LobbyFilter;
 
 class T_DLLCLASS IMatchMaking : public Object
 {
@@ -26,7 +27,7 @@ class T_DLLCLASS IMatchMaking : public Object
 public:
 	virtual bool ready() const = 0;
 
-	virtual Ref< LobbyArrayResult > findMatchingLobbies(const std::wstring& key, const std::wstring& value) = 0;
+	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter) = 0;
 
 	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers) = 0;
 };

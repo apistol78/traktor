@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="3">
 			<comment/>
 			<position>
-				<first>366</first>
-				<second>499</second>
+				<first>367</first>
+				<second>417</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<cullMode>CmClockWise</cullMode>
@@ -38,8 +38,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>90</first>
-				<second>528</second>
+				<first>-224</first>
+				<second>517</second>
 			</position>
 			<name>Output</name>
 			<connectable>true</connectable>
@@ -80,6 +80,30 @@
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
 		</item>
+		<item type="traktor.render.Discard">
+			<comment/>
+			<position>
+				<first>174</first>
+				<second>487</second>
+			</position>
+			<operator>CoGreaterEqual</operator>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>-20</first>
+				<second>479</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>61</first>
+				<second>539</second>
+			</position>
+			<value>0.01</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -88,8 +112,28 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Reference</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -98,7 +142,27 @@
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Pass</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
 				<name>Input</name>
 			</destination>
 		</item>

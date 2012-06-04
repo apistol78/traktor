@@ -154,14 +154,14 @@ Vector4 colorAsVector4(const Color4ub& color)
 struct ImpostorUpdateRenderBlock : public render::RenderBlock
 {
 	render::RenderTargetSet* impostorTargetSet;
-	float impostorClearColor[4];
+	Color4f impostorClearColor;
 	render::RenderBlock* particlePass[1024];
 	uint32_t particlePassCount;
 
 	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const
 	{
 		renderView->begin(impostorTargetSet, 0);
-		renderView->clear(render::CfColor, impostorClearColor, 0.0f, 0);
+		renderView->clear(render::CfColor, &impostorClearColor, 0.0f, 0);
 
 		for (int i = 0; i < particlePassCount; ++i)
 			particlePass[i]->render(renderView, globalParameters);
@@ -419,7 +419,7 @@ void CloudEntity::renderCluster(
 			ImpostorUpdateRenderBlock* impostorRenderBlock = renderContext->alloc< ImpostorUpdateRenderBlock >();
 			impostorRenderBlock->distance = -std::numeric_limits< float >::max();
 			impostorRenderBlock->impostorTargetSet = m_impostorTargets[slice];
-			haloColor.storeUnaligned(impostorRenderBlock->impostorClearColor);
+			impostorRenderBlock->impostorClearColor = Color4f(haloColor);
 			impostorRenderBlock->particlePassCount = 0;
 
 			uint32_t sliceParticleCount = uint32_t(sliceParticles.size());

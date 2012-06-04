@@ -58,6 +58,10 @@ public:
 		const Path& fileName
 	);
 
+	virtual void addDependency(
+		const TypeInfo& sourceAssetType
+	);
+
 	virtual bool waitUntilFinished();
 
 	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const;

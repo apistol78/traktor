@@ -22,6 +22,7 @@ namespace traktor
 	{
 
 class IScriptClass;
+class IScriptResource;
 
 /*! \brief JavaScript scripting context.
  * \ingroup JS Script
@@ -35,15 +36,13 @@ public:
 
 	virtual ~ScriptContextJs();
 
-	bool create(const RefArray< IScriptClass >& registeredClasses);
+	bool create(const RefArray< IScriptClass >& registeredClasses, const IScriptResource* scriptResource);
 
 	virtual void destroy();
 
 	virtual void setGlobal(const std::wstring& globalName, const Any& globalValue);
 
 	virtual Any getGlobal(const std::wstring& globalName);
-
-	virtual bool executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid);
 
 	virtual bool haveFunction(const std::wstring& functionName) const;
 

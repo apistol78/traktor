@@ -23,6 +23,7 @@ namespace traktor
 	namespace render
 	{
 
+class ClearTarget;
 class ParameterCache;
 class ProgramWin32;
 class RenderViewWin32;
@@ -122,6 +123,7 @@ private:
 	Ref< Window > m_window;
 	Ref< ResourceManagerDx9 > m_resourceManager;
 	Ref< ShaderCache > m_shaderCache;
+	Ref< ClearTarget > m_clearTarget;
 	Ref< ParameterCache > m_parameterCache;
 	Ref< VertexDeclCache > m_vertexDeclCache;
 	int32_t m_maxAnisotropy;

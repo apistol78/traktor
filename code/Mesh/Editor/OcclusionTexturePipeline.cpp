@@ -43,6 +43,7 @@ bool OcclusionTexturePipeline::buildDependencies(
 	const OcclusionTextureAsset* asset = checked_type_cast< const OcclusionTextureAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
 	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency< render::TextureOutput >();
 	return true;
 }
 

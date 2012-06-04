@@ -702,6 +702,10 @@ public:
 
 	int32_t getAlphaTestReference() const;
 
+	void setAlphaToCoverageEnable(bool enable);
+
+	bool getAlphaToCoverageEnable() const;
+
 	void setWireframe(bool wireframe);
 
 	bool getWireframe() const;
@@ -756,6 +760,7 @@ private:
 	bool m_alphaTestEnable;
 	CompareFunction m_alphaTestFunction;
 	int32_t m_alphaTestReference;
+	bool m_alphaToCoverageEnable;
 	bool m_wireframe;
 	bool m_stencilEnable;
 	StencilOperation m_stencilFail;
@@ -838,6 +843,10 @@ public:
 
 	Address getAddressW();
 
+	void setMipBias(float mipBias);
+
+	float getMipBias() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -847,6 +856,7 @@ private:
 	Address m_addressU;
 	Address m_addressV;
 	Address m_addressW;
+	float m_mipBias;
 };
 
 /*! \brief Scalar constant. */

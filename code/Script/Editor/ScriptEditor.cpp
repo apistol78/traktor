@@ -262,7 +262,7 @@ void ScriptEditor::eventTimer(ui::Event* event)
 	{
 		// Take snapshot of script and try to compile it.
 		std::wstring script = m_edit->getText();
-		if (m_scriptManager->compile(script, false, this))
+		if (m_scriptManager->compile(script, 0, this))
 		{
 			// Reset error status.
 			m_compileStatus->setText(L"");

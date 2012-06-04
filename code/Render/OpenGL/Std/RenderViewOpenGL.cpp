@@ -356,6 +356,11 @@ bool RenderViewOpenGL::begin(EyeType eye)
 	return begin(m_primaryTarget, 0);
 }
 
+bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
+{
+	return false;
+}
+
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT));
@@ -376,7 +381,7 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	return true;
 }
 
-void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float depth, int32_t stencil)
 {
 	const GLuint c_clearMask[] =
 	{
@@ -396,10 +401,10 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const float color[4], float dep
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
 		//m_stateCache->setColorMask(RenderState::CmAll);
-		float r = color[0];
-		float g = color[1];
-		float b = color[2];
-		float a = color[3];
+		float r = color->getRed();
+		float g = color->getGreen();
+		float b = color->getBlue();
+		float a = color->getAlpha();
 		T_OGL_SAFE(glColorMask(GL_TRUE, GL_TRUE, GL_TRUE, GL_TRUE));
 		T_OGL_SAFE(glClearColor(r, g, b, a));
 	}

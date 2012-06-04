@@ -812,6 +812,7 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
 	cx.setStencilReference(node->getStencilReference());
 
+	cx.getD3DBlendDesc().AlphaToCoverageEnable = node->getAlphaToCoverageEnable() ? TRUE : FALSE;
 	cx.getD3DBlendDesc().BlendEnable[0] = node->getBlendEnable() ? TRUE : FALSE;
 	cx.getD3DBlendDesc().SrcBlend = d3dBlendFactor[node->getBlendSource()];
 	cx.getD3DBlendDesc().DestBlend = d3dBlendFactor[node->getBlendDestination()];

@@ -21,6 +21,7 @@ namespace traktor
 	namespace render
 	{
 
+class ClearTarget;
 class IndexBufferDx9;
 class ParameterCache;
 class ProgramWin32;
@@ -40,6 +41,7 @@ class T_DLLCLASS RenderViewWin32
 public:
 	RenderViewWin32(
 		RenderSystemWin32* renderSystem,
+		ClearTarget* clearTarget,
 		ParameterCache* parameterCache,
 		IDirect3DDevice9* d3dDevice
 	);
@@ -54,9 +56,11 @@ public:
 
 	virtual bool begin(EyeType eye);
 
+	virtual bool begin(RenderTargetSet* renderTargetSet);
+
 	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);
 
-	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
+	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil);
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives);
 
@@ -84,13 +88,14 @@ protected:
 	{
 		D3DVIEWPORT9 d3dViewport;
 		int32_t targetSize[2];
-		IDirect3DSurface9* d3dBackBuffer;
+		IDirect3DSurface9* d3dColorBuffer[2];
 		IDirect3DSurface9* d3dDepthStencilSurface;
-		RenderTargetWin32* renderTarget;
+		RenderTargetWin32* renderTarget[2];
 	};
 
 	Ref< RenderSystemWin32 > m_renderSystem;
 	ParameterCache* m_parameterCache;
+	ClearTarget* m_clearTarget;
 	ComRef< IDirect3DDevice9 > m_d3dDevice;
 	ComRef< IDirect3DSwapChain9 > m_d3dSwapChain;
 	ComRef< IDirect3DSurface9 > m_d3dBackBuffer;

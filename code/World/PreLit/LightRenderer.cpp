@@ -113,7 +113,6 @@ void LightRenderer::render(
 	render::IRenderView* renderView,
 	const Matrix44& projection,
 	const Matrix44& view,
-	//const Vector4& eyePosition,
 	const Light& light,
 	render::ITexture* depthMap,
 	render::ITexture* normalMap,

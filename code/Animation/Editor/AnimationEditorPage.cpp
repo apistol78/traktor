@@ -871,10 +871,11 @@ void AnimationEditorPage::eventRenderPaint(ui::Event* event)
 
 	float tmp[4];
 	m_colorClear.getRGBA32F(tmp);
+	Color4f c4f(tmp[0], tmp[1], tmp[2], tmp[3]);
 
 	data->renderView->clear(
 		render::CfColor | render::CfDepth,
-		tmp,
+		&c4f,
 		1.0f,
 		128
 	);

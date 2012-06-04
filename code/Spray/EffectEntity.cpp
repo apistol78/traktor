@@ -1,4 +1,4 @@
-#include <ctime>
+#include "Core/Timer/Timer.h"
 #include "Render/Shader.h"
 #include "Spray/EffectEntity.h"
 #include "Spray/Effect.h"
@@ -15,6 +15,7 @@ namespace traktor
 
 const float c_maxDeltaTime = 1.0f / 30.0f;
 const uint32_t c_updateDenom = 1;
+Timer g_randomTimer;
 
 		}
 
@@ -27,9 +28,7 @@ EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Ef
 ,	m_enable(true)
 {
 	m_context.deltaTime = 0.0f;
-#if !defined(WINCE)
-	m_context.random = RandomGeometry(uint32_t(clock()));
-#endif
+	m_context.random = RandomGeometry(uint32_t(g_randomTimer.getElapsedTime() * 10000.0f));
 	m_context.soundSystem = soundSystem;
 	m_context.surroundEnvironment = surroundEnvironment;
 }
@@ -106,6 +105,17 @@ void EffectEntity::update(const UpdateParams& update)
 
 		m_effectInstance->update(m_context, m_transform, m_enable);
 	}
+}
+
+bool EffectEntity::isFinished() const
+{
+	if (!m_effect || !m_effectInstance)
+		return true;
+
+	if (m_effectInstance->getLoopEnable())
+		return false;
+
+	return m_effectInstance->getTime() >= m_effect->getDuration();
 }
 
 	}

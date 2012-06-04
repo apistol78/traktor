@@ -18,7 +18,6 @@ namespace traktor
 	namespace hf
 	{
 
-class Heightfield;
 class MaterialMask;
 
 	}
@@ -41,6 +40,8 @@ class IResourceManager;
 	namespace terrain
 	{
 
+class Terrain;
+
 class T_DLLCLASS UndergrowthEntityData : public world::EntityData
 {
 	T_RTTI_CLASS;
@@ -50,14 +51,14 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
+	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
 	const resource::Id< hf::MaterialMask >& getMaterialMask() const { return m_materialMask; }
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
-	resource::Id< hf::Heightfield > m_heightfield;
+	resource::Id< Terrain > m_terrain;
 	resource::Id< hf::MaterialMask > m_materialMask;
 	resource::Id< render::Shader > m_shader;
 	UndergrowthEntity::Settings m_settings;

@@ -15,14 +15,13 @@ bool MatchMaking::ready() const
 	return true;
 }
 
-Ref< LobbyArrayResult > MatchMaking::findMatchingLobbies(const std::wstring& key, const std::wstring& value)
+Ref< LobbyArrayResult > MatchMaking::findMatchingLobbies(const LobbyFilter* filter)
 {
 	Ref< LobbyArrayResult > result = new LobbyArrayResult();
 	if (m_taskQueue->add(new TaskFindMatchingLobbies(
 		m_matchMakingProvider,
 		m_userCache,
-		key,
-		value,
+		filter,
 		result
 	)))
 		return result;

@@ -75,7 +75,7 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 	if (m_fullScreen)
 	{
 		SetWindowLong(m_hWnd, GWL_STYLE, WS_OVERLAPPEDWINDOW);
-		SetWindowPos(m_hWnd, NULL, m_windowPosition.x, m_windowPosition.y, 0, 0, SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+		SetWindowPos(m_hWnd, HWND_NOTOPMOST, m_windowPosition.x, m_windowPosition.y, 0, 0, SWP_NOSIZE | SWP_FRAMECHANGED);
 		SetCursor(LoadCursor(NULL, IDC_ARROW));
 	}
 
@@ -113,7 +113,7 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 		m_windowPosition.y = rcWindow.top;
 
 		SetWindowLong(m_hWnd, GWL_STYLE, WS_POPUP);
-		SetWindowPos(m_hWnd, NULL, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_NOZORDER | SWP_FRAMECHANGED);
+		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
 	}
 
 	SetWindowPos(m_hWnd, NULL, 0, 0, width, height, SWP_NOZORDER);

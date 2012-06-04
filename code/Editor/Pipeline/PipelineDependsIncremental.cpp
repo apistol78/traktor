@@ -172,6 +172,25 @@ void PipelineDependsIncremental::addDependency(
 		m_currentDependency->files.insert(fileName);
 }
 
+void PipelineDependsIncremental::addDependency(
+	const TypeInfo& sourceAssetType
+)
+{
+	Ref< IPipeline > pipeline;
+	uint32_t pipelineHash;
+
+	// Find pipeline which consume asset type.
+	if (!m_pipelineFactory->findPipeline(sourceAssetType, pipeline, pipelineHash))
+	{
+		log::error << L"Unable to add dependency to \"" << sourceAssetType.getName() << L"\"; no pipeline found" << Endl;
+		return;
+	}
+
+	// Merge hash of dependent pipeline with current pipeline hash.
+	if (m_currentDependency)
+		m_currentDependency->pipelineHash += pipelineHash;
+}
+
 bool PipelineDependsIncremental::waitUntilFinished()
 {
 	return true;

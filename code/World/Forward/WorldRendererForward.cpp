@@ -466,8 +466,8 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 		if (m_renderView->begin(m_depthTargetSet, 0))
 		{
 			float farZ = m_settings.viewFarZ;
-			const float depthColor[] = { farZ, farZ, farZ, farZ };
-			m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
+			const Color4f depthColor(farZ, farZ, farZ, farZ);
+			m_renderView->clear(render::CfColor | render::CfDepth, &depthColor, 1.0f, 0);
 			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
 			m_renderView->end();
 		}
@@ -476,8 +476,8 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	else if (!f.haveDepth)
 	{
 		// No depth pass; ensure primary depth is cleared.
-		const float nullColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		m_renderView->clear(render::CfDepth, nullColor, 1.0f, 0);
+		const Color4f nullColor(0.0f, 0.0f, 0.0f, 0.0f);
+		m_renderView->clear(render::CfDepth, &nullColor, 1.0f, 0);
 	}
 
 	// Render shadow map.
@@ -490,8 +490,8 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
 				if (m_renderView->begin(m_shadowTargetSet, 0))
 				{
-					const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-					m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
+					const Color4f shadowClear(1.0f, 1.0f, 1.0f, 1.0f);
+					m_renderView->clear(render::CfColor | render::CfDepth, &shadowClear, 1.0f, 0);
 					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
 					m_renderView->end();
 				}
@@ -502,8 +502,8 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				{
 					if (i == 0)
 					{
-						const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-						m_renderView->clear(render::CfColor, maskClear, 0.0f, 0);
+						const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
+						m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
 					}
 
 					Scalar zn(max(m_slicePositions[i], m_settings.viewNearZ));

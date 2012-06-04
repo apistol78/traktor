@@ -3,6 +3,7 @@
 
 #include <cstring>
 #include <png.h>
+#include "Core/Log/Log.h"
 #include "Drawing/Formats/ImageFormatPng.h"
 #include "Drawing/Image.h"
 #include "Drawing/ImageInfo.h"
@@ -79,6 +80,9 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 
 	png_get_IHDR(png_ptr, info_ptr, &width, &height, &bit_depth, &color_type, NULL, NULL, NULL);
 
+	double gamma = 0.0;
+	png_get_gAMA(png_ptr, info_ptr, &gamma);
+
 	if (bit_depth == 8 && (color_type == PNG_COLOR_TYPE_RGB || color_type == PNG_COLOR_TYPE_RGB_ALPHA))
 	{
 		PixelFormat pixelFormat;
@@ -113,6 +117,7 @@ Ref< Image > ImageFormatPng::read(IStream* stream)
 		imageInfo->setAuthor(L"Unknown");
 		imageInfo->setCopyright(L"Unknown");
 		imageInfo->setFormat(L"PNG");
+		imageInfo->setGamma(float(gamma));
 		image->setImageInfo(imageInfo);
 	}
 

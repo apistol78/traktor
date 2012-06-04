@@ -98,6 +98,7 @@ bool HeightfieldTexturePipeline::buildDependencies(
 {
 	const HeightfieldTextureAsset* asset = checked_type_cast< const HeightfieldTextureAsset* >(sourceAsset);
 	pipelineDepends->addDependency(asset->m_heightfield, editor::PdfUse);
+	pipelineDepends->addDependency< render::TextureOutput >();
 	return true;
 }
 

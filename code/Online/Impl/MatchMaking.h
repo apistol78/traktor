@@ -19,7 +19,7 @@ class MatchMaking : public IMatchMaking
 public:
 	virtual bool ready() const;
 
-	virtual Ref< LobbyArrayResult > findMatchingLobbies(const std::wstring& key, const std::wstring& value);
+	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter);
 
 	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers);
 

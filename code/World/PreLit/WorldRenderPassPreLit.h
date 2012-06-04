@@ -41,8 +41,8 @@ public:
 		float fogRange,
 		const Vector4& fogColor,
 		render::ISimpleTexture* depthMap,
-		render::ISimpleTexture* lightMap,
-		render::ISimpleTexture* normalMap
+		render::ISimpleTexture* normalMap,
+		render::ISimpleTexture* lightMap
 	);
 
 	WorldRenderPassPreLit(
@@ -70,9 +70,9 @@ private:
 	float m_fogRange;
 	Vector4 m_fogColor;
 	render::ISimpleTexture* m_depthMap;
+	render::ISimpleTexture* m_normalMap;
 	render::ISimpleTexture* m_shadowMask;
 	render::ISimpleTexture* m_lightMap;
-	render::ISimpleTexture* m_normalMap;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
 

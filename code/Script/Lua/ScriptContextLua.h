@@ -2,6 +2,7 @@
 #define traktor_script_ScriptContextLua_H
 
 #include "Script/IScriptContext.h"
+#include "Script/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -29,8 +30,6 @@ class T_DLLCLASS ScriptContextLua : public IScriptContext
 	T_RTTI_CLASS;
 
 public:
-	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState);
-
 	virtual ~ScriptContextLua();
 
 	virtual void destroy();
@@ -39,8 +38,6 @@ public:
 
 	virtual Any getGlobal(const std::wstring& globalName);
 
-	virtual bool executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid);
-
 	virtual bool haveFunction(const std::wstring& functionName) const;
 
 	virtual Any executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv);
@@ -48,9 +45,14 @@ public:
 	virtual Any executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv);
 
 private:
+	friend class ScriptManagerLua;
+
 	Ref< ScriptManagerLua > m_scriptManager;
 	lua_State* m_luaState;
 	int32_t m_environmentRef;
+	source_map_t m_map;
+
+	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, const source_map_t& map);
 };
 
 	}

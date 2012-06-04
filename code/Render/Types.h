@@ -105,27 +105,28 @@ enum TextureFormat
 	/*! \name Floating point formats. */
 	//@{
 
-	TfR16G16B16A16F = 6,
-	TfR32G32B32A32F = 7,
-	TfR16G16F = 8,
-	TfR32G32F = 9,
-	TfR16F = 10,
-	TfR32F = 11,
+	TfR16G16B16A16F = 10,
+	TfR32G32B32A32F = 11,
+	TfR16G16F = 12,
+	TfR32G32F = 13,
+	TfR16F = 14,
+	TfR32F = 15,
+	TfR11G11B10F = 16,
 
 	//@}
 
 	/*! \name Compressed texture formats. */
 	//@{
 
-	TfDXT1 = 12,
-	TfDXT2 = 13,
-	TfDXT3 = 14,
-	TfDXT4 = 15,
-	TfDXT5 = 16,
-	TfPVRTC1 = 17,	// 4bpp, no alpha
-	TfPVRTC2 = 18,	// 2bpp, no alpha
-	TfPVRTC3 = 19,	// 4bpp, alpha
-	TfPVRTC4 = 20	// 2bpp, alpha
+	TfDXT1 = 30,
+	TfDXT2 = 31,
+	TfDXT3 = 32,
+	TfDXT4 = 33,
+	TfDXT5 = 34,
+	TfPVRTC1 = 40,	// 4bpp, no alpha
+	TfPVRTC2 = 41,	// 2bpp, no alpha
+	TfPVRTC3 = 42,	// 4bpp, alpha
+	TfPVRTC4 = 43	// 2bpp, alpha
 
 	//@}
 };

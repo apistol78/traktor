@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/TypesDx11.h"
@@ -33,7 +34,8 @@ Ref< VertexBufferDynamicDx11 > VertexBufferDynamicDx11::create(
 	Ref< VertexBufferDynamicDx11 > vb = new VertexBufferDynamicDx11(bufferSize);
 
 	vb->m_context = context;
-	vb->m_locked = false;
+	vb->m_data.reset(new uint8_t [bufferSize]);
+	vb->m_dirty = false;
 	vb->m_d3dBuffer = d3dBuffer;
 	vb->m_d3dStride = getVertexSize(vertexElements);
 
@@ -62,8 +64,6 @@ VertexBufferDynamicDx11::~VertexBufferDynamicDx11()
 
 void VertexBufferDynamicDx11::destroy()
 {
-	T_ASSERT (!m_locked);
-	
 	if (!m_context)
 		return;
 
@@ -73,46 +73,46 @@ void VertexBufferDynamicDx11::destroy()
 
 void* VertexBufferDynamicDx11::lock()
 {
-	T_ASSERT (!m_locked);
-	D3D11_MAPPED_SUBRESOURCE dm;
-	HRESULT hr;
-
-	hr = m_context->getD3DDeviceContext()->Map(m_d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
-	if (FAILED(hr))
-		return 0;
-
-	m_locked = true;
-	return dm.pData;
+	return m_data.ptr();
 }
 
 void* VertexBufferDynamicDx11::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
-	T_ASSERT (!m_locked);
-	D3D11_MAPPED_SUBRESOURCE dm;
-	HRESULT hr;
-
-	hr = m_context->getD3DDeviceContext()->Map(m_d3dBuffer, 0, D3D11_MAP_WRITE_NO_OVERWRITE, 0, &dm);
-	if (FAILED(hr))
-		return 0;
-
-	m_locked = true;
-	return static_cast< uint8_t* >(dm.pData) + vertexOffset * m_d3dStride;
+	T_FATAL_ERROR;
+	return 0;
 }
 
 void VertexBufferDynamicDx11::unlock()
 {
-	T_ASSERT (m_d3dBuffer);
-	T_ASSERT (m_locked);
-	
-	m_context->getD3DDeviceContext()->Unmap(m_d3dBuffer, 0);
-	m_locked = false;
-
+	m_dirty = true;
 	setContentValid(true);
+}
+
+void VertexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
+{
+	if (m_dirty)
+	{
+		D3D11_MAPPED_SUBRESOURCE dm;
+		HRESULT hr;
+
+		hr = d3dDeviceContext->Map(m_d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
+		if (FAILED(hr))
+		{
+			T_DEBUG(L"Failed to map dynamic vertex buffer; unable to update");
+			return;
+		}
+
+		std::memcpy(dm.pData, m_data.c_ptr(), getBufferSize());
+
+		d3dDeviceContext->Unmap(m_d3dBuffer, 0);
+		m_dirty = false;
+	}
+	VertexBufferDx11::prepare(d3dDeviceContext);
 }
 
 VertexBufferDynamicDx11::VertexBufferDynamicDx11(uint32_t bufferSize)
 :	VertexBufferDx11(bufferSize)
-,	m_locked(false)
+,	m_dirty(false)
 {
 }
 

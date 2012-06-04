@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Render/Dx9/ClearTarget.h"
 #include "Render/Dx9/IndexBufferDx9.h"
 #include "Render/Dx9/ParameterCache.h"
 #include "Render/Dx9/VertexBufferDx9.h"
@@ -43,10 +44,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewWin32", RenderViewWin32, IRend
 
 RenderViewWin32::RenderViewWin32(
 	RenderSystemWin32* renderSystem,
+	ClearTarget* clearTarget,
 	ParameterCache* parameterCache,
 	IDirect3DDevice9* d3dDevice
 )
 :	m_renderSystem(renderSystem)
+,	m_clearTarget(clearTarget)
 ,	m_parameterCache(parameterCache)
 ,	m_d3dDevice(d3dDevice)
 ,	m_frameCount(0)
@@ -126,8 +129,9 @@ bool RenderViewWin32::begin(EyeType eye)
 	{
 		m_d3dViewport,
 		{ getWidth(), getHeight() },
-		m_d3dBackBuffer,
-		m_d3dDepthStencilSurface
+		{ m_d3dBackBuffer, 0 },
+		m_d3dDepthStencilSurface,
+		{ 0, 0 }
 	};
 
 	m_renderStateStack.push_back(rs);
@@ -136,6 +140,47 @@ bool RenderViewWin32::begin(EyeType eye)
 	m_primitiveCount = 0;
 
 	return true;
+}
+
+bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet)
+{
+	T_ASSERT (!m_renderStateStack.empty());
+
+	if (!m_d3dDevice || !renderTargetSet)
+		return false;
+
+	RenderTargetSetWin32* rts = static_cast< RenderTargetSetWin32* >(renderTargetSet);
+
+	if (rts->getRenderTargetCount() >= 2)
+	{
+		RenderTargetWin32* rt0 = rts->getRenderTarget(0);
+		RenderTargetWin32* rt1 = rts->getRenderTarget(1);
+
+		RenderState rs =
+		{
+			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+			{ rts->getWidth(), rts->getHeight() },
+			{ rt0->getD3DColorSurface(), rt1->getD3DColorSurface() },
+			rts->getD3DDepthStencilSurface(),
+			{ rt0, rt1 }
+		};
+
+		if (rts->usingPrimaryDepthStencil())
+			rs.d3dDepthStencilSurface = m_d3dDepthStencilSurface;
+
+		m_renderStateStack.push_back(rs);
+		m_targetDirty = true;
+
+		// Flag content valid here; it's not completely true but we don't want to store
+		// target set as well in render state stack.
+		rts->setContentValid(true);
+		return true;
+	}
+	else
+	{
+		// Only a single target.
+		return begin(renderTargetSet, 0);
+	}
 }
 
 bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget)
@@ -152,9 +197,9 @@ bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	{
 		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
 		{ rt->getWidth(), rt->getHeight() },
-		rt->getD3DColorSurface(),
+		{ rt->getD3DColorSurface(), 0 },
 		rts->getD3DDepthStencilSurface(),
-		rt
+		{ rt, 0 }
 	};
 
 	if (rts->usingPrimaryDepthStencil())
@@ -169,29 +214,39 @@ bool RenderViewWin32::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	return true;
 }
 
-void RenderViewWin32::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+void RenderViewWin32::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
 {
+	T_ASSERT (colors);
 	const RenderState& rs = m_renderStateStack.back();
 
 	if (m_targetDirty)
 		bindTargets();
 
-	if (rs.renderTarget)
-		rs.renderTarget->clear(
-			m_d3dDevice,
-			m_parameterCache,
-			c_d3dClearMask[clearMask],
-			color,
-			depth,
-			stencil
-		);
-	else
+	if (clearMask & CfColor)
+	{
+		if (rs.renderTarget[0] && rs.renderTarget[1])
+		{
+			m_clearTarget->clear(m_d3dDevice, m_parameterCache, rs.targetSize[0], rs.targetSize[1], colors, 2);
+			clearMask &= ~CfColor;
+		}
+		else if (rs.renderTarget[0])
+		{
+			// Perform slow clear only on single render targets with FP formats.
+			if (rs.renderTarget[0]->getD3DFormat() >= D3DFMT_R16F)
+			{
+				m_clearTarget->clear(m_d3dDevice, m_parameterCache, rs.targetSize[0], rs.targetSize[1], colors, 1);
+				clearMask &= ~CfColor;
+			}
+		}
+	}
+
+	if (c_d3dClearMask[clearMask])
 	{
 		D3DCOLOR clearColor = D3DCOLOR_RGBA(
-			uint8_t(color[0] * 255),
-			uint8_t(color[1] * 255),
-			uint8_t(color[2] * 255),
-			uint8_t(color[3] * 255)
+			uint8_t(colors[0].getRed() * 255),
+			uint8_t(colors[0].getGreen() * 255),
+			uint8_t(colors[0].getBlue() * 255),
+			uint8_t(colors[0].getAlpha() * 255)
 		);
 		m_d3dDevice->Clear(0, NULL, c_d3dClearMask[clearMask], clearColor, depth, stencil);
 	}
@@ -247,8 +302,10 @@ void RenderViewWin32::end()
 	T_ASSERT (!m_renderStateStack.empty());
 
 	RenderState& rs = m_renderStateStack.back();
-	if (rs.renderTarget)
-		rs.renderTarget->resolve(m_d3dDevice);
+	if (rs.renderTarget[0])
+		rs.renderTarget[0]->resolve(m_d3dDevice);
+	if (rs.renderTarget[1])
+		rs.renderTarget[1]->resolve(m_d3dDevice);
 
 	m_renderStateStack.pop_back();
 	if (!m_renderStateStack.empty())
@@ -312,7 +369,10 @@ void RenderViewWin32::bindTargets()
 
 	const RenderState& rs = m_renderStateStack.back();
 
-	hr = m_d3dDevice->SetRenderTarget(0, rs.d3dBackBuffer);
+	hr = m_d3dDevice->SetRenderTarget(0, rs.d3dColorBuffer[0]);
+	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"SetRenderTarget failed");
+
+	hr = m_d3dDevice->SetRenderTarget(1, rs.d3dColorBuffer[1]);
 	T_FATAL_ASSERT_M (SUCCEEDED(hr), L"SetRenderTarget failed");
 
 	hr = m_d3dDevice->SetDepthStencilSurface(rs.d3dDepthStencilSurface);

@@ -273,9 +273,11 @@ void AccDisplayRenderer::begin(
 	{
 		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (color+stencil)");
 		renderBlock->clearMask = render::CfColor | render::CfStencil;
-		renderBlock->clearColor[0] = backgroundColor.red / 255.0f;
-		renderBlock->clearColor[1] = backgroundColor.green / 255.0f;
-		renderBlock->clearColor[2] = backgroundColor.blue / 255.0f;
+		renderBlock->clearColor.set(
+			backgroundColor.red / 255.0f,
+			backgroundColor.green / 255.0f,
+			backgroundColor.blue / 255.0f
+		);
 		m_renderContext->draw(render::RfOverlay, renderBlock);
 	}
 	else

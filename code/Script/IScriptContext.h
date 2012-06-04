@@ -19,7 +19,7 @@ namespace traktor
 	namespace script
 	{
 
-class IScriptResource;
+//class IScriptResource;
 
 /*! \brief Script context.
  * \ingroup Script
@@ -51,14 +51,6 @@ public:
 	 * \return Global value; void if not found.
 	 */
 	virtual Any getGlobal(const std::wstring& globalName) = 0;
-
-	/*! \brief Execute script.
-	 *
-	 * \param scriptResource Pre-compiled script resource.
-	 * \param scriptGuid Guid identifier of script; used for debugging.
-	 * \return True if executed successfully.
-	 */
-	virtual bool executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid) = 0;
 
 	/*! \brief Return true if context contains function (or method).
 	 *

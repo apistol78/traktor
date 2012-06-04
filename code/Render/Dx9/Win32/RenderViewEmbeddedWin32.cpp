@@ -12,12 +12,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewEmbeddedWin32", RenderViewEmbe
 
 RenderViewEmbeddedWin32::RenderViewEmbeddedWin32(
 	RenderSystemWin32* renderSystem,
+	ClearTarget* clearTarget,
 	ParameterCache* parameterCache,
 	IDirect3DDevice9* d3dDevice,
 	const D3DPRESENT_PARAMETERS& d3dPresent,
 	D3DFORMAT d3dDepthStencilFormat
 )
-:	RenderViewWin32(renderSystem, parameterCache, d3dDevice)
+:	RenderViewWin32(renderSystem, clearTarget, parameterCache, d3dDevice)
 ,	m_d3dPresent(d3dPresent)
 ,	m_d3dDepthStencilFormat(d3dDepthStencilFormat)
 {

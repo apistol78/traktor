@@ -106,7 +106,7 @@ void TargetClearRenderBlock::render(IRenderView* renderView, const ProgramParame
 	{
 		renderView->clear(
 			clearMask,
-			clearColor,
+			&clearColor,
 			clearDepth,
 			clearStencil
 		);

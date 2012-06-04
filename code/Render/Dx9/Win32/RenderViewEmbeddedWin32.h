@@ -27,6 +27,7 @@ class T_DLLCLASS RenderViewEmbeddedWin32
 public:
 	RenderViewEmbeddedWin32(
 		RenderSystemWin32* renderSystem,
+		ClearTarget* clearTarget,
 		ParameterCache* parameterCache,
 		IDirect3DDevice9* d3dDevice,
 		const D3DPRESENT_PARAMETERS& d3dPresent,

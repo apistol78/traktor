@@ -170,10 +170,10 @@ void VideoEditorPage::eventPaint(ui::Event* event)
 
 	if (m_renderView->begin(render::EtCyclop))
 	{
-		const float clearColor[] = { 0.8f, 0.8f, 0.8f, 0.0 };
+		const Color4f clearColor(0.8f, 0.8f, 0.8f, 0.0);
 		m_renderView->clear(
 			render::CfColor,
-			clearColor,
+			&clearColor,
 			0.0f,
 			0
 		);

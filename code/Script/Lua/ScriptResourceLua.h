@@ -3,6 +3,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Script/IScriptResource.h"
+#include "Script/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,14 +25,17 @@ class T_DLLCLASS ScriptResourceLua : public IScriptResource
 public:
 	ScriptResourceLua();
 
-	ScriptResourceLua(const std::string& script);
+	ScriptResourceLua(const std::string& script, const source_map_t& map);
 
 	const std::string& getScript() const;
+
+	const source_map_t& getMap() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
 	std::string m_script;
+	source_map_t m_map;
 };
 
 	}

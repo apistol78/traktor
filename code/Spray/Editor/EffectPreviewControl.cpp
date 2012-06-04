@@ -299,10 +299,10 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	if (!m_renderView->begin(render::EtCyclop))
 		return;
 
-	const float clearColor[] = { 0.2f, 0.2f, 0.2f, 0.0f };
+	const Color4f clearColor(0.2f, 0.2f, 0.2f, 0.0f);
 	m_renderView->clear(
 		render::CfColor | render::CfDepth,
-		clearColor,
+		&clearColor,
 		1.0f,
 		128
 	);

@@ -48,8 +48,8 @@ struct TerrainSurfaceRenderBlock : public render::RenderBlock
 			
 			if (clear)
 			{
-				float cc[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
-				renderView->clear(render::CfColor, cc, 1.0f, 0);
+				const Color4f cc(0.0f, 0.0f, 0.0f, 0.0f);
+				renderView->clear(render::CfColor, &cc, 1.0f, 0);
 			}
 		}
 		
@@ -239,49 +239,45 @@ void TerrainSurfaceCache::get(
 	Vector4 patchExtentM = patchExtent;
 	patchExtentM += Vector4(2.0f / 4096.0f, 0.0f, 2.0f / 4096.0f, 0.0f) * Scalar(10.0f);
 
-	const std::vector< resource::Proxy< render::Shader > >& layers = terrain->getSurfaceLayers();
-	for (size_t i = 0; i < layers.size(); ++i)
+	render::Shader* shader = terrain->getSurfaceShader();
+	render::ISimpleTexture* heightMap = terrain->getHeightMap();
+
+	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
+
+	renderBlock->screenRenderer = m_screenRenderer;
+	renderBlock->renderTargetSet = m_pool;
+	renderBlock->distance = 0.0f;
+	renderBlock->program = shader->getCurrentProgram();
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+
+	renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
+	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
+	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
+	renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);
+	renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtentM);
+
+	Vector4 textureOffset(
+		2.0f * tile.x / 4096.0f - 1.0f,
+		1.0f - 2.0f * tile.y / 4096.0f,
+		2.0f * tile.dim / 4096.0f,
+		-2.0f * tile.dim / 4096.0f
+	);
+	renderBlock->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
+	renderBlock->programParams->endParameters(renderContext);
+
+	if (!renderBlockChain)
 	{
-		render::Shader* shader = layers[i];
-		render::ISimpleTexture* heightMap = terrain->getHeightMap();
-
-		TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
-
-		renderBlock->screenRenderer = m_screenRenderer;
-		renderBlock->renderTargetSet = m_pool;
-		renderBlock->distance = 0.0f;
-		renderBlock->program = shader->getCurrentProgram();
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-
-		renderBlock->programParams->beginParameters(renderContext);
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
-		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
-		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
-		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);
-		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtentM);
-
-		Vector4 textureOffset(
-			2.0f * tile.x / 4096.0f - 1.0f,
-			1.0f - 2.0f * tile.y / 4096.0f,
-			2.0f * tile.dim / 4096.0f,
-			-2.0f * tile.dim / 4096.0f
-		);
-		renderBlock->programParams->setVectorParameter(m_handleTextureOffset, textureOffset);
-		renderBlock->programParams->endParameters(renderContext);
-
-		if (!renderBlockChain)
-		{
-			renderBlock->top = true;
-			renderBlock->clear = m_clearCache;
-			renderBlockChain = renderBlock;
-			outRenderBlock = renderBlock;
-		}
-		else
-		{
-			renderBlock->top = false;
-			renderBlockChain->next = renderBlock;
-			renderBlockChain = renderBlock;
-		}
+		renderBlock->top = true;
+		renderBlock->clear = m_clearCache;
+		renderBlockChain = renderBlock;
+		outRenderBlock = renderBlock;
+	}
+	else
+	{
+		renderBlock->top = false;
+		renderBlockChain->next = renderBlock;
+		renderBlockChain = renderBlock;
 	}
 	
 	m_clearCache = false;

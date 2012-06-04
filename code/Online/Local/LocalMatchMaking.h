@@ -14,7 +14,7 @@ class LocalMatchMaking : public IMatchMakingProvider
 	T_RTTI_CLASS;
 
 public:
-	virtual bool findMatchingLobbies(const std::wstring& key, const std::wstring& value, std::vector< uint64_t >& outLobbyHandles);
+	virtual bool findMatchingLobbies(const LobbyFilter* filter, std::vector< uint64_t >& outLobbyHandles);
 
 	virtual bool createLobby(uint32_t maxUsers, uint64_t& outLobbyHandle);
 

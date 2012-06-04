@@ -55,7 +55,7 @@ ScriptContextJs::~ScriptContextJs()
 	destroy();
 }
 
-bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
+bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses, const IScriptResource* scriptResource)
 {
 	v8::HandleScope handleScope;
 
@@ -159,6 +159,19 @@ bool ScriptContextJs::create(const RefArray< IScriptClass >& registeredClasses)
 		m_classRegistry.push_back(registeredClass);
 	}
 
+	v8::TryCatch trycatch;
+
+	const ScriptResourceJs* scriptResourceJs = checked_type_cast< const ScriptResourceJs*, false >(scriptResource);
+	v8::Local< v8::String > str = v8::Local< v8::String >::New(createString(scriptResourceJs->getScript()));
+
+	v8::Local< v8::Script > obj = v8::Script::Compile(str);
+	if (obj.IsEmpty())
+		return false;
+
+	v8::Local< v8::Value > result = obj->Run();
+	if (result.IsEmpty())
+		return false;
+
 	return true;
 }
 
@@ -187,25 +200,25 @@ Any ScriptContextJs::getGlobal(const std::wstring& globalName)
 	return fromValue(value);
 }
 
-bool ScriptContextJs::executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid)
-{
-	v8::HandleScope handleScope;
-	v8::Context::Scope contextScope(m_context);
-	v8::TryCatch trycatch;
-
-	const ScriptResourceJs* scriptResourceJs = checked_type_cast< const ScriptResourceJs*, false >(scriptResource);
-	v8::Local< v8::String > str = v8::Local< v8::String >::New(createString(scriptResourceJs->getScript()));
-	
-	v8::Local< v8::Script > obj = v8::Script::Compile(str);
-	if (obj.IsEmpty())
-		return false;
-
-	v8::Local< v8::Value > result = obj->Run();
-	if (result.IsEmpty())
-		return false;
-
-	return true;
-}
+//bool ScriptContextJs::executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid)
+//{
+//	v8::HandleScope handleScope;
+//	v8::Context::Scope contextScope(m_context);
+//	v8::TryCatch trycatch;
+//
+//	const ScriptResourceJs* scriptResourceJs = checked_type_cast< const ScriptResourceJs*, false >(scriptResource);
+//	v8::Local< v8::String > str = v8::Local< v8::String >::New(createString(scriptResourceJs->getScript()));
+//	
+//	v8::Local< v8::Script > obj = v8::Script::Compile(str);
+//	if (obj.IsEmpty())
+//		return false;
+//
+//	v8::Local< v8::Value > result = obj->Run();
+//	if (result.IsEmpty())
+//		return false;
+//
+//	return true;
+//}
 
 bool ScriptContextJs::haveFunction(const std::wstring& functionName) const
 {

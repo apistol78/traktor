@@ -358,13 +358,21 @@ int32_t RenderServerDefault::reconfigure(const PropertyGroup* settings)
 		m_renderViewDesc.displayMode.stereoscopic != rvdd.displayMode.stereoscopic
 	)
 	{
-		// Reset primary render view.
-		if (!m_renderView->reset(rvdd))
-			return CrFailed;
+		T_DEBUG(L"Render view settings changed; resetting view...");
+		render::RenderViewDefaultDesc current = m_renderViewDesc;
 
+		// Reset primary render view, restore descriptor if fail.
 		m_renderViewDesc = rvdd;
+		if (!m_renderView->reset(rvdd))
+		{
+			m_renderViewDesc = current;
+			return CrFailed;
+		}
+
 		result = CrAccepted;
 	}
+	else
+		T_DEBUG(L"Render view settings unchanged");
 
 	// Update texture quality; manifest through skipping high-detail mips.
 	int32_t skipMips = settings->getProperty< PropertyInteger >(L"Render.SkipMips", 0);

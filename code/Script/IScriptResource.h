@@ -1,6 +1,7 @@
 #ifndef traktor_script_IScriptResource_H
 #define traktor_script_IScriptResource_H
 
+#include <list>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.

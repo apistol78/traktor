@@ -506,7 +506,7 @@ bool ProgramDx10::createState(
 				return false;
 
 			D3D10_SAMPLER_DESC dsd = it->second;
-			dsd.MipLODBias = mipBias;
+			dsd.MipLODBias += mipBias;
 
 			ID3D10SamplerState* d3dSamplerState;
 

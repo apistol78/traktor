@@ -76,6 +76,7 @@ private:
 	Ref< StateCache > m_stateCache;
 	float m_displayAspect;
 	float m_mipBias;
+	int32_t m_maxAnisotropy;
 };
 
 	}

@@ -41,11 +41,11 @@ public:
 
 	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	const std::vector< resource::Id< render::Shader > >& getSurfaceLayers() const { return m_surfaceLayers; }
+	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
 private:
 	resource::Id< hf::Heightfield > m_heightfield;
-	std::vector< resource::Id< render::Shader > > m_surfaceLayers;
+	resource::Id< render::Shader > m_surfaceShader;
 };
 
 	}

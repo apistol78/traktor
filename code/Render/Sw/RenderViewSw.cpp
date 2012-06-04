@@ -260,6 +260,11 @@ bool RenderViewSw::begin(EyeType eye)
 	return true;
 }
 
+bool RenderViewSw::begin(RenderTargetSet* renderTargetSet)
+{
+	return false;
+}
+
 bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_ASSERT (!m_renderStateStack.empty());
@@ -290,7 +295,7 @@ bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	return true;
 }
 
-void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+void RenderViewSw::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
 {
 	RenderState& rs = m_renderStateStack.back();
 	if (clearMask & CfColor)
@@ -298,7 +303,7 @@ void RenderViewSw::clear(uint32_t clearMask, const float color[4], float depth, 
 		uint16_t* colorTarget = rs.colorTarget;
 		if (colorTarget)
 		{
-			uint16_t clearColor = to565(color[0], color[1], color[2]);
+			uint16_t clearColor = to565(colors[0].getRed(), colors[0].getGreen(), colors[0].getBlue());
 			for (int32_t y = 0; y < rs.height; ++y)
 			{
 				for (int32_t x = 0; x < rs.width; ++x)

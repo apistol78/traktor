@@ -47,6 +47,8 @@ public:
 		PhysicsManager* physicsManager
 	) const;
 
+	virtual void setTransform(const Transform& transform);
+
 	virtual bool serialize(ISerializer& s);
 
 	void setBodyDesc(BodyDesc* bodyDesc) { m_bodyDesc = bodyDesc; }

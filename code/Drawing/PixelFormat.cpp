@@ -816,6 +816,7 @@ void PixelFormat::convertFrom4f(
 			uint32_t b = uint32_t(clamp(clr[2]) * bmx);
 			uint32_t a = uint32_t(clamp(clr[3]) * amx);
 
+			T_ASSERT (m_pack);
 			(*m_pack)(
 				dst,
 				(r << getRedShift()) |
@@ -837,6 +838,7 @@ void PixelFormat::convertFrom4f(
 			// rgba => dst
 			if (isPalettized())
 			{
+				T_ASSERT (m_pack);
 				(*m_pack)(
 					dst,
 					dstPalette->find(*src)
@@ -861,6 +863,7 @@ void PixelFormat::convertFrom4f(
 				uint32_t b = uint32_t(clamp(clr[2]) * bmx);
 				uint32_t a = uint32_t(clamp(clr[3]) * amx);
 
+				T_ASSERT (m_pack);
 				(*m_pack)(
 					dst,
 					(r << getRedShift()) |
