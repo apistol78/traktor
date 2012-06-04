@@ -49,6 +49,7 @@ bool TextureOutput::serialize(ISerializer& s)
 			{ L"TfR32G32F", TfR32G32F },
 			{ L"TfR16F", TfR16F },
 			{ L"TfR32F", TfR32F },
+			{ L"TfR11G11B10F", TfR11G11B10F },
 			{ L"TfDXT1", TfDXT1 },
 			{ L"TfDXT2", TfDXT2 },
 			{ L"TfDXT3", TfDXT3 },

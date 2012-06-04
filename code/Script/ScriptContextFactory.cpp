@@ -39,18 +39,18 @@ Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceM
 		return 0;
 	}
 
-	Ref< IScriptContext > scriptContext = m_scriptManager->createContext();
+	Ref< IScriptContext > scriptContext = m_scriptManager->createContext(scriptResource);
 	if (!scriptContext)
 	{
 		log::error << L"Unable to create script context; create context failed" << Endl;
 		return 0;
 	}
 
-	if (!scriptContext->executeScript(scriptResource, guid))
-	{
-		log::error << L"Unable to create script context; execute script failed" << Endl;
-		return 0;
-	}
+	//if (!scriptContext->executeScript(scriptResource, guid))
+	//{
+	//	log::error << L"Unable to create script context; execute script failed" << Endl;
+	//	return 0;
+	//}
 
 	return scriptContext;
 }

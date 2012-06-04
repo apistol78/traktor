@@ -5,6 +5,22 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+int32_t getInputPinIndex(const Node* node, const InputPin* inputPin)
+{
+	int32_t inputPinCount = node->getInputPinCount();
+	for (int32_t i = 0; i < inputPinCount; ++i)
+	{
+		if (node->getInputPin(i) == inputPin)
+			return i;
+	}
+	T_FATAL_ERROR;
+	return -1;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelNodeTraits", 0, PixelNodeTraits, INodeTraits)
 
@@ -62,6 +78,8 @@ PinType PixelNodeTraits::getInputPinType(
 		}
 		if (pixelOutputNode->getAlphaTestEnable())
 			return PntScalar4;
+		if (pixelOutputNode->getAlphaToCoverageEnable())
+			return PntScalar4;
 
 		// Blend enable but not using alpha as a blend factor; determine
 		// from write mask as if opaque.
@@ -86,7 +104,7 @@ int32_t PixelNodeTraits::getInputPinGroup(
 	const InputPin* inputPin
 ) const
 {
-	return 0;
+	return getInputPinIndex(node, inputPin);
 }
 
 bool PixelNodeTraits::evaluateFull(

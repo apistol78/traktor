@@ -1,5 +1,4 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
@@ -18,7 +17,9 @@ bool TerrainResource::serialize(ISerializer& s)
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
 	s >> resource::Member< render::ISimpleTexture >(L"normalMap", m_normalMap);
 	s >> resource::Member< render::ISimpleTexture >(L"heightMap", m_heightMap);
-	s >> MemberStlVector< resource::Id< render::Shader >, resource::Member< render::Shader > >(L"surfaceLayers", m_surfaceLayers);
+	s >> resource::Member< render::Shader >(L"terrainCoarseShader", m_terrainCoarseShader);
+	s >> resource::Member< render::Shader >(L"terrainDetailShader", m_terrainDetailShader);
+	s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
 	return true;
 }
 

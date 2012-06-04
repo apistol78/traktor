@@ -441,9 +441,11 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 	{
 		float tmp[4];
 		m_colorClear.getRGBA32F(tmp);
+
+		Color4f ct(tmp[0], tmp[1], tmp[2], tmp[3]);
 		m_renderView->clear(
 			render::CfColor | render::CfDepth,
-			tmp,
+			&ct,
 			1.0f,
 			128
 		);

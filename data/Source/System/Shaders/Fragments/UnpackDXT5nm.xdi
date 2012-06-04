@@ -46,15 +46,15 @@
 		<item type="traktor.render.Dot">
 			<comment/>
 			<position>
-				<first>770</first>
-				<second>322</second>
+				<first>753</first>
+				<second>311</second>
 			</position>
 		</item>
 		<item type="traktor.render.Sqrt">
 			<comment/>
 			<position>
-				<first>1125</first>
-				<second>306</second>
+				<first>1168</first>
+				<second>287</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -102,16 +102,16 @@ http://developer.nvidia.com/object/real-time-normal-map-dxt-compression.html
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>852</first>
-				<second>284</second>
+				<first>767</first>
+				<second>265</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>990</first>
-				<second>306</second>
+				<first>905</first>
+				<second>287</second>
 			</position>
 		</item>
 		<item type="traktor.render.Platform">
@@ -178,6 +178,15 @@ thus normals are stored uncompressed.
 				<second>4</second>
 			</position>
 			<value>-1, 1, 1, 0</value>
+		</item>
+		<item type="traktor.render.Clamp">
+			<comment/>
+			<position>
+				<first>1035</first>
+				<second>271</second>
+			</position>
+			<min>0</min>
+			<max>1</max>
 		</item>
 	</nodes>
 	<edges>
@@ -293,16 +302,6 @@ thus normals are stored uncompressed.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Output</name>
 			</source>
@@ -399,6 +398,26 @@ thus normals are stored uncompressed.
 			<destination>
 				<node ref="/object/nodes/item[14]"/>
 				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[22]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

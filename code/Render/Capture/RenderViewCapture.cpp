@@ -149,6 +149,15 @@ bool RenderViewCapture::begin(EyeType eye)
 	return true;
 }
 
+bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet)
+{
+	if (!m_renderView->begin(renderTargetSet))
+		return false;
+
+	m_captureDepth++;
+	return true;
+}
+
 bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	if (!m_renderView->begin(renderTargetSet, renderTarget))
@@ -158,7 +167,7 @@ bool RenderViewCapture::begin(RenderTargetSet* renderTargetSet, int renderTarget
 	return true;
 }
 
-void RenderViewCapture::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+void RenderViewCapture::clear(uint32_t clearMask, const Color4f* color, float depth, int32_t stencil)
 {
 	m_renderView->clear(clearMask, color, depth, stencil);
 }

@@ -40,6 +40,7 @@ bool TextureAssetPipeline::buildDependencies(
 	const TextureAsset* asset = checked_type_cast< const TextureAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
 	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency< TextureAsset >();
 	return true;
 }
 

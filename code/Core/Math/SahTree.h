@@ -3,6 +3,7 @@
 
 #include <vector>
 #include "Core/Ref.h"
+#include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Winding3.h"
@@ -25,8 +26,10 @@ namespace traktor
  *
  * \ingroup Core
  */
-class T_DLLCLASS SahTree
+class T_DLLCLASS SahTree : public Object
 {
+	T_RTTI_CLASS;
+
 public:
 	struct QueryResult { /* \fixme */ };
 
@@ -59,6 +62,12 @@ public:
 	 */
 	bool queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance) const;
 
+	/*! \brief Get polygons. */
+	const AlignedVector< Winding3 >& getPolygons() const { return m_polygons; }
+
+	/*! \brief Get bounding box. */
+	const Aabb3& getBoundingBox() const { return m_root->aabb; }
+
 private:
 	struct Node
 	{
@@ -68,13 +77,21 @@ private:
 		float split;
 		Node* leftChild;
 		Node* rightChild;
+
+		Node()
+		:	axis(0)
+		,	split(0.0f)
+		,	leftChild(0)
+		,	rightChild(0)
+		{
+		}
 	};
 
 	struct Stack
 	{
 		Node* node;
-		Scalar nearT;
-		Scalar farT;
+		float nearT;
+		float farT;
 
 		Stack()
 		:	node(0)
@@ -83,7 +100,7 @@ private:
 		{
 		}
 
-		Stack(Node* _node, const Scalar& _nearT, const Scalar& _farT)
+		Stack(Node* _node, float _nearT, float _farT)
 		:	node(_node)
 		,	nearT(_nearT)
 		,	farT(_farT)
@@ -94,9 +111,6 @@ private:
 	Node* m_root;
 	AlignedVector< Winding3 > m_polygons;
 	AlignedVector< Node* > m_nodes;
-	mutable AlignedVector< Stack > m_stack;
-	mutable std::vector< int32_t > m_query;
-	mutable int32_t m_queryTag;
 
 	void buildNode(Node* node, int32_t depth);
 

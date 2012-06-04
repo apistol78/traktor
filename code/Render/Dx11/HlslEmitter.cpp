@@ -569,6 +569,27 @@ bool emitMatrixIn(HlslContext& cx, MatrixIn* node)
 	return true;
 }
 
+bool emitMatrixOut(HlslContext& cx, MatrixOut* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	HlslVariable* xaxis = cx.emitOutput(node, L"XAxis", HtFloat4);
+	if (xaxis)
+		assign(f, xaxis) << in->getName() << L"._11_21_31_41;" << Endl;
+	HlslVariable* yaxis = cx.emitOutput(node, L"YAxis", HtFloat4);
+	if (yaxis)
+		assign(f, yaxis) << in->getName() << L"._12_22_32_42;" << Endl;
+	HlslVariable* zaxis = cx.emitOutput(node, L"ZAxis", HtFloat4);
+	if (zaxis)
+		assign(f, zaxis) << in->getName() << L"._13_23_33_43;" << Endl;
+	HlslVariable* translate = cx.emitOutput(node, L"Translate", HtFloat4);
+	if (translate)
+		assign(f, translate) << in->getName() << L"._14_24_34_44;" << Endl;
+	return true;
+}
+
 bool emitMax(HlslContext& cx, Max* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -770,38 +791,51 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 
 	cx.enterPixel();
 
-	HlslVariable* in = cx.emitInput(node, L"Input");
+	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
+	HlslVariable* in[4];
 
-	StringOutputStream& fpo = cx.getPixelShader().getOutputStream(HlslShader::BtOutput);
-	fpo << L"float4 Color0 : SV_Target0;" << Endl;
+	for (int32_t i = 0; i < sizeof_array(in); ++i)
+		in[i] = cx.emitInput(node, inputs[i]);
 
-	StringOutputStream& fpb = cx.getPixelShader().getOutputStream(HlslShader::BtBody);
-	fpb << L"float4 out_Color = " << in->cast(HtFloat4) << L";" << Endl;
+	if (!in[0])
+		return false;
 
-	// Emulate old fashion alpha test through "discard" instruction.
-	if (node->getAlphaTestEnable())
+	for (int32_t i = 0; i < sizeof_array(in); ++i)
 	{
-		float alphaRef = node->getAlphaTestReference() / 255.0f;
+		if (!in[i])
+			continue;
 
-		if (node->getAlphaTestFunction() == PixelOutput::CfLess)
-			fpb << L"if (out_Color.w >= " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfLessEqual)
-			fpb << L"if (out_Color.w > " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfGreater)
-			fpb << L"if (out_Color.w <= " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfGreaterEqual)
-			fpb << L"if (out_Color.w < " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfEqual)
-			fpb << L"if (out_Color.w != " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfNotEqual)
-			fpb << L"if (out_Color.w == " << alphaRef << L")" << Endl;
-		else
-			return false;
+		StringOutputStream& fpo = cx.getPixelShader().getOutputStream(HlslShader::BtOutput);
+		fpo << L"float4 Color" << i << L" : SV_Target" << i << L";" << Endl;
 
-		fpb << L"\tdiscard;" << Endl;
+		StringOutputStream& fpb = cx.getPixelShader().getOutputStream(HlslShader::BtBody);
+		fpb << L"float4 out_Color" << i << L" = " << in[i]->cast(HtFloat4) << L";" << Endl;
+
+		// Emulate old fashion alpha test through "discard" instruction.
+		if (i == 0 && node->getAlphaTestEnable())
+		{
+			float alphaRef = node->getAlphaTestReference() / 255.0f;
+
+			if (node->getAlphaTestFunction() == PixelOutput::CfLess)
+				fpb << L"if (out_Color" << i << L".w >= " << alphaRef << L")" << Endl;
+			else if (node->getAlphaTestFunction() == PixelOutput::CfLessEqual)
+				fpb << L"if (out_Color" << i << L".w > " << alphaRef << L")" << Endl;
+			else if (node->getAlphaTestFunction() == PixelOutput::CfGreater)
+				fpb << L"if (out_Color" << i << L".w <= " << alphaRef << L")" << Endl;
+			else if (node->getAlphaTestFunction() == PixelOutput::CfGreaterEqual)
+				fpb << L"if (out_Color" << i << L".w < " << alphaRef << L")" << Endl;
+			else if (node->getAlphaTestFunction() == PixelOutput::CfEqual)
+				fpb << L"if (out_Color" << i << L".w != " << alphaRef << L")" << Endl;
+			else if (node->getAlphaTestFunction() == PixelOutput::CfNotEqual)
+				fpb << L"if (out_Color" << i << L".w == " << alphaRef << L")" << Endl;
+			else
+				return false;
+
+			fpb << L"\tdiscard;" << Endl;
+		}
+
+		fpb << L"o.Color" << i << L" = out_Color" << i << L";" << Endl;
 	}
-
-	fpb << L"o.Color0 = out_Color;" << Endl;
 
 	cx.getD3DRasterizerDesc().FillMode = node->getWireframe() ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
 	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[node->getCullMode()];
@@ -822,6 +856,7 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
 	cx.setStencilReference(node->getStencilReference());
 
+	cx.getD3DBlendDesc().AlphaToCoverageEnable = node->getAlphaToCoverageEnable() ? TRUE : FALSE;
 	cx.getD3DBlendDesc().RenderTarget[0].BlendEnable = node->getBlendEnable() ? TRUE : FALSE;
 	cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = d3dBlendFactor[node->getBlendSource()];
 	cx.getD3DBlendDesc().RenderTarget[0].DestBlend = d3dBlendFactor[node->getBlendDestination()];
@@ -837,7 +872,11 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	if (node->getColorWriteMask() & PixelOutput::CwAlpha)
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_ALPHA;
 
-	cx.getD3DBlendDesc().RenderTarget[0].RenderTargetWriteMask = d3dWriteMask;
+	for (int32_t i = 0; i < sizeof_array(in); ++i)
+	{
+		if (in[i])
+			cx.getD3DBlendDesc().RenderTarget[i].RenderTargetWriteMask = d3dWriteMask;
+	}
 
 	return true;
 }
@@ -961,7 +1000,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		dsd.AddressU = c_d3dAddress[node->getAddressU()];
 		dsd.AddressV = c_d3dAddress[node->getAddressV()];
 		dsd.AddressW = c_d3dAddress[node->getAddressW()];
-		dsd.MipLODBias = 0.0f;
+		dsd.MipLODBias = node->getMipBias();
 		dsd.MaxAnisotropy = 1;
 		dsd.ComparisonFunc = D3D11_COMPARISON_NEVER;
 		dsd.BorderColor[0] =
@@ -1736,6 +1775,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
 	m_emitters[&type_of< MatrixIn >()] = new EmitterCast< MatrixIn >(emitMatrixIn);
+	m_emitters[&type_of< MatrixOut >()] = new EmitterCast< MatrixOut >(emitMatrixOut);
 	m_emitters[&type_of< Max >()] = new EmitterCast< Max >(emitMax);
 	m_emitters[&type_of< Min >()] = new EmitterCast< Min >(emitMin);
 	m_emitters[&type_of< MixIn >()] = new EmitterCast< MixIn >(emitMixIn);

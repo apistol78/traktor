@@ -31,13 +31,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewDefaultWin32", RenderViewDefau
 
 RenderViewDefaultWin32::RenderViewDefaultWin32(
 	RenderSystemWin32* renderSystem,
+	ClearTarget* clearTarget,
 	ParameterCache* parameterCache,
 	IDirect3DDevice9* d3dDevice,
 	IDirect3D9* d3d,
 	D3DPRESENT_PARAMETERS& d3dPresent,
 	Window* window
 )
-:	RenderViewWin32(renderSystem, parameterCache, d3dDevice)
+:	RenderViewWin32(renderSystem, clearTarget, parameterCache, d3dDevice)
 ,	m_d3d(d3d)
 ,	m_d3dPresent(d3dPresent)
 ,	m_window(window)

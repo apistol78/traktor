@@ -299,10 +299,10 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 		}
 
 		// Flush render context.
-		const float clearColor[] = { 0.8f, 0.8f, 0.8f, 0.0 };
+		const Color4f clearColor(0.8f, 0.8f, 0.8f, 0.0);
 		m_renderView->clear(
 			render::CfColor | render::CfDepth | render::CfStencil,
-			clearColor,
+			&clearColor,
 			1.0f,
 			0
 		);

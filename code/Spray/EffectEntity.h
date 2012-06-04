@@ -62,6 +62,8 @@ public:
 
 	virtual void update(const UpdateParams& update);
 
+	bool isFinished() const;
+
 	const resource::Proxy< Effect >& getEffect() const { return m_effect; }
 
 	void setEnable(bool enable) { m_enable = enable; }

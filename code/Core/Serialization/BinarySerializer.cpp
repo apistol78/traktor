@@ -206,34 +206,32 @@ bool write_primitive(const Ref< IStream >& stream, bool v)
 
 bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& outString)
 {
-	wchar_t wc;
-
-	outString.clear();
-
 	if (u8len > 0)
 	{
-		uint8_t* u8str = (uint8_t*)alloca(u8len * sizeof(uint8_t));
-		if (!u8str)
+		uint8_t* buf = (uint8_t*)alloca(u8len * sizeof(uint8_t) + u8len * sizeof(wchar_t) + 8);
+		if (!buf)
 			return false;
+
+		uint8_t* u8str = buf;
+		wchar_t* wstr = (wchar_t*)(buf + u8len * sizeof(uint8_t));
+		wchar_t* wptr = wstr;
 
 		if (!read_block(stream, u8str, u8len, sizeof(uint8_t)))
 			return false;
 
-		outString.reserve(u8len);
-
 		Utf8Encoding utf8enc;
 		for (uint32_t i = 0; i < u8len; )
 		{
-			int n = utf8enc.translate(u8str + i, u8len - i, wc);
-			if (n > 0)
-			{
-				outString.push_back(wc);
-				i += n;
-			}
-			else
+			int n = utf8enc.translate(u8str + i, u8len - i, *wptr++);
+			if (n <= 0)
 				return false;
+			i += n;
 		}
+
+		outString = std::wstring(wstr, wptr);
 	}
+	else
+		outString.clear();
 
 	return true;
 }

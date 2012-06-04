@@ -6,6 +6,7 @@
 #include "Amalgam/Impl/UpdateInfo.h"
 #include "Core/RefArray.h"
 #include "Core/Library/Library.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Signal.h"
 #include "Core/Timer/Timer.h"
@@ -97,7 +98,7 @@ private:
 	UpdateControl m_updateControl;
 	UpdateInfo m_updateInfo;
 	bool m_renderViewActive;
-	float m_backgroundColor[4];
+	Color4f m_backgroundColor;
 	float m_updateDuration;
 	float m_buildDuration;
 	float m_renderDuration;

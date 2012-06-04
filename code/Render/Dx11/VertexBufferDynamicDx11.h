@@ -1,6 +1,7 @@
 #ifndef traktor_render_VertexBufferDynamicDx11_H
 #define traktor_render_VertexBufferDynamicDx11_H
 
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/VertexElement.h"
 #include "Render/Dx11/VertexBufferDx11.h"
@@ -44,9 +45,12 @@ public:
 	
 	virtual void unlock();
 
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext);
+
 private:
 	Ref< ContextDx11 > m_context;
-	bool m_locked;
+	AutoArrayPtr< uint8_t > m_data;
+	bool m_dirty;
 
 	VertexBufferDynamicDx11(uint32_t bufferSize);
 };

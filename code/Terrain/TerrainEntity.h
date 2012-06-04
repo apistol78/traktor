@@ -98,13 +98,12 @@ private:
 
 	enum
 	{
-		LodCount = 4,
-		PatchInstanceCount = 8
+		LodCount = 4
 	};
 
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< Terrain > m_terrain;
-	resource::Proxy< render::Shader > m_shader;
+	//resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
@@ -112,10 +111,8 @@ private:
 	Ref< render::IndexBuffer > m_indexBuffer;
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	Ref< render::VertexBuffer > m_vertexBuffer;
-	render::Primitives m_primitives[LodCount][PatchInstanceCount];
-#else
-	render::Primitives m_primitives[LodCount];
 #endif
+	render::Primitives m_primitives[LodCount];
 
 	uint32_t m_detailSkip;
 	uint32_t m_patchDim;

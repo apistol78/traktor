@@ -161,7 +161,7 @@ void Replicator::update(float dT)
 							float offsetAdjust = time - m_time;
 							if (offsetAdjust > c_maxOffsetAdjustError)
 							{
-								T_DEBUG(L"Corrupt time (" << time << L") from peer " << peerId << L"; package ignored");
+								log::error << L"Corrupt time (" << time << L") from peer " << peerId << L"; package ignored" << Endl;
 								continue;
 							}
 
@@ -190,7 +190,7 @@ void Replicator::update(float dT)
 						m_eventsIn.push_back(evt);
 					}
 					else
-						T_DEBUG(L"Too old package received from peer " << peerId << L"; package ignored");
+						log::warning << L"Too old package received from peer " << peerId << L"; package ignored" << Endl;
 				}
 			}
 			else if (msg.type == MtEvent)	// Event message.

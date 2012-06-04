@@ -44,6 +44,14 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 	);
 }
 
+void RigidEntityData::setTransform(const Transform& transform)
+{
+	if (m_entityData)
+		m_entityData->setTransform(transform);
+
+	world::EntityData::setTransform(transform);
+}
+
 bool RigidEntityData::serialize(ISerializer& s)
 {
 	if (!world::EntityData::serialize(s))

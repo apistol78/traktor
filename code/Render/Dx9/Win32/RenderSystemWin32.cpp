@@ -6,6 +6,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Render/VertexElement.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Dx9/ClearTarget.h"
 #include "Render/Dx9/CubeTextureDx9.h"
 #include "Render/Dx9/IndexBufferDx9.h"
 #include "Render/Dx9/ParameterCache.h"
@@ -153,6 +154,10 @@ bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
 	m_vertexDeclCache = new VertexDeclCache(m_d3dDevice);
 	m_maxAnisotropy = desc.maxAnisotropy;
 
+	m_clearTarget = new ClearTarget();
+	if (!m_clearTarget->create(m_d3dDevice))
+		return false;
+
 #if defined(T_USE_RENDER_MARKERS)
 	log::warning << L"Render markers enabled; should be disabled for RTM builds" << Endl;
 #endif
@@ -187,6 +192,9 @@ void RenderSystemWin32::destroy()
 		m_shaderCache->releaseAll();
 		m_shaderCache = 0;
 	}
+
+	if (m_clearTarget)
+		m_clearTarget = 0;
 
 	m_d3dDevice.release();
 	m_d3d.release();
@@ -232,6 +240,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewDefaultDe
 
 	Ref< RenderViewWin32 > renderView = new RenderViewDefaultWin32(
 		this,
+		m_clearTarget,
 		m_parameterCache,
 		m_d3dDevice,
 		m_d3d,
@@ -290,6 +299,7 @@ Ref< IRenderView > RenderSystemWin32::createRenderView(const RenderViewEmbeddedD
 
 	Ref< RenderViewWin32 > renderView = new RenderViewEmbeddedWin32(
 		this,
+		m_clearTarget,
 		m_parameterCache,
 		m_d3dDevice,
 		d3dPresent,

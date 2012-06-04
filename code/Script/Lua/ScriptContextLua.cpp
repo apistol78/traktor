@@ -1,4 +1,7 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
+#include "Core/Misc/WildCompare.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptResourceLua.h"
@@ -8,29 +11,45 @@ namespace traktor
 {
 	namespace script
 	{
+		namespace
+		{
+
+std::wstring translateSource(const source_map_t& map, int32_t line)
+{
+	StringOutputStream ss;
+	for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
+	{
+		if (line >= i->first)
+		{
+			ss << i->second << L"(" << (line - i->first + 1) << L")";
+			return ss.str();
+		}
+	}
+	ss << L"< No source >(" << (line + 1) << L")";
+	return ss.str();
+}
+
+void translateError(const char* error, const source_map_t& map)
+{
+	if (error)
+	{
+		WildCompare wc(L"[*]:*:*");
+		std::vector< std::wstring > pieces;
+		if (wc.match(mbstows(error), WildCompare::CmIgnoreCase, &pieces))
+		{
+			int32_t line = parseString< int32_t >(pieces[1]) - 1;
+			log::error << L"Lua runtime error: " << translateSource(map, line) << L": " << trim(pieces[2]) << Endl;
+		}
+		else
+			log::error << L"Lua runtime error: " << error << Endl;
+	}
+	else
+		log::error << L"Unknown lua runtime error" << Endl;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextLua", ScriptContextLua, IScriptContext)
-
-ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState)
-:	m_scriptManager(scriptManager)
-,	m_luaState(luaState)
-{
-	CHECK_LUA_STACK(m_luaState, 0);
-
-	// Create local environment.
-	lua_newtable(m_luaState);
-	m_environmentRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-
-	// Create table with __index as global environment.
-	lua_newtable(m_luaState);
-	lua_getglobal(m_luaState, "_G");
-	lua_setfield(m_luaState, -2, "__index");
-
-	// Setup "inheritance" with the global environment.
-	lua_setmetatable(m_luaState, -2);
-	lua_pop(m_luaState, 1);
-}
 
 ScriptContextLua::~ScriptContextLua()
 {
@@ -81,39 +100,6 @@ Any ScriptContextLua::getGlobal(const std::wstring& globalName)
 	return value;
 }
 
-bool ScriptContextLua::executeScript(const IScriptResource* scriptResource, const Guid& scriptGuid)
-{
-	CHECK_LUA_STACK(m_luaState, 0);
-
-	m_scriptManager->lock(this);
-
-	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua*, false >(scriptResource);
-	
-	const std::string& text = scriptResourceLua->getScript();
-	int32_t result = luaL_loadbuffer(
-		m_luaState,
-		text.c_str(),
-		text.length(),
-		wstombs(scriptGuid.format()).c_str()
-	);
-
-	if (result != 0)
-	{
-		log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
-		lua_pop(m_luaState, 1);
-		m_scriptManager->unlock();
-		return false;
-	}
-
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-	lua_setfenv(m_luaState, -2);
-	lua_call(m_luaState, 0, 0);
-
-	m_scriptManager->unlock();
-
-	return true;
-}
-
 bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
 {
 	CHECK_LUA_STACK(m_luaState, 0);
@@ -149,8 +135,8 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 			returnValue = m_scriptManager->toAny(-1);
 		else
 		{
-			log::error << L"LUA RUNTIME ERROR; \"" << mbstows(lua_tostring(m_luaState, lua_gettop(m_luaState))) << L"\"" << Endl;
-			lua_pop(m_luaState, 1);
+			const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
+			translateError(err, m_map);
 		}
 	}
 
@@ -188,8 +174,7 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 		else
 		{
 			const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
-			log::error << L"LUA RUNTIME ERROR; \"" << mbstows(err ? err : "<null>") << L"\"" << Endl;
-			lua_pop(m_luaState, 1);
+			translateError(err, m_map);
 		}
 	}
 
@@ -197,6 +182,14 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 
 	m_scriptManager->unlock();
 	return returnValue;
+}
+
+ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, const source_map_t& map)
+:	m_scriptManager(scriptManager)
+,	m_luaState(luaState)
+,	m_environmentRef(environmentRef)
+,	m_map(map)
+{
 }
 
 	}

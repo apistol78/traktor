@@ -203,6 +203,11 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 	return true;
 }
 
+bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet)
+{
+	return false;
+}
+
 bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
@@ -229,7 +234,7 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 	return true;
 }
 
-void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+void RenderViewOpenGLES2::clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil)
 {
 	const GLuint c_clearMask[] =
 	{
@@ -256,10 +261,10 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const float color[4], float 
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
 		m_stateCache->setColorMask(RenderState::CmAll);
-		float r = color[0];
-		float g = color[1];
-		float b = color[2];
-		float a = color[3];
+		float r = colors[0].getRed();
+		float g = colors[0].getGreen();
+		float b = colors[0].getBlue();
+		float a = colors[0].getAlpha();
 		T_OGL_SAFE(glClearColor(r, g, b, a));
 	}
 

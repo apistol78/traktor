@@ -68,6 +68,7 @@ Application::Application()
 :	m_threadDatabase(0)
 ,	m_threadRender(0)
 ,	m_renderViewActive(true)
+,	m_backgroundColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_updateDuration(0.0f)
 ,	m_buildDuration(0.0f)
 ,	m_renderDuration(0.0f)
@@ -79,10 +80,6 @@ Application::Application()
 ,	m_fps(0.0f)
 #endif
 {
-	m_backgroundColor[0] = 0.0f;
-	m_backgroundColor[1] = 0.0f;
-	m_backgroundColor[2] = 0.0f;
-	m_backgroundColor[3] = 0.0f;
 }
 
 bool Application::create(
@@ -673,7 +670,7 @@ bool Application::update()
 							{
 								renderView->clear(
 									render::CfColor | render::CfDepth | render::CfStencil,
-									m_backgroundColor,
+									&m_backgroundColor,
 									1.0f,
 									0
 								);
@@ -693,7 +690,7 @@ bool Application::update()
 							{
 								renderView->clear(
 									render::CfColor | render::CfDepth | render::CfStencil,
-									m_backgroundColor,
+									&m_backgroundColor,
 									1.0f,
 									0
 								);
@@ -709,7 +706,7 @@ bool Application::update()
 							{
 								renderView->clear(
 									render::CfColor | render::CfDepth | render::CfStencil,
-									m_backgroundColor,
+									&m_backgroundColor,
 									1.0f,
 									0
 								);
@@ -876,7 +873,7 @@ void Application::threadRender()
 						{
 							renderView->clear(
 								render::CfColor | render::CfDepth | render::CfStencil,
-								m_backgroundColor,
+								&m_backgroundColor,
 								1.0f,
 								0
 							);
@@ -896,7 +893,7 @@ void Application::threadRender()
 						{
 							renderView->clear(
 								render::CfColor | render::CfDepth | render::CfStencil,
-								m_backgroundColor,
+								&m_backgroundColor,
 								1.0f,
 								0
 							);
@@ -912,7 +909,7 @@ void Application::threadRender()
 						{
 							renderView->clear(
 								render::CfColor | render::CfDepth | render::CfStencil,
-								m_backgroundColor,
+								&m_backgroundColor,
 								1.0f,
 								0
 							);

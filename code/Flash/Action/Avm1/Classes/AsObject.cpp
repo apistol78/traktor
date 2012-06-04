@@ -74,9 +74,15 @@ bool AsObject::Object_isPrototypeOf(const ActionObject* self) const
 
 void AsObject::Object_registerClass(CallArgs& ca)
 {
-	Ref< ActionObject > global = ca.context->getGlobal();
-	std::string movieClipName = ca.args[0].getString();
+	if (ca.args.size() < 1)
+	{
+		ca.ret = ActionValue(false);
+		return;
+	}
 
+	Ref< ActionObject > global = ca.context->getGlobal();
+
+	std::string movieClipName = ca.args[0].getString();
 	uint32_t movieClipNameId = ca.context->getString(movieClipName);
 	
 	if (ca.args.size() >= 2)

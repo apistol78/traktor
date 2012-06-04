@@ -50,22 +50,52 @@ struct TextureFormatInfo
 c_textureFormatInfo[] =
 {
 	{ L"TfInvalid", 0, 0 },
+
 	{ L"TfR8", 1, 1 },
 	{ L"TfR8G8B8A8", 4, 1 },
 	{ L"TfR5G6B5", 2, 1 },
 	{ L"TfR5G5B5A1", 2, 1 },
 	{ L"TfR4G4B4A4", 2, 1 },
+
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+
 	{ L"TfR16G16B16A16F", 8, 1 },
 	{ L"TfR32G32B32A32F", 16, 1 },
 	{ L"TfR16G16F", 4, 1 },
 	{ L"TfR32G32F", 8, 1 },
 	{ L"TfR16F", 2, 1 },
 	{ L"TfR32F", 4, 1 },
+	{ L"TfR11G11B10F", 4, 1 },
+
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+
 	{ L"TfDXT1", 8, 4 },
 	{ L"TfDXT2", 16, 4 },
 	{ L"TfDXT3", 16, 4 },
 	{ L"TfDXT4", 16, 4 },
 	{ L"TfDXT5", 16, 4 },
+
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+	{ L"TfInvalid", 0, 0 },
+
 	{ L"TfPVRTC1", 2, 2 },
 	{ L"TfPVRTC2", 2, 4 },
 	{ L"TfPVRTC3", 2, 2 },

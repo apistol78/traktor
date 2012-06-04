@@ -75,9 +75,11 @@ public:
 
 	virtual bool begin(EyeType eye);
 
+	virtual bool begin(RenderTargetSet* renderTargetSet);
+
 	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);
 
-	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
+	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil);
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives);
 
@@ -95,7 +97,7 @@ private:
 	struct RenderState
 	{
 		D3D11_VIEWPORT d3dViewport;
-		ID3D11RenderTargetView* d3dRenderView;
+		ID3D11RenderTargetView* d3dRenderView[2];
 		ID3D11DepthStencilView* d3dDepthStencilView;
 		int32_t targetSize[2];
 	};

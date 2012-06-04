@@ -59,6 +59,7 @@ bool PostProcessDefineTarget::serialize(ISerializer& s)
 		{ L"TfR32G32B32A32F", render::TfR32G32B32A32F },
 		{ L"TfR16F", render::TfR16F },
 		{ L"TfR32F", render::TfR32F },
+		{ L"TfR11G11B10F", render::TfR11G11B10F },
 		{ 0, 0 }
 	};
 

@@ -37,7 +37,7 @@ public:
 
 	virtual ~ProgramDx11();
 
-	bool create(ID3D11Device* d3dDevice, StateCache& stateCache, const ProgramResourceDx11* resource, float mipBias);
+	bool create(ID3D11Device* d3dDevice, StateCache& stateCache, const ProgramResourceDx11* resource, float mipBias, int32_t maxAnisotropy);
 
 	virtual void destroy();
 
@@ -89,7 +89,7 @@ private:
 
 	struct State
 	{
-		ComRef< ID3D11Buffer > d3dConstantBuffer[4];
+		ComRef< ID3D11Buffer > d3dConstantBuffer[8];
 		ComRefArray< ID3D11SamplerState > d3dSamplerStates;
 		std::vector< ParameterOffset > parameterFloatOffsets;
 		std::vector< std::pair< UINT, uint32_t > > resourceIndices;
@@ -119,6 +119,7 @@ private:
 	bool createState(
 		ID3D11Device* d3dDevice,
 		float mipBias,
+		int32_t maxAnisotropy,
 		ID3DBlob* d3dShaderBlob,
 		const std::map< std::wstring, D3D11_SAMPLER_DESC >& d3dSamplers,
 		State& outState

@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Platform.h"
+#include "Core/Math/Color4f.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -97,6 +98,13 @@ public:
 	 */
 	virtual bool begin(EyeType eye) = 0;
 
+	/*! \brief Begin rendering to all render targets in set.
+	 *
+	 * \param renderTargetSet Set of render targets.
+	 * \return True if successful.
+	 */
+	virtual bool begin(RenderTargetSet* renderTargetSet) = 0;
+
 	/*! \brief Begin rendering to a render target set.
 	 *
 	 * \param renderTargetSet Set of render targets.
@@ -108,11 +116,11 @@ public:
 	/*! \brief Clear current target.
 	 *
 	 * \param clearMask Combination of ClearFlags.
-	 * \param color Clear color value.
+	 * \param colors Clear color values; must be one color for each bound target.
 	 * \param depth Clear depth value.
 	 * \param stencil Clear stencil value.
 	 */
-	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil) = 0;
+	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil) = 0;
 
 	/*! \brief Draw primitives.
 	 *

@@ -44,14 +44,12 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 	if (!resourceManager->bind(terrainResource->getHeightMap(), terrain->m_heightMap))
 		return 0;
 
-	const std::vector< resource::Id< render::Shader > >& surfaceLayers = terrainResource->getSurfaceLayers();
-	
-	terrain->m_surfaceLayers.resize(surfaceLayers.size());
-	for (size_t i = 0; i < surfaceLayers.size(); ++i)
-	{
-		if (!resourceManager->bind(surfaceLayers[i], terrain->m_surfaceLayers[i]))
-			return 0;
-	}
+	if (!resourceManager->bind(terrainResource->getTerrainCoarseShader(), terrain->m_terrainCoarseShader))
+		return 0;
+	if (!resourceManager->bind(terrainResource->getTerrainDetailShader(), terrain->m_terrainDetailShader))
+		return 0;
+	if (!resourceManager->bind(terrainResource->getSurfaceShader(), terrain->m_surfaceShader))
+		return 0;
 
 	return terrain;
 }

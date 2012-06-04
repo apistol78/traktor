@@ -129,8 +129,8 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 	{
 		renderView->begin(m_worldTarget, 0);
 
-		const float clearColor[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-		renderView->clear(render::CfColor | render::CfDepth, clearColor, 1.0f, 0);
+		const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
 	}
 
 	m_worldRenderer->render(
@@ -293,7 +293,7 @@ void WorldLayer::createWorldRenderer()
 		))
 		{
 			m_worldTarget = m_environment->getRender()->createOffscreenTarget(
-				m_postProcess->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8,
+				m_postProcess->requireHighRange() ? render::TfR11G11B10F : render::TfR8G8B8A8,
 				false,
 				true
 			);

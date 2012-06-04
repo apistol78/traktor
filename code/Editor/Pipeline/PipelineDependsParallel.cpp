@@ -97,6 +97,28 @@ void PipelineDependsParallel::addDependency(const Path& fileName)
 		parentDependency->files.insert(fileName);
 }
 
+void PipelineDependsParallel::addDependency(
+	const TypeInfo& sourceAssetType
+)
+{
+	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
+	if (parentDependency)
+	{
+		Ref< IPipeline > pipeline;
+		uint32_t pipelineHash;
+
+		// Find pipeline which consume asset type.
+		if (!m_pipelineFactory->findPipeline(sourceAssetType, pipeline, pipelineHash))
+		{
+			log::error << L"Unable to add dependency to \"" << sourceAssetType.getName() << L"\"; no pipeline found" << Endl;
+			return;
+		}
+
+		// Merge hash of dependent pipeline with parent pipeline hash.
+		parentDependency->pipelineHash += pipelineHash;
+	}
+}
+
 bool PipelineDependsParallel::waitUntilFinished()
 {
 	return m_jobQueue->wait();

@@ -1,3 +1,4 @@
+#include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Online/IAchievements.h"
 #include "Online/ILeaderboards.h"
@@ -7,6 +8,7 @@
 #include "Online/ISessionManager.h"
 #include "Online/IStatistics.h"
 #include "Online/IUser.h"
+#include "Online/LobbyFilter.h"
 #include "Parade/Classes/OnlineClasses.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
@@ -18,6 +20,62 @@ namespace traktor
 	{
 		namespace
 		{
+
+bool translateComparison(const std::wstring& comparison, online::LobbyFilter::ComparisonType& outComparison)
+{
+	if (compareIgnoreCase< std::wstring >(comparison, L"Equal") == 0)
+		outComparison = online::LobbyFilter::CtEqual;
+	else if (compareIgnoreCase< std::wstring >(comparison, L"NotEqual") == 0)
+		outComparison = online::LobbyFilter::CtNotEqual;
+	else if (compareIgnoreCase< std::wstring >(comparison, L"Less") == 0)
+		outComparison = online::LobbyFilter::CtLess;
+	else if (compareIgnoreCase< std::wstring >(comparison, L"LessEqual") == 0)
+		outComparison = online::LobbyFilter::CtLessEqual;
+	else if (compareIgnoreCase< std::wstring >(comparison, L"Greater") == 0)
+		outComparison = online::LobbyFilter::CtGreater;
+	else if (compareIgnoreCase< std::wstring >(comparison, L"GreaterEqual") == 0)
+		outComparison = online::LobbyFilter::CtGreaterEqual;
+	else
+		return false;
+
+	return true;
+}
+
+bool online_LobbyFilter_addStringComparison(online::LobbyFilter* self, const std::wstring& key, const std::wstring& value, const std::wstring& comparison)
+{
+	online::LobbyFilter::ComparisonType ct;
+	if (!translateComparison(comparison, ct))
+		return false;
+
+	self->addComparison(key, value, ct);
+	return true;
+}
+
+bool online_LobbyFilter_addNumberComparison(online::LobbyFilter* self, const std::wstring& key, int32_t value, const std::wstring& comparison)
+{
+	online::LobbyFilter::ComparisonType ct;
+	if (!translateComparison(comparison, ct))
+		return false;
+
+	self->addComparison(key, value, ct);
+	return true;
+}
+
+bool online_LobbyFilter_setDistance(online::LobbyFilter* self, const std::wstring& distance)
+{
+	if (compareIgnoreCase< std::wstring >(distance, L"Local"))
+		self->setDistance(online::LobbyFilter::DtLocal);
+	else if (compareIgnoreCase< std::wstring >(distance, L"Near"))
+		self->setDistance(online::LobbyFilter::DtNear);
+	else if (compareIgnoreCase< std::wstring >(distance, L"Far"))
+		self->setDistance(online::LobbyFilter::DtFar);
+	else if (compareIgnoreCase< std::wstring >(distance, L"Infinity"))
+		self->setDistance(online::LobbyFilter::DtInfinity);
+	else
+		return false;
+
+	return true;
+}
 
 std::vector< std::wstring > online_IAchievements_enumerate(online::IAchievements* self)
 {
@@ -134,6 +192,14 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classUserArrayResult->addMethod(L"succeed", &online::UserArrayResult::succeed);
 	classUserArrayResult->addMethod(L"get", &online::UserArrayResult::get);
 	scriptManager->registerClass(classUserArrayResult);
+
+	Ref< script::AutoScriptClass< online::LobbyFilter > > classLobbyFilter = new script::AutoScriptClass< online::LobbyFilter >();
+	classLobbyFilter->addConstructor();
+	classLobbyFilter->addMethod(L"addStringComparison", &online_LobbyFilter_addStringComparison);
+	classLobbyFilter->addMethod(L"addNumberComparison", &online_LobbyFilter_addNumberComparison);
+	classLobbyFilter->addMethod(L"setDistance", &online_LobbyFilter_setDistance);
+	classLobbyFilter->addMethod(L"setCount", &online::LobbyFilter::setCount);
+	scriptManager->registerClass(classLobbyFilter);
 
 	Ref< script::AutoScriptClass< online::IAchievements > > classIAchievements = new script::AutoScriptClass< online::IAchievements >();
 	classIAchievements->addMethod(L"ready", &online::IAchievements::ready);

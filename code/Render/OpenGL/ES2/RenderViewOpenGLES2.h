@@ -69,9 +69,11 @@ public:
 
 	virtual bool begin(EyeType eye);
 
+	virtual bool begin(RenderTargetSet* renderTargetSet);
+
 	virtual bool begin(RenderTargetSet* renderTargetSet, int renderTarget);
 
-	virtual void clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil);
+	virtual void clear(uint32_t clearMask, const Color4f* colors, float depth, int32_t stencil);
 
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives);
 

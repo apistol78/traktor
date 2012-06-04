@@ -2,6 +2,7 @@
 #define traktor_render_RenderBlock_H
 
 #include "Core/Config.h"
+#include "Core/Math/Color4f.h"
 #include "Render/Types.h"
 
 // import/export mechanism.
@@ -163,20 +164,17 @@ class T_DLLCLASS TargetClearRenderBlock : public RenderBlock
 {
 public:
 	uint32_t clearMask;
-	float clearColor[4];
+	Color4f clearColor;
 	float clearDepth;
 	uint8_t clearStencil;
 
 	TargetClearRenderBlock()
 	:	RenderBlock()
 	,	clearMask(0)
+	,	clearColor(0.0f, 0.0f, 0.0f, 0.0f)
 	,	clearDepth(1.0f)
 	,	clearStencil(0)
 	{
-		clearColor[0] =
-		clearColor[1] =
-		clearColor[2] =
-		clearColor[3] = 0.0f;
 	}
 
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;

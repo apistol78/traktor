@@ -13,14 +13,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskFindMatchingLobbies", TaskFindMatchi
 TaskFindMatchingLobbies::TaskFindMatchingLobbies(
 	IMatchMakingProvider* matchMakingProvider,
 	UserCache* userCache,
-	const std::wstring& key,
-	const std::wstring& value,
+	const LobbyFilter* filter,
 	LobbyArrayResult* result
 )
 :	m_matchMakingProvider(matchMakingProvider)
 ,	m_userCache(userCache)
-,	m_key(key)
-,	m_value(value)
+,	m_filter(filter)
 ,	m_result(result)
 {
 }
@@ -32,7 +30,7 @@ void TaskFindMatchingLobbies::execute(TaskQueue* taskQueue)
 	T_ASSERT (m_result);
 
 	std::vector< uint64_t > providerLobbies;
-	if (m_matchMakingProvider->findMatchingLobbies(m_key, m_value, providerLobbies))
+	if (m_matchMakingProvider->findMatchingLobbies(m_filter, providerLobbies))
 	{
 		RefArray< ILobby > lobbies;
 		lobbies.reserve(providerLobbies.size());

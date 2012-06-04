@@ -11,12 +11,20 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainAsset", 0, TerrainAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainAsset", 1, TerrainAsset, ISerializable)
 
 bool TerrainAsset::serialize(ISerializer& s)
 {
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
-	s >> MemberStlVector< resource::Id< render::Shader >, resource::Member< render::Shader > >(L"surfaceLayers", m_surfaceLayers);
+	if (s.getVersion() >= 1)
+		s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
+	else
+	{
+		std::vector< resource::Id< render::Shader > > surfaceLayers;
+		s >> MemberStlVector< resource::Id< render::Shader >, resource::Member< render::Shader > >(L"surfaceLayers", surfaceLayers);
+		if (!surfaceLayers.empty())
+			m_surfaceShader = surfaceLayers.front();
+	}
 	return true;
 }
 

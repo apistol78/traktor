@@ -42,10 +42,12 @@ class T_DLLCLASS IPipelineDepends : public Object
 	T_RTTI_CLASS;
 
 public:
+	/*! \brief Add dependency to source asset; will not produce any output. */
 	virtual void addDependency(
 		const ISerializable* sourceAsset
 	) = 0;
 
+	/*! \brief Add dependency to source asset. */
 	virtual void addDependency(
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
@@ -53,27 +55,45 @@ public:
 		uint32_t flags
 	) = 0;
 
+	/*! \brief Add dependency to source asset. */
 	virtual void addDependency(
 		db::Instance* sourceAssetInstance,
 		uint32_t flags
 	) = 0;
 
+	/*! \brief Add dependency to source asset. */
 	virtual void addDependency(
 		const Guid& sourceAssetGuid,
 		uint32_t flags
 	) = 0;
 
+	/*! \brief Add dependency to physical file. */
 	virtual void addDependency(
 		const Path& fileName
 	) = 0;
 
+	/*! \brief Add dependency to pipeline which consume source assets of specified type. */
+	virtual void addDependency(
+		const TypeInfo& sourceAssetType
+	) = 0;
+
+	/*! \brief Wait until all dependency processing is complete before returning. */
 	virtual bool waitUntilFinished() = 0;
 
+	/*! \brief Get all generated dependencies. */
 	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const = 0;
 
+	/*! \brief Get access to source database. */
 	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
+	/*! \brief Get read-only copy of source instance. */
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
+
+	template < typename T >
+	void addDependency()
+	{
+		addDependency(type_of< T >());
+	}
 
 	template < typename T >
 	Ref< const T > getObjectReadOnly(const Guid& guid)

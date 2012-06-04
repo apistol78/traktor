@@ -107,25 +107,21 @@ private:
 	struct Frame
 	{
 		Slice slice[MaxSliceCount];
-		Ref< WorldContext > depth;
-		Ref< WorldContext > normal;
+		Ref< WorldContext > gbuffer;
 		Ref< WorldContext > visual;
 
 		Matrix44 projection;
 		Matrix44 view;
 		Frustum viewFrustum;
-		//Vector4 eyePosition;
 
 		Light lights[MaxLightCount];
 		uint32_t lightCount;
 
-		bool haveDepth;
-		bool haveNormal;
+		bool haveGBuffer;
 		bool haveShadows[MaxLightCount];
 
 		Frame()
-		:	haveDepth(false)
-		,	haveNormal(false)
+		:	haveGBuffer(false)
 		,	lightCount(0)
 		{
 			for (uint32_t i = 0; i < MaxLightCount; ++i)
@@ -134,8 +130,7 @@ private:
 	};
 
 	static render::handle_t ms_techniquePreLitColor;
-	static render::handle_t ms_techniqueDepth;
-	static render::handle_t ms_techniqueNormal;
+	static render::handle_t ms_techniqueGBuffer;
 	static render::handle_t ms_techniqueShadow;
 	static render::handle_t ms_handleTime;
 	static render::handle_t ms_handleProjection;
@@ -143,8 +138,7 @@ private:
 	WorldRenderSettings m_settings;
 	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::IRenderView > m_renderView;
-	Ref< render::RenderTargetSet > m_depthTargetSet;
-	Ref< render::RenderTargetSet > m_normalTargetSet;
+	Ref< render::RenderTargetSet > m_gbufferTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
 	RefArray< render::RenderTargetSet > m_shadowMaskFilterTargetSet;

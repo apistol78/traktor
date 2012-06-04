@@ -1,6 +1,9 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -16,38 +19,34 @@ namespace traktor
 		namespace
 		{
 
-Script* resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Script* unresolvedScript)
+bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& scriptGuid, std::list< std::pair< std::wstring, Ref< const Script > > >& outScripts)
 {
-	const std::vector< Guid >& dependencies = unresolvedScript->getDependencies();
-	if (dependencies.empty())
-	{
-		return new Script(
-			unresolvedScript->getText()
-		);
-	}
+	Ref< db::Instance > scriptInstance = pipelineBuilder->getSourceDatabase()->getInstance(scriptGuid);
+	if (!scriptInstance)
+		return false;
 
-	StringOutputStream ss;
+	Ref< const Script > script = scriptInstance->getObject< Script >();
+	if (!script)
+		return false;
+
+	const std::vector< Guid >& dependencies = script->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
-		Ref< const Script > unresolvedDependency = pipelineBuilder->getObjectReadOnly< Script >(*i);
-		if (!unresolvedDependency)
-			return 0;
-
-		Ref< Script > resolvedDependency = resolveScript(pipelineBuilder, unresolvedDependency);
-		if (!resolvedDependency)
-			return 0;
-
-		ss << resolvedDependency->getText() << Endl << Endl;
+		if (!resolveScript(pipelineBuilder, *i, outScripts))
+			return false;
 	}
 
-	ss << unresolvedScript->getText();
+	outScripts.push_back(std::make_pair(
+		scriptInstance->getName(),
+		script
+	));
 
-	return new Script(ss.str());
+	return true;
 }
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 3, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 4, ScriptPipeline, editor::DefaultPipeline)
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -102,18 +101,32 @@ bool ScriptPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< const Script > sourceScript = checked_type_cast< const Script* >(sourceAsset);
-
-	// Resolve script; ie. concate all dependent scripts.
-	Ref< Script > script = resolveScript(pipelineBuilder, sourceScript);
-	if (!script)
+	// Create ordered list of dependent scripts.
+	std::list< std::pair< std::wstring, Ref< const Script > > > scripts;
+	if (!resolveScript(pipelineBuilder, outputGuid, scripts))
 	{
 		log::error << L"Script pipeline failed; unable to resolve script dependencies" << Endl;
 		return false;
 	}
 
+	// Concate all scripts into a single script; generate a map with line numbers to corresponding source.
+	script::source_map_t sm;
+	StringOutputStream ss;
+	int32_t line = 0;
+
+	for (std::list< std::pair< std::wstring, Ref< const Script > > >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
+	{
+		sm.push_back(std::make_pair(line, i->first));
+		StringSplit< std::wstring > split(i->second->getText(), L"\r\n");
+		for (StringSplit< std::wstring >::const_iterator j = split.begin(); j != split.end(); ++j)
+		{
+			ss << *j << Endl;
+			++line;
+		}
+	}
+
 	// Compile script; save binary blobs if possible.
-	Ref< IScriptResource > resource = m_scriptManager->compile(script->getText(), true, 0);
+	Ref< IScriptResource > resource = m_scriptManager->compile(ss.str(), &sm, 0);
 	if (!resource)
 	{
 		log::error << L"Script pipeline failed; unable to compile script" << Endl;

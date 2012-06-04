@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/Format.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberEnum.h"
@@ -927,9 +928,9 @@ bool OutputPort::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 3, PixelOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 4, PixelOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, 0 };
 
 PixelOutput::PixelOutput()
 :	ImmutableNode(c_PixelOutput_i, 0)
@@ -946,6 +947,7 @@ PixelOutput::PixelOutput()
 ,	m_alphaTestEnable(false)
 ,	m_alphaTestFunction(CfLess)
 ,	m_alphaTestReference(128)
+,	m_alphaToCoverageEnable(false)
 ,	m_wireframe(false)
 ,	m_stencilEnable(false)
 ,	m_stencilFail(SoKeep)
@@ -1086,6 +1088,16 @@ void PixelOutput::setAlphaTestReference(int alphaRef)
 int32_t PixelOutput::getAlphaTestReference() const
 {
 	return m_alphaTestReference;
+}
+
+void PixelOutput::setAlphaToCoverageEnable(bool enable)
+{
+	m_alphaToCoverageEnable = enable;
+}
+
+bool PixelOutput::getAlphaToCoverageEnable() const
+{
+	return m_alphaToCoverageEnable;
 }
 
 void PixelOutput::setWireframe(bool wireframe)
@@ -1270,10 +1282,11 @@ bool PixelOutput::serialize(ISerializer& s)
 	s >> MemberEnum< CompareFunction >(L"alphaTestFunction", m_alphaTestFunction, kCompareFunctions);
 	s >> Member< int32_t >(L"alphaTestReference", m_alphaTestReference);
 
+	if (s.getVersion() >= 4)
+		s >> Member< bool >(L"alphaToCoverageEnable", m_alphaToCoverageEnable);
+
 	if (s.getVersion() >= 1)
-	{
 		s >> Member< bool >(L"wireframe", m_wireframe);
-	}
 
 	if (s.getVersion() >= 2)
 	{
@@ -1287,9 +1300,7 @@ bool PixelOutput::serialize(ISerializer& s)
 	}
 
 	if (s.getVersion() >= 3)
-	{
 		s >> Member< uint32_t >(L"registerCount", m_registerCount);
-	}
 
 	return true;
 }
@@ -1356,7 +1367,7 @@ Reflect::Reflect()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 0, Sampler, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 1, Sampler, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
@@ -1376,6 +1387,7 @@ Sampler::Sampler(
 ,	m_addressU(addressU)
 ,	m_addressV(addressV)
 ,	m_addressW(addressW)
+,	m_mipBias(0.0f)
 {
 }
 
@@ -1439,6 +1451,16 @@ Sampler::Address Sampler::getAddressW()
 	return m_addressW;
 }
 
+void Sampler::setMipBias(float mipBias)
+{
+	m_mipBias = mipBias;
+}
+
+float Sampler::getMipBias() const
+{
+	return m_mipBias;
+}
+
 bool Sampler::serialize(ISerializer& s)
 {
 	const MemberEnum< Filter >::Key kFilter[] =
@@ -1466,6 +1488,9 @@ bool Sampler::serialize(ISerializer& s)
 	s >> MemberEnum< Address >(L"addressU", m_addressU, kAddress);
 	s >> MemberEnum< Address >(L"addressV", m_addressV, kAddress);
 	s >> MemberEnum< Address >(L"addressW", m_addressW, kAddress);
+
+	if (s.getVersion() >= 1)
+		s >> Member< float >(L"mipBias", m_mipBias);
 
 	return true;
 }

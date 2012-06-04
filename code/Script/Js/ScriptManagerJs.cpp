@@ -30,15 +30,15 @@ void ScriptManagerJs::registerClass(IScriptClass* scriptClass)
 	m_registeredClasses.push_back(scriptClass);
 }
 
-Ref< IScriptResource > ScriptManagerJs::compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const
+Ref< IScriptResource > ScriptManagerJs::compile(const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
 {
 	return new ScriptResourceJs(script);
 }
 
-Ref< IScriptContext > ScriptManagerJs::createContext()
+Ref< IScriptContext > ScriptManagerJs::createContext(const IScriptResource* scriptResource)
 {
 	Ref< ScriptContextJs > scriptContext = new ScriptContextJs();
-	if (!scriptContext->create(m_registeredClasses))
+	if (!scriptContext->create(m_registeredClasses, scriptResource))
 		return 0;
 	return scriptContext;
 }

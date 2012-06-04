@@ -446,6 +446,11 @@ bool RenderViewDx10::begin(EyeType eye)
 	return true;
 }
 
+bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet)
+{
+	return false;
+}
+
 bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_ASSERT (!m_renderStateStack.empty());
@@ -474,14 +479,18 @@ bool RenderViewDx10::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	return true;
 }
 
-void RenderViewDx10::clear(uint32_t clearMask, const float color[4], float depth, int32_t stencil)
+void RenderViewDx10::clear(uint32_t clearMask, const Color4f* color, float depth, int32_t stencil)
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
 	const RenderState& rs = m_renderStateStack.back();
 
 	if (rs.d3dRenderView && (clearMask & CfColor) == CfColor)
-		m_context->getD3DDevice()->ClearRenderTargetView(rs.d3dRenderView, color);
+	{
+		float T_MATH_ALIGN16 tmp[4];
+		color->storeAligned(tmp);
+		m_context->getD3DDevice()->ClearRenderTargetView(rs.d3dRenderView, tmp);
+	}
 
 	if (rs.d3dDepthStencilView && (clearMask & CfDepth) == CfDepth)
 		m_context->getD3DDevice()->ClearDepthStencilView(rs.d3dDepthStencilView, D3D10_CLEAR_DEPTH, depth, stencil);

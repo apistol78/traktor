@@ -47,8 +47,7 @@ const static float c_screenPlaneDistance = 13.0f;
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererPreLit", 0, WorldRendererPreLit, IWorldRenderer)
 
 render::handle_t WorldRendererPreLit::ms_techniquePreLitColor = 0;
-render::handle_t WorldRendererPreLit::ms_techniqueDepth = 0;
-render::handle_t WorldRendererPreLit::ms_techniqueNormal = 0;
+render::handle_t WorldRendererPreLit::ms_techniqueGBuffer = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueShadow = 0;
 render::handle_t WorldRendererPreLit::ms_handleProjection = 0;
 
@@ -57,8 +56,7 @@ WorldRendererPreLit::WorldRendererPreLit()
 {
 	// Techniques
 	ms_techniquePreLitColor = render::getParameterHandle(L"World_PreLitColor");
-	ms_techniqueDepth = render::getParameterHandle(L"World_DepthWrite");
-	ms_techniqueNormal = render::getParameterHandle(L"World_NormalWrite");
+	ms_techniqueGBuffer = render::getParameterHandle(L"World_GBufferWrite");
 	ms_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
@@ -88,72 +86,36 @@ bool WorldRendererPreLit::create(
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
 
-	// Create "depth map" target.
+	// Create "gbuffer" targets.
 	{
 		render::RenderTargetSetCreateDesc desc;
 
-		desc.count = 1;
+		desc.count = 2;
 		desc.width = width;
 		desc.height = height;
 		desc.multiSample = multiSample;
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = true;
 		desc.preferTiled = true;
-#if !defined(_PS3)
-		desc.targets[0].format = render::TfR16F;
-#else
-		desc.targets[0].format = render::TfR8G8B8A8;
-#endif
+		desc.targets[0].format = render::TfR16F;		// Depth
+		desc.targets[1].format = render::TfR8G8B8A8;	// Normals
 
-		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_gbufferTargetSet = renderSystem->createRenderTargetSet(desc);
 
-		if (!m_depthTargetSet && multiSample > 0)
+		if (!m_gbufferTargetSet && multiSample > 0)
 		{
 			desc.multiSample = 0;
 			desc.createDepthStencil = true;
 			desc.usingPrimaryDepthStencil = false;
 
-			m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
-			if (m_depthTargetSet)
+			m_gbufferTargetSet = renderSystem->createRenderTargetSet(desc);
+			if (m_gbufferTargetSet)
 				log::warning << L"MSAA depth render target unsupported; may cause poor performance" << Endl;
 		}
 
-		if (!m_depthTargetSet)
+		if (!m_gbufferTargetSet)
 		{
 			log::error << L"Unable to create depth render target" << Endl;
-			return false;
-		}
-	}
-
-	// Create "normal map" targets.
-	{
-		render::RenderTargetSetCreateDesc desc;
-
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = multiSample;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR8G8B8A8;
-
-		m_normalTargetSet = renderSystem->createRenderTargetSet(desc);
-
-		if (!m_normalTargetSet && multiSample > 0)
-		{
-			desc.multiSample = 0;
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
-
-			m_normalTargetSet = renderSystem->createRenderTargetSet(desc);
-			if (m_normalTargetSet)
-				log::warning << L"MSAA normal render target unsupported; may cause poor performance" << Endl;
-		}
-
-		if (!m_normalTargetSet)
-		{
-			log::error << L"Unable to create normal render target" << Endl;
 			return false;
 		}
 	}
@@ -186,11 +148,7 @@ bool WorldRendererPreLit::create(
 		desc.createDepthStencil = true;
 		desc.usingPrimaryDepthStencil = false;
 		desc.preferTiled = true;
-#if !defined(_PS3)
 		desc.targets[0].format = render::TfR16F;
-#else
-		desc.targets[0].format = render::TfR8G8B8A8;
-#endif
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		// Determine shadow mask size; high quality is same as entire screen.
@@ -366,16 +324,10 @@ bool WorldRendererPreLit::create(
 		}
 	}
 
-	// Allocate "depth" context.
+	// Allocate "gbuffer" context.
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->depth = new WorldContext(entityRenderers);
-	}
-
-	// Allocate "normal" context.
-	{
-		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->normal = new WorldContext(entityRenderers);
+			i->gbuffer = new WorldContext(entityRenderers);
 	}
 
 	// Allocate "shadow" contexts.
@@ -433,8 +385,7 @@ void WorldRendererPreLit::destroy()
 		}
 
 		i->visual = 0;
-		i->depth = 0;
-		i->normal = 0;
+		i->gbuffer = 0;
 	}
 
 	safeDestroy(m_shadowMaskFilter);
@@ -443,8 +394,7 @@ void WorldRendererPreLit::destroy()
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_lightMapTargetSet);
-	safeDestroy(m_normalTargetSet);
-	safeDestroy(m_depthTargetSet);
+	safeDestroy(m_gbufferTargetSet);
 
 	m_renderView = 0;
 }
@@ -481,11 +431,8 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 	Frame& f = m_frames[frame];
 
 	// Flush previous frame.
-	if (f.haveDepth)
-		f.depth->getRenderContext()->flush();
-
-	if (f.haveNormal)
-		f.normal->getRenderContext()->flush();
+	if (f.haveGBuffer)
+		f.gbuffer->getRenderContext()->flush();
 
 	for (uint32_t i = 0; i < f.lightCount; ++i)
 	{
@@ -498,34 +445,19 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 	f.visual->getRenderContext()->flush();
 
-	// Build depth context.
+	// Build gbuffer context.
 	{
-		WorldRenderView depthRenderView = worldRenderView;
-		depthRenderView.resetLights();
+		WorldRenderView gbufferRenderView = worldRenderView;
+		gbufferRenderView.resetLights();
 
-		WorldRenderPassPreLit depthPass(
-			ms_techniqueDepth,
-			depthRenderView
+		WorldRenderPassPreLit gbufferPass(
+			ms_techniqueGBuffer,
+			gbufferRenderView
 		);
-		f.depth->build(depthRenderView, depthPass, entity);
-		f.depth->flush(depthRenderView, depthPass);
+		f.gbuffer->build(gbufferRenderView, gbufferPass, entity);
+		f.gbuffer->flush(gbufferRenderView, gbufferPass);
 
-		f.haveDepth = true;
-	}
-
-	// Build normal context.
-	{
-		WorldRenderView normalRenderView = worldRenderView;
-		normalRenderView.resetLights();
-
-		WorldRenderPassPreLit normalPass(
-			ms_techniqueNormal,
-			normalRenderView
-		);
-		f.normal->build(normalRenderView, normalPass, entity);
-		f.normal->flush(normalRenderView, normalPass);
-
-		f.haveNormal = true;
+		f.haveGBuffer = true;
 	}
 
 	// Build shadow contexts.
@@ -572,37 +504,22 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	programParams.endParameters(m_globalContext);
 
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.
-	if ((flags & WrfDepthMap) != 0)
+	if ((flags & (WrfDepthMap | WrfNormalMap)) != 0)
 	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth");
-		if (m_renderView->begin(m_depthTargetSet, 0))
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth and normals");
+		if (m_renderView->begin(m_gbufferTargetSet))
 		{
 			float farZ = m_settings.viewFarZ;
-			const float depthColor[] = { farZ, farZ, farZ, farZ };
-			if (f.haveDepth)
-			{
-				m_renderView->clear(render::CfColor | render::CfDepth, depthColor, 1.0f, 0);
-				f.depth->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
-			}
-			else
-			{
-				m_renderView->clear(render::CfDepth, depthColor, 1.0f, 0);
-			}
-			m_renderView->end();
-		}
-		T_RENDER_POP_MARKER(m_renderView);
-	}
 
-	// Render normal map.
-	if ((flags & WrfNormalMap) != 0)
-	{
-		T_RENDER_PUSH_MARKER(m_renderView, "World: Normal");
-		if (m_renderView->begin(m_normalTargetSet, 0))
-		{
-			const float depthColor[] = { 0.5f, 0.5f, 0.5f, 0.5f };
-			m_renderView->clear(render::CfColor, depthColor, 1.0f, 0);
-			if (f.haveNormal)
-				f.normal->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
+			const Color4f depthColor(farZ, farZ, farZ, farZ);
+			const Color4f normalColor(0.5f, 0.5f, 0.5f, 0.5f);
+			const Color4f clearColors[] = { depthColor, normalColor };
+
+			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
+
+			if (f.haveGBuffer)
+				f.gbuffer->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
+
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
@@ -621,8 +538,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
 					if (m_renderView->begin(m_shadowTargetSet, 0))
 					{
-						const float shadowClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-						m_renderView->clear(render::CfColor | render::CfDepth, shadowClear, 1.0f, 0);
+						const Color4f shadowClear(1.0f, 1.0f, 1.0f, 1.0f);
+						m_renderView->clear(render::CfColor | render::CfDepth, &shadowClear, 1.0f, 0);
 						f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
 						m_renderView->end();
 					}
@@ -633,8 +550,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					{
 						if (j == 0)
 						{
-							const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-							m_renderView->clear(render::CfColor, maskClear, 0.0f, 0);
+							const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
+							m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
 						}
 
 						Scalar zn(max(m_slicePositions[j], m_settings.viewNearZ));
@@ -654,7 +571,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						m_shadowMaskProject->render(
 							m_renderView,
 							m_shadowTargetSet,
-							m_depthTargetSet,
+							m_gbufferTargetSet,
 							0,
 							params
 						);
@@ -667,8 +584,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow mask filter");
 				if (m_renderView->begin(m_shadowMaskFilterTargetSet[i], 0))
 				{
-					const float maskClear[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-					m_renderView->clear(render::CfColor, maskClear, 0.0f, 0);
+					const Color4f maskClear(1.0f, 1.0f, 1.0f, 1.0f);
+					m_renderView->clear(render::CfColor, &maskClear, 0.0f, 0);
 
 					PostProcessStep::Instance::RenderParams params;
 					params.viewFrustum = f.viewFrustum;
@@ -681,7 +598,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					m_shadowMaskFilter->render(
 						m_renderView,
 						m_shadowMaskProjectTargetSet,
-						m_depthTargetSet,
+						m_gbufferTargetSet,
 						0,
 						params
 					);
@@ -697,16 +614,16 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 				{
 					if (i == 0)
 					{
-						const float lightClear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-						m_renderView->clear(render::CfColor, lightClear, 0.0f, 0);
+						const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
+						m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
 					}
 					m_lightRenderer->render(
 						m_renderView,
 						f.projection,
 						f.view,
 						f.lights[i],
-						m_depthTargetSet->getColorTexture(0),
-						m_normalTargetSet->getColorTexture(0),
+						m_gbufferTargetSet->getColorTexture(0),
+						m_gbufferTargetSet->getColorTexture(1),
 						f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
 						f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getColorTexture(0) : 0
 					);
@@ -724,8 +641,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 			T_RENDER_PUSH_MARKER(m_renderView, "World: Light map");
 			if (m_renderView->begin(m_lightMapTargetSet, 0))
 			{
-				const float lightClear[] = { 0.0f, 0.0f, 0.0f, 0.0f };
-				m_renderView->clear(render::CfColor, lightClear, 0.0f, 0);
+				const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
+				m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
 				m_renderView->end();
 			}
 			T_RENDER_POP_MARKER(m_renderView);
@@ -754,7 +671,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 
 render::RenderTargetSet* WorldRendererPreLit::getDepthTargetSet()
 {
-	return m_depthTargetSet;
+	return m_gbufferTargetSet;
 }
 
 render::RenderTargetSet* WorldRendererPreLit::getShadowMaskTargetSet()
@@ -765,8 +682,8 @@ render::RenderTargetSet* WorldRendererPreLit::getShadowMaskTargetSet()
 void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) const
 {
 	outTargets.resize(4);
-	outTargets[0] = m_depthTargetSet ? m_depthTargetSet->getColorTexture(0) : 0;
-	outTargets[1] = m_normalTargetSet ? m_normalTargetSet->getColorTexture(0) : 0;
+	outTargets[0] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(0) : 0;
+	outTargets[1] = m_gbufferTargetSet ? m_gbufferTargetSet->getColorTexture(1) : 0;
 	outTargets[2] = m_lightMapTargetSet ? m_lightMapTargetSet->getColorTexture(0) : 0;
 	outTargets[3] = !m_shadowMaskFilterTargetSet.empty() ? m_shadowMaskFilterTargetSet[0]->getColorTexture(0) : 0;
 }
@@ -879,9 +796,9 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 		m_settings.fogDistance,
 		m_settings.fogRange,
 		m_fogColor,
-		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
-		m_lightMapTargetSet->getColorTexture(0),
-		m_normalTargetSet->getColorTexture(0)
+		m_gbufferTargetSet->getColorTexture(0),
+		m_gbufferTargetSet->getColorTexture(1),
+		m_lightMapTargetSet->getColorTexture(0)
 	);
 	f.visual->build(worldRenderView, defaultPreLitPass, entity);
 	f.visual->flush(worldRenderView, defaultPreLitPass);

@@ -7,7 +7,7 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Frustum.h"
-#include "Core/Math/Random.h"
+#include "Core/Math/RandomGeometry.h"
 #include "Core/Math/Half.h"
 #include "Core/Thread/Job.h"
 #include "Render/Types.h"
@@ -25,7 +25,6 @@ namespace traktor
 	namespace hf
 	{
 
-class Heightfield;
 class MaterialMask;
 
 	}
@@ -51,11 +50,15 @@ class WorldRenderView;
 	namespace terrain
 	{
 
+class Terrain;
+
 class T_DLLCLASS UndergrowthEntity : public world::Entity
 {
 	T_RTTI_CLASS;
 
 public:
+	enum { InstanceCount = 180 };
+
 	struct Settings
 	{
 		int32_t density;
@@ -75,21 +78,17 @@ public:
 #pragma pack(1)
 	struct Vertex
 	{
-		float position[3];
-		half_t normal[4];
+		float position[4];
 		half_t texCoord[2];
-
-		void set(const Vector4& position, const Vector4& normal, float texCoordU, float texCoordV);
 	};
 #pragma pack()
 
 	UndergrowthEntity(
-		const resource::Proxy< hf::Heightfield >& heightfield,
+		const resource::Proxy< Terrain >& terrain,
 		const resource::Proxy< hf::MaterialMask >& materialMask,
 		const Settings& settings,
 		render::VertexBuffer* vertexBuffer,
 		render::IndexBuffer* indexBuffer,
-		const render::Primitives& primitives,
 		const resource::Proxy< render::Shader >& shader
 	);
 
@@ -106,30 +105,26 @@ public:
 	virtual void update(const UpdateParams& update);
 
 private:
-	struct Cell
+	struct Cluster
 	{
-		Vector4 position;
-		int offset;
-		int count;
+		Vector4 center;
+		float distance;
+		uint8_t plant;
+		bool visible;
+		int32_t from;
+		int32_t to;
 	};
 
-	resource::Proxy< hf::Heightfield > m_heightfield;
+	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< hf::MaterialMask > m_materialMask;
 	Settings m_settings;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
-	render::Primitives m_primitives;
 	resource::Proxy< render::Shader > m_shader;
-	Random m_random;
-	Cell m_cells[16];
-	Matrix44 m_lastView;
-	Frustum m_lastFrustum;
-	RefArray< Job > m_jobs;
-	bool m_sync;
-
-	void synchronize();
-
-	void updateTask(int start, int end, Vertex* outVertex);
+	RandomGeometry m_random;
+	AlignedVector< Cluster > m_clusters;
+	AlignedVector< Vector4 > m_plants;
+	Vector4 m_eye;
 };
 
 	}

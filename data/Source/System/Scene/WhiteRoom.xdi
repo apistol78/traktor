@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="4">
 	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="12">
-		<renderType>RtForward</renderType>
+		<renderType>RtPreLit</renderType>
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<depthPassEnabled>false</depthPassEnabled>

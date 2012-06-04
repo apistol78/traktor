@@ -80,8 +80,8 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 	float fogRange,
 	const Vector4& fogColor,
 	render::ISimpleTexture* depthMap,
-	render::ISimpleTexture* lightMap,
-	render::ISimpleTexture* normalMap
+	render::ISimpleTexture* normalMap,
+	render::ISimpleTexture* lightMap
 )
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
@@ -90,9 +90,9 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 ,	m_fogRange(fogRange)
 ,	m_fogColor(fogColor)
 ,	m_depthMap(depthMap)
+,	m_normalMap(normalMap)
 ,	m_shadowMask(0)
 ,	m_lightMap(lightMap)
-,	m_normalMap(normalMap)
 {
 	initializeHandles();
 }

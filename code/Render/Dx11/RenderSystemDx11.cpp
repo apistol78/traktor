@@ -29,6 +29,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx11", 0, RenderSyst
 RenderSystemDx11::RenderSystemDx11()
 :	m_displayAspect(0.0f)
 ,	m_mipBias(0.0f)
+,	m_maxAnisotropy(1)
 {
 }
 
@@ -90,6 +91,7 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	m_stateCache = new StateCache(d3dDevice);
 
 	m_mipBias = desc.mipBias;
+	m_maxAnisotropy = clamp(desc.maxAnisotropy, 1, 16);
 	return true;
 }
 
@@ -195,6 +197,11 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 		return 0;
 	}
 
+	m_context->getDXGIFactory()->MakeWindowAssociation(
+		scd.OutputWindow,
+		DXGI_MWA_NO_WINDOW_CHANGES | DXGI_MWA_NO_ALT_ENTER
+	);
+
 	Ref< RenderViewDx11 > renderView = new RenderViewDx11(m_context, dxgiSwapChain);
 
 	if (!renderView->reset(scd.BufferDesc.Width, scd.BufferDesc.Height))
@@ -263,7 +270,7 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 		return 0;
 
 	Ref< ProgramDx11 > program = new ProgramDx11(m_context);
-	if (!program->create(m_context->getD3DDevice(), *m_stateCache, resource, m_mipBias))
+	if (!program->create(m_context->getD3DDevice(), *m_stateCache, resource, m_mipBias, m_maxAnisotropy))
 		return 0;
 
 	return program;

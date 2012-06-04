@@ -7,6 +7,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.ImageInfo", ImageInfo, Object)
 
+ImageInfo::ImageInfo()
+:	m_gamma(0.0f)
+{
+}
+
 void ImageInfo::setAuthor(const std::wstring& author)
 {
 	m_author = author;
@@ -35,6 +40,16 @@ void ImageInfo::setFormat(const std::wstring& format)
 const std::wstring& ImageInfo::getFormat() const
 {
 	return m_format;
+}
+
+void ImageInfo::setGamma(float gamma)
+{
+	m_gamma = gamma;
+}
+
+float ImageInfo::getGamma() const
+{
+	return m_gamma;
 }
 
 	}

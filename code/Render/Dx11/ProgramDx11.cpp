@@ -42,7 +42,7 @@ ProgramDx11::~ProgramDx11()
 	destroy();
 }
 
-bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const ProgramResourceDx11* resource, float mipBias)
+bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const ProgramResourceDx11* resource, float mipBias, int32_t maxAnisotropy)
 {
 	ComRef< ID3DBlob > d3dErrorMsgs;
 	HRESULT hr;
@@ -77,6 +77,7 @@ bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const 
 	if (!createState(
 		d3dDevice,
 		mipBias,
+		1,
 		resource->m_vertexShader,
 		resource->m_d3dVertexSamplers,
 		/* [out] */
@@ -87,6 +88,7 @@ bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const 
 	if (!createState(
 		d3dDevice,
 		mipBias,
+		maxAnisotropy,
 		resource->m_pixelShader,
 		resource->m_d3dPixelSamplers,
 		/* [out] */
@@ -341,6 +343,7 @@ bool ProgramDx11::bind(
 bool ProgramDx11::createState(
 	ID3D11Device* d3dDevice,
 	float mipBias,
+	int32_t maxAnisotropy,
 	ID3DBlob* d3dShaderBlob,
 	const std::map< std::wstring, D3D11_SAMPLER_DESC >& d3dSamplers,
 	State& outState
@@ -465,7 +468,8 @@ bool ProgramDx11::createState(
 				return false;
 
 			D3D11_SAMPLER_DESC dsd = it->second;
-			dsd.MipLODBias = mipBias;
+			dsd.MipLODBias += mipBias;
+			dsd.MaxAnisotropy = maxAnisotropy;
 
 			ID3D11SamplerState* d3dSamplerState;
 

@@ -2,13 +2,18 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/RandomGeometry.h"
 #include "Core/Thread/JobManager.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/MaterialMask.h"
+#include "Heightfield/MaterialParams.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Context/RenderContext.h"
+#include "Terrain/Terrain.h"
 #include "Terrain/UndergrowthEntity.h"
+#include "Terrain/UndergrowthPlant.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -16,62 +21,66 @@ namespace traktor
 {
 	namespace terrain
 	{
+		namespace
+		{
+
+render::handle_t s_handleNormals;
+render::handle_t s_handleHeightfield;
+render::handle_t s_handleWorldExtent;
+render::handle_t s_handleEye;
+render::handle_t s_handleSpreadDistance;
+render::handle_t s_handleCellRadius;
+render::handle_t s_handleInstances;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.UndergrowthEntity", UndergrowthEntity, world::Entity)
 
-void UndergrowthEntity::Vertex::set(const Vector4& position_, const Vector4& normal_, float texCoordU, float texCoordV)
-{
-	position[0] = position_.x();
-	position[1] = position_.y();
-	position[2] = position_.z();
-	normal[0] = floatToHalf(normal_.x());
-	normal[1] = floatToHalf(normal_.z());
-	texCoord[0] = floatToHalf(texCoordU);
-	texCoord[1] = floatToHalf(texCoordV);
-}
-
 UndergrowthEntity::UndergrowthEntity(
-	const resource::Proxy< hf::Heightfield >& heightfield,
+	const resource::Proxy< Terrain >& terrain,
 	const resource::Proxy< hf::MaterialMask >& materialMask,
 	const Settings& settings,
 	render::VertexBuffer* vertexBuffer,
 	render::IndexBuffer* indexBuffer,
-	const render::Primitives& primitives,
 	const resource::Proxy< render::Shader >& shader
 )
-:	m_heightfield(heightfield)
+:	m_terrain(terrain)
 ,	m_materialMask(materialMask)
 ,	m_settings(settings)
 ,	m_vertexBuffer(vertexBuffer)
 ,	m_indexBuffer(indexBuffer)
-,	m_primitives(primitives)
 ,	m_shader(shader)
-,	m_lastView(Matrix44::identity())
-,	m_jobs(4)
-,	m_sync(false)
 {
-	m_lastFrustum.buildPerspective(0.0f, 1.0f, 0.0f, 0.0f);
+	m_plants.resize(m_settings.density);
 
-	int offset = 0;
-	for (int i = 0; i < sizeof_array(m_cells); ++i)
+	for (int32_t i = 0; i < m_settings.density; i += InstanceCount)
 	{
-		m_cells[i].position.set(
-			std::numeric_limits< float >::max(),
-			std::numeric_limits< float >::max(),
-			std::numeric_limits< float >::max(),
+		Cluster c;
+		c.center = Vector4(
+			(m_random.nextFloat() * 2.0f - 1.0f) * m_terrain->getHeightfield()->getWorldExtent().x(),
+			0.0f,
+			(m_random.nextFloat() * 2.0f - 1.0f) * m_terrain->getHeightfield()->getWorldExtent().z(),
 			1.0f
 		);
-
-		m_cells[i].offset = offset;
-		m_cells[i].count = m_settings.density / sizeof_array(m_cells);
-
-		offset += m_cells[i].count * 4 * 2;
+		c.distance = std::numeric_limits< float >::max();
+		c.visible = false;
+		c.plant = 0;
+		c.from = i;
+		c.to = min< int32_t >(i + InstanceCount, m_settings.density);
+		m_clusters.push_back(c);
 	}
+
+	s_handleNormals = render::getParameterHandle(L"Normals");
+	s_handleHeightfield = render::getParameterHandle(L"Heightfield");
+	s_handleWorldExtent = render::getParameterHandle(L"WorldExtent");
+	s_handleEye = render::getParameterHandle(L"Eye");
+	s_handleSpreadDistance = render::getParameterHandle(L"SpreadDistance");
+	s_handleCellRadius = render::getParameterHandle(L"CellRadius");
+	s_handleInstances = render::getParameterHandle(L"Instances");
 }
 
 UndergrowthEntity::~UndergrowthEntity()
 {
-	synchronize();
 }
 
 void UndergrowthEntity::render(
@@ -80,8 +89,98 @@ void UndergrowthEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	m_lastView = worldRenderView.getView();
-	m_lastFrustum = worldRenderView.getViewFrustum();
+	// \fixme Assume depth pass enabled; need some information about first pass from camera POV.
+	bool updateClusters = bool(
+		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_DepthWrite") ||
+		worldRenderPass.getTechnique() == render::getParameterHandle(L"World_GBufferWrite")
+	);
+
+	if (updateClusters)
+	{
+		Frustum viewFrustum = worldRenderView.getViewFrustum();
+		viewFrustum.setFarZ(Scalar(m_settings.spreadDistance + m_settings.cellRadius * 2.0f));
+
+		const Matrix44& view = worldRenderView.getView();
+		Vector4 eye = view.inverse().translation();
+
+		// Only perform "replanting" when moved more than one unit.
+		if ((eye - m_eye).length() >= 1.0f)
+		{
+			m_eye = eye;
+
+			for (AlignedVector< Cluster >::iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
+			{
+				Vector4 delta = i->center - m_eye;
+				Scalar distance = delta.length();
+
+				if (distance > m_settings.spreadDistance + m_settings.cellRadius)
+				{
+					float phi = (m_random.nextFloat() - 0.5f) * HALF_PI;
+					float err = distance - (m_settings.spreadDistance + m_settings.cellRadius);
+
+					i->center = m_eye + rotateY(phi) * (-delta * Scalar((m_settings.spreadDistance + m_settings.cellRadius - err - FUZZY_EPSILON) / distance));
+
+					float cy = m_terrain->getHeightfield()->getWorldHeight(i->center.x(), i->center.z());
+					i->center = i->center * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, cy, 0.0f, 1.0f);
+
+					float gx, gz;
+					m_terrain->getHeightfield()->worldToGrid(i->center.x(), i->center.z(), gx, gz);
+
+					gx *= float(m_materialMask->getSize()) / m_terrain->getHeightfield()->getSize();
+					gz *= float(m_materialMask->getSize()) / m_terrain->getHeightfield()->getSize();
+					
+					int32_t igx = clamp< int32_t >(int32_t(gx), 0, m_materialMask->getSize() - 1);
+					int32_t igz = clamp< int32_t >(int32_t(gz), 0, m_materialMask->getSize() - 1);
+
+					i->plant = 0;
+
+					const hf::MaterialParams* params = m_materialMask->getParams(igx, m_materialMask->getSize() - 1 - igz);
+					if (params)
+					{
+						const UndergrowthPlant* plant = params->get< UndergrowthPlant >();
+						if (plant)
+						{
+							const std::vector< int32_t >& plantIds = plant->getPlants();
+							int32_t index = int32_t((m_random.nextFloat() + 0.5f) * (plantIds.size() - 1));
+							if (index >= 0)
+							{
+								T_ASSERT (index < plantIds.size());
+								i->plant = plantIds[index] + 1;
+								for (int32_t j = i->from; j < i->to; ++j)
+								{
+									float dx, dz;
+									
+									do 
+									{
+										dx = (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius;
+										dz = (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius;
+									}
+									while (std::sqrtf(dx * dx + dz * dz) > m_settings.cellRadius);
+
+									float px = i->center.x() + dx;
+									float pz = i->center.z() + dz;
+
+									m_plants[j] = Vector4(
+										i->center.x() + (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius,
+										i->center.z() + (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius,
+										m_random.nextFloat() * TWO_PI,
+										float(i->plant - 1)
+									);
+								}
+							}
+						}
+					}
+				}
+
+				if (i->plant)
+					i->visible = (viewFrustum.inside(view * i->center, Scalar(m_settings.cellRadius)) != Frustum::IrOutside);
+				else
+					i->visible = false;
+
+				i->distance = distance;
+			}
+		}
+	}
 
 	worldRenderPass.setShaderTechnique(m_shader);
 	worldRenderPass.setShaderCombination(m_shader);
@@ -90,27 +189,57 @@ void UndergrowthEntity::render(
 	if (!program)
 		return;
 
-	synchronize();
+	Vector4 instanceData[InstanceCount];
+	uint32_t count = 0;
 
-	// Create render blocks.
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+	for (AlignedVector< Cluster >::const_iterator i = m_clusters.begin(); i != m_clusters.end(); ++i)
+	{
+		if (!i->visible)
+			continue;
 
-	renderBlock->distance = 0.0f;
-	renderBlock->program = program;
-	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-	renderBlock->indexBuffer = m_indexBuffer;
-	renderBlock->vertexBuffer = m_vertexBuffer;
-	renderBlock->primitives = &m_primitives;
+		float fc = 1.0f - clamp(i->distance / (m_settings.spreadDistance + m_settings.cellRadius), 0.0f, 1.0f);
+		int32_t count = i->to - i->from;
+		
+		count = int32_t(count * (fc * fc));
+		if (count <= 0)
+			continue;
+		
+		for (int32_t j = 0; j < count; ++j)
+			instanceData[j] = m_plants[j + i->from];
 
-	renderBlock->programParams->beginParameters(renderContext);
-	worldRenderPass.setProgramParameters(renderBlock->programParams, false);
-	renderBlock->programParams->setFloatParameter(L"MaxRadius", m_settings.spreadDistance + m_settings.cellRadius);
-	renderBlock->programParams->endParameters(renderContext);
+		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >();
 
-	renderContext->draw(
-		render::RfAlphaBlend,
-		renderBlock
-	);
+		renderBlock->distance = i->distance;
+		renderBlock->program = program;
+		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->indexBuffer = m_indexBuffer;
+		renderBlock->vertexBuffer = m_vertexBuffer;
+		renderBlock->primitive = render::PtTriangles;
+		renderBlock->offset = 0;
+		renderBlock->count = count * 2 * 2 * 2;
+		renderBlock->minIndex = 0;
+		renderBlock->maxIndex = count * 4 * 2 - 1;
+
+		renderBlock->programParams->beginParameters(renderContext);
+		worldRenderPass.setProgramParameters(renderBlock->programParams, false);
+		renderBlock->programParams->setTextureParameter(s_handleNormals, m_terrain->getNormalMap());
+		renderBlock->programParams->setTextureParameter(s_handleHeightfield, m_terrain->getHeightMap());
+		renderBlock->programParams->setVectorParameter(s_handleWorldExtent, m_terrain->getHeightfield()->getWorldExtent());
+		renderBlock->programParams->setVectorParameter(s_handleEye, m_eye);
+		renderBlock->programParams->setFloatParameter(s_handleSpreadDistance, m_settings.spreadDistance);
+		renderBlock->programParams->setFloatParameter(s_handleCellRadius, m_settings.cellRadius);
+		renderBlock->programParams->setVectorArrayParameter(s_handleInstances, instanceData, count);
+		renderBlock->programParams->endParameters(renderContext);
+
+		renderContext->draw(
+			render::RfOpaque,
+			renderBlock
+		);
+
+		// Only allowed to draw 1/4th of all clusters.
+		if (++count > m_settings.density / 4)
+			break;
+	}
 }
 
 Aabb3 UndergrowthEntity::getBoundingBox() const
@@ -120,121 +249,6 @@ Aabb3 UndergrowthEntity::getBoundingBox() const
 
 void UndergrowthEntity::update(const UpdateParams& update)
 {
-	synchronize();
-
-	Vertex* vertexTop = static_cast< Vertex* >(m_vertexBuffer->lock());
-	T_ASSERT_M (vertexTop, L"Unable to lock vertex buffer");
-
-	m_lastFrustum.setFarZ(m_lastFrustum.getNearZ() + Scalar(m_settings.spreadDistance));
-
-	JobManager& jobManager = JobManager::getInstance();
-	m_jobs[0] = jobManager.add(makeFunctor(this, &UndergrowthEntity::updateTask, 0, 4, vertexTop));
-	m_jobs[1] = jobManager.add(makeFunctor(this, &UndergrowthEntity::updateTask, 4, 8, vertexTop));
-	m_jobs[2] = jobManager.add(makeFunctor(this, &UndergrowthEntity::updateTask, 8, 12, vertexTop));
-	m_jobs[3] = jobManager.add(makeFunctor(this, &UndergrowthEntity::updateTask, 12, 16, vertexTop));
-
-	m_sync = true;
-}
-
-void UndergrowthEntity::synchronize()
-{
-	if (!m_sync)
-		return;
-
-	m_jobs[0]->wait();
-	m_jobs[1]->wait();
-	m_jobs[2]->wait();
-	m_jobs[3]->wait();
-
-	m_vertexBuffer->unlock();
-
-	m_sync = false;
-}
-
-void UndergrowthEntity::updateTask(int start, int end, Vertex* outVertex)
-{
-	const Vector4& worldExtent = m_heightfield->getWorldExtent();
-	Scalar dw = worldExtent.x() / Scalar(m_heightfield->getSize());
-
-	Scalar mmszs(m_materialMask->getSize());
-	int32_t mmszf = int32_t(m_materialMask->getSize());
-
-	Matrix44 inverseView = m_lastView.inverseOrtho();
-	for (int32_t i = start; i < end; ++i)
-	{
-		Vector4 position = m_lastView * m_cells[i].position;
-		if (m_lastFrustum.inside(position, Scalar(m_settings.cellRadius)) != Frustum::IrOutside)
-			continue;
-
-		Vector4 seed(
-			float(m_random.nextDouble() * 2.0f - 1.0f) * m_settings.spreadDistance,
-			0.0f,
-			float(m_random.nextDouble()) * m_settings.spreadDistance,
-			1.0f
-		);
-
-		seed = inverseView * seed;
-
-		// Check plant type from material mask.
-		int32_t mx = int32_t(Scalar(m_materialMask->getSize()) * (0.5f - seed.x() / worldExtent.x()));
-		int32_t my = int32_t(Scalar(m_materialMask->getSize()) * (seed.z() / worldExtent.z() + 0.5f));
-		if (mx < 0 || my < 0 || mx >= int32_t(m_materialMask->getSize()) || my >= int32_t(m_materialMask->getSize()))
-			continue;
-		if (m_materialMask->getId(mx, my))
-			continue;
-
-		m_cells[i].position = seed;
-
-		Vertex* vertex = outVertex + m_cells[i].offset;
-
-		for (int j = 0; j < m_cells[i].count; ++j)
-		{
-			float x = seed.x() + float(m_random.nextDouble() * 2.0f - 1.0f) * m_settings.cellRadius;
-			float z = seed.z() + float(m_random.nextDouble() * 2.0f - 1.0f) * m_settings.cellRadius;
-
-			Vector4 position(
-				x,
-				m_heightfield->getWorldHeight(x, z),
-				z,
-				1.0f
-			);
-
-			// Calculate heightfield normal, use to bias lighting.
-			float hx = m_heightfield->getWorldHeight(position.x() + dw, position.z());
-			float hz = m_heightfield->getWorldHeight(position.x(), position.z() + dw);
-
-			Vector4 normal = cross(
-				Vector4(0.0f, hz - position.y(), dw, 0.0f),
-				Vector4(dw, hx - position.y(), 0.0f, 0.0f)
-			).normalized();
-
-			// Height, or extrusion from seed.
-			float e = float(m_random.nextDouble() * 0.25f + 1.25f) * m_settings.plantScale;
-
-			// Random rotation.
-			float a = float(m_random.nextDouble() * PI * 2.0f);
-			float s = sinf(a) * 0.5f * m_settings.plantScale;
-			float c = cosf(a) * 0.5f * m_settings.plantScale;
-
-			// Random sheering.
-			float sx = float(m_random.nextDouble() * 0.2f - 0.1f);
-			float sz = float(m_random.nextDouble() * 0.2f - 0.1f);
-
-			Vector4 axisX(c, 0.0f, s);
-			Vector4 axisY(sx, e, sz);
-			Vector4 axisZ(-s, 0.0f, c);
-
-			vertex++->set(position - axisX         + axisZ, normal, 0.0f, 1.0f);
-			vertex++->set(position - axisX + axisY + axisZ, normal, 0.0f, 0.0f);
-			vertex++->set(position + axisX + axisY - axisZ, normal, 0.5f, 0.0f);
-			vertex++->set(position + axisX         - axisZ, normal, 0.5f, 1.0f);
-
-			vertex++->set(position - axisX         - axisZ, normal, 0.5f, 1.0f);
-			vertex++->set(position - axisX + axisY - axisZ, normal, 0.5f, 0.0f);
-			vertex++->set(position + axisX + axisY + axisZ, normal, 1.0f, 0.0f);
-			vertex++->set(position + axisX         + axisZ, normal, 1.0f, 1.0f);
-		}
-	}
 }
 
 	}

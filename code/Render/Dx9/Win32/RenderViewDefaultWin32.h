@@ -34,6 +34,7 @@ class T_DLLCLASS RenderViewDefaultWin32
 public:
 	RenderViewDefaultWin32(
 		RenderSystemWin32* renderSystem,
+		ClearTarget* clearTarget,
 		ParameterCache* parameterCache,
 		IDirect3DDevice9* d3dDevice,
 		IDirect3D9* d3d,

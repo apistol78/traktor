@@ -45,7 +45,11 @@ public:
 
 	const resource::Id< render::ISimpleTexture >& getHeightMap() const { return m_heightMap; }
 
-	const std::vector< resource::Id< render::Shader > >& getSurfaceLayers() const { return m_surfaceLayers; }
+	const resource::Id< render::Shader >& getTerrainCoarseShader() const { return m_terrainCoarseShader; }
+
+	const resource::Id< render::Shader >& getTerrainDetailShader() const { return m_terrainDetailShader; }
+
+	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
 private:
 	friend class TerrainPipeline;
@@ -53,7 +57,9 @@ private:
 	resource::Id< hf::Heightfield > m_heightfield;
 	resource::Id< render::ISimpleTexture > m_normalMap;
 	resource::Id< render::ISimpleTexture > m_heightMap;
-	std::vector< resource::Id< render::Shader > > m_surfaceLayers;
+	resource::Id< render::Shader > m_terrainCoarseShader;
+	resource::Id< render::Shader > m_terrainDetailShader;
+	resource::Id< render::Shader > m_surfaceShader;
 };
 
 	}

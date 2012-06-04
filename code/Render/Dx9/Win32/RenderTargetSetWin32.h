@@ -65,6 +65,8 @@ public:
 
 	// \}
 
+	uint32_t getRenderTargetCount() const { return m_colorTextures.size(); }
+
 	RenderTargetWin32* getRenderTarget(int renderTarget) const { return m_colorTextures[renderTarget]; }
 
 	IDirect3DSurface9* getD3DDepthStencilSurface() const { return m_d3dTargetDepthStencilSurface; }

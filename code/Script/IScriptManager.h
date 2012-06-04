@@ -2,6 +2,7 @@
 #define traktor_script_IScriptManager_H
 
 #include "Core/Object.h"
+#include "Script/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -59,17 +60,18 @@ public:
 	/*! \brief Compile script.
 	 *
 	 * \param script Script
-	 * \param strip Strip debug information if available.
+	 * \param map Optional source map; used for debugging.
 	 * \param errorCallback Optional callback which is called for each error found during compilation.
 	 * \return Script resource; null if failed to compile.
 	 */
-	virtual Ref< IScriptResource > compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const = 0;
+	virtual Ref< IScriptResource > compile(const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const = 0;
 
 	/*! \brief Create script context.
 	 *
+	 * \param scriptResource Script resource.
 	 * \return Script context interface.
 	 */
-	virtual Ref< IScriptContext > createContext() = 0;
+	virtual Ref< IScriptContext > createContext(const IScriptResource* scriptResource) = 0;
 
 	/*! \brief Create debugger.
 	 *

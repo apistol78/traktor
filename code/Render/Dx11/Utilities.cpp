@@ -138,7 +138,7 @@ bool getDisplayMode(IDXGIOutput* dxgiOutput, uint32_t index, DisplayMode& outDis
 
 	outDisplayMode.width = dxgiDisplayModes[index].Width;
 	outDisplayMode.height = dxgiDisplayModes[index].Height;
-	outDisplayMode.refreshRate = dxgiDisplayModes[index].RefreshRate.Numerator;
+	outDisplayMode.refreshRate = dxgiDisplayModes[index].RefreshRate.Numerator / dxgiDisplayModes[index].RefreshRate.Denominator;
 	outDisplayMode.colorBits = 32;
 	outDisplayMode.stereoscopic = false;
 
@@ -180,7 +180,7 @@ bool findDxgiDisplayMode(IDXGIOutput* dxgiOutput, const DisplayMode& dm, DXGI_MO
 		
 		if (dm.refreshRate)
 		{
-			if (dm.refreshRate != dxgiDisplayModes[i].RefreshRate.Numerator)
+			if (dm.refreshRate != dxgiDisplayModes[i].RefreshRate.Numerator / dxgiDisplayModes[i].RefreshRate.Denominator)
 				continue;
 		}
 		

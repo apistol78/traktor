@@ -221,16 +221,59 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	}
 }
 
-Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& script, bool strip, IErrorCallback* errorCallback) const
+Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	return new ScriptResourceLua(wstombs(script));
+	return new ScriptResourceLua(wstombs(script), map ? *map : source_map_t());
 }
 
-Ref< IScriptContext > ScriptManagerLua::createContext()
+Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scriptResource)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	return new ScriptContextLua(this, m_luaState);
+	CHECK_LUA_STACK(m_luaState, 0);
+
+	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua*, false >(scriptResource);
+	
+	// Create local environment.
+	lua_newtable(m_luaState);
+	int32_t environmentRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
+
+	// Create table with __index as global environment.
+	lua_newtable(m_luaState);
+	lua_getglobal(m_luaState, "_G");
+	lua_setfield(m_luaState, -2, "__index");
+
+	// Setup "inheritance" with the global environment.
+	lua_setmetatable(m_luaState, -2);
+	lua_pop(m_luaState, 1);
+
+	// Load script into environment.
+	const std::string& text = scriptResourceLua->getScript();
+	int32_t result = luaL_loadbuffer(
+		m_luaState,
+		text.c_str(),
+		text.length(),
+		""
+	);
+
+	if (result != 0)
+	{
+		log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
+		lua_pop(m_luaState, 1);
+		return false;
+	}
+
+	// Call script.
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
+	lua_setfenv(m_luaState, -2);
+	lua_call(m_luaState, 0, 0);
+
+	return new ScriptContextLua(
+		this,
+		m_luaState,
+		environmentRef,
+		scriptResourceLua->getMap()
+	);
 }
 
 Ref< IScriptDebugger > ScriptManagerLua::createDebugger()

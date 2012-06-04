@@ -577,6 +577,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 	if (lightwaveExported)
 		leftHanded = true;
 
+#if defined(_DEBUG)
 	log::info << L"Up axis: " << (upSign < 0 ? L"-" : L"");
 	switch (up)
 	{
@@ -606,6 +607,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 		log::info << L"Left handed" << Endl;
 	else
 		log::info << L"Right handed" << Endl;
+#endif
 
 	float sign = upSign < 0 ? -1.0f : 1.0f;
 	float scale = leftHanded ? 1.0f : -1.0f;

@@ -127,7 +127,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 22, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 23, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_skipMips(0)
@@ -139,11 +139,11 @@ TextureOutputPipeline::TextureOutputPipeline()
 
 bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 {
-	m_skipMips = settings->getProperty< PropertyInteger >(L"TextureOutputPipeline.SkipMips", 0);
-	m_clampSize = settings->getProperty< PropertyInteger >(L"TextureOutputPipeline.ClampSize", 0);
-	m_compressionQuality = settings->getProperty< PropertyInteger >(L"TextureOutputPipeline.CompressionQuality", 1);
+	m_skipMips = settings->getProperty< PropertyInteger >(L"TexturePipeline.SkipMips", 0);
+	m_clampSize = settings->getProperty< PropertyInteger >(L"TexturePipeline.ClampSize", 0);
+	m_compressionQuality = settings->getProperty< PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
 
-	std::wstring compressionMethod = settings->getProperty< PropertyString >(L"TextureOutputPipeline.CompressionMethod", L"DXTn");
+	std::wstring compressionMethod = settings->getProperty< PropertyString >(L"TexturePipeline.CompressionMethod", L"DXTn");
 	if (compareIgnoreCase< std::wstring >(compressionMethod, L"None") == 0)
 		m_compressionMethod = CmNone;
 	else if (compareIgnoreCase< std::wstring >(compressionMethod, L"DXTn") == 0)
@@ -245,6 +245,8 @@ bool TextureOutputPipeline::buildOutput(
 		case TfR32F:
 			pixelFormat = drawing::PixelFormat::getR32F();
 			break;
+		//case TfR11G11B10F:
+		//	break;
 		case TfDXT1:
 			pixelFormat = drawing::PixelFormat::getR8G8B8A8();
 			break;
@@ -499,7 +501,7 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(8);
+		writer << uint32_t(9);
 		writer << int32_t(width);
 		writer << int32_t(height);
 		writer << int32_t(mipCount);
@@ -649,7 +651,7 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(8);
+		writer << uint32_t(9);
 		writer << int32_t(sideSize);
 		writer << int32_t(sideSize);
 		writer << int32_t(mipCount);

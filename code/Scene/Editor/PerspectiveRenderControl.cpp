@@ -544,9 +544,10 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))
 	{
+		Color4f ct(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
 		m_renderView->clear(
 			render::CfColor | render::CfDepth,
-			colorClear,
+			&ct,
 			1.0f,
 			128
 		);
@@ -570,7 +571,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			m_renderView->begin(m_renderTarget, 0);
 			m_renderView->clear(
 				render::CfColor,
-				colorClear,
+				&ct,
 				1.0f,
 				128
 			);

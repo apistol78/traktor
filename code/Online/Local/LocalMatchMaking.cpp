@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LocalMatchMaking", LocalMatchMaking, IMatchMakingProvider)
 
-bool LocalMatchMaking::findMatchingLobbies(const std::wstring& key, const std::wstring& value, std::vector< uint64_t >& outLobbyHandles)
+bool LocalMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vector< uint64_t >& outLobbyHandles)
 {
 	return false;
 }
