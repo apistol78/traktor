@@ -1,6 +1,7 @@
 #ifndef traktor_animation_AnimationAsset_H
 #define traktor_animation_AnimationAsset_H
 
+#include "Core/Math/Vector4.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -19,6 +20,22 @@ namespace traktor
 class T_DLLCLASS AnimationAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
+
+public:
+	AnimationAsset();
+
+	virtual bool serialize(ISerializer& s);
+
+	const Vector4& getOffset() const { return m_offset; }
+
+	bool getInvertX() const { return m_invertX; }
+
+	bool getInvertZ() const { return m_invertZ; }
+
+private:
+	Vector4 m_offset;
+	bool m_invertX;
+	bool m_invertZ;
 };
 
 	}
