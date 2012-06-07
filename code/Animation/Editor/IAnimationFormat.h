@@ -7,6 +7,7 @@ namespace traktor
 {
 
 class IStream;
+class Vector4;
 
 	namespace animation
 	{
@@ -18,7 +19,7 @@ class IAnimationFormat : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Animation > import(IStream* stream) const = 0;
+	virtual Ref< Animation > import(IStream* stream, const Vector4& offset, bool invertX, bool invertZ) const = 0;
 };
 
 	}

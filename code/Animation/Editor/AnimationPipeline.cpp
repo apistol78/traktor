@@ -78,7 +78,12 @@ bool AnimationPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< Animation > anim = format->import(file);
+	Ref< Animation > anim = format->import(
+		file, 
+		animationAsset->getOffset(),
+		animationAsset->getInvertX(),
+		animationAsset->getInvertZ()
+	);
 
 	file->close();
 
