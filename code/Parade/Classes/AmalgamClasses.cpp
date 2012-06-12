@@ -30,6 +30,7 @@ namespace traktor
 void registerAmalgamClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< amalgam::IEnvironment > > classEnvironment = new script::AutoScriptClass< amalgam::IEnvironment >();
+	classEnvironment->addMethod(L"getDatabase", &amalgam::IEnvironment::getDatabase);
 	classEnvironment->addMethod(L"getAudio", &amalgam::IEnvironment::getAudio);
 	classEnvironment->addMethod(L"getInput", &amalgam::IEnvironment::getInput);
 	classEnvironment->addMethod(L"getOnline", &amalgam::IEnvironment::getOnline);
