@@ -97,6 +97,12 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 	if (!mesh)
 		return false;
 
+	FbxDocumentInfo* documentInfo = scene->GetDocumentInfo();
+
+	bool mayaExported = false;
+	if (documentInfo->LastSaved_ApplicationName.Get().Find("Maya") >= 0)
+		mayaExported = true;
+
 	// Convert materials.
 	uint32_t materialBase = c_InvalidIndex;
 	int32_t materialCount = 0;
@@ -128,6 +134,10 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 			std::wstring transparencyMap = getTextureName(material, FbxSurfaceMaterial::sTransparentColor);
 			if (!transparencyMap.empty())
 				mm.setBlendOperator(Material::BoAlpha);
+
+			std::wstring emissiveMap = getTextureName(material, mayaExported ? FbxSurfaceMaterial::sAmbient : FbxSurfaceMaterial::sEmissive);
+			if (!emissiveMap.empty())
+				mm.setEmissiveMap(emissiveMap);
 
 			if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
 			{
@@ -166,11 +176,11 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 					mm.setSpecularRoughness(float(shininess / 16.0));
 				}
 
-				FbxPropertyT<FbxDouble3> phongEmissive = phongMaterial->Emissive;
+				FbxPropertyT<FbxDouble3> phongEmissive = mayaExported ? phongMaterial->Ambient : phongMaterial->Emissive;
 				if (phongEmissive.IsValid())
 				{
 					FbxDouble3 emissive = phongEmissive.Get();
-					FbxDouble emissiveFactor = phongMaterial->EmissiveFactor.Get();
+					FbxDouble emissiveFactor = mayaExported ? phongMaterial->AmbientFactor.Get() : phongMaterial->EmissiveFactor.Get();
 
 					emissive[0] *= emissiveFactor;
 					emissive[1] *= emissiveFactor;
@@ -202,11 +212,11 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 					mm.setDiffuseTerm(clamp(float(diffuseFactor), 0.0f, 1.0f));
 				}
 
-				FbxPropertyT<FbxDouble3> lambertEmissive = lambertMaterial->Emissive;
+				FbxPropertyT<FbxDouble3> lambertEmissive = mayaExported ? lambertMaterial->Ambient : lambertMaterial->Emissive;
 				if (lambertEmissive.IsValid())
 				{
 					FbxDouble3 emissive = lambertEmissive.Get();
-					FbxDouble emissiveFactor = lambertMaterial->EmissiveFactor.Get();
+					FbxDouble emissiveFactor = mayaExported ? lambertMaterial->AmbientFactor.Get() : lambertMaterial->EmissiveFactor.Get();
 
 					emissive[0] *= emissiveFactor;
 					emissive[1] *= emissiveFactor;
