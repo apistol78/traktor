@@ -1,12 +1,13 @@
 #ifndef traktor_render_RenderContext_H
 #define traktor_render_RenderContext_H
 
-#include <map>
 #include "Core/Object.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Matrix44.h"
-#include "Render/Context/RenderBlock.h"
+#include "Core/Math/Vector4.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Render/Context/ProgramParameters.h"
+#include "Render/Context/RenderBlock.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -48,7 +49,7 @@ public:
 #if defined(WINCE)
 	enum { DefaultHeapSize = 512 * 1024 };
 #else
-	enum { DefaultHeapSize = 2 * 1024 * 1024 };
+	enum { DefaultHeapSize = 1 * 1024 * 1024 };
 #endif
 
 	RenderContext(uint32_t heapSize = DefaultHeapSize);
@@ -93,13 +94,13 @@ public:
 	/*! \brief Flush blocks. */
 	void flush();
 
-	inline uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - &m_heap[0]); }
+	uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - m_heap.ptr()); }
 
 private:
-	uint8_t* m_heap;
+	AutoPtr< uint8_t, AllocFreeAlign > m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
-	mutable std::vector< RenderBlock* > m_renderQueue[3];
+	mutable AlignedVector< RenderBlock* > m_renderQueue[3];
 };
 
 	}

@@ -39,6 +39,8 @@ public:
 
 	const PropertyGroup* getPipelineProperties() const { return m_pipelineProperties; }
 
+	const PropertyGroup* getMigrateProperties() const { return m_migrateProperties; }
+
 	const PropertyGroup* getRuntimeProperties() const { return m_runtimeProperties; }
 
 	virtual bool serialize(ISerializer& s);
@@ -47,6 +49,7 @@ private:
 	std::wstring m_description;
 	Platforms m_platforms;
 	Ref< PropertyGroup > m_pipelineProperties;
+	Ref< PropertyGroup > m_migrateProperties;
 	Ref< PropertyGroup > m_runtimeProperties;
 };
 

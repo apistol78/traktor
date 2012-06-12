@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class SoundSystem;
+class SoundChannel;
 
 	}
 
@@ -36,10 +37,11 @@ public:
 
 	virtual void destroy();
 
-	virtual void play(const FlashSound& sound);
+	virtual void play(const FlashSound* sound);
 
 private:
 	Ref< sound::SoundSystem > m_soundSystem;
+	Ref< sound::SoundChannel > m_soundChannel;
 };
 
 	}

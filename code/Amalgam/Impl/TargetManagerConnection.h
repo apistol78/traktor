@@ -29,7 +29,6 @@ private:
 	Ref< net::TcpSocket > m_socket;
 	Ref< net::SocketStream > m_socketStream;
 	TargetPerformance m_performance;
-	TargetPerformance m_deltaPerformance;
 };
 
 	}

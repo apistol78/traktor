@@ -47,13 +47,7 @@ bool TargetConnection::update()
 	if (!performance)
 		return false;
 
-	Ref< TargetPerformance > deltaPerformance = BinarySerializer(&ss).readObject< TargetPerformance >();
-	if (!deltaPerformance)
-		return false;
-
 	m_performance = *performance;
-	m_deltaPerformance = *deltaPerformance;
-
 	return true;
 }
 

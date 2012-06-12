@@ -1,6 +1,8 @@
+#include "Core/Io/FileOutputStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Library/Library.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
@@ -18,10 +20,47 @@ using namespace traktor;
 namespace
 {
 
+class LogStreamTarget : public ILogTarget
+{
+public:
+	LogStreamTarget(OutputStream* stream)
+	:	m_stream(stream)
+	{
+	}
+
+	virtual void log(const std::wstring& str)
+	{
+		(*m_stream) << str << Endl;
+	}
+
+private:
+	Ref< OutputStream > m_stream;
+};
+
+class LogDualTarget : public ILogTarget
+{
+public:
+	LogDualTarget(ILogTarget* target1, ILogTarget* target2)
+	:	m_target1(target1)
+	,	m_target2(target2)
+	{
+	}
+
+	virtual void log(const std::wstring& str)
+	{
+		m_target1->log(str);
+		m_target2->log(str);
+	}
+
+private:
+	Ref< ILogTarget > m_target1;
+	Ref< ILogTarget > m_target2;
+};
+
 bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 {
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
-	log::info << IncreaseIndent;
+	traktor::log::info << IncreaseIndent;
 
 	RefArray< db::Instance > childInstances;
 	sourceGroup->getChildInstances(childInstances);
@@ -31,12 +70,12 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 		Ref< db::Instance > sourceInstance = *i;
 		T_ASSERT (sourceInstance);
 
-		log::info << L"Converting \"" << sourceInstance->getName() << L"\"..." << Endl;
+		traktor::log::info << L"Converting \"" << sourceInstance->getName() << L"\"..." << Endl;
 
 		Ref< ISerializable > sourceObject = sourceInstance->getObject();
 		if (!sourceObject)
 		{
-			log::error << L"Failed, unable to get source object" << Endl;
+			traktor::log::error << L"Failed, unable to get source object" << Endl;
 			return false;
 		}
 
@@ -44,7 +83,7 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 		Ref< db::Instance > targetInstance = targetGroup->createInstance(sourceInstance->getName(), db::CifReplaceExisting, &sourceGuid);
 		if (!targetInstance)
 		{
-			log::error << L"Failed, unable to create target instance" << Endl;
+			traktor::log::error << L"Failed, unable to create target instance" << Endl;
 			return false;
 		}
 
@@ -60,20 +99,20 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 			Ref< IStream > sourceStream = sourceInstance->readData(*j);
 			if (!sourceStream)
 			{
-				log::error << L"Failed, unable to open source stream" << Endl;
+				traktor::log::error << L"Failed, unable to open source stream" << Endl;
 				return false;
 			}
 
 			Ref< IStream > targetStream = targetInstance->writeData(*j);
 			if (!targetStream)
 			{
-				log::error << L"Failed, unable to open target stream" << Endl;
+				traktor::log::error << L"Failed, unable to open target stream" << Endl;
 				return false;
 			}
 
 			if (!StreamCopy(targetStream, sourceStream).execute())
 			{
-				log::error << L"Failed, unable to copy data" << Endl;
+				traktor::log::error << L"Failed, unable to copy data" << Endl;
 				return false;
 			}
 
@@ -83,7 +122,7 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 
 		if (!targetInstance->commit())
 		{
-			log::error << L"Failed, unable to commit target instance" << Endl;
+			traktor::log::error << L"Failed, unable to commit target instance" << Endl;
 			return false;
 		}
 	}
@@ -96,7 +135,7 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 		Ref< db::Group > sourceChildGroup = *i;
 		T_ASSERT (sourceChildGroup);
 
-		log::info << L"Creating group \"" << sourceChildGroup->getName() << L"\"..." << Endl;
+		traktor::log::info << L"Creating group \"" << sourceChildGroup->getName() << L"\"..." << Endl;
 
 		Ref< db::Group > targetChildGroup = targetGroup->getGroup(sourceChildGroup->getName());
 		if (!targetChildGroup)
@@ -104,7 +143,7 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 			targetChildGroup = targetGroup->createGroup(sourceChildGroup->getName());
 			if (!targetChildGroup)
 			{
-				log::error << L"Failed, unable to create target group" << Endl;
+				traktor::log::error << L"Failed, unable to create target group" << Endl;
 				return false;
 			}
 		}
@@ -132,7 +171,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 
 	if (settings)
 	{
-		log::info << L"Using configuration \"" << userConfig << L"\"" << Endl;
+		traktor::log::info << L"Using configuration \"" << userConfig << L"\"" << Endl;
 		return settings;
 	}
 
@@ -144,7 +183,7 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 
 	if (settings)
 	{
-		log::info << L"Using configuration \"" << globalConfig << L"\"" << Endl;
+		traktor::log::info << L"Using configuration \"" << globalConfig << L"\"" << Endl;
 		return settings;
 	}
 
@@ -156,18 +195,39 @@ Ref< PropertyGroup > loadSettings(const std::wstring& settingsFile)
 int main(int argc, const char** argv)
 {
 	CommandLine cmdLine(argc, argv);
+	Ref< traktor::IStream > logFile;
 
-	log::info << L"Database Migration Tool; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
+	traktor::log::info << L"Database Migration Tool; Built '" << mbstows(__TIME__) << L" - " << mbstows(__DATE__) << L"'" << Endl;
 
 	if (!cmdLine.hasOption('s', L"settings") && cmdLine.getCount() < 2)
 	{
-		log::info << L"Usage: Traktor.Database.Migrate.App [source database] [destination database] (module)*" << Endl;
-		log::info << L"       Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
+		traktor::log::info << L"Usage: Traktor.Database.Migrate.App [source database] [destination database] (module)*" << Endl;
+		traktor::log::info << L"       Traktor.Database.Migrate.App -s|-settings=[settings]" << Endl;
+		traktor::log::info << L"       -s|-settings    Settings (default \"Traktor.Editor\")" << Endl;
+		traktor::log::info << L"       -l|-log=logfile Save log file" << Endl;
 		return 0;
 	}
 
 	std::wstring sourceCs;
 	std::wstring destinationCs;
+
+	if (cmdLine.hasOption('l', L"log"))
+	{
+		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
+		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
+		{
+			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
+			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
+
+			traktor::log::info   .setTarget(new LogDualTarget(logStreamTarget, traktor::log::info   .getTarget()));
+			traktor::log::warning.setTarget(new LogDualTarget(logStreamTarget, traktor::log::warning.getTarget()));
+			traktor::log::error  .setTarget(new LogDualTarget(logStreamTarget, traktor::log::error  .getTarget()));
+
+			traktor::log::info << L"Log file \"" << logPath << L"\" created" << Endl;
+		}
+		else
+			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
+	}
 
 	if (cmdLine.hasOption('s', L"settings"))
 	{
@@ -186,7 +246,7 @@ int main(int argc, const char** argv)
 			Library library;
 			if (!library.open(*i))
 			{
-				log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
+				traktor::log::error << L"Unable to load module \"" << *i << L"\"" << Endl;
 				return 2;
 			}
 			library.detach();
@@ -202,7 +262,7 @@ int main(int argc, const char** argv)
 			Library library;
 			if (!library.open(cmdLine.getString(i)))
 			{
-				log::error << L"Unable to load module \"" << cmdLine.getString(i) << L"\"" << Endl;
+				traktor::log::error << L"Unable to load module \"" << cmdLine.getString(i) << L"\"" << Endl;
 				return 2;
 			}
 			library.detach();
@@ -215,18 +275,18 @@ int main(int argc, const char** argv)
 	Ref< db::Database > sourceDb = new db::Database();
 	if (!sourceDb->open(sourceCs))
 	{
-		log::error << L"Unable to open source database \"" << sourceCs << L"\"" << Endl;
+		traktor::log::error << L"Unable to open source database \"" << sourceCs << L"\"" << Endl;
 		return 3;
 	}
 
 	Ref< db::Database > destinationDb = new db::Database();
 	if (!destinationDb->create(destinationCs))
 	{
-		log::error << L"Unable to create destination database \"" << destinationCs << L"\"" << Endl;
+		traktor::log::error << L"Unable to create destination database \"" << destinationCs << L"\"" << Endl;
 		return 4;
 	}
 
-	log::info << L"Migration begin" << Endl;
+	traktor::log::info << L"Migration begin" << Endl;
 
 	Ref< db::Group > sourceGroup = sourceDb->getRootGroup();
 	Ref< db::Group > targetGroup = destinationDb->getRootGroup();
@@ -236,10 +296,21 @@ int main(int argc, const char** argv)
 			return 5;
 	}
 
-	log::info << L"Migration complete" << Endl;
+	traktor::log::info << L"Migration complete" << Endl;
 
 	destinationDb->close();
 	sourceDb->close();
+
+	if (logFile)
+	{
+		traktor::log::info.setBuffer(0);
+		traktor::log::warning.setBuffer(0);
+		traktor::log::error.setBuffer(0);
+		traktor::log::debug.setBuffer(0);
+
+		logFile->close();
+		logFile = 0;
+	}
 
 	return 0;
 }

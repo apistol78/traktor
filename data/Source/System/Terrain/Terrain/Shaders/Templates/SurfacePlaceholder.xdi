@@ -20,7 +20,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>30</first>
+				<first>44</first>
 				<second>381</second>
 			</position>
 			<name>T_PatchTexCoord</name>
@@ -31,8 +31,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>71</first>
-				<second>455</second>
+				<first>85</first>
+				<second>486</second>
 			</position>
 			<name>T_Normal</name>
 			<connectable>true</connectable>
@@ -42,8 +42,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>27</first>
-				<second>418</second>
+				<first>41</first>
+				<second>416</second>
 			</position>
 			<name>T_WorldTexCoord</name>
 			<connectable>true</connectable>
@@ -53,8 +53,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>75</first>
-				<second>492</second>
+				<first>89</first>
+				<second>521</second>
 			</position>
 			<name>T_Height</name>
 			<connectable>true</connectable>
@@ -79,6 +79,17 @@ This is the contract of a terrain surface shader.
 				<first>207</first>
 				<second>215</second>
 			</position>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>26</first>
+				<second>451</second>
+			</position>
+			<name>T_WorldEyeDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

@@ -116,9 +116,12 @@ void JobQueue::threadWorker(int id)
 			if (m_jobQueue.get(job))
 			{
 				T_ASSERT (!job->m_finished);
+
 				(*job->m_functor)();
 				job->m_finished = true;
 				job->m_stopped = true;
+				job = 0;
+
 				m_jobFinishedEvent.broadcast();
 			}
 			Atomic::decrement(m_running);

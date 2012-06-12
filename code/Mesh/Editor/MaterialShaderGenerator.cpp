@@ -26,10 +26,12 @@ const Guid c_tplVertexParams(L"{AEBE83FB-68D4-9D45-A672-0A8487A197CD}");
 const Guid c_implDiffuseConst(L"{BA68E2CA-77EB-684E-AD2B-0CD4BC35608D}");
 const Guid c_implDiffuseMap(L"{EE7D62D6-B5A8-DC48-8328-A3513B998DD4}");
 const Guid c_implEmissiveConst(L"{61A41113-D9F9-964A-9D90-B7A686058A26}");
+const Guid c_implEmissiveMap(L"{AA813CBA-5007-2F49-9254-153646162932}");
 const Guid c_implNormalConst(L"{5D881AE1-B99D-8941-B949-4E95AEF1CB7A}");
 const Guid c_implNormalMap(L"{8CA655BD-E17B-5A48-B6C6-3FDBC1D4F97D}");
 const Guid c_implRimConst(L"{449F16EF-5C14-4940-A5E1-E1ABF73CC5D7}");
-const Guid c_implReflectionConst(L"{2E6EC61A-E1C2-D545-A29A-B4CBED8914E5}");
+const Guid c_implReflectiveConst(L"{2E6EC61A-E1C2-D545-A29A-B4CBED8914E5}");
+const Guid c_implReflectiveMap(L"{D8F82B95-DC7F-1A4A-9A1C-E0B6CBDEDE4D}");
 const Guid c_implOutputAdd(L"{321B8969-32D7-D44A-BF91-B056E4728DE2}");
 const Guid c_implOutputAlpha(L"{1CDA749C-D713-974F-8E84-895AFEE8D552}");
 const Guid c_implOutputDecal(L"{31FD2B2B-3D3C-024F-9AA6-544B73D6009C}");
@@ -77,6 +79,8 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 
 	Guid diffuseTexture = lookupTexture(textures, material.getDiffuseMap());
 	Guid specularTexture = lookupTexture(textures, material.getSpecularMap());
+	Guid emissiveTexture = lookupTexture(textures, material.getEmissiveMap());
+	Guid reflectiveTexture = lookupTexture(textures, material.getReflectiveMap());
 	Guid normalTexture = lookupTexture(textures, material.getNormalMap());
 
 	RefArray< render::External > externalNodes;
@@ -95,7 +99,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 				(*i)->setFragmentGuid(c_implDiffuseMap);
 		}
 		else if (fragmentGuid == c_tplEmissiveParams)
-			(*i)->setFragmentGuid(c_implEmissiveConst);
+		{
+			if (emissiveTexture.isNull())
+				(*i)->setFragmentGuid(c_implEmissiveConst);
+			else
+				(*i)->setFragmentGuid(c_implEmissiveMap);
+		}
 		else if (fragmentGuid == c_tplNormalParams)
 		{
 			if (normalTexture.isNull())
@@ -125,7 +134,12 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 		else if (fragmentGuid == c_tplRimParams)
 			(*i)->setFragmentGuid(c_implRimConst);
 		else if (fragmentGuid == c_tplReflectionParams)
-			(*i)->setFragmentGuid(c_implReflectionConst);
+		{
+			if (reflectiveTexture.isNull())
+				(*i)->setFragmentGuid(c_implReflectiveConst);
+			else
+				(*i)->setFragmentGuid(c_implReflectiveMap);
+		}
 		else if (fragmentGuid == c_tplSpecularParams)
 		{
 			if (specularTexture.isNull())
@@ -170,17 +184,29 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 			emissiveNode->setComment(L"");
 			emissiveNode->set(material.getEmissive());
 		}
+		else if (comment == L"Tag_EmissiveMap")
+		{
+			render::Texture* emissiveTextureNode = checked_type_cast< render::Texture* >(*i);
+			emissiveTextureNode->setComment(L"");
+			emissiveTextureNode->setExternal(emissiveTexture);
+		}
 		else if (comment == L"Tag_NormalMap")
 		{
 			render::Texture* normalTextureNode = checked_type_cast< render::Texture* >(*i);
 			normalTextureNode->setComment(L"");
 			normalTextureNode->setExternal(normalTexture);
 		}
-		else if (comment == L"Tag_Reflection")
+		else if (comment == L"Tag_Reflective")
 		{
-			render::Scalar* reflectionNode = checked_type_cast< render::Scalar* >(*i);
-			reflectionNode->setComment(L"");
-			reflectionNode->set(material.getReflection());
+			render::Scalar* reflectiveNode = checked_type_cast< render::Scalar* >(*i);
+			reflectiveNode->setComment(L"");
+			reflectiveNode->set(material.getReflective());
+		}
+		else if (comment == L"Tag_ReflectiveMap")
+		{
+			render::Texture* reflectiveTextureNode = checked_type_cast< render::Texture* >(*i);
+			reflectiveTextureNode->setComment(L"");
+			reflectiveTextureNode->setExternal(reflectiveTexture);
 		}
 		else if (comment == L"Tag_RimIntensity")
 		{
@@ -225,10 +251,12 @@ void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipeline
 	pipelineDepends->addDependency(c_implDiffuseConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implDiffuseMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implEmissiveConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implEmissiveMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalConst, editor::PdfUse);
 	pipelineDepends->addDependency(c_implNormalMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implRimConst, editor::PdfUse);
-	pipelineDepends->addDependency(c_implReflectionConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implReflectiveConst, editor::PdfUse);
+	pipelineDepends->addDependency(c_implReflectiveMap, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputAdd, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputAlpha, editor::PdfUse);
 	pipelineDepends->addDependency(c_implOutputDecal, editor::PdfUse);

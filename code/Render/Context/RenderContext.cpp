@@ -33,19 +33,18 @@ T_FORCE_INLINE bool SortAlphaBlendPredicate(const RenderBlock* renderBlock1, con
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderContext", RenderContext, Object)
 
 RenderContext::RenderContext(uint32_t heapSize)
-:	m_heap(0)
-,	m_heapEnd(0)
+:	m_heapEnd(0)
 ,	m_heapPtr(0)
 {
-	m_heap = static_cast< uint8_t* >(Alloc::acquireAlign(heapSize, 16, T_FILE_LINE));
-	T_FATAL_ASSERT_M (m_heap, L"Out of memory (Render context)");
-	m_heapEnd = m_heap + heapSize;
-	m_heapPtr = m_heap;
+	m_heap.reset(static_cast< uint8_t* >(Alloc::acquireAlign(heapSize, 16, T_FILE_LINE)));
+	T_FATAL_ASSERT_M (m_heap.ptr(), L"Out of memory (Render context)");
+	m_heapEnd = m_heap.ptr() + heapSize;
+	m_heapPtr = m_heap.ptr();
 }
 
 RenderContext::~RenderContext()
 {
-	Alloc::freeAlign(m_heap);
+	m_heap.release();
 }
 
 void* RenderContext::alloc(int blockSize)
@@ -82,7 +81,7 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t flags, cons
 	if (flags & RfOpaque)
 	{
 		std::sort(m_renderQueue[0].begin(), m_renderQueue[0].end(), SortOpaquePredicate);
-		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[0].begin(); i != m_renderQueue[0].end(); ++i)
+		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[0].begin(); i != m_renderQueue[0].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
 
@@ -90,14 +89,14 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t flags, cons
 	if (flags & RfAlphaBlend)
 	{
 		std::sort(m_renderQueue[1].begin(), m_renderQueue[1].end(), SortAlphaBlendPredicate);
-		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[1].begin(); i != m_renderQueue[1].end(); ++i)
+		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[1].begin(); i != m_renderQueue[1].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
 
 	// Render overlay blocks unsorted.
 	if (flags & RfOverlay)
 	{
-		for (std::vector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
+		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
 }
@@ -105,10 +104,10 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t flags, cons
 void RenderContext::flush()
 {
 	// Reset queues and heap.
-	for (int i = 0; i < sizeof_array(m_renderQueue); ++i)
+	for (int32_t i = 0; i < sizeof_array(m_renderQueue); ++i)
 		m_renderQueue[i].resize(0);
 
-	m_heapPtr = m_heap;
+	m_heapPtr = m_heap.ptr();
 }
 
 	}

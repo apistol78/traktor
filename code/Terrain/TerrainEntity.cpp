@@ -62,6 +62,7 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 ,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleNormals(render::getParameterHandle(L"Normals"))
+,	m_handleEye(render::getParameterHandle(L"Eye"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
@@ -349,10 +350,10 @@ void TerrainEntity::render(
 		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
-
 		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, i->patchOrigin);
 
@@ -389,6 +390,7 @@ void TerrainEntity::render(
 		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);

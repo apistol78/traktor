@@ -15,14 +15,14 @@ class FlashSoundBuffer : public sound::ISoundBuffer
 	T_RTTI_CLASS;
 
 public:
-	FlashSoundBuffer(const FlashSound& sound);
+	FlashSoundBuffer(const FlashSound* sound);
 
 	virtual Ref< sound::ISoundBufferCursor > createCursor() const;
 
 	virtual bool getBlock(sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const;
 
 private:
-	const FlashSound& m_sound;
+	Ref< const FlashSound > m_sound;
 };
 
 	}

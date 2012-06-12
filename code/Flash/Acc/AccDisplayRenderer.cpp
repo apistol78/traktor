@@ -47,8 +47,9 @@ const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
 const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
 const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
-const SwfCxTransform c_cxfZero = { 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f, 0.0f };
-const SwfCxTransform c_cxfIdentity = { 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f, 1.0f, 0.0f };
+const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 1.0f } };
+const SwfCxTransform c_cxfWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f } };
+const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
 
 bool insideFrameBounds(const FlashMovie& movie, const Matrix33& transform, const SwfRect& bounds)
 {
@@ -176,9 +177,14 @@ void AccDisplayRenderer::destroy()
 	safeDestroy(m_textureCache);
 	safeDestroy(m_renderTargetGlyphs);
 
-	for (std::map< uint64_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 		safeDestroy(i->second.shape);
+
+	for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+		safeDestroy(i->second.shape);
+
 	m_shapeCache.clear();
+	m_glyphCache.clear();
 
 	safeDestroy(m_shapeResources);
 	safeDestroy(m_vertexPool);
@@ -193,16 +199,22 @@ void AccDisplayRenderer::build(uint32_t frame)
 {
 	m_renderContext = m_renderContexts[frame];
 	m_renderContext->flush();
+
 	m_viewOffset.set(0.0f, 0.0f, 1.0f, 1.0f);
 
-	for (std::map< uint64_t, CacheEntry >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+	for (SmallMap< int32_t, ShapeCache >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+		i->second.shape->preBuild();
+	for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
 		i->second.shape->preBuild();
 }
 
 void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t frame)
 {
 	m_renderContext = renderContext;
-	for (std::map< uint64_t, CacheEntry >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+
+	for (SmallMap< int32_t, ShapeCache >::const_iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+		i->second.shape->preBuild();
+	for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
 		i->second.shape->preBuild();
 }
 
@@ -226,33 +238,6 @@ void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame,
 
 void AccDisplayRenderer::preload(const FlashMovie& movie)
 {
-	/*
-	// Upload all bitmaps to texture cache.
-	const std::map< uint16_t, Ref< FlashBitmap > >& bitmaps = movie.getBitmaps();
-	for (std::map< uint16_t, Ref< FlashBitmap > >::const_iterator i = bitmaps.begin(); i != bitmaps.end(); ++i)
-		m_textureCache->getBitmapTexture(*(i->second));
-
-	const std::map< uint16_t, Ref< FlashCharacter > >& characters = movie.getCharacters();
-	for (std::map< uint16_t, Ref< FlashCharacter > >::const_iterator i = characters.begin(); i != characters.end(); ++i)
-	{
-		if (const FlashShape* shape = dynamic_type_cast< const FlashShape* >(i->second))
-		{
-			Ref< AccShape > accShape = new AccShape();
-			if (accShape->create(
-				m_resourceManager,
-				m_renderSystem,
-				*m_textureCache,
-				movie,
-				*shape
-			))
-			{
-				uint64_t hash = reinterpret_cast< uint64_t >(shape);
-				m_shapeCache[hash].unusedCount = 0;
-				m_shapeCache[hash].shape = accShape;
-			}
-		}
-	}
-	*/
 }
 
 void AccDisplayRenderer::begin(
@@ -290,8 +275,9 @@ void AccDisplayRenderer::begin(
 	// Flush glyph cache is RT has become invalid.
 	if (!m_renderTargetGlyphs->isContentValid())
 	{
-		m_glyphCache.clear();
-		m_nextIndex = 0;
+		m_renderTargetGlyphs->setContentValid(true);
+		for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+			i->second.index = -1;
 	}
 
 	m_maskWrite = false;
@@ -301,15 +287,7 @@ void AccDisplayRenderer::begin(
 
 void AccDisplayRenderer::beginMask(bool increment)
 {
-	m_glyph->render(
-		m_renderContext,
-		m_frameSize,
-		m_viewSize,
-		m_viewOffset,
-		1.0f,
-		m_renderTargetGlyphs->getColorTexture(0),
-		m_maskReference
-	);
+	renderEnqueuedGlyphs();
 
 	m_maskWrite = true;
 	m_maskIncrement = increment;
@@ -317,15 +295,7 @@ void AccDisplayRenderer::beginMask(bool increment)
 
 void AccDisplayRenderer::endMask()
 {
-	m_glyph->render(
-		m_renderContext,
-		m_frameSize,
-		m_viewSize,
-		m_viewOffset,
-		1.0f,
-		m_renderTargetGlyphs->getColorTexture(0),
-		m_maskReference
-	);
+	renderEnqueuedGlyphs();
 
 	m_maskWrite = false;
 	if (m_maskIncrement)
@@ -342,18 +312,18 @@ void AccDisplayRenderer::endMask()
 
 void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
 {
-	uint64_t hash = reinterpret_cast< uint64_t >(&shape);
 	Ref< AccShape > accShape;
 
-	std::map< uint64_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
+	int32_t tag = shape.getCacheTag();
+	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
 	if (it == m_shapeCache.end())
 	{
 		accShape = new AccShape(m_shapeResources);
 		if (!accShape->createTesselation(shape))
 			return;
 
-		m_shapeCache[hash].unusedCount = 0;
-		m_shapeCache[hash].shape = accShape;
+		m_shapeCache[tag].unusedCount = 0;
+		m_shapeCache[tag].shape = accShape;
 	}
 	else
 	{
@@ -363,7 +333,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 
 	if (!accShape->updateRenderable(
 		m_vertexPool,
-		*m_textureCache,
+		m_textureCache,
 		movie,
 		shape.getFillStyles(),
 		shape.getLineStyles()
@@ -373,15 +343,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	if (!insideFrameBounds(movie, transform, accShape->getBounds()))
 		return;
 
-	m_glyph->render(
-		m_renderContext,
-		m_frameSize,
-		m_viewSize,
-		m_viewOffset,
-		1.0f,
-		m_renderTargetGlyphs->getColorTexture(0),
-		m_maskReference
-	);
+	renderEnqueuedGlyphs();
 
 	accShape->render(
 		m_renderContext,
@@ -403,35 +365,39 @@ void AccDisplayRenderer::renderMorphShape(const FlashMovie& movie, const Matrix3
 
 void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform)
 {
-	uint64_t hash = reinterpret_cast< uint64_t >(&shape);
-	Ref< AccShape > accShape;
-	int32_t index;
+	uint32_t tag = shape.getCacheTag();
 
-	// Get glyph shape; create if not already cached.
-	std::map< uint64_t, CacheEntry >::iterator it1 = m_shapeCache.find(hash);
-	if (it1 == m_shapeCache.end())
+	SmallMap< int32_t, GlyphCache >::iterator it1 = m_glyphCache.find(tag);
+	if (it1 == m_glyphCache.end())
 	{
-		accShape = new AccShape(m_shapeResources);
+		Ref< AccShape > accShape = new AccShape(m_shapeResources);
 		if (!accShape->createTesselation(shape))
+		{
+			T_DEBUG(L"Glyph tesselation failed");
 			return;
+		}
 
-		m_shapeCache[hash].unusedCount = 0;
-		m_shapeCache[hash].shape = accShape;
+		m_glyphCache[tag].shape = accShape;
+		m_glyphCache[tag].index = -1;
+
+		it1 = m_glyphCache.find(tag);
+		T_ASSERT (it1 != m_glyphCache.end());
 	}
-	else
-	{
-		it1->second.unusedCount = 0;
-		accShape = it1->second.shape;
-	}
+
+	Ref< AccShape > accShape = it1->second.shape;
+	T_ASSERT (accShape);
 
 	if (!accShape->updateRenderable(
 		m_vertexPool,
-		*m_textureCache,
+		0,
 		movie,
 		shape.getFillStyles(),
 		shape.getLineStyles()
 	))
+	{
+		it1->second.index = -1;
 		return;
+	}
 
 	SwfRect bounds = accShape->getBounds();
 	if (!insideFrameBounds(movie, transform, bounds))
@@ -446,31 +412,21 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		bounds.max.x = bounds.min.x + gh;
 
 	// Get cached glyph target.
-	std::map< uint64_t, int32_t >::iterator it2 = m_glyphCache.find(hash);
-	if (it2 != m_glyphCache.end())
-	{
-		index = it2->second;
-	}
-	else
+	if (it1->second.index < 0)
 	{
 		// Glyph not cached; pick index by cycling which means oldest glyph get discarded.
-		index = m_nextIndex++ % c_cacheGlyphCount;
-		for (std::map< uint64_t, int32_t >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
+		int32_t index = m_nextIndex++;
+		if (m_nextIndex >= c_cacheGlyphCount)
+			m_nextIndex = 0;
+
+		for (SmallMap< int32_t, GlyphCache >::iterator i = m_glyphCache.begin(); i != m_glyphCache.end(); ++i)
 		{
-			if (i->second == index)
-			{
-				m_glyphCache.erase(i);
-				break;
-			}
+			if (i->second.index == index)
+				i->second.index = -1;
 		}
 
 		int32_t column = index & (c_cacheGlyphCountX - 1);
 		int32_t row = index / c_cacheGlyphCountX;
-
-		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash glyph render begin");
-		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
-		renderBlockBegin->renderTargetIndex = 0;
-		m_renderContext->draw(render::RfOverlay, renderBlockBegin);
 
 		float cachePixelDx = 1.0f / c_cacheGlyphDimX;
 		float cachePixelDy = 1.0f / c_cacheGlyphDimY;
@@ -489,6 +445,11 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			-cachePixelDx * c_cacheGlyphMargin * 2.0f,
 			-cachePixelDy * c_cacheGlyphMargin * 2.0f
 		);
+
+		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash glyph render begin");
+		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
+		renderBlockBegin->renderTargetIndex = 0;
+		m_renderContext->draw(render::RfOverlay, renderBlockBegin);
 
 		// Clear previous glyph by drawing a solid quad at it's place.
 		m_quad->render(
@@ -513,7 +474,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 			viewSize,
 			viewOffsetWithMargin,
 			0.0f,
-			c_cxfIdentity,
+			c_cxfWhite,
 			false,
 			false,
 			false
@@ -522,8 +483,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		render::TargetEndRenderBlock* renderBlockEnd = m_renderContext->alloc< render::TargetEndRenderBlock >("Flash glyph render end");
 		m_renderContext->draw(render::RfOverlay, renderBlockEnd);
 
-		// Place in cache.
-		m_glyphCache[hash] = index;
+		it1->second.index = index;
 	}
 
 	// Draw glyph quad.
@@ -535,8 +495,8 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		{ (color.alpha * cxform.alpha[0]) / 255.0f + cxform.alpha[1], 0.0f }
 	};
 
-	int32_t column = index & (c_cacheGlyphCountX - 1);
-	int32_t row = index / c_cacheGlyphCountX;
+	int32_t column = it1->second.index & (c_cacheGlyphCountX - 1);
+	int32_t row = it1->second.index / c_cacheGlyphCountX;
 
 	m_glyph->add(
 		bounds,
@@ -553,18 +513,18 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 
 void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
 {
-	uint64_t hash = reinterpret_cast< uint64_t >(&canvas);
 	Ref< AccShape > accShape;
 
-	std::map< uint64_t, CacheEntry >::iterator it = m_shapeCache.find(hash);
-	if (it == m_shapeCache.end() || it->second.tag != canvas.getTag())
+	int32_t tag = canvas.getCacheTag();
+	SmallMap< int32_t, ShapeCache >::iterator it = m_shapeCache.find(tag);
+	if (it == m_shapeCache.end() || it->second.tag != canvas.getDirtyTag())
 	{
 		accShape = new AccShape(m_shapeResources);
 		if (!accShape->createTesselation(canvas))
 			return;
 
-		m_shapeCache[hash].unusedCount = 0;
-		m_shapeCache[hash].shape = accShape;
+		m_shapeCache[tag].unusedCount = 0;
+		m_shapeCache[tag].shape = accShape;
 	}
 	else
 	{
@@ -574,7 +534,7 @@ void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& t
 
 	if (!accShape->updateRenderable(
 		m_vertexPool,
-		*m_textureCache,
+		m_textureCache,
 		movie,
 		canvas.getFillStyles(),
 		canvas.getLineStyles()
@@ -584,15 +544,7 @@ void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& t
 	if (!insideFrameBounds(movie, transform, accShape->getBounds()))
 		return;
 
-	m_glyph->render(
-		m_renderContext,
-		m_frameSize,
-		m_viewSize,
-		m_viewOffset,
-		1.0f,
-		m_renderTargetGlyphs->getColorTexture(0),
-		m_maskReference
-	);
+	renderEnqueuedGlyphs();
 
 	accShape->render(
 		m_renderContext,
@@ -610,9 +562,11 @@ void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& t
 
 void AccDisplayRenderer::end()
 {
+	renderEnqueuedGlyphs();
+
 #if T_DEBUG_GLYPH_CACHE
 	// Overlay glyph cache.
-	const SwfRect bounds = { Vector2(0.0f, 0.0f), Vector2(c_cacheGlyphCount * 1024, 1024) };
+	const SwfRect bounds = { Vector2(0.0f, 0.0f), Vector2(c_cacheGlyphCountX * 1024, c_cacheGlyphCountY * 1024) };
 	m_quad->render(
 		m_renderContext,
 		bounds,
@@ -620,34 +574,26 @@ void AccDisplayRenderer::end()
 		m_frameSize,
 		m_viewSize,
 		m_viewOffset,
+		0.0f,
 		c_cxfIdentity,
 		m_renderTargetGlyphs->getColorTexture(0),
-		Vector4(0.0f, 0.0f, 1.0f, 1.0f)
+		Vector4(0.0f, 0.0f, 1.0f, 1.0f),
+		0
 	);
 #endif
-
-	m_glyph->render(
-		m_renderContext,
-		m_frameSize,
-		m_viewSize,
-		m_viewOffset,
-		1.0f,
-		m_renderTargetGlyphs->getColorTexture(0),
-		m_maskReference
-	);
 
 #if T_FLUSH_CACHE
 	// Don't flush cache if it doesn't contain that many shapes.
 	if (m_shapeCache.size() < c_maxCacheSize)
 	{
 		// Increment "unused" counter still.
-		for (std::map< uint64_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
+		for (std::map< uint64_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); ++i)
 			i->second.unusedCount++;
 		return;
 	}
 
 	// Nuke cached shapes which hasn't been used for X number of frames.
-	for (std::map< uint64_t, CacheEntry >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); )
+	for (SmallMap< int32_t, ShapeCache >::iterator i = m_shapeCache.begin(); i != m_shapeCache.end(); )
 	{
 		if (i->second.unusedCount++ >= c_maxUnusedCount)
 		{
@@ -662,6 +608,19 @@ void AccDisplayRenderer::end()
 	m_vertexPool->cycleGarbage();
 
 	m_renderContext = 0;
+}
+
+void AccDisplayRenderer::renderEnqueuedGlyphs()
+{
+	m_glyph->render(
+		m_renderContext,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		1.0f,
+		m_renderTargetGlyphs->getColorTexture(0),
+		m_maskReference
+	);
 }
 
 	}

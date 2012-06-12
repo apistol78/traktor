@@ -49,6 +49,14 @@ public:
 
 	const std::wstring& getSpecularMap() const;
 
+	void setEmissiveMap(const std::wstring& emissiveMap);
+
+	const std::wstring& getReflectiveMap() const;
+
+	void setReflectiveMap(const std::wstring& reflectiveMap);
+
+	const std::wstring& getEmissiveMap() const;
+
 	void setNormalMap(const std::wstring& normalMap);
 
 	const std::wstring& getNormalMap() const;
@@ -73,9 +81,9 @@ public:
 
 	float getEmissive() const;
 
-	void setReflection(float reflection);
+	void setReflective(float reflective);
 
-	float getReflection() const;
+	float getReflective() const;
 
 	void setRimLightIntensity(float rimLightIntensity);
 
@@ -93,13 +101,15 @@ private:
 	std::wstring m_name;
 	std::wstring m_diffuseMap;
 	std::wstring m_specularMap;
+	std::wstring m_emissiveMap;
+	std::wstring m_reflectiveMap;
 	std::wstring m_normalMap;
 	Color4ub m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;
 	float m_specularRoughness;
 	float m_emissive;
-	float m_reflection;
+	float m_reflective;
 	float m_rimLightIntensity;
 	BlendOperator m_blendOperator;
 	bool m_doubleSided;

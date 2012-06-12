@@ -23,5 +23,6 @@
 			</item>
 		</value>
 	</pipelineProperties>
+	<migrateProperties/>
 	<runtimeProperties/>
 </object>

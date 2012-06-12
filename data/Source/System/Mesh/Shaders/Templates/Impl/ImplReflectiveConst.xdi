@@ -4,7 +4,7 @@
 		<item type="traktor.render.Scalar">
 			<comment>
 			<![CDATA[
-Tag_Reflection
+Tag_Reflective
 			]]>
 			</comment>
 			<position>
@@ -19,7 +19,7 @@ Tag_Reflection
 				<first>912</first>
 				<second>571</second>
 			</position>
-			<name>T_Reflection</name>
+			<name>T_Reflective</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
@@ -27,7 +27,7 @@ Tag_Reflection
 				<first>912</first>
 				<second>613</second>
 			</position>
-			<name>T_ReflectionMap</name>
+			<name>T_ReflectiveMap</name>
 		</item>
 		<item type="traktor.render.Texture">
 			<comment/>
@@ -37,6 +37,17 @@ Tag_Reflection
 			</position>
 			<external>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</external>
 			<type>PtTextureCube</type>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>501</first>
+				<second>586</second>
+			</position>
+			<name>T_TexCoord</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

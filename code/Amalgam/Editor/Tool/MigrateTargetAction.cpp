@@ -68,18 +68,13 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 
 	// Set database connection strings.
 	db::ConnectionString sourceDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true;eventFile=false");
-	db::ConnectionString targetDatabaseCs(L"provider=traktor.db.CompactDatabase;fileName=Content.compact");
+	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.CompactDatabase;fileName=Content.compact");
+	db::ConnectionString applicationDatabaseCs(L"provider=traktor.db.CompactDatabase;fileName=Content.compact;readOnly=true");
 
-	// Concatenate modules from all used features.
-	StringOutputStream migrateModules;
-	StringOutputStream runtimeModules;
+	// Create migration configuration.
+	Ref< PropertyGroup > migrateConfiguration = new PropertyGroup();
 
-	// Add mandatory modules first.
-	migrateModules <<
-		L"Traktor.Database "
-		L"Traktor.Database.Local "
-		L"Traktor.Database.Compact ";
-
+	// Insert target's features into migrate configuration.
 	const std::list< Guid >& features = m_targetConfiguration->getFeatures();
 	for (std::list< Guid >::const_iterator i = features.begin(); i != features.end(); ++i)
 	{
@@ -90,22 +85,54 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 			continue;
 		}
 
-		Ref< const PropertyGroup > pipelineProperties = feature->getPipelineProperties();
-		if (pipelineProperties)
-		{
-			std::set< std::wstring > modules = pipelineProperties->getProperty< PropertyStringSet >(L"Editor.Modules");
-			for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
-				migrateModules << *i << L" ";
-		}
+		Ref< const PropertyGroup > migrateProperties = feature->getMigrateProperties();
+		if (!migrateProperties)
+			continue;
 
-		Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
-		if (runtimeProperties)
-		{
-			std::set< std::wstring > modules = runtimeProperties->getProperty< PropertyStringSet >(L"Amalgam.Modules");
-			for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
-				runtimeModules << *i << L" ";
-		}
+		migrateConfiguration = migrateConfiguration->mergeJoin(migrateProperties);
 	}
+
+	migrateConfiguration->setProperty< PropertyString >(L"Migrate.SourceDatabase", sourceDatabaseCs.format());
+	migrateConfiguration->setProperty< PropertyString >(L"Migrate.OutputDatabase", outputDatabaseCs.format());
+
+
+
+	//// Concatenate modules from all used features.
+	//StringOutputStream migrateModules;
+	//StringOutputStream runtimeModules;
+
+	//// Add mandatory modules first.
+	//migrateModules <<
+	//	L"Traktor.Database "
+	//	L"Traktor.Database.Local "
+	//	L"Traktor.Database.Compact ";
+
+	//const std::list< Guid >& features = m_targetConfiguration->getFeatures();
+	//for (std::list< Guid >::const_iterator i = features.begin(); i != features.end(); ++i)
+	//{
+	//	Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(*i);
+	//	if (!feature)
+	//	{
+	//		log::warning << L"Unable to get feature \"" << i->format() << L"\"; feature skipped." << Endl;
+	//		continue;
+	//	}
+
+	//	Ref< const PropertyGroup > pipelineProperties = feature->getPipelineProperties();
+	//	if (pipelineProperties)
+	//	{
+	//		std::set< std::wstring > modules = pipelineProperties->getProperty< PropertyStringSet >(L"Editor.Modules");
+	//		for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	//			migrateModules << *i << L" ";
+	//	}
+
+	//	Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
+	//	if (runtimeProperties)
+	//	{
+	//		std::set< std::wstring > modules = runtimeProperties->getProperty< PropertyStringSet >(L"Amalgam.Modules");
+	//		for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
+	//			runtimeModules << *i << L" ";
+	//	}
+	//}
 
 	// Create target application configuration.
 	Ref< PropertyGroup > applicationConfiguration = new PropertyGroup();
@@ -128,7 +155,6 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	// Modify configuration to connect to migrated database.
-	db::ConnectionString applicationDatabaseCs(L"provider=traktor.db.CompactDatabase;fileName=Content.compact;readOnly=true");
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Database", applicationDatabaseCs.format());
 
 	// Append target guid;s to application configuration.
@@ -137,8 +163,23 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	applicationConfiguration->setProperty< PropertyString >(L"Input.Default", m_targetConfiguration->getDefaultInput().format());
 	applicationConfiguration->setProperty< PropertyString >(L"Online.Config", m_targetConfiguration->getOnlineConfig().format());
 
-	// Write generated application configuration in output directory.
+	// Write generated configurations in output directory.
 	Ref< IStream > file = FileSystem::getInstance().open(
+		m_outputPath + L"/Migrate.config",
+		File::FmWrite
+	);
+	if (file)
+	{
+		xml::XmlSerializer(file).writeObject(migrateConfiguration);
+		file->close();
+	}
+	else
+	{
+		log::error << L"Unable to write migrate configuration" << Endl;
+		return false;
+	}
+
+	file = FileSystem::getInstance().open(
 		m_outputPath + L"/Application.config",
 		File::FmWrite
 	);
@@ -166,10 +207,6 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_PROJECT_ICON"] = m_targetConfiguration->getIcon();
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
-	envmap[L"DEPLOY_SOURCE_CS"] = sourceDatabaseCs.format();
-	envmap[L"DEPLOY_TARGET_CS"] = targetDatabaseCs.format();
-	envmap[L"DEPLOY_MIGRATE_MODULES"] = migrateModules.str();
-	envmap[L"DEPLOY_RUNTIME_MODULES"] = runtimeModules.str();
 
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());

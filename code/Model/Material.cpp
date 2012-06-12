@@ -9,13 +9,15 @@ Material::Material()
 :	m_name(L"")
 ,	m_diffuseMap(L"")
 ,	m_specularMap(L"")
+,	m_emissiveMap(L"")
+,	m_reflectiveMap(L"")
 ,	m_normalMap(L"")
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
 ,	m_emissive(0.0f)
-,	m_reflection(0.0f)
+,	m_reflective(0.0f)
 ,	m_rimLightIntensity(0.0f)
 ,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
@@ -26,13 +28,15 @@ Material::Material(const std::wstring& name)
 :	m_name(name)
 ,	m_diffuseMap(L"")
 ,	m_specularMap(L"")
+,	m_emissiveMap(L"")
+,	m_reflectiveMap(L"")
 ,	m_normalMap(L"")
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
 ,	m_emissive(0.0f)
-,	m_reflection(0.0f)
+,	m_reflective(0.0f)
 ,	m_rimLightIntensity(0.0f)
 ,	m_blendOperator(BoDecal)
 ,	m_doubleSided(false)
@@ -67,6 +71,26 @@ void Material::setSpecularMap(const std::wstring& specularMap)
 const std::wstring& Material::getSpecularMap() const
 {
 	return m_specularMap;
+}
+
+void Material::setEmissiveMap(const std::wstring& emissiveMap)
+{
+	m_emissiveMap = emissiveMap;
+}
+
+const std::wstring& Material::getReflectiveMap() const
+{
+	return m_reflectiveMap;
+}
+
+void Material::setReflectiveMap(const std::wstring& reflectiveMap)
+{
+	m_reflectiveMap = reflectiveMap;
+}
+
+const std::wstring& Material::getEmissiveMap() const
+{
+	return m_emissiveMap;
 }
 
 void Material::setNormalMap(const std::wstring& normalMap)
@@ -129,14 +153,14 @@ float Material::getEmissive() const
 	return m_emissive;
 }
 
-void Material::setReflection(float reflection)
+void Material::setReflective(float reflective)
 {
-	m_reflection = reflection;
+	m_reflective = reflective;
 }
 
-float Material::getReflection() const
+float Material::getReflective() const
 {
-	return m_reflection;
+	return m_reflective;
 }
 
 void Material::setRimLightIntensity(float rimLightIntensity)

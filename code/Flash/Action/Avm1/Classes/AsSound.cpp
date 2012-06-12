@@ -180,7 +180,7 @@ void AsSound::Sound_start(ActionObject* self) const
 	if (!fsr)
 		return;
 
-	m_soundPlayer->play(*fsr->getSound());
+	m_soundPlayer->play(fsr->getSound());
 }
 
 void AsSound::Sound_stop(ActionObject* self) const

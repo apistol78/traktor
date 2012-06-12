@@ -1774,7 +1774,6 @@ void opx_defineFunction2(ExecutionState& state)
 	data += sizeof(uint16_t);
 
 	Ref< ActionVMImage1 > image = new ActionVMImage1(state.npc, codeSize);
-	image->prepare();
 
 	Ref< ActionFunction > function = new ActionFunction2(
 		state.context,
@@ -2144,7 +2143,6 @@ void opx_defineFunction(ExecutionState& state)
 	data += sizeof(uint16_t);
 
 	Ref< ActionVMImage1 > image = new ActionVMImage1(state.npc, codeSize);
-	image->prepare();
 
 	Ref< ActionFunction > function = new ActionFunction1(
 		state.context,

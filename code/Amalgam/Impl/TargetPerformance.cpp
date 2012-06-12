@@ -26,6 +26,8 @@ TargetPerformance::TargetPerformance()
 ,	heapObjects(0)
 ,	drawCalls(0)
 ,	primitiveCount(0)
+,	residentResourcesCount(0)
+,	exclusiveResourcesCount(0)
 ,	bodyCount(0)
 ,	activeBodyCount(0)
 {
@@ -47,6 +49,8 @@ bool TargetPerformance::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"heapObjects", heapObjects);
 	s >> Member< uint32_t >(L"drawCalls", drawCalls);
 	s >> Member< uint32_t >(L"primitiveCount", primitiveCount);
+	s >> Member< uint32_t >(L"residentResourcesCount", residentResourcesCount);
+	s >> Member< uint32_t >(L"exclusiveResourcesCount", exclusiveResourcesCount);
 	s >> Member< uint32_t >(L"bodyCount", bodyCount);
 	s >> Member< uint32_t >(L"activeBodyCount", activeBodyCount);
 	return true;

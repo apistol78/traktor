@@ -175,14 +175,13 @@ bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority,
 
 bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	// Update active state.
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		if (m_currentState.sound != m_activeState.sound)
-			m_outputSamplesIn = 0;
-		if (m_currentState.sound != m_activeState.sound || m_currentState.filter != m_activeState.filter)
-			m_activeState = m_currentState;
-	}
+	if (m_currentState.sound != m_activeState.sound)
+		m_outputSamplesIn = 0;
+	if (m_currentState.sound != m_activeState.sound || m_currentState.filter != m_activeState.filter)
+		m_activeState = m_currentState;
 
 	if (!m_activeState.sound || !m_activeState.cursor)
 		return false;

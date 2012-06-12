@@ -15,13 +15,6 @@
 
 namespace traktor
 {
-	namespace hf
-	{
-
-class Heightfield;
-
-	}
-
 	namespace render
 	{
 
@@ -34,6 +27,7 @@ class Shader;
 	{
 
 class OceanEntity;
+class Terrain;
 
 class T_DLLCLASS OceanEntityData : public world::EntityData
 {
@@ -66,14 +60,14 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
+	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
 	friend class OceanEntity;
 
-	resource::Id< hf::Heightfield > m_heightfield;
+	resource::Id< Terrain > m_terrain;
 	resource::Id< render::Shader > m_shader;
 	float m_altitude;
 	Wave m_waves[MaxWaves];

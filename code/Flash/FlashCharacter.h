@@ -39,6 +39,15 @@ public:
 	 */
 	uint16_t getId() const;
 
+	/*! \brief Get character unique tag.
+	 *
+	 * The tag is guaranteed to be unique during the
+	 * life-time of the running process even
+	 * if multiple Flash players are created
+	 * and destroyed during this time.
+	 */
+	int32_t getCacheTag() const;
+
 	/*! \brief Create character instance.
 	 *
 	 * \param context ActionScript execution context.
@@ -55,6 +64,7 @@ public:
 
 private:
 	uint16_t m_id;
+	int32_t m_tag;
 };
 
 	}

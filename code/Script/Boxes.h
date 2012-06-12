@@ -1,6 +1,7 @@
 #ifndef traktor_script_Boxes_H
 #define traktor_script_Boxes_H
 
+#include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Color4f.h"
@@ -23,6 +24,31 @@ namespace traktor
 {
 	namespace script
 	{
+
+class T_DLLCLASS BoxedGuid : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedGuid();
+
+	explicit BoxedGuid(const Guid& value);
+
+	void set(const std::wstring& str) { m_value = Guid(str); }
+
+	std::wstring format() const { return m_value.format(); }
+
+	bool isValid() const { return m_value.isValid(); }
+
+	bool isNull() const { return m_value.isNull(); }
+
+	bool isNotNull() const { return m_value.isNotNull(); }
+
+	const Guid& unbox() const { return m_value; }
+
+private:
+	Guid m_value;
+};
 
 class T_DLLCLASS BoxedVector2 : public Object
 {
@@ -285,6 +311,28 @@ public:
 
 private:
 	std::vector< Any > m_arr;
+};
+
+template < >
+struct CastAny < Guid, false >
+{
+	static Any set(const Guid& value) {
+		return Any(new BoxedGuid(value));
+	}	
+	static Guid get(const Any& value) {
+		return checked_type_cast< BoxedGuid*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Guid&, false >
+{
+	static Any set(const Guid& value) {
+		return Any(new BoxedGuid(value));
+	}	
+	static Guid get(const Any& value) {
+		return checked_type_cast< BoxedGuid*, false >(value.getObject())->unbox();
+	}
 };
 
 template < >

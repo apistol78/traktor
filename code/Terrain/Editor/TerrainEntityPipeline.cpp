@@ -37,7 +37,7 @@ bool TerrainEntityPipeline::buildDependencies(
 	}
 	else if (const OceanEntityData* oceanEntityData = dynamic_type_cast< const OceanEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(oceanEntityData->getHeightfield(), editor::PdfBuild);
+		pipelineDepends->addDependency(oceanEntityData->getTerrain(), editor::PdfBuild);
 		pipelineDepends->addDependency(oceanEntityData->getShader(), editor::PdfBuild);
 	}
 	else if (const RiverEntityData* riverEntityData = dynamic_type_cast< const RiverEntityData* >(sourceAsset))

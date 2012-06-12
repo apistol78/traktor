@@ -34,12 +34,9 @@ public:
 
 	const TargetPerformance& getPerformance() const { return m_performance; }
 
-	const TargetPerformance& getDeltaPerformance() const { return m_deltaPerformance; }
-
 private:
 	Ref< net::TcpSocket > m_socket;
 	TargetPerformance m_performance;
-	TargetPerformance m_deltaPerformance;
 	Semaphore m_lock;
 };
 

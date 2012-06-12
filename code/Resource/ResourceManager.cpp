@@ -150,23 +150,26 @@ void ResourceManager::unloadUnusedResident()
 	}
 }
 
-void ResourceManager::dumpStatistics()
+void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	log::info << L"Resource manager statistics:" << Endl;
-	log::info << IncreaseIndent;
-	
-	log::info << uint32_t(m_residentHandles.size()) << L" resident entries" << Endl;
-	log::info << uint32_t(m_exclusiveHandles.size()) << L" exclusive entries" << Endl;
-	
-	double totalTime = 0.0;
-	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)
-		totalTime += i->second.time;
-	for (std::map< const TypeInfo*, TimeCount >::const_iterator i = m_times.begin(); i != m_times.end(); ++i)
-		log::info << i->first->getName() << L" " << (i->second.time * 1000.0) << L" ms (" << i->second.count << L" resource(s), " << (i->second.time * 100.0f / totalTime) << L"%)" << Endl;
-	
-	log::info << DecreaseIndent;
+	outStatistics.residentCount = 0;
+	for (std::map< Guid, Ref< ResidentResourceHandle > >::const_iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
+	{
+		if (i->second->get() != 0)
+			++outStatistics.residentCount;
+	}
+
+	outStatistics.exclusiveCount = 0;
+	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::const_iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
+	{
+		for (RefArray< ExclusiveResourceHandle >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
+		{
+			if (*j)
+				++outStatistics.exclusiveCount;
+		}
+	}
 }
 
 Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)
@@ -197,7 +200,6 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, const Ty
 	Timer timer;
 	timer.start();
 
-	//const TypeInfo& resourceType = handle->getResourceType();
 	Ref< Object > object = factory->create(this, resourceType, guid);
 	if (object)
 	{

@@ -35,7 +35,7 @@ public:
 
 	virtual bool leave() = 0;
 
-	virtual Ref< UserArrayResult > getParticipants() = 0;
+	virtual RefArray< IUser > getParticipants() = 0;
 
 	virtual int32_t getIndex() const = 0;
 };

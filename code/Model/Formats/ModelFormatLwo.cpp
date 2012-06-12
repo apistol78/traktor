@@ -131,6 +131,32 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 				T_DEBUG(L"No specular texture clip for surface \"" << mbstows(surface->name) << L"\"");
 		}
 
+		const lwTexture* texEmissive = getLwTexture(surface->luminosity.tex);
+		if (texEmissive)
+		{
+			const lwClip* clip = findLwClip(lwo, texEmissive->param.imap.cindex);
+			if (clip)
+			{
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
+				material.setEmissiveMap(textureName);
+			}
+			else
+				T_DEBUG(L"No emissive texture clip for surface \"" << mbstows(surface->name) << L"\"");
+		}
+
+		const lwTexture* texReflective = getLwTexture(surface->reflection.val.tex);
+		if (texReflective)
+		{
+			const lwClip* clip = findLwClip(lwo, texReflective->param.imap.cindex);
+			if (clip)
+			{
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
+				material.setReflectiveMap(textureName);
+			}
+			else
+				T_DEBUG(L"No reflective texture clip for surface \"" << mbstows(surface->name) << L"\"");
+		}
+
 		const lwTexture* texBump = getLwTexture(surface->bump.tex);
 		if (texBump)
 		{
@@ -158,7 +184,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 		material.setSpecularTerm(surface->specularity.val);
 		material.setSpecularRoughness(surface->glossiness.val);
 		material.setEmissive(surface->luminosity.val);
-		material.setReflection(surface->reflection.val.val);
+		material.setReflective(surface->reflection.val.val);
 		material.setRimLightIntensity(surface->glow.val);
 
 		if ((surface->sideflags & 3) == 3)

@@ -188,7 +188,6 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TargetPerformance& performance = connections[i]->getPerformance();
-		const TargetPerformance& deltaPerformance = connections[i]->getDeltaPerformance();
 
 		ui::Rect topRect = performanceRect;
 		topRect.bottom = topRect.top + 12;
@@ -197,23 +196,23 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 		canvas.drawText(topRect, toString(int32_t(performance.fps)), ui::AnLeft, ui::AnCenter);
 
 		topRect.left += 20;
-		canvas.drawText(topRect, L"U: " + formatPerformanceTime(performance.update) + L" (" + formatPerformanceTime(deltaPerformance.update) + L")", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(topRect, L"U: " + formatPerformanceTime(performance.update), ui::AnLeft, ui::AnCenter);
 
 		topRect.left += 80;
-		canvas.drawText(topRect, L"B: " + formatPerformanceTime(performance.build) + L" (" + formatPerformanceTime(deltaPerformance.build) + L")", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(topRect, L"B: " + formatPerformanceTime(performance.build), ui::AnLeft, ui::AnCenter);
 
 		topRect.left += 80;
-		canvas.drawText(topRect, L"R: " + formatPerformanceTime(performance.render) + L" (" + formatPerformanceTime(deltaPerformance.render) + L")", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(topRect, L"R: " + formatPerformanceTime(performance.render), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect middleRect = performanceRect;
 		middleRect.top = performanceRect.top + 12;
 		middleRect.bottom = performanceRect.top + 24;
 
 		middleRect.left += 26;
-		canvas.drawText(middleRect, L"P: " + formatPerformanceTime(performance.physics) + L" (" + formatPerformanceTime(deltaPerformance.physics) + L")", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect, L"P: " + formatPerformanceTime(performance.physics), ui::AnLeft, ui::AnCenter);
 
 		middleRect.left += 80;
-		canvas.drawText(middleRect, L"I: " + formatPerformanceTime(performance.input) + L" (" + formatPerformanceTime(deltaPerformance.input) + L")", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect, L"I: " + formatPerformanceTime(performance.input), ui::AnLeft, ui::AnCenter);
 
 		middleRect.left += 80;
 		canvas.drawText(middleRect, L"S: " + toString(int32_t(performance.steps)) + L", " + formatPerformanceTime(performance.interval) + L", " + toString(performance.collisions), ui::AnLeft, ui::AnCenter);
@@ -223,25 +222,25 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 		middleRect2.bottom = performanceRect.top + 36;
 
 		middleRect2.left += 26;
-		canvas.drawText(middleRect2, L"Draw: " + toString(int32_t(performance.drawCalls)), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect2, L"Draw: " + toString(performance.drawCalls), ui::AnLeft, ui::AnCenter);
 
 		middleRect2.left += 100;
-		canvas.drawText(middleRect2, L"Prim: " + toString(int32_t(performance.primitiveCount)), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect2, L"Prim: " + toString(performance.primitiveCount), ui::AnLeft, ui::AnCenter);
 
 		middleRect2.left += 100;
-		canvas.drawText(middleRect2, L"Phys: " + toString(int32_t(performance.activeBodyCount)) + L"/" + toString(int32_t(performance.bodyCount)), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(middleRect2, L"Phys: " + toString(performance.activeBodyCount) + L"/" + toString(performance.bodyCount), ui::AnLeft, ui::AnCenter);
 
 		ui::Rect bottomRect = performanceRect;
 		bottomRect.top = performanceRect.top + 36;
 
 		bottomRect.left += 26;
-		canvas.drawText(bottomRect, L"Mem: " + toString(uint32_t(performance.memInUse / 1024)) + L" KiB", ui::AnLeft, ui::AnCenter);
+		canvas.drawText(bottomRect, L"Mem: " + toString(performance.memInUse / 1024) + L" KiB", ui::AnLeft, ui::AnCenter);
 
 		bottomRect.left += 100;
-		canvas.drawText(bottomRect, L"Obj: " + toString(uint32_t(performance.heapObjects)), ui::AnLeft, ui::AnCenter);
+		canvas.drawText(bottomRect, L"Obj: " + toString(performance.heapObjects), ui::AnLeft, ui::AnCenter);
 
-
-
+		bottomRect.left += 100;
+		canvas.drawText(bottomRect, L"Res: " + toString(performance.residentResourcesCount) + L", " + toString(performance.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
 
 		canvas.drawBitmap(
 			ui::Point(performanceRect.right - 24 * 1 - 4, performanceRect.getCenter().y - 10),
@@ -250,8 +249,6 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 			s_bitmapTargetControl,
 			ui::BmAlpha
 		);
-
-
 
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}

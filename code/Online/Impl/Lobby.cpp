@@ -1,7 +1,7 @@
 #include "Online/Impl/Lobby.h"
 #include "Online/Impl/TaskQueue.h"
 #include "Online/Impl/User.h"
-#include "Online/Impl/Tasks/TaskGetParticipants.h"
+#include "Online/Impl/UserCache.h"
 #include "Online/Impl/Tasks/TaskJoinLobby.h"
 #include "Online/Impl/Tasks/TaskSetLobbyMetaValue.h"
 #include "Online/Impl/Tasks/TaskSetLobbyParticipantMetaValue.h"
@@ -76,18 +76,17 @@ bool Lobby::leave()
 	return m_matchMakingProvider->leaveLobby(m_handle);
 }
 
-Ref< UserArrayResult > Lobby::getParticipants()
+RefArray< IUser > Lobby::getParticipants()
 {
-	Ref< UserArrayResult > result = new UserArrayResult();
-	if (m_taskQueue->add(new TaskGetParticipants(
-		m_matchMakingProvider,
-		m_userCache,
-		m_handle,
-		result
-	)))
-		return result;
-	else
-		return 0;
+	std::vector< uint64_t > userHandles;
+	m_matchMakingProvider->getParticipants(m_handle, userHandles);
+
+	RefArray< IUser > users;
+	users.reserve(userHandles.size());
+	for (std::vector< uint64_t >::iterator i = userHandles.begin(); i != userHandles.end(); ++i)
+		users.push_back(m_userCache->get(*i));
+
+	return users;
 }
 
 int32_t Lobby::getIndex() const

@@ -96,6 +96,7 @@ Ref< Entity > EntityBuilder::create(const EntityData* entityData)
 	if (!entity)
 	{
 		log::error << L"Unable to create entity from \"" << type_name(entityData) << L"\"" << Endl;
+		m_entityScope.pop();
 		return 0;
 	}
 

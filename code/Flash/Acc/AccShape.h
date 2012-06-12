@@ -51,7 +51,7 @@ public:
 
 	bool updateRenderable(
 		AccShapeVertexPool* vertexPool,
-		AccTextureCache& textureCache,
+		AccTextureCache* textureCache,
 		const FlashMovie& movie,
 		const AlignedVector< FlashFillStyle >& fillStyles,
 		const AlignedVector< FlashLineStyle >& lineStyles

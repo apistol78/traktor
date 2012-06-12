@@ -1,6 +1,7 @@
 #include "Flash/Sound/FlashSoundBuffer.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Sound/Sound.h"
+#include "Sound/SoundChannel.h"
 #include "Sound/SoundSystem.h"
 
 namespace traktor
@@ -20,11 +21,16 @@ bool SoundRenderer::create(
 
 void SoundRenderer::destroy()
 {
+	if (m_soundChannel)
+	{
+		m_soundChannel->stop();
+		m_soundChannel = 0;
+	}
 }
 
-void SoundRenderer::play(const FlashSound& sound)
+void SoundRenderer::play(const FlashSound* sound)
 {
-	m_soundSystem->play(
+	m_soundChannel = m_soundSystem->play(
 		new sound::Sound(new FlashSoundBuffer(sound)),
 		0,
 		true

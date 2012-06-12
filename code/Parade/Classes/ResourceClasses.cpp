@@ -25,7 +25,6 @@ void registerResourceClasses(script::IScriptManager* scriptManager)
 	classIResourceManager->addMethod(L"addFactory", &resource::IResourceManager::addFactory);
 	classIResourceManager->addMethod(L"removeFactory", &resource::IResourceManager::removeFactory);
 	classIResourceManager->addMethod(L"removeAllFactories", &resource::IResourceManager::removeAllFactories);
-	classIResourceManager->addMethod(L"dumpStatistics", &resource::IResourceManager::dumpStatistics);
 	scriptManager->registerClass(classIResourceManager);
 }
 

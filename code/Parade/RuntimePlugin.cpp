@@ -9,6 +9,7 @@
 #include "Parade/StageState.h"
 #include "Parade/Classes/AmalgamClasses.h"
 #include "Parade/Classes/AnimationClasses.h"
+#include "Parade/Classes/DatabaseClasses.h"
 #include "Parade/Classes/FlashClasses.h"
 #include "Parade/Classes/InputClasses.h"
 #include "Parade/Classes/MeshClasses.h"
@@ -17,6 +18,7 @@
 #include "Parade/Classes/PhysicsClasses.h"
 #include "Parade/Classes/ResourceClasses.h"
 #include "Parade/Classes/SoundClasses.h"
+#include "Parade/Classes/TerrainClasses.h"
 #include "Parade/Classes/WorldClasses.h"
 
 namespace traktor
@@ -36,6 +38,7 @@ bool RuntimePlugin::startup(amalgam::IEnvironment* environment)
 	script::IScriptManager* scriptManager = environment->getScript()->getScriptManager();
 	T_ASSERT (scriptManager);
 
+	registerDatabaseClasses(scriptManager);
 	registerResourceClasses(scriptManager);
 	registerWorldClasses(scriptManager);
 	registerAmalgamClasses(scriptManager);
@@ -47,6 +50,7 @@ bool RuntimePlugin::startup(amalgam::IEnvironment* environment)
 	registerSoundClasses(scriptManager);
 	registerAnimationClasses(scriptManager);
 	registerOnlineClasses(scriptManager);
+	registerTerrainClasses(scriptManager);
 
 	return true;
 }
