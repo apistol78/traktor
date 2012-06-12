@@ -18,7 +18,7 @@ class FlashSoundPlayer : public Object
 public:
 	FlashSoundPlayer(ISoundRenderer* soundRenderer);
 
-	void play(const FlashSound& sound);
+	void play(const FlashSound* sound);
 
 private:
 	Ref< ISoundRenderer > m_soundRenderer;

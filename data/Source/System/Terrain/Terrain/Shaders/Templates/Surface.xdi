@@ -236,7 +236,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
 				<first>1688</first>
@@ -248,6 +248,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<mipBias>0</mipBias>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -298,7 +299,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			</position>
 			<technique/>
 		</item>
-		<item type="traktor.render.PixelOutput" version="3">
+		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>
 			<position>
 				<first>2414</first>
@@ -322,6 +323,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfGreater</alphaTestFunction>
 			<alphaTestReference>0</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
@@ -353,6 +355,10 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 					<optional>false</optional>
 				</item>
 				<item>
+					<name>T_WorldEyeDirection</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<name>T_WorldTexCoord</name>
 					<optional>false</optional>
 				</item>
@@ -366,6 +372,14 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.Vector">
+			<comment/>
+			<position>
+				<first>1703</first>
+				<second>602</second>
+			</position>
+			<value>0, 0, 0, 0</value>
 		</item>
 	</nodes>
 	<edges>
@@ -747,6 +761,16 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			<destination>
 				<node ref="/object/nodes/item[34]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<name>T_WorldEyeDirection</name>
 			</destination>
 		</item>
 	</edges>

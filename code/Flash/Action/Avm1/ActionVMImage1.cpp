@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -16,10 +17,12 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVMImage1", 0, ActionVMImage1, IActionVMImage)
 
 ActionVMImage1::ActionVMImage1()
+:	m_prepared(false)
 {
 }
 
 ActionVMImage1::ActionVMImage1(const uint8_t* byteCode, uint32_t length)
+:	m_prepared(false)
 {
 	if (length > 0)
 	{
@@ -30,6 +33,9 @@ ActionVMImage1::ActionVMImage1(const uint8_t* byteCode, uint32_t length)
 
 void ActionVMImage1::prepare()
 {
+	if (m_prepared)
+		return;
+
 	PreparationState state;
 	state.image = this;
 	state.pc = m_byteCode.ptr();
@@ -71,6 +77,8 @@ void ActionVMImage1::prepare()
 		// Update program counter.
 		state.pc = state.npc;
 	}
+
+	m_prepared = true;
 }
 
 uint16_t ActionVMImage1::addConstData(const ActionValue& cd)
@@ -81,8 +89,9 @@ uint16_t ActionVMImage1::addConstData(const ActionValue& cd)
 
 bool ActionVMImage1::serialize(ISerializer& s)
 {
-	uint32_t size = m_byteCode.size();
+	T_ASSERT (!m_prepared);
 
+	uint32_t size = m_byteCode.size();
 	s >> Member< uint32_t >(L"byteCodeSize", size);
 
 	if (s.getDirection() == ISerializer::SdRead)
@@ -94,10 +103,6 @@ bool ActionVMImage1::serialize(ISerializer& s)
 		s >> Member< void* >(L"byteCode", data, size);
 
 	s >> MemberAlignedVector< ActionValue, MemberComposite< ActionValue > >(L"constData", m_constData);
-
-	if (s.getDirection() == ISerializer::SdRead)
-		prepare();
-
 	return true;
 }
 

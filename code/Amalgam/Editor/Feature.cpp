@@ -17,6 +17,7 @@ bool Feature::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> MemberComposite< Platforms >(L"platforms", m_platforms);
 	s >> MemberRef< PropertyGroup >(L"pipelineProperties", m_pipelineProperties);
+	s >> MemberRef< PropertyGroup >(L"migrateProperties", m_migrateProperties);
 	s >> MemberRef< PropertyGroup >(L"runtimeProperties", m_runtimeProperties);
 	return true;
 }

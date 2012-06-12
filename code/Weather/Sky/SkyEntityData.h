@@ -51,6 +51,7 @@ public:
 private:
 	resource::Id< render::Shader > m_shader;
 	Vector4 m_sunDirection;
+	float m_offset;
 };
 
 	}

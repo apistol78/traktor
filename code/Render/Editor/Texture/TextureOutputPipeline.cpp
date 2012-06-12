@@ -316,8 +316,8 @@ bool TextureOutputPipeline::buildOutput(
 				else
 				{
 					bool binaryAlpha = false;
-					if (textureOutput->m_hasAlpha && !textureOutput->m_ignoreAlpha)
-						binaryAlpha = isBinaryAlpha(image);
+					//if (textureOutput->m_hasAlpha && !textureOutput->m_ignoreAlpha)
+					//	binaryAlpha = isBinaryAlpha(image);
 					if (needAlpha && !binaryAlpha)
 					{
 						log::info << L"Using DXT3 compression" << Endl;

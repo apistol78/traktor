@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashSpriteInstance.h"
@@ -43,6 +44,7 @@ void FlashLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
 	if (m_movie.changed())
 	{
 		m_displayRenderer = 0;
+		m_soundRenderer = 0;
 		m_moviePlayer = 0;
 		m_movie.consume();
 	}
@@ -101,6 +103,10 @@ void FlashLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 
 void FlashLayer::leave(Stage* stage)
 {
+	m_movie.clear();
+	safeDestroy(m_moviePlayer);
+	safeDestroy(m_displayRenderer);
+	safeDestroy(m_soundRenderer);
 }
 
 void FlashLayer::reconfigured(Stage* stage)
@@ -189,6 +195,7 @@ void FlashLayer::createMoviePlayer()
 
 	// All success, replace instances.
 	m_displayRenderer = displayRenderer;
+	m_soundRenderer = soundRenderer;
 	m_moviePlayer = moviePlayer;
 }
 

@@ -1,3 +1,4 @@
+#include <limits>
 #include "Heightfield/Heightfield.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
@@ -11,6 +12,7 @@
 #include "Resource/IResourceManager.h"
 #include "Terrain/OceanEntity.h"
 #include "Terrain/OceanEntityData.h"
+#include "Terrain/Terrain.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -28,7 +30,7 @@ OceanEntity::OceanEntity()
 
 bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanEntityData& data)
 {
-	const uint32_t gridSize = 100;
+	const uint32_t gridSize = 200;
 	const uint32_t vertexCount = gridSize * gridSize;
 	const uint32_t triangleCount = (gridSize - 1) * (gridSize - 1) * 2;
 	const uint32_t indexCount = triangleCount * 3;
@@ -102,7 +104,7 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 
 	m_altitude = data.m_altitude;
 
-	if (!resourceManager->bind(data.m_heightfield, m_heightfield))
+	if (!resourceManager->bind(data.m_terrain, m_terrain))
 		return false;
 	if (!resourceManager->bind(data.m_shader, m_shader))
 		return false;
@@ -132,7 +134,7 @@ void OceanEntity::render(
 
 	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
 
-	renderBlock->distance = 0.0f;
+	renderBlock->distance = std::numeric_limits< float >::max();
 	renderBlock->program = program;
 	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 	renderBlock->indexBuffer = m_indexBuffer;
@@ -156,11 +158,11 @@ void OceanEntity::render(
 	renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInverse);
 	renderBlock->programParams->setFloatParameter(L"ViewRatio", worldRenderView.getViewSize().x / worldRenderView.getViewSize().y);
 
-	if (m_heightfield)
+	if (m_terrain)
 	{
-		renderBlock->programParams->setVectorParameter(L"WorldOrigin", -(m_heightfield->getWorldExtent() * Scalar(0.5f)).xyz1());
-		renderBlock->programParams->setVectorParameter(L"WorldExtent", m_heightfield->getWorldExtent().xyz0());
-		//renderBlock->programParams->setTextureParameter(L"Heightfield", m_heightfield->getHeightTexture());
+		renderBlock->programParams->setVectorParameter(L"WorldOrigin", -(m_terrain->getHeightfield()->getWorldExtent() * Scalar(0.5f)).xyz1());
+		renderBlock->programParams->setVectorParameter(L"WorldExtent", m_terrain->getHeightfield()->getWorldExtent().xyz0());
+		renderBlock->programParams->setTextureParameter(L"Heightfield", m_terrain->getHeightMap());
 	}
 
 	renderBlock->programParams->endParameters(renderContext);

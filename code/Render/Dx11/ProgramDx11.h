@@ -65,6 +65,11 @@ public:
 		const int32_t targetSize[2]
 	);
 
+	void unbind(
+		ID3D11Device* d3dDevice,
+		ID3D11DeviceContext* d3dDeviceContext
+	);
+
 private:
 	struct ParameterOffset
 	{
@@ -89,7 +94,7 @@ private:
 
 	struct State
 	{
-		ComRef< ID3D11Buffer > d3dConstantBuffer[8];
+		ComRef< ID3D11Buffer > d3dConstantBuffer[4];
 		ComRefArray< ID3D11SamplerState > d3dSamplerStates;
 		std::vector< ParameterOffset > parameterFloatOffsets;
 		std::vector< std::pair< UINT, uint32_t > > resourceIndices;

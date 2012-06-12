@@ -51,7 +51,6 @@ int32_t ResourceServer::reconfigure(const PropertyGroup* settings)
 
 void ResourceServer::performCleanup()
 {
-	//m_resourceManager->dumpStatistics();
 	m_resourceManager->unloadUnusedResident();
 }
 

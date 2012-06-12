@@ -286,17 +286,17 @@ public:
 
 	ComRefArray< T >& operator = (const ComRefArray< T >& src)
 	{
+		for (container_type::const_iterator i = src.m_array.begin(); i != src.m_array.end(); ++i)
+		{
+			if (*i)
+				(*i)->AddRef();
+		}
 		for (container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
 		{
 			if (*i)
 				(*i)->Release();
 		}
 		m_array = src.m_array;
-		for (container_type::iterator i = m_array.begin(); i != m_array.end(); ++i)
-		{
-			if (*i)
-				(*i)->AddRef();
-		}
 		return *this;
 	}
 

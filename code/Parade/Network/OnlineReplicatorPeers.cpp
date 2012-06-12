@@ -17,12 +17,7 @@ bool OnlineReplicatorPeers::create(
 {
 	m_sessionManager = sessionManager;
 	m_lobby = lobby;
-
-	Ref< online::UserArrayResult > result = m_lobby->getParticipants();
-	if (!result->succeeded())
-		return false;
-
-	m_users = result->get();
+	m_users = m_lobby->getParticipants();
 	return true;
 }
 

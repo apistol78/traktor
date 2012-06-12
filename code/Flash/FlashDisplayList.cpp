@@ -97,6 +97,8 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			else
 				m_layers.erase(j);
 		}
+		else
+			log::warning << L"Unable to find character " << removeObject.characterId << L" in dictionary (1)" << Endl;
 	}
 
 	// Place instances onto active list.
@@ -106,7 +108,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 		const FlashFrame::PlaceObject& placeObject = i->second;
 		if (placeObject.has(FlashFrame::PfHasMove) || placeObject.has(FlashFrame::PfHasCharacterId))
 		{
-			uint16_t depth = placeObject.depth + c_depthOffset;
+			int32_t depth = placeObject.depth + c_depthOffset;
 			Layer& layer = m_layers[depth];
 
 			if (placeObject.has(FlashFrame::PfHasCharacterId) && placeObject.characterId != layer.id)
@@ -124,7 +126,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 					layer.instance->setTransform(transform);
 				}
 				else
-					log::warning << L"Unable to find character " << placeObject.characterId << L" in dictionary" << Endl;
+					log::warning << L"Unable to find character " << placeObject.characterId << L" in dictionary (2)" << Endl;
 			}
 
 			if (!layer.instance)

@@ -48,7 +48,7 @@ public:
 
 	virtual void unloadUnusedResident();
 	
-	virtual void dumpStatistics();
+	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const;
 
 private:
 	struct TimeCount
@@ -68,7 +68,7 @@ private:
 	std::map< Guid, RefArray< ExclusiveResourceHandle > > m_exclusiveHandles;
 	std::map< const TypeInfo*, TimeCount > m_times;
 	std::stack< double > m_timeStack;
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 
 	Ref< IResourceFactory > findFactory(const TypeInfo& type);
 

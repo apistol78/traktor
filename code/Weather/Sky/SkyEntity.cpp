@@ -12,6 +12,7 @@ namespace traktor
 		{
 
 render::handle_t s_handleSkyDomeRadius;
+render::handle_t s_handleSkyDomeOffset;
 render::handle_t s_handleSunDirection;
 
 		}
@@ -23,15 +24,18 @@ SkyEntity::SkyEntity(
 	render::IndexBuffer* indexBuffer,
 	const render::Primitives& primitives,
 	const resource::Proxy< render::Shader >& shader,
-	const Vector4& sunDirection
+	const Vector4& sunDirection,
+	float offset
 )
 :	m_vertexBuffer(vertexBuffer)
 ,	m_indexBuffer(indexBuffer)
 ,	m_primitives(primitives)
 ,	m_shader(shader)
 ,	m_sunDirection(sunDirection)
+,	m_offset(offset)
 {
 	s_handleSkyDomeRadius = render::getParameterHandle(L"SkyDomeRadius");
+	s_handleSkyDomeOffset = render::getParameterHandle(L"SkyDomeOffset");
 	s_handleSunDirection = render::getParameterHandle(L"SunDirection");
 }
 
@@ -68,6 +72,7 @@ void SkyEntity::render(
 	worldRenderPass.setProgramParameters(renderBlock->programParams, false);
 	
 	renderBlock->programParams->setFloatParameter(s_handleSkyDomeRadius, worldRenderView.getViewFrustum().getFarZ());
+	renderBlock->programParams->setFloatParameter(s_handleSkyDomeOffset, m_offset);
 	renderBlock->programParams->setVectorParameter(s_handleSunDirection, m_sunDirection);
 
 	renderBlock->programParams->endParameters(renderContext);

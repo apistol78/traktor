@@ -32,6 +32,7 @@ private:
 
 	AlignedVector< uint8_t > m_byteCode;
 	AlignedVector< ActionValue > m_constData;
+	bool m_prepared;
 };
 
 	}

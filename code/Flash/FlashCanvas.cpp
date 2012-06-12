@@ -1,5 +1,6 @@
 #include <limits>
 #include "Flash/FlashCanvas.h"
+#include "Flash/FlashTypes.h"
 
 namespace traktor
 {
@@ -21,10 +22,21 @@ void expandBounds(SwfRect& bounds, avm_number_t x, avm_number_t y)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCanvas", FlashCanvas, Object)
 
 FlashCanvas::FlashCanvas()
-:	m_drawing(false)
-,	m_tag(0)
+:	m_cacheTag(allocateCacheTag())
+,	m_dirtyTag(0)
+,	m_drawing(false)
 {
 	clear();
+}
+
+int32_t FlashCanvas::getCacheTag() const
+{
+	return m_cacheTag;
+}
+
+int32_t FlashCanvas::getDirtyTag() const
+{
+	return m_dirtyTag;
 }
 
 void FlashCanvas::clear()
@@ -34,7 +46,7 @@ void FlashCanvas::clear()
 	m_bounds.max = Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max());
 	m_fillStyles.clear();
 	m_lineStyles.clear();
-	++m_tag;
+	++m_dirtyTag;
 }
 
 void FlashCanvas::beginFill(const FlashFillStyle& fillStyle)
@@ -55,7 +67,7 @@ void FlashCanvas::endFill()
 	p.end(fillStyle, 0, 0);
 
 	m_drawing = false;
-	++m_tag;
+	++m_dirtyTag;
 }
 
 void FlashCanvas::moveTo(avm_number_t x, avm_number_t y)

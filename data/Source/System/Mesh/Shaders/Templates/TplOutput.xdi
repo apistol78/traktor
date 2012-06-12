@@ -95,7 +95,7 @@
 				<first>654</first>
 				<second>596</second>
 			</position>
-			<name>T_Reflection</name>
+			<name>T_Reflective</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
@@ -106,7 +106,7 @@
 				<first>630</first>
 				<second>630</second>
 			</position>
-			<name>T_ReflectionMap</name>
+			<name>T_ReflectiveMap</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>

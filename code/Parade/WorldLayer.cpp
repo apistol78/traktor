@@ -5,6 +5,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Parade/WorldLayer.h"
 #include "Render/IRenderView.h"
+#include "Render/RenderTargetSet.h"
 #include "Scene/Scene.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
@@ -160,7 +161,14 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 
 void WorldLayer::leave(Stage* stage)
 {
-	m_renderGroup = 0;
+	m_scene.clear();
+	m_entities.clear();
+
+	safeDestroy(m_renderGroup);
+	safeDestroy(m_dynamicEntities);
+	safeDestroy(m_worldRenderer);
+	safeDestroy(m_postProcess);
+	safeDestroy(m_worldTarget);
 }
 
 void WorldLayer::reconfigured(Stage* stage)
@@ -258,6 +266,7 @@ void WorldLayer::createWorldRenderer()
 
 	// Destroy previous instances.
 	safeDestroy(m_worldRenderer);
+	safeDestroy(m_worldTarget);
 	safeDestroy(m_postProcess);
 
 	// Get render view dimensions.

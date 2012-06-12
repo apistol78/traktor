@@ -6,6 +6,7 @@
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Reflection/RfmObject.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
@@ -35,7 +36,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_margin = 16;
+const int32_t c_margin = 12;
 
 template < typename PipelineType >
 Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializable* object)
@@ -88,7 +89,6 @@ void collectMeshEntities(const ISerializable* object, const Transform& transform
 
 		if (mesh::MeshEntityData* meshEntityData = dynamic_type_cast< mesh::MeshEntityData* >(objectMember->get()))
 		{
-			//meshEntityData->setTransform(transform);
 			outMeshEntityData.push_back(meshEntityData);
 		}
 		else if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
@@ -113,6 +113,7 @@ struct TraceTask : public Object
 	Ref< drawing::Image > occlusion;
 	int32_t x;
 	int32_t y;
+	int32_t rayCount;
 
 	void execute()
 	{
@@ -147,12 +148,12 @@ struct TraceTask : public Object
 
 		for (int32_t ix = mnx - c_margin; ix <= mxx + c_margin; ++ix)
 		{
+			float fx = (ix + 0.5f) / float(resolution);
+			float gx = fx * heightfield->getSize();
+
 			for (int32_t iz = mnz - c_margin; iz <= mxz + c_margin; ++iz)
 			{
-				float fx = (ix + 0.5f) / float(resolution);
 				float fz = (iz + 0.5f) / float(resolution);
-
-				float gx = fx * heightfield->getSize();
 				float gz = fz * heightfield->getSize();
 
 				float gh = heightfield->getGridHeightBilinear(gx, gz);
@@ -163,15 +164,16 @@ struct TraceTask : public Object
 
 				Vector4 origin = Tinv * Vector4(wx, wy, wz, 1.0f);
 				Vector4 direction = Tinv * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
+				Vector4 directionHalf = direction * Scalar(0.5f);
 
 				int32_t occluded = 0;
-				for (int32_t ii = 0; ii < 64; ++ii)
+				for (int32_t ii = 0; ii < rayCount; ++ii)
 				{
-					if (tree->queryAnyIntersection(origin, (rnd.nextHemi(direction) + direction * Scalar(0.5f)).normalized(), maxTraceDistance))
+					if (tree->queryAnyIntersection(origin, (rnd.nextHemi(direction) + directionHalf).normalized(), maxTraceDistance))
 						++occluded;
 				}
 
-				float o = 1.0f - occluded / 64.0f;
+				float o = 1.0f - occluded / float(rayCount);
 
 				Color4f c(o, 0.0f, 0.0f, 1.0f);
 				occlusion->setPixel(ix - (mnx - c_margin), iz - (mnz - c_margin), c);
@@ -187,6 +189,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.OcclusionTexturePipeline", 0, Occlus
 bool OcclusionTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_editor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 
@@ -334,68 +337,13 @@ bool OcclusionTexturePipeline::buildOutput(
 		task->tree = tree;
 		task->x = 0;
 		task->y = 0;
+		task->rayCount = m_editor ? 16 : 64;
 
 		Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &TraceTask::execute));
 		T_ASSERT (job);
 
 		tasks.push_back(task);
 		jobs.push_back(job);
-
-
-		//const Aabb3& aabb = tree->getBoundingBox();
-
-		//Vector4 center = (*i)->getTransform() * aabb.getCenter().xyz1();
-		//float extent = aabb.getExtent().length();
-
-		//Transform Tinv = (*i)->getTransform().inverse();
-
-		//float fmnx = (center.x() - extent) / heightfieldAsset->getWorldExtent().x() + 0.5f;
-		//float fmnz = (center.z() - extent) / heightfieldAsset->getWorldExtent().z() + 0.5f;
-
-		//float fmxx = (center.x() + extent) / heightfieldAsset->getWorldExtent().x() + 0.5f;
-		//float fmxz = (center.z() + extent) / heightfieldAsset->getWorldExtent().z() + 0.5f;
-
-		//int32_t mnx = int32_t(fmnx * image->getWidth());
-		//int32_t mnz = int32_t(fmnz * image->getHeight());
-
-		//int32_t mxx = int32_t(fmxx * image->getWidth());
-		//int32_t mxz = int32_t(fmxz * image->getHeight());
-
-		//for (int32_t ix = mnx - c_margin; ix <= mxx + c_margin; ++ix)
-		//{
-		//	for (int32_t iz = mnz - c_margin; iz <= mxz + c_margin; ++iz)
-		//	{
-		//		float fx = (ix + 0.5f) / float(image->getWidth());
-		//		float fz = (iz + 0.5f) / float(image->getHeight());
-
-		//		float gx = fx * heightfield->getSize();
-		//		float gz = fz * heightfield->getSize();
-
-		//		float gh = heightfield->getGridHeightBilinear(gx, gz);
-		//		float wy = heightfield->unitToWorld(gh);
-
-		//		float wx, wz;
-		//		heightfield->gridToWorld(gx, gz, wx, wz);
-
-		//		Vector4 origin = Tinv * Vector4(wx, wy, wz, 1.0f);
-		//		Vector4 direction = Tinv * Vector4(0.0f, 1.0f, 0.0f, 0.0f);
-
-		//		int32_t occluded = 0;
-		//		for (int32_t ii = 0; ii < 64; ++ii)
-		//		{
-		//			if (tree->queryAnyIntersection(origin, (rnd.nextHemi(direction) + direction * Scalar(0.5f)).normalized(), maxTraceDistance))
-		//				++occluded;
-		//		}
-
-		//		float o = 1.0f - occluded / 64.0f;
-
-		//		Color4f clr(1.0f, 1.0f, 1.0f, 1.0f);
-		//		image->getPixel(ix, image->getHeight() - iz - 1, clr);
-
-		//		clr = clr * Color4f(o, o, o, 1.0f);
-		//		image->setPixel(ix, image->getHeight() - iz - 1, clr);
-		//	}
-		//}
 	}
 
 	log::info << L"Collecting task(s)..." << Endl;

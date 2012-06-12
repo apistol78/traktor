@@ -8,6 +8,17 @@ namespace traktor
 	namespace script
 	{
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Guid", BoxedGuid, Object)
+
+BoxedGuid::BoxedGuid()
+{
+}
+
+BoxedGuid::BoxedGuid(const Guid& value)
+:	m_value(value)
+{
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector2", BoxedVector2, Object)
 
 BoxedVector2::BoxedVector2()
@@ -304,6 +315,15 @@ Any BoxedStdVector::get(int32_t index)
 
 void registerBoxClasses(IScriptManager* scriptManager)
 {
+	Ref< AutoScriptClass< BoxedGuid > > classBoxedGuid = new AutoScriptClass< BoxedGuid >();
+	classBoxedGuid->addConstructor();
+	classBoxedGuid->addMethod(L"set", &BoxedGuid::set);
+	classBoxedGuid->addMethod(L"format", &BoxedGuid::format);
+	classBoxedGuid->addMethod(L"isValid", &BoxedGuid::isValid);
+	classBoxedGuid->addMethod(L"isNull", &BoxedGuid::isNull);
+	classBoxedGuid->addMethod(L"isNotNull", &BoxedGuid::isNotNull);
+	scriptManager->registerClass(classBoxedGuid);
+
 	Ref< AutoScriptClass< BoxedVector2 > > classBoxedVector2 = new AutoScriptClass< BoxedVector2 >();
 	classBoxedVector2->addConstructor();
 	classBoxedVector2->addConstructor< float, float >();

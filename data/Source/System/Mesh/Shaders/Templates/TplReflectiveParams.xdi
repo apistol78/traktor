@@ -7,7 +7,7 @@
 				<first>629</first>
 				<second>373</second>
 			</position>
-			<name>T_Reflection</name>
+			<name>T_Reflective</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
@@ -15,15 +15,26 @@
 				<first>629</first>
 				<second>415</second>
 			</position>
-			<name>T_ReflectionMap</name>
+			<name>T_ReflectiveMap</name>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>492</first>
-				<second>180</second>
+				<first>461</first>
+				<second>373</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>383</first>
+				<second>413</second>
+			</position>
+			<name>T_TexCoord</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>

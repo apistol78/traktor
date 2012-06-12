@@ -24,6 +24,19 @@
 			</item>
 		</value>
 	</pipelineProperties>
+	<migrateProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Migrate.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Online</item>
+						<item>Traktor.Online.Psn</item>
+					</value>
+				</second>
+			</item>
+		</value>
+	</migrateProperties>
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>

@@ -19,18 +19,11 @@ IntervalTransform::IntervalTransform(const Transform& transform)
 
 void IntervalTransform::set(const Transform& transform)
 {
-	if (m_step)
+	if (m_step || m_first)
 	{
 		m_transform[0] = m_transform[1];
 		m_step = false;
 	}
-	
-	if (m_first)
-	{
-		m_transform[0] = transform;
-		m_first = false;
-	}
-
 	m_transform[1] = transform;
 }
 
@@ -49,6 +42,8 @@ void IntervalTransform::step()
 		m_transform[0] = m_transform[1];
 	else
 		m_step = true;
+
+	m_first = false;
 }
 
 }

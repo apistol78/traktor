@@ -1,10 +1,10 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
-#include "Heightfield/Heightfield.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "Terrain/OceanEntityData.h"
+#include "Terrain/Terrain.h"
 
 namespace traktor
 {
@@ -35,7 +35,7 @@ bool OceanEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 
-	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
+	s >> resource::Member< Terrain >(L"terrain", m_terrain);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< float >(L"altitude", m_altitude);
 	s >> MemberStaticArray< Wave, MaxWaves, MemberComposite< Wave > >(L"waves", m_waves);

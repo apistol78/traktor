@@ -1,8 +1,8 @@
 #ifndef traktor_flash_AccDisplayRenderer_H
 #define traktor_flash_AccDisplayRenderer_H
 
-#include <map>
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Flash/IDisplayRenderer.h"
 #include "Render/Types.h"
 
@@ -104,11 +104,17 @@ public:
 	// \}
 
 private:
-	struct CacheEntry
+	struct ShapeCache
 	{
-		uint32_t unusedCount;
-		uint32_t tag;
 		Ref< AccShape > shape;
+		int32_t unusedCount;
+		int32_t tag;
+	};
+
+	struct GlyphCache
+	{
+		Ref< AccShape > shape;
+		int32_t index;
 	};
 
 	resource::IResourceManager* m_resourceManager;
@@ -122,19 +128,20 @@ private:
 	Ref< AccTextureCache > m_textureCache;
 	Ref< AccGlyph > m_glyph;
 	Ref< AccQuad > m_quad;
-	std::map< uint64_t, CacheEntry > m_shapeCache;
-	std::map< uint64_t, int32_t > m_glyphCache;
+	SmallMap< int32_t, ShapeCache > m_shapeCache;
+	SmallMap< int32_t, GlyphCache > m_glyphCache;
 	int32_t m_nextIndex;
 	Vector4 m_frameSize;
 	Vector4 m_viewSize;
 	Vector4 m_viewOffset;
-	//float m_aspectRatio;
 	bool m_clearBackground;
 	float m_stereoscopicOffset;
 	bool m_maskWrite;
 	bool m_maskIncrement;
 	uint8_t m_maskReference;
 	render::handle_t m_handleScreenOffset;
+
+	void renderEnqueuedGlyphs();
 };
 
 	}

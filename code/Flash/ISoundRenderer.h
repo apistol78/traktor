@@ -28,7 +28,7 @@ class T_DLLCLASS ISoundRenderer : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual void play(const FlashSound& sound) = 0;
+	virtual void play(const FlashSound* sound) = 0;
 };
 
 	}

@@ -153,7 +153,7 @@ T_DLLCLASS OutputStream& FormatMultipleLines(OutputStream& s, const std::wstring
 /*! \brief Format as hexadecimal number.
  * \ingroup Core
  */
-T_DLLCLASS OutputStream& FormatHex(OutputStream& s, uint32_t number);
+T_DLLCLASS OutputStream& FormatHex(OutputStream& s, uint32_t number, uint8_t nibbles);
 
 }
 

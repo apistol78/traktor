@@ -33,6 +33,10 @@ class T_DLLCLASS FlashCanvas : public Object
 public:
 	FlashCanvas();
 
+	int32_t getCacheTag() const;
+
+	int32_t getDirtyTag() const;
+
 	void clear();
 
 	void beginFill(const FlashFillStyle& fillStyle);
@@ -53,14 +57,13 @@ public:
 
 	const AlignedVector< FlashFillStyle >& getFillStyles() const { return m_fillStyles; }
 
-	uint32_t getTag() const { return m_tag; }
-
 private:
+	int32_t m_cacheTag;
+	int32_t m_dirtyTag;
 	SwfRect m_bounds;
 	std::list< Path > m_paths;
 	AlignedVector< FlashLineStyle > m_lineStyles;
 	AlignedVector< FlashFillStyle > m_fillStyles;
-	uint32_t m_tag;
 	bool m_drawing;
 };
 

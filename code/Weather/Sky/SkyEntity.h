@@ -45,7 +45,8 @@ public:
 		render::IndexBuffer* indexBuffer,
 		const render::Primitives& primitives,
 		const resource::Proxy< render::Shader >& shader,
-		const Vector4& sunDirection
+		const Vector4& sunDirection,
+		float offset
 	);
 
 	void setSunDirection(const Vector4& sunDirection);
@@ -66,6 +67,7 @@ private:
 	render::Primitives m_primitives;
 	resource::Proxy< render::Shader > m_shader;
 	Vector4 m_sunDirection;
+	float m_offset;
 };
 
 	}

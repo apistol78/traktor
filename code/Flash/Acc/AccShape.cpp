@@ -153,7 +153,7 @@ bool AccShape::createTesselation(const FlashCanvas& canvas)
 
 bool AccShape::updateRenderable(
 	AccShapeVertexPool* vertexPool,
-	AccTextureCache& textureCache,
+	AccTextureCache* textureCache,
 	const FlashMovie& movie,
 	const AlignedVector< FlashFillStyle >& fillStyles,
 	const AlignedVector< FlashLineStyle >& lineStyles
@@ -217,7 +217,8 @@ bool AccShape::updateRenderable(
 					if (colorRecords.size() > 1)
 					{
 						// Create gradient texture.
-						texture = textureCache.getGradientTexture(style);
+						T_ASSERT (textureCache);
+						texture = textureCache->getGradientTexture(style);
 						textureMatrix = textureTS * style.getGradientMatrix().inverse();
 						m_batchFlags |= BfHaveTextured;
 					}
@@ -235,7 +236,8 @@ bool AccShape::updateRenderable(
 					if (bitmap)
 					{
 						T_ASSERT_M (!texture, L"Cannot combine gradients and bitmaps");
-						texture = textureCache.getBitmapTexture(*bitmap);
+						T_ASSERT (textureCache);
+						texture = textureCache->getBitmapTexture(*bitmap);
 						textureMatrix =
 							scale(
 								1.0f / bitmap->getWidth(),
@@ -457,7 +459,7 @@ void AccShape::preBuild()
 	if (m_vertexRange.vertexBuffer)
 		m_needUpdate = !m_vertexRange.vertexBuffer->isContentValid();
 	else
-		m_needUpdate = false;
+		m_needUpdate = true;
 }
 
 	}

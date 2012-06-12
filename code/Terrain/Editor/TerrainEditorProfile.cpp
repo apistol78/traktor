@@ -3,6 +3,7 @@
 #include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
 #include "Terrain/TerrainFactory.h"
+#include "Terrain/Editor/OceanEntityEditorFactory.h"
 #include "Terrain/Editor/TerrainEditorProfile.h"
 #include "Ui/Command.h"
 
@@ -68,6 +69,7 @@ void TerrainEditorProfile::createEntityEditorFactories(
 	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
+	outEntityEditorFactories.push_back(new OceanEntityEditorFactory());
 }
 
 Ref< world::EntityData > TerrainEditorProfile::createEntityData(

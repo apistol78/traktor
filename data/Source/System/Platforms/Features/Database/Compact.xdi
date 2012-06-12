@@ -12,6 +12,7 @@
 		<xbox360>true</xbox360>
 	</platforms>
 	<pipelineProperties/>
+	<migrateProperties/>
 	<runtimeProperties type="traktor.PropertyGroup">
 		<value>
 			<item>

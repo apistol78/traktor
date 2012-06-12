@@ -340,6 +340,14 @@ bool ProgramDx11::bind(
 	return true;
 }
 
+void ProgramDx11::unbind(
+	ID3D11Device* d3dDevice,
+	ID3D11DeviceContext* d3dDeviceContext
+)
+{
+	ms_activeProgram = 0;
+}
+
 bool ProgramDx11::createState(
 	ID3D11Device* d3dDevice,
 	float mipBias,

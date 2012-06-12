@@ -642,7 +642,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
-			<mipBias>-2</mipBias>
+			<mipBias>-1.5</mipBias>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
@@ -851,6 +851,14 @@
 				<first>942</first>
 				<second>-5</second>
 			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1158</first>
+				<second>542</second>
+			</position>
+			<swizzle>111x</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -1576,16 +1584,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[65]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[64]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[66]"/>
 				<name>Output</name>
 			</source>
@@ -1892,6 +1890,26 @@
 			<destination>
 				<node ref="/object/nodes/item[60]"/>
 				<name>SurfaceColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[76]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[85]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[85]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

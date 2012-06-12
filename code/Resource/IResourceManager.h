@@ -23,6 +23,15 @@ namespace traktor
 class IResourceFactory;
 class IResourceHandle;
 
+/*! \brief Resource manager statistics.
+ * \ingroup Resource
+ */
+struct ResourceManagerStatistics
+{
+	uint32_t residentCount;		//!< Number of resident resources.
+	uint32_t exclusiveCount;	//!< Number of exclusive (non-shareable) resources.
+};
+
 /*! \brief Resource manager interface.
  * \ingroup Resource
  */
@@ -68,9 +77,9 @@ public:
 	 * be unloaded.
 	 */
 	virtual void unloadUnusedResident() = 0;
-	
-	/*! \brief Dump statistics. */
-	virtual void dumpStatistics() = 0;
+
+	/*! \brief Get statistics. */
+	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const = 0;
 
 	/*! \brief Bind handle to resource identifier.
 	 *

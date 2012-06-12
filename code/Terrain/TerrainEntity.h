@@ -103,7 +103,6 @@ private:
 
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< Terrain > m_terrain;
-	//resource::Proxy< render::Shader > m_shader;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;
@@ -128,6 +127,7 @@ private:
 	render::handle_t m_handleSurfaceOffset;
 	render::handle_t m_handleHeightfield;
 	render::handle_t m_handleNormals;
+	render::handle_t m_handleEye;
 	render::handle_t m_handleWorldOrigin;
 	render::handle_t m_handleWorldExtent;
 	render::handle_t m_handlePatchOrigin;

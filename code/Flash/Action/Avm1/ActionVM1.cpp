@@ -61,6 +61,10 @@ void ActionVM1::execute(ActionFrame* frame) const
 	const ActionVMImage1* image = static_cast< const ActionVMImage1* >(frame->getImage());
 	T_ASSERT (image);
 
+	// Prepare image on first execution.
+	const_cast< ActionVMImage1* >(image)->prepare();
+
+	// Setup execution state.
 	ExecutionState state;
 	state.image = image;
 	state.frame = frame;

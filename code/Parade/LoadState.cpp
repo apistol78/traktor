@@ -35,6 +35,7 @@ void LoadState::enter()
 
 void LoadState::leave()
 {
+	m_jobLoader = 0;
 }
 
 LoadState::UpdateResult LoadState::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)

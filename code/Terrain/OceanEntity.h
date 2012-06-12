@@ -16,13 +16,6 @@
 
 namespace traktor
 {
-	namespace hf
-	{
-
-class Heightfield;
-
-	}
-
 	namespace render
 	{
 
@@ -54,6 +47,7 @@ class WorldRenderView;
 	{
 
 class OceanEntityData;
+class Terrain;
 
 class T_DLLCLASS OceanEntity : public world::Entity
 {
@@ -76,8 +70,10 @@ public:
 
 	virtual void update(const UpdateParams& update);
 
+	float getAltitude() const { return m_altitude; }
+
 private:
-	resource::Proxy< hf::Heightfield > m_heightfield;
+	resource::Proxy< Terrain > m_terrain;
 	Ref< render::VertexBuffer > m_vertexBuffer;
 	Ref< render::IndexBuffer > m_indexBuffer;
 	Ref< render::ScreenRenderer > m_screenRenderer;

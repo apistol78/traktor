@@ -464,6 +464,7 @@ bool Application::update()
 			T_FATAL_ASSERT (m_stateRender == 0);
 
 			// Leave current state.
+			T_ASSERT_M (m_stateManager->getCurrent() == 0 || m_stateManager->getCurrent()->getReferenceCount() == 1, L"Current state must have one reference only");
 			log::info << L"Leaving state \"" << type_name(m_stateManager->getCurrent()) << L"\"..." << Endl;
 			m_stateManager->leaveCurrent();
 
@@ -477,13 +478,14 @@ bool Application::update()
 			m_updateInfo.m_stateTime = 0.0f;
 
 			// Enter new state.
+			T_ASSERT_M (m_stateManager->getNext() && m_stateManager->getNext()->getReferenceCount() == 1, L"Next state must exist and have one reference only");
 			log::info << L"Enter state \"" << type_name(m_stateManager->getNext()) << L"\"..." << Endl;
 			m_stateManager->enterNext();
 
 			// Assume state's active from start.
 			m_renderViewActive = true;
-			log::info << L"State transition successful" << Endl;
-		};
+			log::info << L"State transition complete" << Endl;
+		}
 	}
 
 	// Update scripting language runtime.
@@ -744,8 +746,11 @@ bool Application::update()
 			if (!m_targetManagerConnection->connected())
 				return false;
 
-			render::RenderViewStatistics statistics;
-			m_renderServer->getRenderView()->getStatistics(statistics);
+			render::RenderViewStatistics rvs;
+			m_renderServer->getRenderView()->getStatistics(rvs);
+
+			resource::ResourceManagerStatistics rms;
+			m_resourceServer->getResourceManager()->getStatistics(rms);
 
 			TargetPerformance performance;
 			performance.time = m_updateInfo.m_totalTime;
@@ -765,10 +770,12 @@ bool Application::update()
 #	if !defined(_PS3)
 			performance.render = m_renderDuration;
 #	else
-			performance.render = float(statistics.duration);
+			performance.render = float(rvs.duration);
 #	endif
-			performance.drawCalls = statistics.drawCalls;
-			performance.primitiveCount = statistics.primitiveCount;
+			performance.drawCalls = rvs.drawCalls;
+			performance.primitiveCount = rvs.primitiveCount;
+			performance.residentResourcesCount = rms.residentCount;
+			performance.exclusiveResourcesCount = rms.exclusiveCount;
 
 			if (m_physicsServer)
 			{

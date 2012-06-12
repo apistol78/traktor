@@ -13,7 +13,7 @@ FlashSoundPlayer::FlashSoundPlayer(ISoundRenderer* soundRenderer)
 {
 }
 
-void FlashSoundPlayer::play(const FlashSound& sound)
+void FlashSoundPlayer::play(const FlashSound* sound)
 {
 	if (m_soundRenderer)
 		m_soundRenderer->play(sound);
