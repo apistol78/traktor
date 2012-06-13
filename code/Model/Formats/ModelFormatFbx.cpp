@@ -119,6 +119,25 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 			Material mm;
 			mm.setName(mbstows(material->GetName()));
 
+			FbxProperty prop = meshNode->GetFirstProperty();
+			while (prop.IsValid())
+			{
+				int userTag = prop.GetUserTag();
+				std::wstring propName(mbstows(prop.GetNameAsCStr()));
+				if (startsWith(propName, std::wstring(L"DEA_")))
+				{
+					propName = replaceAll(propName, std::wstring(L"DEA_"), std::wstring(L""));
+					FbxPropertyT<FbxBool> propState = prop;
+					if (propState.IsValid())
+					{
+						bool propValue = propState.Get();
+//						mm.setProperty(propName, propValue);
+					}
+				}
+				prop = meshNode->GetNextProperty(prop);
+			}
+
+
 			std::wstring diffuseMap = getTextureName(material, FbxSurfaceMaterial::sDiffuse);
 			if (!diffuseMap.empty())
 				mm.setDiffuseMap(diffuseMap);
