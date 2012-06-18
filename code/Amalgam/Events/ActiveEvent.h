@@ -1,7 +1,7 @@
-#ifndef traktor_amalgam_ActivationAction_H
-#define traktor_amalgam_ActivationAction_H
+#ifndef traktor_amalgam_ActiveEvent_H
+#define traktor_amalgam_ActiveEvent_H
 
-#include "Amalgam/IAction.h"
+#include "Amalgam/IEvent.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,18 +16,18 @@ namespace traktor
 	namespace amalgam
 	{
 
-/*! \brief Application activation action.
+/*! \brief Application active events.
  * \ingroup Amalgam
  *
  * Applications are notified with this
- * action when Amalgam is becoming activated or deactivated.
+ * event when Amalgam is becoming activated or deactivated.
  */
-class T_DLLCLASS ActivationAction : public IAction
+class T_DLLCLASS ActiveEvent : public IEvent
 {
 	T_RTTI_CLASS;
 
 public:
-	ActivationAction(bool activated);
+	ActiveEvent(bool activated);
 
 	bool becameActivated() const;
 
@@ -38,4 +38,4 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_ActivationAction_H
+#endif	// traktor_amalgam_ActiveEvent_H

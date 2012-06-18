@@ -127,7 +127,7 @@
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
 			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>

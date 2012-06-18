@@ -6,6 +6,7 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/IRenderView.h"
 #include "Render/Dx11/Platform.h"
+#include "Render/Dx11/StateCache.h"
 #include "Render/Dx11/Window.h"
 
 // import/export mechanism.
@@ -109,6 +110,7 @@ private:
 	ComRef< ID3D11Texture2D > m_d3dDepthStencil;
 	ComRef< ID3D11DepthStencilView > m_d3dDepthStencilView;
 	D3D11_VIEWPORT m_d3dViewport;
+	StateCache m_stateCache;
 	bool m_fullScreen;
 	bool m_waitVBlank;
 	bool m_dirty;

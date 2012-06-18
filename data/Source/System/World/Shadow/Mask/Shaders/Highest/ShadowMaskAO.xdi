@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="3">
+		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>
 			<position>
 				<first>1598</first>
@@ -25,6 +25,7 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
@@ -283,7 +284,7 @@ Clip space
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
 				<first>311</first>
@@ -295,6 +296,7 @@ Clip space
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
@@ -340,7 +342,7 @@ Clip space
 			</position>
 			<parameterName>RandomNormals</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -439,7 +441,7 @@ Clip space
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -463,7 +465,7 @@ Clip space
 			</position>
 			<parameterName>Depth_Size</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -481,7 +483,7 @@ Clip space
 			</position>
 			<parameterName>Depth</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -499,7 +501,7 @@ Clip space
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
 				<first>1164</first>
@@ -511,6 +513,7 @@ Clip space
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<mipBias>0</mipBias>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -520,7 +523,7 @@ Clip space
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 	</nodes>
 	<edges>

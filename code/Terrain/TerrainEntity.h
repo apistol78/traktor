@@ -59,10 +59,16 @@ class T_DLLCLASS TerrainEntity : public world::Entity
 	T_RTTI_CLASS;
 
 public:
+	enum
+	{
+		LodCount = 4
+	};
+
 	struct Patch
 	{
 		float minHeight;
 		float maxHeight;
+		float error[LodCount];
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 		Ref< render::VertexBuffer > vertexBuffer;
 #endif
@@ -95,11 +101,6 @@ public:
 
 private:
 	friend class TerrainEntityEditor;
-
-	enum
-	{
-		LodCount = 4
-	};
 
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< Terrain > m_terrain;
@@ -134,7 +135,7 @@ private:
 	render::handle_t m_handlePatchExtent;
 	render::handle_t m_handlePatchLodColor;
 
-	bool updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int32_t maxZ);
+	bool updatePatches();
 
 	bool createPatches();
 };

@@ -14,6 +14,7 @@ extern "C"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
 #include "Model/Model.h"
@@ -189,6 +190,9 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 
 		if ((surface->sideflags & 3) == 3)
 			material.setDoubleSided(true);
+
+		if (surface->comment)
+			material.setProperty< PropertyBoolean >(mbstows(surface->comment), true);
 
 		outModel->addMaterial(material);
 	}

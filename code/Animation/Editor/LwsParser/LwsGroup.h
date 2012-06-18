@@ -22,7 +22,7 @@ public:
 
 	Ref< const LwsNode > get(uint32_t index) const;
 
-	Ref< const LwsNode > find(const std::wstring& name) const;
+	Ref< const LwsNode > find(const std::wstring& name, uint32_t from = 0) const;
 
 private:
 	RefArray< LwsNode > m_nodes;

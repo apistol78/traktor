@@ -1,4 +1,3 @@
-#include "Core/Misc/Adler32.h"
 #include "Render/Dx11/StateCache.h"
 
 namespace traktor
@@ -8,84 +7,70 @@ namespace traktor
 		namespace
 		{
 
-template < typename T >
-uint32_t hash(const T& item)
-{
-	Adler32 a;
-	a.begin();
-	a.feed(&item, sizeof(T));
-	a.end();
-	return a.get();
-}
+const float c_blendFactors[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 		}
 
-StateCache::StateCache(ID3D11Device* d3dDevice)
-:	m_d3dDevice(d3dDevice)
+StateCache::StateCache(ID3D11DeviceContext* d3dDeviceContext)
+:	m_d3dDeviceContext(d3dDeviceContext)
+,	m_stencilReference(0)
+,	m_d3dTopology(D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED)
 {
 }
 
-ID3D11RasterizerState* StateCache::getRasterizerState(const D3D11_RASTERIZER_DESC& rd)
+void StateCache::setRasterizerState(ID3D11RasterizerState* d3dRasterizerState)
 {
-	uint32_t h = hash(rd);
-
-	std::map< uint32_t, ComRef< ID3D11RasterizerState > >::iterator i = m_d3dRasterizerStates.find(h);
-	if (i != m_d3dRasterizerStates.end())
-		return i->second;
-	
-	ComRef< ID3D11RasterizerState > rs;
-
-	HRESULT hr = m_d3dDevice->CreateRasterizerState(
-		&rd,
-		&rs.getAssign()
-	);
-	if (FAILED(hr))
-		return 0;
-
-	m_d3dRasterizerStates.insert(std::make_pair(h, rs));
-	return rs;
+	if (d3dRasterizerState != m_d3dRasterizerState)
+	{
+		m_d3dDeviceContext->RSSetState(d3dRasterizerState);
+		m_d3dRasterizerState = d3dRasterizerState;
+	}
 }
 
-ID3D11DepthStencilState* StateCache::getDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& dsd)
+void StateCache::setDepthStencilState(ID3D11DepthStencilState* d3dDepthStencilState, UINT stencilReference)
 {
-	uint32_t h = hash(dsd);
-
-	std::map< uint32_t, ComRef< ID3D11DepthStencilState > >::iterator i = m_d3dDepthStencilStates.find(h);
-	if (i != m_d3dDepthStencilStates.end())
-		return i->second;
-	
-	ComRef< ID3D11DepthStencilState > dss;
-
-	HRESULT hr = m_d3dDevice->CreateDepthStencilState(
-		&dsd,
-		&dss.getAssign()
-	);
-	if (FAILED(hr))
-		return 0;
-
-	m_d3dDepthStencilStates.insert(std::make_pair(h, dss));
-	return dss;
+	if (d3dDepthStencilState != m_d3dDepthStencilState || stencilReference != m_stencilReference)
+	{
+		m_d3dDeviceContext->OMSetDepthStencilState(d3dDepthStencilState, stencilReference);
+		m_d3dDepthStencilState = d3dDepthStencilState;
+		m_stencilReference = stencilReference;
+	}
 }
 
-ID3D11BlendState* StateCache::getBlendState(const D3D11_BLEND_DESC& bd)
+void StateCache::setBlendState(ID3D11BlendState* d3dBlendState)
 {
-	uint32_t h = hash(bd);
+	if (d3dBlendState != m_d3dBlendState)
+	{
+		m_d3dDeviceContext->OMSetBlendState(d3dBlendState, c_blendFactors, 0xffffffff);
+		m_d3dBlendState = d3dBlendState;
+	}
+}
 
-	std::map< uint32_t, ComRef< ID3D11BlendState > >::iterator i = m_d3dBlendStates.find(h);
-	if (i != m_d3dBlendStates.end())
-		return i->second;
-	
-	ComRef< ID3D11BlendState > bs;
+void StateCache::setVertexShader(ID3D11VertexShader* d3dVertexShader)
+{
+	if (d3dVertexShader != m_d3dVertexShader)
+	{
+		m_d3dDeviceContext->VSSetShader(d3dVertexShader, 0, 0);
+		m_d3dVertexShader = d3dVertexShader;
+	}
+}
 
-	HRESULT hr = m_d3dDevice->CreateBlendState(
-		&bd,
-		&bs.getAssign()
-	);
-	if (FAILED(hr))
-		return 0;
+void StateCache::setPixelShader(ID3D11PixelShader* d3dPixelShader)
+{
+	if (d3dPixelShader != m_d3dPixelShader)
+	{
+		m_d3dDeviceContext->PSSetShader(d3dPixelShader, 0, 0);
+		m_d3dPixelShader = d3dPixelShader;
+	}
+}
 
-	m_d3dBlendStates.insert(std::make_pair(h, bs));
-	return bs;
+void StateCache::setTopology(D3D11_PRIMITIVE_TOPOLOGY d3dTopology)
+{
+	if (d3dTopology != m_d3dTopology)
+	{
+		m_d3dDeviceContext->IASetPrimitiveTopology(d3dTopology);
+		m_d3dTopology = d3dTopology;
+	}
 }
 
 	}

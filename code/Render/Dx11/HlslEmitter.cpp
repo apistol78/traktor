@@ -364,8 +364,9 @@ bool emitIndexedUniform(HlslContext& cx, IndexedUniform* node)
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-		fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"];" << Endl;
+		const HlslShader::BlockType c_blockType[] = { HlslShader::BtCBufferOnce, HlslShader::BtCBufferFrame, HlslShader::BtCBufferDraw };
+		StringOutputStream& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+		fu << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L"[" << node->getLength() << L"];" << Endl;
 		cx.getShader().addUniform(node->getParameterName());
 	}
 
@@ -842,25 +843,55 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 
 	cx.getD3DDepthStencilDesc().DepthEnable = node->getDepthEnable() ? TRUE : FALSE;
 	cx.getD3DDepthStencilDesc().DepthWriteMask = node->getDepthWriteEnable() ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
-	cx.getD3DDepthStencilDesc().DepthFunc = d3dCompareFunction[node->getDepthFunction()];
-	cx.getD3DDepthStencilDesc().StencilEnable = node->getStencilEnable() ? TRUE : FALSE;
-	cx.getD3DDepthStencilDesc().StencilReadMask = 0xff;
-	cx.getD3DDepthStencilDesc().StencilWriteMask = 0xff;
-	cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = d3dStencilOperation[node->getStencilFail()];
-	cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = d3dStencilOperation[node->getStencilZFail()];
-	cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = d3dStencilOperation[node->getStencilPass()];
-	cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
-	cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = d3dStencilOperation[node->getStencilFail()];
-	cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = d3dStencilOperation[node->getStencilZFail()];
-	cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = d3dStencilOperation[node->getStencilPass()];
-	cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
-	cx.setStencilReference(node->getStencilReference());
+	cx.getD3DDepthStencilDesc().DepthFunc = node->getDepthEnable() ? d3dCompareFunction[node->getDepthFunction()] : D3D11_COMPARISON_ALWAYS;
+
+	if (node->getStencilEnable())
+	{
+		cx.getD3DDepthStencilDesc().StencilEnable = TRUE;
+		cx.getD3DDepthStencilDesc().StencilReadMask = 0xff;
+		cx.getD3DDepthStencilDesc().StencilWriteMask = 0xff;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = d3dStencilOperation[node->getStencilFail()];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = d3dStencilOperation[node->getStencilZFail()];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = d3dStencilOperation[node->getStencilPass()];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
+		cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = d3dStencilOperation[node->getStencilFail()];
+		cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = d3dStencilOperation[node->getStencilZFail()];
+		cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = d3dStencilOperation[node->getStencilPass()];
+		cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
+		cx.setStencilReference(node->getStencilReference());
+	}
+	else
+	{
+		cx.getD3DDepthStencilDesc().StencilEnable = FALSE;
+		cx.getD3DDepthStencilDesc().StencilReadMask = 0xff;
+		cx.getD3DDepthStencilDesc().StencilWriteMask = 0xff;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = D3D11_COMPARISON_ALWAYS;
+		cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = D3D11_STENCIL_OP_KEEP;
+		cx.getD3DDepthStencilDesc().BackFace.StencilFunc =D3D11_COMPARISON_ALWAYS;
+		cx.setStencilReference(0);
+	}
 
 	cx.getD3DBlendDesc().AlphaToCoverageEnable = node->getAlphaToCoverageEnable() ? TRUE : FALSE;
-	cx.getD3DBlendDesc().RenderTarget[0].BlendEnable = node->getBlendEnable() ? TRUE : FALSE;
-	cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = d3dBlendFactor[node->getBlendSource()];
-	cx.getD3DBlendDesc().RenderTarget[0].DestBlend = d3dBlendFactor[node->getBlendDestination()];
-	cx.getD3DBlendDesc().RenderTarget[0].BlendOp = d3dBlendOperation[node->getBlendOperation()];
+
+	if (node->getBlendEnable())
+	{
+		cx.getD3DBlendDesc().RenderTarget[0].BlendEnable = TRUE;
+		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = d3dBlendFactor[node->getBlendSource()];
+		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = d3dBlendFactor[node->getBlendDestination()];
+		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = d3dBlendOperation[node->getBlendOperation()];
+	}
+	else
+	{
+		cx.getD3DBlendDesc().RenderTarget[0].BlendEnable = FALSE;
+		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = D3D11_BLEND_ONE;
+		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = D3D11_BLEND_ZERO;
+		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = D3D11_BLEND_OP_ADD;
+	}
 
 	UINT8 d3dWriteMask = 0;
 	if (node->getColorWriteMask() & PixelOutput::CwRed)
@@ -997,9 +1028,14 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 		D3D11_SAMPLER_DESC dsd;
 		dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+
 		dsd.AddressU = c_d3dAddress[node->getAddressU()];
 		dsd.AddressV = c_d3dAddress[node->getAddressV()];
-		dsd.AddressW = c_d3dAddress[node->getAddressW()];
+		if (texture->getType() > HtTexture2D)
+			dsd.AddressW = c_d3dAddress[node->getAddressW()];
+		else
+			dsd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
 		dsd.MipLODBias = node->getMipBias();
 		dsd.MaxAnisotropy = 1;
 		dsd.ComparisonFunc = D3D11_COMPARISON_NEVER;
@@ -1037,7 +1073,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 			break;
 		}
 
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtSamplers);
 		fu << L"SamplerState " << samplerName << L";" << Endl;
 		
 		cx.getShader().addSampler(samplerName, dsd);
@@ -1477,7 +1513,7 @@ bool emitTexture(HlslContext& cx, Texture* node)
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(textureName) == uniforms.end())
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtTextures);
 		switch (node->getParameterType())
 		{
 		case PtTexture2D:
@@ -1566,12 +1602,15 @@ bool emitUniform(HlslContext& cx, Uniform* node)
 	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
 	if (uniforms.find(node->getParameterName()) == uniforms.end())
 	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtUniform);
-
 		if (out->getType() < HtTexture2D)
-			fu << L"uniform " << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
+		{
+			const HlslShader::BlockType c_blockType[] = { HlslShader::BtCBufferOnce, HlslShader::BtCBufferFrame, HlslShader::BtCBufferDraw };
+			StringOutputStream& fu = cx.getShader().getOutputStream(c_blockType[node->getFrequency()]);
+			fu << hlsl_type_name(out->getType()) << L" " << node->getParameterName() << L";" << Endl;
+		}
 		else
 		{
+			StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtTextures);
 			switch (node->getParameterType())
 			{
 			case PtTexture2D:

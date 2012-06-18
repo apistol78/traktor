@@ -114,7 +114,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -181,7 +181,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			</position>
 			<parameterName>WorldExtent</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -191,7 +191,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			</position>
 			<parameterName>WorldOrigin</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Sub">
 			<comment/>
@@ -216,7 +216,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -226,7 +226,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			</position>
 			<parameterName>PatchOrigin</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -266,7 +266,7 @@ Adjust texcoords by one pixel margins in order to prevent filtering artifacts.
 			</position>
 			<parameterName>TextureOffset</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>

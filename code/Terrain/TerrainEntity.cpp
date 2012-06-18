@@ -1,5 +1,6 @@
 #include <algorithm>
 #include <limits>
+#include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Heightfield/Heightfield.h"
 #include "Render/IndexBuffer.h"
@@ -35,6 +36,7 @@ const Vector4 c_lodColor[] =
 
 struct CullPatch
 {
+	float error[4];
 	float distance;
 	float area;
 	uint32_t patchId;
@@ -152,6 +154,7 @@ void TerrainEntity::render(
 
 	Matrix44 viewInv = worldRenderView.getView().inverse();
 	Vector4 eyePosition = viewInv.translation().xyz1();
+	Vector4 eyeDirection = viewInv.axisZ();
 
 	// Cull patches.
 	static AlignedVector< CullPatch > visiblePatches;
@@ -164,7 +167,8 @@ void TerrainEntity::render(
 	Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
 
 	// Calculate world frustum.
-	Frustum worldCullFrustum = worldRenderView.getCullFrustum();
+	Frustum viewCullFrustum = worldRenderView.getCullFrustum();
+	Frustum worldCullFrustum = viewCullFrustum;
 	for (uint32_t i = 0; i < worldCullFrustum.planes.size(); ++i)
 		worldCullFrustum.planes[i] = viewInv * worldCullFrustum.planes[i];
 
@@ -177,18 +181,57 @@ void TerrainEntity::render(
 			uint32_t patchId = px + pz * m_patchCount;
 			
 			const Patch& patch = m_patches[patchId];
-			T_ASSERT (patch.minHeight <= patch.maxHeight);
-
-			Vector4 patchCenterWorld = (patchOrigin + patchExtent * Scalar(0.5f)).xyz1();
+			Vector4 patchCenterWorld = (patchOrigin + patchDeltaHalf) * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, (patch.minHeight + patch.maxHeight) * 0.5f, 0.0f, 1.0f);
 
 			Aabb3 patchAabb(
-				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) - patchDeltaHalf,
-				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + patchDeltaHalf
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), patch.minHeight - FUZZY_EPSILON, -patchDeltaHalf.z(), 0.0f),
+				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), patch.maxHeight + FUZZY_EPSILON,  patchDeltaHalf.z(), 0.0f)
 			);
 
 			if (worldCullFrustum.inside(patchAabb) != Frustum::IrOutside)
 			{
-				Scalar lodDistance = (patchAabb.getCenter() - eyePosition).xyz0().length();
+				Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
+				Scalar lodDistance = (patchCenterWorld - eyePosition).xyz0().length();
+
+				CullPatch cp;
+
+				// Calculate screen error for each lod.
+				for (int i = 0; i < LodCount; ++i)
+				{
+					Vector4 Pworld[2] =
+					{
+						patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(0.0f, eyePosition.y(), 0.0f, 0.0f),
+						patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(0.0f, eyePosition.y() + patch.error[i], 0.0f, 0.0f)
+					};
+
+					Vector4 Pview[2] =
+					{
+						worldRenderView.getView() * Pworld[0],
+						worldRenderView.getView() * Pworld[1]
+					};
+
+					if (Pview[0].z() < viewCullFrustum.getNearZ())
+						Pview[0].set(2, viewCullFrustum.getNearZ());
+					if (Pview[1].z() < viewCullFrustum.getNearZ())
+						Pview[1].set(2, viewCullFrustum.getNearZ());
+
+					Vector4 Pclip[] =
+					{
+						worldRenderView.getProjection() * Pview[0].xyz1(),
+						worldRenderView.getProjection() * Pview[1].xyz1()
+					};
+
+					T_ASSERT (Pclip[0].w() > 0.0f);
+					T_ASSERT (Pclip[1].w() > 0.0f);
+
+					Pclip[0] /= Pclip[0].w();
+					Pclip[1] /= Pclip[1].w();
+
+					float dx = Pclip[1].x() - Pclip[0].x();
+					float dy = Pclip[1].y() - Pclip[0].y();
+
+					cp.error[i] = std::sqrt(dx * dx + dy * dy) * 100.0f;
+				}
 
 				// Project patch bounding box extents onto view plane and calculate screen area.
 				Vector4 extents[8];
@@ -207,7 +250,6 @@ void TerrainEntity::render(
 					-std::numeric_limits< float >::max()
 				);
 
-				Matrix44 viewProj = worldRenderView.getProjection() * worldRenderView.getView();
 				bool clipped = false;
 
 				for (int i = 0; i < sizeof_array(extents); ++i)
@@ -229,11 +271,11 @@ void TerrainEntity::render(
 
 				Vector4 e = mx - mn;
 
-				CullPatch cp;
 				cp.distance = lodDistance;
 				cp.area = !clipped ? e.x() * e.y() : Scalar(1000.0f);
 				cp.patchId = patchId;
 				cp.patchOrigin = patchOrigin;
+
 				visiblePatches.push_back(cp);
 			}
 			else if (updateCache)
@@ -267,26 +309,27 @@ void TerrainEntity::render(
 			Patch& patch = m_patches[i->patchId];
 			const Vector4& patchOrigin = i->patchOrigin;
 
-			// Calculate which lods to use based one distance to patch center.
-			float patchLodDistance = std::pow(clamp(1.0f - i->area / m_patchLodDistance + m_patchLodBias, 0.0f, 1.0f), m_patchLodExponent);
+			// Calculate which surface lod to use based one distance to patch center.
 			float surfaceLodDistance = std::pow(clamp(i->distance / m_surfaceLodDistance + m_surfaceLodBias, 0.0f, 1.0f), m_surfaceLodExponent);
-
-			float patchLodF = patchLodDistance * c_patchLodSteps;
 			float surfaceLodF = surfaceLodDistance * c_surfaceLodSteps;
-
-			int32_t patchLod = int32_t(patchLodF + 0.5f);
 			int32_t surfaceLod = int32_t(surfaceLodF + 0.5f);
 
 			const float c_lodHysteresisThreshold = 0.5f;
-			if (patchLod != patch.lastPatchLod)
-			{
-				if (std::abs(patchLodF - patch.lastPatchLod) < c_lodHysteresisThreshold)
-					patchLod = patch.lastPatchLod;
-			}
 			if (surfaceLod != patch.lastSurfaceLod)
 			{
 				if (std::abs(surfaceLodF - patch.lastSurfaceLod) < c_lodHysteresisThreshold)
 					surfaceLod = patch.lastSurfaceLod;
+			}
+
+			// Find patch lod based on screen space error.
+			int32_t patchLod = 0;
+			for (int32_t j = 3; j > 0; --j)
+			{
+				if (i->error[j] <= 1.0f)
+				{
+					patchLod = j;
+					break;
+				}
 			}
 
 			patch.lastPatchLod = patchLod;
@@ -419,11 +462,9 @@ void TerrainEntity::update(const UpdateParams& update)
 {
 }
 
-bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int32_t maxZ)
+bool TerrainEntity::updatePatches()
 {
 	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
-
-	int32_t heightfieldSize = int32_t(m_terrain->getHeightfield()->getSize());
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
@@ -434,9 +475,6 @@ bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int3
 			int32_t pmaxX = (px + 1) * m_patchDim * m_detailSkip;
 			int32_t pmaxZ = (pz + 1) * m_patchDim * m_detailSkip;
 
-			if (pmaxX < minX || pmaxZ < minZ || pminX > maxX || pminZ > maxZ)
-				continue;
-
 			Patch& patch = m_patches[px + pz * m_patchCount];
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
@@ -444,6 +482,7 @@ bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int3
 			T_ASSERT (vertex);
 #endif
 
+			// Measure min and max height of patch.
 			float minHeight =  std::numeric_limits< float >::max();
 			float maxHeight = -std::numeric_limits< float >::max();
 
@@ -456,9 +495,6 @@ bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int3
 
 					int32_t ix = int32_t(fx * m_patchDim * m_detailSkip) + pminX;
 					int32_t iz = int32_t(fz * m_patchDim * m_detailSkip) + pminZ;
-
-					ix = std::min(ix, heightfieldSize - 1);
-					iz = std::min(iz, heightfieldSize - 1);
 
 					float height = m_terrain->getHeightfield()->getGridHeightNearest(ix, iz);
 
@@ -477,6 +513,71 @@ bool TerrainEntity::updatePatches(int32_t minX, int32_t minZ, int32_t maxX, int3
 
 			patch.minHeight = minHeight;
 			patch.maxHeight = maxHeight;
+
+			// Calculate lod errors.
+			patch.error[0] = 0.0f;
+
+			for (uint32_t lod = 1; lod < LodCount; ++lod)
+			{
+				patch.error[lod] = 0.0f;
+
+				uint32_t lodSkip = 1 << lod;
+				for (uint32_t z = 0; z < m_patchDim; z += lodSkip)
+				{
+					for (uint32_t x = 0; x < m_patchDim; x += lodSkip)
+					{
+						float fx0 = float(x) / (m_patchDim - 1);
+						float fz0 = float(z) / (m_patchDim - 1);
+						float fx1 = float(x + lodSkip) / (m_patchDim - 1);
+						float fz1 = float(z + lodSkip) / (m_patchDim - 1);
+
+						float gx0 = (fx0 * m_patchDim * m_detailSkip) + pminX;
+						float gz0 = (fz0 * m_patchDim * m_detailSkip) + pminZ;
+						float gx1 = (fx1 * m_patchDim * m_detailSkip) + pminX;
+						float gz1 = (fz1 * m_patchDim * m_detailSkip) + pminZ;
+
+						float h[] =
+						{
+							m_terrain->getHeightfield()->getGridHeightNearest(gx0, gz0),
+							m_terrain->getHeightfield()->getGridHeightNearest(gx1, gz0),
+							m_terrain->getHeightfield()->getGridHeightNearest(gx0, gz1),
+							m_terrain->getHeightfield()->getGridHeightNearest(gx1, gz1)
+						};
+
+						for (int lz = 0; lz <= lodSkip; ++lz)
+						{
+							for (int lx = 0; lx <= lodSkip; ++lx)
+							{
+								float fx = float(lx) / lodSkip;
+								float fz = float(lz) / lodSkip;
+
+								float gx = lerp(gx0, gx1, fx);
+								float gz = lerp(gz0, gz1, fz);
+
+								float ht = lerp(h[0], h[1], fx);
+								float hb = lerp(h[2], h[3], fx);
+								float h0 = lerp(ht, hb, fz);
+
+								float hl = lerp(h[0], h[2], fz);
+								float hr = lerp(h[1], h[3], fz);
+								float h1 = lerp(hl, hr, fx);
+
+								float h = m_terrain->getHeightfield()->getGridHeightNearest(gx, gz);
+
+								float herr0 = abs(h - h0);
+								float herr1 = abs(h - h1);
+								float herr = max(herr0, herr1);
+
+								herr = m_terrain->getHeightfield()->getWorldExtent().y() * herr;
+
+								patch.error[lod] += herr;
+							}
+						}
+					}
+				}
+
+				patch.error[lod] = patch.error[lod] / 1000.0f;
+			}
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 			patch.vertexBuffer->unlock();
@@ -557,7 +658,7 @@ bool TerrainEntity::createPatches()
 		}
 	}
 
-	updatePatches(0, 0, heightfieldSize, heightfieldSize);
+	updatePatches();
 
 	std::vector< uint32_t > indices;
 	for (uint32_t lod = 0; lod < LodCount; ++lod)

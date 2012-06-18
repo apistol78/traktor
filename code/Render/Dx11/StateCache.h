@@ -1,7 +1,6 @@
 #ifndef traktor_render_StateCache_H
 #define traktor_render_StateCache_H
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/Dx11/Platform.h"
@@ -14,19 +13,29 @@ namespace traktor
 class StateCache : public Object
 {
 public:
-	StateCache(ID3D11Device* d3dDevice);
+	StateCache(ID3D11DeviceContext* d3dDeviceContext);
 
-	ID3D11RasterizerState* getRasterizerState(const D3D11_RASTERIZER_DESC& rd);
+	void setRasterizerState(ID3D11RasterizerState* d3dRasterizerState);
 
-	ID3D11DepthStencilState* getDepthStencilState(const D3D11_DEPTH_STENCIL_DESC& dsd);
+	void setDepthStencilState(ID3D11DepthStencilState* d3dDepthStencilState, UINT stencilReference);
 
-	ID3D11BlendState* getBlendState(const D3D11_BLEND_DESC& bd);
+	void setBlendState(ID3D11BlendState* d3dBlendState);
+
+	void setVertexShader(ID3D11VertexShader* d3dVertexShader);
+
+	void setPixelShader(ID3D11PixelShader* d3dPixelShader);
+
+	void setTopology(D3D11_PRIMITIVE_TOPOLOGY d3dTopology);
 
 private:
-	ComRef< ID3D11Device > m_d3dDevice;
-	std::map< uint32_t, ComRef< ID3D11RasterizerState > > m_d3dRasterizerStates;
-	std::map< uint32_t, ComRef< ID3D11DepthStencilState > > m_d3dDepthStencilStates;
-	std::map< uint32_t, ComRef< ID3D11BlendState > > m_d3dBlendStates;
+	ComRef< ID3D11DeviceContext > m_d3dDeviceContext;
+	ComRef< ID3D11RasterizerState > m_d3dRasterizerState;
+	ComRef< ID3D11DepthStencilState > m_d3dDepthStencilState;
+	ComRef< ID3D11BlendState > m_d3dBlendState;
+	ComRef< ID3D11VertexShader > m_d3dVertexShader;
+	ComRef< ID3D11PixelShader > m_d3dPixelShader;
+	D3D11_PRIMITIVE_TOPOLOGY m_d3dTopology;
+	UINT m_stencilReference;
 };
 
 	}

@@ -380,16 +380,16 @@ bool OcclusionTexturePipeline::buildOutput(
 	drawing::MirrorFilter mirrorFilter(false, true);
 	image = image->applyFilter(&mirrorFilter);
 
-	image->save(L"data/Temp/Occlusion.png");
+	//image->save(L"data/Temp/Occlusion.png");
 
-	render::TextureOutput output;
-	output.m_hasAlpha = false;
-	output.m_ignoreAlpha = true;
-	output.m_enableCompression = true;
-	output.m_linearGamma = true;
+	Ref< render::TextureOutput > output = new render::TextureOutput();
+	output->m_hasAlpha = false;
+	output->m_ignoreAlpha = true;
+	output->m_enableCompression = true;
+	output->m_linearGamma = true;
 
 	return pipelineBuilder->buildOutput(
-		&output,
+		output,
 		image,
 		outputPath,
 		outputGuid

@@ -1,7 +1,7 @@
-#ifndef traktor_amalgam_ReconfiguredAction_H
-#define traktor_amalgam_ReconfiguredAction_H
+#ifndef traktor_amalgam_ReconfigureEvent_H
+#define traktor_amalgam_ReconfigureEvent_H
 
-#include "Amalgam/IAction.h"
+#include "Amalgam/IEvent.h"
 #include "Amalgam/Types.h"
 
 // import/export mechanism.
@@ -17,18 +17,18 @@ namespace traktor
 	namespace amalgam
 	{
 
-/*! \brief Reconfigured action.
+/*! \brief Reconfigure event.
  * \ingroup Amalgam
  *
  * Applications are notified with this
- * action when any server has been reconfigured.
+ * event when any server has been reconfigured.
  */
-class T_DLLCLASS ReconfiguredAction : public IAction
+class T_DLLCLASS ReconfigureEvent : public IEvent
 {
 	T_RTTI_CLASS;
 
 public:
-	ReconfiguredAction(int32_t result);
+	ReconfigureEvent(int32_t result);
 
 	int32_t getResult() const;
 
@@ -39,4 +39,4 @@ private:
 	}
 }
 
-#endif	// traktor_amalgam_ReconfiguredAction_H
+#endif	// traktor_amalgam_ReconfigureEvent_H

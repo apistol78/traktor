@@ -192,7 +192,7 @@ bool TextureOutputPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< const TextureOutput > textureOutput = checked_type_cast< const TextureOutput* >(sourceAsset);
+	const TextureOutput* textureOutput = checked_type_cast< const TextureOutput* >(sourceAsset);
 	Ref< drawing::Image > image = checked_type_cast< const drawing::Image*, false >(buildParams)->clone();
 
 	int32_t width = image->getWidth();

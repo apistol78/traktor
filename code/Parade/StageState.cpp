@@ -1,5 +1,5 @@
 #include "Amalgam/IEnvironment.h"
-#include "Amalgam/Actions/ReconfiguredAction.h"
+#include "Amalgam/Events/ReconfigureEvent.h"
 #include "Parade/Stage.h"
 #include "Parade/StageState.h"
 #include "Render/IRenderView.h"
@@ -62,9 +62,9 @@ bool StageState::render(uint32_t frame, render::EyeType eye, const amalgam::IUpd
 	return true;
 }
 
-bool StageState::take(const amalgam::IAction* action)
+bool StageState::take(const amalgam::IEvent* event)
 {
-	if (const amalgam::ReconfiguredAction* reconfiguredAction = dynamic_type_cast< const amalgam::ReconfiguredAction* >(action))
+	if (const amalgam::ReconfigureEvent* reconfigureEvent = dynamic_type_cast< const amalgam::ReconfigureEvent* >(event))
 	{
 		m_stage->reconfigured();
 	}

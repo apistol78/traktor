@@ -1,7 +1,7 @@
 #include "Amalgam/IRuntimePlugin.h"
 #include "Amalgam/IState.h"
-#include "Amalgam/Actions/ActivationAction.h"
-#include "Amalgam/Actions/ReconfiguredAction.h"
+#include "Amalgam/Events/ActiveEvent.h"
+#include "Amalgam/Events/ReconfigureEvent.h"
 #include "Amalgam/Impl/Application.h"
 #include "Amalgam/Impl/AudioServer.h"
 #include "Amalgam/Impl/Environment.h"
@@ -433,8 +433,8 @@ bool Application::update()
 		// Emit action in current state as we've successfully reconfigured servers.
 		if ((currentState = m_stateManager->getCurrent()) != 0)
 		{
-			ReconfiguredAction configuredAction(result);
-			currentState->take(&configuredAction);
+			ReconfigureEvent configureEvent(result);
+			currentState->take(&configureEvent);
 		}
 	}
 
@@ -498,8 +498,8 @@ bool Application::update()
 		bool renderViewActive = m_renderServer->getRenderView()->isActive();
 		if (renderViewActive != m_renderViewActive)
 		{
-			ActivationAction activationAction(renderViewActive);
-			currentState->take(&activationAction);
+			ActiveEvent activeEvent(renderViewActive);
+			currentState->take(&activeEvent);
 			m_renderViewActive = renderViewActive;
 		}
 

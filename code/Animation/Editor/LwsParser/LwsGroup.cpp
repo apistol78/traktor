@@ -28,13 +28,17 @@ Ref< const LwsNode > LwsGroup::get(uint32_t index) const
 	return m_nodes[index];
 }
 
-Ref< const LwsNode > LwsGroup::find(const std::wstring& name) const
+Ref< const LwsNode > LwsGroup::find(const std::wstring& name, uint32_t from) const
 {
-	for (RefArray< LwsNode >::const_iterator i = m_nodes.begin(); i != m_nodes.end(); ++i)
+	if (m_nodes.empty() || from >= m_nodes.size())
+		return 0;
+
+	for (uint32_t i = from; i < m_nodes.size(); ++i)
 	{
-		if ((*i)->getName() == name)
-			return *i;
+		if (m_nodes[i]->getName() == name)
+			return m_nodes[i];
 	}
+
 	return 0;
 }
 

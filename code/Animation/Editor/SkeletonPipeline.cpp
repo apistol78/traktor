@@ -1,6 +1,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Editor/SkeletonFormatBvh.h"
+#include "Animation/Editor/SkeletonFormatLws.h"
 #include "Animation/Editor/SkeletonPipeline.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -9,6 +10,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 
 namespace traktor
@@ -16,7 +18,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonPipeline", 2, SkeletonPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonPipeline", 3, SkeletonPipeline, editor::IPipeline)
 
 bool SkeletonPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -44,6 +46,11 @@ bool SkeletonPipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
+	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, skeletonAsset->getFileName());
+
+	pipelineDepends->addDependency(fileName);
+
 	return true;
 }
 
@@ -64,6 +71,8 @@ bool SkeletonPipeline::buildOutput(
 
 	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
 		format = new SkeletonFormatBvh();
+	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
+		format = new SkeletonFormatLws();
 
 	if (!format)
 	{

@@ -8,6 +8,7 @@
 #include "Render/Dx11/ProgramDx11.h"
 #include "Render/Dx11/ProgramResourceDx11.h"
 #include "Render/Dx11/RenderTargetDx11.h"
+#include "Render/Dx11/ResourceCache.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/StateCache.h"
 
@@ -30,9 +31,10 @@ ProgramDx11::ProgramDx11(ContextDx11* context)
 :	m_context(context)
 ,	m_stencilReference(0)
 ,	m_d3dInputElementsHash(0)
-,	m_parameterArrayDirty(false)
 ,	m_parameterResArrayDirty(false)
-,	m_bufferCycle(0)
+#if defined(_DEBUG)
+,	m_bindCount(0)
+#endif
 {
 	s_targetSizeHandle = getParameterHandle(L"_dx11_targetSize");
 }
@@ -42,32 +44,26 @@ ProgramDx11::~ProgramDx11()
 	destroy();
 }
 
-bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const ProgramResourceDx11* resource, float mipBias, int32_t maxAnisotropy)
+bool ProgramDx11::create(
+	ID3D11Device* d3dDevice,
+	ResourceCache& resourceCache,
+	const ProgramResourceDx11* resource,
+	float mipBias,
+	int32_t maxAnisotropy
+)
 {
-	ComRef< ID3DBlob > d3dErrorMsgs;
-	HRESULT hr;
-
-	hr = d3dDevice->CreateVertexShader(
-		(DWORD*)resource->m_vertexShader->GetBufferPointer(),
-		resource->m_vertexShader->GetBufferSize(),
-		0,
-		&m_d3dVertexShader.getAssign()
-	);
-	if (FAILED(hr))
+	// Get shaders; reuse existing if already created.
+	m_d3dVertexShader = resourceCache.getVertexShader(resource->m_vertexShader, resource->m_vertexShaderHash);
+	if (!m_d3dVertexShader)
 	{
-		log::error << L"Failed to create vertex shader, hr = " << int32_t(hr) << Endl;
+		log::error << L"Failed to create vertex shader" << Endl;
 		return false;
 	}
 
-	hr = d3dDevice->CreatePixelShader(
-		(DWORD*)resource->m_pixelShader->GetBufferPointer(),
-		resource->m_pixelShader->GetBufferSize(),
-		0,
-		&m_d3dPixelShader.getAssign()
-	);
-	if (FAILED(hr))
+	m_d3dPixelShader = resourceCache.getPixelShader(resource->m_pixelShader, resource->m_pixelShaderHash);
+	if (!m_d3dPixelShader)
 	{
-		log::error << L"Failed to create pixel shader, hr = " << int32_t(hr) << Endl;
+		log::error << L"Failed to create pixel shader" << Endl;
 		return false;
 	}
 
@@ -78,6 +74,7 @@ bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const 
 		d3dDevice,
 		mipBias,
 		1,
+		0,
 		resource->m_vertexShader,
 		resource->m_d3dVertexSamplers,
 		/* [out] */
@@ -89,6 +86,7 @@ bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const 
 		d3dDevice,
 		mipBias,
 		maxAnisotropy,
+		1,
 		resource->m_pixelShader,
 		resource->m_d3dPixelSamplers,
 		/* [out] */
@@ -97,9 +95,9 @@ bool ProgramDx11::create(ID3D11Device* d3dDevice, StateCache& stateCache, const 
 		return false;
 
 	// Create state objects.
-	m_d3dRasterizerState = stateCache.getRasterizerState(resource->m_d3dRasterizerDesc);
-	m_d3dDepthStencilState = stateCache.getDepthStencilState(resource->m_d3dDepthStencilDesc);
-	m_d3dBlendState = stateCache.getBlendState(resource->m_d3dBlendDesc);
+	m_d3dRasterizerState = resourceCache.getRasterizerState(resource->m_d3dRasterizerDesc);
+	m_d3dDepthStencilState = resourceCache.getDepthStencilState(resource->m_d3dDepthStencilDesc);
+	m_d3dBlendState = resourceCache.getBlendState(resource->m_d3dBlendDesc);
 
 	m_stencilReference = resource->m_stencilReference;
 	return true;
@@ -118,11 +116,11 @@ void ProgramDx11::destroy()
 	m_context->releaseComRef(m_d3dBlendState);
 	m_context->releaseComRef(m_d3dVertexShader);
 	m_context->releaseComRef(m_d3dPixelShader);
-	for (uint32_t i = 0; i < sizeof_array(m_vertexState.d3dConstantBuffer); ++i)
-		m_context->releaseComRef(m_vertexState.d3dConstantBuffer[i]);
+	for (uint32_t i = 0; i < sizeof_array(m_vertexState.cbuffer); ++i)
+		m_context->releaseComRef(m_vertexState.cbuffer[i].d3dBuffer);
 	m_context->releaseComRef(m_vertexState.d3dSamplerStates);
-	for (uint32_t i = 0; i < sizeof_array(m_pixelState.d3dConstantBuffer); ++i)
-		m_context->releaseComRef(m_pixelState.d3dConstantBuffer[i]);
+	for (uint32_t i = 0; i < sizeof_array(m_pixelState.cbuffer); ++i)
+		m_context->releaseComRef(m_pixelState.cbuffer[i].d3dBuffer);
 	m_context->releaseComRef(m_pixelState.d3dSamplerStates);
 	m_context->releaseComRef(m_d3dVertexShaderBlob);
 	for (SmallMap< size_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.begin(); i != m_d3dInputLayouts.end(); ++i)
@@ -142,68 +140,139 @@ void ProgramDx11::setFloatParameter(handle_t handle, float param)
 
 void ProgramDx11::setFloatArrayParameter(handle_t handle, const float* param, int length)
 {
-	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		if (std::memcmp(&m_parameterFloatArray[i->second], param, length * sizeof(float)) != 0)
+		if (std::memcmp(&m_parameterFloatArray[i->second.offset], param, length * sizeof(float)) != 0)
 		{
-			std::memcpy(&m_parameterFloatArray[i->second], param, length * sizeof(float));
-			m_parameterArrayDirty = true;
+			std::memcpy(&m_parameterFloatArray[i->second.offset], param, length * sizeof(float));
+			if (i->second.cbuffer[0])
+				i->second.cbuffer[0]->dirty = true;
+			if (i->second.cbuffer[1])
+				i->second.cbuffer[1]->dirty = true;
+#if defined(_DEBUG)
+			if (m_bindCount >= 1)
+			{
+				if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
+					T_DEBUG(L"cbOnce modified vertex " << i->second.name);
+				if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
+					T_DEBUG(L"cbOnce modified pixel " << i->second.name);
+			}
+#endif
 		}
 	}
 }
 
 void ProgramDx11::setVectorParameter(handle_t handle, const Vector4& param)
 {
-	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		if (Vector4::loadAligned(&m_parameterFloatArray[i->second]) != param)
+		if (Vector4::loadAligned(&m_parameterFloatArray[i->second.offset]) != param)
 		{
-			param.storeAligned(&m_parameterFloatArray[i->second]);
-			m_parameterArrayDirty = true;
+			param.storeAligned(&m_parameterFloatArray[i->second.offset]);
+			if (i->second.cbuffer[0])
+				i->second.cbuffer[0]->dirty = true;
+			if (i->second.cbuffer[1])
+				i->second.cbuffer[1]->dirty = true;
+#if defined(_DEBUG)
+			if (m_bindCount >= 1)
+			{
+				if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
+					T_DEBUG(L"cbOnce modified vertex " << i->second.name);
+				if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
+					T_DEBUG(L"cbOnce modified pixel " << i->second.name);
+			}
+#endif
 		}
 	}
 }
 
 void ProgramDx11::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
 {
-	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		for (int j = 0; j < length; ++j)
-			param[j].storeAligned(&m_parameterFloatArray[i->second + j * 4]);
-		m_parameterArrayDirty = true;
+		int32_t j = 0;
+		for (; j < length; ++j)
+		{
+			if (Vector4::loadAligned(&m_parameterFloatArray[i->second.offset + j * 4]) != param[j])
+				break;
+		}
+		if (j >= length)
+			return;
+
+		for (; j < length; ++j)
+			param[j].storeAligned(&m_parameterFloatArray[i->second.offset + j * 4]);
+
+		if (i->second.cbuffer[0])
+			i->second.cbuffer[0]->dirty = true;
+		if (i->second.cbuffer[1])
+			i->second.cbuffer[1]->dirty = true;
+
+#if defined(_DEBUG)
+		if (m_bindCount >= 1)
+		{
+			if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
+				T_DEBUG(L"cbOnce modified vertex " << i->second.name);
+			if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
+				T_DEBUG(L"cbOnce modified pixel " << i->second.name);
+		}
+#endif
 	}
 }
 
 void ProgramDx11::setMatrixParameter(handle_t handle, const Matrix44& param)
 {
-	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		if (Matrix44::loadAligned(&m_parameterFloatArray[i->second]) != param)
+		if (Matrix44::loadAligned(&m_parameterFloatArray[i->second.offset]) != param)
 		{
-			param.storeAligned(&m_parameterFloatArray[i->second]);
-			m_parameterArrayDirty = true;
+			param.storeAligned(&m_parameterFloatArray[i->second.offset]);
+			if (i->second.cbuffer[0])
+				i->second.cbuffer[0]->dirty = true;
+			if (i->second.cbuffer[1])
+				i->second.cbuffer[1]->dirty = true;
+#if defined(_DEBUG)
+			if (m_bindCount >= 1)
+			{
+				if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
+					T_DEBUG(L"cbOnce modified vertex " << i->second.name);
+				if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
+					T_DEBUG(L"cbOnce modified pixel " << i->second.name);
+			}
+#endif
 		}
 	}
 }
 
 void ProgramDx11::setMatrixArrayParameter(handle_t handle, const Matrix44* param, int length)
 {
-	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		for (int j = 0; j < length; ++j)
-			param[j].storeAligned(&m_parameterFloatArray[i->second + j * 16]);
-		m_parameterArrayDirty = true;
+			param[j].storeAligned(&m_parameterFloatArray[i->second.offset + j * 16]);
+		if (i->second.cbuffer[0])
+			i->second.cbuffer[0]->dirty = true;
+		if (i->second.cbuffer[1])
+			i->second.cbuffer[1]->dirty = true;
+#if defined(_DEBUG)
+		if (m_bindCount >= 1)
+		{
+			if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
+				T_DEBUG(L"cbOnce modified vertex " << i->second.name);
+			if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
+				T_DEBUG(L"cbOnce modified pixel " << i->second.name);
+		}
+#endif
 	}
 }
 
 void ProgramDx11::setTextureParameter(handle_t handle, ITexture* texture)
 {
-	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
+	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
 		ID3D11ShaderResourceView* d3dTextureResourceView = 0;
@@ -224,7 +293,7 @@ void ProgramDx11::setTextureParameter(handle_t handle, ITexture* texture)
 		else
 			return;
 
-		m_parameterResArray[i->second] = d3dTextureResourceView;
+		m_parameterResArray[i->second.offset] = d3dTextureResourceView;
 		m_parameterResArrayDirty = true;
 	}
 }
@@ -237,36 +306,34 @@ void ProgramDx11::setStencilReference(uint32_t stencilReference)
 bool ProgramDx11::bind(
 	ID3D11Device* d3dDevice,
 	ID3D11DeviceContext* d3dDeviceContext,
+	StateCache& stateCache,
 	size_t d3dInputElementsHash,
 	const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements,
 	const int32_t targetSize[2]
 )
 {
-	static float blendFactors[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 	HRESULT hr;
 
 	// Set states.
-	d3dDeviceContext->RSSetState(m_d3dRasterizerState);
-	d3dDeviceContext->OMSetDepthStencilState(m_d3dDepthStencilState, m_stencilReference);
-	d3dDeviceContext->OMSetBlendState(m_d3dBlendState, blendFactors, 0xffffffff);
+	stateCache.setRasterizerState(m_d3dRasterizerState);
+	stateCache.setDepthStencilState(m_d3dDepthStencilState, m_stencilReference);
+	stateCache.setBlendState(m_d3dBlendState);
 
 	// Update target size parameter.
-	setVectorParameter(s_targetSizeHandle, Vector4(targetSize[0], targetSize[1], 0.0f, 0.0f));
+	setVectorParameter(s_targetSizeHandle, Vector4(float(targetSize[0]), float(targetSize[1]), 0.0f, 0.0f));
 
 	// Update constant buffers.
-	if (m_parameterArrayDirty || ms_activeProgram != this)
-	{
-		m_bufferCycle = (m_bufferCycle + 1) % sizeof_array(m_vertexState.d3dConstantBuffer);
-		if (!updateStateConstants(d3dDeviceContext, m_vertexState))
-			return false;
-		if (!updateStateConstants(d3dDeviceContext, m_pixelState))
-			return false;
-		m_parameterArrayDirty = false;		
-	}
+	if (!updateStateConstants(d3dDeviceContext, m_vertexState))
+		return false;
+	if (!updateStateConstants(d3dDeviceContext, m_pixelState))
+		return false;
 
 	// Bind constant buffers.
-	d3dDeviceContext->VSSetConstantBuffers(0, 1, &m_vertexState.d3dConstantBuffer[m_bufferCycle].get());
-	d3dDeviceContext->PSSetConstantBuffers(0, 1, &m_pixelState.d3dConstantBuffer[m_bufferCycle].get());
+	ID3D11Buffer* d3dVSBuffers[] = { m_vertexState.cbuffer[0].d3dBuffer, m_vertexState.cbuffer[1].d3dBuffer, m_vertexState.cbuffer[2].d3dBuffer };
+	d3dDeviceContext->VSSetConstantBuffers(0, 3, d3dVSBuffers);
+
+	ID3D11Buffer* d3dPSBuffers[] = { m_pixelState.cbuffer[0].d3dBuffer, m_pixelState.cbuffer[1].d3dBuffer, m_pixelState.cbuffer[2].d3dBuffer };
+	d3dDeviceContext->PSSetConstantBuffers(0, 3, d3dPSBuffers);
 
 	// Bind samplers.
 	if (!m_vertexState.d3dSamplerStates.empty())
@@ -302,8 +369,8 @@ bool ProgramDx11::bind(
 	}
 
 	// Bind shaders.
-	d3dDeviceContext->VSSetShader(m_d3dVertexShader, 0, 0);
-	d3dDeviceContext->PSSetShader(m_d3dPixelShader, 0, 0);
+	stateCache.setVertexShader(m_d3dVertexShader);
+	stateCache.setPixelShader(m_d3dPixelShader);
 
 	// Remap input layout if it has changed since last use of this shader.
 	if (m_d3dInputElementsHash != d3dInputElementsHash || ms_activeProgram != this)
@@ -336,6 +403,10 @@ bool ProgramDx11::bind(
 
 	d3dDeviceContext->IASetInputLayout(m_d3dInputLayout);
 
+#if defined(_DEBUG)
+	++m_bindCount;
+#endif
+
 	ms_activeProgram = this;
 	return true;
 }
@@ -352,6 +423,7 @@ bool ProgramDx11::createState(
 	ID3D11Device* d3dDevice,
 	float mipBias,
 	int32_t maxAnisotropy,
+	int32_t shaderType,
 	ID3DBlob* d3dShaderBlob,
 	const std::map< std::wstring, D3D11_SAMPLER_DESC >& d3dSamplers,
 	State& outState
@@ -381,9 +453,9 @@ bool ProgramDx11::createState(
 	d3dShaderReflection->GetDesc(&dsd);
 
 	// Scalar parameters.
-	if (dsd.ConstantBuffers >= 1)
+	for (UINT i = 0; i < dsd.ConstantBuffers; ++i)
 	{
-		d3dConstantBufferReflection = d3dShaderReflection->GetConstantBufferByIndex(0);
+		d3dConstantBufferReflection = d3dShaderReflection->GetConstantBufferByIndex(i);
 		T_ASSERT (d3dConstantBufferReflection);
 
 		d3dConstantBufferReflection->GetDesc(&dsbd);
@@ -395,16 +467,17 @@ bool ProgramDx11::createState(
 		dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 		dbd.MiscFlags = 0;
 
-		for (uint32_t i = 0; i < sizeof_array(outState.d3dConstantBuffer); ++i)
-		{
-			hr = d3dDevice->CreateBuffer(&dbd, NULL, &outState.d3dConstantBuffer[i].getAssign());
-			if (FAILED(hr))
-				return false;
-		}
+		hr = d3dDevice->CreateBuffer(&dbd, NULL, &outState.cbuffer[i].d3dBuffer.getAssign());
+		if (FAILED(hr))
+			return false;
 
-		for (UINT i = 0; i < dsbd.Variables; ++i)
+#if defined(_DEBUG)
+		outState.cbuffer[i].name = mbstows(dsbd.Name);
+#endif
+
+		for (UINT j = 0; j < dsbd.Variables; ++j)
 		{
-			d3dVariableReflection = d3dConstantBufferReflection->GetVariableByIndex(i);
+			d3dVariableReflection = d3dConstantBufferReflection->GetVariableByIndex(j);
 			T_ASSERT (d3dVariableReflection);
 
 			d3dTypeReflection = d3dVariableReflection->GetType();
@@ -416,7 +489,7 @@ bool ProgramDx11::createState(
 			d3dTypeReflection->GetDesc(&dstd);
 			T_ASSERT (dstd.Type == D3D10_SVT_FLOAT);
 
-			SmallMap< handle_t, uint32_t >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsvd.Name)));
+			SmallMap< handle_t, ParameterMap >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsvd.Name)));
 			if (it == m_parameterMap.end())
 			{
 				uint32_t parameterOffset = alignUp(uint32_t(m_parameterFloatArray.size()), 4);
@@ -424,24 +497,31 @@ bool ProgramDx11::createState(
 
 				m_parameterFloatArray.resize(parameterOffset + parameterCount);
 
-				outState.parameterFloatOffsets.push_back(ParameterOffset(
+				outState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
 					dsvd.StartOffset,
 					parameterOffset,
 					parameterCount
 				));
 
-				m_parameterMap.insert(std::make_pair(getParameterHandle(mbstows(dsvd.Name)), parameterOffset));
+				ParameterMap& pm = m_parameterMap[getParameterHandle(mbstows(dsvd.Name))];
+#if defined(_DEBUG)
+				pm.name = mbstows(dsvd.Name);
+#endif
+				pm.offset = parameterOffset;
+				pm.cbuffer[shaderType] = &outState.cbuffer[i];
 			}
 			else
 			{
-				uint32_t parameterOffset = it->second;
+				uint32_t parameterOffset = it->second.offset;
 				uint32_t parameterCount = dsvd.Size >> 2;
 
-				outState.parameterFloatOffsets.push_back(ParameterOffset(
+				outState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
 					dsvd.StartOffset,
 					parameterOffset,
 					parameterCount
 				));
+
+				it->second.cbuffer[shaderType] = &outState.cbuffer[i];
 			}
 		}
 	}
@@ -454,19 +534,23 @@ bool ProgramDx11::createState(
 		{
 			T_ASSERT (dsibd.BindCount == 1);
 
-			SmallMap< handle_t, uint32_t >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsibd.Name)));
+			SmallMap< handle_t, ParameterMap >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsibd.Name)));
 			if (it == m_parameterMap.end())
 			{
 				uint32_t resourceIndex = uint32_t(m_parameterResArray.size());
-
 				m_parameterResArray.resize(resourceIndex + 1);
-				m_parameterMap.insert(std::make_pair(getParameterHandle(mbstows(dsibd.Name)), resourceIndex));
+
+				ParameterMap& pm = m_parameterMap[getParameterHandle(mbstows(dsibd.Name))];
+#if defined(_DEBUG)
+				pm.name = mbstows(dsibd.Name);
+#endif
+				pm.offset = resourceIndex;
 
 				outState.resourceIndices.push_back(std::make_pair(dsibd.BindPoint, resourceIndex));
 			}
 			else
 			{
-				outState.resourceIndices.push_back(std::make_pair(dsibd.BindPoint, it->second));
+				outState.resourceIndices.push_back(std::make_pair(dsibd.BindPoint, it->second.offset));
 			}
 		}
 		else if (dsibd.Type == D3D10_SIT_SAMPLER)
@@ -494,23 +578,33 @@ bool ProgramDx11::createState(
 
 bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, State& state)
 {
-	if (!state.d3dConstantBuffer[m_bufferCycle])
-		return true;
-
 	D3D11_MAPPED_SUBRESOURCE dm;
-	HRESULT hr = d3dDeviceContext->Map(state.d3dConstantBuffer[m_bufferCycle], 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
+	HRESULT hr;
 
-	uint8_t* mapped = (uint8_t*)dm.pData;
-	for (std::vector< ParameterOffset >::const_iterator i = state.parameterFloatOffsets.begin(); i != state.parameterFloatOffsets.end(); ++i)
+	for (int32_t i = 0; i < sizeof_array(state.cbuffer); ++i)
 	{
-		std::memcpy(
-			&mapped[i->constant],
-			&m_parameterFloatArray[i->offset],
-			i->count * sizeof(float)
-		);
+		if (!state.cbuffer[i].d3dBuffer)
+			break;
+		if (!state.cbuffer[i].dirty)
+			continue;
+
+		hr = d3dDeviceContext->Map(state.cbuffer[i].d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
+		if (FAILED(hr))
+			return false;
+
+		uint8_t* mapped = (uint8_t*)dm.pData;
+		for (std::vector< ParameterOffset >::const_iterator j = state.cbuffer[i].parameterOffsets.begin(); j != state.cbuffer[i].parameterOffsets.end(); ++j)
+		{
+			std::memcpy(
+				&mapped[j->constant],
+				&m_parameterFloatArray[j->offset],
+				j->count * sizeof(float)
+			);
+		}
+
+		d3dDeviceContext->Unmap(state.cbuffer[i].d3dBuffer, 0);
 	}
 
-	d3dDeviceContext->Unmap(state.d3dConstantBuffer[m_bufferCycle], 0);
 	return true;
 }
 

@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Dx11/RenderViewDx11.h"
 #include "Render/Dx11/ContextDx11.h"
@@ -50,6 +51,7 @@ RenderViewDx11::RenderViewDx11(
 )
 :	m_context(context)
 ,	m_window(window)
+,	m_stateCache(context->getD3DDeviceContext())
 ,	m_fullScreen(false)
 ,	m_waitVBlank(true)
 ,	m_dirty(false)
@@ -69,6 +71,7 @@ RenderViewDx11::RenderViewDx11(
 )
 :	m_context(context)
 ,	m_dxgiSwapChain(dxgiSwapChain)
+,	m_stateCache(context->getD3DDeviceContext())
 ,	m_fullScreen(false)
 ,	m_waitVBlank(true)
 ,	m_dirty(false)
@@ -629,6 +632,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	if (!m_currentProgram->bind(
 		m_context->getD3DDevice(),
 		m_context->getD3DDeviceContext(),
+		m_stateCache,
 		size_t(m_currentVertexBuffer.ptr()),
 		m_currentVertexBuffer->getD3D11InputElements(),
 		rs.targetSize
@@ -637,7 +641,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 	// Draw primitives.
 	T_ASSERT (c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
-	m_context->getD3DDeviceContext()->IASetPrimitiveTopology(c_d3dTopology[primitives.type]);
+	m_stateCache.setTopology(c_d3dTopology[primitives.type]);
 
 	UINT vertexCount;
 	switch (primitives.type)
@@ -705,10 +709,13 @@ void RenderViewDx11::present()
 
 void RenderViewDx11::pushMarker(const char* const marker)
 {
+	std::wstring wm = marker ? mbstows(marker) : L"Unnamed"; 
+	D3DPERF_BeginEvent(D3DCOLOR_RGBA(255, 255, 255, 255), wm.c_str());
 }
 
 void RenderViewDx11::popMarker()
 {
+	D3DPERF_EndEvent();
 }
 
 void RenderViewDx11::getStatistics(RenderViewStatistics& outStatistics) const

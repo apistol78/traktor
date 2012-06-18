@@ -58,8 +58,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-663</first>
-				<second>-241</second>
+				<first>-665</first>
+				<second>-249</second>
 			</position>
 			<parameterName>Time</parameterName>
 			<type>PtScalar</type>
@@ -108,7 +108,7 @@
 			</position>
 			<parameterName>WaveData</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 			<length>32</length>
 		</item>
 		<item type="traktor.render.Sum">

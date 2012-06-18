@@ -20,7 +20,7 @@ namespace traktor
 		{
 
 const int c_longitudes = 16;
-const int c_latitudes = 12;
+const int c_latitudes = 24;
 const int c_vertexCount = (c_longitudes + 1) * c_latitudes;
 const int c_triangleCount = ((c_latitudes - 1) * ((c_longitudes + 1) * 2));
 const int c_indexCount = c_triangleCount * 3;

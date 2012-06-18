@@ -18,20 +18,14 @@ HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
 ,	m_needTargetSize(false)
 {
 	pushScope();
-	pushOutputStream(BtUniform, new StringOutputStream());
-	pushOutputStream(BtInput, new StringOutputStream());
-	pushOutputStream(BtOutput, new StringOutputStream());
-	pushOutputStream(BtScript, new StringOutputStream());
-	pushOutputStream(BtBody, new StringOutputStream());
+	for (int32_t i = 0; i < BtLast; ++i)
+		pushOutputStream((BlockType)i, new StringOutputStream());
 }
 
 HlslShader::~HlslShader()
 {
-	popOutputStream(BtBody);
-	popOutputStream(BtScript);
-	popOutputStream(BtOutput);
-	popOutputStream(BtInput);
-	popOutputStream(BtUniform);
+	for (int32_t i = 0; i < BtLast; ++i)
+		popOutputStream((BlockType)i);
 	popScope();
 }
 
@@ -175,13 +169,62 @@ std::wstring HlslShader::getGeneratedShader()
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
 	ss << Endl;
 
-	if (m_needTargetSize)
-		ss << L"uniform float4 _dx11_targetSize;" << Endl;
-
-	std::wstring uniformText = getOutputStream(BtUniform).str();
-	if (!uniformText.empty())
+	std::wstring cbufferOnceText = getOutputStream(BtCBufferOnce).str();
+	if (!cbufferOnceText.empty())
 	{
-		ss << uniformText;
+		ss << L"cbuffer cbOnce" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+
+		ss << cbufferOnceText;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring cbufferFrameText = getOutputStream(BtCBufferFrame).str();
+	if (!cbufferFrameText.empty() || m_needTargetSize)
+	{
+		ss << L"cbuffer cbFrame" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+
+		ss << cbufferFrameText;
+
+		if (m_needTargetSize)
+			ss << L"float4 _dx11_targetSize;" << Endl;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring cbufferDrawText = getOutputStream(BtCBufferDraw).str();
+	if (!cbufferDrawText.empty())
+	{
+		ss << L"cbuffer cbDraw" << Endl;
+		ss << L"{" << Endl;
+		ss << IncreaseIndent;
+
+		ss << cbufferDrawText;
+
+		ss << DecreaseIndent;
+		ss << L"};" << Endl;
+		ss << Endl;
+	}
+
+	std::wstring texturesText = getOutputStream(BtTextures).str();
+	if (!texturesText.empty())
+	{
+		ss << texturesText;
+		ss << Endl;
+	}
+
+	std::wstring samplersText = getOutputStream(BtSamplers).str();
+	if (!samplersText.empty())
+	{
+		ss << samplersText;
 		ss << Endl;
 	}
 

@@ -152,28 +152,28 @@ bool HeightfieldTexturePipeline::buildOutput(
 			}
 		}
 
-		render::TextureOutput output;
-		output.m_textureFormat = render::TfR16F;
-		output.m_generateNormalMap = false;
-		output.m_scaleDepth = 0.0f;
-		output.m_generateMips = false;
-		output.m_keepZeroAlpha = false;
-		output.m_isCubeMap = false;
-		output.m_hasAlpha = false;
-		output.m_ignoreAlpha = false;
-		output.m_scaleImage = false;
-		output.m_scaleWidth = 0;
-		output.m_scaleHeight = 0;
-		output.m_enableCompression = false;
-		output.m_enableNormalMapCompression = false;
-		output.m_inverseNormalMapY = false;
-		output.m_linearGamma = true;
-		output.m_generateSphereMap = false;
-		output.m_preserveAlphaCoverage = false;
-		output.m_alphaCoverageReference = 0.0f;
+		Ref< render::TextureOutput > output = new render::TextureOutput();
+		output->m_textureFormat = render::TfR16F;
+		output->m_generateNormalMap = false;
+		output->m_scaleDepth = 0.0f;
+		output->m_generateMips = false;
+		output->m_keepZeroAlpha = false;
+		output->m_isCubeMap = false;
+		output->m_hasAlpha = false;
+		output->m_ignoreAlpha = false;
+		output->m_scaleImage = false;
+		output->m_scaleWidth = 0;
+		output->m_scaleHeight = 0;
+		output->m_enableCompression = false;
+		output->m_enableNormalMapCompression = false;
+		output->m_inverseNormalMapY = false;
+		output->m_linearGamma = true;
+		output->m_generateSphereMap = false;
+		output->m_preserveAlphaCoverage = false;
+		output->m_alphaCoverageReference = 0.0f;
 
 		return pipelineBuilder->buildOutput(
-			&output,
+			output,
 			outputMap,
 			outputPath,
 			outputGuid
@@ -196,28 +196,28 @@ bool HeightfieldTexturePipeline::buildOutput(
 			}
 		}
 
-		render::TextureOutput output;
-		output.m_textureFormat = render::TfInvalid;
-		output.m_generateNormalMap = false;
-		output.m_scaleDepth = 0.0f;
-		output.m_generateMips = true;
-		output.m_keepZeroAlpha = false;
-		output.m_isCubeMap = false;
-		output.m_hasAlpha = false;
-		output.m_ignoreAlpha = true;
-		output.m_scaleImage = false;
-		output.m_scaleWidth = 0;
-		output.m_scaleHeight = 0;
-		output.m_enableCompression = true;
-		output.m_enableNormalMapCompression = true;
-		output.m_inverseNormalMapY = false;
-		output.m_linearGamma = true;
-		output.m_generateSphereMap = false;
-		output.m_preserveAlphaCoverage = false;
-		output.m_alphaCoverageReference = 0.0f;
+		Ref< render::TextureOutput > output = new render::TextureOutput();
+		output->m_textureFormat = render::TfInvalid;
+		output->m_generateNormalMap = false;
+		output->m_scaleDepth = 0.0f;
+		output->m_generateMips = true;
+		output->m_keepZeroAlpha = false;
+		output->m_isCubeMap = false;
+		output->m_hasAlpha = false;
+		output->m_ignoreAlpha = true;
+		output->m_scaleImage = false;
+		output->m_scaleWidth = 0;
+		output->m_scaleHeight = 0;
+		output->m_enableCompression = true;
+		output->m_enableNormalMapCompression = true;
+		output->m_inverseNormalMapY = false;
+		output->m_linearGamma = true;
+		output->m_generateSphereMap = false;
+		output->m_preserveAlphaCoverage = false;
+		output->m_alphaCoverageReference = 0.0f;
 
 		return pipelineBuilder->buildOutput(
-			&output,
+			output,
 			outputMap,
 			outputPath,
 			outputGuid

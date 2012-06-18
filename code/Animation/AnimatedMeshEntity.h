@@ -94,14 +94,15 @@ private:
 	bool m_normalizeTransform;
 	AlignedVector< Transform > m_jointTransforms;
 	AlignedVector< Transform > m_poseTransforms;
-	AlignedVector< Vector4 > m_skinTransforms;
+	AlignedVector< Vector4 > m_skinTransforms[3];
 	float m_totalTime;
+	int32_t m_index;
 	bool m_updateController;
 	mutable Ref< Job > m_updatePoseControllerJob;
 
 	void synchronize() const;
 
-	void updatePoseController(float deltaTime);
+	void updatePoseController(int32_t index, float deltaTime);
 };
 
 	}

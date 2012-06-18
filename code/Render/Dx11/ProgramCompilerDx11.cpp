@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/TString.h"
 #include "Render/Dx11/Hlsl.h"
 #include "Render/Dx11/HlslProgram.h"
@@ -43,12 +44,10 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 	if (!Hlsl().generate(shaderGraph, hints, hlslProgram))
 		return 0;
 
-	optimize = clamp(optimize, 0, 4);
+	optimize = clamp< int32_t >(optimize, 0, sizeof_array(c_optimizationFlags));
 
 	Ref< ProgramResourceDx11 > resource = new ProgramResourceDx11();
 
-	ComRef< ID3DBlob > d3dVertexShaderBlob;
-	ComRef< ID3DBlob > d3dPixelShaderBlob;
 	ComRef< ID3DBlob > d3dErrorMsgs;
 	HRESULT hr;
 
@@ -100,6 +99,22 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 		log::error << Endl;
 		FormatMultipleLines(log::error, hlslProgram.getPixelShader());
 		return 0;
+	}
+
+	{
+		Adler32 hash;
+		hash.begin();
+		hash.feed(resource->m_vertexShader->GetBufferPointer(), resource->m_vertexShader->GetBufferSize());
+		hash.end();
+		resource->m_vertexShaderHash = hash.get();
+	}
+
+	{
+		Adler32 hash;
+		hash.begin();
+		hash.feed(resource->m_pixelShader->GetBufferPointer(), resource->m_pixelShader->GetBufferSize());
+		hash.end();
+		resource->m_pixelShaderHash = hash.get();
 	}
 
 	resource->m_d3dRasterizerDesc = hlslProgram.getD3DRasterizerDesc();

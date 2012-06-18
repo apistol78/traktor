@@ -22,6 +22,7 @@ namespace traktor
 
 class ContextDx11;
 class ProgramResourceDx11;
+class ResourceCache;
 class StateCache;
 class HlslProgram;
 
@@ -37,7 +38,7 @@ public:
 
 	virtual ~ProgramDx11();
 
-	bool create(ID3D11Device* d3dDevice, StateCache& stateCache, const ProgramResourceDx11* resource, float mipBias, int32_t maxAnisotropy);
+	bool create(ID3D11Device* d3dDevice, ResourceCache& resourceCache, const ProgramResourceDx11* resource, float mipBias, int32_t maxAnisotropy);
 
 	virtual void destroy();
 
@@ -60,6 +61,7 @@ public:
 	bool bind(
 		ID3D11Device* d3dDevice,
 		ID3D11DeviceContext* d3dDeviceContext,
+		StateCache& stateCache,
 		size_t d3dInputElementsHash,
 		const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements,
 		const int32_t targetSize[2]
@@ -92,11 +94,41 @@ private:
 		}
 	};
 
+	struct CBuffer
+	{
+#if defined(_DEBUG)
+		std::wstring name;
+#endif
+		ComRef< ID3D11Buffer > d3dBuffer;
+		std::vector< ParameterOffset > parameterOffsets;
+		bool dirty;
+
+		CBuffer()
+		:	dirty(true)
+		{
+		}
+	};
+
+	struct ParameterMap
+	{
+#if defined(_DEBUG)
+		std::wstring name;
+#endif
+		uint32_t offset;
+		CBuffer* cbuffer[2];
+
+		ParameterMap()
+		:	offset(0)
+		{
+			cbuffer[0] =
+			cbuffer[1] = 0;
+		}
+	};
+
 	struct State
 	{
-		ComRef< ID3D11Buffer > d3dConstantBuffer[4];
+		CBuffer cbuffer[3];
 		ComRefArray< ID3D11SamplerState > d3dSamplerStates;
-		std::vector< ParameterOffset > parameterFloatOffsets;
 		std::vector< std::pair< UINT, uint32_t > > resourceIndices;
 	};
 
@@ -114,17 +146,20 @@ private:
 	SmallMap< size_t, ComRef< ID3D11InputLayout > > m_d3dInputLayouts;
 	ComRef< ID3D11InputLayout > m_d3dInputLayout;
 	size_t m_d3dInputElementsHash;
-	SmallMap< handle_t, uint32_t > m_parameterMap;
+	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterFloatArray;
 	ComRefArray< ID3D11ShaderResourceView > m_parameterResArray;
-	bool m_parameterArrayDirty;
 	bool m_parameterResArrayDirty;
-	uint32_t m_bufferCycle;
+
+#if defined(_DEBUG)
+	int32_t m_bindCount;
+#endif
 
 	bool createState(
 		ID3D11Device* d3dDevice,
 		float mipBias,
 		int32_t maxAnisotropy,
+		int32_t shaderType,
 		ID3DBlob* d3dShaderBlob,
 		const std::map< std::wstring, D3D11_SAMPLER_DESC >& d3dSamplers,
 		State& outState

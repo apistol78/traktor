@@ -369,9 +369,9 @@ void MeshAssetEditor::createMaterialShader()
 		return;
 
 	MaterialShaderGenerator generator(
-		m_editor->getSourceDatabase()		
+		m_editor->getSettings()->getProperty< PropertyGroup >(L"MeshPipeline.MaterialTemplates", new PropertyGroup())
 	);
-	Ref< render::ShaderGraph > materialShader = generator.generate(*it, m_asset->getMaterialTextures());
+	Ref< render::ShaderGraph > materialShader = generator.generate(m_editor->getSourceDatabase(), *it, m_asset->getMaterialTextures());
 	if (materialShader)
 	{
 		Ref< db::Instance > materialShaderInstance = m_instance->getParent()->createInstance(materialName);
