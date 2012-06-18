@@ -249,7 +249,7 @@
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -295,7 +295,7 @@
 			</position>
 			<parameterName>WorldExtent</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -469,7 +469,7 @@
 			</position>
 			<parameterName>SpreadDistance</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -479,7 +479,7 @@
 			</position>
 			<parameterName>CellRadius</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>

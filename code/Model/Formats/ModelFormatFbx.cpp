@@ -4,6 +4,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Thread/Acquire.h"
 #include "Model/Model.h"
 #include "Model/Formats/ModelFormatFbx.h"
@@ -123,20 +124,19 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 			while (prop.IsValid())
 			{
 				int userTag = prop.GetUserTag();
-				std::wstring propName(mbstows(prop.GetNameAsCStr()));
-				if (startsWith(propName, std::wstring(L"DEA_")))
+				std::wstring propName = mbstows(prop.GetNameAsCStr());
+				if (startsWith< std::wstring >(propName, L"DEA_"))
 				{
-					propName = replaceAll(propName, std::wstring(L"DEA_"), std::wstring(L""));
-					FbxPropertyT<FbxBool> propState = prop;
+					propName = replaceAll< std::wstring >(propName, L"DEA_", L"");
+					FbxPropertyT< FbxBool > propState = prop;
 					if (propState.IsValid())
 					{
 						bool propValue = propState.Get();
-//						mm.setProperty(propName, propValue);
+						mm.setProperty< PropertyBoolean >(propName, propValue);
 					}
 				}
 				prop = meshNode->GetNextProperty(prop);
 			}
-
 
 			std::wstring diffuseMap = getTextureName(material, FbxSurfaceMaterial::sDiffuse);
 			if (!diffuseMap.empty())

@@ -188,7 +188,7 @@
 			</position>
 			<parameterName>LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -253,7 +253,7 @@
 			</position>
 			<parameterName>LightSunColor</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -263,7 +263,7 @@
 			</position>
 			<parameterName>LightBaseColor</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -273,7 +273,7 @@
 			</position>
 			<parameterName>LightShadowColor</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Normalize">
 			<comment/>
@@ -305,7 +305,7 @@
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
 			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>

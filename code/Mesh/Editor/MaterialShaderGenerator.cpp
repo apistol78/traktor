@@ -1,3 +1,6 @@
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
@@ -67,15 +70,41 @@ Guid lookupTexture(const std::map< std::wstring, Guid >& textures, const std::ws
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGenerator, Object)
 
-MaterialShaderGenerator::MaterialShaderGenerator(db::Database* database)
-:	m_database(database)
+MaterialShaderGenerator::MaterialShaderGenerator(const PropertyGroup* templates)
+:	m_templates(templates)
 {
 }
 
-Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Material& material, const std::map< std::wstring, Guid >& textures) const
+Ref< render::ShaderGraph > MaterialShaderGenerator::generate(db::Database* database, const model::Material& material, const std::map< std::wstring, Guid >& textures) const
 {
-	Ref< render::ShaderGraph > materialShaderGraph = m_database->getObjectReadOnly< render::ShaderGraph >(c_materialShader);
-	T_ASSERT (materialShaderGraph);
+	Guid templateGuid;
+
+	const std::map< std::wstring, Ref< IPropertyValue > >& templateValues = m_templates->getValues();
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = templateValues.begin(); i != templateValues.end(); ++i)
+	{
+		if (!i->first.empty())
+		{
+			// Explicit alternative template; check if material property is set and if so use this template.
+			if (material.getProperty< PropertyBoolean >(i->first, false))
+			{
+				templateGuid = Guid(PropertyString::get(i->second));
+				break;
+			}
+		}
+		else
+		{
+			// Alternative default template.
+			templateGuid = Guid(PropertyString::get(i->second));
+		}
+	}
+
+	// Use default template is no alternative is found.
+	if (templateGuid.isNull() || !templateGuid.isValid())
+		templateGuid = c_materialShader;
+
+	Ref< render::ShaderGraph > materialShaderGraph = database->getObjectReadOnly< render::ShaderGraph >(templateGuid);
+	if (!materialShaderGraph)
+		return 0;
 
 	Guid diffuseTexture = lookupTexture(textures, material.getDiffuseMap());
 	Guid specularTexture = lookupTexture(textures, material.getSpecularMap());
@@ -151,7 +180,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 			(*i)->setFragmentGuid(c_implVertex);
 	}
 
-	FragmentReaderAdapter fragmentReader(m_database);
+	FragmentReaderAdapter fragmentReader(database);
 	materialShaderGraph = render::FragmentLinker(fragmentReader).resolve(materialShaderGraph, false);
 	if (!materialShaderGraph)
 		return 0;
@@ -239,6 +268,13 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(const model::Materi
 
 void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipelineDepends)
 {
+	const std::map< std::wstring, Ref< IPropertyValue > >& templateValues = m_templates->getValues();
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = templateValues.begin(); i != templateValues.end(); ++i)
+	{
+		Guid templateGuid(PropertyString::get(i->second));
+		pipelineDepends->addDependency(templateGuid, editor::PdfUse);
+	}
+
 	pipelineDepends->addDependency(c_materialShader, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplEmissiveParams, editor::PdfUse);

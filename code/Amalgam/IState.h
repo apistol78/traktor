@@ -17,7 +17,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-class IAction;
+class IEvent;
 class IStateManager;
 class IUpdateControl;
 class IUpdateInfo;
@@ -84,12 +84,12 @@ public:
 	 */
 	virtual bool render(uint32_t frame, render::EyeType eye, const IUpdateInfo& info) = 0;
 
-	/*! \brief Take action.
+	/*! \brief Take event.
 	 *
-	 * \param action Action message.
-	 * \return True if action handled.
+	 * \param event Event.
+	 * \return True if event handled.
 	 */
-	virtual bool take(const IAction* action) = 0;
+	virtual bool take(const IEvent* event) = 0;
 };
 
 	}

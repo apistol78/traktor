@@ -146,7 +146,7 @@ void BodyBullet::addForceAt(const Vector4& at, const Vector4& force, bool localS
 {
 	T_ASSERT (m_body);
 
-	Vector4 at0 = localSpace ? at + m_centerOfGravity : at;
+	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
 
 	Vector4 at_ = convert(this, at0, localSpace);
 	Vector4 force_ = convert(this, force, localSpace);
@@ -183,7 +183,7 @@ void BodyBullet::addImpulse(const Vector4& at, const Vector4& impulse, bool loca
 {
 	T_ASSERT (m_body);
 
-	Vector4 at0 = localSpace ? at + m_centerOfGravity : at;
+	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
 
 	Vector4 at_ = convert(this, at0, localSpace);
 	Vector4 impulse_ = convert(this, impulse, localSpace);
@@ -223,7 +223,7 @@ Vector4 BodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
 {
 	T_ASSERT (m_body);
 
-	Vector4 at0 = localSpace ? at + m_centerOfGravity : at;
+	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
 
 	btVector3 relPos;
 	if (localSpace)

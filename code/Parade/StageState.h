@@ -45,7 +45,7 @@ public:
 
 	virtual bool render(uint32_t frame, render::EyeType eye, const amalgam::IUpdateInfo& info);
 
-	virtual bool take(const amalgam::IAction* action);
+	virtual bool take(const amalgam::IEvent* event);
 
 private:
 	Ref< amalgam::IEnvironment > m_environment;

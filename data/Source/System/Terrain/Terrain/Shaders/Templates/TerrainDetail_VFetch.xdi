@@ -86,7 +86,7 @@
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -125,7 +125,7 @@
 			</position>
 			<parameterName>WorldOrigin</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
@@ -142,7 +142,7 @@
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -152,7 +152,7 @@
 			</position>
 			<parameterName>WorldExtent</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
@@ -170,7 +170,7 @@
 			</position>
 			<parameterName>PatchExtent</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -305,7 +305,7 @@
 			</position>
 			<parameterName>PatchLodColor</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="1">
 			<comment>
@@ -333,7 +333,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>Surface</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Interpolator">
 			<comment/>
@@ -488,12 +488,12 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-1045</first>
-				<second>305</second>
+				<first>-1047</first>
+				<second>295</second>
 			</position>
 			<parameterName>PatchOrigin</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -503,7 +503,7 @@ Generated texture from surface cache.
 			</position>
 			<parameterName>SurfaceOffset</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>

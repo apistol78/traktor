@@ -13,6 +13,9 @@
 #include "Flash/Sound/SoundRenderer.h"
 #include "Parade/FlashLayer.h"
 #include "Parade/Stage.h"
+#include "Parade/Action/Classes/As_traktor_parade_Configuration.h"
+#include "Parade/Action/Classes/As_traktor_parade_DisplayMode.h"
+#include "Parade/Action/Classes/As_traktor_parade_InputFabricator.h"
 #include "Render/IRenderView.h"
 #include "Script/Any.h"
 
@@ -192,6 +195,24 @@ void FlashLayer::createMoviePlayer()
 		log::error << L"Unable to create movie player" << Endl;
 		return;
 	}
+
+	// Register additional AS classes.
+	flash::ActionContext* context = moviePlayer->getMovieInstance()->getContext();
+	T_ASSERT (context);
+
+	Ref< flash::ActionObject > asTraktor = moviePlayer->getGlobal("traktor").getObject();
+	if (!asTraktor)
+		asTraktor = new flash::ActionObject(context);
+	{
+		Ref< flash::ActionObject > asParade = new flash::ActionObject(context);
+		{
+			asParade->setMember("Configuration", flash::ActionValue(new As_traktor_parade_Configuration(context, m_environment)));
+			asParade->setMember("DisplayMode", flash::ActionValue(new As_traktor_parade_DisplayMode(context, m_environment)));
+			asParade->setMember("InputFabricator", flash::ActionValue(new As_traktor_parade_InputFabricator(context, m_environment)));
+		}
+		asTraktor->setMember("parade", flash::ActionValue(asParade));
+	}
+	moviePlayer->setGlobal("traktor", flash::ActionValue(asTraktor));
 
 	// All success, replace instances.
 	m_displayRenderer = displayRenderer;

@@ -1,9 +1,8 @@
 #ifndef traktor_model_Material_H
 #define traktor_model_Material_H
 
-#include <string>
-#include <vector>
 #include "Core/Config.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Math/Color4ub.h"
 
 // import/export mechanism.
@@ -22,8 +21,10 @@ namespace traktor
 /*! \brief Material descriptor.
  * \ingroup Model
  */
-class T_DLLCLASS Material
+class T_DLLCLASS Material : public PropertyGroup
 {
+	T_RTTI_CLASS;
+
 public:
 	enum BlendOperator
 	{

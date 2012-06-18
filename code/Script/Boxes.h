@@ -291,7 +291,7 @@ public:
 	{
 		m_arr.resize(arr.size());
 		for (uint32_t i = 0; i < arr.size(); ++i)
-			m_arr[i] = Any(arr[i]);
+			m_arr[i] = CastAny< ItemType >::set(arr[i]);
 	}
 
 	int32_t length() const;

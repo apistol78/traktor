@@ -135,6 +135,11 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	assetPath = FileSystem::getInstance().getAbsolutePath(assetPath);
 	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.AssetPath", assetPath.getPathName());
 
+	// Insert mesh pipeline's material templates.
+	const IPropertyValue* materialTemplates = m_globalSettings->getProperty(L"MeshPipeline.MaterialTemplates");
+	if (materialTemplates)
+		pipelineConfiguration->setProperty(L"MeshPipeline.MaterialTemplates", materialTemplates->clone());
+
 	// Ensure output directory exists.
 	if (!FileSystem::getInstance().makeAllDirectories(m_outputPath))
 	{

@@ -130,7 +130,7 @@ Minimum
 			</position>
 			<parameterName>Extent</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.VertexOutput" version="1">
 			<comment/>

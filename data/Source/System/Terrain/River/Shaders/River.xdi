@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="3">
+		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>
 			<position>
 				<first>2578</first>
@@ -25,6 +25,7 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
@@ -348,7 +349,7 @@
 				<second>890</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
 				<first>1264</first>
@@ -360,6 +361,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
 		</item>
 		<item type="traktor.render.Texture">
 			<comment/>
@@ -370,7 +372,7 @@
 			<external>{EDB0CC4F-1D26-EE45-9FF5-7293F137EDDB}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
 				<first>1265</first>
@@ -382,6 +384,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -551,7 +554,7 @@
 				<second>1238</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
 				<first>2289</first>
@@ -563,6 +566,7 @@
 			<addressU>AdClamp</addressU>
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
+			<mipBias>0</mipBias>
 		</item>
 		<item type="traktor.render.Texture">
 			<comment/>
@@ -595,7 +599,7 @@
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
 				<first>1469</first>
@@ -607,8 +611,9 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
 		</item>
-		<item type="traktor.render.Sampler">
+		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
 				<first>1469</first>
@@ -620,6 +625,7 @@
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
 		</item>
 		<item type="traktor.render.Platform">
 			<comment/>

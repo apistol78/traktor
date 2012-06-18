@@ -79,7 +79,7 @@ bool LoadState::render(uint32_t frame, render::EyeType eye, const amalgam::IUpda
 	return true;
 }
 
-bool LoadState::take(const amalgam::IAction* action)
+bool LoadState::take(const amalgam::IEvent* event)
 {
 	return true;
 }

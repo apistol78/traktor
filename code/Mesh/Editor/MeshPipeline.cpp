@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
@@ -130,6 +131,7 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_promoteHalf = settings->getProperty< PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
 	m_enableBakeOcclusion = settings->getProperty< PropertyBoolean >(L"MeshPipeline.BakeOcclusion", true);
+	m_materialTemplates = settings->getProperty< PropertyGroup >(L"MeshPipeline.MaterialTemplates", new PropertyGroup());
 	return true;
 }
 
@@ -185,7 +187,7 @@ bool MeshPipeline::buildDependencies(
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
 	
 	// Add dependencies to material generator fragments.
-	MaterialShaderGenerator::addDependencies(pipelineDepends);
+	MaterialShaderGenerator(m_materialTemplates).addDependencies(pipelineDepends);
 
 	// Add dependencies to "fixed" material shaders.
 	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
@@ -216,6 +218,7 @@ bool MeshPipeline::buildOutput(
 	std::map< std::wstring, model::Material > materials;
 	RefArray< model::Model > models;
 	uint32_t polygonCount = 0;
+	Aabb3 boundingBox;
 
 	// We allow models to be passed as build parameters in case models
 	// are procedurally generated.
@@ -289,6 +292,7 @@ bool MeshPipeline::buildOutput(
 		for (std::vector< model::Material >::const_iterator j = modelMaterials.begin(); j != modelMaterials.end(); ++j)
 			materials[j->getName()] = *j;
 
+		boundingBox.contain(model::calculateModelBoundingBox(*model));
 		polygonCount += model->getPolygonCount();
 	}
 
@@ -305,9 +309,7 @@ bool MeshPipeline::buildOutput(
 	Guid materialGuid = combineGuids(vertexShaderGuid, outputGuid);
 	T_ASSERT (materialGuid.isValid());
 
-	MaterialShaderGenerator generator(
-		pipelineBuilder->getSourceDatabase()
-	);
+	MaterialShaderGenerator generator(m_materialTemplates);
 
 	int32_t jointCount = models[0]->getJointCount();
 
@@ -333,7 +335,7 @@ bool MeshPipeline::buildOutput(
 		}
 		else
 		{
-			materialShaderGraph = generator.generate(i->second, asset->getMaterialTextures());
+			materialShaderGraph = generator.generate(pipelineBuilder->getSourceDatabase(), i->second, asset->getMaterialTextures());
 			if (!materialShaderGraph)
 			{
 				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << i->first << L"\"" << Endl;
@@ -448,7 +450,9 @@ bool MeshPipeline::buildOutput(
 		}
 	}
 
-	// Dump information about material techniques and shaders.
+	// Dump information about mesh.
+	log::info << polygonCount << L" polygon(s)" << Endl;
+	log::info << L"Bounding box (" << boundingBox.mn << L")-(" << boundingBox.mx << L")" << Endl;
 	log::info << L"Material techniques" << Endl;
 	log::info << IncreaseIndent;
 

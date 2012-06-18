@@ -13,7 +13,7 @@ rotation
 			</position>
 			<parameterName>Joints</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 			<length>16</length>
 		</item>
 		<item type="traktor.render.IndexedUniform" version="1">
@@ -28,7 +28,7 @@ translation
 			</position>
 			<parameterName>Joints</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 			<length>16</length>
 		</item>
 		<item type="traktor.render.InputPort" version="1">

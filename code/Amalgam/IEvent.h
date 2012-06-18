@@ -1,5 +1,5 @@
-#ifndef traktor_amalgam_IAction_H
-#define traktor_amalgam_IAction_H
+#ifndef traktor_amalgam_IEvent_H
+#define traktor_amalgam_IEvent_H
 
 #include "Core/Object.h"
 
@@ -16,13 +16,13 @@ namespace traktor
 	namespace amalgam
 	{
 
-/*! \brief Action message interface.
+/*! \brief Event message interface.
  * \ingroup Amalgam
  *
- * Actions are system messages, such as toggle fullscreen etc,
+ * Events are system messages, such as reconfiguration, activation etc,
  * which are sent to current state.
  */
-class T_DLLCLASS IAction : public Object
+class T_DLLCLASS IEvent : public Object
 {
 	T_RTTI_CLASS;
 };
@@ -30,4 +30,4 @@ class T_DLLCLASS IAction : public Object
 	}
 }
 
-#endif	// traktor_amalgam_IAction_H
+#endif	// traktor_amalgam_IEvent_H

@@ -180,7 +180,7 @@
 			</position>
 			<parameterName>Direction</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -250,7 +250,7 @@ Shadow; adjusted for msaa.
 			</position>
 			<parameterName>Source</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="1">
 			<comment>

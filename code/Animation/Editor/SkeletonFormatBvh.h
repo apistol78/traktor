@@ -5,9 +5,6 @@
 
 namespace traktor
 {
-
-class Vector4;
-
 	namespace animation
 	{
 

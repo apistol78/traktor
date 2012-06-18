@@ -102,7 +102,7 @@
 			</position>
 			<parameterName>OceanAltitude</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment>
@@ -148,7 +148,7 @@ Transform into worldspace
 			</position>
 			<parameterName>ViewRatio</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -516,7 +516,7 @@ Horizon
 			</position>
 			<parameterName>WorldExtent</parameterName>
 			<type>PtVector</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -562,7 +562,7 @@ Horizon
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture2D</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Sampler" version="1">
 			<comment/>
@@ -594,7 +594,7 @@ Horizon
 			</position>
 			<parameterName>OceanAltitude</parameterName>
 			<type>PtScalar</type>
-			<frequency>UfFrame</frequency>
+			<frequency>UfOnce</frequency>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
@@ -1099,26 +1099,6 @@ Horizon
 			<destination>
 				<node ref="/object/nodes/item[36]"/>
 				<name>x0</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[42]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[45]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[43]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[45]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1649,6 +1629,26 @@ Horizon
 			<destination>
 				<node ref="/object/nodes/item[80]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[43]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

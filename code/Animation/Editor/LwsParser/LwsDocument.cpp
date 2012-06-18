@@ -21,7 +21,7 @@ Ref< LwsDocument > LwsDocument::parse(IStream* stream)
 
 	if (reader.readLine(line) < 0 || line != L"LWSC")
 		return 0;
-	if (reader.readLine(line) < 0 || line != L"4")
+	if (reader.readLine(line) < 0 || (line != L"4" && line != L"5"))
 		return 0;
 
 	RefArray< LwsGroup > groupStack;

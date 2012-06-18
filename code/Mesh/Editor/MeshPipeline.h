@@ -13,6 +13,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace mesh
 	{
 
@@ -57,6 +60,7 @@ private:
 	std::wstring m_assetPath;
 	bool m_promoteHalf;
 	bool m_enableBakeOcclusion;
+	Ref< PropertyGroup > m_materialTemplates;
 };
 
 	}

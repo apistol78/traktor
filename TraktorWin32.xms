@@ -17029,10 +17029,10 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Actions</name>
+								<name>Events</name>
 								<items>
 									<item type="File">
-										<fileName>Actions/*.*</fileName>
+										<fileName>Events/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -17277,6 +17277,7 @@
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17303,6 +17304,7 @@
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17329,6 +17331,7 @@
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17355,6 +17358,7 @@
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -17589,6 +17593,24 @@
 				<item type="File">
 					<fileName>*.*</fileName>
 					<items/>
+				</item>
+				<item type="Filter">
+					<name>Action</name>
+					<items>
+						<item type="Filter">
+							<name>Classes</name>
+							<items>
+								<item type="File">
+									<fileName>Action/Classes/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="File">
+							<fileName>Action/*.*</fileName>
+							<items/>
+						</item>
+					</items>
 				</item>
 			</items>
 			<dependencies>

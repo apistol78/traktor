@@ -10,8 +10,8 @@
 #include "Render/Dx11/RenderSystemDx11.h"
 #include "Render/Dx11/RenderTargetSetDx11.h"
 #include "Render/Dx11/RenderViewDx11.h"
+#include "Render/Dx11/ResourceCache.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
-#include "Render/Dx11/StateCache.h"
 #include "Render/Dx11/TypesDx11.h"
 #include "Render/Dx11/Utilities.h"
 #include "Render/Dx11/VertexBufferDynamicDx11.h"
@@ -88,7 +88,7 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 		return 0;
 
 	m_context = new ContextDx11(d3dDevice, d3dDeviceContext, dxgiFactory, dxgiOutput);
-	m_stateCache = new StateCache(d3dDevice);
+	m_resourceCache = new ResourceCache(d3dDevice);
 
 	m_mipBias = desc.mipBias;
 	m_maxAnisotropy = clamp(desc.maxAnisotropy, 1, 16);
@@ -97,7 +97,7 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 
 void RenderSystemDx11::destroy()
 {
-	m_stateCache = 0;
+	m_resourceCache = 0;
 
 	if (m_context)
 	{
@@ -270,7 +270,7 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 		return 0;
 
 	Ref< ProgramDx11 > program = new ProgramDx11(m_context);
-	if (!program->create(m_context->getD3DDevice(), *m_stateCache, resource, m_mipBias, m_maxAnisotropy))
+	if (!program->create(m_context->getD3DDevice(), *m_resourceCache, resource, m_mipBias, m_maxAnisotropy))
 		return 0;
 
 	return program;

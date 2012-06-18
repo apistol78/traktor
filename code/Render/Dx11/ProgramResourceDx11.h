@@ -19,6 +19,8 @@ class ProgramResourceDx11 : public ProgramResource
 	T_RTTI_CLASS;
 
 public:
+	ProgramResourceDx11();
+
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -27,6 +29,8 @@ private:
 
 	ComRef< ID3DBlob > m_vertexShader;
 	ComRef< ID3DBlob > m_pixelShader;
+	uint32_t m_vertexShaderHash;
+	uint32_t m_pixelShaderHash;
 	D3D11_RASTERIZER_DESC m_d3dRasterizerDesc;
 	D3D11_DEPTH_STENCIL_DESC m_d3dDepthStencilDesc;
 	D3D11_BLEND_DESC m_d3dBlendDesc;

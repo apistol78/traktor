@@ -36,6 +36,7 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 ,	m_normalizePose(normalizePose)
 ,	m_normalizeTransform(normalizeTransform)
 ,	m_totalTime(0.0f)
+,	m_index(0)
 ,	m_updateController(true)
 {
 }
@@ -89,11 +90,21 @@ void AnimatedMeshEntity::render(
 {
 	synchronize();
 
+	const AlignedVector< Vector4 >& skinTransforms0 = m_skinTransforms[1 - m_index];
+	const AlignedVector< Vector4 >& skinTransforms1 = m_skinTransforms[m_index];
+
+	for (uint32_t i = 0; i < skinTransforms0.size(); ++i)
+		m_skinTransforms[2][i] = lerp(
+			skinTransforms0[i],
+			skinTransforms1[i],
+			Scalar(worldRenderView.getInterval())
+		);
+
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
 		getTransform(worldRenderView.getInterval()),
-		m_skinTransforms,
+		m_skinTransforms[2],
 		distance,
 		getParameterCallback()
 	);
@@ -112,16 +123,23 @@ void AnimatedMeshEntity::update(const UpdateParams& update)
 		// required to continue running even when this entity
 		// hasn't been rendered.
 		m_updateController = false;
+		m_index = 1 - m_index;
 
 #if defined(T_USE_UPDATE_JOBS)
 		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshEntity, float >(
 			this,
 			&AnimatedMeshEntity::updatePoseController,
+			m_index,
 			update.deltaTime
 		));
 #else
-		updatePoseController(update.deltaTime);
+		updatePoseController(m_index, update.deltaTime);
 #endif
+	}
+	else
+	{
+		m_index = 1 - m_index;
+		m_skinTransforms[m_index] = m_skinTransforms[1 - m_index];
 	}
 
 	mesh::MeshEntity::update(update);
@@ -182,10 +200,10 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& jointName, Transfo
 		return false;
 
 	Quaternion tmp;
-	m_skinTransforms[skinIndex * 2 + 0].storeAligned((float*)&tmp);
+	m_skinTransforms[m_index][skinIndex * 2 + 0].storeAligned((float*)&tmp);
 	
 	outTransform = Transform(
-		m_skinTransforms[skinIndex * 2 + 1],
+		m_skinTransforms[m_index][skinIndex * 2 + 1],
 		tmp
 	);
 	return true;
@@ -233,7 +251,7 @@ void AnimatedMeshEntity::synchronize() const
 #endif
 }
 
-void AnimatedMeshEntity::updatePoseController(float deltaTime)
+void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 {
 	// Calculate original bone transforms in object space.
 	if (m_skeleton.changed())
@@ -296,7 +314,9 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 		}
 
 		// Initialize skin transforms.
-		m_skinTransforms.resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
 
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonJointCount; ++i)
@@ -305,8 +325,8 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
 			{
 				Transform skinTransform = m_poseTransforms[i] * m_jointTransforms[i].inverse();
-				m_skinTransforms[jointIndex * 2 + 0] = skinTransform.rotation().e;
-				m_skinTransforms[jointIndex * 2 + 1] = skinTransform.translation().xyz1();
+				m_skinTransforms[index][jointIndex * 2 + 0] = skinTransform.rotation().e;
+				m_skinTransforms[index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
 		}
 	}
@@ -316,7 +336,9 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 		size_t skinJointCount = m_mesh->getJointCount();
 
 		// Initialize skin transforms.
-		m_skinTransforms.resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
 
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonJointCount; ++i)
@@ -325,15 +347,17 @@ void AnimatedMeshEntity::updatePoseController(float deltaTime)
 			if (jointIndex >= 0 && jointIndex < int32_t(skinJointCount))
 			{
 				Transform skinTransform = m_poseTransforms[i] * m_jointTransforms[i].inverse();
-				m_skinTransforms[jointIndex * 2 + 0] = skinTransform.rotation().e;
-				m_skinTransforms[jointIndex * 2 + 1] = skinTransform.translation().xyz1();
+				m_skinTransforms[index][jointIndex * 2 + 0] = skinTransform.rotation().e;
+				m_skinTransforms[index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
 		}
 	}
 	else
 	{
 		size_t skinJointCount = m_mesh->getJointCount();
-		m_skinTransforms.resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
 	}
 }
 

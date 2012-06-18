@@ -68,7 +68,7 @@ void FlashDisplayList::updateEnd()
 	for (layer_map_t::iterator i = m_layers.begin(); i != m_layers.end(); )
 	{
 		if (!i->second.immutable && i->second.collect)
-			m_layers.erase(i++);
+			i = m_layers.erase(i);
 		else
 			i++;
 	}
