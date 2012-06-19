@@ -16,6 +16,7 @@ HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
 ,	m_nextTemporaryVariable(0)
 ,	m_needVPos(false)
 ,	m_needTargetSize(false)
+,	m_needInstanceID(false)
 {
 	pushScope();
 	for (int32_t i = 0; i < BtLast; ++i)
@@ -109,6 +110,11 @@ int32_t HlslShader::allocateBooleanRegister()
 void HlslShader::allocateVPos()
 {
 	m_needVPos = true;
+}
+
+void HlslShader::allocateInstanceID()
+{
+	m_needInstanceID = true;
 }
 
 void HlslShader::allocateTargetSize()
@@ -256,6 +262,9 @@ std::wstring HlslShader::getGeneratedShader()
 	{
 		ss << L"void main(InputData i";
 
+		if (m_needInstanceID)
+			ss << L", uint instanceID : SV_InstanceID";
+
 		if (!outputDataText.empty())
 			ss << L", out OutputData o";
 
@@ -280,6 +289,9 @@ std::wstring HlslShader::getGeneratedShader()
 		
 		if (!inputDataText.empty())
 			ss << L"InputData i, ";
+
+		if (m_needInstanceID)
+			ss << L"float instanceID : SV_InstanceID, ";
 
 		if (m_needVPos)
 			ss << L"float4 vPos : SV_Position, ";

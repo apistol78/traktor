@@ -27,6 +27,17 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	render::MeshFactory* meshFactory
 ) const
 {
+#if !T_USE_LEGACY_INSTANCING
+
+	Ref< render::Mesh > renderMesh = render::MeshReader(meshFactory).read(dataStream);
+	if (!renderMesh)
+	{
+		log::error << L"Instance mesh create failed; unable to read mesh" << Endl;
+		return 0;
+	}
+
+#else
+
 	// Read single instance mesh.
 	render::SystemMeshFactory systemMeshFactory;
 	Ref< render::Mesh > singleInstanceMesh = render::MeshReader(&systemMeshFactory).read(dataStream);
@@ -140,6 +151,8 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 
 	renderMesh->setParts(renderParts);
 	renderMesh->setBoundingBox(singleInstanceMesh->getBoundingBox());
+
+#endif
 
 	Ref< InstanceMesh > instanceMesh = new InstanceMesh();
 	instanceMesh->m_mesh = renderMesh;

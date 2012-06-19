@@ -223,13 +223,13 @@ Vector4 BodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
 {
 	T_ASSERT (m_body);
 
-	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
+	Transform Tb = fromBtTransform(m_body->getWorldTransform());
 
 	btVector3 relPos;
 	if (localSpace)
-		relPos = toBtVector3(getTransform() * at0 - getTransform().translation());
+		relPos = toBtVector3(Tb * at - Tb.translation());
 	else
-		relPos = toBtVector3(at0 - getTransform().translation());
+		relPos = toBtVector3(at - Tb.translation());
 
 	return fromBtVector3(
 		m_body->getVelocityInLocalPoint(relPos),

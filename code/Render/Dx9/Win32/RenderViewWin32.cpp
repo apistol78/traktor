@@ -297,6 +297,10 @@ void RenderViewWin32::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer,
 	m_primitiveCount += primitives.count;
 }
 
+void RenderViewWin32::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+{
+}
+
 void RenderViewWin32::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());

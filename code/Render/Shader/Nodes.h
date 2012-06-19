@@ -375,6 +375,15 @@ private:
 	float m_defaultValue;
 };
 
+/*! \brief Instance index input. */
+class T_DLLCLASS Instance : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Instance();
+};
+
 /*! \brief Interpolator, pass value from vertex to pixel shader. */
 class T_DLLCLASS Interpolator : public ImmutableNode
 {

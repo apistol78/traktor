@@ -16584,7 +16584,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-116/public</item>
+						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/public</item>
 					</includePaths>
 					<definitions>
 						<item>T_ONLINE_STEAM_EXPORT</item>
@@ -16592,7 +16592,7 @@
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-116/redistributable_bin</item>
+						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/redistributable_bin</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api.lib</item>
@@ -16607,7 +16607,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-116/public</item>
+						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/public</item>
 					</includePaths>
 					<definitions>
 						<item>T_ONLINE_STEAM_EXPORT</item>
@@ -16615,7 +16615,7 @@
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-116/redistributable_bin</item>
+						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/redistributable_bin</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api.lib</item>
@@ -16630,7 +16630,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-116/public</item>
+						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/public</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16638,7 +16638,7 @@
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-116/redistributable_bin</item>
+						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/redistributable_bin</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api.lib</item>
@@ -16653,7 +16653,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-116/public</item>
+						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/public</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16661,7 +16661,7 @@
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-116/redistributable_bin</item>
+						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/redistributable_bin</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api.lib</item>

@@ -406,6 +406,10 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	}
 }
 
+void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+{
+}
+
 void RenderViewOpenGLES2::end()
 {
 	if (m_renderTargetStack.empty())

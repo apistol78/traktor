@@ -40,6 +40,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< FragmentPosition >(), L"SHADERGRAPH_VALUE", L"Fragment pixel position" },
 	{ type_of< IndexedUniform >(), L"SHADERGRAPH_VALUE", L"Indexed uniform" },
 	{ type_of< InputPort >(), L"SHADERGRAPH_VALUE", L"Input connection port into shader fragment" },
+	{ type_of< Instance >(), L"SHADERGRAPH_VALUE", L"Instance index" },
 	{ type_of< Interpolator >(), L"SHADERGRAPH_VALUE", L"Interpolator passing of value from vertex into pixel shader" },
 	{ type_of< Iterate >(), L"SHADERGRAPH_MISCELLANEOUS", L"Iterate value" },
 	{ type_of< Length >(), L"SHADERGRAPH_ALGEBRA", L"Length of vector" },

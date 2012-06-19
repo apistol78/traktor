@@ -75,9 +75,9 @@ const std::wstring& Material::getSpecularMap() const
 	return m_specularMap;
 }
 
-void Material::setEmissiveMap(const std::wstring& emissiveMap)
+void Material::setReflectiveMap(const std::wstring& reflectiveMap)
 {
-	m_emissiveMap = emissiveMap;
+	m_reflectiveMap = reflectiveMap;
 }
 
 const std::wstring& Material::getReflectiveMap() const
@@ -85,9 +85,9 @@ const std::wstring& Material::getReflectiveMap() const
 	return m_reflectiveMap;
 }
 
-void Material::setReflectiveMap(const std::wstring& reflectiveMap)
+void Material::setEmissiveMap(const std::wstring& emissiveMap)
 {
-	m_reflectiveMap = reflectiveMap;
+	m_emissiveMap = emissiveMap;
 }
 
 const std::wstring& Material::getEmissiveMap() const

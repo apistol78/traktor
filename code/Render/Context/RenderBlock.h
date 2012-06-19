@@ -79,6 +79,28 @@ public:
 	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
 };
 
+/*! \brief Instancing render block.
+ * \ingroup Render
+ */
+class T_DLLCLASS InstancingRenderBlock : public RenderBlock
+{
+public:
+	IndexBuffer* indexBuffer;
+	VertexBuffer* vertexBuffer;
+	const Primitives* primitives;
+	uint32_t count;
+
+	InstancingRenderBlock()
+	:	indexBuffer(0)
+	,	vertexBuffer(0)
+	,	primitives(0)
+	,	count(0)
+	{
+	}
+
+	virtual void render(IRenderView* renderView, const ProgramParameters* globalParameters) const;
+};
+
 /*! \brief Non-indexed primitives render block.
  * \ingroup Render
  */
