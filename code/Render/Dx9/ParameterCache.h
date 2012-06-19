@@ -18,8 +18,8 @@ public:
 	{
 		VertexConstantCount = 256,
 		PixelConstantCount = 224,
-		VertexTextureCount = 8,
-		PixelTextureCount = 8,
+		VertexTextureCount = 4,
+		PixelTextureCount = 16,
 		MaxVertexSamplerCount = 4,
 		MaxPixelSamplerCount = 16
 	};

@@ -48,6 +48,28 @@ struct MaterialNamePredicate
 	}
 };
 
+struct MaterialPredicate
+{
+	inline bool operator () (const Material& a, const Material& b) const
+	{
+		return
+			a.getDiffuseMap() == b.getDiffuseMap() &&
+			a.getSpecularMap() == b.getSpecularMap() &&
+			a.getEmissiveMap() == b.getEmissiveMap() &&
+			a.getReflectiveMap() == b.getReflectiveMap() &&
+			a.getNormalMap() == b.getNormalMap() &&
+			a.getColor() == b.getColor() &&
+			a.getDiffuseTerm() == b.getDiffuseTerm() &&
+			a.getSpecularTerm() == b.getSpecularTerm() &&
+			a.getSpecularRoughness() == b.getSpecularRoughness() &&
+			a.getEmissive() == b.getEmissive() &&
+			a.getReflective() == b.getReflective() &&
+			a.getRimLightIntensity() == b.getRimLightIntensity() &&
+			a.getBlendOperator() == b.getBlendOperator() &&
+			a.isDoubleSided() == b.isDoubleSided();
+	}
+};
+
 struct PositionPredicate
 {
 	inline bool operator () (const Vector4& a, const Vector4& b) const

@@ -131,6 +131,16 @@ public:
 	 */
 	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives) = 0;
 
+	/*! \brief Draw primitives using instancing.
+	 *
+	 * \param vertexBuffer Vertex buffer containing geometry.
+	 * \param indexBuffer Index buffer to be used; null if no indices should be used.
+	 * \param program Program to be used.
+	 * \param primitives Set of primitives to render.
+	 * \param instanceCount Number of instances.
+	 */
+	virtual void draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount) = 0;
+
 	/*! \brief End rendering. */
 	virtual void end() = 0;
 

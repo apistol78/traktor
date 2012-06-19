@@ -340,6 +340,10 @@ void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 		drawNonIndexed(primitives);
 }
 
+void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+{
+}
+
 void RenderViewSw::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());

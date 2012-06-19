@@ -52,11 +52,11 @@ public:
 
 	void setEmissiveMap(const std::wstring& emissiveMap);
 
-	const std::wstring& getReflectiveMap() const;
+	const std::wstring& getEmissiveMap() const;
 
 	void setReflectiveMap(const std::wstring& reflectiveMap);
 
-	const std::wstring& getEmissiveMap() const;
+	const std::wstring& getReflectiveMap() const;
 
 	void setNormalMap(const std::wstring& normalMap);
 

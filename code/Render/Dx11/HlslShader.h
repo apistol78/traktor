@@ -73,6 +73,8 @@ public:
 
 	void allocateVPos();
 
+	void allocateInstanceID();
+
 	void allocateTargetSize();
 
 	bool defineScript(const std::wstring& signature);
@@ -109,6 +111,7 @@ private:
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
 	bool m_needVPos;
 	bool m_needTargetSize;
+	bool m_needInstanceID;
 };
 
 	}

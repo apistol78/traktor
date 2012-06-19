@@ -633,6 +633,17 @@ bool InputPort::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Instance", 0, Instance, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_Instance_o[] = { L"Output", 0 };
+
+Instance::Instance()
+:	ImmutableNode(0, c_Instance_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Interpolator", 0, Interpolator, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Interpolator_i[] = { { L"Input", false }, 0 };

@@ -201,6 +201,35 @@ void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffe
 	}
 }
 
+void RenderViewCapture::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+{
+	m_renderView->draw(vertexBuffer, indexBuffer, program, primitives, instanceCount);
+	m_drawCount++;
+
+	if (m_captureFrame && m_captureDepth == 0)
+	{
+		m_renderView->end();
+
+		if (m_captureTarget->read(0, m_captureImage->getData()))
+		{
+			FileSystem::getInstance().makeDirectory(L"capture");
+
+			StringOutputStream ss;
+			ss << L"capture/frame" << m_frameCount << L"_draw" << m_drawCount << L".tga";
+
+			if (m_captureImage->save(ss.str()))
+				log::info << L"Captured draw " << m_drawCount << L", frame " << m_frameCount << Endl;
+			else
+				log::error << L"Unable to save captured image \"" << ss.str() << L"\"" << Endl;
+		}
+		else
+			log::error << L"Unable to capture image" << Endl;
+
+		if (!m_renderView->begin(m_captureTarget, 0))
+			log::error << L"Unable to continue capture; failed to rebind capture target" << Endl;
+	}
+}
+
 void RenderViewCapture::end()
 {
 	if (m_captureFrame && m_captureDepth == 0)

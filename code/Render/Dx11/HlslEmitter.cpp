@@ -373,6 +373,17 @@ bool emitIndexedUniform(HlslContext& cx, IndexedUniform* node)
 	return true;
 }
 
+bool emitInstance(HlslContext& cx, Instance* node)
+{
+	cx.getShader().allocateInstanceID();
+
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
+	assign(f, out) << L"float(instanceID);" << Endl;
+
+	return true;
+}
+
 bool emitInterpolator(HlslContext& cx, Interpolator* node)
 {
 	if (!cx.inPixel())
@@ -1808,6 +1819,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
+	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);

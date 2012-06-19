@@ -68,7 +68,7 @@ uint32_t Model::addMaterial(const Material& material)
 
 uint32_t Model::addUniqueMaterial(const Material& material)
 {
-	return addUniqueId(m_materials, material, MaterialNamePredicate());
+	return addUniqueId(m_materials, material, MaterialPredicate());
 }
 
 const Material& Model::getMaterial(uint32_t index) const

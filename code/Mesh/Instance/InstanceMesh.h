@@ -39,6 +39,8 @@ class IWorldRenderPass;
 	namespace mesh
 	{
 
+#define T_USE_LEGACY_INSTANCING	0
+
 /*! \brief Instance mesh.
  *
  * Instance meshes are meshes which are repeated

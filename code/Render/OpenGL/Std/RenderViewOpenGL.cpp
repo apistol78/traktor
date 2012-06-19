@@ -526,6 +526,10 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	}
 }
 
+void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
+{
+}
+
 void RenderViewOpenGL::end()
 {
 	T_ASSERT (!m_renderTargetStack.empty());

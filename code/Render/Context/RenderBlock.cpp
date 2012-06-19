@@ -38,6 +38,26 @@ void SimpleRenderBlock::render(IRenderView* renderView, const ProgramParameters*
 	T_RENDER_POP_MARKER(renderView);
 }
 
+void InstancingRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
+{
+	T_RENDER_PUSH_MARKER(renderView, name);
+
+	if (programParams)
+		programParams->fixup(program);
+	if (globalParameters)
+		globalParameters->fixup(program);
+
+	renderView->draw(
+		vertexBuffer,
+		indexBuffer,
+		program,
+		*primitives,
+		count
+	);
+
+	T_RENDER_POP_MARKER(renderView);
+}
+
 void NonIndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	Primitives p(primitive, offset, count);
