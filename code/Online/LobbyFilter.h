@@ -62,6 +62,8 @@ public:
 
 	void setDistance(DistanceType distance);
 
+	void setSlots(int32_t slots);
+
 	void setCount(int32_t count);
 
 	const std::vector< StringComparison >& getStringComparisons() const { return m_stringComparisons; }
@@ -70,12 +72,15 @@ public:
 
 	DistanceType getDistance() const { return m_distance; }
 
+	int32_t getSlots() const { return m_slots; }
+
 	int32_t getCount() const { return m_count; }
 
 private:
 	std::vector< StringComparison > m_stringComparisons;
 	std::vector< NumberComparison > m_numberComparisons;
 	DistanceType m_distance;
+	int32_t m_slots;
 	int32_t m_count;
 };
 

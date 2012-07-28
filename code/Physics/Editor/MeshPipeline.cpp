@@ -8,8 +8,10 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
-#include "Model/Formats/ModelFormat.h"
+#include "Model/ModelFormat.h"
+#include "Model/Operations/CalculateConvexHull.h"
+#include "Model/Operations/CleanDuplicates.h"
+#include "Model/Operations/Triangulate.h"
 #include "Physics/Mesh.h"
 #include "Physics/MeshResource.h"
 #include "Physics/Editor/MeshAsset.h"
@@ -95,11 +97,11 @@ bool MeshPipeline::buildOutput(
 	}
 
 	model->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
-	model::cleanDuplicates(*model);
-	model::triangulateModel(*model);
+	model::CleanDuplicates().apply(*model);
+	model::Triangulate().apply(*model);
 
 	// Calculate bounding box; used for center of gravity estimation.
-	Aabb3 boundingBox = model::calculateModelBoundingBox(*model);
+	Aabb3 boundingBox = model->getBoundingBox();
 	Vector4 centerOfGravity = boundingBox.getCenter().xyz0();
 
 	// Create physics mesh.
@@ -127,7 +129,7 @@ bool MeshPipeline::buildOutput(
 		log::info << L"Calculating convex hull..." << Endl;
 
 		model::Model hull = *model;
-		model::calculateConvexHull(hull);
+		model::CalculateConvexHull().apply(hull);
 
 		const std::vector< model::Polygon >& hullTriangles = hull.getPolygons();
 		for (std::vector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)

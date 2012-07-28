@@ -9,6 +9,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.LobbyFilter", LobbyFilter, Object)
 
 LobbyFilter::LobbyFilter()
 :	m_distance(DtUnspecified)
+,	m_slots(0)
 ,	m_count(-1)
 {
 }
@@ -34,6 +35,11 @@ void LobbyFilter::addComparison(const std::wstring& key, int32_t value, Comparis
 void LobbyFilter::setDistance(DistanceType distance)
 {
 	m_distance = distance;
+}
+
+void LobbyFilter::setSlots(int32_t slots)
+{
+	m_slots = slots;
 }
 
 void LobbyFilter::setCount(int32_t count)

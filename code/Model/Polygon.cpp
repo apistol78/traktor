@@ -12,6 +12,15 @@ Polygon::Polygon()
 {
 }
 
+Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2)
+:	m_material(material)
+,	m_normal(c_InvalidIndex)
+,	m_vertices(2)
+{
+	m_vertices[0] = vertex1;
+	m_vertices[1] = vertex2;
+}
+
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3)
 :	m_material(material)
 ,	m_normal(c_InvalidIndex)

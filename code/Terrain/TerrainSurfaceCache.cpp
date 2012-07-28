@@ -78,7 +78,6 @@ Vector4 offsetFromTile(const TerrainSurfaceAlloc::Tile& tile)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCache, Object)
 
 TerrainSurfaceCache::TerrainSurfaceCache()
-//:	m_updateAllowedCount(0)
 :	m_clearCache(true)
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
@@ -107,8 +106,8 @@ bool TerrainSurfaceCache::create(resource::IResourceManager* resourceManager, re
 
 	desc.count = 1;
 #if !defined(TARGET_OS_IPHONE)
-	desc.width = 4096;
-	desc.height = 4096;
+	desc.width = 2048;
+	desc.height = 2048;
 #else
 	desc.width = 1024;
 	desc.height = 1024;
@@ -160,7 +159,6 @@ void TerrainSurfaceCache::flush()
 
 void TerrainSurfaceCache::begin()
 {
-	//m_updateAllowedCount = 16;
 }
 
 void TerrainSurfaceCache::get(
@@ -180,34 +178,19 @@ void TerrainSurfaceCache::get(
 	// If the cache is already valid we just reuse it.
 	if (patchId < m_entries.size())
 	{
-		//if (m_updateAllowedCount > 0)
-		//{
-			if (
-				m_entries[patchId].lod == surfaceLod &&
-				m_entries[patchId].tile.dim > 0 &&
-				m_pool->isContentValid()
-			)
-			{
-				outRenderBlock = 0;
-				outTextureOffset = offsetFromTile(m_entries[patchId].tile);
-				return;
-			}
-		//}
-		//else
-		//{
-		//	// We've already consumed our budget of updates for this frame; only
-		//	// update if absolutely necessary.
-		//	if (m_pool->isContentValid())
-		//	{
-		//		outRenderBlock = 0;
-		//		outTextureOffset = offsetFromTile(m_entries[patchId].tile);
-		//		return;
-		//	}
-		//}
+		if (
+			m_entries[patchId].lod == surfaceLod &&
+			m_entries[patchId].tile.dim > 0 &&
+			m_pool->isContentValid()
+		)
+		{
+			outRenderBlock = 0;
+			outTextureOffset = offsetFromTile(m_entries[patchId].tile);
+			return;
+		}
 	
 		// Release cache as it's no longer valid.
 		flush(patchId);
-		//m_updateAllowedCount--;
 	}
 	else
 	{

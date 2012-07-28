@@ -12,12 +12,13 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 12, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 13, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	renderType(RtForward)
 ,	viewNearZ(1.0f)
 ,	viewFarZ(100.0f)
+,	occlusionCullingEnabled(false)
 ,	depthPassEnabled(true)
 ,	shadowsEnabled(false)
 ,	shadowsProjection(SpUniform)
@@ -40,6 +41,7 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 :	renderType(settings.renderType)
 ,	viewNearZ(settings.viewNearZ)
 ,	viewFarZ(settings.viewFarZ)
+,	occlusionCullingEnabled(settings.occlusionCullingEnabled)
 ,	depthPassEnabled(settings.depthPassEnabled)
 ,	shadowsEnabled(settings.shadowsEnabled)
 ,	shadowsProjection(settings.shadowsProjection)
@@ -91,6 +93,10 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 
 	s >> Member< float >(L"viewNearZ", viewNearZ, AttributeRange(0.0f));
 	s >> Member< float >(L"viewFarZ", viewFarZ, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 13)
+		s >> Member< bool >(L"occlusionCullingEnabled", occlusionCullingEnabled);
+
 	s >> Member< bool >(L"depthPassEnabled", depthPassEnabled);
 
 	if (s.getVersion() >= 6 && s.getVersion() < 10)

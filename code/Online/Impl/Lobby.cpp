@@ -14,8 +14,20 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.Lobby", Lobby, ILobby)
 
+Lobby::~Lobby()
+{
+	if (m_matchMakingProvider)
+	{
+		m_matchMakingProvider->leaveLobby(m_handle);
+		m_matchMakingProvider = 0;
+	}
+}
+
 Ref< Result > Lobby::setMetaValue(const std::wstring& key, const std::wstring& value)
 {
+	if (!m_matchMakingProvider)
+		return 0;
+
 	Ref< Result > result = new Result();
 	if (m_taskQueue->add(new TaskSetLobbyMetaValue(
 		m_matchMakingProvider,
@@ -31,11 +43,14 @@ Ref< Result > Lobby::setMetaValue(const std::wstring& key, const std::wstring& v
 
 bool Lobby::getMetaValue(const std::wstring& key, std::wstring& outValue) const
 {
-	return m_matchMakingProvider->getMetaValue(m_handle, key, outValue);
+	return m_matchMakingProvider ? m_matchMakingProvider->getMetaValue(m_handle, key, outValue) : false;
 }
 
 Ref< Result > Lobby::setParticipantMetaValue(const std::wstring& key, const std::wstring& value)
 {
+	if (!m_matchMakingProvider)
+		return 0;
+
 	Ref< Result > result = new Result();
 	if (m_taskQueue->add(new TaskSetLobbyParticipantMetaValue(
 		m_matchMakingProvider,
@@ -51,6 +66,9 @@ Ref< Result > Lobby::setParticipantMetaValue(const std::wstring& key, const std:
 
 bool Lobby::getParticipantMetaValue(const IUser* user, const std::wstring& key, std::wstring& outValue) const
 {
+	if (!m_matchMakingProvider)
+		return false;
+
 	const User* userImpl = dynamic_type_cast< const User* >(user);
 	if (userImpl)
 		return m_matchMakingProvider->getParticipantMetaValue(m_handle, userImpl->m_handle, key, outValue);
@@ -60,6 +78,9 @@ bool Lobby::getParticipantMetaValue(const IUser* user, const std::wstring& key, 
 
 Ref< Result > Lobby::join()
 {
+	if (!m_matchMakingProvider)
+		return 0;
+
 	Ref< Result > result = new Result();
 	if (m_taskQueue->add(new TaskJoinLobby(
 		m_matchMakingProvider,
@@ -73,26 +94,39 @@ Ref< Result > Lobby::join()
 
 bool Lobby::leave()
 {
-	return m_matchMakingProvider->leaveLobby(m_handle);
+	return m_matchMakingProvider ? m_matchMakingProvider->leaveLobby(m_handle) : true;
 }
 
 RefArray< IUser > Lobby::getParticipants()
 {
-	std::vector< uint64_t > userHandles;
-	m_matchMakingProvider->getParticipants(m_handle, userHandles);
-
 	RefArray< IUser > users;
-	users.reserve(userHandles.size());
-	for (std::vector< uint64_t >::iterator i = userHandles.begin(); i != userHandles.end(); ++i)
-		users.push_back(m_userCache->get(*i));
+
+	if (m_matchMakingProvider)
+	{
+		std::vector< uint64_t > userHandles;
+		m_matchMakingProvider->getParticipants(m_handle, userHandles);
+
+		users.reserve(userHandles.size());
+		for (std::vector< uint64_t >::iterator i = userHandles.begin(); i != userHandles.end(); ++i)
+			users.push_back(m_userCache->get(*i));
+	}
 
 	return users;
+}
+
+uint32_t Lobby::getParticipantCount() const
+{
+	uint32_t count;
+	if (m_matchMakingProvider && m_matchMakingProvider->getParticipantCount(m_handle, count))
+		return count;
+	else
+		return 0;
 }
 
 int32_t Lobby::getIndex() const
 {
 	int32_t index;
-	if (m_matchMakingProvider->getIndex(m_handle, index))
+	if (m_matchMakingProvider && m_matchMakingProvider->getIndex(m_handle, index))
 		return index;
 	else
 		return -1;

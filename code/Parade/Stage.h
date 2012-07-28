@@ -29,6 +29,7 @@ class IUpdateInfo;
 	{
 
 class Layer;
+class StageLoader;
 
 class T_DLLCLASS Stage : public Object
 {
@@ -55,7 +56,11 @@ public:
 
 	void terminate();
 
-	bool gotoStage(const std::wstring& name, const Object* params);
+	Ref< Stage > loadStage(const std::wstring& name, const Object* params);
+
+	Ref< StageLoader > loadStageAsync(const std::wstring& name, const Object* params);
+
+	bool gotoStage(Stage* stage);
 
 	bool update(amalgam::IStateManager* stateManager, const amalgam::IUpdateInfo& info);
 
@@ -78,9 +83,7 @@ private:
 	RefArray< Layer > m_layers;
 	std::map< std::wstring, Guid > m_transitions;
 	Ref< const Object > m_params;
-	Guid m_pendingStageGuid;
-	Ref< const Object > m_pendingStageParams;
-
+	Ref< Stage > m_pendingStage;
 	bool m_running;
 };
 

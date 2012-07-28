@@ -11,7 +11,7 @@ namespace traktor
  */
 int32_t T_FORCE_INLINE log2(int32_t v)
 {
-	for (int i = 32; i >= 0; --i)
+	for (int i = 31; i >= 0; --i)
 	{
 		if (v & (1 << i))
 			return i;

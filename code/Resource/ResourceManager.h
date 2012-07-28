@@ -32,6 +32,8 @@ class T_DLLCLASS ResourceManager : public IResourceManager
 	T_RTTI_CLASS;
 
 public:
+	ResourceManager(bool verbose);
+
 	virtual ~ResourceManager();
 
 	virtual void destroy();
@@ -69,6 +71,7 @@ private:
 	std::map< const TypeInfo*, TimeCount > m_times;
 	std::stack< double > m_timeStack;
 	mutable Semaphore m_lock;
+	bool m_verbose;
 
 	Ref< IResourceFactory > findFactory(const TypeInfo& type);
 

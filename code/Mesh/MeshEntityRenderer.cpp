@@ -1,6 +1,8 @@
+#include "Core/Log/Log.h"
 #include "Mesh/MeshCulling.h"
 #include "Mesh/MeshEntity.h"
 #include "Mesh/MeshEntityRenderer.h"
+#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
@@ -19,6 +21,16 @@ const TypeInfoSet MeshEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void MeshEntityRenderer::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::Entity* entity
+)
+{
+	MeshEntity* meshEntity = checked_type_cast< MeshEntity*, false >(entity);
+	meshEntity->precull(worldContext, worldRenderView);
+}
+
 void MeshEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
@@ -35,6 +47,12 @@ void MeshEntityRenderer::render(
 
 	Transform transform;
 	meshEntity->getTransform(transform);
+
+	if (
+		worldContext.getCulling() &&
+		!worldContext.getCulling()->queryAabb(boundingBox, transform)
+	)
+		return;
 
 	float distance = 0.0f;
 	if (!isMeshVisible(

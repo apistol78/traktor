@@ -829,17 +829,12 @@ void AsTextField::TextField_set_variable(FlashEditInstance* editInstance, const 
 
 bool AsTextField::TextField_get_visible(FlashEditInstance* editInstance) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::get_visible not implemented" << Endl;
-	)
-	return true;
+	return editInstance->isVisible();
 }
 
 void AsTextField::TextField_set_visible(FlashEditInstance* editInstance, bool visible) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_visible not implemented" << Endl;
-	)
+	editInstance->setVisible(visible);
 }
 
 avm_number_t AsTextField::TextField_get_width(FlashEditInstance* editInstance) const

@@ -15,6 +15,14 @@ const TypeInfoSet ClothEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void ClothEntityRenderer::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::Entity* entity
+)
+{
+}
+
 void ClothEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

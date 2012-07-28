@@ -8,8 +8,9 @@
 #include "Mesh/Editor/OcclusionTextureAsset.h"
 #include "Mesh/Editor/OcclusionTexturePipeline.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
-#include "Model/Formats/ModelFormat.h"
+#include "Model/ModelFormat.h"
+#include "Model/Operations/BakePixelOcclusion.h"
+#include "Model/Operations/Triangulate.h"
 
 namespace traktor
 {
@@ -75,11 +76,11 @@ bool OcclusionTexturePipeline::buildOutput(
 	}
 
 	// Ensure model is triangulated.
-	model::triangulateModel(*model);
+	model::Triangulate().apply(*model);
 
 	// Bake occlusion map.
-	Ref< drawing::Image > image = model::bakePixelOcclusion(*model, asset->m_output.m_scaleWidth, asset->m_output.m_scaleHeight);
-	if (!image)
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getX8R8G8B8(), asset->m_output.m_scaleWidth, asset->m_output.m_scaleHeight);
+	if (!model::BakePixelOcclusion(image).apply(*model))
 	{
 		log::error << L"Occlusion texture pipeline failed; unable to bake occlusion map" << Endl;
 		return 0;

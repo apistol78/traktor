@@ -1,5 +1,7 @@
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshEntity.h"
+#include "World/WorldContext.h"
+#include "World/WorldRenderView.h"
 
 namespace traktor
 {
@@ -22,6 +24,17 @@ Aabb3 InstanceMeshEntity::getBoundingBox() const
 bool InstanceMeshEntity::supportTechnique(render::handle_t technique) const
 {
 	return m_mesh->supportTechnique(technique);
+}
+
+void InstanceMeshEntity::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView
+)
+{
+	m_mesh->precull(
+		worldContext.getCulling(),
+		getTransform(worldRenderView.getInterval())
+	);
 }
 
 void InstanceMeshEntity::render(

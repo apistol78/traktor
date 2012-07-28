@@ -18,6 +18,22 @@ const TypeInfoSet EntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void EntityRenderer::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::Entity* entity
+)
+{
+	if (RigidEntity* rigidEntity = dynamic_type_cast< RigidEntity* >(entity))
+		worldContext.precull(worldRenderView, rigidEntity->getEntity());
+	else if (ArticulatedEntity* articulatedEntity = dynamic_type_cast< ArticulatedEntity* >(entity))
+	{
+		const RefArray< RigidEntity >& entities = articulatedEntity->getEntities();
+		for (RefArray< RigidEntity >::const_iterator i = entities.begin(); i != entities.end(); ++i)
+			worldContext.precull(worldRenderView, *i);
+	}
+}
+
 void EntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
@@ -26,9 +42,7 @@ void EntityRenderer::render(
 )
 {
 	if (RigidEntity* rigidEntity = dynamic_type_cast< RigidEntity* >(entity))
-	{
 		worldContext.build(worldRenderView, worldRenderPass, rigidEntity->getEntity());
-	}
 	else if (ArticulatedEntity* articulatedEntity = dynamic_type_cast< ArticulatedEntity* >(entity))
 	{
 		const RefArray< RigidEntity >& entities = articulatedEntity->getEntities();

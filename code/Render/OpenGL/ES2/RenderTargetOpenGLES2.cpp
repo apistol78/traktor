@@ -109,7 +109,7 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	switch (desc.format)
 	{
 	case TfR8:
-#if defined(__APPLE__) && defined(GL_RED_EXT)
+#if defined(GL_RED_EXT)
 		if (haveExtension("GL_EXT_texture_rg"))
 		{
 			internalFormat = GL_RED_EXT;
@@ -121,12 +121,12 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues" << Endl;
 			internalFormat = GL_RGBA;
 			format = GL_RGBA;
-			type = GL_UNSIGNED_SHORT_4_4_4_4;
+			type = GL_UNSIGNED_BYTE;
 		}
 #else
 		internalFormat = GL_RGBA;
 		format = GL_RGBA;
-		type = GL_UNSIGNED_SHORT_4_4_4_4;
+		type = GL_UNSIGNED_BYTE;
 #endif
 		m_textureTarget = GL_TEXTURE_2D;
 		break;
@@ -138,7 +138,7 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 		m_textureTarget = GL_TEXTURE_2D;
 		break;
 		
-#if defined(__APPLE__) && defined(GL_HALF_FLOAT_OES)
+#if defined(GL_HALF_FLOAT_OES)
 	case TfR16G16B16A16F:
 		internalFormat = GL_RGBA;
 		format = GL_RGBA;
@@ -154,21 +154,41 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 		m_textureTarget = GL_TEXTURE_2D;
 		break;
 		
-#if defined(__APPLE__) && defined(GL_RED_EXT)
+#if defined(GL_HALF_FLOAT_OES) && defined(GL_RED_EXT)
 	case TfR16F:
-		internalFormat = GL_RED_EXT;
-		format = GL_RED_EXT;
-		type = GL_HALF_FLOAT_OES;
-		m_textureTarget = GL_TEXTURE_2D;
+		if (haveExtension("GL_EXT_texture_rg"))
+		{
+			internalFormat = GL_RED_EXT;
+			format = GL_RED_EXT;
+			type = GL_HALF_FLOAT_OES;
+			m_textureTarget = GL_TEXTURE_2D;
+		}
+		else
+		{
+			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues" << Endl;
+			internalFormat = GL_RGBA;
+			format = GL_RGBA;
+			type = GL_HALF_FLOAT_OES;
+			m_textureTarget = GL_TEXTURE_2D;
+		}
 		break;
-#endif
-	
-#if defined(__APPLE__) && defined(GL_RED_EXT)
+
 	case TfR32F:
-		internalFormat = GL_RED_EXT;
-		format = GL_RED_EXT;
-		type = GL_FLOAT;
-		m_textureTarget = GL_TEXTURE_2D;
+		if (haveExtension("GL_EXT_texture_rg"))
+		{
+			internalFormat = GL_RED_EXT;
+			format = GL_RED_EXT;
+			type = GL_FLOAT;
+			m_textureTarget = GL_TEXTURE_2D;
+		}
+		else
+		{
+			log::warning << L"Extension \"GL_EXT_texture_rg\" not supported; using different format which may cause performance issues" << Endl;
+			internalFormat = GL_RGBA;
+			format = GL_RGBA;
+			type = GL_FLOAT;
+			m_textureTarget = GL_TEXTURE_2D;
+		}
 		break;
 #endif
 
@@ -187,7 +207,17 @@ bool RenderTargetOpenGLES2::create(const RenderTargetSetCreateDesc& setDesc, con
 	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MAG_FILTER, GL_NEAREST));
 	T_OGL_SAFE(glTexParameterf(m_textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST));
 
-	T_OGL_SAFE(glTexImage2D(m_textureTarget, 0, internalFormat, m_width, m_height, 0, format, type, NULL));
+	T_OGL_SAFE(glTexImage2D(
+		m_textureTarget,
+		0,
+		internalFormat,
+		m_width,
+		m_height,
+		0,
+		format,
+		type,
+		NULL
+	));
 
 	T_OGL_SAFE(glGenFramebuffers(1, &m_frameBufferObject));
 	T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, m_frameBufferObject));

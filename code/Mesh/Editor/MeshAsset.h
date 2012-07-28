@@ -59,12 +59,17 @@ public:
 
 	bool getCullDistantFaces() const { return m_cullDistantFaces; }
 
+	void setGenerateOccluder(bool generateOccluder) { m_generateOccluder = generateOccluder; }
+
+	bool getGenerateOccluder() const { return m_generateOccluder; }
+
 private:
 	MeshType m_meshType;
 	std::map< std::wstring, Guid > m_materialShaders;
 	std::map< std::wstring, Guid > m_materialTextures;
 	bool m_bakeOcclusion;
 	bool m_cullDistantFaces;
+	bool m_generateOccluder;
 };
 
 	}

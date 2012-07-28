@@ -10,8 +10,8 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshAssetEditor.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
-#include "Model/Formats/ModelFormat.h"
 #include "Model/Model.h"
+#include "Model/ModelFormat.h"
 #include "Render/ITexture.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Ui/MethodHandler.h"
@@ -122,6 +122,13 @@ bool MeshAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (!m_checkBakeOcclusion->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_BAKE_OCCLUSION")))
 		return false;
 
+	Ref< ui::Static > staticDummy2 = new ui::Static();
+	staticDummy2->create(containerFile, L"");
+
+	m_checkGenerateOccluder = new ui::CheckBox();
+	if (!m_checkGenerateOccluder->create(containerFile, i18n::Text(L"MESHASSET_EDITOR_GENERATE_OCCLUDER")))
+		return false;
+
 	m_containerMaterials = new ui::Container();
 	if (!m_containerMaterials->create(container, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%,*,100%", 0, 0)))
 		return false;
@@ -178,6 +185,7 @@ void MeshAssetEditor::apply()
 	m_asset->setFileName(m_editFileName->getText());
 	m_asset->setMeshType(MeshAsset::MeshType(m_dropMeshType->getSelected() + 1));
 	m_asset->setBakeOcclusion(m_checkBakeOcclusion->isChecked());
+	m_asset->setGenerateOccluder(m_checkGenerateOccluder->isChecked());
 
 	std::map< std::wstring, Guid > materialShaders;
 	Ref< ui::ListViewItems > shaderItems = m_materialShaderList->getItems();
@@ -243,6 +251,7 @@ void MeshAssetEditor::updateFile()
 	m_editFileName->setText(assetRelPath.getPathName());
 	m_dropMeshType->select(m_asset->getMeshType() - 1);
 	m_checkBakeOcclusion->setChecked(m_asset->getBakeOcclusion());
+	m_checkGenerateOccluder->setChecked(m_asset->getGenerateOccluder());
 }
 
 void MeshAssetEditor::updateMaterialList()

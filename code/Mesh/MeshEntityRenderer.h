@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -25,6 +25,12 @@ class T_DLLCLASS MeshEntityRenderer : public world::IEntityRenderer
 
 public:
 	virtual const TypeInfoSet getEntityTypes() const;
+
+	virtual void precull(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::Entity* entity
+	);
 
 	virtual void render(
 		world::WorldContext& worldContext,

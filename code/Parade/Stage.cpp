@@ -2,8 +2,9 @@
 #include "Amalgam/IStateManager.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Parade/Layer.h"
-#include "Parade/LoadState.h"
 #include "Parade/Stage.h"
+#include "Parade/StageLoader.h"
+#include "Parade/StageState.h"
 
 namespace traktor
 {
@@ -66,15 +67,31 @@ void Stage::terminate()
 	m_running = false;
 }
 
-bool Stage::gotoStage(const std::wstring& name, const Object* params)
+Ref< Stage > Stage::loadStage(const std::wstring& name, const Object* params)
 {
 	std::map< std::wstring, Guid >::const_iterator i = m_transitions.find(name);
 	if (i == m_transitions.end())
-		return false;
+		return 0;
 
-	m_pendingStageGuid = i->second;
-	m_pendingStageParams = params;
+	Ref< StageLoader > stageLoader = StageLoader::create(m_environment, i->second, params);
+	if (stageLoader->failed())
+		return 0;
 
+	return stageLoader->get();
+}
+
+Ref< StageLoader > Stage::loadStageAsync(const std::wstring& name, const Object* params)
+{
+	std::map< std::wstring, Guid >::const_iterator i = m_transitions.find(name);
+	if (i == m_transitions.end())
+		return 0;
+
+	return StageLoader::createAsync(m_environment, i->second, params);
+}
+
+bool Stage::gotoStage(Stage* stage)
+{
+	m_pendingStage = stage;
 	return true;
 }
 
@@ -83,18 +100,15 @@ bool Stage::update(amalgam::IStateManager* stateManager, const amalgam::IUpdateI
 	if (!m_running)
 		return false;
 
-	if (m_pendingStageGuid.isValid() && !m_pendingStageGuid.isNull())
-	{
-		stateManager->enter(new LoadState(
-			m_environment,
-			m_pendingStageGuid,
-			m_pendingStageParams
-		));
-	}
-	else
+	if (!m_pendingStage)
 	{
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			(*i)->update(this, info);
+	}
+	else
+	{
+		stateManager->enter(new StageState(m_environment, m_pendingStage));
+		m_pendingStage = 0;
 	}
 
 	return true;

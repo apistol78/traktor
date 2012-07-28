@@ -9,8 +9,7 @@
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshBrowsePreview.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
-#include "Model/Formats/ModelFormat.h"
+#include "Model/ModelFormat.h"
 #include "Ui/Bitmap.h"
 
 namespace traktor
@@ -40,7 +39,7 @@ Ref< ui::Bitmap > MeshBrowsePreview::generate(const editor::IEditor* editor, db:
 	if (!model)
 		return 0;
 
-	Aabb3 boundingBox = model::calculateModelBoundingBox(*model);
+	Aabb3 boundingBox = model->getBoundingBox();
 
 	Ref< drawing::Image > meshThumb = new drawing::Image(
 		drawing::PixelFormat::getR8G8B8(),

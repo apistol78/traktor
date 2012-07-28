@@ -165,6 +165,8 @@ public:
 
 	void setFollowEntityAdapter(EntityAdapter* followEntityAdapter);
 
+	void setLookAtEntityAdapter(EntityAdapter* lookAtEntityAdapter);
+
 	//@}
 
 	/*! \name Time control. */
@@ -265,6 +267,8 @@ public:
 
 	EntityAdapter* getFollowEntityAdapter() { return m_followEntityAdapter; }
 
+	EntityAdapter* getLookAtEntityAdapter() { return m_lookAtEntityAdapter; }
+
 	//@}
 
 	/*! \name Events. */
@@ -327,6 +331,7 @@ private:
 	Ref< Scene > m_scene;
 	RefArray< EntityAdapter > m_layerEntityAdapters;
 	Ref< EntityAdapter > m_followEntityAdapter;
+	Ref< EntityAdapter > m_lookAtEntityAdapter;
 };
 
 	}

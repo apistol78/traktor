@@ -198,6 +198,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classLobbyFilter->addMethod(L"addStringComparison", &online_LobbyFilter_addStringComparison);
 	classLobbyFilter->addMethod(L"addNumberComparison", &online_LobbyFilter_addNumberComparison);
 	classLobbyFilter->addMethod(L"setDistance", &online_LobbyFilter_setDistance);
+	classLobbyFilter->addMethod(L"setSlots", &online::LobbyFilter::setSlots);
 	classLobbyFilter->addMethod(L"setCount", &online::LobbyFilter::setCount);
 	scriptManager->registerClass(classLobbyFilter);
 
@@ -224,6 +225,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILobby->addMethod(L"join", &online::ILobby::join);
 	classILobby->addMethod(L"leave", &online::ILobby::leave);
 	classILobby->addMethod(L"getParticipants", &online::ILobby::getParticipants);
+	classILobby->addMethod(L"getParticipantCount", &online::ILobby::getParticipantCount);
 	classILobby->addMethod(L"getIndex", &online::ILobby::getIndex);
 	scriptManager->registerClass(classILobby);
 

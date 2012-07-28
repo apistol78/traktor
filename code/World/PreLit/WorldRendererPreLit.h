@@ -32,6 +32,7 @@ class IWorldShadowProjection;
 class LightRenderer;
 class PostProcess;
 class WorldContext;
+class WorldCullingSwRaster;
 
 /*! \brief World renderer (P)re-(L)ighting implementation.
  * \ingroup World
@@ -42,25 +43,23 @@ class WorldContext;
  * shaders during final visual pass.
  *
  * Operation
- * 1. Render depth pass.
- * 2. Render normal pass.
+ * 1. Render gbuffer (depth+normals) pass.
  * For each light
- *   3. Clear shadow mask target.
+ *   2. Clear shadow mask target.
  *   If light is directional
  *     For each slice
- *       4. Render slice shadow map.
- *       5. Render screen-space shadow mask; accumulate shadow mask target.
+ *       3. Render slice shadow map.
+ *       4. Render screen-space shadow mask; accumulate shadow mask target.
  *     End
- *     6. Filter shadow mask target.
+ *     5. Filter shadow mask target.
  *   End
- *   7. Render screen-space lighting; accumulate in lighting target.
+ *   6. Render screen-space lighting; accumulate in lighting target.
  * End
- * 8. Render visuals.
+ * 7. Render visuals.
  *
  * Techniques used
  * "Default" - Visual, final, color output.
- * "Depth"   - Depth pass; write view distance into depth buffer.
- * "Normal"  - Normal pass; write world normals into normal buffer.
+ * "GBuffer" - GBuffer pass; write geometry buffers.
  * "Shadow"  - Shadow map pass; write distance from light into shadow map.
  */
 class T_DLLCLASS WorldRendererPreLit : public IWorldRenderer
@@ -106,6 +105,8 @@ private:
 
 	struct Frame
 	{
+		Ref< WorldCullingSwRaster > culling;
+
 		Slice slice[MaxSliceCount];
 		Ref< WorldContext > gbuffer;
 		Ref< WorldContext > visual;

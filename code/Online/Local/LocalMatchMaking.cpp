@@ -59,6 +59,11 @@ bool LocalMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 	return true;
 }
 
+bool LocalMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
+{
+	return false;
+}
+
 bool LocalMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
 {
 	outIndex = 0;

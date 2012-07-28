@@ -601,6 +601,9 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
+	if (m_currentProgram)
+		m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
+
 	const RenderState& rs = m_renderStateStack.back();
 
 	m_currentVertexBuffer = checked_type_cast< VertexBufferDx11* >(vertexBuffer);
@@ -664,6 +667,9 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 {
 	T_ASSERT (!m_renderStateStack.empty());
 	T_ASSERT (instanceCount > 0);
+
+	if (m_currentProgram)
+		m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
 
 	const RenderState& rs = m_renderStateStack.back();
 
@@ -750,9 +756,10 @@ void RenderViewDx11::end()
 
 void RenderViewDx11::present()
 {
-	m_dxgiSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
 	m_context->deleteResources();
 	m_context->getLock().release();
+
+	m_dxgiSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
 }
 
 void RenderViewDx11::pushMarker(const char* const marker)

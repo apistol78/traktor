@@ -258,7 +258,7 @@ bool AnimationEditorPage::create(ui::Container* parent)
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 
-	m_resourceManager = new resource::ResourceManager();
+	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(
 		new render::TextureFactory(database, renderSystem, 0)
 	);

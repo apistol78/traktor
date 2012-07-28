@@ -122,18 +122,28 @@ void LanReplicatorPeers::destroy()
 	net::Network::finalize();
 }
 
-uint32_t LanReplicatorPeers::getPeerCount() const
+void LanReplicatorPeers::update()
 {
-	return m_peers.size();
+}
+
+uint32_t LanReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
+{
+	return 0;
+}
+
+std::wstring LanReplicatorPeers::getPeerName(handle_t handle) const
+{
+	return L""; // m_peers[peerId].socketAddr.getHostName();
 }
 
 bool LanReplicatorPeers::receiveAnyPending()
 {
-	return m_socket->select(true, false, false, 0) > 0;
+	return false; //m_socket->select(true, false, false, 0) > 0;
 }
 
-bool LanReplicatorPeers::receive(void* data, uint32_t size, uint32_t& outFromPeer)
+bool LanReplicatorPeers::receive(void* data, uint32_t size, handle_t& outFromHandle)
 {
+	/*
 	net::SocketAddressIPv4 fromAddr;
 	if (m_socket->recvFrom(data, size, &fromAddr) <= 0)
 		return false;
@@ -163,16 +173,20 @@ bool LanReplicatorPeers::receive(void* data, uint32_t size, uint32_t& outFromPee
 
 	outFromPeer = m_peers.size() - 1;
 	return true;
+	*/
+	return false;
 }
 
-bool LanReplicatorPeers::sendReady(uint32_t peerId)
+bool LanReplicatorPeers::sendReady(handle_t handle)
 {
-	return m_peers[peerId].socket->select(false, true, false, 0) > 0;
+	//return m_peers[peerId].socket->select(false, true, false, 0) > 0;
+	return false;
 }
 
-bool LanReplicatorPeers::send(uint32_t peerId, const void* data, uint32_t size, bool reliable)
+bool LanReplicatorPeers::send(handle_t handle, const void* data, uint32_t size, bool reliable)
 {
-	return m_peers[peerId].socket->send(data, size) > 0;
+	//return m_peers[peerId].socket->send(data, size) > 0;
+	return false;
 }
 
 	}

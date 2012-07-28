@@ -9,13 +9,21 @@
 #include "Render/Mesh/MeshReader.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "World/OccluderMesh.h"
+#include "World/OccluderMeshReader.h"
 
 namespace traktor
 {
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 2, StaticMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 3, StaticMeshResource, IMeshResource)
+
+StaticMeshResource::StaticMeshResource()
+:	m_haveOccluderMesh(false)
+,	m_haveRenderMesh(false)
+{
+}
 
 Ref< IMesh > StaticMeshResource::createMesh(
 	const std::wstring& name,
@@ -25,11 +33,27 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	render::MeshFactory* meshFactory
 ) const
 {
-	Ref< render::Mesh > mesh = render::MeshReader(meshFactory).read(dataStream);
-	if (!mesh)
+	Ref< world::OccluderMesh > occluderMesh;
+	Ref< render::Mesh > renderMesh;
+	
+	if (m_haveOccluderMesh)
 	{
-		log::error << L"Static mesh create failed; unable to read mesh" << Endl;
-		return 0;
+		occluderMesh = world::OccluderMeshReader().read(dataStream);
+		if (!occluderMesh)
+		{
+			log::error << L"Static mesh create failed; unable to read occluder mesh" << Endl;
+			return 0;
+		}
+	}
+
+	if (m_haveRenderMesh)
+	{
+		renderMesh = render::MeshReader(meshFactory).read(dataStream);
+		if (!renderMesh)
+		{
+			log::error << L"Static mesh create failed; unable to read render mesh" << Endl;
+			return 0;
+		}
 	}
 
 	Ref< StaticMesh > staticMesh = new StaticMesh();
@@ -37,7 +61,8 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	if (!resourceManager->bind(m_shader, staticMesh->m_shader))
 		return 0;
 
-	staticMesh->m_mesh = mesh;
+	staticMesh->m_occluderMesh = occluderMesh;
+	staticMesh->m_renderMesh = renderMesh;
 
 	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 	{
@@ -63,7 +88,9 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 bool StaticMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
+	s >> Member< bool >(L"haveOccluderMesh", m_haveOccluderMesh);
+	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,

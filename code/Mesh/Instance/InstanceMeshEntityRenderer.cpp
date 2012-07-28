@@ -20,6 +20,16 @@ const TypeInfoSet InstanceMeshEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void InstanceMeshEntityRenderer::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::Entity* entity
+)
+{
+	InstanceMeshEntity* meshEntity = checked_type_cast< InstanceMeshEntity*, false >(entity);
+	meshEntity->precull(worldContext, worldRenderView);
+}
+
 void InstanceMeshEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

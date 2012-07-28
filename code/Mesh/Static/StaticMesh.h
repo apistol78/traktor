@@ -30,7 +30,9 @@ class ITexture;
 	namespace world
 	{
 
+class IWorldCulling;
 class IWorldRenderPass;
+class OccluderMesh;
 
 	}
 
@@ -60,6 +62,11 @@ public:
 	const Aabb3& getBoundingBox() const;
 
 	bool supportTechnique(render::handle_t technique) const;
+
+	void precull(
+		world::IWorldCulling* worldCulling,
+		const Transform& worldTransform
+	);
 	
 	void render(
 		render::RenderContext* renderContext,
@@ -73,7 +80,8 @@ private:
 	friend class StaticMeshResource;
 
 	resource::Proxy< render::Shader > m_shader;
-	Ref< render::Mesh > m_mesh;
+	Ref< world::OccluderMesh > m_occluderMesh;
+	Ref< render::Mesh > m_renderMesh;
 	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 #if defined(_DEBUG)
 	std::string m_name;

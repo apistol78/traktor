@@ -16,6 +16,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResourceManager", ResourceManager, IResourceManager)
 
+ResourceManager::ResourceManager(bool verbose)
+:	m_verbose(verbose)
+{
+}
+
 ResourceManager::~ResourceManager()
 {
 	destroy();
@@ -144,7 +149,8 @@ void ResourceManager::unloadUnusedResident()
 		T_ASSERT (i->second);
 		if (i->second->getReferenceCount() <= 1 && i->second->get() != 0)
 		{
-			log::info << L"Unload resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")" << Endl;
+			if (m_verbose)
+				log::info << L"Unload resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")" << Endl;
 			i->second->replace(0);
 		}
 	}
@@ -191,7 +197,8 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, const Ty
 	// so we try to leave early.
 	if (currentThread->stopped())
 	{
-		log::info << L"Resource loader thread stopped; skipped loading resource" << Endl;
+		if (m_verbose)
+			log::info << L"Resource loader thread stopped; skipped loading resource" << Endl;
 		return;
 	}
 
@@ -205,7 +212,9 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, const Ty
 	{
 		T_ASSERT_M (is_type_of(resourceType, type_of(object)), L"Incorrect type of created resource");
 		
-		log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") created" << Endl;
+		if (m_verbose)
+			log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") created" << Endl;
+
 		handle->replace(object);
 
 		// Yield current thread; we want other threads to get some periodic CPU time to
@@ -213,7 +222,7 @@ void ResourceManager::load(const Guid& guid, IResourceFactory* factory, const Ty
 		// to be able to run.
 		currentThread->sleep(0);
 	}
-	else
+	else if (m_verbose)
 		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << resourceType.getName() << L")" << Endl;
 
 	// Accumulate time spend on creating resources.

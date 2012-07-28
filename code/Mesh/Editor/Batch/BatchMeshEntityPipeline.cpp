@@ -12,8 +12,8 @@
 #include "Mesh/Editor/Batch/BatchMeshEntityData.h"
 #include "Mesh/Editor/Batch/BatchMeshEntityPipeline.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
-#include "Model/Formats/ModelFormat.h"
+#include "Model/ModelFormat.h"
+#include "Model/Operations/MergeModel.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -159,7 +159,7 @@ Ref< ISerializable > BatchMeshEntityPipeline::buildOutput(
 			continue;
 		}
 
-		model::mergeModels(*mergedModel, *partModel, (*i)->getTransform());
+		model::MergeModel(*partModel, (*i)->getTransform()).apply(*mergedModel);
 	}
 
 	// Build output mesh from merged model.

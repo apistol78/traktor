@@ -10,7 +10,6 @@
 #include "Parade/Network/IReplicatableState.h"
 #include "Parade/Network/IReplicatorPeers.h"
 #include "Parade/Network/Message.h"
-#include "Parade/Network/MessageRecorder.h"
 #include "Parade/Network/Replicator.h"
 #include "Parade/Network/StateProphet.h"
 
@@ -21,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_broadcastPeerId = ~0UL;
+const handle_t c_broadcastHandle = 0UL;
 const float c_maxLatencyCompensate = 2.0f;
 const float c_maxOffsetAdjustError = 1000.0f;
 const float c_maxOffsetAdjust = 30.0f;
@@ -29,6 +28,9 @@ const float c_nearDistance = 30.0f;
 const float c_farDistance = 400.0f;
 const float c_nearTimeUntilTx = 1.0f / 15.0f;
 const float c_farTimeUntilTx = 1.0f / 4.0f;
+const float c_timeUntilIAm = 4.0f;
+
+#define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
 
 		}
 
@@ -37,7 +39,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.Replicator", Replicator, Object)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.Replicator.IListener", Replicator::IListener, Object)
 
 Replicator::Replicator()
-:	m_origin(0.0f, 0.0f, 0.0f, 1.0f)
+:	m_id(Guid::create())
+,	m_origin(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_time(0.0f)
 {
 }
@@ -49,38 +52,54 @@ Replicator::~Replicator()
 
 bool Replicator::create(IReplicatorPeers* replicatorPeers, const ISerializable* joinParams)
 {
-#if defined(_DEBUG)
-	m_recorder = new MessageRecorder();
-	if (!m_recorder->create())
-		m_recorder = 0;
-#endif
+	std::vector< handle_t > handles;
 
 	m_replicatorPeers = replicatorPeers;
 	m_joinParams = joinParams;
+	m_state = 0;
 
-	// Send "I am" messages to all peers.
-	uint32_t peerCount = m_replicatorPeers->getPeerCount();
-	for (uint32_t i = 0; i < peerCount; ++i)
-		sendIAm(i);
+	m_replicatorPeers->update();
+	m_replicatorPeers->getPeerHandles(handles);
+
+	// Discard any pending data.
+	while (m_replicatorPeers->receiveAnyPending())
+	{
+		uint8_t discard[sizeof(Message)];
+		handle_t fromHandle;
+
+		if (m_replicatorPeers->receive(discard, sizeof(discard), fromHandle))
+			T_REPLICATOR_DEBUG(L"Pending message discarded from peer");
+	}
+
+	// Create non-established entries for each peer.
+	for (std::vector< handle_t >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+	{
+		Peer& peer = m_peers[*i];
+		peer.established = false;
+	}
 
 	return true;
 }
 
 void Replicator::destroy()
 {
-	safeDestroy(m_recorder);
-
-	for (std::map< uint32_t, GhostPeer* >::iterator i = m_ghostPeers.begin(); i != m_ghostPeers.end(); ++i)
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
-		if (i->second)
-			getAllocator()->free(i->second);
+		sendBye(i->first);
+
+		if (i->second.ghost)
+			getAllocator()->free(i->second.ghost);
 	}
 
-	m_ghostPeers.clear();
+	m_peers.clear();
+	m_eventsIn.clear();
+	m_eventsOut.clear();
 	m_listeners.clear();
-	m_state = 0;
-
 	m_eventTypes.clear();
+
+	m_state = 0;
+	m_joinParams = 0;
+	m_replicatorPeers = 0;
 }
 
 void Replicator::addEventType(const TypeInfo& eventType)
@@ -95,121 +114,227 @@ void Replicator::addListener(IListener* listener)
 
 void Replicator::update(float dT)
 {
-	uint32_t peerId;
+	std::set< handle_t > unfresh;
+	std::vector< handle_t > handles;
+	handle_t handle;
 	Message msg;
 
-	// Read messages from any other peer.
+	// Massage replicator peers back-end first and
+	// get fresh list of peer handles.
+	m_replicatorPeers->update();
+	m_replicatorPeers->getPeerHandles(handles);
+
+	// Keep list of unfresh handles.
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+		unfresh.insert(i->first);
+
+	// Iterate all handles, tag peers as fresh or send "I am" to new peers.
+	for (std::vector< handle_t >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+	{
+		Peer& peer = m_peers[*i];
+
+		// Issue "I am" to unestablished peers.
+		if (!peer.established)
+		{
+			if ((peer.timeUntilTx -= dT) <= 0.0f)
+			{
+				T_REPLICATOR_DEBUG(L"Unestablished peer found; sending \"I am\" to peer");
+				sendIAm(*i, 0, m_id);
+				peer.timeUntilTx = c_timeUntilIAm;
+			}
+		}
+
+		unfresh.erase(*i);
+	}
+
+	// Issue disconnect events to listeners.
+	for (std::set< handle_t >::const_iterator i = unfresh.begin(); i != unfresh.end(); ++i)
+	{
+		std::map< handle_t, Peer >::iterator it = m_peers.find(*i);
+		T_ASSERT (it != m_peers.end());
+
+		if (it->second.established)
+		{
+			T_REPLICATOR_DEBUG(L"Established peer disconnected; issue listener event");
+			T_ASSERT (it->second.ghost);
+
+			Event evt;
+			evt.eventId = IListener::ReDisconnected;
+			evt.handle = *i;
+			evt.object = it->second.ghost->params;
+			m_eventsIn.push_back(evt);
+		}
+	}
+
+	// Read messages from any peer.
 	while (m_replicatorPeers->receiveAnyPending())
 	{
-		if (m_replicatorPeers->receive(&msg, sizeof(msg), peerId))
+		if (!m_replicatorPeers->receive(&msg, sizeof(msg), handle))
+			continue;
+
+		// Convert time from ms to seconds.
+		float time = msg.time / 1000.0f;
+
+		// Always handle handshake messages.
+		if (msg.type == MtIAm)
 		{
-			if (m_recorder)
-				m_recorder->addMessage(m_time, peerId, msg);
+			T_REPLICATOR_DEBUG(L"Got \"I am\" from peer, sequence " << int32_t(msg.iam.sequence));
 
-			if (!m_ghostPeers[peerId])
-				sendIAm(peerId);
+			// Unwrap id and ensure it's valid.
+			Guid id(msg.iam.id);
+			if (!id.isNotNull())
+				continue;
 
-			// Convert time from ms to seconds.
-			float time = msg.time / 1000.0f;
+			// Assume peer time is correct if exceeding my time.
+			if (time > m_time)
+				m_time = time;
 
-			if (msg.type == MtIAm)	// "I am" message.
+			if (msg.iam.sequence == 0)
 			{
-				if (!m_ghostPeers[peerId])
+				sendIAm(handle, 1, id);
+			}
+			else if (msg.iam.sequence == 1)
+			{
+				if (id == m_id)
+					sendIAm(handle, 2, id);
+				else
+					T_REPLICATOR_DEBUG(L"\"I am\" message with incorrect id; ignoring");
+			}
+			else if (msg.iam.sequence == 2)
+			{
+				Peer& peer = m_peers[handle];
+
+				if (!peer.ghost)
 				{
 					// Unwrap "I am" parameters.
-					MemoryStream s(msg.data, sizeof(msg.data), true, false);
+					MemoryStream s(msg.iam.data, sizeof(msg.iam.data), true, false);
 					Ref< ISerializable > iAmParams = BinarySerializer(&s).readObject< ISerializable >();
 
-					// Assume peer time is correct if exceeding my time.
-					if (time > m_time)
-					{
-						T_DEBUG(L"Peer " << peerId << L" time exceeding ours; adjusting ours");
-						m_time = time;
-					}
+					// Create ghost data.
+					void* ghostMem = getAllocator()->alloc(sizeof(Ghost), 16, "Ghost");
 
-					// Define ghost struct for this peer; must be 16 byte aligned thus placement new.
-					void* ghostPeerMem = getAllocator()->alloc(sizeof(GhostPeer), 16, "GhostPeer");
-					GhostPeer* ghostPeer = new (ghostPeerMem) GhostPeer();
-					ghostPeer->origin = m_origin;
-					ghostPeer->prophet = new StateProphet();
-					ghostPeer->timeUntilTx = 0.0f;
-					ghostPeer->lastTime = time;
-					ghostPeer->packetCount = 0;
-					ghostPeer->latency = 0.0f;
-					m_ghostPeers[peerId] = ghostPeer;
+					peer.ghost = new (ghostMem) Ghost();
+					peer.ghost->origin = m_origin;
+					peer.ghost->prophet = new StateProphet();
+					peer.ghost->params = iAmParams;
+				}
 
-					// Put an input event to notify listeners about new peer.
+				if (!peer.established)
+				{
+					peer.established = true;
+					peer.timeUntilTx = 0.0f;
+
+					// Issue connect event to listeners.
 					Event evt;
 					evt.eventId = IListener::ReConnected;
-					evt.peerId = peerId;
-					evt.object = iAmParams;
+					evt.handle = handle;
+					evt.object = peer.ghost->params;
 					m_eventsIn.push_back(evt);
+
+					T_REPLICATOR_DEBUG(L"Peer connection established");
 				}
 			}
-			else if (msg.type == MtState)	// Data message.
+
+			continue;
+		}
+		else if (msg.type == MtBye)
+		{
+			T_REPLICATOR_DEBUG(L"Got \"Bye\" from peer");
+
+			Peer& peer = m_peers[handle];
+
+			if (peer.established && peer.ghost)
 			{
-				GhostPeer* ghostPeer = m_ghostPeers[peerId];
-				if (ghostPeer)
+				T_REPLICATOR_DEBUG(L"Established peer gracefully disconnected; issue listener event");
+
+				Event evt;
+				evt.eventId = IListener::ReDisconnected;
+				evt.handle = handle;
+				evt.object = peer.ghost->params;
+				m_eventsIn.push_back(evt);
+			}
+
+			peer.established = false;
+			peer.ghost = 0;
+		}
+
+		// Not a handshake message.
+		Peer& peer = m_peers[handle];
+		if (!peer.ghost)
+		{
+			T_REPLICATOR_DEBUG(L"Peer connection fully established but received non-handshake message; ignoring");
+			continue;
+		}
+
+		// Somehow the handshake wasn't fully successful but we've received a ghost then assume it's ok.
+		if (!peer.established)
+		{
+			peer.established = true;
+			peer.timeUntilTx = 0.0f;
+
+			// Issue connect event to listeners.
+			Event evt;
+			evt.eventId = IListener::ReConnected;
+			evt.handle = handle;
+			evt.object = peer.ghost->params;
+			m_eventsIn.push_back(evt);
+
+			T_REPLICATOR_DEBUG(L"Peer partially connected; but since we've got a ghost then we accept");
+		}
+
+		if (msg.type == MtState)	// Data message.
+		{
+			// Ignore old messages; as we're using unreliable transportation
+			// messages can arrive out-of-order.
+			if (time > peer.lastTime + 1e-8f)
+			{
+				// Adjust time based on network latency etc.
+				if (time > m_time)
 				{
-					// Ignore old messages; as we're using unreliable transportation
-					// messages can arrive out-of-order.
-					if (time > ghostPeer->lastTime + 1e-8f)
+					float offsetAdjust = time - m_time;
+					if (offsetAdjust > c_maxOffsetAdjustError)
 					{
-						// Adjust time based on network latency etc.
-						if (time > m_time)
-						{
-							float offsetAdjust = time - m_time;
-							if (offsetAdjust > c_maxOffsetAdjustError)
-							{
-								log::error << L"Corrupt time (" << time << L") from peer " << peerId << L"; package ignored" << Endl;
-								continue;
-							}
-
-							offsetAdjust = min(offsetAdjust, c_maxOffsetAdjust);
-							float latencyAdjust = min(offsetAdjust / 2.0f, c_maxLatencyCompensate);
-
-							m_time += offsetAdjust + latencyAdjust;
-
-							T_DEBUG(L"Peer " << peerId << L" time exceeding ours; adjusted with " << (offsetAdjust + latencyAdjust) * 1000.0f << L" ms");
-						}
-
-						MemoryStream s(msg.data, sizeof(msg.data), true, false);
-						Ref< IReplicatableState > state = CompactSerializer(&s, &m_eventTypes[0]).readObject< IReplicatableState >();
-						if (state)
-							ghostPeer->prophet->push(time, state);
-
-						ghostPeer->lastTime = time;
-						ghostPeer->packetCount++;
-						ghostPeer->latency = lerp(ghostPeer->latency, m_time - time, 0.1f);
-
-						// Put an input event to notify listeners about new state.
-						Event evt;
-						evt.eventId = IListener::ReState;
-						evt.peerId = peerId;
-						evt.object = 0;
-						m_eventsIn.push_back(evt);
+						T_REPLICATOR_DEBUG(L"Corrupt time (" << time << L") from peer " << handle << L"; package ignored");
+						continue;
 					}
-					else
-						log::warning << L"Too old package received from peer " << peerId << L"; package ignored" << Endl;
-				}
-			}
-			else if (msg.type == MtEvent)	// Event message.
-			{
-				GhostPeer* ghostPeer = m_ghostPeers[peerId];
-				if (ghostPeer)
-				{
-					MemoryStream s(msg.data, sizeof(msg.data), true, false);
-					Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
 
-					// Put an input event to notify listeners about received event.
-					Event e;
-					e.time = time;
-					e.eventId = IListener::ReBroadcastEvent;
-					e.peerId = peerId;
-					e.object = eventObject;
-					m_eventsIn.push_back(e);
+					offsetAdjust = min(offsetAdjust, c_maxOffsetAdjust);
+					float latencyAdjust = min(offsetAdjust / 2.0f, c_maxLatencyCompensate);
+
+					m_time += offsetAdjust + latencyAdjust;
 				}
+
+				MemoryStream s(msg.data, sizeof(msg.data), true, false);
+				Ref< IReplicatableState > state = CompactSerializer(&s, &m_eventTypes[0]).readObject< IReplicatableState >();
+				if (state)
+					peer.ghost->prophet->push(time, state);
+
+				peer.lastTime = time;
+				peer.packetCount++;
+				peer.latency = lerp(peer.latency, m_time - time, 0.1f);
+
+				// Put an input event to notify listeners about new state.
+				Event evt;
+				evt.eventId = IListener::ReState;
+				evt.handle = handle;
+				evt.object = 0;
+				m_eventsIn.push_back(evt);
 			}
+			else
+				T_REPLICATOR_DEBUG(L"Too old package received from peer " << handle << L"; package ignored");
+		}
+		else if (msg.type == MtEvent)	// Event message.
+		{
+			MemoryStream s(msg.data, sizeof(msg.data), true, false);
+			Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
+
+			// Put an input event to notify listeners about received event.
+			Event e;
+			e.time = time;
+			e.eventId = IListener::ReBroadcastEvent;
+			e.handle = handle;
+			e.object = eventObject;
+			m_eventsIn.push_back(e);
 		}
 	}
 
@@ -228,22 +353,21 @@ void Replicator::update(float dT)
 
 			uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
 
-			if (i->peerId == c_broadcastPeerId)
+			if (i->handle == c_broadcastHandle)
 			{
-				for (std::map< uint32_t, GhostPeer* >::const_iterator j = m_ghostPeers.begin(); j != m_ghostPeers.end(); ++j)
+				for (std::map< handle_t, Peer >::const_iterator j = m_peers.begin(); j != m_peers.end(); ++j)
 				{
+					if (!j->second.established)
+						continue;
+
 					if (!m_replicatorPeers->send(j->first, &msg, msgSize, true))
-						log::error << L"Unable to event to peer " << peerId << Endl;
+						log::error << L"Unable to event to peer " << j->first << Endl;
 				}
 			}
 			else
 			{
-				std::map< uint32_t, GhostPeer* >::const_iterator j = m_ghostPeers.find(i->peerId);
-				if (j != m_ghostPeers.end())
-				{
-					if (!m_replicatorPeers->send(j->first, &msg, msgSize, true))
-						log::error << L"Unable to event to peer " << j->first << Endl;
-				}
+				if (!m_replicatorPeers->send(i->handle, &msg, msgSize, true))
+					log::error << L"Unable to event to peer " << i->handle << Endl;
 			}
 		}
 		m_eventsOut.clear();
@@ -262,13 +386,13 @@ void Replicator::update(float dT)
 
 		uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
 
-		for (std::map< uint32_t, GhostPeer* >::iterator i = m_ghostPeers.begin(); i != m_ghostPeers.end(); ++i)
+		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 		{
-			GhostPeer* ghostPeer = i->second;
-			if (!ghostPeer)
-				continue;
+			Peer& peer = i->second;
 
-			if ((ghostPeer->timeUntilTx -= dT) > 0.0f)
+			if (!peer.established || !peer.ghost)
+				continue;
+			if ((peer.timeUntilTx -= dT) > 0.0f)
 				continue;
 
 			if (!m_replicatorPeers->sendReady(i->first))
@@ -277,9 +401,10 @@ void Replicator::update(float dT)
 			if (!m_replicatorPeers->send(i->first, &msg, msgSize, false))
 				log::error << L"Unable to send state to peer " << i->first << Endl;
 
-			float distanceToPeer = (ghostPeer->origin - m_origin).xyz0().length();
+			float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
 			float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-			i->second->timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
+			
+			peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
 		}
 	}
 
@@ -288,9 +413,13 @@ void Replicator::update(float dT)
 	{
 		const Event& event = m_eventsIn.front();
 		for (RefArray< IListener >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-			(*i)->notify(this, event.time, event.eventId, event.peerId, event.object);
+			(*i)->notify(this, event.time, event.eventId, event.handle, event.object);
 		m_eventsIn.pop_front();
 	}
+
+	// Remove all unfresh peer entries.
+	for (std::set< handle_t >::const_iterator i = unfresh.begin(); i != unfresh.end(); ++i)
+		m_peers.erase(*i);
 
 	m_time += dT;
 }
@@ -305,11 +434,11 @@ void Replicator::setState(const IReplicatableState* state)
 	m_state = state;
 }
 
-void Replicator::sendEvent(uint32_t peerId, const ISerializable* eventObject)
+void Replicator::sendEvent(handle_t peerHandle, const ISerializable* eventObject)
 {
 	Event e;
 	e.eventId = 0;
-	e.peerId = peerId;
+	e.handle = peerHandle;
 	e.object = eventObject;
 	m_eventsOut.push_back(e);
 }
@@ -318,59 +447,102 @@ void Replicator::broadcastEvent(const ISerializable* eventObject)
 {
 	Event e;
 	e.eventId = 0;
-	e.peerId = c_broadcastPeerId;
+	e.handle = c_broadcastHandle;
 	e.object = eventObject;
 	m_eventsOut.push_back(e);
 }
 
-uint32_t Replicator::getMaxPeerId() const
+uint32_t Replicator::getPeerCount() const
 {
-	return m_replicatorPeers->getPeerCount();
+	return uint32_t(m_peers.size());
 }
 
-void Replicator::setGhostObject(uint32_t peerId, Object* ghostObject)
+handle_t Replicator::getPeerHandle(uint32_t peerIndex) const
 {
-	std::map< uint32_t, GhostPeer* >::iterator i = m_ghostPeers.find(peerId);
-	if (i != m_ghostPeers.end())
-		i->second->object = ghostObject;
+	std::map< handle_t, Peer >::const_iterator it = m_peers.begin();
+	std::advance(it, peerIndex);
+	return it->first;
 }
 
-Object* Replicator::getGhostObject(uint32_t peerId) const
+std::wstring Replicator::getPeerName(handle_t peerHandle) const
 {
-	std::map< uint32_t, GhostPeer* >::const_iterator i = m_ghostPeers.find(peerId);
-	return i != m_ghostPeers.end() ? i->second->object : 0;
+	return m_replicatorPeers->getPeerName(peerHandle);
 }
 
-void Replicator::setGhostOrigin(uint32_t peerId, const Vector4& origin)
+bool Replicator::isPeerConnected(handle_t peerHandle) const
 {
-	std::map< uint32_t, GhostPeer* >::iterator i = m_ghostPeers.find(peerId);
-	if (i != m_ghostPeers.end())
-		i->second->origin = origin;
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	return i != m_peers.end() ? i->second.established : false;
 }
 
-Ref< const IReplicatableState > Replicator::getGhostState(uint32_t peerId) const
+void Replicator::setGhostObject(handle_t peerHandle, Object* ghostObject)
 {
-	std::map< uint32_t, GhostPeer* >::const_iterator i = m_ghostPeers.find(peerId);
-	if (i != m_ghostPeers.end())
-		return i->second->prophet->get(m_time);
+	std::map< handle_t, Peer >::iterator i = m_peers.find(peerHandle);
+	if (i != m_peers.end() && i->second.ghost)
+		i->second.ghost->object = ghostObject;
 	else
-		return 0;
+		T_REPLICATOR_DEBUG(L"Trying to set ghost object of unknown peer handle " << peerHandle);
 }
 
-void Replicator::sendIAm(uint32_t peerId)
+Object* Replicator::getGhostObject(handle_t peerHandle) const
+{
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	if (i != m_peers.end() && i->second.ghost)
+		return i->second.ghost->object;
+	else
+	{
+		T_REPLICATOR_DEBUG(L"Trying to get ghost object of unknown peer handle " << peerHandle);
+		return 0;
+	}
+}
+
+void Replicator::setGhostOrigin(handle_t peerHandle, const Vector4& origin)
+{
+	std::map< handle_t, Peer >::iterator i = m_peers.find(peerHandle);
+	if (i != m_peers.end() && i->second.ghost)
+		i->second.ghost->origin = origin;
+	else
+		T_REPLICATOR_DEBUG(L"Trying to get ghost origin of unknown peer handle " << peerHandle);
+}
+
+Ref< const IReplicatableState > Replicator::getGhostState(handle_t peerHandle) const
+{
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	if (i != m_peers.end() && i->second.ghost)
+		return i->second.ghost->prophet->get(m_time);
+	else
+	{
+		T_REPLICATOR_DEBUG(L"Trying to get ghost state of unknown peer handle " << peerHandle);
+		return 0;
+	}
+}
+
+void Replicator::sendIAm(handle_t peerHandle, uint8_t sequence, const Guid& id)
 {
 	Message msg;
 
 	msg.type = MtIAm;
 	msg.time = uint32_t(m_time * 1000.0f);
+	msg.iam.sequence = sequence;
 
-	MemoryStream s(msg.data, sizeof(msg.data), false, true);
+	std::memcpy(msg.iam.id, id, sizeof(msg.iam.id));
+
+	MemoryStream s(msg.iam.data, sizeof(msg.iam.data), false, true);
 	BinarySerializer(&s).writeObject(m_joinParams);
 
-	uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
+	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint8_t) + s.tell();
+	m_replicatorPeers->send(peerHandle, &msg, msgSize, true);
+}
 
-	if (!m_replicatorPeers->send(peerId, &msg, msgSize, true))
-		log::error << L"Unable to send \"I am\" to peer " << peerId << Endl;
+void Replicator::sendBye(handle_t peerHandle)
+{
+	Message msg;
+
+	msg.type = MtBye;
+	msg.time = uint32_t(m_time * 1000.0f);
+
+	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
+	m_replicatorPeers->send(peerHandle, &msg, msgSize, true);
 }
 
 	}

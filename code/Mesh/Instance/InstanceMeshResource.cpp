@@ -11,13 +11,20 @@
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "World/OccluderMeshReader.h"
 
 namespace traktor
 {
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 2, InstanceMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.InstanceMeshResource", 3, InstanceMeshResource, IMeshResource)
+
+InstanceMeshResource::InstanceMeshResource()
+:	m_haveRenderMesh(false)
+,	m_haveOccluderMesh(false)
+{
+}
 
 Ref< IMesh > InstanceMeshResource::createMesh(
 	const std::wstring& name,
@@ -27,13 +34,29 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	render::MeshFactory* meshFactory
 ) const
 {
+	Ref< world::OccluderMesh > occluderMesh;
+	Ref< render::Mesh > renderMesh;
+
+	if (m_haveOccluderMesh)
+	{
+		occluderMesh = world::OccluderMeshReader().read(dataStream);
+		if (!occluderMesh)
+		{
+			log::error << L"Instance mesh create failed; unable to read occluder mesh" << Endl;
+			return 0;
+		}
+	}
+
 #if !T_USE_LEGACY_INSTANCING
 
-	Ref< render::Mesh > renderMesh = render::MeshReader(meshFactory).read(dataStream);
-	if (!renderMesh)
+	if (m_haveRenderMesh)
 	{
-		log::error << L"Instance mesh create failed; unable to read mesh" << Endl;
-		return 0;
+		renderMesh = render::MeshReader(meshFactory).read(dataStream);
+		if (!renderMesh)
+		{
+			log::error << L"Instance mesh create failed; unable to read mesh" << Endl;
+			return 0;
+		}
 	}
 
 #else
@@ -155,7 +178,12 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 #endif
 
 	Ref< InstanceMesh > instanceMesh = new InstanceMesh();
-	instanceMesh->m_mesh = renderMesh;
+
+	if (!resourceManager->bind(m_shader, instanceMesh->m_shader))
+		return 0;
+
+	instanceMesh->m_occluderMesh = occluderMesh;
+	instanceMesh->m_renderMesh = renderMesh;
 
 	for (std::map< std::wstring, parts_t >::const_iterator i = m_parts.begin(); i != m_parts.end(); ++i)
 	{
@@ -172,15 +200,14 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 		}
 	}
 
-	if (!resourceManager->bind(m_shader, instanceMesh->m_shader))
-		return 0;
-
 	return instanceMesh;
 }
 
 bool InstanceMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
+	s >> Member< bool >(L"haveOccluderMesh", m_haveOccluderMesh);
+	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,

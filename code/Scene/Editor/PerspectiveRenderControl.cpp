@@ -413,6 +413,8 @@ void PerspectiveRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mo
 		m_camera->move(delta.shuffle< 0, 1, 2, 3 >());
 		break;
 	}
+
+	constrainCamera();
 }
 
 void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
@@ -449,6 +451,35 @@ void PerspectiveRenderControl::updateWorldRenderView()
 		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
 }
 
+void PerspectiveRenderControl::constrainCamera()
+{
+	EntityAdapter* followEntityAdapter = m_context->getFollowEntityAdapter();
+	EntityAdapter* lookAtEntityAdapter = m_context->getLookAtEntityAdapter();
+
+	if (followEntityAdapter || lookAtEntityAdapter)
+	{
+		Matrix44 M = m_camera->getWorld();
+
+		if (followEntityAdapter)
+			M = followEntityAdapter->getTransform().toMatrix44();
+
+		if (lookAtEntityAdapter)
+		{
+			Vector4 origin = M.translation().xyz1();
+			Vector4 target = lookAtEntityAdapter->getTransform().translation().xyz1();
+
+			M = lookAt(
+				origin,
+				target,
+				followEntityAdapter ? M.axisY() : Vector4(0.0f, 1.0f, 0.0f, 0.0f)
+			).inverse();
+		}
+
+		m_camera->setPosition(M.translation().xyz1());
+		m_camera->setOrientation(Quaternion(M));
+	}
+}
+
 Matrix44 PerspectiveRenderControl::getProjectionTransform() const
 {
 	return m_worldRenderView.getProjection();
@@ -456,12 +487,7 @@ Matrix44 PerspectiveRenderControl::getProjectionTransform() const
 
 Matrix44 PerspectiveRenderControl::getViewTransform() const
 {
-	Matrix44 view = m_camera->getCurrentView();
-	Ref< EntityAdapter > followEntityAdapter = m_context->getFollowEntityAdapter();
-	if (followEntityAdapter)
-		return followEntityAdapter->getTransform().inverse().toMatrix44();
-	else
-		return m_camera->getCurrentView();
+	return m_camera->getView();
 }
 
 void PerspectiveRenderControl::eventButtonDown(ui::Event* event)
@@ -533,11 +559,15 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	float scaledTime = m_context->getTime();
 
 	m_colorClear.getRGBA32F(colorClear);
-	m_camera->update(deltaTime);
 
 	if (!m_renderView || !m_primitiveRenderer || !m_worldRenderer)
 		return;
 
+	// Constrain camera; do it continously as target entities might have
+	// been moved.
+	constrainCamera();
+
+	// Get current transformations.
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
 

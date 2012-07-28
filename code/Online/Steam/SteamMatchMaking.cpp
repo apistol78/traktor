@@ -102,6 +102,9 @@ bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vecto
 		break;
 	}
 
+	if (filter->getSlots() > 0)
+		SteamMatchmaking()->AddRequestLobbyListFilterSlotsAvailable(filter->getSlots());
+
 	if (filter->getCount() > 0)
 		SteamMatchmaking()->AddRequestLobbyListResultCountFilter(filter->getCount());
 
@@ -235,6 +238,16 @@ bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 			outUserHandles.push_back(memberId.ConvertToUint64());
 	}
 
+	return true;
+}
+
+bool SteamMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
+{
+	CSteamID id(lobbyHandle);
+	if (!id.IsValid())
+		return false;
+
+	outCount = SteamMatchmaking()->GetNumLobbyMembers(id);
 	return true;
 }
 

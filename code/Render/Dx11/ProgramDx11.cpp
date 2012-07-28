@@ -353,6 +353,19 @@ bool ProgramDx11::bind(
 	// Bind resource views.
 	if (m_parameterResArrayDirty || ms_activeProgram != this)
 	{
+		// Unbind previous program's resources.
+		if (ms_activeProgram && ms_activeProgram != this)
+		{
+			ID3D11ShaderResourceView* res = 0;
+
+			for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_vertexState.resourceIndices.begin(); i != ms_activeProgram->m_vertexState.resourceIndices.end(); ++i)
+				d3dDeviceContext->VSSetShaderResources(i->first, 1, &res);
+
+			for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_pixelState.resourceIndices.begin(); i != ms_activeProgram->m_pixelState.resourceIndices.end(); ++i)
+				d3dDeviceContext->PSSetShaderResources(i->first, 1, &res);
+		}
+
+		// Bind this program's resources.
 		for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = m_vertexState.resourceIndices.begin(); i != m_vertexState.resourceIndices.end(); ++i)
 		{
 			ID3D11ShaderResourceView* res = m_parameterResArray[i->second];

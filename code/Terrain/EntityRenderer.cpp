@@ -23,6 +23,14 @@ const TypeInfoSet EntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void EntityRenderer::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::Entity* entity
+)
+{
+}
+
 void EntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
@@ -31,7 +39,7 @@ void EntityRenderer::render(
 )
 {
 	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(entity))
-		terrainEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
+		terrainEntity->render(worldContext, worldRenderView, worldRenderPass);
 	else if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(entity))
 		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 	else if (RiverEntity* riverEntity = dynamic_type_cast< RiverEntity* >(entity))

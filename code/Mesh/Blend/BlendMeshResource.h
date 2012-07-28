@@ -1,6 +1,7 @@
 #ifndef traktor_mesh_BlendMeshResource_H
 #define traktor_mesh_BlendMeshResource_H
 
+#include <list>
 #include <map>
 #include "Core/Guid.h"
 #include "Mesh/IMeshResource.h"

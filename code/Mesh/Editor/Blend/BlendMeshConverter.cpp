@@ -2,11 +2,15 @@
 #include <limits>
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
-#include "Mesh/Editor/Blend/BlendMeshConverter.h"
-#include "Mesh/Editor/ModelOptimizations.h"
-#include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Blend/BlendMeshResource.h"
-#include "Model/Utilities.h"
+#include "Mesh/Editor/MeshVertexWriter.h"
+#include "Mesh/Editor/Blend/BlendMeshConverter.h"
+#include "Model/Model.h"
+#include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/FlattenDoubleSided.h"
+#include "Model/Operations/SortCacheCoherency.h"
+#include "Model/Operations/SortProjectedArea.h"
+#include "Model/Operations/Triangulate.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
@@ -25,6 +29,7 @@ Ref< IMeshResource > BlendMeshConverter::createResource() const
 
 bool BlendMeshConverter::convert(
 	const RefArray< model::Model >& models,
+	const model::Model* occluderModel,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
@@ -38,19 +43,19 @@ bool BlendMeshConverter::convert(
 	model::Model model = *models[0];
 
 	log::info << L"Triangulating model..." << Endl;
-	model::triangulateModel(model);
+	model::Triangulate().apply(model);
 
 	log::info << L"Sorting indices..." << Endl;
-	model::sortPolygonsCacheCoherent(model);
+	model::SortCacheCoherency().apply(model);
 
 	log::info << L"Calculating tangent bases..." << Endl;
-	model::calculateModelTangents(model, true);
+	model::CalculateTangents().apply(model);
 
 	log::info << L"Sorting materials..." << Endl;
-	sortMaterialsByProjectedArea(model, false);
+	model::SortProjectedArea(false).apply(model);
 
 	log::info << L"Flatten materials..." << Endl;
-	flattenDoubleSided(model);
+	model::FlattenDoubleSided().apply(model);
 
 	// Create vertex declaration.
 	log::info << L"Creating mesh..." << Endl;
@@ -166,7 +171,7 @@ bool BlendMeshConverter::convert(
 
 	baseMesh->getIndexBuffer()->unlock();
 	baseMesh->setParts(meshParts);
-	baseMesh->setBoundingBox(model::calculateModelBoundingBox(model));
+	baseMesh->setBoundingBox(model.getBoundingBox());
 
 	if (!render::MeshWriter().write(meshResourceStream, baseMesh))
 		return false;

@@ -68,6 +68,7 @@ private:
 	Ref< ui::Container > m_containerMaterials;
 	Ref< ui::DropDown > m_dropMeshType;
 	Ref< ui::CheckBox > m_checkBakeOcclusion;
+	Ref< ui::CheckBox > m_checkGenerateOccluder;
 	Ref< ui::ListView > m_materialShaderList;
 	Ref< ui::ListView > m_materialTextureList;
 	std::wstring m_assetPath;

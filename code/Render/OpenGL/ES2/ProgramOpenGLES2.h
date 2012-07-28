@@ -1,6 +1,7 @@
 #ifndef traktor_render_ProgramOpenGLES2_H
 #define traktor_render_ProgramOpenGLES2_H
 
+#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Render/IProgram.h"
 #include "Render/OpenGL/TypesOpenGL.h"
@@ -20,7 +21,7 @@ namespace traktor
 
 class ContextOpenGLES2;
 class GlslProgram;
-class ITextureBinding;
+class ITexture;
 class ProgramResource;
 class StateCache;
 
@@ -56,7 +57,7 @@ public:
 
 	virtual void setStencilReference(uint32_t stencilReference);
 
-	bool activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull);
+	bool activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull, uint32_t instanceID);
 
 private:
 	struct Uniform
@@ -89,11 +90,12 @@ private:
 	RenderState m_renderState;
 	GLint m_locationTargetSize;
 	GLint m_locationPostTransform;
+	GLint m_locationInstanceID;
 	SmallMap< handle_t, uint32_t > m_parameterMap;			//!< Parameter to data map.
 	std::vector< Uniform > m_uniforms;						//!< Scalar uniforms.
 	std::vector< Sampler > m_samplers;						//!< Samplers.
 	AlignedVector< float > m_uniformData;					//!< Scalar uniform data.
-	AlignedVector< ITextureBinding* > m_textureBindings;	//!< Texture bindings.
+	RefArray< ITexture > m_textures;
 	float m_targetSize[2];
 	
 	ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint program, const ProgramResource* resource);

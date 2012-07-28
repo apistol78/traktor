@@ -106,6 +106,8 @@ private:
 
 	void updateWorldRenderView();
 
+	void constrainCamera();
+
 	Matrix44 getProjectionTransform() const;
 
 	Matrix44 getViewTransform() const;

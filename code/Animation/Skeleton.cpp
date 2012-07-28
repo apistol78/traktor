@@ -15,6 +15,7 @@ int32_t Skeleton::addJoint(Joint* joint)
 {
 	int32_t jointIndex = int32_t(m_joints.size());
 	m_joints.push_back(joint);
+	m_jointMap.clear();
 	return jointIndex;
 }
 
@@ -22,19 +23,28 @@ void Skeleton::removeJoint(Joint* joint)
 {
 	RefArray< Joint >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);
 	m_joints.erase(i);
+	m_jointMap.clear();
 }
 
-bool Skeleton::findJoint(const std::wstring& name, uint32_t& outIndex) const
+bool Skeleton::findJoint(render::handle_t name, uint32_t& outIndex) const
 {
-	for (uint32_t i = 0; i < uint32_t(m_joints.size()); ++i)
+	if (m_jointMap.empty())
 	{
-		if (m_joints[i]->getName() == name)
+		for (uint32_t i = 0; i < uint32_t(m_joints.size()); ++i)
 		{
-			outIndex = i;
-			return true;
+			m_jointMap.insert(
+				render::getParameterHandle(m_joints[i]->getName()),
+				i
+			);
 		}
 	}
-	return false;
+
+	SmallMap< render::handle_t, uint32_t >::const_iterator i = m_jointMap.find(name);
+	if (i == m_jointMap.end())
+		return false;
+
+	outIndex = i->second;
+	return true;
 }
 
 void Skeleton::findChildren(uint32_t index, std::vector< uint32_t >& outChildren) const

@@ -68,7 +68,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 	T_ASSERT (database);
 
-	m_resourceManager = new resource::ResourceManager();
+	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new sound::SoundFactory(database));

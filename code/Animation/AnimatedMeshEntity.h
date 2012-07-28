@@ -56,6 +56,11 @@ public:
 
 	virtual bool supportTechnique(render::handle_t technique) const;
 
+	virtual void precull(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView
+	);
+
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
@@ -67,13 +72,13 @@ public:
 
 	virtual void setTransform(const Transform& transform);
 
-	bool getJointTransform(const std::wstring& jointName, Transform& outTransform) const;
+	bool getJointTransform(render::handle_t jointName, Transform& outTransform) const;
 
-	bool getPoseTransform(const std::wstring& jointName, Transform& outTransform) const;
+	bool getPoseTransform(render::handle_t jointName, Transform& outTransform) const;
 
-	bool getSkinTransform(const std::wstring& jointName, Transform& outTransform) const;
+	bool getSkinTransform(render::handle_t jointName, Transform& outTransform) const;
 
-	bool setPoseTransform(const std::wstring& jointName, const Transform& transform, bool inclusive);
+	bool setPoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive);
 
 	const resource::Proxy< Skeleton >& getSkeleton() const { return m_skeleton; }
 

@@ -58,6 +58,7 @@ public:
 	RenderType renderType;
 	float viewNearZ;
 	float viewFarZ;
+	bool occlusionCullingEnabled;
 	bool depthPassEnabled;
 	bool shadowsEnabled;
 	ShadowProjection shadowsProjection;

@@ -27,6 +27,7 @@ class RenderContext;
 
 class Entity;
 class IEntityRenderer;
+class IWorldCulling;
 class IWorldRenderPass;
 class WorldEntityRenderers;
 class WorldRenderView;
@@ -39,16 +40,26 @@ class T_DLLCLASS WorldContext : public Object
 	T_RTTI_CLASS;
 
 public:
-	WorldContext(WorldEntityRenderers* entityRenderers);
+	WorldContext(
+		WorldEntityRenderers* entityRenderers,
+		IWorldCulling* culling
+	);
+
+	void clear();
+
+	void precull(WorldRenderView& worldRenderView, Entity* entity);
 
 	void build(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass, Entity* entity);
 
 	void flush(WorldRenderView& worldRenderView, IWorldRenderPass& worldRenderPass);
 
-	render::RenderContext* getRenderContext() { return m_renderContext.ptr(); }
+	IWorldCulling* getCulling() const { return m_culling; }
+
+	render::RenderContext* getRenderContext() const { return m_renderContext; }
 
 private:
 	Ref< WorldEntityRenderers > m_entityRenderers;
+	Ref< IWorldCulling > m_culling;
 	Ref< render::RenderContext > m_renderContext;
 	const TypeInfo* m_lastEntityType;
 	IEntityRenderer* m_lastEntityRenderer;

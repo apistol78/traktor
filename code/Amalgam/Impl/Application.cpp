@@ -156,7 +156,7 @@ bool Application::create(
 	// Resource
 	T_DEBUG(L"Creating resource server...");
 	m_resourceServer = new ResourceServer();
-	if (!m_resourceServer->create())
+	if (!m_resourceServer->create(settings))
 		return false;
 
 	// Input

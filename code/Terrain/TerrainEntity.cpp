@@ -13,7 +13,9 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainSurfaceCache.h"
+#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
+#include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
 namespace traktor
@@ -111,7 +113,7 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 }
 
 void TerrainEntity::render(
-	render::RenderContext* renderContext,
+	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
 	world::IWorldRenderPass& worldRenderPass
 )
@@ -338,7 +340,7 @@ void TerrainEntity::render(
 			// Update surface cache.
 			render::RenderBlock* renderBlock = 0;
 			m_surfaceCache->get(
-				renderContext,
+				worldContext.getRenderContext(),
 				m_terrain,
 				-worldExtent * Scalar(0.5f),
 				worldExtent,
@@ -353,7 +355,7 @@ void TerrainEntity::render(
 
 			// Queue render block.
 			if (renderBlock)
-				renderContext->draw(render::RfOpaque, renderBlock);
+				worldContext.getRenderContext()->draw(render::RfOpaque, renderBlock);
 
 			// Queue patch instance.
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
@@ -378,16 +380,16 @@ void TerrainEntity::render(
 	{
 		Patch& patch = m_patches[i->patchId];
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
+		render::SimpleRenderBlock* renderBlock = worldContext.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
 
 		renderBlock->distance = i->distance;
 		renderBlock->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams = worldContext.getRenderContext()->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
 		renderBlock->vertexBuffer = m_vertexBuffer;
 		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
 
-		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
 		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
 
 		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
@@ -405,9 +407,9 @@ void TerrainEntity::render(
 		else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
 			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastPatchLod]);
 
-		renderBlock->programParams->endParameters(renderContext);
+		renderBlock->programParams->endParameters(worldContext.getRenderContext());
 
-		renderContext->draw(render::RfOpaque, renderBlock);
+		worldContext.getRenderContext()->draw(render::RfOpaque, renderBlock);
 	}
 
 #else
@@ -418,16 +420,16 @@ void TerrainEntity::render(
 		Patch& patch = m_patches[i->patchId];
 		const Vector4& patchOrigin = i->patchOrigin;
 
-		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Terrain patch");
+		render::SimpleRenderBlock* renderBlock = worldContext.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
 
 		renderBlock->distance = i->distance;
 		renderBlock->program = program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+		renderBlock->programParams = worldContext.getRenderContext()->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
 		renderBlock->vertexBuffer = patch.vertexBuffer;
 		renderBlock->primitives = &m_primitives[patch.lastPatchLod];
 
-		renderBlock->programParams->beginParameters(renderContext);
+		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
 		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
 		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
 		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
@@ -444,9 +446,9 @@ void TerrainEntity::render(
 		else if (m_visualizeMode == TerrainEntityData::VmPatchLod)
 			renderBlock->programParams->setVectorParameter(m_handlePatchLodColor, c_lodColor[patch.lastPatchLod]);
 
-		renderBlock->programParams->endParameters(renderContext);
+		renderBlock->programParams->endParameters(worldContext.getRenderContext());
 
-		renderContext->draw(render::RfOpaque, renderBlock);
+		worldContext.getRenderContext()->draw(render::RfOpaque, renderBlock);
 	}
 
 #endif

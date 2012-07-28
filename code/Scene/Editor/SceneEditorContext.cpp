@@ -108,12 +108,7 @@ SceneEditorContext::SceneEditorContext(
 ,	m_time(0.0f)
 {
 	for (int i = 0; i < sizeof_array(m_cameras); ++i)
-		m_cameras[i] = new Camera(
-			lookAt(
-				Vector4(-4.0f, 4.0f, -4.0f, 1.0f),
-				Vector4(0.0f, 0.0f, 0.0f, 1.0f)
-			)
-		);
+		m_cameras[i] = new Camera();
 }
 
 SceneEditorContext::~SceneEditorContext()
@@ -230,6 +225,11 @@ Camera* SceneEditorContext::getCamera(int index) const
 void SceneEditorContext::setFollowEntityAdapter(EntityAdapter* followEntityAdapter)
 {
 	m_followEntityAdapter = followEntityAdapter;
+}
+
+void SceneEditorContext::setLookAtEntityAdapter(EntityAdapter* lookAtEntityAdapter)
+{
+	m_lookAtEntityAdapter = lookAtEntityAdapter;
 }
 
 void SceneEditorContext::setPlaying(bool playing)

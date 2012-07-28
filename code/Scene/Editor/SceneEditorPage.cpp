@@ -110,7 +110,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	physicsManager->setGravity(Vector4(0.0f, -9.81f, 0.0f, 0.0f));
 
 	// Create resource manager.
-	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager();
+	Ref< resource::IResourceManager > resourceManager = new resource::ResourceManager(true);
 
 	// Create editor context.
 	m_context = new SceneEditorContext(
@@ -335,7 +335,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		Camera* camera = m_context->getCamera(viewIndex);
 		T_ASSERT (camera);
 
-		Matrix44 Mworld = camera->getCurrentWorld() * translate(0.0f, 0.0f, 4.0f);
+		Matrix44 Mworld = camera->getWorld() * translate(0.0f, 0.0f, 4.0f);
 		entityAdapter->setTransform(Transform(Mworld.translation()));
 
 		// Finally add adapter to parent group.
@@ -826,14 +826,11 @@ bool SceneEditorPage::updateLookAtEntity()
 		RefArray< EntityAdapter > selectedEntities;
 		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
 		{
-			Vector4 lookAtPosition = selectedEntities[0]->getTransform().translation().xyz1();
-			for (int32_t i = 0; i < 4; ++i)
-				m_context->getCamera(i)->enterLookAt(lookAtPosition);
+			m_context->setLookAtEntityAdapter(selectedEntities[0]);
 			return true;
 		}
 	}
-	for (int32_t i = 0; i < 4; ++i)
-		m_context->getCamera(i)->enterFreeLook();
+	m_context->setLookAtEntityAdapter(0);
 	return true;
 }
 

@@ -23,6 +23,14 @@ const TypeInfoSet WeatherEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void WeatherEntityRenderer::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::Entity* entity
+)
+{
+}
+
 void WeatherEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

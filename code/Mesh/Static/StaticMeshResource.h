@@ -41,6 +41,8 @@ public:
 		bool serialize(ISerializer& s);
 	};
 
+	StaticMeshResource();
+
 	virtual Ref< IMesh > createMesh(
 		const std::wstring& name,
 		IStream* dataStream,
@@ -55,6 +57,8 @@ private:
 	friend class StaticMeshConverter;
 	typedef std::list< Part > parts_t;
 
+	bool m_haveOccluderMesh;
+	bool m_haveRenderMesh;
 	resource::Id< render::Shader > m_shader;
 	std::map< std::wstring, parts_t > m_parts;
 };

@@ -1,5 +1,5 @@
-#include "Model/Formats/ModelFormat.h"
 #include "Core/Misc/String.h"
+#include "Model/ModelFormat.h"
 
 namespace traktor
 {

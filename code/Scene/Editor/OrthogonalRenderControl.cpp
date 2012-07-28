@@ -536,7 +536,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 				continue;
 
 			m_primitiveRenderer->pushView(view);
-			m_primitiveRenderer->pushWorld(camera->getCurrentWorld());
+			m_primitiveRenderer->pushWorld(camera->getWorld());
 
 			m_primitiveRenderer->drawWireAabb(
 				Vector4::origo(),

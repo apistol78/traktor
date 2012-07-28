@@ -121,7 +121,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 		}
 	}
 
-	shader->setTechnique(L"Default");
+	shader->setTechnique(getParameterHandle(L"Default"));
 	return shader;
 }
 

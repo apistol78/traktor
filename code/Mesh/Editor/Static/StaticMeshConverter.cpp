@@ -4,17 +4,22 @@
 #include "Core/Math/Half.h"
 #include "Core/Misc/String.h"
 #include "Mesh/Editor/IndexRange.h"
-#include "Mesh/Editor/ModelOptimizations.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/Static/StaticMeshResource.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
+#include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/FlattenDoubleSided.h"
+#include "Model/Operations/SortCacheCoherency.h"
+#include "Model/Operations/SortProjectedArea.h"
+#include "Model/Operations/Triangulate.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
+#include "World/OccluderMesh.h"
+#include "World/OccluderMeshWriter.h"
 
 namespace traktor
 {
@@ -40,6 +45,7 @@ Ref< IMeshResource > StaticMeshConverter::createResource() const
 
 bool StaticMeshConverter::convert(
 	const RefArray< model::Model >& models,
+	const model::Model* occluderModel,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
@@ -51,22 +57,63 @@ bool StaticMeshConverter::convert(
 	model::Model model = *models[0];
 
 	log::info << L"Triangulating model..." << Endl;
-	model::triangulateModel(model);
-
-	log::info << L"Sorting materials..." << Endl;
-	sortMaterialsByProjectedArea(model, false);
+	model::Triangulate().apply(model);
 
 	log::info << L"Sorting indices..." << Endl;
-	model::sortPolygonsCacheCoherent(model);
+	model::SortCacheCoherency().apply(model);
 
 	log::info << L"Calculating tangent bases..." << Endl;
-	model::calculateModelTangents(model, true);
+	model::CalculateTangents().apply(model);
+
+	log::info << L"Sorting materials..." << Endl;
+	model::SortProjectedArea(false).apply(model);
 
 	log::info << L"Flatten materials..." << Endl;
-	model::flattenDoubleSided(model);
+	model::FlattenDoubleSided().apply(model);
 
-	// Create vertex declaration.
-	log::info << L"Creating mesh..." << Endl;
+	//---------------------------------------
+	// Create occluder mesh.
+
+	if (occluderModel)
+	{
+		log::info << L"Creating occluder mesh..." << Endl;
+
+		Ref< world::OccluderMesh > occluderMesh = new world::OccluderMesh(
+			occluderModel->getVertexCount(),
+			occluderModel->getPolygonCount() * 3
+		);
+
+		float* occluderVertex = occluderMesh->getVertices();
+		for (uint32_t i = 0; i < occluderModel->getVertexCount(); ++i)
+		{
+			const model::Vertex& vertex = occluderModel->getVertex(i);
+			const Vector4& position = occluderModel->getPosition(vertex.getPosition());
+
+			*occluderVertex++ = position.x();
+			*occluderVertex++ = position.y();
+			*occluderVertex++ = position.z();
+			*occluderVertex++ = 1.0f;
+		}
+
+		uint16_t* occluderIndex = occluderMesh->getIndices();
+		for (uint32_t i = 0; i < occluderModel->getPolygonCount(); ++i)
+		{
+			const model::Polygon& polygon = occluderModel->getPolygon(i);
+			T_ASSERT (polygon.getVertexCount() == 3);
+
+			*occluderIndex++ = uint16_t(polygon.getVertex(0));
+			*occluderIndex++ = uint16_t(polygon.getVertex(1));
+			*occluderIndex++ = uint16_t(polygon.getVertex(2));
+		}
+
+		world::OccluderMeshWriter().write(meshResourceStream, occluderMesh);
+	}
+
+
+	//---------------------------------------
+	// Create render mesh.
+
+	log::info << L"Creating render mesh..." << Endl;
 
 	uint32_t vertexSize = render::getVertexSize(vertexElements);
 	T_ASSERT (vertexSize > 0);
@@ -81,7 +128,7 @@ bool StaticMeshConverter::convert(
 	uint32_t vertexBufferSize = uint32_t(model.getVertices().size() * vertexSize);
 	uint32_t indexBufferSize = uint32_t(model.getPolygons().size() * 3 * indexSize);
 
-	Ref< render::Mesh > mesh = render::SystemMeshFactory().createMesh(
+	Ref< render::Mesh > renderMesh = render::SystemMeshFactory().createMesh(
 		vertexElements,
 		vertexBufferSize,
 		useLargeIndices ? render::ItUInt32 : render::ItUInt16,
@@ -89,7 +136,7 @@ bool StaticMeshConverter::convert(
 	);
 
 	// Create vertex buffer.
-	uint8_t* vertex = static_cast< uint8_t* >(mesh->getVertexBuffer()->lock());
+	uint8_t* vertex = static_cast< uint8_t* >(renderMesh->getVertexBuffer()->lock());
 
 	for (std::vector< model::Vertex >::const_iterator i = model.getVertices().begin(); i != model.getVertices().end(); ++i)
 	{
@@ -112,12 +159,12 @@ bool StaticMeshConverter::convert(
 		vertex += vertexSize;
 	}
 
-	mesh->getVertexBuffer()->unlock();
+	renderMesh->getVertexBuffer()->unlock();
 
 	// Create index buffer.
 	std::map< std::wstring, std::vector< IndexRange > > techniqueRanges;
 
-	uint8_t* index = static_cast< uint8_t* >(mesh->getIndexBuffer()->lock());
+	uint8_t* index = static_cast< uint8_t* >(renderMesh->getIndexBuffer()->lock());
 	uint8_t* indexFirst = index;
 
 	for (std::map< std::wstring, std::list< MeshMaterialTechnique > >::const_iterator i = materialTechniqueMap.begin(); i != materialTechniqueMap.end(); ++i)
@@ -163,7 +210,7 @@ bool StaticMeshConverter::convert(
 		}
 	}
 
-	mesh->getIndexBuffer()->unlock();
+	renderMesh->getIndexBuffer()->unlock();
 
 	// Dump index ranges.
 	log::info << L"Index ranges" << Endl;
@@ -233,12 +280,14 @@ bool StaticMeshConverter::convert(
 	for (std::map< std::wstring, StaticMeshResource::parts_t >::iterator i = parts.begin(); i != parts.end(); ++i)
 		i->second.sort(OpaquePartPred());
 
-	mesh->setParts(meshParts);
-	mesh->setBoundingBox(model::calculateModelBoundingBox(model));
+	renderMesh->setParts(meshParts);
+	renderMesh->setBoundingBox(model.getBoundingBox());
 
-	if (!render::MeshWriter().write(meshResourceStream, mesh))
+	if (!render::MeshWriter().write(meshResourceStream, renderMesh))
 		return false;
 
+	checked_type_cast< StaticMeshResource* >(meshResource)->m_haveRenderMesh = true;
+	checked_type_cast< StaticMeshResource* >(meshResource)->m_haveOccluderMesh = bool(occluderModel != 0);
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_shader = resource::Id< render::Shader >(materialGuid);
 	checked_type_cast< StaticMeshResource* >(meshResource)->m_parts = parts;
 

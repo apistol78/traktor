@@ -52,7 +52,7 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 		std::map< std::wstring, int32_t >::const_iterator j = jointMap.find(joint->getName());
 		if (j == jointMap.end())
 		{
-			log::warning << L"No joint named \"" << joint->getName() << L"\" in skinned mesh" << Endl;
+			T_DEBUG(L"No joint named \"" << joint->getName() << L"\" in skinned mesh");
 			jointRemap[i] = -1;
 			continue;
 		}

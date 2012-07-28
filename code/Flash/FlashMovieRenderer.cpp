@@ -205,6 +205,9 @@ void FlashMovieRenderer::renderCharacter(
 	FlashTextInstance* textInstance = dynamic_type_cast< FlashTextInstance* >(characterInstance);
 	if (textInstance)
 	{
+		if (!textInstance->isVisible())
+			return;
+
 		const FlashText* text = textInstance->getText();
 
 		Matrix33 textTransform = transform * textInstance->getTransform() * text->getTextMatrix();
@@ -243,6 +246,9 @@ void FlashMovieRenderer::renderCharacter(
 	FlashEditInstance* editInstance = dynamic_type_cast< FlashEditInstance* >(characterInstance);
 	if (editInstance)
 	{
+		if (!editInstance->isVisible())
+			return;
+
 		const FlashEdit* edit = editInstance->getEdit();
 		const FlashFont* font = movie->getFont(edit->getFontId());
 		if (!font)

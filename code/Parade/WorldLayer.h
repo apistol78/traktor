@@ -84,6 +84,10 @@ public:
 
 	Ref< world::Entity > createEntity(const std::wstring& name, world::IEntitySchema* entitySchema);
 
+	int32_t getEntityIndex(const world::Entity* entity) const;
+
+	world::Entity* getEntityByIndex(int32_t index) const;
+
 	void addEntity(world::Entity* entity);
 
 	void addTransientEntity(world::Entity* entity, float duration);

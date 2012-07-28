@@ -36,6 +36,8 @@ public:
 
 	virtual bool getParticipants(uint64_t lobbyHandle, std::vector< uint64_t >& outUserHandles);
 
+	virtual bool getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const;
+
 	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const;
 
 private:

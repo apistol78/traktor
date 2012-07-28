@@ -61,6 +61,14 @@ void Model::clear(uint32_t clearFlags)
 	}
 }
 
+Aabb3 Model::getBoundingBox() const
+{
+	Aabb3 boundingBox;
+	for (AlignedVector< Vector4 >::const_iterator i = m_positions.items().begin(); i != m_positions.items().end(); ++i)
+		boundingBox.contain(*i);
+	return boundingBox;
+}
+
 uint32_t Model::addMaterial(const Material& material)
 {
 	return addId(m_materials, material);

@@ -8,12 +8,13 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 4, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 5, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtInvalid)
 ,	m_bakeOcclusion(false)
 ,	m_cullDistantFaces(false)
+,	m_generateOccluder(false)
 {
 }
 
@@ -48,6 +49,9 @@ bool MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"cullDistantFaces", m_cullDistantFaces);
+
+	if (s.getVersion() >= 5)
+		s >> Member< bool >(L"generateOccluder", m_generateOccluder);
 
 	return true;
 }

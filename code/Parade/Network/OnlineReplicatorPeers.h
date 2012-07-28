@@ -29,15 +29,19 @@ public:
 
 	virtual void destroy();
 
-	virtual uint32_t getPeerCount() const;
+	virtual void update();
+
+	virtual uint32_t getPeerHandles(std::vector< handle_t >& outPeerHandles) const;
+
+	virtual std::wstring getPeerName(handle_t handle) const;
 
 	virtual bool receiveAnyPending();
 
-	virtual bool receive(void* data, uint32_t size, uint32_t& outFromPeer);
+	virtual bool receive(void* data, uint32_t size, handle_t& outFromHandle);
 
-	virtual bool sendReady(uint32_t peerId);
+	virtual bool sendReady(handle_t handle);
 
-	virtual bool send(uint32_t peerId, const void* data, uint32_t size, bool reliable);
+	virtual bool send(handle_t handle, const void* data, uint32_t size, bool reliable);
 
 private:
 	Ref< online::ISessionManager > m_sessionManager;

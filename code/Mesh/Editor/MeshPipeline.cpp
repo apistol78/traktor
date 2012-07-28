@@ -27,8 +27,10 @@
 #include "Mesh/Editor/Static/StaticMeshConverter.h"
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
-#include "Model/Formats/ModelFormat.h"
+#include "Model/ModelFormat.h"
+#include "Model/Operations/BakeVertexOcclusion.h"
+#include "Model/Operations/CalculateOccluder.h"
+#include "Model/Operations/CullDistantFaces.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -118,7 +120,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 19, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 20, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -273,13 +275,14 @@ bool MeshPipeline::buildOutput(
 		if (m_enableBakeOcclusion && asset->getBakeOcclusion())
 		{
 			log::info << L"Baking occlusion..." << Endl;
-			model::bakeVertexOcclusion(*model);
+			model::BakeVertexOcclusion().apply(*model);
 		}
 
 		if (asset->getCullDistantFaces())
 		{
 			log::info << L"Culling distant faces..." << Endl;
-			model::cullDistantFaces(*model);
+			const Aabb3 viewerRegion(Vector4(-40.0f, -40.0f, -40.0f), Vector4(40.0f, 40.0f, 40.0f));
+			model::CullDistantFaces(viewerRegion).apply(*model);
 		}
 
 		const std::vector< model::Material >& modelMaterials = model->getMaterials();
@@ -292,7 +295,7 @@ bool MeshPipeline::buildOutput(
 		for (std::vector< model::Material >::const_iterator j = modelMaterials.begin(); j != modelMaterials.end(); ++j)
 			materials[j->getName()] = *j;
 
-		boundingBox.contain(model::calculateModelBoundingBox(*model));
+		boundingBox.contain(model->getBoundingBox());
 		polygonCount += model->getPolygonCount();
 	}
 
@@ -509,6 +512,20 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
+	// Generate occluder model.
+	Ref< model::Model > occluderModel;
+	if (asset->getGenerateOccluder())
+	{
+		log::info << L"Creating occluder model..." << Endl;
+
+		occluderModel = new model::Model(*models[0]);
+		if (!model::CalculateOccluder().apply(*occluderModel))
+		{
+			log::error << L"Mesh pipeline failed; unable to generate occluder" << Endl;
+			return false;
+		}
+	}
+
 	// Create mesh converter.
 	Ref< IMeshConverter > converter;
 	switch (asset->getMeshType())
@@ -579,6 +596,7 @@ bool MeshPipeline::buildOutput(
 	// Convert mesh asset.
 	if (!converter->convert(
 		models,
+		occluderModel,
 		materialGuid,
 		materialTechniqueMap,
 		vertexElements,

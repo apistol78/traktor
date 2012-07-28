@@ -19,21 +19,30 @@ namespace traktor
 Transform animation_AnimatedMeshEntity_getJointTransform(animation::AnimatedMeshEntity* this_, const std::wstring& boneName)
 {
 	Transform transform;
-	this_->getJointTransform(boneName, transform);
+	this_->getJointTransform(
+		render::getParameterHandle(boneName),
+		transform
+	);
 	return transform;
 }
 
 Transform animation_AnimatedMeshEntity_getPoseTransform(animation::AnimatedMeshEntity* this_, const std::wstring& boneName)
 {
 	Transform transform;
-	this_->getPoseTransform(boneName, transform);
+	this_->getPoseTransform(
+		render::getParameterHandle(boneName),
+		transform
+	);
 	return transform;
 }
 
 Transform animation_AnimatedMeshEntity_getSkinTransform(animation::AnimatedMeshEntity* this_, const std::wstring& boneName)
 {
 	Transform transform;
-	this_->getSkinTransform(boneName, transform);
+	this_->getSkinTransform(
+		render::getParameterHandle(boneName),
+		transform
+	);
 	return transform;
 }
 
