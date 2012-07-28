@@ -2,6 +2,7 @@
 #include "Online/ISessionManager.h"
 #include "Parade/AudioLayer.h"
 #include "Parade/Stage.h"
+#include "Parade/StageLoader.h"
 #include "Parade/VideoLayer.h"
 #include "Parade/WorldLayer.h"
 #include "Parade/Classes/ParadeClasses.h"
@@ -35,14 +36,14 @@ public:
 	{
 	}
 
-	virtual void notify(Replicator* replicator, float eventTime, uint32_t eventId, uint32_t peerId, const Object* eventObject)
+	virtual void notify(Replicator* replicator, float eventTime, uint32_t eventId, handle_t peerHandle, const Object* eventObject)
 	{
 		script::Any argv[] =
 		{
 			script::Any(replicator),
 			script::Any(eventTime),
 			script::Any(int32_t(eventId)),
-			script::Any(int32_t(peerId)),
+			script::Any(int32_t(peerHandle)),
 			script::Any((Object*)eventObject)
 		};
 		if (m_delegate)
@@ -93,6 +94,8 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classStage->addMethod(L"removeAllLayers", &Stage::removeAllLayers);
 	classStage->addMethod(L"findLayer", &Stage::findLayer);
 	classStage->addMethod(L"terminate", &Stage::terminate);
+	classStage->addMethod(L"loadStage", &Stage::loadStage);
+	classStage->addMethod(L"loadStageAsync", &Stage::loadStageAsync);
 	classStage->addMethod(L"gotoStage", &Stage::gotoStage);
 	classStage->addMethod(L"getEnvironment", &Stage::getEnvironment);
 	classStage->addMethod(L"getLayers", &Stage::getLayers);
@@ -114,6 +117,8 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod(L"getEntitiesOf", &WorldLayer::getEntitiesOf);
 	classWorldLayer->addMethod(L"createEntity", &WorldLayer_createEntity1);
 	classWorldLayer->addMethod(L"createEntity", &WorldLayer_createEntity2);
+	classWorldLayer->addMethod(L"getEntityIndex", &WorldLayer::getEntityIndex);
+	classWorldLayer->addMethod(L"getEntityByIndex", &WorldLayer::getEntityByIndex);
 	classWorldLayer->addMethod(L"addEntity", &WorldLayer::addEntity);
 	classWorldLayer->addMethod(L"addTransientEntity", &WorldLayer::addTransientEntity);
 	classWorldLayer->addMethod(L"removeEntity", &WorldLayer::removeEntity);
@@ -123,6 +128,14 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod(L"getViewPosition", &WorldLayer_getViewPosition);
 	classWorldLayer->addMethod(L"getScreenPosition", &WorldLayer_getScreenPosition);
 	scriptManager->registerClass(classWorldLayer);
+
+	Ref< script::AutoScriptClass< StageLoader > > classStageLoader = new script::AutoScriptClass< StageLoader >();
+	classStageLoader->addMethod(L"wait", &StageLoader::wait);
+	classStageLoader->addMethod(L"ready", &StageLoader::ready);
+	classStageLoader->addMethod(L"succeeded", &StageLoader::succeeded);
+	classStageLoader->addMethod(L"failed", &StageLoader::failed);
+	classStageLoader->addMethod(L"get", &StageLoader::get);
+	scriptManager->registerClass(classStageLoader);
 
 	Ref< script::AutoScriptClass< IReplicatableState > > classReplicatableState = new script::AutoScriptClass< IReplicatableState >();
 	classReplicatableState->addMethod(L"extrapolate", &IReplicatableState::extrapolate);
@@ -179,7 +192,10 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod(L"setState", &Replicator::setState);
 	classReplicator->addMethod(L"sendEvent", &Replicator::sendEvent);
 	classReplicator->addMethod(L"broadcastEvent", &Replicator::broadcastEvent);
-	classReplicator->addMethod(L"getMaxPeerId", &Replicator::getMaxPeerId);
+	classReplicator->addMethod(L"getPeerCount", &Replicator::getPeerCount);
+	classReplicator->addMethod(L"getPeerHandle", &Replicator::getPeerHandle);
+	classReplicator->addMethod(L"getPeerName", &Replicator::getPeerName);
+	classReplicator->addMethod(L"isPeerConnected", &Replicator::isPeerConnected);
 	classReplicator->addMethod(L"setGhostObject", &Replicator::setGhostObject);
 	classReplicator->addMethod(L"getGhostObject", &Replicator::getGhostObject);
 	classReplicator->addMethod(L"setGhostOrigin", &Replicator::setGhostOrigin);

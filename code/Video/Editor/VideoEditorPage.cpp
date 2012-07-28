@@ -88,7 +88,7 @@ bool VideoEditorPage::create(ui::Container* parent)
 	if (!m_screenRenderer->create(renderSystem))
 		return false;
 
-	m_resourceManager = new resource::ResourceManager();
+	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(
 		new render::ShaderFactory(m_editor->getOutputDatabase(), renderSystem)
 	);

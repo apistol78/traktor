@@ -123,6 +123,11 @@ std::wstring getParameterNameFromGuid(const Guid& guid)
 	return name;
 }
 
+handle_t getParameterHandleFromGuid(const Guid& guid)
+{
+	return s_handleRegistry.getHandle(getParameterNameFromGuid(guid));
+}
+
 std::wstring getDataUsageName(DataUsage usage)
 {
 	const wchar_t* c_names[] =

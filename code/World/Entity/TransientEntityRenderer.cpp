@@ -15,6 +15,16 @@ const TypeInfoSet TransientEntityRenderer::getEntityTypes() const
 	return TypeInfoSet;
 }
 
+void TransientEntityRenderer::precull(
+	WorldContext& worldContext,
+	WorldRenderView& worldRenderView,
+	Entity* entity
+)
+{
+	if (TransientEntity* transientEntity = checked_type_cast< TransientEntity* >(entity))
+		transientEntity->precull(worldContext, worldRenderView);
+}
+
 void TransientEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,

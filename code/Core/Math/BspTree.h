@@ -56,14 +56,15 @@ public:
 private:
 	struct BspNode : public RefCountImpl< IRefCount >
 	{
-		Plane plane;
+		uint32_t plane;
 		Ref< BspNode > front;
 		Ref< BspNode > back;
 	};
 
+	AlignedVector< Plane > m_planes;
 	Ref< BspNode > m_root;
 
-	Ref< BspNode > recursiveBuild(const AlignedVector< Winding3 >& polygons, const AlignedVector< Plane >& planes);
+	Ref< BspNode > recursiveBuild(AlignedVector< Winding3 >& polygons, std::vector< uint32_t >& planes) const;
 
 	bool inside(const BspNode* node, const Vector4& pt) const;
 
@@ -73,13 +74,14 @@ private:
 	void clip(const BspNode* node, const PolygonType& polygon, AlignedVector< PolygonType >& outClipped) const
 	{
 		Winding3 w = polygon.winding();
+		const Plane& p = m_planes[node->plane];
 
-		int cf = w.classify(node->plane);
+		int cf = w.classify(p);
 		if (cf == Winding3::CfCoplanar)
 		{
 			Plane polygonPlane;
 			if (w.getPlane(polygonPlane))
-				cf = dot3(node->plane.normal(), polygonPlane.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
+				cf = dot3(p.normal(), polygonPlane.normal()) >= 0.0f ? Winding3::CfFront : Winding3::CfBack;
 			else
 				cf = Winding3::CfFront;
 		}
@@ -99,7 +101,7 @@ private:
 		else if (cf == Winding3::CfSpan)
 		{
 			PolygonType f, b;
-			polygon.split(node->plane, f, b);
+			polygon.split(p, f, b);
 			if (f.valid())
 			{
 				if (node->front)

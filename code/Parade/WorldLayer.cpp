@@ -126,6 +126,7 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 		eye
 	);
 
+	// Render world to offscreen target.
 	if (m_worldTarget && m_postProcess)
 	{
 		renderView->begin(m_worldTarget, 0);
@@ -134,12 +135,14 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 		renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
 	}
 
+	// Render world.
 	m_worldRenderer->render(
 		world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 		frame,
 		eye
 	);
 
+	// Process world target and blit to framebuffer.
 	if (m_worldTarget && m_postProcess)
 	{
 		renderView->end();
@@ -209,6 +212,23 @@ Ref< world::Entity > WorldLayer::createEntity(const std::wstring& name, world::I
 	entityBuilder->end();
 
 	return entity;
+}
+
+int32_t WorldLayer::getEntityIndex(const world::Entity* entity) const
+{
+	RefArray< world::Entity > entities;
+	m_scene->getEntitySchema()->getEntities(entities);
+
+	RefArray< world::Entity >::const_iterator i = std::find(entities.begin(), entities.end(), entity);
+	if (i == entities.end())
+		return -1;
+
+	return std::distance< RefArray< world::Entity >::const_iterator >(entities.begin(), i);
+}
+
+world::Entity* WorldLayer::getEntityByIndex(int32_t index) const
+{
+	return m_scene->getEntitySchema()->getEntity(index);
 }
 
 void WorldLayer::addEntity(world::Entity* entity)

@@ -40,6 +40,11 @@ public:
 		float duration
 	);
 
+	void precull(
+		WorldContext& worldContext,
+		WorldRenderView& worldRenderView
+	);
+
 	void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,

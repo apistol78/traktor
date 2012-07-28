@@ -21,6 +21,14 @@ const TypeInfoSet LightEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void LightEntityRenderer::precull(
+	WorldContext& worldContext,
+	WorldRenderView& worldRenderView,
+	Entity* entity
+)
+{
+}
+
 void LightEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,

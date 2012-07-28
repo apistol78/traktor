@@ -22,8 +22,8 @@ bool TextureLinker::link(const ShaderResource::Combination& shaderCombination, I
 		if (!texture)
 			return false;
 
-		std::wstring parameterName = getParameterNameFromGuid(*i);
-		program->setTextureParameter(parameterName, texture);
+		handle_t parameterHandle = getParameterHandleFromGuid(*i);
+		program->setTextureParameter(parameterHandle, texture);
 	}
 	return true;
 }

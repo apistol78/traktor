@@ -62,19 +62,31 @@
 			<item>
 				<first>TexturePipeline.CompressionMethod</first>
 				<second type="traktor.PropertyString">
-					<value>PVRTC</value>
+					<value>None</value>
 				</second>
 			</item>
 			<item>
-				<first>TexturePipeline.CompressionQuality</first>
-				<second type="traktor.PropertyInteger">
-					<value>1</value>
+				<first>ScenePipeline.SuppressDepthPass</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
 				</second>
 			</item>
 			<item>
-				<first>TexturePipeline.SkipMips</first>
-				<second type="traktor.PropertyInteger">
-					<value>2</value>
+				<first>ScenePipeline.SuppressPostProcess</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>ScenePipeline.SuppressPreLit</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>ScenePipeline.SuppressShadows</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
 				</second>
 			</item>
 		</value>

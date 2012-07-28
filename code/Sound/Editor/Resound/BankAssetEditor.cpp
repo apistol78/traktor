@@ -111,7 +111,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 			log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
 	}
 
-	m_resourceManager = new resource::ResourceManager();
+	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(new SoundFactory(
 		m_editor->getOutputDatabase()
 	));

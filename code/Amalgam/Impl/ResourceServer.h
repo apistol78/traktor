@@ -18,7 +18,7 @@ class ResourceServer : public IResourceServer
 	T_RTTI_CLASS;
 
 public:
-	bool create();
+	bool create(const PropertyGroup* settings);
 
 	void destroy();
 

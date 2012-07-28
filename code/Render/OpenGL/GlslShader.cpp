@@ -199,6 +199,7 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 
 #if defined(T_OPENGL_ES2)
 	ss << L"uniform vec4 _gl_targetSize;" << Endl;
+	ss << L"uniform float _gl_instanceID;" << Endl;
 #else
 	ss << L"uniform vec2 _gl_targetSize;" << Endl;
 #endif

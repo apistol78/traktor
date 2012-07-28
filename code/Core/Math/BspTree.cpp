@@ -7,16 +7,21 @@ namespace traktor
 
 bool BspTree::build(const AlignedVector< Winding3 >& polygons)
 {
+	AlignedVector< Winding3 > mutablePolygons = polygons;
+	std::vector< uint32_t > mutablePlanes(polygons.size());
+
 	// Calculate polygon planes.
-	AlignedVector< Plane > planes(polygons.size());
-	for (uint32_t i = 0; i < uint32_t(polygons.size()); ++i)
+	m_planes.resize(mutablePolygons.size());
+	for (uint32_t i = 0; i < uint32_t(mutablePolygons.size()); ++i)
 	{
-		if (!polygons[i].getPlane(planes[i]))
+		if (!mutablePolygons[i].getPlane(m_planes[i]))
 			return false;
+
+		mutablePlanes[i] = i;
 	}
 
 	// Recursively build nodes.
-	m_root = recursiveBuild(polygons, planes);
+	m_root = recursiveBuild(mutablePolygons, mutablePlanes);
 	return bool(m_root != 0);
 }
 
@@ -32,17 +37,19 @@ bool BspTree::inside(const Winding3& w) const
 	return inside(m_root, w);
 }
 
-Ref< BspTree::BspNode > BspTree::recursiveBuild(const AlignedVector< Winding3 >& polygons, const AlignedVector< Plane >& planes)
+Ref< BspTree::BspNode > BspTree::recursiveBuild(AlignedVector< Winding3 >& polygons, std::vector< uint32_t >& planes) const
 {
 	Ref< BspNode > node = new BspNode();
 	node->plane = planes[0];
 
+	const Plane& p = m_planes[node->plane];
+
 	AlignedVector< Winding3 > frontPolygons, backPolygons;
-	AlignedVector< Plane > frontPlanes, backPlanes;
+	std::vector< uint32_t > frontPlanes, backPlanes;
 
 	for (size_t i = 1; i < polygons.size(); ++i)
 	{
-		int cf = polygons[i].classify(node->plane);
+		int cf = polygons[i].classify(p);
 		if (cf == Winding3::CfFront || cf == Winding3::CfCoplanar)
 		{
 			frontPolygons.push_back(polygons[i]);
@@ -58,7 +65,7 @@ Ref< BspTree::BspNode > BspTree::recursiveBuild(const AlignedVector< Winding3 >&
 			T_ASSERT (cf == Winding3::CfSpan);
 			Winding3 f, b;
 			
-			polygons[i].split(node->plane, f, b);
+			polygons[i].split(p, f, b);
 			T_ASSERT (f.points.size() >= 3);
 			T_ASSERT (b.points.size() >= 3);
 
@@ -72,6 +79,11 @@ Ref< BspTree::BspNode > BspTree::recursiveBuild(const AlignedVector< Winding3 >&
 	T_ASSERT (frontPolygons.size() == frontPlanes.size());
 	T_ASSERT (backPolygons.size() == backPlanes.size());
 
+	// Discard input windings here; not used any more and
+	// we don't want an memory explosion.
+	polygons.clear();
+	planes.clear();
+
 	if (!frontPolygons.empty())
 		node->front = recursiveBuild(frontPolygons, frontPlanes);
 	if (!backPolygons.empty())
@@ -82,7 +94,7 @@ Ref< BspTree::BspNode > BspTree::recursiveBuild(const AlignedVector< Winding3 >&
 
 bool BspTree::inside(const BspNode* node, const Vector4& pt) const
 {
-	float d = node->plane.distance(pt);
+	float d = m_planes[node->plane].distance(pt);
 	if (d > FUZZY_EPSILON)
 		return node->front ? inside(node->front, pt) : true;
 	else if (d < -FUZZY_EPSILON)
@@ -101,7 +113,7 @@ bool BspTree::inside(const BspNode* node, const Winding3& w) const
 {
 	bool result = false;
 
-	int cf = w.classify(node->plane);
+	int cf = w.classify(m_planes[node->plane]);
 	if (cf == Winding3::CfFront || cf == Winding3::CfCoplanar)
 		result = node->front ? inside(node->front, w) : true;
 	else if (cf == Winding3::CfBack)
@@ -111,7 +123,7 @@ bool BspTree::inside(const BspNode* node, const Winding3& w) const
 		T_ASSERT (cf == Winding3::CfSpan);
 		Winding3 f, b;
 
-		w.split(node->plane, f, b);
+		w.split(m_planes[node->plane], f, b);
 		T_ASSERT (!f.points.empty());
 		T_ASSERT (!b.points.empty());
 
@@ -123,5 +135,15 @@ bool BspTree::inside(const BspNode* node, const Winding3& w) const
 
 	return result;
 }
+
+//void* BspTree::BspNode::operator new (size_t size)
+//{
+//	return getAllocator()->alloc(size, 16, "BspNode");
+//}
+//
+//void BspTree::BspNode::operator delete (void* ptr)
+//{
+//	getAllocator()->free(ptr);
+//}
 
 }

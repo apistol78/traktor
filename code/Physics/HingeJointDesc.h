@@ -35,6 +35,10 @@ public:
 
 	const Vector4& getAxis() const;
 
+	void setEnableLimits(bool enableLimits);
+
+	bool getEnableLimits() const;
+
 	void setAngles(float minAngle, float maxAngle);
 
 	void getAngles(float& outMinAngle, float& outMaxAngle) const;
@@ -48,6 +52,7 @@ public:
 private:
 	Vector4 m_anchor;
 	Vector4 m_axis;
+	bool m_enableLimits;
 	float m_minAngle;
 	float m_maxAngle;
 	bool m_angularOnly;

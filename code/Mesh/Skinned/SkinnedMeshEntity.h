@@ -33,6 +33,11 @@ public:
 
 	virtual bool supportTechnique(render::handle_t technique) const;
 
+	virtual void precull(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView
+	);
+
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,

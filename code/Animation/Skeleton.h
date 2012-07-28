@@ -2,7 +2,9 @@
 #define traktor_animation_Skeleton_H
 
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -31,7 +33,7 @@ public:
 
 	void removeJoint(Joint* joint);
 
-	bool findJoint(const std::wstring& name, uint32_t& outIndex) const;
+	bool findJoint(render::handle_t name, uint32_t& outIndex) const;
 
 	void findChildren(uint32_t index, std::vector< uint32_t >& outChildren) const;
 
@@ -43,6 +45,7 @@ public:
 
 private:
 	RefArray< Joint > m_joints;
+	mutable SmallMap< render::handle_t, uint32_t > m_jointMap;
 };
 
 	}

@@ -68,6 +68,9 @@ PostProcessStepLuminance::InstanceLuminance::InstanceLuminance(
 :	m_step(step)
 ,	m_shader(shader)
 ,	m_source(source)
+,	m_handleSourceTexture(render::getParameterHandle(L"SourceTexture"))
+,	m_handleSampleOffsets(render::getParameterHandle(L"SampleOffsets"))
+,	m_handleSampleOffsetScale(render::getParameterHandle(L"SampleOffsetScale"))
 {
 	for (int i = 0; i < sizeof_array(m_sampleOffsets); ++i)
 		m_sampleOffsets[i] = sampleOffsets[i];

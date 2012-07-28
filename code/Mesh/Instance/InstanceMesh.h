@@ -32,6 +32,8 @@ class Shader;
 	namespace world
 	{
 
+class OccluderMesh;
+class IWorldCulling;
 class IWorldRenderPass;
 
 	}
@@ -52,7 +54,7 @@ class T_DLLCLASS InstanceMesh : public IMesh
 	T_RTTI_CLASS;
 
 public:
-#if TARGET_OS_IPHONE
+#if TARGET_OS_IPHONE && T_USE_LEGACY_INSTANCING
 	enum { MaxInstanceCount = 4 };		// ES doesn't support 32-bit indices thus we cannot batch enough instances.
 #else
 	enum { MaxInstanceCount = 20 };
@@ -75,6 +77,11 @@ public:
 
 	bool supportTechnique(render::handle_t technique) const;
 	
+	void precull(
+		world::IWorldCulling* worldCulling,
+		const Transform& worldTransform
+	);
+
 	void render(
 		render::RenderContext* renderContext,
 		const world::IWorldRenderPass& worldRenderPass,
@@ -85,7 +92,8 @@ private:
 	friend class InstanceMeshResource;
 
 	resource::Proxy< render::Shader > m_shader;
-	Ref< render::Mesh > m_mesh;
+	Ref< world::OccluderMesh > m_occluderMesh;
+	Ref< render::Mesh > m_renderMesh;
 	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 };
 

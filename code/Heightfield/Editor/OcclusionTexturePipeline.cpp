@@ -24,8 +24,8 @@
 #include "Mesh/MeshEntityData.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
-#include "Model/Formats/ModelFormat.h"
+#include "Model/ModelFormat.h"
+#include "Model/Operations/Triangulate.h"
 #include "Render/Editor/Texture/TextureOutput.h"
 #include "World/Entity/ExternalEntityData.h"
 
@@ -175,7 +175,7 @@ struct TraceTask : public Object
 
 				float o = 1.0f - occluded / float(rayCount);
 
-				Color4f c(o, 0.0f, 0.0f, 1.0f);
+				Color4f c(0.4f + o * 0.6f, 0.0f, 0.0f, 1.0f);
 				occlusion->setPixel(ix - (mnx - c_margin), iz - (mnz - c_margin), c);
 			}
 		}
@@ -184,7 +184,7 @@ struct TraceTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.OcclusionTexturePipeline", 0, OcclusionTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.OcclusionTexturePipeline", 1, OcclusionTexturePipeline, editor::DefaultPipeline)
 
 bool OcclusionTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -304,7 +304,7 @@ bool OcclusionTexturePipeline::buildOutput(
 
 			log::info << L"Generating trace tree..." << Endl;
 
-			model::triangulateModel(*model);
+			model::Triangulate().apply(*model);
 
 			const std::vector< model::Polygon >& polygons = model->getPolygons();
 			const std::vector< model::Vertex >& vertices = model->getVertices();

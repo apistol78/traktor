@@ -2,7 +2,7 @@
 #define traktor_model_ModelFormatFbx_H
 
 #include "Core/Thread/Semaphore.h"
-#include "Model/Formats/ModelFormat.h"
+#include "Model/ModelFormat.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

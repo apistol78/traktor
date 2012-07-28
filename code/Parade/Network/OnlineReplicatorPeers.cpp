@@ -17,7 +17,6 @@ bool OnlineReplicatorPeers::create(
 {
 	m_sessionManager = sessionManager;
 	m_lobby = lobby;
-	m_users = m_lobby->getParticipants();
 	return true;
 }
 
@@ -26,9 +25,32 @@ void OnlineReplicatorPeers::destroy()
 	m_lobby = 0;
 }
 
-uint32_t OnlineReplicatorPeers::getPeerCount() const
+void OnlineReplicatorPeers::update()
 {
+	m_users = m_lobby->getParticipants();
+}
+
+uint32_t OnlineReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
+{
+	outPeerHandles.reserve(m_users.size());
+	for (RefArray< online::IUser >::const_iterator i = m_users.begin(); i != m_users.end(); ++i)
+	{
+		T_ASSERT (*i);
+		outPeerHandles.push_back(handle_t(*i));
+	}
 	return m_users.size();
+}
+
+std::wstring OnlineReplicatorPeers::getPeerName(handle_t handle) const
+{
+	online::IUser* user = reinterpret_cast< online::IUser* >(handle);
+	T_ASSERT (user);
+
+	std::wstring name;
+	if (user->getName(name))
+		return name;
+	else
+		return L"";
 }
 
 bool OnlineReplicatorPeers::receiveAnyPending()
@@ -36,7 +58,7 @@ bool OnlineReplicatorPeers::receiveAnyPending()
 	return m_sessionManager->haveP2PData();
 }
 
-bool OnlineReplicatorPeers::receive(void* data, uint32_t size, uint32_t& outFromPeer)
+bool OnlineReplicatorPeers::receive(void* data, uint32_t size, handle_t& outFromHandle)
 {
 	Ref< online::IUser > fromUser;
 	if (!m_sessionManager->receiveP2PData(data, size, fromUser))
@@ -46,20 +68,22 @@ bool OnlineReplicatorPeers::receive(void* data, uint32_t size, uint32_t& outFrom
 	if (i == m_users.end())
 		return false;
 
-	outFromPeer = std::distance(m_users.begin(), i);
+	outFromHandle = handle_t((*i).ptr());
 	return true;
 }
 
-bool OnlineReplicatorPeers::sendReady(uint32_t peerId)
+bool OnlineReplicatorPeers::sendReady(handle_t handle)
 {
-	return peerId < m_users.size();
+	return true;
 }
 
-bool OnlineReplicatorPeers::send(uint32_t peerId, const void* data, uint32_t size, bool reliable)
+bool OnlineReplicatorPeers::send(handle_t handle, const void* data, uint32_t size, bool reliable)
 {
-	T_ASSERT (peerId < m_users.size());
+	online::IUser* user = reinterpret_cast< online::IUser* >(handle);
+	T_ASSERT (user);
 	T_ASSERT (size < 1200);
-	return m_users[peerId]->sendP2PData(data, size, reliable);
+
+	return user->sendP2PData(data, size, reliable);
 }
 
 	}

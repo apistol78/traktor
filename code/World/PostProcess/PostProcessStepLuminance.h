@@ -58,6 +58,9 @@ public:
 		Ref< const PostProcessStepLuminance > m_step;
 		resource::Proxy< render::Shader > m_shader;
 		render::handle_t m_source;
+		render::handle_t m_handleSourceTexture;
+		render::handle_t m_handleSampleOffsets;
+		render::handle_t m_handleSampleOffsetScale;
 		Vector4 m_sampleOffsets[16];
 	};
 

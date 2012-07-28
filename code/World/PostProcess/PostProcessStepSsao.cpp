@@ -122,6 +122,14 @@ PostProcessStepSsao::InstanceSsao::InstanceSsao(
 ,	m_randomNormals(randomNormals)
 ,	m_handleInputColor(render::getParameterHandle(L"InputColor"))
 ,	m_handleInputDepth(render::getParameterHandle(L"InputDepth"))
+,	m_handleViewEdgeTopLeft(render::getParameterHandle(L"ViewEdgeTopLeft"))
+,	m_handleViewEdgeTopRight(render::getParameterHandle(L"ViewEdgeTopRight"))
+,	m_handleViewEdgeBottomLeft(render::getParameterHandle(L"ViewEdgeBottomLeft"))
+,	m_handleViewEdgeBottomRight(render::getParameterHandle(L"ViewEdgeBottomRight"))
+,	m_handleProjection(render::getParameterHandle(L"Projection"))
+,	m_handleOffsets(render::getParameterHandle(L"Offsets"))
+,	m_handleRandomNormals(render::getParameterHandle(L"RandomNormals"))
+,	m_handleMagicCoeffs(render::getParameterHandle(L"MagicCoeffs"))
 {
 	for (int i = 0; i < sizeof_array(m_offsets); ++i)
 		m_offsets[i] = offsets[i];
@@ -166,14 +174,14 @@ void PostProcessStepSsao::InstanceSsao::render(
 	Vector4 viewEdgeBottomLeft = params.viewFrustum.corners[7];
 	Vector4 viewEdgeBottomRight = params.viewFrustum.corners[6];
 
-	m_shader->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
-	m_shader->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
-	m_shader->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
-	m_shader->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
-	m_shader->setMatrixParameter(L"Projection", params.projection);
-	m_shader->setVectorArrayParameter(L"Offsets", m_offsets, sizeof_array(m_offsets));
-	m_shader->setTextureParameter(L"RandomNormals", m_randomNormals);
-	m_shader->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	m_shader->setVectorParameter(m_handleViewEdgeTopLeft, viewEdgeTopLeft);
+	m_shader->setVectorParameter(m_handleViewEdgeTopRight, viewEdgeTopRight);
+	m_shader->setVectorParameter(m_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
+	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
+	m_shader->setMatrixParameter(m_handleProjection, params.projection);
+	m_shader->setVectorArrayParameter(m_handleOffsets, m_offsets, sizeof_array(m_offsets));
+	m_shader->setTextureParameter(m_handleRandomNormals, m_randomNormals);
+	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{

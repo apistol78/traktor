@@ -4,13 +4,14 @@
 #include "Animation/SkeletonUtils.h"
 #include "Animation/IPoseController.h"
 #include "Animation/Joint.h"
+#include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
-//#define T_USE_UPDATE_JOBS
+#define T_USE_UPDATE_JOBS
 
 namespace traktor
 {
@@ -81,6 +82,13 @@ bool AnimatedMeshEntity::supportTechnique(render::handle_t technique) const
 	return m_mesh->supportTechnique(technique);
 }
 
+void AnimatedMeshEntity::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView
+)
+{
+}
+
 void AnimatedMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
@@ -126,7 +134,7 @@ void AnimatedMeshEntity::update(const UpdateParams& update)
 		m_index = 1 - m_index;
 
 #if defined(T_USE_UPDATE_JOBS)
-		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshEntity, float >(
+		m_updatePoseControllerJob = JobManager::getInstance().add(makeFunctor< AnimatedMeshEntity, int32_t, float >(
 			this,
 			&AnimatedMeshEntity::updatePoseController,
 			m_index,
@@ -154,7 +162,7 @@ void AnimatedMeshEntity::setTransform(const Transform& transform)
 	mesh::MeshEntity::setTransform(transform);
 }
 
-bool AnimatedMeshEntity::getJointTransform(const std::wstring& jointName, Transform& outTransform) const
+bool AnimatedMeshEntity::getJointTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
 
@@ -169,7 +177,7 @@ bool AnimatedMeshEntity::getJointTransform(const std::wstring& jointName, Transf
 	return true;
 }
 
-bool AnimatedMeshEntity::getPoseTransform(const std::wstring& jointName, Transform& outTransform) const
+bool AnimatedMeshEntity::getPoseTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
 
@@ -184,7 +192,7 @@ bool AnimatedMeshEntity::getPoseTransform(const std::wstring& jointName, Transfo
 	return true;
 }
 
-bool AnimatedMeshEntity::getSkinTransform(const std::wstring& jointName, Transform& outTransform) const
+bool AnimatedMeshEntity::getSkinTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
 
@@ -209,7 +217,7 @@ bool AnimatedMeshEntity::getSkinTransform(const std::wstring& jointName, Transfo
 	return true;
 }
 
-bool AnimatedMeshEntity::setPoseTransform(const std::wstring& jointName, const Transform& transform, bool inclusive)
+bool AnimatedMeshEntity::setPoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive)
 {
 	uint32_t index;
 

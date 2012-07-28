@@ -26,6 +26,12 @@ class T_DLLCLASS ClothEntityRenderer : public world::IEntityRenderer
 public:
 	virtual const TypeInfoSet getEntityTypes() const;
 
+	virtual void precull(
+		world::WorldContext& worldContext,
+		world::WorldRenderView& worldRenderView,
+		world::Entity* entity
+	);
+
 	virtual void render(
 		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,

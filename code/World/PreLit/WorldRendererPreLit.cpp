@@ -9,11 +9,12 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
-#include "World/WorldRenderView.h"
-#include "World/WorldEntityRenderers.h"
 #include "World/WorldContext.h"
-#include "World/Entity/IEntityRenderer.h"
+#include "World/WorldCullingSwRaster.h"
+#include "World/WorldEntityRenderers.h"
+#include "World/WorldRenderView.h"
 #include "World/Entity/Entity.h"
+#include "World/Entity/IEntityRenderer.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PreLit/LightRenderer.h"
@@ -324,10 +325,17 @@ bool WorldRendererPreLit::create(
 		}
 	}
 
+	// Create software rastering cullers.
+	if (m_settings.occlusionCullingEnabled)
+	{
+		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
+			i->culling = new WorldCullingSwRaster();
+	}
+
 	// Allocate "gbuffer" context.
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->gbuffer = new WorldContext(entityRenderers);
+			i->gbuffer = new WorldContext(entityRenderers, i->culling);
 	}
 
 	// Allocate "shadow" contexts.
@@ -338,14 +346,14 @@ bool WorldRendererPreLit::create(
 			for (int32_t j = 0; j < m_settings.shadowCascadingSlices; ++j)
 			{
 				for (int32_t k = 0; k < MaxLightCount; ++k)
-					i->slice[j].shadow[k] = new WorldContext(entityRenderers);
+					i->slice[j].shadow[k] = new WorldContext(entityRenderers, 0);
 			}
 		}
 	}
 
 	// Allocate "visual" contexts.
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->visual = new WorldContext(entityRenderers);
+		i->visual = new WorldContext(entityRenderers, i->culling);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
@@ -431,19 +439,26 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 	Frame& f = m_frames[frame];
 
 	// Flush previous frame.
-	if (f.haveGBuffer)
-		f.gbuffer->getRenderContext()->flush();
+	f.gbuffer->clear();
 
 	for (uint32_t i = 0; i < f.lightCount; ++i)
 	{
-		if (f.haveShadows[i])
+		for (int32_t j = 0; j < m_settings.shadowCascadingSlices; ++j)
 		{
-			for (int32_t j = 0; j < m_settings.shadowCascadingSlices; ++j)
-				f.slice[j].shadow[i]->getRenderContext()->flush();
+			if (f.slice[j].shadow[i])
+				f.slice[j].shadow[i]->clear();
 		}
 	}
 
-	f.visual->getRenderContext()->flush();
+	f.visual->clear();
+
+	// Prepare occluders.
+	if (f.culling)
+	{
+		f.culling->beginPrecull(worldRenderView);
+		f.gbuffer->precull(worldRenderView, entity);
+		f.culling->endPrecull();
+	}
 
 	// Build gbuffer context.
 	{

@@ -41,6 +41,7 @@ class IResourceManager;
 	{
 
 class IWorldRenderPass;
+class WorldContext;
 class WorldRenderView;
 
 	}
@@ -82,7 +83,7 @@ public:
 	bool create(resource::IResourceManager* resourceManager, const TerrainEntityData& data);
 
 	void render(
-		render::RenderContext* renderContext,
+		world::WorldContext& worldContext,
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	);

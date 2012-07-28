@@ -3,6 +3,7 @@
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Context/RenderContext.h"
 #include "Render/Mesh/Mesh.h"
+#include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 
 namespace traktor
@@ -38,12 +39,21 @@ InstanceMesh::~InstanceMesh()
 
 const Aabb3& InstanceMesh::getBoundingBox() const
 {
-	return m_mesh->getBoundingBox();
+	return m_renderMesh->getBoundingBox();
 }
 
 bool InstanceMesh::supportTechnique(render::handle_t technique) const
 {
 	return m_parts.find(technique) != m_parts.end();
+}
+
+void InstanceMesh::precull(
+	world::IWorldCulling* worldCulling,
+	const Transform& worldTransform
+)
+{
+	if (m_occluderMesh)
+		worldCulling->placeOccluder(m_occluderMesh, worldTransform);
 }
 
 void InstanceMesh::render(
@@ -65,7 +75,7 @@ void InstanceMesh::render(
 	std::sort(instanceWorld.begin(), instanceWorld.end(), SortInstanceDistance());
 
 	// Calculate bounding box of all instances.
-	Aabb3 boundingBoxLocal = m_mesh->getBoundingBox();
+	Aabb3 boundingBoxLocal = m_renderMesh->getBoundingBox();
 	Aabb3 boundingBoxWorld;
 	for (AlignedVector< instance_distance_t >::const_iterator i = instanceWorld.begin(); i != instanceWorld.end(); ++i)
 	{
@@ -93,7 +103,7 @@ void InstanceMesh::render(
 	Matrix44 boundingBoxCenter = translate(boundingBoxWorld.getCenter());
 	boundingBoxWorld.transform(Transform(-boundingBoxWorld.getCenter()));
 
-	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
+	const std::vector< render::Mesh::Part >& meshParts = m_renderMesh->getParts();
 
 	// Render opaque parts front-to-back.
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
@@ -130,8 +140,8 @@ void InstanceMesh::render(
 			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
 			renderBlock->program = program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->indexBuffer = m_mesh->getIndexBuffer();
-			renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
+			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
+			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
 			renderBlock->primitives = &meshParts[i->meshPart].primitives;
 			renderBlock->count = batchCount;
 
@@ -142,8 +152,8 @@ void InstanceMesh::render(
 			renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
 			renderBlock->program = program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-			renderBlock->indexBuffer = m_mesh->getIndexBuffer();
-			renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
+			renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
+			renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
 			renderBlock->primitive = meshParts[i->meshPart].primitives.type;
 			renderBlock->offset = meshParts[i->meshPart].primitives.offset;
 			renderBlock->count = meshParts[i->meshPart].primitives.count * batchCount;
@@ -208,8 +218,8 @@ void InstanceMesh::render(
 				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
 				renderBlock->program = program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-				renderBlock->indexBuffer = m_mesh->getIndexBuffer();
-				renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
+				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
+				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
 				renderBlock->primitives = &meshParts[i->meshPart].primitives;
 				renderBlock->count = batchCount;
 
@@ -220,8 +230,8 @@ void InstanceMesh::render(
 				renderBlock->distance = instanceWorld[batchOffset + batchCount - 1].second;
 				renderBlock->program = program;
 				renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-				renderBlock->indexBuffer = m_mesh->getIndexBuffer();
-				renderBlock->vertexBuffer = m_mesh->getVertexBuffer();
+				renderBlock->indexBuffer = m_renderMesh->getIndexBuffer();
+				renderBlock->vertexBuffer = m_renderMesh->getVertexBuffer();
 				renderBlock->primitive = meshParts[i->meshPart].primitives.type;
 				renderBlock->offset = meshParts[i->meshPart].primitives.offset;
 				renderBlock->count = meshParts[i->meshPart].primitives.count * batchCount;

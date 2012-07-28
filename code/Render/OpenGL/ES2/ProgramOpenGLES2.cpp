@@ -296,25 +296,9 @@ void ProgramOpenGLES2::setMatrixArrayParameter(handle_t handle, const Matrix44* 
 void ProgramOpenGLES2::setTextureParameter(handle_t handle, ITexture* texture)
 {
 #if !defined(T_OFFLINE_ONLY)
-
 	SmallMap< handle_t, uint32_t >::iterator i = m_parameterMap.find(handle);
-	if (i == m_parameterMap.end())
-		return;
-
-	if (!texture)
-		return;
-
-	Ref< ITexture > resolved = texture->resolve();
-	if (!resolved)
-		return;
-
-	if (SimpleTextureOpenGLES2* st = dynamic_type_cast< SimpleTextureOpenGLES2* >(resolved))
-		m_textureBindings[i->second] = static_cast< ITextureBinding* >(st);
-	else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(resolved))
-		m_textureBindings[i->second] = static_cast< ITextureBinding* >(rt);
-	else
-		m_textureBindings[i->second] = 0;
-	
+	if (i != m_parameterMap.end())
+		m_textures[i->second] = texture;
 #endif
 }
 
@@ -323,7 +307,7 @@ void ProgramOpenGLES2::setStencilReference(uint32_t stencilReference)
 	m_renderState.stencilRef = stencilReference;
 }
 
-bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull)
+bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], float postTransform[4], bool invertCull, uint32_t instanceID)
 {
 #if !defined(T_OFFLINE_ONLY)
 
@@ -376,6 +360,12 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 		T_OGL_SAFE(glUniform4fv(m_locationPostTransform, 1, postTransform));
 	}
 
+	// Update instance id.
+	if (m_locationInstanceID != -1)
+	{
+		T_OGL_SAFE(glUniform1f(m_locationInstanceID, GLfloat(instanceID)));
+	}
+
 	// Bind textures.
 	T_ASSERT (m_samplers.size() <= 8);
 	uint32_t nsamplers = m_samplers.size();
@@ -384,12 +374,23 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 		const Sampler& sampler = m_samplers[i];
 		const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
 
-		ITextureBinding* tb = m_textureBindings[sampler.texture];
-		T_ASSERT (tb);
+		if (!m_textures[sampler.texture])
+			continue;
+
+		Ref< ITexture > resolved = m_textures[sampler.texture]->resolve();
+		if (!resolved)
+			continue;
+
+		ITextureBinding* binding = 0;
+
+		if (SimpleTextureOpenGLES2* st = dynamic_type_cast< SimpleTextureOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(st);
+		else if (RenderTargetOpenGLES2* rt = dynamic_type_cast< RenderTargetOpenGLES2* >(resolved))
+			binding = static_cast< ITextureBinding* >(rt);
 			
-		if (tb)
+		if (binding)
 		{
-			tb->bindSampler(
+			binding->bindSampler(
 				i,
 				samplerState,
 				sampler.locationTexture
@@ -408,6 +409,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 ,	m_program(program)
 ,	m_locationTargetSize(0)
 ,	m_locationPostTransform(0)
+,	m_locationInstanceID(0)
 {
 	const ProgramResourceOpenGL* resourceOpenGL = checked_type_cast< const ProgramResourceOpenGL* >(resource);
 
@@ -417,6 +419,7 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
 	m_locationPostTransform = glGetUniformLocation(m_program, "_gl_postTransform");
+	m_locationInstanceID = glGetUniformLocation(m_program, "_gl_instanceID");
 
 	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
 	const std::vector< std::pair< int32_t, int32_t > >& samplers = resourceOpenGL->getSamplers();
@@ -431,8 +434,8 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
-			m_parameterMap[handle] = m_textureBindings.size();
-			m_textureBindings.push_back(0);
+			m_parameterMap[handle] = m_textures.size();
+			m_textures.push_back(0);
 		}
 		
 		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(stage);

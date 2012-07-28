@@ -1,3 +1,4 @@
+#include <numeric>
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Vector2.h"
@@ -121,6 +122,72 @@ int Winding3::classify(const Plane& plane) const
 
 	T_ASSERT (side[CfFront] && side[CfBack]);
 	return CfSpan;
+}
+
+float Winding3::area() const
+{
+	int32_t n = int32_t(points.size());
+	if (n <= 2)
+		return 0.0f;
+
+	Plane plane;
+	if (!getPlane(plane))
+		return 0.0f;
+
+	float area = 0.0f;
+	int32_t i, j, k;
+
+	Vector4 N = plane.normal();
+	Vector4 A = N.absolute();
+	int32_t coord = majorAxis3(A);
+
+	for (i = 1, j = 2, k = 0; i <= n; i++, j++, k++)
+	{
+		int32_t ii = i % n;
+		int32_t jj = j % n;
+		int32_t kk = k % n;
+
+		switch (coord)
+		{
+		case 0:
+			area += (points[ii].y() * (points[jj].z() - points[kk].z()));
+			break;
+
+		case 1:
+			area += (points[ii].x() * (points[jj].z() - points[kk].z()));
+			break;
+
+		case 2:
+			area += (points[ii].x() * (points[jj].y() - points[kk].y()));
+			break;
+		}
+	}
+
+	float Aln = A.length();
+	switch (coord)
+	{
+	case 0:
+		area *= (Aln / (2.0f * A.x()));
+		break;
+
+	case 1:
+		area *= (Aln / (2.0f * A.y()));
+		break;
+
+	case 2:
+		area *= (Aln / (2.0f * A.z()));
+		break;
+	}
+
+	return area;
+}
+
+Vector4 Winding3::center() const
+{
+	if (!points.empty())
+		return std::accumulate(points.begin(), points.end(), Vector4::zero()) / Scalar(float(points.size()));
+	else
+		return Vector4::origo();
 }
 
 bool Winding3::rayIntersection(

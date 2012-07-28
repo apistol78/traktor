@@ -36,6 +36,13 @@ bool StreamMeshEntity::supportTechnique(render::handle_t technique) const
 	return m_mesh->supportTechnique(technique);
 }
 
+void StreamMeshEntity::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView
+)
+{
+}
+
 void StreamMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

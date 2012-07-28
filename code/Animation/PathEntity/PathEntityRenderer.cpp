@@ -15,6 +15,16 @@ const TypeInfoSet PathEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void PathEntityRenderer::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::Entity* entity
+)
+{
+	PathEntity* pathEntity = checked_type_cast< PathEntity*, false >(entity);
+	pathEntity->precull(worldContext, worldRenderView);
+}
+
 void PathEntityRenderer::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,
@@ -22,8 +32,8 @@ void PathEntityRenderer::render(
 	world::Entity* entity
 )
 {
-	if (PathEntity* pathEntity = dynamic_type_cast< PathEntity* >(entity))
-		pathEntity->render(worldContext, worldRenderView, worldRenderPass);
+	PathEntity* pathEntity = checked_type_cast< PathEntity*, false >(entity);
+	pathEntity->render(worldContext, worldRenderView, worldRenderPass);
 }
 
 void PathEntityRenderer::flush(

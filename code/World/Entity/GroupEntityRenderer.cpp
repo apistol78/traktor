@@ -17,6 +17,19 @@ const TypeInfoSet GroupEntityRenderer::getEntityTypes() const
 	return typeSet;
 }
 
+void GroupEntityRenderer::precull(
+	WorldContext& worldContext,
+	WorldRenderView& worldRenderView,
+	Entity* entity
+)
+{
+	GroupEntity* groupEntity = checked_type_cast< GroupEntity*, false >(entity);
+
+	const RefArray< Entity >& childEntities = groupEntity->getEntities();
+	for (RefArray< Entity >::const_iterator i = childEntities.begin(); i != childEntities.end(); ++i)
+		worldContext.precull(worldRenderView, *i);
+}
+
 void GroupEntityRenderer::render(
 	WorldContext& worldContext,
 	WorldRenderView& worldRenderView,

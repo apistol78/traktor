@@ -5,11 +5,15 @@
 #include "Core/Math/Half.h"
 #include "Core/Misc/String.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
-#include "Mesh/Editor/ModelOptimizations.h"
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Editor/Stream/StreamMeshConverter.h"
 #include "Mesh/Stream/StreamMeshResource.h"
+#include "Model/Model.h"
+#include "Model/Operations/CalculateTangents.h"
+#include "Model/Operations/FlattenDoubleSided.h"
+#include "Model/Operations/SortCacheCoherency.h"
+#include "Model/Operations/SortProjectedArea.h"
+#include "Model/Operations/Triangulate.h"
 #include "Render/IndexBuffer.h"
 #include "Render/VertexBuffer.h"
 #include "Render/Mesh/Mesh.h"
@@ -28,6 +32,7 @@ Ref< IMeshResource > StreamMeshConverter::createResource() const
 
 bool StreamMeshConverter::convert(
 	const RefArray< model::Model >& models,
+	const model::Model* occluderModel,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
@@ -47,20 +52,20 @@ bool StreamMeshConverter::convert(
 	{
 		model::Model model = *models[i];
 
-		log::info << L"Triangulating model " << i << L"..." << Endl;
-		model::triangulateModel(model);
+		log::info << L"Triangulating model..." << Endl;
+		model::Triangulate().apply(model);
 
-		log::info << L"Sorting materials " << i << L"..." << Endl;
-		sortMaterialsByProjectedArea(model, false);
+		log::info << L"Sorting indices..." << Endl;
+		model::SortCacheCoherency().apply(model);
 
-		log::info << L"Sorting indices " << i << L"..." << Endl;
-		model::sortPolygonsCacheCoherent(model);
+		log::info << L"Calculating tangent bases..." << Endl;
+		model::CalculateTangents().apply(model);
 
-		log::info << L"Calculating tangent bases " << i << L"..." << Endl;
-		model::calculateModelTangents(model, true);
+		log::info << L"Sorting materials..." << Endl;
+		model::SortProjectedArea(false).apply(model);
 
-		log::info << L"Flatten materials " << i << L"..." << Endl;
-		model::flattenDoubleSided(model);
+		log::info << L"Flatten materials..." << Endl;
+		model::FlattenDoubleSided().apply(model);
 
 		// Create vertex declaration.
 		log::info << L"Creating mesh " << i << L"..." << Endl;
@@ -154,7 +159,7 @@ bool StreamMeshConverter::convert(
 
 		mesh->setParts(meshParts);
 		mesh->getIndexBuffer()->unlock();
-		mesh->setBoundingBox(model::calculateModelBoundingBox(model));
+		mesh->setBoundingBox(model.getBoundingBox());
 
 		int32_t frameOffset = meshResourceStream->tell();
 

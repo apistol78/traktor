@@ -1,5 +1,5 @@
 
-#define T_XML_PARSER_THREAD 1
+#define T_XML_PARSER_THREAD 0
 
 #include <sstream>
 #include "Core/Io/IStream.h"

@@ -487,6 +487,13 @@ handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
  */
 std::wstring T_DLLCLASS getParameterNameFromGuid(const Guid& guid);
 
+/*! \brief Synthesize parameter handle from guid.
+ *
+ * \param guid Guid to generate parameter name from.
+ * \return Parameter handle.
+ */
+handle_t T_DLLCLASS getParameterHandleFromGuid(const Guid& guid);
+
 /*! \brief Return human readable description of data usage. */
 std::wstring T_DLLCLASS getDataUsageName(DataUsage usage);
 

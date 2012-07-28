@@ -81,6 +81,14 @@ public:
 		Ref< render::ISimpleTexture > m_randomNormals;
 		render::handle_t m_handleInputColor;
 		render::handle_t m_handleInputDepth;
+		render::handle_t m_handleViewEdgeTopLeft;
+		render::handle_t m_handleViewEdgeTopRight;
+		render::handle_t m_handleViewEdgeBottomLeft;
+		render::handle_t m_handleViewEdgeBottomRight;
+		render::handle_t m_handleProjection;
+		render::handle_t m_handleOffsets;
+		render::handle_t m_handleRandomNormals;
+		render::handle_t m_handleMagicCoeffs;
 	};
 
 	virtual Ref< Instance > create(

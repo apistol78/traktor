@@ -44,6 +44,10 @@ public:
 	void split(const Plane& plane, Winding3& outFront, Winding3& outBack) const;
 
 	int classify(const Plane& plane) const;
+
+	float area() const;
+
+	Vector4 center() const;
 	
 	bool rayIntersection(
 		const Vector4& origin,

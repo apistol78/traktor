@@ -24,10 +24,8 @@ class WorldRenderView;
 /*! \brief Entity renderer.
  * \ingroup World
  *
- * Each render:able entity type should have
+ * Each renderable entity type should have
  * a matching EntityRenderer.
- * The entity renderer is responsible of
- * producing render commands from entity instances.
  */
 class T_DLLCLASS IEntityRenderer : public Object
 {
@@ -35,6 +33,17 @@ class T_DLLCLASS IEntityRenderer : public Object
 
 public:
 	virtual const TypeInfoSet getEntityTypes() const = 0;
+
+	/*! \brief Pre-cull pass.
+	 *
+	 * Pre-cull pass is used to setup scene culling
+	 * by adding occluders.
+	 */
+	virtual void precull(
+		WorldContext& worldContext,
+		WorldRenderView& worldRenderView,
+		Entity* entity
+	) = 0;
 
 	/*! \brief Render pass.
 	 *
@@ -49,7 +58,8 @@ public:
 
 	/*! \brief Render flush.
 	 *
-	 * Flush whatever queues that the entity renderer might have used.
+	 * Flush whatever queues that the entity
+	 * renderer might have used.
 	 */
 	virtual void flush(
 		WorldContext& worldContext,

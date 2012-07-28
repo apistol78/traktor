@@ -20,6 +20,24 @@ const TypeInfoSet EntityRendererAdapter::getEntityTypes() const
 	return m_entityRenderer->getEntityTypes();
 }
 
+void EntityRendererAdapter::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView,
+	world::Entity* entity
+)
+{
+	EntityAdapter* entityAdapter = m_cache->begin(entity);
+	//if (!entityAdapter || entityAdapter->isVisible())
+	{
+		m_entityRenderer->precull(
+			worldContext,
+			worldRenderView,
+			entity
+		);
+	}
+	m_cache->end();
+}
+
 void EntityRendererAdapter::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

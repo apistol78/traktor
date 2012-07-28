@@ -163,6 +163,19 @@ void MouseDeviceDi8::readState()
 	HWND hWndActive = GetActiveWindow();
 	ScreenToClient(hWndActive, &m_position);
 
+	RECT rcClient;
+	GetClientRect(hWndActive, &rcClient);
+
+	if (m_position.x < 0)
+		m_position.x = 0;
+	else if (m_position.x > rcClient.right - 1)
+		m_position.x = rcClient.right - 1;
+
+	if (m_position.y < 0)
+		m_position.y = 0;
+	else if (m_position.y > rcClient.bottom - 1)
+		m_position.y = rcClient.bottom - 1;
+
 	m_connected = SUCCEEDED(hr);	
 }
 

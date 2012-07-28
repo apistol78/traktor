@@ -200,6 +200,13 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 		));
 	}
 
+	//glGetFramebufferAttachmentParameteriv(
+	//	GL_FRAMEBUFFER, 
+	//	GL_DEPTH_ATTACHMENT,
+	//	GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME,
+	//	&m_primaryDepth
+	//);
+
 	return true;
 }
 
@@ -212,8 +219,8 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 {
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
 	RenderTargetOpenGLES2* rt = checked_type_cast< RenderTargetOpenGLES2* >(rts->getColorTexture(renderTarget));
-	
-	rt->bind(/*m_primaryTargetSet->getDepthBuffer()*/0);
+
+	rt->bind(/*m_primaryDepth*/0);
 	rt->enter();
 	
 	RenderTargetStack s;
@@ -328,7 +335,7 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 		invertCull = true;
 	}
 
-	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull))
+	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
 		return;
 
 	GLenum primitiveType;
@@ -408,6 +415,131 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 
 void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
+	VertexBufferOpenGLES2* vertexBufferGL = checked_type_cast< VertexBufferOpenGLES2* >(vertexBuffer);
+	IndexBufferOpenGLES2* indexBufferGL = checked_type_cast< IndexBufferOpenGLES2* >(indexBuffer);
+	ProgramOpenGLES2* programGL = checked_type_cast< ProgramOpenGLES2 * >(program);
+
+	vertexBufferGL->activate(m_stateCache);
+
+	float targetSize[2];
+	float postTransform[4];
+	bool invertCull;
+
+	if (m_renderTargetStack.empty())
+	{
+		targetSize[0] = float(getWidth());
+		targetSize[1] = float(getHeight());
+		
+		if (m_context->getLandscape())
+		{
+			postTransform[0] = 0.0f;
+			postTransform[1] = -1.0f;
+			postTransform[2] = 1.0f;
+			postTransform[3] = 0.0f;
+		}
+		else
+		{
+			postTransform[0] = 1.0f;
+			postTransform[1] = 0.0f;
+			postTransform[2] = 0.0f;
+			postTransform[3] = 1.0f;
+		}
+		
+		invertCull = false;
+	}
+	else
+	{
+		const RenderTargetOpenGLES2* rt = m_renderTargetStack.top().renderTarget;
+		targetSize[0] = float(rt->getWidth());
+		targetSize[1] = float(rt->getHeight());
+
+		postTransform[0] = 1.0f;
+		postTransform[1] = 0.0f;
+		postTransform[2] = 0.0f;
+		postTransform[3] = -1.0f;
+		
+		invertCull = true;
+	}
+
+	GLenum primitiveType;
+	GLuint vertexCount;
+
+	switch (primitives.type)
+	{
+	case PtPoints:
+		primitiveType = GL_POINTS;
+		vertexCount = primitives.count;
+		break;
+
+	case PtLineStrip:
+		T_ASSERT_M (0, L"PtLineStrip unsupported");
+		break;
+
+	case PtLines:
+		primitiveType = GL_LINES;
+		vertexCount = primitives.count * 2;
+		break;
+
+	case PtTriangleStrip:
+		primitiveType = GL_TRIANGLE_STRIP;
+		vertexCount = primitives.count + 2;
+		break;
+
+	case PtTriangles:
+		primitiveType = GL_TRIANGLES;
+		vertexCount = primitives.count * 3;
+		break;
+
+	default:
+		T_ASSERT (0);
+	}
+
+	for (uint32_t i = 0; i < instanceCount; ++i)
+	{
+		if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, i))
+			return;
+
+		if (primitives.indexed)
+		{
+			T_ASSERT_M (indexBufferGL, L"No index buffer");
+
+			GLenum indexType = 0;
+			GLint offsetMultiplier = 0;
+
+			switch (indexBufferGL->getIndexType())
+			{
+			case ItUInt16:
+				indexType = GL_UNSIGNED_SHORT;
+				offsetMultiplier = 2;
+				break;
+
+			case ItUInt32:
+				indexType = GL_UNSIGNED_INT;
+				offsetMultiplier = 4;
+				break;
+				
+			default:
+				return;
+			}
+
+			indexBufferGL->activate(m_stateCache);
+
+			T_OGL_SAFE(glDrawElements(
+				primitiveType,
+				vertexCount,
+				indexType,
+				(const GLubyte*)(primitives.offset * offsetMultiplier)
+			));
+		}
+		else
+		{
+			T_OGL_SAFE(glDrawArrays(
+				primitiveType,
+				primitives.offset,
+				vertexCount
+			));
+		}
+	}
 }
 
 void RenderViewOpenGLES2::end()

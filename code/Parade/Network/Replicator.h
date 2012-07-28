@@ -5,6 +5,7 @@
 #include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Parade/Network/ReplicatorTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -21,7 +22,6 @@ namespace traktor
 
 class IReplicatableState;
 class IReplicatorPeers;
-class MessageRecorder;
 class StateProphet;
 
 class T_DLLCLASS Replicator : public Object
@@ -46,7 +46,7 @@ public:
 			Replicator* replicator,
 			float eventTime,
 			uint32_t eventId,
-			uint32_t peerId,
+			handle_t peerHandle,
 			const Object* eventObject
 		) = 0;
 	};
@@ -91,7 +91,7 @@ public:
 
 	/*! \brief Send high priority event to a single peer.
 	 */
-	void sendEvent(uint32_t peerId, const ISerializable* eventObject);
+	void sendEvent(handle_t peerHandle, const ISerializable* eventObject);
 
 	/*! \brief Broadcast high priority event to all peers.
 	 */
@@ -99,25 +99,37 @@ public:
 
 	/*! \brief
 	 */
-	uint32_t getMaxPeerId() const;
+	uint32_t getPeerCount() const;
+
+	/*! \brief
+	 */
+	handle_t getPeerHandle(uint32_t peerIndex) const;
+
+	/*! \brief Get peer name.
+	 */
+	std::wstring getPeerName(handle_t peerHandle) const;
+
+	/*! \brief Check if peer is connected.
+	 */
+	bool isPeerConnected(handle_t peerHandle) const;
 
 	/*! \brief Attach an object to a ghost peer.
 	 *
 	 * This permits attaching user objects to ghost
 	 * peers at anytime.
 	 */
-	void setGhostObject(uint32_t peerId, Object* ghostObject);
+	void setGhostObject(handle_t peerHandle, Object* ghostObject);
 
 	/*! \brief
 	 */
-	Object* getGhostObject(uint32_t peerId) const;
+	Object* getGhostObject(handle_t peerHandle) const;
 
 	/*! \brief Set ghost origin.
 	 *
 	 * Ghost origin is used to determine which frequency
 	 * of transmission to use for each peer.
 	 */
-	void setGhostOrigin(uint32_t peerId, const Vector4& origin);
+	void setGhostOrigin(handle_t peerHandle, const Vector4& origin);
 
 	/*! \brief Get state of ghost peer.
 	 *
@@ -125,45 +137,64 @@ public:
 	 * in order to have a virtually identical
 	 * state as the actual peer.
 	 */
-	Ref< const IReplicatableState > getGhostState(uint32_t peerId) const;
+	Ref< const IReplicatableState > getGhostState(uint32_t peerHandle) const;
 
 	/*! \brief Get network time.
 	 */
 	float getTime() const { return m_time; }
 
 private:
-	struct T_MATH_ALIGN16 GhostPeer
-	{
-		Vector4 origin;
-		Ref< StateProphet > prophet;
-		Ref< Object > object;
-		float timeUntilTx;
-		float lastTime;
-		uint32_t packetCount;
-		float latency;
-	};
-
 	struct Event
 	{
 		float time;
 		uint32_t eventId;
-		uint32_t peerId;
+		handle_t handle;
 		Ref< const ISerializable > object;
 	};
 
+	struct Ghost
+	{
+		Vector4 origin;
+		Ref< StateProphet > prophet;
+		Ref< ISerializable > params;
+		Ref< Object > object;
+	};
+
+	struct Peer
+	{
+		bool established;
+		Ghost* ghost;
+		float timeUntilTx;
+		float lastTime;
+		float latency;
+		uint32_t packetCount;
+
+		Peer()
+		:	established(false)
+		,	ghost(0)
+		,	timeUntilTx(0.0f)
+		,	lastTime(0.0f)
+		,	latency(0.0f)
+		,	packetCount(0)
+		{
+		}
+	};
+
+	Guid m_id;
 	std::vector< const TypeInfo* > m_eventTypes;
-	Ref< MessageRecorder > m_recorder;
 	Ref< IReplicatorPeers > m_replicatorPeers;
 	Ref< const ISerializable > m_joinParams;
 	RefArray< IListener > m_listeners;
 	Vector4 m_origin;
 	Ref< const IReplicatableState > m_state;
-	std::map< uint32_t, GhostPeer* > m_ghostPeers;
+	std::map< handle_t, Peer > m_peers;
 	std::list< Event > m_eventsIn;
 	std::list< Event > m_eventsOut;
 	float m_time;
 
-	void sendIAm(uint32_t peerId);
+	void sendIAm(handle_t peerHandle, uint8_t sequence, const Guid& id);
+
+	void sendBye(handle_t peerHandle);
 };
 
 	}

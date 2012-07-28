@@ -26,6 +26,12 @@ class T_DLLCLASS TransientEntityRenderer : public IEntityRenderer
 public:
 	virtual const TypeInfoSet getEntityTypes() const;
 
+	virtual void precull(
+		WorldContext& worldContext,
+		WorldRenderView& worldRenderView,
+		Entity* entity
+	);
+
 	virtual void render(
 		WorldContext& worldContext,
 		WorldRenderView& worldRenderView,

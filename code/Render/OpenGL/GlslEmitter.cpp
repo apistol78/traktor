@@ -342,6 +342,17 @@ void emitIndexedUniform(GlslContext& cx, IndexedUniform* node)
 	}
 }
 
+void emitInstance(GlslContext& cx, Instance* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+#if !defined(T_OPENGL_ES2)
+	assign(f, out) << L"float(gl_InstanceID);" << Endl;
+#else
+	assign(f, out) << L"_gl_instanceID;" << Endl;
+#endif
+}
+
 void emitInterpolator(GlslContext& cx, Interpolator* node)
 {
 	if (!cx.inFragment())
@@ -1591,6 +1602,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
+	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);

@@ -1,7 +1,7 @@
 #ifndef traktor_model_ModelFormatNmb_H
 #define traktor_model_ModelFormatNmb_H
 
-#include "Model/Formats/ModelFormat.h"
+#include "Model/ModelFormat.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -45,9 +45,19 @@ void InetSimPeers::destroy()
 	safeDestroy(m_peers);
 }
 
-uint32_t InetSimPeers::getPeerCount() const
+void InetSimPeers::update()
 {
-	return m_peers->getPeerCount();
+	m_peers->update();
+}
+
+uint32_t InetSimPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
+{
+	return m_peers->getPeerHandles(outPeerHandles);
+}
+
+std::wstring InetSimPeers::getPeerName(handle_t handle) const
+{
+	return m_peers->getPeerName(handle);
 }
 
 bool InetSimPeers::receiveAnyPending()
@@ -55,17 +65,17 @@ bool InetSimPeers::receiveAnyPending()
 	return m_peers->receiveAnyPending();
 }
 
-bool InetSimPeers::receive(void* data, uint32_t size, uint32_t& outFromPeer)
+bool InetSimPeers::receive(void* data, uint32_t size, handle_t& outFromHandle)
 {
-	return m_peers->receive(data, size, outFromPeer);
+	return m_peers->receive(data, size, outFromHandle);
 }
 
-bool InetSimPeers::sendReady(uint32_t peerId)
+bool InetSimPeers::sendReady(handle_t handle)
 {
 	return true;
 }
 
-bool InetSimPeers::send(uint32_t peerId, const void* data, uint32_t size, bool reliable)
+bool InetSimPeers::send(handle_t handle, const void* data, uint32_t size, bool reliable)
 {
 	if (!reliable && m_packetLossRate >= m_random.nextFloat())
 		return true;
@@ -74,7 +84,7 @@ bool InetSimPeers::send(uint32_t peerId, const void* data, uint32_t size, bool r
 
 	Packet p;
 	p.T = T;
-	p.peerId = peerId;
+	p.handle = handle;
 	p.data = new uint8_t [size];
 	p.size = size;
 	p.reliable = reliable;
@@ -115,7 +125,7 @@ void InetSimPeers::threadTx()
 			while (p.T > m_timer.getElapsedTime())
 				currentThread->sleep(10);
 
-			m_peers->send(p.peerId, p.data, p.size, p.reliable);
+			m_peers->send(p.handle, p.data, p.size, p.reliable);
 
 			delete[] p.data;
 		}

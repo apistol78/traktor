@@ -11,11 +11,12 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HingeJointDesc", 1, HingeJointDesc, JointDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HingeJointDesc", 2, HingeJointDesc, JointDesc)
 
 HingeJointDesc::HingeJointDesc()
 :	m_anchor(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_axis(1.0f, 0.0f, 0.0f, 0.0f)
+,	m_enableLimits(true)
 ,	m_minAngle(0.0f)
 ,	m_maxAngle(0.0f)
 ,	m_angularOnly(false)
@@ -40,6 +41,16 @@ void HingeJointDesc::setAxis(const Vector4& axis)
 const Vector4& HingeJointDesc::getAxis() const
 {
 	return m_axis;
+}
+
+void HingeJointDesc::setEnableLimits(bool enableLimits)
+{
+	m_enableLimits = enableLimits;
+}
+
+bool HingeJointDesc::getEnableLimits() const
+{
+	return m_enableLimits;
 }
 
 void HingeJointDesc::setAngles(float minAngle, float maxAngle)
@@ -68,6 +79,10 @@ bool HingeJointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
+
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"enableLimits", m_enableLimits);
+
 	s >> Member< float >(L"minAngle", m_minAngle, AttributeRange(-PI, PI));
 	s >> Member< float >(L"maxAngle", m_maxAngle, AttributeRange(-PI, PI));
 

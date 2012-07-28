@@ -2,6 +2,8 @@
 #include "Amalgam/Impl/ResourceServer.h"
 #include "Animation/Animation/AnimationFactory.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Flash/FlashMovieResourceFactory.h"
 #include "Heightfield/HeightfieldFactory.h"
 #include "Heightfield/MaterialMaskFactory.h"
@@ -18,9 +20,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ResourceServer", ResourceServer, IResourceServer)
 
-bool ResourceServer::create()
+bool ResourceServer::create(const PropertyGroup* settings)
 {
-	m_resourceManager = new resource::ResourceManager();
+	m_resourceManager = new resource::ResourceManager(settings->getProperty< PropertyBoolean >(L"Resource.Verbose", false));
 	return true;
 }
 

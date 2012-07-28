@@ -54,6 +54,24 @@ bool LodMeshEntity::supportTechnique(render::handle_t technique) const
 	return (!m_lods.empty()) ? m_lods[0]->supportTechnique(technique) : false;
 }
 
+void LodMeshEntity::precull(
+	world::WorldContext& worldContext,
+	world::WorldRenderView& worldRenderView
+)
+{
+	if (m_lods.empty())
+		return;
+
+	Vector4 eyePosition = worldRenderView.getView().inverse().translation();
+	float lodDistance = (m_transform.get().translation() - eyePosition).length();
+
+	if (m_lodCullDistance >= FUZZY_EPSILON && lodDistance >= m_lodCullDistance)
+		return;
+
+	int32_t lod = clamp< int32_t >(int32_t(lodDistance / m_lodDistance), 0, m_lods.size() - 1);
+	worldContext.precull(worldRenderView, m_lods[lod]);
+}
+
 void LodMeshEntity::render(
 	world::WorldContext& worldContext,
 	world::WorldRenderView& worldRenderView,

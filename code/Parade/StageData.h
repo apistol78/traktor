@@ -2,6 +2,7 @@
 #define traktor_parade_StageData_H
 
 #include <map>
+#include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 

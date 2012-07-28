@@ -2,6 +2,7 @@
 #define traktor_parade_IReplicatorPeers_H
 
 #include "Core/Object.h"
+#include "Parade/Network/ReplicatorTypes.h"
 
 namespace traktor
 {
@@ -15,15 +16,19 @@ class IReplicatorPeers : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual uint32_t getPeerCount() const = 0;
+	virtual void update() = 0;
+
+	virtual uint32_t getPeerHandles(std::vector< handle_t >& outPeerHandles) const = 0;
+
+	virtual std::wstring getPeerName(handle_t handle) const = 0;
 
 	virtual bool receiveAnyPending() = 0;
 
-	virtual bool receive(void* data, uint32_t size, uint32_t& outFromPeer) = 0;
+	virtual bool receive(void* data, uint32_t size, handle_t& outFromHandle) = 0;
 
-	virtual bool sendReady(uint32_t peerId) = 0;
+	virtual bool sendReady(handle_t handle) = 0;
 
-	virtual bool send(uint32_t peerId, const void* data, uint32_t size, bool reliable) = 0;
+	virtual bool send(handle_t handle, const void* data, uint32_t size, bool reliable) = 0;
 };
 
 	}

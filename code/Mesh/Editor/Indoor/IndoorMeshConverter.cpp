@@ -14,7 +14,6 @@
 #include "Mesh/Editor/MeshVertexWriter.h"
 #include "Mesh/Indoor/IndoorMeshResource.h"
 #include "Model/Model.h"
-#include "Model/Utilities.h"
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
@@ -525,6 +524,7 @@ Ref< IMeshResource > IndoorMeshConverter::createResource() const
 
 bool IndoorMeshConverter::convert(
 	const RefArray< model::Model >& models,
+	const model::Model* occluderModel,
 	const Guid& materialGuid,
 	const std::map< std::wstring, std::list< MeshMaterialTechnique > >& materialTechniqueMap,
 	const std::vector< render::VertexElement >& vertexElements,
@@ -669,7 +669,7 @@ bool IndoorMeshConverter::convert(
 	/*-----------------------------------------------------------------------*/
 	log::info << L"Creating asset" << Endl;
 
-	mesh->setBoundingBox(model::calculateModelBoundingBox(model));
+	mesh->setBoundingBox(model.getBoundingBox());
 
 	if (!render::MeshWriter().write(meshResourceStream, mesh))
 		return false;
