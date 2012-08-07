@@ -527,7 +527,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 			float farZ = m_settings.viewFarZ;
 
 			const Color4f depthColor(farZ, farZ, farZ, farZ);
-			const Color4f normalColor(0.5f, 0.5f, 0.5f, 0.5f);
+			const Color4f normalColor(0.5f, 0.5f, 0.0f, 0.5f);
 			const Color4f clearColors[] = { depthColor, normalColor };
 
 			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);

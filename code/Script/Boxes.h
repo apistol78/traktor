@@ -118,6 +118,8 @@ public:
 
 	float dot(const Vector4& v) const;
 
+	Vector4 cross(const Vector4& v) const;
+
 	float length() const;
 
 	Vector4 normalized() const;
@@ -260,11 +262,19 @@ public:
 			m_arr[i] = arr[i];
 	}
 
-	int32_t length() const;
+	int32_t size() const;
 
 	void set(int32_t index, Object* object);
 
 	Object* get(int32_t index);
+
+	void pushBack(Object* object);
+
+	void popBack();
+
+	Object* front();
+
+	Object* back();
 
 	template < typename ObjectType >
 	RefArray< ObjectType > unbox() const
@@ -294,7 +304,7 @@ public:
 			m_arr[i] = CastAny< ItemType >::set(arr[i]);
 	}
 
-	int32_t length() const;
+	int32_t size() const;
 
 	void set(int32_t index, const Any& value);
 

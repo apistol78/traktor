@@ -14,6 +14,9 @@
 namespace traktor
 {
 
+/*! \brief Reflected member base class.
+ * \ingroup Core
+ */
 class T_DLLCLASS ReflectionMember : public Object
 {
 	T_RTTI_CLASS;

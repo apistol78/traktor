@@ -65,9 +65,9 @@ void convertKeyPose(
 			else if (*k == L"Xrotation")
 				QlocalOrientation *= Quaternion(Vector4(1.0f, 0.0f, 0.0f, 0.0f), deg2rad(c));
 			else if (*k == L"Yrotation")
-				QlocalOrientation *= Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), deg2rad(c));
+				QlocalOrientation *= Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), deg2rad(-c));
 			else if (*k == L"Zrotation")
-				QlocalOrientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), deg2rad(c));
+				QlocalOrientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), deg2rad(-c));
 		}
 
 		Quaternion Qref = calculateReferenceOrientation(skeleton, jointIndex);
@@ -129,8 +129,6 @@ Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offs
 	const BvhDocument::cv_list_t& cvl = document->getChannelValues();
 	for (BvhDocument::cv_list_t::const_iterator i = cvl.begin(); i != cvl.end(); ++i)
 	{
-		const BvhDocument::cv_t& cv = *i;
-
 		Animation::KeyPose kp;
 		kp.at = at;
 

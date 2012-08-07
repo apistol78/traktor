@@ -13123,7 +13123,9 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>d3d9.lib dxguid.lib dwmapi.lib</item>
+									<item>d3d9.lib</item>
+									<item>dxguid.lib</item>
+									<item>dwmapi.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -13150,7 +13152,9 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries>
-									<item>d3d9.lib dxguid.lib dwmapi.lib</item>
+									<item>d3d9.lib</item>
+									<item>dxguid.lib</item>
+									<item>dwmapi.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -13167,9 +13171,15 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>NOMINMAX</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>d3d9.lib</item>
+									<item>dxguid.lib</item>
+									<item>dwmapi.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -13185,9 +13195,16 @@
 								<definitions>
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>NOMINMAX</item>
+									<item>_SECURE_SCL=0</item>
 								</definitions>
 								<libraryPaths/>
-								<libraries/>
+								<libraries>
+									<item>d3d9.lib</item>
+									<item>dxguid.lib</item>
+									<item>dwmapi.lib</item>
+								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
 							</item>
@@ -13348,6 +13365,8 @@
 											<definitions>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
+												<item>_CRT_SECURE_NO_DEPRECATE</item>
+												<item>NOMINMAX</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries>
@@ -13370,6 +13389,9 @@
 											<definitions>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
+												<item>_CRT_SECURE_NO_DEPRECATE</item>
+												<item>NOMINMAX</item>
+												<item>_SECURE_SCL=0</item>
 											</definitions>
 											<libraryPaths/>
 											<libraries>
@@ -13653,6 +13675,9 @@
 														<definitions>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
+															<item>_CRT_SECURE_NO_DEPRECATE</item>
+															<item>NOMINMAX</item>
+															<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -13672,6 +13697,10 @@
 														<definitions>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
+															<item>_CRT_SECURE_NO_DEPRECATE</item>
+															<item>NOMINMAX</item>
+															<item>_SECURE_SCL=0</item>
+															<item>ANGLE_USE_NEW_PREPROCESSOR=1</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -14164,6 +14193,8 @@
 														<definitions>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+															<item>NOMINMAX</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -14182,6 +14213,9 @@
 														<definitions>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
+															<item>_CRT_SECURE_NO_WARNINGS</item>
+															<item>NOMINMAX</item>
+															<item>_SECURE_SCL=0</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -14299,12 +14333,12 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpDebug</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>_DEBUG</item>
+															<item>_CRT_SECURE_NO_DEPRECATE</item>
+															<item>NOMINMAX</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -14316,12 +14350,13 @@
 														<targetFormat>TfStaticLibrary</targetFormat>
 														<targetProfile>TpRelease</targetProfile>
 														<precompiledHeader/>
-														<includePaths>
-															<item>$(TRAKTOR_HOME)/code</item>
-														</includePaths>
+														<includePaths/>
 														<definitions>
 															<item>T_STATIC</item>
 															<item>NDEBUG</item>
+															<item>_CRT_SECURE_NO_DEPRECATE</item>
+															<item>NOMINMAX</item>
+															<item>_SECURE_SCL=0</item>
 														</definitions>
 														<libraryPaths/>
 														<libraries/>
@@ -19274,6 +19309,210 @@
 		<item ref="/object/projects/item[54]/dependencies/item[2]/project/dependencies/item/project/dependencies/item/project"/>
 		<item ref="/object/projects/item[54]/dependencies/item[2]/project/dependencies/item/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[54]/dependencies/item[2]/project/dependencies/item/project/dependencies/item[2]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Amalgam.Np</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/npapi-sdk/headers</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_NP_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/npapi-sdk/headers</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_NP_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/npapi-sdk/headers</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_NP_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/npapi-sdk/headers</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_NP_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Np</name>
+					<items>
+						<item type="File">
+							<fileName>Np/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[100]/dependencies/item[8]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Amalgam.Ie</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_IE_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_IE_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_IE_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_AMALGAM_IE_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Ie</name>
+					<items>
+						<item type="File">
+							<fileName>Ie/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[100]/dependencies/item[8]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
 	</projects>
 	<aggregations/>
 </object>

@@ -1,16 +1,19 @@
-#include "Ui/Custom/LogList/LogList.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Core/Misc/Split.h"
+#include "Core/Misc/String.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Drawing/Image.h"
 #include "Ui/Application.h"
-#include "Ui/Clipboard.h"
 #include "Ui/Bitmap.h"
-#include "Ui/ScrollBar.h"
+#include "Ui/Clipboard.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/ScrollBar.h"
+#include "Ui/Custom/LogList/LogList.h"
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Events/MouseEvent.h"
-#include "Drawing/Image.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Io/StringOutputStream.h"
-#include "Core/Misc/Split.h"
 
 // Resources
 #include "Resources/Log.h"
@@ -27,6 +30,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.LogList", LogList, Widget)
 LogList::LogList()
 :	m_itemHeight(0)
 ,	m_filter(LvInfo | LvWarning | LvError)
+,	m_nextThreadIndex(0)
 {
 }
 
@@ -58,14 +62,26 @@ bool LogList::create(Widget* parent, int style)
 
 void LogList::add(LogLevel level, const std::wstring& text)
 {
-	Acquire< Semaphore > lock(m_pendingLock);
-	m_pending.push_back(std::make_pair(level, text));
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
+	
+	Entry e;
+	e.threadId = ThreadManager::getInstance().getCurrentThread()->id();
+	e.logLevel = level;
+	e.logText = text;
+
+	m_pending.push_back(e);
+
+	if (m_threadIndices.find(e.threadId) == m_threadIndices.end())
+		m_threadIndices.insert(std::make_pair(e.threadId, m_nextThreadIndex++));
 }
 
 void LogList::removeAll()
 {
 	m_logFull.clear();
 	m_logFiltered.clear();
+	m_threadIndices.clear();
+	m_nextThreadIndex = 0;
+
 	updateScrollBar();
 	update();
 }
@@ -74,11 +90,13 @@ void LogList::setFilter(uint32_t filter)
 {
 	m_filter = filter;
 	m_logFiltered.clear();
+
 	for (log_list_t::const_iterator i = m_logFull.begin(); i != m_logFull.end(); ++i)
 	{
-		if ((i->first & m_filter) != 0)
+		if ((i->logLevel & m_filter) != 0)
 			m_logFiltered.push_back(*i);
 	}
+
 	updateScrollBar();
 	update();
 }
@@ -93,8 +111,8 @@ bool LogList::copyLog(uint32_t filter)
 	StringOutputStream ss;
 	for (log_list_t::iterator i = m_logFull.begin(); i != m_logFull.end(); ++i)
 	{
-		if ((i->first & filter) != 0)
-			ss << i->second << Endl;
+		if ((i->logLevel & filter) != 0)
+			ss << i->logText << Endl;
 	}
 	return Application::getInstance()->getClipboard()->setText(ss.str());
 }
@@ -122,7 +140,8 @@ void LogList::eventPaint(Event* event)
 	PaintEvent* paintEvent = checked_type_cast< PaintEvent* >(event);
 	Canvas& canvas = paintEvent->getCanvas();
 
-	const Color4ub c_color[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 200), Color4ub(255, 200, 200) };
+	const Color4ub c_levelColors[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 200), Color4ub(255, 200, 200) };
+	const Color4ub c_threadColors[] = { Color4ub(255, 255, 255), Color4ub(255, 255, 230), Color4ub(240, 240, 255), Color4ub(230, 255, 255) };
 
 	// Get inner rectangle, adjust for scrollbar.
 	Rect inner = getInnerRect();
@@ -145,26 +164,29 @@ void LogList::eventPaint(Event* event)
 
 	for (; i != m_logFiltered.end(); ++i)
 	{
+		uint32_t threadIndex = m_threadIndices[i->threadId];
+		Color4ub backgroundColor = c_threadColors[threadIndex % sizeof_array(c_threadColors)];
+
 		Size iconSize(m_icons->getSize().cy, m_icons->getSize().cy);
-		switch (i->first)
+		switch (i->logLevel)
 		{
 		case LvInfo:
-			canvas.setBackground(c_color[0]);
+			canvas.setBackground(backgroundColor * c_levelColors[0]);
 			canvas.fillRect(rc);
 			canvas.drawBitmap(rc.getTopLeft(), Point(0, 0), iconSize, m_icons, BmAlpha);
 			break;
 		case LvWarning:
-			canvas.setBackground(c_color[1]);
+			canvas.setBackground(backgroundColor * c_levelColors[1]);
 			canvas.fillRect(rc);
 			canvas.drawBitmap(rc.getTopLeft(), Point(iconSize.cx, 0), iconSize, m_icons, BmAlpha);
 			break;
 		case LvError:
-			canvas.setBackground(c_color[2]);
+			canvas.setBackground(backgroundColor * c_levelColors[2]);
 			canvas.fillRect(rc);
 			canvas.drawBitmap(rc.getTopLeft(), Point(2 * iconSize.cx, 0), iconSize, m_icons, BmAlpha);
 			break;
 		default:
-			canvas.setBackground(c_color[0]);
+			canvas.setBackground(backgroundColor * c_levelColors[0]);
 			canvas.fillRect(rc);
 			break;
 		}
@@ -172,23 +194,26 @@ void LogList::eventPaint(Event* event)
 		Rect textRect(rc.left + iconSize.cx, rc.top, rc.right, rc.bottom);
 		canvas.setForeground(Color4ub(0, 0, 0));
 
+		canvas.drawText(textRect, toString(threadIndex), AnLeft, AnCenter);
+		textRect.left += 16;
+
 		size_t s = 0;
-		while (s < i->second.length())
+		while (s < i->logText.length())
 		{
-			size_t e1 = i->second.find_first_not_of('\t', s);
-			if (e1 == i->second.npos)
+			size_t e1 = i->logText.find_first_not_of('\t', s);
+			if (e1 == i->logText.npos)
 				break;
 
 			textRect.left += int(e1 - s) * 8 * 4;
 
-			size_t e2 = i->second.find_first_of('\t', e1);
-			if (e2 == i->second.npos)
-				e2 = i->second.length();
+			size_t e2 = i->logText.find_first_of('\t', e1);
+			if (e2 == i->logText.npos)
+				e2 = i->logText.length();
 
 			if (e2 <= e1)
 				break;
 
-			std::wstring text = i->second.substr(e1, e2 - e1);
+			std::wstring text = i->logText.substr(e1, e2 - e1);
 
 			canvas.drawText(textRect, text, AnLeft, AnCenter);
 
@@ -235,7 +260,7 @@ void LogList::eventScroll(Event* event)
 void LogList::eventTimer(Event* event)
 {
 	{
-		Acquire< Semaphore > lock(m_pendingLock);
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
 
 		if (m_pending.empty())
 			return;
@@ -243,7 +268,7 @@ void LogList::eventTimer(Event* event)
 		for (log_list_t::const_iterator i = m_pending.begin(); i != m_pending.end(); ++i)
 		{
 			m_logFull.push_back(*i);
-			if ((i->first & m_filter) != 0)
+			if ((i->logLevel & m_filter) != 0)
 				m_logFiltered.push_back(*i);
 		}
 

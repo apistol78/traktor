@@ -272,7 +272,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 			desc.multiSample = m_multiSample;
 			desc.createDepthStencil = false;
 			desc.usingPrimaryDepthStencil = true;
-			desc.targets[0].format = m_postProcess->requireHighRange() ? render::TfR16G16B16A16F : render::TfR8G8B8A8;
+			desc.targets[0].format = m_postProcess->requireHighRange() ? render::TfR11G11B10F : render::TfR8G8B8A8;
 			m_renderTarget =  m_context->getRenderSystem()->createRenderTargetSet(desc);
 		}
 

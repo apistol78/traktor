@@ -25,7 +25,7 @@ DWORD WINAPI threadProc(LPVOID lparam)
 
 	}
 
-Thread::Thread(Functor* functor, const std::wstring& name, int hardwareCore)
+Thread::Thread(Functor* functor, const std::wstring& name, int32_t hardwareCore)
 :	m_handle(0)
 ,	m_id(0)
 ,	m_stopped(false)
@@ -85,12 +85,12 @@ bool Thread::start(Priority priority)
 	return bool(m_handle != 0);
 }
 
-bool Thread::wait(int timeout)
+bool Thread::wait(int32_t timeout)
 {
 	return bool(WaitForSingleObject(m_handle, (timeout < 0) ? INFINITE : timeout) == WAIT_OBJECT_0);
 }
 
-bool Thread::stop(int timeout)
+bool Thread::stop(int32_t timeout)
 {
 	m_stopped = true;
 	return wait(timeout);

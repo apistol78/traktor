@@ -8,7 +8,7 @@ namespace traktor
 {
 
 ThreadManager::ThreadManager()
-:	m_threadBase(new Thread(0, L"Base", -1))
+:	m_threadBase(new Thread(0, L"Main", -1))
 {
 }
 
@@ -34,7 +34,7 @@ ThreadManager& ThreadManager::getInstance()
 
 Thread* ThreadManager::getCurrentThread()
 {
-	Acquire< CriticalSection > scopeAcquire(m_threadsLock);
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
 
 	Thread* current = 0;
 	for (std::vector< Thread* >::iterator i = m_threads.begin(); i != m_threads.end(); ++i)
@@ -59,7 +59,7 @@ void ThreadManager::destroy()
 
 Thread* ThreadManager::create(Functor* functor, const std::wstring& name, int hardwareCore)
 {
-	Acquire< CriticalSection > scopeAcquire(m_threadsLock);
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
 	Thread* thread = new Thread(functor, name, hardwareCore);
 	m_threads.push_back(thread);
 	return thread;
@@ -67,7 +67,7 @@ Thread* ThreadManager::create(Functor* functor, const std::wstring& name, int ha
 
 void ThreadManager::destroy(Thread* thread)
 {
-	Acquire< CriticalSection > scopeAcquire(m_threadsLock);
+	T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_threadsLock);
 	std::vector< Thread* >::iterator i = std::find(m_threads.begin(), m_threads.end(), thread);
 	if (i != m_threads.end())
 	{

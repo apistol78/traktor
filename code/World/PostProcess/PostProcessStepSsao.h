@@ -59,7 +59,7 @@ public:
 		InstanceSsao(
 			const PostProcessStepSsao* step,
 			const std::vector< Source >& sources,
-			const Vector4 offsets[32],
+			const Vector4 offsets[64],
 			const resource::Proxy< render::Shader >& shader,
 			render::ISimpleTexture* randomNormals
 		);
@@ -76,7 +76,7 @@ public:
 	private:
 		Ref< const PostProcessStepSsao > m_step;
 		std::vector< Source > m_sources;
-		Vector4 m_offsets[32];
+		Vector4 m_offsets[64];
 		resource::Proxy< render::Shader > m_shader;
 		Ref< render::ISimpleTexture > m_randomNormals;
 		render::handle_t m_handleInputColor;

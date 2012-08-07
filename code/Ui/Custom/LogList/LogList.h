@@ -8,9 +8,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -56,7 +56,14 @@ public:
 	virtual Size getPreferedSize() const;
 
 private:
-	typedef std::list< std::pair< LogLevel, std::wstring > > log_list_t;
+	struct Entry
+	{
+		uint32_t threadId;
+		LogLevel logLevel;
+		std::wstring logText;
+	};
+
+	typedef std::list< Entry > log_list_t;
 
 	Ref< ScrollBar > m_scrollBar;
 	Ref< Bitmap > m_icons;
@@ -64,8 +71,10 @@ private:
 	Semaphore m_pendingLock;
 	log_list_t m_logFull;
 	log_list_t m_logFiltered;
+	std::map< uint32_t, uint32_t > m_threadIndices;
 	int32_t m_itemHeight;
 	uint32_t m_filter;
+	uint32_t m_nextThreadIndex;
 
 	void updateScrollBar();
 

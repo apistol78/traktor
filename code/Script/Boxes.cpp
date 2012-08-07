@@ -108,6 +108,11 @@ float BoxedVector4::dot(const Vector4& v) const
 	return dot3(m_value, v);
 }
 
+Vector4 BoxedVector4::cross(const Vector4& v) const
+{
+	return traktor::cross(m_value, v);
+}
+
 float BoxedVector4::length() const
 {
 	return m_value.length();
@@ -269,7 +274,7 @@ BoxedRefArray::BoxedRefArray()
 {
 }
 
-int32_t BoxedRefArray::length() const
+int32_t BoxedRefArray::size() const
 {
 	return int32_t(m_arr.size());
 }
@@ -288,13 +293,33 @@ Object* BoxedRefArray::get(int32_t index)
 		return 0;
 }
 
+void BoxedRefArray::pushBack(Object* object)
+{
+	m_arr.push_back(object);
+}
+
+void BoxedRefArray::popBack()
+{
+	m_arr.pop_back();
+}
+
+Object* BoxedRefArray::front()
+{
+	return m_arr.front();
+}
+
+Object* BoxedRefArray::back()
+{
+	return m_arr.back();
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.StdVector", BoxedStdVector, Object)
 
 BoxedStdVector::BoxedStdVector()
 {
 }
 
-int32_t BoxedStdVector::length() const
+int32_t BoxedStdVector::size() const
 {
 	return int32_t(m_arr.size());
 }
@@ -352,6 +377,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addMethod< Vector4, float >(L"mulf", &BoxedVector4::mul);
 	classBoxedVector4->addMethod< Vector4, float >(L"divf", &BoxedVector4::div);
 	classBoxedVector4->addMethod(L"dot", &BoxedVector4::dot);
+	classBoxedVector4->addMethod(L"cross", &BoxedVector4::cross);
 	classBoxedVector4->addMethod(L"length", &BoxedVector4::length);
 	classBoxedVector4->addMethod(L"normalized", &BoxedVector4::normalized);
 	classBoxedVector4->addMethod(L"neg", &BoxedVector4::neg);
@@ -407,14 +433,18 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	Ref< AutoScriptClass< BoxedRefArray > > classBoxedRefArray = new AutoScriptClass< BoxedRefArray >();
 	classBoxedRefArray->addConstructor();
 	classBoxedRefArray->addConstructor< const RefArray< Object >& >();
-	classBoxedRefArray->addMethod(L"length", &BoxedRefArray::length);
+	classBoxedRefArray->addMethod(L"size", &BoxedRefArray::size);
 	classBoxedRefArray->addMethod(L"set", &BoxedRefArray::set);
 	classBoxedRefArray->addMethod(L"get", &BoxedRefArray::get);
+	classBoxedRefArray->addMethod(L"pushBack", &BoxedRefArray::pushBack);
+	classBoxedRefArray->addMethod(L"popBack", &BoxedRefArray::popBack);
+	classBoxedRefArray->addMethod(L"front", &BoxedRefArray::front);
+	classBoxedRefArray->addMethod(L"back", &BoxedRefArray::back);
 	scriptManager->registerClass(classBoxedRefArray);
 
 	Ref< AutoScriptClass< BoxedStdVector > > classBoxedStdVector = new AutoScriptClass< BoxedStdVector >();
 	classBoxedStdVector->addConstructor();
-	classBoxedStdVector->addMethod(L"length", &BoxedStdVector::length);
+	classBoxedStdVector->addMethod(L"size", &BoxedStdVector::size);
 	classBoxedStdVector->addMethod(L"set", &BoxedStdVector::set);
 	classBoxedStdVector->addMethod(L"get", &BoxedStdVector::get);
 	scriptManager->registerClass(classBoxedStdVector);

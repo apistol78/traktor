@@ -14,6 +14,9 @@
 namespace traktor
 {
 
+/*! \brief Primitive member reflection.
+ * \ingroup Core
+ */
 template < typename PrimitiveType >
 class T_DLLCLASS RfmPrimitive : public ReflectionMember
 {

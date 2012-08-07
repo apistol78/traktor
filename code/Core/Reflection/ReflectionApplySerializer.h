@@ -10,6 +10,9 @@ namespace traktor
 class ReflectionMember;
 class RfmCompound;
 
+/*! \brief Internal reflection apply serializer.
+ * \ingroup Core
+ */
 class ReflectionApplySerializer : public Serializer
 {
 	T_RTTI_CLASS;
