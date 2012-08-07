@@ -221,6 +221,8 @@ void registerFlashClasses(script::IScriptManager* scriptManager)
 	classFlashLayer->addMethod(L"getMoviePlayer", &FlashLayer::getMoviePlayer);
 	classFlashLayer->addMethod(L"getGlobal", &FlashLayer::getGlobal);
 	classFlashLayer->addMethod(L"getRoot", &FlashLayer::getRoot);
+	classFlashLayer->addMethod(L"isVisible", &FlashLayer::isVisible);
+	classFlashLayer->addMethod(L"setVisible", &FlashLayer::setVisible);
 	scriptManager->registerClass(classFlashLayer);
 
 	Ref< ActionObjectClass > classActionObject = new ActionObjectClass();

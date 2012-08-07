@@ -64,6 +64,10 @@ public:
 
 	flash::ActionObject* getRoot();
 
+	void setVisible(bool visible) { m_visible = visible; }
+
+	bool isVisible() const { return m_visible; }
+
 private:
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< flash::FlashMovie > m_movie;
@@ -71,6 +75,7 @@ private:
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::ISoundRenderer > m_soundRenderer;
 	bool m_clearBackground;
+	bool m_visible;
 
 	void createMoviePlayer();
 };
