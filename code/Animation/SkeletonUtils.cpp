@@ -51,11 +51,10 @@ void calculatePoseLocalTransforms(
 	outJointLocalTransforms.resize(skeleton->getJointCount());
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
-		Transform poseTransform(
-			pose->getJointOffset(i),
-			Quaternion::fromEulerAngles(pose->getJointOrientation(i))
-		);
-		outJointLocalTransforms[i] = poseTransform * skeleton->getJoint(i)->getTransform();
+		Transform p0(pose->getJointOffset(i));
+		Transform p1(Quaternion::fromEulerAngles(pose->getJointOrientation(i)));
+		Transform poseTransform = p1 * p0;
+		outJointLocalTransforms[i] = skeleton->getJoint(i)->getTransform() * poseTransform;
 	}
 }
 

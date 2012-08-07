@@ -14,6 +14,9 @@
 namespace traktor
 {
 
+/*! \brief Reflected enumeration member.
+ * \ingroup Core
+ */
 class T_DLLCLASS RfmEnum : public ReflectionMember
 {
 	T_RTTI_CLASS;

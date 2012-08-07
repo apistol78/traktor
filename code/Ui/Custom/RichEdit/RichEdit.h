@@ -86,8 +86,8 @@ private:
 
 	struct Line
 	{
-		uint32_t start;
-		uint32_t stop;
+		int32_t start;
+		int32_t stop;
 	};
 
 	Ref< ScrollBar > m_scrollBarV;
@@ -96,9 +96,9 @@ private:
 	std::vector< Line > m_lines;
 	std::vector< wchar_t > m_text;
 	std::vector< uint16_t > m_meta;
-	uint32_t m_caret;
-	uint32_t m_selectionStart;
-	uint32_t m_selectionStop;
+	int32_t m_caret;
+	int32_t m_selectionStart;
+	int32_t m_selectionStop;
 
 #if defined(_DEBUG)
 	std::vector< Line > m_linesLastGood;

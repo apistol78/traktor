@@ -42,39 +42,38 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 	}
 
 	RandomGeometry random;
-	Vector4 offsets[32];
+	Vector4 offsets[64];
 
 	for (int i = 0; i < sizeof_array(offsets); ++i)
 	{
 		float r = random.nextFloat() * (1.0f - 0.1f) + 0.1f;
-		offsets[i] = random.nextUnit() * Scalar(r);
+		offsets[i] = random.nextUnit().xyz0() + Vector4(0.0f, 0.0f, 0.0f, r);
 	}
 
-	AutoArrayPtr< uint8_t > data(new uint8_t [128 * 128 * 4]);
-	for (uint32_t y = 0; y < 128; ++y)
+	AutoArrayPtr< uint8_t > data(new uint8_t [256 * 256 * 4]);
+	for (uint32_t y = 0; y < 256; ++y)
 	{
-		for (uint32_t x = 0; x < 128; ++x)
+		for (uint32_t x = 0; x < 256; ++x)
 		{
 			// Randomized normal; attenuated by horizon in order to reduce near surface noise.
 			Vector4 normal = random.nextUnit();
-			normal *= Scalar(1.0f) - squareRoot(abs(normal.z()));
 			normal = normal * Scalar(0.5f) + Scalar(0.5f);
 
-			data[(x + y * 128) * 4 + 0] = uint8_t(normal.x() * 255);
-			data[(x + y * 128) * 4 + 1] = uint8_t(normal.y() * 255);
-			data[(x + y * 128) * 4 + 2] = uint8_t(normal.z() * 255);
-			data[(x + y * 128) * 4 + 3] = 0;
+			data[(x + y * 256) * 4 + 0] = uint8_t(normal.x() * 255);
+			data[(x + y * 256) * 4 + 1] = uint8_t(normal.y() * 255);
+			data[(x + y * 256) * 4 + 2] = uint8_t(normal.z() * 255);
+			data[(x + y * 256) * 4 + 3] = 0;
 		}
 	}
 
 	render::SimpleTextureCreateDesc desc;
-	desc.width = 128;
-	desc.height = 128;
+	desc.width = 256;
+	desc.height = 256;
 	desc.mipCount = 1;
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = true;
 	desc.initialData[0].data = data.ptr();
-	desc.initialData[0].pitch = 128 * 4;
+	desc.initialData[0].pitch = 256 * 4;
 	desc.initialData[0].slicePitch = 0;
 
 	Ref< render::ISimpleTexture > randomNormals = renderSystem->createSimpleTexture(desc);
@@ -112,7 +111,7 @@ bool PostProcessStepSsao::Source::serialize(ISerializer& s)
 PostProcessStepSsao::InstanceSsao::InstanceSsao(
 	const PostProcessStepSsao* step,
 	const std::vector< Source >& sources,
-	const Vector4 offsets[32],
+	const Vector4 offsets[64],
 	const resource::Proxy< render::Shader >& shader,
 	render::ISimpleTexture* randomNormals
 )

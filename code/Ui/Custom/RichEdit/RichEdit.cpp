@@ -201,17 +201,17 @@ int RichEdit::getLineCount() const
 
 int RichEdit::getLineOffset(int line) const
 {
-	return line < m_lines.size() ? m_lines[line].start : 0;
+	return line < int(m_lines.size()) ? m_lines[line].start : 0;
 }
 
 int RichEdit::getLineLength(int line) const
 {
-	return line < m_lines.size() ? (m_lines[line].stop - m_lines[line].start) : 0;
+	return line < int(m_lines.size()) ? (m_lines[line].stop - m_lines[line].start) : 0;
 }
 
 std::wstring RichEdit::getLine(int line) const
 {
-	if (line < m_lines.size())
+	if (line < int(m_lines.size()))
 	{
 		const wchar_t* text = &m_text[0];
 		return std::wstring(
@@ -454,7 +454,7 @@ void RichEdit::eventKeyDown(Event* event)
 		{
 			if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
 			{
-				uint32_t offset = m_caret - m_lines[i].start;
+				int32_t offset = m_caret - m_lines[i].start;
 				offset = std::min(offset, m_lines[i - 1].stop - m_lines[i - 1].start);
 				m_caret = m_lines[i - 1].start + offset;
 				break;
@@ -468,7 +468,7 @@ void RichEdit::eventKeyDown(Event* event)
 		{
 			if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
 			{
-				uint32_t offset = m_caret - m_lines[i].start;
+				int32_t offset = m_caret - m_lines[i].start;
 				offset = std::min(offset, m_lines[i + 1].stop - m_lines[i + 1].start);
 				m_caret = m_lines[i + 1].start + offset;
 				break;
@@ -484,7 +484,7 @@ void RichEdit::eventKeyDown(Event* event)
 
 	case VkRight:
 		// Move caret right.
-		if (m_caret < m_text.size() - 1)
+		if (m_caret < int(m_text.size()) - 1)
 			++m_caret;
 		break;
 
@@ -518,15 +518,15 @@ void RichEdit::eventKeyDown(Event* event)
 			Font font = getFont();
 			Rect rc = getInnerRect();
 
-			uint32_t lineHeight = font.getSize();
-			uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+			int32_t lineHeight = font.getSize();
+			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
-			for (uint32_t i = 1; i < m_lines.size(); ++i)
+			for (int32_t i = 1; i < int32_t(m_lines.size()); ++i)
 			{
 				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
 				{
-					uint32_t offset = m_caret - m_lines[i].start;
-					uint32_t di = std::min(pageLines, i);
+					int32_t offset = m_caret - m_lines[i].start;
+					int32_t di = std::min(pageLines, i);
 					offset = std::min(offset, m_lines[i - di].stop - m_lines[i - di].start);
 					m_caret = m_lines[i - di].start + offset;
 					break;
@@ -541,15 +541,15 @@ void RichEdit::eventKeyDown(Event* event)
 			Font font = getFont();
 			Rect rc = getInnerRect();
 
-			uint32_t lineHeight = font.getSize();
-			uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+			int32_t lineHeight = font.getSize();
+			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
-			for (uint32_t i = 0; i < m_lines.size() - 1; ++i)
+			for (int32_t i = 0; i < int32_t(m_lines.size()) - 1; ++i)
 			{
 				if (m_caret >= m_lines[i].start && m_caret <= m_lines[i].stop)
 				{
-					uint32_t offset = m_caret - m_lines[i].start;
-					uint32_t di = std::min< uint32_t >(pageLines, m_lines.size() - 1 - i);
+					int32_t offset = m_caret - m_lines[i].start;
+					int32_t di = std::min< uint32_t >(pageLines, m_lines.size() - 1 - i);
 					offset = std::min(offset, m_lines[i + di].stop - m_lines[i + di].start);
 					m_caret = m_lines[i + di].start + offset;
 					break;
@@ -716,7 +716,7 @@ void RichEdit::eventPaint(Event* event)
 			uint32_t x = lineMargin + 2;
 
 			// Non-empty line; format print.
-			for (uint32_t j = line.start; j < line.stop; ++j)
+			for (int32_t j = line.start; j < line.stop; ++j)
 			{
 				const Attribute& attrib = m_attributes[m_meta[j]];
 

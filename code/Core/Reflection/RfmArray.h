@@ -15,6 +15,9 @@
 namespace traktor
 {
 
+/*! \brief Reflected array member.
+ * \ingroup Core
+ */
 class T_DLLCLASS RfmArray : public RfmCompound
 {
 	T_RTTI_CLASS;

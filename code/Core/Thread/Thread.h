@@ -35,13 +35,13 @@ public:
 
 	bool start(Priority priority = Normal);
 
-	bool stop(int timeout = -1);
+	bool stop(int32_t timeout = -1);
 
 	bool pause();
 
 	bool resume();
 
-	void sleep(int duration);
+	void sleep(int32_t duration);
 
 	void yield();
 
@@ -53,6 +53,12 @@ public:
 
 	virtual bool wait(int32_t timeout = -1);
 
+	uint32_t id() const { return m_id; }
+
+	const std::string& name() const { return m_name; }
+
+	int32_t hardwareCore() const { return m_hardwareCore; }
+
 private:
 	friend class ThreadManager;
 
@@ -61,9 +67,9 @@ private:
 	bool m_stopped;
 	Ref< Functor > m_functor;
 	std::string m_name;
-	int m_hardwareCore;
+	int32_t m_hardwareCore;
 
-	Thread(Functor* functor, const std::wstring& name, int hardwareCore);
+	Thread(Functor* functor, const std::wstring& name, int32_t hardwareCore);
 	
 	~Thread();
 };

@@ -146,34 +146,36 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	if (!sourceAsset)
 		return 0;
 
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
-
 	uint32_t sourceHash = DeepHash(sourceAsset).get();
 
-	std::map< uint32_t, built_cache_list_t >::iterator i = m_builtCache.find(sourceHash);
-	if (i != m_builtCache.end())
 	{
-		built_cache_list_t& bcl = i->second;
-		T_ASSERT (!bcl.empty());
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
 
-		// Return same instance as before if pointer and hash match.
-		for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
+		std::map< uint32_t, built_cache_list_t >::iterator i = m_builtCache.find(sourceHash);
+		if (i != m_builtCache.end())
 		{
-			if (j->sourceAsset == sourceAsset)
-				return j->product;
+			built_cache_list_t& bcl = i->second;
+			T_ASSERT (!bcl.empty());
+
+			// Return same instance as before if pointer and hash match.
+			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
+			{
+				if (j->sourceAsset == sourceAsset)
+					return j->product;
+			}
+
+			// Hash matching but no product found; need to clone a product.
+			Ref< ISerializable > product = DeepClone(i->second.front().product).create();
+			if (!product)
+				return 0;
+
+			BuiltCacheEntry bce;
+			bce.sourceAsset = sourceAsset;
+			bce.product = product;
+			bcl.push_back(bce);
+
+			return product;
 		}
-
-		// Hash matching but no product found; need to clone a product.
-		Ref< ISerializable > product = DeepClone(i->second.front().product).create();
-		if (!product)
-			return 0;
-
-		BuiltCacheEntry bce;
-		bce.sourceAsset = sourceAsset;
-		bce.product = product;
-		bcl.push_back(bce);
-
-		return product;
 	}
 
 	Ref< IPipeline > pipeline;
@@ -186,10 +188,13 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	if (!product)
 		return 0;
 
-	BuiltCacheEntry bce;
-	bce.sourceAsset = sourceAsset;
-	bce.product = product;
-	m_builtCache[sourceHash].push_back(bce);
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
+		BuiltCacheEntry bce;
+		bce.sourceAsset = sourceAsset;
+		bce.product = product;
+		m_builtCache[sourceHash].push_back(bce);
+	}
 
 	return product;
 }

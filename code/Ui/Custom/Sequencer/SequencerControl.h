@@ -49,7 +49,7 @@ public:
 
 	SequencerControl();
 
-	bool create(Widget* parent, int style = WsDoubleBuffer);
+	bool create(Widget* parent, int style = WsDoubleBuffer | WsAccelerated);
 
 	void setSeparator(int32_t separator);
 

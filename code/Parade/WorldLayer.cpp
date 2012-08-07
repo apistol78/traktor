@@ -126,7 +126,7 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 		eye
 	);
 
-	// Render world to offscreen target.
+	// Render world to off-screen target.
 	if (m_worldTarget && m_postProcess)
 	{
 		renderView->begin(m_worldTarget, 0);
@@ -142,13 +142,15 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 		eye
 	);
 
-	// Process world target and blit to framebuffer.
+	// Process world target and blit to frame-buffer.
 	if (m_worldTarget && m_postProcess)
 	{
 		renderView->end();
 
 		world::PostProcessStep::Instance::RenderParams params;
 		params.viewFrustum = m_worldRenderView.getViewFrustum();
+		params.viewToLight = Matrix44::identity();
+		params.view = m_worldRenderView.getView();
 		params.projection = m_worldRenderView.getProjection();
 		params.deltaTime = m_deltaTime;
 
