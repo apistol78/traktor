@@ -37,6 +37,7 @@ FlashLayer::FlashLayer(
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_clearBackground(clearBackground)
+,	m_visible(true)
 {
 }
 
@@ -86,6 +87,9 @@ void FlashLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t 
 	if (!m_displayRenderer)
 		return;
 
+	if (!m_visible)
+		return;
+
 	m_displayRenderer->build(frame);
 	m_moviePlayer->renderFrame();
 }
@@ -94,6 +98,10 @@ void FlashLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 {
 	if (!m_displayRenderer)
 		return;
+
+	if (!m_visible)
+		return;
+
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 
