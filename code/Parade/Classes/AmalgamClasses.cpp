@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IInputServer.h"
 #include "Amalgam/IRenderServer.h"
+#include "Amalgam/IUpdateControl.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Input/InputSystem.h"
 #include "Input/RumbleEffectPlayer.h"
@@ -89,6 +90,11 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classWorldServer->addMethod(L"createWorldRenderer", &amalgam::IWorldServer::createWorldRenderer);
 	classWorldServer->addMethod(L"getFrameCount", &amalgam::IWorldServer::getFrameCount);
 	scriptManager->registerClass(classWorldServer);
+
+	Ref< script::AutoScriptClass< amalgam::IUpdateControl > > classIUpdateControl = new script::AutoScriptClass< amalgam::IUpdateControl >();
+	classIUpdateControl->addMethod(L"setPause", &amalgam::IUpdateControl::setPause);
+	classIUpdateControl->addMethod(L"getPause", &amalgam::IUpdateControl::getPause);
+	scriptManager->registerClass(classIUpdateControl);
 
 	Ref< script::AutoScriptClass< amalgam::IUpdateInfo > > classIUpdateInfo = new script::AutoScriptClass< amalgam::IUpdateInfo >();
 	classIUpdateInfo->addMethod(L"getTotalTime", &amalgam::IUpdateInfo::getTotalTime);

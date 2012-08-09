@@ -41,8 +41,11 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 		sources[i].index = m_sources[i].index;
 	}
 
-	RandomGeometry random;
+	AutoArrayPtr< uint8_t > data(new uint8_t [256 * 256 * 4]);
+	render::SimpleTextureCreateDesc desc;
 	Vector4 offsets[64];
+	Vector4 directions[8];
+	RandomGeometry random;
 
 	for (int i = 0; i < sizeof_array(offsets); ++i)
 	{
@@ -50,12 +53,18 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 		offsets[i] = random.nextUnit().xyz0() + Vector4(0.0f, 0.0f, 0.0f, r);
 	}
 
-	AutoArrayPtr< uint8_t > data(new uint8_t [256 * 256 * 4]);
+	for (int i = 0; i < sizeof_array(directions); ++i)
+	{
+		float a =  TWO_PI * float(i) / sizeof_array(directions);
+		float c = std::cos(a);
+		float s = std::sin(a);
+		directions[i] = Vector4(c, s, 0.0f, 0.0f);
+	}
+
 	for (uint32_t y = 0; y < 256; ++y)
 	{
 		for (uint32_t x = 0; x < 256; ++x)
 		{
-			// Randomized normal; attenuated by horizon in order to reduce near surface noise.
 			Vector4 normal = random.nextUnit();
 			normal = normal * Scalar(0.5f) + Scalar(0.5f);
 
@@ -66,7 +75,6 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 		}
 	}
 
-	render::SimpleTextureCreateDesc desc;
 	desc.width = 256;
 	desc.height = 256;
 	desc.mipCount = 1;
@@ -80,7 +88,36 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 	if (!randomNormals)
 		return 0;
 
-	return new InstanceSsao(this, sources, offsets, shader, randomNormals);
+	for (uint32_t y = 0; y < 256; ++y)
+	{
+		for (uint32_t x = 0; x < 256; ++x)
+		{
+			float a = random.nextFloat() * TWO_PI;
+			float c = std::cos(a);
+			float s = std::sin(a);
+			float j = random.nextFloat();
+
+			data[(x + y * 256) * 4 + 0] = uint8_t((c * 0.5f + 0.5f) * 255);
+			data[(x + y * 256) * 4 + 1] = uint8_t((s * 0.5f + 0.5f) * 255);
+			data[(x + y * 256) * 4 + 2] = uint8_t(j * 255);
+			data[(x + y * 256) * 4 + 3] = 0;
+		}
+	}
+
+	desc.width = 256;
+	desc.height = 256;
+	desc.mipCount = 1;
+	desc.format = render::TfR8G8B8A8;
+	desc.immutable = true;
+	desc.initialData[0].data = data.ptr();
+	desc.initialData[0].pitch = 256 * 4;
+	desc.initialData[0].slicePitch = 0;
+
+	Ref< render::ISimpleTexture > randomRotations = renderSystem->createSimpleTexture(desc);
+	if (!randomRotations)
+		return 0;
+
+	return new InstanceSsao(this, sources, offsets, directions, shader, randomNormals, randomRotations);
 }
 
 bool PostProcessStepSsao::serialize(ISerializer& s)
@@ -112,26 +149,31 @@ PostProcessStepSsao::InstanceSsao::InstanceSsao(
 	const PostProcessStepSsao* step,
 	const std::vector< Source >& sources,
 	const Vector4 offsets[64],
+	const Vector4 directions[8],
 	const resource::Proxy< render::Shader >& shader,
-	render::ISimpleTexture* randomNormals
+	render::ISimpleTexture* randomNormals,
+	render::ISimpleTexture* randomRotations
 )
 :	m_step(step)
 ,	m_sources(sources)
 ,	m_shader(shader)
 ,	m_randomNormals(randomNormals)
-,	m_handleInputColor(render::getParameterHandle(L"InputColor"))
-,	m_handleInputDepth(render::getParameterHandle(L"InputDepth"))
+,	m_randomRotations(randomRotations)
 ,	m_handleViewEdgeTopLeft(render::getParameterHandle(L"ViewEdgeTopLeft"))
 ,	m_handleViewEdgeTopRight(render::getParameterHandle(L"ViewEdgeTopRight"))
 ,	m_handleViewEdgeBottomLeft(render::getParameterHandle(L"ViewEdgeBottomLeft"))
 ,	m_handleViewEdgeBottomRight(render::getParameterHandle(L"ViewEdgeBottomRight"))
 ,	m_handleProjection(render::getParameterHandle(L"Projection"))
 ,	m_handleOffsets(render::getParameterHandle(L"Offsets"))
+,	m_handleDirections(render::getParameterHandle(L"Directions"))
 ,	m_handleRandomNormals(render::getParameterHandle(L"RandomNormals"))
+,	m_handleRandomRotations(render::getParameterHandle(L"RandomRotations"))
 ,	m_handleMagicCoeffs(render::getParameterHandle(L"MagicCoeffs"))
 {
 	for (int i = 0; i < sizeof_array(m_offsets); ++i)
 		m_offsets[i] = offsets[i];
+	for (int i = 0; i < sizeof_array(m_directions); ++i)
+		m_directions[i] = directions[i];
 }
 
 void PostProcessStepSsao::InstanceSsao::destroy()
@@ -146,25 +188,7 @@ void PostProcessStepSsao::InstanceSsao::render(
 	const RenderParams& params
 )
 {
-	Ref< render::RenderTargetSet > sourceColor = postProcess->getTargetRef(m_handleInputColor);
-	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(m_handleInputDepth);
-	if (!sourceColor || !sourceDepth)
-		return;
-
 	postProcess->prepareShader(m_shader);
-
-	Vector4 sourceColorSize(
-		float(sourceColor->getWidth()),
-		float(sourceColor->getHeight()),
-		0.0f,
-		0.0f
-	);
-	Vector4 sourceDepthSize(
-		float(sourceDepth->getWidth()),
-		float(sourceDepth->getHeight()),
-		0.0f,
-		0.0f
-	);
 
 	Scalar p11 = params.projection.get(0, 0);
 	Scalar p22 = params.projection.get(1, 1);
@@ -179,7 +203,9 @@ void PostProcessStepSsao::InstanceSsao::render(
 	m_shader->setVectorParameter(m_handleViewEdgeBottomRight, viewEdgeBottomRight);
 	m_shader->setMatrixParameter(m_handleProjection, params.projection);
 	m_shader->setVectorArrayParameter(m_handleOffsets, m_offsets, sizeof_array(m_offsets));
+	m_shader->setVectorArrayParameter(m_handleDirections, m_directions, sizeof_array(m_directions));
 	m_shader->setTextureParameter(m_handleRandomNormals, m_randomNormals);
+	m_shader->setTextureParameter(m_handleRandomRotations, m_randomRotations);
 	m_shader->setVectorParameter(m_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)

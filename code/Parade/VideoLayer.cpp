@@ -31,9 +31,9 @@ VideoLayer::VideoLayer(
 {
 }
 
-void VideoLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
+void VideoLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
-	invokeScriptUpdate(stage, info);
+	invokeScriptUpdate(stage, control, info);
 
 	if (!m_video->playing())
 		return;

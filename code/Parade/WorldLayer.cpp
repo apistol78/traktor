@@ -42,7 +42,7 @@ WorldLayer::WorldLayer(
 {
 }
 
-void WorldLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
+void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	if (m_scene.changed())
 	{
@@ -65,7 +65,7 @@ void WorldLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
 	}
 
 	// Issue script update method.
-	invokeScriptUpdate(stage, info);
+	invokeScriptUpdate(stage, control, info);
 
 	// Update scene controller.
 	m_scene->update(

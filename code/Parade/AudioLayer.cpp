@@ -17,10 +17,10 @@ AudioLayer::AudioLayer(
 {
 }
 
-void AudioLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
+void AudioLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	// Issue script update method.
-	invokeScriptUpdate(stage, info);
+	invokeScriptUpdate(stage, control, info);
 }
 
 void AudioLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)

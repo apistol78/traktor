@@ -620,6 +620,14 @@ bool Application::update()
 
 				return false;
 			}
+
+			// Yield a lot of cpu if game is paused.
+			if (m_updateControl.m_pause)
+			{
+				Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+				if (currentThread)
+					currentThread->sleep(100);
+			}
 		}
 
 		// Leave if state has been changed; no need to render current state.

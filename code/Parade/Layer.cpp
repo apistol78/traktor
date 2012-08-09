@@ -1,3 +1,4 @@
+#include "Amalgam/IUpdateControl.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Parade/Layer.h"
 #include "Parade/Stage.h"
@@ -66,7 +67,7 @@ bool Layer::validateScriptContext(Stage* stage)
 	return true;
 }
 
-void Layer::invokeScriptUpdate(Stage* stage, const amalgam::IUpdateInfo& info)
+void Layer::invokeScriptUpdate(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	if (!validateScriptContext(stage))
 		return;
@@ -74,6 +75,7 @@ void Layer::invokeScriptUpdate(Stage* stage, const amalgam::IUpdateInfo& info)
 	script::Any argv[] =
 	{
 		script::Any(stage),
+		script::Any(&control),
 		script::Any(const_cast< amalgam::IUpdateInfo* >(&info))
 	};
 	m_scriptContext->executeMethod(this, L"layerUpdate", sizeof_array(argv), argv);

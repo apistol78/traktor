@@ -46,6 +46,7 @@ TypeInfoSet MathNodeTraits::getNodeTypes() const
 	typeSet.insert(&type_of< Neg >());
 	typeSet.insert(&type_of< Normalize >());
 	typeSet.insert(&type_of< Pow >());
+	typeSet.insert(&type_of< RecipSqrt >());
 	typeSet.insert(&type_of< Reflect >());
 	typeSet.insert(&type_of< Sign >());
 	typeSet.insert(&type_of< Sin >());
@@ -213,6 +214,11 @@ bool MathNodeTraits::evaluateFull(
 		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
 			outputConstant[i] = std::pow(inputConstants[0][i], inputConstants[1][i]);
 	}
+	else if (is_a< RecipSqrt >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+			outputConstant[i] = 1.0f / std::sqrt(inputConstants[0][i]);
+	}
 	//else if (is_a< Reflect >(node))
 	else if (is_a< Sign >(node))
 	{
@@ -359,6 +365,7 @@ PinOrderType MathNodeTraits::evaluateOrder(
 		is_a< Min >(node) ||
 		is_a< Normalize >(node) ||
 		is_a< Pow >(node) ||
+		is_a< RecipSqrt >(node) ||
 		is_a< Reflect >(node) ||
 		is_a< Sign >(node) ||
 		is_a< Sin >(node) ||

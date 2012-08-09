@@ -21,6 +21,7 @@ namespace traktor
 
 class IEnvironment;
 class IStateManager;
+class IUpdateControl;
 class IUpdateInfo;
 
 	}
@@ -62,7 +63,7 @@ public:
 
 	bool gotoStage(Stage* stage);
 
-	bool update(amalgam::IStateManager* stateManager, const amalgam::IUpdateInfo& info);
+	bool update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
 
 	bool build(const amalgam::IUpdateInfo& info, uint32_t frame);
 

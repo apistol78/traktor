@@ -448,6 +448,7 @@ bool PhysicsManagerPhysX::queryRay(
 	float maxLength,
 	uint32_t group,
 	const Body* ignoreBody,
+	bool ignoreBackFace,
 	QueryResult& outResult
 ) const
 {

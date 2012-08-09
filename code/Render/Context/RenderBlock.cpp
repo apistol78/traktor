@@ -2,6 +2,14 @@
 #include "Render/Context/ProgramParameters.h"
 #include "Render/IRenderView.h"
 
+#if defined(_DEBUG)
+#	define T_CONTEXT_PUSH_MARKER(renderView, name) T_RENDER_PUSH_MARKER(renderView, name)
+#	define T_CONTEXT_POP_MARKER(renderView) T_RENDER_POP_MARKER(renderView)
+#else
+#	define T_CONTEXT_PUSH_MARKER(renderView, name)
+#	define T_CONTEXT_POP_MARKER(renderView)
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -9,19 +17,19 @@ namespace traktor
 
 void NullRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (programParams)
 		programParams->fixup(program);
 	if (globalParameters)
 		globalParameters->fixup(program);
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void SimpleRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -35,12 +43,12 @@ void SimpleRenderBlock::render(IRenderView* renderView, const ProgramParameters*
 		*primitives
 	);
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void InstancingRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -55,14 +63,14 @@ void InstancingRenderBlock::render(IRenderView* renderView, const ProgramParamet
 		count
 	);
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void NonIndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	Primitives p(primitive, offset, count);
 
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -76,14 +84,14 @@ void NonIndexedRenderBlock::render(IRenderView* renderView, const ProgramParamet
 		p
 	);
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void IndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
 	Primitives p(primitive, offset, count, minIndex, maxIndex);
 
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (programParams)
 		programParams->fixup(program);
@@ -97,30 +105,30 @@ void IndexedRenderBlock::render(IRenderView* renderView, const ProgramParameters
 		p
 	);
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void TargetBeginRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	renderView->begin(renderTargetSet, renderTargetIndex);
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void TargetEndRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	renderView->end();
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void TargetClearRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (clearMask)
 	{
@@ -132,12 +140,12 @@ void TargetClearRenderBlock::render(IRenderView* renderView, const ProgramParame
 		);
 	}
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 void ChainRenderBlock::render(IRenderView* renderView, const ProgramParameters* globalParameters) const
 {
-	T_RENDER_PUSH_MARKER(renderView, name);
+	T_CONTEXT_PUSH_MARKER(renderView, name);
 
 	if (inner)
 		inner->render(renderView, globalParameters);
@@ -145,7 +153,7 @@ void ChainRenderBlock::render(IRenderView* renderView, const ProgramParameters* 
 	if (next)
 		next->render(renderView, globalParameters);
 
-	T_RENDER_POP_MARKER(renderView);
+	T_CONTEXT_POP_MARKER(renderView);
 }
 
 	}

@@ -799,6 +799,15 @@ public:
 	Reflect();
 };
 
+/*! \brief Reciprocal square root. */
+class T_DLLCLASS RecipSqrt : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	RecipSqrt();
+};
+
 /*! \brief Texture sampler. */
 class T_DLLCLASS Sampler : public ImmutableNode
 {

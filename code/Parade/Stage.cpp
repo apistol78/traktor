@@ -95,7 +95,7 @@ bool Stage::gotoStage(Stage* stage)
 	return true;
 }
 
-bool Stage::update(amalgam::IStateManager* stateManager, const amalgam::IUpdateInfo& info)
+bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	if (!m_running)
 		return false;
@@ -103,7 +103,7 @@ bool Stage::update(amalgam::IStateManager* stateManager, const amalgam::IUpdateI
 	if (!m_pendingStage)
 	{
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			(*i)->update(this, info);
+			(*i)->update(this, control, info);
 	}
 	else
 	{
