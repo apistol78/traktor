@@ -18,6 +18,7 @@ namespace traktor
 	namespace amalgam
 	{
 
+class IUpdateControl;
 class IUpdateInfo;
 
 	}
@@ -49,7 +50,7 @@ public:
 
 	void destroy();
 
-	virtual void update(Stage* stage, const amalgam::IUpdateInfo& info) = 0;
+	virtual void update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info) = 0;
 
 	virtual void build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame) = 0;
 
@@ -66,7 +67,7 @@ protected:
 
 	bool validateScriptContext(Stage* stage);
 
-	void invokeScriptUpdate(Stage* stage, const amalgam::IUpdateInfo& info);
+	void invokeScriptUpdate(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
 
 	void invokeScriptMethod(Stage* stage, const std::wstring& method, uint32_t argc, const script::Any* argv);
 

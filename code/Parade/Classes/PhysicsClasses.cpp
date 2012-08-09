@@ -145,11 +145,12 @@ Ref< QueryResult > physics_PhysicsManager_queryRay(
 	const Vector4& direction,
 	float maxLength,
 	uint32_t group,
-	const physics::Body* ignoreBody
+	const physics::Body* ignoreBody,
+	bool ignoreBackFace
 )
 {
 	physics::QueryResult result;
-	if (this_->queryRay(at, direction, maxLength, group, ignoreBody, result))
+	if (this_->queryRay(at, direction, maxLength, group, ignoreBody, ignoreBackFace, result))
 		return new QueryResult(result);
 	else
 		return 0;

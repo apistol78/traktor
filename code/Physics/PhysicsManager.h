@@ -201,6 +201,7 @@ public:
 	 * \param maxLength Maximum length of ray.
 	 * \param group Collision groups.
 	 * \param ignoreBody Ignore ray casting body, can be null if no body is to be ignored.
+	 * \param ignoreBackFace Ignore intersection with back-facing surfaces.
 	 * \param outResult Intersection result, only modified if method returns true.
 	 * \return True if intersection found.
 	 */
@@ -210,6 +211,7 @@ public:
 		float maxLength,
 		uint32_t group,
 		const Body* ignoreBody,
+		bool ignoreBackFace,
 		QueryResult& outResult
 	) const = 0;
 

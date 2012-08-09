@@ -28,7 +28,7 @@ public:
 		const resource::Proxy< script::IScriptContext >& scriptContext
 	);
 
-	virtual void update(Stage* stage, const amalgam::IUpdateInfo& info);
+	virtual void update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
 
 	virtual void build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame);
 

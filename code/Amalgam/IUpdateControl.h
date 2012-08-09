@@ -26,7 +26,7 @@ namespace traktor
  * interface provide a two-way method of
  * handling update scenarios.
  */
-class IUpdateControl : public Object
+class T_DLLCLASS IUpdateControl : public Object
 {
 	T_RTTI_CLASS;
 

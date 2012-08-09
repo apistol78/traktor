@@ -41,7 +41,7 @@ FlashLayer::FlashLayer(
 {
 }
 
-void FlashLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
+void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	std::wstring command, args;
 
@@ -65,7 +65,7 @@ void FlashLayer::update(Stage* stage, const amalgam::IUpdateInfo& info)
 	}
 
 	// Issue script update method.
-	invokeScriptUpdate(stage, info);
+	invokeScriptUpdate(stage, control, info);
 
 	// Update movie player.
 	m_moviePlayer->progressFrame(info.getSimulationDeltaTime());

@@ -36,7 +36,7 @@ void StageState::leave()
 
 StageState::UpdateResult StageState::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
-	if (m_stage->update(stateManager, info))
+	if (m_stage->update(stateManager, control, info))
 		return UrOk;
 	else
 		return UrExit;

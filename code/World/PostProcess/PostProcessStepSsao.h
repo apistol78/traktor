@@ -1,10 +1,10 @@
 #ifndef traktor_world_PostProcessStepSsao_H
 #define traktor_world_PostProcessStepSsao_H
 
-#include "World/PostProcess/PostProcessStep.h"
+#include "Core/Math/Vector4.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
-#include "Core/Math/Vector4.h"
+#include "World/PostProcess/PostProcessStep.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -60,8 +60,10 @@ public:
 			const PostProcessStepSsao* step,
 			const std::vector< Source >& sources,
 			const Vector4 offsets[64],
+			const Vector4 directions[8],
 			const resource::Proxy< render::Shader >& shader,
-			render::ISimpleTexture* randomNormals
+			render::ISimpleTexture* randomNormals,
+			render::ISimpleTexture* randomRotations
 		);
 
 		virtual void destroy();
@@ -77,17 +79,19 @@ public:
 		Ref< const PostProcessStepSsao > m_step;
 		std::vector< Source > m_sources;
 		Vector4 m_offsets[64];
+		Vector4 m_directions[8];
 		resource::Proxy< render::Shader > m_shader;
 		Ref< render::ISimpleTexture > m_randomNormals;
-		render::handle_t m_handleInputColor;
-		render::handle_t m_handleInputDepth;
+		Ref< render::ISimpleTexture > m_randomRotations;
 		render::handle_t m_handleViewEdgeTopLeft;
 		render::handle_t m_handleViewEdgeTopRight;
 		render::handle_t m_handleViewEdgeBottomLeft;
 		render::handle_t m_handleViewEdgeBottomRight;
 		render::handle_t m_handleProjection;
 		render::handle_t m_handleOffsets;
+		render::handle_t m_handleDirections;
 		render::handle_t m_handleRandomNormals;
+		render::handle_t m_handleRandomRotations;
 		render::handle_t m_handleMagicCoeffs;
 	};
 

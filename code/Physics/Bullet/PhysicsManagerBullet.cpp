@@ -208,6 +208,54 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	}
 };
 
+struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResultCallback
+{
+	btVector3 m_rayFromWorld;
+	btVector3 m_rayToWorld;
+	btVector3 m_hitNormalWorld;
+	btVector3 m_hitPointWorld;
+	uint32_t m_group;
+	btCollisionObject* m_excludeObject;
+	uint32_t m_collisionPart;
+
+	ClosestRayExcludeAndCullResultCallback(btCollisionObject* excludeObject, uint32_t group, const btVector3& rayFromWorld, const btVector3& rayToWorld)
+	:	m_rayFromWorld(rayFromWorld)
+	,	m_rayToWorld(rayToWorld)
+	,	m_excludeObject(excludeObject)
+	,	m_group(group)
+	,	m_collisionPart(0)
+	{
+	}
+
+	virtual	btScalar addSingleResult(btCollisionWorld::LocalRayResult& rayResult, bool normalInWorldSpace)
+	{
+		T_ASSERT (rayResult.m_hitFraction <= m_closestHitFraction);
+		
+		if (m_excludeObject == rayResult.m_collisionObject)
+			return m_closestHitFraction;
+
+		if (m_group != ~0UL && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
+			return m_closestHitFraction;
+
+		btVector3 hitNormalWorld;
+		if (normalInWorldSpace)
+			hitNormalWorld = rayResult.m_hitNormalLocal;
+		else
+			hitNormalWorld = rayResult.m_collisionObject->getWorldTransform().getBasis() * rayResult.m_hitNormalLocal;
+
+		if (hitNormalWorld.dot(m_rayToWorld - m_rayFromWorld) > 0.0f)
+			return m_closestHitFraction;
+
+		m_closestHitFraction = rayResult.m_hitFraction;
+		m_collisionObject = rayResult.m_collisionObject;
+		m_collisionPart = rayResult.m_localShapeInfo ? rayResult.m_localShapeInfo->m_shapePart : 0;
+		m_hitNormalWorld = hitNormalWorld;
+		m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
+
+		return m_closestHitFraction;
+	}
+};
+
 void deleteShape(btCollisionShape* shape)
 {
 	if (shape->getShapeType() == TRIANGLE_MESH_SHAPE_PROXYTYPE)
@@ -928,6 +976,7 @@ bool PhysicsManagerBullet::queryRay(
 	float maxLength,
 	uint32_t group,
 	const Body* ignoreBody,
+	bool ignoreBackFace,
 	QueryResult& outResult
 ) const
 {
@@ -936,16 +985,32 @@ bool PhysicsManagerBullet::queryRay(
 
 	btRigidBody* excludeBody = ignoreBody ? checked_type_cast< const BodyBullet* >(ignoreBody)->getBtRigidBody() : 0;
 
-	ClosestRayExcludeResultCallback callback(excludeBody, group, from, to);
-	m_dynamicsWorld->rayTest(from, to, callback);
-	if (!callback.hasHit())
-		return false;
+	if (!ignoreBackFace)
+	{
+		ClosestRayExcludeResultCallback callback(excludeBody, group, from, to);
+		m_dynamicsWorld->rayTest(from, to, callback);
+		if (!callback.hasHit())
+			return false;
 
-	outResult.body = callback.m_collisionObject ? reinterpret_cast< Body* >(callback.m_collisionObject->getUserPointer()) : 0;
-	outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
-	outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
-	outResult.distance = dot3(direction, outResult.position - at);
-	outResult.part = callback.m_collisionPart;
+		outResult.body = callback.m_collisionObject ? reinterpret_cast< Body* >(callback.m_collisionObject->getUserPointer()) : 0;
+		outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
+		outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
+		outResult.distance = dot3(direction, outResult.position - at);
+		outResult.part = callback.m_collisionPart;
+	}
+	else
+	{
+		ClosestRayExcludeAndCullResultCallback callback(excludeBody, group, from, to);
+		m_dynamicsWorld->rayTest(from, to, callback);
+		if (!callback.hasHit())
+			return false;
+
+		outResult.body = callback.m_collisionObject ? reinterpret_cast< Body* >(callback.m_collisionObject->getUserPointer()) : 0;
+		outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
+		outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
+		outResult.distance = dot3(direction, outResult.position - at);
+		outResult.part = callback.m_collisionPart;
+	}
 
 	return true;
 }

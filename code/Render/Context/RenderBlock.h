@@ -31,14 +31,20 @@ class VertexBuffer;
 class T_DLLCLASS RenderBlock
 {
 public:
+#if defined(_DEBUG)
 	const char* name;
+#endif
 	float distance;
 	IProgram* program;
 	ProgramParameters* programParams;
 
 	RenderBlock()
+#if defined(_DEBUG)
 	:	name(0)
 	,	distance(0.0f)
+#else
+	:	distance(0.0f)
+#endif
 	,	program(0)
 	,	programParams(0)
 	{
