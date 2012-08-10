@@ -138,7 +138,7 @@ void Replicator::update(float dT)
 		{
 			if ((peer.timeUntilTx -= dT) <= 0.0f)
 			{
-				T_REPLICATOR_DEBUG(L"Unestablished peer found; sending \"I am\" to peer");
+				T_REPLICATOR_DEBUG(L"Unestablished peer found; sending \"I am\" to peer " << *i);
 				sendIAm(*i, 0, m_id);
 				peer.timeUntilTx = c_timeUntilIAm;
 			}
@@ -155,7 +155,7 @@ void Replicator::update(float dT)
 
 		if (it->second.established)
 		{
-			T_REPLICATOR_DEBUG(L"Established peer disconnected; issue listener event");
+			T_REPLICATOR_DEBUG(L"Established peer " << *i << L" disconnected; issue listener event");
 			T_ASSERT (it->second.ghost);
 
 			Event evt;
@@ -170,7 +170,10 @@ void Replicator::update(float dT)
 	while (m_replicatorPeers->receiveAnyPending())
 	{
 		if (!m_replicatorPeers->receive(&msg, sizeof(msg), handle))
+		{
+			T_REPLICATOR_DEBUG(L"Failed to receive pending message");
 			continue;
+		}
 
 		// Convert time from ms to seconds.
 		float time = msg.time / 1000.0f;
@@ -178,12 +181,15 @@ void Replicator::update(float dT)
 		// Always handle handshake messages.
 		if (msg.type == MtIAm)
 		{
-			T_REPLICATOR_DEBUG(L"Got \"I am\" from peer, sequence " << int32_t(msg.iam.sequence));
+			T_REPLICATOR_DEBUG(L"Got \"I am\" from peer " << handle << L", sequence " << int32_t(msg.iam.sequence));
 
 			// Unwrap id and ensure it's valid.
 			Guid id(msg.iam.id);
 			if (!id.isNotNull())
+			{
+				T_REPLICATOR_DEBUG(L"Invalid sequence uid received; ignoring response to handshake");
 				continue;
+			}
 
 			// Assume peer time is correct if exceeding my time.
 			if (time > m_time)
@@ -256,6 +262,8 @@ void Replicator::update(float dT)
 
 			peer.established = false;
 			peer.ghost = 0;
+
+			continue;
 		}
 
 		// Not a handshake message.

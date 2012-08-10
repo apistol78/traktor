@@ -1,4 +1,5 @@
 #include "Editor/IPipelineDepends.h"
+#include "Parade/AudioLayerData.h"
 #include "Parade/StageData.h"
 #include "Parade/FlashLayerData.h"
 #include "Parade/VideoLayerData.h"
@@ -37,7 +38,9 @@ bool StagePipeline::buildDependencies(
 	{
 		pipelineDepends->addDependency((*i)->m_script, editor::PdfBuild);
 
-		if (const FlashLayerData* flashLayer = dynamic_type_cast< const FlashLayerData* >(*i))
+		if (const AudioLayerData* audioLayer = dynamic_type_cast< const AudioLayerData* >(*i))
+			pipelineDepends->addDependency(audioLayer->m_sound, editor::PdfBuild);
+		else if (const FlashLayerData* flashLayer = dynamic_type_cast< const FlashLayerData* >(*i))
 			pipelineDepends->addDependency(flashLayer->m_movie, editor::PdfBuild);
 		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(*i))
 		{

@@ -1,8 +1,8 @@
 #ifndef traktor_parade_FlashLayer_H
 #define traktor_parade_FlashLayer_H
 
-#include "Resource/Proxy.h"
 #include "Parade/Layer.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

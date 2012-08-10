@@ -1,16 +1,16 @@
 #ifndef traktor_animation_Animation_H
 #define traktor_animation_Animation_H
 
-#include "Core/Serialization/ISerializable.h"
-#include "Core/Containers/AlignedVector.h"
 #include "Animation/Pose.h"
+#include "Core/Containers/AlignedVector.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace sound
+	{
+
+class Sound;
+
+	}
+
 	namespace parade
 	{
 
@@ -24,6 +31,11 @@ public:
 	virtual Ref< Layer > createInstance(amalgam::IEnvironment* environment) const;
 
 	virtual bool serialize(ISerializer& s);
+
+private:
+	friend class StagePipeline;
+
+	resource::Id< sound::Sound > m_sound;
 };
 
 	}

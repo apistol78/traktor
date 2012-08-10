@@ -3,6 +3,7 @@
 
 #include "Amalgam/IEnvironment.h"
 #include "Parade/Layer.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -14,6 +15,14 @@
 
 namespace traktor
 {
+	namespace sound
+	{
+
+class Sound;
+class SoundChannel;
+
+	}
+
 	namespace parade
 	{
 
@@ -25,7 +34,8 @@ public:
 	AudioLayer(
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
-		const resource::Proxy< script::IScriptContext >& scriptContext
+		const resource::Proxy< script::IScriptContext >& scriptContext,
+		const resource::Proxy< sound::Sound >& sound
 	);
 
 	virtual void update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
@@ -40,6 +50,8 @@ public:
 
 private:
 	Ref< amalgam::IEnvironment > m_environment;
+	resource::Proxy< sound::Sound > m_sound;
+	Ref< sound::SoundChannel > m_soundChannel;
 };
 
 	}

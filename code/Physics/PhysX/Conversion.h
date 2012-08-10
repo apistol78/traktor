@@ -1,6 +1,7 @@
 #ifndef traktor_physics_Conversion_H
 #define traktor_physics_Conversion_H
 
+#include "Core/Math/Matrix33.h"
 #include "Core/Math/Transform.h"
 
 namespace traktor
@@ -21,6 +22,16 @@ T_FORCE_INLINE Vector4 fromNxVec3(const NxVec3& v, float w = 0.0f)
 T_FORCE_INLINE NxVec3 toNxVec3(const Vector4& v)
 {
 	return NxVec3(v.x(), v.y(), v.z());
+}
+
+/*! \brief Convert from PhysX matrix. */
+T_FORCE_INLINE Matrix33 fromNxMat33(const NxMat33& m)
+{
+	return Matrix33(
+		m(0, 0), m(0, 1), m(0, 2),
+		m(1, 0), m(1, 1), m(1, 2),
+		m(2, 0), m(2, 1), m(2, 2)
+	);
 }
 
 /*! \brief Convert from PhysX matrix. */
