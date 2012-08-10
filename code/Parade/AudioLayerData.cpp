@@ -1,7 +1,9 @@
 #include "Parade/AudioLayer.h"
 #include "Parade/AudioLayerData.h"
 #include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 #include "Script/IScriptContext.h"
+#include "Sound/Sound.h"
 
 namespace traktor
 {
@@ -15,13 +17,20 @@ Ref< Layer > AudioLayerData::createInstance(amalgam::IEnvironment* environment) 
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
 	resource::Proxy< script::IScriptContext > script;
+	resource::Proxy< sound::Sound > sound;
+
+	// Bind proxies to resource manager.
+	if (!resourceManager->bind(m_sound, sound))
+		return 0;
 	if (m_script && !resourceManager->bind(m_script, script))
 		return 0;
 
+	// Create layer instance.
 	return new AudioLayer(
 		m_name,
 		environment,
-		script
+		script,
+		sound
 	);
 }
 
@@ -29,6 +38,8 @@ bool AudioLayerData::serialize(ISerializer& s)
 {
 	if (!LayerData::serialize(s))
 		return false;
+
+	s >> resource::Member< sound::Sound >(L"sound", m_sound);
 
 	return true;
 }

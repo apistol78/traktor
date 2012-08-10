@@ -107,7 +107,7 @@ private:
 	PropertyItem* m_parent;
 	RefArray< PropertyItem > m_childItems;
 
-	void updateChildrenInPlaceControls(bool create);
+	void updateChildrenInPlaceControls();
 };
 
 		}

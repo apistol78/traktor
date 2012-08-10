@@ -53,7 +53,7 @@ void PropertyItem::expand()
 	if (!m_expanded)
 	{
 		m_expanded = true;
-		updateChildrenInPlaceControls(true);
+		updateChildrenInPlaceControls();
 	}
 }
 
@@ -62,7 +62,7 @@ void PropertyItem::collapse()
 	if (m_expanded)
 	{
 		m_expanded = false;
-		updateChildrenInPlaceControls(false);
+		updateChildrenInPlaceControls();
 	}
 }
 
@@ -248,17 +248,21 @@ void PropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 }
 
-void PropertyItem::updateChildrenInPlaceControls(bool create)
+void PropertyItem::updateChildrenInPlaceControls()
 {
+	bool expanded = m_expanded;
+
+	for (PropertyItem* parent = m_parent; parent; parent = parent->m_parent)
+		expanded &= parent->m_expanded;
+
 	for (RefArray< PropertyItem >::iterator i = m_childItems.begin(); i != m_childItems.end(); ++i)
 	{
-		if ((*i)->isExpanded())
-			(*i)->updateChildrenInPlaceControls(create);
-
-		if (create)
+		if (expanded)
 			(*i)->createInPlaceControls(m_propertyList);
 		else
 			(*i)->destroyInPlaceControls();
+
+		(*i)->updateChildrenInPlaceControls();
 	}
 }
 

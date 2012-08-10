@@ -46,6 +46,14 @@ void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 {
 	if (m_scene.changed())
 	{
+		// If render group already exist then ensure it doesn't contain anything
+		// before begin re-created as it will otherwise destroy it's children.
+		if (m_renderGroup)
+		{
+			m_renderGroup->removeAllEntities();
+			m_renderGroup = 0;
+		}
+
 		// Create render entity group; contain scene root as well as dynamic entities.
 		m_renderGroup = new world::GroupEntity();
 		m_renderGroup->addEntity(m_scene->getRootEntity());

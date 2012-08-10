@@ -202,7 +202,7 @@ Ref< SoundChannel > SoundSystem::play(const Sound* sound, uint32_t priority, boo
 				else
 				{
 					uint32_t channelPriority = (*i)->getPriority();
-					if (channelPriority < currentLeastPriority)
+					if (channelPriority <= currentLeastPriority)
 					{
 						channel = *i;
 						currentLeastPriority = channelPriority;

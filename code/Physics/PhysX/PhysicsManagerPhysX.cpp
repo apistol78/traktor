@@ -22,6 +22,7 @@
 #include "Physics/PhysX/BodyPhysX.h"
 #include "Physics/PhysX/ConeTwistJointPhysX.h"
 #include "Physics/PhysX/Conversion.h"
+#include "Physics/PhysX/HingeJointPhysX.h"
 #include "Physics/PhysX/NxStreamWrapper.h"
 #include "Physics/PhysX/PhysicsManagerPhysX.h"
 #include "Resource/IResourceManager.h"
@@ -236,6 +237,7 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 			T_ASSERT (meshShapeDesc->meshData);
 
 			actorShapeDesc = meshShapeDesc;
+			actorShapeOffset += toNxVec3(mesh->getOffset());
 		}
 	}
 	else if (const SphereShapeDesc* sphereShape = dynamic_type_cast< const SphereShapeDesc* >(shapeDesc))
@@ -416,6 +418,26 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 			return 0;
 
 		outJoint = new ConeTwistJointPhysX(this, joint, body1, body2);
+	}
+	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
+	{
+		NxCylindricalJointDesc jointDesc;
+
+		jointDesc.actor[0] = actor1;
+		jointDesc.actor[1] = actor2;
+		jointDesc.setGlobalAnchor(toNxVec3(transform * hingeDesc->getAnchor().xyz1()));
+		jointDesc.setGlobalAxis(toNxVec3(transform * hingeDesc->getAxis().xyz1()));
+
+		NxJoint* joint = m_scene->createJoint(jointDesc);
+		if (!joint)
+			return 0;
+
+		outJoint = new HingeJointPhysX(this, joint, body1, body2);
+	}
+	else
+	{
+		log::error << L"Unsupported joint type \"" << type_name(desc) << L"\"" << Endl;
+		return 0;
 	}
 
 	return outJoint;
