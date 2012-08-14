@@ -26,6 +26,7 @@ class ContextDx11;
 class VertexBufferDx11;
 class IndexBufferDx11;
 class ProgramDx11;
+class RenderTargetDx11;
 class RenderTargetSetDx11;
 
 /*!
@@ -100,6 +101,7 @@ private:
 	struct RenderState
 	{
 		D3D11_VIEWPORT d3dViewport;
+		RenderTargetDx11* renderTarget[2];
 		ID3D11RenderTargetView* d3dRenderView[2];
 		ID3D11DepthStencilView* d3dDepthStencilView;
 		int32_t targetSize[2];

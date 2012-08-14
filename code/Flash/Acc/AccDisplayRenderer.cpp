@@ -51,21 +51,40 @@ const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f 
 const SwfCxTransform c_cxfWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f } };
 const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
 
-bool insideFrameBounds(const FlashMovie& movie, const Matrix33& transform, const SwfRect& bounds)
+bool rectangleVisible(
+	const FlashMovie& movie,
+	const Vector4& viewSize,
+	const Vector4& viewOffset,
+	const Matrix33& transform,
+	const SwfRect& bounds
+)
 {
 	if (bounds.max.x <= bounds.min.x || bounds.max.y <= bounds.min.y)
 		return false;
 
-	const SwfRect& frameBounds = movie.getFrameBounds();
-
+	// Transform rectangle into frame.
 	Vector2 emn = transform * bounds.min;
 	Vector2 emx = transform * bounds.max;
 	Vector2 xmn(min(emn.x, emx.x), min(emn.y, emx.y));
 	Vector2 xmx(max(emn.x, emx.x), max(emn.y, emx.y));
 
-	if (xmn.x > frameBounds.max.x || xmn.y > frameBounds.max.y)
+	// Transform from frame into normalized coordinates.
+	const SwfRect& frameBounds = movie.getFrameBounds();
+	xmn.x = (xmn.x - frameBounds.min.x) / (frameBounds.max.x - frameBounds.min.x);
+	xmn.y = (xmn.y - frameBounds.min.y) / (frameBounds.max.y - frameBounds.min.y);
+	xmx.x = (xmx.x - frameBounds.min.x) / (frameBounds.max.x - frameBounds.min.x);
+	xmx.y = (xmx.y - frameBounds.min.y) / (frameBounds.max.y - frameBounds.min.y);
+
+	// Scale into view.
+	xmn.x = (xmn.x * viewOffset.z()) + viewOffset.x();
+	xmn.y = (xmn.y * viewOffset.w()) + viewOffset.y();
+	xmx.x = (xmx.x * viewOffset.z()) + viewOffset.x();
+	xmx.y = (xmx.y * viewOffset.w()) + viewOffset.y();
+
+	// Check if extents are outside view rectangle.
+	if (xmn.x > 1.0f || xmn.y > 1.0f)
 		return false;
-	if (xmx.x < frameBounds.min.x || xmx.y < frameBounds.min.y)
+	if (xmx.x < 0.0f || xmx.y < 0.0f)
 		return false;
 
 	return true;
@@ -340,7 +359,7 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	))
 		return;
 
-	if (!insideFrameBounds(movie, transform, accShape->getBounds()))
+	if (!rectangleVisible(movie, m_viewSize, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
 	renderEnqueuedGlyphs();
@@ -400,7 +419,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	}
 
 	SwfRect bounds = accShape->getBounds();
-	if (!insideFrameBounds(movie, transform, bounds))
+	if (!rectangleVisible(movie, m_viewSize, m_viewOffset, transform, bounds))
 		return;
 
 	// Keep 1:1 aspect ratio; use maximum bound dimension.
@@ -541,7 +560,7 @@ void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& t
 	))
 		return;
 
-	if (!insideFrameBounds(movie, transform, accShape->getBounds()))
+	if (!rectangleVisible(movie, m_viewSize, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
 	renderEnqueuedGlyphs();

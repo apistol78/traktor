@@ -13,11 +13,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanEntityData", 0, OceanEntityData, world::EntityData)
 
-OceanEntityData::OceanEntityData()
-:	m_altitude(0.0f)
-{
-}
-
 void OceanEntityData::setWave(int index, const Wave& wave)
 {
 	T_ASSERT (index >= 0 && index < MaxWaves);
@@ -36,8 +31,8 @@ bool OceanEntityData::serialize(ISerializer& s)
 		return false;
 
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);
-	s >> resource::Member< render::Shader >(L"shader", m_shader);
-	s >> Member< float >(L"altitude", m_altitude);
+	s >> resource::Member< render::Shader >(L"shaderWaves", m_shaderWaves);
+	s >> resource::Member< render::Shader >(L"shaderComposite", m_shaderComposite);
 	s >> MemberStaticArray< Wave, MaxWaves, MemberComposite< Wave > >(L"waves", m_waves);
 
 	return true;

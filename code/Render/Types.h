@@ -410,6 +410,7 @@ struct RenderTargetSetCreateDesc
 	bool usingPrimaryDepthStencil;				/*!< Share primary depth/stencil buffer; shared among all targets. */
 	bool preferTiled;							/*!< Prefer tiled memory; only implemented in PS3 renderer. */
 	bool ignoreStencil;							/*!< Ignoring stencil; stencil isn't used in rendering. */
+	bool generateMips;							/*!< Generate complete mip-chain after target been renderered onto. */
 	RenderTargetCreateDesc targets[MaxTargets];	/*!< Descriptor for each target. */
 
 	RenderTargetSetCreateDesc()
@@ -421,6 +422,7 @@ struct RenderTargetSetCreateDesc
 	,	usingPrimaryDepthStencil(false)
 	,	preferTiled(false)
 	,	ignoreStencil(true)
+	,	generateMips(false)
 	{
 	}
 };

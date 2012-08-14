@@ -560,7 +560,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	// Render visuals.
 	if ((flags & (WrfVisualOpaque | WrfVisualAlphaBlend)) != 0)
 	{
-		uint32_t renderFlags = render::RfOverlay;
+		uint32_t renderFlags = render::RfSetup | render::RfOverlay;
 
 		if (flags & WrfVisualOpaque)
 			renderFlags |= render::RfOpaque;

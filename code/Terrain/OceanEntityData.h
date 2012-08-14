@@ -52,8 +52,6 @@ public:
 		bool serialize(ISerializer& s);
 	};
 
-	OceanEntityData();
-
 	void setWave(int index, const Wave& wave);
 
 	const Wave& getWave(int index) const;
@@ -62,14 +60,16 @@ public:
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
-	const resource::Id< render::Shader >& getShader() const { return m_shader; }
+	const resource::Id< render::Shader >& getShaderWaves() const { return m_shaderWaves; }
+
+	const resource::Id< render::Shader >& getShaderComposite() const { return m_shaderComposite; }
 
 private:
 	friend class OceanEntity;
 
 	resource::Id< Terrain > m_terrain;
-	resource::Id< render::Shader > m_shader;
-	float m_altitude;
+	resource::Id< render::Shader > m_shaderWaves;
+	resource::Id< render::Shader > m_shaderComposite;
 	Wave m_waves[MaxWaves];
 };
 

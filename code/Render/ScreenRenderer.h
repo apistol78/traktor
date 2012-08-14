@@ -46,6 +46,8 @@ public:
 
 	void draw(IRenderView* renderView, Shader* shader);
 
+	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, IProgram* program);
+
 	void draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader);
 
 private:

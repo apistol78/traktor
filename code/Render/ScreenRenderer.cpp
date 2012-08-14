@@ -75,6 +75,15 @@ void ScreenRenderer::draw(IRenderView* renderView, Shader* shader)
 	shader->draw(renderView, m_vertexBuffer, 0, m_primitives);
 }
 
+void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, IProgram* program)
+{
+	if (renderView->begin(renderTargetSet, renderTarget))
+	{
+		renderView->draw(m_vertexBuffer, 0, program, m_primitives);
+		renderView->end();
+	}
+}
+
 void ScreenRenderer::draw(IRenderView* renderView, RenderTargetSet* renderTargetSet, int renderTarget, Shader* shader)
 {
 	if (renderView->begin(renderTargetSet, renderTarget))

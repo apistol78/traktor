@@ -29,10 +29,11 @@ class IRenderView;
  */
 enum RenderBlockType
 {
-	RfOpaque = 1,
-	RfAlphaBlend = 2,
-	RfOverlay = 4,
-	RfAll = (RfOpaque | RfAlphaBlend | RfOverlay)
+	RfSetup = 1,
+	RfOpaque = 2,
+	RfAlphaBlend = 4,
+	RfOverlay = 8,
+	RfAll = (RfSetup | RfOpaque | RfAlphaBlend | RfOverlay)
 };
 
 /*! \brief Deferred render context.
@@ -100,7 +101,7 @@ private:
 	AutoPtr< uint8_t, AllocFreeAlign > m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
-	mutable AlignedVector< RenderBlock* > m_renderQueue[3];
+	mutable AlignedVector< RenderBlock* > m_renderQueue[4];
 };
 
 	}

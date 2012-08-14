@@ -131,7 +131,7 @@ bool ConditionalNodeTraits::evaluateFull(
 	else if (const Discard* discard = dynamic_type_cast< const Discard* >(node))
 	{
 		bool result = false;
-		switch (conditional->getOperator())
+		switch (discard->getOperator())
 		{
 		case Discard::CoLess:
 			result = inputConstants[0][0] < inputConstants[1][0];
