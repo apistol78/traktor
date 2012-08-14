@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="3">
+		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>
 			<position>
 				<first>367</first>
@@ -25,6 +25,7 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
@@ -46,14 +47,14 @@
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.PixelOutput" version="3">
+		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>
 			<position>
 				<first>366</first>
 				<second>551</second>
 			</position>
 			<technique>World_PreLitColor</technique>
-			<cullMode>CmClockWise</cullMode>
+			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
 			<blendSource>BfSourceAlpha</blendSource>
@@ -70,6 +71,7 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>

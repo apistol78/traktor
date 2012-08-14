@@ -462,6 +462,7 @@ bool RenderViewDx11::begin(EyeType eye)
 	RenderState rs =
 	{
 		m_d3dViewport,
+		{ 0, 0 },
 		{ m_d3dRenderTargetView, 0 },
 		m_d3dDepthStencilView,
 		{ m_targetSize[0], m_targetSize[1] }
@@ -504,6 +505,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		RenderState rs =
 		{
 			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+			{ rt0, rt1 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView() },
 			rts->getD3D11DepthTextureView(),
 			{ rts->getWidth(), rts->getHeight() }
@@ -549,6 +551,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	RenderState rs =
 	{
 		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		{ rt, 0 },
 		{ rt->getD3D11RenderTargetView(), 0 },
 		rts->getD3D11DepthTextureView(),
 		{ rts->getWidth(), rts->getHeight() }
@@ -733,6 +736,11 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 void RenderViewDx11::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());
+
+	if (m_renderStateStack.back().renderTarget[0])
+		m_renderStateStack.back().renderTarget[0]->unbind();
+	if (m_renderStateStack.back().renderTarget[1])
+		m_renderStateStack.back().renderTarget[1]->unbind();
 
 	m_renderStateStack.pop_back();
 	if (!m_renderStateStack.empty())

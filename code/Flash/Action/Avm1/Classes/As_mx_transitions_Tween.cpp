@@ -36,13 +36,12 @@ void As_mx_transitions_Tween::initialize(ActionObject* self)
 
 void As_mx_transitions_Tween::construct(ActionObject* self, const ActionValueArray& args)
 {
-	Ref< Tween > tw = new Tween();
+	Ref< Tween > tw = new Tween(getContext());
 	self->setRelay(tw);
 
 	if (args.size() >= 7)
 	{
 		tw->init(
-			getContext(),
 			args[0].getObjectAlways(getContext()),
 			args[1].getString(),
 			args[2].getObject< ActionFunction >(),

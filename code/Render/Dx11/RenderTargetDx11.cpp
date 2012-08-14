@@ -17,6 +17,7 @@ RenderTargetDx11::RenderTargetDx11(ContextDx11* context)
 :	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
+,	m_generateMips(false)
 {
 }
 
@@ -42,6 +43,9 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 	dtd.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	dtd.CPUAccessFlags = 0;
 	dtd.MiscFlags = 0;
+
+	if (setDesc.generateMips)
+		dtd.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
 	if (!setupSampleDesc(d3dDevice, setDesc.multiSample, c_dxgiTextureFormats[desc.format], DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
 		return false;
@@ -78,6 +82,7 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 
 	m_width = setDesc.width;
 	m_height = setDesc.height;
+	m_generateMips = setDesc.generateMips;
 
 	return true;
 }
@@ -113,6 +118,12 @@ bool RenderTargetDx11::lock(int level, Lock& lock)
 
 void RenderTargetDx11::unlock(int level)
 {
+}
+
+void RenderTargetDx11::unbind()
+{
+	if (m_generateMips)
+		m_context->getD3DDeviceContext()->GenerateMips(m_d3dTextureResourceView);
 }
 
 	}

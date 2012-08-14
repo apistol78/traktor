@@ -11,9 +11,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.Tween", Tween, ActionObjectRelay)
 
-Tween::Tween()
+Tween::Tween(ActionContext* context)
 :	ActionObjectRelay("mx.transitions.Tween")
-,	m_context(0)
+,	m_context(context)
 ,	m_begin(0)
 ,	m_finish(0)
 ,	m_duration(0)
@@ -25,7 +25,6 @@ Tween::Tween()
 }
 
 void Tween::init(
-	ActionContext* context,
 	ActionObject* target,
 	const std::string& propertyName,
 	ActionFunction* function,
@@ -35,10 +34,9 @@ void Tween::init(
 	bool useSeconds
 )
 {
-	ActionObject* self = getAsObject(context);
+	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
-	m_context = context;
 	m_begin = begin;
 	m_finish = finish;
 	m_duration = duration;
@@ -63,7 +61,7 @@ void Tween::init(
 	if (function)
 		self->setMember("_function", ActionValue(function));
 
-	self->setMember("onFrame", ActionValue(createNativeFunction(context, this, &Tween::onFrame)));
+	self->setMember("onFrame", ActionValue(createNativeFunction(m_context, this, &Tween::onFrame)));
 	start();
 }
 

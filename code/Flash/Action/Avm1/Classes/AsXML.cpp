@@ -1,6 +1,8 @@
+#include "Core/RefArray.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsXML.h"
-#include "Flash/Action/Avm1/Classes/AsXMLNode.h"
+#include "Flash/Action/Classes/XML.h"
 
 namespace traktor
 {
@@ -33,6 +35,8 @@ AsXML::AsXML(ActionContext* context)
 	prototype->addProperty("xmlDecl", createNativeFunction(context, this, &AsXML::XML_get_xmlDecl), createNativeFunction(context, this, &AsXML::XML_set_xmlDecl));
 
 	prototype->setMember("constructor", ActionValue(this));
+	prototype->setMember("__proto__", ActionValue("XMLNode"));
+
 	prototype->setReadOnly();
 
 	setMember("prototype", ActionValue(prototype));
@@ -44,6 +48,7 @@ void AsXML::initialize(ActionObject* self)
 
 void AsXML::construct(ActionObject* self, const ActionValueArray& args)
 {
+	self->setRelay(new XML(getContext()));
 }
 
 ActionValue AsXML::xplicit(const ActionValueArray& args)
@@ -86,11 +91,9 @@ void AsXML::XML_getBytesTotal(CallArgs& ca)
 	)
 }
 
-void AsXML::XML_load(CallArgs& ca)
+bool AsXML::XML_load(XML* self, const std::wstring& url) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"XML::load not implemented" << Endl;
-	)
+	return self->load(url);
 }
 
 void AsXML::XML_parseXML(CallArgs& ca)

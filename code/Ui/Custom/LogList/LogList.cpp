@@ -194,8 +194,8 @@ void LogList::eventPaint(Event* event)
 		Rect textRect(rc.left + iconSize.cx, rc.top, rc.right, rc.bottom);
 		canvas.setForeground(Color4ub(0, 0, 0));
 
-		canvas.drawText(textRect, toString(threadIndex), AnLeft, AnCenter);
-		textRect.left += 16;
+		canvas.drawText(textRect, toString(threadIndex) + L">", AnLeft, AnCenter);
+		textRect.left += 20;
 
 		size_t s = 0;
 		while (s < i->logText.length())

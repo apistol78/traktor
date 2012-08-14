@@ -47,11 +47,13 @@ public:
 
 	virtual void unlock(int level);
 
-	inline ID3D11RenderTargetView* getD3D11RenderTargetView() const {
+	void unbind();
+
+	ID3D11RenderTargetView* getD3D11RenderTargetView() const {
 		return m_d3dRenderTargetView;
 	}
 
-	inline ID3D11ShaderResourceView* getD3D11TextureResourceView() const {
+	ID3D11ShaderResourceView* getD3D11TextureResourceView() const {
 		return m_d3dTextureResourceView;
 	}
 
@@ -60,8 +62,9 @@ private:
 	ComRef< ID3D11Texture2D > m_d3dTexture;
 	ComRef< ID3D11RenderTargetView > m_d3dRenderTargetView;
 	ComRef< ID3D11ShaderResourceView > m_d3dTextureResourceView;
-	int m_width;
-	int m_height;
+	int32_t m_width;
+	int32_t m_height;
+	bool m_generateMips;
 };
 
 	}

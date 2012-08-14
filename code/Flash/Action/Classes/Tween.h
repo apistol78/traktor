@@ -13,10 +13,9 @@ class Tween : public ActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
-	Tween();
+	Tween(ActionContext* context);
 
 	void init(
-		ActionContext* context,
 		ActionObject* target,
 		const std::string& propertyName,
 		ActionFunction* function,

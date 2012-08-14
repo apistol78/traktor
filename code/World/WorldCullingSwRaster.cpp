@@ -7,21 +7,12 @@
 #include "World/WorldCullingSwRaster.h"
 #include "World/WorldRenderView.h"
 
-#include "Core/Log/Log.h"
-#include "Core/Misc/String.h"
-#include "Drawing/Image.h"
-#include "Drawing/PixelFormat.h"
-#include "Drawing/Raster.h"
-
 namespace traktor
 {
 	namespace world
 	{
 		namespace
 		{
-
-uint32_t g_query = 0;
-uint32_t g_culled = 0;
 
 const int32_t c_width = 256;
 const int32_t c_height = 144;
@@ -263,9 +254,6 @@ void WorldCullingSwRaster::beginPrecull(const WorldRenderView& worldRenderView)
 	// Save projection.
 	m_projection = worldRenderView.getProjection();
 	m_view = worldRenderView.getView();
-
-	g_query = 0;
-	g_culled = 0;
 }
 
 void WorldCullingSwRaster::endPrecull()
@@ -307,32 +295,6 @@ void WorldCullingSwRaster::endPrecull()
 			}
 		}
 	}
-
-	//for (int32_t i = 0; i < mipCount; ++i)
-	//{
-	//	int32_t mipWidth = std::max(c_width >> i, 1);
-	//	int32_t mipHeight = std::max(c_height >> i, 1);
-
-	//	drawing::Image image(drawing::PixelFormat::getA8R8G8B8(), mipWidth, mipHeight);
-
-	//	uint8_t* p = (uint8_t*)image.getData();
-	//	for (int32_t y = 0; y < mipHeight; ++y)
-	//	{
-	//		for (int32_t x = 0; x < mipWidth; ++x)
-	//		{
-	//			uint16_t d = m_depth[i][x + y * mipWidth];
-
-	//			uint8_t b = d >> 8;
-
-	//			*p++ = b;
-	//			*p++ = b;
-	//			*p++ = b;
-	//			*p++ = b;
-	//		}
-	//	}
-
-	//	image.save(L"data/Temp/Depth" + toString(i) + L".tga");
-	//}
 }
 
 void WorldCullingSwRaster::placeOccluder(const OccluderMesh* mesh, const Transform& transform)
@@ -480,50 +442,6 @@ bool WorldCullingSwRaster::queryAabb(const Aabb3& aabb, const Transform& transfo
 	x1 = clamp(x1, 0, mipWidth - 1);
 	y1 = clamp(y1, 0, mipWidth - 1);
 
-	/*
-	{
-		Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8R8G8B8(), c_width, c_height);
-
-		image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-		for (int32_t iy = 0; iy < c_height; ++iy)
-		{
-			for (int32_t ix = 0; ix < c_width; ++ix)
-			{
-				int32_t mx = ix >> mip;
-				int32_t my = iy >> mip;
-
-				uint8_t df = m_depth[0][ix + iy * c_width] >> 8;
-				uint8_t dm = m_depth[mip][mx + my * mipWidth] >> 8;
-				uint8_t c = 0x00;
-				
-				if (mx >= x0 && mx <= x1 && my >= y0 && my <= y1)
-					c = 0xff;
-
-				image->setPixel(ix, iy, Color4f(
-					df / 255.0f,
-					dm / 255.0f,
-					c / 255.0f,
-					1.0f
-				));
-			}
-		}
-
-		drawing::Raster raster(image);
-
-		float cx = (mn.x() + mx.x()) * 0.5f;
-		float cy = (mn.y() + mx.y()) * 0.5f;
-
-		int32_t x0 = int32_t((cx * 0.5f + 0.5f) * c_width);
-		int32_t y0 = int32_t((0.5f - cy * 0.5f) * c_height);
-
-		raster.drawLine(x0 - w / 2, y0 - h / 2, x0 + w / 2, y0 + h / 2, Color4f(1, 1, 1, 1));
-		raster.drawLine(x0 + w / 2, y0 - h / 2, x0 - w / 2, y0 + h / 2, Color4f(1, 1, 1, 1));
-
-		image->save(L"data/Temp/Query" + toString(g_query++) + L".png");
-	}
-	*/
-
 	uint16_t df = uint16_t(mniw * 65535.0f);
 
 	for (int32_t iy = y0; iy <= y1; ++iy)
@@ -535,7 +453,6 @@ bool WorldCullingSwRaster::queryAabb(const Aabb3& aabb, const Transform& transfo
 		}
 	}
 
-	++g_culled;
 	return false;
 }
 

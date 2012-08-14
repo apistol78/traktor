@@ -668,16 +668,15 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	if ((flags & WrfVisualOpaque) != 0)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RfSetup | render::RfOpaque, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
 	// Render alpha blend visuals.
 	if ((flags & (WrfVisualAlphaBlend)) != 0)
 	{
-		uint32_t renderFlags = render::RfOverlay | render::RfAlphaBlend;
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual alpha blend");
-		f.visual->getRenderContext()->render(m_renderView, renderFlags, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RfOverlay | render::RfAlphaBlend, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 

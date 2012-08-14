@@ -14,6 +14,42 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
+
+float polarAngle(float x, float y)
+{
+	if (x == 0.0f && y == 0.0f)
+		return 0.0f;
+	
+	float r = sqrtf(x * x + y * y);
+
+	if (x > 0.0f)
+		return asinf(y / r);
+	else
+		return -asinf(y / r) + PI;
+}
+
+void decomposeTransform(const Matrix33& transform, Vector2& outTranslate, Vector2& outScale, float& outRotation)
+{
+	outTranslate.x = transform.e13;
+	outTranslate.y = transform.e23;
+
+	outScale.x = Vector2(transform.e11, transform.e12).length();
+	outScale.y = Vector2(transform.e21, transform.e22).length();
+
+	outRotation = polarAngle(transform.e11, transform.e12);
+}
+
+Matrix33 composeTransform(const Vector2& translate_, const Vector2& scale_, float rotate_)
+{
+	return
+		translate(translate_.x, translate_.y) *
+		scale(scale_.x, scale_.y) *
+		rotate(rotate_);
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsTextField", AsTextField, ActionClass)
 
@@ -864,15 +900,17 @@ void AsTextField::TextField_set_wordWrap(FlashEditInstance* editInstance, bool w
 
 avm_number_t AsTextField::TextField_get_x(FlashEditInstance* editInstance) const
 {
-	SwfRect bounds = editInstance->getBounds();
-	return bounds.min.x;
+	Vector2 T, S; float R;
+	decomposeTransform(editInstance->getTransform(), T, S, R);
+	return T.x / 20.0f;
 }
 
 void AsTextField::TextField_set_x(FlashEditInstance* editInstance, avm_number_t x) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_x not implemented" << Endl;
-	)
+	Vector2 T, S; float R;
+	decomposeTransform(editInstance->getTransform(), T, S, R);
+	T.x = x * 20.0f;
+	editInstance->setTransform(composeTransform(T, S, R));
 }
 
 avm_number_t AsTextField::TextField_get_xmouse(FlashEditInstance* editInstance) const
@@ -900,15 +938,16 @@ void AsTextField::TextField_set_xscale(FlashEditInstance* editInstance, avm_numb
 
 avm_number_t AsTextField::TextField_get_y(FlashEditInstance* editInstance) const
 {
-	SwfRect bounds = editInstance->getBounds();
-	return bounds.min.y;
+	Vector2 T, S; float R;
+	decomposeTransform(editInstance->getTransform(), T, S, R);
+	return T.y / 20.0f;
 }
 
 void AsTextField::TextField_set_y(FlashEditInstance* editInstance, avm_number_t y) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_y not implemented" << Endl;
-	)
+	Vector2 T, S; float R;
+	decomposeTransform(editInstance->getTransform(), T, S, R);
+	T.y = y * 20.0f;
 }
 
 avm_number_t AsTextField::TextField_get_ymouse(FlashEditInstance* editInstance) const

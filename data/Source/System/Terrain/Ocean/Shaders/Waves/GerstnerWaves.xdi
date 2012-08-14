@@ -246,7 +246,7 @@ Frequency
 				<first>-360</first>
 				<second>-408</second>
 			</position>
-			<value>0.00075</value>
+			<value>0.001</value>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>

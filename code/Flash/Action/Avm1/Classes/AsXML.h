@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 struct CallArgs;
+class XML;
 
 /*! \brief XML class.
  * \ingroup Flash
@@ -37,7 +38,7 @@ private:
 
 	void XML_getBytesTotal(CallArgs& ca);
 
-	void XML_load(CallArgs& ca);
+	bool XML_load(XML* self, const std::wstring& url) const;
 
 	void XML_parseXML(CallArgs& ca);
 

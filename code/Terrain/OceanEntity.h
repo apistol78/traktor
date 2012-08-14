@@ -19,12 +19,13 @@ namespace traktor
 	namespace render
 	{
 
+class IndexBuffer;
 class IRenderSystem;
 class RenderContext;
-class VertexBuffer;
-class IndexBuffer;
-class Shader;
+class RenderTargetSet;
 class ScreenRenderer;
+class Shader;
+class VertexBuffer;
 
 	}
 
@@ -66,21 +67,24 @@ public:
 		world::IWorldRenderPass& worldRenderPass
 	);
 
+	virtual void setTransform(const Transform& transform);
+
+	virtual bool getTransform(Transform& outTransform) const;
+
 	virtual Aabb3 getBoundingBox() const;
 
 	virtual void update(const UpdateParams& update);
 
-	float getAltitude() const { return m_altitude; }
+	//float getAltitude() const { return m_altitude; }
 
 private:
 	resource::Proxy< Terrain > m_terrain;
-	Ref< render::VertexBuffer > m_vertexBuffer;
-	Ref< render::IndexBuffer > m_indexBuffer;
+	resource::Proxy< render::Shader > m_shaderWaves;
+	resource::Proxy< render::Shader > m_shaderComposite;
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	render::Primitives m_primitives;
-	resource::Proxy< render::Shader > m_shader;
-	float m_altitude;
+	Ref< render::RenderTargetSet > m_targetWaves;
 	Vector4 m_waveData[MaxWaves];
+	Transform m_transform;
 };
 
 	}
