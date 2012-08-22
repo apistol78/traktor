@@ -116,7 +116,7 @@ bool Animation::getPose(float at, Pose& outPose) const
 	size_t nposes = m_poses.size();
 	if (nposes > 2)
 	{
-		outPose = Hermite< KeyPose, Scalar, Pose, KeyPoseAccessor, WrapTime< Scalar > >(&m_poses[0], nposes).evaluate(Scalar(at));
+		outPose = Hermite< KeyPose, Scalar, Pose, KeyPoseAccessor, ClampTime< Scalar > >(&m_poses[0], nposes).evaluate(Scalar(at));
 		return true;
 	}
 	else if (nposes > 1)

@@ -155,7 +155,7 @@ void UndergrowthEntity::render(
 										dx = (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius;
 										dz = (m_random.nextFloat() * 2.0f - 1.0f) * m_settings.cellRadius;
 									}
-									while (std::sqrtf(dx * dx + dz * dz) > m_settings.cellRadius);
+									while (std::sqrt(dx * dx + dz * dz) > m_settings.cellRadius);
 
 									float px = i->center.x() + dx;
 									float pz = i->center.z() + dz;

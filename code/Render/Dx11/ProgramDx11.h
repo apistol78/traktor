@@ -2,6 +2,7 @@
 #define traktor_render_ProgramDx11_H
 
 #include <map>
+#include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/IProgram.h"
@@ -148,8 +149,8 @@ private:
 	size_t m_d3dInputElementsHash;
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterFloatArray;
-	ComRefArray< ID3D11ShaderResourceView > m_parameterResArray;
-	bool m_parameterResArrayDirty;
+	RefArray< ITexture > m_parameterTextureArray;
+	bool m_parameterTextureArrayDirty;
 
 #if defined(_DEBUG)
 	int32_t m_bindCount;

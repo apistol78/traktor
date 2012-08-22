@@ -109,10 +109,10 @@ void EffectEntity::update(const UpdateParams& update)
 
 bool EffectEntity::isFinished() const
 {
-	if (!m_effect || !m_effectInstance)
+	if (!m_effect)
 		return true;
 
-	if (m_effectInstance->getLoopEnable())
+	if (!m_effectInstance || m_effectInstance->getLoopEnable())
 		return false;
 
 	return m_effectInstance->getTime() >= m_effect->getDuration();

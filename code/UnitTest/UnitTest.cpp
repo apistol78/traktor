@@ -20,7 +20,6 @@
 #include "UnitTest/CaseXmlPullParser.h"
 #include "UnitTest/CaseXmlDocument.h"
 #include "UnitTest/CaseZip.h"
-#include "UnitTest/CaseSpatialHashArray.h"
 #include "UnitTest/CaseRenderSw.h"
 #include "UnitTest/CaseSound.h"
 #include "UnitTest/CaseStreamCopy.h"
@@ -94,9 +93,6 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//log::info << L"Case zip" << Endl;
 	//traktor::CaseZip().execute(context);
-
-	//log::info << L"Case spatial hash array" << Endl;
-	//traktor::CaseSpatialHashArray().execute(context);
 
 	//log::info << L"Case software renderer" << Endl;
 	//traktor::CaseRenderSw().execute(context);

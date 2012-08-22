@@ -40,7 +40,7 @@ void StatePoseController::setTransform(const Transform& transform)
 {
 }
 
-void StatePoseController::evaluate(
+bool StatePoseController::evaluate(
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
@@ -49,6 +49,7 @@ void StatePoseController::evaluate(
 	bool& outUpdateController
 )
 {
+	bool continous = true;
 	Pose currentPose;
 
 	// Prepare graph evaluation context.
@@ -64,7 +65,7 @@ void StatePoseController::evaluate(
 	}
 
 	if (!m_currentState)
-		return;
+		return false;
 
 	// Evaluate current state.
 	m_currentState->evaluate(
@@ -120,6 +121,7 @@ void StatePoseController::evaluate(
 			m_nextState = 0;
 			m_blendState = 0.0f;
 			m_blendDuration = 0.0f;
+			continous = bool(m_blendDuration > FUZZY_EPSILON);
 		}
 	}
 	else
@@ -214,6 +216,8 @@ void StatePoseController::evaluate(
 			break;
 		}
 	}
+
+	return continous;
 }
 
 void StatePoseController::estimateVelocities(

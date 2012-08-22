@@ -167,9 +167,9 @@ bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority,
 		m_currentState.sound = sound;
 		m_currentState.cursor = cursor;
 		m_currentState.repeat = max< uint32_t >(repeat, 1U);
+		m_priority = priority;
 	}
 
-	m_priority = priority;
 	return true;
 }
 
@@ -216,7 +216,6 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				m_activeState.cursor->reset();
 				if (!soundBuffer->getBlock(m_activeState.cursor, soundBlock))
 				{
-					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 					m_activeState.sound = 0;
 					m_activeState.cursor = 0;
 					m_currentState.sound = 0;
@@ -227,7 +226,6 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 			}
 			else
 			{
-				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 				m_activeState.sound = 0;
 				m_activeState.cursor = 0;
 				m_currentState.sound = 0;

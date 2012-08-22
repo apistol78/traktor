@@ -1,19 +1,28 @@
-#ifndef traktor_scene_LayerEntityData_H
-#define traktor_scene_LayerEntityData_H
+#ifndef traktor_world_LayerEntityData_H
+#define traktor_world_LayerEntityData_H
 
 #include "World/Entity/GroupEntityData.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_WORLD_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
-	namespace scene
+	namespace world
 	{
 
 /*! \brief Layer entity data.
+ * \ingroup World
  *
- * Used by scene editor to store editing layer information
+ * Used by editor to store editing layer information
  * in a scene asset.
  */
-class LayerEntityData : public world::GroupEntityData
+class T_DLLCLASS LayerEntityData : public world::GroupEntityData
 {
 	T_RTTI_CLASS;
 
@@ -34,13 +43,18 @@ public:
 
 	bool isInclude() const { return m_include; }
 
+	void setDynamic(bool dynamic) { m_dynamic = dynamic; }
+
+	bool isDynamic() const { return m_dynamic; }
+
 private:
 	bool m_visible;
 	bool m_locked;
 	bool m_include;
+	bool m_dynamic;
 };
 
 	}
 }
 
-#endif	// traktor_scene_LayerEntityData_H
+#endif	// traktor_world_LayerEntityData_H

@@ -39,7 +39,11 @@ public:
 
 	virtual void setTransform(const Transform& transform) = 0;
 
-	virtual void evaluate(
+	/*! \brief Evaluate pose throught pose controller.
+	 *
+	 * \return True if pose is continuous since last evaluation.
+	 */
+	virtual bool evaluate(
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,

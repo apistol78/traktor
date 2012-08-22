@@ -10,8 +10,7 @@ enum ConfigureResult
 {
 	CrFailed = -1,
 	CrUnaffected = 0,
-	CrAccepted = 1,
-	CrFlushResources = 2
+	CrAccepted = 1
 };
 
 	}

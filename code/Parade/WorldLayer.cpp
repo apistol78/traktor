@@ -305,7 +305,7 @@ void WorldLayer::createWorldRenderer()
 
 	// Create world renderer.
 	m_worldRenderer = m_environment->getWorld()->createWorldRenderer(
-		m_scene->getWorldRenderSettings()
+		*m_scene->getWorldRenderSettings()
 	);
 	if (!m_worldRenderer)
 		return;

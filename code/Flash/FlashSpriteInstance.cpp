@@ -560,6 +560,8 @@ void FlashSpriteInstance::dereference()
 {
 	m_mask = 0;
 	m_displayList.reset();
+	m_visibleCharacters.resize(0);
+
 	FlashCharacterInstance::dereference();
 }
 

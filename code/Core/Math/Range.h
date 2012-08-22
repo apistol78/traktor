@@ -22,7 +22,7 @@ public:
 	{
 	}
 
-	Range(Type min_, Type max_)
+	Range(const Type& min_, const Type& max_)
 	:	min(min_)
 	,	max(max_)
 	{
@@ -45,7 +45,13 @@ public:
 		return min + r.nextFloat() * (max - min);
 	}
 
-	T_MATH_INLINE Type clamp(Type v) const
+	template < typename BlendType >
+	T_MATH_INLINE Type lerp(const BlendType& b) const
+	{
+		return min * (BlendType(1) - b) + max * b;
+	}
+
+	T_MATH_INLINE Type clamp(const Type& v) const
 	{
 		if (v < min)
 			return min;

@@ -28,7 +28,7 @@ public:
 
 	virtual void createResourceFactories(IEnvironment* environment);
 
-	virtual int32_t reconfigure(const PropertyGroup* settings);
+	virtual int32_t reconfigure(IEnvironment* environment, const PropertyGroup* settings);
 
 	virtual UpdateResult update(PropertyGroup* settings);
 

@@ -94,7 +94,7 @@ private:
 	XMLNode* m_parent;
 	Ref< XMLNode > m_firstChild;
 	Ref< XMLNode > m_lastChild;
-	Ref< XMLNode > m_previousSibling;
+	XMLNode* m_previousSibling;
 	Ref< XMLNode > m_nextSibling;
 };
 

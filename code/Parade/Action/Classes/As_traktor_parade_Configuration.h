@@ -94,6 +94,8 @@ private:
 	bool Configuration_get_rumbleEnable(const AsConfiguration* self) const;
 
 	void Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const;
+
+	bool Configuration_apply(AsConfiguration* self) const;
 };
 
 	}

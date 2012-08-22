@@ -101,11 +101,11 @@ BOOL IsXInputDevice(const GUID* pGuidProductFromDirectInput)
 	if (FAILED(hr) || pEnumDevices == NULL)
 		goto LCleanup;
 
-	// Loop over all devices
-	for (;;)
+	// Loop over all devices; no more than 2000 devices.
+	for (uint32_t i = 0; i < 100; ++i)
 	{
-		// Get 20 at a time
-		hr = pEnumDevices->Next(10000, 20, pDevices, &uReturned);
+		// Get 20 at a time; timeout in one second to prevent stupid long enumerations.
+		hr = pEnumDevices->Next(1000, 20, pDevices, &uReturned);
 		if (FAILED(hr))
 			goto LCleanup;
 		if (uReturned == 0)
@@ -260,12 +260,8 @@ IInputDriver::UpdateResult InputDriverDi8::update()
 
 BOOL CALLBACK InputDriverDi8::enumDevicesCallback(const DIDEVICEINSTANCE* deviceInstance, VOID* context)
 {
-	if (IsXInputDevice(&deviceInstance->guidProduct))
-		return DIENUM_CONTINUE;
-
 	InputDriverDi8* driver = static_cast< InputDriverDi8* >(context);
 	driver->addDevice(deviceInstance);
-
 	return DIENUM_CONTINUE;
 }
 
@@ -288,7 +284,11 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 
 	case DI8DEVTYPE_JOYSTICK:
 	case DI8DEVTYPE_GAMEPAD:
-		inputCategory = CtJoystick;
+		{
+			inputCategory = CtJoystick;
+			if (IsXInputDevice(&deviceInstance->guidProduct))
+				return true;
+		}
 		break;
 
 	default:

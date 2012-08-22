@@ -2,7 +2,7 @@
 #include "Core/Math/Const.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
-#include "Scene/Editor/LayerEntityData.h"
+#include "World/Editor/LayerEntityData.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -112,7 +112,7 @@ bool EntityAdapter::getExternalGuid(Guid& outGuid) const
 
 bool EntityAdapter::isLayer() const
 {
-	return is_a< LayerEntityData >(m_entityData);
+	return is_a< world::LayerEntityData >(m_entityData);
 }
 
 bool EntityAdapter::isGroup() const

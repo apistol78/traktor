@@ -141,6 +141,37 @@ void ResourceManager::reload(const Guid& guid)
 	}
 }
 
+void ResourceManager::reload(const TypeInfo& type)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	for (std::map< Guid, RefArray< ExclusiveResourceHandle > >::iterator i = m_exclusiveHandles.begin(); i != m_exclusiveHandles.end(); ++i)
+	{
+		const RefArray< ExclusiveResourceHandle >& handles = i->second;
+		for (RefArray< ExclusiveResourceHandle >::const_iterator j = handles.begin(); j != handles.end(); ++j)
+		{
+			const TypeInfo& resourceType = (*j)->getResourceType();
+			if (is_type_of(type, resourceType))
+			{
+				Ref< IResourceFactory > factory = findFactory(resourceType);
+				if (factory)
+					load(i->first, factory, resourceType, *j);
+			}
+		}
+	}
+
+	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
+	{
+		const TypeInfo& resourceType = i->second->getResourceType();
+		if (is_type_of(type, resourceType))
+		{
+			Ref< IResourceFactory > factory = findFactory(resourceType);
+			if (factory)
+				load(i->first, factory, resourceType, i->second);
+		}
+	}
+}
+
 void ResourceManager::unloadUnusedResident()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

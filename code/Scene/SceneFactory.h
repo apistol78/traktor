@@ -51,18 +51,12 @@ public:
 	 * \param database Database
 	 * \param renderSystem Render system.
 	 * \param entityBuilder Entity builder.
-	 * \param shadowQuality Max shadow quality level.
 	 */
 	SceneFactory(
 		db::Database* database,
 		render::IRenderSystem* renderSystem,
-		world::IEntityBuilder* entityBuilder,
-		world::WorldRenderSettings::ShadowQuality shadowQuality
+		world::IEntityBuilder* entityBuilder
 	);
-
-	void setShadowQuality(world::WorldRenderSettings::ShadowQuality shadowQuality);
-
-	world::WorldRenderSettings::ShadowQuality getShadowQuality() const;
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -74,7 +68,6 @@ private:
 	Ref< db::Database > m_database;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< world::IEntityBuilder > m_entityBuilder;
-	world::WorldRenderSettings::ShadowQuality m_shadowQuality;
 };
 
 	}

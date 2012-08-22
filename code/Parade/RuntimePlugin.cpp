@@ -18,6 +18,7 @@
 #include "Parade/Classes/PhysicsClasses.h"
 #include "Parade/Classes/ResourceClasses.h"
 #include "Parade/Classes/SoundClasses.h"
+#include "Parade/Classes/SprayClasses.h"
 #include "Parade/Classes/TerrainClasses.h"
 #include "Parade/Classes/WorldClasses.h"
 
@@ -51,6 +52,7 @@ bool RuntimePlugin::startup(amalgam::IEnvironment* environment)
 	registerAnimationClasses(scriptManager);
 	registerOnlineClasses(scriptManager);
 	registerTerrainClasses(scriptManager);
+	registerSprayClasses(scriptManager);
 
 	return true;
 }

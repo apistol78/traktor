@@ -5,9 +5,9 @@
 #include "Resource/Member.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
-#include "Scene/Editor/LayerEntityData.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Editor/LayerEntityData.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
@@ -42,12 +42,12 @@ const resource::Id< world::PostProcessSettings >& SceneAsset::getPostProcessSett
 	return m_postProcessSettings;
 }
 
-void SceneAsset::setLayers(const RefArray< LayerEntityData >& layers)
+void SceneAsset::setLayers(const RefArray< world::LayerEntityData >& layers)
 {
 	m_layers = layers;
 }
 
-const RefArray< LayerEntityData >& SceneAsset::getLayers() const
+const RefArray< world::LayerEntityData >& SceneAsset::getLayers() const
 {
 	return m_layers;
 }
@@ -71,14 +71,14 @@ bool SceneAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 4)
 	{
-		s >> MemberRefArray< LayerEntityData >(L"layers", m_layers);
+		s >> MemberRefArray< world::LayerEntityData >(L"layers", m_layers);
 	}
 	else
 	{
 		Ref< world::EntityData > entityData;
 		s >> MemberRef< world::EntityData >(L"entityData", entityData);
 
-		Ref< LayerEntityData > layer = new LayerEntityData();
+		Ref< world::LayerEntityData > layer = new world::LayerEntityData();
 		if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
 		{
 			layer->setName(groupEntityData->getName());
@@ -86,6 +86,7 @@ bool SceneAsset::serialize(ISerializer& s)
 		}
 		else
 			layer->addEntityData(entityData);
+
 		m_layers.push_back(layer);
 	}
 	

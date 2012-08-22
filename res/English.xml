@@ -1594,6 +1594,10 @@
       <second>Interpolator</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_INSTANCE</first>
+      <second>Instance</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_ITERATE</first>
       <second>Iterate</second>
     </item>
@@ -1741,6 +1745,10 @@
       <first>SHADERGRAPH_NODE_TRANSPOSE</first>
       <second>Transpose</second>
     </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TRUNCATE</first>
+      <second>Truncate</second>
+    </item>    
     <item>
       <first>SHADERGRAPH_NODE_TYPE</first>
       <second>Type</second>

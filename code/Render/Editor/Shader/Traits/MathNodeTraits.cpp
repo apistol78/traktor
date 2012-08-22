@@ -53,6 +53,7 @@ TypeInfoSet MathNodeTraits::getNodeTypes() const
 	typeSet.insert(&type_of< Sqrt >());
 	typeSet.insert(&type_of< Sub >());
 	typeSet.insert(&type_of< Tan >());
+	typeSet.insert(&type_of< Truncate >());
 	return typeSet;
 }
 
@@ -245,6 +246,11 @@ bool MathNodeTraits::evaluateFull(
 		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
 			outputConstant[i] = std::tan(inputConstants[0][i]);
 	}
+	else if (is_a< Truncate >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+			outputConstant[i] = std::floor(inputConstants[0][i]);
+	}
 	else
 		return false;
 
@@ -370,7 +376,8 @@ PinOrderType MathNodeTraits::evaluateOrder(
 		is_a< Sign >(node) ||
 		is_a< Sin >(node) ||
 		is_a< Sqrt >(node) ||
-		is_a< Tan >(node)
+		is_a< Tan >(node) ||
+		is_a< Truncate >(node)
 	)
 		return pinOrderConstantOrNonLinear(inputPinOrders, node->getInputPinCount());
 	else if (is_a< Add >(node))

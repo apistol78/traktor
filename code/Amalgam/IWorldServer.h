@@ -50,7 +50,7 @@ public:
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
 
-	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings) = 0;
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings& worldRenderSettings) = 0;
 
 	virtual int32_t getFrameCount() const = 0;
 };

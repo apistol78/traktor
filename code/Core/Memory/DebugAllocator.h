@@ -18,7 +18,7 @@ namespace traktor
  * any memory which it once has allocated in order to ensure
  * data isn't modified after it has been released.
  */
-class DebugAllocator : public IAllocator
+class DebugAllocator : public RefCountImpl< IAllocator >
 {
 public:
 	DebugAllocator(IAllocator* systemAllocator);

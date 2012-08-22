@@ -84,6 +84,32 @@ Ref< Result > Leaderboards::setScore(const std::wstring& leaderboardId, int32_t 
 		return 0;
 }
 
+Ref< Result > Leaderboards::addScore(const std::wstring& leaderboardId, int32_t score)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >::iterator i = m_leaderboards.find(leaderboardId);
+	if (i == m_leaderboards.end())
+	{
+		log::warning << L"Leaderboard error; No such leaderboard provided, \"" << leaderboardId << L"\"" << Endl;
+		return 0;
+	}
+
+	Ref< Result > result = new Result();
+	if (m_taskQueue->add(new TaskLeaderboard(
+		m_provider,
+		i->second.handle,
+		i->second.score + score,
+		result
+	)))
+	{
+		i->second.score += score;
+		return result;
+	}
+	else
+		return 0;
+}
+
 Leaderboards::Leaderboards(ILeaderboardsProvider* provider, TaskQueue* taskQueue)
 :	m_provider(provider)
 ,	m_taskQueue(taskQueue)

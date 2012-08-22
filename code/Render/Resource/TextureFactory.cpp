@@ -104,6 +104,10 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 	{
 		int32_t skipMips = (m_skipMips < mipCount) ? m_skipMips : 0;
 
+		// Do not skip mips on already small enough textures.
+		if (imageWidth <= 16 || imageHeight <= 16)
+			skipMips = 0;
+
 		SimpleTextureCreateDesc desc;
 		desc.width = imageWidth >> skipMips;
 		desc.height = imageHeight >> skipMips;

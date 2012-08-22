@@ -2,18 +2,12 @@
 #define traktor_amalgam_WorldServer_H
 
 #include "Amalgam/IWorldServer.h"
+#include "World/WorldRenderSettings.h"
 
 namespace traktor
 {
 
 class PropertyGroup;
-
-	namespace scene
-	{
-
-class SceneFactory;
-
-	}
 
 	namespace amalgam
 	{
@@ -27,6 +21,8 @@ class WorldServer : public IWorldServer
 	T_RTTI_CLASS;
 
 public:
+	WorldServer();
+
 	bool create(const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer);
 
 	void destroy();
@@ -49,7 +45,7 @@ public:
 
 	virtual world::WorldEntityRenderers* getEntityRenderers();
 
-	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings);
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings& worldRenderSettings);
 
 	virtual int32_t getFrameCount() const;
 
@@ -58,7 +54,7 @@ private:
 	Ref< world::WorldEntityRenderers > m_entityRenderers;
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
-	Ref< scene::SceneFactory > m_sceneFactory;
+	world::WorldRenderSettings::ShadowQuality m_shadowQuality;
 };
 
 	}

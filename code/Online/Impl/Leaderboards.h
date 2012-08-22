@@ -29,6 +29,8 @@ public:
 
 	virtual Ref< Result > setScore(const std::wstring& leaderboardId, int32_t score);
 
+	virtual Ref< Result > addScore(const std::wstring& leaderboardId, int32_t score);
+
 private:
 	friend class SessionManager;
 

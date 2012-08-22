@@ -215,6 +215,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILeaderboards->addMethod(L"getRank", &online_ILeaderboards_getRank);
 	classILeaderboards->addMethod(L"getScore", &online_ILeaderboards_getScore);
 	classILeaderboards->addMethod(L"setScore", &online::ILeaderboards::setScore);
+	classILeaderboards->addMethod(L"addScore", &online::ILeaderboards::addScore);
 	scriptManager->registerClass(classILeaderboards);
 
 	Ref< script::AutoScriptClass< online::ILobby > > classILobby = new script::AutoScriptClass< online::ILobby >();

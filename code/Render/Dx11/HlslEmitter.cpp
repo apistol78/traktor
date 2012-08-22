@@ -1613,6 +1613,17 @@ bool emitTranspose(HlslContext& cx, Transpose* node)
 	return true;
 }
 
+bool emitTruncate(HlslContext& cx, Truncate* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"trunc(" << in->getName() << L");" << Endl;
+	return true;
+}
+
 bool emitUniform(HlslContext& cx, Uniform* node)
 {
 	HlslVariable* out = cx.getShader().createVariable(
@@ -1868,6 +1879,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
+	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
 	m_emitters[&type_of< Vector >()] = new EmitterCast< Vector >(emitVector);
 	m_emitters[&type_of< VertexInput >()] = new EmitterCast< VertexInput >(emitVertexInput);

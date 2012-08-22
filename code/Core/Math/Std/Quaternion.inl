@@ -112,6 +112,11 @@ T_MATH_INLINE Quaternion::Quaternion(const Vector4& from, const Vector4& to)
 	}
 }
 
+T_MATH_INLINE Quaternion::Quaternion(const Vector4& _e)
+:	e(_e)
+{
+}
+
 T_MATH_INLINE Quaternion Quaternion::identity()
 {
 	return Quaternion(0.0f, 0.0f, 0.0f, 1.0f);
@@ -265,11 +270,6 @@ T_MATH_INLINE Vector4 operator * (const Quaternion& q, const Vector4& v)
 	Quaternion qv(v.xyz0());
 	Quaternion qvp = q * qv * q.inverse();
 	return qvp.e.xyz0() + v * Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-}
-
-T_MATH_INLINE Quaternion::Quaternion(const Vector4& _e)
-:	e(_e)
-{
 }
 
 T_MATH_INLINE Quaternion lerp(const Quaternion& a, const Quaternion& b, float c)

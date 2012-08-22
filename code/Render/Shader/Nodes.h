@@ -1045,15 +1045,6 @@ public:
 	TargetSize();
 };
 
-/*! \brief Transform vector by matrix. */
-class T_DLLCLASS Transform : public ImmutableNode
-{
-	T_RTTI_CLASS;
-
-public:
-	Transform();
-};
-
 /*! \brief Texture constant. */
 class T_DLLCLASS Texture : public ImmutableNode
 {
@@ -1087,6 +1078,15 @@ public:
 	TextureSize();
 };
 
+/*! \brief Transform vector by matrix. */
+class T_DLLCLASS Transform : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Transform();
+};
+
 /*! \brief Transpose matrix. */
 class T_DLLCLASS Transpose : public ImmutableNode
 {
@@ -1094,6 +1094,15 @@ class T_DLLCLASS Transpose : public ImmutableNode
 
 public:
 	Transpose();
+};
+
+/*! \brief Truncate. */
+class T_DLLCLASS Truncate : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Truncate();
 };
 
 /*! \brief Type switch. */
