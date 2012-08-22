@@ -5,17 +5,22 @@
 
 namespace traktor
 {
-	namespace scene
+	namespace world
 	{
 
 class LayerEntityData;
+
+	}
+
+	namespace scene
+	{
 
 class LayerEntityEditor : public IEntityEditor
 {
 	T_RTTI_CLASS;
 
 public:
-	LayerEntityEditor(LayerEntityData* entityData);
+	LayerEntityEditor(world::LayerEntityData* entityData);
 
 	virtual bool isPickable() const;
 
@@ -38,7 +43,7 @@ public:
 	virtual bool getStatusText(std::wstring& outStatusText) const;
 
 private:
-	LayerEntityData* m_entityData;
+	world::LayerEntityData* m_entityData;
 };
 
 	}

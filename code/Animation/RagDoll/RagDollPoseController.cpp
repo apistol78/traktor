@@ -259,7 +259,7 @@ void RagDollPoseController::setTransform(const Transform& transform)
 	m_worldTransform = transform;
 }
 
-void RagDollPoseController::evaluate(
+bool RagDollPoseController::evaluate(
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
@@ -364,6 +364,7 @@ void RagDollPoseController::evaluate(
 	//m_worldTransform = worldTransform;
 
 	//outUpdateController = true;
+	return true;
 }
 
 void RagDollPoseController::estimateVelocities(

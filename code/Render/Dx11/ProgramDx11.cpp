@@ -31,7 +31,7 @@ ProgramDx11::ProgramDx11(ContextDx11* context)
 :	m_context(context)
 ,	m_stencilReference(0)
 ,	m_d3dInputElementsHash(0)
-,	m_parameterResArrayDirty(false)
+,	m_parameterTextureArrayDirty(false)
 #if defined(_DEBUG)
 ,	m_bindCount(0)
 #endif
@@ -127,10 +127,10 @@ void ProgramDx11::destroy()
 		m_context->releaseComRef(i->second);
 	m_d3dInputLayouts.clear();
 	m_context->releaseComRef(m_d3dInputLayout);
-	m_context->releaseComRef(m_parameterResArray);
 
 	m_parameterMap.clear();
 	m_parameterFloatArray.resize(0);
+	m_parameterTextureArray.resize(0);
 }
 
 void ProgramDx11::setFloatParameter(handle_t handle, float param)
@@ -275,26 +275,8 @@ void ProgramDx11::setTextureParameter(handle_t handle, ITexture* texture)
 	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		ID3D11ShaderResourceView* d3dTextureResourceView = 0;
-
-		if (!texture)
-			return;
-
-		Ref< ITexture > resolved = texture->resolve();
-		if (!resolved)
-			return;
-
-		if (is_a< SimpleTextureDx11 >(resolved))
-			d3dTextureResourceView = static_cast< SimpleTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-		else if (is_a< CubeTextureDx11 >(resolved))
-			d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-		else if (is_a< RenderTargetDx11 >(resolved))
-			d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
-		else
-			return;
-
-		m_parameterResArray[i->second.offset] = d3dTextureResourceView;
-		m_parameterResArrayDirty = true;
+		m_parameterTextureArray[i->second.offset] = texture;
+		m_parameterTextureArrayDirty = true;
 	}
 }
 
@@ -351,7 +333,7 @@ bool ProgramDx11::bind(
 		);
 
 	// Bind resource views.
-	if (m_parameterResArrayDirty || ms_activeProgram != this)
+	if (m_parameterTextureArrayDirty || ms_activeProgram != this)
 	{
 		// Unbind previous program's resources.
 		if (ms_activeProgram && ms_activeProgram != this)
@@ -368,17 +350,51 @@ bool ProgramDx11::bind(
 		// Bind this program's resources.
 		for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = m_vertexState.resourceIndices.begin(); i != m_vertexState.resourceIndices.end(); ++i)
 		{
-			ID3D11ShaderResourceView* res = m_parameterResArray[i->second];
-			d3dDeviceContext->VSSetShaderResources(i->first, 1, &res);
+			ITexture* texture = m_parameterTextureArray[i->second];
+			if (!texture)
+				continue;
+
+			Ref< ITexture > resolved = texture->resolve();
+			if (!resolved)
+				continue;
+
+			ID3D11ShaderResourceView* d3dTextureResourceView;
+			if (is_a< SimpleTextureDx11 >(resolved))
+				d3dTextureResourceView = static_cast< SimpleTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+			else if (is_a< CubeTextureDx11 >(resolved))
+				d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+			else if (is_a< RenderTargetDx11 >(resolved))
+				d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+			else
+				continue;
+
+			d3dDeviceContext->VSSetShaderResources(i->first, 1, &d3dTextureResourceView);
 		}
 
 		for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = m_pixelState.resourceIndices.begin(); i != m_pixelState.resourceIndices.end(); ++i)
 		{
-			ID3D11ShaderResourceView* res = m_parameterResArray[i->second];
-			d3dDeviceContext->PSSetShaderResources(i->first, 1, &res);
+			ITexture* texture = m_parameterTextureArray[i->second];
+			if (!texture)
+				continue;
+
+			Ref< ITexture > resolved = texture->resolve();
+			if (!resolved)
+				continue;
+
+			ID3D11ShaderResourceView* d3dTextureResourceView;
+			if (is_a< SimpleTextureDx11 >(resolved))
+				d3dTextureResourceView = static_cast< SimpleTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+			else if (is_a< CubeTextureDx11 >(resolved))
+				d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+			else if (is_a< RenderTargetDx11 >(resolved))
+				d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+			else
+				continue;
+
+			d3dDeviceContext->PSSetShaderResources(i->first, 1, &d3dTextureResourceView);
 		}
 
-		m_parameterResArrayDirty = false;
+		m_parameterTextureArrayDirty = false;
 	}
 
 	// Bind shaders.
@@ -550,8 +566,8 @@ bool ProgramDx11::createState(
 			SmallMap< handle_t, ParameterMap >::iterator it = m_parameterMap.find(getParameterHandle(mbstows(dsibd.Name)));
 			if (it == m_parameterMap.end())
 			{
-				uint32_t resourceIndex = uint32_t(m_parameterResArray.size());
-				m_parameterResArray.resize(resourceIndex + 1);
+				uint32_t resourceIndex = uint32_t(m_parameterTextureArray.size());
+				m_parameterTextureArray.resize(resourceIndex + 1);
 
 				ParameterMap& pm = m_parameterMap[getParameterHandle(mbstows(dsibd.Name))];
 #if defined(_DEBUG)

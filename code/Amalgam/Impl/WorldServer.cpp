@@ -43,6 +43,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer)
 
+WorldServer::WorldServer()
+:	m_shadowQuality(world::WorldRenderSettings::SqNoFilter)
+{
+}
+
 bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
 	m_renderServer = renderServer;
@@ -63,6 +68,23 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_entityRenderers->add(new weather::WeatherEntityRenderer());
 	m_entityRenderers->add(new terrain::EntityRenderer());
 
+	int32_t shadowQuality = settings->getProperty< PropertyInteger >(L"World.ShadowQuality", 1);
+	switch (shadowQuality)
+	{
+	case 0:	// low
+		m_shadowQuality = world::WorldRenderSettings::SqLow;
+		break;
+	case 1:	// medium
+		m_shadowQuality = world::WorldRenderSettings::SqMedium;
+		break;
+	case 2:	// high
+		m_shadowQuality = world::WorldRenderSettings::SqHigh;
+		break;
+	case 3:	// ultra
+		m_shadowQuality = world::WorldRenderSettings::SqHighest;
+		break;
+	}
+
 	return true;
 }
 
@@ -82,16 +104,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 	resourceManager->addFactory(new world::PostProcessFactory(database));
 	resourceManager->addFactory(new world::EntityResourceFactory(database));
 	resourceManager->addFactory(new terrain::TerrainFactory(database));
-
-	int32_t shadowQuality = environment->getSettings()->getProperty< PropertyInteger >(L"World.ShadowQuality", world::WorldRenderSettings::SqHigh);
-	m_sceneFactory = new scene::SceneFactory(
-		database,
-		renderSystem,
-		m_entityBuilder,
-		(world::WorldRenderSettings::ShadowQuality)shadowQuality
-	);
-
-	resourceManager->addFactory(m_sceneFactory);
+	resourceManager->addFactory(new scene::SceneFactory(database, renderSystem, m_entityBuilder));
 }
 
 void WorldServer::createEntityFactories(IEnvironment* environment)
@@ -114,13 +127,32 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
-	int32_t shadowQuality = settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::WorldRenderSettings::SqHigh);
-	if (shadowQuality != m_sceneFactory->getShadowQuality())
+	int32_t shadowQuality = settings->getProperty< PropertyInteger >(L"World.ShadowQuality", 1);
+	
+	world::WorldRenderSettings::ShadowQuality worldShadowQuality;
+	switch (shadowQuality)
 	{
-		m_sceneFactory->setShadowQuality((world::WorldRenderSettings::ShadowQuality)shadowQuality);
-		return CrAccepted | CrFlushResources;
+	case 0:	// low
+		worldShadowQuality = world::WorldRenderSettings::SqLow;
+		break;
+	case 1:	// medium
+		worldShadowQuality = world::WorldRenderSettings::SqMedium;
+		break;
+	case 2:	// high
+		worldShadowQuality = world::WorldRenderSettings::SqHigh;
+		break;
+	case 3:	// ultra
+		worldShadowQuality = world::WorldRenderSettings::SqHighest;
+		break;
+	default:
+		return CrUnaffected;
 	}
-	return CrUnaffected;
+
+	if (worldShadowQuality == m_shadowQuality)
+		return CrUnaffected;
+
+	m_shadowQuality = worldShadowQuality;
+	return CrAccepted;
 }
 
 void WorldServer::addEntityFactory(world::IEntityFactory* entityFactory)
@@ -153,22 +185,22 @@ world::WorldEntityRenderers* WorldServer::getEntityRenderers()
 	return m_entityRenderers;
 }
 
-Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::WorldRenderSettings* worldRenderSettings)
+Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::WorldRenderSettings& worldRenderSettings)
 {
-	T_ASSERT (worldRenderSettings);
+	Ref< world::WorldRenderSettings > settings = new world::WorldRenderSettings(worldRenderSettings);
+	settings->shadowsQuality = min(settings->shadowsQuality, m_shadowQuality);
 
 	Ref< world::IWorldRenderer > worldRenderer;
-
-	if (worldRenderSettings->renderType == world::WorldRenderSettings::RtForward)
+	if (settings->renderType == world::WorldRenderSettings::RtForward)
 		worldRenderer = new world::WorldRendererForward();
-	else if (worldRenderSettings->renderType == world::WorldRenderSettings::RtPreLit)
+	else if (settings->renderType == world::WorldRenderSettings::RtPreLit)
 		worldRenderer = new world::WorldRendererPreLit();
 
 	if (!worldRenderer)
 		return 0;
 
 	if (!worldRenderer->create(
-		*worldRenderSettings,
+		*settings,
 		m_entityRenderers,
 		m_resourceServer->getResourceManager(),
 		m_renderServer->getRenderSystem(),

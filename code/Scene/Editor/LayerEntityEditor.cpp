@@ -1,6 +1,6 @@
 #include "Scene/Editor/EntityAdapter.h"
-#include "Scene/Editor/LayerEntityData.h"
 #include "Scene/Editor/LayerEntityEditor.h"
+#include "World/Editor/LayerEntityData.h"
 
 namespace traktor
 {
@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.LayerEntityEditor", LayerEntityEditor, IEntityEditor)
 
-LayerEntityEditor::LayerEntityEditor(LayerEntityData* entityData)
+LayerEntityEditor::LayerEntityEditor(world::LayerEntityData* entityData)
 :	m_entityData(entityData)
 {
 }

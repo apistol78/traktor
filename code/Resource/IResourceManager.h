@@ -71,6 +71,12 @@ public:
 	 */
 	virtual void reload(const Guid& guid) = 0;
 
+	/*! \brief Reload all resources of given type.
+	 *
+	 * \param type Type of resource.
+	 */
+	virtual void reload(const TypeInfo& type) = 0;
+
 	/*! \brief Unload externally unused, resident, resources.
 	 *
 	 * Call this when unused resources which are resident can

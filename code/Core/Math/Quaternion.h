@@ -39,6 +39,8 @@ public:
 
 	explicit T_MATH_INLINE Quaternion(const Vector4& from, const Vector4& to);
 
+	explicit T_MATH_INLINE Quaternion(const Vector4& e);
+
 	static T_MATH_INLINE Quaternion identity();
 
 	T_MATH_INLINE Quaternion normalized() const;
@@ -68,9 +70,6 @@ public:
 	friend T_MATH_INLINE T_DLLCLASS Quaternion operator * (const Quaternion& l, const Quaternion& r);
 
 	friend T_MATH_INLINE T_DLLCLASS Vector4 operator * (const Quaternion& q, const Vector4& v);
-
-private:
-	explicit T_MATH_INLINE Quaternion(const Vector4& e);
 };
 
 T_MATH_INLINE T_DLLCLASS Quaternion lerp(const Quaternion& a, const Quaternion& b, float c);

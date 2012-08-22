@@ -97,8 +97,10 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 			else
 				m_layers.erase(j);
 		}
+#if defined(_DEBUG)
 		else
 			log::warning << L"Unable to find character " << removeObject.characterId << L" in dictionary (1)" << Endl;
+#endif
 	}
 
 	// Place instances onto active list.
@@ -125,8 +127,10 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 					T_ASSERT (layer.instance);
 					layer.instance->setTransform(transform);
 				}
+#if defined(_DEBUG)
 				else
 					log::warning << L"Unable to find character " << placeObject.characterId << L" in dictionary (2)" << Endl;
+#endif
 			}
 
 			if (!layer.instance)

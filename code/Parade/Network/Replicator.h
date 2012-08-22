@@ -57,7 +57,7 @@ public:
 
 	/*! \brief
 	 */
-	bool create(IReplicatorPeers* replicatorPeers, const ISerializable* joinParams);
+	bool create(IReplicatorPeers* replicatorPeers);
 
 	/*! \brief
 	 */
@@ -156,7 +156,6 @@ private:
 	{
 		Vector4 origin;
 		Ref< StateProphet > prophet;
-		Ref< ISerializable > params;
 		Ref< Object > object;
 	};
 
@@ -183,7 +182,6 @@ private:
 	Guid m_id;
 	std::vector< const TypeInfo* > m_eventTypes;
 	Ref< IReplicatorPeers > m_replicatorPeers;
-	Ref< const ISerializable > m_joinParams;
 	RefArray< IListener > m_listeners;
 	Vector4 m_origin;
 	Ref< const IReplicatableState > m_state;

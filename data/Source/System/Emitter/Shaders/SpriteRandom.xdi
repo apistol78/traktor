@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>229</first>
+				<first>202</first>
 				<second>288</second>
 			</position>
 			<name>Random</name>
@@ -15,7 +15,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>236</first>
+				<first>214</first>
 				<second>365</second>
 			</position>
 			<name>Count</name>
@@ -30,33 +30,20 @@
 				<second>299</second>
 			</position>
 		</item>
-		<item type="traktor.render.External" version="1">
-			<comment/>
-			<position>
-				<first>528</first>
-				<second>306</second>
-			</position>
-			<fragmentGuid>{5A85E5F4-5CAD-C64F-82BA-8E31A021DB4F}</fragmentGuid>
-			<inputPins>
-				<item>
-					<name>Input</name>
-					<optional>false</optional>
-				</item>
-			</inputPins>
-			<outputPins>
-				<item>
-					<name>Output</name>
-				</item>
-			</outputPins>
-			<values/>
-		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>678</first>
-				<second>340</second>
+				<first>695</first>
+				<second>319</second>
 			</position>
 			<name>Index</name>
+		</item>
+		<item type="traktor.render.Truncate">
+			<comment/>
+			<position>
+				<first>528</first>
+				<second>299</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -86,17 +73,17 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>

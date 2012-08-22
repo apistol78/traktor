@@ -406,7 +406,7 @@ void Application::destroy()
 	}
 
 	for (RefArray< Library >::iterator i = m_libraries.begin(); i != m_libraries.end(); ++i)
-		(*i)->close();
+		(*i)->detach();
 }
 
 bool Application::update()

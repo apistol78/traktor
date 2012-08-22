@@ -22,7 +22,7 @@
 	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<layers>
-		<item type="traktor.scene.LayerEntityData">
+		<item type="traktor.world.LayerEntityData">
 			<name>Environment</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
@@ -44,8 +44,9 @@
 			<visible>true</visible>
 			<locked>true</locked>
 			<include>true</include>
+      <dynamic>false</dynamic>
 		</item>
-		<item type="traktor.scene.LayerEntityData">
+		<item type="traktor.world.LayerEntityData">
 			<name>Entity</name>
 			<transform>
 				<translation>0, 0, 0, 0</translation>
@@ -55,6 +56,7 @@
 			<visible>true</visible>
 			<locked>false</locked>
 			<include>true</include>
+      <dynamic>false</dynamic>
 		</item>
 	</layers>
 	<controllerData/>

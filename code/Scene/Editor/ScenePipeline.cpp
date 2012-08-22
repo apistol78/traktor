@@ -8,10 +8,10 @@
 #include "Editor/IPipelineSettings.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/SceneResource.h"
-#include "Scene/Editor/LayerEntityData.h"
 #include "Scene/Editor/ScenePipeline.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Editor/LayerEntityData.h"
 
 namespace traktor
 {
@@ -66,8 +66,8 @@ bool ScenePipeline::buildDependencies(
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
 	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings(), editor::PdfBuild);
 
-	const RefArray< LayerEntityData >& layers = sceneAsset->getLayers();
-	for (RefArray< LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
+	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		pipelineDepends->addDependency(*i);
 
 	pipelineDepends->addDependency(sceneAsset->getControllerData());
@@ -89,8 +89,8 @@ bool ScenePipeline::buildOutput(
 	Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
 
 	// Build each layer of entity data; merge into a single output group.
-	const RefArray< LayerEntityData >& layers = sceneAsset->getLayers();
-	for (RefArray< LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
+	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		T_ASSERT (*i);
 		if ((*i)->isInclude() || m_targetEditor)

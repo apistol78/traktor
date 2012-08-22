@@ -18,6 +18,7 @@ namespace traktor
 	namespace world
 	{
 
+class LayerEntityData;
 class PostProcessSettings;
 class WorldRenderSettings;
 
@@ -27,7 +28,6 @@ class WorldRenderSettings;
 	{
 
 class ISceneControllerData;
-class LayerEntityData;
 
 class T_DLLCLASS SceneAsset : public ISerializable
 {
@@ -44,9 +44,9 @@ public:
 
 	const resource::Id< world::PostProcessSettings >& getPostProcessSettings() const;
 
-	void setLayers(const RefArray< LayerEntityData >& layers);
+	void setLayers(const RefArray< world::LayerEntityData >& layers);
 
-	const RefArray< LayerEntityData >& getLayers() const;
+	const RefArray< world::LayerEntityData >& getLayers() const;
 
 	void setControllerData(ISceneControllerData* controllerData);
 
@@ -57,7 +57,7 @@ public:
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	resource::Id< world::PostProcessSettings > m_postProcessSettings;
-	RefArray< LayerEntityData > m_layers;
+	RefArray< world::LayerEntityData > m_layers;
 	Ref< ISceneControllerData > m_controllerData;
 };
 

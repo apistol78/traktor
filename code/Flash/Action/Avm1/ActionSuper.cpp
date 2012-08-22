@@ -1,4 +1,4 @@
-#include "Core/Log/Log.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/Avm1/ActionSuper.h"
 
 namespace traktor
@@ -83,7 +83,7 @@ Ref< ActionObject > ActionSuper::getSuper()
 	if (m_superPrototype != 0 && superPrototype != m_superPrototype)
 	{
 		// __proto__.__ctor__
-		if (m_superPrototype->getLocalMember("__ctor__", memberValue))
+		if (m_superPrototype->getLocalMember(ActionContext::Id__ctor__, memberValue))
 			superClass = memberValue.getObject< ActionFunction >();
 		else
 			superClass = dynamic_type_cast< ActionFunction* >(superPrototype);

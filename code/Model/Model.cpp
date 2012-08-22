@@ -1,6 +1,6 @@
 #include <algorithm>
-#include "Model/Model.h"
 #include "Model/ContainerHelpers.h"
+#include "Model/Model.h"
 
 namespace traktor
 {
@@ -10,6 +10,10 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Model", Model, Object)
 
 Model::Model()
+:	m_positions(2.0f)
+,	m_colors(0.1f)
+,	m_normals(0.1f)
+,	m_texCoords(0.1f)
 {
 }
 
@@ -64,7 +68,7 @@ void Model::clear(uint32_t clearFlags)
 Aabb3 Model::getBoundingBox() const
 {
 	Aabb3 boundingBox;
-	for (AlignedVector< Vector4 >::const_iterator i = m_positions.items().begin(); i != m_positions.items().end(); ++i)
+	for (AlignedVector< Vector4 >::const_iterator i = m_positions.values().begin(); i != m_positions.values().end(); ++i)
 		boundingBox.contain(*i);
 	return boundingBox;
 }
@@ -195,7 +199,7 @@ uint32_t Model::addPosition(const Vector4& position)
 
 uint32_t Model::addUniquePosition(const Vector4& position)
 {
-	uint32_t id = m_positions.get< PositionPredicate >(position);
+	uint32_t id = m_positions.get(position, 0.01f);
 	return id != m_positions.InvalidIndex ? id : m_positions.add(position);
 }
 
@@ -211,7 +215,7 @@ void Model::setPositions(const AlignedVector< Vector4 >& positions)
 
 const AlignedVector< Vector4 >& Model::getPositions() const
 {
-	return m_positions.items();
+	return m_positions.values();
 }
 
 uint32_t Model::addColor(const Vector4& color)
@@ -221,7 +225,7 @@ uint32_t Model::addColor(const Vector4& color)
 
 uint32_t Model::addUniqueColor(const Vector4& color)
 {
-	uint32_t id = m_colors.get< ColorPredicate >(color);
+	uint32_t id = m_colors.get(color, 1.0f / (4.0f * 256.0f));
 	return id != m_colors.InvalidIndex ? id : m_colors.add(color);
 }
 
@@ -237,7 +241,7 @@ void Model::setColors(const AlignedVector< Vector4 >& colors)
 
 const AlignedVector< Vector4 >& Model::getColors() const
 {
-	return m_colors.items();
+	return m_colors.values();
 }
 
 uint32_t Model::addNormal(const Vector4& normal)
@@ -253,7 +257,7 @@ uint32_t Model::addUniqueNormal(const Vector4& normal)
 		int(normal.z() * 128.0f) / 128.0f,
 		0.0f
 	);
-	uint32_t id = m_normals.get< NormalPredicate >(quantizedNormal);
+	uint32_t id = m_normals.get(quantizedNormal, 0.0001f);
 	return id != m_normals.InvalidIndex ? id : m_normals.add(quantizedNormal);
 }
 
@@ -269,7 +273,7 @@ void Model::setNormals(const AlignedVector< Vector4 >& normals)
 
 const AlignedVector< Vector4 >& Model::getNormals() const
 {
-	return m_normals.items();
+	return m_normals.values();
 }
 
 uint32_t Model::addTexCoord(const Vector2& texCoord)
@@ -279,7 +283,7 @@ uint32_t Model::addTexCoord(const Vector2& texCoord)
 
 uint32_t Model::addUniqueTexCoord(const Vector2& texCoord)
 {
-	uint32_t id = m_texCoords.get< TexCoordPredicate >(texCoord);
+	uint32_t id = m_texCoords.get(texCoord, 0.001f);
 	return id != m_texCoords.InvalidIndex ? id : m_texCoords.add(texCoord);
 }
 
@@ -295,7 +299,7 @@ void Model::setTexCoords(const AlignedVector< Vector2 >& texCoords)
 
 const AlignedVector< Vector2 >& Model::getTexCoords() const
 {
-	return m_texCoords.items();
+	return m_texCoords.values();
 }
 
 uint32_t Model::addJoint(const std::wstring& jointName)
@@ -328,7 +332,7 @@ uint32_t Model::addBlendTarget(const std::wstring& blendTargetName)
 	m_blendTargets.push_back(blendTargetName);
 	uint32_t id = uint32_t(m_blendTargets.size() - 1);
 
-	m_blendTargetPositions[id] = m_positions;
+	m_blendTargetPositions[id] = m_positions.values();
 	return id;
 }
 
@@ -344,13 +348,16 @@ const std::wstring& Model::getBlendTarget(uint32_t blendTargetIndex)
 
 void Model::setBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex, const Vector4& position)
 {
-	m_blendTargetPositions[blendTargetIndex].set(positionIndex, position);
+	AlignedVector< Vector4 >& positions = m_blendTargetPositions[blendTargetIndex];
+	if (positionIndex >= positions.size())
+		positions.resize(positionIndex + 1);
+	positions[positionIndex] = position;
 }
 
 const Vector4& Model::getBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex) const
 {
-	std::map< uint32_t, SpatialHashArray< Vector4 > >::const_iterator i = m_blendTargetPositions.find(blendTargetIndex);
-	return i->second.get(positionIndex);
+	std::map< uint32_t, AlignedVector< Vector4 > >::const_iterator i = m_blendTargetPositions.find(blendTargetIndex);
+	return i->second[positionIndex];
 }
 
 	}

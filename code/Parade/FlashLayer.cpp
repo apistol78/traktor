@@ -31,12 +31,14 @@ FlashLayer::FlashLayer(
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< flash::FlashMovie >& movie,
-	bool clearBackground
+	bool clearBackground,
+	bool enableSound
 )
 :	Layer(name, scriptContext)
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_clearBackground(clearBackground)
+,	m_enableSound(enableSound)
 ,	m_visible(true)
 {
 }
@@ -84,10 +86,7 @@ void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 
 void FlashLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
 {
-	if (!m_displayRenderer)
-		return;
-
-	if (!m_visible)
+	if (!m_displayRenderer || !m_visible)
 		return;
 
 	m_displayRenderer->build(frame);
@@ -96,14 +95,11 @@ void FlashLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t 
 
 void FlashLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 {
-	if (!m_displayRenderer)
+	if (!m_displayRenderer || !m_visible)
 		return;
-
-	if (!m_visible)
-		return;
-
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	T_ASSERT (renderView);
 
 	m_displayRenderer->render(
 		renderView,
@@ -190,7 +186,7 @@ void FlashLayer::createMoviePlayer()
 
 	// Create sound Flash renderer.
 	Ref< flash::SoundRenderer > soundRenderer;
-	if (m_environment->getAudio())
+	if (m_enableSound && m_environment->getAudio())
 	{
 		soundRenderer = new flash::SoundRenderer();
 		soundRenderer->create(m_environment->getAudio()->getSoundSystem());

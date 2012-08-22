@@ -70,38 +70,6 @@ struct MaterialPredicate
 	}
 };
 
-struct PositionPredicate
-{
-	inline bool operator () (const Vector4& a, const Vector4& b) const
-	{
-		return (b - a).length() <= 0.01f;
-	}
-};
-
-struct ColorPredicate
-{
-	inline bool operator () (const Vector4& a, const Vector4& b) const
-	{
-		return (b - a).length() <= 1.0f / (4.0f * 256.0f);
-	}
-};
-
-struct NormalPredicate
-{
-	inline bool operator () (const Vector4& a, const Vector4& b) const
-	{
-		return (b - a).length() <= 0.0001f;
-	}
-};
-
-struct TexCoordPredicate
-{
-	inline bool operator () (const Vector2& a, const Vector2& b) const
-	{
-		return (b - a).length() <= 0.001f;
-	}
-};
-
 //@}
 
 	}

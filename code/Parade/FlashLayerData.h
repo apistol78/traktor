@@ -40,6 +40,7 @@ private:
 
 	resource::Id< flash::FlashMovie > m_movie;
 	bool m_clearBackground;
+	bool m_enableSound;
 };
 
 	}

@@ -27,7 +27,6 @@ struct Message
 		{
 			uint8_t sequence;
 			uint8_t id[16];
-			uint8_t data[1200 - 1 - sizeof(float) - 1 - 16];
 		} iam;
 
 		uint8_t data[1200 - 1 - sizeof(float)];

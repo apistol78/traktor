@@ -1594,6 +1594,10 @@
       <second>In</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_INSTANCE</first>
+      <second>Instans</second>
+    </item>    
+    <item>
       <first>SHADERGRAPH_NODE_INTERPOLATOR</first>
       <second>Interpolera</second>
     </item>
@@ -1744,6 +1748,10 @@
     <item>
       <first>SHADERGRAPH_NODE_TRANSPOSE</first>
       <second>Transponera</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_TRUNCATE</first>
+      <second>Trunkera</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_TYPE</first>

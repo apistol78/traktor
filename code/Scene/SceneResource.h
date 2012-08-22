@@ -60,8 +60,7 @@ public:
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		world::IEntityBuilder* entityBuilder,
-		world::IEntitySchema* entitySchema,
-		world::WorldRenderSettings::ShadowQuality shadowQuality
+		world::IEntitySchema* entitySchema
 	) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);

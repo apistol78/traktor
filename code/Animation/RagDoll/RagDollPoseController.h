@@ -69,7 +69,7 @@ public:
 
 	virtual void setTransform(const Transform& transform);
 
-	virtual void evaluate(
+	virtual bool evaluate(
 		float deltaTime,
 		const Transform& worldTransform,
 		const Skeleton* skeleton,

@@ -105,8 +105,10 @@ private:
 	Semaphore m_createOutputLock;
 	Semaphore m_readCacheLock;
 	Semaphore m_builtCacheLock;
+	Semaphore m_buildTimesLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
+	std::map< const TypeInfo*, double > m_buildTimes;
 	ThreadLocal m_buildInstances;
 	uint32_t m_progress;
 	uint32_t m_progressEnd;

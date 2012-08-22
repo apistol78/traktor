@@ -262,15 +262,18 @@ void RenderServerDefault::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	int32_t skipMips = environment->getSettings()->getProperty< PropertyInteger >(L"Render.SkipMips", 0);
+	int32_t textureQuality = environment->getSettings()->getProperty< PropertyInteger >(L"Render.TextureQuality", 1);
+	int32_t skipMips = 3 - textureQuality;
+
 	m_textureFactory = new render::TextureFactory(database, m_renderSystem, skipMips);
 
 	resourceManager->addFactory(m_textureFactory);
 	resourceManager->addFactory(new render::ShaderFactory(database, m_renderSystem));
 }
 
-int32_t RenderServerDefault::reconfigure(const PropertyGroup* settings)
+int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const PropertyGroup* settings)
 {
+	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	int32_t result = CrUnaffected;
 
 	render::RenderViewDefaultDesc rvdd;
@@ -375,11 +378,14 @@ int32_t RenderServerDefault::reconfigure(const PropertyGroup* settings)
 		T_DEBUG(L"Render view settings unchanged");
 
 	// Update texture quality; manifest through skipping high-detail mips.
-	int32_t skipMips = settings->getProperty< PropertyInteger >(L"Render.SkipMips", 0);
+	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 1);
+	int32_t skipMips = 3 - textureQuality;
+
 	if (skipMips != m_textureFactory->getSkipMips())
 	{
 		m_textureFactory->setSkipMips(skipMips);
-		result |= CrAccepted | CrFlushResources;
+		resourceManager->reload(type_of< render::ITexture >());
+		result |= CrAccepted;
 	}
 
 	return result;

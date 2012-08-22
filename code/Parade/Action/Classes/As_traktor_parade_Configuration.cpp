@@ -50,6 +50,8 @@ As_traktor_parade_Configuration::As_traktor_parade_Configuration(flash::ActionCo
 	// Input
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_rumbleEnable));
 
+	prototype->setMember("apply", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_apply)));
+
 	prototype->setMember("constructor", flash::ActionValue(this));
 	prototype->setReadOnly();
 
@@ -232,6 +234,11 @@ bool As_traktor_parade_Configuration::Configuration_get_rumbleEnable(const AsCon
 void As_traktor_parade_Configuration::Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const
 {
 	self->setRumbleEnable(rumbleEnable);
+}
+
+bool As_traktor_parade_Configuration::Configuration_apply(AsConfiguration* self) const
+{
+	return self->apply(m_environment);
 }
 
 	}

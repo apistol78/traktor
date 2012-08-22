@@ -1,4 +1,3 @@
-#include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
@@ -21,7 +20,7 @@ PropertyGroup::PropertyGroup(const std::map< std::wstring, Ref< IPropertyValue >
 
 PropertyGroup::value_type_t PropertyGroup::get(const IPropertyValue* value)
 {
-	return value ? DeepClone(value).create< PropertyGroup >() : 0;
+	return value ? checked_type_cast< PropertyGroup* >(value->clone()) : 0;
 }
 
 void PropertyGroup::setProperty(const std::wstring& propertyName, IPropertyValue* value)
@@ -117,7 +116,7 @@ Ref< PropertyGroup > PropertyGroup::mergeJoin(const PropertyGroup* rightGroup) c
 		if (rightValues.find(i->first) != rightValues.end())
 			continue;
 
-		joinedGroup->setProperty(i->first, DeepClone(i->second).create< IPropertyValue >());
+		joinedGroup->setProperty(i->first, i->second->clone());
 	}
 
 	// Insert values from right group.
@@ -127,7 +126,7 @@ Ref< PropertyGroup > PropertyGroup::mergeJoin(const PropertyGroup* rightGroup) c
 		if (it != leftValues.end())
 			joinedGroup->setProperty(i->first, it->second->join(i->second));
 		else
-			joinedGroup->setProperty(i->first, DeepClone(i->second).create< IPropertyValue >());
+			joinedGroup->setProperty(i->first, i->second->clone());
 	}
 
 	return joinedGroup;
@@ -146,12 +145,12 @@ Ref< PropertyGroup > PropertyGroup::mergeReplace(const PropertyGroup* rightGroup
 		if (rightValues.find(i->first) != rightValues.end())
 			continue;
 
-		joinedGroup->setProperty(i->first, DeepClone(i->second).create< IPropertyValue >());
+		joinedGroup->setProperty(i->first, i->second->clone());
 	}
 
 	// Insert values from right group.
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
-		joinedGroup->setProperty(i->first, DeepClone(i->second).create< IPropertyValue >());
+		joinedGroup->setProperty(i->first, i->second->clone());
 
 	return joinedGroup;
 }
@@ -180,7 +179,16 @@ Ref< IPropertyValue > PropertyGroup::join(const IPropertyValue* right) const
 
 Ref< IPropertyValue > PropertyGroup::clone() const
 {
-	return new PropertyGroup(m_value);
+	std::map< std::wstring, Ref< IPropertyValue > > value;
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = m_value.begin(); i != m_value.end(); ++i)
+	{
+		T_ASSERT (i->second);
+		value.insert(std::make_pair(
+			i->first,
+			i->second->clone()
+		));
+	}
+	return new PropertyGroup(value);
 }
 
 }

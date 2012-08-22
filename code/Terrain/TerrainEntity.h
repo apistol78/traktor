@@ -51,7 +51,7 @@ class WorldRenderView;
 
 class TerrainSurfaceCache;
 
-#if !defined(TARGET_OS_IPHONE)
+#if !TARGET_OS_IPHONE
 #	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
 #endif
 

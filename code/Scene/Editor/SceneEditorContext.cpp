@@ -15,11 +15,11 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/LayerEntityData.h"
 #include "Scene/Editor/LayerEntityEditor.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Event.h"
+#include "World/Editor/LayerEntityData.h"
 #include "World/Entity/EntitySchema.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/PostProcess/PostProcessSettings.h"
@@ -308,12 +308,12 @@ void SceneEditorContext::buildEntities()
 		Ref< world::GroupEntity > rootGroupEntity = new world::GroupEntity();
 
 		// Create entities from scene layers.
-		const RefArray< LayerEntityData >& layers = m_sceneAsset->getLayers();
+		const RefArray< world::LayerEntityData >& layers = m_sceneAsset->getLayers();
 
 		m_layerEntityAdapters.resize(layers.size());
 		for (uint32_t i = 0; i < layers.size(); ++i)
 		{
-			LayerEntityData* layerEntityData = layers[i];
+			world::LayerEntityData* layerEntityData = layers[i];
 			T_ASSERT (layerEntityData);
 
 			// If possible reuse layer entity adapter.

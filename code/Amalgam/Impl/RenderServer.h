@@ -29,7 +29,7 @@ public:
 
 	virtual void createResourceFactories(IEnvironment* environment) = 0;
 
-	virtual int32_t reconfigure(const PropertyGroup* settings) = 0;
+	virtual int32_t reconfigure(IEnvironment* environment, const PropertyGroup* settings) = 0;
 
 	virtual UpdateResult update(PropertyGroup* settings) = 0;
 };

@@ -30,6 +30,8 @@ public:
 	virtual bool getScore(const std::wstring& leaderboardId, int32_t& outScore) const = 0;
 
 	virtual Ref< Result > setScore(const std::wstring& leaderboardId, int32_t score) = 0;
+
+	virtual Ref< Result > addScore(const std::wstring& leaderboardId, int32_t score) = 0;
 };
 
 	}

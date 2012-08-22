@@ -3,14 +3,13 @@
 
 #include <map>
 #include "Core/Object.h"
-#include "Core/Math/Vector4.h"
-#include "Core/Math/Vector2.h"
 #include "Core/Math/Aabb3.h"
 #include "Model/Types.h"
+#include "Model/Grid2.h"
+#include "Model/Grid3.h"
 #include "Model/Material.h"
-#include "Model/Vertex.h"
 #include "Model/Polygon.h"
-#include "Model/SpatialHashArray.h"
+#include "Model/Vertex.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -156,13 +155,13 @@ private:
 	std::vector< Material > m_materials;
 	std::vector< Vertex > m_vertices;
 	std::vector< Polygon > m_polygons;
-	SpatialHashArray< Vector4 > m_positions;
-	SpatialHashArray< Vector4 > m_colors; 
-	SpatialHashArray< Vector4 > m_normals;
-	SpatialHashArray< Vector2 > m_texCoords;
+	Grid3< Vector4 > m_positions;
+	Grid3< Vector4 > m_colors; 
+	Grid3< Vector4 > m_normals;
+	Grid2< Vector2 > m_texCoords;
 	std::vector< std::wstring > m_joints;
 	std::vector< std::wstring > m_blendTargets;
-	std::map< uint32_t, SpatialHashArray< Vector4 > > m_blendTargetPositions;
+	std::map< uint32_t, AlignedVector< Vector4 > > m_blendTargetPositions;
 	std::map< uint32_t, uint32_t > m_verticesHash;
 };
 

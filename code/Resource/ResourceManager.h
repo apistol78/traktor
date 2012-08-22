@@ -48,6 +48,8 @@ public:
 
 	virtual void reload(const Guid& guid);
 
+	virtual void reload(const TypeInfo& type);
+
 	virtual void unloadUnusedResident();
 	
 	virtual void getStatistics(ResourceManagerStatistics& outStatistics) const;

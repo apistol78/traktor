@@ -32,7 +32,7 @@ const source_map_t& ScriptResourceLua::getMap() const
 bool ScriptResourceLua::serialize(ISerializer& s)
 {
 	s >> Member< std::string >(L"script", m_script);
-	s >> MemberStlList< typename source_map_t::value_type, MemberStlPair< typename source_map_t::value_type::first_type, typename source_map_t::value_type::second_type > >(L"map", m_map);
+	s >> MemberStlList< source_map_t::value_type, MemberStlPair< source_map_t::value_type::first_type, source_map_t::value_type::second_type > >(L"map", m_map);
 	return true;
 }
 

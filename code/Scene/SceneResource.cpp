@@ -27,8 +27,7 @@ Ref< Scene > SceneResource::createScene(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	world::IEntityBuilder* entityBuilder,
-	world::IEntitySchema* entitySchema,
-	world::WorldRenderSettings::ShadowQuality shadowQuality
+	world::IEntitySchema* entitySchema
 ) const
 {
 	resource::Proxy< world::PostProcessSettings > postProcessSettings;
@@ -56,14 +55,11 @@ Ref< Scene > SceneResource::createScene(
 
 	entityBuilder->end();
 
-	Ref< world::WorldRenderSettings > worldRenderSettings = new world::WorldRenderSettings(*m_worldRenderSettings);
-	worldRenderSettings->shadowsQuality = min(m_worldRenderSettings->shadowsQuality, shadowQuality);
-
 	return new Scene(
 		controller,
 		entitySchema,
 		rootEntity,
-		worldRenderSettings,
+		m_worldRenderSettings,
 		postProcessSettings
 	);
 }

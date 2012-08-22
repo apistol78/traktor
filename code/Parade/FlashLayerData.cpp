@@ -12,10 +12,11 @@ namespace traktor
 	namespace parade
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.FlashLayerData", 1, FlashLayerData, LayerData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.FlashLayerData", 2, FlashLayerData, LayerData)
 
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)
+,	m_enableSound(true)
 {
 }
 
@@ -38,7 +39,8 @@ Ref< Layer > FlashLayerData::createInstance(amalgam::IEnvironment* environment) 
 		environment,
 		script,
 		movie,
-		m_clearBackground
+		m_clearBackground,
+		m_enableSound
 	);
 }
 
@@ -51,6 +53,9 @@ bool FlashLayerData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"clearBackground", m_clearBackground);
+
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"enableSound", m_enableSound);
 
 	return true;
 }

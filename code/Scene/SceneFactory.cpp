@@ -14,24 +14,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneFactory", SceneFactory, resource::IR
 SceneFactory::SceneFactory(
 	db::Database* database,
 	render::IRenderSystem* renderSystem,
-	world::IEntityBuilder* entityBuilder,
-	world::WorldRenderSettings::ShadowQuality shadowQuality
+	world::IEntityBuilder* entityBuilder
 )
 :	m_database(database)
 ,	m_renderSystem(renderSystem)
 ,	m_entityBuilder(entityBuilder)
-,	m_shadowQuality(shadowQuality)
 {
-}
-
-void SceneFactory::setShadowQuality(world::WorldRenderSettings::ShadowQuality shadowQuality)
-{
-	m_shadowQuality = shadowQuality;
-}
-
-world::WorldRenderSettings::ShadowQuality SceneFactory::getShadowQuality() const
-{
-	return m_shadowQuality;
 }
 
 const TypeInfoSet SceneFactory::getResourceTypes() const
@@ -57,8 +45,7 @@ Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, 
 		resourceManager,
 		m_renderSystem,
 		m_entityBuilder,
-		entitySchema,
-		m_shadowQuality
+		entitySchema
 	);
 }
 

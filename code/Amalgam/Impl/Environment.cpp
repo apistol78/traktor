@@ -111,7 +111,7 @@ int32_t Environment::executeReconfigure()
 		return CrFailed;
 	if (m_physicsServer && (result |= m_physicsServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;
-	if (m_renderServer && (result |= m_renderServer->reconfigure(m_settings)) == CrFailed)
+	if (m_renderServer && (result |= m_renderServer->reconfigure(this, m_settings)) == CrFailed)
 		return CrFailed;
 	if (m_resourceServer && (result |= m_resourceServer->reconfigure(m_settings)) == CrFailed)
 		return CrFailed;

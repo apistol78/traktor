@@ -27,6 +27,7 @@
 #include "Model/ModelFormat.h"
 #include "Model/Operations/Triangulate.h"
 #include "Render/Editor/Texture/TextureOutput.h"
+#include "World/Editor/LayerEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
@@ -90,6 +91,17 @@ void collectMeshEntities(const ISerializable* object, const Transform& transform
 		if (mesh::MeshEntityData* meshEntityData = dynamic_type_cast< mesh::MeshEntityData* >(objectMember->get()))
 		{
 			outMeshEntityData.push_back(meshEntityData);
+		}
+		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
+		{
+			if (layerEntityData->isDynamic())
+				continue;
+
+			collectMeshEntities(
+				objectMember->get(),
+				layerEntityData->getTransform(),
+				outMeshEntityData
+			);
 		}
 		else if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(objectMember->get()))
 		{
@@ -382,8 +394,6 @@ bool OcclusionTexturePipeline::buildOutput(
 
 	drawing::MirrorFilter mirrorFilter(false, true);
 	image = image->applyFilter(&mirrorFilter);
-
-	//image->save(L"data/Temp/Occlusion.png");
 
 	Ref< render::TextureOutput > output = new render::TextureOutput();
 	output->m_hasAlpha = false;

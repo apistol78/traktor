@@ -40,7 +40,7 @@ void IKPoseController::setTransform(const Transform& transform)
 {
 }
 
-void IKPoseController::evaluate(
+bool IKPoseController::evaluate(
 	float deltaTime,
 	const Transform& worldTransform,
 	const Skeleton* skeleton,
@@ -161,6 +161,8 @@ void IKPoseController::evaluate(
 	//		sp
 	//	));
 	//}
+
+	return true;
 }
 
 void IKPoseController::estimateVelocities(

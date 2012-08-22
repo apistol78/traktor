@@ -45,7 +45,8 @@ public:
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< flash::FlashMovie >& movie,
-		bool clearBackground
+		bool clearBackground,
+		bool enableSound
 	);
 
 	virtual void update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
@@ -75,6 +76,7 @@ private:
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::ISoundRenderer > m_soundRenderer;
 	bool m_clearBackground;
+	bool m_enableSound;
 	bool m_visible;
 
 	void createMoviePlayer();

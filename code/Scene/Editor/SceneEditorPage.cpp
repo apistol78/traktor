@@ -26,7 +26,6 @@
 #include "Scene/Editor/ISceneControllerEditorFactory.h"
 #include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
-#include "Scene/Editor/LayerEntityData.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/SceneEditorPage.h"
@@ -52,6 +51,7 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/InputDialog.h"
 #include "World/WorldRenderSettings.h"
+#include "World/Editor/LayerEntityData.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityData.h"
 
@@ -582,7 +582,7 @@ bool SceneEditorPage::createSceneAsset()
 		if (!sceneAsset)
 			return false;
 
-		const RefArray< LayerEntityData >& layers = sceneAsset->getLayers();
+		const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
 		T_ASSERT (layers.size() >= 2);
 
 		layers[1]->addEntityData(entityData);

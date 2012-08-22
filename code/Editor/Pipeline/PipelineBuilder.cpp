@@ -134,7 +134,12 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
+	{
+		for (std::map< const TypeInfo*, double >::const_iterator i = m_buildTimes.begin(); i != m_buildTimes.end(); ++i)
+			log::info << L"Pipeline \"" << i->first->getName() << L"\" " << int32_t(i->second * 1000.0) << L" ms" << Endl;
+
 		log::info << L"Build finished; " << m_succeeded << L" succeeded, " << m_failed << L" failed" << Endl;
+	}
 	else
 		log::info << L"Build finished; aborted" << Endl;
 
@@ -184,12 +189,23 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 		return 0;
 
+	Timer timer;
+	timer.start();
+
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
 	if (!product)
 		return 0;
 
+	double buildTime = timer.getElapsedTime();
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
+		m_buildTimes[&type_of(pipeline)] += buildTime;
+	}
+
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
+		
 		BuiltCacheEntry bce;
 		bce.sourceAsset = sourceAsset;
 		bce.product = product;
@@ -207,7 +223,20 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object
 	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 		return false;
 
-	return pipeline->buildOutput(this, sourceAsset, 0, buildParams, outputPath, outputGuid, PbrSourceModified);
+	Timer timer;
+	timer.start();
+
+	if (!pipeline->buildOutput(this, sourceAsset, 0, buildParams, outputPath, outputGuid, PbrSourceModified))
+		return false;
+
+	double buildTime = timer.getElapsedTime();
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
+		m_buildTimes[&type_of(pipeline)] += buildTime;
+	}
+
+	return true;
 }
 
 Ref< db::Database > PipelineBuilder::getSourceDatabase() const
@@ -413,6 +442,9 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 			RefArray< db::Instance > builtInstances;
 			m_buildInstances.set(&builtInstances);
 
+			Timer timer;
+			timer.start();
+
 			result = dependency->pipeline->buildOutput(
 				this,
 				dependency->sourceAsset,
@@ -423,8 +455,15 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 				dependency->reason
 			);
 
+			double buildTime = timer.getElapsedTime();
+
 			if (result)
 			{
+				{
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
+					m_buildTimes[&type_of(dependency->pipeline)] += buildTime;
+				}
+
 				if (!builtInstances.empty())
 				{
 					log::info << L"Instance(s) built:" << Endl;
