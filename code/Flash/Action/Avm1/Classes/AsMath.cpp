@@ -19,6 +19,7 @@ AsMath::AsMath(ActionContext* context)
 	setMember("ln10", ActionValue(avm_number_t(2.30258509299404568402)));
 	setMember("log10e", ActionValue(avm_number_t(0.43429448190325182765)));
 	setMember("pi", ActionValue(avm_number_t(3.14159265358979323846)));
+	setMember("PI", ActionValue(avm_number_t(3.14159265358979323846)));
 	setMember("sqrt1_2", ActionValue(avm_number_t(0.7071067811865475244)));
 	setMember("sqrt2", ActionValue(avm_number_t(1.4142135623730950488)));
 	setMember("abs", ActionValue(createNativeFunction(context, this, &AsMath::Math_abs)));

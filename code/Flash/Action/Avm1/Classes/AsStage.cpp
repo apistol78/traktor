@@ -323,6 +323,7 @@ void AsStage::Stage_get_scaleMode(CallArgs& ca)
 void AsStage::Stage_set_scaleMode(CallArgs& ca)
 {
 	std::string sm = ca.args[0].getString();
+
 	if (compareIgnoreCase< std::string >(sm, "showAll") == 0)
 		m_scaleMode = SmShowAll;
 	else if (compareIgnoreCase< std::string >(sm, "noBorder") == 0)
@@ -330,7 +331,11 @@ void AsStage::Stage_set_scaleMode(CallArgs& ca)
 	else if (compareIgnoreCase< std::string >(sm, "exactFit") == 0)
 		m_scaleMode = SmExactFit;
 	else if (compareIgnoreCase< std::string >(sm, "noScale") == 0)
+	{
 		m_scaleMode = SmNoScale;
+		m_width = m_viewWidth;
+		m_height = m_viewHeight;
+	}
 
 	updateViewOffset();
 }

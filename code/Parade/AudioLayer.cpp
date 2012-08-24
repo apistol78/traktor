@@ -22,6 +22,10 @@ AudioLayer::AudioLayer(
 {
 }
 
+void AudioLayer::prepare(Stage* stage)
+{
+}
+
 void AudioLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	// Issue script update method.

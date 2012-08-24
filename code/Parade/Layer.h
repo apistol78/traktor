@@ -50,6 +50,8 @@ public:
 
 	void destroy();
 
+	virtual void prepare(Stage* stage) = 0;
+
 	virtual void update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info) = 0;
 
 	virtual void build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame) = 0;

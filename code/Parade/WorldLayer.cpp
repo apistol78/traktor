@@ -42,7 +42,7 @@ WorldLayer::WorldLayer(
 {
 }
 
-void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void WorldLayer::prepare(Stage* stage)
 {
 	if (m_scene.changed())
 	{
@@ -70,7 +70,15 @@ void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 		createWorldRenderer();
 		if (!m_worldRenderer)
 			return;
+
+		flushScript();
 	}
+}
+
+void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+{
+	if (!m_worldRenderer)
+		return;
 
 	// Issue script update method.
 	invokeScriptUpdate(stage, control, info);

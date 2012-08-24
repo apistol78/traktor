@@ -31,6 +31,10 @@ VideoLayer::VideoLayer(
 {
 }
 
+void VideoLayer::prepare(Stage* stage)
+{
+}
+
 void VideoLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	invokeScriptUpdate(stage, control, info);

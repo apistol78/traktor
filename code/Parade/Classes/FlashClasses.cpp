@@ -146,23 +146,32 @@ Ref< Object > ActionObjectClass::construct(const InvokeParam& param, uint32_t ar
 
 uint32_t ActionObjectClass::getMethodCount() const
 {
-	return 0;
+	return 1;
 }
 
 std::wstring ActionObjectClass::getMethodName(uint32_t methodId) const
 {
-	return L"";
+	return L"getMember";
 }
 
 script::Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const script::Any* argv) const
 {
-	return script::Any();
+	T_ASSERT (methodId == 0);
+	flash::ActionObject* object = checked_type_cast< flash::ActionObject*, false >(param.object);
+	flash::ActionValue memberValue;
+	if (object->getMember(wstombs(argv[0].getString()), memberValue))
+		return script::CastAny< flash::ActionValue >::set(memberValue);
+	else
+		return script::Any();
 }
 
 script::Any ActionObjectClass::invokeUnknown(const InvokeParam& param, const std::wstring& methodName, uint32_t argc, const script::Any* argv) const
 {
 	flash::ActionObject* object = checked_type_cast< flash::ActionObject*, false >(param.object);
+	T_ASSERT (object);
+
 	flash::ActionValuePool& pool = object->getContext()->getPool();
+	T_ANONYMOUS_VAR(flash::ActionValuePool::Scope)(pool);
 
 	flash::ActionValueArray args(pool, argc);
 	for (uint32_t i = 0; i < argc; ++i)

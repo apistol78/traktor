@@ -215,6 +215,9 @@ bool SoundPipeline::buildOutput(
 			sampleRate = soundBlock.sampleRate;
 			samplesCount += soundBlock.samplesCount;
 			maxChannel = std::max(soundBlock.maxChannel, maxChannel);
+
+			std::memset(&soundBlock, 0, sizeof(soundBlock));
+			soundBlock.samplesCount = 4096;
 		}
 
 		safeDestroy(encoder);

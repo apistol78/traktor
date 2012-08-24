@@ -19,7 +19,16 @@ namespace traktor
 		namespace
 		{
 
-bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& scriptGuid, std::list< std::pair< std::wstring, Ref< const Script > > >& outScripts)
+struct ResolvedScript
+{
+	Guid guid;
+	std::wstring name;
+	Ref< const Script > script;
+
+	bool operator == (const Guid& rh) const { return guid == rh; }
+};
+
+bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& scriptGuid, std::list< ResolvedScript >& outScripts)
 {
 	Ref< db::Instance > scriptInstance = pipelineBuilder->getSourceDatabase()->getInstance(scriptGuid);
 	if (!scriptInstance)
@@ -32,21 +41,25 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 	const std::vector< Guid >& dependencies = script->getDependencies();
 	for (std::vector< Guid >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 	{
+		if (std::find(outScripts.begin(), outScripts.end(), *i) != outScripts.end())
+			continue;
+
 		if (!resolveScript(pipelineBuilder, *i, outScripts))
 			return false;
 	}
 
-	outScripts.push_back(std::make_pair(
-		scriptInstance->getName(),
-		script
-	));
+	ResolvedScript rs;
+	rs.guid = scriptGuid;
+	rs.name = scriptInstance->getName();
+	rs.script = script;
+	outScripts.push_back(rs);
 
 	return true;
 }
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 4, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 5, ScriptPipeline, editor::DefaultPipeline)
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -102,7 +115,7 @@ bool ScriptPipeline::buildOutput(
 ) const
 {
 	// Create ordered list of dependent scripts.
-	std::list< std::pair< std::wstring, Ref< const Script > > > scripts;
+	std::list< ResolvedScript > scripts;
 	if (!resolveScript(pipelineBuilder, outputGuid, scripts))
 	{
 		log::error << L"Script pipeline failed; unable to resolve script dependencies" << Endl;
@@ -114,10 +127,10 @@ bool ScriptPipeline::buildOutput(
 	StringOutputStream ss;
 	int32_t line = 0;
 
-	for (std::list< std::pair< std::wstring, Ref< const Script > > >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
+	for (std::list< ResolvedScript >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
 	{
-		sm.push_back(std::make_pair(line, i->first));
-		StringSplit< std::wstring > split(i->second->getText(), L"\r\n");
+		sm.push_back(std::make_pair(line, i->name));
+		StringSplit< std::wstring > split(i->script->getText(), L"\r\n");
 		for (StringSplit< std::wstring >::const_iterator j = split.begin(); j != split.end(); ++j)
 		{
 			ss << *j << Endl;
