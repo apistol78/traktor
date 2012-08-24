@@ -43,10 +43,8 @@ FlashLayer::FlashLayer(
 {
 }
 
-void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void FlashLayer::prepare(Stage* stage)
 {
-	std::wstring command, args;
-
 	if (m_movie.changed())
 	{
 		m_displayRenderer = 0;
@@ -62,9 +60,13 @@ void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 		if (!m_moviePlayer)
 			return;
 
-		// Flush script to ensure it will get recreated as-well.
 		flushScript();
 	}
+}
+
+void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+{
+	std::wstring command, args;
 
 	// Issue script update method.
 	invokeScriptUpdate(stage, control, info);
@@ -217,6 +219,9 @@ void FlashLayer::createMoviePlayer()
 		asTraktor->setMember("parade", flash::ActionValue(asParade));
 	}
 	moviePlayer->setGlobal("traktor", flash::ActionValue(asTraktor));
+
+	// Execute first frame.
+	while (!moviePlayer->progressFrame(1.0f / 60.0f));
 
 	// All success, replace instances.
 	m_displayRenderer = displayRenderer;

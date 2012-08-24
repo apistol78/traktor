@@ -502,9 +502,19 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	if (top < 1)
 		return 0;
 
-	Object* object = *reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
-	if (!object)
+	Object** objectPtr = reinterpret_cast< Object** >(lua_touserdata(luaState, 1));
+	if (!objectPtr)
+	{
+		log::error << L"Unable to call method; not an object" << Endl;
 		return 0;
+	}
+
+	Object* object = *objectPtr;
+	if (!object)
+	{
+		log::error << L"Unable to call method; null object" << Endl;
+		return 0;
+	}
 
 	for (int32_t i = 2; i <= top; ++i)
 		argv[i - 2] = manager->toAny(i);

@@ -348,8 +348,10 @@ void Replicator::update(float dT)
 	// Send events to peers.
 	if (!m_eventsOut.empty())
 	{
-		for (std::list< Event >::const_iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
+		for (std::list< Event >::const_iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); )
 		{
+			bool result = true;
+
 			msg.type = MtEvent;
 			msg.time = uint32_t(m_time * 1000.0f);
 
@@ -367,14 +369,26 @@ void Replicator::update(float dT)
 						continue;
 
 					if (!m_replicatorPeers->send(j->first, &msg, msgSize, true))
+					{
 						log::error << L"ERROR: Unable to send event to peer " << j->first << Endl;
+						result = false;
+					}
 				}
+
 			}
 			else
 			{
 				if (!m_replicatorPeers->send(i->handle, &msg, msgSize, true))
+				{
 					log::error << L"ERROR: Unable to event to peer " << i->handle << Endl;
+					result = false;
+				}
 			}
+
+			if (result)
+				i = m_eventsOut.erase(i);
+			else
+				++i;
 		}
 		m_eventsOut.clear();
 	}

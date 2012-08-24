@@ -70,7 +70,10 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 			if (soundBlock.samples[i])
 			{
 				for (uint32_t j = 0; j < samplesCount; ++j)
-					samples[j] = int16_t(soundBlock.samples[i][j] * 32767.0f);
+				{
+					float sample = clamp(soundBlock.samples[i][j], -1.0f, 1.0f);
+					samples[j] = int16_t(sample * 32750.0f);
+				}
 			}
 			else
 			{
@@ -80,6 +83,9 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 		}
 
 		offset += samplesCount;
+
+		std::memset(&soundBlock, 0, sizeof(soundBlock));
+		soundBlock.samplesCount = 4096;
 	}
 
 	// Make sure samples are zero;ed out if not fully decoded.

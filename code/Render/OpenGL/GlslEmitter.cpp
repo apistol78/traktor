@@ -792,6 +792,14 @@ void emitReflect(GlslContext& cx, Reflect* node)
 	assign(f, out) << L"reflect(" << direction->getName() << L", " << normal->cast(direction->getType()) << L");" << Endl;
 }
 
+void emitRecipSqrt(GlslContext& cx, RecipSqrt* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* in = cx.emitInput(node, L"Input");
+	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"inversesqrt(" << in->getName() << L");" << Endl;
+}
+
 void emitSampler(GlslContext& cx, Sampler* node)
 {
 	const GLenum c_glFilter[] =
@@ -1387,6 +1395,14 @@ void emitTranspose(GlslContext& cx, Transpose* node)
 	cx.setRequireTranspose();
 }
 
+void emitTruncate(GlslContext& cx, Truncate* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* in = cx.emitInput(node, L"Input");
+	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"trunc(" << in->getName() << L");" << Endl;
+}
+
 void emitUniform(GlslContext& cx, Uniform* node)
 {
 	GlslVariable* out = cx.getShader().createVariable(
@@ -1621,6 +1637,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
+	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
@@ -1636,6 +1653,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
+	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
 	m_emitters[&type_of< Vector >()] = new EmitterCast< Vector >(emitVector);
 	m_emitters[&type_of< VertexInput >()] = new EmitterCast< VertexInput >(emitVertexInput);

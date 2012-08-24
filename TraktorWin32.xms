@@ -10815,6 +10815,10 @@
 										<fileName>../../../res/resound/Grain.png</fileName>
 										<items/>
 									</item>
+									<item type="File">
+										<fileName>../../../res/toolbar/PlusMinus.png</fileName>
+										<items/>
+									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -14504,7 +14508,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Render.Ps3</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Render/Ps3</sourcePath>
 			<configurations>
@@ -19430,7 +19434,7 @@
 			</dependencies>
 		</item>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Amalgam.Ie</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam</sourcePath>
 			<configurations>

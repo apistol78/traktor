@@ -103,6 +103,9 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 	if (!m_pendingStage)
 	{
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+			(*i)->prepare(this);
+
+		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			(*i)->update(this, control, info);
 	}
 	else

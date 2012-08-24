@@ -1846,6 +1846,30 @@
       <second>Fördela horisontellt</second>
     </item>
     <item>
+      <first>SKELETON_WIZARDTOOL_DESCRIPTION</first>
+      <second>Importera skelett...</second>
+    </item>    
+    <item>
+      <first>SOUND_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Importera ljud-batch...</second>
+    </item>
+    <item>
+      <first>SOUND_BATCH_ADD</first>
+      <second>Lägg till ljud...</second>
+    </item>
+    <item>
+      <first>SOUNDE_BATCH_REMOVE</first>
+      <second>Ta bort ljud</second>
+    </item>
+    <item>
+      <first>SOUND_BATCH_DIALOG_TITLE</first>
+      <second>Importera ljud-batch</second>
+    </item>
+    <item>
+      <first>SOUND_BATCH_FILE_TITLE</first>
+      <second>Lägg till ljud</second>
+    </item>
+    <item>
       <first>STATEGRAPH_ALIGN_LEFT</first>
       <second>Vänsterjustera</second>
     </item>

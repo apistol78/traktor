@@ -1770,6 +1770,30 @@
       <second>Vertex output</second>
     </item>
     <item>
+      <first>SKELETON_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import skeleton...</second>
+    </item>    
+    <item>
+      <first>SOUND_BATCH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import sound batch...</second>
+    </item>
+    <item>
+      <first>SOUND_BATCH_ADD</first>
+      <second>Add sounds...</second>
+    </item>
+    <item>
+      <first>SOUNDE_BATCH_REMOVE</first>
+      <second>Remove sounds</second>
+    </item>
+    <item>
+      <first>SOUND_BATCH_DIALOG_TITLE</first>
+      <second>Import sound batch</second>
+    </item>
+    <item>
+      <first>SOUND_BATCH_FILE_TITLE</first>
+      <second>Add sounds</second>
+    </item>   
+    <item>
       <first>STATEGRAPH_ALIGN_LEFT</first>
       <second>Align left</second>
     </item>
