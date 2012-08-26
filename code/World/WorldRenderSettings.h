@@ -55,6 +55,15 @@ public:
 		SqHighest
 	};
 
+	enum AmbientOcclusionQuality
+	{
+		AoqDisabled,
+		AoqLow,
+		AoqMedium,
+		AoqHigh,
+		AoqHighest
+	};
+
 	RenderType renderType;
 	float viewNearZ;
 	float viewFarZ;
@@ -70,6 +79,7 @@ public:
 	int32_t shadowCascadingSlices;
 	float shadowCascadingLambda;
 	bool shadowQuantizeProjection;
+	AmbientOcclusionQuality ambientOcclusionQuality;
 	bool fogEnabled;
 	float fogDistance;
 	float fogRange;

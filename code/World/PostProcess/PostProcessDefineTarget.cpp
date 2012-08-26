@@ -1,10 +1,10 @@
-#include "World/PostProcess/PostProcessDefineTarget.h"
-#include "World/PostProcess/PostProcess.h"
-#include "Render/IRenderSystem.h"
+#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "Core/Log/Log.h"
+#include "Render/IRenderSystem.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessDefineTarget.h"
 
 namespace traktor
 {
@@ -29,8 +29,8 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 	render::RenderTargetSetCreateDesc desc;
 
 	desc.count = 1;
-	desc.width = m_width + (m_screenDenom ? screenWidth / m_screenDenom : 0);
-	desc.height = m_height + (m_screenDenom ? screenHeight / m_screenDenom : 0);
+	desc.width = m_width + (m_screenDenom ? (screenWidth + m_screenDenom - 1) / m_screenDenom : 0);
+	desc.height = m_height + (m_screenDenom ? (screenHeight + m_screenDenom - 1) / m_screenDenom : 0);
 	desc.multiSample = m_multiSample;
 	desc.createDepthStencil = m_depthStencil;
 	desc.usingPrimaryDepthStencil = false;
@@ -46,6 +46,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 
 	postProcess->getTargetRef(render::getParameterHandle(m_id)) = renderTargetSet;
 
+	T_DEBUG(L"Post process target \"" << m_id << L"\" " << desc.width << L"*" << desc.height << L" created");
 	return true;
 }
 

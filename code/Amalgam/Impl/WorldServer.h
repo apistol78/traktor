@@ -55,6 +55,7 @@ private:
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
 	world::WorldRenderSettings::ShadowQuality m_shadowQuality;
+	world::WorldRenderSettings::AmbientOcclusionQuality m_ambientOcclusionQuality;
 };
 
 	}

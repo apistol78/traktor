@@ -17,7 +17,7 @@ void SoundTriggerInstance::perform(Context& context, const Transform& transform)
 	if (!context.soundSystem)
 		return;
 
-	sound::SoundChannel* channel = context.soundSystem->play(m_sound, 0, false);
+	sound::SoundChannel* channel = context.soundSystem->play(m_sound, 16, false);
 	if (channel)
 	{
 		if (context.surroundEnvironment)

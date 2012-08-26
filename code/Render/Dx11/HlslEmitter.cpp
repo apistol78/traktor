@@ -990,6 +990,17 @@ bool emitRecipSqrt(HlslContext& cx, RecipSqrt* node)
 	return true;
 }
 
+bool emitRound(HlslContext& cx, Round* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	HlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"round(" << in->getName() << L");" << Endl;
+	return true;
+}
+
 bool emitSampler(HlslContext& cx, Sampler* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
@@ -1862,6 +1873,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
+	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Script >()] = new EmitterCast< Script >(emitScript);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);

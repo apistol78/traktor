@@ -492,7 +492,12 @@ std::wstring Replicator::getPeerName(handle_t peerHandle) const
 bool Replicator::isPeerConnected(handle_t peerHandle) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? i->second.established : false;
+	if (i == m_peers.end())
+		return false;
+	else if (!i->second.established || !i->second.ghost)
+		return false;
+	else
+		return true;
 }
 
 void Replicator::setGhostObject(handle_t peerHandle, Object* ghostObject)
@@ -522,7 +527,7 @@ void Replicator::setGhostOrigin(handle_t peerHandle, const Vector4& origin)
 	if (i != m_peers.end() && i->second.ghost)
 		i->second.ghost->origin = origin;
 	else
-		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost origin of unknown peer handle " << peerHandle);
+		T_REPLICATOR_DEBUG(L"ERROR: Trying to set ghost origin of unknown peer handle " << peerHandle);
 }
 
 Ref< const IReplicatableState > Replicator::getGhostState(handle_t peerHandle) const

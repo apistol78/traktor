@@ -147,6 +147,7 @@ private:
 	Ref< render::RenderContext > m_globalContext;
 	Ref< PostProcess > m_shadowMaskProject;
 	Ref< PostProcess > m_shadowMaskFilter;
+	Ref< PostProcess > m_ambientOcclusion;
 	Ref< LightRenderer > m_lightRenderer;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];

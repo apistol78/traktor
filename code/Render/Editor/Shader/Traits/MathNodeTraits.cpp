@@ -48,6 +48,7 @@ TypeInfoSet MathNodeTraits::getNodeTypes() const
 	typeSet.insert(&type_of< Pow >());
 	typeSet.insert(&type_of< RecipSqrt >());
 	typeSet.insert(&type_of< Reflect >());
+	typeSet.insert(&type_of< Round >());
 	typeSet.insert(&type_of< Sign >());
 	typeSet.insert(&type_of< Sin >());
 	typeSet.insert(&type_of< Sqrt >());
@@ -221,6 +222,11 @@ bool MathNodeTraits::evaluateFull(
 			outputConstant[i] = 1.0f / std::sqrt(inputConstants[0][i]);
 	}
 	//else if (is_a< Reflect >(node))
+	else if (is_a< Round >(node))
+	{
+		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
+			outputConstant[i] = std::floor(inputConstants[0][i] + 0.5f);
+	}
 	else if (is_a< Sign >(node))
 	{
 		for (int32_t i = 0; i < outputConstant.getWidth(); ++i)
@@ -373,6 +379,7 @@ PinOrderType MathNodeTraits::evaluateOrder(
 		is_a< Pow >(node) ||
 		is_a< RecipSqrt >(node) ||
 		is_a< Reflect >(node) ||
+		is_a< Round >(node) ||
 		is_a< Sign >(node) ||
 		is_a< Sin >(node) ||
 		is_a< Sqrt >(node) ||

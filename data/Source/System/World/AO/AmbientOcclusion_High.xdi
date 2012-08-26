@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.PostProcessSettings" version="1">
+	<requireHighRange>true</requireHighRange>
+	<definitions>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>Ssao</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>2</screenDenom>
+			<format>TfR8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>SsaoBlur1</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+		<item type="traktor.world.PostProcessDefineTarget" version="1">
+			<id>SsaoBlur2</id>
+			<width>0</width>
+			<height>0</height>
+			<screenDenom>1</screenDenom>
+			<format>TfR8</format>
+			<depthStencil>false</depthStencil>
+			<preferTiled>true</preferTiled>
+			<multiSample>0</multiSample>
+		</item>
+	</definitions>
+	<steps>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>Ssao</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSsao" version="1">
+			<shader>{682F3EA4-A7C6-4D44-9079-E0B2DBA32911}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Normal</param>
+					<source>InputDepth</source>
+					<index>1</index>
+				</item>
+			</sources>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>SsaoBlur1</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>Ssao</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>3, 0, 0, 0</direction>
+			<taps>8</taps>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>SsaoBlur2</target>
+		</item>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{FECC6D88-5127-0247-B896-A6EDC6FE87A9}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>SsaoBlur1</source>
+					<index>0</index>
+				</item>
+				<item>
+					<param>Depth</param>
+					<source>InputDepth</source>
+					<index>0</index>
+				</item>
+			</sources>
+			<direction>0, 3, 0, 0</direction>
+			<taps>8</taps>
+		</item>
+		<item type="traktor.world.PostProcessStepSetTarget">
+			<target>Output</target>
+		</item>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{01AAA8D7-E528-A44D-AF01-78CD5B18F178}</shader>
+			<sources>
+				<item>
+					<param>AO</param>
+					<source>SsaoBlur2</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+	</steps>
+</object>

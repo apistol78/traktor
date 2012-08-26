@@ -154,6 +154,12 @@ float InputMapping::getStatePreviousValue(const std::wstring& id) const
 	return state ? state->getPreviousValue() : 0.0f;
 }
 
+float InputMapping::getStateDeltaValue(const std::wstring& id) const
+{
+	InputState* state = getState(id);
+	return state ? state->getValue() - state->getPreviousValue() : 0.0f;
+}
+
 bool InputMapping::isStateDown(const std::wstring& id) const
 {
 	InputState* state = getState(id);
