@@ -61,6 +61,10 @@ public:
 
 	void setShadowQuality(Quality shadowQuality);
 
+	Quality getAmbientOcclusionQuality() const;
+
+	void setAmbientOcclusionQuality(Quality ambientOcclusionQuality);
+
 	float getMasterVolume() const;
 
 	void setMasterVolume(float masterVolume);
@@ -91,6 +95,7 @@ private:
 	bool m_stereoscopic;
 	Quality m_textureQuality;
 	Quality m_shadowQuality;
+	Quality m_ambientOcclusionQuality;
 	float m_masterVolume;
 	float m_ambientVolume;
 	float m_soundFxVolume;

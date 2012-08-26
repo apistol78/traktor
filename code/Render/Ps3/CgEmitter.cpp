@@ -898,6 +898,17 @@ bool emitReflect(CgContext& cx, Reflect* node)
 	return true;
 }
 
+bool emitRound(CgContext& cx, Round* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"round(" << in->getName() << L");" << Endl;
+	return true;
+}
+
 bool emitSampler(CgContext& cx, Sampler* node)
 {
 	const uint8_t gcmFilter[] =
@@ -1448,6 +1459,17 @@ bool emitTranspose(CgContext& cx, Transpose* node)
 	return true;
 }
 
+bool emitTruncate(CgContext& cx, Truncate* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(CgShader::BtBody);
+	CgVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
+	CgVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"trunc(" << in->getName() << L");" << Endl;
+	return true;
+}
+
 bool emitUniform(CgContext& cx, Uniform* node)
 {
 	CgVariable* out = cx.getShader().createVariable(
@@ -1660,6 +1682,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
+	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
 	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
@@ -1675,6 +1698,7 @@ CgEmitter::CgEmitter()
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
+	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
 	m_emitters[&type_of< Vector >()] = new EmitterCast< Vector >(emitVector);
 	m_emitters[&type_of< VertexInput >()] = new EmitterCast< VertexInput >(emitVertexInput);

@@ -146,7 +146,16 @@ void PostProcess::setTarget(render::IRenderView* renderView, render::handle_t id
 	if (id != s_handleOutput)
 	{
 		m_currentTarget = m_targets[id];
+		T_ASSERT (m_currentTarget);
+
+		bool needClear = !m_currentTarget->isContentValid();
 		renderView->begin(m_currentTarget, 0);
+
+		if (needClear)
+		{
+			const Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			renderView->clear(render::CfColor, &c_clearColor, 0.0f, 0);
+		}
 	}
 	else
 		m_currentTarget = 0;

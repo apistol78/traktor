@@ -37,6 +37,7 @@ As_traktor_parade_Configuration::As_traktor_parade_Configuration(flash::ActionCo
 	// Quality
 	prototype->addProperty("textureQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_textureQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_textureQuality));
 	prototype->addProperty("shadowQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_shadowQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_shadowQuality));
+	prototype->addProperty("ambientOcclusionQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_ambientOcclusionQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_ambientOcclusionQuality));
 	prototype->addProperty("terrainQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_terrainQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_terrainQuality));
 	prototype->addProperty("waterQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_waterQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_waterQuality));
 	prototype->addProperty("undergrowthQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_undergrowthQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_undergrowthQuality));
@@ -157,6 +158,16 @@ int32_t As_traktor_parade_Configuration::Configuration_get_shadowQuality(const A
 void As_traktor_parade_Configuration::Configuration_set_shadowQuality(AsConfiguration* self, int32_t shadowQuality) const
 {
 	self->setShadowQuality((AsConfiguration::Quality)shadowQuality);
+}
+
+int32_t As_traktor_parade_Configuration::Configuration_get_ambientOcclusionQuality(const AsConfiguration* self) const
+{
+	return self->getAmbientOcclusionQuality();
+}
+
+void As_traktor_parade_Configuration::Configuration_set_ambientOcclusionQuality(AsConfiguration* self, int32_t ambientOcclusionQuality) const
+{
+	self->setAmbientOcclusionQuality((AsConfiguration::Quality)ambientOcclusionQuality);
 }
 
 int32_t As_traktor_parade_Configuration::Configuration_get_terrainQuality(const AsConfiguration* self) const

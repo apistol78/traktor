@@ -63,6 +63,7 @@ const NodeCategory c_nodeCategories[] =
 	{ type_of< Platform >(), L"SHADERGRAPH_CONDITIONAL", L"Select path based on type of renderer" },
 	{ type_of< Reflect >(), L"SHADERGRAPH_ALGEBRA", L"Calculate reflected vector from a input direction and an axis" },
 	{ type_of< RecipSqrt >(), L"SHADERGRAPH_ALGEBRA", L"Reciprocal square root" },
+	{ type_of< Round >(), L"SHADERGRAPH_MISCELLANEOUS", L"Round to nearest integer" },
 	{ type_of< Sampler >(), L"SHADERGRAPH_VALUE", L"Texture sampler" },
 	{ type_of< Scalar >(), L"SHADERGRAPH_VALUE", L"Scalar constant" },
 	{ type_of< Script >(), L"SHADERGRAPH_MISCELLANEOUS", L"Script" },

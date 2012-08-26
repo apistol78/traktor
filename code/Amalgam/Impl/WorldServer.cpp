@@ -45,6 +45,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer
 
 WorldServer::WorldServer()
 :	m_shadowQuality(world::WorldRenderSettings::SqNoFilter)
+,	m_ambientOcclusionQuality(world::WorldRenderSettings::AoqHigh)
 {
 }
 
@@ -82,6 +83,23 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 		break;
 	case 3:	// ultra
 		m_shadowQuality = world::WorldRenderSettings::SqHighest;
+		break;
+	}
+
+	int32_t ambientOcclusionQuality = settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", 2);
+	switch (ambientOcclusionQuality)
+	{
+	case 0:	// low
+		m_ambientOcclusionQuality = world::WorldRenderSettings::AoqLow;
+		break;
+	case 1:	// medium
+		m_ambientOcclusionQuality = world::WorldRenderSettings::AoqMedium;
+		break;
+	case 2:	// high
+		m_ambientOcclusionQuality = world::WorldRenderSettings::AoqHigh;
+		break;
+	case 3:	// ultra
+		m_ambientOcclusionQuality = world::WorldRenderSettings::AoqHighest;
 		break;
 	}
 
@@ -128,6 +146,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
 	int32_t shadowQuality = settings->getProperty< PropertyInteger >(L"World.ShadowQuality", 1);
+	int32_t ambientOcclusionQuality = settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", 2);
 	
 	world::WorldRenderSettings::ShadowQuality worldShadowQuality;
 	switch (shadowQuality)
@@ -145,13 +164,39 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		worldShadowQuality = world::WorldRenderSettings::SqHighest;
 		break;
 	default:
-		return CrUnaffected;
+		worldShadowQuality = m_shadowQuality;
+		break;
 	}
 
-	if (worldShadowQuality == m_shadowQuality)
+	world::WorldRenderSettings::AmbientOcclusionQuality worldAmbientOcclusionQuality;
+	switch (ambientOcclusionQuality)
+	{
+	case 0:	// low
+		worldAmbientOcclusionQuality = world::WorldRenderSettings::AoqLow;
+		break;
+	case 1:	// medium
+		worldAmbientOcclusionQuality = world::WorldRenderSettings::AoqMedium;
+		break;
+	case 2:	// high
+		worldAmbientOcclusionQuality = world::WorldRenderSettings::AoqHigh;
+		break;
+	case 3:	// ultra
+		worldAmbientOcclusionQuality = world::WorldRenderSettings::AoqHighest;
+		break;
+	default:
+		worldAmbientOcclusionQuality = m_ambientOcclusionQuality;
+		break;
+	}
+
+	if (
+		worldShadowQuality == m_shadowQuality &&
+		worldAmbientOcclusionQuality == m_ambientOcclusionQuality
+	)
 		return CrUnaffected;
 
 	m_shadowQuality = worldShadowQuality;
+	m_ambientOcclusionQuality = worldAmbientOcclusionQuality;
+
 	return CrAccepted;
 }
 
@@ -188,7 +233,8 @@ world::WorldEntityRenderers* WorldServer::getEntityRenderers()
 Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(const world::WorldRenderSettings& worldRenderSettings)
 {
 	Ref< world::WorldRenderSettings > settings = new world::WorldRenderSettings(worldRenderSettings);
-	settings->shadowsQuality = min(settings->shadowsQuality, m_shadowQuality);
+	settings->shadowsQuality = m_shadowQuality;
+	settings->ambientOcclusionQuality = m_ambientOcclusionQuality;
 
 	Ref< world::IWorldRenderer > worldRenderer;
 	if (settings->renderType == world::WorldRenderSettings::RtForward)

@@ -1390,6 +1390,18 @@ RecipSqrt::RecipSqrt()
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Round", 0, Round, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Round_i[] = { { L"Input", false }, 0 };
+const ImmutableNode::OutputPinDesc c_Round_o[] = { L"Output", 0 };
+
+Round::Round()
+:	ImmutableNode(c_Round_i, c_Round_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 1, Sampler, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, 0 };

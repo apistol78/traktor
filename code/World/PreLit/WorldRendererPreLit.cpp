@@ -39,6 +39,11 @@ const resource::Id< PostProcessSettings > c_shadowMaskFilterMedium(Guid(L"{57FD5
 const resource::Id< PostProcessSettings > c_shadowMaskFilterHigh(Guid(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}"));
 const resource::Id< PostProcessSettings > c_shadowMaskFilterHighest(Guid(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}"));
 
+const resource::Id< PostProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		// SSAO, half size
+const resource::Id< PostProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	// SSAO, full size
+const resource::Id< PostProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
+const resource::Id< PostProcessSettings > c_ambientOcclusionHighest(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	// HBAO, full size
+
 const static float c_interocularDistance = 6.5f;
 const static float c_distortionValue = 0.8f;
 const static float c_screenPlaneDistance = 13.0f;
@@ -304,6 +309,56 @@ bool WorldRendererPreLit::create(
 		}
 	}
 
+	// Create ambient occlusion processing.
+	{
+		resource::Id< PostProcessSettings > ambientOcclusionId;
+		resource::Proxy< PostProcessSettings > ambientOcclusion;
+
+		switch (m_settings.ambientOcclusionQuality)
+		{
+		case WorldRenderSettings::AoqLow:
+			ambientOcclusionId = c_ambientOcclusionLow;
+			break;
+
+		case WorldRenderSettings::AoqMedium:
+			ambientOcclusionId = c_ambientOcclusionMedium;
+			break;
+
+		case WorldRenderSettings::AoqHigh:
+			ambientOcclusionId = c_ambientOcclusionHigh;
+			break;
+
+		case WorldRenderSettings::AoqHighest:
+			ambientOcclusionId = c_ambientOcclusionHighest;
+			break;
+
+		default:
+			break;
+		}
+
+		if (ambientOcclusionId)
+		{
+			if (!resourceManager->bind(ambientOcclusionId, ambientOcclusion))
+				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
+		}
+
+		if (ambientOcclusion)
+		{
+			m_ambientOcclusion = new PostProcess();
+			if (!m_ambientOcclusion->create(
+				ambientOcclusion,
+				resourceManager,
+				renderSystem,
+				width,
+				height
+			))
+			{
+				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
+				m_ambientOcclusion = 0;
+			}
+		}
+	}
+
 	// Create light map target.
 	{
 		render::RenderTargetSetCreateDesc desc;
@@ -396,6 +451,7 @@ void WorldRendererPreLit::destroy()
 		i->gbuffer = 0;
 	}
 
+	safeDestroy(m_ambientOcclusion);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
 	m_shadowMaskFilterTargetSet.clear();
@@ -670,6 +726,26 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
 		f.visual->getRenderContext()->render(m_renderView, render::RfSetup | render::RfOpaque, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
+
+		if (m_ambientOcclusion)
+		{
+			T_RENDER_PUSH_MARKER(m_renderView, "World: AO");
+
+			PostProcessStep::Instance::RenderParams params;
+			params.viewFrustum = f.viewFrustum;
+			params.projection = projection;
+			params.deltaTime = 0.0f;
+
+			m_ambientOcclusion->render(
+				m_renderView,
+				m_shadowTargetSet,
+				m_gbufferTargetSet,
+				0,
+				params
+			);
+
+			T_RENDER_POP_MARKER(m_renderView);
+		}
 	}
 
 	// Render alpha blend visuals.

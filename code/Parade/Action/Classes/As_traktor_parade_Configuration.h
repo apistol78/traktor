@@ -63,6 +63,10 @@ private:
 
 	void Configuration_set_shadowQuality(AsConfiguration* self, int32_t shadowQuality) const;
 
+	int32_t Configuration_get_ambientOcclusionQuality(const AsConfiguration* self) const;
+
+	void Configuration_set_ambientOcclusionQuality(AsConfiguration* self, int32_t ambientOcclusionQuality) const;
+
 	int32_t Configuration_get_terrainQuality(const AsConfiguration* self) const;
 
 	void Configuration_set_terrainQuality(AsConfiguration* self, int32_t terrainQuality) const;

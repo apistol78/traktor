@@ -23,6 +23,7 @@ AsConfiguration::AsConfiguration()
 ,	m_stereoscopic(false)
 ,	m_textureQuality(QtMedium)
 ,	m_shadowQuality(QtMedium)
+,	m_ambientOcclusionQuality(QtHigh)
 ,	m_masterVolume(1.0f)
 ,	m_ambientVolume(1.0f)
 ,	m_soundFxVolume(1.0f)
@@ -46,6 +47,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	current->m_textureQuality = (Quality)settings->getProperty< PropertyInteger >(L"Render.TextureQuality", QtMedium);
 	current->m_shadowQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", QtMedium);
+	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtHigh);
 	current->m_masterVolume = settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f);
 	current->m_ambientVolume = settings->getProperty< PropertyFloat >(L"Audio.AmbientVolume", 1.0f);
 	current->m_soundFxVolume = settings->getProperty< PropertyFloat >(L"Audio.SoundFxVolume", 1.0f);
@@ -139,6 +141,16 @@ void AsConfiguration::setShadowQuality(Quality shadowQuality)
 	m_shadowQuality = shadowQuality;
 }
 
+AsConfiguration::Quality AsConfiguration::getAmbientOcclusionQuality() const
+{
+	return m_ambientOcclusionQuality;
+}
+
+void AsConfiguration::setAmbientOcclusionQuality(Quality ambientOcclusionQuality)
+{
+	m_ambientOcclusionQuality = ambientOcclusionQuality;
+}
+
 float AsConfiguration::getMasterVolume() const
 {
 	return m_masterVolume;
@@ -203,6 +215,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyBoolean >(L"Render.Stereoscopic", m_stereoscopic);
 	settings->setProperty< PropertyInteger >(L"Render.TextureQuality", m_textureQuality);
 	settings->setProperty< PropertyInteger >(L"World.ShadowQuality", m_shadowQuality);
+	settings->setProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", m_ambientOcclusionQuality);
 	settings->setProperty< PropertyFloat >(L"Audio.MasterVolume", m_masterVolume);
 	settings->setProperty< PropertyFloat >(L"Audio.AmbientVolume", m_ambientVolume);
 	settings->setProperty< PropertyFloat >(L"Audio.SoundFxVolume", m_soundFxVolume);

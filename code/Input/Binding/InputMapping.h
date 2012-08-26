@@ -78,6 +78,8 @@ public:
 
 	float getStatePreviousValue(const std::wstring& id) const;
 
+	float getStateDeltaValue(const std::wstring& id) const;
+
 	bool isStateDown(const std::wstring& id) const;
 
 	bool isStateUp(const std::wstring& id) const;

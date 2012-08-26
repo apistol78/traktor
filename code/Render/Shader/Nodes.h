@@ -808,6 +808,15 @@ public:
 	RecipSqrt();
 };
 
+/*! \brief Round. */
+class T_DLLCLASS Round : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Round();
+};
+
 /*! \brief Texture sampler. */
 class T_DLLCLASS Sampler : public ImmutableNode
 {

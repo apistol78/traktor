@@ -12,7 +12,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 13, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 14, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	renderType(RtForward)
@@ -30,6 +30,7 @@ WorldRenderSettings::WorldRenderSettings()
 ,	shadowCascadingSlices(1)
 ,	shadowCascadingLambda(1.0f)
 ,	shadowQuantizeProjection(true)
+,	ambientOcclusionQuality(AoqHigh)
 ,	fogEnabled(false)
 ,	fogDistance(90.0f)
 ,	fogRange(10.0f)
@@ -53,6 +54,7 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 ,	shadowCascadingSlices(settings.shadowCascadingSlices)
 ,	shadowCascadingLambda(settings.shadowCascadingLambda)
 ,	shadowQuantizeProjection(settings.shadowQuantizeProjection)
+,	ambientOcclusionQuality(settings.ambientOcclusionQuality)
 ,	fogEnabled(settings.fogEnabled)
 ,	fogDistance(settings.fogDistance)
 ,	fogRange(settings.fogRange)
@@ -85,6 +87,16 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		{ L"SqMedium", SqMedium },
 		{ L"SqHigh", SqHigh },
 		{ L"SqHighest", SqHighest },
+		{ 0 }
+	};
+
+	const MemberEnum< AmbientOcclusionQuality >::Key c_AmbientOcclusionQuality_Keys[] =
+	{
+		{ L"AoqDisabled", AoqDisabled },
+		{ L"AoqLow", AoqLow },
+		{ L"AoqMedium", AoqMedium },
+		{ L"AoqHigh", AoqHigh },
+		{ L"AoqHighest", AoqHighest },
 		{ 0 }
 	};
 
@@ -147,6 +159,9 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 11)
 		s >> Member< bool >(L"shadowQuantizeProjection", shadowQuantizeProjection);
+
+	if (s.getVersion() >= 14)
+		s >> MemberEnum< AmbientOcclusionQuality >(L"ambientOcclusionQuality", ambientOcclusionQuality, c_AmbientOcclusionQuality_Keys);
 
 	if (s.getVersion() >= 9)
 	{
