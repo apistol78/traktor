@@ -195,38 +195,39 @@ void FlashMoviePlayer::executeFrame()
 		switch (evt.eventType)
 		{
 		case EvtKeyDown:
-			m_movieInstance->eventKeyDown(evt.keyCode);
 			if (m_key)
 				m_key->eventKeyDown(evt.keyCode);
+			m_movieInstance->eventKeyDown(evt.keyCode);
 			break;
 
 		case EvtKeyUp:
-			m_movieInstance->eventKeyUp(evt.keyCode);
 			if (m_key)
 				m_key->eventKeyUp(evt.keyCode);
+			m_movieInstance->eventKeyUp(evt.keyCode);
 			break;
 
 		case EvtMouseDown:
-			m_movieInstance->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
 				m_mouse->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			m_movieInstance->eventMouseDown(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
 		case EvtMouseUp:
-			m_movieInstance->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
 				m_mouse->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			m_movieInstance->eventMouseUp(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
 		case EvtMouseMove:
-			m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			if (m_mouse)
 				m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
 		case EvtViewResize:
 			if (m_stage)
 				m_stage->eventResize(evt.view.width, evt.view.height);
+
 			break;
 		}
 		m_events.pop_front();
