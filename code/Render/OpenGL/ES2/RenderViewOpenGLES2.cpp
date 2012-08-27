@@ -115,6 +115,14 @@ bool RenderViewOpenGLES2::isFullScreen() const
 #endif
 }
 
+void RenderViewOpenGLES2::showCursor()
+{
+}
+
+void RenderViewOpenGLES2::hideCursor()
+{
+}
+
 bool RenderViewOpenGLES2::setGamma(float gamma)
 {
 	return false;

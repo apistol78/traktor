@@ -6,6 +6,14 @@
 #include "Core/Io/Path.h"
 #include "Core/Math/Vector4.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_HEIGHTFIELD_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace hf
@@ -13,7 +21,7 @@ namespace traktor
 
 class Heightfield;
 
-class HeightfieldFormat : public Object
+class T_DLLCLASS HeightfieldFormat : public Object
 {
 	T_RTTI_CLASS;
 

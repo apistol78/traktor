@@ -78,6 +78,10 @@ public:
 
 	virtual bool isFullScreen() const = 0;
 
+	virtual void showCursor() = 0;
+
+	virtual void hideCursor() = 0;
+
 	virtual bool setGamma(float gamma) = 0;
 
 	virtual void setViewport(const Viewport& viewport) = 0;

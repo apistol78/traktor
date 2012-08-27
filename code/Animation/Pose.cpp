@@ -24,16 +24,16 @@ Vector4 Pose::getJointOffset(uint32_t jointIndex) const
 	return joint ? joint->offset : Vector4::zero();
 }
 
-void Pose::setJointOrientation(uint32_t jointIndex, const Vector4& jointOrientation)
+void Pose::setJointOrientation(uint32_t jointIndex, const Rotator& jointOrientation)
 {
 	Joint& joint = getEditJoint(jointIndex);
 	joint.orientation = jointOrientation;
 }
 
-Vector4 Pose::getJointOrientation(uint32_t jointIndex) const
+Rotator Pose::getJointOrientation(uint32_t jointIndex) const
 {
 	const Joint* joint = getJoint(jointIndex);
-	return joint ? joint->orientation : Vector4::zero();
+	return joint ? joint->orientation : Rotator();
 }
 
 void Pose::getIndexMask(BitSet& outIndices) const
@@ -89,7 +89,8 @@ bool Pose::Joint::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"index", index);
 	s >> Member< Vector4 >(L"offset", offset, AttributeDirection());
-	s >> Member< Vector4 >(L"orientation", orientation, AttributeAngles());
+	//s >> Member< Vector4 >(L"orientation", orientation, AttributeAngles());
+	s >> MemberComposite< Rotator >(L"orientation", orientation);
 	return true;
 }
 

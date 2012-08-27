@@ -37,8 +37,9 @@ T readStateValueByOffset(const DIJOYSTATE2& state, uint32_t offset)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.JoystickDeviceDi8", JoystickDeviceDi8, IInputDevice)
 
-JoystickDeviceDi8::JoystickDeviceDi8(IDirectInputDevice8* device, const DIDEVICEINSTANCE* deviceInstance)
-:	m_device(device)
+JoystickDeviceDi8::JoystickDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DIDEVICEINSTANCE* deviceInstance)
+:	m_hWnd(hWnd)
+,	m_device(device)
 ,	m_connected(false)
 {
 	m_device->SetDataFormat(&c_dfDIJoystick2);
@@ -211,6 +212,18 @@ bool JoystickDeviceDi8::supportRumble() const
 
 void JoystickDeviceDi8::setRumble(const InputRumble& rumble)
 {
+}
+
+void JoystickDeviceDi8::setExclusive(bool exclusive)
+{
+	// Ensure device is unaquired, cannot change cooperative level if acquired.
+	m_device->Unacquire();
+	m_connected = false;
+
+	// Change cooperative level.
+	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE));
+	if (FAILED(hr))
+		log::warning << L"Unable to set cooperative level on joystick device" << Endl;
 }
 
 void JoystickDeviceDi8::collectControls(IDirectInputDevice8* device)

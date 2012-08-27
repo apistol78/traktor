@@ -55,6 +55,8 @@ public:
 
 	virtual void setRumble(const InputRumble& rumble);
 
+	virtual void setExclusive(bool exclusive);
+
 private:
 	DWORD m_controller;
 	XINPUT_STATE m_state;

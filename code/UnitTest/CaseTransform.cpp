@@ -35,8 +35,8 @@ void CaseTransform::run()
 	{
 		const float c_angle = PI / 2.0f;
 
-		Transform t1(Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), c_angle));
-		Transform t2(Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), c_angle));
+		Transform t1(Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), c_angle));
+		Transform t2(Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), c_angle));
 		
 		Matrix44 m1 = rotateY(c_angle);
 		Matrix44 m2 = rotateZ(c_angle);
@@ -63,8 +63,8 @@ void CaseTransform::run()
 	{
 		const float c_angle = PI / 3.0f;
 
-		Transform t1(Vector4(0.0f, 0.0f, 2.0f, 0.0f), Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), c_angle));
-		Transform t2(Vector4(0.0f, 2.0f, 0.0f, 0.0f), Quaternion(Vector4(1.0f, 0.0f, 0.0f, 0.0f), c_angle));
+		Transform t1(Vector4(0.0f, 0.0f, 2.0f, 0.0f), Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), c_angle));
+		Transform t2(Vector4(0.0f, 2.0f, 0.0f, 0.0f), Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), c_angle));
 
 		Matrix44 m1 = translate(0.0f, 0.0f, 2.0f) * rotateY(c_angle);
 		Matrix44 m2 = translate(0.0f, 2.0f, 0.0f) * rotateX(c_angle);

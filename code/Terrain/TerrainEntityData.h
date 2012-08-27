@@ -37,10 +37,6 @@ public:
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
-	uint32_t getDetailSkip() const { return m_detailSkip; }
-
-	uint32_t getPatchDim() const { return m_patchDim; }
-
 	float getPatchLodDistance() const { return m_patchLodDistance; }
 
 	float getPatchLodBias() const { return m_patchLodBias; }
@@ -57,8 +53,6 @@ public:
 
 private:
 	resource::Id< Terrain > m_terrain;
-	uint32_t m_detailSkip;
-	uint32_t m_patchDim;
 	float m_patchLodDistance;
 	float m_patchLodBias;
 	float m_patchLodExponent;

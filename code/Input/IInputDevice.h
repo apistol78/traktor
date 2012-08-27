@@ -131,6 +131,12 @@ public:
 	 * \param rumble Rumble parameter configuration.
 	 */
 	virtual void setRumble(const InputRumble& rumble) = 0;
+
+	/*! \brief Set exclusive use of device.
+	 *
+	 * \param exclusive If exclusive use is desired.
+	 */
+	virtual void setExclusive(bool exclusive) = 0;
 };
 
 	}

@@ -24,7 +24,7 @@ class T_DLLCLASS JoystickDeviceDi8 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	JoystickDeviceDi8(IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
+	JoystickDeviceDi8(HWND hWnd, IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
 	virtual std::wstring getName() const;
 
@@ -52,6 +52,8 @@ public:
 
 	virtual void setRumble(const InputRumble& rumble);
 
+	virtual void setExclusive(bool exclusive);
+
 private:
 	struct ControlInfo 
 	{
@@ -62,6 +64,7 @@ private:
 		bool inverted;
 	};
 
+	HWND m_hWnd;
 	ComRef< IDirectInputDevice8 > m_device;
 	std::wstring m_name;
 	DIJOYSTATE2 m_state;

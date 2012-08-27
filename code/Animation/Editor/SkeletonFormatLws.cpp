@@ -102,7 +102,7 @@ Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset
 						case 3:
 							T = Transform(
 								T.translation(),
-								Quaternion(kv, 0.0f, 0.0f) * T.rotation()
+								Quaternion::fromEulerAngles(kv, 0.0f, 0.0f) * T.rotation()
 							);
 							break;
 
@@ -110,7 +110,7 @@ Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset
 						case 4:
 							T = Transform(
 								T.translation(),
-								Quaternion(0.0f, kv, 0.0f) * T.rotation()
+								Quaternion::fromEulerAngles(0.0f, kv, 0.0f) * T.rotation()
 							);
 							break;
 
@@ -118,7 +118,7 @@ Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset
 						case 5:
 							T = Transform(
 								T.translation(),
-								Quaternion(0.0f, 0.0f, kv) * T.rotation()
+								Quaternion::fromEulerAngles(0.0f, 0.0f, kv) * T.rotation()
 							);
 							break;
 						}

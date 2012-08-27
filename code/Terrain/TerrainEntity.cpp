@@ -84,8 +84,6 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 	if (!m_surfaceCache->create(resourceManager, m_renderSystem))
 		return false;
 
-	m_detailSkip = data.getDetailSkip();
-	m_patchDim = data.getPatchDim();
 	m_patchLodDistance = data.getPatchLodDistance();
 	m_patchLodBias = data.getPatchLodBias();
 	m_patchLodExponent = data.getPatchLodExponent();
@@ -467,119 +465,52 @@ void TerrainEntity::update(const UpdateParams& update)
 bool TerrainEntity::updatePatches()
 {
 	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
+	
+	uint32_t patchDim = m_terrain->getPatchDim();
+	uint32_t detailSkip = m_terrain->getDetailSkip();
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
-			int32_t pminX = px * m_patchDim * m_detailSkip;
-			int32_t pminZ = pz * m_patchDim * m_detailSkip;
-			int32_t pmaxX = (px + 1) * m_patchDim * m_detailSkip;
-			int32_t pmaxZ = (pz + 1) * m_patchDim * m_detailSkip;
+			int32_t pminX = px * patchDim * detailSkip;
+			int32_t pminZ = pz * patchDim * detailSkip;
+			int32_t pmaxX = (px + 1) * patchDim * detailSkip;
+			int32_t pmaxZ = (pz + 1) * patchDim * detailSkip;
 
+			const Terrain::Patch& patchData = m_terrain->getPatches()[px + pz * m_patchCount];
 			Patch& patch = m_patches[px + pz * m_patchCount];
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 			float* vertex = static_cast< float* >(patch.vertexBuffer->lock());
 			T_ASSERT (vertex);
-#endif
 
-			// Measure min and max height of patch.
-			float minHeight =  std::numeric_limits< float >::max();
-			float maxHeight = -std::numeric_limits< float >::max();
-
-			for (uint32_t z = 0; z < m_patchDim; ++z)
+			for (uint32_t z = 0; z < patchDim; ++z)
 			{
-				for (uint32_t x = 0; x < m_patchDim; ++x)
+				for (uint32_t x = 0; x < patchDim; ++x)
 				{
-					float fx = float(x) / (m_patchDim - 1);
-					float fz = float(z) / (m_patchDim - 1);
+					float fx = float(x) / (patchDim - 1);
+					float fz = float(z) / (patchDim - 1);
 
-					int32_t ix = int32_t(fx * m_patchDim * m_detailSkip) + pminX;
-					int32_t iz = int32_t(fz * m_patchDim * m_detailSkip) + pminZ;
+					int32_t ix = int32_t(fx * patchDim * detailSkip) + pminX;
+					int32_t iz = int32_t(fz * patchDim * detailSkip) + pminZ;
 
 					float height = m_terrain->getHeightfield()->getGridHeightNearest(ix, iz);
 
-#if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
-					*vertex++ = float(x) / (m_patchDim - 1);
+					*vertex++ = float(x) / (patchDim - 1);
 					*vertex++ = height;
-					*vertex++ = float(z) / (m_patchDim - 1);
+					*vertex++ = float(z) / (patchDim - 1);
+				}
+			}
 #endif
 
-					height = m_terrain->getHeightfield()->unitToWorld(height);
+			patch.minHeight = patchData.height[0];
+			patch.maxHeight = patchData.height[1];
 
-					minHeight = min(minHeight, height);
-					maxHeight = max(maxHeight, height);
-				}
-			}
-
-			patch.minHeight = minHeight;
-			patch.maxHeight = maxHeight;
-
-			// Calculate lod errors.
 			patch.error[0] = 0.0f;
-
-			for (uint32_t lod = 1; lod < LodCount; ++lod)
-			{
-				patch.error[lod] = 0.0f;
-
-				uint32_t lodSkip = 1 << lod;
-				for (uint32_t z = 0; z < m_patchDim; z += lodSkip)
-				{
-					for (uint32_t x = 0; x < m_patchDim; x += lodSkip)
-					{
-						float fx0 = float(x) / (m_patchDim - 1);
-						float fz0 = float(z) / (m_patchDim - 1);
-						float fx1 = float(x + lodSkip) / (m_patchDim - 1);
-						float fz1 = float(z + lodSkip) / (m_patchDim - 1);
-
-						float gx0 = (fx0 * m_patchDim * m_detailSkip) + pminX;
-						float gz0 = (fz0 * m_patchDim * m_detailSkip) + pminZ;
-						float gx1 = (fx1 * m_patchDim * m_detailSkip) + pminX;
-						float gz1 = (fz1 * m_patchDim * m_detailSkip) + pminZ;
-
-						float h[] =
-						{
-							m_terrain->getHeightfield()->getGridHeightNearest(gx0, gz0),
-							m_terrain->getHeightfield()->getGridHeightNearest(gx1, gz0),
-							m_terrain->getHeightfield()->getGridHeightNearest(gx0, gz1),
-							m_terrain->getHeightfield()->getGridHeightNearest(gx1, gz1)
-						};
-
-						for (int lz = 0; lz <= lodSkip; ++lz)
-						{
-							for (int lx = 0; lx <= lodSkip; ++lx)
-							{
-								float fx = float(lx) / lodSkip;
-								float fz = float(lz) / lodSkip;
-
-								float gx = lerp(gx0, gx1, fx);
-								float gz = lerp(gz0, gz1, fz);
-
-								float ht = lerp(h[0], h[1], fx);
-								float hb = lerp(h[2], h[3], fx);
-								float h0 = lerp(ht, hb, fz);
-
-								float hl = lerp(h[0], h[2], fz);
-								float hr = lerp(h[1], h[3], fz);
-								float h1 = lerp(hl, hr, fx);
-
-								float h = m_terrain->getHeightfield()->getGridHeightNearest(gx, gz);
-
-								float herr0 = abs(h - h0);
-								float herr1 = abs(h - h1);
-								float herr = max(herr0, herr1);
-
-								herr = m_terrain->getHeightfield()->getWorldExtent().y() * herr;
-
-								patch.error[lod] += herr;
-							}
-						}
-					}
-				}
-
-				patch.error[lod] = patch.error[lod] / 1000.0f;
-			}
+			patch.error[1] = patchData.error[0];
+			patch.error[2] = patchData.error[1];
+			patch.error[3] = patchData.error[2];
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 			patch.vertexBuffer->unlock();
@@ -602,8 +533,11 @@ bool TerrainEntity::createPatches()
 	uint32_t heightfieldSize = m_terrain->getHeightfield()->getSize();
 	T_ASSERT (heightfieldSize > 0);
 
-	uint32_t patchVertexCount = m_patchDim * m_patchDim;
-	m_patchCount = heightfieldSize / (m_patchDim * m_detailSkip);
+	uint32_t patchDim = m_terrain->getPatchDim();
+	uint32_t detailSkip = m_terrain->getDetailSkip();
+
+	uint32_t patchVertexCount = patchDim * patchDim;
+	m_patchCount = heightfieldSize / (patchDim * detailSkip);
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 	std::vector< render::VertexElement > vertexElements;
@@ -621,12 +555,12 @@ bool TerrainEntity::createPatches()
 	float* vertex = static_cast< float* >(m_vertexBuffer->lock());
 	T_ASSERT_M (vertex, L"Unable to lock vertex buffer");
 
-	for (uint32_t z = 0; z < m_patchDim; ++z)
+	for (uint32_t z = 0; z < patchDim; ++z)
 	{
-		for (uint32_t x = 0; x < m_patchDim; ++x)
+		for (uint32_t x = 0; x < patchDim; ++x)
 		{
-			*vertex++ = float(x) / (m_patchDim - 1);
-			*vertex++ = float(z) / (m_patchDim - 1);
+			*vertex++ = float(x) / (patchDim - 1);
+			*vertex++ = float(z) / (patchDim - 1);
 		}
 	}
 
@@ -670,57 +604,57 @@ bool TerrainEntity::createPatches()
 
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 
-		for (uint32_t y = 0; y < m_patchDim - 1; y += lodSkip)
+		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
 		{
-			uint32_t offset = y * m_patchDim;
-			for (uint32_t x = 0; x < m_patchDim - 1; x += lodSkip)
+			uint32_t offset = y * patchDim;
+			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
 			{
-				if (lod > 0 && (x == 0 || y == 0 || x == m_patchDim - 1 - lodSkip || y == m_patchDim - 1 - lodSkip))
+				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
 				{
-					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * m_patchDim;
+					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
 
 					if (x == 0)
 					{
 						indices.push_back(mid);
 						indices.push_back(lodSkip + offset);
-						indices.push_back(lodSkip + offset + lodSkip * m_patchDim);
+						indices.push_back(lodSkip + offset + lodSkip * patchDim);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(offset + i * m_patchDim + m_patchDim);
-							indices.push_back(offset + i * m_patchDim);
+							indices.push_back(offset + i * patchDim + patchDim);
+							indices.push_back(offset + i * patchDim);
 						}
 					}
-					else if (x == m_patchDim - 1 - lodSkip)
+					else if (x == patchDim - 1 - lodSkip)
 					{
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * m_patchDim);
+						indices.push_back(x + offset + lodSkip * patchDim);
 						indices.push_back(x + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(x + offset + i * m_patchDim + lodSkip);
-							indices.push_back(x + offset + i * m_patchDim + lodSkip + m_patchDim);
+							indices.push_back(x + offset + i * patchDim + lodSkip);
+							indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
 						}
 					}
 					else
 					{
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * m_patchDim);
+						indices.push_back(x + offset + lodSkip * patchDim);
 						indices.push_back(x + offset);
 
 						indices.push_back(mid);
 						indices.push_back(x + offset + lodSkip);
-						indices.push_back(x + offset + lodSkip + lodSkip * m_patchDim);
+						indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
 					}
 
 					if (y == 0)
 					{
 						indices.push_back(mid);
-						indices.push_back(x + lodSkip * m_patchDim + offset + lodSkip);
-						indices.push_back(x + lodSkip * m_patchDim + offset);
+						indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
+						indices.push_back(x + lodSkip * patchDim + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
@@ -729,7 +663,7 @@ bool TerrainEntity::createPatches()
 							indices.push_back(x + offset + i + 1);
 						}
 					}
-					else if (y == m_patchDim - 1 - lodSkip)
+					else if (y == patchDim - 1 - lodSkip)
 					{
 						indices.push_back(mid);
 						indices.push_back(x + offset);
@@ -738,8 +672,8 @@ bool TerrainEntity::createPatches()
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(x + offset + i + lodSkip * m_patchDim + 1);
-							indices.push_back(x + offset + i + lodSkip * m_patchDim);
+							indices.push_back(x + offset + i + lodSkip * patchDim + 1);
+							indices.push_back(x + offset + i + lodSkip * patchDim);
 						}
 					}
 					else
@@ -749,19 +683,19 @@ bool TerrainEntity::createPatches()
 						indices.push_back(x + offset + lodSkip);
 
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * m_patchDim + lodSkip);
-						indices.push_back(x + offset + lodSkip * m_patchDim);
+						indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
+						indices.push_back(x + offset + lodSkip * patchDim);
 					}
 				}
 				else
 				{
 					indices.push_back(x + offset);
 					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * m_patchDim + x + offset);
+					indices.push_back(lodSkip * patchDim + x + offset);
 
 					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * m_patchDim + lodSkip + x + offset);
-					indices.push_back(lodSkip * m_patchDim + x + offset);
+					indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
+					indices.push_back(lodSkip * patchDim + x + offset);
 				}
 			}
 		}
@@ -785,57 +719,57 @@ bool TerrainEntity::createPatches()
 		);
 #else
 
-		for (uint32_t y = 0; y < m_patchDim - 1; y += lodSkip)
+		for (uint32_t y = 0; y < patchDim - 1; y += lodSkip)
 		{
-			uint32_t offset = y * m_patchDim;
-			for (uint32_t x = 0; x < m_patchDim - 1; x += lodSkip)
+			uint32_t offset = y * patchDim;
+			for (uint32_t x = 0; x < patchDim - 1; x += lodSkip)
 			{
-				if (lod > 0 && (x == 0 || y == 0 || x == m_patchDim - 1 - lodSkip || y == m_patchDim - 1 - lodSkip))
+				if (lod > 0 && (x == 0 || y == 0 || x == patchDim - 1 - lodSkip || y == patchDim - 1 - lodSkip))
 				{
-					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * m_patchDim;
+					int mid = x + offset + (lodSkip >> 1) + (lodSkip >> 1) * patchDim;
 
 					if (x == 0)
 					{
 						indices.push_back(mid);
 						indices.push_back(lodSkip + offset);
-						indices.push_back(lodSkip + offset + lodSkip * m_patchDim);
+						indices.push_back(lodSkip + offset + lodSkip * patchDim);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(offset + i * m_patchDim + m_patchDim);
-							indices.push_back(offset + i * m_patchDim);
+							indices.push_back(offset + i * patchDim + patchDim);
+							indices.push_back(offset + i * patchDim);
 						}
 					}
-					else if (x == m_patchDim - 1 - lodSkip)
+					else if (x == patchDim - 1 - lodSkip)
 					{
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * m_patchDim);
+						indices.push_back(x + offset + lodSkip * patchDim);
 						indices.push_back(x + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(x + offset + i * m_patchDim + lodSkip);
-							indices.push_back(x + offset + i * m_patchDim + lodSkip + m_patchDim);
+							indices.push_back(x + offset + i * patchDim + lodSkip);
+							indices.push_back(x + offset + i * patchDim + lodSkip + patchDim);
 						}
 					}
 					else
 					{
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * m_patchDim);
+						indices.push_back(x + offset + lodSkip * patchDim);
 						indices.push_back(x + offset);
 
 						indices.push_back(mid);
 						indices.push_back(x + offset + lodSkip);
-						indices.push_back(x + offset + lodSkip + lodSkip * m_patchDim);
+						indices.push_back(x + offset + lodSkip + lodSkip * patchDim);
 					}
 
 					if (y == 0)
 					{
 						indices.push_back(mid);
-						indices.push_back(x + lodSkip * m_patchDim + offset + lodSkip);
-						indices.push_back(x + lodSkip * m_patchDim + offset);
+						indices.push_back(x + lodSkip * patchDim + offset + lodSkip);
+						indices.push_back(x + lodSkip * patchDim + offset);
 
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
@@ -844,7 +778,7 @@ bool TerrainEntity::createPatches()
 							indices.push_back(x + offset + i + 1);
 						}
 					}
-					else if (y == m_patchDim - 1 - lodSkip)
+					else if (y == patchDim - 1 - lodSkip)
 					{
 						indices.push_back(mid);
 						indices.push_back(x + offset);
@@ -853,8 +787,8 @@ bool TerrainEntity::createPatches()
 						for (uint32_t i = 0; i < lodSkip; ++i)
 						{
 							indices.push_back(mid);
-							indices.push_back(x + offset + i + lodSkip * m_patchDim + 1);
-							indices.push_back(x + offset + i + lodSkip * m_patchDim);
+							indices.push_back(x + offset + i + lodSkip * patchDim + 1);
+							indices.push_back(x + offset + i + lodSkip * patchDim);
 						}
 					}
 					else
@@ -864,19 +798,19 @@ bool TerrainEntity::createPatches()
 						indices.push_back(x + offset + lodSkip);
 
 						indices.push_back(mid);
-						indices.push_back(x + offset + lodSkip * m_patchDim + lodSkip);
-						indices.push_back(x + offset + lodSkip * m_patchDim);
+						indices.push_back(x + offset + lodSkip * patchDim + lodSkip);
+						indices.push_back(x + offset + lodSkip * patchDim);
 					}
 				}
 				else
 				{
 					indices.push_back(x + offset);
 					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * m_patchDim + x + offset);
+					indices.push_back(lodSkip * patchDim + x + offset);
 
 					indices.push_back(lodSkip + x + offset);
-					indices.push_back(lodSkip * m_patchDim + lodSkip + x + offset);
-					indices.push_back(lodSkip * m_patchDim + x + offset);
+					indices.push_back(lodSkip * patchDim + lodSkip + x + offset);
+					indices.push_back(lodSkip * patchDim + x + offset);
 				}
 			}
 		}

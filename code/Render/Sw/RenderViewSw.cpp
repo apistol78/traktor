@@ -214,6 +214,14 @@ bool RenderViewSw::isFullScreen() const
 	return false;
 }
 
+void RenderViewSw::showCursor()
+{
+}
+
+void RenderViewSw::hideCursor()
+{
+}
+
 bool RenderViewSw::setGamma(float gamma)
 {
 	return false;

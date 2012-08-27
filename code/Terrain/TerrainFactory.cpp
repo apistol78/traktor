@@ -37,6 +37,9 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 
 	Ref< Terrain > terrain = new Terrain();
 
+	terrain->m_detailSkip = terrainResource->getDetailSkip();
+	terrain->m_patchDim = terrainResource->getPatchDim();
+
 	if (!resourceManager->bind(terrainResource->getHeightfield(), terrain->m_heightfield))
 		return 0;
 	if (!resourceManager->bind(terrainResource->getNormalMap(), terrain->m_normalMap))
@@ -50,6 +53,17 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 		return 0;
 	if (!resourceManager->bind(terrainResource->getSurfaceShader(), terrain->m_surfaceShader))
 		return 0;
+
+	terrain->m_patches.resize(terrainResource->getPatches().size());
+	for (uint32_t i = 0; i < terrainResource->getPatches().size(); ++i)
+	{
+		terrain->m_patches[i].height[0] = terrainResource->getPatches()[i].height[0];
+		terrain->m_patches[i].height[1] = terrainResource->getPatches()[i].height[1];
+
+		terrain->m_patches[i].error[0] = terrainResource->getPatches()[i].error[0];
+		terrain->m_patches[i].error[1] = terrainResource->getPatches()[i].error[1];
+		terrain->m_patches[i].error[1] = terrainResource->getPatches()[i].error[1];
+	}
 
 	return terrain;
 }

@@ -20,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_outputSamplesBlockCount = 6;
+const uint32_t c_outputSamplesBlockCount = 8;
 
 inline void moveSamples(float* destSamples, const float* sourceSamples, int32_t samplesCount)
 {

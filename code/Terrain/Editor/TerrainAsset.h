@@ -37,13 +37,21 @@ class T_DLLCLASS TerrainAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	TerrainAsset();
+
 	virtual bool serialize(ISerializer& s);
+
+	uint32_t getDetailSkip() const { return m_detailSkip; }
+
+	uint32_t getPatchDim() const { return m_patchDim; }
 
 	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
 	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
 private:
+	uint32_t m_detailSkip;
+	uint32_t m_patchDim;
 	resource::Id< hf::Heightfield > m_heightfield;
 	resource::Id< render::Shader > m_surfaceShader;
 };

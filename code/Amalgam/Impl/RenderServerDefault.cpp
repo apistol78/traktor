@@ -121,7 +121,7 @@ bool RenderServerDefault::create(PropertyGroup* settings)
 
 	render::RenderSystemCreateDesc rscd;
 	rscd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
-	rscd.maxAnisotropy = settings->getProperty< PropertyInteger >(L"Render.MaxAnisotropy", 2);
+	rscd.maxAnisotropy = settings->getProperty< PropertyInteger >(L"Render.MaxAnisotropy", 4);
 
 	if (!renderSystem->create(rscd))
 	{

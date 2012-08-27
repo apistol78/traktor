@@ -290,6 +290,14 @@ bool RenderViewOpenGL::isFullScreen() const
 #endif
 }
 
+void RenderViewOpenGL::showCursor()
+{
+}
+
+void RenderViewOpenGL::hideCursor()
+{
+}
+
 bool RenderViewOpenGL::setGamma(float gamma)
 {
 	return false;

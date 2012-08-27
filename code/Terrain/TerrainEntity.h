@@ -115,8 +115,6 @@ private:
 #endif
 	render::Primitives m_primitives[LodCount];
 
-	uint32_t m_detailSkip;
-	uint32_t m_patchDim;
 	float m_patchLodDistance;
 	float m_patchLodBias;
 	float m_patchLodExponent;

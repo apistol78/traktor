@@ -67,6 +67,10 @@ public:
 
 	virtual bool isFullScreen() const;
 
+	virtual void showCursor();
+
+	virtual void hideCursor();
+
 	virtual bool setGamma(float gamma);
 
 	virtual void setViewport(const Viewport& viewport);
@@ -117,6 +121,7 @@ private:
 	StateCache m_stateCache;
 	bool m_fullScreen;
 	bool m_waitVBlank;
+	bool m_cursorVisible;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
 	Ref< VertexBufferDx11 > m_currentVertexBuffer;

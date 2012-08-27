@@ -31,11 +31,7 @@ public:
 
 	explicit T_MATH_INLINE Quaternion(float x, float y, float z, float w);
 
-	explicit T_MATH_INLINE Quaternion(const Vector4& axis, float angle);
-
 	explicit T_MATH_INLINE Quaternion(const Matrix44& matrixOrientation);
-
-	explicit T_MATH_INLINE Quaternion(float head, float pitch, float bank);
 
 	explicit T_MATH_INLINE Quaternion(const Vector4& from, const Vector4& to);
 
@@ -49,11 +45,17 @@ public:
 
 	T_MATH_INLINE Vector4 toAxisAngle() const;
 
+	static T_MATH_INLINE Quaternion fromAxisAngle(const Vector4& axisAngle);
+
+	static T_MATH_INLINE Quaternion fromAxisAngle(const Vector4& axis, float angle);
+
 	T_MATH_INLINE Matrix44 toMatrix44() const;
 
 	T_MATH_INLINE Vector4 toEulerAngles() const;
 
 	T_MATH_INLINE void toEulerAngles(float& outHead, float& outPitch, float& outBank) const;
+
+	static T_MATH_INLINE Quaternion fromEulerAngles(float head, float pitch, float bank);
 
 	static T_MATH_INLINE Quaternion fromEulerAngles(const Vector4& angles);
 

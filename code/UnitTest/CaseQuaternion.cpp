@@ -16,9 +16,9 @@ void CaseQuaternion::run()
 			float angle = rnd.nextFloat() * PI * 2.0f;
 			log::info << L"Try " << i << L", angle = " << angle << Endl;
 
-			Quaternion q0(Vector4(1.0f, 0.0f, 0.0f, 0.0f), angle);
-			Quaternion q1(Vector4(0.0f, 1.0f, 0.0f, 0.0f), angle);
-			Quaternion q2(Vector4(0.0f, 0.0f, 1.0f, 0.0f), angle);
+			Quaternion q0 = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), angle);
+			Quaternion q1 = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), angle);
+			Quaternion q2 = Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), angle);
 
 			Matrix44 m0 = rotateX(angle);
 			Matrix44 m1 = rotateY(angle);

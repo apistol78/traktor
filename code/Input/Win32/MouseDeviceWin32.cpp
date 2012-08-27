@@ -198,5 +198,9 @@ void MouseDeviceWin32::setRumble(const InputRumble& /*rumble*/)
 {
 }
 
+void MouseDeviceWin32::setExclusive(bool exclusive)
+{
+}
+
 	}
 }

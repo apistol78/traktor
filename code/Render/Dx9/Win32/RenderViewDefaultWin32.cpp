@@ -181,6 +181,14 @@ bool RenderViewDefaultWin32::isFullScreen() const
 	return !m_d3dPresent.Windowed;
 }
 
+void RenderViewDefaultWin32::showCursor()
+{
+}
+
+void RenderViewDefaultWin32::hideCursor()
+{
+}
+
 SystemWindow RenderViewDefaultWin32::getSystemWindow()
 {
 	SystemWindow sw;
