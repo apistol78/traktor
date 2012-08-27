@@ -37,7 +37,21 @@ class T_DLLCLASS TerrainResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	struct Patch
+	{
+		float height[2];
+		float error[3];
+
+		bool serialize(ISerializer& s);
+	};
+
+	TerrainResource();
+
 	virtual bool serialize(ISerializer& s);
+
+	uint32_t getDetailSkip() const { return m_detailSkip; }
+
+	uint32_t getPatchDim() const { return m_patchDim; }
 
 	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
@@ -51,15 +65,20 @@ public:
 
 	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
+	const std::vector< Patch >& getPatches() const { return m_patches; }
+
 private:
 	friend class TerrainPipeline;
 
+	uint32_t m_detailSkip;
+	uint32_t m_patchDim;
 	resource::Id< hf::Heightfield > m_heightfield;
 	resource::Id< render::ISimpleTexture > m_normalMap;
 	resource::Id< render::ISimpleTexture > m_heightMap;
 	resource::Id< render::Shader > m_terrainCoarseShader;
 	resource::Id< render::Shader > m_terrainDetailShader;
 	resource::Id< render::Shader > m_surfaceShader;
+	std::vector< Patch > m_patches;
 };
 
 	}

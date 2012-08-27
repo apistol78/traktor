@@ -11,10 +11,22 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainAsset", 1, TerrainAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainAsset", 2, TerrainAsset, ISerializable)
+
+TerrainAsset::TerrainAsset()
+:	m_detailSkip(2)
+,	m_patchDim(129)
+{
+}
 
 bool TerrainAsset::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 2)
+	{
+		s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
+		s >> Member< uint32_t >(L"patchDim", m_patchDim);
+	}
+
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
 	if (s.getVersion() >= 1)
 		s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
@@ -25,6 +37,7 @@ bool TerrainAsset::serialize(ISerializer& s)
 		if (!surfaceLayers.empty())
 			m_surfaceShader = surfaceLayers.front();
 	}
+
 	return true;
 }
 

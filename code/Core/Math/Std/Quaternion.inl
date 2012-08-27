@@ -20,14 +20,6 @@ T_MATH_INLINE Quaternion::Quaternion(float x, float y, float z, float w)
 {
 }
 
-T_MATH_INLINE Quaternion::Quaternion(const Vector4& axis, float angle)
-{
-	float half = angle / 2.0f;
-	Scalar sh(sinf(half));
-	Scalar ch(cosf(half));
-	e = axis.xyz0() * sh + Vector4(0.0f, 0.0f, 0.0f, ch);
-}
-
 T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 {
 	Vector4 mc0 = m.get(0);
@@ -84,14 +76,6 @@ T_MATH_INLINE Quaternion::Quaternion(const Matrix44& m)
 	}
 }
 
-T_MATH_INLINE Quaternion::Quaternion(float head, float pitch, float bank)
-{
-	Quaternion Qh(Vector4(0.0f, 1.0f, 0.0f, 0.0f), head);
-	Quaternion Qp(Vector4(1.0f, 0.0f, 0.0f, 0.0f), pitch);
-	Quaternion Qb(Vector4(0.0f, 0.0f, 1.0f, 0.0f), bank);
-	*this = Qh * Qp * Qb;
-}
-
 T_MATH_INLINE Quaternion::Quaternion(const Vector4& from, const Vector4& to)
 {
 	T_ASSERT (abs(from.w()) == 0.0f);
@@ -141,6 +125,29 @@ T_MATH_INLINE Vector4 Quaternion::toAxisAngle() const
 	Scalar scale = reciprocalSquareRoot(dot3(e, e));
 	Scalar angle = Scalar(2.0f * acosf(e.w()));
 	return Vector4(e * scale * angle).xyz0();
+}
+
+T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axisAngle)
+{
+	Scalar angle = axisAngle.length();
+	if (abs(angle) >= FUZZY_EPSILON)
+	{
+		Vector4 axis = axisAngle / angle;
+		Scalar half = angle / Scalar(2.0f);
+		Scalar sh(sinf(half));
+		Scalar ch(cosf(half));
+		return Quaternion(axis.xyz0() * sh + Vector4(0.0f, 0.0f, 0.0f, ch));
+	}
+	else
+		return Quaternion::identity();
+}
+
+T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axis, float angle)
+{
+	float half = angle / 2.0f;
+	Scalar sh(sinf(half));
+	Scalar ch(cosf(half));
+	return Quaternion(axis.xyz0() * sh + Vector4(0.0f, 0.0f, 0.0f, ch));
 }
 
 T_MATH_INLINE Matrix44 Quaternion::toMatrix44() const
@@ -196,7 +203,7 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 		axisZ_2.z()
 	);
 
-	Quaternion Qt0(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -outHead);
+	Quaternion Qt0 = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -outHead);
 	Vector4 axisX_3 = Qt0 * axisX_2;
 	Vector4 axisZ_3 = Qt0 * axisZ_2;
 
@@ -205,7 +212,7 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 		axisZ_3.z()
 	);
 
-	Quaternion Qt1(Vector4(1.0f, 0.0f, 0.0f, 0.0f), -outPitch);
+	Quaternion Qt1 = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), -outPitch);
 	Vector4 axisX_4 = Qt1 * axisX_3;
 
 	outBank = atan2f(
@@ -214,9 +221,20 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 	);
 }
 
+T_MATH_INLINE Quaternion Quaternion::fromEulerAngles(float head, float pitch, float bank)
+{
+	Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), head);
+	Quaternion Qp = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), pitch);
+	Quaternion Qb = Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), bank);
+	return Qh * Qp * Qb;
+}
+
 T_MATH_INLINE Quaternion Quaternion::fromEulerAngles(const Vector4& angles)
 {
-	return Quaternion(angles.x(), angles.y(), angles.z());
+	Quaternion Qh = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), angles.x());
+	Quaternion Qp = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), angles.y());
+	Quaternion Qb = Quaternion::fromAxisAngle(Vector4(0.0f, 0.0f, 1.0f, 0.0f), angles.z());
+	return Qh * Qp * Qb;
 }
 
 T_MATH_INLINE Quaternion& Quaternion::operator *= (const Quaternion& r)

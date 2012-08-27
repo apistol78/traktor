@@ -386,7 +386,7 @@ Transform TransformPath::Frame::transform() const
 {
 	return Transform(
 		position.xyz0(),
-		Quaternion(
+		Quaternion::fromEulerAngles(
 			orientation.x(),
 			orientation.y(),
 			orientation.z()

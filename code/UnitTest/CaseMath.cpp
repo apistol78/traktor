@@ -117,9 +117,9 @@ void CaseMath::run()
 	CASE_ASSERT_EQUAL(Vector4(1.0f, 2.0f, 3.0f, 4.0f) + Scalar(5.0f), Vector4(6.0f, 7.0f, 8.0f, 9.0f));
 	CASE_ASSERT_EQUAL(Vector4(1.0f, 2.0f, 3.0f, 4.0f) + Vector4(5.0f, 6.0f, 7.0f, 8.0f), Vector4(6.0f, 8.0f, 10.0f, 12.0f));
 
-	CASE_ASSERT_EQUAL(rotateX(PI), Quaternion(0.0f, PI, 0.0f).toMatrix44());
-	CASE_ASSERT_EQUAL(rotateY(PI), Quaternion(PI, 0.0f, 0.0f).toMatrix44());
-	CASE_ASSERT_EQUAL(rotateZ(PI), Quaternion(0.0f, 0.0f, PI).toMatrix44());
+	CASE_ASSERT_EQUAL(rotateX(PI), Quaternion::fromEulerAngles(0.0f, PI, 0.0f).toMatrix44());
+	CASE_ASSERT_EQUAL(rotateY(PI), Quaternion::fromEulerAngles(PI, 0.0f, 0.0f).toMatrix44());
+	CASE_ASSERT_EQUAL(rotateZ(PI), Quaternion::fromEulerAngles(0.0f, 0.0f, PI).toMatrix44());
 
 	CASE_ASSERT_EQUAL(rotateX(PI), Quaternion(rotateX(PI)).toMatrix44());
 	CASE_ASSERT_EQUAL(rotateY(PI), Quaternion(rotateY(PI)).toMatrix44());

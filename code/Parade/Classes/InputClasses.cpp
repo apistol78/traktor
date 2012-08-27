@@ -31,6 +31,7 @@ void registerInputClasses(script::IScriptManager* scriptManager)
 	classInputDevice->addMethod(L"resetState", &input::IInputDevice::resetState);
 	classInputDevice->addMethod(L"readState", &input::IInputDevice::readState);
 	classInputDevice->addMethod(L"supportRumble", &input::IInputDevice::supportRumble);
+	classInputDevice->addMethod(L"setExclusive", &input::IInputDevice::setExclusive);
 	scriptManager->registerClass(classInputDevice);
 
 	Ref< script::AutoScriptClass< input::InputSystem > > classInputSystem = new script::AutoScriptClass< input::InputSystem >();
@@ -38,6 +39,7 @@ void registerInputClasses(script::IScriptManager* scriptManager)
 	classInputSystem->addMethod(L"removeDriver", &input::InputSystem::removeDriver);
 	classInputSystem->addMethod(L"addDevice", &input::InputSystem::addDevice);
 	classInputSystem->addMethod(L"removeDevice", &input::InputSystem::removeDevice);
+	classInputSystem->addMethod(L"setExclusive", &input::InputSystem::setExclusive);
 	classInputSystem->addMethod(L"update", &input::InputSystem::update);
 	scriptManager->registerClass(classInputSystem);
 

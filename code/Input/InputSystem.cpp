@@ -99,6 +99,12 @@ Ref< IInputDevice > InputSystem::getDevice(InputCategory category, int32_t index
 	return 0;
 }
 
+void InputSystem::setExclusive(bool exclusive)
+{
+	for (RefArray< IInputDevice >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+		(*i)->setExclusive(exclusive);
+}
+
 bool InputSystem::update(float deltaTime)
 {
 	deltaTime = std::min(deltaTime, 1.0f / 30.0f);

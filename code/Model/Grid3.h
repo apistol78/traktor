@@ -62,13 +62,14 @@ public:
 
 	uint32_t get(const ValueType& v, float distance) const
 	{
-		T_ASSERT (distance <= m_cellSize);
+		T_ASSERT (distance <= m_cellSize / 2.0f);
 
-		Vector4 p = PositionAccessor::get(v) / m_cellSize;
+		Vector4 p = PositionAccessor::get(v);
+		Vector4 pq = p / m_cellSize;
 
-		int32_t x = int32_t(p.x());
-		int32_t y = int32_t(p.y());
-		int32_t z = int32_t(p.z());
+		int32_t x = int32_t(pq.x());
+		int32_t y = int32_t(pq.y());
+		int32_t z = int32_t(pq.z());
 
 		for (int32_t iz = -1; iz <= 1; ++iz)
 		{

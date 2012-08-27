@@ -67,6 +67,16 @@ bool RenderViewCapture::isFullScreen() const
 	return m_renderView->isFullScreen();
 }
 
+void RenderViewCapture::showCursor()
+{
+	m_renderView->showCursor();
+}
+
+void RenderViewCapture::hideCursor()
+{
+	m_renderView->hideCursor();
+}
+
 bool RenderViewCapture::setGamma(float gamma)
 {
 	return m_renderView->setGamma(gamma);

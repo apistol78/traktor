@@ -52,7 +52,7 @@ void calculatePoseLocalTransforms(
 	for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 	{
 		Transform p0(pose->getJointOffset(i));
-		Transform p1(Quaternion::fromEulerAngles(pose->getJointOrientation(i)));
+		Transform p1(pose->getJointOrientation(i).toQuaternion());
 		Transform poseTransform = p1 * p0;
 		outJointLocalTransforms[i] = skeleton->getJoint(i)->getTransform() * poseTransform;
 	}
@@ -149,9 +149,9 @@ void blendPoses(
 		Vector4 o2 = pose2->getJointOffset(i);
 		outPose->setJointOffset(i, lerp(o1, o2, blend));
 
-		Vector4 q1 = pose1->getJointOrientation(i);
-		Vector4 q2 = pose2->getJointOrientation(i);
-		outPose->setJointOrientation(i, lerp(q1, q2, blend));
+		Rotator r1 = pose1->getJointOrientation(i);
+		Rotator r2 = pose2->getJointOrientation(i);
+		outPose->setJointOrientation(i, lerp(r1, r2, blend));
 	}
 }
 

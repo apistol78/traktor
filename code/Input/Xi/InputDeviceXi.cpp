@@ -206,5 +206,9 @@ void InputDeviceXi::setRumble(const InputRumble& rumble)
 	XInputSetState(m_controller, &xiv);
 }
 
+void InputDeviceXi::setExclusive(bool exclusive)
+{
+}
+
 	}
 }

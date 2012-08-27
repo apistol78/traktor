@@ -36,8 +36,9 @@ c_mouseControlMap[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceDi8", MouseDeviceDi8, IInputDevice)
 
-MouseDeviceDi8::MouseDeviceDi8(IDirectInputDevice8* device, const DIDEVICEINSTANCE* deviceInstance)
-:	m_device(device)
+MouseDeviceDi8::MouseDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DIDEVICEINSTANCE* deviceInstance)
+:	m_hWnd(hWnd)
+,	m_device(device)
 ,	m_connected(false)
 {
 	m_device->SetDataFormat(&c_dfDIMouse);
@@ -186,6 +187,18 @@ bool MouseDeviceDi8::supportRumble() const
 
 void MouseDeviceDi8::setRumble(const InputRumble& rumble)
 {
+}
+
+void MouseDeviceDi8::setExclusive(bool exclusive)
+{
+	// Ensure device is unaquired, cannot change cooperative level if acquired.
+	m_device->Unacquire();
+	m_connected = false;
+
+	// Change cooperative level.
+	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE));
+	if (FAILED(hr))
+		log::warning << L"Unable to set cooperative level on mouse device" << Endl;
 }
 
 	}

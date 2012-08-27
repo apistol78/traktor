@@ -146,13 +146,13 @@ BoxedQuaternion::BoxedQuaternion(float x, float y, float z, float w)
 }
 
 BoxedQuaternion::BoxedQuaternion(const Vector4& axis, float angle)
-:	m_value(axis, angle)
 {
+	m_value = Quaternion::fromAxisAngle(axis, Scalar(angle));
 }
 
 BoxedQuaternion::BoxedQuaternion(float head, float pitch, float bank)
-:	m_value(head, pitch, bank)
 {
+	m_value = Quaternion::fromEulerAngles(head, pitch, bank);
 }
 
 BoxedQuaternion::BoxedQuaternion(const Vector4& from, const Vector4& to)

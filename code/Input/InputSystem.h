@@ -46,6 +46,8 @@ public:
 
 	Ref< IInputDevice > getDevice(InputCategory category, int32_t index, bool connected);
 
+	void setExclusive(bool exclusive);
+
 	bool update(float deltaTime);
 
 private:

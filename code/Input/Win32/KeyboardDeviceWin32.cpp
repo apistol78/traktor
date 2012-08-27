@@ -120,5 +120,9 @@ void KeyboardDeviceWin32::setRumble(const InputRumble& /*rumble*/)
 {
 }
 
+void KeyboardDeviceWin32::setExclusive(bool exclusive)
+{
+}
+
 	}
 }

@@ -592,6 +592,9 @@ bool ProgramDx11::createState(
 			dsd.MipLODBias += mipBias;
 			dsd.MaxAnisotropy = maxAnisotropy;
 
+			if (maxAnisotropy > 0)
+				dsd.Filter = D3D11_FILTER_ANISOTROPIC;
+
 			ID3D11SamplerState* d3dSamplerState;
 
 			hr = d3dDevice->CreateSamplerState(&dsd, &d3dSamplerState);

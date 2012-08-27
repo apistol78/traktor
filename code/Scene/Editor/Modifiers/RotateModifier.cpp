@@ -176,7 +176,7 @@ bool RotateModifier::handleCommand(const ui::Command& command)
 
 	if (m_entityAdapters.size() == 1)
 	{
-		Quaternion Q(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
+		Quaternion Q = Quaternion::fromEulerAngles(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
 
 		Transform T = m_entityAdapters.front()->getTransform();
 		Transform Tn(T.translation(), Q);
@@ -185,7 +185,7 @@ bool RotateModifier::handleCommand(const ui::Command& command)
 	}
 	else
 	{
-		Quaternion Q(m_deltaHead, m_deltaPitch, m_deltaBank);
+		Quaternion Q = Quaternion::fromEulerAngles(m_deltaHead, m_deltaPitch, m_deltaBank);
 
 		Transform Tc(m_center.xyz1());
 		Transform Tci(-m_center.xyz1());
@@ -224,7 +224,7 @@ void RotateModifier::apply(const TransformChain& transformChain, const Vector4& 
 
 	if (m_entityAdapters.size() == 1)
 	{
-		Quaternion Q(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
+		Quaternion Q = Quaternion::fromEulerAngles(m_baseHead + m_deltaHead, m_basePitch + m_deltaPitch, m_baseBank + m_deltaBank);
 
 		Transform T = m_entityAdapters.front()->getTransform();
 		Transform Tn(T.translation(), Q);
@@ -233,7 +233,7 @@ void RotateModifier::apply(const TransformChain& transformChain, const Vector4& 
 	}
 	else
 	{
-		Quaternion Q(m_deltaHead, m_deltaPitch, m_deltaBank);
+		Quaternion Q = Quaternion::fromEulerAngles(m_deltaHead, m_deltaPitch, m_deltaBank);
 
 		Transform Tc(m_center.xyz1());
 		Transform Tci(-m_center.xyz1());

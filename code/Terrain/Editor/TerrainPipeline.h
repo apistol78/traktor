@@ -21,6 +21,8 @@ class T_DLLCLASS TerrainPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
+	virtual bool create(const editor::IPipelineSettings* settings);
+
 	virtual TypeInfoSet getAssetTypes() const;
 
 	virtual bool buildDependencies(
@@ -41,6 +43,9 @@ public:
 		const Guid& outputGuid,
 		uint32_t reason
 	) const;
+
+private:
+	std::wstring m_assetPath;
 };
 
 	}

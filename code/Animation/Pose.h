@@ -2,6 +2,7 @@
 #define traktor_animation_Pose_H
 
 #include "Animation/BitSet.h"
+#include "Animation/Rotator.h"
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Vector4.h"
@@ -31,9 +32,9 @@ public:
 
 	Vector4 getJointOffset(uint32_t jointIndex) const;
 
-	void setJointOrientation(uint32_t jointIndex, const Vector4& jointOrientation);
+	void setJointOrientation(uint32_t jointIndex, const Rotator& jointOrientation);
 
-	Vector4 getJointOrientation(uint32_t jointIndex) const;
+	Rotator getJointOrientation(uint32_t jointIndex) const;
 
 	void getIndexMask(BitSet& outIndices) const;
 
@@ -44,12 +45,11 @@ private:
 	{
 		uint32_t index;
 		Vector4 offset;
-		Vector4 orientation;
+		Rotator orientation;
 
 		Joint(uint32_t index_ = 0)
 		:	index(index_)
 		,	offset(0.0f, 0.0f, 0.0f, 0.0f)
-		,	orientation(0.0f, 0.0f, 0.0f, 0.0f)
 		{
 		}
 

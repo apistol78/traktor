@@ -1,8 +1,16 @@
+#include <limits>
+#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Float.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
+#include "Heightfield/Heightfield.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldTextureAsset.h"
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Shader/External.h"
@@ -25,12 +33,32 @@ const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
 const Guid c_guidTerrainCoarseShaderSeed(L"{6643B92A-6676-41b9-9427-3569B2EA481B}");
 const Guid c_guidTerrainDetailShaderSeed(L"{1AC67694-4CF8-44ac-B78E-B1E79C9632C8}");
 const Guid c_guidSurfaceShaderSeed(L"{8481FC82-A8E8-49b8-906F-9F8F6365B1F5}");
-
 const Guid c_guidTerrainCoarseShaderTemplate_VFetch(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
 const Guid c_guidTerrainDetailShaderTemplate_VFetch(L"{68565BF3-8F72-8848-8FBA-395B9699F108}");
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
-
 const Guid c_guidSurfaceShaderPlaceholder(L"{23790224-9E2A-4C43-9C3B-F659BE962E10}");
+
+class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
+{
+public:
+	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const render::ShaderGraph* surfaceShaderImpl)
+	:	m_pipelineBuilder(pipelineBuilder)
+	,	m_surfaceShaderImpl(surfaceShaderImpl)
+	{
+	}
+
+	virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid)
+	{
+		if (fragmentGuid == c_guidSurfaceShaderPlaceholder)
+			return m_surfaceShaderImpl;
+		else
+			return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
+	}
+
+private:
+	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
+	Ref< const render::ShaderGraph > m_surfaceShaderImpl;
+};
 
 Guid combineGuids(const Guid& g1, const Guid& g2)
 {
@@ -40,9 +68,130 @@ Guid combineGuids(const Guid& g1, const Guid& g2)
 	return Guid(d);
 }
 
+void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* heightfield, std::vector< TerrainResource::Patch >& outPatches)
+{
+	uint32_t patchDim = terrainAsset->getPatchDim();
+	uint32_t detailSkip = terrainAsset->getDetailSkip();
+
+	uint32_t heightfieldSize = heightfield->getSize();
+	uint32_t patchCount = heightfieldSize / (patchDim * detailSkip);
+
+	const Vector4& worldExtent = heightfield->getWorldExtent();
+
+	outPatches.resize(patchCount * patchCount);
+
+	for (uint32_t pz = 0; pz < patchCount; ++pz)
+	{
+		for (uint32_t px = 0; px < patchCount; ++px)
+		{
+			TerrainResource::Patch& patch = outPatches[px + pz * patchCount];
+
+			int32_t pminX = px * patchDim * detailSkip;
+			int32_t pminZ = pz * patchDim * detailSkip;
+			int32_t pmaxX = (px + 1) * patchDim * detailSkip;
+			int32_t pmaxZ = (pz + 1) * patchDim * detailSkip;
+
+			// Measure min and max height of patch.
+			float minHeight =  std::numeric_limits< float >::max();
+			float maxHeight = -std::numeric_limits< float >::max();
+
+			for (uint32_t z = 0; z < patchDim; ++z)
+			{
+				for (uint32_t x = 0; x < patchDim; ++x)
+				{
+					float fx = float(x) / (patchDim - 1);
+					float fz = float(z) / (patchDim - 1);
+
+					int32_t ix = int32_t(fx * patchDim * detailSkip) + pminX;
+					int32_t iz = int32_t(fz * patchDim * detailSkip) + pminZ;
+
+					float height = heightfield->getGridHeightNearest(ix, iz);
+					height = heightfield->unitToWorld(height);
+
+					minHeight = min(minHeight, height);
+					maxHeight = max(maxHeight, height);
+				}
+			}
+
+			patch.height[0] = minHeight;
+			patch.height[1] = maxHeight;
+
+			// Calculate lod errors.
+			float* error = patch.error;
+			for (uint32_t lod = 1; lod < /*LodCount*/4; ++lod)
+			{
+				*error = 0.0f;
+
+				uint32_t lodSkip = 1 << lod;
+				for (uint32_t z = 0; z < patchDim; z += lodSkip)
+				{
+					for (uint32_t x = 0; x < patchDim; x += lodSkip)
+					{
+						float fx0 = float(x) / (patchDim - 1);
+						float fz0 = float(z) / (patchDim - 1);
+						float fx1 = float(x + lodSkip) / (patchDim - 1);
+						float fz1 = float(z + lodSkip) / (patchDim - 1);
+
+						float gx0 = (fx0 * patchDim * detailSkip) + pminX;
+						float gz0 = (fz0 * patchDim * detailSkip) + pminZ;
+						float gx1 = (fx1 * patchDim * detailSkip) + pminX;
+						float gz1 = (fz1 * patchDim * detailSkip) + pminZ;
+
+						float h[] =
+						{
+							heightfield->getGridHeightNearest(gx0, gz0),
+							heightfield->getGridHeightNearest(gx1, gz0),
+							heightfield->getGridHeightNearest(gx0, gz1),
+							heightfield->getGridHeightNearest(gx1, gz1)
+						};
+
+						for (int lz = 0; lz <= lodSkip; ++lz)
+						{
+							for (int lx = 0; lx <= lodSkip; ++lx)
+							{
+								float fx = float(lx) / lodSkip;
+								float fz = float(lz) / lodSkip;
+
+								float gx = lerp(gx0, gx1, fx);
+								float gz = lerp(gz0, gz1, fz);
+
+								float ht = lerp(h[0], h[1], fx);
+								float hb = lerp(h[2], h[3], fx);
+								float h0 = lerp(ht, hb, fz);
+
+								float hl = lerp(h[0], h[2], fz);
+								float hr = lerp(h[1], h[3], fz);
+								float h1 = lerp(hl, hr, fx);
+
+								float h = heightfield->getGridHeightNearest(gx, gz);
+
+								float herr0 = abs(h - h0);
+								float herr1 = abs(h - h1);
+								float herr = max(herr0, herr1);
+
+								herr = heightfield->getWorldExtent().y() * herr;
+
+								*error += herr;
+							}
+						}
+					}
+				}
+
+				*error++ /= 1000.0f;
+			}
+		}
+	}
+}
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 1, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 4, TerrainPipeline, editor::DefaultPipeline)
+
+bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
+{
+	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	return editor::DefaultPipeline::create(settings);
+}
 
 TypeInfoSet TerrainPipeline::getAssetTypes() const
 {
@@ -92,33 +241,6 @@ bool TerrainPipeline::buildDependencies(
 	return true;
 }
 
-namespace
-{
-
-	class FragmentReaderAdapter : public render::FragmentLinker::FragmentReader
-	{
-	public:
-		FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder, const render::ShaderGraph* surfaceShaderImpl)
-		:	m_pipelineBuilder(pipelineBuilder)
-		,	m_surfaceShaderImpl(surfaceShaderImpl)
-		{
-		}
-
-		virtual Ref< const render::ShaderGraph > read(const Guid& fragmentGuid)
-		{
-			if (fragmentGuid == c_guidSurfaceShaderPlaceholder)
-				return m_surfaceShaderImpl;
-			else
-				return m_pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(fragmentGuid);
-		}
-
-	private:
-		Ref< editor::IPipelineBuilder > m_pipelineBuilder;
-		Ref< const render::ShaderGraph > m_surfaceShaderImpl;
-	};
-
-}
-
 bool TerrainPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
@@ -131,6 +253,31 @@ bool TerrainPipeline::buildOutput(
 {
 	const TerrainAsset* terrainAsset = checked_type_cast< const TerrainAsset*, false >(sourceAsset);
 
+	// Get heightfield asset.
+	Ref< const hf::HeightfieldAsset > heightfieldAsset = pipelineBuilder->getObjectReadOnly< hf::HeightfieldAsset >(terrainAsset->getHeightfield());
+	if (!heightfieldAsset)
+	{
+		log::error << L"Terrain pipeline failed; unable to get heightfield asset" << Endl;
+		return false;
+
+	}
+
+	// Load heightfield from source file.
+	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
+	Ref< const hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
+		fileName,
+		heightfieldAsset->getWorldExtent(),
+		heightfieldAsset->getInvertX(),
+		heightfieldAsset->getInvertZ(),
+		heightfieldAsset->getDetailSkip()
+	);
+	if (!heightfield)
+	{
+		log::error << L"Terrain pipeline failed; unable to read heightfield source \"" << fileName.getPathName() << L"\"" << Endl;
+		return false;
+	}
+
+	// Generate uids.
 	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
 	Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
 	Guid terrainCoarseShaderGuid = combineGuids(c_guidTerrainCoarseShaderSeed, outputGuid);
@@ -231,12 +378,17 @@ bool TerrainPipeline::buildOutput(
 
 	// Create output resource.
 	Ref< TerrainResource > terrainResource = new TerrainResource();
+	terrainResource->m_detailSkip = terrainAsset->getDetailSkip();
+	terrainResource->m_patchDim = terrainAsset->getPatchDim();
 	terrainResource->m_heightfield = terrainAsset->getHeightfield();
 	terrainResource->m_normalMap = resource::Id< render::ISimpleTexture >(normalMapGuid);
 	terrainResource->m_heightMap = resource::Id< render::ISimpleTexture >(heightMapGuid);
 	terrainResource->m_terrainCoarseShader = resource::Id< render::Shader >(terrainCoarseShaderGuid);
 	terrainResource->m_terrainDetailShader = resource::Id< render::Shader >(terrainDetailShaderGuid);
 	terrainResource->m_surfaceShader = resource::Id< render::Shader >(surfaceShaderGuid);
+
+	// Calculate lod errors for each terrain patch.
+	calculatePatches(terrainAsset, heightfield, terrainResource->m_patches);
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)

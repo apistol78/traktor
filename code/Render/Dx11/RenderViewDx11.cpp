@@ -54,6 +54,7 @@ RenderViewDx11::RenderViewDx11(
 ,	m_stateCache(context->getD3DDeviceContext())
 ,	m_fullScreen(false)
 ,	m_waitVBlank(true)
+,	m_cursorVisible(true)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 ,	m_currentVertexBuffer(0)
@@ -395,6 +396,16 @@ bool RenderViewDx11::isActive() const
 bool RenderViewDx11::isFullScreen() const
 {
 	return m_fullScreen;
+}
+
+void RenderViewDx11::showCursor()
+{
+	m_cursorVisible = true;
+}
+
+void RenderViewDx11::hideCursor()
+{
+	m_cursorVisible = false;
 }
 
 bool RenderViewDx11::setGamma(float gamma)
@@ -808,8 +819,6 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 		DXGI_SWAP_CHAIN_DESC dxscd;
 		m_dxgiSwapChain->GetDesc(&dxscd);
 
-		T_DEBUG(L"WM_SIZE " << width << L" x " << height << L"; swap " << dxscd.BufferDesc.Width << L" x " << dxscd.BufferDesc.Height);
-
 		if (width != dxscd.BufferDesc.Width || height != dxscd.BufferDesc.Height)
 		{
 			RenderEvent evt;
@@ -863,10 +872,10 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 	}
 	else if (message == WM_SETCURSOR)
 	{
-		if (isFullScreen())
-			SetCursor(NULL);
-		else
+		if (m_cursorVisible)
 			SetCursor(LoadCursor(NULL, IDC_ARROW));
+		else
+			SetCursor(NULL);
 	}
 	else
 		return false;

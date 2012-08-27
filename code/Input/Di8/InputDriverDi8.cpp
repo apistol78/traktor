@@ -306,7 +306,7 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	if (FAILED(hr)) 
 		return false;
 
-	hr = device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | DISCL_EXCLUSIVE | DISCL_NOWINKEY);
+	hr = device->SetCooperativeLevel(m_hWnd, DISCL_FOREGROUND | /*DISCL_EXCLUSIVE | DISCL_NOWINKEY*/ DISCL_NONEXCLUSIVE);
 	if (FAILED(hr)) 
 		return false;
 
@@ -314,13 +314,13 @@ bool InputDriverDi8::addDevice(const DIDEVICEINSTANCE* deviceInstance)
 	switch (inputCategory)
 	{
 	case CtMouse:
-		inputDevice = new MouseDeviceDi8(device.get(), deviceInstance);
+		inputDevice = new MouseDeviceDi8(m_hWnd, device.get(), deviceInstance);
 		break;
 	case CtKeyboard:
-		inputDevice = new KeyboardDeviceDi8(device.get(), deviceInstance);
+		inputDevice = new KeyboardDeviceDi8(m_hWnd, device.get(), deviceInstance);
 		break;
 	case CtJoystick:
-		inputDevice = new JoystickDeviceDi8(device.get(), deviceInstance);
+		inputDevice = new JoystickDeviceDi8(m_hWnd, device.get(), deviceInstance);
 		break;
 	default:
 		T_FATAL_ERROR;

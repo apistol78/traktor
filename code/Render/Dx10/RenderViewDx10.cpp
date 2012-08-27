@@ -368,6 +368,14 @@ bool RenderViewDx10::isFullScreen() const
 	return m_fullScreen;
 }
 
+void RenderViewDx10::showCursor()
+{
+}
+
+void RenderViewDx10::hideCursor()
+{
+}
+
 bool RenderViewDx10::setGamma(float gamma)
 {
 	return false;

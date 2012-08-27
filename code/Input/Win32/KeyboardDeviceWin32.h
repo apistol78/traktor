@@ -50,6 +50,8 @@ public:
 
 	virtual void setRumble(const InputRumble& rumble);
 
+	virtual void setExclusive(bool exclusive);
+
 private:
 	friend class InputDriverWin32;
 

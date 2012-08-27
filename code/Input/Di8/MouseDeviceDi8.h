@@ -24,7 +24,7 @@ class T_DLLCLASS MouseDeviceDi8 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceDi8(IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
+	MouseDeviceDi8(HWND hWnd, IDirectInputDevice8* diDevice, const DIDEVICEINSTANCE* deviceInstance);
 
 	virtual std::wstring getName() const;
 
@@ -52,7 +52,10 @@ public:
 
 	virtual void setRumble(const InputRumble& rumble);
 
+	virtual void setExclusive(bool exclusive);
+
 private:
+	HWND m_hWnd;
 	ComRef< IDirectInputDevice8 > m_device;
 	std::wstring m_name;
 	DIMOUSESTATE m_state;

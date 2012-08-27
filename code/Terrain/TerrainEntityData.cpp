@@ -9,12 +9,10 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", 0, TerrainEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainEntityData", 1, TerrainEntityData, world::EntityData)
 
 TerrainEntityData::TerrainEntityData()
-:	m_detailSkip(4)
-,	m_patchDim(65)
-,	m_patchLodDistance(100.0f)
+:	m_patchLodDistance(100.0f)
 ,	m_patchLodBias(0.0f)
 ,	m_patchLodExponent(1.0f)
 ,	m_surfaceLodDistance(100.0f)
@@ -30,8 +28,14 @@ bool TerrainEntityData::serialize(ISerializer& s)
 		return false;
 
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);
-	s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
-	s >> Member< uint32_t >(L"patchDim", m_patchDim);
+
+	if (s.getVersion() < 1)
+	{
+		uint32_t detailSkip = 0, patchDim = 0;
+		s >> Member< uint32_t >(L"detailSkip", detailSkip);
+		s >> Member< uint32_t >(L"patchDim", patchDim);
+	}
+
 	s >> Member< float >(L"patchLodDistance", m_patchLodDistance);
 	s >> Member< float >(L"patchLodBias", m_patchLodBias);
 	s >> Member< float >(L"patchLodExponent", m_patchLodExponent);

@@ -1,3 +1,7 @@
+#include "Core/Containers/StaticVector.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
+#include "Core/Misc/String.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/SkeletonUtils.h"
@@ -6,9 +10,6 @@
 #include "Animation/Editor/SkeletonFormatBvh.h"
 #include "Animation/Editor/BvhParser/BvhDocument.h"
 #include "Animation/Editor/BvhParser/BvhJoint.h"
-#include "Core/Log/Log.h"
-#include "Core/Math/Const.h"
-#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -36,8 +37,7 @@ void convertKeyPose(
 	const BvhJoint* joint,
 	const BvhDocument::cv_t& cv,
 	Animation::KeyPose& kp,
-	int32_t& jointIndex,
-	const Quaternion& QparentWorldOrientation
+	int32_t& jointIndex
 )
 {
 	const RefArray< BvhJoint >& children = joint->getChildren();
@@ -51,6 +51,8 @@ void convertKeyPose(
 		Vector4 P = Vector4::zero();
 		Quaternion QlocalOrientation = Quaternion::identity();
 
+		StaticVector< Vector4, 3 > rotations;
+
 		for (std::vector< std::wstring >::const_iterator k = ch.begin(); k != ch.end(); ++k)
 		{
 			float c = cv[offset++];
@@ -63,14 +65,23 @@ void convertKeyPose(
 				P += Vector4(0.0f, 0.0f, c, 0.0f);
 
 			else if (*k == L"Xrotation")
-				QlocalOrientation *= Quaternion(Vector4(1.0f, 0.0f, 0.0f, 0.0f), deg2rad(c));
+				rotations.push_back(Vector4(deg2rad(c), 0.0f, 0.0f, 0.0f));
 			else if (*k == L"Yrotation")
-				QlocalOrientation *= Quaternion(Vector4(0.0f, 1.0f, 0.0f, 0.0f), deg2rad(-c));
+				rotations.push_back(Vector4(0.0f, deg2rad(-c), 0.0f, 0.0f));
 			else if (*k == L"Zrotation")
-				QlocalOrientation *= Quaternion(Vector4(0.0f, 0.0f, 1.0f, 0.0f), deg2rad(-c));
+				rotations.push_back(Vector4(0.0f, 0.0f, deg2rad(-c), 0.0f));
 		}
 
+		while (rotations.size() < 3)
+			rotations.push_back(Vector4::zero());
+
 		Quaternion Qref = calculateReferenceOrientation(skeleton, jointIndex);
+
+		Rotator R(
+			Qref.inverse() * rotations[0],
+			Qref.inverse() * rotations[1],
+			Qref.inverse() * rotations[2]
+		);
 
 		kp.pose.setJointOffset(
 			jointIndex,
@@ -79,7 +90,7 @@ void convertKeyPose(
 
 		kp.pose.setJointOrientation(
 			jointIndex,
-			(Qref.inverse() * QlocalOrientation * Qref).toEulerAngles()
+			R
 		);
 
 		jointIndex++;
@@ -89,8 +100,7 @@ void convertKeyPose(
 			childJoint,
 			cv,
 			kp,
-			jointIndex,
-			QparentWorldOrientation * QlocalOrientation
+			jointIndex
 		);
 	}
 }
@@ -138,8 +148,7 @@ Ref< Animation > AnimationFormatBvh::import(IStream* stream, const Vector4& offs
 			document->getRootJoint(),
 			*i,
 			kp,
-			jointIndex,
-			Quaternion::identity()
+			jointIndex
 		);
 
 		anim->addKeyPose(kp);
