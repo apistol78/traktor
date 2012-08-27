@@ -22,6 +22,24 @@ bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 	return true;
 }
 
+bool SteamUser::isFriend(uint64_t userHandle)
+{
+	CSteamID id(userHandle);
+	if (!id.IsValid())
+		return false;
+
+	return SteamFriends()->GetFriendRelationship(id) == k_EFriendRelationshipFriend;
+}
+
+bool SteamUser::invite(uint64_t userHandle)
+{
+	CSteamID id(userHandle);
+	if (!id.IsValid())
+		return false;
+
+	return SteamFriends()->InviteUserToGame(id, "");
+}
+
 bool SteamUser::setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value)
 {
 	CSteamID id(userHandle);

@@ -26,6 +26,9 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_skipEnterFrame(0)
 ,	m_initialized(false)
 ,	m_playing(true)
+,	m_visible(false)
+,	m_enabled(true)
+,	m_inside(false)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
 ,	m_mouseX(0)
@@ -43,6 +46,8 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 	m_idOnMouseUp = context->getString("onMouseUp");
 	m_idOnRelease = context->getString("onRelease");
 	m_idOnMouseMove = context->getString("onMouseMove");
+	m_idOnRollOver = context->getString("onRollOver");
+	m_idOnRollOut = context->getString("onRollOut");
 }
 
 void FlashSpriteInstance::destroy()
@@ -462,7 +467,6 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 
 	// Check if we're inside then issue press events.
 	SwfRect bounds = getLocalBounds();
-	//bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
 	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside)
 		executeScriptEvent(m_idOnPress);
@@ -497,7 +501,6 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 
 	// Check if we're inside then issue press events.
 	SwfRect bounds = getLocalBounds();
-	//bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
 	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside)
 		executeScriptEvent(m_idOnRelease);
@@ -527,6 +530,19 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	{
 		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 			(*i)->eventMouseMove(x, y, button);
+	}
+
+	// Roll over and out event handling.
+	SwfRect bounds = getLocalBounds();
+	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
+	if (inside != m_inside)
+	{
+		if (inside)
+			executeScriptEvent(m_idOnRollOver);
+		else
+			executeScriptEvent(m_idOnRollOut);
+
+		m_inside = inside;
 	}
 
 	FlashCharacterInstance::eventMouseMove(x, y, button);

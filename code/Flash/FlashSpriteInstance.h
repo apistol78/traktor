@@ -112,6 +112,7 @@ private:
 	bool m_playing;
 	bool m_visible;
 	bool m_enabled;
+	bool m_inside;
 	bool m_inDispatch;
 	bool m_gotoIssued;
 	int32_t m_mouseX;
@@ -126,6 +127,8 @@ private:
 	uint32_t m_idOnMouseUp;
 	uint32_t m_idOnRelease;
 	uint32_t m_idOnMouseMove;
+	uint32_t m_idOnRollOver;
+	uint32_t m_idOnRollOut;
 
 	void executeScriptEvent(uint32_t eventName);
 };

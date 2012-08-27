@@ -2,6 +2,7 @@
 #define traktor_online_ISessionManager_H
 
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,6 +38,10 @@ public:
 	virtual bool isConnected() const = 0;
 
 	virtual bool requireUserAttention() const = 0;
+
+	virtual bool getFriends(RefArray< IUser >& outFriends) const = 0;
+
+	virtual bool findFriend(const std::wstring& name, Ref< IUser >& outFriend) const = 0;
 
 	virtual bool haveP2PData() const = 0;
 

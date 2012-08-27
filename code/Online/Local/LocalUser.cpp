@@ -14,6 +14,16 @@ bool LocalUser::getName(uint64_t userHandle, std::wstring& outName)
 	return true;
 }
 
+bool LocalUser::isFriend(uint64_t userHandle)
+{
+	return true;
+}
+
+bool LocalUser::invite(uint64_t userHandle)
+{
+	return false;
+}
+
 bool LocalUser::setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value)
 {
 	return false;

@@ -148,12 +148,10 @@ void RenderViewOpenGLES2::setViewport(const Viewport& viewport)
 		));
 	}
 
-	/*
 	T_OGL_SAFE(glDepthRangef(
 		viewport.nearZ,
 		viewport.farZ
 	));
-	*/
 }
 
 Viewport RenderViewOpenGLES2::getViewport()
@@ -199,6 +197,11 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 			m_viewport.height
 		));
 	}
+
+	T_OGL_SAFE(glDepthRangef(
+		m_viewport.nearZ,
+		m_viewport.farZ
+	));
 
 	//glGetFramebufferAttachmentParameteriv(
 	//	GL_FRAMEBUFFER, 

@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_deviceStuckTimeout = 5.0f;
+const float c_deviceStuckTimeout = 3 * 60.0f;
 
 bool isDeviceReady(IInputDevice* device)
 {

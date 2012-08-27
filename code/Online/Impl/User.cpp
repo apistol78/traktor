@@ -13,6 +13,16 @@ bool User::getName(std::wstring& outName) const
 	return m_userProvider->getName(m_handle, outName);
 }
 
+bool User::isFriend() const
+{
+	return m_userProvider->isFriend(m_handle);
+}
+
+bool User::invite()
+{
+	return m_userProvider->invite(m_handle);
+}
+
 bool User::setPresenceValue(const std::wstring& key, const std::wstring& value)
 {
 	return m_userProvider->setPresenceValue(m_handle, key, value);

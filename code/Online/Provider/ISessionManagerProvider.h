@@ -43,6 +43,10 @@ public:
 
 	virtual uint64_t getCurrentUserHandle() const = 0;
 
+	virtual bool getFriends(std::vector< uint64_t >& outFriends) const = 0;
+
+	virtual bool findFriend(const std::wstring& name, uint64_t& outFriendUserHandle) const = 0;
+
 	virtual bool haveP2PData() const = 0;
 
 	virtual uint32_t receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const = 0;

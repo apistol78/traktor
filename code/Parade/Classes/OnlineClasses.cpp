@@ -134,6 +134,19 @@ Ref< online::Result > online_ISaveData_set(online::ISaveData* self, const std::w
 	return self->set(saveDataId, sdd, attachment, replace);
 }
 
+RefArray< online::IUser > online_ISessionManager_getFriends(online::ISessionManager* self)
+{
+	RefArray< online::IUser > friends;
+	self->getFriends(friends);
+	return friends;
+}
+
+Ref< online::IUser > online_ISessionManager_findFriend(online::ISessionManager* self, const std::wstring& name)
+{
+	Ref< online::IUser > friendUser;
+	return self->findFriend(name, friendUser) ? friendUser : 0;
+}
+
 std::vector< std::wstring > online_IStatistics_enumerate(online::IStatistics* self)
 {
 	std::set< std::wstring > statIds;
@@ -150,7 +163,7 @@ float online_IStatistics_get(online::IStatistics* self, const std::wstring& stat
 
 std::wstring online_IUser_getName(online::IUser* self)
 {
-	std::wstring name = L"N/A";
+	std::wstring name = L"";
 	self->getName(name);
 	return name;
 }
@@ -249,6 +262,8 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classISessionManager->addMethod(L"getLanguageCode", &online::ISessionManager::getLanguageCode);
 	classISessionManager->addMethod(L"isConnected", &online::ISessionManager::isConnected);
 	classISessionManager->addMethod(L"requireUserAttention", &online::ISessionManager::requireUserAttention);
+	classISessionManager->addMethod(L"getFriends", &online_ISessionManager_getFriends);
+	classISessionManager->addMethod(L"findFriend", &online_ISessionManager_findFriend);
 	classISessionManager->addMethod(L"haveP2PData", &online::ISessionManager::haveP2PData);
 	classISessionManager->addMethod(L"getAchievements", &online::ISessionManager::getAchievements);
 	classISessionManager->addMethod(L"getLeaderboards", &online::ISessionManager::getLeaderboards);
@@ -268,6 +283,8 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< online::IUser > > classIUser = new script::AutoScriptClass< online::IUser >();
 	classIUser->addMethod(L"getName", &online_IUser_getName);
+	classIUser->addMethod(L"isFriend", &online::IUser::isFriend);
+	classIUser->addMethod(L"invite", &online::IUser::invite);
 	classIUser->addMethod(L"setPresenceValue", &online::IUser::setPresenceValue);
 	classIUser->addMethod(L"getPresenceValue", &online_IUser_getPresenceValue);
 	scriptManager->registerClass(classIUser);

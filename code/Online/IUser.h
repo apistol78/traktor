@@ -23,6 +23,10 @@ class T_DLLCLASS IUser : public Object
 public:
 	virtual bool getName(std::wstring& outName) const = 0;
 
+	virtual bool isFriend() const = 0;
+
+	virtual bool invite() = 0;
+
 	virtual bool setPresenceValue(const std::wstring& key, const std::wstring& value) = 0;
 
 	virtual bool getPresenceValue(const std::wstring& key, std::wstring& outValue) const = 0;

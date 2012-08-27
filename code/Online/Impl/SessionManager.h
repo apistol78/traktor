@@ -40,6 +40,10 @@ public:
 
 	virtual bool requireUserAttention() const;
 
+	virtual bool getFriends(RefArray< IUser >& outFriends) const;
+
+	virtual bool findFriend(const std::wstring& name, Ref< IUser >& outFriend) const;
+
 	virtual bool haveP2PData() const;
 
 	virtual uint32_t receiveP2PData(void* data, uint32_t size, Ref< IUser >& outFromUser) const;

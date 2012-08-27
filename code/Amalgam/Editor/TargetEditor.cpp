@@ -4,6 +4,7 @@
 #include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/TargetEditor.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -62,6 +63,10 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	Ref< ui::Button > buttonNewTargetConfiguration = new ui::Button();
 	buttonNewTargetConfiguration->create(containerManageTargetConfigurations, L"New...");
 	buttonNewTargetConfiguration->addClickEventHandler(ui::createMethodHandler(this, &TargetEditor::eventButtonNewTargetConfigurationClick));
+
+	Ref< ui::Button > buttonCloneTargetConfiguration = new ui::Button();
+	buttonCloneTargetConfiguration->create(containerManageTargetConfigurations, L"Clone");
+	buttonCloneTargetConfiguration->addClickEventHandler(ui::createMethodHandler(this, &TargetEditor::eventButtonCloneTargetConfigurationClick));
 
 	Ref< ui::Button > buttonRemoveTargetConfiguration = new ui::Button();
 	buttonRemoveTargetConfiguration->create(containerManageTargetConfigurations, L"Delete");
@@ -308,6 +313,36 @@ void TargetEditor::eventButtonNewTargetConfigurationClick(ui::Event* event)
 	if (dialogInputName->showModal() == ui::DrOk)
 	{
 		Ref< TargetConfiguration > targetConfiguration = new TargetConfiguration();
+		targetConfiguration->setName(fields[0].value);
+
+		m_editTarget->addConfiguration(targetConfiguration);
+
+		updateTargetConfigurations();
+		updateAvailableFeatures();
+		updateUsedFeatures();
+
+		m_listBoxTargetConfigurations->select(-1);
+	}
+}
+
+void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::Event* event)
+{
+	Ref< TargetConfiguration > targetConfiguration = m_listBoxTargetConfigurations->getSelectedData< TargetConfiguration >();
+	if (!targetConfiguration)
+		return;
+
+	targetConfiguration = DeepClone(targetConfiguration).create< TargetConfiguration >();
+	T_ASSERT (targetConfiguration);
+
+	ui::custom::InputDialog::Field fields[] =
+	{
+		{ L"Name", targetConfiguration->getName(), 0 }
+	};
+
+	Ref< ui::custom::InputDialog > dialogInputName = new ui::custom::InputDialog();
+	dialogInputName->create(m_containerOuter, L"Enter name", L"Enter configuration name", fields, sizeof_array(fields));
+	if (dialogInputName->showModal() == ui::DrOk)
+	{
 		targetConfiguration->setName(fields[0].value);
 
 		m_editTarget->addConfiguration(targetConfiguration);

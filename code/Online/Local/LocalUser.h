@@ -15,6 +15,10 @@ class LocalUser : public IUserProvider
 public:
 	virtual bool getName(uint64_t userHandle, std::wstring& outName);
 
+	virtual bool isFriend(uint64_t userHandle);
+
+	virtual bool invite(uint64_t userHandle);
+
 	virtual bool setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value);
 
 	virtual bool getPresenceValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue);
