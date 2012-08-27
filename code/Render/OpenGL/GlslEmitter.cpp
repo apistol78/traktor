@@ -524,6 +524,24 @@ void emitMatrixIn(GlslContext& cx, MatrixIn* node)
 	f << L");" << Endl;
 }
 
+void emitMatrixOut(GlslContext& cx, MatrixOut* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* in = cx.emitInput(node, L"Input");
+	GlslVariable* xaxis = cx.emitOutput(node, L"XAxis", GtFloat4);
+	if (xaxis)
+		assign(f, xaxis) << in->getName() << L"._11_21_31_41;" << Endl;
+	GlslVariable* yaxis = cx.emitOutput(node, L"YAxis", GtFloat4);
+	if (yaxis)
+		assign(f, yaxis) << in->getName() << L"._12_22_32_42;" << Endl;
+	GlslVariable* zaxis = cx.emitOutput(node, L"ZAxis", GtFloat4);
+	if (zaxis)
+		assign(f, zaxis) << in->getName() << L"._13_23_33_43;" << Endl;
+	GlslVariable* translate = cx.emitOutput(node, L"Translate", GtFloat4);
+	if (translate)
+		assign(f, translate) << in->getName() << L"._14_24_34_44;" << Endl;
+}
+
 void emitMax(GlslContext& cx, Max* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -977,6 +995,14 @@ void emitScalar(GlslContext& cx, Scalar* node)
 	f << L"const float " << out->getName() << L" = " << formatFloat(node->get()) << L";" << Endl;
 }
 
+void emitSign(GlslContext& cx, Sign* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	GlslVariable* in = cx.emitInput(node, L"Input");
+	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+	assign(f, out) << L"sign(" << in->getName() << L");" << Endl;
+}
+
 void emitScript(GlslContext& cx, Script* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1408,7 +1434,7 @@ void emitTruncate(GlslContext& cx, Truncate* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
-	assign(f, out) << L"trunc(" << in->getName() << L");" << Endl;
+	assign(f, out) << in->getName() << L" - fract(" << in->getName() << L");" << Endl;
 }
 
 void emitUniform(GlslContext& cx, Uniform* node)
@@ -1619,8 +1645,8 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Cos >()] = new EmitterCast< Cos >(emitCos);
 	m_emitters[&type_of< Cross >()] = new EmitterCast< Cross >(emitCross);
 	m_emitters[&type_of< Derivative >()] = new EmitterCast< Derivative >(emitDerivative);
-	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
 	m_emitters[&type_of< Div >()] = new EmitterCast< Div >(emitDiv);
+	m_emitters[&type_of< Discard >()] = new EmitterCast< Discard >(emitDiscard);
 	m_emitters[&type_of< Dot >()] = new EmitterCast< Dot >(emitDot);
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
@@ -1633,6 +1659,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
 	m_emitters[&type_of< MatrixIn >()] = new EmitterCast< MatrixIn >(emitMatrixIn);
+	m_emitters[&type_of< MatrixOut >()] = new EmitterCast< MatrixOut >(emitMatrixOut);
 	m_emitters[&type_of< Max >()] = new EmitterCast< Max >(emitMax);
 	m_emitters[&type_of< Min >()] = new EmitterCast< Min >(emitMin);
 	m_emitters[&type_of< MixIn >()] = new EmitterCast< MixIn >(emitMixIn);
@@ -1648,14 +1675,16 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< RecipSqrt >()] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
 	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
+	m_emitters[&type_of< Script >()] = new EmitterCast< Script >(emitScript);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
+	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
 	m_emitters[&type_of< Step >()] = new EmitterCast< Step >(emitStep);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
 	m_emitters[&type_of< Sum >()] = new EmitterCast< Sum >(emitSum);
-	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
+	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);

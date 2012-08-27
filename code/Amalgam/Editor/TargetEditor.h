@@ -97,6 +97,8 @@ private:
 
 	void eventButtonNewTargetConfigurationClick(ui::Event* event);
 
+	void eventButtonCloneTargetConfigurationClick(ui::Event* event);
+
 	void eventButtonRemoveTargetConfigurationClick(ui::Event* event);
 
 	void eventDropDownPlatformSelect(ui::Event* event);

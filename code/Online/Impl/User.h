@@ -17,6 +17,10 @@ class User : public IUser
 public:
 	virtual bool getName(std::wstring& outName) const;
 
+	virtual bool isFriend() const;
+
+	virtual bool invite();
+
 	virtual bool setPresenceValue(const std::wstring& key, const std::wstring& value);
 
 	virtual bool getPresenceValue(const std::wstring& key, std::wstring& outValue) const;

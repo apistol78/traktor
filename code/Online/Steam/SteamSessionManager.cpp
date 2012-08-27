@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Misc/WildCompare.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -214,6 +215,47 @@ bool SteamSessionManager::requireUserAttention() const
 uint64_t SteamSessionManager::getCurrentUserHandle() const
 {
 	return ::SteamUser()->GetSteamID().ConvertToUint64();
+}
+
+bool SteamSessionManager::getFriends(std::vector< uint64_t >& outFriends) const
+{
+	int friendCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
+	if (friendCount < 0)
+		return false;
+
+	outFriends.resize(friendCount);
+	for (int i = 0; i < friendCount; ++i)
+	{
+		CSteamID id = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
+		outFriends[i] = id.ConvertToUint64();
+	}
+
+	return true;
+}
+
+bool SteamSessionManager::findFriend(const std::wstring& name, uint64_t& outFriendUserHandle) const
+{
+	int friendCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
+	if (friendCount < 0)
+		return false;
+
+	WildCompare wc(name);
+	for (int i = 0; i < friendCount; ++i)
+	{
+		CSteamID id = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
+
+		const char* persona = SteamFriends()->GetFriendPersonaName(id);
+		if (!persona)
+			continue;
+
+		if (wc.match(mbstows(persona)))
+		{
+			outFriendUserHandle = id.ConvertToUint64();
+			return true;
+		}
+	}
+
+	return false;
 }
 
 bool SteamSessionManager::haveP2PData() const

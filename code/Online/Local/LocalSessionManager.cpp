@@ -165,6 +165,16 @@ uint64_t LocalSessionManager::getCurrentUserHandle() const
 	return 0;
 }
 
+bool LocalSessionManager::getFriends(std::vector< uint64_t >& outFriends) const
+{
+	return true;
+}
+
+bool LocalSessionManager::findFriend(const std::wstring& name, uint64_t& outFriendUserHandle) const
+{
+	return false;
+}
+
 bool LocalSessionManager::haveP2PData() const
 {
 	return false;

@@ -132,6 +132,35 @@ bool SessionManager::requireUserAttention() const
 	return m_provider ? m_provider->requireUserAttention() : false;
 }
 
+bool SessionManager::getFriends(RefArray< IUser >& outFriends) const
+{
+	if (!m_provider)
+		return false;
+
+	std::vector< uint64_t > friendHandles;
+	if (!m_provider->getFriends(friendHandles))
+		return false;
+
+	outFriends.resize(friendHandles.size());
+	for (size_t i = 0; i < friendHandles.size(); ++i)
+		outFriends[i] = m_userCache->get(friendHandles[i]);
+
+	return true;
+}
+
+bool SessionManager::findFriend(const std::wstring& name, Ref< IUser >& outFriend) const
+{
+	if (!m_provider)
+		return false;
+
+	uint64_t friendHandle;
+	if (!m_provider->findFriend(name, friendHandle))
+		return false;
+
+	outFriend = m_userCache->get(friendHandle);
+	return true;
+}
+
 bool SessionManager::haveP2PData() const
 {
 	return m_provider ? m_provider->haveP2PData() : false;
