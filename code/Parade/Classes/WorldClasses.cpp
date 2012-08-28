@@ -29,6 +29,18 @@ Transform world_Entity_getTransform(world::Entity* this_)
 	return transform;
 }
 
+RefArray< world::Entity > world_GroupEntity_getEntitiesOf(world::GroupEntity* this_, const TypeInfo& entityType)
+{
+	RefArray< world::Entity > entities;
+	this_->getEntitiesOf(entityType, entities);
+	return entities;
+}
+
+Ref< world::Entity > world_GroupEntity_getFirstEntityOf(world::GroupEntity* this_, const TypeInfo& entityType)
+{
+	return this_->getFirstEntityOf(entityType);
+}
+
 void world_PostProcess_setParameter(world::PostProcess* this_, const std::wstring& name, float value)
 {
 	this_->setParameter(render::getParameterHandle(name), value);
@@ -90,6 +102,8 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	classGroupEntity->addMethod(L"removeEntity", &world::GroupEntity::removeEntity);
 	classGroupEntity->addMethod(L"removeAllEntities", &world::GroupEntity::removeAllEntities);
 	classGroupEntity->addMethod(L"getEntities", &world::GroupEntity::getEntities);
+	classGroupEntity->addMethod(L"getEntitiesOf", &world_GroupEntity_getEntitiesOf);
+	classGroupEntity->addMethod(L"getFirstEntityOf", &world_GroupEntity_getFirstEntityOf);
 	scriptManager->registerClass(classGroupEntity);
 
 	Ref< script::AutoScriptClass< world::PointLightEntity > > classPointLightEntity = new script::AutoScriptClass< world::PointLightEntity >();
