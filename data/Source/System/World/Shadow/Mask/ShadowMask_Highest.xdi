@@ -12,23 +12,13 @@
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
 		</item>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
-			<id>Ssao</id>
-			<width>0</width>
-			<height>0</height>
-			<screenDenom>1</screenDenom>
-			<format>TfR8</format>
-			<depthStencil>false</depthStencil>
-			<preferTiled>true</preferTiled>
-			<multiSample>0</multiSample>
-		</item>
 	</definitions>
 	<steps>
 		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>Ssao</target>
+			<target>Flip</target>
 		</item>
-		<item type="traktor.world.PostProcessStepSsao" version="1">
-			<shader>{3642D6BE-E519-0A40-98AE-3427C793C395}</shader>
+		<item type="traktor.world.PostProcessStepBlur" version="1">
+			<shader>{B9E4C2BE-9334-C34D-8662-A09D851A1901}</shader>
 			<sources>
 				<item>
 					<param>Source</param>
@@ -41,26 +31,8 @@
 					<index>0</index>
 				</item>
 			</sources>
-		</item>
-		<item type="traktor.world.PostProcessStepSetTarget">
-			<target>Flip</target>
-		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
-			<shader>{B9E4C2BE-9334-C34D-8662-A09D851A1901}</shader>
-			<sources>
-				<item>
-					<param>Source</param>
-					<source>Ssao</source>
-					<index>0</index>
-				</item>
-				<item>
-					<param>Depth</param>
-					<source>InputDepth</source>
-					<index>0</index>
-				</item>
-			</sources>
-			<direction>2, 0, 0, 0</direction>
-			<taps>15</taps>
+			<direction>3, 0, 0, 0</direction>
+			<taps>8</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Output</target>
@@ -79,8 +51,8 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>0, 2, 0, 0</direction>
-			<taps>15</taps>
+			<direction>0, 3, 0, 0</direction>
+			<taps>8</taps>
 		</item>
 	</steps>
 </object>
