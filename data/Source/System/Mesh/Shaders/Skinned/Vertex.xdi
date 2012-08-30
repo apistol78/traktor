@@ -391,6 +391,14 @@
 			</outputPins>
 			<values/>
 		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>-171</first>
+				<second>254</second>
+			</position>
+			<name>Position</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -780,6 +788,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[22]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[41]"/>
 				<name>Input</name>
 			</destination>
 		</item>

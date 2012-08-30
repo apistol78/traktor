@@ -38,6 +38,11 @@ bool DefaultEntityEditor::isGroup() const
 	return is_a< world::GroupEntityData >(entityData);
 }
 
+bool DefaultEntityEditor::isChildrenPrivate() const
+{
+	return false;
+}
+
 bool DefaultEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) const
 {
 	world::EntityData* entityData = m_entityAdapter->getEntityData();

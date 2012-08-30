@@ -613,7 +613,11 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 		T_ASSERT (swizzleOutput);
 
 		Edge* sourceEdge = shaderGraph->findEdge(swizzleInput);
-		T_ASSERT (sourceEdge);
+		if (!sourceEdge || !sourceEdge->getSource())
+		{
+			++i;
+			continue;
+		}
 
 		// Get left swizzle; cast to null if input ain't a swizzle node.
 		Swizzle* swizzleLeftNode = dynamic_type_cast< Swizzle* >(sourceEdge->getSource()->getNode());

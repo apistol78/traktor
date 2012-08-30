@@ -80,6 +80,9 @@ private:
 	bool m_clearBackground;
 	bool m_enableSound;
 	bool m_visible;
+	int32_t m_lastX;
+	int32_t m_lastY;
+	int32_t m_lastButton;
 
 	void createMoviePlayer();
 };

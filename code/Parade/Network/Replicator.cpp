@@ -5,7 +5,6 @@
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Core/Serialization/BinarySerializer.h"
 #include "Parade/Network/CompactSerializer.h"
 #include "Parade/Network/IReplicatableState.h"
 #include "Parade/Network/IReplicatorPeers.h"
@@ -333,7 +332,7 @@ void Replicator::update(float dT)
 		else if (msg.type == MtEvent)	// Event message.
 		{
 			MemoryStream s(msg.data, sizeof(msg.data), true, false);
-			Ref< ISerializable > eventObject = BinarySerializer(&s).readObject< ISerializable >();
+			Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
 
 			// Put an input event to notify listeners about received event.
 			Event e;
@@ -354,8 +353,9 @@ void Replicator::update(float dT)
 			msg.time = uint32_t(m_time * 1000.0f);
 
 			MemoryStream s(msg.data, sizeof(msg.data), false, true);
-			BinarySerializer cs(&s);
+			CompactSerializer cs(&s, &m_eventTypes[0]);
 			cs.writeObject(i->object);
+			cs.flush();
 
 			uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
 

@@ -116,6 +116,31 @@ float MouseDeviceDi8::getControlValue(int32_t control)
 	return 0.0f;
 }
 
+bool MouseDeviceDi8::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	const MouseControlMap& mc = c_mouseControlMap[control];
+	if (mc.index == 7)
+	{
+		outMin = float(m_rect.left);
+		outMax = float(m_rect.right);
+		return true;
+	}
+	else if (mc.index == 8)
+	{
+		outMin = float(m_rect.top);
+		outMax = float(m_rect.bottom);
+		return true;
+	}
+	else if (mc.index <= 3)
+	{
+		outMin = 0.0f;
+		outMax = 1.0f;
+		return true;
+	}
+	else
+		return false;
+}
+
 bool MouseDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
@@ -163,19 +188,17 @@ void MouseDeviceDi8::readState()
 
 	HWND hWndActive = GetActiveWindow();
 	ScreenToClient(hWndActive, &m_position);
-
-	RECT rcClient;
-	GetClientRect(hWndActive, &rcClient);
+	GetClientRect(hWndActive, &m_rect);
 
 	if (m_position.x < 0)
 		m_position.x = 0;
-	else if (m_position.x > rcClient.right - 1)
-		m_position.x = rcClient.right - 1;
+	else if (m_position.x > m_rect.right - 1)
+		m_position.x = m_rect.right - 1;
 
 	if (m_position.y < 0)
 		m_position.y = 0;
-	else if (m_position.y > rcClient.bottom - 1)
-		m_position.y = rcClient.bottom - 1;
+	else if (m_position.y > m_rect.bottom - 1)
+		m_position.y = m_rect.bottom - 1;
 
 	m_connected = SUCCEEDED(hr);	
 }

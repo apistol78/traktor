@@ -31,6 +31,8 @@ public:
 
 	virtual bool isGroup() const;
 
+	virtual bool isChildrenPrivate() const;
+
 	virtual bool addChildEntity(EntityAdapter* childEntityAdapter) const;
 
 	virtual bool removeChildEntity(EntityAdapter* childEntityAdapter) const;

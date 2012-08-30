@@ -713,7 +713,10 @@ Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter*
 	));
 
 	// Recursively add children.
-	if (!entityAdapter->isExternal())
+	if (
+		!entityAdapter->isExternal() &&
+		!entityAdapter->isChildrenPrivate()
+	)
 	{
 		const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
 		for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)

@@ -77,6 +77,13 @@ float KeyboardDeviceWin32::getControlValue(int32_t control)
 		return 0.0f;
 }
 
+bool KeyboardDeviceWin32::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	outMin = 0.0f;
+	outMax = 1.0f;
+	return true;
+}
+
 bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	if (analogue || !c_vkControlKeys[int32_t(controlType)])

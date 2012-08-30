@@ -174,8 +174,6 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		if (!(entity = entityFactory->createEntity(this, *entityData)))
 		{
 			log::warning << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using null entity as placeholder" << Endl;
-			//return 0;
-
 			entity = new world::NullEntity(entityData->getTransform());
 		}
 	}

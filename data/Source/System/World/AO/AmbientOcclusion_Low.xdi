@@ -6,7 +6,7 @@
 			<id>Ssao</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>2</screenDenom>
+			<screenDenom>4</screenDenom>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
@@ -74,7 +74,7 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>3, 0, 0, 0</direction>
+			<direction>2, 0, 0, 0</direction>
 			<taps>8</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
@@ -94,7 +94,7 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>0, 3, 0, 0</direction>
+			<direction>0, 2, 0, 0</direction>
 			<taps>8</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">

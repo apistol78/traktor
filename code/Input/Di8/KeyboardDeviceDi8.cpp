@@ -132,6 +132,13 @@ float KeyboardDeviceDi8::getControlValue(int32_t control)
 	return (m_state[dik] & 0x80) ? 1.0f : 0.0f;
 }
 
+bool KeyboardDeviceDi8::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	outMin = 0.0f;
+	outMax = 1.0f;
+	return true;
+}
+
 bool KeyboardDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	if (analogue)

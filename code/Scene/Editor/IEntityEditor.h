@@ -60,6 +60,12 @@ public:
 	 */
 	virtual bool isGroup() const = 0;
 
+	/*! \brief Is entity children private.
+	 *
+	 * \return True if children private.
+	 */
+	virtual bool isChildrenPrivate() const = 0;
+
 	/*! \brief Add child entity.
 	 *
 	 * \param childEntityAdapter Child entity.

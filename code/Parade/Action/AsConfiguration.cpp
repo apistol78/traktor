@@ -16,6 +16,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.AsConfiguration", AsConfiguration, flash
 
 AsConfiguration::AsConfiguration()
 :	flash::ActionObjectRelay("traktor.parade.Configuration")
+,	m_displayModeWidth(1280)
+,	m_displayModeHeight(720)
 ,	m_fullscreen(false)
 ,	m_waitVBlank(true)
 ,	m_multiSample(0)
@@ -38,8 +40,9 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	T_ASSERT (settings);
 
 	Ref< AsConfiguration > current = new AsConfiguration();
-	//current->m_displayModeWidth = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", 1280);
-	//current->m_displayModeHeight = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", 720);
+	
+	current->m_displayModeWidth = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", 1280);
+	current->m_displayModeHeight = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", 720);
 	current->m_fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
 	current->m_waitVBlank = settings->getProperty< PropertyBoolean >(L"Render.WaitVBlank", true);
 	current->m_multiSample = settings->getProperty< PropertyInteger >(L"Render.MultiSample", 0);
@@ -59,16 +62,17 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 
 Ref< AsDisplayMode > AsConfiguration::getDisplayMode() const
 {
-	Ref< AsDisplayMode > actionDisplayMode = new AsDisplayMode();
-	//actionDisplayMode->dm.width = m_displayModeWidth;
-	//actionDisplayMode->dm.height = m_displayModeHeight;
-	return actionDisplayMode;
+	render::DisplayMode dm;
+	dm.width = m_displayModeWidth;
+	dm.height = m_displayModeHeight;
+	return new AsDisplayMode(dm);
 }
 
 void AsConfiguration::setDisplayMode(const AsDisplayMode* displayMode)
 {
-	//m_displayModeWidth = displayMode->dm.width;
-	//m_displayModeHeight = displayMode->dm.height;
+	const render::DisplayMode& dm = displayMode->getDisplayMode();
+	m_displayModeWidth = dm.width;
+	m_displayModeHeight = dm.height;
 }
 
 bool AsConfiguration::getFullscreen() const
@@ -206,8 +210,8 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	PropertyGroup* settings = environment->getSettings();
 	T_ASSERT (settings);
 
-	//settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_displayModeWidth);
-	//settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_displayModeHeight);
+	settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Width", m_displayModeWidth);
+	settings->setProperty< PropertyInteger >(L"Render.DisplayMode/Height", m_displayModeHeight);
 	settings->setProperty< PropertyBoolean >(L"Render.FullScreen", m_fullscreen);
 	settings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", m_waitVBlank);
 	settings->setProperty< PropertyInteger >(L"Render.MultiSample", m_multiSample);

@@ -24,9 +24,14 @@ class AsDisplayMode : public flash::ActionObjectRelay
 public:
 	AsDisplayMode();
 
+	AsDisplayMode(const render::DisplayMode& displayMode);
+
 	static RefArray< AsDisplayMode > getAvailableModes(amalgam::IEnvironment* environment);
 
-	render::DisplayMode dm;
+	const render::DisplayMode& getDisplayMode() const { return m_displayMode; }
+
+private:
+	render::DisplayMode m_displayMode;
 };
 
 	}

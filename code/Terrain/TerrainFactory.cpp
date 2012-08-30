@@ -62,7 +62,7 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 
 		terrain->m_patches[i].error[0] = terrainResource->getPatches()[i].error[0];
 		terrain->m_patches[i].error[1] = terrainResource->getPatches()[i].error[1];
-		terrain->m_patches[i].error[1] = terrainResource->getPatches()[i].error[1];
+		terrain->m_patches[i].error[2] = terrainResource->getPatches()[i].error[2];
 	}
 
 	return terrain;

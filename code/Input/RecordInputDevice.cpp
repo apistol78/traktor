@@ -52,6 +52,11 @@ float RecordInputDevice::getControlValue(int32_t control)
 	return value;
 }
 
+bool RecordInputDevice::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return m_inputDevice->getControlRange(control, outMin, outMax);
+}
+
 bool RecordInputDevice::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	return m_inputDevice->getDefaultControl(controlType, analogue, control);

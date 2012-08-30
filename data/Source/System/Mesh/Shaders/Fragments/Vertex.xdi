@@ -4,40 +4,40 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>283</second>
+				<first>145</first>
+				<second>284</second>
 			</position>
 			<name>ViewBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>227</second>
+				<first>145</first>
+				<second>228</second>
 			</position>
 			<name>ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>311</second>
+				<first>145</first>
+				<second>312</second>
 			</position>
 			<name>TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>255</second>
+				<first>145</first>
+				<second>256</second>
 			</position>
 			<name>ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>199</second>
+				<first>145</first>
+				<second>200</second>
 			</position>
 			<name>ViewPosition</name>
 		</item>
@@ -56,18 +56,26 @@ This fragment is just a placeholder for an appropriate vertex fragment; it's aut
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>367</second>
+				<first>145</first>
+				<second>368</second>
 			</position>
 			<name>Color</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>146</first>
-				<second>339</second>
+				<first>145</first>
+				<second>340</second>
 			</position>
 			<name>TexCoord2</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>145</first>
+				<second>172</second>
+			</position>
+			<name>Position</name>
 		</item>
 	</nodes>
 	<edges>
@@ -138,6 +146,16 @@ This fragment is just a placeholder for an appropriate vertex fragment; it's aut
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Input</name>
 			</destination>
 		</item>

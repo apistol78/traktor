@@ -105,6 +105,11 @@ float MouseDeviceWin32::getControlValue(int32_t control)
 		return 0.0f;
 }
 
+bool MouseDeviceWin32::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)

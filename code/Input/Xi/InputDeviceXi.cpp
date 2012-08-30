@@ -138,6 +138,11 @@ float InputDeviceXi::getControlValue(int32_t control)
 	return 0.0f;
 }
 
+bool InputDeviceXi::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool InputDeviceXi::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (uint32_t i = 0; i < sizeof_array(c_controlConfig); ++i)

@@ -469,8 +469,13 @@ EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		// Must be unlocked, visible and no child of external.
-		if ((*i)->isLocked() || !(*i)->isVisible() || (*i)->isChildOfExternal())
+		// Must be public, unlocked, visible and no child of external.
+		if (
+			(*i)->isPrivate() ||
+			(*i)->isLocked() ||
+			!(*i)->isVisible() ||
+			(*i)->isChildOfExternal()
+		)
 			continue;
 
 		IEntityEditor* entityEditor = (*i)->getEntityEditor();
@@ -503,8 +508,13 @@ uint32_t SceneEditorContext::queryFrustum(const Frustum& worldFrustum, RefArray<
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		// Must be unlocked, visible and no child of external.
-		if ((*i)->isLocked() || !(*i)->isVisible() || (*i)->isChildOfExternal())
+		// Must be public, unlocked, visible and no child of external.
+		if (
+			(*i)->isPrivate() ||
+			(*i)->isLocked() ||
+			!(*i)->isVisible() ||
+			(*i)->isChildOfExternal()
+		)
 			continue;
 
 		IEntityEditor* entityEditor = (*i)->getEntityEditor();

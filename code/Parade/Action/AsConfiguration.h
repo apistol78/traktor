@@ -88,6 +88,8 @@ public:
 	bool apply(amalgam::IEnvironment* environment);
 
 private:
+	int32_t m_displayModeWidth;
+	int32_t m_displayModeHeight;
 	bool m_fullscreen;
 	bool m_waitVBlank;
 	int32_t m_multiSample;
