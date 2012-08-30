@@ -11,6 +11,8 @@
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValueArray.h"
 #include "Flash/Sound/SoundRenderer.h"
+#include "Input/IInputDevice.h"
+#include "Input/InputSystem.h"
 #include "Parade/FlashLayer.h"
 #include "Parade/Stage.h"
 #include "Parade/Action/Classes/As_traktor_parade_Configuration.h"
@@ -40,6 +42,9 @@ FlashLayer::FlashLayer(
 ,	m_clearBackground(clearBackground)
 ,	m_enableSound(enableSound)
 ,	m_visible(true)
+,	m_lastX(-1)
+,	m_lastY(-1)
+,	m_lastButton(0)
 {
 }
 
@@ -66,10 +71,63 @@ void FlashLayer::prepare(Stage* stage)
 
 void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
+	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 	std::wstring command, args;
 
 	// Issue script update method.
 	invokeScriptUpdate(stage, control, info);
+
+	// Propagate mouse input to movie.
+	input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, 0, true);
+	if (mouseDevice)
+	{
+		int32_t positionX, positionY;
+		mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);
+		mouseDevice->getDefaultControl(input::DtPositionY, true, positionY);
+
+		int32_t button1, button2;
+		mouseDevice->getDefaultControl(input::DtButton1, false, button1);
+		mouseDevice->getDefaultControl(input::DtButton2, false, button2);
+
+		float minX, minY;
+		float maxX, maxY;
+		mouseDevice->getControlRange(positionX, minX, maxX);
+		mouseDevice->getControlRange(positionY, minY, maxY);
+
+		if (maxX > minX && maxY > minY)
+		{
+			float x = mouseDevice->getControlValue(positionX);
+			float y = mouseDevice->getControlValue(positionY);
+
+			x = (x - minX) / (maxX - minX);
+			y = (y - minY) / (maxY - minY);
+
+			int32_t mx = int32_t(renderView->getWidth() * x);
+			int32_t my = int32_t(renderView->getHeight() * y);
+
+			int32_t mb =
+				(mouseDevice->getControlValue(button1) > 0.5f ? 1 : 0) |
+				(mouseDevice->getControlValue(button2) > 0.5f ? 2 : 0);
+
+			if (mx != m_lastX || my != m_lastY)
+			{
+				m_moviePlayer->postMouseMove(mx, my, mb);
+				m_lastX = mx;
+				m_lastY = my;
+			}
+
+			if (mb != m_lastButton)
+			{
+				if (mb)
+					m_moviePlayer->postMouseDown(mx, my, mb);
+				else
+					m_moviePlayer->postMouseUp(mx, my, mb);
+
+				m_lastButton = mb;
+			}
+		}
+	}
 
 	// Update movie player.
 	m_moviePlayer->progressFrame(info.getSimulationDeltaTime());

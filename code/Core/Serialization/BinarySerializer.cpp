@@ -528,11 +528,11 @@ bool BinarySerializer::operator >> (const Member< Vector4 >& m)
 	if (m_direction == SdRead)
 	{
 		result = read_primitives< float >(m_stream, e, 4);
-		(*m) = Vector4::loadAligned(e);
+		(*m) = Vector4::loadUnaligned(e);
 	}
 	else
 	{
-		(*m).storeAligned(e);
+		(*m).storeUnaligned(e);
 		result = write_primitives< float >(m_stream, e, 4);
 	}
 
@@ -563,11 +563,11 @@ bool BinarySerializer::operator >> (const Member< Matrix44 >& m)
 	if (m_direction == SdRead)
 	{
 		result = read_primitives< float >(m_stream, values, 16);
-		(*m) = Matrix44::loadAligned(values);
+		(*m) = Matrix44::loadUnaligned(values);
 	}
 	else
 	{
-		(*m).storeAligned(values);
+		(*m).storeUnaligned(values);
 		result = write_primitives< float >(m_stream, values, 16);
 	}
 
@@ -582,11 +582,11 @@ bool BinarySerializer::operator >> (const Member< Quaternion >& m)
 	if (m_direction == SdRead)
 	{
 		result = read_primitives< float >(m_stream, e, 4);
-		m->e = Vector4::loadAligned(e);
+		m->e = Vector4::loadUnaligned(e);
 	}
 	else
 	{
-		m->e.storeAligned(e);
+		m->e.storeUnaligned(e);
 		result = write_primitives< float >(m_stream, e, 4);
 	}
 

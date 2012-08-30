@@ -95,6 +95,15 @@ public:
 	 */
 	virtual float getControlValue(int32_t control) = 0;
 
+	/*! \brief Get range of a control.
+	 *
+	 * \param control Control identifier (0 - #controls-1).
+	 * \param outMin Minimum value.
+	 * \param outMax Maximum value.
+	 * \return True if range is valid.
+	 */
+	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const = 0;
+
 	/*! \brief Get control identifier of a default control type.
 	 *
 	 * \param controlType Default control type.

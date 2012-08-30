@@ -115,6 +115,22 @@ bool EntityAdapter::isLayer() const
 	return is_a< world::LayerEntityData >(m_entityData);
 }
 
+bool EntityAdapter::isChildrenPrivate() const
+{
+	return m_entityEditor ? m_entityEditor->isChildrenPrivate() : false;
+}
+
+bool EntityAdapter::isPrivate() const
+{
+	EntityAdapter* entity = m_parent;
+	for (; entity; entity = entity->m_parent)
+	{
+		if (entity->isChildrenPrivate())
+			return true;
+	}
+	return false;
+}
+
 bool EntityAdapter::isGroup() const
 {
 	return m_entityEditor ? m_entityEditor->isGroup() : false;

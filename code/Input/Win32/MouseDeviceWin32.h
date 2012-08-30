@@ -39,6 +39,8 @@ public:
 
 	virtual float getControlValue(int32_t control);
 
+	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const;
+
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
 
 	virtual void resetState();

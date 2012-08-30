@@ -35,15 +35,19 @@ void As_traktor_parade_DisplayMode::initialize(flash::ActionObject* self)
 
 void As_traktor_parade_DisplayMode::construct(flash::ActionObject* self, const flash::ActionValueArray& args)
 {
-	Ref< AsDisplayMode > displayMode = new AsDisplayMode();
 	if (args.size() >= 4)
 	{
-		displayMode->dm.width = int32_t(args[0].getNumber());
-		displayMode->dm.height = int32_t(args[1].getNumber());
-		displayMode->dm.refreshRate = int32_t(args[2].getNumber());
-		displayMode->dm.colorBits = int32_t(args[3].getNumber());
+		render::DisplayMode displayMode;
+		displayMode.width = int32_t(args[0].getNumber());
+		displayMode.height = int32_t(args[1].getNumber());
+		displayMode.refreshRate = int32_t(args[2].getNumber());
+		displayMode.colorBits = int32_t(args[3].getNumber());
+		self->setRelay(new AsDisplayMode(
+			displayMode
+		));
 	}
-	self->setRelay(displayMode);
+	else
+		self->setRelay(new AsDisplayMode());
 }
 
 flash::ActionValue As_traktor_parade_DisplayMode::xplicit(const flash::ActionValueArray& args)
@@ -53,40 +57,42 @@ flash::ActionValue As_traktor_parade_DisplayMode::xplicit(const flash::ActionVal
 
 void As_traktor_parade_DisplayMode::DisplayMode_get_availableModes(flash::CallArgs& ca)
 {
-	RefArray< AsDisplayMode > modes = AsDisplayMode::getAvailableModes(m_environment);
-	Ref< flash::Array > asModes = new flash::Array(modes.size());
-	for (uint32_t i = 0; i < modes.size(); ++i)
+	RefArray< AsDisplayMode > displayMode = AsDisplayMode::getAvailableModes(m_environment);
+	
+	Ref< flash::Array > displayModeArr = new flash::Array(displayMode.size());
+	for (uint32_t i = 0; i < displayMode.size(); ++i)
 	{
-		asModes->push(flash::ActionValue(
-			modes[i]->getAsObject(getContext())
+		displayModeArr->push(flash::ActionValue(
+			displayMode[i]->getAsObject(getContext())
 		));
 	}
-	ca.ret = flash::ActionValue(asModes->getAsObject(getContext()));
+
+	ca.ret = flash::ActionValue(displayModeArr->getAsObject(getContext()));
 }
 
 uint32_t As_traktor_parade_DisplayMode::DisplayMode_get_width(const AsDisplayMode* self) const
 {
-	return self->dm.width;
+	return self->getDisplayMode().width;
 }
 
 uint32_t As_traktor_parade_DisplayMode::DisplayMode_get_height(const AsDisplayMode* self) const
 {
-	return self->dm.height;
+	return self->getDisplayMode().height;
 }
 
 uint32_t As_traktor_parade_DisplayMode::DisplayMode_get_refreshRate(const AsDisplayMode* self) const
 {
-	return self->dm.refreshRate;
+	return self->getDisplayMode().refreshRate;
 }
 
 uint32_t As_traktor_parade_DisplayMode::DisplayMode_get_colorBits(const AsDisplayMode* self) const
 {
-	return self->dm.colorBits;
+	return self->getDisplayMode().colorBits;
 }
 
 bool As_traktor_parade_DisplayMode::DisplayMode_get_stereoscopic(const AsDisplayMode* self) const
 {
-	return self->dm.stereoscopic;
+	return self->getDisplayMode().stereoscopic;
 }
 
 	}

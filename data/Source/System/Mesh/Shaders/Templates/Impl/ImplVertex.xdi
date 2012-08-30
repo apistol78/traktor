@@ -14,6 +14,9 @@
 					<name>Color</name>
 				</item>
 				<item>
+					<name>Position</name>
+				</item>
+				<item>
 					<name>TexCoord</name>
 				</item>
 				<item>
@@ -37,50 +40,58 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>975</first>
-				<second>463</second>
+				<first>973</first>
+				<second>459</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>975</first>
-				<second>399</second>
+				<first>973</first>
+				<second>395</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>975</first>
-				<second>495</second>
+				<first>973</first>
+				<second>491</second>
 			</position>
 			<name>T_TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>975</first>
-				<second>431</second>
+				<first>973</first>
+				<second>427</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>975</first>
-				<second>367</second>
+				<first>973</first>
+				<second>363</second>
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>975</first>
-				<second>527</second>
+				<first>973</first>
+				<second>523</second>
 			</position>
 			<name>T_Color</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>973</first>
+				<second>331</second>
+			</position>
+			<name>T_Position</name>
 		</item>
 	</nodes>
 	<edges>
@@ -141,6 +152,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Position</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
 			</destination>
 		</item>

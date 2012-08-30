@@ -4,48 +4,48 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>896</first>
-				<second>433</second>
+				<first>893</first>
+				<second>429</second>
 			</position>
 			<name>T_Color</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>896</first>
-				<second>273</second>
+				<first>893</first>
+				<second>269</second>
 			</position>
 			<name>T_ViewPosition</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>896</first>
-				<second>337</second>
+				<first>893</first>
+				<second>333</second>
 			</position>
 			<name>T_ViewTangent</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>896</first>
-				<second>401</second>
+				<first>893</first>
+				<second>397</second>
 			</position>
 			<name>T_TexCoord</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>896</first>
-				<second>305</second>
+				<first>893</first>
+				<second>301</second>
 			</position>
 			<name>T_ViewNormal</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>896</first>
-				<second>369</second>
+				<first>893</first>
+				<second>365</second>
 			</position>
 			<name>T_ViewBinormal</name>
 		</item>
@@ -56,6 +56,14 @@
 				<second>132</second>
 			</position>
 			<value>0</value>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>893</first>
+				<second>237</second>
+			</position>
+			<name>T_Position</name>
 		</item>
 	</nodes>
 	<edges>
@@ -116,6 +124,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
 			</destination>
 		</item>

@@ -100,6 +100,10 @@ public:
 	/*! \name Relationship. */
 	//@{
 
+	bool isChildrenPrivate() const;
+
+	bool isPrivate() const;
+
 	bool isGroup() const;
 
 	EntityAdapter* getParent() const;

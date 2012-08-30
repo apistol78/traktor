@@ -42,6 +42,8 @@ public:
 
 	virtual float getControlValue(int32_t control);
 
+	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const;
+
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
 
 	virtual void resetState();
@@ -60,6 +62,7 @@ private:
 	std::wstring m_name;
 	DIMOUSESTATE m_state;
 	POINT m_position;
+	RECT m_rect;
 	bool m_connected;
 };
 

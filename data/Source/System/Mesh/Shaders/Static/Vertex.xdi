@@ -307,6 +307,14 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>-81</first>
+				<second>420</second>
+			</position>
+			<name>Position</name>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -646,6 +654,16 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[26]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Input</name>
 			</destination>
 		</item>

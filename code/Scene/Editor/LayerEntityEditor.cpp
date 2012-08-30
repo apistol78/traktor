@@ -24,6 +24,11 @@ bool LayerEntityEditor::isGroup() const
 	return true;
 }
 
+bool LayerEntityEditor::isChildrenPrivate() const
+{
+	return false;
+}
+
 bool LayerEntityEditor::addChildEntity(EntityAdapter* childEntityAdapter) const
 {
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();

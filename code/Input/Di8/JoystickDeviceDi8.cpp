@@ -161,6 +161,11 @@ float JoystickDeviceDi8::getControlValue(int32_t control)
 	return 0.0f;
 }
 
+bool JoystickDeviceDi8::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool JoystickDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (int i = 0; i < int(m_controlInfo.size()); ++i)

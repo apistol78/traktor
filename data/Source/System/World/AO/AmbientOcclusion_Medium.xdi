@@ -6,7 +6,7 @@
 			<id>Ssao</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenDenom>2</screenDenom>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
