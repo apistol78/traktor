@@ -273,7 +273,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 						outputSamplesCount,
 						inputSamples,
 						soundBlock.samplesCount,
-						m_volume
+						m_volume * m_activeState.sound->getVolume()
 					);
 				else
 					mixer->mute(outputSamples, outputSamplesCount);
@@ -290,7 +290,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				T_ASSERT (m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
 
 				if (inputSamples)
-					mixer->mulConst(outputSamples, inputSamples, soundBlock.samplesCount, m_volume);
+					mixer->mulConst(outputSamples, inputSamples, soundBlock.samplesCount, m_volume * m_activeState.sound->getVolume());
 				else
 					mixer->mute(outputSamples, soundBlock.samplesCount);
 			}

@@ -25,6 +25,12 @@ ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie)
 	m_strings["arguments"];
 	m_strings["_root"];
 	m_strings["_parent"];
+	m_strings["apply"];
+	m_strings["call"];
+	m_strings["toString"];
+	m_strings["_target"];
+	m_strings["_targetProperty"];
+	m_strings["_function"];
 
 	m_idOnFrame = m_strings["onFrame"];
 	m_idPrototype = m_strings["prototype"];

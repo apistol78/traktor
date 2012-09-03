@@ -155,7 +155,7 @@ void SoundAssetEditor::eventToolBarClick(ui::Event* event)
 		m_soundChannel = 0;
 	}
 
-	m_soundChannel = m_soundSystem->play(new Sound(buffer), 0, true);
+	m_soundChannel = m_soundSystem->play(new Sound(buffer, 1.0f), 0, true);
 	if (!m_soundChannel)
 	{
 		log::error << L"Failed to preview sound asset; unable to play sound" << Endl;

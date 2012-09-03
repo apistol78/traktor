@@ -17,6 +17,7 @@ class IEditor;
 	{
 
 class Event;
+class HierarchicalState;
 
 	}
 
@@ -43,6 +44,8 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< ui::custom::AutoPropertyList > m_grainPropertyList;
+	Ref< IGrainData > m_grain;
+	std::map< const TypeInfo*, Ref< ui::HierarchicalState > > m_states;
 
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 

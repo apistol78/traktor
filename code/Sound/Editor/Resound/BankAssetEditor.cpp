@@ -142,7 +142,7 @@ void BankAssetEditor::apply()
 
 ui::Size BankAssetEditor::getPreferredSize() const
 {
-	return ui::Size(500, 400);
+	return ui::Size(800, 600);
 }
 
 void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGrainData >& grains)
@@ -261,7 +261,7 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 
 			m_bankBuffer = new BankBuffer(grains);
 			m_soundChannel = m_soundSystem->play(
-				new Sound(m_bankBuffer),
+				new Sound(m_bankBuffer, 1.0f),
 				0,
 				true
 			);

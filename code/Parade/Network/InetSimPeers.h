@@ -46,6 +46,8 @@ public:
 
 	virtual bool send(handle_t handle, const void* data, uint32_t size, bool reliable);
 
+	virtual bool isPrimary() const;
+
 private:
 	struct Packet
 	{

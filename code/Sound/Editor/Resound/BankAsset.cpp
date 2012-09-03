@@ -2,6 +2,7 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Sound/Sound.h"
 #include "Sound/Resound/IGrainData.h"
+#include "Sound/Editor/SoundCategory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 
 namespace traktor
@@ -9,7 +10,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 0, BankAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 1, BankAsset, ISerializable)
 
 void BankAsset::addGrain(IGrainData* grain)
 {
@@ -28,6 +29,9 @@ const RefArray< IGrainData >& BankAsset::getGrains() const
 
 bool BankAsset::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 1)
+		s >> Member< Guid >(L"category", m_category, AttributeType(type_of< SoundCategory >()));
+
 	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }
 

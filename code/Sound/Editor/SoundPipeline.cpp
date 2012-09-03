@@ -14,6 +14,7 @@
 #include "Sound/StaticSoundResource.h"
 #include "Sound/StreamSoundResource.h"
 #include "Sound/Editor/SoundAsset.h"
+#include "Sound/Editor/SoundCategory.h"
 #include "Sound/Editor/SoundPipeline.h"
 #include "Sound/Editor/Encoders/OggStreamEncoder.h"
 #include "Sound/Decoders/FlacStreamDecoder.h"
@@ -26,7 +27,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 23, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 24, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 {
@@ -61,6 +62,20 @@ bool SoundPipeline::buildDependencies(
 	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, soundAsset->getFileName());
 	pipelineDepends->addDependency(fileName);
+
+	Ref< const SoundCategory > category = pipelineDepends->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
+	if (category)
+		pipelineDepends->addDependency(soundAsset->m_category, editor::PdfUse);
+
+	while (category)
+	{
+		Ref< const SoundCategory > parent = pipelineDepends->getObjectReadOnly< SoundCategory >(category->getParent());
+		if (parent)
+			pipelineDepends->addDependency(category->getParent(), editor::PdfUse);
+
+		category = parent;
+	}
+
 	return true;
 }
 
@@ -99,9 +114,24 @@ bool SoundPipeline::buildOutput(
 		return false;
 	}
 
+	float volume = 1.0f;
+
+	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
+	if (category)
+		volume = category->getVolume();
+
+	while (category)
+	{
+		Ref< const SoundCategory > parent = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
+		if (parent)
+			volume *= parent->getVolume();
+
+		category = parent;
+	}
+
 	if (soundAsset->m_stream)
 	{
-		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder), soundAsset->m_preload);
+		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder), volume, soundAsset->m_preload);
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
@@ -228,6 +258,7 @@ bool SoundPipeline::buildOutput(
 		resource->m_sampleRate = sampleRate;
 		resource->m_samplesCount = samplesCount;
 		resource->m_channelsCount = maxChannel;
+		resource->m_volume = volume;
 		resource->m_decoderType = &type_of< OggStreamDecoder >();
 
 		int32_t dataOffsetEnd = stream->tell();

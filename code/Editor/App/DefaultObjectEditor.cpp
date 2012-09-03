@@ -60,7 +60,7 @@ void DefaultObjectEditor::apply()
 
 ui::Size DefaultObjectEditor::getPreferredSize() const
 {
-	return ui::Size(500, 400);
+	return ui::Size(600, 500);
 }
 
 bool DefaultObjectEditor::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const

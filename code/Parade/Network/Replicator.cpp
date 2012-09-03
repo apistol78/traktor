@@ -84,9 +84,11 @@ void Replicator::destroy()
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
 		sendBye(i->first);
-
 		if (i->second.ghost)
+		{
+			i->second.ghost->~Ghost();
 			getAllocator()->free(i->second.ghost);
+		}
 	}
 
 	m_peers.clear();
@@ -131,7 +133,10 @@ void Replicator::update(float dT)
 		Peer& peer = m_peers[*i];
 
 		// Issue "I am" to unestablished peers.
-		if (!peer.established)
+		if (
+			!peer.established &&
+			!peer.disconnected
+		)
 		{
 			if ((peer.timeUntilTx -= dT) <= 0.0f)
 			{
@@ -150,17 +155,29 @@ void Replicator::update(float dT)
 		std::map< handle_t, Peer >::iterator it = m_peers.find(*i);
 		T_ASSERT (it != m_peers.end());
 
-		if (it->second.established)
+		Peer& peer = it->second;
+		if (peer.established)
 		{
 			T_REPLICATOR_DEBUG(L"OK: Established peer " << *i << L" disconnected; issue listener event");
-			T_ASSERT (it->second.ghost);
+			T_ASSERT (peer.ghost);
+			T_ASSERT (!peer.disconnected);
 
-			Event evt;
-			evt.eventId = IListener::ReDisconnected;
-			evt.handle = *i;
-			evt.object = 0;
-			m_eventsIn.push_back(evt);
+			// Need to notify listeners immediately as peer becomes dismounted.
+			for (RefArray< IListener >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+				(*i)->notify(this, 0, IListener::ReDisconnected, it->first, 0);
+
+			if (peer.ghost)
+			{
+				peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
+				peer.ghost = 0;
+			}
+
+			peer.established = false;
+			peer.disconnected = true;
 		}
+
+		// Remove unfresh peer.
+		m_peers.erase(it);
 	}
 
 	// Read messages from any peer.
@@ -251,16 +268,19 @@ void Replicator::update(float dT)
 			{
 				T_REPLICATOR_DEBUG(L"OK: Established peer gracefully disconnected; issue listener event");
 
-				Event evt;
-				evt.eventId = IListener::ReDisconnected;
-				evt.handle = handle;
-				evt.object = 0;
-				m_eventsIn.push_back(evt);
+				// Need to notify listeners immediately as peer becomes dismounted.
+				for (RefArray< IListener >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
+					(*i)->notify(this, 0, IListener::ReDisconnected, handle, 0);
+			}
+
+			if (peer.ghost)
+			{
+				peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
+				peer.ghost = 0;
 			}
 
 			peer.established = false;
-			peer.ghost = 0;
-
+			peer.disconnected = true;
 			continue;
 		}
 
@@ -423,10 +443,6 @@ void Replicator::update(float dT)
 		m_eventsIn.pop_front();
 	}
 
-	// Remove all unfresh peer entries.
-	for (std::set< handle_t >::const_iterator i = unfresh.begin(); i != unfresh.end(); ++i)
-		m_peers.erase(*i);
-
 	m_time += dT;
 }
 
@@ -458,6 +474,11 @@ void Replicator::broadcastEvent(const ISerializable* eventObject)
 	e.handle = c_broadcastHandle;
 	e.object = eventObject;
 	m_eventsOut.push_back(e);
+}
+
+bool Replicator::isPrimary() const
+{
+	return m_replicatorPeers->isPrimary();
 }
 
 uint32_t Replicator::getPeerCount() const

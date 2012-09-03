@@ -1,9 +1,11 @@
+#include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Sound/Resound/BankResource.h"
 #include "Sound/Resound/PlayGrainData.h"
 #include "Sound/Resound/RepeatGrainData.h"
 #include "Sound/Resound/RandomGrainData.h"
 #include "Sound/Resound/SequenceGrainData.h"
+#include "Sound/Editor/SoundCategory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankPipeline.h"
 
@@ -39,7 +41,7 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 0, BankPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 1, BankPipeline, editor::DefaultPipeline)
 
 TypeInfoSet BankPipeline::getAssetTypes() const
 {
@@ -57,10 +59,25 @@ bool BankPipeline::buildDependencies(
 	Ref< const Object >& outBuildParams
 ) const
 {
-	const BankAsset* bankAsset = checked_type_cast< const BankAsset* >(sourceAsset);
+	const BankAsset* bankAsset = checked_type_cast< const BankAsset*, false >(sourceAsset);
+	
 	const RefArray< IGrainData >& grains = bankAsset->getGrains();
 	for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 		buildGrainDependencies(pipelineDepends, *i);
+
+	Ref< const SoundCategory > category = pipelineDepends->getObjectReadOnly< SoundCategory >(bankAsset->m_category);
+	if (category)
+		pipelineDepends->addDependency(bankAsset->m_category, editor::PdfUse);
+
+	while (category)
+	{
+		Ref< const SoundCategory > parent = pipelineDepends->getObjectReadOnly< SoundCategory >(category->getParent());
+		if (parent)
+			pipelineDepends->addDependency(category->getParent(), editor::PdfUse);
+
+		category = parent;
+	}
+
 	return true;
 }
 
@@ -74,10 +91,26 @@ bool BankPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	const BankAsset* bankAsset = checked_type_cast< const BankAsset* >(sourceAsset);
+	const BankAsset* bankAsset = checked_type_cast< const BankAsset*, false >(sourceAsset);
+
+	float volume = 1.0f;
+
+	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(bankAsset->m_category);
+	if (category)
+		volume = category->getVolume();
+
+	while (category)
+	{
+		Ref< const SoundCategory > parent = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
+		if (parent)
+			volume *= parent->getVolume();
+
+		category = parent;
+	}
 
 	Ref< BankResource > bankResource = new BankResource(
-		bankAsset->getGrains()
+		bankAsset->getGrains(),
+		volume
 	);
 
 	return editor::DefaultPipeline::buildOutput(

@@ -45,6 +45,8 @@ public:
 	virtual bool getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const = 0;
 
 	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const = 0;
+
+	virtual bool isOwner(uint64_t lobbyHandle) const = 0;
 };
 
 	}

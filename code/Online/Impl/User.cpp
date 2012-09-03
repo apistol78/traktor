@@ -13,6 +13,11 @@ bool User::getName(std::wstring& outName) const
 	return m_userProvider->getName(m_handle, outName);
 }
 
+int32_t User::getTag() const
+{
+	return m_tag;
+}
+
 bool User::isFriend() const
 {
 	return m_userProvider->isFriend(m_handle);
@@ -38,9 +43,10 @@ bool User::sendP2PData(const void* data, size_t size, bool reliable)
 	return m_userProvider->sendP2PData(m_handle, data, size, reliable);
 }
 
-User::User(IUserProvider* userProvider, uint64_t handle)
+User::User(IUserProvider* userProvider, uint64_t handle, int32_t tag)
 :	m_userProvider(userProvider)
 ,	m_handle(handle)
+,	m_tag(tag)
 {
 }
 

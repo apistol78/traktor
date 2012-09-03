@@ -146,6 +146,9 @@ bool SocketAddressIPv4::getInterfaces(std::list< Interface >& outInterfaces)
 		addr.sin_port = 0;
 		addr.sin_addr.s_addr = inet_addr(ii->IpAddressList.IpAddress.String);
 
+		if (!addr.sin_addr.s_addr)
+			continue;
+
 		itf.addr = new SocketAddressIPv4(addr);
 
 		outInterfaces.push_back(itf);

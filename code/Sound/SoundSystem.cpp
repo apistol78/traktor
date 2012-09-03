@@ -172,11 +172,17 @@ Ref< SoundChannel > SoundSystem::play(uint32_t channelId, const Sound* sound, ui
 
 	// Ensure we're not overriding a higher priority sound.
 	if (channel->isPlaying() && channel->getPriority() > priority)
+	{
+		log::warning << L"Sound not played; cannot override already playing channel with higher priority" << Endl;
 		return 0;
+	}
 
 	// Start playing sound on selected channel.
 	if (!channel->playSound(sound, m_time, priority, repeat))
+	{
+		log::warning << L"Sound not played; unable to attach to channel" << Endl;
 		return 0;
+	}
 
 	return channel;
 }
@@ -219,6 +225,8 @@ Ref< SoundChannel > SoundSystem::play(const Sound* sound, uint32_t priority, boo
 
 		m_channelFinishEvent.wait(1000);
 	}
+
+	log::warning << L"Sound not played; no available channel" << Endl;
 	return 0;
 }
 

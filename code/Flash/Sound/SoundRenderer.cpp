@@ -31,7 +31,7 @@ void SoundRenderer::destroy()
 void SoundRenderer::play(const FlashSound* sound)
 {
 	m_soundChannel = m_soundSystem->play(
-		new sound::Sound(new FlashSoundBuffer(sound)),
+		new sound::Sound(new FlashSoundBuffer(sound), 1.0f),
 		0,
 		true
 	);

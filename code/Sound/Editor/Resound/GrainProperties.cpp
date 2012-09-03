@@ -40,11 +40,26 @@ bool GrainProperties::create(ui::Widget* parent)
 void GrainProperties::destroy()
 {
 	safeDestroy(m_grainPropertyList);
+	m_grain = 0;
 }
 
 void GrainProperties::set(IGrainData* grain)
 {
+	// Capture state of current grain.
+	if (m_grain)
+		m_states[&type_of(m_grain)] = m_grainPropertyList->captureState();
+
 	m_grainPropertyList->bind(grain);
+
+	// Restore state of last property object of same type.
+	if (grain)
+	{
+		std::map< const TypeInfo*, Ref< ui::HierarchicalState > >::iterator i = m_states.find(&type_of(grain));
+		if (i != m_states.end())
+			m_grainPropertyList->applyState(i->second);
+	}
+
+	m_grain = grain;
 }
 
 bool GrainProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const

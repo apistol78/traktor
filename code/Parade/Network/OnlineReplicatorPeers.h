@@ -1,6 +1,7 @@
 #ifndef traktor_parade_OnlineReplicatorPeers_H
 #define traktor_parade_OnlineReplicatorPeers_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Parade/Network/IReplicatorPeers.h"
 
 namespace traktor
@@ -43,10 +44,13 @@ public:
 
 	virtual bool send(handle_t handle, const void* data, uint32_t size, bool reliable);
 
+	virtual bool isPrimary() const;
+
 private:
 	Ref< online::ISessionManager > m_sessionManager;
 	Ref< online::ILobby > m_lobby;
 	RefArray< online::IUser > m_users;
+	SmallMap< int32_t, online::IUser* > m_userMap;
 };
 
 	}

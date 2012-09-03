@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SOUND_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,7 +26,7 @@ class T_DLLCLASS StreamSoundResource : public ISoundResource
 public:
 	StreamSoundResource();
 	
-	StreamSoundResource(const TypeInfo* decoderType, bool preload);
+	StreamSoundResource(const TypeInfo* decoderType, float volume, bool preload);
 
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const;
 
@@ -34,6 +34,7 @@ public:
 
 private:
 	const TypeInfo* m_decoderType;
+	float m_volume;
 	bool m_preload;
 };
 
