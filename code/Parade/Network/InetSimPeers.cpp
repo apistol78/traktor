@@ -101,6 +101,11 @@ bool InetSimPeers::send(handle_t handle, const void* data, uint32_t size, bool r
 	return true;
 }
 
+bool InetSimPeers::isPrimary() const
+{
+	return m_peers->isPrimary();
+}
+
 void InetSimPeers::threadTx()
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();

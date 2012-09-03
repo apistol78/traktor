@@ -189,5 +189,10 @@ bool LanReplicatorPeers::send(handle_t handle, const void* data, uint32_t size, 
 	return false;
 }
 
+bool LanReplicatorPeers::isPrimary() const
+{
+	return true;
+}
+
 	}
 }

@@ -1,6 +1,7 @@
 #ifndef traktor_sound_BankAsset_H
 #define traktor_sound_BankAsset_H
 
+#include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
@@ -33,6 +34,9 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
+	friend class BankPipeline;
+
+	Guid m_category;
 	RefArray< IGrainData > m_grains;
 };
 

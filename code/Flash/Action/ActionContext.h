@@ -44,7 +44,13 @@ public:
 		IdGlobal = 7,
 		IdArguments = 8,
 		IdRoot = 9,
-		IdParent = 10
+		IdParent = 10,
+		IdApply = 11,
+		IdCall = 12,
+		IdToString = 13,
+		IdTarget = 14,
+		IdTargetProperty = 15,
+		IdFunction = 16
 	};
 
 	ActionContext(const IActionVM* vm, const FlashMovie* movie);

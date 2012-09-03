@@ -918,7 +918,7 @@ void opx_new(ExecutionState& state)
 
 	// Get class prototype.
 	ActionValue prototypeValue;
-	classFunction->getLocalMember("prototype", prototypeValue);
+	classFunction->getLocalMember(ActionContext::IdPrototype, prototypeValue);
 
 	if (!prototypeValue.isObject())
 	{
@@ -1337,7 +1337,7 @@ void opx_newMethod(ExecutionState& state)
 	{
 		// Get class prototype.
 		ActionValue prototypeValue;
-		classFunction->getLocalMember("prototype", prototypeValue);
+		classFunction->getLocalMember(ActionContext::IdPrototype, prototypeValue);
 
 		if (!prototypeValue.isObject())
 		{

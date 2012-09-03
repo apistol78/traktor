@@ -37,6 +37,8 @@ public:
 
 	virtual int32_t getIndex() const;
 
+	virtual bool isOwner() const;
+
 private:
 	friend class TaskCreateLobby;
 	friend class TaskFindMatchingLobbies;

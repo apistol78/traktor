@@ -84,7 +84,7 @@ bool ScenePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< SceneAsset > sceneAsset = DeepClone(sourceAsset).create< SceneAsset >();
+	const SceneAsset* sceneAsset = checked_type_cast< const SceneAsset*, false >(sourceAsset);
 
 	Ref< world::GroupEntityData > groupEntityData = new world::GroupEntityData();
 

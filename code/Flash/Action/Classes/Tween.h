@@ -52,9 +52,6 @@ private:
 	avm_number_t m_timeStart;
 	avm_number_t m_current;
 	bool m_playing;
-	uint32_t m_idTarget;
-	uint32_t m_idTargetProperty;
-	uint32_t m_idFunction;
 
 	void onFrame(CallArgs& ca);
 };

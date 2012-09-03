@@ -94,7 +94,14 @@ Ref< Result > Lobby::join()
 
 bool Lobby::leave()
 {
-	return m_matchMakingProvider ? m_matchMakingProvider->leaveLobby(m_handle) : true;
+	if (!m_matchMakingProvider)
+		return true;
+
+	if (!m_matchMakingProvider->leaveLobby(m_handle))
+		return false;
+
+	m_matchMakingProvider = 0;
+	return true;
 }
 
 RefArray< IUser > Lobby::getParticipants()
@@ -130,6 +137,14 @@ int32_t Lobby::getIndex() const
 		return index;
 	else
 		return -1;
+}
+
+bool Lobby::isOwner() const
+{
+	if (m_matchMakingProvider && m_matchMakingProvider->isOwner(m_handle))
+		return true;
+	else
+		return false;
 }
 
 Lobby::Lobby(IMatchMakingProvider* matchMakingProvider, UserCache* userCache, TaskQueue* taskQueue, uint64_t handle)

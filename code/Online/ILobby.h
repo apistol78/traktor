@@ -40,6 +40,8 @@ public:
 	virtual uint32_t getParticipantCount() const = 0;
 
 	virtual int32_t getIndex() const = 0;
+
+	virtual bool isOwner() const = 0;
 };
 
 	}

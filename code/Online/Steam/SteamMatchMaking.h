@@ -40,11 +40,14 @@ public:
 
 	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const;
 
+	virtual bool isOwner(uint64_t lobbyHandle) const;
+
 private:
 	SteamSessionManager* m_sessionManager;
 	std::vector< uint64_t >* m_outLobbies;
 	uint64_t* m_outLobby;
 	bool m_joinResult;
+	bool m_inLobby;
 	CCallResult< SteamMatchMaking, LobbyMatchList_t > m_callbackLobbyMatch;
 	CCallResult< SteamMatchMaking, LobbyCreated_t > m_callbackLobbyCreated;
 	CCallResult< SteamMatchMaking, LobbyEnter_t > m_callbackLobbyEnter;

@@ -31,10 +31,10 @@ void EntitySchema::insertEntity(const Entity* parentEntity, const std::wstring& 
 
 Entity* EntitySchema::getEntity(uint32_t index) const
 {
-	if (index >= m_global.children.size())
+	if (index < m_entityInfo.size())
+		return m_entityInfo[index].entity;
+	else
 		return 0;
-
-	return m_entityInfo[m_global.children[index]].entity;
 }
 
 Entity* EntitySchema::getEntity(const std::wstring& name, uint32_t index) const

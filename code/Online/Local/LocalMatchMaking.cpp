@@ -70,5 +70,10 @@ bool LocalMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
 	return true;
 }
 
+bool LocalMatchMaking::isOwner(uint64_t lobbyHandle) const
+{
+	return true;
+}
+
 	}
 }

@@ -1,6 +1,7 @@
 #ifndef traktor_sound_SoundAsset_H
 #define traktor_sound_SoundAsset_H
 
+#include "Core/Guid.h"
 #include "Editor/Asset.h"
 
 // import/export mechanism.
@@ -28,6 +29,7 @@ public:
 private:
 	friend class SoundPipeline;
 
+	Guid m_category;
 	bool m_stream;
 	bool m_preload;
 };

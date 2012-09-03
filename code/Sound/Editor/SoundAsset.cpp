@@ -1,13 +1,15 @@
+#include "Core/Serialization/AttributeType.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Sound/Editor/SoundAsset.h"
+#include "Sound/Editor/SoundCategory.h"
 
 namespace traktor
 {
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", 1, SoundAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", 2, SoundAsset, editor::Asset)
 
 SoundAsset::SoundAsset()
 :	m_stream(false)
@@ -19,6 +21,9 @@ bool SoundAsset::serialize(ISerializer& s)
 {
 	if (!editor::Asset::serialize(s))
 		return false;
+
+	if (s.getVersion() >= 2)
+		s >> Member< Guid >(L"category", m_category, AttributeType(type_of< SoundCategory >()));
 
 	s >> Member< bool >(L"stream", m_stream);
 	

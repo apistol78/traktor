@@ -192,6 +192,7 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod(L"setState", &Replicator::setState);
 	classReplicator->addMethod(L"sendEvent", &Replicator::sendEvent);
 	classReplicator->addMethod(L"broadcastEvent", &Replicator::broadcastEvent);
+	classReplicator->addMethod(L"isPrimary", &Replicator::isPrimary);
 	classReplicator->addMethod(L"getPeerCount", &Replicator::getPeerCount);
 	classReplicator->addMethod(L"getPeerHandle", &Replicator::getPeerHandle);
 	classReplicator->addMethod(L"getPeerName", &Replicator::getPeerName);

@@ -99,6 +99,10 @@ public:
 
 	/*! \brief
 	 */
+	bool isPrimary() const;
+
+	/*! \brief
+	 */
 	uint32_t getPeerCount() const;
 
 	/*! \brief
@@ -162,6 +166,7 @@ private:
 	struct Peer
 	{
 		bool established;
+		bool disconnected;
 		Ghost* ghost;
 		float timeUntilTx;
 		float lastTime;
@@ -170,6 +175,7 @@ private:
 
 		Peer()
 		:	established(false)
+		,	disconnected(false)
 		,	ghost(0)
 		,	timeUntilTx(0.0f)
 		,	lastTime(0.0f)

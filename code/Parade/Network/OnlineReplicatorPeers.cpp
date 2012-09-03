@@ -27,27 +27,34 @@ void OnlineReplicatorPeers::destroy()
 
 void OnlineReplicatorPeers::update()
 {
+	// Get users still in lobby.
 	m_users = m_lobby->getParticipants();
+	
+	// Create map from tag to user instance.
+	m_userMap.clear();
+	for (RefArray< online::IUser >::const_iterator i = m_users.begin(); i != m_users.end(); ++i)
+	{
+		int32_t tag = (*i)->getTag();
+		m_userMap[tag] = *i;
+	}
 }
 
 uint32_t OnlineReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
 {
-	outPeerHandles.reserve(m_users.size());
-	for (RefArray< online::IUser >::const_iterator i = m_users.begin(); i != m_users.end(); ++i)
-	{
-		T_ASSERT (*i);
-		outPeerHandles.push_back(handle_t(*i));
-	}
-	return m_users.size();
+	outPeerHandles.reserve(m_userMap.size());
+	for (SmallMap< int32_t, online::IUser* >::const_iterator i = m_userMap.begin(); i != m_userMap.end(); ++i)
+		outPeerHandles.push_back(handle_t(i->first));
+	return m_userMap.size();
 }
 
 std::wstring OnlineReplicatorPeers::getPeerName(handle_t handle) const
 {
-	online::IUser* user = reinterpret_cast< online::IUser* >(handle);
-	T_ASSERT (user);
+	SmallMap< int32_t, online::IUser* >::const_iterator i = m_userMap.find(int32_t(handle));
+	if (i == m_userMap.end() || i->second == 0)
+		return L"";
 
 	std::wstring name;
-	if (user->getName(name))
+	if (i->second->getName(name))
 		return name;
 	else
 		return L"";
@@ -64,11 +71,10 @@ bool OnlineReplicatorPeers::receive(void* data, uint32_t size, handle_t& outFrom
 	if (!m_sessionManager->receiveP2PData(data, size, fromUser))
 		return false;
 
-	RefArray< online::IUser >::iterator i = std::find(m_users.begin(), m_users.end(), fromUser);
-	if (i == m_users.end())
+	if (!fromUser)
 		return false;
 
-	outFromHandle = handle_t((*i).ptr());
+	outFromHandle = handle_t(fromUser->getTag());
 	return true;
 }
 
@@ -79,11 +85,18 @@ bool OnlineReplicatorPeers::sendReady(handle_t handle)
 
 bool OnlineReplicatorPeers::send(handle_t handle, const void* data, uint32_t size, bool reliable)
 {
-	online::IUser* user = reinterpret_cast< online::IUser* >(handle);
-	T_ASSERT (user);
 	T_ASSERT (size < 1200);
 
-	return user->sendP2PData(data, size, reliable);
+	SmallMap< int32_t, online::IUser* >::const_iterator i = m_userMap.find(int32_t(handle));
+	if (i == m_userMap.end() || i->second == 0)
+		return false;
+
+	return i->second->sendP2PData(data, size, reliable);
+}
+
+bool OnlineReplicatorPeers::isPrimary() const
+{
+	return m_lobby->isOwner();
 }
 
 	}

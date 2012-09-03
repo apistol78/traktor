@@ -16,14 +16,14 @@ AsFunction::AsFunction(ActionContext* context)
 {
 	Ref< ActionObject > prototype = new ActionObject(context);
 
-	prototype->setMember("apply", ActionValue(createNativeFunction(context, this, &AsFunction::Function_apply)));
-	prototype->setMember("call", ActionValue(createNativeFunction(context, this, &AsFunction::Function_call)));
-	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsFunction::Function_toString)));
+	prototype->setMember(ActionContext::IdApply, ActionValue(createNativeFunction(context, this, &AsFunction::Function_apply)));
+	prototype->setMember(ActionContext::IdCall, ActionValue(createNativeFunction(context, this, &AsFunction::Function_call)));
+	prototype->setMember(ActionContext::IdToString, ActionValue(createNativeFunction(context, this, &AsFunction::Function_toString)));
 
-	prototype->setMember("constructor", ActionValue(this));
+	prototype->setMember(ActionContext::IdConstructor, ActionValue(this));
 	prototype->setReadOnly();
 
-	setMember("prototype", ActionValue(prototype));
+	setMember(ActionContext::IdPrototype, ActionValue(prototype));
 }
 
 void AsFunction::initialize(ActionObject* self)

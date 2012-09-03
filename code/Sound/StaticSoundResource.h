@@ -36,6 +36,7 @@ private:
 	uint32_t m_sampleRate;
 	uint32_t m_samplesCount;
 	uint32_t m_channelsCount;
+	float m_volume;
 	const TypeInfo* m_decoderType;
 };
 

@@ -13,14 +13,15 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 0, BankResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 1, BankResource, ISoundResource)
 
 BankResource::BankResource()
 {
 }
 
-BankResource::BankResource(const RefArray< IGrainData >& grains)
+BankResource::BankResource(const RefArray< IGrainData >& grains, float volume)
 :	m_grains(grains)
+,	m_volume(volume)
 {
 }
 
@@ -36,12 +37,15 @@ Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManag
 			return 0;
 	}
 
-	return new Sound(new BankBuffer(grains));
+	return new Sound(new BankBuffer(grains), m_volume);
 }
 
 bool BankResource::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
+	T_ASSERT (s.getVersion() >= 1);
+	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
+	s >> Member< float >(L"volume", m_volume);
+	return true;
 }
 
 	}

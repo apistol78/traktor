@@ -16,12 +16,13 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StaticSoundResource", 0, StaticSoundResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StaticSoundResource", 1, StaticSoundResource, ISoundResource)
 
 StaticSoundResource::StaticSoundResource()
 :	m_sampleRate(0)
 ,	m_samplesCount(0)
 ,	m_channelsCount(0)
+,	m_volume(1.0f)
 ,	m_decoderType(0)
 {
 }
@@ -101,14 +102,16 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 	stream->close();
 	safeDestroy(streamDecoder);
 
-	return new Sound(soundBuffer);
+	return new Sound(soundBuffer, m_volume);
 }
 
 bool StaticSoundResource::serialize(ISerializer& s)
 {
+	T_ASSERT (s.getVersion() >= 1);
 	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
 	s >> Member< uint32_t >(L"samplesCount", m_samplesCount);
 	s >> Member< uint32_t >(L"channelsCount", m_channelsCount);
+	s >> Member< float >(L"volume", m_volume);
 	s >> MemberType(L"decoderType", m_decoderType);
 	return true;
 }

@@ -45,21 +45,17 @@ void Tween::init(
 	m_current = begin;
 	m_playing = false;
 
-	m_idTarget = m_context->getString("_target");
-	m_idTargetProperty = m_context->getString("_targetProperty");
-	m_idFunction = m_context->getString("_function");
-
 	if (target)
 	{
-		self->setMember("_target", ActionValue(target));
+		self->setMember(ActionContext::IdTarget, ActionValue(target));
 
 		Ref< ActionFunction > propertySet;
 		if (target->getPropertySet(propertyName, propertySet))
-			self->setMember("_targetProperty", ActionValue(propertySet));
+			self->setMember(ActionContext::IdTargetProperty, ActionValue(propertySet));
 	}
 	
 	if (function)
-		self->setMember("_function", ActionValue(function));
+		self->setMember(ActionContext::IdFunction, ActionValue(function));
 
 	self->setMember("onFrame", ActionValue(createNativeFunction(m_context, this, &Tween::onFrame)));
 	start();
@@ -115,9 +111,9 @@ void Tween::start()
 		ActionValue propertySet;
 		ActionValue function;
 
-		self->getLocalMember(m_idTarget, target);
-		self->getLocalMember(m_idTargetProperty, propertySet);
-		self->getLocalMember(m_idFunction, function);
+		self->getLocalMember(ActionContext::IdTarget, target);
+		self->getLocalMember(ActionContext::IdTargetProperty, propertySet);
+		self->getLocalMember(ActionContext::IdFunction, function);
 
 		// Ensure property is set to initial value.
 		if (propertySet.isObject< ActionFunction >() && function.isObject< ActionFunction >())
@@ -183,9 +179,9 @@ void Tween::onFrame(CallArgs& ca)
 	ActionValue propertySet;
 	ActionValue function;
 
-	self->getLocalMember(m_idTarget, target);
-	self->getLocalMember(m_idTargetProperty, propertySet);
-	self->getLocalMember(m_idFunction, function);
+	self->getLocalMember(ActionContext::IdTarget, target);
+	self->getLocalMember(ActionContext::IdTargetProperty, propertySet);
+	self->getLocalMember(ActionContext::IdFunction, function);
 
 	if (
 		!function.isObject< ActionFunction >() ||

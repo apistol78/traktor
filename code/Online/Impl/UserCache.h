@@ -24,6 +24,7 @@ public:
 private:
 	Ref< IUserProvider > m_userProvider;
 	SmallMap< uint64_t, Ref< User > > m_users;
+	int32_t m_nextTag;
 };
 
 	}
