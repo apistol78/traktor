@@ -36,6 +36,10 @@ Ref< MeshEntity > LodMeshEntityData::createEntity(resource::IResourceManager* re
 		}
 	}
 
+	// Must contain at least one lod.
+	if (lods.empty())
+		return 0;
+
 	// Create lod mesh.
 	return new LodMeshEntity(
 		getTransform(),

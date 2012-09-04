@@ -79,12 +79,12 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE</second>
+                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
-				<item>
-				  <first>ExceptionHandling</first>
-				  <second>2</second>
-				</item>
+                <item>
+                  <first>ExceptionHandling</first>
+                  <second>2</second>
+                </item>
                 <item>
                   <first>Optimization</first>
                   <second>0</second>
@@ -143,7 +143,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE</second>
+                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
 				<item>
 				  <first>ExceptionHandling</first>
@@ -270,7 +270,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE</second>
+                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
 				<item>
 				  <first>ExceptionHandling</first>
@@ -369,7 +369,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE</second>
+                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
 				<item>
 				  <first>ExceptionHandling</first>
@@ -543,7 +543,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE</second>
+                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
 				<item>
 				  <first>ExceptionHandling</first>
@@ -638,7 +638,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE</second>
+                  <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
 				<item>
 				  <first>ExceptionHandling</first>
@@ -808,7 +808,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>WIN32;_CONSOLE;UNICODE;_UNICODE</second>
+                  <second>WIN32;_CONSOLE;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
 				<item>
 				  <first>ExceptionHandling</first>
@@ -903,7 +903,7 @@
                 </item>
                 <item>
                   <first>PreprocessorDefinitions</first>
-                  <second>WIN32;_CONSOLE;UNICODE;_UNICODE</second>
+                  <second>WIN32;_CONSOLE;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
 				<item>
 				  <first>ExceptionHandling</first>
