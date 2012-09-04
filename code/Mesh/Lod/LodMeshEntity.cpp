@@ -51,7 +51,7 @@ Aabb3 LodMeshEntity::getBoundingBox() const
 
 bool LodMeshEntity::supportTechnique(render::handle_t technique) const
 {
-	return (!m_lods.empty()) ? m_lods[0]->supportTechnique(technique) : false;
+	return m_lods[0]->supportTechnique(technique);
 }
 
 void LodMeshEntity::precull(
@@ -59,9 +59,6 @@ void LodMeshEntity::precull(
 	world::WorldRenderView& worldRenderView
 )
 {
-	if (m_lods.empty())
-		return;
-
 	Vector4 eyePosition = worldRenderView.getView().inverse().translation();
 	float lodDistance = (m_transform.get().translation() - eyePosition).length();
 
@@ -79,9 +76,6 @@ void LodMeshEntity::render(
 	float /*distance*/
 )
 {
-	if (m_lods.empty())
-		return;
-
 	Vector4 eyePosition = worldRenderView.getView().inverse().translation();
 	float lodDistance = (m_transform.get().translation() - eyePosition).length();
 

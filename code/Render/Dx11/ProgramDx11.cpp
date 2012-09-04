@@ -340,15 +340,15 @@ bool ProgramDx11::bind(
 		{
 			ID3D11ShaderResourceView* res = 0;
 
-			for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_vertexState.resourceIndices.begin(); i != ms_activeProgram->m_vertexState.resourceIndices.end(); ++i)
+			for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_vertexState.resourceIndices.begin(); i != ms_activeProgram->m_vertexState.resourceIndices.end(); ++i)
 				d3dDeviceContext->VSSetShaderResources(i->first, 1, &res);
 
-			for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_pixelState.resourceIndices.begin(); i != ms_activeProgram->m_pixelState.resourceIndices.end(); ++i)
+			for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = ms_activeProgram->m_pixelState.resourceIndices.begin(); i != ms_activeProgram->m_pixelState.resourceIndices.end(); ++i)
 				d3dDeviceContext->PSSetShaderResources(i->first, 1, &res);
 		}
 
 		// Bind this program's resources.
-		for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = m_vertexState.resourceIndices.begin(); i != m_vertexState.resourceIndices.end(); ++i)
+		for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = m_vertexState.resourceIndices.begin(); i != m_vertexState.resourceIndices.end(); ++i)
 		{
 			ITexture* texture = m_parameterTextureArray[i->second];
 			if (!texture)
@@ -371,7 +371,7 @@ bool ProgramDx11::bind(
 			d3dDeviceContext->VSSetShaderResources(i->first, 1, &d3dTextureResourceView);
 		}
 
-		for (std::vector< std::pair< UINT, uint32_t > >::const_iterator i = m_pixelState.resourceIndices.begin(); i != m_pixelState.resourceIndices.end(); ++i)
+		for (AlignedVector< std::pair< UINT, uint32_t > >::const_iterator i = m_pixelState.resourceIndices.begin(); i != m_pixelState.resourceIndices.end(); ++i)
 		{
 			ITexture* texture = m_parameterTextureArray[i->second];
 			if (!texture)
@@ -625,7 +625,7 @@ bool ProgramDx11::updateStateConstants(ID3D11DeviceContext* d3dDeviceContext, St
 			return false;
 
 		uint8_t* mapped = (uint8_t*)dm.pData;
-		for (std::vector< ParameterOffset >::const_iterator j = state.cbuffer[i].parameterOffsets.begin(); j != state.cbuffer[i].parameterOffsets.end(); ++j)
+		for (AlignedVector< ParameterOffset >::const_iterator j = state.cbuffer[i].parameterOffsets.begin(); j != state.cbuffer[i].parameterOffsets.end(); ++j)
 		{
 			std::memcpy(
 				&mapped[j->constant],

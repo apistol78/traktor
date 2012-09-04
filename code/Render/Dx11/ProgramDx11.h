@@ -101,7 +101,7 @@ private:
 		std::wstring name;
 #endif
 		ComRef< ID3D11Buffer > d3dBuffer;
-		std::vector< ParameterOffset > parameterOffsets;
+		AlignedVector< ParameterOffset > parameterOffsets;
 		bool dirty;
 
 		CBuffer()
@@ -130,7 +130,7 @@ private:
 	{
 		CBuffer cbuffer[3];
 		ComRefArray< ID3D11SamplerState > d3dSamplerStates;
-		std::vector< std::pair< UINT, uint32_t > > resourceIndices;
+		AlignedVector< std::pair< UINT, uint32_t > > resourceIndices;
 	};
 
 	static ProgramDx11* ms_activeProgram;
