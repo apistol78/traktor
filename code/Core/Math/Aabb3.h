@@ -126,6 +126,12 @@ public:
 		}
 		return *this;
 	}
+
+	/*! \brief Check if bounding boxes overlap. */
+	T_MATH_INLINE bool overlap(const Aabb3& aabb) const
+	{
+		return inside(aabb.mn) || inside(aabb.mx) || aabb.inside(mn) || aabb.inside(mx);
+	}
 	
 	/*! \brief Scale bounding box along extent vector. */
 	T_MATH_INLINE Aabb3 scale(const Scalar& factor) const

@@ -4,11 +4,11 @@
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Math/Aabb3.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
-#include "Core/Math/Vector4.h"
 #include "Script/Any.h"
 #include "Script/CastAny.h"
 
@@ -206,6 +206,35 @@ public:
 
 private:
 	Transform m_value;
+};
+
+class T_DLLCLASS BoxedAabb3 : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedAabb3();
+
+	explicit BoxedAabb3(const Aabb3& value);
+
+	explicit BoxedAabb3(const Vector4& min, const Vector4& max);
+
+	bool inside(const Vector4& pt) const { return m_value.inside(pt); }
+
+	Aabb3 transform(const Transform& tf) const { return m_value.transform(tf); }
+
+	Vector4 getCenter() const { return m_value.getCenter(); }
+
+	Vector4 getExtent() const { return m_value.getExtent(); }
+
+	bool empty() const { return m_value.empty(); }
+
+	bool overlap(const Aabb3& aabb) const { return m_value.overlap(aabb); }
+
+	const Aabb3& unbox() const { return m_value; }
+
+private:
+	Aabb3 m_value;
 };
 
 class T_DLLCLASS BoxedColor4f : public Object
@@ -431,6 +460,28 @@ struct CastAny < const Transform&, false >
     static Transform get(const Any& value) {
         return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
     }
+};
+
+template < >
+struct CastAny < Aabb3, false >
+{
+	static Any set(const Aabb3& value) {
+		return Any(new BoxedAabb3(value));
+	}	
+	static Aabb3 get(const Any& value) {
+		return checked_type_cast< BoxedAabb3*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Aabb3&, false >
+{
+	static Any set(const Aabb3& value) {
+		return Any(new BoxedAabb3(value));
+	}	
+	static Aabb3 get(const Any& value) {
+		return checked_type_cast< BoxedAabb3*, false >(value.getObject())->unbox();
+	}
 };
 
 template < >
