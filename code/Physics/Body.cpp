@@ -43,6 +43,11 @@ void Body::notifyCollisionListeners(const CollisionInfo& collisionInfo)
 		(*i)->notify(collisionInfo);
 }
 
+bool Body::haveCollisionListeners() const
+{
+	return !m_collisionListeners.empty();
+}
+
 void Body::setUserObject(Object* userObject)
 {
 	m_userObject = userObject;

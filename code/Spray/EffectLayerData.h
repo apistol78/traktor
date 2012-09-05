@@ -41,6 +41,10 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	void setName(const std::wstring& name) { m_name = name; }
+
+	const std::wstring& getName() const { return m_name; }
+
 	void setTime(float time) { m_time = time; }
 
 	float getTime() const { return m_time; }
@@ -54,6 +58,7 @@ public:
 	SequenceData* getSequence() const { return m_sequence; }
 
 private:
+	std::wstring m_name;
 	float m_time;
 	float m_duration;
 	Ref< EmitterData > m_emitter;
