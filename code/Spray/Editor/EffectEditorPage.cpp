@@ -275,22 +275,28 @@ void EffectEditorPage::updateSequencer()
 	const RefArray< EffectLayerData >& layers = m_effectData->getLayers();
 	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		StringOutputStream ss;
-		ss << L"Layer " << uint32_t(std::distance(layers.begin(), i) + 1);
-
-		Ref< ui::custom::Sequence > layerItem = new ui::custom::Sequence(ss.str());
+		Ref< ui::custom::Sequence > layerItem = new ui::custom::Sequence((*i)->getName());
 		layerItem->setData(L"LAYER", *i);
 		
 		float start = (*i)->getTime();
-		float end = (*i)->getTime() + (*i)->getDuration();
+		if ((*i)->getDuration() > 0.0f)
+		{
+			float end = (*i)->getTime() + (*i)->getDuration();
+			Ref< ui::custom::Range > layerRange = new ui::custom::Range(
+				int32_t(start * 1000.0f),
+				int32_t(end * 1000.0f)
+			);
+			layerRange->setData(L"LAYER", *i);
+			layerItem->addKey(layerRange);
+		}
+		else
+		{
+			Ref< ui::custom::Tick > layerTick = new ui::custom::Tick(int32_t(start * 1000.0f));
+			layerTick->setData(L"LAYER", *i);
+			layerItem->addKey(layerTick);
+		}
 
-		Ref< ui::custom::Range > layerRange = new ui::custom::Range(
-			int(start * 1000),
-			int(end * 1000)
-		);
-		layerRange->setData(L"LAYER", *i);
-		layerItem->addKey(layerRange);
-
+		// Add sequence entries.
 		Ref< SequenceData > sequence = (*i)->getSequence();
 		if (sequence)
 		{
@@ -298,6 +304,7 @@ void EffectEditorPage::updateSequencer()
 			for (std::vector< SequenceData::Key >::const_iterator j = keys.begin(); j != keys.end(); ++j)
 			{
 				Ref< ui::custom::Tick > sequenceTick = new ui::custom::Tick(int32_t(j->T * 1000.0f));
+				sequenceTick->setData(L"SEQUENCE", sequence);
 				sequenceTick->setData(L"LAYER", *i);
 				layerItem->addKey(sequenceTick);
 			}
@@ -351,13 +358,30 @@ void EffectEditorPage::eventKeyMove(ui::Event* event)
 
 		float start = movedRange->getStart() / 1000.0f;
 		float end = movedRange->getEnd() / 1000.0f;
-
 		m_document->push();
-
 		layer->setTime(start);
 		layer->setDuration(end - start);
-
 		m_site->setPropertyObject(layer);
+	}
+
+	ui::custom::Tick* movedTick = dynamic_type_cast< ui::custom::Tick* >(commandEvent->getItem());
+	if (movedTick)
+	{
+		Ref< EffectLayerData > layer = movedTick->getData< EffectLayerData >(L"LAYER");
+		T_ASSERT (layer);
+
+		Ref< SequenceData > sequence = movedTick->getData< SequenceData >(L"SEQUENCE");
+		if (sequence)
+		{
+			// \FIXME
+		}
+		else
+		{
+			float start = movedTick->getTime() / 1000.0f;
+			m_document->push();
+			layer->setTime(start);
+			m_site->setPropertyObject(layer);
+		}
 	}
 
 	updateEffectPreview();

@@ -862,12 +862,12 @@ void PhysicsManagerBullet::update()
 	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime, 0);
 
 	// Issue collision events.
-	if (haveCollisionListeners())
+	/*if (haveCollisionListeners())*/
 	{
 		CollisionInfo info;
 
-		int manifoldCount = m_dispatcher->getNumManifolds();
-		for (int i = 0; i < manifoldCount; ++i)
+		int32_t manifoldCount = m_dispatcher->getNumManifolds();
+		for (int32_t i = 0; i < manifoldCount; ++i)
 		{
 			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
 			T_ASSERT (manifold);
@@ -906,8 +906,10 @@ void PhysicsManagerBullet::update()
 			info.body2 = wrapperBody1;
 			info.contacts.resize(0);
 
-			int contacts = manifold->getNumContacts();
-			for (int j = 0; j < contacts; ++j)
+			int32_t contacts = manifold->getNumContacts();
+			info.contacts.reserve(contacts);
+
+			for (int32_t j = 0; j < contacts; ++j)
 			{
 				const btManifoldPoint& pt = manifold->getContactPoint(j);
 				if (pt.getDistance() < 0.0f)

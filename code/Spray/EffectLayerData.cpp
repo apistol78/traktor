@@ -11,7 +11,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 0, EffectLayerData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 1, EffectLayerData, ISerializable)
 
 EffectLayerData::EffectLayerData()
 :	m_time(0.0f)
@@ -48,10 +48,14 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 
 bool EffectLayerData::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 1)
+		s >> Member< std::wstring >(L"name", m_name);
+
 	s >> Member< float >(L"time", m_time);
 	s >> Member< float >(L"duration", m_duration);
 	s >> MemberRef< EmitterData >(L"emitter", m_emitter);
 	s >> MemberRef< SequenceData >(L"sequence", m_sequence);
+
 	return true;
 }
 

@@ -156,6 +156,9 @@ public:
 	 */
 	void notifyCollisionListeners(const CollisionInfo& collisionInfo);
 
+	/*! \brief Check if have any collision listeners. */
+	bool haveCollisionListeners() const;
+
 	/*! \brief Attach user defined object.
 	 *
 	 * \param userObject User object.
