@@ -52,7 +52,7 @@ const uint32_t c_pointCount = 1000;
 #elif defined(_PS3)
 const uint32_t c_pointCount = 3000;
 #else
-const uint32_t c_pointCount = 4000;
+const uint32_t c_pointCount = 8000;
 #endif
 
 const int32_t c_manyPointsThreshold = 100;	//<! Threshold, over this value are considered dense instances.

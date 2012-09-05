@@ -94,6 +94,8 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	classEntity->addMethod(L"destroy", &world::Entity::destroy);
 	classEntity->addMethod(L"setTransform", &world::Entity::setTransform);
 	classEntity->addMethod(L"getTransform", &world_Entity_getTransform);
+	classEntity->addMethod(L"getBoundingBox", &world::Entity::getBoundingBox);
+	classEntity->addMethod(L"getWorldBoundingBox", &world::Entity::getWorldBoundingBox);
 	scriptManager->registerClass(classEntity);
 
 	Ref< script::AutoScriptClass< world::GroupEntity > > classGroupEntity = new script::AutoScriptClass< world::GroupEntity >();

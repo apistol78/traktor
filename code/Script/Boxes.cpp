@@ -246,6 +246,22 @@ Vector4 BoxedTransform::transform(const Vector4& v) const
 	return m_value * v;
 }
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Aabb3", BoxedAabb3, Object)
+
+BoxedAabb3::BoxedAabb3()
+{
+}
+
+BoxedAabb3::BoxedAabb3(const Aabb3& value)
+:	m_value(value)
+{
+}
+
+BoxedAabb3::BoxedAabb3(const Vector4& min, const Vector4& max)
+:	m_value(min, max)
+{
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Color4f", BoxedColor4f, Object)
 
 BoxedColor4f::BoxedColor4f(const Color4f& value)
@@ -413,6 +429,17 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod(L"concat", &BoxedTransform::concat);
 	classBoxedTransform->addMethod(L"transform", &BoxedTransform::transform);
 	scriptManager->registerClass(classBoxedTransform);
+
+	Ref< AutoScriptClass< BoxedAabb3 > > classBoxedAabb3 = new AutoScriptClass< BoxedAabb3 >();
+	classBoxedAabb3->addConstructor();
+	classBoxedAabb3->addConstructor< const Vector4&, const Vector4& >();
+	classBoxedAabb3->addMethod(L"inside", &BoxedAabb3::inside);
+	classBoxedAabb3->addMethod(L"transform", &BoxedAabb3::transform);
+	classBoxedAabb3->addMethod(L"getCenter", &BoxedAabb3::getCenter);
+	classBoxedAabb3->addMethod(L"getExtent", &BoxedAabb3::getExtent);
+	classBoxedAabb3->addMethod(L"empty", &BoxedAabb3::empty);
+	classBoxedAabb3->addMethod(L"overlap", &BoxedAabb3::overlap);
+	scriptManager->registerClass(classBoxedAabb3);
 
 	Ref< AutoScriptClass< BoxedColor4f > > classBoxedColor4f = new AutoScriptClass< BoxedColor4f >();
 	classBoxedColor4f->addConstructor();
