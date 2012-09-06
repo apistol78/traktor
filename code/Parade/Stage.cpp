@@ -1,15 +1,25 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IStateManager.h"
 #include "Amalgam/IUpdateInfo.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Parade/Layer.h"
 #include "Parade/Stage.h"
 #include "Parade/StageLoader.h"
 #include "Parade/StageState.h"
+#include "Render/ScreenRenderer.h"
+#include "Render/Shader.h"
+#include "Resource/IResourceManager.h"
 
 namespace traktor
 {
 	namespace parade
 	{
+		namespace
+		{
+
+const resource::Id< render::Shader > c_shaderFade(Guid(L"{DC104971-11AE-5743-9AB1-53B830F74391}"));
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.Stage", Stage, Object)
 
@@ -22,7 +32,15 @@ Stage::Stage(
 ,	m_transitions(transitions)
 ,	m_params(params)
 ,	m_running(true)
+,	m_fade(1.0f)
 {
+	m_screenRenderer = new render::ScreenRenderer();
+	m_screenRenderer->create(m_environment->getRender()->getRenderSystem());
+
+	m_environment->getResource()->getResourceManager()->bind(
+		c_shaderFade,
+		m_shaderFade
+	);
 }
 
 Stage::~Stage()
@@ -34,7 +52,9 @@ void Stage::destroy()
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->destroy();
-	m_layers.resize(0);
+	m_layers.clear();
+
+	safeDestroy(m_screenRenderer);
 }
 
 void Stage::addLayer(Layer* layer)
@@ -107,11 +127,17 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			(*i)->update(this, control, info);
+
+		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime());
 	}
 	else
 	{
-		stateManager->enter(new StageState(m_environment, m_pendingStage));
-		m_pendingStage = 0;
+		m_fade += info.getSimulationDeltaTime();
+		if (m_fade > 1.0f)
+		{
+			stateManager->enter(new StageState(m_environment, m_pendingStage));
+			m_pendingStage = 0;
+		}
 	}
 
 	return true;
@@ -128,6 +154,15 @@ void Stage::render(render::EyeType eye, uint32_t frame)
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->render(this, eye, frame);
+
+	if (m_fade > FUZZY_EPSILON)
+	{
+		m_shaderFade->setVectorParameter(L"Color", Vector4(0.0f, 0.0f, 0.0f, m_fade));
+		m_screenRenderer->draw(
+			m_environment->getRender()->getRenderView(),
+			m_shaderFade
+		);
+	}
 }
 
 void Stage::leave()

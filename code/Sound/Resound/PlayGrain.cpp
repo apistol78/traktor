@@ -47,10 +47,12 @@ PlayGrain::PlayGrain(
 Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 {
 	Ref< ISoundBuffer > soundBuffer = m_sound->getSoundBuffer();
-	T_ASSERT (soundBuffer);
+	if (!soundBuffer)
+		return 0;
 
 	Ref< ISoundBufferCursor > soundCursor = soundBuffer->createCursor();
-	T_ASSERT (soundCursor);
+	if (!soundCursor)
+		return 0;
 
 	Ref< PlayGrainCursor > playCursor = new PlayGrainCursor();
 	playCursor->m_soundBuffer = soundBuffer;
