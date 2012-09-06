@@ -38,7 +38,7 @@ Ref< ISoundBufferCursor > SequenceGrain::createCursor() const
 	cursor->m_grainIndex = 0;
 	cursor->m_grainCursor = m_grains[0]->createCursor();
 
-	return cursor;
+	return cursor->m_grainCursor ? cursor : 0;
 }
 
 void SequenceGrain::updateCursor(ISoundBufferCursor* cursor) const

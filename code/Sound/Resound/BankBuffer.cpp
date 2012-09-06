@@ -67,7 +67,7 @@ bool BankBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) cons
 	if (bankCursor->m_grainIndex >= ngrains)
 		return false;
 
-	IGrain* grain = m_grains[bankCursor->m_grainIndex];
+	Ref< IGrain > grain = m_grains[bankCursor->m_grainIndex];
 
 	for (;;)
 	{

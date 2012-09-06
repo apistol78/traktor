@@ -5,6 +5,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Render/Types.h"
+#include "Resource/Proxy.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -23,6 +24,14 @@ class IEnvironment;
 class IStateManager;
 class IUpdateControl;
 class IUpdateInfo;
+
+	}
+
+	namespace render
+	{
+
+class ScreenRenderer;
+class Shader;
 
 	}
 
@@ -81,11 +90,14 @@ public:
 
 private:
 	Ref< amalgam::IEnvironment > m_environment;
+	Ref< render::ScreenRenderer > m_screenRenderer;
+	resource::Proxy< render::Shader > m_shaderFade;
 	RefArray< Layer > m_layers;
 	std::map< std::wstring, Guid > m_transitions;
 	Ref< const Object > m_params;
 	Ref< Stage > m_pendingStage;
 	bool m_running;
+	float m_fade;
 };
 
 	}

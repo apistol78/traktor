@@ -54,7 +54,7 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 	}
 	if (m_sequenceInstance)
 	{
-		if (time >= m_start)
+		if (time >= m_start - FUZZY_EPSILON)
 			m_sequenceInstance->update(context, transform, time - m_start);
 	}
 }

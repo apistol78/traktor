@@ -58,7 +58,7 @@ Ref< ISoundBufferCursor > RandomGrain::createCursor() const
 	cursor->m_grain = m_grains[index];
 	cursor->m_grainCursor = m_grains[index]->createCursor();
 
-	return cursor;
+	return cursor->m_grainCursor ? cursor : 0;
 }
 
 void RandomGrain::updateCursor(ISoundBufferCursor* cursor) const

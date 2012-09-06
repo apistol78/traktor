@@ -39,10 +39,9 @@ void TransientEntity::render(
 
 void TransientEntity::update(const UpdateParams& update)
 {
+	m_otherEntity->update(update);
 	if ((m_duration -= update.deltaTime) <= 0.0f)
 		m_parentGroup->removeEntity(this);
-	
-	m_otherEntity->update(update);
 }
 
 void TransientEntity::setTransform(const Transform& transform)
