@@ -23,7 +23,7 @@ bool SteamStatistics::enumerate(std::map< std::wstring, float >& outStats)
 	bool haveStats = m_sessionManager->waitForStats();
 	for (std::set< std::wstring >::const_iterator i = m_statIds.begin(); i != m_statIds.end(); ++i)
 	{
-		float value = 0.0f;
+		int32_t value = 0;
 		if (haveStats)
 		{
 			if (!SteamUserStats()->GetStat(wstombs(*i).c_str(), &value))
@@ -37,7 +37,7 @@ bool SteamStatistics::enumerate(std::map< std::wstring, float >& outStats)
 	return true;
 }
 
-bool SteamStatistics::set(const std::wstring& statId, float value)
+bool SteamStatistics::set(const std::wstring& statId, int32_t value)
 {
 	if (!m_sessionManager->waitForStats())
 		return false;

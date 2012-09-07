@@ -20,16 +20,16 @@ bool Statistics::ready() const
 bool Statistics::enumerate(std::set< std::wstring >& outStatIds) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	for (std::map< std::wstring, float >::const_iterator i = m_statistics.begin(); i != m_statistics.end(); ++i)
+	for (std::map< std::wstring, int32_t >::const_iterator i = m_statistics.begin(); i != m_statistics.end(); ++i)
 		outStatIds.insert(i->first);
 	return true;
 }
 
-bool Statistics::get(const std::wstring& statId, float& outValue) const
+bool Statistics::get(const std::wstring& statId, int32_t& outValue) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::map< std::wstring, float >::const_iterator i = m_statistics.find(statId);
+	std::map< std::wstring, int32_t >::const_iterator i = m_statistics.find(statId);
 	if (i == m_statistics.end())
 	{
 		log::warning << L"Statistics error; No such statistic provided, \"" << statId << L"\"" << Endl;
@@ -40,11 +40,11 @@ bool Statistics::get(const std::wstring& statId, float& outValue) const
 	return true;
 }
 
-Ref< Result > Statistics::set(const std::wstring& statId, float value)
+Ref< Result > Statistics::set(const std::wstring& statId, int32_t value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::map< std::wstring, float >::iterator i = m_statistics.find(statId);
+	std::map< std::wstring, int32_t >::iterator i = m_statistics.find(statId);
 	if (i == m_statistics.end())
 	{
 		log::warning << L"Statistics error; No such statistic provided, \"" << statId << L"\"" << Endl;
@@ -69,11 +69,11 @@ Ref< Result > Statistics::set(const std::wstring& statId, float value)
 		return 0;
 }
 
-Ref< Result > Statistics::add(const std::wstring& statId, float valueDelta)
+Ref< Result > Statistics::add(const std::wstring& statId, int32_t valueDelta)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	std::map< std::wstring, float >::iterator i = m_statistics.find(statId);
+	std::map< std::wstring, int32_t >::iterator i = m_statistics.find(statId);
 	if (i == m_statistics.end())
 	{
 		log::warning << L"Statistics error; No such statistic provided, \"" << statId << L"\"" << Endl;
@@ -107,7 +107,7 @@ Statistics::Statistics(IStatisticsProvider* provider, TaskQueue* taskQueue)
 	));
 }
 
-void Statistics::callbackEnumStatistics(const std::map< std::wstring, float >& statistics)
+void Statistics::callbackEnumStatistics(const std::map< std::wstring, int32_t >& statistics)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_statistics = statistics;

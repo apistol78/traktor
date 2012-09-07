@@ -17,15 +17,15 @@ void SoundTriggerInstance::perform(Context& context, const Transform& transform)
 	if (!context.soundSystem)
 		return;
 
-	sound::SoundChannel* channel = context.soundSystem->play(m_sound, 16, false);
-	if (channel)
+	Ref< sound::SurroundFilter > filter = sound::SurroundFilter::create(
+		context.surroundEnvironment,
+		transform.translation()
+	);
+	if (!context.surroundEnvironment || filter)
 	{
-		if (context.surroundEnvironment)
-		{
-			Ref< sound::SurroundFilter > filter = new sound::SurroundFilter(context.surroundEnvironment);
-			filter->setSpeakerPosition(transform.translation());
+		sound::SoundChannel* channel = context.soundSystem->play(m_sound, 16, false);
+		if (channel)
 			channel->setFilter(filter);
-		}
 	}
 }
 

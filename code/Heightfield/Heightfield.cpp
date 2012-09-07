@@ -35,8 +35,8 @@ float Heightfield::getGridHeightNearest(int32_t gridX, int32_t gridZ) const
 
 float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 {
-	int32_t igridX = int32_t(std::floor(gridX));
-	int32_t igridZ = int32_t(std::floor(gridZ));
+	int32_t igridX = int32_t(gridX);
+	int32_t igridZ = int32_t(gridZ);
 
 	if (igridX < 0)
 		igridX = 0;
@@ -48,21 +48,23 @@ float Heightfield::getGridHeightBilinear(float gridX, float gridZ) const
 	else if (igridZ >= int32_t(m_size) - 1)
 		igridZ = int32_t(m_size) - 2;
 
+	int32_t offset = igridX + igridZ * m_size;
+	
 	height_t hts[] =
 	{
-		m_heights[igridX + igridZ * m_size],
-		m_heights[igridX + 1 + igridZ * m_size],
-		m_heights[igridX + (igridZ + 1) * m_size],
-		m_heights[igridX + 1 + (igridZ + 1) * m_size]
+		m_heights[offset],
+		m_heights[offset + 1],
+		m_heights[offset + m_size],
+		m_heights[offset + 1 + m_size]
 	};
 
 	float fgridX = gridX - igridX;
 	float fgridZ = gridZ - igridZ;
 
-	float hl = hts[0] * (1.0f - fgridZ) + hts[2] * fgridZ;
-	float hr = hts[1] * (1.0f - fgridZ) + hts[3] * fgridZ;
+	float hl = hts[0] + (hts[2] - hts[0]) * fgridZ;
+	float hr = hts[1] + (hts[3] - hts[1]) * fgridZ;
 
-	return (hl * (1.0f - fgridX) + hr * fgridX) / 65535.0f;
+	return (hl + (hr - hl) * fgridX) / 65535.0f;
 }
 
 float Heightfield::getWorldHeight(float worldX, float worldZ) const

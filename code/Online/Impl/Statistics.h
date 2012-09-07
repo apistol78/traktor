@@ -21,11 +21,11 @@ public:
 
 	virtual bool enumerate(std::set< std::wstring >& outStatIds) const;
 
-	virtual bool get(const std::wstring& statId, float& outValue) const;
+	virtual bool get(const std::wstring& statId, int32_t& outValue) const;
 
-	virtual Ref< Result > set(const std::wstring& statId, float value);
+	virtual Ref< Result > set(const std::wstring& statId, int32_t value);
 
-	virtual Ref< Result > add(const std::wstring& statId, float valueDelta);
+	virtual Ref< Result > add(const std::wstring& statId, int32_t valueDelta);
 
 private:
 	friend class SessionManager;
@@ -33,12 +33,12 @@ private:
 	Ref< IStatisticsProvider > m_provider;
 	Ref< TaskQueue > m_taskQueue;
 	mutable Semaphore m_lock;
-	std::map< std::wstring, float > m_statistics;
+	std::map< std::wstring, int32_t > m_statistics;
 	bool m_ready;
 
 	Statistics(IStatisticsProvider* provider, TaskQueue* taskQueue);
 
-	void callbackEnumStatistics(const std::map< std::wstring, float >& statistics);
+	void callbackEnumStatistics(const std::map< std::wstring, int32_t >& statistics);
 };
 
 	}

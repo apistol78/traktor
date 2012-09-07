@@ -22,7 +22,7 @@ public:
 
 	virtual bool enumerate(std::map< std::wstring, float >& outStats);
 
-	virtual bool set(const std::wstring& statId, float value);
+	virtual bool set(const std::wstring& statId, int32_t value);
 
 private:
 	SteamSessionManager* m_sessionManager;

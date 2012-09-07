@@ -89,15 +89,31 @@ const uint32_t c_speakersFullMaxChannel = SbcRearRight + 1;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SurroundFilter", SurroundFilter, IFilter)
 
-SurroundFilter::SurroundFilter(SurroundEnvironment* environment)
+Ref< SurroundFilter > SurroundFilter::create(SurroundEnvironment* environment, const Vector4& speakerPosition)
+{
+	if (!environment)
+		return 0;
+
+	const Transform& listenerTransformInv = environment->getListenerTransformInv();
+
+	Vector4 speakerPositionL = listenerTransformInv * speakerPosition.xyz1();
+	Scalar speakerDistance = speakerPositionL.xyz0().length();
+
+	if (speakerDistance >= environment->getMaxDistance())
+		return 0;
+
+	return new SurroundFilter(environment, speakerPosition);
+}
+
+SurroundFilter::SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition)
 :	m_environment(environment)
-,	m_speakerPosition(0.0f, 0.0f, 0.0f, 1.0f)
+,	m_speakerPosition(speakerPosition)
 {
 }
 
-void SurroundFilter::setSpeakerPosition(const Vector4& position)
+void SurroundFilter::setSpeakerPosition(const Vector4& speakerPosition)
 {
-	m_speakerPosition = position;
+	m_speakerPosition = speakerPosition;
 }
 
 Ref< IFilterInstance > SurroundFilter::createInstance() const

@@ -132,8 +132,17 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	if (!m_window)
 		return false;
 
+	DisplayMode dm;
+	dm = desc.displayMode;
+
+	// Ensure somewhat sane values.
+	if (dm.width <= 0 || dm.height <= 0)
+	{
+		dm.width = 640;
+		dm.height = 480;
+	}
+
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
-	T_DEBUG(L"reset (1) begin");
 
 	m_window->removeListener(this);
 	m_eventQueue.clear();
@@ -152,7 +161,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 
 	if (desc.fullscreen)
 	{
-		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
+		m_window->setFullScreenStyle(dm.width, dm.height);
 
 		std::memset(&scd, 0, sizeof(scd));
 		scd.SampleDesc.Count = 1;
@@ -162,14 +171,10 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 		scd.OutputWindow = *m_window;
 		scd.Windowed = FALSE;
 
-		if (!findDxgiDisplayMode(m_context->getDXGIOutput(), desc.displayMode, scd.BufferDesc))
+		if (!findDxgiDisplayMode(m_context->getDXGIOutput(), dm, scd.BufferDesc))
 		{
-			DisplayMode dm;
-
-			dm = desc.displayMode;
 			dm.refreshRate = 0;
-
-			if (!findDxgiDisplayMode(m_context->getDXGIOutput(), desc.displayMode, scd.BufferDesc))
+			if (!findDxgiDisplayMode(m_context->getDXGIOutput(), dm, scd.BufferDesc))
 			{
 				log::error << L"Unable to create render view; display mode not supported" << Endl;
 				return false;
@@ -178,14 +183,14 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	}
 	else
 	{
-		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
+		m_window->setWindowedStyle(dm.width, dm.height);
 
 		std::memset(&scd, 0, sizeof(scd));
 		scd.SampleDesc.Count = 1;
 		scd.SampleDesc.Quality = 0;
 		scd.BufferCount = 1;
-		scd.BufferDesc.Width = desc.displayMode.width;
-		scd.BufferDesc.Height = desc.displayMode.height;
+		scd.BufferDesc.Width = dm.width;
+		scd.BufferDesc.Height = dm.height;
 		scd.BufferDesc.Format = DXGI_FORMAT_R8G8B8A8_UNORM;
 		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		scd.OutputWindow = *m_window;
@@ -205,7 +210,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateSwapChain failed" << Endl;
+		log::error << L"Unable to create render view; CreateSwapChain failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
@@ -217,14 +222,14 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	hr = m_dxgiSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; GetBuffer failed" << Endl;
+		log::error << L"Unable to create render view; GetBuffer failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
 	hr = m_context->getD3DDevice()->CreateRenderTargetView(d3dBackBuffer, NULL, &m_d3dRenderTargetView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateRenderTargetView failed" << Endl;
+		log::error << L"Unable to create render view; CreateRenderTargetView failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
@@ -244,7 +249,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dDepthStencil.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateTexture2D failed" << Endl;
+		log::error << L"Unable to create render view; CreateTexture2D failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
@@ -257,7 +262,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	hr = m_context->getD3DDevice()->CreateDepthStencilView(m_d3dDepthStencil, &ddsvd, &m_d3dDepthStencilView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to create render view; CreateDepthStencilView failed" << Endl;
+		log::error << L"Unable to create render view; CreateDepthStencilView failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
@@ -277,8 +282,6 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - DirectX 11 Renderer");
 	m_window->addListener(this);
 
-	T_DEBUG(L"reset (1) end");
-
 	return true;
 }
 
@@ -294,8 +297,6 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 		return false;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
-
-	T_DEBUG(L"reset (2) begin");
 	m_eventQueue.clear();
 
 	m_context->getD3DDeviceContext()->OMSetRenderTargets(0, NULL, NULL);
@@ -307,21 +308,21 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 	hr = m_dxgiSwapChain->ResizeBuffers(1, width, height, DXGI_FORMAT_R8G8B8A8_UNORM, 0);
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; ResizeBuffers failed" << Endl;
+		log::error << L"Unable to reset render view; ResizeBuffers failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
 	hr = m_dxgiSwapChain->GetBuffer(0, __uuidof(ID3D11Texture2D), (void**)&d3dBackBuffer.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; GetBuffer failed" << Endl;
+		log::error << L"Unable to reset render view; GetBuffer failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
 	hr = m_context->getD3DDevice()->CreateRenderTargetView(d3dBackBuffer, NULL, &m_d3dRenderTargetView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; CreateRenderTargetView failed" << Endl;
+		log::error << L"Unable to reset render view; CreateRenderTargetView failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
@@ -343,7 +344,7 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 	hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, NULL, &m_d3dDepthStencil.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; CreateTexture2D failed" << Endl;
+		log::error << L"Unable to reset render view; CreateTexture2D failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 	
@@ -356,7 +357,7 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 	hr = m_context->getD3DDevice()->CreateDepthStencilView(m_d3dDepthStencil, &ddsvd, &m_d3dDepthStencilView.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Unable to reset render view; CreateDepthStencilView failed" << Endl;
+		log::error << L"Unable to reset render view; CreateDepthStencilView failed, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
 
@@ -369,8 +370,6 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 
 	m_targetSize[0] = width;
 	m_targetSize[1] = height;
-
-	T_DEBUG(L"reset (2) end");
 
 	return true;
 }
