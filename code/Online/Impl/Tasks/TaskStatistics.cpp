@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.TaskStatistics", TaskStatistics, ITask)
 TaskStatistics::TaskStatistics(
 	IStatisticsProvider* provider,
 	const std::wstring& statId,
-	float value,
+	int32_t value,
 	Result* result
 )
 :	m_provider(provider)

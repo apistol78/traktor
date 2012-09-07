@@ -154,9 +154,9 @@ std::vector< std::wstring > online_IStatistics_enumerate(online::IStatistics* se
 	return std::vector< std::wstring >(statIds.begin(), statIds.end());
 }
 
-float online_IStatistics_get(online::IStatistics* self, const std::wstring& statId)
+int32_t online_IStatistics_get(online::IStatistics* self, const std::wstring& statId)
 {
-	float value = 0.0f;
+	int32_t value = 0;
 	self->get(statId, value);
 	return value;
 }

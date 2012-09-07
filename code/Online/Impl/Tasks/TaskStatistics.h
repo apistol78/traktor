@@ -19,7 +19,7 @@ public:
 	TaskStatistics(
 		IStatisticsProvider* provider,
 		const std::wstring& statId,
-		float value,
+		int32_t value,
 		Result* result
 	);
 
@@ -28,7 +28,7 @@ public:
 private:
 	Ref< IStatisticsProvider > m_provider;
 	std::wstring m_statId;
-	float m_value;
+	int32_t m_value;
 	Ref< Result > m_result;
 };
 

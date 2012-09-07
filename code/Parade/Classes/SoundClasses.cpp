@@ -113,6 +113,7 @@ void registerSoundClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< sound::SurroundFilter > > classSurroundFilter = new script::AutoScriptClass< sound::SurroundFilter >();
 	classSurroundFilter->addConstructor< sound::SurroundEnvironment* >();
+	classSurroundFilter->addConstructor< sound::SurroundEnvironment*, const Vector4& >();
 	classSurroundFilter->addMethod(L"setSpeakerPosition", &sound::SurroundFilter::setSpeakerPosition);
 	scriptManager->registerClass(classSurroundFilter);
 }

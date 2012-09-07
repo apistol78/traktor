@@ -24,7 +24,7 @@ class T_DLLCLASS IStatisticsProvider : public Object
 public:
 	virtual bool enumerate(std::map< std::wstring, float >& outStats) = 0;
 
-	virtual bool set(const std::wstring& statId, float value) = 0;
+	virtual bool set(const std::wstring& statId, int32_t value) = 0;
 };
 
 	}

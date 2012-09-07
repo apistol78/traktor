@@ -25,11 +25,11 @@ public:
 
 	virtual bool enumerate(std::set< std::wstring >& outStatIds) const = 0;
 
-	virtual bool get(const std::wstring& statId, float& outValue) const = 0;
+	virtual bool get(const std::wstring& statId, int32_t& outValue) const = 0;
 
-	virtual Ref< Result > set(const std::wstring& statId, float value) = 0;
+	virtual Ref< Result > set(const std::wstring& statId, int32_t value) = 0;
 
-	virtual Ref< Result > add(const std::wstring& statId, float valueDelta) = 0;
+	virtual Ref< Result > add(const std::wstring& statId, int32_t valueDelta) = 0;
 };
 
 	}

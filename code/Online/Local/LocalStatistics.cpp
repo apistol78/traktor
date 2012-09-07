@@ -33,7 +33,7 @@ bool LocalStatistics::enumerate(std::map< std::wstring, float >& outStats)
 	return true;
 }
 
-bool LocalStatistics::set(const std::wstring& statId, float value)
+bool LocalStatistics::set(const std::wstring& statId, int32_t value)
 {
 	if (m_db->executeUpdate(L"update Statistics set value=" + toString(value) + L" where id='" + statId + L"'") > 0)
 		return true;
