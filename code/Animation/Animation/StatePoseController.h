@@ -33,7 +33,7 @@ class T_DLLCLASS StatePoseController : public IPoseController
 public:
 	StatePoseController(const resource::Proxy< StateGraph >& stateGraph);
 
-	void setCondition(const std::wstring& condition, bool enabled);
+	void setCondition(const std::wstring& condition, bool enabled, bool reset);
 
 	void setTimeFactor(float timeFactor);
 
@@ -63,7 +63,7 @@ private:
 	StateContext m_nextStateContext;
 	float m_blendState;
 	float m_blendDuration;
-	std::map< std::wstring, bool > m_conditions;
+	std::map< std::wstring, std::pair< bool, bool > > m_conditions;
 	float m_timeFactor;
 };
 

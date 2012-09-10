@@ -51,13 +51,13 @@ public:
 
 	explicit ActionValue(avm_number_t n);
 
-	explicit ActionValue(const char* s);
+	explicit ActionValue(const char* s, int32_t id = -1);
 
-	explicit ActionValue(const std::string& s);
+	explicit ActionValue(const std::string& s, int32_t id = -1);
 
-	explicit ActionValue(const wchar_t* s);
+	explicit ActionValue(const wchar_t* s, int32_t id = -1);
 
-	explicit ActionValue(const std::wstring& s);
+	explicit ActionValue(const std::wstring& s, int32_t id = -1);
 
 	explicit ActionValue(ActionObject* o);
 
@@ -119,6 +119,9 @@ public:
 	/*! \brief Get object always, ie. create boxes if not a object. */
 	template < typename ObjectType >
 	Ref< ObjectType > getObjectAlways(ActionContext* context) const { return dynamic_type_cast< ObjectType* >(getObjectAlways(context)); }
+
+	/*! \brief Get string hidden identifier. */
+	int32_t getStringId() const;
 
 	/*! \brief Serialize value. */
 	bool serialize(ISerializer& s);

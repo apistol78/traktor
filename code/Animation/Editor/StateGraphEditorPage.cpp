@@ -86,6 +86,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 		m_stateGraph->getTransitions()
 	);
 
+	parent->update();
 	m_editorGraph->center();
 
 	updateGraph();

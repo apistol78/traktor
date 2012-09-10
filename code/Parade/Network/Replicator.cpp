@@ -22,11 +22,11 @@ namespace traktor
 const handle_t c_broadcastHandle = 0UL;
 const float c_maxLatencyCompensate = 2.0f;
 const float c_maxOffsetAdjustError = 1000.0f;
-const float c_maxOffsetAdjust = 30.0f;
-const float c_nearDistance = 30.0f;
-const float c_farDistance = 400.0f;
-const float c_nearTimeUntilTx = 1.0f / 15.0f;
-const float c_farTimeUntilTx = 1.0f / 4.0f;
+const float c_maxOffsetAdjust = 25.0f;
+const float c_nearDistance = 28.0f;
+const float c_farDistance = 180.0f;
+const float c_nearTimeUntilTx = 1.0f / 18.0f;
+const float c_farTimeUntilTx = 1.0f / 6.0f;
 const float c_timeUntilIAm = 4.0f;
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
@@ -65,7 +65,7 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 		uint8_t discard[sizeof(Message)];
 		handle_t fromHandle;
 
-		if (m_replicatorPeers->receive(discard, sizeof(discard), fromHandle))
+		if (m_replicatorPeers->receive(discard, sizeof(discard), fromHandle) > 0)
 			T_REPLICATOR_DEBUG(L"OK: Pending message discarded from peer " << fromHandle);
 	}
 
@@ -183,7 +183,7 @@ void Replicator::update(float dT)
 	// Read messages from any peer.
 	while (m_replicatorPeers->receiveAnyPending())
 	{
-		if (!m_replicatorPeers->receive(&msg, sizeof(msg), handle))
+		if (m_replicatorPeers->receive(&msg, sizeof(msg), handle) < 0)
 		{
 			T_REPLICATOR_DEBUG(L"ERROR: Failed to receive pending message");
 			continue;

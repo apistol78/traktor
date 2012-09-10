@@ -65,7 +65,7 @@ bool InetSimPeers::receiveAnyPending()
 	return m_peers->receiveAnyPending();
 }
 
-bool InetSimPeers::receive(void* data, uint32_t size, handle_t& outFromHandle)
+int32_t InetSimPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
 	return m_peers->receive(data, size, outFromHandle);
 }
@@ -75,7 +75,7 @@ bool InetSimPeers::sendReady(handle_t handle)
 	return true;
 }
 
-bool InetSimPeers::send(handle_t handle, const void* data, uint32_t size, bool reliable)
+bool InetSimPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
 	if (!reliable && m_packetLossRate >= m_random.nextFloat())
 		return true;

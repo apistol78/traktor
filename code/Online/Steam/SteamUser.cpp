@@ -1,3 +1,4 @@
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Misc/TString.h"
 #include "Online/Steam/SteamUser.h"
 
@@ -18,7 +19,7 @@ bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 	if (!name)
 		return false;
 
-	outName = mbstows(name);
+	outName = mbstows(Utf8Encoding(), name);
 	return true;
 }
 
@@ -46,7 +47,7 @@ bool SteamUser::setPresenceValue(uint64_t userHandle, const std::wstring& key, c
 	if (!id.IsValid())
 		return false;
 
-	return SteamFriends()->SetRichPresence(wstombs(key).c_str(), wstombs(value).c_str());
+	return SteamFriends()->SetRichPresence(wstombs(key).c_str(), wstombs(Utf8Encoding(), value).c_str());
 }
 
 bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
@@ -59,7 +60,7 @@ bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, s
 	if (!value)
 		return false;
 
-	outValue = mbstows(value);
+	outValue = mbstows(Utf8Encoding(), value);
 	return true;
 }
 

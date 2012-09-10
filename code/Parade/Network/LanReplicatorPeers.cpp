@@ -141,7 +141,7 @@ bool LanReplicatorPeers::receiveAnyPending()
 	return false; //m_socket->select(true, false, false, 0) > 0;
 }
 
-bool LanReplicatorPeers::receive(void* data, uint32_t size, handle_t& outFromHandle)
+int32_t LanReplicatorPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
 	/*
 	net::SocketAddressIPv4 fromAddr;
@@ -174,7 +174,7 @@ bool LanReplicatorPeers::receive(void* data, uint32_t size, handle_t& outFromHan
 	outFromPeer = m_peers.size() - 1;
 	return true;
 	*/
-	return false;
+	return -1;
 }
 
 bool LanReplicatorPeers::sendReady(handle_t handle)
@@ -183,7 +183,7 @@ bool LanReplicatorPeers::sendReady(handle_t handle)
 	return false;
 }
 
-bool LanReplicatorPeers::send(handle_t handle, const void* data, uint32_t size, bool reliable)
+bool LanReplicatorPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
 	//return m_peers[peerId].socket->send(data, size) > 0;
 	return false;

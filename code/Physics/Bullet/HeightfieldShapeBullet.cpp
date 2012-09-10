@@ -71,15 +71,23 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 	float mnz = quantizeMin(aabbMin.z());
 	float mxz = quantizeMax(aabbMax.z());
 
-	for (int u = 0; u < 4; ++u)
-	{
-		float mnx2 = mnx + (mxx - mnx) * u / 4.0f;
-		float mxx2 = mnx + (mxx - mnx) * (u + 1.0f) / 4.0f;
+	int32_t imnx = int32_t(mnx);
+	int32_t imxx = int32_t(mxx);
+	int32_t imnz = int32_t(mnz);
+	int32_t imxz = int32_t(mxz);
 
-		for (int v = 0; v < 4; ++v)
+	const int32_t cx = ((imxx - imnx) >> 1) | 1;
+	const int32_t cz = ((imxz - imnz) >> 1) | 1;
+
+	for (int32_t u = imnx; u < imxx; u += cx)
+	{
+		float mnx2 = u;
+		float mxx2 = u + cx;
+
+		for (int32_t v = imnz; v < imxz; v += cz)
 		{
-			float mnz2 = mnz + (mxz - mnz) * v / 4.0f;
-			float mxz2 = mnz + (mxz - mnz) * (v + 1.0f) / 4.0f;
+			float mnz2 = v;
+			float mxz2 = v + cz;
 
 			float h[] =
 			{

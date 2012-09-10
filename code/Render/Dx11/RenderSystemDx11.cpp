@@ -62,36 +62,55 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 		&d3dDeviceContext.getAssign()
 	);
 	if (FAILED(hr))
+	{
+		log::error << L"Failed to create DirectX 11 device, HRESULT " << int32_t(hr) << Endl;
 		return false;
+	}
 
 	hr = d3dDevice->QueryInterface(__uuidof(IDXGIDevice1), (void **)&dxgiDevice.getAssign());
 	if (FAILED(hr))
-		return 0;
+	{
+		log::error << L"Failed to get IDXGIDevice1 interface, HRESULT " << int32_t(hr) << Endl;
+		return false;
+	}
 
 	hr = dxgiDevice->GetParent(__uuidof(IDXGIAdapter1), (void **)&dxgiAdapter.getAssign());
 	if (FAILED(hr))
-		return 0;
+	{
+		log::error << L"Failed to get IDXGIAdapter1 interface, HRESULT " << int32_t(hr) << Endl;
+		return false;
+	}
 
 	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void **)&dxgiFactory.getAssign());
 	if (FAILED(hr))
-		return 0;
+	{
+		log::error << L"Failed to get IDXGIFactory1 interface, HRESULT " << int32_t(hr) << Endl;
+		return false;
+	}
 
 	hr = dxgiAdapter->EnumOutputs(0, &dxgiOutput.getAssign());
 	if (FAILED(hr))
-		return 0;
+	{
+		log::error << L"Failed to enumerate DXGI outputs, HRESULT " << int32_t(hr) << Endl;
+		return false;
+	}
 
 	DisplayMode dm = getCurrentDisplayMode();
 	m_displayAspect = float(dm.width) / dm.height;
 
 	m_window = new Window();
 	if (!m_window->create())
-		return 0;
+	{
+		log::error << L"Failed to create render window" << Endl;
+		return false;
+	}
 
 	m_context = new ContextDx11(d3dDevice, d3dDeviceContext, dxgiFactory, dxgiOutput);
 	m_resourceCache = new ResourceCache(d3dDevice);
 
 	m_mipBias = desc.mipBias;
 	m_maxAnisotropy = clamp(desc.maxAnisotropy, 1, 16);
+
 	return true;
 }
 

@@ -354,7 +354,6 @@ void SteamSessionManager::OnOverlayActivated(GameOverlayActivated_t* pCallback)
 
 void SteamSessionManager::OnP2PSessionRequest(P2PSessionRequest_t* pP2PSessionRequest)
 {
-	log::info << L"Steam; Received P2P session request, accepting..." << Endl;
 	SteamNetworking()->AcceptP2PSessionWithUser(pP2PSessionRequest->m_steamIDRemote);
 }
 

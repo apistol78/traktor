@@ -6,6 +6,7 @@
 #include "Parade/VideoLayer.h"
 #include "Parade/WorldLayer.h"
 #include "Parade/Classes/ParadeClasses.h"
+#include "Parade/Network/DiagnosePeers.h"
 #include "Parade/Network/InetSimPeers.h"
 #include "Parade/Network/IReplicatableState.h"
 #include "Parade/Network/LanReplicatorPeers.h"
@@ -159,6 +160,10 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< IReplicatorPeers > > classIReplicatorPeers = new script::AutoScriptClass< IReplicatorPeers >();
 	classIReplicatorPeers->addMethod(L"destroy", &IReplicatorPeers::destroy);
 	scriptManager->registerClass(classIReplicatorPeers);
+
+	Ref< script::AutoScriptClass< DiagnosePeers > > classDiagnosePeers = new script::AutoScriptClass< DiagnosePeers >();
+	classDiagnosePeers->addConstructor< IReplicatorPeers* >();
+	scriptManager->registerClass(classDiagnosePeers);
 
 	Ref< script::AutoScriptClass< InetSimPeers > > classInetSimPeers = new script::AutoScriptClass< InetSimPeers >();
 	classInetSimPeers->addConstructor< IReplicatorPeers*, float, float, float >();

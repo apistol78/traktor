@@ -1,7 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
-#include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/FlashMovie.h"
@@ -64,24 +63,46 @@ T unalignedRead(const void *ptr)
 
 #define T_IF_TRACE(x)
 
-ActionValue getVariable(ExecutionState& state, const std::string& variableName)
+int32_t parseIndex(const char* str)
+{
+	int32_t value = 0;
+	for (; *str; ++str)
+	{
+		if (*str < '0' || *str > '9')
+			return -1;
+
+		value = (value * 10) + int32_t(*str - '0');
+	}
+	return value;
+}
+
+ActionValue getVariable(ExecutionState& state, const ActionValue& variable)
 {
 	ActionValue value;
 
-	uint32_t variableId = state.context->getString(variableName);
+	// Resolve variable numeric id.
+	int32_t variableId = -1;
+	if (variable.isString())
+		variableId = variable.getStringId();
+	if (variableId < 0)
+		variableId = state.context->getString(variable.getString());
 
+	// Get "with" instance member first.
 	if (state.with)
 	{
 		if (state.with->getMember(variableId, value))
 			return value;
 	}
 
+	// Get frame instance member.
 	if (state.frame->getVariable(variableId, value))
 		return value;
 
+	// Get frame scope variable.
 	if (state.frame->getScopeVariable(variableId, value))
 		return value;
 
+	// Get movie clip member.
 	if (state.movieClip)
 	{
 		FlashCharacterInstance* movieClip = state.movieClip;
@@ -97,21 +118,27 @@ ActionValue getVariable(ExecutionState& state, const std::string& variableName)
 		}
 	}
 
+	// Get from self instance.
 	if (state.self)
 	{
 		if (state.self->getMember(variableId, value))
 			return value;
 	}
 
-	Ref< ActionObject > object = state.global;
-	StringSplit< std::string > variableNameSplit(variableName, ".");
-	for (StringSplit< std::string >::const_iterator i = variableNameSplit.begin(); i != variableNameSplit.end(); ++i)
+	// Variable path.
 	{
-		if (!object->getLocalMember(*i, value))
-			break;
+		std::string variableName = variable.getString();
+		StringSplit< std::string > variableNameSplit(variableName, ".");
 
-		if ((object = value.getObject()) == 0)
-			break;
+		Ref< ActionObject > object = state.global;
+		for (StringSplit< std::string >::const_iterator i = variableNameSplit.begin(); i != variableNameSplit.end(); ++i)
+		{
+			if (!object->getLocalMember(*i, value))
+				break;
+
+			if ((object = value.getObject()) == 0)
+				break;
+		}
 	}
 
 	return value;
@@ -307,12 +334,12 @@ void opx_int(ExecutionState& state)
 void opx_getVariable(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	std::string variableName = stack.pop().getString();
+	ActionValue variable = stack.pop();
 
-	ActionValue variableValue = getVariable(state, variableName);
+	ActionValue variableValue = getVariable(state, variable);
 
 	T_IF_TRACE(
-		*state.trace << L"AopGetVariable: \"" << mbstows(variableName) << L"\" => \"" << variableValue.getWideString() << L"\"" << Endl;
+		*state.trace << L"AopGetVariable: \"" << variable.getWideString() << L"\" => \"" << variableValue.getWideString() << L"\"" << Endl;
 	)
 
 	stack.push(variableValue);
@@ -859,7 +886,7 @@ void opx_defineLocal(ExecutionState& state)
 void opx_callFunction(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
-	std::string functionName = stack.pop().getString();
+	ActionValue functionName = stack.pop();
 
 	ActionValue functionObject = getVariable(state, functionName);
 	if (functionObject.isObject< ActionFunction >())
@@ -872,7 +899,7 @@ void opx_callFunction(ExecutionState& state)
 	}
 
 	T_IF_TRACE(
-		*state.trace << L"AopCallFunction: Undefined function \"" << mbstows(functionName) << L"\"" << Endl;
+		*state.trace << L"AopCallFunction: Undefined function \"" << functionName.getWideString() << L"\"" << Endl;
 	)
 
 	int argCount = int(stack.pop().getNumber());
@@ -904,7 +931,7 @@ void opx_new(ExecutionState& state)
 	Ref< ActionFunction > classFunction = classFunctionValue.getObject< ActionFunction >();
 	if (!classFunction)
 	{
-		classFunctionValue = getVariable(state, classFunctionValue.getString());
+		classFunctionValue = getVariable(state, classFunctionValue);
 		classFunction = classFunctionValue.getObject< ActionFunction >();
 	}
 
@@ -1141,7 +1168,10 @@ void opx_getMember(ExecutionState& state)
 
 	// Special case for arrays; we cannot use string table for all entries thus need to explicitly access elements.
 	const IActionObjectRelay* relay = target->getRelay();
-	if (relay != 0 && &type_of(relay) == &type_of< Array >())
+	if (
+		relay != 0 &&
+		&type_of(relay) == &type_of< Array >()
+	)
 	{
 		const Array* arr = checked_type_cast< const Array* >(relay);
 		int32_t index;
@@ -1149,7 +1179,7 @@ void opx_getMember(ExecutionState& state)
 		if (memberNameValue.isNumeric())
 			index = int32_t(memberNameValue.getNumber());
 		else
-			index = parseString< int32_t >(memberNameValue.getString(), -1);
+			index = parseIndex(memberNameValue.getString().c_str());
 
 		if (index >= 0 && index < int32_t(arr->length()))
 		{
@@ -1158,8 +1188,19 @@ void opx_getMember(ExecutionState& state)
 		}
 	}
 
-	std::string memberName = memberNameValue.getString();
-	uint32_t memberId = state.context->getString(memberName);
+	std::string memberName;
+	int32_t memberId = -1;
+
+	if (memberNameValue.isString())
+	{
+		memberName = memberNameValue.getString();
+		memberId = memberNameValue.getStringId();
+	}
+	if (memberId < 0)
+	{
+		memberName = memberNameValue.getString();
+		memberId = state.context->getString(memberName);
+	}
 
 	if (target->getMember(memberId, memberValue))
 	{
@@ -1186,6 +1227,7 @@ void opx_getMember(ExecutionState& state)
 	T_IF_TRACE(
 		*state.trace << L"AopGetMember: \"" << mbstows(memberName) << L"\", no such member" << Endl;
 	)
+
 	stack.push(ActionValue());
 }
 
@@ -1214,7 +1256,7 @@ void opx_setMember(ExecutionState& state)
 		if (memberNameValue.isNumeric())
 			index = int32_t(memberNameValue.getNumber());
 		else
-			index = parseString< int32_t >(memberNameValue.getString(), -1);
+			index = parseIndex(memberNameValue.getString().c_str());
 
 		if (index >= 0 && index < int32_t(arr->length()))
 		{
@@ -1223,8 +1265,19 @@ void opx_setMember(ExecutionState& state)
 		}
 	}
 
-	std::string memberName = memberNameValue.getString();
-	uint32_t memberId = state.context->getString(memberName);
+	std::string memberName;
+	int32_t memberId = -1;
+
+	if (memberNameValue.isString())
+	{
+		memberName = memberNameValue.getString();
+		memberId = memberNameValue.getStringId();
+	}
+	if (memberId < 0)
+	{
+		memberName = memberNameValue.getString();
+		memberId = state.context->getString(memberName);
+	}
 
 	Ref< ActionFunction > propertySet;
 	if (target->getPropertySet(memberId, propertySet))
@@ -1278,8 +1331,12 @@ void opx_callMethod(ExecutionState& state)
 
 	if (methodName.isString())
 	{
+		int32_t memberId = methodName.getStringId();
+		if (memberId < 0)
+			memberId = state.context->getString(methodName.getString());
+
 		ActionValue memberValue;
-		target->getMember(methodName.getString(), memberValue);
+		target->getMember(memberId, memberValue);
 		method = memberValue.getObject< ActionFunction >();
 	}
 	else
@@ -1664,13 +1721,21 @@ void opp_constantPool(PreparationState& state)
 
 void opx_constantPool(ExecutionState& state)
 {
+	Ref< ActionDictionary > dictionary = new ActionDictionary();
+
 	uint16_t dictionaryCount = *reinterpret_cast< const uint16_t* >(state.data);
 	const char* dictionaryEntry = reinterpret_cast< const char* >(state.data + 2);
 
-	state.frame->setDictionary(new ActionDictionary(
-		dictionaryCount,
-		dictionaryEntry
-	));
+	for (uint16_t i = 0; i < dictionaryCount; ++i)
+	{
+		dictionary->add(ActionValue(
+			dictionaryEntry,
+			state.context->getString(dictionaryEntry)
+		));
+		dictionaryEntry += std::strlen(dictionaryEntry) + 1;
+	}
+
+	state.frame->setDictionary(dictionary);
 }
 
 void opx_waitForFrame(ExecutionState& state)
@@ -1842,8 +1907,9 @@ void opp_pushData(PreparationState& state)
 
 			if (type == 0)		// String
 			{
-				uint32_t length = uint32_t(strlen((const char T_UNALIGNED *)data));
-				uint16_t index = state.image->addConstData(ActionValue((const char T_UNALIGNED *)data));
+				const char T_UNALIGNED * str = (const char T_UNALIGNED *)data;
+				uint32_t length = uint32_t(strlen(str));
+				uint16_t index = state.image->addConstData(ActionValue(str));
 
 				*ndp++ = 100;
 				*(uint16_t*)ndp = index;

@@ -1,30 +1,22 @@
-#ifndef traktor_parade_LanReplicatorPeers_H
-#define traktor_parade_LanReplicatorPeers_H
+#ifndef traktor_parade_DiagnosePeers_H
+#define traktor_parade_DiagnosePeers_H
 
-#include "Net/SocketAddressIPv4.h"
+#include "Core/Timer/Timer.h"
 #include "Parade/Network/IReplicatorPeers.h"
 
 namespace traktor
 {
-	namespace net
-	{
-
-class DiscoveryManager;
-class UdpSocket;
-
-	}
-
 	namespace parade
 	{
 
-class LanReplicatorPeers : public IReplicatorPeers
+class DiagnosePeers : public IReplicatorPeers
 {
 	T_RTTI_CLASS;
 
 public:
-	LanReplicatorPeers();
+	DiagnosePeers(IReplicatorPeers* peers);
 
-	bool create();
+	virtual ~DiagnosePeers();
 
 	virtual void destroy();
 
@@ -45,20 +37,14 @@ public:
 	virtual bool isPrimary() const;
 
 private:
-	struct Peer
-	{
-		net::SocketAddressIPv4 socketAddr;
-		Ref< net::UdpSocket > socket;
-	};
-
-	Ref< net::DiscoveryManager > m_discoveryManager;
-	net::SocketAddressIPv4 m_socketAddr;
-	Ref< net::UdpSocket > m_socket;
-	uint32_t m_networkId;
-	std::vector< Peer > m_peers;
+	Ref< IReplicatorPeers > m_peers;
+	Timer m_timer;
+	double m_lastT;
+	uint32_t m_sent;
+	uint32_t m_received;
 };
 
 	}
 }
 
-#endif	// traktor_parade_LanReplicatorPeers_H
+#endif	// traktor_parade_DiagnosePeers_H
