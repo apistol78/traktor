@@ -569,8 +569,27 @@ void emitMixIn(GlslContext& cx, MixIn* node)
 	GlslVariable* y = cx.emitInput(node, L"Y");
 	GlslVariable* z = cx.emitInput(node, L"Z");
 	GlslVariable* w = cx.emitInput(node, L"W");
-	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
-	assign(f, out) << L"vec4(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L", " << (z ? z->getName() : L"0.0") << L", " << (w ? w->getName() : L"0.0") << L");" << Endl;
+
+	if (!y && !z && !w)
+	{
+		GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
+		assign(f, out) << L"(" << (x ? x->getName() : L"0.0") << L");" << Endl;
+	}
+	else if (!z && !w)
+	{
+		GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat2);
+		assign(f, out) << L"vec2(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L");" << Endl;
+	}
+	else if (!w)
+	{
+		GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat3);
+		assign(f, out) << L"vec3(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L", " << (z ? z->getName() : L"0.0") << L");" << Endl;
+	}
+	else
+	{
+		GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
+		assign(f, out) << L"vec4(" << (x ? x->getName() : L"0.0") << L", " << (y ? y->getName() : L"0.0") << L", " << (z ? z->getName() : L"0.0") << L", " << (w ? w->getName() : L"0.0") << L");" << Endl;
+	}
 }
 
 void emitMixOut(GlslContext& cx, MixOut* node)

@@ -24,6 +24,10 @@ class T_DLLCLASS PropertyState : public IReplicatableState
 public:
 	PropertyState();
 
+	void packByte(uint8_t b);
+
+	void packLowPrecision(float f, float min, float max);
+
 	void packFloat(float f);
 
 	void packVector3(const Vector4& v);
@@ -35,6 +39,10 @@ public:
 	void packTransform(const Transform& t);
 
 	void unpackBegin();
+
+	uint8_t unpackByte() const;
+
+	float unpackLowPrecision(float min, float max) const;
 
 	float unpackFloat() const;
 
@@ -53,8 +61,10 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
-	std::vector< float > m_data;
-	mutable uint32_t m_offset;
+	std::vector< uint8_t > m_u8;
+	std::vector< float > m_f32;
+	mutable uint32_t m_offsetU8;
+	mutable uint32_t m_offsetF32;
 };
 
 	}

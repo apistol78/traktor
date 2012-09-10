@@ -25,19 +25,30 @@ namespace traktor
 #	define T_VALIDATE(av)
 #endif
 
+#if defined(_DEBUG)
 static int32_t s_stringCount = 0;
+#endif
 
-char* refStringCreate(const char* s)
+#pragma pack(1)
+struct StringType
+{
+	uint16_t rc;
+	int32_t id;
+};
+#pragma pack()
+
+char* refStringCreate(const char* s, int32_t id)
 {
 	uint32_t len = strlen(s);
 	T_ASSERT (len < 4096);
 	
-	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
+	void* ptr = getAllocator()->alloc(sizeof(StringType) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
 		return 0;
 
-	uint16_t* base = static_cast< uint16_t* >(ptr);
-	*base = 1;
+	StringType* base = static_cast< StringType* >(ptr);
+	base->rc = 1;
+	base->id = id;
 
 	char* c = reinterpret_cast< char* >(base + 1);
 	if (len > 0)
@@ -45,27 +56,37 @@ char* refStringCreate(const char* s)
 
 	c[len] = '\0';
 
+#if defined(_DEBUG)
 	++s_stringCount;
+#endif
 	return c;
 }
 
 char* refStringInc(char* s)
 {
-	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
-	(*base)++;
+	StringType* base = reinterpret_cast< StringType* >(s) - 1;
+	base->rc++;
 	return s;
 }
 
 char* refStringDec(char* s)
 {
-	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
-	if (--(*base) == 0)
+	StringType* base = reinterpret_cast< StringType* >(s) - 1;
+	if (--base->rc == 0)
 	{
 		getAllocator()->free(base);
+#if defined(_DEBUG)
 		--s_stringCount;
+#endif
 		return 0;
 	}
 	return s;
+}
+
+int32_t refStringId(char* s)
+{
+	StringType* base = reinterpret_cast< StringType* >(s) - 1;
+	return base->id;
 }
 
 		}
@@ -106,28 +127,28 @@ ActionValue::ActionValue(avm_number_t n)
 	m_value.n = n;
 }
 
-ActionValue::ActionValue(const char* s)
+ActionValue::ActionValue(const char* s, int32_t id)
 :	m_type(AvtString)
 {
-	m_value.s = refStringCreate(s);
+	m_value.s = refStringCreate(s, id);
 }
 
-ActionValue::ActionValue(const std::string& s)
+ActionValue::ActionValue(const std::string& s, int32_t id)
 :	m_type(AvtString)
 {
-	m_value.s = refStringCreate(s.c_str());
+	m_value.s = refStringCreate(s.c_str(), id);
 }
 
-ActionValue::ActionValue(const wchar_t* s)
+ActionValue::ActionValue(const wchar_t* s, int32_t id)
 :	m_type(AvtString)
 {
-	m_value.s = refStringCreate(wstombs(Utf8Encoding(), s).c_str());
+	m_value.s = refStringCreate(wstombs(Utf8Encoding(), s).c_str(), id);
 }
 
-ActionValue::ActionValue(const std::wstring& s)
+ActionValue::ActionValue(const std::wstring& s, int32_t id)
 :	m_type(AvtString)
 {
-	m_value.s = refStringCreate(wstombs(Utf8Encoding(), s).c_str());
+	m_value.s = refStringCreate(wstombs(Utf8Encoding(), s).c_str(), id);
 }
 
 ActionValue::ActionValue(ActionObject* o)
@@ -244,6 +265,12 @@ Ref< ActionObject > ActionValue::getObjectAlways(ActionContext* context) const
 	return new ActionObject(context);
 }
 
+int32_t ActionValue::getStringId() const
+{
+	T_ASSERT (m_type == AvtString);
+	return refStringId(m_value.s);
+}
+
 bool ActionValue::serialize(ISerializer& s)
 {
 	const MemberEnum< Type >::Key kType[] =
@@ -276,7 +303,7 @@ bool ActionValue::serialize(ISerializer& s)
 			{
 				std::string str;
 				s >> Member< std::string >(L"value", str);
-				m_value.s = refStringCreate(str.c_str());
+				m_value.s = refStringCreate(str.c_str(), -1);
 			}
 			else
 			{

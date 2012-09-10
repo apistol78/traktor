@@ -22,9 +22,10 @@ StatePoseController::StatePoseController(const resource::Proxy< StateGraph >& st
 {
 }
 
-void StatePoseController::setCondition(const std::wstring& condition, bool enabled)
+void StatePoseController::setCondition(const std::wstring& condition, bool enabled, bool reset)
 {
-	m_conditions[condition] = enabled;
+	m_conditions[condition].first = enabled;
+	m_conditions[condition].second = reset;
 }
 
 void StatePoseController::setTimeFactor(float timeFactor)
@@ -168,9 +169,25 @@ bool StatePoseController::evaluate(
 
 			std::wstring condition = (*i)->getCondition();
 			if (condition[0] == L'!')
-				value = !m_conditions[condition.substr(1)];
+			{
+				std::pair< bool, bool >& cv = m_conditions[condition.substr(1)];
+				value = !cv.first;
+				if (value && cv.second)
+				{
+					cv.first = !cv.first;
+					cv.second = false;
+				}
+			}
 			else
-				value = m_conditions[condition];
+			{
+				std::pair< bool, bool >& cv = m_conditions[condition];
+				value = cv.first;
+				if (value && cv.second)
+				{
+					cv.first = !cv.first;
+					cv.second = false;
+				}
+			}
 
 			if (!value)
 				continue;

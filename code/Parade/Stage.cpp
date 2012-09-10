@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IStateManager.h"
 #include "Amalgam/IUpdateInfo.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Parade/Layer.h"
 #include "Parade/Stage.h"

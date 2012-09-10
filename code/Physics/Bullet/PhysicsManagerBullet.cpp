@@ -862,72 +862,72 @@ void PhysicsManagerBullet::update()
 	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime, 0);
 
 	// Issue collision events.
-	/*if (haveCollisionListeners())*/
-	{
-		CollisionInfo info;
+	//if (haveCollisionListeners())
+	//{
+	//	CollisionInfo info;
 
-		int32_t manifoldCount = m_dispatcher->getNumManifolds();
-		for (int32_t i = 0; i < manifoldCount; ++i)
-		{
-			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
-			T_ASSERT (manifold);
+	//	int32_t manifoldCount = m_dispatcher->getNumManifolds();
+	//	for (int32_t i = 0; i < manifoldCount; ++i)
+	//	{
+	//		btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
+	//		T_ASSERT (manifold);
 
-			// Only call to listeners when a new manifold has been created.
-			if (!manifold->m_fresh)
-				continue;
+	//		// Only call to listeners when a new manifold has been created.
+	//		if (!manifold->m_fresh)
+	//			continue;
 
-			const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
-			const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
+	//		const btRigidBody* body0 = reinterpret_cast< const btRigidBody* >(manifold->getBody0());
+	//		const btRigidBody* body1 = reinterpret_cast< const btRigidBody* >(manifold->getBody1());
 
-			BodyBullet* wrapperBody0 = body0 ? static_cast< BodyBullet* >(body0->getUserPointer()) : 0;
-			BodyBullet* wrapperBody1 = body1 ? static_cast< BodyBullet* >(body1->getUserPointer()) : 0;
+	//		BodyBullet* wrapperBody0 = body0 ? static_cast< BodyBullet* >(body0->getUserPointer()) : 0;
+	//		BodyBullet* wrapperBody1 = body1 ? static_cast< BodyBullet* >(body1->getUserPointer()) : 0;
 
-			// Don't issue collision events between joined bodies.
-			if (wrapperBody0 && wrapperBody1)
-			{
-				bool jointConnected = false;
+	//		// Don't issue collision events between joined bodies.
+	//		if (wrapperBody0 && wrapperBody1)
+	//		{
+	//			bool jointConnected = false;
 
-				// Skip bodies which are directly connected through a joint.
-				const std::vector< Joint* >& joints = wrapperBody0->getJoints();
-				for (std::vector< Joint* >::const_iterator i = joints.begin(); i != joints.end(); ++i)
-				{
-					if ((*i)->getBody1() == wrapperBody1 || (*i)->getBody2() == wrapperBody1)
-					{
-						jointConnected = true;
-						break;
-					}
-				}
+	//			// Skip bodies which are directly connected through a joint.
+	//			const std::vector< Joint* >& joints = wrapperBody0->getJoints();
+	//			for (std::vector< Joint* >::const_iterator i = joints.begin(); i != joints.end(); ++i)
+	//			{
+	//				if ((*i)->getBody1() == wrapperBody1 || (*i)->getBody2() == wrapperBody1)
+	//				{
+	//					jointConnected = true;
+	//					break;
+	//				}
+	//			}
 
-				if (jointConnected)
-					continue;
-			}
+	//			if (jointConnected)
+	//				continue;
+	//		}
 
-			info.body1 = wrapperBody0;
-			info.body2 = wrapperBody1;
-			info.contacts.resize(0);
+	//		info.body1 = wrapperBody0;
+	//		info.body2 = wrapperBody1;
+	//		info.contacts.resize(0);
 
-			int32_t contacts = manifold->getNumContacts();
-			info.contacts.reserve(contacts);
+	//		int32_t contacts = manifold->getNumContacts();
+	//		info.contacts.reserve(contacts);
 
-			for (int32_t j = 0; j < contacts; ++j)
-			{
-				const btManifoldPoint& pt = manifold->getContactPoint(j);
-				if (pt.getDistance() < 0.0f)
-				{
-					CollisionContact cc;
-					cc.depth = -pt.getDistance();
-					cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
-					cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
-					info.contacts.push_back(cc);
-				}
-			}
-			if (info.contacts.empty())
-				continue;
+	//		for (int32_t j = 0; j < contacts; ++j)
+	//		{
+	//			const btManifoldPoint& pt = manifold->getContactPoint(j);
+	//			if (pt.getDistance() < 0.0f)
+	//			{
+	//				CollisionContact cc;
+	//				cc.depth = -pt.getDistance();
+	//				cc.normal = fromBtVector3(pt.m_normalWorldOnB, 0.0f);
+	//				cc.position = fromBtVector3(pt.m_positionWorldOnA, 1.0f);
+	//				info.contacts.push_back(cc);
+	//			}
+	//		}
+	//		if (info.contacts.empty())
+	//			continue;
 
-			notifyCollisionListeners(info);
-			manifold->m_fresh = false;
-		}
-	}
+	//		notifyCollisionListeners(info);
+	//		manifold->m_fresh = false;
+	//	}
+	//}
 }
 
 uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const

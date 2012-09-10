@@ -635,8 +635,28 @@ bool emitMixIn(HlslContext& cx, MixIn* node)
 	HlslVariable* y = cx.emitInput(node, L"Y");
 	HlslVariable* z = cx.emitInput(node, L"Z");
 	HlslVariable* w = cx.emitInput(node, L"W");
-	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
-	assign(f, out) << L"float4(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L", " << (z ? z->getName() : L"0.0f") << L", " << (w ? w->getName() : L"0.0f") << L");" << Endl;
+
+	if (!y && !z && !w)
+	{
+		HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
+		assign(f, out) << L"float(" << (x ? x->getName() : L"0.0f") << L");" << Endl;
+	}
+	else if (!z && !w)
+	{
+		HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
+		assign(f, out) << L"float2(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L");" << Endl;
+	}
+	else if (!w)
+	{
+		HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat3);
+		assign(f, out) << L"float3(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L", " << (z ? z->getName() : L"0.0f") << L");" << Endl;
+	}
+	else
+	{
+		HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
+		assign(f, out) << L"float4(" << (x ? x->getName() : L"0.0f") << L", " << (y ? y->getName() : L"0.0f") << L", " << (z ? z->getName() : L"0.0f") << L", " << (w ? w->getName() : L"0.0f") << L");" << Endl;
+	}
+
 	return true;
 }
 

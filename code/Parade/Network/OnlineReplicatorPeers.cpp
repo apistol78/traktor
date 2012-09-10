@@ -65,17 +65,20 @@ bool OnlineReplicatorPeers::receiveAnyPending()
 	return m_sessionManager->haveP2PData();
 }
 
-bool OnlineReplicatorPeers::receive(void* data, uint32_t size, handle_t& outFromHandle)
+int32_t OnlineReplicatorPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
 	Ref< online::IUser > fromUser;
-	if (!m_sessionManager->receiveP2PData(data, size, fromUser))
-		return false;
+	int32_t nrecv;
+	
+	nrecv = m_sessionManager->receiveP2PData(data, size, fromUser);
+	if (!nrecv)
+		return -1;
 
 	if (!fromUser)
-		return false;
+		return -1;
 
 	outFromHandle = handle_t(fromUser->getTag());
-	return true;
+	return nrecv;
 }
 
 bool OnlineReplicatorPeers::sendReady(handle_t handle)
@@ -83,7 +86,7 @@ bool OnlineReplicatorPeers::sendReady(handle_t handle)
 	return true;
 }
 
-bool OnlineReplicatorPeers::send(handle_t handle, const void* data, uint32_t size, bool reliable)
+bool OnlineReplicatorPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
 	T_ASSERT (size < 1200);
 

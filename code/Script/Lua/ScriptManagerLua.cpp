@@ -20,6 +20,8 @@ namespace traktor
 		namespace
 		{
 
+//#define T_SCRIPT_PROFILE_CALLS
+
 const int32_t c_tableKey_class = -1;
 
 class TableContainerLua : public Object
@@ -488,8 +490,6 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 
 int ScriptManagerLua::classCallMethod(lua_State* luaState)
 {
-	Any argv[8];
-
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
 	T_ASSERT (manager);
 
@@ -516,6 +516,7 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 		return 0;
 	}
 
+	Any argv[10];
 	for (int32_t i = 2; i <= top; ++i)
 		argv[i - 2] = manager->toAny(i);
 
@@ -523,7 +524,19 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 	param.context = manager->m_currentContext;
 	param.object = object;
 
+#if defined(T_SCRIPT_PROFILE_CALLS)
+	Timer timer;
+	timer.start();
+#endif
+
 	Any returnValue = scriptClass->invoke(param, methodId, top - 1, argv);
+
+#if defined(T_SCRIPT_PROFILE_CALLS)
+	double call = timer.getElapsedTime();
+	if (call > 1.0f / 1000.0)
+		log::debug << L"PROFILE: \"" << scriptClass->getExportType().getName() << L"::" << scriptClass->getMethodName(methodId) << L" took " << float(call * 1000.0) << L" ms" << Endl;
+#endif
+
 	manager->pushAny(returnValue);
 
 	return 1;
@@ -557,7 +570,19 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	param.context = manager->m_currentContext;
 	param.object = object;
 
+#if defined(T_SCRIPT_PROFILE_CALLS)
+	Timer timer;
+	timer.start();
+#endif
+
 	Any returnValue = scriptClass->invokeUnknown(param, mbstows(methodName), top - 1, argv);
+
+#if defined(T_SCRIPT_PROFILE_CALLS)
+	double call = timer.getElapsedTime();
+	if (call > 1.0f / 1000.0)
+		log::debug << L"PROFILE: Unknown \"" << scriptClass->getExportType().getName() << L"::" << mbstows(methodName) << L" took " << float(call * 1000.0) << L" ms" << Endl;
+#endif
+
 	manager->pushAny(returnValue);
 
 	return 1;

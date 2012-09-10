@@ -40,7 +40,16 @@ PinType MixNodeTraits::getOutputPinType(
 ) const
 {
 	if (is_a< MixIn >(node))
-		return PntScalar4;
+	{
+		if (inputPinTypes[1] == PntVoid && inputPinTypes[2] == PntVoid && inputPinTypes[3] == PntVoid)
+			return PntScalar1;
+		else if (inputPinTypes[2] == PntVoid && inputPinTypes[3] == PntVoid)
+			return PntScalar2;
+		else if (inputPinTypes[3] == PntVoid)
+			return PntScalar3;
+		else
+			return PntScalar4;
+	}
 	else if (is_a< MixOut >(node))
 		return PntScalar1;
 	else

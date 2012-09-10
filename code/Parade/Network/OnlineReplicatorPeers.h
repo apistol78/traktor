@@ -38,11 +38,11 @@ public:
 
 	virtual bool receiveAnyPending();
 
-	virtual bool receive(void* data, uint32_t size, handle_t& outFromHandle);
+	virtual int32_t receive(void* data, int32_t size, handle_t& outFromHandle);
 
 	virtual bool sendReady(handle_t handle);
 
-	virtual bool send(handle_t handle, const void* data, uint32_t size, bool reliable);
+	virtual bool send(handle_t handle, const void* data, int32_t size, bool reliable);
 
 	virtual bool isPrimary() const;
 

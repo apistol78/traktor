@@ -589,7 +589,7 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 		)
 		{
 			const TypeInfo* type = m_types[typeId - 1];
-			T_ASSERT (type);
+			T_FATAL_ASSERT (type);
 
 			if (!(object = checked_type_cast< ISerializable* >(type->createInstance())))
 				return false;
@@ -606,7 +606,7 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 				return false;
 
 			const TypeInfo* type = TypeInfo::find(typeName);
-			T_ASSERT (type);
+			T_FATAL_ASSERT (type);
 
 			if (!(object = checked_type_cast< ISerializable* >(type->createInstance())))
 				return false;
@@ -664,11 +664,12 @@ bool CompactSerializer::operator >> (const MemberArray& m)
 {
 	if (m_direction == SdRead)
 	{
-		uint16_t size;
-		read_uint16(m_reader, size);
+		uint8_t size;
+		if (!read_uint8(m_reader, size))
+			return false;
 
 		m.reserve(size, size);
-		for (uint16_t i = 0; i < size; ++i)
+		for (uint8_t i = 0; i < size; ++i)
 		{
 			if (!m.read(*this))
 				return false;
@@ -676,8 +677,10 @@ bool CompactSerializer::operator >> (const MemberArray& m)
 	}
 	else
 	{
-		uint16_t size = uint16_t(m.size());
-		write_uint16(m_writer, size);
+		T_FATAL_ASSERT (m.size() < 255);
+
+		uint8_t size = uint8_t(m.size());
+		write_uint8(m_writer, size);
 
 		for (uint32_t i = 0; i < size; ++i)
 		{
