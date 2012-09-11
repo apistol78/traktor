@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Thread/Acquire.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
@@ -52,14 +53,22 @@ bool FlashEditInstance::parseText(const std::wstring& text)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_text.clear();
-	m_text.push_back(text);
+
+	if (m_edit->multiLine())
+	{
+		StringSplit< std::wstring > ss(text, L"\n");
+		for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+			m_text.push_back(*i);
+	}
+	else
+		m_text.push_back(text);
+
 	return true;
 }
 
 bool FlashEditInstance::parseHtml(const std::wstring& html)
 {
 	html::Document document(false);
-
 	if (!document.loadFromText(html))
 		return false;
 
@@ -67,13 +76,26 @@ bool FlashEditInstance::parseHtml(const std::wstring& html)
 
 	m_text.clear();
 
-	const html::Element* element = document.getDocumentElement();
-	for (element = element->getFirstElementChild().ptr(); element; element = element->getNextElementSibling())
+	if (m_edit->multiLine())
+	{
+		const html::Element* element = document.getDocumentElement();
+		for (element = element->getFirstElementChild().ptr(); element; element = element->getNextElementSibling())
+		{
+			StringOutputStream ss;
+			concateHtmlText(element, ss);
+			if (!ss.empty())
+				m_text.push_back(ss.str());
+		}
+	}
+	else
 	{
 		StringOutputStream ss;
-		concateHtmlText(element, ss);
-		if (!ss.empty())
-			m_text.push_back(ss.str());
+
+		const html::Element* element = document.getDocumentElement();
+		for (element = element->getFirstElementChild().ptr(); element; element = element->getNextElementSibling())
+			concateHtmlText(element, ss);
+
+		m_text.push_back(ss.str());
 	}
 
 	return true;

@@ -106,6 +106,10 @@ public:
 
 	bool getScreenPosition(const Vector4& viewPosition, Vector2& outScreenPosition) const;
 
+	void setFieldOfView(float fieldOfView);
+
+	float getFieldOfView() const;
+
 private:
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< scene::Scene > m_scene;
@@ -117,6 +121,7 @@ private:
 	Ref< world::GroupEntity > m_renderGroup;
 	Ref< world::GroupEntity > m_dynamicEntities;
 	float m_deltaTime;
+	float m_fieldOfView;
 	bool m_controllerEnable;
 
 	void createWorldRenderer();
