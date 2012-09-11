@@ -19,6 +19,7 @@ FlashEdit::FlashEdit()
 ,	m_leftMargin(0)
 ,	m_rightMargin(0)
 ,	m_wordWrap(false)
+,	m_multiLine(false)
 ,	m_renderHtml(false)
 {
 }
@@ -34,6 +35,7 @@ FlashEdit::FlashEdit(
 	uint16_t leftMargin,
 	uint16_t rightMargin,
 	bool wordWrap,
+	bool multiLine,
 	bool renderHtml
 )
 :	FlashCharacter(id)
@@ -46,6 +48,7 @@ FlashEdit::FlashEdit(
 ,	m_leftMargin(leftMargin)
 ,	m_rightMargin(rightMargin)
 ,	m_wordWrap(wordWrap)
+,	m_multiLine(multiLine)
 ,	m_renderHtml(renderHtml)
 {
 }
@@ -100,6 +103,11 @@ bool FlashEdit::wordWrap() const
 	return m_wordWrap;
 }
 
+bool FlashEdit::multiLine() const
+{
+	return m_multiLine;
+}
+
 bool FlashEdit::renderHtml() const
 {
 	return m_renderHtml;
@@ -128,6 +136,7 @@ bool FlashEdit::serialize(ISerializer& s)
 	s >> Member< uint16_t >(L"leftMargin", m_leftMargin);
 	s >> Member< uint16_t >(L"rightMargin", m_rightMargin);
 	s >> Member< bool >(L"wordWrap", m_wordWrap);
+	s >> Member< bool >(L"multiLine", m_multiLine);
 	s >> Member< bool >(L"renderHtml", m_renderHtml);
 
 	return true;

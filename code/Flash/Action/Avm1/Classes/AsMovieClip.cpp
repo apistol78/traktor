@@ -424,6 +424,7 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 		0,
 		0,
 		false,
+		false,
 		false
 	);
 

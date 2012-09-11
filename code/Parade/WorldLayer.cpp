@@ -38,8 +38,11 @@ WorldLayer::WorldLayer(
 ,	m_entities(entities)
 ,	m_dynamicEntities(new world::GroupEntity())
 ,	m_deltaTime(0.0f)
+,	m_fieldOfView(70.0f)
 ,	m_controllerEnable(true)
 {
+	// Get initial field of view.
+	m_fieldOfView = m_environment->getSettings()->getProperty< PropertyFloat >(L"World.FieldOfView", 70.0f);
 }
 
 void WorldLayer::prepare(Stage* stage)
@@ -298,6 +301,36 @@ bool WorldLayer::getScreenPosition(const Vector4& viewPosition, Vector2& outScre
 	return true;
 }
 
+void WorldLayer::setFieldOfView(float fieldOfView)
+{
+	if (fieldOfView != m_fieldOfView)
+	{
+		render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+		T_ASSERT (renderView);
+
+		// Get render view dimensions.
+		int32_t width = renderView->getWidth();
+		int32_t height = renderView->getHeight();
+
+		// Create world view.
+		world::WorldViewPerspective worldViewPort;
+		worldViewPort.width = width;
+		worldViewPort.height = height;
+		worldViewPort.aspect = m_environment->getRender()->getAspectRatio();
+		worldViewPort.fov = deg2rad(fieldOfView);
+		m_worldRenderer->createRenderView(worldViewPort, m_worldRenderView);
+
+		// Save field of view value as we must be able to re-create
+		// world view if view port dimensions change.
+		m_fieldOfView = fieldOfView;
+	}
+}
+
+float WorldLayer::getFieldOfView() const
+{
+	return m_fieldOfView;
+}
+
 void WorldLayer::createWorldRenderer()
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -323,7 +356,7 @@ void WorldLayer::createWorldRenderer()
 	worldViewPort.width = width;
 	worldViewPort.height = height;
 	worldViewPort.aspect = m_environment->getRender()->getAspectRatio();
-	worldViewPort.fov = deg2rad(m_environment->getSettings()->getProperty< PropertyFloat >(L"World.FieldOfView", 70.0f));
+	worldViewPort.fov = deg2rad(m_fieldOfView);
 	m_worldRenderer->createRenderView(worldViewPort, m_worldRenderView);
 
 	// Create post frame process.

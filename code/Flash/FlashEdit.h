@@ -46,6 +46,7 @@ public:
 		uint16_t leftMargin,
 		uint16_t rightMargin,
 		bool wordWrap,
+		bool multiLine,
 		bool renderHtml
 	);
 
@@ -105,6 +106,12 @@ public:
 	 */
 	bool wordWrap() const;
 
+	/*! \brief Multiline text field.
+	 *
+	 * \return True if multiline.
+	 */
+	bool multiLine() const;
+
 	/*! \brief Render HTML content.
 	 *
 	 * \return True if text is HTML.
@@ -123,6 +130,7 @@ private:
 	uint16_t m_leftMargin;
 	uint16_t m_rightMargin;
 	bool m_wordWrap;
+	bool m_multiLine;
 	bool m_renderHtml;
 };
 

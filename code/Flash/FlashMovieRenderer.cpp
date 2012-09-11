@@ -307,6 +307,9 @@ void FlashMovieRenderer::renderCharacter(
 			}
 
 			// Pack as many words as fits in bounds (only if word wrap enabled); then render each line.
+			if (words.empty())
+				offsetY += fontHeight;
+
 			uint32_t wordOffsetStart = 0;
 			uint32_t wordOffsetEnd = 0;
 
