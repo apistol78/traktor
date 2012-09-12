@@ -60,7 +60,7 @@ void MeshEntityRenderer::render(
 		worldRenderView.getCullFrustum(),
 		worldRenderView.getView() * transform.toMatrix44(),
 		worldRenderView.getProjection(),
-		1e-4f,
+		0.0002f,
 		distance
 	))
 		return;

@@ -19,6 +19,11 @@ T_MATH_INLINE Color4f::Color4f(float red, float green, float blue, float alpha)
 {
 }
 
+T_MATH_INLINE Color4f::Color4f(const float* data)
+:	m_data(data)
+{
+}
+
 T_MATH_INLINE Color4f::Color4f(const Vector4& data)
 :	m_data(data)
 {

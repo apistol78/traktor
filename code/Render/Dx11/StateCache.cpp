@@ -18,6 +18,17 @@ StateCache::StateCache(ID3D11DeviceContext* d3dDeviceContext)
 {
 }
 
+void StateCache::reset()
+{
+	m_d3dRasterizerState = 0;
+	m_d3dDepthStencilState = 0;
+	m_d3dBlendState = 0;
+	m_d3dVertexShader = 0;
+	m_d3dPixelShader = 0;
+	m_stencilReference = 0;
+	m_d3dTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
+}
+
 void StateCache::setRasterizerState(ID3D11RasterizerState* d3dRasterizerState)
 {
 	if (d3dRasterizerState != m_d3dRasterizerState)

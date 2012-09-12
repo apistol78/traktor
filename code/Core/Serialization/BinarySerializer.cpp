@@ -486,6 +486,25 @@ bool BinarySerializer::operator >> (const Member< Color4ub >& m)
 	return result;
 }
 
+bool BinarySerializer::operator >> (const Member< Color4f >& m)
+{
+	float T_MATH_ALIGN16 e[4];
+	bool result;
+
+	if (m_direction == SdRead)
+	{
+		result = read_primitives< float >(m_stream, e, 4);
+		(*m) = Color4f::loadUnaligned(e);
+	}
+	else
+	{
+		(*m).storeUnaligned(e);
+		result = write_primitives< float >(m_stream, e, 4);
+	}
+
+	return result;
+}
+
 bool BinarySerializer::operator >> (const Member< Scalar >& m)
 {
 	Scalar& v = m;

@@ -99,6 +99,11 @@ bool ReflectionInspectSerializer::operator >> (const Member< Color4ub >& m)
 	return addMember(new RfmPrimitive< Color4ub >(m.getName(), m));
 }
 
+bool ReflectionInspectSerializer::operator >> (const Member< Color4f >& m)
+{
+	return addMember(new RfmPrimitive< Color4f >(m.getName(), m));
+}
+
 bool ReflectionInspectSerializer::operator >> (const Member< Scalar >& m)
 {
 	return addMember(new RfmPrimitive< Scalar >(m.getName(), m));

@@ -63,6 +63,8 @@ public:
 
 	virtual bool operator >> (const Member< Color4ub >& m);
 
+	virtual bool operator >> (const Member< Color4f >& m);
+
 	virtual bool operator >> (const Member< Scalar >& m);
 
 	virtual bool operator >> (const Member< Vector2 >& m);

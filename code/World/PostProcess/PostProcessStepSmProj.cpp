@@ -139,8 +139,8 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	const RenderParams& params
 )
 {
-	Ref< render::RenderTargetSet > sourceShMap = postProcess->getTargetRef(m_handleInputColor);
-	Ref< render::RenderTargetSet > sourceDepth = postProcess->getTargetRef(m_handleInputDepth);
+	render::RenderTargetSet* sourceShMap = postProcess->getTarget(m_handleInputColor);
+	render::RenderTargetSet* sourceDepth = postProcess->getTarget(m_handleInputDepth);
 	if (!sourceShMap || !sourceDepth)
 		return;
 

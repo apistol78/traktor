@@ -226,12 +226,34 @@ void ScriptEditor::eventDependencyToolClick(ui::Event* event)
 	}
 	else if (cmd == L"Script.Editor.RemoveDependency")
 	{
-		int selectedIndex = m_dependencyList->getSelected();
+		int32_t selectedIndex = m_dependencyList->getSelected();
 		if (selectedIndex >= 0)
 		{
 			std::vector< Guid >& dependencies = m_script->getDependencies();
 			dependencies.erase(dependencies.begin() + selectedIndex);
 			updateDependencyList();
+		}
+	}
+	else if (cmd == L"Script.Editor.MoveDependencyUp")
+	{
+		int32_t selectedIndex = m_dependencyList->getSelected();
+		if (selectedIndex > 0)
+		{
+			std::vector< Guid >& dependencies = m_script->getDependencies();
+			std::swap(dependencies[selectedIndex - 1], dependencies[selectedIndex]);
+			updateDependencyList();
+			m_dependencyList->select(selectedIndex - 1);
+		}
+	}
+	else if (cmd == L"Script.Editor.MoveDependencyDown")
+	{
+		int32_t selectedIndex = m_dependencyList->getSelected();
+		if (selectedIndex < m_dependencyList->count() -1 )
+		{
+			std::vector< Guid >& dependencies = m_script->getDependencies();
+			std::swap(dependencies[selectedIndex + 1], dependencies[selectedIndex]);
+			updateDependencyList();
+			m_dependencyList->select(selectedIndex + 1);
 		}
 	}
 }

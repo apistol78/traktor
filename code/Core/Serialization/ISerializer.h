@@ -3,6 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Io/Path.h"
+#include "Core/Math/Color4f.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
@@ -76,6 +77,8 @@ public:
 	virtual bool operator >> (const Member< Path >& m) = 0;
 
 	virtual bool operator >> (const Member< Color4ub >& m) = 0;
+
+	virtual bool operator >> (const Member< Color4f >& m) = 0;
 
 	virtual bool operator >> (const Member< Scalar >& m) = 0;
 
