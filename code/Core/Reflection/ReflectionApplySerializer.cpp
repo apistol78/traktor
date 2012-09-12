@@ -200,6 +200,18 @@ bool ReflectionApplySerializer::operator >> (const Member< Path >& m)
 		return false;
 }
 
+bool ReflectionApplySerializer::operator >> (const Member< Color4f >& m)
+{
+	Ref< const RfmPrimitive< Color4f > > member = dynamic_type_cast< const RfmPrimitive< Color4f >* >(getNextMember());
+	if (member)
+	{
+		m = member->get();
+		return true;
+	}
+	else
+		return false;
+}
+
 bool ReflectionApplySerializer::operator >> (const Member< Color4ub >& m)
 {
 	Ref< const RfmPrimitive< Color4ub > > member = dynamic_type_cast< const RfmPrimitive< Color4ub >* >(getNextMember());

@@ -461,6 +461,27 @@ bool CompactSerializer::operator >> (const Member< Color4ub >& m)
 	return result;
 }
 
+bool CompactSerializer::operator >> (const Member< Color4f >& m)
+{
+	float T_MATH_ALIGN16 e[4];
+	bool result = true;
+
+	if (m_direction == SdRead)
+	{
+		for (uint32_t i = 0; i < 4; ++i)
+			result &= read_float(m_reader, e[i]);
+		(*m) = Color4f::loadUnaligned(e);
+	}
+	else
+	{
+		(*m).storeUnaligned(e);
+		for (uint32_t i = 0; i < 4; ++i)
+			result &= write_float(m_writer, e[i]);
+	}
+
+	return result;
+}
+
 bool CompactSerializer::operator >> (const Member< Scalar >& m)
 {
 	Scalar& v = m;
@@ -504,11 +525,11 @@ bool CompactSerializer::operator >> (const Member< Vector4 >& m)
 	{
 		for (uint32_t i = 0; i < 4; ++i)
 			result &= read_float(m_reader, e[i]);
-		(*m) = Vector4::loadAligned(e);
+		(*m) = Vector4::loadUnaligned(e);
 	}
 	else
 	{
-		(*m).storeAligned(e);
+		(*m).storeUnaligned(e);
 		for (uint32_t i = 0; i < 4; ++i)
 			result &= write_float(m_writer, e[i]);
 	}
@@ -541,11 +562,11 @@ bool CompactSerializer::operator >> (const Member< Matrix44 >& m)
 	{
 		for (uint32_t i = 0; i < 4 * 4; ++i)
 			result &= read_float(m_reader, e[i]);
-		(*m) = Matrix44::loadAligned(e);
+		(*m) = Matrix44::loadUnaligned(e);
 	}
 	else
 	{
-		(*m).storeAligned(e);
+		(*m).storeUnaligned(e);
 		for (uint32_t i = 0; i < 4 * 4; ++i)
 			result &= write_float(m_writer, e[i]);
 	}
@@ -562,11 +583,11 @@ bool CompactSerializer::operator >> (const Member< Quaternion >& m)
 	{
 		for (uint32_t i = 0; i < 4; ++i)
 			result &= read_float(m_reader, e[i]);
-		m->e = Vector4::loadAligned(e);
+		m->e = Vector4::loadUnaligned(e);
 	}
 	else
 	{
-		m->e.storeAligned(e);
+		m->e.storeUnaligned(e);
 		for (uint32_t i = 0; i < 4; ++i)
 			result &= write_float(m_writer, e[i]);
 	}

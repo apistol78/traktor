@@ -1,7 +1,7 @@
-#include "World/PostProcess/PostProcessStepSwapTargets.h"
-#include "World/PostProcess/PostProcess.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessStepSwapTargets.h"
 
 namespace traktor
 {
@@ -49,10 +49,7 @@ void PostProcessStepSwapTargets::InstanceSwapTargets::render(
 	const RenderParams& params
 )
 {
-	std::swap(
-		postProcess->getTargetRef(m_destination),
-		postProcess->getTargetRef(m_source)
-	);
+	postProcess->swapTargets(m_destination, m_source);
 }
 
 	}

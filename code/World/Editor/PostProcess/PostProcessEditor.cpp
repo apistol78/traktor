@@ -107,7 +107,7 @@ void PostProcessEditor::apply()
 
 ui::Size PostProcessEditor::getPreferredSize() const
 {
-	return ui::Size(500, 400);
+	return ui::Size(900, 600);
 }
 
 void PostProcessEditor::updateStepView(PostProcessStepItem* parent, const RefArray< PostProcessStep >& steps)

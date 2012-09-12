@@ -81,16 +81,16 @@ void PostProcess::destroy()
 
 	m_instances.resize(0);
 
-	for (SmallMap< render::handle_t, Ref< render::RenderTargetSet > >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
 	{
 		if (
-			i->second &&
+			i->second.target &&
 			i->first != s_handleOutput &&
 			i->first != s_handleInputColor &&
 			i->first != s_handleInputDepth &&
 			i->first != s_handleInputShadowMask
 		)
-			i->second->destroy();
+			i->second.target->destroy();
 	}
 	m_targets.clear();
 
@@ -111,9 +111,9 @@ bool PostProcess::render(
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	m_targets[s_handleInputColor] = colorBuffer;
-	m_targets[s_handleInputDepth] = depthBuffer;
-	m_targets[s_handleInputShadowMask] = shadowMask;
+	m_targets[s_handleInputColor].target = colorBuffer;
+	m_targets[s_handleInputDepth].target = depthBuffer;
+	m_targets[s_handleInputShadowMask].target = shadowMask;
 	m_currentTarget = 0;
 
 	T_RENDER_PUSH_MARKER(renderView, "PostProcess");
@@ -134,6 +134,19 @@ bool PostProcess::render(
 	return true;
 }
 
+void PostProcess::defineTarget(render::handle_t id, render::RenderTargetSet* target, const Color4f& clearColor)
+{
+	T_ASSERT_M(id != s_handleInputColor, L"Cannot define source color buffer");
+	T_ASSERT_M(id != s_handleInputDepth, L"Cannot define source depth buffer");
+	T_ASSERT_M(id != s_handleInputShadowMask, L"Cannot define source shadow mask");
+
+	Target& t = m_targets[id];
+	t.target = target;
+	t.shouldClear = true;
+
+	clearColor.storeUnaligned(t.clearColor);
+}
+
 void PostProcess::setTarget(render::IRenderView* renderView, render::handle_t id)
 {
 	T_ASSERT_M(id != s_handleInputColor, L"Cannot bind source color buffer as output");
@@ -145,25 +158,32 @@ void PostProcess::setTarget(render::IRenderView* renderView, render::handle_t id
 
 	if (id != s_handleOutput)
 	{
-		m_currentTarget = m_targets[id];
+		Target& t = m_targets[id];
+
+		m_currentTarget = t.target;
 		T_ASSERT (m_currentTarget);
 
-		bool needClear = !m_currentTarget->isContentValid();
 		renderView->begin(m_currentTarget, 0);
 
-		if (needClear)
+		if (t.shouldClear)
 		{
-			const Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
-			renderView->clear(render::CfColor, &c_clearColor, 0.0f, 0);
+			Color4f c(t.clearColor);
+			renderView->clear(render::CfColor, &c, 0.0f, 0);
+			t.shouldClear = false;
 		}
 	}
 	else
 		m_currentTarget = 0;
 }
 
-Ref< render::RenderTargetSet >& PostProcess::getTargetRef(render::handle_t id)
+render::RenderTargetSet* PostProcess::getTarget(render::handle_t id)
 {
-	return m_targets[id];
+	return m_targets[id].target;
+}
+
+void PostProcess::swapTargets(render::handle_t id0, render::handle_t id1)
+{
+	std::swap(m_targets[id0], m_targets[id1]);
 }
 
 void PostProcess::setParameter(render::handle_t handle, bool value)

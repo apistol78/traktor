@@ -171,6 +171,12 @@ bool XmlSerializer::operator >> (const Member< Color4ub >& m)
 	return true;
 }
 
+bool XmlSerializer::operator >> (const Member< Color4f >& m)
+{
+	m_xml << m_indent << L"<" << m.getName() << L">" << m->getRed() << L", " << m->getGreen() << L", " << m->getBlue() << L", " << m->getAlpha() << L"</" << m.getName() << L">" << Endl;
+	return true;
+}
+
 bool XmlSerializer::operator >> (const Member< Scalar >& m)
 {
 	Scalar& v = m;

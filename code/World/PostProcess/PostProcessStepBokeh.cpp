@@ -199,7 +199,7 @@ void PostProcessStepBokeh::InstanceBokeh::render(
 
 	for (std::vector< Source >::const_iterator i = m_sources.begin(); i != m_sources.end(); ++i)
 	{
-		Ref< render::RenderTargetSet > source = postProcess->getTargetRef(i->source);
+		render::RenderTargetSet* source = postProcess->getTarget(i->source);
 		if (source)
 			m_shader->setTextureParameter(i->param, source->getColorTexture(i->index));
 	}

@@ -1,8 +1,9 @@
 #ifndef traktor_world_PostProcessDefineTarget_H
 #define traktor_world_PostProcessDefineTarget_H
 
-#include "World/PostProcess/PostProcessDefine.h"
+#include "Core/Math/Color4f.h"
 #include "Render/Types.h"
+#include "World/PostProcess/PostProcessDefine.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -42,6 +43,7 @@ private:
 	bool m_depthStencil;
 	bool m_preferTiled;
 	int32_t m_multiSample;
+	Color4f m_clearColor;
 };
 
 	}

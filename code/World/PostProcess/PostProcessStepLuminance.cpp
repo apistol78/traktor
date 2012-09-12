@@ -87,7 +87,7 @@ void PostProcessStepLuminance::InstanceLuminance::render(
 	const RenderParams& params
 )
 {
-	Ref< render::RenderTargetSet > source = postProcess->getTargetRef(m_source);
+	render::RenderTargetSet* source = postProcess->getTarget(m_source);
 	if (!source)
 		return;
 

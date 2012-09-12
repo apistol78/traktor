@@ -49,11 +49,7 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 		NULL,
 		D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
-//#if defined(_DEBUG)
-//		D3D11_CREATE_DEVICE_DEBUG,
-//#else
 		0,
-//#endif
 		0,
 		0,
 		D3D11_SDK_VERSION,
@@ -80,6 +76,23 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 		log::error << L"Failed to get IDXGIAdapter1 interface, HRESULT " << int32_t(hr) << Endl;
 		return false;
 	}
+
+	DXGI_ADAPTER_DESC1 dad;
+	hr = dxgiAdapter->GetDesc1(&dad);
+	if (SUCCEEDED(hr))
+	{
+		log::info << L"Using DirectX 11 adapter:" << Endl;
+		log::info << L" . description " << dad.Description << Endl;
+		log::info << L" . vendor id   " << dad.VendorId << Endl;
+		log::info << L" . device id   " << dad.DeviceId << Endl;
+		log::info << L" . subsys id   " << dad.SubSysId << Endl;
+		log::info << L" . revision    " << dad.Revision << Endl;
+		log::info << L" . dedicated video memory  " << uint64_t(dad.DedicatedVideoMemory / (1024*1024)) << L" MiB" << Endl;
+		log::info << L" . dedicated system memory " << uint64_t(dad.DedicatedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+		log::info << L" . shared system memory    " << uint64_t(dad.SharedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+	}
+	else
+		log::warning << L"Unable to get DirectX 11 adapter description, HRESULT " << int32_t(hr) << Endl;
 
 	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void **)&dxgiFactory.getAssign());
 	if (FAILED(hr))

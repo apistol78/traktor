@@ -218,6 +218,26 @@ bool XmlDeserializer::operator >> (const Member< Color4ub >& m)
 	return true;
 }
 
+bool XmlDeserializer::operator >> (const Member< Color4f >& m)
+{
+	std::wstring value;
+	if (!nextElementValue(m.getName(), value))
+		return false;
+
+	m_values.resize(0); m_values.reserve(4);
+	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
+		return false;
+
+	m->set(
+		m_values[0],
+		m_values[1],
+		m_values[2],
+		m_values[3]
+	);
+
+	return true;
+}
+
 bool XmlDeserializer::operator >> (const Member< Scalar >& m)
 {
 	std::wstring value;

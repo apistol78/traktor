@@ -198,7 +198,15 @@ void PointRenderer::render(
 		const Point& point = points[i];
 
 		float distance = cameraPlane.distance(point.position);
+
+		// Skip particles if closer than near cull distance.
 		if (distance < cullNearDistance)
+			continue;
+
+		// Skip particles if further than lod distances.
+		if (distance > 100.0f && (i & 3) > 0)
+			continue;
+		if (distance > 50.0f && (i & 1) > 0)
 			continue;
 
 		// Calculate alpha based on point age and distance from near culling plane.

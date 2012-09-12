@@ -378,6 +378,13 @@ bool InspectReflector::operator >> (const Member< Color4ub >& m)
 	return true;
 }
 
+bool InspectReflector::operator >> (const Member< Color4f >& m)
+{
+	VectorPropertyItem::vector_t value = { m->getRed(), m->getGreen(), m->getBlue(), m->getAlpha() };
+	addPropertyItem(new VectorPropertyItem(stylizeMemberName(m.getName()), value, 4));
+	return true;
+}
+
 bool InspectReflector::operator >> (const Member< Scalar >& m)
 {
 	float min = std::numeric_limits< float >::min();
