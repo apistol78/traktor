@@ -13,6 +13,7 @@ namespace traktor
 
 class ILeaderboardsProvider;
 class TaskQueue;
+class UserCache;
 
 class Leaderboards : public ILeaderboards
 {
@@ -31,16 +32,19 @@ public:
 
 	virtual Ref< Result > addScore(const std::wstring& leaderboardId, int32_t score);
 
+	virtual Ref< ScoreArrayResult > getScores(const std::wstring& leaderboardId, int32_t from, int32_t to);
+
 private:
 	friend class SessionManager;
 
 	Ref< ILeaderboardsProvider > m_provider;
+	Ref< UserCache > m_userCache;
 	Ref< TaskQueue > m_taskQueue;
 	mutable Semaphore m_lock;
 	std::map< std::wstring, ILeaderboardsProvider::LeaderboardData > m_leaderboards;
 	bool m_ready;
 
-	Leaderboards(ILeaderboardsProvider* provider, TaskQueue* taskQueue);
+	Leaderboards(ILeaderboardsProvider* provider, UserCache* userCache, TaskQueue* taskQueue);
 
 	void callbackEnumLeaderboards(const std::map< std::wstring, ILeaderboardsProvider::LeaderboardData >& leaderboards);
 };

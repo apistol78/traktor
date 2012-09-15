@@ -49,7 +49,7 @@ void SprayEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
-	outEntityRenderers.push_back(new spray::EffectEntityRenderer(context->getRenderSystem()));
+	outEntityRenderers.push_back(new spray::EffectEntityRenderer(context->getRenderSystem(), 50.0f, 100.0f));
 }
 
 void SprayEditorProfile::createControllerEditorFactories(

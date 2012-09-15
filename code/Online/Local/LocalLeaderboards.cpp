@@ -45,5 +45,10 @@ bool LocalLeaderboards::set(const uint64_t handle, int32_t score)
 		return false;
 }
 
+bool LocalLeaderboards::getScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+{
+	return false;
+}
+
 	}
 }

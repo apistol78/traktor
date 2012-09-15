@@ -14,7 +14,7 @@ LocalStatistics::LocalStatistics(sql::IConnection* db)
 {
 }
 
-bool LocalStatistics::enumerate(std::map< std::wstring, float >& outStats)
+bool LocalStatistics::enumerate(std::map< std::wstring, int32_t >& outStats)
 {
 	Ref< sql::IResultSet > rs;
 
@@ -26,7 +26,7 @@ bool LocalStatistics::enumerate(std::map< std::wstring, float >& outStats)
 	{
 		outStats.insert(std::make_pair(
 			rs->getString(L"id"),
-			rs->getFloat(L"value")
+			rs->getInt32(L"value")
 		));
 	}
 

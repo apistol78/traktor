@@ -83,7 +83,7 @@ bool SessionManager::create(ISessionManagerProvider* provider, const IGameConfig
 		m_achievements = new Achievements(achievementsProvider, m_taskQueues[0]);
 
 	if (leaderboardsProvider)
-		m_leaderboards = new Leaderboards(leaderboardsProvider, m_taskQueues[0]);
+		m_leaderboards = new Leaderboards(leaderboardsProvider, m_userCache, m_taskQueues[0]);
 
 	if (matchMakingProvider && m_userCache)
 		m_matchMaking = new MatchMaking(matchMakingProvider, m_userCache, m_taskQueues[0]);

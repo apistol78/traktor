@@ -22,7 +22,8 @@ GroupEntity::~GroupEntity()
 
 void GroupEntity::destroy()
 {
-	T_ASSERT (m_remove.empty());
+	T_ASSERT (m_deferred[0].empty());
+	T_ASSERT (m_deferred[1].empty());
 	for (RefArray< Entity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 	{
 		if (*i)
@@ -34,9 +35,13 @@ void GroupEntity::destroy()
 void GroupEntity::addEntity(Entity* entity)
 {
 	T_ASSERT_M (entity, L"Null entity");
-	T_ASSERT_M (!m_update, L"Not allowed to add entity during update");
-	T_ASSERT_M (std::find(m_entities.begin(), m_entities.end(), entity) == m_entities.end(), L"Entity already added");
-	m_entities.push_back(entity);
+	if (m_update)
+	{
+		// Add as deferred add; cannot add while in update loop.
+		m_deferred[0].push_back(entity);
+	}
+	else
+		m_entities.push_back(entity);
 }
 
 void GroupEntity::removeEntity(Entity* entity)
@@ -46,7 +51,7 @@ void GroupEntity::removeEntity(Entity* entity)
 	{
 		// Add as deferred remove; we cannot remove while update
 		// is iterating entity array.
-		m_remove.push_back(entity);
+		m_deferred[1].push_back(entity);
 	}
 	else
 	{
@@ -95,12 +100,20 @@ void GroupEntity::update(const UpdateParams& update)
 		for (RefArray< Entity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 			(*i)->update(update);
 	}
-	// Remove deferred removed entities.
-	if (!m_remove.empty())
+
+	// Add deferred entities.
+	if (!m_deferred[1].empty())
 	{
-		for (RefArray< Entity >::iterator i = m_remove.begin(); i != m_remove.end(); ++i)
+		m_entities.insert(m_entities.end(), m_deferred[0].begin(), m_deferred[0].end());
+		m_deferred[0].resize(0);
+	}
+
+	// Remove deferred entities.
+	if (!m_deferred[1].empty())
+	{
+		for (RefArray< Entity >::iterator i = m_deferred[1].begin(); i != m_deferred[1].end(); ++i)
 			removeEntity(*i);
-		m_remove.resize(0);
+		m_deferred[1].resize(0);
 	}
 }
 

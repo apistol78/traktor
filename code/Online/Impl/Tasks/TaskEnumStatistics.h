@@ -16,7 +16,7 @@ class TaskEnumStatistics : public ITask
 	T_RTTI_CLASS;
 
 public:
-	typedef void (Object::*sink_method_t)(const std::map< std::wstring, float >&);
+	typedef void (Object::*sink_method_t)(const std::map< std::wstring, int32_t >&);
 
 	TaskEnumStatistics(
 		IStatisticsProvider* provider,

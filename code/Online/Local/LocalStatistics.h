@@ -22,7 +22,7 @@ class LocalStatistics : public IStatisticsProvider
 public:
 	LocalStatistics(sql::IConnection* db);
 
-	virtual bool enumerate(std::map< std::wstring, float >& outStats);
+	virtual bool enumerate(std::map< std::wstring, int32_t >& outStats);
 
 	virtual bool set(const std::wstring& statId, int32_t value);
 

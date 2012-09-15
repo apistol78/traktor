@@ -189,15 +189,14 @@ void ClothEntity::render(
 				const Node& node = m_nodes[offset];
 				const Vector4& p = node.position[0];
 
-				Vector4 nx = x > 0 ? m_nodes[offset - 1].position[0] : p - Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-				Vector4 ny = y > 0 ? m_nodes[offset - m_resolutionX].position[0] : p + Vector4(0.0f, -1.0f, 0.0f, 0.0f);
-				Vector4 px = x < (m_resolutionX - 1) ? m_nodes[offset + 1].position[0] : p + Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-				Vector4 py = y < (m_resolutionY - 1) ? m_nodes[offset + m_resolutionX].position[0] : p + Vector4(0.0f, -1.0f, 0.0f, 0.0f);
+				Vector4 nx = x < (m_resolutionX - 1) ? m_nodes[offset + 1].position[0] : p;
+				Vector4 px = x > 0 ? m_nodes[offset - 1].position[0] : p;
 
-				Vector4 nn = cross(p - nx, p - ny);
-				Vector4 pn = cross(px - p, py - p);
-				Vector4 nf = -(nn + pn).normalized();
-				Vector4 nb = nf;
+				Vector4 ny = y < (m_resolutionY - 1) ? m_nodes[offset + m_resolutionX].position[0] : p;
+				Vector4 py = y > 0 ? m_nodes[offset - m_resolutionX].position[0] : p;
+
+				Vector4 nf = cross(ny - py, nx - px).normalized();
+				Vector4 nb = -nf;
 
 				p.storeUnaligned(vertexFront->position);
 				nf.storeUnaligned(vertexFront->normal);

@@ -62,8 +62,10 @@ const int32_t c_fewPointsHole = 40;			//<! Always keep this number of points ava
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
 
-PointRenderer::PointRenderer(render::IRenderSystem* renderSystem)
-:	m_currentBuffer(0)
+PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance)
+:	m_lod1Distance(lod1Distance)
+,	m_lod2Distance(lod2Distance)
+,	m_currentBuffer(0)
 ,	m_vertex(0)
 ,	m_vertexOffset(0)
 {
@@ -204,9 +206,9 @@ void PointRenderer::render(
 			continue;
 
 		// Skip particles if further than lod distances.
-		if (distance > 100.0f && (i & 3) > 0)
+		if (distance > m_lod2Distance && (i & 3) > 0)
 			continue;
-		if (distance > 50.0f && (i & 1) > 0)
+		if (distance > m_lod1Distance && (i & 1) > 0)
 			continue;
 
 		// Calculate alpha based on point age and distance from near culling plane.

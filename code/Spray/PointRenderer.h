@@ -53,7 +53,7 @@ class T_DLLCLASS PointRenderer : public Object
 	T_RTTI_CLASS;
 
 public:
-	PointRenderer(render::IRenderSystem* renderSystem);
+	PointRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance);
 
 	virtual ~PointRenderer();
 
@@ -88,6 +88,8 @@ private:
 
 	Ref< render::VertexBuffer > m_vertexBuffer[BufferCount];
 	Ref< render::IndexBuffer > m_indexBuffer;
+	Scalar m_lod1Distance;
+	Scalar m_lod2Distance;
 	uint32_t m_currentBuffer;
 	Vertex* m_vertex;
 	uint32_t m_vertexOffset;

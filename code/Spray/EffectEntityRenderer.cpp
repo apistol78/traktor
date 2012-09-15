@@ -14,8 +14,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRenderer, world::IEntityRenderer)
 
-EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem)
-:	m_pointRenderer(new PointRenderer(renderSystem))
+EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance)
+:	m_pointRenderer(new PointRenderer(renderSystem, lod1Distance, lod2Distance))
 {
 }
 

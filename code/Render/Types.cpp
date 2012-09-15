@@ -2,6 +2,8 @@
 #include "Core/Containers/SmallMap.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/CriticalSection.h"
 #include "Render/Types.h"
 
 namespace traktor
@@ -21,6 +23,8 @@ public:
 
 	handle_t getHandle(const std::wstring& name)
 	{
+		T_ANONYMOUS_VAR(Acquire< CriticalSection >)(m_lock);
+
 		SmallMap< std::wstring, handle_t >::const_iterator i = m_handles.find(name);
 		if (i != m_handles.end())
 		{
@@ -35,6 +39,7 @@ public:
 	}
 
 private:
+	CriticalSection m_lock;
 	SmallMap< std::wstring, handle_t > m_handles;
 	handle_t m_nextUnusedHandle;
 };

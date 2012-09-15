@@ -22,7 +22,7 @@ class T_DLLCLASS IStatisticsProvider : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual bool enumerate(std::map< std::wstring, float >& outStats) = 0;
+	virtual bool enumerate(std::map< std::wstring, int32_t >& outStats) = 0;
 
 	virtual bool set(const std::wstring& statId, int32_t value) = 0;
 };

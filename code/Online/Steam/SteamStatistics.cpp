@@ -18,7 +18,7 @@ SteamStatistics::SteamStatistics(SteamSessionManager* sessionManager, const std:
 	m_statIds.insert(statIds.begin(), statIds.end());
 }
 
-bool SteamStatistics::enumerate(std::map< std::wstring, float >& outStats)
+bool SteamStatistics::enumerate(std::map< std::wstring, int32_t >& outStats)
 {
 	bool haveStats = m_sessionManager->waitForStats();
 	for (std::set< std::wstring >::const_iterator i = m_statIds.begin(); i != m_statIds.end(); ++i)
