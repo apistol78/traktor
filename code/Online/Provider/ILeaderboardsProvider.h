@@ -31,7 +31,9 @@ public:
 
 	virtual bool enumerate(std::map< std::wstring, LeaderboardData >& outLeaderboards) = 0;
 
-	virtual bool set(const uint64_t handle, int32_t score) = 0;
+	virtual bool set(uint64_t handle, int32_t score) = 0;
+
+	virtual bool getScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores) = 0;
 };
 
 	}

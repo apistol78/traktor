@@ -15,7 +15,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetDx11", RenderTargetSetDx11, RenderTargetSet)
 
 RenderTargetSetDx11::RenderTargetSetDx11(ContextDx11* context)
-:	m_context(context)
+:	RenderTargetSet()
+,	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_usingPrimaryDepthStencil(false)

@@ -107,7 +107,7 @@ bool EffectPreviewControl::create(
 	m_renderContext = new render::RenderContext();
 	m_soundSystem = soundSystem;
 
-	m_pointRenderer = new PointRenderer(renderSystem);
+	m_pointRenderer = new PointRenderer(renderSystem, 50.0f, 100.0f);
 
 	addButtonDownEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonDown));
 	addButtonUpEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonUp));

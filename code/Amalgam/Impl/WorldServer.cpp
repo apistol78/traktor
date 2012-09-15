@@ -9,6 +9,7 @@
 #include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -56,13 +57,16 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 
 	m_entityBuilder = new world::EntityBuilder();
 
+	float sprayLod1Distance = settings->getProperty< PropertyFloat >(L"World.SprayLod1", 40.0f);
+	float sprayLod2Distance = settings->getProperty< PropertyFloat >(L"World.SprayLod2", 90.0f);
+
 	m_entityRenderers = new world::WorldEntityRenderers();
 	m_entityRenderers->add(new world::GroupEntityRenderer());
 	m_entityRenderers->add(new world::LightEntityRenderer());
 	m_entityRenderers->add(new world::TransientEntityRenderer());
 	m_entityRenderers->add(new mesh::MeshEntityRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshEntityRenderer());
-	m_entityRenderers->add(new spray::EffectEntityRenderer(m_renderServer->getRenderSystem()));
+	m_entityRenderers->add(new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance));
 	m_entityRenderers->add(new animation::ClothEntityRenderer());
 	m_entityRenderers->add(new animation::PathEntityRenderer());
 	m_entityRenderers->add(new physics::EntityRenderer());

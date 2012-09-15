@@ -67,7 +67,7 @@ private:
 	Transform m_transform;
 	RefArray< Entity > m_entities;
 	bool m_update;
-	RefArray< Entity > m_remove;
+	RefArray< Entity > m_deferred[2];
 };
 	
 	}

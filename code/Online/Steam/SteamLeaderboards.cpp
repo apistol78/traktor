@@ -107,6 +107,9 @@ SteamLeaderboards::SteamLeaderboards(SteamSessionManager* sessionManager, const 
 :	m_sessionManager(sessionManager)
 ,	m_uploadedScore(false)
 ,	m_uploadedScoreSucceeded(false)
+,	m_downloadedScore(false)
+,	m_downloadedScoreSucceeded(false)
+,	m_outScores(0)
 {
 	m_leaderboardIds.insert(leaderboardIds.begin(), leaderboardIds.end());
 }
@@ -166,7 +169,7 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 	return allSuccessful;
 }
 
-bool SteamLeaderboards::set(const uint64_t handle, int32_t score)
+bool SteamLeaderboards::set(uint64_t handle, int32_t score)
 {
 	if (!handle || !::SteamUser()->BLoggedOn())
 		return false;
@@ -189,12 +192,57 @@ bool SteamLeaderboards::set(const uint64_t handle, int32_t score)
 	return m_uploadedScoreSucceeded;
 }
 
+bool SteamLeaderboards::getScores(uint64_t handle, int32_t from, int32_t to, std::vector< std::pair< uint64_t, int32_t > >& outScores)
+{
+	if (!handle || !::SteamUser()->BLoggedOn())
+		return false;
+
+	SteamAPICall_t call = SteamUserStats()->DownloadLeaderboardEntries(handle, k_ELeaderboardDataRequestGlobal, from + 1, to + 1);
+	if (call == 0)
+		return false;
+
+	m_downloadedScore = false;
+	m_outScores = &outScores;
+	m_callbackLeaderboardDownloaded.Set(call, this, &SteamLeaderboards::OnLeaderboardDownloaded);
+
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!m_downloadedScore)
+	{
+		m_sessionManager->update();
+		if (!m_uploadedScore && currentThread)
+			currentThread->wait(100);
+	}
+
+	return m_downloadedScoreSucceeded;
+}
+
 void SteamLeaderboards::OnLeaderboardUploaded(LeaderboardScoreUploaded_t* pCallback, bool bIOFailure)
 {
 	m_callbackLeaderboardUploaded.Cancel();
 
 	m_uploadedScore = true;
 	m_uploadedScoreSucceeded = (pCallback->m_bSuccess != 0);
+}
+
+void SteamLeaderboards::OnLeaderboardDownloaded(LeaderboardScoresDownloaded_t* pCallback, bool bIOFailure)
+{
+	m_callbackLeaderboardDownloaded.Cancel();
+
+	m_outScores->reserve(pCallback->m_cEntryCount);
+	for (int32_t i = 0; i < pCallback->m_cEntryCount; ++i)
+	{
+		LeaderboardEntry_t entry;
+		if (SteamUserStats()->GetDownloadedLeaderboardEntry(pCallback->m_hSteamLeaderboardEntries, i, &entry, 0, 0))
+		{
+			m_outScores->push_back(std::make_pair(
+				entry.m_steamIDUser.ConvertToUint64(),
+				entry.m_nScore
+			));
+		}
+	}
+
+	m_downloadedScore = true;
+	m_downloadedScoreSucceeded = true;
 }
 
 	}

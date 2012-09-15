@@ -21,12 +21,13 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const float c_maxLatencyCompensate = 2.0f;
-const float c_maxOffsetAdjustError = 1000.0f;
-const float c_maxOffsetAdjust = 25.0f;
+const float c_maxOffsetAdjustError = 4.0f;
+const float c_maxOffsetAdjust = 2.0f;
+const float c_maxStateAge = 2.0f;
 const float c_nearDistance = 28.0f;
-const float c_farDistance = 180.0f;
-const float c_nearTimeUntilTx = 1.0f / 18.0f;
-const float c_farTimeUntilTx = 1.0f / 6.0f;
+const float c_farDistance = 250.0f;
+const float c_nearTimeUntilTx = 1.0f / 20.0f;
+const float c_farTimeUntilTx = 1.0f / 10.0f;
 const float c_timeUntilIAm = 4.0f;
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
@@ -325,9 +326,17 @@ void Replicator::update(float dT)
 					}
 
 					offsetAdjust = min(offsetAdjust, c_maxOffsetAdjust);
-					float latencyAdjust = min(offsetAdjust / 2.0f, c_maxLatencyCompensate);
+					float latencyAdjust = peer.packetCount > 0 ? min(offsetAdjust / 2.0f, c_maxLatencyCompensate) : 0.0f;
 
+					T_REPLICATOR_DEBUG(L"OK: Adjusting time, offset " << int32_t(offsetAdjust * 1000.0f) << L", latency " << int32_t(latencyAdjust * 1000.0f) << L" ms");
 					m_time += offsetAdjust + latencyAdjust;
+				}
+				// Check if message is too old.
+				else if ((m_time - time) > c_maxStateAge)
+				{
+					T_REPLICATOR_DEBUG(L"WARNING: Too old package; package ignored");
+					peer.lastTime = time;
+					continue;
 				}
 
 				MemoryStream s(msg.data, sizeof(msg.data), true, false);

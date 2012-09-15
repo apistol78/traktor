@@ -76,6 +76,9 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 	int32_t imnz = int32_t(mnz);
 	int32_t imxz = int32_t(mxz);
 
+	if (imnx >= imxx || imnz >= imxz)
+		return;
+
 	const int32_t cx = ((imxx - imnx) >> 1) | 1;
 	const int32_t cz = ((imxz - imnz) >> 1) | 1;
 

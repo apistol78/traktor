@@ -9,6 +9,7 @@
 #include "Online/IStatistics.h"
 #include "Online/IUser.h"
 #include "Online/LobbyFilter.h"
+#include "Online/Score.h"
 #include "Parade/Classes/OnlineClasses.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
@@ -201,6 +202,16 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classLobbyArrayResult->addMethod(L"get", &online::LobbyArrayResult::get);
 	scriptManager->registerClass(classLobbyArrayResult);
 
+	Ref< script::AutoScriptClass< online::Score > > classScore = new script::AutoScriptClass< online::Score >();
+	classScore->addMethod(L"getUser", &online::Score::getUser);
+	classScore->addMethod(L"getScore", &online::Score::getScore);
+	scriptManager->registerClass(classScore);
+
+	Ref< script::AutoScriptClass< online::ScoreArrayResult > > classScoreArrayResult = new script::AutoScriptClass< online::ScoreArrayResult >();
+	classScoreArrayResult->addMethod(L"succeed", &online::ScoreArrayResult::succeed);
+	classScoreArrayResult->addMethod(L"get", &online::ScoreArrayResult::get);
+	scriptManager->registerClass(classScoreArrayResult);
+
 	Ref< script::AutoScriptClass< online::UserArrayResult > > classUserArrayResult = new script::AutoScriptClass< online::UserArrayResult >();
 	classUserArrayResult->addMethod(L"succeed", &online::UserArrayResult::succeed);
 	classUserArrayResult->addMethod(L"get", &online::UserArrayResult::get);
@@ -229,6 +240,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILeaderboards->addMethod(L"getScore", &online_ILeaderboards_getScore);
 	classILeaderboards->addMethod(L"setScore", &online::ILeaderboards::setScore);
 	classILeaderboards->addMethod(L"addScore", &online::ILeaderboards::addScore);
+	classILeaderboards->addMethod(L"getScores", &online::ILeaderboards::getScores);
 	scriptManager->registerClass(classILeaderboards);
 
 	Ref< script::AutoScriptClass< online::ILobby > > classILobby = new script::AutoScriptClass< online::ILobby >();

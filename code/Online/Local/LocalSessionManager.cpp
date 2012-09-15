@@ -92,7 +92,7 @@ bool LocalSessionManager::create(const IGameConfiguration* configuration)
 
 	if (!m_db->tableExists(L"Statistics"))
 	{
-		if (m_db->executeUpdate(L"create table Statistics (id varchar(64) primary key, value float)") < 0)
+		if (m_db->executeUpdate(L"create table Statistics (id varchar(64) primary key, value integer)") < 0)
 			return false;
 
 		for (std::list< std::wstring >::const_iterator i = gc->m_statsIds.begin(); i != gc->m_statsIds.end(); ++i)

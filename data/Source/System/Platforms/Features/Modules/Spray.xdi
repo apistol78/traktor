@@ -45,6 +45,18 @@
 					</value>
 				</second>
 			</item>
+			<item>
+				<first>World.SprayLod1</first>
+				<second type="traktor.PropertyFloat">
+					<value>40</value>
+				</second>
+			</item>
+			<item>
+				<first>World.SprayLod2</first>
+				<second type="traktor.PropertyFloat">
+					<value>90</value>
+				</second>
+			</item>
 		</value>
 	</runtimeProperties>
 </object>

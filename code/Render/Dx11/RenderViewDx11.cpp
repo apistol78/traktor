@@ -542,6 +542,8 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
 
 		rts->setContentValid(true);
+
+		m_stateCache.reset();
 	}
 	else if (rt0)
 		return begin(renderTargetSet, 0);
@@ -589,6 +591,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 
 	rts->setContentValid(true);
 
+	m_stateCache.reset();
 	return true;
 }
 
@@ -771,6 +774,8 @@ void RenderViewDx11::end()
 
 		m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
 		m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
+
+		m_stateCache.reset();
 	}
 }
 
@@ -817,10 +822,14 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 		int32_t width = LOWORD(lParam);
 		int32_t height = HIWORD(lParam);
 
-		DXGI_SWAP_CHAIN_DESC dxscd;
-		m_dxgiSwapChain->GetDesc(&dxscd);
+		if (width <= 0 || height <= 0)
+			return false;
 
-		if (width != dxscd.BufferDesc.Width || height != dxscd.BufferDesc.Height)
+		DXGI_SWAP_CHAIN_DESC dxscd;
+		if (m_dxgiSwapChain)
+			m_dxgiSwapChain->GetDesc(&dxscd);
+
+		if (m_dxgiSwapChain == 0 || width != dxscd.BufferDesc.Width || height != dxscd.BufferDesc.Height)
 		{
 			RenderEvent evt;
 			evt.type = ReResize;

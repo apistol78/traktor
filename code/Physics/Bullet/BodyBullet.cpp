@@ -127,6 +127,7 @@ void BodyBullet::reset()
 void BodyBullet::setMass(float mass, const Vector4& inertiaTensor)
 {
 	T_ASSERT (m_body);
+	T_ASSERT (!isNan(mass));
 	m_body->setMassProps(mass, toBtVector3(inertiaTensor));
 }
 

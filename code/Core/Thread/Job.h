@@ -32,6 +32,10 @@ public:
 
 	void stop() { m_stopped = true; }
 
+	void* operator new (size_t size);
+
+	void operator delete (void* ptr);
+
 private:
 	friend class JobQueue;
 
