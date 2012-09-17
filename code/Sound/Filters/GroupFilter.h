@@ -25,6 +25,10 @@ class T_DLLCLASS GroupFilter : public IFilter
 	T_RTTI_CLASS;
 
 public:
+	GroupFilter();
+
+	GroupFilter(IFilter* filter1, IFilter* filter2);
+
 	void addFilter(IFilter* filter);
 
 	virtual Ref< IFilterInstance > createInstance() const;

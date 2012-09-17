@@ -1,10 +1,11 @@
-#include "UnitTest/CaseSound.h"
-#include "Sound/ISoundDriver.h"
-#include "Sound/ISoundBuffer.h"
-#include "Sound/SoundSystem.h"
-#include "Sound/Sound.h"
-#include "Core/Timer/Timer.h"
 #include "Core/Thread/Signal.h"
+#include "Core/Timer/Timer.h"
+#include "Sound/ISoundBuffer.h"
+#include "Sound/ISoundDriver.h"
+#include "Sound/Sound.h"
+#include "Sound/SoundChannel.h"
+#include "Sound/SoundSystem.h"
+#include "UnitTest/CaseSound.h"
 
 namespace traktor
 {
@@ -70,7 +71,7 @@ public:
 		return 0;
 	}
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const
 	{
 		outBlock.samples[0] = m_block;
 		outBlock.samplesCount = sizeof_array(m_block);
@@ -91,7 +92,7 @@ void CaseSound::run()
 	sound::SoundSystem soundSystem(&soundDriver);
 
 	sound::SoundSystemCreateDesc desc;
-	desc.channels = 4;
+	desc.channels = 1;
 	desc.driverDesc.sampleRate = 44100;
 	desc.driverDesc.bitsPerSample = 16;
 	desc.driverDesc.hwChannels = 1;
@@ -103,7 +104,7 @@ void CaseSound::run()
 	sound::Sound sound(&soundBuffer, 1.0f);
 
 	timer.start();
-	soundSystem.play(&sound, 0, false);
+	soundSystem.getChannel(0)->play(&sound, 0);
 
 	signal.wait();
 

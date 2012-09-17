@@ -101,6 +101,10 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 		return true;
 	}
 
+	virtual void setParameter(float parameter)
+	{
+	}
+
 	virtual void reset()
 	{
 		m_position = 0;
@@ -152,7 +156,7 @@ Ref< ISoundBufferCursor > StaticSoundBuffer::createCursor() const
 		return 0;
 }
 
-bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool StaticSoundBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	StaticSoundBufferCursor* ssbc = static_cast< StaticSoundBufferCursor* >(cursor);
 

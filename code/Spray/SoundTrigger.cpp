@@ -8,14 +8,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundTrigger", SoundTrigger, ITrigger)
 
-SoundTrigger::SoundTrigger(const resource::Proxy< sound::Sound >& sound)
+SoundTrigger::SoundTrigger(const resource::Proxy< sound::Sound >& sound, bool follow, bool repeat)
 :	m_sound(sound)
+,	m_follow(follow)
+,	m_repeat(repeat)
 {
 }
 
 Ref< ITriggerInstance > SoundTrigger::createInstance() const
 {
-	return new SoundTriggerInstance(m_sound);
+	return new SoundTriggerInstance(m_sound, m_follow, m_repeat);
 }
 
 	}

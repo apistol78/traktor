@@ -24,7 +24,7 @@ class T_DLLCLASS LowPassFilter : public IFilter
 	T_RTTI_CLASS;
 
 public:
-	LowPassFilter(float cutOff = 0.0f);
+	LowPassFilter(float cutOff = 1e+8f);
 
 	virtual Ref< IFilterInstance > createInstance() const;
 

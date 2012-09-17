@@ -28,8 +28,7 @@ class IResourceManager;
 	namespace sound
 	{
 
-class SurroundEnvironment;
-class SoundSystem;
+class ISoundPlayer;
 
 	}
 
@@ -48,7 +47,7 @@ class T_DLLCLASS EffectEntity : public world::Entity
 	T_RTTI_CLASS;
 
 public:
-	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::SoundSystem* soundSystem, sound::SurroundEnvironment* surroundEnvironment);
+	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::ISoundPlayer* soundPlayer);
 
 	void render(const Plane& cameraPlane, PointRenderer* pointRenderer);
 

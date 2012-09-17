@@ -18,8 +18,8 @@ namespace traktor
 	namespace sound
 	{
 
+class ISoundHandle;
 class Sound;
-class SoundChannel;
 
 	}
 
@@ -53,7 +53,7 @@ public:
 private:
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< sound::Sound > m_sound;
-	Ref< sound::SoundChannel > m_soundChannel;
+	Ref< sound::ISoundHandle > m_handle;
 };
 
 	}

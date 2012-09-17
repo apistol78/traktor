@@ -18,6 +18,12 @@ struct RandomGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Ref< IGrain > m_grain;
 	Ref< ISoundBufferCursor > m_grainCursor;
 
+	virtual void setParameter(float parameter)
+	{
+		if (m_grainCursor)
+			m_grainCursor->setParameter(parameter);
+	}
+
 	virtual void reset()
 	{
 		if (m_grainCursor)
@@ -67,17 +73,12 @@ void RandomGrain::updateCursor(ISoundBufferCursor* cursor) const
 	return randomCursor->m_grain->updateCursor(randomCursor->m_grainCursor);
 }
 
-const IGrain* RandomGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
-{
-	RandomGrainCursor* randomCursor = static_cast< RandomGrainCursor* >(cursor);
-	return randomCursor->m_grain->getCurrentGrain(randomCursor->m_grainCursor);
-}
-
-bool RandomGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool RandomGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	RandomGrainCursor* randomCursor = static_cast< RandomGrainCursor* >(cursor);
 	return randomCursor->m_grain->getBlock(
 		randomCursor->m_grainCursor,
+		mixer,
 		outBlock
 	);
 }

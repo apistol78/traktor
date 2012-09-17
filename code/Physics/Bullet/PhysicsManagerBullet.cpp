@@ -932,6 +932,8 @@ void PhysicsManagerBullet::update()
 
 uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	int manifoldCount = m_dispatcher->getNumManifolds();
 
 	outCollidingPairs.reserve(manifoldCount);
@@ -982,6 +984,8 @@ bool PhysicsManagerBullet::queryRay(
 	QueryResult& outResult
 ) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	btVector3 from = toBtVector3(at);
 	btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
 
@@ -1019,8 +1023,9 @@ bool PhysicsManagerBullet::queryRay(
 
 uint32_t PhysicsManagerBullet::querySphere(const Vector4& at, float radius, uint32_t queryTypes, RefArray< Body >& outBodies) const
 {
-	outBodies.resize(0);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	outBodies.resize(0);
 	for (RefArray< BodyBullet >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 	{
 		if ((queryTypes & QtStatic) == 0 && (*i)->isStatic())
@@ -1054,6 +1059,8 @@ bool PhysicsManagerBullet::querySweep(
 	QueryResult& outResult
 ) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	btSphereShape sphereShape(radius);
 	btTransform from, to;
 
@@ -1096,6 +1103,8 @@ bool PhysicsManagerBullet::querySweep(
 	QueryResult& outResult
 ) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
 	btCollisionShape* shape = rigidBody->getCollisionShape();
 
@@ -1151,6 +1160,7 @@ bool PhysicsManagerBullet::querySweep(
 
 void PhysicsManagerBullet::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	const btCollisionObjectArray& collisionObjects = m_dynamicsWorld->getCollisionObjectArray();
 	for (int i = 0; i < collisionObjects.size(); ++i)
 	{

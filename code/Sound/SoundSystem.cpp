@@ -160,86 +160,10 @@ void SoundSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCou
 
 Ref< SoundChannel > SoundSystem::getChannel(uint32_t channelId)
 {
-	T_ASSERT (channelId < m_channels.size());
-	return m_channels[channelId];
-}
-
-Ref< SoundChannel > SoundSystem::play(uint32_t channelId, const Sound* sound, uint32_t priority, uint32_t repeat)
-{
-	T_ASSERT (channelId < m_channels.size());
-	
-	SoundChannel* channel = m_channels[channelId];
-
-	// Ensure we're not overriding a higher priority sound.
-	if (channel->isPlaying() && channel->getPriority() > priority)
-	{
-		log::warning << L"Sound not played; cannot override already playing channel with higher priority" << Endl;
+	if (channelId < m_channels.size())
+		return m_channels[channelId];
+	else
 		return 0;
-	}
-
-	// Start playing sound on selected channel.
-	if (!channel->playSound(sound, m_time, priority, repeat))
-	{
-		log::warning << L"Sound not played; unable to attach to channel" << Endl;
-		return 0;
-	}
-
-	return channel;
-}
-
-Ref< SoundChannel > SoundSystem::play(const Sound* sound, uint32_t priority, bool wait, uint32_t repeat)
-{
-	for (;;)
-	{
-		{
-			uint32_t currentLeastPriority = priority;
-			SoundChannel* channel = 0;
-
-			for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
-			{
-				if ((*i)->isExclusive())
-					continue;
-
-				if (!(*i)->isPlaying())
-				{
-					channel = *i;
-					break;
-				}
-				else
-				{
-					uint32_t channelPriority = (*i)->getPriority();
-					if (channelPriority <= currentLeastPriority)
-					{
-						channel = *i;
-						currentLeastPriority = channelPriority;
-					}
-				}
-			}
-
-			if (channel && channel->playSound(sound, m_time, priority, repeat))
-				return channel;
-		}
-
-		if (!wait)
-			break;
-
-		m_channelFinishEvent.wait(1000);
-	}
-
-	log::warning << L"Sound not played; no available channel" << Endl;
-	return 0;
-}
-
-void SoundSystem::stop(uint32_t channelId)
-{
-	T_ASSERT (channelId < m_channels.size());
-	m_channels[channelId]->stop();
-}
-
-void SoundSystem::stopAll()
-{
-	for (RefArray< SoundChannel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
-		(*i)->stop();
 }
 
 double SoundSystem::getTime() const

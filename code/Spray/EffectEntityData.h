@@ -24,8 +24,7 @@ class IResourceManager;
 	namespace sound
 	{
 
-class SoundSystem;
-class SurroundEnvironment;
+class ISoundPlayer;
 
 	}
 
@@ -43,7 +42,7 @@ class T_DLLCLASS EffectEntityData : public world::EntityData
 	T_RTTI_CLASS;
 
 public:
-	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, sound::SoundSystem* soundSystem, sound::SurroundEnvironment* surroundEnvironment) const;
+	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
 
 	virtual bool serialize(ISerializer& s);
 

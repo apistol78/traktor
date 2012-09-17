@@ -10,6 +10,7 @@
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Flash/Sw/SwDisplayRenderer.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Ui/Itf/IWidget.h"
 #include "Ui/Application.h"
 #include "Ui/MethodHandler.h"
@@ -142,8 +143,11 @@ bool FlashPreviewControl::create(
 
 	if (soundSystem)
 	{
+		Ref< sound::SoundPlayer > soundPlayer = new sound::SoundPlayer();
+		soundPlayer->create(soundSystem, 0);
+
 		m_soundRenderer = new SoundRenderer();
-		m_soundRenderer->create(soundSystem);
+		m_soundRenderer->create(soundPlayer);
 	}
 	else
 		log::warning << L"Unable to create sound system; Flash sound disabled" << Endl;

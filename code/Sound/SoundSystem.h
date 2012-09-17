@@ -73,34 +73,6 @@ public:
 	 */
 	Ref< SoundChannel > getChannel(uint32_t channelId);
 
-	/*! \brief Play sound, override playing sound if channel is already playing.
-	 *
-	 * \param sound Sound to play.
-	 * \param priority Sound priority.
-	 * \param repeat Repeat sound.
-	 * \return Sound channel.
-	 */
-	Ref< SoundChannel > play(uint32_t channelId, const Sound* sound, uint32_t priority, uint32_t repeat = 1);
-
-	/*! \brief Play sound on first non-playing virtual channel.
-	 *
-	 * \param sound Sound to play.
-	 * \param wait Wait for virtual channel to become available if all are currently playing.
-	 * \param priority Sound priority, if no free sound channel available least priority channels are overridden.
-	 * \param repeat Repeat sound.
-	 * \return Sound channel if sound was successfully attached to one.
-	 */
-	Ref< SoundChannel > play(const Sound* sound, uint32_t priority, bool wait, uint32_t repeat = 1);
-
-	/*! \brief Stop virtual channel from playing.
-	 *
-	 * \param channelId Virtual channel identifier.
-	 */
-	void stop(uint32_t channelId);
-
-	/*! \brief Stop playing all virtual channels. */
-	void stopAll();
-
 	/*! \brief Get current mixer time. */
 	double getTime() const;
 

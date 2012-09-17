@@ -39,11 +39,14 @@ public:
 
 	const Range< float >& getPitch() const { return m_pitch; }
 
+	bool getRepeat() const { return m_repeat; }
+
 private:
 	resource::Id< Sound > m_sound;
 	RefArray< IFilter > m_filters;
 	Range< float > m_gain;
 	Range< float > m_pitch;
+	bool m_repeat;
 };
 
 	}

@@ -8,6 +8,13 @@ namespace traktor
 
 class PropertyGroup;
 
+	namespace sound
+	{
+
+class SoundPlayer;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -32,10 +39,13 @@ public:
 
 	virtual sound::SoundSystem* getSoundSystem();
 
+	virtual sound::ISoundPlayer* getSoundPlayer();
+
 	virtual sound::SurroundEnvironment* getSurroundEnvironment();
 
 private:
 	Ref< sound::SoundSystem > m_soundSystem;
+	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< sound::SurroundEnvironment > m_surroundEnvironment;
 	bool m_soundMuted;
 	float m_soundMutedVolume;

@@ -73,6 +73,7 @@ private:
 	Ref< BankAsset > m_asset;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolBarItemPlay;
+	Ref< ui::Slider > m_sliderParameter;
 	Ref< GrainView > m_grainView;
 	Ref< ui::Container > m_containerGrainProperties;
 	Ref< GrainProperties > m_grainProperties;
@@ -88,6 +89,8 @@ private:
 	void updateGrainView();
 
 	void handleCommand(const ui::Command& command);
+
+	void eventParameterChange(ui::Event* event);
 
 	void eventToolBarClick(ui::Event* event);
 

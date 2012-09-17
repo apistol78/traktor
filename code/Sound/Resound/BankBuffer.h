@@ -27,13 +27,11 @@ class T_DLLCLASS BankBuffer : public ISoundBuffer
 public:
 	BankBuffer(const RefArray< IGrain >& grains);
 
-	const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const;
-
 	void updateCursor(ISoundBufferCursor* cursor) const;
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;
 
 private:
 	RefArray< IGrain > m_grains;

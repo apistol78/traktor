@@ -96,6 +96,9 @@ uint32_t getDisplayModeCount(IDXGIOutput* dxgiOutput)
 	HRESULT hr;
 	UINT count = 0;
 
+	if (!dxgiOutput)
+		return 0;
+
 	hr = dxgiOutput->GetDisplayModeList(
 		DXGI_FORMAT_R8G8B8A8_UNORM,
 		0,
@@ -112,6 +115,9 @@ bool getDisplayMode(IDXGIOutput* dxgiOutput, uint32_t index, DisplayMode& outDis
 {
 	HRESULT hr;
 	UINT count = 0;
+
+	if (!dxgiOutput)
+		return false;
 
 	hr = dxgiOutput->GetDisplayModeList(
 		DXGI_FORMAT_R8G8B8A8_UNORM,
@@ -149,6 +155,9 @@ bool findDxgiDisplayMode(IDXGIOutput* dxgiOutput, const DisplayMode& dm, DXGI_MO
 {
 	HRESULT hr;
 	UINT count = 0;
+
+	if (!dxgiOutput)
+		return false;
 
 	hr = dxgiOutput->GetDisplayModeList(
 		DXGI_FORMAT_R8G8B8A8_UNORM,

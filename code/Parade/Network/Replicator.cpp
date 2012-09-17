@@ -21,7 +21,7 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const float c_maxLatencyCompensate = 2.0f;
-const float c_maxOffsetAdjustError = 4.0f;
+const float c_maxOffsetAdjustError = 8.0f;
 const float c_maxOffsetAdjust = 2.0f;
 const float c_maxStateAge = 2.0f;
 const float c_nearDistance = 28.0f;
@@ -147,6 +147,7 @@ void Replicator::update(float dT)
 			}
 		}
 
+		// Remove from "unfresh" peers.
 		unfresh.erase(*i);
 	}
 
@@ -179,6 +180,89 @@ void Replicator::update(float dT)
 
 		// Remove unfresh peer.
 		m_peers.erase(it);
+	}
+
+	// Broadcast my state to all peers.
+	if (m_state)
+	{
+		msg.type = MtState;
+		msg.time = uint32_t(m_time * 1000.0f);
+
+		MemoryStream s(msg.data, sizeof(msg.data), false, true);
+		CompactSerializer cs(&s, &m_eventTypes[0]);
+		cs.writeObject(m_state);
+		cs.flush();
+
+		uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
+		std::vector< std::pair< handle_t, Peer* > > peers;
+
+		// Collect peers to which we should send state to.
+		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+		{
+			Peer& peer = i->second;
+
+			if (!peer.established || !peer.ghost)
+				continue;
+			if ((peer.timeUntilTx -= dT) > 0.0f)
+				continue;
+
+			if (!m_replicatorPeers->sendReady(i->first))
+				continue;
+
+			peers.push_back(std::make_pair(i->first, &peer));
+		}
+
+		// Randomize peers to prevent same send order multiple frames.
+		std::random_shuffle(peers.begin(), peers.end());
+
+		// Send state to peers.
+		for (std::vector< std::pair< handle_t, Peer* > >::iterator i = peers.begin(); i != peers.end(); ++i)
+		{
+			Peer& peer = *i->second;
+
+			if (!m_replicatorPeers->send(i->first, &msg, msgSize, false))
+				log::error << L"ERROR: Unable to send state to peer " << i->first << Endl;
+
+			float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
+			float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
+
+			peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
+		}
+	}
+
+	// Send events to peers.
+	if (!m_eventsOut.empty())
+	{
+		for (std::list< Event >::const_iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
+		{
+			msg.type = MtEvent;
+			msg.time = uint32_t(m_time * 1000.0f);
+
+			MemoryStream s(msg.data, sizeof(msg.data), false, true);
+			CompactSerializer cs(&s, &m_eventTypes[0]);
+			cs.writeObject(i->object);
+			cs.flush();
+
+			uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
+
+			if (i->handle == c_broadcastHandle)
+			{
+				for (std::map< handle_t, Peer >::const_iterator j = m_peers.begin(); j != m_peers.end(); ++j)
+				{
+					if (!j->second.established)
+						continue;
+
+					if (!m_replicatorPeers->send(j->first, &msg, msgSize, true))
+						log::error << L"ERROR: Unable to send event to peer " << j->first << Endl;
+				}
+			}
+			else
+			{
+				if (!m_replicatorPeers->send(i->handle, &msg, msgSize, true))
+					log::error << L"ERROR: Unable to event to peer " << i->handle << Endl;
+			}
+		}
+		m_eventsOut.clear();
 	}
 
 	// Read messages from any peer.
@@ -313,10 +397,10 @@ void Replicator::update(float dT)
 		{
 			// Ignore old messages; as we're using unreliable transportation
 			// messages can arrive out-of-order.
-			if (time > peer.lastTime + 1e-8f)
+			if (time > peer.lastTime + 1e-4f)
 			{
 				// Adjust time based on network latency etc.
-				if (time > m_time)
+				if (time > m_time + FUZZY_EPSILON)
 				{
 					float offsetAdjust = time - m_time;
 					if (offsetAdjust > c_maxOffsetAdjustError)
@@ -326,10 +410,16 @@ void Replicator::update(float dT)
 					}
 
 					offsetAdjust = min(offsetAdjust, c_maxOffsetAdjust);
-					float latencyAdjust = peer.packetCount > 0 ? min(offsetAdjust / 2.0f, c_maxLatencyCompensate) : 0.0f;
-
-					T_REPLICATOR_DEBUG(L"OK: Adjusting time, offset " << int32_t(offsetAdjust * 1000.0f) << L", latency " << int32_t(latencyAdjust * 1000.0f) << L" ms");
-					m_time += offsetAdjust + latencyAdjust;
+					if (!peer.corrected)
+					{
+						float latencyAdjust = min(offsetAdjust / 2.0f, c_maxLatencyCompensate);
+						m_time += offsetAdjust + latencyAdjust;
+						peer.corrected = true;
+					}
+					else
+					{
+						m_time += offsetAdjust;
+					}
 				}
 				// Check if message is too old.
 				else if ((m_time - time) > c_maxStateAge)
@@ -338,6 +428,8 @@ void Replicator::update(float dT)
 					peer.lastTime = time;
 					continue;
 				}
+				else
+					peer.corrected = false;
 
 				MemoryStream s(msg.data, sizeof(msg.data), true, false);
 				Ref< IReplicatableState > state = CompactSerializer(&s, &m_eventTypes[0]).readObject< IReplicatableState >();
@@ -356,7 +448,7 @@ void Replicator::update(float dT)
 				m_eventsIn.push_back(evt);
 			}
 			else
-				T_REPLICATOR_DEBUG(L"OK: Too old package received from peer " << handle << L"; package ignored");
+				T_REPLICATOR_DEBUG(L"OK: Out-of-order package received from peer " << handle << L"; package ignored");
 		}
 		else if (msg.type == MtEvent)	// Event message.
 		{
@@ -370,76 +462,6 @@ void Replicator::update(float dT)
 			e.handle = handle;
 			e.object = eventObject;
 			m_eventsIn.push_back(e);
-		}
-	}
-
-	// Send events to peers.
-	if (!m_eventsOut.empty())
-	{
-		for (std::list< Event >::const_iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
-		{
-			msg.type = MtEvent;
-			msg.time = uint32_t(m_time * 1000.0f);
-
-			MemoryStream s(msg.data, sizeof(msg.data), false, true);
-			CompactSerializer cs(&s, &m_eventTypes[0]);
-			cs.writeObject(i->object);
-			cs.flush();
-
-			uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
-
-			if (i->handle == c_broadcastHandle)
-			{
-				for (std::map< handle_t, Peer >::const_iterator j = m_peers.begin(); j != m_peers.end(); ++j)
-				{
-					if (!j->second.established)
-						continue;
-
-					if (!m_replicatorPeers->send(j->first, &msg, msgSize, true))
-						log::error << L"ERROR: Unable to send event to peer " << j->first << Endl;
-				}
-			}
-			else
-			{
-				if (!m_replicatorPeers->send(i->handle, &msg, msgSize, true))
-					log::error << L"ERROR: Unable to event to peer " << i->handle << Endl;
-			}
-		}
-		m_eventsOut.clear();
-	}
-
-	// Broadcast my state to all peers.
-	if (m_state)
-	{
-		msg.type = MtState;
-		msg.time = uint32_t(m_time * 1000.0f);
-
-		MemoryStream s(msg.data, sizeof(msg.data), false, true);
-		CompactSerializer cs(&s, &m_eventTypes[0]);
-		cs.writeObject(m_state);
-		cs.flush();
-
-		uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
-
-		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-		{
-			Peer& peer = i->second;
-
-			if (!peer.established || !peer.ghost)
-				continue;
-			if ((peer.timeUntilTx -= dT) > 0.0f)
-				continue;
-
-			if (!m_replicatorPeers->sendReady(i->first))
-				continue;
-
-			if (!m_replicatorPeers->send(i->first, &msg, msgSize, false))
-				log::error << L"ERROR: Unable to send state to peer " << i->first << Endl;
-
-			float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
-			float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-			
-			peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
 		}
 	}
 

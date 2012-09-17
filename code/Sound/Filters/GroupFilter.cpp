@@ -18,6 +18,17 @@ struct GroupFilterInstance : public RefCountImpl< IFilterInstance >
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.GroupFilter", 0, GroupFilter, IFilter)
 
+GroupFilter::GroupFilter()
+{
+}
+
+GroupFilter::GroupFilter(IFilter* filter1, IFilter* filter2)
+{
+	m_filters.resize(2);
+	m_filters[0] = filter1;
+	m_filters[1] = filter2;
+}
+
 void GroupFilter::addFilter(IFilter* filter)
 {
 	m_filters.push_back(filter);

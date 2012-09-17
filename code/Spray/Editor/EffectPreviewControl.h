@@ -37,6 +37,7 @@ class PrimitiveRenderer;
 	namespace sound
 	{
 
+class SoundPlayer;
 class SoundSystem;
 
 	}
@@ -89,6 +90,7 @@ private:
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;
 	Ref< sound::SoundSystem > m_soundSystem;
+	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< PointRenderer > m_pointRenderer;
 	Ref< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
