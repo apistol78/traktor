@@ -113,7 +113,7 @@ private:
 	btBroadphaseInterface* m_broadphase;
 	btConstraintSolver* m_solver;
 	btDiscreteDynamicsWorld* m_dynamicsWorld;
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 	RefArray< BodyBullet > m_bodies;
 	RefArray< Joint > m_joints;
 

@@ -16,6 +16,7 @@ namespace traktor
 	namespace sound
 	{
 
+class ISoundPlayer;
 class SoundSystem;
 class SurroundEnvironment;
 
@@ -38,6 +39,8 @@ class T_DLLCLASS IAudioServer : public IServer
 
 public:
 	virtual sound::SoundSystem* getSoundSystem() = 0;
+
+	virtual sound::ISoundPlayer* getSoundPlayer() = 0;
 
 	virtual sound::SurroundEnvironment* getSurroundEnvironment() = 0;
 };

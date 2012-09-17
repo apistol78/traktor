@@ -19,7 +19,7 @@ public:
 
 	virtual Ref< sound::ISoundBufferCursor > createCursor() const;
 
-	virtual bool getBlock(sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const;
+	virtual bool getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const;
 
 private:
 	Ref< const FlashSound > m_sound;

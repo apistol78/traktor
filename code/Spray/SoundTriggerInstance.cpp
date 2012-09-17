@@ -1,7 +1,6 @@
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
-#include "Sound/SoundSystem.h"
-#include "Sound/Filters/SurroundFilter.h"
+#include "Sound/Player/ISoundHandle.h"
+#include "Sound/Player/ISoundPlayer.h"
 #include "Spray/SoundTriggerInstance.h"
 #include "Spray/Types.h"
 
@@ -14,23 +13,42 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundTriggerInstance", SoundTriggerInstan
 
 void SoundTriggerInstance::perform(Context& context, const Transform& transform)
 {
-	if (!context.soundSystem)
-		return;
-
-	Ref< sound::SurroundFilter > filter = sound::SurroundFilter::create(
-		context.surroundEnvironment,
-		transform.translation()
-	);
-	if (!context.surroundEnvironment || filter)
+	if (context.soundPlayer)
 	{
-		sound::SoundChannel* channel = context.soundSystem->play(m_sound, 16, false);
-		if (channel)
-			channel->setFilter(filter);
+		T_ASSERT (!m_handle);
+		m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
 	}
 }
 
-SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound)
+void SoundTriggerInstance::update(Context& context, const Transform& transform, bool enable)
+{
+	if (!m_handle)
+		return;
+
+	if (enable)
+	{
+		if (m_follow)
+			m_handle->setPosition(transform.translation());
+
+		if (!m_handle->isPlaying())
+		{
+			if (m_repeat)
+				m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
+			else
+				m_handle = 0;
+		}
+	}
+	else
+	{
+		m_handle->stop();
+		m_handle = 0;
+	}
+}
+
+SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool follow, bool repeat)
 :	m_sound(sound)
+,	m_follow(follow)
+,	m_repeat(repeat)
 {
 }
 

@@ -13,6 +13,12 @@ struct RepeatGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Ref< ISoundBufferCursor > m_cursor;
 	uint32_t m_count;
 
+	virtual void setParameter(float parameter)
+	{
+		if (m_cursor)
+			m_cursor->setParameter(parameter);
+	}
+
 	virtual void reset()
 	{
 		if (m_cursor)
@@ -51,16 +57,10 @@ void RepeatGrain::updateCursor(ISoundBufferCursor* cursor) const
 	return m_grain->updateCursor(repeatCursor->m_cursor);
 }
 
-const IGrain* RepeatGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
+bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
-	return m_grain->getCurrentGrain(repeatCursor->m_cursor);
-}
-
-bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
-{
-	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
-	if (!m_grain->getBlock(repeatCursor->m_cursor, outBlock))
+	if (!m_grain->getBlock(repeatCursor->m_cursor, mixer, outBlock))
 	{
 		if (m_count != 0 && ++repeatCursor->m_count >= m_count)
 			return false;
@@ -69,7 +69,7 @@ bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) con
 		if (!repeatCursor->m_cursor)
 			return false;
 
-		if (!m_grain->getBlock(repeatCursor->m_cursor, outBlock))
+		if (!m_grain->getBlock(repeatCursor->m_cursor, mixer, outBlock))
 			return false;
 	}
 	return true;

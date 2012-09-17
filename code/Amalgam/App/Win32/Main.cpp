@@ -153,6 +153,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	Split< std::wstring >::any(szCmdLine, L" \t", argv);
 #endif
 	CommandLine cmdLine(argv);
+	Ref< traktor::IStream > logFile;
 
 	if (!checkPreconditions())
 		return 1;
@@ -161,20 +162,23 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	FileSystem::getInstance().makeAllDirectories(writablePath);
 
 #if !defined(_DEBUG)
-	Ref< traktor::IStream > logFile = FileSystem::getInstance().open(L"Application.log", File::FmWrite);
-	if (logFile)
+	if (!IsDebuggerPresent())
 	{
-		Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
-		Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
+		logFile = FileSystem::getInstance().open(L"Application.log", File::FmWrite);
+		if (logFile)
+		{
+			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
+			Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
 
-		log::info   .setTarget(logTarget);
-		log::warning.setTarget(logTarget);
-		log::error  .setTarget(logTarget);
+			log::info   .setTarget(logTarget);
+			log::warning.setTarget(logTarget);
+			log::error  .setTarget(logTarget);
 
-		log::info << L"Log file \"Application.log\" created" << Endl;
+			log::info << L"Log file \"Application.log\" created" << Endl;
+		}
+		else
+			log::error << L"Unable to create log file; logging only to std pipes" << Endl;
 	}
-	else
-		log::error << L"Unable to create log file; logging only to std pipes" << Endl;
 #endif
 
 	Ref< LogTailTarget > logTail = new LogTailTarget();

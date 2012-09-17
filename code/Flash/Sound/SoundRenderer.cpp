@@ -1,8 +1,7 @@
 #include "Flash/Sound/FlashSoundBuffer.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
-#include "Sound/SoundSystem.h"
+#include "Sound/Player/ISoundPlayer.h"
 
 namespace traktor
 {
@@ -12,28 +11,23 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.SoundRenderer", SoundRenderer, ISoundRenderer)
 
 bool SoundRenderer::create(
-	sound::SoundSystem* soundSystem
+	sound::ISoundPlayer* soundPlayer
 )
 {
-	m_soundSystem = soundSystem;
+	m_soundPlayer = soundPlayer;
 	return true;
 }
 
 void SoundRenderer::destroy()
 {
-	if (m_soundChannel)
-	{
-		m_soundChannel->stop();
-		m_soundChannel = 0;
-	}
+	m_soundPlayer = 0;
 }
 
 void SoundRenderer::play(const FlashSound* sound)
 {
-	m_soundChannel = m_soundSystem->play(
+	m_soundPlayer->play(
 		new sound::Sound(new FlashSoundBuffer(sound), 1.0f),
-		0,
-		true
+		0
 	);
 }
 

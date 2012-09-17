@@ -29,7 +29,7 @@ class T_DLLCLASS SequenceInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	void update(Context& context, const Transform& transform, float T);
+	void update(Context& context, const Transform& transform, float T, bool enable);
 
 private:
 	friend class Sequence;
@@ -41,7 +41,7 @@ private:
 	};
 
 	std::vector< Key > m_keys;
-	uint32_t m_index;
+	int32_t m_index;
 	float m_lastT;
 
 	SequenceInstance(const std::vector< Key >& keys);

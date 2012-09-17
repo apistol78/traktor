@@ -1,7 +1,7 @@
 #include "Parade/AudioLayer.h"
 #include "Sound/Sound.h"
-#include "Sound/SoundChannel.h"
-#include "Sound/SoundSystem.h"
+#include "Sound/Player/ISoundHandle.h"
+#include "Sound/Player/ISoundPlayer.h"
 
 namespace traktor
 {
@@ -32,8 +32,8 @@ void AudioLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 	invokeScriptUpdate(stage, control, info);
 
 	// Play sound if not currently attached.
-	if (!m_soundChannel)
-		m_soundChannel = m_environment->getAudio()->getSoundSystem()->play(m_sound, 0, false, ~0UL);
+	if (!m_handle || !m_handle->isPlaying())
+		m_handle = m_environment->getAudio()->getSoundPlayer()->play(m_sound, 0);
 }
 
 void AudioLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
@@ -46,10 +46,10 @@ void AudioLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 
 void AudioLayer::leave(Stage* stage)
 {
-	if (m_soundChannel)
+	if (m_handle)
 	{
-		m_soundChannel->stop();
-		m_soundChannel = 0;
+		m_handle->stop();
+		m_handle = 0;
 	}
 }
 

@@ -167,6 +167,7 @@ private:
 	{
 		bool established;
 		bool disconnected;
+		bool corrected;
 		Ghost* ghost;
 		float timeUntilTx;
 		float lastTime;
@@ -176,6 +177,7 @@ private:
 		Peer()
 		:	established(false)
 		,	disconnected(false)
+		,	corrected(false)
 		,	ghost(0)
 		,	timeUntilTx(0.0f)
 		,	lastTime(0.0f)

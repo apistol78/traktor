@@ -49,27 +49,6 @@ inline void moveSamples(float* destSamples, const float* sourceSamples, int32_t 
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundChannel", SoundChannel, Object)
 
-SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples)
-:	m_id(id)
-,	m_eventFinish(eventFinish)
-,	m_hwSampleRate(hwSampleRate)
-,	m_hwFrameSamples(hwFrameSamples)
-,	m_outputSamplesIn(0)
-,	m_pitch(1.0f)
-,	m_volume(1.0f)
-,	m_priority(0)
-,	m_exclusive(false)
-{
-	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
-	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
-
-	m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16, T_FILE_LINE));
-	std::memset(m_outputSamples[0], 0, outputSamplesSize);
-
-	for (uint32_t i = 1; i < SbcMaxChannelCount; ++i)
-		m_outputSamples[i] = m_outputSamples[0] + outputSamplesCount * i;
-}
-
 SoundChannel::~SoundChannel()
 {
 	Alloc::freeAlign(m_outputSamples[0]);
@@ -107,16 +86,6 @@ float SoundChannel::getPitch() const
 	return m_pitch;
 }
 
-void SoundChannel::setExclusive(bool exclusive)
-{
-	m_exclusive = exclusive;
-}
-
-bool SoundChannel::isExclusive() const
-{
-	return m_exclusive;
-}
-
 bool SoundChannel::isPlaying() const
 {
 	// \note Reading from active state; ie other thread's state.
@@ -138,27 +107,25 @@ ISoundBufferCursor* SoundChannel::getCursor() const
 	return m_currentState.cursor;
 }
 
-bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority, uint32_t repeat)
+void SoundChannel::setParameter(float parameter)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	if (m_currentState.cursor)
+		m_currentState.cursor->setParameter(parameter);
+}
+
+bool SoundChannel::play(const Sound* sound, uint32_t repeat)
 {
 	if (!sound)
-	{
-		log::error << L"playSound failed; no sound" << Endl;
 		return false;
-	}
 
 	Ref< ISoundBuffer > soundBuffer = sound->getSoundBuffer();
 	if (!soundBuffer)
-	{
-		log::error << L"playSound failed; no sound buffer" << Endl;
 		return false;
-	}
 
 	Ref< ISoundBufferCursor > cursor = soundBuffer->createCursor();
 	if (!cursor)
-	{
-		log::error << L"playSound failed; unable to create cursor" << Endl;
 		return false;
-	}
 
 	// Queue state; activated next time channel is polled for another
 	// sound block.
@@ -166,11 +133,29 @@ bool SoundChannel::playSound(const Sound* sound, double time, uint32_t priority,
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		m_currentState.sound = sound;
 		m_currentState.cursor = cursor;
-		m_currentState.repeat = max< uint32_t >(repeat, 1U);
-		m_priority = priority;
+		m_currentState.repeat = max< uint32_t >(repeat, 1);
 	}
 
 	return true;
+}
+
+SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples)
+:	m_id(id)
+,	m_eventFinish(eventFinish)
+,	m_hwSampleRate(hwSampleRate)
+,	m_hwFrameSamples(hwFrameSamples)
+,	m_outputSamplesIn(0)
+,	m_pitch(1.0f)
+,	m_volume(1.0f)
+{
+	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
+	const uint32_t outputSamplesSize = SbcMaxChannelCount * outputSamplesCount * sizeof(float);
+
+	m_outputSamples[0] = static_cast< float* >(Alloc::acquireAlign(outputSamplesSize, 16, T_FILE_LINE));
+	std::memset(m_outputSamples[0], 0, outputSamplesSize);
+
+	for (uint32_t i = 1; i < SbcMaxChannelCount; ++i)
+		m_outputSamples[i] = m_outputSamples[0] + outputSamplesCount * i;
 }
 
 bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock)
@@ -208,13 +193,13 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	{
 		// Request sound block from buffer.
 		SoundBlock soundBlock = { { 0, 0, 0, 0, 0, 0, 0, 0 }, m_hwFrameSamples, 0, 0 };
-		if (!soundBuffer->getBlock(m_activeState.cursor, soundBlock))
+		if (!soundBuffer->getBlock(m_activeState.cursor, mixer, soundBlock))
 		{
 			// No more blocks from sound buffer.
 			if (--m_activeState.repeat > 0)
 			{
 				m_activeState.cursor->reset();
-				if (!soundBuffer->getBlock(m_activeState.cursor, soundBlock))
+				if (!soundBuffer->getBlock(m_activeState.cursor, mixer, soundBlock))
 				{
 					m_activeState.sound = 0;
 					m_activeState.cursor = 0;
@@ -306,11 +291,6 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 		outBlock.samples[i] = m_outputSamples[i];
 
 	return true;
-}
-
-uint32_t SoundChannel::getPriority() const
-{
-	return m_priority;
 }
 
 	}

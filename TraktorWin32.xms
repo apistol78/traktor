@@ -10034,6 +10034,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Player</name>
+								<items>
+									<item type="File">
+										<fileName>Player/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">

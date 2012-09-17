@@ -1,6 +1,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Sound/Resound/BankResource.h"
+#include "Sound/Resound/EnvelopeGrainData.h"
 #include "Sound/Resound/PlayGrainData.h"
 #include "Sound/Resound/RepeatGrainData.h"
 #include "Sound/Resound/RandomGrainData.h"
@@ -18,6 +19,13 @@ namespace traktor
 
 void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGrainData* grain)
 {
+	if (const EnvelopeGrainData* envelopeGrain = dynamic_type_cast< const EnvelopeGrainData* >(grain))
+	{
+		const std::vector< EnvelopeGrainData::GrainData >& grains = envelopeGrain->getGrains();
+		for (std::vector< EnvelopeGrainData::GrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
+			buildGrainDependencies(pipelineDepends, i->grain);
+	}
+
 	if (const RepeatGrainData* repeatGrain = dynamic_type_cast< const RepeatGrainData* >(grain))
 		buildGrainDependencies(pipelineDepends, repeatGrain->getGrain());
 
@@ -41,7 +49,7 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 1, BankPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 2, BankPipeline, editor::DefaultPipeline)
 
 TypeInfoSet BankPipeline::getAssetTypes() const
 {

@@ -10,9 +10,10 @@
 #include "Core/Settings/PropertyString.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/ISoundDriver.h"
-#include "Sound/SoundSystem.h"
 #include "Sound/SoundFactory.h"
+#include "Sound/SoundSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
+#include "Sound/Player/SoundPlayer.h"
 
 namespace traktor
 {
@@ -31,10 +32,12 @@ bool AudioServer::create(const PropertyGroup* settings)
 {
 	std::wstring audioType = settings->getProperty< PropertyString >(L"Audio.Type");
 
+	// Create sound driver.
 	Ref< sound::ISoundDriver > soundDriver = loadAndInstantiate< sound::ISoundDriver >(audioType);
 	if (!soundDriver)
 		return false;
 
+	// Create sound system.
 	m_soundSystem = new sound::SoundSystem(soundDriver);
 
 	sound::SoundSystemCreateDesc sscd;
@@ -61,6 +64,9 @@ bool AudioServer::create(const PropertyGroup* settings)
 		return true;
 	}
 
+	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
+
+	// Create surround environment.
 	float surroundMaxDistance = settings->getProperty< PropertyFloat >(L"Audio.Surround/MaxDistance", 10.0f);
 	float surroundInnerRadius = settings->getProperty< PropertyFloat >(L"Audio.Surround/InnerRadius", 1.0f);
 	m_surroundEnvironment = new sound::SurroundEnvironment(
@@ -69,13 +75,23 @@ bool AudioServer::create(const PropertyGroup* settings)
 		sscd.driverDesc.hwChannels >= 5+1
 	);
 
-	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
+	// Create high-level sound player.
+	m_soundPlayer = new sound::SoundPlayer();
+	if (!m_soundPlayer->create(m_soundSystem, m_surroundEnvironment))
+	{
+		log::error << L"Audio server failed; unable to create sound player, sound muted" << Endl;
+		safeDestroy(m_soundSystem);
+		m_soundPlayer = 0;
+		return true;
+	}
+
 	return true;
 }
 
 void AudioServer::destroy()
 {
 	m_surroundEnvironment = 0;
+	safeDestroy(m_soundPlayer);
 	safeDestroy(m_soundSystem);
 }
 
@@ -89,7 +105,7 @@ void AudioServer::createResourceFactories(IEnvironment* environment)
 
 void AudioServer::update(float dT, bool renderViewActive)
 {
-	if (!m_soundSystem)
+	if (!m_soundSystem || !m_soundPlayer)
 		return;
 
 	if (!renderViewActive)
@@ -122,6 +138,9 @@ void AudioServer::update(float dT, bool renderViewActive)
 
 		m_soundSystem->setVolume(volume);
 	}
+
+	// Update sound player.
+	m_soundPlayer->update(dT);
 }
 
 int32_t AudioServer::reconfigure(const PropertyGroup* settings)
@@ -142,6 +161,11 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 sound::SoundSystem* AudioServer::getSoundSystem()
 {
 	return m_soundSystem;
+}
+
+sound::ISoundPlayer* AudioServer::getSoundPlayer()
+{
+	return m_soundPlayer;
 }
 
 sound::SurroundEnvironment* AudioServer::getSurroundEnvironment()

@@ -28,20 +28,12 @@ void registerSoundClasses(script::IScriptManager* scriptManager)
 	classSoundSystem->addMethod(L"setVolume", &sound::SoundSystem::setVolume);
 	classSoundSystem->addMethod(L"getVolume", &sound::SoundSystem::getVolume);
 	classSoundSystem->addMethod(L"getChannel", &sound::SoundSystem::getChannel);
-	classSoundSystem->addMethod< Ref< sound::SoundChannel >, uint32_t, const sound::Sound*, uint32_t >(L"playInChannel", &sound::SoundSystem::play);
-	classSoundSystem->addMethod< Ref< sound::SoundChannel >, uint32_t, const sound::Sound*, uint32_t, uint32_t >(L"playInChannel", &sound::SoundSystem::play);
-	classSoundSystem->addMethod< Ref< sound::SoundChannel >, const sound::Sound*, uint32_t, bool >(L"play", &sound::SoundSystem::play);
-	classSoundSystem->addMethod< Ref< sound::SoundChannel >, const sound::Sound*, uint32_t, bool, uint32_t >(L"play", &sound::SoundSystem::play);
-	classSoundSystem->addMethod(L"stop", &sound::SoundSystem::stop);
-	classSoundSystem->addMethod(L"stopAll", &sound::SoundSystem::stopAll);
 	scriptManager->registerClass(classSoundSystem);
 
 	Ref< script::AutoScriptClass< sound::SoundChannel > > classSoundChannel = new script::AutoScriptClass< sound::SoundChannel >();
 	classSoundChannel->addMethod(L"setVolume", &sound::SoundChannel::setVolume);
 	classSoundChannel->addMethod(L"setFilter", &sound::SoundChannel::setFilter);
 	classSoundChannel->addMethod(L"getFilter", &sound::SoundChannel::getFilter);
-	classSoundChannel->addMethod(L"setExclusive", &sound::SoundChannel::setExclusive);
-	classSoundChannel->addMethod(L"isExclusive", &sound::SoundChannel::isExclusive);
 	classSoundChannel->addMethod(L"isPlaying", &sound::SoundChannel::isPlaying);
 	classSoundChannel->addMethod(L"stop", &sound::SoundChannel::stop);
 	scriptManager->registerClass(classSoundChannel);

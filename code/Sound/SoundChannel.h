@@ -39,8 +39,6 @@ class T_DLLCLASS SoundChannel : public Object
 	T_RTTI_CLASS;
 
 public:
-	SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples);
-
 	virtual ~SoundChannel();
 
 	/*! \brief Set channel volume. */
@@ -58,18 +56,11 @@ public:
 	/*! \brief Get current pitch. */
 	float getPitch() const;
 
-	/*! \brief Set exclusive flag.
-	 *
-	 * When channel is marked as exclusive then
-	 * sound system won't acquire this channel
-	 * for sounds even if the channel isn't playing any sounds.
-	 *
-	 * \param exclusive True if channel is application exclusive.
-	 */
-	void setExclusive(bool exclusive);
+	/*! \brief Set cursor parameter. */
+	void setParameter(float parameter);
 
-	/*! \brief Check if channel is application exclusive. */
-	bool isExclusive() const;
+	/*! \brief Play sound through this channel. */
+	bool play(const Sound* sound, uint32_t repeat = 0);
 
 	/*! \brief Check if there are a sound playing in this channel. */
 	bool isPlaying() const;
@@ -108,14 +99,10 @@ private:
 	uint32_t m_outputSamplesIn;
 	float m_pitch;
 	float m_volume;
-	uint32_t m_priority;
-	bool m_exclusive;
 
-	bool playSound(const Sound* sound, double time, uint32_t priority, uint32_t repeat);
+	SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples);
 
 	bool getBlock(const ISoundMixer* mixer, double time, SoundBlock& outBlock);
-
-	uint32_t getPriority() const;
 };
 
 	}

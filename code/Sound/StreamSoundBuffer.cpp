@@ -19,6 +19,10 @@ struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	{
 	}
 
+	virtual void setParameter(float parameter)
+	{
+	}
+
 	virtual void reset()
 	{
 		m_position = 0;
@@ -57,7 +61,7 @@ Ref< ISoundBufferCursor > StreamSoundBuffer::createCursor() const
 	return new StreamSoundBufferCursor();
 }
 
-bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool StreamSoundBuffer::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	StreamSoundBufferCursor* ssbc = static_cast< StreamSoundBufferCursor* >(cursor);
 	uint64_t position = ssbc->m_position;

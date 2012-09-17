@@ -1,11 +1,14 @@
 #include <ctime>
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
+#include "Sound/SoundSystem.h"
+#include "Sound/Player/SoundPlayer.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectInstance.h"
@@ -67,7 +70,7 @@ EffectPreviewControl::EffectPreviewControl()
 {
 	m_context.deltaTime = 0.0f;
 	m_context.random = RandomGeometry(c_initialRandomSeed);
-	m_context.soundSystem = 0;
+	m_context.soundPlayer = 0;
 
 	m_sourceRenderers[&type_of< BoxSource >()] = new BoxSourceRenderer();
 	m_sourceRenderers[&type_of< ConeSource >()] = new ConeSourceRenderer();
@@ -105,7 +108,11 @@ bool EffectPreviewControl::create(
 		return false;
 
 	m_renderContext = new render::RenderContext();
+	
 	m_soundSystem = soundSystem;
+
+	m_soundPlayer = new sound::SoundPlayer();
+	m_soundPlayer->create(m_soundSystem, 0);
 
 	m_pointRenderer = new PointRenderer(renderSystem, 50.0f, 100.0f);
 
@@ -132,17 +139,16 @@ void EffectPreviewControl::destroy()
 		m_idleHandler = 0;
 	}
 
-	if (m_primitiveRenderer)
-	{
-		m_primitiveRenderer->destroy();
-		m_primitiveRenderer = 0;
-	}
+	safeDestroy(m_primitiveRenderer);
 
 	if (m_renderView)
 	{
 		m_renderView->close();
 		m_renderView = 0;
 	}
+
+	safeDestroy(m_soundPlayer);
+	safeDestroy(m_soundSystem);
 
 	Widget::destroy();
 }
@@ -195,8 +201,7 @@ void EffectPreviewControl::syncEffect()
 	Context syncContext;
 	syncContext.deltaTime = 0.0f;
 	syncContext.random = RandomGeometry(m_randomSeed);
-	syncContext.soundSystem = 0;
-	syncContext.surroundEnvironment = 0;
+	syncContext.soundPlayer = 0;
 
 	float currentTime = m_effectInstance->getTime();
 
@@ -372,8 +377,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		float deltaTime = float(m_timer.getDeltaTime() * 0.9f + m_lastDeltaTime * 0.1f);
 
 		m_context.deltaTime = deltaTime * m_timeScale;
-		m_context.soundSystem = m_soundSystem;
-		m_context.surroundEnvironment = 0;
+		m_context.soundPlayer = m_soundPlayer;
 
 		Transform effectTransform = Transform::identity();
 		if (m_moveEmitter)

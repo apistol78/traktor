@@ -32,6 +32,8 @@ class T_DLLCLASS SoundTriggerData : public ITriggerData
 	T_RTTI_CLASS;
 
 public:
+	SoundTriggerData();
+
 	virtual Ref< ITrigger > createTrigger(resource::IResourceManager* resourceManager) const;
 
 	virtual bool serialize(ISerializer& s);
@@ -40,6 +42,8 @@ public:
 
 private:
 	resource::Id< sound::Sound > m_sound;
+	bool m_follow;
+	bool m_repeat;
 };
 
 	}

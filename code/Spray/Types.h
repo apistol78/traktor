@@ -8,8 +8,7 @@ namespace traktor
 	namespace sound
 	{
 
-class SoundSystem;
-class SurroundEnvironment;
+class ISoundPlayer;
 
 	}
 
@@ -23,8 +22,7 @@ struct Context
 {
 	float deltaTime;
 	RandomGeometry random;
-	sound::SoundSystem* soundSystem;
-	sound::SurroundEnvironment* surroundEnvironment;
+	sound::ISoundPlayer* soundPlayer;
 };
 
 	}

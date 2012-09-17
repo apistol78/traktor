@@ -22,6 +22,10 @@ struct FlashSoundBufferCursor : public RefCountImpl< sound::ISoundBufferCursor >
 		m_samples[1].reset((float*)getAllocator()->alloc(4096 * sizeof(float), 16, T_FILE_LINE));
 	}
 
+	virtual void setParameter(float parameter)
+	{
+	}
+
 	virtual void reset()
 	{
 		m_position = 0;
@@ -42,7 +46,7 @@ Ref< sound::ISoundBufferCursor > FlashSoundBuffer::createCursor() const
 	return new FlashSoundBufferCursor();
 }
 
-bool FlashSoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, sound::SoundBlock& outBlock) const
+bool FlashSoundBuffer::getBlock(sound::ISoundBufferCursor* cursor, const sound::ISoundMixer* mixer, sound::SoundBlock& outBlock) const
 {
 	FlashSoundBufferCursor* fsbc = static_cast< FlashSoundBufferCursor* >(cursor);
 	T_ASSERT (fsbc);

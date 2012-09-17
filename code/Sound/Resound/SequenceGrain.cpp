@@ -13,6 +13,12 @@ struct SequenceGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	int32_t m_grainIndex;
 	Ref< ISoundBufferCursor > m_grainCursor;
 
+	virtual void setParameter(float parameter)
+	{
+		if (m_grainCursor)
+			m_grainCursor->setParameter(parameter);
+	}
+
 	virtual void reset()
 	{
 		if (m_grainCursor)
@@ -48,14 +54,7 @@ void SequenceGrain::updateCursor(ISoundBufferCursor* cursor) const
 	return grain->updateCursor(sequenceCursor->m_grainCursor);
 }
 
-const IGrain* SequenceGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
-{
-	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
-	const IGrain* grain = m_grains[sequenceCursor->m_grainIndex];
-	return grain->getCurrentGrain(sequenceCursor->m_grainCursor);
-}
-
-bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	SequenceGrainCursor* sequenceCursor = static_cast< SequenceGrainCursor* >(cursor);
 
@@ -69,6 +68,7 @@ bool SequenceGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) c
 	{
 		if (grain->getBlock(
 			sequenceCursor->m_grainCursor,
+			mixer,
 			outBlock
 		))
 			break;

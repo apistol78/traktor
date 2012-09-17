@@ -10,6 +10,7 @@
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Resound/BankBuffer.h"
+#include "Sound/Resound/EnvelopeGrainData.h"
 #include "Sound/Resound/MuteGrainData.h"
 #include "Sound/Resound/PlayGrainData.h"
 #include "Sound/Resound/RandomGrainData.h"
@@ -19,6 +20,7 @@
 #include "Sound/Editor/SoundSystemFactory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankAssetEditor.h"
+#include "Sound/Editor/Resound/EnvelopeGrainFacade.h"
 #include "Sound/Editor/Resound/GrainProperties.h"
 #include "Sound/Editor/Resound/GrainView.h"
 #include "Sound/Editor/Resound/GrainViewItem.h"
@@ -39,6 +41,7 @@
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 
 namespace traktor
 {
@@ -76,6 +79,13 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(containerGrains);
 	m_toolBar->addItem(m_toolBarItemPlay);
+
+	m_sliderParameter = new ui::Slider();
+	m_sliderParameter->create(m_toolBar);
+	m_sliderParameter->setRange(0, 100);
+	m_sliderParameter->addChangeEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventParameterChange));
+	m_toolBar->addItem(new ui::custom::ToolBarEmbed(m_sliderParameter, 150));
+
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventToolBarClick));
 
 	m_grainView = new GrainView();
@@ -96,6 +106,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_menuGrains->add(new ui::MenuItem(ui::Command(L"Bank.RemoveGrain"), L"Remove grain..."));
 
 	// Create grain editor facades.
+	m_grainFacades[&type_of< EnvelopeGrainData >()] = new EnvelopeGrainFacade();
 	m_grainFacades[&type_of< MuteGrainData >()] = new MuteGrainFacade();
 	m_grainFacades[&type_of< PlayGrainData >()] = new PlayGrainFacade();
 	m_grainFacades[&type_of< RandomGrainData >()] = new RandomGrainFacade();
@@ -107,6 +118,12 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	if (soundSystemFactory)
 	{
 		m_soundSystem = soundSystemFactory->createSoundSystem();
+		if (m_soundSystem)
+		{
+			m_soundChannel = m_soundSystem->getChannel(0);
+			if (!m_soundChannel)
+				m_soundChannel = 0;
+		}
 		if (!m_soundSystem)
 			log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
 	}
@@ -235,7 +252,7 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Bank.PlayGrain")
 	{
-		if (!m_soundChannel)
+		if (m_soundChannel && !m_soundChannel->isPlaying())
 		{
 			RefArray< IGrainData > grainData;
 			RefArray< IGrain > grains;
@@ -260,27 +277,22 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 				grains[i] = grainData[i]->createInstance(m_resourceManager);
 
 			m_bankBuffer = new BankBuffer(grains);
-			m_soundChannel = m_soundSystem->play(
-				new Sound(m_bankBuffer, 1.0f),
-				0,
-				true
-			);
-
-			if (m_soundChannel)
-			{
-				m_toolBarItemPlay->setToggled(true);
-				m_toolBar->update();
-			}
+			m_soundChannel->play(new Sound(m_bankBuffer, 1.0f));
+			m_soundChannel->setParameter(m_sliderParameter->getValue() / 100.0f);
 		}
-		else
+		else if (m_soundChannel && m_soundChannel->isPlaying())
 		{
 			m_soundChannel->stop();
-			m_soundChannel = 0;
-
 			m_toolBarItemPlay->setToggled(false);
 			m_toolBar->update();
 		}
 	}
+}
+
+void BankAssetEditor::eventParameterChange(ui::Event* event)
+{
+	if (m_soundChannel)
+		m_soundChannel->setParameter(m_sliderParameter->getValue() / 100.0f);
 }
 
 void BankAssetEditor::eventToolBarClick(ui::Event* event)
@@ -329,10 +341,8 @@ void BankAssetEditor::eventTimer(ui::Event* event)
 	if (!m_soundChannel)
 		return;
 
-	if (!m_soundChannel->isPlaying())
+	if (!m_soundChannel->isPlaying() && m_toolBarItemPlay->isToggled())
 	{
-		m_soundChannel = 0;
-
 		m_toolBarItemPlay->setToggled(false);
 		m_toolBar->update();
 	}

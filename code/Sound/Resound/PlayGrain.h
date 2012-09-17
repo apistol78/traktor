@@ -34,22 +34,22 @@ public:
 		const resource::Proxy< Sound >& sound,
 		const RefArray< IFilter >& filters,
 		const Range< float >& gain,
-		const Range< float >& pitch
+		const Range< float >& pitch,
+		bool repeat
 	);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
 	virtual void updateCursor(ISoundBufferCursor* cursor) const;
 
-	virtual const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const;
-
-	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;
 
 private:
 	resource::Proxy< Sound > m_sound;
 	RefArray< IFilter > m_filters;
 	Range< float > m_gain;
 	Range< float > m_pitch;
+	bool m_repeat;
 	mutable Random m_random;
 };
 

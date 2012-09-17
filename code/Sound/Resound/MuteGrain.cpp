@@ -14,6 +14,8 @@ struct MuteGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Timer m_timer;
 	double m_end;
 
+	virtual void setParameter(float parameter) {}
+
 	virtual void reset() {}
 };
 
@@ -38,12 +40,7 @@ void MuteGrain::updateCursor(ISoundBufferCursor* cursor) const
 {
 }
 
-const IGrain* MuteGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
-{
-	return this;
-}
-
-bool MuteGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool MuteGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	MuteGrainCursor* muteCursor = static_cast< MuteGrainCursor* >(cursor);
 	return muteCursor->m_timer.getElapsedTime() <= muteCursor->m_end;

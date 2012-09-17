@@ -69,6 +69,12 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	if (soundSystemFactory)
 	{
 		m_soundSystem = soundSystemFactory->createSoundSystem();
+		if (m_soundSystem)
+		{
+			m_soundChannel = m_soundSystem->getChannel(0);
+			if (!m_soundChannel)
+				m_soundSystem = 0;
+		}
 		if (!m_soundSystem)
 			log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
 	}
@@ -149,18 +155,7 @@ void SoundAssetEditor::eventToolBarClick(ui::Event* event)
 		return;
 	}
 
-	if (m_soundChannel)
-	{
-		m_soundChannel->stop();
-		m_soundChannel = 0;
-	}
-
-	m_soundChannel = m_soundSystem->play(new Sound(buffer, 1.0f), 0, true);
-	if (!m_soundChannel)
-	{
-		log::error << L"Failed to preview sound asset; unable to play sound" << Endl;
-		return;
-	}
+	m_soundChannel->play(new Sound(buffer, 1.0f));
 }
 
 void SoundAssetEditor::eventPropertyCommand(ui::Event* event)

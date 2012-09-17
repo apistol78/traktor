@@ -14,11 +14,12 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayGrainData", 0, PlayGrainData, IGrainData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.PlayGrainData", 1, PlayGrainData, IGrainData)
 
 PlayGrainData::PlayGrainData()
 :	m_gain(0.0f, 0.0f)
 ,	m_pitch(1.0f, 1.0f)
+,	m_repeat(false)
 {
 }
 
@@ -32,7 +33,8 @@ Ref< IGrain > PlayGrainData::createInstance(resource::IResourceManager* resource
 		sound,
 		m_filters,
 		m_gain,
-		m_pitch
+		m_pitch,
+		m_repeat
 	);
 }
 
@@ -42,6 +44,10 @@ bool PlayGrainData::serialize(ISerializer& s)
 	s >> MemberRefArray< IFilter >(L"filters", m_filters);
 	s >> MemberComposite< Range< float > >(L"gain", m_gain);
 	s >> MemberComposite< Range< float > >(L"pitch", m_pitch);
+
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"repeat", m_repeat);
+
 	return true;
 }
 

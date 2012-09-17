@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Math/Const.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Sound/Filters/LowPassFilter.h"
@@ -34,18 +35,20 @@ Ref< IFilterInstance > LowPassFilter::createInstance() const
 void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	LowPassFilterInstance* lpfi = static_cast< LowPassFilterInstance* >(instance);
-
-	float dt = 1.0f / outBlock.sampleRate;
-	float alpha = dt / (dt + 1.0f / m_cutOff);
-
-	for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
+	if (m_cutOff > FUZZY_EPSILON)
 	{
-		float* samples = outBlock.samples[j];
-		float& history = lpfi->m_history[j];
-		for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
+		float dt = 1.0f / outBlock.sampleRate;
+		float alpha = dt / (dt + 1.0f / m_cutOff);
+
+		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 		{
-			samples[i] = samples[i] * alpha + history * (1.0f - alpha);
-			history = samples[i];
+			float* samples = outBlock.samples[j];
+			float& history = lpfi->m_history[j];
+			for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
+			{
+				samples[i] = samples[i] * alpha + history * (1.0f - alpha);
+				history = samples[i];
+			}
 		}
 	}
 }

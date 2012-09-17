@@ -28,6 +28,8 @@ class T_DLLCLASS ITriggerInstance : public Object
 
 public:
 	virtual void perform(Context& context, const Transform& transform) = 0;
+	
+	virtual void update(Context& context, const Transform& transform, bool enable) = 0;
 };
 
 	}

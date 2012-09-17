@@ -17,6 +17,7 @@ namespace traktor
 	namespace sound
 	{
 
+class ISoundHandle;
 class Sound;
 
 	}
@@ -34,12 +35,17 @@ class T_DLLCLASS SoundTriggerInstance : public ITriggerInstance
 public:
 	virtual void perform(Context& context, const Transform& transform);
 
+	virtual void update(Context& context, const Transform& transform, bool enable);
+
 private:
 	friend class SoundTrigger;
 
 	resource::Proxy< sound::Sound > m_sound;
+	Ref< sound::ISoundHandle > m_handle;
+	bool m_follow;
+	bool m_repeat;
 
-	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound);
+	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool follow, bool repeat);
 };
 
 	}

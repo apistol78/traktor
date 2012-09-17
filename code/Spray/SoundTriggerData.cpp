@@ -10,7 +10,12 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.SoundTriggerData", 0, SoundTriggerData, ITriggerData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.SoundTriggerData", 1, SoundTriggerData, ITriggerData)
+
+SoundTriggerData::SoundTriggerData()
+:	m_follow(false)
+{
+}
 
 Ref< ITrigger > SoundTriggerData::createTrigger(resource::IResourceManager* resourceManager) const
 {
@@ -18,12 +23,20 @@ Ref< ITrigger > SoundTriggerData::createTrigger(resource::IResourceManager* reso
 	if (!resourceManager->bind(m_sound, sound))
 		return 0;
 
-	return new SoundTrigger(sound);
+	return new SoundTrigger(sound, m_follow, m_repeat);
 }
 
 bool SoundTriggerData::serialize(ISerializer& s)
 {
-	return s >> resource::Member< sound::Sound >(L"sound", m_sound);
+	s >> resource::Member< sound::Sound >(L"sound", m_sound);
+
+	if (s.getVersion() >= 1)
+	{
+		s >> Member< bool >(L"follow", m_follow);
+		s >> Member< bool >(L"repeat", m_repeat);
+	}
+
+	return true;
 }
 
 	}

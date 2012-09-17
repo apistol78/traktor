@@ -249,7 +249,7 @@ void FlashLayer::createMoviePlayer()
 	if (m_enableSound && m_environment->getAudio())
 	{
 		soundRenderer = new flash::SoundRenderer();
-		soundRenderer->create(m_environment->getAudio()->getSoundSystem());
+		soundRenderer->create(m_environment->getAudio()->getSoundPlayer());
 	}
 
 	// Create Flash movie player.

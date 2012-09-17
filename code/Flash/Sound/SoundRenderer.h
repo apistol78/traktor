@@ -17,8 +17,7 @@ namespace traktor
 	namespace sound
 	{
 
-class SoundSystem;
-class SoundChannel;
+class ISoundPlayer;
 
 	}
 
@@ -33,15 +32,14 @@ class T_DLLCLASS SoundRenderer : public ISoundRenderer
 	T_RTTI_CLASS;
 
 public:
-	bool create(sound::SoundSystem* soundSystem);
+	bool create(sound::ISoundPlayer* soundPlayer);
 
 	virtual void destroy();
 
 	virtual void play(const FlashSound* sound);
 
 private:
-	Ref< sound::SoundSystem > m_soundSystem;
-	Ref< sound::SoundChannel > m_soundChannel;
+	Ref< sound::ISoundPlayer > m_soundPlayer;
 };
 
 	}

@@ -36,7 +36,7 @@ public:
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
-	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;
 
 private:
 	Ref< IStreamDecoder > m_streamDecoder;

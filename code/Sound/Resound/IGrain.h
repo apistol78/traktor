@@ -18,6 +18,7 @@ namespace traktor
 	{
 
 class ISoundBufferCursor;
+class ISoundMixer;
 
 /*! \brief
  * \ingroup Sound
@@ -31,9 +32,7 @@ public:
 
 	virtual void updateCursor(ISoundBufferCursor* cursor) const = 0;
 
-	virtual const IGrain* getCurrentGrain(ISoundBufferCursor* cursor) const = 0;
-
-	virtual bool getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const = 0;
+	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const = 0;
 };
 
 	}

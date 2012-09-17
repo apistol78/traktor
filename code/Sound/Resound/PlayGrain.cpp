@@ -21,9 +21,16 @@ struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	float m_gain;
 	float m_pitch;
 
+	virtual void setParameter(float parameter)
+	{
+		if (m_soundCursor)
+			m_soundCursor->setParameter(parameter);
+	}
+
 	virtual void reset()
 	{
-		m_soundCursor->reset();
+		if (m_soundCursor)
+			m_soundCursor->reset();
 	}
 };
 
@@ -35,12 +42,14 @@ PlayGrain::PlayGrain(
 	const resource::Proxy< Sound >& sound,
 	const RefArray< IFilter >& filters,
 	const Range< float >& gain,
-	const Range< float >& pitch
+	const Range< float >& pitch,
+	bool repeat
 )
 :	m_sound(sound)
 ,	m_filters(filters)
 ,	m_gain(gain)
 ,	m_pitch(pitch)
+,	m_repeat(repeat)
 {
 }
 
@@ -75,19 +84,35 @@ void PlayGrain::updateCursor(ISoundBufferCursor* cursor) const
 		playCursor->m_filterInstances.push_back((*i) ? (*i)->createInstance() : 0);
 }
 
-const IGrain* PlayGrain::getCurrentGrain(ISoundBufferCursor* cursor) const
-{
-	return this;
-}
-
-bool PlayGrain::getBlock(ISoundBufferCursor* cursor, SoundBlock& outBlock) const
+bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);
-	if (!playCursor || !playCursor->m_soundBuffer->getBlock(
+	if (!playCursor)
+		return false;
+
+	T_ASSERT (playCursor->m_soundBuffer);
+	T_ASSERT (playCursor->m_soundCursor);
+
+	// Get sound block from buffer; rewind if repeat flag is set.
+	if (!playCursor->m_soundBuffer->getBlock(
 		playCursor->m_soundCursor,
+		mixer,
 		outBlock
 	))
-		return false;
+	{
+		if (m_repeat)
+		{
+			playCursor->m_soundCursor->reset();
+			if (!playCursor->m_soundBuffer->getBlock(
+				playCursor->m_soundCursor,
+				mixer,
+				outBlock
+			))
+				return false;
+		}
+		else
+			return false;
+	}
 
 	// Apply filter chain.
 	uint32_t nfilters = m_filters.size();
