@@ -9,7 +9,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_maxExtrapolate = 4.0f;
+const float c_maxExtrapolate = 1.0f + 2.0f;
 
 		}
 
@@ -44,8 +44,13 @@ Ref< const IReplicatableState > StateProphet::get(float T) const
 	{
 		// Linear predict state from last two.
 		float dST = m_history[N - 1].T - m_history[N - 2].T;
-		float T0 = 1.0f + (T - m_history[N - 1].T) / dST;
-		float Tc = clamp(T0, 0.0f, c_maxExtrapolate);
+		float Tc = 1.0f + (T - m_history[N - 1].T) / dST;
+
+		if (Tc < 1.0f)
+			Tc = 1.0f;
+		else if (Tc >= c_maxExtrapolate)
+			return 0;
+
 		return m_history[N - 2].state->extrapolate(m_history[N - 1].state, Tc);
 	}
 	else

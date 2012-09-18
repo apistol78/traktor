@@ -119,18 +119,18 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 
 void SoundSystem::destroy()
 {
-	T_ASSERT (m_driver);
-
 	if (m_threadSubmit)
 	{
 		m_threadSubmit->stop();
 		ThreadManager::getInstance().destroy(m_threadSubmit);
+		m_threadSubmit = 0;
 	}
 
 	if (m_threadMixer)
 	{
 		m_threadMixer->stop();
 		ThreadManager::getInstance().destroy(m_threadMixer);
+		m_threadMixer = 0;
 	}
 
 	m_mixer = 0;

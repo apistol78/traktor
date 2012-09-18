@@ -113,6 +113,11 @@ public:
 	 */
 	std::wstring getPeerName(handle_t peerHandle) const;
 
+	/*! \brief Get peer average latency.
+	 * \return Latency in milliseconds.
+	 */
+	int32_t getPeerLatency(handle_t peerHandle) const;
+
 	/*! \brief Check if peer is connected.
 	 */
 	bool isPeerConnected(handle_t peerHandle) const;

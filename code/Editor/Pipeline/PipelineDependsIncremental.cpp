@@ -33,6 +33,8 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 
 void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 {
+	T_ASSERT(m_currentDependency);
+
 	if (!sourceAsset)
 		return;
 
@@ -48,6 +50,10 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 		Ref< const Object > dummyBuildParams;
 		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid(), dummyBuildParams);
 		T_ASSERT_M (!dummyBuildParams, L"Build parameters not used with non-producing dependencies");
+
+		// Merge hash of dependent pipeline with parent pipeline hash.
+		if (m_currentDependency)
+			m_currentDependency->pipelineHash += pipelineHash;
 	}
 	else
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;

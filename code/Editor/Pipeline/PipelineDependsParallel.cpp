@@ -47,6 +47,7 @@ void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
 		return;
 
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
+	T_ASSERT (parentDependency);
 
 	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, Ref< const ISerializable >(sourceAsset)));
 }
@@ -282,9 +283,17 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 
 	if (m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 	{
+		Ref< PipelineDependency > previousDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
+		m_currentDependency.set(parentDependency);
+
 		Ref< const Object > dummyBuildParams;
 		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid(), dummyBuildParams);
 		T_ASSERT_M (!dummyBuildParams, L"Build parameters not used with non-producing dependencies");
+
+		// Merge hash of dependent pipeline with parent's pipeline hash.
+		parentDependency->pipelineHash += pipelineHash;
+
+		m_currentDependency.set(previousDependency);
 	}
 	else
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
