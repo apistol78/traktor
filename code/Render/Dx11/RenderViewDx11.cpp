@@ -472,6 +472,7 @@ bool RenderViewDx11::begin(EyeType eye)
 	RenderState rs =
 	{
 		m_d3dViewport,
+		0,
 		{ 0, 0 },
 		{ m_d3dRenderTargetView, 0 },
 		m_d3dDepthStencilView,
@@ -517,6 +518,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		RenderState rs =
 		{
 			{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+			rts,
 			{ rt0, rt1 },
 			{ rt0->getD3D11RenderTargetView(), rt1->getD3D11RenderTargetView() },
 			rts->getD3D11DepthTextureView(),
@@ -541,8 +543,6 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 		m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
 		m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
 
-		rts->setContentValid(true);
-
 		m_stateCache.reset();
 	}
 	else if (rt0)
@@ -565,6 +565,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 	RenderState rs =
 	{
 		{ 0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f },
+		rts,
 		{ rt, 0 },
 		{ rt->getD3D11RenderTargetView(), 0 },
 		rts->getD3D11DepthTextureView(),
@@ -588,8 +589,6 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 
 	m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
 	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
-
-	rts->setContentValid(true);
 
 	m_stateCache.reset();
 	return true;
@@ -752,10 +751,14 @@ void RenderViewDx11::end()
 {
 	T_ASSERT (!m_renderStateStack.empty());
 
-	if (m_renderStateStack.back().renderTarget[0])
-		m_renderStateStack.back().renderTarget[0]->unbind();
-	if (m_renderStateStack.back().renderTarget[1])
-		m_renderStateStack.back().renderTarget[1]->unbind();
+	RenderState& rs = m_renderStateStack.back();
+	if (rs.renderTargetSet)
+		rs.renderTargetSet->setContentValid(true);
+
+	if (rs.renderTarget[0])
+		rs.renderTarget[0]->unbind();
+	if (rs.renderTarget[1])
+		rs.renderTarget[1]->unbind();
 
 	m_renderStateStack.pop_back();
 	if (!m_renderStateStack.empty())

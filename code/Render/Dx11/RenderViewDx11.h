@@ -105,6 +105,7 @@ private:
 	struct RenderState
 	{
 		D3D11_VIEWPORT d3dViewport;
+		RenderTargetSetDx11* renderTargetSet;
 		RenderTargetDx11* renderTarget[2];
 		ID3D11RenderTargetView* d3dRenderView[2];
 		ID3D11DepthStencilView* d3dDepthStencilView;
