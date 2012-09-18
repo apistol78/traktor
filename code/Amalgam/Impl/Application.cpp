@@ -51,7 +51,6 @@ namespace traktor
 const int32_t c_databasePollInterval = 5;
 const uint32_t c_simulationFrequency = 60;
 const float c_simulationDeltaTime = 1.0f / c_simulationFrequency;
-const int32_t c_maxSimulationUpdates = 2;
 const float c_maxDeltaTime = 0.5f;
 const float c_minDeltaTime = 0.0f;
 const float c_deltaTimeFilterCoeff = 0.99f;
@@ -63,6 +62,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.Application", Application, IApplication
 Application::Application()
 :	m_threadDatabase(0)
 ,	m_threadRender(0)
+,	m_maxSimulationUpdates(1)
 ,	m_renderViewActive(true)
 ,	m_backgroundColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_updateDuration(0.0f)
@@ -84,6 +84,7 @@ bool Application::create(
 	void* nativeWindowHandle
 )
 {
+	// Establish target manager connection is launched from the Editor.
 	std::wstring targetManagerHost = settings->getProperty< PropertyString >(L"Amalgam.TargetManager/Host");
 	int32_t targetManagerPort = settings->getProperty< PropertyInteger >(L"Amalgam.TargetManager/Port");
 	Guid targetManagerId = Guid(settings->getProperty< PropertyString >(L"Amalgam.TargetManager/Id"));
@@ -97,6 +98,7 @@ bool Application::create(
 		}
 	}
 
+	// Load dependent modules.
 #if !defined(T_STATIC)
 	std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
@@ -110,6 +112,10 @@ bool Application::create(
 		m_libraries.push_back(library);
 	}
 #endif
+
+	// Sub step configuration.
+	m_maxSimulationUpdates = settings->getProperty< PropertyInteger >(L"Amalgam.MaxSimulationUpdates", 4);
+	m_maxSimulationUpdates = max(m_maxSimulationUpdates, 1);
 
 	m_stateManager = new StateManager();
 
@@ -532,7 +538,7 @@ bool Application::update()
 			m_updateInfo.m_simulationFrequency = c_simulationFrequency;
 
 			float simulationEndTime = m_updateInfo.m_stateTime;
-			updateCount = std::min(int32_t(std::ceil((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime)), c_maxSimulationUpdates);
+			updateCount = std::min(int32_t(std::ceil((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime)), m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
 			bool renderCollision = false;

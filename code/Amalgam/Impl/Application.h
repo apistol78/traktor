@@ -95,6 +95,7 @@ private:
 	Thread* m_threadDatabase;
 	Thread* m_threadRender;
 	Timer m_timer;
+	int32_t m_maxSimulationUpdates;
 	UpdateControl m_updateControl;
 	UpdateInfo m_updateInfo;
 	bool m_renderViewActive;
