@@ -28,7 +28,9 @@ const float c_nearDistance = 28.0f;
 const float c_farDistance = 250.0f;
 const float c_nearTimeUntilTx = 1.0f / 20.0f;
 const float c_farTimeUntilTx = 1.0f / 10.0f;
-const float c_timeUntilIAm = 4.0f;
+const float c_timeUntilIAm = 6.0f;
+const float c_peerTimeout = 10.0f;
+const float c_distanceBlend = 0.75f;
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
 
@@ -147,6 +149,22 @@ void Replicator::update(float dT)
 			}
 		}
 
+		// Check if peer timeout;ed.
+		if (
+			peer.established &&
+			peer.packetCount > 0 &&
+			!peer.disconnected
+		)
+		{
+			T_ASSERT (peer.lastTime > 0.0f);
+			float T = m_time - peer.lastTime;
+			if (T > c_peerTimeout)
+			{
+				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" timeout, no packet in " << int32_t(T * 1000.0f) << L" ms");
+				continue;
+			}
+		}
+
 		// Remove from "unfresh" peers.
 		unfresh.erase(*i);
 	}
@@ -224,7 +242,10 @@ void Replicator::update(float dT)
 				log::error << L"ERROR: Unable to send state to peer " << i->first << Endl;
 
 			float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
-			float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
+			
+			float t0 = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
+			float t1 = std::sqrt(t0);
+			float t = lerp(t0, t1, c_distanceBlend);
 
 			peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
 		}
@@ -527,6 +548,12 @@ handle_t Replicator::getPeerHandle(uint32_t peerIndex) const
 std::wstring Replicator::getPeerName(handle_t peerHandle) const
 {
 	return m_replicatorPeers->getPeerName(peerHandle);
+}
+
+int32_t Replicator::getPeerLatency(handle_t peerHandle) const
+{
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	return i != m_peers.end() ? int32_t(i->second.latency * 1000.0f) : 0;
 }
 
 bool Replicator::isPeerConnected(handle_t peerHandle) const
