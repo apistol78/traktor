@@ -524,7 +524,7 @@ bool ProgramDx11::createState(
 				uint32_t parameterOffset = alignUp(uint32_t(m_parameterFloatArray.size()), 4);
 				uint32_t parameterCount = dsvd.Size >> 2;
 
-				m_parameterFloatArray.resize(parameterOffset + parameterCount);
+				m_parameterFloatArray.resize(parameterOffset + parameterCount, 0.0f);
 
 				outState.cbuffer[i].parameterOffsets.push_back(ParameterOffset(
 					dsvd.StartOffset,

@@ -37,7 +37,7 @@ public:
 
 	virtual void selectionChanged() = 0;
 
-	virtual bool cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition) = 0;
+	virtual bool cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown) = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
 

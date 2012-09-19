@@ -25,6 +25,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.TranslateModifier", TranslateModifier, IM
 TranslateModifier::TranslateModifier(SceneEditorContext* context)
 :	m_context(context)
 ,	m_axisEnable(0)
+,	m_axisHot(0)
 {
 }
 
@@ -51,9 +52,10 @@ void TranslateModifier::selectionChanged()
 	}
 
 	m_axisEnable = 0;
+	m_axisHot = 0;
 }
 
-bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition)
+bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown)
 {
 	if (m_entityAdapters.empty())
 		return false;
@@ -94,7 +96,7 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 
 	tc.popWorld();
 
-	m_axisEnable = 0;
+	m_axisHot = 0;
 
 	// First check squares.
 	{
@@ -108,8 +110,8 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 		w.p[3] = square[1];
 		if (w.inside(cursorPosition))
 		{
-			m_axisEnable |= 1 | 2;
-			return true;
+			m_axisHot |= 1 | 2;
+			goto hit;
 		}
 
 		// XZ
@@ -119,8 +121,8 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 		w.p[3] = square[2];
 		if (w.inside(cursorPosition))
 		{
-			m_axisEnable |= 1 | 4;
-			return true;
+			m_axisHot |= 1 | 4;
+			goto hit;
 		}
 
 		// YZ
@@ -130,20 +132,26 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 		w.p[3] = square[2];
 		if (w.inside(cursorPosition))
 		{
-			m_axisEnable |= 2 | 4;
-			return true;
+			m_axisHot |= 2 | 4;
+			goto hit;
 		}
+
+hit:;
 	}
 
 	// If no square hit; check each line.
 	if (Line2(center, axis[0]).classify(cursorPosition, c_guideThickness))
-		m_axisEnable |= 1;
+		m_axisHot |= 1;
 	if (Line2(center, axis[1]).classify(cursorPosition, c_guideThickness))
-		m_axisEnable |= 2;
+		m_axisHot |= 2;
 	if (Line2(center, axis[2]).classify(cursorPosition, c_guideThickness))
-		m_axisEnable |= 4;
+		m_axisHot |= 4;
 
-	return m_axisEnable != 0;
+	// If user pressed mouse button then hot axises are enabled.
+	if (mouseDown)
+		m_axisEnable = m_axisHot;
+
+	return m_axisHot != 0;
 }
 
 bool TranslateModifier::handleCommand(const ui::Command& command)
@@ -230,21 +238,21 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 
 	// Infinite "trace" lines.
 	primitiveRenderer->pushDepthEnable(true);
-	if (m_axisEnable & 1)
+	if (m_axisHot & 1)
 		primitiveRenderer->drawLine(
 			Vector4(-c_infinite, 0.0f, 0.0f, 1.0f),
 			Vector4(c_infinite, 0.0f, 0.0f, 1.0f),
 			1.0f,
 			Color4ub(255, 0, 0, 100)
 		);
-	if (m_axisEnable & 2)
+	if (m_axisHot & 2)
 		primitiveRenderer->drawLine(
 			Vector4(0.0f, -c_infinite, 0.0f, 1.0f),
 			Vector4(0.0f, c_infinite, 0.0f, 1.0f),
 			1.0f,
 			Color4ub(0, 255, 0, 100)
 		);
-	if (m_axisEnable & 4)
+	if (m_axisHot & 4)
 		primitiveRenderer->drawLine(
 			Vector4(0.0f, 0.0f, -c_infinite, 1.0f),
 			Vector4(0.0f, 0.0f, c_infinite, 1.0f),
@@ -283,32 +291,32 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 
 	// Guide square lines.
 	// XY
-	primitiveRenderer->drawLine(Vector4(squareLength, 0.0f, 0.0f, 1.0f), Vector4(squareLength, squareLength, 0.0f, 1.0f), ((m_axisEnable & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
-	primitiveRenderer->drawLine(Vector4(squareLength, 0.0f, 0.0f, 1.0f), Vector4(squareLength, 0.0f, squareLength, 1.0f), ((m_axisEnable & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
+	primitiveRenderer->drawLine(Vector4(squareLength, 0.0f, 0.0f, 1.0f), Vector4(squareLength, squareLength, 0.0f, 1.0f), ((m_axisHot & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
+	primitiveRenderer->drawLine(Vector4(squareLength, 0.0f, 0.0f, 1.0f), Vector4(squareLength, 0.0f, squareLength, 1.0f), ((m_axisHot & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(255, 0, 0, 255));
 	// XZ
-	primitiveRenderer->drawLine(Vector4(0.0f, squareLength, 0.0f, 1.0f), Vector4(squareLength, squareLength, 0.0f, 1.0f), ((m_axisEnable & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
-	primitiveRenderer->drawLine(Vector4(0.0f, squareLength, 0.0f, 1.0f), Vector4(0.0f, squareLength, squareLength, 1.0f), ((m_axisEnable & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, squareLength, 0.0f, 1.0f), Vector4(squareLength, squareLength, 0.0f, 1.0f), ((m_axisHot & (1 | 2)) == (1 | 2)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, squareLength, 0.0f, 1.0f), Vector4(0.0f, squareLength, squareLength, 1.0f), ((m_axisHot & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 255, 0, 255));
 	// YZ
-	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, squareLength, 1.0f), Vector4(squareLength, 0.0f, squareLength, 1.0f), ((m_axisEnable & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
-	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, squareLength, 1.0f), Vector4(0.0f, squareLength, squareLength, 1.0f), ((m_axisEnable & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, squareLength, 1.0f), Vector4(squareLength, 0.0f, squareLength, 1.0f), ((m_axisHot & (1 | 4)) == (1 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
+	primitiveRenderer->drawLine(Vector4(0.0f, 0.0f, squareLength, 1.0f), Vector4(0.0f, squareLength, squareLength, 1.0f), ((m_axisHot & (2 | 4)) == (2 | 4)) ? 3.0f : 1.0f, Color4ub(0, 0, 255, 255));
 
 	// Guide axis lines.
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(axisLength, 0.0f, 0.0f, 1.0f),
-		(m_axisEnable & 1) ? 3.0f : 1.0f,
+		(m_axisHot & 1) ? 3.0f : 1.0f,
 		Color4ub(255, 0, 0, 255)
 	);
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, axisLength, 0.0f, 1.0f),
-		(m_axisEnable & 2) ? 3.0f : 1.0f,
+		(m_axisHot & 2) ? 3.0f : 1.0f,
 		Color4ub(0, 255, 0, 255)
 	);
 	primitiveRenderer->drawLine(
 		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
 		Vector4(0.0f, 0.0f, axisLength, 1.0f),
-		(m_axisEnable & 4) ? 3.0f : 1.0f,
+		(m_axisHot & 4) ? 3.0f : 1.0f,
 		Color4ub(0, 0, 255, 255)
 	);
 

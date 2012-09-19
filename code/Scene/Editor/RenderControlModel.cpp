@@ -87,7 +87,8 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 				if ((event->getKeyState() & ui::KsShift) == 0)
 					modifierHit = modifier->cursorMoved(
 						transformChain,
-						screenPosition
+						screenPosition,
+						true
 					);
 			}
 
@@ -102,6 +103,7 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 
 	renderWidget->setCapture();
 	renderWidget->setFocus();
+	renderWidget->update();
 }
 
 void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain)
@@ -167,6 +169,8 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 
 	if (renderWidget->hasCapture())
 		renderWidget->releaseCapture();
+
+	renderWidget->update();
 }
 
 void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain)
@@ -191,6 +195,8 @@ void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui
 				context->getEditor()->openEditor(instance);
 		}
 	}
+
+	renderWidget->update();
 }
 
 void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::Widget* renderWidget, ui::Event* event, SceneEditorContext* context, const TransformChain& transformChain)
@@ -224,7 +230,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 			// Notify modifier about modification begun.
 			if (modifier)
 			{
-				modifier->cursorMoved(transformChain, screenPosition);
+				modifier->cursorMoved(transformChain, screenPosition, false);
 				modifier->begin(transformChain);
 			}
 
@@ -259,7 +265,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 	{
 		IModifier* modifier = context->getModifier();
 		if (modifier)
-			modifier->cursorMoved(transformChain, screenPosition);
+			modifier->cursorMoved(transformChain, screenPosition, false);
 	}
 
 	renderWidget->update();
