@@ -28,7 +28,7 @@ public:
 
 	bool isEnable() const;
 
-	void place(const Matrix44& transform);
+	void place(const Vector4& position);
 
 	void move(const Vector4& direction);
 

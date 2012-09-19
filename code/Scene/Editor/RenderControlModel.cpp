@@ -230,6 +230,8 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 			// Notify modifier about modification begun.
 			if (modifier)
 			{
+				Vector2 screenPosition0(2.0f * float(m_mousePosition0.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(m_mousePosition0.y) / innerRect.getHeight());
+				modifier->cursorMoved(transformChain, screenPosition0, true);
 				modifier->cursorMoved(transformChain, screenPosition, false);
 				modifier->begin(transformChain);
 			}

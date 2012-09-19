@@ -167,6 +167,8 @@ public:
 
 	void setLookAtEntityAdapter(EntityAdapter* lookAtEntityAdapter);
 
+	void moveToEntityAdapter(EntityAdapter* entityAdapter);
+
 	//@}
 
 	/*! \name Time control. */

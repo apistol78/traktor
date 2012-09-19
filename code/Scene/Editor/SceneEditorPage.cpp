@@ -172,6 +172,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_entityToolBar->addItem(m_toolLookAtEntity);
 	m_entityToolBar->addItem(m_toolFollowEntity);
+	m_entityToolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), ui::Command(L"Scene.Editor.MoveToEntity"), 5));
 	m_entityToolBar->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityToolClick));
 
 	m_imageHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
@@ -508,6 +510,8 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		result = updateLookAtEntity();
 	else if (command == L"Scene.Editor.FollowEntity")
 		result = updateFollowEntity();
+	else if (command == L"Scene.Editor.MoveToEntity")
+		result = moveToEntity();
 	else if (command == L"Scene.Editor.EnlargeGuide")
 	{
 		float guideSize = m_context->getGuideSize();
@@ -849,6 +853,16 @@ bool SceneEditorPage::updateFollowEntity()
 		}
 	}
 	m_context->setFollowEntityAdapter(0);
+	return true;
+}
+
+bool SceneEditorPage::moveToEntity()
+{
+	RefArray< EntityAdapter > selectedEntities;
+	if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
+		m_context->moveToEntityAdapter(selectedEntities[0]);
+	else
+		m_context->moveToEntityAdapter(0);
 	return true;
 }
 
