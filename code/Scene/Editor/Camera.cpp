@@ -27,6 +27,11 @@ bool Camera::isEnable() const
 	return m_enable;
 }
 
+void Camera::place(const Vector4& position)
+{
+	m_position = position;
+}
+
 void Camera::move(const Vector4& direction)
 {
 	m_position += m_orientation * direction;

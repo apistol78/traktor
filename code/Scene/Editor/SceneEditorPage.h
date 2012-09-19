@@ -127,6 +127,8 @@ private:
 
 	bool updateFollowEntity();
 
+	bool moveToEntity();
+
 	void eventEntityToolClick(ui::Event* event);
 
 	void eventInstanceSelect(ui::Event* event);
