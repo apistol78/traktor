@@ -25,7 +25,7 @@ public:
 
 	virtual void selectionChanged();
 
-	virtual bool cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition);
+	virtual bool cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown);
 
 	virtual bool handleCommand(const ui::Command& command);
 
@@ -55,6 +55,7 @@ private:
 	AlignedVector< Vector4 > m_baseTranslations;
 	Vector4 m_center;
 	uint32_t m_axisEnable;
+	uint32_t m_axisHot;
 };
 
 	}

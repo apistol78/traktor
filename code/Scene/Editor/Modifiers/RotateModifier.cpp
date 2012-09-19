@@ -71,7 +71,7 @@ void RotateModifier::selectionChanged()
 	m_axisEnable = 0;
 }
 
-bool RotateModifier::cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition)
+bool RotateModifier::cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown)
 {
 	if (m_entityAdapters.empty())
 		return false;
