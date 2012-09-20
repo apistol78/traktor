@@ -86,7 +86,7 @@ Ref< Entity > EntityBuilder::create(const EntityData* entityData)
 
 	if (!entityFactory)
 	{
-		log::error << L"Unable to find entity factory for \"" << type_name(entityData) << L"\"" << Endl;
+		log::error << L"Unable to find entity factory for \"" << entityData->getName() << L"\" of " << type_name(entityData) << Endl;
 		return 0;
 	}
 
@@ -95,7 +95,7 @@ Ref< Entity > EntityBuilder::create(const EntityData* entityData)
 	Ref< Entity > entity = entityFactory->createEntity(this, *entityData);
 	if (!entity)
 	{
-		log::error << L"Unable to create entity from \"" << type_name(entityData) << L"\"" << Endl;
+		log::error << L"Unable to create entity from \"" << entityData->getName() << L"\" of " << type_name(entityData) << Endl;
 		m_entityScope.pop();
 		return 0;
 	}

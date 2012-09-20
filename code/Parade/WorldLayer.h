@@ -110,6 +110,10 @@ public:
 
 	float getFieldOfView() const;
 
+	void setAlternateTime(float alternateTime);
+
+	float getAlternateTime() const;
+
 private:
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< scene::Scene > m_scene;
@@ -120,6 +124,7 @@ private:
 	Ref< render::RenderTargetSet > m_worldTarget;
 	Ref< world::GroupEntity > m_renderGroup;
 	Ref< world::GroupEntity > m_dynamicEntities;
+	float m_alternateTime;
 	float m_deltaTime;
 	float m_fieldOfView;
 	bool m_controllerEnable;
