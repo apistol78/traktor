@@ -257,7 +257,7 @@ uint32_t Model::addUniqueNormal(const Vector4& normal)
 		int(normal.z() * 128.0f) / 128.0f,
 		0.0f
 	);
-	uint32_t id = m_normals.get(quantizedNormal, 0.0001f);
+	uint32_t id = m_normals.get(quantizedNormal, 0.008f);
 	return id != m_normals.InvalidIndex ? id : m_normals.add(quantizedNormal);
 }
 
@@ -283,7 +283,7 @@ uint32_t Model::addTexCoord(const Vector2& texCoord)
 
 uint32_t Model::addUniqueTexCoord(const Vector2& texCoord)
 {
-	uint32_t id = m_texCoords.get(texCoord, 0.001f);
+	uint32_t id = m_texCoords.get(texCoord, 1.0f / 2048.0f);
 	return id != m_texCoords.InvalidIndex ? id : m_texCoords.add(texCoord);
 }
 

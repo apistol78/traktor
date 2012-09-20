@@ -37,6 +37,7 @@ WorldLayer::WorldLayer(
 ,	m_scene(scene)
 ,	m_entities(entities)
 ,	m_dynamicEntities(new world::GroupEntity())
+,	m_alternateTime(0.0f)
 ,	m_deltaTime(0.0f)
 ,	m_fieldOfView(70.0f)
 ,	m_controllerEnable(true)
@@ -90,6 +91,7 @@ void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 	m_scene->update(
 		info.getSimulationTime(),
 		info.getSimulationDeltaTime(),
+		m_alternateTime,
 		m_controllerEnable,
 		false
 	);
@@ -99,7 +101,11 @@ void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 	world::Entity::UpdateParams up;
 	up.totalTime = info.getSimulationTime();
 	up.deltaTime = info.getSimulationDeltaTime();
+	up.alternateTime = m_alternateTime;
 	m_renderGroup->update(up);
+
+	// In case not explicitly set we update the alternative time also.
+	m_alternateTime += info.getSimulationDeltaTime();
 }
 
 void WorldLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
@@ -329,6 +335,16 @@ void WorldLayer::setFieldOfView(float fieldOfView)
 float WorldLayer::getFieldOfView() const
 {
 	return m_fieldOfView;
+}
+
+void WorldLayer::setAlternateTime(float alternateTime)
+{
+	m_alternateTime = alternateTime;
+}
+
+float WorldLayer::getAlternateTime() const
+{
+	return m_alternateTime;
 }
 
 void WorldLayer::createWorldRenderer()

@@ -130,6 +130,8 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod(L"getScreenPosition", &WorldLayer_getScreenPosition);
 	classWorldLayer->addMethod(L"setFieldOfView", &WorldLayer::setFieldOfView);
 	classWorldLayer->addMethod(L"getFieldOfView", &WorldLayer::getFieldOfView);
+	classWorldLayer->addMethod(L"setAlternateTime", &WorldLayer::setAlternateTime);
+	classWorldLayer->addMethod(L"getAlternateTime", &WorldLayer::getAlternateTime);
 	scriptManager->registerClass(classWorldLayer);
 
 	Ref< script::AutoScriptClass< StageLoader > > classStageLoader = new script::AutoScriptClass< StageLoader >();

@@ -100,13 +100,8 @@ bool ScenePipeline::buildOutput(
 			for (RefArray< world::EntityData >::const_iterator j = entityData.begin(); j != entityData.end(); ++j)
 			{
 				Ref< world::EntityData > entityData = checked_type_cast< world::EntityData*, true >(pipelineBuilder->buildOutput(*j));
-				if (!entityData)
-				{
-					log::error << L"Scene pipeline failed; unable to build entity data." << Endl;
-					return false;
-				}
-
-				groupEntityData->addEntityData(entityData);
+				if (entityData)
+					groupEntityData->addEntityData(entityData);
 			}
 		}
 		else

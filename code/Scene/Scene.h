@@ -53,7 +53,7 @@ public:
 
 	void destroy();
 
-	void update(float time, float deltaTime, bool updateController, bool updateEntity);
+	void update(float time, float deltaTime, float alternateTime, bool updateController, bool updateEntity);
 
 	void build(world::IWorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame);
 

@@ -461,14 +461,14 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 
 			while (m_lastPhysicsTime < scaledTime)
 			{
-				scene->update(m_lastPhysicsTime, c_updateDeltaTime, true, true);
+				scene->update(m_lastPhysicsTime, c_updateDeltaTime, m_lastPhysicsTime, true, true);
 				m_context->getPhysicsManager()->update();
 				m_lastPhysicsTime += c_updateDeltaTime;
 			}
 		}
 		else if (scene)
 		{
-			scene->update(scaledTime, scaledDeltaTime, true, true);
+			scene->update(scaledTime, scaledDeltaTime, scaledTime, true, true);
 		}
 
 		// Issue updates on render controls.

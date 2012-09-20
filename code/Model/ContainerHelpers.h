@@ -50,6 +50,11 @@ struct MaterialNamePredicate
 
 struct MaterialPredicate
 {
+	inline static bool compare(float a, float b)
+	{
+		return std::abs(a - b) <= 1e-4f;
+	}
+
 	inline bool operator () (const Material& a, const Material& b) const
 	{
 		return
@@ -59,12 +64,12 @@ struct MaterialPredicate
 			a.getReflectiveMap() == b.getReflectiveMap() &&
 			a.getNormalMap() == b.getNormalMap() &&
 			a.getColor() == b.getColor() &&
-			a.getDiffuseTerm() == b.getDiffuseTerm() &&
-			a.getSpecularTerm() == b.getSpecularTerm() &&
-			a.getSpecularRoughness() == b.getSpecularRoughness() &&
-			a.getEmissive() == b.getEmissive() &&
-			a.getReflective() == b.getReflective() &&
-			a.getRimLightIntensity() == b.getRimLightIntensity() &&
+			compare(a.getDiffuseTerm(), b.getDiffuseTerm()) &&
+			compare(a.getSpecularTerm(), b.getSpecularTerm()) &&
+			compare(a.getSpecularRoughness(), b.getSpecularRoughness()) &&
+			compare(a.getEmissive(), b.getEmissive()) &&
+			compare(a.getReflective(), b.getReflective()) &&
+			compare(a.getRimLightIntensity(), b.getRimLightIntensity()) &&
 			a.getBlendOperator() == b.getBlendOperator() &&
 			a.isDoubleSided() == b.isDoubleSided();
 	}
