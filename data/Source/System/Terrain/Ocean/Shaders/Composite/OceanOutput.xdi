@@ -171,6 +171,10 @@ Distance to fog plane
 					<name>ReflectionMap</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>View</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins>
 				<item>
@@ -184,6 +188,10 @@ Distance to fog plane
 				</item>
 				<item>
 					<first>ReflectionMap</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>View</first>
 					<second>0</second>
 				</item>
 			</values>
@@ -367,6 +375,17 @@ Distance to fog plane
 				<second>752</second>
 			</position>
 			<name>ReflectionMap</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>132</first>
+				<second>784</second>
+			</position>
+			<name>View</name>
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<defaultValue>0</defaultValue>
@@ -751,6 +770,16 @@ Distance to fog plane
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>View</name>
 			</destination>
 		</item>
 	</edges>

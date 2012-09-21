@@ -6,6 +6,7 @@
 #include "Sound/Resound/RepeatGrainData.h"
 #include "Sound/Resound/RandomGrainData.h"
 #include "Sound/Resound/SequenceGrainData.h"
+#include "Sound/Resound/TriggerGrainData.h"
 #include "Sound/Editor/SoundCategory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankPipeline.h"
@@ -42,6 +43,9 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 		for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 			buildGrainDependencies(pipelineDepends, *i);
 	}
+
+	if (const TriggerGrainData* triggerGrain = dynamic_type_cast< const TriggerGrainData* >(grain))
+		buildGrainDependencies(pipelineDepends, triggerGrain->getGrain());
 
 	if (const PlayGrainData* playGrain = dynamic_type_cast< const PlayGrainData* >(grain))
 		pipelineDepends->addDependency(playGrain->getSound(), editor::PdfBuild);
