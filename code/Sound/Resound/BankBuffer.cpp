@@ -49,6 +49,9 @@ void BankBuffer::updateCursor(ISoundBufferCursor* cursor) const
 
 Ref< ISoundBufferCursor > BankBuffer::createCursor() const
 {
+	if (m_grains.empty())
+		return 0;
+
 	Ref< BankBufferCursor > bankCursor = new BankBufferCursor();
 
 	bankCursor->m_grainIndex = 0;

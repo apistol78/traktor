@@ -38,16 +38,51 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	ComRef< ID3D11Device > d3dDevice;
 	ComRef< ID3D11DeviceContext > d3dDeviceContext;
 	ComRef< IDXGIDevice1 > dxgiDevice;
+	ComRef< IDXGIAdapter1 > dxgiAdapterEnum;
 	ComRef< IDXGIAdapter1 > dxgiAdapter;
 	ComRef< IDXGIFactory1 > dxgiFactory;
 	ComRef< IDXGIOutput > dxgiOutput;
 	D3D_FEATURE_LEVEL d3dFeatureLevel;
 	HRESULT hr;
 
+	// Create DXGI factory.
+	hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&dxgiFactory.getAssign());
+	if (FAILED(hr))
+	{
+		log::error << L"Failed to create DXGI factory, HRESULT " << int32_t(hr) << Endl;
+		return false;
+	}
+
+	// Prefer AMD or NVidia adapters; if none is found fallback on all others.
+	for (int32_t i = 0; dxgiFactory->EnumAdapters1(i, &dxgiAdapterEnum.getAssign()) != DXGI_ERROR_NOT_FOUND; ++i)
+	{
+		// Ensure the adapter have a connected output.
+		hr = dxgiAdapterEnum->EnumOutputs(0, &dxgiOutput.getAssign());
+		if (FAILED(hr))
+			continue;
+
+		// Get adapter description.
+		DXGI_ADAPTER_DESC1 dad;
+
+		hr = dxgiAdapterEnum->GetDesc1(&dad);
+		if (FAILED(hr))
+			continue;
+
+		if (dad.VendorId == 4098)	// AMD/ATI
+			dxgiAdapter = dxgiAdapterEnum;
+		if (dad.VendorId == 4318)	// NVidia
+			dxgiAdapter = dxgiAdapterEnum;
+	}
+
+	// In case we didn't find an suitable adapter we need to get the factory
+	// determined by DX itself.
+	if (!dxgiAdapter)
+		dxgiFactory.release();
+
 	// Create D3D11 device instance.
 	hr = D3D11CreateDevice(
-		NULL,
-		D3D_DRIVER_TYPE_HARDWARE,
+		dxgiAdapter,
+		dxgiAdapter != 0 ? D3D_DRIVER_TYPE_UNKNOWN : D3D_DRIVER_TYPE_HARDWARE,
 		NULL,
 		0,
 		0,
@@ -82,23 +117,28 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	if (SUCCEEDED(hr))
 	{
 		log::info << L"Using DirectX 11 adapter:" << Endl;
-		log::info << L" . description " << dad.Description << Endl;
-		log::info << L" . vendor id   " << dad.VendorId << Endl;
-		log::info << L" . device id   " << dad.DeviceId << Endl;
-		log::info << L" . subsys id   " << dad.SubSysId << Endl;
-		log::info << L" . revision    " << dad.Revision << Endl;
-		log::info << L" . dedicated video memory  " << uint64_t(dad.DedicatedVideoMemory / (1024*1024)) << L" MiB" << Endl;
-		log::info << L" . dedicated system memory " << uint64_t(dad.DedicatedSystemMemory / (1024*1024)) << L" MiB" << Endl;
-		log::info << L" . shared system memory    " << uint64_t(dad.SharedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+		log::info << IncreaseIndent;
+		log::info << L"Description " << dad.Description << Endl;
+		log::info << L"VendorId " << dad.VendorId << Endl;
+		log::info << L"DeviceId " << dad.DeviceId << Endl;
+		log::info << L"SubSysId " << dad.SubSysId << Endl;
+		log::info << L"Revision " << dad.Revision << Endl;
+		log::info << L"DedicatedVideoMemory " << uint64_t(dad.DedicatedVideoMemory / (1024*1024)) << L" MiB" << Endl;
+		log::info << L"DedicatedSystemMemory " << uint64_t(dad.DedicatedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+		log::info << L"SharedSystemMemory " << uint64_t(dad.SharedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+		log::info << DecreaseIndent;
 	}
 	else
 		log::warning << L"Unable to get DirectX 11 adapter description, HRESULT " << int32_t(hr) << Endl;
 
-	hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void **)&dxgiFactory.getAssign());
-	if (FAILED(hr))
+	if (!dxgiFactory)
 	{
-		log::error << L"Failed to get IDXGIFactory1 interface, HRESULT " << int32_t(hr) << Endl;
-		return false;
+		hr = dxgiAdapter->GetParent(__uuidof(IDXGIFactory1), (void **)&dxgiFactory.getAssign());
+		if (FAILED(hr))
+		{
+			log::error << L"Failed to get IDXGIFactory1 interface, HRESULT " << int32_t(hr) << Endl;
+			return false;
+		}
 	}
 
 	hr = dxgiAdapter->EnumOutputs(0, &dxgiOutput.getAssign());

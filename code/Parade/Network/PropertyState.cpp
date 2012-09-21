@@ -104,31 +104,73 @@ Transform PropertyState::unpackTransform() const
 	return Transform(t, r);
 }
 
-bool PropertyState::verify(const IReplicatableState* targetState) const
+bool PropertyState::verify(const IReplicatableState* S0) const
 {
-	const PropertyState* targetPropertyState = checked_type_cast< const PropertyState*, false >(targetState);
+	const PropertyState* PS0 = checked_type_cast< const PropertyState*, false >(S0);
 	return
-		targetPropertyState->m_u8.size() == m_u8.size() &&
-		targetPropertyState->m_f32.size() == m_f32.size();
+		PS0->m_u8.size() == m_u8.size() &&
+		PS0->m_f32.size() == m_f32.size();
 }
 
-Ref< IReplicatableState > PropertyState::extrapolate(const IReplicatableState* targetState, float T) const
+Ref< IReplicatableState > PropertyState::extrapolate(
+	float T1,
+	float T0, const IReplicatableState* S0,
+	float T
+) const
 {
-	const PropertyState* targetPropertyState = checked_type_cast< const PropertyState*, false >(targetState);
-	T_ASSERT (targetPropertyState->m_u8.size() == m_u8.size());
-	T_ASSERT (targetPropertyState->m_f32.size() == m_f32.size());
+	const PropertyState* PS0 = checked_type_cast< const PropertyState*, false >(S0);
+	T_ASSERT (PS0->m_u8.size() == m_u8.size());
+	T_ASSERT (PS0->m_f32.size() == m_f32.size());
 
-	Ref< PropertyState > extrapolatedState = new PropertyState();
-	extrapolatedState->m_u8.resize(m_u8.size());
-	extrapolatedState->m_f32.resize(m_f32.size());
+	float dST = T0 - T1;
+	float k = 1.0f + (T - T0) / dST;
+
+	Ref< PropertyState > PS = new PropertyState();
+	PS->m_u8.resize(m_u8.size());
+	PS->m_f32.resize(m_f32.size());
 
 	for (uint32_t i = 0; i < m_u8.size(); ++i)
-		extrapolatedState->m_u8[i] = uint8_t(lerp(float(m_u8[i]), float(targetPropertyState->m_u8[i]), T));
+		PS->m_u8[i] = uint8_t(lerp(float(m_u8[i]), float(PS0->m_u8[i]), k));
 
 	for (uint32_t i = 0; i < m_f32.size(); ++i)
-		extrapolatedState->m_f32[i] = lerp(m_f32[i], targetPropertyState->m_f32[i], T);
+		PS->m_f32[i] = lerp(m_f32[i], PS0->m_f32[i], k);
 
-	return extrapolatedState;
+	return PS;
+}
+
+Ref< IReplicatableState > PropertyState::extrapolate(
+	float T2,
+	float T1, const IReplicatableState* S1,
+	float T0, const IReplicatableState* S0,
+	float T
+) const
+{
+	const PropertyState* PS1 = checked_type_cast< const PropertyState*, false >(S1);
+	const PropertyState* PS0 = checked_type_cast< const PropertyState*, false >(S0);
+	T_ASSERT (PS1->m_u8.size() == m_u8.size());
+	T_ASSERT (PS1->m_f32.size() == m_f32.size());
+	T_ASSERT (PS0->m_u8.size() == m_u8.size());
+	T_ASSERT (PS0->m_f32.size() == m_f32.size());
+
+	Ref< PropertyState > PS = new PropertyState();
+	PS->m_u8.resize(m_u8.size());
+	PS->m_f32.resize(m_f32.size());
+
+	float dST = T0 - T1;
+	float k = 1.0f + (T - T0) / dST;
+
+	for (uint32_t i = 0; i < m_u8.size(); ++i)
+		PS->m_u8[i] = uint8_t(lerp(float(PS0->m_u8[i]), float(PS1->m_u8[i]), k));
+
+	for (uint32_t i = 0; i < m_f32.size(); ++i)
+	{
+		float v2_1 = (PS1->m_f32[i] - m_f32[i]) / (T1 - T2);
+		float v1_0 = (PS0->m_f32[i] - PS1->m_f32[i]) / (T0 - T1);
+		float a = clamp((v1_0 - v2_1) / (T0 - T1), -1.0f, 1.0f);
+		PS->m_f32[i] = PS0->m_f32[i] + (PS0->m_f32[i] - PS1->m_f32[i]) * (T - T0) + 0.5f * a * (T - T0) * (T - T0);
+	}
+
+	return PS;
 }
 
 bool PropertyState::serialize(ISerializer& s)

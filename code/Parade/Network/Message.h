@@ -12,6 +12,8 @@ enum MessageType
 {
 	MtIAm = 0xf1,
 	MtBye = 0xf2,
+	MtPing = 0xf3,
+	MtPong = 0xf4,
 	MtState	= 0x11,
 	MtEvent = 0x12
 };
@@ -29,7 +31,12 @@ struct Message
 			uint8_t id[16];
 		} iam;
 
-		uint8_t data[1200 - 1 - sizeof(float)];
+		struct 
+		{
+			uint32_t time0;
+		} pong;
+
+		uint8_t data[1200 - 1 - sizeof(uint32_t)];
 	};
 };
 #pragma pack()

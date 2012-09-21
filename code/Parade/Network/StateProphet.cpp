@@ -1,3 +1,4 @@
+#include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Parade/Network/IReplicatableState.h"
 #include "Parade/Network/StateProphet.h"
@@ -9,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_maxExtrapolate = 1.0f + 2.0f;
+const float c_maxExtrapolate = 1.0f;	//< Means a maximum of 1 second(s) latency.
 
 		}
 
@@ -32,43 +33,48 @@ void StateProphet::push(float T, IReplicatableState* state)
 
 Ref< const IReplicatableState > StateProphet::get(float T) const
 {
-	if (m_history.empty())
+	uint32_t N = m_history.size();
+
+	if (!N)
 		return 0;
 
-	if (m_history.size() <= 1)
+	if (N <= 1)
 		return m_history.back().state;
-
-	uint32_t N = m_history.size();
 
 	if (T >= m_history[N - 1].T)
 	{
-		// Linear predict state from last two.
-		float dST = m_history[N - 1].T - m_history[N - 2].T;
-		float Tc = 1.0f + (T - m_history[N - 1].T) / dST;
-
-		if (Tc < 1.0f)
-			Tc = 1.0f;
-		else if (Tc >= c_maxExtrapolate)
+		if (T - m_history[N - 1].T >= c_maxExtrapolate)
 			return 0;
 
-		return m_history[N - 2].state->extrapolate(m_history[N - 1].state, Tc);
+		if (N > 2)
+			return m_history[N - 3].state->extrapolate(
+				m_history[N - 3].T,
+				m_history[N - 2].T, m_history[N - 2].state,
+				m_history[N - 1].T, m_history[N - 1].state,
+				T
+			);
+		else
+			return m_history[N - 2].state->extrapolate(
+				m_history[N - 2].T,
+				m_history[N - 1].T, m_history[N - 1].state,
+				T
+			);
 	}
 	else
 	{
-		// Interpolate state between two known states.
 		for (size_t i = 0; i < N - 1; ++i)
 		{
 			if (T >= m_history[i].T && T <= m_history[i + 1].T)
 			{
-				float dST = m_history[i + 1].T - m_history[i].T;
-				float Tc = (T - m_history[i].T) / dST;
-				return m_history[i].state->extrapolate(m_history[i + 1].state, Tc);
+				return m_history[i].state->extrapolate(
+					m_history[i].T,
+					m_history[i + 1].T, m_history[i + 1].state,
+					T
+				);
 			}
 		}
 	}
 
-	// Should not happen; something wrong in the above.
-	T_ASSERT_M(0, L"Failed to see past, presence or future");
 	return 0;
 }
 
