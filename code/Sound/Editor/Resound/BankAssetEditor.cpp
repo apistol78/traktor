@@ -16,6 +16,7 @@
 #include "Sound/Resound/RandomGrainData.h"
 #include "Sound/Resound/RepeatGrainData.h"
 #include "Sound/Resound/SequenceGrainData.h"
+#include "Sound/Resound/TriggerGrainData.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundSystemFactory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
@@ -29,6 +30,7 @@
 #include "Sound/Editor/Resound/RandomGrainFacade.h"
 #include "Sound/Editor/Resound/RepeatGrainFacade.h"
 #include "Sound/Editor/Resound/SequenceGrainFacade.h"
+#include "Sound/Editor/Resound/TriggerGrainFacade.h"
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
@@ -112,6 +114,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_grainFacades[&type_of< RandomGrainData >()] = new RandomGrainFacade();
 	m_grainFacades[&type_of< RepeatGrainData >()] = new RepeatGrainFacade();
 	m_grainFacades[&type_of< SequenceGrainData >()] = new SequenceGrainFacade();
+	m_grainFacades[&type_of< TriggerGrainData >()] = new TriggerGrainFacade();
 
 	// Get sound system for preview.
 	Ref< SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< SoundSystemFactory >(L"SoundSystemFactory");
