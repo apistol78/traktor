@@ -23,7 +23,18 @@ class T_DLLCLASS IReplicatableState : public ISerializable
 public:
 	virtual bool verify(const IReplicatableState* targetState) const = 0;
 
-	virtual Ref< IReplicatableState > extrapolate(const IReplicatableState* targetState, float T) const = 0;
+	virtual Ref< IReplicatableState > extrapolate(
+		float T1,
+		float T0, const IReplicatableState* S0,
+		float T
+	) const = 0;
+
+	virtual Ref< IReplicatableState > extrapolate(
+		float T2,
+		float T1, const IReplicatableState* S1,
+		float T0, const IReplicatableState* S0,
+		float T
+	) const = 0;
 };
 
 	}

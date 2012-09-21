@@ -5,6 +5,7 @@
 #include <map>
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/CircularVector.h"
 #include "Parade/Network/ReplicatorTypes.h"
 
 // import/export mechanism.
@@ -153,6 +154,8 @@ public:
 	float getTime() const { return m_time; }
 
 private:
+	enum { MaxRoundTrips = 9 };
+
 	struct Event
 	{
 		float time;
@@ -172,21 +175,22 @@ private:
 	{
 		bool established;
 		bool disconnected;
-		bool corrected;
 		Ghost* ghost;
 		float timeUntilTx;
 		float lastTime;
-		float latency;
+		CircularVector< float, MaxRoundTrips > roundTrips;
+		float latencyMedian;
+		float latencyMinimum;
 		uint32_t packetCount;
 
 		Peer()
 		:	established(false)
 		,	disconnected(false)
-		,	corrected(false)
 		,	ghost(0)
 		,	timeUntilTx(0.0f)
 		,	lastTime(0.0f)
-		,	latency(0.0f)
+		,	latencyMedian(0.0f)
+		,	latencyMinimum(0.0f)
 		,	packetCount(0)
 		{
 		}
@@ -202,10 +206,16 @@ private:
 	std::list< Event > m_eventsIn;
 	std::list< Event > m_eventsOut;
 	float m_time;
+	uint32_t m_pingCount;
+	float m_timeUntilPing;
 
 	void sendIAm(handle_t peerHandle, uint8_t sequence, const Guid& id);
 
 	void sendBye(handle_t peerHandle);
+
+	void sendPing(handle_t peerHandle);
+
+	void sendPong(handle_t peerHandle, uint32_t time0);
 };
 
 	}

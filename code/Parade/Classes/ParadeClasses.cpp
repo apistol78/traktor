@@ -143,7 +143,6 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classStageLoader);
 
 	Ref< script::AutoScriptClass< IReplicatableState > > classReplicatableState = new script::AutoScriptClass< IReplicatableState >();
-	classReplicatableState->addMethod(L"extrapolate", &IReplicatableState::extrapolate);
 	scriptManager->registerClass(classReplicatableState);
 
 	Ref< script::AutoScriptClass< PropertyState > > classPropertyState = new script::AutoScriptClass< PropertyState >();

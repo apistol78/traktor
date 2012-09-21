@@ -272,13 +272,21 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 			}
 
 			// Create grains from data.
-			grains.resize(grainData.size());
 			for (uint32_t i = 0; i < grainData.size(); ++i)
-				grains[i] = grainData[i]->createInstance(m_resourceManager);
+			{
+				Ref< IGrain > grain = grainData[i]->createInstance(m_resourceManager);
+				if (grain)
+					grains.push_back(grain);
+				else
+					log::warning << L"Unable to create grain " << i << L" of type " << type_name(grainData[i]) << Endl;
+			}
 
-			m_bankBuffer = new BankBuffer(grains);
-			m_soundChannel->play(new Sound(m_bankBuffer, 1.0f));
-			m_soundChannel->setParameter(m_sliderParameter->getValue() / 100.0f);
+			if (!grains.empty())
+			{
+				m_bankBuffer = new BankBuffer(grains);
+				m_soundChannel->play(new Sound(m_bankBuffer, 1.0f));
+				m_soundChannel->setParameter(m_sliderParameter->getValue() / 100.0f);
+			}
 		}
 		else if (m_soundChannel && m_soundChannel->isPlaying())
 		{
