@@ -32,6 +32,8 @@ public:
 
 private:
 	float m_timeScale;
+	bool m_linear;
+	bool m_angular;
 };
 
 	}

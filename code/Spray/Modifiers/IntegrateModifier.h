@@ -24,7 +24,7 @@ class T_DLLCLASS IntegrateModifier : public Modifier
 	T_RTTI_CLASS;
 
 public:
-	IntegrateModifier(float timeScale);
+	IntegrateModifier(float timeScale, bool linear, bool angular);
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
 	virtual void update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const;
@@ -34,6 +34,8 @@ public:
 
 private:
 	Scalar m_timeScale;
+	bool m_linear;
+	bool m_angular;
 };
 
 	}
