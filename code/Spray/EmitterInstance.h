@@ -43,7 +43,7 @@ public:
 
 	void update(Context& context, const Transform& transform, bool emit, bool singleShot);
 
-	void render(PointRenderer* pointRenderer, const Plane& cameraPlane);
+	void render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane);
 
 	void synchronize() const;
 
@@ -71,6 +71,7 @@ private:
 	Ref< const Emitter > m_emitter;
 	Vector4 m_position;
 	PointVector m_points;
+	PointVector m_worldPoints;
 	uint32_t m_emitted;
 	float m_totalTime;
 	float m_emitFraction;

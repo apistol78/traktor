@@ -15,9 +15,9 @@
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 #endif
 
-#if !TARGET_OS_IPHONE && !defined(_WINCE)
-#	define T_USE_UPDATE_JOBS
-#endif
+//#if !TARGET_OS_IPHONE && !defined(_WINCE)
+//#	define T_USE_UPDATE_JOBS
+//#endif
 
 namespace traktor
 {
@@ -76,11 +76,13 @@ EmitterInstance::~EmitterInstance()
 
 void EmitterInstance::update(Context& context, const Transform& transform, bool emit, bool singleShot)
 {
+	Transform T = m_emitter->worldSpace() ? transform : Transform::identity();
+
 	// Warm up instance.
 	if (!m_warm)
 	{
 		m_warm = true;
-		m_position = transform.translation();
+		m_position = T.translation();
 
 		if (m_emitter->getWarmUp() >= FUZZY_EPSILON)
 		{
@@ -120,7 +122,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		{
 			if (!singleShot)
 			{
-				Vector4 dm = transform.translation() - m_position;
+				Vector4 dm = T.translation() - m_position;
 				float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
 				float emitConstant = source->getConstantRate() * context.deltaTime;
 				float emit = emitVelocity + emitConstant + m_emitFraction;
@@ -133,7 +135,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 					m_points.reserve(size + emitCount);
 					source->emit(
 						context,
-						transform,
+						T,
 						emitCount,
 						*this
 					);
@@ -149,7 +151,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				m_points.reserve(size + emitCount);
 				source->emit(
 					context,
-					transform,
+					T,
 					emitCount,
 					*this
 				);
@@ -158,7 +160,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	}
 
 	// Save current position as we need it to calculate velocity next update.
-	m_position = transform.translation();
+	m_position = T.translation();
 	m_totalTime += context.deltaTime;
 
 	// Calculate bounding box; do this before modifiers as modifiers are executed
@@ -169,6 +171,8 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		Scalar deltaTime16 = Scalar(context.deltaTime * 16.0f);
 		for (PointVector::iterator i = m_points.begin(); i != m_points.end(); ++i)
 			m_boundingBox.contain(i->position + i->velocity * deltaTime16);
+		if (!m_emitter->worldSpace())
+			m_boundingBox = m_boundingBox.transform(transform);
 	}
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
@@ -187,7 +191,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				(*i)->update(
 					jobQueue,
 					Scalar(context.deltaTime),
-					transform,
+					T,
 					m_points
 				);
 		}
@@ -206,34 +210,59 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 			this,
 			&EmitterInstance::updateTask,
 			context.deltaTime,
-			transform,
+			T,
 			size
 		));
 	}
 	else
-		updateTask(context.deltaTime, transform, size);
+		updateTask(context.deltaTime, T, size);
 #	else
-	updateTask(context.deltaTime, transform, size);
+	updateTask(context.deltaTime, T, size);
 #	endif
 #endif
 }
 
-void EmitterInstance::render(PointRenderer* pointRenderer, const Plane& cameraPlane)
+void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane)
 {
 	if (m_points.empty())
 		return;
 
-	if (m_emitter->getSort())
-		std::sort(m_points.begin(), m_points.end(), PointPredicate(cameraPlane));
+	if (m_emitter->worldSpace())
+	{
+		if (m_emitter->getSort())
+			std::sort(m_points.begin(), m_points.end(), PointPredicate(cameraPlane));
 
-	pointRenderer->render(
-		m_emitter->getShader(),
-		cameraPlane,
-		m_points,
-		m_emitter->getMiddleAge(),
-		m_emitter->getCullNearDistance(),
-		m_emitter->getFadeNearRange()
-	);
+		pointRenderer->render(
+			m_emitter->getShader(),
+			cameraPlane,
+			m_points,
+			m_emitter->getMiddleAge(),
+			m_emitter->getCullNearDistance(),
+			m_emitter->getFadeNearRange()
+		);
+	}
+	else
+	{
+		m_worldPoints.resize(m_points.size());
+		for (uint32_t i = 0; i < m_points.size(); ++i)
+		{
+			m_worldPoints[i] = m_points[i];
+			m_worldPoints[i].position = transform * m_points[i].position.xyz1();
+			m_worldPoints[i].velocity = transform * m_points[i].velocity.xyz0();
+		}
+
+		if (m_emitter->getSort())
+			std::sort(m_worldPoints.begin(), m_worldPoints.end(), PointPredicate(cameraPlane));
+
+		pointRenderer->render(
+			m_emitter->getShader(),
+			cameraPlane,
+			m_worldPoints,
+			m_emitter->getMiddleAge(),
+			m_emitter->getCullNearDistance(),
+			m_emitter->getFadeNearRange()
+		);
+	}
 }
 
 void EmitterInstance::synchronize() const

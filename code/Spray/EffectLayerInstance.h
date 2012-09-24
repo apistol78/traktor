@@ -40,7 +40,7 @@ public:
 
 	void synchronize();
 
-	void render(PointRenderer* pointRenderer, const Plane& cameraPlane, float time) const;
+	void render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane, float time) const;
 
 	Aabb3 getBoundingBox() const;
 

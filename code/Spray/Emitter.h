@@ -45,7 +45,8 @@ public:
 		float cullNearDistance,
 		float fadeNearRange,
 		float warmUp,
-		bool sort
+		bool sort,
+		bool worldSpace
 	);
 
 	Ref< EmitterInstance > createInstance() const;
@@ -66,6 +67,8 @@ public:
 
 	bool getSort() const { return m_sort; }
 
+	bool worldSpace() const { return m_worldSpace; }
+
 private:
 	Ref< Source > m_source;
 	RefArray< Modifier > m_modifiers;
@@ -75,6 +78,7 @@ private:
 	float m_fadeNearRange;
 	float m_warmUp;
 	bool m_sort;
+	bool m_worldSpace;
 };
 
 	}

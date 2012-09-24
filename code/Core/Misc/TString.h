@@ -42,11 +42,13 @@ class IEncoding;
 		if (!mbs.empty())
 		{
 			wchar_t* buf = (wchar_t*)alloca((mbs.length() + 1) * sizeof(wchar_t));
-			std::mbstowcs(buf, mbs.c_str(), mbs.length());
-			return std::wstring(buf, mbs.length());
+			if (buf)
+			{
+				std::mbstowcs(buf, mbs.c_str(), mbs.length());
+				return std::wstring(buf, mbs.length());
+			}
 		}
-		else
-			return std::wstring();
+		return std::wstring();
 	}
 
 	inline
@@ -55,11 +57,13 @@ class IEncoding;
 		if (!ws.empty())
 		{
 			char* buf = (char*)alloca((ws.length() + 1) * sizeof(char));
-			std::wcstombs(buf, ws.c_str(), ws.length());
-			return std::string(buf, ws.length());
+			if (buf)
+			{
+				std::wcstombs(buf, ws.c_str(), ws.length());
+				return std::string(buf, ws.length());
+			}
 		}
-		else
-			return std::string();
+		return std::string();
 	}
 
 #if defined(_UNICODE)

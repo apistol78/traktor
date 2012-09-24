@@ -33,7 +33,7 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 0, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 1, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
 
 std::wstring SolutionBuilderMsvcVCXProj::getPlatform() const
 {
@@ -73,6 +73,8 @@ bool SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"platform", m_platform);
 	s >> Member< std::wstring >(L"keyword", m_keyword);
+	if (s.getVersion() >= 1)
+		s >> Member< std::wstring >(L"toolset", m_toolset);
 	s >> MemberStaticArray<
 			RefArray< SolutionBuilderMsvcVCXDefinition >,
 			sizeof_array(m_buildDefinitionsDebug),
@@ -114,6 +116,9 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	context.set(L"PROJECT_PATH", projectPath);
 	context.set(L"PROJECT_FILENAME", projectFileName);
 	context.set(L"PROJECT_GUID", projectGuid);
+
+	context.set(L"MODULE_DEFINITION_FILE", L"");
+	findDefinitions(context, solution, project, project->getItems());
 
 	std::vector< uint8_t > buffer;
 	buffer.reserve(40000);
@@ -183,6 +188,10 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 		}
 		
 		os << L"<WholeProgramOptimization>false</WholeProgramOptimization>" << Endl;
+
+		if (!m_toolset.empty())
+			os << L"<PlatformToolset>" << m_toolset << L"</PlatformToolset>" << Endl;
+
 		os << DecreaseIndent;
 		os << L"</PropertyGroup>" << Endl;
 	}
@@ -527,4 +536,37 @@ bool SolutionBuilderMsvcVCXProj::collectFiles(
 	}
 
 	return true;
+}
+
+void SolutionBuilderMsvcVCXProj::findDefinitions(
+	GeneratorContext& context,
+	Solution* solution,
+	Project* project,
+	const RefArray< ProjectItem >& items
+) const
+{
+	Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
+
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	{
+		if (const ::File* file = dynamic_type_cast< const ::File* >(*i))
+		{
+			std::set< Path > systemFiles;
+			file->getSystemFiles(project->getSourcePath(), systemFiles);
+			for (std::set< Path >::iterator j = systemFiles.begin(); j != systemFiles.end(); ++j)
+			{
+				if (compareIgnoreCase< std::wstring >(j->getExtension(), L"def") == 0)
+				{
+					Path relativePath;
+					FileSystem::getInstance().getRelativePath(
+						*j,
+						rootPath,
+						relativePath
+						);
+					context.set(L"MODULE_DEFINITION_FILE", relativePath.getPathName());
+				}
+			}
+		}
+		findDefinitions(context, solution, project, (*i)->getItems());
+	}
 }

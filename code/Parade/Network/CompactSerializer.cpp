@@ -577,7 +577,7 @@ bool CompactSerializer::operator >> (const Member< Matrix44 >& m)
 bool CompactSerializer::operator >> (const Member< Quaternion >& m)
 {
 	float T_MATH_ALIGN16 e[4];
-	bool result;
+	bool result = true;
 
 	if (m_direction == SdRead)
 	{
@@ -627,7 +627,8 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 				return false;
 
 			const TypeInfo* type = TypeInfo::find(typeName);
-			T_FATAL_ASSERT (type);
+			if (!type)
+				return false;
 
 			if (!(object = checked_type_cast< ISerializable* >(type->createInstance())))
 				return false;

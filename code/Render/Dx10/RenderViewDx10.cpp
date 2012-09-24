@@ -575,7 +575,7 @@ void RenderViewDx10::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	T_ASSERT (c_d3dTopology[primitives.type] != D3D10_PRIMITIVE_TOPOLOGY_UNDEFINED);
 	m_context->getD3DDevice()->IASetPrimitiveTopology(c_d3dTopology[primitives.type]);
 
-	UINT vertexCount;
+	UINT vertexCount = 0;
 	switch (primitives.type)
 	{
 	case PtPoints:

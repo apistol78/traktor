@@ -11605,13 +11605,13 @@
 									<item>T_MODEL_EXPORT</item>
 									<item>_DEBUG</item>
 									<item>FBXSDK_NEW_API</item>
+									<item>FBXSDK_SHARED</item>
 								</definitions>
 								<libraryPaths>
 									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
 								</libraryPaths>
 								<libraries>
-									<item>fbxsdk-2013.1-mdd.lib</item>
-									<item>wininet.lib</item>
+									<item>fbxsdk-2013.1d.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -11630,13 +11630,13 @@
 									<item>T_MODEL_EXPORT</item>
 									<item>NDEBUG</item>
 									<item>FBXSDK_NEW_API</item>
+									<item>FBXSDK_SHARED</item>
 								</definitions>
 								<libraryPaths>
 									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
 								</libraryPaths>
 								<libraries>
-									<item>fbxsdk-2013.1-md.lib</item>
-									<item>wininet.lib</item>
+									<item>fbxsdk-2013.1.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -11655,13 +11655,13 @@
 									<item>T_STATIC</item>
 									<item>_DEBUG</item>
 									<item>FBXSDK_NEW_API</item>
+									<item>FBXSDK_SHARED</item>
 								</definitions>
 								<libraryPaths>
 									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
 								</libraryPaths>
 								<libraries>
-									<item>fbxsdk-2013.1-mdd.lib</item>
-									<item>wininet.lib</item>
+									<item>fbxsdk-2013.1d.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -11680,13 +11680,13 @@
 									<item>T_STATIC</item>
 									<item>NDEBUG</item>
 									<item>FBXSDK_NEW_API</item>
+									<item>FBXSDK_SHARED</item>
 								</definitions>
 								<libraryPaths>
 									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
 								</libraryPaths>
 								<libraries>
-									<item>fbxsdk-2013.1-md.lib</item>
-									<item>wininet.lib</item>
+									<item>fbxsdk-2013.1.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -13330,6 +13330,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/3rdp/angle/src</item>
 												<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 											</includePaths>
 											<definitions>
 												<item>WIN32</item>
@@ -13340,7 +13341,9 @@
 												<item>_CRT_SECURE_NO_DEPRECATE</item>
 												<item>NOMINMAX</item>
 											</definitions>
-											<libraryPaths/>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
+											</libraryPaths>
 											<libraries>
 												<item>d3d9.lib</item>
 												<item>d3dx9.lib</item>
@@ -13357,6 +13360,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/3rdp/angle/src</item>
 												<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 											</includePaths>
 											<definitions>
 												<item>ANGLE_DISABLE_TRACE</item>
@@ -13369,7 +13373,9 @@
 												<item>NOMINMAX</item>
 												<item>_SECURE_SCL=0</item>
 											</definitions>
-											<libraryPaths/>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
+											</libraryPaths>
 											<libraries>
 												<item>d3d9.lib</item>
 												<item>d3dx9.lib</item>
@@ -13386,6 +13392,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/3rdp/angle/src</item>
 												<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -13393,7 +13400,9 @@
 												<item>_CRT_SECURE_NO_DEPRECATE</item>
 												<item>NOMINMAX</item>
 											</definitions>
-											<libraryPaths/>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
+											</libraryPaths>
 											<libraries>
 												<item>d3d9.lib</item>
 												<item>d3dx9.lib</item>
@@ -13410,6 +13419,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/3rdp/angle/src</item>
 												<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -13418,7 +13428,9 @@
 												<item>NOMINMAX</item>
 												<item>_SECURE_SCL=0</item>
 											</definitions>
-											<libraryPaths/>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
+											</libraryPaths>
 											<libraries>
 												<item>d3d9.lib</item>
 												<item>d3dx9.lib</item>

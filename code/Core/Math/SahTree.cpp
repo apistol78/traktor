@@ -233,7 +233,7 @@ void SahTree::buildNode(Node* node, int32_t depth)
 		}
 	}
 
-	if (lowestCost > leafCost)
+	if (!bestCandidate || lowestCost > leafCost)
 		return;
 
 	// Split triangles into left and right sets.

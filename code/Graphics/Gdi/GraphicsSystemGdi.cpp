@@ -14,6 +14,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.graphics.GraphicsSystemGdi", GraphicsSystemGdi,
 bool GraphicsSystemGdi::getDisplayModes(std::vector< DisplayMode >& outDisplayModes) const
 {
 	DEVMODE devm;
+
+	std::memset(&devm, 0, sizeof(devm));
 	for (DWORD i = 0; EnumDisplaySettings(NULL, i, &devm) != 0; ++i)
 	{
 		DisplayMode dm;
@@ -22,12 +24,15 @@ bool GraphicsSystemGdi::getDisplayModes(std::vector< DisplayMode >& outDisplayMo
 		dm.bits = devm.dmBitsPerPel;
 		outDisplayModes.push_back(dm);
 	}
+
 	return true;
 }
 
 bool GraphicsSystemGdi::getCurrentDisplayMode(DisplayMode& outDisplayMode) const
 {
 	DEVMODE devm;
+
+	std::memset(&devm, 0, sizeof(devm));
 	if (!EnumDisplaySettings(NULL, ENUM_CURRENT_SETTINGS, &devm))
 		return false;
 

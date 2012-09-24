@@ -35,7 +35,7 @@ EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Ef
 void EffectEntity::render(const Plane& cameraPlane, PointRenderer* pointRenderer)
 {
 	if (m_effectInstance)
-		m_effectInstance->render(pointRenderer, cameraPlane);
+		m_effectInstance->render(pointRenderer, m_transform, cameraPlane);
 }
 
 void EffectEntity::setTransform(const Transform& transform)

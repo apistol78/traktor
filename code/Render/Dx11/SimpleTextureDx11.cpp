@@ -48,6 +48,8 @@ bool SimpleTextureDx11::create(const SimpleTextureCreateDesc& desc)
 	if (desc.immutable)
 	{
 		D3D11_SUBRESOURCE_DATA dsrd[16];
+		std::memset(dsrd, 0, sizeof(dsrd));
+
 		for (int32_t i = 0; i < desc.mipCount; ++i)
 		{
 			T_ASSERT (desc.initialData[i].data);
@@ -56,6 +58,7 @@ bool SimpleTextureDx11::create(const SimpleTextureCreateDesc& desc)
 			dsrd[i].SysMemPitch = desc.initialData[i].pitch;
 			dsrd[i].SysMemSlicePitch = desc.initialData[i].slicePitch;
 		}
+
 		hr = m_context->getD3DDevice()->CreateTexture2D(&dtd, dsrd, &m_d3dTexture.getAssign());
 	}
 	else

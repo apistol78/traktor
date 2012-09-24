@@ -117,22 +117,18 @@ void ActionObject::setMember(uint32_t memberName, const ActionValue& memberValue
 
 bool ActionObject::getMember(uint32_t memberName, ActionValue& outMemberValue)
 {
-	ActionObject* __proto__ = get__proto__();
-
 	if (getLocalMember(memberName, outMemberValue))
 		return true;
 
 	// Not a local member; try to get from our __proto__ reference.
-	if (__proto__)
+	ActionObject* __proto__ = get__proto__();
+	while (__proto__)
 	{
-		while (__proto__)
-		{
-			if (__proto__->getLocalMember(memberName, outMemberValue))
-				return true;
+		if (__proto__->getLocalMember(memberName, outMemberValue))
+			return true;
 
-			ActionObject* parentPrototype = __proto__->get__proto__();
-			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
-		}
+		ActionObject* parentPrototype = __proto__->get__proto__();
+		__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 	}
 
 	return false;
@@ -160,22 +156,18 @@ void ActionObject::addProperty(uint32_t propertyName, ActionFunction* propertyGe
 
 bool ActionObject::getPropertyGet(uint32_t propertyName, Ref< ActionFunction >& outPropertyGet)
 {
-	ActionObject* __proto__ = get__proto__();
-
 	if (getLocalPropertyGet(propertyName, outPropertyGet))
 		return true;
 
 	// Not a local property; try to get from our __proto__ reference.
-	if (__proto__)
+	ActionObject* __proto__ = get__proto__();
+	while (__proto__)
 	{
-		while (__proto__)
-		{
-			if (__proto__->getLocalPropertyGet(propertyName, outPropertyGet))
-				return true;
+		if (__proto__->getLocalPropertyGet(propertyName, outPropertyGet))
+			return true;
 
-			ActionObject* parentPrototype = __proto__->get__proto__();
-			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
-		}
+		ActionObject* parentPrototype = __proto__->get__proto__();
+		__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 	}
 
 	return false;
@@ -183,22 +175,18 @@ bool ActionObject::getPropertyGet(uint32_t propertyName, Ref< ActionFunction >& 
 
 bool ActionObject::getPropertySet(uint32_t propertyName, Ref< ActionFunction >& outPropertySet)
 {
-	ActionObject* __proto__ = get__proto__();
-
 	if (getLocalPropertySet(propertyName, outPropertySet))
 		return true;
 
 	// Not a local property; try to get from our __proto__ reference.
-	if (__proto__)
+	ActionObject* __proto__ = get__proto__();
+	while (__proto__)
 	{
-		while (__proto__)
-		{
-			if (__proto__->getLocalPropertySet(propertyName, outPropertySet))
-				return true;
+		if (__proto__->getLocalPropertySet(propertyName, outPropertySet))
+			return true;
 
-			ActionObject* parentPrototype = __proto__->get__proto__();
-			__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
-		}
+		ActionObject* parentPrototype = __proto__->get__proto__();
+		__proto__ = (parentPrototype != __proto__) ? parentPrototype : 0;
 	}
 
 	return false;

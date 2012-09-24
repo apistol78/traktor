@@ -72,13 +72,14 @@ int NativeStream::read(void* block, int nbytes)
 		return 0;
 
 	DWORD nread = 0;
-	ReadFile(
+	if (ReadFile(
 		m_hFile,
 		block,
 		nbytes,
 		&nread,
 		NULL
-	);
+	) == FALSE)
+		return 0;
 
 	T_ASSERT (nread <= nbytes);
 	return int(nread);
@@ -90,13 +91,14 @@ int NativeStream::write(const void* block, int nbytes)
 		return 0;
 
 	DWORD nwritten = 0;
-	WriteFile(
+	if (WriteFile(
 		m_hFile,
 		block,
 		nbytes,
 		&nwritten,
 		NULL
-	);
+	) == FALSE)
+		return 0;
 
 	return int(nwritten);
 }
