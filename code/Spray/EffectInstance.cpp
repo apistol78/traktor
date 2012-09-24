@@ -38,10 +38,10 @@ void EffectInstance::synchronize()
 		(*i)->synchronize();
 }
 
-void EffectInstance::render(PointRenderer* pointRenderer, const Plane& cameraPlane) const
+void EffectInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane) const
 {
 	for (RefArray< EffectLayerInstance >::const_iterator i = m_layerInstances.begin(); i != m_layerInstances.end(); ++i)
-		(*i)->render(pointRenderer, cameraPlane, m_time);
+		(*i)->render(pointRenderer, transform, cameraPlane, m_time);
 }
 
 	}

@@ -91,6 +91,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ProcessWin32", ProcessWin32, IProcess)
 ProcessWin32::ProcessWin32(
 	HANDLE hProcess,
 	DWORD dwProcessId,
+	HANDLE hThread,
 	HANDLE hStdInRead,
 	HANDLE hStdInWrite,
 	HANDLE hStdOutRead,
@@ -100,6 +101,7 @@ ProcessWin32::ProcessWin32(
 )
 :	m_hProcess(hProcess)
 ,	m_dwProcessId(dwProcessId)
+,	m_hThread(hThread)
 ,	m_hStdInRead(hStdInRead)
 ,	m_hStdInWrite(hStdInWrite)
 ,	m_hStdOutRead(hStdOutRead)
@@ -116,6 +118,7 @@ ProcessWin32::ProcessWin32(
 ProcessWin32::~ProcessWin32()
 {
 	CloseHandle(m_hProcess);
+	CloseHandle(m_hThread);
 #if !defined(WINCE)
 	CloseHandle(m_hStdInRead);
 	CloseHandle(m_hStdInWrite);

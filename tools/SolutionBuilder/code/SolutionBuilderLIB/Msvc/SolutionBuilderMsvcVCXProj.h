@@ -36,6 +36,7 @@ public:
 private:
 	std::wstring m_platform;
 	std::wstring m_keyword;
+	std::wstring m_toolset;
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsDebug[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsRelease[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXBuildTool > m_buildTools;
@@ -57,6 +58,13 @@ private:
 		ProjectItem* item,
 		const std::wstring& filterPath,
 		std::vector< std::pair< std::wstring, traktor::Path > >& outFiles
+	) const;
+
+	void findDefinitions(
+		GeneratorContext& context,
+		Solution* solution,
+		Project* project,
+		const traktor::RefArray< ProjectItem >& items
 	) const;
 };
 

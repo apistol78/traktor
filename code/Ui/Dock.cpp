@@ -358,7 +358,7 @@ void Dock::eventHintButtonUp(Event* event)
 		direction = DockPane::DrEast;
 	else if (hintImage == m_hintTop)
 		direction = DockPane::DrNorth;
-	else if (hintImage == m_hintBottom)
+	else/* if (hintImage == m_hintBottom)*/
 		direction = DockPane::DrSouth;
 
 	m_hintDockPane->dock(

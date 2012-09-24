@@ -99,7 +99,7 @@ std::wstring KeyboardDeviceDi8::getControlName(int32_t control)
 			}
 
 			TCHAR keyName[50];
-			if (GetKeyNameText(scanCode << 16, keyName, sizeof(keyName)) != 0)
+			if (GetKeyNameText(scanCode << 16, keyName, sizeof_array(keyName)) != 0)
 				return tstows(keyName);
 			else
 				return L"";

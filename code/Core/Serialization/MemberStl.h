@@ -61,6 +61,8 @@ public:
 			std::memset(zero, 0, sizeof(zero));
 
 			ValueType* item = new (zero) ValueType();
+			if (!item)
+				return false;
 
 			if (!(s >> ValueMember(L"item", *item)))
 				return false;
@@ -83,6 +85,9 @@ public:
 		std::memset(zero, 0, sizeof(zero));
 
 		ValueType* item = new (zero) ValueType();
+		if (!item)
+			return false;
+
 		m_ref.push_back(*item);
 		item->~ValueType();
 

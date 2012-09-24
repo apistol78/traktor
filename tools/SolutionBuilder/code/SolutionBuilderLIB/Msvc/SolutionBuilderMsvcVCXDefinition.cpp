@@ -1,3 +1,4 @@
+#include <Core/Io/FileSystem.h>
 #include <Core/Io/StringOutputStream.h>
 #include <Core/Serialization/ISerializer.h>
 #include <Core/Serialization/Member.h>
@@ -7,6 +8,7 @@
 #include <Core/Log/Log.h>
 #include "SolutionBuilderLIB/Msvc/SolutionBuilderMsvcVCXDefinition.h"
 #include "SolutionBuilderLIB/Msvc/GeneratorContext.h"
+#include "SolutionBuilderLIB/File.h"
 #include "SolutionBuilderLIB/Solution.h"
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ProjectDependency.h"
@@ -50,6 +52,9 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	context.set(L"PROJECT_DEFINITIONS", ssd.str());
 	context.set(L"PROJECT_LIBRARIES", ssl.str());
 	context.set(L"PROJECT_LIBRARY_PATHS", sslp.str());
+
+	context.set(L"MODULE_DEFINITION_FILE", L"");
+	findDefinitions(context, solution, project, project->getItems());
 
 	os << L"<" << m_name << L">" << Endl;
 	os << IncreaseIndent;
@@ -146,5 +151,38 @@ void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(
 				);
 			}
 		}
+	}
+}
+
+void SolutionBuilderMsvcVCXDefinition::findDefinitions(
+	GeneratorContext& context,
+	const Solution* solution,
+	const Project* project,
+	const RefArray< ProjectItem >& items
+) const
+{
+	Path rootPath = FileSystem::getInstance().getAbsolutePath(context.get(L"PROJECT_PATH"));
+
+	for (RefArray< ProjectItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+	{
+		if (const ::File* file = dynamic_type_cast< const ::File* >(*i))
+		{
+			std::set< Path > systemFiles;
+			file->getSystemFiles(project->getSourcePath(), systemFiles);
+			for (std::set< Path >::iterator j = systemFiles.begin(); j != systemFiles.end(); ++j)
+			{
+				if (compareIgnoreCase< std::wstring >(j->getExtension(), L"def") == 0)
+				{
+					Path relativePath;
+					FileSystem::getInstance().getRelativePath(
+						*j,
+						rootPath,
+						relativePath
+						);
+					context.set(L"MODULE_DEFINITION_FILE", relativePath.getPathName());
+				}
+			}
+		}
+		findDefinitions(context, solution, project, (*i)->getItems());
 	}
 }

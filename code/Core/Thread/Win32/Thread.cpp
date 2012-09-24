@@ -54,6 +54,8 @@ bool Thread::start(Priority priority)
 		CREATE_SUSPENDED,
 		(LPDWORD)&m_id
 	);
+	if (!m_handle)
+		return false;
 
 #if defined(_XBOX)
 	if (m_hardwareCore != -1)

@@ -349,8 +349,8 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	if (!programGL->activate(m_stateCache, targetSize, postTransform, invertCull, 0))
 		return;
 
-	GLenum primitiveType;
-	GLuint vertexCount;
+	GLenum primitiveType = GL_POINTS;
+	GLuint vertexCount = 0;
 
 	switch (primitives.type)
 	{

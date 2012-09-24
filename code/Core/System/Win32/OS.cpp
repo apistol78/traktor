@@ -382,6 +382,7 @@ Ref< IProcess > OS::execute(
 		return new ProcessWin32(
 			pi.hProcess,
 			pi.dwProcessId,
+			pi.hThread,
 			hStdInRead,
 			hStdInWrite,
 			hStdOutRead,
@@ -429,6 +430,7 @@ Ref< IProcess > OS::execute(
 #else
 			0,
 #endif
+			NULL,
 			hStdInRead,
 			hStdInWrite,
 			hStdOutRead,

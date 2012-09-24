@@ -2,6 +2,7 @@
 
 set TRAKTOR_HOME=%~dp0
 set STEAMWORKS_SDK=%TRAKTOR_HOME%3rdp\steamworks-sdk-120
+set FBX_SDK=%TRAKTOR_HOME%3rdp\FbxSdk\2013.1
 
 set PATH=%PATH%;%TRAKTOR_HOME%build\win32\releaseshared
 set PATH=%PATH%;%TRAKTOR_HOME%build\win32\debugshared

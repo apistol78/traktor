@@ -63,6 +63,7 @@ private:
 	float m_fadeNearRange;
 	float m_warmUp;
 	bool m_sort;
+	bool m_worldSpace;
 };
 
 	}

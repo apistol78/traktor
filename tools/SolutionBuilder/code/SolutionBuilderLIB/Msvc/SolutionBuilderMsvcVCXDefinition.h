@@ -1,11 +1,13 @@
 #ifndef SolutionBuilderMsvcVCXDefinition_H
 #define SolutionBuilderMsvcVCXDefinition_H
 
+#include <Core/RefArray.h>
 #include <Core/Serialization/ISerializable.h>
 
 class GeneratorContext;
 class Solution;
 class Project;
+class ProjectItem;
 class Configuration;
 
 class SolutionBuilderMsvcVCXDefinition : public traktor::ISerializable
@@ -41,6 +43,13 @@ private:
 		const Configuration* configuration,
 		std::set< std::wstring >& outAdditionalLibraries,
 		std::set< std::wstring >& outAdditionalLibraryPaths
+	) const;
+
+	void findDefinitions(
+		GeneratorContext& context,
+		const Solution* solution,
+		const Project* project,
+		const traktor::RefArray< ProjectItem >& items
 	) const;
 };
 

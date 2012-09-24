@@ -65,10 +65,10 @@ void EffectLayerInstance::synchronize()
 		m_emitterInstance->synchronize();
 }
 
-void EffectLayerInstance::render(PointRenderer* pointRenderer, const Plane& cameraPlane, float time) const
+void EffectLayerInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane, float time) const
 {
 	if (m_emitterInstance && time >= m_start)
-		m_emitterInstance->render(pointRenderer, cameraPlane);
+		m_emitterInstance->render(pointRenderer, transform, cameraPlane);
 }
 
 Aabb3 EffectLayerInstance::getBoundingBox() const

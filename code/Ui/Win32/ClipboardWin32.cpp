@@ -43,7 +43,12 @@ bool ClipboardWin32::setObject(ISerializable* object)
 	}
 
 	uint32_t* ptr = (uint32_t*)GlobalLock(handle);
-	T_ASSERT (ptr);
+	if (!ptr)
+	{
+		CloseClipboard();
+		return false;
+	}
+
 	*ptr++ = uint32_t(buffer.size());
 	std::memcpy(ptr, &buffer[0], buffer.size());
 	GlobalUnlock(handle);
@@ -68,7 +73,12 @@ bool ClipboardWin32::setText(const std::wstring& text)
 	}
 
 	wchar_t* ptr = (wchar_t*)GlobalLock(handle);
-	T_ASSERT (ptr);
+	if (!ptr)
+	{
+		CloseClipboard();
+		return false;
+	}
+
 	std::memcpy(ptr, text.c_str(), text.length() * sizeof(wchar_t));
 	ptr[text.length()] = 0;
 	GlobalUnlock(handle);
@@ -105,7 +115,12 @@ Ref< ISerializable > ClipboardWin32::getObject() const
 	}
 
 	uint32_t* ptr = (uint32_t*)GlobalLock(handle);
-	T_ASSERT (ptr);
+	if (!ptr)
+	{
+		CloseClipboard();
+		return 0;
+	}
+
 	MemoryStream ms(&ptr[1], *ptr);
 	Ref< ISerializable > object = BinarySerializer(&ms).readObject();
 	GlobalUnlock(handle);
@@ -127,7 +142,12 @@ std::wstring ClipboardWin32::getText() const
 	}
 
 	wchar_t* ptr = (wchar_t*)GlobalLock(handle);
-	T_ASSERT (ptr);
+	if (!ptr)
+	{
+		CloseClipboard();
+		return L"";
+	}
+
 	std::wstring str = ptr;
 	GlobalUnlock(handle);
 

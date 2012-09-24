@@ -19,7 +19,8 @@ Emitter::Emitter(
 	float cullNearDistance,
 	float fadeNearRange,
 	float warmUp,
-	bool sort
+	bool sort,
+	bool worldSpace
 )
 :	m_source(source)
 ,	m_modifiers(modifiers)
@@ -29,6 +30,7 @@ Emitter::Emitter(
 ,	m_fadeNearRange(fadeNearRange)
 ,	m_warmUp(warmUp)
 ,	m_sort(sort)
+,	m_worldSpace(worldSpace)
 {
 }
 

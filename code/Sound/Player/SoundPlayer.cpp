@@ -18,7 +18,7 @@ namespace traktor
 
 const float c_nearCutOff = 22050.0f;
 const float c_farCutOff = 0.1f;
-const float c_recentTimeOffset = 0.1f;
+const float c_recentTimeOffset = 0.05f;
 
 		}
 

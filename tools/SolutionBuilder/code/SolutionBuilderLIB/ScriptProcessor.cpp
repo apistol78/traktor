@@ -255,20 +255,12 @@ bool ScriptProcessor::generateFromFile(const Solution* solution, const Project* 
 
 bool ScriptProcessor::generateFromSource(const Solution* solution, const Project* project, const std::wstring& projectPath, const std::wstring& source, std::wstring& output) const
 {
-	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext();
-	if (!scriptContext)
-		return false;
+	StringOutputStream ss;
+	size_t offset = 0;
 
 	Ref< Output > o = new Output();
 
-	scriptContext->setGlobal(L"output", script::Any(o));
-	scriptContext->setGlobal(L"solution", script::Any(const_cast< Solution* >(solution)));
-	scriptContext->setGlobal(L"project", script::Any(const_cast< Project* >(project)));
-	scriptContext->setGlobal(L"projectPath", script::Any(new Path(projectPath)));
-	scriptContext->setGlobal(L"fileSystem", script::Any(&FileSystem::getInstance()));
-
-	StringOutputStream ss;
-	size_t offset = 0;
+	ss << L"function __main__()" << Endl;
 
 	for (;;)
 	{
@@ -281,21 +273,30 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 			return false;
 
 		int32_t id = o->addSection(source.substr(offset, s - offset));
-		ss << L"output:printSection(" << id << L")" << Endl;
+		ss << L"\toutput:printSection(" << id << L")" << Endl;
 		ss << source.substr(s + 5, e - s - 5) << Endl;
 
 		offset = e + 4;
 	}
 
 	int32_t id = o->addSection(source.substr(offset));
-	ss << L"output:printSection(" << id << L")" << Endl;
+	ss << L"\toutput:printSection(" << id << L")" << Endl;
+	ss << L"end" << Endl;
 
 	Ref< script::IScriptResource > scriptResource = m_scriptManager->compile(ss.str(), false, 0);
 	if (!scriptResource)
 		return false;
 
-	if (!scriptContext->executeScript(scriptResource, Guid()))
+	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext(scriptResource);
+	if (!scriptContext)
 		return false;
+
+	scriptContext->setGlobal(L"output", script::Any(o));
+	scriptContext->setGlobal(L"solution", script::Any(const_cast< Solution* >(solution)));
+	scriptContext->setGlobal(L"project", script::Any(const_cast< Project* >(project)));
+	scriptContext->setGlobal(L"projectPath", script::Any(new Path(projectPath)));
+	scriptContext->setGlobal(L"fileSystem", script::Any(&FileSystem::getInstance()));
+	scriptContext->executeFunction(L"__main__");
 
 	output = o->getProduct();
 	return true;

@@ -27,6 +27,7 @@ public:
 	ProcessWin32(
 		HANDLE hProcess,
 		DWORD dwProcessId,
+		HANDLE hThread,
 		HANDLE hStdInRead,
 		HANDLE hStdInWrite,
 		HANDLE hStdOutRead,
@@ -48,6 +49,7 @@ public:
 private:
 	HANDLE m_hProcess;
 	DWORD m_dwProcessId;
+	HANDLE m_hThread;
 	HANDLE m_hStdInRead;
 	HANDLE m_hStdInWrite;
 	HANDLE m_hStdOutRead;

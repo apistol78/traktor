@@ -39,7 +39,7 @@ public:
 
 	void synchronize();
 
-	void render(PointRenderer* pointRenderer, const Plane& cameraPlane) const;
+	void render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane) const;
 
 	void setTime(float time) { m_time = time; }
 

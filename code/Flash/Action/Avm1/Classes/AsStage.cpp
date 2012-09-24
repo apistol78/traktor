@@ -112,7 +112,7 @@ void AsStage::updateViewOffset()
 		float scaleX = frameAspect / aspectRatio;
 		if (scaleX <= 1.0f)
 		{
-			float leftX;
+			float leftX = 0.0f;
 			switch (m_alignH)
 			{
 			case SaLeft:
@@ -132,7 +132,7 @@ void AsStage::updateViewOffset()
 		{
 			float scaleY = 1.0f / scaleX;
 
-			float topY;
+			float topY = 0.0f;
 			switch (m_alignV)
 			{
 			case SaTop:
@@ -157,7 +157,7 @@ void AsStage::updateViewOffset()
 		{
 			float scaleY = 1.0f / scaleX;
 
-			float topY;
+			float topY = 0.0f;
 			switch (m_alignV)
 			{
 			case SaTop:
@@ -175,7 +175,7 @@ void AsStage::updateViewOffset()
 		}
 		else
 		{
-			float leftX;
+			float leftX = 0.0f;
 			switch (m_alignH)
 			{
 			case SaLeft:
@@ -203,7 +203,7 @@ void AsStage::updateViewOffset()
 		float scaleX = boundsWidth / viewWidth;
 		float scaleY = boundsHeight / viewHeight;
 
-		float leftX, topY;
+		float leftX = 0.0f, topY = 0.0f;
 		switch (m_alignH)
 		{
 		case SaLeft:

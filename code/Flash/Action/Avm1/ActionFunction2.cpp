@@ -106,8 +106,13 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 	}
 	if (m_flags & AffPreloadParent)
 	{
-		FlashCharacterInstance* characterInstance = self->getRelay< FlashCharacterInstance >();
-		callFrame.setRegister(preloadRegister++, ActionValue(characterInstance->getParent()->getAsObject(cx)));
+		if (self)
+		{
+			FlashCharacterInstance* characterInstance = self->getRelay< FlashCharacterInstance >();
+			callFrame.setRegister(preloadRegister++, ActionValue(characterInstance->getParent()->getAsObject(cx)));
+		}
+		else
+			callFrame.setRegister(preloadRegister++, ActionValue());
 	}
 	if (m_flags & AffPreloadGlobal)
 		callFrame.setRegister(preloadRegister++, ActionValue(cx->getGlobal()));

@@ -184,10 +184,11 @@ float Winding3::area() const
 
 Vector4 Winding3::center() const
 {
-	if (!points.empty())
-		return std::accumulate(points.begin(), points.end(), Vector4::zero()) / Scalar(float(points.size()));
-	else
-		return Vector4::origo();
+	Vector4 acc = Vector4::zero();
+	for (AlignedVector< Vector4 >::const_iterator i = points.begin(); i != points.end(); ++i)
+		acc += *i;
+	acc /= Scalar(float(points.size()));
+	return acc.xyz1();
 }
 
 bool Winding3::rayIntersection(

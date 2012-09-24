@@ -393,7 +393,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 		m_effectInstance->update(m_context, effectTransform, true);
 		m_effectInstance->synchronize();
-		m_effectInstance->render(m_pointRenderer, cameraPlane);
+		m_effectInstance->render(m_pointRenderer, Transform::identity(), cameraPlane);
 
 		Frustum viewFrustum;
 		viewFrustum.buildPerspective(80.0f * PI / 180.0f, aspect, 0.1f, 2000.0f);

@@ -647,7 +647,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	T_ASSERT (c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
 	m_stateCache.setTopology(c_d3dTopology[primitives.type]);
 
-	UINT vertexCount;
+	UINT vertexCount = 0;
 	switch (primitives.type)
 	{
 	case PtPoints:
@@ -714,7 +714,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	T_ASSERT (c_d3dTopology[primitives.type] != D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED);
 	m_stateCache.setTopology(c_d3dTopology[primitives.type]);
 
-	UINT vertexCount;
+	UINT vertexCount = 0;
 	switch (primitives.type)
 	{
 	case PtPoints:
@@ -829,6 +829,8 @@ bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wP
 			return false;
 
 		DXGI_SWAP_CHAIN_DESC dxscd;
+		std::memset(&dxscd, 0, sizeof(dxscd));
+
 		if (m_dxgiSwapChain)
 			m_dxgiSwapChain->GetDesc(&dxscd);
 
