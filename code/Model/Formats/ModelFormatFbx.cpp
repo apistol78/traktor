@@ -590,9 +590,11 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 	bool lightwaveExported = false;
 
 	// \hack If exported from Lightwave then we need to correct buggy exporter.
+#if defined(T_USE_FBX_LIGHTWAVE_HACK)
 	FbxDocumentInfo* documentInfo = scene->GetDocumentInfo();
 	if (documentInfo && documentInfo->mAuthor.Find("Lightwave") >= 0)
 		lightwaveExported = true;
+#endif
 
 	Matrix44 axisTransform = Matrix44::identity();
 
