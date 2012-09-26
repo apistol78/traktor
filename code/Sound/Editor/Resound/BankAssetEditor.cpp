@@ -287,7 +287,7 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 			if (!grains.empty())
 			{
 				m_bankBuffer = new BankBuffer(grains);
-				m_soundChannel->play(new Sound(m_bankBuffer, 1.0f));
+				m_soundChannel->play(new Sound(m_bankBuffer, 1.0f, 0.0f));
 				m_soundChannel->setParameter(m_sliderParameter->getValue() / 100.0f);
 			}
 		}

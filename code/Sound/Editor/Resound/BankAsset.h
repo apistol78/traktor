@@ -25,6 +25,8 @@ class T_DLLCLASS BankAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	BankAsset();
+
 	void addGrain(IGrainData* grain);
 
 	void removeGrain(IGrainData* grain);
@@ -37,6 +39,7 @@ private:
 	friend class BankPipeline;
 
 	Guid m_category;
+	float m_presence;
 	RefArray< IGrainData > m_grains;
 };
 

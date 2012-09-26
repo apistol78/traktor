@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Sound/Sound.h"
@@ -10,7 +11,12 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 1, BankAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 2, BankAsset, ISerializable)
+
+BankAsset::BankAsset()
+:	m_presence(0.0f)
+{
+}
 
 void BankAsset::addGrain(IGrainData* grain)
 {
@@ -31,6 +37,9 @@ bool BankAsset::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< Guid >(L"category", m_category, AttributeType(type_of< SoundCategory >()));
+
+	if (s.getVersion() >= 2)
+		s >> Member< float >(L"presence", m_presence, AttributeRange(0.0f));
 
 	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }

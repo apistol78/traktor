@@ -101,7 +101,7 @@ void CaseSound::run()
 	soundSystem.create(desc);
 
 	TestSoundBuffer soundBuffer;
-	sound::Sound sound(&soundBuffer, 1.0f);
+	sound::Sound sound(&soundBuffer, 1.0f, 0.0f);
 
 	timer.start();
 	soundSystem.getChannel(0)->play(&sound, 0);

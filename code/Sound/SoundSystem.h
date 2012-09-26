@@ -107,6 +107,7 @@ private:
 	std::vector< float* > m_samplesBlocks;
 	int32_t m_samplesBlockHead;
 	int32_t m_samplesBlockTail;
+	AlignedVector< float > m_duck[2];
 
 	// \}
 

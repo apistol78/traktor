@@ -53,7 +53,7 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 2, BankPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 3, BankPipeline, editor::DefaultPipeline)
 
 TypeInfoSet BankPipeline::getAssetTypes() const
 {
@@ -121,8 +121,9 @@ bool BankPipeline::buildOutput(
 	}
 
 	Ref< BankResource > bankResource = new BankResource(
-		bankAsset->getGrains(),
-		volume
+		bankAsset->m_grains,
+		volume,
+		bankAsset->m_presence
 	);
 
 	return editor::DefaultPipeline::buildOutput(

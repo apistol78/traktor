@@ -134,6 +134,7 @@ bool SoundChannel::play(const Sound* sound, uint32_t repeat)
 		m_currentState.sound = sound;
 		m_currentState.cursor = cursor;
 		m_currentState.repeat = max< uint32_t >(repeat, 1);
+		m_currentState.presence = sound->getPresence();
 	}
 
 	return true;
