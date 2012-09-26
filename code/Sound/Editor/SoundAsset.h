@@ -32,6 +32,7 @@ private:
 	Guid m_category;
 	bool m_stream;
 	bool m_preload;
+	float m_presence;
 };
 
 	}

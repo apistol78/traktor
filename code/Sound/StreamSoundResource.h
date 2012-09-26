@@ -26,7 +26,7 @@ class T_DLLCLASS StreamSoundResource : public ISoundResource
 public:
 	StreamSoundResource();
 	
-	StreamSoundResource(const TypeInfo* decoderType, float volume, bool preload);
+	StreamSoundResource(const TypeInfo* decoderType, float volume, float presence, bool preload);
 
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const;
 
@@ -35,6 +35,7 @@ public:
 private:
 	const TypeInfo* m_decoderType;
 	float m_volume;
+	float m_presence;
 	bool m_preload;
 };
 

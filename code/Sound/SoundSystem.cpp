@@ -1,4 +1,5 @@
 #include <cstring>
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
@@ -107,8 +108,10 @@ bool SoundSystem::create(const SoundSystemCreateDesc& desc)
 
 	m_requestBlocks.resize(desc.channels);
 
-	// Reset global playback time.
+	// Set play parameters.
 	m_time = 0.0;
+	m_duck[0].resize(desc.channels, 1.0f);
+	m_duck[1].resize(desc.channels, 1.0f);
 
 	// Start threads.
 	m_threadMixer->start(Thread::Above);
@@ -200,6 +203,7 @@ void SoundSystem::threadMixer()
 			break;
 
 		double startTime = timerMixer.getElapsedTime();
+		double deltaTime = timerMixer.getDeltaTime();
 
 		// Allocate new frame block.
 		float* samples = m_samplesBlocks[m_samplesBlockHead];
@@ -226,6 +230,33 @@ void SoundSystem::threadMixer()
 
 		m_mixer->synchronize();
 
+		// Get which channel has the highest presence.
+		float presence[64];
+		float maxPresence = 1.0f;
+
+		for (int32_t i = 0; i < int32_t(channelsCount); ++i)
+		{
+			if (m_channels[i]->m_activeState.sound)
+			{
+				presence[i] = 1.0f + m_channels[i]->m_activeState.presence;
+				maxPresence = max(maxPresence, presence[i]);
+				m_channels[i]->m_activeState.presence = 0.0f;
+			}
+			else
+				presence[i] = 1.0f;
+		}
+
+		for (uint32_t i = 0; i < m_duck[0].size(); ++i)
+		{
+			m_duck[0][i] = presence[i] / maxPresence;
+			m_duck[0][i] *= m_duck[0][i];
+
+			if (m_duck[1][i] > m_duck[0][i])
+				m_duck[1][i] = m_duck[0][i];
+			else
+				m_duck[1][i] = min(m_duck[1][i] + float(deltaTime * 0.25f), 1.0f);
+		}
+
 		// Final combine channels into hardware channels using "combine matrix".
 		for (uint32_t i = 0; i < channelsCount; ++i)
 		{
@@ -242,7 +273,7 @@ void SoundSystem::threadMixer()
 
 				for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
 				{
-					float strength = m_desc.cm[j][k] * m_volume;
+					float strength = m_desc.cm[j][k] * m_volume * m_duck[1][i];
 					if (abs(strength) >= FUZZY_EPSILON)
 					{
 						m_mixer->addMulConst(

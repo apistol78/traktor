@@ -81,9 +81,11 @@ private:
 		Ref< IFilter > filter;
 		Ref< IFilterInstance > filterInstance;
 		uint32_t repeat;
+		float presence;
 
 		State()
 		:	repeat(0)
+		,	presence(0.0f)
 		{
 		}
 	};

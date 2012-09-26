@@ -27,7 +27,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 24, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 25, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 {
@@ -131,7 +131,7 @@ bool SoundPipeline::buildOutput(
 
 	if (soundAsset->m_stream)
 	{
-		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder), volume, soundAsset->m_preload);
+		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder), volume, soundAsset->m_presence, soundAsset->m_preload);
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
@@ -259,6 +259,7 @@ bool SoundPipeline::buildOutput(
 		resource->m_samplesCount = samplesCount;
 		resource->m_channelsCount = maxChannel;
 		resource->m_volume = volume;
+		resource->m_presence = soundAsset->m_presence;
 		resource->m_decoderType = &type_of< OggStreamDecoder >();
 
 		int32_t dataOffsetEnd = stream->tell();
