@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IStateManager.h"
 #include "Amalgam/IUpdateInfo.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Parade/Layer.h"
@@ -92,11 +93,17 @@ Ref< Stage > Stage::loadStage(const std::wstring& name, const Object* params)
 {
 	std::map< std::wstring, Guid >::const_iterator i = m_transitions.find(name);
 	if (i == m_transitions.end())
+	{
+		log::error << L"No transition \"" << name << L"\" found" << Endl;
 		return 0;
+	}
 
 	Ref< StageLoader > stageLoader = StageLoader::create(m_environment, i->second, params);
 	if (stageLoader->failed())
+	{
+		log::error << L"Stage loader failed" << Endl;
 		return 0;
+	}
 
 	return stageLoader->get();
 }
@@ -105,7 +112,10 @@ Ref< StageLoader > Stage::loadStageAsync(const std::wstring& name, const Object*
 {
 	std::map< std::wstring, Guid >::const_iterator i = m_transitions.find(name);
 	if (i == m_transitions.end())
+	{
+		log::error << L"No transition \"" << name << L"\" found" << Endl;
 		return 0;
+	}
 
 	return StageLoader::createAsync(m_environment, i->second, params);
 }

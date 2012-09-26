@@ -113,7 +113,7 @@ void AsAsBroadcaster::AsBroadcaster_broadcastMessage(CallArgs& ca)
 		Ref< Array > listenersArray = listenersArrayValue.getObject()->getRelay< Array >();
 		if (listenersArray)
 		{
-			const AlignedVector< ActionValue >& listeners = listenersArray->getValues();
+			AlignedVector< ActionValue > listeners = listenersArray->getValues();
 			for (AlignedVector< ActionValue >::const_iterator i = listeners.begin(); i != listeners.end(); ++i)
 			{
 				Ref< ActionObject > listenerObject = (*i).getObject();

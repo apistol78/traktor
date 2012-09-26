@@ -139,6 +139,8 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 			translateError(err, m_map);
 		}
 	}
+	else
+		log::error << L"Unable to call " << functionName << L"; no such function" << Endl;
 
 	lua_pop(m_luaState, 2);
 
@@ -177,6 +179,8 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 			translateError(err, m_map);
 		}
 	}
+	else
+		log::error << L"Unable to call " << methodName << L"; no such method" << Endl;
 
 	lua_pop(m_luaState, 2);
 

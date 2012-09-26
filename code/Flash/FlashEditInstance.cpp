@@ -130,10 +130,18 @@ FlashEditInstance::text_t FlashEditInstance::getText() const
 std::wstring FlashEditInstance::getConcatedText() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	StringOutputStream ss;
-	for (std::list< std::wstring >::const_iterator i = m_text.begin(); i != m_text.end(); ++i)
-		ss << *i << Endl;
-	return ss.str();
+
+	if (m_text.size() >= 2)
+	{
+		StringOutputStream ss;
+		for (std::list< std::wstring >::const_iterator i = m_text.begin(); i != m_text.end(); ++i)
+			ss << *i << Endl;
+		return ss.str();
+	}
+	else if (!m_text.empty())
+		return m_text.back();
+	else
+		return L"";
 }
 
 bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
@@ -161,6 +169,7 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 	// Get space width.
 	uint16_t spaceGlyphIndex = font->lookupIndex(L' ');
 	int16_t spaceWidth = font->getAdvance(spaceGlyphIndex);
+	float letterSpacing = getLetterSpacing() * 200.0f * 2000.0f / fontHeight;
 
 	// Render text lines.
 	for (FlashEditInstance::text_t::const_iterator i = m_text.begin(); i != m_text.end(); ++i)
@@ -182,7 +191,7 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 				int16_t glyphAdvance = font->getAdvance(glyphIndex);
 				if (k < wordLength - 1)
 					glyphAdvance += font->lookupKerning(word[k], word[k + 1]);
-				wordWidth += (glyphAdvance - c_magicX);
+				wordWidth += glyphAdvance - c_magicX + letterSpacing;
 			}
 
 			widths[j] = wordWidth * fontScale * fontHeight;
@@ -237,8 +246,9 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 					if (i < wordLength - 1)
 						glyphAdvance += font->lookupKerning(word[i], word[i + 1]);
 
-					offsetX += (glyphAdvance - c_magicX) * fontScale * fontHeight;
+					offsetX += (glyphAdvance - c_magicX + letterSpacing) * fontScale * fontHeight;
 				}
+
 				offsetX += spaceWidth * fontScale * fontHeight;
 			}
 			outWidth = max(outWidth, offsetX);
@@ -257,6 +267,30 @@ SwfRect FlashEditInstance::getBounds() const
 	textBounds.min = getTransform() * textBounds.min;
 	textBounds.max = getTransform() * textBounds.max;
 	return textBounds;
+}
+
+void FlashEditInstance::eventKey(wchar_t unicode)
+{
+	if (getFocus() != this)
+		return;
+
+	if (unicode == L'\n' || unicode == L'\r')
+		return;
+
+	if (m_text.empty())
+		m_text.push_back(L"");
+
+	std::wstring& s = m_text.back();
+
+	if (unicode == L'\b')
+	{
+		if (!s.empty())
+			s = s.substr(0, s.length() - 1);
+	}
+	else
+	{
+		s += unicode;
+	}
 }
 
 	}

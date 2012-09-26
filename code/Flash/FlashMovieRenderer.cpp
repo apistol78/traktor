@@ -270,9 +270,8 @@ void FlashMovieRenderer::renderCharacter(
 		FlashEditInstance::text_t text = editInstance->getText();
 
 		const float c_magicX = 32.0f * 20.0f;
-		const float c_magicY = 8.0f * 20.0f;
 
-		float offsetY = fontHeight - c_magicY;
+		float offsetY = fontHeight;
 
 		// Get space width.
 		uint16_t spaceGlyphIndex = font->lookupIndex(L' ');

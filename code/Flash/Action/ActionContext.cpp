@@ -31,9 +31,20 @@ ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie)
 	m_strings["_target"];
 	m_strings["_targetProperty"];
 	m_strings["_function"];
-
-	m_idOnFrame = m_strings["onFrame"];
-	m_idPrototype = m_strings["prototype"];
+	m_strings["onLoad"];
+	m_strings["onEnterFrame"];
+	m_strings["onKeyDown"];
+	m_strings["onKeyUp"];
+	m_strings["onMouseDown"];
+	m_strings["onPress"];
+	m_strings["onMouseUp"];
+	m_strings["onRelease"];
+	m_strings["onMouseMove"];
+	m_strings["onRollOver"];
+	m_strings["onRollOut"];
+	m_strings["onFrame"];
+	m_strings["onSetFocus"];
+	m_strings["onKillFocus"];
 }
 
 void ActionContext::setGlobal(ActionObject* global)
@@ -49,7 +60,7 @@ void ActionContext::setMovieClip(FlashSpriteInstance* movieClip)
 void ActionContext::addFrameListener(ActionObject* frameListener)
 {
 	ActionValue memberValue;
-	if (frameListener->getLocalMember(m_idOnFrame, memberValue))
+	if (frameListener->getLocalMember(IdOnFrame, memberValue))
 	{
 		Ref< ActionFunction > listenerFunction = memberValue.getObject< ActionFunction >();
 		if (listenerFunction)
@@ -103,7 +114,7 @@ ActionObject* ActionContext::lookupClass(const std::string& className)
 		return 0;
 
 	ActionValue prototypeMember;
-	if (!clazz->getLocalMember(m_idPrototype, prototypeMember) || !prototypeMember.isObject())
+	if (!clazz->getLocalMember(IdPrototype, prototypeMember) || !prototypeMember.isObject())
 		return 0;
 
 	return prototypeMember.getObject();

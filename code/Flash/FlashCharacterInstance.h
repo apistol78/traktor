@@ -113,9 +113,9 @@ public:
 
 	/*! \brief Set focus.
 	 *
-	 * \return Set or remove focus.
+	 * \param focusInstance New focus instance.
 	 */
-	void setFocus(bool focus);
+	static void setFocus(FlashCharacterInstance* focusInstance);
 
 	/*! \brief Get focus character.
 	 *
@@ -155,6 +155,8 @@ public:
 
 	virtual void eventFrame();
 
+	virtual void eventKey(wchar_t unicode);
+
 	virtual void eventKeyDown(int keyCode);
 
 	virtual void eventKeyUp(int keyCode);
@@ -164,6 +166,10 @@ public:
 	virtual void eventMouseUp(int x, int y, int button);
 
 	virtual void eventMouseMove(int x, int y, int button);
+
+	virtual void eventSetFocus();
+
+	virtual void eventKillFocus();
 
 	//@}
 
@@ -181,6 +187,8 @@ public:
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
 
 protected:
+	void executeScriptEvent(uint32_t eventName);
+
 	virtual void trace(const IVisitor& visitor) const;
 
 	virtual void dereference();

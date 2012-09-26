@@ -1,6 +1,7 @@
 #ifndef traktor_parade_AsConfiguration_H
 #define traktor_parade_AsConfiguration_H
 
+#include <map>
 #include "Amalgam/IEnvironment.h"
 #include "Flash/Action/ActionObjectRelay.h"
 #include "Flash/Action/Classes/Array.h"
@@ -65,25 +66,13 @@ public:
 
 	void setAmbientOcclusionQuality(Quality ambientOcclusionQuality);
 
-	float getMasterVolume() const;
-
-	void setMasterVolume(float masterVolume);
-
-	float getAmbientVolume() const;
-
-	void setAmbientVolume(float ambientVolume);
-
-	float getSoundFxVolume() const;
-
-	void setSoundFxVolume(float soundFxVolume);
-
-	float getMusicVolume() const;
-
-	void setMusicVolume(float musicVolume);
-
 	bool getRumbleEnable() const;
 
 	void setRumbleEnable(bool rumbleEnable);
+
+	float getVolume(const std::wstring& category) const;
+
+	void setVolume(const std::wstring& category, float volume);
 
 	bool apply(amalgam::IEnvironment* environment);
 
@@ -98,11 +87,8 @@ private:
 	Quality m_textureQuality;
 	Quality m_shadowQuality;
 	Quality m_ambientOcclusionQuality;
-	float m_masterVolume;
-	float m_ambientVolume;
-	float m_soundFxVolume;
-	float m_musicVolume;
 	bool m_rumbleEnable;
+	std::map< std::wstring, float > m_volumes;
 };
 
 	}

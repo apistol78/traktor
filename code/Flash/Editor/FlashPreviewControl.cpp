@@ -154,6 +154,7 @@ bool FlashPreviewControl::create(
 
 	addSizeEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventSize));
 	addPaintEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventPaint));
+	addKeyEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKey));
 	addKeyDownEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKeyDown));
 	addKeyUpEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventKeyUp));
 	addButtonDownEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventButtonDown));
@@ -362,6 +363,13 @@ void FlashPreviewControl::eventIdle(ui::Event* event)
 
 		idleEvent->requestMore();
 	}
+}
+
+void FlashPreviewControl::eventKey(ui::Event* event)
+{
+	ui::KeyEvent* keyEvent = checked_type_cast< ui::KeyEvent* >(event);
+	if (keyEvent->getCharacter() != '\r' && m_moviePlayer)
+		m_moviePlayer->postKey(keyEvent->getCharacter());
 }
 
 void FlashPreviewControl::eventKeyDown(ui::Event* event)

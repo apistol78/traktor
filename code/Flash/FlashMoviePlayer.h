@@ -106,6 +106,12 @@ public:
 	 */
 	bool progressFrame(float deltaTime);
 
+	/*! \brief Post key event.
+	 *
+	 * \param unicode Unicode character.
+	 */
+	void postKey(wchar_t unicode);
+
 	/*! \brief Post key down event.
 	 *
 	 * \param keyCode Key code.
@@ -189,6 +195,7 @@ private:
 		uint32_t eventType;
 		union
 		{
+			wchar_t unicode;
 			int32_t keyCode;
 			struct
 			{

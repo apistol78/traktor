@@ -53,6 +53,7 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classInputServer->addMethod(L"isFabricating", &amalgam::IInputServer::isFabricating);
 	classInputServer->addMethod(L"abortedFabricating", &amalgam::IInputServer::abortedFabricating);
 	classInputServer->addMethod(L"resetInputSource", &amalgam::IInputServer::resetInputSource);
+	classInputServer->addMethod(L"isIdle", &amalgam::IInputServer::isIdle);
 	classInputServer->addMethod(L"getInputSystem", &amalgam::IInputServer::getInputSystem);
 	classInputServer->addMethod(L"getInputMapping", &amalgam::IInputServer::getInputMapping);
 	classInputServer->addMethod(L"getRumbleEffectPlayer", &amalgam::IInputServer::getRumbleEffectPlayer);

@@ -50,6 +50,7 @@ public:
 private:
 	Ref< const InputStateData > m_data;
 	Ref< IInputNode::Instance > m_instance;
+	bool m_active;
 	float m_previousValue;
 	float m_currentValue;
 };

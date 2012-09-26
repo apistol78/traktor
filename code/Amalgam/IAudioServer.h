@@ -32,6 +32,7 @@ class SurroundEnvironment;
  * "Audio.MasterVolume"			- Master volume.
  * "Audio.Surround/MaxDistance"	- Surround sound max speaker distance.
  * "Audio.Surround/InnerRadius"	- Surround inner listener radius.
+ * "Audio.Volumes/<Category>"   - Per category volume.
  */
 class T_DLLCLASS IAudioServer : public IServer
 {

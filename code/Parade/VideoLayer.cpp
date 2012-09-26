@@ -31,6 +31,14 @@ VideoLayer::VideoLayer(
 {
 }
 
+bool VideoLayer::playing() const
+{
+	if (m_video)
+		return m_video->playing();
+	else
+		return false;
+}
+
 void VideoLayer::prepare(Stage* stage)
 {
 }

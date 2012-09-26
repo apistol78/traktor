@@ -110,6 +110,7 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classAudioLayer);
 
 	Ref< script::AutoScriptClass< VideoLayer > > classVideoLayer = new script::AutoScriptClass< VideoLayer >();
+	classVideoLayer->addMethod(L"playing", &VideoLayer::playing);
 	scriptManager->registerClass(classVideoLayer);
 
 	Ref< script::AutoScriptClass< WorldLayer > > classWorldLayer = new script::AutoScriptClass< WorldLayer >();

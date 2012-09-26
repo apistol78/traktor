@@ -9,10 +9,25 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceWin32", KeyboardDeviceWin32, IInputDevice)
 
-KeyboardDeviceWin32::KeyboardDeviceWin32()
+KeyboardDeviceWin32::KeyboardDeviceWin32(HWND hWnd)
 :	m_connected(false)
+,	m_hWnd(hWnd)
+,	m_pWndProc(0)
 {
+	// Subclass window to get access to window events.
+	m_pWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWL_WNDPROC);
+	SetWindowLongPtr(m_hWnd, GWL_WNDPROC, (LONG)&KeyboardDeviceWin32::wndProc);
+	SetWindowLongPtr(m_hWnd, GWL_USERDATA, (LONG)this);
+
+	// Set initally reset.
 	resetState();
+}
+
+KeyboardDeviceWin32::~KeyboardDeviceWin32()
+{
+	// Restore original window proc.
+	SetWindowLongPtr(m_hWnd, GWL_WNDPROC, (LONG)m_pWndProc);
+	SetWindowLongPtr(m_hWnd, GWL_USERDATA, 0);
 }
 
 std::wstring KeyboardDeviceWin32::getName() const
@@ -93,9 +108,21 @@ bool KeyboardDeviceWin32::getDefaultControl(InputDefaultControlType controlType,
 	return true;
 }
 
+bool KeyboardDeviceWin32::getKeyEvent(KeyEvent& outEvent)
+{
+	if (m_keyEvents.empty())
+		return false;
+
+	outEvent = m_keyEvents.front();
+	m_keyEvents.pop_front();
+
+	return true;
+}
+
 void KeyboardDeviceWin32::resetState()
 {
 	std::memset(m_keyStates, 0, sizeof(m_keyStates));
+	m_keyEvents.clear();
 }
 
 void KeyboardDeviceWin32::readState()
@@ -129,6 +156,47 @@ void KeyboardDeviceWin32::setRumble(const InputRumble& /*rumble*/)
 
 void KeyboardDeviceWin32::setExclusive(bool exclusive)
 {
+}
+
+LRESULT WINAPI KeyboardDeviceWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
+{
+	KeyboardDeviceWin32* this_ = reinterpret_cast< KeyboardDeviceWin32* >(GetWindowLongPtr(hWnd, GWL_USERDATA));
+	T_ASSERT (this_);
+
+	if (uMsg == WM_CHAR)
+	{
+		if (wParam != '\r')
+		{
+			KeyEvent ke;
+			ke.type = KtCharacter;
+			ke.character = (wchar_t)wParam;
+			this_->m_keyEvents.push_back(ke);
+		}
+	}
+	else if (uMsg == WM_KEYDOWN)
+	{
+		uint32_t keyCode = translateFromVk(uint32_t(wParam));
+		if (keyCode != 0)
+		{
+			KeyEvent ke;
+			ke.type = KtDown;
+			ke.keyCode = keyCode;
+			this_->m_keyEvents.push_back(ke);
+		}
+	}
+	else if (uMsg == WM_KEYUP)
+	{
+		uint32_t keyCode = translateFromVk(uint32_t(wParam));
+		if (keyCode != 0)
+		{
+			KeyEvent ke;
+			ke.type = KtUp;
+			ke.keyCode = keyCode;
+			this_->m_keyEvents.push_back(ke);
+		}
+	}
+
+	return CallWindowProc(this_->m_pWndProc, hWnd, uMsg, wParam, lParam);
 }
 
 	}

@@ -31,9 +31,9 @@ c_mouseControlMap[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceWin32", MouseDeviceWin32, IInputDevice)
 
-MouseDeviceWin32::MouseDeviceWin32()
+MouseDeviceWin32::MouseDeviceWin32(HWND hWnd)
 :	m_connected(false)
-,	m_hWndActive(0)
+,	m_hWnd(hWnd)
 ,	m_haveCursorPosition(false)
 ,	m_axisX(0.0f)
 ,	m_axisY(0.0f)
@@ -124,6 +124,11 @@ bool MouseDeviceWin32::getDefaultControl(InputDefaultControlType controlType, bo
 	return false;
 }
 
+bool MouseDeviceWin32::getKeyEvent(KeyEvent& outEvent)
+{
+	return false;
+}
+
 void MouseDeviceWin32::resetState()
 {
 	m_axisX = 0.0f;
@@ -138,17 +143,17 @@ void MouseDeviceWin32::resetState()
 
 void MouseDeviceWin32::readState()
 {
-	if (m_connected && m_hWndActive)
+	if (m_connected && m_hWnd)
 	{
-		bool exclusive = ((GetWindowLong(m_hWndActive, GWL_EXSTYLE) & WS_EX_TOPMOST) == WS_EX_TOPMOST);
+		bool exclusive = ((GetWindowLong(m_hWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) == WS_EX_TOPMOST);
 
 		if (exclusive)
 		{
 			GetCursorPos(&m_cursorPosition);
-			ScreenToClient(m_hWndActive, &m_cursorPosition);
+			ScreenToClient(m_hWnd, &m_cursorPosition);
 
 			RECT rc;
-			GetClientRect(m_hWndActive, &rc);
+			GetClientRect(m_hWnd, &rc);
 
 			POINT cursorCenter;
 			cursorCenter.x = (rc.right - rc.left) / 2;
@@ -163,7 +168,7 @@ void MouseDeviceWin32::readState()
 			m_positionX = clamp(m_positionX, 0.0f, float(rc.right - rc.left));
 			m_positionY = clamp(m_positionY, 0.0f, float(rc.bottom - rc.top));
 
-			ClientToScreen(m_hWndActive, &cursorCenter);
+			ClientToScreen(m_hWnd, &cursorCenter);
 			SetCursorPos(cursorCenter.x, cursorCenter.y);
 		}
 		else

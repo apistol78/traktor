@@ -194,6 +194,10 @@ void FlashMoviePlayer::executeFrame()
 		const Event& evt = m_events.front();
 		switch (evt.eventType)
 		{
+		case EvtKey:
+			m_movieInstance->eventKey(evt.unicode);
+			break;
+
 		case EvtKeyDown:
 			if (m_key)
 				m_key->eventKeyDown(evt.keyCode);
@@ -265,6 +269,14 @@ bool FlashMoviePlayer::progressFrame(float deltaTime)
 	}
 	m_timeNext += deltaTime;
 	return executed;
+}
+
+void FlashMoviePlayer::postKey(wchar_t unicode)
+{
+	Event evt;
+	evt.eventType = EvtKey;
+	evt.unicode = unicode;
+	m_events.push_back(evt);
 }
 
 void FlashMoviePlayer::postKeyDown(int32_t keyCode)
