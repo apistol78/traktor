@@ -110,6 +110,8 @@ private:
 
 	void eventIdle(ui::Event* event);
 
+	void eventKey(ui::Event* event);
+
 	void eventKeyDown(ui::Event* event);
 
 	void eventKeyUp(ui::Event* event);

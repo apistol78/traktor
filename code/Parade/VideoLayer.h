@@ -52,6 +52,8 @@ public:
 		const resource::Proxy< render::Shader >& shader
 	);
 
+	bool playing() const;
+
 	virtual void prepare(Stage* stage);
 
 	virtual void update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);

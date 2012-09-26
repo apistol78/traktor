@@ -52,7 +52,7 @@ bool StageLoader::failed()
 	return m_stage == 0;
 }
 
-Stage* StageLoader::get()
+Ref< Stage > StageLoader::get()
 {
 	if (!wait())
 		return 0;

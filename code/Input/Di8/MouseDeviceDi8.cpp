@@ -155,6 +155,11 @@ bool MouseDeviceDi8::getDefaultControl(InputDefaultControlType controlType, bool
 	return false;
 }
 
+bool MouseDeviceDi8::getKeyEvent(KeyEvent& outEvent)
+{
+	return false;
+}
+
 void MouseDeviceDi8::resetState()
 {
 	std::memset(&m_state, 0, sizeof(m_state));

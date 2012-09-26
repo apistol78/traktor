@@ -1,28 +1,23 @@
 #ifndef traktor_input_KeyboardDeviceWin32_H
 #define traktor_input_KeyboardDeviceWin32_H
 
+#include "Core/Containers/CircularVector.h"
 #include "Input/IInputDevice.h"
 #include "Input/Win32/TypesWin32.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_INPUT_WIN32_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
 
 namespace traktor
 {
 	namespace input
 	{
 
-class T_DLLCLASS KeyboardDeviceWin32 : public IInputDevice
+class KeyboardDeviceWin32 : public IInputDevice
 {
 	T_RTTI_CLASS;
 
 public:
-	KeyboardDeviceWin32();
+	KeyboardDeviceWin32(HWND hWnd);
+
+	virtual ~KeyboardDeviceWin32();
 
 	virtual std::wstring getName() const;
 
@@ -44,6 +39,8 @@ public:
 
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
 
+	virtual bool getKeyEvent(KeyEvent& outEvent);
+
 	virtual void resetState();
 
 	virtual void readState();
@@ -58,7 +55,12 @@ private:
 	friend class InputDriverWin32;
 
 	bool m_connected;
+	HWND m_hWnd;
+	WNDPROC m_pWndProc;
+	CircularVector< KeyEvent, 16 > m_keyEvents;
 	uint8_t m_keyStates[sizeof_array(c_vkControlKeys)];
+
+	static LRESULT WINAPI wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam);
 };
 
 	}

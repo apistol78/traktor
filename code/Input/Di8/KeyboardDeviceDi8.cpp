@@ -148,6 +148,11 @@ bool KeyboardDeviceDi8::getDefaultControl(InputDefaultControlType controlType, b
 	return c_di8ControlKeys[control] != 0;
 }
 
+bool KeyboardDeviceDi8::getKeyEvent(KeyEvent& outEvent)
+{
+	return false;
+}
+
 void KeyboardDeviceDi8::resetState()
 {
 	std::memset(&m_state, 0, sizeof(m_state));

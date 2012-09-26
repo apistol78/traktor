@@ -3,25 +3,17 @@
 
 #include "Input/IInputDevice.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_INPUT_WIN32_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace input
 	{
 
-class T_DLLCLASS MouseDeviceWin32 : public IInputDevice
+class MouseDeviceWin32 : public IInputDevice
 {
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceWin32();
+	MouseDeviceWin32(HWND hWnd);
 
 	virtual std::wstring getName() const;
 
@@ -43,6 +35,8 @@ public:
 
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
 
+	virtual bool getKeyEvent(KeyEvent& outEvent);
+
 	virtual void resetState();
 
 	virtual void readState();
@@ -57,7 +51,7 @@ private:
 	friend class InputDriverWin32;
 
 	bool m_connected;
-	HWND m_hWndActive;
+	HWND m_hWnd;
 	POINT m_cursorPosition;
 	bool m_haveCursorPosition;
 	float m_axisX;

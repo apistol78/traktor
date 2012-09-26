@@ -50,7 +50,21 @@ public:
 		IdToString = 13,
 		IdTarget = 14,
 		IdTargetProperty = 15,
-		IdFunction = 16
+		IdFunction = 16,
+		IdOnLoad = 17,
+		IdOnEnterFrame = 18,
+		IdOnKeyDown = 19,
+		IdOnKeyUp = 20,
+		IdOnMouseDown = 21,
+		IdOnPress = 22,
+		IdOnMouseUp = 23,
+		IdOnRelease = 24,
+		IdOnMouseMove = 25,
+		IdOnRollOver = 26,
+		IdOnRollOut = 27,
+		IdOnFrame = 28,
+		IdOnSetFocus = 29,
+		IdOnKillFocus = 30
 	};
 
 	ActionContext(const IActionVM* vm, const FlashMovie* movie);
@@ -100,8 +114,6 @@ private:
 	ActionStrings m_strings;
 	ActionValuePool m_pool;
 	std::vector< FrameListener > m_frameListeners;
-	uint32_t m_idOnFrame;
-	uint32_t m_idPrototype;
 };
 
 	}

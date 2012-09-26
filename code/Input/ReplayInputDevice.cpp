@@ -61,6 +61,11 @@ bool ReplayInputDevice::getDefaultControl(InputDefaultControlType controlType, b
 	return m_inputDevice->getDefaultControl(controlType, analogue, control);
 }
 
+bool ReplayInputDevice::getKeyEvent(KeyEvent& outEvent)
+{
+	return m_inputDevice->getKeyEvent(outEvent);
+}
+
 void ReplayInputDevice::resetState()
 {
 	m_frame = 0;

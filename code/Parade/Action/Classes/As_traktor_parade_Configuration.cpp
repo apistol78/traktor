@@ -42,15 +42,11 @@ As_traktor_parade_Configuration::As_traktor_parade_Configuration(flash::ActionCo
 	prototype->addProperty("waterQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_waterQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_waterQuality));
 	prototype->addProperty("undergrowthQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_undergrowthQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_undergrowthQuality));
 
-	// Audio
-	prototype->addProperty("masterVolume", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_masterVolume), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_masterVolume));
-	prototype->addProperty("ambientVolume", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_ambientVolume), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_ambientVolume));
-	prototype->addProperty("soundFxVolume", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_soundFxVolume), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_soundFxVolume));
-	prototype->addProperty("musicVolume", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_musicVolume), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_musicVolume));
-
 	// Input
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_rumbleEnable));
 
+	prototype->setMember("getVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_getVolume)));
+	prototype->setMember("setVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_setVolume)));
 	prototype->setMember("apply", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_apply)));
 
 	prototype->setMember("constructor", flash::ActionValue(this));
@@ -197,46 +193,6 @@ void As_traktor_parade_Configuration::Configuration_set_undergrowthQuality(AsCon
 {
 }
 
-float As_traktor_parade_Configuration::Configuration_get_masterVolume(const AsConfiguration* self) const
-{
-	return self->getMasterVolume();
-}
-
-void As_traktor_parade_Configuration::Configuration_set_masterVolume(AsConfiguration* self, float masterVolume) const
-{
-	self->setMasterVolume(masterVolume);
-}
-
-float As_traktor_parade_Configuration::Configuration_get_ambientVolume(const AsConfiguration* self) const
-{
-	return self->getAmbientVolume();
-}
-
-void As_traktor_parade_Configuration::Configuration_set_ambientVolume(AsConfiguration* self, float ambientVolume) const
-{
-	self->setAmbientVolume(ambientVolume);
-}
-
-float As_traktor_parade_Configuration::Configuration_get_soundFxVolume(const AsConfiguration* self) const
-{
-	return self->getSoundFxVolume();
-}
-
-void As_traktor_parade_Configuration::Configuration_set_soundFxVolume(AsConfiguration* self, float soundFxVolume) const
-{
-	self->setSoundFxVolume(soundFxVolume);
-}
-
-float As_traktor_parade_Configuration::Configuration_get_musicVolume(const AsConfiguration* self) const
-{
-	return self->getMusicVolume();
-}
-
-void As_traktor_parade_Configuration::Configuration_set_musicVolume(AsConfiguration* self, float musicVolume) const
-{
-	self->setMusicVolume(musicVolume);
-}
-
 bool As_traktor_parade_Configuration::Configuration_get_rumbleEnable(const AsConfiguration* self) const
 {
 	return self->getRumbleEnable();
@@ -245,6 +201,16 @@ bool As_traktor_parade_Configuration::Configuration_get_rumbleEnable(const AsCon
 void As_traktor_parade_Configuration::Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const
 {
 	self->setRumbleEnable(rumbleEnable);
+}
+
+float As_traktor_parade_Configuration::Configuration_getVolume(const AsConfiguration* self, const std::wstring& category) const
+{
+	return self->getVolume(category);
+}
+
+void As_traktor_parade_Configuration::Configuration_setVolume(AsConfiguration* self, const std::wstring& category, float volume) const
+{
+	self->setVolume(category, volume);
 }
 
 bool As_traktor_parade_Configuration::Configuration_apply(AsConfiguration* self) const

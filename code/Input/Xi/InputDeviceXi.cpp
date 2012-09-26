@@ -156,6 +156,11 @@ bool InputDeviceXi::getDefaultControl(InputDefaultControlType controlType, bool 
 	return false;
 }
 
+bool InputDeviceXi::getKeyEvent(KeyEvent& outEvent)
+{
+	return false;
+}
+
 void InputDeviceXi::resetState()
 {
 }

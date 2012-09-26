@@ -29,6 +29,23 @@ class T_DLLCLASS IInputDevice : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum KeyEventType
+	{
+		KtDown,
+		KtUp,
+		KtCharacter
+	};
+
+	struct KeyEvent
+	{
+		KeyEventType type;
+		union
+		{
+			uint32_t keyCode;
+			wchar_t character;
+		};
+	};
+
 	/*! \brief Human readable name of device provided by system.
 	 *
 	 * \return Human readable name of device.
@@ -112,6 +129,13 @@ public:
 	 * \return True if device support control type and have successfully mapped identifier.
 	 */
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const = 0;
+
+	/*! \brief Get keyboard event.
+	 *
+	 * \param outEvent Returning event.
+	 * \return True if event returned.
+	 */
+	virtual bool getKeyEvent(KeyEvent& outEvent) = 0;
 
 	/*! \brief Reset device state.
 	 *

@@ -179,6 +179,11 @@ bool JoystickDeviceDi8::getDefaultControl(InputDefaultControlType controlType, b
 	return false;
 }
 
+bool JoystickDeviceDi8::getKeyEvent(KeyEvent& outEvent)
+{
+	return false;
+}
+
 void JoystickDeviceDi8::resetState()
 {
 	std::memset(&m_state, 0, sizeof(m_state));

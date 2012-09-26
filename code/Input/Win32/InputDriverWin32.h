@@ -14,6 +14,9 @@
 
 namespace traktor
 {
+
+struct SystemWindow;
+
 	namespace input
 	{
 
@@ -25,7 +28,9 @@ class T_DLLCLASS InputDriverWin32 : public IInputDriver
 	T_RTTI_CLASS;
 
 public:
-	InputDriverWin32(uint32_t inputCategories);
+	InputDriverWin32();
+
+	bool create(const SystemWindow& systemWindow, uint32_t inputCategories);
 
 	virtual int getDeviceCount();
 

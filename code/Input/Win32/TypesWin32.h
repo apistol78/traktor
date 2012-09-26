@@ -1,6 +1,8 @@
 #ifndef traktor_input_TypesWin32_H
 #define traktor_input_TypesWin32_H
 
+#include "Core/Config.h"
+
 namespace traktor
 {
 	namespace input
@@ -194,6 +196,8 @@ const DWORD c_vkControlKeys[] =
 	0,
 	0
 };
+
+uint32_t translateFromVk(uint32_t vk);
 
 	}
 }

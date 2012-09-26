@@ -42,6 +42,12 @@ public:
 			return (Capacity - m_front) + m_back;
 	}
 
+	void clear()
+	{
+		m_front = 0;
+		m_back = 0;
+	}
+
 	void push_back(const ItemType& item)
 	{
 		// Push back element.

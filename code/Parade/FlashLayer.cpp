@@ -10,6 +10,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValueArray.h"
+#include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
@@ -25,6 +26,45 @@ namespace traktor
 {
 	namespace parade
 	{
+		namespace
+		{
+
+const struct InputKeyCode
+{
+	uint32_t inputKeyCode;
+	uint32_t asKeyCode;
+}
+c_inputKeyCodes[] =
+{
+	{ input::DtKeyLeftControl, flash::AsKey::AkControl },
+	{ input::DtKeyRightControl, flash::AsKey::AkControl },
+	{ input::DtKeyDelete, flash::AsKey::AkDeleteKey },
+	{ input::DtKeyDown, flash::AsKey::AkDown },
+	{ input::DtKeyEnd, flash::AsKey::AkEnd },
+	{ input::DtKeyReturn, flash::AsKey::AkEnter },
+	{ input::DtKeyEscape, flash::AsKey::AkEscape },
+	{ input::DtKeyHome, flash::AsKey::AkHome },
+	{ input::DtKeyInsert, flash::AsKey::AkInsert },
+	{ input::DtKeyLeft, flash::AsKey::AkLeft },
+	{ input::DtKeyRight, flash::AsKey::AkRight },
+	{ input::DtKeyLeftShift, flash::AsKey::AkShift },
+	{ input::DtKeyRightShift, flash::AsKey::AkShift },
+	{ input::DtKeySpace, flash::AsKey::AkSpace },
+	{ input::DtKeyTab, flash::AsKey::AkTab },
+	{ input::DtKeyUp, flash::AsKey::AkUp }
+};
+
+uint32_t translateInputKeyCode(uint32_t inputKeyCode)
+{
+	for (uint32_t i = 0; i < sizeof_array(c_inputKeyCodes); ++i)
+	{
+		if (c_inputKeyCodes[i].inputKeyCode == inputKeyCode)
+			return c_inputKeyCodes[i].asKeyCode;
+	}
+	return 0;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.FlashLayer", FlashLayer, Layer)
 
@@ -77,6 +117,29 @@ void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 
 	// Issue script update method.
 	invokeScriptUpdate(stage, control, info);
+
+	// Propagate keyboard input to movie.
+	input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::CtKeyboard, 0, true);
+	if (keyboardDevice)
+	{
+		input::IInputDevice::KeyEvent ke;
+		while (keyboardDevice->getKeyEvent(ke))
+		{
+			if (ke.type == input::IInputDevice::KtCharacter)
+				m_moviePlayer->postKey(ke.character);
+			else
+			{
+				uint32_t keyCode = translateInputKeyCode(ke.keyCode);
+				if (keyCode != 0)
+				{
+					if (ke.type == input::IInputDevice::KtDown)
+						m_moviePlayer->postKeyDown(keyCode);
+					else if (ke.type == input::IInputDevice::KtUp)
+						m_moviePlayer->postKeyUp(keyCode);
+				}
+			}
+		}
+	}
 
 	// Propagate mouse input to movie.
 	input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, 0, true);

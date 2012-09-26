@@ -49,6 +49,8 @@ public:
 
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
 
+	virtual bool getKeyEvent(KeyEvent& outEvent);
+
 	virtual void resetState();
 
 	virtual void readState();

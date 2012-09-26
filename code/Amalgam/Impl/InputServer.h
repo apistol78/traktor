@@ -57,6 +57,8 @@ public:
 
 	virtual bool resetInputSource(const std::wstring& sourceId);
 
+	virtual bool isIdle() const;
+
 	virtual input::InputSystem* getInputSystem();
 
 	virtual input::InputMapping* getInputMapping();

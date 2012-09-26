@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Impl/InputServer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -37,6 +38,7 @@
 #include "Input/Binding/InputMappingSourceData.h"
 #include "Input/Binding/InputMappingStateData.h"
 #include "Input/Binding/InputSourceFabricator.h"
+#include "Input/Binding/InputState.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor
@@ -78,28 +80,33 @@ bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 
 #if defined(_WIN32)
 #	if !defined(WINCE)
-
+	
+	// XInput2
 	m_inputSystem->addDriver(new input::InputDriverXi());
 
-#	endif
-
-#	if !defined(WINCE)
+	// DirectInput 8
 	Ref< input::InputDriverDi8 > inputDriverDi8 = new input::InputDriverDi8();
 	if (inputDriverDi8->create(systemWindow, input::CtMouse | input::CtJoystick))
 		m_inputSystem->addDriver(inputDriverDi8);
+
 #	endif
 
-	m_inputSystem->addDriver(new input::InputDriverWin32(input::CtKeyboard));
+	// Win32 API
+	Ref< input::InputDriverWin32 > inputDriverWin32 = new input::InputDriverWin32();
+	if (inputDriverWin32->create(systemWindow, input::CtKeyboard))
+		m_inputSystem->addDriver(inputDriverWin32);
 
 #elif TARGET_OS_MAC
 #	if TARGET_OS_IPHONE
 
+	// iOS Touch
 	Ref< input::InputDriverIPhone > inputDriverIPhone = new input::InputDriverIPhone();
 	if (inputDriverIPhone->create(systemWindow))
 		m_inputSystem->addDriver(inputDriverIPhone);
 
 #	else
 
+	// OSX HID
 	Ref< input::InputDriverOsX > inputDriverOsX = new input::InputDriverOsX();
 	if (inputDriverOsX->create(input::CtKeyboard | input::CtMouse | input::CtJoystick))
 		m_inputSystem->addDriver(inputDriverOsX);
@@ -107,10 +114,12 @@ bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGro
 #	endif
 #elif defined(_PS3)
 
+	// PS3
 	m_inputSystem->addDriver(new input::InputDriverPs3(4));
 
 #elif defined(__LINUX__)
 
+	// X11
 	Ref< input::InputDriverX11 > inputDriverX11 = new input::InputDriverX11();
 	if (inputDriverX11->create(systemWindow, input::CtKeyboard | input::CtMouse))
 		m_inputSystem->addDriver(inputDriverX11);
@@ -416,6 +425,22 @@ bool InputServer::resetInputSource(const std::wstring& sourceId)
 	}
 	else
 		m_inputMapping = 0;
+
+	return true;
+}
+
+bool InputServer::isIdle() const
+{
+	if (!m_inputMapping)
+		return false;
+
+	const std::map< std::wstring, Ref< input::InputState > >& states = m_inputMapping->getStates();
+	for (std::map< std::wstring, Ref< input::InputState > >::const_iterator i = states.begin(); i != states.end(); ++i)
+	{
+		float dV = i->second->getValue() - i->second->getPreviousValue();
+		if (abs(dV) > FUZZY_EPSILON)
+			return false;
+	}
 
 	return true;
 }

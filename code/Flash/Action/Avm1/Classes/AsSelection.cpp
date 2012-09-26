@@ -51,12 +51,13 @@ void AsSelection::Selection_getFocus(CallArgs& ca)
 
 void AsSelection::Selection_setFocus(CallArgs& ca)
 {
-	if (ca.args[0].isObject())
+	if (ca.args[0].getObject())
 	{
 		FlashCharacterInstance* focusInstance = ca.args[0].getObject()->getRelay< FlashCharacterInstance >();
-		if (focusInstance)
-			focusInstance->setFocus(true);
+		FlashCharacterInstance::setFocus(focusInstance);
 	}
+	else
+		FlashCharacterInstance::setFocus(0);
 }
 
 void AsSelection::Selection_setSelection(CallArgs& ca)

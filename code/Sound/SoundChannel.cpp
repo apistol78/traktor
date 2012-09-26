@@ -114,7 +114,7 @@ void SoundChannel::setParameter(float parameter)
 		m_currentState.cursor->setParameter(parameter);
 }
 
-bool SoundChannel::play(const Sound* sound, uint32_t repeat)
+bool SoundChannel::play(const Sound* sound, float presence, uint32_t repeat)
 {
 	if (!sound)
 		return false;
@@ -134,7 +134,7 @@ bool SoundChannel::play(const Sound* sound, uint32_t repeat)
 		m_currentState.sound = sound;
 		m_currentState.cursor = cursor;
 		m_currentState.repeat = max< uint32_t >(repeat, 1);
-		m_currentState.presence = sound->getPresence();
+		m_currentState.presence = presence;
 	}
 
 	return true;

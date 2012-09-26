@@ -59,8 +59,14 @@ public:
 	/*! \brief Set cursor parameter. */
 	void setParameter(float parameter);
 
-	/*! \brief Play sound through this channel. */
-	bool play(const Sound* sound, uint32_t repeat = 0);
+	/*! \brief Play sound through this channel.
+	 *
+	 * \param sound Sound to play.
+	 * \param presence Sound presence.
+	 * \param repeat Number of times to repreat sound.
+	 * \return True if sound is playing successfully.
+	 */
+	bool play(const Sound* sound, float presence, uint32_t repeat = 0);
 
 	/*! \brief Check if there are a sound playing in this channel. */
 	bool isPlaying() const;

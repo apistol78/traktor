@@ -37,7 +37,7 @@ public:
 
 	bool failed();
 
-	Stage* get();
+	Ref< Stage > get();
 
 private:
 	friend class Stage;

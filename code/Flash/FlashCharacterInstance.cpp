@@ -1,7 +1,7 @@
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
-#include "Flash/Action/ActionObject.h"
+#include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/IActionVM.h"
 
 namespace traktor
@@ -112,12 +112,15 @@ bool FlashCharacterInstance::isEnabled() const
 	return m_enabled;
 }
 
-void FlashCharacterInstance::setFocus(bool focus)
+void FlashCharacterInstance::setFocus(FlashCharacterInstance* focusInstance)
 {
-	if (!focus && ms_focusInstance == this)
-		ms_focusInstance = 0;
-	else if (focus && ms_focusInstance != this)
-		ms_focusInstance = this;
+	if (ms_focusInstance)
+		ms_focusInstance->eventKillFocus();
+
+	ms_focusInstance = focusInstance;
+
+	if (ms_focusInstance)
+		ms_focusInstance->eventSetFocus();
 }
 
 FlashCharacterInstance* FlashCharacterInstance::getFocus()
@@ -223,6 +226,10 @@ void FlashCharacterInstance::eventFrame()
 	}
 }
 
+void FlashCharacterInstance::eventKey(wchar_t unicode)
+{
+}
+
 void FlashCharacterInstance::eventKeyDown(int keyCode)
 {
 }
@@ -243,6 +250,16 @@ void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
 {
 }
 
+void FlashCharacterInstance::eventSetFocus()
+{
+	executeScriptEvent(ActionContext::IdOnSetFocus);
+}
+
+void FlashCharacterInstance::eventKillFocus()
+{
+	executeScriptEvent(ActionContext::IdOnKillFocus);
+}
+
 bool FlashCharacterInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
 	if (getParent() && memberName == ActionContext::IdParent)
@@ -252,6 +269,23 @@ bool FlashCharacterInstance::getMember(ActionContext* context, uint32_t memberNa
 	}
 	else
 		return false;
+}
+
+void FlashCharacterInstance::executeScriptEvent(uint32_t eventName)
+{
+	ActionContext* cx = getContext();
+	T_ASSERT (cx);
+
+	ActionObject* self = getAsObject(cx);
+	T_ASSERT (self);
+
+	ActionValue memberValue;
+	if (!self->getMember(eventName, memberValue))
+		return;
+
+	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
+	if (eventFunction)
+		eventFunction->call(self);
 }
 
 void FlashCharacterInstance::trace(const IVisitor& visitor) const

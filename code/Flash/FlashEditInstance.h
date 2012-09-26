@@ -55,6 +55,8 @@ public:
 
 	virtual SwfRect getBounds() const;
 
+	virtual void eventKey(wchar_t unicode);
+
 	const SwfColor& getTextColor() const { return m_textColor; }
 
 	void setTextColor(const SwfColor& textColor) { m_textColor = textColor; }

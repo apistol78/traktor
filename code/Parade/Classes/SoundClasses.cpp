@@ -25,8 +25,6 @@ namespace traktor
 void registerSoundClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< sound::SoundSystem > > classSoundSystem = new script::AutoScriptClass< sound::SoundSystem >();
-	classSoundSystem->addMethod(L"setVolume", &sound::SoundSystem::setVolume);
-	classSoundSystem->addMethod(L"getVolume", &sound::SoundSystem::getVolume);
 	classSoundSystem->addMethod(L"getChannel", &sound::SoundSystem::getChannel);
 	scriptManager->registerClass(classSoundSystem);
 

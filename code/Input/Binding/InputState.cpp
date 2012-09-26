@@ -12,7 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputState", InputState, ISerializable)
 
 InputState::InputState()
-:	m_previousValue(0.0f)
+:	m_active(false)
+,	m_previousValue(0.0f)
 ,	m_currentValue(0.0f)
 {
 }
@@ -35,37 +36,42 @@ void InputState::update(const InputValueSet& valueSet, float T, float dT)
 		T,
 		dT
 	);
+
+	// Enable boolean input as soon as both values has been released.
+	if (!asBoolean(m_previousValue) && !asBoolean(m_currentValue))
+		m_active = true;
 }
 
 void InputState::reset()
 {
+	m_active = false;
 	m_previousValue =
 	m_currentValue = 0.0f;
 }
 
 bool InputState::isDown() const
 {
-	return asBoolean(m_currentValue);
+	return m_active && asBoolean(m_currentValue);
 }
 
 bool InputState::isUp() const
 {
-	return !isDown();
+	return !m_active || !isDown();
 }
 
 bool InputState::isPressed() const
 {
-	return isDown() && !asBoolean(m_previousValue);
+	return m_active && isDown() && !asBoolean(m_previousValue);
 }
 
 bool InputState::isReleased() const
 {
-	return !isDown() && asBoolean(m_previousValue);
+	return m_active && !isDown() && asBoolean(m_previousValue);
 }
 
 bool InputState::hasChanged() const
 {
-	return isPressed() || isReleased();
+	return m_active && (isPressed() || isReleased());
 }
 
 	}

@@ -64,7 +64,21 @@ bool AudioServer::create(const PropertyGroup* settings)
 		return true;
 	}
 
+	// Set master volume.
 	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
+
+	// Set category volumes.
+	const PropertyGroup* volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
+	if (volumes)
+	{
+		const std::map< std::wstring, Ref< IPropertyValue > >& cv = volumes->getValues();
+		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = cv.begin(); i != cv.end(); ++i)
+		{
+			const std::wstring& category = i->first;
+			float volume = PropertyFloat::get(i->second);
+			m_soundSystem->setVolume(category, volume);
+		}
+	}
 
 	// Create surround environment.
 	float surroundMaxDistance = settings->getProperty< PropertyFloat >(L"Audio.Surround/MaxDistance", 10.0f);
@@ -148,8 +162,23 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	if (!m_soundSystem)
 		return CrUnaffected;
 
+	// Set master volume.
 	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
 
+	// Set category volumes.
+	const PropertyGroup* volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
+	if (volumes)
+	{
+		const std::map< std::wstring, Ref< IPropertyValue > >& cv = volumes->getValues();
+		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = cv.begin(); i != cv.end(); ++i)
+		{
+			const std::wstring& category = i->first;
+			float volume = PropertyFloat::get(i->second);
+			m_soundSystem->setVolume(category, volume);
+		}
+	}
+
+	// Configure surround environment distances.
 	float surroundMaxDistance = settings->getProperty< PropertyFloat >(L"Audio.Surround/MaxDistance", 10.0f);
 	float surroundInnerRadius = settings->getProperty< PropertyFloat >(L"Audio.Surround/InnerRadius", 1.0f);
 	m_surroundEnvironment->setMaxDistance(surroundMaxDistance);

@@ -58,6 +58,18 @@ public:
 	 */
 	float getVolume() const;
 
+	/*! \brief Set category volume.
+	 *
+	 * \param volume Volume (0-1)
+	 */
+	void setVolume(const std::wstring& category, float volume);
+
+	/*! \brief Get category volume.
+	 *
+	 * \return Category volume.
+	 */
+	float getVolume(const std::wstring& category) const;
+
 	/*! \brief Set global combination matrix.
 	 *
 	 * [hardware channel][virtual channel]

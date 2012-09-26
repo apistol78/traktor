@@ -79,25 +79,13 @@ private:
 
 	void Configuration_set_undergrowthQuality(AsConfiguration* self, int32_t undergrowthQuality) const;
 
-	float Configuration_get_masterVolume(const AsConfiguration* self) const;
-
-	void Configuration_set_masterVolume(AsConfiguration* self, float masterVolume) const;
-
-	float Configuration_get_ambientVolume(const AsConfiguration* self) const;
-
-	void Configuration_set_ambientVolume(AsConfiguration* self, float ambientVolume) const;
-
-	float Configuration_get_soundFxVolume(const AsConfiguration* self) const;
-
-	void Configuration_set_soundFxVolume(AsConfiguration* self, float soundFxVolume) const;
-
-	float Configuration_get_musicVolume(const AsConfiguration* self) const;
-
-	void Configuration_set_musicVolume(AsConfiguration* self, float musicVolume) const;
-
 	bool Configuration_get_rumbleEnable(const AsConfiguration* self) const;
 
 	void Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const;
+
+	float Configuration_getVolume(const AsConfiguration* self, const std::wstring& category) const;
+
+	void Configuration_setVolume(AsConfiguration* self, const std::wstring& category, float volume) const;
 
 	bool Configuration_apply(AsConfiguration* self) const;
 };

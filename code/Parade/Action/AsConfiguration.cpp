@@ -26,10 +26,6 @@ AsConfiguration::AsConfiguration()
 ,	m_textureQuality(QtMedium)
 ,	m_shadowQuality(QtMedium)
 ,	m_ambientOcclusionQuality(QtHigh)
-,	m_masterVolume(1.0f)
-,	m_ambientVolume(1.0f)
-,	m_soundFxVolume(1.0f)
-,	m_musicVolume(1.0f)
 ,	m_rumbleEnable(true)
 {
 }
@@ -51,11 +47,19 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_textureQuality = (Quality)settings->getProperty< PropertyInteger >(L"Render.TextureQuality", QtMedium);
 	current->m_shadowQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", QtMedium);
 	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtHigh);
-	current->m_masterVolume = settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f);
-	current->m_ambientVolume = settings->getProperty< PropertyFloat >(L"Audio.AmbientVolume", 1.0f);
-	current->m_soundFxVolume = settings->getProperty< PropertyFloat >(L"Audio.SoundFxVolume", 1.0f);
-	current->m_musicVolume = settings->getProperty< PropertyFloat >(L"Audio.MusicVolume", 1.0f);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
+
+	const PropertyGroup* volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
+	if (volumes)
+	{
+		const std::map< std::wstring, Ref< IPropertyValue > >& cv = volumes->getValues();
+		for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = cv.begin(); i != cv.end(); ++i)
+		{
+			const std::wstring& category = i->first;
+			float volume = PropertyFloat::get(i->second);
+			current->m_volumes.insert(std::make_pair(category, volume));
+		}
+	}
 
 	return current;
 }
@@ -155,46 +159,6 @@ void AsConfiguration::setAmbientOcclusionQuality(Quality ambientOcclusionQuality
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 }
 
-float AsConfiguration::getMasterVolume() const
-{
-	return m_masterVolume;
-}
-
-void AsConfiguration::setMasterVolume(float masterVolume)
-{
-	m_masterVolume = masterVolume;
-}
-
-float AsConfiguration::getAmbientVolume() const
-{
-	return m_ambientVolume;
-}
-
-void AsConfiguration::setAmbientVolume(float ambientVolume)
-{
-	m_ambientVolume = ambientVolume;
-}
-
-float AsConfiguration::getSoundFxVolume() const
-{
-	return m_soundFxVolume;
-}
-
-void AsConfiguration::setSoundFxVolume(float soundFxVolume)
-{
-	m_soundFxVolume = soundFxVolume;
-}
-
-float AsConfiguration::getMusicVolume() const
-{
-	return m_musicVolume;
-}
-
-void AsConfiguration::setMusicVolume(float musicVolume)
-{
-	m_musicVolume = musicVolume;
-}
-
 bool AsConfiguration::getRumbleEnable() const
 {
 	return m_rumbleEnable;
@@ -203,6 +167,17 @@ bool AsConfiguration::getRumbleEnable() const
 void AsConfiguration::setRumbleEnable(bool rumbleEnable)
 {
 	m_rumbleEnable = rumbleEnable;
+}
+
+float AsConfiguration::getVolume(const std::wstring& category) const
+{
+	std::map< std::wstring, float >::const_iterator i = m_volumes.find(category);
+	return i != m_volumes.end() ? i->second : 1.0f;
+}
+
+void AsConfiguration::setVolume(const std::wstring& category, float volume)
+{
+	m_volumes[category] = volume;
 }
 
 bool AsConfiguration::apply(amalgam::IEnvironment* environment)
@@ -220,11 +195,10 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"Render.TextureQuality", m_textureQuality);
 	settings->setProperty< PropertyInteger >(L"World.ShadowQuality", m_shadowQuality);
 	settings->setProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", m_ambientOcclusionQuality);
-	settings->setProperty< PropertyFloat >(L"Audio.MasterVolume", m_masterVolume);
-	settings->setProperty< PropertyFloat >(L"Audio.AmbientVolume", m_ambientVolume);
-	settings->setProperty< PropertyFloat >(L"Audio.SoundFxVolume", m_soundFxVolume);
-	settings->setProperty< PropertyFloat >(L"Audio.MusicVolume", m_musicVolume);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
+
+	for (std::map< std::wstring, float >::const_iterator i = m_volumes.begin(); i != m_volumes.end(); ++i)
+		settings->setProperty< PropertyFloat >(L"Audio.Volumes/" + i->first, i->second);
 
 	return environment->reconfigure();
 }
