@@ -1,3 +1,4 @@
+#include "Core/Thread/Acquire.h"
 #include "Online/Impl/User.h"
 #include "Online/Impl/UserCache.h"
 
@@ -16,6 +17,8 @@ UserCache::UserCache(IUserProvider* userProvider)
 
 User* UserCache::get(uint64_t userHandle)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	SmallMap< uint64_t, Ref< User > >::const_iterator i = m_users.find(userHandle);
 	if (i != m_users.end())
 		return i->second;

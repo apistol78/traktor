@@ -294,13 +294,15 @@ void Replicator::update(float dT)
 		if (!m_peers.empty())
 		{
 			std::map< handle_t, Peer >::iterator i = m_peers.begin();
+
+			// Ping one peer at a time.
+			m_pingCount = (m_pingCount + 1) % m_peers.size();
 			std::advance(i, m_pingCount);
 
 			Peer& peer = i->second;
 			if (peer.established)
 				sendPing(i->first);
 
-			m_pingCount = (m_pingCount + 1) % m_peers.size();
 			m_timeUntilPing = c_timeUntilPing / m_peers.size();
 		}
 		else

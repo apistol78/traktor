@@ -31,9 +31,10 @@ const int32_t c_framesBetweenCollections = 100;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashMoviePlayer", FlashMoviePlayer, Object)
 
-FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRenderer* soundRenderer)
+FlashMoviePlayer::FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRenderer* soundRenderer, const IFlashMovieLoader* movieLoader)
 :	m_displayRenderer(displayRenderer)
 ,	m_soundRenderer(soundRenderer)
+,	m_movieLoader(movieLoader)
 ,	m_movieRenderer(new FlashMovieRenderer(displayRenderer))
 ,	m_soundPlayer(new FlashSoundPlayer(soundRenderer))
 ,	m_intervalNextId(1)
@@ -58,7 +59,7 @@ bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 	ActionValue memberValue;
 
 	m_movie = movie;
-	m_movieInstance = m_movie->createMovieClipInstance();
+	m_movieInstance = m_movie->createMovieClipInstance(m_movieLoader);
 
 	Ref< ActionContext > context = m_movieInstance->getContext();
 	Ref< ActionObject > global = context->getGlobal();

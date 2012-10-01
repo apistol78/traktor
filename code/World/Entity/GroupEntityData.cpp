@@ -48,8 +48,11 @@ void GroupEntityData::setTransform(const Transform& transform)
 	Transform deltaTransform = transform * getTransform().inverse();
 	for (RefArray< EntityData >::iterator i = m_entityData.begin(); i != m_entityData.end(); ++i)
 	{
-		Transform currentTransform = (*i)->getTransform();
-		(*i)->setTransform(deltaTransform * currentTransform);
+		if ((*i) != 0)
+		{
+			Transform currentTransform = (*i)->getTransform();
+			(*i)->setTransform(deltaTransform * currentTransform);
+		}
 	}
 	EntityData::setTransform(transform);
 }

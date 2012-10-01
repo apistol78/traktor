@@ -19,6 +19,14 @@ namespace traktor
 class T_DLLCLASS FlashMovieAsset : public editor::Asset
 {
 	T_RTTI_CLASS;
+
+public:
+	virtual bool serialize(ISerializer& s);
+
+private:
+	friend class FlashPipeline;
+
+	std::vector< Guid > m_dependentMovies;
 };
 
 	}

@@ -30,6 +30,7 @@ class FlashSoundPlayer;
 class FlashSpriteInstance;
 class IActionVM;
 class IDisplayRenderer;
+class IFlashMovieLoader;
 class ISoundRenderer;
 
 struct CallArgs;
@@ -45,7 +46,7 @@ class T_DLLCLASS FlashMoviePlayer : public Object
 	T_RTTI_CLASS;
 
 public:
-	FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRenderer* soundRenderer);
+	FlashMoviePlayer(IDisplayRenderer* displayRenderer, ISoundRenderer* soundRenderer, const IFlashMovieLoader* movieLoader);
 
 	virtual ~FlashMoviePlayer();
 
@@ -223,6 +224,7 @@ private:
 
 	Ref< IDisplayRenderer > m_displayRenderer;
 	Ref< ISoundRenderer > m_soundRenderer;
+	Ref< const IFlashMovieLoader > m_movieLoader;
 	Ref< FlashMovieRenderer > m_movieRenderer;
 	Ref< FlashSoundPlayer > m_soundPlayer;
 	Ref< IActionVM > m_actionVM;

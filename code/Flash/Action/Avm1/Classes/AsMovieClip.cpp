@@ -9,6 +9,7 @@
 #include "Flash/FlashMovieFactory.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashSprite.h"
+#include "Flash/IFlashMovieLoader.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
@@ -627,12 +628,14 @@ void AsMovieClip::MovieClip_lineTo(FlashSpriteInstance* self, avm_number_t x, av
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_loadMovie(FlashSpriteInstance* self, const std::wstring& fileName) const
 {
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
-	if (!file)
+	ActionContext* cx = getContext();
+	T_ASSERT (cx);
+
+	const IFlashMovieLoader* movieLoader = cx->getMovieLoader();
+	if (!movieLoader)
 		return 0;
 
-	Ref< SwfReader > swf = new SwfReader(file);
-	Ref< FlashMovie > movie = flash::FlashMovieFactory().createMovie(swf);
+	Ref< FlashMovie > movie = movieLoader->load(fileName);
 	if (!movie)
 		return 0;
 

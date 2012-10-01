@@ -16,6 +16,13 @@
 
 namespace traktor
 {
+	namespace db
+	{
+
+class Database;
+
+	}
+
 	namespace resource
 	{
 
@@ -68,6 +75,7 @@ public:
 	bool create(
 		ui::Widget* parent,
 		int style,
+		db::Database* database,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		sound::SoundSystem* soundSystem
@@ -89,6 +97,7 @@ public:
 
 private:
 	Ref< ui::EventHandler > m_idleHandler;
+	Ref< db::Database > m_database;
 #if T_USE_ACCELERATED_RENDERER
 	Ref< render::IRenderView > m_renderView;
 	Ref< AccDisplayRenderer > m_displayRenderer;

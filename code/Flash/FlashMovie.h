@@ -25,6 +25,7 @@ class FlashSound;
 class FlashSprite;
 class FlashSpriteInstance;
 class IActionVM;
+class IFlashMovieLoader;
 
 /*! \brief Flash movie.
  * \ingroup Flash
@@ -62,7 +63,7 @@ public:
 
 	bool getExportName(uint16_t exportId, std::string& outName) const;
 
-	Ref< FlashSpriteInstance > createMovieClipInstance() const;
+	Ref< FlashSpriteInstance > createMovieClipInstance(const IFlashMovieLoader* movieLoader) const;
 
 	Ref< FlashSpriteInstance > createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const;
 

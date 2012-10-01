@@ -42,7 +42,7 @@ const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 8, FlashPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashPipeline", 9, FlashPipeline, editor::IPipeline)
 
 bool FlashPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -73,6 +73,10 @@ bool FlashPipeline::buildDependencies(
 	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, movieAsset->getFileName());
 	pipelineDepends->addDependency(fileName);
+
+	// Add dependency to dependent flash movies.
+	for (std::vector< Guid >::const_iterator i = movieAsset->m_dependentMovies.begin(); i != movieAsset->m_dependentMovies.end(); ++i)
+		pipelineDepends->addDependency(*i, editor::PdfBuild);
 
 	// AccShape
 	pipelineDepends->addDependency(c_idShaderSolid, editor::PdfBuild);	// Solid
