@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/SmallMap.h"
+#include "Core/Thread/Semaphore.h"
 
 namespace traktor
 {
@@ -22,6 +23,7 @@ public:
 	User* get(uint64_t userHandle);
 
 private:
+	Semaphore m_lock;
 	Ref< IUserProvider > m_userProvider;
 	SmallMap< uint64_t, Ref< User > > m_users;
 	int32_t m_nextTag;

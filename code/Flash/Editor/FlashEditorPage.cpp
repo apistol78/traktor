@@ -108,7 +108,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
 
 	m_previewControl = new FlashPreviewControl();
-	m_previewControl->create(container, ui::WsNone, m_resourceManager, renderSystem, m_soundSystem);
+	m_previewControl->create(container, ui::WsNone, database, m_resourceManager, renderSystem, m_soundSystem);
 	m_previewControl->setMovie(m_movie);
 	m_previewControl->update();
 

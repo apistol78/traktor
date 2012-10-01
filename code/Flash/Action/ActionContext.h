@@ -22,6 +22,7 @@ namespace traktor
 class FlashMovie;
 class FlashSpriteInstance;
 class IActionVM;
+class IFlashMovieLoader;
 
 /*! \brief ActionScript execution context.
  * \ingroup Flash
@@ -67,7 +68,7 @@ public:
 		IdOnKillFocus = 30
 	};
 
-	ActionContext(const IActionVM* vm, const FlashMovie* movie);
+	ActionContext(const IActionVM* vm, const FlashMovie* movie, const IFlashMovieLoader* movieLoader);
 
 	void setGlobal(ActionObject* global);
 
@@ -89,6 +90,8 @@ public:
 
 	const FlashMovie* getMovie() const { return m_movie; }
 
+	const IFlashMovieLoader* getMovieLoader() const { return m_movieLoader; }
+
 	ActionObject* getGlobal() const { return m_global; }
 
 	FlashSpriteInstance* getMovieClip() const { return m_movieClip; }
@@ -109,6 +112,7 @@ private:
 
 	const IActionVM* m_vm;
 	const FlashMovie* m_movie;
+	Ref< const IFlashMovieLoader > m_movieLoader;
 	Ref< ActionObject > m_global;
 	Ref< FlashSpriteInstance > m_movieClip;
 	ActionStrings m_strings;

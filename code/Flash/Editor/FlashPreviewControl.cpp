@@ -2,8 +2,9 @@
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/Editor/FlashPreviewControl.h"
-#include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashMovieLoader.h"
+#include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/Acc/AccDisplayRenderer.h"
@@ -92,6 +93,7 @@ FlashPreviewControl::FlashPreviewControl()
 bool FlashPreviewControl::create(
 	ui::Widget* parent,
 	int style,
+	db::Database* database,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	sound::SoundSystem* soundSystem
@@ -165,6 +167,7 @@ bool FlashPreviewControl::create(
 	m_idleHandler = ui::createMethodHandler(this, &FlashPreviewControl::eventIdle);
 	ui::Application::getInstance()->addEventHandler(ui::EiIdle, m_idleHandler);
 
+	m_database = database;
 	m_timer.start();
 	return true;
 }
@@ -204,7 +207,11 @@ void FlashPreviewControl::setMovie(FlashMovie* movie)
 
 	ui::Size sz = getInnerRect().getSize();
 
-	m_moviePlayer = new FlashMoviePlayer(m_displayRenderer, m_soundRenderer);
+	m_moviePlayer = new FlashMoviePlayer(
+		m_displayRenderer,
+		m_soundRenderer,
+		new flash::FlashMovieLoader(m_database)
+	);
 	m_moviePlayer->create(movie, sz.cx, sz.cy);
 
 	m_playing = true;

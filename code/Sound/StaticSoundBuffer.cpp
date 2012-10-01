@@ -81,18 +81,20 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 
 	virtual ~StaticSoundBufferCursor()
 	{
+		StaticBufferHeap& heap = StaticBufferHeap::getInstance();
 		for (uint32_t i = 0; i < sizeof_array(m_samples); ++i)
 		{
 			if (m_samples[i])
-				StaticBufferHeap::getInstance().free(m_samples[i]);
+				heap.free(m_samples[i]);
 		}
 	}
 
 	bool create()
 	{
+		StaticBufferHeap& heap = StaticBufferHeap::getInstance();
 		for (uint32_t i = 0; i < m_channelsCount; ++i)
 		{
-			m_samples[i] = (float*)StaticBufferHeap::getInstance().alloc();
+			m_samples[i] = (float*)heap.alloc();
 			if (!m_samples[i])
 				return false;
 		}

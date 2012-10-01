@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashMovie.h"
+#include "Flash/FlashMovieLoader.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/ISoundRenderer.h"
@@ -316,7 +317,11 @@ void FlashLayer::createMoviePlayer()
 	}
 
 	// Create Flash movie player.
-	Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(displayRenderer, soundRenderer);
+	Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
+		displayRenderer,
+		soundRenderer,
+		new flash::FlashMovieLoader(m_environment->getDatabase())
+	);
 	if (!moviePlayer->create(m_movie, width, height))
 	{
 		log::error << L"Unable to create movie player" << Endl;

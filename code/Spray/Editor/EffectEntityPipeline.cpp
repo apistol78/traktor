@@ -7,7 +7,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", 0, EffectEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", 1, EffectEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 {
@@ -29,6 +29,18 @@ bool EffectEntityPipeline::buildDependencies(
 	pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild);
 
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid, outBuildParams);
+}
+
+Ref< ISerializable > EffectEntityPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const ISerializable* sourceAsset
+) const
+{
+	const EffectEntityData* effectEntityData = checked_type_cast< const EffectEntityData* >(sourceAsset);
+	if (effectEntityData->getEffect().isNull())
+		return 0;
+
+	return world::EntityPipeline::buildOutput(pipelineBuilder, sourceAsset);
 }
 
 	}
