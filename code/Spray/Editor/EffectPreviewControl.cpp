@@ -107,7 +107,7 @@ bool EffectPreviewControl::create(
 	if (!m_primitiveRenderer->create(resourceManager, renderSystem))
 		return false;
 
-	m_renderContext = new render::RenderContext();
+	m_renderContext = new render::RenderContext(512 * 1024);
 	
 	m_soundSystem = soundSystem;
 

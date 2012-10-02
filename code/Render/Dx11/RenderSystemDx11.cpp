@@ -321,9 +321,12 @@ Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureC
 
 Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_context->getLock());
+
 	Ref< RenderTargetSetDx11 > renderTargetSet = new RenderTargetSetDx11(m_context);
 	if (!renderTargetSet->create(m_context->getD3DDevice(), desc))
 		return 0;
+
 	return renderTargetSet;
 }
 

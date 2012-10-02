@@ -360,6 +360,7 @@ void ScriptManagerLua::pushObject(Object* object)
 	SmallMap< const TypeInfo*, uint32_t >::const_iterator i = m_classRegistryLookup.find(objectType);
 	if (i == m_classRegistryLookup.end())
 	{
+		lua_pop(m_luaState, 1);
 		lua_pushnil(m_luaState);
 		return;
 	}

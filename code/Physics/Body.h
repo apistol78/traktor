@@ -187,7 +187,7 @@ public:
 
 private:
 	RefArray< CollisionListener > m_collisionListeners;
-	Object* m_userObject;
+	Ref< Object > m_userObject;
 	uint32_t m_clusterId;
 };
 

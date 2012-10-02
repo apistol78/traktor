@@ -18,6 +18,7 @@ Body::Body()
 void Body::destroy()
 {
 	removeAllCollisionListeners();
+	m_userObject = 0;
 }
 
 void Body::addCollisionListener(CollisionListener* collisionListener)

@@ -156,13 +156,9 @@ T_MATH_INLINE Plane& Plane::operator = (const Plane& src)
 
 T_MATH_INLINE Plane operator * (const Matrix44& m, const Plane& pl)
 {
-	Vector4 P = pl.normal().xyz0() + Vector4(0.0f, 0.0f, 0.0f, -pl.distance());
-	Vector4 Pn = m.inverse().transpose() * P;
-
-	Plane pr;
-	pr.m_normal = Pn.xyz0();
-	pr.m_distance = -Pn.w();
-	return pr;
+	Vector4 N = m * pl.normal().xyz0();
+	Vector4 P = m * (pl.normal().xyz0() * pl.distance()).xyz1();
+	return Plane(N, P);
 }
 
 }
