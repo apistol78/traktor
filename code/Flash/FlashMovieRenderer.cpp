@@ -119,7 +119,7 @@ void FlashMovieRenderer::renderSprite(
 				movie,
 				layer.instance,
 				transform,
-				concateCxTransform(cxTransform, layer.instance->getColorTransform())
+				cxTransform
 			);
 
 			m_displayRenderer->endMask();
@@ -137,7 +137,7 @@ void FlashMovieRenderer::renderSprite(
 					movie,
 					clippedLayer.instance,
 					transform,
-					concateCxTransform(cxTransform, clippedLayer.instance->getColorTransform())
+					cxTransform
 				);
 			}
 
@@ -147,7 +147,7 @@ void FlashMovieRenderer::renderSprite(
 				movie,
 				layer.instance,
 				transform,
-				concateCxTransform(cxTransform, layer.instance->getColorTransform())
+				cxTransform
 			);
 
 			m_displayRenderer->endMask();
