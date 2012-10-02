@@ -107,7 +107,7 @@ void FlashMovieRenderer::renderSprite(
 				movie,
 				layer.instance,
 				transform,
-				concateCxTransform(cxTransform, layer.instance->getColorTransform())
+				cxTransform
 			);
 			++i;
 		}
