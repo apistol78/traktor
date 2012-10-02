@@ -44,6 +44,7 @@ int32_t sanitizeMultiSample(int32_t multiSample)
 bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayMode& criteria, render::DisplayMode& outBestMatch)
 {
 	int32_t bestMatch = std::numeric_limits< int32_t >::max();
+	int32_t bestRefreshRate = 0;
 	uint32_t bestDisplayModeIndex = 0;
 
 	uint32_t displayModeCount = renderSystem->getDisplayModeCount();
@@ -63,7 +64,7 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 		return true;
 	}
 
-	const uint32_t c_preferColorBits[] = { 24, 32, 16, 15 };
+	const uint32_t c_preferColorBits[] = { 15, 16, 32, 24 };
 	for (uint32_t i = 0; i < sizeof_array(c_preferColorBits); ++i)
 	{
 		for (uint32_t j = 0; j < displayModeCount; ++j)
@@ -79,14 +80,19 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 				std::abs((int32_t)(check.width - criteria.width)) +
 				std::abs((int32_t)(check.height - criteria.height));
 
-			if (match < bestMatch)
+			if (
+				match < bestMatch ||
+				(
+					match == bestMatch &&
+					check.refreshRate > bestRefreshRate
+				)
+			)
 			{
 				bestDisplayModeIndex = j;
 				bestMatch = match;
+				bestRefreshRate = check.refreshRate;
 			}
 		}
-		if (bestMatch == 0)
-			break;
 	}
 
 	if (bestMatch != std::numeric_limits< int32_t >::max())

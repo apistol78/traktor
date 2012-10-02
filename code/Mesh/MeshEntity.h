@@ -66,13 +66,13 @@ public:
 
 	void pushTransform();
 
-	void setParameterCallback(IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
+	void setParameterCallback(const IMeshParameterCallback* parameterCallback) { m_parameterCallback = parameterCallback; }
 
-	IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
+	const IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
 protected:
 	IntervalTransform m_transform;
-	IMeshParameterCallback* m_parameterCallback;
+	const IMeshParameterCallback* m_parameterCallback;
 
 	/*! \brief Calculate render transform.
 	 *
