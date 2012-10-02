@@ -136,11 +136,11 @@ void Replicator::update(float dT)
 	{
 		Peer& peer = m_peers[*i];
 
+		if (peer.disconnected)
+			continue;
+
 		// Issue "I am" to unestablished peers.
-		if (
-			!peer.established &&
-			!peer.disconnected
-		)
+		if (!peer.established)
 		{
 			if ((peer.timeUntilTx -= dT) <= 0.0f)
 			{
@@ -153,8 +153,7 @@ void Replicator::update(float dT)
 		// Check if peer timeout;ed.
 		if (
 			peer.established &&
-			peer.packetCount > 0 &&
-			!peer.disconnected
+			peer.packetCount > 0
 		)
 		{
 			T_ASSERT (peer.lastTime > 0.0f);
@@ -177,11 +176,10 @@ void Replicator::update(float dT)
 		T_ASSERT (it != m_peers.end());
 
 		Peer& peer = it->second;
-		if (peer.established)
+		if (peer.established && !peer.disconnected)
 		{
 			T_REPLICATOR_DEBUG(L"OK: Established peer " << *i << L" disconnected; issue listener event");
 			T_ASSERT (peer.ghost);
-			T_ASSERT (!peer.disconnected);
 
 			// Need to notify listeners immediately as peer becomes dismounted.
 			for (RefArray< IListener >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)

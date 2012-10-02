@@ -74,116 +74,118 @@ void ScriptContextLua::destroy()
 
 void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& globalValue)
 {
-	CHECK_LUA_STACK(m_luaState, 0);
-	
 	m_scriptManager->lock(this);
-
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-	m_scriptManager->pushAny(globalValue);
-	lua_setfield(m_luaState, -2, wstombs(globalName).c_str());
-	lua_pop(m_luaState, 1);
-
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+		m_scriptManager->pushAny(globalValue);
+		lua_setfield(m_luaState, -2, wstombs(globalName).c_str());
+		lua_pop(m_luaState, 1);
+	}
 	m_scriptManager->unlock();
 }
 
 Any ScriptContextLua::getGlobal(const std::wstring& globalName)
 {
-	CHECK_LUA_STACK(m_luaState, 0);
-
+	Any value;
 	m_scriptManager->lock(this);
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
 
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-	lua_getfield(m_luaState, -1, wstombs(globalName).c_str());
-	Any value = m_scriptManager->toAny(-1);
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+		lua_getfield(m_luaState, -1, wstombs(globalName).c_str());
 
+		value = m_scriptManager->toAny(-1);
+	}
 	m_scriptManager->unlock();
 	return value;
 }
 
 bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
 {
-	CHECK_LUA_STACK(m_luaState, 0);
-
+	bool result;
 	m_scriptManager->lock((ScriptContextLua*)this);
+	{
+		CHECK_LUA_STACK(m_luaState, 0);
 
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-	lua_getfield(m_luaState, -1, wstombs(functionName).c_str());
-	bool result = (lua_isfunction(m_luaState, -1) != 0);
-	lua_pop(m_luaState, 2);
-
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+		lua_getfield(m_luaState, -1, wstombs(functionName).c_str());
+		
+		result = (lua_isfunction(m_luaState, -1) != 0);
+		
+		lua_pop(m_luaState, 2);
+	}
 	m_scriptManager->unlock();
 	return result;
 }
 
 Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv)
 {
-	CHECK_LUA_STACK(m_luaState, 0);
-
 	Any returnValue;
-
 	m_scriptManager->lock(this);
-
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-	lua_getfield(m_luaState, -1, wstombs(functionName).c_str());
-
-	if (lua_isfunction(m_luaState, -1))
 	{
-		for (uint32_t i = 0; i < argc; ++i)
-			m_scriptManager->pushAny(argv[i]);
-		int32_t err = lua_pcall(m_luaState, argc, 1, 0);
-		if (err == 0)
-			returnValue = m_scriptManager->toAny(-1);
-		else
+		CHECK_LUA_STACK(m_luaState, 0);
+
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+		lua_getfield(m_luaState, -1, wstombs(functionName).c_str());
+
+		if (lua_isfunction(m_luaState, -1))
 		{
-			const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
-			translateError(err, m_map);
+			for (uint32_t i = 0; i < argc; ++i)
+				m_scriptManager->pushAny(argv[i]);
+			int32_t err = lua_pcall(m_luaState, argc, 1, 0);
+			if (err == 0)
+				returnValue = m_scriptManager->toAny(-1);
+			else
+			{
+				const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
+				translateError(err, m_map);
+			}
 		}
+		else
+			log::error << L"Unable to call " << functionName << L"; no such function" << Endl;
+
+		lua_pop(m_luaState, 2);
 	}
-	else
-		log::error << L"Unable to call " << functionName << L"; no such function" << Endl;
-
-	lua_pop(m_luaState, 2);
-
 	m_scriptManager->unlock();
 	return returnValue;
 }
 
 Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv)
 {
-	CHECK_LUA_STACK(m_luaState, 0);
-
-	m_scriptManager->lock(this);
-
 	Any returnValue;
-
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-	lua_getfield(m_luaState, -1, wstombs(methodName).c_str());
-
-	if (lua_isfunction(m_luaState, -1))
+	m_scriptManager->lock(this);
 	{
-		// Set "self" variable in global environment.
-		m_scriptManager->pushAny(Any(self));
-		lua_setglobal(m_luaState, "self");
+		CHECK_LUA_STACK(m_luaState, 0);
 
-		// Push arguments.
-		for (uint32_t i = 0; i < argc; ++i)
-			m_scriptManager->pushAny(argv[i]);
-		
-		// Call script function.
-		int32_t err = lua_pcall(m_luaState, argc, 1, 0);
-		if (err == 0)
-			returnValue = m_scriptManager->toAny(-1);
-		else
+		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+		lua_getfield(m_luaState, -1, wstombs(methodName).c_str());
+
+		if (lua_isfunction(m_luaState, -1))
 		{
-			const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
-			translateError(err, m_map);
+			// Set "self" variable in global environment.
+			m_scriptManager->pushAny(Any(self));
+			lua_setglobal(m_luaState, "self");
+
+			// Push arguments.
+			for (uint32_t i = 0; i < argc; ++i)
+				m_scriptManager->pushAny(argv[i]);
+		
+			// Call script function.
+			int32_t err = lua_pcall(m_luaState, argc, 1, 0);
+			if (err == 0)
+				returnValue = m_scriptManager->toAny(-1);
+			else
+			{
+				const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
+				translateError(err, m_map);
+			}
 		}
+		else
+			log::error << L"Unable to call " << methodName << L"; no such method" << Endl;
+
+		lua_pop(m_luaState, 2);
 	}
-	else
-		log::error << L"Unable to call " << methodName << L"; no such method" << Endl;
-
-	lua_pop(m_luaState, 2);
-
 	m_scriptManager->unlock();
 	return returnValue;
 }

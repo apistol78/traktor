@@ -9,6 +9,12 @@ namespace traktor
 {
 	namespace world
 	{
+		namespace
+		{
+
+const uint32_t c_renderContextSize = 2 * 1024 * 1024;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldContext", WorldContext, Object)
 
@@ -18,7 +24,7 @@ WorldContext::WorldContext(
 )
 :	m_entityRenderers(entityRenderers)
 ,	m_culling(culling)
-,	m_renderContext(new render::RenderContext())
+,	m_renderContext(new render::RenderContext(c_renderContextSize))
 ,	m_lastEntityType(0)
 ,	m_lastEntityRenderer(0)
 {

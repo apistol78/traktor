@@ -53,7 +53,7 @@ public:
 	enum { DefaultHeapSize = 1 * 1024 * 1024 };
 #endif
 
-	RenderContext(uint32_t heapSize = DefaultHeapSize);
+	RenderContext(uint32_t heapSize);
 
 	virtual ~RenderContext();
 
