@@ -897,10 +897,14 @@
 			<first>MENU_VIEW_PROPERTIES</first>
 			<second>Egenskaper</second>
 		</item>
-	<item>
-		<first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
-		<second>Baka skuggning</second>
-	</item>
+    <item>
+    	<first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
+    	<second>Baka skuggning</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_GENERATE_OCCLUDER</first>
+      <second>Skapa 'occluder' geometri'</second>
+    </item>
     <item>
       <first>MESHASSET_WIZARDTOOL_DESCRIPTION</first>
       <second>Skapa mesh asset...</second>
@@ -932,6 +936,10 @@
     <item>
       <first>MESHASSET_EDITOR_MESH_TYPE_INSTANCE</first>
       <second>Instans</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_PARTITION</first>
+      <second>Hierarkisk</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_MESH_TYPE_SKINNED</first>
@@ -1678,8 +1686,16 @@
       <second>Plattform</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_RECIPSQRT</first>
+      <second>Inv. roten ur</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_REFLECT</first>
       <second>Spegla</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ROUND</first>
+      <second>Avrunda</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_SAMPLER</first>
