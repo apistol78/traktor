@@ -894,6 +894,10 @@
       <second>File name</second>
     </item>
     <item>
+      <first>MESHASSET_EDITOR_GENERATE_OCCLUDER</first>
+      <second>Generate culling occluder</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_MESH_TYPE</first>
       <second>Mesh type</second>
     </item>
@@ -908,6 +912,10 @@
     <item>
       <first>MESHASSET_EDITOR_MESH_TYPE_INSTANCE</first>
       <second>Instance</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_MESH_TYPE_PARTITION</first>
+      <second>Partition</second>
     </item>
     <item>
       <first>MESHASSET_EDITOR_MESH_TYPE_SKINNED</first>
@@ -1674,8 +1682,16 @@
       <second>Platform</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_RECIPSQRT</first>
+      <second>Reciprocal square root</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_REFLECT</first>
       <second>Reflect</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_ROUND</first>
+      <second>Round</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_SAMPLER</first>
