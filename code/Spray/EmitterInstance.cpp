@@ -170,7 +170,11 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		m_boundingBox = Aabb3();
 		Scalar deltaTime16 = Scalar(context.deltaTime * 16.0f);
 		for (PointVector::iterator i = m_points.begin(); i != m_points.end(); ++i)
+		{
+			m_boundingBox.contain(i->position);
 			m_boundingBox.contain(i->position + i->velocity * deltaTime16);
+		}
+		m_boundingBox = m_boundingBox.expand(Scalar(1.0f));
 		if (!m_emitter->worldSpace())
 			m_boundingBox = m_boundingBox.transform(transform);
 	}
