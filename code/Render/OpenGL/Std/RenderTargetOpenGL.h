@@ -19,10 +19,6 @@ namespace traktor
 	namespace render
 	{
 
-class BlitHelper;
-class ContextOpenGL;
-class IContext;
-
 /*!
  * \ingroup OGL
  */
@@ -51,38 +47,14 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
-
-	//bool bind(ContextOpenGL* renderContext, GLuint depthBuffer);
-
-	//void enter();
-	//
-	//void resolveTarget();
-
-	//void blit();
-	//
-	//bool read(void* buffer) const;
 	
 private:
-	Ref< ContextOpenGL > m_resourceContext;
-	//Ref< BlitHelper > m_blitHelper;
 	GLuint m_colorTexture;
 	int32_t m_width;
 	int32_t m_height;
-	//int32_t m_targetWidth;
-	//int32_t m_targetHeight;
-	//GLenum m_textureTarget;
-	//GLuint m_targetFBO;
-	//GLuint m_resolveFBO;
-	//GLuint m_targetColorBuffer;
-	//GLuint m_colorTexture;
-	//bool m_haveDepth;
-	//bool m_usingPrimaryDepthBuffer;
-	//bool m_haveBlitExt;
-	//SamplerState m_shadowState;
-
 };
 
 	}

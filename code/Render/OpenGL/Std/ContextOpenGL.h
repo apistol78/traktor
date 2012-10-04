@@ -48,6 +48,8 @@ public:
 
 	void setPermitDepth(bool permitDepth);
 
+	void setSamplerState(GLuint unit, const SamplerState& samplerState, int32_t mipCount);
+
 	int32_t getWidth() const;
 
 	int32_t getHeight() const;
@@ -84,6 +86,7 @@ private:
 	std::map< uint32_t, GLhandleARB > m_shaderObjects;
 	std::map< uint32_t, GLuint > m_stateLists;
 	std::vector< IDeleteCallback* > m_deleteResources;
+	SamplerState m_samplerStates[16];
 	int32_t m_width;
 	int32_t m_height;
 	bool m_permitDepth;

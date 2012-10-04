@@ -44,7 +44,7 @@ public:
 	
 	virtual int getDepth() const;
 
-	virtual void bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
 

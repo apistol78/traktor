@@ -60,6 +60,7 @@ ContextOpenGL::ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext 
 
 #endif
 {
+
 	update();
 }
 
@@ -298,8 +299,6 @@ GLuint ContextOpenGL::createStateList(const RenderState& renderState)
 	adler.feed(renderState.alphaFunc);
 	adler.feed(renderState.alphaRef);
 	adler.feed(renderState.stencilTestEnable);
-	adler.feed(renderState.stencilFunc);
-	adler.feed(renderState.stencilRef);
 	adler.feed(renderState.stencilOpFail);
 	adler.feed(renderState.stencilOpZFail);
 	adler.feed(renderState.stencilOpZPass);
@@ -373,7 +372,7 @@ GLuint ContextOpenGL::createStateList(const RenderState& renderState)
 			{ T_OGL_SAFE(glDisable(GL_STENCIL_TEST)); }
 
 		T_OGL_SAFE(glStencilMask(~0UL));
-		T_OGL_SAFE(glStencilFunc(rs.stencilFunc, rs.stencilRef, ~0UL));
+		T_OGL_SAFE(glStencilOp(rs.stencilOpFail, rs.stencilOpZFail, rs.stencilOpZPass));
 
 		glEndList();
 	}
@@ -395,6 +394,46 @@ void ContextOpenGL::callStateList(GLuint listBase)
 void ContextOpenGL::setPermitDepth(bool permitDepth)
 {
 	m_permitDepth = permitDepth;
+}
+
+void ContextOpenGL::setSamplerState(GLuint unit, const SamplerState& samplerState, int32_t mipCount)
+{
+	SamplerState& shadowState = m_samplerStates[unit];
+	GLenum minFilter = GL_NEAREST;
+
+	if (mipCount > 1)
+		minFilter = samplerState.minFilter;
+	else
+	{
+		if (samplerState.minFilter != GL_NEAREST)
+			minFilter = GL_LINEAR;
+		else
+			minFilter = GL_NEAREST;
+	}
+
+	//if (shadowState.minFilter != minFilter)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
+		shadowState.minFilter = minFilter;
+	}
+
+	//if (shadowState.magFilter != samplerState.magFilter)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		shadowState.magFilter = samplerState.magFilter;
+	}
+
+	//if (shadowState.wrapS != samplerState.wrapS)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		shadowState.wrapS = samplerState.wrapS;
+	}
+
+	//if (shadowState.wrapT != samplerState.wrapT)
+	{
+		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		shadowState.wrapT = samplerState.wrapT;
+	}
 }
 
 void ContextOpenGL::deleteResource(IDeleteCallback* callback)

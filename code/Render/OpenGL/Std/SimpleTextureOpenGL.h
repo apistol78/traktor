@@ -50,7 +50,7 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
 
@@ -66,7 +66,6 @@ private:
 	uint32_t m_mipCount;
 	uint32_t m_dataSize;
 	AutoArrayPtr< uint8_t > m_data;
-	SamplerState m_shadowState;
 };
 		
 	}

@@ -115,23 +115,22 @@ bool SoundPipeline::buildOutput(
 	}
 
 	float volume = 1.0f;
+	float presence = soundAsset->m_presence;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
-	if (category)
-		volume = category->getVolume();
-
 	while (category)
 	{
-		Ref< const SoundCategory > parent = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
-		if (parent)
-			volume *= parent->getVolume();
-
-		category = parent;
+		volume *= category->getVolume();
+		presence = std::max(presence, category->getPresence());
+		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
+
+	log::info << L"Category volume " << int32_t(volume * 100.0f) << L"%" << Endl;
+	log::info << L"Category presence " << presence << Endl;
 
 	if (soundAsset->m_stream)
 	{
-		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder), volume, soundAsset->m_presence, soundAsset->m_preload);
+		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder), volume, presence, soundAsset->m_preload);
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
@@ -259,7 +258,7 @@ bool SoundPipeline::buildOutput(
 		resource->m_samplesCount = samplesCount;
 		resource->m_channelsCount = maxChannel;
 		resource->m_volume = volume;
-		resource->m_presence = soundAsset->m_presence;
+		resource->m_presence = presence;
 		resource->m_decoderType = &type_of< OggStreamDecoder >();
 
 		int32_t dataOffsetEnd = stream->tell();

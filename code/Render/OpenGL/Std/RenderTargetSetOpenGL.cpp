@@ -1,5 +1,4 @@
 #include "Core/Log/Log.h"
-//#include "Core/Math/Log2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Std/BlitHelper.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
