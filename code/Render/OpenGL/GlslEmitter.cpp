@@ -410,6 +410,7 @@ void emitInterpolator(GlslContext& cx, Interpolator* node)
 void emitIterate(GlslContext& cx, Iterate* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	std::wstring inputName;
 
 	// Create iterator variable.
 	GlslVariable* N = cx.emitOutput(node, L"N", GtFloat);
@@ -425,12 +426,27 @@ void emitIterate(GlslContext& cx, Iterate* node)
 	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
 	cx.getShader().pushScope();
 
-	GlslVariable* input = cx.emitInput(node, L"Input");
-	T_ASSERT (input);
+	{
+		GlslVariable* input = cx.emitInput(node, L"Input");
+		T_ASSERT (input);
 
-	// Modify output variable; need to have input variable ready as it
-	// will determine output type.
-	out->setType(input->getType());
+		// Emit post condition if connected; break iteration if condition is false.
+		GlslVariable* condition = cx.emitInput(node, L"Condition");
+		if (condition)
+		{
+			fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
+			fs << L"\tbreak;" << Endl;
+		}
+
+		inputName = input->getName();
+
+		// Modify output variable; need to have input variable ready as it
+		// will determine output type.
+		out->setType(input->getType());
+	}
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(GlslShader::BtBody);
 
 	// As we now know the type of output variable we can safely
 	// initialize it.
@@ -445,24 +461,13 @@ void emitIterate(GlslContext& cx, Iterate* node)
 	f << L"{" << Endl;
 	f << IncreaseIndent;
 
-	// Emit post condition if connected; break iteration if condition is false.
-	GlslVariable* condition = cx.emitInput(node, L"Condition");
-	if (condition)
-	{
-		fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
-		fs << L"\tbreak;" << Endl;
-	}
-
 	// Insert input branch here; it's already been generated in a temporary
 	// output stream.
 	f << fs.str();
-	f << out->getName() << L" = " << input->getName() << L";" << Endl;
+	f << out->getName() << L" = " << inputName << L";" << Endl;
 
 	f << DecreaseIndent;
 	f << L"}" << Endl;	
-
-	cx.getShader().popScope();
-	cx.getShader().popOutputStream(GlslShader::BtBody);
 }
 
 void emitLength(GlslContext& cx, Length* node)
@@ -743,10 +748,20 @@ void emitPixelOutput(GlslContext& cx, PixelOutput* node)
 
 	cx.enterFragment();
 
-	GlslVariable* in = cx.emitInput(node, L"Input");
+	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
+	GlslVariable* in[4];
 
-	StringOutputStream& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
-	fpb << L"gl_FragColor = " << in->cast(GtFloat4) << L";" << Endl;
+	for (int32_t i = 0; i < sizeof_array(in); ++i)
+		in[i] = cx.emitInput(node, inputs[i]);
+
+	for (int32_t i = 0; i < sizeof_array(in); ++i)
+	{
+		if (!in[i])
+			continue;
+
+		StringOutputStream& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
+		fpb << L"gl_FragData[" << i << L"] = " << in[i]->cast(GtFloat4) << L";" << Endl;
+	}
 
 	uint32_t colorMask =
 		((node->getColorWriteMask() & PixelOutput::CwRed) ? RenderState::CmRed : 0) |
@@ -774,7 +789,6 @@ void emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	rs.stencilOpFail = c_oglStencilOperation[node->getStencilFail()];
 	rs.stencilOpZFail = c_oglStencilOperation[node->getStencilZFail()];
 	rs.stencilOpZPass = c_oglStencilOperation[node->getStencilPass()];
-	
 }
 
 void emitPolynomial(GlslContext& cx, Polynomial* node)

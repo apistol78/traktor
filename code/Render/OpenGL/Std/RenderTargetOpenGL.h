@@ -33,7 +33,7 @@ class T_DLLCLASS RenderTargetOpenGL
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetOpenGL(ContextOpenGL* resourceContext, BlitHelper* blitHelper);
+	RenderTargetOpenGL(GLuint colorTexture, int32_t width, int32_t height);
 
 	virtual ~RenderTargetOpenGL();
 
@@ -55,32 +55,34 @@ public:
 
 	virtual void bindSize(GLint locationSize);
 
-	bool bind(ContextOpenGL* renderContext, GLuint depthBuffer);
+	//bool bind(ContextOpenGL* renderContext, GLuint depthBuffer);
 
-	void enter();
-	
-	void resolveTarget();
+	//void enter();
+	//
+	//void resolveTarget();
 
-	void blit();
-	
-	bool read(void* buffer) const;
+	//void blit();
+	//
+	//bool read(void* buffer) const;
 	
 private:
 	Ref< ContextOpenGL > m_resourceContext;
-	Ref< BlitHelper > m_blitHelper;
+	//Ref< BlitHelper > m_blitHelper;
+	GLuint m_colorTexture;
 	int32_t m_width;
 	int32_t m_height;
-	int32_t m_targetWidth;
-	int32_t m_targetHeight;
-	GLenum m_textureTarget;
-	GLuint m_targetFBO;
-	GLuint m_resolveFBO;
-	GLuint m_targetColorBuffer;
-	GLuint m_colorTexture;
-	bool m_haveDepth;
-	bool m_usingPrimaryDepthBuffer;
-	bool m_haveBlitExt;
-	SamplerState m_shadowState;
+	//int32_t m_targetWidth;
+	//int32_t m_targetHeight;
+	//GLenum m_textureTarget;
+	//GLuint m_targetFBO;
+	//GLuint m_resolveFBO;
+	//GLuint m_targetColorBuffer;
+	//GLuint m_colorTexture;
+	//bool m_haveDepth;
+	//bool m_usingPrimaryDepthBuffer;
+	//bool m_haveBlitExt;
+	//SamplerState m_shadowState;
+
 };
 
 	}

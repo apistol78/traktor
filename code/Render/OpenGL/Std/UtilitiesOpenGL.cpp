@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
 namespace traktor
@@ -109,11 +110,120 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 #endif
 
 	default:
-		T_DEBUG(L"Unsupported texture format used");
+		T_DEBUG(L"Unsupported texture outFormat used");
 		return false;
 	}
 
 	return true;
+}
+
+bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, GLint& outFormat, GLenum& outType)
+{
+	switch (targetFormat)
+	{
+	case TfR8:
+	case TfR8G8B8A8:
+		outInternalFormat = GL_RGBA;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		return true;
+
+	case TfR16G16B16A16F:
+		if (opengl_have_extension(E_GL_ARB_texture_float))
+		{
+			outInternalFormat = GL_RGBA16F_ARB;
+			outFormat = GL_RGBA;
+			outType = GL_HALF_FLOAT_ARB;
+			return true;
+		}
+		break;
+
+	case TfR32G32B32A32F:
+		if (opengl_have_extension(E_GL_ARB_texture_float))
+		{
+			outInternalFormat = GL_RGBA32F_ARB;
+			outFormat = GL_RGBA;
+			outType = GL_FLOAT;
+			return true;
+		}
+		break;
+
+#if !defined(__APPLE__)
+	case TfR16F:
+		if (opengl_have_extension(E_GL_ARB_texture_float))
+		{
+			outInternalFormat = GL_RGBA16F_ARB;
+			outFormat = GL_RED;
+			outType = GL_HALF_FLOAT_ARB;
+			return true;
+		}
+		else if (opengl_have_extension(E_GL_NV_float_buffer))
+		{
+			outInternalFormat = GL_FLOAT_R16_NV;
+			outFormat = GL_RED;
+			outType = GL_FLOAT;
+			return true;
+		}
+		else if (opengl_have_extension(E_GL_ATI_texture_float))
+		{
+			outInternalFormat = GL_LUMINANCE_FLOAT16_ATI;
+			outFormat = GL_RED;
+			outType = GL_FLOAT;
+			return true;
+		}
+		break;
+
+	case TfR32F:
+		if (opengl_have_extension(E_GL_ARB_texture_float))
+		{
+			outInternalFormat = GL_RGBA32F_ARB;
+			outFormat = GL_RED;
+			outType = GL_FLOAT;
+			return true;
+		}
+		else if (opengl_have_extension(E_GL_NV_float_buffer))
+		{
+			outInternalFormat = GL_FLOAT_R32_NV;
+			outFormat = GL_RED;
+			outType = GL_FLOAT;
+			return true;
+		}
+		else if (opengl_have_extension(E_GL_ATI_texture_float))
+		{
+			outInternalFormat = GL_LUMINANCE_FLOAT32_ATI;
+			outFormat = GL_RED;
+			outType = GL_FLOAT;
+			return true;
+		}
+		break;
+#else
+	case TfR16F:
+		if (opengl_have_extension(E_GL_ARB_texture_float))
+		{
+			outInternalFormat = GL_RGBA16F_ARB;
+			outFormat = GL_RED;
+			outType = GL_HALF_FLOAT_ARB;
+			return true;
+		}
+		break;
+
+	case TfR32F:
+		if (opengl_have_extension(E_GL_ARB_texture_float))
+		{
+			outInternalFormat = GL_RGBA32F_ARB;
+			outFormat = GL_RED;
+			outType = GL_FLOAT;
+			return true;
+		}
+		break;
+#endif
+
+	default:
+		break;
+	}
+
+	T_DEBUG(L"Unsupported target format");
+	return false;
 }
 
 	}
