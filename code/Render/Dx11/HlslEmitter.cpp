@@ -1148,7 +1148,7 @@ bool emitScript(HlslContext& cx, Script* node)
 	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
 
 	// Get platform specific script from node.
-	std::wstring script = node->getScript(L"DX9");
+	std::wstring script = node->getScript(L"DX11");
 	if (script.empty())
 		return false;
 

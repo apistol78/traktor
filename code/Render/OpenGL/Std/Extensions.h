@@ -77,6 +77,13 @@ extern PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D;
 // ???
 extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
 
+// GL_ARB_draw_buffers
+extern PFNGLDRAWBUFFERSARBPROC glDrawBuffersARB;
+
+// GL_ARB_draw_instanced
+extern PFNGLDRAWELEMENTSINSTANCEDARBPROC glDrawElementsInstancedARB;
+extern PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstancedARB;
+
 // GL_ARB_half_float_vertex
 #	if !defined(GL_HALF_FLOAT_ARB)
 #		define GL_HALF_FLOAT_ARB 0x140B

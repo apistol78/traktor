@@ -74,6 +74,13 @@ PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D = 0;
 // ???
 PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements = 0;
 
+// GL_ARB_draw_buffers
+PFNGLDRAWBUFFERSARBPROC glDrawBuffersARB = 0;
+
+// GL_ARB_draw_instanced
+PFNGLDRAWELEMENTSINSTANCEDARBPROC glDrawElementsInstancedARB = 0;
+PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstancedARB = 0;
+
 #endif
 
 static struct Extension
@@ -246,6 +253,13 @@ bool opengl_initialize_extensions()
 
 	// ???
 	RESOLVE(glDrawRangeElements);
+
+	// GL_ARB_draw_buffers
+	RESOLVE(glDrawBuffersARB);
+
+	// GL_ARB_draw_instanced
+	RESOLVE(glDrawElementsInstancedARB);
+	RESOLVE(glDrawArraysInstancedARB);
 
 #endif
 

@@ -132,7 +132,7 @@ bool RenderViewOpenGL::createPrimaryTarget()
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
 		m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
-		if (!m_primaryTarget->create(m_primaryTargetDesc, true))
+		if (!m_primaryTarget->create(m_primaryTargetDesc))
 			return false;
 	}
 
@@ -229,7 +229,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
 		m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
-		if (!m_primaryTarget->create(m_primaryTargetDesc, true))
+		if (!m_primaryTarget->create(m_primaryTargetDesc))
 			return false;
 	}
 
@@ -251,7 +251,7 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 	m_primaryTargetDesc.height = m_renderContext->getHeight();
 
 	m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
-	m_primaryTarget->create(m_primaryTargetDesc, true);
+	m_primaryTarget->create(m_primaryTargetDesc);
 
 	return true;
 }
@@ -366,26 +366,27 @@ bool RenderViewOpenGL::begin(EyeType eye)
 
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
 {
-	return false;
+	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT));
+
+	TargetScope ts;
+	ts.renderTargetSet = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
+	ts.renderTarget = -1;
+	m_targetStack.push_back(ts);
+
+	ts.renderTargetSet->bind(m_renderContext, m_primaryTarget->getDepthBuffer());
+	return true;
 }
 
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT));
 
-	RenderTargetSetOpenGL* rts = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
-	RenderTargetOpenGL* rt = checked_type_cast< RenderTargetOpenGL* >(rts->getColorTexture(renderTarget));
+	TargetScope ts;
+	ts.renderTargetSet = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
+	ts.renderTarget = renderTarget;
+	m_targetStack.push_back(ts);
 
-	if (!rt->bind(m_renderContext, m_primaryTarget->getDepthBuffer()))
-	{
-		T_OGL_SAFE(glPopAttrib());
-		return false;
-	}
-
-	rt->enter();
-	rts->setContentValid(true);
-
-	m_renderTargetStack.push_back(rt);
+	ts.renderTargetSet->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), ts.renderTarget);
 	return true;
 }
 
@@ -403,7 +404,6 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float dep
 		GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT
 	};
 
-	RenderTargetOpenGL* rt = m_renderTargetStack.back();
 	GLuint cm = c_clearMask[clearMask];
 
 	if (cm & GL_COLOR_BUFFER_BIT)
@@ -439,8 +439,12 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	IndexBufferOpenGL* indexBufferGL = checked_type_cast< IndexBufferOpenGL* >(indexBuffer);
 	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
 
-	const RenderTargetOpenGL* rt = m_renderTargetStack.back();
-	float targetSize[] = { float(rt->getWidth()), float(rt->getHeight()) };
+	const TargetScope& ts = m_targetStack.back();
+	float targetSize[] =
+	{
+		float(ts.renderTargetSet->getWidth()),
+		float(ts.renderTargetSet->getHeight())
+	};
 
 	if (!programGL->activate(m_renderContext, targetSize))
 		return;
@@ -536,31 +540,133 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 
 void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
+	VertexBufferOpenGL* vertexBufferGL = checked_type_cast< VertexBufferOpenGL* >(vertexBuffer);
+	IndexBufferOpenGL* indexBufferGL = checked_type_cast< IndexBufferOpenGL* >(indexBuffer);
+	ProgramOpenGL* programGL = checked_type_cast< ProgramOpenGL * >(program);
+
+	const TargetScope& ts = m_targetStack.back();
+	float targetSize[] =
+	{
+		float(ts.renderTargetSet->getWidth()),
+		float(ts.renderTargetSet->getHeight())
+	};
+
+	if (!programGL->activate(m_renderContext, targetSize))
+		return;
+
+	vertexBufferGL->activate(
+		programGL->getAttributeLocs()
+	);
+
+	GLenum primitiveType;
+	GLuint vertexCount;
+
+	switch (primitives.type)
+	{
+	case PtPoints:
+		primitiveType = GL_POINTS;
+		vertexCount = primitives.count;
+		break;
+
+	case PtLineStrip:
+		T_ASSERT_M (0, L"PtLineStrip unsupported");
+		break;
+
+	case PtLines:
+		primitiveType = GL_LINES;
+		vertexCount = primitives.count * 2;
+		break;
+
+	case PtTriangleStrip:
+		primitiveType = GL_TRIANGLE_STRIP;
+		vertexCount = primitives.count + 2;
+		break;
+
+	case PtTriangles:
+		primitiveType = GL_TRIANGLES;
+		vertexCount = primitives.count * 3;
+		break;
+
+	default:
+		T_ASSERT (0);
+	}
+
+	if (primitives.indexed)
+	{
+		T_ASSERT_M (indexBufferGL, L"No index buffer");
+
+		GLenum indexType;
+		GLint offsetMultiplier;
+
+		switch (indexBufferGL->getIndexType())
+		{
+		case ItUInt16:
+			indexType = GL_UNSIGNED_SHORT;
+			offsetMultiplier = 2;
+			break;
+
+		case ItUInt32:
+			indexType = GL_UNSIGNED_INT;
+			offsetMultiplier = 4;
+			break;
+		}
+
+		indexBufferGL->bind();
+
+#if 0
+		if (!cglwCheckHardwarePath())
+			log::error << L"Software path detected; serious performance issue" << Endl;
+#endif
+
+		const GLubyte* indices = static_cast< const GLubyte* >(indexBufferGL->getIndexData()) + primitives.offset * offsetMultiplier;
+		T_OGL_SAFE(glDrawElementsInstancedARB(
+			primitiveType,
+			vertexCount,
+			indexType,
+			indices,
+			instanceCount
+		));
+	}
+	else
+	{
+#if 0
+		if (!cglwCheckHardwarePath())
+			log::error << L"Software path detected; serious performance issue" << Endl;
+#endif
+
+		T_OGL_SAFE(glDrawArraysInstancedARB(
+			primitiveType,
+			primitives.offset,
+			vertexCount,
+			instanceCount
+		));
+	}
 }
 
 void RenderViewOpenGL::end()
 {
-	T_ASSERT (!m_renderTargetStack.empty());
+	T_ASSERT (!m_targetStack.empty());
 
-	RenderTargetOpenGL* rt = m_renderTargetStack.back();
-	m_renderTargetStack.pop_back();
+	TargetScope ts = m_targetStack.back();
+	m_targetStack.pop_back();
 
-	if (m_renderTargetStack.empty())
+	if (!m_targetStack.empty())
 	{
-		T_ASSERT (rt == m_primaryTarget->getColorTexture(0));
-		rt->blit();
-
-		// Unbind primary target.
-		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+		ts.renderTargetSet->resolve();
+		ts = m_targetStack.back();
+		if (ts.renderTarget >= 0)
+			ts.renderTargetSet->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), ts.renderTarget);
+		else
+			ts.renderTargetSet->bind(m_renderContext, m_primaryTarget->getDepthBuffer());
 	}
 	else
 	{
-		rt->resolveTarget();
-
-		// Rebind parent target.
-		RenderTargetOpenGL* rt = m_renderTargetStack.back();
-		rt->bind(m_renderContext, 0);
+		T_ASSERT (ts.renderTargetSet == m_primaryTarget);
+		ts.renderTargetSet->blit();
+		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
 	}
+
+	ts.renderTargetSet->setContentValid(true);
 
 	T_OGL_SAFE(glPopAttrib());
 }

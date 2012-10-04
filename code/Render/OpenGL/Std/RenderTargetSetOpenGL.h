@@ -35,7 +35,7 @@ public:
 
 	virtual ~RenderTargetSetOpenGL();
 
-	bool create(const RenderTargetSetCreateDesc& desc, bool backBuffer);
+	bool create(const RenderTargetSetCreateDesc& desc);
 
 	virtual void destroy();
 
@@ -49,17 +49,28 @@ public:
 
 	virtual bool read(int index, void* buffer) const;
 
+	bool bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer);
+
+	bool bind(ContextOpenGL* renderContext, GLuint primaryDepthBuffer, int32_t renderTarget);
+
+	void resolve();
+
+	void blit();
+
 	GLuint getDepthBuffer() const { return m_depthBuffer; }
 
 private:
 	Ref< ContextOpenGL > m_resourceContext;
 	Ref< BlitHelper > m_blitHelper;
+	bool m_haveBlitExt;
 	int32_t m_width;
 	int32_t m_height;
-	int32_t m_targetWidth;
-	int32_t m_targetHeight;
+	GLuint m_targetFBO;
 	GLuint m_depthBuffer;
-	RefArray< RenderTargetOpenGL > m_colorTextures;
+	bool m_usingPrimaryDepth;
+	GLuint m_targetCount;
+	GLuint m_targetTextures[8];
+	Ref< RenderTargetOpenGL > m_renderTargets[8];
 };
 
 	}

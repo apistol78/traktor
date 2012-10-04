@@ -131,6 +131,12 @@ public:
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
 
 private:
+	struct TargetScope
+	{
+		Ref< RenderTargetSetOpenGL > renderTargetSet;
+		int32_t renderTarget;
+	};
+
 #if defined(_WIN32)
 	Ref< Window > m_window;
 #elif defined(__APPLE__)
@@ -144,7 +150,7 @@ private:
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
 	bool m_waitVBlank;
-	std::vector< RenderTargetOpenGL* > m_renderTargetStack;
+	std::list< TargetScope > m_targetStack;
 
 #if defined(_WIN32)
 

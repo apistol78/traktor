@@ -141,6 +141,8 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 		ss << L"#extension GL_OES_standard_derivatives : enable" << Endl;
 		ss << Endl;
 	}
+#else
+	ss << L"#version 110" << Endl;
 #endif
 
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
