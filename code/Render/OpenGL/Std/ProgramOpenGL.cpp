@@ -368,6 +368,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 			if (tb)
 			{
 				tb->bindSampler(
+					renderContext,
 					i,
 					samplerState,
 					sampler.location

@@ -57,6 +57,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
 	m_waitVBlank = desc.waitVBlank;
 
 	if (m_window)

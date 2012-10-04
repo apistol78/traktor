@@ -1,6 +1,6 @@
 #include <cstring>
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
@@ -163,26 +163,12 @@ void CubeTextureOpenGL::unlock(int side, int level)
 {
 }
 
-void CubeTextureOpenGL::bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void CubeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
 	
-	GLenum minFilter = GL_NEAREST;
-	if (m_mipCount > 1)
-		minFilter = samplerState.minFilter;
-	else
-	{
-		if (samplerState.minFilter != GL_NEAREST)
-			minFilter = GL_LINEAR;
-		else
-			minFilter = GL_NEAREST;
-	}
-	
-	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, minFilter));
-	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, samplerState.wrapS));
-	T_OGL_SAFE(glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, samplerState.wrapT));
+	renderContext->setSamplerState(unit, samplerState, m_mipCount);
 	
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
 }

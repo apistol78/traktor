@@ -2,7 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
@@ -117,8 +117,6 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 	}
 
 	m_mipCount = desc.mipCount;
-	std::memset(&m_shadowState, 0, sizeof(m_shadowState));
-
 	return true;
 }
 
@@ -179,45 +177,12 @@ void SimpleTextureOpenGL::unlock(int level)
 	));
 }
 
-void SimpleTextureOpenGL::bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void SimpleTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
 
-	GLenum minFilter = GL_NEAREST;
-	if (m_mipCount > 1)
-		minFilter = samplerState.minFilter;
-	else
-	{
-		if (samplerState.minFilter != GL_NEAREST)
-			minFilter = GL_LINEAR;
-		else
-			minFilter = GL_NEAREST;
-	}
-
-	if (m_shadowState.minFilter != minFilter)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
-		m_shadowState.minFilter = minFilter;
-	}
-
-	if (m_shadowState.magFilter != samplerState.magFilter)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-		m_shadowState.magFilter = samplerState.magFilter;
-	}
-
-	if (m_shadowState.wrapS != samplerState.wrapS)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
-		m_shadowState.wrapS = samplerState.wrapS;
-	}
-
-	if (m_shadowState.wrapT != samplerState.wrapT)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
-		m_shadowState.wrapT = samplerState.wrapT;
-	}
+	renderContext->setSamplerState(unit, samplerState, m_mipCount);
 
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
 }

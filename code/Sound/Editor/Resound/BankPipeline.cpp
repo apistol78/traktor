@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Sound/Resound/BankResource.h"
@@ -106,24 +107,23 @@ bool BankPipeline::buildOutput(
 	const BankAsset* bankAsset = checked_type_cast< const BankAsset*, false >(sourceAsset);
 
 	float volume = 1.0f;
+	float presence = bankAsset->m_presence;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(bankAsset->m_category);
-	if (category)
-		volume = category->getVolume();
-
 	while (category)
 	{
-		Ref< const SoundCategory > parent = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
-		if (parent)
-			volume *= parent->getVolume();
-
-		category = parent;
+		volume *= category->getVolume();
+		presence = max(presence, category->getPresence());
+		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
+
+	log::info << L"Category volume " << int32_t(volume * 100.0f) << L"%" << Endl;
+	log::info << L"Category presence " << presence << Endl;
 
 	Ref< BankResource > bankResource = new BankResource(
 		bankAsset->m_grains,
 		volume,
-		bankAsset->m_presence
+		presence
 	);
 
 	return editor::DefaultPipeline::buildOutput(

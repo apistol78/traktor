@@ -29,9 +29,12 @@ public:
 
 	float getVolume() const { return m_volume; }
 
+	float getPresence() const { return m_presence; }
+
 private:
 	Guid m_parent;
 	float m_volume;
+	float m_presence;
 };
 
 	}

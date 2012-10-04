@@ -887,13 +887,15 @@ void emitSampler(GlslContext& cx, Sampler* node)
 
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
 
+	bool needMip = cx.inFragment();
 	bool needAddressW = bool(texture->getType() > GtTexture2D);
 
 	// Calculate sampler hash.
 	Adler32 samplerHash;
 	samplerHash.feed(texture->getName());
 	samplerHash.feed(node->getMinFilter());
-	samplerHash.feed(node->getMipFilter());
+	if (needMip)
+		samplerHash.feed(node->getMipFilter());
 	samplerHash.feed(node->getMagFilter());
 	samplerHash.feed(node->getAddressU());
 	samplerHash.feed(node->getAddressV());
