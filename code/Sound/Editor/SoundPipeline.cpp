@@ -3,6 +3,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyString.h"
@@ -27,7 +28,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 25, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 27, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 {
@@ -116,21 +117,34 @@ bool SoundPipeline::buildOutput(
 
 	float volume = 1.0f;
 	float presence = soundAsset->m_presence;
+	float presenceRate = soundAsset->m_presenceRate;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
 	while (category)
 	{
 		volume *= category->getVolume();
-		presence = std::max(presence, category->getPresence());
+
+		if (presence <= FUZZY_EPSILON)
+		{
+			presence = category->getPresence();
+			presenceRate = category->getPresenceRate();
+		}
+
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
 	log::info << L"Category volume " << int32_t(volume * 100.0f) << L"%" << Endl;
-	log::info << L"Category presence " << presence << Endl;
+	log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
 
 	if (soundAsset->m_stream)
 	{
-		Ref< StreamSoundResource > resource = new StreamSoundResource(&type_of(decoder), volume, presence, soundAsset->m_preload);
+		Ref< StreamSoundResource > resource = new StreamSoundResource();
+
+		resource->m_decoderType = &type_of(decoder);
+		resource->m_volume = volume;
+		resource->m_presence = presence;
+		resource->m_presenceRate = presenceRate;
+		resource->m_preload = soundAsset->m_preload;
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 			outputPath,
@@ -259,6 +273,7 @@ bool SoundPipeline::buildOutput(
 		resource->m_channelsCount = maxChannel;
 		resource->m_volume = volume;
 		resource->m_presence = presence;
+		resource->m_presenceRate = presenceRate;
 		resource->m_decoderType = &type_of< OggStreamDecoder >();
 
 		int32_t dataOffsetEnd = stream->tell();

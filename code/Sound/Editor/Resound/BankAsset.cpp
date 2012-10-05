@@ -11,10 +11,11 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 2, BankAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.BankAsset", 3, BankAsset, ISerializable)
 
 BankAsset::BankAsset()
 :	m_presence(0.0f)
+,	m_presenceRate(0.25f)
 {
 }
 
@@ -40,6 +41,9 @@ bool BankAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< float >(L"presence", m_presence, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 3)
+		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
 
 	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }

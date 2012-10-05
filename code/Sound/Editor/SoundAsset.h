@@ -33,6 +33,7 @@ private:
 	bool m_stream;
 	bool m_preload;
 	float m_presence;
+	float m_presenceRate;
 };
 
 	}

@@ -29,7 +29,7 @@ class T_DLLCLASS BankResource : public ISoundResource
 public:
 	BankResource();
 
-	BankResource(const RefArray< IGrainData >& grains, float volume, float presence);
+	BankResource(const RefArray< IGrainData >& grains, float volume, float presence, float presenceRate);
 
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const;
 
@@ -41,6 +41,7 @@ private:
 	RefArray< IGrainData > m_grains;
 	float m_volume;
 	float m_presence;
+	float m_presenceRate;
 };
 
 	}

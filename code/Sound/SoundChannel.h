@@ -22,9 +22,9 @@ namespace traktor
 struct IFilterInstance;
 
 class IFilter;
+class ISoundBuffer;
 class ISoundBufferCursor;
 class ISoundMixer;
-class Sound;
 
 /*! \brief Virtual sound channel.
  * \ingroup Sound
@@ -45,10 +45,10 @@ public:
 	void setVolume(float volume);
 
 	/*! \brief Associate filter in channel. */
-	void setFilter(IFilter* filter);
+	void setFilter(const IFilter* filter);
 
 	/*! \brief Get currently associated filter. */
-	IFilter* getFilter() const;
+	const IFilter* getFilter() const;
 
 	/*! \brief Set pitch. */
 	void setPitch(float pitch);
@@ -61,12 +61,14 @@ public:
 
 	/*! \brief Play sound through this channel.
 	 *
-	 * \param sound Sound to play.
+	 * \param buffer Sound buffer.
+	 * \param volume Sound volume.
 	 * \param presence Sound presence.
+	 * \param presenceRate Sound presence recover rate.
 	 * \param repeat Number of times to repreat sound.
 	 * \return True if sound is playing successfully.
 	 */
-	bool play(const Sound* sound, float presence, uint32_t repeat = 0);
+	bool play(const ISoundBuffer* buffer, float volume, float presence, float presenceRate, uint32_t repeat = 0);
 
 	/*! \brief Check if there are a sound playing in this channel. */
 	bool isPlaying() const;
@@ -82,16 +84,20 @@ private:
 
 	struct State
 	{
-		Ref< const Sound > sound;
+		Ref< const ISoundBuffer > buffer;
 		Ref< ISoundBufferCursor > cursor;
-		Ref< IFilter > filter;
+		Ref< const IFilter > filter;
 		Ref< IFilterInstance > filterInstance;
-		uint32_t repeat;
+		float volume;
 		float presence;
+		float presenceRate;
+		uint32_t repeat;
 
 		State()
-		:	repeat(0)
+		:	volume(1.0f)
 		,	presence(0.0f)
+		,	presenceRate(1.0f)
+		,	repeat(0)
 		{
 		}
 	};

@@ -10,7 +10,6 @@
 #include "Sound/IFilter.h"
 #include "Sound/ISoundBuffer.h"
 #include "Sound/ISoundMixer.h"
-#include "Sound/Sound.h"
 #include "Sound/SoundChannel.h"
 
 namespace traktor
@@ -59,7 +58,7 @@ void SoundChannel::setVolume(float volume)
 	m_volume = clamp(volume, 0.0f, 1.0f);
 }
 
-void SoundChannel::setFilter(IFilter* filter)
+void SoundChannel::setFilter(const IFilter* filter)
 {
 	if (m_currentState.filter != filter)
 	{
@@ -71,7 +70,7 @@ void SoundChannel::setFilter(IFilter* filter)
 	}
 }
 
-IFilter* SoundChannel::getFilter() const
+const IFilter* SoundChannel::getFilter() const
 {
 	return m_currentState.filter;
 }
@@ -89,13 +88,13 @@ float SoundChannel::getPitch() const
 bool SoundChannel::isPlaying() const
 {
 	// \note Reading from active state; ie other thread's state.
-	return bool(m_currentState.sound != 0 || m_activeState.sound != 0);
+	return bool(m_currentState.buffer != 0 || m_activeState.buffer != 0);
 }
 
 void SoundChannel::stop()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_currentState.sound = 0;
+	m_currentState.buffer = 0;
 	m_currentState.cursor = 0;
 	m_currentState.filter = 0;
 	m_currentState.filterInstance = 0;
@@ -114,16 +113,12 @@ void SoundChannel::setParameter(float parameter)
 		m_currentState.cursor->setParameter(parameter);
 }
 
-bool SoundChannel::play(const Sound* sound, float presence, uint32_t repeat)
+bool SoundChannel::play(const ISoundBuffer* buffer, float volume, float presence, float presenceRate, uint32_t repeat)
 {
-	if (!sound)
+	if (!buffer)
 		return false;
 
-	Ref< ISoundBuffer > soundBuffer = sound->getSoundBuffer();
-	if (!soundBuffer)
-		return false;
-
-	Ref< ISoundBufferCursor > cursor = soundBuffer->createCursor();
+	Ref< ISoundBufferCursor > cursor = buffer->createCursor();
 	if (!cursor)
 		return false;
 
@@ -131,10 +126,12 @@ bool SoundChannel::play(const Sound* sound, float presence, uint32_t repeat)
 	// sound block.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		m_currentState.sound = sound;
+		m_currentState.buffer = buffer;
 		m_currentState.cursor = cursor;
-		m_currentState.repeat = max< uint32_t >(repeat, 1);
+		m_currentState.volume = volume;
 		m_currentState.presence = presence;
+		m_currentState.presenceRate = presenceRate;
+		m_currentState.repeat = max< uint32_t >(repeat, 1);
 	}
 
 	return true;
@@ -164,15 +161,15 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Update active state.
-	if (m_currentState.sound != m_activeState.sound)
+	if (m_currentState.buffer != m_activeState.buffer)
 		m_outputSamplesIn = 0;
-	if (m_currentState.sound != m_activeState.sound || m_currentState.filter != m_activeState.filter)
+	if (m_currentState.buffer != m_activeState.buffer || m_currentState.filter != m_activeState.filter)
 		m_activeState = m_currentState;
 
-	if (!m_activeState.sound || !m_activeState.cursor)
+	if (!m_activeState.buffer || !m_activeState.cursor)
 		return false;
 
-	Ref< ISoundBuffer > soundBuffer = m_activeState.sound->getSoundBuffer();
+	const ISoundBuffer* soundBuffer = m_activeState.buffer;
 	T_ASSERT (soundBuffer);
 
 	// Remove old output samples.
@@ -202,9 +199,9 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				m_activeState.cursor->reset();
 				if (!soundBuffer->getBlock(m_activeState.cursor, mixer, soundBlock))
 				{
-					m_activeState.sound = 0;
+					m_activeState.buffer = 0;
 					m_activeState.cursor = 0;
-					m_currentState.sound = 0;
+					m_currentState.buffer = 0;
 					m_currentState.cursor = 0;
 					m_eventFinish.broadcast();
 					return false;
@@ -212,9 +209,9 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 			}
 			else
 			{
-				m_activeState.sound = 0;
+				m_activeState.buffer = 0;
 				m_activeState.cursor = 0;
-				m_currentState.sound = 0;
+				m_currentState.buffer = 0;
 				m_currentState.cursor = 0;
 				m_eventFinish.broadcast();
 				return false;
@@ -259,7 +256,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 						outputSamplesCount,
 						inputSamples,
 						soundBlock.samplesCount,
-						m_volume * m_activeState.sound->getVolume()
+						m_volume * m_activeState.volume
 					);
 				else
 					mixer->mute(outputSamples, outputSamplesCount);
@@ -276,7 +273,12 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 				T_ASSERT (m_outputSamplesIn + soundBlock.samplesCount < m_hwFrameSamples * c_outputSamplesBlockCount);
 
 				if (inputSamples)
-					mixer->mulConst(outputSamples, inputSamples, soundBlock.samplesCount, m_volume * m_activeState.sound->getVolume());
+					mixer->mulConst(
+						outputSamples,
+						inputSamples,
+						soundBlock.samplesCount,
+						m_volume * m_activeState.volume
+					);
 				else
 					mixer->mute(outputSamples, soundBlock.samplesCount);
 			}

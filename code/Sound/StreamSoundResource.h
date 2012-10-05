@@ -25,17 +25,18 @@ class T_DLLCLASS StreamSoundResource : public ISoundResource
 
 public:
 	StreamSoundResource();
-	
-	StreamSoundResource(const TypeInfo* decoderType, float volume, float presence, bool preload);
 
 	virtual Ref< Sound > createSound(resource::IResourceManager* resourceManager, db::Instance* resourceInstance) const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
+	friend class SoundPipeline;
+
 	const TypeInfo* m_decoderType;
 	float m_volume;
 	float m_presence;
+	float m_presenceRate;
 	bool m_preload;
 };
 

@@ -69,7 +69,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 
 			i->position = Vector4::zero();
 			i->sound = sound;
-			i->soundChannel->play(sound, sound->getPresence());
+			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
 			i->soundChannel->setFilter(0);
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
@@ -93,7 +93,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 
 			i->position = Vector4::zero();
 			i->sound = sound;
-			i->soundChannel->play(sound, sound->getPresence());
+			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
 			i->soundChannel->setFilter(0);
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
@@ -119,12 +119,15 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 	float k0 = distance / m_surroundEnvironment->getMaxDistance();
 	float k1 = distance / m_surroundEnvironment->getInnerRadius();
+	float k2 = (distance - m_surroundEnvironment->getInnerRadius()) / (m_surroundEnvironment->getMaxDistance() - m_surroundEnvironment->getInnerRadius());
 
 	// Calculate initial cut-off frequency.
 	float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
 
 	// Calculate presence; further sounds have less presence.
-	float presence = lerp(sound->getPresence(), 0.0f, clamp(k1, 0.0f, 1.0f)); 
+	// As long as the sound originate inside inner radius then
+	// original presence is kept.
+	float presence = lerp(sound->getPresence(), 0.0f, clamp(k2, 0.0f, 1.0f)); 
 
 	// First try to associate sound with non-playing channel;
 	// also check if sound has recently been played.
@@ -139,7 +142,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
 			i->lowPassFilter = new LowPassFilter(cutOff);
 			i->sound = sound;
-			i->soundChannel->play(sound, presence);
+			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
@@ -165,7 +168,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
 			i->lowPassFilter = new LowPassFilter(cutOff);
 			i->sound = sound;
-			i->soundChannel->play(sound, presence);
+			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
@@ -191,7 +194,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
 			i->lowPassFilter = new LowPassFilter(cutOff);
 			i->sound = sound;
-			i->soundChannel->play(sound, presence);
+			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
