@@ -27,18 +27,26 @@ class T_DLLCLASS Sound : public Object
 	T_RTTI_CLASS;
 
 public:
-	Sound(ISoundBuffer* soundBuffer, float volume, float presence);
+	Sound(
+		ISoundBuffer* buffer,
+		float volume,
+		float presence,
+		float presenceRate
+	);
 
-	ISoundBuffer* getSoundBuffer() const { return m_soundBuffer; }
+	ISoundBuffer* getBuffer() const { return m_buffer; }
 
 	float getVolume() const { return m_volume; }
 
 	float getPresence() const { return m_presence; }
 
+	float getPresenceRate() const { return m_presenceRate; }
+
 private:
-	Ref< ISoundBuffer > m_soundBuffer;
+	Ref< ISoundBuffer > m_buffer;
 	float m_volume;
 	float m_presence;
+	float m_presenceRate;
 };
 
 	}

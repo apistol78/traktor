@@ -39,10 +39,7 @@ void SoundTriggerInstance::update(Context& context, const Transform& transform, 
 		}
 	}
 	else
-	{
-		m_handle->stop();
 		m_handle = 0;
-	}
 }
 
 SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool follow, bool repeat)

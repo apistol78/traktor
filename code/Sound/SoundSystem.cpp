@@ -245,7 +245,7 @@ void SoundSystem::threadMixer()
 
 		for (int32_t i = 0; i < int32_t(channelsCount); ++i)
 		{
-			if (m_channels[i]->m_activeState.sound)
+			if (m_channels[i]->m_activeState.buffer)
 			{
 				presence[i] = 1.0f + m_channels[i]->m_activeState.presence;
 				maxPresence = max(maxPresence, presence[i]);
@@ -257,13 +257,19 @@ void SoundSystem::threadMixer()
 
 		for (uint32_t i = 0; i < m_duck[0].size(); ++i)
 		{
-			m_duck[0][i] = presence[i] / maxPresence;
-			m_duck[0][i] *= m_duck[0][i];
+			if (m_channels[i]->m_activeState.buffer)
+			{
+				m_duck[0][i] = presence[i] / maxPresence;
+				m_duck[0][i] *= m_duck[0][i];
 
-			if (m_duck[1][i] > m_duck[0][i])
-				m_duck[1][i] = m_duck[0][i];
-			else
-				m_duck[1][i] = min(m_duck[1][i] + float(deltaTime * 0.25f), 1.0f);
+				if (m_duck[1][i] > m_duck[0][i])
+					m_duck[1][i] = m_duck[0][i];
+				else
+				{
+					float presenceRate = m_channels[i]->m_activeState.presenceRate;
+					m_duck[1][i] = min(m_duck[1][i] + float(deltaTime * presenceRate), 1.0f);
+				}
+			}
 		}
 
 		// Final combine channels into hardware channels using "combine matrix".

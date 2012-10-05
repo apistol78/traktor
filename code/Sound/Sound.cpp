@@ -7,10 +7,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.Sound", Sound, Object)
 
-Sound::Sound(ISoundBuffer* soundBuffer, float volume, float presence)
-:	m_soundBuffer(soundBuffer)
+Sound::Sound(
+	ISoundBuffer* buffer,
+	float volume,
+	float presence,
+	float presenceRate
+)
+:	m_buffer(buffer)
 ,	m_volume(volume)
 ,	m_presence(presence)
+,	m_presenceRate(presenceRate)
 {
 }
 

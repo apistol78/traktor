@@ -31,10 +31,13 @@ public:
 
 	float getPresence() const { return m_presence; }
 
+	float getPresenceRate() const { return m_presenceRate; }
+
 private:
 	Guid m_parent;
 	float m_volume;
 	float m_presence;
+	float m_presenceRate;
 };
 
 	}

@@ -40,6 +40,7 @@ private:
 
 	Guid m_category;
 	float m_presence;
+	float m_presenceRate;
 	RefArray< IGrainData > m_grains;
 };
 

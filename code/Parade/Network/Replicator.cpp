@@ -21,14 +21,13 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const float c_maxOffsetAdjust = 2.0f;
-const float c_maxStateAge = 2.0f;
 const float c_nearDistance = 30.0f;
 const float c_farDistance = 250.0f;
 const float c_nearTimeUntilTx = 1.0f / 20.0f;
 const float c_farTimeUntilTx = 1.0f / 10.0f;
 const float c_timeUntilIAm = 6.0f;
 const float c_timeUntilPing = 0.2f;
-const float c_peerTimeout = 10.0f;
+const float c_peerTimeout = 20.0f;
 const float c_distanceBlend = 0.75f;
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
@@ -161,6 +160,19 @@ void Replicator::update(float dT)
 			if (T > c_peerTimeout)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" timeout, no packet in " << int32_t(T * 1000.0f) << L" ms");
+
+				// Need to notify listeners immediately as peer becomes dismounted.
+				for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+					(*j)->notify(this, 0, IListener::ReDisconnected, *i, 0);
+
+				if (peer.ghost)
+				{
+					peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
+					peer.ghost = 0;
+				}
+
+				peer.established = false;
+				peer.disconnected = true;
 				continue;
 			}
 		}
@@ -169,7 +181,7 @@ void Replicator::update(float dT)
 		unfresh.erase(*i);
 	}
 
-	// Issue disconnect events to listeners.
+	// Remove unfresh peers.
 	for (std::set< handle_t >::const_iterator i = unfresh.begin(); i != unfresh.end(); ++i)
 	{
 		std::map< handle_t, Peer >::iterator it = m_peers.find(*i);
@@ -177,25 +189,8 @@ void Replicator::update(float dT)
 
 		Peer& peer = it->second;
 		if (peer.established && !peer.disconnected)
-		{
-			T_REPLICATOR_DEBUG(L"OK: Established peer " << *i << L" disconnected; issue listener event");
-			T_ASSERT (peer.ghost);
+			continue;
 
-			// Need to notify listeners immediately as peer becomes dismounted.
-			for (RefArray< IListener >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
-				(*i)->notify(this, 0, IListener::ReDisconnected, it->first, 0);
-
-			if (peer.ghost)
-			{
-				peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
-				peer.ghost = 0;
-			}
-
-			peer.established = false;
-			peer.disconnected = true;
-		}
-
-		// Remove unfresh peer.
 		m_peers.erase(it);
 	}
 
@@ -349,7 +344,7 @@ void Replicator::update(float dT)
 				{
 					if (id != m_id)
 					{
-						T_REPLICATOR_DEBUG(L"ERROR: \"I am\" message with incorrect id; ignoring");
+						T_REPLICATOR_DEBUG(L"ERROR: \"I am\" message with incorrect id from peer " << handle << L"; ignoring");
 						continue;
 					}
 					sendIAm(handle, 2, id);
@@ -382,19 +377,19 @@ void Replicator::update(float dT)
 					evt.object = 0;
 					m_eventsIn.push_back(evt);
 
-					T_REPLICATOR_DEBUG(L"OK: Peer connection established");
+					T_REPLICATOR_DEBUG(L"OK: Peer " << handle << L" connection established");
 				}
 			}
 		}
 		else if (msg.type == MtBye)
 		{
-			T_REPLICATOR_DEBUG(L"OK: Got \"Bye\" from peer");
+			T_REPLICATOR_DEBUG(L"OK: Got \"Bye\" from peer " << handle);
 
 			Peer& peer = m_peers[handle];
 
 			if (peer.established && peer.ghost)
 			{
-				T_REPLICATOR_DEBUG(L"OK: Established peer gracefully disconnected; issue listener event");
+				T_REPLICATOR_DEBUG(L"OK: Established peer " << handle << L" gracefully disconnected; issue listener event");
 
 				// Need to notify listeners immediately as peer becomes dismounted.
 				for (RefArray< IListener >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
@@ -447,7 +442,7 @@ void Replicator::update(float dT)
 			Peer& peer = m_peers[handle];
 			if (!peer.ghost)
 			{
-				T_REPLICATOR_DEBUG(L"ERROR: Peer partially connected but received non-handshake message; ignoring");
+				T_REPLICATOR_DEBUG(L"ERROR: Peer " << handle << L" partially connected but received MtState; ignoring");
 				continue;
 			}
 
@@ -456,12 +451,6 @@ void Replicator::update(float dT)
 			if (time > peer.lastTime + 1e-4f)
 			{
 				peer.lastTime = time;
-
-				if ((m_time - time) > c_maxStateAge)
-				{
-					T_REPLICATOR_DEBUG(L"WARNING: Too old package; package ignored");
-					continue;
-				}
 
 				if (time + peer.latencyMinimum > m_time + 1e-5f)
 				{
@@ -494,7 +483,7 @@ void Replicator::update(float dT)
 			Peer& peer = m_peers[handle];
 			if (!peer.ghost)
 			{
-				T_REPLICATOR_DEBUG(L"ERROR: Peer partially connected but received non-handshake message; ignoring");
+				T_REPLICATOR_DEBUG(L"ERROR: Peer " << handle << L" partially connected but received MtEvent; ignoring");
 				continue;
 			}
 
