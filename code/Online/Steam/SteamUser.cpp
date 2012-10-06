@@ -70,7 +70,7 @@ bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, 
 	if (!id.IsValid())
 		return false;
 
-	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), reliable ? k_EP2PSendReliable : k_EP2PSendUnreliableNoDelay);
+	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), reliable ? k_EP2PSendReliable : k_EP2PSendUnreliable);
 }
 
 	}

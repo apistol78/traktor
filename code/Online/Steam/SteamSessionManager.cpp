@@ -85,6 +85,7 @@ SteamSessionManager::SteamSessionManager()
 ,	m_callbackUserStatsReceived(this, &SteamSessionManager::OnUserStatsReceived)
 ,	m_callbackOverlay(this, &SteamSessionManager::OnOverlayActivated)
 ,	m_callbackSessionRequest(this, &SteamSessionManager::OnP2PSessionRequest)
+,	m_callbackSessionConnectFail(this, &SteamSessionManager::OnP2PSessionConnectFail)
 {
 }
 
@@ -355,6 +356,19 @@ void SteamSessionManager::OnOverlayActivated(GameOverlayActivated_t* pCallback)
 void SteamSessionManager::OnP2PSessionRequest(P2PSessionRequest_t* pP2PSessionRequest)
 {
 	SteamNetworking()->AcceptP2PSessionWithUser(pP2PSessionRequest->m_steamIDRemote);
+}
+
+void SteamSessionManager::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PSessionConnectFail)
+{
+	const wchar_t* hr[] =
+	{
+		L"k_EP2PSessionErrorNone",
+		L"k_EP2PSessionErrorNotRunningApp",
+		L"k_EP2PSessionErrorNoRightsToApp",
+		L"k_EP2PSessionErrorDestinationNotLoggedIn",
+		L"k_EP2PSessionErrorTimeout"
+	};
+	log::error << L"Steam; P2P session connect failed, m_eP2PSessionError = " << pP2PSessionConnectFail->m_eP2PSessionError << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
 }
 
 	}

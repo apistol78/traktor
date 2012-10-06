@@ -19,16 +19,34 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.StateProphet", StateProphet, Object)
 void StateProphet::push(float T, IReplicatableState* state)
 {
 	// Ensure state is valid before adding to buffer.
-	if (!m_history.empty())
-	{
-		if (!m_history.back().state->verify(state))
-			return;
-	}
+	if (!m_history.empty() && !m_history.back().state->verify(state))
+		return;
 
+	// Do not add too old state.
+	if (!m_history.empty() && T <= m_history.front().T)
+		return;
+
+	// Add state.
 	History h;
 	h.T = T;
 	h.state = state;
 	m_history.push_back(h);
+
+	// Ensure history list is sorted based on time.
+	int32_t swapped = 0;
+	do
+	{
+		swapped = 0;
+		for (uint32_t i = 0; i < m_history.size() - 1; ++i)
+		{
+			if (m_history[i].T > m_history[i + 1].T)
+			{
+				std::swap(m_history[i], m_history[i + 1]);
+				++swapped;
+			}
+		}
+	}
+	while (swapped > 0);
 }
 
 Ref< const IReplicatableState > StateProphet::get(float T) const
