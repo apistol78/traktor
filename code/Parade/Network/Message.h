@@ -34,6 +34,7 @@ struct Message
 		struct 
 		{
 			uint32_t time0;
+			uint32_t latency;
 		} pong;
 
 		uint8_t data[1200 - 1 - sizeof(uint32_t)];

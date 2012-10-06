@@ -114,10 +114,20 @@ public:
 	 */
 	std::wstring getPeerName(handle_t peerHandle) const;
 
-	/*! \brief Get peer average latency.
+	/*! \brief Get peer minimum latency.
 	 * \return Latency in milliseconds.
 	 */
 	int32_t getPeerLatency(handle_t peerHandle) const;
+
+	/*! \brief Get peer reversed minimum latency of myself.
+	 * \return Latency in milliseconds.
+	 */
+	int32_t getPeerReversedLatency(handle_t peerHandle) const;
+
+	/*! \brief Get worst peer reversed minimum latency of myself.
+	 * \return Latency in milliseconds.
+	 */
+	int32_t getWorstReversedLatency() const;
 
 	/*! \brief Check if peer is connected.
 	 */
@@ -181,6 +191,8 @@ private:
 		CircularVector< float, MaxRoundTrips > roundTrips;
 		float latencyMedian;
 		float latencyMinimum;
+		float latencyReversed;
+		uint32_t pendingPing;
 		uint32_t packetCount;
 
 		Peer()
@@ -191,6 +203,8 @@ private:
 		,	lastTime(0.0f)
 		,	latencyMedian(0.0f)
 		,	latencyMinimum(0.0f)
+		,	latencyReversed(0.0f)
+		,	pendingPing(0)
 		,	packetCount(0)
 		{
 		}
