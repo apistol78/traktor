@@ -390,6 +390,7 @@ void Replicator::update(float dT)
 
 					// Send ping to peer.
 					sendPing(handle);
+					++peer.pendingPing;
 
 					// Issue connect event to listeners.
 					Event evt;
@@ -699,7 +700,7 @@ void Replicator::setGhostStateTemplate(handle_t peerHandle, const StateTemplate*
 		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);
 }
 
-Ref< const State > Replicator::getGhostState(handle_t peerHandle) const
+Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* currentState) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
 	if (i != m_peers.end() && i->second.ghost)
@@ -713,6 +714,7 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle) const
 				i->second.ghost->Tn1,
 				i->second.ghost->S0,
 				i->second.ghost->T0,
+				currentState,
 				m_time
 			);
 		else

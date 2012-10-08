@@ -64,15 +64,7 @@ Ref< const IValue > Vector4Template::unpack(BitReader& reader) const
 	}
 }
 
-Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
-{
-	Vector4 fn1 = *checked_type_cast< const Vector4Value* >(Vn1);
-	Vector4 f0 = *checked_type_cast< const Vector4Value* >(V0);
-	float k = (T - Tn1) / (T0 - Tn1);
-	return new Vector4Value(f0 + (fn1 - f0) * Scalar(k));
-}
-
-Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
+Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	Vector4 fn1 = *checked_type_cast< const Vector4Value* >(Vn1);
 	Vector4 f0 = *checked_type_cast< const Vector4Value* >(V0);
