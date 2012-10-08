@@ -31,9 +31,7 @@ public:
 
 	virtual Ref< const IValue > unpack(BitReader& reader) const = 0;
 
-	virtual Ref< const IValue > extrapolate(const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const = 0;
-
-	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const = 0;
+	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const = 0;
 };
 
 	}

@@ -164,8 +164,12 @@ public:
 	 * The state of ghost peers are extrapolated
 	 * in order to have a virtually identical
 	 * state as the actual peer.
+	 *
+	 * \param peerHandle Peer handle.
+	 * \param currentState Current ghost local state.
+	 * \return Extrapolated ghost state.
 	 */
-	Ref< const State > getGhostState(uint32_t peerHandle) const;
+	Ref< const State > getGhostState(uint32_t peerHandle, const State* currentState) const;
 
 	/*! \brief Get network time.
 	 */

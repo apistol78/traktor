@@ -38,15 +38,7 @@ Ref< const IValue > QuaternionTemplate::unpack(BitReader& reader) const
 	));
 }
 
-Ref< const IValue > QuaternionTemplate::extrapolate(const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
-{
-	Quaternion fn1 = *checked_type_cast< const QuaternionValue* >(Vn1);
-	Quaternion f0 = *checked_type_cast< const QuaternionValue* >(V0);
-	Scalar k = Scalar((T - Tn1) / (T0 - Tn1));
-	return new QuaternionValue(f0 * slerp(Quaternion::identity(), fn1.inverse() * f0, k).normalized());
-}
-
-Ref< const IValue > QuaternionTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
+Ref< const IValue > QuaternionTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	Quaternion fn1 = *checked_type_cast< const QuaternionValue* >(Vn1);
 	Quaternion f0 = *checked_type_cast< const QuaternionValue* >(V0);

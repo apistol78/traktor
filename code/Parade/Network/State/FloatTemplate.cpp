@@ -53,30 +53,35 @@ Ref< const IValue > FloatTemplate::unpack(BitReader& reader) const
 	}
 }
 
-Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
+Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	float fn1 = *checked_type_cast< const FloatValue* >(Vn1);
 	float f0 = *checked_type_cast< const FloatValue* >(V0);
-	float k = (T - Tn1) / (T0 - Tn1);
 	
-	float f = f0 + (fn1 - f0) * k;
-	if (m_min < m_max)
-		f = clamp(f, m_min, m_max);
+	if (Vn2)
+	{
+		float fn2 = *checked_type_cast< const FloatValue* >(Vn2);
 
-	return new FloatValue(f);
-}
+		float v2_1 = (fn1 - fn2) / (Tn1 - Tn2);
+		float v1_0 = (f0 - fn1) / (T0 - Tn1);
+		float a = clamp((v1_0 - v2_1) / (T0 - Tn1), -1.0f, 1.0f);
+		float f = f0 + (f0 - fn1) * (T - T0) + 0.5f * a * (T - T0) * (T - T0);
 
-Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
-{
-	float fn1 = *checked_type_cast< const FloatValue* >(Vn1);
-	float f0 = *checked_type_cast< const FloatValue* >(V0);
-	float k = (T - Tn1) / (T0 - Tn1);
+		if (m_min < m_max)
+			f = clamp(f, m_min, m_max);
 
-	float f = f0 + (fn1 - f0) * k;
-	if (m_min < m_max)
-		f = clamp(f, m_min, m_max);
+		return new FloatValue(f);
+	}
+	else
+	{
+		float k = (T - Tn1) / (T0 - Tn1);
+		float f = f0 + (fn1 - f0) * k;
 
-	return new FloatValue(f);
+		if (m_min < m_max)
+			f = clamp(f, m_min, m_max);
+
+		return new FloatValue(f);
+	}
 }
 
 	}

@@ -27,19 +27,7 @@ Ref< const IValue > BooleanTemplate::unpack(BitReader& reader) const
 	return new BooleanValue(f);
 }
 
-Ref< const IValue > BooleanTemplate::extrapolate(const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
-{
-	bool fn1 = *checked_type_cast< const BooleanValue* >(Vn1);
-	bool f0 = *checked_type_cast< const BooleanValue* >(V0);
-
-	if (fn1 == f0)
-		return new BooleanValue(f0);
-
-	float k = (T - Tn1) / (T0 - Tn1);
-	return new BooleanValue(k >= m_threshold ? f0 : fn1);
-}
-
-Ref< const IValue > BooleanTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
+Ref< const IValue > BooleanTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	bool fn1 = *checked_type_cast< const BooleanValue* >(Vn1);
 	bool f0 = *checked_type_cast< const BooleanValue* >(V0);

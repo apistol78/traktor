@@ -51,18 +51,7 @@ Ref< const IValue > TransformTemplate::unpack(BitReader& reader) const
 	));
 }
 
-Ref< const IValue > TransformTemplate::extrapolate(const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
-{
-	Transform tn1 = *checked_type_cast< const TransformValue* >(Vn1);
-	Transform t0 = *checked_type_cast< const TransformValue* >(V0);
-
-	float k = (T - Tn1) / (T0 - Tn1);
-	Transform t = lerp(t0, t0 * (tn1.inverse() * t0), Scalar(k));
-
-	return new TransformValue(t);
-}
-
-Ref< const IValue > TransformTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
+Ref< const IValue > TransformTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	Transform tn1 = *checked_type_cast< const TransformValue* >(Vn1);
 	Transform t0 = *checked_type_cast< const TransformValue* >(V0);
