@@ -6,11 +6,10 @@
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Parade/Network/CompactSerializer.h"
-#include "Parade/Network/IReplicatableState.h"
 #include "Parade/Network/IReplicatorPeers.h"
 #include "Parade/Network/Message.h"
 #include "Parade/Network/Replicator.h"
-#include "Parade/Network/StateProphet.h"
+#include "Parade/Network/State/StateTemplate.h"
 
 namespace traktor
 {
@@ -209,17 +208,18 @@ void Replicator::update(float dT)
 	}
 
 	// Broadcast my state to all peers.
-	if (m_state)
+	if (m_state && m_stateTemplate)
 	{
 		msg.type = MtState;
 		msg.time = uint32_t(m_time * 1000.0f);
 
-		MemoryStream s(msg.data, sizeof(msg.data), false, true);
-		CompactSerializer cs(&s, &m_eventTypes[0]);
-		cs.writeObject(m_state);
-		cs.flush();
+		uint32_t ss = m_stateTemplate->pack(
+			m_state,
+			msg.data,
+			sizeof(msg.data)
+		);
 
-		uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
+		uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + ss;
 		std::vector< std::pair< handle_t, Peer* > > peers;
 
 		// Collect peers to which we should send state to.
@@ -378,7 +378,9 @@ void Replicator::update(float dT)
 
 					peer.ghost = new (ghostMem) Ghost();
 					peer.ghost->origin = m_origin;
-					peer.ghost->prophet = new StateProphet();
+					peer.ghost->Tn2 = 0.0f;
+					peer.ghost->Tn1 = 0.0f;
+					peer.ghost->T0 = 0.0f;
 				}
 
 				if (!peer.established)
@@ -499,10 +501,23 @@ void Replicator::update(float dT)
 					m_time += adjust;
 				}
 
-				MemoryStream s(msg.data, sizeof(msg.data), true, false);
-				Ref< IReplicatableState > state = CompactSerializer(&s, &m_eventTypes[0]).readObject< IReplicatableState >();
-				if (state)
-					peer.ghost->prophet->push(time, state);
+				if (peer.ghost->stateTemplate)
+				{
+					Ref< State > state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+					if (state)
+					{
+						peer.ghost->Sn2 = peer.ghost->Sn1;
+						peer.ghost->Tn2 = peer.ghost->Tn1;
+						peer.ghost->Sn1 = peer.ghost->S0;
+						peer.ghost->Tn1 = peer.ghost->T0;
+						peer.ghost->S0 = state;
+						peer.ghost->T0 = time;
+					}
+					else
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state");
+				}
+				else
+					T_REPLICATOR_DEBUG(L"WARNING: Ghost state received but no state template associated with ghost, thus unable to decode state");
 
 				peer.packetCount++;
 
@@ -515,12 +530,8 @@ void Replicator::update(float dT)
 			}
 			else
 			{
-				// Received an old out-of-order package; insert into extrapolation chain.
-				MemoryStream s(msg.data, sizeof(msg.data), true, false);
-				Ref< IReplicatableState > state = CompactSerializer(&s, &m_eventTypes[0]).readObject< IReplicatableState >();
-				if (state)
-					peer.ghost->prophet->push(time, state);
-
+				// Received an old out-of-order package.
+				T_REPLICATOR_DEBUG(L"WARNING: Out of order package received; ignored");
 				peer.packetCount++;
 			}
 		}
@@ -566,7 +577,12 @@ void Replicator::setOrigin(const Vector4& origin)
 	m_origin = origin;
 }
 
-void Replicator::setState(const IReplicatableState* state)
+void Replicator::setStateTemplate(const StateTemplate* stateTemplate)
+{
+	m_stateTemplate = stateTemplate;
+}
+
+void Replicator::setState(const State* state)
 {
 	m_state = state;
 }
@@ -674,11 +690,34 @@ void Replicator::setGhostOrigin(handle_t peerHandle, const Vector4& origin)
 		T_REPLICATOR_DEBUG(L"ERROR: Trying to set ghost origin of unknown peer handle " << peerHandle);
 }
 
-Ref< const IReplicatableState > Replicator::getGhostState(handle_t peerHandle) const
+void Replicator::setGhostStateTemplate(handle_t peerHandle, const StateTemplate* stateTemplate)
+{
+	std::map< handle_t, Peer >::iterator i = m_peers.find(peerHandle);
+	if (i != m_peers.end() && i->second.ghost)
+		i->second.ghost->stateTemplate = stateTemplate;
+	else
+		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);
+}
+
+Ref< const State > Replicator::getGhostState(handle_t peerHandle) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
 	if (i != m_peers.end() && i->second.ghost)
-		return i->second.ghost->prophet->get(m_time);
+	{
+		const StateTemplate* stateTemplate = i->second.ghost->stateTemplate;
+		if (stateTemplate)
+			return stateTemplate->extrapolate(
+				i->second.ghost->Sn2,
+				i->second.ghost->Tn2,
+				i->second.ghost->Sn1,
+				i->second.ghost->Tn1,
+				i->second.ghost->S0,
+				i->second.ghost->T0,
+				m_time
+			);
+		else
+			return i->second.ghost->S0;
+	}
 	else
 	{
 		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);

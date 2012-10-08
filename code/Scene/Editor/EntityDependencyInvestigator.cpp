@@ -125,7 +125,7 @@ void EntityDependencyInvestigator::eventDependencyActivate(ui::Event* event)
 	Ref< Path > file = item->getData< Path >(L"FILE");
 	if (file)
 	{
-		if (!OS::getInstance().editFile(*file))
+		if (!OS::getInstance().editFile(file->getPathName()))
 			log::error << L"Unable to edit file \"" << file->getFileName() << L"\"" << Endl;
 	}
 }

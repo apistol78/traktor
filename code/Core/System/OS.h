@@ -66,17 +66,26 @@ public:
 	 */
 	std::wstring getWritableFolderPath() const;
 
+	/*! \brief Open associate application of given file.
+	 *
+	 * \param file File or URL to resource.
+	 * \return True if associated application opened successfully.
+	 */
+	bool openFile(const std::wstring& file) const;
+
 	/*! \brief Launch associate editor of given file.
 	 *
+	 * \param file File or URL to resource.
 	 * \return True if associate editor opened successfully.
 	 */
-	bool editFile(const Path& file) const;
+	bool editFile(const std::wstring& file) const;
 
 	/*! \brief Open file explorer to given file.
 	 *
+	 * \param file File or URL to resource.
 	 * \return True if explorer opened successfully.
 	 */
-	bool exploreFile(const Path& file) const;
+	bool exploreFile(const std::wstring& file) const;
 
 	/*! \brief Get process's environment variables.
 	 *
