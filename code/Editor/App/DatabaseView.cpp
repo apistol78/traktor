@@ -381,13 +381,13 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		{
 			Ref< Asset > editAsset = instance->getObject< Asset >();
 			if (editAsset)
-				OS::getInstance().editFile(editAsset->getFileName());
+				OS::getInstance().editFile(editAsset->getFileName().getPathName());
 		}
 		else if (command == L"Editor.Database.Explore")	// Explore
 		{
 			Ref< Asset > exploreAsset = instance->getObject< Asset >();
 			if (exploreAsset)
-				OS::getInstance().exploreFile(exploreAsset->getFileName());
+				OS::getInstance().exploreFile(exploreAsset->getFileName().getPathName());
 		}
 		else if (command == L"Editor.Database.ReplaceInstance")	// Replace instance
 		{

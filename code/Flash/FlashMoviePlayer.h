@@ -242,7 +242,7 @@ private:
 	float m_timeNextFrame;
 	int32_t m_framesUntilCollection;
 
-	void Global_getUrl(CallArgs& ca);
+	void Global_getURL(CallArgs& ca);
 
 	void Global_setInterval(CallArgs& ca);
 

@@ -3,9 +3,9 @@
 
 #include <list>
 #include <map>
-#include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/CircularVector.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Parade/Network/ReplicatorTypes.h"
 
 // import/export mechanism.
@@ -21,9 +21,9 @@ namespace traktor
 	namespace parade
 	{
 
-class IReplicatableState;
 class IReplicatorPeers;
-class StateProphet;
+class State;
+class StateTemplate;
 
 class T_DLLCLASS Replicator : public Object
 {
@@ -83,12 +83,16 @@ public:
 	 */
 	void setOrigin(const Vector4& origin);
 
+	/*!
+	 */
+	void setStateTemplate(const StateTemplate* stateTemplate);
+
 	/*! \brief Set our replication state.
 	 *
 	 * Each peer have multiple ghost states which mirrors
 	 * each peer real state.
 	 */
-	void setState(const IReplicatableState* state);
+	void setState(const State* state);
 
 	/*! \brief Send high priority event to a single peer.
 	 */
@@ -151,13 +155,17 @@ public:
 	 */
 	void setGhostOrigin(handle_t peerHandle, const Vector4& origin);
 
+	/*!
+	 */
+	void setGhostStateTemplate(handle_t peerHandle, const StateTemplate* stateTemplate);
+
 	/*! \brief Get state of ghost peer.
 	 *
 	 * The state of ghost peers are extrapolated
 	 * in order to have a virtually identical
 	 * state as the actual peer.
 	 */
-	Ref< const IReplicatableState > getGhostState(uint32_t peerHandle) const;
+	Ref< const State > getGhostState(uint32_t peerHandle) const;
 
 	/*! \brief Get network time.
 	 */
@@ -177,8 +185,14 @@ private:
 	struct Ghost
 	{
 		Vector4 origin;
-		Ref< StateProphet > prophet;
 		Ref< Object > object;
+		Ref< const StateTemplate > stateTemplate;
+		Ref< const State > Sn2;
+		Ref< const State > Sn1;
+		Ref< const State > S0;
+		float Tn2;
+		float Tn1;
+		float T0;
 	};
 
 	struct Peer
@@ -215,7 +229,8 @@ private:
 	Ref< IReplicatorPeers > m_replicatorPeers;
 	RefArray< IListener > m_listeners;
 	Vector4 m_origin;
-	Ref< const IReplicatableState > m_state;
+	Ref< const StateTemplate > m_stateTemplate;
+	Ref< const State > m_state;
 	std::map< handle_t, Peer > m_peers;
 	std::list< Event > m_eventsIn;
 	std::list< Event > m_eventsOut;

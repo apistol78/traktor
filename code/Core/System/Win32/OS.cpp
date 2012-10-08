@@ -154,14 +154,13 @@ std::wstring OS::getWritableFolderPath() const
 	return getUserApplicationDataPath();
 }
 
-bool OS::editFile(const Path& file) const
+bool OS::openFile(const std::wstring& file) const
 {
 #if !defined(WINCE)
-	Path absoluteFile = FileSystem::getInstance().getAbsolutePath(file);
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
-		_T("edit"),
-		wstots(absoluteFile.getPathName()).c_str(),
+		_T("open"),
+		wstots(file).c_str(),
 		NULL,
 		NULL,
 		SW_SHOWDEFAULT
@@ -172,14 +171,30 @@ bool OS::editFile(const Path& file) const
 #endif
 }
 
-bool OS::exploreFile(const Path& file) const
+bool OS::editFile(const std::wstring& file) const
 {
 #if !defined(WINCE)
-	Path absoluteFile = FileSystem::getInstance().getAbsolutePath(file.getPathOnly());
+	HINSTANCE hInstance = ShellExecute(
+		NULL,
+		_T("edit"),
+		wstots(file).c_str(),
+		NULL,
+		NULL,
+		SW_SHOWDEFAULT
+	);
+	return int(hInstance) > 32;
+#else
+	return false;
+#endif
+}
+
+bool OS::exploreFile(const std::wstring& file) const
+{
+#if !defined(WINCE)
 	HINSTANCE hInstance = ShellExecute(
 		NULL,
 		_T("explore"),
-		wstots(absoluteFile.getPathName()).c_str(),
+		wstots(file).c_str(),
 		NULL,
 		NULL,
 		SW_SHOWDEFAULT

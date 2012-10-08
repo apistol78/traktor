@@ -1679,7 +1679,7 @@ void opx_getUrl(ExecutionState& state)
 	const char* query = url + strlen(url) + 1;
 
 	ActionValue getUrl;
-	context->getGlobal()->getLocalMember("getUrl", getUrl);
+	context->getGlobal()->getLocalMember("getURL", getUrl);
 	if (getUrl.isObject< ActionFunction >())
 	{
 		Ref< ActionFunction > fn = getUrl.getObject< ActionFunction >();
@@ -1693,7 +1693,7 @@ void opx_getUrl(ExecutionState& state)
 		else
 		{
 			T_IF_TRACE(
-				*state.trace << L"AopGetUrl: _global.getUrl must be a function object" << Endl;
+				*state.trace << L"AopGetUrl: _global.getURL must be a function object" << Endl;
 			)
 		}
 	}
@@ -2132,7 +2132,7 @@ void opx_getUrl2(ExecutionState& state)
 	ActionValueStack& stack = state.frame->getStack();
 
 	ActionValue getUrl;
-	context->getGlobal()->getLocalMember("getUrl", getUrl);
+	context->getGlobal()->getLocalMember("getURL", getUrl);
 	if (getUrl.isObject< ActionFunction >())
 	{
 		Ref< ActionFunction > fn = getUrl.getObject< ActionFunction >();
@@ -2150,7 +2150,7 @@ void opx_getUrl2(ExecutionState& state)
 		else
 		{
 			T_IF_TRACE(
-				*state.trace << L"AopGetUrl2: _global.getUrl must be a function object" << Endl;
+				*state.trace << L"AopGetUrl2: _global.getURL must be a function object" << Endl;
 			)
 		}
 	}

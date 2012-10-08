@@ -1,6 +1,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Math/Const.h"
+#include "Core/System/OS.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashMovieRenderer.h"
@@ -65,7 +66,7 @@ bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 	Ref< ActionObject > global = context->getGlobal();
 
 	// Override some global methods.
-	setGlobal("getUrl", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_getUrl)));
+	setGlobal("getURL", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_getURL)));
 	setGlobal("setInterval", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_setInterval)));
 	setGlobal("clearInterval", ActionValue(createNativeFunction(context, this, &FlashMoviePlayer::Global_clearInterval)));
 
@@ -388,16 +389,18 @@ ActionValue FlashMoviePlayer::getGlobal(const std::string& name) const
 	return value;
 }
 
-void FlashMoviePlayer::Global_getUrl(CallArgs& ca)
+void FlashMoviePlayer::Global_getURL(CallArgs& ca)
 {
-	std::string url = ca.args[0].getString();
-	if (startsWith< std::string >(url, "FSCommand:"))
+	std::wstring url = ca.args[0].getWideString();
+	if (startsWith< std::wstring >(url, L"FSCommand:"))
 	{
 		m_fsCommands.push_back(std::make_pair(
-			mbstows(url.substr(10)),
+			url.substr(10),
 			ca.args[1].getWideString()
 		));
 	}
+	else
+		OS::getInstance().openFile(url);
 }
 
 void FlashMoviePlayer::Global_setInterval(CallArgs& ca)

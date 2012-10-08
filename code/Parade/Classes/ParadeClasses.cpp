@@ -8,11 +8,11 @@
 #include "Parade/Classes/ParadeClasses.h"
 #include "Parade/Network/DiagnosePeers.h"
 #include "Parade/Network/InetSimPeers.h"
-#include "Parade/Network/IReplicatableState.h"
 #include "Parade/Network/LanReplicatorPeers.h"
 #include "Parade/Network/OnlineReplicatorPeers.h"
-#include "Parade/Network/PropertyState.h"
 #include "Parade/Network/Replicator.h"
+#include "Parade/Network/State/State.h"
+#include "Parade/Network/State/StateTemplate.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
 #include "Script/Delegate.h"
@@ -143,23 +143,11 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classStageLoader->addMethod(L"get", &StageLoader::get);
 	scriptManager->registerClass(classStageLoader);
 
-	Ref< script::AutoScriptClass< IReplicatableState > > classReplicatableState = new script::AutoScriptClass< IReplicatableState >();
-	scriptManager->registerClass(classReplicatableState);
+	Ref< script::AutoScriptClass< State > > classState = new script::AutoScriptClass< State >();
+	scriptManager->registerClass(classState);
 
-	Ref< script::AutoScriptClass< PropertyState > > classPropertyState = new script::AutoScriptClass< PropertyState >();
-	classPropertyState->addConstructor();
-	classPropertyState->addMethod(L"packFloat", &PropertyState::packFloat);
-	classPropertyState->addMethod(L"packVector3", &PropertyState::packVector3);
-	classPropertyState->addMethod(L"packVector4", &PropertyState::packVector4);
-	classPropertyState->addMethod(L"packQuaternion", &PropertyState::packQuaternion);
-	classPropertyState->addMethod(L"packTransform", &PropertyState::packTransform);
-	classPropertyState->addMethod(L"unpackBegin", &PropertyState::unpackBegin);
-	classPropertyState->addMethod(L"unpackFloat", &PropertyState::unpackFloat);
-	classPropertyState->addMethod(L"unpackVector3", &PropertyState::unpackVector3);
-	classPropertyState->addMethod(L"unpackVector4", &PropertyState::unpackVector4);
-	classPropertyState->addMethod(L"unpackQuaternion", &PropertyState::unpackQuaternion);
-	classPropertyState->addMethod(L"unpackTransform", &PropertyState::unpackTransform);
-	scriptManager->registerClass(classPropertyState);
+	Ref< script::AutoScriptClass< StateTemplate > > classStateTemplate = new script::AutoScriptClass< StateTemplate >();
+	scriptManager->registerClass(classStateTemplate);
 
 	Ref< script::AutoScriptClass< IReplicatorPeers > > classIReplicatorPeers = new script::AutoScriptClass< IReplicatorPeers >();
 	classIReplicatorPeers->addMethod(L"destroy", &IReplicatorPeers::destroy);
@@ -198,6 +186,7 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod(L"addListener", &Replicator::addListener);
 	classReplicator->addMethod(L"update", &Replicator::update);
 	classReplicator->addMethod(L"setOrigin", &Replicator::setOrigin);
+	classReplicator->addMethod(L"setStateTemplate", &Replicator::setStateTemplate);
 	classReplicator->addMethod(L"setState", &Replicator::setState);
 	classReplicator->addMethod(L"sendEvent", &Replicator::sendEvent);
 	classReplicator->addMethod(L"broadcastEvent", &Replicator::broadcastEvent);
@@ -212,6 +201,7 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod(L"setGhostObject", &Replicator::setGhostObject);
 	classReplicator->addMethod(L"getGhostObject", &Replicator::getGhostObject);
 	classReplicator->addMethod(L"setGhostOrigin", &Replicator::setGhostOrigin);
+	classReplicator->addMethod(L"setGhostStateTemplate", &Replicator::setGhostStateTemplate);
 	classReplicator->addMethod(L"getGhostState", &Replicator::getGhostState);
 	classReplicator->addMethod(L"getTime", &Replicator::getTime);
 	scriptManager->registerClass(classReplicator);
