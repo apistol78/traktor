@@ -22,8 +22,8 @@ const handle_t c_broadcastHandle = 0UL;
 const float c_maxOffsetAdjust = 2.0f;
 const float c_nearDistance = 30.0f;
 const float c_farDistance = 250.0f;
-const float c_nearTimeUntilTx = 1.0f / 20.0f;
-const float c_farTimeUntilTx = 1.0f / 10.0f;
+const float c_nearTimeUntilTx = 1.0f / 16.0f;
+const float c_farTimeUntilTx = 1.0f / 8.0f;
 const float c_timeUntilIAm = 6.0f;
 const float c_timeUntilPing = 1.0f;
 const float c_peerTimeout = 20.0f;
@@ -491,8 +491,6 @@ void Replicator::update(float dT)
 			// messages can arrive out-of-order.
 			if (time > peer.lastTime + 1e-4f)
 			{
-				peer.lastTime = time;
-
 				if (time + peer.latencyMinimum > m_time + 1e-5f)
 				{
 					// Adjust time; adjust only with 75% of the difference in order
@@ -518,23 +516,45 @@ void Replicator::update(float dT)
 						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state");
 				}
 				else
-					T_REPLICATOR_DEBUG(L"WARNING: Ghost state received but no state template associated with ghost, thus unable to decode state");
+					T_REPLICATOR_DEBUG(L"OK: Ghost state received but no state template associated with ghost, thus unable to decode state");
 
 				peer.packetCount++;
-
-				// Put an input event to notify listeners about new state.
-				Event evt;
-				evt.eventId = IListener::ReState;
-				evt.handle = handle;
-				evt.object = 0;
-				m_eventsIn.push_back(evt);
+				peer.lastTime = time;
 			}
 			else
 			{
 				// Received an old out-of-order package.
-				T_REPLICATOR_DEBUG(L"WARNING: Out of order package received; ignored");
+				if (peer.ghost->stateTemplate)
+				{
+					Ref< State > state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+					if (state)
+					{
+						if (time > peer.ghost->Tn1)
+						{
+							peer.ghost->Sn1 = state;
+							peer.ghost->Tn1 = time;
+						}
+						else if (time > peer.ghost->Tn2)
+						{
+							peer.ghost->Sn2 = state;
+							peer.ghost->Tn2 = time;
+						}
+					}
+					else
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state");
+				}
+				else
+					T_REPLICATOR_DEBUG(L"OK: Ghost state received but no state template associated with ghost, thus unable to decode state");
+
 				peer.packetCount++;
 			}
+
+			// Put an input event to notify listeners about new state.
+			Event evt;
+			evt.eventId = IListener::ReState;
+			evt.handle = handle;
+			evt.object = 0;
+			m_eventsIn.push_back(evt);
 		}
 		else if (msg.type == MtEvent)	// Event message.
 		{

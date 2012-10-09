@@ -392,19 +392,20 @@ void FlashMovieRenderer::renderCharacter(
 		uint8_t buttonState = buttonInstance->getState();
 
 		const FlashButton::button_layers_t& layers = button->getButtonLayers();
-		for (FlashButton::button_layers_t::const_iterator j = layers.begin(); j != layers.end(); ++j)
+		for (int32_t j = int32_t(layers.size() - 1); j >= 0; --j)
 		{
-			if ((j->state & buttonState) == 0)
+			const FlashButton::ButtonLayer& layer = layers[j];
+			if ((layer.state & buttonState) == 0)
 				continue;
 
-			FlashCharacterInstance* referenceInstance = buttonInstance->getCharacterInstance(j->characterId);
+			FlashCharacterInstance* referenceInstance = buttonInstance->getCharacterInstance(layer.characterId);
 			if (!referenceInstance)
 				continue;
 
 			renderCharacter(
 				movie,
 				referenceInstance,
-				buttonTransform * j->placeMatrix,
+				buttonTransform * layer.placeMatrix,
 				concateCxTransform(cxTransform, buttonInstance->getColorTransform())
 			);
 		}

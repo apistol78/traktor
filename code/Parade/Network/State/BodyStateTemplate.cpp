@@ -12,6 +12,11 @@ namespace traktor
 		namespace
 		{
 
+const Scalar c_maxRubberBandDistance(20.0f);
+const float c_maxRubberBandTime(0.1f);
+const float c_rubberBandStrengthNear(0.3f);
+const float c_rubberBandStrengthFar(0.9f);
+
 void packUnit(BitWriter& writer, float v)
 {
 	uint16_t iv = uint16_t(clamp(v * 0.5f + 0.5f, 0.0f, 1.0f) * 65535.0f);
@@ -22,6 +27,11 @@ float unpackUnit(BitReader& reader)
 {
 	uint16_t iv = reader.readUnsigned(16);
 	return (iv / 65535.0f) * 2.0f - 1.0f;
+}
+
+Vector4 clampV4(const Vector4& v, const Vector4& minV, const Vector4& maxV)
+{
+	return max(min(v, maxV), minV);
 }
 
 		}
@@ -40,8 +50,10 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
 
 	T.rotation().e.storeAligned(e);
-	for (uint32_t i = 0; i < 4; ++i)
+	for (uint32_t i = 0; i < 3; ++i)
 		packUnit(writer, e[i]);
+
+	writer.writeBit(e[3] < 0.0f);
 
 	v.getLinearVelocity().storeAligned(e);
 
@@ -59,13 +71,15 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 {
 	uint32_t u[3];
-	float f[4];
+	float f[3];
 
 	for (uint32_t i = 0; i < 3; ++i)
 		u[i] = reader.readUnsigned(32);
 
-	for (uint32_t i = 0; i < 4; ++i)
+	for (uint32_t i = 0; i < 3; ++i)
 		f[i] = unpackUnit(reader);
+
+	float sign = reader.readBit() ? -1.0f : 1.0f;
 
 	Transform T(
 		Vector4(
@@ -78,7 +92,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 			f[0],
 			f[1],
 			f[2],
-			f[3]
+			std::sqrt(1.0f - f[0] * f[0] - f[1] * f[1] - f[2] * f[2]) * sign
 		).normalized()
 	);
 
@@ -132,6 +146,12 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 
 		Al_prim = (Al - Al_n2_n1) / Scalar(T0 - Tn1);
 		Aa_prim = (Aa - Aa_n2_n1) / Scalar(T0 - Tn1);
+
+		const Vector4 c_linearAccThreshold(1.0f, 1.0f, 1.0f, 0.0f);
+		const Vector4 c_angularAccThreshold(1.0f, 1.0f, 1.0f, 0.0f);
+
+		Al_prim = clampV4(Al_prim, -c_linearAccThreshold, c_linearAccThreshold);
+		Aa_prim = clampV4(Aa_prim, -c_angularAccThreshold, c_angularAccThreshold);
 	}
 
 	Vector4 Vl = S0.getLinearVelocity().xyz0();
@@ -181,10 +201,10 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 		Vector4 Pc = Sc.getTransform().translation();
 		Scalar ln = (P - Pc).length();
 
-		if (ln < 12.0f)
+		if (ln < c_maxRubberBandDistance)
 		{
-			float k0 = clamp((T - T0) / 0.1f + (ln / 12.0f), 0.0f, 1.0f);
-			float k1 = lerp(0.3f, 0.9f, k0);
+			float k0 = clamp((T - T0) / c_maxRubberBandTime + (ln / c_maxRubberBandDistance), 0.0f, 1.0f);
+			float k1 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k0);
 			S = S.interpolate(Sc, Scalar(k1));
 		}
 	}
