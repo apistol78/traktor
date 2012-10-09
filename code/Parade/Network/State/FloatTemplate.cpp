@@ -9,26 +9,54 @@ namespace traktor
 {
 	namespace parade
 	{
+		namespace
+		{
+
+const float c_idleThreshold = 1e-4f;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.FloatTemplate", FloatTemplate, IValueTemplate)
 
 FloatTemplate::FloatTemplate()
 :	m_min(std::numeric_limits< float >::max())
 ,	m_max(-std::numeric_limits< float >::max())
+,	m_idle(0.0f)
 ,	m_lowPrecision(false)
+,	m_haveIdle(false)
 {
 }
 
 FloatTemplate::FloatTemplate(float min, float max, bool lowPrecision)
 :	m_min(min)
 ,	m_max(max)
+,	m_idle(0.0f)
 ,	m_lowPrecision(lowPrecision)
+,	m_haveIdle(false)
+{
+}
+
+FloatTemplate::FloatTemplate(float min, float max, float idle, bool lowPrecision)
+:	m_min(min)
+,	m_max(max)
+,	m_idle(idle)
+,	m_lowPrecision(lowPrecision)
+,	m_haveIdle(true)
 {
 }
 
 void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	float f = *checked_type_cast< const FloatValue* >(V);
+
+	if (m_haveIdle)
+	{
+		bool idle = bool(abs(f - m_idle) <= c_idleThreshold);
+		writer.writeBit(idle);
+		if (idle)
+			return;
+	}
+
 	if (!m_lowPrecision)
 		writer.writeUnsigned(32, *(uint32_t*)&f);
 	else
@@ -40,6 +68,13 @@ void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 
 Ref< const IValue > FloatTemplate::unpack(BitReader& reader) const
 {
+	if (m_haveIdle)
+	{
+		bool idle = reader.readBit();
+		if (idle)
+			return new FloatValue(m_idle);
+	}
+
 	if (!m_lowPrecision)
 	{
 		uint32_t u = reader.readUnsigned(32);

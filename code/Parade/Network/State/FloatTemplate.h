@@ -25,6 +25,8 @@ public:
 
 	explicit FloatTemplate(float min, float max, bool lowPrecision);
 
+	explicit FloatTemplate(float min, float max, float idle, bool lowPrecision);
+
 	virtual void pack(BitWriter& writer, const IValue* V) const;
 
 	virtual Ref< const IValue > unpack(BitReader& reader) const;
@@ -34,7 +36,9 @@ public:
 private:
 	float m_min;
 	float m_max;
+	float m_idle;
 	bool m_lowPrecision;
+	bool m_haveIdle;
 };
 
 	}
