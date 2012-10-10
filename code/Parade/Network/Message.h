@@ -28,7 +28,7 @@ struct Message
 		struct
 		{
 			uint8_t sequence;
-			uint8_t id[16];
+			uint32_t id;
 		} iam;
 
 		struct 

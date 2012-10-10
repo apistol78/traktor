@@ -5,6 +5,7 @@
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Timer/Timer.h"
 #include "Parade/Network/CompactSerializer.h"
 #include "Parade/Network/IReplicatorPeers.h"
 #include "Parade/Network/Message.h"
@@ -28,7 +29,10 @@ const float c_timeUntilIAm = 6.0f;
 const float c_timeUntilPing = 1.0f;
 const float c_peerTimeout = 20.0f;
 const float c_distanceBlend = 0.75f;
+const float c_maxExtrapolateTime = 4.0f;
 const uint32_t c_maxPendingPing = 16;
+const uint32_t c_maxErrorCount = 4;
+Timer g_timer;
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
 
@@ -39,12 +43,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.Replicator", Replicator, Object)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.Replicator.IListener", Replicator::IListener, Object)
 
 Replicator::Replicator()
-:	m_id(Guid::create())
+:	m_id(0)
 ,	m_origin(0.0f, 0.0f, 0.0f, 1.0f)
 ,	m_time(0.0f)
 ,	m_pingCount(0)
 ,	m_timeUntilPing(0.0f)
 {
+	m_id = uint32_t(g_timer.getElapsedTime());
 }
 
 Replicator::~Replicator()
@@ -149,7 +154,7 @@ void Replicator::update(float dT)
 			}
 		}
 
-		// Check if peer doesn't respond or timeout;ed.
+		// Check if peer doesn't respond, timeout;ed or unable to communicate.
 		if (
 			peer.established &&
 			peer.packetCount > 0
@@ -169,6 +174,12 @@ void Replicator::update(float dT)
 			if (peer.pendingPing > c_maxPendingPing)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" doesn't respond to ping");
+				failing = true;
+			}
+
+			if (peer.errorCount > c_maxErrorCount)
+			{
+				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" failing, unable to communicate with peer");
 				failing = true;
 			}
 
@@ -220,7 +231,6 @@ void Replicator::update(float dT)
 		);
 
 		uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + ss;
-		std::vector< std::pair< handle_t, Peer* > > peers;
 
 		// Collect peers to which we should send state to.
 		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
@@ -231,20 +241,9 @@ void Replicator::update(float dT)
 				continue;
 			if ((peer.timeUntilTx -= dT) > 0.0f)
 				continue;
-
 			if (!m_replicatorPeers->sendReady(i->first))
 				continue;
 
-			peers.push_back(std::make_pair(i->first, &peer));
-		}
-
-		// Randomize peers to prevent same send order multiple frames.
-		std::random_shuffle(peers.begin(), peers.end());
-
-		// Send state to peers.
-		for (std::vector< std::pair< handle_t, Peer* > >::iterator i = peers.begin(); i != peers.end(); ++i)
-		{
-			Peer& peer = *i->second;
 			if (m_replicatorPeers->send(i->first, &msg, msgSize, false))
 			{
 				float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
@@ -252,11 +251,13 @@ void Replicator::update(float dT)
 				float t1 = std::sqrt(t0);
 				float t = lerp(t0, t1, c_distanceBlend);
 				peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
+				peer.errorCount = 0;
 			}
 			else
 			{
-				log::error << L"ERROR: Unable to send state to peer " << i->first << Endl;
+				log::error << L"ERROR: Unable to send state to peer " << i->first << L" (" << peer.errorCount << L")" << Endl;
 				peer.timeUntilTx = c_farTimeUntilTx;
+				peer.errorCount++;
 			}
 		}
 	}
@@ -264,6 +265,7 @@ void Replicator::update(float dT)
 	// Send events to peers.
 	if (!m_eventsOut.empty())
 	{
+		std::list< Event > eventsOut;
 		for (std::list< Event >::const_iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
 		{
 			msg.type = MtEvent;
@@ -278,22 +280,46 @@ void Replicator::update(float dT)
 
 			if (i->handle == c_broadcastHandle)
 			{
-				for (std::map< handle_t, Peer >::const_iterator j = m_peers.begin(); j != m_peers.end(); ++j)
+				for (std::map< handle_t, Peer >::iterator j = m_peers.begin(); j != m_peers.end(); ++j)
 				{
 					if (!j->second.established)
 						continue;
 
-					if (!m_replicatorPeers->send(j->first, &msg, msgSize, true))
-						log::error << L"ERROR: Unable to send event to peer " << j->first << Endl;
+					if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
+						j->second.errorCount = 0;
+					else
+					{
+						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L")" << Endl;
+						
+						// Re-send this event to peer next iteration.
+						Event e = *i;
+						e.handle = j->first;
+						eventsOut.push_back(e);
+
+						j->second.errorCount++;
+					}
 				}
 			}
 			else
 			{
-				if (!m_replicatorPeers->send(i->handle, &msg, msgSize, true))
-					log::error << L"ERROR: Unable to event to peer " << i->handle << Endl;
+				std::map< handle_t, Peer >::iterator j = m_peers.find(i->handle);
+				if (j != m_peers.end())
+				{
+					if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
+						j->second.errorCount = 0;
+					else
+					{
+						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L")" << Endl;
+						
+						// Re-send this event to peer next iteration.
+						eventsOut.push_back(*i);
+
+						j->second.errorCount++;
+					}
+				}
 			}
 		}
-		m_eventsOut.clear();
+		m_eventsOut.swap(eventsOut);
 	}
 
 	// Send ping to peers.
@@ -336,15 +362,7 @@ void Replicator::update(float dT)
 		// Always handle handshake messages.
 		if (msg.type == MtIAm)
 		{
-			// Unwrap id and ensure it's valid.
-			Guid id(msg.iam.id);
-			if (!id.isNotNull())
-			{
-				T_REPLICATOR_DEBUG(L"ERROR: Corrupt sequence id received from peer " << handle << L"; ignoring response to handshake");
-				continue;
-			}
-
-			T_REPLICATOR_DEBUG(L"OK: Got \"I am\" from peer " << handle << L", sequence " << int32_t(msg.iam.sequence) << L", id " << id.format());
+			T_REPLICATOR_DEBUG(L"OK: Got \"I am\" from peer " << handle << L", sequence " << int32_t(msg.iam.sequence) << L", id " << msg.iam.id);
 
 			// Assume peer time is correct if exceeding my time.
 			if (time > m_time)
@@ -352,7 +370,7 @@ void Replicator::update(float dT)
 
 			if (msg.iam.sequence == 0)
 			{
-				sendIAm(handle, 1, id);
+				sendIAm(handle, 1, msg.iam.id);
 			}
 			else if (msg.iam.sequence == 1 || msg.iam.sequence == 2)
 			{
@@ -361,12 +379,12 @@ void Replicator::update(float dT)
 
 				if (msg.iam.sequence == 1)
 				{
-					if (id != m_id)
+					if (msg.iam.id != m_id)
 					{
 						T_REPLICATOR_DEBUG(L"ERROR: \"I am\" message with incorrect id from peer " << handle << L"; ignoring");
 						continue;
 					}
-					sendIAm(handle, 2, id);
+					sendIAm(handle, 2, msg.iam.id);
 				}
 
 				Peer& peer = m_peers[handle];
@@ -515,8 +533,6 @@ void Replicator::update(float dT)
 					else
 						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state");
 				}
-				else
-					T_REPLICATOR_DEBUG(L"OK: Ghost state received but no state template associated with ghost, thus unable to decode state");
 
 				peer.packetCount++;
 				peer.lastTime = time;
@@ -543,8 +559,6 @@ void Replicator::update(float dT)
 					else
 						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state");
 				}
-				else
-					T_REPLICATOR_DEBUG(L"OK: Ghost state received but no state template associated with ghost, thus unable to decode state");
 
 				peer.packetCount++;
 			}
@@ -725,6 +739,9 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* c
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
 	if (i != m_peers.end() && i->second.ghost)
 	{
+		if (m_time > i->second.ghost->T0 + c_maxExtrapolateTime)
+			return 0;
+
 		const StateTemplate* stateTemplate = i->second.ghost->stateTemplate;
 		if (stateTemplate)
 			return stateTemplate->extrapolate(
@@ -747,17 +764,16 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* c
 	}
 }
 
-void Replicator::sendIAm(handle_t peerHandle, uint8_t sequence, const Guid& id)
+void Replicator::sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id)
 {
 	Message msg;
 
 	msg.type = MtIAm;
 	msg.time = uint32_t(m_time * 1000.0f);
 	msg.iam.sequence = sequence;
+	msg.iam.id = id;
 
-	std::memcpy(msg.iam.id, id, sizeof(msg.iam.id));
-
-	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint8_t) * (1 + 16);
+	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint8_t) + sizeof(uint32_t);
 	m_replicatorPeers->send(peerHandle, &msg, msgSize, true);
 }
 

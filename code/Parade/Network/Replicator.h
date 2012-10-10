@@ -212,6 +212,7 @@ private:
 		float latencyReversed;
 		uint32_t pendingPing;
 		uint32_t packetCount;
+		uint32_t errorCount;
 
 		Peer()
 		:	established(false)
@@ -224,11 +225,12 @@ private:
 		,	latencyReversed(0.0f)
 		,	pendingPing(0)
 		,	packetCount(0)
+		,	errorCount(0)
 		{
 		}
 	};
 
-	Guid m_id;
+	uint32_t m_id;
 	std::vector< const TypeInfo* > m_eventTypes;
 	Ref< IReplicatorPeers > m_replicatorPeers;
 	RefArray< IListener > m_listeners;
@@ -242,7 +244,7 @@ private:
 	uint32_t m_pingCount;
 	float m_timeUntilPing;
 
-	void sendIAm(handle_t peerHandle, uint8_t sequence, const Guid& id);
+	void sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id);
 
 	void sendBye(handle_t peerHandle);
 
