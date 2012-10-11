@@ -219,6 +219,7 @@ public:
 	 *
 	 * \param at Sphere origin in world space.
 	 * \param radius Sphere radius.
+	 * \param group Collision groups.
 	 * \param queryTypes Type of bodies, @sa QueryTypes
 	 * \param outBodies Array of intersecting bodies.
 	 * \return Number of bodies found.
@@ -226,6 +227,7 @@ public:
 	virtual uint32_t querySphere(
 		const Vector4& at,
 		float radius,
+		uint32_t group,
 		uint32_t queryTypes,
 		RefArray< Body >& outBodies
 	) const = 0;

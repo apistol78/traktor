@@ -1,7 +1,11 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/TString.h"
+#include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributePoint.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Parade/Network/CompactSerializer.h"
 
 namespace traktor
@@ -273,6 +277,13 @@ bool write_string(BitWriter& w, const std::string& str)
 	return write_string(w, ws);
 }
 
+template < typename AttributeType, typename MemberType >
+const AttributeType* findAttribute(const MemberType& m)
+{
+	const Attribute* attributes = m.getAttributes();
+	return attributes ? attributes->find< AttributeType >() : 0;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.CompactSerializer", CompactSerializer, Serializer);
@@ -366,10 +377,32 @@ bool CompactSerializer::operator >> (const Member< uint64_t >& m)
 
 bool CompactSerializer::operator >> (const Member< float >& m)
 {
-	if (m_direction == SdRead)
-		return read_float(m_reader, m);
+	const AttributeRange* range = findAttribute< AttributeRange >(m);
+	if (range)
+	{
+		if (m_direction == SdRead)
+		{
+			uint8_t uv;
+			if (!read_uint8(m_reader, uv))
+				return false;
+
+			m = uv * (range->getMax() - range->getMin()) / 255.0f + range->getMin();
+			return true;
+		}
+		else
+		{
+			float v = clamp< float >(m, range->getMin(), range->getMax());
+			uint8_t uv = uint8_t(255.0f * (v - range->getMin()) / (range->getMax() - range->getMin()));
+			return write_uint8(m_writer, uv);
+		}
+	}
 	else
-		return write_float(m_writer, m);
+	{
+		if (m_direction == SdRead)
+			return read_float(m_reader, m);
+		else
+			return write_float(m_writer, m);
+	}
 }
 
 bool CompactSerializer::operator >> (const Member< double >& m)
@@ -519,18 +552,72 @@ bool CompactSerializer::operator >> (const Member< Vector2 >& m)
 bool CompactSerializer::operator >> (const Member< Vector4 >& m)
 {
 	float T_MATH_ALIGN16 e[4];
+	uint32_t count = 4;
 	bool result = true;
+
+	const AttributeDirection* direction = findAttribute< AttributeDirection >(m);
+	if (direction)
+	{
+		// If unit direction then serialize in polar form.
+		if (direction->getUnit())
+		{
+			if (m_direction == SdRead)
+			{
+				uint16_t uphi = 0, ualpha = 0;
+
+				if (!read_uint16(m_reader, uphi))
+					return false;
+				if (!read_uint16(m_reader, ualpha))
+					return false;
+
+				float phi = float(uphi * PI / 65535.0f);
+				float alpha = float(ualpha * TWO_PI / 65535.0f) - PI;
+
+				float x = std::cos(alpha) * std::sin(phi);
+				float y = std::sin(alpha) * std::sin(phi);
+				float z = std::cos(phi);
+
+				(*m) = Vector4(x, y, z, 0.0f);
+				return true;
+			}
+			else
+			{
+				float phi = std::acos(m->z());
+				float alpha = std::atan2((float)m->y(), (float)m->x());
+
+				uint16_t uphi = uint16_t(clamp(phi / PI, 0.0f, 1.0f) * 65535.0f);
+				uint16_t ualpha = uint16_t(clamp((alpha + PI) / TWO_PI, 0.0f, 1.0f) * 65535.0f);
+
+				if (!write_uint16(m_writer, uphi))
+					return false;
+				if (!write_uint16(m_writer, ualpha))
+					return false;
+
+				return true;
+			}
+		}
+
+		e[3] = 0.0f;
+		count = 3;
+	}
+
+	const AttributePoint* point = findAttribute< AttributePoint >(m);
+	if (point)
+	{
+		e[3] = 1.0f;
+		count = 3;
+	}
 
 	if (m_direction == SdRead)
 	{
-		for (uint32_t i = 0; i < 4; ++i)
+		for (uint32_t i = 0; i < count; ++i)
 			result &= read_float(m_reader, e[i]);
 		(*m) = Vector4::loadUnaligned(e);
 	}
 	else
 	{
 		(*m).storeUnaligned(e);
-		for (uint32_t i = 0; i < 4; ++i)
+		for (uint32_t i = 0; i < count; ++i)
 			result &= write_float(m_writer, e[i]);
 	}
 

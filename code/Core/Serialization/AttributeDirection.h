@@ -20,6 +20,16 @@ namespace traktor
 class T_DLLCLASS AttributeDirection : public Attribute
 {
 	T_RTTI_CLASS;
+
+public:
+	AttributeDirection();
+
+	explicit AttributeDirection(bool unit);
+
+	bool getUnit() const { return m_unit; }
+
+private:
+	bool m_unit;
 };
 
 }
