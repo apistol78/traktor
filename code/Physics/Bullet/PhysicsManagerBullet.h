@@ -79,6 +79,7 @@ public:
 	virtual uint32_t querySphere(
 		const Vector4& at,
 		float radius,
+		uint32_t group,
 		uint32_t queryTypes,
 		RefArray< Body >& outBodies
 	) const;

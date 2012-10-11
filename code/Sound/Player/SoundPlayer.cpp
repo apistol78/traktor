@@ -68,9 +68,12 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->handle->detach();
 
 			i->position = Vector4::zero();
+			i->surroundFilter = 0;
+			i->lowPassFilter = 0;
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
 			i->soundChannel->setFilter(0);
+			i->priority = priority;
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
 
@@ -92,9 +95,12 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->handle->detach();
 
 			i->position = Vector4::zero();
+			i->surroundFilter = 0;
+			i->lowPassFilter = 0;
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
 			i->soundChannel->setFilter(0);
+			i->priority = priority;
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
 
@@ -113,7 +119,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Calculate distance from listener.
-	Scalar distance = (position - m_surroundEnvironment->getListenerTransform().translation()).length();
+	Scalar distance = (position - m_surroundEnvironment->getListenerTransform().translation()).xyz0().length();
 	if (distance > m_surroundEnvironment->getMaxDistance())
 		return 0;
 
@@ -144,6 +150,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
+			i->priority = priority;
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
 
@@ -170,6 +177,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
+			i->priority = priority;
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
 
@@ -196,6 +204,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
+			i->priority = priority;
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
 

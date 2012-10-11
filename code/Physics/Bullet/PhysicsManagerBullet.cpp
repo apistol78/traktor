@@ -1021,16 +1021,26 @@ bool PhysicsManagerBullet::queryRay(
 	return true;
 }
 
-uint32_t PhysicsManagerBullet::querySphere(const Vector4& at, float radius, uint32_t queryTypes, RefArray< Body >& outBodies) const
+uint32_t PhysicsManagerBullet::querySphere(
+	const Vector4& at,
+	float radius,
+	uint32_t group,
+	uint32_t queryTypes,
+	RefArray< Body >& outBodies
+) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	outBodies.resize(0);
 	for (RefArray< BodyBullet >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
 	{
-		if ((queryTypes & QtStatic) == 0 && (*i)->isStatic())
+		if (((*i)->getCollisionGroup() & group) == 0)
 			continue;
-		else if ((queryTypes & QtDynamic) == 0 && !(*i)->isStatic())
+
+		bool st = (*i)->isStatic();
+		if ((queryTypes & QtStatic) == 0 && st)
+			continue;
+		if ((queryTypes & QtDynamic) == 0 && !st)
 			continue;
 
 		btRigidBody* rigidBody = (*i)->getBtRigidBody();

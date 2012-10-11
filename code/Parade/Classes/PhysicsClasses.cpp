@@ -156,10 +156,16 @@ Ref< QueryResult > physics_PhysicsManager_queryRay(
 		return 0;
 }
 
-RefArray< physics::Body > physics_PhysicsManager_querySphere(physics::PhysicsManager* this_, const Vector4& at, float radius, uint32_t queryTypes)
+RefArray< physics::Body > physics_PhysicsManager_querySphere(
+	physics::PhysicsManager* this_,
+	const Vector4& at,
+	float radius,
+	uint32_t group,
+	uint32_t queryTypes
+)
 {
 	RefArray< physics::Body > bodies;
-	this_->querySphere(at, radius, queryTypes, bodies);
+	this_->querySphere(at, radius, group, queryTypes, bodies);
 	return bodies;
 }
 
