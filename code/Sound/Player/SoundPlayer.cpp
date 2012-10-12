@@ -48,6 +48,19 @@ bool SoundPlayer::create(SoundSystem* soundSystem, SurroundEnvironment* surround
 
 void SoundPlayer::destroy()
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+	{
+		if (i->handle)
+		{
+			i->handle->stop();
+			i->handle = 0;
+		}
+	}
+
+	m_channels.clear();
+	m_surroundEnvironment = 0;
 	m_soundSystem = 0;
 }
 

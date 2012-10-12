@@ -22,9 +22,9 @@ namespace traktor
 const handle_t c_broadcastHandle = 0UL;
 const float c_maxOffsetAdjust = 2.0f;
 const float c_nearDistance = 30.0f;
-const float c_farDistance = 250.0f;
+const float c_farDistance = 220.0f;
 const float c_nearTimeUntilTx = 1.0f / 16.0f;
-const float c_farTimeUntilTx = 1.0f / 8.0f;
+const float c_farTimeUntilTx = 1.0f / 10.0f;
 const float c_timeUntilIAm = 6.0f;
 const float c_timeUntilPing = 1.0f;
 const float c_peerTimeout = 20.0f;
@@ -230,14 +230,14 @@ void Replicator::update(float dT)
 			sizeof(msg.data)
 		);
 
-		uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + ss;
+		uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + ss;
 
 		// Collect peers to which we should send state to.
 		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 		{
 			Peer& peer = i->second;
 
-			if (!peer.established || !peer.ghost)
+			if (!peer.established || peer.disconnected || !peer.ghost)
 				continue;
 			if ((peer.timeUntilTx -= dT) > 0.0f)
 				continue;
@@ -246,11 +246,17 @@ void Replicator::update(float dT)
 
 			if (m_replicatorPeers->send(i->first, &msg, msgSize, false))
 			{
-				float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
-				float t0 = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-				float t1 = std::sqrt(t0);
-				float t = lerp(t0, t1, c_distanceBlend);
-				peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
+				if (peer.ghost->stateTemplate)
+				{
+					float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
+					float t0 = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
+					float t1 = std::sqrt(t0);
+					float t = lerp(t0, t1, c_distanceBlend);
+					peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
+				}
+				else
+					peer.timeUntilTx = c_nearTimeUntilTx;
+
 				peer.errorCount = 0;
 			}
 			else
@@ -276,13 +282,13 @@ void Replicator::update(float dT)
 			cs.writeObject(i->object);
 			cs.flush();
 
-			uint32_t msgSize = sizeof(uint8_t) + sizeof(float) + s.tell();
+			uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + s.tell();
 
 			if (i->handle == c_broadcastHandle)
 			{
 				for (std::map< handle_t, Peer >::iterator j = m_peers.begin(); j != m_peers.end(); ++j)
 				{
-					if (!j->second.established)
+					if (!j->second.established || j->second.disconnected)
 						continue;
 
 					if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
@@ -312,7 +318,8 @@ void Replicator::update(float dT)
 						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L")" << Endl;
 						
 						// Re-send this event to peer next iteration.
-						eventsOut.push_back(*i);
+						if (j->second.established && !j->second.disconnected)
+							eventsOut.push_back(*i);
 
 						j->second.errorCount++;
 					}
