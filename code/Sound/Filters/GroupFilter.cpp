@@ -29,6 +29,14 @@ GroupFilter::GroupFilter(IFilter* filter1, IFilter* filter2)
 	m_filters[1] = filter2;
 }
 
+GroupFilter::GroupFilter(IFilter* filter1, IFilter* filter2, IFilter* filter3)
+{
+	m_filters.resize(3);
+	m_filters[0] = filter1;
+	m_filters[1] = filter2;
+	m_filters[2] = filter3;
+}
+
 void GroupFilter::addFilter(IFilter* filter)
 {
 	m_filters.push_back(filter);

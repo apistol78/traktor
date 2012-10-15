@@ -167,8 +167,16 @@ void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 			x = (x - minX) / (maxX - minX);
 			y = (y - minY) / (maxY - minY);
 
-			int32_t mx = int32_t(renderView->getWidth() * x);
-			int32_t my = int32_t(renderView->getHeight() * y);
+			int32_t width = renderView->getWidth();
+			int32_t height = renderView->getHeight();
+
+			float viewRatio = m_environment->getRender()->getViewAspectRatio();
+			float aspectRatio = m_environment->getRender()->getAspectRatio();
+
+			width = int32_t(width * aspectRatio / viewRatio);
+
+			int32_t mx = int32_t(width * x);
+			int32_t my = int32_t(height * y);
 
 			int32_t mb =
 				(mouseDevice->getControlValue(button1) > 0.5f ? 1 : 0) |
@@ -250,6 +258,11 @@ void FlashLayer::reconfigured(Stage* stage)
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
 
+	float viewRatio = m_environment->getRender()->getViewAspectRatio();
+	float aspectRatio = m_environment->getRender()->getAspectRatio();
+
+	width = int32_t(width * aspectRatio / viewRatio);
+
 	m_moviePlayer->postViewResize(width, height);
 }
 
@@ -293,6 +306,11 @@ void FlashLayer::createMoviePlayer()
 
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
+
+	float viewRatio = m_environment->getRender()->getViewAspectRatio();
+	float aspectRatio = m_environment->getRender()->getAspectRatio();
+
+	width = int32_t(width * aspectRatio / viewRatio);
 
 	// Create accelerated Flash renderer.
 	Ref< flash::AccDisplayRenderer > displayRenderer = new flash::AccDisplayRenderer();

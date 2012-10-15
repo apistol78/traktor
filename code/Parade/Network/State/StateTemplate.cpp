@@ -9,6 +9,12 @@ namespace traktor
 {
 	namespace parade
 	{
+		namespace
+		{
+
+const float c_maxExtrapolationDelta = 2.0f;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.StateTemplate", StateTemplate, Object)
 
@@ -17,8 +23,11 @@ void StateTemplate::declare(const IValueTemplate* value)
 	m_valueTemplates.push_back(value);
 }
 
-Ref< State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, const State* S, float T) const
+Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, const State* S, float T) const
 {
+	if (T > T0 + c_maxExtrapolationDelta)
+		return 0;
+
 	if (Sn2 && Sn1 && S0 && S)
 	{
 		const RefArray< const IValue >& Vn2 = Sn2->getValues();
@@ -97,7 +106,7 @@ uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) 
 	return stream.tell();
 }
 
-Ref< State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize) const
+Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize) const
 {
 	MemoryStream stream(buffer, bufferSize);
 	BitReader reader(&stream);
@@ -108,7 +117,8 @@ Ref< State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize) cons
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
 		T_ASSERT (valueTemplate);
 
-		V[i] = valueTemplate->unpack(reader);
+		if ((V[i] = valueTemplate->unpack(reader)) == 0)
+			return 0;
 	}
 
 	return new State(V);

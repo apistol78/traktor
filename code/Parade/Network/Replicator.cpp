@@ -28,7 +28,6 @@ const float c_farTimeUntilTx = 1.0f / 10.0f;
 const float c_timeUntilIAm = 6.0f;
 const float c_timeUntilPing = 1.0f;
 const float c_peerTimeout = 20.0f;
-const float c_distanceBlend = 0.75f;
 const float c_maxExtrapolateTime = 4.0f;
 const uint32_t c_maxPendingPing = 16;
 const uint32_t c_maxErrorCount = 4;
@@ -249,9 +248,7 @@ void Replicator::update(float dT)
 				if (peer.ghost->stateTemplate)
 				{
 					float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
-					float t0 = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-					float t1 = std::sqrt(t0);
-					float t = lerp(t0, t1, c_distanceBlend);
+					float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
 					peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
 				}
 				else
@@ -527,7 +524,7 @@ void Replicator::update(float dT)
 
 				if (peer.ghost->stateTemplate)
 				{
-					Ref< State > state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+					Ref< const State > state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
 					if (state)
 					{
 						peer.ghost->Sn2 = peer.ghost->Sn1;
@@ -549,7 +546,7 @@ void Replicator::update(float dT)
 				// Received an old out-of-order package.
 				if (peer.ghost->stateTemplate)
 				{
-					Ref< State > state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+					Ref< const State > state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
 					if (state)
 					{
 						if (time > peer.ghost->Tn1)
@@ -622,6 +619,7 @@ void Replicator::setOrigin(const Vector4& origin)
 void Replicator::setStateTemplate(const StateTemplate* stateTemplate)
 {
 	m_stateTemplate = stateTemplate;
+	m_state = 0;
 }
 
 void Replicator::setState(const State* state)
@@ -736,7 +734,15 @@ void Replicator::setGhostStateTemplate(handle_t peerHandle, const StateTemplate*
 {
 	std::map< handle_t, Peer >::iterator i = m_peers.find(peerHandle);
 	if (i != m_peers.end() && i->second.ghost)
+	{
 		i->second.ghost->stateTemplate = stateTemplate;
+		i->second.ghost->Sn2 = 0;
+		i->second.ghost->Sn1 = 0;
+		i->second.ghost->S0 = 0;
+		i->second.ghost->Tn2 = 0.0f;
+		i->second.ghost->Tn1 = 0.0f;
+		i->second.ghost->T0 = 0.0f;
+	}
 	else
 		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);
 }

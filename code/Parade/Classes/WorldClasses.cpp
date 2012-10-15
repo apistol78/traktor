@@ -46,6 +46,15 @@ void world_PostProcess_setParameter(world::PostProcess* this_, const std::wstrin
 	this_->setParameter(render::getParameterHandle(name), value);
 }
 
+void world_Entity_update(world::Entity* this_, float totalTime, float deltaTime)
+{
+	world::Entity::UpdateParams up;
+	up.totalTime = totalTime;
+	up.deltaTime = deltaTime;
+	up.alternateTime = totalTime;
+	this_->update(up);
+}
+
 		}
 
 void registerWorldClasses(script::IScriptManager* scriptManager)
@@ -96,6 +105,7 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	classEntity->addMethod(L"getTransform", &world_Entity_getTransform);
 	classEntity->addMethod(L"getBoundingBox", &world::Entity::getBoundingBox);
 	classEntity->addMethod(L"getWorldBoundingBox", &world::Entity::getWorldBoundingBox);
+	classEntity->addMethod(L"update", &world_Entity_update);
 	scriptManager->registerClass(classEntity);
 
 	Ref< script::AutoScriptClass< world::GroupEntity > > classGroupEntity = new script::AutoScriptClass< world::GroupEntity >();

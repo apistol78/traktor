@@ -1,7 +1,7 @@
-#ifndef traktor_sound_GroupFilter_H
-#define traktor_sound_GroupFilter_H
+#ifndef traktor_sound_EchoFilter_H
+#define traktor_sound_EchoFilter_H
 
-#include "Core/RefArray.h"
+#include "Core/Math/Scalar.h"
 #include "Sound/IFilter.h"
 
 // import/export mechanism.
@@ -17,21 +17,17 @@ namespace traktor
 	namespace sound
 	{
 
-/*! \brief Group filter.
+/*! \brief Echo filter.
  * \ingroup Sound
  */
-class T_DLLCLASS GroupFilter : public IFilter
+class T_DLLCLASS EchoFilter : public IFilter
 {
 	T_RTTI_CLASS;
 
 public:
-	GroupFilter();
+	EchoFilter();
 
-	GroupFilter(IFilter* filter1, IFilter* filter2);
-
-	GroupFilter(IFilter* filter1, IFilter* filter2, IFilter* filter3);
-
-	void addFilter(IFilter* filter);
+	EchoFilter(float delay, float decay, float wetMix, float dryMix);
 
 	virtual Ref< IFilterInstance > createInstance() const;
 
@@ -40,10 +36,13 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
-	RefArray< IFilter > m_filters;
+	float m_delay;
+	float m_decay;
+	Scalar m_wetMix;
+	Scalar m_dryMix;
 };
 
 	}
 }
 
-#endif	// traktor_sound_GroupFilter_H
+#endif	// traktor_sound_EchoFilter_H

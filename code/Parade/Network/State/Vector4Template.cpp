@@ -1,5 +1,6 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
+#include "Core/Math/Const.h"
 #include "Parade/Network/State/Vector4Value.h"
 #include "Parade/Network/State/Vector4Template.h"
 
@@ -26,8 +27,8 @@ void Vector4Template::pack(BitWriter& writer, const IValue* V) const
 {
 	Vector4 v = *checked_type_cast< const Vector4Value* >(V);
 
-	float T_MATH_ALIGN16 e[4];
-	v.storeAligned(e);
+	float e[4];
+	v.storeUnaligned(e);
 
 	writer.writeUnsigned(32, *(uint32_t*)&e[0]);
 	writer.writeUnsigned(32, *(uint32_t*)&e[1]);
@@ -68,8 +69,14 @@ Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn2, float Tn2, c
 {
 	Vector4 fn1 = *checked_type_cast< const Vector4Value* >(Vn1);
 	Vector4 f0 = *checked_type_cast< const Vector4Value* >(V0);
-	float k = (T - Tn1) / (T0 - Tn1);
-	return new Vector4Value(f0 + (fn1 - f0) * Scalar(k));
+
+	if (T0 > Tn1 + FUZZY_EPSILON)
+	{
+		float k = (T - Tn1) / (T0 - Tn1);
+		return new Vector4Value(f0 + (fn1 - f0) * Scalar(k));
+	}
+	else
+		return new Vector4Value(f0);
 }
 
 	}

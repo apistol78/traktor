@@ -118,7 +118,7 @@ Transform lerp(const Transform& a, const Transform& b, const Scalar& c)
 {
 	return Transform(
 		lerp(a.translation(), b.translation(), c),
-		lerp(a.rotation(), b.rotation(), c)
+		slerp(a.rotation(), b.rotation(), c).normalized()
 	);
 }
 
