@@ -1,8 +1,10 @@
+#include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Thread/Acquire.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundChannel.h"
 #include "Sound/SoundSystem.h"
+#include "Sound/Filters/EchoFilter.h"
 #include "Sound/Filters/GroupFilter.h"
 #include "Sound/Filters/LowPassFilter.h"
 #include "Sound/Filters/SurroundEnvironment.h"
@@ -83,6 +85,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 			i->position = Vector4::zero();
 			i->surroundFilter = 0;
 			i->lowPassFilter = 0;
+			i->echoFilter = 0;
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
 			i->soundChannel->setFilter(0);
@@ -110,6 +113,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 			i->position = Vector4::zero();
 			i->surroundFilter = 0;
 			i->lowPassFilter = 0;
+			i->echoFilter = 0;
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
 			i->soundChannel->setFilter(0);
@@ -140,13 +144,37 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 	float k1 = distance / m_surroundEnvironment->getInnerRadius();
 	float k2 = (distance - m_surroundEnvironment->getInnerRadius()) / (m_surroundEnvironment->getMaxDistance() - m_surroundEnvironment->getInnerRadius());
 
+	// Surround filter.
+	Ref< SurroundFilter > surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
+
 	// Calculate initial cut-off frequency.
 	float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
+	Ref< LowPassFilter > lowPassFilter = new LowPassFilter(cutOff);
 
 	// Calculate presence; further sounds have less presence.
 	// As long as the sound originate inside inner radius then
 	// original presence is kept.
-	float presence = lerp(sound->getPresence(), 0.0f, clamp(k2, 0.0f, 1.0f)); 
+	float presence = lerp(sound->getPresence(), 0.0f, clamp(k2, 0.0f, 1.0f));
+
+	// Calculate echo.
+	Ref< EchoFilter > echoFilter;
+	float delay = 0.2f * clamp((k0 - 0.2f) / 0.2f, 0.0f, 1.0f);
+	if (delay > FUZZY_EPSILON)
+	{
+		echoFilter = new EchoFilter(
+			delay,
+			0.2f,
+			0.7f,
+			0.5f
+		);
+	}
+
+	// Create group filter.
+	Ref< GroupFilter > groupFilter;
+	if (echoFilter)
+		groupFilter = new GroupFilter(lowPassFilter, echoFilter, surroundFilter);
+	else
+		groupFilter = new GroupFilter(lowPassFilter, surroundFilter);
 
 	// First try to associate sound with non-playing channel;
 	// also check if sound has recently been played.
@@ -158,11 +186,12 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->handle->detach();
 
 			i->position = position.xyz1();
-			i->surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
-			i->lowPassFilter = new LowPassFilter(cutOff);
+			i->surroundFilter = surroundFilter;
+			i->lowPassFilter = lowPassFilter;
+			i->echoFilter = echoFilter;
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
-			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
+			i->soundChannel->setFilter(groupFilter);
 			i->priority = priority;
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
@@ -185,11 +214,12 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->handle->detach();
 
 			i->position = position.xyz1();
-			i->surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
-			i->lowPassFilter = new LowPassFilter(cutOff);
+			i->surroundFilter = surroundFilter;
+			i->lowPassFilter = lowPassFilter;
+			i->echoFilter = echoFilter;
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
-			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
+			i->soundChannel->setFilter(groupFilter);
 			i->priority = priority;
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
@@ -212,11 +242,12 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->handle->detach();
 
 			i->position = position.xyz1();
-			i->surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());
-			i->lowPassFilter = new LowPassFilter(cutOff);
+			i->surroundFilter = surroundFilter;
+			i->lowPassFilter = lowPassFilter;
+			i->echoFilter = echoFilter;
 			i->sound = sound;
 			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
-			i->soundChannel->setFilter(new GroupFilter(i->lowPassFilter, i->surroundFilter));
+			i->soundChannel->setFilter(groupFilter);
 			i->priority = priority;
 			i->time = m_time;
 			i->handle = new SoundHandle(i->soundChannel, i->position);
@@ -267,8 +298,8 @@ void SoundPlayer::update(float dT)
 			}
 
 			// Calculate cut-off frequency.
-			float k = distance / maxDistance;
-			float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k));
+			float k0 = distance / maxDistance;
+			float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
 
 			// Set filter parameters.
 			i->lowPassFilter->setCutOff(cutOff);

@@ -75,6 +75,14 @@ public:
 		return m_items[m_front];
 	}
 
+	const ItemType& offset(int32_t index) const
+	{
+		if (index < 0)
+			return m_items[(m_back + index) % Capacity];
+		else
+			return m_items[(m_front + index) % Capacity];
+	}
+
 	const ItemType& operator [] (uint32_t index) const
 	{
 		return m_items[(index + m_front) % Capacity];

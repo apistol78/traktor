@@ -161,8 +161,6 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 
 	if (desc.fullscreen)
 	{
-		m_window->setFullScreenStyle(dm.width, dm.height);
-
 		std::memset(&scd, 0, sizeof(scd));
 		scd.SampleDesc.Count = 1;
 		scd.SampleDesc.Quality = 0;
@@ -180,11 +178,11 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 				return false;
 			}
 		}
+
+		m_window->setFullScreenStyle(scd.BufferDesc.Width, scd.BufferDesc.Height);
 	}
 	else
 	{
-		m_window->setWindowedStyle(dm.width, dm.height);
-
 		std::memset(&scd, 0, sizeof(scd));
 		scd.SampleDesc.Count = 1;
 		scd.SampleDesc.Quality = 0;
@@ -195,6 +193,8 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 		scd.BufferUsage = DXGI_USAGE_RENDER_TARGET_OUTPUT;
 		scd.OutputWindow = *m_window;
 		scd.Windowed = TRUE;
+
+		m_window->setWindowedStyle(scd.BufferDesc.Width, scd.BufferDesc.Height);
 	}
 
 	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))

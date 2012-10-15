@@ -116,7 +116,7 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 		SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, 0, 0, SWP_NOMOVE | SWP_NOSIZE | SWP_FRAMECHANGED);
 	}
 
-	SetWindowPos(m_hWnd, NULL, 0, 0, width, height, SWP_NOZORDER);
+	SetWindowPos(m_hWnd, HWND_TOPMOST, 0, 0, width, height, SWP_SHOWWINDOW);
 	ShowWindow(m_hWnd, SW_MAXIMIZE);
 
 	m_fullScreen = true;

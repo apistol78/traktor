@@ -1,6 +1,7 @@
 #include <limits>
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Parade/Network/State/FloatValue.h"
 #include "Parade/Network/State/FloatTemplate.h"
@@ -13,6 +14,14 @@ namespace traktor
 		{
 
 const float c_idleThreshold = 1e-4f;
+
+float safeDenom(float v)
+{
+	if (abs(v) < FUZZY_EPSILON)
+		return FUZZY_EPSILON * sign(v);
+	else
+		return v;
+}
 
 		}
 
@@ -92,14 +101,17 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 {
 	float fn1 = *checked_type_cast< const FloatValue* >(Vn1);
 	float f0 = *checked_type_cast< const FloatValue* >(V0);
+
+	float dT_n2_n1 = safeDenom(Tn1 - Tn2);
+	float dT_n1_0 = safeDenom(T0 - Tn1);
 	
 	if (Vn2)
 	{
 		float fn2 = *checked_type_cast< const FloatValue* >(Vn2);
 
-		float v2_1 = (fn1 - fn2) / (Tn1 - Tn2);
-		float v1_0 = (f0 - fn1) / (T0 - Tn1);
-		float a = clamp((v1_0 - v2_1) / (T0 - Tn1), -1.0f, 1.0f);
+		float v2_1 = (fn1 - fn2) / dT_n2_n1;
+		float v1_0 = (f0 - fn1) / dT_n1_0;
+		float a = clamp((v1_0 - v2_1) / dT_n1_0, -1.0f, 1.0f);
 		float f = f0 + (f0 - fn1) * (T - T0) + 0.5f * a * (T - T0) * (T - T0);
 
 		if (m_min < m_max)
@@ -109,7 +121,7 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 	}
 	else
 	{
-		float k = (T - Tn1) / (T0 - Tn1);
+		float k = (T - Tn1) / dT_n1_0;
 		float f = f0 + (fn1 - f0) * k;
 
 		if (m_min < m_max)

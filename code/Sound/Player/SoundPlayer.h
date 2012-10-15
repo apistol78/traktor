@@ -18,6 +18,7 @@ namespace traktor
 	namespace sound
 	{
 
+class EchoFilter;
 class LowPassFilter;
 class SoundChannel;
 class SoundHandle;
@@ -52,6 +53,7 @@ private:
 		Vector4 position;
 		Ref< SurroundFilter > surroundFilter;
 		Ref< LowPassFilter > lowPassFilter;
+		Ref< EchoFilter > echoFilter;
 		const Sound* sound;
 		SoundChannel* soundChannel;
 		uint32_t priority;

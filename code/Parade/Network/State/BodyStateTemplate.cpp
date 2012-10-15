@@ -1,5 +1,6 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
+#include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Parade/Network/State/BodyStateValue.h"
@@ -34,34 +35,50 @@ Vector4 clampV4(const Vector4& v, const Vector4& minV, const Vector4& maxV)
 	return max(min(v, maxV), minV);
 }
 
+float safeSqrt(float v)
+{
+	if (v > 0.0f)
+		return std::sqrt(v);
+	else
+		return 0.0f;
+}
+
+float safeDenom(float v)
+{
+	if (abs(v) < FUZZY_EPSILON)
+		return FUZZY_EPSILON * sign(v);
+	else
+		return v;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.BodyStateTemplate", BodyStateTemplate, IValueTemplate)
 
 void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 {
-	float T_MATH_ALIGN16 e[4];
+	float e[4];
 
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);
 	const Transform& T = v.getTransform();
 
-	T.translation().storeAligned(e);
+	T.translation().storeUnaligned(e);
 	for (uint32_t i = 0; i < 3; ++i)
 		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
 
-	T.rotation().e.storeAligned(e);
+	T.rotation().e.storeUnaligned(e);
 	for (uint32_t i = 0; i < 3; ++i)
 		packUnit(writer, e[i]);
 
 	writer.writeBit(e[3] < 0.0f);
 
-	v.getLinearVelocity().storeAligned(e);
+	v.getLinearVelocity().storeUnaligned(e);
 
 	writer.writeUnsigned(32, *(uint32_t*)&e[0]);
 	writer.writeUnsigned(32, *(uint32_t*)&e[1]);
 	writer.writeUnsigned(32, *(uint32_t*)&e[2]);
 
-	v.getAngularVelocity().storeAligned(e);
+	v.getAngularVelocity().storeUnaligned(e);
 
 	writer.writeUnsigned(32, *(uint32_t*)&e[0]);
 	writer.writeUnsigned(32, *(uint32_t*)&e[1]);
@@ -92,7 +109,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 			f[0],
 			f[1],
 			f[2],
-			std::sqrt(1.0f - f[0] * f[0] - f[1] * f[1] - f[2] * f[2]) * sign
+			safeSqrt(1.0f - f[0] * f[0] - f[1] * f[1] - f[2] * f[2]) * sign
 		).normalized()
 	);
 
@@ -126,13 +143,18 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 
 Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
-	const Scalar dT(1.0f / 60.0f);
+	const Vector4 c_linearAccThreshold(1.0f, 1.0f, 1.0f, 0.0f);
+	const Vector4 c_angularAccThreshold(0.3f, 0.3f, 0.3f, 0.0f);
+
+	Scalar dT_0(safeDenom(T - T0));
+	Scalar dT_n1_0(safeDenom(T0 - Tn1));
+	Scalar dT_n2_n1(safeDenom(Tn1 - Tn2));
 
 	const physics::BodyState& Sn1 = *checked_type_cast< const BodyStateValue* >(Vn1);
 	const physics::BodyState& S0 = *checked_type_cast< const BodyStateValue* >(V0);
 
-	Vector4 Al = (S0.getLinearVelocity() - Sn1.getLinearVelocity()) / Scalar(T0 - Tn1);
-	Vector4 Aa = (S0.getAngularVelocity() - Sn1.getAngularVelocity()) / Scalar(T0 - Tn1);
+	Vector4 Al = (S0.getLinearVelocity() - Sn1.getLinearVelocity()) / dT_n1_0;
+	Vector4 Aa = (S0.getAngularVelocity() - Sn1.getAngularVelocity()) / dT_n1_0;
 
 	Vector4 Al_prim = Vector4::zero();
 	Vector4 Aa_prim = Vector4::zero();
@@ -141,14 +163,11 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	{
 		const physics::BodyState& Sn2 = *checked_type_cast< const BodyStateValue* >(Vn2);
 
-		Vector4 Al_n2_n1 = (Sn1.getLinearVelocity() - Sn2.getLinearVelocity()) / Scalar(Tn1 - Tn2);
-		Vector4 Aa_n2_n1 = (Sn1.getAngularVelocity() - Sn2.getAngularVelocity()) / Scalar(Tn1 - Tn2);
+		Vector4 Al_n2_n1 = (Sn1.getLinearVelocity() - Sn2.getLinearVelocity()) / dT_n2_n1;
+		Vector4 Aa_n2_n1 = (Sn1.getAngularVelocity() - Sn2.getAngularVelocity()) / dT_n2_n1;
 
-		Al_prim = (Al - Al_n2_n1) / Scalar(T0 - Tn1);
-		Aa_prim = (Aa - Aa_n2_n1) / Scalar(T0 - Tn1);
-
-		const Vector4 c_linearAccThreshold(1.0f, 1.0f, 1.0f, 0.0f);
-		const Vector4 c_angularAccThreshold(1.0f, 1.0f, 1.0f, 0.0f);
+		Al_prim = (Al - Al_n2_n1) / Scalar(dT_n1_0);
+		Aa_prim = (Aa - Aa_n2_n1) / Scalar(dT_n1_0);
 
 		Al_prim = clampV4(Al_prim, -c_linearAccThreshold, c_linearAccThreshold);
 		Aa_prim = clampV4(Aa_prim, -c_angularAccThreshold, c_angularAccThreshold);
@@ -160,32 +179,14 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	Vector4 P = S0.getTransform().translation().xyz1();
 	Quaternion R = S0.getTransform().rotation();
 
-	Scalar T_0_c(T - T0);
-	while (T_0_c >= dT)
-	{
-		Al += Al_prim * Scalar(0.5f) * dT * dT;
-		Aa += Aa_prim * Scalar(0.5f) * dT * dT;
+	Al += Al_prim * Scalar(0.5f) * dT_0 * dT_0;
+	Aa += Aa_prim * Scalar(0.5f) * dT_0 * dT_0;
 
-		Vl += Al * dT;
-		Va += Aa * dT;
+	Vl += Al * dT_0;
+	Va += Aa * dT_0;
 
-		P += Vl * dT;
-		R = Quaternion::fromAxisAngle(Va * dT) * R;
-
-		T_0_c -= dT;
-	}
-
-	if (T_0_c > 0.0f)
-	{
-		Al += Al_prim * Scalar(0.5f) * T_0_c * T_0_c;
-		Aa += Aa_prim * Scalar(0.5f) * T_0_c * T_0_c;
-
-		Vl += Al * T_0_c;
-		Va += Aa * T_0_c;
-
-		P += Vl * T_0_c;
-		R = Quaternion::fromAxisAngle(Va * T_0_c) * R;
-	}
+	P += Vl * dT_0;
+	R = Quaternion::fromAxisAngle(Va * dT_0) * R;
 
 	physics::BodyState S;
 	S.setTransform(Transform(P, R.normalized()));
@@ -203,9 +204,11 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 
 		if (ln < c_maxRubberBandDistance)
 		{
-			float k0 = clamp((T - T0) / c_maxRubberBandTime + (ln / c_maxRubberBandDistance), 0.0f, 1.0f);
-			float k1 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k0);
-			S = S.interpolate(Sc, Scalar(k1));
+			float k0 = dT_0 / c_maxRubberBandTime;
+			float k1 = ln / c_maxRubberBandDistance;
+			float k2 = clamp(max(k0, k1), 0.0f, 1.0f);
+			float k3 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k2);
+			S = S.interpolate(Sc, Scalar(k3));
 		}
 	}
 
