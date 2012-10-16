@@ -192,90 +192,95 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		new ui::WidgetFactoryWin32()
 	);
 
-	// Override settings path either from command line or application bundle.
-	Path settingsPath = L"Application.config";
-	if (cmdLine.getCount() >= 1)
-		settingsPath = cmdLine.getString(0);
-
-	Ref< PropertyGroup > defaultSettings = loadSettings(settingsPath);
-	if (!defaultSettings)
+	try
 	{
-		log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
-		log::error << L"Please reinstall application." << Endl;
-		showErrorDialog(logTail->m_tail);
-		return 1;
-	}
+		// Override settings path either from command line or application bundle.
+		Path settingsPath = L"Application.config";
+		if (cmdLine.getCount() >= 1)
+			settingsPath = cmdLine.getString(0);
 
-	Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
-	T_FATAL_ASSERT (settings);
-
-	// Merge user settings into application settings.
-	if (!cmdLine.hasOption('s', L"no-settings"))
-	{
-		Path userSettingsPath;
-		Ref< PropertyGroup > userSettings;
-
-		// First try to load user settings from current working directory; ie. same directory as
-		// the main executable.
-		userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
-		userSettings = loadSettings(userSettingsPath);
-	
-		// Try to load user settings from user's application data path; sometimes it's not possible
-		// to store user settings alongside executable due to restrictive privileges.
-		if (!userSettings)
+		Ref< PropertyGroup > defaultSettings = loadSettings(settingsPath);
+		if (!defaultSettings)
 		{
-			userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
-			userSettings = loadSettings(userSettingsPath);
+			log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
+			log::error << L"Please reinstall application." << Endl;
+			showErrorDialog(logTail->m_tail);
+			return 1;
 		}
 
-		if (userSettings)
-			settings = settings->mergeReplace(userSettings);
-	}
+		Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
+		T_FATAL_ASSERT (settings);
 
-	if (!settings)
-	{
-		log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
-		log::error << L"Please reinstall application." << Endl;
-		showErrorDialog(logTail->m_tail);
-		return 1;
-	}
-
-	// Create amalgam application.
-	Ref< amalgam::Application > application = new amalgam::Application();
-	if (application->create(
-		defaultSettings,
-		settings,
-		0
-	))
-	{
-		for (;;)
-		{
-			if (!application->update())
-				break;
-		}
-
-		safeDestroy(application);
-
-		// Save user settings.
+		// Merge user settings into application settings.
 		if (!cmdLine.hasOption('s', L"no-settings"))
 		{
-			Path userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
-			if (!saveSettings(settings, userSettingsPath))
+			Path userSettingsPath;
+			Ref< PropertyGroup > userSettings;
+
+			// First try to load user settings from current working directory; ie. same directory as
+			// the main executable.
+			userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+			userSettings = loadSettings(userSettingsPath);
+	
+			// Try to load user settings from user's application data path; sometimes it's not possible
+			// to store user settings alongside executable due to restrictive privileges.
+			if (!userSettings)
 			{
 				userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+				userSettings = loadSettings(userSettingsPath);
+			}
+
+			if (userSettings)
+				settings = settings->mergeReplace(userSettings);
+		}
+
+		if (!settings)
+		{
+			log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
+			log::error << L"Please reinstall application." << Endl;
+			showErrorDialog(logTail->m_tail);
+			return 1;
+		}
+
+		// Create amalgam application.
+		Ref< amalgam::Application > application = new amalgam::Application();
+		if (application->create(
+			defaultSettings,
+			settings,
+			0
+		))
+		{
+			for (;;)
+			{
+				if (!application->update())
+					break;
+			}
+
+			safeDestroy(application);
+
+			// Save user settings.
+			if (!cmdLine.hasOption('s', L"no-settings"))
+			{
+				Path userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
 				if (!saveSettings(settings, userSettingsPath))
-					log::error << L"Unable to save user settings; user changes not saved" << Endl;
+				{
+					userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+					if (!saveSettings(settings, userSettingsPath))
+						log::error << L"Unable to save user settings; user changes not saved" << Endl;
+				}
 			}
 		}
+		else
+		{
+			safeDestroy(application);
+			showErrorDialog(logTail->m_tail);
+		}
 	}
-	else
+	catch (...)
 	{
-		safeDestroy(application);
+		log::error << L"Unhandled exception occurred" << Endl;
 		showErrorDialog(logTail->m_tail);
 	}
-	
-	settings;
-	defaultSettings;
 
 	ui::Application::getInstance()->finalize();
 

@@ -9,6 +9,8 @@ namespace traktor
 		namespace
 		{
 
+const int32_t c_maximumStep = 16;
+
 inline float quantizeMin(float v)
 {
 	return floorf(v - 1.0f);
@@ -79,8 +81,11 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 	if (imnx >= imxx || imnz >= imxz)
 		return;
 
-	const int32_t cx = ((imxx - imnx) >> 1) | 1;
-	const int32_t cz = ((imxz - imnz) >> 1) | 1;
+	int32_t cx = ((imxx - imnx) >> 1) | 1;
+	int32_t cz = ((imxz - imnz) >> 1) | 1;
+
+	cx = min(cx, c_maximumStep);
+	cz = min(cz, c_maximumStep);
 
 	for (int32_t u = imnx; u < imxx; u += cx)
 	{
