@@ -36,6 +36,7 @@ SphereSource::SphereSource(
 void SphereSource::emit(
 	Context& context,
 	const Transform& transform,
+	const Vector4& deltaMotion,
 	uint32_t emitCount,
 	EmitterInstance& emitterInstance
 ) const
@@ -48,7 +49,7 @@ void SphereSource::emit(
 	{
 		Vector4 direction = context.random.nextUnit();
 
-		point->position = position + direction * Scalar(m_radius.random(context.random));
+		point->position = position - deltaMotion * Scalar(context.random.nextFloat()) + direction * Scalar(m_radius.random(context.random));
 		point->velocity = direction * Scalar(m_velocity.random(context.random));
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);

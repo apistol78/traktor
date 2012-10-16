@@ -59,7 +59,7 @@ protected:
 	virtual void destroy() { delete this; }
 
 private:
-	enum { MaxJobCount = 16*1024 };
+	enum { MaxJobCount = 64*1024 };
 	enum { MaxJobSize = sizeof(Job) };
 
 	void* m_block;

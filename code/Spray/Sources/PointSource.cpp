@@ -34,6 +34,7 @@ PointSource::PointSource(
 void PointSource::emit(
 	Context& context,
 	const Transform& transform,
+	const Vector4& deltaMotion,
 	uint32_t emitCount,
 	EmitterInstance& emitterInstance
 ) const
@@ -44,7 +45,7 @@ void PointSource::emit(
 
 	while (emitCount-- > 0)
 	{
-		point->position = position;
+		point->position = position - deltaMotion * Scalar(context.random.nextFloat());
 		point->velocity = context.random.nextUnit() * Scalar(m_velocity.random(context.random));
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);

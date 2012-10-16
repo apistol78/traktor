@@ -42,6 +42,7 @@ public:
 	virtual void emit(
 		Context& context,
 		const Transform& transform,
+		const Vector4& deltaMotion,
 		uint32_t emitCount,
 		EmitterInstance& emitterInstance
 	) const;

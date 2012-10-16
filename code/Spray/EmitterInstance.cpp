@@ -120,9 +120,10 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		const Source* source = m_emitter->getSource();
 		if (source)
 		{
+			Vector4 dm = T.translation() - m_position;
+
 			if (!singleShot)
 			{
-				Vector4 dm = T.translation() - m_position;
 				float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
 				float emitConstant = source->getConstantRate() * context.deltaTime;
 				float emit = emitVelocity + emitConstant + m_emitFraction;
@@ -136,6 +137,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 					source->emit(
 						context,
 						T,
+						dm,
 						emitCount,
 						*this
 					);
@@ -152,6 +154,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				source->emit(
 					context,
 					T,
+					dm,
 					emitCount,
 					*this
 				);
