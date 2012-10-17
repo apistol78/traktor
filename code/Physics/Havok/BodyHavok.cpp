@@ -63,6 +63,11 @@ bool BodyHavok::isStatic() const
 	return false;
 }
 
+bool BodyHavok::isKinematic() const
+{
+	return false;
+}
+
 void BodyHavok::setActive(bool active)
 {
 	if (active)

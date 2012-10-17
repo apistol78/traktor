@@ -60,6 +60,11 @@ bool BodyPhysX::isStatic() const
 	return !m_actor->isDynamic();
 }
 
+bool BodyPhysX::isKinematic() const
+{
+	return false;
+}
+
 void BodyPhysX::setActive(bool active)
 {
 	if (!active)

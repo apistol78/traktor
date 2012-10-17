@@ -39,6 +39,8 @@ public:
 
 	virtual bool isStatic() const;
 
+	virtual bool isKinematic() const;
+
 	virtual void setActive(bool active);
 
 	virtual bool isActive() const;

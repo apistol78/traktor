@@ -54,6 +54,9 @@ public:
 	/*! \brief Get type of body. */
 	virtual bool isStatic() const = 0;
 
+	/*! \brief Get type of body. */
+	virtual bool isKinematic() const = 0;
+
 	/*! \brief Set rigid body active state.
 	 *
 	 * Activation state control if body is
