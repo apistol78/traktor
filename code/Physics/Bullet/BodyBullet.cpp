@@ -87,6 +87,11 @@ bool BodyBullet::isStatic() const
 	return m_body->isStaticOrKinematicObject();
 }
 
+bool BodyBullet::isKinematic() const
+{
+	return m_body->isKinematicObject();
+}
+
 void BodyBullet::setActive(bool active)
 {
 	if (!m_body->isKinematicObject())
