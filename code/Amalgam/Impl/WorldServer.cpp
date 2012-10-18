@@ -27,6 +27,7 @@
 #include "Weather/WeatherEntityFactory.h"
 #include "Weather/WeatherEntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
+#include "World/Entity/DecalEntityRenderer.h"
 #include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityResourceFactory.h"
 #include "World/Entity/GroupEntityRenderer.h"
@@ -61,6 +62,7 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	float sprayLod2Distance = settings->getProperty< PropertyFloat >(L"World.SprayLod2", 90.0f);
 
 	m_entityRenderers = new world::WorldEntityRenderers();
+	m_entityRenderers->add(new world::DecalEntityRenderer(m_renderServer->getRenderSystem()));
 	m_entityRenderers->add(new world::GroupEntityRenderer());
 	m_entityRenderers->add(new world::LightEntityRenderer());
 	m_entityRenderers->add(new world::TransientEntityRenderer());

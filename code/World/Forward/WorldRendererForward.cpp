@@ -563,9 +563,9 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 		uint32_t renderFlags = render::RfSetup | render::RfOverlay;
 
 		if (flags & WrfVisualOpaque)
-			renderFlags |= render::RfOpaque;
+			renderFlags |= render::RfOpaque | render::RfPostOpaque;
 		if (flags & WrfVisualAlphaBlend)
-			renderFlags |= render::RfAlphaBlend;
+			renderFlags |= render::RfAlphaBlend | render::RfPostAlphaBlend;
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual");
 		f.visual->getRenderContext()->render(m_renderView, renderFlags, &programParams);

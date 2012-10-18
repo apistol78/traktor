@@ -1,4 +1,7 @@
+#include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity/DecalEntity.h"
+#include "World/Entity/DecalEntityData.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -30,6 +33,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ExternalEntityData >());
 	typeSet.insert(&type_of< GroupEntityData >());
+	typeSet.insert(&type_of< DecalEntityData >());
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
@@ -64,6 +68,21 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 		}
 
 		return groupEntity;
+	}
+
+	if (const DecalEntityData* decalData = dynamic_type_cast< const DecalEntityData* >(&entityData))
+	{
+		resource::Proxy< render::Shader > shader;
+		if (!m_resourceManager->bind(decalData->getShader(), shader))
+			return 0;
+
+		Ref< DecalEntity > decalEntity = new DecalEntity(
+			decalData->getTransform(),
+			decalData->getSize(),
+			shader
+		);
+
+		return decalEntity;
 	}
 
 	if (const DirectionalLightEntityData* directionalLightData = dynamic_type_cast< const DirectionalLightEntityData* >(&entityData))

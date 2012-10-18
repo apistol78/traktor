@@ -71,10 +71,14 @@ void RenderContext::draw(uint32_t type, RenderBlock* renderBlock)
 		m_renderQueue[0].push_back(renderBlock);
 	else if (type == RfOpaque)
 		m_renderQueue[1].push_back(renderBlock);
-	else if (type == RfAlphaBlend)
+	else if (type == RfPostOpaque)
 		m_renderQueue[2].push_back(renderBlock);
-	else	// RbtOverlay
+	else if (type == RfAlphaBlend)
 		m_renderQueue[3].push_back(renderBlock);
+	else if (type == RfPostAlphaBlend)
+		m_renderQueue[4].push_back(renderBlock);
+	else	// RbtOverlay
+		m_renderQueue[5].push_back(renderBlock);
 }
 
 void RenderContext::render(render::IRenderView* renderView, uint32_t flags, const ProgramParameters* globalParameters) const
@@ -94,18 +98,32 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t flags, cons
 			(*i)->render(renderView, globalParameters);
 	}
 
+	// Render post opaque blocks unsorted.
+	if (flags & RfPostOpaque)
+	{
+		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
+			(*i)->render(renderView, globalParameters);
+	}
+
 	// Render alpha blend blocks back to front.
 	if (flags & RfAlphaBlend)
 	{
-		std::sort(m_renderQueue[2].begin(), m_renderQueue[2].end(), SortAlphaBlendPredicate);
-		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
+		std::sort(m_renderQueue[3].begin(), m_renderQueue[3].end(), SortAlphaBlendPredicate);
+		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[3].begin(); i != m_renderQueue[3].end(); ++i)
+			(*i)->render(renderView, globalParameters);
+	}
+
+	// Render post alpha blend blocks unsorted.
+	if (flags & RfPostAlphaBlend)
+	{
+		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[4].begin(); i != m_renderQueue[4].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
 
 	// Render overlay blocks unsorted.
 	if (flags & RfOverlay)
 	{
-		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[3].begin(); i != m_renderQueue[3].end(); ++i)
+		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[5].begin(); i != m_renderQueue[5].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
 }

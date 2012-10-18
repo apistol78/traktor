@@ -31,9 +31,11 @@ enum RenderBlockType
 {
 	RfSetup = 1,
 	RfOpaque = 2,
-	RfAlphaBlend = 4,
-	RfOverlay = 8,
-	RfAll = (RfSetup | RfOpaque | RfAlphaBlend | RfOverlay)
+	RfPostOpaque = 4,
+	RfAlphaBlend = 8,
+	RfPostAlphaBlend = 16,
+	RfOverlay = 32,
+	RfAll = (RfSetup | RfOpaque | RfPostOpaque | RfAlphaBlend | RfPostAlphaBlend | RfOverlay)
 };
 
 /*! \brief Deferred render context.
@@ -101,7 +103,7 @@ private:
 	AutoPtr< uint8_t, AllocFreeAlign > m_heap;
 	uint8_t* m_heapEnd;
 	uint8_t* m_heapPtr;
-	mutable AlignedVector< RenderBlock* > m_renderQueue[4];
+	mutable AlignedVector< RenderBlock* > m_renderQueue[6];
 };
 
 	}

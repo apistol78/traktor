@@ -724,7 +724,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	if ((flags & WrfVisualOpaque) != 0)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RfSetup | render::RfOpaque, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RfSetup | render::RfOpaque | render::RfPostOpaque, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
 		if (m_ambientOcclusion)
@@ -752,7 +752,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	if ((flags & (WrfVisualAlphaBlend)) != 0)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual alpha blend");
-		f.visual->getRenderContext()->render(m_renderView, render::RfOverlay | render::RfAlphaBlend, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RfAlphaBlend | render::RfPostAlphaBlend | render::RfOverlay, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
