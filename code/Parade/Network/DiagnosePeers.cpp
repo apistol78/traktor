@@ -30,17 +30,21 @@ void DiagnosePeers::destroy()
 
 void DiagnosePeers::update()
 {
+	m_peers->update();
+
 	double T = m_timer.getElapsedTime();
 	if (T >= m_lastT + 10.0)
 	{
 		if (m_lastT > 0.0)
 		{
+			std::vector< handle_t > handles;
+			m_peers->getPeerHandles(handles);
+
 			double dT = T - m_lastT;
-
 			double up = m_sent * 8.0 / (dT * 1024.0);
-			double down = m_received * 8.0f / (dT * 1024.0);
+			double down = m_received * 8.0 / (dT * 1024.0);
 
-			log::info << L"Network traffic" << Endl;
+			log::info << L"Network traffic (" << int32_t(handles.size()) << L" peer(s))" << Endl;
 			log::info << L"  U " << up << L" kbps" << Endl;
 			log::info << L"  D " << down << L" kbps" << Endl;
 		}
@@ -48,8 +52,6 @@ void DiagnosePeers::update()
 		m_received = 0;
 		m_lastT = T;
 	}
-
-	m_peers->update();
 }
 
 uint32_t DiagnosePeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
@@ -70,7 +72,7 @@ bool DiagnosePeers::receiveAnyPending()
 int32_t DiagnosePeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
 	int32_t nrecv = m_peers->receive(data, size, outFromHandle);
-	if (nrecv < 0)
+	if (nrecv <= 0)
 		return nrecv;
 
 	m_received += nrecv;

@@ -21,12 +21,12 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const float c_maxOffsetAdjust = 2.0f;
-const float c_nearDistance = 30.0f;
-const float c_farDistance = 220.0f;
+const float c_nearDistance = 20.0f;
+const float c_farDistance = 210.0f;
 const float c_nearTimeUntilTx = 1.0f / 16.0f;
 const float c_farTimeUntilTx = 1.0f / 10.0f;
 const float c_timeUntilIAm = 6.0f;
-const float c_timeUntilPing = 1.0f;
+const float c_timeUntilPing = 2.0f;
 const float c_peerTimeout = 20.0f;
 const float c_maxExtrapolateTime = 4.0f;
 const uint32_t c_maxPendingPing = 16;
@@ -295,9 +295,12 @@ void Replicator::update(float dT)
 						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L")" << Endl;
 						
 						// Re-send this event to peer next iteration.
-						Event e = *i;
-						e.handle = j->first;
-						eventsOut.push_back(e);
+						if (j->second.errorCount == 0)
+						{
+							Event e = *i;
+							e.handle = j->first;
+							eventsOut.push_back(e);
+						}
 
 						j->second.errorCount++;
 					}
@@ -315,7 +318,11 @@ void Replicator::update(float dT)
 						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L")" << Endl;
 						
 						// Re-send this event to peer next iteration.
-						if (j->second.established && !j->second.disconnected)
+						if (
+							j->second.errorCount == 0 &&
+							j->second.established &&
+							!j->second.disconnected
+						)
 							eventsOut.push_back(*i);
 
 						j->second.errorCount++;
@@ -679,6 +686,19 @@ int32_t Replicator::getPeerReversedLatency(handle_t peerHandle) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
 	return i != m_peers.end() ? int32_t(i->second.latencyReversed * 1000.0f) : 0;
+}
+
+int32_t Replicator::getBestReversedLatency() const
+{
+	int32_t latencyBest = 0;
+	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		if (latencyBest > 0)
+			latencyBest = std::min(latencyBest, int32_t(i->second.latencyReversed * 1000.0f));
+		else
+			latencyBest = int32_t(i->second.latencyReversed * 1000.0f);
+	}
+	return latencyBest;
 }
 
 int32_t Replicator::getWorstReversedLatency() const
