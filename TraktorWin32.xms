@@ -6768,13 +6768,20 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>FBXSDK_NEW_API</item>
+						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1d.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -6786,13 +6793,20 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>FBXSDK_NEW_API</item>
+						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -6804,13 +6818,20 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>FBXSDK_NEW_API</item>
+						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1d.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -6822,13 +6843,20 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>FBXSDK_NEW_API</item>
+						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>

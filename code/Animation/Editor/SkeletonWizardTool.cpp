@@ -1,5 +1,6 @@
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonFormatBvh.h"
+#include "Animation/Editor/SkeletonFormatFbx.h"
 #include "Animation/Editor/SkeletonFormatLws.h"
 #include "Animation/Editor/SkeletonWizardTool.h"
 #include "Core/Io/FileSystem.h"
@@ -43,6 +44,8 @@ bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db:
 
 	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
 		format = new SkeletonFormatBvh();
+	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"fbx") == 0)
+		format = new SkeletonFormatFbx();
 	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
 		format = new SkeletonFormatLws();
 
