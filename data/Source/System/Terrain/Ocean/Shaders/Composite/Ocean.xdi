@@ -58,7 +58,7 @@
 				</item>
 				<item>
 					<first>Reflection</first>
-					<second>0.5</second>
+					<second>0.65</second>
 				</item>
 				<item>
 					<first>ReflectionMap</first>
@@ -118,15 +118,15 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>3342</first>
-				<second>597</second>
+				<first>3003</first>
+				<second>613</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>3234</first>
-				<second>604</second>
+				<first>2895</first>
+				<second>620</second>
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
@@ -397,8 +397,8 @@ Surface point
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>3211</first>
-				<second>642</second>
+				<first>2872</first>
+				<second>658</second>
 			</position>
 			<value>0.1</value>
 		</item>
@@ -689,6 +689,39 @@ Surface point
 			<external>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</external>
 			<type>PtTextureCube</type>
 		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>2953</first>
+				<second>516</second>
+			</position>
+			<parameterName>Time</parameterName>
+			<type>PtScalar</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>3125</first>
+				<second>547</second>
+			</position>
+			<swizzle>x0</swizzle>
+		</item>
+		<item type="traktor.render.MulAdd">
+			<comment/>
+			<position>
+				<first>3257</first>
+				<second>567</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>3029</first>
+				<second>580</second>
+			</position>
+			<value>0.15</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -729,16 +762,6 @@ Surface point
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1459,6 +1482,56 @@ Surface point
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>View</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[63]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>TexCoord</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[65]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[64]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

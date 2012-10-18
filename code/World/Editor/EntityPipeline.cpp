@@ -6,6 +6,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "World/Editor/EntityPipeline.h"
+#include "World/Entity/DecalEntityData.h"
 #include "World/Entity/EntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
@@ -98,8 +99,10 @@ bool EntityPipeline::buildDependencies(
 		}
 	}
 
-	// Add external entity data dependencies.
-	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(entityData))
+	// Add entity data dependencies.
+	if (const DecalEntityData* decalEntityData = dynamic_type_cast< const DecalEntityData* >(entityData))
+		pipelineDepends->addDependency(decalEntityData->getShader(), editor::PdfBuild);
+	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(entityData))
 		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
 
 	return true;
