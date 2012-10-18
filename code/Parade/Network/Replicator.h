@@ -128,6 +128,11 @@ public:
 	 */
 	int32_t getPeerReversedLatency(handle_t peerHandle) const;
 
+	/*! \brief Get best peer reversed minimum latency of myself.
+	 * \return Latency in milliseconds.
+	 */
+	int32_t getBestReversedLatency() const;
+
 	/*! \brief Get worst peer reversed minimum latency of myself.
 	 * \return Latency in milliseconds.
 	 */

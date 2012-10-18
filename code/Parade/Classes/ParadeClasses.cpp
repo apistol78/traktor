@@ -196,6 +196,7 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod(L"getPeerName", &Replicator::getPeerName);
 	classReplicator->addMethod(L"getPeerLatency", &Replicator::getPeerLatency);
 	classReplicator->addMethod(L"getPeerReversedLatency", &Replicator::getPeerReversedLatency);
+	classReplicator->addMethod(L"getBestReversedLatency", &Replicator::getBestReversedLatency);
 	classReplicator->addMethod(L"getWorstReversedLatency", &Replicator::getWorstReversedLatency);
 	classReplicator->addMethod(L"isPeerConnected", &Replicator::isPeerConnected);
 	classReplicator->addMethod(L"setGhostObject", &Replicator::setGhostObject);

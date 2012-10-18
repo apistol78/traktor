@@ -23,6 +23,7 @@ private:
 
 	uint32_t m_requestAttempts;
 	bool m_cloudEnabled;
+	bool m_allowP2PRelay;
 	std::list< std::wstring > m_achievementIds;
 	std::list< std::wstring > m_leaderboardIds;
 	std::list< std::wstring > m_statsIds;

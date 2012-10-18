@@ -158,8 +158,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 	// Calculate echo.
 	Ref< EchoFilter > echoFilter;
-	float delay = 0.2f * clamp((k0 - 0.2f) / 0.2f, 0.0f, 1.0f);
-	if (delay > FUZZY_EPSILON)
+	float delay = 0.4f * clamp((k0 - 0.2f) / 0.2f, 0.0f, 1.0f);
+	if (delay > 0.15f)
 	{
 		echoFilter = new EchoFilter(
 			delay,

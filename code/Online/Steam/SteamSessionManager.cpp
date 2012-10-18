@@ -124,6 +124,8 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 
 	m_maxRequestAttempts = gc->m_requestAttempts;
 
+	SteamNetworking()->AllowP2PPacketRelay(gc->m_allowP2PRelay);
+
 	m_achievements = new SteamAchievements(this, gc->m_achievementIds);
 	m_leaderboards = new SteamLeaderboards(this, gc->m_leaderboardIds);
 	m_matchMaking = new SteamMatchMaking(this);
@@ -368,7 +370,7 @@ void SteamSessionManager::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PS
 		L"k_EP2PSessionErrorDestinationNotLoggedIn",
 		L"k_EP2PSessionErrorTimeout"
 	};
-	log::error << L"Steam; P2P session connect failed, m_eP2PSessionError = " << pP2PSessionConnectFail->m_eP2PSessionError << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
+	log::error << L"Steam; P2P session connect failed, m_eP2PSessionError = " << int32_t(pP2PSessionConnectFail->m_eP2PSessionError) << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
 }
 
 	}
