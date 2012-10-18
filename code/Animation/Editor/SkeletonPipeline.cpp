@@ -1,6 +1,7 @@
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Editor/SkeletonFormatBvh.h"
+#include "Animation/Editor/SkeletonFormatFbx.h"
 #include "Animation/Editor/SkeletonFormatLws.h"
 #include "Animation/Editor/SkeletonPipeline.h"
 #include "Core/Io/FileSystem.h"
@@ -71,6 +72,8 @@ bool SkeletonPipeline::buildOutput(
 
 	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
 		format = new SkeletonFormatBvh();
+	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"fbx") == 0)
+		format = new SkeletonFormatFbx();
 	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
 		format = new SkeletonFormatLws();
 
