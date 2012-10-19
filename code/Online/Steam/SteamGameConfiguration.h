@@ -21,7 +21,9 @@ public:
 private:
 	friend class SteamSessionManager;
 
+	uint32_t m_appId;
 	uint32_t m_requestAttempts;
+	bool m_drmEnabled;
 	bool m_cloudEnabled;
 	bool m_allowP2PRelay;
 	std::list< std::wstring > m_achievementIds;

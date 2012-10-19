@@ -95,6 +95,13 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 	if (!gc)
 		return false;
 
+	// Check if application needs to be restarted.
+	if (!gc->m_drmEnabled)
+	{
+		if (SteamAPI_RestartAppIfNecessary(gc->m_appId))
+			return false;
+	}
+
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 	
 	bool result = false;

@@ -72,7 +72,7 @@ bool SkeletonPipeline::buildOutput(
 
 	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
 		format = new SkeletonFormatBvh();
-	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"fbx") == 0)
+	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"fbx") == 0)
 		format = new SkeletonFormatFbx();
 	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
 		format = new SkeletonFormatLws();

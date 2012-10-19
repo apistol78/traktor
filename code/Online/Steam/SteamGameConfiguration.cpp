@@ -8,10 +8,12 @@ namespace traktor
 	namespace online
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.online.SteamGameConfiguration", 1, SteamGameConfiguration, IGameConfiguration)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.online.SteamGameConfiguration", 2, SteamGameConfiguration, IGameConfiguration)
 
 SteamGameConfiguration::SteamGameConfiguration()
-:	m_requestAttempts(10)
+:	m_appId(0)
+,	m_requestAttempts(10)
+,	m_drmEnabled(false)
 ,	m_cloudEnabled(false)
 ,	m_allowP2PRelay(true)
 {
@@ -19,7 +21,14 @@ SteamGameConfiguration::SteamGameConfiguration()
 
 bool SteamGameConfiguration::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 2)
+		s >> Member< uint32_t >(L"appId", m_appId);
+
 	s >> Member< uint32_t >(L"requestAttempts", m_requestAttempts);
+
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"drmEnabled", m_drmEnabled);
+
 	s >> Member< bool >(L"cloudEnabled", m_cloudEnabled);
 
 	if (s.getVersion() >= 1)

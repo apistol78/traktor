@@ -239,6 +239,8 @@ bool AnimatedMeshEntity::setPoseTransform(render::handle_t jointName, const Tran
 		Transform delta = transform * m_jointTransforms[index].inverse();
 
 		std::vector< uint32_t > children;
+		children.reserve(m_jointTransforms.size());
+
 		m_skeleton->findChildren(index, children);
 
 		for (std::vector< uint32_t >::const_iterator i = children.begin(); i != children.end(); ++i)

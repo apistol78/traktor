@@ -79,6 +79,7 @@ Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const En
 		Ref< DecalEntity > decalEntity = new DecalEntity(
 			decalData->getTransform(),
 			decalData->getSize(),
+			decalData->getAlpha(),
 			shader
 		);
 

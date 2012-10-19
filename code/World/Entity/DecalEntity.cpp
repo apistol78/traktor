@@ -10,12 +10,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEntity", DecalEntity, Entity)
 DecalEntity::DecalEntity(
 	const Transform& transform,
 	float size,
+	float alpha,
 	const resource::Proxy< render::Shader >& shader
 )
 :	m_transform(transform)
 ,	m_size(size)
+,	m_alpha(alpha)
 ,	m_shader(shader)
-,	m_alpha(2.0f)
 {
 }
 
