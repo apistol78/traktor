@@ -591,7 +591,19 @@ void Replicator::update(float dT)
 			}
 
 			if (time > peer.lastTime + 1e-4f)
+			{
+				if (time + peer.latencyMinimum > m_time + 1e-5f)
+				{
+					// Adjust time; adjust only with 75% of the difference in order
+					// to stabilize synchronization over multiple iterations.
+					float offset = time + peer.latencyMinimum - m_time;
+					float adjust = min(offset * 0.75f, c_maxOffsetAdjust);
+					m_time += adjust;
+				}
+
+				peer.packetCount++;
 				peer.lastTime = time;
+			}
 
 			MemoryStream s(msg.data, sizeof(msg.data), true, false);
 			Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();

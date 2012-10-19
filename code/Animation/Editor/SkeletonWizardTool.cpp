@@ -44,7 +44,7 @@ bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db:
 
 	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
 		format = new SkeletonFormatBvh();
-	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"fbx") == 0)
+	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"fbx") == 0)
 		format = new SkeletonFormatFbx();
 	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
 		format = new SkeletonFormatLws();

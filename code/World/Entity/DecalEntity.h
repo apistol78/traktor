@@ -28,6 +28,7 @@ public:
 	DecalEntity(
 		const Transform& transform,
 		float size,
+		float alpha,
 		const resource::Proxy< render::Shader >& shader
 	);
 
@@ -43,13 +44,13 @@ public:
 
 	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
-	float getAlpha() const { return clamp(m_alpha, 0.0f, 1.0f); }
+	float getAlpha() const { return clamp(m_alpha * 2.0f, 0.0f, 1.0f); }
 
 private:
 	Transform m_transform;
 	float m_size;
-	resource::Proxy< render::Shader > m_shader;
 	float m_alpha;
+	resource::Proxy< render::Shader > m_shader;
 };
 
 	}

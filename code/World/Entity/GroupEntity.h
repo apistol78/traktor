@@ -54,13 +54,14 @@ public:
 	template < typename EntityType >
 	int getEntitiesOf(RefArray< EntityType >& outEntities) const
 	{
-		return getEntitiesOf(EntityType::getClassType(), *reinterpret_cast< RefArray< Entity >* >(&outEntities));
+		return getEntitiesOf(EntityType::getClassType(), reinterpret_cast< RefArray< Entity >& >(outEntities));
 	}
 
 	template < typename EntityType >
 	Ref< EntityType > getFirstEntityOf() const
 	{
-		return checked_type_cast< EntityType*, true >(getFirstEntityOf(type_of< EntityType >()));
+		Ref< Entity > entity = getFirstEntityOf(type_of< EntityType >());
+		return reinterpret_cast< Ref< EntityType >& >(entity);
 	}
 	
 private:
