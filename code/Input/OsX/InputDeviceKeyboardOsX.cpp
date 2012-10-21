@@ -158,6 +158,11 @@ float InputDeviceKeyboardOsX::getControlValue(int32_t control)
 	return m_data[controlMap.usage] ? 1.0f : 0.0f;
 }
 
+bool InputDeviceKeyboardOsX::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	if (analogue)
@@ -176,6 +181,11 @@ bool InputDeviceKeyboardOsX::getDefaultControl(InputDefaultControlType controlTy
 	return false;
 }
 
+bool InputDeviceKeyboardOsX::getKeyEvent(KeyEvent& outEvent)
+{
+	return false;
+}
+
 void InputDeviceKeyboardOsX::resetState()
 {
 	std::memset(m_data, 0, sizeof(m_data));
@@ -191,6 +201,10 @@ bool InputDeviceKeyboardOsX::supportRumble() const
 }
 
 void InputDeviceKeyboardOsX::setRumble(const InputRumble& rumble)
+{
+}
+
+void InputDeviceKeyboardOsX::setExclusive(bool exclusive)
 {
 }
 

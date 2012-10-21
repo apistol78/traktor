@@ -62,27 +62,68 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);
 	const Transform& T = v.getTransform();
 
+	// 3 * 32
 	T.translation().storeUnaligned(e);
 	for (uint32_t i = 0; i < 3; ++i)
 		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
 
+	// 3 * 16
 	T.rotation().e.storeUnaligned(e);
 	for (uint32_t i = 0; i < 3; ++i)
 		packUnit(writer, e[i]);
 
+	// 1
 	writer.writeBit(e[3] < 0.0f);
 
-	v.getLinearVelocity().storeUnaligned(e);
+	{
+		Vector4 linearVelocity = v.getLinearVelocity();
+		Scalar ln = linearVelocity.length();
+		if (abs(ln) > FUZZY_EPSILON)
+		{
+			// 1
+			writer.writeBit(true);
 
-	writer.writeUnsigned(32, *(uint32_t*)&e[0]);
-	writer.writeUnsigned(32, *(uint32_t*)&e[1]);
-	writer.writeUnsigned(32, *(uint32_t*)&e[2]);
+			linearVelocity /= ln;
 
-	v.getAngularVelocity().storeUnaligned(e);
+			// 2 * 16
+			packUnit(writer, linearVelocity.x());
+			packUnit(writer, linearVelocity.y());
 
-	writer.writeUnsigned(32, *(uint32_t*)&e[0]);
-	writer.writeUnsigned(32, *(uint32_t*)&e[1]);
-	writer.writeUnsigned(32, *(uint32_t*)&e[2]);
+			// 1
+			writer.writeBit(linearVelocity.z() < 0.0f);
+
+			// 32
+			writer.writeUnsigned(32, *(uint32_t*)&ln);
+		}
+		else
+			// 1
+			writer.writeBit(false);
+	}
+
+	{
+		Vector4 angularVelocity = v.getAngularVelocity();
+		Scalar ln = angularVelocity.length();
+		if (abs(ln) > FUZZY_EPSILON)
+		{
+			// 1
+			writer.writeBit(true);
+
+			angularVelocity /= ln;
+
+			// 2 * 16
+			packUnit(writer, angularVelocity.x());
+			packUnit(writer, angularVelocity.y());
+
+			// 1
+			writer.writeBit(angularVelocity.z() < 0.0f);
+
+			// 32
+			writer.writeUnsigned(32, *(uint32_t*)&ln);
+		}
+		else
+			// 1
+			writer.writeBit(false);
+	}
 }
 
 Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
@@ -113,30 +154,46 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 		).normalized()
 	);
 
-	for (uint32_t i = 0; i < 3; ++i)
-		u[i] = reader.readUnsigned(32);
+	Vector4 linearVelocity = Vector4::zero();
+	{
+		if (reader.readBit())
+		{
+			float x = unpackUnit(reader);
+			float y = unpackUnit(reader);
+			float z = std::sqrt(x * x + y * y);
 
-	Vector4 Vl(
-		*(float*)&u[0],
-		*(float*)&u[1],
-		*(float*)&u[2],
-		0.0f
-	);
+			if (reader.readBit())
+				z = -z;
 
-	for (uint32_t i = 0; i < 3; ++i)
-		u[i] = reader.readUnsigned(32);
+			linearVelocity = Vector4(x, y, z, 0.0f).normalized();
 
-	Vector4 Va(
-		*(float*)&u[0],
-		*(float*)&u[1],
-		*(float*)&u[2],
-		0.0f
-	);
+			uint32_t ln = reader.readUnsigned(32);
+			linearVelocity *= Scalar(*(float*)&ln);
+		}
+	}
+
+	Vector4 angularVelocity = Vector4::zero();
+	{
+		if (reader.readBit())
+		{
+			float x = unpackUnit(reader);
+			float y = unpackUnit(reader);
+			float z = std::sqrt(x * x + y * y);
+
+			if (reader.readBit())
+				z = -z;
+
+			angularVelocity = Vector4(x, y, z, 0.0f).normalized();
+
+			uint32_t ln = reader.readUnsigned(32);
+			angularVelocity *= Scalar(*(float*)&ln);
+		}
+	}
 
 	physics::BodyState S;
 	S.setTransform(T);
-	S.setLinearVelocity(Vl);
-	S.setAngularVelocity(Va);
+	S.setLinearVelocity(linearVelocity);
+	S.setAngularVelocity(angularVelocity);
 
 	return new BodyStateValue(S);
 }

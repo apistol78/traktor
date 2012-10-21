@@ -141,6 +141,11 @@ float InputDeviceGamepadOsX::getControlValue(int32_t control)
 	}
 }
 
+bool InputDeviceGamepadOsX::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (int32_t i = 0; i < sizeof_array(c_gamepadControlMap); ++i)
@@ -152,6 +157,11 @@ bool InputDeviceGamepadOsX::getDefaultControl(InputDefaultControlType controlTyp
 			return true;
 		}
 	}
+	return false;
+}
+
+bool InputDeviceGamepadOsX::getKeyEvent(KeyEvent& outEvent)
+{
 	return false;
 }
 
@@ -171,6 +181,10 @@ bool InputDeviceGamepadOsX::supportRumble() const
 }
 
 void InputDeviceGamepadOsX::setRumble(const InputRumble& rumble)
+{
+}
+
+void InputDeviceGamepadOsX::setExclusive(bool exclusive)
 {
 }
 

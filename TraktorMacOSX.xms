@@ -6255,13 +6255,22 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>FBXSDK_NEW_API</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1-staticd</item>
+						<item>CoreServices.framework</item>
+						<item>iconv</item>
+						<item>SystemConfiguration.framework</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -6272,13 +6281,22 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>FBXSDK_NEW_API</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1-static</item>
+						<item>CoreServices.framework</item>
+						<item>iconv</item>
+						<item>SystemConfiguration.framework</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -6289,13 +6307,22 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>FBXSDK_NEW_API</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1-staticd</item>
+						<item>CoreServices.framework</item>
+						<item>iconv</item>
+						<item>SystemConfiguration.framework</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -6306,13 +6333,22 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>FBXSDK_NEW_API</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1-static</item>
+						<item>CoreServices.framework</item>
+						<item>iconv</item>
+						<item>SystemConfiguration.framework</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -8007,6 +8043,138 @@
 								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
 							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.World.Editor</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
+									<configurations>
+										<item type="Configuration" version="1">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_WORLD_EDITOR_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_WORLD_EDITOR_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>PostProcess</name>
+											<items>
+												<item type="File">
+													<fileName>PostProcess/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Resources</name>
+											<items>
+												<item type="File">
+													<fileName>../../../res/world/PostProcessStep.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/world/PostProcessDefine.png</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[14]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[6]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[6]/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -8028,135 +8196,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.World.Editor</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_WORLD_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_WORLD_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>PostProcess</name>
-								<items>
-									<item type="File">
-										<fileName>PostProcess/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Resources</name>
-								<items>
-									<item type="File">
-										<fileName>../../../res/world/PostProcessStep.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/world/PostProcessDefine.png</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[14]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[3]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[6]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[6]/project"/>
-							</item>
-						</dependencies>
-					</project>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -9458,6 +9498,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Player</name>
+								<items>
+									<item type="File">
+										<fileName>Player/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -10057,6 +10106,10 @@
 								<items>
 									<item type="File">
 										<fileName>../../../res/resound/Grain.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/toolbar/PlusMinus.png</fileName>
 										<items/>
 									</item>
 								</items>
@@ -10709,6 +10762,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Operations</name>
+								<items>
+									<item type="File">
+										<fileName>Operations/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -10935,7 +10997,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -11192,7 +11254,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -12095,7 +12157,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -12330,7 +12392,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -12482,7 +12544,23 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+								<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[35]/dependencies/item[5]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[14]/dependencies/item[2]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[35]"/>
 							</item>
 						</dependencies>
 					</project>
@@ -13064,7 +13142,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -13077,7 +13155,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[14]/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
@@ -14045,7 +14123,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/public</item>
+						<item>$(STEAMWORKS_SDK)/public</item>
 					</includePaths>
 					<definitions>
 						<item>T_ONLINE_STEAM_EXPORT</item>
@@ -14053,7 +14131,7 @@
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/redistributable_bin/osx32</item>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/osx32</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api</item>
@@ -14068,7 +14146,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/public</item>
+						<item>$(STEAMWORKS_SDK)/public</item>
 					</includePaths>
 					<definitions>
 						<item>T_ONLINE_STEAM_EXPORT</item>
@@ -14076,7 +14154,7 @@
 						<item>_CRT_SECURE_NO_WARNINGS</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/redistributable_bin/osx32</item>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/osx32</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api</item>
@@ -14091,14 +14169,14 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/public</item>
+						<item>$(STEAMWORKS_SDK)/public</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/redistributable_bin/osx32</item>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/osx32</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api</item>
@@ -14113,14 +14191,14 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/public</item>
+						<item>$(STEAMWORKS_SDK)/public</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/steamworks-sdk-119/redistributable_bin/osx32</item>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/osx32</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api</item>
@@ -14386,24 +14464,6 @@
 										<fileName>Impl/*.*</fileName>
 										<items/>
 									</item>
-									<item type="Filter">
-										<name>Std</name>
-										<items>
-											<item type="File">
-												<fileName>Impl/Std/*.*</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Actions</name>
-								<items>
-									<item type="File">
-										<fileName>Actions/*.*</fileName>
-										<items/>
-									</item>
 								</items>
 							</item>
 							<item type="Filter">
@@ -14411,6 +14471,15 @@
 								<items>
 									<item type="File">
 										<fileName>../../res/Amalgam/Error.png</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Events</name>
+								<items>
+									<item type="File">
+										<fileName>Events/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -14812,6 +14881,24 @@
 			</configurations>
 			<items>
 				<item type="Filter">
+					<name>Action</name>
+					<items>
+						<item type="Filter">
+							<name>Classes</name>
+							<items>
+								<item type="File">
+									<fileName>Action/Classes/*.*</fileName>
+									<items/>
+								</item>
+							</items>
+						</item>
+						<item type="File">
+							<fileName>Action/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
 					<name>Classes</name>
 					<items>
 						<item type="File">
@@ -14826,6 +14913,15 @@
 						<item type="File">
 							<fileName>Network/*.*</fileName>
 							<items/>
+						</item>
+						<item type="Filter">
+							<name>State</name>
+							<items>
+								<item type="File">
+									<fileName>Network/State/*.*</fileName>
+									<items/>
+								</item>
+							</items>
 						</item>
 					</items>
 				</item>
@@ -14910,6 +15006,14 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[14]/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[56]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -15397,7 +15501,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[15]/dependencies/item[7]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>

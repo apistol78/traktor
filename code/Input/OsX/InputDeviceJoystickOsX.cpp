@@ -123,6 +123,11 @@ float InputDeviceJoystickOsX::getControlValue(int32_t control)
 		return 0.0f;
 }
 
+bool InputDeviceJoystickOsX::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool InputDeviceJoystickOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (int32_t i = 0; i < sizeof_array(c_joystickControlMap); ++i)
@@ -134,6 +139,11 @@ bool InputDeviceJoystickOsX::getDefaultControl(InputDefaultControlType controlTy
 			return true;
 		}
 	}
+	return false;
+}
+
+bool InputDeviceJoystickOsX::getKeyEvent(KeyEvent& outEvent)
+{
 	return false;
 }
 
@@ -154,6 +164,10 @@ bool InputDeviceJoystickOsX::supportRumble() const
 }
 
 void InputDeviceJoystickOsX::setRumble(const InputRumble& rumble)
+{
+}
+
+void InputDeviceJoystickOsX::setExclusive(bool exclusive)
 {
 }
 
