@@ -67,6 +67,22 @@ public:
 
 	float y() const { return m_value.y; }
 
+	Vector2 add(const Vector2& v) const;
+
+	Vector2 sub(const Vector2& v) const;
+
+	Vector2 mul(const Vector2& v) const;
+
+	Vector2 div(const Vector2& v) const;
+
+	Vector2 add(float v) const;
+
+	Vector2 sub(float v) const;
+
+	Vector2 mul(float v) const;
+
+	Vector2 div(float v) const;
+
 	const Vector2& unbox() const { return m_value; }
 
 private:

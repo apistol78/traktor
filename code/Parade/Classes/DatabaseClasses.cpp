@@ -30,6 +30,11 @@ Ref< db::Instance > db_Database_createInstance(db::Database* self, const std::ws
 	return self->createInstance(instancePath);
 }
 
+Ref< ISerializable > db_Database_getObjectReadOnly(db::Database* self, const Guid& id)
+{
+	return self->getObjectReadOnly(id);
+}
+
 Ref< db::Instance > db_Group_getInstanceByName(db::Group* self, const std::wstring& instanceName)
 {
 	return self->getInstance(instanceName);
@@ -54,6 +59,11 @@ RefArray< db::Instance > db_Group_getChildInstances(db::Group* self)
 	return childInstances;
 }
 
+Ref< ISerializable > db_Instance_getObject(db::Instance* self)
+{
+	return self->getObject();
+}
+
 std::vector< std::wstring > db_Instance_getDataNames(db::Instance* self)
 {
 	std::vector< std::wstring > dataNames;
@@ -73,7 +83,7 @@ void registerDatabaseClasses(script::IScriptManager* scriptManager)
 	classDatabase->addMethod(L"getInstanceByGuid", &db_Database_getInstanceByGuid);
 	classDatabase->addMethod(L"getInstanceByPath", &db_Database_getInstanceByPath);
 	classDatabase->addMethod(L"createInstance", &db_Database_createInstance);
-	classDatabase->addMethod(L"getObjectReadOnly", &db::Database::getObjectReadOnly);
+	classDatabase->addMethod(L"getObjectReadOnly", &db_Database_getObjectReadOnly);
 	scriptManager->registerClass(classDatabase);
 
 	Ref< script::AutoScriptClass< db::Group > > classGroup = new script::AutoScriptClass< db::Group >();
@@ -97,7 +107,7 @@ void registerDatabaseClasses(script::IScriptManager* scriptManager)
 	classInstance->addMethod(L"getGuid", &db::Instance::getGuid);
 	classInstance->addMethod(L"getPrimaryTypeName", &db::Instance::getPrimaryTypeName);
 	classInstance->addMethod(L"getPrimaryType", &db::Instance::getPrimaryType);
-	classInstance->addMethod(L"getObject", &db::Instance::getObject);
+	classInstance->addMethod(L"getObject", &db_Instance_getObject);
 	classInstance->addMethod(L"getDataNames", &db_Instance_getDataNames);
 	classInstance->addMethod(L"readData", &db::Instance::readData);
 	classInstance->addMethod(L"checkout", &db::Instance::checkout);

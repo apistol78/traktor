@@ -36,6 +36,46 @@ BoxedVector2::BoxedVector2(float x, float y)
 {
 }
 
+Vector2 BoxedVector2::add(const Vector2& v) const
+{
+	return m_value + v;
+}
+
+Vector2 BoxedVector2::sub(const Vector2& v) const
+{
+	return m_value - v;
+}
+
+Vector2 BoxedVector2::mul(const Vector2& v) const
+{
+	return m_value * v;
+}
+
+Vector2 BoxedVector2::div(const Vector2& v) const
+{
+	return m_value / v;
+}
+
+Vector2 BoxedVector2::add(float v) const
+{
+	return m_value + v;
+}
+
+Vector2 BoxedVector2::sub(float v) const
+{
+	return m_value - v;
+}
+
+Vector2 BoxedVector2::mul(float v) const
+{
+	return m_value * v;
+}
+
+Vector2 BoxedVector2::div(float v) const
+{
+	return m_value / v;
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4", BoxedVector4, Object)
 
 BoxedVector4::BoxedVector4()
@@ -371,6 +411,14 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector2->addMethod(L"set", &BoxedVector2::set);
 	classBoxedVector2->addMethod(L"x", &BoxedVector2::x);
 	classBoxedVector2->addMethod(L"y", &BoxedVector2::y);
+	classBoxedVector2->addMethod< Vector2, const Vector2& >(L"add", &BoxedVector2::add);
+	classBoxedVector2->addMethod< Vector2, const Vector2& >(L"sub", &BoxedVector2::sub);
+	classBoxedVector2->addMethod< Vector2, const Vector2& >(L"mul", &BoxedVector2::mul);
+	classBoxedVector2->addMethod< Vector2, const Vector2& >(L"div", &BoxedVector2::div);
+	classBoxedVector2->addMethod< Vector2, float >(L"addf", &BoxedVector2::add);
+	classBoxedVector2->addMethod< Vector2, float >(L"subf", &BoxedVector2::sub);
+	classBoxedVector2->addMethod< Vector2, float >(L"mulf", &BoxedVector2::mul);
+	classBoxedVector2->addMethod< Vector2, float >(L"divf", &BoxedVector2::div);
 	scriptManager->registerClass(classBoxedVector2);
 
 	Ref< AutoScriptClass< BoxedVector4 > > classBoxedVector4 = new AutoScriptClass< BoxedVector4 >();

@@ -129,6 +129,11 @@ float InputDeviceMouseOsX::getControlValue(int32_t control)
 		return 0.0f;
 }
 
+bool InputDeviceMouseOsX::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool InputDeviceMouseOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (int32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
@@ -140,6 +145,11 @@ bool InputDeviceMouseOsX::getDefaultControl(InputDefaultControlType controlType,
 			return true;
 		}
 	}
+	return false;
+}
+
+bool InputDeviceMouseOsX::getKeyEvent(KeyEvent& outEvent)
+{
 	return false;
 }
 
@@ -244,6 +254,10 @@ bool InputDeviceMouseOsX::supportRumble() const
 }
 
 void InputDeviceMouseOsX::setRumble(const InputRumble& rumble)
+{
+}
+
+void InputDeviceMouseOsX::setExclusive(bool exclusive)
 {
 }
 
