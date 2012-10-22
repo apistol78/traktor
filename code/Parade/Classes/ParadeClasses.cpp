@@ -204,6 +204,8 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod(L"setGhostOrigin", &Replicator::setGhostOrigin);
 	classReplicator->addMethod(L"setGhostStateTemplate", &Replicator::setGhostStateTemplate);
 	classReplicator->addMethod(L"getGhostState", &Replicator::getGhostState);
+	classReplicator->addMethod(L"getLoopBackState", &Replicator::getLoopBackState);
+	classReplicator->addMethod(L"getState", &Replicator::getState);
 	classReplicator->addMethod(L"getTime", &Replicator::getTime);
 	scriptManager->registerClass(classReplicator);
 }

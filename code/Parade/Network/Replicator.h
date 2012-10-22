@@ -176,6 +176,18 @@ public:
 	 */
 	Ref< const State > getGhostState(uint32_t peerHandle, const State* currentState) const;
 
+	/*! \brief Get loopback state.
+	 *
+	 * Loopback state is our own state but mangled
+	 * through the state template to enable
+	 * debugging of packing/unpacking of state variables.
+	 */
+	Ref< const State > getLoopBackState() const;
+
+	/*! \brief Get state.
+	 */
+	const State* getState() const { return m_state; }
+
 	/*! \brief Get network time.
 	 */
 	float getTime() const { return m_time; }

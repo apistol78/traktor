@@ -23,7 +23,7 @@ class T_DLLCLASS Vector4Template : public IValueTemplate
 public:
 	Vector4Template();
 
-	explicit Vector4Template(float w);
+	explicit Vector4Template(float w, bool lowPrecision);
 
 	virtual void pack(BitWriter& writer, const IValue* V) const;
 
@@ -33,6 +33,7 @@ public:
 
 private:
 	float m_w;
+	bool m_lowPrecision;
 	bool m_immutableW;
 };
 

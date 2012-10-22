@@ -14,6 +14,7 @@ namespace traktor
 		{
 
 const float c_idleThreshold = 1e-4f;
+const float c_idleThresholdLowPrecision = 1.0f / 256.0f;
 
 float safeDenom(float v)
 {
@@ -60,7 +61,13 @@ void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 
 	if (m_haveIdle)
 	{
-		bool idle = bool(abs(f - m_idle) <= c_idleThreshold);
+		bool idle = false;
+		
+		if (!m_lowPrecision)
+			idle = bool(abs(f - m_idle) <= c_idleThreshold);
+		else
+			idle = bool(abs(f - m_idle) <= c_idleThresholdLowPrecision);
+
 		writer.writeBit(idle);
 		if (idle)
 			return;
