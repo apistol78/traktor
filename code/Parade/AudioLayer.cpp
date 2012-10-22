@@ -33,7 +33,11 @@ void AudioLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 
 	// Play sound if not currently attached.
 	if (!m_handle || !m_handle->isPlaying())
-		m_handle = m_environment->getAudio()->getSoundPlayer()->play(m_sound, 0);
+	{
+		sound::ISoundPlayer* soundPlayer = m_environment->getAudio()->getSoundPlayer();
+		if (soundPlayer)
+			m_handle = soundPlayer->play(m_sound, 0);
+	}
 }
 
 void AudioLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)

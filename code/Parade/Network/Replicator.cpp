@@ -809,6 +809,18 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* c
 	}
 }
 
+Ref< const State > Replicator::getLoopBackState() const
+{
+	if (!m_stateTemplate)
+		return 0;
+
+	uint8_t data[1200];
+	uint32_t size = m_stateTemplate->pack(m_state, data, sizeof(data));
+	T_DEBUG(L"Loopback state size : " << size << L" byte(s)");
+
+	return m_stateTemplate->unpack(data, size);
+}
+
 void Replicator::sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id)
 {
 	Message msg;
