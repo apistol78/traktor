@@ -101,12 +101,15 @@ void AnimatedMeshEntity::render(
 	const AlignedVector< Vector4 >& skinTransforms0 = m_skinTransforms[1 - m_index];
 	const AlignedVector< Vector4 >& skinTransforms1 = m_skinTransforms[m_index];
 
-	for (uint32_t i = 0; i < skinTransforms0.size(); ++i)
-		m_skinTransforms[2][i] = lerp(
-			skinTransforms0[i],
-			skinTransforms1[i],
-			Scalar(worldRenderView.getInterval())
-		);
+	if (skinTransforms0.size() == skinTransforms1.size())
+	{
+		for (uint32_t i = 0; i < skinTransforms0.size(); ++i)
+			m_skinTransforms[2][i] = lerp(
+				skinTransforms0[i],
+				skinTransforms1[i],
+				Scalar(worldRenderView.getInterval())
+			);
+	}
 
 	m_mesh->render(
 		worldContext.getRenderContext(),
