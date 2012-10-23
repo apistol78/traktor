@@ -23,12 +23,22 @@ struct Vertex
 	float position[3];
 };
 
+render::handle_t s_handleDecalSize;
+render::handle_t s_handleAlpha;
+render::handle_t s_handleMagicCoeffs;
+render::handle_t s_handleWorldViewInv;
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEntityRenderer", DecalEntityRenderer, IEntityRenderer)
 
 DecalEntityRenderer::DecalEntityRenderer(render::IRenderSystem* renderSystem)
 {
+	s_handleDecalSize = render::getParameterHandle(L"DecalSize");
+	s_handleAlpha = render::getParameterHandle(L"Alpha");
+	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
+	s_handleWorldViewInv = render::getParameterHandle(L"WorldViewInv");
+
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, position), 0));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
@@ -109,6 +119,9 @@ void DecalEntityRenderer::flush(
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Matrix44& view = worldRenderView.getView();
 
+	const Scalar p11 = projection.get(0, 0);
+	const Scalar p22 = projection.get(1, 1);
+
 	// Render all decal boxes.
 	for (RefArray< DecalEntity >::iterator i = m_decalEntities.begin(); i != m_decalEntities.end(); ++i)
 	{
@@ -124,9 +137,6 @@ void DecalEntityRenderer::flush(
 		render::IProgram* program = shader->getCurrentProgram();
 		if (!program)
 			continue;
-
-		Scalar p11 = projection.get(0, 0);
-		Scalar p22 = projection.get(1, 1);
 
 		Matrix44 worldView = view * transform.toMatrix44();
 		Matrix44 worldViewInv = worldView.inverse();
@@ -153,10 +163,10 @@ void DecalEntityRenderer::flush(
 			(*i)->getBoundingBox()
 		);
 
-		renderBlock->programParams->setFloatParameter(L"DecalSize", (*i)->getSize());
-		renderBlock->programParams->setFloatParameter(L"Alpha", (*i)->getAlpha());
-		renderBlock->programParams->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		renderBlock->programParams->setMatrixParameter(L"WorldViewInv", worldViewInv);
+		renderBlock->programParams->setFloatParameter(s_handleDecalSize, (*i)->getSize());
+		renderBlock->programParams->setFloatParameter(s_handleAlpha, (*i)->getAlpha());
+		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(render::RfPostOpaque, renderBlock);
