@@ -6,7 +6,7 @@
 		<Option compiler="gcc" />
 		<Build><?--
 			local configurations = project:getConfigurations()
-			for i = 0, configurations:length() - 1 do
+			for i = 0, configurations:size() - 1 do
 
 				local configuration = configurations:get(i)
 
@@ -70,12 +70,12 @@
 					end
 
 					local definitions = configuration:getDefinitions()
-					for j = 0, definitions:length() - 1 do
+					for j = 0, definitions:size() - 1 do
 
 						local def = definitions:get(j)
 						local def0 = string.sub(def, 1, 1)
 
-						if not (def0 == "\'" or def0 == "\`") then
+						if not (def0 == "'" or def0 == "`") then
 							def = "-D" .. def
 						end
 --?>
@@ -83,12 +83,12 @@
 					end
 
 					local includePaths = configuration:getIncludePaths()
-					for j = 0, includePaths:length() - 1 do
+					for j = 0, includePaths:size() - 1 do
 
 						local ip = includePaths:get(j)
 						local ip0 = string.sub(ip, 1, 1)
 
-						if not (ip0 == "\'" or ip0 == "\`") then
+						if not (ip0 == "'" or ip0 == "`") then
 
 							local rel = fileSystem:getRelativePath(Path(ip), projectPath)
 							if rel ~= nil then
@@ -124,12 +124,12 @@ end
 function collectLinkProducts(solution, project, configuration, outLibraries, outLibraryPaths)
 
 	local libraries = configuration:getLibraries()
-	for i = 0, libraries:length() - 1 do
+	for i = 0, libraries:size() - 1 do
 		insertLibrary(outLibraries, libraries:get(i))
 	end
 
 	local libraryPaths = configuration:getLibraryPaths()
-	for i = 0, libraryPaths:length() - 1 do
+	for i = 0, libraryPaths:size() - 1 do
 		local libraryRelPath = fileSystem:getRelativePath(
 			Path(libraryPaths:get(i)),
 			projectPath
@@ -143,7 +143,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 	end
 
 	local dependencies = project:getDependencies()
-	for i = 0, dependencies:length() - 1 do
+	for i = 0, dependencies:size() - 1 do
 		local dep = dependencies:get(i)
 
 		if dep.__index == ProjectDependency then
@@ -209,7 +209,7 @@ end
 
 					for i, lib in ipairs(libraries) do
 						local lib0 = string.sub(lib, 1, 1)
-						if not (lib0 == "\'" or lib0 == "\`") then
+						if not (lib0 == "'" or lib0 == "`") then
 --?>
 					<Add library="<?-- output:print(lib) --?>" /><?--
 						else
@@ -236,12 +236,12 @@ end
 		function addPreBuildItems(project, item)
 			if item.__index == Filter then
 				local childItems = item:getItems()
-				for i = 0, childItems:length() - 1 do
+				for i = 0, childItems:size() - 1 do
 					addPreBuildItems(project, childItems:get(i))
 				end
 			elseif item.__index == File then
 				local files = item:getSystemFiles(project:getSourcePath())
-				for i = 0, files:length() - 1 do
+				for i = 0, files:size() - 1 do
 
 					local filePath = files:get(i) -- fileSystem:getAbsolutePath(files:get(i))
 					local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
@@ -261,12 +261,12 @@ end
 		function addItem(project, item)
 			if item.__index == Filter then
 				local childItems = item:getItems()
-				for i = 0, childItems:length() - 1 do
+				for i = 0, childItems:size() - 1 do
 					addItem(project, childItems:get(i))
 				end
 			elseif item.__index == File then
 				local files = item:getSystemFiles(project:getSourcePath())
-				for i = 0, files:length() - 1 do
+				for i = 0, files:size() - 1 do
 
 					local filePath = files:get(i) -- fileSystem:getAbsolutePath(files:get(i))
 					local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
@@ -287,7 +287,7 @@ end
 --?>
 		<ExtraCommands><?--
 
-		for i = 0, items:length() - 1 do
+		for i = 0, items:size() - 1 do
 			addPreBuildItems(project, items:get(i))
 		end
 --?>
@@ -295,7 +295,7 @@ end
 		<Compiler>
 		</Compiler><?--
 
-		for i = 0, items:length() - 1 do
+		for i = 0, items:size() - 1 do
 			addItem(project, items:get(i))
 		end
 --?>

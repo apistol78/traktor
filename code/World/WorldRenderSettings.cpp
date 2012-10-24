@@ -12,7 +12,7 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 14, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 15, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	renderType(RtForward)
@@ -35,6 +35,7 @@ WorldRenderSettings::WorldRenderSettings()
 ,	fogDistance(90.0f)
 ,	fogRange(10.0f)
 ,	fogColor(255, 255, 255, 255)
+,	antiAliasQuality(AaqMedium)
 {
 }
 
@@ -59,6 +60,7 @@ WorldRenderSettings::WorldRenderSettings(const WorldRenderSettings& settings)
 ,	fogDistance(settings.fogDistance)
 ,	fogRange(settings.fogRange)
 ,	fogColor(settings.fogColor)
+,	antiAliasQuality(settings.antiAliasQuality)
 {
 }
 
@@ -97,6 +99,16 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		{ L"AoqMedium", AoqMedium },
 		{ L"AoqHigh", AoqHigh },
 		{ L"AoqHighest", AoqHighest },
+		{ 0 }
+	};
+
+	const MemberEnum< AntiAliasQuality >::Key c_AntiAliasQuality_Keys[] =
+	{
+		{ L"AaqDisabled", AaqDisabled },
+		{ L"AaqLow", AaqLow },
+		{ L"AaqMedium", AaqMedium },
+		{ L"AaqHigh", AaqHigh },
+		{ L"AaqHighest", AaqHighest },
 		{ 0 }
 	};
 
@@ -170,6 +182,9 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 		s >> Member< float >(L"fogRange", fogRange, AttributeRange(0.0f));
 		s >> Member< Color4ub >(L"fogColor", fogColor);
 	}
+
+	if (s.getVersion() >= 15)
+		s >> MemberEnum< AntiAliasQuality >(L"antiAliasQuality", antiAliasQuality, c_AntiAliasQuality_Keys);
 
 	return true;
 }

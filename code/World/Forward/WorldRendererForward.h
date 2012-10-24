@@ -59,7 +59,8 @@ public:
 	WorldRendererForward();
 
 	virtual bool create(
-		const WorldRenderSettings& settings,
+		const WorldRenderSettings* worldRenderSettings,
+		const PostProcessSettings* postProcessSettings,
 		WorldEntityRenderers* entityRenderers,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -76,7 +77,15 @@ public:
 
 	virtual void build(WorldRenderView& worldRenderView, Entity* entity, int frame);
 
+	virtual bool begin(int frame, render::EyeType eye);
+
 	virtual void render(uint32_t flags, int frame, render::EyeType eye);
+
+	virtual void end(int frame, render::EyeType eye, float deltaTime);
+
+	virtual PostProcess* getVisualPostProcess();
+
+	virtual render::RenderTargetSet* getVisualTargetSet();
 
 	virtual render::RenderTargetSet* getDepthTargetSet();
 
@@ -99,6 +108,7 @@ private:
 		Ref< WorldContext > visual;
 
 		Matrix44 projection;
+		Matrix44 view;
 		Matrix44 viewToLightSpace;
 		Matrix44 squareProjection;
 		Frustum viewFrustum;
@@ -120,6 +130,7 @@ private:
 	WorldRenderSettings m_settings;
 	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
@@ -127,6 +138,7 @@ private:
 	Ref< render::RenderContext > m_globalContext;
 	Ref< PostProcess > m_shadowMaskProject;
 	Ref< PostProcess > m_shadowMaskFilter;
+	Ref< PostProcess > m_visualPostProcess;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;

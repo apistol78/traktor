@@ -60,7 +60,8 @@ WorldRendererForward::WorldRendererForward()
 }
 
 bool WorldRendererForward::create(
-	const WorldRenderSettings& settings,
+	const WorldRenderSettings* worldRenderSettings,
+	const PostProcessSettings* postProcessSettings,
 	WorldEntityRenderers* entityRenderers,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
@@ -69,18 +70,40 @@ bool WorldRendererForward::create(
 	uint32_t frameCount
 )
 {
+	T_ASSERT_M (worldRenderSettings, L"World render settings required");
 	T_ASSERT_M (renderView, L"Render view required");
 
-	m_settings = settings;
+	m_settings = *worldRenderSettings;
 	m_renderView = renderView;
 	m_frames.resize(frameCount);
 
 	float fogColor[4];
-	settings.fogColor.getRGBA32F(fogColor);
+	m_settings.fogColor.getRGBA32F(fogColor);
 	m_fogColor = Vector4::loadUnaligned(fogColor);
 
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
+
+	// Create "unprocessed" target.
+	{
+		render::RenderTargetSetCreateDesc desc;
+		
+		desc.count = 1;
+		desc.width = width;
+		desc.height = height;
+		desc.multiSample = multiSample;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = true;
+		desc.preferTiled = true;
+		desc.targets[0].format = render::TfR8G8B8A8;
+
+		if (postProcessSettings && postProcessSettings->requireHighRange())
+			desc.targets[0].format = render::TfR11G11B10F;
+
+		m_visualTargetSet = renderSystem->createRenderTargetSet(desc);
+		if (!m_visualTargetSet)
+			return false;
+	}
 
 	// Create "depth map" target.
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
@@ -298,6 +321,23 @@ bool WorldRendererForward::create(
 		}
 	}
 
+	// Create "visual" post processing filter.
+	if (postProcessSettings)
+	{
+		m_visualPostProcess = new world::PostProcess();
+		if (!m_visualPostProcess->create(
+			postProcessSettings,
+			resourceManager,
+			renderSystem,
+			width,
+			height
+		))
+		{
+			log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
+			m_visualPostProcess = 0;
+		}
+	}
+
 	// Allocate "depth" context.
 	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
 	{
@@ -347,12 +387,14 @@ void WorldRendererForward::destroy()
 		i->depth = 0;
 	}
 
+	safeDestroy(m_visualPostProcess);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
 	safeDestroy(m_shadowMaskFilterTargetSet);
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_depthTargetSet);
+	safeDestroy(m_visualTargetSet);
 
 	m_renderView = 0;
 }
@@ -428,6 +470,19 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 	f.B = std::abs(f.A * worldRenderView.getScreenPlaneDistance() * (1.0f / f.projection(1, 1)));
 
 	m_count++;
+}
+
+bool WorldRendererForward::begin(int frame, render::EyeType eye)
+{
+	if (m_visualTargetSet)
+	{
+		if (!m_renderView->begin(m_visualTargetSet, 0))
+			return false;
+
+		const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
+	}
+	return true;
 }
 
 void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye)
@@ -575,6 +630,67 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	m_globalContext->flush();
 }
 
+void WorldRendererForward::end(int frame, render::EyeType eye, float deltaTime)
+{
+	if (m_visualTargetSet)
+	{
+		m_renderView->end();
+
+		if (m_visualPostProcess)
+		{
+			Frame& f = m_frames[frame];
+			Matrix44 projection;
+
+			// Calculate stereoscopic projection.
+			if (eye != render::EtCyclop)
+			{
+				float A = f.A;
+				float B = f.B;
+
+				if (eye == render::EtLeft)
+					A = -A;
+				else
+					B = -B;
+
+				projection = translate(A, 0.0f, 0.0f) * f.projection * translate(B, 0.0f, 0.0f);
+			}
+			else
+			{
+				projection = f.projection;
+			}
+
+			world::PostProcessStep::Instance::RenderParams params;
+			params.viewFrustum = f.viewFrustum;
+			params.viewToLight = f.viewToLightSpace;
+			params.view = f.view;
+			params.projection = projection;
+			params.deltaTime = deltaTime;
+
+			m_visualPostProcess->render(
+				m_renderView,
+				m_visualTargetSet,
+				m_depthTargetSet,
+				m_shadowTargetSet,
+				params
+			);
+		}
+		else
+		{
+			// \FIXME: Plain blit to primary target.
+		}
+	}
+}
+
+PostProcess* WorldRendererForward::getVisualPostProcess()
+{
+	return m_visualPostProcess;
+}
+
+render::RenderTargetSet* WorldRendererForward::getVisualTargetSet()
+{
+	return m_visualTargetSet;
+}
+
 render::RenderTargetSet* WorldRendererForward::getDepthTargetSet()
 {
 	return m_depthTargetSet;
@@ -694,6 +810,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	f.visual->flush(worldRenderView, defaultPass);
 
 	f.projection = worldRenderView.getProjection();
+	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.haveShadows = true;
 }
@@ -718,6 +835,7 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 	f.visual->flush(worldRenderView, defaultPass);
 
 	f.projection = worldRenderView.getProjection();
+	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.haveShadows = false;
 }

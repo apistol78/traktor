@@ -454,20 +454,6 @@ render::IRenderView* RenderServerDefault::getRenderView()
 	return m_renderView;
 }
 
-Ref< render::RenderTargetSet > RenderServerDefault::createOffscreenTarget(render::TextureFormat format, bool createDepthStencil, bool usingPrimaryDepthStencil)
-{
-	render::RenderTargetSetCreateDesc rtscd;
-	rtscd.count = 1;
-	rtscd.width = m_renderView->getWidth();
-	rtscd.height = m_renderView->getHeight();
-	rtscd.multiSample = m_renderViewDesc.multiSample;
-	rtscd.createDepthStencil = createDepthStencil;
-	rtscd.usingPrimaryDepthStencil = usingPrimaryDepthStencil;
-	rtscd.preferTiled = true;
-	rtscd.targets[0].format = format;
-	return m_renderSystem->createRenderTargetSet(rtscd);
-}
-
 float RenderServerDefault::getScreenAspectRatio() const
 {
 	return m_screenAspectRatio;

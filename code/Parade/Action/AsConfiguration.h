@@ -66,6 +66,10 @@ public:
 
 	void setAmbientOcclusionQuality(Quality ambientOcclusionQuality);
 
+	Quality getAntiAliasQuality() const;
+
+	void setAntiAliasQuality(Quality antiAliasQuality);
+
 	bool getRumbleEnable() const;
 
 	void setRumbleEnable(bool rumbleEnable);
@@ -87,6 +91,7 @@ private:
 	Quality m_textureQuality;
 	Quality m_shadowQuality;
 	Quality m_ambientOcclusionQuality;
+	Quality m_antiAliasQuality;
 	bool m_rumbleEnable;
 	std::map< std::wstring, float > m_volumes;
 };

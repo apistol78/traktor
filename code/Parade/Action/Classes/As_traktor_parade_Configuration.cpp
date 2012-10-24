@@ -38,6 +38,7 @@ As_traktor_parade_Configuration::As_traktor_parade_Configuration(flash::ActionCo
 	prototype->addProperty("textureQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_textureQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_textureQuality));
 	prototype->addProperty("shadowQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_shadowQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_shadowQuality));
 	prototype->addProperty("ambientOcclusionQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_ambientOcclusionQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_ambientOcclusionQuality));
+	prototype->addProperty("antiAliasQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_antiAliasQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_antiAliasQuality));
 	prototype->addProperty("terrainQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_terrainQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_terrainQuality));
 	prototype->addProperty("waterQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_waterQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_waterQuality));
 	prototype->addProperty("undergrowthQuality", flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_get_undergrowthQuality), flash::createNativeFunction(context, this, &As_traktor_parade_Configuration::Configuration_set_undergrowthQuality));
@@ -164,6 +165,16 @@ int32_t As_traktor_parade_Configuration::Configuration_get_ambientOcclusionQuali
 void As_traktor_parade_Configuration::Configuration_set_ambientOcclusionQuality(AsConfiguration* self, int32_t ambientOcclusionQuality) const
 {
 	self->setAmbientOcclusionQuality((AsConfiguration::Quality)ambientOcclusionQuality);
+}
+
+int32_t As_traktor_parade_Configuration::Configuration_get_antiAliasQuality(const AsConfiguration* self) const
+{
+	return self->getAntiAliasQuality();
+}
+
+void As_traktor_parade_Configuration::Configuration_set_antiAliasQuality(AsConfiguration* self, int32_t antiAliasQuality) const
+{
+	self->setAntiAliasQuality((AsConfiguration::Quality)antiAliasQuality);
 }
 
 int32_t As_traktor_parade_Configuration::Configuration_get_terrainQuality(const AsConfiguration* self) const

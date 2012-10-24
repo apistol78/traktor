@@ -20,6 +20,7 @@ class IEntityBuilder;
 class IEntityFactory;
 class IEntityRenderer;
 class IWorldRenderer;
+class PostProcessSettings;
 class WorldEntityRenderers;
 class WorldRenderSettings;
 
@@ -50,7 +51,10 @@ public:
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
 
-	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings& worldRenderSettings) = 0;
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(
+		const world::WorldRenderSettings* worldRenderSettings,
+		const world::PostProcessSettings* postProcessSettings
+	) = 0;
 
 	virtual int32_t getFrameCount() const = 0;
 };

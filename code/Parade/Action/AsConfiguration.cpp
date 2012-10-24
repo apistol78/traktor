@@ -26,6 +26,7 @@ AsConfiguration::AsConfiguration()
 ,	m_textureQuality(QtMedium)
 ,	m_shadowQuality(QtMedium)
 ,	m_ambientOcclusionQuality(QtHigh)
+,	m_antiAliasQuality(QtMedium)
 ,	m_rumbleEnable(true)
 {
 }
@@ -47,6 +48,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_textureQuality = (Quality)settings->getProperty< PropertyInteger >(L"Render.TextureQuality", QtMedium);
 	current->m_shadowQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", QtMedium);
 	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtHigh);
+	current->m_antiAliasQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", QtMedium);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
 
 	const PropertyGroup* volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
@@ -159,6 +161,16 @@ void AsConfiguration::setAmbientOcclusionQuality(Quality ambientOcclusionQuality
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 }
 
+AsConfiguration::Quality AsConfiguration::getAntiAliasQuality() const
+{
+	return m_antiAliasQuality;
+}
+
+void AsConfiguration::setAntiAliasQuality(Quality antiAliasQuality)
+{
+	m_antiAliasQuality = antiAliasQuality;
+}
+
 bool AsConfiguration::getRumbleEnable() const
 {
 	return m_rumbleEnable;
@@ -195,6 +207,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"Render.TextureQuality", m_textureQuality);
 	settings->setProperty< PropertyInteger >(L"World.ShadowQuality", m_shadowQuality);
 	settings->setProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", m_ambientOcclusionQuality);
+	settings->setProperty< PropertyInteger >(L"World.AntiAliasQuality", m_antiAliasQuality);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
 
 	for (std::map< std::wstring, float >::const_iterator i = m_volumes.begin(); i != m_volumes.end(); ++i)

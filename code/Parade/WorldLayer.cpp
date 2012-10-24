@@ -16,7 +16,7 @@
 #include "World/Entity/TransientEntity.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/IEntitySchema.h"
-#include "World/PostProcess/PostProcess.h"
+//#include "World/PostProcess/PostProcess.h"
 
 namespace traktor
 {
@@ -144,48 +144,19 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT (renderView);
 
-	// Render previously built frame.
-	m_worldRenderer->render(
-		world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap,
-		frame,
-		eye
-	);
-
-	// Render world to off-screen target.
-	if (m_worldTarget && m_postProcess)
+	if (m_worldRenderer->begin(frame, eye))
 	{
-		renderView->begin(m_worldTarget, 0);
-
-		const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
-		renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
-	}
-
-	// Render world.
-	m_worldRenderer->render(
-		world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
-		frame,
-		eye
-	);
-
-	// Process world target and blit to frame-buffer.
-	if (m_worldTarget && m_postProcess)
-	{
-		renderView->end();
-
-		world::PostProcessStep::Instance::RenderParams params;
-		params.viewFrustum = m_worldRenderView.getViewFrustum();
-		params.viewToLight = Matrix44::identity();
-		params.view = m_worldRenderView.getView();
-		params.projection = m_worldRenderView.getProjection();
-		params.deltaTime = m_deltaTime;
-
-		m_postProcess->render(
-			renderView,
-			m_worldTarget,
-			m_worldRenderer->getDepthTargetSet(),
-			m_worldRenderer->getShadowMaskTargetSet(),
-			params
+		m_worldRenderer->render(
+			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap,
+			frame,
+			eye
 		);
+		m_worldRenderer->render(
+			world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
+			frame,
+			eye
+		);
+		m_worldRenderer->end(frame, eye, m_deltaTime);
 	}
 }
 
@@ -197,8 +168,6 @@ void WorldLayer::leave(Stage* stage)
 	safeDestroy(m_renderGroup);
 	safeDestroy(m_dynamicEntities);
 	safeDestroy(m_worldRenderer);
-	safeDestroy(m_postProcess);
-	safeDestroy(m_worldTarget);
 }
 
 void WorldLayer::reconfigured(Stage* stage)
@@ -288,7 +257,7 @@ void WorldLayer::setControllerEnable(bool controllerEnable)
 
 world::PostProcess* WorldLayer::getPostProcess() const
 {
-	return m_postProcess;
+	return m_worldRenderer->getVisualPostProcess();
 }
 
 bool WorldLayer::getViewPosition(const Vector4& worldPosition, Vector4& outViewPosition) const
@@ -351,10 +320,8 @@ void WorldLayer::createWorldRenderer()
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 
-	// Destroy previous instances.
+	// Destroy previous world renderer.
 	safeDestroy(m_worldRenderer);
-	safeDestroy(m_worldTarget);
-	safeDestroy(m_postProcess);
 
 	// Get render view dimensions.
 	int32_t width = renderView->getWidth();
@@ -362,7 +329,8 @@ void WorldLayer::createWorldRenderer()
 
 	// Create world renderer.
 	m_worldRenderer = m_environment->getWorld()->createWorldRenderer(
-		*m_scene->getWorldRenderSettings()
+		m_scene->getWorldRenderSettings(),
+		m_scene->getPostProcessSettings()
 	);
 	if (!m_worldRenderer)
 		return;
@@ -374,29 +342,6 @@ void WorldLayer::createWorldRenderer()
 	worldViewPort.aspect = m_environment->getRender()->getAspectRatio();
 	worldViewPort.fov = deg2rad(m_fieldOfView);
 	m_worldRenderer->createRenderView(worldViewPort, m_worldRenderView);
-
-	// Create post frame process.
-	const world::PostProcessSettings* postProcessSettings = m_scene->getPostProcessSettings();
-	if (postProcessSettings)
-	{
-		m_postProcess = new world::PostProcess();
-		if (m_postProcess->create(
-			postProcessSettings,
-			m_environment->getResource()->getResourceManager(),
-			m_environment->getRender()->getRenderSystem(),
-			width,
-			height
-		))
-		{
-			m_worldTarget = m_environment->getRender()->createOffscreenTarget(
-				m_postProcess->requireHighRange() ? render::TfR11G11B10F : render::TfR8G8B8A8,
-				false,
-				true
-			);
-		}
-		else
-			m_postProcess = 0;
-	}
 }
 
 	}
