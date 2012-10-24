@@ -24,13 +24,6 @@ class IEnvironment;
 
 	}
 
-	namespace render
-	{
-
-class RenderTargetSet;
-
-	}
-
 	namespace scene
 	{
 
@@ -120,8 +113,6 @@ private:
 	std::map< std::wstring, resource::Proxy< world::EntityData > > m_entities;
 	Ref< world::IWorldRenderer > m_worldRenderer;
 	world::WorldRenderView m_worldRenderView;
-	Ref< world::PostProcess > m_postProcess;
-	Ref< render::RenderTargetSet > m_worldTarget;
 	Ref< world::GroupEntity > m_renderGroup;
 	Ref< world::GroupEntity > m_dynamicEntities;
 	float m_alternateTime;

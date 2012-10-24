@@ -36,8 +36,6 @@ public:
 
 	virtual render::IRenderView* getRenderView();
 
-	virtual Ref< render::RenderTargetSet > createOffscreenTarget(render::TextureFormat format, bool createDepthStencil, bool usingPrimaryDepthStencil);
-
 	virtual float getScreenAspectRatio() const;
 
 	virtual float getViewAspectRatio() const;

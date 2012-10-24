@@ -249,7 +249,8 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		return;
 
 	if (worldRenderer->create(
-		m_worldRenderSettings,
+		&m_worldRenderSettings,
+		0,
 		worldEntityRenderers,
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),

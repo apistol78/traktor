@@ -37,6 +37,8 @@ class IResourceManager;
 	{
 
 class Entity;
+class PostProcess;
+class PostProcessSettings;
 class WorldEntityRenderers;
 class WorldRenderSettings;
 class WorldRenderView;
@@ -105,7 +107,8 @@ class T_DLLCLASS IWorldRenderer : public Object
 public:
 	/*! \brief Create world renderer. */
 	virtual bool create(
-		const WorldRenderSettings& settings,
+		const WorldRenderSettings* worldRenderSettings,
+		const PostProcessSettings* postProcessSettings,
 		WorldEntityRenderers* entityRenderers,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -142,17 +145,38 @@ public:
 	 */
 	virtual void build(WorldRenderView& worldRenderView, Entity* entity, int frame) = 0;
 
+	/*! \brief Begin render "render contexts".
+	 *
+	 * \param frame Multi threaded context frame.
+	 * \param eye Stereoscopic eye.
+	 * \return True if rendering begun.
+	 */
+	virtual bool begin(int frame, render::EyeType eye) = 0;
+
 	/*! \brief Render "render contexts".
 	 *
 	 * \param flags Combination of world render flags.
 	 * \param frame Multi threaded context frame.
+	 * \param eye Stereoscopic eye.
 	 */
 	virtual void render(uint32_t flags, int frame, render::EyeType eye) = 0;
+
+	/*! \brief End render "render contexts".
+	 *
+	 * \param frame Multi threaded context frame.
+	 * \param eye Stereoscopic eye.
+	 * \param deltaTime Last frame delta time.
+	 */
+	virtual void end(int frame, render::EyeType eye, float deltaTime) = 0;
 
 	//@}
 
 	/*! \name Target accessor. */
 	//@{
+
+	virtual PostProcess* getVisualPostProcess() = 0;
+
+	virtual render::RenderTargetSet* getVisualTargetSet() = 0;
 
 	virtual render::RenderTargetSet* getDepthTargetSet() = 0;
 

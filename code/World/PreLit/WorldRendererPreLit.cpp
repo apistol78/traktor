@@ -44,6 +44,12 @@ const resource::Id< PostProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249
 const resource::Id< PostProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
 const resource::Id< PostProcessSettings > c_ambientOcclusionHighest(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	// HBAO, full size
 
+const resource::Id< PostProcessSettings > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
+const resource::Id< PostProcessSettings > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
+const resource::Id< PostProcessSettings > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
+const resource::Id< PostProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
+const resource::Id< PostProcessSettings > c_antiAliasHighest(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
+
 const static float c_interocularDistance = 6.5f;
 const static float c_distortionValue = 0.8f;
 const static float c_screenPlaneDistance = 13.0f;
@@ -70,7 +76,8 @@ WorldRendererPreLit::WorldRendererPreLit()
 }
 
 bool WorldRendererPreLit::create(
-	const WorldRenderSettings& settings,
+	const WorldRenderSettings* worldRenderSettings,
+	const PostProcessSettings* postProcessSettings,
 	WorldEntityRenderers* entityRenderers,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
@@ -79,14 +86,15 @@ bool WorldRendererPreLit::create(
 	uint32_t frameCount
 )
 {
+	T_ASSERT_M (worldRenderSettings, L"World render settings required");
 	T_ASSERT_M (renderView, L"Render view required");
 
-	m_settings = settings;
+	m_settings = *worldRenderSettings;
 	m_renderView = renderView;
 	m_frames.resize(frameCount);
 
 	float fogColor[4];
-	settings.fogColor.getRGBA32F(fogColor);
+	m_settings.fogColor.getRGBA32F(fogColor);
 	m_fogColor = Vector4::loadUnaligned(fogColor);
 
 	int32_t width = renderView->getWidth();
@@ -359,6 +367,109 @@ bool WorldRendererPreLit::create(
 		}
 	}
 
+	// Create antialias processing.
+	{
+		resource::Id< PostProcessSettings > antiAliasId;
+		resource::Proxy< PostProcessSettings > antiAlias;
+
+		switch (m_settings.antiAliasQuality)
+		{
+		default:
+		case WorldRenderSettings::AaqDisabled:
+			antiAliasId = c_antiAliasNone;
+			break;
+
+		case WorldRenderSettings::AaqLow:
+			antiAliasId = c_antiAliasLow;
+			break;
+
+		case WorldRenderSettings::AoqMedium:
+			antiAliasId = c_antiAliasMedium;
+			break;
+
+		case WorldRenderSettings::AoqHigh:
+			antiAliasId = c_antiAliasHigh;
+			break;
+
+		case WorldRenderSettings::AoqHighest:
+			antiAliasId = c_antiAliasHighest;
+			break;
+		}
+
+		if (antiAliasId)
+		{
+			if (!resourceManager->bind(antiAliasId, antiAlias))
+				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
+		}
+
+		if (antiAlias)
+		{
+			m_antiAlias = new PostProcess();
+			if (!m_antiAlias->create(
+				antiAlias,
+				resourceManager,
+				renderSystem,
+				width,
+				height
+			))
+			{
+				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
+				m_antiAlias = 0;
+			}
+		}
+	}
+
+	// Create "visual" post processing filter.
+	if (postProcessSettings)
+	{
+		m_visualPostProcess = new world::PostProcess();
+		if (!m_visualPostProcess->create(
+			postProcessSettings,
+			resourceManager,
+			renderSystem,
+			width,
+			height
+		))
+		{
+			log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
+			m_visualPostProcess = 0;
+		}
+	}
+
+	// Create "visual" target.
+	{
+		render::RenderTargetSetCreateDesc desc;
+		
+		desc.count = 0;
+		desc.width = width;
+		desc.height = height;
+		desc.multiSample = multiSample;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = true;
+		desc.preferTiled = true;
+
+		if (m_visualPostProcess)
+		{
+			desc.targets[desc.count].format = render::TfR8G8B8A8;	// Unprocessed
+			if (postProcessSettings && postProcessSettings->requireHighRange())
+				desc.targets[desc.count].format = render::TfR11G11B10F;
+			++desc.count;
+		}
+
+		if (m_antiAlias)
+		{
+			desc.targets[desc.count].format = render::TfR8G8B8A8;	// AA unresolved
+			++desc.count;
+		}
+
+		if (desc.count > 0)
+		{
+			m_visualTargetSet = renderSystem->createRenderTargetSet(desc);
+			if (!m_visualTargetSet)
+				return false;
+		}
+	}
+
 	// Create light map target.
 	{
 		render::RenderTargetSetCreateDesc desc;
@@ -451,6 +562,8 @@ void WorldRendererPreLit::destroy()
 		i->gbuffer = 0;
 	}
 
+	safeDestroy(m_visualPostProcess);
+	safeDestroy(m_antiAlias);
 	safeDestroy(m_ambientOcclusion);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
@@ -459,6 +572,7 @@ void WorldRendererPreLit::destroy()
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_lightMapTargetSet);
 	safeDestroy(m_gbufferTargetSet);
+	safeDestroy(m_visualTargetSet);
 
 	m_renderView = 0;
 }
@@ -541,6 +655,19 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 	buildVisual(worldRenderView, entity, frame);
 
 	m_count++;
+}
+
+bool WorldRendererPreLit::begin(int frame, render::EyeType eye)
+{
+	if (m_visualTargetSet)
+	{
+		if (!m_renderView->begin(m_visualTargetSet, 0))
+			return false;
+
+		const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
+	}
+	return true;
 }
 
 void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
@@ -757,6 +884,67 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	}
 
 	m_globalContext->flush();
+}
+
+void WorldRendererPreLit::end(int frame, render::EyeType eye, float deltaTime)
+{
+	Frame& f = m_frames[frame];
+
+	world::PostProcessStep::Instance::RenderParams params;
+	params.viewFrustum = f.viewFrustum;
+	params.viewToLight = Matrix44::identity(); //f.viewToLightSpace;
+	params.view = f.view;
+	params.projection = f.projection;
+	params.deltaTime = deltaTime;
+
+	if (m_visualTargetSet)
+	{
+		m_renderView->end();
+
+		if (m_visualPostProcess)
+		{
+			if (m_antiAlias)
+				m_renderView->begin(m_visualTargetSet, 1);
+
+			m_visualPostProcess->render(
+				m_renderView,
+				m_visualTargetSet,
+				m_gbufferTargetSet,
+				m_shadowTargetSet,
+				params
+			);
+
+			if (m_antiAlias)
+				m_renderView->end();
+		}
+
+		if (m_antiAlias)
+		{
+			if (m_visualPostProcess)
+				m_visualTargetSet->swap(0, 1);
+
+			m_antiAlias->render(
+				m_renderView,
+				m_visualTargetSet,
+				m_gbufferTargetSet,
+				m_shadowTargetSet,
+				params
+			);
+
+			if (m_visualPostProcess)
+				m_visualTargetSet->swap(0, 1);
+		}
+	}
+}
+
+PostProcess* WorldRendererPreLit::getVisualPostProcess()
+{
+	return m_visualPostProcess;
+}
+
+render::RenderTargetSet* WorldRendererPreLit::getVisualTargetSet()
+{
+	return m_visualTargetSet;
 }
 
 render::RenderTargetSet* WorldRendererPreLit::getDepthTargetSet()

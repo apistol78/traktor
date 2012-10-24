@@ -45,7 +45,10 @@ public:
 
 	virtual world::WorldEntityRenderers* getEntityRenderers();
 
-	virtual Ref< world::IWorldRenderer > createWorldRenderer(const world::WorldRenderSettings& worldRenderSettings);
+	virtual Ref< world::IWorldRenderer > createWorldRenderer(
+		const world::WorldRenderSettings* worldRenderSettings,
+		const world::PostProcessSettings* postProcessSettings
+	);
 
 	virtual int32_t getFrameCount() const;
 
@@ -56,6 +59,7 @@ private:
 	Ref< IResourceServer > m_resourceServer;
 	world::WorldRenderSettings::ShadowQuality m_shadowQuality;
 	world::WorldRenderSettings::AmbientOcclusionQuality m_ambientOcclusionQuality;
+	world::WorldRenderSettings::AntiAliasQuality m_antiAliasQuality;
 };
 
 	}

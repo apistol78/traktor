@@ -64,6 +64,15 @@ public:
 		AoqHighest
 	};
 
+	enum AntiAliasQuality
+	{
+		AaqDisabled,
+		AaqLow,
+		AaqMedium,
+		AaqHigh,
+		AaqHighest
+	};
+
 	RenderType renderType;
 	float viewNearZ;
 	float viewFarZ;
@@ -84,6 +93,7 @@ public:
 	float fogDistance;
 	float fogRange;
 	Color4ub fogColor;
+	AntiAliasQuality antiAliasQuality;
 
 	WorldRenderSettings();
 

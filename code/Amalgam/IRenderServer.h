@@ -19,7 +19,6 @@ namespace traktor
 
 class IRenderSystem;
 class IRenderView;
-class RenderTargetSet;
 
 	}
 
@@ -47,8 +46,6 @@ public:
 	virtual render::IRenderSystem* getRenderSystem() = 0;
 
 	virtual render::IRenderView* getRenderView() = 0;
-
-	virtual Ref< render::RenderTargetSet > createOffscreenTarget(render::TextureFormat format, bool createDepthStencil, bool usingPrimaryDepthStencil) = 0;
 
 	virtual float getScreenAspectRatio() const = 0;
 

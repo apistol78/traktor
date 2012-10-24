@@ -67,6 +67,10 @@ private:
 
 	void Configuration_set_ambientOcclusionQuality(AsConfiguration* self, int32_t ambientOcclusionQuality) const;
 
+	int32_t Configuration_get_antiAliasQuality(const AsConfiguration* self) const;
+
+	void Configuration_set_antiAliasQuality(AsConfiguration* self, int32_t antiAliasQuality) const;
+
 	int32_t Configuration_get_terrainQuality(const AsConfiguration* self) const;
 
 	void Configuration_set_terrainQuality(AsConfiguration* self, int32_t terrainQuality) const;

@@ -199,7 +199,8 @@ void OrthogonalRenderControl::updateWorldRenderer()
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
 	if (worldRenderer->create(
-		wrs,
+		&wrs,
+		0,
 		worldEntityRenderers,
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),

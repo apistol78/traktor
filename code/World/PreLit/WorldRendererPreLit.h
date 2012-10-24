@@ -70,7 +70,8 @@ public:
 	WorldRendererPreLit();
 
 	virtual bool create(
-		const WorldRenderSettings& settings,
+		const WorldRenderSettings* worldRenderSettings,
+		const PostProcessSettings* postProcessSettings,
 		WorldEntityRenderers* entityRenderers,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -87,7 +88,15 @@ public:
 
 	virtual void build(WorldRenderView& worldRenderView, Entity* entity, int frame);
 
+	virtual bool begin(int frame, render::EyeType eye);
+
 	virtual void render(uint32_t flags, int frame, render::EyeType eye);
+
+	virtual void end(int frame, render::EyeType eye, float deltaTime);
+
+	virtual PostProcess* getVisualPostProcess();
+
+	virtual render::RenderTargetSet* getVisualTargetSet();
 
 	virtual render::RenderTargetSet* getDepthTargetSet();
 
@@ -139,6 +148,7 @@ private:
 	WorldRenderSettings m_settings;
 	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::IRenderView > m_renderView;
+	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_gbufferTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
@@ -148,6 +158,8 @@ private:
 	Ref< PostProcess > m_shadowMaskProject;
 	Ref< PostProcess > m_shadowMaskFilter;
 	Ref< PostProcess > m_ambientOcclusion;
+	Ref< PostProcess > m_antiAlias;
+	Ref< PostProcess > m_visualPostProcess;
 	Ref< LightRenderer > m_lightRenderer;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
