@@ -1,3 +1,4 @@
+#include <cstring>
 #include <limits>
 #include "Core/Math/Float.h"
 #include "Core/Math/Log2.h"
@@ -285,7 +286,7 @@ void WorldCullingSwRaster::endPrecull()
 					m_depth[i - 1][fx + 1 + (fy + 1) * fromMipWidth]
 				};
 
-				uint16_t d = 
+				uint16_t d =
 					min(
 						min(from[0], from[1]),
 						min(from[2], from[3])
@@ -349,7 +350,7 @@ void WorldCullingSwRaster::placeOccluder(const OccluderMesh* mesh, const Transfo
 				(Vc0.x() * iw0 * c_half + c_half) * c_width,
 				(c_half - Vc0.y() * iw0 * c_half) * c_height
 			);
-			
+
 			Vector2 tv1(
 				(Vc1.x() * iw1 * c_half + c_half) * c_width,
 				(c_half - Vc1.y() * iw1 * c_half) * c_height

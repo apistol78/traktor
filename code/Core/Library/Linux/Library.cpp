@@ -40,7 +40,7 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
             return true;
         }
         else
-            T_DEBUG(L"Failed to load library \"" << library << L"\"; " << mbstows(dlerror()));
+            log::error << L"Failed to load library \"" << library << L"\"; " << mbstows(dlerror()) << L" (1)" << Endl;
     }
 
     // Try default search paths.
@@ -53,10 +53,10 @@ bool Library::open(const Path& libraryName, const std::vector< Path >& searchPat
             return true;
         }
         else
-            T_DEBUG(L"Failed to load library \"" << library << L"\"; " << mbstows(dlerror()));
-    }
+             log::error << L"Failed to load library \"" << library << L"\"; " << mbstows(dlerror()) << L" (2)" << Endl;
+   }
 
-	log::error << L"Unable to open library \"" << libraryName.getPathName() << L"\"" << Endl;
+	log::error << L"Failed to load library \"" << libraryName.getPathName() << L"\"" << Endl;
 	return false;
 }
 

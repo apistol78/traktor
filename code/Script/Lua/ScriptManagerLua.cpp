@@ -234,7 +234,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	const ScriptResourceLua* scriptResourceLua = checked_type_cast< const ScriptResourceLua*, false >(scriptResource);
-	
+
 	// Create local environment.
 	lua_newtable(m_luaState);
 	int32_t environmentRef = luaL_ref(m_luaState, LUA_REGISTRYINDEX);
@@ -262,7 +262,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	{
 		log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
 		lua_pop(m_luaState, 1);
-		return false;
+		return 0;
 	}
 
 	// Call script.
@@ -353,7 +353,7 @@ void ScriptManagerLua::pushObject(Object* object)
 
 	// No reference; drop nil value from stack.
 	lua_pop(m_luaState, 1);
-	
+
 	const TypeInfo* objectType = &type_of(object);
 
 	// Find registered script class entry.
