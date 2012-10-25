@@ -44,10 +44,14 @@ void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 		{
 			float* samples = outBlock.samples[j];
 			float& history = lpfi->m_history[j];
-			for (uint32_t i = 0; i < outBlock.samplesCount; ++i)
+
+			for (uint32_t i = 0; i < outBlock.samplesCount; i += 4)
 			{
-				samples[i] = samples[i] * alpha + history * (1.0f - alpha);
-				history = samples[i];
+				samples[i+0] = (samples[i+0] - history) * alpha + history;
+				samples[i+1] = (samples[i+1] - samples[i+0]) * alpha + samples[i+0];
+				samples[i+2] = (samples[i+2] - samples[i+1]) * alpha + samples[i+1];
+				samples[i+3] = (samples[i+3] - samples[i+2]) * alpha + samples[i+2];
+				history = samples[i+3];
 			}
 		}
 	}
