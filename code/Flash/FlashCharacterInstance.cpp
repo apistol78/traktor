@@ -33,7 +33,9 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 
 void FlashCharacterInstance::destroy()
 {
-	setFocus(false);
+	if (ms_focusInstance == this)
+		ms_focusInstance = 0;
+
 	m_context = 0;
 	m_parent = 0;
 	m_eventScripts.clear();

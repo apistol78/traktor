@@ -72,12 +72,17 @@ std::wstring OS::getWritableFolderPath() const
 	return L"~/.AppData/.Temp";
 }
 
-bool OS::editFile(const Path& file) const
+bool OS::openFile(const std::wstring& file) const
 {
 	return false;
 }
 
-bool OS::exploreFile(const Path& file) const
+bool OS::editFile(const std::wstring& file) const
+{
+	return false;
+}
+
+bool OS::exploreFile(const std::wstring& file) const
 {
 	return false;
 }

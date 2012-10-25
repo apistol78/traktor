@@ -118,9 +118,6 @@ bool EntityPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	if ((reason & (editor::PbrSourceModified | editor::PbrForced)) == 0)
-		return true;
-
 	Ref< EntityData > entityData = checked_type_cast< EntityData*, true >(pipelineBuilder->buildOutput(sourceAsset));
 	if (!entityData)
 		return false;

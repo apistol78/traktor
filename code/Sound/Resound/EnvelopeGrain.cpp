@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
