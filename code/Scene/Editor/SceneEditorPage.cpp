@@ -72,6 +72,20 @@ namespace traktor
 
 const Guid c_guidWhiteRoomScene(L"{473467B0-835D-EF45-B308-E3C3C5B0F226}");
 
+bool isChildEntitySelected(const EntityAdapter* entityAdapter)
+{
+	const RefArray< EntityAdapter >& children = entityAdapter->getChildren();
+	for (RefArray< EntityAdapter >::const_iterator i = children.begin(); i != children.end(); ++i)
+	{
+		if ((*i)->isSelected())
+			return true;
+
+		if (isChildEntitySelected(*i))
+			return true;
+	}
+	return false;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorPage", SceneEditorPage, editor::IEditorPage)
@@ -698,7 +712,14 @@ Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter*
 	else if (entityAdapter->isLayer())
 	{
 		row->add(new ui::custom::GridItem(entityName, m_instanceGridFontHuge/*, 4*/));
-		row->setBackground(Color4ub(230, 230, 230, 255));
+
+		bool childSelected = isChildEntitySelected(entityAdapter);
+		row->setBackground(
+			childSelected ?
+				Color4ub(180, 190, 240, 255) :
+				Color4ub(220, 220, 230, 255)
+		);
+
 		row->setMinimumHeight(32);
 	}
 	else if (entityAdapter->isGroup())
@@ -752,6 +773,16 @@ void SceneEditorPage::createInstanceGrid()
 void SceneEditorPage::updateInstanceGridRow(ui::custom::GridRow* row)
 {
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
+
+	if (entityAdapter->isLayer())
+	{
+		bool childSelected = isChildEntitySelected(entityAdapter);
+		row->setBackground(
+			childSelected ?
+				Color4ub(180, 190, 240, 255) :
+				Color4ub(220, 220, 230, 255)
+		);
+	}
 
 	row->setState(
 		(entityAdapter->isSelected() ? ui::custom::GridRow::RsSelected : 0) |
