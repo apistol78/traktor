@@ -2,6 +2,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/Align.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/ISerializer.h"
@@ -55,6 +57,14 @@ struct SurroundFilterInstance : public RefCountImpl< IFilterInstance >
 	{
 		for (int i = 0; i < sizeof_array(m_buffer); ++i)
 			Alloc::freeAlign(m_buffer[i]);
+	}
+
+	void* operator new (size_t size) {
+		return getAllocator()->alloc(size, 16, T_FILE_LINE);
+	}
+
+	void operator delete (void* ptr) {
+		getAllocator()->free(ptr);
 	}
 };
 

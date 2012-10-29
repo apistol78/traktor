@@ -13,10 +13,10 @@ namespace traktor
 		namespace
 		{
 
-const Scalar c_maxRubberBandDistance(20.0f);
+const Scalar c_maxRubberBandDistance(10.0f);
 const float c_maxRubberBandTime(0.1f);
-const float c_rubberBandStrengthNear(0.3f);
-const float c_rubberBandStrengthFar(0.9f);
+const float c_rubberBandStrengthNear(0.4f);
+const float c_rubberBandStrengthFar(0.95f);
 
 void packUnit(BitWriter& writer, float v)
 {
@@ -33,6 +33,23 @@ float unpackUnit(BitReader& reader)
 Vector4 clampV4(const Vector4& v, const Vector4& minV, const Vector4& maxV)
 {
 	return max(min(v, maxV), minV);
+}
+
+bool fuzzyEqual(const Vector4& Vl, const Vector4& Vr, float epsilon)
+{
+	Vector4 dV = (Vl - Vr).absolute();
+	return
+		dV.x() <= epsilon &&
+		dV.y() <= epsilon &&
+		dV.z() <= epsilon &&
+		dV.w() <= epsilon;
+}
+
+bool fuzzyEqual(const Transform& Tl, const Transform& Tr)
+{
+	return
+		fuzzyEqual(Tl.translation(), Tr.translation(), 1e-2f) &&
+		fuzzyEqual(Tl.rotation().e, Tr.rotation().e, 1e-3f);
 }
 
 float safeSqrt(float v)
@@ -204,6 +221,21 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	return new BodyStateValue(S);
 }
 
+bool BodyStateTemplate::equal(const IValue* Vl, const IValue* Vr) const
+{
+	const physics::BodyState& Sl = *checked_type_cast< const BodyStateValue* >(Vl);
+	const physics::BodyState& Sr = *checked_type_cast< const BodyStateValue* >(Vr);
+
+	if (!fuzzyEqual(Sl.getTransform(), Sr.getTransform()))
+		return false;
+	if (!fuzzyEqual(Sl.getLinearVelocity(), Sr.getLinearVelocity(), 1e-3f))
+		return false;
+	if (!fuzzyEqual(Sl.getAngularVelocity(), Sr.getAngularVelocity(), 1e-3f))
+		return false;
+
+	return true;
+}
+
 Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	const Vector4 c_linearAccThreshold(1.0f, 1.0f, 1.0f, 0.0f);
@@ -269,7 +301,7 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 		{
 			float k0 = dT_0 / c_maxRubberBandTime;
 			float k1 = ln / c_maxRubberBandDistance;
-			float k2 = clamp(max(k0, k1), 0.0f, 1.0f);
+			float k2 = clamp(min(k0, k1), 0.0f, 1.0f);
 			float k3 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k2);
 			S = S.interpolate(Sc, Scalar(k3));
 		}

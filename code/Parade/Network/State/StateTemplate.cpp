@@ -106,6 +106,32 @@ uint32_t StateTemplate::pack(const State* S, void* buffer, uint32_t bufferSize) 
 	return stream.tell();
 }
 
+uint32_t StateTemplate::pack(const State* Sn1, const State* S, void* buffer, uint32_t bufferSize) const
+{
+	MemoryStream stream(buffer, bufferSize, false, true);
+	BitWriter writer(&stream);
+
+	const RefArray< const IValue >& Vn1 = Sn1->getValues();
+	const RefArray< const IValue >& V = S->getValues();
+
+	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
+	{
+		const IValueTemplate* valueTemplate = m_valueTemplates[i];
+		T_ASSERT (valueTemplate);
+
+		if (!valueTemplate->equal(Vn1[i], V[i]))
+		{
+			writer.writeBit(1);
+			valueTemplate->pack(writer, V[i]);
+		}
+		else
+			writer.writeBit(0);
+	}
+
+	writer.flush();
+	return stream.tell();
+}
+
 Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize) const
 {
 	MemoryStream stream(buffer, bufferSize);
@@ -119,6 +145,31 @@ Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize
 
 		if ((V[i] = valueTemplate->unpack(reader)) == 0)
 			return 0;
+	}
+
+	return new State(V);
+}
+
+Ref< const State > StateTemplate::unpack(const State* Sn1, const void* buffer, uint32_t bufferSize) const
+{
+	MemoryStream stream(buffer, bufferSize);
+	BitReader reader(&stream);
+
+	const RefArray< const IValue >& Vn1 = Sn1->getValues();
+	RefArray< const IValue > V(m_valueTemplates.size());
+
+	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
+	{
+		const IValueTemplate* valueTemplate = m_valueTemplates[i];
+		T_ASSERT (valueTemplate);
+
+		if (reader.readBit())
+		{
+			if ((V[i] = valueTemplate->unpack(reader)) == 0)
+				return 0;
+		}
+		else
+			V[i] = Vn1[i];
 	}
 
 	return new State(V);

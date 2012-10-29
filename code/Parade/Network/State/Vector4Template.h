@@ -29,6 +29,8 @@ public:
 
 	virtual Ref< const IValue > unpack(BitReader& reader) const;
 
+	virtual bool equal(const IValue* Vl, const IValue* Vr) const;
+
 	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const;
 
 private:

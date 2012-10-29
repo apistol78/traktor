@@ -29,8 +29,10 @@ const float c_timeUntilIAm = 6.0f;
 const float c_timeUntilPing = 2.0f;
 const float c_peerTimeout = 20.0f;
 const float c_maxExtrapolateTime = 4.0f;
+const float c_errorStateThreshold = 0.5f;
 const uint32_t c_maxPendingPing = 16;
 const uint32_t c_maxErrorCount = 4;
+const uint32_t c_maxDeltaStates = 4;
 Timer g_timer;
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
@@ -122,6 +124,8 @@ void Replicator::update(float dT)
 {
 	std::set< handle_t > unfresh;
 	std::vector< handle_t > handles;
+	uint8_t iframeData[Message::DataSize];
+	uint8_t frameData[Message::DataSize];
 	handle_t handle;
 	Message msg;
 
@@ -196,6 +200,7 @@ void Replicator::update(float dT)
 
 				peer.established = false;
 				peer.disconnected = true;
+				peer.iframe = 0;
 				continue;
 			}
 		}
@@ -220,16 +225,15 @@ void Replicator::update(float dT)
 	// Broadcast my state to all peers.
 	if (m_state && m_stateTemplate)
 	{
-		msg.type = MtState;
-		msg.time = uint32_t(m_time * 1000.0f);
-
-		uint32_t ss = m_stateTemplate->pack(
+		// Pack iframe from current state.
+		uint32_t iframeSize = m_stateTemplate->pack(
 			m_state,
-			msg.data,
-			sizeof(msg.data)
+			iframeData,
+			sizeof(iframeData)
 		);
 
-		uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + ss;
+		// Initialize message.
+		msg.time = uint32_t(m_time * 1000.0f);
 
 		// Collect peers to which we should send state to.
 		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
@@ -243,6 +247,43 @@ void Replicator::update(float dT)
 			if (!m_replicatorPeers->sendReady(i->first))
 				continue;
 
+			uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
+
+			if (
+				peer.iframe &&
+				(peer.stateCount % c_maxDeltaStates) > 0
+			)
+			{
+				// Pack delta frame from last sent state.
+				uint32_t frameSize = m_stateTemplate->pack(
+					peer.iframe,
+					m_state,
+					frameData,
+					sizeof(frameData)
+				);
+
+				if (frameSize < iframeSize)
+				{
+					std::memcpy(msg.data, frameData, frameSize);
+					msgSize += frameSize;
+					msg.type = MtDeltaState;
+				}
+				else
+				{
+					std::memcpy(msg.data, iframeData, iframeSize);
+					msgSize += iframeSize;
+					msg.type = MtFullState;
+					peer.stateCount = 0;
+				}
+			}
+			else
+			{
+				std::memcpy(msg.data, iframeData, iframeSize);
+				msgSize += iframeSize;
+				msg.type = MtFullState;
+				peer.stateCount = 0;
+			}
+
 			if (m_replicatorPeers->send(i->first, &msg, msgSize, false))
 			{
 				if (peer.ghost->stateTemplate)
@@ -255,12 +296,16 @@ void Replicator::update(float dT)
 					peer.timeUntilTx = c_nearTimeUntilTx;
 
 				peer.errorCount = 0;
+				peer.stateCount++;
+				peer.iframe = m_state;
 			}
 			else
 			{
 				log::error << L"ERROR: Unable to send state to peer " << i->first << L" (" << peer.errorCount << L")" << Endl;
 				peer.timeUntilTx = c_farTimeUntilTx;
 				peer.errorCount++;
+				peer.stateCount = 0;
+				peer.iframe = 0;
 			}
 		}
 	}
@@ -507,7 +552,7 @@ void Replicator::update(float dT)
 			else
 				T_REPLICATOR_DEBUG(L"ERROR: Got pong response from peer " << handle << L" but no ping sent; ignored");
 		}
-		else if (msg.type == MtState)	// Data message.
+		else if (msg.type == MtFullState || msg.type == MtDeltaState)	// Data message.
 		{
 			Peer& peer = m_peers[handle];
 			if (!peer.ghost)
@@ -527,22 +572,67 @@ void Replicator::update(float dT)
 					float offset = time + peer.latencyMinimum - m_time;
 					float adjust = min(offset * 0.75f, c_maxOffsetAdjust);
 					m_time += adjust;
+
+					// Also adjust all old states as well.
+					for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+					{
+						Ghost* ghost = i->second.ghost;
+						if (!ghost)
+							continue;
+
+						if (ghost->Sn2)
+							ghost->Tn2 += adjust;
+						if (ghost->Sn1)
+							ghost->Tn1 += adjust;
+						if (ghost->S0)
+							ghost->T0 += adjust;
+					}
+
+					// Adjust on all queued events also.
+					for (std::list< Event >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
+						i->time += adjust;
+					for (std::list< Event >::iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
+						i->time += adjust;
 				}
 
 				if (peer.ghost->stateTemplate)
 				{
-					Ref< const State > state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+					Ref< const State > state;
+					
+					if (msg.type == MtFullState)
+						state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+					else
+					{
+						if (peer.ghost->S0)
+							state = peer.ghost->stateTemplate->unpack(peer.ghost->S0, msg.data, sizeof(msg.data));
+						else
+							T_REPLICATOR_DEBUG(L"ERROR: Received delta state from peer " << handle << L" but have no iframe; state ignored");
+					}
+
 					if (state)
 					{
-						peer.ghost->Sn2 = peer.ghost->Sn1;
-						peer.ghost->Tn2 = peer.ghost->Tn1;
-						peer.ghost->Sn1 = peer.ghost->S0;
-						peer.ghost->Tn1 = peer.ghost->T0;
-						peer.ghost->S0 = state;
-						peer.ghost->T0 = time;
+						if (time - peer.lastTime < c_errorStateThreshold)
+						{
+							peer.ghost->Sn2 = peer.ghost->Sn1;
+							peer.ghost->Tn2 = peer.ghost->Tn1;
+							peer.ghost->Sn1 = peer.ghost->S0;
+							peer.ghost->Tn1 = peer.ghost->T0;
+							peer.ghost->S0 = state;
+							peer.ghost->T0 = time;
+						}
+						else
+						{
+							T_REPLICATOR_DEBUG(L"WARNING: Ghost state unreasonably old from peer " << handle << L", " << int32_t((time - peer.lastTime) * 1000.0f) << L" ms");
+							peer.ghost->Sn2 = 0;
+							peer.ghost->Tn2 = 0.0f;
+							peer.ghost->Sn1 = 0;
+							peer.ghost->Tn1 = 0.0f;
+							peer.ghost->S0 = state;
+							peer.ghost->T0 = time;
+						}
 					}
 					else
-						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state");
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state (1)");
 				}
 
 				peer.packetCount++;
@@ -553,11 +643,31 @@ void Replicator::update(float dT)
 				// Received an old out-of-order package.
 				if (peer.ghost->stateTemplate)
 				{
-					Ref< const State > state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+					Ref< const State > state;
+					
+					if (msg.type == MtFullState)
+						state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+					else
+					{
+						Ref< const State > Sn;
+
+						if (time > peer.ghost->Tn1)
+							Sn = peer.ghost->Sn1;
+						else if (time > peer.ghost->Tn2)
+							Sn = peer.ghost->Sn2;
+
+						if (Sn)
+							state = peer.ghost->stateTemplate->unpack(Sn, msg.data, sizeof(msg.data));
+						else
+							T_REPLICATOR_DEBUG(L"ERROR: Received delta state from peer " << handle << L" but have no iframe; state ignored");
+					}
+
 					if (state)
 					{
 						if (time > peer.ghost->Tn1)
 						{
+							peer.ghost->Sn2 = peer.ghost->Sn1;
+							peer.ghost->Tn2 = peer.ghost->Tn1;
 							peer.ghost->Sn1 = state;
 							peer.ghost->Tn1 = time;
 						}
@@ -568,7 +678,7 @@ void Replicator::update(float dT)
 						}
 					}
 					else
-						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state");
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state (2)");
 				}
 
 				peer.packetCount++;
@@ -599,6 +709,27 @@ void Replicator::update(float dT)
 					float offset = time + peer.latencyMinimum - m_time;
 					float adjust = min(offset * 0.75f, c_maxOffsetAdjust);
 					m_time += adjust;
+
+					// Also adjust all old states as well.
+					for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+					{
+						Ghost* ghost = i->second.ghost;
+						if (!ghost)
+							continue;
+
+						if (ghost->Sn2)
+							ghost->Tn2 += adjust;
+						if (ghost->Sn1)
+							ghost->Tn1 += adjust;
+						if (ghost->S0)
+							ghost->T0 += adjust;
+					}
+
+					// Adjust on all queued events also.
+					for (std::list< Event >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
+						i->time += adjust;
+					for (std::list< Event >::iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
+						i->time += adjust;
 				}
 
 				peer.packetCount++;

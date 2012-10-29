@@ -2,6 +2,8 @@
 #include "Core/Containers/CircularVector.h"
 #include "Core/Math/Const.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/Align.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -34,6 +36,14 @@ struct EchoFilterInstance : public RefCountImpl< IFilterInstance >
 			Alloc::freeAlign(m_history[0]);
 
 		T_EXCEPTION_GUARD_END
+	}
+
+	void* operator new (size_t size) {
+		return getAllocator()->alloc(size, 16, T_FILE_LINE);
+	}
+
+	void operator delete (void* ptr) {
+		getAllocator()->free(ptr);
 	}
 };
 

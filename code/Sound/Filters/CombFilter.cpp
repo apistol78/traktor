@@ -1,4 +1,5 @@
 #include <cstring>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Sound/Filters/CombFilter.h"
@@ -12,9 +13,17 @@ namespace traktor
 
 struct CombFilterInstance : public RefCountImpl< IFilterInstance >
 {
-	std::vector< float > m_history[2];
+	AlignedVector< float > m_history[2];
 	float m_last[2];
 	uint32_t m_index[2];
+
+	void* operator new (size_t size) {
+		return getAllocator()->alloc(size, 16, T_FILE_LINE);
+	}
+
+	void operator delete (void* ptr) {
+		getAllocator()->free(ptr);
+	}
 };
 
 		}
