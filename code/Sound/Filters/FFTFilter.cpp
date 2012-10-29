@@ -3,6 +3,8 @@
 #include "Core/Math/Hermite.h"
 #include "Core/Math/Log2.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberStaticArray.h"
@@ -133,6 +135,14 @@ struct PairAccessor
 struct FFTFilterInstance : public RefCountImpl< IFilterInstance >
 {
 	float m_history[2][FFTFilter::N];
+
+	void* operator new (size_t size) {
+		return getAllocator()->alloc(size, 16, T_FILE_LINE);
+	}
+
+	void operator delete (void* ptr) {
+		getAllocator()->free(ptr);
+	}
 };
 
 			}

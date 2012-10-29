@@ -51,6 +51,13 @@ Ref< const IValue > TransformTemplate::unpack(BitReader& reader) const
 	));
 }
 
+bool TransformTemplate::equal(const IValue* Vl, const IValue* Vr) const
+{
+	Transform tl = *checked_type_cast< const TransformValue* >(Vl);
+	Transform tr = *checked_type_cast< const TransformValue* >(Vr);
+	return tl == tr;
+}
+
 Ref< const IValue > TransformTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	Transform tn1 = *checked_type_cast< const TransformValue* >(Vn1);

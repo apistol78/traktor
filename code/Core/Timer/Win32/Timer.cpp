@@ -47,7 +47,7 @@ double Timer::getDeltaTime()
 	double delta = double(curr - m_last) / m_frequency;
 	m_last = curr;
 
-	return delta;
+	return delta >= 0.0 ? delta : 0.0;
 }
 	
 }

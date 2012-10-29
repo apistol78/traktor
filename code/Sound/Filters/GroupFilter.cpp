@@ -1,3 +1,5 @@
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Sound/Filters/GroupFilter.h"
@@ -12,6 +14,14 @@ namespace traktor
 struct GroupFilterInstance : public RefCountImpl< IFilterInstance >
 {
 	RefArray< IFilterInstance > m_instances;
+
+	void* operator new (size_t size) {
+		return getAllocator()->alloc(size, 16, T_FILE_LINE);
+	}
+
+	void operator delete (void* ptr) {
+		getAllocator()->free(ptr);
+	}
 };
 
 		}

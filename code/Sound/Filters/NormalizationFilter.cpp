@@ -1,4 +1,6 @@
 #include <cmath>
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Sound/Filters/NormalizationFilter.h"
@@ -13,6 +15,14 @@ namespace traktor
 struct NormalizationFilterInstance : public RefCountImpl< IFilterInstance >
 {
 	float m_currentGain;
+
+	void* operator new (size_t size) {
+		return getAllocator()->alloc(size, 16, T_FILE_LINE);
+	}
+
+	void operator delete (void* ptr) {
+		getAllocator()->free(ptr);
+	}
 };
 
 		}

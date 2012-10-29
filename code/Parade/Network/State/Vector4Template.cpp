@@ -1,6 +1,7 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
 #include "Parade/Network/State/Vector4Value.h"
 #include "Parade/Network/State/Vector4Template.h"
 
@@ -10,6 +11,10 @@ namespace traktor
 	{
 		namespace
 		{
+
+const float c_maxRubberBandTime(0.1f);
+const float c_rubberBandStrengthNear(0.4f);
+const float c_rubberBandStrengthFar(0.95f);
 
 void packUnit(BitWriter& writer, float v)
 {
@@ -144,18 +149,59 @@ Ref< const IValue > Vector4Template::unpack(BitReader& reader) const
 	}
 }
 
+bool Vector4Template::equal(const IValue* Vl, const IValue* Vr) const
+{
+	Vector4 vl = *checked_type_cast< const Vector4Value* >(Vl);
+	Vector4 vr = *checked_type_cast< const Vector4Value* >(Vr);
+
+	if (!m_lowPrecision)
+		return vl == vr;
+	else
+	{
+		const float c_idleThresholdLowPrecision = 1.0f / 256.0f;
+
+		Vector4 va = (vl - vr).absolute();
+		if (va.x() > c_idleThresholdLowPrecision)
+			return false;
+		if (va.y() > c_idleThresholdLowPrecision)
+			return false;
+		if (va.z() > c_idleThresholdLowPrecision)
+			return false;
+		if (va.w() > c_idleThresholdLowPrecision)
+			return false;
+	}
+
+	return true;
+}
+
 Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	Vector4 fn1 = *checked_type_cast< const Vector4Value* >(Vn1);
 	Vector4 f0 = *checked_type_cast< const Vector4Value* >(V0);
+	Vector4 r;
 
 	if (T0 > Tn1 + FUZZY_EPSILON)
 	{
 		float k = (T - Tn1) / (T0 - Tn1);
-		return new Vector4Value(f0 + (fn1 - f0) * Scalar(k));
+		r = f0 + (fn1 - f0) * Scalar(k);
 	}
 	else
-		return new Vector4Value(f0);
+		r = f0;
+
+	// If current simulated state is known then blend into it if last known
+	// state is becoming too old or extrapolated too far away.
+	if (V)
+	{
+		Vector4 f = *checked_type_cast< const Vector4Value* >(V);
+
+		float k0 = (T - T0) / c_maxRubberBandTime;
+		float k1 = clamp(k0, 0.0f, 1.0f);
+		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k1);
+
+		r = lerp(r, f, Scalar(k2));
+	}
+
+	return new Vector4Value(r);
 }
 
 	}

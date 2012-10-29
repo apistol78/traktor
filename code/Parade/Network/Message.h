@@ -14,13 +14,16 @@ enum MessageType
 	MtBye = 0xf2,
 	MtPing = 0xf3,
 	MtPong = 0xf4,
-	MtState	= 0x11,
-	MtEvent = 0x12
+	MtFullState	= 0x11,
+	MtDeltaState = 0x12,
+	MtEvent = 0x13
 };
 
 #pragma pack(1)
 struct Message
 {
+	enum { DataSize = 1200 - 1 - sizeof(uint32_t) };
+
 	uint8_t type;
 	uint32_t time;
 	union
@@ -37,7 +40,7 @@ struct Message
 			uint32_t latency;
 		} pong;
 
-		uint8_t data[1200 - 1 - sizeof(uint32_t)];
+		uint8_t data[DataSize];
 	};
 };
 #pragma pack()

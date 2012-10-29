@@ -229,7 +229,9 @@ private:
 		float latencyReversed;
 		uint32_t pendingPing;
 		uint32_t packetCount;
+		uint32_t stateCount;
 		uint32_t errorCount;
+		Ref< const State > iframe;
 
 		Peer()
 		:	established(false)
@@ -242,6 +244,7 @@ private:
 		,	latencyReversed(0.0f)
 		,	pendingPing(0)
 		,	packetCount(0)
+		,	stateCount(0)
 		,	errorCount(0)
 		{
 		}

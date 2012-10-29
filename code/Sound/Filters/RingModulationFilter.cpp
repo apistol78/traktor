@@ -1,5 +1,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Memory/IAllocator.h"
+#include "Core/Memory/MemoryConfig.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Sound/Filters/RingModulationFilter.h"
@@ -14,6 +16,14 @@ namespace traktor
 struct RingModulationFilterInstance : public RefCountImpl< IFilterInstance >
 {
 	float m_time;
+
+	void* operator new (size_t size) {
+		return getAllocator()->alloc(size, 16, T_FILE_LINE);
+	}
+
+	void operator delete (void* ptr) {
+		getAllocator()->free(ptr);
+	}
 };
 
 		}

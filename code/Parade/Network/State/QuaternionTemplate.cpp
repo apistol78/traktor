@@ -38,6 +38,13 @@ Ref< const IValue > QuaternionTemplate::unpack(BitReader& reader) const
 	));
 }
 
+bool QuaternionTemplate::equal(const IValue* Vl, const IValue* Vr) const
+{
+	Quaternion ql = *checked_type_cast< const QuaternionValue* >(Vl);
+	Quaternion qr = *checked_type_cast< const QuaternionValue* >(Vr);
+	return ql == qr;
+}
+
 Ref< const IValue > QuaternionTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
 	Quaternion fn1 = *checked_type_cast< const QuaternionValue* >(Vn1);

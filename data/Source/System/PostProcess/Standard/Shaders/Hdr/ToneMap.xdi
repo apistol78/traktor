@@ -80,7 +80,7 @@ Middle gray
 				<second>42</second>
 			</position>
 			<min>0.8</min>
-			<max>1.4</max>
+			<max>1.25</max>
 		</item>
 		<item type="traktor.render.Max">
 			<comment/>
