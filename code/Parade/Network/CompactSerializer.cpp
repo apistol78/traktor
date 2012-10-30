@@ -7,6 +7,7 @@
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Parade/Network/CompactSerializer.h"
+#include "Parade/Network/Pack.h"
 
 namespace traktor
 {
@@ -558,40 +559,28 @@ bool CompactSerializer::operator >> (const Member< Vector4 >& m)
 	const AttributeDirection* direction = findAttribute< AttributeDirection >(m);
 	if (direction)
 	{
-		// If unit direction then serialize in polar form.
+		// If unit direction then serialize in packed 24-bit form.
 		if (direction->getUnit())
 		{
 			if (m_direction == SdRead)
 			{
-				uint16_t uphi = 0, ualpha = 0;
+				uint8_t u[3];
 
-				if (!read_uint16(m_reader, uphi))
-					return false;
-				if (!read_uint16(m_reader, ualpha))
-					return false;
+				read_uint8(m_reader, u[0]);
+				read_uint8(m_reader, u[1]);
+				read_uint8(m_reader, u[2]);
 
-				float phi = float(uphi * PI / 65535.0f);
-				float alpha = float(ualpha * TWO_PI / 65535.0f) - PI;
-
-				float x = std::cos(alpha) * std::sin(phi);
-				float y = std::sin(alpha) * std::sin(phi);
-				float z = std::cos(phi);
-
-				(*m) = Vector4(x, y, z, 0.0f);
+				(*m) = unpackUnit(u);
 				return true;
 			}
 			else
 			{
-				float phi = std::acos(m->z());
-				float alpha = std::atan2((float)m->y(), (float)m->x());
+				uint8_t u[3];
+				packUnit(*m, u);
 
-				uint16_t uphi = uint16_t(clamp(phi / PI, 0.0f, 1.0f) * 65535.0f);
-				uint16_t ualpha = uint16_t(clamp((alpha + PI) / TWO_PI, 0.0f, 1.0f) * 65535.0f);
-
-				if (!write_uint16(m_writer, uphi))
-					return false;
-				if (!write_uint16(m_writer, ualpha))
-					return false;
+				write_uint8(m_writer, u[0]);
+				write_uint8(m_writer, u[1]);
+				write_uint8(m_writer, u[2]);
 
 				return true;
 			}

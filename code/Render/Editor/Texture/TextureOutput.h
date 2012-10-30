@@ -30,6 +30,7 @@ public:
 	bool m_isCubeMap;
 	bool m_hasAlpha;
 	bool m_ignoreAlpha;
+	bool m_premultiplyAlpha;
 	bool m_scaleImage;
 	int32_t m_scaleWidth;
 	int32_t m_scaleHeight;

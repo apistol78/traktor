@@ -186,6 +186,10 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 	log::warning.setTarget(new LogDualTarget(logTail, log::warning.getTarget()));
 	log::error  .setTarget(new LogDualTarget(logTail, log::error  .getTarget()));
 
+	// Ensure FP is in known state.
+	_controlfp(_PC_24, _MCW_PC);
+	_controlfp(_RC_NEAR, _MCW_RC);
+
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(
 		new ui::EventLoopWin32(),

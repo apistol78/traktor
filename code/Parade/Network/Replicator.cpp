@@ -20,13 +20,14 @@ namespace traktor
 		{
 
 const handle_t c_broadcastHandle = 0UL;
-const float c_maxOffsetAdjust = 2.0f;
+const float c_initialTimeOffset = 0.05f;
+const float c_maxOffsetAdjust = 0.5f;
 const float c_nearDistance = 20.0f;
-const float c_farDistance = 210.0f;
-const float c_nearTimeUntilTx = 1.0f / 16.0f;
+const float c_farDistance = 200.0f;
+const float c_nearTimeUntilTx = 1.0f / 20.0f;
 const float c_farTimeUntilTx = 1.0f / 10.0f;
 const float c_timeUntilIAm = 6.0f;
-const float c_timeUntilPing = 2.0f;
+const float c_timeUntilPing = 1.5f;
 const float c_peerTimeout = 20.0f;
 const float c_maxExtrapolateTime = 4.0f;
 const float c_errorStateThreshold = 0.5f;
@@ -82,7 +83,7 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 	for (std::vector< handle_t >::const_iterator i = handles.begin(); i != handles.end(); ++i)
 	{
 		Peer& peer = m_peers[*i];
-		peer.established = false;
+		peer.state = PsInitial;
 	}
 
 	return true;
@@ -143,11 +144,11 @@ void Replicator::update(float dT)
 	{
 		Peer& peer = m_peers[*i];
 
-		if (peer.disconnected)
+		if (peer.state == PsDisconnected)
 			continue;
 
 		// Issue "I am" to unestablished peers.
-		if (!peer.established)
+		if (peer.state == PsInitial)
 		{
 			if ((peer.timeUntilTx -= dT) <= 0.0f)
 			{
@@ -158,17 +159,14 @@ void Replicator::update(float dT)
 		}
 
 		// Check if peer doesn't respond, timeout;ed or unable to communicate.
-		if (
-			peer.established &&
-			peer.packetCount > 0
-		)
+		if (peer.state == PsEstablished)
 		{
 			T_ASSERT (peer.lastTime > 0.0f);
 
 			bool failing = false;
 
 			float T = m_time - peer.lastTime;
-			if (T > c_peerTimeout)
+			if (T > c_peerTimeout && peer.packetCount > 0)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" timeout, no packet in " << int32_t(T * 1000.0f) << L" ms");
 				failing = true;
@@ -198,8 +196,7 @@ void Replicator::update(float dT)
 					peer.ghost = 0;
 				}
 
-				peer.established = false;
-				peer.disconnected = true;
+				peer.state = PsDisconnected;
 				peer.iframe = 0;
 				continue;
 			}
@@ -216,7 +213,7 @@ void Replicator::update(float dT)
 		T_ASSERT (it != m_peers.end());
 
 		Peer& peer = it->second;
-		if (peer.established && !peer.disconnected)
+		if (peer.state != PsDisconnected)
 			continue;
 
 		m_peers.erase(it);
@@ -240,7 +237,7 @@ void Replicator::update(float dT)
 		{
 			Peer& peer = i->second;
 
-			if (!peer.established || peer.disconnected || !peer.ghost)
+			if (peer.state != PsEstablished || !peer.ghost)
 				continue;
 			if ((peer.timeUntilTx -= dT) > 0.0f)
 				continue;
@@ -330,14 +327,19 @@ void Replicator::update(float dT)
 			{
 				for (std::map< handle_t, Peer >::iterator j = m_peers.begin(); j != m_peers.end(); ++j)
 				{
-					if (!j->second.established || j->second.disconnected)
+					if (j->second.state != PsEstablished)
 						continue;
 
 					if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
+					{
 						j->second.errorCount = 0;
+#if defined(T_PROFILE_REPLICATOR)
+						m_profileSent[&type_of(i->object)] += msgSize;
+#endif
+					}
 					else
 					{
-						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L")" << Endl;
+						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (1)" << Endl;
 						
 						// Re-send this event to peer next iteration.
 						if (j->second.errorCount == 0)
@@ -357,16 +359,20 @@ void Replicator::update(float dT)
 				if (j != m_peers.end())
 				{
 					if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
+					{
 						j->second.errorCount = 0;
+#if defined(T_PROFILE_REPLICATOR)
+						m_profileSent[&type_of(i->object)] += msgSize;
+#endif
+					}
 					else
 					{
-						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L")" << Endl;
+						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (2)" << Endl;
 						
 						// Re-send this event to peer next iteration.
 						if (
 							j->second.errorCount == 0 &&
-							j->second.established &&
-							!j->second.disconnected
+							j->second.state == PsEstablished
 						)
 							eventsOut.push_back(*i);
 
@@ -391,7 +397,7 @@ void Replicator::update(float dT)
 			std::advance(i, m_pingCount);
 
 			Peer& peer = i->second;
-			if (peer.established)
+			if (peer.state == PsEstablished)
 			{
 				sendPing(i->first);
 				++peer.pendingPing;
@@ -421,8 +427,8 @@ void Replicator::update(float dT)
 			T_REPLICATOR_DEBUG(L"OK: Got \"I am\" from peer " << handle << L", sequence " << int32_t(msg.iam.sequence) << L", id " << msg.iam.id);
 
 			// Assume peer time is correct if exceeding my time.
-			if (time > m_time)
-				m_time = time;
+			if (time + c_initialTimeOffset > m_time)
+				m_time = time + c_initialTimeOffset;
 
 			if (msg.iam.sequence == 0)
 			{
@@ -457,9 +463,9 @@ void Replicator::update(float dT)
 					peer.ghost->T0 = 0.0f;
 				}
 
-				if (!peer.established)
+				if (peer.state != PsEstablished)
 				{
-					peer.established = true;
+					peer.state = PsEstablished;
 					peer.timeUntilTx = 0.0f;
 
 					// Send ping to peer.
@@ -486,7 +492,10 @@ void Replicator::update(float dT)
 
 			Peer& peer = m_peers[handle];
 
-			if (peer.established && peer.ghost)
+			if (
+				peer.state == PsEstablished &&
+				peer.ghost
+			)
 			{
 				T_REPLICATOR_DEBUG(L"OK: Established peer " << handle << L" gracefully disconnected; issue listener event");
 
@@ -501,8 +510,8 @@ void Replicator::update(float dT)
 				peer.ghost = 0;
 			}
 
-			peer.established = false;
-			peer.disconnected = true;
+			peer.state = PsDisconnected;
+			peer.iframe = 0;
 
 			if (time > peer.lastTime + 1e-4f)
 				peer.lastTime = time;
@@ -640,6 +649,8 @@ void Replicator::update(float dT)
 			}
 			else
 			{
+				T_REPLICATOR_DEBUG(L"OK: Received out-of-order package from peer " << handle);
+
 				// Received an old out-of-order package.
 				if (peer.ghost->stateTemplate)
 				{
@@ -746,6 +757,10 @@ void Replicator::update(float dT)
 			e.handle = handle;
 			e.object = eventObject;
 			m_eventsIn.push_back(e);
+
+#if defined(T_PROFILE_REPLICATOR)
+			m_profileReceived[&type_of(eventObject)] += s.tell();
+#endif
 		}
 	}
 
@@ -757,6 +772,20 @@ void Replicator::update(float dT)
 			(*j)->notify(this, event.time, event.eventId, event.handle, event.object);
 	}
 	m_eventsIn.clear();
+
+#if defined(T_PROFILE_REPLICATOR)
+	// Dump event information.
+	if (int32_t(m_time / 10.0f) != int32_t((m_time + dT) / 10.0f))
+	{
+		log::info << L"Sent events" << Endl;
+		for (std::map< const TypeInfo*, uint32_t >::const_iterator i = m_profileSent.begin(); i != m_profileSent.end(); ++i)
+			log::info << L"\t" << i->first->getName() << L" " << i->second << L" byte(s)" << Endl;
+
+		log::info << L"Received events" << Endl;
+		for (std::map< const TypeInfo*, uint32_t >::const_iterator i = m_profileReceived.begin(); i != m_profileReceived.end(); ++i)
+			log::info << L"\t" << i->first->getName() << L" " << i->second << L" byte(s)" << Endl;
+	}
+#endif
 
 	m_time += dT;
 }
@@ -857,7 +886,7 @@ bool Replicator::isPeerConnected(handle_t peerHandle) const
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
 	if (i == m_peers.end())
 		return false;
-	else if (!i->second.established || !i->second.ghost)
+	else if (i->second.state != PsEstablished || !i->second.ghost)
 		return false;
 	else
 		return true;

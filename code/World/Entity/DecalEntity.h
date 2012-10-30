@@ -28,6 +28,7 @@ public:
 	DecalEntity(
 		const Transform& transform,
 		float size,
+		float thickness,
 		float alpha,
 		const resource::Proxy< render::Shader >& shader
 	);
@@ -42,14 +43,20 @@ public:
 
 	float getSize() const { return m_size; }
 
+	float getThickness() const { return m_thickness; }
+
 	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
-	float getAlpha() const { return clamp(m_alpha * 2.0f, 0.0f, 1.0f); }
+	float getAlpha() const { return clamp((m_alpha - m_age) * 2.0f, 0.0f, 1.0f); }
+
+	float getAge() const { return m_age; }
 
 private:
 	Transform m_transform;
 	float m_size;
+	float m_thickness;
 	float m_alpha;
+	float m_age;
 	resource::Proxy< render::Shader > m_shader;
 };
 

@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 5, TextureAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.render.TextureAsset", 7, TextureAsset, editor::Asset)
 
 const TypeInfo* TextureAsset::getOutputType() const
 {
