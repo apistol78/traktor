@@ -118,7 +118,8 @@ Transform lerp(const Transform& a, const Transform& b, const Scalar& c)
 {
 	return Transform(
 		lerp(a.translation(), b.translation(), c),
-		slerp(a.rotation(), b.rotation(), c).normalized()
+		//slerp(a.rotation(), b.rotation(), c).normalized()
+		Quaternion(lerp(a.rotation().e, b.rotation().e, c).normalized())
 	);
 }
 

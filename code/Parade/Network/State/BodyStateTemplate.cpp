@@ -3,8 +3,10 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
+#include "Parade/Network/Pack.h"
 #include "Parade/Network/State/BodyStateValue.h"
 #include "Parade/Network/State/BodyStateTemplate.h"
+#include "Parade/Network/State/Config.h"
 
 namespace traktor
 {
@@ -13,18 +15,13 @@ namespace traktor
 		namespace
 		{
 
-const Scalar c_maxRubberBandDistance(10.0f);
-const float c_maxRubberBandTime(0.1f);
-const float c_rubberBandStrengthNear(0.4f);
-const float c_rubberBandStrengthFar(0.95f);
-
-void packUnit(BitWriter& writer, float v)
+void packScalar(BitWriter& writer, float v)
 {
 	uint16_t iv = uint16_t(clamp(v * 0.5f + 0.5f, 0.0f, 1.0f) * 65535.0f);
 	writer.writeUnsigned(16, iv);
 }
 
-float unpackUnit(BitReader& reader)
+float unpackScalar(BitReader& reader)
 {
 	uint16_t iv = reader.readUnsigned(16);
 	return (iv / 65535.0f) * 2.0f - 1.0f;
@@ -87,7 +84,7 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	// 3 * 16
 	T.rotation().e.storeUnaligned(e);
 	for (uint32_t i = 0; i < 3; ++i)
-		packUnit(writer, e[i]);
+		packScalar(writer, e[i]);
 
 	// 1
 	writer.writeBit(e[3] < 0.0f);
@@ -102,12 +99,13 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 
 			linearVelocity /= Scalar(ln);
 
-			// 2 * 16
-			packUnit(writer, linearVelocity.x());
-			packUnit(writer, linearVelocity.y());
+			// 3 * 8
+			uint8_t u[3];
+			packUnit(linearVelocity, u);
 
-			// 1
-			writer.writeBit(linearVelocity.z() < 0.0f);
+			writer.writeUnsigned(8, u[0]);
+			writer.writeUnsigned(8, u[1]);
+			writer.writeUnsigned(8, u[2]);
 
 			// 16
 			uint32_t uln = std::min< uint32_t >(uint32_t(ln * 512.0f), 65535);
@@ -128,12 +126,13 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 
 			angularVelocity /= Scalar(ln);
 
-			// 2 * 16
-			packUnit(writer, angularVelocity.x());
-			packUnit(writer, angularVelocity.y());
+			// 3 * 8
+			uint8_t u[3];
+			packUnit(angularVelocity, u);
 
-			// 1
-			writer.writeBit(angularVelocity.z() < 0.0f);
+			writer.writeUnsigned(8, u[0]);
+			writer.writeUnsigned(8, u[1]);
+			writer.writeUnsigned(8, u[2]);
 
 			// 16
 			uint32_t uln = std::min< uint32_t >(uint32_t(ln * 512.0f), 65535);
@@ -148,13 +147,13 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 {
 	uint32_t u[3];
-	float f[4];
+	float f[3];
 
 	for (uint32_t i = 0; i < 3; ++i)
 		u[i] = reader.readUnsigned(32);
 
 	for (uint32_t i = 0; i < 3; ++i)
-		f[i] = unpackUnit(reader);
+		f[i] = unpackScalar(reader);
 
 	float sign = reader.readBit() ? -1.0f : 1.0f;
 
@@ -176,18 +175,11 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	Vector4 linearVelocity = Vector4::zero();
 	if (reader.readBit())
 	{
-		float x = unpackUnit(reader);
-		float y = unpackUnit(reader);
-		float z = safeSqrt(1.0f - x * x - y * y);
-
-		if (reader.readBit())
-			z = -z;
-		
-		linearVelocity = Vector4(x, y, z, 0.0f);
-
-		Scalar ln1 = linearVelocity.length();
-		if (ln1 > FUZZY_EPSILON)
-			linearVelocity /= ln1;
+		uint8_t u[3];
+		u[0] = reader.readUnsigned(8);
+		u[1] = reader.readUnsigned(8);
+		u[2] = reader.readUnsigned(8);
+		linearVelocity = unpackUnit(u);
 
 		float ln2 = reader.readUnsigned(16) / 512.0f;
 		linearVelocity *= Scalar(ln2);
@@ -196,18 +188,11 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	Vector4 angularVelocity = Vector4::zero();
 	if (reader.readBit())
 	{
-		float x = unpackUnit(reader);
-		float y = unpackUnit(reader);
-		float z = safeSqrt(1.0f - x * x - y * y);
-
-		if (reader.readBit())
-			z = -z;
-
-		angularVelocity = Vector4(x, y, z, 0.0f);
-
-		Scalar ln1 = angularVelocity.length();
-		if (ln1 > FUZZY_EPSILON)
-			angularVelocity /= ln1;
+		uint8_t u[3];
+		u[0] = reader.readUnsigned(8);
+		u[1] = reader.readUnsigned(8);
+		u[2] = reader.readUnsigned(8);
+		angularVelocity = unpackUnit(u);
 
 		float ln2 = reader.readUnsigned(16) / 512.0f;
 		angularVelocity *= Scalar(ln2);
@@ -238,7 +223,7 @@ bool BodyStateTemplate::equal(const IValue* Vl, const IValue* Vr) const
 
 Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
-	const Vector4 c_linearAccThreshold(1.0f, 1.0f, 1.0f, 0.0f);
+	const Vector4 c_linearAccThreshold(0.5f, 0.5f, 0.5f, 0.0f);
 	const Vector4 c_angularAccThreshold(0.3f, 0.3f, 0.3f, 0.0f);
 
 	Scalar dT_0(safeDenom(T - T0));
@@ -282,6 +267,7 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 
 	P += Vl * dT_0;
 	R = Quaternion::fromAxisAngle(Va * dT_0) * R;
+	//R = R * Quaternion::fromAxisAngle(Va * dT_0);
 
 	physics::BodyState S;
 	S.setTransform(Transform(P, R.normalized()));
@@ -297,14 +283,11 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 		Vector4 Pc = Sc.getTransform().translation();
 		Scalar ln = (P - Pc).length();
 
-		if (ln < c_maxRubberBandDistance)
-		{
-			float k0 = dT_0 / c_maxRubberBandTime;
-			float k1 = ln / c_maxRubberBandDistance;
-			float k2 = clamp(min(k0, k1), 0.0f, 1.0f);
-			float k3 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k2);
-			S = S.interpolate(Sc, Scalar(k3));
-		}
+		float k0 = ln / c_maxRubberBandDistance;
+		float k1 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k0);
+
+		if (k1 > FUZZY_EPSILON)
+			S = S.interpolate(Sc, Scalar(k1));
 	}
 
 	return new BodyStateValue(S);

@@ -38,12 +38,15 @@ public:
 
 	float getSize() const { return m_size; }
 
+	float getThickness() const { return m_thickness; }
+
 	float getAlpha() const { return m_alpha; }
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
 	float m_size;
+	float m_thickness;
 	float m_alpha;
 	resource::Id< render::Shader > m_shader;
 };

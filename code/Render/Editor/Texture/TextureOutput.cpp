@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Render/Editor/Texture/TextureOutput.h"
@@ -7,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 6, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 7, TextureOutput, ISerializable)
 
 TextureOutput::TextureOutput()
 :	m_textureFormat(TfInvalid)
@@ -18,6 +19,7 @@ TextureOutput::TextureOutput()
 ,	m_isCubeMap(false)
 ,	m_hasAlpha(false)
 ,	m_ignoreAlpha(false)
+,	m_premultiplyAlpha(false)
 ,	m_scaleImage(false)
 ,	m_scaleWidth(0)
 ,	m_scaleHeight(0)
@@ -65,15 +67,19 @@ bool TextureOutput::serialize(ISerializer& s)
 	}
 
 	s >> Member< bool >(L"generateNormalMap", m_generateNormalMap);
-	s >> Member< float >(L"scaleDepth", m_scaleDepth);
+	s >> Member< float >(L"scaleDepth", m_scaleDepth, AttributeRange(0.0f));
 	s >> Member< bool >(L"generateMips", m_generateMips);
 	s >> Member< bool >(L"keepZeroAlpha", m_keepZeroAlpha);
 	s >> Member< bool >(L"isCubeMap", m_isCubeMap);
 	s >> Member< bool >(L"hasAlpha", m_hasAlpha);
 	s >> Member< bool >(L"ignoreAlpha", m_ignoreAlpha);
+
+	if (s.getVersion() >= 7)
+		s >> Member< bool >(L"premultiplyAlpha", m_premultiplyAlpha);
+
 	s >> Member< bool >(L"scaleImage", m_scaleImage);
-	s >> Member< int32_t >(L"scaleWidth", m_scaleWidth);
-	s >> Member< int32_t >(L"scaleHeight", m_scaleHeight);
+	s >> Member< int32_t >(L"scaleWidth", m_scaleWidth, AttributeRange(0));
+	s >> Member< int32_t >(L"scaleHeight", m_scaleHeight, AttributeRange(0));
 	s >> Member< bool >(L"enableCompression", m_enableCompression);
 
 	if (s.getVersion() >= 2)
@@ -90,7 +96,7 @@ bool TextureOutput::serialize(ISerializer& s)
 	if (s.getVersion() >= 5)
 	{
 		s >> Member< bool >(L"preserveAlphaCoverage", m_preserveAlphaCoverage);
-		s >> Member< float >(L"alphaCoverageReference", m_alphaCoverageReference);
+		s >> Member< float >(L"alphaCoverageReference", m_alphaCoverageReference, AttributeRange(0.0f, 1.0f));
 	}
 	return true;
 }

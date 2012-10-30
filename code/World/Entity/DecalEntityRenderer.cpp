@@ -24,7 +24,9 @@ struct Vertex
 };
 
 render::handle_t s_handleDecalSize;
+render::handle_t s_handleDecalThickness;
 render::handle_t s_handleAlpha;
+render::handle_t s_handleAge;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
 
@@ -35,7 +37,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEntityRenderer", DecalEntityRenderer
 DecalEntityRenderer::DecalEntityRenderer(render::IRenderSystem* renderSystem)
 {
 	s_handleDecalSize = render::getParameterHandle(L"DecalSize");
+	s_handleDecalThickness = render::getParameterHandle(L"DecalThinkness");
 	s_handleAlpha = render::getParameterHandle(L"Alpha");
+	s_handleAge = render::getParameterHandle(L"Age");
 	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
 	s_handleWorldViewInv = render::getParameterHandle(L"WorldViewInv");
 
@@ -104,7 +108,21 @@ void DecalEntityRenderer::render(
 	Entity* entity
 )
 {
-	m_decalEntities.push_back(checked_type_cast< DecalEntity*, false >(entity));
+	DecalEntity* decalEntity = checked_type_cast< DecalEntity*, false >(entity);
+
+	Transform transform;
+	decalEntity->getTransform(transform);
+
+	float s = decalEntity->getSize();
+	float t = decalEntity->getThickness();
+
+	Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
+	Scalar radius = Scalar(std::sqrt(s * s + s * s + t * t));
+
+	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
+		return;
+
+	m_decalEntities.push_back(decalEntity);
 }
 
 void DecalEntityRenderer::flush(
@@ -164,7 +182,9 @@ void DecalEntityRenderer::flush(
 		);
 
 		renderBlock->programParams->setFloatParameter(s_handleDecalSize, (*i)->getSize());
+		renderBlock->programParams->setFloatParameter(s_handleDecalThickness, (*i)->getThickness());
 		renderBlock->programParams->setFloatParameter(s_handleAlpha, (*i)->getAlpha());
+		renderBlock->programParams->setFloatParameter(s_handleAge, (*i)->getAge());
 		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
 		renderBlock->programParams->endParameters(renderContext);

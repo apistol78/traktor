@@ -21,6 +21,8 @@ namespace traktor
 	namespace parade
 	{
 
+//#define T_PROFILE_REPLICATOR
+
 class IReplicatorPeers;
 class State;
 class StateTemplate;
@@ -216,10 +218,16 @@ private:
 		float T0;
 	};
 
+	enum PeerState
+	{
+		PsInitial,
+		PsEstablished,
+		PsDisconnected
+	};
+
 	struct Peer
 	{
-		bool established;
-		bool disconnected;
+		PeerState state;
 		Ghost* ghost;
 		float timeUntilTx;
 		float lastTime;
@@ -234,8 +242,7 @@ private:
 		Ref< const State > iframe;
 
 		Peer()
-		:	established(false)
-		,	disconnected(false)
+		:	state(PsInitial)
 		,	ghost(0)
 		,	timeUntilTx(0.0f)
 		,	lastTime(0.0f)
@@ -263,6 +270,11 @@ private:
 	float m_time;
 	uint32_t m_pingCount;
 	float m_timeUntilPing;
+
+#if defined(T_PROFILE_REPLICATOR)
+	std::map< const TypeInfo*, uint32_t > m_profileSent;
+	std::map< const TypeInfo*, uint32_t > m_profileReceived;
+#endif
 
 	void sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id);
 

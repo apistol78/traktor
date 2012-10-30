@@ -4,6 +4,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
+#include "Parade/Network/State/Config.h"
 #include "Parade/Network/State/FloatValue.h"
 #include "Parade/Network/State/FloatTemplate.h"
 
@@ -14,9 +15,6 @@ namespace traktor
 		namespace
 		{
 
-const float c_maxRubberBandTime = 0.1f;
-const float c_rubberBandStrengthNear = 0.4f;
-const float c_rubberBandStrengthFar = 0.95f;
 const float c_idleThreshold = 1e-4f;
 const float c_idleThresholdLowPrecision = 1.0f / 256.0f;
 
@@ -133,7 +131,7 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 
 		float v2_1 = (fn1 - fn2) / dT_n2_n1;
 		float v1_0 = (f0 - fn1) / dT_n1_0;
-		float a = clamp((v1_0 - v2_1) / dT_n1_0, -1.0f, 1.0f);
+		float a = clamp((v1_0 - v2_1) / dT_n1_0, -0.25f, 0.25f);
 
 		f = f0 + (f0 - fn1) * (T - T0) + 0.5f * a * (T - T0) * (T - T0);
 	}
@@ -151,7 +149,7 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 
 		float k0 = (T - T0) / c_maxRubberBandTime;
 		float k1 = clamp(k0, 0.0f, 1.0f);
-		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k1);
+		float k2 = lerp(0.1f, 0.9f, k1);
 
 		f = lerp(f, fc, k2);
 	}

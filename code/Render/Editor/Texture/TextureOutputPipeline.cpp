@@ -22,6 +22,7 @@
 #include "Drawing/Filters/MirrorFilter.h"
 #include "Drawing/Filters/NormalizeFilter.h"
 #include "Drawing/Filters/NormalMapFilter.h"
+#include "Drawing/Filters/PremultiplyAlphaFilter.h"
 #include "Drawing/Filters/ScaleFilter.h"
 #include "Drawing/Filters/SwizzleFilter.h"
 #include "Drawing/Filters/TransformFilter.h"
@@ -377,6 +378,14 @@ bool TextureOutputPipeline::buildOutput(
 		log::info << L"Converting into linear gamma..." << Endl;
 		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
 		image = image->applyFilter(&gammaFilter);
+	}
+
+	// Multiply with alpha.
+	if (textureOutput->m_premultiplyAlpha)
+	{
+		log::info << L"Premultiply with alpha..." << Endl;
+		drawing::PremultiplyAlphaFilter preAlphaFilter;
+		image = image->applyFilter(&preAlphaFilter);
 	}
 
 	// Convert image into proper format.
