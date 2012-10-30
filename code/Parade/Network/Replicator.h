@@ -239,6 +239,9 @@ private:
 		uint32_t packetCount;
 		uint32_t stateCount;
 		uint32_t errorCount;
+		uint32_t lossCount;
+		uint8_t txSequence;
+		uint8_t rxSequence;
 		Ref< const State > iframe;
 
 		Peer()
@@ -253,6 +256,9 @@ private:
 		,	packetCount(0)
 		,	stateCount(0)
 		,	errorCount(0)
+		,	lossCount(0)
+		,	txSequence(0)
+		,	rxSequence(0)
 		{
 		}
 	};

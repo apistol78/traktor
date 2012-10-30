@@ -96,7 +96,6 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 
 	int32_t nechos = int32_t(1.0f / m_decay);
 	int32_t delay = int32_t(m_delay * outBlock.sampleRate);
-	Scalar decay0(m_decay);
 
 	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
 	{
@@ -122,11 +121,10 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 
 			int32_t maxOffset = count;
 			Vector4 echo = Vector4::zero();
-			Scalar decay(1.0f);
 
 			for (int32_t k = 1; k < nechos; ++k)
 			{
-				decay -= decay0;
+				Scalar decay(1.0f - std::pow(m_decay * k, 0.3f));
 				int32_t offset = alignUp(k * delay, 4);
 				if (offset < maxOffset)
 				{

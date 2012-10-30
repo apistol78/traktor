@@ -31,6 +31,7 @@ const float c_timeUntilPing = 1.5f;
 const float c_peerTimeout = 20.0f;
 const float c_maxExtrapolateTime = 4.0f;
 const float c_errorStateThreshold = 0.5f;
+const uint32_t c_errorLossThreshold = 10000;
 const uint32_t c_maxPendingPing = 16;
 const uint32_t c_maxErrorCount = 4;
 const uint32_t c_maxDeltaStates = 4;
@@ -125,8 +126,8 @@ void Replicator::update(float dT)
 {
 	std::set< handle_t > unfresh;
 	std::vector< handle_t > handles;
-	uint8_t iframeData[Message::DataSize];
-	uint8_t frameData[Message::DataSize];
+	uint8_t iframeData[Message::StateSize];
+	uint8_t frameData[Message::StateSize];
 	handle_t handle;
 	Message msg;
 
@@ -178,7 +179,7 @@ void Replicator::update(float dT)
 				failing = true;
 			}
 
-			if (peer.errorCount > c_maxErrorCount)
+			if (peer.errorCount > c_maxErrorCount || peer.lossCount > c_errorLossThreshold)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" failing, unable to communicate with peer");
 				failing = true;
@@ -229,10 +230,8 @@ void Replicator::update(float dT)
 			sizeof(iframeData)
 		);
 
-		// Initialize message.
+		// Send state to all connected peers.
 		msg.time = uint32_t(m_time * 1000.0f);
-
-		// Collect peers to which we should send state to.
 		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 		{
 			Peer& peer = i->second;
@@ -244,7 +243,7 @@ void Replicator::update(float dT)
 			if (!m_replicatorPeers->sendReady(i->first))
 				continue;
 
-			uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
+			uint32_t msgSize = Message::HeaderSize + sizeof(uint8_t);
 
 			if (
 				peer.iframe &&
@@ -261,13 +260,13 @@ void Replicator::update(float dT)
 
 				if (frameSize < iframeSize)
 				{
-					std::memcpy(msg.data, frameData, frameSize);
+					std::memcpy(msg.state.data, frameData, frameSize);
 					msgSize += frameSize;
 					msg.type = MtDeltaState;
 				}
 				else
 				{
-					std::memcpy(msg.data, iframeData, iframeSize);
+					std::memcpy(msg.state.data, iframeData, iframeSize);
 					msgSize += iframeSize;
 					msg.type = MtFullState;
 					peer.stateCount = 0;
@@ -275,11 +274,13 @@ void Replicator::update(float dT)
 			}
 			else
 			{
-				std::memcpy(msg.data, iframeData, iframeSize);
+				std::memcpy(msg.state.data, iframeData, iframeSize);
 				msgSize += iframeSize;
 				msg.type = MtFullState;
 				peer.stateCount = 0;
 			}
+
+			msg.state.sequence = peer.txSequence;
 
 			if (m_replicatorPeers->send(i->first, &msg, msgSize, false))
 			{
@@ -294,6 +295,7 @@ void Replicator::update(float dT)
 
 				peer.errorCount = 0;
 				peer.stateCount++;
+				peer.txSequence++;
 				peer.iframe = m_state;
 			}
 			else
@@ -316,7 +318,7 @@ void Replicator::update(float dT)
 			msg.type = MtEvent;
 			msg.time = uint32_t(m_time * 1000.0f);
 
-			MemoryStream s(msg.data, sizeof(msg.data), false, true);
+			MemoryStream s(msg.event.data, sizeof(msg.event.data), false, true);
 			CompactSerializer cs(&s, &m_eventTypes[0]);
 			cs.writeObject(i->object);
 			cs.flush();
@@ -412,6 +414,7 @@ void Replicator::update(float dT)
 	// Read messages from any peer.
 	while (m_replicatorPeers->receiveAnyPending())
 	{
+		std::memset(&msg, 0, sizeof(msg));
 		if (m_replicatorPeers->receive(&msg, sizeof(msg), handle) < 0)
 		{
 			T_REPLICATOR_DEBUG(L"ERROR: Failed to receive pending message");
@@ -570,6 +573,17 @@ void Replicator::update(float dT)
 				continue;
 			}
 
+			// Check sequence number.
+			if (peer.rxSequence != msg.state.sequence)
+			{
+				T_REPLICATOR_DEBUG(L"WARNING: Packet loss detected; expected " << int32_t(peer.rxSequence) << L", got " << int32_t(peer.txSequence));
+				peer.lossCount++;
+			}
+
+			peer.rxSequence = msg.state.sequence + 1;
+
+			bool stateValid = false;
+
 			// Ignore old messages; as we're using unreliable transportation
 			// messages can arrive out-of-order.
 			if (time > peer.lastTime + 1e-4f)
@@ -609,11 +623,11 @@ void Replicator::update(float dT)
 					Ref< const State > state;
 					
 					if (msg.type == MtFullState)
-						state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+						state = peer.ghost->stateTemplate->unpack(msg.state.data, sizeof(msg.state.data));
 					else
 					{
 						if (peer.ghost->S0)
-							state = peer.ghost->stateTemplate->unpack(peer.ghost->S0, msg.data, sizeof(msg.data));
+							state = peer.ghost->stateTemplate->unpack(peer.ghost->S0, msg.state.data, sizeof(msg.state.data));
 						else
 							T_REPLICATOR_DEBUG(L"ERROR: Received delta state from peer " << handle << L" but have no iframe; state ignored");
 					}
@@ -639,6 +653,7 @@ void Replicator::update(float dT)
 							peer.ghost->S0 = state;
 							peer.ghost->T0 = time;
 						}
+						stateValid = true;
 					}
 					else
 						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state (1)");
@@ -657,7 +672,7 @@ void Replicator::update(float dT)
 					Ref< const State > state;
 					
 					if (msg.type == MtFullState)
-						state = peer.ghost->stateTemplate->unpack(msg.data, sizeof(msg.data));
+						state = peer.ghost->stateTemplate->unpack(msg.state.data, sizeof(msg.state.data));
 					else
 					{
 						Ref< const State > Sn;
@@ -668,7 +683,7 @@ void Replicator::update(float dT)
 							Sn = peer.ghost->Sn2;
 
 						if (Sn)
-							state = peer.ghost->stateTemplate->unpack(Sn, msg.data, sizeof(msg.data));
+							state = peer.ghost->stateTemplate->unpack(Sn, msg.state.data, sizeof(msg.state.data));
 						else
 							T_REPLICATOR_DEBUG(L"ERROR: Received delta state from peer " << handle << L" but have no iframe; state ignored");
 					}
@@ -681,11 +696,13 @@ void Replicator::update(float dT)
 							peer.ghost->Tn2 = peer.ghost->Tn1;
 							peer.ghost->Sn1 = state;
 							peer.ghost->Tn1 = time;
+							stateValid = true;
 						}
 						else if (time > peer.ghost->Tn2)
 						{
 							peer.ghost->Sn2 = state;
 							peer.ghost->Tn2 = time;
+							stateValid = true;
 						}
 					}
 					else
@@ -696,11 +713,14 @@ void Replicator::update(float dT)
 			}
 
 			// Put an input event to notify listeners about new state.
-			Event evt;
-			evt.eventId = IListener::ReState;
-			evt.handle = handle;
-			evt.object = 0;
-			m_eventsIn.push_back(evt);
+			if (stateValid)
+			{
+				Event evt;
+				evt.eventId = IListener::ReState;
+				evt.handle = handle;
+				evt.object = 0;
+				m_eventsIn.push_back(evt);
+			}
 		}
 		else if (msg.type == MtEvent)	// Event message.
 		{
@@ -747,7 +767,7 @@ void Replicator::update(float dT)
 				peer.lastTime = time;
 			}
 
-			MemoryStream s(msg.data, sizeof(msg.data), true, false);
+			MemoryStream s(msg.event.data, sizeof(msg.event.data), true, false);
 			Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
 
 			// Put an input event to notify listeners about received event.
