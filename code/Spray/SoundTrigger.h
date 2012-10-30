@@ -32,12 +32,13 @@ class T_DLLCLASS SoundTrigger : public ITrigger
 	T_RTTI_CLASS;
 
 public:
-	SoundTrigger(const resource::Proxy< sound::Sound >& sound, bool follow, bool repeat);
+	SoundTrigger(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat);
 
 	virtual Ref< ITriggerInstance > createInstance() const;
 
 private:
 	resource::Proxy< sound::Sound > m_sound;
+	bool m_positional;
 	bool m_follow;
 	bool m_repeat;
 };

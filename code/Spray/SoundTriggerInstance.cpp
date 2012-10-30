@@ -16,7 +16,10 @@ void SoundTriggerInstance::perform(Context& context, const Transform& transform)
 	if (context.soundPlayer)
 	{
 		T_ASSERT (!m_handle);
-		m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
+		if (m_positional)
+			m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
+		else
+			m_handle = context.soundPlayer->play(m_sound, 16);
 	}
 }
 
@@ -27,13 +30,18 @@ void SoundTriggerInstance::update(Context& context, const Transform& transform, 
 
 	if (enable)
 	{
-		if (m_follow)
+		if (m_positional && m_follow)
 			m_handle->setPosition(transform.translation());
 
 		if (!m_handle->isPlaying())
 		{
 			if (m_repeat)
-				m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
+			{
+				if (m_positional)
+					m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
+				else
+					m_handle = context.soundPlayer->play(m_sound, 16);
+			}
 			else
 				m_handle = 0;
 		}
@@ -42,8 +50,9 @@ void SoundTriggerInstance::update(Context& context, const Transform& transform, 
 		m_handle = 0;
 }
 
-SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool follow, bool repeat)
+SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat)
 :	m_sound(sound)
+,	m_positional(positional)
 ,	m_follow(follow)
 ,	m_repeat(repeat)
 {

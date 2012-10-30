@@ -299,8 +299,8 @@ T_MATH_INLINE Quaternion slerp(const Quaternion& a, const Quaternion& b, float c
 {
 	Scalar scale1;
 	Scalar scale2;
-	Quaternion A = a;
-	Quaternion B = b;
+	Quaternion A = a.normalized();
+	Quaternion B = b.normalized();
 	Quaternion Q;
 
 	Scalar cosTheta = dot4(A.e, B.e);
@@ -310,9 +310,9 @@ T_MATH_INLINE Quaternion slerp(const Quaternion& a, const Quaternion& b, float c
 		cosTheta = -cosTheta;
 	}
 
-	if ((cosTheta + Scalar(1.0f)) > 0.05f)
+	if ((cosTheta + Scalar(1.0f)) > 0.01f)
 	{
-		if ((Scalar(1.0f) - cosTheta) < 0.05f)
+		if ((Scalar(1.0f) - cosTheta) < 0.01f)
 		{
 			scale1 = Scalar(1.0f - c);
 			scale2 = Scalar(c);

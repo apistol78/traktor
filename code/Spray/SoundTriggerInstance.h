@@ -42,10 +42,11 @@ private:
 
 	resource::Proxy< sound::Sound > m_sound;
 	Ref< sound::ISoundHandle > m_handle;
+	bool m_positional;
 	bool m_follow;
 	bool m_repeat;
 
-	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool follow, bool repeat);
+	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat);
 };
 
 	}
