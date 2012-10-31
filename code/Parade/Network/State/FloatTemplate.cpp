@@ -18,10 +18,13 @@ namespace traktor
 const float c_idleThreshold = 1e-4f;
 const float c_idleThresholdLowPrecision = 1.0f / 256.0f;
 
-float safeDenom(float v)
+float safeDeltaTime(float v)
 {
-	if (abs(v) < FUZZY_EPSILON)
-		return FUZZY_EPSILON * sign(v);
+	float av = std::abs(v);
+	if (av < 0.01f)
+		return 0.01f * sign(v);
+	else if (av > 1.0f)
+		return 1.0f * sign(v);
 	else
 		return v;
 }
@@ -122,8 +125,8 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 	float f0 = *checked_type_cast< const FloatValue* >(V0);
 	float f;
 
-	float dT_n2_n1 = safeDenom(Tn1 - Tn2);
-	float dT_n1_0 = safeDenom(T0 - Tn1);
+	float dT_n2_n1 = safeDeltaTime(Tn1 - Tn2);
+	float dT_n1_0 = safeDeltaTime(T0 - Tn1);
 	
 	if (Vn2)
 	{

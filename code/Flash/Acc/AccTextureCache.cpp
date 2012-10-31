@@ -68,7 +68,7 @@ void AccTextureCache::destroy()
 
 void AccTextureCache::clear()
 {
-	for (std::map< uint64_t, Ref< render::ITexture > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
+	for (SmallMap< uint64_t, Ref< render::ITexture > >::iterator i = m_cache.begin(); i != m_cache.end(); ++i)
 	{
 		if (i->second)
 			i->second->destroy();
@@ -81,7 +81,7 @@ Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle
 	Ref< render::ISimpleTexture > texture;
 
 	uint64_t hash = reinterpret_cast< uint64_t >(&style);
-	std::map< uint64_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
+	SmallMap< uint64_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
 
@@ -155,7 +155,7 @@ Ref< render::ITexture > AccTextureCache::getGradientTexture(const FlashFillStyle
 Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bitmap)
 {
 	uint64_t hash = reinterpret_cast< uint64_t >(&bitmap);
-	std::map< uint64_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
+	SmallMap< uint64_t, Ref< render::ITexture > >::iterator it = m_cache.find(hash);
 	if (it != m_cache.end())
 		return it->second;
 

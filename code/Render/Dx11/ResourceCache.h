@@ -1,8 +1,8 @@
 #ifndef traktor_render_ResourceCache_H
 #define traktor_render_ResourceCache_H
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Misc/ComRef.h"
 #include "Render/Dx11/Platform.h"
 
@@ -28,11 +28,11 @@ public:
 
 private:
 	ComRef< ID3D11Device > m_d3dDevice;
-	std::map< uint32_t, ComRef< ID3D11RasterizerState > > m_d3dRasterizerStates;
-	std::map< uint32_t, ComRef< ID3D11DepthStencilState > > m_d3dDepthStencilStates;
-	std::map< uint32_t, ComRef< ID3D11BlendState > > m_d3dBlendStates;
-	std::map< uint32_t, ComRef< ID3D11VertexShader > > m_d3dVertexShaders;
-	std::map< uint32_t, ComRef< ID3D11PixelShader > > m_d3dPixelShaders;
+	SmallMap< uint32_t, ComRef< ID3D11RasterizerState > > m_d3dRasterizerStates;
+	SmallMap< uint32_t, ComRef< ID3D11DepthStencilState > > m_d3dDepthStencilStates;
+	SmallMap< uint32_t, ComRef< ID3D11BlendState > > m_d3dBlendStates;
+	SmallMap< uint32_t, ComRef< ID3D11VertexShader > > m_d3dVertexShaders;
+	SmallMap< uint32_t, ComRef< ID3D11PixelShader > > m_d3dPixelShaders;
 };
 
 	}

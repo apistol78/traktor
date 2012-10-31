@@ -22,6 +22,7 @@ struct EchoFilterInstance : public RefCountImpl< IFilterInstance >
 	int32_t m_count[SbcMaxChannelCount];
 	int32_t m_front[SbcMaxChannelCount];
 	int32_t m_size;
+	Scalar m_decay[16];
 
 	EchoFilterInstance()
 	{
@@ -87,6 +88,9 @@ Ref< IFilterInstance > EchoFilter::createInstance() const
 
 	efi->m_size = samples;
 
+	for (int32_t k = 1; k < nechos; ++k)
+		efi->m_decay[k] = Scalar(1.0f - std::pow(m_decay * k, 0.3f));
+
 	return efi;
 }
 
@@ -124,7 +128,6 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 
 			for (int32_t k = 1; k < nechos; ++k)
 			{
-				Scalar decay(1.0f - std::pow(m_decay * k, 0.3f));
 				int32_t offset = alignUp(k * delay, 4);
 				if (offset < maxOffset)
 				{
@@ -133,7 +136,7 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 						index += efi->m_size;
 
 					Vector4 h = Vector4::loadAligned(&history[index]);
-					echo += h * decay;
+					echo += h * efi->m_decay[k];
 				}
 			}
 

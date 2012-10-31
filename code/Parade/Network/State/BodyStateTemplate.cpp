@@ -51,16 +51,19 @@ bool fuzzyEqual(const Transform& Tl, const Transform& Tr)
 
 float safeSqrt(float v)
 {
-	if (v > 0.0f)
+	if (v > FUZZY_EPSILON)
 		return std::sqrt(v);
 	else
 		return 0.0f;
 }
 
-float safeDenom(float v)
+float safeDeltaTime(float v)
 {
-	if (abs(v) < FUZZY_EPSILON)
-		return FUZZY_EPSILON * sign(v);
+	float av = std::abs(v);
+	if (av < 0.01f)
+		return 0.01f * sign(v);
+	else if (av > 1.0f)
+		return 1.0f * sign(v);
 	else
 		return v;
 }
@@ -226,9 +229,9 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	const Vector4 c_linearAccThreshold(0.5f, 0.5f, 0.5f, 0.0f);
 	const Vector4 c_angularAccThreshold(0.3f, 0.3f, 0.3f, 0.0f);
 
-	Scalar dT_0(safeDenom(T - T0));
-	Scalar dT_n1_0(safeDenom(T0 - Tn1));
-	Scalar dT_n2_n1(safeDenom(Tn1 - Tn2));
+	Scalar dT_0(safeDeltaTime(T - T0));
+	Scalar dT_n1_0(safeDeltaTime(T0 - Tn1));
+	Scalar dT_n2_n1(safeDeltaTime(Tn1 - Tn2));
 
 	const physics::BodyState& Sn1 = *checked_type_cast< const BodyStateValue* >(Vn1);
 	const physics::BodyState& S0 = *checked_type_cast< const BodyStateValue* >(V0);

@@ -1,8 +1,8 @@
 #ifndef traktor_flash_AccTextureCache_H
 #define traktor_flash_AccTextureCache_H
 
-#include <map>
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
 #include "Render/IRenderSystem.h"
 
 namespace traktor
@@ -41,7 +41,7 @@ public:
 
 private:
 	Ref< render::IRenderSystem > m_renderSystem;
-	std::map< uint64_t, Ref< render::ITexture > > m_cache;
+	SmallMap< uint64_t, Ref< render::ITexture > > m_cache;
 };
 
 	}

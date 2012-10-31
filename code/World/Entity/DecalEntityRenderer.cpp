@@ -30,6 +30,8 @@ render::handle_t s_handleAge;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
 
+const Scalar c_cullDistance(100.0f);
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEntityRenderer", DecalEntityRenderer, IEntityRenderer)
@@ -117,8 +119,10 @@ void DecalEntityRenderer::render(
 	float t = decalEntity->getThickness();
 
 	Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
-	Scalar radius = Scalar(std::sqrt(s * s + s * s + t * t));
+	if (center.length2() > c_cullDistance * c_cullDistance)
+		return;
 
+	Scalar radius = Scalar(std::sqrt(s * s + s * s + t * t));
 	if (worldRenderView.getCullFrustum().inside(center, radius) == Frustum::IrOutside)
 		return;
 
