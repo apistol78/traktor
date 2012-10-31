@@ -67,14 +67,14 @@ bool AnimationPipeline::buildOutput(
 
 	if (!format)
 	{
-		log::error << L"Unable to build animation; unsupported format" << Endl;
+		log::error << L"Unable to build animation; unsupported format \"" << fileName.getExtension() << L"\"" << Endl;
 		return false;
 	}
 
 	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
 	if (!file)
 	{
-		log::error << L"Unable to build animation; no such file" << Endl;
+		log::error << L"Unable to build animation; no such file \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
 	}
 
@@ -89,14 +89,14 @@ bool AnimationPipeline::buildOutput(
 
 	if (!anim)
 	{
-		log::error << L"Unable to build animation; import failed" << Endl;
+		log::error << L"Unable to build animation; import failed \"" << fileName.getPathName() << L"\"" << Endl;
 		return false;
 	}
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!instance)
 	{
-		log::error << L"Unable to build animation; unable to create output instance" << Endl;
+		log::error << L"Unable to build animation; unable to create output instance \"" << outputPath << L"\"" << Endl;
 		return false;
 	}
 
@@ -104,7 +104,7 @@ bool AnimationPipeline::buildOutput(
 
 	if (!instance->commit())
 	{
-		log::error << L"Unable to build animation; unable to commit output instance" << Endl;
+		log::error << L"Unable to build animation; unable to commit output instance \"" << outputPath << L"\"" << Endl;
 		return false;
 	}
 

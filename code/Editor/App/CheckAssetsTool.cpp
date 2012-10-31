@@ -57,7 +57,7 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor)
 
 		if (files.empty())
 		{
-			log::error << L"File \"" << fileName.getPathName() << L"\" missing" << Endl;
+			log::error << L"File \"" << fileName.getPathName() << L"\" missing, in asset \"" << (*i)->getPath() << L"\"" << Endl;
 			++errorCount;
 			continue;
 		}

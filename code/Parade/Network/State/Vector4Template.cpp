@@ -28,7 +28,7 @@ float unpackScalar(BitReader& reader)
 
 float safeSqrt(float v)
 {
-	if (v > 0.0f)
+	if (v > FUZZY_EPSILON)
 		return std::sqrt(v);
 	else
 		return 0.0f;

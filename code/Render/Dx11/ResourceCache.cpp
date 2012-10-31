@@ -29,7 +29,7 @@ ID3D11RasterizerState* ResourceCache::getRasterizerState(const D3D11_RASTERIZER_
 {
 	uint32_t h = hash(rd);
 
-	std::map< uint32_t, ComRef< ID3D11RasterizerState > >::iterator i = m_d3dRasterizerStates.find(h);
+	SmallMap< uint32_t, ComRef< ID3D11RasterizerState > >::iterator i = m_d3dRasterizerStates.find(h);
 	if (i != m_d3dRasterizerStates.end())
 		return i->second;
 	
@@ -50,7 +50,7 @@ ID3D11DepthStencilState* ResourceCache::getDepthStencilState(const D3D11_DEPTH_S
 {
 	uint32_t h = hash(dsd);
 
-	std::map< uint32_t, ComRef< ID3D11DepthStencilState > >::iterator i = m_d3dDepthStencilStates.find(h);
+	SmallMap< uint32_t, ComRef< ID3D11DepthStencilState > >::iterator i = m_d3dDepthStencilStates.find(h);
 	if (i != m_d3dDepthStencilStates.end())
 		return i->second;
 	
@@ -71,7 +71,7 @@ ID3D11BlendState* ResourceCache::getBlendState(const D3D11_BLEND_DESC& bd)
 {
 	uint32_t h = hash(bd);
 
-	std::map< uint32_t, ComRef< ID3D11BlendState > >::iterator i = m_d3dBlendStates.find(h);
+	SmallMap< uint32_t, ComRef< ID3D11BlendState > >::iterator i = m_d3dBlendStates.find(h);
 	if (i != m_d3dBlendStates.end())
 		return i->second;
 	
@@ -93,7 +93,7 @@ ID3D11VertexShader* ResourceCache::getVertexShader(ID3DBlob* vertexShaderBlob, u
 	ComRef< ID3D11VertexShader > d3dVertexShader;
 	HRESULT hr;
 
-	std::map< uint32_t, ComRef< ID3D11VertexShader > >::const_iterator i = m_d3dVertexShaders.find(vertexShaderHash);
+	SmallMap< uint32_t, ComRef< ID3D11VertexShader > >::const_iterator i = m_d3dVertexShaders.find(vertexShaderHash);
 	if (i != m_d3dVertexShaders.end())
 		return i->second;
 
@@ -115,7 +115,7 @@ ID3D11PixelShader* ResourceCache::getPixelShader(ID3DBlob* pixelShaderBlob, uint
 	ComRef< ID3D11PixelShader > d3dPixelShader;
 	HRESULT hr;
 
-	std::map< uint32_t, ComRef< ID3D11PixelShader > >::const_iterator i = m_d3dPixelShaders.find(pixelShaderHash);
+	SmallMap< uint32_t, ComRef< ID3D11PixelShader > >::const_iterator i = m_d3dPixelShaders.find(pixelShaderHash);
 	if (i != m_d3dPixelShaders.end())
 		return i->second;
 

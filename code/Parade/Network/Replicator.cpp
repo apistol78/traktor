@@ -22,10 +22,10 @@ namespace traktor
 const handle_t c_broadcastHandle = 0UL;
 const float c_initialTimeOffset = 0.05f;
 const float c_maxOffsetAdjust = 0.5f;
-const float c_nearDistance = 20.0f;
-const float c_farDistance = 200.0f;
-const float c_nearTimeUntilTx = 1.0f / 20.0f;
-const float c_farTimeUntilTx = 1.0f / 10.0f;
+const float c_nearDistance = 15.0f;
+const float c_farDistance = 150.0f;
+const float c_nearTimeUntilTx = 1.0f / 15.0f;
+const float c_farTimeUntilTx = 1.0f / 8.0f;
 const float c_timeUntilIAm = 6.0f;
 const float c_timeUntilPing = 1.5f;
 const float c_peerTimeout = 20.0f;
@@ -34,7 +34,7 @@ const float c_errorStateThreshold = 0.5f;
 const uint32_t c_errorLossThreshold = 10000;
 const uint32_t c_maxPendingPing = 16;
 const uint32_t c_maxErrorCount = 4;
-const uint32_t c_maxDeltaStates = 4;
+const uint32_t c_maxDeltaStates = 8;
 Timer g_timer;
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
@@ -179,7 +179,7 @@ void Replicator::update(float dT)
 				failing = true;
 			}
 
-			if (peer.errorCount > c_maxErrorCount || peer.lossCount > c_errorLossThreshold)
+			if (peer.errorCount > c_maxErrorCount || peer.lossDelta > c_errorLossThreshold)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" failing, unable to communicate with peer");
 				failing = true;
@@ -245,9 +245,12 @@ void Replicator::update(float dT)
 
 			uint32_t msgSize = Message::HeaderSize + sizeof(uint8_t);
 
+			// Send delta frames only if we've successfully sent
+			// an iframe and we're not experiencing package loss.
 			if (
 				peer.iframe &&
-				(peer.stateCount % c_maxDeltaStates) > 0
+				peer.lossDelta == 0 &&
+				peer.stateCount % c_maxDeltaStates > 0
 			)
 			{
 				// Pack delta frame from last sent state.
@@ -284,14 +287,19 @@ void Replicator::update(float dT)
 
 			if (m_replicatorPeers->send(i->first, &msg, msgSize, false))
 			{
-				if (peer.ghost->stateTemplate)
+				if (peer.lossDelta == 0)
 				{
-					float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
-					float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-					peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
+					if (peer.ghost->stateTemplate)
+					{
+						float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
+						float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
+						peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
+					}
+					else
+						peer.timeUntilTx = c_nearTimeUntilTx;
 				}
 				else
-					peer.timeUntilTx = c_nearTimeUntilTx;
+					peer.timeUntilTx = c_farTimeUntilTx;
 
 				peer.errorCount = 0;
 				peer.stateCount++;
@@ -576,9 +584,18 @@ void Replicator::update(float dT)
 			// Check sequence number.
 			if (peer.rxSequence != msg.state.sequence)
 			{
-				T_REPLICATOR_DEBUG(L"WARNING: Packet loss detected; expected " << int32_t(peer.rxSequence) << L", got " << int32_t(peer.txSequence));
-				peer.lossCount++;
+				T_REPLICATOR_DEBUG(L"WARNING: Packet loss detected; expected " << int32_t(peer.rxSequence) << L", got " << int32_t(peer.txSequence) << L" from peer " << handle);
+				peer.lossDelta++;
+
+				// Do not accept delta state if packet loss detected.
+				if (msg.type == MtDeltaState)
+				{
+					peer.rxSequence = msg.state.sequence + 1;
+					continue;
+				}
 			}
+			else if (peer.lossDelta > 0)
+				peer.lossDelta--;
 
 			peer.rxSequence = msg.state.sequence + 1;
 
