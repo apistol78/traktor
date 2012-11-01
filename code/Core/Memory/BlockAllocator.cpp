@@ -4,6 +4,14 @@ namespace traktor
 {
 
 BlockAllocator::BlockAllocator(void* top, int count, size_t size)
+:	m_top(0)
+,	m_end(0)
+,	m_free(0)
+#if defined(_DEBUG)
+,	m_alloced(0)
+,	m_size(size)
+,	m_full(false)
+#endif
 {
 	T_ASSERT ((size % sizeof(size_t)) == 0);
 	size_t blockSize = size / sizeof(size_t);
@@ -17,12 +25,6 @@ BlockAllocator::BlockAllocator(void* top, int count, size_t size)
 	
 	m_top[j] = 0;
 	m_free = m_top;
-
-#if defined (_DEBUG)
-	m_alloced = 0;
-	m_size = size;
-	m_full = false;
-#endif
 }
 
 void* BlockAllocator::top()

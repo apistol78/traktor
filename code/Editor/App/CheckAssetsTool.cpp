@@ -50,6 +50,12 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor)
 			continue;
 		}
 
+		if (!asset->getFileName().isRelative())
+		{
+			log::error << L"File \"" << asset->getFileName().getPathName() << L"\" absolute, in asset \"" << (*i)->getPath() << L"\"" << Endl;
+			++errorCount;
+		}
+
 		Path fileName = FileSystem::getInstance().getAbsolutePath(assetPath, asset->getFileName());
 
 		RefArray< File > files;
@@ -59,7 +65,6 @@ bool CheckAssetsTool::launch(ui::Widget* parent, IEditor* editor)
 		{
 			log::error << L"File \"" << fileName.getPathName() << L"\" missing, in asset \"" << (*i)->getPath() << L"\"" << Endl;
 			++errorCount;
-			continue;
 		}
 	}
 

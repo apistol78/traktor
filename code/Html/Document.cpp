@@ -9,10 +9,10 @@
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/Split.h"
+#include "Html/Comment.h"
 #include "Html/Document.h"
 #include "Html/Element.h"
 #include "Html/Text.h"
-#include "Html/Comment.h"
 
 namespace traktor
 {
@@ -128,7 +128,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 				if (text.length() && !elm.empty())
 				{
 					elm.front()->addChild(
-						Ref< Text >(new Text(text))
+						new Text(text)
 					);
 				}
 
@@ -291,7 +291,7 @@ bool Document::loadFromStream(IStream* stream, const IEncoding* encoding)
 					if (text.length() && !elm.empty())
 					{
 						elm.front()->addChild(
-							Ref< Comment >(new Comment(text))
+							new Comment(text)
 						);
 					}
 				}

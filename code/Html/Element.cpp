@@ -1,7 +1,7 @@
-#include <sstream>
-#include "Html/Element.h"
-#include "Html/Attribute.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/StringOutputStream.h"
+#include "Html/Attribute.h"
+#include "Html/Element.h"
 
 namespace traktor
 {
@@ -22,7 +22,7 @@ std::wstring Element::getName() const
 
 std::wstring Element::getValue() const
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 	for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
 		ss << child->getValue();
 	return ss.str();
@@ -122,7 +122,7 @@ Ref< Element > Element::getLastElementChild() const
 void Element::writeHtml(IStream* stream)
 {
 	static int depth = 0; depth++;
-	std::wstringstream ss;
+	StringOutputStream ss;
 
 	for (int i = 0; i < depth - 1; ++i)
 		ss << L"\t";
@@ -135,9 +135,9 @@ void Element::writeHtml(IStream* stream)
 	{
 		ss << L">";
 		if (is_a< Element >(getFirstChild()))
-			ss << std::endl;
+			ss << Endl;
 
-		std::wstring tmp = ss.str(); ss.str(L"");
+		std::wstring tmp = ss.str(); ss.reset();
 		stream->write(tmp.c_str(), int(tmp.length()));
 
 		for (Ref< Node > child = getFirstChild(); child; child = child->getNextSibling())
@@ -147,12 +147,12 @@ void Element::writeHtml(IStream* stream)
 		{
 			for (int i = 0; i < depth - 1; ++i)
 				ss << L"\t";
-			ss << std::endl;
+			ss << Endl;
 		}
 		ss << L"</" << m_name << L">";
 	}
 	else
-		ss << L"/>" << std::endl;
+		ss << L"/>" << Endl;
 
 	std::wstring tmp = ss.str();
 	stream->write(tmp.c_str(), int(tmp.length()));
