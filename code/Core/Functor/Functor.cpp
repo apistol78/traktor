@@ -31,9 +31,15 @@ public:
 	{
 		T_ASSERT_M (size <= MaxFunctorSize, L"Allocation size too big");
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_allocatorLock);
+
 		void* ptr = m_blockAllocator.alloc();
 		if (!ptr)
-			T_FATAL_ERROR;
+		{
+			ptr = Alloc::acquireAlign(size, 16, T_FILE_LINE);
+			if (!ptr)
+				T_FATAL_ERROR;
+		}
+
 #if defined(_DEBUG)
 		m_count++;
 #endif
@@ -46,8 +52,11 @@ public:
 			return;
 
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_allocatorLock);
+
 		bool result = m_blockAllocator.free(ptr);
-		T_ASSERT_M (result, L"Invalid pointer");
+		if (!result)
+			Alloc::freeAlign(ptr);
+
 #if defined(_DEBUG)
 		m_count--;
 #endif

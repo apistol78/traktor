@@ -1,5 +1,5 @@
-#include <iostream>
 #include "Core/Io/IStream.h"
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Html/Text.h"
 
@@ -12,7 +12,7 @@ namespace traktor
 
 std::wstring decodeCharacterEntities(const std::wstring& text)
 {
-	std::wstringstream ss;
+	StringOutputStream ss;
 	size_t offset = 0;
 
 	for (;;)
