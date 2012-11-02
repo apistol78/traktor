@@ -6918,6 +6918,24 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Replication</name>
+											<items>
+												<item type="File">
+													<fileName>Replication/*.*</fileName>
+													<items/>
+												</item>
+												<item type="Filter">
+													<name>State</name>
+													<items>
+														<item type="File">
+															<fileName>Replication/State/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="1">
@@ -14904,24 +14922,6 @@
 						<item type="File">
 							<fileName>Classes/*.*</fileName>
 							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Network</name>
-					<items>
-						<item type="File">
-							<fileName>Network/*.*</fileName>
-							<items/>
-						</item>
-						<item type="Filter">
-							<name>State</name>
-							<items>
-								<item type="File">
-									<fileName>Network/State/*.*</fileName>
-									<items/>
-								</item>
-							</items>
 						</item>
 					</items>
 				</item>

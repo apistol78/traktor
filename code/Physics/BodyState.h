@@ -1,17 +1,8 @@
 #ifndef traktor_physics_BodyState_H
 #define traktor_physics_BodyState_H
 
-#include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector4.h"
-
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_PHYSICS_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
 
 namespace traktor
 {
@@ -21,28 +12,47 @@ namespace traktor
 /*! \brief Rigid body state.
  * \ingroup Physics
  */
-class T_DLLCLASS BodyState : public ISerializable
+struct BodyState
 {
-	T_RTTI_CLASS;
+	BodyState()
+	:	m_transform(Transform::identity())
+	,	m_linearVelocity(Vector4::zero())
+	,	m_angularVelocity(Vector4::zero())
+	{
+	}
 
-public:
-	BodyState();
+	void setTransform(const Transform& transform) {
+		m_transform = transform;
+	}
 
-	void setTransform(const Transform& transform);
+	const Transform& getTransform() const {
+		return m_transform;
+	}
 
-	const Transform& getTransform() const;
+	void setLinearVelocity(const Vector4& velocity) {
+		m_linearVelocity = velocity;
+	}
 
-	void setLinearVelocity(const Vector4& velocity);
+	const Vector4& getLinearVelocity() const {
+		return m_linearVelocity;
+	}
 
-	const Vector4& getLinearVelocity() const;
+	void setAngularVelocity(const Vector4& velocity) {
+		m_angularVelocity = velocity;
+	}
 
-	void setAngularVelocity(const Vector4& velocity);
+	const Vector4& getAngularVelocity() const {
+		return m_angularVelocity;
+	}
 
-	const Vector4& getAngularVelocity() const;
-
-	BodyState interpolate(const BodyState& stateTarget, const Scalar& interpolate) const;
-
-	virtual bool serialize(ISerializer& s);
+	BodyState interpolate(const BodyState& stateTarget, const Scalar& interpolate) const
+	{
+		BodyState state;
+		state.m_transform = lerp(m_transform, stateTarget.m_transform, interpolate);
+		state.m_linearVelocity = lerp(m_linearVelocity, stateTarget.m_linearVelocity, interpolate);
+		state.m_angularVelocity = lerp(m_angularVelocity, stateTarget.m_angularVelocity, interpolate);
+		return state;
+	}
 
 private:
 	Transform m_transform;

@@ -723,7 +723,16 @@ Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter*
 		row->setMinimumHeight(32);
 	}
 	else if (entityAdapter->isGroup())
+	{
 		row->add(new ui::custom::GridItem(entityName/*, 2, 3*/));
+
+		bool childSelected = isChildEntitySelected(entityAdapter);
+		row->setBackground(
+			childSelected ?
+				Color4ub(180, 190, 240, 255) :
+				Color4ub(255, 255, 255, 255)
+		);
+	}
 	else
 		row->add(new ui::custom::GridItem(entityName/*, 0*/));
 
@@ -774,13 +783,21 @@ void SceneEditorPage::updateInstanceGridRow(ui::custom::GridRow* row)
 {
 	EntityAdapter* entityAdapter = row->getData< EntityAdapter >(L"ENTITY");
 
+	bool childSelected = isChildEntitySelected(entityAdapter);
 	if (entityAdapter->isLayer())
 	{
-		bool childSelected = isChildEntitySelected(entityAdapter);
 		row->setBackground(
 			childSelected ?
 				Color4ub(180, 190, 240, 255) :
 				Color4ub(220, 220, 230, 255)
+		);
+	}
+	else
+	{
+		row->setBackground(
+			childSelected ?
+				Color4ub(180, 190, 240, 255) :
+				Color4ub(255, 255, 255, 255)
 		);
 	}
 

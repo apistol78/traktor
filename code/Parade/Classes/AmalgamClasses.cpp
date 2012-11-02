@@ -75,6 +75,7 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classRenderServer->addMethod(L"getAspectRatio", &amalgam::IRenderServer::getAspectRatio);
 	classRenderServer->addMethod(L"getStereoscopic", &amalgam::IRenderServer::getStereoscopic);
 	classRenderServer->addMethod(L"getMultiSample", &amalgam::IRenderServer::getMultiSample);
+	classRenderServer->addMethod(L"getFrameRate", &amalgam::IRenderServer::getFrameRate);
 	scriptManager->registerClass(classRenderServer);
 
 	Ref< script::AutoScriptClass< amalgam::IResourceServer > > classResourceServer = new script::AutoScriptClass< amalgam::IResourceServer >();

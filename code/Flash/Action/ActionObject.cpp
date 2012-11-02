@@ -239,6 +239,8 @@ Ref< ActionObject > ActionObject::getSuper()
 
 	// __proto__
 	Ref< ActionObject > prototype = get__proto__();
+	if (!prototype)
+		return 0;
 
 	// __proto__.__proto__
 	Ref< ActionObject > superPrototype = prototype->get__proto__();
