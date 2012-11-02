@@ -25,6 +25,8 @@ public:
 		UrReconfigure = 2
 	};
 
+	RenderServer();
+
 	virtual void destroy() = 0;
 
 	virtual void createResourceFactories(IEnvironment* environment) = 0;
@@ -32,6 +34,13 @@ public:
 	virtual int32_t reconfigure(IEnvironment* environment, const PropertyGroup* settings) = 0;
 
 	virtual UpdateResult update(PropertyGroup* settings) = 0;
+
+	virtual int32_t getFrameRate() const;
+
+	void setFrameRate(int32_t frameRate);
+
+private:
+	int32_t m_frameRate;
 };
 
 	}

@@ -17,7 +17,7 @@ FlashMovieLoader::FlashMovieLoader(db::Database* database)
 Ref< FlashMovie > FlashMovieLoader::load(const std::wstring& name) const
 {
 	Guid movieId(name);
-	if (!movieId.isNotNull())
+	if (movieId.isNotNull())
 		return m_database->getObjectReadOnly< FlashMovie >(movieId);
 	else
 		return 0;
