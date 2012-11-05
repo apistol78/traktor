@@ -222,9 +222,26 @@ int32_t WorldLayer::getEntityIndex(const world::Entity* entity) const
 	return std::distance< RefArray< world::Entity >::const_iterator >(entities.begin(), i);
 }
 
+int32_t WorldLayer::getEntityIndexOf(const world::Entity* entity) const
+{
+	RefArray< world::Entity > entities;
+	m_scene->getEntitySchema()->getEntities(type_of(entity), entities);
+
+	RefArray< world::Entity >::const_iterator i = std::find(entities.begin(), entities.end(), entity);
+	if (i == entities.end())
+		return -1;
+
+	return std::distance< RefArray< world::Entity >::const_iterator >(entities.begin(), i);
+}
+
 world::Entity* WorldLayer::getEntityByIndex(int32_t index) const
 {
 	return m_scene->getEntitySchema()->getEntity(index);
+}
+
+world::Entity* WorldLayer::getEntityOf(const TypeInfo& entityType, int32_t index) const
+{
+	return m_scene->getEntitySchema()->getEntity(entityType, index);
 }
 
 void WorldLayer::addEntity(world::Entity* entity)

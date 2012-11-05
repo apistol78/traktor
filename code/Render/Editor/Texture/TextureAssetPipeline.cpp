@@ -13,7 +13,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureAssetPipeline", 1, TextureAssetPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureAssetPipeline", 2, TextureAssetPipeline, editor::DefaultPipeline)
 
 bool TextureAssetPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -41,6 +41,7 @@ bool TextureAssetPipeline::buildDependencies(
 	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
 	pipelineDepends->addDependency(fileName);
 	pipelineDepends->addDependency< TextureAsset >();
+	pipelineDepends->addDependency< TextureOutput >();
 	return true;
 }
 

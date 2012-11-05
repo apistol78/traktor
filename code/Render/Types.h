@@ -91,6 +91,15 @@ enum IndexType
 	ItUInt32			//!< Unsigned 32 bit indices.
 };
 
+/*! \brief Texture type. */
+enum TextureType
+{
+	TtInvalid = 0,
+	Tt2D = 1,
+	Tt3D = 2,
+	TtCube = 3
+};
+
 /*! \brief Texture data format. */
 enum TextureFormat
 {

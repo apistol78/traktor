@@ -196,7 +196,7 @@ struct TraceTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.OcclusionTexturePipeline", 1, OcclusionTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.OcclusionTexturePipeline", 3, OcclusionTexturePipeline, editor::DefaultPipeline)
 
 bool OcclusionTexturePipeline::create(const editor::IPipelineSettings* settings)
 {

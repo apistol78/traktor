@@ -40,6 +40,7 @@ MouseDeviceDi8::MouseDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DID
 :	m_hWnd(hWnd)
 ,	m_device(device)
 ,	m_connected(false)
+,	m_exclusive(false)
 {
 	m_device->SetDataFormat(&c_dfDIMouse);
 	m_name = tstows(deviceInstance->tszInstanceName);
@@ -206,6 +207,14 @@ void MouseDeviceDi8::readState()
 		m_position.y = m_rect.bottom - 1;
 
 	m_connected = SUCCEEDED(hr);	
+
+	// As long as mouse is exclusivly acquired we clamp mouse position to client area of window.
+	if (m_exclusive && m_connected)
+	{
+		POINT position = m_position;
+		ClientToScreen(hWndActive, &position);
+		SetCursorPos(position.x, position.y);
+	}
 }
 
 bool MouseDeviceDi8::supportRumble() const
@@ -222,6 +231,7 @@ void MouseDeviceDi8::setExclusive(bool exclusive)
 	// Ensure device is unaquired, cannot change cooperative level if acquired.
 	m_device->Unacquire();
 	m_connected = false;
+	m_exclusive = exclusive;
 
 	// Change cooperative level.
 	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE));

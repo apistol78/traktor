@@ -124,7 +124,6 @@ void Replicator::addListener(IListener* listener)
 
 void Replicator::update(float dT)
 {
-	std::set< handle_t > unfresh;
 	std::vector< handle_t > handles;
 	uint8_t iframeData[Message::StateSize];
 	uint8_t frameData[Message::StateSize];
@@ -137,10 +136,35 @@ void Replicator::update(float dT)
 	m_replicatorPeers->getPeerHandles(handles);
 
 	// Keep list of unfresh handles.
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-		unfresh.insert(i->first);
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); )
+	{
+		if (std::find(handles.begin(), handles.end(), i->first) != handles.end())
+		{
+			++i;
+			continue;
+		}
 
-	// Iterate all handles, tag peers as fresh or send "I am" to new peers.
+		Peer& peer = i->second;
+
+		if (peer.state == PsEstablished)
+		{
+			T_REPLICATOR_DEBUG(L"WARNING: Peer " << i->first << L" connection suddenly terminated");
+
+			// Need to notify listeners immediately as peer becomes dismounted.
+			for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+				(*j)->notify(this, 0, IListener::ReDisconnected, i->first, 0);
+
+			if (peer.ghost)
+			{
+				peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
+				peer.ghost = 0;
+			}
+		}
+
+		i = m_peers.erase(i);
+	}
+
+	// Iterate all handles, check error state or send "I am" to new peers.
 	for (std::vector< handle_t >::const_iterator i = handles.begin(); i != handles.end(); ++i)
 	{
 		Peer& peer = m_peers[*i];
@@ -187,6 +211,9 @@ void Replicator::update(float dT)
 
 			if (failing)
 			{
+				// Peer should disconnect from the network, so send message (if able) to peer.
+				sendDisconnect(*i);
+
 				// Need to notify listeners immediately as peer becomes dismounted.
 				for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
 					(*j)->notify(this, 0, IListener::ReDisconnected, *i, 0);
@@ -199,25 +226,8 @@ void Replicator::update(float dT)
 
 				peer.state = PsDisconnected;
 				peer.iframe = 0;
-				continue;
 			}
 		}
-
-		// Remove from "unfresh" peers.
-		unfresh.erase(*i);
-	}
-
-	// Remove unfresh peers.
-	for (std::set< handle_t >::const_iterator i = unfresh.begin(); i != unfresh.end(); ++i)
-	{
-		std::map< handle_t, Peer >::iterator it = m_peers.find(*i);
-		T_ASSERT (it != m_peers.end());
-
-		Peer& peer = it->second;
-		if (peer.state != PsDisconnected)
-			continue;
-
-		m_peers.erase(it);
 	}
 
 	// Broadcast my state to all peers.
@@ -576,6 +586,11 @@ void Replicator::update(float dT)
 		{
 			T_REPLICATOR_DEBUG(L"OK: Received throttle message from peer " << handle);
 			m_peers[handle].lossDelta += 4;
+		}
+		else if (msg.type == MtDisconnect)	// Peer request me to disconnect.
+		{
+			T_REPLICATOR_DEBUG(L"OK: Received disconnect message from peer " << handle);
+			// \fixme
 		}
 		else if (msg.type == MtFullState || msg.type == MtDeltaState)	// Data message.
 		{
@@ -1083,6 +1098,17 @@ void Replicator::sendThrottle(handle_t peerHandle)
 	Message msg;
 
 	msg.type = MtThrottle;
+	msg.time = uint32_t(m_time * 1000.0f);
+
+	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
+	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
+}
+
+void Replicator::sendDisconnect(handle_t peerHandle)
+{
+	Message msg;
+
+	msg.type = MtDisconnect;
 	msg.time = uint32_t(m_time * 1000.0f);
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);

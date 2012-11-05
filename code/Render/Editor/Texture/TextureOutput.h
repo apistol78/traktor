@@ -27,7 +27,7 @@ public:
 	float m_scaleDepth;
 	bool m_generateMips;
 	bool m_keepZeroAlpha;
-	bool m_isCubeMap;
+	TextureType m_textureType;
 	bool m_hasAlpha;
 	bool m_ignoreAlpha;
 	bool m_premultiplyAlpha;

@@ -31,6 +31,7 @@ render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
 
 const Scalar c_cullDistance(100.0f);
+const uint32_t c_maxRenderDecals = 100;
 
 		}
 
@@ -143,14 +144,19 @@ void DecalEntityRenderer::flush(
 
 	const Scalar p11 = projection.get(0, 0);
 	const Scalar p22 = projection.get(1, 1);
+	const Vector4 magicCoeffs(1.0f / p11, 1.0f / p22, 0.0f, 0.0f);
 
 	// Render all decal boxes.
-	for (RefArray< DecalEntity >::iterator i = m_decalEntities.begin(); i != m_decalEntities.end(); ++i)
+	uint32_t decalsCount = std::min(m_decalEntities.size(), c_maxRenderDecals);
+	for (uint32_t i = 0; i < decalsCount; ++i)
 	{
-		Transform transform;
-		(*i)->getTransform(transform);
+		DecalEntity* decal = m_decalEntities[i];
+		T_ASSERT (decal);
 
-		render::Shader* shader = (*i)->getShader();
+		Transform transform;
+		decal->getTransform(transform);
+
+		render::Shader* shader = decal->getShader();
 		T_ASSERT (shader);
 
 		worldRenderPass.setShaderTechnique(shader);
@@ -182,14 +188,14 @@ void DecalEntityRenderer::flush(
 			renderBlock->programParams,
 			true,
 			transform.toMatrix44(),
-			(*i)->getBoundingBox()
+			decal->getBoundingBox()
 		);
 
-		renderBlock->programParams->setFloatParameter(s_handleDecalSize, (*i)->getSize());
-		renderBlock->programParams->setFloatParameter(s_handleDecalThickness, (*i)->getThickness());
-		renderBlock->programParams->setFloatParameter(s_handleAlpha, (*i)->getAlpha());
-		renderBlock->programParams->setFloatParameter(s_handleAge, (*i)->getAge());
-		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+		renderBlock->programParams->setFloatParameter(s_handleDecalSize, decal->getSize());
+		renderBlock->programParams->setFloatParameter(s_handleDecalThickness, decal->getThickness());
+		renderBlock->programParams->setFloatParameter(s_handleAlpha, decal->getAlpha());
+		renderBlock->programParams->setFloatParameter(s_handleAge, decal->getAge());
+		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
 		renderBlock->programParams->endParameters(renderContext);
 

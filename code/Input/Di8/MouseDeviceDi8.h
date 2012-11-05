@@ -66,6 +66,7 @@ private:
 	POINT m_position;
 	RECT m_rect;
 	bool m_connected;
+	bool m_exclusive;
 };
 
 	}
