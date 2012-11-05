@@ -292,6 +292,8 @@ private:
 	void sendPong(handle_t peerHandle, uint32_t time0);
 
 	void sendThrottle(handle_t peerHandle);
+
+	void sendDisconnect(handle_t peerHandle);
 };
 
 	}

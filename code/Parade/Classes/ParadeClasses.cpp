@@ -81,7 +81,9 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod(L"createEntity", &WorldLayer_createEntity1);
 	classWorldLayer->addMethod(L"createEntity", &WorldLayer_createEntity2);
 	classWorldLayer->addMethod(L"getEntityIndex", &WorldLayer::getEntityIndex);
+	classWorldLayer->addMethod(L"getEntityIndexOf", &WorldLayer::getEntityIndexOf);
 	classWorldLayer->addMethod(L"getEntityByIndex", &WorldLayer::getEntityByIndex);
+	classWorldLayer->addMethod(L"getEntityOf", &WorldLayer::getEntityOf);
 	classWorldLayer->addMethod(L"addEntity", &WorldLayer::addEntity);
 	classWorldLayer->addMethod(L"addTransientEntity", &WorldLayer::addTransientEntity);
 	classWorldLayer->addMethod(L"removeEntity", &WorldLayer::removeEntity);

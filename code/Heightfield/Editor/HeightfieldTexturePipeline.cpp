@@ -72,7 +72,7 @@ Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 1, HeightfieldTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldTexturePipeline", 3, HeightfieldTexturePipeline, editor::DefaultPipeline)
 
 bool HeightfieldTexturePipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -158,7 +158,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = false;
 		output->m_keepZeroAlpha = false;
-		output->m_isCubeMap = false;
+		output->m_textureType = render::Tt2D;
 		output->m_hasAlpha = false;
 		output->m_ignoreAlpha = false;
 		output->m_scaleImage = false;
@@ -202,7 +202,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 		output->m_scaleDepth = 0.0f;
 		output->m_generateMips = true;
 		output->m_keepZeroAlpha = false;
-		output->m_isCubeMap = false;
+		output->m_textureType = render::Tt2D;
 		output->m_hasAlpha = false;
 		output->m_ignoreAlpha = true;
 		output->m_scaleImage = false;

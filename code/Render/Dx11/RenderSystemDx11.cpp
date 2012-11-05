@@ -316,7 +316,10 @@ Ref< ICubeTexture > RenderSystemDx11::createCubeTexture(const CubeTextureCreateD
 
 Ref< IVolumeTexture > RenderSystemDx11::createVolumeTexture(const VolumeTextureCreateDesc& desc)
 {
-	return new VolumeTextureDx11();
+	Ref< VolumeTextureDx11 > texture = new VolumeTextureDx11(m_context);
+	if (!texture->create(desc))
+		return 0;
+	return texture;
 }
 
 Ref< RenderTargetSet > RenderSystemDx11::createRenderTargetSet(const RenderTargetSetCreateDesc& desc)

@@ -128,7 +128,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 23, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 25, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_skipMips(0)
@@ -305,7 +305,10 @@ bool TextureOutputPipeline::buildOutput(
 		}
 
 		// Determine texture compression format.
-		if (!textureOutput->m_isCubeMap && (textureOutput->m_enableCompression || textureOutput->m_enableNormalMapCompression))
+		if (
+			textureOutput->m_textureType == Tt2D &&
+			(textureOutput->m_enableCompression || textureOutput->m_enableNormalMapCompression)
+		)
 		{
 			if (m_compressionMethod == CmDXTn)
 			{
@@ -363,7 +366,7 @@ bool TextureOutputPipeline::buildOutput(
 	pixelFormat = pixelFormat.endianSwapped();
 
 	// Generate sphere map from cube map.
-	if (textureOutput->m_isCubeMap && textureOutput->m_generateSphereMap)
+	if (textureOutput->m_textureType == TtCube && textureOutput->m_generateSphereMap)
 	{
 		log::info << L"Generating sphere map..." << Endl;
 		SphereMapFilter sphereMapFilter;
@@ -440,7 +443,7 @@ bool TextureOutputPipeline::buildOutput(
 		height = textureOutput->m_scaleHeight;
 	}
 
-	if (!textureOutput->m_isCubeMap)
+	if (textureOutput->m_textureType == Tt2D)
 	{
 		// Skip mips.
 		width = std::max(1, width >> m_skipMips);
@@ -503,19 +506,20 @@ bool TextureOutputPipeline::buildOutput(
 
 	int32_t dataOffsetBegin = 0, dataOffsetEnd = 0;
 
-	if (!textureOutput->m_isCubeMap || textureOutput->m_generateSphereMap)
+	if (textureOutput->m_textureType == Tt2D || textureOutput->m_generateSphereMap)
 	{
 		mipCount = textureOutput->m_generateMips ? log2(std::max(width, height)) + 1 : 1;
 		T_ASSERT (mipCount >= 1);
 
 		Writer writer(stream);
 
-		writer << uint32_t(9);
+		writer << uint32_t(10);
 		writer << int32_t(width);
 		writer << int32_t(height);
+		writer << int32_t(1);
 		writer << int32_t(mipCount);
 		writer << int32_t(textureFormat);
-		writer << bool(false);
+		writer << uint8_t(Tt2D);
 		writer << bool(true);
 
 		dataOffsetBegin = stream->tell();
@@ -621,7 +625,77 @@ bool TextureOutputPipeline::buildOutput(
 
 		dataOffsetEnd = stream->tell();
 	}
-	else
+	else if (textureOutput->m_textureType == Tt3D)
+	{
+		int32_t sliceWidth = height;
+		int32_t sliceHeight = height;
+		int32_t sliceDepth = height;
+
+		if (width / sliceWidth != sliceDepth)
+		{
+			log::error << L"3D map invalid size, width must be height * height" << Endl;
+			return false;
+		}
+
+		mipCount = textureOutput->m_generateMips ? log2(height) + 1 : 1;
+		T_ASSERT (mipCount >= 1);
+
+		Writer writer(stream);
+
+		writer << uint32_t(10);
+		writer << int32_t(sliceWidth);
+		writer << int32_t(sliceHeight);
+		writer << int32_t(sliceDepth);
+		writer << int32_t(mipCount);
+		writer << int32_t(textureFormat);
+		writer << uint8_t(Tt3D);
+		writer << bool(true);
+
+		dataOffsetBegin = stream->tell();
+
+		// Create data writer, use deflate compression if enabled.
+		Ref< IStream > streamData = new compress::DeflateStreamLzf(stream);
+		Writer writerData(streamData);
+
+		for (int32_t slice = 0; slice < sliceDepth; ++slice)
+		{
+			Ref< drawing::Image > sliceImage = new drawing::Image(image->getPixelFormat(), sliceWidth, sliceHeight);
+
+			sliceImage->copy(
+				image,
+				slice * sliceWidth,
+				0,
+				sliceWidth,
+				sliceHeight
+			);
+
+			for (int32_t i = 0; i < mipCount; ++i)
+			{
+				int32_t mipSize = sliceHeight >> i;
+
+				drawing::ScaleFilter mipScaleFilter(
+					mipSize,
+					mipSize,
+					drawing::ScaleFilter::MnAverage,
+					drawing::ScaleFilter::MgLinear,
+					textureOutput->m_keepZeroAlpha
+				);
+				Ref< drawing::Image > mipImage = sliceImage->applyFilter(&mipScaleFilter);
+				T_ASSERT (mipImage);
+
+				 writerData.write(
+					mipImage->getData(),
+					mipSize * mipSize,
+					sizeof(uint32_t)
+				);
+			}
+		}
+
+		streamData->close();
+
+		dataOffsetEnd = stream->tell();
+	}
+	else if (textureOutput->m_textureType == TtCube)
 	{
 		uint32_t layout = 0;
 		uint32_t sideSize = height;
@@ -660,12 +734,13 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(9);
+		writer << uint32_t(10);
 		writer << int32_t(sideSize);
 		writer << int32_t(sideSize);
+		writer << int32_t(6);
 		writer << int32_t(mipCount);
 		writer << int32_t(textureFormat);
-		writer << bool(true);
+		writer << uint8_t(TtCube);
 		writer << bool(true);
 
 		dataOffsetBegin = stream->tell();

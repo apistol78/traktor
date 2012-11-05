@@ -12,7 +12,6 @@ namespace traktor
 		{
 
 render::handle_t s_handleJoints = 0;
-render::handle_t s_handleUserParameter = 0;
 
 		}
 
@@ -23,8 +22,6 @@ SkinnedMesh::SkinnedMesh()
 {
 	if (!s_handleJoints)
 		s_handleJoints = render::getParameterHandle(L"Joints");
-	if (!s_handleUserParameter)
-		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
 }
 
 const Aabb3& SkinnedMesh::getBoundingBox() const
@@ -49,6 +46,9 @@ void SkinnedMesh::render(
 	SmallMap< render::handle_t, std::vector< Part > >::const_iterator it = m_parts.find(worldRenderPass.getTechnique());
 	T_ASSERT (it != m_parts.end());
 
+	const Matrix44 world = worldTransform.toMatrix44();
+	const Aabb3 boundingBox = getBoundingBox();
+
 	const std::vector< render::Mesh::Part >& meshParts = m_mesh->getParts();
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
@@ -56,8 +56,8 @@ void SkinnedMesh::render(
 
 		worldRenderPass.setShaderCombination(
 			m_shader,
-			worldTransform.toMatrix44(),
-			getBoundingBox()
+			world,
+			boundingBox
 		);
 
 		render::IProgram* program = m_shader->getCurrentProgram();
@@ -77,8 +77,8 @@ void SkinnedMesh::render(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			i->opaque,
-			worldTransform.toMatrix44(),
-			getBoundingBox()
+			world,
+			boundingBox
 		);
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);

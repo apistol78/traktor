@@ -10,19 +10,11 @@ namespace traktor
 {
 	namespace mesh
 	{
-		namespace
-		{
-
-render::handle_t s_handleUserParameter = 0;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMesh", IndoorMesh, IMesh)
 
 IndoorMesh::IndoorMesh()
 {
-	if (!s_handleUserParameter)
-		s_handleUserParameter = render::getParameterHandle(L"UserParameter");
 }
 
 const Aabb3& IndoorMesh::getBoundingBox() const

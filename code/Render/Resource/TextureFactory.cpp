@@ -7,6 +7,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/ICubeTexture.h"
+#include "Render/IVolumeTexture.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Render/Resource/TextureResource.h"
 
@@ -54,6 +55,7 @@ const TypeInfoSet TextureFactory::getResourceTypes() const
 	typeSet.insert(&type_of< ICubeTexture >());
 	typeSet.insert(&type_of< ISimpleTexture >());
 	typeSet.insert(&type_of< ITexture >());
+	typeSet.insert(&type_of< IVolumeTexture >());
 	return typeSet;
 }
 
@@ -82,25 +84,25 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	uint32_t version;
 	reader >> version;
-	if (version != 9)
+	if (version != 10)
 	{
 		log::error << L"Unable to read texture, unknown version " << version << Endl;
 		return 0;
 	}
 
-	int32_t imageWidth, imageHeight, mipCount, texelFormat;
+	int32_t imageWidth, imageHeight, imageDepth, mipCount, texelFormat;
+	uint8_t textureType;
+	bool compressed;
+
 	reader >> imageWidth;
 	reader >> imageHeight;
+	reader >> imageDepth;
 	reader >> mipCount;
 	reader >> texelFormat;
+	reader >> textureType;
+	reader >> compressed;
 
-	bool isCubeMap;
-	reader >> isCubeMap;
-
-	bool isCompressed;
-	reader >> isCompressed;
-
-	if (!isCubeMap)
+	if (textureType == Tt2D)	// 2D
 	{
 		int32_t skipMips = (m_skipMips < mipCount) ? m_skipMips : 0;
 
@@ -119,7 +121,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
 
 		Ref< IStream > readerStream = stream;
-		if (isCompressed)
+		if (compressed)
 			readerStream = new compress::InflateStreamLzf(stream);
 
 		Reader readerData(readerStream);
@@ -156,7 +158,86 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		if (!texture)
 			log::error << L"Unable to create texture, null texture" << Endl;
 	}
-	else
+	else if (textureType == Tt3D)	// 3D
+	{
+		int32_t skipMips = (m_skipMips < mipCount) ? m_skipMips : 0;
+
+		// Do not skip mips on already small enough textures.
+		if (imageWidth <= 16 || imageHeight <= 16)
+			skipMips = 0;
+
+		VolumeTextureCreateDesc desc;
+
+		desc.width = imageWidth >> skipMips;
+		desc.height = imageHeight >> skipMips;
+		desc.depth = imageDepth >> skipMips;
+		desc.mipCount = mipCount - skipMips;
+		desc.format = (TextureFormat)texelFormat;
+		desc.immutable = true;
+
+		uint32_t sliceDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
+		uint32_t textureDataSize = sliceDataSize * desc.depth;
+		AutoArrayPtr< uint8_t > buffer(new uint8_t [textureDataSize]);
+
+		Ref< IStream > readerStream = stream;
+		if (compressed)
+			readerStream = new compress::InflateStreamLzf(stream);
+
+		Reader readerData(readerStream);
+		
+		// Setup immutable data pointers.
+		uint8_t* data = buffer.ptr();
+		for (int32_t i = 0; i < mipCount; ++i)
+		{
+			int32_t mipWidth = std::max(imageWidth >> i, 1);
+			int32_t mipHeight = std::max(imageHeight >> i, 1);
+						
+			uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
+
+			if (i >= skipMips)
+			{
+				desc.initialData[i - skipMips].data = data;
+				desc.initialData[i - skipMips].pitch = getTextureRowPitch(desc.format, mipWidth);
+				desc.initialData[i - skipMips].slicePitch = sliceDataSize;
+			}
+
+			data += mipPitch;
+		}
+
+		// Read each slice.
+		for (int32_t slice = 0; slice < desc.depth; ++slice)
+		{
+			data = buffer.ptr() + slice * sliceDataSize;
+			for (int32_t i = 0; i < mipCount; ++i)
+			{
+				int32_t mipWidth = std::max(imageWidth >> i, 1);
+				int32_t mipHeight = std::max(imageHeight >> i, 1);
+						
+				uint32_t mipPitch = getTextureMipPitch((TextureFormat)texelFormat, mipWidth, mipHeight);
+
+				if (i >= skipMips)
+				{
+					int32_t nread = readerData.read(data, mipPitch);
+					T_ASSERT (nread == mipPitch);
+
+					data += mipPitch;
+					T_ASSERT (size_t(data - buffer.ptr()) <= textureDataSize);
+				}
+				else
+				{
+					readerStream->seek(
+						IStream::SeekCurrent,
+						mipPitch
+					);
+				}
+			}
+		}
+
+		texture = m_renderSystem->createVolumeTexture(desc);
+		if (!texture)
+			log::error << L"Unable to create texture, null texture" << Endl;
+	}
+	else if (textureType == TtCube)	// Cube
 	{
 		if (imageWidth != imageHeight)
 		{
@@ -176,7 +257,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		AutoArrayPtr< uint8_t > buffer[6];
 
 		Ref< IStream > readerStream = stream;
-		if (isCompressed)
+		if (compressed)
 			readerStream = new compress::InflateStreamLzf(stream);
 
 		Reader readerData(readerStream);

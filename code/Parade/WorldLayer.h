@@ -81,7 +81,11 @@ public:
 
 	int32_t getEntityIndex(const world::Entity* entity) const;
 
+	int32_t getEntityIndexOf(const world::Entity* entity) const;
+
 	world::Entity* getEntityByIndex(int32_t index) const;
+
+	world::Entity* getEntityOf(const TypeInfo& entityType, int32_t index) const;
 
 	void addEntity(world::Entity* entity);
 

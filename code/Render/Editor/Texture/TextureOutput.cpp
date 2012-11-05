@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 7, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 8, TextureOutput, ISerializable)
 
 TextureOutput::TextureOutput()
 :	m_textureFormat(TfInvalid)
@@ -16,7 +16,7 @@ TextureOutput::TextureOutput()
 ,	m_scaleDepth(0.0f)
 ,	m_generateMips(true)
 ,	m_keepZeroAlpha(true)
-,	m_isCubeMap(false)
+,	m_textureType(Tt2D)
 ,	m_hasAlpha(false)
 ,	m_ignoreAlpha(false)
 ,	m_premultiplyAlpha(false)
@@ -70,7 +70,25 @@ bool TextureOutput::serialize(ISerializer& s)
 	s >> Member< float >(L"scaleDepth", m_scaleDepth, AttributeRange(0.0f));
 	s >> Member< bool >(L"generateMips", m_generateMips);
 	s >> Member< bool >(L"keepZeroAlpha", m_keepZeroAlpha);
-	s >> Member< bool >(L"isCubeMap", m_isCubeMap);
+
+	if (s.getVersion() >= 8)
+	{
+		const MemberEnum< TextureType >::Key c_TextureType_Keys[] =
+		{
+			{ L"Tt2D", Tt2D },
+			{ L"Tt3D", Tt3D },
+			{ L"TtCube", TtCube },
+			{ 0 }
+		};
+		s >> MemberEnum< TextureType >(L"textureType", m_textureType, c_TextureType_Keys);
+	}
+	else
+	{
+		bool isCubeMap = false;
+		s >> Member< bool >(L"isCubeMap", isCubeMap);
+		m_textureType = isCubeMap ? TtCube : Tt2D;
+	}
+
 	s >> Member< bool >(L"hasAlpha", m_hasAlpha);
 	s >> Member< bool >(L"ignoreAlpha", m_ignoreAlpha);
 

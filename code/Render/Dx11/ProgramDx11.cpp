@@ -11,6 +11,7 @@
 #include "Render/Dx11/ResourceCache.h"
 #include "Render/Dx11/SimpleTextureDx11.h"
 #include "Render/Dx11/StateCache.h"
+#include "Render/Dx11/VolumeTextureDx11.h"
 
 namespace traktor
 {
@@ -365,6 +366,8 @@ bool ProgramDx11::bind(
 				d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 			else if (is_a< RenderTargetDx11 >(resolved))
 				d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+			else if (is_a< VolumeTextureDx11 >(resolved))
+				d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 			else
 				continue;
 
@@ -388,6 +391,8 @@ bool ProgramDx11::bind(
 				d3dTextureResourceView = static_cast< CubeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 			else if (is_a< RenderTargetDx11 >(resolved))
 				d3dTextureResourceView = static_cast< RenderTargetDx11* >(resolved.ptr())->getD3D11TextureResourceView();
+			else if (is_a< VolumeTextureDx11 >(resolved))
+				d3dTextureResourceView = static_cast< VolumeTextureDx11* >(resolved.ptr())->getD3D11TextureResourceView();
 			else
 				continue;
 
