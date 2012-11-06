@@ -3,6 +3,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Sound/Resound/BankResource.h"
+#include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
 #include "Sound/Resound/PlayGrainData.h"
 #include "Sound/Resound/RepeatGrainData.h"
@@ -22,6 +23,15 @@ namespace traktor
 
 void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGrainData* grain)
 {
+	if (const BlendGrainData* blendGrain = dynamic_type_cast< const BlendGrainData* >(grain))
+	{
+		const Ref< IGrainData >* grains = blendGrain->getGrains();
+		T_ASSERT (grains);
+
+		buildGrainDependencies(pipelineDepends, grains[0]);
+		buildGrainDependencies(pipelineDepends, grains[1]);
+	}
+
 	if (const EnvelopeGrainData* envelopeGrain = dynamic_type_cast< const EnvelopeGrainData* >(grain))
 	{
 		const std::vector< EnvelopeGrainData::GrainData >& grains = envelopeGrain->getGrains();

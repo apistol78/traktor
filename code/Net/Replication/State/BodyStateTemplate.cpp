@@ -75,6 +75,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BodyStateTemplate", BodyStateTemplate, IVal
 void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	float e[4];
+	uint8_t u[3];
 
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);
 	const Transform& T = v.getTransform();
@@ -84,13 +85,17 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	for (uint32_t i = 0; i < 3; ++i)
 		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
 
-	// 3 * 16
-	T.rotation().e.storeUnaligned(e);
-	for (uint32_t i = 0; i < 3; ++i)
-		packScalar(writer, e[i]);
+	// 3 * 8 + 32
+	Vector4 R = T.rotation().toAxisAngle();
+	float a = R.length();
+	if (abs(a) > FUZZY_EPSILON)
+		R /= Scalar(a);
 
-	// 1
-	writer.writeBit(e[3] < 0.0f);
+	packUnit(R, u);
+	writer.writeUnsigned(8, u[0]);
+	writer.writeUnsigned(8, u[1]);
+	writer.writeUnsigned(8, u[2]);
+	writer.writeUnsigned(32, *(uint32_t*)&a);
 
 	{
 		Vector4 linearVelocity = v.getLinearVelocity().xyz0();
@@ -103,9 +108,7 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 			linearVelocity /= Scalar(ln);
 
 			// 3 * 8
-			uint8_t u[3];
 			packUnit(linearVelocity, u);
-
 			writer.writeUnsigned(8, u[0]);
 			writer.writeUnsigned(8, u[1]);
 			writer.writeUnsigned(8, u[2]);
@@ -130,9 +133,7 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 			angularVelocity /= Scalar(ln);
 
 			// 3 * 8
-			uint8_t u[3];
 			packUnit(angularVelocity, u);
-
 			writer.writeUnsigned(8, u[0]);
 			writer.writeUnsigned(8, u[1]);
 			writer.writeUnsigned(8, u[2]);
@@ -149,30 +150,26 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 
 Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 {
-	uint32_t u[3];
-	float f[3];
+	uint32_t uf[3];
+	uint8_t u[3];
 
 	for (uint32_t i = 0; i < 3; ++i)
-		u[i] = reader.readUnsigned(32);
+		uf[i] = reader.readUnsigned(32);
 
-	for (uint32_t i = 0; i < 3; ++i)
-		f[i] = unpackScalar(reader);
-
-	float sign = reader.readBit() ? -1.0f : 1.0f;
+	u[0] = reader.readUnsigned(8);
+	u[1] = reader.readUnsigned(8);
+	u[2] = reader.readUnsigned(8);
+	Vector4 R = unpackUnit(u);
+	uint32_t ua = reader.readUnsigned(32);
 
 	Transform T(
 		Vector4(
-			*(float*)&u[0],
-			*(float*)&u[1],
-			*(float*)&u[2],
+			*(float*)&uf[0],
+			*(float*)&uf[1],
+			*(float*)&uf[2],
 			1.0f
 		),
-		Quaternion(
-			f[0],
-			f[1],
-			f[2],
-			safeSqrt(1.0f - f[0] * f[0] - f[1] * f[1] - f[2] * f[2]) * sign
-		).normalized()
+		Quaternion::fromAxisAngle(R, *(float*)&ua).normalized()
 	);
 
 	Vector4 linearVelocity = Vector4::zero();
