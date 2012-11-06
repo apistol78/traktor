@@ -1053,7 +1053,7 @@ void Replicator::sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id)
 	msg.iam.id = id;
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint8_t) + sizeof(uint32_t);
-	m_replicatorPeers->send(peerHandle, &msg, msgSize, true);
+	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
 }
 
 void Replicator::sendBye(handle_t peerHandle)
@@ -1112,7 +1112,7 @@ void Replicator::sendDisconnect(handle_t peerHandle)
 	msg.time = uint32_t(m_time * 1000.0f);
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
-	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
+	m_replicatorPeers->send(peerHandle, &msg, msgSize, true);
 }
 
 	}

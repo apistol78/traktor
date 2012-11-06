@@ -10,6 +10,7 @@
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Resound/BankBuffer.h"
+#include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
 #include "Sound/Resound/MuteGrainData.h"
 #include "Sound/Resound/PlayGrainData.h"
@@ -21,6 +22,7 @@
 #include "Sound/Editor/SoundSystemFactory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankAssetEditor.h"
+#include "Sound/Editor/Resound/BlendGrainFacade.h"
 #include "Sound/Editor/Resound/EnvelopeGrainFacade.h"
 #include "Sound/Editor/Resound/GrainProperties.h"
 #include "Sound/Editor/Resound/GrainView.h"
@@ -108,6 +110,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_menuGrains->add(new ui::MenuItem(ui::Command(L"Bank.RemoveGrain"), L"Remove grain..."));
 
 	// Create grain editor facades.
+	m_grainFacades[&type_of< BlendGrainData >()] = new BlendGrainFacade();
 	m_grainFacades[&type_of< EnvelopeGrainData >()] = new EnvelopeGrainFacade();
 	m_grainFacades[&type_of< MuteGrainData >()] = new MuteGrainFacade();
 	m_grainFacades[&type_of< PlayGrainData >()] = new PlayGrainFacade();
