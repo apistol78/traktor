@@ -64,19 +64,13 @@ bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, s
 	return true;
 }
 
-bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
+bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 {
 	CSteamID id(userHandle);
 	if (!id.IsValid())
 		return false;
 
-	return SteamNetworking()->SendP2PPacket(
-		id,
-		data,
-		uint32(size),
-		reliable ? k_EP2PSendReliable : k_EP2PSendUnreliable,
-		reliable ? 1 : 0
-	);
+	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), k_EP2PSendUnreliableNoDelay);
 }
 
 	}

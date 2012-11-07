@@ -882,6 +882,14 @@
 			<second>Properties</second>
 		</item>
     <item>
+      <first>MESHASSET_EDITOR_TEMPLATE</first>
+      <second>Template</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED</first>
+      <second>[ Default ]</second>
+    </item>
+    <item>
       <first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
       <second>Bake occlusion</second>
     </item>

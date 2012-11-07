@@ -72,11 +72,6 @@ std::wstring OnlineReplicatorPeers::getPeerName(handle_t handle) const
 		return L"";
 }
 
-bool OnlineReplicatorPeers::receiveAnyPending()
-{
-	return m_sessionManager->haveP2PData();
-}
-
 int32_t OnlineReplicatorPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
 	Ref< online::IUser > fromUser;
@@ -93,20 +88,16 @@ int32_t OnlineReplicatorPeers::receive(void* data, int32_t size, handle_t& outFr
 	return nrecv;
 }
 
-bool OnlineReplicatorPeers::sendReady(handle_t handle)
-{
-	return true;
-}
-
 bool OnlineReplicatorPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
 	T_ASSERT (size < 1200);
+	T_ASSERT (!reliable);
 
 	SmallMap< int32_t, online::IUser* >::const_iterator i = m_userMap.find(int32_t(handle));
 	if (i == m_userMap.end() || i->second == 0)
 		return false;
 
-	return i->second->sendP2PData(data, size, reliable);
+	return i->second->sendP2PData(data, size);
 }
 
 bool OnlineReplicatorPeers::isPrimary() const

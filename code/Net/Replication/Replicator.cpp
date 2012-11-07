@@ -71,13 +71,15 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 	m_replicatorPeers->getPeerHandles(handles);
 
 	// Discard any pending data.
-	while (m_replicatorPeers->receiveAnyPending())
+	for (;;)
 	{
 		uint8_t discard[sizeof(Message)];
 		handle_t fromHandle;
 
 		if (m_replicatorPeers->receive(discard, sizeof(discard), fromHandle) > 0)
 			T_REPLICATOR_DEBUG(L"OK: Pending message discarded from peer " << fromHandle);
+		else
+			break;
 	}
 
 	// Create non-established entries for each peer.
@@ -249,8 +251,6 @@ void Replicator::update(float dT)
 			if (peer.state != PsEstablished || !peer.ghost)
 				continue;
 			if ((peer.timeUntilTx -= dT) > 0.0f)
-				continue;
-			if (!m_replicatorPeers->sendReady(i->first))
 				continue;
 
 			uint32_t msgSize = Message::HeaderSize + sizeof(uint8_t);
@@ -430,14 +430,11 @@ void Replicator::update(float dT)
 	}
 
 	// Read messages from any peer.
-	while (m_replicatorPeers->receiveAnyPending())
+	for (;;)
 	{
 		std::memset(&msg, 0, sizeof(msg));
-		if (m_replicatorPeers->receive(&msg, sizeof(msg), handle) < 0)
-		{
-			T_REPLICATOR_DEBUG(L"ERROR: Failed to receive pending message");
-			continue;
-		}
+		if (m_replicatorPeers->receive(&msg, sizeof(msg), handle) <= 0)
+			break;
 
 		// Convert time from ms to seconds.
 		float time = msg.time / 1000.0f;

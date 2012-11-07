@@ -56,7 +56,8 @@ void GroupEntity::removeEntity(Entity* entity)
 	else
 	{
 		RefArray< Entity >::iterator i = std::find(m_entities.begin(), m_entities.end(), entity);
-		m_entities.erase(i);
+		if (i != m_entities.end())
+			m_entities.erase(i);
 	}
 }
 

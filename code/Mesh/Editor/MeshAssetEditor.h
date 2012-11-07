@@ -79,6 +79,10 @@ private:
 
 	void updateMaterialList();
 
+	void browseMaterialTemplate();
+	
+	void removeMaterialTemplate();
+
 	void createMaterialShader();
 
 	void browseMaterialShader();

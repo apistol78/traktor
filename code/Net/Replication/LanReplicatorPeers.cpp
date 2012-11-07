@@ -136,11 +136,6 @@ std::wstring LanReplicatorPeers::getPeerName(handle_t handle) const
 	return L""; // m_peers[peerId].socketAddr.getHostName();
 }
 
-bool LanReplicatorPeers::receiveAnyPending()
-{
-	return false; //m_socket->select(true, false, false, 0) > 0;
-}
-
 int32_t LanReplicatorPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
 	/*
@@ -175,12 +170,6 @@ int32_t LanReplicatorPeers::receive(void* data, int32_t size, handle_t& outFromH
 	return true;
 	*/
 	return -1;
-}
-
-bool LanReplicatorPeers::sendReady(handle_t handle)
-{
-	//return m_peers[peerId].socket->select(false, true, false, 0) > 0;
-	return false;
 }
 
 bool LanReplicatorPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)

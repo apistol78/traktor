@@ -70,35 +70,14 @@ Guid lookupTexture(const std::map< std::wstring, Guid >& textures, const std::ws
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGenerator, Object)
 
-MaterialShaderGenerator::MaterialShaderGenerator(const PropertyGroup* templates)
-:	m_templates(templates)
+Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
+	db::Database* database,
+	const model::Material& material,
+	const Guid& materialTemplate,
+	const std::map< std::wstring, Guid >& textures
+) const
 {
-}
-
-Ref< render::ShaderGraph > MaterialShaderGenerator::generate(db::Database* database, const model::Material& material, const std::map< std::wstring, Guid >& textures) const
-{
-	Guid templateGuid;
-
-	const std::map< std::wstring, Ref< IPropertyValue > >& templateValues = m_templates->getValues();
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = templateValues.begin(); i != templateValues.end(); ++i)
-	{
-		if (!i->first.empty())
-		{
-			// Explicit alternative template; check if material property is set and if so use this template.
-			if (material.getProperty< PropertyBoolean >(i->first, false))
-			{
-				templateGuid = Guid(PropertyString::get(i->second));
-				break;
-			}
-		}
-		else
-		{
-			// Alternative default template.
-			templateGuid = Guid(PropertyString::get(i->second));
-		}
-	}
-
-	// Use default template is no alternative is found.
+	Guid templateGuid = materialTemplate;
 	if (templateGuid.isNull() || !templateGuid.isValid())
 		templateGuid = c_materialShader;
 
@@ -268,13 +247,6 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(db::Database* datab
 
 void MaterialShaderGenerator::addDependencies(editor::IPipelineDepends* pipelineDepends)
 {
-	const std::map< std::wstring, Ref< IPropertyValue > >& templateValues = m_templates->getValues();
-	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = templateValues.begin(); i != templateValues.end(); ++i)
-	{
-		Guid templateGuid(PropertyString::get(i->second));
-		pipelineDepends->addDependency(templateGuid, editor::PdfUse);
-	}
-
 	pipelineDepends->addDependency(c_materialShader, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplDiffuseParams, editor::PdfUse);
 	pipelineDepends->addDependency(c_tplEmissiveParams, editor::PdfUse);
