@@ -898,6 +898,14 @@
 			<second>Egenskaper</second>
 		</item>
     <item>
+      <first>MESHASSET_EDITOR_TEMPLATE</first>
+      <second>Mall</second>
+    </item>
+    <item>
+      <first>MESHASSET_EDITOR_TEMPLATE_NOT_ASSIGNED</first>
+      <second>[ Standard ]</second>
+    </item>
+    <item>
     	<first>MESHASSET_EDITOR_BAKE_OCCLUSION</first>
     	<second>Baka skuggning</second>
     </item>

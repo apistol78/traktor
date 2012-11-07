@@ -5,9 +5,6 @@
 
 namespace traktor
 {
-
-class PropertyGroup;
-
 	namespace db
 	{
 
@@ -44,14 +41,14 @@ class MaterialShaderGenerator : public Object
 	T_RTTI_CLASS;
 
 public:
-	MaterialShaderGenerator(const PropertyGroup* templates);
-
-	Ref< render::ShaderGraph > generate(db::Database* database, const model::Material& material, const std::map< std::wstring, Guid >& textures) const;
+	Ref< render::ShaderGraph > generate(
+		db::Database* database,
+		const model::Material& material,
+		const Guid& materialTemplate,
+		const std::map< std::wstring, Guid >& textures
+	) const;
 	
 	void addDependencies(editor::IPipelineDepends* pipelineDepends);
-
-private:
-	Ref< const PropertyGroup > m_templates;
 };
 
 	}

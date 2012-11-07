@@ -4,6 +4,7 @@
 #include "Net/Replication/InetSimPeers.h"
 #include "Net/Replication/LanReplicatorPeers.h"
 #include "Net/Replication/OnlineReplicatorPeers.h"
+#include "Net/Replication/ReliableTransportPeers.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/State/State.h"
 #include "Net/Replication/State/StateTemplate.h"
@@ -80,6 +81,10 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classOnlineReplicatorPeers->addConstructor();
 	classOnlineReplicatorPeers->addMethod(L"create", &net::OnlineReplicatorPeers::create);
 	scriptManager->registerClass(classOnlineReplicatorPeers);
+
+	Ref< script::AutoScriptClass< net::ReliableTransportPeers > > classReliableTransportPeers = new script::AutoScriptClass< net::ReliableTransportPeers >();
+	classReliableTransportPeers->addConstructor< net::IReplicatorPeers* >();
+	scriptManager->registerClass(classReliableTransportPeers);
 
 	Ref< script::AutoScriptClass< net::Replicator::IListener > > classReplicatorIListener = new script::AutoScriptClass< net::Replicator::IListener >();
 	scriptManager->registerClass(classReplicatorIListener);

@@ -272,21 +272,10 @@ bool SteamSessionManager::haveP2PData() const
 {
 	uint32 available = 0;
 
-	// First check un-reliable channel.
-	if (SteamNetworking()->IsP2PPacketAvailable(&available, 0))
-	{
-		if (available > 0)
-			return true;
-	}
+	if (!SteamNetworking()->IsP2PPacketAvailable(&available))
+		return false;
 
-	// Then check reliable channel.
-	if (SteamNetworking()->IsP2PPacketAvailable(&available, 1))
-	{
-		if (available > 0)
-			return true;
-	}
-
-	return false;
+	return available > 0;
 }
 
 uint32_t SteamSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t& outFromUserHandle) const
@@ -294,21 +283,11 @@ uint32_t SteamSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t
 	uint32_t receivedSize = 0;
 	CSteamID fromUserID;
 
-	// First read un-reliable data.
-	if (SteamNetworking()->ReadP2PPacket(data, size, &receivedSize, &fromUserID, 0))
-	{
-		outFromUserHandle = fromUserID.ConvertToUint64();
-		return receivedSize;
-	}
+	if (!SteamNetworking()->ReadP2PPacket(data, size, &receivedSize, &fromUserID))
+		return false;
 
-	// Then read reliable data.
-	if (SteamNetworking()->ReadP2PPacket(data, size, &receivedSize, &fromUserID, 1))
-	{
-		outFromUserHandle = fromUserID.ConvertToUint64();
-		return receivedSize;
-	}
-
-	return 0;
+	outFromUserHandle = fromUserID.ConvertToUint64();
+	return receivedSize;
 }
 
 IAchievementsProvider* SteamSessionManager::getAchievements() const

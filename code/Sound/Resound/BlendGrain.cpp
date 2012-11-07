@@ -74,14 +74,14 @@ Ref< ISoundBufferCursor > BlendGrain::createCursor() const
 
 void BlendGrain::updateCursor(ISoundBufferCursor* cursor) const
 {
-	BlendGrainCursor* blendCursor = checked_type_cast< BlendGrainCursor*, false >(cursor);
+	BlendGrainCursor* blendCursor = static_cast< BlendGrainCursor* >(cursor);
 	m_grains[0]->updateCursor(blendCursor->m_cursors[0]);
 	m_grains[1]->updateCursor(blendCursor->m_cursors[1]);
 }
 
 bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
-	BlendGrainCursor* blendCursor = checked_type_cast< BlendGrainCursor*, false >(cursor);
+	BlendGrainCursor* blendCursor = static_cast< BlendGrainCursor* >(cursor);
 
 	SoundBlock soundBlock1 = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
 	SoundBlock soundBlock2 = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };

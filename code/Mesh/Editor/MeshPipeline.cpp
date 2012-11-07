@@ -120,7 +120,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 20, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 21, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -133,7 +133,6 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_promoteHalf = settings->getProperty< PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
 	m_enableBakeOcclusion = settings->getProperty< PropertyBoolean >(L"MeshPipeline.BakeOcclusion", true);
-	m_materialTemplates = settings->getProperty< PropertyGroup >(L"MeshPipeline.MaterialTemplates", new PropertyGroup());
 	return true;
 }
 
@@ -188,8 +187,10 @@ bool MeshPipeline::buildDependencies(
 
 	pipelineDepends->addDependency(vertexShaderGuid, editor::PdfUse);
 	
-	// Add dependencies to material generator fragments.
-	MaterialShaderGenerator(m_materialTemplates).addDependencies(pipelineDepends);
+	// Add dependencies to material templates.
+	const std::map< std::wstring, Guid >& materialTemplates = asset->getMaterialTemplates();
+	for (std::map< std::wstring, Guid >::const_iterator i = materialTemplates.begin(); i != materialTemplates.end(); ++i)
+		pipelineDepends->addDependency(i->second, editor::PdfUse);
 
 	// Add dependencies to "fixed" material shaders.
 	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
@@ -216,7 +217,9 @@ bool MeshPipeline::buildOutput(
 ) const
 {
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
+	const std::map< std::wstring, Guid >& materialTemplates = asset->getMaterialTemplates();
 	const std::map< std::wstring, Guid >& materialShaders = asset->getMaterialShaders();
+	const std::map< std::wstring, Guid >& materialTextures = asset->getMaterialTextures();
 	std::map< std::wstring, model::Material > materials;
 	RefArray< model::Model > models;
 	uint32_t polygonCount = 0;
@@ -312,7 +315,7 @@ bool MeshPipeline::buildOutput(
 	Guid materialGuid = combineGuids(vertexShaderGuid, outputGuid);
 	T_ASSERT (materialGuid.isValid());
 
-	MaterialShaderGenerator generator(m_materialTemplates);
+	MaterialShaderGenerator generator;
 
 	int32_t jointCount = models[0]->getJointCount();
 
@@ -338,7 +341,18 @@ bool MeshPipeline::buildOutput(
 		}
 		else
 		{
-			materialShaderGraph = generator.generate(pipelineBuilder->getSourceDatabase(), i->second, asset->getMaterialTextures());
+			Guid materialTemplate;
+
+			std::map< std::wstring, Guid >::const_iterator it = materialTemplates.find(i->first);
+			if (it != materialTemplates.end())
+				materialTemplate = it->second;
+
+			materialShaderGraph = generator.generate(
+				pipelineBuilder->getSourceDatabase(),
+				i->second,
+				materialTemplate,
+				materialTextures
+			);
 			if (!materialShaderGraph)
 			{
 				log::error << L"Mesh pipeline failed; unable to generate material shader \"" << i->first << L"\"" << Endl;

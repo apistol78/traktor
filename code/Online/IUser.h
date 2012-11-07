@@ -33,7 +33,7 @@ public:
 
 	virtual bool getPresenceValue(const std::wstring& key, std::wstring& outValue) const = 0;
 
-	virtual bool sendP2PData(const void* data, size_t size, bool reliable) = 0;
+	virtual bool sendP2PData(const void* data, size_t size) = 0;
 };
 
 	}

@@ -38,9 +38,9 @@ bool User::getPresenceValue(const std::wstring& key, std::wstring& outValue) con
 	return m_userProvider->getPresenceValue(m_handle, key, outValue);
 }
 
-bool User::sendP2PData(const void* data, size_t size, bool reliable)
+bool User::sendP2PData(const void* data, size_t size)
 {
-	return m_userProvider->sendP2PData(m_handle, data, size, reliable);
+	return m_userProvider->sendP2PData(m_handle, data, size);
 }
 
 User::User(IUserProvider* userProvider, uint64_t handle, int32_t tag)

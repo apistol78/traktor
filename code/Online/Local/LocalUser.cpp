@@ -34,7 +34,7 @@ bool LocalUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, s
 	return false;
 }
 
-bool LocalUser::sendP2PData(uint64_t userHandle, const void* data, size_t size, bool reliable)
+bool LocalUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 {
 	return false;
 }

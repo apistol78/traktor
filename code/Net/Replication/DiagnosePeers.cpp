@@ -64,11 +64,6 @@ std::wstring DiagnosePeers::getPeerName(handle_t handle) const
 	return m_peers->getPeerName(handle);
 }
 
-bool DiagnosePeers::receiveAnyPending()
-{
-	return m_peers->receiveAnyPending();
-}
-
 int32_t DiagnosePeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
 	int32_t nrecv = m_peers->receive(data, size, outFromHandle);
@@ -77,11 +72,6 @@ int32_t DiagnosePeers::receive(void* data, int32_t size, handle_t& outFromHandle
 
 	m_received += nrecv;
 	return nrecv;
-}
-
-bool DiagnosePeers::sendReady(handle_t handle)
-{
-	return m_peers->sendReady(handle);;
 }
 
 bool DiagnosePeers::send(handle_t handle, const void* data, int32_t size, bool reliable)

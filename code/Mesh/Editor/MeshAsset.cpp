@@ -8,7 +8,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 5, MeshAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshAsset", 6, MeshAsset, editor::Asset)
 
 MeshAsset::MeshAsset()
 :	m_meshType(MtInvalid)
@@ -37,6 +37,9 @@ bool MeshAsset::serialize(ISerializer& s)
 		return false;
 
 	s >> MemberEnum< MeshType >(L"meshType", m_meshType, c_MeshType_Keys);
+
+	if (s.getVersion() >= 6)
+		s >> MemberStlMap< std::wstring, Guid >(L"materialTemplates", m_materialTemplates);
 
 	if (s.getVersion() >= 1)
 		s >> MemberStlMap< std::wstring, Guid >(L"materialShaders", m_materialShaders);

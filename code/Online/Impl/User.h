@@ -27,7 +27,7 @@ public:
 
 	virtual bool getPresenceValue(const std::wstring& key, std::wstring& outValue) const;
 
-	virtual bool sendP2PData(const void* data, size_t size, bool reliable);
+	virtual bool sendP2PData(const void* data, size_t size);
 
 private:
 	friend class Lobby;
