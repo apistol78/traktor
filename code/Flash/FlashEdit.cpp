@@ -53,7 +53,13 @@ FlashEdit::FlashEdit(
 {
 }
 
-Ref< FlashCharacterInstance > FlashEdit::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const
+Ref< FlashCharacterInstance > FlashEdit::createInstance(
+	ActionContext* context,
+	FlashCharacterInstance* parent,
+	const std::string& name,
+	const ActionObject* initObject,
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+) const
 {
 	return new FlashEditInstance(context, parent, this, m_initialText);
 }

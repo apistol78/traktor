@@ -123,13 +123,6 @@ public:
 	 */
 	static FlashCharacterInstance* getFocus();
 
-	/*! \brief Set event script.
-	 *
-	 * \param eventMask Event mask.
-	 * \param eventScript Event script.
-	 */
-	void setEvent(uint32_t eventMask, const IActionVMImage* eventScript);
-
 	/*! \brief Set event scripts.
 	 *
 	 * \param eventScripts Event scripts.
@@ -150,6 +143,8 @@ public:
 	virtual void postDispatchEvents();
 
 	virtual void eventInit();
+
+	virtual void eventConstruct();
 
 	virtual void eventLoad();
 

@@ -34,7 +34,13 @@ public:
 
 	bool create(const SwfRect& shapeBounds, const SwfShape* startShape, const SwfShape* endShape, const SwfStyles* startStyles, const SwfStyles* endStyles);
 
-	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const;
+	virtual Ref< FlashCharacterInstance > createInstance(
+		ActionContext* context,
+		FlashCharacterInstance* parent,
+		const std::string& name,
+		const ActionObject* initObject,
+		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+	) const;
 
 	const SwfRect& getShapeBounds() const { return m_shapeBounds; }
 

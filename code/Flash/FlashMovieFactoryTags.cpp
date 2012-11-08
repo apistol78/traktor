@@ -977,10 +977,8 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 
 			while (uint32_t(bs.getStream()->tell()) < context.tagEndPosition)
 			{
-				FlashFrame::PlaceAction placeAction;
-
-				placeAction.eventMask = context.version >= 6 ? bs.readUInt32() : (bs.readUInt16() << 16);
-				if (!placeAction.eventMask)
+				uint32_t eventMask = context.version >= 6 ? bs.readUInt32() : (bs.readUInt16() << 16);
+				if (!eventMask)
 					break;
 
 				uint32_t eventLength = bs.readUInt32();
@@ -991,16 +989,16 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 				}
 
 				// "Key Press" events.
-				if (placeAction.eventMask & EvtKeyPress)
+				if (eventMask & EvtKeyPress)
 				{
 					/*uint8_t keyCode = */bs.readUInt8();
 					T_DEBUG(L"PlaceObject, unused keycode in EvtKeyPress");
 				}
 
-				placeAction.script = context.movie->getVM()->load(bs);
+				Ref< const IActionVMImage > image = context.movie->getVM()->load(bs);
 				bs.alignByte();
 
-				placeObject.actions.push_back(placeAction);
+				placeObject.events.insert(std::make_pair(eventMask, image));
 			}
 		}
 

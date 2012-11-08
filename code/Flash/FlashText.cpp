@@ -62,7 +62,13 @@ const AlignedVector< FlashText::Character >& FlashText::getCharacters() const
 	return m_characters;
 }
 
-Ref< FlashCharacterInstance > FlashText::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const
+Ref< FlashCharacterInstance > FlashText::createInstance(
+	ActionContext* context,
+	FlashCharacterInstance* parent,
+	const std::string& name,
+	const ActionObject* initObject,
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+) const
 {
 	return new FlashTextInstance(context, parent, this);
 }

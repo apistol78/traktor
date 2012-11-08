@@ -223,7 +223,13 @@ bool FlashShape::create(const SwfShape* shape)
 	return true;
 }
 
-Ref< FlashCharacterInstance > FlashShape::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const
+Ref< FlashCharacterInstance > FlashShape::createInstance(
+	ActionContext* context,
+	FlashCharacterInstance* parent,
+	const std::string& name,
+	const ActionObject* initObject,
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+) const
 {
 	return new FlashShapeInstance(context, parent, this);
 }

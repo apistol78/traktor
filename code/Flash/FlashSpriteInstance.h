@@ -76,6 +76,8 @@ public:
 
 	virtual void eventInit();
 
+	virtual void eventConstruct();
+
 	virtual void eventLoad();
 
 	virtual void eventFrame();
@@ -117,6 +119,7 @@ private:
 	bool m_inside;
 	bool m_inDispatch;
 	bool m_gotoIssued;
+	bool m_press;
 	int32_t m_mouseX;
 	int32_t m_mouseY;
 	int32_t m_maskCount;
