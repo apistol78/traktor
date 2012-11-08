@@ -130,11 +130,6 @@ FlashCharacterInstance* FlashCharacterInstance::getFocus()
 	return ms_focusInstance;
 }
 
-void FlashCharacterInstance::setEvent(uint32_t eventMask, const IActionVMImage* eventScript)
-{
-	m_eventScripts[eventMask] = eventScript;
-}
-
 void FlashCharacterInstance::setEvents(const SmallMap< uint32_t, Ref< const IActionVMImage > >& eventScripts)
 {
 	m_eventScripts = eventScripts;
@@ -156,6 +151,31 @@ void FlashCharacterInstance::postDispatchEvents()
 void FlashCharacterInstance::eventInit()
 {
 	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtInitialize);
+	if (i != m_eventScripts.end())
+	{
+		ActionObject* self = getAsObject(m_context);
+		Ref< ActionObject > super = self->getSuper();
+
+		ActionFrame callFrame(
+			m_context,
+			self,
+			i->second,
+			4,
+			0,
+			0
+		);
+
+		callFrame.setVariable(ActionContext::IdThis, ActionValue(self));
+		callFrame.setVariable(ActionContext::IdSuper, ActionValue(super));
+		callFrame.setVariable(ActionContext::IdGlobal, ActionValue(m_context->getGlobal()));
+
+		m_context->getVM()->execute(&callFrame);
+	}
+}
+
+void FlashCharacterInstance::eventConstruct()
+{
+	SmallMap< uint32_t, Ref< const IActionVMImage > >::iterator i = m_eventScripts.find(EvtConstruct);
 	if (i != m_eventScripts.end())
 	{
 		ActionObject* self = getAsObject(m_context);

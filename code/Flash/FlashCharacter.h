@@ -1,6 +1,7 @@
 #ifndef traktor_flash_FlashCharacter_H
 #define traktor_flash_FlashCharacter_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Flash/SwfTypes.h"
 
@@ -20,6 +21,7 @@ namespace traktor
 class ActionContext;
 class ActionObject;
 class FlashCharacterInstance;
+class IActionVMImage;
 
 /*! \brief Character definition.
  * \ingroup Flash
@@ -56,7 +58,13 @@ public:
 	 * \param initObject Initialization object.
 	 * \return Character instance.
 	 */
-	virtual Ref< FlashCharacterInstance > createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const = 0;
+	virtual Ref< FlashCharacterInstance > createInstance(
+		ActionContext* context,
+		FlashCharacterInstance* parent,
+		const std::string& name,
+		const ActionObject* initObject,
+		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+	) const = 0;
 
 	/*! \brief
 	 */

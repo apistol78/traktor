@@ -140,7 +140,13 @@ bool FlashMorphShape::create(const SwfRect& shapeBounds, const SwfShape* startSh
 	return true;
 }
 
-Ref< FlashCharacterInstance > FlashMorphShape::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const
+Ref< FlashCharacterInstance > FlashMorphShape::createInstance(
+	ActionContext* context,
+	FlashCharacterInstance* parent,
+	const std::string& name,
+	const ActionObject* initObject,
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+) const
 {
 	return new FlashMorphShapeInstance(context, parent, this);
 }

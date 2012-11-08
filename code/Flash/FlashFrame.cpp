@@ -4,6 +4,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberSmallMap.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/SwfMembers.h"
 #include "Flash/Action/IActionVMImage.h"
@@ -97,13 +98,6 @@ bool FlashFrame::serialize(ISerializer& s)
 	return true;
 }
 
-bool FlashFrame::PlaceAction::serialize(ISerializer& s)
-{
-	s >> Member< uint32_t >(L"eventMask", eventMask);
-	s >> MemberRef< const IActionVMImage >(L"script", script);
-	return true;
-}
-
 bool FlashFrame::PlaceObject::serialize(ISerializer& s)
 {
 	s >> Member< uint16_t >(L"hasFlags", hasFlags);
@@ -116,7 +110,12 @@ bool FlashFrame::PlaceObject::serialize(ISerializer& s)
 		s >> Member< uint8_t >(L"blendMode", blendMode);
 
 	if (hasFlags & PfHasActions)
-		s >> MemberStlVector< PlaceAction, MemberComposite< PlaceAction > >(L"actions", actions);
+		s >> MemberSmallMap<
+			uint32_t,
+			Ref< const IActionVMImage >,
+			Member< uint32_t >,
+			MemberRef< const IActionVMImage >
+		>(L"events", events);
 
 	if (hasFlags & PfHasClipDepth)
 		s >> Member< uint16_t >(L"clipDepth", clipDepth);

@@ -70,15 +70,21 @@ const RefArray< const IActionVMImage >& FlashSprite::getInitActionScripts() cons
 	return m_initActionScripts;
 }
 
-Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context, FlashCharacterInstance* parent, const std::string& name, const ActionObject* initObject) const
+Ref< FlashCharacterInstance > FlashSprite::createInstance(
+	ActionContext* context,
+	FlashCharacterInstance* parent,
+	const std::string& name,
+	const ActionObject* initObject,
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
+) const
 {
 	Ref< FlashSpriteInstance > spriteInstance = new FlashSpriteInstance(context, parent, this);
 
 	if (!name.empty())
 		spriteInstance->setName(name);
 
-	spriteInstance->eventInit();
-	spriteInstance->updateDisplayList();
+	if (events)
+		spriteInstance->setEvents(*events);
 
 	if (initObject)
 	{
@@ -93,6 +99,10 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(ActionContext* context
 				spriteInstanceAO->setMember(i->first, i->second);
 		}
 	}
+
+	spriteInstance->eventConstruct();
+	spriteInstance->eventInit();
+	spriteInstance->updateDisplayList();
 
 	std::string spriteClassName;
 	if (context->getMovie()->getExportName(getId(), spriteClassName))

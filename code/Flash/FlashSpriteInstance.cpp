@@ -31,6 +31,7 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_inside(false)
 ,	m_inDispatch(false)
 ,	m_gotoIssued(false)
+,	m_press(false)
 ,	m_mouseX(0)
 ,	m_mouseY(0)
 ,	m_maskCount(0)
@@ -172,8 +173,14 @@ FlashDisplayList& FlashSpriteInstance::getDisplayList()
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 {
-	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(getContext(), getParent(), "", 0));
-	cloneInstance->setEvents(getEvents());
+	const SmallMap< uint32_t, Ref< const IActionVMImage > >& events = getEvents();
+	Ref< FlashSpriteInstance > cloneInstance = checked_type_cast< FlashSpriteInstance* >(m_sprite->createInstance(
+		getContext(),
+		getParent(),
+		"",
+		0,
+		&events
+	));
 	return cloneInstance;
 }
 
@@ -323,6 +330,18 @@ void FlashSpriteInstance::eventInit()
 	context->setMovieClip(current);
 }
 
+void FlashSpriteInstance::eventConstruct()
+{
+	ActionContext* context = getContext();
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
+
+	FlashCharacterInstance::eventConstruct();
+
+	context->setMovieClip(current);
+}
+
 void FlashSpriteInstance::eventLoad()
 {
 	ActionContext* context = getContext();
@@ -466,7 +485,10 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	SwfRect bounds = getLocalBounds();
 	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside)
+	{
 		executeScriptEvent(ActionContext::IdOnPress);
+		m_press = true;
+	}
 
 	// Call base class event function.
 	FlashCharacterInstance::eventMouseDown(x, y, button);
@@ -499,12 +521,13 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	// Check if we're inside then issue press events.
 	SwfRect bounds = getLocalBounds();
 	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
-	if (inside)
+	if (inside && m_press)
 		executeScriptEvent(ActionContext::IdOnRelease);
 
 	FlashCharacterInstance::eventMouseUp(x, y, button);
 
 	context->setMovieClip(current);
+	m_press = false;
 }
 
 void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)

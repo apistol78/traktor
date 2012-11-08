@@ -37,8 +37,10 @@ bool BlendGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childGra
 bool BlendGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
 	BlendGrainData* blendGrain = checked_type_cast< BlendGrainData*, false >(grain);
-	outChildren.push_back(blendGrain->getGrains()[0]);
-	outChildren.push_back(blendGrain->getGrains()[1]);
+	if (blendGrain->getGrains()[0])
+		outChildren.push_back(blendGrain->getGrains()[0]);
+	if (blendGrain->getGrains()[1])	
+		outChildren.push_back(blendGrain->getGrains()[1]);
 	return true;
 }
 

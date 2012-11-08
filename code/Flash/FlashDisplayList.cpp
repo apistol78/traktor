@@ -123,7 +123,13 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 					// Create new instance.
 					layer.id = placeObject.characterId;
-					layer.instance = character->createInstance(m_context, ownerInstance, placeObject.has(FlashFrame::PfHasName) ? placeObject.name : "", 0);
+					layer.instance = character->createInstance(
+						m_context,
+						ownerInstance,
+						placeObject.has(FlashFrame::PfHasName) ? placeObject.name : "",
+						0,
+						&placeObject.events
+					);
 					T_ASSERT (layer.instance);
 					layer.instance->setTransform(transform);
 				}
@@ -144,12 +150,6 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 			if (placeObject.has(FlashFrame::PfHasMatrix))
 				layer.instance->setTransform(placeObject.matrix);
-
-			if (!placeObject.actions.empty())
-			{
-				for (std::vector< FlashFrame::PlaceAction >::const_iterator j = placeObject.actions.begin(); j != placeObject.actions.end(); ++j)
-					layer.instance->setEvent(j->eventMask, j->script);
-			}
 
 			if (placeObject.has(FlashFrame::PfHasClipDepth))
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;

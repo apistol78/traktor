@@ -48,21 +48,13 @@ public:
 		PfHasMove = 1 << 10
 	};
 
-	struct PlaceAction
-	{
-		uint32_t eventMask;
-		Ref< const IActionVMImage > script;
-
-		bool serialize(ISerializer& s);
-	};
-
 	struct PlaceObject
 	{
 		uint16_t hasFlags;
 		uint16_t depth;
 		uint8_t bitmapCaching;
 		uint8_t blendMode;
-		std::vector< PlaceAction > actions;
+		SmallMap< uint32_t, Ref< const IActionVMImage > > events;
 		uint16_t clipDepth;
 		std::string name;
 		uint16_t ratio;
