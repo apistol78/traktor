@@ -102,6 +102,7 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 
 	spriteInstance->eventConstruct();
 	spriteInstance->eventInit();
+
 	spriteInstance->updateDisplayList();
 
 	std::string spriteClassName;
