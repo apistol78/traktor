@@ -367,6 +367,10 @@ void FlashSpriteInstance::eventFrame()
 	FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
 	T_ASSERT (frame);
 
+	// Issue events on "visible" characters.
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		(*i)->eventFrame();
+
 	// Issue script assigned event; hack to skip events when using goto methods.
 	if (!m_skipEnterFrame)
 		executeScriptEvent(ActionContext::IdOnEnterFrame);
@@ -403,10 +407,6 @@ void FlashSpriteInstance::eventFrame()
 		m_lastExecutedFrame = m_currentFrame;
 	}
 
-	// Issue events on "visible" characters.
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->eventFrame();
-
 	FlashCharacterInstance::eventFrame();
 
 	context->setMovieClip(current);
@@ -428,12 +428,12 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
-	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnKeyDown);
-
 	// Issue events on "visible" characters.
 	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 		(*i)->eventKeyDown(keyCode);
+
+	// Issue script assigned event.
+	executeScriptEvent(ActionContext::IdOnKeyDown);
 
 	FlashCharacterInstance::eventKeyDown(keyCode);
 
@@ -447,12 +447,12 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(this);
 
-	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnKeyUp);
-
 	// Issue events on "visible" characters.
 	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 		(*i)->eventKeyUp(keyCode);
+
+	// Issue script assigned event.
+	executeScriptEvent(ActionContext::IdOnKeyUp);
 
 	FlashCharacterInstance::eventKeyUp(keyCode);
 
@@ -471,15 +471,15 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
-	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseDown);
-
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
 		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 			(*i)->eventMouseDown(x, y, button);
 	}
+
+	// Issue script assigned event.
+	executeScriptEvent(ActionContext::IdOnMouseDown);
 
 	// Check if we're inside then issue press events.
 	SwfRect bounds = getLocalBounds();
@@ -508,15 +508,15 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
-	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseUp);
-
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
 		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 			(*i)->eventMouseUp(x, y, button);
 	}
+
+	// Issue script assigned event.
+	executeScriptEvent(ActionContext::IdOnMouseUp);
 
 	// Check if we're inside then issue press events.
 	SwfRect bounds = getLocalBounds();
@@ -542,15 +542,15 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	m_mouseX = int32_t(xy.x / 20.0f);
 	m_mouseY = int32_t(xy.y / 20.0f);
 
-	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseMove);
-
 	// Issue events on "visible" characters.
 	if (!m_visibleCharacters.empty())
 	{
 		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
 			(*i)->eventMouseMove(x, y, button);
 	}
+
+	// Issue script assigned event.
+	executeScriptEvent(ActionContext::IdOnMouseMove);
 
 	// Roll over and out event handling.
 	SwfRect bounds = getLocalBounds();
