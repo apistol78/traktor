@@ -1,6 +1,7 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Endian.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Timer/Timer.h"
 #include "Flash/FlashMovie.h"
@@ -76,8 +77,39 @@ int32_t parseIndex(const char* str)
 	return value;
 }
 
+bool getMemberOrProperty(ExecutionState& state, ActionObject* self, int32_t variableId, ActionValue& outValue)
+{
+	ActionValueStack& stack = state.frame->getStack();
+	Ref< ActionFunction > propertyGet;
+
+	if (self->getPropertyGet(variableId, propertyGet))
+	{
+		stack.push(ActionValue(avm_number_t(0)));
+		outValue = propertyGet->call(state.frame, self);
+		return true;
+	}
+	
+	return self->getMember(variableId, outValue);
+}
+
+void setMemberOrProperty(ExecutionState& state, ActionObject* self, int32_t variableId, const ActionValue& value)
+{
+	ActionValueStack& stack = state.frame->getStack();
+	Ref< ActionFunction > propertySet;
+
+	if (self->getPropertySet(variableId, propertySet))
+	{
+		stack.push(value);
+		stack.push(ActionValue(avm_number_t(1)));
+		propertySet->call(state.frame, self);
+	}
+	else
+		self->setMember(variableId, value);
+}
+
 ActionValue getVariable(ExecutionState& state, const ActionValue& variable)
 {
+	ActionValueStack& stack = state.frame->getStack();
 	ActionValue value;
 
 	// Resolve variable numeric id.
@@ -90,7 +122,7 @@ ActionValue getVariable(ExecutionState& state, const ActionValue& variable)
 	// Get "with" instance member first.
 	if (state.with)
 	{
-		if (state.with->getMember(variableId, value))
+		if (getMemberOrProperty(state, state.with, variableId, value))
 			return value;
 	}
 
@@ -111,7 +143,7 @@ ActionValue getVariable(ExecutionState& state, const ActionValue& variable)
 			ActionObject* movieClipAS = movieClip->getAsObject(state.context);
 			T_ASSERT (movieClipAS);
 
-			if (movieClipAS->getMember(variableId, value))
+			if (getMemberOrProperty(state, movieClipAS, variableId, value))
 				return value;
 
 			movieClip = movieClip->getParent();
@@ -121,7 +153,7 @@ ActionValue getVariable(ExecutionState& state, const ActionValue& variable)
 	// Get from self instance.
 	if (state.self)
 	{
-		if (state.self->getMember(variableId, value))
+		if (getMemberOrProperty(state, state.self, variableId, value))
 			return value;
 	}
 
@@ -327,6 +359,8 @@ void opx_int(ExecutionState& state)
 	ActionValue& number = stack.top();
 	if (number.isNumeric())
 		number = ActionValue(avm_number_t(std::floor(number.getNumber())));
+	else if (number.isString())
+		number = ActionValue(avm_number_t(parseString< int32_t >(number.getString())));
 	else
 		number = ActionValue();
 }
@@ -349,14 +383,23 @@ void opx_setVariable(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue value = stack.pop();
-	std::string variableName = stack.pop().getString();
+	ActionValue variable = stack.pop();
+	std::string variableName = variable.getString();
 
-	uint32_t variableNameId = state.context->getString(variableName);
+	uint32_t variableId = state.context->getString(variableName);
 
-	ActionValue* variableValue = state.frame->getVariableValue(variableNameId);
+	T_IF_TRACE(
+		*state.trace << L"AopSetVariable: \"" << variable.getWideString() << L"\"" << Endl;
+	)
+
+	ActionValue* variableValue = state.frame->getVariableValue(variableId);
 	if (variableValue)
 	{
 		*variableValue = value;
+
+		T_IF_TRACE(
+			*state.trace << L"<set in frame variable>" << Endl;
+		)
 		return;
 	}
 
@@ -365,9 +408,17 @@ void opx_setVariable(ExecutionState& state)
 		ActionObject* movieClipAS = state.movieClip->getAsObject(state.context);
 		T_ASSERT (movieClipAS);
 
-		movieClipAS->setMember(variableNameId, value);
+		setMemberOrProperty(state, movieClipAS, variableId, value);
+
+		T_IF_TRACE(
+			*state.trace << L"<set in movie clip variable>" << Endl;
+		)
 		return;
 	}
+
+	T_IF_TRACE(
+		*state.trace << L"<variable lost>" << Endl;
+	)
 }
 
 void opx_setTargetExpr(ExecutionState& state)
@@ -705,17 +756,37 @@ void opx_castOp(ExecutionState& state)
 {
 	ActionValueStack& stack = state.frame->getStack();
 	ActionValue objectValue = stack.pop();
-	ActionValue constructorValue = stack.pop();
+	ActionValue classValue = stack.pop();
 
-	if (objectValue.isObject() && constructorValue.isObject())
+	if (objectValue.isObject() && classValue.isObject())
 	{
 		Ref< ActionObject > object = objectValue.getObject();
-		Ref< ActionObject > constructor = constructorValue.getObject();
+		Ref< ActionObject > classFunction = classValue.getObject();
 
-		if (object->get__proto__() == constructor)
+		if (object && classFunction)
 		{
-			stack.push(objectValue);
-			return;
+			ActionObject* __proto__ = object->get__proto__();
+			T_ASSERT (__proto__);
+
+			ActionValue prototypeValue;
+			classFunction->getLocalMember(ActionContext::IdPrototype, prototypeValue);
+
+			if (prototypeValue.isObject())
+			{
+				ActionObject* prototype = prototypeValue.getObject();
+				T_ASSERT (prototype);
+
+				do
+				{
+					if (__proto__ == prototype)
+					{
+						stack.push(objectValue);
+						return;
+					}
+					__proto__ = __proto__->get__proto__();
+				}
+				while (__proto__);
+			}
 		}
 	}
 
@@ -1025,7 +1096,7 @@ void opx_initObject(ExecutionState& state)
 	{
 		ActionValue value = stack.pop();
 		ActionValue name = stack.pop();
-		scriptObject->setMember(name.getString(), value);
+		setMemberOrProperty(state, scriptObject, name.getStringId(), value);
 		T_IF_TRACE(
 			*state.trace << L"AopInitObject: " << i << L" \"" << name.getWideString() << L"\" = " << value.getWideString() << Endl;
 		)
@@ -1728,10 +1799,16 @@ void opx_constantPool(ExecutionState& state)
 
 	for (uint16_t i = 0; i < dictionaryCount; ++i)
 	{
+		T_IF_TRACE(
+			*state.trace << int32_t(i) << L" = " << mbstows(dictionaryEntry) << Endl;
+		)
+
+		int32_t index = state.context->getString(dictionaryEntry);
 		dictionary->add(ActionValue(
 			dictionaryEntry,
-			state.context->getString(dictionaryEntry)
+			index
 		));
+
 		dictionaryEntry += std::strlen(dictionaryEntry) + 1;
 	}
 
@@ -2027,10 +2104,17 @@ void opx_pushData(ExecutionState& state)
 
 	const uint8_t T_UNALIGNED * data = state.data;
 	const uint8_t T_UNALIGNED * end = data + state.length;
+	int32_t index = 0;
+
 	while (data < end)
 	{
 		ActionValue value;
 		uint8_t type = *data++;
+
+		T_IF_TRACE(
+			if (type != 200)
+				*state.trace << ++index << L". " << int32_t(type);
+		)
 
 		if (type == 0)		// String
 		{
@@ -2090,13 +2174,21 @@ void opx_pushData(ExecutionState& state)
 		else if (type == 8)	// Dictionary (8bit index)
 		{
 			uint8_t index = *data++;
-			value = ActionValue(state.frame->getDictionary()->get(index));
+			value = state.frame->getDictionary()->get(index);
+
+			T_IF_TRACE(
+				*state.trace << L" (" << int32_t(index) << L")";
+			)
 		}
 		else if (type == 9)	// Dictionary (16bit index)
 		{
 			uint16_t index = *reinterpret_cast< const uint16_t* >(data);
-			value = ActionValue(state.frame->getDictionary()->get(index));
+			value = state.frame->getDictionary()->get(index);
 			data += sizeof(uint16_t);
+
+			T_IF_TRACE(
+				*state.trace << L" (" << int32_t(index) << L")";
+			)
 		}
 		else if (type == 100)	// Preconverted constant value.
 		{
@@ -2108,6 +2200,10 @@ void opx_pushData(ExecutionState& state)
 			break;
 		else
 			break;
+
+		T_IF_TRACE(
+			*state.trace << L" = " << value.getWideString() << Endl;
+		)
 
 		stack.push(value);
 	}

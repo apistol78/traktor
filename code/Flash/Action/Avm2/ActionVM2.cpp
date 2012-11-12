@@ -1,5 +1,6 @@
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm2/ActionVM2.h"
+#include "Flash/Action/Avm2/ActionVMImage2.h"
 
 #define VM_TRACE_ENABLE 0
 
@@ -60,7 +61,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVM2", 0, ActionVM2, IAction
 
 Ref< const IActionVMImage > ActionVM2::load(BitReader& br) const
 {
-	return 0;
+	Ref< ActionVMImage2 > image = new ActionVMImage2();
+	return image;
 }
 
 void ActionVM2::execute(ActionFrame* frame) const

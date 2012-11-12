@@ -58,6 +58,8 @@ private:
 
 	void TextField_setTextFormat_2(FlashEditInstance* editInstance, int32_t beginIndex, int32_t endIndex, FlashTextFormat* textFormat) const;
 
+	std::string TextField_toString(const FlashEditInstance* self) const;
+
 	avm_number_t TextField_get_alpha(FlashEditInstance* editInstance) const;
 
 	void TextField_set_alpha(FlashEditInstance* editInstance, avm_number_t alpha) const;

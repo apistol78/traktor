@@ -100,11 +100,6 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 		}
 	}
 
-	spriteInstance->eventConstruct();
-	spriteInstance->eventInit();
-
-	spriteInstance->updateDisplayList();
-
 	std::string spriteClassName;
 	if (context->getMovie()->getExportName(getId(), spriteClassName))
 	{
@@ -118,6 +113,21 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 			spriteClassValue.getObjectAlways(context)->getMember(ActionContext::IdPrototype, prototype);
 			spriteInstanceAO->setMember(ActionContext::Id__proto__, prototype);
 			spriteInstanceAO->setMember(ActionContext::Id__ctor__, spriteClassValue);
+		}
+	}
+
+	spriteInstance->eventConstruct();
+	spriteInstance->eventInit();
+
+	spriteInstance->updateDisplayList();
+
+	if (context->getMovie()->getExportName(getId(), spriteClassName))
+	{
+		ActionValue spriteClassValue;
+		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))
+		{
+			ActionObject* spriteInstanceAO = spriteInstance->getAsObject(context);
+			T_ASSERT (spriteInstanceAO);
 
 			ActionFunction* classConstructor = spriteClassValue.getObject< ActionFunction >();
 			if (classConstructor)

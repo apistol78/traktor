@@ -26,18 +26,27 @@ class T_DLLCLASS ActionDictionary : public Object
 	T_RTTI_CLASS;
 
 public:
-	//ActionDictionary(uint16_t tableSize, const char* tableFirstEntry);
+	ActionDictionary();
+
+	Ref< ActionDictionary > clone() const;
 
 	void add(const ActionValue& value);
 
-	inline const ActionValue& get(uint16_t index) const
+	const ActionValue& get(uint16_t index) const
 	{
 		T_ASSERT (index < m_table.size());
 		return m_table[index];
 	}
 
+	const AlignedVector< ActionValue >& getTable() const
+	{
+		return m_table;
+	}
+
 private:
 	AlignedVector< ActionValue > m_table;
+
+	ActionDictionary(const AlignedVector< ActionValue >& table);
 };
 
 	}
