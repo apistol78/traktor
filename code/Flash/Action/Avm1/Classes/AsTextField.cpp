@@ -1,6 +1,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/String.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashSpriteInstance.h"
@@ -85,6 +86,7 @@ AsTextField::AsTextField(ActionContext* context)
 			createNativeFunction(context, this, &AsTextField::TextField_setTextFormat_2)
 		)
 	));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &AsTextField::TextField_toString)));
 
 	prototype->addProperty("_alpha", createNativeFunction(context, this, &AsTextField::TextField_get_alpha), createNativeFunction(context, this, &AsTextField::TextField_set_alpha));
 	prototype->addProperty("antiAliasType", createNativeFunction(context, this, &AsTextField::TextField_get_antiAliasType), createNativeFunction(context, this, &AsTextField::TextField_set_antiAliasType));
@@ -241,6 +243,12 @@ void AsTextField::TextField_setTextFormat_0(FlashEditInstance* self, FlashTextFo
 void AsTextField::TextField_setTextFormat_2(FlashEditInstance* self, int32_t beginIndex, int32_t endIndex, FlashTextFormat* textFormat) const
 {
 	self->setTextFormat(textFormat, beginIndex, endIndex);
+}
+
+std::string AsTextField::TextField_toString(const FlashEditInstance* self) const
+{
+	std::string target = self->getTarget();
+	return "_level0" + replaceAll(target, '/', '.');
 }
 
 avm_number_t AsTextField::TextField_get_alpha(FlashEditInstance* self) const

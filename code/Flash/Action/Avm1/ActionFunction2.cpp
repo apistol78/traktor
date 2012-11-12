@@ -23,7 +23,7 @@ ActionFunction2::ActionFunction2(
 	uint16_t flags,
 	const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
 	const SmallMap< uint32_t, ActionValue >& variables,
-	ActionDictionary* dictionary
+	const ActionDictionary* dictionary
 )
 :	ActionFunction(context, name)
 ,	m_image(image)

@@ -21,7 +21,7 @@ ActionFunction1::ActionFunction1(
 	uint16_t argumentCount,
 	const std::vector< std::string >& argumentsIntoVariables,
 	const SmallMap< uint32_t, ActionValue >& variables,
-	ActionDictionary* dictionary
+	const ActionDictionary* dictionary
 )
 :	ActionFunction(context, name)
 ,	m_image(image)

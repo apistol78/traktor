@@ -48,7 +48,7 @@ public:
 		uint16_t flags,
 		const std::vector< std::pair< std::string, uint8_t > >& argumentsIntoRegisters,
 		const SmallMap< uint32_t, ActionValue >& variables,
-		ActionDictionary* dictionary
+		const ActionDictionary* dictionary
 	);
 
 	virtual ActionValue call(ActionObject* self, ActionObject* super, const ActionValueArray& args);
@@ -64,7 +64,7 @@ private:
 	uint16_t m_flags;
 	std::vector< std::pair< uint32_t, uint8_t > > m_argumentsIntoRegisters;
 	SmallMap< uint32_t, ActionValue > m_variables;
-	Ref< ActionDictionary > m_dictionary;
+	Ref< const ActionDictionary > m_dictionary;
 };
 
 	}

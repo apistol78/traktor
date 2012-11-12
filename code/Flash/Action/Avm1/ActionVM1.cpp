@@ -2,6 +2,7 @@
 #include <cmath>
 #include "Core/Io/BitReader.h"
 #include "Flash/Action/ActionContext.h"
+#include "Flash/Action/ActionDictionary.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/Avm1/ActionOpcodes.h"
 #include "Flash/Action/Avm1/ActionOperations.h"
@@ -86,6 +87,19 @@ void ActionVM1::execute(ActionFrame* frame) const
 	{
 		m_trace->beginDispatcher();
 		state.trace = &m_trace->getTraceStream();
+
+		const ActionDictionary* dictionary = state.frame->getDictionary();
+		if (dictionary)
+		{
+			*state.trace << L"Dictionary:" << Endl;
+			*state.trace << IncreaseIndent;
+
+			const AlignedVector< ActionValue >& table = dictionary->getTable();
+			for (uint32_t i = 0; i < table.size(); ++i)
+				*state.trace << i << L". " << table[i].getWideString() << Endl;
+
+			*state.trace << DecreaseIndent;
+		}
 	}
 #endif
 

@@ -39,7 +39,7 @@ public:
 		ActionObject* self,
 		const IActionVMImage* image,
 		uint16_t localRegisters,
-		ActionDictionary* dictionary,
+		const ActionDictionary* dictionary,
 		ActionFunction* callee
 	);
 
@@ -63,7 +63,7 @@ public:
 
 	ActionValue* getScopeVariableValue(uint32_t variableName);
 
-	void setDictionary(ActionDictionary* dictionary);
+	void setDictionary(const ActionDictionary* dictionary);
 
 	ActionContext* getContext() const { return m_context; }
 
@@ -77,7 +77,7 @@ public:
 
 	const SmallMap< uint32_t, ActionValue >& getScopeVariables() const { return m_scopeVariables; }
 
-	ActionDictionary* getDictionary() const { return m_dictionary; }
+	const ActionDictionary* getDictionary() const { return m_dictionary; }
 
 	ActionFunction* getCallee() const { return m_callee; }
 
@@ -90,7 +90,7 @@ private:
 	ActionValueArray m_localRegisters;
 	SmallMap< uint32_t, ActionValue > m_localVariables;
 	SmallMap< uint32_t, ActionValue > m_scopeVariables;
-	Ref< ActionDictionary > m_dictionary;
+	Ref< const ActionDictionary > m_dictionary;
 	ActionFunction* m_callee;
 	ActionValueStack m_stack;
 };

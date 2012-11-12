@@ -13,7 +13,7 @@ ActionFrame::ActionFrame(
 	ActionObject* self,
 	const IActionVMImage* image,
 	uint16_t localRegisters,
-	ActionDictionary* dictionary,
+	const ActionDictionary* dictionary,
 	ActionFunction* callee
 )
 :	m_context(context)
@@ -91,7 +91,7 @@ ActionValue* ActionFrame::getScopeVariableValue(uint32_t variableName)
 	return (i != m_scopeVariables.end()) ? &i->second : 0;
 }
 
-void ActionFrame::setDictionary(ActionDictionary* dictionary)
+void ActionFrame::setDictionary(const ActionDictionary* dictionary)
 {
 	m_dictionary = dictionary;
 }
