@@ -32,23 +32,24 @@ class T_DLLCLASS AudioLayer : public Layer
 
 public:
 	AudioLayer(
+		Stage* stage,
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< sound::Sound >& sound
 	);
 
-	virtual void prepare(Stage* stage);
+	virtual void prepare();
 
-	virtual void update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
+	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
 
-	virtual void build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame);
+	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
 
-	virtual void render(Stage* stage, render::EyeType eye, uint32_t frame);
+	virtual void render(render::EyeType eye, uint32_t frame);
 
-	virtual void leave(Stage* stage);
+	virtual void leave();
 
-	virtual void reconfigured(Stage* stage);
+	virtual void reconfigured();
 
 private:
 	Ref< amalgam::IEnvironment > m_environment;

@@ -18,6 +18,7 @@
 #include "Flash/Action/Avm1/Classes/AsMouse.h"
 #include "Flash/Action/Avm1/Classes/AsSound.h"
 #include "Flash/Action/Avm1/Classes/AsStage.h"
+#include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
 
 namespace traktor
 {
@@ -74,12 +75,14 @@ bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 	setGlobal("Sound", ActionValue(new AsSound(context, m_soundPlayer)));
 
 	// Get references to key and mouse singletons.
-	if (global->getMember("Key", memberValue))
+	if (global->getMemberByQName("Key", memberValue))
 		m_key = memberValue.getObject< AsKey >();
-	if (global->getMember("Mouse", memberValue))
+	if (global->getMemberByQName("Mouse", memberValue))
 		m_mouse = memberValue.getObject< AsMouse >();
-	if (global->getMember("Stage", memberValue))
+	if (global->getMemberByQName("Stage", memberValue))
 		m_stage = memberValue.getObject< AsStage >();
+	if (global->getMemberByQName("flash.external.ExternalInterface", memberValue))
+		m_externalInterface = memberValue.getObject< As_flash_external_ExternalInterface >();
 	
 	// Ensure stage are properly initialized.
 	if (m_stage)
@@ -97,6 +100,8 @@ void FlashMoviePlayer::destroy()
 	m_movieRenderer = 0;
 	m_soundPlayer = 0;
 	m_actionVM = 0;
+	m_externalInterface = 0;
+	m_stage =  0;
 	m_key = 0;
 	m_mouse = 0;
 	m_movie = 0;
@@ -354,12 +359,26 @@ bool FlashMoviePlayer::getFsCommand(std::wstring& outCommand, std::wstring& outA
 	return true;
 }
 
+void FlashMoviePlayer::setExternalCall(IExternalCall* externalCall)
+{
+	if (m_externalInterface)
+		m_externalInterface->setExternalCall(externalCall);
+}
+
+ActionValue FlashMoviePlayer::dispatchCallback(const std::string& methodName, int32_t argc, const ActionValue* argv)
+{
+	if (m_externalInterface)
+		return m_externalInterface->dispatchCallback(methodName, argc, argv);
+	else
+		return ActionValue();
+}
+
 FlashSpriteInstance* FlashMoviePlayer::getMovieInstance() const
 {
 	return m_movieInstance;
 }
 
-IActionVM* FlashMoviePlayer::getVM() const
+const IActionVM* FlashMoviePlayer::getVM() const
 {
 	return m_actionVM;
 }

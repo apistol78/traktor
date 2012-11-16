@@ -15,6 +15,7 @@
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
+#include "Parade/FlashCast.h"
 #include "Parade/FlashLayer.h"
 #include "Parade/Stage.h"
 #include "Parade/Action/Classes/As_traktor_parade_Configuration.h"
@@ -70,6 +71,7 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.FlashLayer", FlashLayer, Layer)
 
 FlashLayer::FlashLayer(
+	Stage* stage,
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
@@ -77,7 +79,7 @@ FlashLayer::FlashLayer(
 	bool clearBackground,
 	bool enableSound
 )
-:	Layer(name, scriptContext)
+:	Layer(stage, name, scriptContext)
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_clearBackground(clearBackground)
@@ -89,7 +91,7 @@ FlashLayer::FlashLayer(
 {
 }
 
-void FlashLayer::prepare(Stage* stage)
+void FlashLayer::prepare()
 {
 	if (m_movie.changed())
 	{
@@ -110,14 +112,14 @@ void FlashLayer::prepare(Stage* stage)
 	}
 }
 
-void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 	std::wstring command, args;
 
 	// Issue script update method.
-	invokeScriptUpdate(stage, control, info);
+	invokeScriptUpdate(control, info);
 
 	// Propagate keyboard input to movie.
 	input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::CtKeyboard, 0, true);
@@ -209,14 +211,14 @@ void FlashLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 	{
 		script::Any argv[] =
 		{
-			script::Any(stage),
+			script::Any(getStage()),
 			script::Any(args)
 		};
-		invokeScriptMethod(stage, command, sizeof_array(argv), argv);
+		invokeScriptMethod(command, sizeof_array(argv), argv);
 	}
 }
 
-void FlashLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
+void FlashLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 {
 	if (!m_displayRenderer || !m_visible)
 		return;
@@ -225,7 +227,7 @@ void FlashLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t 
 	m_moviePlayer->renderFrame();
 }
 
-void FlashLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
+void FlashLayer::render(render::EyeType eye, uint32_t frame)
 {
 	if (!m_displayRenderer || !m_visible)
 		return;
@@ -240,7 +242,7 @@ void FlashLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 	);
 }
 
-void FlashLayer::leave(Stage* stage)
+void FlashLayer::leave()
 {
 	m_movie.clear();
 	safeDestroy(m_moviePlayer);
@@ -248,7 +250,7 @@ void FlashLayer::leave(Stage* stage)
 	safeDestroy(m_soundRenderer);
 }
 
-void FlashLayer::reconfigured(Stage* stage)
+void FlashLayer::reconfigured()
 {
 	if (!m_moviePlayer)
 		return;
@@ -297,6 +299,22 @@ flash::ActionObject* FlashLayer::getRoot()
 	T_ASSERT (cx);
 
 	return movieInstance->getAsObject(cx);
+}
+
+script::Any FlashLayer::externalCall(const std::wstring& methodName, uint32_t argc, const script::Any* argv)
+{
+	if (!m_moviePlayer)
+		return script::Any();
+
+	flash::ActionValue av[16];
+	T_ASSERT (argc < sizeof_array(av));
+
+	for (uint32_t i = 0; i < argc; ++i)
+		av[i] = script::CastAny< flash::ActionValue >::get(argv[i]);
+
+	flash::ActionValue ret = m_moviePlayer->dispatchCallback(wstombs(methodName), argc, av);
+
+	return script::CastAny< flash::ActionValue >::set(ret);
 }
 
 void FlashLayer::createMoviePlayer()
@@ -364,6 +382,9 @@ void FlashLayer::createMoviePlayer()
 	}
 	moviePlayer->setGlobal("traktor", flash::ActionValue(asTraktor));
 
+	// Set ourself as external call hook.
+	moviePlayer->setExternalCall(this);
+
 	// Execute first frame.
 	while (!moviePlayer->progressFrame(1.0f / 60.0f));
 
@@ -371,6 +392,24 @@ void FlashLayer::createMoviePlayer()
 	m_displayRenderer = displayRenderer;
 	m_soundRenderer = soundRenderer;
 	m_moviePlayer = moviePlayer;
+}
+
+flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv)
+{
+	script::Any av[16];
+	T_ASSERT (argc < sizeof_array(av) - 1);
+
+	av[0] = script::Any(getStage());
+	for (int32_t i = 0; i < argc; ++i)
+		av[i + 1] = script::CastAny< flash::ActionValue >::set(argv[i]);
+
+	script::Any ret = invokeScriptMethod(
+		mbstows(methodName),
+		argc + 1,
+		av
+	);
+
+	return script::CastAny< flash::ActionValue >::get(ret);
 }
 
 	}

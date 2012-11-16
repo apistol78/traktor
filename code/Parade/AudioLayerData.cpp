@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.AudioLayerData", 0, AudioLayerData, LayerData)
 
-Ref< Layer > AudioLayerData::createInstance(amalgam::IEnvironment* environment) const
+Ref< Layer > AudioLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
@@ -27,6 +27,7 @@ Ref< Layer > AudioLayerData::createInstance(amalgam::IEnvironment* environment) 
 
 	// Create layer instance.
 	return new AudioLayer(
+		stage,
 		m_name,
 		environment,
 		script,

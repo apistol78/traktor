@@ -17,7 +17,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.VideoLayerData", 0, VideoLayerData, LayerData)
 
-Ref< Layer > VideoLayerData::createInstance(amalgam::IEnvironment* environment) const
+Ref< Layer > VideoLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
@@ -36,6 +36,7 @@ Ref< Layer > VideoLayerData::createInstance(amalgam::IEnvironment* environment) 
 
 	// Create layer instance.
 	return new VideoLayer(
+		stage,
 		m_name,
 		environment,
 		script,

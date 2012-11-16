@@ -37,8 +37,12 @@ public:
 	virtual bool isControlStable(int32_t control) const;
 
 	virtual float getControlValue(int32_t control);
+	
+	virtual bool getControlRange(int32_t control, float& outMin, float& outMax) const;
 
 	virtual bool getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const;
+
+	virtual bool getKeyEvent(KeyEvent& outEvent);
 
 	virtual void resetState();
 
@@ -47,6 +51,8 @@ public:
 	virtual bool supportRumble() const;
 
 	virtual void setRumble(const InputRumble& rumble);
+	
+	virtual void setExclusive(bool exclusive);
 	
 	// ITouchViewCallback
 	

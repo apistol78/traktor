@@ -24,6 +24,7 @@ class ActionValue;
 class AsKey;
 class AsMouse;
 class AsStage;
+class As_flash_external_ExternalInterface;
 class FlashMovie;
 class FlashMovieRenderer;
 class FlashSoundPlayer;
@@ -34,6 +35,7 @@ class IFlashMovieLoader;
 class ISoundRenderer;
 
 struct CallArgs;
+struct IExternalCall;
 
 /*! \brief Flash movie player.
  * \ingroup Flash
@@ -164,6 +166,14 @@ public:
 	 */
 	bool getFsCommand(std::wstring& outCommand, std::wstring& outArgs);
 
+	/*! \brief Set external call interface.
+	 */
+	void setExternalCall(IExternalCall* externalCall);
+
+	/*! \brief Dispatch callback through ExternalInterface.
+	 */
+	ActionValue dispatchCallback(const std::string& methodName, int32_t argc, const ActionValue* argv);
+
 	/*! \brief Get root movie instance.
 	 *
 	 * \return Root movie instance.
@@ -174,7 +184,7 @@ public:
 	 *
 	 * \return action virtual machine.
 	 */
-	IActionVM* getVM() const;
+	const IActionVM* getVM() const;
 
 	/*! \brief Set global ActionScript value.
 	 *
@@ -231,6 +241,7 @@ private:
 	Ref< AsKey > m_key;
 	Ref< AsMouse > m_mouse;
 	Ref< AsStage > m_stage;
+	Ref< As_flash_external_ExternalInterface > m_externalInterface;
 	Ref< FlashMovie > m_movie;
 	Ref< FlashSpriteInstance > m_movieInstance;
 	std::list< Event > m_events;

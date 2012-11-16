@@ -13,10 +13,12 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.Layer", Layer, Object)
 
 Layer::Layer(
+	Stage* stage,
 	const std::wstring& name,
 	const resource::Proxy< script::IScriptContext >& scriptContext
 )
-:	m_name(name)
+:	m_stage(stage)
+,	m_name(name)
 ,	m_scriptContext(scriptContext)
 ,	m_initialized(false)
 {
@@ -34,6 +36,7 @@ void Layer::destroy()
 		m_scriptContext->destroy();
 		m_scriptContext.clear();
 	}
+	m_stage = 0;
 }
 
 void Layer::flushScript()
@@ -41,7 +44,7 @@ void Layer::flushScript()
 	m_initialized = false;
 }
 
-bool Layer::validateScriptContext(Stage* stage)
+bool Layer::validateScriptContext()
 {
 	if (!m_scriptContext)
 		return false;
@@ -57,8 +60,8 @@ bool Layer::validateScriptContext(Stage* stage)
 		// Call script init; do this everytime we re-validate script.
 		script::Any argv[] =
 		{
-			script::Any(stage),
-			script::Any((Object*)stage->getParams())
+			script::Any(m_stage),
+			script::Any((Object*)m_stage->getParams())
 		};
 		m_scriptContext->executeMethod(this, L"layerInit", sizeof_array(argv), argv);
 		m_initialized = true;
@@ -67,26 +70,28 @@ bool Layer::validateScriptContext(Stage* stage)
 	return true;
 }
 
-void Layer::invokeScriptUpdate(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+script::Any Layer::invokeScriptUpdate(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
-	if (!validateScriptContext(stage))
-		return;
-
-	script::Any argv[] =
+	if (validateScriptContext())
 	{
-		script::Any(stage),
-		script::Any(&control),
-		script::Any(const_cast< amalgam::IUpdateInfo* >(&info))
-	};
-	m_scriptContext->executeMethod(this, L"layerUpdate", sizeof_array(argv), argv);
+		script::Any argv[] =
+		{
+			script::Any(m_stage),
+			script::Any(&control),
+			script::Any(const_cast< amalgam::IUpdateInfo* >(&info))
+		};
+		return m_scriptContext->executeMethod(this, L"layerUpdate", sizeof_array(argv), argv);
+	}
+	else
+		return script::Any();
 }
 
-void Layer::invokeScriptMethod(Stage* stage, const std::wstring& method, uint32_t argc, const script::Any* argv)
+script::Any Layer::invokeScriptMethod(const std::wstring& method, uint32_t argc, const script::Any* argv)
 {
-	if (!validateScriptContext(stage))
-		return;
-
-	m_scriptContext->executeMethod(this, method, argc, argv);
+	if (validateScriptContext())
+		return m_scriptContext->executeMethod(this, method, argc, argv);
+	else
+		return script::Any();
 }
 
 	}

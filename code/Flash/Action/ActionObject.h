@@ -107,6 +107,8 @@ public:
 
 	bool getLocalMember(const std::string& memberName, ActionValue& outMemberValue) const;
 
+	bool getMemberByQName(const std::string& memberName, ActionValue& outMemberValue);
+
 	void addProperty(const std::string& propertyName, ActionFunction* propertyGet, ActionFunction* propertySet);
 
 	bool getPropertyGet(const std::string& propertyName, Ref< ActionFunction >& outPropertyGet);

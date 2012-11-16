@@ -134,10 +134,10 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 	if (!m_pendingStage)
 	{
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			(*i)->prepare(this);
+			(*i)->prepare();
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			(*i)->update(this, control, info);
+			(*i)->update(control, info);
 
 		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime());
 	}
@@ -157,14 +157,14 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 bool Stage::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->build(this, info, frame);
+		(*i)->build(info, frame);
 	return true;
 }
 
 void Stage::render(render::EyeType eye, uint32_t frame)
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->render(this, eye, frame);
+		(*i)->render(eye, frame);
 
 	if (m_fade > FUZZY_EPSILON)
 	{
@@ -179,13 +179,13 @@ void Stage::render(render::EyeType eye, uint32_t frame)
 void Stage::leave()
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->leave(this);
+		(*i)->leave();
 }
 
 void Stage::reconfigured()
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->reconfigured(this);
+		(*i)->reconfigured();
 }
 
 	}

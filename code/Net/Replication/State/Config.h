@@ -1,6 +1,8 @@
 #ifndef traktor_net_Config_H
 #define traktor_net_Config_H
 
+#include "Core/Math/Scalar.h"
+
 namespace traktor
 {
 	namespace net

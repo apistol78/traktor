@@ -33,6 +33,9 @@
 #include "Flash/Action/Avm1/Classes/AsXML.h"
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
 
+// flash.external
+#include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
+
 // flash.geom
 #include "Flash/Action/Avm1/Classes/As_flash_geom_ColorTransform.h"
 #include "Flash/Action/Avm1/Classes/As_flash_geom_Point.h"
@@ -96,6 +99,13 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	// flash.
 	Ref< ActionObject > flash = new ActionObject(context);
 	{
+		// flash.external.
+		Ref< ActionObject > external = new ActionObject(context);
+		{
+			external->setMember("ExternalInterface", ActionValue(new As_flash_external_ExternalInterface(context)));
+		}
+		flash->setMember("external", ActionValue(external));
+
 		// flash.geom.
 		Ref< ActionObject > geom = new ActionObject(context);
 		{

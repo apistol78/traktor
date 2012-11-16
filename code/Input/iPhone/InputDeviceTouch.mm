@@ -103,6 +103,11 @@ float InputDeviceTouch::getControlValue(int32_t control)
 		return 0.0f;
 }
 
+bool InputDeviceTouch::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool InputDeviceTouch::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	control = 0;
@@ -156,6 +161,11 @@ bool InputDeviceTouch::getDefaultControl(InputDefaultControlType controlType, bo
 	return control != 0;
 }
 
+bool InputDeviceTouch::getKeyEvent(KeyEvent& outEvent)
+{
+	return false;
+}
+
 void InputDeviceTouch::resetState()
 {
 }
@@ -170,6 +180,10 @@ bool InputDeviceTouch::supportRumble() const
 }
 
 void InputDeviceTouch::setRumble(const InputRumble& rumble)
+{
+}
+
+void InputDeviceTouch::setExclusive(bool exclusive)
 {
 }
 

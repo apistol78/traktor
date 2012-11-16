@@ -1,5 +1,6 @@
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/StringSplit.h"
 #include "Core/Thread/Acquire.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
@@ -283,6 +284,27 @@ bool ActionObject::getLocalMember(uint32_t memberName, ActionValue& outMemberVal
 	}
 
 	outMemberValue = i->second;
+	return true;
+}
+
+bool ActionObject::getMemberByQName(const std::string& memberName, ActionValue& outMemberValue)
+{
+	StringSplit< std::string > ss(memberName, ".");
+	ActionValue objectValue(this);
+	ActionValue memberValue;
+
+	for (StringSplit< std::string >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+	{
+		if (!objectValue.isObject() || !objectValue.getObject())
+			return false;
+
+		if (!objectValue.getObject()->getMember(*i, memberValue))
+			return false;
+
+		objectValue = memberValue;
+	}
+
+	outMemberValue = objectValue;
 	return true;
 }
 

@@ -107,6 +107,11 @@ float InputDeviceTouchMouse::getControlValue(int32_t control)
 		return 0.0f;
 }
 
+bool InputDeviceTouchMouse::getControlRange(int32_t control, float& outMin, float& outMax) const
+{
+	return false;
+}
+
 bool InputDeviceTouchMouse::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
 	for (int32_t i = 0; i < sizeof_array(c_mouseControlMap); ++i)
@@ -118,6 +123,11 @@ bool InputDeviceTouchMouse::getDefaultControl(InputDefaultControlType controlTyp
 			return true;
 		}
 	}
+	return false;
+}
+
+bool InputDeviceTouchMouse::getKeyEvent(KeyEvent& outEvent)
+{
 	return false;
 }
 
@@ -138,6 +148,10 @@ bool InputDeviceTouchMouse::supportRumble() const
 }
 
 void InputDeviceTouchMouse::setRumble(const InputRumble& rumble)
+{
+}
+
+void InputDeviceTouchMouse::setExclusive(bool exclusive)
 {
 }
 

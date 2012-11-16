@@ -18,7 +18,7 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 	Ref< Stage > stage = new Stage(environment, m_transitions, params);
 	for (RefArray< LayerData >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
-		Ref< Layer > layer = (*i)->createInstance(environment);
+		Ref< Layer > layer = (*i)->createInstance(stage, environment);
 		if (!layer)
 			return 0;
 
