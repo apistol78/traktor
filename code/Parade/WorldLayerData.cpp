@@ -17,7 +17,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.WorldLayerData", 0, WorldLayerData, LayerData)
 
-Ref< Layer > WorldLayerData::createInstance(amalgam::IEnvironment* environment) const
+Ref< Layer > WorldLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
@@ -39,6 +39,7 @@ Ref< Layer > WorldLayerData::createInstance(amalgam::IEnvironment* environment) 
 
 	// Create layer instance.
 	return new WorldLayer(
+		stage,
 		m_name,
 		environment,
 		script,

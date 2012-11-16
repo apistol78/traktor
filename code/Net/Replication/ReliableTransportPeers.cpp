@@ -51,7 +51,7 @@ void ReliableTransportPeers::update()
 	for (std::map< handle_t, Control >::iterator i = m_control.begin(); i != m_control.end(); )
 	{
 		if (!i->second.alive)
-			i = m_control.erase(i);
+			m_control.erase(i++);
 		else
 			++i;
 	}

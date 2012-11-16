@@ -52,6 +52,7 @@ class T_DLLCLASS WorldLayer : public Layer
 
 public:
 	WorldLayer(
+		Stage* stage,
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< script::IScriptContext >& scriptContext,
@@ -59,17 +60,17 @@ public:
 		const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
 	);
 
-	virtual void prepare(Stage* stage);
+	virtual void prepare();
 
-	virtual void update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
+	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
 
-	virtual void build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame);
+	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
 
-	virtual void render(Stage* stage, render::EyeType eye, uint32_t frame);
+	virtual void render(render::EyeType eye, uint32_t frame);
 
-	virtual void leave(Stage* stage);
+	virtual void leave();
 
-	virtual void reconfigured(Stage* stage);
+	virtual void reconfigured();
 
 	world::Entity* getEntity(const std::wstring& name) const;
 

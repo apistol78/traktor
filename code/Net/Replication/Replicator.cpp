@@ -163,7 +163,7 @@ void Replicator::update(float dT)
 			}
 		}
 
-		i = m_peers.erase(i);
+		m_peers.erase(i++);
 	}
 
 	// Iterate all handles, check error state or send "I am" to new peers.

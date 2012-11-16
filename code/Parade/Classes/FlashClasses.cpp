@@ -3,6 +3,7 @@
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValue.h"
+#include "Parade/FlashCast.h"
 #include "Parade/FlashLayer.h"
 #include "Parade/Classes/FlashClasses.h"
 #include "Script/AutoScriptClass.h"
@@ -10,85 +11,6 @@
 
 namespace traktor
 {
-	namespace script
-	{
-
-template < >
-struct CastAny < flash::ActionValue, false >
-{
-	static Any set(const flash::ActionValue& value)
-	{
-		switch (value.getType())
-		{
-		case flash::ActionValue::AvtBoolean:
-			return Any(value.getBoolean());
-		case flash::ActionValue::AvtNumber:
-			return Any(float(value.getNumber()));
-		case flash::ActionValue::AvtString:
-			return Any(value.getWideString());
-		case flash::ActionValue::AvtObject:
-			return Any(value.getObject());
-		default:
-			return Any();
-		}
-	}
-
-	static flash::ActionValue get(const Any& value)
-	{
-		if (value.isBoolean())
-			return flash::ActionValue(value.getBoolean());
-		else if (value.isInteger())
-			return flash::ActionValue((flash::avm_number_t)value.getInteger());
-		else if (value.isFloat())
-			return flash::ActionValue(value.getFloat());
-		else if (value.isString())
-			return flash::ActionValue(value.getString());
-		else if (value.isObject())
-			return flash::ActionValue(dynamic_type_cast< flash::ActionObject* >(value.getObject()));
-		else
-			return flash::ActionValue();
-	}
-};
-
-template < >
-struct CastAny < const flash::ActionValue&, false >
-{
-	static Any set(const flash::ActionValue& value)
-	{
-		switch (value.getType())
-		{
-		case flash::ActionValue::AvtBoolean:
-			return Any(value.getBoolean());
-		case flash::ActionValue::AvtNumber:
-			return Any(float(value.getNumber()));
-		case flash::ActionValue::AvtString:
-			return Any(value.getWideString());
-		case flash::ActionValue::AvtObject:
-			return Any(value.getObject());
-		default:
-			return Any();
-		}
-	}
-
-	static flash::ActionValue get(const Any& value)
-	{
-		if (value.isBoolean())
-			return flash::ActionValue(value.getBoolean());
-		else if (value.isInteger())
-			return flash::ActionValue((flash::avm_number_t)value.getInteger());
-		else if (value.isFloat())
-			return flash::ActionValue(value.getFloat());
-		else if (value.isString())
-			return flash::ActionValue(value.getString());
-		else if (value.isObject())
-			return flash::ActionValue(dynamic_type_cast< flash::ActionObject* >(value.getObject()));
-		else
-			return flash::ActionValue();
-	}
-};
-
-	}
-
 	namespace parade
 	{
 
@@ -232,6 +154,7 @@ void registerFlashClasses(script::IScriptManager* scriptManager)
 	classFlashLayer->addMethod(L"getRoot", &FlashLayer::getRoot);
 	classFlashLayer->addMethod(L"isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod(L"setVisible", &FlashLayer::setVisible);
+	classFlashLayer->setUnknownMethod(&FlashLayer::externalCall);
 	scriptManager->registerClass(classFlashLayer);
 
 	Ref< ActionObjectClass > classActionObject = new ActionObjectClass();

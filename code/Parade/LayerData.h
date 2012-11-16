@@ -32,13 +32,14 @@ class IScriptContext;
 	{
 
 class Layer;
+class Stage;
 
 class T_DLLCLASS LayerData : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Layer > createInstance(amalgam::IEnvironment* environment) const = 0;
+	virtual Ref< Layer > createInstance(Stage* stage, amalgam::IEnvironment* environment) const = 0;
 
 	virtual bool serialize(ISerializer& s);
 

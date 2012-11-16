@@ -18,13 +18,14 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.VideoLayer", VideoLayer, Layer)
 
 VideoLayer::VideoLayer(
+	Stage* stage,
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< video::Video >& video,
 	const resource::Proxy< render::Shader >& shader
 )
-:	Layer(name, scriptContext)
+:	Layer(stage, name, scriptContext)
 ,	m_environment(environment)
 ,	m_video(video)
 ,	m_shader(shader)
@@ -39,13 +40,13 @@ bool VideoLayer::playing() const
 		return false;
 }
 
-void VideoLayer::prepare(Stage* stage)
+void VideoLayer::prepare()
 {
 }
 
-void VideoLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void VideoLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
-	invokeScriptUpdate(stage, control, info);
+	invokeScriptUpdate(control, info);
 
 	if (!m_video->playing())
 		return;
@@ -54,17 +55,17 @@ void VideoLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 	{
 		script::Any argv[] =
 		{
-			script::Any(stage)
+			script::Any(getStage())
 		};
-		invokeScriptMethod(stage, L"videoFinished", sizeof_array(argv), argv);
+		invokeScriptMethod(L"videoFinished", sizeof_array(argv), argv);
 	}
 }
 
-void VideoLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
+void VideoLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 {
 }
 
-void VideoLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
+void VideoLayer::render(render::EyeType eye, uint32_t frame)
 {
 	if (!m_screenRenderer)
 	{
@@ -89,11 +90,11 @@ void VideoLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 	}
 }
 
-void VideoLayer::leave(Stage* stage)
+void VideoLayer::leave()
 {
 }
 
-void VideoLayer::reconfigured(Stage* stage)
+void VideoLayer::reconfigured()
 {
 }
 

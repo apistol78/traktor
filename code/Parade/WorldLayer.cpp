@@ -16,7 +16,6 @@
 #include "World/Entity/TransientEntity.h"
 #include "World/Entity/IEntityBuilder.h"
 #include "World/Entity/IEntitySchema.h"
-//#include "World/PostProcess/PostProcess.h"
 
 namespace traktor
 {
@@ -26,13 +25,14 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.WorldLayer", WorldLayer, Layer)
 
 WorldLayer::WorldLayer(
+	Stage* stage,
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< scene::Scene >& scene,
 	const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
 )
-:	Layer(name, scriptContext)
+:	Layer(stage, name, scriptContext)
 ,	m_environment(environment)
 ,	m_scene(scene)
 ,	m_entities(entities)
@@ -46,7 +46,7 @@ WorldLayer::WorldLayer(
 	m_fieldOfView = m_environment->getSettings()->getProperty< PropertyFloat >(L"World.FieldOfView", 70.0f);
 }
 
-void WorldLayer::prepare(Stage* stage)
+void WorldLayer::prepare()
 {
 	if (m_scene.changed())
 	{
@@ -79,13 +79,13 @@ void WorldLayer::prepare(Stage* stage)
 	}
 }
 
-void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void WorldLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	if (!m_worldRenderer)
 		return;
 
 	// Issue script update method.
-	invokeScriptUpdate(stage, control, info);
+	invokeScriptUpdate(control, info);
 
 	// Update scene controller.
 	m_scene->update(
@@ -108,7 +108,7 @@ void WorldLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 	m_alternateTime += info.getSimulationDeltaTime();
 }
 
-void WorldLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
+void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 {
 	if (!m_worldRenderer)
 		return;
@@ -136,7 +136,7 @@ void WorldLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t 
 	m_deltaTime = info.getFrameDeltaTime();
 }
 
-void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
+void WorldLayer::render(render::EyeType eye, uint32_t frame)
 {
 	if (!m_worldRenderer)
 		return;
@@ -160,7 +160,7 @@ void WorldLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
 	}
 }
 
-void WorldLayer::leave(Stage* stage)
+void WorldLayer::leave()
 {
 	m_scene.clear();
 	m_entities.clear();
@@ -170,7 +170,7 @@ void WorldLayer::leave(Stage* stage)
 	safeDestroy(m_worldRenderer);
 }
 
-void WorldLayer::reconfigured(Stage* stage)
+void WorldLayer::reconfigured()
 {
 	createWorldRenderer();
 }

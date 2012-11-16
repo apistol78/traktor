@@ -11,25 +11,26 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.AudioLayer", AudioLayer, Layer)
 
 AudioLayer::AudioLayer(
+	Stage* stage,
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< sound::Sound >& sound
 )
-:	Layer(name, scriptContext)
+:	Layer(stage, name, scriptContext)
 ,	m_environment(environment)
 ,	m_sound(sound)
 {
 }
 
-void AudioLayer::prepare(Stage* stage)
+void AudioLayer::prepare()
 {
 }
 
-void AudioLayer::update(Stage* stage, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
+void AudioLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
 	// Issue script update method.
-	invokeScriptUpdate(stage, control, info);
+	invokeScriptUpdate(control, info);
 
 	// Play sound if not currently attached.
 	if (!m_handle || !m_handle->isPlaying())
@@ -40,15 +41,15 @@ void AudioLayer::update(Stage* stage, amalgam::IUpdateControl& control, const am
 	}
 }
 
-void AudioLayer::build(Stage* stage, const amalgam::IUpdateInfo& info, uint32_t frame)
+void AudioLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 {
 }
 
-void AudioLayer::render(Stage* stage, render::EyeType eye, uint32_t frame)
+void AudioLayer::render(render::EyeType eye, uint32_t frame)
 {
 }
 
-void AudioLayer::leave(Stage* stage)
+void AudioLayer::leave()
 {
 	if (m_handle)
 	{
@@ -57,7 +58,7 @@ void AudioLayer::leave(Stage* stage)
 	}
 }
 
-void AudioLayer::reconfigured(Stage* stage)
+void AudioLayer::reconfigured()
 {
 }
 
