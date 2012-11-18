@@ -76,7 +76,6 @@ private:
 	Ref< GridHeaderCell > m_headerCell;
 	RefArray< GridColumn > m_columns;
 	RefArray< GridRow > m_rows;
-
 	Ref< GridRow > m_clickRow;
 	int32_t m_clickColumn;
 

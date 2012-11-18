@@ -211,7 +211,6 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	{
 		script::Any argv[] =
 		{
-			script::Any(getStage()),
 			script::Any(args)
 		};
 		invokeScriptMethod(command, sizeof_array(argv), argv);
@@ -397,15 +396,14 @@ void FlashLayer::createMoviePlayer()
 flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv)
 {
 	script::Any av[16];
-	T_ASSERT (argc < sizeof_array(av) - 1);
+	T_ASSERT (argc < sizeof_array(av));
 
-	av[0] = script::Any(getStage());
 	for (int32_t i = 0; i < argc; ++i)
-		av[i + 1] = script::CastAny< flash::ActionValue >::set(argv[i]);
+		av[i] = script::CastAny< flash::ActionValue >::set(argv[i]);
 
 	script::Any ret = invokeScriptMethod(
 		mbstows(methodName),
-		argc + 1,
+		argc,
 		av
 	);
 
