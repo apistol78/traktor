@@ -138,9 +138,14 @@ void SyntaxLanguageLua::outline(int32_t line, const std::wstring& text, std::lis
 			size_t j = text.find(L'(', i + 1);
 			if (j != text.npos)
 			{
-				SyntaxOutline so = { line, text.substr(i + 1, j - i - 1) };
+				SyntaxOutline so(SotFunction, line, text.substr(i + 1, j - i - 1));
 				outOutline.push_back(so);
 			}
+		}
+		else if (word == L"local")
+		{
+			SyntaxOutline so(SotVariable, line, text.substr(i + 1));
+			outOutline.push_back(so);
 		}
 	}
 }

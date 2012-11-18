@@ -52,13 +52,7 @@ void VideoLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 		return;
 
 	if (!m_video->update(info.getSimulationDeltaTime()))
-	{
-		script::Any argv[] =
-		{
-			script::Any(getStage())
-		};
-		invokeScriptMethod(L"videoFinished", sizeof_array(argv), argv);
-	}
+		invokeScriptMethod(L"videoFinished", 0, 0);
 }
 
 void VideoLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)

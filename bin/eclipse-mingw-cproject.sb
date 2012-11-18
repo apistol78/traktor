@@ -6,7 +6,7 @@
 <?--	
 	
 	local configurations = project:getConfigurations()
-	for i = 0, configurations:length() - 1 do
+	for i = 0, configurations:size() - 1 do
 	
 		local configuration = configurations:get(i)
 		
