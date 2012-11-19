@@ -20,10 +20,6 @@
 #include "Ui/TabPage.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
-#include "Ui/Custom/GridView/GridColumn.h"
-#include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/GridView/GridRow.h"
-#include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
@@ -67,13 +63,11 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	if (!tabOutline->create(tab, L"Outline", new ui::TableLayout(L"100%", L"100%", 0, 0)))
 		return false;
 
-	m_outlineGrid = new ui::custom::GridView();
-	if (!m_outlineGrid->create(tabOutline, ui::custom::GridView::WsColumnHeader | ui::WsClientBorder | ui::WsDoubleBuffer))
+	m_outlineList = new ui::ListBox();
+	if (!m_outlineList->create(tabOutline))
 		return false;
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(L"", 20));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_NAME"), 170));
-	m_outlineGrid->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCRIPT_EDITOR_OUTLINE_LINE"), 50));
-	m_outlineGrid->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventOutlineDoubleClick));
+
+	m_outlineList->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventOutlineDoubleClick));
 
 	Ref< ui::TabPage > tabDependencies = new ui::TabPage();
 	if (!tabDependencies->create(tab, L"Dependencies", new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
@@ -202,17 +196,17 @@ void ScriptEditor::updateDependencyList()
 
 void ScriptEditor::eventOutlineDoubleClick(ui::Event* event)
 {
-	const ui::custom::GridRow* selectedRow = m_outlineGrid->getSelectedRow();
-	if (!selectedRow)
+	int32_t selected = m_outlineList->getSelected();
+	if (selected < 0 || selected >= int32_t(m_outline.size()))
 		return;
 
-	const ui::custom::GridItem* lineItem = checked_type_cast< const ui::custom::GridItem*, false >(selectedRow->get(2));
-	int32_t line = parseString< int32_t >(lineItem->getText()) - 1;
-	if (line >= 0)
-	{
-		m_edit->scrollToLine(line > 4 ? line - 4 : 0);
-		m_edit->placeCaret(m_edit->getLineOffset(line));
-	}
+	std::list< ui::custom::SyntaxOutline >::const_iterator i = m_outline.begin();
+	std::advance(i, selected);
+
+	const ui::custom::SyntaxOutline& outline = *i;
+
+	m_edit->scrollToLine(outline.line > 4 ? outline.line - 4 : 0);
+	m_edit->placeCaret(m_edit->getLineOffset(outline.line));
 }
 
 void ScriptEditor::eventDependencyToolClick(ui::Event* event)
@@ -300,30 +294,9 @@ void ScriptEditor::eventTimer(ui::Event* event)
 			m_outline.clear();
 			m_edit->getOutline(m_outline);
 
-			m_outlineGrid->removeAllRows();
+			m_outlineList->removeAll();
 			for (std::list< ui::custom::SyntaxOutline >::const_iterator i = m_outline.begin(); i != m_outline.end(); ++i)
-			{
-				Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-
-				switch (i->type)
-				{
-				default:
-				case ui::custom::SotUnknown:
-					row->add(new ui::custom::GridItem(L"?"));
-					break;
-				case ui::custom::SotVariable:
-					row->add(new ui::custom::GridItem(L"V"));
-					break;
-				case ui::custom::SotFunction:
-					row->add(new ui::custom::GridItem(L"F"));
-					break;
-				}
-
-				row->add(new ui::custom::GridItem(i->name));
-				row->add(new ui::custom::GridItem(toString(i->line + 1)));
-
-				m_outlineGrid->addRow(row);
-			}
+				m_outlineList->add(i->name + L" (" + toString(i->line + 1) + L")");
 		}
 	}
 }
