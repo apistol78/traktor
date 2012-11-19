@@ -1386,14 +1386,6 @@
       <second>Add dependency</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_OUTLINE_NAME</first>
-      <second>Name</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_OUTLINE_LINE</first>
-      <second>Line</second>
-    </item>
-    <item>
       <first>SCRIPT_EDITOR_REMOVE_DEPENDENCY</first>
       <second>Remove dependency</second>
     </item>

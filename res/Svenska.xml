@@ -1418,14 +1418,6 @@
       <second>Lägg till beroende</second>
     </item>
     <item>
-      <first>SCRIPT_EDITOR_OUTLINE_NAME</first>
-      <second>Namn</second>
-    </item>
-    <item>
-      <first>SCRIPT_EDITOR_OUTLINE_LINE</first>
-      <second>Rad</second>
-    </item>    
-    <item>
       <first>SCRIPT_EDITOR_REMOVE_DEPENDENCY</first>
       <second>Ta bort beroende</second>
     </item>

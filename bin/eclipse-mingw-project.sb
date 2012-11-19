@@ -6,7 +6,7 @@
 <?--
 
 local dependencies = project:getDependencies()
-for i = 0, dependencies:size() - 1 do
+for i = 0, dependencies:length() - 1 do
 	local dependency = dependencies:get(i)
 	if getmetatable(dependency) == ProjectDependency then
 		output:printLn("\t\t<project>" .. dependency:getName() .. "</project>")
@@ -84,7 +84,7 @@ end
 function generateItemLink(item, filterPath)
 	if getmetatable(item) == File then
 		local files = item:getSystemFiles(project:getSourcePath())
-		for i = 0, files:size() - 1 do
+		for i = 0, files:length() - 1 do
 			local file = files:get(i)
 
 			local filePath = fileSystem:getAbsolutePath(file)
@@ -110,14 +110,14 @@ function generateItemLink(item, filterPath)
 		-- Recurse with child items.
 		local childFilterPath = filterPath .. item:getName() .. "/"
 		local childItems = item:getItems()
-		for i = 0, childItems:size() - 1 do
+		for i = 0, childItems:length() - 1 do
 			generateItemLink(childItems:get(i), childFilterPath)
 		end
 	end
 end
 
 local items = project:getItems()
-for i = 0, items:size() - 1 do
+for i = 0, items:length() - 1 do
 	generateItemLink(items:get(i), "")
 end
 

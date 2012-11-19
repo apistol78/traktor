@@ -1,4 +1,3 @@
-#include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateControl.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Parade/Layer.h"
@@ -58,13 +57,10 @@ bool Layer::validateScriptContext()
 
 	if (!m_initialized)
 	{
-		// Expose commonly used globals.
-		m_scriptContext->setGlobal(L"stage", script::Any(m_stage));
-		m_scriptContext->setGlobal(L"environment", script::Any(m_stage->getEnvironment()));
-
 		// Call script init; do this everytime we re-validate script.
 		script::Any argv[] =
 		{
+			script::Any(m_stage),
 			script::Any((Object*)m_stage->getParams())
 		};
 		m_scriptContext->executeMethod(this, L"layerInit", sizeof_array(argv), argv);
@@ -80,6 +76,7 @@ script::Any Layer::invokeScriptUpdate(amalgam::IUpdateControl& control, const am
 	{
 		script::Any argv[] =
 		{
+			script::Any(m_stage),
 			script::Any(&control),
 			script::Any(const_cast< amalgam::IUpdateInfo* >(&info))
 		};
