@@ -30,7 +30,12 @@ public:
 
 	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const
 	{
-		return new Delegate(param.context, argv[0].getObject(), argv[1].getString());
+		if (argc >= 2)
+			return new Delegate(param.context, argv[0].getObject(), argv[1].getString());
+		else if (argc >= 1)
+			return new Delegate(param.context, argv[0].getString());
+		else
+			return 0;
 	}
 
 	virtual uint32_t getMethodCount() const
@@ -77,6 +82,12 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Delegate", Delegate, Object)
 
+Delegate::Delegate(IScriptContext* context, const std::wstring& methodName)
+:	m_context(context)
+,	m_methodName(methodName)
+{
+}
+
 Delegate::Delegate(IScriptContext* context, Object* object, const std::wstring& methodName)
 :	m_context(context)
 ,	m_object(object)
@@ -86,7 +97,10 @@ Delegate::Delegate(IScriptContext* context, Object* object, const std::wstring& 
 
 void Delegate::invoke(uint32_t argc, const Any* argv)
 {
-	m_context->executeMethod(m_object, m_methodName, argc, argv);
+	if (m_object)
+		m_context->executeMethod(m_object, m_methodName, argc, argv);
+	else
+		m_context->executeFunction(m_methodName, argc, argv);
 }
 
 void registerDelegateClasses(IScriptManager* scriptManager)

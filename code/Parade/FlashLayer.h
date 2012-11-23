@@ -4,6 +4,7 @@
 #include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
 #include "Parade/Layer.h"
 #include "Resource/Proxy.h"
+#include "Script/Any.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -47,7 +48,6 @@ public:
 		Stage* stage,
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
-		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< flash::FlashMovie >& movie,
 		bool clearBackground,
 		bool enableSound

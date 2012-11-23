@@ -28,11 +28,10 @@ WorldLayer::WorldLayer(
 	Stage* stage,
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
-	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< scene::Scene >& scene,
 	const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
 )
-:	Layer(stage, name, scriptContext)
+:	Layer(stage, name)
 ,	m_environment(environment)
 ,	m_scene(scene)
 ,	m_entities(entities)
@@ -74,8 +73,6 @@ void WorldLayer::prepare()
 		createWorldRenderer();
 		if (!m_worldRenderer)
 			return;
-
-		flushScript();
 	}
 }
 
@@ -83,9 +80,6 @@ void WorldLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 {
 	if (!m_worldRenderer)
 		return;
-
-	// Issue script update method.
-	invokeScriptUpdate(control, info);
 
 	// Update scene controller.
 	m_scene->update(

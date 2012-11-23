@@ -2,6 +2,7 @@
 #define traktor_parade_AudioLayerData_H
 
 #include "Parade/LayerData.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -31,6 +31,11 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 	m_transform = Matrix33::identity();
 }
 
+FlashCharacterInstance::~FlashCharacterInstance()
+{
+	destroy();
+}
+
 void FlashCharacterInstance::destroy()
 {
 	if (ms_focusInstance == this)
@@ -318,7 +323,11 @@ void FlashCharacterInstance::trace(const IVisitor& visitor) const
 
 void FlashCharacterInstance::dereference()
 {
+	if (ms_focusInstance == this)
+		ms_focusInstance = 0;
+
 	m_context = 0;
+
 	ActionObjectRelay::dereference();
 }
 

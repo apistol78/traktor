@@ -14,10 +14,9 @@ AudioLayer::AudioLayer(
 	Stage* stage,
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
-	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< sound::Sound >& sound
 )
-:	Layer(stage, name, scriptContext)
+:	Layer(stage, name)
 ,	m_environment(environment)
 ,	m_sound(sound)
 {
@@ -29,9 +28,6 @@ void AudioLayer::prepare()
 
 void AudioLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
-	// Issue script update method.
-	invokeScriptUpdate(control, info);
-
 	// Play sound if not currently attached.
 	if (!m_handle || !m_handle->isPlaying())
 	{

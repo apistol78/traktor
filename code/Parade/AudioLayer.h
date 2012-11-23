@@ -35,7 +35,6 @@ public:
 		Stage* stage,
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
-		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< sound::Sound >& sound
 	);
 

@@ -7,7 +7,6 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
-#include "Script/Any.h"
 #include "Video/Video.h"
 
 namespace traktor
@@ -21,11 +20,10 @@ VideoLayer::VideoLayer(
 	Stage* stage,
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
-	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< video::Video >& video,
 	const resource::Proxy< render::Shader >& shader
 )
-:	Layer(stage, name, scriptContext)
+:	Layer(stage, name)
 ,	m_environment(environment)
 ,	m_video(video)
 ,	m_shader(shader)
@@ -46,19 +44,11 @@ void VideoLayer::prepare()
 
 void VideoLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)
 {
-	invokeScriptUpdate(control, info);
-
 	if (!m_video->playing())
 		return;
 
 	if (!m_video->update(info.getSimulationDeltaTime()))
-	{
-		script::Any argv[] =
-		{
-			script::Any(getStage())
-		};
-		invokeScriptMethod(L"videoFinished", sizeof_array(argv), argv);
-	}
+		getStage()->invokeScript(L"videoFinished", 0, 0);
 }
 
 void VideoLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)

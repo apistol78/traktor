@@ -55,7 +55,6 @@ public:
 		Stage* stage,
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
-		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const resource::Proxy< scene::Scene >& scene,
 		const std::map< std::wstring, resource::Proxy< world::EntityData > >& entities
 	);

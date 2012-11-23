@@ -25,6 +25,8 @@ public:
 
 	virtual ActionObject* getAsObject(ActionContext* context);
 
+	virtual bool enumerateMembers(std::vector< uint32_t >& outMemberNames) const;
+
 	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue);
 
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);

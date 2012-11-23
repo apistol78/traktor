@@ -2,7 +2,6 @@
 #define traktor_parade_LayerData_H
 
 #include "Core/Serialization/ISerializable.h"
-#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -18,13 +17,6 @@ namespace traktor
 	{
 
 class IEnvironment;
-
-	}
-
-	namespace script
-	{
-
-class IScriptContext;
 
 	}
 
@@ -47,7 +39,6 @@ protected:
 	friend class StagePipeline;
 
 	std::wstring m_name;
-	resource::Id< script::IScriptContext > m_script;
 };
 
 	}

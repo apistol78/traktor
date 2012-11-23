@@ -1,5 +1,6 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IStateManager.h"
+#include "Amalgam/IUpdateControl.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -11,6 +12,7 @@
 #include "Render/ScreenRenderer.h"
 #include "Render/Shader.h"
 #include "Resource/IResourceManager.h"
+#include "Script/IScriptContext.h"
 
 namespace traktor
 {
@@ -27,12 +29,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.Stage", Stage, Object)
 
 Stage::Stage(
 	amalgam::IEnvironment* environment,
+	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const std::map< std::wstring, Guid >& transitions,
 	const Object* params
 )
 :	m_environment(environment)
+,	m_scriptContext(scriptContext)
 ,	m_transitions(transitions)
 ,	m_params(params)
+,	m_initialized(false)
 ,	m_running(true)
 ,	m_fade(1.0f)
 {
@@ -52,8 +57,15 @@ Stage::~Stage()
 
 void Stage::destroy()
 {
+	if (m_scriptContext)
+	{
+		m_scriptContext->destroy();
+		m_scriptContext.clear();
+	}
+
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->destroy();
+
 	m_layers.clear();
 
 	safeDestroy(m_screenRenderer);
@@ -87,6 +99,14 @@ Layer* Stage::findLayer(const std::wstring& name) const
 void Stage::terminate()
 {
 	m_running = false;
+}
+
+script::Any Stage::invokeScript(const std::wstring& fn, uint32_t argc, const script::Any* argv)
+{
+	if (validateScriptContext())
+		return m_scriptContext->executeFunction(fn, argc, argv);
+	else
+		return script::Any();
 }
 
 Ref< Stage > Stage::loadStage(const std::wstring& name, const Object* params)
@@ -135,6 +155,16 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 	{
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			(*i)->prepare();
+
+		if (validateScriptContext())
+		{
+			script::Any argv[] =
+			{
+				script::Any(&control),
+				script::Any(const_cast< amalgam::IUpdateInfo* >(&info))
+			};
+			m_scriptContext->executeFunction(L"update", sizeof_array(argv), argv);
+		}
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			(*i)->update(control, info);
@@ -186,6 +216,46 @@ void Stage::reconfigured()
 {
 	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		(*i)->reconfigured();
+}
+
+void Stage::flushScript()
+{
+	m_initialized = false;
+}
+
+bool Stage::validateScriptContext()
+{
+	if (!m_scriptContext)
+		return false;
+
+	if (m_scriptContext.changed())
+	{
+		m_initialized = false;
+		m_scriptContext.consume();
+	}
+
+	if (!m_initialized)
+	{
+		// Expose commonly used globals.
+		m_scriptContext->setGlobal(L"stage", script::Any(this));
+		m_scriptContext->setGlobal(L"environment", script::Any(m_environment));
+
+		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		{
+			if (!(*i)->getName().empty())
+				m_scriptContext->setGlobal((*i)->getName(), script::Any(*i));
+		}
+
+		// Call script init; do this everytime we re-validate script.
+		script::Any argv[] =
+		{
+			script::Any(const_cast< Object* >(m_params.c_ptr()))
+		};
+		m_scriptContext->executeMethod(this, L"initialize", sizeof_array(argv), argv);
+		m_initialized = true;
+	}
+
+	return true;
 }
 
 	}

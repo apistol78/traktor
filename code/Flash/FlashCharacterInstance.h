@@ -31,6 +31,8 @@ class T_DLLCLASS FlashCharacterInstance : public ActionObjectRelay
 
 public:
 	FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent);
+
+	virtual ~FlashCharacterInstance();
 	
 	/*! \brief Destroy instance. */
 	virtual void destroy();

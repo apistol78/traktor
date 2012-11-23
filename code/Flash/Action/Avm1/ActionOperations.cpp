@@ -776,16 +776,20 @@ void opx_castOp(ExecutionState& state)
 				ActionObject* prototype = prototypeValue.getObject();
 				T_ASSERT (prototype);
 
-				do
+				for (;;)
 				{
 					if (__proto__ == prototype)
 					{
 						stack.push(objectValue);
 						return;
 					}
-					__proto__ = __proto__->get__proto__();
+
+					ActionObject* parent__proto__ = __proto__->get__proto__();
+					if (!parent__proto__ || parent__proto__ == __proto__)
+						break;
+
+					__proto__ = parent__proto__;
 				}
-				while (__proto__);
 			}
 		}
 	}
@@ -1547,11 +1551,24 @@ void opx_enum2(ExecutionState& state)
 				));
 		}
 
-		const Array* arr = object->getRelay< Array >();
-		if (arr)
+		const IActionObjectRelay* relay = object->getRelay();
+		if (relay)
 		{
-			for (uint32_t i = 0; i < arr->length(); ++i)
-				stack.push(ActionValue(avm_number_t(i)));
+			std::vector< uint32_t > memberNames;
+			if (relay->enumerateMembers(memberNames))
+			{
+				for (std::vector< uint32_t >::const_iterator i = memberNames.begin(); i != memberNames.end(); ++i)
+					stack.push(ActionValue(
+						state.context->getString(*i)
+					));
+			}
+
+			const Array* arr = dynamic_type_cast< const Array* >(relay);
+			if (arr)
+			{
+				for (uint32_t i = 0; i < arr->length(); ++i)
+					stack.push(ActionValue(avm_number_t(i)));
+			}
 		}
 
 		//const ActionObject::property_map_t& properties = object->getProperties();

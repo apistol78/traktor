@@ -74,12 +74,11 @@ FlashLayer::FlashLayer(
 	Stage* stage,
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
-	const resource::Proxy< script::IScriptContext >& scriptContext,
 	const resource::Proxy< flash::FlashMovie >& movie,
 	bool clearBackground,
 	bool enableSound
 )
-:	Layer(stage, name, scriptContext)
+:	Layer(stage, name)
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_clearBackground(clearBackground)
@@ -107,8 +106,6 @@ void FlashLayer::prepare()
 		createMoviePlayer();
 		if (!m_moviePlayer)
 			return;
-
-		flushScript();
 	}
 }
 
@@ -117,9 +114,6 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 	std::wstring command, args;
-
-	// Issue script update method.
-	invokeScriptUpdate(control, info);
 
 	// Propagate keyboard input to movie.
 	input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::CtKeyboard, 0, true);
@@ -211,10 +205,9 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	{
 		script::Any argv[] =
 		{
-			script::Any(getStage()),
 			script::Any(args)
 		};
-		invokeScriptMethod(command, sizeof_array(argv), argv);
+		getStage()->invokeScript(command, sizeof_array(argv), argv);
 	}
 }
 
@@ -397,15 +390,14 @@ void FlashLayer::createMoviePlayer()
 flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv)
 {
 	script::Any av[16];
-	T_ASSERT (argc < sizeof_array(av) - 1);
+	T_ASSERT (argc < sizeof_array(av));
 
-	av[0] = script::Any(getStage());
 	for (int32_t i = 0; i < argc; ++i)
-		av[i + 1] = script::CastAny< flash::ActionValue >::set(argv[i]);
+		av[i] = script::CastAny< flash::ActionValue >::set(argv[i]);
 
-	script::Any ret = invokeScriptMethod(
+	script::Any ret = getStage()->invokeScript(
 		mbstows(methodName),
-		argc + 1,
+		argc,
 		av
 	);
 

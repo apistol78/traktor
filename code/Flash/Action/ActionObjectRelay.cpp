@@ -24,6 +24,11 @@ ActionObject* ActionObjectRelay::getAsObject(ActionContext* context)
 	return m_asObject;
 }
 
+bool ActionObjectRelay::enumerateMembers(std::vector< uint32_t >& outMemberNames) const
+{
+	return false;
+}
+
 bool ActionObjectRelay::setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue)
 {
 	return false;

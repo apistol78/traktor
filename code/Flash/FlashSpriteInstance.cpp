@@ -232,6 +232,15 @@ FlashCanvas* FlashSpriteInstance::createCanvas()
 	return m_canvas;
 }
 
+bool FlashSpriteInstance::enumerateMembers(std::vector< uint32_t >& outMemberNames) const
+{
+	// Visible named character in display list.
+	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
+	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		outMemberNames.push_back(i->second.name);
+	return true;
+}
+
 bool FlashSpriteInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
 	// Find visible named character in display list.
@@ -367,10 +376,6 @@ void FlashSpriteInstance::eventFrame()
 	FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
 	T_ASSERT (frame);
 
-	// Issue events on "visible" characters.
-	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-		(*i)->eventFrame();
-
 	// Issue script assigned event; hack to skip events when using goto methods.
 	if (!m_skipEnterFrame)
 		executeScriptEvent(ActionContext::IdOnEnterFrame);
@@ -406,6 +411,10 @@ void FlashSpriteInstance::eventFrame()
 
 		m_lastExecutedFrame = m_currentFrame;
 	}
+
+	// Issue events on "visible" characters.
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		(*i)->eventFrame();
 
 	FlashCharacterInstance::eventFrame();
 
