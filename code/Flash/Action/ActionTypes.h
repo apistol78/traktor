@@ -16,8 +16,11 @@ typedef double avm_number_t;
 #endif
 
 // Verbose logging.
-#define T_IF_VERBOSE(x) \
-{ x }
+#if defined(_DEBUG)
+#	define T_IF_VERBOSE(x) { x }
+#else
+#	define T_IF_VERBOSE(x)
+#endif
 
 	}
 }

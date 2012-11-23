@@ -68,6 +68,8 @@ public:
 
 	int32_t getMouseY() const { return m_mouseY; }
 
+	virtual bool enumerateMembers(std::vector< uint32_t >& outMemberNames) const;
+
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
 
 	virtual void preDispatchEvents();

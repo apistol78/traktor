@@ -11,7 +11,7 @@ namespace traktor
 	namespace parade
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.parade.StagePipeline", 2, StagePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.parade.StagePipeline", 3, StagePipeline, editor::DefaultPipeline)
 
 TypeInfoSet StagePipeline::getAssetTypes() const
 {
@@ -31,13 +31,13 @@ bool StagePipeline::buildDependencies(
 {
 	const StageData* stageData = checked_type_cast< const StageData*, false >(sourceAsset);
 
+	pipelineDepends->addDependency(stageData->m_script, editor::PdfBuild);
+
 	for (std::map< std::wstring, Guid >::const_iterator i = stageData->m_transitions.begin(); i != stageData->m_transitions.end(); ++i)
 		pipelineDepends->addDependency(i->second, editor::PdfBuild);
 
 	for (RefArray< LayerData >::const_iterator i = stageData->m_layers.begin(); i != stageData->m_layers.end(); ++i)
 	{
-		pipelineDepends->addDependency((*i)->m_script, editor::PdfBuild);
-
 		if (const AudioLayerData* audioLayer = dynamic_type_cast< const AudioLayerData* >(*i))
 			pipelineDepends->addDependency(audioLayer->m_sound, editor::PdfBuild);
 		else if (const FlashLayerData* flashLayer = dynamic_type_cast< const FlashLayerData* >(*i))

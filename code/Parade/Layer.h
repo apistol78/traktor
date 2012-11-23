@@ -3,8 +3,6 @@
 
 #include "Core/Object.h"
 #include "Render/Types.h"
-#include "Resource/Proxy.h"
-#include "Script/Any.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -24,13 +22,6 @@ class IUpdateInfo;
 
 	}
 
-	namespace script
-	{
-
-class IScriptContext;
-
-	}
-
 	namespace parade
 	{
 
@@ -43,8 +34,7 @@ class T_DLLCLASS Layer : public Object
 public:
 	Layer(
 		Stage* stage,
-		const std::wstring& name,
-		const resource::Proxy< script::IScriptContext >& scriptContext
+		const std::wstring& name
 	);
 
 	virtual ~Layer();
@@ -67,22 +57,9 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
-protected:
-	void flushScript();
-
-	bool validateScriptContext();
-
-	script::Any invokeScriptUpdate(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
-
-	script::Any invokeScriptMethod(const std::wstring& method, uint32_t argc, const script::Any* argv);
-
-	bool isInitialized() const { return m_initialized; }
-
 private:
 	Stage* m_stage;
 	std::wstring m_name;
-	resource::Proxy< script::IScriptContext > m_scriptContext;
-	bool m_initialized;
 };
 
 	}

@@ -27,6 +27,8 @@ class T_DLLCLASS Delegate : public Object
 	T_RTTI_CLASS;
 
 public:
+	Delegate(IScriptContext* context, const std::wstring& methodName);
+
 	Delegate(IScriptContext* context, Object* object, const std::wstring& methodName);
 
 	void invoke(uint32_t argc, const Any* argv);

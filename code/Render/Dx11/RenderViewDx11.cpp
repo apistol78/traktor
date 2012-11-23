@@ -610,8 +610,18 @@ void RenderViewDx11::clear(uint32_t clearMask, const Color4f* colors, float dept
 		}
 	}
 
-	if (rs.d3dDepthStencilView && (clearMask & CfDepth) == CfDepth)
-		m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, D3D11_CLEAR_DEPTH, depth, stencil);
+	if ((clearMask & (CfDepth | CfStencil)) != 0)
+	{
+		UINT d3dClear = 0;
+
+		if ((clearMask & CfDepth) != 0)
+			d3dClear |= D3D11_CLEAR_DEPTH;
+		if ((clearMask & CfStencil) != 0)
+			d3dClear |= D3D11_CLEAR_STENCIL;
+
+		if (rs.d3dDepthStencilView)
+			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, D3D11_CLEAR_DEPTH, depth, stencil);
+	}
 }
 
 void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives)

@@ -6,7 +6,6 @@
 #include "Render/Shader/ShaderGraph.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "Script/IScriptContext.h"
 #include "Video/Video.h"
 #include "Video/VideoResource.h"
 
@@ -20,8 +19,6 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.VideoLayerData", 0, VideoLayerData,
 Ref< Layer > VideoLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-
-	resource::Proxy< script::IScriptContext > script;
 	resource::Proxy< video::Video > video;
 	resource::Proxy< render::Shader > shader;
 
@@ -31,15 +28,12 @@ Ref< Layer > VideoLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 		!resourceManager->bind(m_shader, shader)
 	)
 		return 0;
-	if (m_script && !resourceManager->bind(m_script, script))
-		return 0;
 
 	// Create layer instance.
 	return new VideoLayer(
 		stage,
 		m_name,
 		environment,
-		script,
 		video,
 		shader
 	);

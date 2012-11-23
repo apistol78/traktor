@@ -5,6 +5,7 @@
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -20,6 +21,13 @@ namespace traktor
 	{
 
 class IEnvironment;
+
+	}
+
+	namespace script
+	{
+
+class IScriptContext;
 
 	}
 
@@ -42,6 +50,7 @@ private:
 	friend class StagePipeline;
 
 	RefArray< LayerData > m_layers;
+	resource::Id< script::IScriptContext > m_script;
 	std::map< std::wstring, Guid > m_transitions;
 };
 

@@ -6,6 +6,7 @@
 #include "Core/RefArray.h"
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
+#include "Script/Any.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -35,6 +36,13 @@ class Shader;
 
 	}
 
+	namespace script
+	{
+
+class IScriptContext;
+
+	}
+
 	namespace parade
 	{
 
@@ -48,6 +56,7 @@ class T_DLLCLASS Stage : public Object
 public:
 	Stage(
 		amalgam::IEnvironment* environment,
+		const resource::Proxy< script::IScriptContext >& scriptContext,
 		const std::map< std::wstring, Guid >& transitions,
 		const Object* params
 	);
@@ -65,6 +74,8 @@ public:
 	Layer* findLayer(const std::wstring& name) const;
 
 	void terminate();
+
+	script::Any invokeScript(const std::wstring& fn, uint32_t argc, const script::Any* argv);
 
 	Ref< Stage > loadStage(const std::wstring& name, const Object* params);
 
@@ -90,14 +101,22 @@ public:
 
 private:
 	Ref< amalgam::IEnvironment > m_environment;
+	resource::Proxy< script::IScriptContext > m_scriptContext;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	resource::Proxy< render::Shader > m_shaderFade;
 	RefArray< Layer > m_layers;
 	std::map< std::wstring, Guid > m_transitions;
 	Ref< const Object > m_params;
 	Ref< Stage > m_pendingStage;
+	bool m_initialized;
 	bool m_running;
 	float m_fade;
+
+	void flushScript();
+
+	bool validateScriptContext();
+
+	script::Any invokeScriptUpdate(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
 };
 
 	}

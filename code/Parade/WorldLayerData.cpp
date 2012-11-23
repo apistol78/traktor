@@ -7,7 +7,6 @@
 #include "Resource/Member.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
-#include "Script/IScriptContext.h"
 #include "World/Entity/EntityData.h"
 
 namespace traktor
@@ -20,15 +19,11 @@ T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.WorldLayerData", 0, WorldLayerData,
 Ref< Layer > WorldLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-
-	resource::Proxy< script::IScriptContext > script;
 	resource::Proxy< scene::Scene > scene;
 	std::map< std::wstring, resource::Proxy< world::EntityData > > entities;
 
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_scene, scene))
-		return 0;
-	if (m_script && !resourceManager->bind(m_script, script))
 		return 0;
 
 	for (std::map< std::wstring, resource::Id< world::EntityData > >::const_iterator i = m_entities.begin(); i != m_entities.end(); ++i)
@@ -42,7 +37,6 @@ Ref< Layer > WorldLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 		stage,
 		m_name,
 		environment,
-		script,
 		scene,
 		entities
 	);

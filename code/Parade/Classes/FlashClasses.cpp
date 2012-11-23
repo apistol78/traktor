@@ -68,23 +68,46 @@ Ref< Object > ActionObjectClass::construct(const InvokeParam& param, uint32_t ar
 
 uint32_t ActionObjectClass::getMethodCount() const
 {
-	return 1;
+	return 2;
 }
 
 std::wstring ActionObjectClass::getMethodName(uint32_t methodId) const
 {
-	return L"getMember";
+	switch (methodId)
+	{
+	case 0:
+		return L"getMember";
+	case 1:
+		return L"getMemberByQName";
+	default:
+		return L"";
+	}
 }
 
 script::Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const script::Any* argv) const
 {
-	T_ASSERT (methodId == 0);
 	flash::ActionObject* object = checked_type_cast< flash::ActionObject*, false >(param.object);
-	flash::ActionValue memberValue;
-	if (object->getMember(wstombs(argv[0].getString()), memberValue))
-		return script::CastAny< flash::ActionValue >::set(memberValue);
-	else
+	switch (methodId)
+	{
+	case 0:
+		{
+			flash::ActionValue memberValue;
+			if (object->getMember(wstombs(argv[0].getString()), memberValue))
+				return script::CastAny< flash::ActionValue >::set(memberValue);
+		}
+		break;
+
+	case 1:
+		{
+			flash::ActionValue memberValue;
+			if (object->getMemberByQName(wstombs(argv[0].getString()), memberValue))
+				return script::CastAny< flash::ActionValue >::set(memberValue);
+		}
+		break;
+
+	default:
 		return script::Any();
+	}
 }
 
 script::Any ActionObjectClass::invokeUnknown(const InvokeParam& param, const std::wstring& methodName, uint32_t argc, const script::Any* argv) const
