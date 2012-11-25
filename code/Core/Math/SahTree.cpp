@@ -264,6 +264,13 @@ void SahTree::buildNode(Node* node, int32_t depth)
 	node->rightChild->leftChild = 0;
 	node->rightChild->rightChild = 0;
 
+	// Release memory before recursing.
+	leftIndices.resize(0);
+	rightIndices.resize(0);
+	splitCandidates.resize(0);
+	spatialRanges.resize(0);
+
+	// Recursively build branches.
 	buildNode(node->leftChild, depth + 1);
 	buildNode(node->rightChild, depth + 1);
 }

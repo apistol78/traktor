@@ -10,6 +10,7 @@
 #include "Core/Math/Vector4.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Job.h"
@@ -135,6 +136,7 @@ TextureOutputPipeline::TextureOutputPipeline()
 ,	m_clampSize(0)
 ,	m_compressionMethod(CmDXTn)
 ,	m_compressionQuality(1)
+,	m_gamma(2.2f)
 {
 }
 
@@ -143,6 +145,7 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 	m_skipMips = settings->getProperty< PropertyInteger >(L"TexturePipeline.SkipMips", 0);
 	m_clampSize = settings->getProperty< PropertyInteger >(L"TexturePipeline.ClampSize", 0);
 	m_compressionQuality = settings->getProperty< PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
+	m_gamma = settings->getProperty< PropertyFloat >(L"TexturePipeline.Gamma", 2.2f);
 
 	std::wstring compressionMethod = settings->getProperty< PropertyString >(L"TexturePipeline.CompressionMethod", L"DXTn");
 	if (compareIgnoreCase< std::wstring >(compressionMethod, L"None") == 0)
@@ -369,7 +372,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_textureType == TtCube && textureOutput->m_generateSphereMap)
 	{
 		log::info << L"Generating sphere map..." << Endl;
-		SphereMapFilter sphereMapFilter;
+		const SphereMapFilter sphereMapFilter;
 		image = image->applyFilter(&sphereMapFilter);
 	}
 
@@ -379,7 +382,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (!textureOutput->m_linearGamma)
 	{
 		log::info << L"Converting into linear gamma..." << Endl;
-		drawing::GammaFilter gammaFilter(1.0f / 2.2f);
+		const drawing::GammaFilter gammaFilter(m_gamma);
 		image = image->applyFilter(&gammaFilter);
 	}
 
@@ -387,7 +390,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_premultiplyAlpha)
 	{
 		log::info << L"Premultiply with alpha..." << Endl;
-		drawing::PremultiplyAlphaFilter preAlphaFilter;
+		const drawing::PremultiplyAlphaFilter preAlphaFilter;
 		image = image->applyFilter(&preAlphaFilter);
 	}
 

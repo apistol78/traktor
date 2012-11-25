@@ -2,7 +2,7 @@
 <object type="traktor.world.PostProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="1">
+		<item type="traktor.world.PostProcessDefineTarget" version="2">
 			<id>Flip</id>
 			<width>0</width>
 			<height>0</height>
@@ -11,6 +11,7 @@
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
 			<multiSample>0</multiSample>
+			<clearColor>0, 0, 0, 0</clearColor>
 		</item>
 	</definitions>
 	<steps>
@@ -31,8 +32,8 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>3, 0, 0, 0</direction>
-			<taps>8</taps>
+			<direction>2.5, 0, 0, 0</direction>
+			<taps>12</taps>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Output</target>
@@ -51,8 +52,8 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>0, 3, 0, 0</direction>
-			<taps>8</taps>
+			<direction>0, 2.5, 0, 0</direction>
+			<taps>12</taps>
 		</item>
 	</steps>
 </object>

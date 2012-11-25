@@ -246,7 +246,7 @@ Shadow; adjusted for msaa.
 			<parameterName>GaussianOffsetWeights</parameterName>
 			<type>PtVector</type>
 			<frequency>UfFrame</frequency>
-			<length>8</length>
+			<length>12</length>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -270,7 +270,7 @@ Shadow; adjusted for msaa.
 				<second>161</second>
 			</position>
 			<from>0</from>
-			<to>7</to>
+			<to>11</to>
 		</item>
 		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>

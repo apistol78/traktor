@@ -197,7 +197,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 		m_window->setWindowedStyle(scd.BufferDesc.Width, scd.BufferDesc.Height);
 	}
 
-	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
+	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D24_UNORM_S8_UINT, scd.SampleDesc))
 	{
 		log::error << L"Unable to create render view; unsupported MSAA" << Endl;
 		return false;
