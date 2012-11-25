@@ -77,7 +77,10 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	// In case we didn't find an suitable adapter we need to get the factory
 	// determined by DX itself.
 	if (!dxgiAdapter)
+	{
+		log::warning << L"No preferred DX adapter found; using automatic" << Endl;
 		dxgiFactory.release();
+	}
 
 	// Create D3D11 device instance.
 	hr = D3D11CreateDevice(
@@ -252,7 +255,7 @@ Ref< IRenderView > RenderSystemDx11::createRenderView(const RenderViewEmbeddedDe
 	scd.OutputWindow = (HWND)desc.nativeWindowHandle;
 	scd.Windowed = TRUE;
 
-	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D16_UNORM, scd.SampleDesc))
+	if (!setupSampleDesc(m_context->getD3DDevice(), desc.multiSample, scd.BufferDesc.Format, DXGI_FORMAT_D24_UNORM_S8_UINT, scd.SampleDesc))
 	{
 		log::error << L"Unable to create render view; unsupported MSAA" << Endl;
 		return 0;

@@ -65,6 +65,7 @@ private:
 	int32_t m_clampSize;
 	CompressionMethod m_compressionMethod;
 	int32_t m_compressionQuality;
+	float m_gamma;
 };
 
 	}

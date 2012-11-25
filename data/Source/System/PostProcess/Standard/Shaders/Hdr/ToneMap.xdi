@@ -60,7 +60,7 @@ Middle gray
 				<first>395</first>
 				<second>56</second>
 			</position>
-			<value>0.6</value>
+			<value>0.75</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>

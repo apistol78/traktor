@@ -83,7 +83,7 @@ public:
 	void setSpanUnsafe(int32_t y, const Color4f* span);
 	
 	/*! \brief Apply filter on entire image. */
-	Ref< Image > applyFilter(IImageFilter* imageFilter) const;
+	Ref< Image > applyFilter(const IImageFilter* imageFilter) const;
 
 	/*! \brief Convert format of image. */
 	void convert(const PixelFormat& intoPixelFormat, Palette* intoPalette = 0);

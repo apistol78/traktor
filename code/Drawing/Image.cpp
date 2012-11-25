@@ -255,7 +255,7 @@ void Image::setSpanUnsafe(int32_t y, const Color4f* span)
 	);
 }
 
-Ref< Image > Image::applyFilter(IImageFilter* imageFilter) const
+Ref< Image > Image::applyFilter(const IImageFilter* imageFilter) const
 {
 	Ref< Image > image = imageFilter->apply(this);
 	checkData(m_data, m_size);
