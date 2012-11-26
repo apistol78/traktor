@@ -9,6 +9,7 @@
 #include "Parade/StageState.h"
 #include "Parade/Classes/AmalgamClasses.h"
 #include "Parade/Classes/AnimationClasses.h"
+#include "Parade/Classes/CoreClasses.h"
 #include "Parade/Classes/DatabaseClasses.h"
 #include "Parade/Classes/FlashClasses.h"
 #include "Parade/Classes/InputClasses.h"
@@ -41,6 +42,7 @@ bool RuntimePlugin::startup(amalgam::IEnvironment* environment)
 	script::IScriptManager* scriptManager = environment->getScript()->getScriptManager();
 	T_ASSERT (scriptManager);
 
+	registerCoreClasses(scriptManager);
 	registerDatabaseClasses(scriptManager);
 	registerResourceClasses(scriptManager);
 	registerRenderClasses(scriptManager);
