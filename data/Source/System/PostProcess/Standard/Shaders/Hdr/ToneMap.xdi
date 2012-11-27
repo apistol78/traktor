@@ -60,7 +60,7 @@ Middle gray
 				<first>395</first>
 				<second>56</second>
 			</position>
-			<value>0.75</value>
+			<value>0.4</value>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
@@ -76,11 +76,11 @@ Middle gray
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>665</first>
-				<second>42</second>
+				<first>689</first>
+				<second>89</second>
 			</position>
-			<min>0.8</min>
-			<max>1.25</max>
+			<min>0.1</min>
+			<max>2</max>
 		</item>
 		<item type="traktor.render.Max">
 			<comment/>
@@ -143,16 +143,6 @@ Middle gray
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
@@ -178,6 +168,16 @@ Middle gray
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
 				<name>Input2</name>
 			</destination>
 		</item>

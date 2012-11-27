@@ -178,6 +178,9 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 	int32_t result = CrUnaffected;
 
 	Ref< input::InputMappingSourceData > inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< PropertyObject >(L"Input.Sources"));
+	if (!inputMappingSourceData)
+		inputMappingSourceData = m_inputMappingDefaultSourceData;
+
 	if (DeepHash(inputMappingSourceData) != DeepHash(m_inputMappingSourceData))
 	{
 		if (m_inputMappingSourceData && m_inputMappingStateData)
@@ -218,30 +221,24 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 
 	// Don't update input if render view is inactive.
 	if (!renderViewActive)
-	{
-		if (m_inputMapping)
-			m_inputMapping->reset();
-
 		m_inputActive = false;
-		return;
-	}
-
-	if (!m_inputActive)
-	{
-		// Poll all devices.
-		m_inputSystem->update(deltaTime);
-
-		// Cannot become active as long as any mouse button is pressed
-		// in case application became active with mouse.
-		if (anyControlPressed(m_inputSystem, input::CtMouse))
-			return;
-
-		m_inputActive = true;
-		return;
-	}
 
 	// Poll all devices.
 	m_inputSystem->update(deltaTime);
+
+	// If input is disabled then only check if we can become active.
+	if (!m_inputActive)
+	{
+		// Cannot become active as long as any mouse button is pressed
+		// in case application became active with mouse.
+		if (!anyControlPressed(m_inputSystem, input::CtMouse))
+		{
+			if (m_inputMapping)
+				m_inputMapping->reset();
+			m_inputActive = true;
+		}
+		return;
+	}
 
 	if (!m_inputSourceFabricator)
 	{
