@@ -459,6 +459,8 @@ bool WorldRendererPreLit::create(
 		if (m_antiAlias)
 		{
 			desc.targets[desc.count].format = render::TfR8G8B8A8;	// AA unresolved
+			if (postProcessSettings && postProcessSettings->requireHighRange())
+				desc.targets[desc.count].format = render::TfR11G11B10F;
 			++desc.count;
 		}
 

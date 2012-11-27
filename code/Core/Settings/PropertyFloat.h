@@ -30,6 +30,8 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	operator value_type_t () const { return m_value; }
+
 protected:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const;
 

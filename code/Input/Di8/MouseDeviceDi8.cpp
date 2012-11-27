@@ -173,6 +173,10 @@ void MouseDeviceDi8::readState()
 
 	if (!m_connected)
 	{
+		hr = m_device->SetCooperativeLevel(m_hWnd, m_exclusive ? (DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE));
+		if (FAILED(hr))
+			return;
+
 		hr = m_device->Acquire();
 		m_connected = SUCCEEDED(hr);
 		if (!m_connected)
@@ -182,8 +186,8 @@ void MouseDeviceDi8::readState()
 	hr = m_device->Poll();
 	if (FAILED(hr))  
 	{
-		hr = m_device->Acquire();
-		m_connected = SUCCEEDED(hr);
+		m_device->Unacquire();
+		m_connected = false;
 		if (!m_connected)
 			return;
 	}
@@ -232,11 +236,6 @@ void MouseDeviceDi8::setExclusive(bool exclusive)
 	m_device->Unacquire();
 	m_connected = false;
 	m_exclusive = exclusive;
-
-	// Change cooperative level.
-	HRESULT hr = m_device->SetCooperativeLevel(m_hWnd, exclusive ? (DISCL_FOREGROUND | DISCL_EXCLUSIVE) : (DISCL_FOREGROUND | DISCL_NONEXCLUSIVE));
-	if (FAILED(hr))
-		log::warning << L"Unable to set cooperative level on mouse device" << Endl;
 }
 
 	}

@@ -218,6 +218,16 @@ bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, 
 		break;
 #endif
 
+	case TfR11G11B10F:
+		if (opengl_have_extension(E_GL_ARB_texture_float))
+		{
+			outInternalFormat = GL_RGBA16F_ARB;
+			outFormat = GL_RGBA;
+			outType = GL_HALF_FLOAT_ARB;
+			return true;
+		}
+		break;
+
 	default:
 		break;
 	}

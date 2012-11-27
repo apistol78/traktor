@@ -29,7 +29,13 @@ void MeshShapeRenderer::draw(
 	resource::Proxy< Mesh > mesh;
 	if (resourceManager->bind(meshShapeDesc->getMesh(), mesh))
 	{
-		primitiveRenderer->pushWorld((body1Transform * Transform(mesh->getOffset()) * shapeDesc->getLocalTransform()).toMatrix44());
+		Transform T = body1Transform * Transform(mesh->getOffset()) * shapeDesc->getLocalTransform();
+
+		Vector4 Vc = primitiveRenderer->getView() * T.translation().xyz1();
+		if (Vc.z() < 0.0f || Vc.z() > 100.0f)
+			return;
+
+		primitiveRenderer->pushWorld(T.toMatrix44());
 
 		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 
