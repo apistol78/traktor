@@ -51,59 +51,59 @@ Ref< script::BoxedVector2 > WorldLayer_getScreenPosition(WorldLayer* self, const
 void registerParadeClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< Stage > > classStage = new script::AutoScriptClass< Stage >();
-	classStage->addMethod(L"addLayer", &Stage::addLayer);
-	classStage->addMethod(L"removeLayer", &Stage::removeLayer);
-	classStage->addMethod(L"removeAllLayers", &Stage::removeAllLayers);
-	classStage->addMethod(L"findLayer", &Stage::findLayer);
-	classStage->addMethod(L"terminate", &Stage::terminate);
-	classStage->addMethod(L"loadStage", &Stage::loadStage);
-	classStage->addMethod(L"loadStageAsync", &Stage::loadStageAsync);
-	classStage->addMethod(L"gotoStage", &Stage::gotoStage);
-	classStage->addMethod(L"getEnvironment", &Stage::getEnvironment);
-	classStage->addMethod(L"getLayers", &Stage::getLayers);
+	classStage->addMethod("addLayer", &Stage::addLayer);
+	classStage->addMethod("removeLayer", &Stage::removeLayer);
+	classStage->addMethod("removeAllLayers", &Stage::removeAllLayers);
+	classStage->addMethod("findLayer", &Stage::findLayer);
+	classStage->addMethod("terminate", &Stage::terminate);
+	classStage->addMethod("loadStage", &Stage::loadStage);
+	classStage->addMethod("loadStageAsync", &Stage::loadStageAsync);
+	classStage->addMethod("gotoStage", &Stage::gotoStage);
+	classStage->addMethod("getEnvironment", &Stage::getEnvironment);
+	classStage->addMethod("getLayers", &Stage::getLayers);
 	scriptManager->registerClass(classStage);
 
 	Ref< script::AutoScriptClass< Layer > > classLayer = new script::AutoScriptClass< Layer >();
-	classLayer->addMethod(L"getName", &Layer::getName);
+	classLayer->addMethod("getName", &Layer::getName);
 	scriptManager->registerClass(classLayer);
 
 	Ref< script::AutoScriptClass< AudioLayer > > classAudioLayer = new script::AutoScriptClass< AudioLayer >();
 	scriptManager->registerClass(classAudioLayer);
 
 	Ref< script::AutoScriptClass< VideoLayer > > classVideoLayer = new script::AutoScriptClass< VideoLayer >();
-	classVideoLayer->addMethod(L"playing", &VideoLayer::playing);
+	classVideoLayer->addMethod("playing", &VideoLayer::playing);
 	scriptManager->registerClass(classVideoLayer);
 
 	Ref< script::AutoScriptClass< WorldLayer > > classWorldLayer = new script::AutoScriptClass< WorldLayer >();
-	classWorldLayer->addMethod(L"getEntity", &WorldLayer::getEntity);
-	classWorldLayer->addMethod(L"getEntities", &WorldLayer::getEntities);
-	classWorldLayer->addMethod(L"getEntitiesOf", &WorldLayer::getEntitiesOf);
-	classWorldLayer->addMethod(L"createEntity", &WorldLayer_createEntity1);
-	classWorldLayer->addMethod(L"createEntity", &WorldLayer_createEntity2);
-	classWorldLayer->addMethod(L"getEntityIndex", &WorldLayer::getEntityIndex);
-	classWorldLayer->addMethod(L"getEntityIndexOf", &WorldLayer::getEntityIndexOf);
-	classWorldLayer->addMethod(L"getEntityByIndex", &WorldLayer::getEntityByIndex);
-	classWorldLayer->addMethod(L"getEntityOf", &WorldLayer::getEntityOf);
-	classWorldLayer->addMethod(L"addEntity", &WorldLayer::addEntity);
-	classWorldLayer->addMethod(L"addTransientEntity", &WorldLayer::addTransientEntity);
-	classWorldLayer->addMethod(L"removeEntity", &WorldLayer::removeEntity);
-	classWorldLayer->addMethod(L"getEntitySchema", &WorldLayer::getEntitySchema);
-	classWorldLayer->addMethod(L"setControllerEnable", &WorldLayer::setControllerEnable);
-	classWorldLayer->addMethod(L"getPostProcess", &WorldLayer::getPostProcess);
-	classWorldLayer->addMethod(L"getViewPosition", &WorldLayer_getViewPosition);
-	classWorldLayer->addMethod(L"getScreenPosition", &WorldLayer_getScreenPosition);
-	classWorldLayer->addMethod(L"setFieldOfView", &WorldLayer::setFieldOfView);
-	classWorldLayer->addMethod(L"getFieldOfView", &WorldLayer::getFieldOfView);
-	classWorldLayer->addMethod(L"setAlternateTime", &WorldLayer::setAlternateTime);
-	classWorldLayer->addMethod(L"getAlternateTime", &WorldLayer::getAlternateTime);
+	classWorldLayer->addMethod("getEntity", &WorldLayer::getEntity);
+	classWorldLayer->addMethod("getEntities", &WorldLayer::getEntities);
+	classWorldLayer->addMethod("getEntitiesOf", &WorldLayer::getEntitiesOf);
+	classWorldLayer->addMethod("createEntity", &WorldLayer_createEntity1);
+	classWorldLayer->addMethod("createEntity", &WorldLayer_createEntity2);
+	classWorldLayer->addMethod("getEntityIndex", &WorldLayer::getEntityIndex);
+	classWorldLayer->addMethod("getEntityIndexOf", &WorldLayer::getEntityIndexOf);
+	classWorldLayer->addMethod("getEntityByIndex", &WorldLayer::getEntityByIndex);
+	classWorldLayer->addMethod("getEntityOf", &WorldLayer::getEntityOf);
+	classWorldLayer->addMethod("addEntity", &WorldLayer::addEntity);
+	classWorldLayer->addMethod("addTransientEntity", &WorldLayer::addTransientEntity);
+	classWorldLayer->addMethod("removeEntity", &WorldLayer::removeEntity);
+	classWorldLayer->addMethod("getEntitySchema", &WorldLayer::getEntitySchema);
+	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
+	classWorldLayer->addMethod("getPostProcess", &WorldLayer::getPostProcess);
+	classWorldLayer->addMethod("getViewPosition", &WorldLayer_getViewPosition);
+	classWorldLayer->addMethod("getScreenPosition", &WorldLayer_getScreenPosition);
+	classWorldLayer->addMethod("setFieldOfView", &WorldLayer::setFieldOfView);
+	classWorldLayer->addMethod("getFieldOfView", &WorldLayer::getFieldOfView);
+	classWorldLayer->addMethod("setAlternateTime", &WorldLayer::setAlternateTime);
+	classWorldLayer->addMethod("getAlternateTime", &WorldLayer::getAlternateTime);
 	scriptManager->registerClass(classWorldLayer);
 
 	Ref< script::AutoScriptClass< StageLoader > > classStageLoader = new script::AutoScriptClass< StageLoader >();
-	classStageLoader->addMethod(L"wait", &StageLoader::wait);
-	classStageLoader->addMethod(L"ready", &StageLoader::ready);
-	classStageLoader->addMethod(L"succeeded", &StageLoader::succeeded);
-	classStageLoader->addMethod(L"failed", &StageLoader::failed);
-	classStageLoader->addMethod(L"get", &StageLoader::get);
+	classStageLoader->addMethod("wait", &StageLoader::wait);
+	classStageLoader->addMethod("ready", &StageLoader::ready);
+	classStageLoader->addMethod("succeeded", &StageLoader::succeeded);
+	classStageLoader->addMethod("failed", &StageLoader::failed);
+	classStageLoader->addMethod("get", &StageLoader::get);
 	scriptManager->registerClass(classStageLoader);
 }
 

@@ -75,7 +75,7 @@ public:
 
 	void terminate();
 
-	script::Any invokeScript(const std::wstring& fn, uint32_t argc, const script::Any* argv);
+	script::Any invokeScript(const std::string& fn, uint32_t argc, const script::Any* argv);
 
 	Ref< Stage > loadStage(const std::wstring& name, const Object* params);
 

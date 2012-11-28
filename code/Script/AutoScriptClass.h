@@ -1247,7 +1247,7 @@ template < typename ClassType >
 class AutoScriptClass : public IScriptClass
 {
 public:
-	typedef Any (ClassType::*unknown_method_t)(const std::wstring& methodName, uint32_t argc, const Any* argv);
+	typedef Any (ClassType::*unknown_method_t)(const std::string& methodName, uint32_t argc, const Any* argv);
 
 	AutoScriptClass()
 	:	m_unknown(0)
@@ -1261,13 +1261,13 @@ public:
 		for (std::vector< IConstructor* >::iterator i = m_constructors.begin(); i != m_constructors.end(); ++i)
 			delete *i;
 		
-		for (std::vector< std::pair< std::wstring, std::vector< IMethod* > > >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+		for (std::vector< std::pair< std::string, std::vector< IMethod* > > >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 		{
 			for (std::vector< IMethod* >::iterator j = i->second.begin(); j != i->second.end(); ++j)
 				delete *j;
 		}
 		
-		for (std::vector< std::pair< std::wstring, IProperty* > >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
+		for (std::vector< std::pair< std::string, IProperty* > >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
 			delete i->second;
 
 		T_EXCEPTION_GUARD_END
@@ -1339,7 +1339,7 @@ public:
 	template <
 		typename ReturnType
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)())
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)())
 	{
 		addMethod(methodName, 0, new Method_0< ClassType, ReturnType, false >(method));
 	}
@@ -1347,7 +1347,7 @@ public:
 	template <
 		typename ReturnType
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)() const)
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)() const)
 	{
 		addMethod(methodName, 0, new Method_0< ClassType, ReturnType, true >(method));
 	}
@@ -1355,7 +1355,7 @@ public:
 	template <
 		typename ReturnType
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*))
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*))
 	{
 		addMethod(methodName, 0, new MethodTrunk_0< ClassType, ReturnType >(method));
 	}
@@ -1364,7 +1364,7 @@ public:
 		typename ReturnType,
 		typename Argument1Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type))
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type))
 	{
 		addMethod(methodName, 1, new Method_1< ClassType, ReturnType, Argument1Type, false >(method));
 	}
@@ -1373,7 +1373,7 @@ public:
 		typename ReturnType,
 		typename Argument1Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type) const)
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type) const)
 	{
 		addMethod(methodName, 1, new Method_1< ClassType, ReturnType, Argument1Type, true >(method));
 	}
@@ -1382,7 +1382,7 @@ public:
 		typename ReturnType,
 		typename Argument1Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type))
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type))
 	{
 		addMethod(methodName, 1, new MethodTrunk_1< ClassType, ReturnType, Argument1Type >(method));
 	}
@@ -1392,7 +1392,7 @@ public:
 		typename Argument1Type,
 		typename Argument2Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type))
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type))
 	{
 		addMethod(methodName, 2, new Method_2< ClassType, ReturnType, Argument1Type, Argument2Type, false >(method));
 	}
@@ -1402,7 +1402,7 @@ public:
 		typename Argument1Type,
 		typename Argument2Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type) const)
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type) const)
 	{
 		addMethod(methodName, 2, new Method_2< ClassType, ReturnType, Argument1Type, Argument2Type, true >(method));
 	}
@@ -1412,7 +1412,7 @@ public:
 		typename Argument1Type,
 		typename Argument2Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type))
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type))
 	{
 		addMethod(methodName, 2, new MethodTrunk_2< ClassType, ReturnType, Argument1Type, Argument2Type >(method));
 	}
@@ -1423,7 +1423,7 @@ public:
 		typename Argument2Type,
 		typename Argument3Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type))
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type))
 	{
 		addMethod(methodName, 3, new Method_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, false >(method));
 	}
@@ -1434,7 +1434,7 @@ public:
 		typename Argument2Type,
 		typename Argument3Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type) const)
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type) const)
 	{
 		addMethod(methodName, 3, new Method_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, true >(method));
 	}
@@ -1445,7 +1445,7 @@ public:
 		typename Argument2Type,
 		typename Argument3Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type))
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type))
 	{
 		addMethod(methodName, 3, new MethodTrunk_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >(method));
 	}
@@ -1457,7 +1457,7 @@ public:
 		typename Argument3Type,
 		typename Argument4Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type))
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type))
 	{
 		addMethod(methodName, 4, new Method_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, false >(method));
 	}
@@ -1469,7 +1469,7 @@ public:
 		typename Argument3Type,
 		typename Argument4Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type) const)
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type) const)
 	{
 		addMethod(methodName, 4, new Method_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, true >(method));
 	}
@@ -1481,7 +1481,7 @@ public:
 		typename Argument3Type,
 		typename Argument4Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type))
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type))
 	{
 		addMethod(methodName, 4, new MethodTrunk_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >(method));
 	}
@@ -1494,7 +1494,7 @@ public:
 		typename Argument4Type,
 		typename Argument5Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
 	{
 		addMethod(methodName, 5, new Method_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, false >(method));
 	}
@@ -1507,7 +1507,7 @@ public:
 		typename Argument4Type,
 		typename Argument5Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type) const)
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type) const)
 	{
 		addMethod(methodName, 5, new Method_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, true >(method));
 	}
@@ -1520,7 +1520,7 @@ public:
 		typename Argument4Type,
 		typename Argument5Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
 	{
 		addMethod(methodName, 5, new MethodTrunk_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >(method));
 	}
@@ -1534,7 +1534,7 @@ public:
 		typename Argument5Type,
 		typename Argument6Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
 	{
 		addMethod(methodName, 6, new Method_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, false >(method));
 	}
@@ -1548,7 +1548,7 @@ public:
 		typename Argument5Type,
 		typename Argument6Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const)
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type) const)
 	{
 		addMethod(methodName, 6, new Method_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, true >(method));
 	}
@@ -1562,7 +1562,7 @@ public:
 		typename Argument5Type,
 		typename Argument6Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
 	{
 		addMethod(methodName, 6, new MethodTrunk_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >(method));
 	}
@@ -1577,7 +1577,7 @@ public:
 		typename Argument6Type,
 		typename Argument7Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
 	{
 		addMethod(methodName, 7, new Method_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, false >(method));
 	}
@@ -1592,7 +1592,7 @@ public:
 		typename Argument6Type,
 		typename Argument7Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type) const)
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type) const)
 	{
 		addMethod(methodName, 7, new Method_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, true >(method));
 	}
@@ -1607,7 +1607,7 @@ public:
 		typename Argument6Type,
 		typename Argument7Type
 	>
-	void addMethod(const std::wstring& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
 	{
 		addMethod(methodName, 7, new MethodTrunk_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
 	}
@@ -1622,7 +1622,7 @@ public:
 	template <
 		typename MemberType
 	>
-	void addProperty(const std::wstring& memberName, MemberType ClassType::*member)
+	void addProperty(const std::string& memberName, MemberType ClassType::*member)
 	{
 		m_properties.push_back(std::make_pair(
 			memberName,
@@ -1658,7 +1658,7 @@ public:
 		return uint32_t(m_methods.size());
 	}
 
-	virtual std::wstring getMethodName(uint32_t methodId) const
+	virtual std::string getMethodName(uint32_t methodId) const
 	{
 		return m_methods[methodId].first;
 	}
@@ -1672,7 +1672,7 @@ public:
 			return Any();
 	}
 
-	virtual Any invokeUnknown(const InvokeParam& param, const std::wstring& methodName, uint32_t argc, const Any* argv) const
+	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const
 	{
 		if (m_unknown)
 			return (checked_type_cast< ClassType* >(param.object)->*m_unknown)(methodName, argc, argv);
@@ -1685,7 +1685,7 @@ public:
 		return uint32_t(m_properties.size());
 	}
 
-	virtual std::wstring getPropertyName(uint32_t propertyId) const
+	virtual std::string getPropertyName(uint32_t propertyId) const
 	{
 		return m_properties[propertyId].first;
 	}
@@ -1702,8 +1702,8 @@ public:
 
 private:
 	std::vector< IConstructor* > m_constructors;
-	std::vector< std::pair< std::wstring, std::vector< IMethod* > > > m_methods;
-	std::vector< std::pair< std::wstring, IProperty* > > m_properties;
+	std::vector< std::pair< std::string, std::vector< IMethod* > > > m_methods;
+	std::vector< std::pair< std::string, IProperty* > > m_properties;
 	unknown_method_t m_unknown;
 
 	void addConstructor(size_t argc, IConstructor* constructor)
@@ -1713,9 +1713,9 @@ private:
 		m_constructors[argc] = constructor;
 	}
 
-	void addMethod(const std::wstring& methodName, size_t argc, IMethod* method)
+	void addMethod(const std::string& methodName, size_t argc, IMethod* method)
 	{
-		for (std::vector< std::pair< std::wstring, std::vector< IMethod* > > >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+		for (std::vector< std::pair< std::string, std::vector< IMethod* > > >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 		{
 			if (i->first == methodName)
 			{
@@ -1727,7 +1727,7 @@ private:
 			}
 		}
 
-		std::pair< std::wstring, std::vector< IMethod* > > m;
+		std::pair< std::string, std::vector< IMethod* > > m;
 		m.first = methodName;
 		m.second.resize(argc + 1, 0);
 		m.second[argc] = method;

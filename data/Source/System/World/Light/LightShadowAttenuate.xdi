@@ -70,7 +70,7 @@
 				<first>726</first>
 				<second>441</second>
 			</position>
-			<min>0.5</min>
+			<min>0.1</min>
 			<max>1</max>
 		</item>
 	</nodes>

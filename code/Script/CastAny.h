@@ -163,7 +163,7 @@ struct CastAny < std::string, false >
 		return Any(mbstows(Utf8Encoding(), value));
 	}
 	static std::string get(const Any& value) {
-		return wstombs(Utf8Encoding(), value.getString());
+		return value.getString();
 	}
 };
 
@@ -174,7 +174,18 @@ struct CastAny < const std::string&, false >
 		return Any(mbstows(Utf8Encoding(), value));
 	}
 	static std::string get(const Any& value) {
-		return wstombs(Utf8Encoding(), value.getString());
+		return value.getString();
+	}
+};
+
+template < >
+struct CastAny < const char, true >
+{
+	static Any set(const char* value) {
+		return Any(value);
+	}
+	static const char* get(const Any& value) {
+		return value.getString().c_str();
 	}
 };
 
@@ -185,7 +196,7 @@ struct CastAny < std::wstring, false >
 		return Any(value);
 	}
 	static std::wstring get(const Any& value) {
-		return value.getString();
+		return value.getWideString();
 	}
 };
 
@@ -196,7 +207,7 @@ struct CastAny < const std::wstring&, false >
 		return Any(value);
 	}
 	static std::wstring get(const Any& value) {
-		return value.getString();
+		return value.getWideString();
 	}
 };
 
@@ -204,10 +215,10 @@ template < >
 struct CastAny < const wchar_t, true >
 {
 	static Any set(const wchar_t* value) {
-		return Any(std::wstring(value));
+		return Any(value);
 	}
 	static const wchar_t* get(const Any& value) {
-		return value.getString().c_str();
+		return value.getWideString().c_str();
 	}
 };
 

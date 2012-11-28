@@ -32,15 +32,15 @@ struct CastAny < flash::ActionValue, false >
 	static flash::ActionValue get(const Any& value)
 	{
 		if (value.isBoolean())
-			return flash::ActionValue(value.getBoolean());
+			return flash::ActionValue(value.getBooleanUnsafe());
 		else if (value.isInteger())
-			return flash::ActionValue((flash::avm_number_t)value.getInteger());
+			return flash::ActionValue((flash::avm_number_t)value.getIntegerUnsafe());
 		else if (value.isFloat())
-			return flash::ActionValue(value.getFloat());
+			return flash::ActionValue(value.getFloatUnsafe());
 		else if (value.isString())
-			return flash::ActionValue(value.getString());
+			return flash::ActionValue(value.getStringUnsafe());
 		else if (value.isObject())
-			return flash::ActionValue(dynamic_type_cast< flash::ActionObject* >(value.getObject()));
+			return flash::ActionValue(dynamic_type_cast< flash::ActionObject* >(value.getObjectUnsafe()));
 		else
 			return flash::ActionValue();
 	}
@@ -69,15 +69,15 @@ struct CastAny < const flash::ActionValue&, false >
 	static flash::ActionValue get(const Any& value)
 	{
 		if (value.isBoolean())
-			return flash::ActionValue(value.getBoolean());
+			return flash::ActionValue(value.getBooleanUnsafe());
 		else if (value.isInteger())
-			return flash::ActionValue((flash::avm_number_t)value.getInteger());
+			return flash::ActionValue((flash::avm_number_t)value.getIntegerUnsafe());
 		else if (value.isFloat())
-			return flash::ActionValue(value.getFloat());
+			return flash::ActionValue(value.getFloatUnsafe());
 		else if (value.isString())
-			return flash::ActionValue(value.getString());
+			return flash::ActionValue(value.getStringUnsafe());
 		else if (value.isObject())
-			return flash::ActionValue(dynamic_type_cast< flash::ActionObject* >(value.getObject()));
+			return flash::ActionValue(dynamic_type_cast< flash::ActionObject* >(value.getObjectUnsafe()));
 		else
 			return flash::ActionValue();
 	}

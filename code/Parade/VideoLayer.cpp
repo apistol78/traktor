@@ -48,7 +48,7 @@ void VideoLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 		return;
 
 	if (!m_video->update(info.getSimulationDeltaTime()))
-		getStage()->invokeScript(L"videoFinished", 0, 0);
+		getStage()->invokeScript("videoFinished", 0, 0);
 }
 
 void VideoLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)

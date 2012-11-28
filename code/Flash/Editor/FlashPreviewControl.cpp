@@ -360,9 +360,9 @@ void FlashPreviewControl::eventIdle(ui::Event* event)
 		{
 			if (m_moviePlayer->progressFrame(deltaTime))
 			{
-				std::wstring command, args;
+				std::string command, args;
 				while (m_moviePlayer->getFsCommand(command, args))
-					log::info << L"FSCommand \"" << command << L"\" \"" << args << L"\"" << Endl;
+					log::info << L"FSCommand \"" << mbstows(command) << L"\" \"" << mbstows(args) << L"\"" << Endl;
 
 				update();
 			}

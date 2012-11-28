@@ -14,7 +14,7 @@ namespace traktor
 void registerTerrainClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< terrain::OceanEntity > > classOceanEntity = new script::AutoScriptClass< terrain::OceanEntity >();
-	//classOceanEntity->addMethod(L"getAltitude", &terrain::OceanEntity::getAltitude);
+	//classOceanEntity->addMethod("getAltitude", &terrain::OceanEntity::getAltitude);
 	scriptManager->registerClass(classOceanEntity);
 
 	Ref< script::AutoScriptClass< terrain::RiverEntity > > classRiverEntity = new script::AutoScriptClass< terrain::RiverEntity >();

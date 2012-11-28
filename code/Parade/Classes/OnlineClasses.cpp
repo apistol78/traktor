@@ -181,125 +181,125 @@ std::wstring online_IUser_getPresenceValue(online::IUser* self, const std::wstri
 void registerOnlineClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< online::Result > > classResult = new script::AutoScriptClass< online::Result >();
-	classResult->addMethod(L"succeed", &online::Result::succeed);
-	classResult->addMethod(L"fail", &online::Result::fail);
-	classResult->addMethod(L"ready", &online::Result::ready);
-	classResult->addMethod(L"succeeded", &online::Result::succeeded);
+	classResult->addMethod("succeed", &online::Result::succeed);
+	classResult->addMethod("fail", &online::Result::fail);
+	classResult->addMethod("ready", &online::Result::ready);
+	classResult->addMethod("succeeded", &online::Result::succeeded);
 	scriptManager->registerClass(classResult);
 
 	Ref< script::AutoScriptClass< online::AttachmentResult > > classAttachmentResult = new script::AutoScriptClass< online::AttachmentResult >();
-	classAttachmentResult->addMethod(L"succeed", &online::AttachmentResult::succeed);
-	classAttachmentResult->addMethod(L"get", &online::AttachmentResult::get);
+	classAttachmentResult->addMethod("succeed", &online::AttachmentResult::succeed);
+	classAttachmentResult->addMethod("get", &online::AttachmentResult::get);
 	scriptManager->registerClass(classAttachmentResult);
 
 	Ref< script::AutoScriptClass< online::LobbyResult > > classLobbyResult = new script::AutoScriptClass< online::LobbyResult >();
-	classLobbyResult->addMethod(L"succeed", &online::LobbyResult::succeed);
-	classLobbyResult->addMethod(L"get", &online::LobbyResult::get);
+	classLobbyResult->addMethod("succeed", &online::LobbyResult::succeed);
+	classLobbyResult->addMethod("get", &online::LobbyResult::get);
 	scriptManager->registerClass(classLobbyResult);
 
 	Ref< script::AutoScriptClass< online::LobbyArrayResult > > classLobbyArrayResult = new script::AutoScriptClass< online::LobbyArrayResult >();
-	classLobbyArrayResult->addMethod(L"succeed", &online::LobbyArrayResult::succeed);
-	classLobbyArrayResult->addMethod(L"get", &online::LobbyArrayResult::get);
+	classLobbyArrayResult->addMethod("succeed", &online::LobbyArrayResult::succeed);
+	classLobbyArrayResult->addMethod("get", &online::LobbyArrayResult::get);
 	scriptManager->registerClass(classLobbyArrayResult);
 
 	Ref< script::AutoScriptClass< online::Score > > classScore = new script::AutoScriptClass< online::Score >();
-	classScore->addMethod(L"getUser", &online::Score::getUser);
-	classScore->addMethod(L"getScore", &online::Score::getScore);
+	classScore->addMethod("getUser", &online::Score::getUser);
+	classScore->addMethod("getScore", &online::Score::getScore);
 	scriptManager->registerClass(classScore);
 
 	Ref< script::AutoScriptClass< online::ScoreArrayResult > > classScoreArrayResult = new script::AutoScriptClass< online::ScoreArrayResult >();
-	classScoreArrayResult->addMethod(L"succeed", &online::ScoreArrayResult::succeed);
-	classScoreArrayResult->addMethod(L"get", &online::ScoreArrayResult::get);
+	classScoreArrayResult->addMethod("succeed", &online::ScoreArrayResult::succeed);
+	classScoreArrayResult->addMethod("get", &online::ScoreArrayResult::get);
 	scriptManager->registerClass(classScoreArrayResult);
 
 	Ref< script::AutoScriptClass< online::UserArrayResult > > classUserArrayResult = new script::AutoScriptClass< online::UserArrayResult >();
-	classUserArrayResult->addMethod(L"succeed", &online::UserArrayResult::succeed);
-	classUserArrayResult->addMethod(L"get", &online::UserArrayResult::get);
+	classUserArrayResult->addMethod("succeed", &online::UserArrayResult::succeed);
+	classUserArrayResult->addMethod("get", &online::UserArrayResult::get);
 	scriptManager->registerClass(classUserArrayResult);
 
 	Ref< script::AutoScriptClass< online::LobbyFilter > > classLobbyFilter = new script::AutoScriptClass< online::LobbyFilter >();
 	classLobbyFilter->addConstructor();
-	classLobbyFilter->addMethod(L"addStringComparison", &online_LobbyFilter_addStringComparison);
-	classLobbyFilter->addMethod(L"addNumberComparison", &online_LobbyFilter_addNumberComparison);
-	classLobbyFilter->addMethod(L"setDistance", &online_LobbyFilter_setDistance);
-	classLobbyFilter->addMethod(L"setSlots", &online::LobbyFilter::setSlots);
-	classLobbyFilter->addMethod(L"setCount", &online::LobbyFilter::setCount);
+	classLobbyFilter->addMethod("addStringComparison", &online_LobbyFilter_addStringComparison);
+	classLobbyFilter->addMethod("addNumberComparison", &online_LobbyFilter_addNumberComparison);
+	classLobbyFilter->addMethod("setDistance", &online_LobbyFilter_setDistance);
+	classLobbyFilter->addMethod("setSlots", &online::LobbyFilter::setSlots);
+	classLobbyFilter->addMethod("setCount", &online::LobbyFilter::setCount);
 	scriptManager->registerClass(classLobbyFilter);
 
 	Ref< script::AutoScriptClass< online::IAchievements > > classIAchievements = new script::AutoScriptClass< online::IAchievements >();
-	classIAchievements->addMethod(L"ready", &online::IAchievements::ready);
-	classIAchievements->addMethod(L"enumerate", &online_IAchievements_enumerate);
-	classIAchievements->addMethod(L"have", &online::IAchievements::have);
-	classIAchievements->addMethod(L"set", &online::IAchievements::set);
+	classIAchievements->addMethod("ready", &online::IAchievements::ready);
+	classIAchievements->addMethod("enumerate", &online_IAchievements_enumerate);
+	classIAchievements->addMethod("have", &online::IAchievements::have);
+	classIAchievements->addMethod("set", &online::IAchievements::set);
 	scriptManager->registerClass(classIAchievements);
 
 	Ref< script::AutoScriptClass< online::ILeaderboards > > classILeaderboards = new script::AutoScriptClass< online::ILeaderboards >();
-	classILeaderboards->addMethod(L"ready", &online::ILeaderboards::ready);
-	classILeaderboards->addMethod(L"enumerate", &online_ILeaderboards_enumerate);
-	classILeaderboards->addMethod(L"getRank", &online_ILeaderboards_getRank);
-	classILeaderboards->addMethod(L"getScore", &online_ILeaderboards_getScore);
-	classILeaderboards->addMethod(L"setScore", &online::ILeaderboards::setScore);
-	classILeaderboards->addMethod(L"addScore", &online::ILeaderboards::addScore);
-	classILeaderboards->addMethod(L"getScores", &online::ILeaderboards::getScores);
+	classILeaderboards->addMethod("ready", &online::ILeaderboards::ready);
+	classILeaderboards->addMethod("enumerate", &online_ILeaderboards_enumerate);
+	classILeaderboards->addMethod("getRank", &online_ILeaderboards_getRank);
+	classILeaderboards->addMethod("getScore", &online_ILeaderboards_getScore);
+	classILeaderboards->addMethod("setScore", &online::ILeaderboards::setScore);
+	classILeaderboards->addMethod("addScore", &online::ILeaderboards::addScore);
+	classILeaderboards->addMethod("getScores", &online::ILeaderboards::getScores);
 	scriptManager->registerClass(classILeaderboards);
 
 	Ref< script::AutoScriptClass< online::ILobby > > classILobby = new script::AutoScriptClass< online::ILobby >();
-	classILobby->addMethod(L"setMetaValue", &online::ILobby::setMetaValue);
-	classILobby->addMethod(L"getMetaValue", &online_ILobby_getMetaValue);
-	classILobby->addMethod(L"setParticipantMetaValue", &online::ILobby::setParticipantMetaValue);
-	classILobby->addMethod(L"getParticipantMetaValue", &online_ILobby_getParticipantMetaValue);
-	classILobby->addMethod(L"join", &online::ILobby::join);
-	classILobby->addMethod(L"leave", &online::ILobby::leave);
-	classILobby->addMethod(L"getParticipants", &online::ILobby::getParticipants);
-	classILobby->addMethod(L"getParticipantCount", &online::ILobby::getParticipantCount);
-	classILobby->addMethod(L"getIndex", &online::ILobby::getIndex);
-	classILobby->addMethod(L"isOwner", &online::ILobby::isOwner);
+	classILobby->addMethod("setMetaValue", &online::ILobby::setMetaValue);
+	classILobby->addMethod("getMetaValue", &online_ILobby_getMetaValue);
+	classILobby->addMethod("setParticipantMetaValue", &online::ILobby::setParticipantMetaValue);
+	classILobby->addMethod("getParticipantMetaValue", &online_ILobby_getParticipantMetaValue);
+	classILobby->addMethod("join", &online::ILobby::join);
+	classILobby->addMethod("leave", &online::ILobby::leave);
+	classILobby->addMethod("getParticipants", &online::ILobby::getParticipants);
+	classILobby->addMethod("getParticipantCount", &online::ILobby::getParticipantCount);
+	classILobby->addMethod("getIndex", &online::ILobby::getIndex);
+	classILobby->addMethod("isOwner", &online::ILobby::isOwner);
 	scriptManager->registerClass(classILobby);
 
 	Ref< script::AutoScriptClass< online::IMatchMaking > > classIMatchMaking = new script::AutoScriptClass< online::IMatchMaking >();
-	classIMatchMaking->addMethod(L"ready", &online::IMatchMaking::ready);
-	classIMatchMaking->addMethod(L"findMatchingLobbies", &online::IMatchMaking::findMatchingLobbies);
-	classIMatchMaking->addMethod(L"createLobby", &online::IMatchMaking::createLobby);
+	classIMatchMaking->addMethod("ready", &online::IMatchMaking::ready);
+	classIMatchMaking->addMethod("findMatchingLobbies", &online::IMatchMaking::findMatchingLobbies);
+	classIMatchMaking->addMethod("createLobby", &online::IMatchMaking::createLobby);
 	scriptManager->registerClass(classIMatchMaking);
 
 	Ref< script::AutoScriptClass< online::ISaveData > > classISaveData = new script::AutoScriptClass< online::ISaveData >();
-	classISaveData->addMethod(L"ready", &online::ISaveData::ready);
-	classISaveData->addMethod(L"enumerate", &online_ISaveData_enumerate);
-	classISaveData->addMethod(L"get", &online::ISaveData::get);
-	classISaveData->addMethod(L"set", &online_ISaveData_set);
+	classISaveData->addMethod("ready", &online::ISaveData::ready);
+	classISaveData->addMethod("enumerate", &online_ISaveData_enumerate);
+	classISaveData->addMethod("get", &online::ISaveData::get);
+	classISaveData->addMethod("set", &online_ISaveData_set);
 	scriptManager->registerClass(classISaveData);
 
 	Ref< script::AutoScriptClass< online::ISessionManager > > classISessionManager = new script::AutoScriptClass< online::ISessionManager >();
-	classISessionManager->addMethod(L"destroy", &online::ISessionManager::destroy);
-	classISessionManager->addMethod(L"update", &online::ISessionManager::update);
-	classISessionManager->addMethod(L"getLanguageCode", &online::ISessionManager::getLanguageCode);
-	classISessionManager->addMethod(L"isConnected", &online::ISessionManager::isConnected);
-	classISessionManager->addMethod(L"requireUserAttention", &online::ISessionManager::requireUserAttention);
-	classISessionManager->addMethod(L"getFriends", &online_ISessionManager_getFriends);
-	classISessionManager->addMethod(L"findFriend", &online_ISessionManager_findFriend);
-	classISessionManager->addMethod(L"haveP2PData", &online::ISessionManager::haveP2PData);
-	classISessionManager->addMethod(L"getAchievements", &online::ISessionManager::getAchievements);
-	classISessionManager->addMethod(L"getLeaderboards", &online::ISessionManager::getLeaderboards);
-	classISessionManager->addMethod(L"getMatchMaking", &online::ISessionManager::getMatchMaking);
-	classISessionManager->addMethod(L"getSaveData", &online::ISessionManager::getSaveData);
-	classISessionManager->addMethod(L"getStatistics", &online::ISessionManager::getStatistics);
-	classISessionManager->addMethod(L"getUser", &online::ISessionManager::getUser);
+	classISessionManager->addMethod("destroy", &online::ISessionManager::destroy);
+	classISessionManager->addMethod("update", &online::ISessionManager::update);
+	classISessionManager->addMethod("getLanguageCode", &online::ISessionManager::getLanguageCode);
+	classISessionManager->addMethod("isConnected", &online::ISessionManager::isConnected);
+	classISessionManager->addMethod("requireUserAttention", &online::ISessionManager::requireUserAttention);
+	classISessionManager->addMethod("getFriends", &online_ISessionManager_getFriends);
+	classISessionManager->addMethod("findFriend", &online_ISessionManager_findFriend);
+	classISessionManager->addMethod("haveP2PData", &online::ISessionManager::haveP2PData);
+	classISessionManager->addMethod("getAchievements", &online::ISessionManager::getAchievements);
+	classISessionManager->addMethod("getLeaderboards", &online::ISessionManager::getLeaderboards);
+	classISessionManager->addMethod("getMatchMaking", &online::ISessionManager::getMatchMaking);
+	classISessionManager->addMethod("getSaveData", &online::ISessionManager::getSaveData);
+	classISessionManager->addMethod("getStatistics", &online::ISessionManager::getStatistics);
+	classISessionManager->addMethod("getUser", &online::ISessionManager::getUser);
 	scriptManager->registerClass(classISessionManager);
 
 	Ref< script::AutoScriptClass< online::IStatistics > > classIStatistics = new script::AutoScriptClass< online::IStatistics >();
-	classIStatistics->addMethod(L"ready", &online::IStatistics::ready);
-	classIStatistics->addMethod(L"enumerate", &online_IStatistics_enumerate);
-	classIStatistics->addMethod(L"get", &online_IStatistics_get);
-	classIStatistics->addMethod(L"set", &online::IStatistics::set);
-	classIStatistics->addMethod(L"add", &online::IStatistics::add);
+	classIStatistics->addMethod("ready", &online::IStatistics::ready);
+	classIStatistics->addMethod("enumerate", &online_IStatistics_enumerate);
+	classIStatistics->addMethod("get", &online_IStatistics_get);
+	classIStatistics->addMethod("set", &online::IStatistics::set);
+	classIStatistics->addMethod("add", &online::IStatistics::add);
 	scriptManager->registerClass(classIStatistics);
 
 	Ref< script::AutoScriptClass< online::IUser > > classIUser = new script::AutoScriptClass< online::IUser >();
-	classIUser->addMethod(L"getName", &online_IUser_getName);
-	classIUser->addMethod(L"isFriend", &online::IUser::isFriend);
-	classIUser->addMethod(L"invite", &online::IUser::invite);
-	classIUser->addMethod(L"setPresenceValue", &online::IUser::setPresenceValue);
-	classIUser->addMethod(L"getPresenceValue", &online_IUser_getPresenceValue);
+	classIUser->addMethod("getName", &online_IUser_getName);
+	classIUser->addMethod("isFriend", &online::IUser::isFriend);
+	classIUser->addMethod("invite", &online::IUser::invite);
+	classIUser->addMethod("setPresenceValue", &online::IUser::setPresenceValue);
+	classIUser->addMethod("getPresenceValue", &online_IUser_getPresenceValue);
 	scriptManager->registerClass(classIUser);
 }
 

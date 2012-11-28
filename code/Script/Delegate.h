@@ -27,16 +27,16 @@ class T_DLLCLASS Delegate : public Object
 	T_RTTI_CLASS;
 
 public:
-	Delegate(IScriptContext* context, const std::wstring& methodName);
+	Delegate(IScriptContext* context, const std::string& methodName);
 
-	Delegate(IScriptContext* context, Object* object, const std::wstring& methodName);
+	Delegate(IScriptContext* context, Object* object, const std::string& methodName);
 
 	void invoke(uint32_t argc, const Any* argv);
 
 private:
 	Ref< IScriptContext > m_context;
 	Ref< Object > m_object;
-	std::wstring m_methodName;
+	std::string m_methodName;
 };
 
 void T_DLLCLASS registerDelegateClasses(class IScriptManager* scriptManager);

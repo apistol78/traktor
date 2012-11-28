@@ -347,7 +347,7 @@ void FlashMoviePlayer::postViewResize(int32_t width, int32_t height)
 	m_events.push_back(evt);
 }
 
-bool FlashMoviePlayer::getFsCommand(std::wstring& outCommand, std::wstring& outArgs)
+bool FlashMoviePlayer::getFsCommand(std::string& outCommand, std::string& outArgs)
 {
 	if (m_fsCommands.empty())
 		return false;
@@ -410,16 +410,16 @@ ActionValue FlashMoviePlayer::getGlobal(const std::string& name) const
 
 void FlashMoviePlayer::Global_getURL(CallArgs& ca)
 {
-	std::wstring url = ca.args[0].getWideString();
-	if (startsWith< std::wstring >(url, L"FSCommand:"))
+	std::string url = ca.args[0].getString();
+	if (startsWith< std::string >(url, "FSCommand:"))
 	{
 		m_fsCommands.push_back(std::make_pair(
 			url.substr(10),
-			ca.args[1].getWideString()
+			ca.args[1].getString()
 		));
 	}
 	else
-		OS::getInstance().openFile(url);
+		OS::getInstance().openFile(mbstows(url));
 }
 
 void FlashMoviePlayer::Global_setInterval(CallArgs& ca)

@@ -40,7 +40,11 @@ public:
 	explicit Any(int32_t value);
 
 	explicit Any(float value);
-	
+
+	explicit Any(const char* value);
+
+	explicit Any(const std::string& value);
+
 	explicit Any(const wchar_t* value);
 
 	explicit Any(const std::wstring& value);
@@ -57,7 +61,9 @@ public:
 
 	float getFloat() const;
 
-	std::wstring getString() const;
+	std::string getString() const;
+
+	std::wstring getWideString() const;
 
 	Object* getObject() const;
 
@@ -76,6 +82,23 @@ public:
 	bool isObject() const { return m_type == AtObject; }
 
 	bool isType() const { return m_type == AtType; }
+
+	// \name Unsafe accessors.
+	// \{
+
+	bool getBooleanUnsafe() const { T_ASSERT (m_type == AtBoolean); return m_data.m_boolean; }
+
+	int32_t getIntegerUnsafe( ) const { T_ASSERT (m_type == AtInteger); return m_data.m_integer; }
+
+	float getFloatUnsafe() const { T_ASSERT (m_type == AtFloat); return m_data.m_float; }
+
+	std::string getStringUnsafe() const { T_ASSERT (m_type == AtString); return m_data.m_string; }
+
+	Object* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return m_data.m_object; }
+
+	const TypeInfo* getTypeUnsafe() const { T_ASSERT (m_type == AtType); return m_data.m_type; }
+
+	// \}
 
 	Any& operator = (const Any& src);
 
@@ -96,7 +119,7 @@ private:
 		bool m_boolean;
 		int32_t m_integer;
 		float m_float;
-		wchar_t* m_string;
+		char* m_string;
 		Object* m_object;
 		const TypeInfo* m_type;
 	};

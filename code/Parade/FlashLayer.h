@@ -71,7 +71,7 @@ public:
 
 	flash::ActionObject* getRoot();
 
-	script::Any externalCall(const std::wstring& methodName, uint32_t argc, const script::Any* argv);
+	script::Any externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv);
 
 	void setVisible(bool visible) { m_visible = visible; }
 

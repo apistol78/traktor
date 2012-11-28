@@ -1,3 +1,4 @@
+#include "Core/Misc/TString.h"
 #include "Script/Delegate.h"
 #include "Script/IScriptClass.h"
 #include "Script/IScriptContext.h"
@@ -43,9 +44,9 @@ public:
 		return 0;
 	}
 
-	virtual std::wstring getMethodName(uint32_t methodId) const
+	virtual std::string getMethodName(uint32_t methodId) const
 	{
-		return L"";
+		return "";
 	}
 
 	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const
@@ -53,7 +54,7 @@ public:
 		return Any();
 	}
 
-	virtual Any invokeUnknown(const InvokeParam& param, const std::wstring& methodName, uint32_t argc, const Any* argv) const
+	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const
 	{
 		return Any();
 	}
@@ -63,9 +64,9 @@ public:
 		return 0;
 	}
 
-	virtual std::wstring getPropertyName(uint32_t propertyId) const
+	virtual std::string getPropertyName(uint32_t propertyId) const
 	{
-		return L"";
+		return "";
 	}
 
 	virtual Any getPropertyValue(const InvokeParam& param, uint32_t propertyId) const
@@ -82,13 +83,13 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Delegate", Delegate, Object)
 
-Delegate::Delegate(IScriptContext* context, const std::wstring& methodName)
+Delegate::Delegate(IScriptContext* context, const std::string& methodName)
 :	m_context(context)
 ,	m_methodName(methodName)
 {
 }
 
-Delegate::Delegate(IScriptContext* context, Object* object, const std::wstring& methodName)
+Delegate::Delegate(IScriptContext* context, Object* object, const std::string& methodName)
 :	m_context(context)
 ,	m_object(object)
 ,	m_methodName(methodName)

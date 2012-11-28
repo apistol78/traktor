@@ -11,14 +11,14 @@ namespace traktor
 void registerRenderClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< render::IRenderView > > classRenderView = new script::AutoScriptClass< render::IRenderView >();
-	classRenderView->addMethod(L"close", &render::IRenderView::close);
-	classRenderView->addMethod(L"getWidth", &render::IRenderView::getWidth);
-	classRenderView->addMethod(L"getHeight", &render::IRenderView::getHeight);
-	classRenderView->addMethod(L"isActive", &render::IRenderView::isActive);
-	classRenderView->addMethod(L"isFullScreen", &render::IRenderView::isFullScreen);
-	classRenderView->addMethod(L"showCursor", &render::IRenderView::showCursor);
-	classRenderView->addMethod(L"hideCursor", &render::IRenderView::hideCursor);
-	classRenderView->addMethod(L"setGamma", &render::IRenderView::setGamma);
+	classRenderView->addMethod("close", &render::IRenderView::close);
+	classRenderView->addMethod("getWidth", &render::IRenderView::getWidth);
+	classRenderView->addMethod("getHeight", &render::IRenderView::getHeight);
+	classRenderView->addMethod("isActive", &render::IRenderView::isActive);
+	classRenderView->addMethod("isFullScreen", &render::IRenderView::isFullScreen);
+	classRenderView->addMethod("showCursor", &render::IRenderView::showCursor);
+	classRenderView->addMethod("hideCursor", &render::IRenderView::hideCursor);
+	classRenderView->addMethod("setGamma", &render::IRenderView::setGamma);
 	scriptManager->registerClass(classRenderView);
 }
 

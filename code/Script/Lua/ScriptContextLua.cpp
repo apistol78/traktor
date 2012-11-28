@@ -72,20 +72,20 @@ void ScriptContextLua::destroy()
 	}
 }
 
-void ScriptContextLua::setGlobal(const std::wstring& globalName, const Any& globalValue)
+void ScriptContextLua::setGlobal(const std::string& globalName, const Any& globalValue)
 {
 	m_scriptManager->lock(this);
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		m_scriptManager->pushAny(globalValue);
-		lua_setfield(m_luaState, -2, wstombs(globalName).c_str());
+		lua_setfield(m_luaState, -2, globalName.c_str());
 		lua_pop(m_luaState, 1);
 	}
 	m_scriptManager->unlock();
 }
 
-Any ScriptContextLua::getGlobal(const std::wstring& globalName)
+Any ScriptContextLua::getGlobal(const std::string& globalName)
 {
 	Any value;
 	m_scriptManager->lock(this);
@@ -93,7 +93,7 @@ Any ScriptContextLua::getGlobal(const std::wstring& globalName)
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, wstombs(globalName).c_str());
+		lua_getfield(m_luaState, -1, globalName.c_str());
 
 		value = m_scriptManager->toAny(-1);
 	}
@@ -101,7 +101,7 @@ Any ScriptContextLua::getGlobal(const std::wstring& globalName)
 	return value;
 }
 
-bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
+bool ScriptContextLua::haveFunction(const std::string& functionName) const
 {
 	bool result;
 	m_scriptManager->lock((ScriptContextLua*)this);
@@ -109,7 +109,7 @@ bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, wstombs(functionName).c_str());
+		lua_getfield(m_luaState, -1, functionName.c_str());
 		
 		result = (lua_isfunction(m_luaState, -1) != 0);
 		
@@ -119,7 +119,7 @@ bool ScriptContextLua::haveFunction(const std::wstring& functionName) const
 	return result;
 }
 
-Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv)
+Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t argc, const Any* argv)
 {
 	Any returnValue;
 	m_scriptManager->lock(this);
@@ -127,7 +127,7 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, wstombs(functionName).c_str());
+		lua_getfield(m_luaState, -1, functionName.c_str());
 
 		if (lua_isfunction(m_luaState, -1))
 		{
@@ -143,7 +143,7 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 			}
 		}
 		else
-			log::error << L"Unable to call " << functionName << L"; no such function" << Endl;
+			log::error << L"Unable to call " << mbstows(functionName) << L"; no such function" << Endl;
 
 		lua_pop(m_luaState, 2);
 	}
@@ -151,7 +151,7 @@ Any ScriptContextLua::executeFunction(const std::wstring& functionName, uint32_t
 	return returnValue;
 }
 
-Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv)
+Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName, uint32_t argc, const Any* argv)
 {
 	Any returnValue;
 	m_scriptManager->lock(this);
@@ -159,7 +159,7 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 		CHECK_LUA_STACK(m_luaState, 0);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		lua_getfield(m_luaState, -1, wstombs(methodName).c_str());
+		lua_getfield(m_luaState, -1, methodName.c_str());
 
 		if (lua_isfunction(m_luaState, -1))
 		{
@@ -182,7 +182,7 @@ Any ScriptContextLua::executeMethod(Object* self, const std::wstring& methodName
 			}
 		}
 		else
-			log::error << L"Unable to call " << methodName << L"; no such method" << Endl;
+			log::error << L"Unable to call " << mbstows(methodName) << L"; no such method" << Endl;
 
 		lua_pop(m_luaState, 2);
 	}

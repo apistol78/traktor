@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/TString.h"
 #include "Parade/Layer.h"
 #include "Parade/Stage.h"
 #include "Parade/StageLoader.h"
@@ -101,7 +102,7 @@ void Stage::terminate()
 	m_running = false;
 }
 
-script::Any Stage::invokeScript(const std::wstring& fn, uint32_t argc, const script::Any* argv)
+script::Any Stage::invokeScript(const std::string& fn, uint32_t argc, const script::Any* argv)
 {
 	if (validateScriptContext())
 		return m_scriptContext->executeFunction(fn, argc, argv);
@@ -163,7 +164,7 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 				script::Any(&control),
 				script::Any(const_cast< amalgam::IUpdateInfo* >(&info))
 			};
-			m_scriptContext->executeFunction(L"update", sizeof_array(argv), argv);
+			m_scriptContext->executeFunction("update", sizeof_array(argv), argv);
 		}
 
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
@@ -237,13 +238,13 @@ bool Stage::validateScriptContext()
 	if (!m_initialized)
 	{
 		// Expose commonly used globals.
-		m_scriptContext->setGlobal(L"stage", script::Any(this));
-		m_scriptContext->setGlobal(L"environment", script::Any(m_environment));
+		m_scriptContext->setGlobal("stage", script::Any(this));
+		m_scriptContext->setGlobal("environment", script::Any(m_environment));
 
 		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			if (!(*i)->getName().empty())
-				m_scriptContext->setGlobal((*i)->getName(), script::Any(*i));
+				m_scriptContext->setGlobal(wstombs((*i)->getName()), script::Any(*i));
 		}
 
 		// Call script init; do this everytime we re-validate script.
@@ -251,7 +252,7 @@ bool Stage::validateScriptContext()
 		{
 			script::Any(const_cast< Object* >(m_params.c_ptr()))
 		};
-		m_scriptContext->executeMethod(this, L"initialize", sizeof_array(argv), argv);
+		m_scriptContext->executeMethod(this, "initialize", sizeof_array(argv), argv);
 		m_initialized = true;
 	}
 
