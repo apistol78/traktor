@@ -113,7 +113,7 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 {
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
-	std::wstring command, args;
+	std::string command, args;
 
 	// Propagate keyboard input to movie.
 	input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::CtKeyboard, 0, true);
@@ -294,7 +294,7 @@ flash::ActionObject* FlashLayer::getRoot()
 	return movieInstance->getAsObject(cx);
 }
 
-script::Any FlashLayer::externalCall(const std::wstring& methodName, uint32_t argc, const script::Any* argv)
+script::Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv)
 {
 	if (!m_moviePlayer)
 		return script::Any();
@@ -305,7 +305,7 @@ script::Any FlashLayer::externalCall(const std::wstring& methodName, uint32_t ar
 	for (uint32_t i = 0; i < argc; ++i)
 		av[i] = script::CastAny< flash::ActionValue >::get(argv[i]);
 
-	flash::ActionValue ret = m_moviePlayer->dispatchCallback(wstombs(methodName), argc, av);
+	flash::ActionValue ret = m_moviePlayer->dispatchCallback(methodName, argc, av);
 
 	return script::CastAny< flash::ActionValue >::set(ret);
 }
@@ -396,7 +396,7 @@ flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodNam
 		av[i] = script::CastAny< flash::ActionValue >::set(argv[i]);
 
 	script::Any ret = getStage()->invokeScript(
-		mbstows(methodName),
+		methodName,
 		argc,
 		av
 	);

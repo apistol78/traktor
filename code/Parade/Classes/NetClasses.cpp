@@ -61,7 +61,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classStateTemplate);
 
 	Ref< script::AutoScriptClass< net::IReplicatorPeers > > classIReplicatorPeers = new script::AutoScriptClass< net::IReplicatorPeers >();
-	classIReplicatorPeers->addMethod(L"destroy", &net::IReplicatorPeers::destroy);
+	classIReplicatorPeers->addMethod("destroy", &net::IReplicatorPeers::destroy);
 	scriptManager->registerClass(classIReplicatorPeers);
 
 	Ref< script::AutoScriptClass< net::DiagnosePeers > > classDiagnosePeers = new script::AutoScriptClass< net::DiagnosePeers >();
@@ -74,12 +74,12 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< net::LanReplicatorPeers > > classLanReplicatorPeers = new script::AutoScriptClass< net::LanReplicatorPeers >();
 	classLanReplicatorPeers->addConstructor();
-	classLanReplicatorPeers->addMethod(L"create", &net::LanReplicatorPeers::create);
+	classLanReplicatorPeers->addMethod("create", &net::LanReplicatorPeers::create);
 	scriptManager->registerClass(classLanReplicatorPeers);
 
 	Ref< script::AutoScriptClass< net::OnlineReplicatorPeers > > classOnlineReplicatorPeers = new script::AutoScriptClass< net::OnlineReplicatorPeers >();
 	classOnlineReplicatorPeers->addConstructor();
-	classOnlineReplicatorPeers->addMethod(L"create", &net::OnlineReplicatorPeers::create);
+	classOnlineReplicatorPeers->addMethod("create", &net::OnlineReplicatorPeers::create);
 	scriptManager->registerClass(classOnlineReplicatorPeers);
 
 	Ref< script::AutoScriptClass< net::ReliableTransportPeers > > classReliableTransportPeers = new script::AutoScriptClass< net::ReliableTransportPeers >();
@@ -95,33 +95,33 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< net::Replicator > > classReplicator = new script::AutoScriptClass< net::Replicator >();
 	classReplicator->addConstructor();
-	classReplicator->addMethod(L"create", &net::Replicator::create);
-	classReplicator->addMethod(L"destroy", &net::Replicator::destroy);
-	classReplicator->addMethod(L"addEventType", &net::Replicator::addEventType);
-	classReplicator->addMethod(L"addListener", &net::Replicator::addListener);
-	classReplicator->addMethod(L"update", &net::Replicator::update);
-	classReplicator->addMethod(L"setOrigin", &net::Replicator::setOrigin);
-	classReplicator->addMethod(L"setStateTemplate", &net::Replicator::setStateTemplate);
-	classReplicator->addMethod(L"setState", &net::Replicator::setState);
-	classReplicator->addMethod(L"sendEvent", &net::Replicator::sendEvent);
-	classReplicator->addMethod(L"broadcastEvent", &net::Replicator::broadcastEvent);
-	classReplicator->addMethod(L"isPrimary", &net::Replicator::isPrimary);
-	classReplicator->addMethod(L"getPeerCount", &net::Replicator::getPeerCount);
-	classReplicator->addMethod(L"getPeerHandle", &net::Replicator::getPeerHandle);
-	classReplicator->addMethod(L"getPeerName", &net::Replicator::getPeerName);
-	classReplicator->addMethod(L"getPeerLatency", &net::Replicator::getPeerLatency);
-	classReplicator->addMethod(L"getPeerReversedLatency", &net::Replicator::getPeerReversedLatency);
-	classReplicator->addMethod(L"getBestReversedLatency", &net::Replicator::getBestReversedLatency);
-	classReplicator->addMethod(L"getWorstReversedLatency", &net::Replicator::getWorstReversedLatency);
-	classReplicator->addMethod(L"isPeerConnected", &net::Replicator::isPeerConnected);
-	classReplicator->addMethod(L"setGhostObject", &net::Replicator::setGhostObject);
-	classReplicator->addMethod(L"getGhostObject", &net::Replicator::getGhostObject);
-	classReplicator->addMethod(L"setGhostOrigin", &net::Replicator::setGhostOrigin);
-	classReplicator->addMethod(L"setGhostStateTemplate", &net::Replicator::setGhostStateTemplate);
-	classReplicator->addMethod(L"getGhostState", &net::Replicator::getGhostState);
-	classReplicator->addMethod(L"getLoopBackState", &net::Replicator::getLoopBackState);
-	classReplicator->addMethod(L"getState", &net::Replicator::getState);
-	classReplicator->addMethod(L"getTime", &net::Replicator::getTime);
+	classReplicator->addMethod("create", &net::Replicator::create);
+	classReplicator->addMethod("destroy", &net::Replicator::destroy);
+	classReplicator->addMethod("addEventType", &net::Replicator::addEventType);
+	classReplicator->addMethod("addListener", &net::Replicator::addListener);
+	classReplicator->addMethod("update", &net::Replicator::update);
+	classReplicator->addMethod("setOrigin", &net::Replicator::setOrigin);
+	classReplicator->addMethod("setStateTemplate", &net::Replicator::setStateTemplate);
+	classReplicator->addMethod("setState", &net::Replicator::setState);
+	classReplicator->addMethod("sendEvent", &net::Replicator::sendEvent);
+	classReplicator->addMethod("broadcastEvent", &net::Replicator::broadcastEvent);
+	classReplicator->addMethod("isPrimary", &net::Replicator::isPrimary);
+	classReplicator->addMethod("getPeerCount", &net::Replicator::getPeerCount);
+	classReplicator->addMethod("getPeerHandle", &net::Replicator::getPeerHandle);
+	classReplicator->addMethod("getPeerName", &net::Replicator::getPeerName);
+	classReplicator->addMethod("getPeerLatency", &net::Replicator::getPeerLatency);
+	classReplicator->addMethod("getPeerReversedLatency", &net::Replicator::getPeerReversedLatency);
+	classReplicator->addMethod("getBestReversedLatency", &net::Replicator::getBestReversedLatency);
+	classReplicator->addMethod("getWorstReversedLatency", &net::Replicator::getWorstReversedLatency);
+	classReplicator->addMethod("isPeerConnected", &net::Replicator::isPeerConnected);
+	classReplicator->addMethod("setGhostObject", &net::Replicator::setGhostObject);
+	classReplicator->addMethod("getGhostObject", &net::Replicator::getGhostObject);
+	classReplicator->addMethod("setGhostOrigin", &net::Replicator::setGhostOrigin);
+	classReplicator->addMethod("setGhostStateTemplate", &net::Replicator::setGhostStateTemplate);
+	classReplicator->addMethod("getGhostState", &net::Replicator::getGhostState);
+	classReplicator->addMethod("getLoopBackState", &net::Replicator::getLoopBackState);
+	classReplicator->addMethod("getState", &net::Replicator::getState);
+	classReplicator->addMethod("getTime", &net::Replicator::getTime);
 	scriptManager->registerClass(classReplicator);
 }
 

@@ -60,14 +60,14 @@ void world_Entity_update(world::Entity* this_, float totalTime, float deltaTime)
 void registerWorldClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< world::IEntitySchema > > classIEntitySchema = new script::AutoScriptClass< world::IEntitySchema >();
-	classIEntitySchema->addMethod< world::Entity*, uint32_t >(L"getEntity", &world::IEntitySchema::getEntity);
-	classIEntitySchema->addMethod< world::Entity*, const std::wstring&, uint32_t >(L"getEntity", &world::IEntitySchema::getEntity);
-	classIEntitySchema->addMethod< world::Entity*, const TypeInfo&, uint32_t >(L"getEntityOf", &world::IEntitySchema::getEntity);
-	classIEntitySchema->addMethod< world::Entity*, const std::wstring&, const TypeInfo&, uint32_t >(L"getEntityOf", &world::IEntitySchema::getEntity);
-	classIEntitySchema->addMethod< world::Entity*, const world::Entity*, uint32_t >(L"getChildEntity", &world::IEntitySchema::getChildEntity);
-	classIEntitySchema->addMethod< world::Entity*, const world::Entity*, const std::wstring&, uint32_t >(L"getChildEntity", &world::IEntitySchema::getChildEntity);
-	classIEntitySchema->addMethod< world::Entity*, const world::Entity*, const TypeInfo&, uint32_t >(L"getChildEntityOf", &world::IEntitySchema::getChildEntity);
-	classIEntitySchema->addMethod< world::Entity*, const world::Entity*, const std::wstring&, const TypeInfo&, uint32_t >(L"getChildEntityOf", &world::IEntitySchema::getChildEntity);
+	classIEntitySchema->addMethod< world::Entity*, uint32_t >("getEntity", &world::IEntitySchema::getEntity);
+	classIEntitySchema->addMethod< world::Entity*, const std::wstring&, uint32_t >("getEntity", &world::IEntitySchema::getEntity);
+	classIEntitySchema->addMethod< world::Entity*, const TypeInfo&, uint32_t >("getEntityOf", &world::IEntitySchema::getEntity);
+	classIEntitySchema->addMethod< world::Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getEntityOf", &world::IEntitySchema::getEntity);
+	classIEntitySchema->addMethod< world::Entity*, const world::Entity*, uint32_t >("getChildEntity", &world::IEntitySchema::getChildEntity);
+	classIEntitySchema->addMethod< world::Entity*, const world::Entity*, const std::wstring&, uint32_t >("getChildEntity", &world::IEntitySchema::getChildEntity);
+	classIEntitySchema->addMethod< world::Entity*, const world::Entity*, const TypeInfo&, uint32_t >("getChildEntityOf", &world::IEntitySchema::getChildEntity);
+	classIEntitySchema->addMethod< world::Entity*, const world::Entity*, const std::wstring&, const TypeInfo&, uint32_t >("getChildEntityOf", &world::IEntitySchema::getChildEntity);
 	scriptManager->registerClass(classIEntitySchema);
 
 	Ref< script::AutoScriptClass< world::EntitySchema > > classEntitySchema = new script::AutoScriptClass< world::EntitySchema >();
@@ -78,12 +78,12 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classIEntityFactory);
 
 	Ref< script::AutoScriptClass< world::IEntityBuilder > > classIEntityBuilder = new script::AutoScriptClass< world::IEntityBuilder >();
-	classIEntityBuilder->addMethod(L"addFactory", &world::IEntityBuilder::addFactory);
-	classIEntityBuilder->addMethod(L"removeFactory", &world::IEntityBuilder::removeFactory);
-	classIEntityBuilder->addMethod(L"beginBuild", &world::IEntityBuilder::begin);
-	classIEntityBuilder->addMethod(L"create", &world::IEntityBuilder::create);
-	classIEntityBuilder->addMethod(L"get", &world::IEntityBuilder::get);
-	classIEntityBuilder->addMethod(L"endBuild", &world::IEntityBuilder::end);
+	classIEntityBuilder->addMethod("addFactory", &world::IEntityBuilder::addFactory);
+	classIEntityBuilder->addMethod("removeFactory", &world::IEntityBuilder::removeFactory);
+	classIEntityBuilder->addMethod("beginBuild", &world::IEntityBuilder::begin);
+	classIEntityBuilder->addMethod("create", &world::IEntityBuilder::create);
+	classIEntityBuilder->addMethod("get", &world::IEntityBuilder::get);
+	classIEntityBuilder->addMethod("endBuild", &world::IEntityBuilder::end);
 	scriptManager->registerClass(classIEntityBuilder);
 
 	Ref< script::AutoScriptClass< world::EntityBuilder > > classEntityBuilder = new script::AutoScriptClass< world::EntityBuilder >();
@@ -94,48 +94,48 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classIEntityRenderer);
 
 	Ref< script::AutoScriptClass< world::EntityData > > classEntityData = new script::AutoScriptClass< world::EntityData >();
-	classEntityData->addMethod(L"getName", &world::EntityData::getName);
-	classEntityData->addMethod(L"setTransform", &world::EntityData::setTransform);
-	classEntityData->addMethod(L"getTransform", &world::EntityData::getTransform);
+	classEntityData->addMethod("getName", &world::EntityData::getName);
+	classEntityData->addMethod("setTransform", &world::EntityData::setTransform);
+	classEntityData->addMethod("getTransform", &world::EntityData::getTransform);
 	scriptManager->registerClass(classEntityData);
 
 	Ref< script::AutoScriptClass< world::Entity > > classEntity = new script::AutoScriptClass< world::Entity >();
-	classEntity->addMethod(L"destroy", &world::Entity::destroy);
-	classEntity->addMethod(L"setTransform", &world::Entity::setTransform);
-	classEntity->addMethod(L"getTransform", &world_Entity_getTransform);
-	classEntity->addMethod(L"getBoundingBox", &world::Entity::getBoundingBox);
-	classEntity->addMethod(L"getWorldBoundingBox", &world::Entity::getWorldBoundingBox);
-	classEntity->addMethod(L"update", &world_Entity_update);
+	classEntity->addMethod("destroy", &world::Entity::destroy);
+	classEntity->addMethod("setTransform", &world::Entity::setTransform);
+	classEntity->addMethod("getTransform", &world_Entity_getTransform);
+	classEntity->addMethod("getBoundingBox", &world::Entity::getBoundingBox);
+	classEntity->addMethod("getWorldBoundingBox", &world::Entity::getWorldBoundingBox);
+	classEntity->addMethod("update", &world_Entity_update);
 	scriptManager->registerClass(classEntity);
 
 	Ref< script::AutoScriptClass< world::GroupEntity > > classGroupEntity = new script::AutoScriptClass< world::GroupEntity >();
 	classGroupEntity->addConstructor< const Transform& >();
-	classGroupEntity->addMethod(L"addEntity", &world::GroupEntity::addEntity);
-	classGroupEntity->addMethod(L"removeEntity", &world::GroupEntity::removeEntity);
-	classGroupEntity->addMethod(L"removeAllEntities", &world::GroupEntity::removeAllEntities);
-	classGroupEntity->addMethod(L"getEntities", &world::GroupEntity::getEntities);
-	classGroupEntity->addMethod(L"getEntitiesOf", &world_GroupEntity_getEntitiesOf);
-	classGroupEntity->addMethod(L"getFirstEntityOf", &world_GroupEntity_getFirstEntityOf);
+	classGroupEntity->addMethod("addEntity", &world::GroupEntity::addEntity);
+	classGroupEntity->addMethod("removeEntity", &world::GroupEntity::removeEntity);
+	classGroupEntity->addMethod("removeAllEntities", &world::GroupEntity::removeAllEntities);
+	classGroupEntity->addMethod("getEntities", &world::GroupEntity::getEntities);
+	classGroupEntity->addMethod("getEntitiesOf", &world_GroupEntity_getEntitiesOf);
+	classGroupEntity->addMethod("getFirstEntityOf", &world_GroupEntity_getFirstEntityOf);
 	scriptManager->registerClass(classGroupEntity);
 
 	Ref< script::AutoScriptClass< world::PointLightEntity > > classPointLightEntity = new script::AutoScriptClass< world::PointLightEntity >();
-	classPointLightEntity->addMethod(L"getSunColor", &world::PointLightEntity::getSunColor);
-	classPointLightEntity->addMethod(L"getBaseColor", &world::PointLightEntity::getBaseColor);
-	classPointLightEntity->addMethod(L"getShadowColor", &world::PointLightEntity::getShadowColor);
-	classPointLightEntity->addMethod(L"getRange", &world::PointLightEntity::getRange);
-	classPointLightEntity->addMethod(L"getRandomFlicker", &world::PointLightEntity::getRandomFlicker);
+	classPointLightEntity->addMethod("getSunColor", &world::PointLightEntity::getSunColor);
+	classPointLightEntity->addMethod("getBaseColor", &world::PointLightEntity::getBaseColor);
+	classPointLightEntity->addMethod("getShadowColor", &world::PointLightEntity::getShadowColor);
+	classPointLightEntity->addMethod("getRange", &world::PointLightEntity::getRange);
+	classPointLightEntity->addMethod("getRandomFlicker", &world::PointLightEntity::getRandomFlicker);
 	scriptManager->registerClass(classPointLightEntity);
 
 	Ref< script::AutoScriptClass< world::DirectionalLightEntity > > classDirectionalLightEntity = new script::AutoScriptClass< world::DirectionalLightEntity >();
 	classDirectionalLightEntity->addConstructor< const Transform&, const Vector4&, const Vector4&, const Vector4&, bool >();
-	classDirectionalLightEntity->addMethod(L"setSunColor", &world::DirectionalLightEntity::setSunColor);
-	classDirectionalLightEntity->addMethod(L"getSunColor", &world::DirectionalLightEntity::getSunColor);
-	classDirectionalLightEntity->addMethod(L"setBaseColor", &world::DirectionalLightEntity::setBaseColor);
-	classDirectionalLightEntity->addMethod(L"getBaseColor", &world::DirectionalLightEntity::getBaseColor);
-	classDirectionalLightEntity->addMethod(L"setShadowColor", &world::DirectionalLightEntity::setShadowColor);
-	classDirectionalLightEntity->addMethod(L"getShadowColor", &world::DirectionalLightEntity::getShadowColor);
-	classDirectionalLightEntity->addMethod(L"setCastShadow", &world::DirectionalLightEntity::setCastShadow);
-	classDirectionalLightEntity->addMethod(L"getCastShadow", &world::DirectionalLightEntity::getCastShadow);
+	classDirectionalLightEntity->addMethod("setSunColor", &world::DirectionalLightEntity::setSunColor);
+	classDirectionalLightEntity->addMethod("getSunColor", &world::DirectionalLightEntity::getSunColor);
+	classDirectionalLightEntity->addMethod("setBaseColor", &world::DirectionalLightEntity::setBaseColor);
+	classDirectionalLightEntity->addMethod("getBaseColor", &world::DirectionalLightEntity::getBaseColor);
+	classDirectionalLightEntity->addMethod("setShadowColor", &world::DirectionalLightEntity::setShadowColor);
+	classDirectionalLightEntity->addMethod("getShadowColor", &world::DirectionalLightEntity::getShadowColor);
+	classDirectionalLightEntity->addMethod("setCastShadow", &world::DirectionalLightEntity::setCastShadow);
+	classDirectionalLightEntity->addMethod("getCastShadow", &world::DirectionalLightEntity::getCastShadow);
 	scriptManager->registerClass(classDirectionalLightEntity);
 
 	Ref< script::AutoScriptClass< world::NullEntity > > classNullEntity = new script::AutoScriptClass< world::NullEntity >();
@@ -147,8 +147,8 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classTransientEntity);
 
 	Ref< script::AutoScriptClass< world::PostProcess > > classPostProcess = new script::AutoScriptClass< world::PostProcess >();
-	classPostProcess->addMethod(L"setParameter", &world_PostProcess_setParameter);
-	classPostProcess->addMethod(L"requireHighRange", &world::PostProcess::requireHighRange);
+	classPostProcess->addMethod("setParameter", &world_PostProcess_setParameter);
+	classPostProcess->addMethod("requireHighRange", &world::PostProcess::requireHighRange);
 	scriptManager->registerClass(classPostProcess);
 }
 

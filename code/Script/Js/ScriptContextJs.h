@@ -40,15 +40,15 @@ public:
 
 	virtual void destroy();
 
-	virtual void setGlobal(const std::wstring& globalName, const Any& globalValue);
+	virtual void setGlobal(const std::string& globalName, const Any& globalValue);
 
-	virtual Any getGlobal(const std::wstring& globalName);
+	virtual Any getGlobal(const std::string& globalName);
 
-	virtual bool haveFunction(const std::wstring& functionName) const;
+	virtual bool haveFunction(const std::string& functionName) const;
 
-	virtual Any executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv);
+	virtual Any executeFunction(const std::string& functionName, uint32_t argc, const Any* argv);
 
-	virtual Any executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv);
+	virtual Any executeMethod(Object* self, const std::string& methodName, uint32_t argc, const Any* argv);
 
 private:
 	struct RegisteredClass
@@ -66,6 +66,8 @@ private:
 	static v8::Handle< v8::Value > invokeMethod(const v8::Arguments& arguments);
 
 	static void weakHandleCallback(v8::Persistent< v8::Value > object, void* parameter);
+
+	v8::Handle< v8::String > createString(const std::string& s) const;
 
 	v8::Handle< v8::String > createString(const std::wstring& s) const;
 

@@ -27,7 +27,7 @@ void PropertyGroup_setProperty(PropertyGroup* self, const std::wstring& property
 	else if (value.isFloat())
 		self->setProperty< PropertyFloat >(propertyName, value.getBoolean());
 	else if (value.isString())
-		self->setProperty< PropertyString >(propertyName, value.getString());
+		self->setProperty< PropertyString >(propertyName, value.getWideString());
 }
 
 script::Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& propertyName)
@@ -68,8 +68,8 @@ void registerCoreClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< PropertyGroup > > classPropertyGroup = new script::AutoScriptClass< PropertyGroup >();
 	classPropertyGroup->addConstructor();
-	classPropertyGroup->addMethod(L"setProperty", &PropertyGroup_setProperty);
-	classPropertyGroup->addMethod(L"getProperty", &PropertyGroup_getProperty);
+	classPropertyGroup->addMethod("setProperty", &PropertyGroup_setProperty);
+	classPropertyGroup->addMethod("getProperty", &PropertyGroup_getProperty);
 	scriptManager->registerClass(classPropertyGroup);
 
 	Ref< script::AutoScriptClass< PropertyInteger > > classPropertyInteger = new script::AutoScriptClass< PropertyInteger >();

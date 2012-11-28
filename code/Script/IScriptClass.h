@@ -53,19 +53,19 @@ public:
 	virtual uint32_t getMethodCount() const = 0;
 
 	/*! \brief Get name of exported method. */
-	virtual std::wstring getMethodName(uint32_t methodId) const = 0;
+	virtual std::string getMethodName(uint32_t methodId) const = 0;
 
 	/*! \brief Invoke exported method. */
 	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Invoke unknown method. */
-	virtual Any invokeUnknown(const InvokeParam& param, const std::wstring& methodName, uint32_t argc, const Any* argv) const = 0;
+	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const = 0;
 
 	/*! \brief Get exported properties count. */
 	virtual uint32_t getPropertyCount() const = 0;
 
 	/*! \brief Get name of exported property. */
-	virtual std::wstring getPropertyName(uint32_t propertyId) const = 0;
+	virtual std::string getPropertyName(uint32_t propertyId) const = 0;
 
 	/*! \brief Get property value. */
 	virtual Any getPropertyValue(const InvokeParam& param, uint32_t propertyId) const = 0;

@@ -145,12 +145,12 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	uint32_t methodCount = scriptClass->getMethodCount();
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
-		std::wstring methodName = scriptClass->getMethodName(i);
+		std::string methodName = scriptClass->getMethodName(i);
 		lua_pushinteger(m_luaState, i);
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
 		lua_pushcclosure(m_luaState, classCallMethod, 3);
-		lua_setfield(m_luaState, -2, wstombs(methodName).c_str());
+		lua_setfield(m_luaState, -2, methodName.c_str());
 	}
 
 	const TypeInfo& exportType = scriptClass->getExportType();
@@ -389,15 +389,15 @@ void ScriptManagerLua::pushAny(const Any& any)
 	if (any.isVoid())
 		lua_pushnil(m_luaState);
 	else if (any.isBoolean())
-		lua_pushboolean(m_luaState, any.getBoolean() ? 1 : 0);
+		lua_pushboolean(m_luaState, any.getBooleanUnsafe() ? 1 : 0);
 	else if (any.isInteger())
-		lua_pushinteger(m_luaState, any.getInteger());
+		lua_pushinteger(m_luaState, any.getIntegerUnsafe());
 	else if (any.isFloat())
-		lua_pushnumber(m_luaState, any.getFloat());
+		lua_pushnumber(m_luaState, any.getFloatUnsafe());
 	else if (any.isString())
-		lua_pushstring(m_luaState, wstombs(any.getString()).c_str());
+		lua_pushstring(m_luaState, any.getStringUnsafe().c_str());
 	else if (any.isObject())
-		pushObject(any.getObject());
+		pushObject(any.getObjectUnsafe());
 	else
 		lua_pushnil(m_luaState);
 }
@@ -411,7 +411,7 @@ Any ScriptManagerLua::toAny(int32_t index)
 	if (lua_isboolean(m_luaState, index))
 		return Any(bool(lua_toboolean(m_luaState, index) != 0));
 	if (lua_isstring(m_luaState, index))
-		return Any(mbstows(lua_tostring(m_luaState, index)));
+		return Any(lua_tostring(m_luaState, index));
 	if (lua_isuserdata(m_luaState, index))
 	{
 		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
@@ -576,7 +576,7 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 	timer.start();
 #endif
 
-	Any returnValue = scriptClass->invokeUnknown(param, mbstows(methodName), top - 1, argv);
+	Any returnValue = scriptClass->invokeUnknown(param, methodName, top - 1, argv);
 
 #if defined(T_SCRIPT_PROFILE_CALLS)
 	double call = timer.getElapsedTime();

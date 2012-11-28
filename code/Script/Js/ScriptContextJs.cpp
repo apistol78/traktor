@@ -180,7 +180,7 @@ void ScriptContextJs::destroy()
 	m_context.Dispose();
 }
 
-void ScriptContextJs::setGlobal(const std::wstring& globalName, const Any& globalValue)
+void ScriptContextJs::setGlobal(const std::string& globalName, const Any& globalValue)
 {
 	v8::HandleScope handleScope;
 	v8::Context::Scope contextScope(m_context);
@@ -191,7 +191,7 @@ void ScriptContextJs::setGlobal(const std::wstring& globalName, const Any& globa
 	);
 }
 
-Any ScriptContextJs::getGlobal(const std::wstring& globalName)
+Any ScriptContextJs::getGlobal(const std::string& globalName)
 {
 	v8::HandleScope handleScope;
 	v8::Context::Scope contextScope(m_context);
@@ -220,7 +220,7 @@ Any ScriptContextJs::getGlobal(const std::wstring& globalName)
 //	return true;
 //}
 
-bool ScriptContextJs::haveFunction(const std::wstring& functionName) const
+bool ScriptContextJs::haveFunction(const std::string& functionName) const
 {
 	v8::HandleScope handleScope;
 	v8::Context::Scope contextScope(m_context);
@@ -228,7 +228,7 @@ bool ScriptContextJs::haveFunction(const std::wstring& functionName) const
 	return m_context->Global()->Has(createString(functionName));
 }
 
-Any ScriptContextJs::executeFunction(const std::wstring& functionName, uint32_t argc, const Any* argv)
+Any ScriptContextJs::executeFunction(const std::string& functionName, uint32_t argc, const Any* argv)
 {
 	v8::HandleScope handleScope;
 	v8::Context::Scope contextScope(m_context);
@@ -263,7 +263,7 @@ Any ScriptContextJs::executeFunction(const std::wstring& functionName, uint32_t 
 	return fromValue(result);
 }
 
-Any ScriptContextJs::executeMethod(Object* self, const std::wstring& methodName, uint32_t argc, const Any* argv)
+Any ScriptContextJs::executeMethod(Object* self, const std::string& methodName, uint32_t argc, const Any* argv)
 {
 	v8::HandleScope handleScope;
 	v8::Context::Scope contextScope(m_context);
@@ -373,6 +373,11 @@ void ScriptContextJs::weakHandleCallback(v8::Persistent< v8::Value > object, voi
 {
 	Object* objectRef = reinterpret_cast< Object* >(parameter);
 	T_SAFE_ANONYMOUS_RELEASE(objectRef);
+}
+
+v8::Handle< v8::String > ScriptContextJs::createString(const std::string& s) const
+{
+	return v8::String::New(s.c_str());
 }
 
 v8::Handle< v8::String > ScriptContextJs::createString(const std::wstring& s) const

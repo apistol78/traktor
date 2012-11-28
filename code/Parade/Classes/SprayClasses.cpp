@@ -11,9 +11,9 @@ namespace traktor
 void registerSprayClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< spray::EffectEntity > > classEffectEntity = new script::AutoScriptClass< spray::EffectEntity >();
-	classEffectEntity->addMethod(L"isFinished", &spray::EffectEntity::isFinished);
-	classEffectEntity->addMethod(L"setEnable", &spray::EffectEntity::setEnable);
-	classEffectEntity->addMethod(L"isEnable", &spray::EffectEntity::isEnable);
+	classEffectEntity->addMethod("isFinished", &spray::EffectEntity::isFinished);
+	classEffectEntity->addMethod("setEnable", &spray::EffectEntity::setEnable);
+	classEffectEntity->addMethod("isEnable", &spray::EffectEntity::isEnable);
 	scriptManager->registerClass(classEffectEntity);
 }
 

@@ -43,21 +43,21 @@ public:
 	 * \param globalName Name of global variable.
 	 * \param globalValue Value of global variable.
 	 */
-	virtual void setGlobal(const std::wstring& globalName, const Any& globalValue) = 0;
+	virtual void setGlobal(const std::string& globalName, const Any& globalValue) = 0;
 
 	/*! \brief Get global variable value.
 	 *
 	 * \param globalName Name of global variable.
 	 * \return Global value; void if not found.
 	 */
-	virtual Any getGlobal(const std::wstring& globalName) = 0;
+	virtual Any getGlobal(const std::string& globalName) = 0;
 
 	/*! \brief Return true if context contains function (or method).
 	 *
 	 * \param functionName Name of function of interest.
 	 * \return True if function exists.
 	 */
-	virtual bool haveFunction(const std::wstring& functionName) const = 0;
+	virtual bool haveFunction(const std::string& functionName) const = 0;
 
 	/*! \brief Execute function.
 	 *
@@ -66,7 +66,7 @@ public:
 	 * \param argv Argument vector.
 	 * \return Return value from function.
 	 */
-	virtual Any executeFunction(const std::wstring& functionName, uint32_t argc = 0, const Any* argv = 0) = 0;
+	virtual Any executeFunction(const std::string& functionName, uint32_t argc = 0, const Any* argv = 0) = 0;
 
 	/*! \brief Execute method.
 	*
@@ -76,7 +76,7 @@ public:
 	* \param argv Argument vector.
 	* \return Return value from function.
 	*/
-	virtual Any executeMethod(Object* self, const std::wstring& methodName, uint32_t argc = 0, const Any* argv = 0) = 0;
+	virtual Any executeMethod(Object* self, const std::string& methodName, uint32_t argc = 0, const Any* argv = 0) = 0;
 };
 
 	}

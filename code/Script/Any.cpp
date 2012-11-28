@@ -1,8 +1,10 @@
 #include <cstring>
 #include "Script/Any.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/TString.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
 
@@ -13,33 +15,33 @@ namespace traktor
 		namespace
 		{
 
-wchar_t* refStringCreate(const wchar_t* s)
+char* refStringCreate(const char* s)
 {
-	uint32_t len = wcslen(s);
+	uint32_t len = strlen(s);
 	
-	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(wchar_t), 4, T_FILE_LINE);
+	void* ptr = getAllocator()->alloc(sizeof(uint16_t) + (len + 1) * sizeof(char), 4, T_FILE_LINE);
 	if (!ptr)
 		return 0;
 
 	uint16_t* base = static_cast< uint16_t* >(ptr);
 	*base = 1;
 
-	wchar_t* c = reinterpret_cast< wchar_t* >(base + 1);
+	char* c = reinterpret_cast< char* >(base + 1);
 	if (len > 0)
-		std::memcpy(c, s, len * sizeof(wchar_t));
+		std::memcpy(c, s, len * sizeof(char));
 
 	c[len] = L'\0';
 	return c;
 }
 
-wchar_t* refStringInc(wchar_t* s)
+char* refStringInc(char* s)
 {
 	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
 	(*base)++;
 	return s;
 }
 
-wchar_t* refStringDec(wchar_t* s)
+char* refStringDec(char* s)
 {
 	uint16_t* base = reinterpret_cast< uint16_t* >(s) - 1;
 	if (--*base == 0)
@@ -89,16 +91,28 @@ Any::Any(float value)
 	m_data.m_float = value;
 }
 
-Any::Any(const wchar_t* value)
+Any::Any(const char* value)
 :	m_type(AtString)
 {
 	m_data.m_string = refStringCreate(value);
 }
 
-Any::Any(const std::wstring& value)
+Any::Any(const std::string& value)
 :	m_type(AtString)
 {
 	m_data.m_string = refStringCreate(value.c_str());
+}
+
+Any::Any(const wchar_t* value)
+:	m_type(AtString)
+{
+	m_data.m_string = refStringCreate(wstombs(value).c_str());
+}
+
+Any::Any(const std::wstring& value)
+:	m_type(AtString)
+{
+	m_data.m_string = refStringCreate(wstombs(value).c_str());
 }
 
 Any::Any(Object* value)
@@ -184,7 +198,27 @@ float Any::getFloat() const
 	return 0.0f;
 }
 
-std::wstring Any::getString() const
+std::string Any::getString() const
+{
+	switch (m_type)
+	{
+	case AtBoolean:
+		return m_data.m_boolean ? "true" : "false";
+	case AtInteger:
+		return wstombs(toString(m_data.m_integer));
+	case AtFloat:
+		return wstombs(toString(m_data.m_float));
+	case AtString:
+		return m_data.m_string;
+	case AtType:
+		return wstombs(m_data.m_type->getName());
+	default:
+		break;
+	}
+	return "";
+}
+
+std::wstring Any::getWideString() const
 {
 	switch (m_type)
 	{
@@ -195,7 +229,7 @@ std::wstring Any::getString() const
 	case AtFloat:
 		return toString(m_data.m_float);
 	case AtString:
-		return m_data.m_string;
+		return mbstows(Utf8Encoding(), m_data.m_string);
 	case AtType:
 		return m_data.m_type->getName();
 	default:

@@ -12,19 +12,19 @@ namespace traktor
 void registerResourceClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< resource::IResourceFactory > > classIResourceFactory = new script::AutoScriptClass< resource::IResourceFactory >();
-	classIResourceFactory->addMethod(L"isCacheable", &resource::IResourceFactory::isCacheable);
+	classIResourceFactory->addMethod("isCacheable", &resource::IResourceFactory::isCacheable);
 	scriptManager->registerClass(classIResourceFactory);
 
 	Ref< script::AutoScriptClass< resource::IResourceHandle > > classIResourceHandle = new script::AutoScriptClass< resource::IResourceHandle >();
-	classIResourceHandle->addMethod(L"replace", &resource::IResourceHandle::replace);
-	classIResourceHandle->addMethod(L"get", &resource::IResourceHandle::get);
-	classIResourceHandle->addMethod(L"flush", &resource::IResourceHandle::flush);
+	classIResourceHandle->addMethod("replace", &resource::IResourceHandle::replace);
+	classIResourceHandle->addMethod("get", &resource::IResourceHandle::get);
+	classIResourceHandle->addMethod("flush", &resource::IResourceHandle::flush);
 	scriptManager->registerClass(classIResourceHandle);
 
 	Ref< script::AutoScriptClass< resource::IResourceManager > > classIResourceManager = new script::AutoScriptClass< resource::IResourceManager >();
-	classIResourceManager->addMethod(L"addFactory", &resource::IResourceManager::addFactory);
-	classIResourceManager->addMethod(L"removeFactory", &resource::IResourceManager::removeFactory);
-	classIResourceManager->addMethod(L"removeAllFactories", &resource::IResourceManager::removeAllFactories);
+	classIResourceManager->addMethod("addFactory", &resource::IResourceManager::addFactory);
+	classIResourceManager->addMethod("removeFactory", &resource::IResourceManager::removeFactory);
+	classIResourceManager->addMethod("removeAllFactories", &resource::IResourceManager::removeAllFactories);
 	scriptManager->registerClass(classIResourceManager);
 }
 

@@ -31,80 +31,80 @@ namespace traktor
 void registerAmalgamClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< amalgam::IEnvironment > > classEnvironment = new script::AutoScriptClass< amalgam::IEnvironment >();
-	classEnvironment->addMethod(L"getDatabase", &amalgam::IEnvironment::getDatabase);
-	classEnvironment->addMethod(L"getAudio", &amalgam::IEnvironment::getAudio);
-	classEnvironment->addMethod(L"getInput", &amalgam::IEnvironment::getInput);
-	classEnvironment->addMethod(L"getOnline", &amalgam::IEnvironment::getOnline);
-	classEnvironment->addMethod(L"getPhysics", &amalgam::IEnvironment::getPhysics);
-	classEnvironment->addMethod(L"getRender", &amalgam::IEnvironment::getRender);
-	classEnvironment->addMethod(L"getResource", &amalgam::IEnvironment::getResource);
-	classEnvironment->addMethod(L"getScript", &amalgam::IEnvironment::getScript);
-	classEnvironment->addMethod(L"getWorld", &amalgam::IEnvironment::getWorld);
-	classEnvironment->addMethod(L"getSettings", &amalgam::IEnvironment::getSettings);
-	classEnvironment->addMethod(L"reconfigure", &amalgam::IEnvironment::reconfigure);
+	classEnvironment->addMethod("getDatabase", &amalgam::IEnvironment::getDatabase);
+	classEnvironment->addMethod("getAudio", &amalgam::IEnvironment::getAudio);
+	classEnvironment->addMethod("getInput", &amalgam::IEnvironment::getInput);
+	classEnvironment->addMethod("getOnline", &amalgam::IEnvironment::getOnline);
+	classEnvironment->addMethod("getPhysics", &amalgam::IEnvironment::getPhysics);
+	classEnvironment->addMethod("getRender", &amalgam::IEnvironment::getRender);
+	classEnvironment->addMethod("getResource", &amalgam::IEnvironment::getResource);
+	classEnvironment->addMethod("getScript", &amalgam::IEnvironment::getScript);
+	classEnvironment->addMethod("getWorld", &amalgam::IEnvironment::getWorld);
+	classEnvironment->addMethod("getSettings", &amalgam::IEnvironment::getSettings);
+	classEnvironment->addMethod("reconfigure", &amalgam::IEnvironment::reconfigure);
 	scriptManager->registerClass(classEnvironment);
 
 	Ref< script::AutoScriptClass< amalgam::IAudioServer > > classAudioServer = new script::AutoScriptClass< amalgam::IAudioServer >();
-	classAudioServer->addMethod(L"getSoundSystem", &amalgam::IAudioServer::getSoundSystem);
-	classAudioServer->addMethod(L"getSurroundEnvironment", &amalgam::IAudioServer::getSurroundEnvironment);
+	classAudioServer->addMethod("getSoundSystem", &amalgam::IAudioServer::getSoundSystem);
+	classAudioServer->addMethod("getSurroundEnvironment", &amalgam::IAudioServer::getSurroundEnvironment);
 	scriptManager->registerClass(classAudioServer);
 
 	Ref< script::AutoScriptClass< amalgam::IInputServer > > classInputServer = new script::AutoScriptClass< amalgam::IInputServer >();
-	classInputServer->addMethod(L"isFabricating", &amalgam::IInputServer::isFabricating);
-	classInputServer->addMethod(L"abortedFabricating", &amalgam::IInputServer::abortedFabricating);
-	classInputServer->addMethod(L"resetInputSource", &amalgam::IInputServer::resetInputSource);
-	classInputServer->addMethod(L"isIdle", &amalgam::IInputServer::isIdle);
-	classInputServer->addMethod(L"getInputSystem", &amalgam::IInputServer::getInputSystem);
-	classInputServer->addMethod(L"getInputMapping", &amalgam::IInputServer::getInputMapping);
-	classInputServer->addMethod(L"getRumbleEffectPlayer", &amalgam::IInputServer::getRumbleEffectPlayer);
+	classInputServer->addMethod("isFabricating", &amalgam::IInputServer::isFabricating);
+	classInputServer->addMethod("abortedFabricating", &amalgam::IInputServer::abortedFabricating);
+	classInputServer->addMethod("resetInputSource", &amalgam::IInputServer::resetInputSource);
+	classInputServer->addMethod("isIdle", &amalgam::IInputServer::isIdle);
+	classInputServer->addMethod("getInputSystem", &amalgam::IInputServer::getInputSystem);
+	classInputServer->addMethod("getInputMapping", &amalgam::IInputServer::getInputMapping);
+	classInputServer->addMethod("getRumbleEffectPlayer", &amalgam::IInputServer::getRumbleEffectPlayer);
 	scriptManager->registerClass(classInputServer);
 
 	Ref< script::AutoScriptClass< amalgam::IOnlineServer > > classOnlineServer = new script::AutoScriptClass< amalgam::IOnlineServer >();
-	classOnlineServer->addMethod(L"getSessionManager", &amalgam::IOnlineServer::getSessionManager);
+	classOnlineServer->addMethod("getSessionManager", &amalgam::IOnlineServer::getSessionManager);
 	scriptManager->registerClass(classOnlineServer);
 
 	Ref< script::AutoScriptClass< amalgam::IPhysicsServer > > classPhysicsServer = new script::AutoScriptClass< amalgam::IPhysicsServer >();
-	classPhysicsServer->addMethod(L"getPhysicsManager", &amalgam::IPhysicsServer::getPhysicsManager);
+	classPhysicsServer->addMethod("getPhysicsManager", &amalgam::IPhysicsServer::getPhysicsManager);
 	scriptManager->registerClass(classPhysicsServer);
 
 	Ref< script::AutoScriptClass< amalgam::IRenderServer > > classRenderServer = new script::AutoScriptClass< amalgam::IRenderServer >();
-	classRenderServer->addMethod(L"getRenderSystem", &amalgam::IRenderServer::getRenderSystem);
-	classRenderServer->addMethod(L"getRenderView", &amalgam::IRenderServer::getRenderView);
-	classRenderServer->addMethod(L"getScreenAspectRatio", &amalgam::IRenderServer::getScreenAspectRatio);
-	classRenderServer->addMethod(L"getViewAspectRatio", &amalgam::IRenderServer::getViewAspectRatio);
-	classRenderServer->addMethod(L"getAspectRatio", &amalgam::IRenderServer::getAspectRatio);
-	classRenderServer->addMethod(L"getStereoscopic", &amalgam::IRenderServer::getStereoscopic);
-	classRenderServer->addMethod(L"getMultiSample", &amalgam::IRenderServer::getMultiSample);
-	classRenderServer->addMethod(L"getFrameRate", &amalgam::IRenderServer::getFrameRate);
+	classRenderServer->addMethod("getRenderSystem", &amalgam::IRenderServer::getRenderSystem);
+	classRenderServer->addMethod("getRenderView", &amalgam::IRenderServer::getRenderView);
+	classRenderServer->addMethod("getScreenAspectRatio", &amalgam::IRenderServer::getScreenAspectRatio);
+	classRenderServer->addMethod("getViewAspectRatio", &amalgam::IRenderServer::getViewAspectRatio);
+	classRenderServer->addMethod("getAspectRatio", &amalgam::IRenderServer::getAspectRatio);
+	classRenderServer->addMethod("getStereoscopic", &amalgam::IRenderServer::getStereoscopic);
+	classRenderServer->addMethod("getMultiSample", &amalgam::IRenderServer::getMultiSample);
+	classRenderServer->addMethod("getFrameRate", &amalgam::IRenderServer::getFrameRate);
 	scriptManager->registerClass(classRenderServer);
 
 	Ref< script::AutoScriptClass< amalgam::IResourceServer > > classResourceServer = new script::AutoScriptClass< amalgam::IResourceServer >();
-	classResourceServer->addMethod(L"getResourceManager", &amalgam::IResourceServer::getResourceManager);
+	classResourceServer->addMethod("getResourceManager", &amalgam::IResourceServer::getResourceManager);
 	scriptManager->registerClass(classResourceServer);
 
 	Ref< script::AutoScriptClass< amalgam::IWorldServer > > classWorldServer = new script::AutoScriptClass< amalgam::IWorldServer >();
-	classWorldServer->addMethod(L"addEntityFactory", &amalgam::IWorldServer::addEntityFactory);
-	classWorldServer->addMethod(L"removeEntityFactory", &amalgam::IWorldServer::removeEntityFactory);
-	classWorldServer->addMethod(L"addEntityRenderer", &amalgam::IWorldServer::addEntityRenderer);
-	classWorldServer->addMethod(L"removeEntityRenderer", &amalgam::IWorldServer::removeEntityRenderer);
-	classWorldServer->addMethod(L"getEntityBuilder", &amalgam::IWorldServer::getEntityBuilder);
-	classWorldServer->addMethod(L"getEntityRenderers", &amalgam::IWorldServer::getEntityRenderers);
-	classWorldServer->addMethod(L"getFrameCount", &amalgam::IWorldServer::getFrameCount);
+	classWorldServer->addMethod("addEntityFactory", &amalgam::IWorldServer::addEntityFactory);
+	classWorldServer->addMethod("removeEntityFactory", &amalgam::IWorldServer::removeEntityFactory);
+	classWorldServer->addMethod("addEntityRenderer", &amalgam::IWorldServer::addEntityRenderer);
+	classWorldServer->addMethod("removeEntityRenderer", &amalgam::IWorldServer::removeEntityRenderer);
+	classWorldServer->addMethod("getEntityBuilder", &amalgam::IWorldServer::getEntityBuilder);
+	classWorldServer->addMethod("getEntityRenderers", &amalgam::IWorldServer::getEntityRenderers);
+	classWorldServer->addMethod("getFrameCount", &amalgam::IWorldServer::getFrameCount);
 	scriptManager->registerClass(classWorldServer);
 
 	Ref< script::AutoScriptClass< amalgam::IUpdateControl > > classIUpdateControl = new script::AutoScriptClass< amalgam::IUpdateControl >();
-	classIUpdateControl->addMethod(L"setPause", &amalgam::IUpdateControl::setPause);
-	classIUpdateControl->addMethod(L"getPause", &amalgam::IUpdateControl::getPause);
+	classIUpdateControl->addMethod("setPause", &amalgam::IUpdateControl::setPause);
+	classIUpdateControl->addMethod("getPause", &amalgam::IUpdateControl::getPause);
 	scriptManager->registerClass(classIUpdateControl);
 
 	Ref< script::AutoScriptClass< amalgam::IUpdateInfo > > classIUpdateInfo = new script::AutoScriptClass< amalgam::IUpdateInfo >();
-	classIUpdateInfo->addMethod(L"getTotalTime", &amalgam::IUpdateInfo::getTotalTime);
-	classIUpdateInfo->addMethod(L"getStateTime", &amalgam::IUpdateInfo::getStateTime);
-	classIUpdateInfo->addMethod(L"getSimulationTime", &amalgam::IUpdateInfo::getSimulationTime);
-	classIUpdateInfo->addMethod(L"getSimulationDeltaTime", &amalgam::IUpdateInfo::getSimulationDeltaTime);
-	classIUpdateInfo->addMethod(L"getSimulationFrequency", &amalgam::IUpdateInfo::getSimulationFrequency);
-	classIUpdateInfo->addMethod(L"getFrameDeltaTime", &amalgam::IUpdateInfo::getFrameDeltaTime);
-	classIUpdateInfo->addMethod(L"getInterval", &amalgam::IUpdateInfo::getInterval);
+	classIUpdateInfo->addMethod("getTotalTime", &amalgam::IUpdateInfo::getTotalTime);
+	classIUpdateInfo->addMethod("getStateTime", &amalgam::IUpdateInfo::getStateTime);
+	classIUpdateInfo->addMethod("getSimulationTime", &amalgam::IUpdateInfo::getSimulationTime);
+	classIUpdateInfo->addMethod("getSimulationDeltaTime", &amalgam::IUpdateInfo::getSimulationDeltaTime);
+	classIUpdateInfo->addMethod("getSimulationFrequency", &amalgam::IUpdateInfo::getSimulationFrequency);
+	classIUpdateInfo->addMethod("getFrameDeltaTime", &amalgam::IUpdateInfo::getFrameDeltaTime);
+	classIUpdateInfo->addMethod("getInterval", &amalgam::IUpdateInfo::getInterval);
 	scriptManager->registerClass(classIUpdateInfo);
 }
 

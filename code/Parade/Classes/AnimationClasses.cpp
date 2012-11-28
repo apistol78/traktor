@@ -51,33 +51,33 @@ Transform animation_AnimatedMeshEntity_getSkinTransform(animation::AnimatedMeshE
 void registerAnimationClasses(script::IScriptManager* scriptManager)
 {
 	Ref< script::AutoScriptClass< animation::AnimatedMeshEntity > > classAnimatedMeshEntity = new script::AutoScriptClass< animation::AnimatedMeshEntity >();
-	classAnimatedMeshEntity->addMethod(L"getJointTransform", &animation_AnimatedMeshEntity_getJointTransform);
-	classAnimatedMeshEntity->addMethod(L"getPoseTransform", &animation_AnimatedMeshEntity_getPoseTransform);
-	classAnimatedMeshEntity->addMethod(L"getSkinTransform", &animation_AnimatedMeshEntity_getSkinTransform);
-	classAnimatedMeshEntity->addMethod(L"setPoseTransform", &animation::AnimatedMeshEntity::setPoseTransform);
-	classAnimatedMeshEntity->addMethod(L"setPoseController", &animation::AnimatedMeshEntity::setPoseController);
-	classAnimatedMeshEntity->addMethod(L"getPoseController", &animation::AnimatedMeshEntity::getPoseController);
+	classAnimatedMeshEntity->addMethod("getJointTransform", &animation_AnimatedMeshEntity_getJointTransform);
+	classAnimatedMeshEntity->addMethod("getPoseTransform", &animation_AnimatedMeshEntity_getPoseTransform);
+	classAnimatedMeshEntity->addMethod("getSkinTransform", &animation_AnimatedMeshEntity_getSkinTransform);
+	classAnimatedMeshEntity->addMethod("setPoseTransform", &animation::AnimatedMeshEntity::setPoseTransform);
+	classAnimatedMeshEntity->addMethod("setPoseController", &animation::AnimatedMeshEntity::setPoseController);
+	classAnimatedMeshEntity->addMethod("getPoseController", &animation::AnimatedMeshEntity::getPoseController);
 	scriptManager->registerClass(classAnimatedMeshEntity);
 
 	Ref< script::AutoScriptClass< animation::IPoseController > > classPoseController = new script::AutoScriptClass< animation::IPoseController >();
-	classPoseController->addMethod(L"setTransform", &animation::IPoseController::setTransform);
+	classPoseController->addMethod("setTransform", &animation::IPoseController::setTransform);
 	scriptManager->registerClass(classPoseController);
 
 	Ref< script::AutoScriptClass< animation::IKPoseController > > classIKPoseController = new script::AutoScriptClass< animation::IKPoseController >();
 	classIKPoseController->addConstructor< physics::PhysicsManager*, animation::IPoseController*, uint32_t >();
-	classIKPoseController->addMethod(L"setIgnoreBody", &animation::IKPoseController::setIgnoreBody);
-	classIKPoseController->addMethod(L"getNeutralPoseController", &animation::IKPoseController::getNeutralPoseController);
+	classIKPoseController->addMethod("setIgnoreBody", &animation::IKPoseController::setIgnoreBody);
+	classIKPoseController->addMethod("getNeutralPoseController", &animation::IKPoseController::getNeutralPoseController);
 	scriptManager->registerClass(classIKPoseController);
 
 	Ref< script::AutoScriptClass< animation::RagDollPoseController > > classRagDollPoseController = new script::AutoScriptClass< animation::RagDollPoseController >();
-	classRagDollPoseController->addMethod(L"setEnable", &animation::RagDollPoseController::setEnable);
-	classRagDollPoseController->addMethod(L"isEnable", &animation::RagDollPoseController::isEnable);
-	classRagDollPoseController->addMethod(L"getLimbs", &animation::RagDollPoseController::getLimbs);
+	classRagDollPoseController->addMethod("setEnable", &animation::RagDollPoseController::setEnable);
+	classRagDollPoseController->addMethod("isEnable", &animation::RagDollPoseController::isEnable);
+	classRagDollPoseController->addMethod("getLimbs", &animation::RagDollPoseController::getLimbs);
 	scriptManager->registerClass(classRagDollPoseController);
 
 	Ref< script::AutoScriptClass< animation::StatePoseController > > classStatePoseController = new script::AutoScriptClass< animation::StatePoseController >();
-	classStatePoseController->addMethod(L"setCondition", &animation::StatePoseController::setCondition);
-	classStatePoseController->addMethod(L"setTimeFactor", &animation::StatePoseController::setTimeFactor);
+	classStatePoseController->addMethod("setCondition", &animation::StatePoseController::setCondition);
+	classStatePoseController->addMethod("setTimeFactor", &animation::StatePoseController::setTimeFactor);
 	scriptManager->registerClass(classStatePoseController);
 }
 

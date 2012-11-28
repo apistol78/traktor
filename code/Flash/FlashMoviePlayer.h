@@ -164,7 +164,7 @@ public:
 	 * \param outArgs Output FS arguments.
 	 * \return True any command was popped.
 	 */
-	bool getFsCommand(std::wstring& outCommand, std::wstring& outArgs);
+	bool getFsCommand(std::string& outCommand, std::string& outArgs);
 
 	/*! \brief Set external call interface.
 	 */
@@ -245,7 +245,7 @@ private:
 	Ref< FlashMovie > m_movie;
 	Ref< FlashSpriteInstance > m_movieInstance;
 	std::list< Event > m_events;
-	std::list< std::pair< std::wstring, std::wstring > > m_fsCommands;
+	std::list< std::pair< std::string, std::string > > m_fsCommands;
 	std::map< uint32_t, Interval > m_interval;
 	uint32_t m_intervalNextId;
 	float m_timeCurrent;
