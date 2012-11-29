@@ -28,24 +28,30 @@ bool OceanEntityEditor::handleCommand(const ui::Command& command)
 	{
 		static Random s_random;
 
-		float globalAngle = s_random.nextFloat() * PI * 2.0f;
+		float globalAngle = s_random.nextFloat() * TWO_PI;
 
 		for (int i = 0; i < OceanEntityData::MaxWaves; ++i)
 		{
-			static float maxRandomAngle = deg2rad(20.0f);
-			static float repeatDuration = 0.03f;
+			static float maxRandomAngle = deg2rad(40.0f);
 			static float maxAmplitude = 0.5f;
 
 			float localAngle = (s_random.nextFloat() - 0.5f) * maxRandomAngle + globalAngle;
 
-			float baseFrequency = 2.0f * PI / repeatDuration;
-			float frequency = baseFrequency * (i + 1);
+			float frequency = TWO_PI * (i + 1);
+
+			float fu = sin(localAngle) * frequency;
+			float fv = cos(localAngle) * frequency;
+
+			fu = floor(fu / TWO_PI) * TWO_PI;
+			fv = floor(fv / TWO_PI) * TWO_PI;
+
+			float f = sqrt(fu * fu + fv * fv);
 
 			OceanEntityData::Wave wave;
-			wave.direction.x = cos(localAngle) * frequency;
-			wave.direction.y = sin(localAngle) * frequency;
+			wave.direction.x = cos(localAngle) * f;
+			wave.direction.y = sin(localAngle) * f;
 			wave.amplitude = maxAmplitude * pow(1.0f - float(i) / OceanEntityData::MaxWaves, 4.0f);
-			wave.phase = s_random.nextFloat() * PI * 2.0f;
+			wave.phase = s_random.nextFloat() * TWO_PI;
 
 			oceanEntityData->setWave(i, wave);
 		}

@@ -89,7 +89,7 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 	desc.usingPrimaryDepthStencil = false;
 	desc.preferTiled = false;
 	desc.ignoreStencil = true;
-	desc.generateMips = true;
+	desc.generateMips = false;
 	desc.targets[0].format = render::TfR16F;
 	
 	m_targetWaves = renderSystem->createRenderTargetSet(desc);

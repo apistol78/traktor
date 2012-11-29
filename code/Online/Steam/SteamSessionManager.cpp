@@ -328,8 +328,9 @@ bool SteamSessionManager::waitForStats()
 			return false;
 
 		log::info << L"Steam; Waiting for stats..." << Endl;
+
 		Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-		while (!m_receivedStats)
+		for (int32_t i = 0; i < 100 && !m_receivedStats; ++i)
 		{
 			if (!update())
 				return false;
@@ -341,7 +342,7 @@ bool SteamSessionManager::waitForStats()
 				break;
 		}
 	}
-	return m_receivedStatsSucceeded;
+	return m_receivedStats && m_receivedStatsSucceeded;
 }
 
 bool SteamSessionManager::storeStats()

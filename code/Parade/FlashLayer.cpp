@@ -294,6 +294,20 @@ flash::ActionObject* FlashLayer::getRoot()
 	return movieInstance->getAsObject(cx);
 }
 
+Ref< flash::ActionObject > FlashLayer::createObject() const
+{
+	if (!m_moviePlayer)
+		return 0;
+
+	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
+	T_ASSERT (movieInstance);
+
+	flash::ActionContext* cx = movieInstance->getContext();
+	T_ASSERT (cx);
+
+	return new flash::ActionObject(cx);
+}
+
 script::Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv)
 {
 	if (!m_moviePlayer)

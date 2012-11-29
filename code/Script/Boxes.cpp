@@ -19,6 +19,11 @@ BoxedGuid::BoxedGuid(const Guid& value)
 {
 }
 
+BoxedGuid::BoxedGuid(const std::wstring& value)
+:	m_value(value)
+{
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector2", BoxedVector2, Object)
 
 BoxedVector2::BoxedVector2()
@@ -398,6 +403,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 {
 	Ref< AutoScriptClass< BoxedGuid > > classBoxedGuid = new AutoScriptClass< BoxedGuid >();
 	classBoxedGuid->addConstructor();
+	classBoxedGuid->addConstructor< const std::wstring& >();
 	classBoxedGuid->addMethod("set", &BoxedGuid::set);
 	classBoxedGuid->addMethod("format", &BoxedGuid::format);
 	classBoxedGuid->addMethod("isValid", &BoxedGuid::isValid);
