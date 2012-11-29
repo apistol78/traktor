@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>4431</first>
-				<second>892</second>
+				<first>4433</first>
+				<second>888</second>
 			</position>
 			<fragmentGuid>{0B35548E-B9A0-C149-A141-89C7C4D5C434}</fragmentGuid>
 			<inputPins>
@@ -54,11 +54,11 @@
 			<values>
 				<item>
 					<first>DiffuseTerm</first>
-					<second>1</second>
+					<second>0.4</second>
 				</item>
 				<item>
 					<first>Reflection</first>
-					<second>0.65</second>
+					<second>0.95</second>
 				</item>
 				<item>
 					<first>ReflectionMap</first>
@@ -70,7 +70,7 @@
 				</item>
 				<item>
 					<first>SpecularTerm</first>
-					<second>1</second>
+					<second>0</second>
 				</item>
 				<item>
 					<first>View</first>
@@ -95,8 +95,8 @@
 		<item type="traktor.render.Sampler" version="1">
 			<comment/>
 			<position>
-				<first>3538</first>
-				<second>543</second>
+				<first>3526</first>
+				<second>512</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -109,8 +109,8 @@
 		<item type="traktor.render.Texture">
 			<comment/>
 			<position>
-				<first>3350</first>
-				<second>455</second>
+				<first>3338</first>
+				<second>424</second>
 			</position>
 			<external>{D1BE1A6B-85D6-2B40-B837-A1063DAB8927}</external>
 			<type>PtTexture2D</type>
@@ -118,15 +118,15 @@
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>3003</first>
-				<second>613</second>
+				<first>2991</first>
+				<second>582</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2895</first>
-				<second>620</second>
+				<first>2883</first>
+				<second>589</second>
 			</position>
 			<swizzle>xz</swizzle>
 		</item>
@@ -397,47 +397,32 @@ Surface point
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>2872</first>
-				<second>658</second>
+				<first>2860</first>
+				<second>627</second>
 			</position>
 			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Discard">
 			<comment/>
 			<position>
-				<first>2671</first>
-				<second>638</second>
+				<first>2447</first>
+				<second>637</second>
 			</position>
 			<operator>CoLess</operator>
-		</item>
-		<item type="traktor.render.Add">
-			<comment/>
-			<position>
-				<first>2306</first>
-				<second>770</second>
-			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2131</first>
-				<second>738</second>
+				<first>2234</first>
+				<second>617</second>
 			</position>
 			<swizzle>y</swizzle>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>2154</first>
-				<second>833</second>
-			</position>
-			<value>-1</value>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>2072</first>
-				<second>652</second>
+				<first>2155</first>
+				<second>666</second>
 			</position>
 			<parameterName>OceanAltitude</parameterName>
 			<type>PtScalar</type>
@@ -446,16 +431,16 @@ Surface point
 		<item type="traktor.render.Color">
 			<comment/>
 			<position>
-				<first>2430</first>
-				<second>850</second>
+				<first>2204</first>
+				<second>722</second>
 			</position>
-			<color>9, 115, 159, 255</color>
+			<color>166, 210, 239, 255</color>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>3762</first>
-				<second>843</second>
+				<first>3781</first>
+				<second>765</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -477,8 +462,8 @@ Surface point
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>3372</first>
-				<second>1025</second>
+				<first>3354</first>
+				<second>1010</second>
 			</position>
 			<fragmentGuid>{D2B23342-5AF7-3C4E-A593-48394F75EA06}</fragmentGuid>
 			<inputPins>
@@ -511,8 +496,8 @@ Surface point
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>3134</first>
-				<second>1041</second>
+				<first>3191</first>
+				<second>1050</second>
 			</position>
 		</item>
 		<item type="traktor.render.Div">
@@ -525,15 +510,15 @@ Surface point
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>2833</first>
-				<second>1018</second>
+				<first>2756</first>
+				<second>1025</second>
 			</position>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>2541</first>
-				<second>965</second>
+				<first>2523</first>
+				<second>966</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -557,8 +542,8 @@ Surface point
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>2620</first>
-				<second>1086</second>
+				<first>2536</first>
+				<second>1084</second>
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
@@ -567,24 +552,24 @@ Surface point
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2893</first>
-				<second>1345</second>
+				<first>2928</first>
+				<second>1319</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>2962</first>
-				<second>1097</second>
+				<first>3005</first>
+				<second>1096</second>
 			</position>
 			<value>0.5, -0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>2973</first>
-				<second>1128</second>
+				<first>3016</first>
+				<second>1127</second>
 			</position>
 			<value>0.5, 0.5, 0, 0</value>
 		</item>
@@ -602,21 +587,21 @@ Surface point
 				<first>3598</first>
 				<second>1084</second>
 			</position>
-			<value>0.05</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>3978</first>
-				<second>830</second>
+				<first>4051</first>
+				<second>809</second>
 			</position>
 			<swizzle>111x</swizzle>
 		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>3996</first>
-				<second>1032</second>
+				<first>3983</first>
+				<second>997</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
@@ -634,7 +619,7 @@ Surface point
 				<first>3717</first>
 				<second>1130</second>
 			</position>
-			<value>1</value>
+			<value>0.3</value>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -683,8 +668,8 @@ Surface point
 		<item type="traktor.render.Texture">
 			<comment/>
 			<position>
-				<first>4243</first>
-				<second>1023</second>
+				<first>4177</first>
+				<second>946</second>
 			</position>
 			<external>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</external>
 			<type>PtTextureCube</type>
@@ -692,8 +677,8 @@ Surface point
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>2953</first>
-				<second>516</second>
+				<first>2961</first>
+				<second>504</second>
 			</position>
 			<parameterName>Time</parameterName>
 			<type>PtScalar</type>
@@ -702,23 +687,23 @@ Surface point
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>3125</first>
-				<second>547</second>
+				<first>3113</first>
+				<second>516</second>
 			</position>
 			<swizzle>x0</swizzle>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>3257</first>
-				<second>567</second>
+				<first>3245</first>
+				<second>536</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>3029</first>
-				<second>580</second>
+				<first>3017</first>
+				<second>549</second>
 			</position>
 			<value>0.15</value>
 		</item>
@@ -781,16 +766,6 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1086,47 +1061,17 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[12]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[31]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[34]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1136,7 +1081,7 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[35]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1146,7 +1091,7 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1156,12 +1101,32 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
 				<node ref="/object/nodes/item[37]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[36]"/>
-				<name>Input</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1171,7 +1136,7 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[37]"/>
-				<name>Input1</name>
+				<name>DepthMap</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1180,8 +1145,8 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item[37]"/>
+				<name>DepthMapUV</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1191,7 +1156,7 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[39]"/>
-				<name>DepthMap</name>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1200,8 +1165,8 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[39]"/>
-				<name>DepthMapUV</name>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1211,36 +1176,16 @@ Surface point
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[41]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[43]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[42]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[43]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1250,8 +1195,28 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[45]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Transform</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1260,8 +1225,18 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Transform</name>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[41]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1270,28 +1245,18 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[43]"/>
-				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[42]"/>
+				<node ref="/object/nodes/item[39]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[48]"/>
-				<name>Input</name>
+				<node ref="/object/nodes/item[39]"/>
+				<name>Input3</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1300,8 +1265,18 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[41]"/>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[49]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1310,43 +1285,13 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[41]"/>
-				<name>Input3</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[51]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[38]"/>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[51]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[52]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[37]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[53]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1356,47 +1301,47 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[52]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[51]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[52]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[53]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[55]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[54]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[55]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1406,11 +1351,11 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[58]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1420,23 +1365,23 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[58]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<name>Position</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[57]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<name>Transform</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1446,7 +1391,7 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[58]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1456,17 +1401,17 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[58]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1476,7 +1421,7 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[46]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1486,21 +1431,21 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[61]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1510,13 +1455,13 @@ Surface point
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<name>Input3</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1526,12 +1471,32 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[65]"/>
+				<node ref="/object/nodes/item[63]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[64]"/>
+				<node ref="/object/nodes/item[62]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

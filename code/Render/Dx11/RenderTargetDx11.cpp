@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/RenderTargetDx11.h"
@@ -34,7 +35,7 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 
 	dtd.Width = setDesc.width;
 	dtd.Height = setDesc.height;
-	dtd.MipLevels = 1;
+	dtd.MipLevels = setDesc.generateMips ? log2(max(setDesc.width, setDesc.height)) + 1 : 1;
 	dtd.ArraySize = 1;
 	dtd.Format = c_dxgiTextureFormats[desc.format];
 	dtd.SampleDesc.Count = 1;

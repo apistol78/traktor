@@ -68,7 +68,7 @@ Ref< Object > ActionObjectClass::construct(const InvokeParam& param, uint32_t ar
 
 uint32_t ActionObjectClass::getMethodCount() const
 {
-	return 2;
+	return 3;
 }
 
 std::string ActionObjectClass::getMethodName(uint32_t methodId) const
@@ -79,6 +79,8 @@ std::string ActionObjectClass::getMethodName(uint32_t methodId) const
 		return "getMember";
 	case 1:
 		return "getMemberByQName";
+	case 2:
+		return "setMember";
 	default:
 		return "";
 	}
@@ -102,6 +104,13 @@ script::Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodI
 			flash::ActionValue memberValue;
 			if (object->getMemberByQName(argv[0].getString(), memberValue))
 				return script::CastAny< flash::ActionValue >::set(memberValue);
+		}
+		break;
+
+	case 2:
+		{
+			flash::ActionValue memberValue = script::CastAny< flash::ActionValue >::get(argv[1]);
+			object->setMember(argv[0].getString(), memberValue);
 		}
 		break;
 
@@ -176,6 +185,7 @@ void registerFlashClasses(script::IScriptManager* scriptManager)
 	classFlashLayer->addMethod("getMoviePlayer", &FlashLayer::getMoviePlayer);
 	classFlashLayer->addMethod("getGlobal", &FlashLayer::getGlobal);
 	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
+	classFlashLayer->addMethod("createObject", &FlashLayer::createObject);
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
 	classFlashLayer->setUnknownMethod(&FlashLayer::externalCall);

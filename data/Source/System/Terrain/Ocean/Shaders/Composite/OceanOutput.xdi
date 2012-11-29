@@ -34,15 +34,15 @@
 		<item type="traktor.render.Sub">
 			<comment/>
 			<position>
-				<first>2190</first>
-				<second>467</second>
+				<first>2189</first>
+				<second>333</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>2075</first>
-				<second>478</second>
+				<first>2074</first>
+				<second>344</second>
 			</position>
 			<value>1</value>
 		</item>
@@ -111,8 +111,8 @@ Distance to fog plane
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1621</first>
-				<second>507</second>
+				<first>1649</first>
+				<second>459</second>
 			</position>
 			<value>0.0004</value>
 		</item>

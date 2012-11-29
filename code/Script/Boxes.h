@@ -34,6 +34,8 @@ public:
 
 	explicit BoxedGuid(const Guid& value);
 
+	explicit BoxedGuid(const std::wstring& value);
+
 	void set(const std::wstring& str) { m_value = Guid(str); }
 
 	std::wstring format() const { return m_value.format(); }
