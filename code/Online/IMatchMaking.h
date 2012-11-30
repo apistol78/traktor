@@ -30,6 +30,8 @@ public:
 	virtual Ref< LobbyArrayResult > findMatchingLobbies(const LobbyFilter* filter) = 0;
 
 	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers) = 0;
+
+	virtual Ref< ILobby > acceptLobby() = 0;
 };
 
 	}

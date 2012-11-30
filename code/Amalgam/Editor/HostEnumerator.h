@@ -6,6 +6,9 @@
 
 namespace traktor
 {
+
+class PropertyGroup;
+
 	namespace net
 	{
 
@@ -21,7 +24,7 @@ class HostEnumerator : public Object
 	T_RTTI_CLASS;
 
 public:
-	HostEnumerator(net::DiscoveryManager* discoveryManager);
+	HostEnumerator(const PropertyGroup* settings, net::DiscoveryManager* discoveryManager);
 
 	int32_t count() const;
 
@@ -47,6 +50,7 @@ private:
 
 	Ref< net::DiscoveryManager > m_discoveryManager;
 	mutable Semaphore m_lock;
+	std::vector< Host > m_manual;
 	std::vector< Host > m_hosts;
 };
 

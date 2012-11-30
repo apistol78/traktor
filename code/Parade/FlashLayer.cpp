@@ -308,6 +308,45 @@ Ref< flash::ActionObject > FlashLayer::createObject() const
 	return new flash::ActionObject(cx);
 }
 
+Ref< flash::ActionObject > FlashLayer::createObject(const std::string& prototype) const
+{
+	if (!m_moviePlayer)
+		return 0;
+
+	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
+	T_ASSERT (movieInstance);
+
+	flash::ActionContext* cx = movieInstance->getContext();
+	T_ASSERT (cx);
+
+	flash::ActionValue classFunctionValue;
+	cx->getGlobal()->getMemberByQName(prototype, classFunctionValue);
+
+	Ref< flash::ActionFunction > classFunction = classFunctionValue.getObject< flash::ActionFunction >();
+	if (!classFunction)
+	{
+		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
+		return 0;
+	}
+
+	flash::ActionValue classPrototypeValue;
+	classFunction->getLocalMember(flash::ActionContext::IdPrototype, classPrototypeValue);
+
+	Ref< flash::ActionObject > classPrototype = classPrototypeValue.getObject();
+	if (!classPrototype)
+	{
+		log::error << L"Unable to create object; no such prototype \"" << mbstows(prototype) << L"\"" << Endl;
+		return 0;
+	}
+
+	Ref< flash::ActionObject > self = new flash::ActionObject(cx, classPrototype);
+	self->setMember(flash::ActionContext::Id__ctor__, classFunctionValue);
+
+	classFunction->call(self);
+
+	return self;
+}
+
 script::Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv)
 {
 	if (!m_moviePlayer)

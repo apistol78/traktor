@@ -1,3 +1,4 @@
+#include "Core/Thread/Atomic.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
 #include "Mesh/Skinned/SkinnedMeshEntity.h"
 #include "World/WorldContext.h"
@@ -13,26 +14,37 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.SkinnedMeshEntity", SkinnedMeshEntity, Mes
 SkinnedMeshEntity::SkinnedMeshEntity(const Transform& transform, const resource::Proxy< SkinnedMesh >& mesh)
 :	MeshEntity(transform)
 ,	m_mesh(mesh)
+,	m_count(0)
 {
+	const std::map< std::wstring, int >& jointMap = m_mesh->getJointMap();
+	m_jointTransforms[0].resize(jointMap.size() * 2, Vector4::origo());
+	m_jointTransforms[1].resize(jointMap.size() * 2, Vector4::origo());
 }
 
-void SkinnedMeshEntity::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms)
+void SkinnedMeshEntity::setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms_)
 {
-	uint32_t size = uint32_t(m_jointTransforms.size());
+	AlignedVector< Vector4 >& jointTransforms = m_jointTransforms[m_count];
+
+	const std::map< std::wstring, int >& jointMap = m_mesh->getJointMap();
+	jointTransforms.resize(jointMap.size() * 2, Vector4::origo());
+
+	uint32_t size = uint32_t(jointTransforms_.size());
 	for (uint32_t i = 0, j = 0; i < size; i += 2, ++j)
 	{
-		if (j < jointTransforms.size())
+		if (j < jointTransforms_.size())
 		{
-			Transform joint(jointTransforms[i]);
-			m_jointTransforms[i + 0] = joint.rotation().e;
-			m_jointTransforms[i + 1] = joint.translation().xyz1();
+			Transform joint(jointTransforms_[i]);
+			jointTransforms[i + 0] = joint.rotation().e;
+			jointTransforms[i + 1] = joint.translation().xyz1();
 		}
 		else
 		{
-			m_jointTransforms[i + 0] = Vector4::origo();
-			m_jointTransforms[i + 1] = Vector4::origo();
+			jointTransforms[i + 0] = Vector4::origo();
+			jointTransforms[i + 1] = Vector4::origo();
 		}
 	}
+
+	Atomic::exchange(m_count, 1 - m_count);
 }
 
 Aabb3 SkinnedMeshEntity::getBoundingBox() const
@@ -59,20 +71,12 @@ void SkinnedMeshEntity::render(
 	float distance
 )
 {
-	// Ensure bone transform array is at least enough size.
-	const std::map< std::wstring, int >& jointMap = m_mesh->getJointMap();
-	if (m_jointTransforms.size() < jointMap.size() * 2)
-	{
-		m_jointTransforms.resize(jointMap.size() * 2);
-		for (uint32_t i = 0; i < uint32_t(m_jointTransforms.size()); ++i)
-			m_jointTransforms[i] = Vector4::origo();
-	}
-
+	const AlignedVector< Vector4 >& jointTransforms = m_jointTransforms[m_count];
 	m_mesh->render(
 		worldContext.getRenderContext(),
 		worldRenderPass,
 		getTransform(worldRenderView.getInterval()),
-		m_jointTransforms,
+		jointTransforms,
 		distance,
 		getParameterCallback()
 	);

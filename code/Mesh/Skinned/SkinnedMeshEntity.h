@@ -47,7 +47,8 @@ public:
 
 private:
 	resource::Proxy< SkinnedMesh > m_mesh;
-	AlignedVector< Vector4 > m_jointTransforms;
+	AlignedVector< Vector4 > m_jointTransforms[2];
+	int32_t m_count;
 };
 
 	}

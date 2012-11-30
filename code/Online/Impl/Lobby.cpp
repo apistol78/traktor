@@ -130,6 +130,18 @@ uint32_t Lobby::getParticipantCount() const
 		return 0;
 }
 
+bool Lobby::invite(const IUser* user)
+{
+	const User* userImpl = dynamic_type_cast< const User* >(user);
+	if (!userImpl)
+		return false;
+
+	if (m_matchMakingProvider && m_matchMakingProvider->invite(m_handle, userImpl->m_handle))
+		return true;
+	else
+		return true;
+}
+
 int32_t Lobby::getIndex() const
 {
 	int32_t index;

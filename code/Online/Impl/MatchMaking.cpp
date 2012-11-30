@@ -1,7 +1,9 @@
+#include "Online/Impl/Lobby.h"
 #include "Online/Impl/MatchMaking.h"
 #include "Online/Impl/TaskQueue.h"
 #include "Online/Impl/Tasks/TaskCreateLobby.h"
 #include "Online/Impl/Tasks/TaskFindMatchingLobbies.h"
+#include "Online/Provider/IMatchMakingProvider.h"
 
 namespace traktor
 {
@@ -39,6 +41,15 @@ Ref< LobbyResult > MatchMaking::createLobby(uint32_t maxUsers)
 		result
 	)))
 		return result;
+	else
+		return 0;
+}
+
+Ref< ILobby > MatchMaking::acceptLobby()
+{
+	uint64_t lobbyHandle;
+	if (m_matchMakingProvider->acceptLobby(lobbyHandle))
+		return new Lobby(m_matchMakingProvider, m_userCache, m_taskQueue, lobbyHandle);
 	else
 		return 0;
 }

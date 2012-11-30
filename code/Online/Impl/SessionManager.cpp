@@ -132,13 +132,13 @@ bool SessionManager::requireUserAttention() const
 	return m_provider ? m_provider->requireUserAttention() : false;
 }
 
-bool SessionManager::getFriends(RefArray< IUser >& outFriends) const
+bool SessionManager::getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const
 {
 	if (!m_provider)
 		return false;
 
 	std::vector< uint64_t > friendHandles;
-	if (!m_provider->getFriends(friendHandles))
+	if (!m_provider->getFriends(friendHandles, onlineOnly))
 		return false;
 
 	outFriends.resize(friendHandles.size());

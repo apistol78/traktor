@@ -2,6 +2,7 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -299,7 +300,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				if (!cluster)
 					continue;
 
-				int weightCount = cluster->GetControlPointIndicesCount();
+				int32_t weightCount = cluster->GetControlPointIndicesCount();
 				if (weightCount <= 0)
 					continue;
 
@@ -310,13 +311,14 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				uint32_t jointIndex = outModel.addJoint(mbstows(jointName));
 
 				const double* weights = cluster->GetControlPointWeights();
-				const int* indices = cluster->GetControlPointIndices();
+				const int32_t* indices = cluster->GetControlPointIndices();
 
 				for (int32_t k = 0; k < weightCount; ++k)
 				{
 					int32_t vertexIndex = indices[k];
 					float jointWeight = float(weights[k]);
-					vertexJoints[vertexIndex].insert(std::pair< uint32_t, float >(jointIndex, jointWeight));
+					if (jointWeight > FUZZY_EPSILON)
+						vertexJoints[vertexIndex].insert(std::pair< uint32_t, float >(jointIndex, jointWeight));
 				}
 			}
 		}

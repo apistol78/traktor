@@ -165,7 +165,7 @@ uint64_t LocalSessionManager::getCurrentUserHandle() const
 	return 0;
 }
 
-bool LocalSessionManager::getFriends(std::vector< uint64_t >& outFriends) const
+bool LocalSessionManager::getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const
 {
 	return true;
 }
