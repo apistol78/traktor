@@ -1,7 +1,9 @@
 #include "Amalgam/Editor/HostEnumerator.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringArray.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/NetworkService.h"
@@ -13,9 +15,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.HostEnumerator", HostEnumerator, Object)
 
-HostEnumerator::HostEnumerator(net::DiscoveryManager* discoveryManager)
+HostEnumerator::HostEnumerator(const PropertyGroup* settings, net::DiscoveryManager* discoveryManager)
 :	m_discoveryManager(discoveryManager)
 {
+	std::vector< std::wstring > hosts = settings->getProperty< PropertyStringArray >(L"Amalgam.RemoteHosts");
+	for (std::vector< std::wstring >::const_iterator i = hosts.begin(); i != hosts.end(); ++i)
+	{
+		Host h;
+		h.host = *i;
+		h.description = *i;
+		h.local = false;
+		m_manual.push_back(h);
+	}
 }
 
 int32_t HostEnumerator::count() const
@@ -66,6 +77,7 @@ void HostEnumerator::update()
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 		m_hosts.clear();
+		m_hosts.insert(m_hosts.end(), m_manual.begin(), m_manual.end());
 
 		for (RefArray< net::NetworkService >::const_iterator i = services.begin(); i != services.end(); ++i)
 		{
@@ -80,7 +92,6 @@ void HostEnumerator::update()
 			h.host = properties->getProperty< PropertyString >(L"Host");
 			h.description = properties->getProperty< PropertyString >(L"Description");
 			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == h.host);
-
 			m_hosts.push_back(h);
 		}
 

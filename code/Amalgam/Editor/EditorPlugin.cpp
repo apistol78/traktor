@@ -96,7 +96,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	if (!m_discoveryManager->create(false))
 		log::error << L"Unable to create discovery manager; unable to enumerate hosts" << Endl;
 
-	m_hostEnumerator = new HostEnumerator(m_discoveryManager);
+	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
 
 	// Create panel.
 	Ref< ui::Container > container = new ui::Container();

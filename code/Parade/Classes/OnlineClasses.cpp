@@ -135,10 +135,10 @@ Ref< online::Result > online_ISaveData_set(online::ISaveData* self, const std::w
 	return self->set(saveDataId, sdd, attachment, replace);
 }
 
-RefArray< online::IUser > online_ISessionManager_getFriends(online::ISessionManager* self)
+RefArray< online::IUser > online_ISessionManager_getFriends(online::ISessionManager* self, bool onlineOnly)
 {
 	RefArray< online::IUser > friends;
-	self->getFriends(friends);
+	self->getFriends(friends, onlineOnly);
 	return friends;
 }
 
@@ -252,6 +252,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILobby->addMethod("leave", &online::ILobby::leave);
 	classILobby->addMethod("getParticipants", &online::ILobby::getParticipants);
 	classILobby->addMethod("getParticipantCount", &online::ILobby::getParticipantCount);
+	classILobby->addMethod("invite", &online::ILobby::invite);
 	classILobby->addMethod("getIndex", &online::ILobby::getIndex);
 	classILobby->addMethod("isOwner", &online::ILobby::isOwner);
 	scriptManager->registerClass(classILobby);
@@ -260,6 +261,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classIMatchMaking->addMethod("ready", &online::IMatchMaking::ready);
 	classIMatchMaking->addMethod("findMatchingLobbies", &online::IMatchMaking::findMatchingLobbies);
 	classIMatchMaking->addMethod("createLobby", &online::IMatchMaking::createLobby);
+	classIMatchMaking->addMethod("acceptLobby", &online::IMatchMaking::acceptLobby);
 	scriptManager->registerClass(classIMatchMaking);
 
 	Ref< script::AutoScriptClass< online::ISaveData > > classISaveData = new script::AutoScriptClass< online::ISaveData >();

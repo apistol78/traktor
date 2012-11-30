@@ -43,7 +43,7 @@ public:
 
 	virtual uint64_t getCurrentUserHandle() const = 0;
 
-	virtual bool getFriends(std::vector< uint64_t >& outFriends) const = 0;
+	virtual bool getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const = 0;
 
 	virtual bool findFriend(const std::wstring& name, uint64_t& outFriendUserHandle) const = 0;
 

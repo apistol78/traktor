@@ -18,6 +18,12 @@ bool LocalMatchMaking::createLobby(uint32_t maxUsers, uint64_t& outLobbyHandle)
 	return true;
 }
 
+bool LocalMatchMaking::acceptLobby(uint64_t& outLobbyHandle)
+{
+	outLobbyHandle = 0;
+	return false;
+}
+
 bool LocalMatchMaking::joinLobby(uint64_t lobbyHandle)
 {
 	return false;
@@ -60,6 +66,11 @@ bool LocalMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 }
 
 bool LocalMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
+{
+	return false;
+}
+
+bool LocalMatchMaking::invite(uint64_t lobbyHandle, uint64_t userHandle)
 {
 	return false;
 }

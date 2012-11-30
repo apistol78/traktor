@@ -22,6 +22,8 @@ public:
 
 	virtual bool createLobby(uint32_t maxUsers, uint64_t& outLobbyHandle);
 
+	virtual bool acceptLobby(uint64_t& outLobbyHandle);
+
 	virtual bool joinLobby(uint64_t lobbyHandle);
 
 	virtual bool leaveLobby(uint64_t lobbyHandle);
@@ -38,6 +40,8 @@ public:
 
 	virtual bool getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const;
 
+	virtual bool invite(uint64_t lobbyHandle, uint64_t userHandle);
+
 	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const;
 
 	virtual bool isOwner(uint64_t lobbyHandle) const;
@@ -46,6 +50,7 @@ private:
 	SteamSessionManager* m_sessionManager;
 	std::vector< uint64_t >* m_outLobbies;
 	uint64_t* m_outLobby;
+	uint64_t m_acceptedInvite;
 	bool m_joinResult;
 	bool m_inLobby;
 	CCallResult< SteamMatchMaking, LobbyMatchList_t > m_callbackLobbyMatch;
@@ -57,6 +62,8 @@ private:
 	void OnLobbyCreated(LobbyCreated_t* pCallback, bool bIOFailure);
 
 	void OnLobbyEnter(LobbyEnter_t* pCallback, bool bIOFailure);
+
+	STEAM_CALLBACK(SteamMatchMaking, OnGameLobbyJoinRequested, GameLobbyJoinRequested_t, m_callbackGameLobbyJoinRequested);
 };
 
 	}

@@ -23,6 +23,8 @@ public:
 
 	virtual Ref< LobbyResult > createLobby(uint32_t maxUsers);
 
+	virtual Ref< ILobby > acceptLobby();
+
 private:
 	friend class SessionManager;
 

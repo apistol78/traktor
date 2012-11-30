@@ -13,6 +13,20 @@ namespace traktor
 {
 	namespace parade
 	{
+		namespace
+		{
+
+Ref< flash::ActionObject > FlashLayer_createObject_0(FlashLayer* self)
+{
+	return self->createObject();
+}
+
+Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, const std::string& prototype)
+{
+	return self->createObject(prototype);
+}
+
+		}
 
 class ActionObjectClass : public script::IScriptClass
 {
@@ -185,7 +199,8 @@ void registerFlashClasses(script::IScriptManager* scriptManager)
 	classFlashLayer->addMethod("getMoviePlayer", &FlashLayer::getMoviePlayer);
 	classFlashLayer->addMethod("getGlobal", &FlashLayer::getGlobal);
 	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
-	classFlashLayer->addMethod("createObject", &FlashLayer::createObject);
+	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_0);
+	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_1);
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
 	classFlashLayer->setUnknownMethod(&FlashLayer::externalCall);

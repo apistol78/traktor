@@ -227,17 +227,21 @@ uint64_t SteamSessionManager::getCurrentUserHandle() const
 	return ::SteamUser()->GetSteamID().ConvertToUint64();
 }
 
-bool SteamSessionManager::getFriends(std::vector< uint64_t >& outFriends) const
+bool SteamSessionManager::getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const
 {
 	int friendCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
 	if (friendCount < 0)
 		return false;
 
-	outFriends.resize(friendCount);
+	outFriends.resize(0);
+	outFriends.reserve(friendCount);
 	for (int i = 0; i < friendCount; ++i)
 	{
 		CSteamID id = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
-		outFriends[i] = id.ConvertToUint64();
+		if (onlineOnly && SteamFriends()->GetFriendPersonaState(id) != k_EPersonaStateOnline)
+			continue;
+
+		outFriends.push_back(id.ConvertToUint64());
 	}
 
 	return true;

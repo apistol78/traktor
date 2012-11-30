@@ -35,11 +35,14 @@ public:
 
 	virtual uint32_t getParticipantCount() const;
 
+	virtual bool invite(const IUser* user);
+
 	virtual int32_t getIndex() const;
 
 	virtual bool isOwner() const;
 
 private:
+	friend class MatchMaking;
 	friend class TaskCreateLobby;
 	friend class TaskFindMatchingLobbies;
 
