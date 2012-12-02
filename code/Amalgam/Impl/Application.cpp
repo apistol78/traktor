@@ -563,12 +563,6 @@ bool Application::update()
 					}
 				}
 
-				// Update physics.
-				double physicsTimeStart = m_timer.getElapsedTime();
-				m_physicsServer->update();
-				double physicsTimeEnd = m_timer.getElapsedTime();
-				physicsDuration += physicsTimeEnd - physicsTimeStart;
-
 				// Update input.
 				double inputTimeStart = m_timer.getElapsedTime();
 				if (m_inputServer)
@@ -581,6 +575,12 @@ bool Application::update()
 				IState::UpdateResult result = currentState->update(m_stateManager, m_updateControl, m_updateInfo);
 				double updateTimeEnd = m_timer.getElapsedTime();
 				updateDuration += updateTimeEnd - updateTimeStart;
+
+				// Update physics.
+				double physicsTimeStart = m_timer.getElapsedTime();
+				m_physicsServer->update();
+				double physicsTimeEnd = m_timer.getElapsedTime();
+				physicsDuration += physicsTimeEnd - physicsTimeStart;
 
 				m_updateDuration = float(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
 
