@@ -758,6 +758,7 @@ void opx_castOp(ExecutionState& state)
 	ActionValue objectValue = stack.pop();
 	ActionValue classValue = stack.pop();
 
+	// Check if object is derived from class.
 	if (objectValue.isObject() && classValue.isObject())
 	{
 		Ref< ActionObject > object = objectValue.getObject();
@@ -791,6 +792,19 @@ void opx_castOp(ExecutionState& state)
 					__proto__ = parent__proto__;
 				}
 			}
+		}
+	}
+	
+	// Use native class "xplicit" coersion.
+	if (classValue.isObject())
+	{
+		Ref< ActionFunction > classFunction = classValue.getObject< ActionFunction >();
+		if (classFunction)
+		{
+			ActionValueArray argv(state.context->getPool(), 1);
+			argv[0] = objectValue;
+			stack.push(classFunction->call(argv));
+			return;
 		}
 	}
 

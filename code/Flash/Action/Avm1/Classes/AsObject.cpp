@@ -114,7 +114,7 @@ void AsObject::Object_unwatch(ActionObject* self) const
 
 void AsObject::Object_valueOf(CallArgs& ca)
 {
-	ca.ret = ActionValue(avm_number_t(0));
+	ca.ret = ActionValue(avm_number_t(1));
 }
 
 void AsObject::Object_watch(ActionObject* self) const

@@ -45,9 +45,9 @@ public:
 private:
 	enum EnvelopeType
 	{
-		EtUnreliable,
-		EtReliable,
-		EtAck
+		EtUnreliable = 0x01,
+		EtReliable = 0x02,
+		EtAck = 0x03
 	};
 
 #pragma pack(1)
