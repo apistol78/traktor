@@ -5,6 +5,8 @@
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/Thread.h"
 #include "Core/Timer/Timer.h"
 #include "Net/Replication/CompactSerializer.h"
 #include "Net/Replication/IReplicatorPeers.h"
@@ -89,7 +91,29 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 		peer.state = PsInitial;
 	}
 
-	return true;
+	// Iterate until all initially known peers have become established.
+	for (int32_t i = 0; i < 200; ++i)
+	{
+		uint32_t initialCount = 0;
+
+		// Send ping to all non-established entires.
+		for (std::map< handle_t, Peer >::iterator j = m_peers.begin(); j != m_peers.end(); ++j)
+		{
+			if (j->second.state == PsInitial)
+				++initialCount;
+		}
+
+		// Update peers.
+		if (initialCount > 0)
+			update(10.0f / 1000.0f);
+		else
+			return true;
+
+		// Idle thread.
+		ThreadManager::getInstance().getCurrentThread()->sleep(10);
+	}
+
+	return false;
 }
 
 void Replicator::destroy()

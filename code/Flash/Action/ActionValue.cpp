@@ -186,7 +186,7 @@ bool ActionValue::getBoolean() const
 		return std::strlen(m_value.s) > 0;
 
 	case AvtObject:
-		return bool(m_value.o != 0);
+		return m_value.o ? m_value.o->valueOf().getBoolean() : false;
 
 	default:
 		break;

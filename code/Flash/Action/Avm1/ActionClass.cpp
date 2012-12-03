@@ -18,7 +18,7 @@ ActionValue ActionClass::call(ActionObject* self, ActionObject* super, const Act
 	if (self)
 	{
 		construct(self, args);
-		return ActionValue();
+		return ActionValue(self);
 	}
 	else
 		return xplicit(args);

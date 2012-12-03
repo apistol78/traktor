@@ -93,7 +93,7 @@ ActionValue ActionFunction2::call(ActionObject* self, ActionObject* super, const
 
 	if (m_flags & AffPreloadSuper)
 	{
-		if (!super2)
+		if (!super2 && self)
 			super2 = self->getSuper();
 		callFrame.setRegister(preloadRegister++, ActionValue(super2));
 	}
