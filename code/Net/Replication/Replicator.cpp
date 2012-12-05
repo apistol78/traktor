@@ -91,29 +91,7 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 		peer.state = PsInitial;
 	}
 
-	// Iterate until all initially known peers have become established.
-	for (int32_t i = 0; i < 200; ++i)
-	{
-		uint32_t initialCount = 0;
-
-		// Send ping to all non-established entires.
-		for (std::map< handle_t, Peer >::iterator j = m_peers.begin(); j != m_peers.end(); ++j)
-		{
-			if (j->second.state == PsInitial)
-				++initialCount;
-		}
-
-		// Update peers.
-		if (initialCount > 0)
-			update(10.0f / 1000.0f);
-		else
-			return true;
-
-		// Idle thread.
-		ThreadManager::getInstance().getCurrentThread()->sleep(10);
-	}
-
-	return false;
+	return true;
 }
 
 void Replicator::destroy()
@@ -217,7 +195,7 @@ void Replicator::update(float dT)
 			bool failing = false;
 
 			float T = m_time - peer.lastTime;
-			if (T > c_peerTimeout && peer.packetCount > 0)
+			if (T > c_peerTimeout)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" timeout, no packet in " << int32_t(T * 1000.0f) << L" ms");
 				failing = true;
@@ -321,16 +299,11 @@ void Replicator::update(float dT)
 
 			if (m_replicatorPeers->send(i->first, &msg, msgSize, false))
 			{
-				if (peer.lossDelta == 0)
+				if (peer.lossDelta == 0 && peer.ghost->stateTemplate)
 				{
-					if (peer.ghost->stateTemplate)
-					{
-						float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
-						float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-						peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
-					}
-					else
-						peer.timeUntilTx = c_nearTimeUntilTx;
+					float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
+					float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
+					peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
 				}
 				else
 					peer.timeUntilTx = c_farTimeUntilTx;
@@ -830,16 +803,19 @@ void Replicator::update(float dT)
 				peer.lastTime = time;
 			}
 
-			MemoryStream s(msg.event.data, sizeof(msg.event.data), true, false);
-			Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
+			if (!m_eventTypes.empty())
+			{
+				MemoryStream s(msg.event.data, sizeof(msg.event.data), true, false);
+				Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
 
-			// Put an input event to notify listeners about received event.
-			Event e;
-			e.time = time;
-			e.eventId = IListener::ReBroadcastEvent;
-			e.handle = handle;
-			e.object = eventObject;
-			m_eventsIn.push_back(e);
+				// Put an input event to notify listeners about received event.
+				Event e;
+				e.time = time;
+				e.eventId = IListener::ReBroadcastEvent;
+				e.handle = handle;
+				e.object = eventObject;
+				m_eventsIn.push_back(e);
+			}
 
 #if defined(T_PROFILE_REPLICATOR)
 			m_profileReceived[&type_of(eventObject)] += s.tell();
@@ -967,12 +943,20 @@ int32_t Replicator::getWorstReversedLatency() const
 bool Replicator::isPeerConnected(handle_t peerHandle) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i == m_peers.end())
-		return false;
-	else if (i->second.state != PsEstablished || !i->second.ghost)
+	if (i == m_peers.end() || i->second.state != PsEstablished)
 		return false;
 	else
 		return true;
+}
+
+bool Replicator::areAllPeersConnected() const
+{
+	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		if (i->second.state != PsEstablished)
+			return false;
+	}
+	return true;
 }
 
 void Replicator::setGhostObject(handle_t peerHandle, Object* ghostObject)

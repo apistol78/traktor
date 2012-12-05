@@ -145,6 +145,10 @@ public:
 	 */
 	bool isPeerConnected(handle_t peerHandle) const;
 
+	/*! \brief Check if all peers are connected.
+	 */
+	bool areAllPeersConnected() const;
+
 	/*! \brief Attach an object to a ghost peer.
 	 *
 	 * This permits attaching user objects to ghost
