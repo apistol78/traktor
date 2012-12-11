@@ -208,6 +208,7 @@ bool AccShape::updateRenderable(
 
 				Color4ub color(255, 255, 255, 255);
 				render::ITexture* texture = 0;
+				bool textureClamp = false;
 
 				if (j->fillStyle && j->fillStyle - 1 < uint16_t(fillStyles.size()))
 				{
@@ -220,6 +221,7 @@ bool AccShape::updateRenderable(
 						T_ASSERT (textureCache);
 						texture = textureCache->getGradientTexture(style);
 						textureMatrix = textureTS * style.getGradientMatrix().inverse();
+						textureClamp = true;
 						m_batchFlags |= BfHaveTextured;
 					}
 					else if (colorRecords.size() == 1)
@@ -244,16 +246,18 @@ bool AccShape::updateRenderable(
 								1.0f / bitmap->getHeight()
 							) *
 							style.getFillBitmapMatrix().inverse();
+						textureClamp = false;
 						m_batchFlags |= BfHaveTextured;
 					}
 				}
 
-				if (batch.empty() || batch.back().texture != texture)
+				if (batch.empty() || batch.back().texture != texture || batch.back().textureClamp != textureClamp)
 				{
 					batch.push_back(RenderBatch());
 					batch.back().primitives.setNonIndexed(render::PtTriangles, vertexOffset, 0);
 					batch.back().texture = texture;
 					batch.back().textureMatrix = textureMatrix;
+					batch.back().textureClamp = textureClamp;
 				}
 
 				for (int k = 0; k < 3; ++k)
@@ -446,6 +450,7 @@ void AccShape::render(
 					renderBlock->programParams->beginParameters(renderContext);
 					renderBlock->programParams->setTextureParameter(m_shapeResources->m_handleTexture, j->texture);
 					renderBlock->programParams->setMatrixParameter(m_shapeResources->m_handleTextureMatrix, textureMatrix);
+					renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);
 					renderBlock->programParams->endParameters(renderContext);
 					renderContext->draw(render::RfOverlay, renderBlock);
 				}

@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_valueThreshold = 0.1f;
+const float c_valueThreshold = 0.5f;
 
 		}
 

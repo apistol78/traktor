@@ -1,6 +1,7 @@
 #ifndef traktor_sound_SoundDriverWriteOut_H
 #define traktor_sound_SoundDriverWriteOut_H
 
+#include "Core/Misc/AutoPtr.h"
 #include "Sound/ISoundDriver.h"
 
 // import/export mechanism.
@@ -13,6 +14,9 @@
 
 namespace traktor
 {
+
+class IStream;
+
 	namespace sound
 	{
 
@@ -24,7 +28,7 @@ class T_DLLCLASS SoundDriverWriteOut : public ISoundDriver
 	T_RTTI_CLASS;
 
 public:
-	SoundDriverWriteOut();
+	SoundDriverWriteOut(ISoundDriver* childDriver = 0);
 
 	virtual bool create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer);
 
@@ -35,8 +39,10 @@ public:
 	virtual void submit(const SoundBlock& soundBlock);
 
 private:
+	Ref< ISoundDriver > m_childDriver;
 	SoundDriverCreateDesc m_desc;
-	Ref< IStream > m_streams[SbcMaxChannelCount];
+	Ref< IStream > m_stream;
+	AutoArrayPtr< float > m_interleaved;
 	float m_peek;
 	bool m_wait;
 };

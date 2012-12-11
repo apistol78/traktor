@@ -601,8 +601,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libogg-1.2.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/src</sourcePath>
+			<name>Extern.libogg-1.3.0</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/src</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -611,7 +611,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBOGG-1_1_3_EXPORT</item>
@@ -629,7 +629,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBOGG-1_1_3_EXPORT</item>
@@ -647,7 +647,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -665,7 +665,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -691,8 +691,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.libvorbis-1.3.1</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/lib</sourcePath>
+			<name>Extern.libvorbis-1.3.3</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -701,9 +701,9 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
@@ -721,9 +721,9 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_LIBVORBIS-1_2_0_EXPORT</item>
@@ -741,9 +741,9 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -761,9 +761,9 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/lib</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -4231,8 +4231,8 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/wince</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 									<item>$(TRAKTOR_HOME)/3rdp/opentimece</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
@@ -4255,8 +4255,8 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/wince</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 									<item>$(TRAKTOR_HOME)/3rdp/opentimece</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
@@ -4279,8 +4279,8 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/wince</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 									<item>$(TRAKTOR_HOME)/3rdp/opentimece</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
@@ -4303,8 +4303,8 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/libmad-0.15.1b/platforms/wince</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 									<item>$(TRAKTOR_HOME)/3rdp/opentimece</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
@@ -7802,7 +7802,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -7820,7 +7820,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -7838,7 +7838,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -7856,7 +7856,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/lib</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -7901,7 +7901,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_VIDEO_EXPORT</item>
@@ -7920,7 +7920,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_VIDEO_EXPORT</item>
@@ -7939,7 +7939,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -7958,7 +7958,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/libtheora-1.1.1/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.2.0/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

@@ -1,8 +1,19 @@
+#define OGG_VORBIS_DECODER_REF 1
+#define OGG_VORBIS_DECODER_STB 2
+#define OGG_VORBIS_DECODER OGG_VORBIS_DECODER_STB
+
 #include <cstring>
-#include <vorbis/codec.h>
+#if OGG_VORBIS_DECODER == OGG_VORBIS_DECODER_REF
+#	include <vorbis/codec.h>
+#elif OGG_VORBIS_DECODER == OGG_VORBIS_DECODER_STB
+#	define STB_VORBIS_HEADER_ONLY
+#	include <stb_vorbis.c>
+#endif
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Memory/Alloc.h"
+#include "Core/Misc/Align.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Sound/Decoders/OggStreamDecoder.h"
 
@@ -10,6 +21,8 @@ namespace traktor
 {
 	namespace sound
 	{
+
+#if OGG_VORBIS_DECODER == OGG_VORBIS_DECODER_REF
 
 class OggStreamDecoderImpl : public Object
 {
@@ -239,7 +252,7 @@ public:
 		for (int i = 0; i < m_vi.channels; ++i)
 			outSoundBlock.samples[i] = m_decoded[i];
 		outSoundBlock.maxChannel = m_vi.channels;
-		outSoundBlock.sampleRate = m_vi.rate;
+		outSoundBlock.sampleRate = m_vi.rate + 1400;	// \hack Why do we need this adjustment?
 		outSoundBlock.samplesCount = decodedCount;
 
 		return true;
@@ -260,6 +273,136 @@ private:
 	bool m_readPage;
 	bool m_readPacket;
 };
+
+#elif OGG_VORBIS_DECODER == OGG_VORBIS_DECODER_STB
+
+class OggStreamDecoderImpl : public Object
+{
+public:
+	OggStreamDecoderImpl()
+	:	m_vorbis(0)
+	,	m_buffered(0)
+	,	m_output(0)
+	,	m_channels(0)
+	,	m_samples(0)
+	{
+	}
+
+	bool create(IStream* stream)
+	{
+		m_stream = stream;
+
+		m_data.reset(new uint8_t [BufferSize]);
+		m_buffered = 0;
+
+		for (;;)
+		{
+			if (!read())
+				return false;
+
+			int32_t used = 0, error = 0;
+			m_vorbis = stb_vorbis_open_pushdata(m_data.ptr(), m_buffered, &used, &error, 0);
+			if (m_vorbis)
+				break;
+			if (error != VORBIS_need_more_data)
+				return false;
+
+			if (used > 0)
+				consume(used);
+		}
+
+		m_info = stb_vorbis_get_info(m_vorbis);
+		return true;
+	}
+
+	void destroy()
+	{
+		stb_vorbis_close(m_vorbis);
+		m_stream = 0;
+	}
+
+	double getDuration() const
+	{
+		return 0.0;
+	}
+
+	bool getBlock(SoundBlock& outSoundBlock)
+	{
+		while (m_samples <= 0)
+		{
+			int32_t used = stb_vorbis_decode_frame_pushdata(m_vorbis, m_data.ptr(), m_buffered, &m_channels, &m_output, &m_samples);
+			if (used == 0)
+			{
+				if (read())
+					continue;
+				else
+					return false;
+			}
+
+			T_ASSERT (used > 0)
+			consume(used);
+		}
+
+		int32_t samples = std::min< int32_t >(m_samples, outSoundBlock.samplesCount);
+		for (int32_t i = 0; i < m_channels; ++i)
+		{
+			outSoundBlock.samples[i] = m_output[i];
+			m_output[i] += samples;
+		}
+
+		outSoundBlock.maxChannel = m_channels;
+		outSoundBlock.sampleRate = m_info.sample_rate;
+		outSoundBlock.samplesCount = samples;
+
+		m_samples -= samples;
+		return true;
+	}
+
+private:
+	enum
+	{
+		BufferSize = 8 * 65536,
+		PageSize = 4096
+	};
+
+	Ref< IStream > m_stream;
+	AutoArrayPtr< uint8_t > m_data;
+	stb_vorbis* m_vorbis;
+	stb_vorbis_info m_info;
+	int32_t m_buffered;
+	float** m_output;
+	int32_t m_channels;
+	int32_t m_samples;
+
+	bool read()
+	{
+		int32_t nread = std::min< int32_t >(PageSize, BufferSize - m_buffered);
+		T_ASSERT (nread > 0);
+
+		int32_t read = m_stream->read(m_data.ptr() + m_buffered, nread);
+		if (read > 0)
+		{
+			m_buffered += read;
+			return true;
+		}
+		else
+			return false;
+	}
+
+	void consume(int32_t nbytes)
+	{
+		T_ASSERT (nbytes > 0);
+		if (nbytes < m_buffered)
+		{
+			std::memmove(m_data.ptr(), m_data.ptr() + nbytes, m_buffered - nbytes);
+			m_buffered -= nbytes;
+		}
+		else
+			m_buffered = 0;
+	}
+};
+
+#endif
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.OggStreamDecoder", 0, OggStreamDecoder, IStreamDecoder)
 

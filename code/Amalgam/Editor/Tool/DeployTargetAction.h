@@ -36,7 +36,8 @@ public:
 		const std::wstring& deployHost,
 		const std::wstring& databaseName,
 		const Guid& targetManagerId,
-		const std::wstring& outputPath
+		const std::wstring& outputPath,
+		bool audioWriteOut
 	);
 
 	virtual bool execute(IProgressListener* progressListener);
@@ -51,6 +52,7 @@ private:
 	std::wstring m_databaseName;
 	Guid m_targetManagerId;
 	std::wstring m_outputPath;
+	bool m_audioWriteOut;
 };
 
 	}

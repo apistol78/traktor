@@ -86,6 +86,7 @@ private:
 	{
 		render::ITexture* texture;
 		Matrix33 textureMatrix;
+		bool textureClamp;
 		render::Primitives primitives;
 	};
 

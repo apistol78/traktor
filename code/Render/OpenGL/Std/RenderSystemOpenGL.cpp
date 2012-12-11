@@ -88,14 +88,32 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 	if (!SetPixelFormat(hSharedDC, pixelFormat, &pfd))
 		return false;
 
-	HGLRC hSharedRC = wglCreateContext(hSharedDC);
+
+	// Create a dummy, old, context to load all extensions.
+	HGLRC hDummyRC = wglCreateContext(hSharedDC);
+	T_ASSERT (hDummyRC);
+
+	wglMakeCurrent(hSharedDC, hDummyRC);
+
+	if (!opengl_initialize_extensions())
+		return false;
+
+	wglMakeCurrent(NULL, NULL);
+	wglDeleteContext(hDummyRC);
+
+
+	// Finally create new type of context.
+	const GLint attribs[] =
+	{
+		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
+		0, 0
+	};
+
+	HGLRC hSharedRC = wglCreateContextAttribsARB(hSharedDC, NULL, attribs);
 	T_ASSERT (hSharedRC);
 
 	m_resourceContext = new ContextOpenGL(*m_windowShared, hSharedDC, hSharedRC);
 	m_resourceContext->enter();
-
-	if (!opengl_initialize_extensions())
-		return false;
 
 #elif defined(__APPLE__)
 
@@ -389,7 +407,13 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		return 0;
 	}
 
-	HGLRC hRC = wglCreateContext(hDC);
+	const GLint attribs[] =
+	{
+		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
+		0, 0
+	};
+
+	HGLRC hRC = wglCreateContextAttribsARB(hDC, NULL, attribs);
 	if (!hRC)
 	{
 		log::error << L"createRenderView failed; unable to create WGL context" << Endl;

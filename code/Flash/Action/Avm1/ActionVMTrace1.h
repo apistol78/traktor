@@ -7,7 +7,7 @@
 namespace traktor
 {
 
-class OutputStream;
+class FileOutputStream;
 
 	namespace flash
 	{
@@ -23,6 +23,8 @@ class ActionVMTrace1 : public Object
 public:
 	ActionVMTrace1();
 
+	virtual ~ActionVMTrace1();
+
 	void beginDispatcher();
 
 	void endDispatcher();
@@ -34,7 +36,7 @@ public:
 	OutputStream& getTraceStream();
 	
 private:
-	Ref< OutputStream > m_stream;
+	Ref< FileOutputStream > m_stream;
 };
 
 	}

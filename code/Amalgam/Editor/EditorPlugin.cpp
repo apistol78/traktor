@@ -30,12 +30,15 @@
 #include "I18N/Text.h"
 #include "Net/Network.h"
 #include "Net/Discovery/DiscoveryManager.h"
+#include "Ui/CheckBox.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
+#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
+#include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Events/CommandEvent.h"
 
 namespace traktor
@@ -110,6 +113,12 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), 150, i18n::Text(L"AMALGAM_TARGETS"));
 	m_toolBar->addItem(m_toolTargets);
+
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+
+	m_checkWriteOut = new ui::CheckBox();
+	m_checkWriteOut->create(m_toolBar, L"Audio \"Write Out\"", false);
+	m_toolBar->addItem(new ui::custom::ToolBarEmbed(m_checkWriteOut, 120));
 
 	// Create target configuration list control.
 	m_targetList = new TargetListControl();
@@ -385,7 +394,8 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				deployHost,
 				targetInstance->getDatabaseName(),
 				targetInstance->getId(),
-				outputPath
+				outputPath,
+				m_checkWriteOut->isChecked()
 			);
 			chain.actions.push_back(action);
 
