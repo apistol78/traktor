@@ -133,6 +133,9 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 	if (!sound)
 		return 0;
 
+	if (!m_surroundEnvironment)
+		return play(sound, priority);
+
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
 	// Calculate distance from listener.

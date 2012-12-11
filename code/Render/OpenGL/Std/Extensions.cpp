@@ -10,6 +10,9 @@ namespace traktor
 
 #if !defined(__APPLE__)
 
+// WGL_ARB_create_context
+PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = 0;
+
 // GL_ARB_shader_objects
 // GL_ARB_shading_language_100
 // GL_ARB_vertex_shader
@@ -81,6 +84,14 @@ PFNGLDRAWBUFFERSARBPROC glDrawBuffersARB = 0;
 PFNGLDRAWELEMENTSINSTANCEDARBPROC glDrawElementsInstancedARB = 0;
 PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstancedARB = 0;
 
+// GL_KHR_debug
+PFNGLDEBUGMESSAGECALLBACKARBPROC glDebugMessageCallbackARB = 0;
+PFNGLDEBUGMESSAGECONTROLARBPROC glDebugMessageControlARB = 0;
+
+// GL_AMD_debug_output
+PFNGLDEBUGMESSAGECALLBACKAMDPROC glDebugMessageCallbackAMD = 0;
+PFNGLDEBUGMESSAGEENABLEAMDPROC glDebugMessageEnableAMD = 0;
+
 #endif
 
 static struct Extension
@@ -101,6 +112,8 @@ s_extensions[] =
 	{ "GL_EXT_framebuffer_object", false, true, false },
 	{ "GL_EXT_framebuffer_multisample", false, true, false },
 	{ "GL_ARB_half_float_vertex", false, true, false },
+	{ "GL_KHR_debug", false, true, false },
+	{ "GL_AMD_debug_output", false, true, false },
 
 	{ "T_rendertarget_non_power_of_two", true, true, true },
 	{ "T_rendertarget_nearest_filter_only", false, true, true }
@@ -177,18 +190,35 @@ bool opengl_initialize_extensions()
 #	define T_WIDEN(x) T_WIDEN_X(x)
 
 #	if defined(_WIN32)
+
 #		define RESOLVE(fp) \
 		if (!(*(PROC*)&fp = wglGetProcAddress(#fp))) { \
 			log::error << L"Unable to load OpenGL extensions, \"" << T_WIDEN(#fp) << L"\" failed" << Endl; \
 			return false; \
 		}
+
+#		define RESOLVE_OPTIONAL(fp) \
+		if (!(*(PROC*)&fp = wglGetProcAddress(#fp))) { \
+			log::warning << L"OpenGL extension \"" << T_WIDEN(#fp) << L"\" not supported" << Endl; \
+		}
+
 #	else	// LINUX
+
 #		define RESOLVE(fp) \
-		if (!(*(size_t*)&fp = (size_t)glXGetProcAddressARB((const GLubyte*)#fp))) { \
+		if (!(*(intptr_t*)&fp = (intptr_t)glXGetProcAddressARB((const GLubyte*)#fp))) { \
 			log::error << L"Unable to load OpenGL extensions, \"" << T_WIDEN(#fp) << L"\" failed" << Endl; \
 			return false; \
 		}
+
+#		define RESOLVE_OPTIONAL(fp) \
+		if (!(*(intptr_t*)&fp = (intptr_t)glXGetProcAddressARB(#fp))) { \
+			log::warning << L"OpenGL extension \"" << T_WIDEN(#fp) << L"\" not supported" << Endl; \
+		}
+
 #	endif
+
+	// WGL_ARB_create_context
+	RESOLVE(wglCreateContextAttribsARB);
 
 	// GL_ARB_shader_objects
 	// GL_ARB_shading_language_100
@@ -260,6 +290,14 @@ bool opengl_initialize_extensions()
 	// GL_ARB_draw_instanced
 	RESOLVE(glDrawElementsInstancedARB);
 	RESOLVE(glDrawArraysInstancedARB);
+
+	// GL_KHR_debug
+	RESOLVE_OPTIONAL(glDebugMessageCallbackARB);
+	RESOLVE_OPTIONAL(glDebugMessageControlARB);
+
+	// GL_AMD_debug_output
+	RESOLVE_OPTIONAL(glDebugMessageCallbackAMD);
+	RESOLVE_OPTIONAL(glDebugMessageEnableAMD);
 
 #endif
 

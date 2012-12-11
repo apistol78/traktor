@@ -13,6 +13,9 @@ namespace traktor
 /*! \ingroup OGL */
 //@{
 
+// WGL_ARB_create_context
+extern PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+
 // GL_ARB_shader_objects
 // GL_ARB_shading_language_100
 // GL_ARB_vertex_shader
@@ -84,6 +87,14 @@ extern PFNGLDRAWBUFFERSARBPROC glDrawBuffersARB;
 extern PFNGLDRAWELEMENTSINSTANCEDARBPROC glDrawElementsInstancedARB;
 extern PFNGLDRAWARRAYSINSTANCEDARBPROC glDrawArraysInstancedARB;
 
+// GL_KHR_debug
+extern PFNGLDEBUGMESSAGECALLBACKARBPROC glDebugMessageCallbackARB;
+extern PFNGLDEBUGMESSAGECONTROLARBPROC glDebugMessageControlARB;
+
+// GL_AMD_debug_output
+extern PFNGLDEBUGMESSAGECALLBACKAMDPROC glDebugMessageCallbackAMD;
+extern PFNGLDEBUGMESSAGEENABLEAMDPROC glDebugMessageEnableAMD;
+
 // GL_ARB_half_float_vertex
 #	if !defined(GL_HALF_FLOAT_ARB)
 #		define GL_HALF_FLOAT_ARB 0x140B
@@ -102,10 +113,12 @@ enum Extensions
 	E_GL_EXT_framebuffer_object = 6,
 	E_GL_EXT_framebuffer_multisample = 7,
 	E_GL_ARB_half_float_vertex = 8,
+	E_GL_KHR_debug = 9,
+	E_GL_AMD_debug_output = 10,
 	
 	// Internal extensions.
-	E_T_rendertarget_non_power_of_two = 9,
-	E_T_rendertarget_nearest_filter_only = 10
+	E_T_rendertarget_non_power_of_two = 11,
+	E_T_rendertarget_nearest_filter_only = 12
 };
 
 bool opengl_initialize_extensions();

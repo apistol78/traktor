@@ -10,6 +10,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/ISoundDriver.h"
+#include "Sound/SoundDriverWriteOut.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
@@ -36,6 +37,13 @@ bool AudioServer::create(const PropertyGroup* settings)
 	Ref< sound::ISoundDriver > soundDriver = loadAndInstantiate< sound::ISoundDriver >(audioType);
 	if (!soundDriver)
 		return false;
+
+	// Create a wrapping "write out" driver if we want to debug audio.
+	if (settings->getProperty< PropertyBoolean >(L"Audio.WriteOut", false))
+	{
+		log::info << L"Creating \"write out\" sound driver wrapper" << Endl;
+		soundDriver = new sound::SoundDriverWriteOut(soundDriver);
+	}
 
 	// Create sound system.
 	m_soundSystem = new sound::SoundSystem(soundDriver);

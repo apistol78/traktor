@@ -174,20 +174,26 @@ void FlashMoviePlayer::renderFrame()
 void FlashMoviePlayer::executeFrame()
 {
 	ActionContext* context = m_movieInstance->getContext();
+	T_ASSERT (context);
 
 	Ref< FlashSpriteInstance > current = context->getMovieClip();
 	context->setMovieClip(m_movieInstance);
 
-	// Issue interval functions.
-	ActionValueArray argv;
+	// Collect interval functions.
+	std::vector< std::pair< ActionObject*, ActionFunction* > > intervalFns;
 	for (std::map< uint32_t, Interval >::iterator i = m_interval.begin(); i != m_interval.end(); ++i)
 	{
 		if (i->second.count++ >= i->second.interval)
 		{
-			i->second.function->call(i->second.target, argv);
+			intervalFns.push_back(std::make_pair(i->second.target, i->second.function));
 			i->second.count = 0;
 		}
 	}
+
+	// Issue interval functions.
+	ActionValueArray argv;
+	for (std::vector< std::pair< ActionObject*, ActionFunction* > >::const_iterator i = intervalFns.begin(); i != intervalFns.end(); ++i)
+		i->second->call(i->first, argv);
 
 	// Issue all events in sequence as each event possibly update
 	// the play head and other aspects of the movie.

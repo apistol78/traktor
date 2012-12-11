@@ -2,6 +2,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Thread.h"
@@ -15,23 +16,29 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverWriteOut", 0, SoundDriverWriteOut, ISoundDriver)
 
-SoundDriverWriteOut::SoundDriverWriteOut()
-:	m_peek(0.0f)
+SoundDriverWriteOut::SoundDriverWriteOut(ISoundDriver* childDriver)
+:	m_childDriver(childDriver)
+,	m_peek(0.0f)
 ,	m_wait(true)
 {
 }
 
 bool SoundDriverWriteOut::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
-	for (uint32_t i = 0; i < desc.hwChannels; ++i)
+	if (m_childDriver)
 	{
-		Ref< IStream > stream = FileSystem::getInstance().open(L"Sound" + toString(i) + L".raw", File::FmWrite);
-		if (!stream)
+		if (!m_childDriver->create(desc, outMixer))
 			return false;
-
-		m_streams[i] = stream;
 	}
 
+	StringOutputStream ss;
+	ss << L"swo-" << desc.sampleRate << L"-" << desc.hwChannels << L"-32fp.raw";
+
+	m_stream = FileSystem::getInstance().open(ss.str(), File::FmWrite);
+	if (!m_stream)
+		return false;
+
+	m_interleaved.reset(new float [desc.frameSamples * desc.hwChannels]);
 	m_desc = desc;
 	m_wait = true;
 
@@ -40,25 +47,34 @@ bool SoundDriverWriteOut::create(const SoundDriverCreateDesc& desc, Ref< ISoundM
 
 void SoundDriverWriteOut::destroy()
 {
-	for (uint32_t i = 0; i < sizeof_array(m_streams); ++i)
+	if (m_stream)
 	{
-		if (m_streams[i])
-		{
-			m_streams[i]->close();
-			m_streams[i] = 0;
-		}
+		m_stream->close();
+		m_stream = 0;
 	}
+
+	safeDestroy(m_childDriver);
 }
 
 void SoundDriverWriteOut::wait()
 {
-	long ms = m_desc.frameSamples * 1000L / m_desc.sampleRate;
-	ThreadManager::getInstance().getCurrentThread()->sleep(ms);
+	if (m_childDriver)
+		m_childDriver->wait();
+	else
+	{
+		long ms = m_desc.frameSamples * 1000L / m_desc.sampleRate;
+		ThreadManager::getInstance().getCurrentThread()->sleep(ms);
+	}
 }
 
 void SoundDriverWriteOut::submit(const SoundBlock& soundBlock)
 {
-	// Wait for first non-mute block.
+	// Submit to child driver first.
+	if (m_childDriver)
+		m_childDriver->submit(soundBlock);
+
+	// Wait for first non-mute block before we start writing out
+	// in order to prevent big empty files.
 	if (m_wait)
 	{
 		for (uint32_t i = 0; i < m_desc.hwChannels && m_wait; ++i)
@@ -73,19 +89,21 @@ void SoundDriverWriteOut::submit(const SoundBlock& soundBlock)
 			return;
 	}
 
-	for (uint32_t i = 0; i < m_desc.hwChannels; ++i)
-	{
-		if (soundBlock.samples[i] && m_streams[i])
-		{
-			m_streams[i]->write(
-				soundBlock.samples[i],
-				soundBlock.samplesCount * sizeof(float)
-			);
+	// Shuffle samples into an interleaved format.
+	float* sp = m_interleaved.ptr();
+	T_ASSERT (sp);
 
-			for (uint32_t j = 0; j < soundBlock.samplesCount; ++j)
-				m_peek = max(m_peek, soundBlock.samples[i][j]);
-		}
+	for (uint32_t i = 0; i < soundBlock.samplesCount; ++i)
+	{
+		for (uint32_t j = 0; j < m_desc.hwChannels; ++j)
+			*sp++ = soundBlock.samples[j] ? soundBlock.samples[j][i] : 0.0f;
 	}
+
+	// Write out interleaved block.
+	m_stream->write(
+		m_interleaved.c_ptr(),
+		soundBlock.samplesCount * m_desc.hwChannels * sizeof(float)
+	);
 }
 
 	}

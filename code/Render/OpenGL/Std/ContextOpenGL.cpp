@@ -21,6 +21,22 @@ namespace traktor
 
 typedef RefArray< ContextOpenGL > context_stack_t;
 
+void APIENTRY debugCallbackARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
+{
+	if (message)
+		log::info << L"OpenGL: " << mbstows(message) << Endl;
+	else
+		log::info << L"OpenGL: <empty>" << Endl;
+}
+
+void APIENTRY debugCallbackAMD(GLuint id, GLenum category, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
+{
+	if (message)
+		log::info << L"OpenGL: " << mbstows(message) << Endl;
+	else
+		log::info << L"OpenGL: <empty>" << Endl;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ContextOpenGL", ContextOpenGL, IContext)
@@ -60,7 +76,6 @@ ContextOpenGL::ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext 
 
 #endif
 {
-
 	update();
 }
 
@@ -186,6 +201,18 @@ bool ContextOpenGL::enter()
 	{
 		stack = new context_stack_t();
 		ms_contextStack.set(stack);
+	}
+
+	if (glDebugMessageCallbackARB)
+	{
+		T_OGL_SAFE(glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, GL_TRUE));
+		T_OGL_SAFE(glDebugMessageCallbackARB(&debugCallbackARB, 0));
+		T_OGL_SAFE(glEnable(GL_DEBUG_OUTPUT));
+	}
+	if (glDebugMessageCallbackAMD)
+	{
+		T_OGL_SAFE(glDebugMessageEnableAMD(0, 0, 0, NULL, GL_TRUE));
+		T_OGL_SAFE(glDebugMessageCallbackAMD(&debugCallbackAMD, 0));
 	}
 
 	stack->push_back(this);

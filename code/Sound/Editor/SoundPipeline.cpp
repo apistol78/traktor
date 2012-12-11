@@ -133,7 +133,7 @@ bool SoundPipeline::buildOutput(
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
-	log::info << L"Category volume " << int32_t(volume * 100.0f) << L"%" << Endl;
+	log::info << L"Category volume " << int32_t(volume * 100.0f) << L" %" << Endl;
 	log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
 
 	if (soundAsset->m_stream)
@@ -249,10 +249,13 @@ bool SoundPipeline::buildOutput(
 
 		while (decoder->getBlock(soundBlock))
 		{
-			if (!encoder->putBlock(soundBlock))
+			if (soundBlock.samplesCount > 0 && soundBlock.maxChannel > 0)
 			{
-				log::error << L"Failed to build sound asset, transcoding failed" << Endl;
-				return false;
+				if (!encoder->putBlock(soundBlock))
+				{
+					log::error << L"Failed to build sound asset, transcoding failed" << Endl;
+					return false;
+				}
 			}
 
 			sampleRate = soundBlock.sampleRate;

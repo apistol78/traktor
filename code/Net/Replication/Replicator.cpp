@@ -856,8 +856,13 @@ void Replicator::setOrigin(const Vector4& origin)
 
 void Replicator::setStateTemplate(const StateTemplate* stateTemplate)
 {
+	// Replace template.
 	m_stateTemplate = stateTemplate;
+
+	// Nuke states from previous template.
 	m_state = 0;
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+		i->second.iframe = 0;
 }
 
 void Replicator::setState(const State* state)

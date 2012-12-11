@@ -79,12 +79,25 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionVMTrace1", ActionVMTrace1, Object)
 
 ActionVMTrace1::ActionVMTrace1()
 {
-	Ref< IStream > traceFile = FileSystem::getInstance().open(L"ActionVM1.trace", File::FmWrite);
-	m_stream = new FileOutputStream(traceFile, new Utf8Encoding());
+}
+
+ActionVMTrace1::~ActionVMTrace1()
+{
+	if (m_stream)
+	{
+		m_stream->close();
+		m_stream = 0;
+	}
 }
 
 void ActionVMTrace1::beginDispatcher()
 {
+	if (!m_stream)
+	{
+		Ref< IStream > traceFile = FileSystem::getInstance().open(L"ActionVM1.trace", File::FmWrite | File::FmAppend);
+		m_stream = new FileOutputStream(traceFile, new Utf8Encoding());
+	}
+
 	(*m_stream) << L"Begin dispatcher" << Endl;
 }
 

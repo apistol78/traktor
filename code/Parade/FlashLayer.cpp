@@ -115,84 +115,88 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	input::InputSystem* inputSystem = m_environment->getInput()->getInputSystem();
 	std::string command, args;
 
-	// Propagate keyboard input to movie.
-	input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::CtKeyboard, 0, true);
-	if (keyboardDevice)
+	// Do NOT propagate input in case user is fabricating input.
+	if (!m_environment->getInput()->isFabricating())
 	{
-		input::IInputDevice::KeyEvent ke;
-		while (keyboardDevice->getKeyEvent(ke))
+		// Propagate keyboard input to movie.
+		input::IInputDevice* keyboardDevice = inputSystem->getDevice(input::CtKeyboard, 0, true);
+		if (keyboardDevice)
 		{
-			if (ke.type == input::IInputDevice::KtCharacter)
-				m_moviePlayer->postKey(ke.character);
-			else
+			input::IInputDevice::KeyEvent ke;
+			while (keyboardDevice->getKeyEvent(ke))
 			{
-				uint32_t keyCode = translateInputKeyCode(ke.keyCode);
-				if (keyCode != 0)
+				if (ke.type == input::IInputDevice::KtCharacter)
+					m_moviePlayer->postKey(ke.character);
+				else
 				{
-					if (ke.type == input::IInputDevice::KtDown)
-						m_moviePlayer->postKeyDown(keyCode);
-					else if (ke.type == input::IInputDevice::KtUp)
-						m_moviePlayer->postKeyUp(keyCode);
+					uint32_t keyCode = translateInputKeyCode(ke.keyCode);
+					if (keyCode != 0)
+					{
+						if (ke.type == input::IInputDevice::KtDown)
+							m_moviePlayer->postKeyDown(keyCode);
+						else if (ke.type == input::IInputDevice::KtUp)
+							m_moviePlayer->postKeyUp(keyCode);
+					}
 				}
 			}
 		}
-	}
 
-	// Propagate mouse input to movie.
-	input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, 0, true);
-	if (mouseDevice)
-	{
-		int32_t positionX, positionY;
-		mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);
-		mouseDevice->getDefaultControl(input::DtPositionY, true, positionY);
-
-		int32_t button1, button2;
-		mouseDevice->getDefaultControl(input::DtButton1, false, button1);
-		mouseDevice->getDefaultControl(input::DtButton2, false, button2);
-
-		float minX, minY;
-		float maxX, maxY;
-		mouseDevice->getControlRange(positionX, minX, maxX);
-		mouseDevice->getControlRange(positionY, minY, maxY);
-
-		if (maxX > minX && maxY > minY)
+		// Propagate mouse input to movie.
+		input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, 0, true);
+		if (mouseDevice)
 		{
-			float x = mouseDevice->getControlValue(positionX);
-			float y = mouseDevice->getControlValue(positionY);
+			int32_t positionX, positionY;
+			mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);
+			mouseDevice->getDefaultControl(input::DtPositionY, true, positionY);
 
-			x = (x - minX) / (maxX - minX);
-			y = (y - minY) / (maxY - minY);
+			int32_t button1, button2;
+			mouseDevice->getDefaultControl(input::DtButton1, false, button1);
+			mouseDevice->getDefaultControl(input::DtButton2, false, button2);
 
-			int32_t width = renderView->getWidth();
-			int32_t height = renderView->getHeight();
+			float minX, minY;
+			float maxX, maxY;
+			mouseDevice->getControlRange(positionX, minX, maxX);
+			mouseDevice->getControlRange(positionY, minY, maxY);
 
-			float viewRatio = m_environment->getRender()->getViewAspectRatio();
-			float aspectRatio = m_environment->getRender()->getAspectRatio();
-
-			width = int32_t(width * aspectRatio / viewRatio);
-
-			int32_t mx = int32_t(width * x);
-			int32_t my = int32_t(height * y);
-
-			int32_t mb =
-				(mouseDevice->getControlValue(button1) > 0.5f ? 1 : 0) |
-				(mouseDevice->getControlValue(button2) > 0.5f ? 2 : 0);
-
-			if (mx != m_lastX || my != m_lastY)
+			if (maxX > minX && maxY > minY)
 			{
-				m_moviePlayer->postMouseMove(mx, my, mb);
-				m_lastX = mx;
-				m_lastY = my;
-			}
+				float x = mouseDevice->getControlValue(positionX);
+				float y = mouseDevice->getControlValue(positionY);
 
-			if (mb != m_lastButton)
-			{
-				if (mb)
-					m_moviePlayer->postMouseDown(mx, my, mb);
-				else
-					m_moviePlayer->postMouseUp(mx, my, mb);
+				x = (x - minX) / (maxX - minX);
+				y = (y - minY) / (maxY - minY);
 
-				m_lastButton = mb;
+				int32_t width = renderView->getWidth();
+				int32_t height = renderView->getHeight();
+
+				float viewRatio = m_environment->getRender()->getViewAspectRatio();
+				float aspectRatio = m_environment->getRender()->getAspectRatio();
+
+				width = int32_t(width * aspectRatio / viewRatio);
+
+				int32_t mx = int32_t(width * x);
+				int32_t my = int32_t(height * y);
+
+				int32_t mb =
+					(mouseDevice->getControlValue(button1) > 0.5f ? 1 : 0) |
+					(mouseDevice->getControlValue(button2) > 0.5f ? 2 : 0);
+
+				if (mx != m_lastX || my != m_lastY)
+				{
+					m_moviePlayer->postMouseMove(mx, my, mb);
+					m_lastX = mx;
+					m_lastY = my;
+				}
+
+				if (mb != m_lastButton)
+				{
+					if (mb)
+						m_moviePlayer->postMouseDown(mx, my, mb);
+					else
+						m_moviePlayer->postMouseUp(mx, my, mb);
+
+					m_lastButton = mb;
+				}
 			}
 		}
 	}

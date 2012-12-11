@@ -196,11 +196,11 @@ bool SteamMatchMaking::joinLobby(uint64_t lobbyHandle)
 
 bool SteamMatchMaking::leaveLobby(uint64_t lobbyHandle)
 {
-	T_ASSERT_M (m_inLobby, L"Not in any lobby");
-
-	SteamMatchmaking()->LeaveLobby(lobbyHandle);
-	m_inLobby = false;
-
+	if (m_inLobby)
+	{
+		SteamMatchmaking()->LeaveLobby(lobbyHandle);
+		m_inLobby = false;
+	}
 	return true;
 }
 
@@ -267,12 +267,14 @@ bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 
 bool SteamMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
+	T_ASSERT_M (m_inLobby, L"Not in any lobby");
 	outCount = SteamMatchmaking()->GetNumLobbyMembers(lobbyHandle);
 	return true;
 }
 
 bool SteamMatchMaking::invite(uint64_t lobbyHandle, uint64_t userHandle)
 {
+	T_ASSERT_M (m_inLobby, L"Not in any lobby");
 	return SteamMatchmaking()->InviteUserToLobby(lobbyHandle, userHandle);
 }
 

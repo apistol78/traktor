@@ -185,7 +185,9 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 	{
 		if (m_inputMappingSourceData && m_inputMappingStateData)
 		{
-			m_inputMapping = new input::InputMapping();
+			if (!m_inputMapping)
+				m_inputMapping = new input::InputMapping();
+
 			m_inputMapping->create(
 				m_inputSystem,
 				m_inputMappingSourceData,
@@ -260,7 +262,9 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 				// Update mapping with new, fabricated, source.
 				if (m_inputMappingSourceData && m_inputMappingStateData)
 				{
-					m_inputMapping = new input::InputMapping();
+					if (!m_inputMapping)
+						m_inputMapping = new input::InputMapping();
+
 					m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 					m_inputMapping->update(deltaTime);
 				}
@@ -288,7 +292,9 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 			// Update mapping with new, fabricated, source.
 			if (m_inputMappingSourceData && m_inputMappingStateData)
 			{
-				m_inputMapping = new input::InputMapping();
+				if (!m_inputMapping)
+					m_inputMapping = new input::InputMapping();
+
 				m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 				m_inputMapping->update(deltaTime);
 			}
@@ -362,9 +368,10 @@ bool InputServer::createInputMapping(const input::InputMappingStateData* stateDa
 		return false;
 	}
 
-	m_inputMapping = new input::InputMapping();
-	m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+	if (!m_inputMapping)
+		m_inputMapping = new input::InputMapping();
 
+	m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 	return true;
 }
 
@@ -416,7 +423,9 @@ bool InputServer::resetInputSource(const std::wstring& sourceId)
 
 	if (m_inputMappingStateData)
 	{
-		m_inputMapping = new input::InputMapping();
+		if (!m_inputMapping)
+			m_inputMapping = new input::InputMapping();
+
 		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
 		m_inputMapping->update(1.0f / 30.0f);
 	}

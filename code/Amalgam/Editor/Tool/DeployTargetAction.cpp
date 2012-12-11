@@ -7,6 +7,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyObject.h"
@@ -43,7 +44,8 @@ DeployTargetAction::DeployTargetAction(
 	const std::wstring& deployHost,
 	const std::wstring& databaseName,
 	const Guid& targetManagerId,
-	const std::wstring& outputPath
+	const std::wstring& outputPath,
+	bool audioWriteOut
 )
 :	m_database(database)
 ,	m_globalSettings(globalSettings)
@@ -54,6 +56,7 @@ DeployTargetAction::DeployTargetAction(
 ,	m_databaseName(databaseName)
 ,	m_targetManagerId(targetManagerId)
 ,	m_outputPath(outputPath)
+,	m_audioWriteOut(audioWriteOut)
 {
 }
 
@@ -124,6 +127,10 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 
 	// Append application title.
 	applicationConfiguration->setProperty< PropertyString >(L"Render.Title", m_targetName);
+
+	// Append audio write out.
+	if (m_audioWriteOut)
+		applicationConfiguration->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
 
 	// Write generated application configuration in output directory.
 	Ref< IStream > file = FileSystem::getInstance().open(

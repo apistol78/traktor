@@ -29,12 +29,22 @@ void AsBoolean::initialize(ActionObject* self)
 
 void AsBoolean::construct(ActionObject* self, const ActionValueArray& args)
 {
-	Ref< Boolean > b;
-	if (args.size() > 0)
-		b = new Boolean(args[0].getBoolean());
+	Ref< Boolean > b = self->getRelay< Boolean >();
+	if (!b)
+	{
+		if (args.size() > 0)
+			b = new Boolean(args[0].getBoolean());
+		else
+			b = new Boolean(false);
+		self->setRelay(b);
+	}
 	else
-		b = new Boolean(false);
-	self->setRelay(b);
+	{
+		if (args.size() > 0)
+			b->set(args[0].getBoolean());
+		else
+			b->set(false);
+	}
 }
 
 ActionValue AsBoolean::xplicit(const ActionValueArray& args)
