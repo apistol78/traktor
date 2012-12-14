@@ -103,7 +103,7 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 	Ref< IStream > eventFile;
 
 	// Create our shared memory object.
-	m_shm = OS::getInstance().createSharedMemory(toLower(eventFileName), 4UL * 1024 * 1024);
+	m_shm = OS::getInstance().createSharedMemory(toLower(eventFileName), 256 * 1024);
 	T_ASSERT (m_shm);
 
 	if (m_globalLock.existing())

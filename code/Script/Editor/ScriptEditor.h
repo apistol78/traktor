@@ -32,6 +32,7 @@ class ListBox;
 		namespace custom
 		{
 
+class GridView;
 class Splitter;
 class SyntaxRichEdit;
 class StatusBar;
@@ -69,7 +70,7 @@ private:
 	Ref< Script > m_script;
 	Ref< IScriptManager > m_scriptManager;
 	Ref< ui::custom::Splitter > m_splitter;
-	Ref< ui::ListBox > m_outlineList;
+	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ui::ListBox > m_dependencyList;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;

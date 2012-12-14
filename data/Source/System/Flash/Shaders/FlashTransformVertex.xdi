@@ -20,7 +20,7 @@
 			</position>
 			<parameterName>Flash_FrameSize</parameterName>
 			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -150,7 +150,7 @@
 			</position>
 			<parameterName>Flash_ViewSize</parameterName>
 			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -218,7 +218,7 @@
 			</position>
 			<parameterName>Flash_ViewOffset</parameterName>
 			<type>PtVector</type>
-			<frequency>UfOnce</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>

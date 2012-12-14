@@ -21,6 +21,12 @@ namespace traktor
 {
 	namespace parade
 	{
+		namespace
+		{
+
+const Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.WorldLayer", WorldLayer, Layer)
 
@@ -138,7 +144,7 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT (renderView);
 
-	if (m_worldRenderer->begin(frame, eye))
+	if (m_worldRenderer->begin(frame, eye, c_clearColor))
 	{
 		m_worldRenderer->render(
 			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap,

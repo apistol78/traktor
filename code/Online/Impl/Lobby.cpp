@@ -14,15 +14,6 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.Lobby", Lobby, ILobby)
 
-Lobby::~Lobby()
-{
-	if (m_matchMakingProvider)
-	{
-		m_matchMakingProvider->leaveLobby(m_handle);
-		m_matchMakingProvider = 0;
-	}
-}
-
 Ref< Result > Lobby::setMetaValue(const std::wstring& key, const std::wstring& value)
 {
 	if (!m_matchMakingProvider)

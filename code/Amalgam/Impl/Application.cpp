@@ -538,11 +538,11 @@ bool Application::update()
 			m_updateInfo.m_simulationFrequency = c_simulationFrequency;
 
 			float simulationEndTime = m_updateInfo.m_stateTime;
-			updateCount = std::min(int32_t(std::ceil((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime)), m_maxSimulationUpdates);
+			updateCount = std::min(int32_t((simulationEndTime - m_updateInfo.m_simulationTime) / c_simulationDeltaTime), m_maxSimulationUpdates);
 
 			// Execute fixed update(s).
 			bool renderCollision = false;
-			for (int32_t i = 0; i < updateCount; ++i, m_updateInfo.m_simulationTime += c_simulationDeltaTime)
+			for (int32_t i = 0; i < updateCount; ++i)
 			{
 				// If we're doing multiple updates per frame then we're rendering bound; so in order
 				// to keep input updating periodically we need to make sure we wait a bit, as long
@@ -584,6 +584,10 @@ bool Application::update()
 
 				m_updateDuration = float(physicsTimeEnd - physicsTimeStart + inputTimeEnd - inputTimeStart + updateTimeEnd - updateTimeStart);
 
+				m_updateInfo.m_simulationTime += c_simulationDeltaTime;
+				m_updateInfo.m_totalTime += c_simulationDeltaTime;
+				m_updateInfo.m_stateTime += c_simulationDeltaTime;
+
 				if (result == IState::UrExit || result == IState::UrFailed)
 				{
 					// Ensure render thread is finished before we leave.
@@ -596,6 +600,9 @@ bool Application::update()
 				if (m_stateManager->getNext())
 					break;
 			}
+
+			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime - updateCount * c_simulationDeltaTime;
+			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime - updateCount * c_simulationDeltaTime;
 		}
 		else
 		{
@@ -614,12 +621,14 @@ bool Application::update()
 			updateDuration += updateTimeEnd - updateTimeStart;
 			updateCount++;
 
+			m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime;
+			m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime;
+
 			if (updateResult == IState::UrExit || updateResult == IState::UrFailed)
 			{
 				// Ensure render thread is finished before we leave.
 				if (m_threadRender)
 					m_signalRenderFinish.wait(1000);
-
 				return false;
 			}
 
@@ -741,8 +750,6 @@ bool Application::update()
 				currentThread->yield();
 		}
 
-		m_updateInfo.m_totalTime += m_updateInfo.m_frameDeltaTime;
-		m_updateInfo.m_stateTime += m_updateInfo.m_frameDeltaTime;
 		m_updateInfo.m_frame++;
 
 #if T_MEASURE_PERFORMANCE

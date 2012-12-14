@@ -23,8 +23,8 @@ public:
 
 private:
 	traktor::Ref< ScriptProcessor > m_scriptProcessor;
-
-	void addItem(const Solution* solution, const Project* project, const ProjectItem* item, const std::wstring& filterPath, traktor::OutputStream& os) const;
+	std::wstring m_projectFile;
+	std::wstring m_cprojectFile;
 };
 
 #endif	// SolutionBuilderEclipse_H

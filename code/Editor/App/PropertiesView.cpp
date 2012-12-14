@@ -38,7 +38,7 @@ PropertiesView::PropertiesView(IEditor* editor)
 
 bool PropertiesView::create(ui::Widget* parent)
 {
-	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,50", 0, 4)))
+	if (!ui::Container::create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,75", 0, 4)))
 		return false;
 
 	m_propertyList = new ui::custom::AutoPropertyList();

@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/Adler32.h"
 #include "Core/Misc/String.h"
 #include "Render/VertexElement.h"
 #include "Render/Dx11/Platform.h"
@@ -1033,10 +1034,81 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 	if (!texCoord)
 		return false;
 
-	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
+	// Define sampler class.
+	const D3D11_TEXTURE_ADDRESS_MODE c_d3dAddress[] =
+	{
+		D3D11_TEXTURE_ADDRESS_WRAP,
+		D3D11_TEXTURE_ADDRESS_MIRROR,
+		D3D11_TEXTURE_ADDRESS_CLAMP,
+		D3D11_TEXTURE_ADDRESS_BORDER
+	};
 
+	D3D11_SAMPLER_DESC dsd;
+	std::memset(&dsd, 0, sizeof(dsd));
+
+	dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
+
+	dsd.AddressU = c_d3dAddress[node->getAddressU()];
+	dsd.AddressV = c_d3dAddress[node->getAddressV()];
+	if (texture->getType() > HtTexture2D)
+		dsd.AddressW = c_d3dAddress[node->getAddressW()];
+	else
+		dsd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
+
+	dsd.MipLODBias = node->getMipBias();
+	dsd.MaxAnisotropy = 1;
+	dsd.ComparisonFunc = D3D11_COMPARISON_NEVER;
+	dsd.BorderColor[0] =
+	dsd.BorderColor[1] =
+	dsd.BorderColor[2] =
+	dsd.BorderColor[3] = 1.0f;
+	dsd.MinLOD = -D3D11_FLOAT32_MAX;
+	dsd.MaxLOD =  D3D11_FLOAT32_MAX;
+
+	switch (node->getMipFilter())
+	{
+	case Sampler::FtPoint:
+		break;
+	case Sampler::FtLinear:
+		(UINT&)dsd.Filter |= 0x1;
+		break;
+	}
+
+	switch (node->getMagFilter())
+	{
+	case Sampler::FtPoint:
+		break;
+	case Sampler::FtLinear:
+		(UINT&)dsd.Filter |= 0x4;
+		break;
+	}
+
+	switch (node->getMinFilter())
+	{
+	case Sampler::FtPoint:
+		break;
+	case Sampler::FtLinear:
+		(UINT&)dsd.Filter |= 0x10;
+		break;
+	}
+
+	Adler32 samplerHash;
+	samplerHash.begin();
+	samplerHash.feed(&dsd, sizeof(dsd));
+	samplerHash.end();
+
+	std::wstring samplerName = L"S" + toString(samplerHash.get()) + L"_samplerState";
 	std::wstring textureName = texture->getName();
-	std::wstring samplerName = out->getName() + L"_samplerState";
+
+	const std::map< std::wstring, D3D11_SAMPLER_DESC >& samplers = cx.getShader().getSamplers();
+	if (samplers.find(samplerName) == samplers.end())
+	{
+		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtSamplers);
+		fu << L"SamplerState " << samplerName << L";" << Endl;
+		cx.getShader().addSampler(samplerName, dsd);
+	}
+
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 
 	if (cx.inPixel())
 	{
@@ -1051,6 +1123,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 			break;
 		}
 	}
+
 	if (cx.inVertex())
 	{
 		switch (texture->getType())
@@ -1063,73 +1136,6 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 			assign(f, out) << textureName << L".SampleLevel(" << samplerName << L", " << texCoord->cast(HtFloat3) << L", 0.0f);" << Endl;
 			break;
 		}
-	}
-
-	// Define sampler class.
-	const std::map< std::wstring, D3D11_SAMPLER_DESC >& samplers = cx.getShader().getSamplers();
-	if (samplers.find(samplerName) == samplers.end())
-	{
-		int sampler = int(samplers.size());
-
-		const D3D11_TEXTURE_ADDRESS_MODE c_d3dAddress[] =
-		{
-			D3D11_TEXTURE_ADDRESS_WRAP,
-			D3D11_TEXTURE_ADDRESS_MIRROR,
-			D3D11_TEXTURE_ADDRESS_CLAMP,
-			D3D11_TEXTURE_ADDRESS_BORDER
-		};
-
-		D3D11_SAMPLER_DESC dsd;
-		dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_POINT;
-
-		dsd.AddressU = c_d3dAddress[node->getAddressU()];
-		dsd.AddressV = c_d3dAddress[node->getAddressV()];
-		if (texture->getType() > HtTexture2D)
-			dsd.AddressW = c_d3dAddress[node->getAddressW()];
-		else
-			dsd.AddressW = D3D11_TEXTURE_ADDRESS_WRAP;
-
-		dsd.MipLODBias = node->getMipBias();
-		dsd.MaxAnisotropy = 1;
-		dsd.ComparisonFunc = D3D11_COMPARISON_NEVER;
-		dsd.BorderColor[0] =
-		dsd.BorderColor[1] =
-		dsd.BorderColor[2] =
-		dsd.BorderColor[3] = 1.0f;
-		dsd.MinLOD = -D3D11_FLOAT32_MAX;
-		dsd.MaxLOD =  D3D11_FLOAT32_MAX;
-
-		switch (node->getMipFilter())
-		{
-		case Sampler::FtPoint:
-			break;
-		case Sampler::FtLinear:
-			(UINT&)dsd.Filter |= 0x1;
-			break;
-		}
-
-		switch (node->getMagFilter())
-		{
-		case Sampler::FtPoint:
-			break;
-		case Sampler::FtLinear:
-			(UINT&)dsd.Filter |= 0x4;
-			break;
-		}
-
-		switch (node->getMinFilter())
-		{
-		case Sampler::FtPoint:
-			break;
-		case Sampler::FtLinear:
-			(UINT&)dsd.Filter |= 0x10;
-			break;
-		}
-
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtSamplers);
-		fu << L"SamplerState " << samplerName << L";" << Endl;
-		
-		cx.getShader().addSampler(samplerName, dsd);
 	}
 
 	return true;

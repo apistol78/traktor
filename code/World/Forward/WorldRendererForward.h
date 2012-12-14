@@ -77,7 +77,7 @@ public:
 
 	virtual void build(WorldRenderView& worldRenderView, Entity* entity, int frame);
 
-	virtual bool begin(int frame, render::EyeType eye);
+	virtual bool begin(int frame, render::EyeType eye, const Color4f& clearColor);
 
 	virtual void render(uint32_t flags, int frame, render::EyeType eye);
 

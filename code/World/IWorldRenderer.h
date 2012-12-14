@@ -16,6 +16,9 @@
 
 namespace traktor
 {
+
+class Color4f;
+
 	namespace render
 	{
 
@@ -149,9 +152,10 @@ public:
 	 *
 	 * \param frame Multi threaded context frame.
 	 * \param eye Stereoscopic eye.
+	 * \param clearColor Clear visual target color.
 	 * \return True if rendering begun.
 	 */
-	virtual bool begin(int frame, render::EyeType eye) = 0;
+	virtual bool begin(int frame, render::EyeType eye, const Color4f& clearColor) = 0;
 
 	/*! \brief Render "render contexts".
 	 *
