@@ -472,14 +472,13 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 	m_count++;
 }
 
-bool WorldRendererForward::begin(int frame, render::EyeType eye)
+bool WorldRendererForward::begin(int frame, render::EyeType eye, const Color4f& clearColor)
 {
 	if (m_visualTargetSet)
 	{
 		if (!m_renderView->begin(m_visualTargetSet, 0))
 			return false;
 
-		const Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
 	}
 	return true;

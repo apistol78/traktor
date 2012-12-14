@@ -88,7 +88,7 @@ public:
 
 	virtual void build(WorldRenderView& worldRenderView, Entity* entity, int frame);
 
-	virtual bool begin(int frame, render::EyeType eye);
+	virtual bool begin(int frame, render::EyeType eye, const Color4f& clearColor);
 
 	virtual void render(uint32_t flags, int frame, render::EyeType eye);
 
@@ -149,6 +149,7 @@ private:
 	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::RenderTargetSet > m_visualTargetSet;
+	Ref< render::RenderTargetSet > m_intermediateTargetSet;
 	Ref< render::RenderTargetSet > m_gbufferTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
@@ -160,6 +161,7 @@ private:
 	Ref< PostProcess > m_ambientOcclusion;
 	Ref< PostProcess > m_antiAlias;
 	Ref< PostProcess > m_visualPostProcess;
+	Ref< PostProcess > m_gammaCorrectionPostProcess;
 	Ref< LightRenderer > m_lightRenderer;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];

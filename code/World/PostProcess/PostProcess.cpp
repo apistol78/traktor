@@ -118,21 +118,21 @@ bool PostProcess::render(
 
 	T_RENDER_PUSH_MARKER(renderView, "PostProcess");
 
-	// Check if any target need to be cleared before post processing.
-	for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
-	{
-		Target& target = i->second;
-		if (target.shouldClear)
-		{
-			if (renderView->begin(target.target, 0))
-			{
-				Color4f c(target.clearColor);
-				renderView->clear(render::CfColor, &c, 0.0f, 0);
-				renderView->end();
-				target.shouldClear = false;
-			}
-		}
-	}
+	//// Check if any target need to be cleared before post processing.
+	//for (SmallMap< render::handle_t, Target >::iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+	//{
+	//	Target& target = i->second;
+	//	if (target.shouldClear)
+	//	{
+	//		if (renderView->begin(target.target, 0))
+	//		{
+	//			Color4f c(target.clearColor);
+	//			renderView->clear(render::CfColor, &c, 0.0f, 0);
+	//			renderView->end();
+	//			target.shouldClear = false;
+	//		}
+	//	}
+	//}
 
 	// Execute each post processing step in sequence.
 	for (RefArray< PostProcessStep::Instance >::const_iterator i = m_instances.begin(); i != m_instances.end(); ++i)

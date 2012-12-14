@@ -187,18 +187,6 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		m_worldRenderer = 0;
 	}
 
-	if (m_postProcess)
-	{
-		m_postProcess->destroy();
-		m_postProcess = 0;
-	}
-
-	if (m_renderTarget)
-	{
-		m_renderTarget->destroy();
-		m_renderTarget = 0;
-	}
-
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
 	if (!sceneInstance)
 		return;
@@ -208,21 +196,6 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		return;
 
 	m_worldRenderSettings = *sceneInstance->getWorldRenderSettings();
-
-	// Create post processing.
-	Ref< const world::PostProcessSettings > postProcessSettings = sceneInstance->getPostProcessSettings();
-	if (postProcessSettings)
-	{
-		m_postProcess = new world::PostProcess();
-		if (!m_postProcess->create(
-			postProcessSettings,
-			m_context->getResourceManager(),
-			m_context->getRenderSystem(),
-			sz.cx,
-			sz.cy
-		))
-			m_postProcess = 0;
-	}
 
 	// Create entity renderers.
 	Ref< EntityRendererCache > entityRendererCache = new EntityRendererCache(m_context);
@@ -250,7 +223,7 @@ void PerspectiveRenderControl::updateWorldRenderer()
 
 	if (worldRenderer->create(
 		&m_worldRenderSettings,
-		0,
+		m_postProcessEnable ? sceneInstance->getPostProcessSettings() : 0,
 		worldEntityRenderers,
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
@@ -262,20 +235,6 @@ void PerspectiveRenderControl::updateWorldRenderer()
 		m_worldRenderer = worldRenderer;
 
 		updateWorldRenderView();
-
-		// Create render target used for post processing.
-		if (m_postProcess)
-		{
-			render::RenderTargetSetCreateDesc desc;
-			desc.count = 1;
-			desc.width = sz.cx;
-			desc.height = sz.cy;
-			desc.multiSample = m_multiSample;
-			desc.createDepthStencil = false;
-			desc.usingPrimaryDepthStencil = true;
-			desc.targets[0].format = m_postProcess->requireHighRange() ? render::TfR11G11B10F : render::TfR8G8B8A8;
-			m_renderTarget =  m_context->getRenderSystem()->createRenderTargetSet(desc);
-		}
 
 		// Expose world targets to debug view.
 		RefArray< render::ITexture > worldTargets;
@@ -310,9 +269,15 @@ bool PerspectiveRenderControl::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.DisableGuide")
 		m_guideEnable = false;
 	else if (command == L"Scene.Editor.EnablePostProcess")
+	{
 		m_postProcessEnable = true;
+		updateWorldRenderer();
+	}
 	else if (command == L"Scene.Editor.DisablePostProcess")
+	{
 		m_postProcessEnable = false;
+		updateWorldRenderer();
+	}
 
 	return result;
 }
@@ -575,14 +540,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))
 	{
-		Color4f ct(colorClear[0], colorClear[1], colorClear[2], colorClear[3]);
-		m_renderView->clear(
-			render::CfColor | render::CfDepth,
-			&ct,
-			1.0f,
-			128
-		);
-
 		// Render entities.
 		m_worldRenderView.setTimes(scaledTime, deltaTime, 1.0f);
 		m_worldRenderView.setView(view);
@@ -591,49 +548,19 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		if (sceneInstance)
 			m_worldRenderer->build(m_worldRenderView, sceneInstance->getRootEntity(), 0);
 
+		m_worldRenderer->begin(
+			0,
+			render::EtCyclop,
+			Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3])
+		);
+
 		m_worldRenderer->render(
-			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap,
+			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 			0,
 			render::EtCyclop
 		);
 
-		if (m_postProcessEnable && m_renderTarget)
-		{
-			m_renderView->begin(m_renderTarget, 0);
-			m_renderView->clear(
-				render::CfColor,
-				&ct,
-				1.0f,
-				128
-			);
-		}
-
-		m_worldRenderer->render(
-			world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
-			0,
-			render::EtCyclop
-		);
-
-		if (m_postProcessEnable && m_renderTarget)
-		{
-			m_renderView->end();
-
-			world::PostProcessStep::Instance::RenderParams params;
-
-			params.viewFrustum = m_worldRenderView.getViewFrustum();
-			params.viewToLight = Matrix44::identity();
-			params.view = view;
-			params.projection = projection;
-			params.deltaTime = deltaTime;
-
-			m_postProcess->render(
-				m_renderView,
-				m_renderTarget,
-				m_worldRenderer->getDepthTargetSet(),
-				m_worldRenderer->getShadowMaskTargetSet(),
-				params
-			);
-		}
+		m_worldRenderer->end(0, render::EtCyclop, deltaTime);
 
 		// Render wire guides.
 		m_primitiveRenderer->begin(m_renderView);

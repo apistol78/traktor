@@ -76,6 +76,13 @@ void packUnit(const Vector4& u, uint8_t out[3])
 			}
 		}
 	}
+
+#if defined(_DEBUG)
+	Vector4 check = unpackUnit(out);
+	Vector4 error = (check - u).absolute();
+	Scalar E = horizontalAdd4(error);
+	T_ASSERT (E < 0.01f);
+#endif
 }
 
 	}

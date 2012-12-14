@@ -17,8 +17,6 @@ class Lobby : public ILobby
 	T_RTTI_CLASS;
 
 public:
-	virtual ~Lobby();
-
 	virtual Ref< Result > setMetaValue(const std::wstring& key, const std::wstring& value);
 
 	virtual bool getMetaValue(const std::wstring& key, std::wstring& outValue) const;

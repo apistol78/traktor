@@ -77,7 +77,7 @@ public:
 
 	/*! \brief
 	 */
-	void update(float dT);
+	void update(float T, float dT);
 
 	/*! \brief Set our origin.
 	 *
@@ -281,11 +281,6 @@ private:
 	float m_time;
 	uint32_t m_pingCount;
 	float m_timeUntilPing;
-
-#if defined(T_PROFILE_REPLICATOR)
-	std::map< const TypeInfo*, uint32_t > m_profileSent;
-	std::map< const TypeInfo*, uint32_t > m_profileReceived;
-#endif
 
 	void sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id);
 

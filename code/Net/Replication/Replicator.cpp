@@ -126,7 +126,7 @@ void Replicator::addListener(IListener* listener)
 	m_listeners.push_back(listener);
 }
 
-void Replicator::update(float dT)
+void Replicator::update(float T, float dT)
 {
 	std::vector< handle_t > handles;
 	uint8_t iframeData[Message::StateSize];
@@ -262,6 +262,7 @@ void Replicator::update(float dT)
 			if (
 				peer.iframe &&
 				peer.lossDelta == 0 &&
+				peer.packetCount > 0 &&
 				peer.stateCount % c_maxDeltaStates > 0
 			)
 			{
@@ -348,12 +349,7 @@ void Replicator::update(float dT)
 						continue;
 
 					if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
-					{
 						j->second.errorCount = 0;
-#if defined(T_PROFILE_REPLICATOR)
-						m_profileSent[&type_of(i->object)] += msgSize;
-#endif
-					}
 					else
 					{
 						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (1)" << Endl;
@@ -376,12 +372,7 @@ void Replicator::update(float dT)
 				if (j != m_peers.end())
 				{
 					if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
-					{
 						j->second.errorCount = 0;
-#if defined(T_PROFILE_REPLICATOR)
-						m_profileSent[&type_of(i->object)] += msgSize;
-#endif
-					}
 					else
 					{
 						log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (2)" << Endl;
@@ -595,35 +586,31 @@ void Replicator::update(float dT)
 				continue;
 			}
 
-			// Check sequence number.
-			if (peer.rxSequence != msg.state.sequence)
-			{
-				T_REPLICATOR_DEBUG(L"WARNING: Packet loss detected; expected " << int32_t(peer.rxSequence) << L", got " << int32_t(peer.txSequence) << L" from peer " << handle);
-
-				// Must receive 10 in order to leave "loss state".
-				peer.lossDelta += 10;
-
-				// Do not accept delta state if packet loss detected.
-				if (msg.type == MtDeltaState)
-				{
-					peer.rxSequence = msg.state.sequence + 1;
-					continue;
-				}
-
-				// Send throttle message to errornous peer.
-				sendThrottle(handle);
-			}
-			else if (peer.lossDelta > 0)
-				peer.lossDelta--;
-
-			peer.rxSequence = msg.state.sequence + 1;
-
 			bool stateValid = false;
 
 			// Ignore old messages; as we're using unreliable transportation
 			// messages can arrive out-of-order.
 			if (time > peer.lastTime + 1e-4f)
 			{
+				// Check sequence number; this is used for traffic shaping.
+				if (peer.rxSequence != msg.state.sequence)
+				{
+					T_REPLICATOR_DEBUG(L"WARNING: Packet loss detected; expected " << int32_t(peer.rxSequence) << L", got " << int32_t(peer.txSequence) << L" from peer " << handle);
+
+					// Send throttle message to errornous peer.
+					if (peer.lossDelta <= 0)
+						sendThrottle(handle);
+
+					// Must receive 10 in order to leave "loss state".
+					peer.lossDelta += 10;
+				}
+				else if (peer.lossDelta > 0)
+					peer.lossDelta--;
+
+				// Next expected sequence number.
+				peer.rxSequence = msg.state.sequence + 1;
+
+				// Check network time.
 				if (time + peer.latencyMinimum > m_time + 1e-5f)
 				{
 					// Adjust time; adjust only with 75% of the difference in order
@@ -816,10 +803,6 @@ void Replicator::update(float dT)
 				e.object = eventObject;
 				m_eventsIn.push_back(e);
 			}
-
-#if defined(T_PROFILE_REPLICATOR)
-			m_profileReceived[&type_of(eventObject)] += s.tell();
-#endif
 		}
 	}
 
@@ -831,20 +814,6 @@ void Replicator::update(float dT)
 			(*j)->notify(this, event.time, event.eventId, event.handle, event.object);
 	}
 	m_eventsIn.clear();
-
-#if defined(T_PROFILE_REPLICATOR)
-	// Dump event information.
-	if (int32_t(m_time / 10.0f) != int32_t((m_time + dT) / 10.0f))
-	{
-		log::info << L"Sent events" << Endl;
-		for (std::map< const TypeInfo*, uint32_t >::const_iterator i = m_profileSent.begin(); i != m_profileSent.end(); ++i)
-			log::info << L"\t" << i->first->getName() << L" " << i->second << L" byte(s)" << Endl;
-
-		log::info << L"Received events" << Endl;
-		for (std::map< const TypeInfo*, uint32_t >::const_iterator i = m_profileReceived.begin(); i != m_profileReceived.end(); ++i)
-			log::info << L"\t" << i->first->getName() << L" " << i->second << L" byte(s)" << Endl;
-	}
-#endif
 
 	m_time += dT;
 }

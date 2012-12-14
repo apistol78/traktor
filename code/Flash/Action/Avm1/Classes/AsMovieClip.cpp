@@ -834,9 +834,9 @@ void AsMovieClip::MovieClip_get_focusEnabled(const FlashSpriteInstance* self) co
 
 void AsMovieClip::MovieClip_set_focusEnabled(FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_focusEnabled not implemented" << Endl;
-	)
+	//T_IF_VERBOSE(
+	//	log::warning << L"MovieClip::set_focusEnabled not implemented" << Endl;
+	//)
 }
 
 void AsMovieClip::MovieClip_get_focusrect(const FlashSpriteInstance* self) const
@@ -1079,9 +1079,9 @@ void AsMovieClip::MovieClip_get_tabEnabled(const FlashSpriteInstance* self) cons
 
 void AsMovieClip::MovieClip_set_tabEnabled(FlashSpriteInstance* self) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::set_tabEnabled not implemented" << Endl;
-	)
+	//T_IF_VERBOSE(
+	//	log::warning << L"MovieClip::set_tabEnabled not implemented" << Endl;
+	//)
 }
 
 void AsMovieClip::MovieClip_get_tabIndex(const FlashSpriteInstance* self) const

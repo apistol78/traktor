@@ -1,9 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="4">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="12">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="16">
 		<renderType>RtPreLit</renderType>
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
+		<linearLighting>true</linearLighting>
+		<occlusionCullingEnabled>false</occlusionCullingEnabled>
 		<depthPassEnabled>false</depthPassEnabled>
 		<shadowsEnabled>false</shadowsEnabled>
 		<shadowsProjection>SpUniform</shadowsProjection>
@@ -15,10 +17,12 @@
 		<shadowCascadingSlices>1</shadowCascadingSlices>
 		<shadowCascadingLambda>1</shadowCascadingLambda>
 		<shadowQuantizeProjection>true</shadowQuantizeProjection>
+		<ambientOcclusionQuality>AoqHigh</ambientOcclusionQuality>
 		<fogEnabled>false</fogEnabled>
 		<fogDistance>90</fogDistance>
 		<fogRange>10</fogRange>
 		<fogColor>255, 255, 255, 255</fogColor>
+		<antiAliasQuality>AaqMedium</antiAliasQuality>
 	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<layers>
@@ -44,7 +48,7 @@
 			<visible>true</visible>
 			<locked>true</locked>
 			<include>true</include>
-      <dynamic>false</dynamic>
+			<dynamic>false</dynamic>
 		</item>
 		<item type="traktor.world.LayerEntityData">
 			<name>Entity</name>
@@ -56,7 +60,7 @@
 			<visible>true</visible>
 			<locked>false</locked>
 			<include>true</include>
-      <dynamic>false</dynamic>
+			<dynamic>false</dynamic>
 		</item>
 	</layers>
 	<controllerData/>

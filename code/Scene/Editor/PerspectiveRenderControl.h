@@ -35,7 +35,7 @@ class PrimitiveRenderer;
 	{
 
 class IWorldRenderer;
-class PostProcess;
+//class PostProcess;
 class Entity;
 
 	}
@@ -80,10 +80,10 @@ private:
 	Ref< ui::Container > m_containerAspect;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
-	Ref< render::RenderTargetSet > m_renderTarget;
+	//Ref< render::RenderTargetSet > m_renderTarget;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::IWorldRenderer > m_worldRenderer;
-	Ref< world::PostProcess > m_postProcess;
+	//Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
 	RenderControlModel m_model;
