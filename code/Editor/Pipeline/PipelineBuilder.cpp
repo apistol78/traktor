@@ -135,8 +135,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
 	{
-		for (std::map< const TypeInfo*, double >::const_iterator i = m_buildTimes.begin(); i != m_buildTimes.end(); ++i)
-			log::info << L"Pipeline \"" << i->first->getName() << L"\" " << int32_t(i->second * 1000.0) << L" ms" << Endl;
+		//for (std::map< const TypeInfo*, double >::const_iterator i = m_buildTimes.begin(); i != m_buildTimes.end(); ++i)
+		//	log::info << L"Pipeline \"" << i->first->getName() << L"\" " << int32_t(i->second * 1000.0) << L" ms" << Endl;
 
 		log::info << L"Build finished; " << m_succeeded << L" succeeded, " << m_failed << L" failed" << Endl;
 	}
@@ -198,10 +198,10 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 
 	double buildTime = timer.getElapsedTime();
 
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
-		m_buildTimes[&type_of(pipeline)] += buildTime;
-	}
+	//{
+	//	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
+	//	m_buildTimes[&type_of(pipeline)] += buildTime;
+	//}
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
@@ -231,10 +231,10 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object
 
 	double buildTime = timer.getElapsedTime();
 
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
-		m_buildTimes[&type_of(pipeline)] += buildTime;
-	}
+	//{
+	//	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
+	//	m_buildTimes[&type_of(pipeline)] += buildTime;
+	//}
 
 	return true;
 }
@@ -296,16 +296,24 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 
 Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_readCacheLock);
 	Ref< ISerializable > object;
 
-	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
-	if (i != m_readCache.end())
-		object = i->second;
-	else
+	// Get object from cache if already acquired.
 	{
+		m_readCacheLock.acquireReader();
+		std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
+		if (i != m_readCache.end())
+			object = i->second;
+		m_readCacheLock.releaseReader();
+	}
+
+	// If not acquired then read from database.
+	if (!object)
+	{
+		m_readCacheLock.acquireWriter();
 		object = m_sourceDatabase->getObjectReadOnly(instanceGuid);
 		m_readCache[instanceGuid] = object;
+		m_readCacheLock.releaseWriter();
 	}
 
 	return object;
@@ -459,10 +467,10 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 
 			if (result)
 			{
-				{
-					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
-					m_buildTimes[&type_of(dependency->pipeline)] += buildTime;
-				}
+				//{
+				//	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
+				//	m_buildTimes[&type_of(dependency->pipeline)] += buildTime;
+				//}
 
 				if (!builtInstances.empty())
 				{
