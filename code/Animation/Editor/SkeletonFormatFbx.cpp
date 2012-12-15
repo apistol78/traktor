@@ -5,7 +5,9 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/TString.h"
+#include "Core/Thread/Acquire.h"
 
 namespace traktor
 {
@@ -192,9 +194,13 @@ void createJoints(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatFbx", SkeletonFormatFbx, ISkeletonFormat)
 
+Semaphore SkeletonFormatFbx::ms_lock;
+
 Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const
 {
-	Vector4 jointModifier(
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(ms_lock);
+
+	const Vector4 jointModifier(
 		invertX ? -1.0f : 1.0f, 
 		1.0f, 
 		invertZ ? -1.0f : 1.0f, 
@@ -228,8 +234,8 @@ Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset
 	FbxIOPluginRegistry* registry = sdkManager->GetIOPluginRegistry();
 	int readerID = registry->FindReaderIDByExtension("fbx");
 
-	FbxStream *fbxStream = new FbxIStreamWrap();
-	bool status = importer->Initialize(fbxStream, stream, readerID, sdkManager->GetIOSettings());
+	AutoPtr< FbxStream > fbxStream(new FbxIStreamWrap());
+	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, sdkManager->GetIOSettings());
 	if (!status)
 	{
 		log::error << L"Unable to import FBX skeleton; failed to initialize FBX importer" << Endl;

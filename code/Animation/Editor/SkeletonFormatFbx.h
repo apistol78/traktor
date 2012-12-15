@@ -2,6 +2,7 @@
 #define traktor_animation_SkeletonFormatFbx_H
 
 #include "Animation/Editor/ISkeletonFormat.h"
+#include "Core/Thread/Semaphore.h"
 
 namespace traktor
 {
@@ -14,6 +15,9 @@ class SkeletonFormatFbx : public ISkeletonFormat
 
 public:
 	virtual Ref< Skeleton > import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const;
+
+private:
+	static Semaphore ms_lock;
 };
 
 	}
