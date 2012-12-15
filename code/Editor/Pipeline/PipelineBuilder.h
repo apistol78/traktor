@@ -5,6 +5,7 @@
 #include <map>
 #include "Core/Io/Path.h"
 #include "Core/Thread/Event.h"
+#include "Core/Thread/ReaderWriterLock.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Editor/IPipelineBuilder.h"
@@ -103,9 +104,8 @@ private:
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
 	Semaphore m_createOutputLock;
-	Semaphore m_readCacheLock;
+	ReaderWriterLock m_readCacheLock;
 	Semaphore m_builtCacheLock;
-	Semaphore m_buildTimesLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	std::map< const TypeInfo*, double > m_buildTimes;
