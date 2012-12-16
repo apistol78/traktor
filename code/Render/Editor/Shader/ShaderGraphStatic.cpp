@@ -23,7 +23,13 @@ namespace traktor
 struct ConstantFoldingVisitor
 {
 	Ref< ShaderGraph > m_shaderGraph;
-	std::map< const OutputPin*, Constant > m_outputConstants;
+	const SmallMap< const OutputPin*, Constant >& m_outputConstants;
+
+	ConstantFoldingVisitor(ShaderGraph* shaderGraph, const SmallMap< const OutputPin*, Constant >& outputConstants)
+	:	m_shaderGraph(shaderGraph)
+	,	m_outputConstants(outputConstants)
+	{
+	}
 
 	bool operator () (Node* node)
 	{
@@ -35,7 +41,7 @@ struct ConstantFoldingVisitor
 	{
 		const OutputPin* source = edge->getSource();
 
-		std::map< const OutputPin*, Constant >::const_iterator it = m_outputConstants.find(source);
+		SmallMap< const OutputPin*, Constant >::const_iterator it = m_outputConstants.find(source);
 		if (it != m_outputConstants.end())
 		{
 			std::pair< int, int > position = source->getNode()->getPosition();
@@ -275,7 +281,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 
 Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 {
-	std::map< const OutputPin*, Constant > outputConstants;
+	SmallMap< const OutputPin*, Constant > outputConstants;
 	AlignedVector< Constant > inputConstants;
 	AlignedVector< Constant > inputConstantsCast;
 	std::vector< const OutputPin* > inputOutputPins;
@@ -358,7 +364,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 					if (!isPinTypeScalar(inputPinType))
 						continue;
 
-					std::map< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
+					SmallMap< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
 					if (it != outputConstants.end())
 					{
 						inputConstants[j] = it->second.cast(inputPinType);
@@ -440,7 +446,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 
 				inputOutputPins[j] = outputPin;
 
-				std::map< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
+				SmallMap< const OutputPin*, Constant >::const_iterator it = outputConstants.find(outputPin);
 				if (it != outputConstants.end())
 				{
 					PinType inputPinType = typePropagation.evaluate(inputPin);
@@ -585,9 +591,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 	}
 
 	// Traverse copy shader graph; replace inputs if constant.
-	ConstantFoldingVisitor visitor;
-	visitor.m_shaderGraph = new ShaderGraph();
-	visitor.m_outputConstants = outputConstants;
+	ConstantFoldingVisitor visitor(new ShaderGraph(), outputConstants);
 	ShaderGraphTraverse(shaderGraph, roots).preorder(visitor);
 
 	T_ASSERT (ShaderGraphValidator(visitor.m_shaderGraph).validateIntegrity());

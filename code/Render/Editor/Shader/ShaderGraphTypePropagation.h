@@ -1,9 +1,9 @@
 #ifndef traktor_render_ShaderGraphTypePropagation_H
 #define traktor_render_ShaderGraphTypePropagation_H
 
-#include <map>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 #include "Render/Editor/Shader/PinType.h"
 
 // import/export mechanism.
@@ -49,8 +49,8 @@ public:
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
-	std::map< const InputPin*, PinType > m_inputPinTypes;
-	std::map< const OutputPin*, PinType > m_outputPinTypes;
+	SmallMap< const InputPin*, PinType > m_inputPinTypes;
+	SmallMap< const OutputPin*, PinType > m_outputPinTypes;
 };
 
 	}

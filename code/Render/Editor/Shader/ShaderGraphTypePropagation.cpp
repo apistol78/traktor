@@ -15,11 +15,11 @@ namespace traktor
 struct EvalInitialOutputTypes
 {
 	Ref< const ShaderGraph > m_shaderGraph;
-	std::map< const OutputPin*, PinType >& m_outputPinTypes;
+	SmallMap< const OutputPin*, PinType >& m_outputPinTypes;
 
 	EvalInitialOutputTypes(
 		const ShaderGraph* shaderGraph,
-		std::map< const OutputPin*, PinType >& outputPinTypes
+		SmallMap< const OutputPin*, PinType >& outputPinTypes
 	)
 	:	m_shaderGraph(shaderGraph)
 	,	m_outputPinTypes(outputPinTypes)
@@ -149,15 +149,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 
 				PinType inputPinType = nodeTraits->getInputPinType(m_shaderGraph, node, inputPin, currentInputPinTypes, outputPinTypes);
 				if (inputPinType == PntVoid)
-				{
-					//const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
-					//if (sourceOutputPin)
-					//	inputPinType = m_outputPinTypes[sourceOutputPin];
-					//else
-					//	T_ASSERT (inputPin->isOptional());
-
 					inputPinType = currentInputPinTypes[j];
-				}
 
 				if (m_inputPinTypes[inputPin] != inputPinType)
 				{
@@ -181,9 +173,6 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 		{
 			const Node* node = *i;
 			T_ASSERT (node);
-
-			//const INodeTraits* nodeTraits = INodeTraits::find(node);
-			//T_ASSERT (nodeTraits);
 
 			uint32_t outputPinCount = node->getOutputPinCount();
 			for (uint32_t j = 0; j < outputPinCount; ++j)
@@ -218,14 +207,14 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 
 PinType ShaderGraphTypePropagation::evaluate(const InputPin* inputPin) const
 {
-	std::map< const InputPin*, PinType >::const_iterator i = m_inputPinTypes.find(inputPin);
+	SmallMap< const InputPin*, PinType >::const_iterator i = m_inputPinTypes.find(inputPin);
 	T_ASSERT (i != m_inputPinTypes.end());
 	return i != m_inputPinTypes.end() ? i->second : PntVoid;
 }
 
 PinType ShaderGraphTypePropagation::evaluate(const OutputPin* outputPin) const
 {
-	std::map< const OutputPin*, PinType >::const_iterator i = m_outputPinTypes.find(outputPin);
+	SmallMap< const OutputPin*, PinType >::const_iterator i = m_outputPinTypes.find(outputPin);
 	T_ASSERT (i != m_outputPinTypes.end());
 	return i != m_outputPinTypes.end() ? i->second : PntVoid;
 }

@@ -57,10 +57,10 @@ void LogStreamBuffer::setTarget(ILogTarget* target)
 
 int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	StringOutputStream* ss;
 
-	StringOutputStream* ss = static_cast< StringOutputStream* >(m_buffers.get());
-	if (!ss)
+	// Get thread local output stream.
+	if ((ss = static_cast< StringOutputStream* >(m_buffers.get())) == 0)
 	{
 		ss = new StringOutputStream();
 		m_buffers.set(ss);

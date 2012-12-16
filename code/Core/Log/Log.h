@@ -67,7 +67,6 @@ protected:
 	virtual int overflow(const wchar_t* buffer, int count);
 	
 private:
-	Semaphore m_lock;
 	ThreadLocal m_buffers;
 	Ref< ILogTarget > m_target;
 };
