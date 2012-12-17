@@ -496,6 +496,7 @@ void PerspectiveRenderControl::eventMouseWheel(ui::Event* event)
 		rotation = -rotation;
 
 	m_camera->move(Vector4(0.0f, 0.0f, rotation * -m_mouseWheelRate, 0.0f));
+	m_context->raiseCameraMoved();
 }
 
 void PerspectiveRenderControl::eventSize(ui::Event* event)

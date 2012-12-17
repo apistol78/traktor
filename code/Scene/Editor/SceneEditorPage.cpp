@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -42,6 +43,8 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
+#include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
@@ -49,7 +52,6 @@
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
-#include "Ui/Custom/InputDialog.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/Entity.h"
@@ -161,10 +163,13 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	// Create editor panel.
 	m_editPanel = new ui::Container();
-	m_editPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0));
+	m_editPanel->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0));
 
 	m_editControl = new ScenePreviewControl();
 	m_editControl->create(m_editPanel, m_context);
+
+	m_statusBar = new ui::custom::StatusBar();
+	m_statusBar->create(m_editPanel);
 
 	// Create entity panel.
 	m_entityPanel = new ui::Container();
@@ -232,6 +237,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_context->addSelectEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextSelect));
 	m_context->addPreModifyEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPreModify));
 	m_context->addPostModifyEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextPostModify));
+	m_context->addCameraMovedEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventContextCameraMoved));
 
 	// Finally realize the scene.
 	createSceneAsset();
@@ -239,6 +245,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	createInstanceGrid();
 	createControllerEditor();
 	updatePropertyObject();
+	updateStatusBar();
 
 	return true;
 }
@@ -836,6 +843,22 @@ void SceneEditorPage::updatePropertyObject()
 		m_site->setPropertyObject(m_context->getDocument()->getObject(0));
 }
 
+void SceneEditorPage::updateStatusBar()
+{
+	Camera* camera = m_context->getCamera(0);
+	T_ASSERT (camera);
+
+	Vector4 position = camera->getPosition();
+	Vector4 angles = camera->getOrientation().toEulerAngles();
+
+	StringOutputStream ss;
+	ss.setDecimals(2);
+	ss << position.x() << L", " << position.y() << L", " << position.z() << L"     ";
+	ss << rad2deg(angles.x()) << L"°, " << rad2deg(angles.y()) << L"°, " << rad2deg(angles.z()) << L"°";
+
+	m_statusBar->setText(ss.str());
+}
+
 bool SceneEditorPage::addEntity()
 {
 	Ref< EntityAdapter > parentGroupAdapter;
@@ -1030,6 +1053,11 @@ void SceneEditorPage::eventContextPreModify(ui::Event* event)
 void SceneEditorPage::eventContextPostModify(ui::Event* event)
 {
 	updatePropertyObject();
+}
+
+void SceneEditorPage::eventContextCameraMoved(ui::Event* event)
+{
+	updateStatusBar();
 }
 
 	}
