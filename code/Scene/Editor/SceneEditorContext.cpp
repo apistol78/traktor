@@ -634,6 +634,11 @@ void SceneEditorContext::raiseSelect(Object* item)
 	raiseEvent(EiSelect, &event);
 }
 
+void SceneEditorContext::raiseCameraMoved()
+{
+	raiseEvent(EiCameraMoved, 0);
+}
+
 void SceneEditorContext::addPreModifyEventHandler(ui::EventHandler* eventHandler)
 {
 	addEventHandler(EiPreModify, eventHandler);
@@ -657,6 +662,11 @@ void SceneEditorContext::addPostBuildEventHandler(ui::EventHandler* eventHandler
 void SceneEditorContext::addSelectEventHandler(ui::EventHandler* eventHandler)
 {
 	addEventHandler(EiSelect, eventHandler);
+}
+
+void SceneEditorContext::addCameraMovedEventHandler(ui::EventHandler* eventHandler)
+{
+	addEventHandler(EiCameraMoved, eventHandler);
 }
 
 	}

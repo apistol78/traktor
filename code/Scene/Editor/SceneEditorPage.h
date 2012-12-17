@@ -36,6 +36,7 @@ class Font;
 		namespace custom
 		{
 
+class StatusBar;
 class ToolBar;
 class ToolBarButton;
 class GridView;
@@ -88,6 +89,7 @@ private:
 	Ref< SceneEditorContext > m_context;
 	Ref< ui::Container > m_editPanel;
 	Ref< ScenePreviewControl > m_editControl;
+	Ref< ui::custom::StatusBar > m_statusBar;
 	Ref< ui::Container > m_entityPanel;
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
 	Ref< ui::PopupMenu > m_entityMenu;
@@ -121,6 +123,8 @@ private:
 
 	void updatePropertyObject();
 
+	void updateStatusBar();
+
 	bool addEntity();
 
 	bool updateLookAtEntity();
@@ -146,6 +150,8 @@ private:
 	void eventContextPreModify(ui::Event* event);
 
 	void eventContextPostModify(ui::Event* event);
+
+	void eventContextCameraMoved(ui::Event* event);
 };
 
 	}

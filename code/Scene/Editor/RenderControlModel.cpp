@@ -256,6 +256,8 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 			renderControl->moveCamera(ISceneRenderControl::McmMoveXZ, mouseDelta, viewDelta);
 		else if (m_mouseButton == 3 || (m_mouseButton == 2 && m_modifyAlternative))
 			renderControl->moveCamera(ISceneRenderControl::McmMoveXY, mouseDelta, viewDelta);
+
+		context->raiseCameraMoved();
 	}
 	else if (m_modify == MtSelection)
 	{
