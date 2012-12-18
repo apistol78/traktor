@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
 
@@ -80,6 +81,7 @@ bool MergeModel::apply(Model& model) const
 	}
 
 	// Merge polygons.
+	std::vector< Polygon > mergedPolygons = model.getPolygons();
 	const std::vector< Polygon >& sourcePolygons = m_sourceModel.getPolygons();
 	for (std::vector< Polygon >::const_iterator i = sourcePolygons.begin(); i != sourcePolygons.end(); ++i)
 	{
@@ -96,8 +98,66 @@ bool MergeModel::apply(Model& model) const
 			p.setNormal(normal);
 		}
 
-		model.addUniquePolygon(p);
+		// Check if polygon exist with opposite winding; if such then the both
+		// polygons is removed. Also don't add duplicates.
+		bool duplicate = false;
+
+		std::vector< uint32_t > pv = p.getVertices();
+		std::reverse(pv.begin(), pv.end());
+
+		for (std::vector< Polygon >::iterator i = mergedPolygons.begin(); i != mergedPolygons.end(); ++i)
+		{
+			if (i->getVertices() == p.getVertices())
+			{
+				duplicate = true;
+				break;
+			}
+
+			if (i->getVertexCount() != p.getVertexCount() || i->getVertexCount() == 0)
+				continue;
+
+			uint32_t c = i->getVertexCount();
+			uint32_t v0 = i->getVertex(0);
+			uint32_t p0 = model.getVertex(v0).getPosition();
+
+			uint32_t i0 = 0;
+			for (; i0 < pv.size(); ++i0)
+			{
+				if (model.getVertex(pv[i0]).getPosition() == p0)
+					break;
+			}
+			if (i0 >= pv.size())
+				continue;
+
+			bool cull = true;
+			for (uint32_t j = 0; j < c; ++j)
+			{
+				const Vertex& v0 = model.getVertex(i->getVertex(j));
+				const Vertex& v1 = model.getVertex(pv[(i0 + j) % c]);
+
+				const Vector4& p0 = model.getPosition(v0.getPosition());
+				const Vector4& p1 = model.getPosition(v1.getPosition());
+
+				if ((p1 - p0).length2() > 0.01f * 0.01f)
+				{
+					cull = false;
+					break;
+				}
+			}
+
+			if (cull)
+			{
+				mergedPolygons.erase(i);
+				duplicate = true;
+				break;
+			}
+		}
+
+		if (!duplicate)
+			mergedPolygons.push_back(p);
 	}
+
+	model.setPolygons(mergedPolygons);
 
 	return true;
 }

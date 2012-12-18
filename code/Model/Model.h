@@ -162,7 +162,6 @@ private:
 	std::vector< std::wstring > m_joints;
 	std::vector< std::wstring > m_blendTargets;
 	std::map< uint32_t, AlignedVector< Vector4 > > m_blendTargetPositions;
-	std::map< uint32_t, uint32_t > m_verticesHash;
 };
 
 	}
