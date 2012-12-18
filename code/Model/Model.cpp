@@ -6,6 +6,64 @@ namespace traktor
 {
 	namespace model
 	{
+		namespace
+		{
+
+/*! \brief Return true if a replacing vertex match or "exceed" an existing vertex. */
+bool shouldReplace(const Vertex& existing, const Vertex& replaceWith)
+{
+	if (
+		existing.getPosition() != c_InvalidIndex &&
+		existing.getPosition() != replaceWith.getPosition()
+	)
+		return false;
+
+	if (
+		existing.getColor() != c_InvalidIndex &&
+		existing.getColor() != replaceWith.getColor()
+	)
+		return false;
+
+	if (
+		existing.getNormal() != c_InvalidIndex &&
+		existing.getNormal() != replaceWith.getNormal()
+	)
+		return false;
+
+	if (
+		existing.getTangent() != c_InvalidIndex &&
+		existing.getTangent() != replaceWith.getTangent()
+	)
+		return false;
+
+	if (
+		existing.getBinormal() != c_InvalidIndex &&
+		existing.getBinormal() != replaceWith.getBinormal()
+	)
+		return false;
+
+	if (existing.getTexCoordCount() > replaceWith.getTexCoordCount())
+		return false;
+
+	for (uint32_t i = 0; i < existing.getTexCoordCount(); ++i)
+	{
+		if (existing.getTexCoord(i) != replaceWith.getTexCoord(i))
+			return false;
+	}
+
+	if (existing.getJointInfluenceCount() != replaceWith.getJointInfluenceCount())
+		return false;
+
+	for (uint32_t i = 0; i < existing.getJointInfluenceCount(); ++i)
+	{
+		if (abs(existing.getJointInfluence(i) - replaceWith.getJointInfluence(i)) > FUZZY_EPSILON)
+			return false;
+	}
+
+	return true;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Model", Model, Object)
 
@@ -105,19 +163,15 @@ uint32_t Model::addVertex(const Vertex& vertex)
 
 uint32_t Model::addUniqueVertex(const Vertex& vertex)
 {
-	uint32_t hash = vertex.getHash();
-
-	std::map< uint32_t, uint32_t >::const_iterator i = m_verticesHash.find(hash);
-	if (i != m_verticesHash.end())
+	for (uint32_t i = 0; i < m_vertices.size(); ++i)
 	{
-		if (m_vertices[i->second] == vertex)
-			return i->second;
+		if (shouldReplace(m_vertices[i], vertex))
+		{
+			m_vertices[i] = vertex;
+			return i;
+		}
 	}
-
-	uint32_t id = addId(m_vertices, vertex);
-	
-	m_verticesHash[hash] = id;
-	return id;
+	return addId(m_vertices, vertex);
 }
 
 void Model::setVertex(uint32_t index, const Vertex& vertex)
