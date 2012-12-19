@@ -13,10 +13,10 @@ struct SequenceGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	int32_t m_grainIndex;
 	Ref< ISoundBufferCursor > m_grainCursor;
 
-	virtual void setParameter(float parameter)
+	virtual void setParameter(handle_t id, float parameter)
 	{
 		if (m_grainCursor)
-			m_grainCursor->setParameter(parameter);
+			m_grainCursor->setParameter(id, parameter);
 	}
 
 	virtual void reset()

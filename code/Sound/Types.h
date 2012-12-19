@@ -3,6 +3,14 @@
 
 #include "Core/Config.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SOUND_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace sound
@@ -77,6 +85,16 @@ struct SoundBlock
 	uint32_t sampleRate;				//< Samples per second.
 	uint32_t maxChannel;				//< Last channel used, everyone above is considered mute.
 };
+
+/*! \brief Parameter handle. */
+typedef uint32_t handle_t;
+
+/*! \brief Return handle from parameter name.
+ *
+ * \param name Parameter name.
+ * \return Parameter handle.
+ */
+handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
 //@}
 

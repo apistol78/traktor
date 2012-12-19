@@ -13,10 +13,10 @@ struct RepeatGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Ref< ISoundBufferCursor > m_cursor;
 	uint32_t m_count;
 
-	virtual void setParameter(float parameter)
+	virtual void setParameter(handle_t id, float parameter)
 	{
 		if (m_cursor)
-			m_cursor->setParameter(parameter);
+			m_cursor->setParameter(id, parameter);
 	}
 
 	virtual void reset()

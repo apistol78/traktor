@@ -103,7 +103,7 @@ struct StaticSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 		return true;
 	}
 
-	virtual void setParameter(float parameter)
+	virtual void setParameter(handle_t id, float parameter)
 	{
 	}
 

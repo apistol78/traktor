@@ -20,6 +20,11 @@ std::wstring RandomGrainFacade::getText(const IGrainData* grain) const
 	return i18n::Format(L"RESOUND_RANDOM_GRAIN_TEXT", int32_t(count));
 }
 
+bool RandomGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
+{
+	return false;
+}
+
 bool RandomGrainFacade::canHaveChildren() const
 {
 	return true;

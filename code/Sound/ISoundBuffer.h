@@ -25,7 +25,7 @@ class ISoundMixer;
 class T_DLLCLASS ISoundBufferCursor : public IRefCount
 {
 public:
-	virtual void setParameter(float parameter) = 0;
+	virtual void setParameter(handle_t id, float parameter) = 0;
 
 	virtual void reset() = 0;
 };

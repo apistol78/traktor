@@ -19,7 +19,7 @@ struct StreamSoundBufferCursor : public RefCountImpl< ISoundBufferCursor >
 	{
 	}
 
-	virtual void setParameter(float parameter)
+	virtual void setParameter(handle_t id, float parameter)
 	{
 	}
 

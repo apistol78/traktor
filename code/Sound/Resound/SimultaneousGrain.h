@@ -1,6 +1,7 @@
-#ifndef traktor_sound_BlendGrain_H
-#define traktor_sound_BlendGrain_H
+#ifndef traktor_sound_SimultaneousGrain_H
+#define traktor_sound_SimultaneousGrain_H
 
+#include "Core/RefArray.h"
 #include "Sound/Resound/IGrain.h"
 
 // import/export mechanism.
@@ -19,12 +20,12 @@ namespace traktor
 /*! \brief
  * \ingroup Sound
  */
-class T_DLLCLASS BlendGrain : public IGrain
+class T_DLLCLASS SimultaneousGrain : public IGrain
 {
 	T_RTTI_CLASS;
 
 public:
-	BlendGrain(handle_t id, IGrain* grain1, IGrain* grain2);
+	SimultaneousGrain(const RefArray< IGrain >& grains);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -33,11 +34,10 @@ public:
 	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;
 
 private:
-	handle_t m_id;
-	Ref< IGrain > m_grains[2];
+	RefArray< IGrain > m_grains;
 };
 
 	}
 }
 
-#endif	// traktor_sound_BlendGrain_H
+#endif	// traktor_sound_SimultaneousGrain_H

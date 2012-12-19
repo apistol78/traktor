@@ -24,6 +24,11 @@ std::wstring PlayGrainFacade::getText(const IGrainData* grain) const
 	);
 }
 
+bool PlayGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
+{
+	return false;
+}
+
 bool PlayGrainFacade::canHaveChildren() const
 {
 	return false;

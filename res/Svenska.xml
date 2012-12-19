@@ -1081,70 +1081,42 @@
 			<first>QUERY_TITLE_INSTANCE_NOT_SAVED_CLOSE_EDITOR</first>
 			<second>Ej sparad instans</second>
 		</item>
-		<item>
-			<first>RAYTRACE_ANTIALIAS</first>
-			<second>Antialias</second>
-		</item>
-		<item>
-			<first>RAYTRACE_GLOBAL_LIGHTING</first>
-			<second>Globalt ljus</second>
-		</item>
-		<item>
-			<first>RAYTRACE_LIGHTS</first>
-			<second>Lampor</second>
-		</item>
-		<item>
-			<first>RAYTRACE_PREVIEW</first>
-			<second>Förhandsvisning</second>
-		</item>
-		<item>
-			<first>RAYTRACE_REFRESH</first>
-			<second>Uppdatera</second>
-		</item>
-		<item>
-			<first>RAYTRACE_SHAPES</first>
-			<second>Former</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TONEMAP</first>
-			<second>Tonemap</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_ANTIALIAS</first>
-			<second>Antialias</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_DESCRIPTION</first>
-			<second>Raytrace...</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_FAKE_DOF</first>
-			<second>Imiterad djupeffekt</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_GLOBAL_LIGHTING</first>
-			<second>Globalt ljus</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_OUTPUT</first>
-			<second>Ut</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_RESOLUTION</first>
-			<second>Upplösning</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_SCENE</first>
-			<second>Scen</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_SETTINGS</first>
-			<second>Inställningar</second>
-		</item>
-		<item>
-			<first>RAYTRACE_TOOL_TITLE</first>
-			<second>Raytrace</second>
-		</item>
+    <item>
+      <first>RESOUND_BLEND_GRAIN_TEXT</first>
+      <second>Blend</second>
+    </item>    
+    <item>
+      <first>RESOUND_ENVELOPE_GRAIN_TEXT</first>
+      <second>Envelop</second>
+    </item>
+    <item>
+      <first>RESOUND_MUTE_GRAIN_TEXT</first>
+      <second>{0} ms</second>
+    </item>
+    <item>
+      <first>RESOUND_PLAY_GRAIN_TEXT</first>
+      <second>{0}% - {1}%</second>
+    </item>
+    <item>
+      <first>RESOUND_RANDOM_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
+    </item>
+    <item>
+      <first>RESOUND_REPEAT_GRAIN_TEXT</first>
+      <second>{0} time(s)</second>
+    </item>
+    <item>
+      <first>RESOUND_SEQUENCE_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
+    </item>
+    <item>
+      <first>RESOUND_SIMULTANEOUS_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
+    </item>    
+    <item>
+      <first>RESOUND_TRIGGER_GRAIN_TEXT</first>
+      <second>Trigger</second>
+    </item>    
 		<item>
 			<first>SCENE_EDITOR_ADD_ENTITY</first>
 			<second>Lägg till...</second>

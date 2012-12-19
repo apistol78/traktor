@@ -57,7 +57,7 @@ public:
 	float getPitch() const;
 
 	/*! \brief Set cursor parameter. */
-	void setParameter(float parameter);
+	void setParameter(handle_t id, float parameter);
 
 	/*! \brief Play sound through this channel.
 	 *

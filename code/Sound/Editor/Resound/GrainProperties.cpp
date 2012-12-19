@@ -31,7 +31,7 @@ bool GrainProperties::create(ui::Widget* parent)
 	m_grainPropertyList->create(parent, ui::WsDoubleBuffer | ui::custom::AutoPropertyList::WsColumnHeader, this);
 	m_grainPropertyList->addCommandEventHandler(ui::createMethodHandler(this, &GrainProperties::eventPropertyCommand));
 	m_grainPropertyList->addChangeEventHandler(ui::createMethodHandler(this, &GrainProperties::eventPropertyChange));
-	m_grainPropertyList->setSeparator(200);
+	m_grainPropertyList->setSeparator(150);
 	m_grainPropertyList->setColumnName(0, i18n::Text(L"PROPERTY_COLUMN_NAME"));
 	m_grainPropertyList->setColumnName(1, i18n::Text(L"PROPERTY_COLUMN_VALUE"));
 	return true;
@@ -189,8 +189,8 @@ void GrainProperties::eventPropertyCommand(ui::Event* event)
 
 void GrainProperties::eventPropertyChange(ui::Event* event)
 {
-	raiseEvent(ui::EiUser + 1, 0);
 	m_grainPropertyList->apply();
+	raiseEvent(ui::EiUser + 1, 0);
 }
 
 	}

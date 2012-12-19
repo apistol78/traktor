@@ -106,11 +106,11 @@ ISoundBufferCursor* SoundChannel::getCursor() const
 	return m_currentState.cursor;
 }
 
-void SoundChannel::setParameter(float parameter)
+void SoundChannel::setParameter(handle_t id, float parameter)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (m_currentState.cursor)
-		m_currentState.cursor->setParameter(parameter);
+		m_currentState.cursor->setParameter(id, parameter);
 }
 
 bool SoundChannel::play(const ISoundBuffer* buffer, float volume, float presence, float presenceRate, uint32_t repeat)

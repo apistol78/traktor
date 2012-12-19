@@ -19,6 +19,13 @@ std::wstring BlendGrainFacade::getText(const IGrainData* grain) const
 	return i18n::Text(L"RESOUND_BLEND_GRAIN_TEXT");
 }
 
+bool BlendGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
+{
+	const BlendGrainData* blendGrain = checked_type_cast< const BlendGrainData*, false >(grain);
+	outProperties.insert(blendGrain->getId());
+	return true;
+}
+
 bool BlendGrainFacade::canHaveChildren() const
 {
 	return false;

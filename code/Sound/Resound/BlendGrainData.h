@@ -1,6 +1,7 @@
 #ifndef traktor_sound_BlendGrainData_H
 #define traktor_sound_BlendGrainData_H
 
+#include "Sound/Types.h"
 #include "Sound/Resound/IGrainData.h"
 
 // import/export mechanism.
@@ -25,9 +26,12 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	const std::wstring& getId() const { return m_id; }
+
 	const Ref< IGrainData >* getGrains() const { return m_grains; }
 
 private:
+	std::wstring m_id;
 	Ref< IGrainData > m_grains[2];
 };
 

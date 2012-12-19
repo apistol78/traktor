@@ -23,6 +23,9 @@ const float c_nearCutOff = 22050.0f;
 const float c_farCutOff = 0.1f;
 const float c_recentTimeOffset = 0.05f;
 
+handle_t s_handleDistance = 0;
+handle_t s_handleVelocity = 0;
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundPlayer", SoundPlayer, ISoundPlayer)
@@ -30,6 +33,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundPlayer", SoundPlayer, ISoundPlayer)
 SoundPlayer::SoundPlayer()
 :	m_time(0.0f)
 {
+	s_handleDistance = getParameterHandle(L"Distance");
+	s_handleVelocity = getParameterHandle(L"Velocity");
 }
 
 bool SoundPlayer::create(SoundSystem* soundSystem, SurroundEnvironment* surroundEnvironment)
@@ -286,7 +291,7 @@ void SoundPlayer::update(float dT)
 				continue;
 
 			// Calculate distance from listener; stop sounds which has moved outside max listener distance.
-			Scalar distance = (i->position -listenerPosition).length();
+			Scalar distance = (i->position - listenerPosition).length();
 			if (distance > maxDistance)
 			{
 				if (i->handle)
@@ -301,12 +306,16 @@ void SoundPlayer::update(float dT)
 			}
 
 			// Calculate cut-off frequency.
-			float k0 = distance / maxDistance;
-			float cutOff = lerp(c_nearCutOff, c_farCutOff, clamp(std::sqrt(k0), 0.0f, 1.0f));
+			float k0 = clamp< float >(distance / maxDistance, 0.0f, 1.0f);
+			float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k0));
 
 			// Set filter parameters.
 			i->lowPassFilter->setCutOff(cutOff);
 			i->surroundFilter->setSpeakerPosition(i->position);
+
+			// Set automatic sound parameters.
+			i->soundChannel->setParameter(s_handleDistance, k0);
+			i->soundChannel->setParameter(s_handleVelocity, 0.0f);
 		}
 	}
 

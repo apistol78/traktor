@@ -24,6 +24,11 @@ std::wstring RepeatGrainFacade::getText(const IGrainData* grain) const
 		return i18n::Text(L"RESOUND_REPEAT_GRAIN_INFINITE_TEXT");
 }
 
+bool RepeatGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
+{
+	return false;
+}
+
 bool RepeatGrainFacade::canHaveChildren() const
 {
 	return false;

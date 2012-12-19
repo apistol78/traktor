@@ -17,6 +17,8 @@ public:
 
 	virtual std::wstring getText(const IGrainData* grain) const;
 
+	virtual bool getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const;
+
 	virtual bool canHaveChildren() const;
 
 	virtual bool addChild(IGrainData* parentGrain, IGrainData* childGrain);

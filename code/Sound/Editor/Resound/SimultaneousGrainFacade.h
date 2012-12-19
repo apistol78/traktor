@@ -1,5 +1,5 @@
-#ifndef traktor_sound_EnvelopeGrainFacade_H
-#define traktor_sound_EnvelopeGrainFacade_H
+#ifndef traktor_sound_SimultaneousGrainFacade_H
+#define traktor_sound_SimultaneousGrainFacade_H
 
 #include "Sound/Editor/Resound/IGrainFacade.h"
 
@@ -8,7 +8,7 @@ namespace traktor
 	namespace sound
 	{
 
-class EnvelopeGrainFacade : public IGrainFacade
+class SimultaneousGrainFacade : public IGrainFacade
 {
 	T_RTTI_CLASS;
 
@@ -31,4 +31,4 @@ public:
 	}
 }
 
-#endif	// traktor_sound_EnvelopeGrainFacade_H
+#endif	// traktor_sound_SimultaneousGrainFacade_H
