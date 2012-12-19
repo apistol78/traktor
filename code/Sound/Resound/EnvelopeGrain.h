@@ -34,7 +34,7 @@ public:
 		float easeOut;
 	};
 
-	EnvelopeGrain(const std::vector< Grain >& grains);
+	EnvelopeGrain(handle_t id, const std::vector< Grain >& grains);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -43,6 +43,7 @@ public:
 	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;
 
 private:
+	handle_t m_id;
 	std::vector< Grain > m_grains;
 };
 

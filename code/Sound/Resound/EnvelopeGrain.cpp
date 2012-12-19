@@ -17,6 +17,7 @@ const uint32_t c_outputSamplesBlockCount = 8;
 
 struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
+	handle_t m_id;
 	float m_parameter;
 	RefArray< ISoundBufferCursor > m_cursors;
 	float* m_outputSamples[SbcMaxChannelCount];
@@ -26,9 +27,10 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 		Alloc::freeAlign(m_outputSamples[0]);
 	}
 
-	virtual void setParameter(float parameter)
+	virtual void setParameter(handle_t id, float parameter)
 	{
-		m_parameter = parameter;
+		if (m_id == id)
+			m_parameter = parameter;
 	}
 
 	virtual void reset()
@@ -42,8 +44,9 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EnvelopeGrain", EnvelopeGrain, IGrain)
 
-EnvelopeGrain::EnvelopeGrain(const std::vector< Grain >& grains)
-:	m_grains(grains)
+EnvelopeGrain::EnvelopeGrain(handle_t id, const std::vector< Grain >& grains)
+:	m_id(id)
+,	m_grains(grains)
 {
 }
 
@@ -53,6 +56,7 @@ Ref< ISoundBufferCursor > EnvelopeGrain::createCursor() const
 		return 0;
 
 	Ref< EnvelopeGrainCursor > cursor = new EnvelopeGrainCursor();
+	cursor->m_id = m_id;
 	cursor->m_parameter = 0.0f;
 
 	cursor->m_cursors.resize(m_grains.size());

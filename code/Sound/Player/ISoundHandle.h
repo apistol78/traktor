@@ -34,7 +34,7 @@ public:
 
 	virtual void setPosition(const Vector4& position) = 0;
 
-	virtual void setParameter(float parameter) = 0;
+	virtual void setParameter(int32_t id, float parameter) = 0;
 };
 
 	}

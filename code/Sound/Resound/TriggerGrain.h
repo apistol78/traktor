@@ -27,6 +27,7 @@ class T_DLLCLASS TriggerGrain : public IGrain
 
 public:
 	TriggerGrain(
+		handle_t id,
 		float position,
 		float rate,
 		IGrain* grain
@@ -39,6 +40,7 @@ public:
 	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;
 
 private:
+	handle_t m_id;
 	float m_position;
 	float m_rate;
 	Ref< IGrain > m_grain;

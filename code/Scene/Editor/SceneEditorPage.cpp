@@ -192,7 +192,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityToolBar->addItem(m_toolLookAtEntity);
 	m_entityToolBar->addItem(m_toolFollowEntity);
 	m_entityToolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), ui::Command(L"Scene.Editor.MoveToEntity"), 5));
+	m_entityToolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_MOVE_TO_ENTITY"), ui::Command(L"Scene.Editor.MoveToEntity"), 1));
 	m_entityToolBar->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventEntityToolClick));
 
 	m_imageHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
@@ -355,7 +355,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		entityAdapter->setEntityData(entityData);
 
 		// Place instance in front of perspective camera.
-		Camera* camera = m_context->getCamera(viewIndex);
+		const Camera* camera = m_context->getCamera(viewIndex);
 		T_ASSERT (camera);
 
 		Matrix44 Mworld = camera->getWorld() * translate(0.0f, 0.0f, 4.0f);
@@ -845,7 +845,7 @@ void SceneEditorPage::updatePropertyObject()
 
 void SceneEditorPage::updateStatusBar()
 {
-	Camera* camera = m_context->getCamera(0);
+	const Camera* camera = m_context->getCamera(0);
 	T_ASSERT (camera);
 
 	Vector4 position = camera->getPosition();

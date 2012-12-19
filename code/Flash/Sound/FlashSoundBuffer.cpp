@@ -22,7 +22,7 @@ struct FlashSoundBufferCursor : public RefCountImpl< sound::ISoundBufferCursor >
 		m_samples[1].reset((float*)getAllocator()->alloc(4096 * sizeof(float), 16, T_FILE_LINE));
 	}
 
-	virtual void setParameter(float parameter)
+	virtual void setParameter(sound::handle_t id, float parameter)
 	{
 	}
 

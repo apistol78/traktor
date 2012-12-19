@@ -20,6 +20,13 @@ std::wstring TriggerGrainFacade::getText(const IGrainData* grain) const
 	return i18n::Text(L"RESOUND_TRIGGER_GRAIN_TEXT");
 }
 
+bool TriggerGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
+{
+	const TriggerGrainData* triggerGrain = checked_type_cast< const TriggerGrainData*, false >(grain);
+	outProperties.insert(triggerGrain->getId());
+	return true;
+}
+
 bool TriggerGrainFacade::canHaveChildren() const
 {
 	return false;

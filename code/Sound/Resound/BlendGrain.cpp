@@ -17,12 +17,14 @@ const uint32_t c_outputSamplesBlockCount = 8;
 
 struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
+	handle_t m_id;
 	float m_parameter;
 	Ref< ISoundBufferCursor > m_cursors[2];
 	float* m_outputSamples[SbcMaxChannelCount];
 
 	BlendGrainCursor()
-	:	m_parameter(0.0f)
+	:	m_id(0)
+	,	m_parameter(0.0f)
 	{
 	}
 
@@ -31,9 +33,10 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 		Alloc::freeAlign(m_outputSamples[0]);
 	}
 
-	virtual void setParameter(float parameter)
+	virtual void setParameter(handle_t id, float parameter)
 	{
-		m_parameter = parameter;
+		if (id == m_id)
+			m_parameter = parameter;
 	}
 
 	virtual void reset()
@@ -47,7 +50,8 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BlendGrain", BlendGrain, IGrain)
 
-BlendGrain::BlendGrain(IGrain* grain1, IGrain* grain2)
+BlendGrain::BlendGrain(handle_t id, IGrain* grain1, IGrain* grain2)
+:	m_id(id)
 {
 	m_grains[0] = grain1;
 	m_grains[1] = grain2;
@@ -57,6 +61,7 @@ Ref< ISoundBufferCursor > BlendGrain::createCursor() const
 {
 	Ref< BlendGrainCursor > cursor = new BlendGrainCursor();
 
+	cursor->m_id = m_id;
 	cursor->m_cursors[0] = m_grains[0]->createCursor();
 	cursor->m_cursors[1] = m_grains[1]->createCursor();
 
@@ -88,7 +93,7 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 
 	bool anyBlock = false;
 	anyBlock |= m_grains[0]->getBlock(blendCursor->m_cursors[0], mixer, soundBlock1);
-	anyBlock |= m_grains[1]->getBlock(blendCursor->m_cursors[1], mixer, soundBlock1);
+	anyBlock |= m_grains[1]->getBlock(blendCursor->m_cursors[1], mixer, soundBlock2);
 	if (!anyBlock)
 		return false;
 

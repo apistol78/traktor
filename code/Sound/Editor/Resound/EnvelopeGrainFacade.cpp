@@ -20,6 +20,13 @@ std::wstring EnvelopeGrainFacade::getText(const IGrainData* grain) const
 	return i18n::Format(L"RESOUND_ENVELOPE_GRAIN_TEXT", int32_t(count));
 }
 
+bool EnvelopeGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
+{
+	const EnvelopeGrainData* envelopeGrain = checked_type_cast< const EnvelopeGrainData*, false >(grain);
+	outProperties.insert(envelopeGrain->getId());
+	return true;
+}
+
 bool EnvelopeGrainFacade::canHaveChildren() const
 {
 	return true;

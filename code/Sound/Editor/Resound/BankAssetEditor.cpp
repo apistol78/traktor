@@ -17,6 +17,7 @@
 #include "Sound/Resound/RandomGrainData.h"
 #include "Sound/Resound/RepeatGrainData.h"
 #include "Sound/Resound/SequenceGrainData.h"
+#include "Sound/Resound/SimultaneousGrainData.h"
 #include "Sound/Resound/TriggerGrainData.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundSystemFactory.h"
@@ -32,6 +33,7 @@
 #include "Sound/Editor/Resound/RandomGrainFacade.h"
 #include "Sound/Editor/Resound/RepeatGrainFacade.h"
 #include "Sound/Editor/Resound/SequenceGrainFacade.h"
+#include "Sound/Editor/Resound/SimultaneousGrainFacade.h"
 #include "Sound/Editor/Resound/TriggerGrainFacade.h"
 #include "Ui/Container.h"
 #include "Ui/PopupMenu.h"
@@ -45,12 +47,30 @@
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
-#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 
 namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
+
+class HandleWrapper : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	HandleWrapper(int32_t id) : m_id(id) {}
+
+	int32_t get() const { return m_id; }
+
+private:
+	int32_t m_id;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.BankAssetEditor.HandleWrapper", HandleWrapper, Object)
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.BankAssetEditor", BankAssetEditor, editor::IObjectEditor)
 
@@ -73,29 +93,28 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	parent->startTimer(100);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, 30, true);
+	splitter->create(parent, true, 40, true);
+
+	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
+	splitter2->create(splitter, false, -150);
 
 	Ref< ui::Container > containerGrains = new ui::Container();
-	containerGrains->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	containerGrains->create(splitter2, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	m_toolBarItemPlay = new ui::custom::ToolBarButton(L"Play", ui::Command(L"Bank.PlayGrain"), 0, ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(containerGrains);
 	m_toolBar->addItem(m_toolBarItemPlay);
-
-	m_sliderParameter = new ui::Slider();
-	m_sliderParameter->create(m_toolBar);
-	m_sliderParameter->setRange(0, 100);
-	m_sliderParameter->addChangeEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventParameterChange));
-	m_toolBar->addItem(new ui::custom::ToolBarEmbed(m_sliderParameter, 150));
-
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventToolBarClick));
 
 	m_grainView = new GrainView();
 	m_grainView->create(containerGrains);
 	m_grainView->addEventHandler(ui::EiSelectionChange, ui::createMethodHandler(this, &BankAssetEditor::eventGrainSelect));
 	m_grainView->addButtonUpEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGrainButtonUp));
+
+	m_containerDynamicParameters = new ui::Container();
+	m_containerDynamicParameters->create(splitter2, ui::WsClientBorder, new ui::TableLayout(L"*,100%", L"*", 4, 0));
 
 	m_containerGrainProperties = new ui::Container();
 	m_containerGrainProperties->create(splitter, ui::WsClientBorder, new ui::TableLayout(L"100%", L"100%", 0, 4));
@@ -117,6 +136,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_grainFacades[&type_of< RandomGrainData >()] = new RandomGrainFacade();
 	m_grainFacades[&type_of< RepeatGrainData >()] = new RepeatGrainFacade();
 	m_grainFacades[&type_of< SequenceGrainData >()] = new SequenceGrainFacade();
+	m_grainFacades[&type_of< SimultaneousGrainData >()] = new SimultaneousGrainFacade();
 	m_grainFacades[&type_of< TriggerGrainData >()] = new TriggerGrainFacade();
 
 	// Get sound system for preview.
@@ -140,6 +160,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	));
 
 	updateGrainView();
+	updateProperties();
 	return true;
 }
 
@@ -200,6 +221,56 @@ void BankAssetEditor::updateGrainView()
 	m_grainView->update();
 }
 
+void BankAssetEditor::updateProperties()
+{
+	std::set< std::wstring > properties;
+
+	// Scan grains for all dynamic properties.
+	RefArray< IGrainData > grains = m_asset->getGrains();
+	while (!grains.empty())
+	{
+		Ref< IGrainData > grain = grains.front();
+		grains.pop_front();
+
+		IGrainFacade* grainFacade = m_grainFacades[&type_of(grain)];
+		if (grainFacade)
+		{
+			grainFacade->getProperties(grain, properties);
+
+			RefArray< IGrainData > childGrains;
+			if (grainFacade->getChildren(grain, childGrains))
+				grains.insert(grains.end(), childGrains.begin(), childGrains.end());
+		}
+	}
+
+	// Destroy previous sliders.
+	m_sliderParameters.clear();
+	while (m_containerDynamicParameters->getLastChild())
+		m_containerDynamicParameters->getLastChild()->destroy();
+
+	// Create slider for each dynamic property.
+	for (std::set< std::wstring >::const_iterator i = properties.begin(); i != properties.end(); ++i)
+	{
+		if (i->empty())
+			continue;
+
+		Ref< ui::Static > staticParameter = new ui::Static();
+		staticParameter->create(m_containerDynamicParameters, *i);
+
+		Ref< ui::Slider > sliderParameter = new ui::Slider();
+		sliderParameter->create(m_containerDynamicParameters);
+		sliderParameter->setRange(0, 100);
+		sliderParameter->addChangeEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventParameterChange));
+		sliderParameter->setData(L"ID", new HandleWrapper(
+			getParameterHandle(*i)
+		));
+
+		m_sliderParameters.push_back(sliderParameter);
+	}
+
+	m_containerDynamicParameters->update();
+}
+
 void BankAssetEditor::handleCommand(const ui::Command& command)
 {
 	if (command == L"Bank.AddGrain")
@@ -229,6 +300,7 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 				m_asset->addGrain(grain);
 
 			updateGrainView();
+			updateProperties();
 		}
 	}
 	else if (command == L"Bank.RemoveGrain")
@@ -254,6 +326,7 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 				m_asset->removeGrain(grain);
 
 			updateGrainView();
+			updateProperties();
 		}
 	}
 	else if (command == L"Bank.PlayGrain")
@@ -289,10 +362,24 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 
 			if (!grains.empty())
 			{
+				log::info << L"Playing " << grains.size() << L" grain(s)..." << Endl;
+
 				m_bankBuffer = new BankBuffer(grains);
 				m_soundChannel->play(m_bankBuffer, 1.0f, 0.0f, 1.0f);
-				m_soundChannel->setParameter(m_sliderParameter->getValue() / 100.0f);
+
+				for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
+				{
+					const HandleWrapper* id = (*i)->getData< HandleWrapper >(L"ID");
+					T_ASSERT (id);
+
+					m_soundChannel->setParameter(
+						id->get(),
+						(*i)->getValue() / 100.0f
+					);
+				}
 			}
+			else
+				log::error << L"No grains to play" << Endl;
 		}
 		else if (m_soundChannel && m_soundChannel->isPlaying())
 		{
@@ -305,8 +392,12 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 
 void BankAssetEditor::eventParameterChange(ui::Event* event)
 {
+	const ui::Slider* slider = checked_type_cast< const ui::Slider*, false >(event->getSender());
+	const HandleWrapper* id = slider->getData< HandleWrapper >(L"ID");
+	T_ASSERT (id);
+
 	if (m_soundChannel)
-		m_soundChannel->setParameter(m_sliderParameter->getValue() / 100.0f);
+		m_soundChannel->setParameter(id->get(), slider->getValue() / 100.0f);
 }
 
 void BankAssetEditor::eventToolBarClick(ui::Event* event)
@@ -348,6 +439,7 @@ void BankAssetEditor::eventGrainPropertiesChange(ui::Event* event)
 	}
 
 	updateGrainView();
+	updateProperties();
 }
 
 void BankAssetEditor::eventTimer(ui::Event* event)

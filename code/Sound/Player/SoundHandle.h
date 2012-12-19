@@ -23,7 +23,7 @@ public:
 
 	virtual void setPosition(const Vector4& position);
 
-	virtual void setParameter(float parameter);
+	virtual void setParameter(int32_t id, float parameter);
 
 private:
 	friend class SoundPlayer;

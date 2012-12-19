@@ -1066,6 +1066,14 @@
       <second>Instance(s) not saved</second>
     </item>
     <item>
+      <first>RESOUND_BLEND_GRAIN_TEXT</first>
+      <second>Blend</second>
+    </item>    
+    <item>
+      <first>RESOUND_ENVELOPE_GRAIN_TEXT</first>
+      <second>Envelope</second>
+    </item>    
+    <item>
       <first>RESOUND_MUTE_GRAIN_TEXT</first>
       <second>{0} ms</second>
     </item>
@@ -1085,6 +1093,14 @@
       <first>RESOUND_SEQUENCE_GRAIN_TEXT</first>
       <second>{0} child(ren)</second>
     </item>
+    <item>
+      <first>RESOUND_SIMULTANEOUS_GRAIN_TEXT</first>
+      <second>{0} child(ren)</second>
+    </item> 
+    <item>
+      <first>RESOUND_TRIGGER_GRAIN_TEXT</first>
+      <second>Trigger</second>
+    </item>    
     <item>
       <first>STATUS_BUILDING</first>
       <second>Building assets...</second>

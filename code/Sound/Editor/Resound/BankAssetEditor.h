@@ -73,8 +73,9 @@ private:
 	Ref< BankAsset > m_asset;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolBarItemPlay;
-	Ref< ui::Slider > m_sliderParameter;
 	Ref< GrainView > m_grainView;
+	Ref< ui::Container > m_containerDynamicParameters;
+	RefArray< ui::Slider > m_sliderParameters;
 	Ref< ui::Container > m_containerGrainProperties;
 	Ref< GrainProperties > m_grainProperties;
 	Ref< ui::PopupMenu > m_menuGrains;
@@ -87,6 +88,8 @@ private:
 	void updateGrainView(GrainViewItem* parent, const RefArray< IGrainData >& grains);
 
 	void updateGrainView();
+
+	void updateProperties();
 
 	void handleCommand(const ui::Command& command);
 

@@ -1,6 +1,7 @@
 #ifndef traktor_sound_TriggerGrainData_H
 #define traktor_sound_TriggerGrainData_H
 
+#include "Sound/Types.h"
 #include "Sound/Resound/IGrainData.h"
 
 // import/export mechanism.
@@ -27,6 +28,8 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	const std::wstring& getId() const { return m_id; }
+
 	float getPosition() const { return m_position; }
 
 	float getRate() const { return m_rate; }
@@ -34,6 +37,7 @@ public:
 	IGrainData* getGrain() const { return m_grain; }
 
 private:
+	std::wstring m_id;
 	float m_position;
 	float m_rate;
 	Ref< IGrainData > m_grain;

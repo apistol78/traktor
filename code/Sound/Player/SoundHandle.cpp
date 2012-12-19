@@ -40,10 +40,10 @@ void SoundHandle::setPosition(const Vector4& position)
 		*m_position = position.xyz1();
 }
 
-void SoundHandle::setParameter(float parameter)
+void SoundHandle::setParameter(int32_t id, float parameter)
 {
 	if (m_channel)
-		m_channel->setParameter(parameter);
+		m_channel->setParameter(id, parameter);
 }
 
 SoundHandle::SoundHandle(SoundChannel* channel, Vector4& position)

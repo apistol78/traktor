@@ -2,6 +2,7 @@
 #define traktor_sound_EnvelopeGrainData_H
 
 #include "Core/RefArray.h"
+#include "Sound/Types.h"
 #include "Sound/Resound/IGrainData.h"
 
 // import/export mechanism.
@@ -49,9 +50,12 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	const std::wstring& getId() const { return m_id; }
+
 	const std::vector< GrainData >& getGrains() const { return m_grains; }
 
 private:
+	std::wstring m_id;
 	std::vector< GrainData > m_grains;
 };
 

@@ -20,6 +20,11 @@ std::wstring MuteGrainFacade::getText(const IGrainData* grain) const
 	return i18n::Format(L"RESOUND_MUTE_GRAIN_TEXT", int32_t(muteGrain->getDuration() * 1000));
 }
 
+bool MuteGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
+{
+	return false;
+}
+
 bool MuteGrainFacade::canHaveChildren() const
 {
 	return false;

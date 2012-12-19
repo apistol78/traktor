@@ -20,6 +20,11 @@ std::wstring SequenceGrainFacade::getText(const IGrainData* grain) const
 	return i18n::Format(L"RESOUND_SEQUENCE_GRAIN_TEXT", int32_t(count));
 }
 
+bool SequenceGrainFacade::getProperties(const IGrainData* grain, std::set< std::wstring >& outProperties) const
+{
+	return false;
+}
+
 bool SequenceGrainFacade::canHaveChildren() const
 {
 	return true;

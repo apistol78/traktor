@@ -10,7 +10,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EnvelopeGrainData", 0, EnvelopeGrainData, IGrainData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.EnvelopeGrainData", 1, EnvelopeGrainData, IGrainData)
 
 void EnvelopeGrainData::addGrain(IGrainData* grain, float in, float out, float easeIn, float easeOut)
 {
@@ -45,12 +45,19 @@ Ref< IGrain > EnvelopeGrainData::createInstance(resource::IResourceManager* reso
 		grains[i].easeOut = m_grains[i].easeOut;
 	}
 
-	return new EnvelopeGrain(grains);
+	return new EnvelopeGrain(
+		getParameterHandle(m_id),
+		grains
+	);
 }
 
 bool EnvelopeGrainData::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< GrainData, MemberComposite< GrainData > >(L"grains", m_grains);
+	if (s.getVersion() >= 1)
+		s >> Member< std::wstring >(L"id", m_id);
+
+	s >> MemberStlVector< GrainData, MemberComposite< GrainData > >(L"grains", m_grains);
+	return true;
 }
 
 bool EnvelopeGrainData::GrainData::serialize(ISerializer& s)

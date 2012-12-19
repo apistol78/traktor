@@ -9,7 +9,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.TriggerGrainData", 0, TriggerGrainData, IGrainData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.TriggerGrainData", 1, TriggerGrainData, IGrainData)
 
 TriggerGrainData::TriggerGrainData()
 :	m_position(0.0f)
@@ -23,14 +23,23 @@ Ref< IGrain > TriggerGrainData::createInstance(resource::IResourceManager* resou
 	if (!grain)
 		return 0;
 
-	return new TriggerGrain(m_position, m_rate, grain);
+	return new TriggerGrain(
+		getParameterHandle(m_id),
+		m_position,
+		m_rate,
+		grain
+	);
 }
 
 bool TriggerGrainData::serialize(ISerializer& s)
 {
+	if (s.getVersion() >= 1)
+		s >> Member< std::wstring >(L"id", m_id);
+
 	s >> Member< float >(L"position", m_position);
 	s >> Member< float >(L"rate", m_rate);
 	s >> MemberRef< IGrainData >(L"grain", m_grain);
+
 	return true;
 }
 

@@ -13,14 +13,18 @@ namespace traktor
 struct TriggerGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
 	Ref< ISoundBufferCursor > m_cursor;
+	handle_t m_id;
 	float m_position;
 	float m_rate;
 	Timer m_timer;
 	float m_parameter;
 	bool m_active;
 
-	virtual void setParameter(float parameter)
+	virtual void setParameter(handle_t id, float parameter)
 	{
+		if (id != m_id)
+			return;
+
 		float dT = float(m_timer.getDeltaTime());
 		if (m_parameter >= 0.0f)
 		{
@@ -36,6 +40,7 @@ struct TriggerGrainCursor : public RefCountImpl< ISoundBufferCursor >
 			else if (m_position < FUZZY_EPSILON && m_parameter > -m_position && parameter <= -m_position)
 				m_active = true;
 		}
+
 		m_parameter = parameter;
 	}
 
@@ -54,11 +59,13 @@ struct TriggerGrainCursor : public RefCountImpl< ISoundBufferCursor >
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.TriggerGrain", TriggerGrain, IGrain)
 
 TriggerGrain::TriggerGrain(
+	handle_t id,
 	float position,
 	float rate,
 	IGrain* grain
 )
-:	m_position(position)
+:	m_id(id)
+,	m_position(position)
 ,	m_rate(rate)
 ,	m_grain(grain)
 {
@@ -70,6 +77,7 @@ Ref< ISoundBufferCursor > TriggerGrain::createCursor() const
 		return 0;
 
 	Ref< TriggerGrainCursor > cursor = new TriggerGrainCursor();
+	cursor->m_id = m_id;
 	cursor->m_position = m_position;
 	cursor->m_rate = m_rate;
 	cursor->m_parameter = -1.0f;
