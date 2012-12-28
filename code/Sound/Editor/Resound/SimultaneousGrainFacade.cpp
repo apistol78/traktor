@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SimultaneousGrainFacade", SimultaneousGra
 
 int32_t SimultaneousGrainFacade::getImage(const IGrainData* grain) const
 {
-	return 1;
+	return 6;
 }
 
 std::wstring SimultaneousGrainFacade::getText(const IGrainData* grain) const

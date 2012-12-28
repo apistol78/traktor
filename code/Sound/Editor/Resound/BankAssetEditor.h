@@ -33,6 +33,7 @@ class Slider;
 		namespace custom
 		{
 
+class Panel;
 class ToolBar;
 class ToolBarButton;
 
@@ -73,8 +74,9 @@ private:
 	Ref< BankAsset > m_asset;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolBarItemPlay;
+	Ref< ui::custom::ToolBarButton > m_toolBarItemRepeat;
 	Ref< GrainView > m_grainView;
-	Ref< ui::Container > m_containerDynamicParameters;
+	Ref< ui::custom::Panel > m_containerDynamicParameters;
 	RefArray< ui::Slider > m_sliderParameters;
 	Ref< ui::Container > m_containerGrainProperties;
 	Ref< GrainProperties > m_grainProperties;

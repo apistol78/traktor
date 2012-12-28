@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EnvelopeGrainFacade", EnvelopeGrainFacade
 
 int32_t EnvelopeGrainFacade::getImage(const IGrainData* grain) const
 {
-	return 1;
+	return 5;
 }
 
 std::wstring EnvelopeGrainFacade::getText(const IGrainData* grain) const
