@@ -12,7 +12,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.GrainView", GrainView, ui::custom::AutoWi
 
 bool GrainView::create(ui::Widget* parent)
 {
-	if (!ui::custom::AutoWidget::create(parent, ui::WsClientBorder | ui::WsDoubleBuffer))
+	if (!ui::custom::AutoWidget::create(parent, ui::WsDoubleBuffer))
 		return false;
 
 	setBackgroundColor(ui::getSystemColor(ui::ScButtonShadow));

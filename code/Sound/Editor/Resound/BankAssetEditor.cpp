@@ -44,6 +44,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
+#include "Ui/Custom/Panel.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
@@ -98,14 +99,16 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
 	splitter2->create(splitter, false, -150);
 
-	Ref< ui::Container > containerGrains = new ui::Container();
-	containerGrains->create(splitter2, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	Ref< ui::custom::Panel > containerGrains = new ui::custom::Panel();
+	containerGrains->create(splitter2, L"Grains", new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	m_toolBarItemPlay = new ui::custom::ToolBarButton(L"Play", ui::Command(L"Bank.PlayGrain"), 0, ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	m_toolBarItemRepeat = new ui::custom::ToolBarButton(L"Repeat", ui::Command(L"Bank.RepeatGrain"), 0, ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(containerGrains);
 	m_toolBar->addItem(m_toolBarItemPlay);
+	m_toolBar->addItem(m_toolBarItemRepeat);
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventToolBarClick));
 
 	m_grainView = new GrainView();
@@ -113,8 +116,8 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_grainView->addEventHandler(ui::EiSelectionChange, ui::createMethodHandler(this, &BankAssetEditor::eventGrainSelect));
 	m_grainView->addButtonUpEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGrainButtonUp));
 
-	m_containerDynamicParameters = new ui::Container();
-	m_containerDynamicParameters->create(splitter2, ui::WsClientBorder, new ui::TableLayout(L"*,100%", L"*", 4, 0));
+	m_containerDynamicParameters = new ui::custom::Panel();
+	m_containerDynamicParameters->create(splitter2, L"Dynamic Parameters", new ui::TableLayout(L"*,100%", L"*", 4, 0));
 
 	m_containerGrainProperties = new ui::Container();
 	m_containerGrainProperties->create(splitter, ui::WsClientBorder, new ui::TableLayout(L"100%", L"100%", 0, 4));
@@ -362,8 +365,6 @@ void BankAssetEditor::handleCommand(const ui::Command& command)
 
 			if (!grains.empty())
 			{
-				log::info << L"Playing " << grains.size() << L" grain(s)..." << Endl;
-
 				m_bankBuffer = new BankBuffer(grains);
 				m_soundChannel->play(m_bankBuffer, 1.0f, 0.0f, 1.0f);
 
@@ -449,8 +450,27 @@ void BankAssetEditor::eventTimer(ui::Event* event)
 
 	if (!m_soundChannel->isPlaying() && m_toolBarItemPlay->isToggled())
 	{
-		m_toolBarItemPlay->setToggled(false);
-		m_toolBar->update();
+		if (!m_toolBarItemRepeat->isToggled())
+		{
+			m_toolBarItemPlay->setToggled(false);
+			m_toolBar->update();
+		}
+		else
+		{
+			T_ASSERT (m_bankBuffer);
+			m_soundChannel->play(m_bankBuffer, 1.0f, 0.0f, 1.0f);
+
+			for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
+			{
+				const HandleWrapper* id = (*i)->getData< HandleWrapper >(L"ID");
+				T_ASSERT (id);
+
+				m_soundChannel->setParameter(
+					id->get(),
+					(*i)->getValue() / 100.0f
+				);
+			}
+		}
 	}
 }
 

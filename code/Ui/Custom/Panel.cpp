@@ -56,7 +56,7 @@ Size Panel::getPreferedSize() const
 	Size titleSize = getTextExtent(getText());
 	Size sz = Container::getPreferedSize();
 	sz.cx += 2;
-	sz.cy += 1 + titleSize.cy;
+	sz.cy += 3 + titleSize.cy;
 	return sz;
 }
 
@@ -65,7 +65,7 @@ Rect Panel::getInnerRect() const
 	Size titleSize = getTextExtent(getText());
 	Rect rc = Container::getInnerRect();
 	rc.left += 1;
-	rc.top += titleSize.cy + 1;
+	rc.top += titleSize.cy + 3;
 	rc.right -= 1;
 	rc.bottom -= 1;
 	return rc;
@@ -86,15 +86,9 @@ void Panel::eventPaint(Event* event)
 
 	Rect rcTitle(rcInner.left, rcInner.top, rcInner.right, rcInner.top + extent.cy + 4);
 
-	/*
-	canvas.setForeground(Color4ub(51, 94, 168));
-	canvas.setBackground(Color4ub(82, 126, 192));
-	canvas.fillGradientRect(rcTitle);
-	*/
 	canvas.setBackground(getSystemColor(focus ? ScActiveCaption : ScInactiveCaption));
 	canvas.fillRect(rcTitle);
 
-	//canvas.setForeground(Color4ub(255, 255, 255));
 	canvas.setForeground(getSystemColor(focus ? ScActiveCaptionText : ScInactiveCaptionText));
 	canvas.drawText(
 		rcTitle.inflate(-4, 0),
