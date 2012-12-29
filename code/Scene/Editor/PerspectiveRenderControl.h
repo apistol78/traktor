@@ -35,7 +35,6 @@ class PrimitiveRenderer;
 	{
 
 class IWorldRenderer;
-//class PostProcess;
 class Entity;
 
 	}
@@ -61,6 +60,8 @@ public:
 
 	virtual void setAspect(float aspect);
 
+	virtual void setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality);
+
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void update();
@@ -80,12 +81,13 @@ private:
 	Ref< ui::Container > m_containerAspect;
 	Ref< ui::Widget > m_renderWidget;
 	Ref< render::IRenderView > m_renderView;
-	//Ref< render::RenderTargetSet > m_renderTarget;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::IWorldRenderer > m_worldRenderer;
-	//Ref< world::PostProcess > m_postProcess;
 	world::WorldRenderView m_worldRenderView;
 	world::WorldRenderSettings m_worldRenderSettings;
+	world::Quality m_shadowQuality;
+	world::Quality m_ambientOcclusionQuality;
+	world::Quality m_antiAliasQuality;
 	RenderControlModel m_model;
 	bool m_gridEnable;
 	bool m_guideEnable;

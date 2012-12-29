@@ -191,29 +191,33 @@ void OrthogonalRenderControl::updateWorldRenderer()
 		}
 	}
 
-	// Create a copy of the render settings; we don't want to enable shadows nor velocity in this view.
-	world::WorldRenderSettings wrs;
-	wrs = *worldRenderSettings;
-	wrs.depthPassEnabled = wrs.shadowsEnabled;
-	wrs.shadowsEnabled = false;
+	// Create world renderer.
+	world::WorldCreateDesc wcd;
+	wcd.worldRenderSettings = worldRenderSettings;
+	wcd.entityRenderers = worldEntityRenderers;
+	wcd.shadowsQuality = world::QuDisabled;
+	wcd.ambientOcclusionQuality = world::QuDisabled;
+	wcd.antiAliasQuality = world::QuDisabled;
+	wcd.multiSample = m_multiSample;
+	wcd.frameCount = 1;
 
 	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererForward();
 	if (worldRenderer->create(
-		&wrs,
-		0,
-		worldEntityRenderers,
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
 		m_renderView,
-		m_multiSample,
-		1
+		wcd
 	))
 		m_worldRenderer = worldRenderer;
 
-	m_viewFarZ = wrs.viewFarZ;
+	m_viewFarZ = worldRenderSettings->viewFarZ;
 }
 
 void OrthogonalRenderControl::setAspect(float aspect)
+{
+}
+
+void OrthogonalRenderControl::setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
 }
 

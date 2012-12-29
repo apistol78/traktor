@@ -80,7 +80,10 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.PerspectiveRenderControl", PerspectiveRenderControl, ISceneRenderControl)
 
 PerspectiveRenderControl::PerspectiveRenderControl()
-:	m_gridEnable(true)
+:	m_shadowQuality(world::QuDisabled)
+,	m_ambientOcclusionQuality(world::QuDisabled)
+,	m_antiAliasQuality(world::QuDisabled)
+,	m_gridEnable(true)
 ,	m_guideEnable(true)
 ,	m_postProcessEnable(true)
 ,	m_fieldOfView(c_defaultFieldOfView)
@@ -212,24 +215,31 @@ void PerspectiveRenderControl::updateWorldRenderer()
 	}
 
 	// Create world renderer.
-	Ref< world::IWorldRenderer > worldRenderer;
-	if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtForward)
-		worldRenderer = new world::WorldRendererForward();
-	else if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtPreLit)
-		worldRenderer = new world::WorldRendererPreLit();
+	//Ref< world::IWorldRenderer > worldRenderer;
+	//if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtForward)
+	//	worldRenderer = new world::WorldRendererForward();
+	//else if (m_worldRenderSettings.renderType == world::WorldRenderSettings::RtPreLit)
+	//	worldRenderer = new world::WorldRendererPreLit();
 
+	Ref< world::IWorldRenderer > worldRenderer = new world::WorldRendererPreLit();
 	if (!worldRenderer)
 		return;
 
+	world::WorldCreateDesc wcd;
+	wcd.worldRenderSettings = &m_worldRenderSettings;
+	wcd.postProcessSettings = m_postProcessEnable ? sceneInstance->getPostProcessSettings() : 0;
+	wcd.entityRenderers = worldEntityRenderers;
+	wcd.shadowsQuality = m_shadowQuality;
+	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
+	wcd.antiAliasQuality = m_antiAliasQuality;
+	wcd.multiSample = m_multiSample;
+	wcd.frameCount = 1;
+
 	if (worldRenderer->create(
-		&m_worldRenderSettings,
-		m_postProcessEnable ? sceneInstance->getPostProcessSettings() : 0,
-		worldEntityRenderers,
 		m_context->getResourceManager(),
 		m_context->getRenderSystem(),
 		m_renderView,
-		m_multiSample,
-		1
+		wcd
 	))
 	{
 		m_worldRenderer = worldRenderer;
@@ -252,6 +262,14 @@ void PerspectiveRenderControl::setAspect(float aspect)
 		m_containerAspect->setLayout(new ui::FloodLayout());
 
 	m_containerAspect->update();
+}
+
+void PerspectiveRenderControl::setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+{
+	m_shadowQuality = shadowQuality;
+	m_ambientOcclusionQuality = ambientOcclusionQuality;
+	m_antiAliasQuality = antiAliasQuality;
+	updateWorldRenderer();
 }
 
 bool PerspectiveRenderControl::handleCommand(const ui::Command& command)

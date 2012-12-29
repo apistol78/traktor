@@ -538,7 +538,7 @@ Clip space
 				<first>1069</first>
 				<second>1061</second>
 			</position>
-			<value>16</value>
+			<value>8</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>

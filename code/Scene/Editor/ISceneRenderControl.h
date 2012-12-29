@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Math/Frustum.h"
+#include "World/WorldTypes.h"
 
 namespace traktor
 {
@@ -35,6 +36,8 @@ public:
 	virtual void updateWorldRenderer() = 0;
 
 	virtual void setAspect(float aspect) = 0;
+
+	virtual void setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality) = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
 

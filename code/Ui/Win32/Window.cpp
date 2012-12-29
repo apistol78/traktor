@@ -334,6 +334,9 @@ LRESULT CALLBACK Window::wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam,
 	Window* window = reinterpret_cast< Window* >(GET_WINDOW_LONG_PTR(hWnd, GWLP_USERDATA));
 	if (window)
 	{
+		WNDPROC originalWndProc = window->m_originalWndProc;
+
+		// Call custom message handler.
 		IMessageHandler* messageHandler = window->m_messageHandlers[message];
 		if (messageHandler)
 		{
@@ -344,11 +347,23 @@ LRESULT CALLBACK Window::wndProcSubClass(HWND hWnd, UINT message, WPARAM wParam,
 		}
 
 		// Call original window procedure.
-		return CallWindowProc(window->m_originalWndProc, hWnd, message, wParam, lParam);
+		if (originalWndProc && IsWindow(hWnd))
+			return CallWindowProc(
+				originalWndProc,
+				hWnd,
+				message,
+				wParam,
+				lParam
+			);
 	}
 	
 	// Unable to get original window procedure, call default window procedure.
-	return DefWindowProc(hWnd, message, wParam, lParam);
+	return DefWindowProc(
+		hWnd,
+		message,
+		wParam,
+		lParam
+	);
 }
 
 	}

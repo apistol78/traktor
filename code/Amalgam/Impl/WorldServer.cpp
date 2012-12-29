@@ -9,6 +9,7 @@
 #include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
+#include "Core/Log/Log.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -46,17 +47,26 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer)
 
 WorldServer::WorldServer()
-:	m_shadowQuality(world::WorldRenderSettings::SqNoFilter)
-,	m_ambientOcclusionQuality(world::WorldRenderSettings::AoqHigh)
-,	m_antiAliasQuality(world::WorldRenderSettings::AaqMedium)
+:	m_worldType(0)
+,	m_shadowQuality(world::QuMedium)
+,	m_ambientOcclusionQuality(world::QuMedium)
+,	m_antiAliasQuality(world::QuMedium)
 {
 }
 
 bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderServer, IResourceServer* resourceServer)
 {
+	std::wstring worldType = settings->getProperty< PropertyString >(L"World.Type");
+
+	m_worldType = TypeInfo::find(worldType);
+	if (!m_worldType)
+	{
+		log::error << L"Unable to create world server; no such type \"" << worldType << L"\"" << Endl;
+		return false;
+	}
+
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
-
 	m_entityBuilder = new world::EntityBuilder();
 
 	float sprayLod1Distance = settings->getProperty< PropertyFloat >(L"World.SprayLod1", 40.0f);
@@ -76,56 +86,9 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_entityRenderers->add(new weather::WeatherEntityRenderer());
 	m_entityRenderers->add(new terrain::EntityRenderer());
 
-	int32_t shadowQuality = settings->getProperty< PropertyInteger >(L"World.ShadowQuality", 1);
-	switch (shadowQuality)
-	{
-	case 0:	// low
-		m_shadowQuality = world::WorldRenderSettings::SqLow;
-		break;
-	case 1:	// medium
-		m_shadowQuality = world::WorldRenderSettings::SqMedium;
-		break;
-	case 2:	// high
-		m_shadowQuality = world::WorldRenderSettings::SqHigh;
-		break;
-	case 3:	// ultra
-		m_shadowQuality = world::WorldRenderSettings::SqHighest;
-		break;
-	}
-
-	int32_t ambientOcclusionQuality = settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", 2);
-	switch (ambientOcclusionQuality)
-	{
-	case 0:	// low
-		m_ambientOcclusionQuality = world::WorldRenderSettings::AoqLow;
-		break;
-	case 1:	// medium
-		m_ambientOcclusionQuality = world::WorldRenderSettings::AoqMedium;
-		break;
-	case 2:	// high
-		m_ambientOcclusionQuality = world::WorldRenderSettings::AoqHigh;
-		break;
-	case 3:	// ultra
-		m_ambientOcclusionQuality = world::WorldRenderSettings::AoqHighest;
-		break;
-	}
-
-	int32_t antiAliasQuality = settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", 2);
-	switch (antiAliasQuality)
-	{
-	case 0:	// low
-		m_antiAliasQuality = world::WorldRenderSettings::AaqDisabled;
-		break;
-	case 1:	// medium
-		m_antiAliasQuality = world::WorldRenderSettings::AaqMedium;
-		break;
-	case 2:	// high
-		m_antiAliasQuality = world::WorldRenderSettings::AaqHigh;
-		break;
-	case 3:	// ultra
-		m_antiAliasQuality = world::WorldRenderSettings::AaqHighest;
-		break;
-	}
+	m_shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
+	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
+	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 
 	return true;
 }
@@ -135,6 +98,7 @@ void WorldServer::destroy()
 	m_resourceServer = 0;
 	m_renderServer = 0;
 	m_entityBuilder = 0;
+	m_worldType = 0;
 }
 
 void WorldServer::createResourceFactories(IEnvironment* environment)
@@ -168,77 +132,20 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 {
-	int32_t shadowQuality = settings->getProperty< PropertyInteger >(L"World.ShadowQuality", 1);
-	int32_t ambientOcclusionQuality = settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", 2);
-	int32_t antiAliasQuality = settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", 2);
+	world::Quality shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
+	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
+	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 	
-	world::WorldRenderSettings::ShadowQuality worldShadowQuality;
-	switch (shadowQuality)
-	{
-	case 0:	// low
-		worldShadowQuality = world::WorldRenderSettings::SqLow;
-		break;
-	case 1:	// medium
-		worldShadowQuality = world::WorldRenderSettings::SqMedium;
-		break;
-	case 2:	// high
-		worldShadowQuality = world::WorldRenderSettings::SqHigh;
-		break;
-	case 3:	// ultra
-		worldShadowQuality = world::WorldRenderSettings::SqHighest;
-		break;
-	default:
-		worldShadowQuality = m_shadowQuality;
-		break;
-	}
-
-	world::WorldRenderSettings::AmbientOcclusionQuality worldAmbientOcclusionQuality;
-	switch (ambientOcclusionQuality)
-	{
-	case 0:	// low
-		worldAmbientOcclusionQuality = world::WorldRenderSettings::AoqLow;
-		break;
-	case 1:	// medium
-		worldAmbientOcclusionQuality = world::WorldRenderSettings::AoqMedium;
-		break;
-	case 2:	// high
-		worldAmbientOcclusionQuality = world::WorldRenderSettings::AoqHigh;
-		break;
-	case 3:	// ultra
-		worldAmbientOcclusionQuality = world::WorldRenderSettings::AoqHighest;
-		break;
-	default:
-		worldAmbientOcclusionQuality = m_ambientOcclusionQuality;
-		break;
-	}
-
-	world::WorldRenderSettings::AntiAliasQuality worldAntiAliasQuality;
-	switch (antiAliasQuality)
-	{
-	case 0:	// low
-		worldAntiAliasQuality = world::WorldRenderSettings::AaqDisabled;
-		break;
-	case 1:	// medium
-		worldAntiAliasQuality = world::WorldRenderSettings::AaqMedium;
-		break;
-	case 2:	// high
-		worldAntiAliasQuality = world::WorldRenderSettings::AaqHigh;
-		break;
-	case 3:	// ultra
-		worldAntiAliasQuality = world::WorldRenderSettings::AaqHighest;
-		break;
-	}
-
 	if (
-		worldShadowQuality == m_shadowQuality &&
-		worldAmbientOcclusionQuality == m_ambientOcclusionQuality &&
-		worldAntiAliasQuality == m_antiAliasQuality
+		shadowQuality == m_shadowQuality &&
+		ambientOcclusionQuality == m_ambientOcclusionQuality &&
+		antiAliasQuality == m_antiAliasQuality
 	)
 		return CrUnaffected;
 
-	m_shadowQuality = worldShadowQuality;
-	m_ambientOcclusionQuality = worldAmbientOcclusionQuality;
-	m_antiAliasQuality = worldAntiAliasQuality;
+	m_shadowQuality = shadowQuality;
+	m_ambientOcclusionQuality = ambientOcclusionQuality;
+	m_antiAliasQuality = antiAliasQuality;
 
 	return CrAccepted;
 }
@@ -278,35 +185,26 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 	const world::PostProcessSettings* postProcessSettings
 )
 {
-	Ref< world::WorldRenderSettings > settings;
-	
-	if (worldRenderSettings)
-		settings = new world::WorldRenderSettings(*worldRenderSettings);
-	else
-		settings = new world::WorldRenderSettings();
+	world::WorldCreateDesc wcd;
 
-	settings->shadowsQuality = m_shadowQuality;
-	settings->ambientOcclusionQuality = m_ambientOcclusionQuality;
-	settings->antiAliasQuality = m_antiAliasQuality;
+	wcd.worldRenderSettings = worldRenderSettings;
+	wcd.postProcessSettings = postProcessSettings;
+	wcd.entityRenderers = m_entityRenderers;
+	wcd.shadowsQuality = m_shadowQuality;
+	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
+	wcd.antiAliasQuality = m_antiAliasQuality;
+	wcd.multiSample = m_renderServer->getMultiSample();
+	wcd.frameCount = getFrameCount();
 
-	Ref< world::IWorldRenderer > worldRenderer;
-	if (settings->renderType == world::WorldRenderSettings::RtForward)
-		worldRenderer = new world::WorldRendererForward();
-	else if (settings->renderType == world::WorldRenderSettings::RtPreLit)
-		worldRenderer = new world::WorldRendererPreLit();
-
+	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldType->createInstance());
 	if (!worldRenderer)
 		return 0;
 
 	if (!worldRenderer->create(
-		settings,
-		postProcessSettings,
-		m_entityRenderers,
 		m_resourceServer->getResourceManager(),
 		m_renderServer->getRenderSystem(),
 		m_renderServer->getRenderView(),
-		m_renderServer->getMultiSample(),
-		getFrameCount()
+		wcd
 	))
 		return 0;
 

@@ -57,9 +57,10 @@ private:
 	Ref< world::WorldEntityRenderers > m_entityRenderers;
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
-	world::WorldRenderSettings::ShadowQuality m_shadowQuality;
-	world::WorldRenderSettings::AmbientOcclusionQuality m_ambientOcclusionQuality;
-	world::WorldRenderSettings::AntiAliasQuality m_antiAliasQuality;
+	const TypeInfo* m_worldType;
+	world::Quality m_shadowQuality;
+	world::Quality m_ambientOcclusionQuality;
+	world::Quality m_antiAliasQuality;
 };
 
 	}

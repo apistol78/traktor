@@ -113,6 +113,12 @@
 					<value>true</value>
 				</second>
 			</item>
+			<item>
+				<first>World.Type</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.world.WorldRendererForward</value>
+				</second>
+			</item>
 		</value>
 	</runtimeProperties>
 </object>

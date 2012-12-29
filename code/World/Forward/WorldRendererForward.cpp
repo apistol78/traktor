@@ -48,7 +48,10 @@ render::handle_t s_handleProjection = 0;
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRendererForward", 0, WorldRendererForward, IWorldRenderer)
 
 WorldRendererForward::WorldRendererForward()
-:	m_count(0)
+:	m_shadowsQuality(QuDisabled)
+,	m_ambientOcclusionQuality(QuDisabled)
+,	m_antiAliasQuality(QuDisabled)
+,	m_count(0)
 {
 	// Techniques
 	s_techniqueDefault = render::getParameterHandle(L"World_ForwardColor");
@@ -60,22 +63,22 @@ WorldRendererForward::WorldRendererForward()
 }
 
 bool WorldRendererForward::create(
-	const WorldRenderSettings* worldRenderSettings,
-	const PostProcessSettings* postProcessSettings,
-	WorldEntityRenderers* entityRenderers,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	render::IRenderView* renderView,
-	uint32_t multiSample,
-	uint32_t frameCount
+	const WorldCreateDesc& desc
 )
 {
-	T_ASSERT_M (worldRenderSettings, L"World render settings required");
-	T_ASSERT_M (renderView, L"Render view required");
-
-	m_settings = *worldRenderSettings;
 	m_renderView = renderView;
-	m_frames.resize(frameCount);
+
+	m_settings = *desc.worldRenderSettings;
+	m_shadowSettings = m_settings.shadowSettings[desc.shadowsQuality];
+
+	m_shadowsQuality = desc.shadowsQuality;
+	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
+	m_antiAliasQuality = desc.antiAliasQuality;
+
+	m_frames.resize(desc.frameCount);
 
 	float fogColor[4];
 	m_settings.fogColor.getRGBA32F(fogColor);
@@ -86,52 +89,48 @@ bool WorldRendererForward::create(
 
 	// Create "unprocessed" target.
 	{
-		render::RenderTargetSetCreateDesc desc;
+		render::RenderTargetSetCreateDesc rtscd;
 		
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = multiSample;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = true;
-		desc.targets[0].format = render::TfR8G8B8A8;
+		rtscd.count = 1;
+		rtscd.width = width;
+		rtscd.height = height;
+		rtscd.multiSample = desc.multiSample;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR8G8B8A8;
 
-		if (postProcessSettings && postProcessSettings->requireHighRange())
-			desc.targets[0].format = render::TfR11G11B10F;
+		if (desc.postProcessSettings && desc.postProcessSettings->requireHighRange())
+			rtscd.targets[0].format = render::TfR11G11B10F;
 
-		m_visualTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
 		if (!m_visualTargetSet)
 			return false;
 	}
 
 	// Create "depth map" target.
-	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
+	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
 	{
-		render::RenderTargetSetCreateDesc desc;
+		render::RenderTargetSetCreateDesc rtscd;
 
-		desc.count = 1;
-		desc.width = width;
-		desc.height = height;
-		desc.multiSample = multiSample;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = true;
-		desc.preferTiled = true;
-//#if !defined(_PS3)
-		desc.targets[0].format = render::TfR16F;
-//#else
-//		desc.targets[0].format = render::TfR8G8B8A8;
-//#endif
+		rtscd.count = 1;
+		rtscd.width = width;
+		rtscd.height = height;
+		rtscd.multiSample = desc.multiSample;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = true;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR16F;
 
-		m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
+		m_depthTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
-		if (!m_depthTargetSet && multiSample > 0)
+		if (!m_depthTargetSet && desc.multiSample > 0)
 		{
-			desc.multiSample = 0;
-			desc.createDepthStencil = true;
-			desc.usingPrimaryDepthStencil = false;
+			rtscd.multiSample = 0;
+			rtscd.createDepthStencil = true;
+			rtscd.usingPrimaryDepthStencil = false;
 
-			m_depthTargetSet = renderSystem->createRenderTargetSet(desc);
+			m_depthTargetSet = renderSystem->createRenderTargetSet(rtscd);
 			if (m_depthTargetSet)
 				log::warning << L"MSAA depth render target unsupported; may cause poor performance" << Endl;
 		}
@@ -144,73 +143,40 @@ bool WorldRendererForward::create(
 	}
 
 	// Allocate "shadow map" targets.
-	if (m_settings.shadowsEnabled)
+	if (m_shadowsQuality > QuDisabled)
 	{
-		render::RenderTargetSetCreateDesc desc;
-
-		uint32_t shadowMapResolution = m_settings.shadowMapResolution;
-		switch (m_settings.shadowsQuality)
-		{
-		case WorldRenderSettings::SqLow:
-			shadowMapResolution /= 4;
-			break;
-
-		case WorldRenderSettings::SqMedium:
-			shadowMapResolution /= 2;
-			break;
-
-		default:
-			break;
-		}
+		render::RenderTargetSetCreateDesc rtscd;
 
 		// Create shadow map target.
-		desc.count = 1;
-		desc.width =
-		desc.height = shadowMapResolution;
-		desc.multiSample = 0;
-		desc.createDepthStencil = true;
-		desc.usingPrimaryDepthStencil = false;
-		desc.preferTiled = true;
-//#if !defined(_PS3)
-		desc.targets[0].format = render::TfR16F;
-//#else
-//		desc.targets[0].format = render::TfR8G8B8A8;
-//#endif
-		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
-
-		// Determine shadow mask size; high quality is same as entire screen.
-		if (
-			m_settings.shadowsQuality == WorldRenderSettings::SqNoFilter ||
-			m_settings.shadowsQuality == WorldRenderSettings::SqHigh ||
-			m_settings.shadowsQuality == WorldRenderSettings::SqHighest
-		)
-		{
-			desc.width = width;
-			desc.height = height;
-		}
-		else
-		{
-			desc.width = width / 2;
-			desc.height = height / 2;
-		}
+		rtscd.count = 1;
+		rtscd.width =
+		rtscd.height = m_shadowSettings.resolution;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = true;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.preferTiled = true;
+		rtscd.targets[0].format = render::TfR16F;
+		m_shadowTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
 		// Create shadow mask target.
-		desc.count = 1;
-		desc.multiSample = 0;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = false;
-		desc.targets[0].format = render::TfR8;
-		desc.preferTiled = true;
-		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(desc);
+		rtscd.count = 1;
+		rtscd.width = width / m_shadowSettings.maskDenominator;
+		rtscd.height = height / m_shadowSettings.maskDenominator;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.targets[0].format = render::TfR8;
+		rtscd.preferTiled = true;
+		m_shadowMaskProjectTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
 		// Create filtered shadow mask target.
-		desc.count = 1;
-		desc.multiSample = 0;
-		desc.createDepthStencil = false;
-		desc.usingPrimaryDepthStencil = false;
-		desc.targets[0].format = render::TfR8;
-		desc.preferTiled = true;
-		m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(desc);
+		rtscd.count = 1;
+		rtscd.multiSample = 0;
+		rtscd.createDepthStencil = false;
+		rtscd.usingPrimaryDepthStencil = false;
+		rtscd.targets[0].format = render::TfR8;
+		rtscd.preferTiled = true;
+		m_shadowMaskFilterTargetSet = renderSystem->createRenderTargetSet(rtscd);
 
 		if (
 			m_shadowTargetSet &&
@@ -218,55 +184,31 @@ bool WorldRendererForward::create(
 			m_shadowMaskFilterTargetSet
 		)
 		{
-			resource::Id< PostProcessSettings > shadowMaskProjectId;
-			resource::Id< PostProcessSettings > shadowMaskFilterId;
-
-			shadowMaskProjectId = c_shadowMaskProject;
-
-			switch (m_settings.shadowsQuality)
-			{
-			case WorldRenderSettings::SqNoFilter:
-				shadowMaskFilterId = c_shadowMaskFilterNone;
-				break;
-			case WorldRenderSettings::SqLow:
-				shadowMaskFilterId = c_shadowMaskFilterLow;
-				break;
-			case WorldRenderSettings::SqMedium:
-				shadowMaskFilterId = c_shadowMaskFilterMedium;
-				break;
-			case WorldRenderSettings::SqHigh:
-				shadowMaskFilterId = c_shadowMaskFilterHigh;
-				break;
-			case WorldRenderSettings::SqHighest:
-				shadowMaskFilterId = c_shadowMaskFilterHighest;
-				break;
-			}
-
 			resource::Proxy< PostProcessSettings > shadowMaskProject;
 			resource::Proxy< PostProcessSettings > shadowMaskFilter;
 
 			if (
-				!resourceManager->bind(shadowMaskProjectId, shadowMaskProject) ||
-				!resourceManager->bind(shadowMaskFilterId, shadowMaskFilter)
+				!resourceManager->bind(m_shadowSettings.maskProject, shadowMaskProject) ||
+				!resourceManager->bind(m_shadowSettings.maskFilter, shadowMaskFilter)
 			)
 			{
 				log::warning << L"Unable to create shadow project process; shadows disabled (1)" << Endl;
-				m_settings.shadowsEnabled = false;
+				m_shadowsQuality = QuDisabled;
 			}
 
-			if (m_settings.shadowsEnabled)
+			if (m_shadowsQuality > QuDisabled)
 			{
 				m_shadowMaskProject = new PostProcess();
 				if (!m_shadowMaskProject->create(
 					shadowMaskProject,
 					resourceManager,
 					renderSystem,
-					desc.width,
-					desc.height
+					rtscd.width,
+					rtscd.height
 				))
 				{
 					log::warning << L"Unable to create shadow project process; shadows disabled (2)" << Endl;
-					m_settings.shadowsEnabled = false;
+					m_shadowsQuality = QuDisabled;
 				}
 
 				m_shadowMaskFilter = new PostProcess();
@@ -274,27 +216,27 @@ bool WorldRendererForward::create(
 					shadowMaskFilter,
 					resourceManager,
 					renderSystem,
-					desc.width,
-					desc.height
+					rtscd.width,
+					rtscd.height
 				))
 				{
 					log::warning << L"Unable to create shadow filter process; shadows disabled (3)" << Endl;
-					m_settings.shadowsEnabled = false;
+					m_shadowsQuality = QuDisabled;
 				}
 			}
 		}
 		else
 		{
 			log::warning << L"Unable to create shadow render targets; shadows disabled (4)" << Endl;
-			m_settings.shadowsEnabled = false;
+			m_shadowsQuality = QuDisabled;
 		}
 
-		if (m_settings.shadowsEnabled)
+		if (m_shadowsQuality > QuDisabled)
 		{
-			switch (m_settings.shadowsProjection)
+			switch (m_shadowSettings.projection)
 			{
 			case WorldRenderSettings::SpBox:
-				m_shadowProjection = new BoxShadowProjection(m_settings);
+				m_shadowProjection = new BoxShadowProjection();
 				break;
 
 			case WorldRenderSettings::SpLiSP:
@@ -302,18 +244,18 @@ bool WorldRendererForward::create(
 				break;
 
 			case WorldRenderSettings::SpTrapezoid:
-				m_shadowProjection = new TrapezoidShadowProjection(m_settings);
+				m_shadowProjection = new TrapezoidShadowProjection();
 				break;
 
 			default:
 			case WorldRenderSettings::SpUniform:
-				m_shadowProjection = new UniformShadowProjection(m_settings, shadowMapResolution);
+				m_shadowProjection = new UniformShadowProjection(m_shadowSettings.resolution);
 				break;
 			}
 		}
 
 		// Ensure targets are destroyed if something went wrong in setup.
-		if (!m_settings.shadowsEnabled)
+		if (m_shadowsQuality == QuDisabled)
 		{
 			safeDestroy(m_shadowTargetSet);
 			safeDestroy(m_shadowMaskProjectTargetSet);
@@ -322,11 +264,11 @@ bool WorldRendererForward::create(
 	}
 
 	// Create "visual" post processing filter.
-	if (postProcessSettings)
+	if (desc.postProcessSettings)
 	{
 		m_visualPostProcess = new world::PostProcess();
 		if (!m_visualPostProcess->create(
-			postProcessSettings,
+			desc.postProcessSettings,
 			resourceManager,
 			renderSystem,
 			width,
@@ -339,38 +281,38 @@ bool WorldRendererForward::create(
 	}
 
 	// Allocate "depth" context.
-	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
+	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-			i->depth = new WorldContext(entityRenderers, 0);
+			i->depth = new WorldContext(desc.entityRenderers, 0);
 	}
 
 	// Allocate "shadow" contexts for each slice.
-	if (m_settings.shadowsEnabled)
+	if (m_shadowsQuality > QuDisabled)
 	{
 		for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
 		{
-			for (int32_t j = 0; j < m_settings.shadowCascadingSlices; ++j)
-				i->slice[j].shadow = new WorldContext(entityRenderers, 0);
+			for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
+				i->slice[j].shadow = new WorldContext(desc.entityRenderers, 0);
 		}
 	}
 
 	// Allocate "visual" contexts.
 	for (AlignedVector< Frame >::iterator i = m_frames.begin(); i != m_frames.end(); ++i)
-		i->visual = new WorldContext(entityRenderers, 0);
+		i->visual = new WorldContext(desc.entityRenderers, 0);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
 	m_globalContext = new render::RenderContext(4096);
 
 	// Determine slice distances.
-	for (int32_t i = 0; i < m_settings.shadowCascadingSlices; ++i)
+	for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
 	{
-		float ii = float(i) / m_settings.shadowCascadingSlices;
-		float log = powf(ii, m_settings.shadowCascadingLambda);
-		m_slicePositions[i] = lerp(m_settings.viewNearZ, m_settings.shadowFarZ, log);
+		float ii = float(i) / m_shadowSettings.cascadingSlices;
+		float log = powf(ii, m_shadowSettings.cascadingLambda);
+		m_slicePositions[i] = lerp(m_settings.viewNearZ, m_shadowSettings.farZ, log);
 	}
-	m_slicePositions[m_settings.shadowCascadingSlices] = m_settings.shadowFarZ;
+	m_slicePositions[m_shadowSettings.cascadingSlices] = m_shadowSettings.farZ;
 
 	m_count = 0;
 	return true;
@@ -435,13 +377,14 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 
 	if (f.haveShadows)
 	{
-		for (int32_t i = 0; i < m_settings.shadowCascadingSlices; ++i)
+		int32_t cascadingSlices = m_settings.shadowSettings[m_shadowsQuality].cascadingSlices;
+		for (int32_t i = 0; i < cascadingSlices; ++i)
 			f.slice[i].shadow->getRenderContext()->flush();
 	}
 
 	f.visual->getRenderContext()->flush();
 
-	if (m_settings.depthPassEnabled || m_settings.shadowsEnabled)
+	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
 	{
 		WorldRenderView depthRenderView = worldRenderView;
 		depthRenderView.resetLights();
@@ -459,7 +402,7 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 	else
 		f.haveDepth = false;
 
-	if (m_settings.shadowsEnabled)
+	if (m_shadowsQuality > QuDisabled)
 		buildShadows(worldRenderView, entity, frame);
 	else
 		buildNoShadows(worldRenderView, entity, frame);
@@ -539,7 +482,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	{
 		if ((flags & WrfShadowMap) != 0 && f.haveShadows)
 		{
-			for (int32_t i = 0; i < m_settings.shadowCascadingSlices; ++i)
+			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
 			{
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
 				if (m_renderView->begin(m_shadowTargetSet, 0))
@@ -561,7 +504,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 					}
 
 					Scalar zn(max(m_slicePositions[i], m_settings.viewNearZ));
-					Scalar zf(min(m_slicePositions[i + 1], m_settings.shadowFarZ));
+					Scalar zf(min(m_slicePositions[i + 1], m_shadowSettings.farZ));
 
 					PostProcessStep::Instance::RenderParams params;
 					params.viewFrustum = f.viewFrustum;
@@ -570,8 +513,8 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 					params.squareProjection = f.slice[i].squareProjection;
 					params.sliceNearZ = zn;
 					params.sliceFarZ = zf;
-					params.shadowFarZ = m_settings.shadowFarZ;
-					params.shadowMapBias = m_settings.shadowMapBias + i * m_settings.shadowMapBiasCoeff;
+					params.shadowFarZ = m_shadowSettings.farZ;
+					params.shadowMapBias = m_shadowSettings.bias + i * m_shadowSettings.biasCoeff;
 					params.deltaTime = 0.0f;
 
 					m_shadowMaskProject->render(
@@ -594,8 +537,8 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				params.viewFrustum = f.viewFrustum;
 				params.projection = projection;
 				params.sliceNearZ = 0.0f;
-				params.sliceFarZ = m_settings.shadowFarZ;
-				params.shadowMapBias = m_settings.shadowMapBias;
+				params.sliceFarZ = m_shadowSettings.farZ;
+				params.shadowMapBias = m_shadowSettings.bias;
 				params.deltaTime = 0.0f;
 
 				m_shadowMaskFilter->render(
@@ -737,10 +680,10 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
 	Vector4 eyePosition = viewInverse.translation();
 
-	for (int32_t slice = 0; slice < m_settings.shadowCascadingSlices; ++slice)
+	for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)
 	{
 		Scalar zn(max(m_slicePositions[slice], m_settings.viewNearZ));
-		Scalar zf(min(m_slicePositions[slice + 1], m_settings.shadowFarZ));
+		Scalar zf(min(m_slicePositions[slice + 1], m_shadowSettings.farZ));
 
 		// Create sliced view frustum.
 		Frustum sliceViewFrustum = viewFrustum;
@@ -759,7 +702,8 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 			shadowLight->direction,
 			sliceViewFrustum,
 			shadowBox,
-			m_settings.shadowQuantizeProjection,
+			m_shadowSettings.farZ,
+			m_shadowSettings.quantizeProjection,
 			shadowLightView,
 			shadowLightProjection,
 			shadowLightSquareProjection,

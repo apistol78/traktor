@@ -56,9 +56,7 @@ public:
 private:
 	bool m_targetEditor;
 	bool m_suppressDepthPass;
-	bool m_suppressShadows;
 	bool m_suppressPostProcess;
-	bool m_suppressPreLit;
 	int32_t m_shadowMapSizeDenom;
 	int32_t m_shadowMapMaxSlices;
 };

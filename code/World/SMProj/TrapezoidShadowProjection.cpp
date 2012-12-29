@@ -25,17 +25,13 @@ Vector4 v2top4(const Vector2& v)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.TrapezoidShadowProjection", TrapezoidShadowProjection, IWorldShadowProjection)
 
-TrapezoidShadowProjection::TrapezoidShadowProjection(const WorldRenderSettings& settings)
-:	m_settings(settings)
-{
-}
-
 void TrapezoidShadowProjection::calculate(
 	const Matrix44& viewInverse,
 	const Vector4& lightPosition,
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
 	const Aabb3& shadowBox,
+	float shadowFarZ,
 	bool quantizeProjection,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
@@ -134,7 +130,7 @@ void TrapezoidShadowProjection::calculate(
 
 	// Calculate light view and projection matrices.
 	Vector4 worldCenter = viewInverse * Vector4(0.0f, 0.0f, -nz, 1.0f);
-	Scalar lightDistance = Scalar(m_settings.shadowFarZ * 2.0f);
+	Scalar lightDistance = Scalar(shadowFarZ * 2.0f);
 
 	outLightView = Matrix44(
 		lightAxisX,

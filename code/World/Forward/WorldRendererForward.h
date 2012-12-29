@@ -59,14 +59,10 @@ public:
 	WorldRendererForward();
 
 	virtual bool create(
-		const WorldRenderSettings* worldRenderSettings,
-		const PostProcessSettings* postProcessSettings,
-		WorldEntityRenderers* entityRenderers,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
-		uint32_t multiSample,
-		uint32_t frameCount
+		const WorldCreateDesc& desc
 	);
 
 	virtual void destroy();
@@ -128,8 +124,13 @@ private:
 	};
 
 	WorldRenderSettings m_settings;
-	Ref< IWorldShadowProjection > m_shadowProjection;
+	WorldRenderSettings::ShadowSettings m_shadowSettings;
+	Quality m_shadowsQuality;
+	Quality m_ambientOcclusionQuality;
+	Quality m_antiAliasQuality;
+
 	Ref< render::IRenderView > m_renderView;
+	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_depthTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;

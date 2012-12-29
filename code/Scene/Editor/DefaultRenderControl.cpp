@@ -106,12 +106,40 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolAspect->add(L"4:6");
 	m_toolAspect->select(0);
 
+	m_toolShadows = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.ShadowQuality"), 80, i18n::Text(L"SCENE_EDITOR_SHADOWS"));
+	m_toolShadows->add(L"Disabled");
+	m_toolShadows->add(L"Low");
+	m_toolShadows->add(L"Medium");
+	m_toolShadows->add(L"High");
+	m_toolShadows->add(L"Ultra");
+	m_toolShadows->select(0);
+
+	m_toolAO = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.AmbientOcclusionQuality"), 80, i18n::Text(L"SCENE_EDITOR_AO"));
+	m_toolAO->add(L"Disabled");
+	m_toolAO->add(L"Low");
+	m_toolAO->add(L"Medium");
+	m_toolAO->add(L"High");
+	m_toolAO->add(L"Ultra");
+	m_toolAO->select(0);
+
+	m_toolAA = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.AntiAliasQuality"), 80, i18n::Text(L"SCENE_EDITOR_AA"));
+	m_toolAA->add(L"Disabled");
+	m_toolAA->add(L"Low");
+	m_toolAA->add(L"Medium");
+	m_toolAA->add(L"High");
+	m_toolAA->add(L"Ultra");
+	m_toolAA->select(0);
+
 	m_toolBar->addItem(m_toolView);
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolTogglePostProcess);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(m_toolShadows);
+	m_toolBar->addItem(m_toolAO);
+	m_toolBar->addItem(m_toolAA);
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &DefaultRenderControl::eventToolClick));
 
 	createRenderControl(viewType);
@@ -154,6 +182,16 @@ void DefaultRenderControl::setAspect(float aspect)
 {
 	if (m_renderControl)
 		m_renderControl->setAspect(aspect);
+}
+
+void DefaultRenderControl::setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+{
+	if (m_renderControl)
+		m_renderControl->setQuality(
+			shadowQuality,
+			ambientOcclusionQuality,
+			antiAliasQuality
+		);
 }
 
 bool DefaultRenderControl::handleCommand(const ui::Command& command)
@@ -344,6 +382,18 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 			4.0f / 6.0f
 		};
 		m_renderControl->setAspect(c_aspects[m_toolAspect->getSelected()]);
+	}
+	else if (
+		cmdEvent->getCommand() == L"Scene.Editor.ShadowQuality" ||
+		cmdEvent->getCommand() == L"Scene.Editor.AmbientOcclusionQuality" ||
+		cmdEvent->getCommand() == L"Scene.Editor.AntiAliasQuality"
+	)
+	{
+		m_renderControl->setQuality(
+			(world::Quality)m_toolShadows->getSelected(),
+			(world::Quality)m_toolAO->getSelected(),
+			(world::Quality)m_toolAA->getSelected()
+		);
 	}
 }
 

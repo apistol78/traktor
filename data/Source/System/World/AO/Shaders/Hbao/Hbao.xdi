@@ -1037,7 +1037,7 @@ g_Strength
 				<first>380</first>
 				<second>1</second>
 			</position>
-			<value>0.6</value>
+			<value>1</value>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>

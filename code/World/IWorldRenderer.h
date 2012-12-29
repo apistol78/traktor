@@ -5,6 +5,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Const.h"
 #include "Render/Types.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -45,6 +46,33 @@ class PostProcessSettings;
 class WorldEntityRenderers;
 class WorldRenderSettings;
 class WorldRenderView;
+
+/*! \brief World renderer creation description.
+ * \ingroup World
+ */
+struct WorldCreateDesc
+{
+	const WorldRenderSettings* worldRenderSettings;
+	const PostProcessSettings* postProcessSettings;
+	WorldEntityRenderers* entityRenderers;
+	Quality shadowsQuality;
+	Quality ambientOcclusionQuality;
+	Quality antiAliasQuality;
+	uint32_t multiSample;
+	uint32_t frameCount;
+
+	WorldCreateDesc()
+	:	worldRenderSettings(0)
+	,	postProcessSettings(0)
+	,	entityRenderers(0)
+	,	shadowsQuality(QuDisabled)
+	,	ambientOcclusionQuality(QuDisabled)
+	,	antiAliasQuality(QuDisabled)
+	,	multiSample(0)
+	,	frameCount(0)
+	{
+	}
+};
 
 /*! \brief Perspective view port.
  * \ingroup World
@@ -110,14 +138,10 @@ class T_DLLCLASS IWorldRenderer : public Object
 public:
 	/*! \brief Create world renderer. */
 	virtual bool create(
-		const WorldRenderSettings* worldRenderSettings,
-		const PostProcessSettings* postProcessSettings,
-		WorldEntityRenderers* entityRenderers,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		render::IRenderView* renderView,
-		uint32_t multiSample,
-		uint32_t frameCount
+		const WorldCreateDesc& desc
 	) = 0;
 
 	/*! \brief Destroy world renderer. */
