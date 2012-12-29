@@ -7,17 +7,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.BoxShadowProjection", BoxShadowProjection, IWorldShadowProjection)
 
-BoxShadowProjection::BoxShadowProjection(const WorldRenderSettings& settings)
-:	m_settings(settings)
-{
-}
-
 void BoxShadowProjection::calculate(
 	const Matrix44& viewInverse,
 	const Vector4& lightPosition,
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
 	const Aabb3& shadowBox,
+	float shadowFarZ,
 	bool quantizeProjection,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
@@ -25,7 +21,7 @@ void BoxShadowProjection::calculate(
 	Frustum& outShadowFrustum
 ) const
 {
-	Scalar lightDistance(m_settings.shadowFarZ * 2.0f);
+	Scalar lightDistance(shadowFarZ * 2.0f);
 
 	Vector4 shadowBoxExtents[8];
 	shadowBox.getExtents(shadowBoxExtents);

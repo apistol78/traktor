@@ -6780,7 +6780,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1d.lib</item>
+						<item>fbxsdk-2013.1.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -6830,7 +6830,7 @@
 						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1d.lib</item>
+						<item>fbxsdk-2013.1.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -11718,7 +11718,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
 								</libraryPaths>
 								<libraries>
-									<item>fbxsdk-2013.1d.lib</item>
+									<item>fbxsdk-2013.1.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>
@@ -11768,7 +11768,7 @@
 									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
 								</libraryPaths>
 								<libraries>
-									<item>fbxsdk-2013.1d.lib</item>
+									<item>fbxsdk-2013.1.lib</item>
 								</libraries>
 								<additionalCompilerOptions/>
 								<additionalLinkerOptions/>

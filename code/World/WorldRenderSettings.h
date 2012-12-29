@@ -4,7 +4,8 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Math/Color4ub.h"
 #include "Core/Math/Vector4.h"
-#include "Resource/Proxy.h"
+#include "Resource/Id.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,6 +20,8 @@ namespace traktor
 	namespace world
 	{
 
+class PostProcessSettings;
+
 /*! \brief World render settings.
  * \ingroup World
  *
@@ -32,12 +35,6 @@ class T_DLLCLASS WorldRenderSettings : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	enum RenderType
-	{
-		RtForward,
-		RtPreLit
-	};
-
 	enum ShadowProjection
 	{
 		SpBox,
@@ -46,59 +43,37 @@ public:
 		SpUniform
 	};
 
-	enum ShadowQuality
+	struct ShadowSettings
 	{
-		SqNoFilter,
-		SqLow,
-		SqMedium,
-		SqHigh,
-		SqHighest
+		ShadowProjection projection;
+		float farZ;
+		int32_t resolution;
+		float bias;
+		float biasCoeff;
+		int32_t cascadingSlices;
+		float cascadingLambda;
+		bool quantizeProjection;
+		int32_t maskDenominator;
+		resource::Id< PostProcessSettings > maskProject;
+		resource::Id< PostProcessSettings > maskFilter;
+
+		ShadowSettings();
+
+		bool serialize(ISerializer& s);
 	};
 
-	enum AmbientOcclusionQuality
-	{
-		AoqDisabled,
-		AoqLow,
-		AoqMedium,
-		AoqHigh,
-		AoqHighest
-	};
-
-	enum AntiAliasQuality
-	{
-		AaqDisabled,
-		AaqLow,
-		AaqMedium,
-		AaqHigh,
-		AaqHighest
-	};
-
-	RenderType renderType;
 	float viewNearZ;
 	float viewFarZ;
 	bool linearLighting;
 	bool occlusionCullingEnabled;
 	bool depthPassEnabled;
-	bool shadowsEnabled;
-	ShadowProjection shadowsProjection;
-	ShadowQuality shadowsQuality;
-	float shadowFarZ;
-	int32_t shadowMapResolution;
-	float shadowMapBias;
-	float shadowMapBiasCoeff;
-	int32_t shadowCascadingSlices;
-	float shadowCascadingLambda;
-	bool shadowQuantizeProjection;
-	AmbientOcclusionQuality ambientOcclusionQuality;
+	ShadowSettings shadowSettings[QuLast];
 	bool fogEnabled;
 	float fogDistance;
 	float fogRange;
 	Color4ub fogColor;
-	AntiAliasQuality antiAliasQuality;
 
 	WorldRenderSettings();
-
-	WorldRenderSettings(const WorldRenderSettings& settings);
 
 	virtual bool serialize(ISerializer& s);
 };

@@ -83,6 +83,10 @@ void DebugRenderControl::setAspect(float aspect)
 {
 }
 
+void DebugRenderControl::setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
+{
+}
+
 bool DebugRenderControl::handleCommand(const ui::Command& command)
 {
 	return false;

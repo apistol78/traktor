@@ -443,10 +443,7 @@ bool XmlDeserializer::operator >> (const MemberArray& m)
 	{
 		while (m_xpp.next() != XmlPullParser::EtEndDocument)
 		{
-			if (
-				m_xpp.getEvent().type == XmlPullParser::EtStartElement &&
-				m_xpp.getEvent().value == L"item"
-			)
+			if (m_xpp.getEvent().type == XmlPullParser::EtStartElement)
 				break;
 			if (
 				m_xpp.getEvent().type == XmlPullParser::EtEndElement &&
@@ -455,10 +452,7 @@ bool XmlDeserializer::operator >> (const MemberArray& m)
 				break;
 		}
 
-		if (!(
-			m_xpp.getEvent().type == XmlPullParser::EtStartElement &&
-			m_xpp.getEvent().value == L"item"
-		))
+		if (m_xpp.getEvent().type != XmlPullParser::EtStartElement)
 			break;
 
 		m_xpp.push();

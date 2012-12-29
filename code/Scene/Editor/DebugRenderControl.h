@@ -43,6 +43,8 @@ public:
 
 	virtual void setAspect(float aspect);
 
+	virtual void setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality);
+
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void update();

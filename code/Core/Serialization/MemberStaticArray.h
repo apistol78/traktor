@@ -13,9 +13,10 @@ template < typename ValueType, int ArraySize, typename ValueMember = Member< Val
 class MemberStaticArray : public MemberArray
 {
 public:
-	MemberStaticArray(const wchar_t* const name, ValueType* arr)
+	MemberStaticArray(const wchar_t* const name, ValueType* arr, const wchar_t** elementNames = 0)
 	:	MemberArray(name, 0)
 	,	m_arr(arr)
+	,	m_elementNames(elementNames)
 	,	m_index(0)
 	{
 	}
@@ -38,12 +39,28 @@ public:
 
 	virtual bool read(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", m_arr[m_index++]);
+		bool result = s >> ValueMember(
+			m_elementNames ? m_elementNames[m_index] : L"item",
+			m_arr[m_index]
+		);
+		if (!result)
+			return false;
+
+		++m_index;
+		return true;
 	}
 
 	virtual bool write(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", m_arr[m_index++]);
+		bool result = s >> ValueMember(
+			m_elementNames ? m_elementNames[m_index] : L"item",
+			m_arr[m_index]
+		);
+		if (!result)
+			return false;
+
+		++m_index;
+		return true;
 	}
 
 	virtual bool insert() const
@@ -53,6 +70,7 @@ public:
 
 private:
 	ValueType* m_arr;
+	const wchar_t** m_elementNames;
 	mutable size_t m_index;
 };
 

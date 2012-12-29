@@ -14,6 +14,16 @@ enum
 	MaxLightCount = 16
 };
 
+enum Quality
+{
+	QuDisabled = 0,
+	QuLow = 1,
+	QuMedium = 2,
+	QuHigh = 3,
+	QuUltra = 4,
+	QuLast = 5
+};
+
 enum LightType
 {
 	LtDisabled = 0,

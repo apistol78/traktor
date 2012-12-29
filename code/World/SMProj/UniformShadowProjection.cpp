@@ -7,12 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.UniformShadowProjection", UniformShadowProjection, IWorldShadowProjection)
 
-UniformShadowProjection::UniformShadowProjection(
-	const WorldRenderSettings& settings,
-	uint32_t realShadowMapSize
-)
-:	m_settings(settings)
-,	m_realShadowMapSize(float(realShadowMapSize))
+UniformShadowProjection::UniformShadowProjection(uint32_t realShadowMapSize)
+:	m_realShadowMapSize(float(realShadowMapSize))
 {
 }
 
@@ -22,6 +18,7 @@ void UniformShadowProjection::calculate(
 	const Vector4& lightDirection,
 	const Frustum& viewFrustum,
 	const Aabb3& shadowBox,
+	float shadowFarZ,
 	bool quantizeProjection,
 	Matrix44& outLightView,
 	Matrix44& outLightProjection,
@@ -84,7 +81,7 @@ void UniformShadowProjection::calculate(
 		lightAxisZ * center.z()
 	).xyz1();
 
-	Scalar lightDistance = Scalar(m_settings.shadowFarZ);
+	Scalar lightDistance = Scalar(shadowFarZ);
 
 	outLightView = Matrix44(
 		lightAxisX,
