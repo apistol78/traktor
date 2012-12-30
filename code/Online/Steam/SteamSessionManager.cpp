@@ -119,6 +119,7 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 	if (!result)
 	{
 		log::error << L"Session manager failed; Unable to initialize Steam API" << Endl;
+		log::error << L"Please restart Steam client and try again later" << Endl;
 		return false;
 	}
 

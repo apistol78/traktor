@@ -74,7 +74,10 @@ Vector4 projectUnit(const ui::Rect& rc, const ui::Point& pnt)
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.OrthogonalRenderControl", OrthogonalRenderControl, ISceneRenderControl)
 
 OrthogonalRenderControl::OrthogonalRenderControl()
-:	m_gridEnable(true)
+:	m_shadowQuality(world::QuDisabled)
+,	m_ambientOcclusionQuality(world::QuDisabled)
+,	m_antiAliasQuality(world::QuDisabled)
+,	m_gridEnable(true)
 ,	m_guideEnable(true)
 ,	m_multiSample(0)
 ,	m_viewPlane(PositiveX)
@@ -195,9 +198,9 @@ void OrthogonalRenderControl::updateWorldRenderer()
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = worldRenderSettings;
 	wcd.entityRenderers = worldEntityRenderers;
-	wcd.shadowsQuality = world::QuDisabled;
-	wcd.ambientOcclusionQuality = world::QuDisabled;
-	wcd.antiAliasQuality = world::QuDisabled;
+	wcd.shadowsQuality = m_shadowQuality;
+	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
+	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
 
@@ -219,6 +222,10 @@ void OrthogonalRenderControl::setAspect(float aspect)
 
 void OrthogonalRenderControl::setQuality(world::Quality shadowQuality, world::Quality ambientOcclusionQuality, world::Quality antiAliasQuality)
 {
+	m_shadowQuality = shadowQuality;
+	m_ambientOcclusionQuality = ambientOcclusionQuality;
+	m_antiAliasQuality = antiAliasQuality;
+	updateWorldRenderer();
 }
 
 bool OrthogonalRenderControl::handleCommand(const ui::Command& command)
@@ -449,14 +456,6 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		float tmp[4];
 		m_colorClear.getRGBA32F(tmp);
 
-		Color4f ct(tmp[0], tmp[1], tmp[2], tmp[3]);
-		m_renderView->clear(
-			render::CfColor | render::CfDepth,
-			&ct,
-			1.0f,
-			128
-		);
-
 		float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
 
 		world::WorldViewOrtho worldView;
@@ -476,11 +475,19 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		if (sceneInstance)
 			m_worldRenderer->build(worldRenderView, sceneInstance->getRootEntity(), 0);
 
+		m_worldRenderer->begin(
+			0,
+			render::EtCyclop,
+			Color4f(tmp[0], tmp[1], tmp[2], tmp[3])
+		);
+
 		m_worldRenderer->render(
 			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap | world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 			0,
 			render::EtCyclop
 		);
+
+		m_worldRenderer->end(0, render::EtCyclop, deltaTime);
 
 		// Draw wire guides.
 		m_primitiveRenderer->begin(m_renderView);
@@ -505,8 +512,8 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			int32_t step = nearestLog2(std::max((rx - lx) / 20, (by - ty) / 20));
 			step = std::max(1, step);
 
-			lx += abs(lx) % step;
-			ty += abs(ty) % step;
+			lx -= sign(lx) * (abs(lx) % step);
+			ty -= sign(ty) * (abs(ty) % step);
 
 			for (int32_t x = lx; x <= rx; x += step)
 			{

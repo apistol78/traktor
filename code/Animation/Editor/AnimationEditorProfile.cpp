@@ -50,7 +50,7 @@ void AnimationEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new AnimatedMeshEntityFactory(context->getResourceManager(), context->getPhysicsManager()));
-	outEntityFactories.push_back(new ClothEntityFactory(context->getResourceManager(), context->getRenderSystem(), context->getPhysicsManager()));
+	outEntityFactories.push_back(new ClothEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 	outEntityFactories.push_back(new PathEntityFactory());
 }
 

@@ -9,10 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntityFactory", ClothEntityFactory, world::IEntityFactory)
 
-ClothEntityFactory::ClothEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager)
+ClothEntityFactory::ClothEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem)
 :	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
-,	m_physicsManager(physicsManager)
 {
 }
 
@@ -25,7 +24,7 @@ const TypeInfoSet ClothEntityFactory::getEntityTypes() const
 
 Ref< world::Entity > ClothEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const ClothEntityData* >(&entityData)->createEntity(builder, m_resourceManager, m_renderSystem, m_physicsManager);
+	return checked_type_cast< const ClothEntityData* >(&entityData)->createEntity(builder, m_resourceManager, m_renderSystem);
 }
 
 	}
