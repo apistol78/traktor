@@ -29,7 +29,12 @@ std::wstring GenericInputSource::getDescription() const
 	{
 		std::wstring controlName = i->getControlName();
 		if (!controlName.empty())
-			return controlName;
+		{
+			if (!m_data->isInverted())
+				return controlName;
+			else
+				return controlName + L" (Inverted)";
+		}
 	}
 
 	// No device connected; return empty string.
@@ -100,7 +105,10 @@ float GenericInputSource::read(float T, float dT)
 		m_lastValue = 0.0f;
 	}
 
-	return m_lastValue;
+	if (!m_data->isInverted())
+		return m_lastValue;
+	else
+		return -m_lastValue;
 }
 
 	}

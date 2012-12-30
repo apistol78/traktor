@@ -86,6 +86,9 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< world::IWorldRenderer > m_worldRenderer;
+	world::Quality m_shadowQuality;
+	world::Quality m_ambientOcclusionQuality;
+	world::Quality m_antiAliasQuality;
 	RenderControlModel m_model;
 	bool m_gridEnable;
 	bool m_guideEnable;

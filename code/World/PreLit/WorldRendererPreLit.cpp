@@ -679,11 +679,17 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	// Render shadow and light maps.
 	if ((flags & (WrfShadowMap | WrfLightMap)) != 0 && f.lightCount > 0)
 	{
-		for (uint32_t i = 0; i < f.lightCount; ++i)
+		bool firstLight = true;
+
+		// First render all shadowing lights.
+		if ((flags & WrfShadowMap) != 0)
 		{
-			// Combine all shadow slices into a screen shadow mask.
-			if ((flags & WrfShadowMap) != 0 && f.haveShadows[i])
+			for (uint32_t i = 0; i < f.lightCount; ++i)
 			{
+				if (!f.haveShadows[i])
+					continue;
+
+				// Combine all shadow slices into a screen shadow mask.
 				for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
 				{
 					T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
@@ -756,18 +762,54 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					m_renderView->end();
 				}
 				T_RENDER_POP_MARKER(m_renderView);
-			}
 
-			if ((flags & WrfLightMap) != 0)
-			{
-				T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive");
-				if (m_renderView->begin(m_lightMapTargetSet, 0))
+				if ((flags & WrfLightMap) != 0)
 				{
-					if (i == 0)
+					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (shadow)");
+					if (m_renderView->begin(m_lightMapTargetSet, 0))
 					{
-						const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
-						m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
+						if (firstLight)
+						{
+							const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
+							m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
+							firstLight = false;
+						}
+
+						m_lightRenderer->render(
+							m_renderView,
+							f.projection,
+							f.view,
+							f.lights[i],
+							m_gbufferTargetSet->getColorTexture(0),
+							m_gbufferTargetSet->getColorTexture(1),
+							f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
+							f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getColorTexture(0) : 0
+						);
+						m_renderView->end();
 					}
+					T_RENDER_POP_MARKER(m_renderView);
+				}
+			}
+		}
+
+		// Then render all non-shadowing lights; no need to rebind render target for each light.
+		if ((flags & WrfLightMap) != 0)
+		{
+			if (m_renderView->begin(m_lightMapTargetSet, 0))
+			{
+				if (firstLight)
+				{
+					const Color4f lightClear(0.0f, 0.0f, 0.0f, 0.0f);
+					m_renderView->clear(render::CfColor, &lightClear, 0.0f, 0);
+					firstLight = false;
+				}
+
+				for (uint32_t i = 0; i < f.lightCount; ++i)
+				{
+					if (f.haveShadows[i])
+						continue;
+
+					T_RENDER_PUSH_MARKER(m_renderView, "World: Light primitive (no shadow)");
 					m_lightRenderer->render(
 						m_renderView,
 						f.projection,
@@ -778,9 +820,10 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getWidth() : 0,
 						f.haveShadows[i] ? m_shadowMaskFilterTargetSet[i]->getColorTexture(0) : 0
 					);
-					m_renderView->end();
+					T_RENDER_POP_MARKER(m_renderView);
 				}
-				T_RENDER_POP_MARKER(m_renderView);
+
+				m_renderView->end();
 			}
 		}
 	}

@@ -31,12 +31,18 @@ namespace traktor
 		namespace
 		{
 
-const resource::Id< PostProcessSettings > c_shadowMaskProject(Guid(L"{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}"));
-const resource::Id< PostProcessSettings > c_shadowMaskFilterNone(Guid(L"{19222311-363F-CB45-86E5-34D376CDA8AD}"));
-const resource::Id< PostProcessSettings > c_shadowMaskFilterLow(Guid(L"{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}"));
-const resource::Id< PostProcessSettings > c_shadowMaskFilterMedium(Guid(L"{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}"));
-const resource::Id< PostProcessSettings > c_shadowMaskFilterHigh(Guid(L"{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}"));
-const resource::Id< PostProcessSettings > c_shadowMaskFilterHighest(Guid(L"{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}"));
+const resource::Id< PostProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		// SSAO, half size
+const resource::Id< PostProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	// SSAO, full size
+const resource::Id< PostProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		// HBAO, half size
+const resource::Id< PostProcessSettings > c_ambientOcclusionUltra(Guid(L"{C1C9DDCB-2F82-A94C-BF65-653D8E68F628}"));	// HBAO, full size
+
+const resource::Id< PostProcessSettings > c_antiAliasNone(Guid(L"{960283DC-7AC2-804B-901F-8AD4C205F4E0}"));
+const resource::Id< PostProcessSettings > c_antiAliasLow(Guid(L"{DBF2FBB9-1310-A24E-B443-AF0D018571F7}"));
+const resource::Id< PostProcessSettings > c_antiAliasMedium(Guid(L"{3E1D810B-339A-F742-9345-4ECA00220D57}"));
+const resource::Id< PostProcessSettings > c_antiAliasHigh(Guid(L"{0C288028-7BFD-BE46-A25F-F3910BE50319}"));
+const resource::Id< PostProcessSettings > c_antiAliasUltra(Guid(L"{4750DA97-67F4-E247-A9C2-B4883B1158B2}"));
+
+const resource::Id< PostProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77BF-0A4E-8E3B-4987B801CE6B}"));
 
 render::handle_t s_techniqueDefault = 0;
 render::handle_t s_techniqueDepth = 0;
@@ -86,27 +92,6 @@ bool WorldRendererForward::create(
 
 	int32_t width = renderView->getWidth();
 	int32_t height = renderView->getHeight();
-
-	// Create "unprocessed" target.
-	{
-		render::RenderTargetSetCreateDesc rtscd;
-		
-		rtscd.count = 1;
-		rtscd.width = width;
-		rtscd.height = height;
-		rtscd.multiSample = desc.multiSample;
-		rtscd.createDepthStencil = false;
-		rtscd.usingPrimaryDepthStencil = true;
-		rtscd.preferTiled = true;
-		rtscd.targets[0].format = render::TfR8G8B8A8;
-
-		if (desc.postProcessSettings && desc.postProcessSettings->requireHighRange())
-			rtscd.targets[0].format = render::TfR11G11B10F;
-
-		m_visualTargetSet = renderSystem->createRenderTargetSet(rtscd);
-		if (!m_visualTargetSet)
-			return false;
-	}
 
 	// Create "depth map" target.
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
@@ -263,6 +248,109 @@ bool WorldRendererForward::create(
 		}
 	}
 
+	// Create ambient occlusion processing.
+	{
+		resource::Id< PostProcessSettings > ambientOcclusionId;
+		resource::Proxy< PostProcessSettings > ambientOcclusion;
+
+		switch (m_ambientOcclusionQuality)
+		{
+		default:
+		case QuDisabled:
+			break;
+
+		case QuLow:
+			ambientOcclusionId = c_ambientOcclusionLow;
+			break;
+
+		case QuMedium:
+			ambientOcclusionId = c_ambientOcclusionMedium;
+			break;
+
+		case QuHigh:
+			ambientOcclusionId = c_ambientOcclusionHigh;
+			break;
+
+		case QuUltra:
+			ambientOcclusionId = c_ambientOcclusionUltra;
+			break;
+		}
+
+		if (ambientOcclusionId)
+		{
+			if (!resourceManager->bind(ambientOcclusionId, ambientOcclusion))
+				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
+		}
+
+		if (ambientOcclusion)
+		{
+			m_ambientOcclusion = new PostProcess();
+			if (!m_ambientOcclusion->create(
+				ambientOcclusion,
+				resourceManager,
+				renderSystem,
+				width,
+				height
+			))
+			{
+				log::warning << L"Unable to create ambient occlusion process; AO disabled" << Endl;
+				m_ambientOcclusion = 0;
+			}
+		}
+	}
+
+	// Create antialias processing.
+	{
+		resource::Id< PostProcessSettings > antiAliasId;
+		resource::Proxy< PostProcessSettings > antiAlias;
+
+		switch (m_antiAliasQuality)
+		{
+		default:
+		case QuDisabled:
+			antiAliasId = c_antiAliasNone;
+			break;
+
+		case QuLow:
+			antiAliasId = c_antiAliasLow;
+			break;
+
+		case QuMedium:
+			antiAliasId = c_antiAliasMedium;
+			break;
+
+		case QuHigh:
+			antiAliasId = c_antiAliasHigh;
+			break;
+
+		case QuUltra:
+			antiAliasId = c_antiAliasUltra;
+			break;
+		}
+
+		if (antiAliasId)
+		{
+			if (!resourceManager->bind(antiAliasId, antiAlias))
+				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
+		}
+
+		if (antiAlias)
+		{
+			m_antiAlias = new PostProcess();
+			if (!m_antiAlias->create(
+				antiAlias,
+				resourceManager,
+				renderSystem,
+				width,
+				height
+			))
+			{
+				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
+				m_antiAlias = 0;
+			}
+		}
+	}
+
 	// Create "visual" post processing filter.
 	if (desc.postProcessSettings)
 	{
@@ -278,6 +366,52 @@ bool WorldRendererForward::create(
 			log::warning << L"Unable to create visual post processing; post processing disabled" << Endl;
 			m_visualPostProcess = 0;
 		}
+	}
+
+	// Create gamma correction processing.
+	if (m_settings.linearLighting)
+	{
+		resource::Proxy< PostProcessSettings > gammaCorrection;
+		if (!resourceManager->bind(c_gammaCorrection, gammaCorrection))
+			log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
+
+		if (gammaCorrection)
+		{
+			m_gammaCorrectionPostProcess = new PostProcess();
+			if (!m_gammaCorrectionPostProcess->create(
+				gammaCorrection,
+				resourceManager,
+				renderSystem,
+				width,
+				height
+			))
+			{
+				log::warning << L"Unable to create gamma correction process; gamma correction disabled" << Endl;
+				m_gammaCorrectionPostProcess = 0;
+			}
+		}
+	}
+
+	// Create "visual" and "intermediate" target.
+	{
+		render::RenderTargetSetCreateDesc desc;
+		
+		desc.count = 1;
+		desc.width = width;
+		desc.height = height;
+		desc.multiSample = desc.multiSample;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = true;
+		desc.preferTiled = true;
+		desc.targets[0].format = render::TfR11G11B10F;
+
+		m_visualTargetSet = renderSystem->createRenderTargetSet(desc);
+		if (!m_visualTargetSet)
+			return false;
+
+		m_intermediateTargetSet = renderSystem->createRenderTargetSet(desc);
+		if (!m_intermediateTargetSet)
+			return false;
 	}
 
 	// Allocate "depth" context.
@@ -329,6 +463,7 @@ void WorldRendererForward::destroy()
 		i->depth = 0;
 	}
 
+	safeDestroy(m_gammaCorrectionPostProcess);
 	safeDestroy(m_visualPostProcess);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
@@ -417,13 +552,10 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 
 bool WorldRendererForward::begin(int frame, render::EyeType eye, const Color4f& clearColor)
 {
-	if (m_visualTargetSet)
-	{
-		if (!m_renderView->begin(m_visualTargetSet, 0))
-			return false;
+	if (!m_renderView->begin(m_visualTargetSet, 0))
+		return false;
 
-		m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
-	}
+	m_renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
 	return true;
 }
 
@@ -574,52 +706,104 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 
 void WorldRendererForward::end(int frame, render::EyeType eye, float deltaTime)
 {
-	if (m_visualTargetSet)
+	Frame& f = m_frames[frame];
+	Matrix44 projection;
+
+	// Calculate stereoscopic projection.
+	if (eye != render::EtCyclop)
 	{
-		m_renderView->end();
+		float A = f.A;
+		float B = f.B;
 
-		if (m_visualPostProcess)
-		{
-			Frame& f = m_frames[frame];
-			Matrix44 projection;
-
-			// Calculate stereoscopic projection.
-			if (eye != render::EtCyclop)
-			{
-				float A = f.A;
-				float B = f.B;
-
-				if (eye == render::EtLeft)
-					A = -A;
-				else
-					B = -B;
-
-				projection = translate(A, 0.0f, 0.0f) * f.projection * translate(B, 0.0f, 0.0f);
-			}
-			else
-			{
-				projection = f.projection;
-			}
-
-			world::PostProcessStep::Instance::RenderParams params;
-			params.viewFrustum = f.viewFrustum;
-			params.viewToLight = f.viewToLightSpace;
-			params.view = f.view;
-			params.projection = projection;
-			params.deltaTime = deltaTime;
-
-			m_visualPostProcess->render(
-				m_renderView,
-				m_visualTargetSet,
-				m_depthTargetSet,
-				m_shadowTargetSet,
-				params
-			);
-		}
+		if (eye == render::EtLeft)
+			A = -A;
 		else
+			B = -B;
+
+		projection = translate(A, 0.0f, 0.0f) * f.projection * translate(B, 0.0f, 0.0f);
+	}
+	else
+	{
+		projection = f.projection;
+	}
+
+	world::PostProcessStep::Instance::RenderParams params;
+	params.viewFrustum = f.viewFrustum;
+	params.viewToLight = f.viewToLightSpace;
+	params.view = f.view;
+	params.projection = f.projection;
+	params.deltaTime = deltaTime;
+
+	m_renderView->end();
+
+	render::RenderTargetSet* sourceTargetSet = m_visualTargetSet;
+	render::RenderTargetSet* outputTargetSet = m_intermediateTargetSet;
+	T_ASSERT (sourceTargetSet);
+
+	// Apply custom post processing filter.
+	if (m_visualPostProcess)
+	{
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Custom PP");
+
+		if (m_gammaCorrectionPostProcess || m_antiAlias)
+			m_renderView->begin(outputTargetSet);
+
+		m_visualPostProcess->render(
+			m_renderView,
+			sourceTargetSet,
+			m_depthTargetSet,
+			m_shadowTargetSet,
+			params
+		);
+
+		if (m_gammaCorrectionPostProcess || m_antiAlias)
 		{
-			// \FIXME: Plain blit to primary target.
+			m_renderView->end();
+			std::swap(sourceTargetSet, outputTargetSet);
 		}
+
+		T_RENDER_POP_MARKER(m_renderView);
+	}
+
+	// Apply gamma correction filter.
+	if (m_gammaCorrectionPostProcess)
+	{
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Gamma Correction");
+
+		if (m_antiAlias)
+			m_renderView->begin(outputTargetSet);
+
+		m_gammaCorrectionPostProcess->render(
+			m_renderView,
+			sourceTargetSet,
+			m_depthTargetSet,
+			m_shadowTargetSet,
+			params
+		);
+
+		if (m_antiAlias)
+		{
+			m_renderView->end();
+			std::swap(sourceTargetSet, outputTargetSet);
+		}
+
+		T_RENDER_POP_MARKER(m_renderView);
+	}
+
+	// Apply software antialias filter.
+	if (m_antiAlias)
+	{
+		T_RENDER_PUSH_MARKER(m_renderView, "World: AntiAlias");
+
+		m_antiAlias->render(
+			m_renderView,
+			sourceTargetSet,
+			m_depthTargetSet,
+			m_shadowTargetSet,
+			params
+		);
+
+		T_RENDER_POP_MARKER(m_renderView);
 	}
 }
 

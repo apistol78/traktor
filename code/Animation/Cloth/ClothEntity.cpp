@@ -24,9 +24,8 @@ struct ClothVertex
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.ClothEntity", ClothEntity, world::Entity)
 
-ClothEntity::ClothEntity(physics::PhysicsManager* physicsManager)
-:	m_physicsManager(physicsManager)
-,	m_time(0.0f)
+ClothEntity::ClothEntity()
+:	m_time(0.0f)
 ,	m_updateTime(0.0f)
 ,	m_scale(0.0f)
 ,	m_damping(1.0f)
@@ -255,7 +254,6 @@ void ClothEntity::destroy()
 {
 	safeDestroy(m_vertexBuffer);
 	safeDestroy(m_indexBuffer);
-	m_physicsManager = 0;
 }
 
 void ClothEntity::setTransform(const Transform& transform)
@@ -312,40 +310,6 @@ void ClothEntity::update(const UpdateParams& update)
 
 		for (uint32_t i = 0; i < m_solverIterations; ++i)
 		{
-#if 0
-			// Solve collisions; last iteration only as this is
-			// silly expensive.
-			if (m_physicsManager/* && i == m_solverIterations - 1*/)
-			{
-				physics::QueryResult result;
-				for (AlignedVector< Node >::iterator j = m_nodes.begin(); j != m_nodes.end(); ++j)
-				{
-					if (j->invMass < Scalar(FUZZY_EPSILON))
-						continue;
-
-#if 0
-					if (m_physicsManager->queryPoint(m_transform * j->position[0], 0.05f, result))
-						j->position[0] = transformInv * result.position;
-#else
-					Vector4 p0 = m_transform * j->position[1];
-					Vector4 pn = m_transform * j->position[0];
-
-					Vector4 d = pn - p0;
-					Scalar ln = d.length();
-
-					if (m_physicsManager->queryRay(
-						p0,
-						d / ln,
-						ln,
-						0,
-						result
-					))
-						j->position[0] = transformInv * result.position;
-#endif
-				}
-			}
-#endif
-
 			// Satisfy edge lengths.
 			for (AlignedVector< Edge >::iterator j = m_edges.begin(); j != m_edges.end(); ++j)
 			{

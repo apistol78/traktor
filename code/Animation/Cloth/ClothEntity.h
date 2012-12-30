@@ -3,7 +3,6 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector2.h"
-#include "Physics/PhysicsManager.h"
 #include "Render/IndexBuffer.h"
 #include "Render/IRenderSystem.h"
 #include "Render/Shader.h"
@@ -51,7 +50,7 @@ public:
 		Scalar length;
 	};
 
-	ClothEntity(physics::PhysicsManager* physicsManager);
+	ClothEntity();
 
 	virtual ~ClothEntity();
 
@@ -90,7 +89,6 @@ public:
 	const AlignedVector< Edge >& getEdges() const { return m_edges; }
 
 private:
-	Ref< physics::PhysicsManager > m_physicsManager;
 	AlignedVector< Node > m_nodes;
 	AlignedVector< Edge > m_edges;
 	Transform m_transform;

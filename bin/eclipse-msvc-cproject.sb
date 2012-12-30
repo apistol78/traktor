@@ -1,7 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<?fileVersion 4.0.0?>
-
-<cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
+<?fileVersion 4.0.0?><cproject storage_type_id="org.eclipse.cdt.core.XmlProjectDescriptionStorage">
 	<storageModule moduleId="org.eclipse.cdt.core.settings">
 <?--	
 	
@@ -9,34 +7,136 @@
 		return math.random(0, 100000000)
 	end
 
-	local configurations = project:getConfigurations()
-	for i = 0, configurations:size() - 1 do
-	
-		local configuration = configurations:get(i)
+	function insertLibrary(outLibraries, library)
+		for i, v in ipairs(outLibraries) do
+			if v == library then
+				table.remove(outLibraries, i)
+				break
+			end
+		end
+		table.insert(outLibraries, library)
+	end
+
+	function collectLinkProducts(solution, project, configuration, outLibraries, outLibraryPaths)
+
+		local libraries = configuration:getLibraries()
+		for i = 0, libraries:size() - 1 do
+			insertLibrary(outLibraries, libraries:get(i))
+		end
+
+		local libraryPaths = configuration:getLibraryPaths()
+		for i = 0, libraryPaths:size() - 1 do
+			local libraryRelPath = fileSystem:getRelativePath(
+				Path(libraryPaths:get(i)),
+				projectPath
+			)
+			insertLibrary(outLibraryPaths, libraryRelPath:getPathName())
+		end
+
+		local productSuffix = ""
+		if configuration:getTargetProfile() == "Debug" then
+			productSuffix = "_d"
+		end
+
+		local dependencies = project:getDependencies()
+		for i = 0, dependencies:size() - 1 do
+			local dep = dependencies:get(i)
+
+			if dep.__index == ProjectDependency then
+
+				local localSolution = solution
+				local localProject = dep:getProject()
+				local localConfig = localProject:getConfiguration(configuration:getName())
+
+				if localProject:getEnable() then
+					insertLibrary(outLibraries, localProject:getName() .. productSuffix .. ".lib")
+					collectLinkProducts(
+						localSolution,
+						localProject,
+						localConfig,
+						outLibraries,
+						outLibraryPaths
+					)
+				end
+
+			elseif dep.__index == ExternalDependency then
+
+				local externalSolution = dep:getSolution()
+				local externalProject = dep:getProject()
+				local externalConfig = externalProject:getConfiguration(configuration:getName())
+
+				if externalProject:getEnable() then
+					local externalRelPath = fileSystem:getRelativePath(
+						Path(externalSolution:getRootPath() .. "/" .. configuration:getName()),
+						projectPath
+					)
+
+					insertLibrary(outLibraryPaths, externalRelPath:getPathName())
+					insertLibrary(outLibraries, externalProject:getName() .. productSuffix .. ".lib")
+
+					collectLinkProducts(
+						externalSolution,
+						externalProject,
+						externalConfig,
+						outLibraries,
+						outLibraryPaths
+					)
+				end
+			end
+		end
+	end
+
+	local configurations = {}
+
+	-- Insert unsorted configurations into table.
+	local configurations0 = project:getConfigurations()
+	for i = 0, configurations0:size() - 1 do
+		table.insert(configurations, configurations0:get(i))
+	end
+
+	-- Sort configurations based on name; must be same order for Eclipse to know which to build.
+	table.sort(configurations, function(a, b)
+		return a:getName() < b:getName()
+	end)
+
+	-- Add each configuration.	
+	for i, configuration in ipairs(configurations) do
 		
 		local parent
 		local buildType
 		local toolChainSuperClass
-		local targetPlatformSuperClass;
-		
+		local binaryParser
+		local targetPlatformSuperClass
+		local targetBuilderClass
+
 		if configuration:getTargetProfile() == "Debug" then
 			parent = "org.eclipse.cdt.msvc.exe.debug"
 			buildType = "org.eclipse.cdt.build.core.buildType.debug"
 			toolChainSuperClass = "org.eclipse.cdt.msvc.toolchain.exe.debug"
-			targetPlatformSuperClass = "cdt.managedbuild.target.gnu.platform.mingw.so.debug"
+			binaryParser = "org.eclipse.cdt.core.PE"
+			targetPlatformSuperClass = "org.eclipse.cdt.msvc.targetPlatform.exe.debug"
+			targetBuilderClass = "org.eclipse.cdt.msvc.builder"
 		else
 			parent = "org.eclipse.cdt.msvc.exe.release"
 			buildType = "org.eclipse.cdt.build.core.buildType.release"
 			toolChainSuperClass = "org.eclipse.cdt.msvc.toolchain.exe.release"
-			targetPlatformSuperClass = "cdt.managedbuild.target.gnu.platform.mingw.so.release"
+			binaryParser = "org.eclipse.cdt.core.PE"
+			targetPlatformSuperClass = "org.eclipse.cdt.msvc.targetPlatform.exe.release"
+			targetBuilderClass = "org.eclipse.cdt.msvc.builder"
 		end
 		
 		local id = parent .. "." .. generateRandomId()
 		local toolChainId = toolChainSuperClass .. "." .. generateRandomId()
 		local targetPlatformId = targetPlatformSuperClass .. "." .. generateRandomId()
+		local targetBuilderId = targetBuilderClass .. "." .. generateRandomId()
 	
 --?>		<cconfiguration id="<?-- output:print(id) --?>">
-			<storageModule buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider" id="<?-- output:print(id) --?>" moduleId="org.eclipse.cdt.core.settings" name="<?-- output:print(configuration:getName()) --?>">
+			<storageModule
+				buildSystemId="org.eclipse.cdt.managedbuilder.core.configurationDataProvider"
+				id="<?-- output:print(id) --?>"
+				moduleId="org.eclipse.cdt.core.settings"
+				name="<?-- output:print(configuration:getName()) --?>"
+			>
 				<externalSettings/>
 				<extensions>
 					<extension id="org.eclipse.cdt.core.PE" point="org.eclipse.cdt.core.BinaryParser"/>
@@ -46,12 +146,13 @@
 			<storageModule moduleId="cdtBuildSystem" version="4.0.0">
 <?--			
 
+				local artifactName
 				local artifactExtension
 				local buildArtefactType
 				
 				if configuration:getTargetFormat() == "StaticLibrary" then
 					artifactExtension = "lib"
-					buildArtefactType = ""
+					buildArtefactType = "org.eclipse.cdt.build.core.buildArtefactType.staticLib"
 				elseif configuration:getTargetFormat() == "SharedLibrary" then
 					artifactExtension = "dll"
 					buildArtefactType = "org.eclipse.cdt.build.core.buildArtefactType.sharedLib"
@@ -62,11 +163,70 @@
 					artifactExtension = "exe"
 					buildArtefactType = "org.eclipse.cdt.build.core.buildArtefactType.exe"
 				end
-			
+
+				if configuration:getTargetProfile() == "Debug" then
+					artifactName = "${ProjName}_d"
+				else
+					artifactName = "${ProjName}"
+				end
+
+				local cTool = "org.eclipse.cdt.msvc.cl.c.exe"
+				local cppTool = "org.eclipse.cdt.msvc.cl.exe"
+				local rcTool = "org.eclipse.cdt.msvc.rc.exe"
+				local linkTool = "org.eclipse.cdt.msvc.link.exe"
+				local libTool = "org.eclipse.cdt.msvc.lib"
+				local runtime
+
+				if configuration:getTargetProfile() == "Debug" then
+					cTool = cTool .. ".debug"
+					cppTool = cppTool .. ".debug"
+					rcTool = rcTool .. ".debug"
+					linkTool = linkTool .. ".debug"
+					runtime = "org.eclipse.cdt.msvc.cl.option.runtime.mdd"
+				else
+					cTool = cTool .. ".release"
+					cppTool = cppTool .. ".release"
+					rcTool = rcTool .. ".release"
+					linkTool = linkTool .. ".release"
+					runtime = "org.eclipse.cdt.msvc.cl.option.runtime.md"
+				end
+
+				local cToolId = cTool .. "." .. generateRandomId()
+				local cppToolId = cppTool .. "." .. generateRandomId()
+				local rcToolId = rcTool .. "." .. generateRandomId()
+				local linkToolId = linkTool .. "." .. generateRandomId()
+				local libToolId = libTool .. "." .. generateRandomId()
+
+				local definitions = configuration:getDefinitions()
+				local includePaths = configuration:getIncludePaths()
+
+				local libraries = {}
+				local libraryPaths = {}
+
+				table.insert(libraryPaths, "../../" .. configuration:getName())
+				collectLinkProducts(
+					solution,
+					project,
+					configuration,
+					libraries,
+					libraryPaths
+				)
+
+				-- Add implicit default libraries.
+				insertLibrary(libraries, "kernel32.lib")
+				insertLibrary(libraries, "user32.lib")
+				insertLibrary(libraries, "gdi32.lib")
+				insertLibrary(libraries, "comdlg32.lib")
+				insertLibrary(libraries, "advapi32.lib")
+				insertLibrary(libraries, "shell32.lib")
+				insertLibrary(libraries, "ole32.lib")
+				insertLibrary(libraries, "oleaut32.lib")
+				insertLibrary(libraries, "uuid.lib")
+
 --?>
 				<configuration
 					artifactExtension="<?-- output:print(artifactExtension) --?>"
-					artifactName="${ProjName}"
+					artifactName="<?-- output:print(artifactName) --?>"
 					buildArtefactType="<?-- output:print(buildArtefactType) --?>"
 					buildProperties="org.eclipse.cdt.build.core.buildType=<?-- output:print(buildType) --?>,org.eclipse.cdt.build.core.buildArtefactType=<?-- output:print(buildArtefactType) --?>"
 					cleanCommand="rm -rf"
@@ -74,36 +234,233 @@
 					id="<?-- output:print(id) --?>"
 					name="<?-- output:print(configuration:getName()) --?>"
 					parent="<?-- output:print(parent) --?>"
+					postannouncebuildStep="Copy artifact(s) to output"
+					postbuildStep="xcopy /C /I /R /Y ${BuildArtifactFilePrefix}${BuildArtifactFileBaseName}.* &quot;${WorkspaceDirPath}\\${ConfigName}&quot;;"
 				>
 					<folderInfo id="<?-- output:print(id) --?>." name="/" resourcePath="">
 						<toolChain id="<?-- output:print(toolChainId) --?>" name="Microsoft Visual C++" superClass="<?-- output:print(toolChainSuperClass) --?>">
-							<targetPlatform id="<?-- output:print(targetPlatformId) --?>" superClass="<?-- output:print(targetPlatformSuperClass) --?>"/>
-							<builder
-								buildPath="${workspace_loc:/<?-- output:print(project:getName() .. "/" .. configuration:getName()) --?>}"
-								id="org.eclipse.cdt.msvc.builder.742300684"
-								managedBuildOn="true"
-								name="CDT Internal Builder"
-								superClass="org.eclipse.cdt.msvc.builder"
+							<targetPlatform
+								binaryParser="<?-- output:print(binaryParser) --?>"
+								id="<?-- output:print(targetPlatformId) --?>"
+								superClass="<?-- output:print(targetPlatformSuperClass) --?>"
 							/>
 
-							<tool id="org.eclipse.cdt.msvc.cl.c.exe.debug.1805513535" name="C Compiler (cl)" superClass="org.eclipse.cdt.msvc.cl.c.exe.debug">
-								<option id="org.eclipse.cdt.msvc.cl.option.optimization.2030011450" superClass="org.eclipse.cdt.msvc.cl.option.optimization" value="org.eclipse.cdt.msvc.cl.option.optimization.default" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.debugFormat.692142739" superClass="org.eclipse.cdt.msvc.cl.option.debugFormat" value="org.eclipse.cdt.msvc.cl.option.debugFormat.complete" valueType="enumerated"/>
-								<inputType id="org.eclipse.cdt.msvc.cl.inputType.c.1060851408" superClass="org.eclipse.cdt.msvc.cl.inputType.c"/>
+							<!-- Builder -->
+							<builder
+								buildPath="${workspace_loc:/<?-- output:print(project:getName() .. "/" .. configuration:getName()) --?>}"
+								id="<?-- output:print(targetBuilderId) --?>"
+								managedBuildOn="true"
+								name="CDT Internal Builder"
+								superClass="<?-- output:print(targetBuilderClass) --?>"
+							/>
+
+							<!-- C compiler tool -->
+							<tool
+								command="cl /c"
+								commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
+								errorParsers="org.eclipse.cdt.core.VCErrorParser"
+								id="<?-- output:print(cToolId) --?>"
+								name="C Compiler (cl)"
+								superClass="<?-- output:print(cTool) --?>"
+							>
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.optimization.<?-- output:print(generateRandomId()) --?>"
+									name="Optimization"
+									superClass="org.eclipse.cdt.msvc.cl.option.optimization"
+									value="org.eclipse.cdt.msvc.cl.option.optimization.default"
+									valueType="enumerated"
+								/>
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.debugFormat.<?-- output:print(generateRandomId()) --?>"
+									name="Debug Information Format"
+									superClass="org.eclipse.cdt.msvc.cl.option.debugFormat"
+									value="org.eclipse.cdt.msvc.cl.option.debugFormat.complete"
+									valueType="enumerated"
+								/>
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.macros.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.cl.option.macros"
+									valueType="definedSymbols"
+								>
+									<listOptionValue builtIn="false" value="WIN32"/>
+									<listOptionValue builtIn="false" value="_WINDOWS"/>
+									<listOptionValue builtIn="false" value="_USRDLL"/>
+									<listOptionValue builtIn="false" value="UNICODE"/>
+									<listOptionValue builtIn="false" value="_UNICODE"/>
+								<?--
+									for i = 0, definitions:size() - 1 do
+								--?>	<listOptionValue builtIn="false" value="<?-- output:print(definitions:get(i)) --?>"/>
+<?--
+									end
+								--?>
+								</option>								
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.includes.<?-- output:print(generateRandomId()) --?>"
+									name="Include Path (/I)"
+									superClass="org.eclipse.cdt.msvc.cl.option.includes"
+									valueType="includePath"
+								>
+									<listOptionValue builtIn="false" value=".."/>
+								<?--
+									for i = 0, includePaths:size() - 1 do
+										local ip = fileSystem:getAbsolutePath(Path(includePaths:get(i))):getPathName()
+								--?>	<listOptionValue builtIn="false" value="&quot;<?-- output:print(ip) --?>&quot;"/>
+<?--
+									end
+								--?>
+								</option>
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.runtime.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.cl.option.runtime"
+									value="<?-- output:print(runtime) --?>"
+									valueType="enumerated"
+								/>
+								<inputType
+									id="org.eclipse.cdt.msvc.cl.inputType.c.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.cl.inputType.c"
+								/>
 							</tool>
-							<tool id="org.eclipse.cdt.msvc.cl.exe.debug.1021846687" name="C++ Compiler (cl)" superClass="org.eclipse.cdt.msvc.cl.exe.debug">
-								<option id="org.eclipse.cdt.msvc.cl.option.optimization.1994800719" superClass="org.eclipse.cdt.msvc.cl.option.optimization" value="org.eclipse.cdt.msvc.cl.option.optimization.default" valueType="enumerated"/>
-								<option id="org.eclipse.cdt.msvc.cl.option.debugFormat.78983953" superClass="org.eclipse.cdt.msvc.cl.option.debugFormat" value="org.eclipse.cdt.msvc.cl.option.debugFormat.complete" valueType="enumerated"/>
-								<inputType id="org.eclipse.cdt.msvc.cl.inputType.202166013" superClass="org.eclipse.cdt.msvc.cl.inputType"/>
+
+							<!-- C++ compiler tool -->
+							<tool
+								command="cl /c"
+								commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
+								errorParsers="org.eclipse.cdt.core.VCErrorParser"
+								id="<?-- output:print(cppToolId) --?>"
+								name="C++ Compiler (cl)"
+								superClass="<?-- output:print(cppTool) --?>"
+							>
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.optimization.<?-- output:print(generateRandomId()) --?>"
+									name="Optimization"
+									superClass="org.eclipse.cdt.msvc.cl.option.optimization"
+									value="org.eclipse.cdt.msvc.cl.option.optimization.default"
+									valueType="enumerated"
+								/>
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.debugFormat.<?-- output:print(generateRandomId()) --?>"
+									name="Debug Information Format"
+									superClass="org.eclipse.cdt.msvc.cl.option.debugFormat"
+									value="org.eclipse.cdt.msvc.cl.option.debugFormat.complete"
+									valueType="enumerated"
+								/>
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.macros.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.cl.option.macros"
+									valueType="definedSymbols"
+								>
+									<listOptionValue builtIn="false" value="WIN32"/>
+									<listOptionValue builtIn="false" value="_WINDOWS"/>
+									<listOptionValue builtIn="false" value="_USRDLL"/>
+									<listOptionValue builtIn="false" value="UNICODE"/>
+									<listOptionValue builtIn="false" value="_UNICODE"/>
+								<?--
+									for i = 0, definitions:size() - 1 do
+								--?>	<listOptionValue builtIn="false" value="<?-- output:print(definitions:get(i)) --?>"/>
+<?--
+									end
+								--?>
+								</option>
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.includes.<?-- output:print(generateRandomId()) --?>"
+									name="Include Path (/I)"
+									superClass="org.eclipse.cdt.msvc.cl.option.includes"
+									valueType="includePath"
+								>
+									<listOptionValue builtIn="false" value=".."/>
+								<?--
+									for i = 0, includePaths:size() - 1 do
+										local ip = fileSystem:getAbsolutePath(Path(includePaths:get(i))):getPathName()
+								--?>	<listOptionValue builtIn="false" value="&quot;<?-- output:print(ip) --?>&quot;"/>
+<?--
+									end
+								--?>
+								</option>								
+								<option
+									id="org.eclipse.cdt.msvc.cl.option.runtime.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.cl.option.runtime"
+									value="<?-- output:print(runtime) --?>"
+									valueType="enumerated"
+								/>
+								<inputType
+									id="org.eclipse.cdt.msvc.cl.inputType.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.cl.inputType"
+								/>
 							</tool>
-							<tool id="org.eclipse.cdt.msvc.rc.exe.debug.1384755390" name="Resource Compiler (rc)" superClass="org.eclipse.cdt.msvc.rc.exe.debug">
-								<inputType id="org.eclipse.cdt.msvc.rc.inputType.655725390" superClass="org.eclipse.cdt.msvc.rc.inputType"/>
+
+							<!-- Resource compiler tool -->
+							<tool
+								command="rc"
+								commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG} ${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
+								errorParsers="org.eclipse.cdt.core.VCErrorParser"
+								id="<?-- output:print(rcToolId) --?>"
+								name="Resource Compiler (rc)"
+								superClass="<?-- output:print(rcTool) --?>"
+							>
+								<inputType
+									id="org.eclipse.cdt.msvc.rc.inputType.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.rc.inputType"
+								/>
 							</tool>
-							<tool id="org.eclipse.cdt.msvc.link.exe.debug.768043697" name="Linker (link)" superClass="org.eclipse.cdt.msvc.link.exe.debug">
-								<option id="org.eclipse.cdt.msvc.link.option.debug.1935951810" superClass="org.eclipse.cdt.msvc.link.option.debug" value="true" valueType="boolean"/>
-								<inputType id="org.eclipse.cdt.msvc.link.inputType.1858203543" superClass="org.eclipse.cdt.msvc.link.inputType"/>
+
+							<!-- Linker tool -->
+							<tool
+								command="link"
+								commandLinePattern="${COMMAND} ${FLAGS} ${OUTPUT_FLAG}${OUTPUT_PREFIX}${OUTPUT} ${INPUTS}"
+								errorParsers="org.eclipse.cdt.core.VCErrorParser"
+								id="<?-- output:print(linkToolId) --?>"
+								name="Linker (link)"
+								superClass="<?-- output:print(linkTool) --?>"
+							>
+								<option
+									id="org.eclipse.cdt.msvc.link.option.debug.<?-- output:print(generateRandomId()) --?>"
+									name="Generate Debug Info (/debug)"
+									superClass="org.eclipse.cdt.msvc.link.option.debug"
+									value="true"
+									valueType="boolean"
+								/>
+								<option
+									id="org.eclipse.cdt.msvc.link.option.dll.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.link.option.dll"
+									value="true"
+									valueType="boolean"
+								/>
+								<option
+									id="org.eclipse.cdt.msvc.link.option.libpath.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.link.option.libpath"
+									valueType="stringList"
+								>
+								<?--
+									for i, lp in ipairs(libraryPaths) do
+								--?>	<listOptionValue builtIn="false" value="&quot;<?-- output:print(lp) --?>&quot;"/>
+<?--
+									end
+								--?>
+								</option>
+								<option
+									id="org.eclipse.cdt.msvc.link.option.libraries.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.link.option.libraries"
+									valueType="libs"
+								>
+								<?--
+									for i, lib in ipairs(libraries) do
+								--?>	<listOptionValue builtIn="false" value="<?-- output:print(lib) --?>"/>
+<?--
+									end
+								--?>
+								</option>								
+								<inputType
+									id="org.eclipse.cdt.msvc.link.inputType.<?-- output:print(generateRandomId()) --?>"
+									superClass="org.eclipse.cdt.msvc.link.inputType"
+								/>
 							</tool>
-							<tool id="org.eclipse.cdt.msvc.lib.232609143" name="Library Manager (lib)" superClass="org.eclipse.cdt.msvc.lib"/>
+
+							<!-- Library tool -->
+							<tool
+								id="<?-- output:print(libToolId) --?>"
+								name="Library Manager (lib)"
+								superClass="<?-- output:print(libTool) --?>"
+							/>
 
 						</toolChain>
 					</folderInfo>
@@ -119,16 +476,38 @@
 	</storageModule>
 	
 	<storageModule moduleId="cdtBuildSystem" version="4.0.0">
-		<project id="<?-- output:print(project:getName()) --?>.org.eclipse.cdt.msvc.projectType.exe.1315798448" name="Executable" projectType="org.eclipse.cdt.msvc.projectType.exe"/>
+		<project
+			id="<?-- output:print(project:getName()) --?>.org.eclipse.cdt.msvc.projectType.exe.1315798448"
+			name="Executable"
+			projectType="org.eclipse.cdt.msvc.projectType.exe"
+		/>
 	</storageModule>
+
 	<storageModule moduleId="scannerConfiguration">
-		<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId=""/>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.338578373;org.eclipse.cdt.msvc.exe.debug.338578373.;org.eclipse.cdt.msvc.cl.c.exe.debug.1805513535;org.eclipse.cdt.msvc.cl.inputType.c.1060851408">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
+		<autodiscovery
+			enabled="true"
+			problemReportingEnabled="true"
+			selectedProfileId=""
+		/>
+		<scannerConfigBuildInfo
+			instanceId="org.eclipse.cdt.msvc.exe.debug.338578373;org.eclipse.cdt.msvc.exe.debug.338578373.;org.eclipse.cdt.msvc.cl.c.exe.debug.1805513535;org.eclipse.cdt.msvc.cl.inputType.c.1060851408"
+		>
+			<autodiscovery
+				enabled="true"
+				problemReportingEnabled="true"
+				selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"
+			/>
 		</scannerConfigBuildInfo>
-		<scannerConfigBuildInfo instanceId="org.eclipse.cdt.msvc.exe.debug.338578373;org.eclipse.cdt.msvc.exe.debug.338578373.;org.eclipse.cdt.msvc.cl.exe.debug.1021846687;org.eclipse.cdt.msvc.cl.inputType.202166013">
-			<autodiscovery enabled="true" problemReportingEnabled="true" selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"/>
+		<scannerConfigBuildInfo
+			instanceId="org.eclipse.cdt.msvc.exe.debug.338578373;org.eclipse.cdt.msvc.exe.debug.338578373.;org.eclipse.cdt.msvc.cl.exe.debug.1021846687;org.eclipse.cdt.msvc.cl.inputType.202166013"
+		>
+			<autodiscovery
+				enabled="true"
+				problemReportingEnabled="true"
+				selectedProfileId="org.eclipse.cdt.msw.build.clScannerInfo"
+			/>
 		</scannerConfigBuildInfo>
 	</storageModule>
+
 	<storageModule moduleId="org.eclipse.cdt.core.LanguageSettingsProviders"/>
 </cproject>

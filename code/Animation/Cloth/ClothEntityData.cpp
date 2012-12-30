@@ -27,15 +27,14 @@ ClothEntityData::ClothEntityData()
 Ref< ClothEntity > ClothEntityData::createEntity(
 	world::IEntityBuilder* builder,
 	resource::IResourceManager* resourceManager,
-	render::IRenderSystem* renderSystem,
-	physics::PhysicsManager* physicsManager
+	render::IRenderSystem* renderSystem
 ) const
 {
 	resource::Proxy< render::Shader > shader;
 	if (!resourceManager->bind(m_shader, shader))
 		return 0;
 
-	Ref< ClothEntity > clothEntity = new ClothEntity(physicsManager);
+	Ref< ClothEntity > clothEntity = new ClothEntity();
 	if (!clothEntity->create(
 		renderSystem,
 		shader,

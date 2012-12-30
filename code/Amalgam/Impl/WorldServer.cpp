@@ -123,7 +123,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new animation::AnimatedMeshEntityFactory(resourceManager, physicsManager));
-	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem, physicsManager));
+	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, soundPlayer));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));

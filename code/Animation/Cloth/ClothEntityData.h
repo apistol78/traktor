@@ -14,13 +14,6 @@
 
 namespace traktor
 {
-	namespace physics
-	{
-
-class PhysicsManager;
-
-	}
-
 	namespace render
 	{
 
@@ -66,8 +59,7 @@ public:
 	Ref< ClothEntity > createEntity(
 		world::IEntityBuilder* builder,
 		resource::IResourceManager* resourceManager,
-		render::IRenderSystem* renderSystem,
-		physics::PhysicsManager* physicsManager
+		render::IRenderSystem* renderSystem
 	) const;
 
 	virtual bool serialize(ISerializer& s);

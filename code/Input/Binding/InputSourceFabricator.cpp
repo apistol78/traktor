@@ -65,7 +65,8 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 			)
 				continue;
 
-			if (std::abs(value - i->values[controlType]) > c_valueThreshold)
+			float dV = value - i->values[controlType];
+			if (std::abs(dV) > c_valueThreshold)
 			{
 				if (!first)
 				{
@@ -74,12 +75,22 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 					{
 						// Analogue control cannot be combined, thus create generic
 						// source and finish.
+						
+						bool inverted = false;
+						if (m_category == CtMouse)
+						{
+							if (dV < 0.0f)
+								inverted = true;
+						}
+
 						m_outputData = new GenericInputSourceData(
 							m_category,
 							std::distance(m_deviceStates.begin(), i),
 							controlType,
-							m_analogue
+							m_analogue,
+							inverted
 						);
+
 						break;
 					}
 					else if (m_category == CtKeyboard)
@@ -109,7 +120,8 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 								m_category,
 								std::distance(m_deviceStates.begin(), i),
 								controlType,
-								m_analogue
+								m_analogue,
+								false
 							));
 						}
 						else

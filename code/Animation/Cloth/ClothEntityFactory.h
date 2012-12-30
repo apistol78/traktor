@@ -27,13 +27,6 @@ class IResourceManager;
 
 	}
 
-	namespace physics
-	{
-
-class PhysicsManager;
-
-	}
-
 	namespace animation
 	{
 
@@ -45,7 +38,7 @@ class T_DLLCLASS ClothEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	ClothEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, physics::PhysicsManager* physicsManager);
+	ClothEntityFactory(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -54,7 +47,6 @@ public:
 private:
 	resource::IResourceManager* m_resourceManager;
 	render::IRenderSystem* m_renderSystem;
-	physics::PhysicsManager* m_physicsManager;
 };
 
 	}
