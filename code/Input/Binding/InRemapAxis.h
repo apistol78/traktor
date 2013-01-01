@@ -16,6 +16,9 @@ namespace traktor
 	namespace input
 	{
 
+/*! \brief
+ * \ingroup Input
+ */
 class T_DLLCLASS InRemapAxis : public IInputNode
 {
 	T_RTTI_CLASS;

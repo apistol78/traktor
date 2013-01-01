@@ -19,6 +19,9 @@ namespace traktor
 class InputSystem;
 class InputValueSet;
 
+/*! \brief Abstract input source.
+ * \ingroup Input
+ */
 class T_DLLCLASS IInputSource : public Object
 {
 	T_RTTI_CLASS;

@@ -19,6 +19,9 @@ namespace traktor
 class DeviceControlManager;
 class IInputSource;
 
+/*! \brief
+ * \ingroup Input
+ */
 class T_DLLCLASS IInputSourceData : public ISerializable
 {
 	T_RTTI_CLASS;

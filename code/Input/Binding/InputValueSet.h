@@ -17,6 +17,9 @@ namespace traktor
 	namespace input
 	{
 	
+/*! \brief
+ * \ingroup Input
+ */
 class T_DLLCLASS InputValueSet : public Object
 {
 	T_RTTI_CLASS;

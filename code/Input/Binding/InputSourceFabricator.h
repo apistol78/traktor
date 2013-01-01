@@ -25,6 +25,9 @@ class IInputDevice;
 class IInputSourceData;
 class InputSystem;
 
+/*! \brief
+ * \ingroup Input
+ */
 class T_DLLCLASS InputSourceFabricator : public Object
 {
 	T_RTTI_CLASS;

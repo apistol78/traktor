@@ -12,6 +12,9 @@ namespace traktor
 
 class IInputDevice;
 
+/*! \brief Device control mapping to driver and device.
+ * \ingroup Input
+ */
 class DeviceControl : public RefCountImpl< IRefCount >
 {
 public:

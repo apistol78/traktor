@@ -19,6 +19,9 @@ namespace traktor
 class InputMappingSourceData;
 class InputMappingStateData;
 
+/*! \brief
+ * \ingroup Input
+ */
 class T_DLLCLASS InputMappingResource : public ISerializable
 {
 	T_RTTI_CLASS;
