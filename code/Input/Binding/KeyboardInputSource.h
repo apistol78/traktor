@@ -22,6 +22,9 @@ class DeviceControlManager;
 class IInputDevice;
 class InputSystem;
 
+/*! \brief
+ * \ingroup Input
+ */
 class T_DLLCLASS KeyboardInputSource : public IInputSource
 {
 	T_RTTI_CLASS;

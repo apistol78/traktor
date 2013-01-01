@@ -46,6 +46,31 @@ uint8_t FlashButtonInstance::getState() const
 	return m_state;
 }
 
+SwfRect FlashButtonInstance::getLocalBounds() const
+{
+	SwfRect bounds =
+	{
+		Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max()),
+		Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max())
+	};
+
+	const FlashButton::button_layers_t& layers = m_button->getButtonLayers();
+	for (FlashButton::button_layers_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	{
+		Ref< FlashCharacterInstance > characterInstance = getCharacterInstance(i->characterId);
+		if (!characterInstance)
+			continue;
+
+		SwfRect characterBounds = characterInstance->getBounds();
+		bounds.min.x = std::min(bounds.min.x, characterBounds.min.x);
+		bounds.min.y = std::min(bounds.min.y, characterBounds.min.y);
+		bounds.max.x = std::max(bounds.max.x, characterBounds.max.x);
+		bounds.max.y = std::max(bounds.max.y, characterBounds.max.y);
+	}
+
+	return bounds;
+}
+
 FlashCharacterInstance* FlashButtonInstance::getCharacterInstance(uint16_t referenceId) const
 {
 	std::map< uint16_t, Ref< FlashCharacterInstance > >::const_iterator i = m_characterInstances.find(referenceId);
@@ -83,8 +108,12 @@ void FlashButtonInstance::eventMouseUp(int x, int y, int button)
 
 void FlashButtonInstance::eventMouseMove(int x, int y, int button)
 {
-	SwfRect bounds = getBounds();
-	bool inside = (x >= bounds.min.x && y >= bounds.min.y && x <= bounds.max.x && y <= bounds.max.y);
+	// Transform coordinates into local.
+	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
+
+	// Roll over and out event handling.
+	SwfRect bounds = getLocalBounds();
+	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside != m_inside)
 	{
 		if (inside)
@@ -121,28 +150,11 @@ void FlashButtonInstance::eventMouseMove(int x, int y, int button)
 
 SwfRect FlashButtonInstance::getBounds() const
 {
-	SwfRect bounds =
-	{
-		Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max()),
-		Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max())
-	};
+	SwfRect bounds = getLocalBounds();
 
-	const FlashButton::button_layers_t& layers = m_button->getButtonLayers();
-	for (FlashButton::button_layers_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		Ref< FlashCharacterInstance > characterInstance = getCharacterInstance(i->characterId);
-		if (!characterInstance)
-			continue;
-
-		SwfRect characterBounds = characterInstance->getBounds();
-		bounds.min.x = std::min(bounds.min.x, characterBounds.min.x);
-		bounds.min.y = std::min(bounds.min.y, characterBounds.min.y);
-		bounds.max.x = std::max(bounds.max.x, characterBounds.max.x);
-		bounds.max.y = std::max(bounds.max.y, characterBounds.max.y);
-	}
-
-	bounds.min = getTransform() * bounds.min;
-	bounds.max = getTransform() * bounds.max;
+	Matrix33 transform = getTransform();
+	bounds.min = transform * bounds.min;
+	bounds.max = transform * bounds.max;
 
 	return bounds;
 }

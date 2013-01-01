@@ -38,6 +38,8 @@ InputSourceFabricator::InputSourceFabricator(InputSystem* inputSystem, InputCate
 
 Ref< IInputSourceData > InputSourceFabricator::update()
 {
+	float min, max;
+
 	// Have we already finished fabricating?
 	if (m_outputData)
 		return m_outputData;
@@ -65,8 +67,13 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 			)
 				continue;
 
+			// Determine motion threshold from control range.
+			float threshold = c_valueThreshold;
+			if (i->device->getControlRange(control, min, max))
+				threshold = (max - min) * 0.1f;
+
 			float dV = value - i->values[controlType];
-			if (std::abs(dV) > c_valueThreshold)
+			if (std::abs(dV) > threshold)
 			{
 				if (!first)
 				{

@@ -17,6 +17,9 @@ namespace traktor
 	namespace input
 	{
 
+/*! \brief Input include/exlusive filter.
+ * \ingroup Input
+ */
 class T_DLLCLASS IfInclusiveExclusive : public IInputFilter
 {
 	T_RTTI_CLASS;

@@ -120,7 +120,13 @@ float MouseDeviceDi8::getControlValue(int32_t control)
 bool MouseDeviceDi8::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
 	const MouseControlMap& mc = c_mouseControlMap[control];
-	if (mc.index == 7)
+	if (mc.index == 4 || mc.index == 5)
+	{
+		outMin = -100.0f;
+		outMax =  100.0f;
+		return true;
+	}
+	else if (mc.index == 7)
 	{
 		outMin = float(m_rect.left);
 		outMax = float(m_rect.right);

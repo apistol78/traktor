@@ -42,6 +42,12 @@ public:
 	 */
 	uint8_t getState() const;
 
+	/*! \brief Get button local bounds.
+	 *
+	 * \return Button bounds in local space.
+	 */
+	SwfRect getLocalBounds() const;
+
 	/*! \brief Get button character.
 	 *
 	 * \param referenceId Character identity.

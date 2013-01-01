@@ -17,6 +17,9 @@ namespace traktor
 	namespace input
 	{
 
+/*! \brief Constant value input.
+ * \ingroup Input
+ */
 class T_DLLCLASS ConstantInputSource : public IInputSource
 {
 	T_RTTI_CLASS;

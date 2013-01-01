@@ -18,6 +18,9 @@ namespace traktor
 
 class IInputNode;
 
+/*! \brief
+ * \ingroup Input
+ */
 class T_DLLCLASS InputStateData : public ISerializable
 {
 	T_RTTI_CLASS;

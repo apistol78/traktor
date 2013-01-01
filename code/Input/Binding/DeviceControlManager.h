@@ -13,6 +13,9 @@ namespace traktor
 class DeviceControl;
 class InputSystem;
 
+/*! \brief Device control manager.
+ * \ingroup Input
+ */
 class DeviceControlManager : public Object
 {
 	T_RTTI_CLASS;
