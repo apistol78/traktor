@@ -10,6 +10,7 @@ namespace traktor
 	{
 
 /*! \brief Translate Win32 virtual key to our virtual key.
+ * \ingroup UIW32
  *
  * \param keyCode Win32 virtual key.
  * \return Virtual key.

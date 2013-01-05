@@ -1,9 +1,8 @@
 #ifndef traktor_ui_RichEditWin32_H
 #define traktor_ui_RichEditWin32_H
 
-#include "Ui/Win32/WidgetWin32Impl.h"
 #include "Ui/Itf/IRichEdit.h"
-
+#include "Ui/Win32/WidgetWin32Impl.h"
 #if !defined(WINCE)
 #	include <richedit.h>
 #endif
@@ -13,6 +12,9 @@ namespace traktor
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class RichEditWin32 : public WidgetWin32Impl< IRichEdit >
 {
 public:

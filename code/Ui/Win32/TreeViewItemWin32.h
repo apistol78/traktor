@@ -11,6 +11,9 @@ namespace traktor
 
 class TreeViewWin32;
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class TreeViewItemWin32 : public TreeViewItem
 {
 	T_RTTI_CLASS;

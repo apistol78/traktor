@@ -31,16 +31,22 @@ public:
 	virtual void destroy();
 
 	virtual void update();
+	
+	virtual std::wstring getName() const;
+
+	virtual uint64_t getGlobalId() const;
+
+	virtual bool isPrimary() const;
 
 	virtual uint32_t getPeerHandles(std::vector< handle_t >& outPeerHandles) const;
 
 	virtual std::wstring getPeerName(handle_t handle) const;
 
+	virtual uint64_t getPeerGlobalId(handle_t handle) const;
+
 	virtual int32_t receive(void* data, int32_t size, handle_t& outFromHandle);
 
 	virtual bool send(handle_t handle, const void* data, int32_t size, bool reliable);
-
-	virtual bool isPrimary() const;
 
 private:
 	enum EnvelopeType

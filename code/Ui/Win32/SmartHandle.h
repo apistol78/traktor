@@ -6,11 +6,17 @@ namespace traktor
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 struct GdiDeleteObjectPolicy
 {
 	static void deleteObject(HGDIOBJ h) { ::DeleteObject(h); }
 };
 
+/*! \brief
+ * \ingroup UIW32
+ */
 template < typename HandleType, typename DeletePolicy >
 class SmartHandle
 {

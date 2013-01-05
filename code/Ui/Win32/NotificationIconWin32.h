@@ -1,8 +1,8 @@
 #ifndef traktor_ui_NotificationIconWin32_H
 #define traktor_ui_NotificationIconWin32_H
 
-#include "Ui/Win32/Window.h"
 #include "Ui/Itf/INotificationIcon.h"
+#include "Ui/Win32/Window.h"
 
 namespace traktor
 {
@@ -11,6 +11,9 @@ namespace traktor
 
 class EventSubject;
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class NotificationIconWin32 : public INotificationIcon
 {
 public:

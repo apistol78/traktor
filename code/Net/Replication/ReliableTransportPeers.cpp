@@ -91,6 +91,21 @@ void ReliableTransportPeers::update()
 	}
 }
 
+std::wstring ReliableTransportPeers::getName() const
+{
+	return m_peers->getName();
+}
+
+uint64_t ReliableTransportPeers::getGlobalId() const
+{
+	return m_peers->getGlobalId();
+}
+
+bool ReliableTransportPeers::isPrimary() const
+{
+	return m_peers->isPrimary();
+}
+
 uint32_t ReliableTransportPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
 {
 	outPeerHandles.resize(0);
@@ -102,6 +117,11 @@ uint32_t ReliableTransportPeers::getPeerHandles(std::vector< handle_t >& outPeer
 std::wstring ReliableTransportPeers::getPeerName(handle_t handle) const
 {
 	return m_peers->getPeerName(handle);
+}
+
+uint64_t ReliableTransportPeers::getPeerGlobalId(handle_t handle) const
+{
+	return m_peers->getPeerGlobalId(handle);
 }
 
 int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
@@ -202,11 +222,6 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 	}
 
 	return true;
-}
-
-bool ReliableTransportPeers::isPrimary() const
-{
-	return m_peers->isPrimary();
 }
 
 	}

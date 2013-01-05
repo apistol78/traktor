@@ -1,14 +1,17 @@
 #ifndef traktor_ui_ListViewWin32_H
 #define traktor_ui_ListViewWin32_H
 
-#include "Ui/Win32/WidgetWin32Impl.h"
 #include "Ui/Itf/IListView.h"
+#include "Ui/Win32/WidgetWin32Impl.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class ListViewWin32 : public WidgetWin32Impl< IListView >
 {
 public:

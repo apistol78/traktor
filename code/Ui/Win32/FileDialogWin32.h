@@ -1,9 +1,9 @@
 #ifndef traktor_ui_FileDialogWin32_H
 #define traktor_ui_FileDialogWin32_H
 
+#include "Core/Misc/TString.h"
 #include "Ui/Itf/IFileDialog.h"
 #include "Ui/Win32/Window.h"
-#include "Core/Misc/TString.h"
 
 namespace traktor
 {
@@ -12,6 +12,9 @@ namespace traktor
 
 class EventSubject;
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class FileDialogWin32 : public IFileDialog
 {
 public:

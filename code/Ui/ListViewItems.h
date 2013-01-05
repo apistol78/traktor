@@ -2,15 +2,15 @@
 #define traktor_ui_ListViewItems_H
 
 #include <vector>
-#include "Core/RefArray.h"
 #include "Core/Object.h"
+#include "Core/RefArray.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

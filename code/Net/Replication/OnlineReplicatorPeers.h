@@ -42,21 +42,27 @@ public:
 
 	virtual void update();
 
+	virtual std::wstring getName() const;
+
+	virtual uint64_t getGlobalId() const;
+
+	virtual bool isPrimary() const;
+
 	virtual uint32_t getPeerHandles(std::vector< handle_t >& outPeerHandles) const;
 
 	virtual std::wstring getPeerName(handle_t handle) const;
+
+	virtual uint64_t getPeerGlobalId(handle_t handle) const;
 
 	virtual int32_t receive(void* data, int32_t size, handle_t& outFromHandle);
 
 	virtual bool send(handle_t handle, const void* data, int32_t size, bool reliable);
 
-	virtual bool isPrimary() const;
-
 private:
 	Ref< online::ISessionManager > m_sessionManager;
 	Ref< online::ILobby > m_lobby;
 	RefArray< online::IUser > m_users;
-	SmallMap< int32_t, online::IUser* > m_userMap;
+	SmallMap< uint64_t, online::IUser* > m_userMap;
 	float m_timeUntilQuery;
 };
 

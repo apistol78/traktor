@@ -1,14 +1,17 @@
 #ifndef traktor_ui_StaticWin32_H
 #define traktor_ui_StaticWin32_H
 
-#include "Ui/Win32/WidgetWin32Impl.h"
 #include "Ui/Itf/IStatic.h"
+#include "Ui/Win32/WidgetWin32Impl.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class StaticWin32 : public WidgetWin32Impl< IStatic >
 {
 public:

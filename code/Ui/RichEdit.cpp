@@ -1,7 +1,8 @@
-#include "Ui/RichEdit.h"
-#include "Ui/Application.h"
-#include "Ui/Itf/IRichEdit.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Color4ub.h"
+#include "Ui/Application.h"
+#include "Ui/RichEdit.h"
+#include "Ui/Itf/IRichEdit.h"
 
 namespace traktor
 {

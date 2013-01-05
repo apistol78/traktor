@@ -8,7 +8,7 @@ namespace traktor
 	namespace net
 	{
 
-typedef uint32_t handle_t;
+typedef uint64_t handle_t;
 
 	}
 }

@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class Color4ub;
+
 	namespace ui
 	{
 

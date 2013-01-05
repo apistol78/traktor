@@ -25,6 +25,21 @@ namespace traktor
 	namespace script
 	{
 
+class T_DLLCLASS BoxedUInt64 : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedUInt64();
+
+	explicit BoxedUInt64(uint64_t value);
+
+	uint64_t unbox() const { return m_value; }
+
+private:
+	uint64_t m_value;
+};
+
 class T_DLLCLASS BoxedGuid : public Object
 {
 	T_RTTI_CLASS;
@@ -368,6 +383,28 @@ public:
 
 private:
 	std::vector< Any > m_arr;
+};
+
+template < >
+struct CastAny< uint64_t, false >
+{
+	static Any set(const uint64_t& value) {
+		return Any(new BoxedUInt64(value));
+	}	
+	static uint64_t get(const Any& value) {
+		return checked_type_cast< BoxedUInt64*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny< const uint64_t&, false >
+{
+	static Any set(const uint64_t& value) {
+		return Any(new BoxedUInt64(value));
+	}	
+	static uint64_t get(const Any& value) {
+		return checked_type_cast< BoxedUInt64*, false >(value.getObject())->unbox();
+	}
 };
 
 template < >

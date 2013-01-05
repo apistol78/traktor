@@ -10,8 +10,11 @@
 
 /*! \defgroup UI User interface */
 /*! \defgroup UIC User interface - Custom widgets */
+/*! \defgroup UIW32 User interface - Win32 backend */
 
 /*! \defgroup Editor Editor */
+
+/*! \defgroup Resource Resource system */
 
 /*! \defgroup Graphics Graphics */
 /*! \defgroup GDI Graphics - GDI */
@@ -19,6 +22,7 @@
 /*! \defgroup Render Render */
 /*! \defgroup DX9 Render - DirectX 9 */
 /*! \defgroup DX10 Render - DirectX 10 */
+/*! \defgroup DX11 Render - DirectX 11 */
 /*! \defgroup OGL Render - OpenGL */
 /*! \defgroup SW Render - Software */
 /*! \defgroup Xbox360 Render - Xbox 360 */
@@ -28,6 +32,7 @@
 
 /*! \defgroup Script Scripting */
 /*! \defgroup LUA Scripting - LUA */
+/*! \defgroup JS Scripting - JavaScript */
 
 /*! \defgroup Physics Physics */
 /*! \defgroup Bullet Physics - Bullet */

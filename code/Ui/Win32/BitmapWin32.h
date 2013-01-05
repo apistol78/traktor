@@ -17,6 +17,9 @@ namespace traktor
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class BitmapWin32 : public IBitmap
 {
 public:
