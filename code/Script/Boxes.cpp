@@ -8,6 +8,17 @@ namespace traktor
 	namespace script
 	{
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.UInt64", BoxedUInt64, Object)
+
+BoxedUInt64::BoxedUInt64()
+{
+}
+
+BoxedUInt64::BoxedUInt64(uint64_t value)
+:	m_value(value)
+{
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Guid", BoxedGuid, Object)
 
 BoxedGuid::BoxedGuid()
@@ -401,6 +412,10 @@ Any BoxedStdVector::get(int32_t index)
 
 void registerBoxClasses(IScriptManager* scriptManager)
 {
+	Ref< AutoScriptClass< BoxedUInt64 > > classBoxedUInt64 = new AutoScriptClass< BoxedUInt64 >();
+	classBoxedUInt64->addConstructor();
+	scriptManager->registerClass(classBoxedUInt64);
+
 	Ref< AutoScriptClass< BoxedGuid > > classBoxedGuid = new AutoScriptClass< BoxedGuid >();
 	classBoxedGuid->addConstructor();
 	classBoxedGuid->addConstructor< const std::wstring& >();

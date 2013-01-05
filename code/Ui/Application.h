@@ -1,17 +1,17 @@
 #ifndef traktor_ui_Application_H
 #define traktor_ui_Application_H
 
-#include "Ui/EventSubject.h"
 #include "Ui/Enums.h"
+#include "Ui/EventSubject.h"
 #include "Ui/Itf/IEventLoop.h"
 #include "Ui/Itf/IWidgetFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

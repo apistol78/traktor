@@ -28,7 +28,7 @@ struct Message
 	{
 		HeaderSize = sizeof(uint8_t) + sizeof(uint32_t),
 		MessageSize = 1200,
-		StateSize = MessageSize - HeaderSize - 1,
+		StateSize = MessageSize - HeaderSize,
 		EventSize = MessageSize - HeaderSize
 	};
 
@@ -50,7 +50,11 @@ struct Message
 
 		struct
 		{
-			uint8_t sequence;
+			uint64_t globalId;
+		} disconnect;
+
+		struct
+		{
 			uint8_t data[StateSize];
 		} state;
 

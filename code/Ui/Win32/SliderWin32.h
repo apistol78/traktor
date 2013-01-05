@@ -1,14 +1,17 @@
 #ifndef traktor_ui_SliderWin32_H
 #define traktor_ui_SliderWin32_H
 
-#include "Ui/Win32/WidgetWin32Impl.h"
 #include "Ui/Itf/ISlider.h"
+#include "Ui/Win32/WidgetWin32Impl.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class SliderWin32 : public WidgetWin32Impl< ISlider >
 {
 public:

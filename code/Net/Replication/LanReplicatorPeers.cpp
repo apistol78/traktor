@@ -126,6 +126,21 @@ void LanReplicatorPeers::update()
 {
 }
 
+std::wstring LanReplicatorPeers::getName() const
+{
+	return L"";
+}
+
+uint64_t LanReplicatorPeers::getGlobalId() const
+{
+	return 0;
+}
+
+bool LanReplicatorPeers::isPrimary() const
+{
+	return true;
+}
+
 uint32_t LanReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
 {
 	return 0;
@@ -134,6 +149,11 @@ uint32_t LanReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerHand
 std::wstring LanReplicatorPeers::getPeerName(handle_t handle) const
 {
 	return L""; // m_peers[peerId].socketAddr.getHostName();
+}
+
+uint64_t LanReplicatorPeers::getPeerGlobalId(handle_t handle) const
+{
+	return 0;
 }
 
 int32_t LanReplicatorPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
@@ -176,11 +196,6 @@ bool LanReplicatorPeers::send(handle_t handle, const void* data, int32_t size, b
 {
 	//return m_peers[peerId].socket->send(data, size) > 0;
 	return false;
-}
-
-bool LanReplicatorPeers::isPrimary() const
-{
-	return true;
 }
 
 	}

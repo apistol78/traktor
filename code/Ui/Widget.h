@@ -2,20 +2,20 @@
 #define traktor_ui_Widget_H
 
 #include <vector>
-#include "Ui/EventSubject.h"
-#include "Ui/EventHandler.h"
 #include "Ui/Associative.h"
 #include "Ui/Canvas.h"
-#include "Ui/Rect.h"
-#include "Ui/Font.h"
 #include "Ui/Enums.h"
+#include "Ui/EventHandler.h"
+#include "Ui/EventSubject.h"
+#include "Ui/Font.h"
+#include "Ui/Rect.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

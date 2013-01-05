@@ -1,8 +1,8 @@
 #ifndef traktor_ui_FormWin32_H
 #define traktor_ui_FormWin32_H
 
-#include "Ui/Win32/WidgetWin32Impl.h"
 #include "Ui/Itf/IForm.h"
+#include "Ui/Win32/WidgetWin32Impl.h"
 
 namespace traktor
 {
@@ -11,6 +11,9 @@ namespace traktor
 
 class MenuBarWin32;
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class FormWin32 : public WidgetWin32Impl< IForm >
 {
 public:

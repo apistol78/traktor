@@ -50,9 +50,29 @@ void InetSimPeers::update()
 	m_peers->update();
 }
 
+std::wstring InetSimPeers::getName() const
+{
+	return m_peers->getName();
+}
+
+uint64_t InetSimPeers::getGlobalId() const
+{
+	return m_peers->getGlobalId();
+}
+
+bool InetSimPeers::isPrimary() const
+{
+	return m_peers->isPrimary();
+}
+
 uint32_t InetSimPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
 {
 	return m_peers->getPeerHandles(outPeerHandles);
+}
+
+uint64_t InetSimPeers::getPeerGlobalId(handle_t handle) const
+{
+	return m_peers->getPeerGlobalId(handle);
 }
 
 std::wstring InetSimPeers::getPeerName(handle_t handle) const
@@ -89,11 +109,6 @@ bool InetSimPeers::send(handle_t handle, const void* data, int32_t size, bool re
 	m_txEvent.broadcast();
 
 	return true;
-}
-
-bool InetSimPeers::isPrimary() const
-{
-	return m_peers->isPrimary();
 }
 
 void InetSimPeers::threadTx()

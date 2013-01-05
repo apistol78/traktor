@@ -10,6 +10,9 @@ namespace traktor
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class PopupMenuWin32 : public IPopupMenu
 {
 public:

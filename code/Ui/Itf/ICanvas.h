@@ -1,14 +1,14 @@
 #ifndef traktor_ui_ICanvas_H
 #define traktor_ui_ICanvas_H
 
-#include <vector>
 #include <string>
+#include <vector>
+#include "Core/Math/Color4ub.h"
 #include "Ui/Enums.h"
 #include "Ui/Font.h"
 #include "Ui/Point.h"
-#include "Ui/Size.h"
 #include "Ui/Rect.h"
-#include "Core/Math/Color4ub.h"
+#include "Ui/Size.h"
 
 namespace traktor
 {

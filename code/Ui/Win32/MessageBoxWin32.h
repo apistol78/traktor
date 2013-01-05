@@ -1,9 +1,9 @@
 #ifndef traktor_ui_MessageBoxWin32_H
 #define traktor_ui_MessageBoxWin32_H
 
-#include "Ui/Win32/Window.h"
-#include "Ui/Itf/IMessageBox.h"
 #include "Core/Misc/TString.h"
+#include "Ui/Itf/IMessageBox.h"
+#include "Ui/Win32/Window.h"
 
 namespace traktor
 {
@@ -12,6 +12,9 @@ namespace traktor
 
 class EventSubject;
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class MessageBoxWin32 : public IMessageBox
 {
 public:

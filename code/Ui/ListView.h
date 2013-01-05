@@ -1,15 +1,15 @@
 #ifndef traktor_ui_ListView_H
 #define traktor_ui_ListView_H
 
-#include "Ui/Widget.h"
 #include "Ui/ListViewItems.h"
+#include "Ui/Widget.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor

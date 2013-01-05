@@ -26,11 +26,17 @@ namespace traktor
 #define WM_REFLECTED_HSCROLL	(WM_USER + 1002)
 #define WM_REFLECTED_VSCROLL	(WM_USER + 1003)
 
+/*! \brief
+ * \ingroup UIW32
+ */
 struct IMessageHandler : public Object
 {
 	virtual LRESULT handle(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& pass) = 0;
 };
 
+/*! \brief
+ * \ingroup UIW32
+ */
 template < typename ClassType >
 struct MethodMessageHandler : public IMessageHandler
 {
@@ -51,6 +57,9 @@ struct MethodMessageHandler : public IMessageHandler
 	}
 };
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class Window
 {
 public:

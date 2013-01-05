@@ -1,8 +1,8 @@
 #ifndef traktor_ui_TreeViewWin32_H
 #define traktor_ui_TreeViewWin32_H
 
-#include "Ui/Win32/WidgetWin32Impl.h"
 #include "Ui/Itf/ITreeView.h"
+#include "Ui/Win32/WidgetWin32Impl.h"
 
 namespace traktor
 {
@@ -11,6 +11,9 @@ namespace traktor
 
 class TreeViewItemWin32;
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class TreeViewWin32 : public WidgetWin32Impl< ITreeView >
 {
 public:

@@ -298,6 +298,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< online::IUser > > classIUser = new script::AutoScriptClass< online::IUser >();
 	classIUser->addMethod("getName", &online_IUser_getName);
+	classIUser->addMethod("getGlobalId", &online::IUser::getGlobalId);
 	classIUser->addMethod("isFriend", &online::IUser::isFriend);
 	classIUser->addMethod("invite", &online::IUser::invite);
 	classIUser->addMethod("setPresenceValue", &online::IUser::setPresenceValue);

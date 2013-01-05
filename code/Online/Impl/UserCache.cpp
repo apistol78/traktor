@@ -11,7 +11,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.online.UserCache", UserCache, Object)
 
 UserCache::UserCache(IUserProvider* userProvider)
 :	m_userProvider(userProvider)
-,	m_nextTag(1)
 {
 }
 
@@ -23,7 +22,7 @@ User* UserCache::get(uint64_t userHandle)
 	if (i != m_users.end())
 		return i->second;
 
-	Ref< User > user = new User(m_userProvider, userHandle, m_nextTag++);
+	Ref< User > user = new User(m_userProvider, userHandle);
 	m_users.insert(std::make_pair(userHandle, user));
 
 	return user;

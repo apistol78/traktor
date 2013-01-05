@@ -23,7 +23,7 @@ class T_DLLCLASS IUser : public Object
 public:
 	virtual bool getName(std::wstring& outName) const = 0;
 
-	virtual int32_t getTag() const = 0;
+	virtual uint64_t getGlobalId() const = 0;
 
 	virtual bool isFriend() const = 0;
 

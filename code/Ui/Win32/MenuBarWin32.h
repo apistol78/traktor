@@ -14,6 +14,9 @@ namespace traktor
 
 class EventSubject;
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class MenuBarWin32 : public IMenuBar
 {
 public:

@@ -76,8 +76,12 @@ public:
 	void addListener(IListener* listener);
 
 	/*! \brief
+	 *
+	 * \param T Time since application started.
+	 * \param dT Delta time since last update.
+	 * \return True if still connected.
 	 */
-	void update(float T, float dT);
+	bool update(float T, float dT);
 
 	/*! \brief Set our origin.
 	 *
@@ -181,7 +185,7 @@ public:
 	 * \param currentState Current ghost local state.
 	 * \return Extrapolated ghost state.
 	 */
-	Ref< const State > getGhostState(uint32_t peerHandle, const State* currentState) const;
+	Ref< const State > getGhostState(handle_t peerHandle, const State* currentState) const;
 
 	/*! \brief Get loopback state.
 	 *
@@ -245,8 +249,6 @@ private:
 		uint32_t packetCount;
 		uint32_t stateCount;
 		uint32_t errorCount;
-		uint8_t txSequence;
-		uint8_t rxSequence;
 		Ref< const State > iframe;
 
 		Peer()
@@ -262,8 +264,6 @@ private:
 		,	packetCount(0)
 		,	stateCount(0)
 		,	errorCount(0)
-		,	txSequence(0)
-		,	rxSequence(0)
 		{
 		}
 	};
@@ -282,6 +282,18 @@ private:
 	uint32_t m_pingCount;
 	float m_timeUntilPing;
 
+	void updatePeers(float dT);
+
+	void sendState(float dT);
+
+	void sendEvents();
+
+	void sendPings(float dT);
+
+	void receiveMessages();
+
+	void dispatchEventListeners();
+
 	void sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id);
 
 	void sendBye(handle_t peerHandle);
@@ -292,7 +304,7 @@ private:
 
 	void sendThrottle(handle_t peerHandle);
 
-	void sendDisconnect(handle_t peerHandle);
+	void broadcastDisconnect(handle_t peerHandle);
 };
 
 	}

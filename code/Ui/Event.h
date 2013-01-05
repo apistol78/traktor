@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -35,9 +35,9 @@ class T_DLLCLASS Event : public Object
 public:
 	Event(EventSubject* sender, Object* item);
 
-	Ref< EventSubject > getSender() const;
+	EventSubject* getSender() const;
 
-	Ref< Object > getItem() const;
+	Object* getItem() const;
 
 	int getKeyState() const;
 

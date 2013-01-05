@@ -54,9 +54,29 @@ void DiagnosePeers::update()
 	}
 }
 
+std::wstring DiagnosePeers::getName() const
+{
+	return m_peers->getName();
+}
+
+uint64_t DiagnosePeers::getGlobalId() const
+{
+	return m_peers->getGlobalId();
+}
+
+bool DiagnosePeers::isPrimary() const
+{
+	return m_peers->isPrimary();
+}
+
 uint32_t DiagnosePeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
 {
 	return m_peers->getPeerHandles(outPeerHandles);
+}
+
+uint64_t DiagnosePeers::getPeerGlobalId(handle_t handle) const
+{
+	return m_peers->getPeerGlobalId(handle);
 }
 
 std::wstring DiagnosePeers::getPeerName(handle_t handle) const
@@ -81,11 +101,6 @@ bool DiagnosePeers::send(handle_t handle, const void* data, int32_t size, bool r
 
 	m_sent += size;
 	return true;
-}
-
-bool DiagnosePeers::isPrimary() const
-{
-	return m_peers->isPrimary();
 }
 
 	}

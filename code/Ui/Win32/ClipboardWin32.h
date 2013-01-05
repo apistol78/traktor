@@ -8,6 +8,9 @@ namespace traktor
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class ClipboardWin32 : public IClipboard
 {
 public:

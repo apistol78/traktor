@@ -9,6 +9,9 @@ namespace traktor
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class CanvasWin32 : public ICanvas
 {
 public:

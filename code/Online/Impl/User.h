@@ -17,7 +17,7 @@ class User : public IUser
 public:
 	virtual bool getName(std::wstring& outName) const;
 
-	virtual int32_t getTag() const;
+	virtual uint64_t getGlobalId() const;
 
 	virtual bool isFriend() const;
 
@@ -35,9 +35,8 @@ private:
 
 	Ref< IUserProvider > m_userProvider;
 	uint64_t m_handle;
-	int32_t m_tag;
 
-	User(IUserProvider* userProvider, uint64_t handle, int32_t tag);
+	User(IUserProvider* userProvider, uint64_t handle);
 };
 
 	}

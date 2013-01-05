@@ -44,24 +44,41 @@ void OnlineReplicatorPeers::update()
 	m_userMap.clear();
 	for (RefArray< online::IUser >::const_iterator i = m_users.begin(); i != m_users.end(); ++i)
 	{
-		int32_t tag = (*i)->getTag();
-		m_userMap[tag] = *i;
+		uint64_t handle = (*i)->getGlobalId();
+		m_userMap[handle] = *i;
 	}
 
 	m_timeUntilQuery = 1.0f;
 }
 
+std::wstring OnlineReplicatorPeers::getName() const
+{
+	std::wstring name;
+	m_sessionManager->getUser()->getName(name);
+	return name;
+}
+
+uint64_t OnlineReplicatorPeers::getGlobalId() const
+{
+	return m_sessionManager->getUser()->getGlobalId();
+}
+
+bool OnlineReplicatorPeers::isPrimary() const
+{
+	return m_lobby->isOwner();
+}
+
 uint32_t OnlineReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
 {
 	outPeerHandles.reserve(m_userMap.size());
-	for (SmallMap< int32_t, online::IUser* >::const_iterator i = m_userMap.begin(); i != m_userMap.end(); ++i)
+	for (SmallMap< uint64_t, online::IUser* >::const_iterator i = m_userMap.begin(); i != m_userMap.end(); ++i)
 		outPeerHandles.push_back(handle_t(i->first));
 	return m_userMap.size();
 }
 
 std::wstring OnlineReplicatorPeers::getPeerName(handle_t handle) const
 {
-	SmallMap< int32_t, online::IUser* >::const_iterator i = m_userMap.find(int32_t(handle));
+	SmallMap< uint64_t, online::IUser* >::const_iterator i = m_userMap.find(handle);
 	if (i == m_userMap.end() || i->second == 0)
 		return L"";
 
@@ -70,6 +87,15 @@ std::wstring OnlineReplicatorPeers::getPeerName(handle_t handle) const
 		return name;
 	else
 		return L"";
+}
+
+uint64_t OnlineReplicatorPeers::getPeerGlobalId(handle_t handle) const
+{
+	SmallMap< uint64_t, online::IUser* >::const_iterator i = m_userMap.find(handle);
+	if (i == m_userMap.end() || i->second == 0)
+		return 0;
+
+	return i->second->getGlobalId();
 }
 
 int32_t OnlineReplicatorPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
@@ -84,7 +110,7 @@ int32_t OnlineReplicatorPeers::receive(void* data, int32_t size, handle_t& outFr
 	if (!fromUser)
 		return -1;
 
-	outFromHandle = handle_t(fromUser->getTag());
+	outFromHandle = handle_t(fromUser->getGlobalId());
 	return nrecv;
 }
 
@@ -93,16 +119,11 @@ bool OnlineReplicatorPeers::send(handle_t handle, const void* data, int32_t size
 	T_ASSERT (size < 1200);
 	T_ASSERT (!reliable);
 
-	SmallMap< int32_t, online::IUser* >::const_iterator i = m_userMap.find(int32_t(handle));
+	SmallMap< uint64_t, online::IUser* >::const_iterator i = m_userMap.find(handle);
 	if (i == m_userMap.end() || i->second == 0)
 		return false;
 
 	return i->second->sendP2PData(data, size);
-}
-
-bool OnlineReplicatorPeers::isPrimary() const
-{
-	return m_lobby->isOwner();
 }
 
 	}

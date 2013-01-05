@@ -1,5 +1,5 @@
-#include "Ui/Event.h"
 #include "Ui/Application.h"
+#include "Ui/Event.h"
 #include "Ui/Itf/IEventLoop.h"
 
 namespace traktor
@@ -18,12 +18,12 @@ Event::Event(EventSubject* sender, Object* item)
 	m_keyState = Application::getInstance()->getEventLoop()->getAsyncKeyState();
 }
 
-Ref< EventSubject > Event::getSender() const
+EventSubject* Event::getSender() const
 {
 	return m_sender;
 }
 
-Ref< Object > Event::getItem() const
+Object* Event::getItem() const
 {
 	return m_item;
 }

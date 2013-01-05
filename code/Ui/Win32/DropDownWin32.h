@@ -1,14 +1,17 @@
 #ifndef traktor_ui_DropDownWin32_H
 #define traktor_ui_DropDownWin32_H
 
-#include "Ui/Win32/WidgetWin32Impl.h"
 #include "Ui/Itf/IDropDown.h"
+#include "Ui/Win32/WidgetWin32Impl.h"
 
 namespace traktor
 {
 	namespace ui
 	{
 
+/*! \brief
+ * \ingroup UIW32
+ */
 class DropDownWin32 : public WidgetWin32Impl< IDropDown >
 {
 public:
