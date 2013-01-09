@@ -131,98 +131,98 @@ bool ScriptProcessor::create()
 	m_scriptManager = new script::ScriptManagerLua();
 
 	Ref< script::AutoScriptClass< Output > > classOutput = new script::AutoScriptClass< Output >();
-	classOutput->addMethod(L"print", &Output::print);
-	classOutput->addMethod(L"printLn", &Output::printLn);
-	classOutput->addMethod(L"printSection", &Output::printSection);
+	classOutput->addMethod("print", &Output::print);
+	classOutput->addMethod("printLn", &Output::printLn);
+	classOutput->addMethod("printSection", &Output::printSection);
 	m_scriptManager->registerClass(classOutput);
 
 	Ref< script::AutoScriptClass< Path > > classPath = new script::AutoScriptClass< Path >();
 	classPath->addConstructor();
 	classPath->addConstructor< const std::wstring& >();
-	classPath->addMethod(L"getOriginal", &Path::getOriginal);
-	classPath->addMethod(L"hasVolume", &Path::hasVolume);
-	classPath->addMethod(L"getVolume", &Path::getVolume);
-	classPath->addMethod(L"isRelative", &Path::isRelative);
-	classPath->addMethod(L"getFileName", &Path::getFileName);
-	classPath->addMethod(L"getFileNameNoExtension", &Path::getFileNameNoExtension);
-	classPath->addMethod(L"getPathOnly", &Path::getPathOnly);
-	classPath->addMethod(L"getPathOnlyNoVolume", &Path::getPathOnlyNoVolume);
-	classPath->addMethod(L"getPathName", &Path::getPathName);
-	classPath->addMethod(L"getPathNameNoExtension", &Path::getPathNameNoExtension);
-	classPath->addMethod(L"getPathNameNoVolume", &Path::getPathNameNoVolume);
-	classPath->addMethod(L"getExtension", &Path::getExtension);
-	classPath->addMethod(L"normalized", &Path::normalized);
+	classPath->addMethod("getOriginal", &Path::getOriginal);
+	classPath->addMethod("hasVolume", &Path::hasVolume);
+	classPath->addMethod("getVolume", &Path::getVolume);
+	classPath->addMethod("isRelative", &Path::isRelative);
+	classPath->addMethod("getFileName", &Path::getFileName);
+	classPath->addMethod("getFileNameNoExtension", &Path::getFileNameNoExtension);
+	classPath->addMethod("getPathOnly", &Path::getPathOnly);
+	classPath->addMethod("getPathOnlyNoVolume", &Path::getPathOnlyNoVolume);
+	classPath->addMethod("getPathName", &Path::getPathName);
+	classPath->addMethod("getPathNameNoExtension", &Path::getPathNameNoExtension);
+	classPath->addMethod("getPathNameNoVolume", &Path::getPathNameNoVolume);
+	classPath->addMethod("getExtension", &Path::getExtension);
+	classPath->addMethod("normalized", &Path::normalized);
 	m_scriptManager->registerClass(classPath);
 
 	Ref< script::AutoScriptClass< FileSystem > > classFileSystem = new script::AutoScriptClass< FileSystem >();
-	classFileSystem->addMethod(L"exist", &FileSystem::exist);
-	classFileSystem->addMethod(L"remove", &FileSystem::remove);
-	classFileSystem->addMethod(L"makeDirectory", &FileSystem::makeDirectory);
-	classFileSystem->addMethod(L"makeAllDirectories", &FileSystem::makeAllDirectories);
-	classFileSystem->addMethod(L"removeDirectory", &FileSystem::removeDirectory);
-	classFileSystem->addMethod(L"renameDirectory", &FileSystem::renameDirectory);
-	classFileSystem->addMethod(L"getAbsolutePath", &FileSystem_getAbsolutePath_1);
-	classFileSystem->addMethod(L"getAbsolutePath", &FileSystem_getAbsolutePath_2);
-	classFileSystem->addMethod(L"getRelativePath", &FileSystem_getRelativePath);
+	classFileSystem->addMethod("exist", &FileSystem::exist);
+	classFileSystem->addMethod("remove", &FileSystem::remove);
+	classFileSystem->addMethod("makeDirectory", &FileSystem::makeDirectory);
+	classFileSystem->addMethod("makeAllDirectories", &FileSystem::makeAllDirectories);
+	classFileSystem->addMethod("removeDirectory", &FileSystem::removeDirectory);
+	classFileSystem->addMethod("renameDirectory", &FileSystem::renameDirectory);
+	classFileSystem->addMethod("getAbsolutePath", &FileSystem_getAbsolutePath_1);
+	classFileSystem->addMethod("getAbsolutePath", &FileSystem_getAbsolutePath_2);
+	classFileSystem->addMethod("getRelativePath", &FileSystem_getRelativePath);
 	m_scriptManager->registerClass(classFileSystem);
 
 	Ref< script::AutoScriptClass< Solution > > classSolution = new script::AutoScriptClass< Solution >();
-	classSolution->addMethod(L"getName", &Solution::getName);
-	classSolution->addMethod(L"getRootPath", &Solution::getRootPath);
-	classSolution->addMethod(L"getDefinitions", &Solution::getDefinitions);
-	classSolution->addMethod(L"getProjects", &Solution::getProjects);
+	classSolution->addMethod("getName", &Solution::getName);
+	classSolution->addMethod("getRootPath", &Solution::getRootPath);
+	classSolution->addMethod("getDefinitions", &Solution::getDefinitions);
+	classSolution->addMethod("getProjects", &Solution::getProjects);
 	m_scriptManager->registerClass(classSolution);
 
 	Ref< script::AutoScriptClass< Project > > classProject = new script::AutoScriptClass< Project >();
-	classProject->addMethod(L"getEnable", &Project::getEnable);
-	classProject->addMethod(L"getName", &Project::getName);
-	classProject->addMethod(L"getSourcePath", &Project::getSourcePath);
-	classProject->addMethod(L"getConfigurations", &Project::getConfigurations);
-	classProject->addMethod(L"getConfiguration", &Project::getConfiguration);
-	classProject->addMethod(L"getItems", &Project::getItems);
-	classProject->addMethod(L"getDependencies", &Project::getDependencies);
+	classProject->addMethod("getEnable", &Project::getEnable);
+	classProject->addMethod("getName", &Project::getName);
+	classProject->addMethod("getSourcePath", &Project::getSourcePath);
+	classProject->addMethod("getConfigurations", &Project::getConfigurations);
+	classProject->addMethod("getConfiguration", &Project::getConfiguration);
+	classProject->addMethod("getItems", &Project::getItems);
+	classProject->addMethod("getDependencies", &Project::getDependencies);
 	m_scriptManager->registerClass(classProject);
 
 	Ref< script::AutoScriptClass< Configuration > > classConfiguration = new script::AutoScriptClass< Configuration >();
-	classConfiguration->addMethod(L"getName", &Configuration::getName);
-	classConfiguration->addMethod(L"getTargetFormat", &Configuration_getTargetFormat);
-	classConfiguration->addMethod(L"getTargetProfile", &Configuration_getTargetProfile);
-	classConfiguration->addMethod(L"getPrecompiledHeader", &Configuration::getPrecompiledHeader);
-	classConfiguration->addMethod(L"getIncludePaths", &Configuration::getIncludePaths);
-	classConfiguration->addMethod(L"getDefinitions", &Configuration::getDefinitions);
-	classConfiguration->addMethod(L"getLibraryPaths", &Configuration::getLibraryPaths);
-	classConfiguration->addMethod(L"getLibraries", &Configuration::getLibraries);
-	classConfiguration->addMethod(L"getAdditionalCompilerOptions", &Configuration::getAdditionalCompilerOptions);
-	classConfiguration->addMethod(L"getAdditionalLinkerOptions", &Configuration::getAdditionalLinkerOptions);
+	classConfiguration->addMethod("getName", &Configuration::getName);
+	classConfiguration->addMethod("getTargetFormat", &Configuration_getTargetFormat);
+	classConfiguration->addMethod("getTargetProfile", &Configuration_getTargetProfile);
+	classConfiguration->addMethod("getPrecompiledHeader", &Configuration::getPrecompiledHeader);
+	classConfiguration->addMethod("getIncludePaths", &Configuration::getIncludePaths);
+	classConfiguration->addMethod("getDefinitions", &Configuration::getDefinitions);
+	classConfiguration->addMethod("getLibraryPaths", &Configuration::getLibraryPaths);
+	classConfiguration->addMethod("getLibraries", &Configuration::getLibraries);
+	classConfiguration->addMethod("getAdditionalCompilerOptions", &Configuration::getAdditionalCompilerOptions);
+	classConfiguration->addMethod("getAdditionalLinkerOptions", &Configuration::getAdditionalLinkerOptions);
 	m_scriptManager->registerClass(classConfiguration);
 
 	Ref< script::AutoScriptClass< ProjectItem > > classProjectItem = new script::AutoScriptClass< ProjectItem >();
-	classProjectItem->addMethod(L"getItems", &ProjectItem::getItems);
+	classProjectItem->addMethod("getItems", &ProjectItem::getItems);
 	m_scriptManager->registerClass(classProjectItem);
 
 	Ref< script::AutoScriptClass< ::File > > classFile = new script::AutoScriptClass< ::File >();
-	classFile->addMethod(L"getFileName", &::File::getFileName);
-	classFile->addMethod(L"getSystemFiles", &File_getSystemFiles);
+	classFile->addMethod("getFileName", &::File::getFileName);
+	classFile->addMethod("getSystemFiles", &File_getSystemFiles);
 	m_scriptManager->registerClass(classFile);
 
 	Ref< script::AutoScriptClass< Filter > > classFilter = new script::AutoScriptClass< Filter >();
-	classFilter->addMethod(L"getName", &Filter::getName);
+	classFilter->addMethod("getName", &Filter::getName);
 	m_scriptManager->registerClass(classFilter);
 
 	Ref< script::AutoScriptClass< Dependency > > classDependency = new script::AutoScriptClass< Dependency >();
-	classDependency->addMethod(L"shouldLinkWithProduct", &Dependency::shouldLinkWithProduct);
-	classDependency->addMethod(L"getName", &Dependency::getName);
-	classDependency->addMethod(L"getLocation", &Dependency::getLocation);
+	classDependency->addMethod("shouldLinkWithProduct", &Dependency::shouldLinkWithProduct);
+	classDependency->addMethod("getName", &Dependency::getName);
+	classDependency->addMethod("getLocation", &Dependency::getLocation);
 	m_scriptManager->registerClass(classDependency);
 
 	Ref< script::AutoScriptClass< ExternalDependency > > classExternalDependency = new script::AutoScriptClass< ExternalDependency >();
-	classExternalDependency->addMethod(L"getSolutionFileName", &ExternalDependency::getSolutionFileName);
-	classExternalDependency->addMethod(L"getSolution", &ExternalDependency::getSolution);
-	classExternalDependency->addMethod(L"getProject", &ExternalDependency::getProject);
+	classExternalDependency->addMethod("getSolutionFileName", &ExternalDependency::getSolutionFileName);
+	classExternalDependency->addMethod("getSolution", &ExternalDependency::getSolution);
+	classExternalDependency->addMethod("getProject", &ExternalDependency::getProject);
 	m_scriptManager->registerClass(classExternalDependency);
 
 	Ref< script::AutoScriptClass< ProjectDependency > > classProjectDependency = new script::AutoScriptClass< ProjectDependency >();
-	classProjectDependency->addMethod(L"getProject", &ProjectDependency::getProject);
+	classProjectDependency->addMethod("getProject", &ProjectDependency::getProject);
 	m_scriptManager->registerClass(classProjectDependency);
 
 	return true;
@@ -291,12 +291,12 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 	if (!scriptContext)
 		return false;
 
-	scriptContext->setGlobal(L"output", script::Any(o));
-	scriptContext->setGlobal(L"solution", script::Any(const_cast< Solution* >(solution)));
-	scriptContext->setGlobal(L"project", script::Any(const_cast< Project* >(project)));
-	scriptContext->setGlobal(L"projectPath", script::Any(new Path(projectPath)));
-	scriptContext->setGlobal(L"fileSystem", script::Any(&FileSystem::getInstance()));
-	scriptContext->executeFunction(L"__main__");
+	scriptContext->setGlobal("output", script::Any(o));
+	scriptContext->setGlobal("solution", script::Any(const_cast< Solution* >(solution)));
+	scriptContext->setGlobal("project", script::Any(const_cast< Project* >(project)));
+	scriptContext->setGlobal("projectPath", script::Any(new Path(projectPath)));
+	scriptContext->setGlobal("fileSystem", script::Any(&FileSystem::getInstance()));
+	scriptContext->executeFunction("__main__");
 
 	output = o->getProduct();
 	return true;

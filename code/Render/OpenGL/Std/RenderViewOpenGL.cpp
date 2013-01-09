@@ -54,6 +54,8 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
+,	m_cursorVisible(true)
+,	m_waitVBlank(false)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
@@ -77,6 +79,8 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
+,	m_cursorVisible(true)
+,	m_waitVBlank(false)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
@@ -96,6 +100,8 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
 ,	m_blitHelper(blitHelper)
+,	m_cursorVisible(true)
+,	m_waitVBlank(false)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
@@ -132,7 +138,7 @@ bool RenderViewOpenGL::createPrimaryTarget()
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
+		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
 		if (!m_primaryTarget->create(m_primaryTargetDesc))
 			return false;
 	}
@@ -220,6 +226,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 #endif
 
+	// Update render context to ensure dimensions are set.
 	m_renderContext->update();
 
 	// Re-create primary FBO target.
@@ -229,7 +236,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
+		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
 		if (!m_primaryTarget->create(m_primaryTargetDesc))
 			return false;
 	}
@@ -245,13 +252,14 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 
 	safeDestroy(m_primaryTarget);
 
+	// Update render context to ensure dimensions are set.
 	m_renderContext->update();
 
 	// Re-create primary FBO target.
 	m_primaryTargetDesc.width = m_renderContext->getWidth();
 	m_primaryTargetDesc.height = m_renderContext->getHeight();
 
-	m_primaryTarget = new RenderTargetSetOpenGL(m_renderContext, m_blitHelper);
+	m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
 	m_primaryTarget->create(m_primaryTargetDesc);
 
 	return true;
@@ -293,10 +301,12 @@ bool RenderViewOpenGL::isFullScreen() const
 
 void RenderViewOpenGL::showCursor()
 {
+	m_cursorVisible = true;
 }
 
 void RenderViewOpenGL::hideCursor()
 {
+	m_cursorVisible = false;
 }
 
 bool RenderViewOpenGL::setGamma(float gamma)
@@ -678,7 +688,11 @@ void RenderViewOpenGL::present()
 	m_renderContext->leave();
 
 	// Clean pending resources.
-	m_resourceContext->deleteResources();
+	if (m_resourceContext->enter())
+	{
+		m_resourceContext->deleteResources();
+		m_resourceContext->leave();
+	}
 }
 
 void RenderViewOpenGL::pushMarker(const char* const marker)
@@ -764,10 +778,10 @@ bool RenderViewOpenGL::windowListenerEvent(Window* window, UINT message, WPARAM 
 	}
 	else if (message == WM_SETCURSOR)
 	{
-		if (isFullScreen())
-			SetCursor(NULL);
-		else
+		if (m_cursorVisible)
 			SetCursor(LoadCursor(NULL, IDC_ARROW));
+		else
+			SetCursor(NULL);
 	}
 	else
 		return false;

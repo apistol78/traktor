@@ -166,9 +166,12 @@ void GlslContext::defineTexture(const std::wstring& texture)
 		m_textures.push_back(texture);
 }
 
-bool GlslContext::defineSampler(uint32_t stateHash, const std::wstring& texture, int32_t& outStage)
+bool GlslContext::defineSampler(uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage)
 {
-	std::map< uint32_t, int32_t >::const_iterator j = m_samplersMap.find(stateHash);
+	uint32_t key = stateHash ^ target;
+
+	// Check if sampler already defined.
+	std::map< uint32_t, int32_t >::const_iterator j = m_samplersMap.find(key);
 	if (j != m_samplersMap.end())
 	{
 		outStage = j->second;
@@ -176,13 +179,17 @@ bool GlslContext::defineSampler(uint32_t stateHash, const std::wstring& texture,
 	}
 
 	outStage = m_nextStage++;
-	m_samplersMap[stateHash] = outStage;
+	m_samplersMap[key] = outStage;
 
+	// Create sampler binding.
 	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);
 	T_ASSERT (i != m_textures.end());
 
-	int32_t textureIndex = int32_t(std::distance(m_textures.begin(), i));
-	m_samplers.push_back(std::make_pair(textureIndex, outStage));
+	SamplerBinding sb;
+	sb.stage = outStage;
+	sb.target = target;
+	sb.texture = std::distance(m_textures.begin(), i);
+	m_samplers.push_back(sb);
 
 	return true;
 }
@@ -192,7 +199,7 @@ const std::vector< std::wstring >& GlslContext::getTextures() const
 	return m_textures;
 }
 
-const std::vector< std::pair< int32_t, int32_t > >& GlslContext::getSamplers() const
+const std::vector< SamplerBinding >& GlslContext::getSamplers() const
 {
 	return m_samplers;
 }

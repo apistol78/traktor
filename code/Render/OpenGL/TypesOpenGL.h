@@ -12,10 +12,18 @@ namespace traktor
 /*! \ingroup OGL */
 //@{
 
-struct SamplerTexture
+struct SamplerBinding
 {
-	std::wstring sampler;
-	std::wstring texture;
+	GLuint stage;
+	GLenum target;
+	int32_t texture;
+
+	SamplerBinding()
+	:	stage(0)
+	,	target(GL_INVALID_ENUM)
+	,	texture(0)
+	{
+	}
 };
 
 struct SamplerState
@@ -24,12 +32,14 @@ struct SamplerState
 	GLenum magFilter;
 	GLenum wrapS;
 	GLenum wrapT;
+	GLenum wrapR;
 
 	SamplerState()
 	:	minFilter(GL_LINEAR)
 	,	magFilter(GL_LINEAR)
 	,	wrapS(GL_REPEAT)
 	,	wrapT(GL_REPEAT)
+	,	wrapR(GL_REPEAT)
 	{
 	}
 };

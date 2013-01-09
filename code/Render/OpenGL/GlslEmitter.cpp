@@ -5,6 +5,7 @@
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/GlslContext.h"
 #include "Render/OpenGL/GlslEmitter.h"
+#include "Render/OpenGL/Platform.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/Script.h"
 
@@ -400,10 +401,15 @@ void emitInterpolator(GlslContext& cx, Interpolator* node)
 	if (declare)
 	{
 		StringOutputStream& fvo = cx.getVertexShader().getOutputStream(GlslShader::BtOutput);
-		fvo << L"varying vec4 " << interpolatorName << L";" << Endl;
-
 		StringOutputStream& fpi = cx.getFragmentShader().getOutputStream(GlslShader::BtInput);
+
+#if !defined(T_OPENGL_ES2)
+		fvo << L"out vec4 " << interpolatorName << L";" << Endl;
+		fpi << L"in vec4 " << interpolatorName << L";" << Endl;
+#else
+		fvo << L"varying vec4 " << interpolatorName << L";" << Endl;
 		fpi << L"varying vec4 " << interpolatorName << L";" << Endl;
+#endif
 	}
 }
 
@@ -887,15 +893,31 @@ void emitSampler(GlslContext& cx, Sampler* node)
 
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat4);
 
-	bool needMip = cx.inFragment();
 	bool needAddressW = bool(texture->getType() > GtTexture2D);
+	GLenum target = GL_INVALID_ENUM;
+
+	switch (texture->getType())
+	{
+	case GtTexture2D:
+		target = GL_TEXTURE_2D;
+		break;
+
+#if !defined(T_OPENGL_ES2)
+	case GtTexture3D:
+		target = GL_TEXTURE_3D;
+		break;
+#endif
+
+	case GtTextureCube:
+		target = GL_TEXTURE_CUBE_MAP;
+		break;
+	}
 
 	// Calculate sampler hash.
 	Adler32 samplerHash;
 	samplerHash.feed(texture->getName());
 	samplerHash.feed(node->getMinFilter());
-	if (needMip)
-		samplerHash.feed(node->getMipFilter());
+	samplerHash.feed(node->getMipFilter());
 	samplerHash.feed(node->getMagFilter());
 	samplerHash.feed(node->getAddressU());
 	samplerHash.feed(node->getAddressV());
@@ -907,42 +929,35 @@ void emitSampler(GlslContext& cx, Sampler* node)
 	int32_t stage;
 
 	// Define sampler.
-    bool defineStates = cx.defineSampler(samplerHash.get(), texture->getName(), stage);
+    bool defineStates = cx.defineSampler(samplerHash.get(), target, texture->getName(), stage);
 	std::wstring samplerName = L"_gl_sampler_" + texture->getName() + L"_" + toString(stage);
 
 	if (defineStates)
 	{
 		RenderState& rs = cx.getRenderState();
 
-		if (cx.inFragment())
-		{
-			bool minLinear = node->getMinFilter() != Sampler::FtPoint;
-			bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
+		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
+		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;
 
-			if (!minLinear && !mipLinear)
-				rs.samplerStates[stage].minFilter = GL_NEAREST;
-			else if (!minLinear && mipLinear)
-				rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
-			else if (minLinear && !mipLinear)
-				rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
-			else
+		if (!minLinear && !mipLinear)
+			rs.samplerStates[stage].minFilter = GL_NEAREST;
+		else if (!minLinear && mipLinear)
+			rs.samplerStates[stage].minFilter = GL_NEAREST_MIPMAP_LINEAR;
+		else if (minLinear && !mipLinear)
+			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;
+		else
 #if defined(T_OPENGL_STD)
-				rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
+			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_LINEAR;
 #else
-				rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;	// Don't use trilinear filtering on OpenGL ES as it's too expensive.
+			rs.samplerStates[stage].minFilter = GL_LINEAR_MIPMAP_NEAREST;	// Don't use trilinear filtering on OpenGL ES as it's too expensive.
 #endif
 
-			rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
-			rs.samplerStates[stage].wrapS = c_glWrap[node->getAddressU()];
-			rs.samplerStates[stage].wrapT = c_glWrap[node->getAddressV()];
-		}
-		else
-		{
-			rs.samplerStates[stage].minFilter = c_glFilter[node->getMinFilter()];
-			rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
-			rs.samplerStates[stage].wrapS = GL_REPEAT;
-			rs.samplerStates[stage].wrapT = GL_REPEAT;
-		}
+		rs.samplerStates[stage].magFilter = c_glFilter[node->getMagFilter()];
+		rs.samplerStates[stage].wrapS = c_glWrap[node->getAddressU()];
+		rs.samplerStates[stage].wrapT = c_glWrap[node->getAddressV()];
+
+		if (needAddressW)
+			rs.samplerStates[stage].wrapR = c_glWrap[node->getAddressW()];
 	}
 
 	if (cx.getShader().getUniforms().find(samplerName) == cx.getShader().getUniforms().end())
@@ -971,6 +986,19 @@ void emitSampler(GlslContext& cx, Sampler* node)
 
 	if (cx.inFragment())
 	{
+#if defined(T_OPENGL_STD)
+		switch (texture->getType())
+		{
+		case GtTexture2D:
+			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+			break;
+
+		case GtTexture3D:
+		case GtTextureCube:
+			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+			break;
+		}
+#else
 		switch (texture->getType())
 		{
 		case GtTexture2D:
@@ -985,6 +1013,7 @@ void emitSampler(GlslContext& cx, Sampler* node)
 			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
 		}
+#endif
 	}
 	
 	if (cx.inVertex())
@@ -993,15 +1022,13 @@ void emitSampler(GlslContext& cx, Sampler* node)
 		switch (texture->getType())
 		{
 		case GtTexture2D:
-			assign(f, out) << L"texture2DLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
+			//assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
+			assign(f, out) << L"texture2DBilinear(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
 			break;
 
 		case GtTexture3D:
-			assign(f, out) << L"texture3DLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
-			break;
-
 		case GtTextureCube:
-			assign(f, out) << L"textureCubeLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
 		}
 #else

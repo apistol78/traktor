@@ -23,10 +23,24 @@ typedef RefArray< ContextOpenGL > context_stack_t;
 
 void APIENTRY debugCallbackARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
 {
+#if !defined(_DEBUG)
+	if (severity == GL_DEBUG_SEVERITY_LOW_ARB)
+		return;
+#endif
+
+	const wchar_t* s = L"unknown";
+
+	if (severity == GL_DEBUG_SEVERITY_LOW_ARB)
+		s = L"low";
+	else if (severity == GL_DEBUG_SEVERITY_MEDIUM_ARB)
+		s = L"medium";
+	else if (severity == GL_DEBUG_SEVERITY_HIGH_ARB)
+		s = L"high";
+
 	if (message)
-		log::info << L"OpenGL: " << mbstows(message) << Endl;
+		log::info << L"OpenGL (" << s << L"): " << mbstows(message) << Endl;
 	else
-		log::info << L"OpenGL: <empty>" << Endl;
+		log::info << L"OpenGL (" << s << L"): <empty>" << Endl;
 }
 
 void APIENTRY debugCallbackAMD(GLuint id, GLenum category, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
@@ -173,17 +187,12 @@ bool ContextOpenGL::enter()
 		return false;
 
 #if defined(_WIN32)
-
 	if (!wglMakeCurrent(m_hDC, m_hRC))
 		return false;
-
 #elif defined(__APPLE__)
-
 	if (!cglwMakeCurrent(m_context))
 		return false;
-
 #elif defined(__LINUX__)
-
 	if (m_drawable)
 	{
 		if (!glXMakeCurrent(
@@ -193,7 +202,6 @@ bool ContextOpenGL::enter()
 		))
 			return false;
 	}
-
 #endif
 
 	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
@@ -207,7 +215,13 @@ bool ContextOpenGL::enter()
 	{
 		T_OGL_SAFE(glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, GL_TRUE));
 		T_OGL_SAFE(glDebugMessageCallbackARB(&debugCallbackARB, 0));
-		T_OGL_SAFE(glEnable(GL_DEBUG_OUTPUT));
+#if defined(_WIN32)
+#	if defined(_DEBUG)
+		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
+#	else
+		glEnable(GL_DEBUG_OUTPUT);
+#	endif
+#endif
 	}
 	if (glDebugMessageCallbackAMD)
 	{
@@ -423,46 +437,6 @@ void ContextOpenGL::setPermitDepth(bool permitDepth)
 	m_permitDepth = permitDepth;
 }
 
-void ContextOpenGL::setSamplerState(GLuint unit, const SamplerState& samplerState, int32_t mipCount)
-{
-	SamplerState& shadowState = m_samplerStates[unit];
-	GLenum minFilter = GL_NEAREST;
-
-	if (mipCount > 1)
-		minFilter = samplerState.minFilter;
-	else
-	{
-		if (samplerState.minFilter != GL_NEAREST)
-			minFilter = GL_LINEAR;
-		else
-			minFilter = GL_NEAREST;
-	}
-
-	//if (shadowState.minFilter != minFilter)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, minFilter));
-		shadowState.minFilter = minFilter;
-	}
-
-	//if (shadowState.magFilter != samplerState.magFilter)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-		shadowState.magFilter = samplerState.magFilter;
-	}
-
-	//if (shadowState.wrapS != samplerState.wrapS)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, samplerState.wrapS));
-		shadowState.wrapS = samplerState.wrapS;
-	}
-
-	//if (shadowState.wrapT != samplerState.wrapT)
-	{
-		T_OGL_SAFE(glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, samplerState.wrapT));
-		shadowState.wrapT = samplerState.wrapT;
-	}
-}
-
 void ContextOpenGL::deleteResource(IDeleteCallback* callback)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -472,16 +446,11 @@ void ContextOpenGL::deleteResource(IDeleteCallback* callback)
 void ContextOpenGL::deleteResources()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	if (!m_deleteResources.empty())
 	{
-		if (enter())
-		{
-			for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
-				(*i)->deleteResource();
-			m_deleteResources.resize(0);
-			leave();
-		}
+		for (std::vector< IDeleteCallback* >::iterator i = m_deleteResources.begin(); i != m_deleteResources.end(); ++i)
+			(*i)->deleteResource();
+		m_deleteResources.resize(0);
 	}
 }
 

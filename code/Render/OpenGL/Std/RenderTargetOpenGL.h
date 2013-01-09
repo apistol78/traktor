@@ -19,6 +19,8 @@ namespace traktor
 	namespace render
 	{
 
+class ContextOpenGL;
+
 /*!
  * \ingroup OGL
  */
@@ -29,7 +31,7 @@ class T_DLLCLASS RenderTargetOpenGL
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetOpenGL(GLuint colorTexture, int32_t width, int32_t height);
+	RenderTargetOpenGL(ContextOpenGL* resourceContext, GLuint colorTexture, int32_t width, int32_t height);
 
 	virtual ~RenderTargetOpenGL();
 
@@ -47,11 +49,12 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
 	
 private:
+	Ref< ContextOpenGL > m_resourceContext;
 	GLuint m_colorTexture;
 	int32_t m_width;
 	int32_t m_height;

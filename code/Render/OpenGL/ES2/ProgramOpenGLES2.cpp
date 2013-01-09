@@ -37,21 +37,6 @@ struct DeleteProgramCallback : public IContext::IDeleteCallback
 	}
 };
 
-struct FindSamplerTexture
-{
-	std::wstring m_sampler;
-
-	FindSamplerTexture(const std::wstring& sampler)
-	:	m_sampler(sampler)
-	{
-	}
-
-	bool operator () (const SamplerTexture& st) const
-	{
-		return st.sampler == m_sampler;
-	}
-};
-
 bool storeIfNotEqual(const float* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
@@ -422,28 +407,26 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 	m_locationInstanceID = glGetUniformLocation(m_program, "_gl_instanceID");
 
 	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
-	const std::vector< std::pair< int32_t, int32_t > >& samplers = resourceOpenGL->getSamplers();
+	const std::vector< SamplerBinding >& samplers = resourceOpenGL->getSamplers();
 
 	// Map texture parameters.
-	for (std::vector< std::pair< int32_t, int32_t > >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	for (std::vector< SamplerBinding >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
 	{
-		const std::wstring& texture = textures[i->first];
-		int32_t stage = i->second;
+		const std::wstring& texture = textures[i->texture];
 
 		handle_t handle = getParameterHandle(texture);
-
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
 			m_parameterMap[handle] = m_textures.size();
 			m_textures.push_back(0);
 		}
 		
-		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(stage);
+		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(i->stage);
 		
 		Sampler sampler;
 		sampler.locationTexture = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];
-		sampler.stage = stage;
+		sampler.stage = i->stage;
 
 		m_samplers.push_back(sampler);
 	}

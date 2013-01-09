@@ -10,8 +10,19 @@ namespace traktor
 
 #if !defined(__APPLE__)
 
+#	if defined(_WIN32)
 // WGL_ARB_create_context
 PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB = 0;
+#	endif
+
+// GL_???
+PFNGLTEXIMAGE3DPROC glTexImage3D = 0;
+
+// GL_ARB_sampler_object
+PFNGLGENSAMPLERSPROC glGenSamplers = 0;
+PFNGLDELETESAMPLERSPROC glDeleteSamplers = 0;
+PFNGLBINDSAMPLERPROC glBindSampler = 0;
+PFNGLSAMPLERPARAMETERIPROC glSamplerParameteri = 0;
 
 // GL_ARB_shader_objects
 // GL_ARB_shading_language_100
@@ -73,6 +84,7 @@ PFNGLBLENDEQUATIONEXTPROC glBlendEquationEXT = 0;
 
 // GL_ARB_texture_compression
 PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D = 0;
+PFNGLCOMPRESSEDTEXIMAGE3DPROC glCompressedTexImage3D = 0;
 
 // ???
 PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements = 0;
@@ -103,6 +115,7 @@ static struct Extension
 }
 s_extensions[] =
 {
+	// OpenGL extensions.
 	{ "GL_ARB_vertex_buffer_object", false, true, false },
 	{ "GL_ARB_texture_non_power_of_two", false, true, false },
 	{ "GL_ARB_texture_float", false, true, false },
@@ -112,9 +125,8 @@ s_extensions[] =
 	{ "GL_EXT_framebuffer_object", false, true, false },
 	{ "GL_EXT_framebuffer_multisample", false, true, false },
 	{ "GL_ARB_half_float_vertex", false, true, false },
-	{ "GL_KHR_debug", false, true, false },
-	{ "GL_AMD_debug_output", false, true, false },
 
+	// Internal extensions.
 	{ "T_rendertarget_non_power_of_two", true, true, true },
 	{ "T_rendertarget_nearest_filter_only", false, true, true }
 };
@@ -198,9 +210,7 @@ bool opengl_initialize_extensions()
 		}
 
 #		define RESOLVE_OPTIONAL(fp) \
-		if (!(*(PROC*)&fp = wglGetProcAddress(#fp))) { \
-			log::warning << L"OpenGL extension \"" << T_WIDEN(#fp) << L"\" not supported" << Endl; \
-		}
+		*(PROC*)&fp = wglGetProcAddress(#fp);
 
 #	else	// LINUX
 
@@ -211,14 +221,23 @@ bool opengl_initialize_extensions()
 		}
 
 #		define RESOLVE_OPTIONAL(fp) \
-		if (!(*(intptr_t*)&fp = (intptr_t)glXGetProcAddressARB(#fp))) { \
-			log::warning << L"OpenGL extension \"" << T_WIDEN(#fp) << L"\" not supported" << Endl; \
-		}
+		*(intptr_t*)&fp = (intptr_t)glXGetProcAddressARB(#fp);
 
 #	endif
 
+#	if defined(_WIN32)
 	// WGL_ARB_create_context
 	RESOLVE(wglCreateContextAttribsARB);
+#	endif
+
+	// GL_???
+	RESOLVE(glTexImage3D);
+
+	// GL_ARB_sampler_object
+	RESOLVE(glGenSamplers);
+	RESOLVE(glDeleteSamplers);
+	RESOLVE(glBindSampler);
+	RESOLVE(glSamplerParameteri);
 
 	// GL_ARB_shader_objects
 	// GL_ARB_shading_language_100
@@ -280,6 +299,7 @@ bool opengl_initialize_extensions()
 
 	// GL_ARB_texture_compression
 	RESOLVE(glCompressedTexImage2D);
+	RESOLVE(glCompressedTexImage3D);
 
 	// ???
 	RESOLVE(glDrawRangeElements);
@@ -291,6 +311,7 @@ bool opengl_initialize_extensions()
 	RESOLVE(glDrawElementsInstancedARB);
 	RESOLVE(glDrawArraysInstancedARB);
 
+#	if defined(_WIN32)
 	// GL_KHR_debug
 	RESOLVE_OPTIONAL(glDebugMessageCallbackARB);
 	RESOLVE_OPTIONAL(glDebugMessageControlARB);
@@ -298,7 +319,7 @@ bool opengl_initialize_extensions()
 	// GL_AMD_debug_output
 	RESOLVE_OPTIONAL(glDebugMessageCallbackAMD);
 	RESOLVE_OPTIONAL(glDebugMessageEnableAMD);
-
+#	endif
 #endif
 
 	return true;

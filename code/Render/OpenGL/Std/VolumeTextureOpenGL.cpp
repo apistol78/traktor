@@ -1,5 +1,7 @@
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/IContext.h"
+#include "Render/OpenGL/Std/ContextOpenGL.h"
+#include "Render/OpenGL/Std/Extensions.h"
+#include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 
 namespace traktor
@@ -35,12 +37,67 @@ VolumeTextureOpenGL::VolumeTextureOpenGL(IContext* resourceContext)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_depth(0)
+,	m_pixelSize(0)
+,	m_components(0)
+,	m_format(0)
+,	m_type(0)
 {
+}
+
+VolumeTextureOpenGL::~VolumeTextureOpenGL()
+{
+	destroy();
 }
 
 bool VolumeTextureOpenGL::create(const VolumeTextureCreateDesc& desc)
 {
-	return false;
+	m_width = desc.width;
+	m_height = desc.height;
+	m_depth = desc.depth;
+
+	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
+		return false;
+
+	T_OGL_SAFE(glGenTextures(1, &m_textureName));
+
+	if (desc.immutable)
+	{
+		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
+		T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
+
+		if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
+		{
+			uint32_t mipPitch = getTextureMipPitch(desc.format, m_width, m_height);
+			T_OGL_SAFE(glCompressedTexImage3D(
+				GL_TEXTURE_3D,
+				0,
+				m_components,
+				m_width,
+				m_height,
+				m_depth,
+				0,
+				mipPitch,
+				desc.initialData[0].data
+			));
+		}
+		else
+		{
+			T_OGL_SAFE(glTexImage3D(
+				GL_TEXTURE_3D,
+				0,
+				m_components,
+				m_width,
+				m_height,
+				m_depth,
+				0,
+				m_format,
+				m_type,
+				desc.initialData[0].data
+			));
+		}
+	}
+
+	return true;
 }
 
 void VolumeTextureOpenGL::destroy()
@@ -72,13 +129,17 @@ int VolumeTextureOpenGL::getDepth() const
 	return m_depth;
 }
 
-void VolumeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void VolumeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture)
 {
-	T_FATAL_ERROR;
+	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
+	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
+	T_OGL_SAFE(glBindSampler(unit, sampler[0]));
+	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
 }
 
 void VolumeTextureOpenGL::bindSize(GLint locationSize)
 {
+	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(m_depth), GLfloat(1.0f)));
 }
 
 	}

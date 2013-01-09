@@ -1,6 +1,7 @@
 #ifndef traktor_render_CubeTextureOpenGL_H
 #define traktor_render_CubeTextureOpenGL_H
 
+#include "Core/Misc/AutoPtr.h"
 #include "Render/ICubeTexture.h"
 #include "Render/Types.h"
 #include "Render/OpenGL/ITextureBinding.h"
@@ -52,7 +53,7 @@ public:
 	
 	// ITextureBinding
 	
-	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
 	
@@ -65,7 +66,7 @@ private:
 	GLint m_components;
 	GLenum m_format;
 	GLenum m_type;
-	std::vector< unsigned char > m_data;
+	AutoArrayPtr< uint8_t > m_data;
 };
 
 	}

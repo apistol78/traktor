@@ -205,8 +205,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1874</first>
-				<second>-99</second>
+				<first>1894</first>
+				<second>-130</second>
 			</position>
 			<fragmentGuid>{B633DBF6-FC42-5341-B0D8-940670973041}</fragmentGuid>
 			<inputPins>
@@ -401,8 +401,8 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-873</first>
-				<second>-131</second>
+				<first>-957</first>
+				<second>-87</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -438,8 +438,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-337</first>
-				<second>-290</second>
+				<first>-322</first>
+				<second>-302</second>
 			</position>
 			<parameterName>Eye</parameterName>
 			<type>PtVector</type>
@@ -467,8 +467,8 @@ Generated texture from surface cache.
 			]]>
 			</comment>
 			<position>
-				<first>624</first>
-				<second>-28</second>
+				<first>623</first>
+				<second>-25</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -481,8 +481,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>377</first>
-				<second>-48</second>
+				<first>402</first>
+				<second>-35</second>
 			</position>
 			<parameterName>Surface</parameterName>
 			<type>PtTexture2D</type>
@@ -523,8 +523,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>284</first>
-				<second>83</second>
+				<first>289</first>
+				<second>88</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -599,15 +599,15 @@ Generated texture from surface cache.
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>887</first>
-				<second>-449</second>
+				<first>901</first>
+				<second>-470</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>724</first>
-				<second>-379</second>
+				<first>672</first>
+				<second>-337</second>
 			</position>
 			<swizzle>xzy</swizzle>
 		</item>
@@ -643,8 +643,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>1472</first>
-				<second>-131</second>
+				<first>1447</first>
+				<second>-147</second>
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>
@@ -653,8 +653,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>1751</first>
-				<second>-47</second>
+				<first>1669</first>
+				<second>-78</second>
 			</position>
 		</item>
 	</nodes>
@@ -1321,16 +1321,6 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
-				<name>T_Normal</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[56]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[57]"/>
 				<name>Output</name>
 			</source>
@@ -1421,16 +1411,6 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[62]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[58]"/>
 				<name>Output</name>
 			</source>
@@ -1467,6 +1447,26 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[57]"/>
 				<name>ZAxis</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[62]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>T_Normal</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[56]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

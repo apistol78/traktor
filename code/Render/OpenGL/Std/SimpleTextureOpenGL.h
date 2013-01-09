@@ -50,7 +50,7 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
 
