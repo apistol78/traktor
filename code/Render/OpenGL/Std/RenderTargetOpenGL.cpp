@@ -6,11 +6,32 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct DeleteTextureCallback : public IContext::IDeleteCallback
+{
+	GLuint m_textureName;
+
+	DeleteTextureCallback(GLuint textureName)
+	:	m_textureName(textureName)
+	{
+	}
+
+	virtual void deleteResource()
+	{
+		T_OGL_SAFE(glDeleteTextures(1, &m_textureName));
+		delete this;
+	}
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetOpenGL", RenderTargetOpenGL, ISimpleTexture)
 
-RenderTargetOpenGL::RenderTargetOpenGL(GLuint colorTexture, int32_t width, int32_t height)
-:	m_colorTexture(colorTexture)
+RenderTargetOpenGL::RenderTargetOpenGL(ContextOpenGL* resourceContext, GLuint colorTexture, int32_t width, int32_t height)
+:	m_resourceContext(resourceContext)
+,	m_colorTexture(colorTexture)
 ,	m_width(width)
 ,	m_height(height)
 {
@@ -23,6 +44,12 @@ RenderTargetOpenGL::~RenderTargetOpenGL()
 
 void RenderTargetOpenGL::destroy()
 {
+	if (m_colorTexture)
+	{
+		//if (m_resourceContext)
+		//	m_resourceContext->deleteResource(new DeleteTextureCallback(m_colorTexture));
+		m_colorTexture = 0;
+	}
 }
 
 ITexture* RenderTargetOpenGL::resolve()
@@ -49,14 +76,11 @@ void RenderTargetOpenGL::unlock(int level)
 {
 }
 
-void RenderTargetOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void RenderTargetOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_colorTexture));
-
-	if (!opengl_have_extension(E_T_rendertarget_nearest_filter_only))
-		renderContext->setSamplerState(unit, samplerState, 0);
-
+	T_OGL_SAFE(glBindSampler(unit, sampler[0]));
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
 }
 

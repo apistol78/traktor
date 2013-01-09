@@ -3,6 +3,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/XInput2.h>
 #include "Core/Platform.h"
 #include "Core/RefArray.h"
 #include "Input/IInputDriver.h"
@@ -38,6 +39,7 @@ public:
 private:
 	Display* m_display;
 	Window m_window;
+	RefArray< IInputDevice > m_devices;
 };
 
 	}

@@ -48,8 +48,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-1098</first>
-				<second>-79</second>
+				<first>-1163</first>
+				<second>-27</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -81,8 +81,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-385</first>
-				<second>129</second>
+				<first>-392</first>
+				<second>136</second>
 			</position>
 			<parameterName>Heightfield</parameterName>
 			<type>PtTexture2D</type>
@@ -147,8 +147,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-720</first>
-				<second>261</second>
+				<first>-728</first>
+				<second>256</second>
 			</position>
 			<parameterName>WorldExtent</parameterName>
 			<type>PtVector</type>
@@ -175,8 +175,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>192</first>
-				<second>293</second>
+				<first>204</first>
+				<second>268</second>
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>
@@ -185,8 +185,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>358</first>
-				<second>313</second>
+				<first>403</first>
+				<second>310</second>
 			</position>
 			<parameterName>Projection</parameterName>
 			<type>PtMatrix</type>
@@ -195,8 +195,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1428</first>
-				<second>-102</second>
+				<first>1397</first>
+				<second>15</second>
 			</position>
 			<fragmentGuid>{B633DBF6-FC42-5341-B0D8-940670973041}</fragmentGuid>
 			<inputPins>
@@ -352,8 +352,8 @@ Generated texture from surface cache.
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-873</first>
-				<second>-131</second>
+				<first>-858</first>
+				<second>-27</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -376,15 +376,15 @@ Generated texture from surface cache.
 		<item type="traktor.render.Transform">
 			<comment/>
 			<position>
-				<first>1098</first>
-				<second>205</second>
+				<first>1076</first>
+				<second>141</second>
 			</position>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>559</first>
-				<second>-258</second>
+				<first>372</first>
+				<second>-156</second>
 			</position>
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
 			<inputPins>
@@ -403,15 +403,15 @@ Generated texture from surface cache.
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>366</first>
-				<second>-217</second>
+				<first>294</first>
+				<second>-136</second>
 			</position>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>955</first>
-				<second>277</second>
+				<first>925</first>
+				<second>194</second>
 			</position>
 			<parameterName>View</parameterName>
 			<type>PtMatrix</type>

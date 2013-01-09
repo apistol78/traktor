@@ -13,8 +13,19 @@ namespace traktor
 /*! \ingroup OGL */
 //@{
 
+#	if defined(_WIN32)
 // WGL_ARB_create_context
 extern PFNWGLCREATECONTEXTATTRIBSARBPROC wglCreateContextAttribsARB;
+#	endif
+
+// GL_???
+extern PFNGLTEXIMAGE3DPROC glTexImage3D;
+
+// GL_ARB_sampler_object
+extern PFNGLGENSAMPLERSPROC glGenSamplers;
+extern PFNGLDELETESAMPLERSPROC glDeleteSamplers;
+extern PFNGLBINDSAMPLERPROC glBindSampler;
+extern PFNGLSAMPLERPARAMETERIPROC glSamplerParameteri;
 
 // GL_ARB_shader_objects
 // GL_ARB_shading_language_100
@@ -76,6 +87,7 @@ extern PFNGLBLENDEQUATIONEXTPROC glBlendEquationEXT;
 
 // GL_ARB_texture_compression
 extern PFNGLCOMPRESSEDTEXIMAGE2DPROC glCompressedTexImage2D;
+extern PFNGLCOMPRESSEDTEXIMAGE3DPROC glCompressedTexImage3D;
 
 // ???
 extern PFNGLDRAWRANGEELEMENTSPROC glDrawRangeElements;
@@ -113,12 +125,10 @@ enum Extensions
 	E_GL_EXT_framebuffer_object = 6,
 	E_GL_EXT_framebuffer_multisample = 7,
 	E_GL_ARB_half_float_vertex = 8,
-	E_GL_KHR_debug = 9,
-	E_GL_AMD_debug_output = 10,
-	
+
 	// Internal extensions.
-	E_T_rendertarget_non_power_of_two = 11,
-	E_T_rendertarget_nearest_filter_only = 12
+	E_T_rendertarget_non_power_of_two = 9,
+	E_T_rendertarget_nearest_filter_only = 10
 };
 
 bool opengl_initialize_extensions();

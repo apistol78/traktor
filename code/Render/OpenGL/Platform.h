@@ -2,6 +2,10 @@
 #define traktor_render_Platform_H
 
 #include "Core/Config.h"
+#if defined(_DEBUG)
+#	include "Core/Assert.h"
+#	include "Core/Io/StringOutputStream.h"
+#endif
 
 #if TARGET_OS_IPHONE || TARGET_OS_IPAD
 #	if !defined(T_OPENGL_ES2)
@@ -81,8 +85,6 @@ std::wstring getEGLErrorString(EGLint error);
 }
 
 #if defined(_DEBUG)
-#	include "Core/Assert.h"
-#	include "Core/Io/StringOutputStream.h"
 #	define T_OGL_SAFE(CALL) \
 	{ \
 		(CALL); \

@@ -13,7 +13,7 @@ GlslProgram::GlslProgram(
 	const std::wstring& vertexShader,
 	const std::wstring& fragmentShader,
 	const std::vector< std::wstring >& textures,
-	const std::vector< std::pair< int32_t, int32_t > >& samplers,
+	const std::vector< SamplerBinding >& samplers,
 	const RenderState& renderState
 )
 :	m_vertexShader(vertexShader)
@@ -39,7 +39,7 @@ const std::vector< std::wstring >& GlslProgram::getTextures() const
 	return m_textures;
 }
 
-const std::vector< std::pair< int32_t, int32_t > >& GlslProgram::getSamplers() const
+const std::vector< SamplerBinding>& GlslProgram::getSamplers() const
 {
 	return m_samplers;
 }

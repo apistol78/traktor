@@ -21,7 +21,7 @@ public:
 		const std::wstring& vertexShader,
 		const std::wstring& fragmentShader,
 		const std::vector< std::wstring >& textures,
-		const std::vector< std::pair< int32_t, int32_t > >& samplers,
+		const std::vector< SamplerBinding >& samplers,
 		const RenderState& renderState
 	);
 
@@ -31,7 +31,7 @@ public:
 
 	const std::vector< std::wstring >& getTextures() const;
 
-	const std::vector< std::pair< int32_t, int32_t > >& getSamplers() const;
+	const std::vector< SamplerBinding >& getSamplers() const;
 
 	const RenderState& getRenderState() const;
 
@@ -39,7 +39,7 @@ private:
 	std::wstring m_vertexShader;
 	std::wstring m_fragmentShader;
 	std::vector< std::wstring > m_textures;
-	std::vector< std::pair< int32_t, int32_t > > m_samplers;
+	std::vector< SamplerBinding > m_samplers;
 	RenderState m_renderState;
 };
 

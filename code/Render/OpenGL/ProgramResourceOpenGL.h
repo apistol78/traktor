@@ -23,7 +23,7 @@ public:
 		const std::string& vertexShader,
 		const std::string& fragmentShader,
 		const std::vector< std::wstring >& textures,
-		const std::vector< std::pair< int32_t, int32_t > >& samplers,
+		const std::vector< SamplerBinding >& samplers,
 		const RenderState& renderState
 	);
 
@@ -33,7 +33,7 @@ public:
 
 	const std::vector< std::wstring >& getTextures() const { return m_textures; }
 
-	const std::vector< std::pair< int32_t, int32_t > >& getSamplers() const { return m_samplers; }
+	const std::vector< SamplerBinding >& getSamplers() const { return m_samplers; }
 
 	const RenderState& getRenderState() const { return m_renderState; }
 
@@ -47,7 +47,7 @@ private:
 	std::string m_vertexShader;
 	std::string m_fragmentShader;
 	std::vector< std::wstring > m_textures;
-	std::vector< std::pair< int32_t, int32_t > > m_samplers;
+	std::vector< SamplerBinding > m_samplers;
 	RenderState m_renderState;
 	uint32_t m_hash;
 };

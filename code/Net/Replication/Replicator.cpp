@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -583,7 +584,7 @@ void Replicator::sendEvents()
 				else
 				{
 					log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (1)" << Endl;
-						
+
 					// Re-send this event to peer next iteration.
 					if (j->second.errorCount == 0)
 					{
@@ -606,7 +607,7 @@ void Replicator::sendEvents()
 				else
 				{
 					log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (2)" << Endl;
-						
+
 					// Re-send this event to peer next iteration.
 					if (
 						j->second.errorCount == 0 &&
@@ -914,7 +915,7 @@ void Replicator::receiveMessages()
 				if (peer.ghost->stateTemplate)
 				{
 					Ref< const State > state;
-					
+
 					if (msg.type == MtFullState)
 						state = peer.ghost->stateTemplate->unpack(msg.state.data, sizeof(msg.state.data));
 					else
@@ -963,7 +964,7 @@ void Replicator::receiveMessages()
 				if (peer.ghost->stateTemplate)
 				{
 					Ref< const State > state;
-					
+
 					if (msg.type == MtFullState)
 						state = peer.ghost->stateTemplate->unpack(msg.state.data, sizeof(msg.state.data));
 					else
@@ -1132,7 +1133,7 @@ void Replicator::sendPong(handle_t peerHandle, uint32_t time0)
 	msg.type = MtPong;
 	msg.time = uint32_t(m_time * 1000.0f);
 	msg.pong.time0 = time0;
-	msg.pong.latency = (i != m_peers.end()) ? uint32_t(i->second.latencyMinimum * 1000.0f) : 0;	// Report back my perception of latency to this peer. 
+	msg.pong.latency = (i != m_peers.end()) ? uint32_t(i->second.latencyMinimum * 1000.0f) : 0;	// Report back my perception of latency to this peer.
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t);
 	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);

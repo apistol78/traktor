@@ -53,6 +53,7 @@
 
 					if configuration:getTargetProfile() == "Debug" then
 --?>
+					<Add option="-march=pentium4" />
 					<Add option="-g" />
 					<Add option="-fPIC" />
 					<Add option="-DUNICODE" />
@@ -61,6 +62,7 @@
 					
 					else
 --?>
+					<Add option="-march=pentium4" />
 					<Add option="-O3" />
 					<Add option="-fPIC" />
 					<Add option="-DUNICODE" />

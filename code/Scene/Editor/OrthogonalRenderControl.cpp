@@ -515,6 +515,8 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			lx -= sign(lx) * (abs(lx) % step);
 			ty -= sign(ty) * (abs(ty) % step);
 
+			m_primitiveRenderer->pushDepthEnable(false);
+
 			for (int32_t x = lx; x <= rx; x += step)
 			{
 				float fx = x + m_cameraX;
@@ -538,6 +540,8 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 					m_colorGrid
 				);
 			}
+
+			m_primitiveRenderer->popDepthEnable();
 		}
 
 		m_primitiveRenderer->pushView(view);

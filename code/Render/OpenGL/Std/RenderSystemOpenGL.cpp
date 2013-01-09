@@ -491,19 +491,16 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
 */
 
-	Display* display = m_window->getDisplay();
-	T_ASSERT (display);
-
 	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, desc.depthBits, None };
-	XVisualInfo* visual = glXChooseVisual(display, DefaultScreen(display), attribs);
+	XVisualInfo* visual = glXChooseVisual(m_display, DefaultScreen(m_display), attribs);
 	if (!visual)
 		return 0;
 
-	GLXContext glcontext = glXCreateContext(display, visual, m_resourceContext->getGLXContext(), GL_TRUE);
+	GLXContext glcontext = glXCreateContext(m_display, visual, m_resourceContext->getGLXContext(), GL_TRUE);
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(display, (GLXDrawable)m_window->getWindow(), glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_display, (GLXDrawable)m_window->getWindow(), glcontext);
 
 	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext, m_blitHelper);
 	if (renderView->createPrimaryTarget())

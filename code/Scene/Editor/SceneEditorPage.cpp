@@ -338,7 +338,7 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 		// Ensure group is selected when editing a prefab.
 		Object* documentObject = m_context->getDocument()->getObject(0);
 		T_ASSERT (documentObject);
-		
+
 		if (world::EntityData* entityData = dynamic_type_cast< world::EntityData* >(documentObject))
 		{
 			if (parentGroupAdapter->isLayer())
@@ -404,7 +404,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		createSceneAsset();
 		updateScene();
 		createInstanceGrid();
-		
+
 		m_context->raiseSelect(this);
 	}
 	else if (command == L"Editor.Redo")
@@ -415,7 +415,7 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 		createSceneAsset();
 		updateScene();
 		createInstanceGrid();
-		
+
 		m_context->raiseSelect(this);
 	}
 	else if (command == L"Editor.Cut" || command == L"Editor.Copy")
@@ -709,7 +709,7 @@ Ref< ui::custom::GridRow > SceneEditorPage::createInstanceGridRow(EntityAdapter*
 		(entityAdapter->isSelected() ? ui::custom::GridRow::RsSelected : 0) |
 		(entityAdapter->isExpanded() ? ui::custom::GridRow::RsExpanded : 0)
 	);
-	
+
 	std::wstring entityName = entityAdapter->getName();
 	if (entityName.empty())
 		entityName = i18n::Text(L"SCENE_EDITOR_UNNAMED_ENTITY");
@@ -854,7 +854,7 @@ void SceneEditorPage::updateStatusBar()
 	StringOutputStream ss;
 	ss.setDecimals(2);
 	ss << position.x() << L", " << position.y() << L", " << position.z() << L"     ";
-	ss << rad2deg(angles.x()) << L"°, " << rad2deg(angles.y()) << L"°, " << rad2deg(angles.z()) << L"°";
+	ss << rad2deg(angles.x()) << L"\176, " << rad2deg(angles.y()) << L"\176, " << rad2deg(angles.z()) << L"\176";
 
 	m_statusBar->setText(ss.str());
 }

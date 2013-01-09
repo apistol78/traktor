@@ -40,21 +40,6 @@ struct DeleteObjectCallback : public IContext::IDeleteCallback
 	}
 };
 
-struct FindSamplerTexture
-{
-	std::wstring m_sampler;
-
-	FindSamplerTexture(const std::wstring& sampler)
-	:	m_sampler(sampler)
-	{
-	}
-
-	bool operator () (const SamplerTexture& st) const
-	{
-		return st.sampler == m_sampler;
-	}
-};
-
 bool storeIfNotEqual(const float* source, int length, float* dest)
 {
 	for (int i = 0; i < length; ++i)
@@ -354,13 +339,12 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	// Bind textures.
 	if (m_textureDirty || ms_activeProgram != this)
 	{
-		T_ASSERT (m_samplers.size() <= 8);
+		T_ASSERT (m_samplers.size() <= 16);
 
 		uint32_t nsamplers = m_samplers.size();
 		for (uint32_t i = 0; i < nsamplers; ++i)
 		{
 			const Sampler& sampler = m_samplers[i];
-			const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
 
 			ITextureBinding* tb = getTextureBinding(m_textures[sampler.texture]);
 			T_ASSERT (tb);
@@ -369,8 +353,8 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 			{
 				tb->bindSampler(
 					renderContext,
-					i,
-					samplerState,
+					sampler.stage,
+					sampler.object,
 					sampler.location
 				);
 			}
@@ -431,33 +415,54 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 
 	m_targetSize[0] =
 	m_targetSize[1] = 0.0f;
-	
+
+	m_renderState = resourceOpenGL->getRenderState();
+
 	// Get target size parameter.
 	m_locationTargetSize = glGetUniformLocationARB(m_program, "_gl_targetSize");
 
 	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
-	const std::vector< std::pair< int32_t, int32_t > >& samplers = resourceOpenGL->getSamplers();
+	const std::vector< SamplerBinding >& samplers = resourceOpenGL->getSamplers();
 
 	// Map texture parameters.
-	for (std::vector< std::pair< int32_t, int32_t > >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	for (std::vector< SamplerBinding >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
 	{
-		const std::wstring& texture = textures[i->first];
-		int32_t stage = i->second;
+		const std::wstring& texture = textures[i->texture];
 
+		// Get texture parameter handle.
 		handle_t handle = getParameterHandle(texture);
-
 		if (m_parameterMap.find(handle) == m_parameterMap.end())
 		{
 			m_parameterMap[handle] = m_textures.size();
 			m_textures.push_back(0);
 		}
 		
-		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(stage);
+		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(i->stage);
 		
 		Sampler sampler;
 		sampler.location = glGetUniformLocationARB(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];
-		sampler.stage = stage;
+		sampler.stage = i->stage;
+
+		// Create sampler object.
+		T_OGL_SAFE(glGenSamplers(2, sampler.object));
+
+		const SamplerState& samplerState = m_renderState.samplerStates[i->stage];
+
+		if (samplerState.minFilter != GL_NEAREST)
+			T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_MIN_FILTER, GL_LINEAR))
+		else
+			T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_MIN_FILTER, GL_NEAREST));
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_WRAP_R, samplerState.wrapR));
+
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_WRAP_S, samplerState.wrapS));
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_WRAP_T, samplerState.wrapT));
+		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_WRAP_R, samplerState.wrapR));
 
 		m_samplers.push_back(sampler);
 	}
@@ -574,9 +579,6 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuColor, j)).c_str());
 		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuCustom, j)).c_str());
 	}
-
-	// Create a display list from the render states.
-	m_renderState = resourceOpenGL->getRenderState();
 }
 
 	}

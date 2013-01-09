@@ -1,6 +1,7 @@
 #ifndef traktor_render_VolumeTextureOpenGL_H
 #define traktor_render_VolumeTextureOpenGL_H
 
+#include "Core/Misc/AutoPtr.h"
 #include "Render/IVolumeTexture.h"
 #include "Render/Types.h"
 #include "Render/OpenGL/ITextureBinding.h"
@@ -32,6 +33,8 @@ class T_DLLCLASS VolumeTextureOpenGL
 public:
 	VolumeTextureOpenGL(IContext* resourceContext);
 
+	virtual ~VolumeTextureOpenGL();
+
 	bool create(const VolumeTextureCreateDesc& desc);
 
 	virtual void destroy();
@@ -44,7 +47,7 @@ public:
 	
 	virtual int getDepth() const;
 
-	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
 
@@ -54,6 +57,10 @@ private:
 	int m_width;
 	int m_height;
 	int m_depth;
+	int32_t m_pixelSize;
+	GLint m_components;
+	GLenum m_format;
+	GLenum m_type;
 };
 		
 	}

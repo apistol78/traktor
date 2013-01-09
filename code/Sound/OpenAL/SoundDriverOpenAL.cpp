@@ -2,9 +2,9 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/MathConfig.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Core/Timer/Timer.h"
 #include "Sound/OpenAL/SoundDriverOpenAL.h"
 
 namespace traktor
@@ -23,7 +23,7 @@ struct CastSample
 	}
 };
 
-#if !defined(__GNUC__) && !TARGET_OS_IPHONE
+#if defined(T_MATH_USE_SSE2)
 
 static const __m128 c_clampMin(_mm_set1_ps(-1.0f));
 static const __m128 c_clampMax(_mm_set1_ps(1.0f));
@@ -110,7 +110,10 @@ bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMix
 	};
 
 	// Open device and create context.
-	m_device = alcOpenDevice(0);
+	const ALCchar* defaultDevice = alcGetString(NULL, ALC_DEFAULT_DEVICE_SPECIFIER);
+	log::info << L"OpenAL; using default device \"" << mbstows(defaultDevice) << L"\"" << Endl;
+
+	m_device = alcOpenDevice(defaultDevice);
 	if (!m_device)
 		return false;
 
@@ -119,6 +122,7 @@ bool SoundDriverOpenAL::create(const SoundDriverCreateDesc& desc, Ref< ISoundMix
 		return false;
 
 	alcMakeContextCurrent(m_context);
+	alcProcessContext(m_context);
 
 	// Determine data format.
 	int r = -1, c = -1;
@@ -175,25 +179,27 @@ void SoundDriverOpenAL::destroy()
 
 void SoundDriverOpenAL::wait()
 {
+	alcMakeContextCurrent(m_context);
+	alcProcessContext(m_context);
+
 	if (m_submitted < sizeof_array(m_buffers))
 		return;
 
 	// Wait until at least one buffer has been processed by OpenAL.
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	Timer timer; timer.start();
-
-	while (timer.getElapsedTime() < 1.0)
+	for (int32_t i = 0; i < 100; ++i)
 	{
 		ALint processed = 0;
 		alGetSourcei(m_source, AL_BUFFERS_PROCESSED, &processed);
 		if (processed > 0)
-			break;
+			return;
 
 		// Flush pending errors.
 		alGetError();
-
 		currentThread->sleep(10);
 	}
+
+	log::error << L"OpenAL error detected; timeout while waiting for processed buffer" << Endl;
 }
 
 void SoundDriverOpenAL::submit(const SoundBlock& soundBlock)

@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Math/MathUtils.h"
 #include "Core/Memory/Alloc.h"
 #include "Sound/ISoundBuffer.h"

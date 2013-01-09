@@ -17,22 +17,6 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteTextureCallback : public IContext::IDeleteCallback
-{
-	GLuint m_textureName;
-
-	DeleteTextureCallback(GLuint textureName)
-	:	m_textureName(textureName)
-	{
-	}
-
-	virtual void deleteResource()
-	{
-		T_OGL_SAFE(glDeleteTextures(1, &m_textureName));
-		delete this;
-	}
-};
-
 struct DeleteFramebufferCallback : public IContext::IDeleteCallback
 {
 	GLuint m_framebufferName;
@@ -76,21 +60,23 @@ RenderTargetSetOpenGL::~RenderTargetSetOpenGL()
 
 bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 {
+	T_ASSERT (desc.multiSample <= 1);
+
 	if (!opengl_have_extension(E_GL_EXT_framebuffer_object))
 	{
 		log::error << L"Cannot create FBO; not supported by OpenGL driver" << Endl;
 		return false;
 	}
 
-	// When using MSAA we require both MSAA framebuffer extension and framebuffer blitting.
-	if (
-		desc.multiSample > 1 &&
-		!(opengl_have_extension(E_GL_EXT_framebuffer_multisample) && opengl_have_extension(E_GL_EXT_framebuffer_blit))
-	)
-	{
-		log::error << L"Cannot create multisample FBO; not supported by OpenGL driver" << Endl;
-		return false;
-	}
+	//// When using MSAA we require both MSAA framebuffer extension and framebuffer blitting.
+	//if (
+	//	desc.multiSample > 1 &&
+	//	!(opengl_have_extension(E_GL_EXT_framebuffer_multisample) && opengl_have_extension(E_GL_EXT_framebuffer_blit))
+	//)
+	//{
+	//	log::error << L"Cannot create multisample FBO; not supported by OpenGL driver" << Endl;
+	//	return false;
+	//}
 
 	m_width = desc.width;
 	m_height = desc.height;
@@ -133,7 +119,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 		GLenum format = GL_DEPTH_STENCIL_EXT;
 #endif
 		
-		if (desc.multiSample <= 1)
+		//if (desc.multiSample <= 1)
 		{
 			T_OGL_SAFE(glRenderbufferStorageEXT(
 				GL_RENDERBUFFER_EXT,
@@ -142,16 +128,16 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 				m_height
 			));
 		}
-		else
-		{
-			T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(
-				GL_RENDERBUFFER_EXT,
-				desc.multiSample,
-				format,
-				m_width,
-				m_height
-			));
-		}
+		//else
+		//{
+		//	T_OGL_SAFE(glRenderbufferStorageMultisampleEXT(
+		//		GL_RENDERBUFFER_EXT,
+		//		desc.multiSample,
+		//		format,
+		//		m_width,
+		//		m_height
+		//	));
+		//}
 
 		T_OGL_SAFE(glFramebufferRenderbufferEXT(
 			GL_FRAMEBUFFER_EXT,
@@ -159,12 +145,16 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			GL_RENDERBUFFER_EXT,
 			m_depthBuffer
 		));
-		T_OGL_SAFE(glFramebufferRenderbufferEXT(
-			GL_FRAMEBUFFER_EXT,
-			GL_STENCIL_ATTACHMENT_EXT,
-			GL_RENDERBUFFER_EXT,
-			m_depthBuffer
-		));
+
+		if (!desc.ignoreStencil)
+		{
+			T_OGL_SAFE(glFramebufferRenderbufferEXT(
+				GL_FRAMEBUFFER_EXT,
+				GL_STENCIL_ATTACHMENT_EXT,
+				GL_RENDERBUFFER_EXT,
+				m_depthBuffer
+			));
+		}
 	}
 
 	// Create color targets.
@@ -180,7 +170,7 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 		if (!convertTargetFormat(desc.targets[i].format, internalFormat, format, type))
 			return false;
 
-		if (desc.multiSample <= 1)
+		//if (desc.multiSample <= 1)
 		{
 			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0));
 			T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_targetTextures[i]));
@@ -210,8 +200,8 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 				0
 			));
 		}
-		else
-		{
+		//else
+		//{
 			//// Multisampled color buffer.
 			//T_OGL_SAFE(glGenRenderbuffersEXT(1, &m_targetColorBuffer));
 			//T_OGL_SAFE(glBindRenderbufferEXT(GL_RENDERBUFFER_EXT, m_targetColorBuffer));
@@ -276,9 +266,10 @@ bool RenderTargetSetOpenGL::create(const RenderTargetSetCreateDesc& desc)
 			//T_OGL_SAFE(glGenFramebuffersEXT(1, &m_resolveFBO));
 			//T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, m_resolveFBO));
 			//T_OGL_SAFE(glFramebufferTexture2DEXT(GL_FRAMEBUFFER_EXT, GL_COLOR_ATTACHMENT0_EXT, GL_TEXTURE_2D, m_colorTexture, 0));
-		}
+		//}
 
 		m_renderTargets[i] = new RenderTargetOpenGL(
+			m_resourceContext,
 			m_targetTextures[i],
 			m_width,
 			m_height

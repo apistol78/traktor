@@ -80,7 +80,7 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 
-	m_data.resize(m_side * m_side * m_pixelSize);
+	m_data.reset(new uint8_t [m_side * m_side * m_pixelSize]);
 
 	if (desc.immutable)
 	{
@@ -95,7 +95,7 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 
 				T_ASSERT (desc.initialData[face * desc.mipCount + i].pitch >= side * m_pixelSize);
 				const uint8_t* s = static_cast< const uint8_t* >(desc.initialData[face * desc.mipCount + i].data);
-				uint8_t* d = static_cast< uint8_t* >(&m_data[0]);
+				uint8_t* d = m_data.ptr();
 				
 				for (int y = 0; y < side; ++y)
 				{
@@ -155,7 +155,7 @@ int CubeTextureOpenGL::getDepth() const
 bool CubeTextureOpenGL::lock(int side, int level, Lock& lock)
 {
 	lock.pitch = (m_side >> level) * m_pixelSize;
-	lock.bits = &m_data[0];
+	lock.bits = m_data.ptr();
 	return true;
 }
 
@@ -163,13 +163,16 @@ void CubeTextureOpenGL::unlock(int side, int level)
 {
 }
 
-void CubeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void CubeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
 	
-	renderContext->setSamplerState(unit, samplerState, m_mipCount);
-	
+	if (m_mipCount > 1)
+		T_OGL_SAFE(glBindSampler(unit, sampler[1]))
+	else
+		T_OGL_SAFE(glBindSampler(unit, sampler[0]));
+
 	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
 }
 

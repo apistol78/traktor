@@ -82,6 +82,8 @@ public:
 	virtual int32_t getHeight() const;
 
 private:
+	friend class GridView;
+
 	uint32_t m_state;
 	Color4ub m_background;
 	int32_t m_minimumHeight;

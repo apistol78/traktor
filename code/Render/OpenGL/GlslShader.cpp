@@ -142,7 +142,7 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 		ss << Endl;
 	}
 #else
-	ss << L"#version 110" << Endl;
+	ss << L"#version 150" << Endl;
 #endif
 
 	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
@@ -194,6 +194,22 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 		ss << L"vec4 PV(in vec4 cp0)" << Endl;
 		ss << L"{" << Endl;
 		ss << L"\treturn vec4(cp0.x, -cp0.y, cp0.z, cp0.w);" << Endl;
+		ss << L"}" << Endl;
+		ss << Endl;
+
+		// Add bilinear texture fetch.
+		ss << L"vec4 texture2DBilinear(sampler2D sampler, vec2 uv)" << Endl;
+		ss << L"{" << Endl;
+		ss << L"\tvec2 textureSize = vec2(textureSize(sampler, 0));" << Endl;
+		ss << L"\tvec2 texelSize = 1.0 / textureSize;" << Endl;
+		ss << L"\tvec4 tl = texture(sampler, uv);" << Endl;
+		ss << L"\tvec4 tr = texture(sampler, uv + vec2(texelSize.x, 0.0));" << Endl;
+		ss << L"\tvec4 bl = texture(sampler, uv + vec2(0.0, texelSize.y));" << Endl;
+		ss << L"\tvec4 br = texture(sampler, uv + texelSize);" << Endl;
+		ss << L"\tvec2 f = fract(uv * textureSize);" << Endl;
+		ss << L"\tvec4 a = mix(tl, tr, f.x);" << Endl;
+		ss << L"\tvec4 b = mix(bl, br, f.x);" << Endl;
+		ss << L"\treturn mix(a, b, f.y);" << Endl;
 		ss << L"}" << Endl;
 		ss << Endl;
 	}

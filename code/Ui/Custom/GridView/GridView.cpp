@@ -195,6 +195,19 @@ void GridView::eventButtonDown(Event* event)
 	if (mouseEvent->getButton() != MouseEvent::BtLeft)
 		return;
 
+	AutoWidgetCell* cell = hitTest(position);
+
+	// Prevent selection change when expanding row.
+	if (GridRow* row = dynamic_type_cast< GridRow* >(cell))
+	{
+		if (!row->getChildren().empty())
+		{
+			int32_t rx = row->getDepth() * 16 + 16;
+			if (position.x <= rx)
+				return;
+		}
+	}
+
 	// De-select all rows if no modifier key.
 	bool modifier = bool((state & (KsShift | KsControl)) != 0);
 	if (!modifier)
@@ -206,7 +219,6 @@ void GridView::eventButtonDown(Event* event)
 	}
 
 	// Check for row click; move selection.
-	AutoWidgetCell* cell = hitTest(position);
 	if (GridRow* row = dynamic_type_cast< GridRow* >(cell))
 	{
 		RefArray< GridRow > rows;

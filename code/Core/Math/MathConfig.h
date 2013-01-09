@@ -38,6 +38,8 @@
 #			elif !TARGET_OS_IPHONE
 #				define T_MATH_USE_SSE2
 #			endif
+#		elif defined(__LINUX__)
+#			define T_MATH_USE_SSE2
 #		endif
 #	else	// _DEBUG
 #		if defined(__APPLE__)
@@ -76,7 +78,7 @@
 #endif	// _PS3
 
 #if defined(T_MATH_USE_SSE2)
-#	if defined(_MSC_VER) || defined(__APPLE__)
+#	if defined(_MSC_VER) || defined(__APPLE__) || defined(__LINUX__)
 #		include <xmmintrin.h>
 #	endif
 #endif

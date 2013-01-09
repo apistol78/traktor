@@ -34,11 +34,11 @@ public:
 	{
 		script::Any argv[] =
 		{
-			script::Any(replicator),
-			script::Any(eventTime),
-			script::Any(int32_t(eventId)),
-			script::Any(int32_t(peerHandle)),
-			script::Any((Object*)eventObject)
+			script::CastAny< Object* >::set(replicator),
+			script::CastAny< float >::set(eventTime),
+			script::CastAny< int32_t >::set(int32_t(eventId)),
+			script::CastAny< uint64_t >::set(peerHandle),
+			script::CastAny< Object* >::set((Object*)eventObject)
 		};
 		if (m_delegate)
 			m_delegate->invoke(sizeof_array(argv), argv);

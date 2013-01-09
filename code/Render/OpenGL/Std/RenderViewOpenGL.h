@@ -149,6 +149,7 @@ private:
 	Ref< BlitHelper > m_blitHelper;
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
+	bool m_cursorVisible;
 	bool m_waitVBlank;
 	std::list< TargetScope > m_targetStack;
 

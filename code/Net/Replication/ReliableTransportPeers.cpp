@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Net/Replication/ReliableTransportPeers.h"
@@ -202,7 +203,7 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 		e.sequence = ct.sequence0;
 		if (!m_peers->send(handle, &e, 2 + size, false))
 			return false;
-		
+
 		ct.sequence0++;
 	}
 	else

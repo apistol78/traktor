@@ -11,6 +11,27 @@ namespace traktor
 		namespace
 		{
 
+class MemberSamplerBinding : public MemberComplex
+{
+public:
+	MemberSamplerBinding(const wchar_t* const name, SamplerBinding& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< GLuint >(L"stage", m_ref.stage);
+		s >> Member< GLenum >(L"target", m_ref.target);
+		s >> Member< int32_t >(L"texture", m_ref.texture);
+		return true;
+	}
+
+private:
+	SamplerBinding& m_ref;
+};
+
 class MemberSamplerState : public MemberComplex
 {
 public:
@@ -26,6 +47,7 @@ public:
 		s >> Member< GLenum >(L"magFilter", m_ref.magFilter);
 		s >> Member< GLenum >(L"wrapS", m_ref.wrapS);
 		s >> Member< GLenum >(L"wrapT", m_ref.wrapT);
+		s >> Member< GLenum >(L"wrapR", m_ref.wrapR);
 		return true;
 	}
 	
@@ -72,7 +94,7 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 4, ProgramResourceOpenGL, ProgramResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceOpenGL", 6, ProgramResourceOpenGL, ProgramResource)
 
 ProgramResourceOpenGL::ProgramResourceOpenGL()
 :	m_hash(0)
@@ -83,7 +105,7 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 	const std::string& vertexShader,
 	const std::string& fragmentShader,
 	const std::vector< std::wstring >& textures,
-	const std::vector< std::pair< int32_t, int32_t > >& samplers,
+	const std::vector< SamplerBinding >& samplers,
 	const RenderState& renderState
 )
 :	m_vertexShader(vertexShader)
@@ -97,12 +119,12 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 
 bool ProgramResourceOpenGL::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 4);
+	T_ASSERT (s.getVersion() >= 6);
 
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);
 	s >> MemberStlVector< std::wstring >(L"textures", m_textures);
-	s >> MemberStlVector< std::pair< int32_t, int32_t >, MemberStlPair< int32_t, int32_t > >(L"samplers", m_samplers);
+	s >> MemberStlVector< SamplerBinding, MemberSamplerBinding >(L"samplers", m_samplers);
 	s >> MemberRenderState(L"renderState", m_renderState);
 	s >> Member< uint32_t >(L"hash", m_hash);
 

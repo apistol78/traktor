@@ -1,5 +1,8 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Input/X11/InputDriverX11.h"
+#include "Input/X11/KeyboardDeviceX11.h"
+#include "Input/X11/MouseDeviceX11.h"
 
 namespace traktor
 {
@@ -18,26 +21,65 @@ bool InputDriverX11::create(const SystemWindow& systemWindow, uint32_t inputCate
 {
 	m_display = (Display*)systemWindow.display;
 	m_window = (Window)systemWindow.window;
+
+	log::info << L"Initializing XInput 2.0..." << Endl;
+	log::info << L" ... m_display = " << int32_t(m_display) << Endl;
+
+	static int32_t opcode = 0, event = 0, error = 0;
+	if (!XQueryExtension(m_display, "XInputExtension", &opcode, &event, &error))
+	{
+		log::error << L"X11 input failed; \"XInputExtension\" not supported" << Endl;
+		return false;
+	}
+
+	int32_t major = 2, minor = 0;
+	if (XIQueryVersion(m_display, &major, &minor) == BadRequest)
+	{
+		log::error << L"X11 input failed; Need atleast XInput 2.0" << Endl;
+		return false;
+	}
+
+	log::info << L"Using XInput " << major << L"." << minor << L"; setting up devices..." << Endl;
+
+	XIDeviceInfo* deviceInfo = 0;
+	int deviceInfoCount = 0;
+
+	deviceInfo = XIQueryDevice(m_display, XIAllMasterDevices, &deviceInfoCount);
+
+	log::info << L"Found " << deviceInfoCount << L" X11 device(s)" << Endl;
+	for (int i = 0; i < deviceInfoCount; ++i)
+	{
+		if (deviceInfo[i].use == XIMasterPointer || deviceInfo[i].use == XISlavePointer)
+		{
+			log::info << L"Mouse device " << i << L" \"" << mbstows(deviceInfo[i].name) << L"\"" << Endl;
+			Ref< MouseDeviceX11 > mouseDevice = new MouseDeviceX11();
+			m_devices.push_back(mouseDevice);
+		}
+		else if (deviceInfo[i].use == XIMasterKeyboard || deviceInfo[i].use == XISlaveKeyboard)
+		{
+			log::info << L"Keyboard device " << i << L" \"" << mbstows(deviceInfo[i].name) << L"\"" << Endl;
+			Ref< KeyboardDeviceX11 > keyboardDevice = new KeyboardDeviceX11();
+			m_devices.push_back(keyboardDevice);
+		}
+	}
+
+	XIFreeDeviceInfo(deviceInfo);
+
 	return true;
 }
 
 int InputDriverX11::getDeviceCount()
 {
-	return 0;
+	return int(m_devices.size());
 }
 
 Ref< IInputDevice > InputDriverX11::getDevice(int index)
 {
-	return 0;
+	return m_devices[index];
 }
 
 InputDriverX11::UpdateResult InputDriverX11::update()
 {
-	XEvent evt;
-	while (XCheckWindowEvent(m_display, m_window, KeyPressMask | KeyReleaseMask, &evt) == True)
-	{
-		T_DEBUG(L"Input event");
-	}
 	return UrOk;
 }
 

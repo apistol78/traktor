@@ -1034,7 +1034,7 @@ void SolutionForm::eventTreeSelect(ui::Event* event)
 
 void SolutionForm::eventTreeEdit(ui::Event* event)
 {
-	Ref< ui::TreeViewItem > treeItem = static_cast< ui::TreeViewItem* >(event->getItem().ptr());
+	Ref< ui::TreeViewItem > treeItem = static_cast< ui::TreeViewItem* >(event->getItem());
 	Ref< AggregationItem > aggregationItem = treeItem->getData< AggregationItem >(L"PRIMARY");
 	if (aggregationItem)
 		treeItem->setText(aggregationItem->getSourceFile());
@@ -1043,7 +1043,7 @@ void SolutionForm::eventTreeEdit(ui::Event* event)
 void SolutionForm::eventTreeChange(ui::Event* event)
 {
 	Ref< ui::TreeViewItem > treeItem = static_cast< ui::TreeViewItem* >(
-		static_cast< ui::CommandEvent* >(event)->getItem().ptr()
+		static_cast< ui::CommandEvent* >(event)->getItem()
 	);
 
 	Ref< Solution > solution = treeItem->getData< Solution >(L"PRIMARY");
