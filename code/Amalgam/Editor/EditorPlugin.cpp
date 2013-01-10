@@ -111,7 +111,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolBar->create(container);
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventToolBarClick));
 
-	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), 150, i18n::Text(L"AMALGAM_TARGETS"));
+	m_toolTargets = new ui::custom::ToolBarDropDown(ui::Command(L"Amalgam.Targets"), 120, i18n::Text(L"AMALGAM_TARGETS"));
 	m_toolBar->addItem(m_toolTargets);
 
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());

@@ -256,7 +256,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 1:	// Front
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveZ))
+			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveZ, m_cameraId))
 				m_renderControl = renderControl;
 		}
 		break;
@@ -264,7 +264,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 2:	// Back
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeZ))
+			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeZ, m_cameraId))
 				m_renderControl = renderControl;
 		}
 		break;
@@ -272,7 +272,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 3:	// Top
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveY))
+			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveY, m_cameraId))
 				m_renderControl = renderControl;
 		}
 		break;
@@ -280,7 +280,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 4:	// Bottom
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeY))
+			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeY, m_cameraId))
 				m_renderControl = renderControl;
 		}
 		break;
@@ -288,7 +288,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 5:	// Left
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX))
+			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::PositiveX, m_cameraId))
 				m_renderControl = renderControl;
 		}
 		break;
@@ -296,7 +296,7 @@ void DefaultRenderControl::createRenderControl(int32_t type)
 	case 6:	// Right
 		{
 			Ref< OrthogonalRenderControl > renderControl = new OrthogonalRenderControl();
-			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX))
+			if (renderControl->create(m_container, m_context, OrthogonalRenderControl::NegativeX, m_cameraId))
 				m_renderControl = renderControl;
 		}
 		break;

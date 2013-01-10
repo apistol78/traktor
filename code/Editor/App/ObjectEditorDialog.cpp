@@ -33,7 +33,7 @@ bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, ISer
 	int32_t height = m_settings->getProperty< PropertyInteger >(L"Editor.ObjectEditor.Dimensions/" + instance->getGuid().format() + L"/Height", preferredSize.cy);
 
 	StringOutputStream ss;
-	ss << L"Edit \"" << instance->getName() << L"\"";
+	ss << L"Edit \"" << instance->getName() << L"\" (" << type_name(object) << L")";
 
 	if (!ui::ConfigDialog::create(
 		parent,

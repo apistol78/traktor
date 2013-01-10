@@ -75,7 +75,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		widget->placeCell(
 			m_hostsCell,
 			ui::Rect(
-				controlRect.getCenter().x - 16,
+				controlRect.getCenter().x,
 				controlRect.getCenter().y - 10,
 				controlRect.right - 24 * 1 - 12,
 				controlRect.getCenter().y + 10

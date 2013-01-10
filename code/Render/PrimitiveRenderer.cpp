@@ -515,6 +515,43 @@ void PrimitiveRenderer::drawWireQuad(
 	drawLine(vert4, vert1, color4);
 }
 
+void PrimitiveRenderer::drawWireCircle(
+	const Vector4& center,
+	const Vector4& normal,
+	float radius,
+	float width,
+	const Color4ub& color
+)
+{
+	const Vector4 c_axis[] =
+	{
+		Vector4(0.0f, 1.0f, 0.0f),
+		Vector4(1.0f, 0.0f, 0.0f),
+		Vector4(0.0f, 1.0f, 0.0f)
+	};
+
+	Vector4 u = cross(normal, c_axis[majorAxis3(normal)]).normalized();
+	Vector4 v = cross(u, normal).normalized();
+
+	for (int32_t i = 0; i < 16; ++i)
+	{
+		float a0 = (i / 16.0f) * TWO_PI;
+		float a1 = a0 + (1.0f / 16.0f) * TWO_PI;
+
+		float u0 = cosf(a0);
+		float v0 = sinf(a0);
+		float u1 = cosf(a1);
+		float v1 = sinf(a1);
+
+		drawLine(
+			center + u * Scalar(u0 * radius) + v * Scalar(v0 * radius),
+			center + u * Scalar(u1 * radius) + v * Scalar(v1 * radius),
+			width,
+			color
+		);
+	}
+}
+
 void PrimitiveRenderer::drawWireSphere(
 	const Matrix44& frame,
 	float radius,
