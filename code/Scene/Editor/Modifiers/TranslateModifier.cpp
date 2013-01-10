@@ -98,7 +98,12 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 
 	m_axisHot = 0;
 
-	// First check squares.
+	// Check drag circles.
+	{
+		// \FIXME
+	}
+
+	// Check combo squares.
 	{
 		Winding2 w;
 		w.p.resize(4);
@@ -139,7 +144,7 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 hit:;
 	}
 
-	// If no square hit; check each line.
+	// Check each line.
 	if (Line2(center, axis[0]).classify(cursorPosition, c_guideThickness))
 		m_axisHot |= 1;
 	if (Line2(center, axis[1]).classify(cursorPosition, c_guideThickness))
@@ -262,6 +267,29 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->popDepthEnable();
 
 	primitiveRenderer->pushDepthEnable(false);
+
+	// Drag circles.
+	primitiveRenderer->drawWireCircle(
+		Vector4(axisLength + arrowLength * 3.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(1.0f, 0.0f, 0.0f, 0.0f),
+		0.2f,
+		(m_axisHot & 1) ? 3.0f : 1.0f,
+		Color4ub(255, 0, 0, 255)
+	);
+	primitiveRenderer->drawWireCircle(
+		Vector4(0.0f, axisLength + arrowLength * 3.0f, 0.0f, 1.0f),
+		Vector4(0.0f, 1.0f, 0.0f, 0.0f),
+		0.2f,
+		(m_axisHot & 2) ? 3.0f : 1.0f,
+		Color4ub(0, 255, 0, 255)
+	);
+	primitiveRenderer->drawWireCircle(
+		Vector4(0.0f, 0.0f, axisLength + arrowLength * 3.0f, 1.0f),
+		Vector4(0.0f, 0.0f, 1.0f, 0.0f),
+		0.2f,
+		(m_axisHot & 4) ? 3.0f : 1.0f,
+		Color4ub(0, 0, 255, 255)
+	);
 
 	// Guide fill squares.
 	// XY

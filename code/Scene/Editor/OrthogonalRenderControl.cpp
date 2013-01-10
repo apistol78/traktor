@@ -83,13 +83,11 @@ OrthogonalRenderControl::OrthogonalRenderControl()
 ,	m_viewPlane(PositiveX)
 ,	m_viewFarZ(0.0f)
 ,	m_magnification(10.0f)
-,	m_cameraX(0.0f)
-,	m_cameraY(0.0f)
 ,	m_dirtySize(0, 0)
 {
 }
 
-bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane)
+bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane, int32_t cameraId)
 {
 	m_context = context;
 	T_ASSERT (m_context);
@@ -130,8 +128,32 @@ bool OrthogonalRenderControl::create(ui::Widget* parent, SceneEditorContext* con
 	updateSettings();
 	updateWorldRenderer();
 
-	m_timer.start();
+	m_camera = m_context->getCamera(cameraId);
+	m_camera->setEnable(false);
 
+	switch (m_viewPlane)
+	{
+	case PositiveX:
+		m_camera->setOrientation(Quaternion(rotateY(deg2rad(90.0f))));
+		break;
+	case NegativeX:
+		m_camera->setOrientation(Quaternion(rotateY(deg2rad(-90.0f))));
+		break;
+	case PositiveY:
+		m_camera->setOrientation(Quaternion(rotateX(deg2rad(90.0f))));
+		break;
+	case NegativeY:
+		m_camera->setOrientation(Quaternion(rotateX(deg2rad(-90.0f))));
+		break;
+	case PositiveZ:
+		m_camera->setOrientation(Quaternion::identity());
+		break;
+	case NegativeZ:
+		m_camera->setOrientation(Quaternion(rotateY(deg2rad(180.0f))));
+		break;
+	}
+
+	m_timer.start();
 	return true;
 }
 
@@ -319,8 +341,9 @@ void OrthogonalRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mou
 {
 	if (mode == McmMoveXY || mode == McmMoveXZ)
 	{
-		m_cameraX += viewDelta.x();
-		m_cameraY += viewDelta.y();
+		Vector4 cameraPosition = m_camera->getPosition();
+		cameraPosition -= m_camera->getOrientation() * viewDelta.xyz0();
+		m_camera->setPosition(cameraPosition);
 	}
 }
 
@@ -355,22 +378,7 @@ Matrix44 OrthogonalRenderControl::getProjectionTransform() const
 
 Matrix44 OrthogonalRenderControl::getViewTransform() const
 {
-	switch (m_viewPlane)
-	{
-	case PositiveX:
-		return translate(m_cameraX, m_cameraY, 0.0f) * rotateY(deg2rad(-90.0f));
-	case NegativeX:
-		return translate(m_cameraX, m_cameraY, 0.0f) * rotateY(deg2rad(90.0f));
-	case PositiveY:
-		return translate(m_cameraX, m_cameraY, 0.0f) * rotateX(deg2rad(-90.0f));
-	case NegativeY:
-		return translate(m_cameraX, m_cameraY, 0.0f) * rotateX(deg2rad(90.0f));
-	case PositiveZ:
-		return translate(m_cameraX, m_cameraY, 0.0f);
-	case NegativeZ:
-		return translate(m_cameraX, m_cameraY, 0.0f) * rotateY(deg2rad(180.0f));
-	}
-	return Matrix44::identity();
+	return m_camera->getView();
 }
 
 void OrthogonalRenderControl::eventButtonDown(ui::Event* event)
@@ -497,10 +505,12 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 		// Render grid.
 		if (m_gridEnable)
 		{
+			Vector4 cameraPosition = -(m_camera->getOrientation().inverse() * m_camera->getPosition().xyz1());
+
 			float hx = worldView.width * 0.5f;
 			float hy = worldView.height * 0.5f;
 
-			Vector2 cp(m_cameraX, m_cameraY);
+			Vector2 cp(cameraPosition.x(), cameraPosition.y());
 			Vector2 vtl(-hx, -hy), vbr(hx, hy);
 			Vector2 tl = vtl - cp, br = vbr - cp;
 
@@ -519,7 +529,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 			for (int32_t x = lx; x <= rx; x += step)
 			{
-				float fx = x + m_cameraX;
+				float fx = x + cameraPosition.x();
 
 				m_primitiveRenderer->drawLine(
 					Vector4(fx, vtl.y, 0.0f, 1.0f),
@@ -531,7 +541,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 			for (int32_t y = ty; y <= by; y += step)
 			{
-				float fy = y + m_cameraY;
+				float fy = y + cameraPosition.y();
 
 				m_primitiveRenderer->drawLine(
 					Vector4(vtl.x, fy, 1.0f),

@@ -37,6 +37,7 @@ class IWorldRenderer;
 	namespace scene
 	{
 
+class Camera;
 class SceneEditorContext;
 
 class OrthogonalRenderControl : public ISceneRenderControl
@@ -56,7 +57,7 @@ public:
 
 	OrthogonalRenderControl();
 
-	bool create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane);
+	bool create(ui::Widget* parent, SceneEditorContext* context, ViewPlane viewPlane, int32_t cameraId);
 
 	void destroy();
 
@@ -101,8 +102,9 @@ private:
 	ViewPlane m_viewPlane;
 	float m_viewFarZ;
 	float m_magnification;
-	float m_cameraX;
-	float m_cameraY;
+	//float m_cameraX;
+	//float m_cameraY;
+	Ref< Camera > m_camera;
 	ui::Rect m_selectionRectangle;
 	ui::Size m_dirtySize;
 

@@ -423,7 +423,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ui::DockPane > pane = m_dock->getPane();
 	Ref< ui::DockPane > paneCenter, paneLog;
 
-	pane->split(false, 320, m_paneWest, paneCenter);
+	pane->split(false, 340, m_paneWest, paneCenter);
 	paneCenter->split(false, -250, paneCenter, m_paneEast);
 	paneCenter->split(true, -140, paneCenter, paneLog);
 	paneCenter->split(true, -200, paneCenter, m_paneSouth);
@@ -455,7 +455,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	m_tab = new ui::Tab();
 	m_tab->create(m_dock);
-	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 30);
+	m_tab->addImage(ui::Bitmap::load(c_ResourceTypes, sizeof(c_ResourceTypes), L"png"), 23);
 	m_tab->addButtonDownEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabButtonDown));
 	m_tab->addSelChangeEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabSelChange));
 	m_tab->addCloseEventHandler(ui::createMethodHandler(this, &EditorForm::eventTabClose));
