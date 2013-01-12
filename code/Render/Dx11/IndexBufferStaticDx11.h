@@ -4,14 +4,6 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Render/Dx11/IndexBufferDx11.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX11_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -22,7 +14,7 @@ class ContextDx11;
 /*!
  * \ingroup DX11
  */
-class T_DLLCLASS IndexBufferStaticDx11 : public IndexBufferDx11
+class IndexBufferStaticDx11 : public IndexBufferDx11
 {
 	T_RTTI_CLASS;
 

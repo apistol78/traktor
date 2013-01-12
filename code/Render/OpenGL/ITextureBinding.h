@@ -16,7 +16,7 @@ public:
 #if defined(T_OPENGL_STD)
 	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture) = 0;
 #else
-	virtual void bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture) = 0;
+	virtual void bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture) = 0;
 #endif
 
 	virtual void bindSize(GLint locationSize) = 0;

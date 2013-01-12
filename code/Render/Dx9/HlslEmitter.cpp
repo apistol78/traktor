@@ -826,6 +826,12 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		D3DSTENCILOP_DECR
 	};
 
+	RenderState rs = node->getState();
+
+	const State* state = dynamic_type_cast< const State* >(cx.getInputNode(node, L"State"));
+	if (state)
+		rs = state->get();
+
 	cx.enterPixel();
 
 	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
@@ -850,56 +856,56 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	}
 
 	DWORD d3dColorWriteEnable =
-		((node->getColorWriteMask() & PixelOutput::CwRed) ? D3DCOLORWRITEENABLE_RED : 0) |
-		((node->getColorWriteMask() & PixelOutput::CwGreen) ? D3DCOLORWRITEENABLE_GREEN : 0) |
-		((node->getColorWriteMask() & PixelOutput::CwBlue) ? D3DCOLORWRITEENABLE_BLUE : 0) |
-		((node->getColorWriteMask() & PixelOutput::CwAlpha) ? D3DCOLORWRITEENABLE_ALPHA : 0);
+		((rs.colorWriteMask & CwRed) ? D3DCOLORWRITEENABLE_RED : 0) |
+		((rs.colorWriteMask & CwGreen) ? D3DCOLORWRITEENABLE_GREEN : 0) |
+		((rs.colorWriteMask & CwBlue) ? D3DCOLORWRITEENABLE_BLUE : 0) |
+		((rs.colorWriteMask & CwAlpha) ? D3DCOLORWRITEENABLE_ALPHA : 0);
 
-	StateBlockDx9& state = cx.getState();
+	StateBlockDx9& sb = cx.getState();
 
-	state.setRenderState(D3DRS_CULLMODE, d3dCullMode[node->getCullMode()]);
+	sb.setRenderState(D3DRS_CULLMODE, d3dCullMode[rs.cullMode]);
 
-	if (node->getBlendEnable())
+	if (rs.blendEnable)
 	{
-		state.setRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
-		state.setRenderState(D3DRS_BLENDOP, d3dBlendOperation[node->getBlendOperation()]);
-		state.setRenderState(D3DRS_SRCBLEND, d3dBlendFactor[node->getBlendSource()]);
-		state.setRenderState(D3DRS_DESTBLEND, d3dBlendFactor[node->getBlendDestination()]);
+		sb.setRenderState(D3DRS_ALPHABLENDENABLE, TRUE);
+		sb.setRenderState(D3DRS_BLENDOP, d3dBlendOperation[rs.blendOperation]);
+		sb.setRenderState(D3DRS_SRCBLEND, d3dBlendFactor[rs.blendSource]);
+		sb.setRenderState(D3DRS_DESTBLEND, d3dBlendFactor[rs.blendDestination]);
 	}
 	else
-		state.setRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
+		sb.setRenderState(D3DRS_ALPHABLENDENABLE, FALSE);
 
-	state.setRenderState(D3DRS_ZENABLE, node->getDepthEnable() ? TRUE : FALSE);
-	state.setRenderState(D3DRS_COLORWRITEENABLE, d3dColorWriteEnable);
-	state.setRenderState(D3DRS_ZWRITEENABLE, node->getDepthWriteEnable() ? TRUE : FALSE);
+	sb.setRenderState(D3DRS_ZENABLE, rs.depthEnable ? TRUE : FALSE);
+	sb.setRenderState(D3DRS_COLORWRITEENABLE, d3dColorWriteEnable);
+	sb.setRenderState(D3DRS_ZWRITEENABLE, rs.depthWriteEnable ? TRUE : FALSE);
 #if !defined(_XBOX)
-	state.setRenderState(D3DRS_ZFUNC, d3dCompareFunction[node->getDepthFunction()]);
+	sb.setRenderState(D3DRS_ZFUNC, d3dCompareFunction[rs.depthFunction]);
 #else
-	state.setRenderState(D3DRS_ZFUNC, d3dDepthCompareFunction[node->getDepthFunction()]);
+	sb.setRenderState(D3DRS_ZFUNC, d3dDepthCompareFunction[rs.depthFunction]);
 #endif
 
-	if (node->getAlphaTestEnable())
+	if (rs.alphaTestEnable)
 	{
-		state.setRenderState(D3DRS_ALPHATESTENABLE, TRUE);
-		state.setRenderState(D3DRS_ALPHAFUNC, d3dCompareFunction[node->getAlphaTestFunction()]);
-		state.setRenderState(D3DRS_ALPHAREF, node->getAlphaTestReference());
+		sb.setRenderState(D3DRS_ALPHATESTENABLE, TRUE);
+		sb.setRenderState(D3DRS_ALPHAFUNC, d3dCompareFunction[rs.alphaTestFunction]);
+		sb.setRenderState(D3DRS_ALPHAREF, rs.alphaTestReference);
 	}
 	else
-		state.setRenderState(D3DRS_ALPHATESTENABLE, FALSE);
+		sb.setRenderState(D3DRS_ALPHATESTENABLE, FALSE);
 
-	state.setRenderState(D3DRS_FILLMODE, node->getWireframe() ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
+	sb.setRenderState(D3DRS_FILLMODE, rs.wireframe ? D3DFILL_WIREFRAME : D3DFILL_SOLID);
 
-	if (node->getStencilEnable())
+	if (rs.stencilEnable)
 	{
-		state.setRenderState(D3DRS_STENCILENABLE, TRUE);
-		state.setRenderState(D3DRS_STENCILFAIL, d3dStencilOperation[node->getStencilFail()]);
-		state.setRenderState(D3DRS_STENCILZFAIL, d3dStencilOperation[node->getStencilZFail()]);
-		state.setRenderState(D3DRS_STENCILPASS, d3dStencilOperation[node->getStencilPass()]);
-		state.setRenderState(D3DRS_STENCILFUNC, d3dCompareFunction[node->getStencilFunction()]);
-		state.setRenderState(D3DRS_STENCILREF, node->getStencilReference());
+		sb.setRenderState(D3DRS_STENCILENABLE, TRUE);
+		sb.setRenderState(D3DRS_STENCILFAIL, d3dStencilOperation[rs.stencilFail]);
+		sb.setRenderState(D3DRS_STENCILZFAIL, d3dStencilOperation[rs.stencilZFail]);
+		sb.setRenderState(D3DRS_STENCILPASS, d3dStencilOperation[rs.stencilPass]);
+		sb.setRenderState(D3DRS_STENCILFUNC, d3dCompareFunction[rs.stencilFunction]);
+		sb.setRenderState(D3DRS_STENCILREF, rs.stencilReference);
 	}
 	else
-		state.setRenderState(D3DRS_STENCILENABLE, FALSE);
+		sb.setRenderState(D3DRS_STENCILENABLE, FALSE);
 
 	return true;
 }

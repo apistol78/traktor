@@ -5,14 +5,6 @@
 #include "Render/VertexBuffer.h"
 #include "Render/Dx11/Platform.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX11_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -21,7 +13,7 @@ namespace traktor
 /*!
  * \ingroup DX11
  */
-class T_DLLCLASS VertexBufferDx11 : public VertexBuffer
+class VertexBufferDx11 : public VertexBuffer
 {
 	T_RTTI_CLASS;
 

@@ -12,6 +12,20 @@ namespace traktor
 {
 	namespace parade
 	{
+		namespace
+		{
+
+void input_InputMapping_reset_0(input::InputMapping* self)
+{
+	self->reset();
+}
+
+void input_InputMapping_reset_1(input::InputMapping* self, const std::wstring& id)
+{
+	self->reset(id);
+}
+
+		}
 
 void registerInputClasses(script::IScriptManager* scriptManager)
 {
@@ -44,7 +58,8 @@ void registerInputClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classInputSystem);
 
 	Ref< script::AutoScriptClass< input::InputMapping > > classInputMapping = new script::AutoScriptClass< input::InputMapping >();
-	classInputMapping->addMethod("reset", &input::InputMapping::reset);
+	classInputMapping->addMethod("reset", &input_InputMapping_reset_0);
+	classInputMapping->addMethod("reset", &input_InputMapping_reset_1);
 	classInputMapping->addMethod("setValue", &input::InputMapping::setValue);
 	classInputMapping->addMethod("getValue", &input::InputMapping::getValue);
 	classInputMapping->addMethod("getSource", &input::InputMapping::getSource);

@@ -1,4 +1,5 @@
 #include "Render/Shader/Nodes.h"
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/Traits/PixelNodeTraits.h"
 
 namespace traktor
@@ -49,47 +50,58 @@ PinType PixelNodeTraits::getInputPinType(
 ) const
 {
 	const PixelOutput* pixelOutputNode = checked_type_cast< const PixelOutput* >(node);
-	uint32_t writeMask = pixelOutputNode->getColorWriteMask();
 
-	if (!pixelOutputNode->getBlendEnable() && !pixelOutputNode->getAlphaTestEnable())
+	RenderState rs = pixelOutputNode->getState();
+
+	const OutputPin* statePin = shaderGraph->findSourcePin(pixelOutputNode->getInputPin(4));
+	if (statePin)
 	{
-		if (writeMask & PixelOutput::CwAlpha)
+		const State* state = dynamic_type_cast< const State* >(statePin->getNode());
+		if (!state)
 			return PntScalar4;
-		else if (writeMask & PixelOutput::CwBlue)
+
+		rs = state->get();
+	}
+
+	if (!rs.blendEnable && !rs.alphaTestEnable)
+	{
+		if (rs.colorWriteMask & CwAlpha)
+			return PntScalar4;
+		else if (rs.colorWriteMask & CwBlue)
 			return PntScalar3;
-		else if (writeMask & PixelOutput::CwGreen)
+		else if (rs.colorWriteMask & CwGreen)
 			return PntScalar2;
-		else if (writeMask & PixelOutput::CwRed)
+		else if (rs.colorWriteMask & CwRed)
 			return PntScalar1;
 		else
 			return PntVoid;
 	}
 	else
 	{
-		if (pixelOutputNode->getBlendEnable())
+		if (rs.blendEnable)
 		{
 			if (
-				pixelOutputNode->getBlendSource() == PixelOutput::BfSourceAlpha ||
-				pixelOutputNode->getBlendSource() == PixelOutput::BfOneMinusSourceAlpha ||
-				pixelOutputNode->getBlendDestination() == PixelOutput::BfSourceAlpha ||
-				pixelOutputNode->getBlendDestination() == PixelOutput::BfOneMinusSourceAlpha
+				rs.blendSource == BfSourceAlpha ||
+				rs.blendSource == BfOneMinusSourceAlpha ||
+				rs.blendDestination == BfSourceAlpha ||
+				rs.blendDestination == BfOneMinusSourceAlpha
 			)
 				return PntScalar4;
 		}
-		if (pixelOutputNode->getAlphaTestEnable())
+		if (rs.alphaTestEnable)
 			return PntScalar4;
-		if (pixelOutputNode->getAlphaToCoverageEnable())
+		if (rs.alphaToCoverageEnable)
 			return PntScalar4;
 
 		// Blend enable but not using alpha as a blend factor; determine
 		// from write mask as if opaque.
-		if (writeMask & PixelOutput::CwAlpha)
+		if (rs.colorWriteMask & CwAlpha)
 			return PntScalar4;
-		else if (writeMask & PixelOutput::CwBlue)
+		else if (rs.colorWriteMask & CwBlue)
 			return PntScalar3;
-		else if (writeMask & PixelOutput::CwGreen)
+		else if (rs.colorWriteMask & CwGreen)
 			return PntScalar2;
-		else if (writeMask & PixelOutput::CwRed)
+		else if (rs.colorWriteMask & CwRed)
 			return PntScalar1;
 		else
 			return PntVoid;

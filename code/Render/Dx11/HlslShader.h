@@ -73,6 +73,8 @@ public:
 
 	void allocateVPos();
 
+	void allocateVFace();
+
 	void allocateInstanceID();
 
 	void allocateTargetSize();
@@ -110,6 +112,7 @@ private:
 	int32_t m_nextTemporaryVariable;
 	RefArray< StringOutputStream > m_outputStreams[BtLast];
 	bool m_needVPos;
+	bool m_needVFace;
 	bool m_needTargetSize;
 	bool m_needInstanceID;
 };

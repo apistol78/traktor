@@ -15,7 +15,7 @@ bool isOpaqueMaterial(const render::ShaderGraph* shaderGraph)
 
 	for (RefArray< render::PixelOutput >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		if ((*i)->getBlendEnable())
+		if ((*i)->getState().blendEnable)
 			return false;
 	}
 

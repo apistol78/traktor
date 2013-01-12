@@ -15,6 +15,7 @@ HlslShader::HlslShader(ShaderType shaderType, IProgramHints* programHints)
 ,	m_booleanRegisterCount(0)
 ,	m_nextTemporaryVariable(0)
 ,	m_needVPos(false)
+,	m_needVFace(false)
 ,	m_needTargetSize(false)
 ,	m_needInstanceID(false)
 {
@@ -110,6 +111,11 @@ int32_t HlslShader::allocateBooleanRegister()
 void HlslShader::allocateVPos()
 {
 	m_needVPos = true;
+}
+
+void HlslShader::allocateVFace()
+{
+	m_needVFace = true;
 }
 
 void HlslShader::allocateInstanceID()
@@ -295,6 +301,9 @@ std::wstring HlslShader::getGeneratedShader()
 
 		if (m_needVPos)
 			ss << L"float4 vPos : SV_Position, ";
+
+		if (m_needVFace)
+			ss << L"bool vFace : SV_IsFrontFace, ";
 		
 		ss << L"out OutputData o)" << Endl;
 

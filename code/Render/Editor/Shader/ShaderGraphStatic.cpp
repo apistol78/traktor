@@ -197,6 +197,10 @@ Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
 		{
 			inputPin = (*i)->findInputPin(L"Texture");
 		}
+		else if (isPinTypeState(inputType))
+		{
+			inputPin = (*i)->findInputPin(L"State");
+		}
 
 		if (!inputPin)
 			return 0;

@@ -9,6 +9,7 @@
 #include "Sound/Resound/RepeatGrainData.h"
 #include "Sound/Resound/RandomGrainData.h"
 #include "Sound/Resound/SequenceGrainData.h"
+#include "Sound/Resound/SimultaneousGrainData.h"
 #include "Sound/Resound/TriggerGrainData.h"
 #include "Sound/Editor/SoundCategory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
@@ -52,6 +53,13 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 	if (const SequenceGrainData* sequenceGrain = dynamic_type_cast< const SequenceGrainData* >(grain))
 	{
 		const RefArray< IGrainData >& grains = sequenceGrain->getGrains();
+		for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
+			buildGrainDependencies(pipelineDepends, *i);
+	}
+
+	if (const SimultaneousGrainData* simultaneousGrain = dynamic_type_cast< const SimultaneousGrainData* >(grain))
+	{
+		const RefArray< IGrainData >& grains = simultaneousGrain->getGrains();
 		for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 			buildGrainDependencies(pipelineDepends, *i);
 	}

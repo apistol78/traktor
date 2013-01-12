@@ -564,19 +564,20 @@ void emitNormalize(EmitterContext& cx, Normalize* node)
 void emitPixelOutput(EmitterContext& cx, PixelOutput* node)
 {
 	cx.enterPixel();
+
 	Variable* in = cx.emitInput(node, L"Input");
 	Variable* out = cx.emitVarying(0);
 	cx.emitInstruction(OpStoreVarying, out, in);
 
-	RenderStateDesc state;
-	state.depthEnable = node->getDepthEnable();
-	state.depthWriteEnable = node->getDepthWriteEnable();
-	state.cullMode = node->getCullMode();
-	state.blendEnable = node->getBlendEnable();
-	state.blendOperation = node->getBlendOperation();
-	state.blendSource = node->getBlendSource();
-	state.blendDestination = node->getBlendDestination();
-	cx.setRenderState(state);
+	//RenderStateDesc state;
+	//state.depthEnable = node->getDepthEnable();
+	//state.depthWriteEnable = node->getDepthWriteEnable();
+	//state.cullMode = node->getCullMode();
+	//state.blendEnable = node->getBlendEnable();
+	//state.blendOperation = node->getBlendOperation();
+	//state.blendSource = node->getBlendSource();
+	//state.blendDestination = node->getBlendDestination();
+	//cx.setRenderState(state);
 }
 
 void emitReflect(EmitterContext& cx, Reflect* node)

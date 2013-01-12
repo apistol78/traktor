@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>315</first>
-				<second>364</second>
+				<first>313</first>
+				<second>354</second>
 			</position>
 			<fragmentGuid>{7F2F8712-3B18-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
@@ -49,6 +49,10 @@
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -84,13 +88,17 @@
 					<first>SpecularTerm</first>
 					<second>1</second>
 				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
+				</item>
 			</values>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>315</first>
-				<second>128</second>
+				<first>313</first>
+				<second>102</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
@@ -142,6 +150,10 @@
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -181,13 +193,17 @@
 					<first>SpecularTerm</first>
 					<second>1</second>
 				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
+				</item>
 			</values>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>315</first>
-				<second>644</second>
+				<first>313</first>
+				<second>666</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -199,6 +215,10 @@
 					<name>Mask</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -206,13 +226,17 @@
 					<first>Mask</first>
 					<second>1</second>
 				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
+				</item>
 			</values>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>315</first>
-				<second>568</second>
+				<first>313</first>
+				<second>574</second>
 			</position>
 			<fragmentGuid>{6EF33326-74C7-B640-BB38-5C57D2199FB4}</fragmentGuid>
 			<inputPins>
@@ -224,6 +248,10 @@
 					<name>Mask</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -231,12 +259,16 @@
 					<first>Mask</first>
 					<second>1</second>
 				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
+				</item>
 			</values>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-237</first>
+				<first>-236</first>
 				<second>328</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -247,7 +279,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-234</first>
+				<first>-233</first>
 				<second>360</second>
 			</position>
 			<name>DiffuseTerm</name>
@@ -258,7 +290,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-234</first>
+				<first>-233</first>
 				<second>520</second>
 			</position>
 			<name>ViewNormal</name>
@@ -269,7 +301,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-222</first>
+				<first>-221</first>
 				<second>552</second>
 			</position>
 			<name>Reflection</name>
@@ -280,7 +312,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-246</first>
+				<first>-245</first>
 				<second>584</second>
 			</position>
 			<name>ReflectionMap</name>
@@ -291,7 +323,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-235</first>
+				<first>-234</first>
 				<second>616</second>
 			</position>
 			<name>RimIntensity</name>
@@ -302,7 +334,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-218</first>
+				<first>-217</first>
 				<second>648</second>
 			</position>
 			<name>RimColor</name>
@@ -313,7 +345,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-242</first>
+				<first>-241</first>
 				<second>392</second>
 			</position>
 			<name>SpecularTerm</name>
@@ -324,7 +356,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-237</first>
+				<first>-236</first>
 				<second>488</second>
 			</position>
 			<name>ViewPosition</name>
@@ -335,7 +367,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-273</first>
+				<first>-272</first>
 				<second>424</second>
 			</position>
 			<name>SpecularRoughness</name>
@@ -346,7 +378,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-197</first>
+				<first>-196</first>
 				<second>680</second>
 			</position>
 			<name>Mask</name>
@@ -357,7 +389,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-214</first>
+				<first>-213</first>
 				<second>456</second>
 			</position>
 			<name>Emissive</name>
@@ -368,8 +400,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>315</first>
-				<second>720</second>
+				<first>313</first>
+				<second>758</second>
 			</position>
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
@@ -389,6 +421,10 @@
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
+				<item>
+					<name>State</name>
+					<optional>true</optional>
+				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -400,7 +436,22 @@
 					<first>SpecularRoughness</first>
 					<second>0</second>
 				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
+				</item>
 			</values>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-195</first>
+				<second>712</second>
+			</position>
+			<name>State</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -702,6 +753,56 @@
 			<destination>
 				<node ref="/object/nodes/item[16]"/>
 				<name>SpecularRoughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>State</name>
 			</destination>
 		</item>
 	</edges>

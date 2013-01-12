@@ -86,7 +86,7 @@ bool BlitHelper::create(ContextOpenGLES2* resourceContext)
 	m_renderState.cullFaceEnable = GL_FALSE;
 	m_renderState.blendEnable = GL_FALSE;
 	m_renderState.depthTestEnable = GL_FALSE;
-	m_renderState.colorMask = RenderState::CmAll;
+	m_renderState.colorMask = RenderStateOpenGL::CmAll;
 	m_renderState.depthMask = GL_TRUE;
 	m_renderState.alphaTestEnable = GL_FALSE;
 	m_renderState.stencilTestEnable = GL_FALSE;

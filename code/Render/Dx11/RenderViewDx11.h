@@ -9,14 +9,6 @@
 #include "Render/Dx11/StateCache.h"
 #include "Render/Dx11/Window.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX11_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -32,7 +24,7 @@ class RenderTargetSetDx11;
 /*!
  * \ingroup DX11
  */
-class T_DLLCLASS RenderViewDx11
+class RenderViewDx11
 :	public IRenderView
 ,	public IWindowListener
 {
@@ -123,6 +115,7 @@ private:
 	bool m_fullScreen;
 	bool m_waitVBlank;
 	bool m_cursorVisible;
+	bool m_targetsDirty;
 	uint32_t m_drawCalls;
 	uint32_t m_primitiveCount;
 	Ref< VertexBufferDx11 > m_currentVertexBuffer;
@@ -131,6 +124,8 @@ private:
 	std::list< RenderState > m_renderStateStack;
 	int32_t m_targetSize[2];
 	std::list< RenderEvent > m_eventQueue;
+
+	void bindTargets();
 
 	// \name IWindowListener implementation.
 	// \{

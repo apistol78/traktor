@@ -22,6 +22,20 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph, IProgramHints* programH
 {
 }
 
+Node* HlslContext::getInputNode(const InputPin* inputPin)
+{
+	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
+	return sourcePin ? sourcePin->getNode() : 0;
+}
+
+Node* HlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
+{
+	const InputPin* inputPin = node->findInputPin(inputPinName);
+	T_ASSERT (inputPin);
+
+	return getInputNode(inputPin);
+}
+
 HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);

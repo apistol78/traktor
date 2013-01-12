@@ -422,10 +422,10 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 	m_locationTargetSize = glGetUniformLocationARB(m_program, "_gl_targetSize");
 
 	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
-	const std::vector< SamplerBinding >& samplers = resourceOpenGL->getSamplers();
+	const std::vector< SamplerBindingOpenGL >& samplers = resourceOpenGL->getSamplers();
 
 	// Map texture parameters.
-	for (std::vector< SamplerBinding >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	for (std::vector< SamplerBindingOpenGL >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
 	{
 		const std::wstring& texture = textures[i->texture];
 
@@ -447,7 +447,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 		// Create sampler object.
 		T_OGL_SAFE(glGenSamplers(2, sampler.object));
 
-		const SamplerState& samplerState = m_renderState.samplerStates[i->stage];
+		const SamplerStateOpenGL& samplerState = m_renderState.samplerStates[i->stage];
 
 		if (samplerState.minFilter != GL_NEAREST)
 			T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_MIN_FILTER, GL_LINEAR))

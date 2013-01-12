@@ -15,20 +15,20 @@ struct RenderStateDesc
 {
 	bool depthEnable;
 	bool depthWriteEnable;
-	PixelOutput::CullMode cullMode;
+	CullMode cullMode;
 	bool blendEnable;
-	PixelOutput::BlendOperation blendOperation;
-	PixelOutput::BlendFactor blendSource;
-	PixelOutput::BlendFactor blendDestination;
+	BlendOperation blendOperation;
+	BlendFactor blendSource;
+	BlendFactor blendDestination;
 
 	RenderStateDesc()
 	:	depthEnable(true)
 	,	depthWriteEnable(true)
-	,	cullMode(PixelOutput::CmNever)
+	,	cullMode(CmNever)
 	,	blendEnable(false)
-	,	blendOperation(PixelOutput::BoAdd)
-	,	blendSource(PixelOutput::BfOne)
-	,	blendDestination(PixelOutput::BfZero)
+	,	blendOperation(BoAdd)
+	,	blendSource(BfOne)
+	,	blendDestination(BfZero)
 	{
 	}
 };

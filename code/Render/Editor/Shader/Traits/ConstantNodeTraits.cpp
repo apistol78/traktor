@@ -13,8 +13,10 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Color >());
 	typeSet.insert(&type_of< FragmentPosition >());
+	typeSet.insert(&type_of< FrontFace >());
 	typeSet.insert(&type_of< Instance >());
 	typeSet.insert(&type_of< Scalar >());
+	typeSet.insert(&type_of< State >());
 	typeSet.insert(&type_of< TargetSize >());
 	typeSet.insert(&type_of< Texture >());
 	typeSet.insert(&type_of< TextureSize >());
@@ -30,12 +32,14 @@ PinType ConstantNodeTraits::getOutputPinType(
 {
 	if (is_a< Color >(node) || is_a< Vector >(node))
 		return PntScalar4;
-	else if (is_a< Scalar >(node))
+	else if (is_a< Scalar >(node) || is_a< FrontFace >(node))
 		return PntScalar1;
 	else if (is_a< FragmentPosition >(node) || is_a< TargetSize >(node))
 		return PntScalar2;
 	else if (is_a< Instance >(node))
 		return PntScalar1;
+	else if (is_a< State >(node))
+		return PntState;
 	else if (is_a< Texture >(node))
 	{
 		const Texture* textureNode = checked_type_cast< const Texture*, false >(node);

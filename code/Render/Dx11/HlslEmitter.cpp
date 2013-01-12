@@ -348,6 +348,20 @@ bool emitFragmentPosition(HlslContext& cx, FragmentPosition* node)
 	return true;
 }
 
+bool emitFrontFace(HlslContext& cx, FrontFace* node)
+{
+	if (!cx.inPixel())
+		return false;
+
+	cx.getShader().allocateVFace();
+
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat);
+	assign(f, out) << L"vFace ? 1.0f : 0.0f;" << Endl;
+
+	return true;
+}
+
 bool emitIndexedUniform(HlslContext& cx, IndexedUniform* node)
 {
 	HlslVariable* index = cx.emitInput(node, L"Index");
@@ -768,7 +782,7 @@ bool emitNormalize(HlslContext& cx, Normalize* node)
 
 bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 {
-	const  D3D11_CULL_MODE d3dCullMode[] =
+	const D3D11_CULL_MODE d3dCullMode[] =
 	{
 		D3D11_CULL_NONE,
 		D3D11_CULL_FRONT,
@@ -822,6 +836,12 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		D3D11_STENCIL_OP_DECR
 	};
 
+	RenderState rs = node->getState();
+
+	const State* state = dynamic_type_cast< const State* >(cx.getInputNode(node, L"State"));
+	if (state)
+		rs = state->get();
+
 	cx.enterPixel();
 
 	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
@@ -845,21 +865,21 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		fpb << L"float4 out_Color" << i << L" = " << in[i]->cast(HtFloat4) << L";" << Endl;
 
 		// Emulate old fashion alpha test through "discard" instruction.
-		if (i == 0 && node->getAlphaTestEnable())
+		if (i == 0 && rs.alphaTestEnable)
 		{
-			float alphaRef = node->getAlphaTestReference() / 255.0f;
+			float alphaRef = rs.alphaTestReference / 255.0f;
 
-			if (node->getAlphaTestFunction() == PixelOutput::CfLess)
+			if (rs.alphaTestFunction == CfLess)
 				fpb << L"if (out_Color" << i << L".w >= " << alphaRef << L")" << Endl;
-			else if (node->getAlphaTestFunction() == PixelOutput::CfLessEqual)
+			else if (rs.alphaTestFunction == CfLessEqual)
 				fpb << L"if (out_Color" << i << L".w > " << alphaRef << L")" << Endl;
-			else if (node->getAlphaTestFunction() == PixelOutput::CfGreater)
+			else if (rs.alphaTestFunction == CfGreater)
 				fpb << L"if (out_Color" << i << L".w <= " << alphaRef << L")" << Endl;
-			else if (node->getAlphaTestFunction() == PixelOutput::CfGreaterEqual)
+			else if (rs.alphaTestFunction == CfGreaterEqual)
 				fpb << L"if (out_Color" << i << L".w < " << alphaRef << L")" << Endl;
-			else if (node->getAlphaTestFunction() == PixelOutput::CfEqual)
+			else if (rs.alphaTestFunction == CfEqual)
 				fpb << L"if (out_Color" << i << L".w != " << alphaRef << L")" << Endl;
-			else if (node->getAlphaTestFunction() == PixelOutput::CfNotEqual)
+			else if (rs.alphaTestFunction == CfNotEqual)
 				fpb << L"if (out_Color" << i << L".w == " << alphaRef << L")" << Endl;
 			else
 				return false;
@@ -870,27 +890,27 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		fpb << L"o.Color" << i << L" = out_Color" << i << L";" << Endl;
 	}
 
-	cx.getD3DRasterizerDesc().FillMode = node->getWireframe() ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
-	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[node->getCullMode()];
+	cx.getD3DRasterizerDesc().FillMode = rs.wireframe ? D3D11_FILL_WIREFRAME : D3D11_FILL_SOLID;
+	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[rs.cullMode];
 
-	cx.getD3DDepthStencilDesc().DepthEnable = node->getDepthEnable() ? TRUE : FALSE;
-	cx.getD3DDepthStencilDesc().DepthWriteMask = node->getDepthWriteEnable() ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
-	cx.getD3DDepthStencilDesc().DepthFunc = node->getDepthEnable() ? d3dCompareFunction[node->getDepthFunction()] : D3D11_COMPARISON_ALWAYS;
+	cx.getD3DDepthStencilDesc().DepthEnable = rs.depthEnable ? TRUE : FALSE;
+	cx.getD3DDepthStencilDesc().DepthWriteMask = rs.depthWriteEnable ? D3D11_DEPTH_WRITE_MASK_ALL : D3D11_DEPTH_WRITE_MASK_ZERO;
+	cx.getD3DDepthStencilDesc().DepthFunc = rs.depthEnable ? d3dCompareFunction[rs.depthFunction] : D3D11_COMPARISON_ALWAYS;
 
-	if (node->getStencilEnable())
+	if (rs.stencilEnable)
 	{
 		cx.getD3DDepthStencilDesc().StencilEnable = TRUE;
 		cx.getD3DDepthStencilDesc().StencilReadMask = 0xff;
 		cx.getD3DDepthStencilDesc().StencilWriteMask = 0xff;
-		cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = d3dStencilOperation[node->getStencilFail()];
-		cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = d3dStencilOperation[node->getStencilZFail()];
-		cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = d3dStencilOperation[node->getStencilPass()];
-		cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
-		cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = d3dStencilOperation[node->getStencilFail()];
-		cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = d3dStencilOperation[node->getStencilZFail()];
-		cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = d3dStencilOperation[node->getStencilPass()];
-		cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
-		cx.setStencilReference(node->getStencilReference());
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = d3dStencilOperation[rs.stencilFail];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = d3dStencilOperation[rs.stencilZFail];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = d3dStencilOperation[rs.stencilPass];
+		cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = d3dCompareFunction[rs.stencilFunction];
+		cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = d3dStencilOperation[rs.stencilFail];
+		cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = d3dStencilOperation[rs.stencilZFail];
+		cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = d3dStencilOperation[rs.stencilPass];
+		cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[rs.stencilFunction];
+		cx.setStencilReference(rs.stencilReference);
 	}
 	else
 	{
@@ -908,14 +928,14 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		cx.setStencilReference(0);
 	}
 
-	cx.getD3DBlendDesc().AlphaToCoverageEnable = node->getAlphaToCoverageEnable() ? TRUE : FALSE;
+	cx.getD3DBlendDesc().AlphaToCoverageEnable = rs.alphaToCoverageEnable ? TRUE : FALSE;
 
-	if (node->getBlendEnable())
+	if (rs.blendEnable)
 	{
 		cx.getD3DBlendDesc().RenderTarget[0].BlendEnable = TRUE;
-		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = d3dBlendFactor[node->getBlendSource()];
-		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = d3dBlendFactor[node->getBlendDestination()];
-		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = d3dBlendOperation[node->getBlendOperation()];
+		cx.getD3DBlendDesc().RenderTarget[0].SrcBlend = d3dBlendFactor[rs.blendSource];
+		cx.getD3DBlendDesc().RenderTarget[0].DestBlend = d3dBlendFactor[rs.blendDestination];
+		cx.getD3DBlendDesc().RenderTarget[0].BlendOp = d3dBlendOperation[rs.blendOperation];
 	}
 	else
 	{
@@ -926,13 +946,13 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	}
 
 	UINT8 d3dWriteMask = 0;
-	if (node->getColorWriteMask() & PixelOutput::CwRed)
+	if (rs.colorWriteMask & CwRed)
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_RED;
-	if (node->getColorWriteMask() & PixelOutput::CwGreen)
+	if (rs.colorWriteMask & CwGreen)
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_GREEN;
-	if (node->getColorWriteMask() & PixelOutput::CwBlue)	
+	if (rs.colorWriteMask & CwBlue)	
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_BLUE;
-	if (node->getColorWriteMask() & PixelOutput::CwAlpha)
+	if (rs.colorWriteMask & CwAlpha)
 		d3dWriteMask |= D3D11_COLOR_WRITE_ENABLE_ALPHA;
 
 	for (int32_t i = 0; i < sizeof_array(in); ++i)
@@ -1877,6 +1897,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Exp >()] = new EmitterCast< Exp >(emitExp);
 	m_emitters[&type_of< Fraction >()] = new EmitterCast< Fraction >(emitFraction);
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
+	m_emitters[&type_of< FrontFace >()] = new EmitterCast< FrontFace >(emitFrontFace);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
 	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);

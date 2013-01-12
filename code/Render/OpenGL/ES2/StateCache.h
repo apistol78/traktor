@@ -17,7 +17,7 @@ class StateCache : public Object
 public:
 	StateCache();
 	
-	void setRenderState(const RenderState& renderState, bool invertCull);
+	void setRenderState(const RenderStateOpenGL& renderState, bool invertCull);
 	
 	void setColorMask(uint32_t colorMask);
 	
@@ -32,7 +32,7 @@ public:
 	void setProgram(GLuint program);
 
 private:
-	RenderState m_renderState;
+	RenderStateOpenGL m_renderState;
 	GLint m_arrayBuffer;
 	GLint m_elemArrayBuffer;
 	GLint m_vertexArrayObject;

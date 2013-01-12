@@ -25,6 +25,10 @@ class GlslContext
 public:
 	GlslContext(const ShaderGraph* shaderGraph);
 
+	Node* getInputNode(const InputPin* inputPin);
+
+	Node* getInputNode(Node* node, const std::wstring& inputPinName);
+
 	GlslVariable* emitInput(const InputPin* inputPin);
 
 	GlslVariable* emitInput(Node* node, const std::wstring& inputPinName);
@@ -59,7 +63,7 @@ public:
 
 	GlslEmitter& getEmitter();
 
-	RenderState& getRenderState();
+	RenderStateOpenGL& getRenderState();
 
 	void defineTexture(const std::wstring& texture);
 
@@ -67,7 +71,7 @@ public:
 
 	const std::vector< std::wstring >& getTextures() const;
 
-	const std::vector< SamplerBinding >& getSamplers() const;
+	const std::vector< SamplerBindingOpenGL >& getSamplers() const;
 
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
@@ -75,13 +79,13 @@ private:
 	GlslShader m_fragmentShader;
 	GlslShader* m_currentShader;
 	GlslEmitter m_emitter;
-	RenderState m_renderState;
+	RenderStateOpenGL m_renderState;
 	int32_t m_nextStage;
 	bool m_requireDerivatives;
 	bool m_requireTranspose;
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< std::wstring > m_textures;
-	std::vector< SamplerBinding > m_samplers;
+	std::vector< SamplerBindingOpenGL > m_samplers;
 	std::map< uint32_t, int32_t > m_samplersMap;
 };
 

@@ -13,6 +13,126 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+class MemberRenderState : public MemberComplex
+{
+public:
+	MemberRenderState(RenderState& ref)
+	:	MemberComplex(L"", false)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		const MemberEnum< CullMode >::Key kCullMode[] =
+		{
+			{ L"CmNever", CmNever },
+			{ L"CmClockWise", CmClockWise },
+			{ L"CmCounterClockWise", CmCounterClockWise },
+			{ 0, 0 }
+		};
+
+		const MemberEnum< BlendOperation >::Key kBlendOperations[] =
+		{
+			{ L"BoAdd", BoAdd },
+			{ L"BoSubtract", BoSubtract },
+			{ L"BoReverseSubtract", BoReverseSubtract },
+			{ L"BoMin", BoMin },
+			{ L"BoMax", BoMax },
+			{ 0, 0 }
+		};
+
+		const MemberEnum< BlendFactor >::Key kBlendFactors[] =
+		{
+			{ L"BfOne", BfOne },
+			{ L"BfZero", BfZero },
+			{ L"BfSourceColor", BfSourceColor },
+			{ L"BfOneMinusSourceColor", BfOneMinusSourceColor },
+			{ L"BfDestinationColor", BfDestinationColor },
+			{ L"BfOneMinusDestinationColor", BfOneMinusDestinationColor },
+			{ L"BfSourceAlpha", BfSourceAlpha },
+			{ L"BfOneMinusSourceAlpha", BfOneMinusSourceAlpha },
+			{ L"BfDestinationAlpha", BfDestinationAlpha },
+			{ L"BfOneMinusDestinationAlpha", BfOneMinusDestinationAlpha },
+			{ 0, 0 }
+		};
+
+		const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
+		{
+			{ L"CfAlways", CfAlways },
+			{ L"CfNever", CfNever },
+			{ L"CfLess", CfLess },
+			{ L"CfLessEqual", CfLessEqual },
+			{ L"CfGreater", CfGreater },
+			{ L"CfGreaterEqual", CfGreaterEqual },
+			{ L"CfEqual", CfEqual },
+			{ L"CfNotEqual", CfNotEqual },
+			{ 0, 0 }
+		};
+
+		const MemberBitMask::Bit kColorWriteBits[] =
+		{
+			{ L"red", CwRed },
+			{ L"green", CwGreen },
+			{ L"blue", CwBlue },
+			{ L"alpha", CwAlpha },
+			{ 0, 0 }
+		};
+
+		const MemberEnum< StencilOperation >::Key kStencilOperations[] =
+		{
+			{ L"SoKeep", SoKeep },
+			{ L"SoZero", SoZero },
+			{ L"SoReplace", SoReplace },
+			{ L"SoIncrementSaturate", SoIncrementSaturate },
+			{ L"SoDecrementSaturate", SoDecrementSaturate },
+			{ L"SoInvert", SoInvert },
+			{ L"SoIncrement", SoIncrement },
+			{ L"SoDecrement", SoDecrement },
+			{ 0, 0 }
+		};
+
+		s >> MemberEnum< CullMode >(L"cullMode", m_ref.cullMode, kCullMode);
+		s >> Member< bool >(L"blendEnable", m_ref.blendEnable);
+		s >> MemberEnum< BlendOperation >(L"blendOperation", m_ref.blendOperation, kBlendOperations);
+		s >> MemberEnum< BlendFactor >(L"blendSource", m_ref.blendSource, kBlendFactors);
+		s >> MemberEnum< BlendFactor >(L"blendDestination", m_ref.blendDestination, kBlendFactors);
+		s >> MemberBitMask(L"colorWriteMask", m_ref.colorWriteMask, kColorWriteBits);
+		s >> Member< bool >(L"depthEnable", m_ref.depthEnable);
+		s >> Member< bool >(L"depthWriteEnable", m_ref.depthWriteEnable);
+		s >> MemberEnum< CompareFunction >(L"depthFunction", m_ref.depthFunction, kCompareFunctions);
+		s >> Member< bool >(L"alphaTestEnable", m_ref.alphaTestEnable);
+		s >> MemberEnum< CompareFunction >(L"alphaTestFunction", m_ref.alphaTestFunction, kCompareFunctions);
+		s >> Member< int32_t >(L"alphaTestReference", m_ref.alphaTestReference);
+
+		if (s.getVersion() >= 4)
+			s >> Member< bool >(L"alphaToCoverageEnable", m_ref.alphaToCoverageEnable);
+
+		if (s.getVersion() >= 1)
+			s >> Member< bool >(L"wireframe", m_ref.wireframe);
+
+		if (s.getVersion() >= 2)
+		{
+			s >> Member< bool >(L"stencilEnable", m_ref.stencilEnable);
+			s >> MemberEnum< StencilOperation >(L"stencilFail", m_ref.stencilFail, kStencilOperations);
+			s >> MemberEnum< StencilOperation >(L"stencilZFail", m_ref.stencilZFail, kStencilOperations);
+			s >> MemberEnum< StencilOperation >(L"stencilPass", m_ref.stencilPass, kStencilOperations);
+			s >> MemberEnum< CompareFunction >(L"stencilFunction", m_ref.stencilFunction, kCompareFunctions);
+			s >> Member< uint32_t >(L"stencilReference", m_ref.stencilReference);
+			s >> Member< uint32_t >(L"stencilMask", m_ref.stencilMask);
+		}
+
+		return true;
+	}
+
+private:
+	RenderState& m_ref;
+};
+
+		}
 
 /*---------------------------------------------------------------------------*/
 
@@ -451,6 +571,17 @@ const ImmutableNode::OutputPinDesc c_FragmentPosition_o[] = { L"Output", 0 };
 
 FragmentPosition::FragmentPosition()
 :	ImmutableNode(0, c_FragmentPosition_o)
+{
+}
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.FrontFace", 0, FrontFace, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_FrontFace_o[] = { L"Output", 0 };
+
+FrontFace::FrontFace()
+:	ImmutableNode(0, c_FrontFace_o)
 {
 }
 
@@ -941,32 +1072,11 @@ bool OutputPort::serialize(ISerializer& s)
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 4, PixelOutput, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, 0 };
+const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, 0 };
 
 PixelOutput::PixelOutput()
 :	ImmutableNode(c_PixelOutput_i, 0)
 ,	m_technique(L"Default")
-,	m_cullMode(CmCounterClockWise)
-,	m_blendEnable(false)
-,	m_blendOperation(BoAdd)
-,	m_blendSource(BfOne)
-,	m_blendDestination(BfZero)
-,	m_colorWriteMask(CwRed | CwGreen | CwBlue)
-,	m_depthEnable(true)
-,	m_depthWriteEnable(true)
-,	m_depthFunction(CfLessEqual)
-,	m_alphaTestEnable(false)
-,	m_alphaTestFunction(CfLess)
-,	m_alphaTestReference(128)
-,	m_alphaToCoverageEnable(false)
-,	m_wireframe(false)
-,	m_stencilEnable(false)
-,	m_stencilFail(SoKeep)
-,	m_stencilZFail(SoKeep)
-,	m_stencilPass(SoKeep)
-,	m_stencilFunction(CfAlways)
-,	m_stencilReference(0x00000000)
-,	m_stencilMask(0xffffffff)
 ,	m_registerCount(0)
 {
 }
@@ -981,214 +1091,14 @@ const std::wstring& PixelOutput::getTechnique() const
 	return m_technique;
 }
 
-void PixelOutput::setCullMode(CullMode cullMode)
+void PixelOutput::setState(const RenderState& state)
 {
-	m_cullMode = cullMode;
+	m_state = state;
 }
 
-PixelOutput::CullMode PixelOutput::getCullMode() const
+const RenderState& PixelOutput::getState() const
 {
-	return m_cullMode;
-}
-
-void PixelOutput::setBlendEnable(bool enable)
-{
-	m_blendEnable = enable;
-}
-
-bool PixelOutput::getBlendEnable() const
-{
-	return m_blendEnable;
-}
-
-void PixelOutput::setBlendOperation(BlendOperation blendOperation)
-{
-	m_blendOperation = blendOperation;
-}
-
-PixelOutput::BlendOperation PixelOutput::getBlendOperation() const
-{
-	return m_blendOperation;
-}
-
-void PixelOutput::setBlendSource(BlendFactor source)
-{
-	m_blendSource = source;
-}
-
-PixelOutput::BlendFactor PixelOutput::getBlendSource() const
-{
-	return m_blendSource;
-}
-
-void PixelOutput::setBlendDestination(BlendFactor destination)
-{
-	m_blendDestination = destination;
-}
-
-PixelOutput::BlendFactor PixelOutput::getBlendDestination() const
-{
-	return m_blendDestination;
-}
-
-void PixelOutput::setColorWriteMask(uint32_t writeMask)
-{
-	m_colorWriteMask = writeMask;
-}
-
-uint32_t PixelOutput::getColorWriteMask() const
-{
-	return m_colorWriteMask;
-}
-
-void PixelOutput::setDepthEnable(bool enable)
-{
-	m_depthEnable = enable;
-}
-
-bool PixelOutput::getDepthEnable() const
-{
-	return m_depthEnable;
-}
-
-void PixelOutput::setDepthWriteEnable(bool enable)
-{
-	m_depthWriteEnable = enable;
-}
-
-bool PixelOutput::getDepthWriteEnable() const
-{
-	return m_depthWriteEnable;
-}
-
-void PixelOutput::setDepthFunction(CompareFunction depthFunction)
-{
-	m_depthFunction = depthFunction;
-}
-
-PixelOutput::CompareFunction PixelOutput::getDepthFunction() const
-{
-	return m_depthFunction;
-}
-
-void PixelOutput::setAlphaTestEnable(bool enable)
-{
-	m_alphaTestEnable = enable;
-}
-
-bool PixelOutput::getAlphaTestEnable() const
-{
-	return m_alphaTestEnable;
-}
-
-void PixelOutput::setAlphaTestFunction(CompareFunction alphaFunction)
-{
-	m_alphaTestFunction = alphaFunction;
-}
-
-PixelOutput::CompareFunction PixelOutput::getAlphaTestFunction() const
-{
-	return m_alphaTestFunction;
-}
-
-void PixelOutput::setAlphaTestReference(int alphaRef)
-{
-	m_alphaTestReference = alphaRef;
-}
-
-int32_t PixelOutput::getAlphaTestReference() const
-{
-	return m_alphaTestReference;
-}
-
-void PixelOutput::setAlphaToCoverageEnable(bool enable)
-{
-	m_alphaToCoverageEnable = enable;
-}
-
-bool PixelOutput::getAlphaToCoverageEnable() const
-{
-	return m_alphaToCoverageEnable;
-}
-
-void PixelOutput::setWireframe(bool wireframe)
-{
-	m_wireframe = wireframe;
-}
-
-bool PixelOutput::getWireframe() const
-{
-	return m_wireframe;
-}
-
-void PixelOutput::setStencilEnable(bool stencilEnable)
-{
-	m_stencilEnable = stencilEnable;
-}
-
-bool PixelOutput::getStencilEnable() const
-{
-	return m_stencilEnable;
-}
-
-void PixelOutput::setStencilFail(StencilOperation stencilFail)
-{
-	m_stencilFail = stencilFail;
-}
-
-PixelOutput::StencilOperation PixelOutput::getStencilFail() const
-{
-	return m_stencilFail;
-}
-
-void PixelOutput::setStencilZFail(StencilOperation stencilZFail)
-{
-	m_stencilZFail = stencilZFail;
-}
-
-PixelOutput::StencilOperation PixelOutput::getStencilZFail() const
-{
-	return m_stencilZFail;
-}
-
-void PixelOutput::setStencilPass(StencilOperation stencilPass)
-{
-	m_stencilPass = stencilPass;
-}
-
-PixelOutput::StencilOperation PixelOutput::getStencilPass() const
-{
-	return m_stencilPass;
-}
-
-void PixelOutput::setStencilFunction(CompareFunction stencilFunction)
-{
-	m_stencilFunction = stencilFunction;
-}
-
-PixelOutput::CompareFunction PixelOutput::getStencilFunction() const
-{
-	return m_stencilFunction;
-}
-
-void PixelOutput::setStencilReference(uint32_t stencilReference)
-{
-	m_stencilReference = stencilReference;
-}
-
-uint32_t PixelOutput::getStencilReference() const
-{
-	return m_stencilReference;
-}
-
-void PixelOutput::setStencilMask(uint32_t stencilMask)
-{
-	m_stencilMask = stencilMask;
-}
-
-uint32_t PixelOutput::getStencilMask() const
-{
-	return m_stencilMask;
+	return m_state;
 }
 
 void PixelOutput::setRegisterCount(uint32_t registerCount)
@@ -1208,107 +1118,11 @@ std::wstring PixelOutput::getInformation() const
 
 bool PixelOutput::serialize(ISerializer& s)
 {
-	const MemberEnum< CullMode >::Key kCullMode[] =
-	{
-		{ L"CmNever", CmNever },
-		{ L"CmClockWise", CmClockWise },
-		{ L"CmCounterClockWise", CmCounterClockWise },
-		{ 0, 0 }
-	};
-
-	const MemberEnum< BlendOperation >::Key kBlendOperations[] =
-	{
-		{ L"BoAdd", BoAdd },
-		{ L"BoSubtract", BoSubtract },
-		{ L"BoReverseSubtract", BoReverseSubtract },
-		{ L"BoMin", BoMin },
-		{ L"BoMax", BoMax },
-		{ 0, 0 }
-	};
-
-	const MemberEnum< BlendFactor >::Key kBlendFactors[] =
-	{
-		{ L"BfOne", BfOne },
-		{ L"BfZero", BfZero },
-		{ L"BfSourceColor", BfSourceColor },
-		{ L"BfOneMinusSourceColor", BfOneMinusSourceColor },
-		{ L"BfDestinationColor", BfDestinationColor },
-		{ L"BfOneMinusDestinationColor", BfOneMinusDestinationColor },
-		{ L"BfSourceAlpha", BfSourceAlpha },
-		{ L"BfOneMinusSourceAlpha", BfOneMinusSourceAlpha },
-		{ L"BfDestinationAlpha", BfDestinationAlpha },
-		{ L"BfOneMinusDestinationAlpha", BfOneMinusDestinationAlpha },
-		{ 0, 0 }
-	};
-
-	const MemberEnum< CompareFunction >::Key kCompareFunctions[] =
-	{
-		{ L"CfAlways", CfAlways },
-		{ L"CfNever", CfNever },
-		{ L"CfLess", CfLess },
-		{ L"CfLessEqual", CfLessEqual },
-		{ L"CfGreater", CfGreater },
-		{ L"CfGreaterEqual", CfGreaterEqual },
-		{ L"CfEqual", CfEqual },
-		{ L"CfNotEqual", CfNotEqual },
-		{ 0, 0 }
-	};
-
-	const MemberBitMask::Bit kColorWriteBits[] =
-	{
-		{ L"red", CwRed },
-		{ L"green", CwGreen },
-		{ L"blue", CwBlue },
-		{ L"alpha", CwAlpha },
-		{ 0, 0 }
-	};
-
-	const MemberEnum< StencilOperation >::Key kStencilOperations[] =
-	{
-		{ L"SoKeep", SoKeep },
-		{ L"SoZero", SoZero },
-		{ L"SoReplace", SoReplace },
-		{ L"SoIncrementSaturate", SoIncrementSaturate },
-		{ L"SoDecrementSaturate", SoDecrementSaturate },
-		{ L"SoInvert", SoInvert },
-		{ L"SoIncrement", SoIncrement },
-		{ L"SoDecrement", SoDecrement },
-		{ 0, 0 }
-	};
-
 	if (!Node::serialize(s))
 		return false;
 
 	s >> Member< std::wstring >(L"technique", m_technique);
-	s >> MemberEnum< CullMode >(L"cullMode", m_cullMode, kCullMode);
-	s >> Member< bool >(L"blendEnable", m_blendEnable);
-	s >> MemberEnum< BlendOperation >(L"blendOperation", m_blendOperation, kBlendOperations);
-	s >> MemberEnum< BlendFactor >(L"blendSource", m_blendSource, kBlendFactors);
-	s >> MemberEnum< BlendFactor >(L"blendDestination", m_blendDestination, kBlendFactors);
-	s >> MemberBitMask(L"colorWriteMask", m_colorWriteMask, kColorWriteBits);
-	s >> Member< bool >(L"depthEnable", m_depthEnable);
-	s >> Member< bool >(L"depthWriteEnable", m_depthWriteEnable);
-	s >> MemberEnum< CompareFunction >(L"depthFunction", m_depthFunction, kCompareFunctions);
-	s >> Member< bool >(L"alphaTestEnable", m_alphaTestEnable);
-	s >> MemberEnum< CompareFunction >(L"alphaTestFunction", m_alphaTestFunction, kCompareFunctions);
-	s >> Member< int32_t >(L"alphaTestReference", m_alphaTestReference);
-
-	if (s.getVersion() >= 4)
-		s >> Member< bool >(L"alphaToCoverageEnable", m_alphaToCoverageEnable);
-
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"wireframe", m_wireframe);
-
-	if (s.getVersion() >= 2)
-	{
-		s >> Member< bool >(L"stencilEnable", m_stencilEnable);
-		s >> MemberEnum< StencilOperation >(L"stencilFail", m_stencilFail, kStencilOperations);
-		s >> MemberEnum< StencilOperation >(L"stencilZFail", m_stencilZFail, kStencilOperations);
-		s >> MemberEnum< StencilOperation >(L"stencilPass", m_stencilPass, kStencilOperations);
-		s >> MemberEnum< CompareFunction >(L"stencilFunction", m_stencilFunction, kCompareFunctions);
-		s >> Member< uint32_t >(L"stencilReference", m_stencilReference);
-		s >> Member< uint32_t >(L"stencilMask", m_stencilMask);
-	}
+	s >> MemberRenderState(m_state);
 
 	if (s.getVersion() >= 3)
 		s >> Member< uint32_t >(L"registerCount", m_registerCount);
@@ -1603,6 +1417,37 @@ const ImmutableNode::OutputPinDesc c_Sqrt_o[] = { L"Output", 0 };
 Sqrt::Sqrt()
 :	ImmutableNode(c_Sqrt_i, c_Sqrt_o)
 {
+}
+
+
+/*---------------------------------------------------------------------------*/
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 4, State, ImmutableNode)
+
+const ImmutableNode::OutputPinDesc c_State_o[] = { L"Output", 0 };
+
+State::State()
+:	ImmutableNode(0, c_State_o)
+{
+}
+
+void State::set(const RenderState& state)
+{
+	m_state = state;
+}
+
+const RenderState& State::get() const
+{
+	return m_state;
+}
+
+bool State::serialize(ISerializer& s)
+{
+	if (!Node::serialize(s))
+		return false;
+
+	s >> MemberRenderState(m_state);
+	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1936,7 +1781,7 @@ Truncate::Truncate()
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Type", 0, Type, ImmutableNode)
 
-const ImmutableNode::InputPinDesc c_Type_i[] = { { L"Type", false }, { L"Scalar", true }, { L"Vector", true }, { L"Matrix", true }, { L"Texture", true }, { L"Default", false }, 0 };
+const ImmutableNode::InputPinDesc c_Type_i[] = { { L"Type", false }, { L"Scalar", true }, { L"Vector", true }, { L"Matrix", true }, { L"Texture", true }, { L"State", true }, { L"Default", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Type_o[] = { L"Output", 0 };
 
 Type::Type()

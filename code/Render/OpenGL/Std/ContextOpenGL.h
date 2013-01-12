@@ -42,7 +42,7 @@ public:
 
 	GLhandleARB createShaderObject(const char* shader, GLenum shaderType);
 
-	GLuint createStateList(const RenderState& renderState);
+	GLuint createStateList(const RenderStateOpenGL& renderState);
 
 	void callStateList(GLuint listBase);
 

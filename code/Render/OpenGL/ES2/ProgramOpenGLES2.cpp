@@ -357,7 +357,7 @@ bool ProgramOpenGLES2::activate(StateCache* stateCache, float targetSize[2], flo
 	for (uint32_t i = 0; i < nsamplers; ++i)
 	{
 		const Sampler& sampler = m_samplers[i];
-		const SamplerState& samplerState = m_renderState.samplerStates[sampler.stage];
+		const SamplerStateOpenGL& samplerState = m_renderState.samplerStates[sampler.stage];
 
 		if (!m_textures[sampler.texture])
 			continue;
@@ -407,10 +407,10 @@ ProgramOpenGLES2::ProgramOpenGLES2(ContextOpenGLES2* resourceContext, GLuint pro
 	m_locationInstanceID = glGetUniformLocation(m_program, "_gl_instanceID");
 
 	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
-	const std::vector< SamplerBinding >& samplers = resourceOpenGL->getSamplers();
+	const std::vector< SamplerBindingOpenGL >& samplers = resourceOpenGL->getSamplers();
 
 	// Map texture parameters.
-	for (std::vector< SamplerBinding >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
+	for (std::vector< SamplerBindingOpenGL >::const_iterator i = samplers.begin(); i != samplers.end(); ++i)
 	{
 		const std::wstring& texture = textures[i->texture];
 

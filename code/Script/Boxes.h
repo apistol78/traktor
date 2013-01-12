@@ -256,6 +256,10 @@ public:
 
 	Aabb3 transform(const Transform& tf) const { return m_value.transform(tf); }
 
+	const Vector4& getMin() const { return m_value.mn; }
+
+	const Vector4& getMax() const { return m_value.mx; }
+
 	Vector4 getCenter() const { return m_value.getCenter(); }
 
 	Vector4 getExtent() const { return m_value.getExtent(); }

@@ -12,13 +12,13 @@ namespace traktor
 /*! \ingroup OGL */
 //@{
 
-struct SamplerBinding
+struct SamplerBindingOpenGL
 {
 	GLuint stage;
 	GLenum target;
 	int32_t texture;
 
-	SamplerBinding()
+	SamplerBindingOpenGL()
 	:	stage(0)
 	,	target(GL_INVALID_ENUM)
 	,	texture(0)
@@ -26,7 +26,7 @@ struct SamplerBinding
 	}
 };
 
-struct SamplerState
+struct SamplerStateOpenGL
 {
 	GLenum minFilter;
 	GLenum magFilter;
@@ -34,7 +34,7 @@ struct SamplerState
 	GLenum wrapT;
 	GLenum wrapR;
 
-	SamplerState()
+	SamplerStateOpenGL()
 	:	minFilter(GL_LINEAR)
 	,	magFilter(GL_LINEAR)
 	,	wrapS(GL_REPEAT)
@@ -44,7 +44,7 @@ struct SamplerState
 	}
 };
 
-struct RenderState
+struct RenderStateOpenGL
 {
 	enum
 	{
@@ -74,9 +74,9 @@ struct RenderState
 	GLenum stencilOpFail;
 	GLenum stencilOpZFail;
 	GLenum stencilOpZPass;
-	SamplerState samplerStates[16];
+	SamplerStateOpenGL samplerStates[16];
 
-	RenderState()
+	RenderStateOpenGL()
 	:	cullFaceEnable(GL_TRUE)
 	,	cullFace(GL_BACK)
 	,	blendEnable(GL_FALSE)

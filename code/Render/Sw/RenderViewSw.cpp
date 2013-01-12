@@ -535,17 +535,17 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 				bool cullReversed = false;
 				switch (m_currentProgram->getRenderState().cullMode)
 				{
-				case PixelOutput::CmNever:
+				case CmNever:
 					if (nz > 0.0f)
 						cullReversed = true;
 					break;
 
-				case PixelOutput::CmClockWise:
+				case CmClockWise:
 					if (nz > 0.0f)
 						cullDiscard = true;
 					break;
 
-				case PixelOutput::CmCounterClockWise:
+				case CmCounterClockWise:
 					if (nz < 0.0f)
 						cullDiscard = true;
 					cullReversed = true;
@@ -701,17 +701,17 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 				bool cullReversed = false;
 				switch (m_currentProgram->getRenderState().cullMode)
 				{
-				case PixelOutput::CmNever:
+				case CmNever:
 					if (nz > 0.0f)
 						cullReversed = true;
 					break;
 
-				case PixelOutput::CmClockWise:
+				case CmClockWise:
 					if (nz > 0.0f)
 						cullDiscard = true;
 					break;
 
-				case PixelOutput::CmCounterClockWise:
+				case CmCounterClockWise:
 					if (nz < 0.0f)
 						cullDiscard = true;
 					cullReversed = true;
@@ -953,99 +953,99 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 
 			switch (m_currentProgram->getRenderState().blendSource)
 			{
-			case PixelOutput::BfOne:
+			case BfOne:
 				break;
 
-			case PixelOutput::BfZero:
+			case BfZero:
 				color.set(0.0f, 0.0f, 0.0f, 0.0f);
 				break;
 
-			case PixelOutput::BfSourceColor:
+			case BfSourceColor:
 				color *= color;
 				break;
 
-			case PixelOutput::BfOneMinusSourceColor:
+			case BfOneMinusSourceColor:
 				color *= scalar_t(1.0f) - color;
 				break;
 
-			case PixelOutput::BfDestinationColor:
+			case BfDestinationColor:
 				color *= destination;
 				break;
 
-			case PixelOutput::BfOneMinusDestinationColor:
+			case BfOneMinusDestinationColor:
 				color *= scalar_t(1.0f) - destination;
 				break;
 
-			case PixelOutput::BfSourceAlpha:
+			case BfSourceAlpha:
 				color *= color.w();
 				break;
 
-			case PixelOutput::BfOneMinusSourceAlpha:
+			case BfOneMinusSourceAlpha:
 				color *= scalar_t(1.0f) - color.w();
 				break;
 
-			case PixelOutput::BfDestinationAlpha:
+			case BfDestinationAlpha:
 				color *= destination.w();
 				break;
 
-			case PixelOutput::BfOneMinusDestinationAlpha:
+			case BfOneMinusDestinationAlpha:
 				color *= scalar_t(1.0f) - destination.w();
 				break;
 			}
 			
 			switch (m_currentProgram->getRenderState().blendDestination)
 			{
-			case PixelOutput::BfOne:
+			case BfOne:
 				break;
 
-			case PixelOutput::BfZero:
+			case BfZero:
 				destination.set(0.0f, 0.0f, 0.0f, 0.0f);
 				break;
 
-			case PixelOutput::BfSourceColor:
+			case BfSourceColor:
 				destination *= color;
 				break;
 
-			case PixelOutput::BfOneMinusSourceColor:
+			case BfOneMinusSourceColor:
 				destination *= scalar_t(1.0f) - color;
 				break;
 
-			case PixelOutput::BfDestinationColor:
+			case BfDestinationColor:
 				destination *= destination;
 				break;
 
-			case PixelOutput::BfOneMinusDestinationColor:
+			case BfOneMinusDestinationColor:
 				destination *= scalar_t(1.0f) - destination;
 				break;
 
-			case PixelOutput::BfSourceAlpha:
+			case BfSourceAlpha:
 				destination *= color.w();
 				break;
 
-			case PixelOutput::BfOneMinusSourceAlpha:
+			case BfOneMinusSourceAlpha:
 				destination *= scalar_t(1.0f) - color.w();
 				break;
 
-			case PixelOutput::BfDestinationAlpha:
+			case BfDestinationAlpha:
 				destination *= destination.w();
 				break;
 
-			case PixelOutput::BfOneMinusDestinationAlpha:
+			case BfOneMinusDestinationAlpha:
 				destination *= scalar_t(1.0f) - destination.w();
 				break;
 			}
 
 			switch (m_currentProgram->getRenderState().blendOperation)
 			{
-			case PixelOutput::BoAdd:
+			case BoAdd:
 				color = color + destination;
 				break;
 
-			case PixelOutput::BoSubtract:
+			case BoSubtract:
 				color = color - destination;
 				break;
 
-			case PixelOutput::BoReverseSubtract:
+			case BoReverseSubtract:
 				color = destination - color;
 				break;
 			}

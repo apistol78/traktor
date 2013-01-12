@@ -253,7 +253,7 @@ void SimpleTextureOpenGLES2::unlock(int level)
 	T_OGL_SAFE(glFlush());
 }
 
-void SimpleTextureOpenGLES2::bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture)
+void SimpleTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture)
 {
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
