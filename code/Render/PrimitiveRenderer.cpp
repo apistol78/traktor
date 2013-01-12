@@ -347,78 +347,38 @@ void PrimitiveRenderer::drawArrowHead(
 	const Color4ub& color
 )
 {
-	if (int(m_vertex - m_vertexStart + 3) >= c_bufferCount)
-		flush();
+	Vector4 d = end - start;
+	Vector4 dn = d.normalized();
 
-	Vector4 vs1 = m_worldView * start.xyz1();
-	Vector4 vs2 = m_worldView * end.xyz1();
-
-	const Plane vp(0.0f, 0.0f, 1.0f, -m_viewNearZ);
-
-	bool i1 = bool(vp.distance(vs1) >= 0.0f);
-	bool i2 = bool(vp.distance(vs2) >= 0.0f);
-	if (!i1 && !i2)
-		return;
-
-	if (i1 != i2)
+	const Vector4 c_axis[] =
 	{
-		Vector4 vsc;
-		Scalar k;
+		Vector4(0.0f, 1.0f, 0.0f),
+		Vector4(1.0f, 0.0f, 0.0f),
+		Vector4(0.0f, 1.0f, 0.0f)
+	};
 
-		if (vp.segmentIntersection(vs1, vs2, k, &vsc))
-		{
-			if (!i1)
-				vs1 = vsc;
-			else
-				vs2 = vsc;
-		}
-	}
+	Vector4 u = cross(dn, c_axis[majorAxis3(dn)]).normalized();
+	Vector4 v = cross(u, dn).normalized();
 
-	Vector4 cs1 = m_projection.back() * vs1;
-	Vector4 cs2 = m_projection.back() * vs2;
+	float radius = d.length() * (1.0f - sharpness);
 
-	Scalar cw1 = cs1.w(), cw2 = cs2.w();
-	if (cw1 <= Scalar(FUZZY_EPSILON) || cw2 <= Scalar(FUZZY_EPSILON))
-		return;
-
-	Scalar sx1 = cs1.x() / cw1;
-	Scalar sy1 = cs1.y() / cw1;
-
-	Scalar sx2 = cs2.x() / cw2;
-	Scalar sy2 = cs2.y() / cw2;
-
-	Scalar dy =   sx2 - sx1;
-	Scalar dx = -(sy2 - sy1);
-
-	Scalar dln = Scalar(sqrtf(dx * dx + dy * dy));
-	if (dln <= FUZZY_EPSILON)
-		return;
-
-	dx *= Scalar(1.0f - sharpness);
-	dy *= Scalar(1.0f - sharpness);
-
-	Scalar csdx = dx * cs1.w();
-	Scalar csdy = dy * cs1.w();
-
-	uint8_t shaderId = m_depthEnable.back() ? SiSolidDepth : SiSolid;
-	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtTriangles)
+	for (int32_t i = 0; i < 8; ++i)
 	{
-		Batch batch;
-		batch.shaderId = shaderId;
-		batch.primitives = Primitives(PtTriangles, int(m_vertex - m_vertexStart), 0);
-		m_batches.push_back(batch);
+		float a0 = (i / 8.0f) * TWO_PI;
+		float a1 = a0 + (1.0f / 8.0f) * TWO_PI;
+
+		float u0 = cosf(a0);
+		float v0 = sinf(a0);
+		float u1 = cosf(a1);
+		float v1 = sinf(a1);
+
+		drawSolidTriangle(
+			start + u * Scalar(u0 * radius) + v * Scalar(v0 * radius),
+			start + u * Scalar(u1 * radius) + v * Scalar(v1 * radius),
+			end,
+			color
+		);
 	}
-
-	m_vertex->set(Vector4(cs1.x() - csdx, cs1.y() - csdy, cs1.z(), cs1.w()), color);
-	m_vertex++;
-
-	m_vertex->set(Vector4(cs1.x() + csdx, cs1.y() + csdy, cs1.z(), cs1.w()), color);
-	m_vertex++;
-
-	m_vertex->set(Vector4(cs2.x(), cs2.y(), cs2.z(), cs2.w()), color);
-	m_vertex++;
-
-	m_batches.back().primitives.count++;
 }
 
 void PrimitiveRenderer::drawWireAabb(

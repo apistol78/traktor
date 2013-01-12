@@ -87,7 +87,7 @@ private:
 	static ProgramOpenGLES2* ms_current;
 	Ref< ContextOpenGLES2 > m_resourceContext;
 	GLuint m_program;
-	RenderState m_renderState;
+	RenderStateOpenGL m_renderState;
 	GLint m_locationTargetSize;
 	GLint m_locationPostTransform;
 	GLint m_locationInstanceID;

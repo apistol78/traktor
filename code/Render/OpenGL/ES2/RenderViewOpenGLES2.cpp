@@ -278,7 +278,7 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const Color4f* colors, float
 
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
-		m_stateCache->setColorMask(RenderState::CmAll);
+		m_stateCache->setColorMask(RenderStateOpenGL::CmAll);
 		float r = colors[0].getRed();
 		float g = colors[0].getGreen();
 		float b = colors[0].getBlue();

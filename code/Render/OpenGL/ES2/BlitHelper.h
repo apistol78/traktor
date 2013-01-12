@@ -32,7 +32,7 @@ private:
 	GLint m_attribTexCoord;
 	GLint m_samplerIndex;
 	GLuint m_vertexBuffer;
-	RenderState m_renderState;
+	RenderStateOpenGL m_renderState;
 };
         
 #endif

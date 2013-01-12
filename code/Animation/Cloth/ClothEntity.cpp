@@ -115,13 +115,13 @@ bool ClothEntity::create(
 	vertexElements.push_back(render::VertexElement(render::DuNormal, render::DtFloat4, offsetof(ClothVertex, normal)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(ClothVertex, texCoord)));
 
-	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, 2 * resolutionX * resolutionY * sizeof(ClothVertex), true);
+	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, /*2 * */resolutionX * resolutionY * sizeof(ClothVertex), true);
 	if (!m_vertexBuffer)
 		return false;
 
 	m_resolutionX = resolutionX;
 	m_resolutionY = resolutionY;
-	m_triangleCount = quadsX * quadsY * 2 * 2;
+	m_triangleCount = quadsX * quadsY * 2/* * 2*/;
 
 	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, m_triangleCount * 3 * sizeof(uint16_t), false);
 	if (!m_indexBuffer)
@@ -130,13 +130,10 @@ bool ClothEntity::create(
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
 	T_ASSERT (index);
 
-	uint16_t backOffset = resolutionX * resolutionY;
-
 	for (uint32_t y = 0; y < quadsY; ++y)
 	{
 		for (uint32_t x = 0; x < quadsX; ++x)
 		{
-			// Front faces.
 			*index++ = x + y * resolutionX;
 			*index++ = x + y * resolutionX + 1;
 			*index++ = x + y * resolutionX + resolutionX;
@@ -144,15 +141,6 @@ bool ClothEntity::create(
 			*index++ = x + y * resolutionX + 1;
 			*index++ = x + y * resolutionX + 1 + resolutionX;
 			*index++ = x + y * resolutionX + resolutionX;
-
-			// Back faces.
-			*index++ = backOffset + x + y * resolutionX;
-			*index++ = backOffset + x + y * resolutionX + resolutionX;
-			*index++ = backOffset + x + y * resolutionX + 1;
-
-			*index++ = backOffset + x + y * resolutionX + 1;
-			*index++ = backOffset + x + y * resolutionX + resolutionX;
-			*index++ = backOffset + x + y * resolutionX + 1 + resolutionX;
 		}
 	}
 
@@ -178,8 +166,6 @@ void ClothEntity::render(
 		ClothVertex* vertexFront = static_cast< ClothVertex* >(m_vertexBuffer->lock());
 		T_ASSERT (vertexFront);
 
-		ClothVertex* vertexBack = vertexFront + m_resolutionX * m_resolutionY;
-
 		for (uint32_t y = 0; y < m_resolutionY; ++y)
 		{
 			for (uint32_t x = 0; x < m_resolutionX; ++x)
@@ -195,19 +181,12 @@ void ClothEntity::render(
 				Vector4 py = y > 0 ? m_nodes[offset - m_resolutionX].position[0] : p;
 
 				Vector4 nf = cross(ny - py, nx - px).normalized();
-				Vector4 nb = -nf;
 
 				p.storeUnaligned(vertexFront->position);
 				nf.storeUnaligned(vertexFront->normal);
 				vertexFront->texCoord[0] = node.texCoord.x;
 				vertexFront->texCoord[1] = node.texCoord.y;
 				vertexFront++;
-
-				p.storeUnaligned(vertexBack->position);
-				nb.storeUnaligned(vertexBack->normal);
-				vertexBack->texCoord[0] = node.texCoord.x;
-				vertexBack->texCoord[1] = node.texCoord.y;
-				vertexBack++;
 			}
 		}
 

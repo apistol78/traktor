@@ -110,6 +110,13 @@ void InputMapping::reset()
 		i->second->reset();
 }
 
+void InputMapping::reset(const std::wstring& id)
+{
+	InputState* state = getState(id);
+	if (state)
+		state->reset();
+}
+
 void InputMapping::setValue(const std::wstring& id, float value)
 {
 	m_valueSet.set(id, value);

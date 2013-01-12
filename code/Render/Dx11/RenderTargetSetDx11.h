@@ -5,14 +5,6 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/RenderTargetSet.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX11_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -25,7 +17,7 @@ struct RenderTargetSetCreateDesc;
 /*!
  * \ingroup DX11
  */
-class T_DLLCLASS RenderTargetSetDx11 : public RenderTargetSet
+class RenderTargetSetDx11 : public RenderTargetSet
 {
 	T_RTTI_CLASS;
 

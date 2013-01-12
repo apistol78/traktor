@@ -129,6 +129,25 @@ void AnimatedMeshEntity::update(const UpdateParams& update)
 	{
 		synchronize();
 
+		// Calculate original bone transforms in object space.
+		if (m_skeleton.changed())
+		{
+			m_jointTransforms.resize(0);
+			m_poseTransforms.resize(0);
+
+			calculateJointTransforms(
+				m_skeleton,
+				m_jointTransforms
+			);
+
+			m_skeleton.consume();
+		}
+
+		size_t skinJointCount = m_mesh->getJointCount();
+		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
+		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
+
 		// Prevent further updates from evaluating pose controller,
 		// each pose controller needs to set this flag if it's
 		// required to continue running even when this entity
@@ -266,20 +285,6 @@ void AnimatedMeshEntity::synchronize() const
 
 void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 {
-	// Calculate original bone transforms in object space.
-	if (m_skeleton.changed())
-	{
-		m_jointTransforms.resize(0);
-		m_poseTransforms.resize(0);
-
-		calculateJointTransforms(
-			m_skeleton,
-			m_jointTransforms
-		);
-
-		m_skeleton.consume();
-	}
-
 	// Calculate pose transforms and skinning transforms.
 	if (m_poseController)
 	{
@@ -298,7 +303,7 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 		size_t skeletonJointCount = m_jointTransforms.size();
 		size_t skinJointCount = m_mesh->getJointCount();
 		
-		// Ensure we have same number of pose transforms as bones.
+		// Ensure we have same number of pose transforms as b/ones.
 		for (size_t i = m_poseTransforms.size(); i < skeletonJointCount; ++i)
 			m_poseTransforms.push_back(m_jointTransforms[i]);
 
@@ -326,11 +331,6 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 				));
 		}
 
-		// Initialize skin transforms.
-		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
-
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonJointCount; ++i)
 		{
@@ -348,11 +348,6 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 		size_t skeletonJointCount = m_jointTransforms.size();
 		size_t skinJointCount = m_mesh->getJointCount();
 
-		// Initialize skin transforms.
-		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
-
 		// Calculate skin transforms in delta space.
 		for (size_t i = 0; i < skeletonJointCount; ++i)
 		{
@@ -364,13 +359,6 @@ void AnimatedMeshEntity::updatePoseController(int32_t index, float deltaTime)
 				m_skinTransforms[index][jointIndex * 2 + 1] = skinTransform.translation().xyz1();
 			}
 		}
-	}
-	else
-	{
-		size_t skinJointCount = m_mesh->getJointCount();
-		m_skinTransforms[0].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[1].resize(skinJointCount * 2, Vector4::origo());
-		m_skinTransforms[2].resize(skinJointCount * 2, Vector4::origo());
 	}
 }
 

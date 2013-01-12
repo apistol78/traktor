@@ -49,7 +49,7 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
 
@@ -64,7 +64,7 @@ private:
 	GLenum m_type;
 	uint32_t m_mipCount;
 	std::vector< uint8_t > m_data;
-	SamplerState m_shadowState;
+	SamplerStateOpenGL m_shadowState;
 };
 		
 	}

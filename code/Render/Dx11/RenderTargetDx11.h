@@ -4,14 +4,6 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/ISimpleTexture.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX11_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -24,7 +16,7 @@ struct RenderTargetCreateDesc;
 /*!
  * \ingroup DX11
  */
-class T_DLLCLASS RenderTargetDx11 : public ISimpleTexture
+class RenderTargetDx11 : public ISimpleTexture
 {
 	T_RTTI_CLASS;
 

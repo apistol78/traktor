@@ -752,6 +752,12 @@ void emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		GL_DECR_WRAP
 	};
 
+	RenderState rs = node->getState();
+
+	const State* state = dynamic_type_cast< const State* >(cx.getInputNode(node, L"State"));
+	if (state)
+		rs = state->get();
+
 	cx.enterFragment();
 
 	const wchar_t* inputs[] = { L"Input", L"Input1", L"Input2", L"Input3" };
@@ -770,31 +776,31 @@ void emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	}
 
 	uint32_t colorMask =
-		((node->getColorWriteMask() & PixelOutput::CwRed) ? RenderState::CmRed : 0) |
-		((node->getColorWriteMask() & PixelOutput::CwGreen) ? RenderState::CmGreen : 0) |
-		((node->getColorWriteMask() & PixelOutput::CwBlue) ? RenderState::CmBlue : 0) |
-		((node->getColorWriteMask() & PixelOutput::CwAlpha) ? RenderState::CmAlpha : 0);
+		((rs.colorWriteMask & CwRed) ? RenderStateOpenGL::CmRed : 0) |
+		((rs.colorWriteMask & CwGreen) ? RenderStateOpenGL::CmGreen : 0) |
+		((rs.colorWriteMask & CwBlue) ? RenderStateOpenGL::CmBlue : 0) |
+		((rs.colorWriteMask & CwAlpha) ? RenderStateOpenGL::CmAlpha : 0);
 
-	RenderState& rs = cx.getRenderState();
-	rs.cullFaceEnable = node->getCullMode() == PixelOutput::CmNever ? GL_FALSE : GL_TRUE;
-	rs.cullFace = c_oglCullFace[node->getCullMode()];
-	rs.blendEnable = node->getBlendEnable() ? GL_TRUE : GL_FALSE;
-	rs.blendEquation = c_oglBlendEquation[node->getBlendOperation()];
-	rs.blendFuncSrc = c_oglBlendFunction[node->getBlendSource()];
-	rs.blendFuncDest = c_oglBlendFunction[node->getBlendDestination()];
-	rs.depthTestEnable = node->getDepthEnable() ? GL_TRUE : GL_FALSE;
-	rs.colorMask = colorMask;
-	rs.depthMask = node->getDepthWriteEnable() ? GL_TRUE : GL_FALSE;
-	rs.depthFunc = c_oglFunction[node->getDepthFunction()];
-	rs.alphaTestEnable = node->getAlphaTestEnable() ? GL_TRUE : GL_FALSE;
-	rs.alphaFunc = c_oglFunction[node->getAlphaTestFunction()];
-	rs.alphaRef = GLclampf(node->getAlphaTestReference() / 255.0f);
-	rs.stencilTestEnable = node->getStencilEnable();
-	rs.stencilFunc = c_oglFunction[node->getStencilFunction()];
-	rs.stencilRef = node->getStencilReference();
-	rs.stencilOpFail = c_oglStencilOperation[node->getStencilFail()];
-	rs.stencilOpZFail = c_oglStencilOperation[node->getStencilZFail()];
-	rs.stencilOpZPass = c_oglStencilOperation[node->getStencilPass()];
+	RenderStateOpenGL& rsogl = cx.getRenderState();
+	rsogl.cullFaceEnable = (rs.cullMode == CmNever) ? GL_FALSE : GL_TRUE;
+	rsogl.cullFace = c_oglCullFace[rs.cullMode];
+	rsogl.blendEnable = rs.blendEnable ? GL_TRUE : GL_FALSE;
+	rsogl.blendEquation = c_oglBlendEquation[rs.blendOperation];
+	rsogl.blendFuncSrc = c_oglBlendFunction[rs.blendSource];
+	rsogl.blendFuncDest = c_oglBlendFunction[rs.blendDestination];
+	rsogl.depthTestEnable = rs.depthEnable ? GL_TRUE : GL_FALSE;
+	rsogl.colorMask = colorMask;
+	rsogl.depthMask = rs.depthWriteEnable ? GL_TRUE : GL_FALSE;
+	rsogl.depthFunc = c_oglFunction[rs.depthFunction];
+	rsogl.alphaTestEnable = rs.alphaTestEnable ? GL_TRUE : GL_FALSE;
+	rsogl.alphaFunc = c_oglFunction[rs.alphaTestFunction];
+	rsogl.alphaRef = GLclampf(rs.alphaTestReference / 255.0f);
+	rsogl.stencilTestEnable = rs.stencilEnable;
+	rsogl.stencilFunc = c_oglFunction[rs.stencilFunction];
+	rsogl.stencilRef = rs.stencilReference;
+	rsogl.stencilOpFail = c_oglStencilOperation[rs.stencilFail];
+	rsogl.stencilOpZFail = c_oglStencilOperation[rs.stencilZFail];
+	rsogl.stencilOpZPass = c_oglStencilOperation[rs.stencilPass];
 }
 
 void emitPolynomial(GlslContext& cx, Polynomial* node)
@@ -934,7 +940,7 @@ void emitSampler(GlslContext& cx, Sampler* node)
 
 	if (defineStates)
 	{
-		RenderState& rs = cx.getRenderState();
+		RenderStateOpenGL& rs = cx.getRenderState();
 
 		bool minLinear = node->getMinFilter() != Sampler::FtPoint;
 		bool mipLinear = node->getMipFilter() != Sampler::FtPoint;

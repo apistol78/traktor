@@ -23,8 +23,8 @@ public:
 		const std::string& vertexShader,
 		const std::string& fragmentShader,
 		const std::vector< std::wstring >& textures,
-		const std::vector< SamplerBinding >& samplers,
-		const RenderState& renderState
+		const std::vector< SamplerBindingOpenGL >& samplers,
+		const RenderStateOpenGL& renderState
 	);
 
 	const std::string& getVertexShader() const { return m_vertexShader; }
@@ -33,9 +33,9 @@ public:
 
 	const std::vector< std::wstring >& getTextures() const { return m_textures; }
 
-	const std::vector< SamplerBinding >& getSamplers() const { return m_samplers; }
+	const std::vector< SamplerBindingOpenGL >& getSamplers() const { return m_samplers; }
 
-	const RenderState& getRenderState() const { return m_renderState; }
+	const RenderStateOpenGL& getRenderState() const { return m_renderState; }
 
 	void setHash(uint32_t hash) { m_hash = hash; }
 
@@ -47,8 +47,8 @@ private:
 	std::string m_vertexShader;
 	std::string m_fragmentShader;
 	std::vector< std::wstring > m_textures;
-	std::vector< SamplerBinding > m_samplers;
-	RenderState m_renderState;
+	std::vector< SamplerBindingOpenGL > m_samplers;
+	RenderStateOpenGL m_renderState;
 	uint32_t m_hash;
 };
 

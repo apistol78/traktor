@@ -323,7 +323,7 @@ GLhandleARB ContextOpenGL::createShaderObject(const char* shader, GLenum shaderT
 	return shaderObject;
 }
 
-GLuint ContextOpenGL::createStateList(const RenderState& renderState)
+GLuint ContextOpenGL::createStateList(const RenderStateOpenGL& renderState)
 {
 	Adler32 adler;
 	adler.feed(renderState.cullFaceEnable);
@@ -355,7 +355,7 @@ GLuint ContextOpenGL::createStateList(const RenderState& renderState)
 		bool permitDepth = bool(i == 0);
 		bool invertCull = true;
 
-		RenderState rs = renderState;
+		RenderStateOpenGL rs = renderState;
 		if (!permitDepth)
 		{
 			rs.depthTestEnable = GL_FALSE;
@@ -401,10 +401,10 @@ GLuint ContextOpenGL::createStateList(const RenderState& renderState)
 			{ T_OGL_SAFE(glDepthMask(GL_FALSE)); }
 
 		T_OGL_SAFE(glColorMask(
-			(rs.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
-			(rs.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
-			(rs.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
-			(rs.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
+			(rs.colorMask & RenderStateOpenGL::CmRed) ? GL_TRUE : GL_FALSE,
+			(rs.colorMask & RenderStateOpenGL::CmGreen) ? GL_TRUE : GL_FALSE,
+			(rs.colorMask & RenderStateOpenGL::CmBlue) ? GL_TRUE : GL_FALSE,
+			(rs.colorMask & RenderStateOpenGL::CmAlpha) ? GL_TRUE : GL_FALSE
 		));
 
 		if (rs.stencilTestEnable)

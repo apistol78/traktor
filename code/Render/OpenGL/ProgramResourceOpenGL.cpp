@@ -11,10 +11,10 @@ namespace traktor
 		namespace
 		{
 
-class MemberSamplerBinding : public MemberComplex
+class MemberSamplerBindingOpenGL : public MemberComplex
 {
 public:
-	MemberSamplerBinding(const wchar_t* const name, SamplerBinding& ref)
+	MemberSamplerBindingOpenGL(const wchar_t* const name, SamplerBindingOpenGL& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -29,13 +29,13 @@ public:
 	}
 
 private:
-	SamplerBinding& m_ref;
+	SamplerBindingOpenGL& m_ref;
 };
 
-class MemberSamplerState : public MemberComplex
+class MemberSamplerStateOpenGL : public MemberComplex
 {
 public:
-	MemberSamplerState(const wchar_t* const name, SamplerState& ref)
+	MemberSamplerStateOpenGL(const wchar_t* const name, SamplerStateOpenGL& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -52,13 +52,13 @@ public:
 	}
 	
 private:
-	SamplerState& m_ref;
+	SamplerStateOpenGL& m_ref;
 };
 
-class MemberRenderState : public MemberComplex
+class MemberRenderStateOpenGL : public MemberComplex
 {
 public:
-	MemberRenderState(const wchar_t* const name, RenderState& ref)
+	MemberRenderStateOpenGL(const wchar_t* const name, RenderStateOpenGL& ref)
 	:	MemberComplex(name, true)
 	,	m_ref(ref)
 	{
@@ -84,12 +84,12 @@ public:
 		s >> Member< GLenum >(L"stencilOpFail", m_ref.stencilOpFail);
 		s >> Member< GLenum >(L"stencilOpZFail", m_ref.stencilOpZFail);
 		s >> Member< GLenum >(L"stencilOpZPass", m_ref.stencilOpZPass);
-		s >> MemberStaticArray< SamplerState, 16, MemberSamplerState >(L"samplerStates", m_ref.samplerStates);
+		s >> MemberStaticArray< SamplerStateOpenGL, 16, MemberSamplerStateOpenGL >(L"samplerStates", m_ref.samplerStates);
 		return true;
 	}
 	
 private:
-	RenderState& m_ref;
+	RenderStateOpenGL& m_ref;
 };
 
 		}
@@ -105,8 +105,8 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 	const std::string& vertexShader,
 	const std::string& fragmentShader,
 	const std::vector< std::wstring >& textures,
-	const std::vector< SamplerBinding >& samplers,
-	const RenderState& renderState
+	const std::vector< SamplerBindingOpenGL >& samplers,
+	const RenderStateOpenGL& renderState
 )
 :	m_vertexShader(vertexShader)
 ,	m_fragmentShader(fragmentShader)
@@ -124,8 +124,8 @@ bool ProgramResourceOpenGL::serialize(ISerializer& s)
 	s >> Member< std::string >(L"vertexShader", m_vertexShader);
 	s >> Member< std::string >(L"fragmentShader", m_fragmentShader);
 	s >> MemberStlVector< std::wstring >(L"textures", m_textures);
-	s >> MemberStlVector< SamplerBinding, MemberSamplerBinding >(L"samplers", m_samplers);
-	s >> MemberRenderState(L"renderState", m_renderState);
+	s >> MemberStlVector< SamplerBindingOpenGL, MemberSamplerBindingOpenGL >(L"samplers", m_samplers);
+	s >> MemberRenderStateOpenGL(L"renderState", m_renderState);
 	s >> Member< uint32_t >(L"hash", m_hash);
 
 	return true;

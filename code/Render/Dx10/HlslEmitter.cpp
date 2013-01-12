@@ -778,6 +778,12 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		D3D10_STENCIL_OP_DECR
 	};
 
+	RenderState rs = node->getState();
+
+	const State* state = dynamic_type_cast< const State* >(cx.getInputNode(node, L"State"));
+	if (state)
+		rs = state->get();
+
 	cx.enterPixel();
 
 	HlslVariable* in = cx.emitInput(node, L"Input");
@@ -789,21 +795,21 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	fpb << L"float4 out_Color = " << in->cast(HtFloat4) << L";" << Endl;
 
 	// Emulate old fashion alpha test through "discard" instruction.
-	if (node->getAlphaTestEnable())
+	if (rs.alphaTestEnable)
 	{
-		float alphaRef = node->getAlphaTestReference() / 255.0f;
+		float alphaRef = rs.alphaTestReference / 255.0f;
 
-		if (node->getAlphaTestFunction() == PixelOutput::CfLess)
+		if (rs.alphaTestFunction == CfLess)
 			fpb << L"if (out_Color.w >= " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfLessEqual)
+		else if (rs.alphaTestFunction == CfLessEqual)
 			fpb << L"if (out_Color.w > " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfGreater)
+		else if (rs.alphaTestFunction == CfGreater)
 			fpb << L"if (out_Color.w <= " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfGreaterEqual)
+		else if (rs.alphaTestFunction == CfGreaterEqual)
 			fpb << L"if (out_Color.w < " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfEqual)
+		else if (rs.alphaTestFunction == CfEqual)
 			fpb << L"if (out_Color.w != " << alphaRef << L")" << Endl;
-		else if (node->getAlphaTestFunction() == PixelOutput::CfNotEqual)
+		else if (rs.alphaTestFunction == CfNotEqual)
 			fpb << L"if (out_Color.w == " << alphaRef << L")" << Endl;
 		else
 			return false;
@@ -813,39 +819,39 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 
 	fpb << L"o.Color0 = out_Color;" << Endl;
 
-	cx.getD3DRasterizerDesc().FillMode = node->getWireframe() ? D3D10_FILL_WIREFRAME : D3D10_FILL_SOLID;
-	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[node->getCullMode()];
+	cx.getD3DRasterizerDesc().FillMode = rs.wireframe ? D3D10_FILL_WIREFRAME : D3D10_FILL_SOLID;
+	cx.getD3DRasterizerDesc().CullMode = d3dCullMode[rs.cullMode];
 
-	cx.getD3DDepthStencilDesc().DepthEnable = node->getDepthEnable() ? TRUE : FALSE;
-	cx.getD3DDepthStencilDesc().DepthWriteMask = node->getDepthWriteEnable() ? D3D10_DEPTH_WRITE_MASK_ALL : D3D10_DEPTH_WRITE_MASK_ZERO;
-	cx.getD3DDepthStencilDesc().DepthFunc = d3dCompareFunction[node->getDepthFunction()];
-	cx.getD3DDepthStencilDesc().StencilEnable = node->getStencilEnable() ? TRUE : FALSE;
+	cx.getD3DDepthStencilDesc().DepthEnable = rs.depthEnable ? TRUE : FALSE;
+	cx.getD3DDepthStencilDesc().DepthWriteMask = rs.depthWriteEnable ? D3D10_DEPTH_WRITE_MASK_ALL : D3D10_DEPTH_WRITE_MASK_ZERO;
+	cx.getD3DDepthStencilDesc().DepthFunc = d3dCompareFunction[rs.depthFunction];
+	cx.getD3DDepthStencilDesc().StencilEnable = rs.stencilEnable ? TRUE : FALSE;
 	cx.getD3DDepthStencilDesc().StencilReadMask = 0xff;
 	cx.getD3DDepthStencilDesc().StencilWriteMask = 0xff;
-	cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = d3dStencilOperation[node->getStencilFail()];
-	cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = d3dStencilOperation[node->getStencilZFail()];
-	cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = d3dStencilOperation[node->getStencilPass()];
-	cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
-	cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = d3dStencilOperation[node->getStencilFail()];
-	cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = d3dStencilOperation[node->getStencilZFail()];
-	cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = d3dStencilOperation[node->getStencilPass()];
-	cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[node->getStencilFunction()];
-	cx.setStencilReference(node->getStencilReference());
+	cx.getD3DDepthStencilDesc().FrontFace.StencilFailOp = d3dStencilOperation[rs.stencilFail];
+	cx.getD3DDepthStencilDesc().FrontFace.StencilDepthFailOp = d3dStencilOperation[rs.stencilZFail];
+	cx.getD3DDepthStencilDesc().FrontFace.StencilPassOp = d3dStencilOperation[rs.stencilPass];
+	cx.getD3DDepthStencilDesc().FrontFace.StencilFunc = d3dCompareFunction[rs.stencilFunction];
+	cx.getD3DDepthStencilDesc().BackFace.StencilFailOp = d3dStencilOperation[rs.stencilFail];
+	cx.getD3DDepthStencilDesc().BackFace.StencilDepthFailOp = d3dStencilOperation[rs.stencilZFail];
+	cx.getD3DDepthStencilDesc().BackFace.StencilPassOp = d3dStencilOperation[rs.stencilPass];
+	cx.getD3DDepthStencilDesc().BackFace.StencilFunc = d3dCompareFunction[rs.stencilFunction];
+	cx.setStencilReference(rs.stencilReference);
 
-	cx.getD3DBlendDesc().AlphaToCoverageEnable = node->getAlphaToCoverageEnable() ? TRUE : FALSE;
-	cx.getD3DBlendDesc().BlendEnable[0] = node->getBlendEnable() ? TRUE : FALSE;
-	cx.getD3DBlendDesc().SrcBlend = d3dBlendFactor[node->getBlendSource()];
-	cx.getD3DBlendDesc().DestBlend = d3dBlendFactor[node->getBlendDestination()];
-	cx.getD3DBlendDesc().BlendOp = d3dBlendOperation[node->getBlendOperation()];
+	cx.getD3DBlendDesc().AlphaToCoverageEnable = rs.alphaToCoverageEnable ? TRUE : FALSE;
+	cx.getD3DBlendDesc().BlendEnable[0] = rs.blendEnable ? TRUE : FALSE;
+	cx.getD3DBlendDesc().SrcBlend = d3dBlendFactor[rs.blendSource];
+	cx.getD3DBlendDesc().DestBlend = d3dBlendFactor[rs.blendDestination];
+	cx.getD3DBlendDesc().BlendOp = d3dBlendOperation[rs.blendOperation];
 
 	UINT8 d3dWriteMask = 0;
-	if (node->getColorWriteMask() & PixelOutput::CwRed)
+	if (rs.colorWriteMask & CwRed)
 		d3dWriteMask |= D3D10_COLOR_WRITE_ENABLE_RED;
-	if (node->getColorWriteMask() & PixelOutput::CwGreen)
+	if (rs.colorWriteMask & CwGreen)
 		d3dWriteMask |= D3D10_COLOR_WRITE_ENABLE_GREEN;
-	if (node->getColorWriteMask() & PixelOutput::CwBlue)	
+	if (rs.colorWriteMask & CwBlue)	
 		d3dWriteMask |= D3D10_COLOR_WRITE_ENABLE_BLUE;
-	if (node->getColorWriteMask() & PixelOutput::CwAlpha)
+	if (rs.colorWriteMask & CwAlpha)
 		d3dWriteMask |= D3D10_COLOR_WRITE_ENABLE_ALPHA;
 
 	cx.getD3DBlendDesc().RenderTargetWriteMask[0] = d3dWriteMask;

@@ -86,26 +86,20 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 		{
 			TerrainResource::Patch& patch = outPatches[px + pz * patchCount];
 
-			int32_t pminX = px * patchDim * detailSkip;
-			int32_t pminZ = pz * patchDim * detailSkip;
-			int32_t pmaxX = (px + 1) * patchDim * detailSkip;
-			int32_t pmaxZ = (pz + 1) * patchDim * detailSkip;
+			int32_t pminX = (heightfieldSize * px) / patchCount;
+			int32_t pminZ = (heightfieldSize * pz) / patchCount;
+			int32_t pmaxX = (heightfieldSize * (px + 1)) / patchCount;
+			int32_t pmaxZ = (heightfieldSize * (pz + 1)) / patchCount;
 
 			// Measure min and max height of patch.
 			float minHeight =  std::numeric_limits< float >::max();
 			float maxHeight = -std::numeric_limits< float >::max();
 
-			for (uint32_t z = 0; z < patchDim; ++z)
+			for (int32_t z = pminZ; z <= pmaxZ; ++z)
 			{
-				for (uint32_t x = 0; x < patchDim; ++x)
+				for (int32_t x = pminX; x <= pmaxX; ++x)
 				{
-					float fx = float(x) / (patchDim - 1);
-					float fz = float(z) / (patchDim - 1);
-
-					int32_t ix = int32_t(fx * patchDim * detailSkip) + pminX;
-					int32_t iz = int32_t(fz * patchDim * detailSkip) + pminZ;
-
-					float height = heightfield->getGridHeightNearest(ix, iz);
+					float height = heightfield->getGridHeightNearest(x, z);
 					height = heightfield->unitToWorld(height);
 
 					minHeight = min(minHeight, height);
@@ -185,7 +179,7 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 4, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 5, TerrainPipeline, editor::DefaultPipeline)
 
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {

@@ -59,6 +59,8 @@ public:
 
 	void reset();
 
+	void reset(const std::wstring& id);
+
 	void setValue(const std::wstring& id, float value);
 
 	float getValue(const std::wstring& id) const;

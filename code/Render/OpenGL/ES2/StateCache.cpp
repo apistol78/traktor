@@ -15,7 +15,7 @@ StateCache::StateCache()
 {
 }
 
-void StateCache::setRenderState(const RenderState& renderState, bool invertCull)
+void StateCache::setRenderState(const RenderStateOpenGL& renderState, bool invertCull)
 {
 	if (renderState.cullFaceEnable)
 	{
@@ -100,10 +100,10 @@ void StateCache::setRenderState(const RenderState& renderState, bool invertCull)
 	if (renderState.colorMask != m_renderState.colorMask)
 	{
 		T_OGL_SAFE(glColorMask(
-			(renderState.colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
-			(renderState.colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
-			(renderState.colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
-			(renderState.colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
+			(renderState.colorMask & RenderStateOpenGL::CmRed) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderStateOpenGL::CmGreen) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderStateOpenGL::CmBlue) ? GL_TRUE : GL_FALSE,
+			(renderState.colorMask & RenderStateOpenGL::CmAlpha) ? GL_TRUE : GL_FALSE
 		));
 		m_renderState.colorMask = renderState.colorMask;
 	}
@@ -120,10 +120,10 @@ void StateCache::setColorMask(uint32_t colorMask)
 	if (colorMask != m_renderState.colorMask)
 	{
 		T_OGL_SAFE(glColorMask(
-			(colorMask & RenderState::CmRed) ? GL_TRUE : GL_FALSE,
-			(colorMask & RenderState::CmGreen) ? GL_TRUE : GL_FALSE,
-			(colorMask & RenderState::CmBlue) ? GL_TRUE : GL_FALSE,
-			(colorMask & RenderState::CmAlpha) ? GL_TRUE : GL_FALSE
+			(colorMask & RenderStateOpenGL::CmRed) ? GL_TRUE : GL_FALSE,
+			(colorMask & RenderStateOpenGL::CmGreen) ? GL_TRUE : GL_FALSE,
+			(colorMask & RenderStateOpenGL::CmBlue) ? GL_TRUE : GL_FALSE,
+			(colorMask & RenderStateOpenGL::CmAlpha) ? GL_TRUE : GL_FALSE
 		));
 		m_renderState.colorMask = colorMask;
 	}

@@ -1582,6 +1582,10 @@
       <second>Fragment position</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_FRONTFACE</first>
+      <second>Framsida</second>
+    </item>    
+    <item>
       <first>SHADERGRAPH_NODE_INDEXEDUNIFORM</first>
       <second>Indexerad uniform</second>
     </item>
@@ -1708,6 +1712,10 @@
     <item>
       <first>SHADERGRAPH_NODE_SQRT</first>
       <second>Roten ur</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_STATE</first>
+      <second>Tillstånd</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_STEP</first>

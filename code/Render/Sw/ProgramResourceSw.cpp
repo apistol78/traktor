@@ -21,46 +21,46 @@ public:
 
 	virtual bool serialize(ISerializer& s) const
 	{
-		const MemberEnum< PixelOutput::CullMode >::Key kCullMode[] =
+		const MemberEnum< CullMode >::Key kCullMode[] =
 		{
-			{ L"CmNever", PixelOutput::CmNever },
-			{ L"CmClockWise", PixelOutput::CmClockWise },
-			{ L"CmCounterClockWise", PixelOutput::CmCounterClockWise },
+			{ L"CmNever", CmNever },
+			{ L"CmClockWise", CmClockWise },
+			{ L"CmCounterClockWise", CmCounterClockWise },
 			{ 0, 0 }
 		};
 
-		const MemberEnum< PixelOutput::BlendOperation >::Key kBlendOperations[] =
+		const MemberEnum< BlendOperation >::Key kBlendOperations[] =
 		{
-			{ L"BoAdd", PixelOutput::BoAdd },
-			{ L"BoSubtract", PixelOutput::BoSubtract },
-			{ L"BoReverseSubtract", PixelOutput::BoReverseSubtract },
-			{ L"BoMin", PixelOutput::BoMin },
-			{ L"BoMax", PixelOutput::BoMax },
+			{ L"BoAdd", BoAdd },
+			{ L"BoSubtract", BoSubtract },
+			{ L"BoReverseSubtract", BoReverseSubtract },
+			{ L"BoMin", BoMin },
+			{ L"BoMax", BoMax },
 			{ 0, 0 }
 		};
 
-		const MemberEnum< PixelOutput::BlendFactor >::Key kBlendFactors[] =
+		const MemberEnum< BlendFactor >::Key kBlendFactors[] =
 		{
-			{ L"BfOne", PixelOutput::BfOne },
-			{ L"BfZero", PixelOutput::BfZero },
-			{ L"BfSourceColor", PixelOutput::BfSourceColor },
-			{ L"BfOneMinusSourceColor", PixelOutput::BfOneMinusSourceColor },
-			{ L"BfDestinationColor", PixelOutput::BfDestinationColor },
-			{ L"BfOneMinusDestinationColor", PixelOutput::BfOneMinusDestinationColor },
-			{ L"BfSourceAlpha", PixelOutput::BfSourceAlpha },
-			{ L"BfOneMinusSourceAlpha", PixelOutput::BfOneMinusSourceAlpha },
-			{ L"BfDestinationAlpha", PixelOutput::BfDestinationAlpha },
-			{ L"BfOneMinusDestinationAlpha", PixelOutput::BfOneMinusDestinationAlpha },
+			{ L"BfOne", BfOne },
+			{ L"BfZero", BfZero },
+			{ L"BfSourceColor", BfSourceColor },
+			{ L"BfOneMinusSourceColor", BfOneMinusSourceColor },
+			{ L"BfDestinationColor", BfDestinationColor },
+			{ L"BfOneMinusDestinationColor", BfOneMinusDestinationColor },
+			{ L"BfSourceAlpha", BfSourceAlpha },
+			{ L"BfOneMinusSourceAlpha", BfOneMinusSourceAlpha },
+			{ L"BfDestinationAlpha", BfDestinationAlpha },
+			{ L"BfOneMinusDestinationAlpha", BfOneMinusDestinationAlpha },
 			{ 0, 0 }
 		};
 
 		s >> Member< bool >(L"depthEnable", m_ref.depthEnable);
 		s >> Member< bool >(L"depthWriteEnable", m_ref.depthWriteEnable);
-		s >> MemberEnum< PixelOutput::CullMode >(L"cullMode", m_ref.cullMode, kCullMode);
+		s >> MemberEnum< CullMode >(L"cullMode", m_ref.cullMode, kCullMode);
 		s >> Member< bool >(L"blendEnable", m_ref.blendEnable);
-		s >> MemberEnum< PixelOutput::BlendOperation >(L"blendOperation", m_ref.blendOperation, kBlendOperations);
-		s >> MemberEnum< PixelOutput::BlendFactor >(L"blendSource", m_ref.blendSource, kBlendFactors);
-		s >> MemberEnum< PixelOutput::BlendFactor >(L"blendDestination", m_ref.blendDestination, kBlendFactors);
+		s >> MemberEnum< BlendOperation >(L"blendOperation", m_ref.blendOperation, kBlendOperations);
+		s >> MemberEnum< BlendFactor >(L"blendSource", m_ref.blendSource, kBlendFactors);
+		s >> MemberEnum< BlendFactor >(L"blendDestination", m_ref.blendDestination, kBlendFactors);
 
 		return true;
 	}

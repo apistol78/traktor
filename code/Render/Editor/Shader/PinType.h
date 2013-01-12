@@ -24,7 +24,8 @@ enum PinType
 	PntTexture2D = 6,
 	PntTexture3D = 7,
 	PntTextureCube = 8,
-	PntAny = (PntTextureCube)
+	PntState = 9,
+	PntAny = (PntState)
 };
 
 /*! \brief Return true if type is a scalar.
@@ -41,6 +42,14 @@ inline bool isPinTypeScalar(PinType pinType)
 inline bool isPinTypeTexture(PinType pinType)
 {
 	return pinType >= PntTexture2D && pinType <= PntTextureCube;
+}
+
+/*! \brief Return true if type is a state.
+ * \ingroup Render
+ */
+inline bool isPinTypeState(PinType pinType)
+{
+	return pinType == PntState;
 }
 
 /*! \brief Get width of scalar type.

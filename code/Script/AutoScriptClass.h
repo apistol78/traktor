@@ -866,6 +866,28 @@ struct MethodTrunk_0 : public IMethod
 };
 
 template <
+	typename ClassType
+>
+struct MethodTrunk_0< ClassType, void > : public IMethod
+{
+	typedef void (*method_t)(ClassType*);
+
+	method_t m_method;
+
+	MethodTrunk_0(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, const Any* argv) const
+	{
+		(*m_method)(checked_type_cast< ClassType*, false >(object));
+		return Any();
+	}
+};
+
+
+template <
 	typename ClassType,
 	typename ReturnType,
 	typename Argument1Type
@@ -877,7 +899,7 @@ struct MethodTrunk_1 : public IMethod
 	method_t m_method;
 
 	MethodTrunk_1(method_t method)
-		:	m_method(method)
+	:	m_method(method)
 	{
 	}
 

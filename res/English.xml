@@ -1622,6 +1622,10 @@
       <second>Fragment position</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_FRONTFACE</first>
+      <second>Front face</second>
+    </item>
+    <item>
       <first>SHADERGRAPH_NODE_INDEXEDUNIFORM</first>
       <second>Indexed uniform</second>
     </item>
@@ -1748,6 +1752,10 @@
     <item>
       <first>SHADERGRAPH_NODE_SQRT</first>
       <second>Sqrt</second>
+    </item>
+    <item>
+      <first>SHADERGRAPH_NODE_STATE</first>
+      <second>State</second>
     </item>
     <item>
       <first>SHADERGRAPH_NODE_STEP</first>

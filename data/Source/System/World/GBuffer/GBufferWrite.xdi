@@ -37,7 +37,7 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="2">
 			<comment/>
 			<position>
 				<first>1009</first>
@@ -204,6 +204,17 @@
 				<first>442</first>
 				<second>423</second>
 			</position>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>865</first>
+				<second>600</second>
+			</position>
+			<name>State</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -395,6 +406,16 @@
 			<destination>
 				<node ref="/object/nodes/item[17]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>State</name>
 			</destination>
 		</item>
 	</edges>

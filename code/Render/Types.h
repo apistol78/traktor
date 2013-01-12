@@ -21,6 +21,119 @@ namespace traktor
 /*! \ingroup Render */
 //@{
 
+enum CullMode
+{
+	CmNever,
+	CmClockWise,
+	CmCounterClockWise
+};
+
+enum BlendOperation
+{
+	BoAdd,
+	BoSubtract,
+	BoReverseSubtract,
+	BoMin,
+	BoMax
+};
+
+enum BlendFactor
+{
+	BfOne,
+	BfZero,
+	BfSourceColor,
+	BfOneMinusSourceColor,
+	BfDestinationColor,
+	BfOneMinusDestinationColor,
+	BfSourceAlpha,
+	BfOneMinusSourceAlpha,
+	BfDestinationAlpha,
+	BfOneMinusDestinationAlpha
+};
+
+enum ColorWrite
+{
+	CwRed = 1,
+	CwGreen = 2,
+	CwBlue = 4,
+	CwAlpha = 8
+};
+
+enum CompareFunction
+{
+	CfAlways,
+	CfNever,
+	CfLess,
+	CfLessEqual,
+	CfGreater,
+	CfGreaterEqual,
+	CfEqual,
+	CfNotEqual
+};
+
+enum StencilOperation
+{
+	SoKeep,
+	SoZero,
+	SoReplace,
+	SoIncrementSaturate,
+	SoDecrementSaturate,
+	SoInvert,
+	SoIncrement,
+	SoDecrement
+};
+
+/*! \brief Render state. */
+struct RenderState
+{
+	CullMode cullMode;
+	bool blendEnable;
+	BlendOperation blendOperation;
+	BlendFactor blendSource;
+	BlendFactor blendDestination;
+	uint32_t colorWriteMask;
+	bool depthEnable;
+	bool depthWriteEnable;
+	CompareFunction depthFunction;
+	bool alphaTestEnable;
+	CompareFunction alphaTestFunction;
+	int32_t alphaTestReference;
+	bool alphaToCoverageEnable;
+	bool wireframe;
+	bool stencilEnable;
+	StencilOperation stencilFail;
+	StencilOperation stencilZFail;
+	StencilOperation stencilPass;
+	CompareFunction stencilFunction;
+	uint32_t stencilReference;
+	uint32_t stencilMask;
+
+	RenderState()
+	:	cullMode(CmCounterClockWise)
+	,	blendEnable(false)
+	,	blendOperation(BoAdd)
+	,	blendSource(BfOne)
+	,	blendDestination(BfZero)
+	,	colorWriteMask(CwRed | CwGreen | CwBlue | CwAlpha)
+	,	depthEnable(true)
+	,	depthWriteEnable(true)
+	,	depthFunction(CfLessEqual)
+	,	alphaTestEnable(false)
+	,	alphaTestFunction(CfLess)
+	,	alphaTestReference(128)
+	,	alphaToCoverageEnable(false)
+	,	wireframe(false)
+	,	stencilEnable(false)
+	,	stencilFail(SoKeep)
+	,	stencilZFail(SoKeep)
+	,	stencilPass(SoKeep)
+	,	stencilFunction(CfAlways)
+	,	stencilReference(0x00000000)
+	,	stencilMask(0xffffffff)
+	{
+	}
+};
+
 /*! \brief Render view event types. */
 enum RenderEventType
 {

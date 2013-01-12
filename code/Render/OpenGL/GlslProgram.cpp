@@ -13,8 +13,8 @@ GlslProgram::GlslProgram(
 	const std::wstring& vertexShader,
 	const std::wstring& fragmentShader,
 	const std::vector< std::wstring >& textures,
-	const std::vector< SamplerBinding >& samplers,
-	const RenderState& renderState
+	const std::vector< SamplerBindingOpenGL >& samplers,
+	const RenderStateOpenGL& renderState
 )
 :	m_vertexShader(vertexShader)
 ,	m_fragmentShader(fragmentShader)
@@ -39,12 +39,12 @@ const std::vector< std::wstring >& GlslProgram::getTextures() const
 	return m_textures;
 }
 
-const std::vector< SamplerBinding>& GlslProgram::getSamplers() const
+const std::vector< SamplerBindingOpenGL >& GlslProgram::getSamplers() const
 {
 	return m_samplers;
 }
 
-const RenderState& GlslProgram::getRenderState() const
+const RenderStateOpenGL& GlslProgram::getRenderState() const
 {
 	return m_renderState;
 }

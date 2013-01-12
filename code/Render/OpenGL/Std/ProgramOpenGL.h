@@ -85,7 +85,7 @@ private:
 
 	Ref< ContextOpenGL > m_resourceContext;
 	GLhandleARB m_program;
-	RenderState m_renderState;
+	RenderStateOpenGL m_renderState;
 	GLuint m_renderStateList;
 	GLint m_locationTargetSize;
 	GLint m_attributeLocs[T_OGL_MAX_USAGE_INDEX];			//!< Vertex attribute locations.

@@ -55,6 +55,7 @@ RenderViewDx11::RenderViewDx11(
 ,	m_fullScreen(false)
 ,	m_waitVBlank(true)
 ,	m_cursorVisible(true)
+,	m_targetsDirty(false)
 ,	m_drawCalls(0)
 ,	m_primitiveCount(0)
 ,	m_currentVertexBuffer(0)
@@ -74,6 +75,8 @@ RenderViewDx11::RenderViewDx11(
 ,	m_stateCache(context->getD3DDeviceContext())
 ,	m_fullScreen(false)
 ,	m_waitVBlank(true)
+,	m_cursorVisible(true)
+,	m_targetsDirty(false)
 ,	m_currentVertexBuffer(0)
 ,	m_currentIndexBuffer(0)
 ,	m_currentProgram(0)
@@ -481,23 +484,9 @@ bool RenderViewDx11::begin(EyeType eye)
 
 	m_renderStateStack.push_back(rs);
 
-	if (m_currentProgram)
-	{
-		m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
-		m_currentProgram = 0;
-	}
-
-	ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-	m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-
-	m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
-	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
-
-	m_stateCache.reset();
-
 	m_drawCalls = 0;
 	m_primitiveCount = 0;
+	m_targetsDirty = true;
 
 	return true;
 }
@@ -529,21 +518,7 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet)
 			rs.d3dDepthStencilView = m_d3dDepthStencilView;
 
 		m_renderStateStack.push_back(rs);
-
-		if (m_currentProgram)
-		{
-			m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
-			m_currentProgram = 0;
-		}
-
-		ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-		m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-		m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-
-		m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
-		m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
-
-		m_stateCache.reset();
+		m_targetsDirty = true;
 	}
 	else if (rt0)
 		return begin(renderTargetSet, 0);
@@ -576,21 +551,8 @@ bool RenderViewDx11::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 		rs.d3dDepthStencilView = m_d3dDepthStencilView;
 
 	m_renderStateStack.push_back(rs);
+	m_targetsDirty = true;
 
-	if (m_currentProgram)
-	{
-		m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
-		m_currentProgram = 0;
-	}
-
-	ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-	m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-	m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-
-	m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
-	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
-
-	m_stateCache.reset();
 	return true;
 }
 
@@ -630,6 +592,8 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 
 	if (m_currentProgram)
 		m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
+
+	bindTargets();
 
 	const RenderState& rs = m_renderStateStack.back();
 
@@ -698,6 +662,8 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	if (m_currentProgram)
 		m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
 
+	bindTargets();
+
 	const RenderState& rs = m_renderStateStack.back();
 
 	m_currentVertexBuffer = checked_type_cast< VertexBufferDx11* >(vertexBuffer);
@@ -765,31 +731,19 @@ void RenderViewDx11::end()
 	if (rs.renderTargetSet)
 		rs.renderTargetSet->setContentValid(true);
 
-	if (rs.renderTarget[0])
-		rs.renderTarget[0]->unbind();
-	if (rs.renderTarget[1])
-		rs.renderTarget[1]->unbind();
+	if (!m_targetsDirty)
+	{
+		if (rs.renderTarget[0])
+			rs.renderTarget[0]->unbind();
+		if (rs.renderTarget[1])
+			rs.renderTarget[1]->unbind();
+	}
 
 	m_renderStateStack.pop_back();
 	if (!m_renderStateStack.empty())
-	{
-		const RenderState& rs = m_renderStateStack.back();
-
-		if (m_currentProgram)
-		{
-			m_currentProgram->unbind(m_context->getD3DDevice(), m_context->getD3DDeviceContext());
-			m_currentProgram = 0;
-		}
-
-		ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
-		m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-		m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
-
-		m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
-		m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
-
-		m_stateCache.reset();
-	}
+		m_targetsDirty = true;
+	else
+		m_targetsDirty = false;
 }
 
 void RenderViewDx11::present()
@@ -816,6 +770,25 @@ void RenderViewDx11::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.drawCalls = m_drawCalls;
 	outStatistics.primitiveCount = m_primitiveCount;
 	outStatistics.duration = 0.0;
+}
+
+void RenderViewDx11::bindTargets()
+{
+	if (!m_targetsDirty)
+		return;
+
+	RenderState& rs = m_renderStateStack.back();
+
+	ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+	m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+
+	m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
+	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
+
+	m_stateCache.reset();
+
+	m_targetsDirty = false;
 }
 
 bool RenderViewDx11::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)

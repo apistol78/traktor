@@ -51,7 +51,7 @@ public:
 
 	virtual void unlock(int level);
 
-	virtual void bindSampler(GLuint unit, const SamplerState& samplerState, GLint locationTexture);
+	virtual void bindSampler(GLuint unit, const SamplerStateOpenGL& samplerState, GLint locationTexture);
 
 	virtual void bindSize(GLint locationSize);
 
@@ -71,7 +71,7 @@ private:
 	GLuint m_colorTexture;
 	Vector4 m_originAndScale;
 	bool m_haveDepth;
-	SamplerState m_shadowState;
+	SamplerStateOpenGL m_shadowState;
 };
 
 #endif

@@ -22,6 +22,20 @@ GlslContext::GlslContext(const ShaderGraph* shaderGraph)
 {
 }
 
+Node* GlslContext::getInputNode(const InputPin* inputPin)
+{
+	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
+	return sourcePin ? sourcePin->getNode() : 0;
+}
+
+Node* GlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
+{
+	const InputPin* inputPin = node->findInputPin(inputPinName);
+	T_ASSERT (inputPin);
+
+	return getInputNode(inputPin);
+}
+
 GlslVariable* GlslContext::emitInput(const InputPin* inputPin)
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
@@ -155,7 +169,7 @@ GlslEmitter& GlslContext::getEmitter()
 	return m_emitter;
 }
 
-RenderState& GlslContext::getRenderState()
+RenderStateOpenGL& GlslContext::getRenderState()
 {
 	return m_renderState;
 }
@@ -185,7 +199,7 @@ bool GlslContext::defineSampler(uint32_t stateHash, GLenum target, const std::ws
 	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);
 	T_ASSERT (i != m_textures.end());
 
-	SamplerBinding sb;
+	SamplerBindingOpenGL sb;
 	sb.stage = outStage;
 	sb.target = target;
 	sb.texture = std::distance(m_textures.begin(), i);
@@ -199,7 +213,7 @@ const std::vector< std::wstring >& GlslContext::getTextures() const
 	return m_textures;
 }
 
-const std::vector< SamplerBinding >& GlslContext::getSamplers() const
+const std::vector< SamplerBindingOpenGL >& GlslContext::getSamplers() const
 {
 	return m_samplers;
 }

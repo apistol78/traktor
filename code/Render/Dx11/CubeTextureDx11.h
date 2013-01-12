@@ -4,14 +4,6 @@
 #include "Core/Misc/ComRef.h"
 #include "Render/ICubeTexture.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX11_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -23,7 +15,7 @@ struct CubeTextureCreateDesc;
 /*!
  * \ingroup DX11
  */
-class T_DLLCLASS CubeTextureDx11 : public ICubeTexture
+class CubeTextureDx11 : public ICubeTexture
 {
 	T_RTTI_CLASS;
 

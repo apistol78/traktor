@@ -300,6 +300,15 @@ public:
 	FragmentPosition();
 };
 
+/*! \brief Emit true if primitive is seen from the front. */
+class T_DLLCLASS FrontFace : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	FrontFace();
+};
+
 /*! \brief Fetch value from array uniform. */
 class T_DLLCLASS IndexedUniform : public ImmutableNode
 {
@@ -595,157 +604,15 @@ class T_DLLCLASS PixelOutput : public ImmutableNode
 	T_RTTI_CLASS;
 
 public:
-	enum CullMode
-	{
-		CmNever,
-		CmClockWise,
-		CmCounterClockWise
-	};
-
-	enum BlendOperation
-	{
-		BoAdd,
-		BoSubtract,
-		BoReverseSubtract,
-		BoMin,
-		BoMax
-	};
-
-	enum BlendFactor
-	{
-		BfOne,
-		BfZero,
-		BfSourceColor,
-		BfOneMinusSourceColor,
-		BfDestinationColor,
-		BfOneMinusDestinationColor,
-		BfSourceAlpha,
-		BfOneMinusSourceAlpha,
-		BfDestinationAlpha,
-		BfOneMinusDestinationAlpha
-	};
-
-	enum ColorWrite
-	{
-		CwRed = 1,
-		CwGreen = 2,
-		CwBlue = 4,
-		CwAlpha = 8
-	};
-
-	enum CompareFunction
-	{
-		CfAlways,
-		CfNever,
-		CfLess,
-		CfLessEqual,
-		CfGreater,
-		CfGreaterEqual,
-		CfEqual,
-		CfNotEqual
-	};
-
-	enum StencilOperation
-	{
-		SoKeep,
-		SoZero,
-		SoReplace,
-		SoIncrementSaturate,
-		SoDecrementSaturate,
-		SoInvert,
-		SoIncrement,
-		SoDecrement
-	};
-
 	PixelOutput();
 
 	void setTechnique(const std::wstring& technique);
 
 	const std::wstring& getTechnique() const;
 
-	void setCullMode(CullMode cullMode);
+	void setState(const RenderState& state);
 
-	CullMode getCullMode() const;
-
-	void setBlendEnable(bool enable);
-
-	bool getBlendEnable() const;
-
-	void setBlendOperation(BlendOperation blendOperation);
-
-	BlendOperation getBlendOperation() const;
-
-	void setBlendSource(BlendFactor source);
-
-	BlendFactor getBlendSource() const;
-
-	void setBlendDestination(BlendFactor destination);
-
-	BlendFactor getBlendDestination() const;
-
-	void setColorWriteMask(uint32_t writeMask);
-
-	uint32_t getColorWriteMask() const;
-
-	void setDepthEnable(bool enable);
-
-	bool getDepthEnable() const;
-
-	void setDepthWriteEnable(bool enable);
-
-	bool getDepthWriteEnable() const;
-
-	void setDepthFunction(CompareFunction depthFunction);
-
-	CompareFunction getDepthFunction() const;
-
-	void setAlphaTestEnable(bool enable);
-
-	bool getAlphaTestEnable() const;
-
-	void setAlphaTestFunction(CompareFunction alphaFunction);
-
-	CompareFunction getAlphaTestFunction() const;
-
-	void setAlphaTestReference(int alphaRef);
-
-	int32_t getAlphaTestReference() const;
-
-	void setAlphaToCoverageEnable(bool enable);
-
-	bool getAlphaToCoverageEnable() const;
-
-	void setWireframe(bool wireframe);
-
-	bool getWireframe() const;
-
-	void setStencilEnable(bool stencilEnable);
-
-	bool getStencilEnable() const;
-
-	void setStencilFail(StencilOperation stencilFail);
-
-	StencilOperation getStencilFail() const;
-
-	void setStencilZFail(StencilOperation stencilZFail);
-
-	StencilOperation getStencilZFail() const;
-
-	void setStencilPass(StencilOperation stencilPass);
-
-	StencilOperation getStencilPass() const;
-
-	void setStencilFunction(CompareFunction stencilFunction);
-
-	CompareFunction getStencilFunction() const;
-
-	void setStencilReference(uint32_t stencilReference);
-
-	uint32_t getStencilReference() const;
-
-	void setStencilMask(uint32_t stencilMask);
-
-	uint32_t getStencilMask() const;
+	const RenderState& getState() const;
 
 	void setRegisterCount(uint32_t registerCount);
 
@@ -757,27 +624,7 @@ public:
 
 private:
 	std::wstring m_technique;
-	CullMode m_cullMode;
-	bool m_blendEnable;
-	BlendOperation m_blendOperation;
-	BlendFactor m_blendSource;
-	BlendFactor m_blendDestination;
-	uint32_t m_colorWriteMask;
-	bool m_depthEnable;
-	bool m_depthWriteEnable;
-	CompareFunction m_depthFunction;
-	bool m_alphaTestEnable;
-	CompareFunction m_alphaTestFunction;
-	int32_t m_alphaTestReference;
-	bool m_alphaToCoverageEnable;
-	bool m_wireframe;
-	bool m_stencilEnable;
-	StencilOperation m_stencilFail;
-	StencilOperation m_stencilZFail;
-	StencilOperation m_stencilPass;
-	CompareFunction m_stencilFunction;
-	uint32_t m_stencilReference;
-	uint32_t m_stencilMask;
+	RenderState m_state;
 	uint32_t m_registerCount;
 };
 
@@ -931,6 +778,24 @@ class T_DLLCLASS Sqrt : public ImmutableNode
 
 public:
 	Sqrt();
+};
+
+/*! \brief Output states. */
+class T_DLLCLASS State : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	State();
+
+	void set(const RenderState& state);
+
+	const RenderState& get() const;
+
+	virtual bool serialize(ISerializer& s);
+
+private:
+	RenderState m_state;
 };
 
 /*! \brief Step function. */

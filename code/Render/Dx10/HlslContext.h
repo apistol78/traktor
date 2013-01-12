@@ -23,6 +23,10 @@ class HlslContext
 public:
 	HlslContext(const ShaderGraph* shaderGraph);
 
+	Node* getInputNode(const InputPin* inputPin);
+
+	Node* getInputNode(Node* node, const std::wstring& inputPinName);
+
 	HlslVariable* emitInput(const InputPin* inputPin);
 
 	HlslVariable* emitInput(Node* node, const std::wstring& inputPinName);
