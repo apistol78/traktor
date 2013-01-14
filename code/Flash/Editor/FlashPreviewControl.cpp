@@ -162,6 +162,7 @@ bool FlashPreviewControl::create(
 	addButtonDownEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventButtonDown));
 	addButtonUpEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventButtonUp));
 	addMouseMoveEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventMouseMove));
+	addMouseWheelEventHandler(ui::createMethodHandler(this, &FlashPreviewControl::eventMouseWheel));
 
 	// Register our event handler in case of message idle.
 	m_idleHandler = ui::createMethodHandler(this, &FlashPreviewControl::eventIdle);
@@ -431,6 +432,16 @@ void FlashPreviewControl::eventMouseMove(ui::Event* event)
 	{
 		ui::Point mousePosition = mouseEvent->getPosition();
 		m_moviePlayer->postMouseMove(mousePosition.x, mousePosition.y, mouseEvent->getButton());
+	}
+}
+
+void FlashPreviewControl::eventMouseWheel(ui::Event* event)
+{
+	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
+	if (m_moviePlayer)
+	{
+		ui::Point mousePosition = mouseEvent->getPosition();
+		m_moviePlayer->postMouseWheel(mousePosition.x, mousePosition.y, mouseEvent->getWheelRotation());
 	}
 }
 

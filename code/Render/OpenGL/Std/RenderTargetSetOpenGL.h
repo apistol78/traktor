@@ -6,14 +6,6 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_OPENGL_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -26,7 +18,7 @@ class RenderTargetOpenGL;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderTargetSetOpenGL : public RenderTargetSet
+class RenderTargetSetOpenGL : public RenderTargetSet
 {
 	T_RTTI_CLASS;
 

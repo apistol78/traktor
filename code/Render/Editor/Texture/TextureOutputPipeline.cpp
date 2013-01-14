@@ -129,7 +129,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 25, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 26, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_skipMips(0)
@@ -137,6 +137,7 @@ TextureOutputPipeline::TextureOutputPipeline()
 ,	m_compressionMethod(CmDXTn)
 ,	m_compressionQuality(1)
 ,	m_gamma(2.2f)
+,	m_sRGB(false)
 {
 }
 
@@ -146,6 +147,7 @@ bool TextureOutputPipeline::create(const editor::IPipelineSettings* settings)
 	m_clampSize = settings->getProperty< PropertyInteger >(L"TexturePipeline.ClampSize", 0);
 	m_compressionQuality = settings->getProperty< PropertyInteger >(L"TexturePipeline.CompressionQuality", 1);
 	m_gamma = settings->getProperty< PropertyFloat >(L"TexturePipeline.Gamma", 2.2f);
+	m_sRGB = settings->getProperty< PropertyBoolean >(L"TexturePipeline.sRGB", false);
 
 	std::wstring compressionMethod = settings->getProperty< PropertyString >(L"TexturePipeline.CompressionMethod", L"DXTn");
 	if (compareIgnoreCase< std::wstring >(compressionMethod, L"None") == 0)
@@ -203,6 +205,7 @@ bool TextureOutputPipeline::buildOutput(
 	int32_t height = image->getHeight();
 	int32_t mipCount = 1;
 	bool isNormalMap = false;
+	bool sRGB = false;
 
 	drawing::PixelFormat pixelFormat;
 	TextureFormat textureFormat;
@@ -381,9 +384,14 @@ bool TextureOutputPipeline::buildOutput(
 	// resulting in greater accuracy.
 	if (!textureOutput->m_linearGamma)
 	{
-		log::info << L"Converting into linear gamma..." << Endl;
-		const drawing::GammaFilter gammaFilter(m_gamma);
-		image = image->applyFilter(&gammaFilter);
+		if (m_sRGB)
+			sRGB = true;
+		else
+		{
+			log::info << L"Converting into linear gamma..." << Endl;
+			const drawing::GammaFilter gammaFilter(m_gamma);
+			image = image->applyFilter(&gammaFilter);
+		}
 	}
 
 	// Multiply with alpha.
@@ -414,6 +422,10 @@ bool TextureOutputPipeline::buildOutput(
 		image = image->applyFilter(&transformFilter);
 		isNormalMap = true;
 	}
+
+	// Ensure normal map isn't using sRGB texture.
+	if (isNormalMap)
+		sRGB = false;
 
 	Ref< drawing::ChainFilter > mipFilters;
 
@@ -516,12 +528,13 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(10);
+		writer << uint32_t(11);
 		writer << int32_t(width);
 		writer << int32_t(height);
 		writer << int32_t(1);
 		writer << int32_t(mipCount);
 		writer << int32_t(textureFormat);
+		writer << bool(sRGB);
 		writer << uint8_t(Tt2D);
 		writer << bool(true);
 
@@ -645,12 +658,13 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(10);
+		writer << uint32_t(11);
 		writer << int32_t(sliceWidth);
 		writer << int32_t(sliceHeight);
 		writer << int32_t(sliceDepth);
 		writer << int32_t(mipCount);
 		writer << int32_t(textureFormat);
+		writer << bool(sRGB);
 		writer << uint8_t(Tt3D);
 		writer << bool(true);
 
@@ -737,12 +751,13 @@ bool TextureOutputPipeline::buildOutput(
 
 		Writer writer(stream);
 
-		writer << uint32_t(10);
+		writer << uint32_t(11);
 		writer << int32_t(sideSize);
 		writer << int32_t(sideSize);
 		writer << int32_t(6);
 		writer << int32_t(mipCount);
 		writer << int32_t(textureFormat);
+		writer << bool(sRGB);
 		writer << uint8_t(TtCube);
 		writer << bool(true);
 

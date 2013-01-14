@@ -5,14 +5,6 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/Dx9/IResourceDx9.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -24,7 +16,7 @@ struct SimpleTextureCreateDesc;
 /*!
  * \ingroup DX9 Xbox360
  */
-class T_DLLCLASS SimpleTextureDx9
+class SimpleTextureDx9
 :	public ISimpleTexture
 ,	public IResourceDx9
 {

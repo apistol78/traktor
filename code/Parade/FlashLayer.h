@@ -93,6 +93,7 @@ private:
 	int32_t m_lastX;
 	int32_t m_lastY;
 	int32_t m_lastButton;
+	int32_t m_lastWheel;
 
 	void createMoviePlayer();
 

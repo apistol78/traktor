@@ -9,14 +9,6 @@
 #include "Render/IRenderView.h"
 #include "Render/Sw/VaryingUtils.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_SW_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace graphics
@@ -38,7 +30,7 @@ class Processor;
 /*!
  * \ingroup SW
  */
-class T_DLLCLASS RenderViewSw : public IRenderView
+class RenderViewSw : public IRenderView
 {
 	T_RTTI_CLASS;
 

@@ -5,14 +5,6 @@
 #include "Render/VertexElement.h"
 #include "Render/Dx9/VertexBufferDx9.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -24,7 +16,7 @@ class VertexDeclCache;
 /*!
  * \ingroup DX9 Xbox360
  */
-class T_DLLCLASS VertexBufferStaticDx9 : public VertexBufferDx9
+class VertexBufferStaticDx9 : public VertexBufferDx9
 {
 	T_RTTI_CLASS;
 

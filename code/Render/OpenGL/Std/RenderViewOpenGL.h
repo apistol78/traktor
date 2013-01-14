@@ -11,14 +11,6 @@
 #   include "Render/OpenGL/Std/Linux/Window.h"
 #endif
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_OPENGL_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -35,7 +27,7 @@ class VertexBufferOpenGL;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderViewOpenGL
+class RenderViewOpenGL
 :	public IRenderView
 #if defined(_WIN32)
 ,	public IWindowListener

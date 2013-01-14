@@ -6,14 +6,6 @@
 #include "Core/Misc/AutoPtr.h"
 #include "Render/VertexBuffer.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_SW_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -24,7 +16,7 @@ class VertexElement;
 /*!
  * \ingroup SW
  */
-class T_DLLCLASS VertexBufferSw : public VertexBuffer
+class VertexBufferSw : public VertexBuffer
 {
 	T_RTTI_CLASS;
 

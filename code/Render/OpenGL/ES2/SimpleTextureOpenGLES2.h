@@ -6,14 +6,6 @@
 #include "Render/Types.h"
 #include "Render/OpenGL/ITextureBinding.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_OPENGL_ES2_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -24,7 +16,7 @@ class IContext;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS SimpleTextureOpenGLES2
+class SimpleTextureOpenGLES2
 :	public ISimpleTexture
 ,	public ITextureBinding
 {

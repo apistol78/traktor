@@ -12,14 +12,6 @@
 #include "Render/Dx9/StateBlockDx9.h"
 #include "Render/Dx9/TypesDx9.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -35,7 +27,7 @@ class TextureBaseDx9;
 /*!
  * \ingroup DX9
  */
-class T_DLLCLASS ProgramWin32
+class ProgramWin32
 :	public IProgram
 ,	public IResourceDx9
 {

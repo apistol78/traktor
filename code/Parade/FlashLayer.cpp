@@ -87,6 +87,7 @@ FlashLayer::FlashLayer(
 ,	m_lastX(-1)
 ,	m_lastY(-1)
 ,	m_lastButton(0)
+,	m_lastWheel(0)
 {
 }
 
@@ -153,6 +154,9 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 			mouseDevice->getDefaultControl(input::DtButton1, false, button1);
 			mouseDevice->getDefaultControl(input::DtButton2, false, button2);
 
+			int32_t axisZ;
+			mouseDevice->getDefaultControl(input::DtAxisZ, true, axisZ);
+
 			float minX, minY;
 			float maxX, maxY;
 			mouseDevice->getControlRange(positionX, minX, maxX);
@@ -196,6 +200,13 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 						m_moviePlayer->postMouseUp(mx, my, mb);
 
 					m_lastButton = mb;
+				}
+
+				int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
+				if (wheel != m_lastWheel)
+				{
+					m_moviePlayer->postMouseWheel(mx, my, wheel);
+					m_lastWheel = wheel;
 				}
 			}
 		}

@@ -7,14 +7,6 @@
 #include "Render/Dx9/IResourceDx9.h"
 #include "Render/Dx9/Platform.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -26,7 +18,7 @@ class ResourceManagerDx9;
 /*!
  * \ingroup DX9 Xbox360
  */
-class T_DLLCLASS CubeTextureDx9
+class CubeTextureDx9
 :	public ICubeTexture
 ,	public IResourceDx9
 {

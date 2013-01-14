@@ -25,12 +25,12 @@ Vector4 unpackUnit(const uint8_t u[3])
 void packUnit(const Vector4& u, uint8_t out[3])
 {
 	float x = 0.0f, y = 0.0f, z = 0.0f;
-	float dx = u.x() / 8.0f;
-	float dy = u.y() / 8.0f;
-	float dz = u.z() / 8.0f;
+	float dx = u.x() / 128.0f;
+	float dy = u.y() / 128.0f;
+	float dz = u.z() / 128.0f;
 
 	float md = std::numeric_limits< float >::max();
-	for (int32_t i = 0; i < 8; ++i)
+	for (int32_t i = 0; i < 128; ++i)
 	{
 		x += dx;
 		y += dy;
@@ -40,40 +40,23 @@ void packUnit(const Vector4& u, uint8_t out[3])
 		int32_t iy = int32_t((y * 0.5f + 0.5f) * 255.0f);
 		int32_t iz = int32_t((z * 0.5f + 0.5f) * 255.0f);
 
-		for (int32_t dx = -1; dx <= 1; ++dx)
+		T_ASSERT (ix >= 0 && ix <= 255);
+		T_ASSERT (iy >= 0 && iy <= 255);
+		T_ASSERT (iz >= 0 && iz <= 255);
+
+		Vector4 v(
+			ix / 127.0f - 1.0f,
+			iy / 127.0f - 1.0f,
+			iz / 127.0f - 1.0f
+		);
+
+		float D = (u * v.length() - v).length();
+		if (D < md)
 		{
-			int32_t iix = ix + dx;
-			if (iix < 0 || iix > 255)
-				continue;
-
-			for (int32_t dy = -1; dy <= 1; ++dy)
-			{
-				int32_t iiy = iy + dy;
-				if (iiy < 0 || iiy > 255)
-					continue;
-
-				for (int32_t dz = -1; dz <= 1; ++dz)
-				{
-					int32_t iiz = iz + dz;
-					if (iiz < 0 || iiz > 255)
-						continue;
-
-					Vector4 v(
-						iix / 127.0f - 1.0f,
-						iiy / 127.0f - 1.0f,
-						iiz / 127.0f - 1.0f
-					);
-
-					float D = (u * v.length() - v).length();
-					if (D < md)
-					{
-						out[0] = iix;
-						out[1] = iiy;
-						out[2] = iiz;
-						md = D;
-					}
-				}
-			}
+			out[0] = ix;
+			out[1] = iy;
+			out[2] = iz;
+			md = D;
 		}
 	}
 

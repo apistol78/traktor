@@ -152,7 +152,7 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 
 		float k0 = (T - T0) / c_maxRubberBandTime;
 		float k1 = clamp(k0, 0.0f, 1.0f);
-		float k2 = lerp(0.1f, 0.9f, k1);
+		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k1);
 
 		f = lerp(f, fc, k2);
 	}

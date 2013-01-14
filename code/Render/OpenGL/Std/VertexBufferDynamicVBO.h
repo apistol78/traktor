@@ -4,14 +4,6 @@
 #include "Core/Containers/AlignedVector.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_OPENGL_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -23,7 +15,7 @@ class VertexElement;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS VertexBufferDynamicVBO : public VertexBufferOpenGL
+class VertexBufferDynamicVBO : public VertexBufferOpenGL
 {
 	T_RTTI_CLASS;
 

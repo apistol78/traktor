@@ -7,14 +7,6 @@
 #include "Render/Types.h"
 #include "Render/Dx9/IResourceDx9.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -26,7 +18,7 @@ class ResourceManagerDx9;
 /*!
  * \ingroup DX9
  */
-class T_DLLCLASS RenderTargetSetWin32
+class RenderTargetSetWin32
 :	public RenderTargetSet
 ,	public IResourceDx9
 {

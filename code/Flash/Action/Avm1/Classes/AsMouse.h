@@ -27,6 +27,8 @@ public:
 
 	void eventMouseMove(int x, int y, int button);
 
+	void eventMouseWheel(int x, int y, int delta);
+
 private:
 	void Mouse_show(CallArgs& ca);
 

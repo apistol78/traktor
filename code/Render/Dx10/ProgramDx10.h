@@ -7,14 +7,6 @@
 #include "Render/IProgram.h"
 #include "Render/Types.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX10_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -27,7 +19,7 @@ class HlslProgram;
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS ProgramDx10 : public IProgram
+class ProgramDx10 : public IProgram
 {
 	T_RTTI_CLASS;
 

@@ -408,6 +408,7 @@ struct SwfFilter
 
 enum SwfEventType
 {
+	EvtMouseWheel		= (1 << 21),
 	EvtKey				= (1 << 20),
 	EvtViewResize		= (1 << 19),
 	EvtConstruct		= (1 << 18),

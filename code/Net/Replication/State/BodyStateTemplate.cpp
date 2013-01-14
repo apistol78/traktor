@@ -74,11 +74,33 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BodyStateTemplate", BodyStateTemplate, IVal
 
 void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 {
-	float e[4];
-	uint8_t u[3];
-
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);
 	const Transform& T = v.getTransform();
+
+#if 1
+
+	float e[4];
+
+	T.translation().storeUnaligned(e);
+	for (uint32_t i = 0; i < 3; ++i)
+		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
+
+	T.rotation().toAxisAngle().storeUnaligned(e);
+	for (uint32_t i = 0; i < 3; ++i)
+		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
+
+	v.getLinearVelocity().storeUnaligned(e);
+	for (uint32_t i = 0; i < 3; ++i)
+		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
+
+	v.getAngularVelocity().storeUnaligned(e);
+	for (uint32_t i = 0; i < 3; ++i)
+		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
+
+#else
+
+	float e[4];
+	uint8_t u[3];
 
 	// 3 * 32
 	T.translation().storeUnaligned(e);
@@ -146,10 +168,60 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 			// 1
 			writer.writeBit(false);
 	}
+
+#endif
 }
 
 Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 {
+	Vector4 linearVelocity, angularVelocity;
+	Transform T;
+
+#if 1
+	uint32_t ut[3], ur[3];
+	uint32_t ulv[3], uav[3];
+
+	for (uint32_t i = 0; i < 3; ++i)
+		ut[i] = reader.readUnsigned(32);
+	for (uint32_t i = 0; i < 3; ++i)
+		ur[i] = reader.readUnsigned(32);
+	for (uint32_t i = 0; i < 3; ++i)
+		ulv[i] = reader.readUnsigned(32);
+	for (uint32_t i = 0; i < 3; ++i)
+		uav[i] = reader.readUnsigned(32);
+
+	T = Transform(
+		Vector4(
+			*(float*)&ut[0],
+			*(float*)&ut[1],
+			*(float*)&ut[2],
+			1.0f
+		),
+		Quaternion::fromAxisAngle(
+			Vector4(
+				*(float*)&ur[0],
+				*(float*)&ur[1],
+				*(float*)&ur[2],
+				0.0f
+			)
+		).normalized()
+	);
+
+	linearVelocity = Vector4(
+		*(float*)&ulv[0],
+		*(float*)&ulv[1],
+		*(float*)&ulv[2],
+		0.0f
+	);
+	angularVelocity = Vector4(
+		*(float*)&uav[0],
+		*(float*)&uav[1],
+		*(float*)&uav[2],
+		0.0f
+	);
+
+#else
+
 	uint32_t uf[3];
 	uint8_t u[3];
 
@@ -162,7 +234,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	Vector4 R = unpackUnit(u);
 	uint32_t ua = reader.readUnsigned(32);
 
-	Transform T(
+	T = Transform(
 		Vector4(
 			*(float*)&uf[0],
 			*(float*)&uf[1],
@@ -172,7 +244,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 		Quaternion::fromAxisAngle(R, *(float*)&ua).normalized()
 	);
 
-	Vector4 linearVelocity = Vector4::zero();
+	linearVelocity = Vector4::zero();
 	if (reader.readBit())
 	{
 		uint8_t u[3];
@@ -185,7 +257,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 		linearVelocity *= Scalar(ln2);
 	}
 
-	Vector4 angularVelocity = Vector4::zero();
+	angularVelocity = Vector4::zero();
 	if (reader.readBit())
 	{
 		uint8_t u[3];
@@ -197,6 +269,8 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 		float ln2 = reader.readUnsigned(16) / 512.0f;
 		angularVelocity *= Scalar(ln2);
 	}
+
+#endif
 
 	physics::BodyState S;
 	S.setTransform(T);
@@ -284,10 +358,11 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 		Scalar ln = (P - Pc).length();
 
 		float k0 = ln / c_maxRubberBandDistance;
-		float k1 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k0);
+		float k1 = clamp(k0, 0.0f, 1.0f);
+		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k2);
 
 		if (k1 > FUZZY_EPSILON)
-			S = S.interpolate(Sc, Scalar(k1));
+			S = S.interpolate(Sc, Scalar(k2));
 	}
 
 	return new BodyStateValue(S);

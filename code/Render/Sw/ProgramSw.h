@@ -8,14 +8,6 @@
 #include "Render/Sw/Core/Processor.h"
 #include "Render/Sw/RenderStateDesc.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_SW_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -26,7 +18,7 @@ class AbstractSampler;
 /*!
  * \ingroup SW
  */
-class T_DLLCLASS ProgramSw : public IProgram
+class ProgramSw : public IProgram
 {
 	T_RTTI_CLASS;
 

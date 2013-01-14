@@ -4,14 +4,6 @@
 #include "Script/IScriptContext.h"
 #include "Script/Types.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_SCRIPT_LUA_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 struct lua_State;
 
 namespace traktor
@@ -25,7 +17,7 @@ class ScriptManagerLua;
 /*! \brief LUA scripting context.
  * \ingroup LUA Script
  */
-class T_DLLCLASS ScriptContextLua : public IScriptContext
+class ScriptContextLua : public IScriptContext
 {
 	T_RTTI_CLASS;
 

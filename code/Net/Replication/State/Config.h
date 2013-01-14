@@ -10,8 +10,8 @@ namespace traktor
 
 const Scalar c_maxRubberBandDistance(120.0f);
 const float c_maxRubberBandTime = 0.2f;
-const float c_rubberBandStrengthNear = 0.9f;
-const float c_rubberBandStrengthFar = 0.1f;
+const float c_rubberBandStrengthNear = 0.95f;
+const float c_rubberBandStrengthFar = 0.8f;
 
 	}
 }
