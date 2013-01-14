@@ -3,14 +3,6 @@
 
 #include "Render/IRenderView.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_CAPTURE_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace drawing
@@ -29,7 +21,7 @@ class RenderTargetSet;
 /*! \brief Performance capture render view.
  * \ingroup RenderCapture
  */
-class T_DLLCLASS RenderViewCapture : public IRenderView
+class RenderViewCapture : public IRenderView
 {
 	T_RTTI_CLASS;
 

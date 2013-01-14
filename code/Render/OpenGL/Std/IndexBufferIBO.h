@@ -3,14 +3,6 @@
 
 #include "Render/OpenGL/IndexBufferOpenGL.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_OPENGL_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -21,7 +13,7 @@ class IContext;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS IndexBufferIBO : public IndexBufferOpenGL
+class IndexBufferIBO : public IndexBufferOpenGL
 {
 	T_RTTI_CLASS;
 

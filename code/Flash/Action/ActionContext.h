@@ -65,7 +65,8 @@ public:
 		IdOnRollOut = 27,
 		IdOnFrame = 28,
 		IdOnSetFocus = 29,
-		IdOnKillFocus = 30
+		IdOnKillFocus = 30,
+		IdOnMouseWheel = 31
 	};
 
 	ActionContext(const IActionVM* vm, const FlashMovie* movie, const IFlashMovieLoader* movieLoader);

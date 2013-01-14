@@ -8,14 +8,6 @@
 #include "Render/IRenderView.h"
 #include "Render/Dx9/Platform.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -33,7 +25,7 @@ class VertexBufferDx9;
 /*!
  * \ingroup DX9
  */
-class T_DLLCLASS RenderViewWin32
+class RenderViewWin32
 :	public IRenderView
 {
 	T_RTTI_CLASS;

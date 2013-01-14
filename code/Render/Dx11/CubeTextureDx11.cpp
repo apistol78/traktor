@@ -29,15 +29,18 @@ bool CubeTextureDx11::create(const CubeTextureCreateDesc& desc)
 	D3D11_TEXTURE2D_DESC dtd;
 	HRESULT hr;
 
-	T_ASSERT (c_dxgiTextureFormats[desc.format] != DXGI_FORMAT_UNKNOWN);
 	T_ASSERT (sizeof(TextureInitialData) == sizeof(D3D11_SUBRESOURCE_DATA));
+
+	const DXGI_FORMAT* dxgiTextureFormats = desc.sRGB ? c_dxgiTextureFormats_sRGB : c_dxgiTextureFormats;
+	if (dxgiTextureFormats[desc.format] == DXGI_FORMAT_UNKNOWN)
+		return false;
 
 	std::memset(&dtd, 0, sizeof(dtd));
 	dtd.Width = desc.side;
 	dtd.Height = desc.side;
 	dtd.MipLevels = desc.mipCount;
 	dtd.ArraySize = 6;
-	dtd.Format = c_dxgiTextureFormats[desc.format];
+	dtd.Format = dxgiTextureFormats[desc.format];
 	dtd.SampleDesc.Count = 1;
 	dtd.SampleDesc.Quality = 0;
 	dtd.Usage = desc.immutable ? D3D11_USAGE_IMMUTABLE : D3D11_USAGE_DYNAMIC;

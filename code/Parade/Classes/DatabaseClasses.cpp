@@ -3,6 +3,7 @@
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Database/Traverse.h"
 #include "Parade/Classes/DatabaseClasses.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
@@ -33,6 +34,13 @@ Ref< db::Instance > db_Database_createInstance(db::Database* self, const std::ws
 Ref< ISerializable > db_Database_getObjectReadOnly(db::Database* self, const Guid& id)
 {
 	return self->getObjectReadOnly(id);
+}
+
+RefArray< db::Instance > db_Database_findInstancesByType(db::Database* self, const TypeInfo& instanceType)
+{
+	RefArray< db::Instance > instances;
+	recursiveFindChildInstances(self->getRootGroup(), db::FindInstanceByType(instanceType), instances);
+	return instances;
 }
 
 Ref< db::Instance > db_Group_getInstanceByName(db::Group* self, const std::wstring& instanceName)
@@ -84,6 +92,7 @@ void registerDatabaseClasses(script::IScriptManager* scriptManager)
 	classDatabase->addMethod("getInstanceByPath", &db_Database_getInstanceByPath);
 	classDatabase->addMethod("createInstance", &db_Database_createInstance);
 	classDatabase->addMethod("getObjectReadOnly", &db_Database_getObjectReadOnly);
+	classDatabase->addMethod("findInstancesByType", &db_Database_findInstancesByType);
 	scriptManager->registerClass(classDatabase);
 
 	Ref< script::AutoScriptClass< db::Group > > classGroup = new script::AutoScriptClass< db::Group >();

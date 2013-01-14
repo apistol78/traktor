@@ -151,6 +151,14 @@ public:
 	 */
 	void postMouseMove(int32_t x, int32_t y, int32_t button);
 
+	/*! \brief Post mouse wheel event.
+	 *
+	 * \param x Mouse cursor X coordinate.
+	 * \param y Mouse cursor Y coordinate.
+	 * \param delta Wheel delta motion
+	 */
+	void postMouseWheel(int32_t x, int32_t y, int32_t delta);
+
 	/*! \brief Post view resize event.
 	 *
 	 * \param width New view width (in pixels).
@@ -212,7 +220,11 @@ private:
 			{
 				int32_t x;
 				int32_t y;
-				int32_t button;
+				union
+				{
+					int32_t button;
+					int32_t delta;
+				};
 			}
 			mouse;
 			struct 

@@ -3,14 +3,6 @@
 
 #include "Render/Dx9/Win32/RenderViewWin32.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX9_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -19,7 +11,7 @@ namespace traktor
 /*!
  * \ingroup DX9
  */
-class T_DLLCLASS RenderViewEmbeddedWin32
+class RenderViewEmbeddedWin32
 :	public RenderViewWin32
 {
 	T_RTTI_CLASS;

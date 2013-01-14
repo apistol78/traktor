@@ -359,7 +359,7 @@ void FlashSpriteInstance::eventLoad()
 	context->setMovieClip(this);
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnLoad);
+	executeScriptEvent(ActionContext::IdOnLoad, ActionValue());
 
 	FlashCharacterInstance::eventLoad();
 
@@ -378,7 +378,7 @@ void FlashSpriteInstance::eventFrame()
 
 	// Issue script assigned event; hack to skip events when using goto methods.
 	if (!m_skipEnterFrame)
-		executeScriptEvent(ActionContext::IdOnEnterFrame);
+		executeScriptEvent(ActionContext::IdOnEnterFrame, ActionValue());
 	else
 		--m_skipEnterFrame;
 
@@ -442,7 +442,7 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 		(*i)->eventKeyDown(keyCode);
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnKeyDown);
+	executeScriptEvent(ActionContext::IdOnKeyDown, ActionValue());
 
 	FlashCharacterInstance::eventKeyDown(keyCode);
 
@@ -461,7 +461,7 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 		(*i)->eventKeyUp(keyCode);
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnKeyUp);
+	executeScriptEvent(ActionContext::IdOnKeyUp, ActionValue());
 
 	FlashCharacterInstance::eventKeyUp(keyCode);
 
@@ -488,14 +488,14 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	}
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseDown);
+	executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
 
 	// Check if we're inside then issue press events.
 	SwfRect bounds = getLocalBounds();
 	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside)
 	{
-		executeScriptEvent(ActionContext::IdOnPress);
+		executeScriptEvent(ActionContext::IdOnPress, ActionValue());
 		m_press = true;
 	}
 
@@ -525,13 +525,13 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	}
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseUp);
+	executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
 
 	// Check if we're inside then issue press events.
 	SwfRect bounds = getLocalBounds();
 	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside && m_press)
-		executeScriptEvent(ActionContext::IdOnRelease);
+		executeScriptEvent(ActionContext::IdOnRelease, ActionValue());
 
 	FlashCharacterInstance::eventMouseUp(x, y, button);
 
@@ -559,7 +559,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	}
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnMouseMove);
+	executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
 
 	// Roll over and out event handling.
 	SwfRect bounds = getLocalBounds();
@@ -567,9 +567,9 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	if (inside != m_inside)
 	{
 		if (inside)
-			executeScriptEvent(ActionContext::IdOnRollOver);
+			executeScriptEvent(ActionContext::IdOnRollOver, ActionValue());
 		else
-			executeScriptEvent(ActionContext::IdOnRollOut);
+			executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
 
 		m_inside = inside;
 	}

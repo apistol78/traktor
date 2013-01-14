@@ -60,6 +60,21 @@ void AsMouse::eventMouseMove(int x, int y, int button)
 	}
 }
 
+void AsMouse::eventMouseWheel(int x, int y, int delta)
+{
+	ActionValue broadcastMessageValue;
+	getMember("broadcastMessage", broadcastMessageValue);
+
+	Ref< ActionFunction > broadcastMessageFn = broadcastMessageValue.getObject< ActionFunction >();
+	if (broadcastMessageFn)
+	{
+		ActionValueArray args(getContext()->getPool(), 2);
+		args[0] = ActionValue("onMouseWheel");
+		args[1] = ActionValue(avm_number_t(delta));
+		broadcastMessageFn->call(this, args);
+	}
+}
+
 void AsMouse::Mouse_show(CallArgs& ca)
 {
 	T_IF_VERBOSE(

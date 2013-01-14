@@ -18,8 +18,8 @@
 				<second type="traktor.PropertyStringSet">
 					<value>
 						<item>Traktor.Render</item>
-						<item>Traktor.Render.Editor</item>
 						<item>Traktor.Render.Dx10</item>
+						<item>Traktor.Render.Editor</item>
 					</value>
 				</second>
 			</item>
@@ -69,6 +69,12 @@
 				<first>TexturePipeline.SkipMips</first>
 				<second type="traktor.PropertyInteger">
 					<value>0</value>
+				</second>
+			</item>
+			<item>
+				<first>TexturePipeline.sRGB</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
 				</second>
 			</item>
 		</value>

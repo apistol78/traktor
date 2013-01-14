@@ -6,14 +6,6 @@
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_OPENGL_ES2_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -27,7 +19,7 @@ class RenderTargetOpenGLES2;
 /*!
  * \ingroup OGL
  */
-class T_DLLCLASS RenderTargetSetOpenGLES2 : public RenderTargetSet
+class RenderTargetSetOpenGLES2 : public RenderTargetSet
 {
 	T_RTTI_CLASS;
 

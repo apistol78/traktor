@@ -455,6 +455,7 @@ struct SimpleTextureCreateDesc
 	int32_t height;
 	int32_t mipCount;
 	TextureFormat format;
+	bool sRGB;
 	bool immutable;
 	TextureInitialData initialData[16];
 
@@ -463,6 +464,7 @@ struct SimpleTextureCreateDesc
 	,	height(0)
 	,	mipCount(0)
 	,	format(TfInvalid)
+	,	sRGB(false)
 	,	immutable(false)
 	{
 	}
@@ -474,6 +476,7 @@ struct CubeTextureCreateDesc
 	int32_t side;
 	int32_t mipCount;
 	TextureFormat format;
+	bool sRGB;
 	bool immutable;
 	TextureInitialData initialData[16 * 6];
 
@@ -481,6 +484,7 @@ struct CubeTextureCreateDesc
 	:	side(0)
 	,	mipCount(0)
 	,	format(TfInvalid)
+	,	sRGB(false)
 	,	immutable(false)
 	{
 	}
@@ -494,6 +498,7 @@ struct VolumeTextureCreateDesc
 	int32_t depth;
 	int32_t mipCount;
 	TextureFormat format;
+	bool sRGB;
 	bool immutable;
 	TextureInitialData initialData[16];
 
@@ -503,6 +508,7 @@ struct VolumeTextureCreateDesc
 	,	depth(0)
 	,	mipCount(0)
 	,	format(TfInvalid)
+	,	sRGB(false)
 	,	immutable(false)
 	{
 	}

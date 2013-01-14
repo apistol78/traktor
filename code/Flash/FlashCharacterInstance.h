@@ -184,7 +184,7 @@ public:
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
 
 protected:
-	void executeScriptEvent(uint32_t eventName);
+	void executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
 	virtual void trace(const IVisitor& visitor) const;
 

@@ -84,7 +84,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	uint32_t version;
 	reader >> version;
-	if (version != 10)
+	if (version != 11)
 	{
 		log::error << L"Unable to read texture, unknown version " << version << Endl;
 		return 0;
@@ -92,13 +92,14 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 
 	int32_t imageWidth, imageHeight, imageDepth, mipCount, texelFormat;
 	uint8_t textureType;
-	bool compressed;
+	bool sRGB, compressed;
 
 	reader >> imageWidth;
 	reader >> imageHeight;
 	reader >> imageDepth;
 	reader >> mipCount;
 	reader >> texelFormat;
+	reader >> sRGB;
 	reader >> textureType;
 	reader >> compressed;
 
@@ -115,6 +116,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.height = imageHeight >> skipMips;
 		desc.mipCount = mipCount - skipMips;
 		desc.format = (TextureFormat)texelFormat;
+		desc.sRGB = sRGB;
 		desc.immutable = true;
 
 		uint32_t textureDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
@@ -173,6 +175,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.depth = imageDepth >> skipMips;
 		desc.mipCount = mipCount - skipMips;
 		desc.format = (TextureFormat)texelFormat;
+		desc.sRGB = sRGB;
 		desc.immutable = true;
 
 		uint32_t sliceDataSize = mipChainSize(desc.format, desc.width, desc.height, desc.mipCount);
@@ -250,6 +253,7 @@ Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager
 		desc.side = imageWidth;
 		desc.mipCount = mipCount;
 		desc.format = (TextureFormat)texelFormat;
+		desc.sRGB = sRGB;
 		desc.immutable = true;
 
 		uint32_t textureDataSize = mipChainSize(desc.format, desc.side, desc.side, desc.mipCount);

@@ -241,10 +241,14 @@ void FlashMoviePlayer::executeFrame()
 			m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
+		case EvtMouseWheel:
+			if (m_mouse)
+				m_mouse->eventMouseWheel(evt.mouse.x, evt.mouse.y, evt.mouse.delta);
+			break;
+
 		case EvtViewResize:
 			if (m_stage)
 				m_stage->eventResize(evt.view.width, evt.view.height);
-
 			break;
 		}
 		m_events.pop_front();
@@ -341,6 +345,18 @@ void FlashMoviePlayer::postMouseMove(int32_t x, int32_t y, int32_t button)
 	evt.mouse.x = xy.x;
 	evt.mouse.y = xy.y;
 	evt.mouse.button = button;
+	m_events.push_back(evt);
+}
+
+void FlashMoviePlayer::postMouseWheel(int32_t x, int32_t y, int32_t delta)
+{
+	Vector2 xy = m_stage->toStage(Vector2(x, y));
+
+	Event evt;
+	evt.eventType = EvtMouseWheel;
+	evt.mouse.x = xy.x;
+	evt.mouse.y = xy.y;
+	evt.mouse.delta = delta;
 	m_events.push_back(evt);
 }
 

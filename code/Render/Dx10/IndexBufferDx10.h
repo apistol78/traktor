@@ -4,14 +4,6 @@
 #include "Render/IndexBuffer.h"
 #include "Core/Misc/ComRef.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_RENDER_DX10_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
-#else
-#define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace render
@@ -22,7 +14,7 @@ class ContextDx10;
 /*!
  * \ingroup DX10
  */
-class T_DLLCLASS IndexBufferDx10 : public IndexBuffer
+class IndexBufferDx10 : public IndexBuffer
 {
 	T_RTTI_CLASS;
 

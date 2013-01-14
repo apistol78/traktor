@@ -279,12 +279,12 @@ void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
 
 void FlashCharacterInstance::eventSetFocus()
 {
-	executeScriptEvent(ActionContext::IdOnSetFocus);
+	executeScriptEvent(ActionContext::IdOnSetFocus, ActionValue());
 }
 
 void FlashCharacterInstance::eventKillFocus()
 {
-	executeScriptEvent(ActionContext::IdOnKillFocus);
+	executeScriptEvent(ActionContext::IdOnKillFocus, ActionValue());
 }
 
 bool FlashCharacterInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
@@ -298,7 +298,7 @@ bool FlashCharacterInstance::getMember(ActionContext* context, uint32_t memberNa
 		return false;
 }
 
-void FlashCharacterInstance::executeScriptEvent(uint32_t eventName)
+void FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
 {
 	ActionContext* cx = getContext();
 	T_ASSERT (cx);
@@ -311,8 +311,13 @@ void FlashCharacterInstance::executeScriptEvent(uint32_t eventName)
 		return;
 
 	Ref< ActionFunction > eventFunction = memberValue.getObject< ActionFunction >();
-	if (eventFunction)
-		eventFunction->call(self);
+	if (!eventFunction)
+		return;
+
+	ActionValueArray argv(cx->getPool(), 1);
+	argv[0] = arg;
+
+	eventFunction->call(self, argv);
 }
 
 void FlashCharacterInstance::trace(const IVisitor& visitor) const
