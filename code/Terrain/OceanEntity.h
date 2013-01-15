@@ -22,7 +22,6 @@ namespace traktor
 class IndexBuffer;
 class IRenderSystem;
 class RenderContext;
-class RenderTargetSet;
 class ScreenRenderer;
 class Shader;
 class VertexBuffer;
@@ -75,15 +74,10 @@ public:
 
 	virtual void update(const UpdateParams& update);
 
-	//float getAltitude() const { return m_altitude; }
-
 private:
 	resource::Proxy< Terrain > m_terrain;
-	resource::Proxy< render::Shader > m_shaderWaves;
 	resource::Proxy< render::Shader > m_shaderComposite;
 	Ref< render::ScreenRenderer > m_screenRenderer;
-	Ref< render::RenderTargetSet > m_targetWaves;
-	Vector4 m_waveData[MaxWaves];
 	Transform m_transform;
 };
 

@@ -341,7 +341,6 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 
 	P += Vl * dT_0;
 	R = Quaternion::fromAxisAngle(Va * dT_0) * R;
-	//R = R * Quaternion::fromAxisAngle(Va * dT_0);
 
 	physics::BodyState S;
 	S.setTransform(Transform(P, R.normalized()));
@@ -359,7 +358,7 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 
 		float k0 = ln / c_maxRubberBandDistance;
 		float k1 = clamp(k0, 0.0f, 1.0f);
-		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k2);
+		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k1);
 
 		if (k1 > FUZZY_EPSILON)
 			S = S.interpolate(Sc, Scalar(k2));

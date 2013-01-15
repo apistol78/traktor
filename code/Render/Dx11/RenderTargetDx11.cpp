@@ -1,5 +1,4 @@
 #include "Core/Log/Log.h"
-#include "Core/Math/Log2.h"
 #include "Render/Types.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/RenderTargetDx11.h"
@@ -35,7 +34,7 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 
 	dtd.Width = setDesc.width;
 	dtd.Height = setDesc.height;
-	dtd.MipLevels = setDesc.generateMips ? log2(max(setDesc.width, setDesc.height)) + 1 : 1;
+	dtd.MipLevels = setDesc.generateMips ? 0 : 1;
 	dtd.ArraySize = 1;
 	dtd.Format = c_dxgiTextureFormats[desc.format];
 	dtd.SampleDesc.Count = 1;
@@ -43,7 +42,7 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 	dtd.Usage = D3D11_USAGE_DEFAULT;
 	dtd.BindFlags = D3D11_BIND_RENDER_TARGET | D3D11_BIND_SHADER_RESOURCE;
 	dtd.CPUAccessFlags = 0;
-	dtd.MiscFlags = 0;
+	dtd.MiscFlags = setDesc.generateMips ? D3D11_RESOURCE_MISC_GENERATE_MIPS : 0;
 
 	if (setDesc.generateMips)
 		dtd.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
@@ -124,7 +123,13 @@ void RenderTargetDx11::unlock(int level)
 void RenderTargetDx11::unbind()
 {
 	if (m_generateMips)
+	{
+		ID3D11ShaderResourceView* nullViews[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+		m_context->getD3DDeviceContext()->VSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+		m_context->getD3DDeviceContext()->PSSetShaderResources(0, sizeof_array(nullViews), (ID3D11ShaderResourceView**)nullViews);
+		m_context->getD3DDeviceContext()->OMSetRenderTargets(0, NULL, NULL);
 		m_context->getD3DDeviceContext()->GenerateMips(m_d3dTextureResourceView);
+	}
 }
 
 	}
