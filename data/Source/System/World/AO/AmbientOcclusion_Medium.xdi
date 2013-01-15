@@ -6,7 +6,7 @@
 			<id>Ssao</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>2</screenDenom>
+			<screenDenom>4</screenDenom>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
@@ -16,7 +16,7 @@
 			<id>SsaoBlur1</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenDenom>2</screenDenom>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
@@ -26,7 +26,7 @@
 			<id>SsaoBlur2</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenDenom>2</screenDenom>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
@@ -38,7 +38,7 @@
 			<target>Ssao</target>
 		</item>
 		<item type="traktor.world.PostProcessStepSsao" version="1">
-			<shader>{868B48AA-AC86-F64F-9934-671F2BE9DD80}</shader>
+			<shader>{682F3EA4-A7C6-4D44-9079-E0B2DBA32911}</shader>
 			<sources>
 				<item>
 					<param>Source</param>

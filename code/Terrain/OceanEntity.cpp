@@ -24,22 +24,6 @@ namespace traktor
 		namespace
 		{
 
-struct WavesRenderBlock : public render::RenderBlock
-{
-	render::ScreenRenderer* screenRenderer;
-	render::RenderTargetSet* targetWaves;
-
-	virtual void render(render::IRenderView* renderView, const render::ProgramParameters* globalParameters) const
-	{
-		if (programParams)
-			programParams->fixup(program);
-		if (globalParameters)
-			globalParameters->fixup(program);
-
-		screenRenderer->draw(renderView, targetWaves, 0, program);
-	}
-};
-
 struct OceanRenderBlock : public render::RenderBlock
 {
 	render::ScreenRenderer* screenRenderer;
@@ -72,28 +56,7 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 
 	resourceManager->bind(data.m_terrain, m_terrain);
 
-	if (!resourceManager->bind(data.m_shaderWaves, m_shaderWaves))
-		return false;
 	if (!resourceManager->bind(data.m_shaderComposite, m_shaderComposite))
-		return false;
-
-	for (int i = 0; i < MaxWaves; ++i)
-		m_waveData[i] = Vector4(data.m_waves[i].direction.x, data.m_waves[i].direction.y, data.m_waves[i].amplitude, data.m_waves[i].phase);
-
-	render::RenderTargetSetCreateDesc desc;
-	desc.count = 1;
-	desc.width = 1024;
-	desc.height = 1024;
-	desc.multiSample = 0;
-	desc.createDepthStencil = false;
-	desc.usingPrimaryDepthStencil = false;
-	desc.preferTiled = false;
-	desc.ignoreStencil = true;
-	desc.generateMips = false;
-	desc.targets[0].format = render::TfR16F;
-	
-	m_targetWaves = renderSystem->createRenderTargetSet(desc);
-	if (!m_targetWaves)
 		return false;
 
 	m_transform = data.getTransform();
@@ -124,30 +87,6 @@ void OceanEntity::render(
 	if (!program)
 		return;
 
-	// Render wave displacement map.
-	{
-		WavesRenderBlock* renderBlock = renderContext->alloc< WavesRenderBlock >("Ocean waves");
-
-		renderBlock->screenRenderer = m_screenRenderer;
-		renderBlock->targetWaves = m_targetWaves;
-		renderBlock->distance = 0.0f;
-		renderBlock->program = m_shaderWaves->getCurrentProgram();
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
-
-		renderBlock->programParams->beginParameters(renderContext);
-
-		worldRenderPass.setProgramParameters(
-			renderBlock->programParams,
-			false
-		);
-
-		renderBlock->programParams->setVectorArrayParameter(L"WaveData", m_waveData, MaxWaves);
-
-		renderBlock->programParams->endParameters(renderContext);
-
-		renderContext->draw(render::RfSetup, renderBlock);
-	}
-
 	// Render ocean compositing.
 	{
 		OceanRenderBlock* renderBlock = renderContext->alloc< OceanRenderBlock >("Ocean composite");
@@ -174,7 +113,6 @@ void OceanEntity::render(
 		renderBlock->programParams->setMatrixParameter(L"Projection", projection);
 		renderBlock->programParams->setVectorParameter(L"Eye", view.inverse().translation().xyz1());
 		renderBlock->programParams->setFloatParameter(L"OceanAltitude", m_transform.translation().y());
-		renderBlock->programParams->setTextureParameter(L"Waves", m_targetWaves->getColorTexture(0));
 
 		renderBlock->programParams->endParameters(renderContext);
 
