@@ -70,9 +70,9 @@ public:
 	{
 		script::Any argv[] =
 		{
-			script::Any(collisionInfo.body1),
-			script::Any(collisionInfo.body2),
-			script::Any(new CollisionContact(collisionInfo.contacts))
+			script::Any::fromObject(collisionInfo.body1),
+			script::Any::fromObject(collisionInfo.body2),
+			script::Any::fromObject(new CollisionContact(collisionInfo.contacts))
 		};
 		if (m_delegate)
 			m_delegate->invoke(sizeof_array(argv), argv);

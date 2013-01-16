@@ -407,16 +407,16 @@ Any ScriptManagerLua::toAny(int32_t index)
 	CHECK_LUA_STACK(m_luaState, 0);
 
 	if (lua_isnumber(m_luaState, index))
-		return Any(float(lua_tonumber(m_luaState, index)));
+		return Any::fromFloat(float(lua_tonumber(m_luaState, index)));
 	if (lua_isboolean(m_luaState, index))
-		return Any(bool(lua_toboolean(m_luaState, index) != 0));
+		return Any::fromBoolean(bool(lua_toboolean(m_luaState, index) != 0));
 	if (lua_isstring(m_luaState, index))
-		return Any(lua_tostring(m_luaState, index));
+		return Any::fromString(lua_tostring(m_luaState, index));
 	if (lua_isuserdata(m_luaState, index))
 	{
 		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
 		if (object)
-			return Any(object);
+			return Any::fromObject(object);
 	}
 	if (lua_istable(m_luaState, index))
 	{
@@ -427,13 +427,13 @@ Any ScriptManagerLua::toAny(int32_t index)
 			const IScriptClass* scriptClass = reinterpret_cast< const IScriptClass* >(lua_touserdata(m_luaState, -1));
 			lua_pop(m_luaState, 1);
 			if (scriptClass)
-				return Any(&scriptClass->getExportType());
+				return Any::fromTypeInfo(&scriptClass->getExportType());
 		}
 		lua_pop(m_luaState, 1);
 
 		// Box LUA table into C++ container.
 		lua_pushvalue(m_luaState, index);
-		return Any(new TableContainerLua(m_luaState));
+		return Any::fromObject(new TableContainerLua(m_luaState));
 	}
 
 	return Any();
@@ -483,7 +483,7 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 	param.context = manager->m_currentContext;
 	param.object = 0;
 
-	Any returnValue(scriptClass->construct(param, top - 1, argv));
+	Any returnValue = Any::fromObject(scriptClass->construct(param, top - 1, argv));
 	manager->pushAny(returnValue);
 
 	return 1;

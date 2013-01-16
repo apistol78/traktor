@@ -164,7 +164,7 @@ Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName,
 		if (lua_isfunction(m_luaState, -1))
 		{
 			// Set "self" variable in global environment.
-			m_scriptManager->pushAny(Any(self));
+			m_scriptManager->pushAny(Any::fromObject(self));
 			lua_setglobal(m_luaState, "self");
 
 			// Push arguments.

@@ -220,7 +220,7 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	{
 		script::Any argv[] =
 		{
-			script::Any(args)
+			script::Any::fromString(args)
 		};
 		getStage()->invokeScript(command, sizeof_array(argv), argv);
 	}

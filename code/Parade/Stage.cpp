@@ -161,8 +161,8 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 		{
 			script::Any argv[] =
 			{
-				script::Any(&control),
-				script::Any(const_cast< amalgam::IUpdateInfo* >(&info))
+				script::Any::fromObject(&control),
+				script::Any::fromObject(const_cast< amalgam::IUpdateInfo* >(&info))
 			};
 			m_scriptContext->executeFunction("update", sizeof_array(argv), argv);
 		}
@@ -238,19 +238,19 @@ bool Stage::validateScriptContext()
 	if (!m_initialized)
 	{
 		// Expose commonly used globals.
-		m_scriptContext->setGlobal("stage", script::Any(this));
-		m_scriptContext->setGlobal("environment", script::Any(m_environment));
+		m_scriptContext->setGlobal("stage", script::Any::fromObject(this));
+		m_scriptContext->setGlobal("environment", script::Any::fromObject(m_environment));
 
 		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 		{
 			if (!(*i)->getName().empty())
-				m_scriptContext->setGlobal(wstombs((*i)->getName()), script::Any(*i));
+				m_scriptContext->setGlobal(wstombs((*i)->getName()), script::Any::fromObject(*i));
 		}
 
 		// Call script init; do this everytime we re-validate script.
 		script::Any argv[] =
 		{
-			script::Any(const_cast< Object* >(m_params.c_ptr()))
+			script::Any::fromObject(const_cast< Object* >(m_params.c_ptr()))
 		};
 		m_scriptContext->executeMethod(this, "initialize", sizeof_array(argv), argv);
 		m_initialized = true;

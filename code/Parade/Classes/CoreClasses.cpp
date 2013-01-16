@@ -34,13 +34,13 @@ script::Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& p
 {
 	const IPropertyValue* property = self->getProperty(propertyName);
 	if (const PropertyBoolean* propertyBoolean = dynamic_type_cast< const PropertyBoolean* >(property))
-		return script::Any(*propertyBoolean);
+		return script::Any::fromBoolean(*propertyBoolean);
 	else if (const PropertyInteger* propertyInteger = dynamic_type_cast< const PropertyInteger* >(property))
-		return script::Any(*propertyInteger);
+		return script::Any::fromInteger(*propertyInteger);
 	else if (const PropertyFloat* propertyFloat = dynamic_type_cast< const PropertyFloat* >(property))
-		return script::Any(*propertyFloat);
+		return script::Any::fromFloat(*propertyFloat);
 	else if (const PropertyString* propertyString = dynamic_type_cast< const PropertyString* >(property))
-		return script::Any(*propertyString);
+		return script::Any::fromString(*propertyString);
 	else
 		return script::Any();
 }

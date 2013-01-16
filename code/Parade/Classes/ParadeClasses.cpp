@@ -10,6 +10,7 @@
 #include "Script/IScriptManager.h"
 #include "World/Entity/IEntitySchema.h"
 #include "World/Entity/Entity.h"
+#include "World/Entity/EntityData.h"
 
 namespace traktor
 {
@@ -75,6 +76,7 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classVideoLayer);
 
 	Ref< script::AutoScriptClass< WorldLayer > > classWorldLayer = new script::AutoScriptClass< WorldLayer >();
+	classWorldLayer->addMethod("getEntityData", &WorldLayer::getEntityData);
 	classWorldLayer->addMethod("getEntity", &WorldLayer::getEntity);
 	classWorldLayer->addMethod("getEntities", &WorldLayer::getEntities);
 	classWorldLayer->addMethod("getEntitiesOf", &WorldLayer::getEntitiesOf);
