@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Parade/WorldLayer.h"
@@ -173,6 +174,15 @@ void WorldLayer::leave()
 void WorldLayer::reconfigured()
 {
 	createWorldRenderer();
+}
+
+Ref< world::EntityData > WorldLayer::getEntityData(const std::wstring& name) const
+{
+	std::map< std::wstring, resource::Proxy< world::EntityData > >::const_iterator i = m_entities.find(name);
+	if (i != m_entities.end())
+		return DeepClone(i->second).create< world::EntityData >();
+	else
+		return 0;
 }
 
 world::Entity* WorldLayer::getEntity(const std::wstring& name) const

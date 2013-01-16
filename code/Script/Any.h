@@ -35,25 +35,25 @@ public:
 
 	Any(const Any& src);
 
-	explicit Any(bool value);
-
-	explicit Any(int32_t value);
-
-	explicit Any(float value);
-
-	explicit Any(const char* value);
-
-	explicit Any(const std::string& value);
-
-	explicit Any(const wchar_t* value);
-
-	explicit Any(const std::wstring& value);
-
-	explicit Any(Object* value);
-
-	explicit Any(const TypeInfo* value);
-
 	virtual ~Any();
+
+	static Any fromBoolean(bool value);
+
+	static Any fromInteger(int32_t value);
+
+	static Any fromFloat(float value);
+
+	static Any fromString(const char* value);
+
+	static Any fromString(const std::string& value);
+
+	static Any fromString(const wchar_t* value);
+
+	static Any fromString(const std::wstring& value);
+
+	static Any fromObject(Object* value);
+
+	static Any fromTypeInfo(const TypeInfo* value);
 
 	bool getBoolean() const;
 
@@ -67,7 +67,7 @@ public:
 
 	Object* getObject() const;
 
-	const TypeInfo* getType() const;
+	const TypeInfo* getTypeInfo() const;
 
 	bool isVoid() const { return m_type == AtVoid; }
 
@@ -81,7 +81,7 @@ public:
 
 	bool isObject() const { return m_type == AtObject; }
 
-	bool isType() const { return m_type == AtType; }
+	bool isTypeInfo() const { return m_type == AtTypeInfo; }
 
 	// \name Unsafe accessors.
 	// \{
@@ -96,7 +96,7 @@ public:
 
 	Object* getObjectUnsafe() const { T_ASSERT (m_type == AtObject); return m_data.m_object; }
 
-	const TypeInfo* getTypeUnsafe() const { T_ASSERT (m_type == AtType); return m_data.m_type; }
+	const TypeInfo* getTypeInfoUnsafe() const { T_ASSERT (m_type == AtTypeInfo); return m_data.m_typeInfo; }
 
 	// \}
 
@@ -111,7 +111,7 @@ private:
 		AtFloat,
 		AtString,
 		AtObject,
-		AtType
+		AtTypeInfo
 	};
 
 	union AnyData
@@ -121,7 +121,7 @@ private:
 		float m_float;
 		char* m_string;
 		Object* m_object;
-		const TypeInfo* m_type;
+		const TypeInfo* m_typeInfo;
 	};
 
 	AnyType m_type;

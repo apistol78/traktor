@@ -393,7 +393,7 @@ template < >
 struct CastAny< uint64_t, false >
 {
 	static Any set(const uint64_t& value) {
-		return Any(new BoxedUInt64(value));
+		return Any::fromObject(new BoxedUInt64(value));
 	}	
 	static uint64_t get(const Any& value) {
 		return checked_type_cast< BoxedUInt64*, false >(value.getObject())->unbox();
@@ -404,7 +404,7 @@ template < >
 struct CastAny< const uint64_t&, false >
 {
 	static Any set(const uint64_t& value) {
-		return Any(new BoxedUInt64(value));
+		return Any::fromObject(new BoxedUInt64(value));
 	}	
 	static uint64_t get(const Any& value) {
 		return checked_type_cast< BoxedUInt64*, false >(value.getObject())->unbox();
@@ -415,7 +415,7 @@ template < >
 struct CastAny < Guid, false >
 {
 	static Any set(const Guid& value) {
-		return Any(new BoxedGuid(value));
+		return Any::fromObject(new BoxedGuid(value));
 	}	
 	static Guid get(const Any& value) {
 		return checked_type_cast< BoxedGuid*, false >(value.getObject())->unbox();
@@ -426,7 +426,7 @@ template < >
 struct CastAny < const Guid&, false >
 {
 	static Any set(const Guid& value) {
-		return Any(new BoxedGuid(value));
+		return Any::fromObject(new BoxedGuid(value));
 	}	
 	static Guid get(const Any& value) {
 		return checked_type_cast< BoxedGuid*, false >(value.getObject())->unbox();
@@ -437,7 +437,7 @@ template < >
 struct CastAny < Vector2, false >
 {
 	static Any set(const Vector2& value) {
-		return Any(new BoxedVector2(value));
+		return Any::fromObject(new BoxedVector2(value));
 	}	
 	static Vector2 get(const Any& value) {
 		return checked_type_cast< BoxedVector2*, false >(value.getObject())->unbox();
@@ -448,7 +448,7 @@ template < >
 struct CastAny < const Vector2&, false >
 {
 	static Any set(const Vector2& value) {
-		return Any(new BoxedVector2(value));
+		return Any::fromObject(new BoxedVector2(value));
 	}	
 	static Vector2 get(const Any& value) {
 		return checked_type_cast< BoxedVector2*, false >(value.getObject())->unbox();
@@ -459,7 +459,7 @@ template < >
 struct CastAny < Vector4, false >
 {
     static Any set(const Vector4& value) {
-        return Any(new BoxedVector4(value));
+        return Any::fromObject(new BoxedVector4(value));
     }	
     static Vector4 get(const Any& value) {
         return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
@@ -470,7 +470,7 @@ template < >
 struct CastAny < const Vector4&, false >
 {
     static Any set(const Vector4& value) {
-        return Any(new BoxedVector4(value));
+        return Any::fromObject(new BoxedVector4(value));
     }	
     static Vector4 get(const Any& value) {
         return checked_type_cast< BoxedVector4*, false >(value.getObject())->unbox();
@@ -481,7 +481,7 @@ template < >
 struct CastAny < Quaternion, false >
 {
     static Any set(const Quaternion& value) {
-        return Any(new BoxedQuaternion(value));
+        return Any::fromObject(new BoxedQuaternion(value));
     }
     static Quaternion get(const Any& value) {
         return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
@@ -492,7 +492,7 @@ template < >
 struct CastAny < const Quaternion&, false >
 {
     static Any set(const Quaternion& value) {
-        return Any(new BoxedQuaternion(value));
+        return Any::fromObject(new BoxedQuaternion(value));
     }
     static Quaternion get(const Any& value) {
         return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
@@ -503,7 +503,7 @@ template < >
 struct CastAny < Transform, false >
 {
     static Any set(const Transform& value) {
-        return Any(new BoxedTransform(value));
+        return Any::fromObject(new BoxedTransform(value));
     }
     static Transform get(const Any& value) {
         return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
@@ -514,7 +514,7 @@ template < >
 struct CastAny < const Transform&, false >
 {
     static Any set(const Transform& value) {
-        return Any(new BoxedTransform(value));
+        return Any::fromObject(new BoxedTransform(value));
     }
     static Transform get(const Any& value) {
         return checked_type_cast< BoxedTransform*, false >(value.getObject())->unbox();
@@ -525,7 +525,7 @@ template < >
 struct CastAny < Aabb3, false >
 {
 	static Any set(const Aabb3& value) {
-		return Any(new BoxedAabb3(value));
+		return Any::fromObject(new BoxedAabb3(value));
 	}	
 	static Aabb3 get(const Any& value) {
 		return checked_type_cast< BoxedAabb3*, false >(value.getObject())->unbox();
@@ -536,7 +536,7 @@ template < >
 struct CastAny < const Aabb3&, false >
 {
 	static Any set(const Aabb3& value) {
-		return Any(new BoxedAabb3(value));
+		return Any::fromObject(new BoxedAabb3(value));
 	}	
 	static Aabb3 get(const Any& value) {
 		return checked_type_cast< BoxedAabb3*, false >(value.getObject())->unbox();
@@ -547,7 +547,7 @@ template < >
 struct CastAny < Color4f, false >
 {
 	static Any set(const Color4f& value) {
-		return Any(new BoxedColor4f(value));
+		return Any::fromObject(new BoxedColor4f(value));
 	}
 	static Color4f get(const Any& value) {
 		return checked_type_cast< BoxedColor4f*, false >(value.getObject())->unbox();
@@ -558,7 +558,7 @@ template < >
 struct CastAny < const Color4f&, false >
 {
 	static Any set(const Color4f& value) {
-		return Any(new BoxedColor4f(value));
+		return Any::fromObject(new BoxedColor4f(value));
 	}
 	static Color4f get(const Any& value) {
 		return checked_type_cast< BoxedColor4f*, false >(value.getObject())->unbox();
@@ -569,7 +569,7 @@ template < typename InnerType >
 struct CastAny < RefArray< InnerType >, false >
 {
     static Any set(const RefArray< InnerType >& value) {
-        return Any(new BoxedRefArray(value));
+        return Any::fromObject(new BoxedRefArray(value));
     }
     static RefArray< InnerType > get(const Any& value) {
         return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox< InnerType >();
@@ -580,7 +580,7 @@ template < typename InnerType >
 struct CastAny < const RefArray< InnerType >&, false >
 {
     static Any set(const RefArray< InnerType >& value) {
-        return Any(new BoxedRefArray(value));
+        return Any::fromObject(new BoxedRefArray(value));
     }
     static RefArray< InnerType > get(const Any& value) {
         return checked_type_cast< BoxedRefArray*, false >(value.getObject())->unbox< InnerType >();
@@ -591,7 +591,7 @@ template < typename InnerType >
 struct CastAny < std::vector< InnerType >, false >
 {
     static Any set(const std::vector< InnerType >& value) {
-        return Any(new BoxedStdVector(value));
+        return Any::fromObject(new BoxedStdVector(value));
     }
     static std::vector< InnerType > get(const Any& value) {
         return checked_type_cast< BoxedStdVector*, false >(value.getObject())->unbox< InnerType >();
@@ -602,7 +602,7 @@ template < typename InnerType >
 struct CastAny < const std::vector< InnerType >&, false >
 {
     static Any set(const std::vector< InnerType >& value) {
-        return Any(new BoxedStdVector(value));
+        return Any::fromObject(new BoxedStdVector(value));
     }
     static std::vector< InnerType > get(const Any& value) {
         return checked_type_cast< BoxedStdVector*, false >(value.getObject())->unbox< InnerType >();

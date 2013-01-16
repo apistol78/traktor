@@ -451,18 +451,18 @@ Any ScriptContextJs::fromValue(v8::Handle< v8::Value > value) const
 	if (value.IsEmpty())
 		return Any();
 	if (value->IsTrue())
-		return Any(true);
+		return Any::fromBoolean(true);
 	if (value->IsFalse())
-		return Any(false);
+		return Any::fromBoolean(false);
 	if (value->IsString())
 	{
 		v8::String::Utf8Value str(value);
-		return Any(mbstows(*str));
+		return Any::fromString(*str);
 	}
 	if (value->IsInt32())
-		return Any(int32_t(value->ToInt32()->Value()));
+		return Any::fromInteger(int32_t(value->ToInt32()->Value()));
 	if (value->IsNumber())
-		return Any(float(value->ToNumber()->Value()));
+		return Any::fromFloat(float(value->ToNumber()->Value()));
 	if (value->IsObject())
 	{
 		v8::Local< v8::Object > objectWrapper = value->ToObject();
@@ -470,7 +470,7 @@ Any ScriptContextJs::fromValue(v8::Handle< v8::Value > value) const
 		if (objectExternal->IsExternal())
 		{
 			Object* object = static_cast< Object* >(objectExternal->Value());
-			return Any(object);
+			return Any::fromObject(object);
 		}
 	}
 	

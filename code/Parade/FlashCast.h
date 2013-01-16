@@ -17,13 +17,13 @@ struct CastAny < flash::ActionValue, false >
 		switch (value.getType())
 		{
 		case flash::ActionValue::AvtBoolean:
-			return Any(value.getBoolean());
+			return Any::fromBoolean(value.getBoolean());
 		case flash::ActionValue::AvtNumber:
-			return Any(float(value.getNumber()));
+			return Any::fromFloat(float(value.getNumber()));
 		case flash::ActionValue::AvtString:
-			return Any(value.getWideString());
+			return Any::fromString(value.getString());
 		case flash::ActionValue::AvtObject:
-			return Any(value.getObject());
+			return Any::fromObject(value.getObject());
 		default:
 			return Any();
 		}
@@ -54,13 +54,13 @@ struct CastAny < const flash::ActionValue&, false >
 		switch (value.getType())
 		{
 		case flash::ActionValue::AvtBoolean:
-			return Any(value.getBoolean());
+			return Any::fromBoolean(value.getBoolean());
 		case flash::ActionValue::AvtNumber:
-			return Any(float(value.getNumber()));
+			return Any::fromFloat(float(value.getNumber()));
 		case flash::ActionValue::AvtString:
-			return Any(value.getWideString());
+			return Any::fromString(value.getString());
 		case flash::ActionValue::AvtObject:
-			return Any(value.getObject());
+			return Any::fromObject(value.getObject());
 		default:
 			return Any();
 		}

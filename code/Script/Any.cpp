@@ -73,61 +73,6 @@ Any::Any(const Any& src)
 		m_data = src.m_data;
 }
 
-Any::Any(bool value)
-:	m_type(AtBoolean)
-{
-	m_data.m_boolean = value;
-}
-
-Any::Any(int32_t value)
-:	m_type(AtInteger)
-{
-	m_data.m_integer = value;
-}
-
-Any::Any(float value)
-:	m_type(AtFloat)
-{
-	m_data.m_float = value;
-}
-
-Any::Any(const char* value)
-:	m_type(AtString)
-{
-	m_data.m_string = refStringCreate(value);
-}
-
-Any::Any(const std::string& value)
-:	m_type(AtString)
-{
-	m_data.m_string = refStringCreate(value.c_str());
-}
-
-Any::Any(const wchar_t* value)
-:	m_type(AtString)
-{
-	m_data.m_string = refStringCreate(wstombs(value).c_str());
-}
-
-Any::Any(const std::wstring& value)
-:	m_type(AtString)
-{
-	m_data.m_string = refStringCreate(wstombs(value).c_str());
-}
-
-Any::Any(Object* value)
-:	m_type(AtObject)
-{
-	T_SAFE_ADDREF(value);
-	m_data.m_object = value;
-}
-
-Any::Any(const TypeInfo* value)
-:	m_type(AtType)
-{
-	m_data.m_type = value;
-}
-
 Any::~Any()
 {
 	T_EXCEPTION_GUARD_BEGIN
@@ -138,6 +83,79 @@ Any::~Any()
 		T_SAFE_RELEASE(m_data.m_object);
 
 	T_EXCEPTION_GUARD_END
+}
+
+Any Any::fromBoolean(bool value)
+{
+	Any any;
+	any.m_type = AtBoolean;
+	any.m_data.m_boolean = value;
+	return any;
+}
+
+Any Any::fromInteger(int32_t value)
+{
+	Any any;
+	any.m_type = AtInteger;
+	any.m_data.m_integer = value;
+	return any;
+}
+
+Any Any::fromFloat(float value)
+{
+	Any any;
+	any.m_type = AtFloat;
+	any.m_data.m_float = value;
+	return any;
+}
+
+Any Any::fromString(const char* value)
+{
+	Any any;
+	any.m_type = AtString;
+	any.m_data.m_string = refStringCreate(value);
+	return any;
+}
+
+Any Any::fromString(const std::string& value)
+{
+	Any any;
+	any.m_type = AtString;
+	any.m_data.m_string = refStringCreate(value.c_str());
+	return any;
+}
+
+Any Any::fromString(const wchar_t* value)
+{
+	Any any;
+	any.m_type = AtString;
+	any.m_data.m_string = refStringCreate(wstombs(value).c_str());
+	return any;
+}
+
+Any Any::fromString(const std::wstring& value)
+{
+	Any any;
+	any.m_type = AtString;
+	any.m_data.m_string = refStringCreate(wstombs(value).c_str());
+	return any;
+}
+
+Any Any::fromObject(Object* value)
+{
+	T_SAFE_ANONYMOUS_ADDREF(value);
+	Any any;
+	any.m_type = AtObject;
+	any.m_data.m_object = value;
+	return any;
+}
+
+Any Any::fromTypeInfo(const TypeInfo* value)
+{
+	Any any;
+	any.m_type = AtTypeInfo;
+	any.m_data.m_typeInfo = value;
+	return any;
 }
 
 bool Any::getBoolean() const
@@ -154,8 +172,8 @@ bool Any::getBoolean() const
 		return parseString< int32_t >(m_data.m_string) != 0;
 	case AtObject:
 		return m_data.m_object != 0;
-	case AtType:
-		return m_data.m_type != 0;
+	case AtTypeInfo:
+		return m_data.m_typeInfo != 0;
 	default:
 		break;
 	}
@@ -210,8 +228,8 @@ std::string Any::getString() const
 		return wstombs(toString(m_data.m_float));
 	case AtString:
 		return m_data.m_string;
-	case AtType:
-		return wstombs(m_data.m_type->getName());
+	case AtTypeInfo:
+		return wstombs(m_data.m_typeInfo->getName());
 	default:
 		break;
 	}
@@ -230,8 +248,8 @@ std::wstring Any::getWideString() const
 		return toString(m_data.m_float);
 	case AtString:
 		return mbstows(Utf8Encoding(), m_data.m_string);
-	case AtType:
-		return m_data.m_type->getName();
+	case AtTypeInfo:
+		return m_data.m_typeInfo->getName();
 	default:
 		break;
 	}
@@ -243,9 +261,9 @@ Object* Any::getObject() const
 	return m_type == AtObject ? m_data.m_object : 0;
 }
 
-const TypeInfo* Any::getType() const
+const TypeInfo* Any::getTypeInfo() const
 {
-	return m_type == AtType ? m_data.m_type : 0;
+	return m_type == AtTypeInfo ? m_data.m_typeInfo : 0;
 }
 
 Any& Any::operator = (const Any& src)

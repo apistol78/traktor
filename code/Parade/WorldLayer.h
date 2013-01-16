@@ -71,6 +71,8 @@ public:
 
 	virtual void reconfigured();
 
+	Ref< world::EntityData > getEntityData(const std::wstring& name) const;
+
 	world::Entity* getEntity(const std::wstring& name) const;
 
 	RefArray< world::Entity > getEntities(const std::wstring& name) const;
