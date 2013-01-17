@@ -1198,6 +1198,10 @@
 			<second>Namn</second>
 		</item>
     <item>
+      <first>SCENE_EDITOR_FIND_IN_DATABASE</first>
+      <second>Hitta i databas</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_FOLLOW_ENTITY</first>
       <second>Följ entitet</second>
     </item>

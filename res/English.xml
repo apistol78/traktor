@@ -1206,6 +1206,10 @@
       <second>Name</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_FIND_IN_DATABASE</first>
+      <second>Find in database</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_FOLLOW_ENTITY</first>
       <second>Follow entity</second>
     </item>
