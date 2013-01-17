@@ -11,6 +11,8 @@
 #include "Ui/Command.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/GroupEntityData.h"
+#include "World/Entity/PointLightEntity.h"
+#include "World/Entity/SpotLightEntity.h"
 
 namespace traktor
 {
@@ -29,7 +31,14 @@ DefaultEntityEditor::DefaultEntityEditor(SceneEditorContext* context, EntityAdap
 
 bool DefaultEntityEditor::isPickable() const
 {
-	return !isGroup();
+	if (
+		is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()) ||
+		is_a< world::PointLightEntity >(m_entityAdapter->getEntity()) ||
+		is_a< world::SpotLightEntity >(m_entityAdapter->getEntity())
+	)
+		return false;
+	else
+		return !isGroup();
 }
 
 bool DefaultEntityEditor::isGroup() const

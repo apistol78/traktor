@@ -181,6 +181,12 @@ bool SceneEditorPage::create(ui::Container* parent)
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
 	m_entityMenu->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
 
+	m_entityMenuExternal = new ui::PopupMenu();
+	m_entityMenuExternal->create();
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.AddEntity"), i18n::Text(L"SCENE_EDITOR_ADD_ENTITY")));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"SCENE_EDITOR_REMOVE_ENTITY")));
+	m_entityMenuExternal->add(new ui::MenuItem(ui::Command(L"Scene.Editor.FindInDatabase"), i18n::Text(L"SCENE_EDITOR_FIND_IN_DATABASE")));
+
 	m_toolLookAtEntity = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_LOOK_AT_ENTITY"), ui::Command(L"Scene.Editor.LookAtEntity"), 3, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolFollowEntity = new ui::custom::ToolBarButton(i18n::Text(L"SCENE_EDITOR_FOLLOW_ENTITY"), ui::Command(L"Scene.Editor.FollowEntity"), 4, ui::custom::ToolBarButton::BsDefaultToggle);
 
@@ -267,6 +273,7 @@ void SceneEditorPage::destroy()
 	safeDestroy(m_entityPanel);
 	safeDestroy(m_entityDependencyPanel);
 	safeDestroy(m_entityMenu);
+	safeDestroy(m_entityMenuExternal);
 	safeDestroy(m_controllerPanel);
 	safeDestroy(m_entityToolBar);
 	safeDestroy(m_instanceGrid);
@@ -545,6 +552,20 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Scene.Editor.ResetGuide")
 		m_context->setGuideSize(2.0f);
+	else if (command == L"Scene.Editor.FindInDatabase")
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) != 1)
+			return false;
+
+		Guid externalGuid;
+		if (selectedEntities[0]->getExternalGuid(externalGuid))
+		{
+			Ref< db::Instance > externalInstance = m_context->getEditor()->getSourceDatabase()->getInstance(externalGuid);
+			if (externalInstance)
+				m_context->getEditor()->highlightInstance(externalInstance);
+		}
+	}
 	else
 	{
 		result = false;
@@ -976,7 +997,15 @@ void SceneEditorPage::eventInstanceButtonDown(ui::Event* event)
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
 	if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
 	{
-		Ref< ui::MenuItem > selectedItem = m_entityMenu->show(m_instanceGrid, mouseEvent->getPosition());
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		Ref< ui::MenuItem > selectedItem;
+		if (selectedEntities.size() == 1 && selectedEntities[0]->isExternal())
+			selectedItem = m_entityMenuExternal->show(m_instanceGrid, mouseEvent->getPosition());
+		else
+			selectedItem = m_entityMenu->show(m_instanceGrid, mouseEvent->getPosition());
+
 		if (selectedItem)
 		{
 			if (handleCommand(selectedItem->getCommand()))

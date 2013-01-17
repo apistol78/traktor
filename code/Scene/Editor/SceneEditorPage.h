@@ -93,6 +93,7 @@ private:
 	Ref< ui::Container > m_entityPanel;
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
 	Ref< ui::PopupMenu > m_entityMenu;
+	Ref< ui::PopupMenu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
 	Ref< ui::custom::ToolBarButton > m_toolLookAtEntity;
 	Ref< ui::custom::ToolBarButton > m_toolFollowEntity;
