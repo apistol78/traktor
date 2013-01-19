@@ -185,13 +185,12 @@ Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn2, float Tn2, c
 	// state is becoming too old or extrapolated too far away.
 	if (V)
 	{
-		Vector4 f = *checked_type_cast< const Vector4Value* >(V);
+		Vector4 rc = *checked_type_cast< const Vector4Value* >(V);
 
-		float k0 = (T - T0) / c_maxRubberBandTime;
-		float k1 = clamp(k0, 0.0f, 1.0f);
-		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k1);
+		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 1.0f);
+		float s_T = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k_T);
 
-		r = lerp(r, f, Scalar(k2));
+		r = lerp(rc, r, Scalar(s_T));
 	}
 
 	return new Vector4Value(r);

@@ -210,9 +210,9 @@ Shadow; adjusted for msaa.
 			<comment/>
 			<position>
 				<first>470</first>
-				<second>-106</second>
+				<second>-109</second>
 			</position>
-			<value>0.2</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>

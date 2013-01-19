@@ -8,10 +8,10 @@ namespace traktor
 	namespace net
 	{
 
-const Scalar c_maxRubberBandDistance(120.0f);
-const float c_maxRubberBandTime = 0.2f;
-const float c_rubberBandStrengthNear = 0.95f;
-const float c_rubberBandStrengthFar = 0.8f;
+const Scalar c_maxRubberBandDistance(200.0f);
+const float c_maxRubberBandTime = 0.5f;
+const float c_rubberBandStrengthNear = 0.99f;
+const float c_rubberBandStrengthFar = 0.85f;
 
 	}
 }

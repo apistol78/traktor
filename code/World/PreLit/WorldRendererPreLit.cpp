@@ -718,7 +718,6 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						params.viewFrustum = f.viewFrustum;
 						params.viewToLight = f.slice[j].viewToLightSpace[i];
 						params.projection = projection;
-						params.squareProjection = f.slice[j].squareProjection[i];
 						params.sliceNearZ = zn;
 						params.sliceFarZ = zf;
 						params.shadowFarZ = m_shadowSettings.farZ;
@@ -1066,8 +1065,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, entity);
 				f.slice[slice].shadow[i]->flush(shadowRenderView, shadowPass);
 				
-				f.slice[slice].viewToLightSpace[i] = shadowLightProjection * shadowLightView * viewInverse;
-				f.slice[slice].squareProjection[i] = shadowLightSquareProjection;
+				f.slice[slice].viewToLightSpace[i] = shadowLightSquareProjection * shadowLightProjection * shadowLightView * viewInverse;
 			}
 
 			f.haveShadows[i] = true;

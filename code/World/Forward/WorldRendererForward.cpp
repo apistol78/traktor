@@ -642,7 +642,6 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 					params.viewFrustum = f.viewFrustum;
 					params.viewToLight = f.slice[i].viewToLightSpace;
 					params.projection = projection;
-					params.squareProjection = f.slice[i].squareProjection;
 					params.sliceNearZ = zn;
 					params.sliceFarZ = zf;
 					params.shadowFarZ = m_shadowSettings.farZ;
@@ -916,8 +915,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
 		f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
 				
-		f.slice[slice].viewToLightSpace = shadowLightProjection * shadowLightView * viewInverse;
-		f.slice[slice].squareProjection = shadowLightSquareProjection;
+		f.slice[slice].viewToLightSpace = shadowLightSquareProjection * shadowLightProjection * shadowLightView * viewInverse;
 	}
 
 	// Render visuals.
