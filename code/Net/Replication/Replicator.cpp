@@ -24,7 +24,7 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const float c_initialTimeOffset = 0.05f;
-const float c_maxOffsetAdjust = 0.5f;
+const float c_maxOffsetAdjust = 1.0f;
 const float c_nearDistance = 15.0f;
 const float c_farDistance = 150.0f;
 const float c_nearTimeUntilTx = 1.0f / 15.0f;

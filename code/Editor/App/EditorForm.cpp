@@ -579,6 +579,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Build"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CancelBuild"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.ToggleRoot"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.Build"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.Rebuild"));
 
 	for (RefArray< IEditorPageFactory >::iterator i = m_editorPageFactories.begin(); i != m_editorPageFactories.end(); ++i)
 	{

@@ -94,7 +94,6 @@ private:
 	{
 		Ref< WorldContext > shadow;
 		Matrix44 viewToLightSpace;
-		Matrix44 squareProjection;
 	};
 
 	struct Frame
@@ -106,7 +105,6 @@ private:
 		Matrix44 projection;
 		Matrix44 view;
 		Matrix44 viewToLightSpace;
-		Matrix44 squareProjection;
 		Frustum viewFrustum;
 
 		float A;

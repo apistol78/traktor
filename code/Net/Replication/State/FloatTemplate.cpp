@@ -15,14 +15,14 @@ namespace traktor
 		namespace
 		{
 
-const float c_idleThreshold = 1e-4f;
+const float c_idleThreshold = 1e-5f;
 const float c_idleThresholdLowPrecision = 1.0f / 256.0f;
 
 float safeDeltaTime(float v)
 {
 	float av = std::abs(v);
-	if (av < 0.01f)
-		return 0.01f * sign(v);
+	if (av < 1e-5f)
+		return 1e-5f * sign(v);
 	else if (av > 1.0f)
 		return 1.0f * sign(v);
 	else
@@ -64,19 +64,19 @@ void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	float f = *checked_type_cast< const FloatValue* >(V);
 
-	if (m_haveIdle)
-	{
-		bool idle = false;
-		
-		if (!m_lowPrecision)
-			idle = bool(abs(f - m_idle) <= c_idleThreshold);
-		else
-			idle = bool(abs(f - m_idle) <= c_idleThresholdLowPrecision);
+	//if (m_haveIdle)
+	//{
+	//	bool idle = false;
+	//	
+	//	if (!m_lowPrecision)
+	//		idle = bool(abs(f - m_idle) <= c_idleThreshold);
+	//	else
+	//		idle = bool(abs(f - m_idle) <= c_idleThresholdLowPrecision);
 
-		writer.writeBit(idle);
-		if (idle)
-			return;
-	}
+	//	writer.writeBit(idle);
+	//	if (idle)
+	//		return;
+	//}
 
 	if (!m_lowPrecision)
 		writer.writeUnsigned(32, *(uint32_t*)&f);
@@ -89,12 +89,12 @@ void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 
 Ref< const IValue > FloatTemplate::unpack(BitReader& reader) const
 {
-	if (m_haveIdle)
-	{
-		bool idle = reader.readBit();
-		if (idle)
-			return new FloatValue(m_idle);
-	}
+	//if (m_haveIdle)
+	//{
+	//	bool idle = reader.readBit();
+	//	if (idle)
+	//		return new FloatValue(m_idle);
+	//}
 
 	if (!m_lowPrecision)
 	{
@@ -150,11 +150,10 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 	{
 		float fc = *checked_type_cast< const FloatValue* >(V);
 
-		float k0 = (T - T0) / c_maxRubberBandTime;
-		float k1 = clamp(k0, 0.0f, 1.0f);
-		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k1);
+		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 1.0f);
+		float s_T = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k_T);
 
-		f = lerp(f, fc, k2);
+		f = lerp(fc, f, s_T);
 	}
 
 	if (m_min < m_max)

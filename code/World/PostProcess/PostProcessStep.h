@@ -54,7 +54,6 @@ public:
 			Matrix44 view;
 			Matrix44 viewToLight;
 			Matrix44 projection;
-			Matrix44 squareProjection;
 			float sliceNearZ;
 			float sliceFarZ;
 			float shadowFarZ;

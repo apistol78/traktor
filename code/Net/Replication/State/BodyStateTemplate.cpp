@@ -45,8 +45,8 @@ bool fuzzyEqual(const Vector4& Vl, const Vector4& Vr, float epsilon)
 bool fuzzyEqual(const Transform& Tl, const Transform& Tr)
 {
 	return
-		fuzzyEqual(Tl.translation(), Tr.translation(), 1e-2f) &&
-		fuzzyEqual(Tl.rotation().e, Tr.rotation().e, 1e-3f);
+		fuzzyEqual(Tl.translation(), Tr.translation(), 1e-4f) &&
+		fuzzyEqual(Tl.rotation().e, Tr.rotation().e, 1e-5f);
 }
 
 float safeSqrt(float v)
@@ -60,8 +60,8 @@ float safeSqrt(float v)
 float safeDeltaTime(float v)
 {
 	float av = std::abs(v);
-	if (av < 0.01f)
-		return 0.01f * sign(v);
+	if (av < 1e-5f)
+		return 1e-5f * sign(v);
 	else if (av > 1.0f)
 		return 1.0f * sign(v);
 	else
@@ -178,6 +178,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	Transform T;
 
 #if 1
+
 	uint32_t ut[3], ur[3];
 	uint32_t ulv[3], uav[3];
 
@@ -287,9 +288,9 @@ bool BodyStateTemplate::equal(const IValue* Vl, const IValue* Vr) const
 
 	if (!fuzzyEqual(Sl.getTransform(), Sr.getTransform()))
 		return false;
-	if (!fuzzyEqual(Sl.getLinearVelocity(), Sr.getLinearVelocity(), 1e-3f))
+	if (!fuzzyEqual(Sl.getLinearVelocity(), Sr.getLinearVelocity(), 1e-4f))
 		return false;
-	if (!fuzzyEqual(Sl.getAngularVelocity(), Sr.getAngularVelocity(), 1e-3f))
+	if (!fuzzyEqual(Sl.getAngularVelocity(), Sr.getAngularVelocity(), 1e-4f))
 		return false;
 
 	return true;
@@ -352,16 +353,15 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	if (V)
 	{
 		const physics::BodyState& Sc = *checked_type_cast< const BodyStateValue* >(V);
-
 		Vector4 Pc = Sc.getTransform().translation();
-		Scalar ln = (P - Pc).length();
 
-		float k0 = ln / c_maxRubberBandDistance;
-		float k1 = clamp(k0, 0.0f, 1.0f);
-		float k2 = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k1);
+		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 1.0f);
+		float k_D = clamp(float((P - Pc).length()) / c_maxRubberBandDistance, 0.0f, 1.0f);
 
-		if (k1 > FUZZY_EPSILON)
-			S = S.interpolate(Sc, Scalar(k2));
+		float s_T = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k_T);
+		float s_D = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k_D);
+
+		S = Sc.interpolate(S, Scalar(max(s_T, s_D)));
 	}
 
 	return new BodyStateValue(S);

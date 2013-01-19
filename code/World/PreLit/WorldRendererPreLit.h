@@ -105,7 +105,6 @@ private:
 	{
 		Ref< WorldContext > shadow[MaxLightCount];
 		Matrix44 viewToLightSpace[MaxLightCount];
-		Matrix44 squareProjection[MaxLightCount];
 	};
 
 	struct Frame
