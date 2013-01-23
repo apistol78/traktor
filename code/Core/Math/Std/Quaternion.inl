@@ -299,42 +299,22 @@ T_MATH_INLINE Quaternion slerp(const Quaternion& a, const Quaternion& b, float c
 {
 	Scalar scale1;
 	Scalar scale2;
+
 	Quaternion A = a.normalized();
 	Quaternion B = b.normalized();
-	Quaternion Q;
 
-	Scalar cosTheta = dot4(A.e, B.e);
-	if (cosTheta < 0.0f)
+	Scalar phi = dot4(A.e, B.e);
+	if (phi < 0.0f)
 	{
-		A.e = -A.e;
-		cosTheta = -cosTheta;
+		phi = -phi;
+		B.e = -B.e;
 	}
 
-	if ((cosTheta + Scalar(1.0f)) > 0.01f)
-	{
-		if ((Scalar(1.0f) - cosTheta) < 0.01f)
-		{
-			scale1 = Scalar(1.0f - c);
-			scale2 = Scalar(c);
-		}
-		else
-		{
-			float theta = acosf(cosTheta);
-			float sinTheta = sinf(theta);
-			scale1 = Scalar(sinf(theta * (1.0f - c)) / sinTheta);
-			scale2 = Scalar(sinf(theta * c) / sinTheta);
-		}
-	}
-	else
-	{
-		Vector4 A_yxwz = A.e.shuffle< 1, 0, 3, 2 >();
-		B.e = A_yxwz * Vector4(-1.0f, 1.0f, -1.0f, 1.0f);
-		scale1 = Scalar(sinf(PI * (0.5f - c)));
-		scale2 = Scalar(sinf(PI * c));
-	}
+	if (phi > Scalar(0.95f))
+		return Quaternion(lerp(A.e, B.e, Scalar(c))).normalized();
 
-	Q.e = A.e * scale1 + B.e * scale2;
-	return Q;
+	float theta_0 = acosf(phi);
+	return (A * sinf(theta_0 * (1 - c)) + B * sinf(theta_0 * c)) * (1.0f / sinf(theta_0));
 }
 
 }

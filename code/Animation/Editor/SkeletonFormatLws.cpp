@@ -54,6 +54,11 @@ Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset
 				current->setName(value->getString(0));
 			}
 
+			if (current != 0 && value->getName() == L"BoneWeightMapName" && value->getCount() >= 1)
+			{
+				current->setName(value->getString(0));
+			}
+
 			if (current != 0 && value->getName() == L"NumChannels" && value->getCount() >= 1)
 			{
 				numChannels = value->getInteger(0);

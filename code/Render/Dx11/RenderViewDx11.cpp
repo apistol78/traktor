@@ -720,7 +720,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		m_context->getD3DDeviceContext()->DrawInstanced(vertexCount, instanceCount, primitives.offset, 0);
 
 	m_drawCalls++;
-	m_primitiveCount += primitives.count;
+	m_primitiveCount += primitives.count * instanceCount;
 }
 
 void RenderViewDx11::end()
