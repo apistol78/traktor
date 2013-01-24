@@ -239,7 +239,8 @@ private:
 		PeerState state;
 		Ghost* ghost;
 		float timeUntilTx;
-		float lastTime;
+		float lastTimeLocal;
+		float lastTimeRemote;
 		CircularVector< float, MaxRoundTrips > roundTrips;
 		float latencyMedian;
 		float latencyMinimum;
@@ -255,7 +256,8 @@ private:
 		:	state(PsInitial)
 		,	ghost(0)
 		,	timeUntilTx(0.0f)
-		,	lastTime(0.0f)
+		,	lastTimeLocal(0.0f)
+		,	lastTimeRemote(0.0f)
 		,	latencyMedian(0.0f)
 		,	latencyMinimum(0.0f)
 		,	latencyReversed(0.0f)
@@ -305,6 +307,8 @@ private:
 	void sendThrottle(handle_t peerHandle);
 
 	void broadcastDisconnect(handle_t peerHandle);
+
+	void adjustTime(float offset);
 };
 
 	}

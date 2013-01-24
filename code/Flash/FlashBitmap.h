@@ -44,31 +44,20 @@ public:
 	 */
 	bool create(drawing::Image* image);
 
-	/*! \brief Create empty bitmap.
-	 *
-	 * \param width Bitmap width.
-	 * \param height Bitmap height.
-	 * \return True if successfully created.
-	 */
-	bool create(uint16_t width, uint16_t height);
+	uint32_t getWidth() const { return m_width; }
 
-	uint16_t getWidth() const { return m_width; }
+	uint32_t getHeight() const { return m_height; }
 
-	uint16_t getHeight() const { return m_height; }
+	uint32_t getMips() const { return m_mips; }
 
 	const SwfColor* getBits() const { return m_bits.c_ptr(); }
-
-	void setPixel(uint16_t x, uint16_t y, const SwfColor& color)
-	{
-		if (x < m_width && y < m_height)
-			m_bits[x + y * m_width] = color;
-	}
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	uint16_t m_width;
-	uint16_t m_height;
+	uint32_t m_width;
+	uint32_t m_height;
+	uint32_t m_mips;
 	AutoArrayPtr< SwfColor > m_bits;
 };
 

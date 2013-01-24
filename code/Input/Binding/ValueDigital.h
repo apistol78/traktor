@@ -13,7 +13,7 @@ namespace traktor
  */
 bool T_FORCE_INLINE asBoolean(float inputValue)
 {
-	return abs(inputValue) >= 0.5f ? true : false;
+	return inputValue >= 0.5f ? true : false;
 }
 
 /*! \brief

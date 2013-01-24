@@ -101,9 +101,13 @@ public:
 
 	world::PostProcess* getPostProcess() const;
 
-	bool getViewPosition(const Vector4& worldPosition, Vector4& outViewPosition) const;
+	bool worldToView(const Vector4& worldPosition, Vector4& outViewPosition) const;
 
-	bool getScreenPosition(const Vector4& viewPosition, Vector2& outScreenPosition) const;
+	bool viewToWorld(const Vector4& viewPosition, Vector4& outWorldPosition) const;
+
+	bool worldToScreen(const Vector4& worldPosition, Vector2& outScreenPosition) const;
+
+	bool viewToScreen(const Vector4& viewPosition, Vector2& outScreenPosition) const;
 
 	void setFieldOfView(float fieldOfView);
 

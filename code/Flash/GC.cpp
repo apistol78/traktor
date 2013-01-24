@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Timer/Timer.h"
 #include "Flash/Collectable.h"
 #include "Flash/GC.h"
 
@@ -14,6 +15,7 @@ namespace traktor
 		{
 
 static GC* s_instance = 0;
+const float c_maxPartialCollectTime = 0.01f;	//< Maximum time spent in a partial garbage collection.
 
 		}
 
@@ -45,7 +47,8 @@ void GC::collectCycles(bool full)
 
 	if (m_candidates.empty())
 		return;
-		
+	
+	Timer timer;
 	do
 	{
 		// Mark roots.
@@ -72,6 +75,7 @@ void GC::collectCycles(bool full)
 		}
 
 		// Collect roots.
+		timer.start();
 		while (!m_candidates.empty())
 		{
 			Collectable* candidate = m_candidates.front();
@@ -85,6 +89,12 @@ void GC::collectCycles(bool full)
 
 			candidate->m_traceBuffered = false;
 			candidate->traceCollectWhite();
+
+#if !defined(_DEBUG)
+			// Ensure collection doesn't exceed time budget.
+			if (!full && timer.getElapsedTime() >= c_maxPartialCollectTime)
+				break;
+#endif
 		}
 	}
 	while (full && !m_candidates.empty());

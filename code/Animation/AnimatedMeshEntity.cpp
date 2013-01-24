@@ -57,9 +57,11 @@ void AnimatedMeshEntity::destroy()
 Aabb3 AnimatedMeshEntity::getBoundingBox() const
 {
 	synchronize();
+
+	Aabb3 boundingBox = m_mesh->getBoundingBox();
+
 	if (!m_poseTransforms.empty())
 	{
-		Aabb3 boundingBox;
 		for (uint32_t i = 0; i < uint32_t(m_poseTransforms.size()); ++i)
 		{
 			const Joint* joint = m_skeleton->getJoint(i);
@@ -70,10 +72,9 @@ Aabb3 AnimatedMeshEntity::getBoundingBox() const
 
 			boundingBox.contain(jointAabb);
 		}
-		return boundingBox;
 	}
-	else
-		return m_mesh->getBoundingBox();
+
+	return boundingBox;
 }
 
 bool AnimatedMeshEntity::supportTechnique(render::handle_t technique) const

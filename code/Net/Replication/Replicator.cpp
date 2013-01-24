@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
+#include "Core/Math/Random.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -27,19 +28,23 @@ const float c_initialTimeOffset = 0.05f;
 const float c_maxOffsetAdjust = 1.0f;
 const float c_nearDistance = 15.0f;
 const float c_farDistance = 150.0f;
-const float c_nearTimeUntilTx = 1.0f / 15.0f;
-const float c_farTimeUntilTx = 1.0f / 8.0f;
-const float c_timeUntilIAm = 6.0f;
+const float c_nearTimeUntilTx = 1.0f / 16.0f;
+const float c_farTimeUntilTx = 1.0f / 9.0f;
+const float c_timeUntilIAm = 4.0f;
 const float c_timeUntilPing = 1.5f;
-const float c_peerTimeout = 20.0f;
 const float c_maxExtrapolateTime = 4.0f;
-const float c_errorStateThreshold = 1.0f;
+const float c_errorStateThreshold = 0.2f;
+const float c_remoteOffsetThreshold = 0.1f;
+const float c_remoteOffsetLimit = c_maxOffsetAdjust;
 const uint32_t c_errorLossThreshold = 10000;
 const uint32_t c_maxPendingPing = 16;
 const uint32_t c_maxErrorCount = 4;
 const uint32_t c_maxDeltaStates = 8;
-Timer g_timer;
 
+Timer g_timer;
+Random g_random;
+
+#define T_USE_DELTA_FRAMES 0
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
 
 		}
@@ -338,19 +343,20 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* c
 
 Ref< const State > Replicator::getLoopBackState() const
 {
-	if (!m_stateTemplate)
+	if (m_stateTemplate)
+	{
+		uint8_t data[Message::MessageSize];
+		uint32_t size = m_stateTemplate->pack(m_state, data, sizeof(data));
+		return m_stateTemplate->unpack(data, size);
+	}
+	else
 		return 0;
-
-	uint8_t data[1200];
-	uint32_t size = m_stateTemplate->pack(m_state, data, sizeof(data));
-	T_DEBUG(L"Loopback state size : " << size << L" byte(s)");
-
-	return m_stateTemplate->unpack(data, size);
 }
 
 void Replicator::updatePeers(float dT)
 {
 	std::vector< handle_t > handles;
+	handles.reserve(m_peers.size());
 
 	// Massage replicator peers back-end first and
 	// then get fresh list of peer handles.
@@ -367,7 +373,6 @@ void Replicator::updatePeers(float dT)
 		}
 
 		Peer& peer = i->second;
-
 		if (peer.state == PsEstablished)
 		{
 			T_REPLICATOR_DEBUG(L"WARNING: Peer " << i->first << L" connection suddenly terminated");
@@ -405,23 +410,14 @@ void Replicator::updatePeers(float dT)
 			{
 				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer " << *i);
 				sendIAm(*i, 0, m_id);
-				peer.timeUntilTx = c_timeUntilIAm;
+				peer.timeUntilTx = c_timeUntilIAm * (1.0f + g_random.nextFloat());
 			}
 		}
 
 		// Check if peer doesn't respond, timeout;ed or unable to communicate.
 		if (peer.state == PsEstablished)
 		{
-			T_ASSERT (peer.lastTime > 0.0f);
-
 			bool failing = false;
-
-			float T = m_time - peer.lastTime;
-			if (T > c_peerTimeout)
-			{
-				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" timeout, no packet in " << int32_t(T * 1000.0f) << L" ms");
-				failing = true;
-			}
 
 			if (peer.pendingPing > c_maxPendingPing)
 			{
@@ -487,6 +483,7 @@ void Replicator::sendState(float dT)
 
 		uint32_t msgSize = Message::HeaderSize + sizeof(uint8_t);
 
+#if T_USE_DELTA_FRAMES
 		// Send delta frames only if we've successfully sent
 		// an iframe and we're not experiencing package loss.
 		if (
@@ -519,6 +516,7 @@ void Replicator::sendState(float dT)
 			}
 		}
 		else
+#endif
 		{
 			std::memcpy(msg.state.data, iframeData, iframeSize);
 			msgSize += iframeSize;
@@ -672,8 +670,8 @@ void Replicator::receiveMessages()
 			T_REPLICATOR_DEBUG(L"OK: Got \"I am\" from peer " << handle << L", sequence " << int32_t(msg.iam.sequence) << L", id " << msg.iam.id);
 
 			// Assume peer time is correct if exceeding my time.
-			if (time + c_initialTimeOffset > m_time)
-				m_time = time + c_initialTimeOffset;
+			float offset = time + c_initialTimeOffset - m_time;
+			adjustTime(offset);
 
 			if (msg.iam.sequence == 0)
 			{
@@ -727,8 +725,8 @@ void Replicator::receiveMessages()
 					T_REPLICATOR_DEBUG(L"OK: Peer " << handle << L" connection established");
 				}
 
-				if (time > peer.lastTime + 1e-4f)
-					peer.lastTime = time;
+				peer.lastTimeRemote = std::max(time, peer.lastTimeRemote + 1e-4f);
+				peer.lastTimeLocal = m_time;
 			}
 		}
 		else if (msg.type == MtBye)
@@ -758,14 +756,15 @@ void Replicator::receiveMessages()
 			peer.state = PsDisconnected;
 			peer.iframe = 0;
 
-			if (time > peer.lastTime + 1e-4f)
-				peer.lastTime = time;
+			peer.lastTimeRemote = std::max(time, peer.lastTimeRemote + 1e-4f);
+			peer.lastTimeLocal = m_time;
 		}
 		else if (msg.type == MtPing)
 		{
 			// I've got pinged; reply with a pong.
 			Peer& peer = m_peers[handle];
-			peer.lastTime = time;
+			peer.lastTimeRemote = std::max(time, peer.lastTimeRemote + 1e-4f);
+			peer.lastTimeLocal = m_time;
 
 			sendPong(handle, msg.time);
 		}
@@ -797,9 +796,8 @@ void Replicator::receiveMessages()
 				peer.latencyMedian = sorted[peer.roundTrips.size() / 2] / 2.0f;
 				peer.latencyMinimum = minrt / 2.0f;
 				peer.latencyReversed = float(msg.pong.latency / 1000.0f);
-
-				if (time > peer.lastTime + 1e-4f)
-					peer.lastTime = time;
+				peer.lastTimeRemote = std::max(time, peer.lastTimeRemote + 1e-4f);
+				peer.lastTimeLocal = m_time;
 
 				--peer.pendingPing;
 			}
@@ -840,7 +838,7 @@ void Replicator::receiveMessages()
 			}
 			else
 			{
-				T_REPLICATOR_DEBUG(L"OK: Other has been disconnected");
+				T_REPLICATOR_DEBUG(L"OK: Other " << msg.disconnect.globalId << L" has been disconnected");
 
 				for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 				{
@@ -879,7 +877,7 @@ void Replicator::receiveMessages()
 
 			// Ignore old messages; as we're using unreliable transportation
 			// messages can arrive out-of-order.
-			if (time > peer.lastTime + 1e-4f)
+			if (time > peer.lastTimeRemote + 1e-4f)
 			{
 				// Check network time.
 				if (time + peer.latencyMinimum > m_time + 1e-5f)
@@ -888,28 +886,7 @@ void Replicator::receiveMessages()
 					// to stabilize synchronization over multiple iterations.
 					float offset = time + peer.latencyMinimum - m_time;
 					float adjust = min(offset * 0.75f, c_maxOffsetAdjust);
-					m_time += adjust;
-
-					// Also adjust all old states as well.
-					for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-					{
-						Ghost* ghost = i->second.ghost;
-						if (!ghost)
-							continue;
-
-						if (ghost->Sn2)
-							ghost->Tn2 += adjust;
-						if (ghost->Sn1)
-							ghost->Tn1 += adjust;
-						if (ghost->S0)
-							ghost->T0 += adjust;
-					}
-
-					// Adjust on all queued events also.
-					for (std::list< Event >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
-						i->time += adjust;
-					for (std::list< Event >::iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
-						i->time += adjust;
+					adjustTime(adjust);
 				}
 
 				if (peer.ghost->stateTemplate)
@@ -928,25 +905,23 @@ void Replicator::receiveMessages()
 
 					if (state)
 					{
-						if (time - peer.lastTime < c_errorStateThreshold)
+						float localOffset = m_time - peer.lastTimeLocal;
+						float remoteOffset = time - peer.lastTimeRemote;
+
+						float offset = 0.0f;
+						if (localOffset > 0 && remoteOffset > 0.0f)
 						{
-							peer.ghost->Sn2 = peer.ghost->Sn1;
-							peer.ghost->Tn2 = peer.ghost->Tn1;
-							peer.ghost->Sn1 = peer.ghost->S0;
-							peer.ghost->Tn1 = peer.ghost->T0;
-							peer.ghost->S0 = state;
-							peer.ghost->T0 = time;
+							offset = std::max(remoteOffset - localOffset - c_remoteOffsetThreshold, 0.0f);
+							offset = std::min(offset, c_remoteOffsetLimit);
 						}
-						else
-						{
-							T_REPLICATOR_DEBUG(L"WARNING: Ghost state unreasonably old from peer " << handle << L", " << int32_t((time - peer.lastTime) * 1000.0f) << L" ms");
-							peer.ghost->Sn2 = 0;
-							peer.ghost->Tn2 = 0.0f;
-							peer.ghost->Sn1 = 0;
-							peer.ghost->Tn1 = 0.0f;
-							peer.ghost->S0 = state;
-							peer.ghost->T0 = time;
-						}
+
+						peer.ghost->Sn2 = peer.ghost->Sn1;
+						peer.ghost->Tn2 = peer.ghost->Tn1 + offset;
+						peer.ghost->Sn1 = peer.ghost->S0;
+						peer.ghost->Tn1 = peer.ghost->T0 + offset;
+						peer.ghost->S0 = state;
+						peer.ghost->T0 = time + offset;
+
 						stateValid = true;
 					}
 					else
@@ -954,12 +929,11 @@ void Replicator::receiveMessages()
 				}
 
 				peer.packetCount++;
-				peer.lastTime = time;
+				peer.lastTimeLocal = m_time;
+				peer.lastTimeRemote = time;
 			}
 			else
 			{
-				T_REPLICATOR_DEBUG(L"OK: Received out-of-order package from peer " << handle);
-
 				// Received an old out-of-order package.
 				if (peer.ghost->stateTemplate)
 				{
@@ -1025,41 +999,18 @@ void Replicator::receiveMessages()
 				continue;
 			}
 
-			if (time > peer.lastTime + 1e-4f)
+			if (time + peer.latencyMinimum > m_time + 1e-5f)
 			{
-				if (time + peer.latencyMinimum > m_time + 1e-5f)
-				{
-					// Adjust time; adjust only with 75% of the difference in order
-					// to stabilize synchronization over multiple iterations.
-					float offset = time + peer.latencyMinimum - m_time;
-					float adjust = min(offset * 0.75f, c_maxOffsetAdjust);
-					m_time += adjust;
-
-					// Also adjust all old states as well.
-					for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-					{
-						Ghost* ghost = i->second.ghost;
-						if (!ghost)
-							continue;
-
-						if (ghost->Sn2)
-							ghost->Tn2 += adjust;
-						if (ghost->Sn1)
-							ghost->Tn1 += adjust;
-						if (ghost->S0)
-							ghost->T0 += adjust;
-					}
-
-					// Adjust on all queued events also.
-					for (std::list< Event >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
-						i->time += adjust;
-					for (std::list< Event >::iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
-						i->time += adjust;
-				}
-
-				peer.packetCount++;
-				peer.lastTime = time;
+				// Adjust time; adjust only with 75% of the difference in order
+				// to stabilize synchronization over multiple iterations.
+				float offset = time + peer.latencyMinimum - m_time;
+				float adjust = min(offset * 0.75f, c_maxOffsetAdjust);
+				adjustTime(adjust);
 			}
+
+			peer.packetCount++;
+			peer.lastTimeLocal = m_time;
+			peer.lastTimeRemote = time;
 
 			if (!m_eventTypes.empty())
 			{
@@ -1165,6 +1116,32 @@ void Replicator::broadcastDisconnect(handle_t peerHandle)
 		if (j->second.state == PsEstablished)
 			m_replicatorPeers->send(j->first, &msg, msgSize, true);
 	}
+}
+
+void Replicator::adjustTime(float offset)
+{
+	if (offset < 0.0f)
+		return;
+
+	m_time += offset;
+
+	// Also adjust all old states as well.
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		Ghost* ghost = i->second.ghost;
+		if (!ghost)
+			continue;
+
+		ghost->Tn2 += offset;
+		ghost->Tn1 += offset;
+		ghost->T0 += offset;
+	}
+
+	// Adjust on all queued events also.
+	for (std::list< Event >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
+		i->time += offset;
+	for (std::list< Event >::iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
+		i->time += offset;
 }
 
 	}

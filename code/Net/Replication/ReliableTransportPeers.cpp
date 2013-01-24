@@ -11,10 +11,29 @@ namespace traktor
 		{
 
 const double c_resendTime = 2.0f;	//< Resend reliable message after N seconds.
-const double c_discardTime = 10.0f;	//< Discard reliable message after N seconds.
+const double c_discardTime = 5.0f;	//< Discard reliable message after N seconds.
 const uint32_t c_windowSize = 100;	//< Number of reliable messages kept in sent queue.
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
+
+#define T_CRC8_POLYNOMIAL (0x1070U << 3)
+
+uint8_t calculateChecksum(const void* data, uint32_t size)
+{
+	uint8_t crc = 0;
+	for (uint32_t i = 0; i < size; ++i)
+	{
+		uint16_t D = (crc ^ ((const uint8_t*)data)[i]) << 8;
+		for (int32_t j = 0; j < 8; ++j) 
+		{
+			if ((D & 0x8000) != 0)
+				D ^= T_CRC8_POLYNOMIAL;
+			D <<= 1;
+		}
+		crc = uint8_t(D >> 8);
+	}
+	return crc;
+}
 
 		}
 
@@ -63,7 +82,7 @@ void ReliableTransportPeers::update()
 	{
 		if (i->second.sent.size() >= c_windowSize)
 		{
-			T_REPLICATOR_DEBUG(L"Too many messages queued in sent buffer");
+			T_REPLICATOR_DEBUG(L"ERROR: Too many messages queued in sent buffer");
 			while (i->second.sent.size() >= c_windowSize)
 				i->second.sent.pop_front();
 		}
@@ -72,13 +91,13 @@ void ReliableTransportPeers::update()
 		{
 			if ((time - j->time0) >= c_discardTime)
 			{
-				T_REPLICATOR_DEBUG(L"No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message discarded");
+				T_REPLICATOR_DEBUG(L"ERROR: No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message discarded");
 				j = i->second.sent.erase(j);
 				continue;
 			}
 			if ((time - j->time) >= c_resendTime)
 			{
-				T_REPLICATOR_DEBUG(L"No response from peer " << i->first << L" in " << c_resendTime << L" second(s); message resent");
+				T_REPLICATOR_DEBUG(L"OK: No response from peer " << i->first << L" in " << c_resendTime << L" second(s); message resent");
 				m_peers->send(
 					i->first,
 					&j->envelope,
@@ -86,6 +105,7 @@ void ReliableTransportPeers::update()
 					false
 				);
 				j->time = time;
+				j->resent = true;
 			}
 			++j;
 		}
@@ -132,7 +152,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 	for (;;)
 	{
 		// Receive message.
-		int32_t nrecv = m_peers->receive(&e, size + 2, outFromHandle);
+		int32_t nrecv = m_peers->receive(&e, size + 3, outFromHandle);
 		if (nrecv <= 0)
 			return 0;
 
@@ -141,6 +161,17 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 		// Send back ACK if reliable message.
 		if (e.type == EtReliable)
 		{
+			if (nrecv < 3)
+				return 0;
+
+			// Verify checksum.
+			uint8_t checksum = calculateChecksum(e.payload, nrecv - 3);
+			if (checksum != e.checksum)
+			{
+				T_REPLICATOR_DEBUG(L"ERROR: Data corruption detected; message ignored");
+				return 0;
+			}
+
 			Envelope ack;
 			ack.type = EtAck;
 			ack.sequence = e.sequence;
@@ -152,17 +183,34 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 
 			ct.last1_0 = ct.last1_1;
 			ct.last1_1 = e.sequence;
+
+			std::memcpy(data, e.payload, nrecv - 3);
+			return nrecv - 3;
 		}
 
 		// If unreliable message then we just check for duplicate messages.
 		else if (e.type == EtUnreliable)
 		{
+			if (nrecv < 3)
+				return 0;
+
+			// Verify checksum.
+			uint8_t checksum = calculateChecksum(e.payload, nrecv - 3);
+			if (checksum != e.checksum)
+			{
+				T_REPLICATOR_DEBUG(L"ERROR: Data corruption detected; message ignored");
+				return 0;
+			}
+
 			// We've already received this message.
 			if (e.sequence == ct.last0_0 || e.sequence == ct.last0_1)
 				continue;
 
 			ct.last0_0 = ct.last0_1;
 			ct.last0_1 = e.sequence;
+
+			std::memcpy(data, e.payload, nrecv - 3);
+			return nrecv - 3;
 		}
 
 		// Did we receive an ACK then remove message from sent queue.
@@ -172,15 +220,14 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 			{
 				if (i->envelope.sequence == e.sequence)
 				{
+					if (i->resent)
+						T_REPLICATOR_DEBUG(L"OK: Resent message finally ACK;ed");
+
 					ct.sent.erase(i);
 					break;
 				}
 			}
-			continue;
 		}
-
-		std::memcpy(data, e.payload, nrecv - 2);
-		return nrecv - 2;
 	}
 
 	// Unreachable.
@@ -195,13 +242,14 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 	Envelope e;
 	e.type = reliable ? EtReliable : EtUnreliable;
 	e.sequence = 0x00;
+	e.checksum = calculateChecksum(data, size);
 	std::memcpy(e.payload, data, size);
 
 	// Send message.
 	if (!reliable)
 	{
 		e.sequence = ct.sequence0;
-		if (!m_peers->send(handle, &e, 2 + size, false))
+		if (!m_peers->send(handle, &e, 3 + size, false))
 			return false;
 
 		ct.sequence0++;
@@ -209,7 +257,7 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 	else
 	{
 		e.sequence = ct.sequence1;
-		if (!m_peers->send(handle, &e, 2 + size, false))
+		if (!m_peers->send(handle, &e, 3 + size, false))
 			return false;
 
 		ct.sequence1++;
@@ -217,7 +265,8 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 		ControlEnvelope ce;
 		ce.time0 =
 		ce.time = m_timer.getElapsedTime();
-		ce.size = 2 + size;
+		ce.resent = false;
+		ce.size = 3 + size;
 		ce.envelope = e;
 		ct.sent.push_back(ce);
 	}

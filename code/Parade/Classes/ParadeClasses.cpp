@@ -29,19 +29,37 @@ Ref< world::Entity > WorldLayer_createEntity2(WorldLayer* self, const std::wstri
 	return self->createEntity(name, 0);
 }
 
-Ref< script::BoxedVector4 > WorldLayer_getViewPosition(WorldLayer* self, const Vector4& worldPosition)
+Ref< script::BoxedVector4 > WorldLayer_worldToView(WorldLayer* self, const Vector4& worldPosition)
 {
 	Vector4 viewPosition;
-	if (self->getViewPosition(worldPosition, viewPosition))
+	if (self->worldToView(worldPosition, viewPosition))
 		return new script::BoxedVector4(viewPosition);
 	else
 		return 0;
 }
 
-Ref< script::BoxedVector2 > WorldLayer_getScreenPosition(WorldLayer* self, const Vector4& viewPosition)
+Ref< script::BoxedVector4 > WorldLayer_viewToWorld(WorldLayer* self, const Vector4& viewPosition)
+{
+	Vector4 worldPosition;
+	if (self->viewToWorld(viewPosition, worldPosition))
+		return new script::BoxedVector4(worldPosition);
+	else
+		return 0;
+}
+
+Ref< script::BoxedVector2 > WorldLayer_worldToScreen(WorldLayer* self, const Vector4& worldPosition)
 {
 	Vector2 screenPosition;
-	if (self->getScreenPosition(viewPosition, screenPosition))
+	if (self->worldToScreen(worldPosition, screenPosition))
+		return new script::BoxedVector2(screenPosition);
+	else
+		return 0;
+}
+
+Ref< script::BoxedVector2 > WorldLayer_viewToScreen(WorldLayer* self, const Vector4& viewPosition)
+{
+	Vector2 screenPosition;
+	if (self->viewToScreen(viewPosition, screenPosition))
 		return new script::BoxedVector2(screenPosition);
 	else
 		return 0;
@@ -92,8 +110,10 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod("getEntitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
 	classWorldLayer->addMethod("getPostProcess", &WorldLayer::getPostProcess);
-	classWorldLayer->addMethod("getViewPosition", &WorldLayer_getViewPosition);
-	classWorldLayer->addMethod("getScreenPosition", &WorldLayer_getScreenPosition);
+	classWorldLayer->addMethod("worldToView", &WorldLayer_worldToView);
+	classWorldLayer->addMethod("viewToWorld", &WorldLayer_viewToWorld);
+	classWorldLayer->addMethod("worldToScreen", &WorldLayer_worldToScreen);
+	classWorldLayer->addMethod("viewToScreen", &WorldLayer_viewToScreen);
 	classWorldLayer->addMethod("setFieldOfView", &WorldLayer::setFieldOfView);
 	classWorldLayer->addMethod("getFieldOfView", &WorldLayer::getFieldOfView);
 	classWorldLayer->addMethod("setAlternateTime", &WorldLayer::setAlternateTime);

@@ -163,13 +163,26 @@ Ref< render::ITexture > AccTextureCache::getBitmapTexture(const FlashBitmap& bit
 
 	desc.width = bitmap.getWidth();
 	desc.height = bitmap.getHeight();
-	desc.mipCount = 1;
+	desc.mipCount = bitmap.getMips();
 	desc.format = render::TfR8G8B8A8;
 	desc.immutable = true;
-	desc.initialData[0].data = bitmap.getBits();
-	desc.initialData[0].pitch = bitmap.getWidth() * 4;
+
+	uint32_t mipOffset = 0;
+	for (uint32_t i = 0; i < bitmap.getMips(); ++i)
+	{
+		uint32_t mipWidth = std::max< uint32_t >(bitmap.getWidth() >> i, 1);
+		uint32_t mipHeight = std::max< uint32_t >(bitmap.getHeight() >> i, 1);
+
+		desc.initialData[i].data = bitmap.getBits() + mipOffset;
+		desc.initialData[i].pitch = mipWidth * 4;
+		desc.initialData[i].slicePitch = mipWidth * mipHeight * 4;
+
+		mipOffset += mipWidth * mipHeight;
+	}
 
 	Ref< render::ISimpleTexture > texture = m_renderSystem->createSimpleTexture(desc);
+	if (!texture)
+		return 0;
 
 	m_cache[hash] = texture;
 	return texture;
