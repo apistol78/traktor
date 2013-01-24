@@ -24,6 +24,8 @@ class ActionValue;
 class T_DLLCLASS ActionValuePool
 {
 public:
+	enum { Capacity = 65535 };
+
 	class Scope
 	{
 	public:
@@ -46,20 +48,49 @@ public:
 
 	ActionValuePool();
 
-	ActionValue* alloc(uint32_t count);
+	/*! \brief Allocate N values from pool.
+	 *
+	 * \param count Number of values.
+	 * \return Pointer to first value.
+	 */
+	ActionValue* alloc(uint32_t count)
+	{
+		T_FATAL_ASSERT_M (m_next + count <= Capacity, L"Out of memory in pool");
+		ActionValue* value = &m_top[m_next];
+		m_next += count;
+		return value;
+	}
 
-	uint32_t offset() const;
+	/*! \brief Number of values allocated from pool.
+	 *
+	 * \return Offset from first pool value.
+	 */
+	uint32_t offset() const
+	{
+		return m_next;
+	}
 
-	void rewind(uint32_t offset);
+	/*! \brief Rewind, or release, N values back to pool.
+	 *
+	 * \param offset Offset from first pool value.
+	 */
+	void rewind(uint32_t offset)
+	{
+		T_ASSERT (offset <= m_next);
+		for (uint32_t i = offset; i < m_next; ++i)
+			m_top[i] = ActionValue();
+		m_next = offset;
+	}
 
-	void flush();
+	/*! \brief Rewind all values back to pool. */
+	void flush()
+	{
+		rewind(0);
+	}
 
 private:
 	AutoArrayPtr< ActionValue > m_top;
 	uint32_t m_next;
-#if defined(_DEBUG)
-	const class Thread* m_ownerThread;
-#endif
 };
 
 	}

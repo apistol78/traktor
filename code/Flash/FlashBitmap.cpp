@@ -68,41 +68,73 @@ bool FlashBitmap::create(drawing::Image* image)
 
 	m_width = image->getWidth();
 	m_height = image->getHeight();
-	m_bits.reset(new SwfColor [m_width * m_height]);
 
-	std::memcpy(
-		m_bits.ptr(),
-		clone->getData(),
-		clone->getWidth() * clone->getHeight() * sizeof(SwfColor)
-	);
+	if (isLog2(m_width) && isLog2(m_height))
+		m_mips = log2(std::max(m_width, m_height)) + 1;
+	else
+		m_mips = 1;
 
-	if (!hasAlpha)
+	uint32_t mipChainSize = 0;
+	for (uint32_t i = 0; i < m_mips; ++i)
 	{
-		for (int32_t i = 0; i < clone->getWidth() * clone->getHeight(); ++i)
-			m_bits[i].alpha = 255;
+		uint32_t mipWidth = std::max< uint32_t >(m_width >> i, 1);
+		uint32_t mipHeight = std::max< uint32_t >(m_height >> i, 1);
+		mipChainSize += mipWidth * mipHeight;
+	}
+
+	m_bits.reset(new SwfColor [mipChainSize]);
+
+	SwfColor* bits = m_bits.ptr();
+	T_ASSERT (bits);
+
+	for (uint32_t i = 0; i < m_mips; ++i)
+	{
+		uint32_t mipWidth = std::max< uint32_t >(m_width >> i, 1);
+		uint32_t mipHeight = std::max< uint32_t >(m_height >> i, 1);
+
+		if (i > 0)
+		{
+			drawing::ScaleFilter scaleFilter(mipWidth, mipHeight, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
+			clone = clone->applyFilter(&scaleFilter);
+		}
+
+		std::memcpy(
+			bits,
+			clone->getData(),
+			mipWidth * mipHeight * sizeof(SwfColor)
+		);
+
+		if (!hasAlpha)
+		{
+			for (uint32_t i = 0; i < mipWidth * mipHeight; ++i)
+				bits[i].alpha = 255;
+		}
+
+		bits += mipWidth * mipHeight;
 	}
 
 	return true;
 }
 
-bool FlashBitmap::create(uint16_t width, uint16_t height)
-{
-	m_width = width;
-	m_height = height;
-	m_bits.reset(new SwfColor [m_width * m_height]);
-	return true;
-}
-
 bool FlashBitmap::serialize(ISerializer& s)
 {
-	s >> Member< uint16_t >(L"width", m_width);
-	s >> Member< uint16_t >(L"height", m_height);
+	s >> Member< uint32_t >(L"width", m_width);
+	s >> Member< uint32_t >(L"height", m_height);
+	s >> Member< uint32_t >(L"mips", m_mips);
+
+	uint32_t mipChainSize = 0;
+	for (uint32_t i = 0; i < m_mips; ++i)
+	{
+		uint32_t mipWidth = std::max< uint32_t >(m_width >> i, 1);
+		uint32_t mipHeight = std::max< uint32_t >(m_height >> i, 1);
+		mipChainSize += mipWidth * mipHeight;
+	}
 
 	if (s.getDirection() == ISerializer::SdRead)
-		m_bits.reset(new SwfColor [m_width * m_height]);
+		m_bits.reset(new SwfColor [mipChainSize]);
 
 	void* bits = m_bits.ptr();
-	uint32_t size = m_width * m_height * sizeof(SwfColor);
+	uint32_t size = mipChainSize * sizeof(SwfColor);
 
 	s >> Member< void* >(L"bits", bits, size);
 

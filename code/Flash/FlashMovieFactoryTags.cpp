@@ -694,23 +694,27 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);
 		bs.alignByte();
 
-		Ref< FlashBitmap > bitmap = new FlashBitmap();
-		if (!bitmap->create(width, height))
+		Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
+		if (!image)
 			return false;
 
-		for (uint16_t y = 0; y < height; ++y)
+		for (int32_t y = 0; y < height; ++y)
 		{
 			uint8_t* src = &buffer[colorTableSize + y * imagePitch];
-			for (uint16_t x = 0; x < width; ++x)
+			for (int32_t x = 0; x < width; ++x)
 			{
-				SwfColor color;
-				color.red = buffer[src[x] * colorSize + 0];
-				color.green = buffer[src[x] * colorSize + 1];
-				color.blue = buffer[src[x] * colorSize + 2];
-				color.alpha = (colorSize == 4) ? buffer[src[x] * colorSize + 3] : 255;
-				bitmap->setPixel(x, y, color);
+				image->setPixelUnsafe(x, y, Color4f(
+					buffer[src[x] * colorSize + 0] / 255.0f,
+					buffer[src[x] * colorSize + 1] / 255.0f,
+					buffer[src[x] * colorSize + 2] / 255.0f,
+					(colorSize == 4) ? buffer[src[x] * colorSize + 3] / 255.0f : 1.0f
+				));
 			}
 		}
+
+		Ref< FlashBitmap > bitmap = new FlashBitmap();
+		if (!bitmap->create(image))
+			return false;
 
 		context.movie->defineBitmap(bitmapId, bitmap);
 	}
@@ -742,37 +746,43 @@ bool FlashTagDefineBitsLossLess::read(SwfReader* swf, ReadContext& context)
 		bs.getStream()->seek(IStream::SeekSet, context.tagEndPosition);
 		bs.alignByte();
 
-		Ref< FlashBitmap > bitmap = new FlashBitmap();
-		if (!bitmap->create(width, height))
+		Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), width, height);
+		if (!image)
 			return false;
 
-		for (uint16_t y = 0; y < height; ++y)
+		for (int32_t y = 0; y < height; ++y)
 		{
 			uint8_t* src = &buffer[y * imagePitch];
-			for (uint16_t x = 0; x < width; ++x)
+			for (int32_t x = 0; x < width; ++x)
 			{
-				SwfColor color;
 				if (colorSize == 2)
 				{
 					uint16_t& c = reinterpret_cast< uint16_t& >(src[x * 2]);
 #if defined(T_BIG_ENDIAN)
 					swap8in16(c);
 #endif
-					color.alpha = 255;
-					color.red = (c >> 7) & 0xf8;
-					color.green = (c >> 2) & 0xf8;
-					color.blue = (c << 3) & 0xf8;
+					image->setPixelUnsafe(x, y, Color4f(
+						((c >> 7) & 0xf8) / 255.0f,
+						((c >> 2) & 0xf8) / 255.0f,
+						((c << 3) & 0xf8) / 255.0f,
+						1.0f
+					));
 				}
 				else
 				{
-					color.alpha = (m_bitsType > 1) ? src[x * 4 + 0] : 255;
-					color.red = src[x * 4 + 1];
-					color.green = src[x * 4 + 2];
-					color.blue = src[x * 4 + 3];
+					image->setPixelUnsafe(x, y, Color4f(
+						src[x * 4 + 1] / 255.0f,
+						src[x * 4 + 2] / 255.0f,
+						src[x * 4 + 3] / 255.0f,
+						(m_bitsType > 1) ? src[x * 4 + 0] / 255.0f : 1.0f
+					));
 				}
-				bitmap->setPixel(x, y, color);
 			}
 		}
+
+		Ref< FlashBitmap > bitmap = new FlashBitmap();
+		if (!bitmap->create(image))
+			return false;
 
 		context.movie->defineBitmap(bitmapId, bitmap);
 	}

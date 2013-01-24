@@ -287,13 +287,25 @@ world::PostProcess* WorldLayer::getPostProcess() const
 	return m_worldRenderer->getVisualPostProcess();
 }
 
-bool WorldLayer::getViewPosition(const Vector4& worldPosition, Vector4& outViewPosition) const
+bool WorldLayer::worldToView(const Vector4& worldPosition, Vector4& outViewPosition) const
 {
 	outViewPosition = m_worldRenderView.getView() * worldPosition.xyz1();
 	return true;
 }
 
-bool WorldLayer::getScreenPosition(const Vector4& viewPosition, Vector2& outScreenPosition) const
+bool WorldLayer::viewToWorld(const Vector4& viewPosition, Vector4& outWorldPosition) const
+{
+	outWorldPosition = m_worldRenderView.getView().inverse() * viewPosition.xyz1();
+	return true;
+}
+
+bool WorldLayer::worldToScreen(const Vector4& worldPosition, Vector2& outScreenPosition) const
+{
+	Vector4 viewPosition = m_worldRenderView.getView() * worldPosition.xyz1();
+	return viewToScreen(viewPosition, outScreenPosition);
+}
+
+bool WorldLayer::viewToScreen(const Vector4& viewPosition, Vector2& outScreenPosition) const
 {
 	Vector4 clipPosition = m_worldRenderView.getProjection() * viewPosition.xyz1();
 	if (clipPosition.w() <= 0.0f)

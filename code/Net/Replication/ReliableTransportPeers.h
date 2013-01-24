@@ -61,6 +61,7 @@ private:
 	{
 		uint8_t type;
 		uint8_t sequence;
+		uint8_t checksum;
 		uint8_t payload[1200];
 	};
 #pragma pack()
@@ -69,6 +70,7 @@ private:
 	{
 		double time0;
 		double time;
+		bool resent;
 		uint32_t size;
 		Envelope envelope;
 	};

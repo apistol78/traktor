@@ -15,7 +15,11 @@ void SoundTriggerInstance::perform(Context& context, const Transform& transform)
 {
 	if (context.soundPlayer)
 	{
-		T_ASSERT (!m_handle);
+		if (m_handle)
+		{
+			m_handle->stop();
+			m_handle = 0;
+		}
 		if (m_positional)
 			m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
 		else
