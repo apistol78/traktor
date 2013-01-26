@@ -238,6 +238,7 @@ private:
 	{
 		PeerState state;
 		Ghost* ghost;
+		bool precursor;
 		float timeUntilTx;
 		float lastTimeLocal;
 		float lastTimeRemote;
@@ -255,6 +256,7 @@ private:
 		Peer()
 		:	state(PsInitial)
 		,	ghost(0)
+		,	precursor(false)
 		,	timeUntilTx(0.0f)
 		,	lastTimeLocal(0.0f)
 		,	lastTimeRemote(0.0f)
@@ -280,6 +282,7 @@ private:
 	std::map< handle_t, Peer > m_peers;
 	std::list< Event > m_eventsIn;
 	std::list< Event > m_eventsOut;
+	float m_time0;
 	float m_time;
 	uint32_t m_pingCount;
 	float m_timeUntilPing;

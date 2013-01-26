@@ -128,17 +128,17 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 	float dT_n2_n1 = safeDeltaTime(Tn1 - Tn2);
 	float dT_n1_0 = safeDeltaTime(T0 - Tn1);
 	
-	if (Vn2)
-	{
-		float fn2 = *checked_type_cast< const FloatValue* >(Vn2);
+	//if (Vn2)
+	//{
+	//	float fn2 = *checked_type_cast< const FloatValue* >(Vn2);
 
-		float v2_1 = (fn1 - fn2) / dT_n2_n1;
-		float v1_0 = (f0 - fn1) / dT_n1_0;
-		float a = clamp((v1_0 - v2_1) / dT_n1_0, -0.25f, 0.25f);
+	//	float v2_1 = (fn1 - fn2) / dT_n2_n1;
+	//	float v1_0 = (f0 - fn1) / dT_n1_0;
+	//	float a = clamp((v1_0 - v2_1) / dT_n1_0, -0.25f, 0.25f);
 
-		f = f0 + (f0 - fn1) * (T - T0) + 0.5f * a * (T - T0) * (T - T0);
-	}
-	else
+	//	f = f0 + (f0 - fn1) * (T - T0) + 0.5f * a * (T - T0) * (T - T0);
+	//}
+	//else
 	{
 		float k = (T - Tn1) / dT_n1_0;
 		f = f0 + (fn1 - f0) * k;
@@ -149,11 +149,8 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 	if (V)
 	{
 		float fc = *checked_type_cast< const FloatValue* >(V);
-
-		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 1.0f);
-		float s_T = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k_T);
-
-		f = lerp(fc, f, s_T);
+		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
+		f = lerp(f, fc, k_T);
 	}
 
 	if (m_min < m_max)

@@ -56,6 +56,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IListener", Replicator::IListene
 Replicator::Replicator()
 :	m_id(0)
 ,	m_origin(0.0f, 0.0f, 0.0f, 1.0f)
+,	m_time0(0.0f)
 ,	m_time(0.0f)
 ,	m_pingCount(0)
 ,	m_timeUntilPing(0.0f)
@@ -95,6 +96,7 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 	{
 		Peer& peer = m_peers[*i];
 		peer.state = PsInitial;
+		peer.precursor = true;
 	}
 
 	return true;
@@ -144,6 +146,7 @@ bool Replicator::update(float T, float dT)
 	receiveMessages();
 	dispatchEventListeners();
 
+	m_time0 = m_time;
 	m_time += dT;
 
 	return bool(m_replicatorPeers != 0);
@@ -329,7 +332,7 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* c
 				i->second.ghost->S0,
 				i->second.ghost->T0,
 				currentState,
-				m_time
+				m_time0
 			);
 		else
 			return i->second.ghost->S0;
@@ -434,7 +437,10 @@ void Replicator::updatePeers(float dT)
 			if (failing)
 			{
 				// Peer should be disconnected from the network, so send disconnect message to all peers.
-				broadcastDisconnect(*i);
+				// \fixme Need to rewrite this, peer should enter recovery state where
+				// we try different means to recover connection through relaying, negotiation etc.
+				if (!peer.precursor)
+					broadcastDisconnect(*i);
 
 				// Need to notify listeners immediately as peer becomes dismounted.
 				for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
@@ -1123,6 +1129,7 @@ void Replicator::adjustTime(float offset)
 	if (offset < 0.0f)
 		return;
 
+	m_time0 += offset;
 	m_time += offset;
 
 	// Also adjust all old states as well.
