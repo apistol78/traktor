@@ -298,7 +298,7 @@ bool BodyStateTemplate::equal(const IValue* Vl, const IValue* Vr) const
 
 Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
-	const Vector4 c_linearAccThreshold(0.5f, 0.5f, 0.5f, 0.0f);
+	const Vector4 c_linearAccThreshold(10.0f, 10.0f, 10.0f, 0.0f);
 	const Vector4 c_angularAccThreshold(0.3f, 0.3f, 0.3f, 0.0f);
 
 	Scalar dT_0(safeDeltaTime(T - T0));
@@ -309,24 +309,27 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	const physics::BodyState& S0 = *checked_type_cast< const BodyStateValue* >(V0);
 
 	Vector4 Al = (S0.getLinearVelocity() - Sn1.getLinearVelocity()) / dT_n1_0;
-	Vector4 Aa = (S0.getAngularVelocity() - Sn1.getAngularVelocity()) / dT_n1_0;
+	//Vector4 Aa = (S0.getAngularVelocity() - Sn1.getAngularVelocity()) / dT_n1_0;
 
-	Vector4 Al_prim = Vector4::zero();
-	Vector4 Aa_prim = Vector4::zero();
+	Al = clampV4(Al, -c_linearAccThreshold, c_linearAccThreshold);
+	//Aa = clampV4(Aa, -c_angularAccThreshold, c_angularAccThreshold);
 
-	if (Vn2)
-	{
-		const physics::BodyState& Sn2 = *checked_type_cast< const BodyStateValue* >(Vn2);
+	//Vector4 Al_prim = Vector4::zero();
+	//Vector4 Aa_prim = Vector4::zero();
 
-		Vector4 Al_n2_n1 = (Sn1.getLinearVelocity() - Sn2.getLinearVelocity()) / dT_n2_n1;
-		Vector4 Aa_n2_n1 = (Sn1.getAngularVelocity() - Sn2.getAngularVelocity()) / dT_n2_n1;
+	//if (Vn2)
+	//{
+	//	const physics::BodyState& Sn2 = *checked_type_cast< const BodyStateValue* >(Vn2);
 
-		Al_prim = (Al - Al_n2_n1) / Scalar(dT_n1_0);
-		Aa_prim = (Aa - Aa_n2_n1) / Scalar(dT_n1_0);
+	//	Vector4 Al_n2_n1 = (Sn1.getLinearVelocity() - Sn2.getLinearVelocity()) / dT_n2_n1;
+	//	Vector4 Aa_n2_n1 = (Sn1.getAngularVelocity() - Sn2.getAngularVelocity()) / dT_n2_n1;
 
-		Al_prim = clampV4(Al_prim, -c_linearAccThreshold, c_linearAccThreshold);
-		Aa_prim = clampV4(Aa_prim, -c_angularAccThreshold, c_angularAccThreshold);
-	}
+	//	Al_prim = (Al - Al_n2_n1) / Scalar(dT_n1_0);
+	//	Aa_prim = (Aa - Aa_n2_n1) / Scalar(dT_n1_0);
+
+	//	Al_prim = clampV4(Al_prim, -c_linearAccThreshold, c_linearAccThreshold);
+	//	Aa_prim = clampV4(Aa_prim, -c_angularAccThreshold, c_angularAccThreshold);
+	//}
 
 	Vector4 Vl = S0.getLinearVelocity().xyz0();
 	Vector4 Va = S0.getAngularVelocity().xyz0();
@@ -334,37 +337,30 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	Vector4 P = S0.getTransform().translation().xyz1();
 	Quaternion R = S0.getTransform().rotation();
 
-	Al += Al_prim * Scalar(0.5f) * dT_0 * dT_0;
-	Aa += Aa_prim * Scalar(0.5f) * dT_0 * dT_0;
+	//Al += Al_prim * /*Scalar(0.5f) * */dT_0; // * dT_0;
+	//Aa += Aa_prim * /*Scalar(0.5f) * */dT_0; // * dT_0;
 
 	Vl += Al * dT_0;
-	Va += Aa * dT_0;
+	//Va += Aa * dT_0;
 
 	P += Vl * dT_0;
 	R = Quaternion::fromAxisAngle(Va * dT_0) * R;
 
-	physics::BodyState S;
-	S.setTransform(Transform(P, R.normalized()));
-	S.setLinearVelocity(Vl);
-	S.setAngularVelocity(Va);
+	physics::BodyState Sf;
+	Sf.setTransform(Transform(P, R.normalized()));
+	Sf.setLinearVelocity(Vl);
+	Sf.setAngularVelocity(Va);
 
 	// If current simulated state is known then blend into it if last known
 	// state is becoming too old or extrapolated too far away.
 	if (V)
 	{
 		const physics::BodyState& Sc = *checked_type_cast< const BodyStateValue* >(V);
-		Vector4 Pc = Sc.getTransform().translation();
-
-		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 1.0f);
-		float k_D = clamp(float((P - Pc).length()) / c_maxRubberBandDistance, 0.0f, 1.0f);
-
-		float s_T = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k_T);
-		float s_D = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k_D);
-
-		S = Sc.interpolate(S, Scalar(max(s_T, s_D)));
+		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
+		Sf = Sf.interpolate(Sc, Scalar(k_T));
 	}
 
-	return new BodyStateValue(S);
+	return new BodyStateValue(Sf);
 }
 
 	}

@@ -186,11 +186,8 @@ Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn2, float Tn2, c
 	if (V)
 	{
 		Vector4 rc = *checked_type_cast< const Vector4Value* >(V);
-
-		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 1.0f);
-		float s_T = lerp(c_rubberBandStrengthNear, c_rubberBandStrengthFar, k_T);
-
-		r = lerp(rc, r, Scalar(s_T));
+		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
+		r = lerp(r, rc, Scalar(k_T));
 	}
 
 	return new Vector4Value(r);
