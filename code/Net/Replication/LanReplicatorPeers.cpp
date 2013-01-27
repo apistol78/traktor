@@ -136,9 +136,9 @@ uint64_t LanReplicatorPeers::getGlobalId() const
 	return 0;
 }
 
-bool LanReplicatorPeers::isPrimary() const
+handle_t LanReplicatorPeers::getPrimaryPeerHandle() const
 {
-	return true;
+	return 0;
 }
 
 uint32_t LanReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const

@@ -43,7 +43,7 @@ public:
 
 	virtual int32_t getIndex() const = 0;
 
-	virtual bool isOwner() const = 0;
+	virtual const IUser* getOwner() const = 0;
 };
 
 	}

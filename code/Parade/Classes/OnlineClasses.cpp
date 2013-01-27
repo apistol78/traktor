@@ -254,7 +254,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILobby->addMethod("getParticipantCount", &online::ILobby::getParticipantCount);
 	classILobby->addMethod("invite", &online::ILobby::invite);
 	classILobby->addMethod("getIndex", &online::ILobby::getIndex);
-	classILobby->addMethod("isOwner", &online::ILobby::isOwner);
+	classILobby->addMethod("getOwner", &online::ILobby::getOwner);
 	scriptManager->registerClass(classILobby);
 
 	Ref< script::AutoScriptClass< online::IMatchMaking > > classIMatchMaking = new script::AutoScriptClass< online::IMatchMaking >();

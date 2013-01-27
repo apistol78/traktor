@@ -25,17 +25,15 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const float c_initialTimeOffset = 0.05f;
-const float c_maxOffsetAdjust = 1.0f;
 const float c_nearDistance = 15.0f;
 const float c_farDistance = 150.0f;
 const float c_nearTimeUntilTx = 1.0f / 16.0f;
 const float c_farTimeUntilTx = 1.0f / 9.0f;
 const float c_timeUntilIAm = 4.0f;
 const float c_timeUntilPing = 1.5f;
-const float c_maxExtrapolateTime = 4.0f;
 const float c_errorStateThreshold = 0.2f;
 const float c_remoteOffsetThreshold = 0.1f;
-const float c_remoteOffsetLimit = c_maxOffsetAdjust;
+const float c_remoteOffsetLimit = 0.05f;
 const uint32_t c_errorLossThreshold = 10000;
 const uint32_t c_maxPendingPing = 16;
 const uint32_t c_maxErrorCount = 4;
@@ -146,7 +144,7 @@ bool Replicator::update(float T, float dT)
 	receiveMessages();
 	dispatchEventListeners();
 
-	m_time0 = m_time;
+	m_time0 += dT;
 	m_time += dT;
 
 	return bool(m_replicatorPeers != 0);
@@ -195,7 +193,7 @@ void Replicator::broadcastEvent(const ISerializable* eventObject)
 
 bool Replicator::isPrimary() const
 {
-	return m_replicatorPeers->isPrimary();
+	return m_replicatorPeers->getPrimaryPeerHandle() == m_replicatorPeers->getGlobalId();
 }
 
 uint32_t Replicator::getPeerCount() const
@@ -319,9 +317,6 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* c
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
 	if (i != m_peers.end() && i->second.ghost)
 	{
-		if (m_time > i->second.ghost->T0 + c_maxExtrapolateTime)
-			return 0;
-
 		const StateTemplate* stateTemplate = i->second.ghost->stateTemplate;
 		if (stateTemplate)
 			return stateTemplate->extrapolate(
@@ -332,7 +327,7 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* c
 				i->second.ghost->S0,
 				i->second.ghost->T0,
 				currentState,
-				m_time0
+				m_time
 			);
 		else
 			return i->second.ghost->S0;
@@ -340,7 +335,7 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, const State* c
 	else
 	{
 		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);
-		return 0;
+		return currentState;
 	}
 }
 
@@ -439,7 +434,7 @@ void Replicator::updatePeers(float dT)
 				// Peer should be disconnected from the network, so send disconnect message to all peers.
 				// \fixme Need to rewrite this, peer should enter recovery state where
 				// we try different means to recover connection through relaying, negotiation etc.
-				if (!peer.precursor)
+				if (isPrimary())
 					broadcastDisconnect(*i);
 
 				// Need to notify listeners immediately as peer becomes dismounted.
@@ -768,10 +763,6 @@ void Replicator::receiveMessages()
 		else if (msg.type == MtPing)
 		{
 			// I've got pinged; reply with a pong.
-			Peer& peer = m_peers[handle];
-			peer.lastTimeRemote = std::max(time, peer.lastTimeRemote + 1e-4f);
-			peer.lastTimeLocal = m_time;
-
 			sendPong(handle, msg.time);
 		}
 		else if (msg.type == MtPong)
@@ -784,7 +775,7 @@ void Replicator::receiveMessages()
 			{
 				float pingTime = float(msg.pong.time0 / 1000.0f);
 				float pongTime = float(msg.time / 1000.0f);
-				float roundTrip = max(m_time - pingTime, 0.0f);
+				float roundTrip = max(m_time0 - pingTime, 0.0f);
 
 				peer.roundTrips.push_back(roundTrip);
 
@@ -802,8 +793,6 @@ void Replicator::receiveMessages()
 				peer.latencyMedian = sorted[peer.roundTrips.size() / 2] / 2.0f;
 				peer.latencyMinimum = minrt / 2.0f;
 				peer.latencyReversed = float(msg.pong.latency / 1000.0f);
-				peer.lastTimeRemote = std::max(time, peer.lastTimeRemote + 1e-4f);
-				peer.lastTimeLocal = m_time;
 
 				--peer.pendingPing;
 			}
@@ -886,13 +875,13 @@ void Replicator::receiveMessages()
 			if (time > peer.lastTimeRemote + 1e-4f)
 			{
 				// Check network time.
-				if (time + peer.latencyMinimum > m_time + 1e-5f)
+				if (m_replicatorPeers->getPrimaryPeerHandle() == handle)
 				{
-					// Adjust time; adjust only with 75% of the difference in order
-					// to stabilize synchronization over multiple iterations.
-					float offset = time + peer.latencyMinimum - m_time;
-					float adjust = min(offset * 0.75f, c_maxOffsetAdjust);
-					adjustTime(adjust);
+					float offset = time + peer.latencyReversed - m_time;
+					float k = clamp((abs(offset) - 0.05f) / (1.0f - 0.05f), 0.0f, 1.0f);
+					float adjust = offset * lerp(0.1f, 1.0f, k);
+					if (abs(adjust) > FUZZY_EPSILON)
+						adjustTime(adjust);
 				}
 
 				if (peer.ghost->stateTemplate)
@@ -1005,15 +994,6 @@ void Replicator::receiveMessages()
 				continue;
 			}
 
-			if (time + peer.latencyMinimum > m_time + 1e-5f)
-			{
-				// Adjust time; adjust only with 75% of the difference in order
-				// to stabilize synchronization over multiple iterations.
-				float offset = time + peer.latencyMinimum - m_time;
-				float adjust = min(offset * 0.75f, c_maxOffsetAdjust);
-				adjustTime(adjust);
-			}
-
 			peer.packetCount++;
 			peer.lastTimeLocal = m_time;
 			peer.lastTimeRemote = time;
@@ -1075,7 +1055,7 @@ void Replicator::sendPing(handle_t peerHandle)
 	Message msg;
 
 	msg.type = MtPing;
-	msg.time = uint32_t(m_time * 1000.0f);
+	msg.time = uint32_t(m_time0 * 1000.0f);
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
 	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
@@ -1088,9 +1068,9 @@ void Replicator::sendPong(handle_t peerHandle, uint32_t time0)
 	Message msg;
 
 	msg.type = MtPong;
-	msg.time = uint32_t(m_time * 1000.0f);
+	msg.time = uint32_t(m_time0 * 1000.0f);
 	msg.pong.time0 = time0;
-	msg.pong.latency = (i != m_peers.end()) ? uint32_t(i->second.latencyMinimum * 1000.0f) : 0;	// Report back my perception of latency to this peer.
+	msg.pong.latency = (i != m_peers.end()) ? uint32_t(i->second.latencyMedian * 1000.0f) : 0;	// Report back my perception of latency to this peer.
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t);
 	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
@@ -1126,10 +1106,8 @@ void Replicator::broadcastDisconnect(handle_t peerHandle)
 
 void Replicator::adjustTime(float offset)
 {
-	if (offset < 0.0f)
-		return;
+	//T_REPLICATOR_DEBUG(L"OK: Adjust time with " << (offset * 1000.0f) << L" ms");
 
-	m_time0 += offset;
 	m_time += offset;
 
 	// Also adjust all old states as well.

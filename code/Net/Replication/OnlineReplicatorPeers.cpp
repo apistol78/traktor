@@ -63,9 +63,9 @@ uint64_t OnlineReplicatorPeers::getGlobalId() const
 	return m_sessionManager->getUser()->getGlobalId();
 }
 
-bool OnlineReplicatorPeers::isPrimary() const
+handle_t OnlineReplicatorPeers::getPrimaryPeerHandle() const
 {
-	return m_lobby->isOwner();
+	return handle_t(m_lobby->getOwner()->getGlobalId());
 }
 
 uint32_t OnlineReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const

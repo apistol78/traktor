@@ -204,7 +204,7 @@ public:
 	float getTime() const { return m_time; }
 
 private:
-	enum { MaxRoundTrips = 9 };
+	enum { MaxRoundTrips = 17 };
 
 	struct Event
 	{
@@ -260,9 +260,9 @@ private:
 		,	timeUntilTx(0.0f)
 		,	lastTimeLocal(0.0f)
 		,	lastTimeRemote(0.0f)
-		,	latencyMedian(0.0f)
-		,	latencyMinimum(0.0f)
-		,	latencyReversed(0.0f)
+		,	latencyMedian(0.05f)
+		,	latencyMinimum(0.05f)
+		,	latencyReversed(0.05f)
 		,	pendingPing(0)
 		,	lossDelta(0)
 		,	packetCount(0)
