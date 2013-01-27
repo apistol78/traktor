@@ -40,7 +40,7 @@ public:
 
 	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const;
 
-	virtual bool isOwner(uint64_t lobbyHandle) const;
+	virtual bool getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const;
 
 private:
 	std::map< std::wstring, std::wstring > m_lobbyMeta;

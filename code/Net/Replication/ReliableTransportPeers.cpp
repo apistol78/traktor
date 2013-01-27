@@ -122,9 +122,9 @@ uint64_t ReliableTransportPeers::getGlobalId() const
 	return m_peers->getGlobalId();
 }
 
-bool ReliableTransportPeers::isPrimary() const
+handle_t ReliableTransportPeers::getPrimaryPeerHandle() const
 {
-	return m_peers->isPrimary();
+	return m_peers->getPrimaryPeerHandle();
 }
 
 uint32_t ReliableTransportPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const

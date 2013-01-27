@@ -37,7 +37,7 @@ public:
 
 	virtual int32_t getIndex() const;
 
-	virtual bool isOwner() const;
+	virtual const IUser* getOwner() const;
 
 private:
 	friend class MatchMaking;

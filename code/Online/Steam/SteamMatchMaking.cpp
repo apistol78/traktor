@@ -298,10 +298,11 @@ bool SteamMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
 	return false;
 }
 
-bool SteamMatchMaking::isOwner(uint64_t lobbyHandle) const
+bool SteamMatchMaking::getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const
 {
 	T_ASSERT_M (m_inLobby, L"Not in any lobby");
-	return SteamMatchmaking()->GetLobbyOwner(lobbyHandle) == ::SteamUser()->GetSteamID();
+	outUserHandle = SteamMatchmaking()->GetLobbyOwner(lobbyHandle).ConvertToUint64();
+	return true;
 }
 
 void SteamMatchMaking::OnLobbyMatch(LobbyMatchList_t* pCallback, bool bIOFailure)

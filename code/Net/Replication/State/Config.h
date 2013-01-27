@@ -8,7 +8,7 @@ namespace traktor
 	namespace net
 	{
 
-const float c_maxRubberBandTime = 0.25f;
+const float c_maxRubberBandTime = 0.15f;
 
 	}
 }

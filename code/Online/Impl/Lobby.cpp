@@ -142,12 +142,16 @@ int32_t Lobby::getIndex() const
 		return -1;
 }
 
-bool Lobby::isOwner() const
+const IUser* Lobby::getOwner() const
 {
-	if (m_matchMakingProvider && m_matchMakingProvider->isOwner(m_handle))
-		return true;
-	else
-		return false;
+	if (!m_matchMakingProvider)
+		return 0;
+
+	uint64_t userHandle;
+	if (!m_matchMakingProvider->getOwner(m_handle, userHandle))
+		return 0;
+
+	return m_userCache->get(userHandle);
 }
 
 Lobby::Lobby(IMatchMakingProvider* matchMakingProvider, UserCache* userCache, TaskQueue* taskQueue, uint64_t handle)

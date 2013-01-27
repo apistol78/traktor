@@ -307,6 +307,7 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 
 	const physics::BodyState& Sn1 = *checked_type_cast< const BodyStateValue* >(Vn1);
 	const physics::BodyState& S0 = *checked_type_cast< const BodyStateValue* >(V0);
+	const physics::BodyState& S = *checked_type_cast< const BodyStateValue* >(V);
 
 	Vector4 Al = (S0.getLinearVelocity() - Sn1.getLinearVelocity()) / dT_n1_0;
 	//Vector4 Aa = (S0.getAngularVelocity() - Sn1.getAngularVelocity()) / dT_n1_0;
@@ -351,14 +352,8 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	Sf.setLinearVelocity(Vl);
 	Sf.setAngularVelocity(Va);
 
-	// If current simulated state is known then blend into it if last known
-	// state is becoming too old or extrapolated too far away.
-	if (V)
-	{
-		const physics::BodyState& Sc = *checked_type_cast< const BodyStateValue* >(V);
-		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
-		Sf = Sf.interpolate(Sc, Scalar(k_T));
-	}
+	float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
+	Sf = Sf.interpolate(S, Scalar(k_T));
 
 	return new BodyStateValue(Sf);
 }

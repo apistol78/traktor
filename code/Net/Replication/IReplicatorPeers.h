@@ -32,7 +32,7 @@ public:
 
 	virtual uint64_t getGlobalId() const = 0;
 
-	virtual bool isPrimary() const = 0;
+	virtual handle_t getPrimaryPeerHandle() const = 0;
 
 	//! \}
 

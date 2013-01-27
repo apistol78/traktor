@@ -64,9 +64,9 @@ uint64_t DiagnosePeers::getGlobalId() const
 	return m_peers->getGlobalId();
 }
 
-bool DiagnosePeers::isPrimary() const
+handle_t DiagnosePeers::getPrimaryPeerHandle() const
 {
-	return m_peers->isPrimary();
+	return m_peers->getPrimaryPeerHandle();
 }
 
 uint32_t DiagnosePeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const

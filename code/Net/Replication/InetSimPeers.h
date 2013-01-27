@@ -46,7 +46,7 @@ public:
 
 	virtual uint64_t getGlobalId() const;
 
-	virtual bool isPrimary() const;
+	virtual handle_t getPrimaryPeerHandle() const;
 
 	virtual uint32_t getPeerHandles(std::vector< handle_t >& outPeerHandles) const;
 

@@ -60,9 +60,9 @@ uint64_t InetSimPeers::getGlobalId() const
 	return m_peers->getGlobalId();
 }
 
-bool InetSimPeers::isPrimary() const
+handle_t InetSimPeers::getPrimaryPeerHandle() const
 {
-	return m_peers->isPrimary();
+	return m_peers->getPrimaryPeerHandle();
 }
 
 uint32_t InetSimPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
