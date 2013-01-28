@@ -25,6 +25,7 @@ namespace traktor
 //#define T_PROFILE_REPLICATOR
 
 class IReplicatorPeers;
+struct Message;
 class State;
 class StateTemplate;
 
@@ -243,6 +244,7 @@ private:
 		PeerState state;
 		Ghost* ghost;
 		bool precursor;
+		bool relay;
 		float timeUntilTx;
 		float lastTimeLocal;
 		float lastTimeRemote;
@@ -261,6 +263,7 @@ private:
 		:	state(PsInitial)
 		,	ghost(0)
 		,	precursor(false)
+		,	relay(false)
 		,	timeUntilTx(0.0f)
 		,	lastTimeLocal(0.0f)
 		,	lastTimeRemote(0.0f)
@@ -316,6 +319,14 @@ private:
 	void broadcastDisconnect(handle_t peerHandle);
 
 	void adjustTime(float offset);
+
+	bool sendMasqueraded(handle_t fromPeerHandle, handle_t targetPeerHandle, const Message* msg, uint32_t size, bool reliable);
+
+	bool sendRelay(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable);
+
+	bool send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable);
+
+	int32_t receive(Message* msg, handle_t& outPeerHandle);
 };
 
 	}

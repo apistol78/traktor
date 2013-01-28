@@ -33,6 +33,7 @@
 #include "Input/InputSystem.h"
 #include "Input/RumbleEffectFactory.h"
 #include "Input/RumbleEffectPlayer.h"
+#include "Input/Binding/IInputSourceData.h"
 #include "Input/Binding/InputMapping.h"
 #include "Input/Binding/InputMappingResource.h"
 #include "Input/Binding/InputMappingSourceData.h"
@@ -287,7 +288,19 @@ void InputServer::update(float deltaTime, bool renderViewActive)
 			m_inputSourceFabricator = 0;
 
 			if (m_inputMappingSourceData)
+			{
+				uint32_t sourceHash = DeepHash(sourceData).get();
+				
+				// Discard duplicated input sources.
+				const std::map< std::wstring, Ref< input::IInputSourceData > >& currentSourceData = m_inputMappingSourceData->getSourceData();
+				for (std::map< std::wstring, Ref< input::IInputSourceData > >::const_iterator i = currentSourceData.begin(); i != currentSourceData.end(); ++i)
+				{
+					if (DeepHash(i->second) == sourceHash)
+						m_inputMappingSourceData->setSourceData(i->first, 0);
+				}
+
 				m_inputMappingSourceData->setSourceData(m_inputSourceFabricatorId, sourceData);
+			}
 
 			// Update mapping with new, fabricated, source.
 			if (m_inputMappingSourceData && m_inputMappingStateData)

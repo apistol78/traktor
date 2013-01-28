@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Input/X11/MouseDeviceX11.h"
 
@@ -30,8 +31,11 @@ c_mouseControlMap[] =
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceX11", MouseDeviceX11, IInputDevice)
 
-MouseDeviceX11::MouseDeviceX11()
-:	m_connected(false)
+MouseDeviceX11::MouseDeviceX11(Display* display, Window window, int deviceId)
+:	m_display(display)
+,	m_window(window)
+,	m_deviceId(deviceId)
+,	m_connected(false)
 ,	m_haveCursorPosition(false)
 ,	m_axisX(0.0f)
 ,	m_axisY(0.0f)
@@ -40,7 +44,15 @@ MouseDeviceX11::MouseDeviceX11()
 ,	m_button1(0.0f)
 ,	m_button2(0.0f)
 ,	m_button3(0.0f)
+,	m_width(0)
+,	m_height(0)
 {
+	XWindowAttributes attr;
+	XGetWindowAttributes(m_display, m_window, &attr);
+
+	m_width = attr.width;
+	m_height = attr.height;
+
 	resetState();
 }
 
@@ -81,7 +93,7 @@ bool MouseDeviceX11::isControlStable(int32_t control) const
 
 float MouseDeviceX11::getControlValue(int32_t control)
 {
-	if (!m_connected)
+	if (!m_connected || control < 0)
 		return 0.0f;
 
 	const MouseControlMap& mc = c_mouseControlMap[control];
@@ -105,7 +117,24 @@ float MouseDeviceX11::getControlValue(int32_t control)
 
 bool MouseDeviceX11::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
-	return false;
+	if (!m_connected || control < 0)
+		return false;
+
+	const MouseControlMap& mc = c_mouseControlMap[control];
+	if (mc.controlType == DtPositionX)
+	{
+		outMin = 0;
+		outMax = float(m_width);
+	}
+	else if (mc.controlType == DtPositionY)
+	{
+		outMin = 0;
+		outMax = float(m_height);
+	}
+	else
+		return false;
+
+	return true;
 }
 
 bool MouseDeviceX11::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
@@ -119,6 +148,7 @@ bool MouseDeviceX11::getDefaultControl(InputDefaultControlType controlType, bool
 			return true;
 		}
 	}
+	control = -1;
 	return false;
 }
 
@@ -141,8 +171,63 @@ void MouseDeviceX11::resetState()
 
 void MouseDeviceX11::readState()
 {
+	if (!m_connected)
+	{
+		/*
+		uint8_t mask[2] = { 0, 0 };
+		XIEventMask evmask;
+
+		evmask.mask = mask;
+		evmask.mask_len = sizeof(mask);
+		evmask.deviceid = XIAllDevices;
+
+		XISetMask(mask, XI_Motion);
+		XISetMask(mask, XI_ButtonPress);
+		XISetMask(mask, XI_ButtonRelease);
+
+		if (XIGrabDevice(
+			m_display,
+			m_deviceId,
+			m_window,
+			CurrentTime,
+			None,
+			GrabModeAsync,
+			GrabModeAsync,
+			False,
+			&mask
+		) == GrabSuccess)
+			m_connected = true;
+		*/
+
+		m_connected = true;
+	}
+
 	if (m_connected)
 	{
+		Window rootWindow, childWindow;
+		int rootX = 0, rootY = 0;
+		int x = 0, y = 0;
+		unsigned int mask = 0;
+
+		XQueryPointer(
+			m_display,
+			m_window,
+			&rootWindow,
+			&childWindow,
+			&rootX,
+			&rootY,
+			&x,
+			&y,
+			&mask
+		);
+
+		m_positionX = clamp(float(x), 0.0f, float(m_width));
+		m_positionY = clamp(float(y), 0.0f, float(m_height));
+
+		m_button1 = (mask & Button1Mask) ? 1.0f : 0.0f;
+		m_button2 = (mask & Button2Mask) ? 1.0f : 0.0f;
+		m_button3 = (mask & Button3Mask) ? 1.0f : 0.0f;
+
 /*
 		bool exclusive = ((GetWindowLong(m_hWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) == WS_EX_TOPMOST);
 

@@ -296,9 +296,11 @@ DisplayMode RenderSystemOpenGL::getCurrentDisplayMode() const
 
 #elif defined(__LINUX__)
 
+	int screen = DefaultScreen(m_display);
+
 	DisplayMode dm;
-	dm.width = 1280;
-	dm.height = 720;
+	dm.width = DisplayWidth(m_display, screen);
+	dm.height = DisplayHeight(m_display, screen);
 	dm.refreshRate = 60;
 	dm.colorBits = 32;
 	return dm;

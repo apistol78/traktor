@@ -73,6 +73,13 @@ void eventNotificationButtonDown(ui::Event* event)
 		if (clipboard)
 			clipboard->setText(g_scratchPath);
 	}
+	else if (item->getCommand() == L"RemoteServer.CleanScratch")
+	{
+		RefArray< File > files;
+		FileSystem::getInstance().find(g_scratchPath + L"/*.*", files);
+		for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+			FileSystem::getInstance().remove((*i)->getPath());
+	}
 	else if (item->getCommand() == L"RemoteServer.Exit")
 	{
 		if (ui::MessageBox::show(L"Sure you want to exit RemoteServer?", L"Exit", ui::MbIconQuestion | ui::MbYesNo) == ui::DrYes)
@@ -283,7 +290,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #endif
 
-	traktor::log::info << L"Traktor RemoteServer 1.3" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.4" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -297,10 +304,12 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu = new ui::PopupMenu();
 	g_popupMenu->create();
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CopyScratch"), L"Copy Scratch Directory"));
+	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CleanScratch"), L"Clean Scratch Directory"));
+	g_popupMenu->add(new ui::MenuItem(L"-"));
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.3.1 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.4 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
 #endif
 

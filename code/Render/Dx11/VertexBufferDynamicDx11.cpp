@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/TypesDx11.h"
@@ -17,9 +18,14 @@ Ref< VertexBufferDynamicDx11 > VertexBufferDynamicDx11::create(
 	const std::vector< VertexElement >& vertexElements
 )
 {
+	ComRef< ID3D11DeviceContext > d3dDeferredContext;
 	ComRef< ID3D11Buffer > d3dBuffer;
 	D3D11_BUFFER_DESC dbd;
 	HRESULT hr;
+
+	hr = context->getD3DDevice()->CreateDeferredContext(0, &d3dDeferredContext.getAssign());
+	if (FAILED(hr))
+		return 0;
 
 	dbd.ByteWidth = bufferSize;
 	dbd.Usage = D3D11_USAGE_DYNAMIC;
@@ -34,6 +40,7 @@ Ref< VertexBufferDynamicDx11 > VertexBufferDynamicDx11::create(
 	Ref< VertexBufferDynamicDx11 > vb = new VertexBufferDynamicDx11(bufferSize);
 
 	vb->m_context = context;
+	vb->m_d3dDeferredContext = d3dDeferredContext;
 	vb->m_d3dBuffer = d3dBuffer;
 	vb->m_d3dStride = getVertexSize(vertexElements);
 
@@ -74,7 +81,7 @@ void* VertexBufferDynamicDx11::lock()
 	D3D11_MAPPED_SUBRESOURCE dm;
 	HRESULT hr;
 
-	hr = m_context->getD3DDeviceContext()->Map(m_d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
+	hr = m_d3dDeferredContext->Map(m_d3dBuffer, 0, D3D11_MAP_WRITE_DISCARD, 0, &dm);
 	if (FAILED(hr))
 		return 0;
 
@@ -89,8 +96,26 @@ void* VertexBufferDynamicDx11::lock(uint32_t vertexOffset, uint32_t vertexCount)
 
 void VertexBufferDynamicDx11::unlock()
 {
-	m_context->getD3DDeviceContext()->Unmap(m_d3dBuffer, 0);
+	m_d3dDeferredContext->Unmap(m_d3dBuffer, 0);
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_d3dDeferredContext->FinishCommandList(FALSE, &m_d3dPendingCommandList.getAssign());
+	}
+
 	setContentValid(true);
+}
+
+void VertexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	if (m_d3dPendingCommandList)
+	{
+		d3dDeviceContext->ExecuteCommandList(m_d3dPendingCommandList, TRUE);
+		m_d3dPendingCommandList.release();
+	}
+
+	VertexBufferDx11::prepare(d3dDeviceContext);
 }
 
 VertexBufferDynamicDx11::VertexBufferDynamicDx11(uint32_t bufferSize)

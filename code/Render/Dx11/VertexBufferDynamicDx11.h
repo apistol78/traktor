@@ -1,6 +1,7 @@
 #ifndef traktor_render_VertexBufferDynamicDx11_H
 #define traktor_render_VertexBufferDynamicDx11_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Render/VertexElement.h"
 #include "Render/Dx11/VertexBufferDx11.h"
 
@@ -35,8 +36,13 @@ public:
 	
 	virtual void unlock();
 
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext);
+
 private:
 	Ref< ContextDx11 > m_context;
+	ComRef< ID3D11DeviceContext > m_d3dDeferredContext;
+	ComRef< ID3D11CommandList > m_d3dPendingCommandList;
+	Semaphore m_lock;
 
 	VertexBufferDynamicDx11(uint32_t bufferSize);
 };

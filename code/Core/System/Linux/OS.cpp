@@ -89,7 +89,20 @@ bool OS::exploreFile(const std::wstring& file) const
 
 OS::envmap_t OS::getEnvironment() const
 {
-	return envmap_t();
+	envmap_t envmap;
+	for (char** e = environ; *e; ++e)
+	{
+		char* sep = strchr(*e, '=');
+		if (sep)
+		{
+			char* val = sep + 1;
+			envmap.insert(std::make_pair(
+				mbstows(std::string(*e, sep)),
+				mbstows(val)
+			));
+		}
+	}
+	return envmap;
 }
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
@@ -139,11 +152,15 @@ Ref< IProcess > OS::execute(
 		argv[argc++] = strdup(wstombs(*i).c_str());
 
 	// Convert environment variables.
+	envmap_t pem = getEnvironment();
 	if (envmap)
 	{
 		for (envmap_t::const_iterator i = envmap->begin(); i != envmap->end(); ++i)
-			envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
+			pem.insert(std::make_pair(i->first, i->second));
 	}
+
+	for (envmap_t::const_iterator i = pem.begin(); i != pem.end(); ++i)
+		envv[envc++] = strdup(wstombs(i->first + L"=" + i->second).c_str());
 
 	// Terminate argument and environment vectors.
 	envv[envc] = 0;
@@ -163,7 +180,10 @@ Ref< IProcess > OS::execute(
 
 	// Spawn process.
 	pid_t pid;
-	err = posix_spawn(&pid, argv[0], 0, 0, argv, envv);
+	if (envc > 0)
+		err = posix_spawn(&pid, argv[0], 0, 0, argv, envv);
+	else
+		err = posix_spawn(&pid, argv[0], 0, 0, argv, 0);
 
 	// Restore our working directory before returning.
 	chdir(cwd);
