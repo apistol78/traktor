@@ -15,7 +15,7 @@ namespace traktor
 
 struct LowPassFilterInstance : public RefCountImpl< IFilterInstance >
 {
-	float m_history[SbcMaxChannelCount];
+	Scalar m_history[SbcMaxChannelCount];
 
 	void* operator new (size_t size) {
 		return getAllocator()->alloc(size, 16, T_FILE_LINE);
@@ -48,21 +48,28 @@ void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	if (m_cutOff > FUZZY_EPSILON)
 	{
 		float dt = 1.0f / outBlock.sampleRate;
-		float alpha = dt / (dt + 1.0f / m_cutOff);
+		Scalar alpha(dt / (dt + 1.0f / m_cutOff));
 
 		for (uint32_t j = 0; j < outBlock.maxChannel; ++j)
 		{
 			float* samples = outBlock.samples[j];
-			float& history = lpfi->m_history[j];
+			Scalar history = lpfi->m_history[j];
 
 			for (uint32_t i = 0; i < outBlock.samplesCount; i += 4)
 			{
-				samples[i+0] = (samples[i+0] - history) * alpha + history;
-				samples[i+1] = (samples[i+1] - samples[i+0]) * alpha + samples[i+0];
-				samples[i+2] = (samples[i+2] - samples[i+1]) * alpha + samples[i+1];
-				samples[i+3] = (samples[i+3] - samples[i+2]) * alpha + samples[i+2];
-				history = samples[i+3];
+				Vector4 s0123 = Vector4::loadAligned(&samples[i]);
+
+				Scalar s0 = (s0123.x() - history) * alpha + history;
+				Scalar s1 = (s0123.y() - s0) * alpha + s0;
+				Scalar s2 = (s0123.z() - s1) * alpha + s1;
+				Scalar s3 = (s0123.w() - s2) * alpha + s2;
+
+				Vector4(s0, s1, s2, s3).storeAligned(&samples[i]);
+
+				history = s3;
 			}
+
+			lpfi->m_history[j] = history;
 		}
 	}
 }

@@ -228,23 +228,20 @@ void ProgramDx11::setMatrixParameter(handle_t handle, const Matrix44& param)
 	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		if (Matrix44::loadAligned(&m_parameterFloatArray[i->second.offset]) != param)
-		{
-			param.storeAligned(&m_parameterFloatArray[i->second.offset]);
-			if (i->second.cbuffer[0])
-				i->second.cbuffer[0]->dirty = true;
-			if (i->second.cbuffer[1])
-				i->second.cbuffer[1]->dirty = true;
+		param.storeAligned(&m_parameterFloatArray[i->second.offset]);
+		if (i->second.cbuffer[0])
+			i->second.cbuffer[0]->dirty = true;
+		if (i->second.cbuffer[1])
+			i->second.cbuffer[1]->dirty = true;
 #if defined(_DEBUG)
-			if (m_bindCount >= 1)
-			{
-				if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
-					T_DEBUG(L"cbOnce modified vertex " << i->second.name);
-				if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
-					T_DEBUG(L"cbOnce modified pixel " << i->second.name);
-			}
-#endif
+		if (m_bindCount >= 1)
+		{
+			if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
+				T_DEBUG(L"cbOnce modified vertex " << i->second.name);
+			if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
+				T_DEBUG(L"cbOnce modified pixel " << i->second.name);
 		}
+#endif
 	}
 }
 
