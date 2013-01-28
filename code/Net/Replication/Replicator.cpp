@@ -255,6 +255,11 @@ bool Replicator::isPeerConnected(handle_t peerHandle) const
 		return true;
 }
 
+bool Replicator::isPeerPrimary(handle_t peerHandle) const
+{
+	return m_replicatorPeers->getPrimaryPeerHandle() == peerHandle;
+}
+
 bool Replicator::areAllPeersConnected() const
 {
 	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)

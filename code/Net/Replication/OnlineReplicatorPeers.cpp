@@ -102,13 +102,16 @@ int32_t OnlineReplicatorPeers::receive(void* data, int32_t size, handle_t& outFr
 {
 	Ref< online::IUser > fromUser;
 	int32_t nrecv;
+
+	if (!m_sessionManager->haveP2PData())
+		return 0;
 	
 	nrecv = m_sessionManager->receiveP2PData(data, size, fromUser);
 	if (!nrecv)
-		return -1;
+		return 0;
 
 	if (!fromUser)
-		return -1;
+		return 0;
 
 	outFromHandle = handle_t(fromUser->getGlobalId());
 	return nrecv;

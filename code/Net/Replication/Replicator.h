@@ -149,6 +149,10 @@ public:
 	 */
 	bool isPeerConnected(handle_t peerHandle) const;
 
+	/*! \brief Check if peer is primary.
+	 */
+	bool isPeerPrimary(handle_t peerHandle) const;
+
 	/*! \brief Check if all peers are connected.
 	 */
 	bool areAllPeersConnected() const;

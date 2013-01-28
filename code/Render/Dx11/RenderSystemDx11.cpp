@@ -49,37 +49,41 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	hr = CreateDXGIFactory1(__uuidof(IDXGIFactory1), (void**)&dxgiFactory.getAssign());
 	if (FAILED(hr))
 	{
-		log::error << L"Failed to create DXGI factory, HRESULT " << int32_t(hr) << Endl;
-		return false;
-	}
-
-	// Prefer AMD or NVidia adapters; if none is found fallback on all others.
-	for (int32_t i = 0; dxgiFactory->EnumAdapters1(i, &dxgiAdapterEnum.getAssign()) != DXGI_ERROR_NOT_FOUND; ++i)
-	{
-		// Ensure the adapter have a connected output.
-		hr = dxgiAdapterEnum->EnumOutputs(0, &dxgiOutput.getAssign());
-		if (FAILED(hr))
-			continue;
-
-		// Get adapter description.
-		DXGI_ADAPTER_DESC1 dad;
-
-		hr = dxgiAdapterEnum->GetDesc1(&dad);
-		if (FAILED(hr))
-			continue;
-
-		if (dad.VendorId == 4098)	// AMD/ATI
-			dxgiAdapter = dxgiAdapterEnum;
-		if (dad.VendorId == 4318)	// NVidia
-			dxgiAdapter = dxgiAdapterEnum;
-	}
-
-	// In case we didn't find an suitable adapter we need to get the factory
-	// determined by DX itself.
-	if (!dxgiAdapter)
-	{
-		log::warning << L"No preferred DX adapter found; using automatic" << Endl;
+		log::warning << L"Failed to create DXGI factory, HRESULT " << int32_t(hr) << Endl;
+		log::warning << L"Unable to enumerate preferred adapter; using DX default" << Endl;
 		dxgiFactory.release();
+	}
+
+	if (dxgiFactory)
+	{
+		// Prefer AMD or NVidia adapters; if none is found fallback on all others.
+		for (int32_t i = 0; dxgiFactory->EnumAdapters1(i, &dxgiAdapterEnum.getAssign()) != DXGI_ERROR_NOT_FOUND; ++i)
+		{
+			// Ensure the adapter have a connected output.
+			hr = dxgiAdapterEnum->EnumOutputs(0, &dxgiOutput.getAssign());
+			if (FAILED(hr))
+				continue;
+
+			// Get adapter description.
+			DXGI_ADAPTER_DESC1 dad;
+
+			hr = dxgiAdapterEnum->GetDesc1(&dad);
+			if (FAILED(hr))
+				continue;
+
+			if (dad.VendorId == 4098)	// AMD/ATI
+				dxgiAdapter = dxgiAdapterEnum;
+			if (dad.VendorId == 4318)	// NVidia
+				dxgiAdapter = dxgiAdapterEnum;
+		}
+
+		// In case we didn't find an suitable adapter we need to get the factory
+		// determined by DX itself.
+		if (!dxgiAdapter)
+		{
+			log::warning << L"No preferred DX adapter found; using DX default" << Endl;
+			dxgiFactory.release();
+		}
 	}
 
 	// Create D3D11 device instance.
