@@ -22,9 +22,6 @@ bool InputDriverX11::create(const SystemWindow& systemWindow, uint32_t inputCate
 	m_display = (Display*)systemWindow.display;
 	m_window = (Window)systemWindow.window;
 
-	log::info << L"Initializing XInput 2.0..." << Endl;
-	log::info << L" ... m_display = " << int32_t(m_display) << Endl;
-
 	static int32_t opcode = 0, event = 0, error = 0;
 	if (!XQueryExtension(m_display, "XInputExtension", &opcode, &event, &error))
 	{
@@ -52,7 +49,7 @@ bool InputDriverX11::create(const SystemWindow& systemWindow, uint32_t inputCate
 		if (deviceInfo[i].use == XIMasterPointer || deviceInfo[i].use == XISlavePointer)
 		{
 			log::info << L"Mouse device " << i << L" \"" << mbstows(deviceInfo[i].name) << L"\"" << Endl;
-			Ref< MouseDeviceX11 > mouseDevice = new MouseDeviceX11();
+			Ref< MouseDeviceX11 > mouseDevice = new MouseDeviceX11(m_display, m_window, deviceInfo[i].deviceid);
 			m_devices.push_back(mouseDevice);
 		}
 		else if (deviceInfo[i].use == XIMasterKeyboard || deviceInfo[i].use == XISlaveKeyboard)
@@ -64,6 +61,21 @@ bool InputDriverX11::create(const SystemWindow& systemWindow, uint32_t inputCate
 	}
 
 	XIFreeDeviceInfo(deviceInfo);
+
+	/*
+	uint8_t mask[2] = { 0, 0 };
+	XIEventMask evmask;
+
+	evmask.mask = mask;
+	evmask.mask_len = sizeof(mask);
+	evmask.deviceid = XIAllDevices;
+
+	XISetMask(mask, XI_Motion);
+	XISetMask(mask, XI_ButtonPress);
+	XISetMask(mask, XI_ButtonRelease);
+
+	XIGrabDevice(m_display, 2, m_window, CurrentTime, None, GrabModeAsync, GrabModeAsync, False, &mask);
+	*/
 
 	return true;
 }

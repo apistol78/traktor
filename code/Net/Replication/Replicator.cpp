@@ -25,7 +25,7 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const float c_initialTimeOffset = 0.05f;
-const float c_nearDistance = 15.0f;
+const float c_nearDistance = 14.0f;
 const float c_farDistance = 150.0f;
 const float c_nearTimeUntilTx = 1.0f / 16.0f;
 const float c_farTimeUntilTx = 1.0f / 9.0f;
@@ -80,10 +80,10 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 	// Discard any pending data.
 	for (;;)
 	{
-		uint8_t discard[sizeof(Message)];
+		Message discard;
 		handle_t fromHandle;
 
-		if (m_replicatorPeers->receive(discard, sizeof(discard), fromHandle) > 0)
+		if (receive(&discard, fromHandle) > 0)
 			T_REPLICATOR_DEBUG(L"OK: Pending message discarded from peer " << fromHandle);
 		else
 			break;
@@ -436,24 +436,33 @@ void Replicator::updatePeers(float dT)
 
 			if (failing)
 			{
-				// Peer should be disconnected from the network, so send disconnect message to all peers.
-				// \fixme Need to rewrite this, peer should enter recovery state where
-				// we try different means to recover connection through relaying, negotiation etc.
-				if (isPrimary())
+				// If peer is failing and we're the primary peer then we disconnect peer from network;
+				// also disconnect peer if we're using relaying and still fail.
+				if (isPrimary() || peer.relay)
+				{
 					broadcastDisconnect(*i);
 
-				// Need to notify listeners immediately as peer becomes dismounted.
-				for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-					(*j)->notify(this, 0, IListener::ReDisconnected, *i, 0);
+					// Need to notify listeners immediately as peer becomes dismounted.
+					for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+						(*j)->notify(this, 0, IListener::ReDisconnected, *i, 0);
 
-				if (peer.ghost)
-				{
-					peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
-					peer.ghost = 0;
+					if (peer.ghost)
+					{
+						peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
+						peer.ghost = 0;
+					}
+
+					peer.state = PsDisconnected;
+					peer.iframe = 0;
 				}
-
-				peer.state = PsDisconnected;
-				peer.iframe = 0;
+				else
+				{
+					T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate with peer; relay through primary peer");
+					peer.pendingPing = 0;
+					peer.errorCount = 0;
+					peer.lossDelta = 0;
+					peer.relay = true;
+				}
 			}
 		}
 	}
@@ -530,7 +539,7 @@ void Replicator::sendState(float dT)
 			peer.stateCount = 0;
 		}
 
-		if (m_replicatorPeers->send(i->first, &msg, msgSize, false))
+		if (send(i->first, &msg, msgSize, false))
 		{
 			if (peer.lossDelta == 0 && peer.ghost->stateTemplate)
 			{
@@ -583,7 +592,7 @@ void Replicator::sendEvents()
 				if (j->second.state != PsEstablished)
 					continue;
 
-				if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
+				if (send(j->first, &msg, msgSize, true))
 					j->second.errorCount = 0;
 				else
 				{
@@ -606,7 +615,7 @@ void Replicator::sendEvents()
 			std::map< handle_t, Peer >::iterator j = m_peers.find(i->handle);
 			if (j != m_peers.end())
 			{
-				if (m_replicatorPeers->send(j->first, &msg, msgSize, true))
+				if (send(j->first, &msg, msgSize, true))
 					j->second.errorCount = 0;
 				else
 				{
@@ -659,12 +668,13 @@ void Replicator::receiveMessages()
 {
 	handle_t handle;
 	Message msg;
+	int32_t size;
 
 	// Read messages from any peer.
 	while (m_replicatorPeers)
 	{
 		std::memset(&msg, 0, sizeof(msg));
-		if (m_replicatorPeers->receive(&msg, sizeof(msg), handle) <= 0)
+		if ((size = receive(&msg, handle)) <= 0)
 			break;
 
 		// Convert time from ms to seconds.
@@ -1041,7 +1051,7 @@ void Replicator::sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id)
 	msg.iam.id = id;
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint8_t) + sizeof(uint32_t);
-	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
+	send(peerHandle, &msg, msgSize, false);
 }
 
 void Replicator::sendBye(handle_t peerHandle)
@@ -1052,7 +1062,7 @@ void Replicator::sendBye(handle_t peerHandle)
 	msg.time = uint32_t(m_time * 1000.0f);
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
-	m_replicatorPeers->send(peerHandle, &msg, msgSize, true);
+	send(peerHandle, &msg, msgSize, true);
 }
 
 void Replicator::sendPing(handle_t peerHandle)
@@ -1063,7 +1073,7 @@ void Replicator::sendPing(handle_t peerHandle)
 	msg.time = uint32_t(m_time0 * 1000.0f);
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
-	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
+	send(peerHandle, &msg, msgSize, false);
 }
 
 void Replicator::sendPong(handle_t peerHandle, uint32_t time0)
@@ -1078,7 +1088,7 @@ void Replicator::sendPong(handle_t peerHandle, uint32_t time0)
 	msg.pong.latency = (i != m_peers.end()) ? uint32_t(i->second.latencyMedian * 1000.0f) : 0;	// Report back my perception of latency to this peer.
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint32_t) + sizeof(uint32_t);
-	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
+	send(peerHandle, &msg, msgSize, false);
 }
 
 void Replicator::sendThrottle(handle_t peerHandle)
@@ -1089,7 +1099,7 @@ void Replicator::sendThrottle(handle_t peerHandle)
 	msg.time = uint32_t(m_time * 1000.0f);
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t);
-	m_replicatorPeers->send(peerHandle, &msg, msgSize, false);
+	send(peerHandle, &msg, msgSize, false);
 }
 
 void Replicator::broadcastDisconnect(handle_t peerHandle)
@@ -1105,7 +1115,7 @@ void Replicator::broadcastDisconnect(handle_t peerHandle)
 	for (std::map< handle_t, Peer >::iterator j = m_peers.begin(); j != m_peers.end(); ++j)
 	{
 		if (j->second.state == PsEstablished)
-			m_replicatorPeers->send(j->first, &msg, msgSize, true);
+			send(j->first, &msg, msgSize, true);
 	}
 }
 
@@ -1132,6 +1142,110 @@ void Replicator::adjustTime(float offset)
 		i->time += offset;
 	for (std::list< Event >::iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
 		i->time += offset;
+}
+
+bool Replicator::sendMasqueraded(handle_t fromPeerHandle, handle_t targetPeerHandle, const Message* msg, uint32_t size, bool reliable)
+{
+	Message mm;
+	mm.type = MtMasquerade;
+	mm.time = uint32_t(m_time * 1000.0f);
+	mm.masquerade.fromGlobalId = fromPeerHandle;
+	std::memcpy(mm.masquerade.data, msg, size);
+
+	return m_replicatorPeers->send(targetPeerHandle, &mm, Message::HeaderSize + sizeof(uint64_t) + size, reliable);
+}
+
+bool Replicator::sendRelay(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)
+{
+	handle_t primaryPeerHandle = m_replicatorPeers->getPrimaryPeerHandle();
+	if (!primaryPeerHandle)
+		return false;
+
+	Message mr;
+	mr.type = reliable ? MtRelayReliable : MtRelayUnreliable;
+	mr.time = uint32_t(m_time * 1000.0f);
+	mr.relay.targetGlobalId = peerHandle;
+	std::memcpy(mr.relay.data, msg, size);
+
+	return m_replicatorPeers->send(primaryPeerHandle, &mr, Message::HeaderSize + sizeof(uint64_t) + size, reliable);
+}
+
+bool Replicator::send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)
+{
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	if (i == m_peers.end())
+		return false;
+
+	if (!i->second.relay || isPrimary())
+		return m_replicatorPeers->send(peerHandle, msg, size, reliable);
+	else
+		return sendRelay(peerHandle, msg, size, reliable);
+}
+
+int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
+{
+	int32_t size;
+
+	for (;;)
+	{
+		size = m_replicatorPeers->receive(msg, sizeof(Message), outPeerHandle);
+		if (size <= 0)
+			return size;
+
+		if (msg->type == MtRelayUnreliable || msg->type == MtRelayReliable)
+		{
+			size -= Message::HeaderSize + sizeof(uint64_t);
+			if (size <= 0)
+				return size;
+
+			handle_t targetPeerHandle = msg->relay.targetGlobalId;
+			if (targetPeerHandle != m_replicatorPeers->getGlobalId())
+			{
+				bool reliable = bool(msg->type == MtRelayReliable);
+
+				std::memmove(
+					msg,
+					msg->relay.data,
+					size
+				);
+
+				sendMasqueraded(
+					outPeerHandle,
+					targetPeerHandle,
+					msg,
+					size,
+					reliable
+				);
+
+				continue;
+			}
+			else
+			{
+				std::memmove(
+					msg,
+					msg->relay.data,
+					size
+				);
+			}
+		}
+		else if (msg->type == MtMasquerade)
+		{
+			size -= Message::HeaderSize + sizeof(uint64_t);
+			if (size <= 0)
+				return size;
+
+			outPeerHandle = msg->masquerade.fromGlobalId;
+			std::memmove(
+				msg,
+				msg->masquerade.data,
+				size
+			);
+		}
+
+		break;
+	}
+
+	return size;
 }
 
 	}

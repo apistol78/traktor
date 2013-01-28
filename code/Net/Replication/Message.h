@@ -18,7 +18,10 @@ enum MessageType
 	MtDisconnect = 0xf6,
 	MtFullState	= 0x11,
 	MtDeltaState = 0x12,
-	MtEvent = 0x13
+	MtEvent = 0x13,
+	MtRelayUnreliable = 0x21,
+	MtRelayReliable = 0x22,
+	MtMasquerade = 0x23
 };
 
 #pragma pack(1)
@@ -28,8 +31,10 @@ struct Message
 	{
 		HeaderSize = sizeof(uint8_t) + sizeof(uint32_t),
 		MessageSize = 1200,
-		StateSize = MessageSize - HeaderSize,
-		EventSize = MessageSize - HeaderSize
+		StateSize = MessageSize - HeaderSize - sizeof(uint64_t),
+		EventSize = MessageSize - HeaderSize - sizeof(uint64_t),
+		RelaySize = MessageSize - HeaderSize - sizeof(uint64_t),
+		MasqueradeSize = MessageSize - HeaderSize - sizeof(uint64_t)
 	};
 
 	uint8_t type;
@@ -62,6 +67,19 @@ struct Message
 		{
 			uint8_t data[EventSize];
 		} event;
+
+		struct 
+		{
+			uint64_t targetGlobalId;
+			uint8_t data[RelaySize];
+		} relay;
+
+		struct 
+		{
+			uint64_t fromGlobalId;
+			uint8_t data[RelaySize];
+		}
+		masquerade;
 
 		uint8_t reserved[MessageSize - HeaderSize];
 	};

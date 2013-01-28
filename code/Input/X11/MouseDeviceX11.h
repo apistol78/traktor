@@ -1,6 +1,9 @@
 #ifndef traktor_input_MouseDeviceX11_H
 #define traktor_input_MouseDeviceX11_H
 
+#include <X11/Xlib.h>
+#include <X11/Xutil.h>
+#include <X11/extensions/XInput2.h>
 #include "Input/IInputDevice.h"
 
 namespace traktor
@@ -13,7 +16,7 @@ class MouseDeviceX11 : public IInputDevice
 	T_RTTI_CLASS;
 
 public:
-	MouseDeviceX11();
+	MouseDeviceX11(Display* display, Window window, int deviceId);
 
 	virtual std::wstring getName() const;
 
@@ -48,9 +51,10 @@ public:
 	virtual void setExclusive(bool exclusive);
 
 private:
+	Display* m_display;
+	Window m_window;
+	int m_deviceId;
 	bool m_connected;
-	//HWND m_hWnd;
-	//POINT m_cursorPosition;
 	bool m_haveCursorPosition;
 	float m_axisX;
 	float m_axisY;
@@ -59,6 +63,8 @@ private:
 	float m_button1;
 	float m_button2;
 	float m_button3;
+	int m_width;
+	int m_height;
 };
 
 	}

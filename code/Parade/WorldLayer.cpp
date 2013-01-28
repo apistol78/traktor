@@ -180,7 +180,7 @@ Ref< world::EntityData > WorldLayer::getEntityData(const std::wstring& name) con
 {
 	std::map< std::wstring, resource::Proxy< world::EntityData > >::const_iterator i = m_entities.find(name);
 	if (i != m_entities.end())
-		return DeepClone(i->second).create< world::EntityData >();
+		return DeepClone(i->second.getResource()).create< world::EntityData >();
 	else
 		return 0;
 }
