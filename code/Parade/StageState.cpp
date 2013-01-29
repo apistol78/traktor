@@ -1,5 +1,6 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Events/ReconfigureEvent.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Parade/Stage.h"
 #include "Parade/StageState.h"
 #include "Render/IRenderView.h"
@@ -26,12 +27,7 @@ void StageState::enter()
 
 void StageState::leave()
 {
-	if (m_stage)
-	{
-		m_stage->leave();
-		m_stage->destroy();
-		m_stage = 0;
-	}
+	safeDestroy(m_stage);
 }
 
 StageState::UpdateResult StageState::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info)

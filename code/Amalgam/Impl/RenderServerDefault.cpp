@@ -41,6 +41,19 @@ int32_t sanitizeMultiSample(int32_t multiSample)
 	}
 }
 
+int32_t skipMipsFromQuality(int32_t quality)
+{
+	const int32_t c_skipMips[] =
+	{
+		3,	// Disabled
+		3,	// Low
+		2,	// Medium
+		1,	// High
+		0	// Ultra
+	};
+	return c_skipMips[quality];
+}
+
 bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayMode& criteria, render::DisplayMode& outBestMatch)
 {
 	int32_t bestMatch = std::numeric_limits< int32_t >::max();
@@ -268,8 +281,8 @@ void RenderServerDefault::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	int32_t textureQuality = environment->getSettings()->getProperty< PropertyInteger >(L"Render.TextureQuality", 1);
-	int32_t skipMips = 3 - textureQuality;
+	int32_t textureQuality = environment->getSettings()->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t skipMips = skipMipsFromQuality(textureQuality);
 
 	m_textureFactory = new render::TextureFactory(database, m_renderSystem, skipMips);
 
@@ -384,8 +397,8 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 		T_DEBUG(L"Render view settings unchanged");
 
 	// Update texture quality; manifest through skipping high-detail mips.
-	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 1);
-	int32_t skipMips = 3 - textureQuality;
+	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t skipMips = skipMipsFromQuality(textureQuality);
 
 	if (skipMips != m_textureFactory->getSkipMips())
 	{

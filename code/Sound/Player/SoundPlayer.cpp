@@ -96,7 +96,8 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 			i->soundChannel->setFilter(0);
 			i->priority = priority;
 			i->time = m_time;
-			i->handle = new SoundHandle(i->soundChannel, i->position);
+			i->fadeOff = -1.0f;
+			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 			return i->handle;
 		}
@@ -124,7 +125,8 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 			i->soundChannel->setFilter(0);
 			i->priority = priority;
 			i->time = m_time;
-			i->handle = new SoundHandle(i->soundChannel, i->position);
+			i->fadeOff = -1.0f;
+			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 			return i->handle;
 		}
@@ -202,7 +204,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->soundChannel->setFilter(groupFilter);
 			i->priority = priority;
 			i->time = m_time;
-			i->handle = new SoundHandle(i->soundChannel, i->position);
+			i->fadeOff = -1.0f;
+			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 			return i->handle; 
 		}
@@ -230,7 +233,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->soundChannel->setFilter(groupFilter);
 			i->priority = priority;
 			i->time = m_time;
-			i->handle = new SoundHandle(i->soundChannel, i->position);
+			i->fadeOff = -1.0f;
+			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 			return i->handle;
 		}
@@ -258,7 +262,8 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 			i->soundChannel->setFilter(groupFilter);
 			i->priority = priority;
 			i->time = m_time;
-			i->handle = new SoundHandle(i->soundChannel, i->position);
+			i->fadeOff = -1.0f;
+			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
 			return i->handle;
 		}
@@ -316,6 +321,22 @@ void SoundPlayer::update(float dT)
 			// Set automatic sound parameters.
 			i->soundChannel->setParameter(s_handleDistance, k0);
 			i->soundChannel->setParameter(s_handleVelocity, 0.0f);
+		}
+	}
+
+	// Update fade-off channels.
+	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+	{
+		if (!i->soundChannel->isPlaying() || i->fadeOff <= 0.0f)
+			continue;
+
+		i->fadeOff -= std::min(dT, 1.0f / 60.0f);
+		if (i->fadeOff > 0.0f)
+			i->soundChannel->setVolume(i->fadeOff);
+		else
+		{
+			i->soundChannel->setVolume(1.0f);
+			i->soundChannel->stop();
 		}
 	}
 

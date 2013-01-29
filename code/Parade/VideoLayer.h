@@ -52,6 +52,10 @@ public:
 		const resource::Proxy< render::Shader >& shader
 	);
 
+	virtual ~VideoLayer();
+
+	void destroy();
+
 	bool playing() const;
 
 	virtual void prepare();
@@ -61,8 +65,6 @@ public:
 	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
 
 	virtual void render(render::EyeType eye, uint32_t frame);
-
-	virtual void leave();
 
 	virtual void reconfigured();
 

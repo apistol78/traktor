@@ -52,6 +52,21 @@ WorldLayer::WorldLayer(
 	m_fieldOfView = m_environment->getSettings()->getProperty< PropertyFloat >(L"World.FieldOfView", 70.0f);
 }
 
+WorldLayer::~WorldLayer()
+{
+	destroy();
+}
+
+void WorldLayer::destroy()
+{
+	m_scene.clear();
+	m_entities.clear();
+
+	safeDestroy(m_renderGroup);
+	safeDestroy(m_dynamicEntities);
+	safeDestroy(m_worldRenderer);
+}
+
 void WorldLayer::prepare()
 {
 	if (m_scene.changed())
@@ -159,16 +174,6 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 		);
 		m_worldRenderer->end(frame, eye, m_deltaTime);
 	}
-}
-
-void WorldLayer::leave()
-{
-	m_scene.clear();
-	m_entities.clear();
-
-	safeDestroy(m_renderGroup);
-	safeDestroy(m_dynamicEntities);
-	safeDestroy(m_worldRenderer);
 }
 
 void WorldLayer::reconfigured()

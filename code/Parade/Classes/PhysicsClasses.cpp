@@ -119,9 +119,9 @@ public:
 		return m_result.fraction;
 	}
 
-	uint32_t part() const
+	int32_t material() const
 	{
-		return m_result.part;
+		return m_result.material;
 	}
 
 private:
@@ -214,7 +214,7 @@ void registerPhysicsClasses(script::IScriptManager* scriptManager)
 	classQueryResult->addMethod("normal", &QueryResult::normal);
 	classQueryResult->addMethod("distance", &QueryResult::distance);
 	classQueryResult->addMethod("fraction", &QueryResult::fraction);
-	classQueryResult->addMethod("part", &QueryResult::part);
+	classQueryResult->addMethod("material", &QueryResult::material);
 	scriptManager->registerClass(classQueryResult);
 
 	Ref< script::AutoScriptClass< physics::PhysicsManager > > classPhysicsManager = new script::AutoScriptClass< physics::PhysicsManager >();

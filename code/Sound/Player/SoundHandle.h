@@ -15,6 +15,8 @@ class SoundHandle : public ISoundHandle
 public:
 	virtual void stop();
 
+	virtual void fadeOff();
+
 	virtual bool isPlaying();
 
 	virtual void setVolume(float volume);
@@ -30,8 +32,9 @@ private:
 
 	SoundChannel* m_channel;
 	Vector4* m_position;
+	float* m_fadeOff;
 
-	SoundHandle(SoundChannel* channel, Vector4& position);
+	SoundHandle(SoundChannel* channel, Vector4& position, float& fadeOff);
 
 	void detach();
 };

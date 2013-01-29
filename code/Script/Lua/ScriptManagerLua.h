@@ -80,6 +80,8 @@ private:
 
 	Any toAny(int32_t index);
 
+	void collectGarbageFull();
+
 	static int classIndexLookup(lua_State* luaState);
 
 	static int classCallConstructor(lua_State* luaState);

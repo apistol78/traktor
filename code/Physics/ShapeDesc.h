@@ -39,12 +39,17 @@ public:
 
 	uint32_t getCollisionMask() const;
 
+	void setMaterial(int32_t material);
+
+	int32_t getMaterial() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
 	Transform m_localTransform;
 	uint32_t m_collisionGroup;
 	uint32_t m_collisionMask;
+	int32_t m_material;
 };
 
 	}

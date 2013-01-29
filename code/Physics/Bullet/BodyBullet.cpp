@@ -34,7 +34,8 @@ BodyBullet::BodyBullet(
 	btCollisionShape* shape,
 	const Vector4& centerOfGravity,
 	uint32_t collisionGroup,
-	uint32_t collisionMask
+	uint32_t collisionMask,
+	int32_t material
 )
 :	m_callback(callback)
 ,	m_dynamicsWorld(dynamicsWorld)
@@ -43,6 +44,7 @@ BodyBullet::BodyBullet(
 ,	m_centerOfGravity(centerOfGravity)
 ,	m_collisionGroup(collisionGroup)
 ,	m_collisionMask(collisionMask)
+,	m_material(material)
 ,	m_enable(false)
 {
 }

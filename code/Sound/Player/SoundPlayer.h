@@ -58,6 +58,7 @@ private:
 		SoundChannel* soundChannel;
 		uint32_t priority;
 		float time;
+		float fadeOff;
 		Ref< SoundHandle > handle;
 	};
 

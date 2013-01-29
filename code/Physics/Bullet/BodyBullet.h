@@ -39,7 +39,8 @@ public:
 		btCollisionShape* shape,
 		const Vector4& centerOfGravity,
 		uint32_t collisionGroup,
-		uint32_t collisionMask
+		uint32_t collisionMask,
+		int32_t material
 	);
 
 	virtual void destroy();
@@ -110,6 +111,8 @@ public:
 
 	uint32_t getCollisionMask() const { return m_collisionMask; }
 
+	int32_t getMaterial() const { return m_material; }
+
 	const std::vector< Joint* >& getJoints() const { return m_joints; }
 
 private:
@@ -120,6 +123,7 @@ private:
 	Vector4 m_centerOfGravity;
 	uint32_t m_collisionGroup;
 	uint32_t m_collisionMask;
+	int32_t m_material;
 	std::vector< Joint* > m_joints;
 	bool m_enable;
 };

@@ -27,7 +27,6 @@ class Shader;
 	{
 
 class OceanEntity;
-class Terrain;
 
 class T_DLLCLASS OceanEntityData : public world::EntityData
 {
@@ -36,14 +35,11 @@ class T_DLLCLASS OceanEntityData : public world::EntityData
 public:
 	virtual bool serialize(ISerializer& s);
 
-	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
-
 	const resource::Id< render::Shader >& getShaderComposite() const { return m_shaderComposite; }
 
 private:
 	friend class OceanEntity;
 
-	resource::Id< Terrain > m_terrain;
 	resource::Id< render::Shader > m_shaderComposite;
 };
 

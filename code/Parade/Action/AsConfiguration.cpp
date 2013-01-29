@@ -25,7 +25,7 @@ AsConfiguration::AsConfiguration()
 ,	m_stereoscopic(false)
 ,	m_textureQuality(QtMedium)
 ,	m_shadowQuality(QtMedium)
-,	m_ambientOcclusionQuality(QtHigh)
+,	m_ambientOcclusionQuality(QtMedium)
 ,	m_antiAliasQuality(QtMedium)
 ,	m_rumbleEnable(true)
 {
@@ -47,7 +47,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_stereoscopic = settings->getProperty< PropertyBoolean >(L"Render.Stereoscopic", false);
 	current->m_textureQuality = (Quality)settings->getProperty< PropertyInteger >(L"Render.TextureQuality", QtMedium);
 	current->m_shadowQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", QtMedium);
-	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtHigh);
+	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtMedium);
 	current->m_antiAliasQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", QtMedium);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
 

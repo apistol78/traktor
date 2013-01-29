@@ -39,6 +39,19 @@ int32_t sanitizeMultiSample(int32_t multiSample)
 	}
 }
 
+int32_t skipMipsFromQuality(int32_t quality)
+{
+	const int32_t c_skipMips[] =
+	{
+		3,	// Disabled
+		3,	// Low
+		2,	// Medium
+		1,	// High
+		0	// Ultra
+	};
+	return c_skipMips[quality];
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.RenderServerEmbedded", RenderServerEmbedded, RenderServer)
@@ -122,8 +135,8 @@ void RenderServerEmbedded::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	int32_t textureQuality = environment->getSettings()->getProperty< PropertyInteger >(L"Render.TextureQuality", 1);
-	int32_t skipMips = 3 - textureQuality;
+	int32_t textureQuality = environment->getSettings()->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t skipMips = skipMipsFromQuality(textureQuality);
 
 	m_textureFactory = new render::TextureFactory(database, m_renderSystem, skipMips);
 
@@ -137,8 +150,8 @@ int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const Prope
 	int32_t result = CrUnaffected;
 
 	// Update texture quality; manifest through skipping high-detail mips.
-	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 1);
-	int32_t skipMips = 3 - textureQuality;
+	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
+	int32_t skipMips = skipMipsFromQuality(textureQuality);
 
 	if (skipMips != m_textureFactory->getSkipMips())
 	{

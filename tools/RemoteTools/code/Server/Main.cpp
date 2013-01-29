@@ -1,4 +1,5 @@
 #include <list>
+#include <Compress/Lzo/InflateStreamLzo.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/Reader.h>
 #include <Core/Io/StreamCopy.h>
@@ -80,6 +81,10 @@ void eventNotificationButtonDown(ui::Event* event)
 		for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
 			FileSystem::getInstance().remove((*i)->getPath());
 	}
+	else if (item->getCommand() == L"RemoteServer.BrowseScratch")
+	{
+		OS::getInstance().exploreFile(g_scratchPath);
+	}
 	else if (item->getCommand() == L"RemoteServer.Exit")
 	{
 		if (ui::MessageBox::show(L"Sure you want to exit RemoteServer?", L"Exit", ui::MbIconQuestion | ui::MbYesNo) == ui::DrYes)
@@ -160,7 +165,8 @@ uint8_t handleDeploy(net::TcpSocket* clientSocket)
 			return c_errIoFailed;
 		}
 
-		if (!StreamCopy(fileStream, &clientStream).execute(size))
+		compress::InflateStreamLzo inflateStream(&clientStream);
+		if (!StreamCopy(fileStream, &inflateStream).execute(size))
 		{
 			traktor::log::error << L"Unable to receive file \"" << pathName << L"\"" << Endl;
 			return c_errIoFailed;
@@ -303,8 +309,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 #if defined(_WIN32)
 	g_popupMenu = new ui::PopupMenu();
 	g_popupMenu->create();
-	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CopyScratch"), L"Copy Scratch Directory"));
-	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CleanScratch"), L"Clean Scratch Directory"));
+	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CopyScratch"), L"Copy Scratch Path"));
+	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.CleanScratch"), L"Clean Scratch"));
+	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.BrowseScratch"), L"Browse Scratch..."));
 	g_popupMenu->add(new ui::MenuItem(L"-"));
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 

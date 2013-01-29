@@ -47,7 +47,6 @@ class WorldRenderView;
 	{
 
 class OceanEntityData;
-class Terrain;
 
 class T_DLLCLASS OceanEntity : public world::Entity
 {
@@ -75,7 +74,6 @@ public:
 	virtual void update(const UpdateParams& update);
 
 private:
-	resource::Proxy< Terrain > m_terrain;
 	resource::Proxy< render::Shader > m_shaderComposite;
 	Ref< render::ScreenRenderer > m_screenRenderer;
 	Transform m_transform;

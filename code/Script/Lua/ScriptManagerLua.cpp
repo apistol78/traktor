@@ -439,6 +439,19 @@ Any ScriptManagerLua::toAny(int32_t index)
 	return Any();
 }
 
+void ScriptManagerLua::collectGarbageFull()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	uint32_t memoryUse = 0;
+	do 
+	{
+		memoryUse = m_totalMemoryUse;
+		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+	}
+	while (memoryUse != m_totalMemoryUse);
+	m_lastMemoryUse = m_totalMemoryUse;
+}
+
 int ScriptManagerLua::classIndexLookup(lua_State* luaState)
 {
 	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
