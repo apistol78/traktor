@@ -13,7 +13,6 @@
 #include "Resource/IResourceManager.h"
 #include "Terrain/OceanEntity.h"
 #include "Terrain/OceanEntityData.h"
-#include "Terrain/Terrain.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldRenderView.h"
 
@@ -53,8 +52,6 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 	m_screenRenderer = new render::ScreenRenderer();
 	if (!m_screenRenderer->create(renderSystem))
 		return 0;
-
-	resourceManager->bind(data.m_terrain, m_terrain);
 
 	if (!resourceManager->bind(data.m_shaderComposite, m_shaderComposite))
 		return false;

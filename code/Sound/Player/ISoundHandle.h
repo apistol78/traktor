@@ -26,6 +26,8 @@ class T_DLLCLASS ISoundHandle : public Object
 public:
 	virtual void stop() = 0;
 
+	virtual void fadeOff() = 0;
+
 	virtual bool isPlaying() = 0;
 
 	virtual void setVolume(float volume) = 0;

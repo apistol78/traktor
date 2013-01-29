@@ -17,6 +17,14 @@ void SoundHandle::stop()
 	detach();
 }
 
+void SoundHandle::fadeOff()
+{
+	if (m_fadeOff)
+		*m_fadeOff = 1.0f;
+
+	detach();
+}
+
 bool SoundHandle::isPlaying()
 {
 	return m_channel ? m_channel->isPlaying() : false;
@@ -46,9 +54,10 @@ void SoundHandle::setParameter(int32_t id, float parameter)
 		m_channel->setParameter(id, parameter);
 }
 
-SoundHandle::SoundHandle(SoundChannel* channel, Vector4& position)
+SoundHandle::SoundHandle(SoundChannel* channel, Vector4& position, float& fadeOff)
 :	m_channel(channel)
 ,	m_position(&position)
+,	m_fadeOff(&fadeOff)
 {
 }
 
@@ -56,6 +65,7 @@ void SoundHandle::detach()
 {
 	m_channel = 0;
 	m_position = 0;
+	m_fadeOff = 0;
 }
 
 	}

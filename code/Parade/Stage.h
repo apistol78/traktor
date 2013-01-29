@@ -89,7 +89,7 @@ public:
 
 	void render(render::EyeType eye, uint32_t frame);
 
-	void leave();
+	//void leave();
 
 	void reconfigured();
 

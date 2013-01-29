@@ -1,3 +1,4 @@
+#include <Compress/Lzo/DeflateStreamLzo.h>
 #include <Core/Io/FileSystem.h>
 #include <Core/Io/Reader.h>
 #include <Core/Io/StreamCopy.h>
@@ -89,7 +90,8 @@ bool deployFile(net::TcpSocket* clientSocket, const Path& sourceFile, const Path
 		fileStream->seek(traktor::IStream::SeekSet, 0);
 
 		clientStream.setTimeout(-1);
-		if (!StreamCopy(&clientStream, fileStream).execute(int32_t(file->getSize())))
+		compress::DeflateStreamLzo deflateStream(&clientStream);
+		if (!StreamCopy(&deflateStream, fileStream).execute(int32_t(file->getSize())))
 		{
 			traktor::log::error << L"Unable to deploy file \"" << sourceFile.getPathName() << L"\"; unable to transmit" << Endl;
 			return false;

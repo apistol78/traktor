@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution" version="1">
+<object type="Solution" version="2">
 	<name>RemoteTools Linux</name>
 	<rootPath>$(TRAKTOR_HOME)/tools/RemoteTools/build/linux</rootPath>
 	<definitions/>
@@ -62,6 +62,11 @@
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
+				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
+					<projectName>Traktor.Compress</projectName>
 				</item>
 			</dependencies>
 		</item>
@@ -185,7 +190,13 @@
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
 					<projectName>Traktor.Net</projectName>
 				</item>
+				<item type="ExternalDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
+					<projectName>Traktor.Compress</projectName>
+				</item>
 			</dependencies>
 		</item>
 	</projects>
+	<aggregations/>
 </object>

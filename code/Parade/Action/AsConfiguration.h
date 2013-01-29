@@ -20,10 +20,11 @@ class AsConfiguration : public flash::ActionObjectRelay
 public:
 	enum Quality
 	{
-		QtLow = 0,
-		QtMedium = 1,
-		QtHigh = 2,
-		QtUltra = 3
+		QtDisabled = 0,
+		QtLow = 1,
+		QtMedium = 2,
+		QtHigh = 3,
+		QtUltra = 4
 	};
 
 	AsConfiguration();

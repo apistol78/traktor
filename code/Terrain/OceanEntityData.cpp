@@ -2,7 +2,6 @@
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "Terrain/OceanEntityData.h"
-#include "Terrain/Terrain.h"
 
 namespace traktor
 {
@@ -16,9 +15,7 @@ bool OceanEntityData::serialize(ISerializer& s)
 	if (!world::EntityData::serialize(s))
 		return false;
 
-	s >> resource::Member< Terrain >(L"terrain", m_terrain);
 	s >> resource::Member< render::Shader >(L"shaderComposite", m_shaderComposite);
-
 	return true;
 }
 

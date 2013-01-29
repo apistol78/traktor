@@ -91,6 +91,19 @@ FlashLayer::FlashLayer(
 {
 }
 
+FlashLayer::~FlashLayer()
+{
+	destroy();
+}
+
+void FlashLayer::destroy()
+{
+	m_movie.clear();
+	safeDestroy(m_moviePlayer);
+	safeDestroy(m_displayRenderer);
+	safeDestroy(m_soundRenderer);
+}
+
 void FlashLayer::prepare()
 {
 	if (m_movie.changed())
@@ -248,14 +261,6 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 		frame,
 		eye
 	);
-}
-
-void FlashLayer::leave()
-{
-	m_movie.clear();
-	safeDestroy(m_moviePlayer);
-	safeDestroy(m_displayRenderer);
-	safeDestroy(m_soundRenderer);
 }
 
 void FlashLayer::reconfigured()

@@ -1,6 +1,7 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/IUpdateInfo.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Parade/VideoLayer.h"
 #include "Parade/Stage.h"
 #include "Render/IRenderView.h"
@@ -28,6 +29,16 @@ VideoLayer::VideoLayer(
 ,	m_video(video)
 ,	m_shader(shader)
 {
+}
+
+VideoLayer::~VideoLayer()
+{
+	destroy();
+}
+
+void VideoLayer::destroy()
+{
+	safeDestroy(m_screenRenderer);
 }
 
 bool VideoLayer::playing() const
@@ -78,10 +89,6 @@ void VideoLayer::render(render::EyeType eye, uint32_t frame)
 			m_shader
 		);
 	}
-}
-
-void VideoLayer::leave()
-{
 }
 
 void VideoLayer::reconfigured()

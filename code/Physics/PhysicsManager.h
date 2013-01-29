@@ -44,7 +44,7 @@ struct QueryResult
 	Vector4 normal;
 	float distance;
 	float fraction;
-	uint32_t part;
+	int32_t material;
 };
 
 /*! \brief Collision pair.

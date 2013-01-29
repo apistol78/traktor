@@ -172,14 +172,12 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	btVector3 m_hitPointWorld;
 	uint32_t m_group;
 	btCollisionObject* m_excludeObject;
-	uint32_t m_collisionPart;
 
 	ClosestRayExcludeResultCallback(btCollisionObject* excludeObject, uint32_t group, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
 	,	m_rayToWorld(rayToWorld)
 	,	m_excludeObject(excludeObject)
 	,	m_group(group)
-	,	m_collisionPart(0)
 	{
 	}
 
@@ -195,7 +193,6 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 
 		m_closestHitFraction = rayResult.m_hitFraction;
 		m_collisionObject = rayResult.m_collisionObject;
-		m_collisionPart = rayResult.m_localShapeInfo ? rayResult.m_localShapeInfo->m_shapePart : 0;
 
 		if (normalInWorldSpace)
 			m_hitNormalWorld = rayResult.m_hitNormalLocal;
@@ -216,14 +213,12 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 	btVector3 m_hitPointWorld;
 	uint32_t m_group;
 	btCollisionObject* m_excludeObject;
-	uint32_t m_collisionPart;
 
 	ClosestRayExcludeAndCullResultCallback(btCollisionObject* excludeObject, uint32_t group, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
 	,	m_rayToWorld(rayToWorld)
 	,	m_excludeObject(excludeObject)
 	,	m_group(group)
-	,	m_collisionPart(0)
 	{
 	}
 
@@ -248,7 +243,6 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 
 		m_closestHitFraction = rayResult.m_hitFraction;
 		m_collisionObject = rayResult.m_collisionObject;
-		m_collisionPart = rayResult.m_localShapeInfo ? rayResult.m_localShapeInfo->m_shapePart : 0;
 		m_hitNormalWorld = hitNormalWorld;
 		m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
 
@@ -547,7 +541,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			shape,
 			centerOfGravity,
 			shapeDesc->getCollisionGroup(),
-			shapeDesc->getCollisionMask()
+			shapeDesc->getCollisionMask(),
+			shapeDesc->getMaterial()
 		);
 		m_bodies.push_back(staticBody);
 
@@ -592,7 +587,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			shape,
 			centerOfGravity,
 			shapeDesc->getCollisionGroup(),
-			shapeDesc->getCollisionMask()
+			shapeDesc->getCollisionMask(),
+			shapeDesc->getMaterial()
 		);
 		m_bodies.push_back(dynamicBody);
 
@@ -998,11 +994,14 @@ bool PhysicsManagerBullet::queryRay(
 		if (!callback.hasHit())
 			return false;
 
-		outResult.body = callback.m_collisionObject ? reinterpret_cast< Body* >(callback.m_collisionObject->getUserPointer()) : 0;
+		BodyBullet* body = reinterpret_cast< BodyBullet* >(callback.m_collisionObject->getUserPointer());
+		T_ASSERT (body);
+
+		outResult.body = body;
 		outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
 		outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 		outResult.distance = dot3(direction, outResult.position - at);
-		outResult.part = callback.m_collisionPart;
+		outResult.material = body->getMaterial(); 
 	}
 	else
 	{
@@ -1011,11 +1010,14 @@ bool PhysicsManagerBullet::queryRay(
 		if (!callback.hasHit())
 			return false;
 
-		outResult.body = callback.m_collisionObject ? reinterpret_cast< Body* >(callback.m_collisionObject->getUserPointer()) : 0;
+		BodyBullet* body = reinterpret_cast< BodyBullet* >(callback.m_collisionObject->getUserPointer());
+		T_ASSERT (body);
+
+		outResult.body = body;
 		outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
 		outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 		outResult.distance = dot3(direction, outResult.position - at);
-		outResult.part = callback.m_collisionPart;
+		outResult.material = body->getMaterial();
 	}
 
 	return true;
@@ -1092,12 +1094,15 @@ bool PhysicsManagerBullet::querySweep(
 	if (!callback.hasHit())
 		return false;
 
-	outResult.body = callback.m_hitCollisionObject ? reinterpret_cast< Body* >(callback.m_hitCollisionObject->getUserPointer()) : 0;
+	BodyBullet* body = reinterpret_cast< BodyBullet* >(callback.m_hitCollisionObject->getUserPointer());
+	T_ASSERT (body);
+
+	outResult.body = body;
 	outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
 	outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 	outResult.distance = dot3(direction, outResult.position - at);
 	outResult.fraction = callback.m_closestHitFraction;
-	outResult.part = 0;
+	outResult.material = body->getMaterial();
 
 	return true;
 }
@@ -1158,12 +1163,15 @@ bool PhysicsManagerBullet::querySweep(
 	if (!callback.hasHit())
 		return false;
 
-	outResult.body = callback.m_hitCollisionObject ? reinterpret_cast< Body* >(callback.m_hitCollisionObject->getUserPointer()) : 0;
+	BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(callback.m_hitCollisionObject->getUserPointer());
+	T_ASSERT (bodyBullet);
+
+	outResult.body = bodyBullet;
 	outResult.position = fromBtVector3(callback.m_hitPointWorld, 1.0f);
 	outResult.normal = fromBtVector3(callback.m_hitNormalWorld, 0.0).normalized();
 	outResult.distance = dot3(direction, outResult.position - at);
 	outResult.fraction = callback.m_closestHitFraction;
-	outResult.part = 0;
+	outResult.material = bodyBullet->getMaterial();
 
 	return true;
 }

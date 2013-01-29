@@ -9,7 +9,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HeightfieldShapeDesc", 2, HeightfieldShapeDesc, ShapeDesc)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.HeightfieldShapeDesc", 3, HeightfieldShapeDesc, ShapeDesc)
 
 void HeightfieldShapeDesc::setHeightfield(const resource::Id< hf::Heightfield >& heightfield)
 {

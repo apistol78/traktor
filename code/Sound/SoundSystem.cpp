@@ -280,7 +280,8 @@ void SoundSystem::threadMixer()
 
 			T_ASSERT (m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
 			T_ASSERT (m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
-			
+
+			float duck = m_volume * m_duck[1][i];
 			for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 			{
 				if (!m_requestBlocks[i].samples[k])
@@ -288,7 +289,7 @@ void SoundSystem::threadMixer()
 
 				for (uint32_t j = 0; j < m_desc.driverDesc.hwChannels; ++j)
 				{
-					float strength = m_desc.cm[j][k] * m_volume * m_duck[1][i];
+					float strength = m_desc.cm[j][k] * duck;
 					if (abs(strength) >= FUZZY_EPSILON)
 					{
 						m_mixer->addMulConst(

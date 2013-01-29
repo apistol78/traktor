@@ -60,12 +60,18 @@ void Stage::destroy()
 {
 	if (m_scriptContext)
 	{
+		m_scriptContext->setGlobal("stage", script::Any());
+		m_scriptContext->setGlobal("environment", script::Any());
+
+		for (RefArray< Layer >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+		{
+			if (!(*i)->getName().empty())
+				m_scriptContext->setGlobal(wstombs((*i)->getName()), script::Any());
+		}
+
 		m_scriptContext->destroy();
 		m_scriptContext.clear();
 	}
-
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->destroy();
 
 	m_layers.clear();
 
@@ -174,7 +180,7 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 	}
 	else
 	{
-		m_fade += info.getSimulationDeltaTime();
+		m_fade += info.getSimulationDeltaTime() * 1.5f;
 		if (m_fade > 1.0f)
 		{
 			stateManager->enter(new StageState(m_environment, m_pendingStage));
@@ -205,12 +211,6 @@ void Stage::render(render::EyeType eye, uint32_t frame)
 			m_shaderFade
 		);
 	}
-}
-
-void Stage::leave()
-{
-	for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-		(*i)->leave();
 }
 
 void Stage::reconfigured()

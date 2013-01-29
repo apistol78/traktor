@@ -22,6 +22,20 @@ AudioLayer::AudioLayer(
 {
 }
 
+AudioLayer::~AudioLayer()
+{
+	destroy();
+}
+
+void AudioLayer::destroy()
+{
+	if (m_handle)
+	{
+		m_handle->fadeOff();
+		m_handle = 0;
+	}
+}
+
 void AudioLayer::prepare()
 {
 }
@@ -43,15 +57,6 @@ void AudioLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 
 void AudioLayer::render(render::EyeType eye, uint32_t frame)
 {
-}
-
-void AudioLayer::leave()
-{
-	if (m_handle)
-	{
-		m_handle->stop();
-		m_handle = 0;
-	}
 }
 
 void AudioLayer::reconfigured()

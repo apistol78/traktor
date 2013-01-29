@@ -53,6 +53,10 @@ public:
 		bool enableSound
 	);
 
+	virtual ~FlashLayer();
+
+	void destroy();
+
 	virtual void prepare();
 
 	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
@@ -60,8 +64,6 @@ public:
 	virtual void build(const amalgam::IUpdateInfo& info, uint32_t frame);
 
 	virtual void render(render::EyeType eye, uint32_t frame);
-
-	virtual void leave();
 
 	virtual void reconfigured();
 
