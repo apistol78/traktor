@@ -28,8 +28,12 @@ public:
 	
 	virtual void unlock();
 
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext);
+
 private:
-	bool m_locked;
+	ComRef< ID3D11DeviceContext > m_d3dDeferredContext;
+	ComRef< ID3D11CommandList > m_d3dPendingCommandList;
+	Semaphore m_lock;
 
 	IndexBufferDynamicDx11(IndexType indexType, uint32_t bufferSize);
 };

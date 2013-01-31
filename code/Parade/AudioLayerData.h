@@ -29,6 +29,8 @@ class T_DLLCLASS AudioLayerData : public LayerData
 	T_RTTI_CLASS;
 
 public:
+	AudioLayerData();
+
 	virtual Ref< Layer > createInstance(Stage* stage, amalgam::IEnvironment* environment) const;
 
 	virtual bool serialize(ISerializer& s);
@@ -37,6 +39,7 @@ private:
 	friend class StagePipeline;
 
 	resource::Id< sound::Sound > m_sound;
+	bool m_autoPlay;
 };
 
 	}

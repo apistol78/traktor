@@ -17,7 +17,7 @@ void SequenceInstance::update(Context& context, const Transform& transform, floa
 			++m_index;
 
 		if (m_index < m_keys.size() && m_keys[m_index].trigger)
-			m_keys[m_index].trigger->perform(context, transform);
+			m_keys[m_index].trigger->perform(context, transform, enable);
 
 		m_lastT = T;
 	}
@@ -28,7 +28,7 @@ void SequenceInstance::update(Context& context, const Transform& transform, floa
 		if (T >= m_keys[next].T)
 		{
 			if (m_keys[next].trigger)
-				m_keys[next].trigger->perform(context, transform);
+				m_keys[next].trigger->perform(context, transform, enable);
 		}
 		m_index = next;
 	}

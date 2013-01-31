@@ -687,7 +687,8 @@ void Replicator::receiveMessages()
 
 			// Assume peer time is correct if exceeding my time.
 			float offset = time + c_initialTimeOffset - m_time;
-			adjustTime(offset);
+			if (offset > 0.0f)
+				adjustTime(offset);
 
 			if (msg.iam.sequence == 0)
 			{

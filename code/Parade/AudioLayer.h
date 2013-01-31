@@ -35,12 +35,19 @@ public:
 		Stage* stage,
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
-		const resource::Proxy< sound::Sound >& sound
+		const resource::Proxy< sound::Sound >& sound,
+		bool autoPlay
 	);
 
 	virtual ~AudioLayer();
 
 	void destroy();
+
+	void play();
+
+	void stop();
+
+	void fadeOff();
 
 	virtual void prepare();
 
@@ -50,14 +57,13 @@ public:
 
 	virtual void render(render::EyeType eye, uint32_t frame);
 
-	//virtual void leave();
-
 	virtual void reconfigured();
 
 private:
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< sound::Sound > m_sound;
 	Ref< sound::ISoundHandle > m_handle;
+	bool m_autoPlay;
 };
 
 	}

@@ -64,11 +64,14 @@ private:
 	ScriptContextLua* m_currentContext;
 	std::vector< RegisteredClass > m_classRegistry;
 	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
+	RefArray< ScriptContextLua > m_contexts;
 	Timer m_timer;
 	double m_collectStepFrequency;
 	int32_t m_collectSteps;
 	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
+
+	void destroyContext(ScriptContextLua* context);
 
 	void lock(ScriptContextLua* context);
 

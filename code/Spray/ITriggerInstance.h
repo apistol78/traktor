@@ -27,7 +27,7 @@ class T_DLLCLASS ITriggerInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void perform(Context& context, const Transform& transform) = 0;
+	virtual void perform(Context& context, const Transform& transform, bool enable) = 0;
 	
 	virtual void update(Context& context, const Transform& transform, bool enable) = 0;
 };

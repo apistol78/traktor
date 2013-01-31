@@ -40,6 +40,12 @@ public:
 	virtual Ref< Entity > get(const EntityData* entityData) const = 0;
 
 	virtual void end() = 0;
+
+	template < typename EntityType >
+	Ref< EntityType > create(const EntityData* entityData)
+	{
+		return checked_type_cast< EntityType*, true >(create(entityData));
+	}
 };
 
 	}

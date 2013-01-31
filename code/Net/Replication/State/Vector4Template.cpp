@@ -34,6 +34,17 @@ float safeSqrt(float v)
 		return 0.0f;
 }
 
+float safeDeltaTime(float v)
+{
+	float av = std::abs(v);
+	if (av < 1e-5f)
+		return 1e-5f * sign(v);
+	else if (av > 1.0f)
+		return 1.0f * sign(v);
+	else
+		return v;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Vector4Template", Vector4Template, IValueTemplate)
@@ -169,28 +180,25 @@ bool Vector4Template::equal(const IValue* Vl, const IValue* Vr) const
 
 Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
-	Vector4 fn1 = *checked_type_cast< const Vector4Value* >(Vn1);
-	Vector4 f0 = *checked_type_cast< const Vector4Value* >(V0);
-	Vector4 r;
+	Vector4 Fn1 = *checked_type_cast< const Vector4Value* >(Vn1);
+	Vector4 F0 = *checked_type_cast< const Vector4Value* >(V0);
+	Vector4 Fc = *checked_type_cast< const Vector4Value* >(V);
+	Vector4 Ff;
 
-	if (T0 > Tn1 + FUZZY_EPSILON)
+	float dT_n2_n1 = safeDeltaTime(Tn1 - Tn2);
+	float dT_n1_0 = safeDeltaTime(T0 - Tn1);
+
 	{
-		float k = (T - Tn1) / (T0 - Tn1);
-		r = f0 + (fn1 - f0) * Scalar(k);
+		float k = (T - T0) / dT_n1_0;
+		Ff = F0 + (F0 - Fn1) * Scalar(k);
 	}
-	else
-		r = f0;
 
 	// If current simulated state is known then blend into it if last known
 	// state is becoming too old or extrapolated too far away.
-	if (V)
-	{
-		Vector4 rc = *checked_type_cast< const Vector4Value* >(V);
-		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
-		r = lerp(r, rc, Scalar(k_T));
-	}
+	float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
+	Ff = lerp(Ff, Fc, Scalar(k_T));
 
-	return new Vector4Value(r);
+	return new Vector4Value(Ff);
 }
 
 	}

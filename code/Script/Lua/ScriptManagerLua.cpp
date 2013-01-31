@@ -104,16 +104,19 @@ ScriptManagerLua::~ScriptManagerLua()
 
 void ScriptManagerLua::destroy()
 {
-	if (m_luaState)
-	{
-		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
-		m_objectTableRef = LUA_NOREF;
+	if (!m_luaState)
+		return;
 
-		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+	while (!m_contexts.empty())
+		m_contexts.back()->destroy();
 
-		lua_close(m_luaState);
-		m_luaState = 0;
-	}
+	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
+	m_objectTableRef = LUA_NOREF;
+
+	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
+
+	lua_close(m_luaState);
+	m_luaState = 0;
 }
 
 void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
@@ -270,12 +273,16 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	lua_setfenv(m_luaState, -2);
 	lua_call(m_luaState, 0, 0);
 
-	return new ScriptContextLua(
+	// Create new context.
+	Ref< ScriptContextLua > context = new ScriptContextLua(
 		this,
 		m_luaState,
 		environmentRef,
 		scriptResourceLua->getMap()
 	);
+
+	m_contexts.push_back(context);
+	return context;
 }
 
 Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
@@ -310,6 +317,11 @@ void ScriptManagerLua::collectGarbage()
 	}
 
 	m_lastMemoryUse = m_totalMemoryUse;
+}
+
+void ScriptManagerLua::destroyContext(ScriptContextLua* context)
+{
+	m_contexts.remove(context);
 }
 
 void ScriptManagerLua::lock(ScriptContextLua* context)

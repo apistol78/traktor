@@ -183,10 +183,17 @@ void AsString::String_substr(CallArgs& ca)
 	Ref< String > self = ca.self->getRelay< String >();
 	const std::string& st = self->get();
 
-	uint32_t index = uint32_t(ca.args[0].getNumber());
+	int32_t index = int32_t(ca.args[0].getNumber());
+	if (index < 0)
+	{
+		index = int32_t(st.length()) + index;
+		if (index < 0)
+			index = 0;
+	}
+
 	if (ca.args.size() >= 2)
 	{
-		uint32_t count = uint32_t(ca.args[1].getNumber());
+		int32_t count = int32_t(ca.args[1].getNumber());
 		if (index < st.length())
 			ca.ret = ActionValue(st.substr(index, count));
 		else

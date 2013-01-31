@@ -121,42 +121,40 @@ bool FloatTemplate::equal(const IValue* Vl, const IValue* Vr) const
 
 Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
-	float fn1 = *checked_type_cast< const FloatValue* >(Vn1);
-	float f0 = *checked_type_cast< const FloatValue* >(V0);
-	float f;
+	float Fn1 = *checked_type_cast< const FloatValue* >(Vn1);
+	float F0 = *checked_type_cast< const FloatValue* >(V0);
+	float Fc = *checked_type_cast< const FloatValue* >(V);
+	float Ff;
 
 	float dT_n2_n1 = safeDeltaTime(Tn1 - Tn2);
 	float dT_n1_0 = safeDeltaTime(T0 - Tn1);
 	
 	//if (Vn2)
 	//{
-	//	float fn2 = *checked_type_cast< const FloatValue* >(Vn2);
+	//	float Fn2 = *checked_type_cast< const FloatValue* >(Vn2);
 
-	//	float v2_1 = (fn1 - fn2) / dT_n2_n1;
-	//	float v1_0 = (f0 - fn1) / dT_n1_0;
+	//	float v2_1 = (Fn1 - Fn2) / dT_n2_n1;
+	//	float v1_0 = (F0 - Fn1) / dT_n1_0;
 	//	float a = clamp((v1_0 - v2_1) / dT_n1_0, -0.25f, 0.25f);
+	//	float k = (T - T0) / dT_n1_0;
 
-	//	f = f0 + (f0 - fn1) * (T - T0) + 0.5f * a * (T - T0) * (T - T0);
+	//	Ff = F0 + (F0 - Fn1) * k + 0.5f * a * k * k;
 	//}
 	//else
 	{
-		float k = (T - Tn1) / dT_n1_0;
-		f = f0 + (fn1 - f0) * k;
+		float k = (T - T0) / dT_n1_0;
+		Ff = F0 + (F0 - Fn1) * k;
 	}
 
 	// If current simulated state is known then blend into it if last known
 	// state is becoming too old or extrapolated too far away.
-	if (V)
-	{
-		float fc = *checked_type_cast< const FloatValue* >(V);
-		float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
-		f = lerp(f, fc, k_T);
-	}
+	float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
+	Ff = lerp(Ff, Fc, k_T);
 
 	if (m_min < m_max)
-		f = clamp(f, m_min, m_max);
+		Ff = clamp(Ff, m_min, m_max);
 
-	return new FloatValue(f);
+	return new FloatValue(Ff);
 }
 
 	}

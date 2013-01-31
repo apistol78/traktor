@@ -1,4 +1,3 @@
-#include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/Platform.h"
@@ -73,6 +72,7 @@ void VertexBufferDynamicDx11::destroy()
 		return;
 
 	m_context->releaseComRef(m_d3dBuffer);
+	m_context->releaseComRef(m_d3dDeferredContext);
 	m_context = 0;
 }
 
@@ -97,12 +97,10 @@ void* VertexBufferDynamicDx11::lock(uint32_t vertexOffset, uint32_t vertexCount)
 void VertexBufferDynamicDx11::unlock()
 {
 	m_d3dDeferredContext->Unmap(m_d3dBuffer, 0);
-
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		m_d3dDeferredContext->FinishCommandList(FALSE, &m_d3dPendingCommandList.getAssign());
 	}
-
 	setContentValid(true);
 }
 
@@ -114,7 +112,6 @@ void VertexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
 		d3dDeviceContext->ExecuteCommandList(m_d3dPendingCommandList, TRUE);
 		m_d3dPendingCommandList.release();
 	}
-
 	VertexBufferDx11::prepare(d3dDeviceContext);
 }
 
