@@ -31,7 +31,7 @@ public:
 
 	Delegate(IScriptContext* context, Object* object, const std::string& methodName);
 
-	void invoke(uint32_t argc, const Any* argv);
+	Any invoke(uint32_t argc, const Any* argv);
 
 private:
 	Ref< IScriptContext > m_context;

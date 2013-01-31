@@ -39,7 +39,7 @@ public:
 private:
 	friend class ScriptManagerLua;
 
-	Ref< ScriptManagerLua > m_scriptManager;
+	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
 	int32_t m_environmentRef;
 	source_map_t m_map;

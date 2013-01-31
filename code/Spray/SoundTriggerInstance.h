@@ -33,7 +33,7 @@ class T_DLLCLASS SoundTriggerInstance : public ITriggerInstance
 	T_RTTI_CLASS;
 
 public:
-	virtual void perform(Context& context, const Transform& transform);
+	virtual void perform(Context& context, const Transform& transform, bool enable);
 
 	virtual void update(Context& context, const Transform& transform, bool enable);
 

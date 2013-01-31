@@ -60,6 +60,22 @@ public:
 		else
 			return v;
 	}
+
+	static T_MATH_INLINE Range< Type > unioon(const Range< Type >& a, const Range< Type >& b)
+	{
+		return Range< Type >(
+			std::min< Type >(a.min, b.min),
+			std::max< Type >(a.max, b.max)
+		);
+	}
+
+	static T_MATH_INLINE Range< Type > intersection(const Range< Type >& a, const Range< Type >& b)
+	{
+		return Range< Type >(
+			std::max< Type >(a.min, b.min),
+			std::min< Type >(a.max, b.max)
+		);
+	}
 };
 
 }

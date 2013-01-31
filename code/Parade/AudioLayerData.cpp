@@ -9,7 +9,12 @@ namespace traktor
 	namespace parade
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.AudioLayerData", 0, AudioLayerData, LayerData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.AudioLayerData", 1, AudioLayerData, LayerData)
+
+AudioLayerData::AudioLayerData()
+:	m_autoPlay(true)
+{
+}
 
 Ref< Layer > AudioLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {
@@ -25,7 +30,8 @@ Ref< Layer > AudioLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 		stage,
 		m_name,
 		environment,
-		sound
+		sound,
+		m_autoPlay
 	);
 }
 
@@ -35,6 +41,9 @@ bool AudioLayerData::serialize(ISerializer& s)
 		return false;
 
 	s >> resource::Member< sound::Sound >(L"sound", m_sound);
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"autoPlay", m_autoPlay);
+
 	return true;
 }
 

@@ -11,20 +11,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundTriggerInstance", SoundTriggerInstance, ITriggerInstance)
 
-void SoundTriggerInstance::perform(Context& context, const Transform& transform)
+void SoundTriggerInstance::perform(Context& context, const Transform& transform, bool enable)
 {
-	if (context.soundPlayer)
+	if (!context.soundPlayer || !enable)
+		return;
+	
+	if (m_handle)
 	{
-		if (m_handle)
-		{
-			m_handle->stop();
-			m_handle = 0;
-		}
-		if (m_positional)
-			m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
-		else
-			m_handle = context.soundPlayer->play(m_sound, 16);
+		m_handle->stop();
+		m_handle = 0;
 	}
+
+	if (m_positional)
+		m_handle = context.soundPlayer->play3d(m_sound, transform.translation(), 16);
+	else
+		m_handle = context.soundPlayer->play(m_sound, 16);
 }
 
 void SoundTriggerInstance::update(Context& context, const Transform& transform, bool enable)

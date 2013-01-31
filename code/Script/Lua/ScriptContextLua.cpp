@@ -58,16 +58,26 @@ ScriptContextLua::~ScriptContextLua()
 
 void ScriptContextLua::destroy()
 {
-	// Unpin our local environment reference.
-	if (m_environmentRef != LUA_NOREF)
+	if (m_scriptManager)
 	{
-		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
-		m_environmentRef = LUA_NOREF;
-	}
+		m_scriptManager->lock(this);
+		{
+			// Unpin our local environment reference.
+			if (m_environmentRef != LUA_NOREF)
+			{
+				luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
+				m_environmentRef = LUA_NOREF;
+				m_luaState =  0;
+			}
 
-	// Perform a full garbage collect; don't want
-	// lingering objects.
-	m_scriptManager->collectGarbageFull();
+			// Perform a full garbage collect; don't want
+			// lingering objects.
+			m_scriptManager->collectGarbageFull();
+			m_scriptManager->destroyContext(this);
+		}
+		m_scriptManager->unlock();
+		m_scriptManager = 0;
+	}
 }
 
 void ScriptContextLua::setGlobal(const std::string& globalName, const Any& globalValue)

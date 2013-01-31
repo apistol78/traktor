@@ -94,7 +94,7 @@ bool AccGlyph::create(
 	{
 		m_vertexBuffers[i] = renderSystem->createVertexBuffer(
 			vertexElements,
-			c_glyphCount * 4 * sizeof(Vertex),
+			c_glyphCount * sizeof_array(c_glyphTemplate) * sizeof(Vertex),
 			true
 		);
 		if (!m_vertexBuffers[i])

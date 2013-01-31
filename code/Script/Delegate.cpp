@@ -96,12 +96,12 @@ Delegate::Delegate(IScriptContext* context, Object* object, const std::string& m
 {
 }
 
-void Delegate::invoke(uint32_t argc, const Any* argv)
+Any Delegate::invoke(uint32_t argc, const Any* argv)
 {
 	if (m_object)
-		m_context->executeMethod(m_object, m_methodName, argc, argv);
+		return m_context->executeMethod(m_object, m_methodName, argc, argv);
 	else
-		m_context->executeFunction(m_methodName, argc, argv);
+		return m_context->executeFunction(m_methodName, argc, argv);
 }
 
 void registerDelegateClasses(IScriptManager* scriptManager)
