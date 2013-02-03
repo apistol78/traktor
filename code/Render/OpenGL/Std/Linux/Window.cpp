@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Render/OpenGL/Std/Linux/Window.h"
@@ -10,33 +11,49 @@ namespace traktor
 Window::Window(::Display* display)
 :   m_display(display)
 ,   m_window(None)
+,	m_screen(0)
+,	m_originalConfig(0)
+,	m_originalSizeIndex(-1)
+,	m_originalRate(0)
+,	m_originalRotation(RR_Rotate_0)
 {
+	m_screen = DefaultScreen(m_display);
 }
 
 Window::~Window()
 {
+	// Set default resolution.
+	if (m_originalConfig)
+	{
+		XRRSetScreenConfigAndRate(
+			m_display,
+			m_originalConfig,
+			RootWindow(m_display, m_screen),
+			m_originalSizeIndex,
+			m_originalRotation,
+			m_originalRate,
+			CurrentTime
+		);
+		XRRFreeScreenConfigInfo(m_originalConfig);
+		m_originalConfig = 0;
+	}
 }
 
 bool Window::create(int32_t width, int32_t height)
 {
-    int screen = DefaultScreen(m_display);
-
     m_window = XCreateSimpleWindow(
         m_display,
-        RootWindow(m_display, screen),
+        RootWindow(m_display, m_screen),
         10,
         10,
         width,
         height,
         1,
-        BlackPixel(m_display, screen),
-        WhitePixel(m_display, screen)
+        BlackPixel(m_display, m_screen),
+        WhitePixel(m_display, m_screen)
     );
 
-    XSelectInput(m_display, m_window, ExposureMask | KeyPressMask | KeyReleaseMask);
-    XMapWindow(m_display, m_window);
-
-	T_DEBUG(L"Render window " << int32_t(m_window));
+    //XSelectInput(m_display, m_window, ExposureMask | KeyPressMask | KeyReleaseMask);
     return true;
 }
 
@@ -53,27 +70,121 @@ void Window::setTitle(const wchar_t* title)
 
 void Window::setFullScreenStyle(int32_t width, int32_t height)
 {
-	/*
-	XResizeWindow(m_display, m_window, width, height);
+	Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
+	Atom fullScreen = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
+
+	// Find display mode index.
+	int index = -1;
+	int sizes = 0;
+	XRRScreenSize* xrrss = XRRSizes(m_display, 0, &sizes);
+
+	for (int i = 0; i < sizes; ++i)
+	{
+		if (xrrss[i].width == width && xrrss[i].height == height)
+		{
+			index = i;
+			break;
+		}
+	}
+
+	if (index < 0)
+	{
+		log::error << L"Unable to find matching display mode" << Endl;
+		return;
+	}
+
+	log::info << L"Using display mode index " << index << Endl;
+
+	// Set display mode.
+	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
+	if (!xrrc)
+	{
+		log::error << L"XRRGetScreenInfo returned null" << Endl;
+		return;
+	}
+
+	// Remember original configuration.
+	if (!m_originalConfig)
+	{
+		m_originalConfig = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
+		m_originalSizeIndex = XRRConfigCurrentConfiguration(m_originalConfig, &m_originalRotation);
+		m_originalRate = XRRConfigCurrentRate(m_originalConfig);
+	}
+
+	// Set new configuration.
+	XRRSetScreenConfig(
+		m_display,
+		xrrc,
+		RootWindow(m_display, m_screen),
+		index,
+		m_originalRotation,
+		CurrentTime
+	);
+
+	XRRFreeScreenConfigInfo(xrrc);
+
+	// Set window in WM fullscreen mode.
+	XEvent evt;
+	std::memset(&evt, 0, sizeof(evt));
+	evt.type = ClientMessage;
+	evt.xclient.window = m_window;
+	evt.xclient.message_type = wmState;
+	evt.xclient.format = 32;
+	evt.xclient.data.l[0] = 1;
+	evt.xclient.data.l[1] = fullScreen;
+	evt.xclient.data.l[2] = 0;
+
+	XMoveResizeWindow(m_display, m_window, 0, 0, width, height);
+	XSendEvent(m_display, RootWindow(m_display, m_screen), False, SubstructureRedirectMask | SubstructureNotifyMask, &evt);
 	XFlush(m_display);
-	XSync(m_display, True);
-	*/
 }
 
 void Window::setWindowedStyle(int32_t width, int32_t height)
 {
-	/*
+	Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
+	Atom fullScreen = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
+
+	// Set default resolution.
+	if (m_originalConfig)
+	{
+		XRRSetScreenConfigAndRate(
+			m_display,
+			m_originalConfig,
+			RootWindow(m_display, m_screen),
+			m_originalSizeIndex,
+			m_originalRotation,
+			m_originalRate,
+			CurrentTime
+		);
+		XRRFreeScreenConfigInfo(m_originalConfig);
+		m_originalConfig = 0;
+	}
+
+	// Remove fullscreen WM state from window.
+	XEvent evt;
+	std::memset(&evt, 0, sizeof(evt));
+	evt.type = ClientMessage;
+	evt.xclient.window = m_window;
+	evt.xclient.message_type = wmState;
+	evt.xclient.format = 32;
+	evt.xclient.data.l[0] = 0;
+	evt.xclient.data.l[1] = fullScreen;
+	evt.xclient.data.l[2] = 0;
+
 	XResizeWindow(m_display, m_window, width, height);
+	XSendEvent(m_display, RootWindow(m_display, m_screen), False, SubstructureRedirectMask | SubstructureNotifyMask, &evt);
 	XFlush(m_display);
-	XSync(m_display, True);
-	*/
+}
+
+void Window::show()
+{
+    XMapWindow(m_display, m_window);
 }
 
 bool Window::update(RenderEvent& outEvent)
 {
-    XEvent evt;
-
 	/*
+    XEvent evt;
     if (XCheckWindowEvent(m_display, m_window, ResizeRedirectMask, &evt))
     {
     	if (evt.type == ResizeRequest)
@@ -86,7 +197,6 @@ bool Window::update(RenderEvent& outEvent)
     	}
     }
     */
-
     return false;
 }
 

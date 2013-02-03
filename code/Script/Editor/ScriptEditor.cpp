@@ -19,6 +19,7 @@
 #include "Ui/TableLayout.h"
 #include "Ui/TabPage.h"
 #include "Ui/Events/CommandEvent.h"
+#include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
@@ -162,6 +163,50 @@ void ScriptEditor::apply()
 {
 	m_script->setText(m_edit->getText());
 	m_instance->setObject(m_script);
+}
+
+bool ScriptEditor::handleCommand(const ui::Command& command)
+{
+	if (command == L"Editor.Find")
+	{
+		ui::custom::InputDialog::Field fields[] =
+		{
+			{ L"Find", L"", 0 }
+		};
+
+		Ref< ui::custom::InputDialog > dialogFind = new ui::custom::InputDialog();
+		dialogFind->create(m_edit, L"Find", L"Enter text or word to search for", fields, sizeof_array(fields));
+		if (dialogFind->showModal() == ui::DrOk)
+		{
+			for (int32_t i = 0; i < m_edit->getLineCount(); ++i)
+			{
+				std::wstring text = m_edit->getLine(i);
+				if (text.find(fields[0].value) != text.npos)
+				{
+					m_edit->scrollToLine(i);
+					break;
+				}
+			}
+		}
+	}
+	else if (command == L"Editor.Replace")
+	{
+		ui::custom::InputDialog::Field fields[] =
+		{
+			{ L"Search", L"", 0 },
+			{ L"Replace with", L"", 0 },
+		};
+
+		Ref< ui::custom::InputDialog > dialogReplace = new ui::custom::InputDialog();
+		dialogReplace->create(m_edit, L"Replace", L"Enter text or word to replace", fields, sizeof_array(fields));
+		if (dialogReplace->showModal() == ui::DrOk)
+		{
+		}
+	}
+	else
+		return false;
+
+	return true;
 }
 
 ui::Size ScriptEditor::getPreferredSize() const

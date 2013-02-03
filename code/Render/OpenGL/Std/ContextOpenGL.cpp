@@ -21,12 +21,13 @@ namespace traktor
 
 typedef RefArray< ContextOpenGL > context_stack_t;
 
+#if !defined(__APPLE__)
 void APIENTRY debugCallbackARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
 {
-#if !defined(_DEBUG)
+#	if !defined(_DEBUG)
 	if (severity == GL_DEBUG_SEVERITY_LOW_ARB)
 		return;
-#endif
+#	endif
 
 	const wchar_t* s = L"unknown";
 
@@ -50,6 +51,7 @@ void APIENTRY debugCallbackAMD(GLuint id, GLenum category, GLenum severity, GLsi
 	else
 		log::info << L"OpenGL: <empty>" << Endl;
 }
+#endif
 
 		}
 
@@ -211,23 +213,25 @@ bool ContextOpenGL::enter()
 		ms_contextStack.set(stack);
 	}
 
+#if !defined(__APPLE__)
 	if (glDebugMessageCallbackARB)
 	{
 		T_OGL_SAFE(glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, GL_TRUE));
 		T_OGL_SAFE(glDebugMessageCallbackARB(&debugCallbackARB, 0));
-#if defined(_WIN32)
-#	if defined(_DEBUG)
+#	if defined(_WIN32)
+#		if defined(_DEBUG)
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
-#	else
+#		else
 		glEnable(GL_DEBUG_OUTPUT);
+#		endif
 #	endif
-#endif
 	}
 	if (glDebugMessageCallbackAMD)
 	{
 		T_OGL_SAFE(glDebugMessageEnableAMD(0, 0, 0, NULL, GL_TRUE));
 		T_OGL_SAFE(glDebugMessageCallbackAMD(&debugCallbackAMD, 0));
 	}
+#endif
 
 	stack->push_back(this);
 	return true;

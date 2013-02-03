@@ -1,7 +1,10 @@
 #include "Core/RefArray.h"
+#include "Core/Functor/Functor.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Job.h"
+#include "Core/Thread/JobManager.h"
 #include "Flash/Action/ActionContext.h"
-#include "Flash/Action/ActionFunction.h"
+#include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/XML.h"
 #include "Flash/Action/Classes/XMLNode.h"
 #include "Net/Url.h"
@@ -12,34 +15,25 @@ namespace traktor
 {
 	namespace flash
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.XML", XML, XMLNode)
-
-XML::XML(ActionContext* context)
-:	XMLNode("XML", XMLNode::NtElement, L"", L"")
-,	m_context(context)
+void jobLoad(Ref< XML > xml, std::wstring url_)
 {
-}
-
-bool XML::load(const std::wstring& url_)
-{
-	ActionObject* self = getAsObject(m_context);
-	T_ASSERT (self);
-
 	net::Url url(url_);
 	if (!url.valid())
-		return false;
+		return;
 
 	Ref< net::UrlConnection > connection = net::UrlConnection::open(url);
 	if (!connection)
-		return false;
+		return;
 
 	IStream* stream = connection->getStream();
 	if (!stream)
-		return false;
+		return;
 
 	RefArray< XMLNode > elementStack;
-	elementStack.push_back(this);
+	elementStack.push_back(xml);
 
 	xml::XmlPullParser parser(stream);
 	for (;;)
@@ -65,20 +59,20 @@ bool XML::load(const std::wstring& url_)
 		else if (eventType == xml::XmlPullParser::EtEndElement)
 		{
 			if (elementStack.empty())
-				return false;
+				return;
 
 			Ref< XMLNode > element = elementStack.back();
 			elementStack.pop_back();
 
 			if (elementStack.empty())
-				return false;
+				return;
 
 			elementStack.back()->appendChild(element);
 		}
 		else if (eventType == xml::XmlPullParser::EtText)
 		{
 			if (elementStack.empty())
-				return false;
+				return;
 
 			std::wstring value = trim(parser.getEvent().value);
 			if (!value.empty())
@@ -93,17 +87,52 @@ bool XML::load(const std::wstring& url_)
 			}
 		}
 	}
+}
 
-	// Trigger onLoad callback.
-	ActionValue memberOnLoad;
-	if (self->getMember("onLoad", memberOnLoad))
-	{
-		Ref< ActionFunction > onLoad = memberOnLoad.getObject< ActionFunction >();
-		if (onLoad)
-			onLoad->call(self, ActionValueArray());
-	}
+		}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.XML", XML, XMLNode)
+
+XML::XML(ActionContext* context)
+:	XMLNode("XML", XMLNode::NtElement, L"", L"")
+,	m_context(context)
+{
+}
+
+bool XML::load(const std::wstring& url_)
+{
+	ActionObject* self = getAsObject(m_context);
+	T_ASSERT (self);
+
+	m_job = JobManager::getInstance().add(makeStaticFunctor< Ref< XML >, std::wstring >(jobLoad, this, url_));
+	if (!m_job)
+		return false;
+
+	self->setMember("onFrame", ActionValue(createNativeFunction(m_context, this, &XML::onFrame)));
+	m_context->addFrameListener(self);
 
 	return true;
+}
+
+void XML::onFrame(CallArgs& ca)
+{
+	ActionObject* self = getAsObject(m_context);
+	T_ASSERT (self);
+
+	if (m_job->wait(0))
+	{
+		m_job = 0;
+
+		m_context->removeFrameListener(self);
+
+		ActionValue memberOnLoad;
+		if (self->getMember("onLoad", memberOnLoad))
+		{
+			Ref< ActionFunction > onLoad = memberOnLoad.getObject< ActionFunction >();
+			if (onLoad)
+				onLoad->call(self, ActionValueArray());
+		}
+	}
 }
 
 	}

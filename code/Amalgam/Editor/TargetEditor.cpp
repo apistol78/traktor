@@ -185,6 +185,11 @@ void TargetEditor::apply()
 	m_editInstance->setObject(m_editTarget);
 }
 
+bool TargetEditor::handleCommand(const ui::Command& command)
+{
+	return false;
+}
+
 ui::Size TargetEditor::getPreferredSize() const
 {
 	return ui::Size(1000, 600);

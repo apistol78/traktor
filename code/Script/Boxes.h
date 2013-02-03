@@ -34,6 +34,8 @@ public:
 
 	explicit BoxedUInt64(uint64_t value);
 
+	std::wstring format() const;
+
 	uint64_t unbox() const { return m_value; }
 
 private:

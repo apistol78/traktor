@@ -22,6 +22,11 @@ namespace traktor
 		namespace
 		{
 
+Ref< world::Entity > world_IEntityBuilder_create(world::IEntityBuilder* this_, const world::EntityData* entityData)
+{
+	return this_->create(entityData);
+}
+
 Transform world_Entity_getTransform(world::Entity* this_)
 {
 	Transform transform;
@@ -81,7 +86,7 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	classIEntityBuilder->addMethod("addFactory", &world::IEntityBuilder::addFactory);
 	classIEntityBuilder->addMethod("removeFactory", &world::IEntityBuilder::removeFactory);
 	classIEntityBuilder->addMethod("beginBuild", &world::IEntityBuilder::begin);
-	classIEntityBuilder->addMethod("create", &world::IEntityBuilder::create);
+	classIEntityBuilder->addMethod("create", &world_IEntityBuilder_create);
 	classIEntityBuilder->addMethod("get", &world::IEntityBuilder::get);
 	classIEntityBuilder->addMethod("endBuild", &world::IEntityBuilder::end);
 	scriptManager->registerClass(classIEntityBuilder);

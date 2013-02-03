@@ -21,5 +21,9 @@ Ref< editor::IObjectEditor > ScriptEditorFactory::createObjectEditor(editor::IEd
 	return new ScriptEditor(editor);
 }
 
+void ScriptEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+}
+
 	}
 }

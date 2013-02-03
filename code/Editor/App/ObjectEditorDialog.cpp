@@ -100,6 +100,11 @@ void ObjectEditorDialog::cancel()
 	}
 }
 
+bool ObjectEditorDialog::handleCommand(const ui::Command& command)
+{
+	return m_objectEditor->handleCommand(command);
+}
+
 void ObjectEditorDialog::eventClick(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();

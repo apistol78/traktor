@@ -104,6 +104,11 @@ void SoundAssetEditor::apply()
 	m_instance->setObject(m_asset);
 }
 
+bool SoundAssetEditor::handleCommand(const ui::Command& command)
+{
+	return false;
+}
+
 ui::Size SoundAssetEditor::getPreferredSize() const
 {
 	return ui::Size(500, 400);

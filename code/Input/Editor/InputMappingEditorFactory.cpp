@@ -21,5 +21,9 @@ Ref< editor::IObjectEditor > InputMappingEditorFactory::createObjectEditor(edito
 	return new InputMappingEditor(editor);
 }
 
+void InputMappingEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+}
+
 	}
 }

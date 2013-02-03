@@ -16,6 +16,7 @@ class Instance;
 
 	}
 
+
 	namespace editor
 	{
 
@@ -35,6 +36,8 @@ public:
 	bool apply(bool keep);
 
 	void cancel();
+
+	bool handleCommand(const ui::Command& command);
 
 private:
 	Ref< PropertyGroup > m_settings;

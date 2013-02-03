@@ -1,3 +1,4 @@
+#include "Core/Misc/String.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/CastAny.h"
 #include "Script/Boxes.h"
@@ -17,6 +18,11 @@ BoxedUInt64::BoxedUInt64()
 BoxedUInt64::BoxedUInt64(uint64_t value)
 :	m_value(value)
 {
+}
+
+std::wstring BoxedUInt64::format() const
+{
+	return toString(m_value);
 }
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Guid", BoxedGuid, Object)
@@ -414,6 +420,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 {
 	Ref< AutoScriptClass< BoxedUInt64 > > classBoxedUInt64 = new AutoScriptClass< BoxedUInt64 >();
 	classBoxedUInt64->addConstructor();
+	classBoxedUInt64->addMethod("format", &BoxedUInt64::format);
 	scriptManager->registerClass(classBoxedUInt64);
 
 	Ref< AutoScriptClass< BoxedGuid > > classBoxedGuid = new AutoScriptClass< BoxedGuid >();

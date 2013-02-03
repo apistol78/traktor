@@ -58,6 +58,11 @@ void DefaultObjectEditor::apply()
 	m_instance->setObject(m_object);
 }
 
+bool DefaultObjectEditor::handleCommand(const ui::Command& command)
+{
+	return false;
+}
+
 ui::Size DefaultObjectEditor::getPreferredSize() const
 {
 	return ui::Size(600, 500);

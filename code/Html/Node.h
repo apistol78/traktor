@@ -40,15 +40,15 @@ public:
 	
 	void insertAfter(Node* child, Node* node);
 
-	Ref< Node > getParent() const;
+	Node* getParent() const;
 	
-	Ref< Node > getPreviousSibling() const;
+	Node* getPreviousSibling() const;
 	
-	Ref< Node > getNextSibling() const;
+	Node* getNextSibling() const;
 	
-	Ref< Node > getFirstChild() const;
+	Node* getFirstChild() const;
 	
-	Ref< Node > getLastChild() const;
+	Node* getLastChild() const;
 
 	virtual void writeHtml(IStream* stream);
 

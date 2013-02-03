@@ -21,5 +21,9 @@ Ref< editor::IObjectEditor > TargetEditorFactory::createObjectEditor(editor::IEd
 	return new TargetEditor(editor);
 }
 
+void TargetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+}
+
 	}
 }

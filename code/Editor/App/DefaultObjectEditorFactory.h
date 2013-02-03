@@ -16,6 +16,8 @@ public:
 	virtual const TypeInfoSet getEditableTypes() const;
 
 	virtual Ref< IObjectEditor > createObjectEditor(IEditor* editor) const;
+
+	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };
 
 	}

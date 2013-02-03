@@ -73,6 +73,11 @@ void InputMappingEditor::apply()
 	m_instance->setObject(m_mapping);
 }
 
+bool InputMappingEditor::handleCommand(const ui::Command& command)
+{
+	return false;
+}
+
 ui::Size InputMappingEditor::getPreferredSize() const
 {
 	return ui::Size(500, 400);

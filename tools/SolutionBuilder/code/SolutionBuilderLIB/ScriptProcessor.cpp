@@ -291,11 +291,11 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 	if (!scriptContext)
 		return false;
 
-	scriptContext->setGlobal("output", script::Any(o));
-	scriptContext->setGlobal("solution", script::Any(const_cast< Solution* >(solution)));
-	scriptContext->setGlobal("project", script::Any(const_cast< Project* >(project)));
-	scriptContext->setGlobal("projectPath", script::Any(new Path(projectPath)));
-	scriptContext->setGlobal("fileSystem", script::Any(&FileSystem::getInstance()));
+	scriptContext->setGlobal("output", script::Any::fromObject(o));
+	scriptContext->setGlobal("solution", script::Any::fromObject(const_cast< Solution* >(solution)));
+	scriptContext->setGlobal("project", script::Any::fromObject(const_cast< Project* >(project)));
+	scriptContext->setGlobal("projectPath", script::Any::fromObject(new Path(projectPath)));
+	scriptContext->setGlobal("fileSystem", script::Any::fromObject(&FileSystem::getInstance()));
 	scriptContext->executeFunction("__main__");
 
 	output = o->getProduct();

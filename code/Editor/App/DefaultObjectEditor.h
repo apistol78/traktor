@@ -26,6 +26,8 @@ public:
 
 	virtual void apply();
 
+	virtual bool handleCommand(const ui::Command& command);
+
 	virtual ui::Size getPreferredSize() const;
 
 private:

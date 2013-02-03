@@ -21,5 +21,9 @@ Ref< editor::IObjectEditor > SoundAssetEditorFactory::createObjectEditor(editor:
 	return new SoundAssetEditor(editor);
 }
 
+void SoundAssetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+}
+
 	}
 }

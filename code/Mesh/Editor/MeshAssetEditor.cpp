@@ -234,6 +234,11 @@ void MeshAssetEditor::apply()
 	m_instance->setObject(m_asset);
 }
 
+bool MeshAssetEditor::handleCommand(const ui::Command& command)
+{
+	return false;
+}
+
 ui::Size MeshAssetEditor::getPreferredSize() const
 {
 	return ui::Size(800, 600);

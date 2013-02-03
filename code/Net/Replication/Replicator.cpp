@@ -34,8 +34,7 @@ const float c_timeUntilPing = 1.5f;
 const float c_errorStateThreshold = 0.2f;
 const float c_remoteOffsetThreshold = 0.1f;
 const float c_remoteOffsetLimit = 0.05f;
-const uint32_t c_errorLossThreshold = 10000;
-const uint32_t c_maxPendingPing = 16;
+const uint32_t c_maxPendingPing = 8;
 const uint32_t c_maxErrorCount = 4;
 const uint32_t c_maxDeltaStates = 8;
 
@@ -428,7 +427,7 @@ void Replicator::updatePeers(float dT)
 				failing = true;
 			}
 
-			if (peer.errorCount > c_maxErrorCount || peer.lossDelta > c_errorLossThreshold)
+			if (peer.errorCount > c_maxErrorCount)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" failing, unable to communicate with peer");
 				failing = true;
@@ -457,10 +456,9 @@ void Replicator::updatePeers(float dT)
 				}
 				else
 				{
-					T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate with peer; relay through primary peer");
+					T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate with peer; relaying through other peer(s)");
 					peer.pendingPing = 0;
 					peer.errorCount = 0;
-					peer.lossDelta = 0;
 					peer.relay = true;
 				}
 			}
@@ -503,7 +501,6 @@ void Replicator::sendState(float dT)
 		// an iframe and we're not experiencing package loss.
 		if (
 			peer.iframe &&
-			peer.lossDelta == 0 &&
 			peer.packetCount > 0 &&
 			peer.stateCount % c_maxDeltaStates > 0
 		)
@@ -541,7 +538,7 @@ void Replicator::sendState(float dT)
 
 		if (send(i->first, &msg, msgSize, false))
 		{
-			if (peer.lossDelta == 0 && peer.ghost->stateTemplate)
+			if (peer.ghost->stateTemplate)
 			{
 				float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
 				float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
@@ -597,15 +594,6 @@ void Replicator::sendEvents()
 				else
 				{
 					log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (1)" << Endl;
-
-					// Re-send this event to peer next iteration.
-					if (j->second.errorCount == 0)
-					{
-						Event e = *i;
-						e.handle = j->first;
-						eventsOut.push_back(e);
-					}
-
 					j->second.errorCount++;
 				}
 			}
@@ -620,14 +608,6 @@ void Replicator::sendEvents()
 				else
 				{
 					log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (2)" << Endl;
-
-					// Re-send this event to peer next iteration.
-					if (
-						j->second.errorCount == 0 &&
-						j->second.state == PsEstablished
-					)
-						eventsOut.push_back(*i);
-
 					j->second.errorCount++;
 				}
 			}
@@ -818,7 +798,6 @@ void Replicator::receiveMessages()
 		else if (msg.type == MtThrottle)	// Received throttle message.
 		{
 			T_REPLICATOR_DEBUG(L"OK: Received throttle message from peer " << handle);
-			m_peers[handle].lossDelta += 4;
 		}
 		else if (msg.type == MtDisconnect)	// Disconnect request of peer from network.
 		{
@@ -1158,8 +1137,25 @@ bool Replicator::sendMasqueraded(handle_t fromPeerHandle, handle_t targetPeerHan
 
 bool Replicator::sendRelay(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)
 {
-	handle_t primaryPeerHandle = m_replicatorPeers->getPrimaryPeerHandle();
-	if (!primaryPeerHandle)
+	float relayPeerLatency = std::numeric_limits< float >::max();
+	handle_t relayPeerHandle = 0;
+
+	// Find optimal relay peer; use peer with least latency and no errors.
+	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		if (
+			i->second.state == PsEstablished &&
+			i->second.relay == false &&
+			i->second.errorCount == 0 &&
+			i->second.latencyMedian < relayPeerLatency
+		)
+		{
+			relayPeerHandle = i->first;
+			relayPeerLatency = i->second.latencyMedian;
+		}
+	}
+
+	if (!relayPeerHandle)
 		return false;
 
 	Message mr;
@@ -1168,7 +1164,7 @@ bool Replicator::sendRelay(handle_t peerHandle, const Message* msg, uint32_t siz
 	mr.relay.targetGlobalId = peerHandle;
 	std::memcpy(mr.relay.data, msg, size);
 
-	return m_replicatorPeers->send(primaryPeerHandle, &mr, Message::HeaderSize + sizeof(uint64_t) + size, reliable);
+	return m_replicatorPeers->send(relayPeerHandle, &mr, Message::HeaderSize + sizeof(uint64_t) + size, reliable);
 }
 
 bool Replicator::send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)

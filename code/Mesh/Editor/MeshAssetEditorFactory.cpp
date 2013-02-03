@@ -21,5 +21,9 @@ Ref< editor::IObjectEditor > MeshAssetEditorFactory::createObjectEditor(editor::
 	return new MeshAssetEditor(editor);
 }
 
+void MeshAssetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+}
+
 	}
 }

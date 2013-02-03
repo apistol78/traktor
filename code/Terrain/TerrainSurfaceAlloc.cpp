@@ -7,7 +7,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_tileDims[] = { 1024, 512, 256, 128 };
+const uint32_t c_tileDims[] = { 512, 512, 256, 128 };
 
 		}
 

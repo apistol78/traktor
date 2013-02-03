@@ -66,6 +66,8 @@ public:
 
 	virtual void apply();
 
+	virtual bool handleCommand(const ui::Command& command);
+
 	virtual ui::Size getPreferredSize() const;
 
 private:
@@ -92,8 +94,6 @@ private:
 	void updateGrainView();
 
 	void updateProperties();
-
-	void handleCommand(const ui::Command& command);
 
 	void eventParameterChange(ui::Event* event);
 
