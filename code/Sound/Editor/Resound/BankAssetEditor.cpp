@@ -187,6 +187,127 @@ void BankAssetEditor::apply()
 	m_instance->setObject(m_asset);
 }
 
+bool BankAssetEditor::handleCommand(const ui::Command& command)
+{
+	if (command == L"Bank.AddGrain")
+	{
+		IGrainData* parentGrain = 0;
+		IGrainFacade* parentGrainFacade = 0;
+
+		GrainViewItem* selectedItem = m_grainView->getSelected();
+		if (selectedItem)
+		{
+			parentGrain = selectedItem->getGrain();
+			T_ASSERT (parentGrain);
+
+			parentGrainFacade = m_grainFacades[&type_of(parentGrain)];
+			if (!parentGrainFacade || !parentGrainFacade->canHaveChildren())
+				return true;
+		}
+
+		const TypeInfo* grainType = m_editor->browseType(&type_of< IGrainData >());
+		if (grainType)
+		{
+			Ref< IGrainData > grain = checked_type_cast< IGrainData*, false >(grainType->createInstance());
+
+			if (parentGrainFacade)
+				parentGrainFacade->addChild(parentGrain, grain);
+			else
+				m_asset->addGrain(grain);
+
+			updateGrainView();
+			updateProperties();
+		}
+	}
+	else if (command == L"Bank.RemoveGrain")
+	{
+		GrainViewItem* selectedItem = m_grainView->getSelected();
+		if (selectedItem)
+		{
+			IGrainData* grain = selectedItem->getGrain();
+			T_ASSERT (grain);
+
+			if (selectedItem->getParent())
+			{
+				IGrainData* parentGrain = selectedItem->getParent()->getGrain();
+				T_ASSERT (parentGrain);
+
+				IGrainFacade* parentGrainFacade = m_grainFacades[&type_of(parentGrain)];
+				if (!parentGrainFacade || !parentGrainFacade->canHaveChildren())
+					return true;
+
+				parentGrainFacade->removeChild(parentGrain, grain);
+			}
+			else
+				m_asset->removeGrain(grain);
+
+			updateGrainView();
+			updateProperties();
+		}
+	}
+	else if (command == L"Bank.PlayGrain")
+	{
+		if (m_soundChannel && !m_soundChannel->isPlaying())
+		{
+			RefArray< IGrainData > grainData;
+			RefArray< IGrain > grains;
+
+			// Play only selected grain.
+			GrainViewItem* selectedItem = m_grainView->getSelected();
+			if (selectedItem)
+			{
+				IGrainData* grain = selectedItem->getGrain();
+				T_ASSERT (grain);
+
+				grainData.push_back(grain);
+			}
+			else
+			{
+				grainData = m_asset->getGrains();
+			}
+
+			// Create grains from data.
+			for (uint32_t i = 0; i < grainData.size(); ++i)
+			{
+				Ref< IGrain > grain = grainData[i]->createInstance(m_resourceManager);
+				if (grain)
+					grains.push_back(grain);
+				else
+					log::warning << L"Unable to create grain " << i << L" of type " << type_name(grainData[i]) << Endl;
+			}
+
+			if (!grains.empty())
+			{
+				m_bankBuffer = new BankBuffer(grains);
+				m_soundChannel->play(m_bankBuffer, 1.0f, 0.0f, 1.0f);
+
+				for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
+				{
+					const HandleWrapper* id = (*i)->getData< HandleWrapper >(L"ID");
+					T_ASSERT (id);
+
+					m_soundChannel->setParameter(
+						id->get(),
+						(*i)->getValue() / 100.0f
+					);
+				}
+			}
+			else
+				log::error << L"No grains to play" << Endl;
+		}
+		else if (m_soundChannel && m_soundChannel->isPlaying())
+		{
+			m_soundChannel->stop();
+			m_toolBarItemPlay->setToggled(false);
+			m_toolBar->update();
+		}
+	}
+	else
+		return false;
+
+	return true;
+}
+
 ui::Size BankAssetEditor::getPreferredSize() const
 {
 	return ui::Size(800, 600);
@@ -272,123 +393,6 @@ void BankAssetEditor::updateProperties()
 	}
 
 	m_containerDynamicParameters->update();
-}
-
-void BankAssetEditor::handleCommand(const ui::Command& command)
-{
-	if (command == L"Bank.AddGrain")
-	{
-		IGrainData* parentGrain = 0;
-		IGrainFacade* parentGrainFacade = 0;
-
-		GrainViewItem* selectedItem = m_grainView->getSelected();
-		if (selectedItem)
-		{
-			parentGrain = selectedItem->getGrain();
-			T_ASSERT (parentGrain);
-
-			parentGrainFacade = m_grainFacades[&type_of(parentGrain)];
-			if (!parentGrainFacade || !parentGrainFacade->canHaveChildren())
-				return;
-		}
-
-		const TypeInfo* grainType = m_editor->browseType(&type_of< IGrainData >());
-		if (grainType)
-		{
-			Ref< IGrainData > grain = checked_type_cast< IGrainData*, false >(grainType->createInstance());
-
-			if (parentGrainFacade)
-				parentGrainFacade->addChild(parentGrain, grain);
-			else
-				m_asset->addGrain(grain);
-
-			updateGrainView();
-			updateProperties();
-		}
-	}
-	else if (command == L"Bank.RemoveGrain")
-	{
-		GrainViewItem* selectedItem = m_grainView->getSelected();
-		if (selectedItem)
-		{
-			IGrainData* grain = selectedItem->getGrain();
-			T_ASSERT (grain);
-
-			if (selectedItem->getParent())
-			{
-				IGrainData* parentGrain = selectedItem->getParent()->getGrain();
-				T_ASSERT (parentGrain);
-
-				IGrainFacade* parentGrainFacade = m_grainFacades[&type_of(parentGrain)];
-				if (!parentGrainFacade || !parentGrainFacade->canHaveChildren())
-					return;
-
-				parentGrainFacade->removeChild(parentGrain, grain);
-			}
-			else
-				m_asset->removeGrain(grain);
-
-			updateGrainView();
-			updateProperties();
-		}
-	}
-	else if (command == L"Bank.PlayGrain")
-	{
-		if (m_soundChannel && !m_soundChannel->isPlaying())
-		{
-			RefArray< IGrainData > grainData;
-			RefArray< IGrain > grains;
-
-			// Play only selected grain.
-			GrainViewItem* selectedItem = m_grainView->getSelected();
-			if (selectedItem)
-			{
-				IGrainData* grain = selectedItem->getGrain();
-				T_ASSERT (grain);
-
-				grainData.push_back(grain);
-			}
-			else
-			{
-				grainData = m_asset->getGrains();
-			}
-
-			// Create grains from data.
-			for (uint32_t i = 0; i < grainData.size(); ++i)
-			{
-				Ref< IGrain > grain = grainData[i]->createInstance(m_resourceManager);
-				if (grain)
-					grains.push_back(grain);
-				else
-					log::warning << L"Unable to create grain " << i << L" of type " << type_name(grainData[i]) << Endl;
-			}
-
-			if (!grains.empty())
-			{
-				m_bankBuffer = new BankBuffer(grains);
-				m_soundChannel->play(m_bankBuffer, 1.0f, 0.0f, 1.0f);
-
-				for (RefArray< ui::Slider >::const_iterator i = m_sliderParameters.begin(); i != m_sliderParameters.end(); ++i)
-				{
-					const HandleWrapper* id = (*i)->getData< HandleWrapper >(L"ID");
-					T_ASSERT (id);
-
-					m_soundChannel->setParameter(
-						id->get(),
-						(*i)->getValue() / 100.0f
-					);
-				}
-			}
-			else
-				log::error << L"No grains to play" << Endl;
-		}
-		else if (m_soundChannel && m_soundChannel->isPlaying())
-		{
-			m_soundChannel->stop();
-			m_toolBarItemPlay->setToggled(false);
-			m_toolBar->update();
-		}
-	}
 }
 
 void BankAssetEditor::eventParameterChange(ui::Event* event)

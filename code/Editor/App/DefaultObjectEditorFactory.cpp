@@ -20,5 +20,9 @@ Ref< IObjectEditor > DefaultObjectEditorFactory::createObjectEditor(IEditor* edi
 	return new DefaultObjectEditor(editor);
 }
 
+void DefaultObjectEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+}
+
 	}
 }

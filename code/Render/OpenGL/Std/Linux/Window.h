@@ -3,6 +3,7 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/extensions/Xrandr.h>
 #include "Core/Object.h"
 #include "Render/Types.h"
 
@@ -26,6 +27,8 @@ public:
 
     void setWindowedStyle(int32_t width, int32_t height);
 
+    void show();
+
     bool update(RenderEvent& outEvent);
 
     int32_t getWidth() const;
@@ -39,6 +42,11 @@ public:
 private:
     ::Display* m_display;
     ::Window m_window;
+    int m_screen;
+    XRRScreenConfiguration* m_originalConfig;
+    int m_originalSizeIndex;
+    int m_originalRate;
+    Rotation m_originalRotation;
 };
 
     }

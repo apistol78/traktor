@@ -12249,6 +12249,7 @@
 						<item>GL</item>
 						<item>GLU</item>
 						<item>X11</item>
+						<item>Xrandr</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12272,6 +12273,7 @@
 						<item>GL</item>
 						<item>GLU</item>
 						<item>X11</item>
+						<item>Xrandr</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12295,6 +12297,7 @@
 						<item>GL</item>
 						<item>GLU</item>
 						<item>X11</item>
+						<item>Xrandr</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12318,6 +12321,7 @@
 						<item>GL</item>
 						<item>GLU</item>
 						<item>X11</item>
+						<item>Xrandr</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>

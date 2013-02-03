@@ -253,7 +253,6 @@ private:
 		float latencyMinimum;
 		float latencyReversed;
 		uint32_t pendingPing;
-		uint32_t lossDelta;
 		uint32_t packetCount;
 		uint32_t stateCount;
 		uint32_t errorCount;
@@ -271,7 +270,6 @@ private:
 		,	latencyMinimum(0.05f)
 		,	latencyReversed(0.05f)
 		,	pendingPing(0)
-		,	lossDelta(0)
 		,	packetCount(0)
 		,	stateCount(0)
 		,	errorCount(0)

@@ -239,7 +239,11 @@ uint32_t RenderSystemOpenGL::getDisplayModeCount() const
 	return cglwGetDisplayModeCount();
 
 #else
-	return 0;
+
+	int sizes;
+	XRRSizes(m_display, 0, &sizes);
+	return sizes >= 0 ? uint32_t(sizes) : 0;
+
 #endif
 }
 
@@ -267,7 +271,21 @@ DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 	return dm;
 
 #else
-	return DisplayMode();
+
+	DisplayMode dm;
+
+	int sizes;
+	XRRScreenSize* xrrss = XRRSizes(m_display, 0, &sizes);
+
+	if (index < sizes)
+	{
+		dm.width = xrrss[index].width;
+		dm.height = xrrss[index].height;
+		dm.refreshRate = 60;
+		dm.colorBits = 32;
+	}
+
+	return dm;
 #endif
 }
 
@@ -485,13 +503,12 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	}
 
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - OpenGL Renderer");
+	m_window->show();
 
-/*
 	if (desc.fullscreen)
 		m_window->setFullScreenStyle(desc.displayMode.width, desc.displayMode.height);
 	else
 		m_window->setWindowedStyle(desc.displayMode.width, desc.displayMode.height);
-*/
 
 	int attribs[] = { GLX_RGBA, GLX_DOUBLEBUFFER, GLX_DEPTH_SIZE, desc.depthBits, None };
 	XVisualInfo* visual = glXChooseVisual(m_display, DefaultScreen(m_display), attribs);

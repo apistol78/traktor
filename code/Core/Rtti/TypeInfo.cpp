@@ -1,8 +1,6 @@
 #if !defined(_WIN32)
 #	include <alloca.h>
 #endif
-#include <cstdlib>
-#include <string>
 #include "Core/Misc/TString.h"
 #include "Core/Rtti/TypeInfo.h"
 
@@ -14,6 +12,24 @@ namespace traktor
 static uint32_t s_typeInfoCount = 0;
 static uint32_t s_typeInfoRegistrySize = 0;
 static const TypeInfo** s_typeInfoRegistry = 0;
+
+int32_t safeStringCompare(const wchar_t* a, const wchar_t* b)
+{
+	int32_t ca = 0, cb = 0;
+	for (;;)
+	{
+		ca = int32_t(*a++);
+		cb = int32_t(*b++);
+		if (ca != cb || ca == 0)
+			break;
+	}
+	if (ca < cb)
+		return -1;
+	else if (ca > cb)
+		return 1;
+	else
+		return 0;
+}
 
 	}
 
@@ -37,7 +53,7 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 		T_ASSERT (typeInfo2);
 
 		const wchar_t* typeName2 = typeInfo2->getName();
-		int32_t res = wcscmp(typeName2, typeName);
+		int32_t res = safeStringCompare(typeName2, typeName);
 		if (res > 0)
 			break;
 
@@ -76,7 +92,7 @@ void __unregisterTypeInfo(const TypeInfo* typeInfo)
 		T_ASSERT (typeInfo2);
 
 		const wchar_t* typeName2 = typeInfo2->getName();
-		if (wcscmp(typeName2, typeName) == 0)
+		if (safeStringCompare(typeName2, typeName) == 0)
 			break;
 
 		index++;
@@ -158,9 +174,10 @@ const TypeInfo* TypeInfo::find(const std::wstring& name)
 	while (first < last)
 	{
 		uint32_t index = (last + first) >> 1;
+		T_ASSERT (index >= first && index < last);
 
 		const wchar_t* typeName = s_typeInfoRegistry[index]->getName();
-		int32_t res = wcscmp(typeName, name.c_str());
+		int32_t res = safeStringCompare(typeName, name.c_str());
 		if (res == 0)
 			return s_typeInfoRegistry[index];
 		else if (res > 0)

@@ -576,6 +576,8 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Undo"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Redo"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Delete"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.Find"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.Replace"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Build"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CancelBuild"));
@@ -595,6 +597,13 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		std::list< ui::Command > editorPluginCommands;
 		(*i)->getCommands(editorPluginCommands);
 		m_shortcutCommands.insert(m_shortcutCommands.end(), editorPluginCommands.begin(), editorPluginCommands.end());
+	}
+
+	for (RefArray< IObjectEditorFactory >::iterator i = m_objectEditorFactories.begin(); i != m_objectEditorFactories.end(); ++i)
+	{
+		std::list< ui::Command > objectEditorCommands;
+		(*i)->getCommands(objectEditorCommands);
+		m_shortcutCommands.insert(m_shortcutCommands.end(), objectEditorCommands.begin(), objectEditorCommands.end());
 	}
 
 	// Build shortcut accelerator table.
@@ -2131,6 +2140,19 @@ bool EditorForm::handleCommand(const ui::Command& command)
 			{
 				if (m_activeEditorPage)
 					result = m_activeEditorPage->handleCommand(command);
+			}
+		}
+
+		if (!result)
+		{
+			for (Ref< Widget > child = getFirstChild(); child; child = child->getNextSibling())
+			{
+				ObjectEditorDialog* editorDialog = dynamic_type_cast< ObjectEditorDialog* >(child);
+				if (editorDialog && editorDialog->containFocus())
+				{
+					result = editorDialog->handleCommand(command);
+					break;
+				}
 			}
 		}
 	}

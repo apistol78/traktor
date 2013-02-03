@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,6 +24,8 @@ public:
 	virtual const TypeInfoSet getEditableTypes() const;
 
 	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const;
+
+	virtual void getCommands(std::list< ui::Command >& outCommands) const;
 };
 
 	}

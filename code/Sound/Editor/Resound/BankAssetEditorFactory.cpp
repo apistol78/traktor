@@ -21,5 +21,9 @@ Ref< editor::IObjectEditor > BankAssetEditorFactory::createObjectEditor(editor::
 	return new BankAssetEditor(editor);
 }
 
+void BankAssetEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+}
+
 	}
 }

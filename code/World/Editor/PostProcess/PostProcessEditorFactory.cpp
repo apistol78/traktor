@@ -21,5 +21,9 @@ Ref< editor::IObjectEditor > PostProcessEditorFactory::createObjectEditor(editor
 	return new PostProcessEditor(editor);
 }
 
+void PostProcessEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
+{
+}
+
 	}
 }

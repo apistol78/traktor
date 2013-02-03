@@ -1,6 +1,7 @@
 #ifndef traktor_editor_IObjectEditorFactory_H
 #define traktor_editor_IObjectEditorFactory_H
 
+#include <list>
 #include "Core/Object.h"
 
 // import/export mechanism.
@@ -13,6 +14,13 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+
+class Command;
+
+	}
+
 	namespace editor
 	{
 
@@ -30,6 +38,8 @@ public:
 	virtual const TypeInfoSet getEditableTypes() const = 0;
 
 	virtual Ref< IObjectEditor > createObjectEditor(IEditor* editor) const = 0;
+
+	virtual void getCommands(std::list< ui::Command >& outCommands) const = 0;
 };
 
 	}

@@ -13,10 +13,14 @@
 
 namespace traktor
 {
+
+class Job;
+
 	namespace flash
 	{
 
 class ActionContext;
+struct CallArgs;
 
 /*! \brief ActionScript XML document.
  * \ingroup Flash
@@ -32,6 +36,9 @@ public:
 
 private:
 	ActionContext* m_context;
+	Ref< Job > m_job;
+
+	void onFrame(CallArgs& ca);
 };
 
 	}
