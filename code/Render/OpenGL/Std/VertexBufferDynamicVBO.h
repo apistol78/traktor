@@ -44,11 +44,13 @@ private:
 	};
 
 	Ref< IContext > m_resourceContext;
-	GLuint m_name;
+	GLuint m_array;
+	GLuint m_buffer;
 	GLuint m_vertexStride;
 	AttributeDesc m_attributeDesc[T_OGL_MAX_USAGE_INDEX];
+	const GLint* m_attributeLocs;
 	uint8_t* m_lock;
-	AlignedVector< uint8_t > m_buffer;
+	AlignedVector< uint8_t > m_data;
 	bool m_dirty;
 };
 

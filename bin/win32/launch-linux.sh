@@ -1,6 +1,8 @@
 #!/bin/bash
 
-export LD_LIBRARY_PATH="$HOME/.steam/bin"
+export LD_LIBRARY_PATH="$LD_LIBRARY_PATH:.:$HOME/.steam/bin"
 
-echo "run" > gbd.cmd
-gdb -batch -x gdb.cmd --args ./$1 -s Application.config
+chmod u+x *.so
+chmod u+x $1
+
+./$1 -s Application.config

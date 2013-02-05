@@ -7,6 +7,8 @@ namespace traktor
 	{
 
 bool isInputAllowed();
+
+bool getMouseRange(float& outMaxX, float& outMaxY);
         
 bool getMousePosition(float& outX, float& outY);
 	

@@ -421,7 +421,7 @@ void TerrainEntity::render(
 		render::SimpleRenderBlock* renderBlock = worldContext.getRenderContext()->alloc< render::SimpleRenderBlock >("Terrain patch");
 
 		renderBlock->distance = i->distance;
-		renderBlock->program = program;
+		renderBlock->program = (patch.lastSurfaceLod == 0) ? detailProgram : coarseProgram;
 		renderBlock->programParams = worldContext.getRenderContext()->alloc< render::ProgramParameters >();
 		renderBlock->indexBuffer = m_indexBuffer;
 		renderBlock->vertexBuffer = patch.vertexBuffer;
@@ -585,10 +585,10 @@ bool TerrainEntity::createPatches()
 			if (!vertexBuffer)
 				return false;
 
-			TerrainEntity::Patch patch = { 0.0f, 0.0f, vertexBuffer, c_patchLodSteps, c_surfaceLodSteps };
+			TerrainEntity::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, vertexBuffer, c_patchLodSteps, c_surfaceLodSteps };
 			m_patches.push_back(patch);
 #else
-			TerrainEntity::Patch patch = { 0.0f, 0.0f, c_patchLodSteps, c_surfaceLodSteps };
+			TerrainEntity::Patch patch = { 0.0f, 0.0f, { 0.0f, 0.0f, 0.0f, 0.0f }, c_patchLodSteps, c_surfaceLodSteps };
 			m_patches.push_back(patch);
 #endif
 		}

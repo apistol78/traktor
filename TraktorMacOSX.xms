@@ -11456,12 +11456,13 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glext</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>T_OPENGL_STD</item>
+						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11479,12 +11480,13 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glext</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>T_OPENGL_STD</item>
+						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -11502,13 +11504,19 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>Cocoa.framework</item>
+						<item>AppKit.framework</item>
+						<item>OpenGL.framework</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -11519,13 +11527,19 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
-					<libraries/>
+					<libraries>
+						<item>Cocoa.framework</item>
+						<item>AppKit.framework</item>
+						<item>OpenGL.framework</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -11562,6 +11576,91 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[14]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.glew-1.9.0</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/src</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>GLEW_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>GLEW_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>GLEW_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>GLEW_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>glew.c</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
@@ -15297,6 +15396,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[27]/dependencies/item[8]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[44]/dependencies/item[2]/project"/>
 	</projects>
 	<aggregations>
 		<item type="Aggregation" version="1">

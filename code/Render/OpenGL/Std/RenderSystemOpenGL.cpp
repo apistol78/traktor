@@ -1,11 +1,10 @@
 #include <algorithm>
 #include <locale>
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
-#include "Render/OpenGL/Std/BlitHelper.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
 #include "Render/OpenGL/Std/IndexBufferIAR.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
@@ -88,23 +87,24 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 	if (!SetPixelFormat(hSharedDC, pixelFormat, &pfd))
 		return false;
 
-
 	// Create a dummy, old, context to load all extensions.
 	HGLRC hDummyRC = wglCreateContext(hSharedDC);
 	T_ASSERT (hDummyRC);
 
 	wglMakeCurrent(hSharedDC, hDummyRC);
 
-	if (!opengl_initialize_extensions())
+	// Initialize GL extensions.
+	if (glewInit() != GLEW_OK)
 		return false;
 
 	wglMakeCurrent(NULL, NULL);
 	wglDeleteContext(hDummyRC);
 
-
 	// Finally create new type of context.
 	const GLint attribs[] =
 	{
+		WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+		WGL_CONTEXT_MINOR_VERSION_ARB, 0,
 		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
 		0, 0
 	};
@@ -119,13 +119,13 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 
 	void* resourceContext = cglwCreateContext(0, 0, 0, 0, 0);
 	if (!resourceContext)
+	{
+		log::error << L"Unable to create OpenGL renderer; Unable to create OpenGL 3.2 context" << Endl;
 		return false;
+	}
 
 	m_resourceContext = new ContextOpenGL(resourceContext);
 	m_resourceContext->enter();
-
-	if (!opengl_initialize_extensions())
-		return false;
 
 #elif defined(__LINUX__)
 
@@ -138,6 +138,49 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 		return 0;
 	}
 
+	int screen = DefaultScreen(m_display);
+
+	// Create required GLX extensions.
+	glXCreateContextAttribsARB = (PFNGLXCREATECONTEXTATTRIBSARBPROC)glXGetProcAddressARB((const GLubyte*)"glXCreateContextAttribsARB");
+	glXChooseFBConfig = (PFNGLXCHOOSEFBCONFIGPROC)glXGetProcAddressARB((const GLubyte*)"glXChooseFBConfig");
+	glXGetVisualFromFBConfig = (PFNGLXGETVISUALFROMFBCONFIGPROC)glXGetProcAddressARB((const GLubyte*)"glXGetVisualFromFBConfig");
+
+	if (
+		!glXCreateContextAttribsARB ||
+		!glXChooseFBConfig ||
+		!glXGetVisualFromFBConfig
+	)
+	{
+		log::error << L"Unable to create OpenGL renderer; Failed to get GLX extensions" << Endl;
+		return 0;
+	}
+
+	static int visualAttribs[] =
+	{
+		GLX_RENDER_TYPE, GLX_RGBA_BIT,
+		GLX_DRAWABLE_TYPE, GLX_WINDOW_BIT,
+		GLX_DOUBLEBUFFER, True,
+		GLX_RED_SIZE, 1,
+		GLX_GREEN_SIZE, 1,
+		GLX_BLUE_SIZE, 1,
+		None
+	};
+
+	int nfbc = 0;
+	GLXFBConfig* fbc = glXChooseFBConfig(m_display, screen, visualAttribs, &nfbc);
+	if (!fbc)
+	{
+		log::error << L"Unable to create OpenGL renderer; No framebuffer configuration" << Endl;
+		return false;
+	}
+
+	XVisualInfo* vi = glXGetVisualFromFBConfig(m_display, fbc[0]);
+	if (!vi)
+	{
+		log::error << L"Unable to create OpenGL renderer; No visual information" << Endl;
+		return false;
+	}
+
 	m_windowShared = new Window(m_display);
 	if (!m_windowShared->create(16, 16))
 	{
@@ -145,43 +188,45 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 		return 0;
 	}
 
-	int screen = DefaultScreen(m_windowShared->getDisplay());
+	m_windowShared->show();
 
-	static int attribs[] =
-	{
-		GLX_RGBA,
-		None
-	};
-	XVisualInfo* visual = glXChooseVisual(m_windowShared->getDisplay(), screen, attribs);
-	if (!visual)
-	{
-		log::error << L"Unable to create OpenGL renderer; No visual found" << Endl;
-		return false;
-	}
-
-	GLXContext resourceContext = glXCreateContext(m_windowShared->getDisplay(), visual, NULL, GL_TRUE);
-	if (!resourceContext)
+	GLXContext oldContext = glXCreateContext(m_display, vi, NULL, GL_TRUE);
+	if (!oldContext)
 	{
 		log::error << L"Unable to create OpenGL renderer; glXCreateContext failed" << Endl;
 		return false;
 	}
 
-	m_resourceContext = new ContextOpenGL(m_windowShared->getDisplay(), m_windowShared->getWindow(), resourceContext);
-	m_resourceContext->enter();
+	glXMakeCurrent(m_display, m_windowShared->getWindow(), oldContext);
 
-	if (!opengl_initialize_extensions())
+	if (glewInit() != GLEW_OK)
+		return false;
+
+	glXMakeCurrent(m_display, 0, 0);
+	glXDestroyContext(m_display, oldContext);
+
+	static int contextAttribs[] =
 	{
-		log::error << L"Unable to create OpenGL renderer; Failed to initialize OpenGL extensions" << Endl;
+		GLX_CONTEXT_MAJOR_VERSION_ARB, 3,
+		GLX_CONTEXT_MINOR_VERSION_ARB, 0,
+		None
+	};
+
+	GLXContext context = glXCreateContextAttribsARB(m_display, fbc[0], NULL, true, contextAttribs);
+	if (!context)
+	{
+		log::error << L"Unable to create OpenGL renderer; glXCreateContextAttribsARB failed" << Endl;
 		return false;
 	}
 
+	m_resourceContext = new ContextOpenGL(m_display, m_windowShared->getWindow(), context);
+	m_resourceContext->enter();
+
 #endif
 
-	m_blitHelper = new BlitHelper();
-	m_blitHelper->create();
+	log::info << L"OpenGL " << mbstows((const char *)glGetString(GL_VERSION)) << L" renderer created." << Endl;
 
 	m_resourceContext->leave();
-
 	m_maxAnisotrophy = (GLfloat)desc.maxAnisotropy;
 	return true;
 }
@@ -429,11 +474,13 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	const GLint attribs[] =
 	{
+		WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+		WGL_CONTEXT_MINOR_VERSION_ARB, 0,
 		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
 		0, 0
 	};
 
-	HGLRC hRC = wglCreateContextAttribsARB(hDC, NULL, attribs);
+	HGLRC hRC = wglCreateContextAttribsARB(hDC, m_resourceContext->getGLRC(), attribs);
 	if (!hRC)
 	{
 		log::error << L"createRenderView failed; unable to create WGL context" << Endl;
@@ -441,9 +488,14 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	}
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(*m_window, hDC, hRC);
-	m_resourceContext->share(context);
+	context->enter();
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext, m_blitHelper);
+	if (glewInit() != GLEW_OK)
+		return 0;
+
+	context->leave();
+
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 
@@ -481,7 +533,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_windowHandle, context, m_resourceContext, m_blitHelper);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_windowHandle, context, m_resourceContext);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 
@@ -520,8 +572,14 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 		return 0;
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(m_display, (GLXDrawable)m_window->getWindow(), glcontext);
+	context->enter();
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext, m_blitHelper);
+	if (glewInit() != GLEW_OK)
+		return 0;
+
+	context->leave();
+
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, m_window, context, m_resourceContext);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 
@@ -570,21 +628,30 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	if (!SetPixelFormat(hDC, pixelFormat, &pfd))
 		return 0;
 
-	HGLRC hRC = wglCreateContext(hDC);
+	const GLint attribs[] =
+	{
+		WGL_CONTEXT_MAJOR_VERSION_ARB, 3,
+		WGL_CONTEXT_MINOR_VERSION_ARB, 0,
+		WGL_CONTEXT_FLAGS_ARB, WGL_CONTEXT_DEBUG_BIT_ARB,
+		0, 0
+	};
+
+	HGLRC hRC = wglCreateContextAttribsARB(hDC, m_resourceContext->getGLRC(), attribs);
 	if (!hRC)
+	{
+		log::error << L"createRenderView failed; unable to create WGL context" << Endl;
 		return 0;
+	}
 
 	Ref< ContextOpenGL > context = new ContextOpenGL((HWND)desc.nativeWindowHandle, hDC, hRC);
-	m_resourceContext->share(context);
-
 	context->enter();
 
-	if (!opengl_initialize_extensions())
+	if (glewInit() != GLEW_OK)
 		return 0;
 
 	context->leave();
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext, m_blitHelper);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 
@@ -605,7 +672,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(glcontext);
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext, m_blitHelper);
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 
@@ -628,8 +695,14 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 		return 0;
 
 	Ref< ContextOpenGL > context = new ContextOpenGL(display, (GLXDrawable)desc.nativeWindowHandle, resourceContext);
+	context->enter();
 
-	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext, m_blitHelper);
+	if (glewInit() != GLEW_OK)
+		return 0;
+
+	context->leave();
+
+	Ref< RenderViewOpenGL > renderView = new RenderViewOpenGL(desc, 0, context, m_resourceContext);
 	if (renderView->createPrimaryTarget())
 		return renderView;
 
@@ -645,56 +718,16 @@ Ref< VertexBuffer > RenderSystemOpenGL::createVertexBuffer(const std::vector< Ve
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-#if defined(_WIN32)
-
-	if (glGenBuffersARB)
-	{
-		if (dynamic)
-			return new VertexBufferDynamicVBO(m_resourceContext, vertexElements, bufferSize);
-		else
-			return new VertexBufferStaticVBO(m_resourceContext, vertexElements, bufferSize);
-	}
+	if (dynamic)
+		return new VertexBufferDynamicVBO(m_resourceContext, vertexElements, bufferSize);
 	else
-		return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
-
-#elif defined(__APPLE__) || defined(__LINUX__)
-
-	if (opengl_have_extension(E_GL_ARB_vertex_buffer_object))
-	{
-		if (dynamic)
-			return new VertexBufferDynamicVBO(m_resourceContext, vertexElements, bufferSize);
-		else
-			return new VertexBufferStaticVBO(m_resourceContext, vertexElements, bufferSize);
-	}
-	else
-		return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
-
-#else
-	return new VertexBufferVAR(m_resourceContext, vertexElements, bufferSize, dynamic);
-#endif
+		return new VertexBufferStaticVBO(m_resourceContext, vertexElements, bufferSize);
 }
 
 Ref< IndexBuffer > RenderSystemOpenGL::createIndexBuffer(IndexType indexType, uint32_t bufferSize, bool dynamic)
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-
-#if defined(_WIN32)
-
-	if (glGenBuffersARB)
-		return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
-	else
-		return new IndexBufferIAR(m_resourceContext, indexType, bufferSize);
-
-#elif defined(__APPLE__) || defined(__LINUX__)
-
-	if (opengl_have_extension(E_GL_ARB_vertex_buffer_object))
-		return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
-	else
-		return new IndexBufferIAR(m_resourceContext, indexType, bufferSize);
-
-#else
-	return new IndexBufferIAR(m_resourceContext, indexType, bufferSize);
-#endif
+	return new IndexBufferIBO(m_resourceContext, indexType, bufferSize, dynamic);
 }
 
 Ref< ISimpleTexture > RenderSystemOpenGL::createSimpleTexture(const SimpleTextureCreateDesc& desc)
@@ -734,7 +767,7 @@ Ref< RenderTargetSet > RenderSystemOpenGL::createRenderTargetSet(const RenderTar
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
+	Ref< RenderTargetSetOpenGL > renderTargetSet = new RenderTargetSetOpenGL(m_resourceContext);
 	if (!renderTargetSet->create(desc))
 		return 0;
 

@@ -18,7 +18,6 @@ namespace traktor
 	namespace render
 	{
 
-class BlitHelper;
 class Window;
 
 /*! \brief OpenGL render system.
@@ -88,7 +87,6 @@ private:
 #endif
 
 	Ref< ContextOpenGL > m_resourceContext;
-	Ref< BlitHelper > m_blitHelper;
 	GLfloat m_maxAnisotrophy;
 };
 

@@ -2,7 +2,6 @@
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/IContext.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
 
 namespace traktor
@@ -14,16 +13,16 @@ namespace traktor
 
 struct DeleteBufferCallback : public IContext::IDeleteCallback
 {
-	GLuint m_bufferName;
+	GLuint m_buffer;
 
-	DeleteBufferCallback(GLuint bufferName)
-	:	m_bufferName(bufferName)
+	DeleteBufferCallback(GLuint buffer)
+	:	m_buffer(buffer)
 	{
 	}
 
 	virtual void deleteResource()
 	{
-		T_OGL_SAFE(glDeleteBuffersARB(1, &m_bufferName));
+		T_OGL_SAFE(glDeleteBuffers(1, &m_buffer));
 		delete this;
 	}
 };
@@ -35,15 +34,19 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.VertexBufferDynamicVBO", VertexBufferDyn
 VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const std::vector< VertexElement >& vertexElements, uint32_t bufferSize)
 :	VertexBufferOpenGL(bufferSize)
 ,	m_resourceContext(resourceContext)
+,	m_array(0)
+,	m_buffer(0)
+,	m_vertexStride(0)
+,	m_attributeLocs(0)
 ,	m_lock(0)
 ,	m_dirty(false)
 {
 	m_vertexStride = getVertexSize(vertexElements);
 	T_ASSERT (m_vertexStride > 0);
 
-	T_OGL_SAFE(glGenBuffersARB(1, &m_name));
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
-	T_OGL_SAFE(glBufferDataARB(GL_ARRAY_BUFFER_ARB, bufferSize, 0, GL_DYNAMIC_DRAW_ARB));
+	T_OGL_SAFE(glGenBuffers(1, &m_buffer));
+	T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
+	T_OGL_SAFE(glBufferData(GL_ARRAY_BUFFER, bufferSize, 0, GL_DYNAMIC_DRAW));
 
 	std::memset(m_attributeDesc, 0, sizeof(m_attributeDesc));
 
@@ -119,25 +122,15 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const 
 			break;
 
 		case DtHalf2:
-			if (opengl_have_extension(E_GL_ARB_half_float_vertex))
-			{
-				m_attributeDesc[usageIndex].size = 2;
-				m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
-				m_attributeDesc[usageIndex].normalized = GL_TRUE;
-			}
-			else
-				log::error << L"Unsupported vertex format; OpenGL driver doesn't support GL_ARB_half_float_vertex" << Endl;
+			m_attributeDesc[usageIndex].size = 2;
+			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT;
+			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
 		case DtHalf4:
-			if (opengl_have_extension(E_GL_ARB_half_float_vertex))
-			{
-				m_attributeDesc[usageIndex].size = 4;
-				m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
-				m_attributeDesc[usageIndex].normalized = GL_TRUE;
-			}
-			else
-				log::error << L"Unsupported vertex format; OpenGL driver doesn't support GL_ARB_half_float_vertex" << Endl;
+			m_attributeDesc[usageIndex].size = 4;
+			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT;
+			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
 		default:
@@ -147,7 +140,7 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const 
 		m_attributeDesc[usageIndex].offset = vertexElements[i].getOffset();
 	}
 	
-	m_buffer.resize(getBufferSize(), 0);
+	m_data.resize(getBufferSize(), 0);
 	m_dirty = true;
 }
 
@@ -158,21 +151,21 @@ VertexBufferDynamicVBO::~VertexBufferDynamicVBO()
 
 void VertexBufferDynamicVBO::destroy()
 {
-	if (m_name)
+	if (m_buffer)
 	{
 		if (m_resourceContext)
-			m_resourceContext->deleteResource(new DeleteBufferCallback(m_name));
-		m_name = 0;
+			m_resourceContext->deleteResource(new DeleteBufferCallback(m_buffer));
+		m_buffer = 0;
 	}
 	
-	m_buffer.resize(0);
+	m_data.resize(0);
 }
 
 void* VertexBufferDynamicVBO::lock()
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
 	
-	m_lock = &m_buffer[0];
+	m_lock = &m_data[0];
 	return m_lock;
 }
 
@@ -180,7 +173,7 @@ void* VertexBufferDynamicVBO::lock(uint32_t vertexOffset, uint32_t vertexCount)
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
 
-	m_lock = &m_buffer[0];
+	m_lock = &m_data[0];
 	if (!m_lock)
 		return 0;
 
@@ -193,6 +186,7 @@ void VertexBufferDynamicVBO::unlock()
 
 	m_lock = 0;
 	m_dirty = true;
+	m_attributeLocs = 0;
 	
 	setContentValid(true);
 }
@@ -201,34 +195,45 @@ void VertexBufferDynamicVBO::activate(const GLint* attributeLocs)
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer still locked");
 
-	T_OGL_SAFE(glBindBufferARB(GL_ARRAY_BUFFER_ARB, m_name));
+	if (!m_array || attributeLocs != m_attributeLocs || m_dirty)
+	{
+		if (!m_array)
+			T_OGL_SAFE(glGenVertexArrays(1, &m_array));
+
+		T_OGL_SAFE(glBindVertexArray(m_array));
+		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
 	
-	if (m_dirty)
-	{
-		GLvoid* mapped = glMapBufferARB(GL_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
-		if (!mapped)
-			return;
+		if (m_dirty)
+		{
+			GLvoid* mapped = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
+			if (!mapped)
+				return;
+				
+			std::memcpy(mapped, &m_data[0], getBufferSize());
 			
-		std::memcpy(mapped, &m_buffer[0], getBufferSize());
-		
-		T_OGL_SAFE(glUnmapBufferARB(GL_ARRAY_BUFFER_ARB));
-		m_dirty = false;
+			T_OGL_SAFE(glUnmapBuffer(GL_ARRAY_BUFFER));
+			m_dirty = false;
+		}
+
+		for (int i = 0; i < T_OGL_MAX_USAGE_INDEX; ++i)
+		{
+			if (attributeLocs[i] == -1 || m_attributeDesc[i].size == 0)
+				continue;
+
+			T_OGL_SAFE(glEnableVertexAttribArray(attributeLocs[i]));
+			T_OGL_SAFE(glVertexAttribPointer(
+				attributeLocs[i],
+				m_attributeDesc[i].size,
+				m_attributeDesc[i].type,
+				m_attributeDesc[i].normalized,
+				m_vertexStride,
+				(GLvoid*)m_attributeDesc[i].offset
+			));
+		}
 	}
-
-	for (int i = 0; i < T_OGL_MAX_USAGE_INDEX; ++i)
+	else
 	{
-		if (attributeLocs[i] == -1 || m_attributeDesc[i].size == 0)
-			continue;
-
-		T_OGL_SAFE(glEnableVertexAttribArrayARB(attributeLocs[i]));
-		T_OGL_SAFE(glVertexAttribPointerARB(
-			attributeLocs[i],
-			m_attributeDesc[i].size,
-			m_attributeDesc[i].type,
-			m_attributeDesc[i].normalized,
-			m_vertexStride,
-			(GLvoid*)m_attributeDesc[i].offset
-		));
+		T_OGL_SAFE(glBindVertexArray(m_array));
 	}
 }
 

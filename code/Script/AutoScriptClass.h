@@ -15,16 +15,22 @@ namespace traktor
 
 struct T_NOVTABLE IConstructor
 {
+	virtual ~IConstructor() {}
+
 	virtual Ref< Object > construct(const Any* argv) const = 0;
 };
 
 struct T_NOVTABLE IMethod
 {
+	virtual ~IMethod() {}
+
 	virtual Any invoke(Object* object, const Any* argv) const = 0;
 };
 
 struct T_NOVTABLE IProperty
 {
+	virtual ~IProperty() {}
+
 	virtual Any get(const Object* object) const = 0;
 
 	virtual void set(Object* object, const Any& value) const = 0;

@@ -131,7 +131,23 @@ float InputDeviceMouseOsX::getControlValue(int32_t control)
 
 bool InputDeviceMouseOsX::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
-	return false;
+	int32_t index = c_mouseControlMap[control].index;
+	float dummy;
+	
+	if (index == -4)
+	{
+		outMin = 0.0f;
+		return getMouseRange(outMax, dummy);
+	}
+	else if (index == -5)
+	{
+		outMin = 0.0f;
+		return getMouseRange(dummy, outMax);
+	}
+	else
+		return false;
+		
+	return true;
 }
 
 bool InputDeviceMouseOsX::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
