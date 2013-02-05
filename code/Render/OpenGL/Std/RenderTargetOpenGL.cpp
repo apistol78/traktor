@@ -1,5 +1,4 @@
 #include "Render/OpenGL/Std/ContextOpenGL.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderTargetOpenGL.h"
 
 namespace traktor
@@ -46,8 +45,8 @@ void RenderTargetOpenGL::destroy()
 {
 	if (m_colorTexture)
 	{
-		//if (m_resourceContext)
-		//	m_resourceContext->deleteResource(new DeleteTextureCallback(m_colorTexture));
+		if (m_resourceContext)
+			m_resourceContext->deleteResource(new DeleteTextureCallback(m_colorTexture));
 		m_colorTexture = 0;
 	}
 }
@@ -81,12 +80,12 @@ void RenderTargetOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, 
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_colorTexture));
 	T_OGL_SAFE(glBindSampler(unit, sampler[0]));
-	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+	T_OGL_SAFE(glUniform1i(locationTexture, unit));
 }
 
 void RenderTargetOpenGL::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
+	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
 }
 
 	}

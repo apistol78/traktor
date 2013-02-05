@@ -186,7 +186,6 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 		ss << Endl;
 	}
 #else
-	ss << Endl;
 
 	if (m_shaderType == StVertex)
 	{
@@ -213,6 +212,15 @@ std::wstring GlslShader::getGeneratedShader(bool requireDerivatives, bool requir
 		ss << L"}" << Endl;
 		ss << Endl;
 	}
+	else
+	{
+		// Add fragment outputs.
+		ss << L"out vec4 _gl_FragData_0;" << Endl;
+		ss << L"out vec4 _gl_FragData_1;" << Endl;
+		ss << L"out vec4 _gl_FragData_2;" << Endl;
+		ss << L"out vec4 _gl_FragData_3;" << Endl;
+	}
+
 #endif
 
 #if defined(T_OPENGL_ES2)

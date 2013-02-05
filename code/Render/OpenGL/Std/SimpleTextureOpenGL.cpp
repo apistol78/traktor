@@ -4,7 +4,6 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
 namespace traktor
@@ -54,15 +53,6 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 {
 	m_width = desc.width;
 	m_height = desc.height;
-
-	if (!isLog2(m_width) || !isLog2(m_height))
-	{
-		if (!opengl_have_extension(E_GL_ARB_texture_non_power_of_two))
-		{
-			log::error << L"Cannot create non-power-of-2 texture; not supported by OpenGL driver" << Endl;
-			return false;
-		}
-	}
 
 	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
 		return false;
@@ -187,12 +177,12 @@ void SimpleTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit,
 	else
 		T_OGL_SAFE(glBindSampler(unit, sampler[0]));
 
-	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+	T_OGL_SAFE(glUniform1i(locationTexture, unit));
 }
 
 void SimpleTextureOpenGL::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
+	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(1.0f), GLfloat(1.0f)));
 }
 
 	}

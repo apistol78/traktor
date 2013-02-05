@@ -1,6 +1,5 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 #include "Render/OpenGL/Std/VolumeTextureOpenGL.h"
 
@@ -134,12 +133,12 @@ void VolumeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit,
 	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
 	T_OGL_SAFE(glBindSampler(unit, sampler[0]));
-	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+	T_OGL_SAFE(glUniform1i(locationTexture, unit));
 }
 
 void VolumeTextureOpenGL::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(m_depth), GLfloat(1.0f)));
+	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_width), GLfloat(m_height), GLfloat(m_depth), GLfloat(1.0f)));
 }
 
 	}

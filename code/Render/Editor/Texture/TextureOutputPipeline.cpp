@@ -375,7 +375,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_textureType == TtCube && textureOutput->m_generateSphereMap)
 	{
 		log::info << L"Generating sphere map..." << Endl;
-		const SphereMapFilter sphereMapFilter;
+		SphereMapFilter sphereMapFilter;
 		image = image->applyFilter(&sphereMapFilter);
 	}
 
@@ -398,7 +398,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_premultiplyAlpha)
 	{
 		log::info << L"Premultiply with alpha..." << Endl;
-		const drawing::PremultiplyAlphaFilter preAlphaFilter;
+		drawing::PremultiplyAlphaFilter preAlphaFilter;
 		image = image->applyFilter(&preAlphaFilter);
 	}
 

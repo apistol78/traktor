@@ -32,19 +32,17 @@ public:
 
 	virtual ~ContextOpenGL();
 
-	void share(ContextOpenGL* context);
-
 	void update();
 
 	void swapBuffers(bool waitVBlank);
 
 	void destroy();
 
-	GLhandleARB createShaderObject(const char* shader, GLenum shaderType);
+	GLuint createShaderObject(const char* shader, GLenum shaderType);
 
-	GLuint createStateList(const RenderStateOpenGL& renderState);
+	uint32_t createStateList(const RenderStateOpenGL& renderState);
 
-	void callStateList(GLuint listBase);
+	void callStateList(uint32_t listBase);
 
 	void setPermitDepth(bool permitDepth);
 
@@ -60,10 +58,12 @@ public:
 
 	virtual void deleteResources();
 
-#if defined(__APPLE__)
-	inline void* getGLContext() { return m_context; }
+#if defined(_WIN32)
+	HGLRC getGLRC() const { return m_hRC; }
+#elif defined(__APPLE__)
+	void* getGLContext() const { return m_context; }
 #elif defined(__LINUX__)
-	inline GLXContext getGLXContext() { return m_context; }
+	GLXContext getGLXContext() const { return m_context; }
 #endif
 
 private:
@@ -81,13 +81,14 @@ private:
 
 	static ThreadLocal ms_contextStack;
 	Semaphore m_lock;
-	std::map< uint32_t, GLhandleARB > m_shaderObjects;
-	std::map< uint32_t, GLuint > m_stateLists;
+	std::map< uint32_t, GLuint > m_shaderObjects;
+	std::map< uint32_t, uint32_t > m_stateListCache;
+	std::vector< RenderStateOpenGL > m_stateList;
 	std::vector< IDeleteCallback* > m_deleteResources;
 	int32_t m_width;
 	int32_t m_height;
 	bool m_permitDepth;
-	GLuint m_currentList;
+	uint32_t m_currentStateList;
 };
 
 	}

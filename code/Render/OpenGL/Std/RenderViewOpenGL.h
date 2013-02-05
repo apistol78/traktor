@@ -16,7 +16,6 @@ namespace traktor
 	namespace render
 	{
 
-class BlitHelper;
 class IndexBufferOpenGL;
 class ProgramOpenGL;
 class RenderSystemOpenGL;
@@ -42,8 +41,7 @@ public:
 		const RenderViewDesc desc,
 		Window* window,
 		ContextOpenGL* renderContext,
-		ContextOpenGL* resourceContext,
-		BlitHelper* blitHelper
+		ContextOpenGL* resourceContext
 	);
 
 #elif defined(__APPLE__)
@@ -52,8 +50,7 @@ public:
 		const RenderViewDesc desc,
 		void* windowHandle,
 		ContextOpenGL* renderContext,
-		ContextOpenGL* resourceContext,
-		BlitHelper* blitHelper
+		ContextOpenGL* resourceContext
 	);
 
 #elif defined(__LINUX__)
@@ -62,8 +59,7 @@ public:
 		const RenderViewDesc desc,
 		Window* window,
 		ContextOpenGL* renderContext,
-		ContextOpenGL* resourceContext,
-		BlitHelper* blitHelper
+		ContextOpenGL* resourceContext
 	);
 
 #endif
@@ -138,7 +134,6 @@ private:
 #endif
 	Ref< ContextOpenGL > m_renderContext;
 	Ref< ContextOpenGL > m_resourceContext;
-	Ref< BlitHelper > m_blitHelper;
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
 	bool m_cursorVisible;

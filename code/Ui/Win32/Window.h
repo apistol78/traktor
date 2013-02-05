@@ -15,6 +15,7 @@
 #include <map>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Ui/Win32/SmartHandle.h"
 
 namespace traktor
 {
@@ -103,7 +104,7 @@ public:
 
 private:
 	HWND m_hWnd;
-	HFONT m_hFont;
+	SmartFont m_hFont;
 	WNDPROC m_originalWndProc;
 	std::map< UINT, Ref< IMessageHandler > > m_messageHandlers;
 

@@ -1,5 +1,5 @@
-#include "Ui/Win32/Window.h"
 #include "Core/Log/Log.h"
+#include "Ui/Win32/Window.h"
 
 extern HINSTANCE g_hInstance;
 
@@ -20,7 +20,6 @@ namespace traktor
 
 Window::Window()
 :	m_hWnd(0)
-,	m_hFont(0)
 ,	m_originalWndProc(0)
 {
 }
@@ -31,10 +30,6 @@ Window::~Window()
 		SET_WINDOW_LONG_PTR(m_hWnd, GWLP_WNDPROC, (LONG_PTR)m_originalWndProc);
 
 	SET_WINDOW_LONG_PTR(m_hWnd, GWLP_USERDATA, (LONG_PTR)0);
-
-#if !defined(WINCE)
-	DeleteObject(m_hFont);
-#endif
 
 	DestroyWindow(m_hWnd);
 }
@@ -101,7 +96,7 @@ bool Window::create(
 #else
 	m_hFont = (HFONT)GetStockObject(SYSTEM_FONT);
 #endif
-	SendMessage(m_hWnd, WM_SETFONT, (WPARAM)m_hFont, FALSE);
+	SendMessage(m_hWnd, WM_SETFONT, (WPARAM)m_hFont.getHandle(), FALSE);
 
 	return true;
 }
@@ -121,18 +116,13 @@ bool Window::subClass(HWND hWnd)
 
 void Window::setFont(HFONT hFont)
 {
-	HFONT hOldFont = m_hFont;
-
+	sendMessage(WM_SETFONT, (WPARAM)hFont, TRUE);
 	m_hFont = hFont;
-	sendMessage(WM_SETFONT, (WPARAM)m_hFont, TRUE);
-
-	if (hOldFont)
-		DeleteObject(hOldFont);
 }
 
 HFONT Window::getFont() const
 {
-	return m_hFont;
+	return m_hFont.getHandle();
 }
 
 LRESULT Window::sendMessage(UINT message, WPARAM wParam, LPARAM lParam) const

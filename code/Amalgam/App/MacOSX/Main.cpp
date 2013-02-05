@@ -138,9 +138,9 @@ int main(int argc, const char** argv)
 		Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 		Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
 
-		log::info   .setTarget(logTarget);
-		log::warning.setTarget(logTarget);
-		log::error  .setTarget(logTarget);
+		log::info   .setTarget(new LogDualTarget(logTarget, log::info   .getTarget()));
+		log::warning.setTarget(new LogDualTarget(logTarget, log::warning.getTarget()));
+		log::error  .setTarget(new LogDualTarget(logTarget, log::error  .getTarget()));
 
 		log::info << L"Log file \"Application.log\" created" << Endl;
 	}

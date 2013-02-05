@@ -2,11 +2,11 @@
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
-#include "Render/OpenGL/Std/Extensions.h"
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
@@ -21,7 +21,7 @@ namespace traktor
 
 typedef RefArray< ContextOpenGL > context_stack_t;
 
-#if !defined(__APPLE__)
+#if !defined(__LINUX__) && !defined(__APPLE__)
 void APIENTRY debugCallbackARB(GLenum source, GLenum type, GLuint id, GLenum severity, GLsizei length, const GLchar *message, GLvoid *userParam)
 {
 #	if !defined(_DEBUG)
@@ -68,7 +68,7 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
-,	m_currentList(0)
+,	m_currentStateList(~0UL)
 
 #elif defined(__APPLE__)
 
@@ -77,7 +77,7 @@ ContextOpenGL::ContextOpenGL(void* context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
-,	m_currentList(0)
+,	m_currentStateList(~0UL)
 
 #elif defined(__LINUX__)
 
@@ -88,7 +88,7 @@ ContextOpenGL::ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext 
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
-,	m_currentList(0)
+,	m_currentStateList(~0UL)
 
 #endif
 {
@@ -103,14 +103,6 @@ ContextOpenGL::~ContextOpenGL()
 	T_ASSERT (!m_context);
 #elif defined(__LINUX__)
 	T_ASSERT (!m_context);
-#endif
-}
-
-void ContextOpenGL::share(ContextOpenGL* context)
-{
-#if defined(_WIN32)
-	wglShareLists(context->m_hRC, m_hRC);
-	wglShareLists(m_hRC, context->m_hRC);
 #endif
 }
 
@@ -213,7 +205,7 @@ bool ContextOpenGL::enter()
 		ms_contextStack.set(stack);
 	}
 
-#if !defined(__APPLE__)
+#if !defined(__LINUX__) && !defined(__APPLE__)
 	if (glDebugMessageCallbackARB)
 	{
 		T_OGL_SAFE(glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, GL_TRUE));
@@ -288,7 +280,7 @@ void ContextOpenGL::leave()
 	m_lock.release();
 }
 
-GLhandleARB ContextOpenGL::createShaderObject(const char* shader, GLenum shaderType)
+GLuint ContextOpenGL::createShaderObject(const char* shader, GLenum shaderType)
 {
 	char errorBuf[32000];
 	GLsizei errorBufLen;
@@ -301,18 +293,18 @@ GLhandleARB ContextOpenGL::createShaderObject(const char* shader, GLenum shaderT
 
 	uint32_t hash = adler.get();
 
-	std::map< uint32_t, GLhandleARB >::const_iterator i = m_shaderObjects.find(hash);
+	std::map< uint32_t, GLuint >::const_iterator i = m_shaderObjects.find(hash);
 	if (i != m_shaderObjects.end())
 		return i->second;
 
-	GLhandleARB shaderObject = glCreateShaderObjectARB(shaderType);
-	T_OGL_SAFE(glShaderSourceARB(shaderObject, 1, &shader, NULL));
-	T_OGL_SAFE(glCompileShaderARB(shaderObject));
+	GLuint shaderObject = glCreateShader(shaderType);
+	T_OGL_SAFE(glShaderSource(shaderObject, 1, &shader, NULL));
+	T_OGL_SAFE(glCompileShader(shaderObject));
 
-	T_OGL_SAFE(glGetObjectParameterivARB(shaderObject, GL_OBJECT_COMPILE_STATUS_ARB, &status));
+	T_OGL_SAFE(glGetShaderiv(shaderObject, GL_COMPILE_STATUS, &status));
 	if (status != 1)
 	{
-		T_OGL_SAFE(glGetInfoLogARB(shaderObject, sizeof(errorBuf), &errorBufLen, errorBuf));
+		T_OGL_SAFE(glGetShaderInfoLog(shaderObject, sizeof(errorBuf), &errorBufLen, errorBuf));
 		if (errorBufLen > 0)
 		{
 			log::error << L"GLSL shader compile failed :" << Endl;
@@ -327,7 +319,7 @@ GLhandleARB ContextOpenGL::createShaderObject(const char* shader, GLenum shaderT
 	return shaderObject;
 }
 
-GLuint ContextOpenGL::createStateList(const RenderStateOpenGL& renderState)
+uint32_t ContextOpenGL::createStateList(const RenderStateOpenGL& renderState)
 {
 	Adler32 adler;
 	adler.feed(renderState.cullFaceEnable);
@@ -348,92 +340,82 @@ GLuint ContextOpenGL::createStateList(const RenderStateOpenGL& renderState)
 	adler.feed(renderState.stencilOpZFail);
 	adler.feed(renderState.stencilOpZPass);
 
-	std::map< uint32_t, GLuint >::iterator i = m_stateLists.find(adler.get());
-	if (i != m_stateLists.end())
+	std::map< uint32_t, uint32_t >::iterator i = m_stateListCache.find(adler.get());
+	if (i != m_stateListCache.end())
 		return i->second;
 
-	GLuint listBase = glGenLists(2);
+	uint32_t list = m_stateList.size();
 
-	for (uint32_t i = 0; i < 2; ++i)
-	{
-		bool permitDepth = bool(i == 0);
-		bool invertCull = true;
+	m_stateList.push_back(renderState);
+	if (m_stateList.back().cullFace == GL_FRONT)
+		m_stateList.back().cullFace = GL_BACK;
+	else
+		m_stateList.back().cullFace = GL_FRONT;
 
-		RenderStateOpenGL rs = renderState;
-		if (!permitDepth)
-		{
-			rs.depthTestEnable = GL_FALSE;
-			rs.depthMask = GL_FALSE;
-			rs.stencilTestEnable = GL_FALSE;
-		}
+	m_stateList.push_back(renderState);
+	if (m_stateList.back().cullFace == GL_FRONT)
+		m_stateList.back().cullFace = GL_BACK;
+	else
+		m_stateList.back().cullFace = GL_FRONT;
 
-		if (invertCull)
-		{
-			if (rs.cullFace == GL_FRONT)
-				rs.cullFace = GL_BACK;
-			else
-				rs.cullFace = GL_FRONT;
-		}
+	RenderStateOpenGL& rs = m_stateList.back();
 
-		glNewList(listBase + i, GL_COMPILE);
+	rs.depthTestEnable = GL_FALSE;
+	rs.depthMask = GL_FALSE;
+	rs.stencilTestEnable = GL_FALSE;
 
-		if (rs.cullFaceEnable)
-			{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
-		else
-			{ T_OGL_SAFE(glDisable(GL_CULL_FACE)); }
-
-		T_OGL_SAFE(glCullFace(rs.cullFace));
-
-		if (rs.blendEnable)
-			{ T_OGL_SAFE(glEnable(GL_BLEND)); }
-		else
-			{ T_OGL_SAFE(glDisable(GL_BLEND)); }
-
-		T_OGL_SAFE(glBlendFunc(rs.blendFuncSrc, rs.blendFuncDest));
-		T_OGL_SAFE(glBlendEquationEXT(rs.blendEquation));
-
-		if (rs.depthTestEnable && permitDepth)
-			{ T_OGL_SAFE(glEnable(GL_DEPTH_TEST)); }
-		else
-			{ T_OGL_SAFE(glDisable(GL_DEPTH_TEST)); }
-
-		T_OGL_SAFE(glDepthFunc(rs.depthFunc));
-
-		if (permitDepth)
-			{ T_OGL_SAFE(glDepthMask(rs.depthMask)); }
-		else
-			{ T_OGL_SAFE(glDepthMask(GL_FALSE)); }
-
-		T_OGL_SAFE(glColorMask(
-			(rs.colorMask & RenderStateOpenGL::CmRed) ? GL_TRUE : GL_FALSE,
-			(rs.colorMask & RenderStateOpenGL::CmGreen) ? GL_TRUE : GL_FALSE,
-			(rs.colorMask & RenderStateOpenGL::CmBlue) ? GL_TRUE : GL_FALSE,
-			(rs.colorMask & RenderStateOpenGL::CmAlpha) ? GL_TRUE : GL_FALSE
-		));
-
-		if (rs.stencilTestEnable)
-			{ T_OGL_SAFE(glEnable(GL_STENCIL_TEST)); }
-		else
-			{ T_OGL_SAFE(glDisable(GL_STENCIL_TEST)); }
-
-		T_OGL_SAFE(glStencilMask(~0UL));
-		T_OGL_SAFE(glStencilOp(rs.stencilOpFail, rs.stencilOpZFail, rs.stencilOpZPass));
-
-		glEndList();
-	}
-
-	m_stateLists[adler.get()] = listBase;
-	return listBase;
+	m_stateListCache.insert(std::make_pair(adler.get(), list));
+	return list;
 }
 
-void ContextOpenGL::callStateList(GLuint listBase)
+void ContextOpenGL::callStateList(uint32_t listBase)
 {
-	GLuint list = listBase + (m_permitDepth ? 0 : 1);
-	if (list != m_currentList)
-	{
-		glCallList(list);
-		m_currentList = list;
-	}
+	uint32_t list = listBase + (m_permitDepth ? 0 : 1);
+	if (list == m_currentStateList)
+		return;
+
+	T_ASSERT (list < m_stateList.size());
+	RenderStateOpenGL& rs = m_stateList[list];
+
+	if (rs.cullFaceEnable)
+		{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
+	else
+		{ T_OGL_SAFE(glDisable(GL_CULL_FACE)); }
+
+	T_OGL_SAFE(glCullFace(rs.cullFace));
+
+	if (rs.blendEnable)
+		{ T_OGL_SAFE(glEnable(GL_BLEND)); }
+	else
+		{ T_OGL_SAFE(glDisable(GL_BLEND)); }
+
+	T_OGL_SAFE(glBlendFunc(rs.blendFuncSrc, rs.blendFuncDest));
+	T_OGL_SAFE(glBlendEquation(rs.blendEquation));
+
+	if (rs.depthTestEnable)
+		{ T_OGL_SAFE(glEnable(GL_DEPTH_TEST)); }
+	else
+		{ T_OGL_SAFE(glDisable(GL_DEPTH_TEST)); }
+
+	T_OGL_SAFE(glDepthFunc(rs.depthFunc));
+	T_OGL_SAFE(glDepthMask(rs.depthMask));
+
+	T_OGL_SAFE(glColorMask(
+		(rs.colorMask & RenderStateOpenGL::CmRed) ? GL_TRUE : GL_FALSE,
+		(rs.colorMask & RenderStateOpenGL::CmGreen) ? GL_TRUE : GL_FALSE,
+		(rs.colorMask & RenderStateOpenGL::CmBlue) ? GL_TRUE : GL_FALSE,
+		(rs.colorMask & RenderStateOpenGL::CmAlpha) ? GL_TRUE : GL_FALSE
+	));
+
+	if (rs.stencilTestEnable)
+		{ T_OGL_SAFE(glEnable(GL_STENCIL_TEST)); }
+	else
+		{ T_OGL_SAFE(glDisable(GL_STENCIL_TEST)); }
+
+	T_OGL_SAFE(glStencilMask(~0UL));
+	T_OGL_SAFE(glStencilOp(rs.stencilOpFail, rs.stencilOpZFail, rs.stencilOpZPass));
+
+	m_currentStateList = list;
 }
 
 void ContextOpenGL::setPermitDepth(bool permitDepth)

@@ -1,6 +1,5 @@
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/IndexBufferIBO.h"
-#include "Render/OpenGL/Std/Extensions.h"
 
 namespace traktor
 {
@@ -20,7 +19,7 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 
 	virtual void deleteResource()
 	{
-		T_OGL_SAFE(glDeleteBuffersARB(1, &m_bufferName));
+		T_OGL_SAFE(glDeleteBuffers(1, &m_bufferName));
 		delete this;
 	}
 };
@@ -34,9 +33,9 @@ IndexBufferIBO::IndexBufferIBO(IContext* resourceContext, IndexType indexType, u
 ,	m_resourceContext(resourceContext)
 ,	m_locked(false)
 {
-	T_OGL_SAFE(glGenBuffersARB(1, &m_name));
-	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
-	T_OGL_SAFE(glBufferDataARB(GL_ELEMENT_ARRAY_BUFFER_ARB, bufferSize, 0, dynamic ? GL_DYNAMIC_DRAW_ARB : GL_STATIC_DRAW_ARB));
+	T_OGL_SAFE(glGenBuffers(1, &m_name));
+	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
+	T_OGL_SAFE(glBufferData(GL_ELEMENT_ARRAY_BUFFER, bufferSize, 0, dynamic ? GL_DYNAMIC_DRAW : GL_STATIC_DRAW));
 }
 
 IndexBufferIBO::~IndexBufferIBO()
@@ -60,9 +59,9 @@ void* IndexBufferIBO::lock()
 	T_ASSERT_M (!m_locked, L"Index buffer already locked");
 	
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
+	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
 
-	void* ptr = glMapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, GL_WRITE_ONLY_ARB);
+	void* ptr = glMapBuffer(GL_ELEMENT_ARRAY_BUFFER, GL_WRITE_ONLY);
 	if (ptr)
 		m_locked = true;
 
@@ -74,15 +73,15 @@ void IndexBufferIBO::unlock()
 	T_ASSERT_M (m_locked, L"Index buffer not locked");
 
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
-	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
-	T_OGL_SAFE(glUnmapBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB));
+	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
+	T_OGL_SAFE(glUnmapBuffer(GL_ELEMENT_ARRAY_BUFFER));
 
 	m_locked = false;
 }
 
 void IndexBufferIBO::bind()
 {
-	T_OGL_SAFE(glBindBufferARB(GL_ELEMENT_ARRAY_BUFFER_ARB, m_name));
+	T_OGL_SAFE(glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, m_name));
 }
 
 const GLvoid* IndexBufferIBO::getIndexData() const

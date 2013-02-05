@@ -13,6 +13,8 @@ template
 class ISpline
 {
 public:
+	virtual ~ISpline() {}
+
 	virtual Value evaluate(const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f)) const = 0;
 };
 

@@ -76,7 +76,7 @@ private:
 	};
 
 	Ref< ContextOpenGL > m_resourceContext;
-	GLhandleARB m_program;
+	GLuint m_program;
 	RenderStateOpenGL m_renderState;
 	GLuint m_renderStateList;
 	GLint m_locationTargetSize;
@@ -91,7 +91,7 @@ private:
 	bool m_textureDirty;
 	static ProgramOpenGL* ms_activeProgram;
 	
-	ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, GLuint renderStateList, const ProgramResource* resource);
+	ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource);
 };
 
 	}

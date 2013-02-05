@@ -9,7 +9,6 @@
 #include "Render/OpenGL/GlslProgram.h"
 #include "Render/OpenGL/ITextureBinding.h"
 #include "Render/OpenGL/ProgramResourceOpenGL.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
 #include "Render/OpenGL/Std/SimpleTextureOpenGL.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
@@ -24,18 +23,18 @@ namespace traktor
 		namespace
 		{
 
-struct DeleteObjectCallback : public IContext::IDeleteCallback
+struct DeleteProgramCallback : public IContext::IDeleteCallback
 {
-	GLhandleARB m_objectName;
+	GLuint m_programName;
 
-	DeleteObjectCallback(GLhandleARB objectName)
-	:	m_objectName(objectName)
+	DeleteProgramCallback(GLuint programName)
+	:	m_programName(programName)
 	{
 	}
 
 	virtual void deleteResource()
 	{
-		T_OGL_SAFE(glDeleteObjectARB(m_objectName));
+		T_OGL_SAFE(glDeleteProgram(m_programName));
 		delete this;
 	}
 };
@@ -136,31 +135,37 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 	const std::string& vertexShader = resourceOpenGL->getVertexShader();
 	const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
 
-	GLhandleARB vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER_ARB);
+	GLuint vertexObject = resourceContext->createShaderObject(vertexShader.c_str(), GL_VERTEX_SHADER);
 	if (!vertexObject)
 	{
 		log::error << L"Unable to create vertex object" << Endl;
 		return 0;
 	}
 		
-	GLhandleARB fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER_ARB);
+	GLuint fragmentObject = resourceContext->createShaderObject(fragmentShader.c_str(), GL_FRAGMENT_SHADER);
 	if (!fragmentObject)
 	{
 		log::error << L"Unable to create fragment object" << Endl;
 		return 0;
 	}
 
-	GLhandleARB programObject = glCreateProgramObjectARB();
+	GLuint programObject = glCreateProgram();
 	T_ASSERT (programObject != 0);
 
-	T_OGL_SAFE(glAttachObjectARB(programObject, vertexObject));
-	T_OGL_SAFE(glAttachObjectARB(programObject, fragmentObject));
-	T_OGL_SAFE(glLinkProgramARB(programObject));
+	T_OGL_SAFE(glAttachShader(programObject, vertexObject));
+	T_OGL_SAFE(glAttachShader(programObject, fragmentObject));
 
-	T_OGL_SAFE(glGetObjectParameterivARB(programObject, GL_OBJECT_LINK_STATUS_ARB, &status));
+	T_OGL_SAFE(glBindFragDataLocation(programObject, 0, "_gl_FragData_0"));
+	T_OGL_SAFE(glBindFragDataLocation(programObject, 1, "_gl_FragData_1"));
+	T_OGL_SAFE(glBindFragDataLocation(programObject, 2, "_gl_FragData_2"));
+	T_OGL_SAFE(glBindFragDataLocation(programObject, 3, "_gl_FragData_3"));
+
+	T_OGL_SAFE(glLinkProgram(programObject));
+
+	T_OGL_SAFE(glGetProgramiv(programObject, GL_LINK_STATUS, &status));
 	if (status != GL_TRUE)
 	{
-		T_OGL_SAFE(glGetInfoLogARB(programObject, sizeof(errorBuf), &errorBufLen, errorBuf));
+		T_OGL_SAFE(glGetProgramInfoLog(programObject, sizeof(errorBuf), &errorBufLen, errorBuf));
 		if (errorBufLen > 0)
 		{
 			log::error << L"GLSL program link failed :" << Endl;
@@ -168,10 +173,8 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 			return 0;
 		}
 	}
-
-	GLuint renderStateList = resourceContext->createStateList(resourceOpenGL->getRenderState());
-
-	Ref< ProgramOpenGL > program = new ProgramOpenGL(resourceContext, programObject, renderStateList, resource);
+	
+	Ref< ProgramOpenGL > program = new ProgramOpenGL(resourceContext, programObject, resource);
 	s_programCache.insert(std::make_pair(hash, program));
 	
 	return program;
@@ -194,7 +197,7 @@ void ProgramOpenGL::destroy()
 	if (m_program)
 	{
 		if (m_resourceContext)
-			m_resourceContext->deleteResource(new DeleteObjectCallback(m_program));
+			m_resourceContext->deleteResource(new DeleteProgramCallback(m_program));
 		m_program = 0;
 	}
 }
@@ -284,9 +287,12 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 		return false;
 
 	// Bind program.
-	T_OGL_SAFE(glUseProgramObjectARB(m_program));
+	T_OGL_SAFE(glUseProgram(m_program));
 
 	// Setup our render state.
+	if (m_renderStateList == ~0UL)
+		m_renderStateList = renderContext->createStateList(m_renderState);
+
 	renderContext->callStateList(m_renderStateList);
 	if (m_renderState.stencilTestEnable)
 	{
@@ -307,15 +313,15 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 		switch (i->type)
 		{
 		case GL_FLOAT:
-			T_OGL_SAFE(glUniform1fvARB(i->location, i->length, uniformData));
+			T_OGL_SAFE(glUniform1fv(i->location, i->length, uniformData));
 			break;
 
-		case GL_FLOAT_VEC4_ARB:
-			T_OGL_SAFE(glUniform4fvARB(i->location, i->length, uniformData));
+		case GL_FLOAT_VEC4:
+			T_OGL_SAFE(glUniform4fv(i->location, i->length, uniformData));
 			break;
 
-		case GL_FLOAT_MAT4_ARB:
-			T_OGL_SAFE(glUniformMatrix4fvARB(i->location, i->length, GL_FALSE, uniformData));
+		case GL_FLOAT_MAT4:
+			T_OGL_SAFE(glUniformMatrix4fv(i->location, i->length, GL_FALSE, uniformData));
 			break;
 
 		default:
@@ -330,7 +336,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	{
 		if (m_targetSize[0] != targetSize[0] || m_targetSize[1] != targetSize[1])
 		{
-			T_OGL_SAFE(glUniform2fvARB(m_locationTargetSize, 1, targetSize));
+			T_OGL_SAFE(glUniform2fv(m_locationTargetSize, 1, targetSize));
 			m_targetSize[0] = targetSize[0];
 			m_targetSize[1] = targetSize[1];
 		}
@@ -376,16 +382,16 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	}
 
 	// Check if program and state is valid.
- #if defined(_DEBUG)
+#if defined(_DEBUG)
 	GLint status;
-	T_OGL_SAFE(glValidateProgramARB(m_program));
-	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_VALIDATE_STATUS_ARB, &status));
+	T_OGL_SAFE(glValidateProgram(m_program));
+	T_OGL_SAFE(glGetProgramiv(m_program, GL_VALIDATE_STATUS, &status));
 	if (status != GL_TRUE)
 	{
 		GLchar errorBuf[512];
 		GLint errorBufLen;
 		
-		T_OGL_SAFE(glGetInfoLogARB(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
+		T_OGL_SAFE(glGetProgramInfoLog(m_program, sizeof(errorBuf), &errorBufLen, errorBuf));
 		if (errorBufLen > 0)
 		{
 			log::error << L"GLSL program validate failed :" << Endl;
@@ -393,7 +399,7 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 			return false;
 		}
 	}
- #endif
+#endif
 
 	ms_activeProgram = this;
 	return true;
@@ -404,10 +410,10 @@ const GLint* ProgramOpenGL::getAttributeLocs() const
 	return m_attributeLocs;
 }
 
-ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program, GLuint renderStateList, const ProgramResource* resource)
+ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource)
 :	m_resourceContext(resourceContext)
 ,	m_program(program)
-,	m_renderStateList(renderStateList)
+,	m_renderStateList(~0UL)
 ,	m_locationTargetSize(0)
 ,	m_textureDirty(true)
 {
@@ -419,7 +425,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 	m_renderState = resourceOpenGL->getRenderState();
 
 	// Get target size parameter.
-	m_locationTargetSize = glGetUniformLocationARB(m_program, "_gl_targetSize");
+	m_locationTargetSize = glGetUniformLocation(m_program, "_gl_targetSize");
 
 	const std::vector< std::wstring >& textures = resourceOpenGL->getTextures();
 	const std::vector< SamplerBindingOpenGL >& samplers = resourceOpenGL->getSamplers();
@@ -440,7 +446,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 		std::wstring samplerName = L"_gl_sampler_" + texture + L"_" + toString(i->stage);
 		
 		Sampler sampler;
-		sampler.location = glGetUniformLocationARB(m_program, wstombs(samplerName).c_str());
+		sampler.location = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];
 		sampler.stage = i->stage;
 
@@ -473,7 +479,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 		const std::wstring& texture = *i;
 		std::wstring textureSizeName = L"_gl_textureSize_" + texture;
 
-		GLint location = glGetUniformLocationARB(m_program, wstombs(textureSizeName).c_str());
+		GLint location = glGetUniformLocation(m_program, wstombs(textureSizeName).c_str());
 		if (location <= 0)
 			continue;
 
@@ -494,15 +500,15 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 
 	// Map samplers and uniforms.
 	GLint uniformCount;
-	T_OGL_SAFE(glGetObjectParameterivARB(m_program, GL_OBJECT_ACTIVE_UNIFORMS_ARB, &uniformCount));
+	T_OGL_SAFE(glGetProgramiv(m_program, GL_ACTIVE_UNIFORMS, &uniformCount));
 
 	for (GLint j = 0; j < uniformCount; ++j)
 	{
 		GLint uniformSize;
 		GLenum uniformType;
-		GLcharARB uniformName[256];
+		GLchar uniformName[256];
 
-		T_OGL_SAFE(glGetActiveUniformARB(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
+		T_OGL_SAFE(glGetActiveUniform(m_program, j, sizeof(uniformName), 0, &uniformSize, &uniformType, uniformName));
 		std::wstring uniformNameW = mbstows(uniformName);
 		
 		// Skip uniforms which starts with _gl_ as they are private.
@@ -514,7 +520,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 		if (p != uniformNameW.npos)
 			uniformNameW = uniformNameW.substr(0, p);
 
-		if (uniformType == GL_FLOAT || uniformType == GL_FLOAT_VEC4_ARB || uniformType == GL_FLOAT_MAT4_ARB)
+		if (uniformType == GL_FLOAT || uniformType == GL_FLOAT_VEC4 || uniformType == GL_FLOAT_MAT4)
 		{
 			handle_t handle = getParameterHandle(uniformNameW);
 			
@@ -539,11 +545,11 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 				allocSize = alignUp(1 * uniformSize, 4);
 				break;
 
-			case GL_FLOAT_VEC4_ARB:
+			case GL_FLOAT_VEC4:
 				allocSize = 4 * uniformSize;
 				break;
 
-			case GL_FLOAT_MAT4_ARB:
+			case GL_FLOAT_MAT4:
 				allocSize = 16 * uniformSize;
 				break;
 
@@ -557,7 +563,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 			m_parameterMap[handle] = offsetUniform;
 
 			m_uniforms.push_back(Uniform());
-			m_uniforms.back().location = glGetUniformLocationARB(m_program, uniformName);
+			m_uniforms.back().location = glGetUniformLocation(m_program, uniformName);
 			m_uniforms.back().type = uniformType;
 			m_uniforms.back().offset = offsetData;
 			m_uniforms.back().length = uniformSize;
@@ -572,12 +578,12 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLhandleARB program
 
 	for (int j = 0; j < T_OGL_MAX_INDEX; ++j)
 	{
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuPosition, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuPosition, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuNormal, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuNormal, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuTangent, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuTangent, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuBinormal, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuBinormal, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuColor, j)).c_str());
-		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocationARB(m_program, wstombs(glsl_vertex_attr_name(DuCustom, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuPosition, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuPosition, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuNormal, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuNormal, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuTangent, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuTangent, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuBinormal, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuBinormal, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuColor, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuColor, j)).c_str());
+		m_attributeLocs[T_OGL_USAGE_INDEX(DuCustom, j)] = glGetAttribLocation(m_program, wstombs(glsl_vertex_attr_name(DuCustom, j)).c_str());
 	}
 }
 

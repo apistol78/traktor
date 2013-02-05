@@ -37,6 +37,8 @@ public:
 		,	orientation(Vector4::zero())
 		{
 		}
+		
+		virtual ~Frame() {}
 
 		Transform transform() const;
 
@@ -54,6 +56,8 @@ public:
 		,	tcb(0.0f, 0.0f, 0.0f, 0.0f)
 		{
 		}
+		
+		virtual ~Key() {}
 
 		bool serialize(ISerializer& s);
 	};

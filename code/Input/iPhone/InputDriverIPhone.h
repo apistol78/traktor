@@ -1,6 +1,7 @@
 #ifndef traktor_input_InputDriverIPhone_H
 #define traktor_input_InputDriverIPhone_H
 
+#include "Core/Platform.h"
 #include "Input/IInputDriver.h"
 
 // import/export mechanism.
@@ -25,7 +26,7 @@ class T_DLLCLASS InputDriverIPhone : public IInputDriver
 public:
 	InputDriverIPhone();
 	
-	bool create(void* nativeWindowHandle);
+	bool create(const SystemWindow& systemWindow);
 	
 	virtual int getDeviceCount();
 	

@@ -889,7 +889,7 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 			continue;
 
 		StringOutputStream& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
-		fpb << L"gl_FragData[" << i << L"] = " << in[i]->cast(GtFloat4) << L";" << Endl;
+		fpb << L"_gl_FragData_" << i << L" = " << in[i]->cast(GtFloat4) << L";" << Endl;
 	}
 
 	uint32_t colorMask =
@@ -1735,7 +1735,7 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 		std::wstring attributeName = glsl_vertex_attr_name(node->getDataUsage(), node->getIndex());
 
 		StringOutputStream& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
-		fi << L"attribute " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
+		fi << L"in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
 
 		if (node->getDataUsage() == DuPosition && type != GtFloat4)
 		{

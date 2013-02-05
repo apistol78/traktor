@@ -21,51 +21,51 @@ template < typename HandleType, typename DeletePolicy >
 class SmartHandle
 {
 public:
-	SmartHandle() :
-		m_h(0)
+	SmartHandle()
+	:	m_object(0)
 	{
 	}
 
-	SmartHandle(HandleType h) :
-		m_h(h)
+	SmartHandle(HandleType h)
+	:	m_object(h)
 	{
 	}
 
 	~SmartHandle()
 	{
-		if (m_h)
-			DeletePolicy::deleteObject(m_h);
+		if (m_object)
+			DeletePolicy::deleteObject(m_object);
 	}
 
 	SmartHandle& operator = (HandleType h)
 	{
-		if (m_h)
-			DeletePolicy::deleteObject(m_h);
-		m_h = h;
+		if (m_object)
+			DeletePolicy::deleteObject(m_object);
+		m_object = h;
 		return *this;
 	}
 
 	SmartHandle& operator = (SmartHandle& sh)
 	{
-		if (m_h)
-			DeletePolicy::deleteObject(m_h);
-		m_h = sh.m_h;
-		sh.m_h = NULL;
+		if (m_object)
+			DeletePolicy::deleteObject(m_object);
+		m_object = sh.m_object;
+		sh.m_object = NULL;
 		return *this;
 	}
 
 	HandleType getHandle() const
 	{
-		return m_h;
+		return m_object;
 	}
 
 	operator HandleType ()
 	{
-		return m_h;
+		return m_object;
 	}
 
 private:
-	HandleType m_h;
+	HandleType m_object;
 };
 
 typedef SmartHandle< HFONT,	GdiDeleteObjectPolicy >	SmartFont;

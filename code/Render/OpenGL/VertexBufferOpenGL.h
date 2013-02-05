@@ -2,6 +2,7 @@
 #define traktor_render_VertexBufferOpenGL_H
 
 #include "Render/VertexBuffer.h"
+#include "Render/OpenGL/Platform.h"
 
 namespace traktor
 {

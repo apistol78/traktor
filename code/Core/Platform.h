@@ -41,6 +41,15 @@ namespace traktor
 		{
 		}
 
+#elif defined(__APPLE__)
+
+		void* view;
+		
+		SystemWindow()
+		:	view(0)
+		{
+		}
+
 #else
 		void* unk;
 

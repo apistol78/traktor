@@ -23,22 +23,17 @@
 #		define _WIN32_LEAN_AND_MEAN
 #		include <windows.h>
 #		include <tchar.h>
-#		include <gl/gl.h>
-#		include <gl/glu.h>
-#		include <gl/glext.h>
-#		include <gl/wglext.h>
+#		include <GL/glew.h>
+#		include <GL/wglew.h>
 #	elif defined(__APPLE__)
-#		include <OpenGL/gl.h>
-#		include <OpenGL/glu.h>
-#		include <OpenGL/glext.h>
+#		include <OpenGL/gl3.h>
+#		include <OpenGL/gl3ext.h>
 #	else	// LINUX
 #		if !defined(GLX_GLXEXT_LEGACY)
 #			define GLX_GLXEXT_LEGACY
 #		endif
-#		include <GL/gl.h>
-#		include <GL/glu.h>
-#		include <GL/glext.h>
-#		include <GL/glx.h>
+#		include <GL/glew.h>
+#		include <GL/glxew.h>
 #	endif
 #elif defined(T_OPENGL_ES2)
 #	if TARGET_OS_IPHONE || TARGET_OS_IPAD

@@ -2,7 +2,6 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/Std/ContextOpenGL.h"
 #include "Render/OpenGL/Std/CubeTextureOpenGL.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/UtilitiesOpenGL.h"
 
 namespace traktor
@@ -25,12 +24,12 @@ const GLenum c_cubeFaces[] =
 #else
 const GLenum c_cubeFaces[] =
 {
-	GL_TEXTURE_CUBE_MAP_POSITIVE_X_ARB,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_X_ARB,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Y_ARB,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y_ARB,
-	GL_TEXTURE_CUBE_MAP_POSITIVE_Z_ARB,
-	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z_ARB
+	GL_TEXTURE_CUBE_MAP_POSITIVE_X,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_X,
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Y,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Y,
+	GL_TEXTURE_CUBE_MAP_POSITIVE_Z,
+	GL_TEXTURE_CUBE_MAP_NEGATIVE_Z
 };
 #endif
 
@@ -85,7 +84,7 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 	if (desc.immutable)
 	{
 		T_OGL_SAFE(glPixelStorei(GL_UNPACK_ALIGNMENT, 1));
-		T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP_ARB, m_textureName));
+		T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
 
 		for (int face = 0; face < 6; ++face)
 		{
@@ -173,12 +172,12 @@ void CubeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, c
 	else
 		T_OGL_SAFE(glBindSampler(unit, sampler[0]));
 
-	T_OGL_SAFE(glUniform1iARB(locationTexture, unit));
+	T_OGL_SAFE(glUniform1i(locationTexture, unit));
 }
 
 void CubeTextureOpenGL::bindSize(GLint locationSize)
 {
-	T_OGL_SAFE(glUniform4fARB(locationSize, GLfloat(m_side), GLfloat(m_side), GLfloat(m_side), GLfloat(1.0f)));
+	T_OGL_SAFE(glUniform4f(locationSize, GLfloat(m_side), GLfloat(m_side), GLfloat(m_side), GLfloat(1.0f)));
 }
 
 	}

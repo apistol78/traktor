@@ -1,7 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/VertexBufferVAR.h"
 
 namespace traktor
@@ -97,25 +96,15 @@ VertexBufferVAR::VertexBufferVAR(IContext* resourceContext, const std::vector< V
 			break;
 
 		case DtHalf2:
-			if (opengl_have_extension(E_GL_ARB_half_float_vertex))
-			{
-				m_attributeDesc[usageIndex].size = 2;
-				m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
-				m_attributeDesc[usageIndex].normalized = GL_TRUE;
-			}
-			else
-				log::error << L"Unsupported vertex format; OpenGL driver doesn't support GL_ARB_half_float_vertex" << Endl;
+			m_attributeDesc[usageIndex].size = 2;
+			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT;
+			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
 		case DtHalf4:
-			if (opengl_have_extension(E_GL_ARB_half_float_vertex))
-			{
-				m_attributeDesc[usageIndex].size = 4;
-				m_attributeDesc[usageIndex].type = GL_HALF_FLOAT_ARB;
-				m_attributeDesc[usageIndex].normalized = GL_TRUE;
-			}
-			else
-				log::error << L"Unsupported vertex format; OpenGL driver doesn't support GL_ARB_half_float_vertex" << Endl;
+			m_attributeDesc[usageIndex].size = 4;
+			m_attributeDesc[usageIndex].type = GL_HALF_FLOAT;
+			m_attributeDesc[usageIndex].normalized = GL_TRUE;
 			break;
 
 		default:
@@ -160,8 +149,8 @@ void VertexBufferVAR::activate(const GLint* attributeLocs)
 		if (attributeLocs[i] == -1 || m_attributeDesc[i].size == 0)
 			continue;
 
-		T_OGL_SAFE(glEnableVertexAttribArrayARB(attributeLocs[i]));
-		T_OGL_SAFE(glVertexAttribPointerARB(
+		T_OGL_SAFE(glEnableVertexAttribArray(attributeLocs[i]));
+		T_OGL_SAFE(glVertexAttribPointer(
 			attributeLocs[i],
 			m_attributeDesc[i].size,
 			m_attributeDesc[i].type,

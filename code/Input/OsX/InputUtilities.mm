@@ -28,7 +28,22 @@ bool isInputAllowed()
 	
 	return true;
 }
-        
+
+bool getMouseRange(float& outMaxX, float& outMaxY)
+{
+	NSWindow* keyWindow = [NSApp keyWindow];
+	if (!keyWindow)
+		return false;
+
+	NSRect frameRect = [keyWindow frame];
+	NSRect contentRect = [keyWindow contentRectForFrameRect: frameRect];
+
+	outMaxX = contentRect.size.width;
+	outMaxY = contentRect.size.height;
+
+	return true;
+}
+
 bool getMousePosition(float& outX, float& outY)
 {
 	NSWindow* keyWindow = [NSApp keyWindow];

@@ -3,7 +3,6 @@
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/VertexBufferOpenGL.h"
 #include "Render/OpenGL/IndexBufferOpenGL.h"
-#include "Render/OpenGL/Std/Extensions.h"
 #include "Render/OpenGL/Std/RenderViewOpenGL.h"
 #include "Render/OpenGL/Std/RenderSystemOpenGL.h"
 #include "Render/OpenGL/Std/ProgramOpenGL.h"
@@ -47,18 +46,18 @@ RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	Window* window,
 	ContextOpenGL* renderContext,
-	ContextOpenGL* resourceContext,
-	BlitHelper* blitHelper
+	ContextOpenGL* resourceContext
 )
 :	m_window(window)
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
-,	m_blitHelper(blitHelper)
 ,	m_cursorVisible(true)
 ,	m_waitVBlank(false)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
+	m_primaryTargetDesc.preferTiled = false;
 	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
 	m_waitVBlank = desc.waitVBlank;
 
@@ -72,18 +71,19 @@ RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	void* windowHandle,
 	ContextOpenGL* renderContext,
-	ContextOpenGL* resourceContext,
-	BlitHelper* blitHelper
+	ContextOpenGL* resourceContext
 )
 :	m_windowHandle(windowHandle)
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
-,	m_blitHelper(blitHelper)
 ,	m_cursorVisible(true)
 ,	m_waitVBlank(false)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
+	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
+	m_primaryTargetDesc.preferTiled = false;
+	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
 	m_waitVBlank = desc.waitVBlank;
 }
 
@@ -93,13 +93,11 @@ RenderViewOpenGL::RenderViewOpenGL(
 	const RenderViewDesc desc,
 	Window* window,
 	ContextOpenGL* renderContext,
-	ContextOpenGL* resourceContext,
-	BlitHelper* blitHelper
+	ContextOpenGL* resourceContext
 )
 :   m_window(window)
 ,	m_renderContext(renderContext)
 ,	m_resourceContext(resourceContext)
-,	m_blitHelper(blitHelper)
 ,	m_cursorVisible(true)
 ,	m_waitVBlank(false)
 {
@@ -107,7 +105,7 @@ RenderViewOpenGL::RenderViewOpenGL(
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
 	m_primaryTargetDesc.usingPrimaryDepthStencil = false;
 	m_primaryTargetDesc.preferTiled = false;
-	m_primaryTargetDesc.ignoreStencil = false;
+	m_primaryTargetDesc.ignoreStencil = bool(desc.stencilBits == 0);
 	m_waitVBlank = desc.waitVBlank;
 }
 
@@ -138,7 +136,7 @@ bool RenderViewOpenGL::createPrimaryTarget()
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
+		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
 		if (!m_primaryTarget->create(m_primaryTargetDesc))
 			return false;
 	}
@@ -236,7 +234,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
-		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
+		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
 		if (!m_primaryTarget->create(m_primaryTargetDesc))
 			return false;
 	}
@@ -259,7 +257,7 @@ bool RenderViewOpenGL::reset(int32_t width, int32_t height)
 	m_primaryTargetDesc.width = m_renderContext->getWidth();
 	m_primaryTargetDesc.height = m_renderContext->getHeight();
 
-	m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext, m_blitHelper);
+	m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
 	m_primaryTarget->create(m_primaryTargetDesc);
 
 	return true;
@@ -377,8 +375,6 @@ bool RenderViewOpenGL::begin(EyeType eye)
 
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
 {
-	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT));
-
 	TargetScope ts;
 	ts.renderTargetSet = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	ts.renderTarget = -1;
@@ -390,8 +386,6 @@ bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet)
 
 bool RenderViewOpenGL::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
-	T_OGL_SAFE(glPushAttrib(GL_VIEWPORT_BIT));
-
 	TargetScope ts;
 	ts.renderTargetSet = checked_type_cast< RenderTargetSetOpenGL* >(renderTargetSet);
 	ts.renderTarget = renderTarget;
@@ -419,7 +413,6 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float dep
 
 	if (cm & GL_COLOR_BUFFER_BIT)
 	{
-		//m_stateCache->setColorMask(RenderState::CmAll);
 		float r = color->getRed();
 		float g = color->getGreen();
 		float b = color->getBlue();
@@ -430,7 +423,6 @@ void RenderViewOpenGL::clear(uint32_t clearMask, const Color4f* color, float dep
 
 	if (cm & GL_DEPTH_BUFFER_BIT)
 	{
-		//m_stateCache->setDepthMask(GL_TRUE);
 		T_OGL_SAFE(glDepthMask(GL_TRUE));
 		T_OGL_SAFE(glClearDepth(depth));
 	}
@@ -457,9 +449,6 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 		float(ts.renderTargetSet->getHeight())
 	};
 
-	if (!programGL->activate(m_renderContext, targetSize))
-		return;
-
 	vertexBufferGL->activate(
 		programGL->getAttributeLocs()
 	);
@@ -519,10 +508,8 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 
 		indexBufferGL->bind();
 
-#if 0
-		if (!cglwCheckHardwarePath())
-			log::error << L"Software path detected; serious performance issue" << Endl;
-#endif
+		if (!programGL->activate(m_renderContext, targetSize))
+			return;
 
 		const GLubyte* indices = static_cast< const GLubyte* >(indexBufferGL->getIndexData()) + primitives.offset * offsetMultiplier;
 		T_OGL_SAFE(glDrawRangeElements(
@@ -536,10 +523,8 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	}
 	else
 	{
-#if 0
-		if (!cglwCheckHardwarePath())
-			log::error << L"Software path detected; serious performance issue" << Endl;
-#endif
+		if (!programGL->activate(m_renderContext, targetSize))
+			return;
 
 		T_OGL_SAFE(glDrawArrays(
 			primitiveType,
@@ -562,9 +547,6 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 		float(ts.renderTargetSet->getHeight())
 	};
 
-	if (!programGL->activate(m_renderContext, targetSize))
-		return;
-
 	vertexBufferGL->activate(
 		programGL->getAttributeLocs()
 	);
@@ -624,13 +606,11 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 
 		indexBufferGL->bind();
 
-#if 0
-		if (!cglwCheckHardwarePath())
-			log::error << L"Software path detected; serious performance issue" << Endl;
-#endif
+		if (!programGL->activate(m_renderContext, targetSize))
+			return;
 
 		const GLubyte* indices = static_cast< const GLubyte* >(indexBufferGL->getIndexData()) + primitives.offset * offsetMultiplier;
-		T_OGL_SAFE(glDrawElementsInstancedARB(
+		T_OGL_SAFE(glDrawElementsInstanced(
 			primitiveType,
 			vertexCount,
 			indexType,
@@ -640,12 +620,10 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 	}
 	else
 	{
-#if 0
-		if (!cglwCheckHardwarePath())
-			log::error << L"Software path detected; serious performance issue" << Endl;
-#endif
+		if (!programGL->activate(m_renderContext, targetSize))
+			return;
 
-		T_OGL_SAFE(glDrawArraysInstancedARB(
+		T_OGL_SAFE(glDrawArraysInstanced(
 			primitiveType,
 			primitives.offset,
 			vertexCount,
@@ -663,7 +641,6 @@ void RenderViewOpenGL::end()
 
 	if (!m_targetStack.empty())
 	{
-		ts.renderTargetSet->resolve();
 		ts = m_targetStack.back();
 		if (ts.renderTarget >= 0)
 			ts.renderTargetSet->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), ts.renderTarget);
@@ -674,12 +651,10 @@ void RenderViewOpenGL::end()
 	{
 		T_ASSERT (ts.renderTargetSet == m_primaryTarget);
 		ts.renderTargetSet->blit();
-		T_OGL_SAFE(glBindFramebufferEXT(GL_FRAMEBUFFER_EXT, 0));
+		T_OGL_SAFE(glBindFramebuffer(GL_FRAMEBUFFER, 0));
 	}
 
 	ts.renderTargetSet->setContentValid(true);
-
-	T_OGL_SAFE(glPopAttrib());
 }
 
 void RenderViewOpenGL::present()
