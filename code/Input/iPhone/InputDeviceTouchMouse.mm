@@ -109,7 +109,21 @@ float InputDeviceTouchMouse::getControlValue(int32_t control)
 
 bool InputDeviceTouchMouse::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
-	return false;
+	const MouseControlMap& mc = c_mouseControlMap[control];
+	if (mc.controlType == DtPositionX)
+	{
+		outMin = 0.0f;
+		outMax = m_width;
+		return true;
+	}
+	else if (mc.controlType == DtPositionY)
+	{
+		outMin = 0.0f;
+		outMax = m_height;
+		return true;
+	}
+	else
+		return false;
 }
 
 bool InputDeviceTouchMouse::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const

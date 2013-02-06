@@ -8,18 +8,58 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.MenuItem", MenuItem, Object)
 
+MenuItem::MenuItem(const Command& command, const std::wstring& text, bool checkBox, Bitmap* image)
+:	m_command(command)
+,	m_text(text)
+,	m_checkBox(checkBox)
+,	m_image(image)
+,	m_enable(true)
+,	m_checked(false)
+{
+}
+
+MenuItem::MenuItem(const std::wstring& text, bool checkBox, Bitmap* image)
+:	m_text(text)
+,	m_checkBox(checkBox)
+,	m_image(image)
+,	m_enable(true)
+,	m_checked(false)
+{
+}
+
 MenuItem::MenuItem(const Command& command, const std::wstring& text, Bitmap* image)
 :	m_command(command)
 ,	m_text(text)
+,	m_checkBox(false)
 ,	m_image(image)
 ,	m_enable(true)
+,	m_checked(false)
 {
 }
 
 MenuItem::MenuItem(const std::wstring& text, Bitmap* image)
 :	m_text(text)
+,	m_checkBox(false)
 ,	m_image(image)
 ,	m_enable(true)
+,	m_checked(false)
+{
+}
+
+MenuItem::MenuItem(const Command& command, const std::wstring& text)
+:	m_command(command)
+,	m_text(text)
+,	m_checkBox(false)
+,	m_enable(true)
+,	m_checked(false)
+{
+}
+
+MenuItem::MenuItem(const std::wstring& text)
+:	m_text(text)
+,	m_checkBox(false)
+,	m_enable(true)
+,	m_checked(false)
 {
 }
 
@@ -36,6 +76,16 @@ const Command& MenuItem::getCommand() const
 void MenuItem::setText(const std::wstring& text)
 {
 	m_text = text;
+}
+
+void MenuItem::setCheckBox(bool checkBox)
+{
+	m_checkBox = checkBox;
+}
+
+bool MenuItem::getCheckBox() const
+{
+	return m_checkBox;
 }
 
 const std::wstring& MenuItem::getText() const
@@ -61,6 +111,16 @@ void MenuItem::setEnable(bool enable)
 bool MenuItem::isEnable() const
 {
 	return m_enable;
+}
+
+void MenuItem::setChecked(bool checked)
+{
+	m_checked = checked;
+}
+
+bool MenuItem::isChecked() const
+{
+	return m_checked;
 }
 
 void MenuItem::remove(MenuItem* item)

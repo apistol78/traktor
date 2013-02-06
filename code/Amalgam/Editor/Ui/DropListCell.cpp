@@ -25,13 +25,17 @@ void DropListCell::mouseDown(ui::custom::AutoWidget* widget, const ui::Point& po
 	ui::PopupMenu menu;
 	if (menu.create())
 	{
-		int32_t count = m_hostEnumerator->count();
+		std::wstring platformName = m_instance->getPlatformName();
 
+		int32_t count = m_hostEnumerator->count();
 		for (int32_t i = 0; i < count; ++i)
 		{
-			std::wstring item;
-			m_hostEnumerator->getDescription(i, item);
-			menu.add(new ui::MenuItem(ui::Command(i), item));
+			if (m_hostEnumerator->supportPlatform(i, platformName))
+			{
+				std::wstring item;
+				m_hostEnumerator->getDescription(i, item);
+				menu.add(new ui::MenuItem(ui::Command(i), item));
+			}
 		}
 
 		Ref< ui::MenuItem > selectedItem = menu.show(widget, m_menuPosition);

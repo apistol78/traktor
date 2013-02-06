@@ -51,9 +51,9 @@ class WorldRenderView;
 
 class TerrainSurfaceCache;
 
-#if !TARGET_OS_IPHONE
-#	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
-#endif
+//#if !TARGET_OS_IPHONE
+//#	define T_USE_TERRAIN_VERTEX_TEXTURE_FETCH
+//#endif
 
 class T_DLLCLASS TerrainEntity : public world::Entity
 {

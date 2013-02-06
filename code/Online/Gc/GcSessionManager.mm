@@ -42,11 +42,11 @@ bool GcSessionManager::create()
 	
 	// Create provider wrappers.
 	m_achievements = new GcAchievements();
-	m_leaderboards = new GcLeaderboards();
-	m_matchMaking = new GcMatchMaking();
+//	m_leaderboards = new GcLeaderboards();
+//	m_matchMaking = new GcMatchMaking();
 	m_saveData = new GcSaveData();
-	m_statistics = new GcStatistics();
-	m_user = new GcUser();
+//	m_statistics = new GcStatistics();
+//	m_user = new GcUser();
 
 	return true;
 }

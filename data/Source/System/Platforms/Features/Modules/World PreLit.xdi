@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.amalgam.Feature">
-	<description>World Rendering</description>
+	<description>World - PreLit Rendering</description>
 	<platforms>
 		<ios>true</ios>
 		<linux>true</linux>
@@ -43,6 +43,12 @@
 					<value>
 						<item>Traktor.World</item>
 					</value>
+				</second>
+			</item>
+			<item>
+				<first>World.Type</first>
+				<second type="traktor.PropertyString">
+					<value>traktor.world.WorldRendererPreLit</value>
 				</second>
 			</item>
 		</value>

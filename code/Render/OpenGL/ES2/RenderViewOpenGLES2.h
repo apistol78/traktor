@@ -89,7 +89,7 @@ private:
 	struct RenderTargetStack
 	{
 		RenderTargetSetOpenGLES2* renderTargetSet;
-		RenderTargetOpenGLES2* renderTarget;
+		int32_t renderTarget;
 		Viewport viewport;
 	};
 	

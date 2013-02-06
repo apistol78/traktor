@@ -1,7 +1,7 @@
-#include "Ui/Win32/PopupMenuWin32.h"
-#include "Ui/Itf/IWidget.h"
-#include "Ui/MenuItem.h"
 #include "Core/Misc/TString.h"
+#include "Ui/MenuItem.h"
+#include "Ui/Itf/IWidget.h"
+#include "Ui/Win32/PopupMenuWin32.h"
 
 namespace traktor
 {
@@ -31,32 +31,43 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 	if (!hMenu)
 		return 0;
 
-	for (RefArray< MenuItem >::iterator i = m_items.begin(); i != m_items.end(); ++i)
+	for (uint32_t i = 0; i < m_items.size(); ++i)
 	{
-		tstring tmp = wstots((*i)->getText());	
-		UINT flags = (*i)->getText() != L"-" ? MF_STRING : MF_SEPARATOR;
+		MenuItem* item = m_items[i];
+		T_ASSERT (item);
+
+		tstring tmp = wstots(item->getText());	
+		UINT flags = item->getText() != L"-" ? MF_STRING : MF_SEPARATOR;
 
 #if !defined(WINCE)
-		if (!(*i)->isEnable())
+		if (!item->isEnable())
 			flags |= MF_DISABLED;
+
+		if (item->getCheckBox())
+		{
+			if (item->isChecked())
+				flags |= MF_CHECKED;
+			else
+				flags |= MF_UNCHECKED;
+		}
 #endif
 
-		if (!(*i)->count())
+		if (!item->count())
 		{
 			AppendMenu(
 				hMenu,
 				flags,
-				UINT((*i).ptr()),
+				UINT_PTR(item),
 				(LPTSTR)tmp.c_str()
 			);
 		}
 		else
 		{
-			HMENU hSubMenu = buildMenu((*i));
+			HMENU hSubMenu = buildMenu(item);
 			AppendMenu(
 				hMenu,
 				flags | MF_POPUP,
-				UINT(hSubMenu),
+				UINT_PTR(hSubMenu),
 				(LPTSTR)tmp.c_str()
 			);
 		}
@@ -76,7 +87,7 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 		0, 0, 0, 0
 	);
 
-	UINT id = TrackPopupMenuEx(
+	UINT_PTR id = TrackPopupMenuEx(
 		hMenu,
 		TPM_RETURNCMD,
 		pnt.x,
@@ -85,9 +96,12 @@ MenuItem* PopupMenuWin32::show(IWidget* parent, const Point& at)
 		NULL
 	);
 
-	DestroyMenu(hMenu);
+	MenuItem* item = reinterpret_cast< MenuItem* >(id);
+	if (item && item->getCheckBox())
+		item->setChecked(!item->isChecked());
 
-	return id ? reinterpret_cast< MenuItem* >(id) : 0;
+	DestroyMenu(hMenu);
+	return item;
 }
 
 HMENU PopupMenuWin32::buildMenu(MenuItem* item)
@@ -98,14 +112,22 @@ HMENU PopupMenuWin32::buildMenu(MenuItem* item)
 
 	for (int i = 0; i < item->count(); ++i)
 	{
-		Ref< MenuItem > subItem = item->get(i);
-		tstring tmp = wstots(subItem->getText());
+		MenuItem* subItem = item->get(i);
 
+		tstring tmp = wstots(subItem->getText());
 		UINT flags = subItem->getText() != L"-" ? MF_STRING : MF_SEPARATOR;
 
 #if !defined(WINCE)
 		if (!subItem->isEnable())
 			flags |= MF_DISABLED;
+
+		if (subItem->getCheckBox())
+		{
+			if (subItem->isChecked())
+				flags |= MF_CHECKED;
+			else
+				flags |= MF_UNCHECKED;
+		}
 #endif
 
 		if (!subItem->count())
@@ -113,7 +135,7 @@ HMENU PopupMenuWin32::buildMenu(MenuItem* item)
 			AppendMenu(
 				hMenu,
 				flags,
-				UINT(subItem.ptr()),
+				UINT_PTR(subItem),
 				(LPTSTR)tmp.c_str()
 			);
 		}
@@ -123,7 +145,7 @@ HMENU PopupMenuWin32::buildMenu(MenuItem* item)
 			AppendMenu(
 				hMenu,
 				flags | MF_POPUP,
-				UINT(hSubMenu),
+				UINT_PTR(hSubMenu),
 				(LPTSTR)tmp.c_str()
 			);
 		}

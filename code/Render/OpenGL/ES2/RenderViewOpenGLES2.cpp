@@ -4,14 +4,14 @@
 
 #if !defined(T_OFFLINE_ONLY)
 
-#	include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
+#	include "Core/Log/Log.h"
 #	include "Render/OpenGL/ES2/VertexBufferOpenGLES2.h"
 #	include "Render/OpenGL/ES2/IndexBufferOpenGLES2.h"
 #	include "Render/OpenGL/ES2/ProgramOpenGLES2.h"
-#	include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
+#	include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
 #	include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
+#	include "Render/OpenGL/ES2/RenderTargetSetOpenGLES2.h"
 #	include "Render/OpenGL/ES2/StateCache.h"
-#	include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -41,7 +41,6 @@ RenderViewOpenGLES2::RenderViewOpenGLES2(
 RenderViewOpenGLES2::~RenderViewOpenGLES2()
 {
 }
-
 
 bool RenderViewOpenGLES2::nextEvent(RenderEvent& outEvent)
 {
@@ -223,20 +222,20 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 
 bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet)
 {
+	T_FATAL_ERROR;
 	return false;
 }
 
 bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 {
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
-	RenderTargetOpenGLES2* rt = checked_type_cast< RenderTargetOpenGLES2* >(rts->getColorTexture(renderTarget));
 
-	rt->bind(/*m_primaryDepth*/0);
-	rt->enter();
+	if (!rts->bind(/*m_primaryDepth*/0, renderTarget))
+		return false;
 	
 	RenderTargetStack s;
 	s.renderTargetSet = rts;
-	s.renderTarget = rt;
+	s.renderTarget = renderTarget;
 	s.viewport = Viewport(0, 0, rts->getWidth(), rts->getHeight(), 0.0f, 1.0f);
 	
 	T_OGL_SAFE(glViewport(
@@ -246,9 +245,12 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 		s.viewport.height
 	));
 
-	m_renderTargetStack.push(s);
+	T_OGL_SAFE(glDepthRangef(
+		s.viewport.nearZ,
+		s.viewport.farZ
+	));
 
-	rts->setContentValid(true);
+	m_renderTargetStack.push(s);
 	return true;
 }
 
@@ -267,12 +269,6 @@ void RenderViewOpenGLES2::clear(uint32_t clearMask, const Color4f* colors, float
 	};
 	
 	GLuint cm = c_clearMask[clearMask];
-	
-	if (!m_renderTargetStack.empty())
-		cm &= m_renderTargetStack.top().renderTargetSet->getClearMask();
-	else
-		cm &= ~GL_STENCIL_BUFFER_BIT;
-	
 	if (!cm)
 		return;
 
@@ -334,9 +330,9 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	}
 	else
 	{
-		const RenderTargetOpenGLES2* rt = m_renderTargetStack.top().renderTarget;
-		targetSize[0] = float(rt->getWidth());
-		targetSize[1] = float(rt->getHeight());
+		const RenderTargetSetOpenGLES2* rts = m_renderTargetStack.top().renderTargetSet;
+		targetSize[0] = float(rts->getWidth());
+		targetSize[1] = float(rts->getHeight());
 
 		postTransform[0] = 1.0f;
 		postTransform[1] = 0.0f;
@@ -460,9 +456,9 @@ void RenderViewOpenGLES2::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuf
 	}
 	else
 	{
-		const RenderTargetOpenGLES2* rt = m_renderTargetStack.top().renderTarget;
-		targetSize[0] = float(rt->getWidth());
-		targetSize[1] = float(rt->getHeight());
+		const RenderTargetSetOpenGLES2* rts = m_renderTargetStack.top().renderTargetSet;
+		targetSize[0] = float(rts->getWidth());
+		targetSize[1] = float(rts->getHeight());
 
 		postTransform[0] = 1.0f;
 		postTransform[1] = 0.0f;
@@ -557,21 +553,26 @@ void RenderViewOpenGLES2::end()
 {
 	if (m_renderTargetStack.empty())
 		return;
-	
+
+	m_renderTargetStack.top().renderTargetSet->setContentValid(true);
 	m_renderTargetStack.pop();
 	
 	if (!m_renderTargetStack.empty())
 	{
 		RenderTargetStack& s = m_renderTargetStack.top();
 		
-		s.renderTarget->bind(/*m_primaryTargetSet->getDepthBuffer()*/0);
-		s.renderTarget->enter();
+		s.renderTargetSet->bind(/*m_primaryTargetSet->getDepthBuffer()*/0, s.renderTarget);
 		
 		T_OGL_SAFE(glViewport(
 			s.viewport.left,
 			s.viewport.top,
 			s.viewport.width,
 			s.viewport.height
+		));
+
+		T_OGL_SAFE(glDepthRangef(
+			s.viewport.nearZ,
+			s.viewport.farZ
 		));
 	}
 	else
@@ -596,6 +597,11 @@ void RenderViewOpenGLES2::end()
 				m_viewport.height
 			));
 		}
+
+		T_OGL_SAFE(glDepthRangef(
+			m_viewport.nearZ,
+			m_viewport.farZ
+		));
 	}
 }
 

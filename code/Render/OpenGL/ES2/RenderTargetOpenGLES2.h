@@ -25,11 +25,9 @@ class RenderTargetOpenGLES2
 	T_RTTI_CLASS;
 
 public:
-	RenderTargetOpenGLES2(IContext* context);
+	RenderTargetOpenGLES2(IContext* context, GLuint colorTexture, int32_t width, int32_t height);
 
 	virtual ~RenderTargetOpenGLES2();
-
-	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, GLuint depthBuffer, GLuint stencilBuffer);
 
 	virtual void destroy();
 
@@ -47,22 +45,11 @@ public:
 
 	virtual void bindSize(GLint locationSize);
 
-	void bind(GLuint primaryDepthTarget);
-
-	void enter();
-	
-	GLuint getColorTexture() { return m_colorTexture; }
-
 private:
 	Ref< IContext > m_context;
-	int m_width;
-	int m_height;
-	bool m_usingPrimaryDepthBuffer;
-	GLenum m_textureTarget;
-	GLuint m_frameBufferObject;
 	GLuint m_colorTexture;
-	Vector4 m_originAndScale;
-	bool m_haveDepth;
+	int32_t m_width;
+	int32_t m_height;
 	SamplerStateOpenGL m_shadowState;
 };
 

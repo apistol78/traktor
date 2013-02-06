@@ -2,6 +2,18 @@
 <object type="traktor.i18n.Dictionary">
 	<map>
     <item>
+      <first>AMALGAM_TARGETS</first>
+      <second>Targets</second>
+    </item>
+    <item>
+      <first>AMALGAM_TWEAKS</first>
+      <second>Tweaks</second>
+    </item>
+    <item>
+      <first>AMALGAM_TWEAKS_TOOLTIP</first>
+      <second>Runtime tweaks</second>
+    </item>
+    <item>
       <first>ANIMATION_EDITOR_BROWSE_SKELETON</first>
       <second>Browse skeleton...</second>
     </item>

@@ -32,9 +32,17 @@ class T_DLLCLASS MenuItem
 	T_RTTI_CLASS;
 
 public:
-	MenuItem(const Command& command, const std::wstring& text, Bitmap* image = 0);
+	MenuItem(const Command& command, const std::wstring& text, bool checkBox, Bitmap* image);
 
-	MenuItem(const std::wstring& text, Bitmap* image = 0);
+	MenuItem(const std::wstring& text, bool checkBox, Bitmap* image);
+
+	MenuItem(const Command& command, const std::wstring& text, Bitmap* image);
+
+	MenuItem(const std::wstring& text, Bitmap* image);
+
+	MenuItem(const Command& command, const std::wstring& text);
+
+	MenuItem(const std::wstring& text);
 
 	void setCommand(const Command& command);
 
@@ -44,6 +52,10 @@ public:
 
 	const std::wstring& getText() const;
 
+	void setCheckBox(bool checkBox);
+
+	bool getCheckBox() const;
+
 	void setImage(Bitmap* image);
 
 	Ref< Bitmap > getImage() const;
@@ -51,6 +63,10 @@ public:
 	void setEnable(bool enable);
 
 	bool isEnable() const;
+
+	void setChecked(bool checked);
+
+	bool isChecked() const;
 
 	void add(MenuItem* item);
 
@@ -65,8 +81,10 @@ public:
 private:
 	Command m_command;
 	std::wstring m_text;
+	bool m_checkBox;
 	Ref< Bitmap > m_image;
 	bool m_enable;
+	bool m_checked;
 	RefArray< MenuItem > m_items;
 };
 

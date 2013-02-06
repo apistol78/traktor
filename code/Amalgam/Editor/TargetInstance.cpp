@@ -26,11 +26,12 @@ std::wstring mangleName(std::wstring name)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetInstance", TargetInstance, Object)
 
-TargetInstance::TargetInstance(const std::wstring& name, const Target* target, const TargetConfiguration* targetConfiguration, const Platform* platform)
+TargetInstance::TargetInstance(const std::wstring& name, const Target* target, const TargetConfiguration* targetConfiguration, const std::wstring& platformName, const Platform* platform)
 :	m_id(Guid::create())
 ,	m_name(name)
 ,	m_target(target)
 ,	m_targetConfiguration(targetConfiguration)
+,	m_platformName(platformName)
 ,	m_platform(platform)
 ,	m_deployHostId(-1)
 ,	m_state(TsIdle)
@@ -65,6 +66,11 @@ const Target* TargetInstance::getTarget() const
 const TargetConfiguration* TargetInstance::getTargetConfiguration() const
 {
 	return m_targetConfiguration;
+}
+
+const std::wstring& TargetInstance::getPlatformName() const
+{
+	return m_platformName;
 }
 
 const Platform* TargetInstance::getPlatform() const

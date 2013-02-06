@@ -9,6 +9,7 @@
 #include <Core/Misc/CommandLine.h>
 #include <Core/Misc/SafeDestroy.h>
 #include <Core/Settings/PropertyString.h>
+#include <Core/Settings/PropertyStringArray.h>
 #include <Core/System/IProcess.h>
 #include <Core/System/OS.h>
 #include <Core/Thread/Thread.h>
@@ -296,11 +297,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #endif
 
-	traktor::log::info << L"Traktor RemoteServer 1.4" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.5" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
-		traktor::log::error << L"Usage: RemoteServer (Scratch directory)" << Endl;
+		traktor::log::error << L"Usage: RemoteServer [-k|--keyword=(Filter keyword)] (Scratch directory)" << Endl;
 		return 1;
 	}
 
@@ -316,7 +317,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.4 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.5 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
 #endif
 
@@ -354,13 +355,26 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	Ref< PropertyGroup > properties = new PropertyGroup();
 	properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
 	properties->setProperty< PropertyString >(L"Description", OS::getInstance().getComputerName());
+
+	std::vector< std::wstring > platforms;
 #if defined(_WIN32)
-	properties->setProperty< PropertyString >(L"OS", L"win32");
+	platforms.push_back(L"Mobile6");
+	platforms.push_back(L"PS3");
+	platforms.push_back(L"Win32");
+	platforms.push_back(L"Win64");
+	platforms.push_back(L"XBox360");
 #elif defined(__APPLE__)
-	properties->setProperty< PropertyString >(L"OS", L"osx");
-#else
-	properties->setProperty< PropertyString >(L"OS", L"linux");
+	platforms.push_back(L"iPad");
+	platforms.push_back(L"iPhone");
+	platforms.push_back(L"Mac OSX");
+#elif defined(__LINUX__)
+	platforms.push_back(L"Linux32");
+	platforms.push_back(L"Linux64");
 #endif
+	properties->setProperty< PropertyStringArray >(L"Platforms", platforms);
+
+	if (cmdLine.hasOption('k', L"keyword"))
+		properties->setProperty< PropertyString >(L"Keyword", cmdLine.getOption('k', L"keyword").getString());
 
 	discoveryManager->addService(new net::NetworkService(L"RemoteTools/Server", properties));
 

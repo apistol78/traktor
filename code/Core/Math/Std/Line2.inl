@@ -58,7 +58,7 @@ T_MATH_INLINE bool Line2::classify(const Vector2& pt, float thickness) const
 	if (abs(k) > thickness)
 		return false;
 	Vector2 p1 = pt - normal() * k;
-	return inrange(pt);
+	return inrange(p1);
 }
 
 T_MATH_INLINE bool Line2::intersect(const Ray2& ray, float& outR, float& outK) const

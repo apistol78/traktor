@@ -24,14 +24,12 @@ class DiscoveryManager;
 
 	namespace ui
 	{
-
-class CheckBox;
-
 		namespace custom
 		{
 
 class ToolBar;
 class ToolBarDropDown;
+class ToolBarDropMenu;
 
 		}
 	}
@@ -93,7 +91,7 @@ private:
 	// \{
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarDropDown > m_toolTargets;
-	Ref< ui::CheckBox > m_checkWriteOut;
+	Ref< ui::custom::ToolBarDropMenu > m_toolTweaks;
 	Ref< TargetListControl > m_targetList;
 	// \}
 

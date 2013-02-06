@@ -32,6 +32,8 @@ public:
 
 	bool getDescription(int32_t index, std::wstring& outDescription) const;
 
+	bool supportPlatform(int32_t index, const std::wstring& platform) const;
+
 	bool isLocal(int32_t index) const;
 
 	void update();
@@ -41,6 +43,7 @@ private:
 	{
 		std::wstring host;
 		std::wstring description;
+		std::vector< std::wstring > platforms;
 		bool local;
 
 		Host();

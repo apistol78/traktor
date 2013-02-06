@@ -16,6 +16,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Thread/Acquire.h"
@@ -33,10 +34,12 @@
 #include "Ui/CheckBox.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
+#include "Ui/MenuItem.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarDropDown.h"
+#include "Ui/Custom/ToolBar/ToolBarDropMenu.h"
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Events/CommandEvent.h"
@@ -116,9 +119,10 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 
-	m_checkWriteOut = new ui::CheckBox();
-	m_checkWriteOut->create(m_toolBar, L"Audio \"Write Out\"", false);
-	m_toolBar->addItem(new ui::custom::ToolBarEmbed(m_checkWriteOut, 120));
+	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::Command(L"Amalgam.Tweaks"), 70, i18n::Text(L"AMALGAM_TWEAKS"), i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
+	m_toolTweaks->add(new ui::MenuItem(L"Mute Audio", true, 0));
+	m_toolTweaks->add(new ui::MenuItem(L"Audio \"Write Out\"", true, 0));
+	m_toolBar->addItem(m_toolTweaks);
 
 	// Create target configuration list control.
 	m_targetList = new TargetListControl();
@@ -252,10 +256,13 @@ void EditorPlugin::handleWorkspaceOpened()
 				TargetConfiguration* targetConfiguration = *j;
 				T_ASSERT (targetConfiguration);
 
-				Ref< const Platform > platform = sourceDatabase->getObjectReadOnly< Platform >(targetConfiguration->getPlatform());
+				Ref< db::Instance > platformInstance = sourceDatabase->getInstance(targetConfiguration->getPlatform());
+				T_ASSERT (platformInstance);
+
+				Ref< const Platform > platform = platformInstance->getObject< Platform >();
 				T_ASSERT (platform);
 
-				Ref< TargetInstance > targetInstance = new TargetInstance(et.name, et.target, targetConfiguration, platform);
+				Ref< TargetInstance > targetInstance = new TargetInstance(et.name, et.target, targetConfiguration, platformInstance->getName(), platform);
 				T_ASSERT (targetInstance);
 
 				m_targetInstances.push_back(targetInstance);
@@ -383,6 +390,13 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 
 		if (event->getKeyState() == 0)
 		{
+			Ref< PropertyGroup > tweakSettings = new PropertyGroup();
+
+			if (m_toolTweaks->get(0)->isChecked())
+				tweakSettings->setProperty< PropertyFloat >(L"Audio.MasterVolume", 0.0f);
+			if (m_toolTweaks->get(1)->isChecked())
+				tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
+
 			// Add deploy and launch actions.
 			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
 			action.action = new DeployTargetAction(
@@ -395,7 +409,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				targetInstance->getDatabaseName(),
 				targetInstance->getId(),
 				outputPath,
-				m_checkWriteOut->isChecked()
+				tweakSettings
 			);
 			chain.actions.push_back(action);
 
@@ -481,6 +495,7 @@ void EditorPlugin::threadHostEnumerator()
 		m_hostEnumerator->update();
 
 		// Find first local host.
+		std::vector< std::wstring > localDeployPlatforms;
 		int32_t localDeployHostId = -1;
 		for (int32_t i = 0; i < m_hostEnumerator->count(); ++i)
 		{
@@ -499,8 +514,12 @@ void EditorPlugin::threadHostEnumerator()
 			{
 				if ((*i)->getDeployHostId() < 0)
 				{
-					(*i)->setDeployHostId(localDeployHostId);
-					needUpdate = true;
+					std::wstring platformName = (*i)->getPlatformName();
+					if (m_hostEnumerator->supportPlatform(localDeployHostId, platformName))
+					{
+						(*i)->setDeployHostId(localDeployHostId);
+						needUpdate = true;
+					}
 				}
 			}
 			if (needUpdate)

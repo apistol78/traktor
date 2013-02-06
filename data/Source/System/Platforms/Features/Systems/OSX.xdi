@@ -44,14 +44,5 @@
 			</item>
 		</value>
 	</migrateProperties>
-	<runtimeProperties type="traktor.PropertyGroup">
-		<value>
-			<item>
-				<first>World.Type</first>
-				<second type="traktor.PropertyString">
-					<value>traktor.world.WorldRendererPreLit</value>
-				</second>
-			</item>
-		</value>
-	</runtimeProperties>
+	<runtimeProperties/>
 </object>

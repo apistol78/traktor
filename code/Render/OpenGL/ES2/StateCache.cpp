@@ -97,6 +97,26 @@ void StateCache::setRenderState(const RenderStateOpenGL& renderState, bool inver
 		}
 	}
 
+	if (renderState.stencilTestEnable)
+	{
+		if (!m_renderState.stencilTestEnable)
+		{
+			T_OGL_SAFE(glEnable(GL_STENCIL_TEST));
+			m_renderState.stencilTestEnable = true;
+		}
+		T_OGL_SAFE(glStencilMask(~0UL));
+		T_OGL_SAFE(glStencilOp(renderState.stencilOpFail, renderState.stencilOpZFail, renderState.stencilOpZPass));
+		T_OGL_SAFE(glStencilFunc(renderState.stencilFunc, renderState.stencilRef, ~0UL));
+	}
+	else
+	{
+		if (m_renderState.stencilTestEnable)
+		{
+			T_OGL_SAFE(glDisable(GL_STENCIL_TEST));
+			m_renderState.stencilTestEnable = false;
+		}
+	}
+
 	if (renderState.colorMask != m_renderState.colorMask)
 	{
 		T_OGL_SAFE(glColorMask(

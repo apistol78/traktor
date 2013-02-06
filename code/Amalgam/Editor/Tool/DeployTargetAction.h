@@ -37,7 +37,7 @@ public:
 		const std::wstring& databaseName,
 		const Guid& targetManagerId,
 		const std::wstring& outputPath,
-		bool audioWriteOut
+		const PropertyGroup* tweakSettings
 	);
 
 	virtual bool execute(IProgressListener* progressListener);
@@ -52,7 +52,7 @@ private:
 	std::wstring m_databaseName;
 	Guid m_targetManagerId;
 	std::wstring m_outputPath;
-	bool m_audioWriteOut;
+	Ref< const PropertyGroup > m_tweakSettings;
 };
 
 	}
