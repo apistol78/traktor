@@ -33,9 +33,9 @@ private:
 	Ref< InputDeviceTouchMouse > m_deviceMouse;
 };
 
-bool InputDriverIPhoneImpl::create(const SystemWindow& systemWindow)
+bool InputDriverIPhoneImpl::create(void* nativeWindowHandle)
 {
-	UIView* view = (UIView*)systemWindow.view;
+	UIView* view = (UIView*)nativeWindowHandle;
 	CGRect frame = [view frame];
 	
 	UITouchView* touchView = [[UITouchView alloc] initWithFrame: frame];
@@ -100,10 +100,10 @@ InputDriverIPhone::InputDriverIPhone()
 {
 }
 
-bool InputDriverIPhone::create(void* nativeWindowHandle)
+bool InputDriverIPhone::create(const SystemWindow& systemWindow)
 {
 	m_impl = new InputDriverIPhoneImpl();
-	if (!m_impl->create(nativeWindowHandle))
+	if (!m_impl->create(systemWindow.view))
 	{
 		m_impl = 0;
 		return false;

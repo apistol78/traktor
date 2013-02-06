@@ -18,10 +18,11 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 8, ScenePipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.scene.ScenePipeline", 9, ScenePipeline, editor::IPipeline)
 
 ScenePipeline::ScenePipeline()
 :	m_targetEditor(false)
+,	m_suppressLinearLighting(false)
 ,	m_suppressDepthPass(false)
 ,	m_suppressPostProcess(false)
 ,	m_shadowMapSizeDenom(1)
@@ -32,6 +33,7 @@ ScenePipeline::ScenePipeline()
 bool ScenePipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_targetEditor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor");
+	m_suppressLinearLighting = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressLinearLighting");
 	m_suppressDepthPass = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressDepthPass");
 	m_suppressPostProcess = settings->getProperty< PropertyBoolean >(L"ScenePipeline.SuppressPostProcess");
 	m_shadowMapSizeDenom = settings->getProperty< PropertyInteger >(L"ScenePipeline.ShadowMapSizeDenom", 1);
@@ -113,6 +115,11 @@ bool ScenePipeline::buildOutput(
 	sceneResource->setEntityData(groupEntityData);
 	sceneResource->setControllerData(controllerData);
 
+	if (m_suppressLinearLighting && sceneResource->getWorldRenderSettings()->linearLighting)
+	{
+		sceneResource->getWorldRenderSettings()->linearLighting = false;
+		log::info << L"Linear lighting suppressed" << Endl;
+	}
 	if (m_suppressDepthPass && sceneResource->getWorldRenderSettings()->depthPassEnabled)
 	{
 		sceneResource->getWorldRenderSettings()->depthPassEnabled = false;
@@ -123,25 +130,14 @@ bool ScenePipeline::buildOutput(
 		sceneResource->setPostProcessSettings(resource::Id< world::PostProcessSettings >());
 		log::info << L"Post processing suppressed" << Endl;
 	}
-	//if (m_suppressPreLit && sceneResource->getWorldRenderSettings()->renderType == world::WorldRenderSettings::RtPreLit)
-	//{
-	//	sceneResource->getWorldRenderSettings()->renderType = world::WorldRenderSettings::RtForward;
-	//	log::info << L"PreLit render type suppressed" << Endl;
-	//}
 
-	//if (m_shadowMapSizeDenom > 1)
-	//{
-	//	sceneResource->getWorldRenderSettings()->shadowMapResolution =
-	//		sceneAsset->getWorldRenderSettings()->shadowMapResolution / m_shadowMapSizeDenom;
-	//	log::info << L"Reduced shadow map size " << sceneResource->getWorldRenderSettings()->shadowMapResolution << Endl;
-	//}
-
-	//if (m_shadowMapMaxSlices > 0)
-	//{
-	//	sceneResource->getWorldRenderSettings()->shadowCascadingSlices =
-	//		std::min(sceneResource->getWorldRenderSettings()->shadowCascadingSlices, m_shadowMapMaxSlices);
-	//	log::info << L"Reduced shadow slices " << sceneResource->getWorldRenderSettings()->shadowCascadingSlices << Endl;
-	//}
+	for (uint32_t i = 0; i < world::QuLast; ++i)
+	{
+		world::WorldRenderSettings::ShadowSettings& shadowSetting = sceneResource->getWorldRenderSettings()->shadowSettings[i];
+		shadowSetting.resolution /= m_shadowMapSizeDenom;
+		if (m_shadowMapMaxSlices > 0)
+			shadowSetting.cascadingSlices = std::min(shadowSetting.cascadingSlices, m_shadowMapMaxSlices);
+	}
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)

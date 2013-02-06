@@ -120,6 +120,7 @@ SimpleTextureOpenGLES2::SimpleTextureOpenGLES2(IContext* context)
 ,	m_pixelSize(0)
 ,	m_mipCount(0)
 {
+	std::memset(&m_shadowState, 0, sizeof(m_shadowState));
 }
 
 SimpleTextureOpenGLES2::~SimpleTextureOpenGLES2()
@@ -261,15 +262,6 @@ void SimpleTextureOpenGLES2::bindSampler(GLuint unit, const SamplerStateOpenGL& 
 	GLenum minFilter = GL_NEAREST;
 	if (m_mipCount > 1)
 		minFilter = samplerState.minFilter;
-	else
-	{
-	/*
-		if (samplerState.minFilter != GL_NEAREST)
-			minFilter = GL_LINEAR;
-		else
-	*/
-			minFilter = GL_NEAREST;
-	}
 
 	if (m_shadowState.minFilter != minFilter)
 	{

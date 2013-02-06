@@ -33,6 +33,8 @@ const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
 const Guid c_guidTerrainCoarseShaderSeed(L"{6643B92A-6676-41b9-9427-3569B2EA481B}");
 const Guid c_guidTerrainDetailShaderSeed(L"{1AC67694-4CF8-44ac-B78E-B1E79C9632C8}");
 const Guid c_guidSurfaceShaderSeed(L"{8481FC82-A8E8-49b8-906F-9F8F6365B1F5}");
+const Guid c_guidTerrainCoarseShaderTemplate(L"{E18056AF-BC95-4349-A98F-17DCF37607D3}");
+const Guid c_guidTerrainDetailShaderTemplate(L"{F08984BF-AC87-9A4E-B739-B6F574393F8F}");
 const Guid c_guidTerrainCoarseShaderTemplate_VFetch(L"{A6C4532A-0540-4D42-93FC-964C7BFDD1FD}");
 const Guid c_guidTerrainDetailShaderTemplate_VFetch(L"{68565BF3-8F72-8848-8FBA-395B9699F108}");
 const Guid c_guidSurfaceShaderTemplate(L"{BAD675B3-9799-7D49-A045-BDA471DD5A3E}");
@@ -208,6 +210,8 @@ bool TerrainPipeline::buildDependencies(
 	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse | editor::PdfBuild);
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
+	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate, editor::PdfUse);
+	pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate_VFetch, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidTerrainDetailShaderTemplate_VFetch, editor::PdfUse);
 	pipelineDepends->addDependency(c_guidSurfaceShaderTemplate, editor::PdfUse);
@@ -289,14 +293,14 @@ bool TerrainPipeline::buildOutput(
 	Ref< render::ShaderGraph > surfaceShaderImpl = DeepClone(assetSurfaceShader).create< render::ShaderGraph >();
 
 	// Read shader templates.
-	Ref< const render::ShaderGraph > terrainCoarseShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainCoarseShaderTemplate_VFetch);
+	Ref< const render::ShaderGraph > terrainCoarseShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainCoarseShaderTemplate/*_VFetch*/);
 	if (!terrainCoarseShaderTemplate)
 	{
 		log::error << L"Terrain pipeline failed; unable to get terrain coarse template shader" << Endl;
 		return false;
 	}
 
-	Ref< const render::ShaderGraph > terrainDetailShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainDetailShaderTemplate_VFetch);
+	Ref< const render::ShaderGraph > terrainDetailShaderTemplate = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(c_guidTerrainDetailShaderTemplate/*_VFetch*/);
 	if (!terrainDetailShaderTemplate)
 	{
 		log::error << L"Terrain pipeline failed; unable to get terrain detail template shader" << Endl;

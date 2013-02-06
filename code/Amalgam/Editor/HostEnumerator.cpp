@@ -56,6 +56,20 @@ bool HostEnumerator::getDescription(int32_t index, std::wstring& outDescription)
 		return false;
 }
 
+bool HostEnumerator::supportPlatform(int32_t index, const std::wstring& platform) const
+{
+	if (index >= 0 && index < int32_t(m_hosts.size()))
+	{
+		const std::vector< std::wstring >& platforms = m_hosts[index].platforms;
+		if (!platforms.empty())
+			return std::find(platforms.begin(), platforms.end(), platform) != platforms.end();
+		else
+			return true;
+	}
+	else
+		return false;
+}
+
 bool HostEnumerator::isLocal(int32_t index) const
 {
 	if (index >= 0 && index < int32_t(m_hosts.size()))
@@ -91,6 +105,7 @@ void HostEnumerator::update()
 			Host h;
 			h.host = properties->getProperty< PropertyString >(L"Host");
 			h.description = properties->getProperty< PropertyString >(L"Description");
+			h.platforms = properties->getProperty< PropertyStringArray >(L"Platforms");
 			h.local = bool(itf.addr != 0 && itf.addr->getHostName() == h.host);
 			m_hosts.push_back(h);
 		}

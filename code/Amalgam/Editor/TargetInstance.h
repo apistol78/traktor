@@ -36,7 +36,7 @@ class TargetInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetInstance(const std::wstring& name, const Target* target, const TargetConfiguration* targetConfiguration, const Platform* platform);
+	TargetInstance(const std::wstring& name, const Target* target, const TargetConfiguration* targetConfiguration, const std::wstring& platformName, const Platform* platform);
 
 	void destroy();
 
@@ -47,6 +47,8 @@ public:
 	const Target* getTarget() const;
 
 	const TargetConfiguration* getTargetConfiguration() const;
+
+	const std::wstring& getPlatformName() const;
 
 	const Platform* getPlatform() const;
 
@@ -79,6 +81,7 @@ private:
 	std::wstring m_name;
 	Ref< const Target > m_target;
 	Ref< const TargetConfiguration > m_targetConfiguration;
+	std::wstring m_platformName;
 	Ref< const Platform > m_platform;
 	int32_t m_deployHostId;
 	TargetState m_state;

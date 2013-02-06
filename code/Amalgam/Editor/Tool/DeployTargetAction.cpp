@@ -45,7 +45,7 @@ DeployTargetAction::DeployTargetAction(
 	const std::wstring& databaseName,
 	const Guid& targetManagerId,
 	const std::wstring& outputPath,
-	bool audioWriteOut
+	const PropertyGroup* tweakSettings
 )
 :	m_database(database)
 ,	m_globalSettings(globalSettings)
@@ -56,7 +56,7 @@ DeployTargetAction::DeployTargetAction(
 ,	m_databaseName(databaseName)
 ,	m_targetManagerId(targetManagerId)
 ,	m_outputPath(outputPath)
-,	m_audioWriteOut(audioWriteOut)
+,	m_tweakSettings(tweakSettings)
 {
 }
 
@@ -128,9 +128,9 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	// Append application title.
 	applicationConfiguration->setProperty< PropertyString >(L"Render.Title", m_targetName);
 
-	// Append audio write out.
-	if (m_audioWriteOut)
-		applicationConfiguration->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
+	// Append tweaks.
+	if (m_tweakSettings)
+		applicationConfiguration = applicationConfiguration->mergeReplace(m_tweakSettings);
 
 	// Write generated application configuration in output directory.
 	Ref< IStream > file = FileSystem::getInstance().open(

@@ -41,13 +41,13 @@
 				</second>
 			</item>
 			<item>
-				<first>ScenePipeline.SuppressPostProcess</first>
+				<first>ScenePipeline.SuppressLinearLighting</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
 				</second>
 			</item>
 			<item>
-				<first>ScenePipeline.SuppressPreLit</first>
+				<first>ScenePipeline.SuppressPostProcess</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
 				</second>
@@ -68,14 +68,5 @@
 			</item>
 		</value>
 	</migrateProperties>
-	<runtimeProperties type="traktor.PropertyGroup">
-		<value>
-			<item>
-				<first>World.Type</first>
-				<second type="traktor.PropertyString">
-					<value>traktor.world.WorldRendererForward</value>
-				</second>
-			</item>
-		</value>
-	</runtimeProperties>
+	<runtimeProperties/>
 </object>

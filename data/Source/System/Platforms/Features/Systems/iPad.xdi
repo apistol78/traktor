@@ -47,6 +47,12 @@
 				</second>
 			</item>
 			<item>
+				<first>ScenePipeline.SuppressLinearLighting</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>
+			<item>
 				<first>ScenePipeline.SuppressDepthPass</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
@@ -54,18 +60,6 @@
 			</item>
 			<item>
 				<first>ScenePipeline.SuppressPostProcess</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
-				</second>
-			</item>
-			<item>
-				<first>ScenePipeline.SuppressPreLit</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
-				</second>
-			</item>
-			<item>
-				<first>ScenePipeline.SuppressShadows</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
 				</second>
@@ -111,12 +105,6 @@
 				<first>Render.FullScreen</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
-				</second>
-			</item>
-			<item>
-				<first>World.Type</first>
-				<second type="traktor.PropertyString">
-					<value>traktor.world.WorldRendererForward</value>
 				</second>
 			</item>
 		</value>

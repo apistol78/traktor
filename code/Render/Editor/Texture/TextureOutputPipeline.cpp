@@ -382,7 +382,7 @@ bool TextureOutputPipeline::buildOutput(
 	// Convert into linear gamma, do it before we're converting image
 	// format as it's possible source image has float format thus
 	// resulting in greater accuracy.
-	if (!textureOutput->m_linearGamma)
+	if (!textureOutput->m_linearGamma && std::abs(m_gamma - 1.0f) > FUZZY_EPSILON)
 	{
 		if (m_sRGB)
 			sRGB = true;

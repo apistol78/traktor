@@ -55,6 +55,7 @@ public:
 
 private:
 	bool m_targetEditor;
+	bool m_suppressLinearLighting;
 	bool m_suppressDepthPass;
 	bool m_suppressPostProcess;
 	int32_t m_shadowMapSizeDenom;

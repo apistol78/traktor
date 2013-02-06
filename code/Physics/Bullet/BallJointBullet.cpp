@@ -19,7 +19,7 @@ void BallJointBullet::setAnchor(const Vector4& anchor)
 	btVector3 pivotInA = m_constraint->getRigidBodyA().getWorldTransform().inverse() * pivotInWorld;
 	m_constraint->setPivotA(pivotInA);
 	btVector3 pivotInB = m_constraint->getRigidBodyB().getWorldTransform().inverse() * pivotInWorld;
-	m_constraint->setPivotB(pivotInA);
+	m_constraint->setPivotB(pivotInB);
 }
 
 Vector4 BallJointBullet::getAnchor() const

@@ -1,8 +1,6 @@
 #ifndef traktor_render_RenderTargetSetOpenGLES2_H
 #define traktor_render_RenderTargetSetOpenGLES2_H
 
-#include "Core/RefArray.h"
-#include "Core/Math/Vector4.h"
 #include "Render/RenderTargetSet.h"
 #include "Render/Types.h"
 
@@ -41,19 +39,18 @@ public:
 	virtual void swap(int index1, int index2);
 
 	virtual bool read(int index, void* buffer) const;
-	
-	GLuint getDepthBuffer() const { return m_depthBuffer; }
-	
-	GLuint getClearMask() const { return m_clearMask; }
+
+	bool bind(GLuint primaryDepthBuffer, int32_t renderTarget);
 
 private:
 	Ref< IContext > m_context;
-	int m_width;
-	int m_height;
+	RenderTargetSetCreateDesc m_desc;
+	GLuint m_targetFBO[8];
 	GLuint m_depthBuffer;
-	GLuint m_stencilBuffer;
-	RefArray< RenderTargetOpenGLES2 > m_colorTextures;
-	GLuint m_clearMask;
+	GLuint m_targetTextures[8];
+	Ref< RenderTargetOpenGLES2 > m_renderTargets[8];
+
+	bool createFramebuffer(GLuint primaryDepthBuffer);
 };
 
 #endif

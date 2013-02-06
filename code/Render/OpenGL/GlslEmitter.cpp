@@ -380,7 +380,7 @@ bool emitFrontFace(GlslContext& cx, FrontFace* node)
 
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtFloat);
-	assign(f, out) << L"gl_FrontFacing ? 1.0f : 0.0f;" << Endl;
+	assign(f, out) << L"gl_FrontFacing ? 1.0 : 0.0;" << Endl;
 
 	return true;
 }
@@ -883,6 +883,7 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 	if (!in[0])
 		return false;
 
+#if !defined(T_OPENGL_ES2)
 	for (int32_t i = 0; i < sizeof_array(in); ++i)
 	{
 		if (!in[i])
@@ -891,6 +892,10 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		StringOutputStream& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
 		fpb << L"_gl_FragData_" << i << L" = " << in[i]->cast(GtFloat4) << L";" << Endl;
 	}
+#else
+	StringOutputStream& fpb = cx.getFragmentShader().getOutputStream(GlslShader::BtBody);
+	fpb << L"gl_FragColor" << L" = " << in[0]->cast(GtFloat4) << L";" << Endl;
+#endif
 
 	uint32_t colorMask =
 		((rs.colorWriteMask & CwRed) ? RenderStateOpenGL::CmRed : 0) |
@@ -1002,7 +1007,11 @@ bool emitRound(GlslContext& cx, Round* node)
 	if (!in)
 		return false;
 	GlslVariable* out = cx.emitOutput(node, L"Output", in->getType());
+#if !defined(T_OPENGL_ES2)
 	assign(f, out) << L"round(" << in->getName() << L");" << Endl;
+#else
+	assign(f, out) << L"trunc(" << in->getName() << L" + 0.5);" << Endl;
+#endif
 	return true;
 }
 
@@ -1735,7 +1744,11 @@ bool emitVertexInput(GlslContext& cx, VertexInput* node)
 		std::wstring attributeName = glsl_vertex_attr_name(node->getDataUsage(), node->getIndex());
 
 		StringOutputStream& fi = cx.getVertexShader().getOutputStream(GlslShader::BtInput);
+#if !defined(T_OPENGL_ES2)
 		fi << L"in " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
+#else
+		fi << L"attribute " << glsl_type_name(type) << L" " << attributeName << L";" << Endl;
+#endif
 
 		if (node->getDataUsage() == DuPosition && type != GtFloat4)
 		{

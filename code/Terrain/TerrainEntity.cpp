@@ -429,14 +429,15 @@ void TerrainEntity::render(
 
 		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
 		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
+
 		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
 		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 		renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOrigin);
+		renderBlock->programParams->setVectorParameter(m_handleSurfaceOffset, patch.surfaceOffset);
 		renderBlock->programParams->setVectorParameter(m_handlePatchExtent, patchExtent);
 
 		if (m_visualizeMode == TerrainEntityData::VmSurfaceLod)
@@ -465,18 +466,19 @@ void TerrainEntity::update(const UpdateParams& update)
 bool TerrainEntity::updatePatches()
 {
 	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
-	
+
 	uint32_t patchDim = m_terrain->getPatchDim();
 	uint32_t detailSkip = m_terrain->getDetailSkip();
+	uint32_t heightfieldSize = m_terrain->getHeightfield()->getSize();
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
-			int32_t pminX = px * patchDim * detailSkip;
-			int32_t pminZ = pz * patchDim * detailSkip;
-			int32_t pmaxX = (px + 1) * patchDim * detailSkip;
-			int32_t pmaxZ = (pz + 1) * patchDim * detailSkip;
+			int32_t pminX = (heightfieldSize * px) / m_patchCount;
+			int32_t pminZ = (heightfieldSize * pz) / m_patchCount;
+			int32_t pmaxX = (heightfieldSize * (px + 1)) / m_patchCount;
+			int32_t pmaxZ = (heightfieldSize * (pz + 1)) / m_patchCount;
 
 			const Terrain::Patch& patchData = m_terrain->getPatches()[px + pz * m_patchCount];
 			Patch& patch = m_patches[px + pz * m_patchCount];
@@ -492,14 +494,14 @@ bool TerrainEntity::updatePatches()
 					float fx = float(x) / (patchDim - 1);
 					float fz = float(z) / (patchDim - 1);
 
-					int32_t ix = int32_t(fx * patchDim * detailSkip) + pminX;
-					int32_t iz = int32_t(fz * patchDim * detailSkip) + pminZ;
+					int32_t ix = int32_t(fx * (pmaxX - pminX)) + pminX;
+					int32_t iz = int32_t(fz * (pmaxZ - pminZ)) + pminZ;
 
 					float height = m_terrain->getHeightfield()->getGridHeightNearest(ix, iz);
 
-					*vertex++ = float(x) / (patchDim - 1);
+					*vertex++ = fx;
 					*vertex++ = height;
-					*vertex++ = float(z) / (patchDim - 1);
+					*vertex++ = fz;
 				}
 			}
 #endif

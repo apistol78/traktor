@@ -27,8 +27,6 @@ public:
 
 	virtual ~RenderTargetOpenGL();
 
-	bool create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc, GLuint depthBuffer, bool backBuffer);
-
 	virtual void destroy();
 
 	virtual ITexture* resolve();

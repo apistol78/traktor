@@ -60,9 +60,21 @@
 				</second>
 			</item>
 			<item>
+				<first>TexturePipeline.Gamma</first>
+				<second type="traktor.PropertyFloat">
+					<value>1</value>
+				</second>
+			</item>
+			<item>
 				<first>TexturePipeline.CompressionMethod</first>
 				<second type="traktor.PropertyString">
 					<value>None</value>
+				</second>
+			</item>
+			<item>
+				<first>ScenePipeline.SuppressLinearLighting</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
 				</second>
 			</item>
 			<item>
@@ -73,18 +85,6 @@
 			</item>
 			<item>
 				<first>ScenePipeline.SuppressPostProcess</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
-				</second>
-			</item>
-			<item>
-				<first>ScenePipeline.SuppressPreLit</first>
-				<second type="traktor.PropertyBoolean">
-					<value>true</value>
-				</second>
-			</item>
-			<item>
-				<first>ScenePipeline.SuppressShadows</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
 				</second>
@@ -161,6 +161,24 @@
 				<first>Render.WaitVBlank</first>
 				<second type="traktor.PropertyBoolean">
 					<value>true</value>
+				</second>
+			</item>
+			<item>
+				<first>World.ShadowQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>0</value>
+				</second>
+			</item>
+			<item>
+				<first>World.AmbientOcclusionQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>0</value>
+				</second>
+			</item>
+			<item>
+				<first>World.AntiAliasQuality</first>
+				<second type="traktor.PropertyInteger">
+					<value>0</value>
 				</second>
 			</item>
 		</value>

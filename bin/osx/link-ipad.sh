@@ -5,9 +5,13 @@ ARG_BUNDLE=${1}
 ARG_EXECUTABLE=${2}
 ARG_MODULES=${*:3}
 
-LD=/Developer/Platforms/iPhoneSimulator.platform/Developer/usr/bin/clang++
-SDK_SYSROOT=/Developer/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator5.0.sdk
+XCODE_PATH=`xcode-select --print-path`
+
+LD="$XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/usr/bin/g++"
+SDK_SYSROOT="$XCODE_PATH/Platforms/iPhoneSimulator.platform/Developer/SDKs/iPhoneSimulator6.1.sdk"
 FORCE="-Xlinker -force_load -Xlinker "
+
+echo "Using SDK_ROOT = $SDK_SYSROOT"
 
 # Mandatory modules.
 LD_MODULES="
@@ -39,12 +43,13 @@ LD_MODULES="
 	$FORCE libTraktor.Video.a
 	$FORCE libTraktor.Online.a
 	$FORCE libTraktor.Amalgam.a
+	$FORCE libTraktor.Parade.a
 	libExtern.bullet-2.80.a
 	libExtern.expat-2.0.0.a
 	libExtern.jpeg-6b.a
 	libExtern.libflac-1.2.1.a
-	libExtern.libogg-1.2.0.a
-	libExtern.libvorbis-1.3.1.a
+	libExtern.libogg-1.3.0.a
+	libExtern.libvorbis-1.3.3.a
 	libExtern.lpng128.a
 	libExtern.lua-5.1.4.a
 	libExtern.zlib-1.2.3.a
@@ -53,6 +58,7 @@ LD_MODULES="
 	libExtern.mpg123-1.13.2.a
 	libExtern.sqlite-3.7.6.3.a
 	libExtern.libtheora-1.1.1.a
+	libExtern.stb_vorbis.a
 "
 
 # Add dynamic modules from command line.
@@ -79,7 +85,7 @@ $LD \
 	-Xlinker -objc_abi_version -Xlinker 2 \
 	-Xlinker -no_implicit_dylibs \
 	-Xlinker -u -Xlinker _main \
-	-D__IPHONE_OS_VERSION_MIN_REQUIRED=50000 \
+	-D__IPHONE_OS_VERSION_MIN_REQUIRED=60000 \
 	$LD_FRAMEWORKS \
 	$LD_MODULES \
 	-o $ARG_EXECUTABLE
