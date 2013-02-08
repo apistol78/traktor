@@ -54,8 +54,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>61</first>
-				<second>405</second>
+				<first>46</first>
+				<second>414</second>
 			</position>
 			<fragmentGuid>{B5FB3B51-18B3-1D44-A060-5E83D267C7D4}</fragmentGuid>
 			<inputPins>
@@ -86,7 +86,7 @@
 			<comment/>
 			<position>
 				<first>-207</first>
-				<second>399</second>
+				<second>407</second>
 			</position>
 			<fragmentGuid>{D0BC3830-8C89-3745-BF71-AAB4B5B985D9}</fragmentGuid>
 			<inputPins>
@@ -175,16 +175,16 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-406</first>
-				<second>447</second>
+				<first>-399</first>
+				<second>454</second>
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-666</first>
-				<second>456</second>
+				<first>-659</first>
+				<second>463</second>
 			</position>
 			<parameterName>LightDirectionAndRange</parameterName>
 			<type>PtVector</type>
@@ -193,8 +193,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-103</first>
-				<second>316</second>
+				<first>-110</first>
+				<second>327</second>
 			</position>
 			<fragmentGuid>{BAFF9338-89FC-074F-ADB8-050FD2747021}</fragmentGuid>
 			<inputPins/>
@@ -248,8 +248,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>100</first>
-				<second>328</second>
+				<first>51</first>
+				<second>317</second>
 			</position>
 			<parameterName>LightSunColor</parameterName>
 			<type>PtVector</type>
@@ -258,8 +258,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>96</first>
-				<second>302</second>
+				<first>48</first>
+				<second>291</second>
 			</position>
 			<parameterName>LightBaseColor</parameterName>
 			<type>PtVector</type>
@@ -268,8 +268,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>78</first>
-				<second>276</second>
+				<first>30</first>
+				<second>265</second>
 			</position>
 			<parameterName>LightShadowColor</parameterName>
 			<type>PtVector</type>
@@ -370,6 +370,33 @@
 			</outputPins>
 			<values/>
 		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>263</first>
+				<second>412</second>
+			</position>
+			<fragmentGuid>{ED89170C-A890-D540-843D-6FA811FCD029}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Input</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>378</first>
+				<second>442</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -390,16 +417,6 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Specular</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -680,6 +697,46 @@
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
 				<name>SpecularRoughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[26]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Specular</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[27]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>
