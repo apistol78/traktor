@@ -8,6 +8,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionObjectRelay", ActionObjectRelay, IActionObjectRelay)
 
+void ActionObjectRelay::release(void* owner)
+{
+	// Explicitly break cyclic reference if relay object's
+	// last external reference is released.
+	if (getReferenceCount() <= 2)
+		m_asObject = 0;
+	IActionObjectRelay::release(owner);
+}
+
 void ActionObjectRelay::setAsObject(ActionObject* asObject)
 {
 	T_ASSERT (m_asObject == 0);

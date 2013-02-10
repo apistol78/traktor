@@ -36,7 +36,7 @@ public:
 			m_offset = m_pool.offset();
 		}
 
-		~Scope()
+		virtual ~Scope()
 		{
 			m_pool.rewind(m_offset);
 		}

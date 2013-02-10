@@ -2,6 +2,7 @@
 #define traktor_flash_FlashEditorPage_H
 
 #include "Editor/IEditorPage.h"
+#include "Ui/Custom/ProfileControl.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -27,6 +28,8 @@ class IEditorPageSite;
 
 class Event;
 class Container;
+class TreeView;
+class TreeViewItem;
 
 		namespace custom
 		{
@@ -53,10 +56,14 @@ class SoundSystem;
 	namespace flash
 	{
 
+class ActionObject;
+class FlashCharacterInstance;
 class FlashPreviewControl;
 class FlashMovie;
 
-class T_DLLCLASS FlashEditorPage : public editor::IEditorPage
+class T_DLLCLASS FlashEditorPage
+:	public editor::IEditorPage
+,	public ui::custom::ProfileControl::IProfileCallback
 {
 	T_RTTI_CLASS;
 
@@ -77,15 +84,27 @@ public:
 
 	virtual void handleDatabaseEvent(const Guid& eventId);
 
+	// IProfileCallback
+
+	virtual uint32_t getProfileValue() const;
+
 private:
 	editor::IEditor* m_editor;
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
+	Ref< ui::TreeView > m_treeMovie;
+	Ref< ui::custom::ProfileControl > m_profileMovie;
 	Ref< FlashPreviewControl > m_previewControl;
 	Ref< ui::custom::ToolBar > m_toolBarPlay;
 	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< FlashMovie > m_movie;
+
+	void updateTreeObject(ui::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
+
+	void updateTreeCharacter(ui::TreeViewItem* parentItem, FlashCharacterInstance* characterInstance, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
+
+	void updateTreeMovie();
 
 	void eventToolClick(ui::Event* event);
 };

@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Misc/SafeDestroy.h"
 #include "Flash/FlashButtonInstance.h"
 #include "Flash/FlashButton.h"
 #include "Flash/FlashMovie.h"
@@ -34,6 +35,21 @@ FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterI
 
 		m_characterInstances[i->characterId] = characterInstance;
 	}
+}
+
+FlashButtonInstance::~FlashButtonInstance()
+{
+	destroy();
+}
+
+void FlashButtonInstance::destroy()
+{
+	for (std::map< uint16_t, Ref< FlashCharacterInstance > >::iterator i = m_characterInstances.begin(); i != m_characterInstances.end(); ++i)
+		safeDestroy(i->second);
+
+	m_characterInstances.clear();
+
+	FlashCharacterInstance::destroy();
 }
 
 const FlashButton* FlashButtonInstance::getButton() const

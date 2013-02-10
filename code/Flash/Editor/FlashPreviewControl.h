@@ -93,7 +93,11 @@ public:
 
 	void forward();
 
+	bool playing() const;
+
 	virtual ui::Size getPreferedSize() const;
+
+	FlashMoviePlayer* getMoviePlayer() const { return m_moviePlayer; }
 
 private:
 	Ref< ui::EventHandler > m_idleHandler;

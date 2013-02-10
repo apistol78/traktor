@@ -13,6 +13,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.FlashCharacterInstance", FlashCharacterIn
 
 FlashCharacterInstance* FlashCharacterInstance::ms_focusInstance = 0;
 
+int32_t FlashCharacterInstance::ms_instanceCount = 0;
+
 FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent)
 :	ActionObjectRelay(prototype)
 ,	m_context(context)
@@ -20,6 +22,8 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 ,	m_visible(true)
 ,	m_enabled(true)
 {
+	Atomic::increment(ms_instanceCount);
+
 	m_cxform.red[0] =
 	m_cxform.green[0] =
 	m_cxform.blue[0] =
@@ -28,12 +32,19 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 	m_cxform.green[1] =
 	m_cxform.blue[1] =
 	m_cxform.alpha[1] = 0.0f;
+
 	m_transform = Matrix33::identity();
 }
 
 FlashCharacterInstance::~FlashCharacterInstance()
 {
 	destroy();
+	Atomic::decrement(ms_instanceCount);
+}
+
+int32_t FlashCharacterInstance::getInstanceCount()
+{
+	return ms_instanceCount;
 }
 
 void FlashCharacterInstance::destroy()
@@ -44,6 +55,8 @@ void FlashCharacterInstance::destroy()
 	m_context = 0;
 	m_parent = 0;
 	m_eventScripts.clear();
+
+	ActionObjectRelay::dereference();
 }
 
 ActionContext* FlashCharacterInstance::getContext() const
@@ -289,21 +302,23 @@ void FlashCharacterInstance::eventKillFocus()
 
 bool FlashCharacterInstance::getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue)
 {
-	if (getParent() && memberName == ActionContext::IdParent)
+	if (m_parent && memberName == ActionContext::IdParent)
 	{
-		outMemberValue = ActionValue(getParent()->getAsObject(context));
+		outMemberValue = ActionValue(m_parent->getAsObject(context));
 		return true;
 	}
 	else
 		return false;
 }
 
+void FlashCharacterInstance::setParent(FlashCharacterInstance* parent)
+{
+	m_parent = parent;
+}
+
 void FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const ActionValue& arg)
 {
-	ActionContext* cx = getContext();
-	T_ASSERT (cx);
-
-	ActionObject* self = getAsObject(cx);
+	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
 	ActionValue memberValue;
@@ -314,7 +329,7 @@ void FlashCharacterInstance::executeScriptEvent(uint32_t eventName, const Action
 	if (!eventFunction)
 		return;
 
-	ActionValueArray argv(cx->getPool(), 1);
+	ActionValueArray argv(m_context->getPool(), 1);
 	argv[0] = arg;
 
 	eventFunction->call(self, argv);
@@ -332,6 +347,7 @@ void FlashCharacterInstance::dereference()
 		ms_focusInstance = 0;
 
 	m_context = 0;
+	m_parent = 0;
 
 	ActionObjectRelay::dereference();
 }

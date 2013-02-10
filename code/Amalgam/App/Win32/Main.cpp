@@ -133,6 +133,14 @@ bool checkPreconditions()
 	return true;
 }
 
+void* g_exceptionAddress = 0;
+
+LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
+{
+	g_exceptionAddress = (void*)ep->ExceptionRecord->ExceptionAddress;
+	return EXCEPTION_CONTINUE_SEARCH;
+}
+
 }
 
 #if !defined(WINCE)
@@ -198,6 +206,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 
 	try
 	{
+		PVOID eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
+
 		// Override settings path either from command line or application bundle.
 		Path settingsPath = L"Application.config";
 		if (cmdLine.getCount() >= 1)
@@ -279,10 +289,21 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 			safeDestroy(application);
 			showErrorDialog(logTail->m_tail);
 		}
+
+		RemoveVectoredExceptionHandler(eh);
 	}
 	catch (...)
 	{
-		log::error << L"Unhandled exception occurred" << Endl;
+		HMODULE hCrashModule;
+		if (GetModuleHandleEx(GET_MODULE_HANDLE_EX_FLAG_FROM_ADDRESS, reinterpret_cast<LPCTSTR>(g_exceptionAddress), &hCrashModule))
+		{
+			TCHAR fileName[MAX_PATH];
+			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
+			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << L" in module " << fileName << Endl;
+		}
+		else
+			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << Endl;
+
 		showErrorDialog(logTail->m_tail);
 	}
 

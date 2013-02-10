@@ -134,6 +134,8 @@ std::string ActionContext::getString(uint32_t id)
 
 void ActionContext::trace(const IVisitor& visitor) const
 {
+	T_ASSERT (m_pool.offset() == 0);
+
 	visitor(m_global);
 	visitor(m_movieClip);
 
@@ -148,6 +150,7 @@ void ActionContext::dereference()
 {
 	m_global = 0;
 	m_movieClip = 0;
+	m_frameListeners.clear();
 }
 
 	}

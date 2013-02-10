@@ -290,7 +290,7 @@ Generated texture from surface cache.
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>372</first>
+				<first>434</first>
 				<second>-156</second>
 			</position>
 			<fragmentGuid>{53930A33-0CD2-0247-838C-3561FD095306}</fragmentGuid>
@@ -310,7 +310,7 @@ Generated texture from surface cache.
 		<item type="traktor.render.Interpolator">
 			<comment/>
 			<position>
-				<first>294</first>
+				<first>356</first>
 				<second>-136</second>
 			</position>
 		</item>
@@ -331,47 +331,25 @@ Generated texture from surface cache.
 				<second>227</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sub">
+		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>-149</first>
-				<second>-229</second>
+				<first>38</first>
+				<second>-156</second>
 			</position>
-		</item>
-		<item type="traktor.render.Uniform" version="1">
-			<comment/>
-			<position>
-				<first>-351</first>
-				<second>-180</second>
-			</position>
-			<parameterName>WorldOrigin</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
-		</item>
-		<item type="traktor.render.Div">
-			<comment/>
-			<position>
-				<first>8</first>
-				<second>-202</second>
-			</position>
-		</item>
-		<item type="traktor.render.Uniform" version="1">
-			<comment/>
-			<position>
-				<first>-192</first>
-				<second>-143</second>
-			</position>
-			<parameterName>WorldExtent</parameterName>
-			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
-		</item>
-		<item type="traktor.render.Swizzle">
-			<comment/>
-			<position>
-				<first>170</first>
-				<second>-162</second>
-			</position>
-			<swizzle>xz</swizzle>
+			<fragmentGuid>{E848C73B-E979-E445-AD18-E843CECF0928}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>WorldPosition</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>TexCoord</name>
+				</item>
+			</outputPins>
+			<values/>
 		</item>
 	</nodes>
 	<edges>
@@ -647,58 +625,18 @@ Generated texture from surface cache.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[27]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[26]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[26]"/>
-				<name>Input1</name>
+				<name>WorldPosition</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[26]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[28]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Output</name>
+				<name>TexCoord</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[23]"/>

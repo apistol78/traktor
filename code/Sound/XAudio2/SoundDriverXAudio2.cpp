@@ -15,12 +15,32 @@ namespace traktor
 		namespace
 		{
 
-struct StreamingVoiceContext : public IXAudio2VoiceCallback
+struct EngineCallback : public IXAudio2EngineCallback
 {
 	HANDLE m_hEvent;
+	HRESULT& m_hResult;
 
-	StreamingVoiceContext(HANDLE hEvent)
+	EngineCallback(HANDLE hEvent, HRESULT& hResult)
 	:	m_hEvent(hEvent)
+	,	m_hResult(hResult)
+	{
+	}
+
+	virtual void STDMETHODCALLTYPE OnProcessingPassStart() {}
+
+	virtual void STDMETHODCALLTYPE OnProcessingPassEnd() {}
+
+	virtual void STDMETHODCALLTYPE OnCriticalError(HRESULT hResult) { m_hResult = hResult; SetEvent(m_hEvent); }
+};
+
+struct VoiceCallback : public IXAudio2VoiceCallback
+{
+	HANDLE m_hEvent;
+	HRESULT& m_hResult;
+
+	VoiceCallback(HANDLE hEvent, HRESULT& hResult)
+	:	m_hEvent(hEvent)
+	,	m_hResult(hResult)
 	{
 	}
 
@@ -28,9 +48,9 @@ struct StreamingVoiceContext : public IXAudio2VoiceCallback
 	virtual void STDMETHODCALLTYPE OnVoiceProcessingPassEnd() {}
 	virtual void STDMETHODCALLTYPE OnStreamEnd() {}
 	virtual void STDMETHODCALLTYPE OnBufferStart(void*) {}
-	virtual void STDMETHODCALLTYPE OnBufferEnd( void*) { SetEvent(m_hEvent); }
+	virtual void STDMETHODCALLTYPE OnBufferEnd( void*) { m_hResult = S_OK; SetEvent(m_hEvent); }
 	virtual void STDMETHODCALLTYPE OnLoopEnd(void*) {}   
-	virtual void STDMETHODCALLTYPE OnVoiceError(void*, HRESULT) {}
+	virtual void STDMETHODCALLTYPE OnVoiceError(void*, HRESULT hResult) { m_hResult = hResult; SetEvent(m_hEvent); }
 };
 
 template < typename SampleType >
@@ -98,13 +118,14 @@ void writeSamples(void* dest, const float* samples, uint32_t samplesCount, uint3
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundDriverXAudio2", 0, SoundDriverXAudio2, ISoundDriver)
 
 SoundDriverXAudio2::SoundDriverXAudio2()
-:	m_voiceCallback(0)
+:	m_engineCallback(0)
+,	m_voiceCallback(0)
 ,	m_masteringVoice(0)
 ,	m_sourceVoice(0)
 ,	m_eventNotify(NULL)
+,	m_hResult(S_OK)
 ,	m_bufferSize(0)
 ,	m_nextSubmitBuffer(0)
-,	m_channels(0)
 {
 	std::memset(&m_wfx, 0, sizeof(m_wfx));
 	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
@@ -118,7 +139,19 @@ SoundDriverXAudio2::~SoundDriverXAudio2()
 
 bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMixer >& outMixer)
 {
-	HRESULT hr;
+	m_desc = desc;
+
+	// Allocate submission buffers.
+	m_bufferSize = desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8;
+	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
+	{
+		m_buffers[i] = (uint8_t*)Alloc::acquireAlign(m_bufferSize, 16, T_FILE_LINE);
+		if (!m_buffers[i])
+		{
+			log::error << L"Unable to create XAudio2 sound driver; Out of memory" << Endl;
+			return false;
+		}
+	}
 
 #if !defined(_XBOX)
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);
@@ -131,122 +164,13 @@ bool SoundDriverXAudio2::create(const SoundDriverCreateDesc& desc, Ref< ISoundMi
 		return false;
 	}
 
-	UINT32 flags = 0;
-#if defined(_DEBUG)
-	flags |= XAUDIO2_DEBUG_ENGINE;
-#endif
-	hr = XAudio2Create(&m_audio.getAssign(), flags, XAUDIO2_DEFAULT_PROCESSOR);
-	if (FAILED(hr))
-	{
-		log::error << L"Unable to create XAudio2 sound driver; XAudio2Create failed (" << int32_t(hr) << L")" << Endl;
+	// Create callback objects.
+	m_engineCallback = new EngineCallback(m_eventNotify, m_hResult);
+	m_voiceCallback = new VoiceCallback(m_eventNotify, m_hResult);
+
+	if (!reset())
 		return false;
-	}
 
-	hr = m_audio->CreateMasteringVoice(
-		&m_masteringVoice,
-		XAUDIO2_DEFAULT_CHANNELS,
-		XAUDIO2_DEFAULT_SAMPLERATE,
-		0,
-		0,
-		NULL
-	);
-	if (FAILED(hr))
-	{
-		log::error << L"Unable to create XAudio2 sound driver; CreateMasteringVoice failed (" << desc.hwChannels << L" channels, " << int32_t(hr) << L")" << Endl;
-		return false;
-	}
-
-	m_masteringVoice->SetVolume(1.0f);
-
-	std::memset(&m_wfx, 0, sizeof(m_wfx));
-	m_wfx.Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE);
-	m_wfx.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
-	m_wfx.Format.nChannels = desc.hwChannels;
-	m_wfx.Format.nSamplesPerSec = desc.sampleRate;
-	m_wfx.Format.wBitsPerSample = desc.bitsPerSample;
-	m_wfx.Format.nBlockAlign = desc.hwChannels * desc.bitsPerSample / 8;
-	m_wfx.Format.nAvgBytesPerSec = desc.sampleRate * m_wfx.Format.nBlockAlign;
-	m_wfx.Samples.wValidBitsPerSample = desc.bitsPerSample;
-
-	switch (desc.hwChannels)
-	{
-	case 7+1:
-		m_wfx.dwChannelMask |= SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT;
-	case 5+1:
-		m_wfx.dwChannelMask |= SPEAKER_FRONT_CENTER;
-	case 4+1:
-		m_wfx.dwChannelMask |= SPEAKER_SIDE_LEFT | SPEAKER_SIDE_RIGHT;
-	case 2+1:
-		m_wfx.dwChannelMask |= SPEAKER_LOW_FREQUENCY;
-	case 2:
-		m_wfx.dwChannelMask |= SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
-		break;
-	default:
-		log::error << L"Unable to create XAudio2 sound driver; Incorrect number of channels" << Endl;
-		return false;
-	}
-
-	m_wfx.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
-
-	m_voiceCallback = new StreamingVoiceContext(m_eventNotify);
-
-	hr = m_audio->CreateSourceVoice(
-		&m_sourceVoice,
-		(WAVEFORMATEX*)&m_wfx,
-		0,
-		XAUDIO2_DEFAULT_FREQ_RATIO,
-		m_voiceCallback,
-		NULL,
-		NULL
-	);
-	if (FAILED(hr))
-	{
-		// Unable to create source voice with extensible wave format; try with default.
-		log::warning << L"CreateSourceVoice failed (" << int32_t(hr) << L"); trying without extensible wave format..." << Endl;
-
-		std::memset(&m_wfx, 0, sizeof(m_wfx));
-		m_wfx.Format.cbSize = sizeof(WAVEFORMATEX);
-		m_wfx.Format.wFormatTag = WAVE_FORMAT_PCM;
-		m_wfx.Format.nChannels = desc.hwChannels;
-		m_wfx.Format.nSamplesPerSec = desc.sampleRate;
-		m_wfx.Format.wBitsPerSample = desc.bitsPerSample;
-		m_wfx.Format.nBlockAlign = desc.hwChannels * desc.bitsPerSample / 8;
-		m_wfx.Format.nAvgBytesPerSec = desc.sampleRate * m_wfx.Format.nBlockAlign;
-		m_wfx.Samples.wValidBitsPerSample = desc.bitsPerSample;
-		m_wfx.dwChannelMask = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
-		m_wfx.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
-
-		hr = m_audio->CreateSourceVoice(
-			&m_sourceVoice,
-			(WAVEFORMATEX*)&m_wfx,
-			0,
-			XAUDIO2_DEFAULT_FREQ_RATIO,
-			m_voiceCallback,
-			NULL,
-			NULL
-		);
-		if (FAILED(hr))
-		{
-			log::error << L"Unable to create XAudio2 sound driver; CreateSourceVoice failed (" << int32_t(hr) << L")" << Endl;
-			return false;
-		}
-	}
-
-	m_sourceVoice->SetVolume(1.0f);
-	m_sourceVoice->Start(0);
-
-	m_bufferSize = desc.frameSamples * desc.hwChannels * desc.bitsPerSample / 8;
-	for (uint32_t i = 0; i < sizeof_array(m_buffers); ++i)
-	{
-		m_buffers[i] = (uint8_t*)Alloc::acquireAlign(m_bufferSize, 16, T_FILE_LINE);
-		if (!m_buffers[i])
-		{
-			log::error << L"Unable to create XAudio2 sound driver; Out of memory" << Endl;
-			return false;
-		}
-	}
-
-	m_channels = desc.hwChannels;
 	return true;
 }
 
@@ -265,12 +189,19 @@ void SoundDriverXAudio2::destroy()
 		m_masteringVoice = 0;
 	}
 
+	m_audio->UnregisterForCallbacks(m_engineCallback);
 	m_audio.release();
 
 	if (m_voiceCallback)
 	{
 		delete m_voiceCallback;
 		m_voiceCallback = 0;
+	}
+
+	if (m_engineCallback)
+	{
+		delete m_engineCallback;
+		m_engineCallback = 0;
 	}
 
 	if (m_eventNotify)
@@ -294,22 +225,32 @@ void SoundDriverXAudio2::wait()
 {
 	XAUDIO2_VOICE_STATE state;
 
-	if (!m_sourceVoice)
+	if (!m_sourceVoice || FAILED(m_hResult))
 		return;
 
 	while (m_sourceVoice->GetState(&state), state.BuffersQueued >= 3)
+	{
 		WaitForSingleObject(m_eventNotify, INFINITE);
+		if (FAILED(m_hResult))
+			break;
+	}
 }
 
 void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 {
 	XAUDIO2_BUFFER buffer;
 
+	if (FAILED(m_hResult))
+	{
+		if (!reset())
+			return;
+	}
+
 	if (!m_sourceVoice)
 		return;
 
 	uint32_t blockSize = soundBlock.samplesCount * m_wfx.Format.nChannels * m_wfx.Format.wBitsPerSample / 8;
-	uint32_t channels = min(m_channels, soundBlock.maxChannel);
+	uint32_t channels = min< uint32_t >(m_desc.hwChannels, soundBlock.maxChannel);
 
 	// Grab buffer to submit.
 	std::memset(&buffer, 0, sizeof(buffer));
@@ -325,7 +266,7 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 		for (uint32_t i = 0; i < channels; ++i)
 		{
 			T_ASSERT (soundBlock.samples[i]);
-			writeSamples< int8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, m_channels);
+			writeSamples< int8_t >(&data[i], soundBlock.samples[i], soundBlock.samplesCount, m_desc.hwChannels);
 		}
 		break;
 
@@ -333,12 +274,143 @@ void SoundDriverXAudio2::submit(const SoundBlock& soundBlock)
 		for (uint32_t i = 0; i < channels; ++i)
 		{
 			T_ASSERT (soundBlock.samples[i]);
-			writeSamples< int16_t >(&data[i * 2], soundBlock.samples[i], soundBlock.samplesCount, m_channels);
+			writeSamples< int16_t >(&data[i * 2], soundBlock.samples[i], soundBlock.samplesCount, m_desc.hwChannels);
 		}
 		break;
 	}
 
 	m_sourceVoice->SubmitSourceBuffer(&buffer);
+}
+
+bool SoundDriverXAudio2::reset()
+{
+	HRESULT hr;
+
+	if (m_sourceVoice)
+	{
+		m_sourceVoice->Stop(0);
+		m_sourceVoice->DestroyVoice();
+		m_sourceVoice = 0;
+	}
+
+	if (m_masteringVoice)
+	{
+		m_masteringVoice->DestroyVoice();
+		m_masteringVoice = 0;
+	}
+
+	if (m_audio)
+	{
+		m_audio->UnregisterForCallbacks(m_engineCallback);
+		m_audio.release();
+	}
+
+	UINT32 flags = 0;
+#if defined(_DEBUG)
+	flags |= XAUDIO2_DEBUG_ENGINE;
+#endif
+	hr = XAudio2Create(&m_audio.getAssign(), flags, XAUDIO2_DEFAULT_PROCESSOR);
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create XAudio2 sound driver; XAudio2Create failed (" << int32_t(hr) << L")" << Endl;
+		return false;
+	}
+
+	m_audio->RegisterForCallbacks(m_engineCallback);
+
+	hr = m_audio->CreateMasteringVoice(
+		&m_masteringVoice,
+		XAUDIO2_DEFAULT_CHANNELS,
+		XAUDIO2_DEFAULT_SAMPLERATE,
+		0,
+		0,
+		NULL
+	);
+	if (FAILED(hr))
+	{
+		log::error << L"Unable to create XAudio2 sound driver; CreateMasteringVoice failed (" << m_desc.hwChannels << L" channels, " << int32_t(hr) << L")" << Endl;
+		return false;
+	}
+
+	m_masteringVoice->SetVolume(1.0f);
+
+	std::memset(&m_wfx, 0, sizeof(m_wfx));
+	m_wfx.Format.cbSize = sizeof(WAVEFORMATEXTENSIBLE);
+	m_wfx.Format.wFormatTag = WAVE_FORMAT_EXTENSIBLE;
+	m_wfx.Format.nChannels = m_desc.hwChannels;
+	m_wfx.Format.nSamplesPerSec = m_desc.sampleRate;
+	m_wfx.Format.wBitsPerSample = m_desc.bitsPerSample;
+	m_wfx.Format.nBlockAlign = m_desc.hwChannels * m_desc.bitsPerSample / 8;
+	m_wfx.Format.nAvgBytesPerSec = m_desc.sampleRate * m_wfx.Format.nBlockAlign;
+	m_wfx.Samples.wValidBitsPerSample = m_desc.bitsPerSample;
+
+	switch (m_desc.hwChannels)
+	{
+	case 7+1:
+		m_wfx.dwChannelMask |= SPEAKER_BACK_LEFT | SPEAKER_BACK_RIGHT;
+	case 5+1:
+		m_wfx.dwChannelMask |= SPEAKER_FRONT_CENTER;
+	case 4+1:
+		m_wfx.dwChannelMask |= SPEAKER_SIDE_LEFT | SPEAKER_SIDE_RIGHT;
+	case 2+1:
+		m_wfx.dwChannelMask |= SPEAKER_LOW_FREQUENCY;
+	case 2:
+		m_wfx.dwChannelMask |= SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+		break;
+	default:
+		log::error << L"Unable to create XAudio2 sound driver; Incorrect number of channels" << Endl;
+		return false;
+	}
+
+	m_wfx.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
+
+	hr = m_audio->CreateSourceVoice(
+		&m_sourceVoice,
+		(WAVEFORMATEX*)&m_wfx,
+		0,
+		XAUDIO2_DEFAULT_FREQ_RATIO,
+		m_voiceCallback,
+		NULL,
+		NULL
+	);
+	if (FAILED(hr))
+	{
+		// Unable to create source voice with extensible wave format; try with default.
+		log::warning << L"CreateSourceVoice failed (" << int32_t(hr) << L"); trying without extensible wave format..." << Endl;
+
+		std::memset(&m_wfx, 0, sizeof(m_wfx));
+		m_wfx.Format.cbSize = sizeof(WAVEFORMATEX);
+		m_wfx.Format.wFormatTag = WAVE_FORMAT_PCM;
+		m_wfx.Format.nChannels = m_desc.hwChannels;
+		m_wfx.Format.nSamplesPerSec = m_desc.sampleRate;
+		m_wfx.Format.wBitsPerSample = m_desc.bitsPerSample;
+		m_wfx.Format.nBlockAlign = m_desc.hwChannels * m_desc.bitsPerSample / 8;
+		m_wfx.Format.nAvgBytesPerSec = m_desc.sampleRate * m_wfx.Format.nBlockAlign;
+		m_wfx.Samples.wValidBitsPerSample = m_desc.bitsPerSample;
+		m_wfx.dwChannelMask = SPEAKER_FRONT_LEFT | SPEAKER_FRONT_RIGHT;
+		m_wfx.SubFormat = KSDATAFORMAT_SUBTYPE_PCM;
+
+		hr = m_audio->CreateSourceVoice(
+			&m_sourceVoice,
+			(WAVEFORMATEX*)&m_wfx,
+			0,
+			XAUDIO2_DEFAULT_FREQ_RATIO,
+			m_voiceCallback,
+			NULL,
+			NULL
+		);
+		if (FAILED(hr))
+		{
+			log::error << L"Unable to create XAudio2 sound driver; CreateSourceVoice failed (" << int32_t(hr) << L")" << Endl;
+			return false;
+		}
+	}
+
+	m_sourceVoice->SetVolume(1.0f);
+	m_sourceVoice->Start(0);
+
+	m_hResult = S_OK;
+	return true;
 }
 
 	}
