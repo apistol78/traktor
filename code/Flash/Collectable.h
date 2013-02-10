@@ -46,10 +46,10 @@ private:
 
 	enum TraceColor
 	{
-		TcBlack,
-		TcPurple,
-		TcGray,
-		TcWhite
+		TcBlack = 0,
+		TcPurple = 1,
+		TcGray = 2,
+		TcWhite = 3
 	};
 
 	struct MarkGrayVisitor : public IVisitor
@@ -69,7 +69,7 @@ private:
 
 	Collectable* m_prev;	//!< Intrusive list chain members.
 	Collectable* m_next;
-	mutable int32_t m_traceColor;
+	mutable TraceColor m_traceColor;
 	mutable bool m_traceBuffered;
 	mutable int32_t m_traceRefCount;
 

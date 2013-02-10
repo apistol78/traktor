@@ -33,9 +33,12 @@ public:
 	FlashCharacterInstance(ActionContext* context, const char* const prototype, FlashCharacterInstance* parent);
 
 	virtual ~FlashCharacterInstance();
+
+	/*! \brief Get character instance count. */
+	static int32_t getInstanceCount();
 	
 	/*! \brief Destroy instance. */
-	virtual void destroy();
+	void destroy();
 
 	/*! \brief Get ActionScript execution context.
 	 *
@@ -184,6 +187,8 @@ public:
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
 
 protected:
+	void setParent(FlashCharacterInstance* parent);
+
 	void executeScriptEvent(uint32_t eventName, const ActionValue& arg);
 
 	virtual void trace(const IVisitor& visitor) const;
@@ -192,6 +197,7 @@ protected:
 
 private:
 	static FlashCharacterInstance* ms_focusInstance;
+	static int32_t ms_instanceCount;
 	Ref< ActionContext > m_context;
 	FlashCharacterInstance* m_parent;
 	std::string m_name;

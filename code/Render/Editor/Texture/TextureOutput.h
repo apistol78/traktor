@@ -34,6 +34,8 @@ public:
 	bool m_scaleImage;
 	int32_t m_scaleWidth;
 	int32_t m_scaleHeight;
+	bool m_flipX;
+	bool m_flipY;
 	bool m_enableCompression;
 	bool m_enableNormalMapCompression;
 	bool m_inverseNormalMapY;

@@ -16,7 +16,6 @@ Library::Library()
 
 Library::~Library()
 {
-	T_ASSERT (m_handle == 0);
 }
 
 bool Library::open(const Path& libraryName)

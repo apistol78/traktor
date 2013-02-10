@@ -679,14 +679,7 @@ void AsMovieClip::MovieClip_prevFrame(FlashSpriteInstance* self) const
 
 void AsMovieClip::MovieClip_removeMovieClip(FlashSpriteInstance* self) const
 {
-	// Ensure this clip doesn't have focus.
-	if (FlashCharacterInstance::getFocus() == self)
-		FlashCharacterInstance::setFocus(0);
-
-	// Remove from parent's display list.
-	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(self->getParent());
-	FlashDisplayList& displayList = parentClipInstance->getDisplayList();
-	displayList.removeObject(self);
+	self->removeMovieClip();
 }
 
 void AsMovieClip::MovieClip_setMask(FlashSpriteInstance* self, FlashSpriteInstance* mask) const

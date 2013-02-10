@@ -43,6 +43,8 @@ public:
 
 	explicit ActionObject(ActionContext* context, ActionObject* prototype, IActionObjectRelay* relay = 0);
 
+	virtual void release(void* owner);
+
 	virtual void addInterface(ActionObject* intrface);
 
 	void set__proto__(ActionObject* prototype);

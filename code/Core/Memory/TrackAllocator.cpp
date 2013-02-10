@@ -3,6 +3,7 @@
 #	include <execinfo.h>
 #endif
 #include "Core/Platform.h"
+#include "Core/Debug/CallStack.h"
 #include "Core/Memory/TrackAllocator.h"
 #include "Core/Thread/Acquire.h"
 
@@ -71,21 +72,7 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	for (int i = 0; i < sizeof_array(block.at); ++i)
 		block.at[i] = 0;
 
-#if defined(_WIN32)
-#	if !defined(WINCE)
-	CaptureStackBackTrace(
-		2,
-		sizeof_array(block.at),
-		block.at,
-		0
-	);
-#	endif
-#elif !defined(_PS3)
-	backtrace(
-		block.at,
-		sizeof_array(block.at)
-	);
-#endif
+	getCallStack(sizeof_array(block.at), block.at);
 
 	m_aliveBlocks.insert(std::make_pair(ptr, block));
 	m_allocCount[block.at[0]]++;

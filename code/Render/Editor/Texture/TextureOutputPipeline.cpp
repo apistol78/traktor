@@ -129,7 +129,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 26, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 27, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_skipMips(0)
@@ -371,6 +371,13 @@ bool TextureOutputPipeline::buildOutput(
 	// Data is stored in big endian as GPUs are big endian machines.
 	pixelFormat = pixelFormat.endianSwapped();
 
+	// Flip image if necessary.
+	if (textureOutput->m_flipX || textureOutput->m_flipY)
+	{
+		drawing::MirrorFilter mirrorFilter(textureOutput->m_flipX, textureOutput->m_flipY);
+		image = image->applyFilter(&mirrorFilter);
+	}
+
 	// Generate sphere map from cube map.
 	if (textureOutput->m_textureType == TtCube && textureOutput->m_generateSphereMap)
 	{
@@ -389,7 +396,7 @@ bool TextureOutputPipeline::buildOutput(
 		else
 		{
 			log::info << L"Converting into linear gamma..." << Endl;
-			const drawing::GammaFilter gammaFilter(m_gamma);
+			drawing::GammaFilter gammaFilter(m_gamma);
 			image = image->applyFilter(&gammaFilter);
 		}
 	}

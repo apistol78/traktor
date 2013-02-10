@@ -119,7 +119,7 @@ void CycleRefDebugger::removeObjectRef(void* ref, void* object)
 				j->second.refs.end(),
 				Pair1stEqual< std::pair< void*, ObjInfo* > >(object)
 			);
-			T_ASSERT (k != j->second.refs.end());
+			T_FATAL_ASSERT (k != j->second.refs.end());
 			j->second.refs.erase(k);
 		}
 		break;
@@ -148,7 +148,7 @@ void CycleRefDebugger::removeObjectRef(void* ref, void* object)
 					break;
 				}
 			}
-			T_ASSERT_M (reachable, L"Orphan cycle detected");
+			T_FATAL_ASSERT_M (reachable, L"Orphan cycle detected");
 		}
 	}	
 }

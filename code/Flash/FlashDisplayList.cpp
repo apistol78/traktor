@@ -183,9 +183,11 @@ void FlashDisplayList::showObject(int32_t depth, uint16_t characterId, FlashChar
 void FlashDisplayList::removeObject(FlashCharacterInstance* characterInstance)
 {
 	T_ASSERT (characterInstance);
-	layer_map_t::iterator i = std::remove_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
-	if (i != m_layers.end())
-		m_layers.erase(i, m_layers.end());
+	
+	layer_map_t::iterator i = std::find_if(m_layers.begin(), m_layers.end(), FindCharacter(characterInstance));
+	T_ASSERT (i != m_layers.end());
+
+	m_layers.erase(i);
 }
 
 int32_t FlashDisplayList::getObjectDepth(const FlashCharacterInstance* characterInstance) const
@@ -216,6 +218,7 @@ void FlashDisplayList::swap(int32_t depth1, int32_t depth2)
 
 void FlashDisplayList::getVisibleObjects(RefArray< FlashCharacterInstance >& outCharacterInstances) const
 {
+	T_ASSERT (outCharacterInstances.empty());
 	for (FlashDisplayList::layer_map_t::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
 		T_ASSERT (i->second.instance);

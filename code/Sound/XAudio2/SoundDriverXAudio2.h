@@ -43,16 +43,20 @@ public:
 	virtual void submit(const SoundBlock& soundBlock);
 
 private:
+	SoundDriverCreateDesc m_desc;
 	ComRef< IXAudio2 > m_audio;
+	IXAudio2EngineCallback* m_engineCallback;
 	IXAudio2VoiceCallback* m_voiceCallback;
 	IXAudio2MasteringVoice* m_masteringVoice;
 	IXAudio2SourceVoice* m_sourceVoice;
 	WAVEFORMATEXTENSIBLE m_wfx;
 	HANDLE m_eventNotify;
+	HRESULT m_hResult;
 	uint32_t m_bufferSize;
 	uint8_t* m_buffers[3];
 	uint32_t m_nextSubmitBuffer;
-	uint32_t m_channels;
+
+	bool reset();
 };
 
 	}

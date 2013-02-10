@@ -3,7 +3,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Timer/Timer.h"
 #include "Flash/Collectable.h"
 #include "Flash/GC.h"
 
@@ -15,7 +14,6 @@ namespace traktor
 		{
 
 static GC* s_instance = 0;
-const float c_maxPartialCollectTime = 0.01f;	//< Maximum time spent in a partial garbage collection.
 
 		}
 
@@ -32,12 +30,16 @@ GC& GC::getInstance()
 void GC::addCandidate(Collectable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (object->m_traceColor != Collectable::TcGray);
+	T_ASSERT (object->m_traceColor != Collectable::TcWhite);
 	m_candidates.push_back(object);
 }
 
 void GC::removeCandidate(Collectable* object)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (object->m_traceColor != Collectable::TcGray);
+	T_ASSERT (object->m_traceColor != Collectable::TcWhite);
 	m_candidates.remove(object);
 }
 
@@ -48,13 +50,26 @@ void GC::collectCycles(bool full)
 	if (m_candidates.empty())
 		return;
 	
-	Timer timer;
 	do
 	{
+#if defined(_DEBUG)
+		// Ensure root candidates are initially colored reasonably.
+		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); ++i)
+		{
+			Collectable* candidate = *i;
+			T_ASSERT (
+				candidate->m_traceColor == Collectable::TcBlack ||
+				candidate->m_traceColor == Collectable::TcPurple
+			);
+		}
+#endif
+
 		// Mark roots.
 		for (IntrusiveList< Collectable >::iterator i = m_candidates.begin(); i != m_candidates.end(); )
 		{
 			Collectable* candidate = *i;
+			T_ASSERT (candidate->m_traceColor != Collectable::TcWhite);
+
 			if (candidate->m_traceColor == Collectable::TcPurple)
 			{
 				candidate->traceMarkGray();
@@ -62,6 +77,10 @@ void GC::collectCycles(bool full)
 			}
 			else
 			{
+				T_ASSERT (
+					candidate->m_traceColor == Collectable::TcBlack ||
+					candidate->m_traceColor == Collectable::TcGray
+				);
 				candidate->m_traceBuffered = false;
 				i = m_candidates.erase(i);
 			}
@@ -75,7 +94,6 @@ void GC::collectCycles(bool full)
 		}
 
 		// Collect roots.
-		timer.start();
 		while (!m_candidates.empty())
 		{
 			Collectable* candidate = m_candidates.front();
@@ -89,12 +107,6 @@ void GC::collectCycles(bool full)
 
 			candidate->m_traceBuffered = false;
 			candidate->traceCollectWhite();
-
-#if !defined(_DEBUG)
-			// Ensure collection doesn't exceed time budget.
-			if (!full && timer.getElapsedTime() >= c_maxPartialCollectTime)
-				break;
-#endif
 		}
 	}
 	while (full && !m_candidates.empty());

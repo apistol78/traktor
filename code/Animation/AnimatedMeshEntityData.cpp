@@ -3,7 +3,6 @@
 #include "Animation/IPoseControllerData.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
-#include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Mesh/Skinned/SkinnedMesh.h"
@@ -52,7 +51,6 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 		std::map< std::wstring, int32_t >::const_iterator j = jointMap.find(joint->getName());
 		if (j == jointMap.end())
 		{
-			T_DEBUG(L"No joint named \"" << joint->getName() << L"\" in skinned mesh");
 			jointRemap[i] = -1;
 			continue;
 		}

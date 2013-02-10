@@ -32,7 +32,9 @@ class T_DLLCLASS FlashSpriteInstance : public FlashCharacterInstance
 public:
 	FlashSpriteInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashSprite* sprite);
 
-	virtual void destroy();
+	virtual ~FlashSpriteInstance();
+
+	void destroy();
 
 	const FlashSprite* getSprite() const;
 
@@ -51,6 +53,8 @@ public:
 	void updateDisplayList();
 
 	FlashDisplayList& getDisplayList();
+
+	void removeMovieClip();
 
 	Ref< FlashSpriteInstance > clone() const;
 
@@ -115,6 +119,7 @@ private:
 	uint32_t m_lastExecutedFrame;
 	uint32_t m_skipEnterFrame;
 	bool m_initialized;
+	bool m_removed;
 	bool m_playing;
 	bool m_visible;
 	bool m_enabled;

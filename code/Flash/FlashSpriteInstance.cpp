@@ -25,6 +25,7 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_lastExecutedFrame(~0U)
 ,	m_skipEnterFrame(0)
 ,	m_initialized(false)
+,	m_removed(false)
 ,	m_playing(true)
 ,	m_visible(false)
 ,	m_enabled(true)
@@ -39,10 +40,17 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 	T_ASSERT (m_sprite->getFrameCount() > 0);
 }
 
+FlashSpriteInstance::~FlashSpriteInstance()
+{
+	destroy();
+}
+
 void FlashSpriteInstance::destroy()
 {
 	m_sprite = 0;
 	m_mask = 0;
+	m_canvas = 0;
+	m_playing = false;
 
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
@@ -50,8 +58,8 @@ void FlashSpriteInstance::destroy()
 		if (i->second.instance)
 			i->second.instance->destroy();
 	}
-
 	m_displayList.reset();
+	m_visibleCharacters.clear();
 
 	FlashCharacterInstance::destroy();
 }
@@ -169,6 +177,23 @@ void FlashSpriteInstance::updateDisplayList()
 FlashDisplayList& FlashSpriteInstance::getDisplayList()
 {
 	return m_displayList;
+}
+
+void FlashSpriteInstance::removeMovieClip()
+{
+	if (FlashCharacterInstance::getFocus() == this)
+		FlashCharacterInstance::setFocus(0);
+
+	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(getParent());
+	FlashDisplayList& parentDisplayList = parentClipInstance->getDisplayList();
+	parentDisplayList.removeObject(this);
+
+	m_displayList.reset();
+	m_mask = 0;
+	m_canvas = 0;
+	m_removed = true;
+
+	setParent(0);
 }
 
 Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
@@ -594,6 +619,9 @@ void FlashSpriteInstance::trace(const IVisitor& visitor) const
 {
 	visitor(m_mask);
 
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+		visitor(*i);
+
 	const FlashDisplayList::layer_map_t& layers = m_displayList.getLayers();
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 		visitor(i->second.instance);
@@ -604,8 +632,8 @@ void FlashSpriteInstance::trace(const IVisitor& visitor) const
 void FlashSpriteInstance::dereference()
 {
 	m_mask = 0;
-	m_displayList.reset();
 	m_visibleCharacters.resize(0);
+	m_displayList.reset();
 
 	FlashCharacterInstance::dereference();
 }

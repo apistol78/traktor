@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 8, TextureOutput, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutput", 9, TextureOutput, ISerializable)
 
 TextureOutput::TextureOutput()
 :	m_textureFormat(TfInvalid)
@@ -23,6 +23,8 @@ TextureOutput::TextureOutput()
 ,	m_scaleImage(false)
 ,	m_scaleWidth(0)
 ,	m_scaleHeight(0)
+,	m_flipX(false)
+,	m_flipY(false)
 ,	m_enableCompression(true)
 ,	m_enableNormalMapCompression(false)
 ,	m_inverseNormalMapY(false)
@@ -98,6 +100,13 @@ bool TextureOutput::serialize(ISerializer& s)
 	s >> Member< bool >(L"scaleImage", m_scaleImage);
 	s >> Member< int32_t >(L"scaleWidth", m_scaleWidth, AttributeRange(0));
 	s >> Member< int32_t >(L"scaleHeight", m_scaleHeight, AttributeRange(0));
+
+	if (s.getVersion() >= 9)
+	{
+		s >> Member< bool >(L"flipX", m_flipX);
+		s >> Member< bool >(L"flipY", m_flipY);
+	}
+
 	s >> Member< bool >(L"enableCompression", m_enableCompression);
 
 	if (s.getVersion() >= 2)

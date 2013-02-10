@@ -248,6 +248,11 @@ void FlashPreviewControl::forward()
 	}
 }
 
+bool FlashPreviewControl::playing() const
+{
+	return m_playing;
+}
+
 ui::Size FlashPreviewControl::getPreferedSize() const
 {
 	if (!m_movie)

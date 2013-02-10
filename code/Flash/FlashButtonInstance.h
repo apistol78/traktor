@@ -30,6 +30,10 @@ class T_DLLCLASS FlashButtonInstance : public FlashCharacterInstance
 public:
 	FlashButtonInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashButton* button);
 
+	virtual ~FlashButtonInstance();
+
+	void destroy();
+
 	/*! \brief Get button.
 	 *
 	 * \return Pointer to button.

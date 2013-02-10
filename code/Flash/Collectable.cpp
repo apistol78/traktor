@@ -42,14 +42,11 @@ void Collectable::release(void* owner) const
 	}
 	else
 	{
-		if (m_traceColor != TcPurple)
+		m_traceColor = TcPurple;
+		if (!m_traceBuffered)
 		{
-			m_traceColor = TcPurple;
-			if (!m_traceBuffered)
-			{
-				m_traceBuffered = true;
-				GC::getInstance().addCandidate(const_cast< Collectable* >(this));
-			}
+			m_traceBuffered = true;
+			GC::getInstance().addCandidate(const_cast< Collectable* >(this));
 		}
 	}
 	Object::release(owner);

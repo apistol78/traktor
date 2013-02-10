@@ -21,6 +21,8 @@ class T_DLLCLASS ActionObjectRelay : public IActionObjectRelay
 	T_RTTI_CLASS;
 
 public:
+	virtual void release(void* owner);
+
 	virtual void setAsObject(ActionObject* asObject);
 
 	virtual ActionObject* getAsObject(ActionContext* context);
@@ -30,6 +32,8 @@ public:
 	virtual bool setMember(ActionContext* context, uint32_t memberName, const ActionValue& memberValue);
 
 	virtual bool getMember(ActionContext* context, uint32_t memberName, ActionValue& outMemberValue);
+
+	ActionObject* getAsObject() const { return m_asObject; }
 
 protected:
 	ActionObjectRelay(const char* const prototype);

@@ -1,7 +1,6 @@
 #include "Ui/Custom/ProfileControl.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/PaintEvent.h"
-//#include "Core/Heap/HeapStats.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Timer/Timer.h"
 
@@ -21,14 +20,20 @@ const double c_profileTime = 10.0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ProfileControl", ProfileControl, Widget)
 
 ProfileControl::ProfileControl()
-:	m_peekObjectReference(4000)
+:	m_peekCount(0)
+,	m_callBack(0)
 {
 }
 
-bool ProfileControl::create(Widget* parent, int time, int minSample, int maxSample, int style)
+bool ProfileControl::create(Widget* parent, int time, int minSample, int maxSample, int style, IProfileCallback* callBack)
 {
 	if (!Widget::create(parent, style))
 		return false;
+
+	Sample s = { 0.0, 0 };
+	m_samples.push_back(s);
+
+	m_callBack = callBack;
 
 	addPaintEventHandler(createMethodHandler(this, &ProfileControl::eventPaint));
 	addTimerEventHandler(createMethodHandler(this, &ProfileControl::eventTimer));
@@ -60,20 +65,11 @@ void ProfileControl::eventPaint(Event* event)
 	for (int y = rc.top; y < rc.bottom; y += 16)
 		canvas.drawLine(rc.left, y, rc.right, y);
 
-	//HeapStats stats;
-	//Heap::getStats(stats);
-
 	StringOutputStream ss1;
-	//ss1 << stats.objects << L" object(s)";
-
-	StringOutputStream ss2;
-	//ss2 << stats.references << L" reference(s), " << stats.rootReferences << L" root(s)";
+	ss1 << m_samples.back().count << L" object(s)";
 
 	canvas.setForeground(Color4ub(200, 255, 200));
 	canvas.drawText(Point(0,  0), ss1.str());
-
-	canvas.setForeground(Color4ub(200, 200, 255));
-	canvas.drawText(Point(0, 16), ss2.str());
 
 	if (!m_samples.empty())
 	{
@@ -82,24 +78,18 @@ void ProfileControl::eventPaint(Event* event)
 		std::list< Sample >::iterator i = m_samples.begin();
 
 		int x1 = int(rc.right - rc.getWidth() * (c_profileTime - i->at + Ts) / c_profileTime);
-		int yo1 = int(rc.bottom - (rc.getHeight() * i->objectCount) / m_peekObjectReference);
-		int yr1 = int(rc.bottom - (rc.getHeight() * i->referenceCount) / m_peekObjectReference);
+		int y1 = int(rc.bottom - (rc.getHeight() * i->count) / (m_peekCount + 1));
 
 		for (++i; i != m_samples.end(); ++i)
 		{
 			int x2 = int(rc.right - rc.getWidth() * (c_profileTime - i->at + Ts) / c_profileTime);
-			int yo2 = int(rc.bottom - (rc.getHeight() * i->objectCount) / m_peekObjectReference);
-			int yr2 = int(rc.bottom - (rc.getHeight() * i->referenceCount) / m_peekObjectReference);
+			int y2 = int(rc.bottom - (rc.getHeight() * i->count) / (m_peekCount + 1));
 
 			canvas.setForeground(Color4ub(200, 255, 200));
-			canvas.drawLine(x1, yo1, x2, yo2);
-
-			canvas.setForeground(Color4ub(200, 200, 255));
-			canvas.drawLine(x1, yr1, x2, yr2);
+			canvas.drawLine(x1, y1, x2, y2);
 
 			x1 = x2;
-			yo1 = yo2;
-			yr1 = yr2;
+			y1 = y2;
 		}
 	}
 
@@ -113,20 +103,16 @@ void ProfileControl::eventTimer(Event* event)
 	while (!m_samples.empty() && m_samples.front().at < T - c_profileTime)
 		m_samples.pop_front();
 
-	//HeapStats stats;
-	//Heap::getStats(stats);
+	uint32_t count = m_callBack->getProfileValue();
 
 	Sample sample =
 	{
 		T,
-		//stats.objects,
-		//stats.references,
-		0, 0
+		count
 	};
 	m_samples.push_back(sample);
 
-	m_peekObjectReference = std::max(sample.objectCount, m_peekObjectReference);
-	m_peekObjectReference = std::max(sample.referenceCount, m_peekObjectReference);
+	m_peekCount = std::max(sample.count, m_peekCount);
 
 	update();
 }

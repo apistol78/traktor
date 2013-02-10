@@ -41,6 +41,15 @@ ActionObject::ActionObject(ActionContext* context, ActionObject* prototype, IAct
 	setRelay(relay);
 }
 
+void ActionObject::release(void* owner)
+{
+	// Explicitly break cyclic reference if object's
+	// last external reference is released.
+	if (getReferenceCount() <= 2)
+		m_relay = 0;
+	Collectable::release(owner);
+}
+
 void ActionObject::addInterface(ActionObject* intrface)
 {
 	T_ASSERT (!m_readOnly);
