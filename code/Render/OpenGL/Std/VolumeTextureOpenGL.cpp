@@ -128,12 +128,10 @@ int VolumeTextureOpenGL::getDepth() const
 	return m_depth;
 }
 
-void VolumeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture)
+void VolumeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
 {
-	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_3D, m_textureName));
-	T_OGL_SAFE(glBindSampler(unit, sampler[0]));
-	T_OGL_SAFE(glUniform1i(locationTexture, unit));
+	renderContext->bindSamplerStateObject(GL_TEXTURE_3D, samplerObject, false);
 }
 
 void VolumeTextureOpenGL::bindSize(GLint locationSize)

@@ -68,7 +68,7 @@ ContextOpenGL::ContextOpenGL(HWND hWnd, HDC hDC, HGLRC hRC)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
-,	m_currentStateList(~0UL)
+,	m_currentRenderStateList(~0UL)
 
 #elif defined(__APPLE__)
 
@@ -77,7 +77,7 @@ ContextOpenGL::ContextOpenGL(void* context)
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
-,	m_currentStateList(~0UL)
+,	m_currentRenderStateList(~0UL)
 
 #elif defined(__LINUX__)
 
@@ -88,7 +88,7 @@ ContextOpenGL::ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext 
 ,	m_width(0)
 ,	m_height(0)
 ,	m_permitDepth(true)
-,	m_currentStateList(~0UL)
+,	m_currentRenderStateList(~0UL)
 
 #endif
 {
@@ -225,6 +225,8 @@ bool ContextOpenGL::enter()
 	}
 #endif
 
+	T_OGL_SAFE(glDisable(GL_DITHER));
+
 	stack->push_back(this);
 	return true;
 }
@@ -319,7 +321,7 @@ GLuint ContextOpenGL::createShaderObject(const char* shader, GLenum shaderType)
 	return shaderObject;
 }
 
-uint32_t ContextOpenGL::createStateList(const RenderStateOpenGL& renderState)
+uint32_t ContextOpenGL::createRenderStateObject(const RenderStateOpenGL& renderState)
 {
 	Adler32 adler;
 	adler.feed(renderState.cullFaceEnable);
@@ -340,42 +342,62 @@ uint32_t ContextOpenGL::createStateList(const RenderStateOpenGL& renderState)
 	adler.feed(renderState.stencilOpZFail);
 	adler.feed(renderState.stencilOpZPass);
 
-	std::map< uint32_t, uint32_t >::iterator i = m_stateListCache.find(adler.get());
-	if (i != m_stateListCache.end())
+	std::map< uint32_t, uint32_t >::iterator i = m_renderStateListCache.find(adler.get());
+	if (i != m_renderStateListCache.end())
 		return i->second;
 
-	uint32_t list = m_stateList.size();
+	uint32_t list = m_renderStateList.size();
 
-	m_stateList.push_back(renderState);
-	if (m_stateList.back().cullFace == GL_FRONT)
-		m_stateList.back().cullFace = GL_BACK;
+	m_renderStateList.push_back(renderState);
+	if (m_renderStateList.back().cullFace == GL_FRONT)
+		m_renderStateList.back().cullFace = GL_BACK;
 	else
-		m_stateList.back().cullFace = GL_FRONT;
+		m_renderStateList.back().cullFace = GL_FRONT;
 
-	m_stateList.push_back(renderState);
-	if (m_stateList.back().cullFace == GL_FRONT)
-		m_stateList.back().cullFace = GL_BACK;
+	m_renderStateList.push_back(renderState);
+	if (m_renderStateList.back().cullFace == GL_FRONT)
+		m_renderStateList.back().cullFace = GL_BACK;
 	else
-		m_stateList.back().cullFace = GL_FRONT;
+		m_renderStateList.back().cullFace = GL_FRONT;
 
-	RenderStateOpenGL& rs = m_stateList.back();
+	RenderStateOpenGL& rs = m_renderStateList.back();
 
 	rs.depthTestEnable = GL_FALSE;
 	rs.depthMask = GL_FALSE;
 	rs.stencilTestEnable = GL_FALSE;
 
-	m_stateListCache.insert(std::make_pair(adler.get(), list));
+	m_renderStateListCache.insert(std::make_pair(adler.get(), list));
 	return list;
 }
 
-void ContextOpenGL::callStateList(uint32_t listBase)
+uint32_t ContextOpenGL::createSamplerStateObject(const SamplerStateOpenGL& samplerState)
 {
-	uint32_t list = listBase + (m_permitDepth ? 0 : 1);
-	if (list == m_currentStateList)
+	Adler32 adler;
+	adler.feed(samplerState.minFilter);
+	adler.feed(samplerState.magFilter);
+	adler.feed(samplerState.wrapS);
+	adler.feed(samplerState.wrapT);
+	adler.feed(samplerState.wrapR);
+
+	std::map< uint32_t, uint32_t >::iterator i = m_samplerStateListCache.find(adler.get());
+	if (i != m_samplerStateListCache.end())
+		return i->second;
+
+	uint32_t list = m_samplerStateList.size();
+	m_samplerStateList.push_back(samplerState);
+	m_samplerStateListCache.insert(std::make_pair(adler.get(), list));
+
+	return list;
+}
+
+void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
+{
+	renderStateObject += (m_permitDepth ? 0 : 1);
+	if (renderStateObject == m_currentRenderStateList)
 		return;
 
-	T_ASSERT (list < m_stateList.size());
-	RenderStateOpenGL& rs = m_stateList[list];
+	T_ASSERT (renderStateObject < m_renderStateList.size());
+	const RenderStateOpenGL& rs = m_renderStateList[renderStateObject];
 
 	if (rs.cullFaceEnable)
 		{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
@@ -415,7 +437,24 @@ void ContextOpenGL::callStateList(uint32_t listBase)
 	T_OGL_SAFE(glStencilMask(~0UL));
 	T_OGL_SAFE(glStencilOp(rs.stencilOpFail, rs.stencilOpZFail, rs.stencilOpZPass));
 
-	m_currentStateList = list;
+	m_currentRenderStateList = renderStateObject;
+}
+
+void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips)
+{
+	T_ASSERT (samplerStateObject < m_samplerStateList.size());
+	const SamplerStateOpenGL& ss = m_samplerStateList[samplerStateObject];
+
+	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, ss.wrapS));
+	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, ss.wrapT));
+	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_R, ss.wrapR));
+
+	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, ss.magFilter));
+
+	if (haveMips)
+		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, ss.minFilter)); }
+	else
+		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST)); }
 }
 
 void ContextOpenGL::setPermitDepth(bool permitDepth)

@@ -103,8 +103,8 @@ public:
 private:
 	struct Slice
 	{
-		Ref< WorldContext > shadow[MaxLightCount];
-		Matrix44 viewToLightSpace[MaxLightCount];
+		Ref< WorldContext > shadow[MaxLightShadowCount];
+		Matrix44 viewToLightSpace[MaxLightShadowCount];
 	};
 
 	struct Frame

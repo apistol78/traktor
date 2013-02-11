@@ -11,7 +11,8 @@ namespace traktor
 enum
 {
 	MaxSliceCount = 4,
-	MaxLightCount = 16
+	MaxLightCount = 64,
+	MaxLightShadowCount = 2
 };
 
 enum Quality

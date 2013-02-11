@@ -162,17 +162,10 @@ void CubeTextureOpenGL::unlock(int side, int level)
 {
 }
 
-void CubeTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture)
+void CubeTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
 {
-	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_CUBE_MAP, m_textureName));
-	
-	if (m_mipCount > 1)
-		T_OGL_SAFE(glBindSampler(unit, sampler[1]))
-	else
-		T_OGL_SAFE(glBindSampler(unit, sampler[0]));
-
-	T_OGL_SAFE(glUniform1i(locationTexture, unit));
+	renderContext->bindSamplerStateObject(GL_TEXTURE_CUBE_MAP, samplerObject, m_mipCount > 1);
 }
 
 void CubeTextureOpenGL::bindSize(GLint locationSize)

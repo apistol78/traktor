@@ -466,7 +466,7 @@ bool WorldRendererPreLit::create(
 		{
 			for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
 			{
-				for (int32_t k = 0; k < MaxLightCount; ++k)
+				for (int32_t k = 0; k < MaxLightShadowCount; ++k)
 					i->slice[j].shadow[k] = new WorldContext(desc.entityRenderers, 0);
 			}
 		}
@@ -509,7 +509,7 @@ void WorldRendererPreLit::destroy()
 	{
 		for (int32_t j = 0; j < MaxSliceCount; ++j)
 		{
-			for (int32_t k = 0; k < MaxLightCount; ++k)
+			for (int32_t k = 0; k < MaxLightShadowCount; ++k)
 				i->slice[j].shadow[k] = 0;
 		}
 
@@ -568,7 +568,8 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 	// Flush previous frame.
 	f.gbuffer->clear();
 
-	for (uint32_t i = 0; i < f.lightCount; ++i)
+	uint32_t shadowLightCount = min< uint32_t >(f.lightCount, MaxLightShadowCount);
+	for (uint32_t i = 0; i < shadowLightCount; ++i)
 	{
 		for (int32_t j = 0; j < m_shadowSettings.cascadingSlices; ++j)
 		{
@@ -684,7 +685,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		// First render all shadowing lights.
 		if ((flags & WrfShadowMap) != 0)
 		{
-			for (uint32_t i = 0; i < f.lightCount; ++i)
+			uint32_t shadowLightCount = min< uint32_t >(f.lightCount, MaxLightShadowCount);
+			for (uint32_t i = 0; i < shadowLightCount; ++i)
 			{
 				if (!f.haveShadows[i])
 					continue;
@@ -1011,7 +1013,9 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 		f.lights[i] = light;
 
 		if (
-			(light.type == LtDirectional || light.type == LtSpot) && light.castShadow
+			(light.type == LtDirectional || light.type == LtSpot) &&
+			light.castShadow &&
+			i < MaxLightShadowCount
 		)
 		{
 			for (int32_t slice = 0; slice < m_shadowSettings.cascadingSlices; ++slice)

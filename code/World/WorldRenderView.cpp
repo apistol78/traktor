@@ -91,8 +91,20 @@ void WorldRenderView::setScreenPlaneDistance(float screenPlaneDistance)
 
 void WorldRenderView::addLight(const Light& light)
 {
-	if (m_lightCount < MaxLightCount)
-		m_lights[m_lightCount++] = light;
+	if (m_lightCount >= MaxLightCount)
+		return;
+
+	if (light.castShadow)
+	{
+		for (int32_t i = m_lightCount; i >= 0; --i)
+			m_lights[i + 1] = m_lights[i];
+
+		m_lights[0] = light;
+	}
+	else
+		m_lights[m_lightCount] = light;
+
+	++m_lightCount;
 }
 
 void WorldRenderView::resetLights()
