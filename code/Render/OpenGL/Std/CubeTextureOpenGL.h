@@ -45,7 +45,7 @@ public:
 	
 	// ITextureBinding
 	
-	virtual void bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture);
+	virtual void bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject);
 
 	virtual void bindSize(GLint locationSize);
 	

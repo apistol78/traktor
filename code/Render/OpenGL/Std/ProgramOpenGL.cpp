@@ -290,10 +290,10 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 	T_OGL_SAFE(glUseProgram(m_program));
 
 	// Setup our render state.
-	if (m_renderStateList == ~0UL)
-		m_renderStateList = renderContext->createStateList(m_renderState);
+	if (m_renderStateList == 0)
+		m_renderStateList = renderContext->createRenderStateObject(m_renderState);
 
-	renderContext->callStateList(m_renderStateList);
+	renderContext->bindRenderStateObject(m_renderStateList);
 	if (m_renderState.stencilTestEnable)
 	{
 		T_OGL_SAFE(glStencilFunc(
@@ -350,20 +350,18 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 		uint32_t nsamplers = m_samplers.size();
 		for (uint32_t i = 0; i < nsamplers; ++i)
 		{
-			const Sampler& sampler = m_samplers[i];
+			Sampler& sampler = m_samplers[i];
+
+			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + sampler.stage));
+
+			if (sampler.object == 0)
+				sampler.object = renderContext->createSamplerStateObject(m_renderState.samplerStates[sampler.stage]);
 
 			ITextureBinding* tb = getTextureBinding(m_textures[sampler.texture]);
-			T_ASSERT (tb);
-			
 			if (tb)
-			{
-				tb->bindSampler(
-					renderContext,
-					sampler.stage,
-					sampler.object,
-					sampler.location
-				);
-			}
+				tb->bindTexture(renderContext, sampler.object);
+
+			T_OGL_SAFE(glUniform1i(sampler.location, sampler.stage));
 		}
 
 		uint32_t ntextureSize = m_textureSize.size();
@@ -413,7 +411,7 @@ const GLint* ProgramOpenGL::getAttributeLocs() const
 ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, const ProgramResource* resource)
 :	m_resourceContext(resourceContext)
 ,	m_program(program)
-,	m_renderStateList(~0UL)
+,	m_renderStateList(0)
 ,	m_locationTargetSize(0)
 ,	m_textureDirty(true)
 {
@@ -449,26 +447,7 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 		sampler.location = glGetUniformLocation(m_program, wstombs(samplerName).c_str());
 		sampler.texture = m_parameterMap[handle];
 		sampler.stage = i->stage;
-
-		// Create sampler object.
-		T_OGL_SAFE(glGenSamplers(2, sampler.object));
-
-		const SamplerStateOpenGL& samplerState = m_renderState.samplerStates[i->stage];
-
-		if (samplerState.minFilter != GL_NEAREST)
-			T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_MIN_FILTER, GL_LINEAR))
-		else
-			T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_MIN_FILTER, GL_NEAREST));
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_WRAP_S, samplerState.wrapS));
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_WRAP_T, samplerState.wrapT));
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[0], GL_TEXTURE_WRAP_R, samplerState.wrapR));
-
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_MIN_FILTER, samplerState.minFilter));
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_MAG_FILTER, samplerState.magFilter));
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_WRAP_S, samplerState.wrapS));
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_WRAP_T, samplerState.wrapT));
-		T_OGL_SAFE(glSamplerParameteri(sampler.object[1], GL_TEXTURE_WRAP_R, samplerState.wrapR));
+		sampler.object = 0;
 
 		m_samplers.push_back(sampler);
 	}

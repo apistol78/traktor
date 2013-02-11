@@ -40,9 +40,13 @@ public:
 
 	GLuint createShaderObject(const char* shader, GLenum shaderType);
 
-	uint32_t createStateList(const RenderStateOpenGL& renderState);
+	uint32_t createRenderStateObject(const RenderStateOpenGL& renderState);
 
-	void callStateList(uint32_t listBase);
+	uint32_t createSamplerStateObject(const SamplerStateOpenGL& samplerState);
+
+	void bindRenderStateObject(uint32_t renderStateObject);
+
+	void bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips);
 
 	void setPermitDepth(bool permitDepth);
 
@@ -82,13 +86,15 @@ private:
 	static ThreadLocal ms_contextStack;
 	Semaphore m_lock;
 	std::map< uint32_t, GLuint > m_shaderObjects;
-	std::map< uint32_t, uint32_t > m_stateListCache;
-	std::vector< RenderStateOpenGL > m_stateList;
+	std::map< uint32_t, uint32_t > m_renderStateListCache;
+	std::map< uint32_t, uint32_t > m_samplerStateListCache;
+	std::vector< RenderStateOpenGL > m_renderStateList;
+	std::vector< SamplerStateOpenGL > m_samplerStateList;
 	std::vector< IDeleteCallback* > m_deleteResources;
 	int32_t m_width;
 	int32_t m_height;
 	bool m_permitDepth;
-	uint32_t m_currentStateList;
+	uint32_t m_currentRenderStateList;
 };
 
 	}

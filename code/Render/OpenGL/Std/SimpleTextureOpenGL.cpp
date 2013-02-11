@@ -167,17 +167,10 @@ void SimpleTextureOpenGL::unlock(int level)
 	));
 }
 
-void SimpleTextureOpenGL::bindSampler(ContextOpenGL* renderContext, GLuint unit, const GLuint sampler[], GLint locationTexture)
+void SimpleTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
 {
-	T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + unit));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-
-	if (m_mipCount > 1)
-		T_OGL_SAFE(glBindSampler(unit, sampler[1]))
-	else
-		T_OGL_SAFE(glBindSampler(unit, sampler[0]));
-
-	T_OGL_SAFE(glUniform1i(locationTexture, unit));
+	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, m_mipCount > 1);
 }
 
 void SimpleTextureOpenGL::bindSize(GLint locationSize)

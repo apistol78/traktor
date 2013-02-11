@@ -66,7 +66,7 @@ private:
 		GLint location;
 		uint32_t texture;
 		uint32_t stage;
-		GLuint object[2];	// 0 - no mips, 1 - including mips
+		GLuint object;
 	};
 
 	struct TextureSize

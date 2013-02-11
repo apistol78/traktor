@@ -189,8 +189,11 @@ void SoundDriverXAudio2::destroy()
 		m_masteringVoice = 0;
 	}
 
-	m_audio->UnregisterForCallbacks(m_engineCallback);
-	m_audio.release();
+	if (m_audio)
+	{
+		m_audio->UnregisterForCallbacks(m_engineCallback);
+		m_audio.release();
+	}
 
 	if (m_voiceCallback)
 	{

@@ -4,8 +4,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>513</first>
-				<second>378</second>
+				<first>351</first>
+				<second>440</second>
 			</position>
 			<parameterName>Flash_Texture</parameterName>
 			<type>PtTexture2D</type>
@@ -28,8 +28,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>453</first>
-				<second>460</second>
+				<first>363</first>
+				<second>496</second>
 			</position>
 			<name>TexCoord</name>
 			<connectable>true</connectable>
@@ -45,9 +45,9 @@
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
 			<magFilter>FtLinear</magFilter>
-			<addressU>AdClamp</addressU>
-			<addressV>AdClamp</addressV>
-			<addressW>AdClamp</addressW>
+			<addressU>AdWrap</addressU>
+			<addressV>AdWrap</addressV>
+			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
 		</item>
 		<item type="traktor.render.Lerp">
@@ -60,8 +60,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>680</first>
-				<second>587</second>
+				<first>646</first>
+				<second>613</second>
 			</position>
 			<parameterName>Flash_TextureClamp</parameterName>
 			<type>PtScalar</type>
@@ -74,6 +74,15 @@
 				<second>475</second>
 			</position>
 			<name>Output</name>
+		</item>
+		<item type="traktor.render.Clamp">
+			<comment/>
+			<position>
+				<first>575</first>
+				<second>526</second>
+			</position>
+			<min>0</min>
+			<max>1</max>
 		</item>
 	</nodes>
 	<edges>
@@ -105,16 +114,6 @@
 			<destination>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>TexCoord</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -155,6 +154,26 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>
