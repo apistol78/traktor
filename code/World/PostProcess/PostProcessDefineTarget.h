@@ -38,7 +38,10 @@ private:
 	std::wstring m_id;
 	uint32_t m_width;
 	uint32_t m_height;
-	uint32_t m_screenDenom;
+	uint32_t m_screenWidthDenom;
+	uint32_t m_screenHeightDenom;
+	uint32_t m_maxWidth;
+	uint32_t m_maxHeight;
 	render::TextureFormat m_format;
 	bool m_depthStencil;
 	bool m_preferTiled;

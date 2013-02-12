@@ -72,7 +72,7 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 
 		// Handle entity picking if enabled.
 		if (
-			!m_modifyAlternative &&
+			!m_modifyClone &&
 			m_mouseButton == 1 &&
 			context->getPickEnable()
 		)
@@ -130,11 +130,18 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 				context->queryFrustum(worldFrustum, intersectingEntities, true);
 
 				// De-select all other if shift isn't held.
-				if ((event->getKeyState() & ui::KsShift) == 0)
+				if ((event->getKeyState() & (ui::KsShift | ui::KsControl)) == 0)
 					context->selectAllEntities(false);
 
+				// Remove selection if ctrl is begin held.
 				for (RefArray< EntityAdapter >::iterator i = intersectingEntities.begin(); i != intersectingEntities.end(); ++i)
-					context->selectEntity(*i);
+				{
+					if ((event->getKeyState() & ui::KsControl) == 0)
+						context->selectEntity(*i, true);
+					else
+						context->selectEntity(*i, false);
+				}
+
 				context->raiseSelect(this);
 			}
 		}
@@ -147,10 +154,15 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 				Ref< EntityAdapter > entityAdapter = context->queryRay(worldRayOrigin, worldRayDirection, true);
 
 				// De-select all other if shift isn't held.
-				if ((event->getKeyState() & ui::KsShift) == 0)
+				if ((event->getKeyState() & (ui::KsShift | ui::KsControl)) == 0)
 					context->selectAllEntities(false);
 
-				context->selectEntity(entityAdapter);
+				// Toggle selection if ctrl is being held.
+				if ((event->getKeyState() & ui::KsControl) == 0)
+					context->selectEntity(entityAdapter, true);
+				else
+					context->selectEntity(entityAdapter, !entityAdapter->isSelected());
+
 				context->raiseSelect(this);
 			}
 		}
@@ -179,6 +191,8 @@ void RenderControlModel::eventDoubleClick(ISceneRenderControl* renderControl, ui
 	ui::Point mousePosition = mouseEvent->getPosition();
 
 	if (mouseEvent->getButton() != ui::MouseEvent::BtLeft)
+		return;
+	if ((mouseEvent->getKeyState() & (ui::KsShift | ui::KsControl)) != 0)
 		return;
 	
 	Vector4 worldRayOrigin, worldRayDirection;

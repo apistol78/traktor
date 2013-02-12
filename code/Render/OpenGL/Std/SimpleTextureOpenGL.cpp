@@ -53,15 +53,13 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 {
 	m_width = desc.width;
 	m_height = desc.height;
+	m_maxAnisotropy = maxAnisotropy;
 
 	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
 		return false;
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-
-	if (maxAnisotropy > 0.0f)
-		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
 
 	m_dataSize = getTextureMipPitch(desc.format, desc.width, desc.height);
 
@@ -170,7 +168,7 @@ void SimpleTextureOpenGL::unlock(int level)
 void SimpleTextureOpenGL::bindTexture(ContextOpenGL* renderContext, uint32_t samplerObject)
 {
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));
-	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, m_mipCount > 1);
+	renderContext->bindSamplerStateObject(GL_TEXTURE_2D, samplerObject, m_mipCount > 1, m_maxAnisotropy);
 }
 
 void SimpleTextureOpenGL::bindSize(GLint locationSize)

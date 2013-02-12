@@ -1216,7 +1216,7 @@ Round::Round()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 1, Sampler, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Sampler", 2, Sampler, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Sampler_i[] = { { L"Texture", false }, { L"TexCoord", false }, 0 };
 const ImmutableNode::OutputPinDesc c_Sampler_o[] = { L"Output", 0 };
@@ -1237,6 +1237,7 @@ Sampler::Sampler(
 ,	m_addressV(addressV)
 ,	m_addressW(addressW)
 ,	m_mipBias(0.0f)
+,	m_useAnisotropic(false)
 {
 }
 
@@ -1310,6 +1311,16 @@ float Sampler::getMipBias() const
 	return m_mipBias;
 }
 
+void Sampler::setUseAnisotropic(bool useAnisotropic)
+{
+	m_useAnisotropic = useAnisotropic;
+}
+
+bool Sampler::getUseAnisotropic() const
+{
+	return m_useAnisotropic;
+}
+
 bool Sampler::serialize(ISerializer& s)
 {
 	const MemberEnum< Filter >::Key kFilter[] =
@@ -1340,6 +1351,9 @@ bool Sampler::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< float >(L"mipBias", m_mipBias);
+
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"useAnisotropic", m_useAnisotropic);
 
 	return true;
 }

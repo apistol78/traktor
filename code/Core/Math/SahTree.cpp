@@ -57,8 +57,88 @@ void SahTree::build(const AlignedVector< Winding3 >& polygons)
 
 bool SahTree::queryClosestIntersection(const Vector4& origin, const Vector4& direction, QueryResult& outResult) const
 {
-	// \fixme
-	return false;
+	#define IS_LEAF(node) ((node)->leftChild == 0)
+
+	const float F(1e-3f);
+	bool result = false;
+	Scalar nearT, farT;
+	Scalar T;
+
+	if (!m_root->aabb.intersectRay(origin, direction, nearT, farT) || farT < 0.0f)
+		return false;
+
+	if (nearT < 0.0f)
+		nearT = Scalar(0.0f);
+
+	outResult.distance = std::numeric_limits< float >::max();
+
+	std::vector< bool > tags(m_polygons.size(), false);
+
+	AlignedVector< Stack > stack;
+	stack.reserve(64);
+	stack.push_back(Stack(m_root, nearT, farT));
+
+	while (!stack.empty())
+	{
+		Node* N = stack.back().node;
+		nearT = Scalar(stack.back().nearT);
+		farT = Scalar(stack.back().farT);
+
+		stack.pop_back();
+
+		if (IS_LEAF(N))
+		{
+			for (std::vector< int32_t >::iterator i = N->indices.begin(); i != N->indices.end(); ++i)
+			{
+				if (tags[*i])
+					continue;
+
+				const Winding3& polygon = m_polygons[*i];
+				if (polygon.rayIntersection(origin, direction, T))
+				{
+					if (T >= -F && T <= outResult.distance)
+					{
+						outResult.distance = T;
+						outResult.position = origin + direction * T;
+						result = true;
+					}
+				}
+
+				tags[*i] = true;
+			}
+		}
+		else
+		{
+			Vector4 O = origin + direction * nearT;
+			float e = O[N->axis];
+
+			if (e <= N->split + F)
+			{
+				T = nearT + Scalar(N->split - e) / direction[N->axis];
+				if (T >= nearT && T <= farT)
+				{
+					stack.push_back(Stack(N->leftChild, nearT, T));
+					stack.push_back(Stack(N->rightChild, T, farT));
+				}
+				else
+					stack.push_back(Stack(N->leftChild, nearT, farT));
+			}
+
+			if (e >= N->split - F)
+			{
+				T = nearT + Scalar(N->split - e) / direction[N->axis];
+				if (T >= nearT  && T <= farT)
+				{
+					stack.push_back(Stack(N->rightChild, nearT, T));
+					stack.push_back(Stack(N->leftChild, T, farT));
+				}
+				else
+					stack.push_back(Stack(N->rightChild, nearT, farT));
+			}
+		}
+	}
+
+	return result;
 }
 
 bool SahTree::queryAnyIntersection(const Vector4& origin, const Vector4& direction, float maxDistance) const

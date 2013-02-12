@@ -80,6 +80,8 @@ bool TerrainEntity::create(resource::IResourceManager* resourceManager, const Te
 	if (!resourceManager->bind(data.getTerrain(), m_terrain))
 		return 0;
 
+	m_heightfield = m_terrain->getHeightfield();
+
 	m_surfaceCache = new TerrainSurfaceCache();
 	if (!m_surfaceCache->create(resourceManager, m_renderSystem))
 		return false;
@@ -116,11 +118,15 @@ void TerrainEntity::render(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (m_terrain.changed())
+	if (
+		m_terrain.changed() ||
+		m_heightfield.changed()
+	)
 	{
 		if (!createPatches())
 			return;
 
+		m_heightfield.consume();
 		m_terrain.consume();
 	}
 
@@ -150,7 +156,7 @@ void TerrainEntity::render(
 	bool updateCache = true;
 #endif
 
-	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
 	Matrix44 viewInv = worldRenderView.getView().inverse();
 	Vector4 eyePosition = viewInv.translation().xyz1();
@@ -455,7 +461,7 @@ void TerrainEntity::render(
 
 Aabb3 TerrainEntity::getBoundingBox() const
 {
-	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 	return Aabb3(-worldExtent, worldExtent);
 }
 
@@ -465,11 +471,11 @@ void TerrainEntity::update(const UpdateParams& update)
 
 bool TerrainEntity::updatePatches()
 {
-	const Vector4& worldExtent = m_terrain->getHeightfield()->getWorldExtent();
+	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
 	uint32_t patchDim = m_terrain->getPatchDim();
 	uint32_t detailSkip = m_terrain->getDetailSkip();
-	uint32_t heightfieldSize = m_terrain->getHeightfield()->getSize();
+	uint32_t heightfieldSize = m_heightfield->getSize();
 
 	for (uint32_t pz = 0; pz < m_patchCount; ++pz)
 	{
@@ -497,7 +503,7 @@ bool TerrainEntity::updatePatches()
 					int32_t ix = int32_t(fx * (pmaxX - pminX)) + pminX;
 					int32_t iz = int32_t(fz * (pmaxZ - pminZ)) + pminZ;
 
-					float height = m_terrain->getHeightfield()->getGridHeightNearest(ix, iz);
+					float height = m_heightfield->getGridHeightNearest(ix, iz);
 
 					*vertex++ = fx;
 					*vertex++ = height;
@@ -532,7 +538,7 @@ bool TerrainEntity::createPatches()
 	safeDestroy(m_vertexBuffer);
 #endif
 
-	uint32_t heightfieldSize = m_terrain->getHeightfield()->getSize();
+	uint32_t heightfieldSize = m_heightfield->getSize();
 	T_ASSERT (heightfieldSize > 0);
 
 	uint32_t patchDim = m_terrain->getPatchDim();

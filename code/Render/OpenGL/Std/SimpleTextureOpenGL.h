@@ -56,6 +56,7 @@ private:
 	GLenum m_format;
 	GLenum m_type;
 	uint32_t m_mipCount;
+	GLfloat m_maxAnisotropy;
 	uint32_t m_dataSize;
 	AutoArrayPtr< uint8_t > m_data;
 };

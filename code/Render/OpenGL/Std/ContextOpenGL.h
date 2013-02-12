@@ -46,7 +46,7 @@ public:
 
 	void bindRenderStateObject(uint32_t renderStateObject);
 
-	void bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips);
+	void bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips, GLfloat maxAnisotropy);
 
 	void setPermitDepth(bool permitDepth);
 

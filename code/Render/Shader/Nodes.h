@@ -721,6 +721,10 @@ public:
 
 	float getMipBias() const;
 
+	void setUseAnisotropic(bool useAnisotropic);
+
+	bool getUseAnisotropic() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -731,6 +735,7 @@ private:
 	Address m_addressV;
 	Address m_addressW;
 	float m_mipBias;
+	bool m_useAnisotropic;
 };
 
 /*! \brief Scalar constant. */
