@@ -440,7 +440,7 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	m_currentRenderStateList = renderStateObject;
 }
 
-void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips)
+void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips, GLfloat maxAnisotropy)
 {
 	T_ASSERT (samplerStateObject < m_samplerStateList.size());
 	const SamplerStateOpenGL& ss = m_samplerStateList[samplerStateObject];
@@ -452,7 +452,10 @@ void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t sample
 	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, ss.magFilter));
 
 	if (haveMips)
-		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, ss.minFilter)); }
+	{
+		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, ss.minFilter));
+		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
+	}
 	else
 		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST)); }
 }

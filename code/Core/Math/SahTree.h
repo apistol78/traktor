@@ -31,7 +31,11 @@ class T_DLLCLASS SahTree : public Object
 	T_RTTI_CLASS;
 
 public:
-	struct QueryResult { /* \fixme */ };
+	struct QueryResult
+	{
+		float distance;
+		Vector4 position;
+	};
 
 	SahTree();
 

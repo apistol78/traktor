@@ -1112,6 +1112,12 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 		break;
 	}
 
+	if (
+		node->getUseAnisotropic() &&
+		dsd.Filter == (0x10 | 0x4 | 0x1)
+	)
+		dsd.Filter = D3D11_FILTER_ANISOTROPIC;
+
 	Adler32 samplerHash;
 	samplerHash.begin();
 	samplerHash.feed(&dsd, sizeof(dsd));

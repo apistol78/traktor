@@ -18,6 +18,13 @@
 
 namespace traktor
 {
+	namespace hf
+	{
+
+class Heightfield;
+
+	}
+
 	namespace render
 	{
 
@@ -105,6 +112,7 @@ private:
 
 	Ref< render::IRenderSystem > m_renderSystem;
 	resource::Proxy< Terrain > m_terrain;
+	resource::Proxy< hf::Heightfield > m_heightfield;
 	Ref< TerrainSurfaceCache > m_surfaceCache;
 	AlignedVector< Patch > m_patches;
 	uint32_t m_patchCount;

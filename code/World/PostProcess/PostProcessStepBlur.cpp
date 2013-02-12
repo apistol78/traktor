@@ -17,10 +17,11 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepBlur", 1, PostProcessStepBlur, PostProcessStep)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepBlur", 2, PostProcessStepBlur, PostProcessStep)
 
 PostProcessStepBlur::PostProcessStepBlur()
 :	m_taps(15)
+,	m_blurType(BtGaussian)
 {
 }
 
@@ -46,23 +47,58 @@ Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(
 	AlignedVector< Vector4 > gaussianOffsetWeights(m_taps);
 	float totalWeight = 0.0f;
 
-	float step = 1.0f / (m_taps - 1.0f);
-	float angleMin = (PI * step) / 2.0f;
-	float angleMax = PI - angleMin;
-
-	for (int i = 0; i < m_taps; ++i)
+	if (m_blurType == BtGaussian)
 	{
-		float phi = (float(i) * step) * (angleMax - angleMin) + angleMin;
+		float sigma = m_taps / 4.0f;
+		float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
+		for (int32_t i = 0; i < m_taps; ++i)
+		{
+			float x = i - m_taps / 2.0f;
+			
+			float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
+			totalWeight += weight;
 
-		float weight = sinf(phi);
-		totalWeight += weight;
+			gaussianOffsetWeights[i].set(
+				i - m_taps / 2.0f,
+				weight,
+				0.0f,
+				0.0f
+			);
+		}
+	}
+	else if (m_blurType == BtSine)
+	{
+		float step = 1.0f / (m_taps - 1.0f);
+		float angleMin = (PI * step) / 2.0f;
+		float angleMax = PI - angleMin;
 
-		gaussianOffsetWeights[i].set(
-			i - m_taps / 2.0f,
-			weight,
-			0.0f,
-			0.0f
-		);
+		for (int i = 0; i < m_taps; ++i)
+		{
+			float phi = (float(i) * step) * (angleMax - angleMin) + angleMin;
+
+			float weight = sinf(phi);
+			totalWeight += weight;
+
+			gaussianOffsetWeights[i].set(
+				i - m_taps / 2.0f,
+				weight,
+				0.0f,
+				0.0f
+			);
+		}
+	}
+	else if (m_blurType == BtBox)
+	{
+		for (int i = 0; i < m_taps; ++i)
+		{
+			gaussianOffsetWeights[i].set(
+				i - m_taps / 2.0f,
+				1.0f,
+				0.0f,
+				0.0f
+			);
+		}
+		totalWeight = float(m_taps);
 	}
 
 	Vector4 invWeight(1.0f, 1.0f / totalWeight, 1.0f, 1.0f);
@@ -84,6 +120,17 @@ bool PostProcessStepBlur::serialize(ISerializer& s)
 	s >> Member< Vector4 >(L"direction", m_direction, AttributeDirection());
 	if (s.getVersion() >= 1)
 		s >> Member< int32_t >(L"taps", m_taps);
+	if (s.getVersion() >= 2)
+	{
+		const MemberEnum< BlurType >::Key c_BlurType_Keys[] =
+		{
+			{ L"BtGaussian", BtGaussian },
+			{ L"BtSine", BtSine },
+			{ L"BtBox", BtBox },
+			{ 0 }
+		};
+		s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
+	}
 	return true;
 }
 

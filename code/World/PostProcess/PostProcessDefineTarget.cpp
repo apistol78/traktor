@@ -11,12 +11,15 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", 2, PostProcessDefineTarget, PostProcessDefine)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessDefineTarget", 3, PostProcessDefineTarget, PostProcessDefine)
 
 PostProcessDefineTarget::PostProcessDefineTarget()
 :	m_width(0)
 ,	m_height(0)
-,	m_screenDenom(0)
+,	m_screenWidthDenom(0)
+,	m_screenHeightDenom(0)
+,	m_maxWidth(0)
+,	m_maxHeight(0)
 ,	m_format(render::TfInvalid)
 ,	m_depthStencil(false)
 ,	m_preferTiled(false)
@@ -30,13 +33,18 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 	render::RenderTargetSetCreateDesc desc;
 
 	desc.count = 1;
-	desc.width = m_width + (m_screenDenom ? (screenWidth + m_screenDenom - 1) / m_screenDenom : 0);
-	desc.height = m_height + (m_screenDenom ? (screenHeight + m_screenDenom - 1) / m_screenDenom : 0);
+	desc.width = m_width + (m_screenWidthDenom ? (screenWidth + m_screenWidthDenom - 1) / m_screenWidthDenom : 0);
+	desc.height = m_height + (m_screenHeightDenom ? (screenHeight + m_screenHeightDenom - 1) / m_screenHeightDenom : 0);
 	desc.multiSample = m_multiSample;
 	desc.createDepthStencil = m_depthStencil;
 	desc.usingPrimaryDepthStencil = false;
 	desc.preferTiled = m_preferTiled;
 	desc.targets[0].format = m_format;
+
+	if (m_maxWidth > 0)
+		desc.width = min< int32_t >(desc.width, m_maxWidth);
+	if (m_maxHeight > 0)
+		desc.height = min< int32_t >(desc.height, m_maxHeight);
 
 	Ref< render::RenderTargetSet > renderTargetSet = renderSystem->createRenderTargetSet(desc);
 	if (!renderTargetSet)
@@ -72,7 +80,22 @@ bool PostProcessDefineTarget::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"id", m_id);
 	s >> Member< uint32_t >(L"width", m_width);
 	s >> Member< uint32_t >(L"height", m_height);
-	s >> Member< uint32_t >(L"screenDenom", m_screenDenom);
+
+	if (s.getVersion() >= 3)
+	{
+		s >> Member< uint32_t >(L"screenWidthDenom", m_screenWidthDenom);
+		s >> Member< uint32_t >(L"screenHeightDenom", m_screenHeightDenom);
+		s >> Member< uint32_t >(L"maxWidth", m_maxWidth);
+		s >> Member< uint32_t >(L"maxHeight", m_maxHeight);
+	}
+	else
+	{
+		uint32_t screenDenom = 0;
+		s >> Member< uint32_t >(L"screenDenom", screenDenom);
+		m_screenWidthDenom = screenDenom;
+		m_screenHeightDenom = screenDenom;
+	}
+
 	s >> MemberEnum< render::TextureFormat >(L"format", m_format, kFormats);
 	s >> Member< bool >(L"depthStencil", m_depthStencil);
 	

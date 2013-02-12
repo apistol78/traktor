@@ -96,10 +96,18 @@ public:
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
+	enum BlurType
+	{
+		BtGaussian,
+		BtSine,
+		BtBox
+	};
+
 	resource::Id< render::Shader > m_shader;
 	std::vector< Source > m_sources;
 	Vector4 m_direction;
 	int32_t m_taps;
+	BlurType m_blurType;
 };
 
 	}
