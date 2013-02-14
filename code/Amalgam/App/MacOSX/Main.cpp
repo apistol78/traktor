@@ -152,6 +152,9 @@ int main(int argc, const char** argv)
 	log::info   .setTarget(new LogDualTarget(logTail, log::info   .getTarget()));
 	log::warning.setTarget(new LogDualTarget(logTail, log::warning.getTarget()));
 	log::error  .setTarget(new LogDualTarget(logTail, log::error  .getTarget()));
+	
+	// Set default path to resources in bundle.
+	FileSystem::getInstance().setCurrentVolumeAndDirectory(L"$(BUNDLE_PATH)/Contents/Resources");
 
 	// Initialize native UI.
 	ui::Application::getInstance()->initialize(

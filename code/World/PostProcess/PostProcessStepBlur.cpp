@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/ISerializer.h"
@@ -49,8 +50,24 @@ Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(
 
 	if (m_blurType == BtGaussian)
 	{
-		float sigma = m_taps / 4.0f;
-		float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
+		float sigma = m_taps / 4.73f;
+		float sigma0 = sigma;
+
+		// Iterate to prevent under or over sigma.
+		for (int32_t i = 0; i < 10; ++i)
+		{
+			const float x = m_taps / 2.0f;
+			float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
+			float weight = a * std::exp(-((x * x) / (2.0f * sigma * sigma)));
+			if (weight > 0.01f)
+				sigma -= 0.1f;
+			else if (weight < 0.001f)
+				sigma += 0.01f;
+			else
+				break;
+		}
+
+		const float a = 1.0f / sqrtf(TWO_PI * sigma * sigma);
 		for (int32_t i = 0; i < m_taps; ++i)
 		{
 			float x = i - m_taps / 2.0f;

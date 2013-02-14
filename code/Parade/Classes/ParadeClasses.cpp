@@ -90,6 +90,8 @@ void registerParadeClasses(script::IScriptManager* scriptManager)
 	classAudioLayer->addMethod("play", &AudioLayer::play);
 	classAudioLayer->addMethod("stop", &AudioLayer::stop);
 	classAudioLayer->addMethod("fadeOff", &AudioLayer::fadeOff);
+	classAudioLayer->addMethod("setParameter", &AudioLayer::setParameter);
+	classAudioLayer->addMethod("tweenParameter", &AudioLayer::tweenParameter);
 	scriptManager->registerClass(classAudioLayer);
 
 	Ref< script::AutoScriptClass< VideoLayer > > classVideoLayer = new script::AutoScriptClass< VideoLayer >();

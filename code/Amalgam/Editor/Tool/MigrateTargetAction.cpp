@@ -95,45 +95,6 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	migrateConfiguration->setProperty< PropertyString >(L"Migrate.SourceDatabase", sourceDatabaseCs.format());
 	migrateConfiguration->setProperty< PropertyString >(L"Migrate.OutputDatabase", outputDatabaseCs.format());
 
-
-
-	//// Concatenate modules from all used features.
-	//StringOutputStream migrateModules;
-	//StringOutputStream runtimeModules;
-
-	//// Add mandatory modules first.
-	//migrateModules <<
-	//	L"Traktor.Database "
-	//	L"Traktor.Database.Local "
-	//	L"Traktor.Database.Compact ";
-
-	//const std::list< Guid >& features = m_targetConfiguration->getFeatures();
-	//for (std::list< Guid >::const_iterator i = features.begin(); i != features.end(); ++i)
-	//{
-	//	Ref< const Feature > feature = m_database->getObjectReadOnly< Feature >(*i);
-	//	if (!feature)
-	//	{
-	//		log::warning << L"Unable to get feature \"" << i->format() << L"\"; feature skipped." << Endl;
-	//		continue;
-	//	}
-
-	//	Ref< const PropertyGroup > pipelineProperties = feature->getPipelineProperties();
-	//	if (pipelineProperties)
-	//	{
-	//		std::set< std::wstring > modules = pipelineProperties->getProperty< PropertyStringSet >(L"Editor.Modules");
-	//		for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
-	//			migrateModules << *i << L" ";
-	//	}
-
-	//	Ref< const PropertyGroup > runtimeProperties = feature->getRuntimeProperties();
-	//	if (runtimeProperties)
-	//	{
-	//		std::set< std::wstring > modules = runtimeProperties->getProperty< PropertyStringSet >(L"Amalgam.Modules");
-	//		for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
-	//			runtimeModules << *i << L" ";
-	//	}
-	//}
-
 	// Create target application configuration.
 	Ref< PropertyGroup > applicationConfiguration = new PropertyGroup();
 
@@ -207,6 +168,7 @@ bool MigrateTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_PROJECT_ICON"] = m_targetConfiguration->getIcon();
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
+	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());

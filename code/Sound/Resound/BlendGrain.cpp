@@ -92,8 +92,10 @@ bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, 
 	SoundBlock soundBlock2 = { { 0, 0, 0, 0, 0, 0, 0, 0 }, outBlock.samplesCount, 0, 0 };
 
 	bool anyBlock = false;
-	anyBlock |= m_grains[0]->getBlock(blendCursor->m_cursors[0], mixer, soundBlock1);
-	anyBlock |= m_grains[1]->getBlock(blendCursor->m_cursors[1], mixer, soundBlock2);
+	if (m_grains[0])
+		anyBlock |= m_grains[0]->getBlock(blendCursor->m_cursors[0], mixer, soundBlock1);
+	if (m_grains[1])
+		anyBlock |= m_grains[1]->getBlock(blendCursor->m_cursors[1], mixer, soundBlock2);
 	if (!anyBlock)
 		return false;
 

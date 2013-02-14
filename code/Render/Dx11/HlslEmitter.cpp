@@ -147,6 +147,11 @@ bool emitConditional(HlslContext& cx, Conditional* node)
 	HlslVariable* out = cx.emitOutput(node, L"Output", outputType);
 	f << hlsl_type_name(out->getType()) << L" " << out->getName() << L";" << Endl;
 
+	if (node->getBranch() == Conditional::BrStatic)
+		f << L"[flatten]" << Endl;
+	else if (node->getBranch() == Conditional::BrDynamic)
+		f << L"[branch]" << Endl;
+
 	// Create condition statement.
 	switch (node->getOperator())
 	{

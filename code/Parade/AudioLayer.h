@@ -2,8 +2,10 @@
 #define traktor_parade_AudioLayer_H
 
 #include "Amalgam/IEnvironment.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Parade/Layer.h"
 #include "Resource/Proxy.h"
+#include "Sound/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -49,6 +51,10 @@ public:
 
 	void fadeOff();
 
+	void setParameter(const std::wstring& parameterName, float value);
+
+	void tweenParameter(const std::wstring& parameterName, float fromValue, float toValue, float duration);
+
 	virtual void prepare();
 
 	virtual void update(amalgam::IUpdateControl& control, const amalgam::IUpdateInfo& info);
@@ -60,10 +66,20 @@ public:
 	virtual void reconfigured();
 
 private:
+	struct Tween
+	{
+		sound::handle_t parameter;
+		float fromValue;
+		float toValue;
+		float duration;
+		float time;
+	};
+
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< sound::Sound > m_sound;
 	Ref< sound::ISoundHandle > m_handle;
 	bool m_autoPlay;
+	AlignedVector< Tween > m_tweens;
 };
 
 	}
