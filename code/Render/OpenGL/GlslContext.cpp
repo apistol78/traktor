@@ -182,18 +182,7 @@ void GlslContext::defineTexture(const std::wstring& texture)
 
 bool GlslContext::defineSampler(uint32_t stateHash, GLenum target, const std::wstring& texture, int32_t& outStage)
 {
-	uint32_t key = stateHash ^ target;
-
-	// Check if sampler already defined.
-	std::map< uint32_t, int32_t >::const_iterator j = m_samplersMap.find(key);
-	if (j != m_samplersMap.end())
-	{
-		outStage = j->second;
-		return false;
-	}
-
 	outStage = m_nextStage++;
-	m_samplersMap[key] = outStage;
 
 	// Create sampler binding.
 	std::vector< std::wstring >::iterator i = std::find(m_textures.begin(), m_textures.end(), texture);

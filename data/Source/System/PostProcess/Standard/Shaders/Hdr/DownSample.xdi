@@ -4,8 +4,8 @@
 		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>
 			<position>
-				<first>1148</first>
-				<second>454</second>
+				<first>1358</first>
+				<second>466</second>
 			</position>
 			<technique>Default</technique>
 			<cullMode>CmNever</cullMode>
@@ -36,11 +36,11 @@
 			<stencilMask>4294967295</stencilMask>
 			<registerCount>0</registerCount>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
-				<first>391</first>
-				<second>404</second>
+				<first>402</first>
+				<second>405</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -49,6 +49,7 @@
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -71,8 +72,8 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>162</first>
-				<second>376</second>
+				<first>201</first>
+				<second>425</second>
 			</position>
 			<parameterName>SourceTexture</parameterName>
 			<type>PtTexture2D</type>
@@ -107,8 +108,8 @@ Iterate U
 			]]>
 			</comment>
 			<position>
-				<first>583</first>
-				<second>377</second>
+				<first>793</first>
+				<second>389</second>
 			</position>
 			<from>-1</from>
 			<to>1</to>
@@ -120,8 +121,8 @@ Iterate V
 			]]>
 			</comment>
 			<position>
-				<first>741</first>
-				<second>377</second>
+				<first>951</first>
+				<second>389</second>
 			</position>
 			<from>-1</from>
 			<to>1</to>
@@ -136,24 +137,32 @@ Iterate V
 		<item type="traktor.render.MixIn">
 			<comment/>
 			<position>
-				<first>865</first>
-				<second>248</second>
+				<first>1075</first>
+				<second>260</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>851</first>
-				<second>528</second>
+				<first>1061</first>
+				<second>540</second>
 			</position>
 			<value>9</value>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>982</first>
-				<second>454</second>
+				<first>1192</first>
+				<second>466</second>
 			</position>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>586</first>
+				<second>425</second>
+			</position>
+			<swizzle>x</swizzle>
 		</item>
 	</nodes>
 	<edges>
@@ -185,16 +194,6 @@ Iterate V
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -294,6 +293,26 @@ Iterate V
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Input</name>
 			</destination>
 		</item>

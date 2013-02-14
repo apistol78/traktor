@@ -166,6 +166,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	envmap[L"DEPLOY_TARGET_HOST"] = m_deployHost;
 	envmap[L"DEPLOY_EXECUTABLE"] = m_targetConfiguration->getExecutable();
 	envmap[L"DEPLOY_MODULES"] = mm;
+	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 
 	// Merge tool environment variables.
 	const DeployTool& deployTool = platform->getDeployTool();

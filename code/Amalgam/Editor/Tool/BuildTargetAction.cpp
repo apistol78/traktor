@@ -171,6 +171,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 #else
 	envmap[L"DEPLOY_PROJECT_ROOT"] = projectRoot.getPathNameNoVolume();
 #endif
+	envmap[L"DEPLOY_OUTPUT_PATH"] = m_outputPath;
 
 	const DeployTool& deployTool = platform->getDeployTool();
 	envmap.insert(deployTool.getEnvironment().begin(), deployTool.getEnvironment().end());

@@ -1,6 +1,7 @@
 #include <algorithm>
 #include <limits>
 #include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "World/Entity/Entity.h"
 #include "World/Entity/EntityBuilder.h"
 #include "World/Entity/EntityData.h"
@@ -15,20 +16,19 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityBuilder", EntityBuilder, IEntityBuilder)
 
 EntityBuilder::EntityBuilder()
-:	m_inbuild(false)
 {
 }
 
 void EntityBuilder::addFactory(IEntityFactory* entityFactory)
 {
-	T_FATAL_ASSERT_M (!m_inbuild, L"Should not add entity factory when building");
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_entityFactories.push_back(entityFactory);
 	m_resolvedFactoryCache.clear();
 }
 
 void EntityBuilder::removeFactory(IEntityFactory* entityFactory)
 {
-	T_FATAL_ASSERT_M (!m_inbuild, L"Should not remove entity factory when building");
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	RefArray< IEntityFactory >::iterator i = std::find(m_entityFactories.begin(), m_entityFactories.end(), entityFactory);
 	if (i != m_entityFactories.end())
 	{
@@ -39,15 +39,12 @@ void EntityBuilder::removeFactory(IEntityFactory* entityFactory)
 
 void EntityBuilder::begin(IEntitySchema* entitySchema)
 {
-	T_FATAL_ASSERT_M (!m_inbuild, L"EntityBuilder already begun");
+	m_lock.wait();
 	m_entitySchema = entitySchema;
-	m_inbuild = true;
 }
 
 Ref< Entity > EntityBuilder::create(const EntityData* entityData)
 {
-	T_FATAL_ASSERT_M (m_inbuild, L"EntityBuilder not begun");
-
 	if (!entityData)
 		return 0;
 
@@ -138,10 +135,9 @@ Ref< Entity > EntityBuilder::get(const EntityData* entityData) const
 
 void EntityBuilder::end()
 {
-	T_FATAL_ASSERT_M (m_inbuild, L"EntityBuilder not begun");
 	m_entities.clear();
 	m_entitySchema = 0;
-	m_inbuild = false;
+	m_lock.release();
 }
 
 	}

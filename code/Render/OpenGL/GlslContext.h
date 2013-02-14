@@ -86,7 +86,6 @@ private:
 	std::vector< uint8_t > m_interpolatorMap;
 	std::vector< std::wstring > m_textures;
 	std::vector< SamplerBindingOpenGL > m_samplers;
-	std::map< uint32_t, int32_t > m_samplersMap;
 };
 
 	}

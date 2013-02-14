@@ -5,6 +5,7 @@
 #include <map>
 #include <stack>
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
 #include "World/Entity/IEntityBuilder.h"
 
 // import/export mechanism.
@@ -45,12 +46,12 @@ public:
 private:
 	typedef std::list< std::pair< std::wstring, Ref< Entity > > > scope_t;
 
+	Semaphore m_lock;
 	Ref< IEntitySchema > m_entitySchema;
 	RefArray< IEntityFactory > m_entityFactories;
 	std::stack< scope_t > m_entityScope;
 	std::map< const EntityData*, Ref< Entity > > m_entities;
 	std::map< const TypeInfo*, IEntityFactory* > m_resolvedFactoryCache;
-	bool m_inbuild;
 };
 
 	}

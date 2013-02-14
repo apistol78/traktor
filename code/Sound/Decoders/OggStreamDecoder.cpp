@@ -284,7 +284,8 @@ public:
 	,	m_buffered(0)
 	,	m_output(0)
 	,	m_channels(0)
-	,	m_samples(0)
+	,	m_queued(0)
+	,	m_consume(0)
 	{
 	}
 
@@ -292,7 +293,9 @@ public:
 	{
 		m_stream = stream;
 
-		m_data.reset(new uint8_t [BufferSize]);
+		m_data.reset((uint8_t*)Alloc::acquireAlign(BufferSize, 16, T_FILE_LINE));
+		m_decoded[0].reset((float*)Alloc::acquireAlign(DecodedSize, 16, T_FILE_LINE));
+		m_decoded[1].reset((float*)Alloc::acquireAlign(DecodedSize, 16, T_FILE_LINE));
 		m_buffered = 0;
 
 		for (;;)
@@ -328,51 +331,66 @@ public:
 
 	bool getBlock(SoundBlock& outSoundBlock)
 	{
-		while (m_samples <= 0)
+		m_queued -= m_consume;
+		if (m_queued > 0)
 		{
-			int32_t used = stb_vorbis_decode_frame_pushdata(m_vorbis, m_data.ptr(), m_buffered, &m_channels, &m_output, &m_samples);
-			if (used == 0)
+			for (int32_t i = 0; i < m_channels; ++i)
+				std::memmove(m_decoded[i].ptr(), m_decoded[i].ptr() + m_consume, m_queued * sizeof(float));
+		}
+		m_consume = 0;
+
+		while (m_queued < outSoundBlock.samplesCount)
+		{
+			int32_t decodedSamples = 0;
+			while (decodedSamples <= 0)
 			{
-				if (read())
-					continue;
-				else
-					return false;
+				int32_t used = stb_vorbis_decode_frame_pushdata(m_vorbis, m_data.ptr(), m_buffered, &m_channels, &m_output, &decodedSamples);
+				if (used == 0)
+				{
+					if (read())
+						continue;
+					else
+						return false;
+				}
+
+				T_ASSERT (used > 0)
+				consume(used);
 			}
 
-			T_ASSERT (used > 0)
-			consume(used);
+			for (int32_t i = 0; i < m_channels; ++i)
+				std::memcpy(m_decoded[i].ptr() + m_queued, m_output[i], decodedSamples * sizeof(float));
+
+			m_queued += decodedSamples;
 		}
 
-		int32_t samples = std::min< int32_t >(m_samples, outSoundBlock.samplesCount);
 		for (int32_t i = 0; i < m_channels; ++i)
-		{
-			outSoundBlock.samples[i] = m_output[i];
-			m_output[i] += samples;
-		}
+			outSoundBlock.samples[i] = m_decoded[i].ptr();
 
 		outSoundBlock.maxChannel = m_channels;
 		outSoundBlock.sampleRate = m_info.sample_rate;
-		outSoundBlock.samplesCount = samples;
 
-		m_samples -= samples;
+		m_consume = outSoundBlock.samplesCount;
 		return true;
 	}
 
 private:
 	enum
 	{
+		DecodedSize = 8192 * sizeof(float),
 		BufferSize = 8 * 65536,
 		PageSize = 4096
 	};
 
 	Ref< IStream > m_stream;
-	AutoArrayPtr< uint8_t > m_data;
+	AutoArrayPtr< uint8_t, AllocFreeAlign > m_data;
+	AutoArrayPtr< float, AllocFreeAlign > m_decoded[2];
 	stb_vorbis* m_vorbis;
 	stb_vorbis_info m_info;
 	int32_t m_buffered;
 	float** m_output;
 	int32_t m_channels;
-	int32_t m_samples;
+	int32_t m_queued;
+	int32_t m_consume;
 
 	bool read()
 	{
