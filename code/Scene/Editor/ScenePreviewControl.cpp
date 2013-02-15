@@ -74,7 +74,6 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 	m_toolSnapSpacing->add(L"1/2");
 	m_toolSnapSpacing->add(L"1");
 	m_toolSnapSpacing->add(L"2");
-	m_toolSnapSpacing->add(L"3");
 	m_toolSnapSpacing->add(L"4");
 	m_toolSnapSpacing->add(L"8");
 	m_toolSnapSpacing->select(0);
@@ -415,7 +414,7 @@ void ScenePreviewControl::updateEditState()
 		m_context->setSnapMode(SceneEditorContext::SmNeighbour);
 	else
 	{
-		const float c_snapSpacing[] = { 0.0f, 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 3.0f, 4.0f, 8.0f };
+		const float c_snapSpacing[] = { 0.0f, 0.125f, 0.25f, 0.5f, 1.0f, 2.0f, 4.0f, 8.0f };
 		if (m_toolSnapSpacing->getSelected() >= 1)
 		{
 			m_context->setSnapSpacing(c_snapSpacing[m_toolSnapSpacing->getSelected()]);

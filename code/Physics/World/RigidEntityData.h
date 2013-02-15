@@ -1,7 +1,7 @@
 #ifndef traktor_physics_RigidEntityData_H
 #define traktor_physics_RigidEntityData_H
 
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)

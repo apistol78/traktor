@@ -8,9 +8,9 @@
 #include "Script/Boxes.h"
 #include "Script/Delegate.h"
 #include "Script/IScriptManager.h"
-#include "World/Entity/IEntitySchema.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/EntityData.h"
+#include "World/Entity.h"
+#include "World/EntityData.h"
+#include "World/IEntitySchema.h"
 
 namespace traktor
 {

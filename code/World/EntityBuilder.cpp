@@ -2,11 +2,11 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/EntityBuilder.h"
-#include "World/Entity/EntityData.h"
-#include "World/Entity/IEntitySchema.h"
-#include "World/Entity/IEntityFactory.h"
+#include "World/Entity.h"
+#include "World/EntityBuilder.h"
+#include "World/EntityData.h"
+#include "World/IEntitySchema.h"
+#include "World/IEntityFactory.h"
 
 namespace traktor
 {

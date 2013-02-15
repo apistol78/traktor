@@ -402,22 +402,46 @@ Ref< DockPane > DockPane::findWidgetPane(Widget* widget)
 	return 0;
 }
 
-Ref< DockPane > DockPane::getFromPosition(const Point& position)
+Ref< DockPane > DockPane::getPaneFromPosition(const Point& position)
 {
-	if (!m_rect.inside(position) || (m_widget && !m_widget->isVisible(false)))
+	if (!m_rect.inside(position))
 		return 0;
 
 	for (int i = 0; i < 2; ++i)
 	{
 		if (m_child[i])
 		{
-			Ref< DockPane > childPane = m_child[i]->getFromPosition(position);
+			Ref< DockPane > childPane = m_child[i]->getPaneFromPosition(position);
 			if (childPane)
 				return childPane;
 		}
 	}
 
-	return this;
+	if (m_widget && m_widget->isVisible(false))
+		return this;
+	else
+		return 0;
+}
+
+Ref< DockPane > DockPane::getSplitterFromPosition(const Point& position)
+{
+	if (!m_rect.inside(position))
+		return 0;
+
+	for (int i = 0; i < 2; ++i)
+	{
+		if (m_child[i])
+		{
+			Ref< DockPane > childPane = m_child[i]->getSplitterFromPosition(position);
+			if (childPane)
+				return childPane;
+		}
+	}
+
+	if (m_widget && m_widget->isVisible(false))
+		return 0;
+	else
+		return this;
 }
 
 bool DockPane::hitGripper(const Point& position) const

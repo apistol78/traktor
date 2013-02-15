@@ -1,7 +1,7 @@
 #ifndef traktor_world_TransientEntityRenderer_H
 #define traktor_world_TransientEntityRenderer_H
 
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

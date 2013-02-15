@@ -6,10 +6,10 @@
 #include "Scene/Editor/EntityAdapterBuilder.h"
 #include "Scene/Editor/IEntityEditorFactory.h"
 #include "Scene/Editor/SceneEditorContext.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/EntityData.h"
-#include "World/Entity/IEntityFactory.h"
-#include "World/Entity/IEntitySchema.h"
+#include "World/Entity.h"
+#include "World/EntityData.h"
+#include "World/IEntityFactory.h"
+#include "World/IEntitySchema.h"
 #include "World/Entity/NullEntity.h"
 
 namespace traktor

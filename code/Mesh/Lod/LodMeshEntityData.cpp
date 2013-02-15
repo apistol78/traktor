@@ -4,7 +4,7 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Mesh/Lod/LodMeshEntity.h"
 #include "Mesh/Lod/LodMeshEntityData.h"
-#include "World/Entity/IEntityBuilder.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {

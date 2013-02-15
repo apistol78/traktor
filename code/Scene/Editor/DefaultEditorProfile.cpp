@@ -9,7 +9,7 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
-#include "World/Entity/EntityResourceFactory.h"
+#include "World/EntityResourceFactory.h"
 #include "World/PostProcess/PostProcessFactory.h"
 
 // Entity factories

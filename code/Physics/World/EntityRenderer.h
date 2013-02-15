@@ -1,7 +1,7 @@
 #ifndef traktor_physics_EntityRenderer_H
 #define traktor_physics_EntityRenderer_H
 
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)

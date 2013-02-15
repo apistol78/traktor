@@ -6,7 +6,7 @@
 #include "Render/Shader.h"
 #include "Resource/Proxy.h"
 #include "Terrain/TerrainEntityData.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

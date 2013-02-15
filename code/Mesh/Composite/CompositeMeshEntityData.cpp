@@ -3,7 +3,7 @@
 #include "Core/Serialization/MemberRefArray.h"
 #include "Mesh/Composite/CompositeMeshEntity.h"
 #include "Mesh/Composite/CompositeMeshEntityData.h"
-#include "World/Entity/IEntityBuilder.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {

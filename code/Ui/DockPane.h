@@ -50,7 +50,9 @@ public:
 
 	Ref< DockPane > findWidgetPane(Widget* widget);
 
-	Ref< DockPane > getFromPosition(const Point& position);
+	Ref< DockPane > getPaneFromPosition(const Point& position);
+
+	Ref< DockPane > getSplitterFromPosition(const Point& position);
 
 	bool hitGripper(const Point& position) const;
 

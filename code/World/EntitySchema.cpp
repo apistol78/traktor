@@ -1,5 +1,5 @@
-#include "World/Entity/Entity.h"
-#include "World/Entity/EntitySchema.h"
+#include "World/Entity.h"
+#include "World/EntitySchema.h"
 
 namespace traktor
 {

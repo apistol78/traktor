@@ -2,7 +2,7 @@
 #define traktor_animation_PathEntity_H
 
 #include "Core/Math/TransformPath.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

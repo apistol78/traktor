@@ -38,7 +38,7 @@
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/DatabaseView.h"
-#include "Editor/App/DefaultObjectEditor.h"
+#include "Editor/App/DefaultObjectEditorFactory.h"
 #include "Editor/App/Document.h"
 #include "Editor/App/EditorForm.h"
 #include "Editor/App/EditorPageSite.h"
@@ -947,12 +947,9 @@ bool EditorForm::openEditor(db::Instance* instance)
 	}
 	else if (objectEditorFactory)
 	{
-		Ref< IObjectEditor > objectEditor = objectEditorFactory->createObjectEditor(this);
-		T_ASSERT (objectEditor);
-
 		// Create object editor dialog.
-		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditor);
-		if (!objectEditorDialog->create(this, instance, object))
+		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditorFactory);
+		if (!objectEditorDialog->create(this, this, instance, object))
 		{
 			log::error << L"Failed to create editor" << Endl;
 			instance->revert();
@@ -994,12 +991,12 @@ bool EditorForm::openDefaultEditor(db::Instance* instance)
 		return false;
 	}
 
-	Ref< IObjectEditor > objectEditor = new DefaultObjectEditor(this);
-	T_ASSERT (objectEditor);
+	Ref< IObjectEditorFactory > objectEditorFactory = new DefaultObjectEditorFactory();
+	T_ASSERT (objectEditorFactory);
 
 	// Open editor dialog.
-	Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditor);
-	if (!objectEditorDialog->create(this, instance, object))
+	Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditorFactory);
+	if (!objectEditorDialog->create(this, this, instance, object))
 	{
 		log::error << L"Failed to create editor" << Endl;
 		instance->revert();
@@ -1473,10 +1470,6 @@ void EditorForm::buildAssets(const std::vector< Guid >& assetGuids, bool rebuild
 	// Stop current build if any.
 	buildCancel();
 
-	// Automatically save all opened instances.
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.AutoSave", false))
-		saveAllDocuments();
-
 	// Create build thread.
 	m_threadBuild = ThreadManager::getInstance().create(
 		makeFunctor<
@@ -1515,6 +1508,11 @@ void EditorForm::buildAssets(bool rebuild)
 	if (!m_workspaceSettings)
 		return;
 
+	// Automatically save all opened instances.
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.AutoSave", false))
+		saveAllDocuments();
+
+	// Collect root assets.
 	log::info << L"Collecting assets..." << Endl;
 	log::info << IncreaseIndent;
 
@@ -1525,6 +1523,7 @@ void EditorForm::buildAssets(bool rebuild)
 
 	log::info << DecreaseIndent;
 
+	// Launch build.
 	buildAssets(assetGuids, rebuild);
 }
 

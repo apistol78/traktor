@@ -6,8 +6,8 @@
 #include "Resource/Member.h"
 #include "Terrain/RubbleEntityData.h"
 #include "Terrain/Terrain.h"
+#include "World/IEntityBuilder.h"
 #include "World/Entity/GroupEntity.h"
-#include "World/Entity/IEntityBuilder.h"
 
 namespace traktor
 {

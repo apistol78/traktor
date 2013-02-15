@@ -1,7 +1,7 @@
 #ifndef traktor_world_DirectionalLightEntityData_H
 #define traktor_world_DirectionalLightEntityData_H
 
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

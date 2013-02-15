@@ -1,7 +1,7 @@
 #ifndef traktor_spray_EffectEntityFactory_H
 #define traktor_spray_EffectEntityFactory_H
 
-#include "World/Entity/IEntityFactory.h"
+#include "World/IEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

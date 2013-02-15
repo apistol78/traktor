@@ -1,6 +1,6 @@
 #include "Database/Database.h"
-#include "World/Entity/EntityData.h"
-#include "World/Entity/EntityResourceFactory.h"
+#include "World/EntityData.h"
+#include "World/EntityResourceFactory.h"
 
 namespace traktor
 {

@@ -34,8 +34,7 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 		return false;
 
 	Ref< ui::Container > containerInner = new ui::Container();
-	if (!containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"100%", 0, 4)))
-		return false;
+	containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,*", 0, 4));
 
 	Ref< ui::Static > staticRemoteDatabasePort = new ui::Static();
 	staticRemoteDatabasePort->create(containerInner, L"Remote database port");

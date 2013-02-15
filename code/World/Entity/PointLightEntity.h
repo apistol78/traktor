@@ -2,7 +2,7 @@
 #define traktor_world_PointLightEntity_H
 
 #include "Core/Math/Random.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

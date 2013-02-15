@@ -1,7 +1,7 @@
 #ifndef traktor_spray_EffectEntityRenderer_H
 #define traktor_spray_EffectEntityRenderer_H
 
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

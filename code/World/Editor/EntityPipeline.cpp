@@ -5,9 +5,9 @@
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
+#include "World/EntityData.h"
 #include "World/Editor/EntityPipeline.h"
 #include "World/Entity/DecalEntityData.h"
-#include "World/Entity/EntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor

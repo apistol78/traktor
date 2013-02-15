@@ -68,6 +68,10 @@ bool SceneEditorSettingsPage::create(ui::Container* parent, PropertyGroup* setti
 	m_checkInvertPanY->create(container, i18n::Text(L"SCENE_EDITOR_SETTINGS_INVERT_PAN_Y"));
 	m_checkInvertPanY->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.InvertPanY"));
 
+	m_checkBuildWhenDrop = new ui::CheckBox();
+	m_checkBuildWhenDrop->create(container, i18n::Text(L"SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP"));
+	m_checkBuildWhenDrop->setChecked(settings->getProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", true));
+
 	parent->setText(i18n::Text(L"SCENE_EDITOR_SETTINGS"));
 
 	updateValues();
@@ -84,6 +88,7 @@ bool SceneEditorSettingsPage::apply(PropertyGroup* settings)
 	settings->setProperty< PropertyFloat >(L"SceneEditor.MouseWheelRate", float(m_sliderMouseWheelRate->getValue()));
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertMouseWheel", m_checkInvertMouseWheel->isChecked());
 	settings->setProperty< PropertyBoolean >(L"SceneEditor.InvertPanY", m_checkInvertPanY->isChecked());
+	settings->setProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", m_checkBuildWhenDrop->isChecked());
 	return true;
 }
 

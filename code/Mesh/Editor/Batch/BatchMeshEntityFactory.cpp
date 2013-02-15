@@ -1,7 +1,7 @@
 #include "Mesh/Editor/Batch/BatchMeshEntityData.h"
 #include "Mesh/Editor/Batch/BatchMeshEntityFactory.h"
+#include "World/IEntityBuilder.h"
 #include "World/Entity/GroupEntity.h"
-#include "World/Entity/IEntityBuilder.h"
 
 namespace traktor
 {

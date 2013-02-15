@@ -9,7 +9,7 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/EntityFactory.h"
 #include "Resource/IResourceManager.h"
-#include "World/Entity/IEntityBuilder.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {

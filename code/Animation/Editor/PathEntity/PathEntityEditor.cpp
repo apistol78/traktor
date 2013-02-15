@@ -6,7 +6,7 @@
 #include "Scene/Editor/IModifier.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Command.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 namespace traktor
 {

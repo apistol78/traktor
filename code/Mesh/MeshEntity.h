@@ -4,7 +4,7 @@
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/IntervalTransform.h"
 #include "Render/Types.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

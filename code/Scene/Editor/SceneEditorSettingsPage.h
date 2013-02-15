@@ -47,6 +47,7 @@ private:
 	Ref< ui::Static > m_staticMouseWheelRateValue;
 	Ref< ui::CheckBox > m_checkInvertMouseWheel;
 	Ref< ui::CheckBox > m_checkInvertPanY;
+	Ref< ui::CheckBox > m_checkBuildWhenDrop;
 
 	void updateValues();
 

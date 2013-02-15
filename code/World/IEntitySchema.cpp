@@ -1,4 +1,4 @@
-#include "World/Entity/IEntitySchema.h"
+#include "World/IEntitySchema.h"
 
 namespace traktor
 {

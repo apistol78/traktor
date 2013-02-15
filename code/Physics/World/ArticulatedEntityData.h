@@ -2,7 +2,7 @@
 #define traktor_physics_ArticulatedEntityData_H
 
 #include "Core/RefArray.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)

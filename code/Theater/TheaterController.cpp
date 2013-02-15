@@ -3,7 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Theater/TheaterController.h"
 #include "Theater/Track.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 namespace traktor
 {

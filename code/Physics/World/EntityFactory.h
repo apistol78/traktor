@@ -1,7 +1,7 @@
 #ifndef traktor_physics_EntityFactory_H
 #define traktor_physics_EntityFactory_H
 
-#include "World/Entity/IEntityFactory.h"
+#include "World/IEntityFactory.h"
 
 #undef T_DLLCLASS
 #if defined(T_PHYSICS_EXPORT)

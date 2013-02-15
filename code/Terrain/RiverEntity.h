@@ -3,7 +3,7 @@
 
 #include "Render/Types.h"
 #include "Resource/Proxy.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

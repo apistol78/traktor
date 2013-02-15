@@ -17,7 +17,7 @@
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
 #include "Ui/Events/CommandEvent.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 // Resources
 #include "Resources/Types.h"

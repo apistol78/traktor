@@ -1,8 +1,8 @@
 #include "Scene/ISceneController.h"
 #include "Scene/Scene.h"
+#include "World/Entity.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/Entity.h"
 
 namespace traktor
 {

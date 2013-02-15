@@ -20,16 +20,19 @@ class Instance;
 	namespace editor
 	{
 
+class IEditor;
 class IObjectEditor;
+class IObjectEditorFactory;
+class ObjectEditor;
 
 class ObjectEditorDialog : public ui::ConfigDialog
 {
 	T_RTTI_CLASS;
 
 public:
-	ObjectEditorDialog(PropertyGroup* settings, IObjectEditor* objectEditor);
+	ObjectEditorDialog(PropertyGroup* settings, const IObjectEditorFactory* objectEditorFactory);
 
-	bool create(ui::Widget* parent, db::Instance* instance, ISerializable* object);
+	bool create(IEditor* editor, ui::Widget* parent, db::Instance* instance, ISerializable* object);
 
 	void destroy();
 
@@ -41,7 +44,9 @@ public:
 
 private:
 	Ref< PropertyGroup > m_settings;
+	Ref< const IObjectEditorFactory > m_objectEditorFactory;
 	Ref< IObjectEditor > m_objectEditor;
+	Ref< ObjectEditor > m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< ISerializable > m_object;
 

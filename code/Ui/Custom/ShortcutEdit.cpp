@@ -96,18 +96,15 @@ void ShortcutEdit::addChangeEventHandler(EventHandler* eventHandler)
 void ShortcutEdit::eventKeyDown(Event* event)
 {
 	KeyEvent* keyEvent = checked_type_cast< KeyEvent* >(event);
-
 	VirtualKey virtualKey = keyEvent->getVirtualKey();
 	
-	/*
-	if (virtualKey == 16 || virtualKey == 17)
-	{
-		keyEvent->consume();
-		return;
-	}
-	*/
-
 	m_keyState = keyEvent->getKeyState();
+	if (m_keyState & ui::KsControl)
+	{
+		m_keyState &= ~ui::KsControl;
+		m_keyState |= ui::KsCommand;
+	}
+
 	m_virtualKey = virtualKey;
 
 	update();

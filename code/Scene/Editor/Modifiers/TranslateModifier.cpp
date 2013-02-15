@@ -1,3 +1,4 @@
+#include <numeric>
 #include "Core/Math/Line2.h"
 #include "Core/Math/Winding2.h"
 #include "Render/PrimitiveRenderer.h"
@@ -5,6 +6,7 @@
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Scene/Editor/TransformChain.h"
 #include "Scene/Editor/Modifiers/TranslateModifier.h"
+#include "Ui/Command.h"
 
 namespace traktor
 {
@@ -41,18 +43,13 @@ void TranslateModifier::selectionChanged()
 		m_baseTranslations.push_back(T.translation());
 	}
 
-	m_center = Vector4::zero();
-	if (!m_entityAdapters.empty())
+	m_center = Vector4::origo();
+	if (!m_baseTranslations.empty())
 	{
-		for (RefArray< EntityAdapter >::const_iterator i = m_entityAdapters.begin(); i != m_entityAdapters.end(); ++i)
-			m_center += (*i)->getTransform().translation();
-
-		m_center /= Scalar(float(m_entityAdapters.size()));
-		m_center = m_center.xyz1();
+		m_center = std::accumulate(m_baseTranslations.begin(), m_baseTranslations.end(), Vector4::zero());
+		m_center /= Scalar(float(m_baseTranslations.size()));
+		m_center = snap(m_center.xyz1(), 1 | 2 | 4);
 	}
-
-	m_axisEnable = 0;
-	m_axisHot = 0;
 }
 
 bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown)
@@ -64,29 +61,17 @@ bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const 
 	float arrowLength = axisLength / 8.0f;
 	float squareLength = axisLength / 3.0f;
 
-	Vector4 snappedCenter = m_center;
-	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
-	{
-		float spacing = m_context->getSnapSpacing();
-		if (spacing > 0.0f)
-		{
-			snappedCenter.set(
-				floor(snappedCenter[0] / spacing + 0.5f) * spacing,
-				floor(snappedCenter[1] / spacing + 0.5f) * spacing,
-				floor(snappedCenter[2] / spacing + 0.5f) * spacing,
-				1.0f
-			);
-		}
-	}
-
 	TransformChain tc = transformChain;
-	tc.pushWorld(translate(snappedCenter));
+	tc.pushWorld(translate(m_center));
 
-	Vector2 center, axis[3], square[6];
+	Vector2 center, axis0[3], axis1[3], square[6];
 	tc.objectToScreen(Vector4(0.0f, 0.0f, 0.0f, 1.0f), center);
-	tc.objectToScreen(Vector4(axisLength + arrowLength, 0.0f, 0.0f, 1.0f), axis[0]);
-	tc.objectToScreen(Vector4(0.0f, axisLength + arrowLength, 0.0f, 1.0f), axis[1]);
-	tc.objectToScreen(Vector4(0.0f, 0.0f, axisLength + arrowLength, 1.0f), axis[2]);
+	tc.objectToScreen(Vector4(-axisLength, 0.0f, 0.0f, 1.0f), axis0[0]);
+	tc.objectToScreen(Vector4(0.0f, -axisLength, 0.0f, 1.0f), axis0[1]);
+	tc.objectToScreen(Vector4(0.0f, 0.0f, -axisLength, 1.0f), axis0[2]);
+	tc.objectToScreen(Vector4(axisLength + arrowLength, 0.0f, 0.0f, 1.0f), axis1[0]);
+	tc.objectToScreen(Vector4(0.0f, axisLength + arrowLength, 0.0f, 1.0f), axis1[1]);
+	tc.objectToScreen(Vector4(0.0f, 0.0f, axisLength + arrowLength, 1.0f), axis1[2]);
 	tc.objectToScreen(Vector4(squareLength, 0.0f, 0.0f, 1.0f), square[0]);
 	tc.objectToScreen(Vector4(0.0f, squareLength, 0.0f, 1.0f), square[1]);
 	tc.objectToScreen(Vector4(0.0f, 0.0f, squareLength, 1.0f), square[2]);
@@ -145,74 +130,79 @@ hit:;
 	}
 
 	// Check each line.
-	if (Line2(center, axis[0]).classify(cursorPosition, c_guideThickness))
+	if (Line2(axis0[0], axis1[0]).classify(cursorPosition, c_guideThickness))
 		m_axisHot |= 1;
-	if (Line2(center, axis[1]).classify(cursorPosition, c_guideThickness))
+	if (Line2(axis0[1], axis1[1]).classify(cursorPosition, c_guideThickness))
 		m_axisHot |= 2;
-	if (Line2(center, axis[2]).classify(cursorPosition, c_guideThickness))
+	if (Line2(axis0[2], axis1[2]).classify(cursorPosition, c_guideThickness))
 		m_axisHot |= 4;
-
-	// If user pressed mouse button then hot axises are enabled.
-	if (mouseDown)
-		m_axisEnable = m_axisHot;
 
 	return m_axisHot != 0;
 }
 
 bool TranslateModifier::handleCommand(const ui::Command& command)
 {
-	return false;
+	if (command == L"Scene.Editor.Snap")
+	{
+		for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
+		{
+			Transform T = m_entityAdapters[i]->getTransform();
+			m_entityAdapters[i]->setTransform(Transform(
+				snap(m_baseTranslations[i], 1 | 2 | 4),
+				T.rotation()
+			));
+		}
+		selectionChanged();
+		return true;
+	}
+	else
+		return false;
 }
 
 void TranslateModifier::begin(const TransformChain& transformChain)
 {
+	m_axisEnable = m_axisHot;
+	m_center0 = m_center;
 }
 
 void TranslateModifier::apply(const TransformChain& transformChain, const Vector4& screenDelta, const Vector4& viewDelta)
 {
 	Vector4 cp = transformChain.worldToClip(m_center);
-	Vector4 worldDelta = transformChain.getView().inverse() * viewDelta * cp.w();
 
+	Vector4 worldDelta = transformChain.getView().inverse() * viewDelta * cp.w();
 	if (!(m_axisEnable & 1))
 		worldDelta *= Vector4(0.0f, 1.0f, 1.0f);
 	if (!(m_axisEnable & 2))
 		worldDelta *= Vector4(1.0f, 0.0f, 1.0f);
 	if (!(m_axisEnable & 4))
 		worldDelta *= Vector4(1.0f, 1.0f, 0.0f);
+	m_center += worldDelta;
+
+	Vector4 baseDelta = snap(m_center, 1 | 2 | 4) - m_center0;
+	if (!(m_axisEnable & 1))
+		baseDelta *= Vector4(0.0f, 1.0f, 1.0f);
+	if (!(m_axisEnable & 2))
+		baseDelta *= Vector4(1.0f, 0.0f, 1.0f);
+	if (!(m_axisEnable & 4))
+		baseDelta *= Vector4(1.0f, 1.0f, 0.0f);
 
 	for (uint32_t i = 0; i < m_entityAdapters.size(); ++i)
 	{
-		m_baseTranslations[i] += worldDelta;
-
-		Vector4 translation = m_baseTranslations[i];
-
-		if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
-		{
-			float spacing = m_context->getSnapSpacing();
-			if (spacing > 0.0f)
-			{
-				translation.set(
-					floor(translation[0] / spacing + 0.5f) * spacing,
-					floor(translation[1] / spacing + 0.5f) * spacing,
-					floor(translation[2] / spacing + 0.5f) * spacing,
-					1.0f
-				);
-			}
-		}
-
 		Transform T = m_entityAdapters[i]->getTransform();
-
 		m_entityAdapters[i]->setTransform(Transform(
-			translation,
+			//m_baseTranslations[i] + baseDelta,	<< Snap in object space
+			snap(m_baseTranslations[i] + baseDelta, m_axisEnable),	//< Snap in world space.
 			T.rotation()
 		));
 	}
 
-	m_center += worldDelta;
+	m_axisHot = m_axisEnable;
 }
 
 void TranslateModifier::end(const TransformChain& transformChain)
 {
+	selectionChanged();
+	m_axisEnable = 0;
 }
 
 void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
@@ -224,22 +214,7 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	float arrowLength = axisLength / 8.0f;
 	float squareLength = axisLength / 3.0f;
 
-	Vector4 center = m_center;
-	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
-	{
-		float spacing = m_context->getSnapSpacing();
-		if (spacing > 0.0f)
-		{
-			center.set(
-				floor(center[0] / spacing + 0.5f) * spacing,
-				floor(center[1] / spacing + 0.5f) * spacing,
-				floor(center[2] / spacing + 0.5f) * spacing,
-				1.0f
-			);
-		}
-	}
-
-	primitiveRenderer->pushWorld(translate(center));
+	primitiveRenderer->pushWorld(translate(m_center));
 
 	// Infinite "trace" lines.
 	primitiveRenderer->pushDepthEnable(true);
@@ -330,19 +305,19 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 
 	// Guide axis lines.
 	primitiveRenderer->drawLine(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(-axisLength, 0.0f, 0.0f, 1.0f),
 		Vector4(axisLength, 0.0f, 0.0f, 1.0f),
 		(m_axisHot & 1) ? 3.0f : 1.0f,
 		Color4ub(255, 0, 0, 255)
 	);
 	primitiveRenderer->drawLine(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(0.0f, -axisLength, 0.0f, 1.0f),
 		Vector4(0.0f, axisLength, 0.0f, 1.0f),
 		(m_axisHot & 2) ? 3.0f : 1.0f,
 		Color4ub(0, 255, 0, 255)
 	);
 	primitiveRenderer->drawLine(
-		Vector4(0.0f, 0.0f, 0.0f, 1.0f),
+		Vector4(0.0f, 0.0f, -axisLength, 1.0f),
 		Vector4(0.0f, 0.0f, axisLength, 1.0f),
 		(m_axisHot & 4) ? 3.0f : 1.0f,
 		Color4ub(0, 0, 255, 255)
@@ -371,6 +346,24 @@ void TranslateModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 	primitiveRenderer->popDepthEnable();
 
 	primitiveRenderer->popWorld();
+}
+
+Vector4 TranslateModifier::snap(const Vector4& position, uint32_t axisEnable) const
+{
+	if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
+	{
+		float spacing = m_context->getSnapSpacing();
+		if (spacing > 0.0f)
+		{
+			return Vector4(
+				(axisEnable & 1) ? floor(position[0] / spacing + 0.5f) * spacing : position[0],
+				(axisEnable & 2) ? floor(position[1] / spacing + 0.5f) * spacing : position[1],
+				(axisEnable & 4) ? floor(position[2] / spacing + 0.5f) * spacing : position[2],
+				1.0f
+			);
+		}
+	}
+	return position;
 }
 
 	}

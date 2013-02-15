@@ -2,7 +2,7 @@
 #define traktor_scene_EntityRendererAdapter_H
 
 #include <Core/Ref.h>
-#include <World/Entity/IEntityRenderer.h>
+#include <World/IEntityRenderer.h>
 
 namespace traktor
 {

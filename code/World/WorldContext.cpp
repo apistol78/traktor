@@ -1,9 +1,9 @@
 #include "Render/Context/RenderContext.h"
+#include "World/Entity.h"
+#include "World/IEntityRenderer.h"
 #include "World/IWorldCulling.h"
 #include "World/WorldContext.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/IEntityRenderer.h"
 
 namespace traktor
 {

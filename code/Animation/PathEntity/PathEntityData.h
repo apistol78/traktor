@@ -1,8 +1,8 @@
 #ifndef traktor_animation_PathEntityData_H
 #define traktor_animation_PathEntityData_H
 
-#include "World/Entity/EntityData.h"
 #include "Animation/PathEntity/PathEntity.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

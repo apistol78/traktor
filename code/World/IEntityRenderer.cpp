@@ -1,4 +1,4 @@
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 namespace traktor
 {

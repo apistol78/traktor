@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Float.h"
@@ -9,12 +10,12 @@
 #include "Render/ISimpleTexture.h"
 #include "Render/Context/RenderContext.h"
 #include "Resource/IResourceManager.h"
+#include "World/Entity.h"
+#include "World/IEntityRenderer.h"
 #include "World/WorldContext.h"
 #include "World/WorldCullingSwRaster.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderView.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/IEntityRenderer.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PostProcess/PostProcessSettings.h"
 #include "World/PreLit/LightRenderer.h"
@@ -661,9 +662,9 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Depth and normals");
 		if (m_renderView->begin(m_gbufferTargetSet))
 		{
-			float farZ = m_settings.viewFarZ;
+			const float clearZ = std::numeric_limits< float >::max();
 
-			const Color4f depthColor(farZ, farZ, farZ, farZ);
+			const Color4f depthColor(clearZ, clearZ, clearZ, clearZ);
 			const Color4f normalColor(0.5f, 0.5f, 0.0f, 0.5f);
 			const Color4f clearColors[] = { depthColor, normalColor };
 

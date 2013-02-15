@@ -1,6 +1,6 @@
 #include "Scene/Editor/DefaultEntityEditor.h"
 #include "Scene/Editor/DefaultEntityEditorFactory.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {

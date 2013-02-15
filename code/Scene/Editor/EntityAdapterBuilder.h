@@ -4,7 +4,7 @@
 #include <map>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
-#include "World/Entity/IEntityBuilder.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {

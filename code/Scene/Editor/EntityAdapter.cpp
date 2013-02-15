@@ -3,8 +3,8 @@
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/IEntityEditor.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/EntityData.h"
+#include "World/Entity.h"
+#include "World/EntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
