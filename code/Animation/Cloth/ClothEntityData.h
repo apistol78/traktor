@@ -2,7 +2,7 @@
 #define traktor_animation_ClothEntityData_H
 
 #include "Resource/Id.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -4,8 +4,8 @@
 #include "Theater/TheaterControllerData.h"
 #include "Theater/Track.h"
 #include "Theater/TrackData.h"
-#include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {

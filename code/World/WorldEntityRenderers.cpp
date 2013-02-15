@@ -1,6 +1,6 @@
 #include <algorithm>
+#include "World/IEntityRenderer.h"
 #include "World/WorldEntityRenderers.h"
-#include "World/Entity/IEntityRenderer.h"
 
 namespace traktor
 {

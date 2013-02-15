@@ -122,6 +122,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks = new ui::custom::ToolBarDropMenu(ui::Command(L"Amalgam.Tweaks"), 70, i18n::Text(L"AMALGAM_TWEAKS"), i18n::Text(L"AMALGAM_TWEAKS_TOOLTIP"));
 	m_toolTweaks->add(new ui::MenuItem(L"Mute Audio", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Audio \"Write Out\"", true, 0));
+	m_toolTweaks->add(new ui::MenuItem(L"Force VBlank Off", true, 0));
 	m_toolBar->addItem(m_toolTweaks);
 
 	// Create target configuration list control.
@@ -396,6 +397,8 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				tweakSettings->setProperty< PropertyFloat >(L"Audio.MasterVolume", 0.0f);
 			if (m_toolTweaks->get(1)->isChecked())
 				tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
+			if (m_toolTweaks->get(2)->isChecked())
+				tweakSettings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", false);
 
 			// Add deploy and launch actions.
 			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);

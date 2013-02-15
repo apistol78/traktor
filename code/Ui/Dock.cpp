@@ -132,9 +132,9 @@ void Dock::eventButtonDown(Event* event)
 {
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 	Point position = mouseEvent->getPosition();
-
-	Ref< DockPane > pane = m_pane->getFromPosition(position);
-	if (pane)
+	Ref< DockPane > pane;
+		
+	if ((pane = m_pane->getPaneFromPosition(position)) != 0)
 	{
 		if (pane->hitGripperClose(position))
 		{
@@ -142,20 +142,27 @@ void Dock::eventButtonDown(Event* event)
 				pane->m_widget->hide();
 			update();
 		}
-		else if (pane->hitSplitter(position))
+
+		if (pane->m_widget)
+			pane->m_widget->setFocus();
+
+		event->consume();
+		return;
+	}
+
+	if ((pane = m_pane->getSplitterFromPosition(position)) != 0)
+	{
+		if (pane->hitSplitter(position))
 		{
 			m_splittingPane = pane;
 			setCursor(pane->m_vertical ? CrSizeNS : CrSizeWE);
 			setCapture();
 		}
-		else
-		{
-			if (pane->m_widget)
-				pane->m_widget->setFocus();
-		}
-
 		event->consume();
+		return;
 	}
+
+	event->consume();
 }
 
 void Dock::eventButtonUp(Event* event)
@@ -171,8 +178,11 @@ void Dock::eventMouseMove(Event* event)
 
 	if (!hasCapture())
 	{
-		Ref< DockPane > pane = m_pane->getFromPosition(position);
-		if (pane && pane->hitSplitter(position))
+		Ref< DockPane > pane = m_pane->getSplitterFromPosition(position);
+		if (
+			pane &&
+			pane->hitSplitter(position)
+		)
 		{
 			setCursor(pane->m_vertical ? CrSizeNS : CrSizeWE);
 		}
@@ -189,8 +199,14 @@ void Dock::eventDoubleClick(Event* event)
 	MouseEvent* mouseEvent = checked_type_cast< MouseEvent* >(event);
 	Point position = mouseEvent->getPosition();
 
-	Ref< DockPane > pane = m_pane->getFromPosition(position);
-	if (pane && pane->hitGripper(position) && !pane->hitGripperClose(position))
+	Ref< DockPane > pane = m_pane->getPaneFromPosition(position);
+	if (!pane)
+		return;
+
+	if (
+		pane->hitGripper(position) &&
+		!pane->hitGripperClose(position)
+	)
 	{
 		T_ASSERT (pane->m_detachable);
 
@@ -245,7 +261,7 @@ void Dock::eventFormMove(Event* event)
 	MoveEvent* moveEvent = checked_type_cast< MoveEvent* >(event);
 	Point position = getMousePosition();
 
-	Ref< DockPane > pane = m_pane->getFromPosition(position);
+	Ref< DockPane > pane = m_pane->getPaneFromPosition(position);
 	if (pane)
 	{
 		// Is hint form already visible for this pane?
@@ -294,7 +310,7 @@ void Dock::eventFormNcButtonUp(Event* event)
 		m_hintDockForm = 0;
 	}
 
-	Ref< DockPane > pane = m_pane->getFromPosition(position);
+	Ref< DockPane > pane = m_pane->getPaneFromPosition(position);
 	if (pane)
 	{
 		Ref< ToolForm > form = checked_type_cast< ToolForm* >(mouseEvent->getSender());

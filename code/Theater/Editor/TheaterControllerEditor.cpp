@@ -20,7 +20,7 @@
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 // Resources
 #include "Resources/Theater.h"

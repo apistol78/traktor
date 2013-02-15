@@ -10,13 +10,13 @@
 #include "Scene/Scene.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/EntityData.h"
+#include "World/Entity.h"
+#include "World/EntityData.h"
+#include "World/IEntityBuilder.h"
+#include "World/IEntitySchema.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/NullEntity.h"
 #include "World/Entity/TransientEntity.h"
-#include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/IEntitySchema.h"
 
 namespace traktor
 {

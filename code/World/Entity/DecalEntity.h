@@ -3,7 +3,7 @@
 
 #include "Core/Math/Float.h"
 #include "Resource/Proxy.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 namespace traktor
 {

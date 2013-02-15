@@ -3,7 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

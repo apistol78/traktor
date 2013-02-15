@@ -3,7 +3,7 @@
 #include "Theater/TheaterControllerData.h"
 #include "Theater/TrackData.h"
 #include "Theater/Editor/TheaterControllerPipeline.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {

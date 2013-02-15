@@ -1,7 +1,7 @@
 #ifndef traktor_terrain_EntityFactory_H
 #define traktor_terrain_EntityFactory_H
 
-#include "World/Entity/IEntityFactory.h"
+#include "World/IEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

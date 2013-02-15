@@ -2,7 +2,7 @@
 #define traktor_world_EntitySchema_H
 
 #include <map>
-#include "World/Entity/IEntitySchema.h"
+#include "World/IEntitySchema.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

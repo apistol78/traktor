@@ -7,7 +7,7 @@
 #include "Resource/Member.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {

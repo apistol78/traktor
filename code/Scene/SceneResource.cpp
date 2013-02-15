@@ -6,9 +6,9 @@
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
+#include "World/EntityData.h"
+#include "World/IEntityBuilder.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/EntityData.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor

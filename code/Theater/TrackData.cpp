@@ -2,7 +2,7 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Theater/TrackData.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {

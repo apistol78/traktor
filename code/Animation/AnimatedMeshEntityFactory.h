@@ -1,7 +1,7 @@
 #ifndef traktor_animation_AnimatedMeshEntityFactory_H
 #define traktor_animation_AnimatedMeshEntityFactory_H
 
-#include "World/Entity/IEntityFactory.h"
+#include "World/IEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

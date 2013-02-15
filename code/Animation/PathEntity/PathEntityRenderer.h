@@ -1,7 +1,7 @@
 #ifndef traktor_animation_PathEntityRenderer_H
 #define traktor_animation_PathEntityRenderer_H
 
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

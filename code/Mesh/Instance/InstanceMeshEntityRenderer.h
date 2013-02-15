@@ -4,7 +4,7 @@
 #include "Core/Containers/SmallMap.h"
 #include "Mesh/Instance/InstanceMesh.h"
 #include "Mesh/Instance/InstanceMeshData.h"
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

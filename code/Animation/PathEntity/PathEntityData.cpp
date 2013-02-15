@@ -3,7 +3,7 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberEnum.h"
-#include "World/Entity/IEntityBuilder.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {

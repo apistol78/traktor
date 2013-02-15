@@ -70,6 +70,11 @@ void OceanEntity::render(
 	const Matrix44& projection = worldRenderView.getProjection();
 	const Matrix44& view = worldRenderView.getView();
 
+	Matrix44 viewInv = view.inverse();
+	Vector4 eye = viewInv.translation().xyz1();
+	if (eye.y() < m_transform.translation().y())
+		return;
+
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 	Vector4 viewEdgeTopLeft = viewFrustum.corners[4];
@@ -106,9 +111,9 @@ void OceanEntity::render(
 		renderBlock->programParams->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
 		renderBlock->programParams->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
 		renderBlock->programParams->setMatrixParameter(L"View", view);
-		renderBlock->programParams->setMatrixParameter(L"ViewInverse", view.inverse());
+		renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInv);
 		renderBlock->programParams->setMatrixParameter(L"Projection", projection);
-		renderBlock->programParams->setVectorParameter(L"Eye", view.inverse().translation().xyz1());
+		renderBlock->programParams->setVectorParameter(L"Eye", eye);
 		renderBlock->programParams->setFloatParameter(L"OceanAltitude", m_transform.translation().y());
 
 		renderBlock->programParams->endParameters(renderContext);

@@ -53,9 +53,12 @@ private:
 	SceneEditorContext* m_context;
 	RefArray< EntityAdapter > m_entityAdapters;
 	AlignedVector< Vector4 > m_baseTranslations;
+	Vector4 m_center0;
 	Vector4 m_center;
 	uint32_t m_axisEnable;
 	uint32_t m_axisHot;
+
+	Vector4 snap(const Vector4& position, uint32_t axisEnable) const;
 };
 
 	}

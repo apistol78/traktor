@@ -1,7 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRefArray.h"
 #include "Scene/Editor/EntityClipboardData.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {

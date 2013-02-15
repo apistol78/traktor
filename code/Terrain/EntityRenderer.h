@@ -1,7 +1,7 @@
 #ifndef traktor_terrain_EntityRenderer_H
 #define traktor_terrain_EntityRenderer_H
 
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -6,7 +6,7 @@
 #include <stack>
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
-#include "World/Entity/IEntityBuilder.h"
+#include "World/IEntityBuilder.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

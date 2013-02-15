@@ -19,8 +19,8 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Event.h"
+#include "World/EntitySchema.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/EntitySchema.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
@@ -187,7 +187,12 @@ bool SceneEditorContext::getPickEnable() const
 
 void SceneEditorContext::setSnapMode(SnapMode snapMode)
 {
-	m_snapMode = snapMode;
+	if (m_snapMode != snapMode)
+	{
+		m_snapMode = snapMode;
+		if (m_modifier)
+			m_modifier->selectionChanged();
+	}
 }
 
 SceneEditorContext::SnapMode SceneEditorContext::getSnapMode() const
@@ -197,7 +202,12 @@ SceneEditorContext::SnapMode SceneEditorContext::getSnapMode() const
 
 void SceneEditorContext::setSnapSpacing(float snapSpacing)
 {
-	m_snapSpacing = snapSpacing;
+	if (m_snapSpacing != snapSpacing)
+	{
+		m_snapSpacing = snapSpacing;
+		if (m_modifier)
+			m_modifier->selectionChanged();
+	}
 }
 
 float SceneEditorContext::getSnapSpacing() const

@@ -1,9 +1,9 @@
 #ifndef traktor_weather_SkyEntity_H
 #define traktor_weather_SkyEntity_H
 
-#include "Resource/Proxy.h"
-#include "World/Entity/Entity.h"
 #include "Render/Shader.h"
+#include "Resource/Proxy.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

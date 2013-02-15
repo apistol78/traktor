@@ -1,4 +1,4 @@
-#include "World/Entity/IEntityBuilder.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {

@@ -1,8 +1,6 @@
 #ifndef traktor_terrain_UndergrowthEntity_H
 #define traktor_terrain_UndergrowthEntity_H
 
-#include "Resource/Proxy.h"
-#include "World/Entity/Entity.h"
 #include "Core/RefArray.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Matrix44.h"
@@ -11,6 +9,8 @@
 #include "Core/Math/Half.h"
 #include "Core/Thread/Job.h"
 #include "Render/Types.h"
+#include "Resource/Proxy.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

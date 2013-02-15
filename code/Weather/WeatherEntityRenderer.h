@@ -1,7 +1,7 @@
 #ifndef traktor_weather_WeatherEntityRenderer_H
 #define traktor_weather_WeatherEntityRenderer_H
 
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

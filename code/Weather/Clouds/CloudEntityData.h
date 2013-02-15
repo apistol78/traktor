@@ -1,9 +1,9 @@
 #ifndef traktor_weather_CloudEntityData_H
 #define traktor_weather_CloudEntityData_H
 
-#include "World/Entity/EntityData.h"
 #include "Resource/Id.h"
 #include "Weather/Clouds/CloudParticleData.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

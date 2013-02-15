@@ -125,16 +125,16 @@ through interpolators on PS3 in order to prevent patching.
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>2743</first>
-				<second>482</second>
+				<first>2728</first>
+				<second>498</second>
 			</position>
 			<value>1</value>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>
 			<position>
-				<first>2419</first>
-				<second>420</second>
+				<first>2405</first>
+				<second>435</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -1116,16 +1116,6 @@ Only perform PCM filtering on higher quality platforms.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[46]"/>
-				<name>Software</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[46]"/>
 				<name>GCM</name>
 			</destination>
 		</item>
@@ -1191,16 +1181,6 @@ Only perform PCM filtering on higher quality platforms.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[21]"/>
 				<name>Output</name>
 			</source>
@@ -1227,6 +1207,16 @@ Only perform PCM filtering on higher quality platforms.
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[48]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

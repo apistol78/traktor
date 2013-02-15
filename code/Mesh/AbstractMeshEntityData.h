@@ -2,7 +2,7 @@
 #define traktor_mesh_AbstractMeshEntityData_H
 
 #include "Core/Math/Matrix44.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

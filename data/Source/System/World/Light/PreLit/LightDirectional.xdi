@@ -300,18 +300,18 @@
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>-263</first>
-				<second>136</second>
+				<first>-256</first>
+				<second>173</second>
 			</position>
 			<parameterName>MagicCoeffs</parameterName>
 			<type>PtVector</type>
-			<frequency>UfDraw</frequency>
+			<frequency>UfFrame</frequency>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>-85</first>
-				<second>87</second>
+				<first>-78</first>
+				<second>124</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -396,6 +396,22 @@
 				<first>378</first>
 				<second>442</second>
 			</position>
+		</item>
+		<item type="traktor.render.Discard">
+			<comment/>
+			<position>
+				<first>-233</first>
+				<second>-120</second>
+			</position>
+			<operator>CoLess</operator>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>-425</first>
+				<second>-68</second>
+			</position>
+			<value>100000</value>
 		</item>
 	</nodes>
 	<edges>
@@ -601,26 +617,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[20]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[25]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[6]"/>
 				<name>TexCoord</name>
 			</source>
@@ -737,6 +733,56 @@
 			<destination>
 				<node ref="/object/nodes/item[27]"/>
 				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[25]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Pass</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[28]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[20]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 	</edges>

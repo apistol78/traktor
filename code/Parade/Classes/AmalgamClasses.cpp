@@ -16,12 +16,12 @@
 #include "Script/IScriptManager.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Filters/SurroundEnvironment.h"
+#include "World/IEntityBuilder.h"
+#include "World/IEntityFactory.h"
+#include "World/IEntityRenderer.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
-#include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/IEntityFactory.h"
-#include "World/Entity/IEntityRenderer.h"
 
 namespace traktor
 {

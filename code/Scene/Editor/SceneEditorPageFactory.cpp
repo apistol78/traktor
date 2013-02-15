@@ -6,7 +6,7 @@
 #include "Scene/Editor/SceneEditorPage.h"
 #include "Scene/Editor/SceneEditorPageFactory.h"
 #include "Ui/Command.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
 
 namespace traktor
 {
@@ -52,6 +52,7 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.EnlargeGuide"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ShrinkGuide"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.ResetGuide"));
+	outCommands.push_back(ui::Command(L"Scene.Editor.Snap"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.RotatePlus30"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.RotatePlus45"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.RotatePlus90"));

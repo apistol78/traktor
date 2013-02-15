@@ -1402,6 +1402,10 @@
       <second>Världsrenderare</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP</first>
+      <second>Bygg entitet automatiskt vid drag'n'drop</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Lägg till beroende</second>
     </item>

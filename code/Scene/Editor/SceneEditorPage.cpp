@@ -5,6 +5,7 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/ThreadManager.h"
@@ -52,10 +53,10 @@
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridItem.h"
+#include "World/Entity.h"
+#include "World/EntityData.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
-#include "World/Entity/Entity.h"
-#include "World/Entity/EntityData.h"
 
 // Resources
 #include "Resources/EntityEdit.h"
@@ -354,6 +355,11 @@ bool SceneEditorPage::dropInstance(db::Instance* instance, const ui::Point& posi
 				return false;
 			}
 		}
+
+		// Issue automatic build of dropped entity just in case the
+		// entity hasn't been built.
+		if (m_editor->getSettings()->getProperty< PropertyBoolean >(L"SceneEditor.BuildWhenDrop", true))
+			m_editor->buildAsset(instance->getGuid(), false);
 
 		m_context->getDocument()->push();
 

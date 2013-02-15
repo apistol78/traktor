@@ -2,7 +2,7 @@
 #define traktor_mesh_MeshEntityRenderer_H
 
 #include <map>
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

@@ -5,8 +5,8 @@
 #include "Physics/PhysicsManager.h"
 #include "Physics/World/RigidEntity.h"
 #include "Physics/World/RigidEntityData.h"
-#include "World/Entity/IEntityBuilder.h"
-#include "World/Entity/EntityData.h"
+#include "World/EntityData.h"
+#include "World/IEntityBuilder.h"
 
 namespace traktor
 {

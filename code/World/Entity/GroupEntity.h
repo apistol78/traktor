@@ -2,7 +2,7 @@
 #define traktor_world_GroupEntity_H
 
 #include "Core/RefArray.h"
-#include "World/Entity/Entity.h"
+#include "World/Entity.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

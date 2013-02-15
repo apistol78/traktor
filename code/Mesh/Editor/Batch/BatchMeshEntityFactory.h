@@ -1,7 +1,7 @@
 #ifndef traktor_mesh_BatchMeshEntityFactory_H
 #define traktor_mesh_BatchMeshEntityFactory_H
 
-#include "World/Entity/IEntityFactory.h"
+#include "World/IEntityFactory.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

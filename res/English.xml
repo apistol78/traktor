@@ -1414,6 +1414,10 @@
       <second>Mouse wheel rate</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_SETTINGS_BUILD_WHEN_DROP</first>
+      <second>Auto-build entity when drag'n'drop</second>
+    </item>
+    <item>
       <first>SCRIPT_EDITOR_ADD_DEPENDENCY</first>
       <second>Add dependency</second>
     </item>

@@ -2,7 +2,7 @@
 #define traktor_world_DecalEntityRenderer_H
 
 #include "Core/RefArray.h"
-#include "World/Entity/IEntityRenderer.h"
+#include "World/IEntityRenderer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS

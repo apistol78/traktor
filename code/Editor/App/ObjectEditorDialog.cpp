@@ -3,6 +3,8 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Instance.h"
 #include "Editor/IObjectEditor.h"
+#include "Editor/IObjectEditorFactory.h"
+#include "Editor/App/ObjectEditor.h"
 #include "Editor/App/ObjectEditorDialog.h"
 #include "I18N/Text.h"
 #include "Ui/MessageBox.h"
@@ -17,15 +19,22 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ObjectEditorDialog", ObjectEditorDialog, ui::ConfigDialog)
 
-ObjectEditorDialog::ObjectEditorDialog(PropertyGroup* settings, IObjectEditor* objectEditor)
+ObjectEditorDialog::ObjectEditorDialog(PropertyGroup* settings, const IObjectEditorFactory* objectEditorFactory)
 :	m_settings(settings)
-,	m_objectEditor(objectEditor)
+,	m_objectEditorFactory(objectEditorFactory)
 {
-	T_ASSERT (m_objectEditor);
 }
 
-bool ObjectEditorDialog::create(ui::Widget* parent, db::Instance* instance, ISerializable* object)
+bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instance* instance, ISerializable* object)
 {
+	// Create IEditor wrapper; need to disable dialogs when accessing editor's browsers.
+	m_editor = new ObjectEditor(editor, this);
+	
+	// Create concrete object editor.
+	m_objectEditor = m_objectEditorFactory->createObjectEditor(m_editor);
+	if (!m_objectEditor)
+		return false;
+
 	ui::Size preferredSize = m_objectEditor->getPreferredSize();
 
 	// Get instance's editor dimensions from settings.

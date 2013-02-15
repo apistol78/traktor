@@ -514,39 +514,53 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			Vector2 vtl(-hx, -hy), vbr(hx, hy);
 			Vector2 tl = vtl - cp, br = vbr - cp;
 
-			int32_t lx = int32_t(floorf(tl.x));
-			int32_t rx = int32_t(ceilf(br.x));
-			int32_t ty = int32_t(floorf(tl.y));
-			int32_t by = int32_t(ceilf(br.y));
+			float lx = floorf(tl.x);
+			float rx = ceilf(br.x);
+			float ty = floorf(tl.y);
+			float by = ceilf(br.y);
 
-			int32_t step = nearestLog2(std::max((rx - lx) / 20, (by - ty) / 20));
-			step = std::max(1, step);
+			float step = float(
+				nearestLog2(int32_t(
+					std::max(
+						(rx - lx) / 10.0f,
+						(by - ty) / 10.0f
+					)
+				)) - 1
+			);
 
-			lx -= sign(lx) * (abs(lx) % step);
-			ty -= sign(ty) * (abs(ty) % step);
+			if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
+			{
+				float spacing = m_context->getSnapSpacing();
+				step = std::max(spacing, step);
+			}
+			else
+				step = std::max(1.0f, step);
+
+			lx -= sign(lx) * std::fmod(abs(lx), step);
+			ty -= sign(ty) * std::fmod(abs(ty), step);
 
 			m_primitiveRenderer->pushDepthEnable(false);
 
-			for (int32_t x = lx; x <= rx; x += step)
+			for (float x = lx; x <= rx; x += step)
 			{
 				float fx = x + cameraPosition.x();
 
 				m_primitiveRenderer->drawLine(
 					Vector4(fx, vtl.y, 0.0f, 1.0f),
 					Vector4(fx, vbr.y, 0.0f, 1.0f),
-					(x == 0) ? 2.0f : 0.0f,
+					(abs(x) < 0.01f) ? 2.0f : 0.0f,
 					m_colorGrid
 				);
 			}
 
-			for (int32_t y = ty; y <= by; y += step)
+			for (float y = ty; y <= by; y += step)
 			{
 				float fy = y + cameraPosition.y();
 
 				m_primitiveRenderer->drawLine(
 					Vector4(vtl.x, fy, 1.0f),
 					Vector4(vbr.x, fy, 1.0f),
-					(y == 0) ? 2.0f : 0.0f,
+					(abs(y) < 0.01f) ? 2.0f : 0.0f,
 					m_colorGrid
 				);
 			}
