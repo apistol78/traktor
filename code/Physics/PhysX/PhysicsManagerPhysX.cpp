@@ -511,6 +511,18 @@ bool PhysicsManagerPhysX::queryRay(
 	return bool(hitShape != 0);
 }
 
+bool PhysicsManagerPhysX::queryShadowRay(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	uint32_t queryTypes,
+	const Body* ignoreBody
+) const
+{
+	return false;
+}
+
 uint32_t PhysicsManagerPhysX::querySphere(
 	const Vector4& at,
 	float radius,
@@ -547,6 +559,25 @@ bool PhysicsManagerPhysX::querySweep(
 ) const
 {
 	return false;
+}
+
+void PhysicsManagerPhysX::querySweep(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	float radius,
+	uint32_t group,
+	const Body* ignoreBody,
+	RefArray< Body >& outResult
+) const
+{
+}
+
+void PhysicsManagerPhysX::queryOverlap(
+	const Body* body,
+	RefArray< Body >& outResult
+) const
+{
 }
 
 void PhysicsManagerPhysX::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const

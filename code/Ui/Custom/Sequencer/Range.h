@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -38,7 +38,7 @@ public:
 
 	virtual void move(int offset);
 
-	virtual void getRange(const Sequence* sequence, int& outLeft, int& outRight) const;
+	virtual void getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const;
 
 	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset);
 

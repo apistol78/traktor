@@ -355,17 +355,13 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
 
 	// Get selected target host.
-	int32_t deployHostId = targetInstance->getDeployHostId();
-	if (deployHostId < 0)
-		return;
-
 	std::wstring deployHost = L"";
-	m_hostEnumerator->getHost(deployHostId, deployHost);
-	T_DEBUG(L"Deploy host \"" << deployHost << L"\"");
+	int32_t deployHostId = targetInstance->getDeployHostId();
+	if (deployHostId >= 0)
+		m_hostEnumerator->getHost(deployHostId, deployHost);
 	
 	// Resolve absolute output path.
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
-	T_DEBUG(L"Resolved output path \"" << outputPath << L"\"");
 
 	// Set target's state to pending as actions can be queued up to be performed much later.
 	targetInstance->setState(TsPending);

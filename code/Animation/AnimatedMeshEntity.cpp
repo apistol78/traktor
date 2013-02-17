@@ -140,6 +140,7 @@ void AnimatedMeshEntity::update(const UpdateParams& update)
 				m_jointTransforms
 			);
 
+			m_poseTransforms.reserve(m_jointTransforms.size());
 			m_skeleton.consume();
 		}
 

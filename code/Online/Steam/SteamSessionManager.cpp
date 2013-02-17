@@ -383,7 +383,7 @@ void SteamSessionManager::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PS
 		L"k_EP2PSessionErrorDestinationNotLoggedIn",
 		L"k_EP2PSessionErrorTimeout"
 	};
-	log::error << L"Steam; P2P session connect failed, m_eP2PSessionError = " << int32_t(pP2PSessionConnectFail->m_eP2PSessionError) << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
+	log::error << L"Steam; P2P session connect fail to peer " << uint64_t(pP2PSessionConnectFail->m_steamIDRemote.ConvertToUint64()) << L", m_eP2PSessionError = " << int32_t(pP2PSessionConnectFail->m_eP2PSessionError) << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
 }
 
 	}

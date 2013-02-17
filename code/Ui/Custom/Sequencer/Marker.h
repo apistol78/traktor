@@ -1,5 +1,5 @@
-#ifndef traktor_ui_custom_Tick_H
-#define traktor_ui_custom_Tick_H
+#ifndef traktor_ui_custom_Marker_H
+#define traktor_ui_custom_Marker_H
 
 #include "Ui/Custom/Sequencer/Key.h"
 
@@ -18,15 +18,15 @@ namespace traktor
 		namespace custom
 		{
 
-/*! \brief Sequencer tick.
+/*! \brief Sequencer marker.
  * \ingroup UIC
  */
-class T_DLLCLASS Tick : public Key
+class T_DLLCLASS Marker : public Key
 {
 	T_RTTI_CLASS;
 
 public:
-	Tick(int time);
+	Marker(int time);
 
 	void setTime(int time);
 
@@ -46,4 +46,4 @@ private:
 	}
 }
 
-#endif	// traktor_ui_custom_Tick_H
+#endif	// traktor_ui_custom_Marker_H

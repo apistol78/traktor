@@ -51,8 +51,8 @@ private:
 	std::vector< uint64_t >* m_outLobbies;
 	uint64_t* m_outLobby;
 	uint64_t m_acceptedInvite;
+	uint64_t m_joinedLobby;
 	bool m_joinResult;
-	bool m_inLobby;
 	CCallResult< SteamMatchMaking, LobbyMatchList_t > m_callbackLobbyMatch;
 	CCallResult< SteamMatchMaking, LobbyCreated_t > m_callbackLobbyCreated;
 	CCallResult< SteamMatchMaking, LobbyEnter_t > m_callbackLobbyEnter;

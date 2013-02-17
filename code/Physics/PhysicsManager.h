@@ -67,7 +67,8 @@ public:
 	enum QueryType
 	{
 		QtStatic = 1,
-		QtDynamic = 2
+		QtDynamic = 2,
+		QtAll = QtStatic | QtDynamic
 	};
 
 	/*! \brief Add collision listener.
@@ -215,6 +216,28 @@ public:
 		QueryResult& outResult
 	) const = 0;
 
+	/*! \brief "Shadow" ray cast world.
+	 *
+	 * Cast ray into the world and check if any
+	 * intersection.
+	 *
+	 * \param at Ray origin in world space.
+	 * \param direction Ray direction in world space.
+	 * \param maxLength Maximum length of ray.
+	 * \param group Collision groups.
+	 * \param queryTypes Type of bodies, @sa QueryTypes
+	 * \param ignoreBody Ignore ray casting body, can be null if no body is to be ignored.
+	 * \return True if any intersection found.
+	 */
+	virtual bool queryShadowRay(
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
+		uint32_t group,
+		uint32_t queryTypes,
+		const Body* ignoreBody
+	) const = 0;
+
 	/*! \brief Get all bodies within a sphere.
 	 *
 	 * \param at Sphere origin in world space.
@@ -275,6 +298,36 @@ public:
 		uint32_t group,
 		const Body* ignoreBody,
 		QueryResult& outResult
+	) const = 0;
+
+	/*! \brief Get all contact bodies from swept sphere.
+	 *
+	 * \param at Sphere origin in world space.
+	 * \param direction Sweep direction in world space.
+	 * \param maxLength Max sweep length.
+	 * \param radius Sphere radius.
+	 * \param group Collision groups.
+	 * \param ignoreBody Ignore ray casting body, can be null if no body is to be ignored.
+	 * \param outResult Overlapping bodies result.
+	 */
+	virtual void querySweep(
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
+		float radius,
+		uint32_t group,
+		const Body* ignoreBody,
+		RefArray< Body >& outResult
+	) const = 0;
+
+	/*! \brief Get overlapping bodies.
+	 *
+	 * \param body Check body; using body's shape when performing query.
+	 * \param outResult Overlapping bodies result.
+	 */
+	virtual void queryOverlap(
+		const Body* body,
+		RefArray< Body >& outResult
 	) const = 0;
 
 	/*! \brief Get number of bodies within world.

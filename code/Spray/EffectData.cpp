@@ -18,6 +18,19 @@ EffectData::EffectData()
 {
 }
 
+EffectData::EffectData(
+	float duration,
+	float loopStart,
+	float loopEnd,
+	const RefArray< EffectLayerData >& layers
+)
+:	m_duration(duration)
+,	m_loopStart(loopStart)
+,	m_loopEnd(loopEnd)
+,	m_layers(layers)
+{
+}
+
 Ref< Effect > EffectData::createEffect(resource::IResourceManager* resourceManager) const
 {
 	RefArray< EffectLayer > effectLayers;

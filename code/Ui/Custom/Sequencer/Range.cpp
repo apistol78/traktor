@@ -8,6 +8,12 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
+
+const int c_sequenceHeight = 22;
+
+			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Range", Range, Key)
 
@@ -43,10 +49,12 @@ void Range::move(int offset)
 	m_end += offset;
 }
 
-void Range::getRange(const Sequence* sequence, int& outLeft, int& outRight) const
+void Range::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
-	outLeft = sequence->clientFromTime(m_start);
-	outRight = sequence->clientFromTime(m_end);
+	outRect.left = sequence->clientFromTime(m_start);
+	outRect.top = rcClient.top + 2;
+	outRect.right = sequence->clientFromTime(m_end);
+	outRect.bottom = rcClient.top + c_sequenceHeight - 3;
 }
 
 void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
@@ -54,7 +62,7 @@ void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcCl
 	int x1 = sequence->clientFromTime(m_start) - scrollOffset;
 	int x2 = sequence->clientFromTime(m_end) - scrollOffset;
 
-	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.left + x2, rcClient.bottom - 3);
+	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.top + x2, rcClient.top + c_sequenceHeight - 3);
 
 	canvas.setForeground(Color4ub(220, 255, 220));
 	canvas.setBackground(Color4ub(180, 230, 180));

@@ -801,11 +801,9 @@ void Replicator::receiveMessages()
 		}
 		else if (msg.type == MtDisconnect)	// Disconnect request of peer from network.
 		{
-			T_REPLICATOR_DEBUG(L"OK: Received disconnect message from peer " << handle);
-
 			if (msg.disconnect.globalId == m_replicatorPeers->getGlobalId())
 			{
-				T_REPLICATOR_DEBUG(L"OK: I've been issued to disconnect");
+				T_REPLICATOR_DEBUG(L"OK: I've been issued to disconnect by peer " << handle);
 
 				for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 				{
@@ -828,7 +826,7 @@ void Replicator::receiveMessages()
 			}
 			else
 			{
-				T_REPLICATOR_DEBUG(L"OK: Other " << msg.disconnect.globalId << L" has been disconnected");
+				T_REPLICATOR_DEBUG(L"OK: Other " << msg.disconnect.globalId << L" has been disconnected by peer" << handle);
 
 				for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 				{
@@ -1092,17 +1090,15 @@ void Replicator::broadcastDisconnect(handle_t peerHandle)
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint64_t);
 
-	for (std::map< handle_t, Peer >::iterator j = m_peers.begin(); j != m_peers.end(); ++j)
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
-		if (j->second.state == PsEstablished)
-			send(j->first, &msg, msgSize, true);
+		if (i->second.state == PsEstablished)
+			send(i->first, &msg, msgSize, true);
 	}
 }
 
 void Replicator::adjustTime(float offset)
 {
-	//T_REPLICATOR_DEBUG(L"OK: Adjust time with " << (offset * 1000.0f) << L" ms");
-
 	m_time += offset;
 
 	// Also adjust all old states as well.

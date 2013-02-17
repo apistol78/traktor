@@ -299,7 +299,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		{
 			TCHAR fileName[MAX_PATH];
 			GetModuleFileName(hCrashModule, fileName, sizeof_array(fileName));
-			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << L" in module " << fileName << Endl;
+			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << L" in module " << (void*)hCrashModule << L" " << fileName << Endl;
 		}
 		else
 			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << Endl;

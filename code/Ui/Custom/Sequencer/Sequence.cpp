@@ -15,6 +15,7 @@ namespace traktor
 			{
 
 const int c_sequenceHeight = 22;
+const int c_buttonSize = 18;
 
 			}
 
@@ -25,6 +26,22 @@ Sequence::Sequence(const std::wstring& name)
 ,	m_previousPosition(0)
 ,	m_timeScale(8)
 {
+}
+
+int32_t Sequence::addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command)
+{
+	Button btn;
+	btn.imageUp = imageUp;
+	btn.imageDown = imageDown;
+	btn.command = command;
+	btn.state = false;
+	m_buttons.push_back(btn);
+	return int32_t(m_buttons.size() - 1);
+}
+
+bool Sequence::getButtonState(int32_t buttonIndex) const
+{
+	return m_buttons[buttonIndex].state;
 }
 
 void Sequence::addKey(Key* key)
@@ -70,27 +87,51 @@ int Sequence::timeFromClient(int client) const
 void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rect& rc, int button, int separator, int scrollOffset)
 {
 	if (at.x < separator)
-		return;
-
-	m_selectedKey = 0;
-	m_trackKey = 0;
-
-	for (uint32_t j = m_keys.size(); j > 0; --j)
 	{
-		Key* key = m_keys[j - 1];
-
-		int left, right;
-		key->getRange(this, left, right);
-
-		left += separator - scrollOffset;
-		right += separator - scrollOffset;
-
-		if (at.x >= left && at.x <= right)
+		for (int32_t i = 0; i < int32_t(m_buttons.size()); ++i)
 		{
-			m_previousPosition = at.x;
-			m_selectedKey = key;
-			m_trackKey = key;
-			break;
+			if (m_buttons[i].rc.inside(Point(at.x + rc.left, at.y + rc.top)))
+			{
+				// Toggle button state.
+				m_buttons[i].state = !m_buttons[i].state;
+
+				// Notify button listeners.
+				CommandEvent cmdEvent(sequencer, this, m_buttons[i].command);
+				sequencer->raiseEvent(ui::EiClick, &cmdEvent);
+
+				break;
+			}
+		}
+	}
+	else
+	{
+		m_selectedKey = 0;
+		m_trackKey = 0;
+
+		Rect rcClient(
+			rc.left + separator,
+			rc.top,
+			rc.right,
+			rc.bottom
+		);
+
+		for (uint32_t j = m_keys.size(); j > 0; --j)
+		{
+			Key* key = m_keys[j - 1];
+
+			Rect rcKey;
+			key->getRect(this, rcClient, rcKey);
+
+			rcKey.left += separator - scrollOffset;
+			rcKey.right += separator - scrollOffset;
+
+			if (rcKey.inside(at))
+			{
+				m_previousPosition = at.x;
+				m_selectedKey = key;
+				m_trackKey = key;
+				break;
+			}
 		}
 	}
 }
@@ -119,6 +160,12 @@ void Sequence::mouseMove(SequencerControl* sequencer, const Point& at, const Rec
 
 void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset)
 {
+	Rect rcSequence = rc;
+	Rect rcTick = rc;
+
+	rcSequence.bottom = rcSequence.top + c_sequenceHeight;
+	rcTick.top = rcTick.top + c_sequenceHeight;
+
 	// Save time scale here; it's used in client<->time conversion.
 	m_timeScale = sequencer->getTimeScale();
 
@@ -128,16 +175,26 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 		canvas.setForeground(Color4ub(250, 249, 250));
 		canvas.setBackground(Color4ub(238, 237, 240));
 		canvas.fillGradientRect(Rect(rc.left, rc.top, separator, rc.bottom));
+
 		canvas.setForeground(Color4ub(170, 169, 170));
 		canvas.setBackground(Color4ub(158, 157, 160));
-		canvas.fillGradientRect(Rect(separator, rc.top, rc.right, rc.bottom));
+		canvas.fillGradientRect(Rect(separator, rcSequence.top, rcSequence.right, rcSequence.bottom));
+
+		canvas.setForeground(Color4ub(240, 239, 240));
+		canvas.setBackground(Color4ub(228, 227, 230));
+		canvas.fillGradientRect(Rect(separator, rcTick.top, rcTick.right, rcTick.bottom));
 	}
 	else
 	{
 		canvas.setBackground(Color4ub(226, 229, 238));
 		canvas.fillRect(Rect(rc.left, rc.top, separator, rc.bottom));
+
 		canvas.setBackground(Color4ub(206, 209, 218));
-		canvas.fillRect(Rect(separator, rc.top, rc.right, rc.bottom));
+		canvas.fillRect(Rect(separator, rcSequence.top, rcSequence.right, rcSequence.bottom));
+
+		canvas.setForeground(Color4ub(240, 239, 240));
+		canvas.setBackground(Color4ub(228, 227, 230));
+		canvas.fillGradientRect(Rect(separator, rcTick.top, rcTick.right, rcTick.bottom));
 	}
 
 	canvas.setForeground(Color4ub(128, 128, 128));
@@ -154,6 +211,27 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 		getName()
 	);
 
+	// Draw sequence buttons.
+	Rect rcButton;
+	rcButton.left = rc.left + separator - c_buttonSize - 4 - m_buttons.size() * (c_buttonSize + 2);
+	rcButton.top = rc.top + (rc.getHeight() - c_buttonSize) / 2;
+	rcButton.right = rcButton.left + c_buttonSize;
+	rcButton.bottom = rcButton.top + c_buttonSize;
+
+	for (int32_t i = 0; i < int32_t(m_buttons.size()); ++i)
+	{
+		m_buttons[i].rc = rcButton;
+
+		canvas.drawBitmap(
+			rcButton.getTopLeft(),
+			Point(0, 0),
+			Size(16, 16),
+			m_buttons[i].state ? m_buttons[i].imageDown.ptr() : m_buttons[i].imageUp.ptr()
+		);
+
+		rcButton = rcButton.offset(-c_buttonSize - 2, 0);
+	}
+
 	// Draw sequence keys.
 	canvas.setClipRect(Rect(
 		rc.left + separator,
@@ -164,7 +242,7 @@ void Sequence::paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc
 
 	// Draw tickers.
 	canvas.setForeground(Color4ub(128, 128, 128));
-	int cy = (rc.top + rc.bottom) / 2;
+	int cy = (rcSequence.top + rcSequence.bottom) / 2;
 	for (int i = 0; i < sequencer->getLength(); i += 100)
 	{
 		int cx = separator + clientFromTime(i) - scrollOffset;

@@ -37,6 +37,13 @@ class T_DLLCLASS EffectData : public ISerializable
 public:
 	EffectData();
 
+	EffectData(
+		float duration,
+		float loopStart,
+		float loopEnd,
+		const RefArray< EffectLayerData >& layers
+	);
+
 	Ref< Effect > createEffect(resource::IResourceManager* resourceManager) const;
 
 	virtual bool serialize(ISerializer& s);

@@ -81,7 +81,7 @@ void UniformShadowProjection::calculate(
 		lightAxisZ * center.z()
 	).xyz1();
 
-	Scalar lightDistance = Scalar(shadowFarZ);
+	Scalar lightDistance = Scalar(shadowFarZ * 2.0f);
 
 	outLightView = Matrix44(
 		lightAxisX,

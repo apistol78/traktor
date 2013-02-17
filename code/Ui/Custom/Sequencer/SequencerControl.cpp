@@ -24,7 +24,7 @@ namespace traktor
 			namespace
 			{
 
-const int c_sequenceHeight = 22;
+const int c_sequenceHeight = 40;
 const int c_endWidth = 200;
 
 			}
@@ -196,6 +196,11 @@ void SequencerControl::addKeyMoveEventHandler(EventHandler* eventHandler)
 void SequencerControl::addGroupVisibleEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiGroupVisible, eventHandler);
+}
+
+void SequencerControl::addClickEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiClick, eventHandler);
 }
 
 void SequencerControl::eventSize(Event* e)
@@ -430,14 +435,7 @@ void SequencerControl::eventPaint(Event* e)
 	canvas.fillRect(Rect(rc.left, rc.top, rc.left + m_separator, rc.bottom));
 	
 	canvas.setBackground(Color4ub(138, 137, 140));
-	canvas.setForeground(Color4ub(118, 117, 120));
-	canvas.fillRect(Rect(rc.left + m_separator + 64, rc.top, rc.right, rc.bottom));
-	canvas.fillGradientRect(Rect(
-		rc.left + m_separator,
-		rc.top,
-		rc.left + m_separator + 64,
-		rc.bottom
-	), false);
+	canvas.fillRect(Rect(rc.left + m_separator, rc.top, rc.right, rc.bottom));
 
 	canvas.setBackground(getSystemColor(ScButtonFace));
 	canvas.fillRect(Rect(rc.right - scrollWidth, rc.bottom - scrollHeight, rc.right, rc.bottom));
@@ -467,6 +465,15 @@ void SequencerControl::eventPaint(Event* e)
 	}
 
 	canvas.resetClipRect();
+
+	canvas.setBackground(Color4ub(0, 0, 0, 0));
+	canvas.setForeground(Color4ub(0, 0, 0, 80));
+	canvas.fillGradientRect(Rect(
+		rc.left + m_separator,
+		rc.top,
+		rc.left + m_separator + 16,
+		rc.bottom
+	), false);
 
 	// Draw cursor.
 	int x = m_separator + m_cursor / m_timeScale - scrollOffsetX;

@@ -28,6 +28,7 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
+#include "Ui/Custom/Sequencer/Marker.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Range.h"
@@ -37,11 +38,39 @@
 // Resources
 #include "Resources/Playback.h"
 #include "Resources/EffectEdit.h"
+#include "Resources/LayerVisible.h"
+#include "Resources/LayerHidden.h"
 
 namespace traktor
 {
 	namespace spray
 	{
+		namespace
+		{
+
+class SequenceDataKey : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	SequenceDataKey(SequenceData* sequenceData, int32_t key)
+	:	m_sequenceData(sequenceData)
+	,	m_key(key)
+	{
+	}
+
+	SequenceData* getSequenceData() { return m_sequenceData; }
+
+	int32_t getKeyIndex() const { return m_key; }
+
+private:
+	Ref< SequenceData > m_sequenceData;
+	int32_t m_key;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SequenceDataKey", SequenceDataKey, Object)
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEditorPage", EffectEditorPage, editor::IEditorPage)
 
@@ -110,7 +139,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventToolClick));
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(container, false, -150, false);
+	splitter->create(container, false, -220, false);
 
 	m_previewControl = new EffectPreviewControl();
 	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem, m_soundSystem);
@@ -122,11 +151,12 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->addSelectEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerSelect));
 	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventTimeCursorMove));
 	m_sequencer->addKeyMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventKeyMove));
+	m_sequencer->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerClick));
 
 	m_site->setPropertyObject(m_effectData);
 
-	updateEffectPreview();
 	updateSequencer();
+	updateEffectPreview();
 
 	return true;
 }
@@ -207,8 +237,8 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.PropertiesChanged")
 	{
-		updateEffectPreview();
 		updateSequencer();
+		updateEffectPreview();
 	}
 	else if (command == L"Editor.Undo")
 	{
@@ -219,8 +249,8 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 
 			m_site->setPropertyObject(m_effectData);
 
-			updateEffectPreview();
 			updateSequencer();
+			updateEffectPreview();
 		}
 	}
 	else if (command == L"Editor.Redo")
@@ -232,8 +262,8 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 
 			m_site->setPropertyObject(m_effectData);
 
-			updateEffectPreview();
 			updateSequencer();
+			updateEffectPreview();
 		}
 	}
 
@@ -250,7 +280,28 @@ void EffectEditorPage::updateEffectPreview()
 {
 	if (m_resourceManager)
 	{
-		Ref< Effect > effect = m_effectData->createEffect(m_resourceManager);
+		RefArray< EffectLayerData > layersData;
+
+		RefArray< ui::custom::SequenceItem > layers;
+		m_sequencer->getSequenceItems(layers, ui::custom::SequencerControl::GfDefault);
+
+		for (RefArray< ui::custom::SequenceItem >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		{
+			const ui::custom::Sequence* layerItem = checked_type_cast< ui::custom::Sequence*, false >(*i);
+			if (layerItem->getButtonState(0))
+				continue;
+
+			layersData.push_back(layerItem->getData< EffectLayerData >(L"LAYER"));
+		}
+
+		Ref< EffectData > effectData = new EffectData(
+			m_effectData->getDuration(),
+			m_effectData->getLoopStart(),
+			m_effectData->getLoopEnd(),
+			layersData
+		);
+
+		Ref< Effect > effect = effectData->createEffect(m_resourceManager);
 		m_previewControl->setEffect(effect);
 
 		float time = m_sequencer->getCursor() / 1000.0f;
@@ -272,10 +323,14 @@ void EffectEditorPage::updateSequencer()
 		return;
 	}
 
+	Ref< ui::Bitmap > layerVisible = ui::Bitmap::load(c_ResourceLayerVisible, sizeof(c_ResourceLayerVisible), L"png");
+	Ref< ui::Bitmap > layerHidden = ui::Bitmap::load(c_ResourceLayerHidden, sizeof(c_ResourceLayerHidden), L"png");
+
 	const RefArray< EffectLayerData >& layers = m_effectData->getLayers();
 	for (RefArray< EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		Ref< ui::custom::Sequence > layerItem = new ui::custom::Sequence((*i)->getName());
+		layerItem->addButton(layerVisible, layerHidden, ui::Command(L"Effect.Editor.ToggleLayerVisible"));
 		layerItem->setData(L"LAYER", *i);
 		
 		float start = (*i)->getTime();
@@ -301,12 +356,12 @@ void EffectEditorPage::updateSequencer()
 		if (sequence)
 		{
 			const std::vector< SequenceData::Key >& keys = sequence->getKeys();
-			for (std::vector< SequenceData::Key >::const_iterator j = keys.begin(); j != keys.end(); ++j)
+			for (int32_t j = 0; j < int32_t(keys.size()); ++j)
 			{
-				Ref< ui::custom::Tick > sequenceTick = new ui::custom::Tick(int32_t(j->T * 1000.0f));
-				sequenceTick->setData(L"SEQUENCE", sequence);
-				sequenceTick->setData(L"LAYER", *i);
-				layerItem->addKey(sequenceTick);
+				Ref< ui::custom::Marker > sequenceMarker = new ui::custom::Marker(int32_t(keys[j].T * 1000.0f));
+				sequenceMarker->setData(L"SEQUENCE", new SequenceDataKey(sequence, j));
+				sequenceMarker->setData(L"LAYER", *i);
+				layerItem->addKey(sequenceMarker);
 			}
 		}
 
@@ -329,10 +384,21 @@ void EffectEditorPage::eventLayerSelect(ui::Event* event)
 	RefArray< ui::custom::SequenceItem > selectedItems;
 	if (m_sequencer->getSequenceItems(selectedItems, ui::custom::SequencerControl::GfSelectedOnly) == 1)
 	{
-		Ref< EffectLayerData > layer = selectedItems.front()->getData< EffectLayerData >(L"LAYER");
+		ui::custom::Sequence* selectedSequence = checked_type_cast< ui::custom::Sequence*, false >(selectedItems.front());
+
+		Ref< EffectLayerData > layer = selectedSequence->getData< EffectLayerData >(L"LAYER");
 		T_ASSERT (layer);
 
-		m_site->setPropertyObject(layer);
+		ui::custom::Marker* selectedMarker = dynamic_type_cast< ui::custom::Marker* >(selectedSequence->getSelectedKey());
+		if (selectedMarker)
+		{
+			// FIXME
+			m_site->setPropertyObject(layer);
+		}
+		else
+		{
+			m_site->setPropertyObject(layer);
+		}
 	}
 	else
 		m_site->setPropertyObject(m_effectData);
@@ -370,20 +436,37 @@ void EffectEditorPage::eventKeyMove(ui::Event* event)
 		Ref< EffectLayerData > layer = movedTick->getData< EffectLayerData >(L"LAYER");
 		T_ASSERT (layer);
 
-		Ref< SequenceData > sequence = movedTick->getData< SequenceData >(L"SEQUENCE");
-		if (sequence)
-		{
-			// \FIXME
-		}
-		else
-		{
-			float start = movedTick->getTime() / 1000.0f;
-			m_document->push();
-			layer->setTime(start);
-			m_site->setPropertyObject(layer);
-		}
+		float start = movedTick->getTime() / 1000.0f;
+		m_document->push();
+		layer->setTime(start);
+		m_site->setPropertyObject(layer);
 	}
 
+	ui::custom::Marker* movedMarker = dynamic_type_cast< ui::custom::Marker* >(commandEvent->getItem());
+	if (movedMarker)
+	{
+		Ref< EffectLayerData > layer = movedMarker->getData< EffectLayerData >(L"LAYER");
+		T_ASSERT (layer);
+
+		Ref< SequenceDataKey > sequenceDataKey = movedMarker->getData< SequenceDataKey >(L"SEQUENCE");
+		T_ASSERT (sequenceDataKey);
+
+		SequenceData* sequenceData = sequenceDataKey->getSequenceData();
+		T_ASSERT (sequenceData);
+
+		m_document->push();
+
+		std::vector< SequenceData::Key >& keys = sequenceData->getKeys();
+		keys[sequenceDataKey->getKeyIndex()].T = float(movedMarker->getTime() / 1000.0f);
+
+		m_site->setPropertyObject(layer);
+	}
+
+	updateEffectPreview();
+}
+
+void EffectEditorPage::eventLayerClick(ui::Event* event)
+{
 	updateEffectPreview();
 }
 

@@ -798,6 +798,18 @@ bool PhysicsManagerHavok::querySweep(
 	return true;
 }
 
+bool PhysicsManagerHavok::queryShadowRay(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	uint32_t queryTypes,
+	const Body* ignoreBody
+) const
+{
+	return false;
+}
+
 bool PhysicsManagerHavok::querySweep(
 	const Body* body,
 	const Quaternion& orientation,
@@ -810,6 +822,25 @@ bool PhysicsManagerHavok::querySweep(
 ) const
 {
 	return false;
+}
+
+void PhysicsManagerHavok::querySweep(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	float radius,
+	uint32_t group,
+	const Body* ignoreBody,
+	RefArray< Body >& outResult
+) const
+{
+}
+
+void PhysicsManagerHavok::queryOverlap(
+	const Body* body,
+	RefArray< Body >& outResult
+) const
+{
 }
 
 void PhysicsManagerHavok::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const

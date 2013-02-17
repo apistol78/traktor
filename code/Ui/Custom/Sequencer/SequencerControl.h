@@ -83,6 +83,8 @@ public:
 
 	void addGroupVisibleEventHandler(EventHandler* eventHandler);
 
+	void addClickEventHandler(EventHandler* eventHandler);
+
 private:
 	struct MouseTrackItem
 	{

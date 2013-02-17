@@ -44,7 +44,7 @@ void DiagnosePeers::update()
 			double up = m_sent * 8.0 / (dT * 1024.0);
 			double down = m_received * 8.0 / (dT * 1024.0);
 
-			log::info << L"Network traffic (" << int32_t(handles.size()) << L" peer(s))" << Endl;
+			log::info << L"Network traffic (" << int32_t(handles.size()) << L" peer(s)) :" << int32_t(T) << Endl;
 			log::info << L"  U " << up << L" kbps" << Endl;
 			log::info << L"  D " << down << L" kbps" << Endl;
 		}
