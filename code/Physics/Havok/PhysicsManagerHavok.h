@@ -69,6 +69,15 @@ public:
 		QueryResult& outResult
 	) const;
 
+	virtual bool queryShadowRay(
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
+		uint32_t group,
+		uint32_t queryTypes,
+		const Body* ignoreBody
+	) const;
+
 	virtual uint32_t querySphere(
 		const Vector4& at,
 		float radius,
@@ -96,6 +105,21 @@ public:
 		uint32_t group,
 		const Body* ignoreBody,
 		QueryResult& outResult
+	) const;
+
+	virtual void querySweep(
+		const Vector4& at,
+		const Vector4& direction,
+		float maxLength,
+		float radius,
+		uint32_t group,
+		const Body* ignoreBody,
+		RefArray< Body >& outResult
+	) const;
+
+	virtual void queryOverlap(
+		const Body* body,
+		RefArray< Body >& outResult
 	) const;
 
 	virtual void getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const;

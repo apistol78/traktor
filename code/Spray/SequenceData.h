@@ -48,6 +48,8 @@ public:
 
 	const std::vector< Key >& getKeys() const { return m_keys; }
 
+	 std::vector< Key >& getKeys() { return m_keys; }
+
 private:
 	std::vector< Key > m_keys;
 };

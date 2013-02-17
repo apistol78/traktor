@@ -5574,6 +5574,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>SwHiZ</name>
+								<items>
+									<item type="File">
+										<fileName>SwHiZ/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -16318,6 +16327,14 @@
 						</item>
 						<item type="File">
 							<fileName>../../../res/toolbar/EffectEdit.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/LayerVisible.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/LayerHidden.png</fileName>
 							<items/>
 						</item>
 					</items>

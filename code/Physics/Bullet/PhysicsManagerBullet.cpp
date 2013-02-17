@@ -171,13 +171,15 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 	btVector3 m_hitNormalWorld;
 	btVector3 m_hitPointWorld;
 	uint32_t m_group;
+	uint32_t m_queryTypes;
 	btCollisionObject* m_excludeObject;
 
-	ClosestRayExcludeResultCallback(btCollisionObject* excludeObject, uint32_t group, const btVector3& rayFromWorld, const btVector3& rayToWorld)
+	ClosestRayExcludeResultCallback(btCollisionObject* excludeObject, uint32_t group, uint32_t queryTypes, const btVector3& rayFromWorld, const btVector3& rayToWorld)
 	:	m_rayFromWorld(rayFromWorld)
 	,	m_rayToWorld(rayToWorld)
 	,	m_excludeObject(excludeObject)
 	,	m_group(group)
+	,	m_queryTypes(queryTypes)
 	{
 	}
 
@@ -191,15 +193,22 @@ struct ClosestRayExcludeResultCallback : public btCollisionWorld::RayResultCallb
 		if (m_group != ~0UL && (getCollisionGroup(rayResult.m_collisionObject) & m_group) == 0)
 			return m_closestHitFraction;
 
-		m_closestHitFraction = rayResult.m_hitFraction;
-		m_collisionObject = rayResult.m_collisionObject;
+		bool isStatic = rayResult.m_collisionObject->isStaticOrKinematicObject();
+		if (
+			( isStatic && (m_queryTypes & PhysicsManager::QtStatic ) != 0) ||
+			(!isStatic && (m_queryTypes & PhysicsManager::QtDynamic) != 0)
+		)
+		{
+			m_closestHitFraction = rayResult.m_hitFraction;
+			m_collisionObject = rayResult.m_collisionObject;
 
-		if (normalInWorldSpace)
-			m_hitNormalWorld = rayResult.m_hitNormalLocal;
-		else
-			m_hitNormalWorld = m_collisionObject->getWorldTransform().getBasis() * rayResult.m_hitNormalLocal;
+			if (normalInWorldSpace)
+				m_hitNormalWorld = rayResult.m_hitNormalLocal;
+			else
+				m_hitNormalWorld = m_collisionObject->getWorldTransform().getBasis() * rayResult.m_hitNormalLocal;
 
-		m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
+			m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
+		}
 
 		return m_closestHitFraction;
 	}
@@ -247,6 +256,70 @@ struct ClosestRayExcludeAndCullResultCallback : public btCollisionWorld::RayResu
 		m_hitPointWorld.setInterpolate3(m_rayFromWorld, m_rayToWorld, rayResult.m_hitFraction);
 
 		return m_closestHitFraction;
+	}
+};
+
+struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallback
+{
+	uint32_t m_group;
+	btCollisionObject* m_excludeObject;
+	RefArray< Body >& m_outResult;
+
+	ConvexExcludeResultCallback(uint32_t group, btCollisionObject* excludeObject, RefArray< Body >& outResult)
+	:	m_group(group)
+	,	m_excludeObject(excludeObject)
+	,	m_outResult(outResult)
+	{
+	}
+
+	virtual	btScalar addSingleResult(btCollisionWorld::LocalConvexResult& convexResult, bool normalInWorldSpace)
+	{
+		if (m_excludeObject == convexResult.m_hitCollisionObject)
+			return 1.0f;
+
+		if (m_group != ~0UL && (getCollisionGroup(convexResult.m_hitCollisionObject) & m_group) == 0)
+			return 1.0f;
+
+		BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(convexResult.m_hitCollisionObject->getUserPointer());
+		T_ASSERT (bodyBullet);
+
+		m_outResult.push_back(bodyBullet);
+		return 1.0f;
+	}
+};
+
+struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
+{
+	const btCollisionObject* m_colObj;
+	RefArray< Body >& m_outResult;
+
+	ContactResultCallback(const btCollisionObject* colObj, RefArray< Body >& outResult)
+	:	m_colObj(colObj)
+	,	m_outResult(outResult)
+	{
+	}
+
+	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1)
+	{
+		if (m_colObj == colObj0)
+		{
+			T_ASSERT (colObj1);
+
+			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj1->getUserPointer());
+			T_ASSERT (bodyBullet);
+
+			m_outResult.push_back(bodyBullet);
+		}
+		else if (m_colObj == colObj1)
+		{
+			T_ASSERT (colObj0);
+
+			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj0->getUserPointer());
+			T_ASSERT (bodyBullet);
+
+			m_outResult.push_back(bodyBullet);
+		}
+		return 0.0f;
 	}
 };
 
@@ -989,7 +1062,7 @@ bool PhysicsManagerBullet::queryRay(
 
 	if (!ignoreBackFace)
 	{
-		ClosestRayExcludeResultCallback callback(excludeBody, group, from, to);
+		ClosestRayExcludeResultCallback callback(excludeBody, group, QtAll, from, to);
 		m_dynamicsWorld->rayTest(from, to, callback);
 		if (!callback.hasHit())
 			return false;
@@ -1019,6 +1092,30 @@ bool PhysicsManagerBullet::queryRay(
 		outResult.distance = dot3(direction, outResult.position - at);
 		outResult.material = body->getMaterial();
 	}
+
+	return true;
+}
+
+bool PhysicsManagerBullet::queryShadowRay(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	uint32_t queryTypes,
+	const Body* ignoreBody
+) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	btVector3 from = toBtVector3(at);
+	btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
+
+	btRigidBody* excludeBody = ignoreBody ? checked_type_cast< const BodyBullet* >(ignoreBody)->getBtRigidBody() : 0;
+
+	ClosestRayExcludeResultCallback callback(excludeBody, group, queryTypes, from, to);
+	m_dynamicsWorld->rayTest(from, to, callback);
+	if (!callback.hasHit())
+		return false;
 
 	return true;
 }
@@ -1146,13 +1243,6 @@ bool PhysicsManagerBullet::querySweep(
 	to.setRotation(toBtQuaternion(orientation) * localRotation);
 	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
 
-	//btRigidBody* excludeBody = 0;
-
-	//if (const DynamicBodyBullet* dynamicBody = dynamic_type_cast< const DynamicBodyBullet* >(ignoreBody))
-	//	excludeBody = dynamicBody->getBtRigidBody();
-	//else if (const StaticBodyBullet* staticBody = dynamic_type_cast< const StaticBodyBullet* >(ignoreBody))
-	//	excludeBody = staticBody->getBtRigidBody();
-
 	ClosestConvexExcludeResultCallback callback(group, rigidBody/*excludeBody*/, from.getOrigin(), to.getOrigin());
 	m_dynamicsWorld->convexSweepTest(
 		static_cast< const btConvexShape* >(shape),
@@ -1174,6 +1264,54 @@ bool PhysicsManagerBullet::querySweep(
 	outResult.material = bodyBullet->getMaterial();
 
 	return true;
+}
+
+void PhysicsManagerBullet::querySweep(
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	float radius,
+	uint32_t group,
+	const Body* ignoreBody,
+	RefArray< Body >& outResult
+) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	btSphereShape sphereShape(radius);
+	btTransform from, to;
+
+	from.setIdentity();
+	from.setOrigin(toBtVector3(at));
+
+	to.setIdentity();
+	to.setOrigin(toBtVector3(at + direction * Scalar(maxLength)));
+
+	ConvexExcludeResultCallback callback(
+		group,
+		ignoreBody ? checked_type_cast< const BodyBullet* >(ignoreBody)->getBtRigidBody() : 0,
+		outResult
+	);
+	m_dynamicsWorld->convexSweepTest(
+		&sphereShape,
+		from,
+		to,
+		callback
+	);
+}
+
+void PhysicsManagerBullet::queryOverlap(
+	const Body* body,
+	RefArray< Body >& outResult
+) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
+	T_ASSERT (rigidBody);
+
+	ContactResultCallback callback(rigidBody, outResult);
+	m_dynamicsWorld->contactTest(rigidBody, callback);
 }
 
 void PhysicsManagerBullet::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const

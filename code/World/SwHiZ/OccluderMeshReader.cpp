@@ -1,7 +1,7 @@
 #include "Core/Io/Reader.h"
 #include "Core/Misc/Endian.h"
-#include "World/OccluderMesh.h"
-#include "World/OccluderMeshReader.h"
+#include "World/SwHiZ/OccluderMesh.h"
+#include "World/SwHiZ/OccluderMeshReader.h"
 
 namespace traktor
 {

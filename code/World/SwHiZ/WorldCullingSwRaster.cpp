@@ -4,9 +4,9 @@
 #include "Core/Math/Log2.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Math/Triangle.h"
-#include "World/OccluderMesh.h"
-#include "World/WorldCullingSwRaster.h"
 #include "World/WorldRenderView.h"
+#include "World/SwHiZ/OccluderMesh.h"
+#include "World/SwHiZ/WorldCullingSwRaster.h"
 
 namespace traktor
 {

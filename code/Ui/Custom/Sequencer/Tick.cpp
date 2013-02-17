@@ -8,6 +8,12 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
+
+const int c_sequenceHeight = 22;
+
+			}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Tick", Tick, Key)
 
@@ -31,18 +37,20 @@ void Tick::move(int offset)
 	m_time += offset;
 }
 
-void Tick::getRange(const Sequence* sequence, int& outLeft, int& outRight) const
+void Tick::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const
 {
 	int x = sequence->clientFromTime(m_time);
-	outLeft = x - 3;
-	outRight = x + 4;
+	outRect.left = x - 3;
+	outRect.top = rcClient.top + 2;
+	outRect.right = x + 4;
+	outRect.bottom = rcClient.top + c_sequenceHeight - 3;
 }
 
 void Tick::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset)
 {
 	int x = sequence->clientFromTime(m_time) - scrollOffset;
 
-	Rect rc(rcClient.left + x - 3, rcClient.top + 2, rcClient.left + x + 4, rcClient.bottom - 3);
+	Rect rc(rcClient.left + x - 3, rcClient.top + 2, rcClient.left + x + 4, rcClient.top + c_sequenceHeight - 3);
 
 	if (sequence->getSelectedKey() != this)
 	{

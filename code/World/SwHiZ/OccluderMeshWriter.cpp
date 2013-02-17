@@ -1,6 +1,6 @@
 #include "Core/Io/Writer.h"
-#include "World/OccluderMesh.h"
-#include "World/OccluderMeshWriter.h"
+#include "World/SwHiZ/OccluderMesh.h"
+#include "World/SwHiZ/OccluderMeshWriter.h"
 
 namespace traktor
 {

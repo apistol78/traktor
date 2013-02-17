@@ -9,7 +9,10 @@ if "%1"=="build" (
 ) else if "%1"=="deploy" (
 
 	rem Build application bundle.
-	mkdir -p "%BUNDLE%.app\Contents\Resources"
+	if not exist "%BUNDLE%.app" mkdir "%BUNDLE%.app"
+	if not exist "%BUNDLE%.app\Contents" mkdir "%BUNDLE%.app\Contents"
+	if not exist "%BUNDLE%.app\Contents\MacOS" mkdir "%BUNDLE%.app\Contents\MacOS"
+	if not exist "%BUNDLE%.app\Contents\Resources" mkdir "%BUNDLE%.app\Contents\Resources"
 
 	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\deploy\osx\Info.plist "%BUNDLE%.app\Contents\" > "%DEPLOY_OUTPUT_PATH%\Deploy.log"
 	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\deploy\osx\Icon.icns "%BUNDLE%.app\Contents\Resources\" >> "%DEPLOY_OUTPUT_PATH%\Deploy.log"
@@ -39,7 +42,10 @@ if "%1"=="build" (
 	%DEPLOY_PROJECT_ROOT%\bin\latest\win32\releaseshared\Traktor.Database.Migrate.App -s=Migrate -l=Migrate.log
 
 	rem Build application bundle.
-	mkdir -p "%BUNDLE%.app\Contents\Resources"
+	if not exist "%BUNDLE%.app" mkdir "%BUNDLE%.app"
+	if not exist "%BUNDLE%.app\Contents" mkdir "%BUNDLE%.app\Contents"
+	if not exist "%BUNDLE%.app\Contents\MacOS" mkdir "%BUNDLE%.app\Contents\MacOS"
+	if not exist "%BUNDLE%.app\Contents\Resources" mkdir "%BUNDLE%.app\Contents\Resources"
 
 	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\deploy\osx\Info.plist "%BUNDLE%.app\Contents\" >> "%DEPLOY_OUTPUT_PATH%\Migrate.log"
 	copy /Y %DEPLOY_PROJECT_ROOT:/=\%\res\deploy\osx\Icon.icns "%BUNDLE%.app\Contents\Resources\" >> "%DEPLOY_OUTPUT_PATH%\Migrate.log"

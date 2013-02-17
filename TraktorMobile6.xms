@@ -2443,6 +2443,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>SwHiZ</name>
+								<items>
+									<item type="File">
+										<fileName>SwHiZ/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">

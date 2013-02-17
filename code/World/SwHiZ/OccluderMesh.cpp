@@ -1,4 +1,4 @@
-#include "World/OccluderMesh.h"
+#include "World/SwHiZ/OccluderMesh.h"
 
 namespace traktor
 {

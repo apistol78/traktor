@@ -11,7 +11,7 @@
 #include "Render/Mesh/SystemMeshFactory.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
-#include "World/OccluderMeshReader.h"
+#include "World/SwHiZ/OccluderMeshReader.h"
 
 namespace traktor
 {

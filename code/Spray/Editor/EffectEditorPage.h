@@ -105,6 +105,8 @@ private:
 	void eventTimeCursorMove(ui::Event* event);
 
 	void eventKeyMove(ui::Event* event);
+
+	void eventLayerClick(ui::Event* event);
 };
 
 	}

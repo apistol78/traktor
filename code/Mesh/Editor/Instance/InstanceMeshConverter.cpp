@@ -19,8 +19,8 @@
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/VertexBuffer.h"
 #include "Render/IndexBuffer.h"
-#include "World/OccluderMesh.h"
-#include "World/OccluderMeshWriter.h"
+#include "World/SwHiZ/OccluderMesh.h"
+#include "World/SwHiZ/OccluderMeshWriter.h"
 
 namespace traktor
 {

@@ -91,13 +91,13 @@ void ReliableTransportPeers::update()
 		{
 			if ((time - j->time0) >= c_discardTime)
 			{
-				T_REPLICATOR_DEBUG(L"ERROR: No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message discarded");
+				T_REPLICATOR_DEBUG(L"ERROR: No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message " << int32_t(j->envelope.sequence) << L" discarded");
 				j = i->second.sent.erase(j);
 				continue;
 			}
 			if ((time - j->time) >= c_resendTime)
 			{
-				T_REPLICATOR_DEBUG(L"OK: No response from peer " << i->first << L" in " << c_resendTime << L" second(s); message resent");
+				T_REPLICATOR_DEBUG(L"OK: No response from peer " << i->first << L" in " << c_resendTime << L" second(s); message " << int32_t(j->envelope.sequence) << L" resent");
 				m_peers->send(
 					i->first,
 					&j->envelope,
@@ -221,7 +221,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 				if (i->envelope.sequence == e.sequence)
 				{
 					if (i->resent)
-						T_REPLICATOR_DEBUG(L"OK: Resent message finally ACK;ed");
+						T_REPLICATOR_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" finally ACK;ed");
 
 					ct.sent.erase(i);
 					break;

@@ -2,6 +2,8 @@
 #define traktor_ui_custom_Sequence_H
 
 #include "Core/RefArray.h"
+#include "Ui/Command.h"
+#include "Ui/Rect.h"
 #include "Ui/Custom/Sequencer/SequenceItem.h"
 
 // import/export mechanism.
@@ -16,6 +18,10 @@ namespace traktor
 {
 	namespace ui
 	{
+
+class Bitmap;
+class Command;
+
 		namespace custom
 		{
 
@@ -30,6 +36,10 @@ class T_DLLCLASS Sequence : public SequenceItem
 
 public:
 	Sequence(const std::wstring& name);
+
+	int32_t addButton(Bitmap* imageUp, Bitmap* imageDown, const Command& command);
+
+	bool getButtonState(int32_t buttonIndex) const;
 
 	void addKey(Key* key);
 	
@@ -56,7 +66,17 @@ public:
 	virtual void paint(SequencerControl* sequencer, Canvas& canvas, const Rect& rc, int separator, int scrollOffset);
 
 private:
+	struct Button
+	{
+		Ref< Bitmap > imageUp;
+		Ref< Bitmap > imageDown;
+		Command command;
+		bool state;
+		Rect rc;
+	};
+
 	RefArray< Key > m_keys;
+	std::vector< Button > m_buttons;
 	Ref< Key > m_selectedKey;
 	Ref< Key > m_trackKey;
 	int32_t m_previousPosition;

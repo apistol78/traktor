@@ -18,8 +18,8 @@
 #include "Render/Mesh/Mesh.h"
 #include "Render/Mesh/MeshWriter.h"
 #include "Render/Mesh/SystemMeshFactory.h"
-#include "World/OccluderMesh.h"
-#include "World/OccluderMeshWriter.h"
+#include "World/SwHiZ/OccluderMesh.h"
+#include "World/SwHiZ/OccluderMeshWriter.h"
 
 namespace traktor
 {
