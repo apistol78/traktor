@@ -34,7 +34,7 @@ const uint32_t c_maxEmitSingleShot = 10;
 const uint32_t c_maxEmitPerUpdate = 6;
 const uint32_t c_maxEmitSingleShot = 2000;
 #else
-const uint32_t c_maxEmitPerUpdate = 8;
+const uint32_t c_maxEmitPerUpdate = 16;
 const uint32_t c_maxEmitSingleShot = 3000;
 #endif
 
@@ -59,6 +59,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object
 
 EmitterInstance::EmitterInstance(const Emitter* emitter)
 :	m_emitter(emitter)
+,	m_sortPlane(0.0f, 0.0f, 1.0f, 0.0f)
 ,	m_emitted(0)
 ,	m_totalTime(0.0f)
 ,	m_emitFraction(0.0f)
@@ -66,7 +67,9 @@ EmitterInstance::EmitterInstance(const Emitter* emitter)
 ,	m_count(std::rand() & 15)
 {
 	// Pre-allocate points; estimate average required.
-	m_points.reserve(std::max(c_maxEmitPerUpdate * 30 * 10, c_maxEmitSingleShot));
+	m_points.reserve(std::max(c_maxEmitPerUpdate * 60 * 10, c_maxEmitSingleShot));
+	if (m_emitter->worldSpace())
+		m_worldPoints.reserve(std::max(c_maxEmitPerUpdate * 60 * 10, c_maxEmitSingleShot));
 }
 
 EmitterInstance::~EmitterInstance()
@@ -127,7 +130,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
 				float emitConstant = source->getConstantRate() * context.deltaTime;
 				float emit = emitVelocity + emitConstant + m_emitFraction;
-				uint32_t emitCountFrame = uint32_t(emit);
+				uint32_t emitCountFrame = uint32_t(emit + 0.5f);
 
 				// Emit in multiple frames; estimate number of particles to emit.
 				if (emitCountFrame > 0)
@@ -233,26 +236,14 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	updateTask(context.deltaTime, T, size);
 #	endif
 #endif
-}
 
-void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane)
-{
-	if (m_points.empty())
-		return;
-
+	// Transform and sort particles if necessary.
 	if (m_emitter->worldSpace())
 	{
+#if !defined(__LINUX__)
 		if (m_emitter->getSort())
-			std::sort(m_points.begin(), m_points.end(), PointPredicate(cameraPlane));
-
-		pointRenderer->render(
-			m_emitter->getShader(),
-			cameraPlane,
-			m_points,
-			m_emitter->getMiddleAge(),
-			m_emitter->getCullNearDistance(),
-			m_emitter->getFadeNearRange()
-		);
+			std::sort(m_points.begin(), m_points.end(), PointPredicate(m_sortPlane));
+#endif
 	}
 	else
 	{
@@ -264,9 +255,31 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& tran
 			m_worldPoints[i].velocity = transform * m_points[i].velocity.xyz0();
 		}
 
+#if !defined(__LINUX__)
 		if (m_emitter->getSort())
-			std::sort(m_worldPoints.begin(), m_worldPoints.end(), PointPredicate(cameraPlane));
+			std::sort(m_worldPoints.begin(), m_worldPoints.end(), PointPredicate(m_sortPlane));
+#endif
+	}
+}
 
+void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane)
+{
+	if (m_points.empty())
+		return;
+
+	if (m_emitter->worldSpace())
+	{
+		pointRenderer->render(
+			m_emitter->getShader(),
+			cameraPlane,
+			m_points,
+			m_emitter->getMiddleAge(),
+			m_emitter->getCullNearDistance(),
+			m_emitter->getFadeNearRange()
+		);
+	}
+	else
+	{
 		pointRenderer->render(
 			m_emitter->getShader(),
 			cameraPlane,
@@ -276,6 +289,8 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& tran
 			m_emitter->getFadeNearRange()
 		);
 	}
+
+	m_sortPlane = cameraPlane;
 }
 
 void EmitterInstance::synchronize() const

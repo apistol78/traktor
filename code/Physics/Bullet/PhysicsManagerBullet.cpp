@@ -1225,8 +1225,8 @@ bool PhysicsManagerBullet::querySweep(
 	if (shape->isCompound())
 	{
 		btCompoundShape* compoundShape = static_cast< btCompoundShape* >(shape);
-		shape = compoundShape->getChildShape(0);
-		localRotation = compoundShape->getChildTransform(0).getRotation();
+		if (compoundShape->getNumChildShapes() > 0)
+			localRotation = compoundShape->getChildTransform(0).getRotation();
 	}
 
 	// Ensure shape is a convex shape; required when performing sweep test.

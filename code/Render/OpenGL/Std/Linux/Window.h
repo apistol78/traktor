@@ -27,6 +27,10 @@ public:
 
     void setWindowedStyle(int32_t width, int32_t height);
 
+    void showCursor();
+
+    void hideCursor();
+
     void show();
 
     bool update(RenderEvent& outEvent);

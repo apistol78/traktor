@@ -23,6 +23,7 @@ namespace traktor
 //#define T_SCRIPT_PROFILE_CALLS
 
 const int32_t c_tableKey_class = -1;
+const int32_t c_maxTargetSteps = 100;
 
 class TableContainerLua : public Object
 {
@@ -297,7 +298,7 @@ void ScriptManagerLua::collectGarbage()
 
 	double collectTime = m_timer.getElapsedTime();
 
-	int32_t targetSteps = int32_t(collectTime * m_collectStepFrequency);
+	int32_t targetSteps = std::min(int32_t(collectTime * m_collectStepFrequency), c_maxTargetSteps);
 	if (m_collectSteps < 0)
 	{
 		lua_gc(m_luaState, LUA_GCSTOP, 0);
@@ -455,7 +456,7 @@ void ScriptManagerLua::collectGarbageFull()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	uint32_t memoryUse = 0;
-	do 
+	do
 	{
 		memoryUse = m_totalMemoryUse;
 		lua_gc(m_luaState, LUA_GCCOLLECT, 0);

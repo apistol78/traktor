@@ -93,6 +93,7 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 	{
 		Peer& peer = m_peers[*i];
 		peer.state = PsInitial;
+		peer.global = m_replicatorPeers->getPeerGlobalId(*i);
 		peer.precursor = true;
 	}
 
@@ -254,6 +255,16 @@ bool Replicator::isPeerConnected(handle_t peerHandle) const
 		return true;
 }
 
+handle_t Replicator::getPrimaryPeerHandle() const
+{
+	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		if (isPeerPrimary(i->first))
+			return i->first;
+	}
+	return 0;
+}
+
 bool Replicator::isPeerPrimary(handle_t peerHandle) const
 {
 	return m_replicatorPeers->getPrimaryPeerHandle() == peerHandle;
@@ -365,7 +376,7 @@ void Replicator::updatePeers(float dT)
 	m_replicatorPeers->update();
 	m_replicatorPeers->getPeerHandles(handles);
 
-	// Keep list of unfresh handles.
+	// Keep list of un-fresh handles.
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); )
 	{
 		if (std::find(handles.begin(), handles.end(), i->first) != handles.end())
@@ -408,6 +419,7 @@ void Replicator::updatePeers(float dT)
 		// Issue "I am" to unestablished peers.
 		if (peer.state == PsInitial)
 		{
+			peer.global = m_replicatorPeers->getPeerGlobalId(*i);
 			if ((peer.timeUntilTx -= dT) <= 0.0f)
 			{
 				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer " << *i);
@@ -826,11 +838,11 @@ void Replicator::receiveMessages()
 			}
 			else
 			{
-				T_REPLICATOR_DEBUG(L"OK: Other " << msg.disconnect.globalId << L" has been disconnected by peer" << handle);
+				T_REPLICATOR_DEBUG(L"OK: Other " << msg.disconnect.globalId << L" has been disconnected by peer " << handle);
 
 				for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 				{
-					if (m_replicatorPeers->getPeerGlobalId(i->first) != msg.disconnect.globalId)
+					if (i->second.global != msg.disconnect.globalId)
 						continue;
 
 					Peer& disconnectPeer = i->second;
@@ -1057,7 +1069,6 @@ void Replicator::sendPing(handle_t peerHandle)
 void Replicator::sendPong(handle_t peerHandle, uint32_t time0)
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-
 	Message msg;
 
 	msg.type = MtPong;
@@ -1082,11 +1093,15 @@ void Replicator::sendThrottle(handle_t peerHandle)
 
 void Replicator::broadcastDisconnect(handle_t peerHandle)
 {
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	if (i == m_peers.end())
+		return;
+
 	Message msg;
 
 	msg.type = MtDisconnect;
 	msg.time = uint32_t(m_time * 1000.0f);
-	msg.disconnect.globalId = m_replicatorPeers->getPeerGlobalId(peerHandle);
+	msg.disconnect.globalId = i->second.global;
 
 	uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + sizeof(uint64_t);
 

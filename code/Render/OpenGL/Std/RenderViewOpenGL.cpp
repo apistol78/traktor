@@ -299,12 +299,24 @@ bool RenderViewOpenGL::isFullScreen() const
 
 void RenderViewOpenGL::showCursor()
 {
-	m_cursorVisible = true;
+	if (!m_cursorVisible)
+	{
+#if defined(__LINUX__)
+		m_window->showCursor();
+#endif
+		m_cursorVisible = true;
+	}
 }
 
 void RenderViewOpenGL::hideCursor()
 {
-	m_cursorVisible = false;
+	if (m_cursorVisible)
+	{
+#if defined(__LINUX__)
+		m_window->hideCursor();
+#endif
+		m_cursorVisible = false;
+	}
 }
 
 bool RenderViewOpenGL::setGamma(float gamma)

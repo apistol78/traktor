@@ -21,6 +21,8 @@ namespace traktor
 	namespace input
 	{
 
+class InputDeviceX11;
+
 class T_DLLCLASS InputDriverX11 : public IInputDriver
 {
 	T_RTTI_CLASS;
@@ -39,7 +41,8 @@ public:
 private:
 	Display* m_display;
 	Window m_window;
-	RefArray< IInputDevice > m_devices;
+	int32_t m_opcode;
+	RefArray< InputDeviceX11 > m_devices;
 };
 
 	}

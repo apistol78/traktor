@@ -108,6 +108,9 @@ int main(int argc, const char** argv)
 		return 0;
 	}
 
+	Path workingDirectory = FileSystem::getInstance().getAbsolutePath(settingsPath).getPathOnly();
+	FileSystem::getInstance().setCurrentVolumeAndDirectory(workingDirectory);
+
 	std::wstring settingsSaveDataId = defaultSettings->getProperty< PropertyString >(L"Amalgam.SettingsSaveDataId");
 
 	online::SaveDataDesc settingsSaveDataDesc;

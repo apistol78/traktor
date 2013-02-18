@@ -184,9 +184,12 @@ void FlashSpriteInstance::removeMovieClip()
 	if (FlashCharacterInstance::getFocus() == this)
 		FlashCharacterInstance::setFocus(0);
 
-	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, false >(getParent());
-	FlashDisplayList& parentDisplayList = parentClipInstance->getDisplayList();
-	parentDisplayList.removeObject(this);
+	FlashSpriteInstance* parentClipInstance = checked_type_cast< FlashSpriteInstance*, true >(getParent());
+	if (parentClipInstance)
+	{
+		FlashDisplayList& parentDisplayList = parentClipInstance->getDisplayList();
+		parentDisplayList.removeObject(this);
+	}
 
 	m_displayList.reset();
 	m_mask = 0;

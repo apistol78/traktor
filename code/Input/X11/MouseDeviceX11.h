@@ -4,19 +4,21 @@
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
 #include <X11/extensions/XInput2.h>
-#include "Input/IInputDevice.h"
+#include "Input/X11/InputDeviceX11.h"
 
 namespace traktor
 {
 	namespace input
 	{
 
-class MouseDeviceX11 : public IInputDevice
+class MouseDeviceX11 : public InputDeviceX11
 {
 	T_RTTI_CLASS;
 
 public:
 	MouseDeviceX11(Display* display, Window window, int deviceId);
+
+	virtual ~MouseDeviceX11();
 
 	virtual std::wstring getName() const;
 
@@ -50,19 +52,18 @@ public:
 
 	virtual void setExclusive(bool exclusive);
 
+	virtual void consumeEvent(XEvent& evt);
+
 private:
 	Display* m_display;
 	Window m_window;
 	int m_deviceId;
 	bool m_connected;
-	bool m_haveCursorPosition;
-	float m_axisX;
-	float m_axisY;
-	float m_positionX;
-	float m_positionY;
-	float m_button1;
-	float m_button2;
-	float m_button3;
+	bool m_exclusive;
+	float m_raw[2];
+	float m_axis[2];
+	float m_position[2];
+	float m_button[3];
 	int m_width;
 	int m_height;
 };
