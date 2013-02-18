@@ -47,6 +47,7 @@ void ConeSource::emit(
 {
 	Vector4 position = transform * m_position;
 	Vector4 normal = transform * m_normal;
+	Scalar dT(context.deltaTime);
 	
 	Point* point = emitterInstance.addPoints(emitCount);
 
@@ -54,6 +55,7 @@ void ConeSource::emit(
 	{
 		float phi = context.random.nextFloat() * 2.0f * PI;
 		Scalar gamma = Scalar(context.random.nextFloat());
+		Scalar beta = Scalar(context.random.nextFloat()) * dT;
 
 		Scalar x = Scalar(cosf(phi));
 		Scalar z = Scalar(sinf(phi));
@@ -61,12 +63,12 @@ void ConeSource::emit(
 		Vector4 extent = transform.axisX() * m_angle1s * x + transform.axisZ() * m_angle2s * z;
 		Vector4 direction = (normal + extent * gamma).normalized();
 
-		point->position = position;
 		point->velocity = direction * Scalar(m_velocity.random(context.random));
+		point->position = position + point->velocity * beta;
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
 		point->color = Vector4::one();
-		point->age = 0.0f;
+		point->age = beta;
 		point->maxAge = m_age.random(context.random);
 		point->inverseMass = 1.0f / (m_mass.random(context.random));
 		point->size = m_size.random(context.random);

@@ -37,9 +37,10 @@ double Timer::getElapsedTime() const
 	timeval tv;
 	gettimeofday(&tv, 0);
 
-	int64_t curr = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
-	
-	return double(curr) / 1e6;
+	int64_t current = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
+	int64_t elapsed = current - m_first;
+
+	return double(elapsed) / 1e6;
 }
 
 double Timer::getDeltaTime()
@@ -47,10 +48,10 @@ double Timer::getDeltaTime()
 	timeval tv;
 	gettimeofday(&tv, 0);
 
-	int64_t curr = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
-	
-	double delta = double(curr - m_last) / 1e6;
-	m_last = curr;
+	int64_t current = int64_t(tv.tv_sec) * 1e6 + tv.tv_usec;
+
+	double delta = double(current - m_last) / 1e6;
+	m_last = current;
 
 	return delta;
 }

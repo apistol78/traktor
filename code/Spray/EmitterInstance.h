@@ -72,6 +72,7 @@ private:
 	Vector4 m_position;
 	PointVector m_points;
 	PointVector m_worldPoints;
+	Plane m_sortPlane;
 	uint32_t m_emitted;
 	float m_totalTime;
 	float m_emitFraction;

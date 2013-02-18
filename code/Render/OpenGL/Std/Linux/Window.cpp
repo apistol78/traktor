@@ -176,6 +176,21 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 	XFlush(m_display);
 }
 
+void Window::showCursor()
+{
+	XUndefineCursor(m_display, DefaultRootWindow(m_display));
+}
+
+void Window::hideCursor()
+{
+	static const char c_invisibleCursor[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	XColor black; std::memset(&black, 0, sizeof(black));
+	Pixmap bitmapInvisibleCursor = XCreateBitmapFromData(m_display, DefaultRootWindow(m_display), c_invisibleCursor, 8, 8);
+	Cursor invisibleCursor = XCreatePixmapCursor(m_display, bitmapInvisibleCursor, bitmapInvisibleCursor, &black, &black, 0, 0);
+	XDefineCursor(m_display, DefaultRootWindow(m_display), invisibleCursor);
+	XFreeCursor(m_display, invisibleCursor);
+}
+
 void Window::show()
 {
     XMapWindow(m_display, m_window);

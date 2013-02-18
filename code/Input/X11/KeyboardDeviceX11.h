@@ -3,21 +3,27 @@
 
 #include <X11/Xlib.h>
 #include <X11/Xutil.h>
+#include <X11/XKBlib.h>
+#include <X11/keysymdef.h>
+#include <X11/extensions/XI.h>
 #include <X11/extensions/XInput2.h>
+#include <X11/extensions/XKB.h>
 #include "Core/Containers/CircularVector.h"
-#include "Input/IInputDevice.h"
+#include "Input/X11/InputDeviceX11.h"
 
 namespace traktor
 {
 	namespace input
 	{
 
-class KeyboardDeviceX11 : public IInputDevice
+class KeyboardDeviceX11 : public InputDeviceX11
 {
 	T_RTTI_CLASS;
 
 public:
-	KeyboardDeviceX11();
+	KeyboardDeviceX11(Display* display, Window window, int deviceId);
+
+	virtual ~KeyboardDeviceX11();
 
 	virtual std::wstring getName() const;
 
@@ -51,7 +57,13 @@ public:
 
 	virtual void setExclusive(bool exclusive);
 
+	virtual void consumeEvent(XEvent& evt);
+
 private:
+	Display* m_display;
+	Window m_window;
+	int m_deviceId;
+	XkbDescPtr m_kbdesc;
 	bool m_connected;
 	CircularVector< KeyEvent, 16 > m_keyEvents;
 	uint8_t m_keyStates[256];

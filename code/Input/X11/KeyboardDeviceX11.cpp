@@ -1,18 +1,44 @@
 #include <cstring>
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Input/X11/KeyboardDeviceX11.h"
+#include "Input/X11/TypesX11.h"
 
 namespace traktor
 {
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceX11", KeyboardDeviceX11, IInputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.KeyboardDeviceX11", KeyboardDeviceX11, InputDeviceX11)
 
-KeyboardDeviceX11::KeyboardDeviceX11()
-:	m_connected(true)
+KeyboardDeviceX11::KeyboardDeviceX11(Display* display, Window window, int deviceId)
+:	m_display(display)
+,	m_window(window)
+,	m_deviceId(deviceId)
+,	m_kbdesc(0)
+,	m_connected(true)
 {
+	uint8_t mask[2] = { 0, 0 };
+	XIEventMask evmask;
+
+	evmask.mask = mask;
+	evmask.mask_len = sizeof(mask);
+	evmask.deviceid = m_deviceId;
+
+	XISetMask(mask, XI_KeyPress);
+	XISetMask(mask, XI_KeyRelease);
+
+	XISelectEvents(m_display, m_window, &evmask, 1);
+	XAutoRepeatOff(m_display);
+
+	m_kbdesc = XkbGetKeyboard(m_display, XkbAllComponentsMask, XkbUseCoreKbd);
+
 	resetState();
+}
+
+KeyboardDeviceX11::~KeyboardDeviceX11()
+{
+	setExclusive(false);
 }
 
 std::wstring KeyboardDeviceX11::getName() const
@@ -37,7 +63,11 @@ int32_t KeyboardDeviceX11::getControlCount()
 
 std::wstring KeyboardDeviceX11::getControlName(int32_t control)
 {
-	return L"";
+	KeySym ks = c_x11ControlKeys[control];
+	if (ks != 0)
+		return mbstows(XKeysymToString(ks));
+	else
+		return L"";
 }
 
 bool KeyboardDeviceX11::isControlAnalogue(int32_t control) const
@@ -67,8 +97,8 @@ bool KeyboardDeviceX11::getControlRange(int32_t control, float& outMin, float& o
 
 bool KeyboardDeviceX11::getDefaultControl(InputDefaultControlType controlType, bool analogue, int32_t& control) const
 {
-//	if (analogue || !c_vkControlKeys[int32_t(controlType)])
-//		return false;
+	if (analogue || !c_x11ControlKeys[int32_t(controlType)])
+		return false;
 
 	control = int32_t(controlType);
 	return true;
@@ -93,23 +123,7 @@ void KeyboardDeviceX11::resetState()
 
 void KeyboardDeviceX11::readState()
 {
-	if (m_connected)
-	{
-		/*
-		for (int32_t i = 0; i < sizeof_array(c_vkControlKeys); ++i)
-		{
-			if (c_vkControlKeys[i] == 0)
-				continue;
-
-			SHORT keyState = GetAsyncKeyState(c_vkControlKeys[i]);
-			if (keyState & 0x8000)
-				m_keyStates[i] = 0xff;
-			else
-				m_keyStates[i] = 0x00;
-		}
-		*/
-	}
-	else
+	if (!m_connected)
 		resetState();
 }
 
@@ -124,6 +138,86 @@ void KeyboardDeviceX11::setRumble(const InputRumble& /*rumble*/)
 
 void KeyboardDeviceX11::setExclusive(bool exclusive)
 {
+	if (exclusive)
+	{
+		uint8_t mask[2] = { 0, 0 };
+		XIEventMask evmask;
+
+		evmask.mask = mask;
+		evmask.mask_len = sizeof(mask);
+		evmask.deviceid = m_deviceId;
+
+		XISetMask(mask, XI_KeyPress);
+		XISetMask(mask, XI_KeyRelease);
+
+		XIGrabDevice(m_display, m_deviceId, m_window, CurrentTime, None, GrabModeAsync, GrabModeAsync, False, &evmask);
+	}
+	else
+	{
+		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
+	}
+}
+
+void KeyboardDeviceX11::consumeEvent(XEvent& evt)
+{
+	XIDeviceEvent* event = (XIDeviceEvent*)evt.xcookie.data;
+	if (event->deviceid != m_deviceId)
+		return;
+
+	switch (event->evtype)
+	{
+	case XI_KeyPress:
+		{
+            KeySym ksym;
+            unsigned int mods_rtrn;
+
+            XkbTranslateKeyCode(
+				m_kbdesc,
+				event->detail,
+				0,
+				&mods_rtrn,
+				&ksym
+			);
+
+            for (uint32_t i = 0; i < sizeof_array(c_x11ControlKeys); ++i)
+            {
+				if (c_x11ControlKeys[i] == ksym)
+				{
+					m_keyStates[i] = 0xff;
+					break;
+				}
+			}
+		}
+		break;
+
+	case XI_KeyRelease:
+		{
+            KeySym ksym;
+            unsigned int mods_rtrn;
+
+            XkbTranslateKeyCode(
+				m_kbdesc,
+				event->detail,
+				0,
+				&mods_rtrn,
+				&ksym
+			);
+
+            for (uint32_t i = 0; i < sizeof_array(c_x11ControlKeys); ++i)
+            {
+				if (c_x11ControlKeys[i] == ksym)
+				{
+					m_keyStates[i] = 0x00;
+					break;
+				}
+			}
+		}
+		break;
+
+	default:
+		log::info << L"Unknown event in device " << m_deviceId << Endl;
+		break;
+	}
 }
 
 	}

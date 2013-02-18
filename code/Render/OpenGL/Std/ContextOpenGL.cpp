@@ -454,7 +454,8 @@ void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t sample
 	if (haveMips)
 	{
 		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, ss.minFilter));
-		T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
+		if (maxAnisotropy > 0.0f)
+			T_OGL_SAFE(glTexParameterf(GL_TEXTURE_2D, GL_TEXTURE_MAX_ANISOTROPY_EXT, maxAnisotropy));
 	}
 	else
 		{ T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MIN_FILTER, GL_NEAREST)); }

@@ -188,8 +188,6 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 		return 0;
 	}
 
-	m_windowShared->show();
-
 	GLXContext oldContext = glXCreateContext(m_display, vi, NULL, GL_TRUE);
 	if (!oldContext)
 	{

@@ -150,6 +150,12 @@ public:
 	 */
 	bool isPeerConnected(handle_t peerHandle) const;
 
+	/*! \brief Get handle of primary peer.
+	 *
+	 * \return Primary peer handle.
+	 */
+	handle_t getPrimaryPeerHandle() const;
+
 	/*! \brief Check if peer is primary.
 	 */
 	bool isPeerPrimary(handle_t peerHandle) const;
@@ -242,6 +248,7 @@ private:
 	struct Peer
 	{
 		PeerState state;
+		uint64_t global;
 		Ghost* ghost;
 		bool precursor;
 		bool relay;
@@ -260,6 +267,7 @@ private:
 
 		Peer()
 		:	state(PsInitial)
+		,	global(0)
 		,	ghost(0)
 		,	precursor(false)
 		,	relay(false)

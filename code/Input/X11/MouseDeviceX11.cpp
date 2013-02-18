@@ -29,21 +29,14 @@ c_mouseControlMap[] =
 
 		}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceX11", MouseDeviceX11, IInputDevice)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceX11", MouseDeviceX11, InputDeviceX11)
 
 MouseDeviceX11::MouseDeviceX11(Display* display, Window window, int deviceId)
 :	m_display(display)
 ,	m_window(window)
 ,	m_deviceId(deviceId)
-,	m_connected(false)
-,	m_haveCursorPosition(false)
-,	m_axisX(0.0f)
-,	m_axisY(0.0f)
-,	m_positionX(0.0f)
-,	m_positionY(0.0f)
-,	m_button1(0.0f)
-,	m_button2(0.0f)
-,	m_button3(0.0f)
+,	m_connected(true)
+,	m_exclusive(false)
 ,	m_width(0)
 ,	m_height(0)
 {
@@ -53,7 +46,35 @@ MouseDeviceX11::MouseDeviceX11(Display* display, Window window, int deviceId)
 	m_width = attr.width;
 	m_height = attr.height;
 
+	uint8_t mask[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+	XIEventMask evmask;
+
+	// Select motion from user window.
+	evmask.mask = mask;
+	evmask.mask_len = sizeof(mask);
+	evmask.deviceid = m_deviceId;
+
+	XISetMask(mask, XI_Motion);
+
+	XISelectEvents(m_display, m_window, &evmask, 1);
+
+	// Select raw events from default root window.
+	evmask.mask = mask;
+	evmask.mask_len = sizeof(mask);
+	evmask.deviceid = XIAllDevices; //m_deviceId;
+
+	XISetMask(mask, XI_RawMotion);
+	XISetMask(mask, XI_RawButtonPress);
+	XISetMask(mask, XI_RawButtonRelease);
+
+	XISelectEvents(m_display, DefaultRootWindow(m_display), &evmask, 1);
+
 	resetState();
+}
+
+MouseDeviceX11::~MouseDeviceX11()
+{
+	setExclusive(false);
 }
 
 std::wstring MouseDeviceX11::getName() const
@@ -98,19 +119,19 @@ float MouseDeviceX11::getControlValue(int32_t control)
 
 	const MouseControlMap& mc = c_mouseControlMap[control];
 	if (mc.controlType == DtAxisX)
-		return m_axisX;
+		return m_axis[0];
 	else if (mc.controlType == DtAxisY)
-		return m_axisY;
+		return m_axis[1];
 	else if (mc.controlType == DtPositionX)
-		return m_positionX;
+		return m_position[0];
 	else if (mc.controlType == DtPositionY)
-		return m_positionY;
+		return m_position[1];
 	else if (mc.controlType == DtButton1)
-		return m_button1;
+		return m_button[0];
 	else if (mc.controlType == DtButton2)
-		return m_button2;
+		return m_button[1];
 	else if (mc.controlType == DtButton3)
-		return m_button3;
+		return m_button[2];
 	else
 		return 0.0f;
 }
@@ -159,129 +180,27 @@ bool MouseDeviceX11::getKeyEvent(KeyEvent& outEvent)
 
 void MouseDeviceX11::resetState()
 {
-	m_axisX = 0.0f;
-	m_axisY = 0.0f;
-	m_positionX = 0.0f;
-	m_positionY = 0.0f;
-	m_button1 = 0.0f;
-	m_button2 = 0.0f;
-	m_button3 = 0.0f;
-	m_haveCursorPosition = false;
+	for (int i = 0; i < 2; ++i)
+	{
+		m_raw[i] = 0.0f;
+		m_axis[i] = 0.0f;
+		m_position[i] = 0.0f;
+	}
+	m_button[0] = 0.0f;
+	m_button[1] = 0.0f;
+	m_button[2] = 0.0f;
 }
 
 void MouseDeviceX11::readState()
 {
 	if (!m_connected)
-	{
-		/*
-		uint8_t mask[2] = { 0, 0 };
-		XIEventMask evmask;
-
-		evmask.mask = mask;
-		evmask.mask_len = sizeof(mask);
-		evmask.deviceid = XIAllDevices;
-
-		XISetMask(mask, XI_Motion);
-		XISetMask(mask, XI_ButtonPress);
-		XISetMask(mask, XI_ButtonRelease);
-
-		if (XIGrabDevice(
-			m_display,
-			m_deviceId,
-			m_window,
-			CurrentTime,
-			None,
-			GrabModeAsync,
-			GrabModeAsync,
-			False,
-			&mask
-		) == GrabSuccess)
-			m_connected = true;
-		*/
-
-		m_connected = true;
-	}
-
-	if (m_connected)
-	{
-		Window rootWindow, childWindow;
-		int rootX = 0, rootY = 0;
-		int x = 0, y = 0;
-		unsigned int mask = 0;
-
-		XQueryPointer(
-			m_display,
-			m_window,
-			&rootWindow,
-			&childWindow,
-			&rootX,
-			&rootY,
-			&x,
-			&y,
-			&mask
-		);
-
-		m_positionX = clamp(float(x), 0.0f, float(m_width));
-		m_positionY = clamp(float(y), 0.0f, float(m_height));
-
-		m_button1 = (mask & Button1Mask) ? 1.0f : 0.0f;
-		m_button2 = (mask & Button2Mask) ? 1.0f : 0.0f;
-		m_button3 = (mask & Button3Mask) ? 1.0f : 0.0f;
-
-/*
-		bool exclusive = ((GetWindowLong(m_hWnd, GWL_EXSTYLE) & WS_EX_TOPMOST) == WS_EX_TOPMOST);
-
-		if (exclusive)
-		{
-			GetCursorPos(&m_cursorPosition);
-			ScreenToClient(m_hWnd, &m_cursorPosition);
-
-			RECT rc;
-			GetClientRect(m_hWnd, &rc);
-
-			POINT cursorCenter;
-			cursorCenter.x = (rc.right - rc.left) / 2;
-			cursorCenter.y = (rc.bottom - rc.top) / 2;
-
-			m_axisX = float(m_cursorPosition.x - cursorCenter.x);
-			m_axisY = float(m_cursorPosition.y - cursorCenter.y);
-
-			m_positionX += m_axisX;
-			m_positionY += m_axisY;
-
-			m_positionX = clamp(m_positionX, 0.0f, float(rc.right - rc.left));
-			m_positionY = clamp(m_positionY, 0.0f, float(rc.bottom - rc.top));
-
-			ClientToScreen(m_hWnd, &cursorCenter);
-			SetCursorPos(cursorCenter.x, cursorCenter.y);
-		}
-		else
-		{
-			POINT cursorPosition;
-			GetCursorPos(&cursorPosition);
-
-			if (!m_haveCursorPosition)
-				m_cursorPosition = cursorPosition;
-
-			m_axisX = float(cursorPosition.x - m_cursorPosition.x);
-			m_axisY = float(cursorPosition.y - m_cursorPosition.y);
-
-			m_positionX = float(cursorPosition.x);
-			m_positionY = float(cursorPosition.y);
-
-			m_cursorPosition = cursorPosition;
-			m_haveCursorPosition = true;
-		}
-
-		{
-			m_button1 = (GetAsyncKeyState(VK_LBUTTON) & 0x8000) ? 1.0f : 0.0f;
-			m_button2 = (GetAsyncKeyState(VK_RBUTTON) & 0x8000) ? 1.0f : 0.0f;
-			m_button3 = (GetAsyncKeyState(VK_MBUTTON) & 0x8000) ? 1.0f : 0.0f;
-		}
-*/
-	}
-	else
 		resetState();
+
+	for (int i = 0; i < 2; ++i)
+	{
+		m_axis[i] = m_raw[i];
+		m_raw[i] = 0.0f;
+	}
 }
 
 bool MouseDeviceX11::supportRumble() const
@@ -295,6 +214,91 @@ void MouseDeviceX11::setRumble(const InputRumble& /*rumble*/)
 
 void MouseDeviceX11::setExclusive(bool exclusive)
 {
+	if (exclusive)
+	{
+		uint8_t mask[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
+		XIEventMask evmask;
+
+		evmask.mask = mask;
+		evmask.mask_len = sizeof(mask);
+		evmask.deviceid = XIAllDevices; //m_deviceId;
+
+		XISetMask(mask, XI_RawMotion);
+		XISetMask(mask, XI_RawButtonPress);
+		XISetMask(mask, XI_RawButtonRelease);
+
+		XIGrabDevice(
+			m_display,
+			m_deviceId,
+			DefaultRootWindow(m_display),
+			CurrentTime,
+			None,
+			GrabModeAsync,
+			GrabModeAsync,
+			False,
+			&evmask
+		);
+
+		m_exclusive = true;
+	}
+	else
+	{
+		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
+		m_exclusive = false;
+	}
+}
+
+void MouseDeviceX11::consumeEvent(XEvent& evt)
+{
+	XIEvent* xi = (XIEvent*)evt.xcookie.data;
+	switch (xi->evtype)
+	{
+	case XI_Motion:
+		{
+			XIDeviceEvent* event = (XIDeviceEvent*)evt.xcookie.data;
+			if (event->deviceid != m_deviceId)
+				return;
+
+			m_position[0] = float(event->event_x);
+			m_position[1] = float(event->event_y);
+		}
+		break;
+
+	case XI_RawMotion:
+		{
+			XIRawEvent* event = (XIRawEvent*)evt.xcookie.data;
+			if (event->deviceid != m_deviceId)
+				return;
+
+			const double* values = event->raw_values;
+			for (uint32_t i = 0, j = 0; i < event->valuators.mask_len * 8; ++i)
+			{
+				if (!XIMaskIsSet(event->valuators.mask, i))
+					continue;
+
+				m_raw[j++] = float(values[i]);
+				if (j >= 2)
+					break;
+			}
+		}
+		break;
+
+	case XI_RawButtonPress:
+	case XI_RawButtonRelease:
+		{
+			XIRawEvent* event = (XIRawEvent*)evt.xcookie.data;
+			/*
+			if (event->deviceid != m_deviceId)
+				return;
+			*/
+			if (event->detail >= 1 && event->detail <= 3)
+				m_button[event->detail - 1] = (xi->evtype == XI_RawButtonPress) ? 1.0f : 0.0f;
+		}
+		break;
+
+	default:
+		break;
+	}
 }
 
 	}

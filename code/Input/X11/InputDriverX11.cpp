@@ -14,6 +14,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDriverX11", InputDriverX11, IInputDr
 InputDriverX11::InputDriverX11()
 :	m_display(0)
 ,	m_window(None)
+,	m_opcode(0)
 {
 }
 
@@ -36,6 +37,8 @@ bool InputDriverX11::create(const SystemWindow& systemWindow, uint32_t inputCate
 		return false;
 	}
 
+	m_opcode = opcode;
+
 	log::info << L"Using XInput " << major << L"." << minor << L"; setting up devices..." << Endl;
 
 	XIDeviceInfo* deviceInfo = 0;
@@ -55,28 +58,12 @@ bool InputDriverX11::create(const SystemWindow& systemWindow, uint32_t inputCate
 		else if (deviceInfo[i].use == XIMasterKeyboard || deviceInfo[i].use == XISlaveKeyboard)
 		{
 			log::info << L"Keyboard device " << i << L" \"" << mbstows(deviceInfo[i].name) << L"\"" << Endl;
-			Ref< KeyboardDeviceX11 > keyboardDevice = new KeyboardDeviceX11();
+			Ref< KeyboardDeviceX11 > keyboardDevice = new KeyboardDeviceX11(m_display, m_window, deviceInfo[i].deviceid);
 			m_devices.push_back(keyboardDevice);
 		}
 	}
 
 	XIFreeDeviceInfo(deviceInfo);
-
-	/*
-	uint8_t mask[2] = { 0, 0 };
-	XIEventMask evmask;
-
-	evmask.mask = mask;
-	evmask.mask_len = sizeof(mask);
-	evmask.deviceid = XIAllDevices;
-
-	XISetMask(mask, XI_Motion);
-	XISetMask(mask, XI_ButtonPress);
-	XISetMask(mask, XI_ButtonRelease);
-
-	XIGrabDevice(m_display, 2, m_window, CurrentTime, None, GrabModeAsync, GrabModeAsync, False, &mask);
-	*/
-
 	return true;
 }
 
@@ -92,6 +79,20 @@ Ref< IInputDevice > InputDriverX11::getDevice(int index)
 
 InputDriverX11::UpdateResult InputDriverX11::update()
 {
+	XEvent evt;
+	while (XCheckTypedEvent(m_display, GenericEvent, &evt))
+	{
+		if (evt.xcookie.type == GenericEvent && evt.xcookie.extension == m_opcode)
+		{
+			if (XGetEventData(m_display, &evt.xcookie))
+			{
+				for (RefArray< InputDeviceX11 >::iterator i = m_devices.begin(); i != m_devices.end(); ++i)
+					(*i)->consumeEvent(evt);
+
+				XFreeEventData(m_display, &evt.xcookie);
+			}
+		}
+	}
 	return UrOk;
 }
 
