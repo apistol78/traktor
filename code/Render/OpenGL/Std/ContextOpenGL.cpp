@@ -10,6 +10,8 @@
 
 #if defined(__APPLE__)
 #	include "Render/OpenGL/Std/OsX/CGLWrapper.h"
+#elif defined(__LINUX__)
+#	include "Render/OpenGL/Std/Linux/Window.h"
 #endif
 
 namespace traktor
@@ -81,9 +83,8 @@ ContextOpenGL::ContextOpenGL(void* context)
 
 #elif defined(__LINUX__)
 
-ContextOpenGL::ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext context)
-:	m_display(display)
-,	m_drawable(drawable)
+ContextOpenGL::ContextOpenGL(Window* window, GLXContext context)
+:	m_window(window)
 ,	m_context(context)
 ,	m_width(0)
 ,	m_height(0)
@@ -117,8 +118,8 @@ void ContextOpenGL::update()
 	cglwUpdate(m_context);
 	cglwGetSize(m_context, m_width, m_height);
 #elif defined(__LINUX__)
-	glXQueryDrawable(m_display, m_drawable, GLX_WIDTH, (uint32_t*)&m_width);
-	glXQueryDrawable(m_display, m_drawable, GLX_HEIGHT, (uint32_t*)&m_height);
+	m_width = m_window->getWidth();
+	m_height = m_window->getHeight();
 #endif
 }
 
@@ -129,7 +130,10 @@ void ContextOpenGL::swapBuffers(bool waitVBlank)
 #elif defined(__APPLE__)
 	cglwSwapBuffers(m_context, waitVBlank);
 #elif defined(__LINUX__)
-	glXSwapBuffers(m_display, m_drawable);
+	glXSwapBuffers(
+		m_window->getDisplay(),
+		 m_window->getWindow()
+	);
 #endif
 }
 
@@ -158,7 +162,7 @@ void ContextOpenGL::destroy()
 
 	if (m_context)
 	{
-		glXDestroyContext(m_display, m_context);
+		glXDestroyContext(m_window->getDisplay(), m_context);
 		m_context = 0;
 	}
 
@@ -187,15 +191,12 @@ bool ContextOpenGL::enter()
 	if (!cglwMakeCurrent(m_context))
 		return false;
 #elif defined(__LINUX__)
-	if (m_drawable)
-	{
-		if (!glXMakeCurrent(
-			m_display,
-			m_drawable,
-			m_context
-		))
-			return false;
-	}
+	if (!glXMakeCurrent(
+		m_window->getDisplay(),
+		m_window->getWindow(),
+		m_context
+	))
+		return false;
 #endif
 
 	context_stack_t* stack = static_cast< context_stack_t* >(ms_contextStack.get());
@@ -266,15 +267,20 @@ void ContextOpenGL::leave()
 	if (!stack->empty())
 	{
 		result = (glXMakeContextCurrent(
-			m_display,
-			stack->back()->m_drawable,
-			stack->back()->m_drawable,
+			stack->back()->m_window->getDisplay(),
+			stack->back()->m_window->getWindow(),
+			stack->back()->m_window->getWindow(),
 			stack->back()->m_context
 		) == True);
 	}
 	else
 	{
-		result = (glXMakeContextCurrent(m_display, None, None, NULL) == True);
+		result = (glXMakeContextCurrent(
+			m_window->getDisplay(),
+			None,
+			None,
+			NULL
+		) == True);
 	}
 
 #endif

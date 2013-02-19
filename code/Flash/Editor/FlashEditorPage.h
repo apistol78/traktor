@@ -2,6 +2,7 @@
 #define traktor_flash_FlashEditorPage_H
 
 #include "Editor/IEditorPage.h"
+#include "Flash/SwfTypes.h"
 #include "Ui/Custom/ProfileControl.h"
 
 // import/export mechanism.
@@ -99,6 +100,8 @@ private:
 	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< FlashMovie > m_movie;
+	Ref< FlashCharacterInstance > m_selectedCharacterInstance;
+	SwfCxTransform m_selectedCharacterInstanceCxForm;
 
 	void updateTreeObject(ui::TreeViewItem* parentItem, const ActionObject* asObject, std::set< const ActionObject* >& objectStack, std::map< const void*, uint32_t >& pointerHash, uint32_t& nextPointerHash);
 
@@ -107,6 +110,8 @@ private:
 	void updateTreeMovie();
 
 	void eventToolClick(ui::Event* event);
+
+	void eventTreeMovieSelect(ui::Event* event);
 };
 
 	}

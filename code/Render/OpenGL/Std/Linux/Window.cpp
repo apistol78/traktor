@@ -12,6 +12,9 @@ Window::Window(::Display* display)
 :   m_display(display)
 ,   m_window(None)
 ,	m_screen(0)
+,	m_width(0)
+,	m_height(0)
+,	m_fullScreen(false)
 ,	m_originalConfig(0)
 ,	m_originalSizeIndex(-1)
 ,	m_originalRate(0)
@@ -41,6 +44,9 @@ Window::~Window()
 
 bool Window::create(int32_t width, int32_t height)
 {
+	m_width = width;
+	m_height = height;
+
     m_window = XCreateSimpleWindow(
         m_display,
         RootWindow(m_display, m_screen),
@@ -53,7 +59,11 @@ bool Window::create(int32_t width, int32_t height)
         WhitePixel(m_display, m_screen)
     );
 
-    //XSelectInput(m_display, m_window, ExposureMask | KeyPressMask | KeyReleaseMask);
+    XSelectInput(
+		m_display,
+		m_window,
+		StructureNotifyMask
+	);
     return true;
 }
 
@@ -73,11 +83,20 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 	Atom wmState = XInternAtom(m_display, "_NET_WM_STATE", False);
 	Atom fullScreen = XInternAtom(m_display, "_NET_WM_STATE_FULLSCREEN", False);
 
+	// Get screen configuration.
+	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
+	if (!xrrc)
+	{
+		log::error << L"XRRGetScreenInfo returned null" << Endl;
+		return;
+	}
+
+	// Get available display sizes.
+	int sizes = 0;
+	XRRScreenSize* xrrss = XRRConfigSizes(xrrc, &sizes);
+
 	// Find display mode index.
 	int index = -1;
-	int sizes = 0;
-	XRRScreenSize* xrrss = XRRSizes(m_display, 0, &sizes);
-
 	for (int i = 0; i < sizes; ++i)
 	{
 		if (xrrss[i].width == width && xrrss[i].height == height)
@@ -90,18 +109,11 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 	if (index < 0)
 	{
 		log::error << L"Unable to find matching display mode" << Endl;
+		XRRFreeScreenConfigInfo(xrrc);
 		return;
 	}
 
 	log::info << L"Using display mode index " << index << Endl;
-
-	// Set display mode.
-	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, m_screen));
-	if (!xrrc)
-	{
-		log::error << L"XRRGetScreenInfo returned null" << Endl;
-		return;
-	}
 
 	// Remember original configuration.
 	if (!m_originalConfig)
@@ -110,6 +122,9 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 		m_originalSizeIndex = XRRConfigCurrentConfiguration(m_originalConfig, &m_originalRotation);
 		m_originalRate = XRRConfigCurrentRate(m_originalConfig);
 	}
+
+	m_width = width;
+	m_height = height;
 
 	// Set new configuration.
 	XRRSetScreenConfig(
@@ -123,6 +138,10 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 
 	XRRFreeScreenConfigInfo(xrrc);
 
+	XSetWindowAttributes attr;
+	attr.override_redirect = True;
+	XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
+
 	// Set window in WM fullscreen mode.
 	XEvent evt;
 	std::memset(&evt, 0, sizeof(evt));
@@ -134,9 +153,18 @@ void Window::setFullScreenStyle(int32_t width, int32_t height)
 	evt.xclient.data.l[1] = fullScreen;
 	evt.xclient.data.l[2] = 0;
 
+	XSendEvent(
+		m_display,
+		RootWindow(m_display, m_screen),
+		False,
+		SubstructureNotifyMask,
+		&evt
+	);
+
 	XMoveResizeWindow(m_display, m_window, 0, 0, width, height);
-	XSendEvent(m_display, RootWindow(m_display, m_screen), False, SubstructureRedirectMask | SubstructureNotifyMask, &evt);
 	XFlush(m_display);
+
+	m_fullScreen = true;
 }
 
 void Window::setWindowedStyle(int32_t width, int32_t height)
@@ -160,6 +188,13 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 		m_originalConfig = 0;
 	}
 
+	m_width = width;
+	m_height = height;
+
+	XSetWindowAttributes attr;
+	attr.override_redirect = False;
+	XChangeWindowAttributes(m_display, m_window, CWOverrideRedirect, &attr);
+
 	// Remove fullscreen WM state from window.
 	XEvent evt;
 	std::memset(&evt, 0, sizeof(evt));
@@ -171,24 +206,37 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 	evt.xclient.data.l[1] = fullScreen;
 	evt.xclient.data.l[2] = 0;
 
+	XSendEvent(
+		m_display,
+		RootWindow(m_display, m_screen),
+		False,
+		SubstructureNotifyMask,
+		&evt
+	);
+
 	XResizeWindow(m_display, m_window, width, height);
-	XSendEvent(m_display, RootWindow(m_display, m_screen), False, SubstructureRedirectMask | SubstructureNotifyMask, &evt);
 	XFlush(m_display);
+
+	m_fullScreen = false;
 }
 
 void Window::showCursor()
 {
+#if !defined(_DEBUG)
 	XUndefineCursor(m_display, DefaultRootWindow(m_display));
+#endif
 }
 
 void Window::hideCursor()
 {
+#if !defined(_DEBUG)
 	static const char c_invisibleCursor[] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	XColor black; std::memset(&black, 0, sizeof(black));
 	Pixmap bitmapInvisibleCursor = XCreateBitmapFromData(m_display, DefaultRootWindow(m_display), c_invisibleCursor, 8, 8);
 	Cursor invisibleCursor = XCreatePixmapCursor(m_display, bitmapInvisibleCursor, bitmapInvisibleCursor, &black, &black, 0, 0);
 	XDefineCursor(m_display, DefaultRootWindow(m_display), invisibleCursor);
 	XFreeCursor(m_display, invisibleCursor);
+#endif
 }
 
 void Window::show()
@@ -198,35 +246,29 @@ void Window::show()
 
 bool Window::update(RenderEvent& outEvent)
 {
-	/*
     XEvent evt;
-    if (XCheckWindowEvent(m_display, m_window, ResizeRedirectMask, &evt))
+    if (XCheckWindowEvent(m_display, m_window, StructureNotifyMask, &evt))
     {
-    	if (evt.type == ResizeRequest)
+    	if (
+			evt.type == ConfigureNotify &&
+			(
+				evt.xconfigure.width != m_width ||
+				evt.xconfigure.height != m_height
+			)
+		)
     	{
-    		outEvent.type = ReResize;
-    		outEvent.resize.width = evt.xresizerequest.width;
-    		outEvent.resize.height = evt.xresizerequest.height;
-    		T_DEBUG(L"Resize event " << outEvent.resize.width << L" x " << outEvent.resize.height);
-    		return true;
+			if (!m_fullScreen)
+			{
+				outEvent.type = ReResize;
+				outEvent.resize.width = evt.xconfigure.width;
+				outEvent.resize.height = evt.xconfigure.height;
+				T_DEBUG(L"Resize event " << outEvent.resize.width << L" x " << outEvent.resize.height);
+				T_DEBUG(L"  from " << m_width << L" x " << m_height);
+				return true;
+			}
     	}
     }
-    */
     return false;
-}
-
-int32_t Window::getWidth() const
-{
-	XWindowAttributes attr;
-	XGetWindowAttributes(m_display, m_window, &attr);
-	return attr.width;
-}
-
-int32_t Window::getHeight() const
-{
-	XWindowAttributes attr;
-	XGetWindowAttributes(m_display, m_window, &attr);
-	return attr.height;
 }
 
     }

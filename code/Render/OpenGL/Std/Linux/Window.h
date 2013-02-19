@@ -35,9 +35,11 @@ public:
 
     bool update(RenderEvent& outEvent);
 
-    int32_t getWidth() const;
+    int32_t getWidth() const { return m_width; }
 
-    int32_t getHeight() const;
+    int32_t getHeight() const { return m_height; }
+
+    bool isFullScreen() const { return m_fullScreen; }
 
     ::Display* getDisplay() const { return m_display; }
 
@@ -46,10 +48,13 @@ public:
 private:
     ::Display* m_display;
     ::Window m_window;
-    int m_screen;
+    int32_t m_screen;
+    int32_t m_width;
+    int32_t m_height;
+    bool m_fullScreen;
     XRRScreenConfiguration* m_originalConfig;
-    int m_originalSizeIndex;
-    int m_originalRate;
+    int32_t m_originalSizeIndex;
+    int32_t m_originalRate;
     Rotation m_originalRotation;
 };
 

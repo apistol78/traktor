@@ -155,7 +155,10 @@ void ResourceManager::reload(const TypeInfo& type)
 			{
 				Ref< IResourceFactory > factory = findFactory(resourceType);
 				if (factory)
+				{
+					(*j)->flush();
 					load(i->first, factory, resourceType, *j);
+				}
 			}
 		}
 	}
@@ -167,7 +170,10 @@ void ResourceManager::reload(const TypeInfo& type)
 		{
 			Ref< IResourceFactory > factory = findFactory(resourceType);
 			if (factory)
+			{
+				i->second->flush();
 				load(i->first, factory, resourceType, i->second);
+			}
 		}
 	}
 }

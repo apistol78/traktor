@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const double c_resendTime = 2.0f;	//< Resend reliable message after N seconds.
+const double c_resendTime = 1.0f;	//< Resend reliable message after N seconds.
 const double c_discardTime = 5.0f;	//< Discard reliable message after N seconds.
 const uint32_t c_windowSize = 100;	//< Number of reliable messages kept in sent queue.
 
@@ -66,15 +66,17 @@ void ReliableTransportPeers::update()
 	// Add or remove control entries.
 	for (std::map< handle_t, Control >::iterator i = m_control.begin(); i != m_control.end(); ++i)
 		i->second.alive = false;
+
 	for (std::vector< handle_t >::const_iterator i = handles.begin(); i != handles.end(); ++i)
 		m_control[*i].alive = true;
-	for (std::map< handle_t, Control >::iterator i = m_control.begin(); i != m_control.end(); )
+
+	std::map< handle_t, Control > controls;
+	for (std::map< handle_t, Control >::iterator i = m_control.begin(); i != m_control.end(); ++i)
 	{
-		if (!i->second.alive)
-			m_control.erase(i++);
-		else
-			++i;
+		if (i->second.alive)
+			controls.insert(std::make_pair(i->first, i->second));
 	}
+	m_control.swap(controls);
 
 	// Check if we need to resend or discard some reliable messages.
 	double time = m_timer.getElapsedTime();

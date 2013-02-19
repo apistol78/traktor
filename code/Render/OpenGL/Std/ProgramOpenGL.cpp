@@ -259,21 +259,11 @@ void ProgramOpenGL::setMatrixArrayParameter(handle_t handle, const Matrix44* par
 void ProgramOpenGL::setTextureParameter(handle_t handle, ITexture* texture)
 {
 	SmallMap< handle_t, uint32_t >::const_iterator i = m_parameterMap.find(handle);
-	if (i == m_parameterMap.end())
-		return;
-
-	if (!texture)
-		return;
-
-	Ref< ITexture > resolved = texture->resolve();
-	if (!resolved)
-		return;
-
-	if (m_textures[i->second] == resolved)
-		return;
-
-	m_textures[i->second] = resolved;
-	m_textureDirty = true;
+	if (i != m_parameterMap.end())
+	{
+		m_textures[i->second] = texture;
+		m_textureDirty = true;
+	}
 }
 
 void ProgramOpenGL::setStencilReference(uint32_t stencilReference)
@@ -352,12 +342,20 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 		{
 			Sampler& sampler = m_samplers[i];
 
+			ITexture* texture = m_textures[sampler.texture];
+			if (!texture)
+				continue;
+
+			Ref< ITexture > resolved = texture->resolve();
+			if (!resolved)
+				continue;
+
 			T_OGL_SAFE(glActiveTexture(GL_TEXTURE0 + sampler.stage));
 
 			if (sampler.object == 0)
 				sampler.object = renderContext->createSamplerStateObject(m_renderState.samplerStates[sampler.stage]);
 
-			ITextureBinding* tb = getTextureBinding(m_textures[sampler.texture]);
+			ITextureBinding* tb = getTextureBinding(resolved);
 			if (tb)
 				tb->bindTexture(renderContext, sampler.object);
 
@@ -369,7 +367,15 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 		{
 			const TextureSize& textureSize = m_textureSize[i];
 
-			ITextureBinding* tb = getTextureBinding(m_textures[textureSize.texture]);
+			ITexture* texture = m_textures[textureSize.texture];
+			if (!texture)
+				continue;
+
+			Ref< ITexture > resolved = texture->resolve();
+			if (!resolved)
+				continue;
+
+			ITextureBinding* tb = getTextureBinding(resolved);
 			T_ASSERT (tb);
 
 			if (tb)

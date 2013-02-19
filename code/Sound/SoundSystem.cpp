@@ -195,7 +195,6 @@ void SoundSystem::threadMixer()
 	Timer timerMixer;
 
 	timerMixer.start();
-
 	while (!m_threadMixer->stopped())
 	{
 		// Wait until submission queue is below threshold.
@@ -325,6 +324,7 @@ void SoundSystem::threadSubmit()
 {
 	Timer timerSubmit;
 
+	timerSubmit.start();
 	while (!m_threadSubmit->stopped())
 	{
 		m_submitQueueLock.wait();

@@ -433,8 +433,8 @@ RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 			{
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Width", evt.resize.width);
 				settings->setProperty< PropertyInteger >(L"Render.DisplayMode.Window/Height", evt.resize.height);
+				return UrReconfigure;
 			}
-			return UrReconfigure;
 		}
 	}
 

@@ -138,6 +138,10 @@ bool Replicator::update(float T, float dT)
 		return false;
 
 	updatePeers(dT);
+
+	if (!m_replicatorPeers)
+		return false;
+
 	sendState(dT);
 	sendEvents();
 	sendPings(dT);
@@ -447,24 +451,61 @@ void Replicator::updatePeers(float dT)
 
 			if (failing)
 			{
-				// If peer is failing and we're the primary peer then we disconnect peer from network;
-				// also disconnect peer if we're using relaying and still fail.
-				if (isPrimary() || peer.relay)
+				if (peer.relay)
 				{
-					broadcastDisconnect(*i);
-
-					// Need to notify listeners immediately as peer becomes dismounted.
-					for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
-						(*j)->notify(this, 0, IListener::ReDisconnected, *i, 0);
-
-					if (peer.ghost)
+					// If all my other connects are fine then we issue disconnect of failing peer;
+					// else we disconnect ourself.
+					uint32_t failingPeers = 0;
+					for (std::map< handle_t, Peer >::const_iterator j = m_peers.begin(); j != m_peers.end(); ++j)
 					{
-						peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
-						peer.ghost = 0;
+						if (j->second.errorCount > 0 || peer.pendingPing >= 2)
+							++failingPeers;
 					}
 
-					peer.state = PsDisconnected;
-					peer.iframe = 0;
+					if (failingPeers <= 1)
+					{
+						T_REPLICATOR_DEBUG(L"OK: Requesting disconnect of peer " << *i << L" from network");
+						
+						broadcastDisconnect(*i);
+
+						// Need to notify listeners immediately as peer becomes dismounted.
+						for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+							(*j)->notify(this, 0, IListener::ReDisconnected, *i, 0);
+
+						if (peer.ghost)
+						{
+							peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
+							peer.ghost = 0;
+						}
+
+						peer.state = PsDisconnected;
+						peer.iframe = 0;
+					}
+					else
+					{
+						T_REPLICATOR_DEBUG(L"OK: Network problem with " << failingPeers << L" peer(s); disconnecting");
+						
+						for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+						{
+							sendBye(i->first);
+							if (i->second.ghost)
+							{
+								i->second.ghost->~Ghost();
+								getAllocator()->free(i->second.ghost);
+							}
+						}
+
+						m_peers.clear();
+						m_eventsIn.clear();
+						m_eventsOut.clear();
+						m_listeners.clear();
+						m_eventTypes.clear();
+
+						m_state = 0;
+						m_replicatorPeers = 0;
+
+						break;
+					}
 				}
 				else
 				{
@@ -675,8 +716,6 @@ void Replicator::receiveMessages()
 		// Always handle handshake messages.
 		if (msg.type == MtIAm)
 		{
-			T_REPLICATOR_DEBUG(L"OK: Got \"I am\" from peer " << handle << L", sequence " << int32_t(msg.iam.sequence) << L", id " << msg.iam.id);
-
 			// Assume peer time is correct if exceeding my time.
 			float offset = time + c_initialTimeOffset - m_time;
 			if (offset > 0.0f)
@@ -813,28 +852,32 @@ void Replicator::receiveMessages()
 		}
 		else if (msg.type == MtDisconnect)	// Disconnect request of peer from network.
 		{
+			Peer& peer = m_peers[handle];
 			if (msg.disconnect.globalId == m_replicatorPeers->getGlobalId())
 			{
-				T_REPLICATOR_DEBUG(L"OK: I've been issued to disconnect by peer " << handle);
-
-				for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+				if (peer.state == PsEstablished)
 				{
-					sendBye(i->first);
-					if (i->second.ghost)
+					T_REPLICATOR_DEBUG(L"OK: I've been issued to disconnect by peer " << handle);
+
+					for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 					{
-						i->second.ghost->~Ghost();
-						getAllocator()->free(i->second.ghost);
+						sendBye(i->first);
+						if (i->second.ghost)
+						{
+							i->second.ghost->~Ghost();
+							getAllocator()->free(i->second.ghost);
+						}
 					}
+
+					m_peers.clear();
+					m_eventsIn.clear();
+					m_eventsOut.clear();
+					m_listeners.clear();
+					m_eventTypes.clear();
+
+					m_state = 0;
+					m_replicatorPeers = 0;
 				}
-
-				m_peers.clear();
-				m_eventsIn.clear();
-				m_eventsOut.clear();
-				m_listeners.clear();
-				m_eventTypes.clear();
-
-				m_state = 0;
-				m_replicatorPeers = 0;
 			}
 			else
 			{
@@ -1166,6 +1209,24 @@ bool Replicator::sendRelay(handle_t peerHandle, const Message* msg, uint32_t siz
 		}
 	}
 
+	// If no optimal relay peer found; use least bad.
+	if (!relayPeerHandle)
+	{
+		for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+		{
+			if (
+				i->second.state == PsEstablished &&
+				i->second.relay == false &&
+				i->second.latencyMedian < relayPeerLatency
+			)
+			{
+				relayPeerHandle = i->first;
+				relayPeerLatency = i->second.latencyMedian;
+			}
+		}
+	}
+
+	// Unable to determine any relay peer.
 	if (!relayPeerHandle)
 		return false;
 
@@ -1184,7 +1245,7 @@ bool Replicator::send(handle_t peerHandle, const Message* msg, uint32_t size, bo
 	if (i == m_peers.end())
 		return false;
 
-	if (!i->second.relay || isPrimary())
+	if (!i->second.relay)
 		return m_replicatorPeers->send(peerHandle, msg, size, reliable);
 	else
 		return sendRelay(peerHandle, msg, size, reliable);
@@ -1207,6 +1268,8 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 				return size;
 
 			handle_t targetPeerHandle = msg->relay.targetGlobalId;
+			T_REPLICATOR_DEBUG(L"OK: Replaying message on behalf of peer " << outPeerHandle << L" to peer " << targetPeerHandle);
+
 			if (targetPeerHandle != m_replicatorPeers->getGlobalId())
 			{
 				bool reliable = bool(msg->type == MtRelayReliable);

@@ -232,6 +232,7 @@ bool RenderViewOpenGL::reset(const RenderViewDefaultDesc& desc)
 	m_primaryTargetDesc.height = m_renderContext->getHeight();
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 
+	log::info << L"Creating primary target " << m_primaryTargetDesc.width << L" x " << m_primaryTargetDesc.height << Endl;
 	if (m_primaryTargetDesc.width > 0 && m_primaryTargetDesc.height > 0)
 	{
 		m_primaryTarget = new RenderTargetSetOpenGL(m_resourceContext);
@@ -292,6 +293,8 @@ bool RenderViewOpenGL::isFullScreen() const
 		return false;
 
 	return cglwIsFullscreen(m_windowHandle);
+#elif defined(__LINUX__)
+	return m_window->isFullScreen();
 #else
 	return false;
 #endif
