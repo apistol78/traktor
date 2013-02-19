@@ -7,8 +7,10 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Timer", Timer, Object)
 
 Timer::Timer()
-:	m_paused(true)
-,	m_frequency(0)
+:	m_frequency(0)
+,	m_first(0)
+,	m_last(0)
+,	m_paused(true)
 {
 }
 

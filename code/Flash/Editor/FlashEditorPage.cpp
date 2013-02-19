@@ -29,6 +29,7 @@
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
+#include "Ui/TreeViewItem.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/AspectLayout.h"
 #include "Ui/Custom/CenterLayout.h"
@@ -124,6 +125,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 
 	m_treeMovie = new ui::TreeView();
 	m_treeMovie->create(splitterV, ui::TreeView::WsDefault & ~ui::WsClientBorder);
+	m_treeMovie->addSelectEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventTreeMovieSelect));
 
 	m_profileMovie = new ui::custom::ProfileControl();
 	m_profileMovie->create(splitterV, 10, 0, 10000, ui::WsClientBorder | ui::WsDoubleBuffer, this);
@@ -306,6 +308,8 @@ void FlashEditorPage::updateTreeCharacter(ui::TreeViewItem* parentItem, FlashCha
 	Ref< ui::TreeViewItem > characterItem = m_treeMovie->createItem(parentItem, ss.str(), 0, 0);
 	T_ASSERT (characterItem);
 
+	characterItem->setData(L"CHARACTER", characterInstance);
+
 	if (FlashSpriteInstance* spriteInstance = dynamic_type_cast< FlashSpriteInstance* >(characterInstance))
 	{
 		Ref< ui::TreeViewItem > layersItem = m_treeMovie->createItem(characterItem, L"Layer(s)", 0, 0);
@@ -347,12 +351,49 @@ void FlashEditorPage::updateTreeMovie()
 			}
 		}
 	}
+	else if (m_selectedCharacterInstance)
+	{
+		m_selectedCharacterInstance->setColorTransform(m_selectedCharacterInstanceCxForm);
+		m_selectedCharacterInstance = 0;
+		m_previewControl->update();
+	}
 }
 
 void FlashEditorPage::eventToolClick(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
 	handleCommand(command);
+}
+
+void FlashEditorPage::eventTreeMovieSelect(ui::Event* event)
+{
+	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
+	ui::TreeViewItem* selectedItem = checked_type_cast< ui::TreeViewItem*, true >(cmdEvent->getItem());
+
+	if (m_selectedCharacterInstance)
+	{
+		m_selectedCharacterInstance->setColorTransform(m_selectedCharacterInstanceCxForm);
+		m_selectedCharacterInstance = 0;
+	}
+
+	if (selectedItem)
+	{
+		m_selectedCharacterInstance = selectedItem->getData< FlashCharacterInstance >(L"CHARACTER");
+		if (m_selectedCharacterInstance)
+		{
+			m_selectedCharacterInstanceCxForm = m_selectedCharacterInstance->getColorTransform();
+
+			SwfCxTransform cxform;
+			cxform.red[0] = 0.5f; cxform.red[1] = 0.0f;
+			cxform.green[0] = 0.5f; cxform.green[1] = 0.5f;
+			cxform.blue[0] = 0.5f; cxform.blue[1] = 1.0f;
+			cxform.alpha[0] = 1.0f; cxform.alpha[1] = 0.0f;
+
+			m_selectedCharacterInstance->setColorTransform(cxform);
+		}
+	}
+
+	m_previewControl->update();
 }
 
 	}

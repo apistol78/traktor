@@ -40,12 +40,6 @@ MouseDeviceX11::MouseDeviceX11(Display* display, Window window, int deviceId)
 ,	m_width(0)
 ,	m_height(0)
 {
-	XWindowAttributes attr;
-	XGetWindowAttributes(m_display, m_window, &attr);
-
-	m_width = attr.width;
-	m_height = attr.height;
-
 	uint8_t mask[8] = { 0, 0, 0, 0, 0, 0, 0, 0 };
 	XIEventMask evmask;
 
@@ -196,6 +190,12 @@ void MouseDeviceX11::readState()
 	if (!m_connected)
 		resetState();
 
+	XWindowAttributes attr;
+	XGetWindowAttributes(m_display, m_window, &attr);
+
+	m_width = attr.width;
+	m_height = attr.height;
+
 	for (int i = 0; i < 2; ++i)
 	{
 		m_axis[i] = m_raw[i];
@@ -227,6 +227,7 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 		XISetMask(mask, XI_RawButtonPress);
 		XISetMask(mask, XI_RawButtonRelease);
 
+#if !defined(_DEBUG)
 		XIGrabDevice(
 			m_display,
 			m_deviceId,
@@ -238,12 +239,15 @@ void MouseDeviceX11::setExclusive(bool exclusive)
 			False,
 			&evmask
 		);
+#endif
 
 		m_exclusive = true;
 	}
 	else
 	{
+#if !defined(_DEBUG)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
+#endif
 		m_exclusive = false;
 	}
 }

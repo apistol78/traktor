@@ -48,6 +48,8 @@
 #			elif !TARGET_OS_IPHONE
 #				define T_MATH_USE_SSE2
 #			endif
+#		elif defined(__LINUX__)
+#			define T_MATH_USE_SSE2
 #		endif
 #	endif
 

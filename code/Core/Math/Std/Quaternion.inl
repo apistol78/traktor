@@ -1,7 +1,8 @@
 #include <limits>
-#include "Core/Math/Quaternion.h"
-#include "Core/Math/MathUtils.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
+#include "Core/Math/MathUtils.h"
+#include "Core/Math/Quaternion.h"
 
 namespace traktor
 {
@@ -192,8 +193,8 @@ T_MATH_INLINE Vector4 Quaternion::toEulerAngles() const
 
 T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, float& outBank) const
 {
-	const Vector4 axisX(1.0f, 0.0f, 0.0f);
-	const Vector4 axisZ(0.0f, 0.0f, 1.0f);
+	const Vector4 axisX(1.0f, 0.0f, 0.0f, 0.0f);
+	const Vector4 axisZ(0.0f, 0.0f, 1.0f, 0.0f);
 
 	Vector4 axisX_2 = (*this) * axisX;
 	Vector4 axisZ_2 = (*this) * axisZ;
@@ -202,6 +203,7 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 		axisZ_2.x(),
 		axisZ_2.z()
 	);
+	T_ASSERT (!isNan(outHead));
 
 	Quaternion Qt0 = Quaternion::fromAxisAngle(Vector4(0.0f, 1.0f, 0.0f, 0.0f), -outHead);
 	Vector4 axisX_3 = Qt0 * axisX_2;
@@ -211,6 +213,7 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 		axisZ_3.y(),
 		axisZ_3.z()
 	);
+	T_ASSERT (!isNan(outPitch));
 
 	Quaternion Qt1 = Quaternion::fromAxisAngle(Vector4(1.0f, 0.0f, 0.0f, 0.0f), -outPitch);
 	Vector4 axisX_4 = Qt1 * axisX_3;
@@ -219,6 +222,7 @@ T_MATH_INLINE void Quaternion::toEulerAngles(float& outHead, float& outPitch, fl
 		axisX_4.y(),
 		axisX_4.x()
 	);
+	T_ASSERT (!isNan(outBank));
 }
 
 T_MATH_INLINE Quaternion Quaternion::fromEulerAngles(float head, float pitch, float bank)

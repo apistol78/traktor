@@ -274,7 +274,7 @@ end
 					local filePathRel = fileSystem:getRelativePath(filePath, projectPath)
 					if filePathRel ~= nil then
 						local ext = filePathRel:getExtension()
-						if ext == "c" or ext == "cc" or ext == "cpp" or ext == "h" or ext == "hh" or ext == "hpp" or ext == "inl" then
+						if ext == "c" or ext == "cc" or ext == "cpp" or ext == "h" or ext == "hh" or ext == "hpp" or ext == "inl" or ext == "o" then
 --?>
 		<Unit filename="<?-- output:print(filePathRel:getPathName()) --?>" /><?--
 						end

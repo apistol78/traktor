@@ -76,10 +76,10 @@ Middle gray
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>689</first>
-				<second>89</second>
+				<first>659</first>
+				<second>42</second>
 			</position>
-			<min>0.1</min>
+			<min>0.3</min>
 			<max>2</max>
 		</item>
 		<item type="traktor.render.Max">
@@ -173,7 +173,7 @@ Middle gray
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[9]"/>
 				<name>Output</name>
 			</source>
 			<destination>

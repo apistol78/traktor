@@ -217,7 +217,7 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 		return false;
 	}
 
-	m_resourceContext = new ContextOpenGL(m_display, m_windowShared->getWindow(), context);
+	m_resourceContext = new ContextOpenGL(m_windowShared, context);
 	m_resourceContext->enter();
 
 #endif
@@ -283,8 +283,16 @@ uint32_t RenderSystemOpenGL::getDisplayModeCount() const
 
 #else
 
-	int sizes;
-	XRRSizes(m_display, 0, &sizes);
+	int screen = DefaultScreen(m_display);
+	int sizes = 0;
+
+	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, screen));
+	if (xrrc)
+	{
+		XRRConfigSizes(xrrc, &sizes);
+		XRRFreeScreenConfigInfo(xrrc);
+	}
+
 	return sizes >= 0 ? uint32_t(sizes) : 0;
 
 #endif
@@ -317,15 +325,22 @@ DisplayMode RenderSystemOpenGL::getDisplayMode(uint32_t index) const
 
 	DisplayMode dm;
 
-	int sizes;
-	XRRScreenSize* xrrss = XRRSizes(m_display, 0, &sizes);
-
-	if (index < sizes)
+	int screen = DefaultScreen(m_display);
+	XRRScreenConfiguration* xrrc = XRRGetScreenInfo(m_display, RootWindow(m_display, screen));
+	if (xrrc)
 	{
-		dm.width = xrrss[index].width;
-		dm.height = xrrss[index].height;
-		dm.refreshRate = 60;
-		dm.colorBits = 32;
+		int sizes;
+		XRRScreenSize* xrrss = XRRConfigSizes(xrrc, &sizes);
+
+		if (index < sizes)
+		{
+			dm.width = xrrss[index].width;
+			dm.height = xrrss[index].height;
+			dm.refreshRate = 60;
+			dm.colorBits = 32;
+		}
+
+		XRRFreeScreenConfigInfo(xrrc);
 	}
 
 	return dm;
@@ -569,7 +584,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewDefaultD
 	if (!glcontext)
 		return 0;
 
-	Ref< ContextOpenGL > context = new ContextOpenGL(m_display, (GLXDrawable)m_window->getWindow(), glcontext);
+	Ref< ContextOpenGL > context = new ContextOpenGL(m_window, glcontext);
 	context->enter();
 
 	if (glewInit() != GLEW_OK)
@@ -677,6 +692,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	context->destroy();
 	context = 0;
 
+/*
 #elif defined(__LINUX__)
 
 	Display* display = XOpenDisplay(0);
@@ -707,6 +723,7 @@ Ref< IRenderView > RenderSystemOpenGL::createRenderView(const RenderViewEmbedded
 	context->destroy();
 	context = 0;
 
+*/
 #endif
 
 	return 0;

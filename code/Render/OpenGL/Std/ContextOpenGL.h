@@ -14,6 +14,10 @@ namespace traktor
 	namespace render
 	{
 
+#if defined(__LINUX__)
+class Window;
+#endif
+
 /*! \brief OpenGL context.
  * \ingroup OGL
  */
@@ -27,7 +31,7 @@ public:
 #elif defined(__APPLE__)
 	ContextOpenGL(void* context);
 #elif defined(__LINUX__)
-	ContextOpenGL(Display* display, GLXDrawable drawable, GLXContext context);
+	ContextOpenGL(Window* window, GLXContext context);
 #endif
 
 	virtual ~ContextOpenGL();
@@ -78,8 +82,7 @@ private:
 #elif defined(__APPLE__)
 	void* m_context;
 #elif defined(__LINUX__)
-	Display* m_display;
-	GLXDrawable m_drawable;
+	Ref< Window > m_window;
 	GLXContext m_context;
 #endif
 

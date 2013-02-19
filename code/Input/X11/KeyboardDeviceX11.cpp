@@ -150,11 +150,25 @@ void KeyboardDeviceX11::setExclusive(bool exclusive)
 		XISetMask(mask, XI_KeyPress);
 		XISetMask(mask, XI_KeyRelease);
 
-		XIGrabDevice(m_display, m_deviceId, m_window, CurrentTime, None, GrabModeAsync, GrabModeAsync, False, &evmask);
+#if !defined(_DEBUG)
+		XIGrabDevice(
+			m_display,
+			m_deviceId,
+			m_window,
+			CurrentTime,
+			None,
+			GrabModeAsync,
+			GrabModeAsync,
+			False,
+			&evmask
+		);
+#endif
 	}
 	else
 	{
+#if !defined(_DEBUG)
 		XIUngrabDevice(m_display, m_deviceId, CurrentTime);
+#endif
 	}
 }
 
