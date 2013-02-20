@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Input/Di8/MouseDeviceDi8.h"
@@ -31,6 +32,8 @@ c_mouseControlMap[] =
 	{ L"Mouse X axis", DtPositionX, true, false, 7 },
 	{ L"Mouse Y axis", DtPositionY, true, false, 8 }
 };
+
+const float c_mouseDeltaLimit = 100.0f;
 
 		}
 
@@ -103,9 +106,9 @@ float MouseDeviceDi8::getControlValue(int32_t control)
 	case 3:
 		return (m_state.rgbButtons[3] & 0x80) ? 1.0f : 0.0f;
 	case 4:
-		return float(m_state.lX);
+		return clamp(float(m_state.lX), -c_mouseDeltaLimit, c_mouseDeltaLimit);
 	case 5:
-		return float(m_state.lY);
+		return clamp(float(m_state.lY), -c_mouseDeltaLimit, c_mouseDeltaLimit);
 	case 6:
 		return float(m_state.lZ / 120.0f);
 	case 7:
@@ -218,7 +221,7 @@ void MouseDeviceDi8::readState()
 
 	m_connected = SUCCEEDED(hr);	
 
-	// As long as mouse is exclusivly acquired we clamp mouse position to client area of window.
+	// As long as mouse is exclusively acquired we clamp mouse position to client area of window.
 	if (m_exclusive && m_connected)
 	{
 		POINT position = m_position;
@@ -238,7 +241,7 @@ void MouseDeviceDi8::setRumble(const InputRumble& rumble)
 
 void MouseDeviceDi8::setExclusive(bool exclusive)
 {
-	// Ensure device is unaquired, cannot change cooperative level if acquired.
+	// Ensure device is unacquired, cannot change cooperative level if acquired.
 	m_device->Unacquire();
 	m_connected = false;
 	m_exclusive = exclusive;

@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Format.h"
@@ -130,12 +131,21 @@ bool WorldRendererForward::create(
 	// Allocate "shadow map" targets.
 	if (m_shadowsQuality > QuDisabled)
 	{
-		render::RenderTargetSetCreateDesc rtscd;
+		render::RenderSystemInformation info;
+		renderSystem->getInformation(info);
+
+		int32_t maxResolution = m_shadowSettings.resolution;
+		if (info.dedicatedMemoryTotal >= 0 && info.dedicatedMemoryTotal < 512 * 1024 * 1024)
+			maxResolution /= 2;
+
+		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(width, height) * 1.9f)), maxResolution);
+		T_DEBUG(L"Using shadow map resolution " << resolution);
 
 		// Create shadow map target.
+		render::RenderTargetSetCreateDesc rtscd;
 		rtscd.count = 1;
 		rtscd.width =
-		rtscd.height = m_shadowSettings.resolution;
+		rtscd.height = resolution;
 		rtscd.multiSample = 0;
 		rtscd.createDepthStencil = true;
 		rtscd.usingPrimaryDepthStencil = false;
@@ -234,7 +244,7 @@ bool WorldRendererForward::create(
 
 			default:
 			case WorldRenderSettings::SpUniform:
-				m_shadowProjection = new UniformShadowProjection(m_shadowSettings.resolution);
+				m_shadowProjection = new UniformShadowProjection(resolution);
 				break;
 			}
 		}
@@ -649,6 +659,8 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 					params.viewFrustum = f.viewFrustum;
 					params.viewToLight = f.slice[i].viewToLightSpace;
 					params.projection = projection;
+					params.sliceCount = m_shadowSettings.cascadingSlices;
+					params.sliceIndex = i;
 					params.sliceNearZ = zn;
 					params.sliceFarZ = zf;
 					params.shadowFarZ = m_shadowSettings.farZ;

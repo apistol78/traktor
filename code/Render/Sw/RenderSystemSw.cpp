@@ -93,6 +93,10 @@ void RenderSystemSw::destroy()
 	safeDestroy(m_graphicsSystem);
 }
 
+void RenderSystemSw::getInformation(RenderSystemInformation& outInfo) const
+{
+}
+
 uint32_t RenderSystemSw::getDisplayModeCount() const
 {
 	return uint32_t(m_displayModes.size());

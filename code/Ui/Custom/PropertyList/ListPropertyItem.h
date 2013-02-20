@@ -36,6 +36,8 @@ class T_DLLCLASS ListPropertyItem : public PropertyItem
 public:
 	ListPropertyItem(const std::wstring& text);
 
+	virtual ~ListPropertyItem();
+
 	int add(const std::wstring& item);
 
 	bool remove(int index);

@@ -54,6 +54,8 @@ public:
 			Matrix44 view;
 			Matrix44 viewToLight;
 			Matrix44 projection;
+			int32_t sliceCount;
+			int32_t sliceIndex;
 			float sliceNearZ;
 			float sliceFarZ;
 			float shadowFarZ;

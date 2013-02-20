@@ -27,6 +27,13 @@ ListPropertyItem::ListPropertyItem(const std::wstring& text)
 {
 }
 
+ListPropertyItem::~ListPropertyItem()
+{
+	T_ASSERT (!m_buttonDrop);
+	T_ASSERT (!m_listForm);
+	T_ASSERT (!m_listBox);
+}
+
 int ListPropertyItem::add(const std::wstring& item)
 {
 	if (m_listBox)

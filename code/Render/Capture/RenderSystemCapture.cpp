@@ -23,6 +23,11 @@ void RenderSystemCapture::destroy()
 	m_renderSystem->destroy();
 }
 
+void RenderSystemCapture::getInformation(RenderSystemInformation& outInfo) const
+{
+	m_renderSystem->getInformation(outInfo);
+}
+
 uint32_t RenderSystemCapture::getDisplayModeCount() const
 {
 	return m_renderSystem->getDisplayModeCount();

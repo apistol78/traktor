@@ -93,6 +93,40 @@ void RenderSystemDx10::destroy()
 	}
 }
 
+void RenderSystemDx10::getInformation(RenderSystemInformation& outInfo) const
+{
+	ComRef< IDXGIDevice > dxgiDevice;
+	ComRef< IDXGIAdapter > dxgiAdapter;
+	DXGI_ADAPTER_DESC desc;
+	HRESULT hr;
+
+	hr = m_context->getD3DDevice()->QueryInterface(__uuidof(IDXGIDevice), (void **)&dxgiDevice.getAssign());
+	if (FAILED(hr))
+	{
+		log::error << L"Failed to get IDXGIDevice1 interface, HRESULT " << int32_t(hr) << Endl;
+		return;
+	}
+
+	hr = dxgiDevice->GetParent(__uuidof(IDXGIAdapter), (void **)&dxgiAdapter.getAssign());
+	if (FAILED(hr))
+	{
+		log::error << L"Failed to get IDXGIAdapter1 interface, HRESULT " << int32_t(hr) << Endl;
+		return;
+	}
+
+	hr = dxgiAdapter->GetDesc(&desc);
+	if (FAILED(hr))
+	{
+		log::error << L"Failed to get IDXGIAdapter1 description, HRESULT " << int32_t(hr) << Endl;
+		return;
+	}
+
+	outInfo.dedicatedMemoryTotal = desc.DedicatedVideoMemory;
+	outInfo.sharedMemoryTotal = desc.SharedSystemMemory;
+	outInfo.dedicatedMemoryAvailable = 0;
+	outInfo.sharedMemoryAvailable = 0;
+}
+
 uint32_t RenderSystemDx10::getDisplayModeCount() const
 {
 	return traktor::render::getDisplayModeCount(m_context->getDXGIOutput());
