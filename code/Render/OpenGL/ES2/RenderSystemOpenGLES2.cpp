@@ -87,6 +87,10 @@ void RenderSystemOpenGLES2::destroy()
 //#endif
 }
 
+void RenderSystemOpenGLES2::getInformation(RenderSystemInformation& outInfo) const
+{
+}
+
 uint32_t RenderSystemOpenGLES2::getDisplayModeCount() const
 {
 	return 0;

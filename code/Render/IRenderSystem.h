@@ -55,6 +55,9 @@ public:
 	/*! \brief Destroy render system. */
 	virtual void destroy() = 0;
 
+	/*! \brief Get render system information. */
+	virtual void getInformation(RenderSystemInformation& outInfo) const = 0;
+
 	//@}
 
 	/*! \name Display mode enumeration. */

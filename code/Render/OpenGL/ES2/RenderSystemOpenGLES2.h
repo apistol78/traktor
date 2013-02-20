@@ -35,6 +35,8 @@ public:
 
 	virtual void destroy();
 
+	virtual void getInformation(RenderSystemInformation& outInfo) const;
+
 	virtual uint32_t getDisplayModeCount() const;
 
 	virtual DisplayMode getDisplayMode(uint32_t index) const;

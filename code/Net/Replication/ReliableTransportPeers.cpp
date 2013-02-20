@@ -11,8 +11,8 @@ namespace traktor
 		{
 
 const double c_resendTime = 1.0f;	//< Resend reliable message after N seconds.
-const double c_discardTime = 5.0f;	//< Discard reliable message after N seconds.
-const uint32_t c_windowSize = 100;	//< Number of reliable messages kept in sent queue.
+const double c_discardTime = 10.0f;	//< Discard reliable message after N seconds.
+const uint32_t c_windowSize = 200;	//< Number of reliable messages kept in sent queue.
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
 
@@ -223,7 +223,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 				if (i->envelope.sequence == e.sequence)
 				{
 					if (i->resent)
-						T_REPLICATOR_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" finally ACK;ed");
+						T_REPLICATOR_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" to peer " << outFromHandle << L" finally ACK;ed");
 
 					ct.sent.erase(i);
 					break;

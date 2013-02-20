@@ -375,6 +375,23 @@ struct DisplayMode
 	}
 };
 
+/*! \brief Render system information. */
+struct RenderSystemInformation
+{
+	uint32_t dedicatedMemoryTotal;
+	uint32_t sharedMemoryTotal;
+	uint32_t dedicatedMemoryAvailable;
+	uint32_t sharedMemoryAvailable;
+
+	RenderSystemInformation()
+	:	dedicatedMemoryTotal(0)
+	,	sharedMemoryTotal(0)
+	,	dedicatedMemoryAvailable(0)
+	,	sharedMemoryAvailable(0)
+	{
+	}
+};
+
 /*! \brief Descriptor for render system. */
 struct RenderSystemCreateDesc
 {

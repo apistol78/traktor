@@ -200,6 +200,10 @@ void RenderSystemWin32::destroy()
 	m_d3d.release();
 }
 
+void RenderSystemWin32::getInformation(RenderSystemInformation& outInfo) const
+{
+}
+
 uint32_t RenderSystemWin32::getDisplayModeCount() const
 {
 	return uint32_t(m_d3d->GetAdapterModeCount(D3DADAPTER_DEFAULT, m_d3dDefaultDisplayMode.Format));

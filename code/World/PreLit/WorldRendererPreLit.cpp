@@ -1,5 +1,6 @@
 #include <limits>
 #include "Core/Log/Log.h"
+#include "Core/Math/Log2.h"
 #include "Core/Math/Random.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/Format.h"
@@ -134,12 +135,21 @@ bool WorldRendererPreLit::create(
 	// Create "shadow map" targets.
 	if (m_shadowsQuality > QuDisabled)
 	{
-		render::RenderTargetSetCreateDesc desc;
+		render::RenderSystemInformation info;
+		renderSystem->getInformation(info);
+
+		int32_t maxResolution = m_shadowSettings.resolution;
+		if (info.dedicatedMemoryTotal >= 0 && info.dedicatedMemoryTotal < 512 * 1024 * 1024)
+			maxResolution /= 2;
+
+		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(width, height) * 1.9f)), maxResolution);
+		T_DEBUG(L"Using shadow map resolution " << resolution);
 
 		// Create shadow map target.
+		render::RenderTargetSetCreateDesc desc;
 		desc.count = 1;
 		desc.width =
-		desc.height = m_shadowSettings.resolution;
+		desc.height = resolution;
 		desc.multiSample = 0;
 		desc.createDepthStencil = true;
 		desc.usingPrimaryDepthStencil = false;
@@ -234,22 +244,24 @@ bool WorldRendererPreLit::create(
 			switch (m_shadowSettings.projection)
 			{
 			case WorldRenderSettings::SpBox:
-				m_shadowProjection = new BoxShadowProjection();
+				m_shadowProjection0 = new BoxShadowProjection();
 				break;
 
 			case WorldRenderSettings::SpLiSP:
-				m_shadowProjection = new LiSPShadowProjection();
+				m_shadowProjection0 = new LiSPShadowProjection();
 				break;
 
 			case WorldRenderSettings::SpTrapezoid:
-				m_shadowProjection = new TrapezoidShadowProjection();
+				m_shadowProjection0 = new TrapezoidShadowProjection();
 				break;
 
 			default:
 			case WorldRenderSettings::SpUniform:
-				m_shadowProjection = new UniformShadowProjection(m_shadowSettings.resolution);
+				m_shadowProjection0 = new UniformShadowProjection(resolution);
 				break;
 			}
+
+			m_shadowProjection = new UniformShadowProjection(resolution);
 		}
 
 		// Ensure targets are destroyed if something went wrong in setup.
@@ -719,6 +731,8 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 						params.viewFrustum = f.viewFrustum;
 						params.viewToLight = f.slice[j].viewToLightSpace[i];
 						params.projection = projection;
+						params.sliceCount = m_shadowSettings.cascadingSlices;
+						params.sliceIndex = j;
 						params.sliceNearZ = zn;
 						params.sliceFarZ = zf;
 						params.shadowFarZ = m_shadowSettings.farZ;
@@ -1033,14 +1047,14 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				Matrix44 shadowLightSquareProjection = Matrix44::identity();
 				Frustum shadowFrustum;
 
-				m_shadowProjection->calculate(
+				(slice == 0 ? m_shadowProjection0 : m_shadowProjection)->calculate(
 					viewInverse,
 					light.position,
 					light.direction,
 					sliceViewFrustum,
 					shadowBox,
 					m_shadowSettings.farZ,
-					m_shadowSettings.quantizeProjection,
+					(slice == 0) && m_shadowSettings.quantizeProjection,
 					shadowLightView,
 					shadowLightProjection,
 					shadowLightSquareProjection,

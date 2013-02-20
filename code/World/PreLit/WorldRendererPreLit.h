@@ -147,6 +147,7 @@ private:
 	Quality m_antiAliasQuality;
 
 	Ref< render::IRenderView > m_renderView;
+	Ref< IWorldShadowProjection > m_shadowProjection0;
 	Ref< IWorldShadowProjection > m_shadowProjection;
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;

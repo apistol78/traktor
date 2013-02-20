@@ -34,7 +34,7 @@ const float c_timeUntilPing = 1.5f;
 const float c_errorStateThreshold = 0.2f;
 const float c_remoteOffsetThreshold = 0.1f;
 const float c_remoteOffsetLimit = 0.05f;
-const uint32_t c_maxPendingPing = 8;
+const uint32_t c_maxPendingPing = 12;
 const uint32_t c_maxErrorCount = 4;
 const uint32_t c_maxDeltaStates = 8;
 
@@ -458,7 +458,9 @@ void Replicator::updatePeers(float dT)
 					uint32_t failingPeers = 0;
 					for (std::map< handle_t, Peer >::const_iterator j = m_peers.begin(); j != m_peers.end(); ++j)
 					{
-						if (j->second.errorCount > 0 || peer.pendingPing >= 2)
+						if (j->second.state != PsEstablished)
+							continue;
+						if (j->second.errorCount > 0 || j->second.pendingPing >= 2)
 							++failingPeers;
 					}
 
@@ -509,7 +511,7 @@ void Replicator::updatePeers(float dT)
 				}
 				else
 				{
-					T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate with peer; relaying through other peer(s)");
+					T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate with peer " << *i << L"; relaying through other peer(s)");
 					peer.pendingPing = 0;
 					peer.errorCount = 0;
 					peer.relay = true;
@@ -1268,8 +1270,6 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 				return size;
 
 			handle_t targetPeerHandle = msg->relay.targetGlobalId;
-			T_REPLICATOR_DEBUG(L"OK: Replaying message on behalf of peer " << outPeerHandle << L" to peer " << targetPeerHandle);
-
 			if (targetPeerHandle != m_replicatorPeers->getGlobalId())
 			{
 				bool reliable = bool(msg->type == MtRelayReliable);

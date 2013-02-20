@@ -14,7 +14,7 @@ namespace traktor
 		namespace
 		{
 
-const wchar_t* c_ShadowSettings_elementNames[] =
+const wchar_t* c_ShadowSettings_elementNames18[] =
 {
 	L"disabled",
 	L"low",
@@ -23,9 +23,18 @@ const wchar_t* c_ShadowSettings_elementNames[] =
 	L"highest"
 };
 
+const wchar_t* c_ShadowSettings_elementNames[] =
+{
+	L"disabled",
+	L"low",
+	L"medium",
+	L"high",
+	L"ultra"
+};
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 17, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 19, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -49,7 +58,10 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< bool >(L"linearLighting", linearLighting);
 	s >> Member< bool >(L"occlusionCullingEnabled", occlusionCullingEnabled);
 	s >> Member< bool >(L"depthPassEnabled", depthPassEnabled);
-	s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames);
+	if (s.getVersion() >= 19)
+		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames);
+	else
+		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames18);
 	s >> Member< bool >(L"fogEnabled", fogEnabled);
 	s >> Member< float >(L"fogDistance", fogDistance, AttributeRange(0.0f));
 	s >> Member< float >(L"fogRange", fogRange, AttributeRange(0.0f));
@@ -73,6 +85,18 @@ WorldRenderSettings::ShadowSettings::ShadowSettings()
 
 bool WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 {
+	const MemberEnum< ShadowProjection >::Key c_ShadowProjection_Keys[] =
+	{
+		{ L"SpBox", SpBox },
+		{ L"SpLiSP", SpLiSP },
+		{ L"SpTrapezoid", SpTrapezoid },
+		{ L"SpUniform", SpUniform },
+		{ 0 }
+	};
+
+	if (s.getVersion() >= 18)
+		s >> MemberEnum< ShadowProjection >(L"projection", projection, c_ShadowProjection_Keys);
+
 	s >> Member< float >(L"farZ", farZ, AttributeRange(0.0f));
 	s >> Member< int32_t >(L"resolution", resolution, AttributeRange(1));
 	s >> Member< float >(L"bias", bias);
@@ -83,6 +107,7 @@ bool WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"maskDenominator", maskDenominator, AttributeRange(1));
 	s >> resource::Member< PostProcessSettings >(L"maskProject", maskProject);
 	s >> resource::Member< PostProcessSettings >(L"maskFilter", maskFilter);
+
 	return true;
 }
 

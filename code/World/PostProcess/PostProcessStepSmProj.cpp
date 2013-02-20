@@ -125,6 +125,7 @@ PostProcessStepSmProj::InstanceSmProj::InstanceSmProj(
 	m_handleViewEdgeBottomLeft = render::getParameterHandle(L"ViewEdgeBottomLeft");
 	m_handleViewEdgeBottomRight = render::getParameterHandle(L"ViewEdgeBottomRight");
 	m_handleViewToLight = render::getParameterHandle(L"ViewToLight");
+	m_handleLastSlice = render::getParameterHandle(L"LastSlice");
 }
 
 void PostProcessStepSmProj::InstanceSmProj::destroy()
@@ -143,6 +144,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	if (!sourceShMap || !sourceDepth)
 		return;
 
+	postProcess->setParameter(m_handleLastSlice, bool(params.sliceIndex >= (params.sliceCount - 1)));
 	postProcess->prepareShader(m_shader);
 
 	float shadowMapBias = params.shadowMapBias / params.shadowFarZ;

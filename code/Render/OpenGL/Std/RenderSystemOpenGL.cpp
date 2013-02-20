@@ -262,6 +262,10 @@ void RenderSystemOpenGL::destroy()
 #endif
 }
 
+void RenderSystemOpenGL::getInformation(RenderSystemInformation& outInfo) const
+{
+}
+
 uint32_t RenderSystemOpenGL::getDisplayModeCount() const
 {
 #if defined(_WIN32)
