@@ -535,9 +535,11 @@ struct VolumeTextureCreateDesc
 struct RenderTargetCreateDesc
 {
 	TextureFormat format;	/*< Render target pixel format. */
+	bool sRGB;
 
 	RenderTargetCreateDesc()
 	:	format(TfInvalid)
+	,	sRGB(false)
 	{
 	}
 };

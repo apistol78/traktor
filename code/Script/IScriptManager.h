@@ -59,12 +59,13 @@ public:
 
 	/*! \brief Compile script.
 	 *
+	 * \param fileName Script file name.
 	 * \param script Script
 	 * \param map Optional source map; used for debugging.
 	 * \param errorCallback Optional callback which is called for each error found during compilation.
 	 * \return Script resource; null if failed to compile.
 	 */
-	virtual Ref< IScriptResource > compile(const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const = 0;
+	virtual Ref< IScriptResource > compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const = 0;
 
 	/*! \brief Create script context.
 	 *

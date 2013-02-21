@@ -13,10 +13,16 @@ ScriptResourceLua::ScriptResourceLua()
 {
 }
 
-ScriptResourceLua::ScriptResourceLua(const std::string& script, const source_map_t& map)
-:	m_script(script)
+ScriptResourceLua::ScriptResourceLua(const std::string& fileName, const std::string& script, const source_map_t& map)
+:	m_fileName(fileName)
+,	m_script(script)
 ,	m_map(map)
 {
+}
+
+const std::string& ScriptResourceLua::getFileName() const
+{
+	return m_fileName;
 }
 
 const std::string& ScriptResourceLua::getScript() const
@@ -31,6 +37,7 @@ const source_map_t& ScriptResourceLua::getMap() const
 
 bool ScriptResourceLua::serialize(ISerializer& s)
 {
+	s >> Member< std::string >(L"fileName", m_fileName);
 	s >> Member< std::string >(L"script", m_script);
 	s >> MemberStlList< source_map_t::value_type, MemberStlPair< source_map_t::value_type::first_type, source_map_t::value_type::second_type > >(L"map", m_map);
 	return true;

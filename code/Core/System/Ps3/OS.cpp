@@ -36,6 +36,11 @@ uint32_t OS::getCPUCoreCount() const
 	return 2;
 }
 
+std::wstring OS::getCommandLine() const
+{
+	return L"";
+}
+
 std::wstring OS::getComputerName() const
 {
 	return L"PS3";

@@ -29,6 +29,12 @@
 					<value>traktor.script.ScriptManagerLua</value>
 				</second>
 			</item>
+			<item>
+				<first>ScriptPipeline.OutputPath</first>
+				<second type="traktor.PropertyString">
+					<value>temp/Script</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

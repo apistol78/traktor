@@ -47,6 +47,11 @@ uint32_t OS::getCPUCoreCount() const
 	return si.dwNumberOfProcessors;
 }
 
+std::wstring OS::getCommandLine() const
+{
+	return tstows(GetCommandLine());
+}
+
 std::wstring OS::getComputerName() const
 {
 #if !defined(WINCE)
@@ -54,11 +59,11 @@ std::wstring OS::getComputerName() const
 
 	DWORD size = sizeof_array(buf);
 	if (!GetComputerName(buf, &size))
-		return L"Unavailable";
+		return L"";
 
 	return buf;
 #else
-	return L"Unavailable";
+	return L"";
 #endif
 }
 
@@ -69,11 +74,11 @@ std::wstring OS::getCurrentUser() const
 	
 	DWORD size = sizeof_array(buf);
 	if (!GetUserName(buf, &size))
-		return L"Unavailable";
+		return L"";
 
 	return buf;
 #else
-	return L"Unavailable";
+	return L"";
 #endif
 }
 

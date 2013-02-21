@@ -32,11 +32,15 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 	D3D11_SHADER_RESOURCE_VIEW_DESC dsrvd;
 	HRESULT hr;
 
+	const DXGI_FORMAT* dxgiTextureFormats = desc.sRGB ? c_dxgiTextureFormats_sRGB : c_dxgiTextureFormats;
+	if (dxgiTextureFormats[desc.format] == DXGI_FORMAT_UNKNOWN)
+		return false;
+
 	dtd.Width = setDesc.width;
 	dtd.Height = setDesc.height;
 	dtd.MipLevels = setDesc.generateMips ? 0 : 1;
 	dtd.ArraySize = 1;
-	dtd.Format = c_dxgiTextureFormats[desc.format];
+	dtd.Format = dxgiTextureFormats[desc.format];
 	dtd.SampleDesc.Count = 1;
 	dtd.SampleDesc.Quality = 0;
 	dtd.Usage = D3D11_USAGE_DEFAULT;
@@ -47,7 +51,7 @@ bool RenderTargetDx11::create(ID3D11Device* d3dDevice, const RenderTargetSetCrea
 	if (setDesc.generateMips)
 		dtd.MiscFlags = D3D11_RESOURCE_MISC_GENERATE_MIPS;
 
-	if (!setupSampleDesc(d3dDevice, setDesc.multiSample, c_dxgiTextureFormats[desc.format], DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
+	if (!setupSampleDesc(d3dDevice, setDesc.multiSample, dtd.Format, DXGI_FORMAT_D16_UNORM, dtd.SampleDesc))
 		return false;
 
 	hr = d3dDevice->CreateTexture2D(

@@ -28,57 +28,6 @@ namespace traktor
 {
 	namespace scene
 	{
-		namespace
-		{
-
-// Find adapter by traverse entity adapter hierarchy.
-template < typename Predicate >
-EntityAdapter* findAdapter(const RefArray< EntityAdapter >& entityAdapters, Predicate predicate)
-{
-	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
-	{
-		if (predicate(*i))
-			return *i;
-
-		EntityAdapter* foundEntityAdapter = findAdapter((*i)->getChildren(), predicate);
-		if (foundEntityAdapter)
-			return foundEntityAdapter;
-	}
-
-	return 0;
-}
-
-struct FindFromEntity
-{
-	const world::Entity* m_entity;
-
-	FindFromEntity(const world::Entity* entity)
-	:	m_entity(entity)
-	{
-	}
-
-	bool operator () (const EntityAdapter* entityAdapter) const
-	{
-		return entityAdapter->getEntity() == m_entity;
-	}
-};
-
-struct FindFromType
-{
-	const TypeInfo& m_entityDataType;
-
-	FindFromType(const TypeInfo& entityDataType)
-	:	m_entityDataType(entityDataType)
-	{
-	}
-
-	bool operator () (const EntityAdapter* entityAdapter) const
-	{
-		return is_type_of(m_entityDataType, type_of(entityAdapter->getEntityData()));
-	}
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.SceneEditorContext", SceneEditorContext, ui::EventSubject)
 
@@ -405,6 +354,14 @@ void SceneEditorContext::buildEntities()
 		);
 	}
 
+	// Create map from entity to adapter.
+	RefArray< EntityAdapter > entityAdapters;
+	getEntities(entityAdapters);
+
+	m_entityAdapterMap.clear();
+	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+		m_entityAdapterMap.insert((*i)->getEntity(), *i);
+
 	raisePostBuild();
 }
 
@@ -483,12 +440,8 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 
 EntityAdapter* SceneEditorContext::findAdapterFromEntity(const world::Entity* entity) const
 {
-	return findAdapter(m_layerEntityAdapters, FindFromEntity(entity));
-}
-
-EntityAdapter* SceneEditorContext::findAdapterFromType(const TypeInfo& entityDataType) const
-{
-	return findAdapter(m_layerEntityAdapters, FindFromType(entityDataType));
+	SmallMap< const world::Entity*, EntityAdapter* >::const_iterator i = m_entityAdapterMap.find(entity);
+	return i != m_entityAdapterMap.end() ? i->second : 0;
 }
 
 EntityAdapter* SceneEditorContext::queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const
