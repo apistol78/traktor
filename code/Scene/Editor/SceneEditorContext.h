@@ -2,6 +2,7 @@
 #define traktor_scene_SceneEditorContext_H
 
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Math/Frustum.h"
 #include "Ui/EventSubject.h"
 
@@ -208,8 +209,6 @@ public:
 	
 	EntityAdapter* findAdapterFromEntity(const world::Entity* entity) const;
 
-	EntityAdapter* findAdapterFromType(const TypeInfo& entityDataType) const;
-
 	EntityAdapter* queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, bool onlyPickable) const;
 
 	uint32_t queryFrustum(const Frustum& worldFrustum, RefArray< EntityAdapter >& outEntityAdapters, bool onlyPickable) const;
@@ -337,6 +336,7 @@ private:
 	Ref< SceneAsset > m_sceneAsset;
 	Ref< Scene > m_scene;
 	RefArray< EntityAdapter > m_layerEntityAdapters;
+	SmallMap< const world::Entity*, EntityAdapter* > m_entityAdapterMap;
 	Ref< EntityAdapter > m_followEntityAdapter;
 	Ref< EntityAdapter > m_lookAtEntityAdapter;
 };

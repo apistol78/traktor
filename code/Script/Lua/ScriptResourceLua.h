@@ -25,7 +25,9 @@ class T_DLLCLASS ScriptResourceLua : public IScriptResource
 public:
 	ScriptResourceLua();
 
-	ScriptResourceLua(const std::string& script, const source_map_t& map);
+	ScriptResourceLua(const std::string& fileName, const std::string& script, const source_map_t& map);
+
+	const std::string& getFileName() const;
 
 	const std::string& getScript() const;
 
@@ -34,6 +36,7 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
+	std::string m_fileName;
 	std::string m_script;
 	source_map_t m_map;
 };

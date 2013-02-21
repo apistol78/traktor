@@ -227,9 +227,9 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	}
 }
 
-Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
+Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
 {
-	return new ScriptResourceLua(wstombs(script), map ? *map : source_map_t());
+	return new ScriptResourceLua(wstombs(fileName), wstombs(script), map ? *map : source_map_t());
 }
 
 Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scriptResource)
@@ -254,12 +254,13 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	lua_pop(m_luaState, 1);
 
 	// Load script into environment.
+	std::string fileName = "@" + scriptResourceLua->getFileName();
 	const std::string& text = scriptResourceLua->getScript();
 	int32_t result = luaL_loadbuffer(
 		m_luaState,
 		text.c_str(),
 		text.length(),
-		""
+		fileName.c_str()
 	);
 
 	if (result != 0)

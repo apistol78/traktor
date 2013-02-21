@@ -1,8 +1,6 @@
-#if defined(_WIN32)
-#	include <Windows.h>
-#endif
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Online/LobbyFilter.h"
@@ -65,9 +63,8 @@ SteamMatchMaking::SteamMatchMaking(SteamSessionManager* sessionManager)
 ,	m_joinResult(false)
 ,	m_callbackGameLobbyJoinRequested(this, &SteamMatchMaking::OnGameLobbyJoinRequested)
 {
-#if defined(_WIN32)
 	std::vector< std::wstring > argv;
-	Split< std::wstring >::any(tstows(GetCommandLine()), L" \t", argv);
+	Split< std::wstring >::any(OS::getInstance().getCommandLine(), L" \t", argv);
 	if (argv.size() >= 2)
 	{
 		for (size_t i = 0; i < argv.size() - 1; ++i)
@@ -79,7 +76,6 @@ SteamMatchMaking::SteamMatchMaking(SteamSessionManager* sessionManager)
 			}
 		}
 	}
-#endif
 }
 
 bool SteamMatchMaking::findMatchingLobbies(const LobbyFilter* filter, std::vector< uint64_t >& outLobbyHandles)

@@ -36,6 +36,12 @@ public:
 	 */
 	uint32_t getCPUCoreCount() const;
 
+	/*! \brief Get command line.
+	 *
+	 * \return Process command line.
+	 */
+	std::wstring getCommandLine() const;
+
 	/*! \brief Get network name of computer.
 	 *
 	 * \return Computer network name.
@@ -92,7 +98,7 @@ public:
 	 * \return Environment variables.
 	 */
 	envmap_t getEnvironment() const;
-	
+
 	/*! \brief Get environment variable value.
 	 *
 	 * \param name Name of variable.

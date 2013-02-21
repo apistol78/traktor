@@ -30,7 +30,7 @@ void ScriptManagerJs::registerClass(IScriptClass* scriptClass)
 	m_registeredClasses.push_back(scriptClass);
 }
 
-Ref< IScriptResource > ScriptManagerJs::compile(const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
+Ref< IScriptResource > ScriptManagerJs::compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
 {
 	return new ScriptResourceJs(script);
 }

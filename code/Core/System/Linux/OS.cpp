@@ -1,3 +1,4 @@
+#include <cstdio>
 #include <cstring>
 #include <spawn.h>
 #include <unistd.h>
@@ -32,6 +33,18 @@ OS& OS::getInstance()
 uint32_t OS::getCPUCoreCount() const
 {
 	return 4;
+}
+
+std::wstring OS::getCommandLine() const
+{
+	char cmdLine[1024] = { '\0' };
+	FILE* fp = fopen("/proc/self/cmdline", "r");
+	if (fp)
+	{
+		fgets(cmdLine, sizeof(cmdLine), fp);
+		fclose(fp);
+	}
+	return mbstows(cmdLine);
 }
 
 std::wstring OS::getComputerName() const

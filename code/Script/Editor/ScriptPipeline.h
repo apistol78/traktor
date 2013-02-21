@@ -51,6 +51,7 @@ public:
 
 private:
 	Ref< IScriptManager > m_scriptManager;
+	std::wstring m_scriptOutputPath;
 };
 
 	}

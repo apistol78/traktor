@@ -1,4 +1,8 @@
+#include "Core/Io/FileOutputStream.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyString.h"
@@ -59,7 +63,7 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 5, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 7, ScriptPipeline, editor::DefaultPipeline)
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -75,6 +79,10 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 
 	m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
 	T_ASSERT (m_scriptManager);
+
+	m_scriptOutputPath = settings->getProperty< PropertyString >(L"ScriptPipeline.OutputPath", L"");
+	if (!m_scriptOutputPath.empty())
+		FileSystem::getInstance().makeAllDirectories(m_scriptOutputPath);
 
 	return editor::DefaultPipeline::create(settings);
 }
@@ -139,11 +147,23 @@ bool ScriptPipeline::buildOutput(
 	}
 
 	// Compile script; save binary blobs if possible.
-	Ref< IScriptResource > resource = m_scriptManager->compile(ss.str(), &sm, 0);
+	Ref< IScriptResource > resource = m_scriptManager->compile(outputGuid.format() + L".lua", ss.str(), &sm, 0);
 	if (!resource)
 	{
 		log::error << L"Script pipeline failed; unable to compile script" << Endl;
 		return false;
+	}
+
+	// Output script source into temp folder; this can be useful for debugging.
+	if (!m_scriptOutputPath.empty())
+	{
+		Ref< IStream > scriptFile = FileSystem::getInstance().open(m_scriptOutputPath + L"/" + outputGuid.format() + L".lua", File::FmWrite);
+		if (scriptFile)
+		{
+			FileOutputStream(scriptFile, new Utf8Encoding()) << ss.str() << Endl;
+			scriptFile->close();
+			scriptFile = 0;
+		}
 	}
 
 	return DefaultPipeline::buildOutput(

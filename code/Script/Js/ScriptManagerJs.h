@@ -31,7 +31,7 @@ public:
 	
 	virtual void registerClass(IScriptClass* scriptClass);
 
-	virtual Ref< IScriptResource > compile(const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const;
+	virtual Ref< IScriptResource > compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const;
 
 	virtual Ref< IScriptContext > createContext(const IScriptResource* scriptResource);
 

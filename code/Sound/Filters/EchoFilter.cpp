@@ -16,6 +16,9 @@ namespace traktor
 		namespace
 		{
 
+const int32_t c_maxEchos = 4;
+const float c_maxDelay = 1.0f;
+
 struct EchoFilterInstance : public RefCountImpl< IFilterInstance >
 {
 	float* m_history[SbcMaxChannelCount];
@@ -61,7 +64,7 @@ EchoFilter::EchoFilter()
 }
 
 EchoFilter::EchoFilter(float delay, float decay, float wetMix, float dryMix)
-:	m_delay(delay)
+:	m_delay(min(delay, c_maxDelay))
 ,	m_decay(decay)
 ,	m_wetMix(wetMix)
 ,	m_dryMix(dryMix)
@@ -70,7 +73,7 @@ EchoFilter::EchoFilter(float delay, float decay, float wetMix, float dryMix)
 
 Ref< IFilterInstance > EchoFilter::createInstance() const
 {
-	int32_t nechos = int32_t(1.0f / m_decay);
+	int32_t nechos = min(int32_t(1.0f / m_decay), c_maxEchos);
 	int32_t samples = nechos * alignUp(int32_t(m_delay * 48000), 4);
 
 	float* history = static_cast< float* >(Alloc::acquireAlign(samples * sizeof(float) * SbcMaxChannelCount, 16, T_FILE_LINE));
@@ -98,7 +101,7 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 {
 	EchoFilterInstance* efi = static_cast< EchoFilterInstance* >(instance);
 
-	int32_t nechos = int32_t(1.0f / m_decay);
+	int32_t nechos = min(int32_t(1.0f / m_decay), c_maxEchos);
 	int32_t delay = int32_t(m_delay * outBlock.sampleRate);
 
 	for (uint32_t i = 0; i < outBlock.maxChannel; ++i)
