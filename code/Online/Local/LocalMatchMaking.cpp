@@ -70,6 +70,11 @@ bool LocalMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCo
 	return false;
 }
 
+bool LocalMatchMaking::getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
+{
+	return false;
+}
+
 bool LocalMatchMaking::invite(uint64_t lobbyHandle, uint64_t userHandle)
 {
 	return false;

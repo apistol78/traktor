@@ -16,6 +16,11 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 /*!
  * \ingroup OGL
  */
+bool convertTextureFormat_sRGB(TextureFormat textureFormat, int& outPixelSize, GLint& outComponents, GLenum& outFormat, GLenum& outType);
+
+/*!
+ * \ingroup OGL
+ */
 bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, GLint& outFormat, GLenum& outType);
 
 	}

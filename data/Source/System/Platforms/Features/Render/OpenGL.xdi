@@ -71,6 +71,12 @@
 					<value>0</value>
 				</second>
 			</item>
+			<item>
+				<first>TexturePipeline.sRGB</first>
+				<second type="traktor.PropertyBoolean">
+					<value>true</value>
+				</second>
+			</item>			
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

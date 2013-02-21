@@ -116,6 +116,55 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 	return true;
 }
 
+bool convertTextureFormat_sRGB(TextureFormat textureFormat, int& outPixelSize, GLint& outComponents, GLenum& outFormat, GLenum& outType)
+{
+	switch (textureFormat)
+	{
+	case TfR8:
+		outPixelSize = 1;
+		outComponents = GL_SLUMINANCE8_EXT;
+		outFormat = GL_RED;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+
+	case TfR8G8B8A8:
+		outPixelSize = 4;
+		outComponents = GL_SRGB8_ALPHA8;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_INT_8_8_8_8_REV;
+		break;
+
+	case TfDXT1:
+		outPixelSize = 0;
+		outComponents = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT1_EXT;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+
+	case TfDXT2:
+	case TfDXT3:
+		outPixelSize = 0;
+		outComponents = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT3_EXT;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+
+	case TfDXT4:
+	case TfDXT5:
+		outPixelSize = 0;
+		outComponents = GL_COMPRESSED_SRGB_ALPHA_S3TC_DXT5_EXT;
+		outFormat = GL_RGBA;
+		outType = GL_UNSIGNED_BYTE;
+		break;
+
+	default:
+		T_DEBUG(L"Unsupported texture outFormat used");
+		return false;
+	}
+
+	return true;
+}
+
 bool convertTargetFormat(TextureFormat targetFormat, GLenum& outInternalFormat, GLint& outFormat, GLenum& outType)
 {
 	switch (targetFormat)

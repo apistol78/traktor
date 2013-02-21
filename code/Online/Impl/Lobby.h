@@ -33,6 +33,8 @@ public:
 
 	virtual uint32_t getParticipantCount() const;
 
+	virtual uint32_t getMaxParticipantCount() const;
+
 	virtual bool invite(const IUser* user);
 
 	virtual int32_t getIndex() const;

@@ -55,8 +55,16 @@ bool SimpleTextureOpenGL::create(const SimpleTextureCreateDesc& desc, GLfloat ma
 	m_height = desc.height;
 	m_maxAnisotropy = maxAnisotropy;
 
-	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
-		return false;
+	if (desc.sRGB)
+	{
+		if (!convertTextureFormat_sRGB(desc.format, m_pixelSize, m_components, m_format, m_type))
+			return false;
+	}
+	else
+	{
+		if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
+			return false;
+	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 	T_OGL_SAFE(glBindTexture(GL_TEXTURE_2D, m_textureName));

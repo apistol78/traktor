@@ -277,9 +277,13 @@ bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 
 bool SteamMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
-	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
-	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
 	outCount = SteamMatchmaking()->GetNumLobbyMembers(lobbyHandle);
+	return true;
+}
+
+bool SteamMatchMaking::getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
+{
+	outCount = SteamMatchmaking()->GetLobbyMemberLimit(lobbyHandle);
 	return true;
 }
 
