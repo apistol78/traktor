@@ -54,8 +54,16 @@ bool VolumeTextureOpenGL::create(const VolumeTextureCreateDesc& desc)
 	m_height = desc.height;
 	m_depth = desc.depth;
 
-	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
-		return false;
+	if (desc.sRGB)
+	{
+		if (!convertTextureFormat_sRGB(desc.format, m_pixelSize, m_components, m_format, m_type))
+			return false;
+	}
+	else
+	{
+		if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
+			return false;
+	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 

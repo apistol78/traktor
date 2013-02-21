@@ -74,8 +74,16 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 {
 	m_side = desc.side;
 
-	if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
-		return false;
+	if (desc.sRGB)
+	{
+		if (!convertTextureFormat_sRGB(desc.format, m_pixelSize, m_components, m_format, m_type))
+			return false;
+	}
+	else
+	{
+		if (!convertTextureFormat(desc.format, m_pixelSize, m_components, m_format, m_type))
+			return false;
+	}
 
 	T_OGL_SAFE(glGenTextures(1, &m_textureName));
 

@@ -59,17 +59,21 @@ std::wstring OS::getCurrentUser() const
 
 std::wstring OS::getUserHomePath() const
 {
-	return L"~";
+	std::wstring home;
+	if (getEnvironment(L"HOME", home))
+		return home;
+	else
+		return L"~";
 }
 
 std::wstring OS::getUserApplicationDataPath() const
 {
-	return L"~/.AppData";
+	return getUserHomePath() + L"/Library";
 }
 
 std::wstring OS::getWritableFolderPath() const
 {
-	return L"~/.AppData/.Temp";
+	return getUserHomePath() + L"/Library";
 }
 
 bool OS::openFile(const std::wstring& file) const
@@ -107,7 +111,14 @@ OS::envmap_t OS::getEnvironment() const
 
 bool OS::getEnvironment(const std::wstring& name, std::wstring& outValue) const
 {
-    return false;
+	const char* value = getenv(wstombs(name).c_str());
+	if (value)
+	{
+		outValue = mbstows(value);
+		return true;
+	}
+	else
+		return false;
 }
 
 Ref< IProcess > OS::execute(

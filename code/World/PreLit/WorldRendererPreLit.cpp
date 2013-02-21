@@ -1054,7 +1054,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 					sliceViewFrustum,
 					shadowBox,
 					m_shadowSettings.farZ,
-					(slice == 0) && m_shadowSettings.quantizeProjection,
+					m_shadowSettings.quantizeProjection,
 					shadowLightView,
 					shadowLightProjection,
 					shadowLightSquareProjection,

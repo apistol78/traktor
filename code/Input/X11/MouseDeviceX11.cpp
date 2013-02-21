@@ -27,6 +27,10 @@ c_mouseControlMap[] =
 	{ L"Mouse Y axis", DtPositionY, true, false }
 };
 
+const float c_mouseMargin = 16.0f;
+const float c_mouseDeltaScale = 4.0f;
+const float c_mouseDeltaLimit = 100.0f;
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.input.MouseDeviceX11", MouseDeviceX11, InputDeviceX11)
@@ -201,6 +205,24 @@ void MouseDeviceX11::readState()
 		m_axis[i] = m_raw[i];
 		m_raw[i] = 0.0f;
 	}
+
+	if (m_exclusive)
+	{
+		m_position[0] = clamp< float >(m_position[0], c_mouseMargin, m_width - c_mouseMargin);
+		m_position[1] = clamp< float >(m_position[1], c_mouseMargin, m_height - c_mouseMargin);
+
+		XWarpPointer(
+			m_display,
+			None,
+			m_window,
+			0,
+			0,
+			0,
+			0,
+			int(m_position[0]),
+			int(m_position[1])
+		);
+	}
 }
 
 bool MouseDeviceX11::supportRumble() const
@@ -280,7 +302,7 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 				if (!XIMaskIsSet(event->valuators.mask, i))
 					continue;
 
-				m_raw[j++] = float(values[i]);
+				m_raw[j++] = clamp(float(values[i] * c_mouseDeltaScale), -c_mouseDeltaLimit, c_mouseDeltaLimit);
 				if (j >= 2)
 					break;
 			}
