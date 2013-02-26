@@ -13,7 +13,7 @@ MeshEntity::MeshEntity(const Transform& transform)
 {
 }
 
-void MeshEntity::update(const UpdateParams& update)
+void MeshEntity::update(const world::UpdateParams& update)
 {
 	m_transform.step();
 }

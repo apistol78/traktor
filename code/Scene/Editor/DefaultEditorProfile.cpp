@@ -51,7 +51,7 @@ void DefaultEditorProfile::createEditorPlugins(
 
 void DefaultEditorProfile::createResourceFactories(
 	SceneEditorContext* context,
-	RefArray< resource::IResourceFactory >& outResourceFactories
+	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(new render::ShaderFactory(context->getResourceDatabase(), context->getRenderSystem()));
@@ -63,7 +63,7 @@ void DefaultEditorProfile::createResourceFactories(
 
 void DefaultEditorProfile::createEntityFactories(
 	SceneEditorContext* context,
-	RefArray< world::IEntityFactory >& outEntityFactories
+	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager()));
@@ -85,14 +85,14 @@ void DefaultEditorProfile::createEntityRenderers(
 
 void DefaultEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
+	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
 }
 
 void DefaultEditorProfile::createEntityEditorFactories(
 	SceneEditorContext* context,
-	RefArray< IEntityEditorFactory >& outEntityEditorFactories
+	RefArray< const IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 	outEntityEditorFactories.push_back(new DefaultEntityEditorFactory());

@@ -29,6 +29,7 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
+#include "World/IEntityEventManager.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
@@ -481,9 +482,14 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 		Ref< scene::Scene > sceneInstance = m_context->getScene();
 		if (sceneInstance)
-			m_worldRenderer->build(worldRenderView, sceneInstance->getRootEntity(), 0);
+		{
+			m_worldRenderer->beginBuild();
+			m_worldRenderer->build(sceneInstance->getRootEntity());
+			m_context->getEntityEventManager()->build(m_worldRenderer);
+			m_worldRenderer->endBuild(worldRenderView, 0);
+		}
 
-		m_worldRenderer->begin(
+		m_worldRenderer->beginRender(
 			0,
 			render::EtCyclop,
 			Color4f(tmp[0], tmp[1], tmp[2], tmp[3])
@@ -495,7 +501,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 			render::EtCyclop
 		);
 
-		m_worldRenderer->end(0, render::EtCyclop, deltaTime);
+		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
 
 		// Draw wire guides.
 		m_primitiveRenderer->begin(m_renderView);

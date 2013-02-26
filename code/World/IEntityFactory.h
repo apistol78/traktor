@@ -31,7 +31,7 @@ public:
 	virtual const TypeInfoSet getEntityTypes() const = 0;
 
 	virtual Ref< Entity > createEntity(
-		IEntityBuilder* builder,
+		const IEntityBuilder* builder,
 		const EntityData& entityData
 	) const = 0;
 };

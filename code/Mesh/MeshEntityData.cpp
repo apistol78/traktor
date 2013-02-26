@@ -35,7 +35,7 @@ const resource::Id< IMesh >& MeshEntityData::getMesh() const
 	return m_mesh;
 }
 
-Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
+Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const
 {
 	resource::Proxy< IMesh > mesh;
 	if (!resourceManager->bind(m_mesh, mesh))

@@ -46,13 +46,13 @@ public:
 	 *
 	 * \param factory Resource factory.
 	 */
-	virtual void addFactory(IResourceFactory* factory) = 0;
+	virtual void addFactory(const IResourceFactory* factory) = 0;
 
 	/*! \brief Remove resource factory from manager.
 	 *
 	 * \param factory Resource factory.
 	 */
-	virtual void removeFactory(IResourceFactory* factory) = 0;
+	virtual void removeFactory(const IResourceFactory* factory) = 0;
 
 	/*! \brief Remove all resource factories. */
 	virtual void removeAllFactories() = 0;

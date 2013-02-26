@@ -41,7 +41,7 @@ class T_DLLCLASS AbstractMeshEntityData : public world::EntityData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const = 0;
+	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const = 0;
 };
 
 	}

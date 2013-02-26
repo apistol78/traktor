@@ -28,6 +28,7 @@
 #include "Weather/WeatherEntityFactory.h"
 #include "Weather/WeatherEntityRenderer.h"
 #include "World/EntityBuilder.h"
+#include "World/EntityEventManager.h"
 #include "World/EntityResourceFactory.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/DecalEntityRenderer.h"
@@ -86,6 +87,8 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_entityRenderers->add(new weather::WeatherEntityRenderer());
 	m_entityRenderers->add(new terrain::EntityRenderer());
 
+	m_eventManager = new world::EntityEventManager();
+
 	m_shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
 	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
 	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
@@ -95,10 +98,12 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 
 void WorldServer::destroy()
 {
+	m_worldType = 0;
 	m_resourceServer = 0;
 	m_renderServer = 0;
 	m_entityBuilder = 0;
-	m_worldType = 0;
+	m_entityRenderers = 0;
+	m_eventManager = 0;
 }
 
 void WorldServer::createResourceFactories(IEnvironment* environment)
@@ -170,7 +175,7 @@ void WorldServer::removeEntityRenderer(world::IEntityRenderer* entityRenderer)
 	m_entityRenderers->remove(entityRenderer);
 }
 
-world::IEntityBuilder* WorldServer::getEntityBuilder()
+const world::IEntityBuilder* WorldServer::getEntityBuilder()
 {
 	return m_entityBuilder;
 }
@@ -178,6 +183,11 @@ world::IEntityBuilder* WorldServer::getEntityBuilder()
 world::WorldEntityRenderers* WorldServer::getEntityRenderers()
 {
 	return m_entityRenderers;
+}
+
+world::IEntityEventManager* WorldServer::getEntityEventManager()
+{
+	return m_eventManager;
 }
 
 Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(

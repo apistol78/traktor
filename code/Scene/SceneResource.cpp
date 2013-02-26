@@ -7,7 +7,9 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneResource.h"
 #include "World/EntityData.h"
-#include "World/IEntityBuilder.h"
+#include "World/EntitySchema.h"
+#include "World/EntityBuilderWithSchema.h"
+#include "World/IEntityFactory.h"
 #include "World/WorldRenderSettings.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
@@ -26,8 +28,7 @@ SceneResource::SceneResource()
 Ref< Scene > SceneResource::createScene(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
-	world::IEntityBuilder* entityBuilder,
-	world::IEntitySchema* entitySchema
+	world::IEntityBuilder* entityBuilder
 ) const
 {
 	resource::Proxy< world::PostProcessSettings > postProcessSettings;
@@ -38,14 +39,16 @@ Ref< Scene > SceneResource::createScene(
 			log::error << L"Unable to bind post processing settings" << Endl;
 	}
 
-	entityBuilder->begin(entitySchema);
+	Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
+	std::map< const world::EntityData*, Ref< world::Entity > > entityProducts;
 
-	Ref< world::Entity > rootEntity = entityBuilder->create(m_entityData);
+	Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema, entityProducts);
+	Ref< world::Entity > rootEntity = entityBuilderSchema->create(m_entityData);
 
 	Ref< ISceneController > controller;
 	if (m_controllerData)
 	{
-		controller = m_controllerData->createController(entityBuilder, entitySchema);
+		controller = m_controllerData->createController(entityProducts);
 		if (!controller)
 		{
 			log::error << L"Failed to create scene; unable to instantiate scene controller" << Endl;
@@ -53,7 +56,7 @@ Ref< Scene > SceneResource::createScene(
 		}
 	}
 
-	entityBuilder->end();
+	T_ASSERT (entityBuilderSchema->getReferenceCount() == 1);
 
 	return new Scene(
 		controller,

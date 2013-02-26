@@ -86,7 +86,7 @@ Aabb3 SkyEntity::getBoundingBox() const
 	return Aabb3(Vector4(-c_radius, -c_radius, -c_radius, 1.0f), Vector4(c_radius, c_radius, c_radius, 1.0f));
 }
 
-void SkyEntity::update(const UpdateParams& update)
+void SkyEntity::update(const world::UpdateParams& update)
 {
 }
 

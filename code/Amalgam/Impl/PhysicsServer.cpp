@@ -44,17 +44,14 @@ void PhysicsServer::destroy()
 void PhysicsServer::createResourceFactories(IEnvironment* environment)
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	db::Database* database = environment->getDatabase();
-
-	resourceManager->addFactory(new physics::MeshFactory(database));
+	resourceManager->addFactory(new physics::MeshFactory(environment->getDatabase()));
 }
 
 void PhysicsServer::createEntityFactories(IEnvironment* environment)
 {
+	world::IEntityEventManager* eventManger = environment->getWorld()->getEntityEventManager();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
-	world::IEntityBuilder* entityBuilder = environment->getWorld()->getEntityBuilder();
-
-	entityBuilder->addFactory(new physics::EntityFactory(resourceManager, m_physicsManager));
+	environment->getWorld()->addEntityFactory(new physics::EntityFactory(eventManger, resourceManager, m_physicsManager));
 }
 
 int32_t PhysicsServer::reconfigure(const PropertyGroup* settings)

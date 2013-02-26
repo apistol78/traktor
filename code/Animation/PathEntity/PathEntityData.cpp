@@ -17,7 +17,7 @@ PathEntityData::PathEntityData()
 {
 }
 
-Ref< PathEntity > PathEntityData::createEntity(world::IEntityBuilder* builder) const
+Ref< PathEntity > PathEntityData::createEntity(const world::IEntityBuilder* builder) const
 {
 	Ref< world::Entity > entity = builder->create(m_entityData);
 	return new PathEntity(

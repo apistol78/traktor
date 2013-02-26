@@ -32,7 +32,7 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > EntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
+Ref< world::Entity > EntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	if (const OceanEntityData* oceanData = dynamic_type_cast< const OceanEntityData* >(&entityData))
 	{

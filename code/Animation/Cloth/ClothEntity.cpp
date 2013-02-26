@@ -251,7 +251,7 @@ Aabb3 ClothEntity::getBoundingBox() const
 	return m_aabb;
 }
 
-void ClothEntity::update(const UpdateParams& update)
+void ClothEntity::update(const world::UpdateParams& update)
 {
 #if !TARGET_OS_IPHONE
 	const float c_updateDeltaTime = 1.0f / 30.0f;

@@ -47,7 +47,7 @@ bool MeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)

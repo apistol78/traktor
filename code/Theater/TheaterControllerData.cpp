@@ -5,12 +5,21 @@
 #include "Theater/Track.h"
 #include "Theater/TrackData.h"
 #include "World/Entity.h"
-#include "World/IEntityBuilder.h"
 
 namespace traktor
 {
 	namespace theater
 	{
+		namespace
+		{
+
+world::Entity* findEntityDataProduct(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts, const world::EntityData* entityData)
+{
+	std::map< const world::EntityData*, Ref< world::Entity > >::const_iterator i = entityProducts.find(entityData);
+	return i != entityProducts.end() ? i->second : 0;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 1, TheaterControllerData, scene::ISceneControllerData)
 
@@ -20,16 +29,16 @@ TheaterControllerData::TheaterControllerData()
 {
 }
 
-Ref< scene::ISceneController > TheaterControllerData::createController(world::IEntityBuilder* entityBuilder, world::IEntitySchema* entitySchema) const
+Ref< scene::ISceneController > TheaterControllerData::createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const
 {
 	RefArray< Track > tracks(m_trackData.size());
 	for (size_t i = 0; i < m_trackData.size(); ++i)
 	{
-		Ref< world::Entity > entity = entityBuilder->get(m_trackData[i]->getEntityData());
+		Ref< world::Entity > entity = findEntityDataProduct(entityProducts, m_trackData[i]->getEntityData());
 		if (!entity)
 			return 0;
 
-		Ref< world::Entity > lookAtEntity = entityBuilder->get(m_trackData[i]->getLookAtEntityData());
+		Ref< world::Entity > lookAtEntity = findEntityDataProduct(entityProducts, m_trackData[i]->getLookAtEntityData());
 
 		tracks[i] = new Track(
 			entity,

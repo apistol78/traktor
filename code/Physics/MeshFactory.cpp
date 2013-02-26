@@ -1,9 +1,9 @@
-#include "Physics/MeshFactory.h"
-#include "Physics/MeshResource.h"
-#include "Physics/Mesh.h"
+#include "Core/Io/IStream.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Core/Io/IStream.h"
+#include "Physics/Mesh.h"
+#include "Physics/MeshFactory.h"
+#include "Physics/MeshResource.h"
 
 namespace traktor
 {
@@ -29,7 +29,7 @@ bool MeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

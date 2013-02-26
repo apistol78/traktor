@@ -41,6 +41,7 @@
 #include "Ui/Events/KeyEvent.h"
 #include "Ui/Itf/IWidget.h"
 #include "World/Entity.h"
+#include "World/IEntityEventManager.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/WorldRenderSettings.h"
 #include "World/WorldRenderView.h"
@@ -565,9 +566,14 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 		Ref< scene::Scene > sceneInstance = m_context->getScene();
 		if (sceneInstance)
-			m_worldRenderer->build(m_worldRenderView, sceneInstance->getRootEntity(), 0);
+		{
+			m_worldRenderer->beginBuild();
+			m_worldRenderer->build(sceneInstance->getRootEntity());
+			m_context->getEntityEventManager()->build(m_worldRenderer);
+			m_worldRenderer->endBuild(m_worldRenderView, 0);
+		}
 
-		m_worldRenderer->begin(
+		m_worldRenderer->beginRender(
 			0,
 			render::EtCyclop,
 			Color4f(colorClear[0], colorClear[1], colorClear[2], colorClear[3])
@@ -579,7 +585,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 			render::EtCyclop
 		);
 
-		m_worldRenderer->end(0, render::EtCyclop, deltaTime);
+		m_worldRenderer->endRender(0, render::EtCyclop, deltaTime);
 
 		// Render wire guides.
 		m_primitiveRenderer->begin(m_renderView);

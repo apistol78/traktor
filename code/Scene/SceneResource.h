@@ -33,7 +33,6 @@ class IRenderSystem;
 	{
 
 class IEntityBuilder;
-class IEntitySchema;
 class EntityData;
 class WorldRenderSettings;
 class PostProcessSettings;
@@ -59,8 +58,7 @@ public:
 	Ref< Scene > createScene(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
-		world::IEntityBuilder* entityBuilder,
-		world::IEntitySchema* entitySchema
+		world::IEntityBuilder* entityBuilder
 	) const;
 
 	void setWorldRenderSettings(world::WorldRenderSettings* worldRenderSettings);

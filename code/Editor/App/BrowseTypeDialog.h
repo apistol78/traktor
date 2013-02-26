@@ -32,7 +32,7 @@ class BrowseTypeDialog : public ui::ConfigDialog
 public:
 	BrowseTypeDialog(const PropertyGroup* settings);
 
-	bool create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable);
+	bool create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable, bool onlyInstantiable);
 
 	const TypeInfo* getSelectedType() const;
 

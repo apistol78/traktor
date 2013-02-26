@@ -63,7 +63,7 @@ public:
 	 * \param outCacheable If resource is cacheable (default set to true).
 	 * \return Resource instance.
 	 */
-	virtual Ref< Object > create(IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) = 0;
+	virtual Ref< Object > create(IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const = 0;
 };
 	
 	}

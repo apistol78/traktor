@@ -25,7 +25,6 @@ ClothEntityData::ClothEntityData()
 }
 
 Ref< ClothEntity > ClothEntityData::createEntity(
-	world::IEntityBuilder* builder,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem
 ) const

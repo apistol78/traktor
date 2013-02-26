@@ -39,7 +39,7 @@ void ArticulatedEntity::destroy()
 	world::Entity::destroy();
 }
 
-void ArticulatedEntity::update(const UpdateParams& update)
+void ArticulatedEntity::update(const world::UpdateParams& update)
 {
 	for (RefArray< RigidEntity >::iterator i = m_entities.begin(); i != m_entities.end(); ++i)
 		(*i)->update(update);

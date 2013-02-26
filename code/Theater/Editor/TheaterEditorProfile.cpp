@@ -29,14 +29,14 @@ void TheaterEditorProfile::createEditorPlugins(
 
 void TheaterEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< resource::IResourceFactory >& outResourceFactories
+	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
 }
 
 void TheaterEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< world::IEntityFactory >& outEntityFactories
+	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
 }
@@ -52,7 +52,7 @@ void TheaterEditorProfile::createEntityRenderers(
 
 void TheaterEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
+	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
 	outControllerEditorFactories.push_back(new TheaterControllerEditorFactory());
@@ -60,7 +60,7 @@ void TheaterEditorProfile::createControllerEditorFactories(
 
 void TheaterEditorProfile::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
+	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 }

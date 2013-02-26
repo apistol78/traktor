@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class IEntityBuilder;
+class IEntityEventManager;
 class IEntityFactory;
 class IEntityRenderer;
 class IWorldRenderer;
@@ -47,9 +48,11 @@ public:
 
 	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer) = 0;
 
-	virtual world::IEntityBuilder* getEntityBuilder() = 0;
+	virtual const world::IEntityBuilder* getEntityBuilder() = 0;
 
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
+
+	virtual world::IEntityEventManager* getEntityEventManager() = 0;
 
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,

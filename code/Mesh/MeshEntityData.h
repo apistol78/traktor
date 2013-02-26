@@ -29,7 +29,7 @@ public:
 
 	const resource::Id< IMesh >& getMesh() const;
 
-	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
+	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(ISerializer& s);
 

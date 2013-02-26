@@ -9,7 +9,6 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityFactory.h"
-#include "World/IEntitySchema.h"
 #include "World/Entity/NullEntity.h"
 
 namespace traktor
@@ -21,16 +20,16 @@ namespace traktor
 
 Ref< IEntityEditor > createEntityEditor(
 	SceneEditorContext* context,
-	const RefArray< IEntityEditorFactory >& entityEditorFactories,
+	const RefArray< const IEntityEditorFactory >& entityEditorFactories,
 	EntityAdapter* entityAdapter
 )
 {
 	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< IEntityEditorFactory > entityEditorFactory;
+	const IEntityEditorFactory* entityEditorFactory = 0;
 
 	const TypeInfo& entityDataType = type_of(entityAdapter->getEntityData());
 
-	for (RefArray< IEntityEditorFactory >::const_iterator i = entityEditorFactories.begin(); i != entityEditorFactories.end(); ++i)
+	for (RefArray< const IEntityEditorFactory >::const_iterator i = entityEditorFactories.begin(); i != entityEditorFactories.end(); ++i)
 	{
 		TypeInfoSet entityDataTypes = (*i)->getEntityDataTypes();
 		for (TypeInfoSet::const_iterator j = entityDataTypes.begin(); j != entityDataTypes.end(); ++j)
@@ -61,27 +60,16 @@ Ref< IEntityEditor > createEntityEditor(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuilder, world::IEntityBuilder)
 
-EntityAdapterBuilder::EntityAdapterBuilder(SceneEditorContext* context, const RefArray< IEntityEditorFactory >& entityEditorFactories)
+EntityAdapterBuilder::EntityAdapterBuilder(
+	SceneEditorContext* context,
+	world::IEntityBuilder* entityBuilder,
+	const RefArray< const IEntityEditorFactory >& entityEditorFactories
+)
 :	m_context(context)
+,	m_entityBuilder(entityBuilder)
 ,	m_entityEditorFactories(entityEditorFactories)
 ,	m_adapterCount(0)
 {
-}
-
-void EntityAdapterBuilder::addFactory(world::IEntityFactory* entityFactory)
-{
-	m_entityFactories.push_back(entityFactory);
-}
-
-void EntityAdapterBuilder::removeFactory(world::IEntityFactory* entityFactory)
-{
-	T_BREAKPOINT;
-}
-
-void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
-{
-	m_entitySchema = entitySchema;
-
 	RefArray< EntityAdapter > entityAdapters;
 	m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants);
 
@@ -118,7 +106,22 @@ void EntityAdapterBuilder::begin(world::IEntitySchema* entitySchema)
 	T_ASSERT (!m_rootAdapter);
 }
 
-Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entityData)
+void EntityAdapterBuilder::addFactory(const world::IEntityFactory* entityFactory)
+{
+	m_entityBuilder->addFactory(entityFactory);
+}
+
+void EntityAdapterBuilder::removeFactory(const world::IEntityFactory* entityFactory)
+{
+	m_entityBuilder->removeFactory(entityFactory);
+}
+
+const world::IEntityFactory* EntityAdapterBuilder::getFactory(const world::EntityData* entityData) const
+{
+	return m_entityBuilder->getFactory(entityData);
+}
+
+Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entityData) const
 {
 	Ref< EntityAdapter > entityAdapter;
 
@@ -142,26 +145,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		m_rootAdapter = entityAdapter;
 
 	// Find entity factory.
-	uint32_t minClassDifference = std::numeric_limits< uint32_t >::max();
-	Ref< world::IEntityFactory > entityFactory;
-
-	for (RefArray< world::IEntityFactory >::iterator i = m_entityFactories.begin(); i != m_entityFactories.end() && minClassDifference > 0; ++i)
-	{
-		const TypeInfoSet& typeSet = (*i)->getEntityTypes();
-		for (TypeInfoSet::const_iterator j = typeSet.begin(); j != typeSet.end() && minClassDifference > 0; ++j)
-		{
-			if (is_type_of(**j, type_of(entityData)))
-			{
-				uint32_t classDifference = type_difference(**j, type_of(entityData));
-				if (classDifference < minClassDifference)
-				{
-					minClassDifference = classDifference;
-					entityFactory = *i;
-				}
-			}
-		}
-	}
-
+	Ref< const world::IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityData);
 	if (!entityFactory)
 	{
 		log::error << L"Unable to find entity factory for \"" << type_name(entityData) << L"\"" << Endl;
@@ -193,25 +177,13 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		entityAdapter->setEntityEditor(entityEditor);
 	}
 
-	m_entities[entityData] = entity;
-	
-	if (m_entitySchema)
-		m_entitySchema->insertEntity(0, entityData->getName(), entity);
-
 	++m_adapterCount;
 	return entity;
 }
 
-Ref< world::Entity > EntityAdapterBuilder::get(const world::EntityData* entityData) const
+const world::IEntityBuilder* EntityAdapterBuilder::getCompositeEntityBuilder() const
 {
-	std::map< const world::EntityData*, Ref< world::Entity > >::const_iterator i = m_entities.find(entityData);
-	return (i != m_entities.end()) ? i->second : 0;
-}
-
-void EntityAdapterBuilder::end()
-{
-	T_ASSERT (m_currentAdapter == 0);
-	m_cachedAdapters.clear();
+	return m_entityBuilder->getCompositeEntityBuilder();
 }
 
 EntityAdapter* EntityAdapterBuilder::getRootAdapter() const

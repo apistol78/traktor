@@ -47,7 +47,7 @@ public:
 		float distance
 	);
 
-	virtual void update(const UpdateParams& update);
+	virtual void update(const world::UpdateParams& update);
 
 private:
 	RefArray< MeshEntity > m_lods;

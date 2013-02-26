@@ -25,7 +25,7 @@ void HeightfieldEditorProfile::createEditorPlugins(
 
 void HeightfieldEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< resource::IResourceFactory >& outResourceFactories
+	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(new HeightfieldFactory(context->getResourceDatabase()));
@@ -34,7 +34,7 @@ void HeightfieldEditorProfile::createResourceFactories(
 
 void HeightfieldEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< world::IEntityFactory >& outEntityFactories
+	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
 }
@@ -50,14 +50,14 @@ void HeightfieldEditorProfile::createEntityRenderers(
 
 void HeightfieldEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
+	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
 }
 
 void HeightfieldEditorProfile::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
+	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 }

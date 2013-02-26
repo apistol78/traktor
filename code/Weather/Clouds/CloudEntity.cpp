@@ -285,7 +285,7 @@ void CloudEntity::render(
 	renderCluster(renderContext, worldRenderView, worldRenderPass, primitiveRenderer, m_cluster);
 }
 
-void CloudEntity::update(const UpdateParams& update)
+void CloudEntity::update(const world::UpdateParams& update)
 {
 	m_cluster.update(m_particleData, update.deltaTime);
 	m_timeUntilUpdate -= update.deltaTime;

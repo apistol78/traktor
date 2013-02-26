@@ -517,7 +517,18 @@ void WorldRendererForward::createRenderView(const WorldViewOrtho& worldView, Wor
 	outRenderView.setProjection(orthoLh(worldView.width, worldView.height, -viewFarZ, viewFarZ));
 }
 
-void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entity, int frame)
+bool WorldRendererForward::beginBuild()
+{
+	m_buildEntities.clear();
+	return true;
+}
+
+void WorldRendererForward::build(Entity* entity)
+{
+	m_buildEntities.push_back(entity);
+}
+
+void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -543,7 +554,8 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 			depthRenderView,
 			0
 		);
-		f.depth->build(depthRenderView, pass, entity);
+		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+			f.depth->build(depthRenderView, pass, *i);
 		f.depth->flush(depthRenderView, pass);
 
 		f.haveDepth = true;
@@ -552,9 +564,15 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 		f.haveDepth = false;
 
 	if (m_shadowsQuality > QuDisabled)
-		buildShadows(worldRenderView, entity, frame);
+	{
+		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+			buildShadows(worldRenderView, *i, frame);
+	}
 	else
-		buildNoShadows(worldRenderView, entity, frame);
+	{
+		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+			buildNoShadows(worldRenderView, *i, frame);
+	}
 
 	// Prepare stereoscopic projection.
 	float screenWidth = float(m_renderView->getWidth());
@@ -564,7 +582,7 @@ void WorldRendererForward::build(WorldRenderView& worldRenderView, Entity* entit
 	m_count++;
 }
 
-bool WorldRendererForward::begin(int frame, render::EyeType eye, const Color4f& clearColor)
+bool WorldRendererForward::beginRender(int frame, render::EyeType eye, const Color4f& clearColor)
 {
 	if (m_visualTargetSet)
 	{
@@ -722,7 +740,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	m_globalContext->flush();
 }
 
-void WorldRendererForward::end(int frame, render::EyeType eye, float deltaTime)
+void WorldRendererForward::endRender(int frame, render::EyeType eye, float deltaTime)
 {
 	Frame& f = m_frames[frame];
 	Matrix44 projection;

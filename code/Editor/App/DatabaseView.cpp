@@ -392,7 +392,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		else if (command == L"Editor.Database.ReplaceInstance")	// Replace instance
 		{
 			BrowseTypeDialog browseTypeDlg(m_editor->getSettings());
-			browseTypeDlg.create(this, &type_of< ISerializable >(), true);
+			browseTypeDlg.create(this, &type_of< ISerializable >(), true, true);
 
 			if (browseTypeDlg.showModal() == ui::DrOk)
 			{

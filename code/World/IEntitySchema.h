@@ -22,7 +22,7 @@ class Entity;
 /*! \brief Entity schema interface.
  * \ingroup World
  *
- * Entity schemas are blue-prints of entities
+ * Entity schema are blue-prints of entities
  * collected when entities are created and thus
  * are useful for resolving entity relationships
  * externally.

@@ -41,9 +41,11 @@ public:
 
 	virtual void removeEntityRenderer(world::IEntityRenderer* entityRenderer);
 
-	virtual world::IEntityBuilder* getEntityBuilder();
+	virtual const world::IEntityBuilder* getEntityBuilder();
 
 	virtual world::WorldEntityRenderers* getEntityRenderers();
+
+	virtual world::IEntityEventManager* getEntityEventManager();
 
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,
@@ -55,6 +57,7 @@ public:
 private:
 	Ref< world::IEntityBuilder > m_entityBuilder;
 	Ref< world::WorldEntityRenderers > m_entityRenderers;
+	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
 	const TypeInfo* m_worldType;

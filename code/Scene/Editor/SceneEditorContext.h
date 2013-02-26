@@ -60,6 +60,7 @@ class PrimitiveRenderer;
 
 class Entity;
 class EntityData;
+class IEntityEventManager;
 
 	}
 
@@ -110,6 +111,7 @@ public:
 		editor::IDocument* document,
 		db::Database* resourceDb,
 		db::Database* sourceDb,
+		world::IEntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
 		physics::PhysicsManager* physicsManager
@@ -248,6 +250,8 @@ public:
 
 	db::Database* getSourceDatabase() { return m_sourceDb; }
 
+	world::IEntityEventManager* getEntityEventManager() const { return m_eventManager; }
+
 	resource::IResourceManager* getResourceManager() const { return m_resourceManager; }
 
 	render::IRenderSystem* getRenderSystem() const { return m_renderSystem; }
@@ -316,6 +320,7 @@ private:
 	editor::IDocument* m_document;
 	Ref< db::Database > m_resourceDb;
 	Ref< db::Database > m_sourceDb;
+	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderSystem > m_renderSystem;
 	Ref< render::ITexture > m_debugTexture[4];

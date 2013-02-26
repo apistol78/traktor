@@ -47,7 +47,7 @@ BrowseTypeDialog::BrowseTypeDialog(const PropertyGroup* settings)
 {
 }
 
-bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable)
+bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable, bool onlyInstantiable)
 {
 	std::vector< const TypeInfo* > types;
 	if (base)
@@ -107,6 +107,8 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 		const TypeInfo* type = *i;
 
 		if (onlyEditable && !type->isEditable())
+			continue;
+		if (onlyInstantiable && !type->isInstantiable())
 			continue;
 
 		std::vector< std::wstring > parts;

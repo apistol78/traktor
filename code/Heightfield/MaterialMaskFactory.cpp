@@ -32,7 +32,7 @@ bool MaterialMaskFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > MaterialMaskFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > MaterialMaskFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

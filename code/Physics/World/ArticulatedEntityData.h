@@ -47,7 +47,7 @@ public:
 	};
 
 	Ref< ArticulatedEntity > createEntity(
-		world::IEntityBuilder* builder,
+		const world::IEntityBuilder* builder,
 		PhysicsManager* physicsManager
 	) const;
 

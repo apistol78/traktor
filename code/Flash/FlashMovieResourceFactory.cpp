@@ -26,7 +26,7 @@ bool FlashMovieResourceFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > FlashMovieResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > FlashMovieResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	return m_db->getObjectReadOnly< FlashMovie >(guid);
 }

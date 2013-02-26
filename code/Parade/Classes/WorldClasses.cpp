@@ -3,6 +3,7 @@
 #include "Script/Boxes.h"
 #include "Script/IScriptManager.h"
 #include "World/EntityBuilder.h"
+#include "World/EntityBuilderWithSchema.h"
 #include "World/EntityData.h"
 #include "World/EntitySchema.h"
 #include "World/IEntityFactory.h"
@@ -53,7 +54,7 @@ void world_PostProcess_setParameter(world::PostProcess* this_, const std::wstrin
 
 void world_Entity_update(world::Entity* this_, float totalTime, float deltaTime)
 {
-	world::Entity::UpdateParams up;
+	world::UpdateParams up;
 	up.totalTime = totalTime;
 	up.deltaTime = deltaTime;
 	up.alternateTime = totalTime;
@@ -85,15 +86,16 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< world::IEntityBuilder > > classIEntityBuilder = new script::AutoScriptClass< world::IEntityBuilder >();
 	classIEntityBuilder->addMethod("addFactory", &world::IEntityBuilder::addFactory);
 	classIEntityBuilder->addMethod("removeFactory", &world::IEntityBuilder::removeFactory);
-	classIEntityBuilder->addMethod("beginBuild", &world::IEntityBuilder::begin);
 	classIEntityBuilder->addMethod("create", &world_IEntityBuilder_create);
-	classIEntityBuilder->addMethod("get", &world::IEntityBuilder::get);
-	classIEntityBuilder->addMethod("endBuild", &world::IEntityBuilder::end);
 	scriptManager->registerClass(classIEntityBuilder);
 
 	Ref< script::AutoScriptClass< world::EntityBuilder > > classEntityBuilder = new script::AutoScriptClass< world::EntityBuilder >();
 	classEntityBuilder->addConstructor();
 	scriptManager->registerClass(classEntityBuilder);
+
+	Ref< script::AutoScriptClass< world::EntityBuilderWithSchema > > classEntityBuilderWithSchema = new script::AutoScriptClass< world::EntityBuilderWithSchema >();
+	classEntityBuilderWithSchema->addConstructor< world::IEntityBuilder*, world::IEntitySchema* >();
+	scriptManager->registerClass(classEntityBuilderWithSchema);
 
 	Ref< script::AutoScriptClass< world::IEntityRenderer > > classIEntityRenderer = new script::AutoScriptClass< world::IEntityRenderer >();
 	scriptManager->registerClass(classIEntityRenderer);

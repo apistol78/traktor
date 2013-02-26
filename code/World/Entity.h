@@ -4,6 +4,7 @@
 #include "Core/Object.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Transform.h"
+#include "World/WorldTypes.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -26,14 +27,6 @@ class T_DLLCLASS Entity : public Object
 	T_RTTI_CLASS;
 
 public:
-	/*! \brief Entity update parameters. */
-	struct UpdateParams
-	{
-		float totalTime;		/*! \brief Total time since first update. */
-		float deltaTime;		/*! \brief Delta time since last update. */
-		float alternateTime;	/*! \brief Alternative absolute time. */
-	};
-
 	virtual ~Entity();
 
 	/*! \brief Destroy entity resources.

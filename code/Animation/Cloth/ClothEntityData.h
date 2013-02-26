@@ -29,13 +29,6 @@ class IResourceManager;
 
 	}
 
-	namespace world
-	{
-
-class IEntityBuilder;
-
-	}
-
 	namespace animation
 	{
 
@@ -57,7 +50,6 @@ public:
 	ClothEntityData();
 
 	Ref< ClothEntity > createEntity(
-		world::IEntityBuilder* builder,
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem
 	) const;

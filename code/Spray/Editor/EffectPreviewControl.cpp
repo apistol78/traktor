@@ -232,6 +232,7 @@ void EffectPreviewControl::syncEffect()
 	}
 
 	m_context = syncContext;
+	update();
 }
 
 void EffectPreviewControl::eventButtonDown(ui::Event* event)
@@ -339,12 +340,14 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			m_primitiveRenderer->drawLine(
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				Color4ub(90, 90, 90)
+				(x == 0) ? 2.0f : 0.0f,
+				Color4ub(90, 90, 90, 200)
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				Color4ub(90, 90, 90)
+				(x == 0) ? 2.0f : 0.0f,
+				Color4ub(90, 90, 90, 200)
 			);
 		}
 

@@ -31,7 +31,7 @@ bool TerrainFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< const TerrainResource > terrainResource = m_db->getObjectReadOnly< TerrainResource >(guid);
 	if (!terrainResource)

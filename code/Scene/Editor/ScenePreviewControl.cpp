@@ -38,6 +38,7 @@
 #include "Ui/Custom/StatusBar/StatusBar.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/QuadSplitter.h"
+#include "World/IEntityEventManager.h"
 
 // Resources
 #include "Resources/SceneEdit.h"
@@ -460,14 +461,27 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 
 			while (m_lastPhysicsTime < scaledTime)
 			{
-				scene->update(m_lastPhysicsTime, c_updateDeltaTime, m_lastPhysicsTime, true, true);
+				world::UpdateParams update;
+				update.totalTime = m_lastPhysicsTime;
+				update.deltaTime = c_updateDeltaTime;
+				update.alternateTime = m_lastPhysicsTime;
+
+				scene->update(update, true, true);
+				m_context->getEntityEventManager()->update(update);
 				m_context->getPhysicsManager()->update();
+
 				m_lastPhysicsTime += c_updateDeltaTime;
 			}
 		}
 		else if (scene)
 		{
-			scene->update(scaledTime, scaledDeltaTime, scaledTime, true, true);
+			world::UpdateParams update;
+			update.totalTime = scaledTime;
+			update.deltaTime = scaledDeltaTime;
+			update.alternateTime = scaledTime;
+
+			scene->update(update, true, true);
+			m_context->getEntityEventManager()->update(update);
 		}
 
 		// Issue updates on render controls.

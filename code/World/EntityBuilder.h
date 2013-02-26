@@ -1,9 +1,7 @@
-#ifndef traktor_world_EntitySetBuilder_H
-#define traktor_world_EntitySetBuilder_H
+#ifndef traktor_world_EntityBuilder_H
+#define traktor_world_EntityBuilder_H
 
-#include <list>
 #include <map>
-#include <stack>
 #include "Core/RefArray.h"
 #include "Core/Thread/Semaphore.h"
 #include "World/IEntityBuilder.h"
@@ -29,32 +27,23 @@ class T_DLLCLASS EntityBuilder : public IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	EntityBuilder();
+	virtual void addFactory(const IEntityFactory* entityFactory);
 
-	virtual void addFactory(IEntityFactory* entityFactory);
+	virtual void removeFactory(const IEntityFactory* entityFactory);
 
-	virtual void removeFactory(IEntityFactory* entityFactory);
+	virtual const IEntityFactory* getFactory(const EntityData* entityData) const;
 
-	virtual void begin(IEntitySchema* entitySchema);
+	virtual const IEntityBuilder* getCompositeEntityBuilder() const;
 
-	virtual Ref< Entity > create(const EntityData* entityData);
-
-	virtual Ref< Entity > get(const EntityData* entityData) const;
-
-	virtual void end();
+	virtual Ref< Entity > create(const EntityData* entityData) const;
 
 private:
-	typedef std::list< std::pair< std::wstring, Ref< Entity > > > scope_t;
-
-	Semaphore m_lock;
-	Ref< IEntitySchema > m_entitySchema;
-	RefArray< IEntityFactory > m_entityFactories;
-	std::stack< scope_t > m_entityScope;
-	std::map< const EntityData*, Ref< Entity > > m_entities;
-	std::map< const TypeInfo*, IEntityFactory* > m_resolvedFactoryCache;
+	mutable Semaphore m_lock;
+	RefArray< const IEntityFactory > m_entityFactories;
+	mutable std::map< const TypeInfo*, const IEntityFactory* > m_resolvedFactoryCache;
 };
 
 	}
 }
 
-#endif	// traktor_world_EntitySetBuilder_H
+#endif	// traktor_world_EntityBuilder_H

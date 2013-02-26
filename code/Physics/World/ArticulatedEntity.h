@@ -35,7 +35,7 @@ public:
 
 	virtual void destroy();
 
-	virtual void update(const UpdateParams& update);
+	virtual void update(const world::UpdateParams& update);
 
 	virtual void setTransform(const Transform& transform);
 

@@ -20,7 +20,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.ArticulatedEntityData", 0, ArticulatedEntityData, world::EntityData)
 
 Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
-	world::IEntityBuilder* builder,
+	const world::IEntityBuilder* builder,
 	PhysicsManager* physicsManager
 ) const
 {

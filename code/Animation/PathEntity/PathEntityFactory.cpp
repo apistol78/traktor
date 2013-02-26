@@ -16,7 +16,7 @@ const TypeInfoSet PathEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > PathEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
+Ref< world::Entity > PathEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const PathEntityData* pathEntityData = checked_type_cast< const PathEntityData* >(&entityData);
 	return pathEntityData->createEntity(builder);

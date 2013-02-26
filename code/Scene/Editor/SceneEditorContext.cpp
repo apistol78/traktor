@@ -19,6 +19,8 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
 #include "Ui/Event.h"
+#include "World/EntityBuilder.h"
+#include "World/EntityBuilderWithSchema.h"
 #include "World/EntitySchema.h"
 #include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupEntity.h"
@@ -36,6 +38,7 @@ SceneEditorContext::SceneEditorContext(
 	editor::IDocument* document,
 	db::Database* resourceDb,
 	db::Database* sourceDb,
+	world::IEntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,
 	physics::PhysicsManager* physicsManager
@@ -44,6 +47,7 @@ SceneEditorContext::SceneEditorContext(
 ,	m_document(document)
 ,	m_resourceDb(resourceDb)
 ,	m_sourceDb(sourceDb)
+,	m_eventManager(eventManager)
 ,	m_resourceManager(resourceManager)
 ,	m_renderSystem(renderSystem)
 ,	m_physicsManager(physicsManager)
@@ -265,25 +269,24 @@ void SceneEditorContext::buildEntities()
 	if (m_sceneAsset)
 	{
 		// Create entity editor factories.
-		RefArray< IEntityEditorFactory > entityEditorFactories;
+		RefArray< const IEntityEditorFactory > entityEditorFactories;
 		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
 			(*i)->createEntityEditorFactories(this, entityEditorFactories);
-		
-		Ref< EntityAdapterBuilder > entityBuilder = new EntityAdapterBuilder(this, entityEditorFactories);
+
+		Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
+		Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
+		Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema);
+		Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilderSchema, entityEditorFactories);
 
 		// Create entity factories.
 		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
 		{
-			RefArray< world::IEntityFactory > entityFactories;
+			RefArray< const world::IEntityFactory > entityFactories;
 			(*i)->createEntityFactories(this, entityFactories);
 
-			for (RefArray< world::IEntityFactory >::iterator j = entityFactories.begin(); j != entityFactories.end(); ++j)
-				entityBuilder->addFactory(*j);
+			for (RefArray< const world::IEntityFactory >::iterator j = entityFactories.begin(); j != entityFactories.end(); ++j)
+				entityAdapterBuilder->addFactory(*j);
 		}
-
-		// Create entity schema and prepare entity builder.
-		Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
-		entityBuilder->begin(entitySchema);
 
 		// Create root group entity as scene instances doesn't have a concept of layers.
 		Ref< world::GroupEntity > rootGroupEntity = new world::GroupEntity();
@@ -317,11 +320,11 @@ void SceneEditorContext::buildEntities()
 			const RefArray< world::EntityData >& layerChildEntityData = layerEntityData->getEntityData();
 			for (RefArray< world::EntityData >::const_iterator j = layerChildEntityData.begin(); j != layerChildEntityData.end(); ++j)
 			{
-				Ref< world::Entity > entity = entityBuilder->create(*j);
+				Ref< world::Entity > entity = entityAdapterBuilder->create(*j);
 				if (!entity)
 					continue;
 
-				Ref< EntityAdapter > entityAdapter = entityBuilder->getRootAdapter();
+				Ref< EntityAdapter > entityAdapter = entityAdapterBuilder->getRootAdapter();
 				T_ASSERT (entityAdapter->getEntity() == entity);
 
 				layerEntity->addEntity(entity);
@@ -335,10 +338,21 @@ void SceneEditorContext::buildEntities()
 		// Update scene controller also.
 		Ref< ISceneController > controller;
 		if (m_sceneAsset->getControllerData())
-			controller = m_sceneAsset->getControllerData()->createController(entityBuilder, entitySchema);
+		{
+			RefArray< EntityAdapter > entityAdapters;
+			getEntities(entityAdapters);
 
-		entityBuilder->end();
-		T_DEBUG(entityBuilder->getAdapterCount() << L" entity adapter(s) built");
+			std::map< const world::EntityData*, Ref< world::Entity > > entityProducts;
+			for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+				entityProducts.insert(std::make_pair(
+					(*i)->getEntityData(),
+					(*i)->getEntity()
+				));
+
+			controller = m_sceneAsset->getControllerData()->createController(entityProducts);
+		}
+
+		T_DEBUG(entityAdapterBuilder->getAdapterCount() << L" entity adapter(s) built");
 
 		// Bind post process settings.
 		resource::Proxy< world::PostProcessSettings > postProcessSettings;
