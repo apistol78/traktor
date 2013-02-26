@@ -572,7 +572,18 @@ void WorldRendererPreLit::createRenderView(const WorldViewOrtho& worldView, Worl
 	outRenderView.setProjection(orthoLh(worldView.width, worldView.height, -viewFarZ, viewFarZ));
 }
 
-void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity, int frame)
+bool WorldRendererPreLit::beginBuild()
+{
+	m_buildEntities.clear();
+	return true;
+}
+
+void WorldRendererPreLit::build(Entity* entity)
+{
+	m_buildEntities.push_back(entity);
+}
+
+void WorldRendererPreLit::endBuild(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -595,7 +606,8 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 	if (f.culling)
 	{
 		f.culling->beginPrecull(worldRenderView);
-		f.gbuffer->precull(worldRenderView, entity);
+		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+			f.gbuffer->precull(worldRenderView, *i);
 		f.culling->endPrecull();
 	}
 
@@ -608,7 +620,8 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 			ms_techniqueGBuffer,
 			gbufferRenderView
 		);
-		f.gbuffer->build(gbufferRenderView, gbufferPass, entity);
+		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+			f.gbuffer->build(gbufferRenderView, gbufferPass, *i);
 		f.gbuffer->flush(gbufferRenderView, gbufferPass);
 
 		f.haveGBuffer = true;
@@ -616,17 +629,25 @@ void WorldRendererPreLit::build(WorldRenderView& worldRenderView, Entity* entity
 
 	// Build shadow contexts.
 	if (m_shadowsQuality > QuDisabled)
-		buildLightWithShadows(worldRenderView, entity, frame);
+	{
+		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+			buildLightWithShadows(worldRenderView, *i, frame);
+	}
 	else
-		buildLightWithNoShadows(worldRenderView, entity, frame);
+	{
+		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+			buildLightWithNoShadows(worldRenderView, *i, frame);
+	}
 
 	// Build visual context.
-	buildVisual(worldRenderView, entity, frame);
+	worldRenderView.resetLights();
+	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+		buildVisual(worldRenderView, *i, frame);
 
 	m_count++;
 }
 
-bool WorldRendererPreLit::begin(int frame, render::EyeType eye, const Color4f& clearColor)
+bool WorldRendererPreLit::beginRender(int frame, render::EyeType eye, const Color4f& clearColor)
 {
 	if (!m_renderView->begin(m_visualTargetSet, 0))
 		return false;
@@ -896,7 +917,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	m_globalContext->flush();
 }
 
-void WorldRendererPreLit::end(int frame, render::EyeType eye, float deltaTime)
+void WorldRendererPreLit::endRender(int frame, render::EyeType eye, float deltaTime)
 {
 	Frame& f = m_frames[frame];
 
@@ -1109,8 +1130,6 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 
 	Frustum viewFrustum = worldRenderView.getViewFrustum();
 	Aabb3 shadowBox = worldRenderView.getShadowBox();
-
-	worldRenderView.resetLights();
 
 	WorldRenderPassPreLit defaultPreLitPass(
 		ms_techniquePreLitColor,

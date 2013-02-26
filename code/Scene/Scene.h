@@ -20,6 +20,7 @@ class Entity;
 class IEntitySchema;
 class IWorldRenderer;
 class PostProcessSettings;
+struct UpdateParams;
 class WorldRenderSettings;
 class WorldRenderView;
 
@@ -53,9 +54,7 @@ public:
 
 	void destroy();
 
-	void update(float time, float deltaTime, float alternateTime, bool updateController, bool updateEntity);
-
-	void build(world::IWorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame);
+	void update(const world::UpdateParams& update, bool updateController, bool updateEntity);
 
 	world::IEntitySchema* getEntitySchema() const;
 

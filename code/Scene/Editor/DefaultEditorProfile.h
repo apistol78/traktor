@@ -27,12 +27,12 @@ public:
 
 	virtual void createResourceFactories(
 		SceneEditorContext* context,
-		RefArray< resource::IResourceFactory >& outResourceFactories
+		RefArray< const resource::IResourceFactory >& outResourceFactories
 	) const;
 
 	virtual void createEntityFactories(
 		SceneEditorContext* context,
-		RefArray< world::IEntityFactory >& outEntityFactories
+		RefArray< const world::IEntityFactory >& outEntityFactories
 	) const;
 
 	virtual void createEntityRenderers(
@@ -44,12 +44,12 @@ public:
 
 	virtual void createControllerEditorFactories(
 		SceneEditorContext* context,
-		RefArray< ISceneControllerEditorFactory >& outControllerEditorFactories
+		RefArray< const ISceneControllerEditorFactory >& outControllerEditorFactories
 	) const;
 
 	virtual void createEntityEditorFactories(
 		SceneEditorContext* context,
-		RefArray< IEntityEditorFactory >& outEntityEditorFactories
+		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
 	) const;
 
 	virtual Ref< world::EntityData > createEntityData(

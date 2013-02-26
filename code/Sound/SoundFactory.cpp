@@ -1,8 +1,8 @@
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Sound/ISoundResource.h"
 #include "Sound/Sound.h"
 #include "Sound/SoundFactory.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
 
 namespace traktor
 {
@@ -28,7 +28,7 @@ bool SoundFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > SoundFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

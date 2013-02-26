@@ -34,13 +34,13 @@ void ResourceManager::destroy()
 	m_times.clear();
 }
 
-void ResourceManager::addFactory(IResourceFactory* factory)
+void ResourceManager::addFactory(const IResourceFactory* factory)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_factories.push_back(factory);
 }
 
-void ResourceManager::removeFactory(IResourceFactory* factory)
+void ResourceManager::removeFactory(const IResourceFactory* factory)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_factories.remove(factory);
@@ -59,7 +59,7 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	if (guid.isNull() || !guid.isValid())
 		return 0;
 
-	Ref< IResourceFactory > factory = findFactory(type);
+	const IResourceFactory* factory = findFactory(type);
 	if (!factory)
 		return 0;
 
@@ -123,7 +123,7 @@ void ResourceManager::reload(const Guid& guid)
 		for (RefArray< ExclusiveResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
 		{
 			const TypeInfo& resourceType = (*i)->getResourceType();
-			Ref< IResourceFactory > factory = findFactory(resourceType);
+			const IResourceFactory* factory = findFactory(resourceType);
 			if (factory)
 				load(guid, factory, resourceType, *i);
 		}
@@ -134,7 +134,7 @@ void ResourceManager::reload(const Guid& guid)
 	if (i1 != m_residentHandles.end())
 	{
 		const TypeInfo& resourceType = i1->second->getResourceType();
-		Ref< IResourceFactory > factory = findFactory(resourceType);
+		const IResourceFactory* factory = findFactory(resourceType);
 		if (factory)
 			load(guid, factory, resourceType, i1->second);
 		return;
@@ -153,7 +153,7 @@ void ResourceManager::reload(const TypeInfo& type)
 			const TypeInfo& resourceType = (*j)->getResourceType();
 			if (is_type_of(type, resourceType))
 			{
-				Ref< IResourceFactory > factory = findFactory(resourceType);
+				const IResourceFactory* factory = findFactory(resourceType);
 				if (factory)
 				{
 					(*j)->flush();
@@ -168,7 +168,7 @@ void ResourceManager::reload(const TypeInfo& type)
 		const TypeInfo& resourceType = i->second->getResourceType();
 		if (is_type_of(type, resourceType))
 		{
-			Ref< IResourceFactory > factory = findFactory(resourceType);
+			const IResourceFactory* factory = findFactory(resourceType);
 			if (factory)
 			{
 				i->second->flush();
@@ -215,9 +215,9 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 	}
 }
 
-Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)
+const IResourceFactory* ResourceManager::findFactory(const TypeInfo& type)
 {
-	for (RefArray< IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
+	for (RefArray< const IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
 	{
 		TypeInfoSet typeSet = (*i)->getResourceTypes();
 		if (std::find(typeSet.begin(), typeSet.end(), &type) != typeSet.end())
@@ -226,7 +226,7 @@ Ref< IResourceFactory > ResourceManager::findFactory(const TypeInfo& type)
 	return 0;
 }
 
-void ResourceManager::load(const Guid& guid, IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle)
+void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
 

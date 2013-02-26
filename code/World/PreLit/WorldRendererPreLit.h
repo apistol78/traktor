@@ -82,13 +82,17 @@ public:
 
 	virtual void createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const;
 
-	virtual void build(WorldRenderView& worldRenderView, Entity* entity, int frame);
+	virtual bool beginBuild();
 
-	virtual bool begin(int frame, render::EyeType eye, const Color4f& clearColor);
+	virtual void build(Entity* entity);
+
+	virtual void endBuild(WorldRenderView& worldRenderView, int frame);
+
+	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor);
 
 	virtual void render(uint32_t flags, int frame, render::EyeType eye);
 
-	virtual void end(int frame, render::EyeType eye, float deltaTime);
+	virtual void endRender(int frame, render::EyeType eye, float deltaTime);
 
 	virtual PostProcess* getVisualPostProcess();
 
@@ -110,18 +114,14 @@ private:
 	struct Frame
 	{
 		Ref< WorldCullingSwRaster > culling;
-
 		Slice slice[MaxSliceCount];
 		Ref< WorldContext > gbuffer;
 		Ref< WorldContext > visual;
-
 		Matrix44 projection;
 		Matrix44 view;
 		Frustum viewFrustum;
-
 		Light lights[MaxLightCount];
 		uint32_t lightCount;
-
 		bool haveGBuffer;
 		bool haveShadows[MaxLightCount];
 
@@ -164,6 +164,7 @@ private:
 	Ref< PostProcess > m_visualPostProcess;
 	Ref< PostProcess > m_gammaCorrectionPostProcess;
 	Ref< LightRenderer > m_lightRenderer;
+	RefArray< Entity > m_buildEntities;
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;

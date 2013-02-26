@@ -2,7 +2,6 @@
 #include "Scene/Scene.h"
 #include "Scene/SceneFactory.h"
 #include "Scene/SceneResource.h"
-#include "World/EntitySchema.h"
 
 namespace traktor
 {
@@ -34,18 +33,16 @@ bool SceneFactory::isCacheable() const
 	return false;
 }
 
-Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > SceneFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< SceneResource > sceneResource = m_database->getObjectReadOnly< SceneResource >(guid);
 	if (!sceneResource)
 		return 0;
 
-	Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
 	return sceneResource->createScene(
 		resourceManager,
 		m_renderSystem,
-		m_entityBuilder,
-		entitySchema
+		m_entityBuilder
 	);
 }
 

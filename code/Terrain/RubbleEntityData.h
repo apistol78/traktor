@@ -41,7 +41,7 @@ class T_DLLCLASS RubbleEntityData : public world::EntityData
 public:
 	RubbleEntityData();
 
-	Ref< world::Entity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
+	Ref< world::Entity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(ISerializer& s);
 

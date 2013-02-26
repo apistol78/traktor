@@ -11,8 +11,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.EntityFactory", EntityFactory, world::IEntityFactory)
 
-EntityFactory::EntityFactory(resource::IResourceManager* resourceManager, PhysicsManager* physicsManager)
-:	m_resourceManager(resourceManager)
+EntityFactory::EntityFactory(
+	world::IEntityEventManager* eventManager,
+	resource::IResourceManager* resourceManager,
+	PhysicsManager* physicsManager
+)
+:	m_eventManager(eventManager)
+,	m_resourceManager(resourceManager)
 ,	m_physicsManager(physicsManager)
 {
 }
@@ -26,12 +31,12 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 }
 
 Ref< world::Entity > EntityFactory::createEntity(
-	world::IEntityBuilder* builder,
+	const world::IEntityBuilder* builder,
 	const world::EntityData& entityData
 ) const
 {
 	if (const RigidEntityData* rigidEntityData = dynamic_type_cast< const RigidEntityData* >(&entityData))
-		return rigidEntityData->createEntity(builder, m_resourceManager, m_physicsManager);
+		return rigidEntityData->createEntity(builder, m_eventManager, m_resourceManager, m_physicsManager);
 
 	if (const ArticulatedEntityData* articulatedEntityData = dynamic_type_cast< const ArticulatedEntityData* >(&entityData))
 		return articulatedEntityData->createEntity(builder, m_physicsManager);

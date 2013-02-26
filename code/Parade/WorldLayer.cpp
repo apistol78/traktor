@@ -14,6 +14,7 @@
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
 #include "World/IEntitySchema.h"
+#include "World/IEntityEventManager.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/NullEntity.h"
 #include "World/Entity/TransientEntity.h"
@@ -103,22 +104,22 @@ void WorldLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	if (!m_worldRenderer)
 		return;
 
-	// Update scene controller.
-	m_scene->update(
-		info.getSimulationTime(),
-		info.getSimulationDeltaTime(),
-		m_alternateTime,
-		m_controllerEnable,
-		false
-	);
-
-	// Update all entities; calling manually because we have exclusive control
-	// of dynamic entities and an explicit render root group.
-	world::Entity::UpdateParams up;
+	world::UpdateParams up;
 	up.totalTime = info.getSimulationTime();
 	up.deltaTime = info.getSimulationDeltaTime();
 	up.alternateTime = m_alternateTime;
+
+	// Update scene controller.
+	m_scene->update(up, m_controllerEnable, false);
+
+	// Update all entities; calling manually because we have exclusive control
+	// of dynamic entities and an explicit render root group.
 	m_renderGroup->update(up);
+
+	// Update entity events.
+	world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+	if (eventManager)
+		eventManager->update(up);
 
 	// In case not explicitly set we update the alternative time also.
 	m_alternateTime += info.getSimulationDeltaTime();
@@ -143,11 +144,16 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 		info.getFrameDeltaTime(),
 		info.getInterval()
 	);
-	m_worldRenderer->build(
-		m_worldRenderView,
-		m_renderGroup,
-		frame
-	);
+	if (m_worldRenderer->beginBuild())
+	{
+		m_worldRenderer->build(m_renderGroup);
+
+		world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+		if (eventManager)
+			eventManager->build(m_worldRenderer);
+
+		m_worldRenderer->endBuild(m_worldRenderView, frame);
+	}
 
 	m_deltaTime = info.getFrameDeltaTime();
 }
@@ -160,19 +166,15 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT (renderView);
 
-	if (m_worldRenderer->begin(frame, eye, c_clearColor))
+	if (m_worldRenderer->beginRender(frame, eye, c_clearColor))
 	{
 		m_worldRenderer->render(
-			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap,
-			frame,
-			eye
-		);
-		m_worldRenderer->render(
+			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap |
 			world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 			frame,
 			eye
 		);
-		m_worldRenderer->end(frame, eye, m_deltaTime);
+		m_worldRenderer->endRender(frame, eye, m_deltaTime);
 	}
 }
 
@@ -215,14 +217,10 @@ Ref< world::Entity > WorldLayer::createEntity(const std::wstring& name, world::I
 	if (i == m_entities.end())
 		return 0;
 
-	world::IEntityBuilder* entityBuilder = m_environment->getWorld()->getEntityBuilder();
+	const world::IEntityBuilder* entityBuilder = m_environment->getWorld()->getEntityBuilder();
 	T_ASSERT (entityBuilder);
 
-	entityBuilder->begin(entitySchema);
-	Ref< world::Entity > entity = entityBuilder->create(i->second);
-	entityBuilder->end();
-
-	return entity;
+	return entityBuilder->create(i->second);
 }
 
 int32_t WorldLayer::getEntityIndex(const world::Entity* entity) const

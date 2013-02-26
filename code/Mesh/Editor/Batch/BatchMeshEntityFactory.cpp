@@ -22,7 +22,7 @@ const TypeInfoSet BatchMeshEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > BatchMeshEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
+Ref< world::Entity > BatchMeshEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const BatchMeshEntityData* batchMeshEntityData = checked_type_cast< const BatchMeshEntityData* >(&entityData);
 	

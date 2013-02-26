@@ -19,6 +19,13 @@ class IResourceManager;
 
 	}
 
+	namespace world
+	{
+
+class IEntityEventManager;
+
+	}
+
 	namespace physics
 	{
 
@@ -33,6 +40,7 @@ class T_DLLCLASS EntityFactory : public world::IEntityFactory
 
 public:
 	EntityFactory(
+		world::IEntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	);
@@ -40,11 +48,12 @@ public:
 	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual Ref< world::Entity > createEntity(
-		world::IEntityBuilder* builder,
+		const world::IEntityBuilder* builder,
 		const world::EntityData& entityData
 	) const;
 
 private:
+	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< PhysicsManager > m_physicsManager;
 };

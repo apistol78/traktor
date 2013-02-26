@@ -1,6 +1,6 @@
-#include "Input/RumbleEffectFactory.h"
-#include "Input/RumbleEffect.h"
 #include "Database/Database.h"
+#include "Input/RumbleEffect.h"
+#include "Input/RumbleEffectFactory.h"
 
 namespace traktor
 {
@@ -26,7 +26,7 @@ bool RumbleEffectFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > RumbleEffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > RumbleEffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	return m_db->getObjectReadOnly< RumbleEffect >(guid);
 }

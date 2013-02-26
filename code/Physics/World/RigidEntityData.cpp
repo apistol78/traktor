@@ -7,16 +7,18 @@
 #include "Physics/World/RigidEntityData.h"
 #include "World/EntityData.h"
 #include "World/IEntityBuilder.h"
+#include "World/IEntityEventData.h"
 
 namespace traktor
 {
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidEntityData", 0, RigidEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.physics.RigidEntityData", 1, RigidEntityData, world::EntityData)
 
 Ref< RigidEntity > RigidEntityData::createEntity(
-	world::IEntityBuilder* builder,
+	const world::IEntityBuilder* entityBuilder,
+	world::IEntityEventManager* eventManager,
 	resource::IResourceManager* resourceManager,
 	PhysicsManager* physicsManager
 ) const
@@ -31,16 +33,26 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 	Ref< world::Entity > entity;
 	if (m_entityData)
 	{
-		entity = builder->create(m_entityData);
+		entity = entityBuilder->create(m_entityData);
 		if (!entity)
 			return 0;
 
 		entity->setTransform(getTransform());
 	}
 
+	Ref< world::IEntityEvent > eventCollide;
+	if (m_eventCollide)
+	{
+		eventCollide = m_eventCollide->create(entityBuilder);
+		if (!eventCollide)
+			return 0;
+	}
+
 	return new RigidEntity(
 		body,
-		entity
+		entity,
+		eventManager,
+		eventCollide
 	);
 }
 
@@ -59,6 +71,9 @@ bool RigidEntityData::serialize(ISerializer& s)
 
 	s >> MemberRef< BodyDesc >(L"bodyDesc", m_bodyDesc);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
+
+	if (s.getVersion() >= 1)
+		s >> MemberRef< world::IEntityEventData >(L"eventCollide", m_eventCollide);
 
 	return true;
 }

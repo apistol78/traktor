@@ -99,7 +99,7 @@ public:
 	 */
 	virtual void createResourceFactories(
 		SceneEditorContext* context,
-		RefArray< resource::IResourceFactory >& outResourceFactories
+		RefArray< const resource::IResourceFactory >& outResourceFactories
 	) const = 0;
 
 	/*! \brief Create entity factories.
@@ -109,7 +109,7 @@ public:
 	 */
 	virtual void createEntityFactories(
 		SceneEditorContext* context,
-		RefArray< world::IEntityFactory >& outEntityFactories
+		RefArray< const world::IEntityFactory >& outEntityFactories
 	) const = 0;
 
 	/*! \brief Create entity renderers.
@@ -133,7 +133,7 @@ public:
 	 */
 	virtual void createControllerEditorFactories(
 		SceneEditorContext* context,
-		RefArray< ISceneControllerEditorFactory >& outControllerEditorFactories
+		RefArray< const ISceneControllerEditorFactory >& outControllerEditorFactories
 	) const = 0;
 
 	/*! \brief Create entity editor factories.
@@ -143,7 +143,7 @@ public:
 	 */
 	virtual void createEntityEditorFactories(
 		SceneEditorContext* context,
-		RefArray< IEntityEditorFactory >& outEntityEditorFactories
+		RefArray< const IEntityEditorFactory >& outEntityEditorFactories
 	) const = 0;
 
 	/*! \brief Create entity from database instance.

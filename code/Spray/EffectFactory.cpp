@@ -1,11 +1,11 @@
 #include "Core/Io/Reader.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Spray/Effect.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/PointSet.h"
 #include "Spray/PointSetResource.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
 
 namespace traktor
 {
@@ -32,7 +32,7 @@ bool EffectFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	if (is_type_a< Effect >(resourceType))
 	{

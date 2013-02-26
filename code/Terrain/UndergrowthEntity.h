@@ -102,7 +102,7 @@ public:
 
 	virtual Aabb3 getBoundingBox() const;
 
-	virtual void update(const UpdateParams& update);
+	virtual void update(const world::UpdateParams& update);
 
 private:
 	struct Cluster

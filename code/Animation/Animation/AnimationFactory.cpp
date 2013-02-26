@@ -32,7 +32,7 @@ bool AnimationFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > AnimationFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > AnimationFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	return m_db->getObjectReadOnly(guid);
 }

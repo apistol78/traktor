@@ -20,19 +20,21 @@ class EntityAdapterBuilder : public world::IEntityBuilder
 	T_RTTI_CLASS;
 
 public:
-	EntityAdapterBuilder(SceneEditorContext* context, const RefArray< IEntityEditorFactory >& entityEditorFactories);
+	EntityAdapterBuilder(
+		SceneEditorContext* context,
+		world::IEntityBuilder* entityBuilder,
+		const RefArray< const IEntityEditorFactory >& entityEditorFactories
+	);
 
-	virtual void addFactory(world::IEntityFactory* entityFactory);
+	virtual void addFactory(const world::IEntityFactory* entityFactory);
 
-	virtual void removeFactory(world::IEntityFactory* entityFactory);
+	virtual void removeFactory(const world::IEntityFactory* entityFactory);
 
-	virtual void begin(world::IEntitySchema* entitySchema);
+	virtual const world::IEntityFactory* getFactory(const world::EntityData* entityData) const;
 
-	virtual Ref< world::Entity > create(const world::EntityData* entityData);
+	virtual Ref< world::Entity > create(const world::EntityData* entityData) const;
 
-	virtual Ref< world::Entity > get(const world::EntityData* entityData) const;
-
-	virtual void end();
+	virtual const world::IEntityBuilder* getCompositeEntityBuilder() const;
 
 	EntityAdapter* getRootAdapter() const;
 
@@ -40,14 +42,12 @@ public:
 
 private:
 	Ref< SceneEditorContext > m_context;
-	RefArray< IEntityEditorFactory > m_entityEditorFactories;
-	Ref< world::IEntitySchema > m_entitySchema;
-	RefArray< world::IEntityFactory > m_entityFactories;
-	std::map< const world::EntityData*, Ref< world::Entity > > m_entities;
-	std::map< const TypeInfo*, RefArray< EntityAdapter > > m_cachedAdapters;
-	Ref< EntityAdapter > m_currentAdapter;
-	Ref< EntityAdapter > m_rootAdapter;
-	uint32_t m_adapterCount;
+	Ref< world::IEntityBuilder > m_entityBuilder;
+	RefArray< const IEntityEditorFactory > m_entityEditorFactories;
+	mutable std::map< const TypeInfo*, RefArray< EntityAdapter > > m_cachedAdapters;
+	mutable Ref< EntityAdapter > m_currentAdapter;
+	mutable Ref< EntityAdapter > m_rootAdapter;
+	mutable uint32_t m_adapterCount;
 };
 
 	}

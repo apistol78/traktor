@@ -161,16 +161,32 @@ public:
 	 */
 	virtual void createRenderView(const WorldViewOrtho& worldView, WorldRenderView& outRenderView) const = 0;
 
-	/*! \name Render steps. */
+	/*! \name Build steps. */
 	//@{
+
+	/*! \brief Begin build "render contexts".
+	 *
+	 * \return True if building begun.
+	 */
+	virtual bool beginBuild() = 0;
 
 	/*! \brief Build "render contexts".
 	 *
-	 * \param worldRenderView World render view.
 	 * \param entity Root entity.
+	 */
+	virtual void build(Entity* entity) = 0;
+
+	/*! \brief End build "render contexts".
+	 *
+	 * \param worldRenderView World render view.
 	 * \param frame Multi threaded context frame.
 	 */
-	virtual void build(WorldRenderView& worldRenderView, Entity* entity, int frame) = 0;
+	virtual void endBuild(WorldRenderView& worldRenderView, int frame) = 0;
+
+	//@}
+
+	/*! \name Render steps. */
+	//@{
 
 	/*! \brief Begin render "render contexts".
 	 *
@@ -179,7 +195,7 @@ public:
 	 * \param clearColor Clear visual target color.
 	 * \return True if rendering begun.
 	 */
-	virtual bool begin(int frame, render::EyeType eye, const Color4f& clearColor) = 0;
+	virtual bool beginRender(int frame, render::EyeType eye, const Color4f& clearColor) = 0;
 
 	/*! \brief Render "render contexts".
 	 *
@@ -195,7 +211,7 @@ public:
 	 * \param eye Stereoscopic eye.
 	 * \param deltaTime Last frame delta time.
 	 */
-	virtual void end(int frame, render::EyeType eye, float deltaTime) = 0;
+	virtual void endRender(int frame, render::EyeType eye, float deltaTime) = 0;
 
 	//@}
 

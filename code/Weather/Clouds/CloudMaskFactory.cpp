@@ -1,10 +1,10 @@
-#include "Weather/Clouds/CloudMaskFactory.h"
-#include "Weather/Clouds/CloudMaskResource.h"
-#include "Weather/Clouds/CloudMask.h"
-#include "Database/Database.h"
-#include "Database/Instance.h"
 #include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
+#include "Weather/Clouds/CloudMask.h"
+#include "Weather/Clouds/CloudMaskFactory.h"
+#include "Weather/Clouds/CloudMaskResource.h"
 
 namespace traktor
 {
@@ -30,7 +30,7 @@ bool CloudMaskFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > CloudMaskFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)

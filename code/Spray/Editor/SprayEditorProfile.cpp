@@ -28,7 +28,7 @@ void SprayEditorProfile::createEditorPlugins(
 
 void SprayEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< resource::IResourceFactory >& outResourceFactories
+	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(new spray::EffectFactory(context->getResourceDatabase()));
@@ -36,7 +36,7 @@ void SprayEditorProfile::createResourceFactories(
 
 void SprayEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< world::IEntityFactory >& outEntityFactories
+	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
 	outEntityFactories.push_back(new spray::EffectEntityFactory(context->getResourceManager(), 0));
@@ -54,14 +54,14 @@ void SprayEditorProfile::createEntityRenderers(
 
 void SprayEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
+	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
 }
 
 void SprayEditorProfile::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
+	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 }

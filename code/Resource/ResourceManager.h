@@ -38,9 +38,9 @@ public:
 
 	virtual void destroy();
 
-	virtual void addFactory(IResourceFactory* factory);
+	virtual void addFactory(const IResourceFactory* factory);
 
-	virtual void removeFactory(IResourceFactory* factory);
+	virtual void removeFactory(const IResourceFactory* factory);
 
 	virtual void removeAllFactories();
 	
@@ -67,7 +67,7 @@ private:
 		}
 	};
 
-	RefArray< IResourceFactory > m_factories;
+	RefArray< const IResourceFactory > m_factories;
 	std::map< Guid, Ref< ResidentResourceHandle > > m_residentHandles;
 	std::map< Guid, RefArray< ExclusiveResourceHandle > > m_exclusiveHandles;
 	std::map< const TypeInfo*, TimeCount > m_times;
@@ -75,9 +75,9 @@ private:
 	mutable Semaphore m_lock;
 	bool m_verbose;
 
-	Ref< IResourceFactory > findFactory(const TypeInfo& type);
+	const IResourceFactory* findFactory(const TypeInfo& type);
 
-	void load(const Guid& guid, IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle);
+	void load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle);
 };
 	
 	}

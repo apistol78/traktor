@@ -41,7 +41,7 @@ const uint32_t c_maxDeltaStates = 8;
 Timer g_timer;
 Random g_random;
 
-#define T_USE_DELTA_FRAMES 0
+#define T_USE_DELTA_FRAMES 1
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
 
 		}
@@ -524,7 +524,9 @@ void Replicator::updatePeers(float dT)
 void Replicator::sendState(float dT)
 {
 	uint8_t iframeData[Message::StateSize];
+#if T_USE_DELTA_FRAMES
 	uint8_t frameData[Message::StateSize];
+#endif
 	Message msg;
 
 	// Broadcast my state to all peers.
@@ -649,6 +651,11 @@ void Replicator::sendEvents()
 				else
 				{
 					log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (1)" << Endl;
+					
+					Event ev = *i;
+					ev.handle = j->first;
+					eventsOut.push_back(ev);
+
 					j->second.errorCount++;
 				}
 			}
@@ -663,6 +670,7 @@ void Replicator::sendEvents()
 				else
 				{
 					log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (2)" << Endl;
+					eventsOut.push_back(*i);
 					j->second.errorCount++;
 				}
 			}

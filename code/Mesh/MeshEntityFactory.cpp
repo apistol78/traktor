@@ -21,7 +21,7 @@ const TypeInfoSet MeshEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > MeshEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
+Ref< world::Entity > MeshEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	const AbstractMeshEntityData* meshEntityData = checked_type_cast< const AbstractMeshEntityData* >(&entityData);
 	return meshEntityData->createEntity(m_resourceManager, builder);

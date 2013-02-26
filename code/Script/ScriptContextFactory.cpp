@@ -30,7 +30,7 @@ bool ScriptContextFactory::isCacheable() const
 	return false;
 }
 
-Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< IScriptResource > scriptResource = m_database->getObjectReadOnly< IScriptResource >(guid);
 	if (!scriptResource)

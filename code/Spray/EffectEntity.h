@@ -59,7 +59,7 @@ public:
 
 	virtual Aabb3 getWorldBoundingBox() const;
 
-	virtual void update(const UpdateParams& update);
+	virtual void update(const world::UpdateParams& update);
 
 	bool isFinished() const;
 

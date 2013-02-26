@@ -26,8 +26,8 @@ class WorldRenderView;
  *
  * An transient entity is actually just a container for some
  * other "visual" entity. It's only responsibility is to
- * remove itself from parent group as soon as it
- * has expired.
+ * remove itself from parent group as soon as some
+ * time has expired.
  */
 class T_DLLCLASS TransientEntity : public Entity
 {

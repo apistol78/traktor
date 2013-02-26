@@ -16,10 +16,9 @@ namespace traktor
 	namespace world
 	{
 
-class IEntityFactory;
-class IEntitySchema;
-class EntityData;
 class Entity;
+class EntityData;
+class IEntityFactory;
 
 /*! \brief Entity builder interface.
  * \ingroup World
@@ -29,20 +28,18 @@ class T_DLLCLASS IEntityBuilder : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void addFactory(IEntityFactory* entityFactory) = 0;
+	virtual void addFactory(const IEntityFactory* entityFactory) = 0;
 
-	virtual void removeFactory(IEntityFactory* entityFactory) = 0;
+	virtual void removeFactory(const IEntityFactory* entityFactory) = 0;
 
-	virtual void begin(IEntitySchema* entitySchema) = 0;
+	virtual const IEntityFactory* getFactory(const EntityData* entityData) const = 0;
 
-	virtual Ref< Entity > create(const EntityData* entityData) = 0;
+	virtual Ref< Entity > create(const EntityData* entityData) const = 0;
 
-	virtual Ref< Entity > get(const EntityData* entityData) const = 0;
-
-	virtual void end() = 0;
+	virtual const IEntityBuilder* getCompositeEntityBuilder() const = 0;
 
 	template < typename EntityType >
-	Ref< EntityType > create(const EntityData* entityData)
+	Ref< EntityType > create(const EntityData* entityData) const
 	{
 		return checked_type_cast< EntityType*, true >(create(entityData));
 	}

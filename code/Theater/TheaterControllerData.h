@@ -26,7 +26,7 @@ class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 public:
 	TheaterControllerData();
 
-	virtual Ref< scene::ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntitySchema* entitySchema) const;
+	virtual Ref< scene::ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const;
 
 	virtual bool serialize(ISerializer& s);
 

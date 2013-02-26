@@ -66,7 +66,7 @@ Aabb3 EffectEntity::getWorldBoundingBox() const
 	return m_effectInstance ? m_effectInstance->getBoundingBox() : Aabb3();
 }
 
-void EffectEntity::update(const UpdateParams& update)
+void EffectEntity::update(const world::UpdateParams& update)
 {
 	if ((m_counter++ % c_updateDenom) != 0)
 		return;

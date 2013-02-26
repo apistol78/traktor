@@ -25,13 +25,14 @@ const TypeInfoSet WeatherEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > WeatherEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
+Ref< world::Entity > WeatherEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(&entityData))
 		return skyEntityData->createEntity(m_resourceManager, m_renderSystem);
-	if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(&entityData))
+	else if (const CloudEntityData* cloudEntityData = dynamic_type_cast< const CloudEntityData* >(&entityData))
 		return cloudEntityData->createEntity(m_resourceManager, m_renderSystem);
-	return 0;
+	else
+		return 0;
 }
 
 	}

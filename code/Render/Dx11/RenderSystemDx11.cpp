@@ -71,6 +71,8 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 			if (FAILED(hr))
 				continue;
 
+			log::info << L"Device " << (i + 1) << L" \"" << dad.Description << L"\" (" << dad.DeviceId << L")" << Endl;
+
 			if (dad.VendorId == 4098)	// AMD/ATI
 				dxgiAdapter = dxgiAdapterEnum;
 			if (dad.VendorId == 4318)	// NVidia
@@ -123,6 +125,12 @@ bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
 	hr = dxgiAdapter->GetDesc1(&dad);
 	if (SUCCEEDED(hr))
 	{
+		if (dad.VendorId == 0 && dad.DeviceId == 0)
+		{
+			log::error << L"Failed to get supported DirectX 11 adapter" << Endl;
+			return false;
+		}
+
 		log::info << L"Using DirectX 11 adapter:" << Endl;
 		log::info << IncreaseIndent;
 		log::info << L"Description " << dad.Description << Endl;

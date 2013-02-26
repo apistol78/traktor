@@ -1,6 +1,7 @@
 #ifndef traktor_scene_ISceneControllerData_H
 #define traktor_scene_ISceneControllerData_H
 
+#include <map>
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -16,8 +17,8 @@ namespace traktor
 	namespace world
 	{
 
-class IEntityBuilder;
-class IEntitySchema;
+class Entity;
+class EntityData;
 
 	}
 
@@ -38,7 +39,7 @@ class T_DLLCLASS ISceneControllerData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< ISceneController > createController(world::IEntityBuilder* entityBuilder, world::IEntitySchema* entitySchema) const = 0;
+	virtual Ref< ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const = 0;
 };
 
 	}

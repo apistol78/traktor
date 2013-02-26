@@ -1,6 +1,6 @@
+#include "Database/Database.h"
 #include "World/PostProcess/PostProcessFactory.h"
 #include "World/PostProcess/PostProcessSettings.h"
-#include "Database/Database.h"
 
 namespace traktor
 {
@@ -26,7 +26,7 @@ bool PostProcessFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > PostProcessFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > PostProcessFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	return m_db->getObjectReadOnly< PostProcessSettings >(guid);
 }

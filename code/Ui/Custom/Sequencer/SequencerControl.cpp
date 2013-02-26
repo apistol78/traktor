@@ -373,12 +373,14 @@ void SequencerControl::eventMouseMove(Event* e)
 	cursor = std::max< int >(cursor, 0);
 	cursor = std::min< int >(cursor, m_length);
 
-	if (cursor != m_cursor)
-	{
-		m_cursor = cursor;
-		CommandEvent cmdEvent(this, 0, Command(m_cursor));
-		raiseEvent(EiCursorMove, &cmdEvent);
-	}
+	if (cursor == m_cursor)
+		return;
+
+	m_cursor = cursor;
+	update();
+
+	CommandEvent cmdEvent(this, 0, Command(m_cursor));
+	raiseEvent(EiCursorMove, &cmdEvent);
 
 	// Notify track item mouse move.
 	if (m_mouseTrackItem.item)
@@ -395,8 +397,6 @@ void SequencerControl::eventMouseMove(Event* e)
 			m_scrollBarH->getPosition()
 		);
 	}
-
-	update();
 
 	e->consume();
 }

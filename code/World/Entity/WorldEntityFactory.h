@@ -35,7 +35,7 @@ public:
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
-	virtual Ref< Entity > createEntity(IEntityBuilder* builder, const EntityData& entityData) const;
+	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const;
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;

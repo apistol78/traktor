@@ -41,7 +41,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< Entity > WorldEntityFactory::createEntity(IEntityBuilder* builder, const EntityData& entityData) const
+Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
 {
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(&entityData))
 	{

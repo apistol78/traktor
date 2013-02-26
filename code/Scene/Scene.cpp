@@ -49,25 +49,13 @@ void Scene::destroy()
 	m_postProcessSettings = 0;
 }
 
-void Scene::update(float time, float deltaTime, float alternateTime, bool updateController, bool updateEntity)
+void Scene::update(const world::UpdateParams& update, bool updateController, bool updateEntity)
 {
 	if (m_controller && updateController)
-		m_controller->update(this, time, deltaTime);
+		m_controller->update(this, update.totalTime, update.deltaTime);
 
 	if (m_rootEntity && updateEntity)
-	{
-		world::Entity::UpdateParams up;
-		up.totalTime = time;
-		up.deltaTime = deltaTime;
-		up.alternateTime = alternateTime;
-		m_rootEntity->update(up);
-	}
-}
-
-void Scene::build(world::IWorldRenderer* worldRenderer, world::WorldRenderView& worldRenderView, int frame)
-{
-	if (m_rootEntity)
-		worldRenderer->build(worldRenderView, m_rootEntity, frame);
+		m_rootEntity->update(update);
 }
 
 world::IEntitySchema* Scene::getEntitySchema() const

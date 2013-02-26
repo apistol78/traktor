@@ -30,7 +30,7 @@ void PhysicsEditorProfile::createEditorPlugins(
 
 void PhysicsEditorProfile::createResourceFactories(
 	scene::SceneEditorContext* context,
-	RefArray< resource::IResourceFactory >& outResourceFactories
+	RefArray< const resource::IResourceFactory >& outResourceFactories
 ) const
 {
 	outResourceFactories.push_back(new MeshFactory(context->getResourceDatabase()));
@@ -38,10 +38,10 @@ void PhysicsEditorProfile::createResourceFactories(
 
 void PhysicsEditorProfile::createEntityFactories(
 	scene::SceneEditorContext* context,
-	RefArray< world::IEntityFactory >& outEntityFactories
+	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
-	outEntityFactories.push_back(new EntityFactory(context->getResourceManager(), context->getPhysicsManager()));
+	outEntityFactories.push_back(new EntityFactory(context->getEntityEventManager(), context->getResourceManager(), context->getPhysicsManager()));
 }
 
 void PhysicsEditorProfile::createEntityRenderers(
@@ -56,14 +56,14 @@ void PhysicsEditorProfile::createEntityRenderers(
 
 void PhysicsEditorProfile::createControllerEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::ISceneControllerEditorFactory >& outControllerEditorFactories
+	RefArray< const scene::ISceneControllerEditorFactory >& outControllerEditorFactories
 ) const
 {
 }
 
 void PhysicsEditorProfile::createEntityEditorFactories(
 	scene::SceneEditorContext* context,
-	RefArray< scene::IEntityEditorFactory >& outEntityEditorFactories
+	RefArray< const scene::IEntityEditorFactory >& outEntityEditorFactories
 ) const
 {
 	outEntityEditorFactories.push_back(new PhysicsEntityEditorFactory());

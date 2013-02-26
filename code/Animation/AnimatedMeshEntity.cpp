@@ -123,7 +123,7 @@ void AnimatedMeshEntity::render(
 	m_updateController = true;
 }
 
-void AnimatedMeshEntity::update(const UpdateParams& update)
+void AnimatedMeshEntity::update(const world::UpdateParams& update)
 {
 	if (m_updateController)
 	{

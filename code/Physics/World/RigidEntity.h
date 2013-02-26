@@ -12,10 +12,19 @@
 
 namespace traktor
 {
+	namespace world
+	{
+
+class IEntityEvent;
+class IEntityEventManager;
+
+	}
+
 	namespace physics
 	{
 
 class Body;
+struct CollisionInfo;
 
 /*! \brief Rigid body entity.
  * \ingroup Physics
@@ -27,14 +36,16 @@ class T_DLLCLASS RigidEntity : public world::Entity
 public:
 	RigidEntity(
 		Body* body,
-		world::Entity* entity
+		world::Entity* entity,
+		world::IEntityEventManager* eventManager,
+		world::IEntityEvent* eventCollide
 	);
 
 	virtual ~RigidEntity();
 
 	virtual void destroy();
 
-	virtual void update(const UpdateParams& update);
+	virtual void update(const world::UpdateParams& update);
 
 	virtual void setTransform(const Transform& transform);
 
@@ -49,6 +60,10 @@ public:
 private:
 	Ref< Body > m_body;
 	Ref< world::Entity > m_entity;
+	Ref< world::IEntityEventManager > m_eventManager;
+	Ref< world::IEntityEvent > m_eventCollide;
+
+	void collisionListener(const physics::CollisionInfo& collisionInfo);
 };
 
 	}

@@ -55,6 +55,7 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "World/Entity.h"
 #include "World/EntityData.h"
+#include "World/EntityEventManager.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
 
@@ -106,6 +107,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
+	// Create world event manager.
+	Ref< world::EntityEventManager > eventManager = new world::EntityEventManager();
+
 	// Get physics manager type.
 	std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"SceneEditor.PhysicsManager");
 	const TypeInfo* physicsManagerType = TypeInfo::find(physicsManagerTypeName);
@@ -135,6 +139,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 		m_document,
 		m_editor->getOutputDatabase(),
 		m_editor->getSourceDatabase(),
+		eventManager,
 		resourceManager,
 		renderSystem,
 		physicsManager
@@ -156,9 +161,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 		for (RefArray< ISceneEditorPlugin >::iterator j = editorPlugins.begin(); j != editorPlugins.end(); ++j)
 			m_context->addEditorPlugin(*j);
 
-		RefArray< resource::IResourceFactory > resourceFactories;
+		RefArray< const resource::IResourceFactory > resourceFactories;
 		profile->createResourceFactories(m_context, resourceFactories);
-		for (RefArray< resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
+		for (RefArray< const resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
 			resourceManager->addFactory(*j);
 	}
 
@@ -661,7 +666,7 @@ void SceneEditorPage::createControllerEditor()
 		Ref< ISceneControllerData > controllerData = sceneAsset->getControllerData();
 		if (controllerData)
 		{
-			RefArray< ISceneControllerEditorFactory > controllerEditorFactories;
+			RefArray< const ISceneControllerEditorFactory > controllerEditorFactories;
 			Ref< ISceneControllerEditor > controllerEditor;
 
 			// Create controller editor factories.
@@ -669,7 +674,7 @@ void SceneEditorPage::createControllerEditor()
 			for (RefArray< ISceneEditorProfile >::const_iterator i = profiles.begin(); i != profiles.end(); ++i)
 				(*i)->createControllerEditorFactories(m_context, controllerEditorFactories);
 
-			for (RefArray< ISceneControllerEditorFactory >::iterator i = controllerEditorFactories.begin(); i != controllerEditorFactories.end(); ++i)
+			for (RefArray< const ISceneControllerEditorFactory >::iterator i = controllerEditorFactories.begin(); i != controllerEditorFactories.end(); ++i)
 			{
 				TypeInfoSet typeSet = (*i)->getControllerDataTypes();
 				if (typeSet.find(&type_of(controllerData)) != typeSet.end())

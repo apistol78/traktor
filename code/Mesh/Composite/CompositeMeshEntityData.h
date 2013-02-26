@@ -22,7 +22,7 @@ class T_DLLCLASS CompositeMeshEntityData : public AbstractMeshEntityData
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const;
+	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const;
 
 	virtual bool serialize(ISerializer& s);
 	

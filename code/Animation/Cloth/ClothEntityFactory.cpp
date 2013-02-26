@@ -22,9 +22,9 @@ const TypeInfoSet ClothEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > ClothEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
+Ref< world::Entity > ClothEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const ClothEntityData* >(&entityData)->createEntity(builder, m_resourceManager, m_renderSystem);
+	return checked_type_cast< const ClothEntityData* >(&entityData)->createEntity(m_resourceManager, m_renderSystem);
 }
 
 	}

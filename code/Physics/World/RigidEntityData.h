@@ -16,6 +16,8 @@ namespace traktor
 	{
 
 class IEntityBuilder;
+class IEntityEventData;
+class IEntityEventManager;
 
 	}
 
@@ -42,7 +44,8 @@ class T_DLLCLASS RigidEntityData : public world::EntityData
 
 public:
 	Ref< RigidEntity > createEntity(
-		world::IEntityBuilder* builder,
+		const world::IEntityBuilder* entityBuilder,
+		world::IEntityEventManager* eventManager,
 		resource::IResourceManager* resourceManager,
 		PhysicsManager* physicsManager
 	) const;
@@ -62,6 +65,7 @@ public:
 private:
 	Ref< BodyDesc > m_bodyDesc;
 	Ref< world::EntityData > m_entityData;
+	Ref< world::IEntityEventData > m_eventCollide;
 };
 
 	}

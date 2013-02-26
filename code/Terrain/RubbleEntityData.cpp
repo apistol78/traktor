@@ -21,7 +21,7 @@ RubbleEntityData::RubbleEntityData()
 {
 }
 
-Ref< world::Entity > RubbleEntityData::createEntity(resource::IResourceManager* resourceManager, world::IEntityBuilder* builder) const
+Ref< world::Entity > RubbleEntityData::createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const
 {
 	resource::Proxy< Terrain > terrain;
 

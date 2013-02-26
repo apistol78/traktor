@@ -46,6 +46,14 @@ struct Light
 	bool castShadow;
 };
 
+/*! \brief Update parameters. */
+struct UpdateParams
+{
+	float totalTime;		/*! \brief Total time since first update. */
+	float deltaTime;		/*! \brief Delta time since last update. */
+	float alternateTime;	/*! \brief Alternative absolute time. */
+};
+
 	}
 }
 

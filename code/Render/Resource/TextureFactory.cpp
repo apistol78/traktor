@@ -64,7 +64,7 @@ bool TextureFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid)
+Ref< Object > TextureFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
 {
 	Ref< ITexture > texture;
 

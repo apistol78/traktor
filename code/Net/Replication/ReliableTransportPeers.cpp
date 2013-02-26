@@ -11,7 +11,7 @@ namespace traktor
 		{
 
 const double c_resendTime = 1.0f;	//< Resend reliable message after N seconds.
-const double c_discardTime = 10.0f;	//< Discard reliable message after N seconds.
+const double c_discardTime = 20.0f;	//< Discard reliable message after N seconds.
 const uint32_t c_windowSize = 200;	//< Number of reliable messages kept in sent queue.
 
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
@@ -93,9 +93,10 @@ void ReliableTransportPeers::update()
 		{
 			if ((time - j->time0) >= c_discardTime)
 			{
-				T_REPLICATOR_DEBUG(L"ERROR: No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message " << int32_t(j->envelope.sequence) << L" discarded");
-				j = i->second.sent.erase(j);
-				continue;
+				T_REPLICATOR_DEBUG(L"ERROR: No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message(s) discarded");
+				i->second.sent.clear();
+				i->second.faulty = true;
+				break;
 			}
 			if ((time - j->time) >= c_resendTime)
 			{
@@ -133,7 +134,10 @@ uint32_t ReliableTransportPeers::getPeerHandles(std::vector< handle_t >& outPeer
 {
 	outPeerHandles.resize(0);
 	for (std::map< handle_t, Control >::const_iterator i = m_control.begin(); i != m_control.end(); ++i)
-		outPeerHandles.push_back(i->first);
+	{
+		if (!i->second.faulty)
+			outPeerHandles.push_back(i->first);
+	}
 	return outPeerHandles.size();
 }
 
@@ -185,6 +189,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 
 			ct.last1_0 = ct.last1_1;
 			ct.last1_1 = e.sequence;
+			ct.faulty = false;
 
 			std::memcpy(data, e.payload, nrecv - 3);
 			return nrecv - 3;
@@ -210,6 +215,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 
 			ct.last0_0 = ct.last0_1;
 			ct.last0_1 = e.sequence;
+			ct.faulty = false;
 
 			std::memcpy(data, e.payload, nrecv - 3);
 			return nrecv - 3;
@@ -226,6 +232,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 						T_REPLICATOR_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" to peer " << outFromHandle << L" finally ACK;ed");
 
 					ct.sent.erase(i);
+					ct.faulty = false;
 					break;
 				}
 			}

@@ -68,7 +68,7 @@ public:
 		float distance
 	);
 
-	virtual void update(const UpdateParams& update);
+	virtual void update(const world::UpdateParams& update);
 
 	virtual void setTransform(const Transform& transform);
 

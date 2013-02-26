@@ -22,7 +22,7 @@ const TypeInfoSet EffectEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
-Ref< world::Entity > EffectEntityFactory::createEntity(world::IEntityBuilder* builder, const world::EntityData& entityData) const
+Ref< world::Entity > EffectEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager, m_soundPlayer);
 }

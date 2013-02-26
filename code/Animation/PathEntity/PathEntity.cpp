@@ -49,7 +49,7 @@ Aabb3 PathEntity::getBoundingBox() const
 	return m_entity ? m_entity->getBoundingBox() : Aabb3();
 }
 
-void PathEntity::update(const UpdateParams& update)
+void PathEntity::update(const world::UpdateParams& update)
 {
 	if (!m_entity)
 		return;
