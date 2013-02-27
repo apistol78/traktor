@@ -64,6 +64,12 @@ DockPane::DockPane(Widget* owner, DockPane* parent)
 	m_focusEventHandler = createMethodHandler(this, &DockPane::eventFocus);
 }
 
+DockPane::~DockPane()
+{
+	if (m_widget)
+		unregisterEventHandler(m_widget, EiFocus, m_focusEventHandler);
+}
+
 void DockPane::split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane)
 {
 	outLeftPane = new DockPane(m_owner, this);
@@ -259,6 +265,9 @@ void DockPane::undock(Widget* widget)
 void DockPane::detach()
 {
 	T_ASSERT (m_detachable);
+
+	if (m_widget)
+		unregisterEventHandler(m_widget, EiFocus, m_focusEventHandler);
 
 	if (m_parent)
 	{

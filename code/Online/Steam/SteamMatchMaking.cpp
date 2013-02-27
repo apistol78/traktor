@@ -311,6 +311,13 @@ bool SteamMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
 	return false;
 }
 
+bool SteamMatchMaking::setOwner(uint64_t lobbyHandle, uint64_t userHandle) const
+{
+	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
+	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
+	return SteamMatchmaking()->SetLobbyOwner(lobbyHandle, userHandle);
+}
+
 bool SteamMatchMaking::getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const
 {
 	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");

@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.SoundTriggerData", 2, SoundTriggerData, ITriggerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SoundTriggerData", 2, SoundTriggerData, ITriggerData)
 
 SoundTriggerData::SoundTriggerData()
 :	m_positional(true)

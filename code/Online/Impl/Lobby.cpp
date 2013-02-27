@@ -151,6 +151,18 @@ int32_t Lobby::getIndex() const
 		return -1;
 }
 
+bool Lobby::setOwner(const IUser* user)
+{
+	if (!m_matchMakingProvider)
+		return false;
+
+	const User* userImpl = dynamic_type_cast< const User* >(user);
+	if (!userImpl)
+		return false;
+
+	return m_matchMakingProvider->setOwner(m_handle, userImpl->m_handle);
+}
+
 const IUser* Lobby::getOwner() const
 {
 	if (!m_matchMakingProvider)

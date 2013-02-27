@@ -146,6 +146,17 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 	lua_pushlightuserdata(m_luaState, (void*)scriptClass);			// +1	-> 2
 	lua_rawseti(m_luaState, -2, c_tableKey_class);					// -1	-> 1
 
+	uint32_t staticMethodCount = scriptClass->getStaticMethodCount();
+	for (uint32_t i = 0; i < staticMethodCount; ++i)
+	{
+		std::string methodName = scriptClass->getStaticMethodName(i);
+		lua_pushinteger(m_luaState, i);
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushlightuserdata(m_luaState, (void*)scriptClass);
+		lua_pushcclosure(m_luaState, classCallStaticMethod, 3);
+		lua_setfield(m_luaState, -2, methodName.c_str());
+	}
+
 	uint32_t methodCount = scriptClass->getMethodCount();
 	for (uint32_t i = 0; i < methodCount; ++i)
 	{
@@ -558,6 +569,42 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 #endif
 
 	Any returnValue = scriptClass->invoke(param, methodId, top - 1, argv);
+
+#if defined(T_SCRIPT_PROFILE_CALLS)
+	double call = timer.getElapsedTime();
+	if (call > 1.0f / 1000.0)
+		log::debug << L"PROFILE: \"" << scriptClass->getExportType().getName() << L"::" << scriptClass->getMethodName(methodId) << L" took " << float(call * 1000.0) << L" ms" << Endl;
+#endif
+
+	manager->pushAny(returnValue);
+
+	return 1;
+}
+
+int ScriptManagerLua::classCallStaticMethod(lua_State* luaState)
+{
+	ScriptManagerLua* manager = reinterpret_cast< ScriptManagerLua* >(lua_touserdata(luaState, lua_upvalueindex(2)));
+	T_ASSERT (manager);
+
+	const IScriptClass* scriptClass = reinterpret_cast< IScriptClass* >(lua_touserdata(luaState, lua_upvalueindex(3)));
+	T_ASSERT (scriptClass);
+
+	int32_t methodId = (int32_t)lua_tonumber(luaState, lua_upvalueindex(1));
+
+	int32_t top = lua_gettop(luaState);
+	if (top < 0)
+		return 0;
+
+	Any argv[10];
+	for (int32_t i = 1; i <= top; ++i)
+		argv[i - 1] = manager->toAny(i);
+
+#if defined(T_SCRIPT_PROFILE_CALLS)
+	Timer timer;
+	timer.start();
+#endif
+
+	Any returnValue = scriptClass->invokeStatic(methodId, top, argv);
 
 #if defined(T_SCRIPT_PROFILE_CALLS)
 	double call = timer.getElapsedTime();

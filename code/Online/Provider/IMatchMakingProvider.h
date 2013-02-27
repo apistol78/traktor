@@ -52,6 +52,8 @@ public:
 
 	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const = 0;
 
+	virtual bool setOwner(uint64_t lobbyHandle, uint64_t userHandle) const = 0;
+
 	virtual bool getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const = 0;
 };
 

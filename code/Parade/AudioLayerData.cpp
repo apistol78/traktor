@@ -9,7 +9,7 @@ namespace traktor
 	namespace parade
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.AudioLayerData", 1, AudioLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.parade.AudioLayerData", 1, AudioLayerData, LayerData)
 
 AudioLayerData::AudioLayerData()
 :	m_autoPlay(true)

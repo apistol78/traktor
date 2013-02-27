@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-const int32_t c_version = 3;
+const int32_t c_version = 4;
 
 		}
 
@@ -57,7 +57,7 @@ bool PipelineDb::open(const std::wstring& connectionString)
 	{
 		if (connection->executeUpdate(
 			L"create table PipelineHash ("
-			L"guid char(37) unique,"
+			L"guid char(37) primary key,"
 			L"pipelineVersion integer,"
 			L"hash integer"
 			L")"
@@ -66,7 +66,7 @@ bool PipelineDb::open(const std::wstring& connectionString)
 
 		if (connection->executeUpdate(
 			L"create table PipelineFile ("
-			L"path varchar(1024) unique,"
+			L"path varchar(1024) primary key,"
 			L"size integer,"
 			L"lastWriteTime integer,"
 			L"hash integer"

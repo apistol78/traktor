@@ -53,6 +53,8 @@ RenderViewOpenGL::RenderViewOpenGL(
 ,	m_resourceContext(resourceContext)
 ,	m_cursorVisible(true)
 ,	m_waitVBlank(false)
+,	m_drawCalls(0)
+,	m_primitiveCount(0)
 {
 	m_primaryTargetDesc.multiSample = desc.multiSample;
 	m_primaryTargetDesc.createDepthStencil = bool(desc.depthBits > 0 || desc.stencilBits > 0);
@@ -385,6 +387,9 @@ bool RenderViewOpenGL::begin(EyeType eye)
 	if (!m_renderContext->enter())
 		return false;
 
+	m_drawCalls = 0;
+	m_primitiveCount = 0;
+
 	return begin(m_primaryTarget, 0);
 }
 
@@ -547,6 +552,9 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 			vertexCount
 		));
 	}
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count;
 }
 
 void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
@@ -645,6 +653,9 @@ void RenderViewOpenGL::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer
 			instanceCount
 		));
 	}
+
+	m_drawCalls++;
+	m_primitiveCount += primitives.count * instanceCount;
 }
 
 void RenderViewOpenGL::end()
@@ -695,6 +706,9 @@ void RenderViewOpenGL::popMarker()
 
 void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
 {
+	outStatistics.drawCalls = m_drawCalls;
+	outStatistics.primitiveCount = m_primitiveCount;
+	outStatistics.duration = 0.0;
 }
 
 #if defined(_WIN32)

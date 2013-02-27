@@ -168,7 +168,7 @@ bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
 
 	int nfbc = 0;
 	GLXFBConfig* fbc = glXChooseFBConfig(m_display, screen, visualAttribs, &nfbc);
-	if (!fbc)
+	if (!fbc || nfbc <= 0)
 	{
 		log::error << L"Unable to create OpenGL renderer; No framebuffer configuration" << Endl;
 		return false;
