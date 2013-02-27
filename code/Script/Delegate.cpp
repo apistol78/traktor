@@ -54,6 +54,21 @@ public:
 		return Any();
 	}
 
+	virtual uint32_t getStaticMethodCount() const
+	{
+		return 0;
+	}
+
+	virtual std::string getStaticMethodName(uint32_t methodId) const
+	{
+		return "";
+	}
+
+	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const
+	{
+		return Any();
+	}
+
 	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const
 	{
 		return Any();

@@ -58,6 +58,15 @@ public:
 	/*! \brief Invoke exported method. */
 	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
 
+	/*! \brief Get exported method count. */
+	virtual uint32_t getStaticMethodCount() const = 0;
+
+	/*! \brief Get name of exported method. */
+	virtual std::string getStaticMethodName(uint32_t methodId) const = 0;
+
+	/*! \brief Invoke exported static method. */
+	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const = 0;
+
 	/*! \brief Invoke unknown method. */
 	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const = 0;
 

@@ -86,6 +86,11 @@ bool LocalMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
 	return true;
 }
 
+bool LocalMatchMaking::setOwner(uint64_t lobbyHandle, uint64_t userHandle) const
+{
+	return false;
+}
+
 bool LocalMatchMaking::getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const
 {
 	outUserHandle = 0;

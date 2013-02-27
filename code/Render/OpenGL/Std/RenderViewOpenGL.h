@@ -136,9 +136,11 @@ private:
 	Ref< ContextOpenGL > m_resourceContext;
 	RenderTargetSetCreateDesc m_primaryTargetDesc;
 	Ref< RenderTargetSetOpenGL > m_primaryTarget;
+	std::list< TargetScope > m_targetStack;
 	bool m_cursorVisible;
 	bool m_waitVBlank;
-	std::list< TargetScope > m_targetStack;
+	uint32_t m_drawCalls;
+	uint32_t m_primitiveCount;
 
 #if defined(_WIN32)
 

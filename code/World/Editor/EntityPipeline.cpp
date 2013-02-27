@@ -95,7 +95,8 @@ bool EntityPipeline::buildDependencies(
 		else if (objectMember->get())
 		{
 			Ref< Reflection > childReflection = Reflection::create(objectMember->get());
-			childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+			if (childReflection)
+				childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 		}
 	}
 

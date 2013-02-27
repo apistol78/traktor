@@ -10,7 +10,7 @@ namespace traktor
 	namespace input
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.input.IfInclusiveExclusive", 0, IfInclusiveExclusive, IInputFilter)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.IfInclusiveExclusive", 0, IfInclusiveExclusive, IInputFilter)
 
 void IfInclusiveExclusive::evaluate(InputValueSet& valueSet) const
 {

@@ -41,7 +41,7 @@ void translateError(const char* error, const source_map_t& map)
 			log::error << L"Lua runtime error: " << translateSource(map, line) << L": " << trim(pieces[2]) << Endl;
 		}
 		else
-			log::error << L"Lua runtime error: " << error << Endl;
+			log::error << L"Lua runtime error: " << mbstows(error) << Endl;
 	}
 	else
 		log::error << L"Unknown lua runtime error" << Endl;

@@ -11,7 +11,7 @@ namespace traktor
 	namespace parade
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.FlashLayerData", 0, FlashLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.parade.FlashLayerData", 0, FlashLayerData, LayerData)
 
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)

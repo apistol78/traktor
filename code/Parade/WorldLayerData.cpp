@@ -14,7 +14,7 @@ namespace traktor
 	namespace parade
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.parade.WorldLayerData", 0, WorldLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.parade.WorldLayerData", 0, WorldLayerData, LayerData)
 
 Ref< Layer > WorldLayerData::createInstance(Stage* stage, amalgam::IEnvironment* environment) const
 {

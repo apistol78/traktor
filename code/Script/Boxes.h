@@ -160,6 +160,10 @@ public:
 	Vector4 normalized() const;
 
 	Vector4 neg() const;
+
+	static Vector4 zero() { return Vector4::zero(); }
+
+	static Vector4 origo() { return Vector4::origo(); }
 	
 	const Vector4& unbox() const { return m_value; }
 	
@@ -203,6 +207,8 @@ public:
 	Vector4 getEulerAngles() const;
 
 	Vector4 getAxisAngle() const;
+
+	static Quaternion identity() { return Quaternion::identity(); }
 	
 	const Quaternion& unbox() const { return m_value; }
 
@@ -237,6 +243,8 @@ public:
 
 	Vector4 transform(const Vector4& v) const;
 	
+	static Transform identity() { return Transform::identity(); }
+
 	const Transform& unbox() const { return m_value; }
 
 private:

@@ -25,21 +25,12 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 		outType = GL_UNSIGNED_INT_8_8_8_8_REV;
 		break;
 
-	//case TfR16G16B16A16F:
-	//	break;
-
 	case TfR32G32B32A32F:
 		outPixelSize = 16;
 		outComponents = 4;
 		outFormat = GL_RGBA;
 		outType = GL_FLOAT;
 		break;
-
-	//case TfR16G16F:
-	//	break;
-
-	//case TfR32G32F:
-	//	break;
 
 	case TfR16F:
 		outPixelSize = 2;
@@ -121,10 +112,17 @@ bool convertTextureFormat_sRGB(TextureFormat textureFormat, int& outPixelSize, G
 	switch (textureFormat)
 	{
 	case TfR8:
+#if !defined(__APPLE__)
 		outPixelSize = 1;
 		outComponents = GL_SLUMINANCE8_EXT;
 		outFormat = GL_RED;
 		outType = GL_UNSIGNED_BYTE;
+#else
+		outPixelSize = 1;
+		outComponents = 1;
+		outFormat = GL_RED;
+		outType = GL_UNSIGNED_BYTE;
+#endif
 		break;
 
 	case TfR8G8B8A8:

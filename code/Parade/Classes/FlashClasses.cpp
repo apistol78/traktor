@@ -47,6 +47,12 @@ public:
 
 	virtual script::Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const script::Any* argv) const;
 
+	virtual uint32_t getStaticMethodCount() const;
+
+	virtual std::string getStaticMethodName(uint32_t methodId) const;
+
+	virtual script::Any invokeStatic(uint32_t methodId, uint32_t argc, const script::Any* argv) const;
+
 	virtual script::Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const script::Any* argv) const;
 
 	virtual uint32_t getPropertyCount() const;
@@ -131,6 +137,21 @@ script::Any ActionObjectClass::invoke(const InvokeParam& param, uint32_t methodI
 	default:
 		break;
 	}
+	return script::Any();
+}
+
+uint32_t ActionObjectClass::getStaticMethodCount() const
+{
+	return 0;
+}
+
+std::string ActionObjectClass::getStaticMethodName(uint32_t methodId) const
+{
+	return "";
+}
+
+script::Any ActionObjectClass::invokeStatic(uint32_t methodId, uint32_t argc, const script::Any* argv) const
+{
 	return script::Any();
 }
 

@@ -45,6 +45,8 @@ public:
 
 	virtual int32_t getIndex() const = 0;
 
+	virtual bool setOwner(const IUser* user) = 0;
+
 	virtual const IUser* getOwner() const = 0;
 };
 

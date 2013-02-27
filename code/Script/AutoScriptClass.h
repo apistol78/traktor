@@ -27,6 +27,13 @@ struct T_NOVTABLE IMethod
 	virtual Any invoke(Object* object, const Any* argv) const = 0;
 };
 
+struct T_NOVTABLE IStaticMethod
+{
+	virtual ~IStaticMethod() {}
+
+	virtual Any invoke(const Any* argv) const = 0;
+};
+
 struct T_NOVTABLE IProperty
 {
 	virtual ~IProperty() {}
@@ -153,6 +160,7 @@ template <
 struct MethodSignature_0
 {
 	typedef ReturnType (ClassType::*method_t)();
+	typedef ReturnType (*static_method_t)();
 };
 
 template <
@@ -173,6 +181,7 @@ template <
 struct MethodSignature_1
 {
 	typedef ReturnType (ClassType::*method_t)(Argument1Type);
+	typedef ReturnType (*static_method_t)(Argument1Type);
 };
 
 template <
@@ -195,6 +204,7 @@ template <
 struct MethodSignature_2
 {
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type);
+	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type);
 };
 
 template <
@@ -219,6 +229,7 @@ template <
 struct MethodSignature_3
 {
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type);
+	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type);
 };
 
 template <
@@ -245,6 +256,7 @@ template <
 struct MethodSignature_4
 {
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
+	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type);
 };
 
 template <
@@ -273,6 +285,7 @@ template <
 struct MethodSignature_5
 {
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
+	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type);
 };
 
 template <
@@ -303,6 +316,7 @@ template <
 struct MethodSignature_6
 {
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
+	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type);
 };
 
 template <
@@ -335,6 +349,7 @@ template <
 struct MethodSignature_7
 {
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
+	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type);
 };
 
 template <
@@ -1231,6 +1246,481 @@ struct MethodTrunk_7 : public IMethod
 
 /*! \} */
 
+/*! \name Static method invocations */
+/*! \{ */
+
+template <
+	typename ClassType,
+	typename ReturnType
+>
+struct StaticMethod_0 : public IStaticMethod
+{
+	typedef typename MethodSignature_0< ClassType, ReturnType, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_0(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)();
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType
+>
+struct StaticMethod_0 < ClassType, void > : public IStaticMethod
+{
+	typedef typename MethodSignature_0< ClassType, void, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_0(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		(*m_method)();
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type
+>
+struct StaticMethod_1 : public IStaticMethod
+{
+	typedef typename MethodSignature_1< ClassType, ReturnType, Argument1Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_1(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			CastAny< Argument1Type >::get(argv[0])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type
+>
+struct StaticMethod_1 < ClassType, void, Argument1Type > : public IStaticMethod
+{
+	typedef typename MethodSignature_1< ClassType, void, Argument1Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_1(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		(*m_method)(
+			CastAny< Argument1Type >::get(argv[0])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type
+>
+struct StaticMethod_2 : public IStaticMethod
+{
+	typedef typename MethodSignature_2< ClassType, ReturnType, Argument1Type, Argument2Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_2(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type
+>
+struct StaticMethod_2 < ClassType, void, Argument1Type, Argument2Type > : public IStaticMethod
+{
+	typedef typename MethodSignature_2< ClassType, void, Argument1Type, Argument2Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_2(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		(*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type
+>
+struct StaticMethod_3 : public IStaticMethod
+{
+	typedef typename MethodSignature_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_3(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type
+>
+struct StaticMethod_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type > : public IStaticMethod
+{
+	typedef typename MethodSignature_3< ClassType, void, Argument1Type, Argument2Type, Argument3Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_3(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		(*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type
+>
+struct StaticMethod_4 : public IStaticMethod
+{
+	typedef typename MethodSignature_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_4(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type
+>
+struct StaticMethod_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type > : public IStaticMethod
+{
+	typedef typename MethodSignature_4< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_4(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		(*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+struct StaticMethod_5 : public IStaticMethod
+{
+	typedef typename MethodSignature_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_5(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type
+>
+struct StaticMethod_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type > : public IStaticMethod
+{
+	typedef typename MethodSignature_5< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_5(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		(*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct StaticMethod_6 : public IStaticMethod
+{
+	typedef typename MethodSignature_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_6(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type
+>
+struct StaticMethod_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type > : public IStaticMethod
+{
+	typedef typename MethodSignature_6< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_6(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		(*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type
+>
+struct StaticMethod_7 : public IStaticMethod
+{
+	typedef typename MethodSignature_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_7(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5]),
+			CastAny< Argument7Type >::get(argv[6])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type
+>
+struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type > : public IStaticMethod
+{
+	typedef typename MethodSignature_7< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, false >::static_method_t static_method_t;
+
+	static_method_t m_method;
+
+	StaticMethod_7(static_method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(const Any* argv) const
+	{
+		(*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5]),
+			CastAny< Argument7Type >::get(argv[6])
+		);
+		return Any();
+	}
+};
+
+/*! \} */
+
 /*! \name Property accessor */
 /*! \{ */
 
@@ -1647,6 +2137,103 @@ public:
 
 	/*! \} */
 
+	/*! \name Static methods */
+	/*! \{ */
+
+	template <
+		typename ReturnType
+	>
+	void addStaticMethod(const std::string& methodName, ReturnType (*method)())
+	{
+		addStaticMethod(methodName, 0, new StaticMethod_0< ClassType, ReturnType >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type
+	>
+	void addStaticMethod(const std::string& methodName, ReturnType (*method)(Argument1Type))
+	{
+		addStaticMethod(methodName, 1, new StaticMethod_1< ClassType, ReturnType, Argument1Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type
+	>
+	void addStaticMethod(const std::string& methodName, ReturnType (*method)(Argument1Type, Argument2Type))
+	{
+		addStaticMethod(methodName, 2, new StaticMethod_2< ClassType, ReturnType, Argument1Type, Argument2Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type
+	>
+	void addStaticMethod(const std::string& methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type))
+	{
+		addStaticMethod(methodName, 3, new StaticMethod_3< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type
+	>
+	void addStaticMethod(const std::string& methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type))
+	{
+		addStaticMethod(methodName, 4, new StaticMethod_4< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type
+	>
+	void addStaticMethod(const std::string& methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type))
+	{
+		addStaticMethod(methodName, 5, new StaticMethod_5< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type,
+		typename Argument6Type
+	>
+	void addStaticMethod(const std::string& methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type))
+	{
+		addStaticMethod(methodName, 6, new StaticMethod_6< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type,
+		typename Argument6Type,
+		typename Argument7Type
+	>
+	void addStaticMethod(const std::string& methodName, ReturnType (*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
+	{
+		addStaticMethod(methodName, 7, new StaticMethod_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
+	}
+
+	/*! \} */
+
 	template <
 		typename MemberType
 	>
@@ -1700,6 +2287,25 @@ public:
 			return Any();
 	}
 
+	virtual uint32_t getStaticMethodCount() const
+	{
+		return uint32_t(m_staticMethods.size());
+	}
+
+	virtual std::string getStaticMethodName(uint32_t methodId) const
+	{
+		return m_staticMethods[methodId].first;
+	}
+
+	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const
+	{
+		const std::vector< IStaticMethod* >& methods = m_staticMethods[methodId].second;
+		if (argc < methods.size() && methods[argc] != 0)
+			return methods[argc]->invoke(argv);
+		else
+			return Any();
+	}
+
 	virtual Any invokeUnknown(const InvokeParam& param, const std::string& methodName, uint32_t argc, const Any* argv) const
 	{
 		if (m_unknown)
@@ -1731,6 +2337,7 @@ public:
 private:
 	std::vector< IConstructor* > m_constructors;
 	std::vector< std::pair< std::string, std::vector< IMethod* > > > m_methods;
+	std::vector< std::pair< std::string, std::vector< IStaticMethod* > > > m_staticMethods;
 	std::vector< std::pair< std::string, IProperty* > > m_properties;
 	unknown_method_t m_unknown;
 
@@ -1760,6 +2367,27 @@ private:
 		m.second.resize(argc + 1, 0);
 		m.second[argc] = method;
 		m_methods.push_back(m);
+	}
+
+	void addStaticMethod(const std::string& methodName, size_t argc, IStaticMethod* method)
+	{
+		for (std::vector< std::pair< std::string, std::vector< IStaticMethod* > > >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
+		{
+			if (i->first == methodName)
+			{
+				std::vector< IStaticMethod* >& methods = i->second;
+				if (methods.size() < argc + 1)
+					methods.resize(argc + 1, 0);
+				methods[argc] = method;
+				return;
+			}
+		}
+
+		std::pair< std::string, std::vector< IStaticMethod* > > m;
+		m.first = methodName;
+		m.second.resize(argc + 1, 0);
+		m.second[argc] = method;
+		m_staticMethods.push_back(m);
 	}
 };
 

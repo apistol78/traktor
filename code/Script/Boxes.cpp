@@ -473,6 +473,8 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedVector4->addMethod("length", &BoxedVector4::length);
 	classBoxedVector4->addMethod("normalized", &BoxedVector4::normalized);
 	classBoxedVector4->addMethod("neg", &BoxedVector4::neg);
+	classBoxedVector4->addStaticMethod("zero", &BoxedVector4::zero);
+	classBoxedVector4->addStaticMethod("origo", &BoxedVector4::origo);
 	scriptManager->registerClass(classBoxedVector4);
 
 	Ref< AutoScriptClass< BoxedQuaternion > > classBoxedQuaternion = new AutoScriptClass< BoxedQuaternion >();
@@ -491,6 +493,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedQuaternion->addMethod("transform", &BoxedQuaternion::transform);
 	classBoxedQuaternion->addMethod("getEulerAngles", &BoxedQuaternion::getEulerAngles);
 	classBoxedQuaternion->addMethod("getAxisAngle", &BoxedQuaternion::getAxisAngle);
+	classBoxedQuaternion->addStaticMethod("identity", &BoxedQuaternion::identity);
 	scriptManager->registerClass(classBoxedQuaternion);
 	
 	Ref< AutoScriptClass< BoxedTransform > > classBoxedTransform = new AutoScriptClass< BoxedTransform >();
@@ -504,6 +507,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod("inverse", &BoxedTransform::inverse);
 	classBoxedTransform->addMethod("concat", &BoxedTransform::concat);
 	classBoxedTransform->addMethod("transform", &BoxedTransform::transform);
+	classBoxedTransform->addStaticMethod("identity", &BoxedTransform::identity);
 	scriptManager->registerClass(classBoxedTransform);
 
 	Ref< AutoScriptClass< BoxedAabb3 > > classBoxedAabb3 = new AutoScriptClass< BoxedAabb3 >();

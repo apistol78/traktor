@@ -38,6 +38,8 @@ public:
 
 	DockPane(Widget* owner, DockPane* parent);
 
+	virtual ~DockPane();
+
 	void split(bool vertical, int split, Ref< DockPane >& outLeftPane, Ref< DockPane >& outRightPane);
 
 	void dock(Widget* widget, bool detachable);

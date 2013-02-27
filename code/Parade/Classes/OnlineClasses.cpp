@@ -255,6 +255,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILobby->addMethod("getMaxParticipantCount", &online::ILobby::getMaxParticipantCount);
 	classILobby->addMethod("invite", &online::ILobby::invite);
 	classILobby->addMethod("getIndex", &online::ILobby::getIndex);
+	classILobby->addMethod("setOwner", &online::ILobby::setOwner);
 	classILobby->addMethod("getOwner", &online::ILobby::getOwner);
 	scriptManager->registerClass(classILobby);
 
