@@ -57,7 +57,7 @@ struct PointPredicate
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object)
 
-EmitterInstance::EmitterInstance(const Emitter* emitter)
+EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
 :	m_emitter(emitter)
 ,	m_sortPlane(0.0f, 0.0f, 1.0f, 0.0f)
 ,	m_emitted(0)
@@ -66,10 +66,15 @@ EmitterInstance::EmitterInstance(const Emitter* emitter)
 ,	m_warm(false)
 ,	m_count(std::rand() & 15)
 {
-	// Pre-allocate points; estimate average required.
-	m_points.reserve(std::max(c_maxEmitPerUpdate * 60 * 10, c_maxEmitSingleShot));
+	
+	int32_t pointCount = int32_t(c_maxEmitPerUpdate * 60 * duration);
+	if (duration < 0.01f)
+		pointCount = c_maxEmitSingleShot;
+
+	m_points.reserve(pointCount);
+
 	if (m_emitter->worldSpace())
-		m_worldPoints.reserve(std::max(c_maxEmitPerUpdate * 60 * 10, c_maxEmitSingleShot));
+		m_worldPoints.reserve(pointCount);
 }
 
 EmitterInstance::~EmitterInstance()
@@ -123,6 +128,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		const Source* source = m_emitter->getSource();
 		if (source)
 		{
+			uint32_t avail = m_points.capacity() - size;
 			Vector4 dm = T.translation() - m_position;
 
 			if (!singleShot)
@@ -135,10 +141,9 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				// Emit in multiple frames; estimate number of particles to emit.
 				if (emitCountFrame > 0)
 				{
-					uint32_t emitCount = std::min< uint32_t >(emitCountFrame, c_maxEmitPerUpdate);
+					uint32_t emitCount = min< uint32_t >(emitCountFrame, avail, c_maxEmitPerUpdate);
 					if (emitCount > 0)
 					{
-						m_points.reserve(size + emitCount);
 						source->emit(
 							context,
 							T,
@@ -155,10 +160,9 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 			else
 			{
 				// Single shot emit; emit all particles in one frame and then no more.
-				uint32_t emitCount = std::min< uint32_t >(uint32_t(source->getConstantRate()), c_maxEmitSingleShot);
+				uint32_t emitCount = min< uint32_t >(uint32_t(source->getConstantRate()), avail, c_maxEmitSingleShot);
 				if (emitCount > 0)
 				{
-					m_points.reserve(size + emitCount);
 					source->emit(
 						context,
 						T,
@@ -264,11 +268,11 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 
 void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane)
 {
-	if (m_points.empty())
-		return;
-
 	if (m_emitter->worldSpace())
 	{
+		if (m_points.empty())
+			return;
+
 		pointRenderer->render(
 			m_emitter->getShader(),
 			cameraPlane,
@@ -280,6 +284,9 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& tran
 	}
 	else
 	{
+		if (m_worldPoints.empty())
+			return;
+
 		pointRenderer->render(
 			m_emitter->getShader(),
 			cameraPlane,

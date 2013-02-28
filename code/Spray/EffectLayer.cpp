@@ -30,7 +30,7 @@ Ref< EffectLayerInstance > EffectLayer::createInstance() const
 
 	if (m_emitter)
 	{
-		emitterInstance = m_emitter->createInstance();
+		emitterInstance = m_emitter->createInstance(m_duration);
 		if (!emitterInstance)
 			return 0;
 	}

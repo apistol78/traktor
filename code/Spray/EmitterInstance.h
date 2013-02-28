@@ -37,7 +37,7 @@ class T_DLLCLASS EmitterInstance : public Object
 	T_RTTI_CLASS;
 
 public:
-	EmitterInstance(const Emitter* emitter);
+	EmitterInstance(const Emitter* emitter, float duration);
 
 	virtual ~EmitterInstance();
 

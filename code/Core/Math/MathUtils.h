@@ -29,9 +29,21 @@ inline Type min(Type a, Type b)
 }
 
 template < typename Type >
+inline Type min(Type a, Type b, Type c)
+{
+	return min(a, min(b, c));
+}
+
+template < typename Type >
 inline Type max(Type a, Type b)
 {
 	return a > b ? a : b;
+}
+
+template < typename Type >
+inline Type max(Type a, Type b, Type c)
+{
+	return max(a, max(b, c));
 }
 
 template < typename Type >

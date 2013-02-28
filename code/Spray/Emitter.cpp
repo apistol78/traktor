@@ -34,9 +34,9 @@ Emitter::Emitter(
 {
 }
 
-Ref< EmitterInstance > Emitter::createInstance() const
+Ref< EmitterInstance > Emitter::createInstance(float duration) const
 {
-	return new EmitterInstance(this);
+	return new EmitterInstance(this, duration);
 }
 
 	}
