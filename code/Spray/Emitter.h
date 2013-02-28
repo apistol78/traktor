@@ -49,7 +49,7 @@ public:
 		bool worldSpace
 	);
 
-	Ref< EmitterInstance > createInstance() const;
+	Ref< EmitterInstance > createInstance(float duration) const;
 
 	const Source* getSource() const { return m_source; }
 
