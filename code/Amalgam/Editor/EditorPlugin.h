@@ -42,6 +42,7 @@ class Target;
 class TargetListControl;
 class TargetInstance;
 class TargetManager;
+class TargetScriptDebugger;
 
 class EditorPlugin : public editor::IEditorPlugin
 {
@@ -97,6 +98,7 @@ private:
 
 	// \name Tool
 	// \{
+	Ref< TargetScriptDebugger > m_targetDebugger;
 	std::vector< EditTarget > m_targets;
 	RefArray< TargetInstance > m_targetInstances;
 	// \}
@@ -117,7 +119,6 @@ private:
 	// \}
 
 	Thread* m_threadHostEnumerator;
-	Thread* m_threadTargetManager;
 	Thread* m_threadConnectionManager;
 	Thread* m_threadTargetActions;
 
@@ -127,9 +128,9 @@ private:
 
 	void eventTargetListStop(ui::Event* event);
 
-	void threadHostEnumerator();
+	void eventTimer(ui::Event* event);
 
-	void threadTargetManager();
+	void threadHostEnumerator();
 
 	void threadConnectionManager();
 

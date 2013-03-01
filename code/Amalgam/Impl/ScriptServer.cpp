@@ -1,10 +1,15 @@
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Impl/LibraryHelper.h"
 #include "Amalgam/Impl/ScriptServer.h"
+#include "Amalgam/Impl/ScriptDebuggerBreakpoint.h"
+#include "Amalgam/Impl/ScriptDebuggerControl.h"
+#include "Amalgam/Impl/ScriptDebuggerHalted.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Net/BidirectionalObjectTransport.h"
 #include "Resource/IResourceManager.h"
 #include "Script/IScriptManager.h"
 #include "Script/ScriptContextFactory.h"
@@ -16,7 +21,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ScriptServer", ScriptServer, IScriptServer)
 
-bool ScriptServer::create(const PropertyGroup* settings, bool debugger)
+ScriptServer::ScriptServer()
+:	m_scriptDebuggerThread(0)
+{
+}
+
+bool ScriptServer::create(const PropertyGroup* settings, bool debugger, net::BidirectionalObjectTransport* transport)
 {
 	std::wstring scriptType = settings->getProperty< PropertyString >(L"Script.Type");
 
@@ -27,7 +37,18 @@ bool ScriptServer::create(const PropertyGroup* settings, bool debugger)
 	if (debugger)
 	{
 		m_scriptDebugger = m_scriptManager->createDebugger();
-		if (!m_scriptDebugger)
+		if (m_scriptDebugger)
+		{
+			m_scriptDebuggerThread = ThreadManager::getInstance().create(makeFunctor(this, &ScriptServer::threadDebugger), L"Script debugger thread");
+			if (!m_scriptDebuggerThread)
+				return false;
+
+			m_transport = transport;
+			m_scriptDebugger->addListener(this);
+
+			m_scriptDebuggerThread->start();
+		}
+		else
 			log::warning << L"Unable to create script debugger" << Endl;
 	}
 
@@ -36,7 +57,19 @@ bool ScriptServer::create(const PropertyGroup* settings, bool debugger)
 
 void ScriptServer::destroy()
 {
-	m_scriptDebugger = 0;
+	if (m_scriptDebugger)
+	{
+		m_scriptDebugger->removeListener(this);
+		m_scriptDebugger = 0;
+	}
+
+	if (m_scriptDebuggerThread)
+	{
+		m_scriptDebuggerThread->stop();
+		ThreadManager::getInstance().destroy(m_scriptDebuggerThread);
+		m_scriptDebuggerThread = 0;
+	}
+
 	safeDestroy(m_scriptManager);
 }
 
@@ -55,13 +88,62 @@ int32_t ScriptServer::reconfigure(const PropertyGroup* settings)
 
 void ScriptServer::update()
 {
-	if (m_scriptManager)
-		m_scriptManager->collectGarbage();
+	T_ASSERT (m_scriptManager);
+	m_scriptManager->collectGarbage();
 }
 
 script::IScriptManager* ScriptServer::getScriptManager()
 {
 	return m_scriptManager;
+}
+
+void ScriptServer::threadDebugger()
+{
+	while (!m_scriptDebuggerThread->stopped() && m_transport->connected())
+	{
+		if (!m_transport->wait(100))
+			continue;
+
+		Ref< ScriptDebuggerBreakpoint > breakpoint;
+		if (m_transport->recv< ScriptDebuggerBreakpoint >(0, breakpoint) == net::BidirectionalObjectTransport::RtSuccess)
+		{
+			T_ASSERT (breakpoint);
+			if (breakpoint->shouldAdd())
+				m_scriptDebugger->setBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
+			else
+				m_scriptDebugger->removeBreakpoint(breakpoint->getScriptId(), breakpoint->getLineNumber());
+		}
+
+		Ref< ScriptDebuggerControl > control;
+		if (m_transport->recv< ScriptDebuggerControl >(0, control) == net::BidirectionalObjectTransport::RtSuccess)
+		{
+			T_ASSERT (control);
+			switch (control->getAction())
+			{
+			case ScriptDebuggerControl::AcBreak:
+				m_scriptDebugger->actionBreak();
+				break;
+
+			case ScriptDebuggerControl::AcContinue:
+				m_scriptDebugger->actionContinue();
+				break;
+
+			case ScriptDebuggerControl::AcStepInto:
+				m_scriptDebugger->actionStepInto();
+				break;
+
+			case ScriptDebuggerControl::AcStepOver:
+				m_scriptDebugger->actionStepOver();
+				break;
+			}
+		}
+	}
+	m_scriptDebugger->actionContinue();
+}
+
+void ScriptServer::breakpointReached(script::IScriptDebugger* scriptDebugger, const script::CallStack& callStack)
+{
+	m_transport->send(&ScriptDebuggerHalted(callStack));
 }
 
 	}

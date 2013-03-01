@@ -15478,6 +15478,10 @@
 							<fileName>../../../res/toolbar/PlusMinus.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/toolbar/Debug.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>
@@ -18793,6 +18797,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[35]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[61]"/>
 				</item>
 			</dependencies>
 		</item>

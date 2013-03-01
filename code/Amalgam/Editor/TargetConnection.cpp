@@ -1,8 +1,8 @@
 #include "Amalgam/Editor/TargetConnection.h"
-#include "Core/Serialization/BinarySerializer.h"
+#include "Amalgam/Editor/TargetScriptDebugger.h"
+#include "Amalgam/Impl/ScriptDebuggerHalted.h"
 #include "Core/Thread/Acquire.h"
-#include "Net/SocketStream.h"
-#include "Net/TcpSocket.h"
+#include "Net/BidirectionalObjectTransport.h"
 
 namespace traktor
 {
@@ -11,19 +11,22 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetConnection", TargetConnection, Object)
 
-TargetConnection::TargetConnection(net::TcpSocket* socket)
-:	m_socket(socket)
+TargetConnection::TargetConnection(net::BidirectionalObjectTransport* transport, TargetScriptDebugger* targetDebugger)
+:	m_transport(transport)
+,	m_targetDebugger(targetDebugger)
 {
+	m_targetDebugger->addConnection(this);
 }
 
 void TargetConnection::destroy()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	if (m_socket)
+	if (m_targetDebugger)
 	{
-		m_socket->close();
-		m_socket = 0;
+		m_targetDebugger->removeConnection(this);
+		m_targetDebugger = 0;
 	}
+	m_transport = 0;
 }
 
 void TargetConnection::shutdown()
@@ -35,19 +38,30 @@ bool TargetConnection::update()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
-	if (!m_socket)
+	if (!m_transport)
 		return false;
 
-	if (!m_socket->select(true, false, false, 0))
-		return true;
-
-	net::SocketStream ss(m_socket, true, false);
-
-	Ref< TargetPerformance > performance = BinarySerializer(&ss).readObject< TargetPerformance >();
-	if (!performance)
+	if (!m_transport->connected())
+	{
+		m_transport = 0;
 		return false;
+	}
 
-	m_performance = *performance;
+	{
+		Ref< TargetPerformance > performance;
+		if (m_transport->recv< TargetPerformance >(0, performance) == net::BidirectionalObjectTransport::RtSuccess)
+			m_performance = *performance;
+	}
+
+	{
+		Ref< ScriptDebuggerHalted > debugger;
+		if (m_transport->recv< ScriptDebuggerHalted >(0, debugger) == net::BidirectionalObjectTransport::RtSuccess)
+		{
+			const script::CallStack& cs = debugger->getCallStack();
+			m_targetDebugger->notifyListeners(cs);
+		}
+	}
+
 	return true;
 }
 

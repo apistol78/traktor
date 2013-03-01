@@ -14,6 +14,7 @@
 #include "Amalgam/Impl/ResourceServer.h"
 #include "Amalgam/Impl/ScriptServer.h"
 #include "Amalgam/Impl/TargetManagerConnection.h"
+#include "Amalgam/Impl/TargetPerformance.h"
 #include "Amalgam/Impl/WorldServer.h"
 #include "Core/Platform.h"
 #include "Core/Library/Library.h"
@@ -36,6 +37,7 @@
 #include "Database/Database.h"
 #include "Database/Events/EvtInstanceCommitted.h"
 #include "Online/ISessionManager.h"
+#include "Net/BidirectionalObjectTransport.h"
 #include "Physics/PhysicsManager.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -186,8 +188,16 @@ bool Application::create(
 	{
 		T_DEBUG(L"Creating script server...");
 		m_scriptServer = new ScriptServer();
-		if (!m_scriptServer->create(settings, /*m_targetManagerConnection != 0*/false))
-			return false;
+		if (settings->getProperty< PropertyBoolean >(L"Script.AttachDebugger", false) && m_targetManagerConnection)
+		{
+			if (!m_scriptServer->create(settings, true, m_targetManagerConnection->getTransport()))
+				return false;
+		}
+		else
+		{
+			if (!m_scriptServer->create(settings, false, 0))
+				return false;
+		}
 	}
 
 	// World
@@ -310,7 +320,7 @@ bool Application::create(
 	}
 
 	// Database monitoring thread.
-	if (settings->getProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", false) || m_targetManagerConnection)
+	if (settings->getProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", false))
 	{
 		T_DEBUG(L"Creating database monitoring thread...");
 		m_threadDatabase = ThreadManager::getInstance().create(makeFunctor(this, &Application::threadDatabase), L"Database events");
@@ -415,6 +425,13 @@ bool Application::update()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 	Ref< IState > currentState;
+
+	// Update target manager connection.
+	if (m_targetManagerConnection)
+	{
+		if (!m_targetManagerConnection->update())
+			return false;
+	}
 
 	// Update render server.
 	RenderServer::UpdateResult updateResult = m_renderServer->update(m_settings);
@@ -802,7 +819,7 @@ bool Application::update()
 				);
 			}
 
-			m_targetManagerConnection->setPerformance(performance);
+			m_targetManagerConnection->getTransport()->send(&performance);
 		}
 #endif
 	}
@@ -829,13 +846,7 @@ void Application::threadDatabase()
 	while (!m_threadDatabase->stopped())
 	{
 		for (uint32_t i = 0; i < c_databasePollInterval && !m_threadDatabase->stopped(); ++i)
-		{
-			// Update target manager connection.
-			if (m_targetManagerConnection)
-				m_targetManagerConnection->update();
-
 			m_threadDatabase->sleep(100);
-		}
 
 		if (!m_database)
 			continue;

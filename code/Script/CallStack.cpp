@@ -42,9 +42,10 @@ public:
 
 	virtual bool serialize(ISerializer& s) const
 	{
-		s >> Member< std::wstring >(L"name", m_ref.name);
 		s >> Member< Guid >(L"scriptId", m_ref.scriptId);
-		s >> Member< uint32_t >(L"lineNumber", m_ref.lineNumber);
+		s >> Member< std::wstring >(L"scriptName", m_ref.scriptName);
+		s >> Member< std::wstring >(L"functionName", m_ref.functionName);
+		s >> Member< uint32_t >(L"line", m_ref.line);
 		s >> MemberStlList< CallStack::Local, MemberLocal >(L"locals", m_ref.locals);
 		return true;
 	}
@@ -82,6 +83,11 @@ const std::list< CallStack::Frame >& CallStack::getFrames() const
 bool CallStack::serialize(ISerializer& s)
 {
 	return s >> MemberStlList< Frame, MemberFrame >(L"frames", m_frames);
+}
+
+CallStack::Frame::Frame()
+:	line(0)
+{
 }
 
 	}
