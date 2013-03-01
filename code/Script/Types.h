@@ -2,14 +2,26 @@
 #define traktor_script_Types_H
 
 #include <list>
-#include "Core/Config.h"
+#include "Core/Guid.h"
 
 namespace traktor
 {
 	namespace script
 	{
 
-typedef std::list< std::pair< int32_t, std::wstring > > source_map_t;
+struct SourceMapping
+{
+	Guid id;
+	std::wstring name;
+	int32_t line;
+
+	SourceMapping()
+	:	line(0)
+	{
+	}
+};
+
+typedef std::list< SourceMapping > source_map_t;
 
 	}
 }

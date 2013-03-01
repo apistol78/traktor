@@ -2,16 +2,18 @@
 #define traktor_amalgam_ScriptServer_H
 
 #include "Amalgam/IScriptServer.h"
+#include "Core/Thread/Thread.h"
+#include "Script/IScriptDebugger.h"
 
 namespace traktor
 {
 
 class PropertyGroup;
 
-	namespace script
+	namespace net
 	{
 
-class IScriptDebugger;
+class BidirectionalObjectTransport;
 
 	}
 
@@ -20,12 +22,16 @@ class IScriptDebugger;
 
 class IEnvironment;
 
-class ScriptServer : public IScriptServer
+class ScriptServer
+:	public IScriptServer
+,	public script::IScriptDebugger::IListener
 {
 	T_RTTI_CLASS;
 
 public:
-	bool create(const PropertyGroup* settings, bool debugger);
+	ScriptServer();
+
+	bool create(const PropertyGroup* settings, bool debugger, net::BidirectionalObjectTransport* transport);
 
 	void destroy();
 
@@ -40,6 +46,12 @@ public:
 private:
 	Ref< script::IScriptManager > m_scriptManager;
 	Ref< script::IScriptDebugger > m_scriptDebugger;
+	Ref< net::BidirectionalObjectTransport > m_transport;
+	Thread* m_scriptDebuggerThread;
+
+	void threadDebugger();
+
+	virtual void breakpointReached(script::IScriptDebugger* scriptDebugger, const script::CallStack& callStack);
 };
 
 	}

@@ -6,6 +6,31 @@ namespace traktor
 {
 	namespace script
 	{
+		namespace
+		{
+
+class MemberSourceMapping : public MemberComplex
+{
+public:
+	MemberSourceMapping(const wchar_t* const name, SourceMapping& ref)
+	:	MemberComplex(name, true)
+	,	m_ref(ref)
+	{
+	}
+
+	virtual bool serialize(ISerializer& s) const
+	{
+		s >> Member< Guid >(L"id", m_ref.id);
+		s >> Member< std::wstring >(L"name", m_ref.name);
+		s >> Member< int32_t >(L"line", m_ref.line);
+		return true;
+	}
+
+private:
+	SourceMapping& m_ref;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptResourceLua", 0, ScriptResourceLua, IScriptResource)
 
@@ -39,7 +64,7 @@ bool ScriptResourceLua::serialize(ISerializer& s)
 {
 	s >> Member< std::string >(L"fileName", m_fileName);
 	s >> Member< std::string >(L"script", m_script);
-	s >> MemberStlList< source_map_t::value_type, MemberStlPair< source_map_t::value_type::first_type, source_map_t::value_type::second_type > >(L"map", m_map);
+	s >> MemberStlList< SourceMapping, MemberSourceMapping >(L"map", m_map);
 	return true;
 }
 

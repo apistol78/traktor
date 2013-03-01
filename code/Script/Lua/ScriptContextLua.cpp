@@ -19,9 +19,9 @@ std::wstring translateSource(const source_map_t& map, int32_t line)
 	StringOutputStream ss;
 	for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
 	{
-		if (line >= i->first)
+		if (line >= i->line)
 		{
-			ss << i->second << L"(" << (line - i->first + 1) << L")";
+			ss << i->name << L"(" << (line - i->line + 1) << L")";
 			return ss.str();
 		}
 	}

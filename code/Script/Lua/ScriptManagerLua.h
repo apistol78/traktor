@@ -51,6 +51,7 @@ public:
 
 private:
 	friend class ScriptContextLua;
+	friend class ScriptDebuggerLua;
 
 	struct RegisteredClass
 	{

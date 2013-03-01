@@ -6,6 +6,7 @@
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/TargetManager.h"
+#include "Amalgam/Editor/TargetScriptDebugger.h"
 #include "Amalgam/Editor/Tool/BuildTargetAction.h"
 #include "Amalgam/Editor/Tool/DeployTargetAction.h"
 #include "Amalgam/Editor/Tool/LaunchTargetAction.h"
@@ -84,7 +85,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.EditorPlugin", EditorPlugin, editor::IE
 EditorPlugin::EditorPlugin(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_threadHostEnumerator(0)
-,	m_threadTargetManager(0)
 ,	m_threadConnectionManager(0)
 ,	m_threadTargetActions(0)
 {
@@ -103,6 +103,10 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 		log::error << L"Unable to create discovery manager; unable to enumerate hosts" << Endl;
 
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
+
+	// Create target script debugger dispatcher.
+	m_targetDebugger = new TargetScriptDebugger();
+	m_editor->setStoreObject(L"ScriptDebugger", m_targetDebugger);
 
 	// Create panel.
 	Ref< ui::Container > container = new ui::Container();
@@ -123,6 +127,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(new ui::MenuItem(L"Mute Audio", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Audio \"Write Out\"", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Force VBlank Off", true, 0));
+	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Debugger", true, 0));
 	m_toolBar->addItem(m_toolTweaks);
 
 	// Create target configuration list control.
@@ -139,6 +144,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_threadTargetActions = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetActions), L"Targets");
 	m_threadTargetActions->start();
+
+	container->addTimerEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTimer));
+	container->startTimer(100);
 
 	return true;
 }
@@ -163,6 +171,10 @@ void EditorPlugin::destroy()
 	safeDestroy(m_connectionManager);
 	safeDestroy(m_discoveryManager);
 	safeDestroy(m_targetManager);
+
+	if (m_editor)
+		m_editor->setStoreObject(L"ScriptDebugger", 0);
+	m_targetDebugger = 0;
 
 	m_targetInstances.clear();
 	m_targets.clear();
@@ -276,7 +288,7 @@ void EditorPlugin::handleWorkspaceOpened()
 		m_toolTargets->add(i->name);
 
 	// Create target manager.
-	m_targetManager = new TargetManager();
+	m_targetManager = new TargetManager(m_targetDebugger);
 	if (m_targetManager->create(
 		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
 	))
@@ -312,12 +324,6 @@ void EditorPlugin::handleWorkspaceOpened()
 	}
 
 	// Create communication threads.
-	if (m_targetManager)
-	{
-		m_threadTargetManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadTargetManager), L"Target manager");
-		m_threadTargetManager->start();
-	}
-
 	if (m_connectionManager)
 	{
 		m_threadConnectionManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadConnectionManager), L"Connection manager");
@@ -332,12 +338,6 @@ void EditorPlugin::handleWorkspaceClosed()
 	{
 		m_threadConnectionManager->stop();
 		ThreadManager::getInstance().destroy(m_threadConnectionManager);
-	}
-
-	if (m_threadTargetManager)
-	{
-		m_threadTargetManager->stop();
-		ThreadManager::getInstance().destroy(m_threadTargetManager);
 	}
 
 	m_toolTargets->removeAll();
@@ -395,6 +395,8 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				tweakSettings->setProperty< PropertyBoolean >(L"Audio.WriteOut", true);
 			if (m_toolTweaks->get(2)->isChecked())
 				tweakSettings->setProperty< PropertyBoolean >(L"Render.WaitVBlank", false);
+			if (m_toolTweaks->get(3)->isChecked())
+				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
 
 			// Add deploy and launch actions.
 			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
@@ -487,6 +489,15 @@ void EditorPlugin::eventToolBarClick(ui::Event* event)
 	m_targetList->requestUpdate();
 }
 
+void EditorPlugin::eventTimer(ui::Event* event)
+{
+	if (
+		m_targetManager &&
+		m_targetManager->update()
+	)
+		m_targetList->requestUpdate();
+}
+
 void EditorPlugin::threadHostEnumerator()
 {
 	while (!m_threadHostEnumerator->stopped())
@@ -526,15 +537,6 @@ void EditorPlugin::threadHostEnumerator()
 		}
 
 		m_threadHostEnumerator->sleep(1000);
-	}
-}
-
-void EditorPlugin::threadTargetManager()
-{
-	while (!m_threadTargetManager->stopped())
-	{
-		if (m_targetManager->update())
-			m_targetList->requestUpdate();
 	}
 }
 

@@ -1,12 +1,17 @@
 #ifndef traktor_amalgam_TargetManagerConnection_H
 #define traktor_amalgam_TargetManagerConnection_H
 
-#include "Net/SocketStream.h"
-#include "Net/TcpSocket.h"
-#include "Amalgam/Impl/TargetPerformance.h"
+#include "Core/Object.h"
 
 namespace traktor
 {
+	namespace net
+	{
+
+class BidirectionalObjectTransport;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -15,20 +20,16 @@ class TargetManagerConnection : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetManagerConnection();
-
 	bool connect(const std::wstring& host, uint16_t port, const Guid& id);
 
 	bool connected() const;
 
-	void setPerformance(const TargetPerformance& performance);
-
 	bool update();
 
+	net::BidirectionalObjectTransport* getTransport() const { return m_transport; }
+
 private:
-	Ref< net::TcpSocket > m_socket;
-	Ref< net::SocketStream > m_socketStream;
-	TargetPerformance m_performance;
+	Ref< net::BidirectionalObjectTransport > m_transport;
 };
 
 	}

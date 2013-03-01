@@ -10,19 +10,21 @@ namespace traktor
 	namespace net
 	{
 
-class TcpSocket;
+class BidirectionalObjectTransport;
 
 	}
 
 	namespace amalgam
 	{
 
+class TargetScriptDebugger;
+
 class TargetConnection : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	TargetConnection(net::TcpSocket* socket);
+	TargetConnection(net::BidirectionalObjectTransport* transport, TargetScriptDebugger* targetDebugger);
 
 	void destroy();
 
@@ -30,12 +32,13 @@ public:
 
 	bool update();
 
-	net::TcpSocket* getSocket() const { return m_socket; }
+	net::BidirectionalObjectTransport* getTransport() const { return m_transport; }
 
 	const TargetPerformance& getPerformance() const { return m_performance; }
 
 private:
-	Ref< net::TcpSocket > m_socket;
+	Ref< net::BidirectionalObjectTransport > m_transport;
+	Ref< TargetScriptDebugger > m_targetDebugger;
 	TargetPerformance m_performance;
 	Semaphore m_lock;
 };

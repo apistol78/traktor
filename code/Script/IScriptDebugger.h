@@ -34,9 +34,19 @@ public:
 		virtual void breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack) = 0;
 	};
 
-	virtual bool setBreakpoint(const Guid& scriptId, uint32_t lineNumber) = 0;
+	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
 
-	virtual bool removeBreakpoint(const Guid& scriptId, uint32_t lineNumber) = 0;
+	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber) = 0;
+
+	virtual bool isRunning() = 0;
+
+	virtual bool actionBreak() = 0;
+
+	virtual bool actionContinue() = 0;
+
+	virtual bool actionStepInto() = 0;
+
+	virtual bool actionStepOver() = 0;
 
 	virtual void addListener(IListener* listener) = 0;
 

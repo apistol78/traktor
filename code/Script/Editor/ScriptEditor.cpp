@@ -9,6 +9,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
+#include "Script/CallStack.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptEditor.h"
 #include "Ui/Bitmap.h"
@@ -33,6 +34,7 @@
 #include "Ui/Custom/StatusBar/StatusBar.h"
 
 // Resources
+#include "Resources/Debug.h"
 #include "Resources/PlusMinus.h"
 
 namespace traktor
@@ -102,8 +104,11 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	tab->addPage(tabDependencies);
 	tab->setActivePage(tabOutline);
 
+	Ref< ui::custom::Splitter > splitterWork = new ui::custom::Splitter();
+	splitterWork->create(m_splitter, false, -200);
+
 	Ref< ui::Container > containerEdit = new ui::Container();
-	if (!containerEdit->create(m_splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
+	if (!containerEdit->create(splitterWork, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
 		return false;
 
 	m_edit = new ui::custom::SyntaxRichEdit();
@@ -116,10 +121,59 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	m_edit->setFont(ui::Font(L"Courier New", 16));
 #endif
 	m_edit->addChangeEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptChange));
+	m_edit->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptDoubleClick));
 
 	m_compileStatus = new ui::custom::StatusBar();
 	if (!m_compileStatus->create(containerEdit, ui::WsClientBorder))
 		return false;
+
+	Ref< ui::Container > containerDebugger = new ui::Container();
+	containerDebugger->create(splitterWork, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+
+	m_debuggerTools = new ui::custom::ToolBar();
+	if (!m_debuggerTools->create(containerDebugger))
+		return false;
+
+	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 4);
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), ui::Command(L"Script.Editor.Continue"), 1));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), ui::Command(L"Script.Editor.Break"), 0));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), ui::Command(L"Script.Editor.StepInto"), 2));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), ui::Command(L"Script.Editor.StepOver"), 3));
+	m_debuggerTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDebuggerToolClick));
+
+	Ref< ui::Tab > tabDebugger = new ui::Tab();
+	tabDebugger->create(containerDebugger, ui::WsNone);
+
+	Ref< ui::TabPage > tabPageCallStack = new ui::TabPage();
+	tabPageCallStack->create(tabDebugger, L"Call Stack", new ui::TableLayout(L"100%", L"100%", 0, 0));
+
+	m_callStackGrid = new ui::custom::GridView();
+	m_callStackGrid->create(tabPageCallStack, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Function", 200));
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Line", 100));
+	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Script", 200));
+
+	tabDebugger->addPage(tabPageCallStack);
+
+	Ref< ui::TabPage > tabPageOutput = new ui::TabPage();
+	tabPageOutput->create(tabDebugger, L"Output", new ui::TableLayout(L"100%", L"100%", 0, 0));
+	tabDebugger->addPage(tabPageOutput);
+
+	Ref< ui::TabPage > tabPageVariables = new ui::TabPage();
+	tabPageVariables->create(tabDebugger, L"Variables", new ui::TableLayout(L"100%", L"100%", 0, 0));
+
+	m_variablesGrid = new ui::custom::GridView();
+	m_variablesGrid->create(tabPageVariables, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
+	m_variablesGrid->addColumn(new ui::custom::GridColumn(L"Name", 200));
+	m_variablesGrid->addColumn(new ui::custom::GridColumn(L"Value", 300));
+
+	tabDebugger->addPage(tabPageVariables);
+
+	Ref< ui::TabPage > tabPageBreakpoints = new ui::TabPage();
+	tabPageBreakpoints->create(tabDebugger, L"Breakpoints", new ui::TableLayout(L"100%", L"100%", 0, 0));
+	tabDebugger->addPage(tabPageBreakpoints);
+
+	tabDebugger->setActivePage(tabPageCallStack);
 
 	// Create language specific implementations.
 	{
@@ -149,14 +203,27 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 		m_compileCountDown = 1;
 	}
 
+	// Get debugger implementation.
+	m_scriptDebugger = m_editor->getStoreObject< IScriptDebugger >(L"ScriptDebugger");
+	if (m_scriptDebugger)
+		m_scriptDebugger->addListener(this);
+
 	updateDependencyList();
+	updateDebuggerTools();
 	return true;
 }
 
 void ScriptEditor::destroy()
 {
-	safeDestroy(m_splitter);
+	if (m_scriptDebugger != 0)
+	{
+		m_scriptDebugger->removeListener(this);
+		m_scriptDebugger = 0;
+	}
+
 	m_scriptManager = 0;
+
+	safeDestroy(m_splitter);
 }
 
 void ScriptEditor::apply()
@@ -211,7 +278,7 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 
 ui::Size ScriptEditor::getPreferredSize() const
 {
-	return ui::Size(1000, 600);
+	return ui::Size(1000, 800);
 }
 
 void ScriptEditor::syntaxError(uint32_t line, const std::wstring& message)
@@ -230,6 +297,40 @@ void ScriptEditor::otherError(const std::wstring& message)
 	m_compileStatus->setText(ss.str());
 }
 
+void ScriptEditor::breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack)
+{
+	const script::CallStack::Frame& currentFrame = callStack.getCurrentFrame();
+
+	if (currentFrame.scriptId == m_instance->getGuid())
+	{
+		m_edit->scrollToLine(currentFrame.line);
+		m_edit->placeCaret(m_edit->getLineOffset(currentFrame.line));
+	}
+
+	m_callStackGrid->removeAllRows();
+
+	const std::list< script::CallStack::Frame >& frames = callStack.getFrames();
+	for (std::list< script::CallStack::Frame >::const_iterator i = frames.begin(); i != frames.end(); ++i)
+	{
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(i->functionName));
+		row->add(new ui::custom::GridItem(toString(i->line + 1)));
+		row->add(new ui::custom::GridItem(i->scriptName));
+		m_callStackGrid->addRow(row);
+	}
+
+	m_variablesGrid->removeAllRows();
+
+	const std::list< script::CallStack::Local >& locals = currentFrame.locals;
+	for (std::list< script::CallStack::Local >::const_iterator i = locals.begin(); i != locals.end(); ++i)
+	{
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(i->name));
+		row->add(new ui::custom::GridItem(i->value));
+		m_variablesGrid->addRow(row);
+	}
+}
+
 void ScriptEditor::updateDependencyList()
 {
 	m_dependencyList->removeAll();
@@ -243,6 +344,14 @@ void ScriptEditor::updateDependencyList()
 		else
 			m_dependencyList->add(i->format());
 	}
+}
+
+void ScriptEditor::updateDebuggerTools()
+{
+	if (m_scriptDebugger)
+		m_debuggerTools->setEnable(true);
+	else
+		m_debuggerTools->setEnable(false);
 }
 
 void ScriptEditor::eventOutlineDoubleClick(ui::Event* event)
@@ -321,10 +430,43 @@ void ScriptEditor::eventDependencyListDoubleClick(ui::Event* event)
 	}
 }
 
+void ScriptEditor::eventDebuggerToolClick(ui::Event* event)
+{
+	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
+	const ui::Command& cmd = cmdEvent->getCommand();
+
+	if (cmd == L"Script.Editor.Continue")
+		m_scriptDebugger->actionContinue();
+	else if (cmd == L"Script.Editor.Break")
+		m_scriptDebugger->actionBreak();
+	else if (cmd == L"Script.Editor.StepInto")
+		m_scriptDebugger->actionStepInto();
+	else if (cmd == L"Script.Editor.StepOver")
+		m_scriptDebugger->actionStepOver();
+}
+
 void ScriptEditor::eventScriptChange(ui::Event* event)
 {
 	m_compileCountDown = 10;
 	m_compileStatus->setText(L"");
+}
+
+void ScriptEditor::eventScriptDoubleClick(ui::Event* event)
+{
+	if (m_scriptDebugger)
+	{
+		int32_t offset = m_edit->getCaretOffset();
+		int32_t line = m_edit->getLineFromOffset(offset);
+		if (line < 0)
+			return;
+
+		m_scriptDebugger->setBreakpoint(
+			m_instance->getGuid(),
+			line
+		);
+
+		log::info << L"Breakpoint set on line " << (line + 1) << Endl;
+	}
 }
 
 void ScriptEditor::eventTimer(ui::Event* event)

@@ -32,12 +32,15 @@ public:
 		std::wstring value;
 	};
 
-	struct Frame
+	struct T_DLLCLASS Frame
 	{
-		std::wstring name;
 		Guid scriptId;
-		uint32_t lineNumber;
+		std::wstring scriptName;
+		std::wstring functionName;
+		uint32_t line;
 		std::list< Local > locals;
+
+		Frame();
 	};
 
 	void pushFrame(const Frame& frame);

@@ -3,6 +3,7 @@
 
 #include <list>
 #include "Editor/IObjectEditor.h"
+#include "Script/IScriptDebugger.h"
 #include "Script/IScriptManager.h"
 #include "Ui/Custom/SyntaxRichEdit/SyntaxTypes.h"
 
@@ -36,6 +37,7 @@ class GridView;
 class Splitter;
 class SyntaxRichEdit;
 class StatusBar;
+class ToolBar;
 
 		}
 	}
@@ -43,13 +45,14 @@ class StatusBar;
 	namespace script
 	{
 
-class Script;
-class IScriptManager;
 class IScriptContext;
+class IScriptManager;
+class Script;
 
 class T_DLLCLASS ScriptEditor
 :	public editor::IObjectEditor
 ,	public script::IErrorCallback
+,	public script::IScriptDebugger::IListener
 {
 	T_RTTI_CLASS;
 
@@ -70,12 +73,16 @@ private:
 	editor::IEditor* m_editor;
 	Ref< db::Instance > m_instance;
 	Ref< Script > m_script;
+	Ref< IScriptDebugger > m_scriptDebugger;
 	Ref< IScriptManager > m_scriptManager;
 	Ref< ui::custom::Splitter > m_splitter;
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ui::ListBox > m_dependencyList;
+	Ref< ui::custom::ToolBar > m_debuggerTools;
 	Ref< ui::custom::SyntaxRichEdit > m_edit;
 	Ref< ui::custom::StatusBar > m_compileStatus;
+	Ref< ui::custom::GridView > m_callStackGrid;
+	Ref< ui::custom::GridView > m_variablesGrid;
 	std::list< ui::custom::SyntaxOutline > m_outline;
 	int32_t m_compileCountDown;
 
@@ -83,7 +90,11 @@ private:
 
 	virtual void otherError(const std::wstring& message);
 
+	virtual void breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack);
+
 	void updateDependencyList();
+
+	void updateDebuggerTools();
 
 	void eventOutlineDoubleClick(ui::Event* event);
 
@@ -91,7 +102,11 @@ private:
 
 	void eventDependencyListDoubleClick(ui::Event* event);
 
+	void eventDebuggerToolClick(ui::Event* event);
+
 	void eventScriptChange(ui::Event* event);
+
+	void eventScriptDoubleClick(ui::Event* event);
 
 	void eventTimer(ui::Event* event);
 };

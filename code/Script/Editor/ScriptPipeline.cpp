@@ -25,11 +25,11 @@ namespace traktor
 
 struct ResolvedScript
 {
-	Guid guid;
+	Guid id;
 	std::wstring name;
 	Ref< const Script > script;
 
-	bool operator == (const Guid& rh) const { return guid == rh; }
+	bool operator == (const Guid& rh) const { return id == rh; }
 };
 
 bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& scriptGuid, std::list< ResolvedScript >& outScripts)
@@ -53,7 +53,7 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 	}
 
 	ResolvedScript rs;
-	rs.guid = scriptGuid;
+	rs.id = scriptGuid;
 	rs.name = scriptInstance->getName();
 	rs.script = script;
 	outScripts.push_back(rs);
@@ -63,7 +63,7 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 7, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 8, ScriptPipeline, editor::DefaultPipeline)
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -131,13 +131,19 @@ bool ScriptPipeline::buildOutput(
 	}
 
 	// Concate all scripts into a single script; generate a map with line numbers to corresponding source.
-	script::source_map_t sm;
+	source_map_t sm;
 	StringOutputStream ss;
 	int32_t line = 0;
 
 	for (std::list< ResolvedScript >::const_iterator i = scripts.begin(); i != scripts.end(); ++i)
 	{
-		sm.push_back(std::make_pair(line, i->name));
+		SourceMapping map;
+		map.id = i->id;
+		map.name = i->name;
+		map.line = line;
+		sm.push_back(map);
+
+		// Concatenate and count lines.
 		StringSplit< std::wstring > split(i->script->getText(), L"\r\n");
 		for (StringSplit< std::wstring >::const_iterator j = split.begin(); j != split.end(); ++j)
 		{

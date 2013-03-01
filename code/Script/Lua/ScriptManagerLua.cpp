@@ -267,6 +267,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	// Load script into environment.
 	std::string fileName = "@" + scriptResourceLua->getFileName();
 	const std::string& text = scriptResourceLua->getScript();
+
 	int32_t result = luaL_loadbuffer(
 		m_luaState,
 		text.c_str(),
@@ -281,11 +282,6 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		return 0;
 	}
 
-	// Call script.
-	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
-	lua_setfenv(m_luaState, -2);
-	lua_call(m_luaState, 0, 0);
-
 	// Create new context.
 	Ref< ScriptContextLua > context = new ScriptContextLua(
 		this,
@@ -293,6 +289,15 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		environmentRef,
 		scriptResourceLua->getMap()
 	);
+
+	// Call script.
+	m_currentContext = context;
+
+	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
+	lua_setfenv(m_luaState, -2);
+	lua_call(m_luaState, 0, 0);
+
+	m_currentContext = 0;
 
 	m_contexts.push_back(context);
 	return context;

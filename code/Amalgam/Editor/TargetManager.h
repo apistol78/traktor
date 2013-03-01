@@ -10,12 +10,15 @@ namespace traktor
 	{
 
 class TargetInstance;
+class TargetScriptDebugger;
 
 class TargetManager : public Object
 {
 	T_RTTI_CLASS;
 
 public:
+	TargetManager(TargetScriptDebugger* targetDebugger);
+
 	bool create(uint16_t port);
 
 	void destroy();
@@ -27,6 +30,7 @@ public:
 	bool update();
 
 private:
+	Ref< TargetScriptDebugger > m_targetDebugger;
 	Ref< net::TcpSocket > m_listenSocket;
 	RefArray< TargetInstance > m_instances;
 };

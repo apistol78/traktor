@@ -4,9 +4,9 @@
 #include "Amalgam/Impl/TargetID.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketSet.h"
-#include "Net/SocketStream.h"
 
 namespace traktor
 {
@@ -14,6 +14,11 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetManager", TargetManager, Object)
+
+TargetManager::TargetManager(TargetScriptDebugger* targetDebugger)
+:	m_targetDebugger(targetDebugger)
+{
+}
 
 bool TargetManager::create(uint16_t port)
 {
@@ -69,11 +74,17 @@ bool TargetManager::update()
 	{
 		RefArray< TargetConnection> connections = (*i)->getConnections();
 		for (RefArray< TargetConnection >::const_iterator j = connections.begin(); j != connections.end(); ++j)
-			socketSet.add((*j)->getSocket());
+		{
+			net::BidirectionalObjectTransport* transport = (*j)->getTransport();
+			T_ASSERT (transport);
+
+			if (transport->getSocket())
+				socketSet.add(transport->getSocket());
+		}
 	}
 
 	// Wait on all sockets.
-	if (socketSet.select(true, false, false, 100, socketSetResult) <= 0)
+	if (socketSet.select(true, false, false, 0, socketSetResult) <= 0)
 		return needUpdate;
 
 	// Check if any pending connection available.
@@ -83,11 +94,14 @@ bool TargetManager::update()
 		Ref< net::TcpSocket > socket = m_listenSocket->accept();
 		if (socket)
 		{
+			Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(socket);
+
 			// Target must send it's identifier upon connection.
-			net::SocketStream ss(socket, true, false);
-			Ref< TargetID > targetId = BinarySerializer(&ss).readObject< TargetID >();
-			if (targetId)
+			Ref< TargetID > targetId;
+			if (transport->recv< TargetID >(1000, targetId) == net::BidirectionalObjectTransport::RtSuccess)
 			{
+				T_ASSERT (targetId);
+
 				// Find instance with matching identifier.
 				TargetInstance* instance = 0;
 				for (RefArray< TargetInstance >::iterator i = m_instances.begin(); i != m_instances.end(); ++i)
@@ -102,21 +116,19 @@ bool TargetManager::update()
 				if (instance)
 				{
 					// Create connection object and add to instance.
-					instance->addConnection(new TargetConnection(socket));
+					instance->addConnection(new TargetConnection(transport, m_targetDebugger));
 					needUpdate |= true;
 					log::info << L"New target connection accepted; ID " << targetId->getId().format() << Endl;
 				}
 				else
 				{
 					// Unknown target; refusing connection.
-					socket->close();
 					log::error << L"Unknown target ID " << targetId->getId().format() << L"; connection refused" << Endl;
 				}
 			}
 			else
 			{
 				// Invalid target ID message; refusing connection.
-				socket->close();
 				log::error << L"Invalid target ID message; connection refused" << Endl;
 			}
 		}
