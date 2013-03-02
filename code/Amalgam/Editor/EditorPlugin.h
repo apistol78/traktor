@@ -42,7 +42,7 @@ class Target;
 class TargetListControl;
 class TargetInstance;
 class TargetManager;
-class TargetScriptDebugger;
+class TargetScriptDebuggerSessions;
 
 class EditorPlugin : public editor::IEditorPlugin
 {
@@ -98,7 +98,7 @@ private:
 
 	// \name Tool
 	// \{
-	Ref< TargetScriptDebugger > m_targetDebugger;
+	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
 	std::vector< EditTarget > m_targets;
 	RefArray< TargetInstance > m_targetInstances;
 	// \}

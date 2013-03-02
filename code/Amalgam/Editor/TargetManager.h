@@ -10,14 +10,14 @@ namespace traktor
 	{
 
 class TargetInstance;
-class TargetScriptDebugger;
+class TargetScriptDebuggerSessions;
 
 class TargetManager : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	TargetManager(TargetScriptDebugger* targetDebugger);
+	TargetManager(TargetScriptDebuggerSessions* targetDebuggerSessions);
 
 	bool create(uint16_t port);
 
@@ -30,7 +30,7 @@ public:
 	bool update();
 
 private:
-	Ref< TargetScriptDebugger > m_targetDebugger;
+	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< net::TcpSocket > m_listenSocket;
 	RefArray< TargetInstance > m_instances;
 };

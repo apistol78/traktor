@@ -13,7 +13,7 @@ namespace traktor
 		namespace
 		{
 
-void jobLoader(amalgam::IEnvironment* environment, const Guid& stageGuid, Ref< const Object > params, Ref< Stage >& outStage)
+void jobLoader(amalgam::IEnvironment* environment, const Guid& stageGuid, Ref< const Object > params, Ref< StageLoader > stageLoader, Ref< Stage >& outStage)
 {
 	Ref< StageData > stageData = environment->getDatabase()->getObjectReadOnly< StageData >(stageGuid);
 	if (!stageData)
@@ -64,7 +64,7 @@ Ref< StageLoader > StageLoader::createAsync(amalgam::IEnvironment* environment, 
 {
 	Ref< StageLoader > stageLoader = new StageLoader();
 
-	stageLoader->m_job = JobManager::getInstance().add(makeStaticFunctor< amalgam::IEnvironment*, const Guid&, Ref< const Object >, Ref< Stage >& >(&jobLoader, environment, stageGuid, params, stageLoader->m_stage));
+	stageLoader->m_job = JobManager::getInstance().add(makeStaticFunctor< amalgam::IEnvironment*, const Guid&, Ref< const Object >, Ref< StageLoader >, Ref< Stage >& >(&jobLoader, environment, stageGuid, params, stageLoader, stageLoader->m_stage));
 	if (!stageLoader->m_job)
 		return 0;
 
@@ -74,7 +74,7 @@ Ref< StageLoader > StageLoader::createAsync(amalgam::IEnvironment* environment, 
 Ref< StageLoader > StageLoader::create(amalgam::IEnvironment* environment, const Guid& stageGuid, const Object* params)
 {
 	Ref< StageLoader > stageLoader = new StageLoader();
-	jobLoader(environment, stageGuid, params, stageLoader->m_stage);
+	jobLoader(environment, stageGuid, params, stageLoader, stageLoader->m_stage);
 	return stageLoader;
 }
 

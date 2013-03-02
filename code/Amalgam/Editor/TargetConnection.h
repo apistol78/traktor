@@ -18,13 +18,16 @@ class BidirectionalObjectTransport;
 	{
 
 class TargetScriptDebugger;
+class TargetScriptDebuggerSessions;
 
 class TargetConnection : public Object
 {
 	T_RTTI_CLASS;
 
 public:
-	TargetConnection(net::BidirectionalObjectTransport* transport, TargetScriptDebugger* targetDebugger);
+	TargetConnection(net::BidirectionalObjectTransport* transport, TargetScriptDebuggerSessions* targetDebuggerSessions);
+
+	virtual ~TargetConnection();
 
 	void destroy();
 
@@ -38,6 +41,7 @@ public:
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
+	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< TargetScriptDebugger > m_targetDebugger;
 	TargetPerformance m_performance;
 	Semaphore m_lock;

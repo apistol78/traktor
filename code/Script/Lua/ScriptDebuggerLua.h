@@ -32,7 +32,7 @@ public:
 
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
-	virtual bool isRunning();
+	virtual bool isRunning() const;
 
 	virtual bool actionBreak();
 

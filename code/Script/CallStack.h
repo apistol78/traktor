@@ -3,6 +3,7 @@
 
 #include <list>
 #include "Core/Guid.h"
+#include "Core/RefArray.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -18,6 +19,8 @@ namespace traktor
 	namespace script
 	{
 
+class Local;
+
 /*! \brief Call stack debug information.
  * \ingroup Script
  */
@@ -26,19 +29,13 @@ class T_DLLCLASS CallStack : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	struct Local
-	{
-		std::wstring name;
-		std::wstring value;
-	};
-
 	struct T_DLLCLASS Frame
 	{
 		Guid scriptId;
 		std::wstring scriptName;
 		std::wstring functionName;
 		uint32_t line;
-		std::list< Local > locals;
+		RefArray< Local > locals;
 
 		Frame();
 	};

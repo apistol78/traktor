@@ -13079,6 +13079,10 @@
 							<fileName>../../../res/toolbar/Debug.png</fileName>
 							<items/>
 						</item>
+						<item type="File">
+							<fileName>../../../res/script/Editor.png</fileName>
+							<items/>
+						</item>
 					</items>
 				</item>
 			</items>
@@ -16171,6 +16175,14 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[30]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[51]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[52]"/>
 				</item>
 			</dependencies>
 		</item>

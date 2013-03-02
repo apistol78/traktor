@@ -11,9 +11,11 @@
 #include "I18N/Text.h"
 #include "Script/CallStack.h"
 #include "Script/Editor/Script.h"
+#include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditor.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/ListBox.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Tab.h"
@@ -26,6 +28,7 @@
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridView.h"
+#include "Ui/Custom/Panel.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
@@ -34,7 +37,7 @@
 #include "Ui/Custom/StatusBar/StatusBar.h"
 
 // Resources
-#include "Resources/Debug.h"
+#include "Resources/Editor.h"
 #include "Resources/PlusMinus.h"
 
 namespace traktor
@@ -115,6 +118,8 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	if (!m_edit->create(containerEdit, m_script->getText()))
 		return false;
 
+	m_edit->addImage(ui::Bitmap::load(c_ResourceEditor, sizeof(c_ResourceEditor), L"png"), 1);
+
 #if defined(__APPLE__)
 	m_edit->setFont(ui::Font(L"Courier New", 14));
 #else
@@ -127,53 +132,11 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	if (!m_compileStatus->create(containerEdit, ui::WsClientBorder))
 		return false;
 
-	Ref< ui::Container > containerDebugger = new ui::Container();
-	containerDebugger->create(splitterWork, ui::WsClientBorder, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	Ref< ui::custom::Panel > panelDebugger = new ui::custom::Panel();
+	panelDebugger->create(splitterWork, L"Debugger", new ui::FloodLayout());
 
-	m_debuggerTools = new ui::custom::ToolBar();
-	if (!m_debuggerTools->create(containerDebugger))
-		return false;
-
-	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 4);
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), ui::Command(L"Script.Editor.Continue"), 1));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), ui::Command(L"Script.Editor.Break"), 0));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), ui::Command(L"Script.Editor.StepInto"), 2));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), ui::Command(L"Script.Editor.StepOver"), 3));
-	m_debuggerTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventDebuggerToolClick));
-
-	Ref< ui::Tab > tabDebugger = new ui::Tab();
-	tabDebugger->create(containerDebugger, ui::WsNone);
-
-	Ref< ui::TabPage > tabPageCallStack = new ui::TabPage();
-	tabPageCallStack->create(tabDebugger, L"Call Stack", new ui::TableLayout(L"100%", L"100%", 0, 0));
-
-	m_callStackGrid = new ui::custom::GridView();
-	m_callStackGrid->create(tabPageCallStack, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Function", 200));
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Line", 100));
-	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Script", 200));
-
-	tabDebugger->addPage(tabPageCallStack);
-
-	Ref< ui::TabPage > tabPageOutput = new ui::TabPage();
-	tabPageOutput->create(tabDebugger, L"Output", new ui::TableLayout(L"100%", L"100%", 0, 0));
-	tabDebugger->addPage(tabPageOutput);
-
-	Ref< ui::TabPage > tabPageVariables = new ui::TabPage();
-	tabPageVariables->create(tabDebugger, L"Variables", new ui::TableLayout(L"100%", L"100%", 0, 0));
-
-	m_variablesGrid = new ui::custom::GridView();
-	m_variablesGrid->create(tabPageVariables, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
-	m_variablesGrid->addColumn(new ui::custom::GridColumn(L"Name", 200));
-	m_variablesGrid->addColumn(new ui::custom::GridColumn(L"Value", 300));
-
-	tabDebugger->addPage(tabPageVariables);
-
-	Ref< ui::TabPage > tabPageBreakpoints = new ui::TabPage();
-	tabPageBreakpoints->create(tabDebugger, L"Breakpoints", new ui::TableLayout(L"100%", L"100%", 0, 0));
-	tabDebugger->addPage(tabPageBreakpoints);
-
-	tabDebugger->setActivePage(tabPageCallStack);
+	m_tabSessions = new ui::Tab();
+	m_tabSessions->create(panelDebugger, ui::WsNone);
 
 	// Create language specific implementations.
 	{
@@ -204,21 +167,20 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	}
 
 	// Get debugger implementation.
-	m_scriptDebugger = m_editor->getStoreObject< IScriptDebugger >(L"ScriptDebugger");
-	if (m_scriptDebugger)
-		m_scriptDebugger->addListener(this);
+	m_scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
+	if (m_scriptDebuggerSessions)
+		m_scriptDebuggerSessions->addListener(this);
 
 	updateDependencyList();
-	updateDebuggerTools();
 	return true;
 }
 
 void ScriptEditor::destroy()
 {
-	if (m_scriptDebugger != 0)
+	if (m_scriptDebuggerSessions != 0)
 	{
-		m_scriptDebugger->removeListener(this);
-		m_scriptDebugger = 0;
+		m_scriptDebuggerSessions->removeListener(this);
+		m_scriptDebuggerSessions = 0;
 	}
 
 	m_scriptManager = 0;
@@ -271,7 +233,18 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 		}
 	}
 	else
+	{
+		ui::TabPage* tabPageSession = m_tabSessions->getActivePage();
+		if (tabPageSession)
+		{
+			Ref< ScriptDebuggerView > debuggerView = tabPageSession->getData< ScriptDebuggerView >(L"VIEW");
+			T_ASSERT (debuggerView);
+
+			if (debuggerView->handleCommand(command))
+				return true;
+		}
 		return false;
+	}
 
 	return true;
 }
@@ -297,37 +270,56 @@ void ScriptEditor::otherError(const std::wstring& message)
 	m_compileStatus->setText(ss.str());
 }
 
-void ScriptEditor::breakpointReached(IScriptDebugger* scriptDebugger, const CallStack& callStack)
+void ScriptEditor::notifyDebuggerBeginSession(IScriptDebugger* scriptDebugger)
 {
-	const script::CallStack::Frame& currentFrame = callStack.getCurrentFrame();
+	Ref< ui::TabPage > tabPageSession = new ui::TabPage();
+	tabPageSession->create(m_tabSessions, L"Session 0", new ui::FloodLayout());
 
-	if (currentFrame.scriptId == m_instance->getGuid())
+	Ref< ScriptDebuggerView > debuggerView = new ScriptDebuggerView(scriptDebugger);
+	debuggerView->create(tabPageSession);
+	debuggerView->addBreakPointEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventBreakPoint));
+
+	tabPageSession->setData(L"DEBUGGER", scriptDebugger);
+	tabPageSession->setData(L"VIEW", debuggerView);
+
+	m_tabSessions->addPage(tabPageSession);
+	m_tabSessions->setActivePage(tabPageSession);
+	m_tabSessions->update();
+}
+
+void ScriptEditor::notifyDebuggerEndSession(IScriptDebugger* scriptDebugger)
+{
+	int32_t pageCount = m_tabSessions->getPageCount();
+	for (int32_t i = 0; i < pageCount; ++i)
 	{
-		m_edit->scrollToLine(currentFrame.line);
-		m_edit->placeCaret(m_edit->getLineOffset(currentFrame.line));
+		ui::TabPage* tabPageSession = m_tabSessions->getPage(i);
+		T_ASSERT (tabPageSession);
+
+		if (tabPageSession->getData< IScriptDebugger >(L"DEBUGGER") == scriptDebugger)
+		{
+			m_tabSessions->removePage(tabPageSession);
+			safeDestroy(tabPageSession);
+			break;
+		}
 	}
+	m_tabSessions->update();
+}
 
-	m_callStackGrid->removeAllRows();
-
-	const std::list< script::CallStack::Frame >& frames = callStack.getFrames();
-	for (std::list< script::CallStack::Frame >::const_iterator i = frames.begin(); i != frames.end(); ++i)
+void ScriptEditor::notifyDebuggerSetBreakpoint(const Guid& scriptId, int32_t lineNumber)
+{
+	if (scriptId == m_instance->getGuid())
 	{
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(i->functionName));
-		row->add(new ui::custom::GridItem(toString(i->line + 1)));
-		row->add(new ui::custom::GridItem(i->scriptName));
-		m_callStackGrid->addRow(row);
+		m_edit->setImage(lineNumber, 0);
+		m_edit->update();
 	}
+}
 
-	m_variablesGrid->removeAllRows();
-
-	const std::list< script::CallStack::Local >& locals = currentFrame.locals;
-	for (std::list< script::CallStack::Local >::const_iterator i = locals.begin(); i != locals.end(); ++i)
+void ScriptEditor::notifyDebuggerRemoveBreakpoint(const Guid& scriptId, int32_t lineNumber)
+{
+	if (scriptId == m_instance->getGuid())
 	{
-		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
-		row->add(new ui::custom::GridItem(i->name));
-		row->add(new ui::custom::GridItem(i->value));
-		m_variablesGrid->addRow(row);
+		m_edit->setImage(lineNumber, 1);
+		m_edit->update();
 	}
 }
 
@@ -344,14 +336,6 @@ void ScriptEditor::updateDependencyList()
 		else
 			m_dependencyList->add(i->format());
 	}
-}
-
-void ScriptEditor::updateDebuggerTools()
-{
-	if (m_scriptDebugger)
-		m_debuggerTools->setEnable(true);
-	else
-		m_debuggerTools->setEnable(false);
 }
 
 void ScriptEditor::eventOutlineDoubleClick(ui::Event* event)
@@ -430,21 +414,6 @@ void ScriptEditor::eventDependencyListDoubleClick(ui::Event* event)
 	}
 }
 
-void ScriptEditor::eventDebuggerToolClick(ui::Event* event)
-{
-	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent* >(event);
-	const ui::Command& cmd = cmdEvent->getCommand();
-
-	if (cmd == L"Script.Editor.Continue")
-		m_scriptDebugger->actionContinue();
-	else if (cmd == L"Script.Editor.Break")
-		m_scriptDebugger->actionBreak();
-	else if (cmd == L"Script.Editor.StepInto")
-		m_scriptDebugger->actionStepInto();
-	else if (cmd == L"Script.Editor.StepOver")
-		m_scriptDebugger->actionStepOver();
-}
-
 void ScriptEditor::eventScriptChange(ui::Event* event)
 {
 	m_compileCountDown = 10;
@@ -453,20 +422,16 @@ void ScriptEditor::eventScriptChange(ui::Event* event)
 
 void ScriptEditor::eventScriptDoubleClick(ui::Event* event)
 {
-	if (m_scriptDebugger)
-	{
-		int32_t offset = m_edit->getCaretOffset();
-		int32_t line = m_edit->getLineFromOffset(offset);
-		if (line < 0)
-			return;
+	int32_t offset = m_edit->getCaretOffset();
+	int32_t line = m_edit->getLineFromOffset(offset);
 
-		m_scriptDebugger->setBreakpoint(
-			m_instance->getGuid(),
-			line
-		);
+	if (line < 0)
+		return;
 
-		log::info << L"Breakpoint set on line " << (line + 1) << Endl;
-	}
+	if (!m_scriptDebuggerSessions->haveBreakpoint(m_instance->getGuid(), line))
+		m_scriptDebuggerSessions->setBreakpoint(m_instance->getGuid(), line);
+	else
+		m_scriptDebuggerSessions->removeBreakpoint(m_instance->getGuid(), line);
 }
 
 void ScriptEditor::eventTimer(ui::Event* event)
@@ -512,6 +477,18 @@ void ScriptEditor::eventTimer(ui::Event* event)
 				m_outlineGrid->addRow(row);
 			}
 		}
+	}
+}
+
+void ScriptEditor::eventBreakPoint(ui::Event* event)
+{
+	const CallStack* callStack = checked_type_cast< const CallStack* >(event->getItem());
+	const CallStack::Frame& currentFrame = callStack->getCurrentFrame();
+
+	if (currentFrame.scriptId == m_instance->getGuid())
+	{
+		m_edit->scrollToLine(currentFrame.line > 4 ? currentFrame.line - 4 : 0);
+		m_edit->placeCaret(m_edit->getLineOffset(currentFrame.line));
 	}
 }
 

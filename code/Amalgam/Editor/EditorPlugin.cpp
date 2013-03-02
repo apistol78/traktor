@@ -6,7 +6,7 @@
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/TargetManager.h"
-#include "Amalgam/Editor/TargetScriptDebugger.h"
+#include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
 #include "Amalgam/Editor/Tool/BuildTargetAction.h"
 #include "Amalgam/Editor/Tool/DeployTargetAction.h"
 #include "Amalgam/Editor/Tool/LaunchTargetAction.h"
@@ -105,8 +105,8 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
 
 	// Create target script debugger dispatcher.
-	m_targetDebugger = new TargetScriptDebugger();
-	m_editor->setStoreObject(L"ScriptDebugger", m_targetDebugger);
+	m_targetDebuggerSessions = new TargetScriptDebuggerSessions();
+	m_editor->setStoreObject(L"ScriptDebuggerSessions", m_targetDebuggerSessions);
 
 	// Create panel.
 	Ref< ui::Container > container = new ui::Container();
@@ -173,8 +173,8 @@ void EditorPlugin::destroy()
 	safeDestroy(m_targetManager);
 
 	if (m_editor)
-		m_editor->setStoreObject(L"ScriptDebugger", 0);
-	m_targetDebugger = 0;
+		m_editor->setStoreObject(L"ScriptDebuggerSessions", 0);
+	m_targetDebuggerSessions = 0;
 
 	m_targetInstances.clear();
 	m_targets.clear();
@@ -288,7 +288,7 @@ void EditorPlugin::handleWorkspaceOpened()
 		m_toolTargets->add(i->name);
 
 	// Create target manager.
-	m_targetManager = new TargetManager(m_targetDebugger);
+	m_targetManager = new TargetManager(m_targetDebuggerSessions);
 	if (m_targetManager->create(
 		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
 	))

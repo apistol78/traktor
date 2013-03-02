@@ -1,9 +1,14 @@
+#include <cstring>
 #include "Core/Guid.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Script/CallStack.h"
+#include "Script/IScriptClass.h"
+#include "Script/LocalComposite.h"
+#include "Script/LocalSimple.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
@@ -13,6 +18,66 @@ namespace traktor
 {
 	namespace script
 	{
+		namespace
+		{
+
+std::wstring describeValue(lua_State* L, int32_t index)
+{
+	if (lua_isnumber(L, index))
+		return toString(lua_tonumber(L, index));
+	else if (lua_isboolean(L, index))
+		return lua_toboolean(L, index) != 0 ? L"true" : L"false";
+	else if (lua_isstring(L, index))
+		return mbstows(lua_tostring(L, index));
+	else
+		return L"";
+}
+
+Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index, int depth)
+{
+	if (lua_isnumber(L, index))
+		return new LocalSimple(name, toString(lua_tonumber(L, index)));
+	else if (lua_isboolean(L, index))
+		return new LocalSimple(name, lua_toboolean(L, index) != 0 ? L"true" : L"false");
+	else if (lua_isstring(L, index))
+		return new LocalSimple(name, mbstows(lua_tostring(L, index)));
+	else if (lua_isuserdata(L, index))
+	{
+		Object* object = *reinterpret_cast< Object** >(lua_touserdata(L, index));
+		if (object)
+			return new LocalSimple(name, std::wstring(L"(") + type_name(object) + std::wstring(L")"));
+		else
+			return new LocalSimple(name, L"(null)");
+	}
+	else if (lua_istable(L, index))
+	{
+		RefArray< Local > values;
+
+		lua_pushnil(L);
+		while (lua_next(L, index - 1))
+		{
+			std::wstring name = describeValue(L, -2);
+			if (depth < 4)
+			{
+				Ref< Local > value = describeLocal(name, L, -1, depth + 1);
+				if (value)
+					values.push_back(value);
+			}
+			else
+				values.push_back(new LocalSimple(name, L"(...)"));
+			lua_pop(L, 1);
+		}
+
+		return new LocalComposite(
+			name,
+			values
+		);
+	}
+	else
+		return new LocalSimple(name, L"(unknown)");
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDebuggerLua", ScriptDebuggerLua, IScriptDebugger)
 
@@ -63,7 +128,7 @@ void ScriptDebuggerLua::removeListener(IListener* listener)
 	m_listeners.erase(listener);
 }
 
-bool ScriptDebuggerLua::isRunning()
+bool ScriptDebuggerLua::isRunning() const
 {
 	return m_state == StRunning;
 }
@@ -259,7 +324,7 @@ void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
 		CallStack::Frame f;
 		f.scriptId = currentId;
 		f.scriptName = currentName;
-		f.functionName = ar.name ? mbstows(ar.name) : L"(anonomous)";
+		f.functionName = ar.name ? mbstows(ar.name) : L"(anonymous)";
 		f.line = currentLine;
 
 		const char* localName;
@@ -267,17 +332,9 @@ void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
 		{
 			if (*localName != '(')
 			{
-				CallStack::Local l;
-				l.name = mbstows(localName);
-
-				Any any = m_scriptManager->toAny(-1);
-
-				if (!any.isObject())
-					l.value = any.getWideString();
-				else
-					l.value = std::wstring(L"(") + type_name(any.getObject()) + std::wstring(L")");
-
-				f.locals.push_back(l);
+				Ref< Local > local = describeLocal(mbstows(localName), L, -1, 0);
+				if (local)
+					f.locals.push_back(local);
 			}
 			lua_pop(L, 1);
 		}
