@@ -17,6 +17,7 @@ namespace traktor
 	namespace ui
 	{
 
+class Bitmap;
 class ScrollBar;
 
 		namespace custom
@@ -38,31 +39,35 @@ public:
 	
 	virtual std::wstring getText() const;
 
-	int addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline);
+	int32_t addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline);
 
-	void setAttribute(int start, int length, int attribute);
+	void setAttribute(int32_t start, int32_t length, int32_t attribute);
 
-	void clear(bool attributes, bool content);
+	int32_t addImage(Bitmap* image, uint32_t imageCount);
+
+	void setImage(int32_t line, int32_t image);
+
+	void clear(bool attributes, bool images, bool content);
 
 	void insert(const std::wstring& text);
 
-	int getCaretOffset() const;
+	int32_t getCaretOffset() const;
 
-	int getLineFromOffset(int offset) const;
+	int32_t getLineFromOffset(int32_t offset) const;
 
-	int getLineCount() const;
+	int32_t getLineCount() const;
 
-	int getLineOffset(int line) const;
+	int32_t getLineOffset(int32_t line) const;
 
-	int getLineLength(int line) const;
+	int32_t getLineLength(int32_t line) const;
 
-	std::wstring getLine(int line) const;
+	std::wstring getLine(int32_t line) const;
 
 	std::wstring getSelectedText() const;
 
-	bool scrollToLine(int line);
+	bool scrollToLine(int32_t line);
 
-	void placeCaret(int offset);
+	void placeCaret(int32_t offset);
 
 	bool redo();
 
@@ -82,17 +87,36 @@ private:
 		bool bold;
 		bool italic;
 		bool underline;
+
+		Attribute()
+		:	bold(false)
+		,	italic(false)
+		,	underline(false)
+		{
+		}
 	};
 
 	struct Line
 	{
 		int32_t start;
 		int32_t stop;
+		int32_t image;
+
+		Line()
+		:	start(0)
+		,	stop(0)
+		,	image(-1)
+		{
+		}
 	};
 
 	Ref< ScrollBar > m_scrollBarV;
 	Ref< ScrollBar > m_scrollBarH;
 	std::vector< Attribute > m_attributes;
+	Ref< Bitmap > m_image;
+	uint32_t m_imageWidth;
+	uint32_t m_imageHeight;
+	uint32_t m_imageCount;
 	std::vector< Line > m_lines;
 	std::vector< wchar_t > m_text;
 	std::vector< uint16_t > m_meta;

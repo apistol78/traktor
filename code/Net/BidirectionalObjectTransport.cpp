@@ -34,6 +34,15 @@ BidirectionalObjectTransport::BidirectionalObjectTransport(TcpSocket* socket)
 {
 }
 
+void BidirectionalObjectTransport::close()
+{
+	if (m_socket)
+	{
+		m_socket->close();
+		m_socket = 0;
+	}
+}
+
 bool BidirectionalObjectTransport::send(const ISerializable* object)
 {
 	if (m_socket)

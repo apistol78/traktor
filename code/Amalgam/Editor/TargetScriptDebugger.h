@@ -6,21 +6,28 @@
 
 namespace traktor
 {
-	namespace amalgam
+	namespace net
 	{
 
-class TargetConnection;
+class BidirectionalObjectTransport;
+
+	}
+
+	namespace amalgam
+	{
 
 class TargetScriptDebugger : public script::IScriptDebugger
 {
 	T_RTTI_CLASS;
 
 public:
+	TargetScriptDebugger(net::BidirectionalObjectTransport* transport);
+
 	virtual bool setBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
 	virtual bool removeBreakpoint(const Guid& scriptId, int32_t lineNumber);
 
-	virtual bool isRunning();
+	virtual bool isRunning() const;
 
 	virtual bool actionBreak();
 
@@ -34,18 +41,11 @@ public:
 
 	virtual void removeListener(IListener* listener);
 
-	void addConnection(TargetConnection* connection);
-
-	void removeConnection(TargetConnection* connection);
-
-	const std::list< std::pair< Guid, int32_t > >& getBreakpoints() const { return m_breakpoints; }
-
 	void notifyListeners(const script::CallStack& callStack);
 
 private:
-	std::list< std::pair< Guid, int32_t > > m_breakpoints;
+	Ref< net::BidirectionalObjectTransport > m_transport;
 	std::list< IListener* > m_listeners;
-	std::list< TargetConnection* > m_connections;
 };
 
 	}

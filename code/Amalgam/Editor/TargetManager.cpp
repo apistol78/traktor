@@ -15,8 +15,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetManager", TargetManager, Object)
 
-TargetManager::TargetManager(TargetScriptDebugger* targetDebugger)
-:	m_targetDebugger(targetDebugger)
+TargetManager::TargetManager(TargetScriptDebuggerSessions* targetDebuggerSessions)
+:	m_targetDebuggerSessions(targetDebuggerSessions)
 {
 }
 
@@ -116,7 +116,7 @@ bool TargetManager::update()
 				if (instance)
 				{
 					// Create connection object and add to instance.
-					instance->addConnection(new TargetConnection(transport, m_targetDebugger));
+					instance->addConnection(new TargetConnection(transport, m_targetDebuggerSessions));
 					needUpdate |= true;
 					log::info << L"New target connection accepted; ID " << targetId->getId().format() << Endl;
 				}

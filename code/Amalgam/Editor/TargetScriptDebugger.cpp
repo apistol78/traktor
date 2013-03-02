@@ -12,54 +12,55 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetScriptDebugger", TargetScriptDebugger, script::IScriptDebugger)
 
+TargetScriptDebugger::TargetScriptDebugger(net::BidirectionalObjectTransport* transport)
+:	m_transport(transport)
+{
+}
+
 bool TargetScriptDebugger::setBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	for (std::list< TargetConnection* >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-		(*i)->getTransport()->send(&ScriptDebuggerBreakpoint(true, scriptId, lineNumber));
-
-	m_breakpoints.push_back(std::make_pair(scriptId, lineNumber));
+	ScriptDebuggerBreakpoint bp(true, scriptId, lineNumber);
+	m_transport->send(&bp);
 	return true;
 }
 
 bool TargetScriptDebugger::removeBreakpoint(const Guid& scriptId, int32_t lineNumber)
 {
-	for (std::list< TargetConnection* >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-		(*i)->getTransport()->send(&ScriptDebuggerBreakpoint(false, scriptId, lineNumber));
-
-	m_breakpoints.remove(std::make_pair(scriptId, lineNumber));
+	ScriptDebuggerBreakpoint bp(false, scriptId, lineNumber);
+	m_transport->send(&bp);
 	return true;
 }
 
-bool TargetScriptDebugger::isRunning()
+bool TargetScriptDebugger::isRunning() const
 {
 	return true;
 }
 
 bool TargetScriptDebugger::actionBreak()
 {
-	for (std::list< TargetConnection* >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-		(*i)->getTransport()->send(&ScriptDebuggerControl(ScriptDebuggerControl::AcBreak));
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcBreak);
+	m_transport->send(&ctrl);
 	return true;
 }
 
 bool TargetScriptDebugger::actionContinue()
 {
-	for (std::list< TargetConnection* >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-		(*i)->getTransport()->send(&ScriptDebuggerControl(ScriptDebuggerControl::AcContinue));
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcContinue);
+	m_transport->send(&ctrl);
 	return true;
 }
 
 bool TargetScriptDebugger::actionStepInto()
 {
-	for (std::list< TargetConnection* >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-		(*i)->getTransport()->send(&ScriptDebuggerControl(ScriptDebuggerControl::AcStepInto));
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepInto);
+	m_transport->send(&ctrl);
 	return true;
 }
 
 bool TargetScriptDebugger::actionStepOver()
 {
-	for (std::list< TargetConnection* >::iterator i = m_connections.begin(); i != m_connections.end(); ++i)
-		(*i)->getTransport()->send(&ScriptDebuggerControl(ScriptDebuggerControl::AcStepOver));
+	ScriptDebuggerControl ctrl(ScriptDebuggerControl::AcStepOver);
+	m_transport->send(&ctrl);
 	return true;
 }
 
@@ -71,19 +72,6 @@ void TargetScriptDebugger::addListener(IListener* listener)
 void TargetScriptDebugger::removeListener(IListener* listener)
 {
 	m_listeners.remove(listener);
-}
-
-void TargetScriptDebugger::addConnection(TargetConnection* connection)
-{
-	for (std::list< std::pair< Guid, int32_t > >::const_iterator i = m_breakpoints.begin(); i != m_breakpoints.end(); ++i)
-		connection->getTransport()->send(&ScriptDebuggerBreakpoint(true, i->first, i->second));
-
-	m_connections.push_back(connection);
-}
-
-void TargetScriptDebugger::removeConnection(TargetConnection* connection)
-{
-	m_connections.remove(connection);
 }
 
 void TargetScriptDebugger::notifyListeners(const script::CallStack& callStack)

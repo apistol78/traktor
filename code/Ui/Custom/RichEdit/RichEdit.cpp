@@ -3,6 +3,7 @@
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/ScrollBar.h"
@@ -17,6 +18,13 @@ namespace traktor
 	{
 		namespace custom
 		{
+			namespace
+			{
+
+const int32_t c_lineMargin = 40;
+const int32_t c_iconSize = 16;
+
+			}
 
 #if defined(_DEBUG)
 #	define CHECK checkConsistency()
@@ -27,7 +35,10 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.RichEdit", RichEdit, Widget)
 
 RichEdit::RichEdit()
-:	m_caret(0)
+:	m_imageWidth(0)
+,	m_imageHeight(0)
+,	m_imageCount(0)
+,	m_caret(0)
 ,	m_selectionStart(~0UL)
 ,	m_selectionStop(0)
 {
@@ -116,7 +127,7 @@ std::wstring RichEdit::getText() const
 		return L"";
 }
 
-int RichEdit::addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline)
+int32_t RichEdit::addAttribute(const Color4ub& textColor, const Color4ub& backColor, bool bold, bool italic, bool underline)
 {
 	Attribute attr;
 	attr.textColor = textColor;
@@ -125,25 +136,25 @@ int RichEdit::addAttribute(const Color4ub& textColor, const Color4ub& backColor,
 	attr.italic = italic;
 	attr.underline = underline;
 	m_attributes.push_back(attr);
-	return int(m_attributes.size() - 1);
+	return int32_t(m_attributes.size() - 1);
 }
 
-void RichEdit::setAttribute(int start, int length, int attribute)
+void RichEdit::setAttribute(int32_t start, int32_t length, int32_t attribute)
 {
-	if (attribute < 0 || attribute >= int(m_attributes.size()))
+	if (attribute < 0 || attribute >= int32_t(m_attributes.size()))
 		attribute = 0;
 
 	if (start < 0)
 		start = 0;
 	
-	if (start + length >= int(m_text.size()))
+	if (start + length >= int32_t(m_text.size()))
 	{
-		length = int(m_text.size()) - start;
+		length = int32_t(m_text.size()) - start;
 		if (length < 0)
 			return;
 	}
 
-	for (int i = start; i < start + length; ++i)
+	for (int32_t i = start; i < start + length; ++i)
 		m_meta[i] = uint16_t(attribute);
 
 	CHECK;
@@ -151,7 +162,43 @@ void RichEdit::setAttribute(int start, int length, int attribute)
 	update();
 }
 
-void RichEdit::clear(bool attributes, bool content)
+int32_t RichEdit::addImage(Bitmap* image, uint32_t imageCount)
+{
+	T_ASSERT (image);
+	T_ASSERT (imageCount > 0);
+
+	if (m_image)
+	{
+		Ref< Bitmap > source = image;
+
+		uint32_t width = m_image->getSize().cx + source->getSize().cx;
+		uint32_t height = std::max(m_image->getSize().cy, source->getSize().cy);
+
+		Ref< ui::Bitmap > newImage = new ui::Bitmap(width, height);
+		newImage->copyImage(m_image->getImage());
+		newImage->copySubImage(image->getImage(), Rect(Point(0, 0), source->getSize()), Point(m_image->getSize().cx, 0));
+		m_image = newImage;
+	}
+	else
+	{
+		m_image = image;
+		m_imageWidth = std::max< uint32_t >(m_imageWidth, m_image->getSize().cx / imageCount);
+		m_imageHeight = std::max< uint32_t >(m_imageHeight, m_image->getSize().cy);
+	}
+
+	uint32_t imageBase = m_imageCount;
+	m_imageCount += imageCount;
+
+	return imageBase;
+}
+
+void RichEdit::setImage(int32_t line, int32_t image)
+{
+	if (line >= 0 && line < int32_t(m_lines.size()))
+		m_lines[line].image = image;
+}
+
+void RichEdit::clear(bool attributes, bool images, bool content)
 {
 	if (attributes)
 	{
@@ -166,6 +213,11 @@ void RichEdit::clear(bool attributes, bool content)
 		m_lines.clear();
 		m_text.clear();
 	}
+	else if (images)
+	{
+		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+			i->image = -1;
+	}
 
 	CHECK;
 
@@ -179,39 +231,39 @@ void RichEdit::insert(const std::wstring& text)
 		insertCharacter(*i);
 }
 
-int RichEdit::getCaretOffset() const
+int32_t RichEdit::getCaretOffset() const
 {
 	return m_caret;
 }
 
-int RichEdit::getLineFromOffset(int offset) const
+int32_t RichEdit::getLineFromOffset(int32_t offset) const
 {
-	for (int i = 0; i < int(m_lines.size()) - 1; ++i)
+	for (int32_t i = 0; i < int32_t(m_lines.size()) - 1; ++i)
 	{
 		if (offset >= m_lines[i].start && offset <= m_lines[i].stop)
 			return i;
 	}
-	return int(m_lines.size()) - 1;
+	return int32_t(m_lines.size()) - 1;
 }
 
-int RichEdit::getLineCount() const
+int32_t RichEdit::getLineCount() const
 {
-	return int(m_lines.size());
+	return int32_t(m_lines.size());
 }
 
-int RichEdit::getLineOffset(int line) const
+int32_t RichEdit::getLineOffset(int32_t line) const
 {
-	return line < int(m_lines.size()) ? m_lines[line].start : 0;
+	return line < int32_t(m_lines.size()) ? m_lines[line].start : 0;
 }
 
-int RichEdit::getLineLength(int line) const
+int32_t RichEdit::getLineLength(int32_t line) const
 {
-	return line < int(m_lines.size()) ? (m_lines[line].stop - m_lines[line].start) : 0;
+	return line < int32_t(m_lines.size()) ? (m_lines[line].stop - m_lines[line].start) : 0;
 }
 
-std::wstring RichEdit::getLine(int line) const
+std::wstring RichEdit::getLine(int32_t line) const
 {
-	if (line < int(m_lines.size()))
+	if (line < int32_t(m_lines.size()))
 	{
 		const wchar_t* text = &m_text[0];
 		return std::wstring(
@@ -232,7 +284,7 @@ std::wstring RichEdit::getSelectedText() const
 	return std::wstring(text + m_selectionStart, text + m_selectionStop + 1);
 }
 
-bool RichEdit::scrollToLine(int line)
+bool RichEdit::scrollToLine(int32_t line)
 {
 	if (m_scrollBarV->isVisible(false))
 	{
@@ -243,7 +295,7 @@ bool RichEdit::scrollToLine(int line)
 	return true;
 }
 
-void RichEdit::placeCaret(int offset)
+void RichEdit::placeCaret(int32_t offset)
 {
 	m_caret = offset;
 	update();
@@ -484,7 +536,7 @@ void RichEdit::eventKeyDown(Event* event)
 
 	case VkRight:
 		// Move caret right.
-		if (m_caret < int(m_text.size()) - 1)
+		if (m_caret < int32_t(m_text.size()) - 1)
 			++m_caret;
 		break;
 
@@ -631,9 +683,7 @@ void RichEdit::eventButtonDown(Event* event)
 	std::vector< int32_t > stops;
 	int32_t lineWidth = getCharacterStops(text, stops);
 
-	int32_t lineMargin = 30;
-	int32_t linePosition = mousePosition.x - lineMargin;
-
+	int32_t linePosition = mousePosition.x - c_lineMargin;
 	if (linePosition < lineWidth)
 	{
 		for (int32_t i = stops.size() - 1; i >= 0; --i)
@@ -686,20 +736,33 @@ void RichEdit::eventPaint(Event* event)
 	uint32_t lineHeight = font.getSize() + 1;
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
-	int lineMargin = 30;
-
 	// Background
 	{
-		Rect marginRc(rc.left, rc.top, rc.left + lineMargin, rc.bottom);
+		Rect marginRc(rc.left, rc.top, rc.left + c_lineMargin, rc.bottom);
+		Rect iconsRc(rc.left, rc.top, rc.left + c_iconSize, rc.top + lineHeight);
+		Rect lineRc(rc.left + c_iconSize, rc.top, rc.left + c_lineMargin, rc.top + lineHeight);
+
 		canvas.setForeground(Color4ub(180, 180, 180));
 		canvas.setBackground(Color4ub(200, 200, 200));
 		canvas.fillGradientRect(marginRc, false);
 	
-		Rect lineRc(rc.left, rc.top, rc.left + lineMargin, rc.top + lineHeight);
+		canvas.setForeground(Color4ub(0, 0, 0));
 		for (uint32_t i = lineOffset; i < lineOffset + pageLines && i < lineCount; ++i)
 		{
-			canvas.setForeground(Color4ub(0, 0, 0));
 			canvas.drawText(lineRc, toString(i + 1), AnLeft, AnCenter);
+
+			if (m_lines[i].image >= 0)
+			{
+				canvas.drawBitmap(
+					Point(iconsRc.left, iconsRc.top + (iconsRc.getHeight() - m_imageHeight) / 2),
+					Point(m_lines[i].image * m_imageWidth, 0),
+					Size(m_imageWidth, m_imageHeight),
+					m_image,
+					BmAlpha
+				);
+			}
+
+			iconsRc = iconsRc.offset(0, lineHeight);
 			lineRc = lineRc.offset(0, lineHeight);
 		}
 	}
@@ -713,7 +776,7 @@ void RichEdit::eventPaint(Event* event)
 			const Line& line = m_lines[i];
 
 			Rect textRc = lineRc;
-			uint32_t x = lineMargin + 2;
+			uint32_t x = c_lineMargin + 2;
 
 			// Non-empty line; format print.
 			for (int32_t j = line.start; j < line.stop; ++j)
@@ -791,8 +854,8 @@ void RichEdit::eventPaint(Event* event)
 
 void RichEdit::eventSize(Event* event)
 {
-	int width = m_scrollBarV->getPreferedSize().cx;
-	int height = m_scrollBarH->getPreferedSize().cy;
+	int32_t width = m_scrollBarV->getPreferedSize().cx;
+	int32_t height = m_scrollBarH->getPreferedSize().cy;
 
 	Rect inner = getInnerRect();
 

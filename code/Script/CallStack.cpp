@@ -1,8 +1,10 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComplex.h"
+#include "Core/Serialization/MemberRefArray.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Script/CallStack.h"
+#include "Script/Local.h"
 
 namespace traktor
 {
@@ -10,26 +12,6 @@ namespace traktor
 	{
 		namespace
 		{
-
-class MemberLocal : public MemberComplex
-{
-public:
-	MemberLocal(const wchar_t* const name, CallStack::Local& ref)
-	:	MemberComplex(name, true)
-	,	m_ref(ref)
-	{
-	}
-
-	virtual bool serialize(ISerializer& s) const
-	{
-		s >> Member< std::wstring >(L"name", m_ref.name);
-		s >> Member< std::wstring >(L"value", m_ref.value);
-		return true;
-	}
-
-private:
-	CallStack::Local& m_ref;
-};
 
 class MemberFrame : public MemberComplex
 {
@@ -46,7 +28,7 @@ public:
 		s >> Member< std::wstring >(L"scriptName", m_ref.scriptName);
 		s >> Member< std::wstring >(L"functionName", m_ref.functionName);
 		s >> Member< uint32_t >(L"line", m_ref.line);
-		s >> MemberStlList< CallStack::Local, MemberLocal >(L"locals", m_ref.locals);
+		s >> MemberRefArray< Local >(L"locals", m_ref.locals);
 		return true;
 	}
 

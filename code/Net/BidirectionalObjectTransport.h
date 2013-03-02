@@ -37,6 +37,8 @@ public:
 
 	BidirectionalObjectTransport(TcpSocket* socket);
 
+	void close();
+
 	bool send(const ISerializable* object);
 
 	bool wait(int32_t timeout);

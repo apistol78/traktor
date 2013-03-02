@@ -1,6 +1,7 @@
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptEditor.h"
 #include "Script/Editor/ScriptEditorFactory.h"
+#include "Ui/Command.h"
 
 namespace traktor
 {
@@ -23,6 +24,10 @@ Ref< editor::IObjectEditor > ScriptEditorFactory::createObjectEditor(editor::IEd
 
 void ScriptEditorFactory::getCommands(std::list< ui::Command >& outCommands) const
 {
+	outCommands.push_back(ui::Command(L"Script.Editor.Continue"));
+	outCommands.push_back(ui::Command(L"Script.Editor.Break"));
+	outCommands.push_back(ui::Command(L"Script.Editor.StepInto"));
+	outCommands.push_back(ui::Command(L"Script.Editor.StepOver"));
 }
 
 	}

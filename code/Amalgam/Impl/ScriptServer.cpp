@@ -138,12 +138,14 @@ void ScriptServer::threadDebugger()
 			}
 		}
 	}
-	m_scriptDebugger->actionContinue();
+	if (m_scriptDebugger)
+		m_scriptDebugger->actionContinue();
 }
 
 void ScriptServer::breakpointReached(script::IScriptDebugger* scriptDebugger, const script::CallStack& callStack)
 {
-	m_transport->send(&ScriptDebuggerHalted(callStack));
+	ScriptDebuggerHalted halted(callStack);
+	m_transport->send(&halted);
 }
 
 	}
