@@ -585,6 +585,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 			m_primitiveRenderer->pushView(view);
 			m_primitiveRenderer->pushWorld(camera->getWorld());
+			m_primitiveRenderer->pushDepthEnable(false);
 
 			m_primitiveRenderer->drawWireAabb(
 				Vector4::origo(),
@@ -607,6 +608,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 				);
 			}
 
+			m_primitiveRenderer->popDepthEnable();
 			m_primitiveRenderer->popWorld();
 			m_primitiveRenderer->popView();
 		}

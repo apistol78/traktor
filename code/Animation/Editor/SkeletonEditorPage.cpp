@@ -5,6 +5,7 @@
 #include "Animation/Editor/SkeletonEditorPage.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Vector2.h"
+#include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Database.h"
@@ -148,6 +149,7 @@ bool SkeletonEditorPage::create(ui::Container* parent)
 	m_cameraMoveScaleZ = majorExtent / 100.0f;
 	m_cameraBoneScale = majorExtent / 100.0f;
 
+	updateSettings();
 	createSkeletonTreeNodes();
 
 	m_renderWidget->startTimer(30);
@@ -180,7 +182,12 @@ bool SkeletonEditorPage::dropInstance(db::Instance* instance, const ui::Point& p
 
 bool SkeletonEditorPage::handleCommand(const ui::Command& command)
 {
-	if (command == L"Editor.PropertiesChanged")
+	if (command == L"Editor.SettingsChanged")
+	{
+		updateSettings();
+		m_renderWidget->update();
+	}
+	else if (command == L"Editor.PropertiesChanged")
 	{
 		createSkeletonTreeNodes();
 		m_renderWidget->update();
@@ -267,6 +274,13 @@ void SkeletonEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 	if (m_resourceManager)
 		m_resourceManager->reload(eventId);
+}
+
+void SkeletonEditorPage::updateSettings()
+{
+	Ref< PropertyGroup > colors = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
+	m_colorClear = colors->getProperty< PropertyColor >(L"Background");
+	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
 }
 
 void SkeletonEditorPage::createSkeletonTreeNodes()
@@ -399,7 +413,10 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 	if (!m_renderView->begin(render::EtCyclop))
 		return;
 
-	const Color4f clearColor(0.5f, 0.5f, 0.44f, 0.0f);
+	float tmp[4];
+	m_colorClear.getRGBA32F(tmp);
+	Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
+
 	m_renderView->clear(
 		render::CfColor | render::CfDepth,
 		&clearColor,
@@ -428,24 +445,24 @@ void SkeletonEditorPage::eventPaint(ui::Event* event)
 			m_primitiveRenderer->drawLine(
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
-				Color4ub(100, 100, 100)
+				m_colorGrid
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
-				Color4ub(100, 100, 100)
+				m_colorGrid
 			);
 		}
 
 		m_primitiveRenderer->drawArrowHead(
 			Vector4(11.0f, 0.0f, 0.0f, 1.0f),
-			Vector4(13.0f, 0.0f, 0.0f, 1.0f),
+			Vector4(12.0f, 0.0f, 0.0f, 1.0f),
 			0.8f,
 			Color4ub(255, 64, 64)
 		);
 		m_primitiveRenderer->drawArrowHead(
 			Vector4(0.0f, 0.0f, 11.0f, 1.0f),
-			Vector4(0.0f, 0.0f, 13.0f, 1.0f),
+			Vector4(0.0f, 0.0f, 12.0f, 1.0f),
 			0.8f,
 			Color4ub(64, 64, 255)
 		);

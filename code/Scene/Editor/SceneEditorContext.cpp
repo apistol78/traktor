@@ -298,7 +298,8 @@ void SceneEditorContext::buildEntities()
 		for (uint32_t i = 0; i < layers.size(); ++i)
 		{
 			world::LayerEntityData* layerEntityData = layers[i];
-			T_ASSERT (layerEntityData);
+			if (!layerEntityData)
+				continue;
 
 			// If possible reuse layer entity adapter.
 			if (!m_layerEntityAdapters[i])

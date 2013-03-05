@@ -528,6 +528,13 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 				if (m_context->getControllerEditor())
 					m_context->getControllerEditor()->entityRemoved(*i);
 			}
+			else if ((*i)->isLayer())
+			{
+				RefArray< world::LayerEntityData > layers = m_context->getSceneAsset()->getLayers();
+				layers.remove(checked_type_cast< world::LayerEntityData*, false >((*i)->getEntityData()));
+				m_context->getSceneAsset()->setLayers(layers);
+				removedCount++;
+			}
 		}
 
 		if (removedCount)
@@ -576,6 +583,46 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 			if (externalInstance)
 				m_context->getEditor()->highlightInstance(externalInstance);
 		}
+	}
+	else if (command == L"Scene.Editor.LockEntities")
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+			(*i)->setLocked(true);
+
+		createInstanceGrid();
+	}
+	else if (command == L"Scene.Editor.UnockEntities")
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+			(*i)->setLocked(false);
+
+		createInstanceGrid();
+	}
+	else if (command == L"Scene.Editor.ShowEntities")
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+			(*i)->setVisible(true);
+
+		createInstanceGrid();
+	}
+	else if (command == L"Scene.Editor.HideEntities")
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+			(*i)->setVisible(false);
+
+		createInstanceGrid();
 	}
 	else
 	{
