@@ -81,8 +81,11 @@ bool MergeModel::apply(Model& model) const
 	}
 
 	// Merge polygons.
-	std::vector< Polygon > mergedPolygons = model.getPolygons();
 	const std::vector< Polygon >& sourcePolygons = m_sourceModel.getPolygons();
+
+	std::vector< Polygon > mergedPolygons = model.getPolygons();
+	mergedPolygons.reserve(mergedPolygons.size() + sourcePolygons.size());
+
 	for (std::vector< Polygon >::const_iterator i = sourcePolygons.begin(); i != sourcePolygons.end(); ++i)
 	{
 		Polygon p;

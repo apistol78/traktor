@@ -145,14 +145,18 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 
+	float maxDistance = sound->getRange();
+	if (maxDistance <= m_surroundEnvironment->getInnerRadius())
+		maxDistance = m_surroundEnvironment->getMaxDistance();
+
 	// Calculate distance from listener.
 	Scalar distance = (position - m_surroundEnvironment->getListenerTransform().translation()).xyz0().length();
-	if (distance > m_surroundEnvironment->getMaxDistance())
+	if (distance > maxDistance)
 		return 0;
 
-	float k0 = distance / m_surroundEnvironment->getMaxDistance();
+	float k0 = distance / maxDistance;
 	float k1 = distance / m_surroundEnvironment->getInnerRadius();
-	float k2 = (distance - m_surroundEnvironment->getInnerRadius()) / (m_surroundEnvironment->getMaxDistance() - m_surroundEnvironment->getInnerRadius());
+	float k2 = (distance - m_surroundEnvironment->getInnerRadius()) / (maxDistance - m_surroundEnvironment->getInnerRadius());
 
 	// Surround filter.
 	Ref< SurroundFilter > surroundFilter = new SurroundFilter(m_surroundEnvironment, position.xyz1());

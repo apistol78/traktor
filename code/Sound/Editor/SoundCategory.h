@@ -33,11 +33,14 @@ public:
 
 	float getPresenceRate() const { return m_presenceRate; }
 
+	float getRange() const { return m_range; }
+
 private:
 	Guid m_parent;
 	float m_volume;
 	float m_presence;
 	float m_presenceRate;
+	float m_range;
 };
 
 	}

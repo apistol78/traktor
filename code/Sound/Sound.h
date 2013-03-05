@@ -31,7 +31,8 @@ public:
 		ISoundBuffer* buffer,
 		float volume,
 		float presence,
-		float presenceRate
+		float presenceRate,
+		float range
 	);
 
 	ISoundBuffer* getBuffer() const { return m_buffer; }
@@ -42,11 +43,14 @@ public:
 
 	float getPresenceRate() const { return m_presenceRate; }
 
+	float getRange() const { return m_range; }
+
 private:
 	Ref< ISoundBuffer > m_buffer;
 	float m_volume;
 	float m_presence;
 	float m_presenceRate;
+	float m_range;
 };
 
 	}

@@ -1,3 +1,4 @@
+#include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/String.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/CastAny.h"
@@ -9,7 +10,9 @@ namespace traktor
 	namespace script
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.UInt64", BoxedUInt64, Object)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.script.Boxed", Boxed, Object)
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.UInt64", BoxedUInt64, Boxed)
 
 BoxedUInt64::BoxedUInt64()
 {
@@ -22,10 +25,15 @@ BoxedUInt64::BoxedUInt64(uint64_t value)
 
 std::wstring BoxedUInt64::format() const
 {
-	return toString(m_value);
+	return traktor::toString(m_value);
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Guid", BoxedGuid, Object)
+std::wstring BoxedUInt64::toString() const
+{
+	return format();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Guid", BoxedGuid, Boxed)
 
 BoxedGuid::BoxedGuid()
 {
@@ -41,7 +49,12 @@ BoxedGuid::BoxedGuid(const std::wstring& value)
 {
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector2", BoxedVector2, Object)
+std::wstring BoxedGuid::toString() const
+{
+	return m_value.format();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector2", BoxedVector2, Boxed)
 
 BoxedVector2::BoxedVector2()
 :	m_value(0.0f, 0.0f)
@@ -98,7 +111,14 @@ Vector2 BoxedVector2::div(float v) const
 	return m_value / v;
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4", BoxedVector4, Object)
+std::wstring BoxedVector2::toString() const
+{
+	StringOutputStream ss;
+	ss << m_value.x << L", " << m_value.y;
+	return ss.str();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Vector4", BoxedVector4, Boxed)
 
 BoxedVector4::BoxedVector4()
 :	m_value(Vector4::zero())
@@ -190,7 +210,14 @@ Vector4 BoxedVector4::neg() const
 	return -m_value;
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Quaternion", BoxedQuaternion, Object)
+std::wstring BoxedVector4::toString() const
+{
+	StringOutputStream ss;
+	ss << m_value.x() << L", " << m_value.y() << L", " << m_value.z() << L", " << m_value.w();
+	return ss.str();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Quaternion", BoxedQuaternion, Boxed)
 
 BoxedQuaternion::BoxedQuaternion()
 :	m_value(Quaternion::identity())
@@ -252,7 +279,14 @@ Vector4 BoxedQuaternion::getAxisAngle() const
 	return m_value.toAxisAngle();
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Transform", BoxedTransform, Object)
+std::wstring BoxedQuaternion::toString() const
+{
+	StringOutputStream ss;
+	ss << m_value.e.x() << L", " << m_value.e.y() << L", " << m_value.e.z() << L", " << m_value.e.w();
+	return ss.str();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Transform", BoxedTransform, Boxed)
 
 BoxedTransform::BoxedTransform()
 {
@@ -308,7 +342,12 @@ Vector4 BoxedTransform::transform(const Vector4& v) const
 	return m_value * v;
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Aabb3", BoxedAabb3, Object)
+std::wstring BoxedTransform::toString() const
+{
+	return L"(transform)";
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Aabb3", BoxedAabb3, Boxed)
 
 BoxedAabb3::BoxedAabb3()
 {
@@ -324,7 +363,12 @@ BoxedAabb3::BoxedAabb3(const Vector4& min, const Vector4& max)
 {
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Color4f", BoxedColor4f, Object)
+std::wstring BoxedAabb3::toString() const
+{
+	return L"(aabb3)";
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Color4f", BoxedColor4f, Boxed)
 
 BoxedColor4f::BoxedColor4f(const Color4f& value)
 :	m_value(value)
@@ -346,7 +390,14 @@ BoxedColor4f::BoxedColor4f(float red, float green, float blue, float alpha)
 {
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedRefArray, Object)
+std::wstring BoxedColor4f::toString() const
+{
+	StringOutputStream ss;
+	ss << m_value.getRed() << L", " << m_value.getGreen() << L", " << m_value.getBlue() << L", " << m_value.getAlpha();
+	return ss.str();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedRefArray, Boxed)
 
 BoxedRefArray::BoxedRefArray()
 {
@@ -391,7 +442,14 @@ Object* BoxedRefArray::back()
 	return m_arr.back();
 }
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.StdVector", BoxedStdVector, Object)
+std::wstring BoxedRefArray::toString() const
+{
+	StringOutputStream ss;
+	ss << L"[" << m_arr.size() << L"]";
+	return ss.str();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.StdVector", BoxedStdVector, Boxed)
 
 BoxedStdVector::BoxedStdVector()
 {
@@ -416,8 +474,19 @@ Any BoxedStdVector::get(int32_t index)
 		return Any();
 }
 
+std::wstring BoxedStdVector::toString() const
+{
+	StringOutputStream ss;
+	ss << L"[" << m_arr.size() << L"]";
+	return ss.str();
+}
+
 void registerBoxClasses(IScriptManager* scriptManager)
 {
+	Ref< AutoScriptClass< Boxed > > classBoxed = new AutoScriptClass< Boxed >();
+	classBoxed->addMethod("toString", &Boxed::toString);
+	scriptManager->registerClass(classBoxed);
+
 	Ref< AutoScriptClass< BoxedUInt64 > > classBoxedUInt64 = new AutoScriptClass< BoxedUInt64 >();
 	classBoxedUInt64->addConstructor();
 	classBoxedUInt64->addMethod("format", &BoxedUInt64::format);

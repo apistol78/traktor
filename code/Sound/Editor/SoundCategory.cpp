@@ -9,13 +9,14 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundCategory", 2, SoundCategory, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundCategory", 3, SoundCategory, ISerializable)
 
 
 SoundCategory::SoundCategory()
 :	m_volume(1.0f)
 ,	m_presence(0.0f)
 ,	m_presenceRate(0.25f)
+,	m_range(0.0f)
 {
 }
 
@@ -29,6 +30,9 @@ bool SoundCategory::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 3)
+		s >> Member< float >(L"range", m_range, AttributeRange(0.0f));
 
 	return true;
 }

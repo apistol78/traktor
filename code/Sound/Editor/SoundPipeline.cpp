@@ -4,6 +4,7 @@
 #include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Settings/PropertyString.h"
@@ -28,7 +29,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 27, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 28, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 {
@@ -118,6 +119,7 @@ bool SoundPipeline::buildOutput(
 	float volume = 1.0f;
 	float presence = soundAsset->m_presence;
 	float presenceRate = soundAsset->m_presenceRate;
+	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
 	while (category)
@@ -130,11 +132,14 @@ bool SoundPipeline::buildOutput(
 			presenceRate = category->getPresenceRate();
 		}
 
+		range = max(range, category->getRange());
+
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
 	log::info << L"Category volume " << int32_t(volume * 100.0f) << L" %" << Endl;
 	log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
+	log::info << L"Category range " << range << Endl;
 
 	if (soundAsset->m_stream)
 	{
@@ -144,6 +149,7 @@ bool SoundPipeline::buildOutput(
 		resource->m_volume = volume;
 		resource->m_presence = presence;
 		resource->m_presenceRate = presenceRate;
+		resource->m_range = range;
 		resource->m_preload = soundAsset->m_preload;
 
 		Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
@@ -277,6 +283,7 @@ bool SoundPipeline::buildOutput(
 		resource->m_volume = volume;
 		resource->m_presence = presence;
 		resource->m_presenceRate = presenceRate;
+		resource->m_range = range;
 		resource->m_decoderType = &type_of< OggStreamDecoder >();
 
 		int32_t dataOffsetEnd = stream->tell();

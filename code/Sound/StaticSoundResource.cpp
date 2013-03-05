@@ -16,7 +16,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StaticSoundResource", 3, StaticSoundResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StaticSoundResource", 4, StaticSoundResource, ISoundResource)
 
 StaticSoundResource::StaticSoundResource()
 :	m_sampleRate(0)
@@ -25,6 +25,7 @@ StaticSoundResource::StaticSoundResource()
 ,	m_volume(1.0f)
 ,	m_presence(0.0f)
 ,	m_presenceRate(1.0f)
+,	m_range(0.0f)
 ,	m_decoderType(0)
 {
 }
@@ -104,18 +105,19 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 	stream->close();
 	safeDestroy(streamDecoder);
 
-	return new Sound(soundBuffer, m_volume, m_presence, m_presenceRate);
+	return new Sound(soundBuffer, m_volume, m_presence, m_presenceRate, m_range);
 }
 
 bool StaticSoundResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 3);
+	T_ASSERT (s.getVersion() >= 4);
 	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
 	s >> Member< uint32_t >(L"samplesCount", m_samplesCount);
 	s >> Member< uint32_t >(L"channelsCount", m_channelsCount);
 	s >> Member< float >(L"volume", m_volume);
 	s >> Member< float >(L"presence", m_presence);
 	s >> Member< float >(L"presenceRate", m_presenceRate);
+	s >> Member< float >(L"range", m_range);
 	s >> MemberType(L"decoderType", m_decoderType);
 	return true;
 }

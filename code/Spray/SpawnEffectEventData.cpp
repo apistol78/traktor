@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SpawnEffectEventData", 0, SpawnEffectEventData, world::IEntityEventData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.spray.SpawnEffectEventData", 0, SpawnEffectEventData, world::IEntityEventData)
 
 SpawnEffectEventData::SpawnEffectEventData()
 :	m_follow(true)

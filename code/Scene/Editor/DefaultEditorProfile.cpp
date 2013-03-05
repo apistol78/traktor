@@ -9,6 +9,7 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Weather/Clouds/CloudMaskFactory.h"
+#include "World/EntityEventResourceFactory.h"
 #include "World/EntityResourceFactory.h"
 #include "World/PostProcess/PostProcessFactory.h"
 
@@ -58,6 +59,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
 	outResourceFactories.push_back(new world::EntityResourceFactory(context->getResourceDatabase()));
+	outResourceFactories.push_back(new world::EntityEventResourceFactory(context->getResourceDatabase()));
 	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
 }
 

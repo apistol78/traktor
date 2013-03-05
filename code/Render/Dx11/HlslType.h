@@ -34,7 +34,7 @@ std::wstring hlsl_semantic(DataUsage usage, int index);
 /*!
  * \ingroup DX11
  */
-std::wstring hlsl_type_name(HlslType type);
+std::wstring hlsl_type_name(HlslType type, bool lowPrecision);
 
 /*!
  * \ingroup DX11
