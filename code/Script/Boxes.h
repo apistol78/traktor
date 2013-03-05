@@ -25,7 +25,15 @@ namespace traktor
 	namespace script
 	{
 
-class T_DLLCLASS BoxedUInt64 : public Object
+class T_DLLCLASS Boxed : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	virtual std::wstring toString() const = 0;
+};
+
+class T_DLLCLASS BoxedUInt64 : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -38,11 +46,13 @@ public:
 
 	uint64_t unbox() const { return m_value; }
 
+	virtual std::wstring toString() const;
+
 private:
 	uint64_t m_value;
 };
 
-class T_DLLCLASS BoxedGuid : public Object
+class T_DLLCLASS BoxedGuid : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -65,11 +75,13 @@ public:
 
 	const Guid& unbox() const { return m_value; }
 
+	virtual std::wstring toString() const;
+
 private:
 	Guid m_value;
 };
 
-class T_DLLCLASS BoxedVector2 : public Object
+class T_DLLCLASS BoxedVector2 : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -104,11 +116,13 @@ public:
 
 	const Vector2& unbox() const { return m_value; }
 
+	virtual std::wstring toString() const;
+
 private:
 	Vector2 m_value;
 };
 
-class T_DLLCLASS BoxedVector4 : public Object
+class T_DLLCLASS BoxedVector4 : public Boxed
 {
 	T_RTTI_CLASS;
 	
@@ -166,12 +180,14 @@ public:
 	static Vector4 origo() { return Vector4::origo(); }
 	
 	const Vector4& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
 	
 private:
 	Vector4 m_value;
 };
 
-class T_DLLCLASS BoxedQuaternion : public Object
+class T_DLLCLASS BoxedQuaternion : public Boxed
 {
 	T_RTTI_CLASS;
 	
@@ -212,11 +228,13 @@ public:
 	
 	const Quaternion& unbox() const { return m_value; }
 
+	virtual std::wstring toString() const;
+
 private:
 	Quaternion m_value;
 };
 
-class T_DLLCLASS BoxedTransform : public Object
+class T_DLLCLASS BoxedTransform : public Boxed
 {
 	T_RTTI_CLASS;
 	
@@ -247,11 +265,13 @@ public:
 
 	const Transform& unbox() const { return m_value; }
 
+	virtual std::wstring toString() const;
+
 private:
 	Transform m_value;
 };
 
-class T_DLLCLASS BoxedAabb3 : public Object
+class T_DLLCLASS BoxedAabb3 : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -280,11 +300,13 @@ public:
 
 	const Aabb3& unbox() const { return m_value; }
 
+	virtual std::wstring toString() const;
+
 private:
 	Aabb3 m_value;
 };
 
-class T_DLLCLASS BoxedColor4f : public Object
+class T_DLLCLASS BoxedColor4f : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -319,11 +341,13 @@ public:
 
 	const Color4f& unbox() const { return m_value; }
 
+	virtual std::wstring toString() const;
+
 private:
 	Color4f m_value;
 };
 
-class T_DLLCLASS BoxedRefArray : public Object
+class T_DLLCLASS BoxedRefArray : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -352,6 +376,8 @@ public:
 
 	Object* back();
 
+	virtual std::wstring toString() const;
+
 	template < typename ObjectType >
 	RefArray< ObjectType > unbox() const
 	{
@@ -365,7 +391,7 @@ private:
 	RefArray< Object > m_arr;
 };
 
-class T_DLLCLASS BoxedStdVector : public Object
+class T_DLLCLASS BoxedStdVector : public Boxed
 {
 	T_RTTI_CLASS;
 
@@ -385,6 +411,8 @@ public:
 	void set(int32_t index, const Any& value);
 
 	Any get(int32_t index);
+
+	virtual std::wstring toString() const;
 
 	template < typename ItemType >
 	std::vector< ItemType > unbox() const

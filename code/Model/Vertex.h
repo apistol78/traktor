@@ -28,25 +28,25 @@ public:
 
 	explicit Vertex(uint32_t position);
 
-	void setPosition(uint32_t position);
+	void setPosition(uint32_t position) { m_position = position; }
 
-	uint32_t getPosition() const;
+	uint32_t getPosition() const { return m_position; }
 
-	void setColor(uint32_t color);
+	void setColor(uint32_t color) { m_color = color; }
 
-	uint32_t getColor() const;
+	uint32_t getColor() const { return m_color; }
 
-	void setNormal(uint32_t normal);
+	void setNormal(uint32_t normal) { m_normal = normal; }
 
-	uint32_t getNormal() const;
+	uint32_t getNormal() const { return m_normal; }
 
-	void setTangent(uint32_t tangent);
+	void setTangent(uint32_t tangent) { m_tangent = tangent; }
 
-	uint32_t getTangent() const;
+	uint32_t getTangent() const { return m_tangent; }
 
-	void setBinormal(uint32_t binormal);
+	void setBinormal(uint32_t binormal) { m_binormal = binormal; }
 
-	uint32_t getBinormal() const;
+	uint32_t getBinormal() const { return m_binormal; }
 
 	void clearTexCoords();
 

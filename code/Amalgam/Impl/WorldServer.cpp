@@ -29,6 +29,7 @@
 #include "Weather/WeatherEntityRenderer.h"
 #include "World/EntityBuilder.h"
 #include "World/EntityEventManager.h"
+#include "World/EntityEventResourceFactory.h"
 #include "World/EntityResourceFactory.h"
 #include "World/WorldEntityRenderers.h"
 #include "World/Entity/DecalEntityRenderer.h"
@@ -114,6 +115,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 
 	resourceManager->addFactory(new world::PostProcessFactory(database));
 	resourceManager->addFactory(new world::EntityResourceFactory(database));
+	resourceManager->addFactory(new world::EntityEventResourceFactory(database));
 	resourceManager->addFactory(new terrain::TerrainFactory(database));
 	resourceManager->addFactory(new scene::SceneFactory(database, renderSystem, m_entityBuilder));
 }

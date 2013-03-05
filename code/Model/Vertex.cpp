@@ -25,56 +25,6 @@ Vertex::Vertex(uint32_t position)
 {
 }
 
-void Vertex::setPosition(uint32_t position)
-{
-	m_position = position;
-}
-
-uint32_t Vertex::getPosition() const
-{
-	return m_position;
-}
-
-void Vertex::setColor(uint32_t color)
-{
-	m_color = color;
-}
-
-uint32_t Vertex::getColor() const
-{
-	return m_color;
-}
-
-void Vertex::setNormal(uint32_t normal)
-{
-	m_normal = normal;
-}
-
-uint32_t Vertex::getNormal() const
-{
-	return m_normal;
-}
-
-void Vertex::setTangent(uint32_t tangent)
-{
-	m_tangent = tangent;
-}
-
-uint32_t Vertex::getTangent() const
-{
-	return m_tangent;
-}
-
-void Vertex::setBinormal(uint32_t binormal)
-{
-	m_binormal = binormal;
-}
-
-uint32_t Vertex::getBinormal() const
-{
-	return m_binormal;
-}
-
 void Vertex::clearTexCoords()
 {
 	m_texCoords.resize(0);

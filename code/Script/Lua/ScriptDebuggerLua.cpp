@@ -5,6 +5,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Script/Boxes.h"
 #include "Script/CallStack.h"
 #include "Script/IScriptClass.h"
 #include "Script/LocalComposite.h"
@@ -29,27 +30,26 @@ std::wstring describeValue(lua_State* L, int32_t index)
 		return lua_toboolean(L, index) != 0 ? L"true" : L"false";
 	else if (lua_isstring(L, index))
 		return mbstows(lua_tostring(L, index));
+	else if (lua_isuserdata(L, index))
+	{
+		Object* object = *reinterpret_cast< Object** >(lua_touserdata(L, index));
+		if (object)
+		{
+			if (const Boxed* box = dynamic_type_cast< const Boxed* >(object))
+				return box->toString();
+			else
+				return std::wstring(L"(") + type_name(object) + std::wstring(L")");
+		}
+		else
+			return L"(null)";
+	}
 	else
 		return L"";
 }
 
 Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index, int depth)
 {
-	if (lua_isnumber(L, index))
-		return new LocalSimple(name, toString(lua_tonumber(L, index)));
-	else if (lua_isboolean(L, index))
-		return new LocalSimple(name, lua_toboolean(L, index) != 0 ? L"true" : L"false");
-	else if (lua_isstring(L, index))
-		return new LocalSimple(name, mbstows(lua_tostring(L, index)));
-	else if (lua_isuserdata(L, index))
-	{
-		Object* object = *reinterpret_cast< Object** >(lua_touserdata(L, index));
-		if (object)
-			return new LocalSimple(name, std::wstring(L"(") + type_name(object) + std::wstring(L")"));
-		else
-			return new LocalSimple(name, L"(null)");
-	}
-	else if (lua_istable(L, index))
+	if (lua_istable(L, index))
 	{
 		RefArray< Local > values;
 
@@ -74,7 +74,10 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 		);
 	}
 	else
-		return new LocalSimple(name, L"(unknown)");
+		return new LocalSimple(
+			name,
+			describeValue(L, index)
+		);
 }
 
 		}

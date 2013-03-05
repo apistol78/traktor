@@ -23,9 +23,9 @@ std::wstring hlsl_semantic(DataUsage usage, int index)
 	return ss.str();
 }
 
-std::wstring hlsl_type_name(HlslType type)
+std::wstring hlsl_type_name(HlslType type, bool lowPrecision)
 {
-	const wchar_t* c[] =
+	const wchar_t* c_full[] =
 	{
 		L"void",
 		L"bool",
@@ -38,8 +38,20 @@ std::wstring hlsl_type_name(HlslType type)
 		L"Texture3D",
 		L"TextureCube"
 	};
-	T_ASSERT (type < sizeof_array(c));
-	return c[type];
+	const wchar_t* c_low[] =
+	{
+		L"void",
+		L"bool",
+		L"half",
+		L"half2",
+		L"half3",
+		L"half4",
+		L"half4x4",
+		L"Texture2D",
+		L"Texture3D",
+		L"TextureCube"
+	};
+	return (lowPrecision ? c_low : c_full)[type];
 }
 
 int32_t hlsl_type_width(HlslType type)

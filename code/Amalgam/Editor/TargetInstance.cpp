@@ -117,7 +117,7 @@ bool TargetInstance::update()
 		{
 			log::info << L"Target disconnected; connection removed" << Endl;
 			m_connections.erase(i);
-			break;
+			return true;
 		}
 	}
 	return !m_connections.empty();

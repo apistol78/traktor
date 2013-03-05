@@ -29,9 +29,11 @@ class T_DLLCLASS SurroundFilter : public IFilter
 public:
 	static Ref< SurroundFilter > create(SurroundEnvironment* environment, const Vector4& speakerPosition);
 
-	SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition = Vector4::origo());
+	SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition = Vector4::origo(), float maxDistance = 0.0f);
 
 	void setSpeakerPosition(const Vector4& speakerPosition);
+
+	void setMaxDistance(float maxDistance);
 
 	virtual Ref< IFilterInstance > createInstance() const;
 
@@ -42,6 +44,7 @@ public:
 private:
 	Ref< SurroundEnvironment > m_environment;
 	Vector4 m_speakerPosition;
+	Scalar m_maxDistance;
 
 	void applyStereo(IFilterInstance* instance, SoundBlock& outBlock) const;
 

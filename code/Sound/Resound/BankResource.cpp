@@ -13,20 +13,22 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 3, BankResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankResource", 4, BankResource, ISoundResource)
 
 BankResource::BankResource()
 :	m_volume(1.0f)
 ,	m_presence(0.0f)
 ,	m_presenceRate(1.0f)
+,	m_range(0.0f)
 {
 }
 
-BankResource::BankResource(const RefArray< IGrainData >& grains, float volume, float presence, float presenceRate)
+BankResource::BankResource(const RefArray< IGrainData >& grains, float volume, float presence, float presenceRate, float range)
 :	m_grains(grains)
 ,	m_volume(volume)
 ,	m_presence(presence)
 ,	m_presenceRate(presenceRate)
+,	m_range(range)
 {
 }
 
@@ -42,16 +44,17 @@ Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManag
 			return 0;
 	}
 
-	return new Sound(new BankBuffer(grains), m_volume, m_presence, m_presenceRate);
+	return new Sound(new BankBuffer(grains), m_volume, m_presence, m_presenceRate, m_range);
 }
 
 bool BankResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 3);
+	T_ASSERT (s.getVersion() >= 4);
 	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 	s >> Member< float >(L"volume", m_volume);
 	s >> Member< float >(L"presence", m_presence);
 	s >> Member< float >(L"presenceRate", m_presenceRate);
+	s >> Member< float >(L"range", m_range);
 	return true;
 }
 

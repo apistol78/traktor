@@ -115,15 +115,23 @@ Ref< SurroundFilter > SurroundFilter::create(SurroundEnvironment* environment, c
 	return new SurroundFilter(environment, speakerPosition);
 }
 
-SurroundFilter::SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition)
+SurroundFilter::SurroundFilter(SurroundEnvironment* environment, const Vector4& speakerPosition, float maxDistance)
 :	m_environment(environment)
 ,	m_speakerPosition(speakerPosition)
+,	m_maxDistance(maxDistance)
 {
+	if (m_maxDistance <= m_environment->getInnerRadius())
+		m_maxDistance = m_environment->getMaxDistance();
 }
 
 void SurroundFilter::setSpeakerPosition(const Vector4& speakerPosition)
 {
 	m_speakerPosition = speakerPosition;
+}
+
+void SurroundFilter::setMaxDistance(float maxDistance)
+{
+	m_maxDistance = Scalar(maxDistance);
 }
 
 Ref< IFilterInstance > SurroundFilter::createInstance() const
@@ -169,11 +177,10 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 	Scalar speakerDistance = speakerPosition.xyz0().length();
 	Scalar speakerAngle = angleRange(Scalar(atan2f(-speakerPosition.z(), -speakerPosition.x()) + PI));
 
-	const Scalar& maxDistance = m_environment->getMaxDistance();
 	const Scalar& innerRadius = m_environment->getInnerRadius();
 
 	Scalar innerAtten = c_one - clamp(speakerDistance / innerRadius, c_zero, c_one);
-	Scalar distanceAtten = c_one - clamp(speakerDistance / maxDistance, c_zero, c_one);
+	Scalar distanceAtten = c_one - clamp(speakerDistance / m_maxDistance, c_zero, c_one);
 
 	for (uint32_t i = 0; i < sizeof_array(c_speakersStereo); ++i)
 	{
@@ -222,10 +229,9 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 	Vector4 speakerPosition = listenerTransformInv * m_speakerPosition.xyz1();
 	Scalar speakerDistance = speakerPosition.xyz0().length();
 
-	const Scalar& maxDistance = m_environment->getMaxDistance();
 	const Scalar& innerRadius = m_environment->getInnerRadius();
 
-	Scalar distanceAtten = clamp(c_one - speakerDistance / maxDistance, c_zero, c_one);
+	Scalar distanceAtten = clamp(c_one - speakerDistance / m_maxDistance, c_zero, c_one);
 	Scalar innerAtten = clamp(speakerDistance / innerRadius, c_zero, c_one);
 
 	if (distanceAtten >= FUZZY_EPSILON)
@@ -264,7 +270,9 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 
 bool SurroundFilter::serialize(ISerializer& s)
 {
-	return s >> Member< Vector4 >(L"speakerPosition", m_speakerPosition, AttributePoint());
+	s >> Member< Vector4 >(L"speakerPosition", m_speakerPosition, AttributePoint());
+	s >> Member< Scalar >(L"maxDistance", m_maxDistance);
+	return true;
 }
 
 	}
