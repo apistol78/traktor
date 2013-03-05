@@ -2,6 +2,9 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyColor.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Editor/IEditor.h"
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
@@ -57,8 +60,9 @@ const float c_deltaScalePitch = 0.005f;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectPreviewControl", EffectPreviewControl, ui::Widget)
 
-EffectPreviewControl::EffectPreviewControl()
-:	m_randomSeed(c_initialRandomSeed)
+EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
+:	m_editor(editor)
+,	m_randomSeed(c_initialRandomSeed)
 ,	m_effectPosition(0.0f, -2.0f, 7.0f, 1.0f)
 ,	m_angleHead(0.0f)
 ,	m_anglePitch(0.0f)
@@ -122,6 +126,7 @@ bool EffectPreviewControl::create(
 	addSizeEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventSize));
 	addPaintEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventPaint));
 
+	updateSettings();
 	m_timer.start();
 
 	// Register our event handler in case of message idle.
@@ -235,6 +240,13 @@ void EffectPreviewControl::syncEffect()
 	update();
 }
 
+void EffectPreviewControl::updateSettings()
+{
+	Ref< PropertyGroup > colors = m_editor->getSettings()->getProperty< PropertyGroup >(L"Editor.Colors");
+	m_colorClear = colors->getProperty< PropertyColor >(L"Background");
+	m_colorGrid = colors->getProperty< PropertyColor >(L"Grid");
+}
+
 void EffectPreviewControl::eventButtonDown(ui::Event* event)
 {
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
@@ -305,7 +317,10 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	if (!m_renderView->begin(render::EtCyclop))
 		return;
 
-	const Color4f clearColor(0.2f, 0.2f, 0.2f, 0.0f);
+	float tmp[4];
+	m_colorClear.getRGBA32F(tmp);
+	Color4f clearColor(tmp[0], tmp[1], tmp[2], tmp[3]);
+
 	m_renderView->clear(
 		render::CfColor | render::CfDepth,
 		&clearColor,
@@ -341,13 +356,13 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 				Vector4(float(x), 0.0f, -10.0f, 1.0f),
 				Vector4(float(x), 0.0f, 10.0f, 1.0f),
 				(x == 0) ? 2.0f : 0.0f,
-				Color4ub(90, 90, 90, 200)
+				m_colorGrid
 			);
 			m_primitiveRenderer->drawLine(
 				Vector4(-10.0f, 0.0f, float(x), 1.0f),
 				Vector4(10.0f, 0.0f, float(x), 1.0f),
 				(x == 0) ? 2.0f : 0.0f,
-				Color4ub(90, 90, 90, 200)
+				m_colorGrid
 			);
 		}
 

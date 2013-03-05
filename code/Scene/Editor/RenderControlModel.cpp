@@ -70,6 +70,18 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 	{
 		m_modify = MtModifier;
 
+		bool modifierHit = false;
+
+		IModifier* modifier = context->getModifier();
+		if (modifier)
+		{
+			modifierHit = modifier->cursorMoved(
+				transformChain,
+				screenPosition,
+				true
+			);
+		}
+
 		// Handle entity picking if enabled.
 		if (
 			!m_modifyClone &&
@@ -77,23 +89,15 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 			context->getPickEnable()
 		)
 		{
-			IModifier* modifier = context->getModifier();
-			bool modifierHit = false;
-
-			// Check if current modifier is being hit; modifier should always take precedence.
-			if (modifier)
-			{
-				// Should be able to "press through" modifier if shift is held.
-				if ((event->getKeyState() & ui::KsShift) == 0)
-					modifierHit = modifier->cursorMoved(
-						transformChain,
-						screenPosition,
-						true
-					);
-			}
-
-			if (!modifierHit)
+			if (!modifierHit && (event->getKeyState() & ui::KsShift) == 0)
 				m_modify = MtSelection;
+		}
+
+		// Ensure modifier is hit when cloning.
+		if (m_modifyClone)
+		{
+			if (!modifierHit)
+				m_modifyClone = false;
 		}
 
 		// Ensure controller isn't playing and physics is disabled.

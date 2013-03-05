@@ -17,6 +17,13 @@
 
 namespace traktor
 {
+	namespace editor
+	{
+
+class IEditor;
+
+	}
+
 	namespace resource
 	{
 
@@ -56,7 +63,7 @@ class T_DLLCLASS EffectPreviewControl : public ui::Widget
 	T_RTTI_CLASS;
 
 public:
-	EffectPreviewControl();
+	EffectPreviewControl(editor::IEditor* editor);
 
 	bool create(
 		ui::Widget* parent,
@@ -84,7 +91,10 @@ public:
 
 	void syncEffect();
 
+	void updateSettings();
+
 private:
+	editor::IEditor* m_editor;
 	Ref< ui::EventHandler > m_idleHandler;
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
@@ -94,6 +104,8 @@ private:
 	Ref< PointRenderer > m_pointRenderer;
 	Ref< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
+	Color4ub m_colorClear;
+	Color4ub m_colorGrid;
 	uint32_t m_randomSeed;
 	Context m_context;
 	Timer m_timer;

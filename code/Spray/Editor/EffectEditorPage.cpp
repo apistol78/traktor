@@ -141,7 +141,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
 	splitter->create(container, false, -220, false);
 
-	m_previewControl = new EffectPreviewControl();
+	m_previewControl = new EffectPreviewControl(m_editor);
 	m_previewControl->create(splitter, ui::WsClientBorder, m_resourceManager, renderSystem, m_soundSystem);
 	m_previewControl->showGuide(m_guideVisible);
 	m_previewControl->setMoveEmitter(m_moveEmitter);
@@ -194,7 +194,12 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	if (!m_previewControl)
 		return false;
 
-	if (command == L"Effect.Editor.Reset")
+	if (command == L"Editor.SettingsChanged")
+	{
+		m_previewControl->updateSettings();
+		m_previewControl->update();
+	}
+	else if (command == L"Effect.Editor.Reset")
 	{
 		m_previewControl->setTotalTime(0.0f);
 		m_previewControl->syncEffect();

@@ -1,6 +1,7 @@
 #ifndef traktor_animation_SkeletonEditorPage_H
 #define traktor_animation_SkeletonEditorPage_H
 
+#include "Core/Math/Color4ub.h"
 #include "Editor/IEditorPage.h"
 #include "Ui/Point.h"
 
@@ -101,6 +102,8 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< resource::IResourceManager > m_resourceManager;
+	Color4ub m_colorClear;
+	Color4ub m_colorGrid;
 	ui::Point m_lastMousePosition;
 	int m_selectedJoint;
 	float m_cameraHead;
@@ -109,6 +112,8 @@ private:
 	float m_cameraMoveScaleY;
 	float m_cameraMoveScaleZ;
 	float m_cameraBoneScale;
+
+	void updateSettings();
 
 	void createSkeletonTreeNodes();
 
