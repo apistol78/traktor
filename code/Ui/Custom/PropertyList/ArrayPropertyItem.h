@@ -50,7 +50,6 @@ private:
 	const TypeInfo* m_elementType;
 	bool m_readOnly;
 	Ref< MiniButton > m_buttonEdit;
-	Ref< MiniButton > m_buttonRemove;
 
 	void eventClick(Event* event);
 };

@@ -10,6 +10,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntitySchema", EntitySchema, IEntitySchem
 
 void EntitySchema::insertEntity(const Entity* parentEntity, const std::wstring& name, Entity* entity)
 {
+	if (!entity)
+		return;
+
 	EntityInfo info;
 	info.parent = parentEntity;
 	info.entity = entity;

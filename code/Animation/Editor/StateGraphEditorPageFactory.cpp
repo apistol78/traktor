@@ -30,6 +30,8 @@ void StateGraphEditorPageFactory::getCommands(std::list< ui::Command >& outComma
 	outCommands.push_back(ui::Command(L"StateGraph.Editor.AlignBottom"));
 	outCommands.push_back(ui::Command(L"StateGraph.Editor.EvenSpaceVertically"));
 	outCommands.push_back(ui::Command(L"StateGraph.Editor.EventSpaceHorizontally"));
+	outCommands.push_back(ui::Command(L"StateGraph.Editor.BrowseMesh"));
+	outCommands.push_back(ui::Command(L"StateGraph.Editor.BrowseSkeleton"));
 }
 
 	}

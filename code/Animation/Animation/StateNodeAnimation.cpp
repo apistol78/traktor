@@ -29,8 +29,11 @@ bool StateNodeAnimation::bind(resource::IResourceManager* resourceManager)
 
 bool StateNodeAnimation::prepareContext(StateContext& outContext)
 {
-	int poseCount = m_animation->getKeyPoseCount();
-	if (poseCount <= 0)
+	if (!m_animation)
+		return false;
+
+	uint32_t poseCount = m_animation->getKeyPoseCount();
+	if (poseCount < 1)
 		return false;
 
 	float duration = m_animation->getKeyPose(poseCount - 1).at;

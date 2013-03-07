@@ -547,8 +547,6 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
 	{
 		WorldRenderView depthRenderView = worldRenderView;
-		depthRenderView.resetLights();
-
 		WorldRenderPassForward pass(
 			s_techniqueDepth,
 			depthRenderView,
@@ -958,8 +956,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	}
 
 	// Render visuals.
-	worldRenderView.resetLights();
-
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
 		worldRenderView,
@@ -977,13 +973,13 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.haveShadows = true;
+
+	worldRenderView.resetLights();
 }
 
 void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
 {
 	Frame& f = m_frames[frame];
-
-	worldRenderView.resetLights();
 
 	WorldRenderPassForward defaultPass(
 		s_techniqueDefault,
@@ -1002,6 +998,8 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
 	f.haveShadows = false;
+
+	worldRenderView.resetLights();
 }
 
 	}

@@ -3,7 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Ref.h"
-#include "Resource/IResourceHandle.h"
+#include "Resource/ExplicitResourceHandle.h"
 
 namespace traktor
 {
@@ -47,6 +47,19 @@ public:
 
 	explicit IdProxy(IResourceHandle* handle)
 	:	m_handle(handle)
+	,	m_tag(0)
+	{
+	}
+
+	explicit IdProxy(IResourceHandle* handle, const Guid& id)
+	:	m_handle(handle)
+	,	m_id(id)
+	,	m_tag(0)
+	{
+	}
+
+	explicit IdProxy< ResourceType >(ResourceType* resource)
+	:	m_handle(new ExplicitResourceHandle(resource))
 	,	m_tag(0)
 	{
 	}

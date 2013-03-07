@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 struct CallArgs;
+class FlashSpriteInstance;
 
 /*! \brief MovieClipLoader class.
  * \ingroup Flash
@@ -31,7 +32,7 @@ private:
 
 	void MovieClipLoader_getProgress(CallArgs& ca);
 
-	void MovieClipLoader_loadClip(CallArgs& ca);
+	bool MovieClipLoader_loadClip(ActionObject* self, const std::wstring& url, FlashSpriteInstance* target) const;
 
 	void MovieClipLoader_removeListener(CallArgs& ca);
 

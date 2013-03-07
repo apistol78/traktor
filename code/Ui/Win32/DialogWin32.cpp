@@ -50,8 +50,12 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 	DWORD nativeStyle = WS_POPUP;
 #endif
 
+	HWND hWndParent = 0;
+	if (parent)
+		hWndParent = reinterpret_cast< HWND >(parent->getInternalHandle());
+
 	if (!m_hWnd.create(
-		parent ? reinterpret_cast< HWND >(parent->getInternalHandle()) : 0,
+		hWndParent,
 		_T("TraktorDialogWin32Class"),
 		wstots(text).c_str(),
 		nativeStyle,
@@ -65,6 +69,25 @@ bool DialogWin32::create(IWidget* parent, const std::wstring& text, int width, i
 
 	if (!WidgetWin32Impl::create(0))
 		return false;
+
+	if (hWndParent)
+	{
+		MONITORINFO miParent, miDialog;
+
+		miParent.cbSize = sizeof(miParent);
+		GetMonitorInfo(MonitorFromWindow(hWndParent, MONITOR_DEFAULTTONEAREST), &miParent);
+
+		miDialog.cbSize = sizeof(miDialog);
+		GetMonitorInfo(MonitorFromWindow(m_hWnd, MONITOR_DEFAULTTONEAREST), &miDialog);
+
+		RECT rcDialog;
+		GetWindowRect(m_hWnd, &rcDialog);
+
+		INT x = miParent.rcWork.left + rcDialog.left - miDialog.rcWork.left;
+		INT y = miParent.rcWork.top + rcDialog.top - miDialog.rcWork.top;
+
+		SetWindowPos(m_hWnd, NULL, x, y, 0, 0, SWP_NOSIZE | SWP_NOZORDER);
+	}
 
 	m_hWnd.registerMessageHandler(WM_INITDIALOG, new MethodMessageHandler< DialogWin32 >(this, &DialogWin32::eventInitDialog));
 #if !defined(WINCE)
@@ -105,10 +128,6 @@ int DialogWin32::showModal()
 		rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
 		rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
 	};
-	if (pntPos.x < 0)
-		pntPos.x = 0;
-	if (pntPos.y < 0)
-		pntPos.y = 0;
 	SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
 	
 	// Handle events from the dialog.
@@ -157,27 +176,7 @@ void DialogWin32::setVisible(bool visible)
 		return;
 
 	if (visible)
-	{
-		HWND hParentWnd = GetParent(m_hWnd);
-		HWND hCenterWnd = m_centerDesktop ? GetDesktopWindow() : hParentWnd;
-		if (!hCenterWnd)
-			hCenterWnd = GetDesktopWindow();
-
-		// Position dialog window centered above parent window.
-		RECT rcParent;
-		GetWindowRect(hCenterWnd, &rcParent);
-		POINT pntPos =
-		{
-			rcParent.left + ((rcParent.right - rcParent.left) - getRect().getWidth()) / 2,
-			rcParent.top + ((rcParent.bottom - rcParent.top) - getRect().getHeight()) / 2
-		};
-		if (pntPos.x < 0)
-			pntPos.x = 0;
-		if (pntPos.y < 0)
-			pntPos.y = 0;
-
-		SetWindowPos(m_hWnd, HWND_TOP, pntPos.x, pntPos.y, 0, 0, SWP_NOSIZE | SWP_SHOWWINDOW);
-	}
+		ShowWindow(m_hWnd, SW_SHOW);
 	else
 		ShowWindow(m_hWnd, SW_HIDE);
 }

@@ -134,7 +134,10 @@ void PostProcessStepProperties::eventPropertyCommand(ui::Event* event)
 		}
 		else
 		{
-			objectItem->setObject(0);
+			if (ui::custom::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(objectItem->getParentItem()))
+				m_propertyList->removePropertyItem(parentArrayItem, objectItem);
+			else
+				objectItem->setObject(0);
 
 			m_propertyList->refresh(objectItem, 0);
 			m_propertyList->apply();

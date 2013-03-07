@@ -8755,6 +8755,583 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Traktor.Mesh.Editor</name>
+						<sourcePath>$(TRAKTOR_HOME)/code/Mesh/Editor</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugShared</name>
+								<targetFormat>TfSharedLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_MESH_EDITOR_EXPORT</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseShared</name>
+								<targetFormat>TfSharedLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_MESH_EDITOR_EXPORT</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>_DEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/code</item>
+								</includePaths>
+								<definitions>
+									<item>T_STATIC</item>
+									<item>NDEBUG</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>*.*</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>Indoor</name>
+								<items>
+									<item type="File">
+										<fileName>Indoor/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Skinned</name>
+								<items>
+									<item type="File">
+										<fileName>Skinned/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Static</name>
+								<items>
+									<item type="File">
+										<fileName>Static/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Instance</name>
+								<items>
+									<item type="File">
+										<fileName>Instance/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Blend</name>
+								<items>
+									<item type="File">
+										<fileName>Blend/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Stream</name>
+								<items>
+									<item type="File">
+										<fileName>Stream/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Partition</name>
+								<items>
+									<item type="File">
+										<fileName>Partition/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Batch</name>
+								<items>
+									<item type="File">
+										<fileName>Batch/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[15]/dependencies/item/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Model</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
+									<configurations>
+										<item type="Configuration" version="1">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+											</includePaths>
+											<definitions>
+												<item>T_MODEL_EXPORT</item>
+												<item>_DEBUG</item>
+												<item>FBXSDK_NEW_API</item>
+												<item>FBXSDK_SHARED</item>
+											</definitions>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+											</libraryPaths>
+											<libraries>
+												<item>fbxsdk-2013.1.lib</item>
+											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+											</includePaths>
+											<definitions>
+												<item>T_MODEL_EXPORT</item>
+												<item>NDEBUG</item>
+												<item>FBXSDK_NEW_API</item>
+												<item>FBXSDK_SHARED</item>
+											</definitions>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+											</libraryPaths>
+											<libraries>
+												<item>fbxsdk-2013.1.lib</item>
+											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+												<item>FBXSDK_NEW_API</item>
+												<item>FBXSDK_SHARED</item>
+											</definitions>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+											</libraryPaths>
+											<libraries>
+												<item>fbxsdk-2013.1.lib</item>
+											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+												<item>FBXSDK_NEW_API</item>
+												<item>FBXSDK_SHARED</item>
+											</definitions>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+											</libraryPaths>
+											<libraries>
+												<item>fbxsdk-2013.1.lib</item>
+											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Formats</name>
+											<items>
+												<item type="File">
+													<fileName>Formats/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Operations</name>
+											<items>
+												<item type="File">
+													<fileName>Operations/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[10]"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Render.Editor</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Render/Editor</sourcePath>
+									<configurations>
+										<item type="Configuration" version="1">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+											</includePaths>
+											<definitions>
+												<item>T_RENDER_EDITOR_EXPORT</item>
+												<item>_DEBUG</item>
+												<item>T_HAVE_PVRTC</item>
+											</definitions>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+											</libraryPaths>
+											<libraries>
+												<item>pvrtc.lib</item>
+											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+											</includePaths>
+											<definitions>
+												<item>T_RENDER_EDITOR_EXPORT</item>
+												<item>NDEBUG</item>
+												<item>T_HAVE_PVRTC</item>
+											</definitions>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+											</libraryPaths>
+											<libraries>
+												<item>pvrtc.lib</item>
+											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+												<item>T_HAVE_PVRTC</item>
+											</definitions>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+											</libraryPaths>
+											<libraries>
+												<item>pvrtc.lib</item>
+											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
+												<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
+												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+												<item>T_HAVE_PVRTC</item>
+											</definitions>
+											<libraryPaths>
+												<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
+											</libraryPaths>
+											<libraries>
+												<item>pvrtc.lib</item>
+											</libraries>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Shader</name>
+											<items>
+												<item type="File">
+													<fileName>Shader/*.*</fileName>
+													<items/>
+												</item>
+												<item type="Filter">
+													<name>Traits</name>
+													<items>
+														<item type="File">
+															<fileName>Shader/Traits/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
+												<item type="Filter">
+													<name>Facades</name>
+													<items>
+														<item type="File">
+															<fileName>Shader/Facades/*.*</fileName>
+															<items/>
+														</item>
+													</items>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Resources</name>
+											<items>
+												<item type="File">
+													<fileName>../../../res/toolbar/Alignment.png</fileName>
+													<items/>
+												</item>
+												<item type="File">
+													<fileName>../../../res/toolbar/PlusMinus.png</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Texture</name>
+											<items>
+												<item type="File">
+													<fileName>Texture/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[5]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[11]"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+							</item>
+						</dependencies>
+					</project>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[15]/dependencies/item/project"/>
@@ -11527,577 +12104,8 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[15]/dependencies/item[2]/project"/>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Mesh.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Mesh/Editor</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_MESH_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_MESH_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>Indoor</name>
-					<items>
-						<item type="File">
-							<fileName>Indoor/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Skinned</name>
-					<items>
-						<item type="File">
-							<fileName>Skinned/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Static</name>
-					<items>
-						<item type="File">
-							<fileName>Static/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Instance</name>
-					<items>
-						<item type="File">
-							<fileName>Instance/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Blend</name>
-					<items>
-						<item type="File">
-							<fileName>Blend/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Stream</name>
-					<items>
-						<item type="File">
-							<fileName>Stream/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Partition</name>
-					<items>
-						<item type="File">
-							<fileName>Partition/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="Filter">
-					<name>Batch</name>
-					<items>
-						<item type="File">
-							<fileName>Batch/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Model</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Model</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
-								</includePaths>
-								<definitions>
-									<item>T_MODEL_EXPORT</item>
-									<item>_DEBUG</item>
-									<item>FBXSDK_NEW_API</item>
-									<item>FBXSDK_SHARED</item>
-								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
-								</libraryPaths>
-								<libraries>
-									<item>fbxsdk-2013.1.lib</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
-								</includePaths>
-								<definitions>
-									<item>T_MODEL_EXPORT</item>
-									<item>NDEBUG</item>
-									<item>FBXSDK_NEW_API</item>
-									<item>FBXSDK_SHARED</item>
-								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
-								</libraryPaths>
-								<libraries>
-									<item>fbxsdk-2013.1.lib</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-									<item>FBXSDK_NEW_API</item>
-									<item>FBXSDK_SHARED</item>
-								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
-								</libraryPaths>
-								<libraries>
-									<item>fbxsdk-2013.1.lib</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-									<item>FBXSDK_NEW_API</item>
-									<item>FBXSDK_SHARED</item>
-								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
-								</libraryPaths>
-								<libraries>
-									<item>fbxsdk-2013.1.lib</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>Formats</name>
-								<items>
-									<item type="File">
-										<fileName>Formats/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Operations</name>
-								<items>
-									<item type="File">
-										<fileName>Operations/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[10]"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-							</item>
-						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Render.Editor</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Render/Editor</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
-									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
-								</includePaths>
-								<definitions>
-									<item>T_RENDER_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
-									<item>T_HAVE_PVRTC</item>
-								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
-								</libraryPaths>
-								<libraries>
-									<item>pvrtc.lib</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
-									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
-								</includePaths>
-								<definitions>
-									<item>T_RENDER_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
-									<item>T_HAVE_PVRTC</item>
-								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
-								</libraryPaths>
-								<libraries>
-									<item>pvrtc.lib</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
-									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-									<item>T_HAVE_PVRTC</item>
-								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
-								</libraryPaths>
-								<libraries>
-									<item>pvrtc.lib</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-									<item>$(TRAKTOR_HOME)/3rdp/squish-1.10</item>
-									<item>$(TRAKTOR_HOME)/3rdp/stb_dxt</item>
-									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-									<item>T_HAVE_PVRTC</item>
-								</definitions>
-								<libraryPaths>
-									<item>$(TRAKTOR_HOME)/3rdp/POWERVR SDK/OGLES2_WINDOWS_PCEMULATION_2.07.27.0484/Utilities/Pvrtc/dll</item>
-								</libraryPaths>
-								<libraries>
-									<item>pvrtc.lib</item>
-								</libraries>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>Shader</name>
-								<items>
-									<item type="File">
-										<fileName>Shader/*.*</fileName>
-										<items/>
-									</item>
-									<item type="Filter">
-										<name>Traits</name>
-										<items>
-											<item type="File">
-												<fileName>Shader/Traits/*.*</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-									<item type="Filter">
-										<name>Facades</name>
-										<items>
-											<item type="File">
-												<fileName>Shader/Facades/*.*</fileName>
-												<items/>
-											</item>
-										</items>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Resources</name>
-								<items>
-									<item type="File">
-										<fileName>../../../res/toolbar/Alignment.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/toolbar/PlusMinus.png</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Texture</name>
-								<items>
-									<item type="File">
-										<fileName>Texture/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[40]/dependencies/item[5]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[11]"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-							</item>
-						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item ref="/object/projects/item[40]/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[15]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[5]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[15]/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
@@ -12314,7 +12322,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[40]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -12997,7 +13005,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[40]/dependencies/item[8]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.OpenGL</name>
@@ -13229,6 +13237,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
@@ -13249,6 +13258,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_ES2_EXPORT</item>
@@ -13269,6 +13279,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -13289,6 +13300,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/glsl</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -14730,6 +14742,665 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[54]/dependencies/item[2]/project/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.mesaglsl2</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
+								</includePaths>
+								<definitions>
+									<item>WIN32</item>
+									<item>_DEBUG</item>
+									<item>_LIB</item>
+									<item>NOMINMAX</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>snprintf=_snprintf</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
+								</includePaths>
+								<definitions>
+									<item>WIN32</item>
+									<item>NDEBUG</item>
+									<item>_LIB</item>
+									<item>NOMINMAX</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>snprintf=_snprintf</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
+								</includePaths>
+								<definitions>
+									<item>WIN32</item>
+									<item>_DEBUG</item>
+									<item>_LIB</item>
+									<item>NOMINMAX</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>snprintf=_snprintf</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/include/c99</item>
+									<item>$(TRAKTOR_HOME)/3rdp/glsl-optimizer-master/src/mesa</item>
+								</includePaths>
+								<definitions>
+									<item>WIN32</item>
+									<item>NDEBUG</item>
+									<item>_LIB</item>
+									<item>NOMINMAX</item>
+									<item>_CRT_SECURE_NO_WARNINGS</item>
+									<item>_CRT_SECURE_NO_DEPRECATE</item>
+									<item>snprintf=_snprintf</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>src/glsl/msvc/msvccompat.h</fileName>
+								<items/>
+							</item>
+							<item type="Filter">
+								<name>src</name>
+								<items>
+									<item type="Filter">
+										<name>glsl</name>
+										<items>
+											<item type="File">
+												<fileName>src/glsl/ast.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ast_expr.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ast_function.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ast_to_hir.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ast_type.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/builtin_function.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/builtin_types.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/builtin_variables.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/builtin_variables.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_lexer.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_lexer.lpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_optimizer.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_optimizer.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_parser.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_parser.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_parser.ypp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_parser_extras.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_parser_extras.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_symbol_table.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_symbol_table.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_types.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/glsl_types.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/hir_field_selection.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_basic_block.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_basic_block.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_clone.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_constant_expression.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_expression_flattening.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_expression_flattening.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_function.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_function_can_inline.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_function_detect_recursion.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_function_inlining.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_hierarchical_visitor.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_hierarchical_visitor.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_hv_accept.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_import_prototypes.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_optimization.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_print_glsl_visitor.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_print_glsl_visitor.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_print_visitor.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_print_visitor.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_reader.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_reader.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_rvalue_visitor.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_rvalue_visitor.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_unused_structs.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_unused_structs.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_validate.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_variable_refcount.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_variable_refcount.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ir_visitor.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/link_functions.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/link_uniform_initializers.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/link_uniforms.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/linker.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/linker.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/list.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/loop_analysis.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/loop_analysis.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/loop_controls.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/loop_unroll.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_clip_distance.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_discard.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_discard_flow.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_if_to_cond_assign.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_instructions.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_jumps.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_mat_op_to_vec.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_noise.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_variable_index_to_cond_assign.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_vec_index_to_cond_assign.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_vec_index_to_swizzle.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/lower_vector.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_algebraic.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_array_splitting.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_constant_folding.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_constant_propagation.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_constant_variable.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_copy_propagation.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_copy_propagation_elements.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_dead_code.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_dead_code_local.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_dead_functions.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_function_inlining.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_if_simplification.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_noop_swizzle.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_redundant_jumps.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_structure_splitting.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_swizzle_swizzle.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/opt_tree_grafting.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/program.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ralloc.c</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/ralloc.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/s_expression.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/s_expression.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/standalone_scaffolding.cpp</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/standalone_scaffolding.h</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/strtod.c</fileName>
+												<items/>
+											</item>
+											<item type="File">
+												<fileName>src/glsl/strtod.h</fileName>
+												<items/>
+											</item>
+											<item type="Filter">
+												<name>glcpp</name>
+												<items>
+													<item type="File">
+														<fileName>src/glsl/glcpp/glcpp-lex.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/glcpp-lex.l</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/glcpp-parse.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/glcpp-parse.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/glcpp-parse.y</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/glcpp.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/glcpp.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/glcpp/pp.c</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+										</items>
+									</item>
+									<item type="Filter">
+										<name>mesa</name>
+										<items>
+											<item type="Filter">
+												<name>program</name>
+												<items>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/hash_table.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/hash_table.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/prog_instruction.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/prog_parameter.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/prog_statevars.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/symbol_table.c</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/program/symbol_table.h</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+											<item type="Filter">
+												<name>main</name>
+												<items>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/compiler.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/config.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/context.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/core.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/dd.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/glheader.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/glminimal.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/imports.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/macros.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/mtypes.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/shaderobj.h</fileName>
+														<items/>
+													</item>
+													<item type="File">
+														<fileName>src/glsl/../mesa/main/simple_list.h</fileName>
+														<items/>
+													</item>
+												</items>
+											</item>
+										</items>
+									</item>
+								</items>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
@@ -16395,7 +17066,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[40]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -16758,7 +17429,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[40]/dependencies/item[8]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[8]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -16770,11 +17441,11 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[40]/dependencies/item[5]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[5]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[40]"/>
+								<project ref="/object/projects/item[16]/dependencies/item[15]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -19776,6 +20447,7 @@
 		</item>
 		<item ref="/object/projects/item[28]/dependencies/item[7]/project/dependencies/item[4]/project"/>
 		<item ref="/object/projects/item[53]/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[54]/dependencies/item[4]/project"/>
 	</projects>
 	<aggregations/>
 </object>

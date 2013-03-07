@@ -10,7 +10,6 @@
 #include "Ui/Custom/PropertyList/PropertyList.h"
 
 // Resources
-#include "Resources/SmallCross.h"
 #include "Resources/SmallDots.h"
 #include "Resources/SmallPlus.h"
 
@@ -52,19 +51,11 @@ void ArrayPropertyItem::createInPlaceControls(Widget* parent)
 				ui::Bitmap::load(c_ResourceSmallPlus, sizeof(c_ResourceSmallPlus), L"png")
 		);
 		m_buttonEdit->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
-
-		m_buttonRemove = new MiniButton();
-		m_buttonRemove->create(
-			parent,
-			ui::Bitmap::load(c_ResourceSmallCross, sizeof(c_ResourceSmallCross), L"png")
-		);
-		m_buttonRemove->addClickEventHandler(createMethodHandler(this, &ArrayPropertyItem::eventClick));
 	}
 }
 
 void ArrayPropertyItem::destroyInPlaceControls()
 {
-	safeDestroy(m_buttonRemove);
 	safeDestroy(m_buttonEdit);
 }
 
@@ -74,16 +65,6 @@ void ArrayPropertyItem::resizeInPlaceControls(const Rect& rc, std::vector< Widge
 	if (m_buttonEdit)
 		outChildRects.push_back(WidgetRect(
 			m_buttonEdit,
-			Rect(
-				rc.right - dim * 2,
-				rc.top,
-				rc.right - dim,
-				rc.bottom
-			)
-		));
-	if (m_buttonRemove)
-		outChildRects.push_back(WidgetRect(
-			m_buttonRemove,
 			Rect(
 				rc.right - dim,
 				rc.top,
@@ -105,29 +86,14 @@ void ArrayPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 void ArrayPropertyItem::eventClick(Event* event)
 {
-	if (event->getSender() == m_buttonEdit)
-	{
-		if (m_elementType)
-			notifyCommand(Command(L"Property.Edit"));
-		else
-		{
-			// Add dummy item to indicate where we want to add new element;
-			// the ApplyReflector will detect this item and insert the new element.
-			addChildItem(new NullPropertyItem());
-			notifyCommand(Command(L"Property.Edit"));
-		}
-	}
+	if (m_elementType)
+		notifyCommand(Command(L"Property.Edit"));
 	else
 	{
-		// Remove selected children.
-		RefArray< PropertyItem > selectedItems;
-		getPropertyList()->getPropertyItems(selectedItems, PropertyList::GfDescendants | PropertyList::GfSelectedOnly);
-		for (RefArray< PropertyItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
-		{
-			if ((*i)->getParentItem() == this)
-				getPropertyList()->removePropertyItem(this, *i);
-		}
-		notifyCommand(Command(L"Property.Remove"));
+		// Add dummy item to indicate where we want to add new element;
+		// the ApplyReflector will detect this item and insert the new element.
+		addChildItem(new NullPropertyItem());
+		notifyCommand(Command(L"Property.Edit"));
 	}
 }
 

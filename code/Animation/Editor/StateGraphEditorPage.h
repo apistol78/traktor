@@ -44,6 +44,7 @@ class Node;
 	namespace animation
 	{
 
+class AnimationPreviewControl;
 class StateGraph;
 class StateNode;
 class Transition;
@@ -74,9 +75,13 @@ private:
 	editor::IEditorPageSite* m_site;
 	editor::IDocument* m_document;
 	Ref< StateGraph > m_stateGraph;
-	Ref< ui::custom::ToolBar > m_toolBar;
+	Ref< ui::custom::ToolBar > m_toolBarGraph;
 	Ref< ui::custom::GraphControl > m_editorGraph;
 	Ref< ui::PopupMenu > m_menuPopup;
+	Ref< ui::custom::ToolBar > m_toolBarPreview;
+	Ref< AnimationPreviewControl > m_previewControl;
+
+	void bindStateNodes();
 
 	void createEditorNodes(const RefArray< StateNode >& states, const RefArray< Transition >& transitions);
 
@@ -86,7 +91,9 @@ private:
 
 	void updateGraph();
 
-	void eventToolClick(ui::Event* event);
+	void eventToolBarGraphClick(ui::Event* event);
+
+	void eventToolBarPreviewClick(ui::Event* event);
 
 	void eventPropertyChange(ui::Event* event);
 
