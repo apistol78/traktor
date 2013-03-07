@@ -98,6 +98,7 @@ private:
 
 	std::list< Entry > m_stack;
 	std::map< std::wstring, Ref< ISerializable > > m_refs;
+	std::wstring m_value;
 	std::vector< float > m_values;
 
 	std::wstring stackPath();

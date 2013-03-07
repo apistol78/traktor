@@ -253,7 +253,10 @@ void SoundAssetEditor::eventPropertyCommand(ui::Event* event)
 		}
 		else
 		{
-			objectItem->setObject(0);
+			if (ui::custom::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(objectItem->getParentItem()))
+				m_propertyList->removePropertyItem(parentArrayItem, objectItem);
+			else
+				objectItem->setObject(0);
 
 			m_propertyList->refresh(objectItem, 0);
 			m_propertyList->apply();
@@ -263,29 +266,21 @@ void SoundAssetEditor::eventPropertyCommand(ui::Event* event)
 	Ref< ui::custom::ArrayPropertyItem > arrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(event->getItem());
 	if (arrayItem)
 	{
-		if (cmd == L"Property.Edit")
+		if (arrayItem->getElementType())
 		{
-			if (arrayItem->getElementType())
+			const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
+			if (objectType)
 			{
-				const TypeInfo* objectType = m_editor->browseType(arrayItem->getElementType());
-				if (objectType)
+				Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
+				if (object)
 				{
-					Ref< ISerializable > object = dynamic_type_cast< ISerializable* >(objectType->createInstance());
-					if (object)
-					{
-						m_propertyList->addObject(arrayItem, object);
-						m_propertyList->apply();
-						m_propertyList->refresh();
-					}
+					m_propertyList->addObject(arrayItem, object);
+					m_propertyList->apply();
+					m_propertyList->refresh();
 				}
 			}
-			else	// Non-complex array; just apply and refresh.
-			{
-				m_propertyList->apply();
-				m_propertyList->refresh();
-			}
 		}
-		else if (cmd == L"Property.Remove")
+		else	// Non-complex array; just apply and refresh.
 		{
 			m_propertyList->apply();
 			m_propertyList->refresh();

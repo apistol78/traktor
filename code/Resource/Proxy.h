@@ -2,7 +2,7 @@
 #define traktor_resource_Proxy_H
 
 #include "Core/Ref.h"
-#include "Resource/IResourceHandle.h"
+#include "Resource/ExplicitResourceHandle.h"
 
 namespace traktor
 {
@@ -33,6 +33,12 @@ public:
 
 	explicit Proxy< ResourceType >(IResourceHandle* handle)
 	:	m_handle(handle)
+	,	m_tag(0)
+	{
+	}
+
+	explicit Proxy< ResourceType >(ResourceType* resource)
+	:	m_handle(new ExplicitResourceHandle(resource))
 	,	m_tag(0)
 	{
 	}

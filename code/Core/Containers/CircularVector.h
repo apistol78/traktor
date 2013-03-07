@@ -29,6 +29,11 @@ public:
 		return m_front == m_back;
 	}
 
+	bool full() const
+	{
+		return m_front == ((m_back + 1) % Capacity);
+	}
+
 	uint32_t capacity() const
 	{
 		return Capacity;
@@ -46,6 +51,19 @@ public:
 	{
 		m_front = 0;
 		m_back = 0;
+	}
+
+	ItemType& push_back()
+	{
+		// Get back element.
+		ItemType& item = m_items[m_back];
+		m_back = (m_back + 1) % Capacity;
+
+		// Discard front element if we've reached front.
+		if (m_back == m_front)
+			m_front = (m_front + 1) % Capacity;
+
+		return item;
 	}
 
 	void push_back(const ItemType& item)

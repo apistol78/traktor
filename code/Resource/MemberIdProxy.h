@@ -38,6 +38,7 @@ public:
 	virtual bool serialize(ISerializer& s) const
 	{
 		Guid id = m_ref.getId();
+		Ref< IResourceHandle > handle = m_ref.getHandle();
 		
 		bool result = (s >> traktor::Member< traktor::Guid >(
 			getName(),
@@ -47,7 +48,7 @@ public:
 		if (!result)
 			return false;
 
-		m_ref = IdProxy< Class >(id);
+		m_ref = IdProxy< Class >(handle, id);
 		return true;
 	}
 	

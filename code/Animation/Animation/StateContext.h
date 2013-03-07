@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -26,25 +26,13 @@ class T_DLLCLASS StateContext : public Object
 public:
 	StateContext();
 
-	inline void setTime(float time)
-	{
-		m_time = time;
-	}
+	void setTime(float time) { m_time = time; }
 
-	inline float getTime() const
-	{
-		return m_time;
-	}
+	float getTime() const { return m_time; }
 
-	inline void setDuration(float duration)
-	{
-		m_duration = duration;
-	}
+	void setDuration(float duration) { m_duration = duration; }
 
-	inline float getDuration() const
-	{
-		return m_duration;
-	}
+	float getDuration() const { return m_duration; }
 
 private:
 	float m_time;

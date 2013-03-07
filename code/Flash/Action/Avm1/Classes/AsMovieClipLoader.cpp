@@ -1,4 +1,8 @@
 #include "Core/Log/Log.h"
+#include "Flash/FlashMovie.h"
+#include "Flash/FlashSpriteInstance.h"
+#include "Flash/IFlashMovieLoader.h"
+#include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClipLoader.h"
 
@@ -53,11 +57,20 @@ void AsMovieClipLoader::MovieClipLoader_getProgress(CallArgs& ca)
 	)
 }
 
-void AsMovieClipLoader::MovieClipLoader_loadClip(CallArgs& ca)
+bool AsMovieClipLoader::MovieClipLoader_loadClip(ActionObject* self, const std::wstring& url, FlashSpriteInstance* target) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClipLoader::loadClip not implemented" << Endl;
-	)
+	ActionContext* cx = getContext();
+	T_ASSERT (cx);
+
+	const IFlashMovieLoader* movieLoader = cx->getMovieLoader();
+	if (!movieLoader)
+		return false;
+
+	Ref< FlashMovie > movie = movieLoader->load(url);
+	if (!movie)
+		return false;
+
+	return movie->createExternalMovieClipInstance(target) != 0;
 }
 
 void AsMovieClipLoader::MovieClipLoader_removeListener(CallArgs& ca)

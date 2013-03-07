@@ -46,143 +46,128 @@ Serializer::Direction XmlDeserializer::getDirection() const
 
 bool XmlDeserializer::operator >> (const Member< bool >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = bool(value == L"true");
-
+	m = bool(m_value == L"true");
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< int8_t >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< int32_t >(value);
+	m = parseString< int32_t >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< uint8_t >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< uint32_t >(value);
+	m = parseString< uint32_t >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< int16_t >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< int16_t >(value);
+	m = parseString< int16_t >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< uint16_t >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< uint16_t >(value);
+	m = parseString< uint16_t >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< int32_t >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< int32_t >(value);
+	m = parseString< int32_t >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< uint32_t >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< uint32_t >(value);
+	m = parseString< uint32_t >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< int64_t >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< int64_t >(value);
+	m = parseString< int64_t >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< uint64_t >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< uint64_t >(value);
+	m = parseString< uint64_t >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< float >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< float >(value);
+	m = parseString< float >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< double >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = parseString< double >(value);
+	m = parseString< double >(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< std::string >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = wstombs(value);
+	m = wstombs(m_value);
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< std::wstring >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = value;
+	m = m_value;
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< Guid >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	Guid& guid = m;
-	if (!guid.create(value))
+	if (!guid.create(m_value))
 		return false;
 
 	return true;
@@ -190,24 +175,22 @@ bool XmlDeserializer::operator >> (const Member< Guid >& m)
 
 bool XmlDeserializer::operator >> (const Member< Path >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	Path& path = m;
-	path = Path(value);
+	path = Path(m_value);
 
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< Color4ub >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	m_values.resize(0); m_values.reserve(4);
-	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
+	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4) != 4)
 		return false;
 
 	m->r = uint8_t(m_values[0]);
@@ -220,12 +203,11 @@ bool XmlDeserializer::operator >> (const Member< Color4ub >& m)
 
 bool XmlDeserializer::operator >> (const Member< Color4f >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	m_values.resize(0); m_values.reserve(4);
-	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
+	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4) != 4)
 		return false;
 
 	m->set(
@@ -240,22 +222,20 @@ bool XmlDeserializer::operator >> (const Member< Color4f >& m)
 
 bool XmlDeserializer::operator >> (const Member< Scalar >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
-	m = Scalar(parseString< float >(value));
+	m = Scalar(parseString< float >(m_value));
 	return true;
 }
 
 bool XmlDeserializer::operator >> (const Member< Vector2 >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	m_values.resize(0); m_values.reserve(2);
-	if (Split< std::wstring, float >::any(value, L",", m_values, true, 2) != 2)
+	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 2) != 2)
 		return false;
 
 	m->x = m_values[0];
@@ -266,12 +246,11 @@ bool XmlDeserializer::operator >> (const Member< Vector2 >& m)
 
 bool XmlDeserializer::operator >> (const Member< Vector4 >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	m_values.resize(0); m_values.reserve(4);
-	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
+	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4) != 4)
 		return false;
 
 	m->set(
@@ -286,12 +265,11 @@ bool XmlDeserializer::operator >> (const Member< Vector4 >& m)
 
 bool XmlDeserializer::operator >> (const Member< Matrix33 >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	m_values.resize(0); m_values.reserve(3 * 3);
-	if (Split< std::wstring, float >::any(value, L",", m_values, true, 3 * 3) != 3 * 3)
+	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 3 * 3) != 3 * 3)
 		return false;
 
 	for (int r = 0; r < 3; ++r)
@@ -307,12 +285,11 @@ bool XmlDeserializer::operator >> (const Member< Matrix33 >& m)
 
 bool XmlDeserializer::operator >> (const Member< Matrix44 >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	m_values.resize(0); m_values.reserve(4 * 4);
-	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4 * 4) != 4 * 4)
+	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4 * 4) != 4 * 4)
 		return false;
 
 	for (int r = 0; r < 4; ++r)
@@ -326,12 +303,11 @@ bool XmlDeserializer::operator >> (const Member< Matrix44 >& m)
 
 bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
 {
-	std::wstring value;
-	if (!nextElementValue(m.getName(), value))
+	if (!nextElementValue(m.getName(), m_value))
 		return false;
 
 	m_values.resize(0); m_values.reserve(4);
-	if (Split< std::wstring, float >::any(value, L",", m_values, true, 4) != 4)
+	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4) != 4)
 		return false;
 
 	m->e.set(
@@ -376,7 +352,7 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 		Ref< ISerializable > o = checked_type_cast< ISerializable* >(type->createInstance());
 		if (!o)
 		{
-			log::error << L"Unable to instanciate type \"" << typeName << L"\"" << Endl;
+			log::error << L"Unable to instantiate type \"" << typeName << L"\"" << Endl;
 			return false;
 		}
 

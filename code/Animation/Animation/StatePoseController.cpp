@@ -53,6 +53,9 @@ bool StatePoseController::evaluate(
 	bool continous = true;
 	Pose currentPose;
 
+	if (!skeleton)
+		return false;
+
 	// Prepare graph evaluation context.
 	if (m_stateGraph.changed() || !m_currentState)
 	{

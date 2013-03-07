@@ -12,8 +12,6 @@ TypeInfoSet ConstantNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Color >());
-	typeSet.insert(&type_of< FragmentPosition >());
-	typeSet.insert(&type_of< FrontFace >());
 	typeSet.insert(&type_of< Instance >());
 	typeSet.insert(&type_of< Scalar >());
 	typeSet.insert(&type_of< State >());
@@ -32,9 +30,9 @@ PinType ConstantNodeTraits::getOutputPinType(
 {
 	if (is_a< Color >(node) || is_a< Vector >(node))
 		return PntScalar4;
-	else if (is_a< Scalar >(node) || is_a< FrontFace >(node))
+	else if (is_a< Scalar >(node))
 		return PntScalar1;
-	else if (is_a< FragmentPosition >(node) || is_a< TargetSize >(node))
+	else if (is_a< TargetSize >(node))
 		return PntScalar2;
 	else if (is_a< Instance >(node))
 		return PntScalar1;

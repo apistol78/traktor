@@ -149,7 +149,10 @@ void GrainProperties::eventPropertyCommand(ui::Event* event)
 		}
 		else
 		{
-			objectItem->setObject(0);
+			if (ui::custom::ArrayPropertyItem* parentArrayItem = dynamic_type_cast< ui::custom::ArrayPropertyItem* >(objectItem->getParentItem()))
+				m_grainPropertyList->removePropertyItem(parentArrayItem, objectItem);
+			else
+				objectItem->setObject(0);
 
 			m_grainPropertyList->refresh(objectItem, 0);
 			m_grainPropertyList->apply();
