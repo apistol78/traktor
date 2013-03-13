@@ -104,7 +104,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 						&PipelineBuilder::buildThread,
 						ThreadManager::getInstance().getCurrentThread(),
 						dependencies.begin() + offsetStart,
-						dependencies.begin() + offsetEnd
+						dependencies.begin() + offsetEnd,
+						i
 					),
 					L"Build thread"
 				);
@@ -125,7 +126,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	else
 	{
 		// Invoke thread method directly to build all dependencies.
-		buildThread(ThreadManager::getInstance().getCurrentThread(), dependencies.begin(), dependencies.end());
+		buildThread(ThreadManager::getInstance().getCurrentThread(), dependencies.begin(), dependencies.end(), 0);
 	}
 
 	m_db->endTransaction();
@@ -215,7 +216,7 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	return product;
 }
 
-bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& outputPath, const Guid& outputGuid)
+bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
 	Ref< IPipeline > pipeline;
 	uint32_t pipelineHash;
@@ -226,7 +227,7 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const Object
 	Timer timer;
 	timer.start();
 
-	if (!pipeline->buildOutput(this, sourceAsset, 0, buildParams, outputPath, outputGuid, PbrSourceModified))
+	if (!pipeline->buildOutput(this, sourceAsset, 0, outputPath, outputGuid, buildParams, PbrSourceModified))
 		return false;
 
 	double buildTime = timer.getElapsedTime();
@@ -317,6 +318,22 @@ Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instan
 	}
 
 	return object;
+}
+
+Ref< IStream > PipelineBuilder::openFile(const Path& basePath, const std::wstring& fileName)
+{
+	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
+	return FileSystem::getInstance().open(filePath, File::FmRead);
+}
+
+Ref< IStream > PipelineBuilder::createTemporaryFile(const std::wstring& fileName)
+{
+	return FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
+}
+
+Ref< IStream > PipelineBuilder::openTemporaryFile(const std::wstring& fileName)
+{
+	return FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
 }
 
 Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, const Guid& guid)
@@ -457,9 +474,9 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 				this,
 				dependency->sourceAsset,
 				dependency->sourceAssetHash,
-				dependency->buildParams,
 				dependency->outputPath,
 				dependency->outputGuid,
+				0,
 				dependency->reason
 			);
 
@@ -600,7 +617,7 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int
 	return result;
 }
 
-void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end)
+void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end, uint32_t core)
 {
 	for (RefArray< PipelineDependency >::const_iterator i = begin; i != end; ++i)
 	{
@@ -608,24 +625,29 @@ void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDepen
 		if (controlThread->stopped())
 			break;
 
-		incrementProgress();
+		if (m_listener)
+			m_listener->beginBuild(
+				core,
+				m_progress,
+				m_progressEnd,
+				*i
+			);
 
 		if (performBuild(*i))
 			++m_succeeded;
 		else
 			++m_failed;
+
+		if (m_listener)
+			m_listener->endBuild(
+				core,
+				m_progress,
+				m_progressEnd,
+				*i
+			);
+
+		++m_progress;
 	}
-}
-
-void PipelineBuilder::incrementProgress()
-{
-	if (m_listener)
-		m_listener->begunBuildingAsset(
-			m_progress,
-			m_progressEnd
-		);
-
-	++m_progress;
 }
 
 	}

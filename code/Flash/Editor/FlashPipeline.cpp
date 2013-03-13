@@ -1,4 +1,3 @@
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
@@ -66,13 +65,11 @@ bool FlashPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, movieAsset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency(Path(m_assetPath), movieAsset->getFileName().getOriginal());
 
 	// Add dependency to dependent flash movies.
 	for (std::vector< Guid >::const_iterator i = movieAsset->m_dependentMovies.begin(); i != movieAsset->m_dependentMovies.end(); ++i)
@@ -107,19 +104,18 @@ bool FlashPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
 	const FlashMovieAsset* movieAsset = checked_type_cast< const FlashMovieAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, movieAsset->getFileName());
 
-	Ref< IStream > sourceStream = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > sourceStream = pipelineBuilder->openFile(Path(m_assetPath), movieAsset->getFileName().getOriginal());
 	if (!sourceStream)
 	{
-		log::error << L"Failed to import Flash; unable to open file \"" << fileName.getPathName() << L"\"" << Endl;
+		log::error << L"Failed to import Flash; unable to open file \"" << movieAsset->getFileName().getOriginal() << L"\"" << Endl;
 		return false;
 	}
 
@@ -133,7 +129,6 @@ bool FlashPipeline::buildOutput(
 
 	sourceStream->close();
 	sourceStream = 0;
-
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,

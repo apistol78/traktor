@@ -5,6 +5,7 @@
 #include <Core/Log/Log.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Misc/String.h>
+#include <Core/System/OS.h>
 #include <Net/Network.h>
 #include <Net/SocketAddressIPv4.h>
 #include <Net/SocketStream.h>
@@ -71,6 +72,7 @@ int main(int argc, const char** argv)
 	uint8_t ret;
 
 	writer << c_msgLaunchProcess;
+	writer << OS::getInstance().getCurrentUser();
 	writer << application;
 	writer << arguments;
 	writer << wait;

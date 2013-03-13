@@ -183,20 +183,18 @@ Ref< IStream > LocalInstance::writeObject(const std::wstring& primaryTypeName, c
 	if (!m_transaction)
 		return 0;
 
-	Ref< DynamicMemoryStream > stream = new DynamicMemoryStream(false, true);
-
 	if (!m_context->preferBinary())
 		outSerializerType = &type_of< xml::XmlSerializer >();
 	else
 		outSerializerType = &type_of< BinarySerializer >();
 
-	m_transaction->add(new ActionWriteObject(
+	Ref< ActionWriteObject > action = new ActionWriteObject(
 		m_instancePath,
-		primaryTypeName,
-		stream
-	));
+		primaryTypeName
+	);
+	m_transaction->add(action);
 
-	return stream;
+	return action->getStream();
 }
 
 uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) const

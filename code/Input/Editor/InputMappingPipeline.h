@@ -27,9 +27,23 @@ public:
 
 	virtual TypeInfoSet getAssetTypes() const;
 
-	virtual bool buildDependencies(editor::IPipelineDepends* pipelineDepends, const db::Instance* sourceInstance, const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, Ref< const Object >& outBuildParams) const;
+	virtual bool buildDependencies(
+		editor::IPipelineDepends* pipelineDepends,
+		const db::Instance* sourceInstance,
+		const ISerializable* sourceAsset,
+		const std::wstring& outputPath,
+		const Guid& outputGuid
+	) const;
 
-	virtual bool buildOutput(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* sourceAsset, uint32_t sourceAssetHash, const Object* buildParams, const std::wstring& outputPath, const Guid& outputGuid, uint32_t reason) const;
+	virtual bool buildOutput(
+		editor::IPipelineBuilder* pipelineBuilder,
+		const ISerializable* sourceAsset,
+		uint32_t sourceAssetHash,
+		const std::wstring& outputPath,
+		const Guid& outputGuid,
+		const Object* buildParams,
+		uint32_t reason
+	) const;
 
 	virtual Ref< ISerializable > buildOutput(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* sourceAsset) const;
 };

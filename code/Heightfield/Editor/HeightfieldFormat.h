@@ -26,7 +26,7 @@ class T_DLLCLASS HeightfieldFormat : public Object
 	T_RTTI_CLASS;
 
 public:
-	Ref< Heightfield > read(const Path& filePath, const Vector4& worldExtent, bool invertX, bool invertZ, uint32_t detailSkip) const;
+	Ref< Heightfield > read(IStream* stream, const std::wstring& extension, const Vector4& worldExtent, bool invertX, bool invertZ, uint32_t detailSkip) const;
 };
 
 	}

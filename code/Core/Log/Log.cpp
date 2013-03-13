@@ -8,13 +8,14 @@
 namespace traktor
 {
 
-LogTargetConsole::LogTargetConsole(int color)
+LogTargetConsole::LogTargetConsole(int32_t color)
 :	m_color(color)
 {
 }
 
 void LogTargetConsole::log(const std::wstring& str)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #if !defined(WINCE)
 	if (m_color == 0)
 		std::wcout << str << std::endl;
@@ -31,6 +32,7 @@ void LogTargetConsole::log(const std::wstring& str)
 
 void LogTargetDebug::log(const std::wstring& str)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #if defined(_WIN32)
 	StringOutputStream ss;
 	ss << L"(" << uint32_t(GetCurrentThreadId()) << L") " << str << Endl;
@@ -55,18 +57,40 @@ void LogStreamBuffer::setTarget(ILogTarget* target)
 	m_target = target;
 }
 
-int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
+int32_t LogStreamBuffer::getIndent() const
 {
-	StringOutputStream* ss;
+	return getThreadLocalBuffer()->getIndent();
+}
 
-	// Get thread local output stream.
-	if ((ss = static_cast< StringOutputStream* >(m_buffers.get())) == 0)
-	{
-		ss = new StringOutputStream();
-		m_buffers.set(ss);
-	}
+void LogStreamBuffer::setIndent(int32_t indent)
+{
+	getThreadLocalBuffer()->setIndent(indent);
+}
 
-	for (int i = 0; i < count; ++i)
+int32_t LogStreamBuffer::getDecimals() const
+{
+	return getThreadLocalBuffer()->getDecimals();
+}
+
+void LogStreamBuffer::setDecimals(int32_t decimals)
+{
+	getThreadLocalBuffer()->setDecimals(decimals);
+}
+
+bool LogStreamBuffer::getPushIndent() const
+{
+	return getThreadLocalBuffer()->getPushIndent();
+}
+
+void LogStreamBuffer::setPushIndent(bool pushIndent)
+{
+	getThreadLocalBuffer()->setPushIndent(pushIndent);
+}
+
+int32_t LogStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
+{
+	StringOutputStreamBuffer* ss = static_cast< StringOutputStreamBuffer* >(getThreadLocalBuffer());
+	for (int32_t i = 0; i < count; ++i)
 	{
 		wchar_t c = buffer[i];
 		if (c == L'\n')
@@ -76,10 +100,21 @@ int LogStreamBuffer::overflow(const wchar_t* buffer, int count)
 			ss->reset();
 		}
 		else if (c != L'\r')
-			(*ss) << c;
+			ss->overflow(&c, 1);
 	}
-
 	return count;
+}
+
+IOutputStreamBuffer* LogStreamBuffer::getThreadLocalBuffer() const
+{
+	IOutputStreamBuffer* os;
+	if ((os = static_cast< IOutputStreamBuffer* >(m_buffers.get())) == 0)
+	{
+		os = new StringOutputStreamBuffer();
+		T_SAFE_ADDREF(os);
+		m_buffers.set(os);
+	}
+	return os;
 }
 
 LogStream::LogStream(ILogTarget* target)

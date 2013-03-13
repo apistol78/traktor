@@ -921,16 +921,16 @@ void ModelFormatCollada::getExtensions(std::wstring& outDescription, std::vector
 	outExtensions.push_back(L"dae");
 }
 
-bool ModelFormatCollada::supportFormat(const Path& filePath) const
+bool ModelFormatCollada::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(filePath.getExtension(), L"dae") == 0;
+	return compareIgnoreCase< std::wstring >(extension, L"dae") == 0;
 }
 
-Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags) const
+Ref< Model > ModelFormatCollada::read(IStream* stream, uint32_t importFlags) const
 {
 	xml::Document doc;
 	
-	if (!doc.loadFromFile(filePath.getPathName()))
+	if (!doc.loadFromStream(stream))
 		return 0;
 
 	Ref< xml::Element > scene = doc.getSingle(L"scene");
@@ -1027,7 +1027,7 @@ Ref< Model > ModelFormatCollada::read(const Path& filePath, uint32_t importFlags
 	return outModel;
 }
 
-bool ModelFormatCollada::write(const Path& filePath, const Model* model) const
+bool ModelFormatCollada::write(IStream* stream, const Model* model) const
 {
 	return false;
 }

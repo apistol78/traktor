@@ -5,6 +5,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -22,6 +23,7 @@
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Database/Events/EvtInstanceCommitted.h"
+#include "Database/Remote/Server/ConnectionManager.h"
 #include "Editor/Asset.h"
 #include "Editor/Assets.h"
 #include "Editor/IEditorPage.h"
@@ -37,6 +39,7 @@
 #include "Editor/App/AboutDialog.h"
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "Editor/App/BrowseTypeDialog.h"
+#include "Editor/App/BuildView.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/DefaultObjectEditorFactory.h"
 #include "Editor/App/Document.h"
@@ -53,7 +56,9 @@
 #include "Editor/App/WorkspaceDialog.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
+#include "Editor/Pipeline/PipelineAgentsManager.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
+#include "Editor/Pipeline/PipelineBuilderDistributed.h"
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
@@ -63,6 +68,7 @@
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
 #include "I18N/Format.h"
+#include "Net/Stream/StreamServer.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
 #include "Ui/MessageBox.h"
@@ -118,21 +124,39 @@ const uint32_t c_offsetCollectingDependencies = 20;
 const uint32_t c_offsetBuildingAsset = 30;
 const uint32_t c_offsetFinished = 100;
 
-struct StatusListener : public PipelineBuilder::IListener
+struct StatusListener : public IPipelineBuilder::IListener
 {
+	Ref< BuildView > m_buildView;
 	Ref< ui::custom::ProgressBar > m_buildProgress;
 
-	StatusListener(ui::custom::ProgressBar* buildProgress)
-	:	m_buildProgress(buildProgress)
+	StatusListener(
+		BuildView* buildView,
+		ui::custom::ProgressBar* buildProgress
+	)
+	:	m_buildView(buildView)
+	,	m_buildProgress(buildProgress)
 	{
 	}
 
-	virtual void begunBuildingAsset(
+	virtual void beginBuild(
+		uint32_t core,
 		uint32_t index,
-		uint32_t count
+		uint32_t count,
+		const PipelineDependency* dependency
 	) const
 	{
+		m_buildView->beginBuild(core, dependency->outputPath);
 		m_buildProgress->setProgress(c_offsetBuildingAsset + (index * (c_offsetFinished - c_offsetBuildingAsset)) / count);
+	}
+
+	virtual void endBuild(
+		uint32_t core,
+		uint32_t index,
+		uint32_t count,
+		const PipelineDependency* dependency
+	) const
+	{
+		m_buildView->endBuild(core);
 	}
 };
 
@@ -425,7 +449,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	pane->split(false, 340, m_paneWest, paneCenter);
 	paneCenter->split(false, -250, paneCenter, m_paneEast);
-	paneCenter->split(true, -140, paneCenter, paneLog);
+	paneCenter->split(true, -200, paneCenter, paneLog);
 	paneCenter->split(true, -200, paneCenter, m_paneSouth);
 
 	// Create panes.
@@ -445,13 +469,31 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, 300);
 
+	// Create output panel.
+	Ref< ui::Tab > tabOutput = new ui::Tab();
+	tabOutput->create(m_dock, ui::Tab::WsLine | ui::Tab::WsBottom);
+	tabOutput->setText(i18n::Text(L"TITLE_OUTPUT"));
+
+	Ref< ui::TabPage > tabPageLog = new ui::TabPage();
+	tabPageLog->create(tabOutput, i18n::Text(L"TITLE_LOG"), new ui::FloodLayout());
+
 	m_logView = new LogView();
-	m_logView->create(m_dock);
+	m_logView->create(tabPageLog);
 	m_logView->setText(i18n::Text(L"TITLE_LOG"));
 	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.LogVisible"))
 		m_logView->hide();
 
-	paneLog->dock(m_logView, true);
+	Ref< ui::TabPage > tabPageBuild = new ui::TabPage();
+	tabPageBuild->create(tabOutput, i18n::Text(L"TITLE_BUILD"), new ui::FloodLayout());
+
+	m_buildView = new BuildView();
+	m_buildView->create(tabPageBuild);
+
+	tabOutput->addPage(tabPageLog);
+	tabOutput->addPage(tabPageBuild);
+	tabOutput->setActivePage(tabPageLog);
+
+	paneLog->dock(tabOutput, true);
 
 	m_tab = new ui::Tab();
 	m_tab->create(m_dock);
@@ -1127,6 +1169,27 @@ bool EditorForm::createWorkspace()
 	updateTitle();
 	m_dataBaseView->setDatabase(m_sourceDatabase);
 
+	// Create stream server.
+	m_streamServer = new net::StreamServer();
+	m_streamServer->create(34000);
+
+	// Create remote database server.
+	m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
+	m_dbConnectionManager->create(35000);
+
+	// Create pipeline agent manager.
+	m_agentsManager = new PipelineAgentsManager(m_streamServer, m_dbConnectionManager);
+	m_agentsManager->create(
+		m_mergedSettings,
+		sourceDatabase,
+		outputDatabase
+	);
+
+	// Expose servers as stock objects.
+	setStoreObject(L"StreamServer", m_streamServer);
+	setStoreObject(L"DbConnectionManager", m_dbConnectionManager);
+	setStoreObject(L"PipelineAgentsManager", m_agentsManager);
+
 	// Notify plugins about opened workspace.
 	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		(*i)->handleWorkspaceOpened();
@@ -1195,6 +1258,27 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	updateTitle();
 	m_dataBaseView->setDatabase(m_sourceDatabase);
 
+	// Create stream server.
+	m_streamServer = new net::StreamServer();
+	m_streamServer->create(34000);
+
+	// Create remote database server.
+	m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
+	m_dbConnectionManager->create(35000);
+
+	// Create pipeline agent manager.
+	m_agentsManager = new PipelineAgentsManager(m_streamServer, m_dbConnectionManager);
+	m_agentsManager->create(
+		m_mergedSettings,
+		sourceDatabase,
+		outputDatabase
+	);
+
+	// Expose servers as stock objects.
+	setStoreObject(L"StreamServer", m_streamServer);
+	setStoreObject(L"DbConnectionManager", m_dbConnectionManager);
+	setStoreObject(L"PipelineAgentsManager", m_agentsManager);
+
 	// Notify plugins about opened workspace.
 	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		(*i)->handleWorkspaceOpened();
@@ -1216,17 +1300,18 @@ void EditorForm::closeWorkspace()
 	buildCancel();
 	closeAllEditors();
 
+	setStoreObject(L"StreamServer", 0);
+	setStoreObject(L"DbConnectionManager", 0);
+	setStoreObject(L"PipelineAgentsManager", 0);
+
+	// Shutdown agents manager.
+	safeDestroy(m_agentsManager);
+	safeDestroy(m_dbConnectionManager);
+	safeDestroy(m_streamServer);
+
 	// Close databases.
-	if (m_outputDatabase)
-	{
-		m_outputDatabase->close();
-		m_outputDatabase = 0;
-	}
-	if (m_sourceDatabase)
-	{
-		m_sourceDatabase->close();
-		m_sourceDatabase = 0;
-	}
+	safeClose(m_outputDatabase);
+	safeClose(m_sourceDatabase);
 
 	// Close settings; restore merged as being global.
 	m_workspacePath = L"";
@@ -1411,17 +1496,29 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	double elapsedDependencies = timerBuild.getElapsedTime();
 	T_DEBUG(L"Scanned dependencies in " << elapsedDependencies << L" second(s)");
 
+	m_buildView->beginBuild();
+
 	// Build output.
-	StatusListener listener(m_buildProgress);
-	PipelineBuilder pipelineBuilder(
-		&pipelineFactory,
-		m_sourceDatabase,
-		m_outputDatabase,
-		pipelineCache,
-		pipelineDb,
-		&listener,
-		m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
-	);
+	StatusListener listener(m_buildView, m_buildProgress);
+	Ref< IPipelineBuilder > pipelineBuilder;
+
+	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", false))
+		pipelineBuilder = new PipelineBuilder(
+			&pipelineFactory,
+			m_sourceDatabase,
+			m_outputDatabase,
+			pipelineCache,
+			pipelineDb,
+			&listener,
+			m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
+		);
+	else
+		pipelineBuilder = new PipelineBuilderDistributed(
+			m_agentsManager,
+			&pipelineFactory,
+			pipelineDb,
+			&listener
+		);
 
 	if (rebuild)
 		log::info << L"Rebuilding " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
@@ -1430,7 +1527,9 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	log::info << IncreaseIndent;
 
-	pipelineBuilder.build(dependencies, rebuild);
+	pipelineBuilder->build(dependencies, rebuild);
+
+	m_buildView->endBuild();
 
 	if (pipelineCache)
 		pipelineCache->destroy();
@@ -2362,11 +2461,6 @@ void EditorForm::eventTimer(ui::Event* /*event*/)
 	{
 		while (m_outputDatabase->getEvent(event, remote))
 		{
-			// Always update view if we receive a remote event
-			// thus instances or groups may have been removed, renamed etc.
-			if (remote)
-				updateView = true;
-
 			// Gather guids of commited instances; so we can know
 			// which has been modified and thus needs to be rebuilt.
 			const db::EvtInstanceCommitted* committed = dynamic_type_cast< const db::EvtInstanceCommitted* >(event);

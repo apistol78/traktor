@@ -45,19 +45,28 @@ public:
 
 	Result recv(const TypeInfo& objectType, int32_t timeout, Ref< ISerializable >& outObject);
 
+	void flush(const TypeInfo& objectType);
+
+	bool connected() const { return m_socket != 0; }
+
+	TcpSocket* getSocket() const { return m_socket; }
+
 	template < typename ObjectType >
 	Result recv(int32_t timeout, Ref< ObjectType >& outObject)
 	{
 		return recv(type_of< ObjectType >(), timeout, (Ref< ISerializable >&)outObject);
 	}
 
-	bool connected() const { return m_socket != 0; }
-
-	TcpSocket* getSocket() const { return m_socket; }
+	template < typename ObjectType >
+	void flush()
+	{
+		flush(type_of< ObjectType >());
+	}
 
 private:
 	Ref< TcpSocket > m_socket;
 	RefArray< ISerializable > m_inQueue;
+	std::vector< uint8_t > m_buffer;
 };
 
 	}

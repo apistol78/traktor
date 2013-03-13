@@ -1,14 +1,17 @@
 #ifndef traktor_db_DatabaseMessageListener_H
 #define traktor_db_DatabaseMessageListener_H
 
+#include <map>
 #include "Database/Remote/Server/IMessageListenerImpl.h"
 
 namespace traktor
 {
+
+class Semaphore;
+
 	namespace db
 	{
 
-class Configuration;
 class Connection;
 
 /*! \brief Database message listener.
@@ -19,10 +22,17 @@ class DatabaseMessageListener : public IMessageListenerImpl< DatabaseMessageList
 	T_RTTI_CLASS;
 
 public:
-	DatabaseMessageListener(const Configuration* configuration, Connection* connection);
+	DatabaseMessageListener(
+		Semaphore& connectionStringsLock,
+		const std::map< std::wstring, std::wstring >& connectionStrings,
+		uint16_t streamServerPort,
+		Connection* connection
+	);
 
 private:
-	const Configuration* m_configuration;
+	Semaphore& m_connectionStringsLock;
+	const std::map< std::wstring, std::wstring >& m_connectionStrings;
+	uint16_t m_streamServerPort;
 	Connection* m_connection;
 
 	bool messageOpen(const class DbmOpen* message);

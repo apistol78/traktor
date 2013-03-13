@@ -69,6 +69,12 @@ public:
 	/*! \brief Stop all worker threads. */
 	void stop();
 
+	/*! \brief Number of pending jobs. */
+	int32_t getPendingCount() const;
+
+	/*! \brief Number of running jobs. */
+	int32_t getRunningCount() const;
+
 private:
 	std::vector< Thread* > m_workerThreads;
 	ThreadsafeFifo< Ref< Job > > m_jobQueue;

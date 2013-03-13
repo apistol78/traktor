@@ -1,5 +1,4 @@
 #include "Core/Functor/Functor.h"
-#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
@@ -217,8 +216,7 @@ bool OcclusionTexturePipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const OcclusionTextureAsset* asset = checked_type_cast< const OcclusionTextureAsset* >(sourceAsset);
@@ -231,9 +229,9 @@ bool OcclusionTexturePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
@@ -243,22 +241,29 @@ bool OcclusionTexturePipeline::buildOutput(
 	Ref< const HeightfieldAsset > heightfieldAsset = pipelineBuilder->getObjectReadOnly< HeightfieldAsset >(asset->m_heightfield);
 	if (!heightfieldAsset)
 	{
-		log::error << L"Heightfield texture pipeline failed; unable to read heightfield asset" << Endl;
+		log::error << L"Heightfield occlusion pipeline failed; unable to read heightfield asset" << Endl;
 		return false;
 	}
 
 	// Load heightfield from source file.
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), heightfieldAsset->getFileName().getOriginal());
+	if (!file)
+	{
+		log::error << L"Heightfield occlusion pipeline failed; unable to open source (" << heightfieldAsset->getFileName().getOriginal() << L")" << Endl;
+		return false;
+	}
+
 	Ref< Heightfield > heightfield = HeightfieldFormat().read(
-		fileName,
+		file,
+		heightfieldAsset->getFileName().getExtension(),
 		heightfieldAsset->getWorldExtent(),
 		heightfieldAsset->getInvertX(),
 		heightfieldAsset->getInvertZ(),
 		heightfieldAsset->getDetailSkip()
-	);
+		);
 	if (!heightfield)
 	{
-		log::error << L"Unable to read heightfield source \"" << fileName.getPathName() << L"\"" << Endl;
+		log::error << L"Heightfield occlusion pipeline failed; unable to read heightfield source \"" << heightfieldAsset->getFileName().getOriginal() << L"\"" << Endl;
 		return 0;
 	}
 
@@ -299,18 +304,28 @@ bool OcclusionTexturePipeline::buildOutput(
 
 		Ref< SahTree > tree;
 
-		Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
-		std::map< std::wstring, Ref< SahTree > >::const_iterator j = treeCache.find(fileName.getPathName());
+		std::map< std::wstring, Ref< SahTree > >::const_iterator j = treeCache.find(meshAsset->getFileName().getOriginal());
 		if (j != treeCache.end())
 			tree = j->second;
 		else
 		{
-			log::info << L"Loading \"" << fileName.getFileName() << L"\"..." << Endl;
+			log::info << L"Loading \"" << meshAsset->getFileName().getFileName() << L"\"..." << Endl;
 
-			Ref< model::Model > model = model::ModelFormat::readAny(fileName, model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons);
+			Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
+			if (!file)
+			{
+				log::warning << L"Unable to open model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
+				continue;
+			}
+
+			Ref< model::Model > model = model::ModelFormat::readAny(
+				file,
+				meshAsset->getFileName().getExtension(),
+				model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
+			);
 			if (!model)
 			{
-				log::warning << L"Unable to read model \"" << fileName.getPathName() << L"\"" << Endl;
+				log::warning << L"Unable to read model \"" << meshAsset->getFileName().getOriginal() << L"\"" << Endl;
 				continue;
 			}
 
@@ -340,7 +355,7 @@ bool OcclusionTexturePipeline::buildOutput(
 			tree = new SahTree();
 			tree->build(windings);
 
-			treeCache[fileName.getPathName()] = tree;
+			treeCache[meshAsset->getFileName().getOriginal()] = tree;
 		}
 
 		Ref< TraceTask > task = new TraceTask();
@@ -403,9 +418,9 @@ bool OcclusionTexturePipeline::buildOutput(
 
 	return pipelineBuilder->buildOutput(
 		output,
-		image,
 		outputPath,
-		outputGuid
+		outputGuid,
+		image
 	);
 }
 

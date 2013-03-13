@@ -22,7 +22,19 @@ class T_DLLCLASS IOutputStreamBuffer : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual int overflow(const wchar_t* buffer, int count) = 0;
+	virtual int32_t getIndent() const = 0;
+
+	virtual void setIndent(int32_t indent) = 0;
+
+	virtual int32_t getDecimals() const = 0;
+
+	virtual void setDecimals(int32_t decimals) = 0;
+
+	virtual bool getPushIndent() const = 0;
+
+	virtual void setPushIndent(bool pushIndent) = 0;
+
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count) = 0;
 };
 
 }

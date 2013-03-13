@@ -1,19 +1,21 @@
 #include <signal.h>
-#include "Xml/XmlDeserializer.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Misc/CommandLine.h"
+#include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Compact/CompactDatabase.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Database/Remote/Server/ConnectionManager.h"
-#include "Database/Remote/Server/Configuration.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/NetworkService.h"
-#include "Core/Misc/CommandLine.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
-#include "Core/Log/Log.h"
-#include "Core/Settings/PropertyInteger.h"
-#include "Core/Settings/PropertyString.h"
+#include "Net/Stream/StreamServer.h"
+#include "Xml/XmlDeserializer.h"
 
 using namespace traktor;
 
@@ -64,12 +66,12 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 		return 1;
 	}
 
-	Ref< db::Configuration > configuration = xml::XmlDeserializer(file).readObject< db::Configuration >();
-	if (!configuration)
-	{
-		traktor::log::error << L"Unable to read configuration \"" << configurationFile << L"\"" << Endl;
-		return 1;
-	}
+	//Ref< db::Configuration > configuration = xml::XmlDeserializer(file).readObject< db::Configuration >();
+	//if (!configuration)
+	//{
+	//	traktor::log::error << L"Unable to read configuration \"" << configurationFile << L"\"" << Endl;
+	//	return 1;
+	//}
 
 	file->close();
 
@@ -79,9 +81,13 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 		return 1;
 	}
 
+	// Create stream server.
+	Ref< net::StreamServer > streamServer = new net::StreamServer();
+	streamServer->create(34000);
+
 	// Initialize database connection manager.
-	Ref< db::ConnectionManager > connectionManager = new db::ConnectionManager();
-	if (!connectionManager->create(configuration))
+	Ref< db::ConnectionManager > connectionManager = new db::ConnectionManager(streamServer);
+	//if (!connectionManager->create(configuration))
 	{
 		traktor::log::error << "Unable to create connection manager" << Endl;
 		return 1;
@@ -100,7 +106,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 
 		Ref< PropertyGroup > properties = new PropertyGroup();
 		properties->setProperty< PropertyString >(L"Host", itf.addr->getHostName());
-		properties->setProperty< PropertyInteger >(L"Port", configuration->getListenPort());
+		//properties->setProperty< PropertyInteger >(L"Port", configuration->getListenPort());
 		Ref< net::NetworkService > service = new net::NetworkService(L"Database/Server", properties);
 
 		discoveryManager->addService(service);
@@ -124,10 +130,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	traktor::log::info << L"Server started" << Endl;
 
 	while (g_running)
-	{
-		if (!connectionManager->update())
-			g_running = false;
-	}
+		ThreadManager::getInstance().getCurrentThread()->sleep(1000);
 	
 	if (discoveryManager)
 	{

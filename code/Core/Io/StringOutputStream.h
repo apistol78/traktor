@@ -3,7 +3,7 @@
 
 #include <vector>
 #include "Core/Io/OutputStream.h"
-#include "Core/Io/IOutputStreamBuffer.h"
+#include "Core/Io/OutputStreamBuffer.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,12 +19,18 @@ namespace traktor
 /*! \brief StringOutputStream buffer.
  * \ingroup Core
  */
-class StringOutputStreamBuffer : public IOutputStreamBuffer
+class StringOutputStreamBuffer : public OutputStreamBuffer
 {
 public:
 	StringOutputStreamBuffer();
 
-	virtual int overflow(const wchar_t* buffer, int count);
+	bool empty() const;
+
+	std::wstring str();
+
+	void reset();
+
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count);
 
 private:
 	friend class StringOutputStream;
@@ -44,7 +50,7 @@ public:
 
 	virtual ~StringOutputStream();
 
-	bool empty();
+	bool empty() const;
 
 	std::wstring str();
 

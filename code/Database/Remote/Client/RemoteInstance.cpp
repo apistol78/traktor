@@ -1,5 +1,4 @@
 #include "Database/Remote/Client/RemoteInstance.h"
-#include "Database/Remote/Client/RemoteStream.h"
 #include "Database/Remote/Client/RemoteConnection.h"
 #include "Database/Remote/Messages/CnmReleaseObject.h"
 #include "Database/Remote/Messages/DbmGetInstancePrimaryType.h"
@@ -23,6 +22,7 @@
 #include "Database/Remote/Messages/MsgHandleResult.h"
 #include "Database/Remote/Messages/DbmReadObjectResult.h"
 #include "Database/Remote/Messages/DbmWriteObjectResult.h"
+#include "Net/Stream/RemoteStream.h"
 
 namespace traktor
 {
@@ -107,7 +107,7 @@ Ref< IStream > RemoteInstance::readObject(const TypeInfo*& outSerializerType) co
 	if (!outSerializerType)
 		return 0;
 
-	return new RemoteStream(m_connection, result->getHandle());
+	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->getStreamId());
 }
 
 Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, const TypeInfo*& outSerializerType)
@@ -120,7 +120,7 @@ Ref< IStream > RemoteInstance::writeObject(const std::wstring& primaryTypeName, 
 	if (!outSerializerType)
 		return 0;
 
-	return new RemoteStream(m_connection, result->getHandle());
+	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->getStreamId());
 }
 
 uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames) const
@@ -145,7 +145,7 @@ Ref< IStream > RemoteInstance::readData(const std::wstring& dataName) const
 	if (!result)
 		return 0;
 
-	return new RemoteStream(m_connection, result->get());
+	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
 }
 
 Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
@@ -154,7 +154,7 @@ Ref< IStream > RemoteInstance::writeData(const std::wstring& dataName)
 	if (!result)
 		return 0;
 
-	return new RemoteStream(m_connection, result->get());
+	return net::RemoteStream::connect(m_connection->getStreamServerAddr(), result->get());
 }
 
 	}

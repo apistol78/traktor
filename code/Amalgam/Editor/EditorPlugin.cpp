@@ -26,7 +26,6 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
-#include "Database/Remote/Server/Configuration.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
@@ -52,7 +51,6 @@ namespace traktor
 		namespace
 		{
 
-const uint16_t c_remoteDatabasePort = 35000;
 const uint16_t c_targetConnectionPort = 36000;
 
 class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
@@ -85,7 +83,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.EditorPlugin", EditorPlugin, editor::IE
 EditorPlugin::EditorPlugin(editor::IEditor* editor)
 :	m_editor(editor)
 ,	m_threadHostEnumerator(0)
-,	m_threadConnectionManager(0)
 ,	m_threadTargetActions(0)
 {
 }
@@ -167,8 +164,8 @@ void EditorPlugin::destroy()
 
 	m_hostEnumerator = 0;
 	m_toolTargets = 0;
+	m_connectionManager = 0;
 
-	safeDestroy(m_connectionManager);
 	safeDestroy(m_discoveryManager);
 	safeDestroy(m_targetManager);
 
@@ -302,51 +299,31 @@ void EditorPlugin::handleWorkspaceOpened()
 		m_targetManager = 0;
 	}
 
-	// Create database server; create configuration from targets.
-	Ref< db::Configuration > configuration = new db::Configuration();
-	configuration->setListenPort(
-		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", c_remoteDatabasePort)
-	);
-
-	for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
-	{
-		std::wstring remoteId = (*i)->getDatabaseName();
-		std::wstring databasePath = (*i)->getOutputPath() + L"/db";
-		std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
-		configuration->setConnectionString(remoteId, databaseCs);
-	}
-
-	m_connectionManager = new db::ConnectionManager();
-	if (!m_connectionManager->create(configuration))
-	{
-		log::warning << L"Unable to create connection manager; remote database server disabled" << Endl;
-		m_connectionManager = 0;
-	}
-
-	// Create communication threads.
+	// Get connection manager.
+	m_connectionManager = m_editor->getStoreObject< db::ConnectionManager >(L"DbConnectionManager");
 	if (m_connectionManager)
 	{
-		m_threadConnectionManager = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadConnectionManager), L"Connection manager");
-		m_threadConnectionManager->start();
+		// Create configuration from targets.
+		for (RefArray< TargetInstance >::iterator i = m_targetInstances.begin(); i != m_targetInstances.end(); ++i)
+		{
+			std::wstring remoteId = (*i)->getDatabaseName();
+			std::wstring databasePath = (*i)->getOutputPath() + L"/db";
+			std::wstring databaseCs = L"provider=traktor.db.LocalDatabase;groupPath=" + databasePath + L";binary=true";
+			m_connectionManager->setConnectionString(remoteId, databaseCs);
+		}
 	}
 }
 
 void EditorPlugin::handleWorkspaceClosed()
 {
-	// Terminate communication threads.
-	if (m_threadConnectionManager)
-	{
-		m_threadConnectionManager->stop();
-		ThreadManager::getInstance().destroy(m_threadConnectionManager);
-	}
-
 	m_toolTargets->removeAll();
 
-	safeDestroy(m_connectionManager);
 	safeDestroy(m_targetManager);
 
 	m_targets.resize(0);
 	m_targetInstances.resize(0);
+
+	m_connectionManager = 0;
 }
 
 void EditorPlugin::eventTargetListPlay(ui::Event* event)
@@ -538,12 +515,6 @@ void EditorPlugin::threadHostEnumerator()
 
 		m_threadHostEnumerator->sleep(1000);
 	}
-}
-
-void EditorPlugin::threadConnectionManager()
-{
-	while (!m_threadConnectionManager->stopped())
-		m_connectionManager->update(100);
 }
 
 void EditorPlugin::threadTargetActions()

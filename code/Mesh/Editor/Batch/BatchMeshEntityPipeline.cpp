@@ -102,8 +102,7 @@ bool BatchMeshEntityPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	Ref< BatchMeshEntityData > batchMeshEntityData = checked_type_cast< BatchMeshEntityData* >(resolveAllExternal(pipelineDepends, sourceAsset));
@@ -170,9 +169,9 @@ Ref< ISerializable > BatchMeshEntityPipeline::buildOutput(
 
 	pipelineBuilder->buildOutput(
 		mergedMeshAsset,
-		mergedModel,
 		L"Generated/" + batchMeshEntityData->getOutputGuid().format(),
-		batchMeshEntityData->getOutputGuid()
+		batchMeshEntityData->getOutputGuid(),
+		mergedModel
 	);
 
 	// Create replacement mesh entity.

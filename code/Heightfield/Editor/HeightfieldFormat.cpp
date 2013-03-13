@@ -1,5 +1,4 @@
 #include <cstring>
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Drawing/Image.h"
 #include "Drawing/PixelFormat.h"
@@ -36,22 +35,16 @@ Ref< drawing::Image > readRawTerrain(IStream* stream)
 	return image;
 }
 
-Ref< drawing::Image > readRawTerrain(const Path& fileName)
-{
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
-	return file ? readRawTerrain(file) : 0;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.hf.HeightfieldFormat", HeightfieldFormat, Object)
 
-Ref< Heightfield > HeightfieldFormat::read(const Path& filePath, const Vector4& worldExtent, bool invertX, bool invertZ, uint32_t detailSkip) const
+Ref< Heightfield > HeightfieldFormat::read(IStream* stream, const std::wstring& extension, const Vector4& worldExtent, bool invertX, bool invertZ, uint32_t detailSkip) const
 {
 	Ref< drawing::Image > heightfieldImage;
 
 	// Load base layer as image.
-	if ((heightfieldImage = readRawTerrain(filePath)) == 0)
+	if ((heightfieldImage = readRawTerrain(stream)) == 0)
 		return 0;
 
 	// Flip base image.

@@ -1,4 +1,4 @@
-#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
 #include "Drawing/Image.h"
@@ -33,13 +33,11 @@ bool TextureAssetPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const TextureAsset* asset = checked_type_cast< const TextureAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 	pipelineDepends->addDependency< TextureAsset >();
 	pipelineDepends->addDependency< TextureOutput >();
 	return true;
@@ -49,27 +47,35 @@ bool TextureAssetPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
 	const TextureAsset* asset = checked_type_cast< const TextureAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
 
-	Ref< drawing::Image > image = drawing::Image::load(fileName);
-	if (!image)
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
+	if (!file)
 	{
-		log::error << L"Texture asset pipeline failed; unable to load source image \"" << fileName.getPathName() << L"\"" << Endl;
+		log::error << L"Texture asset pipeline failed; unable to open source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
 		return false;
 	}
 
+	Ref< drawing::Image > image = drawing::Image::load(file, asset->getFileName().getExtension());
+	if (!image)
+	{
+		log::error << L"Texture asset pipeline failed; unable to load source image \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
+		return false;
+	}
+
+	file->close();
+
 	return pipelineBuilder->buildOutput(
 		&asset->m_output,
-		image,
 		outputPath,
-		outputGuid
+		outputGuid,
+		image
 	);
 }
 

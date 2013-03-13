@@ -32,6 +32,12 @@ bool PipelineSettingsPage::create(ui::Container* parent, PropertyGroup* settings
 	m_checkBuildThreads->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_BUILD_THREADS"));
 	m_checkBuildThreads->setChecked(buildThreads);
 
+	bool buildDistributed = settings->getProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", false);
+
+	m_checkBuildDistributed = new ui::CheckBox();
+	m_checkBuildDistributed->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED"));
+	m_checkBuildDistributed->setChecked(buildDistributed);
+
 	// Memcached
 	bool memCachedEnable = settings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
 
@@ -91,6 +97,7 @@ void PipelineSettingsPage::destroy()
 bool PipelineSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", m_checkBuildThreads->isChecked());
+	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", m_checkBuildDistributed->isChecked());
 
 	settings->setProperty< PropertyBoolean >(L"Pipeline.MemCached", m_checkUseMemCached->isChecked());
 	settings->setProperty< PropertyString >(L"Pipeline.MemCached.Host", m_editMemCachedHost->getText());

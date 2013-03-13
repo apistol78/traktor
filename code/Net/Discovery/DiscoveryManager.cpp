@@ -1,15 +1,14 @@
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/MemoryStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Net/MulticastUdpSocket.h"
+#include "Net/SocketAddressIPv4.h"
+#include "Net/UdpSocket.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/DmFindServices.h"
 #include "Net/Discovery/DmServiceInfo.h"
 #include "Net/Discovery/IService.h"
-#include "Net/UdpSocket.h"
-#include "Net/MulticastUdpSocket.h"
-#include "Net/SocketAddressIPv4.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Io/DynamicMemoryStream.h"
-#include "Core/Io/MemoryStream.h"
-#include "Core/Serialization/BinarySerializer.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -33,6 +32,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.DiscoveryManager", DiscoveryManager, Object
 DiscoveryManager::DiscoveryManager()
 :	m_threadMulticastListener(0)
 ,	m_verbose(false)
+,	m_accept(false)
 {
 }
 
@@ -106,15 +106,17 @@ void DiscoveryManager::removeService(IService* service)
 {
 }
 
-bool DiscoveryManager::findServices(const TypeInfo& serviceType, RefArray< IService >& outServices, uint32_t timeout)
+bool DiscoveryManager::beginFindServices(const TypeInfo& serviceType)
 {
 	SocketAddressIPv4 address(c_discoveryMulticastGroup, c_discoveryMulticastPort);
 	SocketAddressIPv4 fromAddress;
+	m_accept = true;
 
-	// Multicast services request.
+	// Multi-cast services request.
 	DmFindServices msgFindServices(m_sessionGuid, &serviceType);
 	if (!sendMessage(m_multicastSendSocket, address, &msgFindServices))
 	{
+		m_accept = false;
 		if (m_verbose)
 			log::info << L"Discovery manager: Unable to send \"find services\" message" << Endl;
 		return false;
@@ -123,13 +125,14 @@ bool DiscoveryManager::findServices(const TypeInfo& serviceType, RefArray< IServ
 	if (m_verbose)
 		log::info << L"Discovery manager: \"Find services\" message sent to " << address << L", waiting for replies..." << Endl;
 
-	// Just wait; we receive from another thread.
-	ThreadManager::getInstance().getCurrentThread()->sleep(timeout);
-
-	outServices = m_foundServices;
-	m_foundServices.resize(0);
-
 	return true;
+}
+
+void DiscoveryManager::endFindServices(RefArray< IService >& outServices)
+{
+	outServices = m_foundServices;
+	m_accept = false;
+	m_foundServices.resize(0);
 }
 
 void DiscoveryManager::threadMulticastListener()
@@ -185,7 +188,8 @@ void DiscoveryManager::threadMulticastListener()
 					if (m_verbose)
 						log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
 
-					m_foundServices.push_back(serviceInfo->getService());
+					if (m_accept)
+						m_foundServices.push_back(serviceInfo->getService());
 				}
 				else
 				{
@@ -201,11 +205,13 @@ void DiscoveryManager::threadMulticastListener()
 
 bool DiscoveryManager::sendMessage(UdpSocket* socket, const SocketAddressIPv4& address, const IDiscoveryMessage* message)
 {
-	DynamicMemoryStream dms(false, true);
-	if (!BinarySerializer(&dms).writeObject(message))
+	Ref< DynamicMemoryStream > dms = new DynamicMemoryStream(false, true, T_FILE_LINE);
+	if (!BinarySerializer(dms).writeObject(message))
 		return false;
 
-	const std::vector< uint8_t >& buffer = dms.getBuffer();
+	const std::vector< uint8_t >& buffer = dms->getBuffer();
+	T_ASSERT (buffer.size() <= 1024);
+
 	return socket->sendTo(address, &buffer[0], buffer.size()) == buffer.size();
 }
 

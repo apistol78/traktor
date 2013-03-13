@@ -21,14 +21,13 @@ bool EffectEntityPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const EffectEntityData* effectEntityData = checked_type_cast< const EffectEntityData* >(sourceAsset);
 	pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild);
 
-	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid, outBuildParams);
+	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
 }
 
 Ref< ISerializable > EffectEntityPipeline::buildOutput(

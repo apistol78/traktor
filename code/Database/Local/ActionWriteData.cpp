@@ -22,7 +22,8 @@ ActionWriteData::ActionWriteData(const Path& instancePath, const std::wstring& d
 	m_dataStream = new DynamicMemoryStream(
 		m_dataBuffer,
 		false,
-		true
+		true,
+		T_FILE_LINE
 	);
 }
 
@@ -49,6 +50,9 @@ bool ActionWriteData::execute(Context* context)
 			return false;
 		}
 	}
+
+	m_dataStream->close();
+	m_dataStream = 0;
 
 	Ref< IStream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
 	if (!writeStream)

@@ -418,17 +418,17 @@ void ModelFormatLwo::getExtensions(std::wstring& outDescription, std::vector< st
 	outExtensions.push_back(L"lw");
 }
 
-bool ModelFormatLwo::supportFormat(const Path& filePath) const
+bool ModelFormatLwo::supportFormat(const std::wstring& extension) const
 {
 	return 
-		compareIgnoreCase< std::wstring >(filePath.getExtension(), L"lwo") == 0 ||
-		compareIgnoreCase< std::wstring >(filePath.getExtension(), L"lw") == 0;
+		compareIgnoreCase< std::wstring >(extension, L"lwo") == 0 ||
+		compareIgnoreCase< std::wstring >(extension, L"lw") == 0;
 }
 
-Ref< Model > ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) const
+Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
-
+/*
 #if defined(_WIN32)
 	std::string fileNameTmp = wstombs(filePath.getPathName());
 #else
@@ -459,9 +459,12 @@ Ref< Model > ModelFormatLwo::read(const Path& filePath, uint32_t importFlags) co
 	lwFreeObject(lwo);
 
 	return md;
+*/
+
+	return 0;
 }
 
-bool ModelFormatLwo::write(const Path& filePath, const Model* model) const
+bool ModelFormatLwo::write(IStream* stream, const Model* model) const
 {
 	return false;
 }

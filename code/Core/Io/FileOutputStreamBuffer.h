@@ -1,7 +1,7 @@
 #ifndef traktor_FileOutputStreamBuffer_H
 #define traktor_FileOutputStreamBuffer_H
 
-#include "Core/Io/IOutputStreamBuffer.h"
+#include "Core/Io/OutputStreamBuffer.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Thread/Semaphore.h"
 
@@ -22,14 +22,14 @@ class IStream;
 /*! \brief File output stream buffer.
  * \ingroup Core
  */
-class T_DLLCLASS FileOutputStreamBuffer : public IOutputStreamBuffer
+class T_DLLCLASS FileOutputStreamBuffer : public OutputStreamBuffer
 {
 public:
 	FileOutputStreamBuffer(IStream* stream, IEncoding* encoding);
 
 	void close();
 
-	virtual int overflow(const wchar_t* buffer, int count);
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count);
 
 private:
 	Semaphore m_lock;

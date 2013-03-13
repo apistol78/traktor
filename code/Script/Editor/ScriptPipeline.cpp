@@ -99,8 +99,7 @@ bool ScriptPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	Ref< const Script > sourceScript = checked_type_cast< const Script* >(sourceAsset);
@@ -116,9 +115,9 @@ bool ScriptPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
@@ -176,9 +175,9 @@ bool ScriptPipeline::buildOutput(
 		pipelineBuilder,
 		resource,
 		sourceAssetHash,
-		buildParams,
 		outputPath,
 		outputGuid,
+		buildParams,
 		reason
 	);
 }

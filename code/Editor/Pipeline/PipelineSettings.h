@@ -3,6 +3,14 @@
 
 #include "Editor/IPipelineSettings.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 
@@ -11,7 +19,7 @@ class PropertyGroup;
 	namespace editor
 	{
 
-class PipelineSettings : public IPipelineSettings
+class T_DLLCLASS PipelineSettings : public IPipelineSettings
 {
 	T_RTTI_CLASS;
 

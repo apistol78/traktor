@@ -60,7 +60,6 @@ public:
 	 * \param sourceAsset Source asset object.
 	 * \param outputPath Output path in database.
 	 * \param outputGuid Output instance guid.
-	 * \param outBuildParams User defined parameter object; passed into buildOutput(...).
 	 * \param True if successful.
 	 */
 	virtual bool buildDependencies(
@@ -68,8 +67,7 @@ public:
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
-		const Guid& outputGuid,
-		Ref< const Object >& outBuildParams
+		const Guid& outputGuid
 	) const = 0;
 
 	/*! \brief Build output asset.
@@ -77,9 +75,9 @@ public:
 	 * \param pipelineBuilder Pipeline builder.
 	 * \param sourceAsset Source asset object.
 	 * \param sourceAssetHash Source asset hash key.
-	 * \param buildParams User defined parameter object.
 	 * \param outputPath Output path in database.
 	 * \param outputGuid Output instance guid.
+	 * \param buildParams Parameters which is passed from another pipeline during build.
 	 * \param reason Reason as why this asset needs to be rebuilt \sa PipelineBuildReason
 	 * \return True if successful.
 	 */
@@ -87,9 +85,9 @@ public:
 		IPipelineBuilder* pipelineBuilder,
 		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
-		const Object* buildParams,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
+		const Object* buildParams,
 		uint32_t reason
 	) const = 0;
 

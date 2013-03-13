@@ -4,7 +4,6 @@
 #include "Animation/Editor/SkeletonFormatFbx.h"
 #include "Animation/Editor/SkeletonFormatLws.h"
 #include "Animation/Editor/SkeletonPipeline.h"
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
@@ -43,15 +42,11 @@ bool SkeletonPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, skeletonAsset->getFileName());
-
-	pipelineDepends->addDependency(fileName);
-
+	pipelineDepends->addDependency(Path(m_assetPath), skeletonAsset->getFileName().getOriginal());
 	return true;
 }
 
@@ -59,22 +54,20 @@ bool SkeletonPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
 	Ref< const SkeletonAsset > skeletonAsset = checked_type_cast< const SkeletonAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, skeletonAsset->getFileName());
-
 	Ref< ISkeletonFormat > format;
 
-	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
+	if (compareIgnoreCase< std::wstring >(skeletonAsset->getFileName().getExtension(), L"bvh") == 0)
 		format = new SkeletonFormatBvh();
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"fbx") == 0)
+	else if (compareIgnoreCase< std::wstring >(skeletonAsset->getFileName().getExtension(), L"fbx") == 0)
 		format = new SkeletonFormatFbx();
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
+	else if (compareIgnoreCase< std::wstring >(skeletonAsset->getFileName().getExtension(), L"lws") == 0)
 		format = new SkeletonFormatLws();
 
 	if (!format)
@@ -83,7 +76,7 @@ bool SkeletonPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), skeletonAsset->getFileName().getOriginal());
 	if (!file)
 	{
 		log::error << L"Unable to build skeleton; no such file" << Endl;

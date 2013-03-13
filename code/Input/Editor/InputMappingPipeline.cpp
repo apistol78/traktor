@@ -31,7 +31,13 @@ TypeInfoSet InputMappingPipeline::getAssetTypes() const
 	return typeSet;
 }
 
-bool InputMappingPipeline::buildDependencies(editor::IPipelineDepends* pipelineDepends, const db::Instance* sourceInstance, const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, Ref< const Object >& outBuildParams) const
+bool InputMappingPipeline::buildDependencies(
+	editor::IPipelineDepends* pipelineDepends,
+	const db::Instance* sourceInstance,
+	const ISerializable* sourceAsset,
+	const std::wstring& outputPath,
+	const Guid& outputGuid
+) const
 {
 	const InputMappingAsset* inputAsset = checked_type_cast< const InputMappingAsset*, false >(sourceAsset);
 
@@ -42,7 +48,15 @@ bool InputMappingPipeline::buildDependencies(editor::IPipelineDepends* pipelineD
 	return true;
 }
 
-bool InputMappingPipeline::buildOutput(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* sourceAsset, uint32_t sourceAssetHash, const Object* buildParams, const std::wstring& outputPath, const Guid& outputGuid, uint32_t reason) const
+bool InputMappingPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const ISerializable* sourceAsset,
+	uint32_t sourceAssetHash,
+	const std::wstring& outputPath,
+	const Guid& outputGuid,
+	const Object* buildParams,
+	uint32_t reason
+) const
 {
 	Ref< InputMappingResource > mappingResource = checked_type_cast< InputMappingResource*, true >(buildOutput(pipelineBuilder, sourceAsset));
 	if (!mappingResource)

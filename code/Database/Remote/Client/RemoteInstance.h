@@ -2,6 +2,7 @@
 #define traktor_db_RemoteInstance_H
 
 #include "Database/Provider/IProviderInstance.h"
+#include "Net/SocketAddressIPv4.h"
 
 namespace traktor
 {

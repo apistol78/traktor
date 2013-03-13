@@ -119,7 +119,6 @@ private:
 	// \}
 
 	Thread* m_threadHostEnumerator;
-	Thread* m_threadConnectionManager;
 	Thread* m_threadTargetActions;
 
 	void eventToolBarClick(ui::Event* event);
@@ -131,8 +130,6 @@ private:
 	void eventTimer(ui::Event* event);
 
 	void threadHostEnumerator();
-
-	void threadConnectionManager();
 
 	void threadTargetActions();
 };

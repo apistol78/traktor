@@ -292,14 +292,15 @@ void SceneEditorContext::buildEntities()
 		Ref< world::GroupEntity > rootGroupEntity = new world::GroupEntity();
 
 		// Create entities from scene layers.
-		const RefArray< world::LayerEntityData >& layers = m_sceneAsset->getLayers();
+		RefArray< world::LayerEntityData > layers = m_sceneAsset->getLayers();
+		RefArray< world::LayerEntityData >::iterator i = std::remove(layers.begin(), layers.end(), (world::LayerEntityData*)0);
+		layers.erase(i, layers.end());
 
 		m_layerEntityAdapters.resize(layers.size());
 		for (uint32_t i = 0; i < layers.size(); ++i)
 		{
 			world::LayerEntityData* layerEntityData = layers[i];
-			if (!layerEntityData)
-				continue;
+			T_ASSERT (layerEntityData);
 
 			// If possible reuse layer entity adapter.
 			if (!m_layerEntityAdapters[i])

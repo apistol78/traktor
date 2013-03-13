@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -47,11 +48,7 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 
 	if (m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
 	{
-		Ref< const Object > dummyBuildParams;
-		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid(), dummyBuildParams);
-		T_ASSERT_M (!dummyBuildParams, L"Build parameters not used with non-producing dependencies");
-
-		// Merge hash of dependent pipeline with parent pipeline hash.
+		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
 		if (m_currentDependency)
 			m_currentDependency->pipelineHash += pipelineHash;
 	}
@@ -171,11 +168,13 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 }
 
 void PipelineDependsIncremental::addDependency(
-	const Path& fileName
+	const Path& basePath,
+	const std::wstring& fileName
 )
 {
+	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath, fileName);
 	if (m_currentDependency)
-		m_currentDependency->files.insert(fileName);
+		m_currentDependency->files.insert(filePath);
 }
 
 void PipelineDependsIncremental::addDependency(
@@ -307,8 +306,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 			sourceInstance,
 			sourceAsset,
 			outputPath,
-			outputGuid,
-			dependency->buildParams
+			outputGuid
 		);
 	}
 

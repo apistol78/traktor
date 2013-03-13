@@ -1,5 +1,4 @@
 #include <limits>
-#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Serialization/DeepClone.h"
@@ -201,8 +200,7 @@ bool TerrainPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const TerrainAsset* terrainAsset = checked_type_cast< const TerrainAsset*, false >(sourceAsset);
@@ -243,9 +241,9 @@ bool TerrainPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
@@ -261,9 +259,16 @@ bool TerrainPipeline::buildOutput(
 	}
 
 	// Load heightfield from source file.
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
-	Ref< const hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-		fileName,
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), heightfieldAsset->getFileName().getOriginal());
+	if (!file)
+	{
+		log::error << L"Terrain pipeline failed; unable to open source (" << heightfieldAsset->getFileName().getOriginal() << L")" << Endl;
+		return false;
+	}
+
+	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
+		file,
+		heightfieldAsset->getFileName().getExtension(),
 		heightfieldAsset->getWorldExtent(),
 		heightfieldAsset->getInvertX(),
 		heightfieldAsset->getInvertZ(),
@@ -271,8 +276,8 @@ bool TerrainPipeline::buildOutput(
 	);
 	if (!heightfield)
 	{
-		log::error << L"Terrain pipeline failed; unable to read heightfield source \"" << fileName.getPathName() << L"\"" << Endl;
-		return false;
+		log::error << L"Terrain pipeline failed; unable to read heightfield source \"" << heightfieldAsset->getFileName().getOriginal() << L"\"" << Endl;
+		return 0;
 	}
 
 	// Generate uids.
@@ -343,7 +348,6 @@ bool TerrainPipeline::buildOutput(
 
 	if (!pipelineBuilder->buildOutput(
 		terrainCoarseShader,
-		0,
 		shaderPath + L"/Coarse",
 		terrainCoarseShaderGuid
 	))
@@ -354,7 +358,6 @@ bool TerrainPipeline::buildOutput(
 
 	if (!pipelineBuilder->buildOutput(
 		terrainDetailShader,
-		0,
 		shaderPath + L"/Detail",
 		terrainDetailShaderGuid
 	))
@@ -365,7 +368,6 @@ bool TerrainPipeline::buildOutput(
 
 	if (!pipelineBuilder->buildOutput(
 		surfaceShader,
-		0,
 		shaderPath + L"/Surface",
 		surfaceShaderGuid
 	))

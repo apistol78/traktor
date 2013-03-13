@@ -300,13 +300,29 @@ Ref< Image > Image::load(const Path& fileName)
 		return 0;
 
 	BufferedStream bufferedFile(file);
-
 	image = imageFormat->read(&bufferedFile);
 
 	if (image)
 		checkData(image->m_data, image->m_size);
 
 	file->close();
+	return image;
+}
+
+Ref< Image > Image::load(IStream* stream, const std::wstring& extension)
+{
+	Ref< Image > image;
+
+	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(extension);
+	if (imageFormat == 0)
+		return 0;
+
+	BufferedStream bufferedFile(stream);
+	image = imageFormat->read(&bufferedFile);
+
+	if (image)
+		checkData(image->m_data, image->m_size);
+
 	return image;
 }
 

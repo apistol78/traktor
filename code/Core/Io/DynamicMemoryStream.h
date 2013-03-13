@@ -23,9 +23,9 @@ class T_DLLCLASS DynamicMemoryStream : public IStream
 	T_RTTI_CLASS;
 
 public:
-	DynamicMemoryStream(std::vector< uint8_t >& buffer, bool readAllowed = true, bool writeAllowed = true);
+	DynamicMemoryStream(std::vector< uint8_t >& buffer, bool readAllowed = true, bool writeAllowed = true, const char* const name = 0);
 
-	DynamicMemoryStream(bool readAllowed = true, bool writeAllowed = true);
+	DynamicMemoryStream(bool readAllowed = true, bool writeAllowed = true, const char* const name = 0);
 
 	virtual void close();
 
@@ -49,12 +49,17 @@ public:
 
 	const std::vector< uint8_t >& getBuffer() const;
 
+	std::vector< uint8_t >& getBuffer();
+
 private:
 	std::vector< uint8_t > m_internal;
-	std::vector< uint8_t >& m_buffer;
+	std::vector< uint8_t >* m_buffer;
 	uint32_t m_readPosition;
 	bool m_readAllowed;
 	bool m_writeAllowed;
+#if defined(_DEBUG)
+	const char* const m_name;
+#endif
 };
 
 }

@@ -14,13 +14,18 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.ActionWriteObject", ActionWriteObject, Action)
 
-ActionWriteObject::ActionWriteObject(const Path& instancePath, const std::wstring& primaryTypeName, DynamicMemoryStream* objectStream)
+ActionWriteObject::ActionWriteObject(const Path& instancePath, const std::wstring& primaryTypeName)
 :	m_instancePath(instancePath)
 ,	m_primaryTypeName(primaryTypeName)
-,	m_objectStream(objectStream)
 ,	m_editObject(false)
 ,	m_editMeta(false)
 {
+	m_objectStream = new DynamicMemoryStream(
+		m_objectBuffer,
+		false,
+		true,
+		T_FILE_LINE
+	);
 }
 
 bool ActionWriteObject::execute(Context* context)
@@ -50,12 +55,18 @@ bool ActionWriteObject::execute(Context* context)
 		return false;
 	}
 
-	const std::vector< uint8_t >& objectBuffer = m_objectStream->getBuffer();
-	if (instanceStream->write(&objectBuffer[0], objectBuffer.size()) != objectBuffer.size())
+	m_objectStream->close();
+	m_objectStream = 0;
+
+	int32_t objectBufferSize = int32_t(m_objectBuffer.size());
+	if (objectBufferSize > 0)
 	{
-		log::error << L"Failed to write instance object" << Endl;
-		instanceStream->close();
-		return false;
+		if (instanceStream->write(&m_objectBuffer[0], objectBufferSize) != objectBufferSize)
+		{
+			log::error << L"Failed to write instance object" << Endl;
+			instanceStream->close();
+			return false;
+		}
 	}
 
 	instanceStream->close();

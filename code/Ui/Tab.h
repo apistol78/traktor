@@ -31,22 +31,23 @@ public:
 	{
 		WsCloseButton = WsUser,
 		WsLine = WsUser << 1,
+		WsBottom = WsUser << 2,
 		WsDefault = WsCloseButton | WsBorder
 	};
 
 	Tab();
 
-	bool create(Widget* parent, int style = WsDefault);
+	bool create(Widget* parent, int32_t style = WsDefault);
 
 	virtual Rect getInnerRect() const;
 
-	int addImage(Bitmap* image, int imageCount);
+	int32_t addImage(Bitmap* image, int32_t imageCount);
 	
-	int addPage(TabPage* page);
+	int32_t addPage(TabPage* page);
 
-	int getPageCount() const;
+	int32_t getPageCount() const;
 
-	Ref< TabPage > getPage(int index) const;
+	Ref< TabPage > getPage(int32_t index) const;
 
 	Ref< TabPage > getPageAt(const Point& position) const;
 
@@ -72,10 +73,10 @@ private:
 	struct PageState
 	{
 		Ref< TabPage > page;
-		int right;
-		int depth;
+		int32_t right;
+		int32_t depth;
 	
-		PageState(TabPage* page, int right = 0);
+		PageState(TabPage* page, int32_t right = 0);
 	
 		bool operator == (const PageState& rh) const;
 	};
@@ -92,13 +93,14 @@ private:
 	bool m_closeButton;
 	bool m_drawBorder;
 	bool m_drawLine;
+	bool m_bottom;
 	bool m_closeHighlight;
 
 	PageState* findPageState(const TabPage* page);
 
-	PageState* findPageState(int depth);
+	PageState* findPageState(int32_t depth);
 
-	void drawClose(Canvas& canvas, int x, int y);
+	void drawClose(Canvas& canvas, int32_t x, int32_t y);
 
 	void eventMouseMove(Event* event);
 

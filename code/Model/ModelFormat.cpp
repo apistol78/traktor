@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Misc/String.h"
 #include "Model/ModelFormat.h"
 
@@ -10,6 +11,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.ModelFormat", ModelFormat, Object)
 
 Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
 {
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmRead);
+	if (file)
+		return readAny(file, filePath.getExtension(), importFlags);
+	else
+		return 0;
+}
+
+Ref< Model > ModelFormat::readAny(IStream* stream, const std::wstring& extension, uint32_t importFlags)
+{
 	Ref< Model > md;
 
 	std::vector< const TypeInfo* > formatTypes;
@@ -21,10 +31,10 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
 		if (!modelFormat)
 			continue;
 
-		if (!modelFormat->supportFormat(filePath))
+		if (!modelFormat->supportFormat(extension))
 			continue;
 
-		md = modelFormat->read(filePath, importFlags);
+		md = modelFormat->read(stream, importFlags);
 		if (md)
 			break;
 	}
@@ -33,6 +43,15 @@ Ref< Model > ModelFormat::readAny(const Path& filePath, uint32_t importFlags)
 }
 
 bool ModelFormat::writeAny(const Path& filePath, const Model* model)
+{
+	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmWrite);
+	if (file)
+		return writeAny(file, filePath.getExtension(), model);
+	else
+		return false;
+}
+
+bool ModelFormat::writeAny(IStream* stream, const std::wstring& extension, const Model* model)
 {
 	std::vector< const TypeInfo* > formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes);
@@ -49,8 +68,8 @@ bool ModelFormat::writeAny(const Path& filePath, const Model* model)
 
 		for (std::vector< std::wstring >::const_iterator i = extensions.begin(); i != extensions.end(); ++i)
 		{
-			if (compareIgnoreCase(filePath.getExtension(), *i) == 0)
-				return modelFormat->write(filePath, model);
+			if (compareIgnoreCase(extension, *i) == 0)
+				return modelFormat->write(stream, model);
 		}
 	}
 

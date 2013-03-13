@@ -4,20 +4,20 @@
 #include "Core/Object.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/Remote/Messages/MsgStatus.h"
+#include "Net/SocketAddressIPv4.h"
 
 namespace traktor
 {
 	namespace net
 	{
 
+class BidirectionalObjectTransport;
 class TcpSocket;
 
 	}
 
 	namespace db
 	{
-
-class MessageTransport;
 
 /*! \brief Database connection.
  * \ingroup Database
@@ -31,6 +31,10 @@ public:
 
 	void destroy();
 
+	void setStreamServerAddr(const net::SocketAddressIPv4& streamServerAddr);
+
+	const net::SocketAddressIPv4& getStreamServerAddr() const;
+
 	template < typename ReplyMessageType >
 	Ref< ReplyMessageType > sendMessage(const IMessage& message)
 	{
@@ -40,8 +44,9 @@ public:
 
 private:
 	Ref< net::TcpSocket > m_socket;
-	Ref< MessageTransport > m_messageTransport;
-	Semaphore m_messageLock;
+	net::SocketAddressIPv4 m_streamServerAddr;
+	Ref< net::BidirectionalObjectTransport > m_transport;
+	Semaphore m_transportLock;
 
 	Ref< IMessage > sendMessage(const IMessage& message);
 };

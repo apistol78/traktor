@@ -1,8 +1,8 @@
 #include <fbxsdk.h>
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -16,6 +16,107 @@ namespace traktor
 	{
 		namespace
 		{
+
+class FbxIStreamWrap : public FbxStream
+{
+public:
+	FbxIStreamWrap()
+	:	m_stream(0)
+	,	m_state(eEmpty)
+	{
+	}
+
+	virtual ~FbxIStreamWrap()
+	{
+		m_stream = 0;
+	}
+
+	virtual EState GetState()
+	{
+		return m_state;
+	}
+
+	virtual bool Open(void* pStreamData)
+	{
+		T_ASSERT (!m_stream);
+		m_stream = static_cast< IStream* >(pStreamData);
+		m_state = eOpen;
+		return true;
+	}
+
+	virtual bool Close()
+	{
+		T_ASSERT (m_stream);
+		m_stream->close();
+		m_stream = 0;
+		m_state = eClosed;
+		return true;
+	}
+
+	virtual bool Flush()
+	{
+		T_ASSERT (m_stream);
+		m_stream->flush();
+		return true;
+	}
+
+	virtual int Write(const void* /*pData*/, int /*pSize*/)
+	{
+		return 0;
+	}
+
+	virtual int Read(void* pData, int pSize) const
+	{
+		T_ASSERT (m_stream);
+		return m_stream->read(pData, pSize);
+	}
+
+	virtual int GetReaderID() const
+	{
+		return -1;
+	}
+
+	virtual int GetWriterID() const
+	{
+		return -1;
+	}
+
+	virtual void Seek(const FbxInt64& pOffset, const FbxFile::ESeekPos& pSeekPos)
+	{
+		T_ASSERT (m_stream);
+		if (pSeekPos == FbxFile::eCurrent)
+			m_stream->seek(IStream::SeekCurrent, int(pOffset));
+		else if (pSeekPos == FbxFile::eBegin)
+			m_stream->seek(IStream::SeekSet, int(pOffset));
+		else if (pSeekPos == FbxFile::eEnd)
+			m_stream->seek(IStream::SeekEnd, int(pOffset));
+	}
+
+	virtual long GetPosition() const
+	{
+		T_ASSERT (m_stream);
+		return m_stream->tell();
+	}
+
+	virtual void SetPosition(long pPosition)
+	{
+		T_ASSERT (m_stream);
+		m_stream->seek(IStream::SeekSet, int(pPosition));
+	}
+
+	virtual int GetError() const
+	{
+		return 0;
+	}
+
+	virtual void ClearError()
+	{
+	}
+
+private:
+	Ref< IStream > m_stream;
+	EState m_state;
+};
 
 Vector2 convertVector2(const FbxVector2& v)
 {
@@ -540,12 +641,12 @@ void ModelFormatFbx::getExtensions(std::wstring& outDescription, std::vector< st
 	outExtensions.push_back(L"fbx");
 }
 
-bool ModelFormatFbx::supportFormat(const Path& filePath) const
+bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(filePath.getExtension(), L"fbx") == 0;
+	return compareIgnoreCase< std::wstring >(extension, L"fbx") == 0;
 }
 
-Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) const
+Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(ms_lock);
 
@@ -573,7 +674,11 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 		return 0;
 	}
 
-	bool status = importer->Initialize(wstombs(filePath.getPathName()).c_str(), -1, sdkManager->GetIOSettings());
+	FbxIOPluginRegistry* registry = sdkManager->GetIOPluginRegistry();
+	int readerID = registry->FindReaderIDByExtension("fbx");
+
+	AutoPtr< FbxStream > fbxStream(new FbxIStreamWrap());
+	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, sdkManager->GetIOSettings());
 	if (!status)
 	{
 		log::error << L"Unable to import FBX model; failed to initialize FBX importer" << Endl;
@@ -731,7 +836,7 @@ Ref< Model > ModelFormatFbx::read(const Path& filePath, uint32_t importFlags) co
 	return model;
 }
 
-bool ModelFormatFbx::write(const Path& filePath, const Model* model) const
+bool ModelFormatFbx::write(IStream* stream, const Model* model) const
 {
 	return false;
 }

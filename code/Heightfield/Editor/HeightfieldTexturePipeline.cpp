@@ -1,4 +1,3 @@
-#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
 #include "Drawing/Image.h"
@@ -92,8 +91,7 @@ bool HeightfieldTexturePipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const HeightfieldTextureAsset* asset = checked_type_cast< const HeightfieldTextureAsset* >(sourceAsset);
@@ -106,9 +104,9 @@ bool HeightfieldTexturePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
@@ -123,9 +121,16 @@ bool HeightfieldTexturePipeline::buildOutput(
 	}
 
 	// Load heightfield from source file.
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, heightfieldAsset->getFileName());
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), heightfieldAsset->getFileName().getOriginal());
+	if (!file)
+	{
+		log::error << L"Heightfield texture pipeline failed; unable to open source (" << heightfieldAsset->getFileName().getOriginal() << L")" << Endl;
+		return false;
+	}
+
 	Ref< Heightfield > heightfield = HeightfieldFormat().read(
-		fileName,
+		file,
+		heightfieldAsset->getFileName().getExtension(),
 		heightfieldAsset->getWorldExtent(),
 		heightfieldAsset->getInvertX(),
 		heightfieldAsset->getInvertZ(),
@@ -133,7 +138,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 	);
 	if (!heightfield)
 	{
-		log::error << L"Unable to read heightfield source \"" << fileName.getPathName() << L"\"" << Endl;
+		log::error << L"Heightfield texture pipeline failed; unable to read heightfield source \"" << heightfieldAsset->getFileName().getOriginal() << L"\"" << Endl;
 		return 0;
 	}
 
@@ -174,9 +179,9 @@ bool HeightfieldTexturePipeline::buildOutput(
 
 		return pipelineBuilder->buildOutput(
 			output,
-			outputMap,
 			outputPath,
-			outputGuid
+			outputGuid,
+			outputMap
 		);
 	}
 	else	// OtNormals
@@ -218,9 +223,9 @@ bool HeightfieldTexturePipeline::buildOutput(
 
 		return pipelineBuilder->buildOutput(
 			output,
-			outputMap,
 			outputPath,
-			outputGuid
+			outputGuid,
+			outputMap
 		);
 	}
 }

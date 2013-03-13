@@ -69,7 +69,8 @@ public:
 
 	/*! \brief Add dependency to physical file. */
 	virtual void addDependency(
-		const Path& fileName
+		const Path& basePath,
+		const std::wstring& fileName
 	) = 0;
 
 	/*! \brief Add dependency to pipeline which consume source assets of specified type. */

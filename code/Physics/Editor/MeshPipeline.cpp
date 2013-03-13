@@ -1,4 +1,3 @@
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
@@ -46,13 +45,11 @@ bool MeshPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const MeshAsset* meshAsset = checked_type_cast< const MeshAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency(Path(m_assetPath), meshAsset->getFileName().getOriginal());
 	return true;
 }
 
@@ -60,9 +57,9 @@ bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
@@ -80,9 +77,14 @@ bool MeshPipeline::buildOutput(
 	}
 	else
 	{
-		// Import source model.
-		Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, meshAsset->getFileName());
-		model = model::ModelFormat::readAny(fileName);
+		Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), meshAsset->getFileName().getOriginal());
+		if (!file)
+		{
+			log::error << L"Phys mesh pipeline failed; unable to open source model (" << meshAsset->getFileName().getOriginal() << L")" << Endl;
+			return false;
+		}
+
+		model = model::ModelFormat::readAny(file, meshAsset->getFileName().getExtension());
 	}
 
 	if (!model)

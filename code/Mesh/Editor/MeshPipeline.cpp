@@ -1,5 +1,4 @@
 #include <list>
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
@@ -152,30 +151,13 @@ bool MeshPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	Ref< const MeshAsset > asset = checked_type_cast< const MeshAsset* >(sourceAsset);
 	T_ASSERT (asset);
 
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-
-	if (asset->getMeshType() != MeshAsset::MtStream)
-		pipelineDepends->addDependency(fileName);
-	else
-	{
-		// Stream meshes use many source models.
-		RefArray< File > files;
-		if (!FileSystem::getInstance().find(fileName, files))
-		{
-			log::error << L"Mesh pipeline failed; no models found" << Endl;
-			return false;
-		}
-
-		for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
-			pipelineDepends->addDependency((*i)->getPath());
-	}
+	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 
 	// Determine vertex shader guid.
 	Guid vertexShaderGuid = getVertexShaderGuid(asset->getMeshType());
@@ -210,9 +192,9 @@ bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t /*sourceAssetHash*/,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t /*reason*/
 ) const
 {
@@ -236,32 +218,24 @@ bool MeshPipeline::buildOutput(
 	}
 	else
 	{
-		Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-		
-		// Locate source model(s).
-		RefArray< File > files;
-		if (!FileSystem::getInstance().find(fileName, files))
+		Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
+		if (!file)
 		{
-			log::error << L"Mesh pipeline failed; unable to locate source model(s) (" << fileName.getPathName() << L")" << Endl;
+			log::error << L"Mesh pipeline failed; unable to open source model (" << asset->getFileName().getOriginal() << L")" << Endl;
 			return false;
 		}
 
 		// Import source model(s); merge all materials into a single list (duplicates will be overridden).
-		for (RefArray< File >::const_iterator i = files.begin(); i != files.end(); ++i)
+		log::info << L"Loading model \"" << asset->getFileName().getFileName() << L"\"..." << Endl;
+
+		Ref< model::Model > model = model::ModelFormat::readAny(file, asset->getFileName().getExtension());
+		if (!model)
 		{
-			Path path = (*i)->getPath();
-
-			log::info << L"Loading model \"" << path.getFileName() << L"\"..." << Endl;
-
-			Ref< model::Model > model = model::ModelFormat::readAny(path);
-			if (!model)
-			{
-				log::error << L"Mesh pipeline failed; unable to read source model (" << path.getPathName() << L")" << Endl;
-				return false;
-			}
-
-			models.push_back(model);
+			log::error << L"Mesh pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")" << Endl;
+			return false;
 		}
+
+		models.push_back(model);
 	}
 
 	if (models.empty())
@@ -517,7 +491,6 @@ bool MeshPipeline::buildOutput(
 	std::wstring materialPath = Path(outputPath).getPathOnly() + L"/" + outputGuid.format() + L"/Shader";
 	if (!pipelineBuilder->buildOutput(
 		materialShaderGraph,
-		0,
 		materialPath,
 		materialGuid
 	))

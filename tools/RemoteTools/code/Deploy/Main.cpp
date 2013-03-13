@@ -6,6 +6,7 @@
 #include <Core/Log/Log.h>
 #include <Core/Misc/Adler32.h>
 #include <Core/Misc/CommandLine.h>
+#include <Core/System/OS.h>
 #include <Core/Timer/Timer.h>
 #include <Net/Network.h>
 #include <Net/SocketAddressIPv4.h>
@@ -79,6 +80,7 @@ bool deployFile(net::TcpSocket* clientSocket, const Path& sourceFile, const Path
 	uint8_t ret;
 
 	writer << c_msgDeploy;
+	writer << OS::getInstance().getCurrentUser();
 	writer << targetFile.getPathName();
 	writer << uint32_t(file->getSize());
 	writer << uint32_t(adler.get());

@@ -1,3 +1,4 @@
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketStream.h"
@@ -48,8 +49,18 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	if (m_socket)
 	{
 		SocketStream ss(m_socket, false, true);
-		BinarySerializer s(&ss);
-		if (s.writeObject(object))
+
+		m_buffer.resize(0);
+
+		DynamicMemoryStream dms(m_buffer, false, true, T_FILE_LINE);
+		if (!BinarySerializer(&dms).writeObject(object))
+			return false;
+
+		uint32_t bufferSize = uint32_t(m_buffer.size());
+		if (!bufferSize)
+			return false;
+
+		if (ss.write(&m_buffer[0], bufferSize) == bufferSize)
 			return true;
 		else
 		{
@@ -109,6 +120,17 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 	}
 
 	return RtTimeout;
+}
+
+void BidirectionalObjectTransport::flush(const TypeInfo& objectType)
+{
+	for (;;)
+	{
+		RefArray< ISerializable >::iterator i = std::find_if(m_inQueue.begin(), m_inQueue.end(), ObjectTypePred(objectType));
+		if (i == m_inQueue.end())
+			break;
+		m_inQueue.erase(i);
+	}
 }
 
 	}
