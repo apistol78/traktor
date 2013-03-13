@@ -18,16 +18,14 @@ BufferedStream::BufferedStream(IStream* stream, uint32_t internalBufferSize)
 	m_writeBufCnt = 0;
 
 	if (m_stream->canRead())
-		m_readBuf = new uint8_t [m_internalBufferSize];
+		m_readBuf.reset(new uint8_t [m_internalBufferSize]);
 	if (m_stream->canWrite())
-		m_writeBuf = new uint8_t [m_internalBufferSize];
+		m_writeBuf.reset(new uint8_t [m_internalBufferSize]);
 }
 
 BufferedStream::BufferedStream(IStream* stream, const void* appendData, uint32_t appendDataSize, uint32_t internalBufferSize)
 :	m_stream(stream)
 ,	m_internalBufferSize(internalBufferSize)
-,	m_readBuf(0)
-,	m_writeBuf(0)
 {
 	T_ASSERT (appendData);
 	T_ASSERT (appendDataSize <= internalBufferSize);
@@ -38,22 +36,16 @@ BufferedStream::BufferedStream(IStream* stream, const void* appendData, uint32_t
 
 	if (m_stream->canRead())
 	{
-		m_readBuf = new uint8_t [m_internalBufferSize];
-		std::memcpy(m_readBuf, appendData, appendDataSize);
+		m_readBuf.reset(new uint8_t [m_internalBufferSize]);
+		std::memcpy(m_readBuf.ptr(), appendData, appendDataSize);
 		m_readBufCnt[1] = appendDataSize;
 	}
 	if (m_stream->canWrite())
 	{
-		m_writeBuf = new uint8_t [m_internalBufferSize];
-		std::memcpy(m_writeBuf, appendData, appendDataSize);
+		m_writeBuf.reset(new uint8_t [m_internalBufferSize]);
+		std::memcpy(m_writeBuf.ptr(), appendData, appendDataSize);
 		m_writeBufCnt = appendDataSize;
 	}
-}
-
-BufferedStream::~BufferedStream()
-{
-	delete[] m_writeBuf;
-	delete[] m_readBuf;
 }
 
 void BufferedStream::close()
@@ -84,10 +76,11 @@ bool BufferedStream::canSeek() const
 int BufferedStream::tell() const
 {
 	if (m_stream->canRead())
-		return m_stream->tell() + m_readBufCnt[0];
-	if (m_stream->canWrite())
+		return m_stream->tell() - m_readBufCnt[1] + m_readBufCnt[0];
+	else if (m_stream->canWrite())
 		return m_stream->tell() + m_writeBufCnt;
-	return m_stream->tell();
+	else
+		return m_stream->tell();
 }
 
 int BufferedStream::available() const
@@ -141,14 +134,20 @@ int BufferedStream::seek(SeekOriginType origin, int offset)
 			m_readBufCnt[0] =
 			m_readBufCnt[1] = 0;
 			return m_stream->seek(SeekEnd, offset);
+
+		default:
+			break;
 		}
 
 		return -1;
 	}
 	else if (m_stream->canWrite())
+	{
 		flushWriteBuffer();
-
-	return m_stream->seek(origin, offset);
+		return m_stream->seek(origin, offset);
+	}
+	else
+		return -1;
 }
 
 int BufferedStream::read(void* block, int nbytes)
@@ -156,7 +155,8 @@ int BufferedStream::read(void* block, int nbytes)
 	uint8_t* out = static_cast< uint8_t* >(block);
 	uint8_t* end = out + nbytes;
 
-	if (nbytes <= int(m_internalBufferSize))
+	int32_t bufferSize = (nbytes > m_internalBufferSize / 2) ? m_internalBufferSize : m_internalBufferSize / 2;
+	if (nbytes <= bufferSize)
 	{
 		// Read and copy until number of desired bytes read is meet.
 		while (out < end)
@@ -164,7 +164,7 @@ int BufferedStream::read(void* block, int nbytes)
 			if (m_readBufCnt[0] >= m_readBufCnt[1])
 			{
 				// Read into buffer.
-				int nread = m_stream->read(m_readBuf, m_internalBufferSize);
+				int32_t nread = m_stream->read(m_readBuf.ptr(), bufferSize);
 				if (nread <= 0)
 					break;
 				m_readBufCnt[0] = 0;
@@ -172,7 +172,7 @@ int BufferedStream::read(void* block, int nbytes)
 			}
 
 			// Copy from read buffer into output buffer.
-			int ncopy = std::min(int(end - out), m_readBufCnt[1] - m_readBufCnt[0]);
+			int32_t ncopy = std::min(int32_t(end - out), m_readBufCnt[1] - m_readBufCnt[0]);
 			T_ASSERT (ncopy > 0);
 
 			std::memcpy(out, &m_readBuf[m_readBufCnt[0]], ncopy);
@@ -188,7 +188,7 @@ int BufferedStream::read(void* block, int nbytes)
 		// Requested more bytes than our internal buffer, read directly from stream.
 		if (m_readBufCnt[0] < m_readBufCnt[1])
 		{
-			int ncopy = m_readBufCnt[1] - m_readBufCnt[0];
+			int32_t ncopy = m_readBufCnt[1] - m_readBufCnt[0];
 			T_ASSERT (ncopy <= nbytes);
 
 			std::memcpy(out, &m_readBuf[m_readBufCnt[0]], ncopy);
@@ -199,7 +199,7 @@ int BufferedStream::read(void* block, int nbytes)
 			out += ncopy;
 		}
 
-		int nread = m_stream->read(out, int(end - out));
+		int32_t nread = m_stream->read(out, int32_t(end - out));
 		if (nread > 0)
 			out += nread;
 		else if (nread < 0 && out == block)
@@ -207,20 +207,20 @@ int BufferedStream::read(void* block, int nbytes)
 	}
 
 	// Returned number of bytes copied.
-	return static_cast< int >(out - static_cast< uint8_t* >(block));
+	return static_cast< int32_t >(out - static_cast< uint8_t* >(block));
 }
 
 int BufferedStream::write(const void* block, int nbytes)
 {
 	int nwritten = 0;
 
-	if (nbytes < int(m_internalBufferSize))
+	if (nbytes < int32_t(m_internalBufferSize))
 	{
 		const uint8_t* ptr = static_cast< const uint8_t* >(block);
 		while (nbytes > 0)
 		{
-			int space = m_internalBufferSize - m_writeBufCnt;
-			int nwrite = std::min< int >(space, nbytes);
+			int32_t space = m_internalBufferSize - m_writeBufCnt;
+			int32_t nwrite = std::min< int32_t >(space, nbytes);
 			
 			std::memcpy(&m_writeBuf[m_writeBufCnt], ptr, nwrite);
 			
@@ -236,7 +236,28 @@ int BufferedStream::write(const void* block, int nbytes)
 	else
 	{
 		flushWriteBuffer();
-		nwritten = m_stream->write(block, nbytes);
+
+		const uint8_t* ptr = static_cast< const uint8_t* >(block);
+		while (nbytes >= int32_t(m_internalBufferSize))
+		{
+			int32_t result = m_stream->write(ptr, m_internalBufferSize);
+			if (result >= 0)
+			{
+				ptr += result;
+				nbytes -= result;
+				nwritten += result;
+			}
+			else
+				return result;
+		}
+
+		T_ASSERT (nbytes < int32_t(m_internalBufferSize));
+		if (nbytes > 0)
+		{
+			std::memcpy(m_writeBuf.ptr(), ptr, nbytes);
+			m_writeBufCnt = nbytes;
+			nwritten += nbytes;
+		}
 	}
 
 	return nwritten;
@@ -253,7 +274,7 @@ void BufferedStream::flushWriteBuffer()
 {
 	if (m_writeBufCnt > 0)
 	{
-		m_stream->write(m_writeBuf, m_writeBufCnt);
+		m_stream->write(m_writeBuf.ptr(), m_writeBufCnt);
 		m_writeBufCnt = 0;
 	}
 }

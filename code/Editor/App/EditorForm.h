@@ -16,6 +16,13 @@ namespace traktor
 class CommandLine;
 class Thread;
 
+	namespace net
+	{
+
+class StreamServer;
+
+	}
+
 	namespace ui
 	{
 
@@ -41,6 +48,7 @@ class ProgressBar;
 	namespace db
 	{
 
+class ConnectionManager;
 class Database;
 
 	}
@@ -48,19 +56,21 @@ class Database;
 	namespace editor
 	{
 
+class BuildView;
 class DatabaseView;
 class Document;
-class PropertiesView;
-class LogView;
-class MRU;
-class IEditorPageFactory;
-class IEditorPage;
-class IObjectEditorFactory;
-class IObjectEditor;
-class IEditorPluginFactory;
-class IEditorTool;
 class EditorPageSite;
 class EditorPluginSite;
+class IEditorPage;
+class IEditorPageFactory;
+class IEditorPluginFactory;
+class IEditorTool;
+class IObjectEditor;
+class IObjectEditorFactory;
+class LogView;
+class MRU;
+class PipelineAgentsManager;
+class PropertiesView;
 
 /*! \brief Main editor form.
  *
@@ -146,6 +156,9 @@ private:
 	RefArray< IEditorPluginFactory > m_editorPluginFactories;
 	RefArray< IEditorTool > m_editorTools;
 	RefArray< EditorPluginSite > m_editorPluginSites;
+	Ref< net::StreamServer > m_streamServer;
+	Ref< db::ConnectionManager > m_dbConnectionManager;
+	Ref< PipelineAgentsManager > m_agentsManager;
 	std::map< std::wstring, Ref< Object > > m_objectStore;
 	Ref< MRU > m_mru;
 	std::list< ui::Command > m_shortcutCommands;
@@ -166,6 +179,7 @@ private:
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
 	Ref< LogView > m_logView;
+	Ref< BuildView > m_buildView;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IEditorPage > m_activeEditorPage;

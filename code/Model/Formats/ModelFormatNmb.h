@@ -26,11 +26,11 @@ class T_DLLCLASS ModelFormatNmb : public ModelFormat
 public:
 	virtual void getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const;
 
-	virtual bool supportFormat(const Path& filePath) const;
+	virtual bool supportFormat(const std::wstring& extension) const;
 
-	virtual Ref< Model > read(const Path& filePath, uint32_t importFlags) const;
+	virtual Ref< Model > read(IStream* stream, uint32_t importFlags) const;
 
-	virtual bool write(const Path& filePath, const Model* model) const;
+	virtual bool write(IStream* stream, const Model* model) const;
 };
 
 	}

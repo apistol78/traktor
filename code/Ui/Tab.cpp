@@ -19,7 +19,7 @@ namespace traktor
 		namespace
 		{
 
-const int c_tabHeight = 21;
+const int32_t c_tabHeight = 21;
 
 		}
 
@@ -28,10 +28,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.Tab", Tab, Widget)
 Tab::Tab()
 :	m_imageWidth(0)
 ,	m_imageHeight(0)
+,	m_closeButton(false)
+,	m_drawBorder(false)
+,	m_drawLine(false)
+,	m_bottom(false)
+,	m_closeHighlight(false)
 {
 }
 
-bool Tab::create(Widget* parent, int style)
+bool Tab::create(Widget* parent, int32_t style)
 {
 	if (!Widget::create(parent, style & ~WsBorder))
 		return false;
@@ -47,9 +52,9 @@ bool Tab::create(Widget* parent, int style)
 	m_closeButton = bool((style & WsCloseButton) == WsCloseButton);
 	m_drawBorder = bool((style & WsBorder) == WsBorder);
 	m_drawLine = bool((style & WsLine) == WsLine);
+	m_bottom = bool((style & WsBottom) == WsBottom);
 	
 	m_closeHighlight = false;
-
 	return true;
 }
 
@@ -58,7 +63,7 @@ Rect Tab::getInnerRect() const
 	return m_innerRect;
 }
 
-int Tab::addImage(Bitmap* image, int imageCount)
+int32_t Tab::addImage(Bitmap* image, int32_t imageCount)
 {
 	uint32_t width = 0, height = 0;
 	
@@ -83,7 +88,7 @@ int Tab::addImage(Bitmap* image, int imageCount)
 	return 0;
 }
 
-int Tab::addPage(TabPage* page)
+int32_t Tab::addPage(TabPage* page)
 {
 	if (page == 0)
 		return -1;
@@ -104,17 +109,17 @@ int Tab::addPage(TabPage* page)
 #if defined(_DEBUG)
 	checkPageStates();
 #endif
-	return int(m_pages.size() - 1);
+	return int32_t(m_pages.size() - 1);
 }
 
-int Tab::getPageCount() const
+int32_t Tab::getPageCount() const
 {
-	return int(m_pages.size());
+	return int32_t(m_pages.size());
 }
 
-Ref< TabPage > Tab::getPage(int index) const
+Ref< TabPage > Tab::getPage(int32_t index) const
 {
-	if (index < 0 || index >= int(m_pages.size()))
+	if (index < 0 || index >= int32_t(m_pages.size()))
 		return 0;
 	return m_pages[index].page;
 }
@@ -198,7 +203,7 @@ void Tab::setActivePage(TabPage* page)
 		checkPageStates();
 #endif
 
-		int depth = state->depth;
+		int32_t depth = state->depth;
 		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 		{
 			if (i->depth <= depth)
@@ -229,7 +234,7 @@ Ref< TabPage > Tab::cycleActivePage(bool forward)
 	checkPageStates();
 #endif
 
-	int maxDepth = int(m_pages.size() - 1);
+	int32_t maxDepth = int32_t(m_pages.size() - 1);
 
 	if (forward)
 	{
@@ -296,15 +301,26 @@ void Tab::eventMouseMove(Event* event)
 	Point pnt = mouseEvent->getPosition();
 	Rect inner = Widget::getInnerRect();
 
-	if (inner.inside(pnt) && pnt.y <= c_tabHeight)
+	int32_t y0, y1;
+	if (!m_bottom)
+	{
+		y0 = inner.top;
+		y1 = inner.top + c_tabHeight;
+	}
+	else
+	{
+		y0 = inner.bottom - c_tabHeight;
+		y1 = inner.bottom;
+	}
+
+	if (inner.inside(pnt) && pnt.y >= y0 && pnt.y <= y1)
 	{
 		if (m_closeButton && m_selectedPage && pnt.x > inner.right - 20)
 		{
 			if (!m_closeHighlight)
 			{
 				m_closeHighlight = true;
-				Rect rc(inner.right - 20, inner.top, inner.right, inner.bottom);
-				update(&rc);
+				update();
 			}
 			setCapture();
 			return;
@@ -314,8 +330,8 @@ void Tab::eventMouseMove(Event* event)
 	if (m_closeHighlight)
 	{
 		m_closeHighlight = false;
-		Rect rc(inner.right - 20, inner.top, inner.right, inner.bottom);
-		update(&rc);
+		Rect rc(inner.right, inner.top, inner.right, inner.bottom);
+		update();
 		releaseCapture();
 	}
 }
@@ -324,10 +340,22 @@ void Tab::eventButtonDown(Event* event)
 {
 	MouseEvent* mouseEvent = static_cast< MouseEvent* >(event);
 	Point pnt = mouseEvent->getPosition();
+	Rect inner = Widget::getInnerRect();
 	
-	if (pnt.y <= c_tabHeight)
+	int32_t y0, y1;
+	if (!m_bottom)
 	{
-		Rect inner = getInnerRect();
+		y0 = inner.top;
+		y1 = inner.top + c_tabHeight;
+	}
+	else
+	{
+		y0 = inner.bottom - c_tabHeight;
+		y1 = inner.bottom;
+	}
+
+	if (pnt.y >= y0 && pnt.y <= y1)
+	{
 		if (m_closeButton && m_selectedPage && pnt.x > inner.right - 16)
 		{
 			CloseEvent closeEvent(this, m_selectedPage);
@@ -392,7 +420,10 @@ void Tab::eventButtonDown(Event* event)
 void Tab::eventSize(Event* event)
 {
 	m_innerRect = Widget::getInnerRect();
-	m_innerRect.top += c_tabHeight;
+	if (!m_bottom)
+		m_innerRect.top += c_tabHeight;
+	else
+		m_innerRect.bottom -= c_tabHeight;
 
 	if (m_drawBorder)
 		m_innerRect = m_innerRect.inflate(-1, -1);
@@ -408,20 +439,39 @@ void Tab::eventSize(Event* event)
 void Tab::eventPaint(Event* event)
 {
 	PaintEvent* paintEvent = static_cast< PaintEvent* >(event);
-	
 	Canvas& canvas = paintEvent->getCanvas();
 	Rect rcPaint = paintEvent->getUpdateRect();
 	Rect rcInner = Widget::getInnerRect();
 	
+	int32_t y0, y1;
+	if (!m_bottom)
+	{
+		y0 = rcInner.top;
+		y1 = rcInner.top + c_tabHeight;
+	}
+	else
+	{
+		y0 = rcInner.bottom - c_tabHeight;
+		y1 = rcInner.bottom;
+	}
+
 	// Fill tab background.
-	Rect rcTabs(rcInner.left, rcInner.top, rcInner.right, rcInner.top + c_tabHeight);
-	canvas.setForeground(Color4ub(255, 255, 255));
-	canvas.setBackground(getSystemColor(ScButtonFace));
+	Rect rcTabs(rcInner.left, y0, rcInner.right, y1);
+	if (!m_bottom)
+	{
+		canvas.setForeground(Color4ub(255, 255, 255));
+		canvas.setBackground(getSystemColor(ScButtonFace));
+	}
+	else
+	{
+		canvas.setBackground(Color4ub(255, 255, 255));
+		canvas.setForeground(getSystemColor(ScButtonFace));
+	}
 	canvas.fillGradientRect(rcTabs);
 	
 	// Draw close button.
 	if (m_closeButton && m_pages.size())
-		drawClose(canvas, rcInner.right - 16, rcInner.top + 8);
+		drawClose(canvas, rcInner.right - 16, (y0 + y1) / 2 + 8);
 	
 	// White separator.
 	canvas.setForeground(Color4ub(255, 255, 255));
@@ -431,7 +481,7 @@ void Tab::eventPaint(Event* event)
 	// Draw tab pages.
 	if (!m_pages.empty())
 	{
-		int left = rcTabs.left + 4;
+		int32_t left = rcTabs.left + 4;
 		for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 		{
 			Ref< TabPage >& page = i->page;
@@ -450,9 +500,9 @@ void Tab::eventPaint(Event* event)
 				// Calculate tab item rectangle.
 				Rect rcTab(
 					left,
-					rcTabs.top + 3,
+					m_bottom ? rcTabs.top : rcTabs.top + 3,
 					left + m_imageWidth + sizText.cx + 16,
-					rcTabs.bottom
+					m_bottom ? rcTabs.bottom - 2 : rcTabs.bottom
 				);
 				
 				// Draw separator.
@@ -463,11 +513,16 @@ void Tab::eventPaint(Event* event)
 				if (page == m_selectedPage)
 				{
 					canvas.fillRect(rcTab);
+					
 					canvas.setForeground(Color4ub(128, 128, 128));
 					canvas.drawLine(Point(rcTab.left, rcTab.bottom - 1), Point(rcTab.left, rcTab.top));
-					canvas.drawLine(Point(rcTab.left, rcTab.top), Point(rcTab.right, rcTab.top));
+					if (!m_bottom)
+						canvas.drawLine(Point(rcTab.left, rcTab.top), Point(rcTab.right, rcTab.top));
+					
 					canvas.setForeground(Color4ub(0, 0, 0));
 					canvas.drawLine(Point(rcTab.right, rcTab.top), Point(rcTab.right, rcTab.bottom - 1));
+					if (m_bottom)
+						canvas.drawLine(Point(rcTab.left + 1, rcTab.bottom - 1), Point(rcTab.right, rcTab.bottom - 1));
 				}
 
 				// Draw image.
@@ -509,9 +564,9 @@ void Tab::eventPaint(Event* event)
 		// No tab pages, fill solid background.
 		Rect rcTabItem(
 			rcInner.left,
-			rcInner.top + c_tabHeight + 1,
+			m_bottom ? rcInner.top : rcInner.top + c_tabHeight + 1,
 			rcInner.right,
-			rcInner.bottom
+			m_bottom ? rcInner.bottom - c_tabHeight - 1 : rcInner.bottom
 		);
 		canvas.setBackground(getSystemColor(ScButtonFace));
 		canvas.fillRect(rcTabItem);
@@ -521,7 +576,10 @@ void Tab::eventPaint(Event* event)
 	if (m_drawLine)
 	{
 		canvas.setForeground(Color4ub(128, 128, 128));
-		canvas.drawLine(rcInner.left, rcInner.top + c_tabHeight - 1, rcInner.right, rcInner.top + c_tabHeight - 1);
+		if (!m_bottom)
+			canvas.drawLine(rcInner.left, rcInner.top + c_tabHeight - 1, rcInner.right, rcInner.top + c_tabHeight - 1);
+		else
+			canvas.drawLine(rcInner.left, rcInner.bottom - c_tabHeight, rcInner.right, rcInner.bottom - c_tabHeight);
 	}
 	
 	// Draw surrounding gray border.
@@ -544,7 +602,7 @@ Tab::PageState* Tab::findPageState(const TabPage* page)
 	return 0;
 }
 
-Tab::PageState* Tab::findPageState(int depth)
+Tab::PageState* Tab::findPageState(int32_t depth)
 {
 	for (page_state_vector_t::iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 	{
@@ -554,7 +612,7 @@ Tab::PageState* Tab::findPageState(int depth)
 	return 0;
 }
 
-void Tab::drawClose(Canvas& canvas, int x, int y)
+void Tab::drawClose(Canvas& canvas, int32_t x, int32_t y)
 {
 	canvas.setForeground(Color4ub(128, 128, 128));
 
@@ -576,20 +634,20 @@ void Tab::drawClose(Canvas& canvas, int x, int y)
 #if defined(_DEBUG)
 void Tab::checkPageStates()
 {
-	std::vector< int > counts(m_pages.size(), 0);
+	std::vector< int32_t > counts(m_pages.size(), 0);
 	for (page_state_vector_t::const_iterator i = m_pages.begin(); i != m_pages.end(); ++i)
 	{
-		int depth = i->depth;
+		int32_t depth = i->depth;
 		T_ASSERT (depth < counts.size());
 
 		counts[depth]++;
 	}
-	for (std::vector< int >::const_iterator i = counts.begin(); i != counts.end(); ++i)
+	for (std::vector< int32_t >::const_iterator i = counts.begin(); i != counts.end(); ++i)
 		T_ASSERT (*i == 1);
 }
 #endif
 
-Tab::PageState::PageState(TabPage* page_, int right_)
+Tab::PageState::PageState(TabPage* page_, int32_t right_)
 :	page(page_)
 ,	right(right_)
 ,	depth(0)

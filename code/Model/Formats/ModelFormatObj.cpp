@@ -1,6 +1,5 @@
 #include "Model/Formats/ModelFormatObj.h"
 #include "Model/Model.h"
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileOutputStream.h"
 #include "Core/Io/StringReader.h"
@@ -21,17 +20,13 @@ void ModelFormatObj::getExtensions(std::wstring& outDescription, std::vector< st
 	outExtensions.push_back(L"obj");
 }
 
-bool ModelFormatObj::supportFormat(const Path& filePath) const
+bool ModelFormatObj::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(filePath.getExtension(), L"obj") == 0;
+	return compareIgnoreCase< std::wstring >(extension, L"obj") == 0;
 }
 
-Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) const
+Ref< Model > ModelFormatObj::read(IStream* stream, uint32_t importFlags) const
 {
-	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
-	if (!stream)
-		return 0;
-
 	BufferedStream bs(stream);
 	StringReader sr(&bs, new AnsiEncoding());
 	std::wstring str;
@@ -136,16 +131,12 @@ Ref< Model > ModelFormatObj::read(const Path& filePath, uint32_t importFlags) co
 	return md;
 }
 
-bool ModelFormatObj::write(const Path& filePath, const Model* model) const
+bool ModelFormatObj::write(IStream* stream, const Model* model) const
 {
-	Ref< IStream > file = FileSystem::getInstance().open(filePath, File::FmWrite);
-	if (!file)
-		return false;
-
-	BufferedStream bs(file, 512 * 1024);
+	BufferedStream bs(stream, 512 * 1024);
 	FileOutputStream s(&bs, new AnsiEncoding());
 
-	s << L"o " << filePath.getFileName() << Endl;
+	s << L"o unnamed.obj" << Endl;
 	s << Endl;
 	s << L"#	             Vertex list" << Endl;
 	s << Endl;

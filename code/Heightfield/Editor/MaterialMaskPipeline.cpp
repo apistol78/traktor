@@ -1,6 +1,5 @@
 #include <limits>
 #include "Core/Containers/AlignedVector.h"
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
@@ -44,14 +43,12 @@ bool MaterialMaskPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const MaterialMaskAsset* maskAsset = checked_type_cast< const MaterialMaskAsset* >(sourceAsset);
 
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency(Path(m_assetPath), maskAsset->getFileName().getPathName());
 
 	const RefArray< MaterialMaskAssetLayer >& maskLayers = maskAsset->getLayers();
 	for (RefArray< MaterialMaskAssetLayer >::const_iterator i = maskLayers.begin(); i != maskLayers.end(); ++i)
@@ -68,9 +65,9 @@ bool MaterialMaskPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
@@ -78,22 +75,28 @@ bool MaterialMaskPipeline::buildOutput(
 	const RefArray< MaterialMaskAssetLayer >& maskLayers = maskAsset->getLayers();
 	if (maskLayers.empty())
 	{
-		log::error << L"Failed to build material mask; no layers defined." << Endl;
+		log::error << L"Material mask pipeline failed; no layers defined." << Endl;
 		return false;
 	}
 
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
-	Ref< drawing::Image > image = drawing::Image::load(fileName);
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), maskAsset->getFileName().getOriginal());
+	if (!file)
+	{
+		log::error << L"Material mask pipeline failed; unable to open source (" << maskAsset->getFileName().getOriginal() << L")" << Endl;
+		return false;
+	}
+
+	Ref< drawing::Image > image = drawing::Image::load(file, maskAsset->getFileName().getExtension());
 	if (!image)
 	{
-		log::error << L"Failed to build material mask; unable to load source image \"" << fileName.getPathName() << L"\"." << Endl;
+		log::error << L"Material mask pipeline failed; unable to load source image \"" << maskAsset->getFileName().getOriginal() << L"\"." << Endl;
 		return false;
 	}
 
 	uint32_t size = image->getWidth();
 	if (size != image->getHeight())
 	{
-		log::error << L"Failed to build material mask; source image must be square." << Endl;
+		log::error << L"Material mask pipeline failed; source image must be square." << Endl;
 		return false;
 	}
 
@@ -114,7 +117,7 @@ bool MaterialMaskPipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Failed to build material mask; unable to create instance." << Endl;
+		log::error << L"Material mask pipeline failed; unable to create instance." << Endl;
 		return false;
 	}
 
@@ -123,7 +126,7 @@ bool MaterialMaskPipeline::buildOutput(
 	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
-		log::error << L"Failed to build material mask; unable to create data stream." << Endl;
+		log::error << L"Material mask pipeline failed; unable to create data stream." << Endl;
 		instance->revert();
 		return false;
 	}

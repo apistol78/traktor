@@ -57,8 +57,7 @@ bool ScenePipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
@@ -76,9 +75,9 @@ bool ScenePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
@@ -90,7 +89,9 @@ bool ScenePipeline::buildOutput(
 	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
 	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		T_ASSERT (*i);
+		if (!(*i))
+			continue;
+
 		if ((*i)->isInclude() || m_targetEditor)
 		{
 			log::info << L"Building layer \"" << (*i)->getName() << L"\"..." << Endl;

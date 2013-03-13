@@ -1,16 +1,15 @@
 #include <limits>
-#include "Weather/Editor/Clouds/CloudMaskPipeline.h"
-#include "Weather/Editor/Clouds/CloudMaskAsset.h"
-#include "Weather/Clouds/CloudMaskResource.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Editor/IPipelineSettings.h"
-#include "Drawing/Image.h"
-#include "Database/Instance.h"
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Instance.h"
+#include "Drawing/Image.h"
+#include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineSettings.h"
+#include "Weather/Clouds/CloudMaskResource.h"
+#include "Weather/Editor/Clouds/CloudMaskPipeline.h"
+#include "Weather/Editor/Clouds/CloudMaskAsset.h"
 
 namespace traktor
 {
@@ -41,13 +40,11 @@ bool CloudMaskPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const CloudMaskAsset* maskAsset = checked_type_cast< const CloudMaskAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency(Path(m_assetPath), maskAsset->getFileName().getOriginal());
 	return true;
 }
 
@@ -55,25 +52,31 @@ bool CloudMaskPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
 	const CloudMaskAsset* maskAsset = checked_type_cast< const CloudMaskAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, maskAsset->getFileName());
 
-	Ref< drawing::Image > image = drawing::Image::load(fileName);
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), maskAsset->getFileName().getOriginal());
+	if (!file)
+	{
+		log::error << L"Cloud mask pipeline failed; unable to open source image \"" << maskAsset->getFileName().getOriginal() << L"\"" << Endl;
+		return false;
+	}
+
+	Ref< drawing::Image > image = drawing::Image::load(file, maskAsset->getFileName().getExtension());
 	if (!image)
 	{
-		log::error << L"Unable to load material mask source image \"" << fileName.getPathName() << L"\"" << Endl;
+		log::error << L"Cloud mask pipeline failed; unable to load material mask source image \"" << maskAsset->getFileName().getOriginal() << L"\"" << Endl;
 		return false;
 	}
 
 	if (image->getWidth() != image->getHeight())
 	{
-		log::error << L"Material mask source image must be square" << Endl;
+		log::error << L"Cloud mask pipeline failed; source image must be square" << Endl;
 		return false;
 	}
 
@@ -89,7 +92,7 @@ bool CloudMaskPipeline::buildOutput(
 	);
 	if (!instance)
 	{
-		log::error << L"Failed to build mask, unable to create instance" << Endl;
+		log::error << L"Cloud mask pipeline failed; unable to create instance" << Endl;
 		return false;
 	}
 
@@ -98,7 +101,7 @@ bool CloudMaskPipeline::buildOutput(
 	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
 	{
-		log::error << L"Failed to build mask, unable to create data stream" << Endl;
+		log::error << L"Cloud mask pipeline failed; unable to create data stream" << Endl;
 		instance->revert();
 		return false;
 	}

@@ -8,7 +8,28 @@ StringOutputStreamBuffer::StringOutputStreamBuffer()
 	m_internal.reserve(1024);
 }
 
-int StringOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
+bool StringOutputStreamBuffer::empty() const
+{
+	return m_internal.empty();
+}
+
+std::wstring StringOutputStreamBuffer::str()
+{
+	if (m_internal.empty())
+		return std::wstring();
+
+	return std::wstring(
+		m_internal.begin(),
+		m_internal.end()
+	);
+}
+
+void StringOutputStreamBuffer::reset()
+{
+	m_internal.resize(0);
+}
+
+int32_t StringOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 {
 	m_internal.insert(m_internal.end(), &buffer[0], &buffer[count]);
 	return count;
@@ -30,25 +51,19 @@ StringOutputStream::~StringOutputStream()
 	T_EXCEPTION_GUARD_END
 }
 
-bool StringOutputStream::empty()
+bool StringOutputStream::empty() const
 {
-	return m_buffer.m_internal.empty();
+	return m_buffer.empty();
 }
 
 std::wstring StringOutputStream::str()
 {
-	if (m_buffer.m_internal.empty())
-		return std::wstring();
-
-	return std::wstring(
-		m_buffer.m_internal.begin(),
-		m_buffer.m_internal.end()
-	);
+	return m_buffer.str();
 }
 
 void StringOutputStream::reset()
 {
-	m_buffer.m_internal.resize(0);
+	m_buffer.reset();
 }
 
 }

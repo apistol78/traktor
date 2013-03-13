@@ -61,7 +61,8 @@ public:
 	);
 
 	virtual void addDependency(
-		const Path& fileName
+		const Path& basePath,
+		const std::wstring& fileName
 	);
 
 	virtual void addDependency(

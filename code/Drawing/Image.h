@@ -16,6 +16,9 @@
 
 namespace traktor
 {
+
+class IStream;
+
 	namespace drawing
 	{
 	
@@ -90,6 +93,9 @@ public:
 
 	/*! \brief Load image from file. */
 	static Ref< Image > load(const Path& fileName);
+
+	/*! \brief Load image from stream. */
+	static Ref< Image > load(IStream* stream, const std::wstring& extension);
 
 	/*! \brief Load image from resource. */
 	static Ref< Image > load(const void* resource, uint32_t size, const std::wstring& extension);

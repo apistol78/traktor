@@ -22,7 +22,7 @@ void FileOutputStreamBuffer::close()
 	}
 }
 
-int FileOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
+int32_t FileOutputStreamBuffer::overflow(const wchar_t* buffer, int32_t count)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ASSERT (count > 0);
@@ -34,7 +34,7 @@ int FileOutputStreamBuffer::overflow(const wchar_t* buffer, int count)
 		m_encoded.reset(new uint8_t [m_encodedSize]);
 	}
 	
-	int encodedCount = m_encoding->translate(buffer, count, m_encoded.ptr());
+	int32_t encodedCount = m_encoding->translate(buffer, count, m_encoded.ptr());
 	if (encodedCount < 0)
 		return -1;
 

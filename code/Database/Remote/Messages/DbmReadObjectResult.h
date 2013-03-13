@@ -24,16 +24,16 @@ class T_DLLCLASS DbmReadObjectResult : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	DbmReadObjectResult(uint32_t handle = 0, const std::wstring& serializerTypeName = L"");
+	DbmReadObjectResult(uint32_t streamId = 0, const std::wstring& serializerTypeName = L"");
 
-	uint32_t getHandle() const { return m_handle; }
+	uint32_t getStreamId() const { return m_streamId; }
 
 	const std::wstring& getSerializerTypeName() const { return m_serializerTypeName; }
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	uint32_t m_handle;
+	uint32_t m_streamId;
 	std::wstring m_serializerTypeName;
 };
 

@@ -1,7 +1,6 @@
 #include <cstring>
 #include "Core/Io/DebugStream.h"
-#include "Core/Io/IOutputStreamBuffer.h"
-#include "Core/Io/OutputStream.h"
+#include "Core/Log/Log.h"
 
 namespace traktor
 {
@@ -51,6 +50,7 @@ DebugStream::DebugStream(IStream* stream)
 DebugStream::~DebugStream()
 {
 	T_ASSERT (!m_stream)
+	dump(log::info);
 }
 
 void DebugStream::close()

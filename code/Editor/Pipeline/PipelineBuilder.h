@@ -46,21 +46,6 @@ class T_DLLCLASS PipelineBuilder : public IPipelineBuilder
 	T_RTTI_CLASS;
 
 public:
-	struct IListener
-	{
-		virtual ~IListener() {}
-
-		/*! \brief Called when an asset is about to be built.
-		 *
-		 * \param index Index of asset.
-		 * \param count Number of assets to build.
-		 */
-		virtual void begunBuildingAsset(
-			uint32_t index,
-			uint32_t count
-		) const = 0;
-	};
-
 	PipelineBuilder(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
@@ -75,7 +60,7 @@ public:
 
 	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset);
 
-	virtual bool buildOutput(const ISerializable* sourceAsset, const Object* buildParams, const std::wstring& outputPath, const Guid& outputGuid);
+	virtual bool buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams);
 
 	virtual Ref< db::Database > getSourceDatabase() const;
 
@@ -84,6 +69,12 @@ public:
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid);
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
+
+	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName);
+
+	virtual Ref< IStream > createTemporaryFile(const std::wstring& fileName);
+
+	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName);
 
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 
@@ -137,10 +128,7 @@ private:
 	bool getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version);
 
 	/*! \brief Build thread method. */
-	void buildThread(Thread* controlThread, RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end);
-
-	/*! \brief Increment progress and notify listener. */
-	void incrementProgress();
+	void buildThread(Thread* controlThread, RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end, uint32_t core);
 };
 
 	}

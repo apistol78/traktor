@@ -2,6 +2,7 @@
 #define traktor_BufferedStream_H
 
 #include "Core/Io/IStream.h"
+#include "Core/Misc/AutoPtr.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -33,8 +34,6 @@ public:
 
 	BufferedStream(IStream* stream, const void* appendData, uint32_t appendDataSize, uint32_t internalBufferSize = DefaultBufferSize);
 
-	virtual ~BufferedStream();
-
 	virtual void close();
 
 	virtual bool canRead() const;
@@ -58,9 +57,9 @@ public:
 private:
 	Ref< IStream > m_stream;
 	uint32_t m_internalBufferSize;
-	uint8_t* m_readBuf;
+	AutoArrayPtr< uint8_t > m_readBuf;
+	AutoArrayPtr< uint8_t > m_writeBuf;
 	int32_t m_readBufCnt[2];
-	uint8_t* m_writeBuf;
 	int32_t m_writeBufCnt;
 
 	void flushWriteBuffer();

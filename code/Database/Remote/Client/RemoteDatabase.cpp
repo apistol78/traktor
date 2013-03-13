@@ -9,11 +9,11 @@
 #include "Database/Remote/Messages/DbmClose.h"
 #include "Database/Remote/Messages/DbmGetBus.h"
 #include "Database/Remote/Messages/DbmGetRootGroup.h"
-#include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
+#include "Database/Remote/Messages/MsgIntResult.h"
 #include "Net/Network.h"
-#include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/TcpSocket.h"
 
 namespace traktor
 {
@@ -58,12 +58,14 @@ bool RemoteDatabase::open(const ConnectionString& connectionString)
 
 	m_connection = new RemoteConnection(socket);
 
-	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmOpen(database));
-	if (!result || result->getStatus() != StSuccess)
+	Ref< MsgIntResult > result = m_connection->sendMessage< MsgIntResult >(DbmOpen(database));
+	if (!result || result->get() <= 0)
 	{
 		log::error << L"Failed to open database; unable to open server database \"" << database << L"\"" << Endl;
 		return false;
 	}
+
+	m_connection->setStreamServerAddr(net::SocketAddressIPv4(host, result->get()));
 
 	return true;
 }

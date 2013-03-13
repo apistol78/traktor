@@ -393,10 +393,14 @@
       <first>EDITOR_SETTINGS_PIPELINE</first>
       <second>Pipeline</second>
     </item>
-	<item>
-		<first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
-		<second>Använd flera byggtrådar</second>
-	</item>
+  	<item>
+  		<first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
+  		<second>Använd flera byggtrådar</second>
+  	</item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED</first>
+      <second>Distribura på flera maskiner</second>
+    </item>
     <item>
       <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
       <second>Använd memcached</second>
@@ -1982,17 +1986,21 @@
       <second>Lägg till texturer</second>
     </item>
     <item>
+      <first>TITLE_BUILD</first>
+      <second>Bygge</second>
+    </item>
+    <item>
 			<first>TITLE_DATABASE</first>
 			<second>Databas</second>
-		</item>
-		<item>
-			<first>TITLE_HEAP</first>
-			<second>Minnesanvändning</second>
 		</item>
 		<item>
 			<first>TITLE_LOG</first>
 			<second>Logg</second>
 		</item>
+    <item>
+      <first>TITLE_OUTPUT</first>
+      <second>Ut</second>
+    </item>
 		<item>
 			<first>TITLE_PROPERTIES</first>
 			<second>Egenskaper</second>

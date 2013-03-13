@@ -99,17 +99,19 @@ uint8_t handleDeploy(net::TcpSocket* clientSocket)
 	net::SocketStream clientStream(clientSocket, true, true, 1000);
 	Reader reader(&clientStream);
 	Writer writer(&clientStream);
+	std::wstring user;
 	std::wstring pathName;
 	uint32_t size;
 	uint32_t hash;
 
+	reader >> user;
 	reader >> pathName;
 	reader >> size;
 	reader >> hash;
 
 	traktor::log::info << L"Receiving file \"" << pathName << L"\", " << size << L" byte(s)" << Endl;
 
-	Path path(g_scratchPath + L"/" + pathName);
+	Path path(g_scratchPath + L"/" + user + L"/" + pathName);
 	bool outOfSync = true;
 
 	std::map< std::wstring, uint32_t >::const_iterator i = g_fileHashes.find(path.getPathName());
@@ -191,11 +193,13 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 	net::SocketStream clientStream(clientSocket, true, true, 1000);
 	Reader reader(&clientStream);
 	Writer writer(&clientStream);
+	std::wstring user;
 	std::wstring pathName;
 	std::wstring arguments;
 	bool wait;
 	int32_t exitCode;
 
+	reader >> user;
 	reader >> pathName;
 	reader >> arguments;
 	reader >> wait;
@@ -203,8 +207,8 @@ uint8_t handleLaunchProcess(net::Socket* clientSocket)
 	traktor::log::info << L"Launching \"" << pathName << L"\"" << Endl;
 	traktor::log::info << L"\targuments \"" << arguments << L"\"" << Endl;
 
-	Path path(g_scratchPath + L"/" + pathName);
-	Ref< IProcess > process = OS::getInstance().execute(path, arguments, g_scratchPath, 0, false, false, false);
+	Path path(g_scratchPath + L"/" + user + L"/" + pathName);
+	Ref< IProcess > process = OS::getInstance().execute(path, arguments, g_scratchPath + L"/" + user, 0, false, false, false);
 	if (!process)
 	{
 		traktor::log::error << L"Unable to launch process \"" << pathName << L"\"" << Endl;
@@ -317,7 +321,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.5 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.6 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
 #endif
 

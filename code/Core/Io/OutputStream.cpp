@@ -152,9 +152,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.OutputStream", OutputStream, Object);
 OutputStream::OutputStream(IOutputStreamBuffer* buffer, LineEnd lineEnd)
 :	m_buffer(buffer)
 ,	m_lineEnd(lineEnd)
-,	m_indent(0)
-,	m_decimals(6)
-,	m_pushIndent(false)
 {
 	if (m_lineEnd == LeAuto)
 	{
@@ -255,21 +252,21 @@ OutputStream& OutputStream::operator << (uint64_t n)
 OutputStream& OutputStream::operator << (float f)
 {
 	wchar_t buf[128];
-	puts(ftoa__< float, sizeof_array(buf) >(f, m_decimals, buf));
+	puts(ftoa__< float, sizeof_array(buf) >(f, getDecimals(), buf));
 	return *this;
 }
 
 OutputStream& OutputStream::operator << (double f)
 {
 	wchar_t buf[256];
-	puts(ftoa__< double, sizeof_array(buf) >(f, m_decimals, buf));
+	puts(ftoa__< double, sizeof_array(buf) >(f, getDecimals(), buf));
 	return *this;
 }
 
 OutputStream& OutputStream::operator << (long double f)
 {
 	wchar_t buf[256];
-	puts(ftoa__< double, sizeof_array(buf) >(f, m_decimals, buf));
+	puts(ftoa__< double, sizeof_array(buf) >(f, getDecimals(), buf));
 	return *this;
 }
 
@@ -290,17 +287,17 @@ void OutputStream::put(wchar_t ch)
 	if (!m_buffer)
 		return;
 
-	if (m_pushIndent)
+	if (m_buffer->getPushIndent())
 	{
-		if (m_indent > 0)
-			m_buffer->overflow(c_indents, m_indent);
-		m_pushIndent = false;
+		if (m_buffer->getIndent() > 0)
+			m_buffer->overflow(c_indents, m_buffer->getIndent());
+		m_buffer->setPushIndent(false);
 	}
 	
 	m_buffer->overflow(&ch, 1);
 
 	if (isEol(ch))
-		m_pushIndent = true;
+		m_buffer->setPushIndent(true);
 }
 
 void OutputStream::puts(const wchar_t* s)
@@ -315,14 +312,13 @@ void OutputStream::puts(const wchar_t* s)
 		{
 			if (isEol(s[x]))
 			{
-				if (m_pushIndent)
+				if (m_buffer->getPushIndent())
 				{
-					if (m_indent > 0)
-						m_buffer->overflow(c_indents, m_indent);
-					m_pushIndent = false;
+					if (m_buffer->getIndent() > 0)
+						m_buffer->overflow(c_indents, m_buffer->getIndent());
 				}
 				m_buffer->overflow(s, x + 1);
-				m_pushIndent = true;
+				m_buffer->setPushIndent(true);
 				s += x + 1;
 				x = 0;
 			}
@@ -331,11 +327,11 @@ void OutputStream::puts(const wchar_t* s)
 		}
 		if (x > 0 && *s != 0)
 		{
-			if (m_pushIndent)
+			if (m_buffer->getPushIndent())
 			{
-				if (m_indent > 0)
-					m_buffer->overflow(c_indents, m_indent);
-				m_pushIndent = false;
+				if (m_buffer->getIndent() > 0)
+					m_buffer->overflow(c_indents, m_buffer->getIndent());
+				m_buffer->setPushIndent(false);
 			}
 			m_buffer->overflow(s, x);
 		}
@@ -344,34 +340,36 @@ void OutputStream::puts(const wchar_t* s)
 
 int32_t OutputStream::getIndent() const
 {
-	return m_indent;
+	return m_buffer->getIndent();
 }
 
 void OutputStream::setIndent(int32_t indent)
 {
-	m_indent = indent;
+	m_buffer->setIndent(indent);
 }
 
 void OutputStream::increaseIndent()
 {
-	if (m_indent < sizeof_array(c_indents))
-		m_indent++;
+	int32_t indent = getIndent();
+	if (indent < sizeof_array(c_indents))
+		setIndent(indent + 1);
 }
 
 void OutputStream::decreaseIndent()
 {
-	if (m_indent > 0)
-		m_indent--;
+	int32_t indent = getIndent();
+	if (indent > 0)
+		setIndent(indent - 1);
 }
 
 int32_t OutputStream::getDecimals() const
 {
-	return m_decimals;
+	return m_buffer->getDecimals();
 }
 
 void OutputStream::setDecimals(int32_t decimals)
 {
-	m_decimals = decimals;
+	m_buffer->setDecimals(decimals);
 }
 
 bool OutputStream::isEol(wchar_t ch) const

@@ -1,16 +1,17 @@
-#include "Database/Remote/Server/Connection.h"
+#include "Core/Log/Log.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Database/Remote/IMessage.h"
 #include "Database/Remote/Server/BusMessageListener.h"
+#include "Database/Remote/Server/Connection.h"
 #include "Database/Remote/Server/ConnectionMessageListener.h"
 #include "Database/Remote/Server/DatabaseMessageListener.h"
 #include "Database/Remote/Server/GroupMessageListener.h"
 #include "Database/Remote/Server/InstanceMessageListener.h"
-#include "Database/Remote/Server/StreamMessageListener.h"
-#include "Database/Remote/MessageTransport.h"
-#include "Database/Remote/IMessage.h"
+#include "Net/BidirectionalObjectTransport.h"
+#include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
-#include "Core/Thread/ThreadManager.h"
-#include "Core/Thread/Thread.h"
-#include "Core/Log/Log.h"
+#include "Net/Stream/StreamServer.h"
 
 namespace traktor
 {
@@ -19,19 +20,23 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.Connection", Connection, Object)
 
-Connection::Connection(const Configuration* configuration, net::TcpSocket* clientSocket)
-:	m_configuration(configuration)
+Connection::Connection(
+	Semaphore& connectionStringsLock,
+	const std::map< std::wstring, std::wstring >& connectionStrings,
+	net::StreamServer* streamServer,
+	net::TcpSocket* clientSocket
+)
+:	m_streamServer(streamServer)
 ,	m_clientSocket(clientSocket)
 ,	m_nextHandle(1)
 {
-	m_messageTransport = new MessageTransport(clientSocket);
+	m_transport = new net::BidirectionalObjectTransport(clientSocket);
 
 	m_messageListeners.push_back(new BusMessageListener(this));
 	m_messageListeners.push_back(new ConnectionMessageListener(this));
-	m_messageListeners.push_back(new DatabaseMessageListener(m_configuration, this));
+	m_messageListeners.push_back(new DatabaseMessageListener(connectionStringsLock, connectionStrings, m_streamServer->getListenPort(), this));
 	m_messageListeners.push_back(new GroupMessageListener(this));
 	m_messageListeners.push_back(new InstanceMessageListener(this));
-	m_messageListeners.push_back(new StreamMessageListener(this));
 
 	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &Connection::messageThread), L"Message thread");
 	T_ASSERT (m_thread);
@@ -48,8 +53,8 @@ void Connection::destroy()
 		m_thread = 0;
 	}
 
-	if (m_messageTransport)
-		m_messageTransport = 0;
+	if (m_transport)
+		m_transport = 0;
 
 	if (m_clientSocket)
 	{
@@ -73,7 +78,7 @@ bool Connection::alive() const
 
 void Connection::sendReply(const IMessage& message)
 {
-	if (!m_messageTransport->send(&message))
+	if (!m_transport->send(&message))
 	{
 		log::error << L"Unable to send reply (" << type_name(&message) << L"); connection terminated" << Endl;
 		destroy();
@@ -108,12 +113,17 @@ IProviderDatabase* Connection::getDatabase() const
 	return m_database;
 }
 
+net::StreamServer* Connection::getStreamServer() const
+{
+	return m_streamServer;
+}
+
 void Connection::messageThread()
 {
 	while (!m_thread->stopped())
 	{
 		Ref< IMessage > message;
-		if (!m_messageTransport->receive(100, message))
+		if (m_transport->recv< IMessage >(100, message) < 0)
 			break;
 
 		if (!message)

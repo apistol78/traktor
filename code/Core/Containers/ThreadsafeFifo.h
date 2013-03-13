@@ -46,6 +46,12 @@ public:
 		return m_items.empty();
 	}
 
+	uint32_t size() const
+	{
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
+		return m_items.size();
+	}
+
 private:
 	mutable LockType m_lock; 
 	AlignedVector< ItemType > m_items;

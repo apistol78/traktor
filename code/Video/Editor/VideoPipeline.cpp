@@ -1,5 +1,5 @@
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -39,13 +39,11 @@ bool VideoPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
-	Ref< const VideoAsset > videoAsset = checked_type_cast< const VideoAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, videoAsset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	const VideoAsset* videoAsset = checked_type_cast< const VideoAsset* >(sourceAsset);
+	pipelineDepends->addDependency(Path(m_assetPath), videoAsset->getFileName().getOriginal());
 	return true;
 }
 
@@ -53,16 +51,15 @@ bool VideoPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
-	Ref< const VideoAsset > videoAsset = checked_type_cast< const VideoAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, videoAsset->getFileName());
+	const VideoAsset* videoAsset = checked_type_cast< const VideoAsset* >(sourceAsset);
 
-	Ref< IStream > sourceStream = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > sourceStream = pipelineBuilder->openFile(Path(m_assetPath), videoAsset->getFileName().getOriginal());
 	if (!sourceStream)
 	{
 		log::error << L"Failed to build video asset, unable to open source" << Endl;
@@ -91,15 +88,7 @@ bool VideoPipeline::buildOutput(
 		return false;
 	}
 
-	// Copy source stream content.
-	bool result = true;
-	while (sourceStream->available() > 0 && result)
-	{
-		uint8_t block[1024];
-		int readBytes = sourceStream->read(block, sizeof(block));
-		if (!stream->write(block, readBytes))
-			result = false;
-	}
+	bool result = StreamCopy(stream, sourceStream).execute();
 
 	stream->close();
 	sourceStream->close();

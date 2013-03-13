@@ -1,3 +1,4 @@
+#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -91,11 +92,17 @@ void PipelineDependsParallel::addDependency(const Guid& sourceAssetGuid, uint32_
 	m_jobQueue->add(makeFunctor(this, &PipelineDependsParallel::jobAddDependency, parentDependency, sourceAssetGuid, flags));
 }
 
-void PipelineDependsParallel::addDependency(const Path& fileName)
+void PipelineDependsParallel::addDependency(
+	const Path& basePath,
+	const std::wstring& fileName
+)
 {
 	Ref< PipelineDependency > parentDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 	if (parentDependency)
-		parentDependency->files.insert(fileName);
+	{
+		Path filePath = FileSystem::getInstance().getAbsolutePath(basePath, fileName);
+		parentDependency->files.insert(filePath);
+	}
 }
 
 void PipelineDependsParallel::addDependency(
@@ -252,8 +259,7 @@ void PipelineDependsParallel::addUniqueDependency(
 			sourceInstance,
 			sourceAsset,
 			currentDependency->outputPath,
-			currentDependency->outputGuid,
-			currentDependency->buildParams
+			currentDependency->outputGuid
 		);
 
 		m_currentDependency.set(previousDependency);
@@ -286,9 +292,7 @@ void PipelineDependsParallel::jobAddDependency(Ref< PipelineDependency > parentD
 		Ref< PipelineDependency > previousDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 		m_currentDependency.set(parentDependency);
 
-		Ref< const Object > dummyBuildParams;
-		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid(), dummyBuildParams);
-		T_ASSERT_M (!dummyBuildParams, L"Build parameters not used with non-producing dependencies");
+		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
 
 		// Merge hash of dependent pipeline with parent's pipeline hash.
 		parentDependency->pipelineHash += pipelineHash;

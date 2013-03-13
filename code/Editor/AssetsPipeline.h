@@ -35,17 +35,16 @@ public:
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		const std::wstring& outputPath,
-		const Guid& outputGuid,
-		Ref< const Object >& outBuildParams
+		const Guid& outputGuid
 	) const;
 
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
 		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
-		const Object* buildParams,
 		const std::wstring& outputPath,
 		const Guid& outputGuid,
+		const Object* buildParams,
 		uint32_t reason
 	) const;
 

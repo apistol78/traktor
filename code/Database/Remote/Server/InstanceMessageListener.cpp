@@ -24,6 +24,7 @@
 #include "Database/Remote/Messages/DbmWriteObjectResult.h"
 #include "Database/Remote/Server/Connection.h"
 #include "Database/Remote/Server/InstanceMessageListener.h"
+#include "Net/Stream/StreamServer.h"
 
 namespace traktor
 {
@@ -203,8 +204,8 @@ bool InstanceMessageListener::messageReadObject(const DbmReadObject* message)
 		return true;
 	}
 
-	uint32_t objectStreamHandle = m_connection->putObject(objectStream);
-	m_connection->sendReply(DbmReadObjectResult(objectStreamHandle, serializerType->getName()));
+	uint32_t objectStreamId = m_connection->getStreamServer()->publish(objectStream);
+	m_connection->sendReply(DbmReadObjectResult(objectStreamId, serializerType->getName()));
 	return true;
 }
 
@@ -226,8 +227,8 @@ bool InstanceMessageListener::messageWriteObject(const DbmWriteObject* message)
 		return true;
 	}
 
-	uint32_t objectStreamHandle = m_connection->putObject(objectStream);
-	m_connection->sendReply(DbmWriteObjectResult(objectStreamHandle, serializerType->getName()));
+	uint32_t objectStreamId = m_connection->getStreamServer()->publish(objectStream);
+	m_connection->sendReply(DbmWriteObjectResult(objectStreamId, serializerType->getName()));
 	return true;
 }
 
@@ -280,8 +281,8 @@ bool InstanceMessageListener::messageReadData(const DbmReadData* message)
 		return true;
 	}
 
-	uint32_t dataStreamHandle = m_connection->putObject(dataStream);
-	m_connection->sendReply(MsgHandleResult(dataStreamHandle));
+	uint32_t dataStreamId = m_connection->getStreamServer()->publish(dataStream);
+	m_connection->sendReply(MsgHandleResult(dataStreamId));
 	return true;
 }
 
@@ -302,8 +303,8 @@ bool InstanceMessageListener::messageWriteData(const DbmWriteData* message)
 		return true;
 	}
 
-	uint32_t dataStreamHandle = m_connection->putObject(dataStream);
-	m_connection->sendReply(MsgHandleResult(dataStreamHandle));
+	uint32_t dataStreamId = m_connection->getStreamServer()->publish(dataStream);
+	m_connection->sendReply(MsgHandleResult(dataStreamId));
 	return true;
 }
 

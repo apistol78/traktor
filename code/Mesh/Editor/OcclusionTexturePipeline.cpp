@@ -37,13 +37,11 @@ bool OcclusionTexturePipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const OcclusionTextureAsset* asset = checked_type_cast< const OcclusionTextureAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency(Path(m_assetPath), asset->getFileName().getOriginal());
 	pipelineDepends->addDependency< render::TextureOutput >();
 	return true;
 }
@@ -52,26 +50,31 @@ bool OcclusionTexturePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
 	const OcclusionTextureAsset* asset = checked_type_cast< const OcclusionTextureAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, asset->getFileName());
-
 	if (!asset->m_output.m_scaleImage || asset->m_output.m_scaleWidth <= 0 || asset->m_output.m_scaleHeight <= 0)
 	{
 		log::error << L"Occlusion texture pipeline failed; must define a scale size of occlusion texture asset" << Endl;
 		return 0;
 	}
 
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), asset->getFileName().getOriginal());
+	if (!file)
+	{
+		log::error << L"Occlusion texture asset pipeline failed; unable to open source model \"" << asset->getFileName().getOriginal() << L"\"" << Endl;
+		return false;
+	}
+
 	// Read source model.
-	Ref< model::Model > model = model::ModelFormat::readAny(fileName);
+	Ref< model::Model > model = model::ModelFormat::readAny(file, asset->getFileName().getExtension());
 	if (!model)
 	{
-		log::error << L"Occlusion texture pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
+		log::error << L"Occlusion texture pipeline failed; unable to read source model (" << asset->getFileName().getOriginal() << L")" << Endl;
 		return 0;
 	}
 
@@ -89,9 +92,9 @@ bool OcclusionTexturePipeline::buildOutput(
 	// Run image through texture pipeline for compression etc.
 	return pipelineBuilder->buildOutput(
 		&asset->m_output,
-		image,
 		outputPath,
-		outputGuid
+		outputGuid,
+		image
 	);
 }
 

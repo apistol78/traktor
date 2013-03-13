@@ -1,6 +1,8 @@
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Database/ConnectionString.h"
 #include "Database/Provider/IProviderBus.h"
 #include "Database/Provider/IProviderDatabase.h"
@@ -9,10 +11,10 @@
 #include "Database/Remote/Messages/DbmClose.h"
 #include "Database/Remote/Messages/DbmGetBus.h"
 #include "Database/Remote/Messages/DbmGetRootGroup.h"
-#include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
+#include "Database/Remote/Messages/MsgIntResult.h"
+#include "Database/Remote/Messages/MsgStatus.h"
 #include "Database/Remote/Server/DatabaseMessageListener.h"
-#include "Database/Remote/Server/Configuration.h"
 #include "Database/Remote/Server/Connection.h"
 
 namespace traktor
@@ -22,8 +24,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.db.DatabaseMessageListener", DatabaseMessageListener, IMessageListener)
 
-DatabaseMessageListener::DatabaseMessageListener(const Configuration* configuration, Connection* connection)
-:	m_configuration(configuration)
+DatabaseMessageListener::DatabaseMessageListener(
+	Semaphore& connectionStringsLock,
+	const std::map< std::wstring, std::wstring >& connectionStrings,
+	uint16_t streamServerPort,
+	Connection* connection
+)
+:	m_connectionStringsLock(connectionStringsLock)
+,	m_connectionStrings(connectionStrings)
+,	m_streamServerPort(streamServerPort)
 ,	m_connection(connection)
 {
 	registerMessage< DbmOpen >(&DatabaseMessageListener::messageOpen);
@@ -34,13 +43,22 @@ DatabaseMessageListener::DatabaseMessageListener(const Configuration* configurat
 
 bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_connectionStringsLock);
+
 	if (m_connection->getDatabase())
 	{
 		m_connection->sendReply(MsgStatus(StFailure));
 		return true;
 	}
 
-	ConnectionString connectionString = m_configuration->getConnectionString(message->getName());
+	std::map< std::wstring, std::wstring >::const_iterator i = m_connectionStrings.find(message->getName());
+	if (i == m_connectionStrings.end())
+	{
+		m_connection->sendReply(MsgStatus(StFailure));
+		return true;
+	}
+
+	ConnectionString connectionString = i->second;
 
 	if (!connectionString.have(L"provider"))
 	{
@@ -71,7 +89,7 @@ bool DatabaseMessageListener::messageOpen(const DbmOpen* message)
 	m_connection->setDatabase(providerDatabase);
 
 	log::info << L"Database \"" << message->getName() << L"\" opened successfully" << Endl;
-	m_connection->sendReply(MsgStatus(StSuccess));
+	m_connection->sendReply(MsgIntResult(m_streamServerPort));
 
 	return true;
 }

@@ -1,5 +1,7 @@
-#include "Database/Remote/Server/GroupMessageListener.h"
+#include "Database/Provider/IProviderGroup.h"
+#include "Database/Provider/IProviderInstance.h"
 #include "Database/Remote/Server/Connection.h"
+#include "Database/Remote/Server/GroupMessageListener.h"
 #include "Database/Remote/Messages/DbmGetGroupName.h"
 #include "Database/Remote/Messages/DbmRenameGroup.h"
 #include "Database/Remote/Messages/DbmRemoveGroup.h"
@@ -11,8 +13,6 @@
 #include "Database/Remote/Messages/MsgStringResult.h"
 #include "Database/Remote/Messages/MsgHandleResult.h"
 #include "Database/Remote/Messages/MsgHandleArrayResult.h"
-#include "Database/Provider/IProviderGroup.h"
-#include "Database/Provider/IProviderInstance.h"
 
 namespace traktor
 {

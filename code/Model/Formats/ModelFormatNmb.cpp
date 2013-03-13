@@ -1,6 +1,5 @@
 #include <cstring>
 #include "Core/Log/Log.h"
-#include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
@@ -351,18 +350,14 @@ void ModelFormatNmb::getExtensions(std::wstring& outDescription, std::vector< st
 	outExtensions.push_back(L"nmb");
 }
 
-bool ModelFormatNmb::supportFormat(const Path& filePath) const
+bool ModelFormatNmb::supportFormat(const std::wstring& extension) const
 {
-	return compareIgnoreCase< std::wstring >(filePath.getExtension(), L"nmb") == 0;
+	return compareIgnoreCase< std::wstring >(extension, L"nmb") == 0;
 }
 
-Ref< Model > ModelFormatNmb::read(const Path& filePath, uint32_t importFlags) const
+Ref< Model > ModelFormatNmb::read(IStream* stream, uint32_t importFlags) const
 {
 	// Read entire file into memory.
-	Ref< IStream > stream = FileSystem::getInstance().open(filePath, File::FmRead);
-	if (!stream)
-		return 0;
-
 	int32_t nbytes = stream->available();
 
 	AutoPtr< uint8_t > buffer(new uint8_t [nbytes]);
@@ -390,7 +385,7 @@ Ref< Model > ModelFormatNmb::read(const Path& filePath, uint32_t importFlags) co
 	return model;
 }
 
-bool ModelFormatNmb::write(const Path& filePath, const Model* model) const
+bool ModelFormatNmb::write(IStream* stream, const Model* model) const
 {
 	return false;
 }

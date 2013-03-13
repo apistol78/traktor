@@ -1,10 +1,10 @@
 #ifndef traktor_Log_H
 #define traktor_Log_H
 
-#include <vector>
 #include <string>
-#include "Core/Io/IOutputStreamBuffer.h"
+#include <vector>
 #include "Core/Io/OutputStream.h"
+#include "Core/Io/OutputStreamBuffer.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 
@@ -34,12 +34,13 @@ public:
 class T_DLLCLASS LogTargetConsole : public ILogTarget
 {
 public:
-	LogTargetConsole(int color);
+	LogTargetConsole(int32_t color);
 
 	virtual void log(const std::wstring& str);
 	
 private:
-	int m_color;
+	Semaphore m_lock;
+	int32_t m_color;
 };
 
 /*! \brief Debugger log target.
@@ -49,6 +50,9 @@ class T_DLLCLASS LogTargetDebug : public ILogTarget
 {
 public:
 	virtual void log(const std::wstring& str);
+
+private:
+	Semaphore m_lock;
 };
 
 /*! \brief Log stream buffer.
@@ -63,12 +67,25 @@ public:
 
 	void setTarget(ILogTarget* target);
 	
-protected:
-	virtual int overflow(const wchar_t* buffer, int count);
+	virtual int32_t getIndent() const;
+
+	virtual void setIndent(int32_t indent);
+
+	virtual int32_t getDecimals() const;
+
+	virtual void setDecimals(int32_t decimals);
+
+	virtual bool getPushIndent() const;
+
+	virtual void setPushIndent(bool pushIndent);
+
+	virtual int32_t overflow(const wchar_t* buffer, int32_t count);
 	
 private:
-	ThreadLocal m_buffers;
+	mutable ThreadLocal m_buffers;
 	Ref< ILogTarget > m_target;
+
+	IOutputStreamBuffer* getThreadLocalBuffer() const;
 };
 
 /*! \brief Log stream.

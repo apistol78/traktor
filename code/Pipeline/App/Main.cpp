@@ -75,14 +75,25 @@ private:
 	Ref< ILogTarget > m_target2;
 };
 
-struct StatusListener : public editor::PipelineBuilder::IListener
+struct StatusListener : public editor::IPipelineBuilder::IListener
 {
-	virtual void begunBuildingAsset(
+	virtual void beginBuild(
+		uint32_t core,
 		uint32_t index,
-		uint32_t count
+		uint32_t count,
+		const editor::PipelineDependency* dependency
 	) const
 	{
 		std::wcout << L":" << index << L":" << count << std::endl;
+	}
+
+	virtual void endBuild(
+		uint32_t core,
+		uint32_t index,
+		uint32_t count,
+		const editor::PipelineDependency* dependency
+	) const
+	{
 	}
 };
 

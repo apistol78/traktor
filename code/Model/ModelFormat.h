@@ -14,6 +14,9 @@
 
 namespace traktor
 {
+
+class IStream;
+
 	namespace model
 	{
 
@@ -51,29 +54,26 @@ public:
 
 	/*! \brief Determine if format support parsing file.
 	 *
-	 * Most conventional way might be just to check file
-	 * extension.
-	 *
-	 * \param filePath Path to model file.
+	 * \param extension Model extension.
 	 * \return True if format is supported.
 	 */
-	virtual bool supportFormat(const Path& filePath) const = 0;
+	virtual bool supportFormat(const std::wstring& extension) const = 0;
 
 	/*! \brief Read model.
 	 *
-	 * \param filePath Path to model file.
+	 * \param stream Source stream.
 	 * \param importFlags Import flags.
 	 * \return Read model.
 	 */
-	virtual Ref< Model > read(const Path& filePath, uint32_t importFlags = IfAll) const = 0;
+	virtual Ref< Model > read(IStream* stream, uint32_t importFlags = IfAll) const = 0;
 
 	/*! \brief Write model.
 	 *
-	 * \param filePath Path to new model file.
+	 * \param stream Output stream.
 	 * \param model Output model.
 	 * \return True if model written successfully.
 	 */
-	virtual bool write(const Path& filePath, const Model* model) const = 0;
+	virtual bool write(IStream* stream, const Model* model) const = 0;
 
 	/*! \brief Automatically read model using appropriate format.
 	 *
@@ -83,6 +83,15 @@ public:
 	 */
 	static Ref< Model > readAny(const Path& filePath, uint32_t importFlags = IfAll);
 
+	/*! \brief Automatically read model using appropriate format.
+	 *
+	 * \param file Source stream.
+	 * \param extension File format extension.
+	 * \param importFlags Import flags.
+	 * \return Read model.
+	 */
+	static Ref< Model > readAny(IStream* stream, const std::wstring& extension, uint32_t importFlags = IfAll);
+
 	/*! \brief Automatically write model using format based on filename extension.
 	 *
 	 * \param filePath Path to new model file.
@@ -90,6 +99,14 @@ public:
 	 * \return True if model written successfully.
 	 */
 	static bool writeAny(const Path& filePath, const Model* model);
+
+	/*! \brief Automatically write model using format based on filename extension.
+	 *
+	 * \param filePath Path to new model file.
+	 * \param model Output model.
+	 * \return True if model written successfully.
+	 */
+	static bool writeAny(IStream* stream, const std::wstring& extension, const Model* model);
 };
 
 	}

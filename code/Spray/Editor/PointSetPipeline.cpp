@@ -1,4 +1,3 @@
-#include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
@@ -41,13 +40,11 @@ bool PointSetPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	const PointSetAsset* pointSetAsset = checked_type_cast< const PointSetAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, pointSetAsset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency(Path(m_assetPath), pointSetAsset->getFileName().getOriginal());
 	return true;
 }
 
@@ -55,29 +52,35 @@ bool PointSetPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
 	const PointSetAsset* pointSetAsset = checked_type_cast< const PointSetAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, pointSetAsset->getFileName());
+
+	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), pointSetAsset->getFileName().getOriginal());
+	if (!file)
+	{
+		log::error << L"PointSet pipeline failed; unable to open source model (" << pointSetAsset->getFileName().getOriginal() << L")" << Endl;
+		return false;
+	}
+
+	Ref< model::Model > model = model::ModelFormat::readAny(
+		file,
+		pointSetAsset->getFileName().getExtension(),
+		model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices
+	);
+	if (!model)
+	{
+		log::error << L"PointSet pipeline failed; unable to read source model (" << pointSetAsset->getFileName().getOriginal() << L")" << Endl;
+		return false;
+	}
 
 	Ref< PointSet > pointSet = new PointSet();
-
 	if (!pointSetAsset->fromFaces())
 	{
-		Ref< model::Model > model = model::ModelFormat::readAny(
-			fileName,
-			model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices
-		);
-		if (!model)
-		{
-			log::error << L"PointSet pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
-			return false;
-		}
-
 		const std::vector< model::Vertex >& vertices = model->getVertices();
 		for (std::vector< model::Vertex >::const_iterator i = vertices.begin(); i != vertices.end(); ++i)
 		{
@@ -100,16 +103,6 @@ bool PointSetPipeline::buildOutput(
 	}
 	else
 	{
-		Ref< model::Model > model = model::ModelFormat::readAny(
-			fileName,
-			model::ModelFormat::IfMeshPositions | model::ModelFormat::IfMeshVertices | model::ModelFormat::IfMeshPolygons
-		);
-		if (!model)
-		{
-			log::error << L"PointSet pipeline failed; unable to read source model (" << fileName.getPathName() << L")" << Endl;
-			return false;
-		}
-
 		const std::vector< model::Polygon >& polygons = model->getPolygons();
 		for (std::vector< model::Polygon >::const_iterator i = polygons.begin(); i != polygons.end(); ++i)
 		{

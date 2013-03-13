@@ -103,6 +103,16 @@ void JobQueue::stop()
 		m_workerThreads[i]->stop(0);
 }
 
+int32_t JobQueue::getPendingCount() const
+{
+	return int32_t(m_jobQueue.size());
+}
+
+int32_t JobQueue::getRunningCount() const
+{
+	return m_running;
+}
+
 void JobQueue::threadWorker(int id)
 {
 	Thread* thread = m_workerThreads[id];

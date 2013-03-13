@@ -5,13 +5,14 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_NET_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -43,16 +44,31 @@ public:
 
 	void removeService(IService* service);
 
-	bool findServices(const TypeInfo& serviceType, RefArray< IService >& outServices, uint32_t timeout);
+	bool beginFindServices(const TypeInfo& serviceType);
+	
+	void endFindServices(RefArray< IService >& outServices);
 	
 	template < typename ServiceType >
-	bool findServices(RefArray< ServiceType >& outServices, uint32_t timeout)
+	bool beginFindServices()
 	{
-		RefArray< IService > services;
-		if (!findServices(type_of< ServiceType >(), services, timeout))
+		return beginFindServices(type_of< ServiceType >());
+	}
+
+	template < typename ServiceType >
+	void endFindServices(RefArray< ServiceType >& outServices)
+	{
+		endFindServices((RefArray< IService >&)outServices);
+	}
+
+	template < typename ServiceType >
+	bool findServices(RefArray< ServiceType >& outServices, int32_t timeout = 1000)
+	{
+		if (!beginFindServices< ServiceType >())
 			return false;
-		for (RefArray< IService >::const_iterator i = services.begin(); i != services.end(); ++i)
-			outServices.push_back(checked_type_cast< ServiceType* >(*i));
+
+		ThreadManager::getInstance().getCurrentThread()->sleep(timeout);
+
+		endFindServices< ServiceType >(outServices);
 		return true;
 	}
 
@@ -62,6 +78,7 @@ private:
 	Thread* m_threadMulticastListener;
 	Guid m_sessionGuid;
 	bool m_verbose;
+	bool m_accept;
 	RefArray< IService > m_services;
 	RefArray< IService > m_foundServices;
 

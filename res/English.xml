@@ -393,10 +393,14 @@
       <first>EDITOR_SETTINGS_PIPELINE</first>
       <second>Pipeline</second>
     </item>
-	<item>
-		<first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
-		<second>Use multiple build threads</second>
-	</item>
+  	<item>
+  		<first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
+  		<second>Use multiple build threads</second>
+  	</item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED</first>
+      <second>Use distributed build</second>
+    </item>
     <item>
       <first>EDITOR_SETTINGS_PIPELINE_ENABLE_MEMCACHED</first>
       <second>Use memcached</second>
@@ -1969,18 +1973,22 @@
       <first>TEXTURE_EDITOR_COLOR</first>
       <second>Texture color</second>
     </item>
+    <item>
+      <first>TITLE_BUILD</first>
+      <second>Build</second>
+    </item>
 		<item>
 			<first>TITLE_DATABASE</first>
 			<second>Database</second>
 		</item>
 		<item>
-			<first>TITLE_HEAP</first>
-			<second>Heap</second>
-		</item>
-		<item>
 			<first>TITLE_LOG</first>
 			<second>Log</second>
 		</item>
+    <item>
+      <first>TITLE_OUTPUT</first>
+      <second>Output</second>
+    </item>
 		<item>
 			<first>TITLE_PROPERTIES</first>
 			<second>Properties</second>

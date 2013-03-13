@@ -24,6 +24,7 @@ namespace traktor
 		{
 
 const Guid c_guidGlobalLock(L"{6DC29473-147F-4b3f-8DF5-BBC7EDF79111}");
+const uint32_t c_maxPendingEvents = 16;
 
 class EventLog : public ISerializable
 {
@@ -59,7 +60,12 @@ public:
 	{
 		Entry entry = { senderGuid, event };
 		for (std::map< Guid, std::list< Entry > >::iterator i = m_pending.begin(); i != m_pending.end(); ++i)
-			i->second.push_back(entry);
+		{
+			std::list< Entry >& entries = i->second;
+			while (entries.size() >= c_maxPendingEvents)
+				entries.pop_front();
+			entries.push_back(entry);
+		}
 	}
 
 	std::list< Entry >& getEvents(const Guid& localGuid)
@@ -103,7 +109,7 @@ LocalBus::LocalBus(const std::wstring& eventFileName)
 	Ref< IStream > eventFile;
 
 	// Create our shared memory object.
-	m_shm = OS::getInstance().createSharedMemory(toLower(eventFileName), 256 * 1024);
+	m_shm = OS::getInstance().createSharedMemory(toLower(eventFileName), 512 * 1024);
 	T_ASSERT (m_shm);
 
 	if (m_globalLock.existing())

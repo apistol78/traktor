@@ -57,13 +57,11 @@ bool SoundPipeline::buildDependencies(
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	const std::wstring& outputPath,
-	const Guid& outputGuid,
-	Ref< const Object >& outBuildParams
+	const Guid& outputGuid
 ) const
 {
 	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, soundAsset->getFileName());
-	pipelineDepends->addDependency(fileName);
+	pipelineDepends->addDependency(Path(m_assetPath), soundAsset->getFileName().getOriginal());
 
 	Ref< const SoundCategory > category = pipelineDepends->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
 	if (category)
@@ -85,23 +83,22 @@ bool SoundPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
-	const Object* buildParams,
 	const std::wstring& outputPath,
 	const Guid& outputGuid,
+	const Object* buildParams,
 	uint32_t reason
 ) const
 {
 	Ref< const SoundAsset > soundAsset = checked_type_cast< const SoundAsset* >(sourceAsset);
-	Path fileName = FileSystem::getInstance().getAbsolutePath(m_assetPath, soundAsset->getFileName());
 
 	Ref< IStreamDecoder > decoder;
-	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"wav") == 0)
+	if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"wav") == 0)
 		decoder = new sound::WavStreamDecoder();
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"flac") == 0)
+	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"flac") == 0)
 		decoder = new sound::FlacStreamDecoder();
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"mp3") == 0)
+	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"mp3") == 0)
 		decoder = new sound::Mp3StreamDecoder();
-	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"ogg") == 0)
+	else if (compareIgnoreCase< std::wstring >(soundAsset->getFileName().getExtension(), L"ogg") == 0)
 		decoder = new sound::OggStreamDecoder();
 	else
 	{
@@ -109,7 +106,7 @@ bool SoundPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< IStream > sourceStream = FileSystem::getInstance().open(fileName, File::FmRead);
+	Ref< IStream > sourceStream = pipelineBuilder->openFile(Path(m_assetPath), soundAsset->getFileName().getOriginal());
 	if (!sourceStream)
 	{
 		log::error << L"Failed to build sound asset, unable to open source" << Endl;

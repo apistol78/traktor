@@ -21,6 +21,8 @@ class PropertyGroup;
 	namespace editor
 	{
 
+class IPipeline;
+
 class T_DLLCLASS PipelineFactory : public Object
 {
 	T_RTTI_CLASS;

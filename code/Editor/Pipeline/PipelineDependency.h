@@ -47,7 +47,6 @@ public:
 	uint32_t dependencyHash;					/*!< Dependency hash, a complete hash of this dep and the children. */
 	std::wstring outputPath;					/*!< Database output path. */
 	Guid outputGuid;							/*!< Database output guid. */
-	Ref< const Object > buildParams;			/*!< Build parameters, passed from dependency phase. */
 	std::set< Path > files;						/*!< External file dependencies. */
 	uint32_t flags;								/*!< Dependency flags. \sa PipelineDependencyFlags */
 	uint32_t reason;							/*!< Build reason, updated prior to being built. \sa PipelineBuildReason */
