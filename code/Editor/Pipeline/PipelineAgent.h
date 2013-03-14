@@ -45,11 +45,13 @@ public:
 
 	void update();
 
+	bool isConnected() const;
+
+	bool isIdle() const;
+
 	net::BidirectionalObjectTransport* getTransport() const { return m_transport; }
 
 	const std::wstring& getDescription() const { return m_description; }
-
-	bool isIdle() const { return m_buildingCount <= 0; }
 
 private:
 	Ref< net::StreamServer > m_streamServer;

@@ -98,7 +98,9 @@ public:
 
 	virtual void eventMouseUp(int32_t x, int32_t y, int32_t button);
 
-	virtual void eventMouseMove(int32_t x, int32_t y, int32_t button);
+	virtual void eventMouseMove0(int32_t x, int32_t y, int32_t button);
+
+	virtual void eventMouseMove1(int32_t x, int32_t y, int32_t button);
 
 	virtual SwfRect getBounds() const;
 

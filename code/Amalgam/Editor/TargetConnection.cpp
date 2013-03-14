@@ -66,7 +66,10 @@ bool TargetConnection::update()
 	{
 		Ref< TargetPerformance > performance;
 		if (m_transport->recv< TargetPerformance >(0, performance) == net::BidirectionalObjectTransport::RtSuccess)
+		{
 			m_performance = *performance;
+			m_transport->flush< TargetPerformance >();
+		}
 	}
 
 	{

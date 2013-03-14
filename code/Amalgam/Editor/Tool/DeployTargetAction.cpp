@@ -112,7 +112,8 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	remoteCs.set(L"host", host + L":" + toString(c_remoteDatabasePort));
 	remoteCs.set(L"database", m_databaseName);
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Database", remoteCs.format());
-
+	applicationConfiguration->setProperty< PropertyBoolean >(L"Amalgam.DatabaseThread", true);
+	
 	// Modify configuration to connect to embedded target manager.
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.TargetManager/Host", host);
 	applicationConfiguration->setProperty< PropertyInteger >(L"Amalgam.TargetManager/Port", targetManagerPort);

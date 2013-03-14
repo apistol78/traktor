@@ -286,7 +286,11 @@ void FlashCharacterInstance::eventMouseUp(int x, int y, int button)
 {
 }
 
-void FlashCharacterInstance::eventMouseMove(int x, int y, int button)
+void FlashCharacterInstance::eventMouseMove0(int x, int y, int button)
+{
+}
+
+void FlashCharacterInstance::eventMouseMove1(int x, int y, int button)
 {
 }
 

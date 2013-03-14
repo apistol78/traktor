@@ -29,6 +29,16 @@ class SocketAddressIPv4;
 class IDiscoveryMessage;
 class IService;
 
+/*! \brief
+ * \ingroup Net
+ */
+enum DiscoveryManagerMode
+{
+	MdFindServices = 1,
+	MdPublishServices = 2,
+	MdVerbose = 4
+};
+
 /*! \brief Network service publish and discovery manager.
  * \ingroup Net
  */
@@ -39,7 +49,7 @@ class T_DLLCLASS DiscoveryManager : public Object
 public:
 	DiscoveryManager();
 
-	bool create(bool verbose);
+	bool create(uint32_t mode);
 
 	void destroy();
 
@@ -71,10 +81,8 @@ private:
 	Ref< UdpSocket > m_multicastSendSocket;
 	Ref< MulticastUdpSocket > m_multicastRecvSocket;
 	Thread* m_threadMulticastListener;
-	
 	Guid m_managerGuid;
-	bool m_verbose;
-	
+	uint32_t m_mode;
 	std::list< LocalService > m_localServices;
 	std::map< Guid, ExternalService > m_externalServices;
 	Semaphore m_externalServicesLock;

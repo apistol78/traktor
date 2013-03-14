@@ -234,7 +234,7 @@ int main(int argc, const char** argv)
 	}
 
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
-	if (!discoveryManager->create(false))
+	if (!discoveryManager->create(net::MdPublishServices))
 	{
 		traktor::log::error << L"Unable to create discovery manager" << Endl;
 		return 3;

@@ -84,11 +84,25 @@ void PipelineAgentsManager::destroy()
 	m_discoveryManager = 0;
 }
 
+int32_t PipelineAgentsManager::getAgentCount() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	int32_t count = 0;
+	for (std::map< std::wstring, Ref< PipelineAgent > >::const_iterator i = m_agents.begin(); i != m_agents.end(); ++i)
+	{
+		PipelineAgent* agent = i->second;
+		T_ASSERT (agent);
+		
+		if (agent->isConnected())
+			++count;
+	}
+	return count;
+}
+
 PipelineAgent* PipelineAgentsManager::getIdleAgent()
 {
 	for (;;)
 	{
-		// Find first idle agent.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 			for (std::map< std::wstring, Ref< PipelineAgent > >::const_iterator i = m_agents.begin(); i != m_agents.end(); ++i)
@@ -96,12 +110,10 @@ PipelineAgent* PipelineAgentsManager::getIdleAgent()
 				PipelineAgent* agent = i->second;
 				T_ASSERT (agent);
 
-				if (agent->isIdle())
+				if (agent->isConnected() && agent->isIdle())
 					return agent;
 			}
 		}
-
-		// No idle agent found; wait until agents has been updated.
 		m_eventAgentsUpdated.wait(1000);
 	}
 	return 0;
@@ -125,8 +137,6 @@ void PipelineAgentsManager::waitUntilAllIdle()
 	for (;;)
 	{
 		bool allIdle = true;
-		
-		// Check if all agents are idle.
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 			for (std::map< std::wstring, Ref< PipelineAgent > >::const_iterator i = m_agents.begin(); i != m_agents.end(); ++i)
@@ -134,7 +144,7 @@ void PipelineAgentsManager::waitUntilAllIdle()
 				PipelineAgent* agent = i->second;
 				T_ASSERT (agent);
 
-				if (!agent->isIdle())
+				if (agent->isConnected() && !agent->isIdle())
 				{
 					allIdle = false;
 					break;
@@ -142,7 +152,6 @@ void PipelineAgentsManager::waitUntilAllIdle()
 			}
 		}
 
-		// Working agent found; wait until agents has been updated.
 		if (!allIdle)
 			m_eventAgentsUpdated.wait(1000);
 		else
@@ -174,7 +183,7 @@ void PipelineAgentsManager::threadUpdate()
 				{
 					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 					std::map< std::wstring, Ref< PipelineAgent > >::const_iterator j = m_agents.find(hostAndAgent);
-					if (j != m_agents.end() && j->second->getTransport()->connected())
+					if (j != m_agents.end() && j->second->isConnected())
 						continue;
 				}
 
@@ -203,7 +212,7 @@ void PipelineAgentsManager::threadUpdate()
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 			for (std::map< std::wstring, Ref< PipelineAgent > >::iterator i = m_agents.begin(); i != m_agents.end(); ++i)
 			{
-				if (i->second->getTransport()->connected())
+				if (i->second->isConnected())
 					agentSocketSet.add(i->second->getTransport()->getSocket());
 			}
 		}
@@ -216,7 +225,7 @@ void PipelineAgentsManager::threadUpdate()
 				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 				for (std::map< std::wstring, Ref< PipelineAgent > >::iterator i = m_agents.begin(); i != m_agents.end(); ++i)
 				{
-					if (i->second->getTransport()->connected())
+					if (i->second->isConnected())
 						i->second->update();
 				}
 				m_eventAgentsUpdated.broadcast();

@@ -66,6 +66,8 @@ public:
 
 	void destroy();
 
+	int32_t getAgentCount() const;
+
 	PipelineAgent* getIdleAgent();
 
 	int32_t getAgentIndex(const PipelineAgent* agent) const;
