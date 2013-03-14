@@ -238,7 +238,8 @@ void FlashMoviePlayer::executeFrame()
 		case EvtMouseMove:
 			if (m_mouse)
 				m_mouse->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
-			m_movieInstance->eventMouseMove(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			m_movieInstance->eventMouseMove0(evt.mouse.x, evt.mouse.y, evt.mouse.button);
+			m_movieInstance->eventMouseMove1(evt.mouse.x, evt.mouse.y, evt.mouse.button);
 			break;
 
 		case EvtMouseWheel:

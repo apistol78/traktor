@@ -122,7 +122,7 @@ void FlashButtonInstance::eventMouseUp(int x, int y, int button)
 	}
 }
 
-void FlashButtonInstance::eventMouseMove(int x, int y, int button)
+void FlashButtonInstance::eventMouseMove0(int x, int y, int button)
 {
 	// Transform coordinates into local.
 	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);

@@ -95,7 +95,7 @@ int WinMain(HINSTANCE, HINSTANCE, LPTSTR cmdLine, int showCmd)
 	
 	// Initialize network discovery.
 	Ref< net::DiscoveryManager > discoveryManager = new net::DiscoveryManager();
-	if (discoveryManager->create(true))
+	if (discoveryManager->create(net::MdPublishServices))
 	{
 		net::SocketAddressIPv4::Interface itf;
 		if (!net::SocketAddressIPv4::getBestInterface(itf))

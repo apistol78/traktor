@@ -567,7 +567,7 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	m_press = false;
 }
 
-void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
+void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 {
 	ActionContext* context = getContext();
 
@@ -583,7 +583,7 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	if (!m_visibleCharacters.empty())
 	{
 		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
-			(*i)->eventMouseMove(x, y, button);
+			(*i)->eventMouseMove0(x, y, button);
 	}
 
 	// Issue script assigned event.
@@ -594,15 +594,46 @@ void FlashSpriteInstance::eventMouseMove(int32_t x, int32_t y, int32_t button)
 	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
 	if (inside != m_inside)
 	{
+		if (!inside)
+			executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
+	}
+
+	FlashCharacterInstance::eventMouseMove0(x, y, button);
+
+	context->setMovieClip(current);
+}
+
+void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
+{
+	ActionContext* context = getContext();
+
+	Ref< FlashSpriteInstance > current = context->getMovieClip();
+	context->setMovieClip(this);
+
+	// Transform coordinates into local.
+	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
+	m_mouseX = int32_t(xy.x / 20.0f);
+	m_mouseY = int32_t(xy.y / 20.0f);
+
+	// Roll over and out event handling.
+	SwfRect bounds = getLocalBounds();
+	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
+	if (inside != m_inside)
+	{
 		if (inside)
 			executeScriptEvent(ActionContext::IdOnRollOver, ActionValue());
-		else
-			executeScriptEvent(ActionContext::IdOnRollOut, ActionValue());
 
 		m_inside = inside;
 	}
 
-	FlashCharacterInstance::eventMouseMove(x, y, button);
+	// Issue events on "visible" characters.
+	if (!m_visibleCharacters.empty())
+	{
+		for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+			(*i)->eventMouseMove1(x, y, button);
+	}
+
+	FlashCharacterInstance::eventMouseMove1(x, y, button);
 
 	context->setMovieClip(current);
 }

@@ -63,7 +63,7 @@ public:
 
 	virtual void eventMouseUp(int x, int y, int button);
 
-	virtual void eventMouseMove(int x, int y, int button);
+	virtual void eventMouseMove0(int x, int y, int button);
 
 	virtual SwfRect getBounds() const;
 

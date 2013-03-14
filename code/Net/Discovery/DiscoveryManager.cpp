@@ -32,11 +32,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.DiscoveryManager", DiscoveryManager, Object
 
 DiscoveryManager::DiscoveryManager()
 :	m_threadMulticastListener(0)
-,	m_verbose(false)
+,	m_mode(0)
 {
 }
 
-bool DiscoveryManager::create(bool verbose)
+bool DiscoveryManager::create(uint32_t mode)
 {
 	m_multicastSendSocket = new UdpSocket();
 	if (!m_multicastSendSocket->bind(SocketAddressIPv4(c_discoveryMulticastPort)))
@@ -69,7 +69,7 @@ bool DiscoveryManager::create(bool verbose)
 	}
 
 	m_managerGuid = Guid::create();
-	m_verbose = verbose;
+	m_mode = mode;
 	m_threadMulticastListener->start();
 
 	return true;
@@ -130,12 +130,15 @@ void DiscoveryManager::threadMulticastListener()
 	beacon = 0;
 	while (!m_threadMulticastListener->stopped())
 	{
-		if (--beacon <= 0)
+		if (
+			((m_mode & MdFindServices) != 0) &&
+			--beacon <= 0
+		)
 		{
 			DmFindServices msgFindServices(m_managerGuid);
 			if (!sendMessage(m_multicastSendSocket, address, &msgFindServices))
 			{
-				if (m_verbose)
+				if ((m_mode & MdVerbose) != 0)
 					log::info << L"Discovery manager: Unable to send \"find services\" message" << Endl;
 			}
 			beacon = 10;
@@ -147,12 +150,15 @@ void DiscoveryManager::threadMulticastListener()
 
 		if (DmFindServices* findServices = dynamic_type_cast< DmFindServices* >(message))
 		{
+			if ((m_mode & MdPublishServices) == 0)
+				continue;
+
 			// Do not respond to our self.
 			Guid requestingManagerGuid = findServices->getManagerGuid();
 			if (requestingManagerGuid == m_managerGuid)
 				continue;
 
-			if (m_verbose)
+			if ((m_mode & MdVerbose) != 0)
 				log::info << L"Discovery manager: Got \"find services\" request from " << fromAddress << Endl;
 
 			for (std::list< LocalService >::const_iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
@@ -160,7 +166,7 @@ void DiscoveryManager::threadMulticastListener()
 				DmServiceInfo serviceInfo(requestingManagerGuid, i->serviceGuid, i->service);
 				if (!sendMessage(m_multicastSendSocket, address, &serviceInfo))
 					log::error << L"Unable to reply service to requesting manager" << Endl;
-				else if (m_verbose)
+				else if ((m_mode & MdVerbose) != 0)
 					log::info << L"Discovery manager: Reply sent to " << address << Endl;
 			}
 		}
@@ -174,7 +180,7 @@ void DiscoveryManager::threadMulticastListener()
 			{
 				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_externalServicesLock);
 
-				if (m_verbose)
+				if ((m_mode & MdVerbose) != 0)
 					log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
 
 				m_externalServices[serviceInfo->getServiceGuid()].tick = 0;
@@ -182,7 +188,7 @@ void DiscoveryManager::threadMulticastListener()
 			}
 			else
 			{
-				if (m_verbose)
+				if ((m_mode & MdVerbose) != 0)
 					log::warning << L"Discovery manager: Got invalid \"service info\" from " << fromAddress << Endl;
 			}
 		}

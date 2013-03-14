@@ -21,7 +21,7 @@ bool LanReplicatorPeers::create()
 {
 	// Create discovery manager.
 	m_discoveryManager = new net::DiscoveryManager();
-	m_discoveryManager->create(false);
+	m_discoveryManager->create(net::MdFindServices | net::MdPublishServices);
 
 	// Find peers and connect to them.
 	RefArray< net::NetworkService > peerServices;

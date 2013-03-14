@@ -88,6 +88,16 @@ void PipelineAgent::update()
 	}
 }
 
+bool PipelineAgent::isConnected() const
+{
+	return m_transport->connected();
+}
+
+bool PipelineAgent::isIdle() const
+{
+	return m_buildingCount <= 0;
+}
+
 bool PipelineAgent::build(const PipelineDependency* dependency, Functor* functorSucceeded, Functor* functorFailed)
 {
 	AgentBuild agentBuild(

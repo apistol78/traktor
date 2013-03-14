@@ -525,7 +525,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 
 	// Create shared discovery manager.
 	m_discoveryManager = new net::DiscoveryManager();
-	m_discoveryManager->create(false);
+	m_discoveryManager->create(net::MdFindServices | net::MdPublishServices);
 	setStoreObject(L"DiscoveryManager", m_discoveryManager);
 
 	// Create editor page factories.
@@ -1513,7 +1513,10 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	StatusListener listener(m_buildView, m_buildProgress);
 	Ref< IPipelineBuilder > pipelineBuilder;
 
-	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", false))
+	if (
+		!m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", false) ||
+		m_agentsManager->getAgentCount() <= 0
+	)
 		pipelineBuilder = new PipelineBuilder(
 			&pipelineFactory,
 			m_sourceDatabase,

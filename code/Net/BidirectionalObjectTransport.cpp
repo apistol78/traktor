@@ -101,9 +101,14 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 	while (m_socket->select(true, false, false, timeout) > 0)
 	{
 		uint32_t objectSize = 0;
-		if (m_socket->recv(&objectSize, 4) != 4)
-			continue;
-		if (objectSize == 0)
+		int32_t result = m_socket->recv(&objectSize, 4);
+		if (result <= 0)
+		{
+			m_socket = 0;
+			m_inQueue.clear();
+			return RtDisconnected;
+		}
+		if (result != 4 || objectSize == 0)
 			continue;
 
 		if (net::SocketStream(m_socket, true, false).read(m_buffer.ptr(), objectSize) != objectSize)
