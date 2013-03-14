@@ -1186,7 +1186,7 @@ bool EditorForm::createWorkspace()
 
 	// Create remote database server.
 	m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
-	m_dbConnectionManager->create(35000);
+	m_dbConnectionManager->create(34001);
 
 	// Create pipeline agent manager.
 	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);
@@ -1275,7 +1275,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 
 	// Create remote database server.
 	m_dbConnectionManager = new db::ConnectionManager(m_streamServer);
-	m_dbConnectionManager->create(35000);
+	m_dbConnectionManager->create(34001);
 
 	// Create pipeline agent manager.
 	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);

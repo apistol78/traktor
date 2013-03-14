@@ -279,6 +279,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classISessionManager->addMethod("getLanguageCode", &online::ISessionManager::getLanguageCode);
 	classISessionManager->addMethod("isConnected", &online::ISessionManager::isConnected);
 	classISessionManager->addMethod("requireUserAttention", &online::ISessionManager::requireUserAttention);
+	classISessionManager->addMethod("haveDLC", &online::ISessionManager::haveDLC);
 	classISessionManager->addMethod("getFriends", &online_ISessionManager_getFriends);
 	classISessionManager->addMethod("findFriend", &online_ISessionManager_findFriend);
 	classISessionManager->addMethod("haveP2PData", &online::ISessionManager::haveP2PData);

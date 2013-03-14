@@ -2,6 +2,7 @@
 #define traktor_net_RemoteStream_H
 
 #include "Core/Io/IStream.h"
+#include "Net/SocketAddressIPv4.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -14,13 +15,12 @@
 namespace traktor
 {
 
-class Reader;
-class Writer;
+//class Reader;
+//class Writer;
 
 	namespace net
 	{
 
-class SocketAddressIPv4;
 class TcpSocket;
 
 /*! \brief
@@ -56,9 +56,8 @@ public:
 	virtual void flush();
 
 private:
+	SocketAddressIPv4 m_addr;
 	Ref< TcpSocket > m_socket;
-	Ref< Reader > m_reader;
-	Ref< Writer > m_writer;
 	uint8_t m_status;
 
 	RemoteStream();

@@ -160,6 +160,11 @@ bool LocalSessionManager::requireUserAttention() const
 	return false;
 }
 
+bool LocalSessionManager::haveDLC(const std::wstring& id) const
+{
+	return false;
+}
+
 uint64_t LocalSessionManager::getCurrentUserHandle() const
 {
 	return 0;

@@ -1,8 +1,9 @@
 #include <algorithm>
+#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Database/Remote/Server/Connection.h"
 #include "Database/Remote/Server/ConnectionManager.h"
 #include "Net/SocketAddressIPv4.h"
@@ -38,14 +39,11 @@ bool ConnectionManager::create(uint16_t listenPort)
 
 	m_listenPort = listenPort;
 
-	m_serverThread = ThreadManager::getInstance().create(
-		makeFunctor(this, &ConnectionManager::threadServer),
-		L"Database server"
+	m_serverThread = ThreadPool::getInstance().spawn(
+		makeFunctor(this, &ConnectionManager::threadServer)
 	);
 	if (!m_serverThread)
 		return false;
-
-	m_serverThread->start();
 
 	log::info << L"Remote database connection manager @" << listenPort << L" created" << Endl;
 	return true;
@@ -55,8 +53,7 @@ void ConnectionManager::destroy()
 {
 	if (m_serverThread)
 	{
-		m_serverThread->stop();
-		ThreadManager::getInstance().destroy(m_serverThread);
+		ThreadPool::getInstance().join(m_serverThread);
 		m_serverThread = 0;
 	}
 

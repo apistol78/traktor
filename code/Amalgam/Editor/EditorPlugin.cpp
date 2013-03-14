@@ -50,7 +50,7 @@ namespace traktor
 		namespace
 		{
 
-const uint16_t c_targetConnectionPort = 36000;
+const uint16_t c_targetConnectionPort = 34002;
 
 class TargetInstanceProgressListener : public RefCountImpl< ITargetAction::IProgressListener >
 {

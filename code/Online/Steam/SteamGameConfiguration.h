@@ -29,6 +29,7 @@ private:
 	std::list< std::wstring > m_achievementIds;
 	std::list< std::wstring > m_leaderboardIds;
 	std::list< std::wstring > m_statsIds;
+	std::map< std::wstring, uint32_t > m_dlcIds;
 };
 
 	}

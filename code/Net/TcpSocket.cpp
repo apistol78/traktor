@@ -149,7 +149,7 @@ Ref< SocketAddress > TcpSocket::getRemoteAddress()
 void TcpSocket::setNoDelay(bool noDelay)
 {
 	uint32_t opt = noDelay ? 1 : 0;
-	setsockopt(m_socket, IPPROTO_IP, TCP_NODELAY, (const char*)&opt, sizeof(opt));
+	setsockopt(m_socket, IPPROTO_TCP, TCP_NODELAY, (const char*)&opt, sizeof(opt));
 }
 
 	}

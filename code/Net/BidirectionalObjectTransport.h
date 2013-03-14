@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
@@ -66,7 +67,7 @@ public:
 private:
 	Ref< TcpSocket > m_socket;
 	RefArray< ISerializable > m_inQueue;
-	std::vector< uint8_t > m_buffer;
+	AutoArrayPtr< uint8_t > m_buffer;
 };
 
 	}

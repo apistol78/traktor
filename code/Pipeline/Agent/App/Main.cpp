@@ -317,6 +317,8 @@ int main(int argc, const char** argv)
 			cs.set(L"host", agentConnect->getHost() + L":" + toString(agentConnect->getDatabasePort()));
 			cs.set(L"provider", L"traktor.db.RemoteDatabase");
 
+			log::info << L"Connecting to database \"" << cs.format() << L"\"..." << Endl;
+
 			Ref< db::Database > sourceDatabase = new db::Database();
 			if (!sourceDatabase->open(cs))
 			{
@@ -335,6 +337,8 @@ int main(int argc, const char** argv)
 			cs.set(L"database", agentConnect->getSessionId().format() + L"|Output");
 			cs.set(L"host", agentConnect->getHost() + L":" + toString(agentConnect->getDatabasePort()));
 			cs.set(L"provider", L"traktor.db.RemoteDatabase");
+
+			log::info << L"Connecting to database \"" << cs.format() << L"\"..." << Endl;
 
 			Ref< db::Database > outputDatabase = new db::Database();
 			if (!outputDatabase->open(cs))

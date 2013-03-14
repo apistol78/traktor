@@ -1,4 +1,5 @@
-#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/MemoryStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketStream.h"
@@ -33,6 +34,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BidirectionalObjectTransport", Bidirectiona
 BidirectionalObjectTransport::BidirectionalObjectTransport(TcpSocket* socket)
 :	m_socket(socket)
 {
+	m_buffer.reset(new uint8_t [4 + 262144]);
 }
 
 void BidirectionalObjectTransport::close()
@@ -48,19 +50,20 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 {
 	if (m_socket)
 	{
-		SocketStream ss(m_socket, false, true);
-
-		m_buffer.resize(0);
-
-		DynamicMemoryStream dms(m_buffer, false, true, T_FILE_LINE);
+		MemoryStream dms(m_buffer.ptr() + 4, 262144, false, true);
 		if (!BinarySerializer(&dms).writeObject(object))
 			return false;
 
-		uint32_t bufferSize = uint32_t(m_buffer.size());
-		if (!bufferSize)
+		uint32_t objectSize = dms.tell();
+		if (objectSize >= 262144)
+		{
+			log::error << L"BidirectionalObjectTransport failed; object too big" << Endl;
 			return false;
+		}
 
-		if (ss.write(&m_buffer[0], bufferSize) == bufferSize)
+		*(uint32_t*)m_buffer.ptr() = objectSize;
+
+		if (m_socket->send(m_buffer.ptr(), 4 + objectSize) == 4 + objectSize)
 			return true;
 		else
 		{
@@ -97,8 +100,21 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 	// Receive objects from connection; if not of desired type then queue object.
 	while (m_socket->select(true, false, false, timeout) > 0)
 	{
-		SocketStream ss(m_socket, true, false);
-		BinarySerializer s(&ss);
+		uint32_t objectSize = 0;
+		if (m_socket->recv(&objectSize, 4) != 4)
+			continue;
+		if (objectSize == 0)
+			continue;
+
+		if (net::SocketStream(m_socket, true, false).read(m_buffer.ptr(), objectSize) != objectSize)
+		{
+			m_socket = 0;
+			m_inQueue.clear();
+			return RtDisconnected;
+		}
+
+		MemoryStream ms(m_buffer.ptr(), objectSize, true, false);
+		BinarySerializer s(&ms);
 
 		Ref< ISerializable > object = s.readObject();
 		if (object)
@@ -110,12 +126,6 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 			}
 			else
 				m_inQueue.push_back(object);
-		}
-		else
-		{
-			m_socket = 0;
-			m_inQueue.clear();
-			return RtDisconnected;
 		}
 	}
 

@@ -22,16 +22,14 @@ void threadPoolDispatcher(
 {
 	while (alive)
 	{
-		if (!eventAttachWork.wait(100))
-			continue;
-
 		T_ASSERT (functorWork);
-		(*functorWork)();
-		functorWork = 0;
+		(*functorWork)(); functorWork = 0;
 
 		Atomic::exchange(busy, 0);
-
 		eventFinishedWork.broadcast();
+
+		while (alive && !eventAttachWork.wait(100))
+			;
 	}
 }
 
@@ -70,7 +68,12 @@ Thread* ThreadPool::spawn(Functor* functor)
 		}
 	}
 
+	if (m_workerThreads.size() >= m_workerThreads.capacity())
+		return 0;
+
 	Worker& worker = m_workerThreads.push_back();
+	worker.busy = 2;
+	worker.functorWork = functor;
 	worker.threadWorker = ThreadManager::getInstance().create(
 		makeStaticFunctor< Event&, Event&, Ref< Functor >&, int32_t&, int32_t& >(
 			&threadPoolDispatcher,
@@ -99,9 +102,12 @@ bool ThreadPool::join(Thread* thread)
 		Worker& worker = m_workerThreads[i];
 		if (worker.threadWorker == thread)
 		{
-			worker.threadWorker->stop(0);
-			worker.eventFinishedWork.wait();
-			worker.threadWorker->resume();
+			if (worker.busy != 0)
+			{
+				worker.threadWorker->stop(0);
+				worker.eventFinishedWork.wait();
+				worker.threadWorker->resume();
+			}
 			return true;
 		}
 	}
@@ -116,6 +122,7 @@ void ThreadPool::destroy()
 	{
 		Worker& worker = m_workerThreads[i];
 		worker.threadWorker->stop();
+		worker.alive = 0;
 		ThreadManager::getInstance().destroy(worker.threadWorker);
 	}
 	m_workerThreads.clear();
