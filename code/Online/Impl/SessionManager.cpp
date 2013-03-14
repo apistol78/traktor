@@ -132,6 +132,11 @@ bool SessionManager::requireUserAttention() const
 	return m_provider ? m_provider->requireUserAttention() : false;
 }
 
+bool SessionManager::haveDLC(const std::wstring& id) const
+{
+	return m_provider ? m_provider->haveDLC(id) : false;
+}
+
 bool SessionManager::getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const
 {
 	if (!m_provider)

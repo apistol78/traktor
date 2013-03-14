@@ -28,7 +28,7 @@ namespace traktor
 		namespace
 		{
 
-const uint16_t c_remoteDatabasePort = 35000;
+const uint16_t c_remoteDatabasePort = 34001;
 const uint16_t c_targetConnectionPort = 36000;
 
 		}
@@ -94,7 +94,6 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 		applicationConfiguration = applicationConfiguration->mergeJoin(runtimeProperties);
 	}
 
-	int32_t remoteDatabasePort = m_globalSettings->getProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", c_remoteDatabasePort);
 	int32_t targetManagerPort = m_globalSettings->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort);
 
 	// Determine our interface address; we let applications know where to find data.
@@ -110,7 +109,7 @@ bool DeployTargetAction::execute(IProgressListener* progressListener)
 	// Modify configuration to connect to embedded database server.
 	db::ConnectionString remoteCs;
 	remoteCs.set(L"provider", L"traktor.db.RemoteDatabase");
-	remoteCs.set(L"host", host + L":" + toString(remoteDatabasePort));
+	remoteCs.set(L"host", host + L":" + toString(c_remoteDatabasePort));
 	remoteCs.set(L"database", m_databaseName);
 	applicationConfiguration->setProperty< PropertyString >(L"Amalgam.Database", remoteCs.format());
 

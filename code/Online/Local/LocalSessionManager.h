@@ -47,6 +47,8 @@ public:
 
 	virtual bool requireUserAttention() const;
 
+	virtual bool haveDLC(const std::wstring& id) const;
+
 	virtual uint64_t getCurrentUserHandle() const;
 
 	virtual bool getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const;

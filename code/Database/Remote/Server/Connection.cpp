@@ -1,6 +1,7 @@
+#include "Core/Functor/Functor.h"
 #include "Core/Log/Log.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Database/Remote/IMessage.h"
 #include "Database/Remote/Server/BusMessageListener.h"
 #include "Database/Remote/Server/Connection.h"
@@ -38,18 +39,15 @@ Connection::Connection(
 	m_messageListeners.push_back(new GroupMessageListener(this));
 	m_messageListeners.push_back(new InstanceMessageListener(this));
 
-	m_thread = ThreadManager::getInstance().create(makeFunctor(this, &Connection::messageThread), L"Message thread");
+	m_thread = ThreadPool::getInstance().spawn(makeFunctor(this, &Connection::messageThread));
 	T_ASSERT (m_thread);
-
-	m_thread->start();
 }
 
 void Connection::destroy()
 {
 	if (m_thread)
 	{
-		m_thread->stop();
-		ThreadManager::getInstance().destroy(m_thread);
+		ThreadPool::getInstance().join(m_thread);
 		m_thread = 0;
 	}
 
@@ -67,13 +65,7 @@ void Connection::destroy()
 
 bool Connection::alive() const
 {
-	if (!m_thread)
-		return false;
-
-	if (m_thread->wait(0))
-		return false;
-
-	return true;
+	return m_thread != 0;
 }
 
 void Connection::sendReply(const IMessage& message)
@@ -144,6 +136,7 @@ void Connection::messageThread()
 			break;
 		}
 	}
+	m_thread = 0;
 }
 
 	}

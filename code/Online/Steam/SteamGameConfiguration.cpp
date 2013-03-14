@@ -8,7 +8,7 @@ namespace traktor
 	namespace online
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.online.SteamGameConfiguration", 2, SteamGameConfiguration, IGameConfiguration)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.online.SteamGameConfiguration", 3, SteamGameConfiguration, IGameConfiguration)
 
 SteamGameConfiguration::SteamGameConfiguration()
 :	m_appId(0)
@@ -37,6 +37,10 @@ bool SteamGameConfiguration::serialize(ISerializer& s)
 	s >> MemberStlList< std::wstring >(L"achievementIds", m_achievementIds);
 	s >> MemberStlList< std::wstring >(L"leaderboardIds", m_leaderboardIds);
 	s >> MemberStlList< std::wstring >(L"statsIds", m_statsIds);
+
+	if (s.getVersion() >= 3)
+		s >> MemberStlMap< std::wstring, uint32_t >(L"dlcIds", m_dlcIds);
+
 	return true;
 }
 

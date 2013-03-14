@@ -40,6 +40,8 @@ public:
 
 	virtual bool requireUserAttention() const;
 
+	virtual bool haveDLC(const std::wstring& id) const;
+
 	virtual bool getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const;
 
 	virtual bool findFriend(const std::wstring& name, Ref< IUser >& outFriend) const;

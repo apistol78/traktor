@@ -1,6 +1,7 @@
 #ifndef traktor_online_SteamSessionManager_H
 #define traktor_online_SteamSessionManager_H
 
+#include <map>
 #include <steam/steam_api.h>
 #include "Core/Thread/Semaphore.h"
 #include "Online/Provider/ISessionManagerProvider.h"
@@ -45,6 +46,8 @@ public:
 
 	virtual bool requireUserAttention() const;
 
+	virtual bool haveDLC(const std::wstring& id) const;
+
 	virtual uint64_t getCurrentUserHandle() const;
 
 	virtual bool getFriends(std::vector< uint64_t >& outFriends, bool onlineOnly) const;
@@ -79,6 +82,7 @@ private:
 	Ref< ISaveDataProvider > m_saveData;
 	Ref< SteamStatistics > m_statistics;
 	Ref< SteamUser > m_user;
+	std::map< std::wstring, uint32_t > m_dlcIds;
 	bool m_requireUserAttention;
 	bool m_requestedStats;
 	bool m_receivedStats;

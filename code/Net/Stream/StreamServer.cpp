@@ -1,13 +1,12 @@
-#include "Core/Io/Reader.h"
-#include "Core/Io/Writer.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/ThreadPool.h"
 #include "Core/Timer/Timer.h"
+#include "Net/Batch.h"
 #include "Net/SocketAddressIPv4.h"
-#include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 #include "Net/Stream/StreamServer.h"
 
@@ -93,13 +92,21 @@ void StreamServer::threadServer()
 		{
 			Ref< TcpSocket > clientSocket = m_listenSocket->accept();
 			if (!clientSocket)
+			{
+				log::error << L"StreamServer; unable to accept client" << Endl;
 				continue;
+			}
+
+			clientSocket->setNoDelay(true);
 
 			Thread* clientThread = ThreadPool::getInstance().spawn(
 				makeFunctor< StreamServer, Ref< TcpSocket > >(this, &StreamServer::threadClient, clientSocket)
 			);
 			if (!clientThread)
+			{
+				log::error << L"StreamServer; unable to allocate client thread" << Endl;
 				continue;
+			}
 
 			m_clientThreads.push_back(clientThread);
 		}
@@ -108,13 +115,11 @@ void StreamServer::threadServer()
 
 void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 {
-	uint8_t buffer[65536];
+#pragma pack(1)
+	struct { int32_t size; uint8_t data[65536]; } buffer;
+#pragma pack()
 	Ref< IStream > stream;
 	uint32_t streamId;
-
-	SocketStream ss(clientSocket);
-	Reader rd(&ss);
-	Writer wr(&ss);
 	Timer timer;
 
 	timer.start();
@@ -134,15 +139,15 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 		else if (result < 0)
 			break;
 
-		int32_t command = clientSocket->recv();
-		if (command < 0)
+		uint8_t command;
+		if (net::recvBatch< uint8_t >(clientSocket, command) <= 0)
 			break;
 
 		switch (command)
 		{
 		case 0x01:	// Acquire stream.
 			{
-				rd >> streamId;
+				net::recvBatch< uint32_t >(clientSocket, streamId);
 
 				std::map< uint32_t, Ref< IStream > >::const_iterator i = m_streams.find(streamId);
 				if (i != m_streams.end() && i->second != 0)
@@ -157,7 +162,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 					if (stream->canSeek())
 						status |= 0x04;
 					
-					wr << status;
+					net::sendBatch< uint8_t >(clientSocket, status);
 
 					start = timer.getElapsedTime();
 					totalRx = 0;
@@ -166,7 +171,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 					countTx = 0;
 				}
 				else
-					wr << uint8_t(0);
+					net::sendBatch< uint8_t >(clientSocket, 0);
 			}
 			break;
 
@@ -181,7 +186,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 					double end = timer.getElapsedTime();
 
 #if T_MEASURE_THROUGHPUT
-					log::info << L"Stream " << streamId << Endl;
+					log::info << L"Stream " << streamId << L", duration " << int32_t((end - start) * 1000) << L" ms" << Endl;
 					log::info << L"RX " << totalRx << L" -- " << int32_t(totalRx / (end - start)) << L" bytes/s (" << countRx << L")" << Endl;
 					log::info << L"TX " << totalTx << L" -- " << int32_t(totalTx / (end - start)) << L" bytes/s (" << countTx << L")" << Endl;
 #endif
@@ -197,28 +202,28 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 				if (stream)
 				{
 					stream->close();
-					wr << bool(true);
+					net::sendBatch< uint8_t >(clientSocket, 1);
 				}
 				else
-					wr << bool(false);
+					net::sendBatch< uint8_t >(clientSocket, 0);
 			}
 			break;
 
 		case 0x04:	// Tell
 			{
 				if (stream)
-					wr << int32_t(stream->tell());
+					net::sendBatch< int32_t >(clientSocket, stream->tell());
 				else
-					wr << int32_t(-1);
+					net::sendBatch< int32_t >(clientSocket, -1);
 			}
 			break;
 
 		case 0x05:	// Available
 			{
 				if (stream)
-					wr << int32_t(stream->available());
+					net::sendBatch< int32_t >(clientSocket, stream->available());
 				else
-					wr << int32_t(-1);
+					net::sendBatch< int32_t >(clientSocket, -1);
 			}
 			break;
 
@@ -226,12 +231,10 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 			{
 				if (stream)
 				{
-					int32_t origin, offset, result;
-					rd >> origin;
-					rd >> offset;
-
-					result = stream->seek((IStream::SeekOriginType)origin, offset);
-					wr << result;
+					int32_t origin, offset;
+					net::recvBatch< int32_t, int32_t >(clientSocket, origin, offset);
+					int32_t result = stream->seek((IStream::SeekOriginType)origin, offset);
+					net::sendBatch< int32_t >(clientSocket, result);
 				}
 			}
 			break;
@@ -240,19 +243,24 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 			{
 				if (stream)
 				{
-					int32_t nrequest = 0;
-					rd >> nrequest;
+					int32_t nrequest;
+					net::recvBatch< int32_t >(clientSocket, nrequest);
 
 					while (nrequest > 0)
 					{
-						int32_t navail = min< int32_t >(nrequest, sizeof(buffer));
-						int32_t nread = stream->read(buffer, navail);
+						int32_t navail = min< int32_t >(nrequest, sizeof(buffer.data));
+						int32_t nread = stream->read(buffer.data, navail);
 
-						wr << nread;
-						if (nread <= 0)
+						if (nread > 0)
+						{
+							buffer.size = nread;
+							clientSocket->send(&buffer, sizeof(int32_t) + nread);
+						}
+						else
+						{
+							clientSocket->send(&nread, sizeof(int32_t));
 							break;
-
-						wr.write(buffer, nread);
+						}
 
 						nrequest -= nread;
 						totalRx += nread;
@@ -267,17 +275,17 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 			{
 				if (stream)
 				{
-					int32_t nbytes = 0;
-					rd >> nbytes;
+					int32_t nbytes;
+					net::recvBatch< int32_t >(clientSocket, nbytes);
 
 					while (nbytes > 0)
 					{
-						int32_t nread = min< int32_t >(nbytes, sizeof(buffer));
-						int32_t nrecv = rd.read(buffer, nread);
+						int32_t nread = min< int32_t >(nbytes, sizeof(buffer.data));
+						int32_t nrecv = clientSocket->recv(buffer.data, nread);
 						if (nrecv <= 0)
 							break;
 
-						stream->write(buffer, nrecv);
+						stream->write(buffer.data, nrecv);
 
 						totalTx += nrecv;
 						nbytes -= nrecv;
@@ -293,10 +301,10 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 				if (stream)
 				{
 					stream->flush();
-					wr << bool(true);
+					net::sendBatch< uint8_t >(clientSocket, 1);
 				}
 				else
-					wr << bool(false);
+					net::sendBatch< uint8_t >(clientSocket, 0);
 			}
 			break;
 		}

@@ -59,7 +59,7 @@ bool TargetConnection::update()
 
 	if (!m_transport->connected())
 	{
-		m_transport = 0;
+		destroy();
 		return false;
 	}
 

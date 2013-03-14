@@ -20,7 +20,6 @@ namespace traktor
 		namespace
 		{
 
-const uint16_t c_remoteDatabasePort = 35000;
 const uint16_t c_targetConnectionPort = 36000;
 
 		}
@@ -36,12 +35,6 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 	Ref< ui::Container > containerInner = new ui::Container();
 	containerInner->create(container, ui::WsNone, new ui::TableLayout(L"*,100%", L"*,*", 0, 4));
 
-	Ref< ui::Static > staticRemoteDatabasePort = new ui::Static();
-	staticRemoteDatabasePort->create(containerInner, L"Remote database port");
-
-	m_editRemoteDatabasePort = new ui::Edit();
-	m_editRemoteDatabasePort->create(containerInner, toString(c_remoteDatabasePort), ui::WsClientBorder, new ui::NumericEditValidator(false, 0, 65535, 0));
-
 	Ref< ui::Static > staticTargetManagerPort = new ui::Static();
 	staticTargetManagerPort->create(containerInner, L"Target manager port");
 
@@ -50,9 +43,6 @@ bool DeploySettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 
 	m_checkInheritCache = new ui::CheckBox();
 	m_checkInheritCache->create(container, L"Inherit editor cache(s)");
-
-	int32_t remoteDatabasePort = settings->getProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", c_remoteDatabasePort);
-	m_editRemoteDatabasePort->setText(toString(remoteDatabasePort));
 
 	int32_t targetManagerPort = settings->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort);
 	m_editTargetManagerPort->setText(toString(targetManagerPort));
@@ -98,9 +88,6 @@ void DeploySettingsPage::destroy()
 
 bool DeploySettingsPage::apply(PropertyGroup* settings)
 {
-	int32_t remoteDatabasePort = parseString< int32_t >(m_editRemoteDatabasePort->getText());
-	settings->setProperty< PropertyInteger >(L"Amalgam.RemoteDatabasePort", remoteDatabasePort);
-
 	int32_t targetManagerPort = parseString< int32_t >(m_editTargetManagerPort->getText());
 	settings->setProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", targetManagerPort);
 

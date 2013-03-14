@@ -6,7 +6,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Atomic.h"
 #include "Core/Thread/Semaphore.h"
-#include "Core/Thread/JobManager.h"
+#include "Core/Thread/ThreadManager.h"
 
 namespace traktor
 {
@@ -22,7 +22,7 @@ public:
 		if (!s_instance)
 		{
 			s_instance = new FunctorHeap();
-			SingletonManager::getInstance().addAfter(s_instance, &JobManager::getInstance());
+			SingletonManager::getInstance().addAfter(s_instance, &ThreadManager::getInstance());
 		}
 		return *s_instance;
 	}

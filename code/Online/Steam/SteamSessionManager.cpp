@@ -131,6 +131,7 @@ bool SteamSessionManager::create(const IGameConfiguration* configuration)
 		log::info << L"Steam; Available languages: " << mbstows(allLanguages) << Endl;
 
 	m_maxRequestAttempts = gc->m_requestAttempts;
+	m_dlcIds = gc->m_dlcIds;
 
 	SteamNetworking()->AllowP2PPacketRelay(gc->m_allowP2PRelay);
 
@@ -221,6 +222,15 @@ bool SteamSessionManager::isConnected() const
 bool SteamSessionManager::requireUserAttention() const
 {
 	return m_requireUserAttention;
+}
+
+bool SteamSessionManager::haveDLC(const std::wstring& id) const
+{
+	std::map< std::wstring, uint32_t >::const_iterator i = m_dlcIds.find(id);
+	if (i != m_dlcIds.end())
+		return SteamApps()->BIsDlcInstalled(i->second);
+	else
+		return false;
 }
 
 uint64_t SteamSessionManager::getCurrentUserHandle() const
