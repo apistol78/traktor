@@ -81,7 +81,7 @@ bool HostEnumerator::isLocal(int32_t index) const
 void HostEnumerator::update()
 {
 	RefArray< net::NetworkService > services;
-	if (!m_discoveryManager->findServices< net::NetworkService >(services, 100))
+	if (!m_discoveryManager->findServices< net::NetworkService >(services))
 		return;
 
 	net::SocketAddressIPv4::Interface itf;

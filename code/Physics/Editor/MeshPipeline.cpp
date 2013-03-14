@@ -184,11 +184,21 @@ bool MeshPipeline::buildOutput(
 		outputGuid		
 	);
 	if (!instance)
+	{
+		log::error << L"Phys mesh pipeline failed; unable create output instance" << Endl;
 		return false;
+	}
 
 	instance->setObject(new MeshResource());
 
 	Ref< IStream > stream = instance->writeData(L"Data");
+	if (!stream)
+	{
+		log::error << L"Phys mesh pipeline failed; unable to write data" << Endl;
+		instance->revert();
+		return false;
+	}
+
 	mesh.write(stream);
 	stream->close();
 

@@ -25,6 +25,7 @@ class BidirectionalObjectTransport;
 	{
 
 class PipelineFactory;
+class ReadOnlyObjectCache;
 
 class PipelineBuilderWrapper : public IPipelineBuilder
 {
@@ -37,7 +38,8 @@ public:
 		const std::wstring& host,
 		uint16_t streamServerPort,
 		db::Database* sourceDatabase,
-		db::Database* outputDatabase
+		db::Database* outputDatabase,
+		ReadOnlyObjectCache* objectCache
 	);
 
 	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild);
@@ -77,11 +79,10 @@ private:
 	uint16_t m_streamServerPort;
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
+	Ref< ReadOnlyObjectCache > m_objectCache;
 	Semaphore m_openFileLock;
 	Semaphore m_createOutputLock;
-	ReaderWriterLock m_readCacheLock;
 	Semaphore m_builtCacheLock;
-	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 };
 

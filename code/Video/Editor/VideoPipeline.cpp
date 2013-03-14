@@ -101,6 +101,7 @@ bool VideoPipeline::buildOutput(
 	else if (!result)
 	{
 		log::error << L"Failed to build video asset, unable to copy source data" << Endl;
+		instance->revert();
 		return false;
 	}
 

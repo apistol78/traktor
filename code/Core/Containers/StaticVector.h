@@ -58,6 +58,16 @@ public:
 
 	/*! \brief Push value onto vector.
 	 *
+	 * \return Item value.
+	 */
+	ItemType& push_back()
+	{
+		T_ASSERT (m_size < Capacity);
+		return m_items[m_size++];
+	}
+
+	/*! \brief Push value onto vector.
+	 *
 	 * \param item Item value.
 	 */
 	void push_back(const ItemType& item)

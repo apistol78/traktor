@@ -147,10 +147,16 @@ bool PointSetPipeline::buildOutput(
 	
 	Ref< IStream > stream = instance->writeData(L"Data");
 	if (!stream)
+	{
+		instance->revert();
 		return false;
+	}
 		
 	if (!pointSet->write(stream))
+	{
+		instance->revert();
 		return false;
+	}
 
 	return instance->commit();
 }

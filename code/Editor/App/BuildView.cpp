@@ -32,12 +32,18 @@ void BuildView::endBuild()
 
 void BuildView::beginBuild(uint32_t core, const std::wstring& name)
 {
-	m_chartControl->beginTask(core, name);
+	m_chartControl->beginTask(core, name, Color4ub(80, 255, 80, 255));
 }
 
-void BuildView::endBuild(uint32_t core)
+void BuildView::endBuild(uint32_t core, IPipelineBuilder::BuildResult result)
 {
-	m_chartControl->endTask(core);
+	const Color4ub c_resultColors[] =
+	{
+		Color4ub(80, 255, 80, 255),
+		Color4ub(255, 230, 80, 255),
+		Color4ub(255, 40, 40, 255)
+	};
+	m_chartControl->endTask(core, c_resultColors[result]);
 }
 
 	}

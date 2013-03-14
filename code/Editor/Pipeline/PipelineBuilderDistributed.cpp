@@ -324,7 +324,8 @@ void PipelineBuilderDistributed::agentBuildSucceeded(PipelineDependency* depende
 			agentIndex,
 			m_progress,
 			m_progressEnd,
-			dependency
+			dependency,
+			BrSucceeded
 		);
 }
 
@@ -335,7 +336,8 @@ void PipelineBuilderDistributed::agentBuildFailed(PipelineDependency* dependency
 			agentIndex,
 			m_progress,
 			m_progressEnd,
-			dependency
+			dependency,
+			BrFailed
 		);
 }
 

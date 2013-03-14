@@ -1,17 +1,15 @@
-#if defined(_WIN32)
-#	include <windows.h>
-#endif
-#include "Ui/Application.h"
-#include "Editor/App/Splash.h"
-#include "Editor/App/EditorForm.h"
 #if defined(_DEBUG)
 #	include "Core/CycleRefDebugger.h"
 #endif
+#include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/Split.h"
-#include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Log/Log.h"
+#include "Core/Thread/ThreadManager.h"
+#include "Editor/App/EditorForm.h"
+#include "Editor/App/Splash.h"
+#include "Net/Network.h"
+#include "Ui/Application.h"
 
 #if defined(_WIN32)
 #	include <Ui/Win32/EventLoopWin32.h>
@@ -60,6 +58,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		new WidgetFactoryImpl()
 	);
 
+	net::Network::initialize();
+
 	try
 	{
 #if !defined(_DEBUG)
@@ -89,6 +89,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	{
 		traktor::log::error << L"Unhandled exception, application terminated" << Endl;
 	}
+
+	net::Network::finalize();
 
 	ui::Application::getInstance()->finalize();
 

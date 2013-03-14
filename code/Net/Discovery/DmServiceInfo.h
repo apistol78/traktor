@@ -1,8 +1,8 @@
 #ifndef traktor_net_DmServiceInfo_H
 #define traktor_net_DmServiceInfo_H
 
-#include "Net/Discovery/IDiscoveryMessage.h"
 #include "Core/Guid.h"
+#include "Net/Discovery/IDiscoveryMessage.h"
 
 namespace traktor
 {
@@ -16,16 +16,23 @@ class DmServiceInfo : public IDiscoveryMessage
 	T_RTTI_CLASS;
 
 public:
-	DmServiceInfo(const Guid& sessionGuid = Guid(), IService* service = 0);
+	DmServiceInfo(
+		const Guid& managerGuid = Guid(),
+		const Guid& serviceGuid = Guid(),
+		IService* service = 0
+	);
 
-	const Guid& getSessionGuid() const { return m_sessionGuid; }
+	const Guid& getManagerGuid() const { return m_managerGuid; }
+
+	const Guid& getServiceGuid() const { return m_serviceGuid; }
 
 	Ref< IService > getService() const { return m_service; }
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	Guid m_sessionGuid;
+	Guid m_managerGuid;
+	Guid m_serviceGuid;
 	Ref< IService > m_service;
 };
 

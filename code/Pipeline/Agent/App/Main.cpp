@@ -24,6 +24,7 @@
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Discovery/NetworkService.h"
 #include "Pipeline/Agent/App/PipelineBuilderWrapper.h"
+#include "Pipeline/Agent/App/ReadOnlyObjectCache.h"
 #include "Xml/XmlDeserializer.h"
 
 using namespace traktor;
@@ -35,7 +36,8 @@ void threadProcessClient(
 	Ref< editor::AgentConnect > agentConnect,
 	Ref< net::BidirectionalObjectTransport > transport,
 	Ref< db::Database > sourceDatabase,
-	Ref< db::Database > outputDatabase
+	Ref< db::Database > outputDatabase,
+	Ref< editor::ReadOnlyObjectCache > objectCache
 )
 {
 	// Create pipeline environment.
@@ -47,7 +49,8 @@ void threadProcessClient(
 		agentConnect->getHost(),
 		agentConnect->getStreamServerPort(),
 		sourceDatabase,
-		outputDatabase
+		outputDatabase,
+		objectCache
 	);
 
 	log::info << L"Ready; waiting for build items..." << Endl;
@@ -267,6 +270,7 @@ int main(int argc, const char** argv)
 	traktor::log::info << L"Waiting for client(s)..." << Endl;
 
 	std::map< std::wstring, Ref< db::Database > > databases;
+	std::map< std::wstring, Ref< editor::ReadOnlyObjectCache > > objectCaches;
 	std::list< Thread* > clientThreads;
 	for (;;)
 	{
@@ -305,8 +309,7 @@ int main(int argc, const char** argv)
 		log::info << L"\tStream server port " << agentConnect->getStreamServerPort() << Endl;
 
 		// Setup a remote database connection to source and output databases.
-		Ref< db::Database > sourceDatabase = databases[agentConnect->getSessionId().format() + L"|Source"];
-		if (!sourceDatabase)
+		if (!databases[agentConnect->getSessionId().format() + L"|Source"])
 		{
 			db::ConnectionString cs;
 
@@ -314,7 +317,7 @@ int main(int argc, const char** argv)
 			cs.set(L"host", agentConnect->getHost() + L":" + toString(agentConnect->getDatabasePort()));
 			cs.set(L"provider", L"traktor.db.RemoteDatabase");
 
-			sourceDatabase = new db::Database();
+			Ref< db::Database > sourceDatabase = new db::Database();
 			if (!sourceDatabase->open(cs))
 			{
 				log::error << L"Agent build error; unable to open source database" << Endl;
@@ -322,10 +325,10 @@ int main(int argc, const char** argv)
 			}
 
 			databases[agentConnect->getSessionId().format() + L"|Source"] = sourceDatabase;
+			objectCaches[agentConnect->getSessionId().format() + L"|Source"] = new editor::ReadOnlyObjectCache(sourceDatabase);
 		}
 
-		Ref< db::Database > outputDatabase = databases[agentConnect->getSessionId().format() + L"|Output"];
-		if (!outputDatabase)
+		if (!databases[agentConnect->getSessionId().format() + L"|Output"])
 		{
 			db::ConnectionString cs;
 
@@ -333,7 +336,7 @@ int main(int argc, const char** argv)
 			cs.set(L"host", agentConnect->getHost() + L":" + toString(agentConnect->getDatabasePort()));
 			cs.set(L"provider", L"traktor.db.RemoteDatabase");
 
-			outputDatabase = new db::Database();
+			Ref< db::Database > outputDatabase = new db::Database();
 			if (!outputDatabase->open(cs))
 			{
 				log::error << L"Agent build error; unable to open output database" << Endl;
@@ -351,14 +354,16 @@ int main(int argc, const char** argv)
 				Ref< editor::AgentConnect >,
 				Ref< net::BidirectionalObjectTransport >,
 				Ref< db::Database >,
-				Ref< db::Database >
+				Ref< db::Database >,
+				Ref< editor::ReadOnlyObjectCache >
 			>
 			(
 				&threadProcessClient,
 				agentConnect,
 				clientTransport,
-				sourceDatabase,
-				outputDatabase
+				databases[agentConnect->getSessionId().format() + L"|Source"],
+				databases[agentConnect->getSessionId().format() + L"|Output"],
+				objectCaches[agentConnect->getSessionId().format() + L"|Source"]
 			),
 			L"Client thread"
 		);

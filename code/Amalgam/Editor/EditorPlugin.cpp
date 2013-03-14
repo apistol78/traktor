@@ -29,7 +29,6 @@
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
-#include "Net/Network.h"
 #include "Net/Discovery/DiscoveryManager.h"
 #include "Ui/CheckBox.h"
 #include "Ui/Command.h"
@@ -89,16 +88,11 @@ EditorPlugin::EditorPlugin(editor::IEditor* editor)
 
 bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 {
-	net::Network::initialize();
-
 	m_parent = parent;
 	m_site = site;
 
 	// Create host enumerator.
-	m_discoveryManager = new net::DiscoveryManager();
-	if (!m_discoveryManager->create(false))
-		log::error << L"Unable to create discovery manager; unable to enumerate hosts" << Endl;
-
+	m_discoveryManager = m_editor->getStoreObject< net::DiscoveryManager >(L"DiscoveryManager");
 	m_hostEnumerator = new HostEnumerator(m_editor->getSettings(), m_discoveryManager);
 
 	// Create target script debugger dispatcher.
@@ -165,8 +159,8 @@ void EditorPlugin::destroy()
 	m_hostEnumerator = 0;
 	m_toolTargets = 0;
 	m_connectionManager = 0;
+	m_discoveryManager = 0;
 
-	safeDestroy(m_discoveryManager);
 	safeDestroy(m_targetManager);
 
 	if (m_editor)

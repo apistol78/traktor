@@ -113,7 +113,7 @@ private:
 	void updateBuildReason(PipelineDependency* dependency, bool rebuild);
 
 	/*! \brief Perform build. */
-	bool performBuild(PipelineDependency* dependency);
+	BuildResult performBuild(PipelineDependency* dependency);
 
 	/*! \brief Calculate global dependency hash; ie. including child dependencies. */
 	uint32_t calculateGlobalHash(const PipelineDependency* dependency) const;

@@ -12,6 +12,7 @@
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/Stream/RemoteStream.h"
 #include "Pipeline/Agent/App/PipelineBuilderWrapper.h"
+#include "Pipeline/Agent/App/ReadOnlyObjectCache.h"
 
 namespace traktor
 {
@@ -33,7 +34,8 @@ PipelineBuilderWrapper::PipelineBuilderWrapper(
 	const std::wstring& host,
 	uint16_t streamServerPort,
 	db::Database* sourceDatabase,
-	db::Database* outputDatabase
+	db::Database* outputDatabase,
+	ReadOnlyObjectCache* objectCache
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_transport(transport)
@@ -41,6 +43,7 @@ PipelineBuilderWrapper::PipelineBuilderWrapper(
 ,	m_streamServerPort(streamServerPort)
 ,	m_sourceDatabase(sourceDatabase)
 ,	m_outputDatabase(outputDatabase)
+,	m_objectCache(objectCache)
 {
 }
 
@@ -175,27 +178,7 @@ Ref< db::Instance > PipelineBuilderWrapper::createOutputInstance(const std::wstr
 
 Ref< const ISerializable > PipelineBuilderWrapper::getObjectReadOnly(const Guid& instanceGuid)
 {
-	Ref< ISerializable > object;
-
-	// Get object from cache if already acquired.
-	{
-		m_readCacheLock.acquireReader();
-		std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
-		if (i != m_readCache.end())
-			object = i->second;
-		m_readCacheLock.releaseReader();
-	}
-
-	// If not acquired then read from database.
-	if (!object)
-	{
-		m_readCacheLock.acquireWriter();
-		object = m_sourceDatabase->getObjectReadOnly(instanceGuid);
-		m_readCache[instanceGuid] = object;
-		m_readCacheLock.releaseWriter();
-	}
-
-	return object;
+	return m_objectCache->get(instanceGuid);
 }
 
 Ref< IStream > PipelineBuilderWrapper::openFile(const Path& basePath, const std::wstring& fileName)

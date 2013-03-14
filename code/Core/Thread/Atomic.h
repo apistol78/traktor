@@ -51,6 +51,9 @@ struct T_DLLCLASS Atomic
 	/*! \brief Set value of variable. */
 	static T_ATOMIC_INLINE uint64_t exchange(uint64_t& s, uint64_t v);
 
+	/*! \brief Compare and swap. */
+	static T_ATOMIC_INLINE int32_t compareAndSwap(int32_t& value, int32_t compareTo, int32_t replaceWithIfEqual);
+
 	/*! \brief Set value of variable. */
 	template < typename T >
 	static T exchange(T& s, T v)

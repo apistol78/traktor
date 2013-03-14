@@ -230,6 +230,7 @@ bool SoundPipeline::buildOutput(
 		if (!decoder->create(sourceStream))
 		{
 			log::error << L"Failed to build sound asset, unable to create stream decoder" << Endl;
+			instance->revert();
 			return false;
 		}
 
@@ -238,6 +239,7 @@ bool SoundPipeline::buildOutput(
 		if (!encoder->create(stream))
 		{
 			log::error << L"Failed to build sound asset, unable to create stream encoder" << Endl;
+			instance->revert();
 			return false;
 		}
 

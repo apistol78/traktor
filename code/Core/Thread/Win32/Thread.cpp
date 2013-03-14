@@ -105,6 +105,7 @@ bool Thread::pause()
 
 bool Thread::resume()
 {
+	m_stopped = false;
 	return bool(ResumeThread(m_handle) != ~0UL);
 }
 

@@ -28,79 +28,23 @@ public:
 	virtual void log(const std::wstring& str) = 0;
 };
 
-/*! \brief Console log target.
- * \ingroup Core
- */
-class T_DLLCLASS LogTargetConsole : public ILogTarget
-{
-public:
-	LogTargetConsole(int32_t color);
-
-	virtual void log(const std::wstring& str);
-	
-private:
-	Semaphore m_lock;
-	int32_t m_color;
-};
-
-/*! \brief Debugger log target.
- * \ingroup Core
- */
-class T_DLLCLASS LogTargetDebug : public ILogTarget
-{
-public:
-	virtual void log(const std::wstring& str);
-
-private:
-	Semaphore m_lock;
-};
-
-/*! \brief Log stream buffer.
- * \ingroup Core
- */
-class T_DLLCLASS LogStreamBuffer : public IOutputStreamBuffer
-{
-public:
-	LogStreamBuffer(ILogTarget* target = 0);
-	
-	ILogTarget* getTarget();
-
-	void setTarget(ILogTarget* target);
-	
-	virtual int32_t getIndent() const;
-
-	virtual void setIndent(int32_t indent);
-
-	virtual int32_t getDecimals() const;
-
-	virtual void setDecimals(int32_t decimals);
-
-	virtual bool getPushIndent() const;
-
-	virtual void setPushIndent(bool pushIndent);
-
-	virtual int32_t overflow(const wchar_t* buffer, int32_t count);
-	
-private:
-	mutable ThreadLocal m_buffers;
-	Ref< ILogTarget > m_target;
-
-	IOutputStreamBuffer* getThreadLocalBuffer() const;
-};
-
 /*! \brief Log stream.
  * \ingroup Core
  */
 class T_DLLCLASS LogStream : public OutputStream
 {
 public:
-	LogStream(ILogTarget* target);
+	LogStream(ILogTarget* globalTarget);
 
 	virtual ~LogStream();
 
-	ILogTarget* getTarget();
+	ILogTarget* getGlobalTarget();
 
-	void setTarget(ILogTarget* target);
+	void setGlobalTarget(ILogTarget* target);
+
+	ILogTarget* getLocalTarget();
+
+	void setLocalTarget(ILogTarget* target);
 };
 	
 	namespace log
