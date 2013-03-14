@@ -8,18 +8,19 @@ namespace traktor
 	namespace net
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmFindServices", 0, DmFindServices, IDiscoveryMessage)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.net.DmFindServices", 1, DmFindServices, IDiscoveryMessage)
 
-DmFindServices::DmFindServices(const Guid& sessionGuid, const TypeInfo* serviceType)
-:	m_sessionGuid(sessionGuid)
-,	m_serviceType(serviceType)
+DmFindServices::DmFindServices(const Guid& managerGuid)
+:	m_managerGuid(managerGuid)
 {
 }
 
 bool DmFindServices::serialize(ISerializer& s)
 {
-	s >> Member< Guid >(L"sessionGuid", m_sessionGuid);
-	s >> MemberType(L"serviceType", m_serviceType);
+	if (s.getVersion() < 1)
+		return false;
+
+	s >> Member< Guid >(L"managerGuid", m_managerGuid);
 	return true;
 }
 

@@ -2,6 +2,7 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
+#include "Core/Thread/Acquire.h"
 #include "Net/MulticastUdpSocket.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/UdpSocket.h"
@@ -32,7 +33,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.DiscoveryManager", DiscoveryManager, Object
 DiscoveryManager::DiscoveryManager()
 :	m_threadMulticastListener(0)
 ,	m_verbose(false)
-,	m_accept(false)
 {
 }
 
@@ -68,7 +68,7 @@ bool DiscoveryManager::create(bool verbose)
 		return false;
 	}
 
-	m_sessionGuid = Guid::create();
+	m_managerGuid = Guid::create();
 	m_verbose = verbose;
 	m_threadMulticastListener->start();
 
@@ -99,103 +99,91 @@ void DiscoveryManager::destroy()
 
 void DiscoveryManager::addService(IService* service)
 {
-	m_services.push_back(service);
+	LocalService ls;
+	ls.serviceGuid = Guid::create();
+	ls.service = service;
+	m_localServices.push_back(ls);
 }
 
 void DiscoveryManager::removeService(IService* service)
 {
 }
 
-bool DiscoveryManager::beginFindServices(const TypeInfo& serviceType)
+bool DiscoveryManager::findServices(const TypeInfo& serviceType, RefArray< IService >& outServices)
 {
-	SocketAddressIPv4 address(c_discoveryMulticastGroup, c_discoveryMulticastPort);
-	SocketAddressIPv4 fromAddress;
-	m_accept = true;
-
-	// Multi-cast services request.
-	DmFindServices msgFindServices(m_sessionGuid, &serviceType);
-	if (!sendMessage(m_multicastSendSocket, address, &msgFindServices))
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_externalServicesLock);
+	outServices.clear();
+	for (std::map< Guid, ExternalService >::const_iterator i = m_externalServices.begin(); i != m_externalServices.end(); ++i)
 	{
-		m_accept = false;
-		if (m_verbose)
-			log::info << L"Discovery manager: Unable to send \"find services\" message" << Endl;
-		return false;
+		if (is_type_of(serviceType, type_of(i->second.service)))
+			outServices.push_back(i->second.service);
 	}
-
-	if (m_verbose)
-		log::info << L"Discovery manager: \"Find services\" message sent to " << address << L", waiting for replies..." << Endl;
-
 	return true;
-}
-
-void DiscoveryManager::endFindServices(RefArray< IService >& outServices)
-{
-	outServices = m_foundServices;
-	m_accept = false;
-	m_foundServices.resize(0);
 }
 
 void DiscoveryManager::threadMulticastListener()
 {
 	SocketAddressIPv4 address(c_discoveryMulticastGroup, c_discoveryMulticastPort);
 	SocketAddressIPv4 fromAddress;
+	int32_t beacon;
 
+	beacon = 0;
 	while (!m_threadMulticastListener->stopped())
 	{
+		if (--beacon <= 0)
+		{
+			DmFindServices msgFindServices(m_managerGuid);
+			if (!sendMessage(m_multicastSendSocket, address, &msgFindServices))
+			{
+				if (m_verbose)
+					log::info << L"Discovery manager: Unable to send \"find services\" message" << Endl;
+			}
+			beacon = 10;
+		}
+
 		Ref< IDiscoveryMessage > message = recvMessage(m_multicastRecvSocket, &fromAddress, 100);
 		if (!message)
 			continue;
 
 		if (DmFindServices* findServices = dynamic_type_cast< DmFindServices* >(message))
 		{
-			Guid requestingSessionGuid = findServices->getSessionGuid();
-			if (requestingSessionGuid != m_sessionGuid)
+			// Do not respond to our self.
+			Guid requestingManagerGuid = findServices->getManagerGuid();
+			if (requestingManagerGuid == m_managerGuid)
+				continue;
+
+			if (m_verbose)
+				log::info << L"Discovery manager: Got \"find services\" request from " << fromAddress << Endl;
+
+			for (std::list< LocalService >::const_iterator i = m_localServices.begin(); i != m_localServices.end(); ++i)
 			{
-				if (m_verbose)
-					log::info << L"Discovery manager: Got \"find services\" request from " << fromAddress << Endl;
-
-				const TypeInfo* serviceType = findServices->getServiceType();
-				if (serviceType)
-				{
-					if (m_verbose)
-						log::info << L"Discovery manager: Find services of \"" << serviceType->getName() << L"\" type" << Endl;
-
-					for (RefArray< IService >::const_iterator i = m_services.begin(); i != m_services.end(); ++i)
-					{
-						if (is_type_of(*serviceType, type_of(*i)))
-						{
-							if (m_verbose)
-								log::info << L"Discovery manager: Found registered local service of requested type" << Endl;
-
-							DmServiceInfo serviceInfo(requestingSessionGuid, *i);
-							if (!sendMessage(m_multicastSendSocket, address, &serviceInfo))
-								log::error << L"Unable to reply service to requesting manager" << Endl;
-							else if (m_verbose)
-								log::info << L"Discovery manager: Reply sent to " << address << Endl;
-						}
-					}
-				}
-				else
-					log::error << L"Got find services message with invalid service type" << Endl;
+				DmServiceInfo serviceInfo(requestingManagerGuid, i->serviceGuid, i->service);
+				if (!sendMessage(m_multicastSendSocket, address, &serviceInfo))
+					log::error << L"Unable to reply service to requesting manager" << Endl;
+				else if (m_verbose)
+					log::info << L"Discovery manager: Reply sent to " << address << Endl;
 			}
 		}
 		else if (DmServiceInfo* serviceInfo = dynamic_type_cast< DmServiceInfo* >(message))
 		{
-			if (serviceInfo->getSessionGuid() == m_sessionGuid)
-			{
-				if (serviceInfo->getService())
-				{
-					if (m_verbose)
-						log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
+			// Response to an query issued from me?
+			if (serviceInfo->getManagerGuid() != m_managerGuid)
+				continue;
 
-					if (m_accept)
-						m_foundServices.push_back(serviceInfo->getService());
-				}
-				else
-				{
-					if (m_verbose)
-						log::warning << L"Discovery manager: Got invalid \"service info\" from " << fromAddress << Endl;
-				}
+			if (serviceInfo->getService())
+			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_externalServicesLock);
+
+				if (m_verbose)
+					log::info << L"Discovery manager: Got \"service info\" from " << fromAddress << Endl;
+
+				m_externalServices[serviceInfo->getServiceGuid()].tick = 0;
+				m_externalServices[serviceInfo->getServiceGuid()].service = serviceInfo->getService();
+			}
+			else
+			{
+				if (m_verbose)
+					log::warning << L"Discovery manager: Got invalid \"service info\" from " << fromAddress << Endl;
 			}
 		}
 		else

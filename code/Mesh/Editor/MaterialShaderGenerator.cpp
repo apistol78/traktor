@@ -5,6 +5,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Model/Material.h"
+#include "Render/Editor/Shader/ShaderGraphValidator.h"
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
@@ -242,6 +243,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 		}
 	}
 
+	render::ShaderGraphValidator(materialShaderGraph).validateIntegrity();
 	return materialShaderGraph;
 }
 

@@ -301,7 +301,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	);
 #endif
 
-	traktor::log::info << L"Traktor RemoteServer 1.5" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.7" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -321,7 +321,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.6 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.7 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
 #endif
 

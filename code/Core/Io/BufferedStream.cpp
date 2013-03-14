@@ -155,8 +155,7 @@ int BufferedStream::read(void* block, int nbytes)
 	uint8_t* out = static_cast< uint8_t* >(block);
 	uint8_t* end = out + nbytes;
 
-	int32_t bufferSize = (nbytes > m_internalBufferSize / 2) ? m_internalBufferSize : m_internalBufferSize / 2;
-	if (nbytes <= bufferSize)
+	if (nbytes <= m_internalBufferSize)
 	{
 		// Read and copy until number of desired bytes read is meet.
 		while (out < end)
@@ -164,7 +163,7 @@ int BufferedStream::read(void* block, int nbytes)
 			if (m_readBufCnt[0] >= m_readBufCnt[1])
 			{
 				// Read into buffer.
-				int32_t nread = m_stream->read(m_readBuf.ptr(), bufferSize);
+				int32_t nread = m_stream->read(m_readBuf.ptr(), m_internalBufferSize);
 				if (nread <= 0)
 					break;
 				m_readBufCnt[0] = 0;

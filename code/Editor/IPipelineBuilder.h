@@ -42,6 +42,13 @@ class T_DLLCLASS IPipelineBuilder : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum BuildResult
+	{
+		BrSucceeded = 0,
+		BrSucceededWithWarnings = 1,
+		BrFailed = 2
+	};
+
 	struct IListener
 	{
 		virtual ~IListener() {}
@@ -57,7 +64,8 @@ public:
 			uint32_t core,
 			uint32_t index,
 			uint32_t count,
-			const PipelineDependency* dependency
+			const PipelineDependency* dependency,
+			BuildResult result
 		) const = 0;
 	};
 

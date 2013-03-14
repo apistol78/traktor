@@ -33,9 +33,9 @@ public:
 
 	void end();
 
-	void beginTask(int32_t lane, const std::wstring& text);
+	void beginTask(int32_t lane, const std::wstring& text, const Color4ub& color);
 
-	void endTask(int32_t lane);
+	void endTask(int32_t lane, const Color4ub& color);
 
 private:
 	enum { MaxLaneCount = 32 };
@@ -45,6 +45,7 @@ private:
 		double time0;
 		double time1;
 		std::wstring text;
+		Color4ub color;
 
 		Task()
 		:	time0(-1.0)

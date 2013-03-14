@@ -59,18 +59,20 @@ void BuildChartControl::end()
 	m_time = m_timer.getElapsedTime();
 }
 
-void BuildChartControl::beginTask(int32_t lane, const std::wstring& text)
+void BuildChartControl::beginTask(int32_t lane, const std::wstring& text, const Color4ub& color)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
 	m_lanes[lane].push_back(Task());
 	m_lanes[lane].back().time0 = m_timer.getElapsedTime();
 	m_lanes[lane].back().text = text;
+	m_lanes[lane].back().color = color;
 }
 
-void BuildChartControl::endTask(int32_t lane)
+void BuildChartControl::endTask(int32_t lane, const Color4ub& color)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lanesLock);
 	m_lanes[lane].back().time1 = m_timer.getElapsedTime();
+	m_lanes[lane].back().color = color;
 }
 
 void BuildChartControl::eventPaint(Event* event)
@@ -119,7 +121,7 @@ void BuildChartControl::eventPaint(Event* event)
 				);
 
 				canvas.setForeground(Color4ub(220, 255, 220, 255));
-				canvas.setBackground(Color4ub(80, 255, 80, 255));
+				canvas.setBackground(i->color);
 				canvas.fillGradientRect(rcTask);
 
 				canvas.setForeground(Color4ub(0, 0, 0, 80));
@@ -143,7 +145,12 @@ void BuildChartControl::eventPaint(Event* event)
 	canvas.drawLine(rcTime.left, rcTime.top, rcTime.right, rcTime.top);
 
 	double time = (rcTime.right - rcTime.left) / m_scale;
-	for (int32_t i = 0; i < int32_t(ceil(time)); ++i)
+	
+	int32_t x0 = 0;
+	int32_t x1 = int32_t(ceil(time));
+	int32_t xs = max(1, (x1 - x0) / 10);
+
+	for (int32_t i = x0; i < x1; i += xs)
 	{
 		int32_t x = int32_t(i * m_scale);
 		canvas.drawLine(x, rcTime.bottom - 4, x, rcTime.bottom);
@@ -195,7 +202,7 @@ void BuildChartControl::eventMouseWheel(Event* event)
 	double pivot = mouseEvent->getPosition().x / m_scale + m_offset;
 
 	m_scale += mouseEvent->getWheelRotation() * 4.0;
-	m_scale = clamp(m_scale, 4.0, 1000.0);
+	m_scale = clamp(m_scale, 1.0, 1000.0);
 
 	m_offset = pivot - mouseEvent->getPosition().x / m_scale;
 

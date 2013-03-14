@@ -19,6 +19,7 @@ class Thread;
 	namespace net
 	{
 
+class DiscoveryManager;
 class StreamServer;
 
 	}
@@ -156,6 +157,7 @@ private:
 	RefArray< IEditorPluginFactory > m_editorPluginFactories;
 	RefArray< IEditorTool > m_editorTools;
 	RefArray< EditorPluginSite > m_editorPluginSites;
+	Ref< net::DiscoveryManager > m_discoveryManager;
 	Ref< net::StreamServer > m_streamServer;
 	Ref< db::ConnectionManager > m_dbConnectionManager;
 	Ref< PipelineAgentsManager > m_agentsManager;

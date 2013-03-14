@@ -471,7 +471,7 @@ void Tab::eventPaint(Event* event)
 	
 	// Draw close button.
 	if (m_closeButton && m_pages.size())
-		drawClose(canvas, rcInner.right - 16, (y0 + y1) / 2 + 8);
+		drawClose(canvas, rcInner.right - 16, (y0 + y1 - 6) / 2);
 	
 	// White separator.
 	canvas.setForeground(Color4ub(255, 255, 255));

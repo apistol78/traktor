@@ -51,9 +51,12 @@ class T_DLLCLASS PipelineAgentsManager : public Object
 
 public:
 	PipelineAgentsManager(
+		net::DiscoveryManager* discoveryManager,
 		net::StreamServer* streamServer,
 		db::ConnectionManager* dbConnectionManager
 	);
+
+	virtual ~PipelineAgentsManager();
 
 	bool create(
 		const PropertyGroup* settings,
@@ -70,10 +73,10 @@ public:
 	void waitUntilAllIdle();
 
 private:
+	Ref< net::DiscoveryManager > m_discoveryManager;
 	Ref< net::StreamServer > m_streamServer;
 	Ref< db::ConnectionManager > m_dbConnectionManager;
 	Guid m_sessionId;
-	Ref< net::DiscoveryManager > m_discoveryManager;
 	Ref< const PropertyGroup > m_settings;
 	Thread* m_threadUpdate;
 	mutable Semaphore m_lock;

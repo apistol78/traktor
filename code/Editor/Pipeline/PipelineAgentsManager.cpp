@@ -24,14 +24,21 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineAgentsManager", PipelineAgentsManager, Object)
 
 PipelineAgentsManager::PipelineAgentsManager(
+	net::DiscoveryManager* discoveryManager,
 	net::StreamServer* streamServer,
 	db::ConnectionManager* dbConnectionManager
 )
-:	m_streamServer(streamServer)
+:	m_discoveryManager(discoveryManager)
+,	m_streamServer(streamServer)
 ,	m_dbConnectionManager(dbConnectionManager)
 ,	m_sessionId(Guid::create())
 ,	m_threadUpdate(0)
 {
+}
+
+PipelineAgentsManager::~PipelineAgentsManager()
+{
+	destroy();
 }
 
 bool PipelineAgentsManager::create(
@@ -41,10 +48,6 @@ bool PipelineAgentsManager::create(
 )
 {
 	m_settings = settings;
-
-	m_discoveryManager = new net::DiscoveryManager();
-	if (!m_discoveryManager->create(false))
-		return false;
 
 	m_dbConnectionManager->setConnectionString(m_sessionId.format() + L"|Source", sourceDatabaseCs.format());
 	m_dbConnectionManager->setConnectionString(m_sessionId.format() + L"|Output", outputDatabaseCs.format());
@@ -58,8 +61,6 @@ bool PipelineAgentsManager::create(
 
 void PipelineAgentsManager::destroy()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	if (m_threadUpdate)
 	{
 		m_threadUpdate->stop();
@@ -67,9 +68,10 @@ void PipelineAgentsManager::destroy()
 		m_threadUpdate = 0;
 	}
 
-	m_agents.clear();
-
-	safeDestroy(m_discoveryManager);
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+		m_agents.clear();
+	}
 
 	if (m_dbConnectionManager)
 	{
@@ -79,6 +81,7 @@ void PipelineAgentsManager::destroy()
 	}
 
 	m_streamServer = 0;
+	m_discoveryManager = 0;
 }
 
 PipelineAgent* PipelineAgentsManager::getIdleAgent()
@@ -152,34 +155,8 @@ void PipelineAgentsManager::threadUpdate()
 	RefArray< net::NetworkService > services;
 	while (!m_threadUpdate->stopped())
 	{
-		// Discover agent services.
-		m_discoveryManager->beginFindServices< net::NetworkService >();
-		
-		// Wait for agent activity.
-		net::SocketSet agentSocketSet;
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-			for (std::map< std::wstring, Ref< PipelineAgent > >::iterator i = m_agents.begin(); i != m_agents.end(); ++i)
-			{
-				if (i->second->getTransport()->connected())
-					agentSocketSet.add(i->second->getTransport()->getSocket());
-			}
-		}
-
-		net::SocketSet agentResultSet;
-		if (agentSocketSet.select(true, false, false, 1000, agentResultSet) > 0)
-		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-			for (std::map< std::wstring, Ref< PipelineAgent > >::iterator i = m_agents.begin(); i != m_agents.end(); ++i)
-			{
-				if (i->second->getTransport()->connected())
-					i->second->update();
-			}
-			m_eventAgentsUpdated.broadcast();
-		}
-
-		// Get found agents; establish local agent proxies for each new agent found.
-		m_discoveryManager->endFindServices< net::NetworkService >(services);
+		// Find agents; establish local agent proxies for each new agent found.
+		m_discoveryManager->findServices< net::NetworkService >(services);
 		for (RefArray< net::NetworkService >::const_iterator i = services.begin(); i != services.end(); ++i)
 		{
 			if ((*i)->getType() != L"Pipeline/Agent")
@@ -219,6 +196,34 @@ void PipelineAgentsManager::threadUpdate()
 				}
 			}
 		}
+
+		// Wait for agent activity.
+		net::SocketSet agentSocketSet;
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			for (std::map< std::wstring, Ref< PipelineAgent > >::iterator i = m_agents.begin(); i != m_agents.end(); ++i)
+			{
+				if (i->second->getTransport()->connected())
+					agentSocketSet.add(i->second->getTransport()->getSocket());
+			}
+		}
+
+		if (agentSocketSet.count() > 0)
+		{
+			net::SocketSet agentResultSet;
+			if (agentSocketSet.select(true, false, false, 100, agentResultSet) > 0)
+			{
+				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+				for (std::map< std::wstring, Ref< PipelineAgent > >::iterator i = m_agents.begin(); i != m_agents.end(); ++i)
+				{
+					if (i->second->getTransport()->connected())
+						i->second->update();
+				}
+				m_eventAgentsUpdated.broadcast();
+			}
+		}
+		else
+			m_threadUpdate->sleep(100);
 	}
 }
 

@@ -1,5 +1,5 @@
+#include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
-#include "Core/Io/IStream.h"
 #include "Core/Io/Reader.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
@@ -25,6 +25,35 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+class LogTargetFilter : public ILogTarget
+{
+public:
+	LogTargetFilter(ILogTarget* target)
+	:	m_target(target)
+	,	m_count(0)
+	{
+	}
+
+	virtual void log(const std::wstring& str)
+	{
+		++m_count;
+		if (m_target)
+			m_target->log(str);
+	}
+
+	ILogTarget* getTarget() const { return m_target; }
+
+	uint32_t getCount() const { return m_count; }
+
+private:
+	Ref< ILogTarget > m_target;
+	uint32_t m_count;
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineBuilder", PipelineBuilder, IPipelineBuilder)
 
@@ -323,17 +352,20 @@ Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instan
 Ref< IStream > PipelineBuilder::openFile(const Path& basePath, const std::wstring& fileName)
 {
 	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath + Path(fileName));
-	return FileSystem::getInstance().open(filePath, File::FmRead);
+	Ref< IStream > fileStream = FileSystem::getInstance().open(filePath, File::FmRead);
+	return fileStream ? new BufferedStream(fileStream) : 0;
 }
 
 Ref< IStream > PipelineBuilder::createTemporaryFile(const std::wstring& fileName)
 {
-	return FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
+	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmWrite);
+	return fileStream ? new BufferedStream(fileStream) : 0;
 }
 
 Ref< IStream > PipelineBuilder::openTemporaryFile(const std::wstring& fileName)
 {
-	return FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
+	Ref< IStream > fileStream = FileSystem::getInstance().open(L"data/temp/" + fileName, File::FmRead);
+	return fileStream ? new BufferedStream(fileStream) : 0;
 }
 
 Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, const Guid& guid)
@@ -422,10 +454,9 @@ void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool reb
 		dependency->reason |= PbrForced;
 }
 
-bool PipelineBuilder::performBuild(PipelineDependency* dependency)
+IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* dependency)
 {
 	IPipelineDb::DependencyHash currentDependencyHash;
-	bool result = true;
 
 	// Create hash entry.
 	currentDependencyHash.pipelineVersion = type_of(dependency->pipeline).getVersion();
@@ -436,87 +467,95 @@ bool PipelineBuilder::performBuild(PipelineDependency* dependency)
 	{
 		if ((dependency->reason & PbrSourceModified) != 0)
 			m_db->setDependency(dependency->outputGuid, currentDependencyHash);
-		return true;
+		return BrSucceeded;
 	}
 
 	// Check if we need to build asset; check the entire dependency chain (will update reason if dependency dirty).
-	if (needBuild(dependency))
+	if (!needBuild(dependency))
+		return BrSucceeded;
+
+	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
+
+	log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << type_name(dependency->pipeline) << L")..." << Endl;
+	log::info << IncreaseIndent;
+
+	// Get output instances from cache.
+	if (m_cache)
 	{
-		T_ANONYMOUS_VAR(ScopeIndent)(log::info);
-
-		log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << type_name(dependency->pipeline) << L")..." << Endl;
-		log::info << IncreaseIndent;
-
-		// Get output instances from cache.
-		if (m_cache)
+		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash.hash, currentDependencyHash.pipelineVersion))
 		{
-			result = getInstancesFromCache(dependency->outputGuid, currentDependencyHash.hash, currentDependencyHash.pipelineVersion);
-			if (result)
-			{
-				log::info << L"Cached instance(s) used" << Endl;
-				m_db->setDependency(dependency->outputGuid, currentDependencyHash);
-			}
+			log::info << L"Cached instance(s) used" << Endl;
+			m_db->setDependency(dependency->outputGuid, currentDependencyHash);
+			return BrSucceeded;
 		}
-		else
-			result = false;
-
-		if (!result)
-		{
-			// Build output instances; keep an array of written instances as we
-			// need them to update the cache.
-			RefArray< db::Instance > builtInstances;
-			m_buildInstances.set(&builtInstances);
-
-			Timer timer;
-			timer.start();
-
-			result = dependency->pipeline->buildOutput(
-				this,
-				dependency->sourceAsset,
-				dependency->sourceAssetHash,
-				dependency->outputPath,
-				dependency->outputGuid,
-				0,
-				dependency->reason
-			);
-
-			double buildTime = timer.getElapsedTime();
-
-			if (result)
-			{
-				//{
-				//	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
-				//	m_buildTimes[&type_of(dependency->pipeline)] += buildTime;
-				//}
-
-				if (!builtInstances.empty())
-				{
-					log::info << L"Instance(s) built:" << Endl;
-					log::info << IncreaseIndent;
-
-					for (RefArray< db::Instance >::const_iterator j = builtInstances.begin(); j != builtInstances.end(); ++j)
-						log::info << L"\"" << (*j)->getPath() << L"\" " << (*j)->getGuid().format() << Endl;
-
-					if (m_cache)
-						putInstancesInCache(
-							dependency->outputGuid,
-							currentDependencyHash.hash,
-							currentDependencyHash.pipelineVersion,
-							builtInstances
-						);
-
-					log::info << DecreaseIndent;
-				}
-
-				m_db->setDependency(dependency->outputGuid, currentDependencyHash);
-			}
-		}
-
-		log::info << DecreaseIndent;
-		log::info << (result ? L"Build successful" : L"Build failed") << Endl;
 	}
 
-	return result;
+	// Build output instances; keep an array of written instances as we
+	// need them to update the cache.
+	RefArray< db::Instance > builtInstances;
+	m_buildInstances.set(&builtInstances);
+
+	LogTargetFilter infoTarget(log::info.getLocalTarget());
+	LogTargetFilter warningTarget(log::warning.getLocalTarget());
+	LogTargetFilter errorTarget(log::error.getLocalTarget());
+
+	log::info.setLocalTarget(&infoTarget);
+	log::warning.setLocalTarget(&warningTarget);
+	log::error.setLocalTarget(&errorTarget);
+
+	Timer timer;
+	timer.start();
+
+	bool result = dependency->pipeline->buildOutput(
+		this,
+		dependency->sourceAsset,
+		dependency->sourceAssetHash,
+		dependency->outputPath,
+		dependency->outputGuid,
+		0,
+		dependency->reason
+	);
+
+	double buildTime = timer.getElapsedTime();
+
+	log::info.setLocalTarget(infoTarget.getTarget());
+	log::warning.setLocalTarget(warningTarget.getTarget());
+	log::error.setLocalTarget(errorTarget.getTarget());
+
+	if (errorTarget.getCount() > 0)
+		result = false;
+
+	if (result)
+	{
+		if (!builtInstances.empty())
+		{
+			log::info << L"Instance(s) built:" << Endl;
+			log::info << IncreaseIndent;
+
+			for (RefArray< db::Instance >::const_iterator j = builtInstances.begin(); j != builtInstances.end(); ++j)
+				log::info << L"\"" << (*j)->getPath() << L"\" " << (*j)->getGuid().format() << Endl;
+
+			if (m_cache)
+				putInstancesInCache(
+					dependency->outputGuid,
+					currentDependencyHash.hash,
+					currentDependencyHash.pipelineVersion,
+					builtInstances
+				);
+
+			log::info << DecreaseIndent;
+		}
+
+		m_db->setDependency(dependency->outputGuid, currentDependencyHash);
+	}
+
+	log::info << DecreaseIndent;
+	log::info << (result ? L"Build successful" : L"Build failed") << Endl;
+
+	if (result)
+		return warningTarget.getCount() > 0 ? BrSucceededWithWarnings : BrSucceeded;
+	else
+		return BrFailed;
 }
 
 uint32_t PipelineBuilder::calculateGlobalHash(const PipelineDependency* dependency) const
@@ -633,7 +672,8 @@ void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDepen
 				*i
 			);
 
-		if (performBuild(*i))
+		BuildResult result = performBuild(*i);
+		if (result == BrSucceeded || result == BrSucceededWithWarnings)
 			++m_succeeded;
 		else
 			++m_failed;
@@ -643,7 +683,8 @@ void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDepen
 				core,
 				m_progress,
 				m_progressEnd,
-				*i
+				*i,
+				BrSucceeded
 			);
 
 		++m_progress;

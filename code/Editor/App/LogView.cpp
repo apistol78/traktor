@@ -100,34 +100,26 @@ bool LogView::create(ui::Widget* parent)
 	m_popup->add(new ui::MenuItem(L"-"));
 	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.Clear"), i18n::Text(L"LOG_CLEAR_ALL")));
 
-	LogStreamBuffer* infoBuffer = static_cast< LogStreamBuffer* >(log::info.getBuffer());
-	LogStreamBuffer* warningBuffer = static_cast< LogStreamBuffer* >(log::warning.getBuffer());
-	LogStreamBuffer* errorBuffer = static_cast< LogStreamBuffer* >(log::error.getBuffer());
-
-	m_originalTargets[0] = infoBuffer->getTarget();
-	m_originalTargets[1] = warningBuffer->getTarget();
-	m_originalTargets[2] = errorBuffer->getTarget();
+	m_originalTargets[0] = log::info.getGlobalTarget();
+	m_originalTargets[1] = log::warning.getGlobalTarget();
+	m_originalTargets[2] = log::error.getGlobalTarget();
 
 	m_newTargets[0] = new LogListTarget(m_log, ui::custom::LogList::LvInfo, m_originalTargets[0]);
 	m_newTargets[1] = new LogListTarget(m_log, ui::custom::LogList::LvWarning, m_originalTargets[1]);
 	m_newTargets[2] = new LogListTarget(m_log, ui::custom::LogList::LvError, m_originalTargets[2]);
 
-	infoBuffer->setTarget(m_newTargets[0]);
-	warningBuffer->setTarget(m_newTargets[1]);
-	errorBuffer->setTarget(m_newTargets[2]);
+	log::info.setGlobalTarget(m_newTargets[0]);
+	log::warning.setGlobalTarget(m_newTargets[1]);
+	log::error.setGlobalTarget(m_newTargets[2]);
 
 	return true;
 }
 
 void LogView::destroy()
 {
-	LogStreamBuffer* infoBuffer = static_cast< LogStreamBuffer* >(log::info.getBuffer());
-	LogStreamBuffer* warningBuffer = static_cast< LogStreamBuffer* >(log::warning.getBuffer());
-	LogStreamBuffer* errorBuffer = static_cast< LogStreamBuffer* >(log::error.getBuffer());
-
-	errorBuffer->setTarget(m_originalTargets[2]);
-	warningBuffer->setTarget(m_originalTargets[1]);
-	infoBuffer->setTarget(m_originalTargets[0]);
+	log::error.setGlobalTarget(m_originalTargets[2]);
+	log::warning.setGlobalTarget(m_originalTargets[1]);
+	log::info.setGlobalTarget(m_originalTargets[0]);
 
 	m_popup->destroy();
 

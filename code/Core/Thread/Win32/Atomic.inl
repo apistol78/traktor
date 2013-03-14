@@ -60,4 +60,14 @@ uint64_t Atomic::exchange(uint64_t& s, uint64_t v)
 #endif
 }
 
+int32_t Atomic::compareAndSwap(int32_t& value, int32_t compareTo, int32_t replaceWithIfEqual)
+{
+#if !defined(WINCE)
+	_InterlockedCompareExchange((long volatile*)&value, replaceWithIfEqual, compareTo);
+#else
+	InterlockedCompareExchange((long volatile*)&value, replaceWithIfEqual, compareTo);
+#endif
+	return value;
+}
+
 }

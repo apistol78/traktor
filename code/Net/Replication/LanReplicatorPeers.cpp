@@ -19,15 +19,13 @@ LanReplicatorPeers::LanReplicatorPeers()
 
 bool LanReplicatorPeers::create()
 {
-	net::Network::initialize();
-
 	// Create discovery manager.
 	m_discoveryManager = new net::DiscoveryManager();
 	m_discoveryManager->create(false);
 
 	// Find peers and connect to them.
 	RefArray< net::NetworkService > peerServices;
-	m_discoveryManager->findServices< net::NetworkService >(peerServices, 1000);
+	m_discoveryManager->findServices< net::NetworkService >(peerServices);
 
 	// Determine safe port and id; need to be exclusive as we want to be able to run
 	// multiple clients on same computer.
@@ -119,7 +117,6 @@ bool LanReplicatorPeers::create()
 void LanReplicatorPeers::destroy()
 {
 	safeDestroy(m_discoveryManager);
-	net::Network::finalize();
 }
 
 void LanReplicatorPeers::update()

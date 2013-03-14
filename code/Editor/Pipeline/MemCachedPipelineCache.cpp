@@ -10,9 +10,8 @@
 #include "Editor/Pipeline/MemCachedProto.h"
 #include "Editor/Pipeline/MemCachedGetStream.h"
 #include "Editor/Pipeline/MemCachedPutStream.h"
-#include "Net/Network.h"
-#include "Net/TcpSocket.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/TcpSocket.h"
 
 namespace traktor
 {
@@ -36,13 +35,11 @@ MemCachedPipelineCache::MemCachedPipelineCache()
 :	m_accessRead(true)
 ,	m_accessWrite(true)
 {
-	net::Network::initialize();
 }
 
 MemCachedPipelineCache::~MemCachedPipelineCache()
 {
 	destroy();
-	net::Network::finalize();
 }
 
 bool MemCachedPipelineCache::create(const PropertyGroup* settings)

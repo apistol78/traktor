@@ -68,6 +68,7 @@
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
 #include "I18N/Format.h"
+#include "Net/Discovery/DiscoveryManager.h"
 #include "Net/Stream/StreamServer.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -153,10 +154,11 @@ struct StatusListener : public IPipelineBuilder::IListener
 		uint32_t core,
 		uint32_t index,
 		uint32_t count,
-		const PipelineDependency* dependency
+		const PipelineDependency* dependency,
+		IPipelineBuilder::BuildResult result
 	) const
 	{
-		m_buildView->endBuild(core);
+		m_buildView->endBuild(core, result);
 	}
 };
 
@@ -521,6 +523,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_buildProgress->create(m_statusBar);
 	m_buildProgress->setVisible(false);
 
+	// Create shared discovery manager.
+	m_discoveryManager = new net::DiscoveryManager();
+	m_discoveryManager->create(false);
+	setStoreObject(L"DiscoveryManager", m_discoveryManager);
+
 	// Create editor page factories.
 	std::vector< const TypeInfo* > editorPageFactoryTypes;
 	type_of< IEditorPageFactory >().findAllOf(editorPageFactoryTypes, false);
@@ -694,6 +701,10 @@ void EditorForm::destroy()
 	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		(*i)->destroy();
 	m_editorPluginSites.resize(0);
+
+	// Destroy discovery manager.
+	safeDestroy(m_discoveryManager);
+	setStoreObject(L"DiscoveryManager", 0);
 
 	// Destroy shortcut table.
 	m_shortcutTable->destroy();
@@ -1178,7 +1189,7 @@ bool EditorForm::createWorkspace()
 	m_dbConnectionManager->create(35000);
 
 	// Create pipeline agent manager.
-	m_agentsManager = new PipelineAgentsManager(m_streamServer, m_dbConnectionManager);
+	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);
 	m_agentsManager->create(
 		m_mergedSettings,
 		sourceDatabase,
@@ -1267,7 +1278,7 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	m_dbConnectionManager->create(35000);
 
 	// Create pipeline agent manager.
-	m_agentsManager = new PipelineAgentsManager(m_streamServer, m_dbConnectionManager);
+	m_agentsManager = new PipelineAgentsManager(m_discoveryManager, m_streamServer, m_dbConnectionManager);
 	m_agentsManager->create(
 		m_mergedSettings,
 		sourceDatabase,

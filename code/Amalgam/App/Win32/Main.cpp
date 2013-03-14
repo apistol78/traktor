@@ -178,9 +178,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 			Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
 
-			log::info   .setTarget(logTarget);
-			log::warning.setTarget(logTarget);
-			log::error  .setTarget(logTarget);
+			log::info   .setGlobalTarget(logTarget);
+			log::warning.setGlobalTarget(logTarget);
+			log::error  .setGlobalTarget(logTarget);
 
 			log::info << L"Log file \"Application.log\" created" << Endl;
 		}
@@ -190,9 +190,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 #endif
 
 	Ref< LogTailTarget > logTail = new LogTailTarget();
-	log::info   .setTarget(new LogDualTarget(logTail, log::info   .getTarget()));
-	log::warning.setTarget(new LogDualTarget(logTail, log::warning.getTarget()));
-	log::error  .setTarget(new LogDualTarget(logTail, log::error  .getTarget()));
+	log::info   .setGlobalTarget(new LogDualTarget(logTail, log::info   .getGlobalTarget()));
+	log::warning.setGlobalTarget(new LogDualTarget(logTail, log::warning.getGlobalTarget()));
+	log::error  .setGlobalTarget(new LogDualTarget(logTail, log::error  .getGlobalTarget()));
 
 	// Ensure FP is in known state.
 	_controlfp(_PC_24, _MCW_PC);
@@ -312,9 +312,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 #if !defined(_DEBUG)
 	if (logFile)
 	{
-		log::info   .setTarget(0);
-		log::warning.setTarget(0);
-		log::error  .setTarget(0);
+		log::info   .setGlobalTarget(0);
+		log::warning.setGlobalTarget(0);
+		log::error  .setGlobalTarget(0);
 
 		logFile->close();
 		logFile;

@@ -4,6 +4,7 @@
 #include "Core/Math/MathUtils.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Core/Timer/Timer.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/SocketStream.h"
@@ -59,10 +60,7 @@ void StreamServer::destroy()
 	}
 
 	for (std::list< Thread* >::iterator i = m_clientThreads.begin(); i != m_clientThreads.end(); ++i)
-	{
-		(*i)->stop();
-		ThreadManager::getInstance().destroy(*i);
-	}
+		ThreadPool::getInstance().join(*i);
 
 	m_clientThreads.clear();
 	m_streams.clear();
@@ -97,28 +95,13 @@ void StreamServer::threadServer()
 			if (!clientSocket)
 				continue;
 
-			Thread* clientThread = ThreadManager::getInstance().create(
-				makeFunctor< StreamServer, Ref< TcpSocket > >(this, &StreamServer::threadClient, clientSocket),
-				L"Stream"
+			Thread* clientThread = ThreadPool::getInstance().spawn(
+				makeFunctor< StreamServer, Ref< TcpSocket > >(this, &StreamServer::threadClient, clientSocket)
 			);
 			if (!clientThread)
 				continue;
 
-			clientThread->start(Thread::Above);
 			m_clientThreads.push_back(clientThread);
-		}
-		else
-		{
-			for (std::list< Thread* >::iterator i = m_clientThreads.begin(); i != m_clientThreads.end(); )
-			{
-				if ((*i)->finished())
-				{
-					ThreadManager::getInstance().destroy(*i);
-					i = m_clientThreads.erase(i);
-				}
-				else
-					++i;
-			}
 		}
 	}	
 }

@@ -1,9 +1,12 @@
 #ifndef traktor_net_DiscoveryManager_H
 #define traktor_net_DiscoveryManager_H
 
+#include <list>
+#include <map>
 #include "Core/Guid.h"
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 
@@ -44,43 +47,37 @@ public:
 
 	void removeService(IService* service);
 
-	bool beginFindServices(const TypeInfo& serviceType);
-	
-	void endFindServices(RefArray< IService >& outServices);
+	bool findServices(const TypeInfo& serviceType, RefArray< IService >& outServices);
 	
 	template < typename ServiceType >
-	bool beginFindServices()
+	bool findServices(RefArray< ServiceType >& outServices)
 	{
-		return beginFindServices(type_of< ServiceType >());
-	}
-
-	template < typename ServiceType >
-	void endFindServices(RefArray< ServiceType >& outServices)
-	{
-		endFindServices((RefArray< IService >&)outServices);
-	}
-
-	template < typename ServiceType >
-	bool findServices(RefArray< ServiceType >& outServices, int32_t timeout = 1000)
-	{
-		if (!beginFindServices< ServiceType >())
-			return false;
-
-		ThreadManager::getInstance().getCurrentThread()->sleep(timeout);
-
-		endFindServices< ServiceType >(outServices);
-		return true;
+		return findServices(type_of< ServiceType >(), (RefArray< IService >&)outServices);
 	}
 
 private:
+	struct LocalService
+	{
+		Guid serviceGuid;
+		Ref< IService > service;
+	};
+
+	struct ExternalService
+	{
+		int32_t tick;
+		Ref< IService > service;
+	};
+
 	Ref< UdpSocket > m_multicastSendSocket;
 	Ref< MulticastUdpSocket > m_multicastRecvSocket;
 	Thread* m_threadMulticastListener;
-	Guid m_sessionGuid;
+	
+	Guid m_managerGuid;
 	bool m_verbose;
-	bool m_accept;
-	RefArray< IService > m_services;
-	RefArray< IService > m_foundServices;
+	
+	std::list< LocalService > m_localServices;
+	std::map< Guid, ExternalService > m_externalServices;
+	Semaphore m_externalServicesLock;
 
 	void threadMulticastListener();
 

@@ -112,6 +112,7 @@ bool Transaction::commit(Context* context)
 	else
 		T_DEBUG(L"Transaction \"" << m_transactionGuid.format() << L"\" failed to commit");
 
+	m_actions.clear();
 	return result;
 }
 
