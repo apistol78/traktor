@@ -848,9 +848,6 @@ void Application::threadDatabase()
 		for (uint32_t i = 0; i < c_databasePollInterval && !m_threadDatabase->stopped(); ++i)
 			m_threadDatabase->sleep(100);
 
-		if (!m_database)
-			continue;
-
 		eventIds.resize(0);
 		while (m_database->getEvent(event, remote))
 		{
@@ -863,7 +860,7 @@ void Application::threadDatabase()
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockUpdate);
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockRender);
 
-			resource::IResourceManager* resourceManager = m_resourceServer->getResourceManager();
+			Ref< resource::IResourceManager > resourceManager = m_resourceServer->getResourceManager();
 			if (resourceManager)
 			{
 				for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)

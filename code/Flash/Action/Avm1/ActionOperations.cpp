@@ -983,7 +983,7 @@ void opx_callFunction(ExecutionState& state)
 		ActionFunction* fn = functionObject.getObject< ActionFunction >();
 		T_ASSERT (fn);
 
-		stack.push(fn->call(state.frame, state.self));
+		stack.push(fn->call(state.frame));
 		return;
 	}
 

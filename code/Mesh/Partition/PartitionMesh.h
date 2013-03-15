@@ -53,7 +53,6 @@ public:
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
 		Aabb3 boundingBox;
-		bool opaque;
 	};
 
 	const Aabb3& getBoundingBox() const;

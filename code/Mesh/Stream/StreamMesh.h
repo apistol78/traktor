@@ -83,7 +83,6 @@ private:
 	{
 		render::handle_t shaderTechnique;
 		std::wstring meshPart;
-		bool opaque;
 	};
 
 	resource::Proxy< render::Shader > m_shader;

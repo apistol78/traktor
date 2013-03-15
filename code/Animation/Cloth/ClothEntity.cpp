@@ -220,13 +220,16 @@ void ClothEntity::render(
 	renderBlock->programParams->beginParameters(renderContext);
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
-		true,
+		m_shader->isOpaque(),
 		m_transform.toMatrix44(),
 		m_aabb
 	);
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(render::RfOpaque, renderBlock);
+	renderContext->draw(
+		m_shader->isOpaque() ? render::RfOpaque : render::RfAlphaBlend,
+		renderBlock
+	);
 }
 
 void ClothEntity::destroy()

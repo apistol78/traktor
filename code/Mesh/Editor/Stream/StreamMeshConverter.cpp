@@ -182,7 +182,6 @@ bool StreamMeshConverter::convert(
 			StreamMeshResource::Part part;
 			part.shaderTechnique = j->shaderTechnique;
 			part.meshPart = i->first;
-			part.opaque = j->opaque;
 			streamMeshResource->m_parts[j->worldTechnique].push_back(part);
 		}
 	}

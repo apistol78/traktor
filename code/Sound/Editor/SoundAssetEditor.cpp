@@ -18,7 +18,6 @@
 #include "Sound/StreamSoundBuffer.h"
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/SoundAssetEditor.h"
-#include "Sound/Editor/SoundSystemFactory.h"
 #include "Ui/Container.h"
 #include "Ui/FileDialog.h"
 #include "Ui/MethodHandler.h"
@@ -65,19 +64,15 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 	m_propertyList->bind(m_asset);
 
 	// Get sound system for preview.
-	Ref< SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< SoundSystemFactory >(L"SoundSystemFactory");
-	if (soundSystemFactory)
+	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
+	if (m_soundSystem)
 	{
-		m_soundSystem = soundSystemFactory->createSoundSystem();
-		if (m_soundSystem)
-		{
-			m_soundChannel = m_soundSystem->getChannel(0);
-			if (!m_soundChannel)
-				m_soundSystem = 0;
-		}
-		if (!m_soundSystem)
-			log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+		m_soundChannel = m_soundSystem->getChannel(0);
+		if (!m_soundChannel)
+			m_soundSystem = 0;
 	}
+	if (!m_soundSystem)
+		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
 
 	return true;
 }
@@ -90,10 +85,10 @@ void SoundAssetEditor::destroy()
 		m_soundChannel = 0;
 	}
 
-	safeDestroy(m_soundSystem);
 	safeDestroy(m_propertyList);
 	safeDestroy(m_toolBar);
 
+	m_soundSystem = 0;
 	m_instance = 0;
 	m_asset = 0;
 }

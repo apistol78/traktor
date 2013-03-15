@@ -72,8 +72,8 @@ Particle extent
 			]]>
 			</comment>
 			<position>
-				<first>118</first>
-				<second>310</second>
+				<first>153</first>
+				<second>285</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -83,8 +83,8 @@ Extent
 			]]>
 			</comment>
 			<position>
-				<first>-189</first>
-				<second>316</second>
+				<first>-404</first>
+				<second>305</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
@@ -95,16 +95,16 @@ Size
 			]]>
 			</comment>
 			<position>
-				<first>-189</first>
-				<second>362</second>
+				<first>-404</first>
+				<second>351</second>
 			</position>
 			<swizzle>w</swizzle>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-441</first>
-				<second>362</second>
+				<first>-656</first>
+				<second>351</second>
 			</position>
 			<name>Attributes1</name>
 			<usage>DuCustom</usage>
@@ -118,8 +118,8 @@ Alpha
 			]]>
 			</comment>
 			<position>
-				<first>-189</first>
-				<second>408</second>
+				<first>-404</first>
+				<second>397</second>
 			</position>
 			<swizzle>z</swizzle>
 		</item>
@@ -227,8 +227,8 @@ Alpha
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>303</first>
-				<second>628</second>
+				<first>-263</first>
+				<second>427</second>
 			</position>
 			<name>Alpha</name>
 		</item>
@@ -381,6 +381,35 @@ Age
 			<optional>true</optional>
 			<defaultValue>0.1</defaultValue>
 		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-268</first>
+				<second>367</second>
+			</position>
+			<name>Size Multiply</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>1</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-248</first>
+				<second>395</second>
+			</position>
+			<name>Size Add</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.MulAdd">
+			<comment/>
+			<position>
+				<first>-11</first>
+				<second>331</second>
+			</position>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -461,16 +490,6 @@ Age
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -760,6 +779,46 @@ Age
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[20]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[38]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[39]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input3</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[40]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Input2</name>
 			</destination>
 		</item>

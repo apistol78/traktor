@@ -12,7 +12,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 2, StreamMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StreamMeshResource", 3, StreamMeshResource, IMeshResource)
 
 Ref< IMesh > StreamMeshResource::createMesh(
 	const std::wstring& name,
@@ -41,7 +41,6 @@ Ref< IMesh > StreamMeshResource::createMesh(
 			StreamMesh::Part part;
 			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
 			part.meshPart = j->meshPart;
-			part.opaque = j->opaque;
 			streamMesh->m_parts[worldTechnique].push_back(part);
 		}
 	}
@@ -51,7 +50,7 @@ Ref< IMesh > StreamMeshResource::createMesh(
 
 bool StreamMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< uint32_t >(L"frameOffsets", m_frameOffsets);
 	s >> Member< Vector4 >(L"boundingBoxMin", m_boundingBox.mn);
@@ -70,7 +69,6 @@ bool StreamMeshResource::serialize(ISerializer& s)
 }
 
 StreamMeshResource::Part::Part()
-:	opaque(true)
 {
 }
 
@@ -78,7 +76,6 @@ bool StreamMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< std::wstring >(L"meshPart", meshPart);
-	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

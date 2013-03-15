@@ -20,7 +20,6 @@
 #include "Sound/Resound/SimultaneousGrainData.h"
 #include "Sound/Resound/TriggerGrainData.h"
 #include "Sound/Editor/SoundAsset.h"
-#include "Sound/Editor/SoundSystemFactory.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankAssetEditor.h"
 #include "Sound/Editor/Resound/BlendGrainFacade.h"
@@ -143,19 +142,15 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	m_grainFacades[&type_of< TriggerGrainData >()] = new TriggerGrainFacade();
 
 	// Get sound system for preview.
-	Ref< SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< SoundSystemFactory >(L"SoundSystemFactory");
-	if (soundSystemFactory)
+	m_soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
+	if (m_soundSystem)
 	{
-		m_soundSystem = soundSystemFactory->createSoundSystem();
-		if (m_soundSystem)
-		{
-			m_soundChannel = m_soundSystem->getChannel(0);
-			if (!m_soundChannel)
-				m_soundChannel = 0;
-		}
-		if (!m_soundSystem)
-			log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
+		m_soundChannel = m_soundSystem->getChannel(0);
+		if (!m_soundChannel)
+			m_soundSystem = 0;
 	}
+	if (!m_soundSystem)
+		log::warning << L"Unable to create preview sound system; preview unavailable" << Endl;
 
 	m_resourceManager = new resource::ResourceManager(true);
 	m_resourceManager->addFactory(new SoundFactory(
@@ -178,7 +173,7 @@ void BankAssetEditor::destroy()
 	if (m_resourceManager)
 		m_resourceManager = 0;
 
-	safeDestroy(m_soundSystem);
+	m_soundSystem = 0;
 	safeDestroy(m_menuGrains);
 }
 

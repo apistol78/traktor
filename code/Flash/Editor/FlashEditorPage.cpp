@@ -23,7 +23,6 @@
 #include "Render/Resource/ShaderFactory.h"
 #include "Resource/ResourceManager.h"
 #include "Sound/SoundSystem.h"
-#include "Sound/Editor/SoundSystemFactory.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
@@ -62,9 +61,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
-	Ref< sound::SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< sound::SoundSystemFactory >(L"SoundSystemFactory");
-	if (soundSystemFactory)
-		m_soundSystem = soundSystemFactory->createSoundSystem();
+	m_soundSystem = m_editor->getStoreObject< sound::SoundSystem >(L"SoundSystem");
 
 	Ref< FlashMovieAsset > asset = m_document->getObject< FlashMovieAsset >(0);
 	if (!asset)
@@ -141,7 +138,7 @@ bool FlashEditorPage::create(ui::Container* parent)
 void FlashEditorPage::destroy()
 {
 	safeDestroy(m_previewControl);
-	safeDestroy(m_soundSystem);
+	m_soundSystem = 0;
 	log::info << FlashCharacterInstance::getInstanceCount() << L" leaked character(s)" << Endl;
 }
 

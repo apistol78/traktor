@@ -883,7 +883,7 @@ void AsTextField::TextField_set_visible(FlashEditInstance* self, bool visible) c
 avm_number_t AsTextField::TextField_get_width(FlashEditInstance* self) const
 {
 	SwfRect bounds = self->getBounds();
-	return bounds.max.x - bounds.min.x;
+	return (bounds.max.x - bounds.min.x) / 20.0f;
 }
 
 void AsTextField::TextField_set_width(FlashEditInstance* self, avm_number_t width) const

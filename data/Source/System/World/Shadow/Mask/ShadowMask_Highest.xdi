@@ -2,11 +2,14 @@
 <object type="traktor.world.PostProcessSettings" version="1">
 	<requireHighRange>false</requireHighRange>
 	<definitions>
-		<item type="traktor.world.PostProcessDefineTarget" version="2">
+		<item type="traktor.world.PostProcessDefineTarget" version="3">
 			<id>Flip</id>
 			<width>0</width>
 			<height>0</height>
-			<screenDenom>1</screenDenom>
+			<screenWidthDenom>1</screenWidthDenom>
+			<screenHeightDenom>1</screenHeightDenom>
+			<maxWidth>0</maxWidth>
+			<maxHeight>0</maxHeight>
 			<format>TfR8</format>
 			<depthStencil>false</depthStencil>
 			<preferTiled>true</preferTiled>
@@ -18,7 +21,7 @@
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Flip</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.world.PostProcessStepBlur" version="2">
 			<shader>{B9E4C2BE-9334-C34D-8662-A09D851A1901}</shader>
 			<sources>
 				<item>
@@ -32,13 +35,14 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>2.5, 0, 0, 0</direction>
+			<direction>2, 0, 0, 0</direction>
 			<taps>12</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 		<item type="traktor.world.PostProcessStepSetTarget">
 			<target>Output</target>
 		</item>
-		<item type="traktor.world.PostProcessStepBlur" version="1">
+		<item type="traktor.world.PostProcessStepBlur" version="2">
 			<shader>{B9E4C2BE-9334-C34D-8662-A09D851A1901}</shader>
 			<sources>
 				<item>
@@ -52,8 +56,9 @@
 					<index>0</index>
 				</item>
 			</sources>
-			<direction>0, 2.5, 0, 0</direction>
-			<taps>12</taps>
+			<direction>0, 2, 0, 0</direction>
+			<taps>16</taps>
+			<blurType>BtGaussian</blurType>
 		</item>
 	</steps>
 </object>

@@ -1,7 +1,7 @@
 #include "Core/Serialization/ISerializer.h"
-#include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Render/Resource/ShaderResource.h"
 
 namespace traktor
@@ -9,7 +9,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 1, ShaderResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderResource", 2, ShaderResource, ISerializable)
 
 const std::map< std::wstring, uint32_t >& ShaderResource::getParameterBits() const
 {
@@ -23,7 +23,7 @@ const std::vector< ShaderResource::Technique >& ShaderResource::getTechniques() 
 
 bool ShaderResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 1);
+	T_ASSERT (s.getVersion() >= 2);
 	s >> MemberStlMap< std::wstring, uint32_t >(L"parameterBits", m_parameterBits);
 	s >> MemberStlVector< Technique, MemberComposite< Technique > >(L"techniques", m_techniques);
 	return true;
@@ -33,6 +33,7 @@ bool ShaderResource::Combination::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"mask", mask);
 	s >> Member< uint32_t >(L"value", value);
+	s >> Member< bool >(L"opaque", opaque);
 	s >> MemberRef< ISerializable >(L"program", program);
 	s >> MemberStlVector< Guid >(L"textures", textures);
 	return true;

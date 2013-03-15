@@ -162,23 +162,30 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 		1.0f / (20.0f * 1000.0f);
 	float fontHeight = m_edit->getFontHeight();
 
+	const SwfRect& bounds = m_edit->getTextBounds();
+	bool wordWrap = m_edit->wordWrap();
+
+	float letterSpacing = getLetterSpacing() * 200.0f * 2000.0f / fontHeight;
+	FlashEditInstance::text_t text = getText();
+
 	const float c_magicX = 32.0f * 20.0f;
 
-	float offsetY = 0.0f;
+	float offsetY = fontHeight;
 
 	// Get space width.
 	uint16_t spaceGlyphIndex = font->lookupIndex(L' ');
 	int16_t spaceWidth = font->getAdvance(spaceGlyphIndex);
-	float letterSpacing = getLetterSpacing() * 200.0f * 2000.0f / fontHeight;
 
 	// Render text lines.
-	for (FlashEditInstance::text_t::const_iterator i = m_text.begin(); i != m_text.end(); ++i)
+	std::vector< std::wstring > words;
+	std::vector< float > widths;
+	for (FlashEditInstance::text_t::const_iterator i = text.begin(); i != text.end(); ++i)
 	{
-		std::vector< std::wstring > words;
+		words.resize(0);
 		Split< std::wstring >::any(*i, L" \t", words);
 
 		// Calculate width of each word.
-		std::vector< float > widths(words.size());
+		widths.resize(words.size());
 		for (uint32_t j = 0; j < words.size(); ++j)
 		{
 			const std::wstring& word = words[j];
@@ -197,12 +204,12 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 			widths[j] = wordWidth * fontScale * fontHeight;
 		}
 
-		// Pack as many words as fits in bounds (only if word wrap enabled).
+		// Pack as many words as fits in bounds (only if word wrap enabled); then render each line.
+		if (words.empty())
+			offsetY += fontHeight;
+
 		uint32_t wordOffsetStart = 0;
 		uint32_t wordOffsetEnd = 0;
-		const FlashEdit* edit = getEdit();
-		const SwfRect& bounds = edit->getTextBounds();
-		bool wordWrap = edit->wordWrap();
 
 		while (wordOffsetStart < words.size())
 		{
@@ -226,9 +233,9 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 
 			// Calculate line horizontal offset.
 			float offsetX = 0.0f;
-			if (edit->getAlign() == FlashEdit::AnCenter)
+			if (m_edit->getAlign() == FlashEdit::AnCenter)
 				offsetX = (bounds.max.x - bounds.min.x - lineWidth) / 2.0f;
-			else if (edit->getAlign() == FlashEdit::AnRight)
+			else if (m_edit->getAlign() == FlashEdit::AnRight)
 				offsetX = bounds.max.x - bounds.min.x - lineWidth;
 
 			// Render each word.
@@ -251,13 +258,17 @@ bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 
 				offsetX += spaceWidth * fontScale * fontHeight;
 			}
+
 			outWidth = max(outWidth, offsetX);
 			offsetY += fontHeight;
 		}
 	}
+
 	outHeight = offsetY;
+
 	outWidth /= 20.0f;
 	outHeight /= 20.0f;
+
 	return true;
 }
 

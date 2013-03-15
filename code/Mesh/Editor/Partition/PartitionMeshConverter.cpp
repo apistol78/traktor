@@ -298,7 +298,6 @@ Ref< OctreeNodeData > createOctreeParts(
 		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
 			std::wstring technique = j->worldTechnique + L"/" + j->shaderTechnique;
-			range.opaque = j->opaque;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
@@ -314,7 +313,6 @@ Ref< OctreeNodeData > createOctreeParts(
 			partitionPart.shaderTechnique = shaderTechnique;
 			partitionPart.meshPart = uint32_t(renderParts.size());
 			partitionPart.boundingBox = nodeTemplate->boundingBox;
-			partitionPart.opaque = j->opaque;
 
 			for (uint32_t k = 0; k < uint32_t(renderParts.size()); ++k)
 			{

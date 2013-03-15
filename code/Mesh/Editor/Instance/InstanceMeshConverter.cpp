@@ -183,7 +183,6 @@ bool InstanceMeshConverter::convert(
 		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
 			std::wstring technique = j->worldTechnique + L"/" + j->shaderTechnique;
-			range.opaque = j->opaque;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
@@ -204,7 +203,6 @@ bool InstanceMeshConverter::convert(
 			InstanceMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;
 			part.meshPart = uint32_t(meshParts.size());
-			part.opaque = j->opaque;
 
 			for (uint32_t k = 0; k < uint32_t(meshParts.size()); ++k)
 			{

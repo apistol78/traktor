@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>662</first>
+				<second>374</second>
+			</position>
+			<name>Depth discontinuity threshold</name>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>472</first>
+				<second>386</second>
+			</position>
+			<value>0.1</value>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

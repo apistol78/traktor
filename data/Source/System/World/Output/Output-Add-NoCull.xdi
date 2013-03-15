@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>471</first>
+				<first>475</first>
 				<second>637</second>
 			</position>
 			<name>Output</name>
@@ -50,8 +50,8 @@
 		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>
 			<position>
-				<first>703</first>
-				<second>541</second>
+				<first>698</first>
+				<second>528</second>
 			</position>
 			<technique>World_ForwardColor</technique>
 			<cullMode>CmNever</cullMode>
@@ -82,6 +82,17 @@
 			<stencilMask>2147483648</stencilMask>
 			<registerCount>0</registerCount>
 		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>486</first>
+				<second>725</second>
+			</position>
+			<name>State</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -102,6 +113,26 @@
 			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[2]"/>
+				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>State</name>
 			</destination>
 		</item>
 	</edges>

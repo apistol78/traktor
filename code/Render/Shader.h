@@ -103,7 +103,9 @@ public:
 	 */
 	//@{
 
-	IProgram* getCurrentProgram() const;
+	bool isOpaque() const { return m_currentOpaque; }
+
+	IProgram* getCurrentProgram() const { return m_currentProgram; }
 
 	//@}
 
@@ -114,25 +116,25 @@ public:
 	 */
 	//@{
 
-	inline bool hasTechnique(const std::wstring& name) const { return hasTechnique(getParameterHandle(name)); }
+	bool hasTechnique(const std::wstring& name) const { return hasTechnique(getParameterHandle(name)); }
 
-	inline void setTechnique(const std::wstring& name) { setTechnique(getParameterHandle(name)); }
+	void setTechnique(const std::wstring& name) { setTechnique(getParameterHandle(name)); }
 
-	inline void setCombination(const std::wstring& name, bool param) { setCombination(getParameterHandle(name), param); }
+	void setCombination(const std::wstring& name, bool param) { setCombination(getParameterHandle(name), param); }
 
-	inline void setFloatParameter(const std::wstring& name, float param) { setFloatParameter(getParameterHandle(name), param); }
+	void setFloatParameter(const std::wstring& name, float param) { setFloatParameter(getParameterHandle(name), param); }
 
-	inline void setFloatArrayParameter(const std::wstring& name, const float* param, int length) { setFloatArrayParameter(getParameterHandle(name), param, length); }
+	void setFloatArrayParameter(const std::wstring& name, const float* param, int length) { setFloatArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setVectorParameter(const std::wstring& name, const Vector4& param) { setVectorParameter(getParameterHandle(name), param); }
+	void setVectorParameter(const std::wstring& name, const Vector4& param) { setVectorParameter(getParameterHandle(name), param); }
 
-	inline void setVectorArrayParameter(const std::wstring& name, const Vector4* param, int length) { setVectorArrayParameter(getParameterHandle(name), param, length); }
+	void setVectorArrayParameter(const std::wstring& name, const Vector4* param, int length) { setVectorArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setMatrixParameter(const std::wstring& name, const Matrix44& param) { setMatrixParameter(getParameterHandle(name), param); }
+	void setMatrixParameter(const std::wstring& name, const Matrix44& param) { setMatrixParameter(getParameterHandle(name), param); }
 
-	inline void setMatrixArrayParameter(const std::wstring& name, const Matrix44* param, int length) { setMatrixArrayParameter(getParameterHandle(name), param, length); }
+	void setMatrixArrayParameter(const std::wstring& name, const Matrix44* param, int length) { setMatrixArrayParameter(getParameterHandle(name), param, length); }
 
-	inline void setTextureParameter(const std::wstring& name, ITexture* texture) { setTextureParameter(getParameterHandle(name), texture); }
+	void setTextureParameter(const std::wstring& name, ITexture* texture) { setTextureParameter(getParameterHandle(name), texture); }
 
 	//@}
 
@@ -143,6 +145,7 @@ private:
 	{
 		uint32_t mask;
 		uint32_t value;
+		bool opaque;
 		Ref< IProgram > program;
 	};
 
@@ -157,6 +160,7 @@ private:
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
 	IProgram* m_currentProgram;
+	bool m_currentOpaque;
 
 	void updateCurrentProgram();
 };
