@@ -117,7 +117,7 @@ void IndoorMesh::render(
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
-				j->opaque,
+				m_shader->isOpaque(),
 				worldTransform.toMatrix44(),
 				getBoundingBox()
 			);
@@ -126,7 +126,7 @@ void IndoorMesh::render(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(
-				j->opaque ? render::RfOpaque : render::RfAlphaBlend,
+				m_shader->isOpaque() ? render::RfOpaque : render::RfAlphaBlend,
 				renderBlock
 			);
 		}

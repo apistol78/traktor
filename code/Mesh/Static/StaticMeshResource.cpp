@@ -17,7 +17,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 3, StaticMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.StaticMeshResource", 4, StaticMeshResource, IMeshResource)
 
 StaticMeshResource::StaticMeshResource()
 :	m_haveOccluderMesh(false)
@@ -74,7 +74,6 @@ Ref< IMesh > StaticMeshResource::createMesh(
 			StaticMesh::Part part;
 			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
 			part.meshPart = j->meshPart;
-			part.opaque = j->opaque;
 			staticMesh->m_parts[worldTechnique].push_back(part);
 		}
 	}
@@ -88,7 +87,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 
 bool StaticMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
 	s >> Member< bool >(L"haveOccluderMesh", m_haveOccluderMesh);
 	s >> Member< bool >(L"haveRenderMesh", m_haveRenderMesh);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
@@ -107,7 +106,6 @@ bool StaticMeshResource::serialize(ISerializer& s)
 
 StaticMeshResource::Part::Part()
 :	meshPart(0)
-,	opaque(true)
 {
 }
 
@@ -115,7 +113,6 @@ bool StaticMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

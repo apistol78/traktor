@@ -17,7 +17,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.IndoorMeshResource", 2, IndoorMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.IndoorMeshResource", 3, IndoorMeshResource, IMeshResource)
 
 Ref< IMesh > IndoorMeshResource::createMesh(
 	const std::wstring& name,
@@ -55,7 +55,6 @@ Ref< IMesh > IndoorMeshResource::createMesh(
 				IndoorMesh::Part p;
 				p.shaderTechnique = render::getParameterHandle(k->shaderTechnique);
 				p.meshPart = k->meshPart;
-				p.opaque = k->opaque;
 				indoorMesh->m_sectors[i].parts[worldTechnique].push_back(p);
 			}
 		}
@@ -74,7 +73,7 @@ Ref< IMesh > IndoorMeshResource::createMesh(
 
 bool IndoorMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Sector, MemberComposite< Sector > >(L"sectors", m_sectors);
 	s >> MemberAlignedVector< Portal, MemberComposite< Portal > >(L"portals", m_portals);
@@ -83,7 +82,6 @@ bool IndoorMeshResource::serialize(ISerializer& s)
 
 IndoorMeshResource::Part::Part()
 :	meshPart(0)
-,	opaque(true)
 {
 }
 
@@ -91,7 +89,6 @@ bool IndoorMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

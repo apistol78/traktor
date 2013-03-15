@@ -60,7 +60,12 @@ void ScriptContextLua::destroy()
 {
 	if (m_scriptManager)
 	{
-		m_scriptManager->lock(this);
+		// Store reference locally as later the garbage
+		// collect might recurse this call.
+		Ref< ScriptManagerLua > scriptManager = m_scriptManager;
+		m_scriptManager = 0;
+
+		scriptManager->lock(this);
 		{
 			// Unpin our local environment reference.
 			if (m_environmentRef != LUA_NOREF)
@@ -72,11 +77,10 @@ void ScriptContextLua::destroy()
 
 			// Perform a full garbage collect; don't want
 			// lingering objects.
-			m_scriptManager->collectGarbageFull();
-			m_scriptManager->destroyContext(this);
+			scriptManager->collectGarbageFull();
+			scriptManager->destroyContext(this);
 		}
-		m_scriptManager->unlock();
-		m_scriptManager = 0;
+		scriptManager->unlock();
 	}
 }
 

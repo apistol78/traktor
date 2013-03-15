@@ -108,19 +108,18 @@ void InstanceMesh::render(
 	// Render opaque parts front-to-back.
 	for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 	{
-		if (!i->opaque)
-		{
-			haveAlphaBlend = true;
-			continue;
-		}
-
 		m_shader->setTechnique(i->shaderTechnique);
-
 		worldRenderPass.setShaderCombination(
 			m_shader,
 			boundingBoxCenter,
 			boundingBoxWorld
 		);
+
+		if (!m_shader->isOpaque())
+		{
+			haveAlphaBlend = true;
+			continue;
+		}
 
 		render::IProgram* program = m_shader->getCurrentProgram();
 		if (!program)
@@ -189,16 +188,15 @@ void InstanceMesh::render(
 
 		for (std::vector< Part >::const_iterator i = it->second.begin(); i != it->second.end(); ++i)
 		{
-			if (i->opaque)
-				continue;
-
 			m_shader->setTechnique(i->shaderTechnique);
-
 			worldRenderPass.setShaderCombination(
 				m_shader,
 				boundingBoxCenter,
 				boundingBoxWorld
 			);
+
+			if (m_shader->isOpaque())
+				continue;
 
 			render::IProgram* program = m_shader->getCurrentProgram();
 			if (!program)

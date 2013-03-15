@@ -684,7 +684,7 @@ void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDepen
 				m_progress,
 				m_progressEnd,
 				*i,
-				BrSucceeded
+				result
 			);
 
 		++m_progress;

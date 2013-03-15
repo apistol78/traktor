@@ -89,37 +89,34 @@ void OceanEntity::render(
 	if (!program)
 		return;
 
-	// Render ocean compositing.
-	{
-		OceanRenderBlock* renderBlock = renderContext->alloc< OceanRenderBlock >("Ocean composite");
+	OceanRenderBlock* renderBlock = renderContext->alloc< OceanRenderBlock >("Ocean");
 
-		renderBlock->screenRenderer = m_screenRenderer;
-		renderBlock->distance = std::numeric_limits< float >::max();
-		renderBlock->program = program;
-		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
+	renderBlock->screenRenderer = m_screenRenderer;
+	renderBlock->distance = std::numeric_limits< float >::max();
+	renderBlock->program = program;
+	renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 
-		renderBlock->programParams->beginParameters(renderContext);
+	renderBlock->programParams->beginParameters(renderContext);
 
-		worldRenderPass.setProgramParameters(
-			renderBlock->programParams,
-			false
-		);
+	worldRenderPass.setProgramParameters(
+		renderBlock->programParams,
+		m_shaderComposite->isOpaque()
+	);
 
-		renderBlock->programParams->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
-		renderBlock->programParams->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
-		renderBlock->programParams->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
-		renderBlock->programParams->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
-		renderBlock->programParams->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-		renderBlock->programParams->setMatrixParameter(L"View", view);
-		renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInv);
-		renderBlock->programParams->setMatrixParameter(L"Projection", projection);
-		renderBlock->programParams->setVectorParameter(L"Eye", eye);
-		renderBlock->programParams->setFloatParameter(L"OceanAltitude", m_transform.translation().y());
+	renderBlock->programParams->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
+	renderBlock->programParams->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
+	renderBlock->programParams->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
+	renderBlock->programParams->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
+	renderBlock->programParams->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	renderBlock->programParams->setMatrixParameter(L"View", view);
+	renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInv);
+	renderBlock->programParams->setMatrixParameter(L"Projection", projection);
+	renderBlock->programParams->setVectorParameter(L"Eye", eye);
+	renderBlock->programParams->setFloatParameter(L"OceanAltitude", m_transform.translation().y());
 
-		renderBlock->programParams->endParameters(renderContext);
+	renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->draw(render::RfAlphaBlend, renderBlock);
-	}
+	renderContext->draw(m_shaderComposite->isOpaque() ? render::RfOpaque : render::RfAlphaBlend, renderBlock);
 }
 
 void OceanEntity::setTransform(const Transform& transform)

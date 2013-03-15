@@ -35,7 +35,6 @@ public:
 	{
 		std::wstring shaderTechnique;
 		std::wstring meshPart;
-		bool opaque;
 
 		Part();
 

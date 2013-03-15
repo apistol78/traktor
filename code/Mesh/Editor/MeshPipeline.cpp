@@ -17,7 +17,6 @@
 #include "Mesh/Editor/MaterialShaderGenerator.h"
 #include "Mesh/Editor/MeshAsset.h"
 #include "Mesh/Editor/MeshPipeline.h"
-#include "Mesh/Editor/MeshUtilities.h"
 #include "Mesh/Editor/Blend/BlendMeshConverter.h"
 #include "Mesh/Editor/Indoor/IndoorMeshConverter.h"
 #include "Mesh/Editor/Instance/InstanceMeshConverter.h"
@@ -119,7 +118,7 @@ Guid incrementGuid(const Guid& g)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 21, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.MeshPipeline", 22, MeshPipeline, editor::IPipeline)
 
 MeshPipeline::MeshPipeline()
 :	m_promoteHalf(false)
@@ -391,7 +390,6 @@ bool MeshPipeline::buildOutput(
 			mt.worldTechnique = *j;
 			mt.shaderTechnique = L"M" + toString(hash);
 			mt.hash = hash;
-			mt.opaque = isOpaqueMaterial(materialTechniqueShaderGraph);
 
 			materialTechniqueMap[i->first].push_back(mt);
 		}

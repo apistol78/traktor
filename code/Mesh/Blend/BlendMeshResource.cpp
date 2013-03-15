@@ -19,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BlendMeshResource", 2, BlendMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.BlendMeshResource", 3, BlendMeshResource, IMeshResource)
 
 Ref< IMesh > BlendMeshResource::createMesh(
 	const std::wstring& name,
@@ -78,7 +78,6 @@ Ref< IMesh > BlendMeshResource::createMesh(
 			BlendMesh::Part part;
 			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
 			part.meshPart = j->meshPart;
-			part.opaque = j->opaque;
 			blendMesh->m_parts[worldTechnique].push_back(part);
 		}
 	}
@@ -90,7 +89,7 @@ Ref< IMesh > BlendMeshResource::createMesh(
 
 bool BlendMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,
@@ -108,7 +107,6 @@ bool BlendMeshResource::serialize(ISerializer& s)
 
 BlendMeshResource::Part::Part()
 :	meshPart(0)
-,	opaque(true)
 {
 }
 
@@ -116,7 +114,6 @@ bool BlendMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

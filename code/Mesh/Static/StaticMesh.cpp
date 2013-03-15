@@ -73,7 +73,7 @@ void StaticMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			i->opaque,
+			m_shader->isOpaque(),
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);
@@ -82,7 +82,7 @@ void StaticMesh::render(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			i->opaque ? render::RfOpaque : render::RfAlphaBlend,
+			m_shader->isOpaque() ? render::RfOpaque : render::RfAlphaBlend,
 			renderBlock
 		);
 	}

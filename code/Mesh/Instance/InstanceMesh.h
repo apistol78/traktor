@@ -64,7 +64,6 @@ public:
 	{
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
-		bool opaque;
 	};
 
 	typedef std::pair< InstanceMeshData, float > instance_distance_t;

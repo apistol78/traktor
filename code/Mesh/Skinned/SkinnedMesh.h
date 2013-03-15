@@ -76,7 +76,6 @@ private:
 	{
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
-		bool opaque;
 	};
 
 	resource::Proxy< render::Shader > m_shader;

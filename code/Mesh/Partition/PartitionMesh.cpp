@@ -85,7 +85,7 @@ void PartitionMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			part.opaque,
+			m_shader->isOpaque(),
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);
@@ -94,7 +94,7 @@ void PartitionMesh::render(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			part.opaque ? render::RfOpaque : render::RfAlphaBlend,
+			m_shader->isOpaque() ? render::RfOpaque : render::RfAlphaBlend,
 			renderBlock
 		);
 	}

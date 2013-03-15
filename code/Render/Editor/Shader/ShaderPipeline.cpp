@@ -40,6 +40,21 @@ namespace traktor
 		namespace
 		{
 
+bool isOpaque(const render::ShaderGraph* shaderGraph)
+{
+	RefArray< render::PixelOutput > nodes;
+	if (shaderGraph->findNodesOf< render::PixelOutput >(nodes) == 0)
+		return true;
+
+	for (RefArray< render::PixelOutput >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+	{
+		if ((*i)->getState().blendEnable)
+			return false;
+	}
+
+	return true;
+}
+
 class FragmentReaderAdapter : public FragmentLinker::FragmentReader
 {
 public:
@@ -158,6 +173,9 @@ struct BuildCombinationTask : public Object
 			log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
 			return;
 		}
+
+		// Add meta tag to indicate if shader combination is opaque.
+		shaderResourceCombination->opaque = isOpaque(programGraph);
 
 		// Bind texture resources.
 		RefArray< Texture > textureNodes;
@@ -290,7 +308,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 50, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 51, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)

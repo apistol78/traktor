@@ -137,6 +137,11 @@ bool SessionManager::haveDLC(const std::wstring& id) const
 	return m_provider ? m_provider->haveDLC(id) : false;
 }
 
+bool SessionManager::buyDLC(const std::wstring& id) const
+{
+	return m_provider ? m_provider->buyDLC(id) : false;
+}
+
 bool SessionManager::getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const
 {
 	if (!m_provider)

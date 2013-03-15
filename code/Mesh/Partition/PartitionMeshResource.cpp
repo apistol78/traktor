@@ -19,7 +19,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.PartitionMeshResource", 0, PartitionMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.PartitionMeshResource", 1, PartitionMeshResource, IMeshResource)
 
 Ref< IMesh > PartitionMeshResource::createMesh(
 	const std::wstring& name,
@@ -48,7 +48,6 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 		part.shaderTechnique = render::getParameterHandle(i->shaderTechnique);
 		part.meshPart = i->meshPart;
 		part.boundingBox = i->boundingBox;
-		part.opaque = i->opaque;
 		partitionMesh->m_parts.push_back(part);
 	}
 
@@ -76,7 +75,6 @@ bool PartitionMeshResource::serialize(ISerializer& s)
 
 PartitionMeshResource::Part::Part()
 :	meshPart(0)
-,	opaque(true)
 {
 }
 
@@ -85,7 +83,6 @@ bool PartitionMeshResource::Part::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
 	s >> MemberAabb(L"boundingBox", boundingBox);
-	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

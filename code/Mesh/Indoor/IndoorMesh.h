@@ -69,7 +69,6 @@ private:
 	{
 		render::handle_t shaderTechnique;
 		uint32_t meshPart;
-		bool opaque;
 	};
 
 	struct Sector

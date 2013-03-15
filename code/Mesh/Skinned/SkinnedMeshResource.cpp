@@ -14,7 +14,7 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 3, SkinnedMeshResource, IMeshResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.SkinnedMeshResource", 4, SkinnedMeshResource, IMeshResource)
 
 Ref< IMesh > SkinnedMeshResource::createMesh(
 	const std::wstring& name,
@@ -47,7 +47,6 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 			SkinnedMesh::Part part;
 			part.shaderTechnique = render::getParameterHandle(j->shaderTechnique);
 			part.meshPart = j->meshPart;
-			part.opaque = j->opaque;
 			skinnedMesh->m_parts[worldTechnique].push_back(part);
 		}
 	}
@@ -64,7 +63,7 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 
 bool SkinnedMeshResource::serialize(ISerializer& s)
 {
-	T_ASSERT_M(s.getVersion() >= 2, L"Incorrect version");
+	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlMap<
 		std::wstring,
@@ -82,7 +81,6 @@ bool SkinnedMeshResource::serialize(ISerializer& s)
 
 SkinnedMeshResource::Part::Part()
 :	meshPart(0)
-,	opaque(true)
 {
 }
 
@@ -90,7 +88,6 @@ bool SkinnedMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	s >> Member< bool >(L"opaque", opaque);
 	return true;
 }
 

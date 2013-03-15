@@ -153,7 +153,7 @@ void EffectPreviewControl::destroy()
 	}
 
 	safeDestroy(m_soundPlayer);
-	safeDestroy(m_soundSystem);
+	m_soundSystem = 0;
 
 	Widget::destroy();
 }

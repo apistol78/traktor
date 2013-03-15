@@ -12,7 +12,6 @@
 #include "Resource/ResourceManager.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
-#include "Sound/Editor/SoundSystemFactory.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectFactory.h"
 #include "Spray/EffectLayerData.h"
@@ -90,9 +89,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	if (!renderSystem)
 		return false;
 
-	Ref< sound::SoundSystemFactory > soundSystemFactory = m_editor->getStoreObject< sound::SoundSystemFactory >(L"SoundSystemFactory");
-	if (soundSystemFactory)
-		m_soundSystem = soundSystemFactory->createSoundSystem();
+	m_soundSystem = m_editor->getStoreObject< sound::SoundSystem >(L"SoundSystem");
 
 	Ref< db::Database > database = m_editor->getOutputDatabase();
 	T_ASSERT (database);
@@ -170,9 +167,9 @@ void EffectEditorPage::destroy()
 	settings->setProperty< PropertyBoolean >(L"EffectEditor.ToggleMove", m_moveEmitter);
 
 	m_editor->commitGlobalSettings();
+	m_soundSystem = 0;
 
 	safeDestroy(m_previewControl);
-	safeDestroy(m_soundSystem);
 	safeDestroy(m_resourceManager);
 }
 

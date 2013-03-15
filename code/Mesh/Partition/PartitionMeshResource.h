@@ -38,7 +38,6 @@ public:
 		std::wstring shaderTechnique;
 		uint32_t meshPart;
 		Aabb3 boundingBox;
-		bool opaque;
 
 		Part();
 

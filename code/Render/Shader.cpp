@@ -14,6 +14,7 @@ Shader::Shader()
 :	m_parameterValue(0)
 ,	m_currentTechnique(0)
 ,	m_currentProgram(0)
+,	m_currentOpaque(true)
 {
 }
 
@@ -26,6 +27,7 @@ void Shader::destroy()
 {
 	m_currentTechnique = 0;
 	m_currentProgram = 0;
+	m_currentOpaque = true;
 
 	for (SmallMap< handle_t, Technique >::iterator i = m_techniques.begin(); i != m_techniques.end(); ++i)
 	{
@@ -132,14 +134,10 @@ void Shader::draw(IRenderView* renderView, VertexBuffer* vertexBuffer, IndexBuff
 	);
 }
 
-IProgram* Shader::getCurrentProgram() const
-{
-	return m_currentProgram;
-}
-
 void Shader::updateCurrentProgram()
 {
 	m_currentProgram = 0;
+	m_currentOpaque = true;
 
 	if (!m_currentTechnique)
 		return;
@@ -149,6 +147,7 @@ void Shader::updateCurrentProgram()
 		if ((m_parameterValue & i->mask) == i->value)
 		{
 			m_currentProgram = i->program;
+			m_currentOpaque = i->opaque;
 			break;
 		}
 	}

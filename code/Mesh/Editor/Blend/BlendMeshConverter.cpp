@@ -153,7 +153,6 @@ bool BlendMeshConverter::convert(
 			BlendMeshResource::Part part;
 			part.shaderTechnique = j->shaderTechnique;
 			part.meshPart = uint32_t(meshParts.size());
-			part.opaque = j->opaque;
 			parts[j->worldTechnique].push_back(part);
 		}
 

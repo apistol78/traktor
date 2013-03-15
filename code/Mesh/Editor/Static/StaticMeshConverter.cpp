@@ -25,18 +25,6 @@ namespace traktor
 {
 	namespace mesh
 	{
-		namespace
-		{
-
-struct OpaquePartPred
-{
-	bool operator () (const StaticMeshResource::Part& lh, const StaticMeshResource::Part& rh) const
-	{
-		return lh.opaque && !rh.opaque;
-	}
-};
-
-		}
 
 Ref< IMeshResource > StaticMeshConverter::createResource() const
 {
@@ -205,7 +193,6 @@ bool StaticMeshConverter::convert(
 		for (std::list< MeshMaterialTechnique >::const_iterator j = i->second.begin(); j != i->second.end(); ++j)
 		{
 			std::wstring technique = j->worldTechnique + L"/" + j->shaderTechnique;
-			range.opaque = j->opaque;
 			range.mergeInto(techniqueRanges[technique]);
 		}
 	}
@@ -245,7 +232,6 @@ bool StaticMeshConverter::convert(
 			StaticMeshResource::Part part;
 			part.shaderTechnique = shaderTechnique;
 			part.meshPart = uint32_t(meshParts.size());
-			part.opaque = j->opaque;
 
 			for (uint32_t k = 0; k < uint32_t(meshParts.size()); ++k)
 			{
@@ -275,10 +261,6 @@ bool StaticMeshConverter::convert(
 			parts[worldTechnique].push_back(part);
 		}
 	}
-
-	// Sort resource parts; opaque parts first then blended parts as this determine render order per mesh.
-	for (std::map< std::wstring, StaticMeshResource::parts_t >::iterator i = parts.begin(); i != parts.end(); ++i)
-		i->second.sort(OpaquePartPred());
 
 	renderMesh->setParts(meshParts);
 	renderMesh->setBoundingBox(model.getBoundingBox());

@@ -646,7 +646,6 @@ bool IndoorMeshConverter::convert(
 				//	int(minIndex),
 				//	int(maxIndex)
 				//);
-				part.opaque = j->opaque;
 				assetSectors.back().parts[j->worldTechnique].push_back(part);
 			}
 

@@ -233,6 +233,18 @@ bool SteamSessionManager::haveDLC(const std::wstring& id) const
 		return false;
 }
 
+bool SteamSessionManager::buyDLC(const std::wstring& id) const
+{
+	std::map< std::wstring, uint32_t >::const_iterator i = m_dlcIds.find(id);
+	if (i != m_dlcIds.end())
+	{
+		SteamFriends()->ActivateGameOverlayToStore(i->second, k_EOverlayToStoreFlag_AddToCartAndShow);
+		return true;
+	}
+	else
+		return false;
+}
+
 uint64_t SteamSessionManager::getCurrentUserHandle() const
 {
 	return ::SteamUser()->GetSteamID().ConvertToUint64();
