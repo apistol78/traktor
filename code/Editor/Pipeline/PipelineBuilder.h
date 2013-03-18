@@ -91,7 +91,7 @@ private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
-	Ref< IPipelineDb > m_db;
+	Ref< IPipelineDb > m_pipelineDb;
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
 	Semaphore m_createOutputLock;
@@ -105,9 +105,6 @@ private:
 	uint32_t m_progressEnd;
 	uint32_t m_succeeded;
 	uint32_t m_failed;
-
-	/*! \brief Update dependency local hashes. */
-	void updateLocalHashes(PipelineDependency* dependency);
 
 	/*! \brief Update build reasons. */
 	void updateBuildReason(PipelineDependency* dependency, bool rebuild);
@@ -128,7 +125,12 @@ private:
 	bool getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version);
 
 	/*! \brief Build thread method. */
-	void buildThread(Thread* controlThread, RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end, uint32_t core);
+	void buildThread(
+		Thread* controlThread,
+		RefArray< PipelineDependency >& workSet,
+		Semaphore& workSetLock,
+		uint32_t cpuCore
+	);
 };
 
 	}

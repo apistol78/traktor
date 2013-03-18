@@ -277,6 +277,7 @@ int main(int argc, const char** argv)
 	{
 		pipelineDepends = new editor::PipelineDependsParallel(
 			&pipelineFactory,
+			0,
 			sourceDatabase
 		);
 	}
@@ -284,6 +285,7 @@ int main(int argc, const char** argv)
 	{
 		pipelineDepends = new editor::PipelineDependsIncremental(
 			&pipelineFactory,
+			0,
 			sourceDatabase
 		);
 	}

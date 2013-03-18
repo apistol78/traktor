@@ -9,6 +9,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Core/Timer/Timer.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -62,7 +63,7 @@ PipelineBuilder::PipelineBuilder(
 	db::Database* sourceDatabase,
 	db::Database* outputDatabase,
 	IPipelineCache* cache,
-	IPipelineDb* db,
+	IPipelineDb* pipelineDb,
 	IListener* listener,
 	bool threadedBuildEnable
 )
@@ -70,7 +71,7 @@ PipelineBuilder::PipelineBuilder(
 ,	m_sourceDatabase(sourceDatabase)
 ,	m_outputDatabase(outputDatabase)
 ,	m_cache(cache)
-,	m_db(db)
+,	m_pipelineDb(pipelineDb)
 ,	m_listener(listener)
 ,	m_threadedBuildEnable(threadedBuildEnable)
 ,	m_progress(0)
@@ -87,16 +88,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::error);
 	T_ANONYMOUS_VAR(ScopeIndent)(log::debug);
 
-	m_db->beginTransaction();
-
 	Timer timer;
 	timer.start();
-
-	// Update dependency hashes.
-	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		updateLocalHashes(*i);
-
-	T_DEBUG(L"Pipeline build; analyzed local hashes in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
@@ -104,14 +97,12 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 
 	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
-	m_db->endTransaction();
-
 	m_progress = 0;
 	m_progressEnd = dependencies.size();
 	m_succeeded = 0;
 	m_failed = 0;
 
-	m_db->beginTransaction();
+	m_pipelineDb->beginTransaction();
 
 	// Split workload on threads; use as many threads as there are CPU cores.
 	// If build set is less than twice number of cores we don't build asynchronously.
@@ -119,57 +110,60 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	if (m_threadedBuildEnable && dependencies.size() >= cpuCores * 2)
 	{
 		std::vector< Thread* > threads(cpuCores, 0);
+		RefArray< PipelineDependency > workSet = dependencies;
+		Semaphore workSetLock;
 
-		// Spawn thread for each slice of the work load.
 		for (uint32_t i = 0; i < cpuCores; ++i)
 		{
-			uint32_t offsetStart = (dependencies.size() * i) / cpuCores;
-			uint32_t offsetEnd = (dependencies.size() * (i + 1)) / cpuCores;
-			if (offsetStart < offsetEnd)
-			{
-				threads[i] = ThreadManager::getInstance().create(
-					makeFunctor(
-						this,
-						&PipelineBuilder::buildThread,
-						ThreadManager::getInstance().getCurrentThread(),
-						dependencies.begin() + offsetStart,
-						dependencies.begin() + offsetEnd,
-						i
-					),
-					L"Build thread"
-				);
-				threads[i]->start();
-			}
+			threads[i] = ThreadPool::getInstance().spawn(
+				makeFunctor
+				<
+					PipelineBuilder,
+					Thread*,
+					RefArray< PipelineDependency >&,
+					Semaphore&,
+					uint32_t
+				>
+				(
+					this,
+					&PipelineBuilder::buildThread,
+					ThreadManager::getInstance().getCurrentThread(),
+					workSet,
+					workSetLock,
+					i
+				)
+			);
 		}
 
-		// Wait until all threads have finished.
 		for (uint32_t i = 0; i < cpuCores; ++i)
 		{
 			if (threads[i])
 			{
-				threads[i]->wait();
-				ThreadManager::getInstance().destroy(threads[i]);
+				ThreadPool::getInstance().join(threads[i]);
+				threads[i] = 0;
 			}
 		}
 	}
 	else
 	{
-		// Invoke thread method directly to build all dependencies.
-		buildThread(ThreadManager::getInstance().getCurrentThread(), dependencies.begin(), dependencies.end(), 0);
+		RefArray< PipelineDependency > workSet = dependencies;
+		Semaphore workSetLock;
+
+		buildThread(
+			ThreadManager::getInstance().getCurrentThread(), 
+			workSet,
+			workSetLock,
+			0
+		);
 	}
 
-	m_db->endTransaction();
+	m_pipelineDb->endTransaction();
 
 	T_DEBUG(L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms");
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
-	{
-		//for (std::map< const TypeInfo*, double >::const_iterator i = m_buildTimes.begin(); i != m_buildTimes.end(); ++i)
-		//	log::info << L"Pipeline \"" << i->first->getName() << L"\" " << int32_t(i->second * 1000.0) << L" ms" << Endl;
-
 		log::info << L"Build finished; " << m_succeeded << L" succeeded, " << m_failed << L" failed" << Endl;
-	}
 	else
 		log::info << L"Build finished; aborted" << Endl;
 
@@ -213,11 +207,14 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 		}
 	}
 
-	Ref< IPipeline > pipeline;
+	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
-	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
+	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 		return 0;
+
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+	T_ASSERT (pipeline);
 
 	Timer timer;
 	timer.start();
@@ -225,13 +222,6 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
 	if (!product)
 		return 0;
-
-	double buildTime = timer.getElapsedTime();
-
-	//{
-	//	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
-	//	m_buildTimes[&type_of(pipeline)] += buildTime;
-	//}
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
@@ -247,24 +237,17 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 
 bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
-	Ref< IPipeline > pipeline;
+	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
-	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
+	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 		return false;
 
-	Timer timer;
-	timer.start();
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+	T_ASSERT (pipeline);
 
 	if (!pipeline->buildOutput(this, sourceAsset, 0, outputPath, outputGuid, buildParams, PbrSourceModified))
 		return false;
-
-	double buildTime = timer.getElapsedTime();
-
-	//{
-	//	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_buildTimesLock);
-	//	m_buildTimes[&type_of(pipeline)] += buildTime;
-	//}
 
 	return true;
 }
@@ -370,81 +353,29 @@ Ref< IStream > PipelineBuilder::openTemporaryFile(const std::wstring& fileName)
 
 Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, const Guid& guid)
 {
-	return m_db->createReport(name, guid);
-}
-
-void PipelineBuilder::updateLocalHashes(PipelineDependency* dependency)
-{
-	IPipelineDb::FileHash previousFileHash;
-
-	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
-	dependency->dependencyHash = 0;
-
-	const std::set< Path >& files = dependency->files;
-	for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-	{
-		Ref< File > file = FileSystem::getInstance().get(*j);
-		if (!file)
-		{
-			log::error << L"Unable to get hash of file \"" << j->getPathName() << L"\"; no such file" << Endl;
-			continue;
-		}
-
-		if (m_db->getFile(*j, previousFileHash))
-		{
-			if (
-				previousFileHash.size == file->getSize() &&
-				previousFileHash.lastWriteTime == file->getLastWriteTime()
-			)
-			{
-				// Reuse previous file hash from cache.
-				dependency->dependencyHash += previousFileHash.hash;
-				continue;
-			}
-		}
-		else
-		{
-			// File doesn't exist in cache; ensure cycle is reset.
-			previousFileHash.hash = 0;
-		}
-
-		// File has either been modified or is new; calculate hash and update cache.
-		previousFileHash.size = file->getSize();
-		previousFileHash.lastWriteTime = file->getLastWriteTime();
-		previousFileHash.hash++;
-
-		m_db->setFile(*j, previousFileHash);
-
-		dependency->dependencyHash += previousFileHash.hash;
-	}
-
-	dependency->dependencyHash += dependency->pipelineHash;
-	dependency->dependencyHash += dependency->sourceDataHash;
-	dependency->dependencyHash += dependency->sourceAssetHash;
+	return m_pipelineDb->createReport(name, guid);
 }
 
 void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool rebuild)
 {
-	dependency->sourceAssetHash = DeepHash(checked_type_cast< const ISerializable* >(dependency->sourceAsset)).get();
-
 	// Have source asset been modified?
 	if (!rebuild)
 	{
-		uint32_t dependencyHash = calculateGlobalHash(dependency);
+		uint32_t hash = calculateGlobalHash(dependency);
 
 		// Get hash entry from database.
 		IPipelineDb::DependencyHash previousDependencyHash;
-		if (!m_db->getDependency(dependency->outputGuid, previousDependencyHash))
+		if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
 		{
 			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
-		else if (previousDependencyHash.pipelineVersion != type_of(dependency->pipeline).getVersion())
+		else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
 		{
 			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
-		else if (previousDependencyHash.hash != dependencyHash)
+		else if (previousDependencyHash.hash != hash)
 		{
 			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
 			dependency->reason |= PbrSourceModified;
@@ -459,14 +390,14 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 	IPipelineDb::DependencyHash currentDependencyHash;
 
 	// Create hash entry.
-	currentDependencyHash.pipelineVersion = type_of(dependency->pipeline).getVersion();
+	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
 	currentDependencyHash.hash = calculateGlobalHash(dependency);
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)
 	{
 		if ((dependency->reason & PbrSourceModified) != 0)
-			m_db->setDependency(dependency->outputGuid, currentDependencyHash);
+			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 		return BrSucceeded;
 	}
 
@@ -476,7 +407,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
-	log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << type_name(dependency->pipeline) << L")..." << Endl;
+	log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << dependency->pipelineType->getName() << L")..." << Endl;
 	log::info << IncreaseIndent;
 
 	// Get output instances from cache.
@@ -485,7 +416,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash.hash, currentDependencyHash.pipelineVersion))
 		{
 			log::info << L"Cached instance(s) used" << Endl;
-			m_db->setDependency(dependency->outputGuid, currentDependencyHash);
+			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 			return BrSucceeded;
 		}
 	}
@@ -506,7 +437,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 	Timer timer;
 	timer.start();
 
-	bool result = dependency->pipeline->buildOutput(
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+	T_ASSERT (pipeline);
+
+	bool result = pipeline->buildOutput(
 		this,
 		dependency->sourceAsset,
 		dependency->sourceAssetHash,
@@ -546,7 +480,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 			log::info << DecreaseIndent;
 		}
 
-		m_db->setDependency(dependency->outputGuid, currentDependencyHash);
+		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 	}
 
 	log::info << DecreaseIndent;
@@ -560,12 +494,18 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 
 uint32_t PipelineBuilder::calculateGlobalHash(const PipelineDependency* dependency) const
 {
-	uint32_t hash = dependency->dependencyHash;
+	uint32_t hash =
+		dependency->pipelineHash +
+		dependency->sourceAssetHash +
+		dependency->sourceDataHash +
+		dependency->filesHash;
+
 	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
 		if (((*i)->flags & PdfUse) != 0)
 			hash += calculateGlobalHash(*i);
 	}
+
 	return hash;
 }
 
@@ -656,23 +596,36 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int
 	return result;
 }
 
-void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDependency >::const_iterator begin, RefArray< PipelineDependency >::const_iterator end, uint32_t core)
+void PipelineBuilder::buildThread(
+	Thread* controlThread,
+	RefArray< PipelineDependency >& workSet,
+	Semaphore& workSetLock,
+	uint32_t cpuCore
+)
 {
-	for (RefArray< PipelineDependency >::const_iterator i = begin; i != end; ++i)
+	while (!controlThread->stopped())
 	{
-		// Abort if control thread has been stopped; thread are stopped by worker dialog.
-		if (controlThread->stopped())
-			break;
+		Ref< PipelineDependency > workDependency;
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(workSetLock);
+			if (!workSet.empty())
+			{
+				workDependency = workSet.front();
+				workSet.pop_front();
+			}
+			else
+				break;
+		}
 
 		if (m_listener)
 			m_listener->beginBuild(
-				core,
+				cpuCore,
 				m_progress,
 				m_progressEnd,
-				*i
+				workDependency
 			);
 
-		BuildResult result = performBuild(*i);
+		BuildResult result = performBuild(workDependency);
 		if (result == BrSucceeded || result == BrSucceededWithWarnings)
 			++m_succeeded;
 		else
@@ -680,10 +633,10 @@ void PipelineBuilder::buildThread(Thread* controlThread, RefArray< PipelineDepen
 
 		if (m_listener)
 			m_listener->endBuild(
-				core,
+				cpuCore,
 				m_progress,
 				m_progressEnd,
-				*i,
+				workDependency,
 				result
 			);
 

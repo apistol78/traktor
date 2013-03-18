@@ -1,4 +1,5 @@
 #include <fbxsdk.h>
+#include "Core/FbxLock.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
@@ -633,8 +634,6 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.model.ModelFormatFbx", 0, ModelFormatFbx, ModelFormat)
 
-Semaphore ModelFormatFbx::ms_lock;
-
 void ModelFormatFbx::getExtensions(std::wstring& outDescription, std::vector< std::wstring >& outExtensions) const
 {
 	outDescription = L"Autodesk FBX";
@@ -648,7 +647,7 @@ bool ModelFormatFbx::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(ms_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
 
 	FbxManager* sdkManager = FbxManager::Create();
 	if (!sdkManager)

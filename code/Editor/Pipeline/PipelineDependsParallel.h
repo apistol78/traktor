@@ -22,6 +22,7 @@ class JobQueue;
 	namespace editor
 	{
 
+class PipelineDependencyCache;
 class PipelineFactory;
 
 /*! \brief Parallel pipeline dependency walker.
@@ -34,6 +35,7 @@ class T_DLLCLASS PipelineDependsParallel : public IPipelineDepends
 public:
 	PipelineDependsParallel(
 		PipelineFactory* pipelineFactory,
+		PipelineDependencyCache* dependencyCache,
 		db::Database* sourceDatabase
 	);
 
@@ -80,6 +82,7 @@ public:
 private:
 	Ref< JobQueue > m_jobQueue;
 	Ref< PipelineFactory > m_pipelineFactory;
+	Ref< PipelineDependencyCache > m_dependencyCache;
 	Ref< db::Database > m_sourceDatabase;
 	RefArray< PipelineDependency > m_dependencies;
 	ThreadLocal m_currentDependency;
@@ -104,6 +107,13 @@ private:
 		const std::wstring& outputPath,
 		const Guid& outputGuid
 	);
+
+	void addCachedDependency(PipelineDependency* dependency);
+
+	void updateDependencyHashes(
+		PipelineDependency* dependency,
+		const db::Instance* sourceInstance
+	) const;
 
 	void jobAddDependency(Ref< PipelineDependency > parentDependency, Ref< const ISerializable > sourceAsset);
 

@@ -73,6 +73,11 @@ bool CompactInstance::setGuid(const Guid& guid)
 	return true;
 }
 
+bool CompactInstance::getLastModifyDate(DateTime& outModifyDate) const
+{
+	return false;
+}
+
 bool CompactInstance::remove()
 {
 	T_ASSERT (m_instanceEntry);

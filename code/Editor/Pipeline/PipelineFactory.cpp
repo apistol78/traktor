@@ -39,8 +39,11 @@ PipelineFactory::~PipelineFactory()
 		i->first->destroy();
 }
 
-bool PipelineFactory::findPipeline(const TypeInfo& sourceType, Ref< IPipeline >& outPipeline, uint32_t& outPipelineHash) const
+bool PipelineFactory::findPipelineType(const TypeInfo& sourceType, const TypeInfo*& outPipelineType, uint32_t& outPipelineHash) const
 {
+	outPipelineType = 0;
+	outPipelineHash = 0;
+
 	uint32_t best = std::numeric_limits< uint32_t >::max();
 	for (std::vector< std::pair< Ref< IPipeline >, uint32_t > >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
 	{
@@ -63,14 +66,26 @@ bool PipelineFactory::findPipeline(const TypeInfo& sourceType, Ref< IPipeline >&
 			// Keep closest matching type.
 			if (type && distance < best)
 			{
-				outPipeline = i->first;
+				outPipelineType = &type_of(i->first);
 				outPipelineHash = i->second;
 				if ((best = distance) == 0)
 					break;
 			}
 		}
 	}
-	return bool(outPipeline != 0);
+
+	return bool(outPipelineType != 0);
 }
+
+IPipeline* PipelineFactory::findPipeline(const TypeInfo& pipelineType) const
+{
+	for (std::vector< std::pair< Ref< IPipeline >, uint32_t > >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
+	{
+		if (is_type_a(pipelineType, type_of(i->first)))
+			return i->first;
+	}
+	return 0;
+}
+
 	}
 }

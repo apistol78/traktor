@@ -82,7 +82,7 @@ private:
 	Event m_jobFinishedEvent;
 	int32_t m_running;
 
-	void threadWorker(int id);
+	void threadWorker();
 };
 
 }

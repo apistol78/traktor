@@ -21,12 +21,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineBuilderDistributed", PipelineBui
 PipelineBuilderDistributed::PipelineBuilderDistributed(
 	PipelineAgentsManager* agentsManager,
 	PipelineFactory* pipelineFactory,
-	IPipelineDb* db,
+	IPipelineDb* pipelineDb,
 	IListener* listener
 )
 :	m_agentsManager(agentsManager)
 ,	m_pipelineFactory(pipelineFactory)
-,	m_db(db)
+,	m_pipelineDb(pipelineDb)
 ,	m_listener(listener)
 ,	m_progress(0)
 ,	m_progressEnd(0)
@@ -37,24 +37,16 @@ PipelineBuilderDistributed::PipelineBuilderDistributed(
 
 bool PipelineBuilderDistributed::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
 {
-	m_db->beginTransaction();
-
-	// Update dependency hashes.
-	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		updateLocalHashes(*i);
-
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		updateBuildReason(*i, rebuild);
-
-	m_db->endTransaction();
 
 	m_progress = 0;
 	m_progressEnd = dependencies.size();
 	m_succeeded = 0;
 	m_failed = 0;
 
-	m_db->beginTransaction();
+	m_pipelineDb->beginTransaction();
 
 	RefArray< PipelineDependency > workSet = dependencies;
 	while (!workSet.empty())
@@ -69,7 +61,7 @@ bool PipelineBuilderDistributed::build(const RefArray< PipelineDependency >& dep
 	log::info << L"Waiting for agents to complete build..." << Endl;
 	m_agentsManager->waitUntilAllIdle();
 
-	m_db->endTransaction();
+	m_pipelineDb->endTransaction();
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
@@ -140,60 +132,8 @@ Ref< IPipelineReport > PipelineBuilderDistributed::createReport(const std::wstri
 	return 0;
 }
 
-void PipelineBuilderDistributed::updateLocalHashes(PipelineDependency* dependency)
-{
-	IPipelineDb::FileHash previousFileHash;
-
-	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
-	dependency->dependencyHash = 0;
-
-	const std::set< Path >& files = dependency->files;
-	for (std::set< Path >::const_iterator j = files.begin(); j != files.end(); ++j)
-	{
-		Ref< File > file = FileSystem::getInstance().get(*j);
-		if (!file)
-		{
-			log::error << L"Unable to get hash of file \"" << j->getPathName() << L"\"; no such file" << Endl;
-			continue;
-		}
-
-		if (m_db->getFile(*j, previousFileHash))
-		{
-			if (
-				previousFileHash.size == file->getSize() &&
-				previousFileHash.lastWriteTime == file->getLastWriteTime()
-			)
-			{
-				// Reuse previous file hash from cache.
-				dependency->dependencyHash += previousFileHash.hash;
-				continue;
-			}
-		}
-		else
-		{
-			// File doesn't exist in cache; ensure cycle is reset.
-			previousFileHash.hash = 0;
-		}
-
-		// File has either been modified or is new; calculate hash and update cache.
-		previousFileHash.size = file->getSize();
-		previousFileHash.lastWriteTime = file->getLastWriteTime();
-		previousFileHash.hash++;
-
-		m_db->setFile(*j, previousFileHash);
-
-		dependency->dependencyHash += previousFileHash.hash;
-	}
-
-	dependency->dependencyHash += dependency->pipelineHash;
-	dependency->dependencyHash += dependency->sourceDataHash;
-	dependency->dependencyHash += dependency->sourceAssetHash;
-}
-
 void PipelineBuilderDistributed::updateBuildReason(PipelineDependency* dependency, bool rebuild)
 {
-	dependency->sourceAssetHash = DeepHash(checked_type_cast< const ISerializable* >(dependency->sourceAsset)).get();
-
 	// Have source asset been modified?
 	if (!rebuild)
 	{
@@ -201,12 +141,12 @@ void PipelineBuilderDistributed::updateBuildReason(PipelineDependency* dependenc
 
 		// Get hash entry from database.
 		IPipelineDb::DependencyHash previousDependencyHash;
-		if (!m_db->getDependency(dependency->outputGuid, previousDependencyHash))
+		if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
 		{
 			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
 			dependency->reason |= PbrSourceModified;
 		}
-		else if (previousDependencyHash.pipelineVersion != type_of(dependency->pipeline).getVersion())
+		else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
 		{
 			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
 			dependency->reason |= PbrSourceModified;
@@ -227,14 +167,14 @@ bool PipelineBuilderDistributed::performBuild(PipelineDependency* dependency)
 	bool result = true;
 
 	// Create hash entry.
-	currentDependencyHash.pipelineVersion = type_of(dependency->pipeline).getVersion();
+	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
 	currentDependencyHash.hash = calculateGlobalHash(dependency);
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)
 	{
 		if ((dependency->reason & PbrSourceModified) != 0)
-			m_db->setDependency(dependency->outputGuid, currentDependencyHash);
+			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 		return true;
 	}
 
@@ -245,7 +185,10 @@ bool PipelineBuilderDistributed::performBuild(PipelineDependency* dependency)
 		if (!agent)
 			return false;
 
-		log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << type_name(dependency->pipeline) << L") on agent " << agent->getDescription() << L"..." << Endl;
+		log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << dependency->pipelineType->getName() << L") on agent " << agent->getDescription() << L"..." << Endl;
+
+		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+		T_ASSERT (pipeline);
 
 		int32_t agentIndex = m_agentsManager->getAgentIndex(agent);
 
@@ -281,12 +224,18 @@ bool PipelineBuilderDistributed::performBuild(PipelineDependency* dependency)
 
 uint32_t PipelineBuilderDistributed::calculateGlobalHash(const PipelineDependency* dependency) const
 {
-	uint32_t hash = dependency->dependencyHash;
+	uint32_t hash =
+		dependency->pipelineHash +
+		dependency->sourceAssetHash +
+		dependency->sourceDataHash +
+		dependency->filesHash;
+
 	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
 		if (((*i)->flags & PdfUse) != 0)
 			hash += calculateGlobalHash(*i);
 	}
+
 	return hash;
 }
 
@@ -317,7 +266,7 @@ void PipelineBuilderDistributed::agentBuildSucceeded(PipelineDependency* depende
 	IPipelineDb::DependencyHash dependencyHash;
 	dependencyHash.pipelineVersion = pipelineVersion;
 	dependencyHash.hash = hash;
-	m_db->setDependency(dependency->outputGuid, dependencyHash);
+	m_pipelineDb->setDependency(dependency->outputGuid, dependencyHash);
 
 	if (m_listener)
 		m_listener->endBuild(

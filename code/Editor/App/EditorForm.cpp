@@ -6,6 +6,7 @@
 #include "Core/Misc/CommandLine.h"
 #include "Core/Misc/EnterLeave.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Serialization/BinarySerializer.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -61,6 +62,7 @@
 #include "Editor/Pipeline/PipelineBuilderDistributed.h"
 #include "Editor/Pipeline/PipelineDb.h"
 #include "Editor/Pipeline/PipelineDependency.h"
+#include "Editor/Pipeline/PipelineDependencyCache.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
@@ -1180,6 +1182,9 @@ bool EditorForm::createWorkspace()
 	updateTitle();
 	m_dataBaseView->setDatabase(m_sourceDatabase);
 
+	// Create pipeline dependency cache.
+	m_dependencyCache = new PipelineDependencyCache();
+
 	// Create stream server.
 	m_streamServer = new net::StreamServer();
 	m_streamServer->create(34000);
@@ -1243,6 +1248,21 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	// Create merged settings.
 	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
 	T_ASSERT (m_mergedSettings);
+
+	// Create pipeline dependency cache.
+	std::wstring dependencyCache = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.DependencyCache");
+	if (!dependencyCache.empty())
+	{
+		Ref< IStream > dependencyCacheFile = FileSystem::getInstance().open(dependencyCache, File::FmRead);
+		if (dependencyCacheFile)
+		{
+			m_dependencyCache = BinarySerializer(dependencyCacheFile).readObject< PipelineDependencyCache >();
+			dependencyCacheFile->close();
+			dependencyCacheFile = 0;
+		}
+	}
+	if (!m_dependencyCache)
+		m_dependencyCache = new PipelineDependencyCache();
 
 	// Open databases.
 	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
@@ -1324,10 +1344,24 @@ void EditorForm::closeWorkspace()
 	safeClose(m_outputDatabase);
 	safeClose(m_sourceDatabase);
 
+	// Save dependency cache.
+	std::wstring dependencyCache = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.DependencyCache");
+	if (!dependencyCache.empty())
+	{
+		Ref< IStream > dependencyCacheFile = FileSystem::getInstance().open(dependencyCache, File::FmWrite);
+		if (dependencyCacheFile)
+		{
+			BinarySerializer(dependencyCacheFile).writeObject(m_dependencyCache);
+			dependencyCacheFile->close();
+			dependencyCacheFile = 0;
+		}
+	}
+
 	// Close settings; restore merged as being global.
 	m_workspacePath = L"";
 	m_workspaceSettings = 0;
 	m_mergedSettings = m_globalSettings;
+	m_dependencyCache = 0;
 
 	// Update UI views.
 	updateTitle();
@@ -1478,6 +1512,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	{
 		pipelineDepends = new PipelineDependsParallel(
 			&pipelineFactory,
+			m_dependencyCache,
 			m_sourceDatabase
 		);
 	}
@@ -1485,6 +1520,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	{
 		pipelineDepends = new PipelineDependsIncremental(
 			&pipelineFactory,
+			m_dependencyCache,
 			m_sourceDatabase
 		);
 	}
@@ -1500,6 +1536,10 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	log::info << DecreaseIndent;
 
 	pipelineDepends->waitUntilFinished();
+
+	//Ref< IStream > s = FileSystem::getInstance().open(L"data/Temp/Pipeline.deb", File::FmWrite);
+	//xml::XmlSerializer(s).writeObject(m_dependencyCache);
+	//s->close();
 
 	RefArray< PipelineDependency > dependencies;
 	pipelineDepends->getDependencies(dependencies);
@@ -1647,6 +1687,7 @@ bool EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t rec
 	PipelineFactory pipelineFactory(m_mergedSettings);
 	PipelineDependsIncremental pipelineDepends(
 		&pipelineFactory,
+		0,
 		m_sourceDatabase,
 		recursionDepth
 	);

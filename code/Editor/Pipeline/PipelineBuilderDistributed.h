@@ -64,15 +64,12 @@ public:
 private:
 	Ref< PipelineAgentsManager > m_agentsManager;
 	Ref< PipelineFactory > m_pipelineFactory;
-	Ref< IPipelineDb > m_db;
+	Ref< IPipelineDb > m_pipelineDb;
 	IListener* m_listener;
 	uint32_t m_progress;
 	uint32_t m_progressEnd;
 	uint32_t m_succeeded;
 	uint32_t m_failed;
-
-	/*! \brief Update dependency local hashes. */
-	void updateLocalHashes(PipelineDependency* dependency);
 
 	/*! \brief Update build reasons. */
 	void updateBuildReason(PipelineDependency* dependency, bool rebuild);

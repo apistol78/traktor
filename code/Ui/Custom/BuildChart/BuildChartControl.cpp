@@ -165,6 +165,17 @@ void BuildChartControl::eventPaint(Event* event)
 
 void BuildChartControl::eventTimer(Event* event)
 {
+	if (m_running && !hasCapture())
+	{
+		Rect rc = getInnerRect();
+		int32_t x = int32_t((m_time - m_offset) * m_scale);
+		if (x >= rc.right)
+		{
+			x = (rc.left + rc.right) / 2;
+			m_offset = -(x / m_scale - m_time);
+		}
+	}
+
 	update();
 }
 

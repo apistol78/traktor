@@ -32,14 +32,9 @@ public:
 
 	virtual ~PipelineFactory();
 
-	/*! \brief Find pipeline from source type.
-	 *
-	 * \param sourceType Type of source asset.
-	 * \param outPipeline Pipeline.
-	 * \param outPipelineHash Hash of pipeline settings.
-	 * \return True if pipeline found.
-	 */
-	bool findPipeline(const TypeInfo& sourceType, Ref< IPipeline >& outPipeline, uint32_t& outPipelineHash) const;
+	bool findPipelineType(const TypeInfo& sourceType, const TypeInfo*& outPipelineType, uint32_t& outPipelineHash) const;
+
+	IPipeline* findPipeline(const TypeInfo& pipelineType) const;
 
 private:
 	std::vector< std::pair< Ref< IPipeline >, uint32_t > > m_pipelines;

@@ -32,6 +32,8 @@ public:
 
 	bool join(Thread* thread);
 
+	bool stop(Thread* thread);
+
 protected:
 	virtual void destroy();
 

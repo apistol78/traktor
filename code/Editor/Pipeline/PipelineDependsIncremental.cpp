@@ -3,6 +3,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
 #include "Core/Misc/Save.h"
+#include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -10,6 +12,7 @@
 #include "Database/Instance.h"
 #include "Editor/IPipeline.h"
 #include "Editor/Pipeline/PipelineDependency.h"
+#include "Editor/Pipeline/PipelineDependencyCache.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 
@@ -22,10 +25,12 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsIncremental", PipelineDep
 
 PipelineDependsIncremental::PipelineDependsIncremental(
 	PipelineFactory* pipelineFactory,
+	PipelineDependencyCache* dependencyCache,
 	db::Database* sourceDatabase,
 	uint32_t recursionDepth
 )
 :	m_pipelineFactory(pipelineFactory)
+,	m_dependencyCache(dependencyCache)
 ,	m_sourceDatabase(sourceDatabase)
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
@@ -43,17 +48,22 @@ void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 	if (ThreadManager::getInstance().getCurrentThread()->stopped())
 		return;
 
-	Ref< IPipeline > pipeline;
+	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
-	if (m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
+	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
-		pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
-		if (m_currentDependency)
-			m_currentDependency->pipelineHash += pipelineHash;
-	}
-	else
 		log::error << L"Unable to add dependency to source asset (" << type_name(sourceAsset) << L"); no pipeline found" << Endl;
+		return;
+	}
+
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+	T_ASSERT (pipeline);
+
+	pipeline->buildDependencies(this, 0, sourceAsset, L"", Guid());
+
+	if (m_currentDependency)
+		m_currentDependency->pipelineHash += pipelineHash;
 }
 
 void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, uint32_t flags)
@@ -174,20 +184,31 @@ void PipelineDependsIncremental::addDependency(
 {
 	Path filePath = FileSystem::getInstance().getAbsolutePath(basePath, fileName);
 	if (m_currentDependency)
-		m_currentDependency->files.insert(filePath);
+	{
+		Ref< File > file = FileSystem::getInstance().get(filePath);
+		if (file)
+		{
+			PipelineDependency::ExternalFile externalFile;
+			externalFile.filePath = filePath;
+			externalFile.lastWriteTime = file->getLastWriteTime();
+			m_currentDependency->files.push_back(externalFile);
+		}
+		else
+			log::error << L"Unable to add dependency to \"" << filePath.getPathName() << L"\"; no such file" << Endl;
+	}
 }
 
 void PipelineDependsIncremental::addDependency(
 	const TypeInfo& sourceAssetType
 )
 {
-	Ref< IPipeline > pipeline;
+	// Find pipeline which consume asset type.
+	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
-	// Find pipeline which consume asset type.
-	if (!m_pipelineFactory->findPipeline(sourceAssetType, pipeline, pipelineHash))
+	if (!m_pipelineFactory->findPipelineType(sourceAssetType, pipelineType, pipelineHash))
 	{
-		log::error << L"Unable to add dependency to \"" << sourceAssetType.getName() << L"\"; no pipeline found" << Endl;
+		log::error << L"Unable to add dependency to source asset (" << sourceAssetType.getName() << L"); no pipeline found" << Endl;
 		return;
 	}
 
@@ -227,7 +248,7 @@ Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const G
 	return object;
 }
 
-Ref< PipelineDependency > PipelineDependsIncremental::findDependency(const Guid& guid) const
+PipelineDependency* PipelineDependsIncremental::findDependency(const Guid& guid) const
 {
 	std::map< Guid, PipelineDependency* >::const_iterator i = m_dependencyMap.find(guid);
 	return i != m_dependencyMap.end() ? i->second : 0;
@@ -241,28 +262,77 @@ void PipelineDependsIncremental::addUniqueDependency(
 	uint32_t flags
 )
 {
-	Ref< IPipeline > pipeline;
+	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
 	// Find appropriate pipeline.
-	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
+	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
 		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found" << Endl;
 		return;
 	}
 
-	// Register dependency, add to "parent" dependency as well.
+	// Get cached dependency from last build.
+	Ref< PipelineDependency > cachedDependency = m_dependencyCache ? m_dependencyCache->get(outputGuid) : 0;
+	if (cachedDependency)
+	{
+		if (
+			cachedDependency->pipelineType != pipelineType ||
+			cachedDependency->pipelineHash != pipelineHash
+		)
+			cachedDependency = 0;
+	}
+
+	// Create dependency, add to "parent" dependency as well.
 	Ref< PipelineDependency > dependency = new PipelineDependency();
-	dependency->pipeline = pipeline;
+	dependency->pipelineType = pipelineType;
 	dependency->pipelineHash = pipelineHash;
+	dependency->sourceInstanceGuid = sourceInstance ? sourceInstance->getGuid() : Guid();
 	dependency->sourceAsset = sourceAsset;
 	dependency->outputPath = outputPath;
 	dependency->outputGuid = outputGuid;
 	dependency->flags = flags;
 	dependency->reason = PbrNone;
 
+	if (sourceInstance)
+		sourceInstance->getLastModifyDate(dependency->sourceInstanceLastModifyDate);
+
 	if (m_currentDependency)
 		m_currentDependency->children.push_back(dependency);
+
+	// Check if cached dependency is still valid.
+	if (cachedDependency)
+	{
+		if (
+			dependency->sourceInstanceGuid == cachedDependency->sourceInstanceGuid &&
+			dependency->sourceInstanceLastModifyDate == cachedDependency->sourceInstanceLastModifyDate &&
+			dependency->outputPath == cachedDependency->outputPath &&
+			dependency->outputGuid == cachedDependency->outputGuid
+		)
+		{
+			// Check time stamps of each external file.
+			for (std::vector< PipelineDependency::ExternalFile >::const_iterator i = cachedDependency->files.begin(); i != cachedDependency->files.end(); ++i)
+			{
+				Ref< File > file = FileSystem::getInstance().get(i->filePath);
+				if (!file || file->getLastWriteTime() != i->lastWriteTime)
+				{
+					cachedDependency = 0;
+					break;
+				}
+			}
+
+			// Reuse hashes from cached dependency.
+			if (cachedDependency)
+			{
+				dependency->sourceAssetHash = cachedDependency->sourceAssetHash;
+				dependency->sourceDataHash = cachedDependency->sourceDataHash;
+				dependency->filesHash = cachedDependency->filesHash;
+				dependency->files = cachedDependency->files;
+			}
+		}
+		else
+			cachedDependency = 0;
+	}
 
 	uint32_t dependencyIndex = uint32_t(m_dependencies.size());
 	m_dependencies.push_back(dependency);
@@ -270,7 +340,108 @@ void PipelineDependsIncremental::addUniqueDependency(
 
 	bool result = true;
 
+	// Recurse scan child dependencies.
+	if (m_currentRecursionDepth < m_maxRecursionDepth)
+	{
+		T_ANONYMOUS_VAR(Save< uint32_t >)(m_currentRecursionDepth, m_currentRecursionDepth + 1);
+		T_ANONYMOUS_VAR(Save< Ref< PipelineDependency > >)(m_currentDependency, dependency);
+
+		if (cachedDependency)
+		{
+			for (RefArray< PipelineDependency >::const_iterator i = cachedDependency->children.begin(); i != cachedDependency->children.end(); ++i)
+				addCachedDependency(*i);
+		}
+		else
+			result = false;
+
+		if (!result)
+		{
+			Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+			T_ASSERT (pipeline);
+
+			result = pipeline->buildDependencies(
+				this,
+				sourceInstance,
+				sourceAsset,
+				outputPath,
+				outputGuid
+			);
+		}
+	}
+
+	if (result)
+	{
+		// Calculate new hashes if no cached dependency was used.
+		if (!cachedDependency)
+			updateDependencyHashes(dependency, sourceInstance);
+
+		// Add to dependency cache.
+		if (m_dependencyCache)
+			m_dependencyCache->put(outputGuid, dependency);
+	}
+	else
+	{
+		// Pipeline build dependencies failed; remove dependency from array.
+		T_ASSERT (dependencyIndex < m_dependencies.size());
+		m_dependencies.erase(m_dependencies.begin() + dependencyIndex);
+
+		// Remove from current as well.
+		if (m_currentDependency)
+		{
+			RefArray< PipelineDependency >::iterator i = std::find(m_currentDependency->children.begin(), m_currentDependency->children.end(), dependency);
+			m_currentDependency->children.erase(i);
+		}
+	}
+}
+
+void PipelineDependsIncremental::addCachedDependency(PipelineDependency* dependency)
+{
+	if (dependency->sourceInstanceGuid.isNotNull())
+	{
+		if (PipelineDependency* existingDependency = findDependency(dependency->outputGuid))
+		{
+			existingDependency->flags |= dependency->flags;
+			if (m_currentDependency)
+				m_currentDependency->children.push_back(existingDependency);
+			return;
+		}
+
+		Ref< db::Instance > sourceAssetInstance = m_sourceDatabase->getInstance(dependency->sourceInstanceGuid);
+		if (!sourceAssetInstance)
+		{
+			log::error << L"Unable to add dependency to \"" << dependency->sourceInstanceGuid.format() << L"\"; no such instance" << Endl;
+			return;
+		}
+
+		addUniqueDependency(
+			sourceAssetInstance,
+			dependency->sourceAsset,
+			sourceAssetInstance->getPath(),
+			sourceAssetInstance->getGuid(),
+			dependency->flags
+		);
+	}
+	else
+	{
+		addDependency(
+			dependency->sourceAsset,
+			dependency->outputPath,
+			dependency->outputGuid,
+			dependency->flags
+		);
+	}
+}
+
+void PipelineDependsIncremental::updateDependencyHashes(
+	PipelineDependency* dependency,
+	const db::Instance* sourceInstance
+) const
+{
+	// Calculate source of source asset.
+	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
+
 	// Calculate hash of instance data.
+	dependency->sourceDataHash = 0;
 	if (sourceInstance)
 	{
 		std::vector< std::wstring > dataNames;
@@ -295,32 +466,24 @@ void PipelineDependsIncremental::addUniqueDependency(
 		}
 	}
 
-	// Recurse scan child dependencies.
-	if (m_currentRecursionDepth < m_maxRecursionDepth)
+	// Calculate external file hashes.
+	dependency->filesHash = 0;
+	for (std::vector< PipelineDependency::ExternalFile >::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
 	{
-		T_ANONYMOUS_VAR(Save< uint32_t >)(m_currentRecursionDepth, m_currentRecursionDepth + 1);
-		T_ANONYMOUS_VAR(Save< Ref< PipelineDependency > >)(m_currentDependency, dependency);
-
-		result = pipeline->buildDependencies(
-			this,
-			sourceInstance,
-			sourceAsset,
-			outputPath,
-			outputGuid
-		);
-	}
-
-	if (!result)
-	{
-		// Pipeline build dependencies failed; remove dependency from array.
-		T_ASSERT (dependencyIndex < m_dependencies.size());
-		m_dependencies.erase(m_dependencies.begin() + dependencyIndex);
-
-		// Remove from current as well.
-		if (m_currentDependency)
+		Ref< IStream > fileStream = FileSystem::getInstance().open(i->filePath, File::FmRead);
+		if (fileStream)
 		{
-			RefArray< PipelineDependency >::iterator i = std::find(m_currentDependency->children.begin(), m_currentDependency->children.end(), dependency);
-			m_currentDependency->children.erase(i);
+			uint8_t buffer[4096];
+			Adler32 a32;
+			int32_t r;
+
+			a32.begin();
+			while ((r = fileStream->read(buffer, sizeof(buffer))) > 0)
+				a32.feed(buffer, r);
+			a32.end();
+
+			dependency->filesHash += a32.get();
+			fileStream->close();
 		}
 	}
 }

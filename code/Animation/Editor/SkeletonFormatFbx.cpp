@@ -2,6 +2,7 @@
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
 #include "Animation/Editor/SkeletonFormatFbx.h"
+#include "Core/FbxLock.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Matrix44.h"
@@ -194,11 +195,9 @@ void createJoints(
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatFbx", SkeletonFormatFbx, ISkeletonFormat)
 
-Semaphore SkeletonFormatFbx::ms_lock;
-
 Ref< Skeleton > SkeletonFormatFbx::import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(ms_lock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
 
 	const Vector4 jointModifier(
 		invertX ? -1.0f : 1.0f, 

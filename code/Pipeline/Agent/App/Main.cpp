@@ -71,19 +71,11 @@ void threadProcessClient(
 			log::error << L"Agent build error; no such pipeline \"" << agentBuild->getPipelineTypeName() << L"\"" << Endl;
 			continue;
 		}
-
-		Ref< editor::IPipeline > pipeline;
-		uint32_t pipelineHash;
-
-		if (!pipelineFactory->findPipeline(type_of(agentBuild->getSourceAsset()), pipeline, pipelineHash))
+	
+		Ref< editor::IPipeline > pipeline = pipelineFactory->findPipeline(*pipelineType);
+		if (!pipeline)
 		{
 			log::error << L"Agent build error; unable to get pipeline" << Endl;
-			continue;
-		}
-
-		if (!is_type_a(type_of(pipeline), *pipelineType))
-		{
-			log::error << L"Agent build error; mismatching pipeline types" << Endl;
 			continue;
 		}
 

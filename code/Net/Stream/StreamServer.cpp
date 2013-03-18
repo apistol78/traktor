@@ -59,7 +59,7 @@ void StreamServer::destroy()
 	}
 
 	for (std::list< Thread* >::iterator i = m_clientThreads.begin(); i != m_clientThreads.end(); ++i)
-		ThreadPool::getInstance().join(*i);
+		ThreadPool::getInstance().stop(*i);
 
 	m_clientThreads.clear();
 	m_streams.clear();

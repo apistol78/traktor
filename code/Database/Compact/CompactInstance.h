@@ -39,6 +39,8 @@ public:
 
 	virtual bool setGuid(const Guid& guid);
 
+	virtual bool getLastModifyDate(DateTime& outModifyDate) const;
+
 	virtual bool remove();
 
 	virtual Ref< IStream > readObject(const TypeInfo*& outSerializerType) const;
