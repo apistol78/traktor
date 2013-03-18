@@ -67,11 +67,27 @@ std::wstring NativeVolume::getDescription() const
 
 Ref< File > NativeVolume::get(const Path& path)
 {
-	RefArray< File > files;
-	if (find(path, files) > 0)
-		return files[0];
-	else
+	WIN32_FILE_ATTRIBUTE_DATA fa;
+	std::memset(&fa, 0, sizeof(fa));
+
+	if (!GetFileAttributesEx(wstots(getSystemPath(path)).c_str(), GetFileExInfoStandard, &fa))
 		return 0;
+
+	int flags =
+		(((fa.dwFileAttributes  & FILE_ATTRIBUTE_NORMAL   ) == FILE_ATTRIBUTE_NORMAL   ) ? File::FfNormal    : 0) |
+		(((fa.dwFileAttributes  & FILE_ATTRIBUTE_READONLY ) == FILE_ATTRIBUTE_READONLY ) ? File::FfReadOnly  : 0) |
+		(((fa.dwFileAttributes  & FILE_ATTRIBUTE_HIDDEN   ) == FILE_ATTRIBUTE_HIDDEN   ) ? File::FfHidden    : 0) |
+		(((fa.dwFileAttributes  & FILE_ATTRIBUTE_ARCHIVE  ) == FILE_ATTRIBUTE_ARCHIVE  ) ? File::FfArchive   : 0) |
+		(((fa.dwFileAttributes  & FILE_ATTRIBUTE_DIRECTORY) == FILE_ATTRIBUTE_DIRECTORY) ? File::FfDirectory : 0);
+
+	return new File(
+		path,
+		fa.nFileSizeLow,
+		flags,
+		createDateTime(fa.ftCreationTime),
+		createDateTime(fa.ftLastAccessTime),
+		createDateTime(fa.ftLastWriteTime)
+	);
 }
 
 int NativeVolume::find(const Path& mask, RefArray< File >& out)

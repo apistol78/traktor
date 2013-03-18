@@ -1,7 +1,6 @@
 #ifndef traktor_model_ModelFormatFbx_H
 #define traktor_model_ModelFormatFbx_H
 
-#include "Core/Thread/Semaphore.h"
 #include "Model/ModelFormat.h"
 
 // import/export mechanism.
@@ -32,9 +31,6 @@ public:
 	virtual Ref< Model > read(IStream* stream, uint32_t importFlags) const;
 
 	virtual bool write(IStream* stream, const Model* model) const;
-
-private:
-	static Semaphore ms_lock;
 };
 
 	}

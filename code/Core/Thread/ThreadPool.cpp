@@ -103,6 +103,23 @@ bool ThreadPool::join(Thread* thread)
 		if (worker.threadWorker == thread)
 		{
 			if (worker.busy != 0)
+				worker.eventFinishedWork.wait();
+			return true;
+		}
+	}
+	T_FATAL_ERROR;
+	return false;
+}
+
+bool ThreadPool::stop(Thread* thread)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	for (uint32_t i = 0; i < m_workerThreads.size(); ++i)
+	{
+		Worker& worker = m_workerThreads[i];
+		if (worker.threadWorker == thread)
+		{
+			if (worker.busy != 0)
 			{
 				worker.threadWorker->stop(0);
 				worker.eventFinishedWork.wait();

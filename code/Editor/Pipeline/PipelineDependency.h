@@ -3,9 +3,10 @@
 
 #include <set>
 #include "Core/Guid.h"
-#include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Date/DateTime.h"
 #include "Core/Io/Path.h"
+#include "Core/Serialization/ISerializable.h"
 #include "Editor/PipelineTypes.h"
 
 // import/export mechanism.
@@ -32,25 +33,37 @@ class IPipeline;
  * Describe the dependencies of an asset;
  * which other assets are used, which files are used etc.
  */
-class T_DLLCLASS PipelineDependency : public Object
+class T_DLLCLASS PipelineDependency : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
-	PipelineDependency();
+	struct ExternalFile
+	{
+		Path filePath;
+		DateTime lastWriteTime;
 
-	Ref< IPipeline > pipeline;					/*!< Associated pipeline, must be used to build output. */
-	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */
+		bool serialize(ISerializer& s);
+	};
+
+	const TypeInfo* pipelineType;
+	Guid sourceInstanceGuid;
+	DateTime sourceInstanceLastModifyDate;
 	Ref< const ISerializable > sourceAsset;		/*!< Source asset. */
-	uint32_t sourceDataHash;					/*!< Hash of source instance data. */
-	uint32_t sourceAssetHash;					/*!< Hash of source asset. */
-	uint32_t dependencyHash;					/*!< Dependency hash, a complete hash of this dep and the children. */
+	std::vector< ExternalFile > files;			/*!< External file dependencies. */
 	std::wstring outputPath;					/*!< Database output path. */
 	Guid outputGuid;							/*!< Database output guid. */
-	std::set< Path > files;						/*!< External file dependencies. */
+	uint32_t pipelineHash;						/*!< Hash of pipeline settings. */
+	uint32_t sourceAssetHash;					/*!< Hash of source asset. */
+	uint32_t sourceDataHash;					/*!< Hash of source instance data. */
+	uint32_t filesHash;							/*!< Hash of external files. */
 	uint32_t flags;								/*!< Dependency flags. \sa PipelineDependencyFlags */
 	uint32_t reason;							/*!< Build reason, updated prior to being built. \sa PipelineBuildReason */
 	RefArray< PipelineDependency > children;	/*!< Child dependencies. */
+
+	PipelineDependency();
+
+	virtual bool serialize(ISerializer& s);
 };
 
 	}

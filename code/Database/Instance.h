@@ -3,6 +3,7 @@
 
 #include "Core/Guid.h"
 #include "Core/Object.h"
+#include "Core/Date/DateTime.h"
 #include "Core/Thread/Semaphore.h"
 #include "Database/Types.h"
 
@@ -55,6 +56,8 @@ public:
 	virtual std::wstring getPath() const;
 
 	virtual Guid getGuid() const;
+
+	virtual bool getLastModifyDate(DateTime& outModifyDate) const;
 
 	virtual std::wstring getPrimaryTypeName() const;
 

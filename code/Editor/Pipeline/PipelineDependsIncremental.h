@@ -17,6 +17,7 @@ namespace traktor
 	namespace editor
 	{
 
+class PipelineDependencyCache;
 class PipelineFactory;
 
 /*! \brief Incremental pipeline dependency walker.
@@ -29,6 +30,7 @@ class T_DLLCLASS PipelineDependsIncremental : public IPipelineDepends
 public:
 	PipelineDependsIncremental(
 		PipelineFactory* pipelineFactory,
+		PipelineDependencyCache* dependencyCache,
 		db::Database* sourceDatabase,
 		uint32_t recursionDepth = ~0UL
 	);
@@ -73,6 +75,7 @@ public:
 
 private:
 	Ref< PipelineFactory > m_pipelineFactory;
+	Ref< PipelineDependencyCache > m_dependencyCache;
 	Ref< db::Database > m_sourceDatabase;
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;
@@ -81,22 +84,8 @@ private:
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< Guid, PipelineDependency* > m_dependencyMap;
 
-	/*! \brief Find already added dependency.
-	 *
-	 * \param guid Output guid.
-	 * \return Pointer to added dependency, null if dependency not added.
-	 */
-	Ref< PipelineDependency > findDependency(const Guid& guid) const;
+	PipelineDependency* findDependency(const Guid& guid) const;
 
-	/*! \brief Add dependency.
-	 * Add dependency without checking if it's already added.
-	 *
-	 * \param sourceInstance Source asset database instance; null if not originate from database.
-	 * \param sourceAsset Pointer to source asset object.
-	 * \param outputPath Output path of target instance.
-	 * \param outputGuid Guid of output instance.
-	 * \param build If asset needs to be built.
-	 */
 	void addUniqueDependency(
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
@@ -104,6 +93,13 @@ private:
 		const Guid& outputGuid,
 		uint32_t flags
 	);
+
+	void addCachedDependency(PipelineDependency* dependency);
+
+	void updateDependencyHashes(
+		PipelineDependency* dependency,
+		const db::Instance* sourceInstance
+	) const;
 };
 
 	}

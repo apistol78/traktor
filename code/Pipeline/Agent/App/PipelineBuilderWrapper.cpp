@@ -90,11 +90,14 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const ISerializable* so
 		}
 	}
 
-	Ref< IPipeline > pipeline;
+	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
-	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
+	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 		return 0;
+
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+	T_ASSERT (pipeline);
 
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
 	if (!product)
@@ -114,11 +117,14 @@ Ref< ISerializable > PipelineBuilderWrapper::buildOutput(const ISerializable* so
 
 bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams)
 {
-	Ref< IPipeline > pipeline;
+	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
 
-	if (!m_pipelineFactory->findPipeline(type_of(sourceAsset), pipeline, pipelineHash))
-		return false;
+	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
+		return 0;
+
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
+	T_ASSERT (pipeline);
 
 	if (!pipeline->buildOutput(this, sourceAsset, 0, outputPath, outputGuid, buildParams, PbrSourceModified))
 		return false;

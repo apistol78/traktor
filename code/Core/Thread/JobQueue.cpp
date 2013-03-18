@@ -27,13 +27,14 @@ bool JobQueue::create(uint32_t workerThreads)
 		m_workerThreads[i] = ThreadManager::getInstance().create(
 			makeFunctor< JobQueue >(
 				this,
-				&JobQueue::threadWorker,
-				int(i)
-			).ptr(),
-			L"Job queue, worker thread " + toString(i),
-			i + 1
+				&JobQueue::threadWorker
+			),
+			L"Job queue, worker thread " + toString(i)
 		);
-		m_workerThreads[i]->start(Thread::Normal);
+		if (m_workerThreads[i])
+			m_workerThreads[i]->start(Thread::Normal);
+		else
+			return false;
 	}
 	return true;
 }
@@ -57,8 +58,9 @@ void JobQueue::destroy()
 Ref< Job > JobQueue::add(Functor* functor)
 {
 	Ref< Job > job = new Job(functor, m_jobFinishedEvent);
+	Atomic::increment(m_running);
 	m_jobQueue.put(job);
-	m_jobQueuedEvent.pulse();
+	m_jobQueuedEvent.broadcast();
 	return job;
 }
 
@@ -71,9 +73,10 @@ void JobQueue::fork(const RefArray< Functor >& functors)
 		for (uint32_t i = 1; i < functors.size(); ++i)
 		{
 			jobs[i] = new Job(functors[i], m_jobFinishedEvent);
+			Atomic::increment(m_running);
 			m_jobQueue.put(jobs[i]);
 		}
-		m_jobQueuedEvent.pulse();
+		m_jobQueuedEvent.broadcast();
 	}
 
 	(*functors[0])();
@@ -113,28 +116,31 @@ int32_t JobQueue::getRunningCount() const
 	return m_running;
 }
 
-void JobQueue::threadWorker(int id)
+void JobQueue::threadWorker()
 {
-	Thread* thread = m_workerThreads[id];
+	Thread* thread = ThreadManager::getInstance().getCurrentThread();
 	Ref< Job > job;
 
 	for (;;)
 	{
-		while (!m_jobQueue.empty() && !thread->stopped())
+		while (
+			!m_jobQueue.empty() &&
+			!thread->stopped()
+		)
 		{
-			Atomic::increment(m_running);
 			if (m_jobQueue.get(job))
 			{
 				T_ASSERT (!job->m_finished);
 
 				(*job->m_functor)();
+	
 				job->m_finished = true;
 				job->m_stopped = true;
 				job = 0;
 
+				Atomic::decrement(m_running);
 				m_jobFinishedEvent.broadcast();
 			}
-			Atomic::decrement(m_running);
 		}
 
 		if (thread->stopped())

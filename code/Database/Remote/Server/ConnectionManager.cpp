@@ -53,7 +53,7 @@ void ConnectionManager::destroy()
 {
 	if (m_serverThread)
 	{
-		ThreadPool::getInstance().join(m_serverThread);
+		ThreadPool::getInstance().stop(m_serverThread);
 		m_serverThread = 0;
 	}
 

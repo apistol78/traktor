@@ -101,7 +101,7 @@ bool PipelineAgent::isIdle() const
 bool PipelineAgent::build(const PipelineDependency* dependency, Functor* functorSucceeded, Functor* functorFailed)
 {
 	AgentBuild agentBuild(
-		type_name(dependency->pipeline),
+		dependency->pipelineType->getName(),
 		dependency->sourceAsset,
 		dependency->sourceAssetHash,
 		dependency->outputPath,

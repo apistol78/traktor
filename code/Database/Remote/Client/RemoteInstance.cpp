@@ -91,6 +91,11 @@ bool RemoteInstance::setGuid(const Guid& guid)
 	return result ? result->getStatus() == StSuccess : false;
 }
 
+bool RemoteInstance::getLastModifyDate(DateTime& outModifyDate) const
+{
+	return false;
+}
+
 bool RemoteInstance::remove()
 {
 	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveInstance(m_handle));

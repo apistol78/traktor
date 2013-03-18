@@ -47,7 +47,7 @@ void Connection::destroy()
 {
 	if (m_thread)
 	{
-		ThreadPool::getInstance().join(m_thread);
+		ThreadPool::getInstance().stop(m_thread);
 		m_thread = 0;
 	}
 
