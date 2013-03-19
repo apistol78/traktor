@@ -52,6 +52,8 @@ public:
 
 	uint32_t getVertexCount() const;
 
+	void setVertices(const std::vector< uint32_t >& vertices);
+
 	const std::vector< uint32_t >& getVertices() const;
 
 	bool operator == (const Polygon& r) const;

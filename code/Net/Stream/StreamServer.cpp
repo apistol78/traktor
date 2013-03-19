@@ -1,12 +1,15 @@
 #include "Core/Io/IStream.h"
+#include "Core/Io/StreamCopy.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Thread/ThreadPool.h"
 #include "Core/Timer/Timer.h"
 #include "Net/Batch.h"
 #include "Net/SocketAddressIPv4.h"
+#include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
 #include "Net/Stream/StreamServer.h"
 
@@ -67,6 +70,7 @@ void StreamServer::destroy()
 
 uint32_t StreamServer::publish(IStream* stream)
 {
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
 	uint32_t id = m_nextId;
 	m_streams[id] = stream;
 	if (++m_nextId == 0)
@@ -149,11 +153,17 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 			{
 				net::recvBatch< uint32_t >(clientSocket, streamId);
 
-				std::map< uint32_t, Ref< IStream > >::const_iterator i = m_streams.find(streamId);
-				if (i != m_streams.end() && i->second != 0)
 				{
-					stream = i->second;
+					T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
+					std::map< uint32_t, Ref< IStream > >::const_iterator i = m_streams.find(streamId);
+					if (i != m_streams.end())
+						stream = i->second;
+					else
+						stream = 0;
+				}
 
+				if (stream != 0)
+				{
 					uint8_t status = 0x00;
 					if (stream->canRead())
 						status |= 0x01;
@@ -161,14 +171,26 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 						status |= 0x02;
 					if (stream->canSeek())
 						status |= 0x04;
+
+					int32_t avail = 0;
+					if ((status & 0x03) == 0x01)
+						avail = stream->available();
 					
-					net::sendBatch< uint8_t >(clientSocket, status);
+					net::sendBatch< uint8_t, int32_t >(clientSocket, status, avail);
 
 					start = timer.getElapsedTime();
 					totalRx = 0;
 					totalTx = 0;
 					countRx = 0;
 					countTx = 0;
+
+					if (avail > 0)
+					{
+						SocketStream ss(clientSocket, false, true);
+						StreamCopy(&ss, stream).execute(avail);
+						totalTx += avail;
+						countTx++;
+					}
 				}
 				else
 					net::sendBatch< uint8_t >(clientSocket, 0);
@@ -179,9 +201,12 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 			{
 				if (stream)
 				{
-					std::map< uint32_t, Ref< IStream > >::const_iterator i = m_streams.find(streamId);
-					if (i != m_streams.end())
-						m_streams.erase(i);
+					{
+						T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
+						std::map< uint32_t, Ref< IStream > >::const_iterator i = m_streams.find(streamId);
+						if (i != m_streams.end())
+							m_streams.erase(i);
+					}
 
 					double end = timer.getElapsedTime();
 

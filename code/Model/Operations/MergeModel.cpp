@@ -1,3 +1,4 @@
+#include <limits>
 #include "Core/Log/Log.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeModel.h"
@@ -6,6 +7,12 @@ namespace traktor
 {
 	namespace model
 	{
+		namespace
+		{
+
+const Scalar c_snapDistance(0.02f);
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeModel", MergeModel, IModelOperation)
 
@@ -25,6 +32,7 @@ bool MergeModel::apply(Model& model) const
 		materialMap[i] = model.addUniqueMaterial(sourceMaterials[i]);
 
 	// Merge geometry.
+	const std::vector< Polygon >& sourcePolygons = m_sourceModel.getPolygons();
 	const std::vector< Vertex >& sourceVertices = m_sourceModel.getVertices();
 
 	std::vector< uint32_t > vertexMap;
@@ -80,86 +88,128 @@ bool MergeModel::apply(Model& model) const
 		vertexMap[i] = model.addUniqueVertex(v);
 	}
 
-	// Merge polygons.
-	const std::vector< Polygon >& sourcePolygons = m_sourceModel.getPolygons();
-
 	std::vector< Polygon > mergedPolygons = model.getPolygons();
-	mergedPolygons.reserve(mergedPolygons.size() + sourcePolygons.size());
+	std::vector< Polygon > outputPolygons; outputPolygons.reserve(sourcePolygons.size());
 
-	for (std::vector< Polygon >::const_iterator i = sourcePolygons.begin(); i != sourcePolygons.end(); ++i)
+	for (uint32_t i = 0; i < sourcePolygons.size(); ++i)
 	{
-		Polygon p;
-		p.setMaterial(materialMap[i->getMaterial()]);
+		const Polygon& sourcePolygon = sourcePolygons[i];
+		const std::vector< uint32_t >& sourceVertices = sourcePolygon.getVertices();
 
-		const std::vector< uint32_t >& sourceVertices = i->getVertices();
+		// Remap vertices.
+		std::vector< uint32_t > outputVertices(sourceVertices.size());
 		for (uint32_t j = 0; j < sourceVertices.size(); ++j)
-			p.addVertex(vertexMap[sourceVertices[j]]);
+			outputVertices[j] = vertexMap[sourceVertices[j]];
 
-		if (i->getNormal() != c_InvalidIndex)
+		// Rotate vertices; keep vertex with lowest geometrical position first.
+		uint32_t minPositionIndex = ~0UL;
+		Vector4 minPosition = Vector4(
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max()
+		);
+
+		for (uint32_t j = 0; j < outputVertices.size(); ++j)
 		{
-			uint32_t normal = model.addUniqueNormal(m_sourceTransform * m_sourceModel.getNormal(i->getNormal()).xyz0());
-			p.setNormal(normal);
+			const Vector4& position = model.getVertexPosition(outputVertices[j]);
+			if (
+				position.x() < minPosition.x() &&
+				position.y() < minPosition.y() &&
+				position.z() < minPosition.z()
+			)
+			{
+				minPositionIndex = j;
+				minPosition = position;
+			}
 		}
 
-		// Check if polygon exist with opposite winding; if such then the both
-		// polygons is removed. Also don't add duplicates.
+		std::rotate(outputVertices.begin(), outputVertices.begin() + minPositionIndex, outputVertices.end());
+
+		// Create polygon.
+		Polygon outputPolygon;
+		outputPolygon.setMaterial(materialMap[sourcePolygon.getMaterial()]);
+
+		if (sourcePolygon.getNormal() != c_InvalidIndex)
+		{
+			uint32_t normal = model.addUniqueNormal(m_sourceTransform * m_sourceModel.getNormal(sourcePolygon.getNormal()).xyz0());
+			outputPolygon.setNormal(normal);
+		}
+
+		outputPolygon.setVertices(outputVertices);
+
+		// Check if polygon is duplicated or canceling through opposite winding.
 		bool duplicate = false;
 
-		std::vector< uint32_t > pv = p.getVertices();
-		std::reverse(pv.begin(), pv.end());
-
-		for (std::vector< Polygon >::iterator i = mergedPolygons.begin(); i != mergedPolygons.end(); ++i)
+		for (uint32_t j = 0; j < mergedPolygons.size(); ++j)
 		{
-			if (i->getVertices() == p.getVertices())
-			{
-				duplicate = true;
-				break;
-			}
+			const Polygon& mergedPolygon = mergedPolygons[j];
 
-			if (i->getVertexCount() != p.getVertexCount() || i->getVertexCount() == 0)
+			if (mergedPolygon.getVertexCount() != outputPolygon.getVertexCount())
 				continue;
 
-			uint32_t c = i->getVertexCount();
-			uint32_t v0 = i->getVertex(0);
-			uint32_t p0 = model.getVertex(v0).getPosition();
+			uint32_t outputVertex = outputPolygon.getVertex(0);
+			uint32_t mergedVertex = mergedPolygon.getVertex(0);
 
-			uint32_t i0 = 0;
-			for (; i0 < pv.size(); ++i0)
-			{
-				if (model.getVertex(pv[i0]).getPosition() == p0)
-					break;
-			}
-			if (i0 >= pv.size())
+			const Vector4& outputPosition = model.getVertexPosition(outputVertex);
+			const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
+
+			Scalar distance = (outputPosition - mergedPosition).xyz0().length();
+			if (distance > c_snapDistance)
 				continue;
 
-			bool cull = true;
-			for (uint32_t j = 0; j < c; ++j)
+			uint32_t vertexCount = outputPolygon.getVertexCount();
+
+			duplicate = true;
+
+			for (uint32_t k = 1; k < vertexCount; ++k)
 			{
-				const Vertex& v0 = model.getVertex(i->getVertex(j));
-				const Vertex& v1 = model.getVertex(pv[(i0 + j) % c]);
+				uint32_t outputVertex = outputPolygon.getVertex(k);
+				uint32_t mergedVertex = mergedPolygon.getVertex(k);
 
-				const Vector4& p0 = model.getPosition(v0.getPosition());
-				const Vector4& p1 = model.getPosition(v1.getPosition());
+				const Vector4& outputPosition = model.getVertexPosition(outputVertex);
+				const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
-				if ((p1 - p0).length2() > 0.01f * 0.01f)
+				Scalar distance = (outputPosition - mergedPosition).xyz0().length();
+				if (distance > c_snapDistance)
 				{
-					cull = false;
+					duplicate = false;
 					break;
 				}
 			}
 
-			if (cull)
+			if (duplicate)
+				break;
+
+			duplicate = true;
+
+			for (uint32_t k = 1; k < vertexCount; ++k)
 			{
-				mergedPolygons.erase(i);
-				duplicate = true;
+				uint32_t outputVertex = outputPolygon.getVertex(k);
+				uint32_t mergedVertex = mergedPolygon.getVertex(vertexCount - k);
+
+				const Vector4& outputPosition = model.getVertexPosition(outputVertex);
+				const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
+
+				Scalar distance = (outputPosition - mergedPosition).xyz0().length();
+				if (distance > c_snapDistance)
+				{
+					duplicate = false;
+					break;
+				}
+			}
+
+			if (duplicate)
+			{
+				mergedPolygons.erase(mergedPolygons.begin() + j);
 				break;
 			}
 		}
 
 		if (!duplicate)
-			mergedPolygons.push_back(p);
+			outputPolygons.push_back(outputPolygon);
 	}
 
+	mergedPolygons.insert(mergedPolygons.end(), outputPolygons.begin(), outputPolygons.end());
 	model.setPolygons(mergedPolygons);
 
 	return true;

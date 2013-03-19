@@ -3,8 +3,6 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/MathUtils.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/Semaphore.h"
 #include "Net/Batch.h"
 #include "Net/TcpSocket.h"
 #include "Net/Stream/RemoteStream.h"
@@ -13,60 +11,13 @@ namespace traktor
 {
 	namespace net
 	{
-		namespace
-		{
-
-class ConnectionPool
-{
-public:
-	static ConnectionPool& getInstance()
-	{
-		static ConnectionPool s_instance;
-		return s_instance;
-	}
-
-	bool acquire(const SocketAddressIPv4& addr, Ref< TcpSocket >& outSocket)
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		uint64_t key = (uint64_t(addr.getAddr()) << 16) | addr.getPort();
-		
-		std::map< uint64_t, RefArray< TcpSocket > >::iterator i = m_connections.find(key);
-		if (i != m_connections.end() && !i->second.empty())
-		{
-			outSocket = i->second.back(); i->second.pop_back();
-			return true;
-		}
-
-		Ref< TcpSocket > socket = new TcpSocket();
-		if (!socket->connect(addr))
-			return false;
-
-		socket->setNoDelay(true);
-
-		outSocket = socket;
-		return true;
-	}
-
-	void release(const SocketAddressIPv4& addr, TcpSocket* socket)
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		uint64_t key = (uint64_t(addr.getAddr()) << 16) | addr.getPort();
-		m_connections[key].push_back(socket);
-	}
-
-private:
-	Semaphore m_lock;
-	std::map< uint64_t, RefArray< TcpSocket > > m_connections;
-};
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.RemoteStream", RemoteStream, IStream)
 
 Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 {
-	Ref< TcpSocket > socket;
-	if (!ConnectionPool::getInstance().acquire(addr, socket))
+	Ref< TcpSocket > socket = new TcpSocket();
+	if (!socket->connect(addr))
 	{
 		log::error << L"RemoteStream; unable to connect to stream server" << Endl;
 		return 0;
@@ -74,44 +25,53 @@ Ref< IStream > RemoteStream::connect(const SocketAddressIPv4& addr, uint32_t id)
 
 	net::sendBatch< uint8_t, uint32_t >(socket, 0x01, id);
 
-	if (socket->select(true, false, false, 30000) <= 0)
+	uint8_t status;
+	int32_t avail;
+
+	if (net::recvBatch< uint8_t, int32_t >(socket, status, avail) <= 0)
 	{
-		log::error << L"RemoteStream; no response from server" << Endl;
+		log::error << L"RemoteStream; no status from server" << Endl;
 		return 0;
 	}
 
-	uint8_t status;
-	if (net::recvBatch< uint8_t >(socket, status) <= 0)
+	if (!status)
 	{
-		log::error << L"RemoteStream; invalid status " << status << L" from server" << Endl;
+		log::error << L"RemoteStream; invalid status from server" << Endl;
 		return 0;
+	}
+
+	if (avail > 0)
+	{
+		T_ASSERT ((status & (0x01 | 0x02)) == 0x01);
+		Ref< DynamicMemoryStream > dm = new DynamicMemoryStream(true, false, T_FILE_LINE);
+	
+		std::vector< uint8_t >& buffer = dm->getBuffer();
+		buffer.resize(avail);
+
+		uint8_t* ptr = &buffer[0];
+		for (int32_t nread = 0; nread < avail; )
+		{
+			int32_t result = socket->recv(ptr, avail - nread);
+			if (result <= 0)
+			{
+				log::error << L"RemoteStream; unexpected disconnect from server" << Endl;
+				return 0;
+			}
+			nread += result;
+			ptr += result;
+		}
+
+		net::sendBatch< uint8_t >(socket, 0x02);
+		socket->close();
+		socket = 0;
+
+		return dm;
 	}
 
 	Ref< RemoteStream > rs = new RemoteStream();
 	rs->m_addr = addr;
 	rs->m_socket = socket;
 	rs->m_status = uint8_t(status);
-
-	if ((status & (0x01 | 0x02)) == 0x01)
-	{
-		int32_t avail = rs->available();
-		if (avail > 0)
-		{
-			Ref< DynamicMemoryStream > dm = new DynamicMemoryStream(true, false, T_FILE_LINE);
-		
-			std::vector< uint8_t >& buffer = dm->getBuffer();
-			buffer.resize(avail);
-
-			if (rs->read(&buffer[0], avail) == avail)
-				return dm;
-			else
-			{
-				log::error << L"RemoteStream; unable to download stream" << Endl;
-				return 0;
-			}
-		}
-	}
-
 	return new BufferedStream(rs);
 }
 
@@ -120,7 +80,7 @@ RemoteStream::~RemoteStream()
 	if (m_socket)
 	{
 		net::sendBatch< uint8_t >(m_socket, 0x02);
-		ConnectionPool::getInstance().release(m_addr, m_socket);
+		m_socket->close();
 		m_socket = 0;
 	}
 }
