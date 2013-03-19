@@ -4,6 +4,7 @@
 #include <list>
 #include <map>
 #include "Core/Object.h"
+#include "Core/Thread/Semaphore.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -47,6 +48,7 @@ public:
 private:
 	uint16_t m_listenPort;
 	Ref< TcpSocket > m_listenSocket;
+	Semaphore m_streamsLock;
 	std::map< uint32_t, Ref< IStream > > m_streams;
 	Thread* m_serverThread;
 	std::list< Thread* > m_clientThreads;

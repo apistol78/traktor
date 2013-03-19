@@ -263,6 +263,11 @@ const Vector4& Model::getPosition(uint32_t index) const
 	return m_positions.get(index);
 }
 
+const Vector4& Model::getVertexPosition(uint32_t vertexIndex) const
+{
+	return getPosition(getVertex(vertexIndex).getPosition());
+}
+
 void Model::setPositions(const AlignedVector< Vector4 >& positions)
 {
 	m_positions.replace(positions);

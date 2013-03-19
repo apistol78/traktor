@@ -35,6 +35,8 @@ public:
 		uint32_t recursionDepth = ~0UL
 	);
 
+	virtual ~PipelineDependsIncremental();
+
 	virtual void addDependency(
 		const ISerializable* sourceAsset
 	);
@@ -83,6 +85,7 @@ private:
 	Ref< PipelineDependency > m_currentDependency;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< Guid, PipelineDependency* > m_dependencyMap;
+	int32_t m_cacheReuseCount;
 
 	PipelineDependency* findDependency(const Guid& guid) const;
 

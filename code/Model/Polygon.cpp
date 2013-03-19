@@ -94,6 +94,11 @@ uint32_t Polygon::getVertexCount() const
 	return uint32_t(m_vertices.size());
 }
 
+void Polygon::setVertices(const std::vector< uint32_t >& vertices)
+{
+	m_vertices = vertices;
+}
+
 const std::vector< uint32_t >& Polygon::getVertices() const
 {
 	return m_vertices;

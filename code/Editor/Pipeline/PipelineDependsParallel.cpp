@@ -33,6 +33,7 @@ PipelineDependsParallel::PipelineDependsParallel(
 :	m_pipelineFactory(pipelineFactory)
 ,	m_dependencyCache(dependencyCache)
 ,	m_sourceDatabase(sourceDatabase)
+,	m_cacheReuseCount(0)
 {
 	m_jobQueue = new JobQueue();
 	m_jobQueue->create(4);
@@ -41,6 +42,7 @@ PipelineDependsParallel::PipelineDependsParallel(
 PipelineDependsParallel::~PipelineDependsParallel()
 {
 	safeDestroy(m_jobQueue);
+	log::debug << L"PipelineDependsParallel; reused " << m_cacheReuseCount << L" cache entries" << Endl;
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
@@ -278,6 +280,7 @@ void PipelineDependsParallel::addUniqueDependency(
 				currentDependency->sourceDataHash = cachedDependency->sourceDataHash;
 				currentDependency->filesHash = cachedDependency->filesHash;
 				currentDependency->files = cachedDependency->files;
+				Atomic::increment(m_cacheReuseCount);
 			}
 		}
 		else

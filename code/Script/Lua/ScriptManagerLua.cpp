@@ -73,6 +73,7 @@ ScriptManagerLua::ScriptManagerLua()
 	luaopen_table(m_luaState);
 	luaopen_string(m_luaState);
 	luaopen_math(m_luaState);
+	luaopen_os(m_luaState);
 
 	lua_register(m_luaState, "print", luaPrint);
 

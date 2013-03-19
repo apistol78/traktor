@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/BinarySerializer.h"
 #include "Core/Thread/Acquire.h"
+#include "Core/Timer/Timer.h"
 #include "Net/MulticastUdpSocket.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/UdpSocket.h"
@@ -19,7 +20,7 @@ namespace traktor
 		{
 
 const wchar_t* c_discoveryMulticastGroup = L"225.0.0.37";
-const uint16_t c_discoveryMulticastPort = 12345;
+const uint16_t c_discoveryMulticastPort = 40000;
 
 OutputStream& operator << (OutputStream& os, const net::SocketAddressIPv4& addr)
 {
@@ -70,8 +71,8 @@ bool DiscoveryManager::create(uint32_t mode)
 
 	m_managerGuid = Guid::create();
 	m_mode = mode;
-	m_threadMulticastListener->start();
-
+	
+	m_threadMulticastListener->start(Thread::Below);
 	return true;
 }
 
@@ -125,14 +126,16 @@ void DiscoveryManager::threadMulticastListener()
 {
 	SocketAddressIPv4 address(c_discoveryMulticastGroup, c_discoveryMulticastPort);
 	SocketAddressIPv4 fromAddress;
-	int32_t beacon;
+	Timer timer;
 
-	beacon = 0;
+	timer.start();
+	double beacon = timer.getElapsedTime() + 1.0;
+
 	while (!m_threadMulticastListener->stopped())
 	{
 		if (
 			((m_mode & MdFindServices) != 0) &&
-			--beacon <= 0
+			timer.getElapsedTime() > beacon
 		)
 		{
 			DmFindServices msgFindServices(m_managerGuid);
@@ -141,7 +144,7 @@ void DiscoveryManager::threadMulticastListener()
 				if ((m_mode & MdVerbose) != 0)
 					log::info << L"Discovery manager: Unable to send \"find services\" message" << Endl;
 			}
-			beacon = 10;
+			beacon = timer.getElapsedTime() + 1.0;
 		}
 
 		Ref< IDiscoveryMessage > message = recvMessage(m_multicastRecvSocket, &fromAddress, 100);

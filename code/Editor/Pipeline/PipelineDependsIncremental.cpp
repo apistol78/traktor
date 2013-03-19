@@ -34,7 +34,13 @@ PipelineDependsIncremental::PipelineDependsIncremental(
 ,	m_sourceDatabase(sourceDatabase)
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
+,	m_cacheReuseCount(0)
 {
+}
+
+PipelineDependsIncremental::~PipelineDependsIncremental()
+{
+	log::debug << L"PipelineDependsIncremental; reused " << m_cacheReuseCount << L" cache entries" << Endl;
 }
 
 void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
@@ -328,6 +334,7 @@ void PipelineDependsIncremental::addUniqueDependency(
 				dependency->sourceDataHash = cachedDependency->sourceDataHash;
 				dependency->filesHash = cachedDependency->filesHash;
 				dependency->files = cachedDependency->files;
+				++m_cacheReuseCount;
 			}
 		}
 		else

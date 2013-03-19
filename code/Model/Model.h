@@ -99,6 +99,8 @@ public:
 
 	const Vector4& getPosition(uint32_t index) const;
 
+	const Vector4& getVertexPosition(uint32_t vertexIndex) const;
+
 	void setPositions(const AlignedVector< Vector4 >& positions);
 
 	const AlignedVector< Vector4 >& getPositions() const;
