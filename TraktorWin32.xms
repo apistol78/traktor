@@ -20253,7 +20253,15 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/Amalgam/Error.png</fileName>
+							<fileName>$(TRAKTOR_HOME)/res/Amalgam/Error.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.ico</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.rc</fileName>
 							<items/>
 						</item>
 					</items>

@@ -8,6 +8,7 @@
 #include <Core/Misc/Adler32.h>
 #include <Core/Misc/CommandLine.h>
 #include <Core/Misc/SafeDestroy.h>
+#include <Core/Settings/PropertyInteger.h>
 #include <Core/Settings/PropertyString.h>
 #include <Core/Settings/PropertyStringArray.h>
 #include <Core/System/IProcess.h>
@@ -300,6 +301,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 		new ui::WidgetFactoryWin32()
 	);
 #endif
+
+	T_FORCE_LINK_REF(PropertyInteger);
 
 	traktor::log::info << L"Traktor RemoteServer 1.8" << Endl;
 

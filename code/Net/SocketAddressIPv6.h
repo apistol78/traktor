@@ -36,7 +36,9 @@ public:
 
 	virtual ~SocketAddressIPv6();
 	
-	bool valid() const;
+	virtual bool valid() const;
+
+	virtual std::wstring getHostName() const;
 
 	const addrinfo* getAddrInfo(int socktype) const;
 	

@@ -1,4 +1,6 @@
-#include <glsl_optimizer.h>
+#if !defined(__APPLE__)
+#	include <glsl_optimizer.h>
+#endif
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Acquire.h"
@@ -39,6 +41,7 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 	if (!Glsl().generate(shaderGraph, glslProgram))
 		return 0;
 
+#if !defined(__APPLE__)
 	// Optimize GLSL shader.
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
@@ -82,6 +85,7 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 		else
 			log::error << L"Unable to initialize GLSL optimizer" << Endl;
 	}
+#endif
 
 	Ref< ProgramResource > resource = ProgramOpenGLES2::compile(glslProgram, optimize, validate);
 	if (!resource)

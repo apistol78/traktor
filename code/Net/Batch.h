@@ -1,12 +1,12 @@
 #ifndef traktor_net_Batch_H
 #define traktor_net_Batch_H
 
+#include "Net/TcpSocket.h"
+
 namespace traktor
 {
 	namespace net
 	{
-
-class TcpSocket;
 
 template < typename P1 >
 int32_t sendBatch(net::TcpSocket* socket, const P1& p1)

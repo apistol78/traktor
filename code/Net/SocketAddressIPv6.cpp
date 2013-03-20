@@ -77,6 +77,11 @@ bool SocketAddressIPv6::valid() const
 	return bool(m_info != 0);
 }
 
+std::wstring SocketAddressIPv6::getHostName() const
+{
+	return L"<unsupported>";
+}
+
 const struct addrinfo* SocketAddressIPv6::getAddrInfo(int socktype) const
 {
 	addrinfo* iter;

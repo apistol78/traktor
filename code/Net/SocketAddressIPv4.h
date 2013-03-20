@@ -54,9 +54,9 @@ public:
 
 	SocketAddressIPv4(const std::wstring& host, uint16_t port);
 
-	bool valid() const;
+	virtual bool valid() const;
 
-	std::wstring getHostName() const;
+	virtual std::wstring getHostName() const;
 
 	uint32_t getAddr() const;
 

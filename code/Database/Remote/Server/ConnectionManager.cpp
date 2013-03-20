@@ -101,7 +101,11 @@ void ConnectionManager::threadServer()
 			Ref< Connection > connection = new Connection(m_connectionStringsLock, m_connectionStrings, m_streamServer, clientSocket);
 			m_connections.push_back(connection);
 
-			log::info << L"Remote database connection accepted" << Endl;
+			Ref< net::SocketAddress > remoteAddress = clientSocket->getRemoteAddress();
+			if (remoteAddress)
+				log::info << L"Remote database connection accepted from " << remoteAddress->getHostName() << Endl;
+			else
+				log::info << L"Remote database connection accepted" << Endl;
 		}
 		else
 		{

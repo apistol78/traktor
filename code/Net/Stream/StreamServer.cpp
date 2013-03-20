@@ -114,7 +114,7 @@ void StreamServer::threadServer()
 
 			m_clientThreads.push_back(clientThread);
 		}
-	}	
+	}
 }
 
 void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
@@ -175,7 +175,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 					int32_t avail = 0;
 					if ((status & 0x03) == 0x01)
 						avail = stream->available();
-					
+
 					net::sendBatch< uint8_t, int32_t >(clientSocket, status, avail);
 
 					start = timer.getElapsedTime();
@@ -203,7 +203,7 @@ void StreamServer::threadClient(Ref< TcpSocket > clientSocket)
 				{
 					{
 						T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_streamsLock);
-						std::map< uint32_t, Ref< IStream > >::const_iterator i = m_streams.find(streamId);
+						std::map< uint32_t, Ref< IStream > >::iterator i = m_streams.find(streamId);
 						if (i != m_streams.end())
 							m_streams.erase(i);
 					}

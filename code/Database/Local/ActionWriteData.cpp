@@ -1,6 +1,8 @@
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Local/ActionWriteData.h"
 #include "Database/Local/Context.h"
 #include "Database/Local/IFileStore.h"
@@ -57,8 +59,14 @@ bool ActionWriteData::execute(Context* context)
 	Ref< IStream > writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
 	if (!writeStream)
 	{
-		log::error << L"Unable to open file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
-		return false;
+		ThreadManager::getInstance().getCurrentThread()->sleep(100);
+
+		writeStream = FileSystem::getInstance().open(instanceDataPath, File::FmWrite);
+		if (!writeStream)
+		{
+			log::error << L"Unable to open file \"" << instanceDataPath.getPathName() << L"\"." << Endl;
+			return false;
+		}
 	}
 
 	int dataBufferSize = int(m_dataBuffer.size());

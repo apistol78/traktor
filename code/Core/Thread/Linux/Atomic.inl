@@ -20,14 +20,18 @@ int32_t Atomic::add(int32_t& value, int32_t delta)
 
 uint32_t Atomic::exchange(uint32_t& s, uint32_t v)
 {
-	uint32_t cv = s; s = v;
-	return cv;
+	return __sync_lock_test_and_set(&s, v);
 }
 
 uint64_t Atomic::exchange(uint64_t& s, uint64_t v)
 {
-	uint64_t cv = s; s = v;
-	return cv;
+	return __sync_lock_test_and_set(&s, v);
+}
+
+int32_t Atomic::compareAndSwap(int32_t& value, int32_t compareTo, int32_t replaceWithIfEqual)
+{
+	__sync_val_compare_and_swap(&value, compareTo, replaceWithIfEqual);
+	return value;
 }
 
 }

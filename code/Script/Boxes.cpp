@@ -445,7 +445,7 @@ Object* BoxedRefArray::back()
 std::wstring BoxedRefArray::toString() const
 {
 	StringOutputStream ss;
-	ss << L"[" << m_arr.size() << L"]";
+	ss << L"[" << int32_t(m_arr.size()) << L"]";
 	return ss.str();
 }
 
@@ -477,7 +477,7 @@ Any BoxedStdVector::get(int32_t index)
 std::wstring BoxedStdVector::toString() const
 {
 	StringOutputStream ss;
-	ss << L"[" << m_arr.size() << L"]";
+	ss << L"[" << int32_t(m_arr.size()) << L"]";
 	return ss.str();
 }
 

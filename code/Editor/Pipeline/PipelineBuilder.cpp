@@ -109,7 +109,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	int32_t cpuCores = OS::getInstance().getCPUCoreCount();
 	if (m_threadedBuildEnable && dependencies.size() >= cpuCores * 2)
 	{
-		std::vector< Thread* > threads(cpuCores, 0);
+		std::vector< Thread* > threads(cpuCores, (Thread*)0);
 		RefArray< PipelineDependency > workSet = dependencies;
 		Semaphore workSetLock;
 
@@ -150,7 +150,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 		Semaphore workSetLock;
 
 		buildThread(
-			ThreadManager::getInstance().getCurrentThread(), 
+			ThreadManager::getInstance().getCurrentThread(),
 			workSet,
 			workSetLock,
 			0
@@ -225,7 +225,7 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
-		
+
 		BuiltCacheEntry bce;
 		bce.sourceAsset = sourceAsset;
 		bce.product = product;
@@ -589,7 +589,7 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int
 				break;
 			}
 		}
-	
+
 		stream->close();
 	}
 
