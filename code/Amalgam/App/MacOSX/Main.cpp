@@ -138,9 +138,9 @@ int main(int argc, const char** argv)
 		Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
 		Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
 
-		log::info   .setTarget(new LogDualTarget(logTarget, log::info   .getTarget()));
-		log::warning.setTarget(new LogDualTarget(logTarget, log::warning.getTarget()));
-		log::error  .setTarget(new LogDualTarget(logTarget, log::error  .getTarget()));
+		log::info   .setGlobalTarget(new LogDualTarget(logTarget, log::info   .getGlobalTarget()));
+		log::warning.setGlobalTarget(new LogDualTarget(logTarget, log::warning.getGlobalTarget()));
+		log::error  .setGlobalTarget(new LogDualTarget(logTarget, log::error  .getGlobalTarget()));
 
 		log::info << L"Log file \"Application.log\" created" << Endl;
 	}
@@ -149,9 +149,9 @@ int main(int argc, const char** argv)
 #endif
 
 	Ref< LogTailTarget > logTail = new LogTailTarget();
-	log::info   .setTarget(new LogDualTarget(logTail, log::info   .getTarget()));
-	log::warning.setTarget(new LogDualTarget(logTail, log::warning.getTarget()));
-	log::error  .setTarget(new LogDualTarget(logTail, log::error  .getTarget()));
+	log::info   .setGlobalTarget(new LogDualTarget(logTail, log::info   .getGlobalTarget()));
+	log::warning.setGlobalTarget(new LogDualTarget(logTail, log::warning.getGlobalTarget()));
+	log::error  .setGlobalTarget(new LogDualTarget(logTail, log::error  .getGlobalTarget()));
 	
 	// Set default path to resources in bundle.
 	FileSystem::getInstance().setCurrentVolumeAndDirectory(L"$(BUNDLE_PATH)/Contents/Resources");
@@ -250,9 +250,9 @@ int main(int argc, const char** argv)
 #if !defined(_DEBUG)
 	if (logFile)
 	{
-		log::info   .setTarget(0);
-		log::warning.setTarget(0);
-		log::error  .setTarget(0);
+		log::info   .setGlobalTarget(0);
+		log::warning.setGlobalTarget(0);
+		log::error  .setGlobalTarget(0);
 
 		logFile->close();
 		logFile = 0;
