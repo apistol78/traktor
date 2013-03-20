@@ -106,14 +106,14 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 
 	// Split workload on threads; use as many threads as there are CPU cores.
 	// If build set is less than twice number of cores we don't build asynchronously.
-	uint32_t cpuCores = OS::getInstance().getCPUCoreCount();
+	int32_t cpuCores = OS::getInstance().getCPUCoreCount();
 	if (m_threadedBuildEnable && dependencies.size() >= cpuCores * 2)
 	{
 		std::vector< Thread* > threads(cpuCores, 0);
 		RefArray< PipelineDependency > workSet = dependencies;
 		Semaphore workSetLock;
 
-		for (uint32_t i = 0; i < cpuCores; ++i)
+		for (int32_t i = 0; i < cpuCores; ++i)
 		{
 			threads[i] = ThreadPool::getInstance().spawn(
 				makeFunctor
@@ -122,7 +122,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 					Thread*,
 					RefArray< PipelineDependency >&,
 					Semaphore&,
-					uint32_t
+					int32_t
 				>
 				(
 					this,
@@ -135,7 +135,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 			);
 		}
 
-		for (uint32_t i = 0; i < cpuCores; ++i)
+		for (int32_t i = 0; i < cpuCores; ++i)
 		{
 			if (threads[i])
 			{
@@ -600,7 +600,7 @@ void PipelineBuilder::buildThread(
 	Thread* controlThread,
 	RefArray< PipelineDependency >& workSet,
 	Semaphore& workSetLock,
-	uint32_t cpuCore
+	int32_t cpuCore
 )
 {
 	while (!controlThread->stopped())
@@ -640,7 +640,7 @@ void PipelineBuilder::buildThread(
 				result
 			);
 
-		++m_progress;
+		Atomic::increment(m_progress);
 	}
 }
 

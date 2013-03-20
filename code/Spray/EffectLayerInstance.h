@@ -19,9 +19,10 @@ namespace traktor
 	namespace spray
 	{
 
+struct Context;
 class EffectLayer;
 class EmitterInstance;
-struct Context;
+class ITriggerInstance;
 class PointRenderer;
 class SequenceInstance;
 
@@ -33,7 +34,9 @@ public:
 	EffectLayerInstance(
 		const EffectLayer* layer,
 		EmitterInstance* emitterInstance,
-		SequenceInstance* sequenceInstance
+		SequenceInstance* sequenceInstance,
+		ITriggerInstance* triggerInstanceEnable,
+		ITriggerInstance* triggerInstanceDisable
 	);
 
 	void update(Context& context, const Transform& transform, float time, bool enable);
@@ -48,9 +51,12 @@ private:
 	Ref< const EffectLayer > m_layer;
 	Ref< EmitterInstance > m_emitterInstance;
 	Ref< SequenceInstance > m_sequenceInstance;
+	Ref< ITriggerInstance > m_triggerInstanceEnable;
+	Ref< ITriggerInstance > m_triggerInstanceDisable;
 	float m_start;
 	float m_end;
 	bool m_singleShotFired;
+	bool m_enable;
 };
 
 	}

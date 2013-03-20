@@ -101,10 +101,10 @@ private:
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	std::map< const TypeInfo*, double > m_buildTimes;
 	ThreadLocal m_buildInstances;
-	uint32_t m_progress;
-	uint32_t m_progressEnd;
-	uint32_t m_succeeded;
-	uint32_t m_failed;
+	int32_t m_progress;
+	int32_t m_progressEnd;
+	int32_t m_succeeded;
+	int32_t m_failed;
 
 	/*! \brief Update build reasons. */
 	void updateBuildReason(PipelineDependency* dependency, bool rebuild);
@@ -129,7 +129,7 @@ private:
 		Thread* controlThread,
 		RefArray< PipelineDependency >& workSet,
 		Semaphore& workSetLock,
-		uint32_t cpuCore
+		int32_t cpuCore
 	);
 };
 

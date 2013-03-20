@@ -25,6 +25,7 @@ class IResourceManager;
 
 class EffectLayer;
 class EmitterData;
+class ITriggerData;
 class SequenceData;
 
 /*! \brief Effect layer persistent data.
@@ -57,12 +58,18 @@ public:
 
 	SequenceData* getSequence() const { return m_sequence; }
 
+	ITriggerData* getTriggerEnable() const { return m_triggerEnable; }
+
+	ITriggerData* getTriggerDisable() const { return m_triggerDisable; }
+
 private:
 	std::wstring m_name;
 	float m_time;
 	float m_duration;
 	Ref< EmitterData > m_emitter;
 	Ref< SequenceData > m_sequence;
+	Ref< ITriggerData > m_triggerEnable;
+	Ref< ITriggerData > m_triggerDisable;
 };
 
 	}

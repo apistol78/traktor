@@ -182,6 +182,7 @@ private:
 	Ref< ui::MenuItem > m_menuTools;
 	Ref< DatabaseView > m_dataBaseView;
 	Ref< PropertiesView > m_propertiesView;
+	Ref< ui::Tab > m_tabOutput;
 	Ref< LogView > m_logView;
 	Ref< BuildView > m_buildView;
 	Ref< db::Database > m_sourceDatabase;

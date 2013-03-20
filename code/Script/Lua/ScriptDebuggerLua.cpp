@@ -163,7 +163,9 @@ bool ScriptDebuggerLua::actionStepOver()
 void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 {
 	ScriptContextLua* currentContext = m_scriptManager->m_currentContext;
-	T_ASSERT (currentContext)
+	if (!currentContext)
+		return;
+
 	T_ASSERT (ar->currentline >= 1);
 
 	if (m_state == StRunning)

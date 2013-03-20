@@ -66,10 +66,10 @@ private:
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< IPipelineDb > m_pipelineDb;
 	IListener* m_listener;
-	uint32_t m_progress;
-	uint32_t m_progressEnd;
-	uint32_t m_succeeded;
-	uint32_t m_failed;
+	int32_t m_progress;
+	int32_t m_progressEnd;
+	int32_t m_succeeded;
+	int32_t m_failed;
 
 	/*! \brief Update build reasons. */
 	void updateBuildReason(PipelineDependency* dependency, bool rebuild);

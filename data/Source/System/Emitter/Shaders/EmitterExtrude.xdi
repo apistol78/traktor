@@ -376,16 +376,33 @@ Random
 			</position>
 			<swizzle>w</swizzle>
 		</item>
-		<item type="traktor.render.VertexInput">
+		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>-209</first>
-				<second>891</second>
+				<first>83</first>
+				<second>972</second>
 			</position>
-			<name>Attributes2</name>
-			<usage>DuCustom</usage>
-			<type>DtFloat4</type>
-			<index>2</index>
+			<name>Age</name>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment>
+			<![CDATA[
+Age
+			]]>
+			</comment>
+			<position>
+				<first>-17</first>
+				<second>972</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>83</first>
+				<second>911</second>
+			</position>
+			<name>Color</name>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment>
@@ -394,18 +411,21 @@ Color
 			]]>
 			</comment>
 			<position>
-				<first>-3</first>
-				<second>891</second>
+				<first>-17</first>
+				<second>911</second>
 			</position>
 			<swizzle>xyz1</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
+		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>101</first>
-				<second>891</second>
+				<first>-223</first>
+				<second>911</second>
 			</position>
-			<name>Color</name>
+			<name>Attributes2</name>
+			<usage>DuCustom</usage>
+			<type>DtFloat4</type>
+			<index>2</index>
 		</item>
 	</nodes>
 	<edges>
@@ -871,7 +891,27 @@ Color
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[42]"/>
+				<node ref="/object/nodes/item[46]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[45]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[45]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -885,7 +925,7 @@ Color
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>Input</name>
 			</destination>
 		</item>
