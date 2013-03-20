@@ -47,6 +47,8 @@ private:
 	bool m_repeat;
 
 	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat);
+
+	virtual ~SoundTriggerInstance();
 };
 
 	}

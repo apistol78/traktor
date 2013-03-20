@@ -18,6 +18,7 @@ namespace traktor
 
 class EffectLayerInstance;
 class Emitter;
+class ITrigger;
 class Sequence;
 
 /*! \brief
@@ -32,7 +33,9 @@ public:
 		float time,
 		float duration,
 		Emitter* emitter,
-		Sequence* sequence
+		Sequence* sequence,
+		ITrigger* triggerEnable,
+		ITrigger* triggerDisable
 	);
 
 	Ref< EffectLayerInstance > createInstance() const;
@@ -45,11 +48,17 @@ public:
 
 	const Sequence* getSequence() const { return m_sequence; }
 
+	const ITrigger* getTriggerEnable() const { return m_triggerEnable; }
+
+	const ITrigger* getTriggerDisable() const { return m_triggerDisable; }
+
 private:
 	float m_time;
 	float m_duration;
 	Ref< Emitter > m_emitter;
 	Ref< Sequence > m_sequence;
+	Ref< ITrigger > m_triggerEnable;
+	Ref< ITrigger > m_triggerDisable;
 };
 
 	}

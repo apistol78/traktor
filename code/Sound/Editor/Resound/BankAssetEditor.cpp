@@ -12,6 +12,7 @@
 #include "Sound/Resound/BankBuffer.h"
 #include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
+#include "Sound/Resound/InLoopOutGrainData.h"
 #include "Sound/Resound/MuteGrainData.h"
 #include "Sound/Resound/PlayGrainData.h"
 #include "Sound/Resound/RandomGrainData.h"
@@ -24,6 +25,7 @@
 #include "Sound/Editor/Resound/BankAssetEditor.h"
 #include "Sound/Editor/Resound/BlendGrainFacade.h"
 #include "Sound/Editor/Resound/EnvelopeGrainFacade.h"
+#include "Sound/Editor/Resound/InLoopOutGrainFacade.h"
 #include "Sound/Editor/Resound/GrainProperties.h"
 #include "Sound/Editor/Resound/GrainView.h"
 #include "Sound/Editor/Resound/GrainViewItem.h"
@@ -133,6 +135,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	// Create grain editor facades.
 	m_grainFacades[&type_of< BlendGrainData >()] = new BlendGrainFacade();
 	m_grainFacades[&type_of< EnvelopeGrainData >()] = new EnvelopeGrainFacade();
+	m_grainFacades[&type_of< InLoopOutGrainData >()] = new InLoopOutGrainFacade();
 	m_grainFacades[&type_of< MuteGrainData >()] = new MuteGrainFacade();
 	m_grainFacades[&type_of< PlayGrainData >()] = new PlayGrainFacade();
 	m_grainFacades[&type_of< RandomGrainData >()] = new RandomGrainFacade();
@@ -312,6 +315,9 @@ void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGr
 {
 	for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 	{
+		if (!(*i))
+			continue;
+
 		IGrainFacade* grainFacade = m_grainFacades[&type_of(*i)];
 		if (!grainFacade)
 			continue;
@@ -350,6 +356,9 @@ void BankAssetEditor::updateProperties()
 	{
 		Ref< IGrainData > grain = grains.front();
 		grains.pop_front();
+
+		if (!grain)
+			continue;
 
 		IGrainFacade* grainFacade = m_grainFacades[&type_of(grain)];
 		if (grainFacade)

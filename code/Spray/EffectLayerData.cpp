@@ -1,6 +1,7 @@
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectLayerData.h"
 #include "Spray/EmitterData.h"
+#include "Spray/ITriggerData.h"
 #include "Spray/SequenceData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
@@ -11,7 +12,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 1, EffectLayerData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 2, EffectLayerData, ISerializable)
 
 EffectLayerData::EffectLayerData()
 :	m_time(0.0f)
@@ -23,6 +24,8 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 {
 	Ref< Emitter > emitter;
 	Ref< Sequence > sequence;
+	Ref< ITrigger > triggerEnable;
+	Ref< ITrigger > triggerDisable;
 
 	if (m_emitter)
 	{
@@ -38,11 +41,27 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 			return 0;
 	}
 
+	if (m_triggerEnable)
+	{
+		triggerEnable = m_triggerEnable->createTrigger(resourceManager);
+		if (!triggerEnable)
+			return 0;
+	}
+
+	if (m_triggerDisable)
+	{
+		triggerDisable = m_triggerDisable->createTrigger(resourceManager);
+		if (triggerDisable)
+			return 0;
+	}
+
 	return new EffectLayer(
 		m_time,
 		m_duration,
 		emitter,
-		sequence
+		sequence,
+		triggerEnable,
+		triggerDisable
 	);
 }
 
@@ -55,6 +74,12 @@ bool EffectLayerData::serialize(ISerializer& s)
 	s >> Member< float >(L"duration", m_duration);
 	s >> MemberRef< EmitterData >(L"emitter", m_emitter);
 	s >> MemberRef< SequenceData >(L"sequence", m_sequence);
+
+	if (s.getVersion() >= 2)
+	{
+		s >> MemberRef< ITriggerData >(L"triggerEnable", m_triggerEnable);
+		s >> MemberRef< ITriggerData >(L"triggerDisable", m_triggerDisable);
+	}
 
 	return true;
 }

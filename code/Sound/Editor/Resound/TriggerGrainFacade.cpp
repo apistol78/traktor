@@ -45,8 +45,7 @@ bool TriggerGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childG
 bool TriggerGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
 	TriggerGrainData* triggerGrain = checked_type_cast< TriggerGrainData*, false >(grain);
-	if (triggerGrain->getGrain())
-		outChildren.push_back(triggerGrain->getGrain());
+	outChildren.push_back(triggerGrain->getGrain());
 	return true;
 }
 

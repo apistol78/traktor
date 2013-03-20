@@ -78,9 +78,9 @@ private:
 struct StatusListener : public editor::IPipelineBuilder::IListener
 {
 	virtual void beginBuild(
-		uint32_t core,
-		uint32_t index,
-		uint32_t count,
+		int32_t core,
+		int32_t index,
+		int32_t count,
 		const editor::PipelineDependency* dependency
 	) const
 	{
@@ -88,9 +88,9 @@ struct StatusListener : public editor::IPipelineBuilder::IListener
 	}
 
 	virtual void endBuild(
-		uint32_t core,
-		uint32_t index,
-		uint32_t count,
+		int32_t core,
+		int32_t index,
+		int32_t count,
 		const editor::PipelineDependency* dependency,
 		editor::IPipelineBuilder::BuildResult result
 	) const

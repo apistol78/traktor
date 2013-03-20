@@ -5,6 +5,7 @@
 #include "Sound/Resound/BankResource.h"
 #include "Sound/Resound/BlendGrainData.h"
 #include "Sound/Resound/EnvelopeGrainData.h"
+#include "Sound/Resound/InLoopOutGrainData.h"
 #include "Sound/Resound/PlayGrainData.h"
 #include "Sound/Resound/RepeatGrainData.h"
 #include "Sound/Resound/RandomGrainData.h"
@@ -38,6 +39,14 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 		const std::vector< EnvelopeGrainData::GrainData >& grains = envelopeGrain->getGrains();
 		for (std::vector< EnvelopeGrainData::GrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 			buildGrainDependencies(pipelineDepends, i->grain);
+	}
+
+	if (const InLoopOutGrainData* iloGrain = dynamic_type_cast< const InLoopOutGrainData* >(grain))
+	{
+		buildGrainDependencies(pipelineDepends, iloGrain->getInGrain());
+		buildGrainDependencies(pipelineDepends, iloGrain->getInLoopGrain());
+		buildGrainDependencies(pipelineDepends, iloGrain->getOutGrain());
+		buildGrainDependencies(pipelineDepends, iloGrain->getOutLoopGrain());
 	}
 
 	if (const RepeatGrainData* repeatGrain = dynamic_type_cast< const RepeatGrainData* >(grain))

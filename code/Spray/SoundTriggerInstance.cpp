@@ -8,6 +8,12 @@ namespace traktor
 {
 	namespace spray
 	{
+		namespace
+		{
+
+int32_t s_handleEnable;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundTriggerInstance", SoundTriggerInstance, ITriggerInstance)
 
@@ -35,9 +41,6 @@ void SoundTriggerInstance::update(Context& context, const Transform& transform, 
 
 	if (enable)
 	{
-		if (m_positional && m_follow)
-			m_handle->setPosition(transform.translation());
-
 		if (!m_handle->isPlaying())
 		{
 			if (m_repeat)
@@ -50,9 +53,19 @@ void SoundTriggerInstance::update(Context& context, const Transform& transform, 
 			else
 				m_handle = 0;
 		}
+
+		if (m_handle)
+		{
+			m_handle->setParameter(s_handleEnable, 1.0f);
+			if (m_positional && m_follow)
+				m_handle->setPosition(transform.translation());
+		}
 	}
 	else
+	{
+		m_handle->setParameter(s_handleEnable, 0.0f);
 		m_handle = 0;
+	}
 }
 
 SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat)
@@ -61,6 +74,16 @@ SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >
 ,	m_follow(follow)
 ,	m_repeat(repeat)
 {
+	s_handleEnable = sound::getParameterHandle(L"Enable");
+}
+
+SoundTriggerInstance::~SoundTriggerInstance()
+{
+	if (m_handle)
+	{
+		m_handle->stop();
+		m_handle = 0;
+	}
 }
 
 	}

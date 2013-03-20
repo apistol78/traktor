@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.Texture">
+			<comment/>
+			<position>
+				<first>1907</first>
+				<second>812</second>
+			</position>
+			<external>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</external>
+			<type>PtTextureCube</type>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>2096</first>
+				<second>876</second>
+			</position>
+			<fragmentGuid>{A83199A9-70BA-B442-B9A2-3958B910766C}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>ReflectionMap</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins/>
+			<values/>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>ReflectionMap</name>
+			</destination>
+		</item>
+	</edges>
+</object>

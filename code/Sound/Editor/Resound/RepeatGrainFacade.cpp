@@ -47,8 +47,7 @@ bool RepeatGrainFacade::removeChild(IGrainData* parentGrain, IGrainData* childGr
 bool RepeatGrainFacade::getChildren(IGrainData* grain, RefArray< IGrainData >& outChildren)
 {
 	RepeatGrainData* repeatGrain = checked_type_cast< RepeatGrainData*, false >(grain);
-	if (repeatGrain->getGrain())
-		outChildren.push_back(repeatGrain->getGrain());
+	outChildren.push_back(repeatGrain->getGrain());
 	return true;
 }
 

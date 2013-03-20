@@ -142,9 +142,9 @@ struct StatusListener : public IPipelineBuilder::IListener
 	}
 
 	virtual void beginBuild(
-		uint32_t core,
-		uint32_t index,
-		uint32_t count,
+		int32_t core,
+		int32_t index,
+		int32_t count,
 		const PipelineDependency* dependency
 	) const
 	{
@@ -153,9 +153,9 @@ struct StatusListener : public IPipelineBuilder::IListener
 	}
 
 	virtual void endBuild(
-		uint32_t core,
-		uint32_t index,
-		uint32_t count,
+		int32_t core,
+		int32_t index,
+		int32_t count,
 		const PipelineDependency* dependency,
 		IPipelineBuilder::BuildResult result
 	) const
@@ -474,12 +474,12 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_paneWest->dock(m_propertiesView, true, ui::DockPane::DrSouth, 300);
 
 	// Create output panel.
-	Ref< ui::Tab > tabOutput = new ui::Tab();
-	tabOutput->create(m_dock, ui::Tab::WsLine | ui::Tab::WsBottom);
-	tabOutput->setText(i18n::Text(L"TITLE_OUTPUT"));
+	m_tabOutput = new ui::Tab();
+	m_tabOutput->create(m_dock, ui::Tab::WsLine | ui::Tab::WsBottom);
+	m_tabOutput->setText(i18n::Text(L"TITLE_OUTPUT"));
 
 	Ref< ui::TabPage > tabPageLog = new ui::TabPage();
-	tabPageLog->create(tabOutput, i18n::Text(L"TITLE_LOG"), new ui::FloodLayout());
+	tabPageLog->create(m_tabOutput, i18n::Text(L"TITLE_LOG"), new ui::FloodLayout());
 
 	m_logView = new LogView();
 	m_logView->create(tabPageLog);
@@ -488,16 +488,16 @@ bool EditorForm::create(const CommandLine& cmdLine)
 		m_logView->hide();
 
 	Ref< ui::TabPage > tabPageBuild = new ui::TabPage();
-	tabPageBuild->create(tabOutput, i18n::Text(L"TITLE_BUILD"), new ui::FloodLayout());
+	tabPageBuild->create(m_tabOutput, i18n::Text(L"TITLE_BUILD"), new ui::FloodLayout());
 
 	m_buildView = new BuildView();
 	m_buildView->create(tabPageBuild);
 
-	tabOutput->addPage(tabPageLog);
-	tabOutput->addPage(tabPageBuild);
-	tabOutput->setActivePage(tabPageLog);
+	m_tabOutput->addPage(tabPageLog);
+	m_tabOutput->addPage(tabPageBuild);
+	m_tabOutput->setActivePage(tabPageLog);
 
-	paneLog->dock(tabOutput, true);
+	paneLog->dock(m_tabOutput, true);
 
 	m_tab = new ui::Tab();
 	m_tab->create(m_dock);
@@ -2226,7 +2226,7 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"Editor.ViewLog")
 	{
-		m_logView->show();
+		m_tabOutput->show();
 		m_dock->update();
 	}
 	else if (command == L"Editor.ViewOther")

@@ -276,6 +276,8 @@ void PipelineBuilderDistributed::agentBuildSucceeded(PipelineDependency* depende
 			dependency,
 			BrSucceeded
 		);
+
+	Atomic::increment(m_progress);
 }
 
 void PipelineBuilderDistributed::agentBuildFailed(PipelineDependency* dependency, int32_t agentIndex)
@@ -288,6 +290,8 @@ void PipelineBuilderDistributed::agentBuildFailed(PipelineDependency* dependency
 			dependency,
 			BrFailed
 		);
+
+	Atomic::increment(m_progress);
 }
 
 	}
