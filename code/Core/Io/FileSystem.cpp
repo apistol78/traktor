@@ -150,9 +150,9 @@ bool FileSystem::move(const Path& destination, const Path& source, bool overwrit
 	if (compareIgnoreCase< std::wstring >(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
 	{
 		// Actually performing a rename operation; thus call rename on volume directly
-		// which is much faster than transfering the file's content.
+		// which is much faster than transferring the file's content.
 		Ref< IVolume > volume = getVolume(destinationPath);
-		return volume ? volume->rename(sourcePath, destinationPath.getFileName()) : false;
+		return volume ? volume->move(sourcePath, destinationPath.getFileName(), overwrite) : false;
 	}
 	else
 	{
@@ -171,37 +171,50 @@ bool FileSystem::move(const Path& destination, const Path& source, bool overwrit
 
 bool FileSystem::copy(const Path& destination, const Path& source, bool overwrite)
 {
-	// Verify that file doesn't exist.
-	if (overwrite == false)
+	Path destinationPath = getAbsolutePath(destination).normalized();
+	Path sourcePath = getAbsolutePath(source).normalized();
+
+	if (compareIgnoreCase< std::wstring >(destinationPath.getPathOnly(), sourcePath.getPathOnly()) == 0)
 	{
-		if (exist(destination) == true)
+		// Actually performing a rename operation; thus call rename on volume directly
+		// which is much faster than transferring the file's content.
+		Ref< IVolume > volume = getVolume(destinationPath);
+		return volume ? volume->copy(sourcePath, destinationPath.getFileName(), overwrite) : false;
+	}
+	else
+	{
+		// Verify that file doesn't exist.
+		if (overwrite == false)
+		{
+			if (exist(destination) == true)
+				return 0;
+		}
+
+		// Open source file.
+		Ref< IStream > src = open(source, File::FmRead);
+		if (!src)
+		{
+			log::error << L"Unable to open file \"" << source.getPathName() << L"\" for reading" << Endl;
 			return 0;
+		}
+
+		// Create destination file.
+		Ref< IStream > dst = open(destination, File::FmWrite);
+		if (!dst)
+		{
+			log::error << L"Unable to open file \"" << destination.getPathName() << L"\" for writing" << Endl;
+			return 0;
+		}
+
+		// Copy entire content.
+		bool result = StreamCopy(dst, src).execute();
+
+		// Finished, close streams.
+		dst->close();
+		src->close();
+
+		return result;
 	}
-
-	// Open source file.
-	Ref< IStream > src = open(source, File::FmRead);
-	if (!src)
-	{
-		log::error << L"Unable to open file \"" << source.getPathName() << L"\" for reading" << Endl;
-		return 0;
-	}
-
-	// Create destination file.
-	Ref< IStream > dst = open(destination, File::FmWrite);
-	if (!dst)
-	{
-		log::error << L"Unable to open file \"" << destination.getPathName() << L"\" for writing" << Endl;
-		return 0;
-	}
-
-	// Copy entire content.
-	bool result = StreamCopy(dst, src).execute();
-
-	// Finished, close streams.
-	dst->close();
-	src->close();
-
-	return result;
 }
 
 bool FileSystem::makeDirectory(const Path& directory)

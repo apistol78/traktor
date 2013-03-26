@@ -14,7 +14,11 @@ const double c_resendTime = 1.0f;	//< Resend reliable message after N seconds.
 const double c_discardTime = 20.0f;	//< Discard reliable message after N seconds.
 const uint32_t c_windowSize = 200;	//< Number of reliable messages kept in sent queue.
 
-#define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
+#if 0
+#	define T_RELIABLE_DEBUG(x) traktor::log::info << x << traktor::Endl
+#else
+#	define T_RELIABLE_DEBUG(x)
+#endif
 
 #define T_CRC8_POLYNOMIAL (0x1070U << 3)
 
@@ -84,7 +88,7 @@ void ReliableTransportPeers::update()
 	{
 		if (i->second.sent.size() >= c_windowSize)
 		{
-			T_REPLICATOR_DEBUG(L"ERROR: Too many messages queued in sent buffer");
+			T_RELIABLE_DEBUG(L"ERROR: Too many messages queued in sent buffer");
 			while (i->second.sent.size() >= c_windowSize)
 				i->second.sent.pop_front();
 		}
@@ -93,14 +97,14 @@ void ReliableTransportPeers::update()
 		{
 			if ((time - j->time0) >= c_discardTime)
 			{
-				T_REPLICATOR_DEBUG(L"ERROR: No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message(s) discarded");
+				T_RELIABLE_DEBUG(L"ERROR: No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message(s) discarded");
 				i->second.sent.clear();
 				i->second.faulty = true;
 				break;
 			}
 			if ((time - j->time) >= c_resendTime)
 			{
-				T_REPLICATOR_DEBUG(L"OK: No response from peer " << i->first << L" in " << c_resendTime << L" second(s); message " << int32_t(j->envelope.sequence) << L" resent");
+				T_RELIABLE_DEBUG(L"OK: No response from peer " << i->first << L" in " << c_resendTime << L" second(s); message " << int32_t(j->envelope.sequence) << L" resent");
 				m_peers->send(
 					i->first,
 					&j->envelope,
@@ -174,7 +178,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 			uint8_t checksum = calculateChecksum(e.payload, nrecv - 3);
 			if (checksum != e.checksum)
 			{
-				T_REPLICATOR_DEBUG(L"ERROR: Data corruption detected; message ignored");
+				T_RELIABLE_DEBUG(L"ERROR: Data corruption detected; message ignored");
 				return 0;
 			}
 
@@ -184,11 +188,10 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 			m_peers->send(outFromHandle, &ack, 2, false);
 
 			// We've already received this message.
-			if (e.sequence == ct.last1_0 || e.sequence == ct.last1_1)
+			if (ct.last1.find(e.sequence) >= 0)
 				continue;
 
-			ct.last1_0 = ct.last1_1;
-			ct.last1_1 = e.sequence;
+			ct.last1.push_back(e.sequence);
 			ct.faulty = false;
 
 			std::memcpy(data, e.payload, nrecv - 3);
@@ -205,16 +208,15 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 			uint8_t checksum = calculateChecksum(e.payload, nrecv - 3);
 			if (checksum != e.checksum)
 			{
-				T_REPLICATOR_DEBUG(L"ERROR: Data corruption detected; message ignored");
+				T_RELIABLE_DEBUG(L"ERROR: Data corruption detected; message ignored");
 				return 0;
 			}
 
 			// We've already received this message.
-			if (e.sequence == ct.last0_0 || e.sequence == ct.last0_1)
+			if (ct.last0.find(e.sequence) >= 0)
 				continue;
 
-			ct.last0_0 = ct.last0_1;
-			ct.last0_1 = e.sequence;
+			ct.last0.push_back(e.sequence);
 			ct.faulty = false;
 
 			std::memcpy(data, e.payload, nrecv - 3);
@@ -229,7 +231,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 				if (i->envelope.sequence == e.sequence)
 				{
 					if (i->resent)
-						T_REPLICATOR_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" to peer " << outFromHandle << L" finally ACK;ed");
+					{ T_RELIABLE_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" to peer " << outFromHandle << L" finally ACK;ed"); }
 
 					ct.sent.erase(i);
 					ct.faulty = false;

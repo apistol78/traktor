@@ -142,21 +142,6 @@ uint32_t Model::addUniqueMaterial(const Material& material)
 	return addUniqueId(m_materials, material, MaterialPredicate());
 }
 
-const Material& Model::getMaterial(uint32_t index) const
-{
-	return m_materials[index];
-}
-
-void Model::setMaterials(const std::vector< Material >& materials)
-{
-	m_materials = materials;
-}
-
-const std::vector< Material >& Model::getMaterials() const
-{
-	return m_materials;
-}
-
 uint32_t Model::addVertex(const Vertex& vertex)
 {
 	return addId(m_vertices, vertex);
@@ -175,37 +160,6 @@ uint32_t Model::addUniqueVertex(const Vertex& vertex)
 	return addId(m_vertices, vertex);
 }
 
-void Model::setVertex(uint32_t index, const Vertex& vertex)
-{
-	T_ASSERT (index < uint32_t(m_vertices.size()));
-	m_vertices[index] = vertex;
-}
-
-const Vertex& Model::getVertex(uint32_t index) const
-{
-	return m_vertices[index];
-}
-
-uint32_t Model::getVertexCount() const
-{
-	return uint32_t(m_vertices.size());
-}
-
-void Model::setVertices(const std::vector< Vertex >& vertices)
-{
-	m_vertices = vertices;
-}
-
-const std::vector< Vertex >& Model::getVertices() const
-{
-	return m_vertices;
-}
-
-void Model::reservePolygons(uint32_t polygonCapacity)
-{
-	m_polygons.reserve(polygonCapacity);
-}
-
 uint32_t Model::addPolygon(const Polygon& polygon)
 {
 	return addId(m_polygons, polygon);
@@ -214,32 +168,6 @@ uint32_t Model::addPolygon(const Polygon& polygon)
 uint32_t Model::addUniquePolygon(const Polygon& polygon)
 {
 	return addUniqueId< std::vector< Polygon >, Polygon, DefaultPredicate< Polygon > >(m_polygons, polygon);
-}
-
-void Model::setPolygon(uint32_t index, const Polygon& polygon)
-{
-	T_ASSERT (index < uint32_t(m_polygons.size()));
-	m_polygons[index] = polygon;
-}
-
-const Polygon& Model::getPolygon(uint32_t index) const
-{
-	return m_polygons[index];
-}
-
-uint32_t Model::getPolygonCount() const
-{
-	return uint32_t(m_polygons.size());
-}
-
-void Model::setPolygons(const std::vector< Polygon >& polygons)
-{
-	m_polygons = polygons;
-}
-
-const std::vector< Polygon >& Model::getPolygons() const
-{
-	return m_polygons;
 }
 
 void Model::reservePositions(uint32_t positionCapacity)
@@ -258,26 +186,6 @@ uint32_t Model::addUniquePosition(const Vector4& position)
 	return id != m_positions.InvalidIndex ? id : m_positions.add(position);
 }
 
-const Vector4& Model::getPosition(uint32_t index) const
-{
-	return m_positions.get(index);
-}
-
-const Vector4& Model::getVertexPosition(uint32_t vertexIndex) const
-{
-	return getPosition(getVertex(vertexIndex).getPosition());
-}
-
-void Model::setPositions(const AlignedVector< Vector4 >& positions)
-{
-	m_positions.replace(positions);
-}
-
-const AlignedVector< Vector4 >& Model::getPositions() const
-{
-	return m_positions.values();
-}
-
 uint32_t Model::addColor(const Vector4& color)
 {
 	return m_colors.add(color);
@@ -287,21 +195,6 @@ uint32_t Model::addUniqueColor(const Vector4& color)
 {
 	uint32_t id = m_colors.get(color, 1.0f / (4.0f * 256.0f));
 	return id != m_colors.InvalidIndex ? id : m_colors.add(color);
-}
-
-const Vector4& Model::getColor(uint32_t index) const
-{
-	return m_colors.get(index);
-}
-
-void Model::setColors(const AlignedVector< Vector4 >& colors)
-{
-	m_colors.replace(colors);
-}
-
-const AlignedVector< Vector4 >& Model::getColors() const
-{
-	return m_colors.values();
 }
 
 uint32_t Model::addNormal(const Vector4& normal)
@@ -321,21 +214,6 @@ uint32_t Model::addUniqueNormal(const Vector4& normal)
 	return id != m_normals.InvalidIndex ? id : m_normals.add(quantizedNormal);
 }
 
-const Vector4& Model::getNormal(uint32_t index) const
-{
-	return m_normals.get(index);
-}
-
-void Model::setNormals(const AlignedVector< Vector4 >& normals)
-{
-	m_normals.replace(normals);
-}
-
-const AlignedVector< Vector4 >& Model::getNormals() const
-{
-	return m_normals.values();
-}
-
 uint32_t Model::addTexCoord(const Vector2& texCoord)
 {
 	return m_texCoords.add(texCoord);
@@ -347,34 +225,9 @@ uint32_t Model::addUniqueTexCoord(const Vector2& texCoord)
 	return id != m_texCoords.InvalidIndex ? id : m_texCoords.add(texCoord);
 }
 
-const Vector2& Model::getTexCoord(uint32_t index) const
-{
-	return m_texCoords.get(index);
-}
-
-void Model::setTexCoords(const AlignedVector< Vector2 >& texCoords)
-{
-	m_texCoords.replace(texCoords);
-}
-
-const AlignedVector< Vector2 >& Model::getTexCoords() const
-{
-	return m_texCoords.values();
-}
-
 uint32_t Model::addJoint(const std::wstring& jointName)
 {
 	return addUniqueId< std::vector< std::wstring >, std::wstring, DefaultPredicate< std::wstring > >(m_joints, jointName);
-}
-
-uint32_t Model::getJointCount() const
-{
-	return int(m_joints.size());
-}
-
-const std::wstring& Model::getJoint(uint32_t jointIndex) const
-{
-	return m_joints[jointIndex];
 }
 
 uint32_t Model::findJointIndex(const std::wstring& jointName) const
@@ -394,16 +247,6 @@ uint32_t Model::addBlendTarget(const std::wstring& blendTargetName)
 
 	m_blendTargetPositions[id] = m_positions.values();
 	return id;
-}
-
-uint32_t Model::getBlendTargetCount() const
-{
-	return uint32_t(m_blendTargets.size());
-}
-
-const std::wstring& Model::getBlendTarget(uint32_t blendTargetIndex)
-{
-	return m_blendTargets[blendTargetIndex];
 }
 
 void Model::setBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex, const Vector4& position)

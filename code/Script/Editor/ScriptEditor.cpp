@@ -212,7 +212,7 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 				std::wstring text = m_edit->getLine(i);
 				if (text.find(fields[0].value) != text.npos)
 				{
-					m_edit->scrollToLine(i);
+					m_edit->showLine(i);
 					break;
 				}
 			}
@@ -348,7 +348,7 @@ void ScriptEditor::eventOutlineDoubleClick(ui::Event* event)
 	int32_t line = parseString< int32_t >(lineItem->getText()) - 1;
 	if (line >= 0)
 	{
-		m_edit->scrollToLine(line > 4 ? line - 4 : 0);
+		m_edit->showLine(line);
 		m_edit->placeCaret(m_edit->getLineOffset(line));
 	}
 }
@@ -487,7 +487,7 @@ void ScriptEditor::eventBreakPoint(ui::Event* event)
 
 	if (currentFrame.scriptId == m_instance->getGuid())
 	{
-		m_edit->scrollToLine(currentFrame.line > 4 ? currentFrame.line - 4 : 0);
+		m_edit->showLine(currentFrame.line);
 		m_edit->placeCaret(m_edit->getLineOffset(currentFrame.line));
 	}
 }

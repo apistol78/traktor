@@ -114,6 +114,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getBestReversedLatency", &net::Replicator::getBestReversedLatency);
 	classReplicator->addMethod("getWorstReversedLatency", &net::Replicator::getWorstReversedLatency);
 	classReplicator->addMethod("isPeerConnected", &net::Replicator::isPeerConnected);
+	classReplicator->addMethod("isPeerRelayed", &net::Replicator::isPeerRelayed);
 	classReplicator->addMethod("getPrimaryPeerHandle", &net::Replicator::getPrimaryPeerHandle);
 	classReplicator->addMethod("isPeerPrimary", &net::Replicator::isPeerPrimary);
 	classReplicator->addMethod("areAllPeersConnected", &net::Replicator::areAllPeersConnected);

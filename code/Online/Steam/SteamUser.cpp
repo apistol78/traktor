@@ -1,4 +1,5 @@
 #include "Core/Io/Utf8Encoding.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Online/Steam/SteamUser.h"
 
@@ -8,6 +9,11 @@ namespace traktor
 	{
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.online.SteamUser", SteamUser, IUserProvider)
+
+SteamUser::SteamUser()
+:	m_callbackSessionConnectFail(this, &SteamUser::OnP2PSessionConnectFail)
+{
+}
 
 bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 {
@@ -66,11 +72,36 @@ bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, s
 
 bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 {
+	if (m_failing.find(userHandle) != m_failing.end())
+		return false;
+
 	CSteamID id(userHandle);
 	if (!id.IsValid())
 		return false;
 
 	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), k_EP2PSendUnreliableNoDelay);
+}
+
+void SteamUser::receivedP2PData(uint64_t userHandle)
+{
+	if (m_failing.erase(userHandle) > 0)
+		log::info << L"Steam; P2P session recovered peer " << userHandle << Endl;
+}
+
+void SteamUser::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PSessionConnectFail)
+{
+	const wchar_t* hr[] =
+	{
+		L"k_EP2PSessionErrorNone",
+		L"k_EP2PSessionErrorNotRunningApp",
+		L"k_EP2PSessionErrorNoRightsToApp",
+		L"k_EP2PSessionErrorDestinationNotLoggedIn",
+		L"k_EP2PSessionErrorTimeout"
+	};
+
+	uint64_t userHandle = uint64_t(pP2PSessionConnectFail->m_steamIDRemote.ConvertToUint64()); 
+	if (m_failing.insert(userHandle).second)
+		log::error << L"Steam; P2P session connect fail to peer " << userHandle << L", m_eP2PSessionError = " << int32_t(pP2PSessionConnectFail->m_eP2PSessionError) << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
 }
 
 	}

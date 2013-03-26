@@ -40,6 +40,10 @@ public:
 
 	uint32_t getNormal() const;
 
+	void setSmoothGroup(uint32_t smoothGroup);
+
+	uint32_t getSmoothGroup() const;
+
 	void clearVertices();
 
 	void flipWinding();
@@ -61,6 +65,7 @@ public:
 private:
 	uint32_t m_material;
 	uint32_t m_normal;
+	uint32_t m_smoothGroup;
 	std::vector< uint32_t > m_vertices;
 };
 

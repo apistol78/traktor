@@ -14,8 +14,6 @@ enum MessageType
 	MtBye = 0xf2,
 	MtPing = 0xf3,
 	MtPong = 0xf4,
-	MtThrottle = 0xf5,
-	MtDisconnect = 0xf6,
 	MtFullState	= 0x11,
 	MtDeltaState = 0x12,
 	MtEvent = 0x13,

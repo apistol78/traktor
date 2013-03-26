@@ -55,7 +55,7 @@ public:
 
 	const PointVector& getPoints() const { return m_points; }
 
-	uint32_t getEmitted() const { return m_emitted; }
+	//uint32_t getEmitted() const { return m_emitted; }
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
@@ -63,7 +63,7 @@ public:
 	{
 		uint32_t offset = m_points.size();
 		m_points.resize(offset + points);
-		m_emitted += points;
+		//m_emitted += points;
 		return &m_points[offset];
 	}
 
@@ -71,9 +71,8 @@ private:
 	Ref< const Emitter > m_emitter;
 	Vector4 m_position;
 	PointVector m_points;
-	PointVector m_worldPoints;
-	Plane m_sortPlane;
-	uint32_t m_emitted;
+	PointVector m_renderPoints[4];
+	//uint32_t m_emitted;
 	float m_totalTime;
 	float m_emitFraction;
 	bool m_warm;

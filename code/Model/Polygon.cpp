@@ -9,12 +9,14 @@ namespace traktor
 Polygon::Polygon()
 :	m_material(c_InvalidIndex)
 ,	m_normal(c_InvalidIndex)
+,	m_smoothGroup(0)
 {
 }
 
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2)
 :	m_material(material)
 ,	m_normal(c_InvalidIndex)
+,	m_smoothGroup(0)
 ,	m_vertices(2)
 {
 	m_vertices[0] = vertex1;
@@ -24,6 +26,7 @@ Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2)
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3)
 :	m_material(material)
 ,	m_normal(c_InvalidIndex)
+,	m_smoothGroup(0)
 ,	m_vertices(3)
 {
 	m_vertices[0] = vertex1;
@@ -34,6 +37,7 @@ Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t
 Polygon::Polygon(uint32_t material, uint32_t vertex1, uint32_t vertex2, uint32_t vertex3, uint32_t vertex4)
 :	m_material(material)
 ,	m_normal(c_InvalidIndex)
+,	m_smoothGroup(0)
 ,	m_vertices(4)
 {
 	m_vertices[0] = vertex1;
@@ -60,6 +64,16 @@ void Polygon::setNormal(uint32_t normal)
 uint32_t Polygon::getNormal() const
 {
 	return m_normal;
+}
+
+void Polygon::setSmoothGroup(uint32_t smoothGroup)
+{
+	m_smoothGroup = smoothGroup;
+}
+
+uint32_t Polygon::getSmoothGroup() const
+{
+	return m_smoothGroup;
 }
 
 void Polygon::clearVertices()

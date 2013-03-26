@@ -97,6 +97,8 @@ private:
 	Semaphore m_createOutputLock;
 	ReaderWriterLock m_readCacheLock;
 	Semaphore m_builtCacheLock;
+	Semaphore m_workSetLock;
+	std::list< std::pair< Ref< PipelineDependency >, Ref< const Object > > > m_workSet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
 	std::map< const TypeInfo*, double > m_buildTimes;
@@ -110,7 +112,7 @@ private:
 	void updateBuildReason(PipelineDependency* dependency, bool rebuild);
 
 	/*! \brief Perform build. */
-	BuildResult performBuild(PipelineDependency* dependency);
+	BuildResult performBuild(PipelineDependency* dependency, const Object* buildParams);
 
 	/*! \brief Calculate global dependency hash; ie. including child dependencies. */
 	uint32_t calculateGlobalHash(const PipelineDependency* dependency) const;
@@ -127,8 +129,6 @@ private:
 	/*! \brief Build thread method. */
 	void buildThread(
 		Thread* controlThread,
-		RefArray< PipelineDependency >& workSet,
-		Semaphore& workSetLock,
 		int32_t cpuCore
 	);
 };

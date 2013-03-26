@@ -67,6 +67,8 @@ public:
 
 	bool scrollToLine(int32_t line);
 
+	bool showLine(int32_t line);
+
 	void placeCaret(int32_t offset);
 
 	bool redo();

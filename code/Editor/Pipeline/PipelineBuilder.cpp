@@ -102,17 +102,18 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	m_succeeded = 0;
 	m_failed = 0;
 
+	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		m_workSet.push_back(std::make_pair< Ref< PipelineDependency >, Ref< const Object > >(*i, 0));
+
 	m_pipelineDb->beginTransaction();
 
-	// Split workload on threads; use as many threads as there are CPU cores.
-	// If build set is less than twice number of cores we don't build asynchronously.
 	int32_t cpuCores = OS::getInstance().getCPUCoreCount();
-	if (m_threadedBuildEnable && dependencies.size() >= cpuCores * 2)
+	if (
+		m_threadedBuildEnable &&
+		int32_t(dependencies.size()) >= cpuCores * 2
+	)
 	{
 		std::vector< Thread* > threads(cpuCores, (Thread*)0);
-		RefArray< PipelineDependency > workSet = dependencies;
-		Semaphore workSetLock;
-
 		for (int32_t i = 0; i < cpuCores; ++i)
 		{
 			threads[i] = ThreadPool::getInstance().spawn(
@@ -120,16 +121,12 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 				<
 					PipelineBuilder,
 					Thread*,
-					RefArray< PipelineDependency >&,
-					Semaphore&,
 					int32_t
 				>
 				(
 					this,
 					&PipelineBuilder::buildThread,
 					ThreadManager::getInstance().getCurrentThread(),
-					workSet,
-					workSetLock,
 					i
 				)
 			);
@@ -146,13 +143,8 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	}
 	else
 	{
-		RefArray< PipelineDependency > workSet = dependencies;
-		Semaphore workSetLock;
-
 		buildThread(
 			ThreadManager::getInstance().getCurrentThread(),
-			workSet,
-			workSetLock,
 			0
 		);
 	}
@@ -243,11 +235,35 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 		return false;
 
+#if 1
+
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT (pipeline);
 
 	if (!pipeline->buildOutput(this, sourceAsset, 0, outputPath, outputGuid, buildParams, PbrSourceModified))
 		return false;
+
+#else
+
+	Ref< PipelineDependency > dependency = new PipelineDependency();
+	dependency->pipelineType = pipelineType;
+	dependency->sourceAsset = sourceAsset;
+	dependency->outputPath = outputPath;
+	dependency->outputGuid = outputGuid;
+	dependency->pipelineHash = pipelineHash;
+	dependency->flags = PdfBuild;
+	dependency->reason = PbrSynthesized;
+
+	{
+
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
+		m_workSet.push_back(std::make_pair(
+			dependency,
+			buildParams
+		));
+	}
+
+#endif
 
 	return true;
 }
@@ -293,7 +309,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 
 	instance = m_outputDatabase->createInstance(
 		instancePath,
-		db::CifReplaceExisting,
+		db::CifDefault,
 		&instanceGuid
 	);
 	if (instance)
@@ -304,7 +320,10 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 		return instance;
 	}
 	else
+	{
+		log::error << L"Unable to create output instance" << Endl;
 		return 0;
+	}
 }
 
 Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
@@ -385,7 +404,7 @@ void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool reb
 		dependency->reason |= PbrForced;
 }
 
-IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* dependency)
+IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* dependency, const Object* buildParams)
 {
 	IPipelineDb::DependencyHash currentDependencyHash;
 
@@ -411,7 +430,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 	log::info << IncreaseIndent;
 
 	// Get output instances from cache.
-	if (m_cache)
+	if (m_cache && !buildParams)
 	{
 		if (getInstancesFromCache(dependency->outputGuid, currentDependencyHash.hash, currentDependencyHash.pipelineVersion))
 		{
@@ -446,7 +465,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 		dependency->sourceAssetHash,
 		dependency->outputPath,
 		dependency->outputGuid,
-		0,
+		buildParams,
 		dependency->reason
 	);
 
@@ -469,7 +488,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 			for (RefArray< db::Instance >::const_iterator j = builtInstances.begin(); j != builtInstances.end(); ++j)
 				log::info << L"\"" << (*j)->getPath() << L"\" " << (*j)->getGuid().format() << Endl;
 
-			if (m_cache)
+			if (m_cache && !buildParams)
 				putInstancesInCache(
 					dependency->outputGuid,
 					currentDependencyHash.hash,
@@ -598,20 +617,21 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int
 
 void PipelineBuilder::buildThread(
 	Thread* controlThread,
-	RefArray< PipelineDependency >& workSet,
-	Semaphore& workSetLock,
 	int32_t cpuCore
 )
 {
 	while (!controlThread->stopped())
 	{
 		Ref< PipelineDependency > workDependency;
+		Ref< const Object > workBuildParams;
+
 		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(workSetLock);
-			if (!workSet.empty())
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
+			if (!m_workSet.empty())
 			{
-				workDependency = workSet.front();
-				workSet.pop_front();
+				workDependency = m_workSet.back().first;
+				workBuildParams = m_workSet.back().second;
+				m_workSet.pop_back();
 			}
 			else
 				break;
@@ -625,7 +645,7 @@ void PipelineBuilder::buildThread(
 				workDependency
 			);
 
-		BuildResult result = performBuild(workDependency);
+		BuildResult result = performBuild(workDependency, workBuildParams);
 		if (result == BrSucceeded || result == BrSucceededWithWarnings)
 			++m_succeeded;
 		else
@@ -640,7 +660,8 @@ void PipelineBuilder::buildThread(
 				result
 			);
 
-		Atomic::increment(m_progress);
+		if (!workBuildParams)
+			Atomic::increment(m_progress);
 	}
 }
 

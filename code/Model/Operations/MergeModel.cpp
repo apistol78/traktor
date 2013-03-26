@@ -153,8 +153,8 @@ bool MergeModel::apply(Model& model) const
 			const Vector4& outputPosition = model.getVertexPosition(outputVertex);
 			const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
-			Scalar distance = (outputPosition - mergedPosition).xyz0().length();
-			if (distance > c_snapDistance)
+			Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
+			if (distance > c_snapDistance * c_snapDistance)
 				continue;
 
 			uint32_t vertexCount = outputPolygon.getVertexCount();
@@ -169,8 +169,8 @@ bool MergeModel::apply(Model& model) const
 				const Vector4& outputPosition = model.getVertexPosition(outputVertex);
 				const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
-				Scalar distance = (outputPosition - mergedPosition).xyz0().length();
-				if (distance > c_snapDistance)
+				Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
+				if (distance > c_snapDistance * c_snapDistance)
 				{
 					duplicate = false;
 					break;
@@ -190,8 +190,8 @@ bool MergeModel::apply(Model& model) const
 				const Vector4& outputPosition = model.getVertexPosition(outputVertex);
 				const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
-				Scalar distance = (outputPosition - mergedPosition).xyz0().length();
-				if (distance > c_snapDistance)
+				Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
+				if (distance > c_snapDistance * c_snapDistance)
 				{
 					duplicate = false;
 					break;

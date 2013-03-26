@@ -150,6 +150,10 @@ public:
 	 */
 	bool isPeerConnected(handle_t peerHandle) const;
 
+	/*! \brief Check if peer is relayed.
+	 */
+	bool isPeerRelayed(handle_t peerHandle) const;
+
 	/*! \brief Get handle of primary peer.
 	 *
 	 * \return Primary peer handle.
@@ -259,10 +263,11 @@ private:
 		float latencyMedian;
 		float latencyMinimum;
 		float latencyReversed;
-		uint32_t pendingPing;
-		uint32_t packetCount;
-		uint32_t stateCount;
-		uint32_t errorCount;
+		int32_t pendingIAm;
+		int32_t pendingPing;
+		int32_t packetCount;
+		int32_t stateCount;
+		int32_t errorCount;
 		Ref< const State > iframe;
 
 		Peer()
@@ -277,6 +282,7 @@ private:
 		,	latencyMedian(0.05f)
 		,	latencyMinimum(0.05f)
 		,	latencyReversed(0.05f)
+		,	pendingIAm(0)
 		,	pendingPing(0)
 		,	packetCount(0)
 		,	stateCount(0)
@@ -312,17 +318,13 @@ private:
 
 	void dispatchEventListeners();
 
-	void sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id);
+	bool sendIAm(handle_t peerHandle, uint8_t sequence, uint32_t id);
 
-	void sendBye(handle_t peerHandle);
+	bool sendBye(handle_t peerHandle);
 
-	void sendPing(handle_t peerHandle);
+	bool sendPing(handle_t peerHandle);
 
-	void sendPong(handle_t peerHandle, uint32_t time0);
-
-	void sendThrottle(handle_t peerHandle);
-
-	void broadcastDisconnect(handle_t peerHandle);
+	bool sendPong(handle_t peerHandle, uint32_t time0);
 
 	void adjustTime(float offset);
 

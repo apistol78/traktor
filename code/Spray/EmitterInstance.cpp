@@ -59,8 +59,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object
 
 EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
 :	m_emitter(emitter)
-,	m_sortPlane(0.0f, 0.0f, 1.0f, 0.0f)
-,	m_emitted(0)
+//,	m_emitted(0)
 ,	m_totalTime(0.0f)
 ,	m_emitFraction(0.0f)
 ,	m_warm(false)
@@ -72,9 +71,10 @@ EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
 		pointCount = c_maxEmitSingleShot;
 
 	m_points.reserve(pointCount);
-
-	if (m_emitter->worldSpace())
-		m_worldPoints.reserve(pointCount);
+	m_renderPoints[0].reserve(pointCount);
+	m_renderPoints[1].reserve(pointCount);
+	m_renderPoints[2].reserve(pointCount);
+	m_renderPoints[3].reserve(pointCount);
 }
 
 EmitterInstance::~EmitterInstance()
@@ -108,7 +108,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		}
 	}
 
-	synchronize();
+	//synchronize();
 
 	// Erase dead particles.
 	size_t size = m_points.size();
@@ -181,7 +181,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 
 	// Calculate bounding box; do this before modifiers as modifiers are executed
 	// asynchronously.
-	if ((m_count++ & 15) == 0)
+	if ((m_count & 15) == 0)
 	{
 		m_boundingBox = Aabb3();
 		Scalar deltaTime16 = Scalar(context.deltaTime * 16.0f);
@@ -241,63 +241,44 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 #	endif
 #endif
 
-	// Transform and sort particles if necessary.
-	if (m_emitter->worldSpace())
-	{
-#if !defined(__LINUX__)
-		if (m_emitter->getSort())
-			std::sort(m_points.begin(), m_points.end(), PointPredicate(m_sortPlane));
-#endif
-	}
-	else
-	{
-		m_worldPoints.resize(m_points.size());
-		for (uint32_t i = 0; i < m_points.size(); ++i)
-		{
-			m_worldPoints[i] = m_points[i];
-			m_worldPoints[i].position = transform * m_points[i].position.xyz1();
-			m_worldPoints[i].velocity = transform * m_points[i].velocity.xyz0();
-		}
+	// \fixme Should transform into render points as a "tail" job.
+	synchronize();
 
-#if !defined(__LINUX__)
-		if (m_emitter->getSort())
-			std::sort(m_worldPoints.begin(), m_worldPoints.end(), PointPredicate(m_sortPlane));
-#endif
+	PointVector& renderPoints = m_renderPoints[m_count & 3];
+	renderPoints = m_points;
+
+	if (!m_emitter->worldSpace())
+	{
+		for (uint32_t i = 0; i < renderPoints.size(); ++i)
+		{
+			renderPoints[i].position = transform * renderPoints[i].position.xyz1();
+			renderPoints[i].velocity = transform * renderPoints[i].velocity.xyz0();
+		}
 	}
+
+	m_count++;
 }
 
 void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane)
 {
-	if (m_emitter->worldSpace())
-	{
-		if (m_points.empty())
-			return;
+	T_ASSERT (m_count > 0);
 
-		pointRenderer->render(
-			m_emitter->getShader(),
-			cameraPlane,
-			m_points,
-			m_emitter->getMiddleAge(),
-			m_emitter->getCullNearDistance(),
-			m_emitter->getFadeNearRange()
-		);
-	}
-	else
-	{
-		if (m_worldPoints.empty())
-			return;
+	PointVector& renderPoints = m_renderPoints[(m_count - 1) & 3];
 
-		pointRenderer->render(
-			m_emitter->getShader(),
-			cameraPlane,
-			m_worldPoints,
-			m_emitter->getMiddleAge(),
-			m_emitter->getCullNearDistance(),
-			m_emitter->getFadeNearRange()
-		);
-	}
+	if (renderPoints.empty())
+		return;
 
-	m_sortPlane = cameraPlane;
+	if (m_emitter->getSort())
+		std::sort(renderPoints.begin(), renderPoints.end(), PointPredicate(cameraPlane));
+
+	pointRenderer->render(
+		m_emitter->getShader(),
+		cameraPlane,
+		renderPoints,
+		m_emitter->getMiddleAge(),
+		m_emitter->getCullNearDistance(),
+		m_emitter->getFadeNearRange()
+	);
 }
 
 void EmitterInstance::synchronize() const
