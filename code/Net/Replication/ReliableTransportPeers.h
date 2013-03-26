@@ -3,6 +3,7 @@
 
 #include <list>
 #include <map>
+#include "Core/Containers/CircularVector.h"
 #include "Core/Timer//Timer.h"
 #include "Net/Replication/IReplicatorPeers.h"
 
@@ -80,20 +81,22 @@ private:
 		uint8_t sequence0;
 		uint8_t sequence1;
 		std::list< ControlEnvelope > sent;
-		uint8_t last0_0;
-		uint8_t last0_1;
-		uint8_t last1_0;
-		uint8_t last1_1;
+		CircularVector< uint8_t, 16 > last0;
+		CircularVector< uint8_t, 16 > last1;
+		//uint8_t last0_0;
+		//uint8_t last0_1;
+		//uint8_t last1_0;
+		//uint8_t last1_1;
 		bool alive;
 		bool faulty;
 
 		Control()
 		:	sequence0(0)
 		,	sequence1(0)
-		,	last0_0(0xff)
-		,	last0_1(0xff)
-		,	last1_0(0xff)
-		,	last1_1(0xff)
+		//,	last0_0(0xff)
+		//,	last0_1(0xff)
+		//,	last1_0(0xff)
+		//,	last1_1(0xff)
 		,	alive(false)
 		,	faulty(false)
 		{

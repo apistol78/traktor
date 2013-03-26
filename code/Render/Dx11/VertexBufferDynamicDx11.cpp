@@ -99,7 +99,7 @@ void VertexBufferDynamicDx11::unlock()
 	m_d3dDeferredContext->Unmap(m_d3dBuffer, 0);
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-		m_d3dDeferredContext->FinishCommandList(FALSE, &m_d3dPendingCommandList.getAssign());
+		m_d3dDeferredContext->FinishCommandList(TRUE, &m_d3dPendingCommandList.getAssign());
 	}
 	setContentValid(true);
 }

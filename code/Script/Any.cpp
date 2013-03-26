@@ -129,7 +129,7 @@ Any Any::fromString(const wchar_t* value)
 {
 	Any any;
 	any.m_type = AtString;
-	any.m_data.m_string = refStringCreate(wstombs(value).c_str());
+	any.m_data.m_string = refStringCreate(wstombs(Utf8Encoding(), value).c_str());
 	return any;
 }
 
@@ -137,7 +137,7 @@ Any Any::fromString(const std::wstring& value)
 {
 	Any any;
 	any.m_type = AtString;
-	any.m_data.m_string = refStringCreate(wstombs(value).c_str());
+	any.m_data.m_string = refStringCreate(wstombs(Utf8Encoding(), value).c_str());
 	return any;
 }
 
@@ -223,13 +223,13 @@ std::string Any::getString() const
 	case AtBoolean:
 		return m_data.m_boolean ? "true" : "false";
 	case AtInteger:
-		return wstombs(toString(m_data.m_integer));
+		return wstombs(Utf8Encoding(), toString(m_data.m_integer));
 	case AtFloat:
-		return wstombs(toString(m_data.m_float));
+		return wstombs(Utf8Encoding(), toString(m_data.m_float));
 	case AtString:
 		return m_data.m_string;
 	case AtTypeInfo:
-		return wstombs(m_data.m_typeInfo->getName());
+		return wstombs(Utf8Encoding(), m_data.m_typeInfo->getName());
 	default:
 		break;
 	}

@@ -295,6 +295,29 @@ bool RichEdit::scrollToLine(int32_t line)
 	return true;
 }
 
+bool RichEdit::showLine(int32_t line)
+{
+	if (m_scrollBarV->isVisible(false))
+	{
+		Font font = getFont();
+		Rect rc = getInnerRect();
+
+		uint32_t lineHeight = font.getSize() + 1;
+		uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+
+		int32_t top = m_scrollBarV->getPosition();
+
+		if (line >= top && line < top + pageLines)
+			return true;
+
+		m_scrollBarV->setPosition(std::max< int32_t >(line - pageLines / 3, 0));
+		m_scrollBarV->update();
+
+		update();
+	}
+	return true;
+}
+
 void RichEdit::placeCaret(int32_t offset)
 {
 	m_caret = offset;

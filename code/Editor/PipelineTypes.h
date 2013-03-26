@@ -24,7 +24,8 @@ enum PipelineBuildReason
 	PbrDependencyModified = 1,	/*!< Dependent resource has been modified. */
 	PbrSourceModified = 2,		/*!< Source has been modified. */
 	PbrAssetModified = 4,		/*!< Asset has been modified; only valid for Asset classes and are always combined with PbrSourceModified. */
-	PbrForced = 8,				/*!< Forced build issued, must build even if output is up-to-date. */
+	PbrSynthesized = 8,			/*!< Build syntehsized. */
+	PbrForced = 16,				/*!< Forced build issued, must build even if output is up-to-date. */
 };
 
 	}

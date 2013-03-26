@@ -45,8 +45,6 @@ PipelineDependsIncremental::~PipelineDependsIncremental()
 
 void PipelineDependsIncremental::addDependency(const ISerializable* sourceAsset)
 {
-	T_ASSERT(m_currentDependency);
-
 	if (!sourceAsset)
 		return;
 

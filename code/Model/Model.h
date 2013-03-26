@@ -55,41 +55,41 @@ public:
 
 	uint32_t addUniqueMaterial(const Material& material);
 
-	const Material& getMaterial(uint32_t index) const;
+	const Material& getMaterial(uint32_t index) const { return m_materials[index]; }
 
-	void setMaterials(const std::vector< Material >& materials);
+	void setMaterials(const std::vector< Material >& materials) { m_materials = materials; }
 
-	const std::vector< Material >& getMaterials() const;
+	const std::vector< Material >& getMaterials() const { return m_materials; }
 
 	uint32_t addVertex(const Vertex& vertex);
 
 	uint32_t addUniqueVertex(const Vertex& vertex);
 
-	void setVertex(uint32_t index, const Vertex& vertex);
+	void setVertex(uint32_t index, const Vertex& vertex) { m_vertices[index] = vertex; }
 
-	const Vertex& getVertex(uint32_t index) const;
+	const Vertex& getVertex(uint32_t index) const { return m_vertices[index]; }
 
-	uint32_t getVertexCount() const;
+	uint32_t getVertexCount() const { return uint32_t(m_vertices.size()); }
 
-	void setVertices(const std::vector< Vertex >& vertices);
+	void setVertices(const std::vector< Vertex >& vertices) { m_vertices = vertices; }
 
-	const std::vector< Vertex >& getVertices() const;
+	const std::vector< Vertex >& getVertices() const { return m_vertices; }
 
-	void reservePolygons(uint32_t polygonCapacity);
+	void reservePolygons(uint32_t polygonCapacity) { m_polygons.reserve(polygonCapacity); }
 
 	uint32_t addPolygon(const Polygon& polygon);
 
 	uint32_t addUniquePolygon(const Polygon& polygon);
 
-	void setPolygon(uint32_t index, const Polygon& polygon);
+	void setPolygon(uint32_t index, const Polygon& polygon) { m_polygons[index] = polygon; }
 
-	const Polygon& getPolygon(uint32_t index) const;
+	const Polygon& getPolygon(uint32_t index) const { return m_polygons[index]; }
 
-	uint32_t getPolygonCount() const;
+	uint32_t getPolygonCount() const { return uint32_t(m_polygons.size()); }
 
-	void setPolygons(const std::vector< Polygon >& polygons);
+	void setPolygons(const std::vector< Polygon >& polygons) { m_polygons = polygons; }
 
-	const std::vector< Polygon >& getPolygons() const;
+	const std::vector< Polygon >& getPolygons() const { return m_polygons; }
 
 	void reservePositions(uint32_t positionCapacity);
 
@@ -97,57 +97,57 @@ public:
 
 	uint32_t addUniquePosition(const Vector4& position);
 
-	const Vector4& getPosition(uint32_t index) const;
+	const Vector4& getPosition(uint32_t index) const { return m_positions.get(index); }
 
-	const Vector4& getVertexPosition(uint32_t vertexIndex) const;
+	const Vector4& getVertexPosition(uint32_t vertexIndex) const { return getPosition(getVertex(vertexIndex).getPosition()); }
 
-	void setPositions(const AlignedVector< Vector4 >& positions);
+	void setPositions(const AlignedVector< Vector4 >& positions) { m_positions.replace(positions); }
 
-	const AlignedVector< Vector4 >& getPositions() const;
+	const AlignedVector< Vector4 >& getPositions() const { return m_positions.values(); }
 
 	uint32_t addColor(const Vector4& color);
 
 	uint32_t addUniqueColor(const Vector4& color);
 
-	const Vector4& getColor(uint32_t index) const;
+	const Vector4& getColor(uint32_t index) const { return m_colors.get(index); }
 
-	void setColors(const AlignedVector< Vector4 >& colors);
+	void setColors(const AlignedVector< Vector4 >& colors) { m_colors.replace(colors); }
 
-	const AlignedVector< Vector4 >& getColors() const;
+	const AlignedVector< Vector4 >& getColors() const { return m_colors.values(); }
 
 	uint32_t addNormal(const Vector4& normal);
 
 	uint32_t addUniqueNormal(const Vector4& normal);
 
-	const Vector4& getNormal(uint32_t index) const;
+	const Vector4& getNormal(uint32_t index) const { return m_normals.get(index); }
 
-	void setNormals(const AlignedVector< Vector4 >& normals);
+	void setNormals(const AlignedVector< Vector4 >& normals) { m_normals.replace(normals); }
 
-	const AlignedVector< Vector4 >& getNormals() const;
+	const AlignedVector< Vector4 >& getNormals() const { return m_normals.values(); }
 
 	uint32_t addTexCoord(const Vector2& texCoord);
 
 	uint32_t addUniqueTexCoord(const Vector2& texCoord);
 
-	const Vector2& getTexCoord(uint32_t index) const;
+	const Vector2& getTexCoord(uint32_t index) const { return m_texCoords.get(index); }
 
-	void setTexCoords(const AlignedVector< Vector2 >& texCoords);
+	void setTexCoords(const AlignedVector< Vector2 >& texCoords) { m_texCoords.replace(texCoords); }
 
-	const AlignedVector< Vector2 >& getTexCoords() const;
+	const AlignedVector< Vector2 >& getTexCoords() const { return m_texCoords.values(); }
 
 	uint32_t addJoint(const std::wstring& jointName);
 
-	uint32_t getJointCount() const;
+	uint32_t getJointCount() const { return int(m_joints.size()); }
 
-	const std::wstring& getJoint(uint32_t jointIndex) const;
+	const std::wstring& getJoint(uint32_t jointIndex) const { return m_joints[jointIndex]; }
 
 	uint32_t findJointIndex(const std::wstring& jointName) const;
 
 	uint32_t addBlendTarget(const std::wstring& blendTargetName);
 
-	uint32_t getBlendTargetCount() const;
+	uint32_t getBlendTargetCount() const { return uint32_t(m_blendTargets.size()); }
 
-	const std::wstring& getBlendTarget(uint32_t blendTargetIndex);
+	const std::wstring& getBlendTarget(uint32_t blendTargetIndex) { return m_blendTargets[blendTargetIndex]; }
 
 	void setBlendTargetPosition(uint32_t blendTargetIndex, uint32_t positionIndex, const Vector4& position);
 

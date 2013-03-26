@@ -113,7 +113,7 @@ Ref< PropertyGroup > PropertyGroup::mergeJoin(const PropertyGroup* rightGroup) c
 	// Insert values from left group.
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = leftValues.begin(); i != leftValues.end(); ++i)
 	{
-		if (rightValues.find(i->first) != rightValues.end())
+		if (!i->second || rightValues.find(i->first) != rightValues.end())
 			continue;
 
 		joinedGroup->setProperty(i->first, i->second->clone());
@@ -123,9 +123,9 @@ Ref< PropertyGroup > PropertyGroup::mergeJoin(const PropertyGroup* rightGroup) c
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
 	{
 		std::map< std::wstring, Ref< IPropertyValue > >::const_iterator it = leftValues.find(i->first);
-		if (it != leftValues.end())
+		if (it != leftValues.end() && it->second)
 			joinedGroup->setProperty(i->first, it->second->join(i->second));
-		else
+		else if (i->second)
 			joinedGroup->setProperty(i->first, i->second->clone());
 	}
 
@@ -142,7 +142,7 @@ Ref< PropertyGroup > PropertyGroup::mergeReplace(const PropertyGroup* rightGroup
 	// Insert values from left group.
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = leftValues.begin(); i != leftValues.end(); ++i)
 	{
-		if (rightValues.find(i->first) != rightValues.end())
+		if (!i->second || rightValues.find(i->first) != rightValues.end())
 			continue;
 
 		joinedGroup->setProperty(i->first, i->second->clone());
@@ -150,7 +150,10 @@ Ref< PropertyGroup > PropertyGroup::mergeReplace(const PropertyGroup* rightGroup
 
 	// Insert values from right group.
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = rightValues.begin(); i != rightValues.end(); ++i)
-		joinedGroup->setProperty(i->first, i->second->clone());
+	{
+		if (i->second)
+			joinedGroup->setProperty(i->first, i->second->clone());
+	}
 
 	return joinedGroup;
 }
@@ -182,7 +185,8 @@ Ref< IPropertyValue > PropertyGroup::clone() const
 	std::map< std::wstring, Ref< IPropertyValue > > value;
 	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = m_value.begin(); i != m_value.end(); ++i)
 	{
-		T_ASSERT (i->second);
+		if (!i->second)
+			continue;
 		value.insert(std::make_pair(
 			i->first,
 			i->second->clone()

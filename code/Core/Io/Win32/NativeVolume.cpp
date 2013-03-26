@@ -180,7 +180,7 @@ Ref< IStream > NativeVolume::open(const Path& fileName, uint32_t mode)
 	if (hFile == INVALID_HANDLE_VALUE)
 	{
 		DWORD errorCode = GetLastError();
-		if ((mode & File::FmRead) == File::FmRead && errorCode != ERROR_FILE_NOT_FOUND)
+		if ((mode & File::FmRead) != File::FmRead || errorCode != ERROR_FILE_NOT_FOUND)
 			log::error << L"Unable to open file \"" << systemPath << L"\"; error code " << int32_t(errorCode) << Endl;
 		return 0;
 	}
@@ -208,11 +208,18 @@ bool NativeVolume::remove(const Path& fileName)
 	return bool(DeleteFile(wstots(systemPath).c_str()) == TRUE);
 }
 
-bool NativeVolume::rename(const Path& fileName, const std::wstring& newName)
+bool NativeVolume::move(const Path& fileName, const std::wstring& newName, bool overwrite)
 {
 	std::wstring sourceName = getSystemPath(fileName);
 	std::wstring destinationName = getSystemPath(fileName.getPathOnly() + L"/" + newName);
-	return bool(MoveFile(wstots(sourceName).c_str(), wstots(destinationName).c_str()) == TRUE);
+	return bool(MoveFileEx(wstots(sourceName).c_str(), wstots(destinationName).c_str(), overwrite ? MOVEFILE_REPLACE_EXISTING : 0) == TRUE);
+}
+
+bool NativeVolume::copy(const Path& fileName, const std::wstring& newName, bool overwrite)
+{
+	std::wstring sourceName = getSystemPath(fileName);
+	std::wstring destinationName = getSystemPath(fileName.getPathOnly() + L"/" + newName);
+	return bool(CopyFile(wstots(sourceName).c_str(), wstots(destinationName).c_str(), !overwrite) == TRUE);
 }
 
 bool NativeVolume::makeDirectory(const Path& directory)

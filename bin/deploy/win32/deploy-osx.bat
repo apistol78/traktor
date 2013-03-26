@@ -34,7 +34,7 @@ if "%1"=="build" (
 
 ) else if "%1"=="launch" (
 
-	%TRAKTOR_HOME%\bin\win32\RemoteLaunch %DEPLOY_TARGET_HOST% launch-osx.sh "%BUNDLE%.app" > "%DEPLOY_OUTPUT_PATH%\Launch.log"
+	%TRAKTOR_HOME%\bin\win32\RemoteLaunch %DEPLOY_TARGET_HOST% launch-osx.sh "%BUNDLE%.app" "%DEPLOY_EXECUTABLE%" > "%DEPLOY_OUTPUT_PATH%\Launch.log"
 
 ) else if "%1"=="migrate" (
 

@@ -86,13 +86,23 @@ public:
 	 */
 	virtual bool remove(const Path& fileName) = 0;
 
-	/*! \brief Rename file.
+	/*! \brief Move file.
 	 *
 	 * \param fileName Name of file to rename.
 	 * \param newName New name of file.
+	 * \param overwrite Overwrite if target exists.
 	 * \return True if file renamed successfully.
 	 */
-	virtual bool rename(const Path& fileName, const std::wstring& newName) = 0;
+	virtual bool move(const Path& fileName, const std::wstring& newName, bool overwrite) = 0;
+
+	/*! \brief Copy file.
+	 *
+	 * \param fileName Name of file to rename.
+	 * \param newName New name of file.
+	 * \param overwrite Overwrite if target exists.
+	 * \return True if file renamed successfully.
+	 */
+	virtual bool copy(const Path& fileName, const std::wstring& newName, bool overwrite) = 0;
 
 	/*! \brief Make new directory.
 	 *

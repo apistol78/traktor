@@ -83,6 +83,16 @@ public:
 		m_front = (m_front + 1) % Capacity;
 	}
 
+	int32_t find(const ItemType& value) const
+	{
+		for (int32_t i = 0; i < int32_t(size()); ++i)
+		{
+			if ((*this)[i] == value)
+				return i;
+		}
+		return -1;
+	}
+
 	const ItemType& back() const
 	{
 		return m_items[m_back > 0 ? (m_back - 1) : Capacity - 1];
