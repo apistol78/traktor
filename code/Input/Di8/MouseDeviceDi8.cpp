@@ -25,12 +25,16 @@ c_mouseControlMap[] =
 	{ L"Left mouse button", DtButton1, false, true, 0 },
 	{ L"Right mouse button", DtButton2, false, true, 1 },
 	{ L"Middle mouse button", DtButton3, false, true, 2 },
-	{ L"Aux mouse button", DtButton3, false, true, 3 },
-	{ L"Mouse X axis", DtAxisX, true, true, 4 },
-	{ L"Mouse Y axis", DtAxisY, true, true, 5 },
-	{ L"Mouse Z axis", DtAxisZ, true, true, 6 },
-	{ L"Mouse X axis", DtPositionX, true, false, 7 },
-	{ L"Mouse Y axis", DtPositionY, true, false, 8 }
+	{ L"Aux 1 mouse button", DtButton3, false, true, 3 },
+	{ L"Aux 2 mouse button", DtButton4, false, true, 4 },
+	{ L"Aux 3 mouse button", DtButton5, false, true, 5 },
+	{ L"Aux 4 mouse button", DtButton6, false, true, 6 },
+	{ L"Aux 5 mouse button", DtButton7, false, true, 7 },
+	{ L"Mouse X axis", DtAxisX, true, true, 8 },
+	{ L"Mouse Y axis", DtAxisY, true, true, 9 },
+	{ L"Mouse Z axis", DtAxisZ, true, true, 10 },
+	{ L"Mouse X axis", DtPositionX, true, false, 11 },
+	{ L"Mouse Y axis", DtPositionY, true, false, 12 }
 };
 
 const float c_mouseDeltaLimit = 100.0f;
@@ -45,7 +49,7 @@ MouseDeviceDi8::MouseDeviceDi8(HWND hWnd, IDirectInputDevice8* device, const DID
 ,	m_connected(false)
 ,	m_exclusive(false)
 {
-	m_device->SetDataFormat(&c_dfDIMouse);
+	m_device->SetDataFormat(&c_dfDIMouse2);
 	m_name = tstows(deviceInstance->tszInstanceName);
 	
 	resetState();
@@ -106,14 +110,22 @@ float MouseDeviceDi8::getControlValue(int32_t control)
 	case 3:
 		return (m_state.rgbButtons[3] & 0x80) ? 1.0f : 0.0f;
 	case 4:
-		return clamp(float(m_state.lX), -c_mouseDeltaLimit, c_mouseDeltaLimit);
+		return (m_state.rgbButtons[4] & 0x80) ? 1.0f : 0.0f;
 	case 5:
-		return clamp(float(m_state.lY), -c_mouseDeltaLimit, c_mouseDeltaLimit);
+		return (m_state.rgbButtons[5] & 0x80) ? 1.0f : 0.0f;
 	case 6:
-		return float(m_state.lZ / 120.0f);
+		return (m_state.rgbButtons[6] & 0x80) ? 1.0f : 0.0f;
 	case 7:
-		return float(m_position.x);
+		return (m_state.rgbButtons[7] & 0x80) ? 1.0f : 0.0f;
 	case 8:
+		return clamp(float(m_state.lX), -c_mouseDeltaLimit, c_mouseDeltaLimit);
+	case 9:
+		return clamp(float(m_state.lY), -c_mouseDeltaLimit, c_mouseDeltaLimit);
+	case 10:
+		return float(m_state.lZ / 120.0f);
+	case 11:
+		return float(m_position.x);
+	case 12:
 		return float(m_position.y);
 	}
 
@@ -123,25 +135,25 @@ float MouseDeviceDi8::getControlValue(int32_t control)
 bool MouseDeviceDi8::getControlRange(int32_t control, float& outMin, float& outMax) const
 {
 	const MouseControlMap& mc = c_mouseControlMap[control];
-	if (mc.index == 4 || mc.index == 5)
+	if (mc.index == 8 || mc.index == 9)
 	{
 		outMin = -100.0f;
 		outMax =  100.0f;
 		return true;
 	}
-	else if (mc.index == 7)
+	else if (mc.index == 11)
 	{
 		outMin = float(m_rect.left);
 		outMax = float(m_rect.right);
 		return true;
 	}
-	else if (mc.index == 8)
+	else if (mc.index == 12)
 	{
 		outMin = float(m_rect.top);
 		outMax = float(m_rect.bottom);
 		return true;
 	}
-	else if (mc.index <= 3)
+	else if (mc.index <= 7)
 	{
 		outMin = 0.0f;
 		outMax = 1.0f;
@@ -201,7 +213,7 @@ void MouseDeviceDi8::readState()
 			return;
 	}
 
-	hr = m_device->GetDeviceState(sizeof(DIMOUSESTATE), &m_state);
+	hr = m_device->GetDeviceState(sizeof(DIMOUSESTATE2), &m_state);
 
 	GetCursorPos(&m_position);
 

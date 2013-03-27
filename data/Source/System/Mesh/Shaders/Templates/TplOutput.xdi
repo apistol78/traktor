@@ -103,17 +103,6 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>630</first>
-				<second>630</second>
-			</position>
-			<name>T_ReflectiveMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
 				<first>662</first>
 				<second>494</second>
 			</position>

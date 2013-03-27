@@ -68,6 +68,10 @@ bool ScenePipeline::buildDependencies(
 		pipelineDepends->addDependency(*i);
 
 	pipelineDepends->addDependency(sceneAsset->getControllerData());
+
+	if (sceneAsset->getWorldRenderSettings())
+		pipelineDepends->addDependency(sceneAsset->getWorldRenderSettings()->reflectionMap, editor::PdfBuild);
+
 	return true;
 }
 

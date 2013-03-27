@@ -62,7 +62,7 @@ private:
 	HWND m_hWnd;
 	ComRef< IDirectInputDevice8 > m_device;
 	std::wstring m_name;
-	DIMOUSESTATE m_state;
+	DIMOUSESTATE2 m_state;
 	POINT m_position;
 	RECT m_rect;
 	bool m_connected;

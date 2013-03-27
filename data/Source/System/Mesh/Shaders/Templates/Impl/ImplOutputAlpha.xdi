@@ -30,15 +30,15 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>ReflectionMap</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
 					<name>SpecularTerm</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>State</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -53,16 +53,16 @@
 					<second>0</second>
 				</item>
 				<item>
-					<first>ReflectionMap</first>
-					<second>0</second>
-				</item>
-				<item>
 					<first>SpecularRoughness</first>
 					<second>0.8</second>
 				</item>
 				<item>
 					<first>SpecularTerm</first>
 					<second>1</second>
+				</item>
+				<item>
+					<first>State</first>
+					<second>0</second>
 				</item>
 			</values>
 		</item>
@@ -176,17 +176,6 @@
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>222</first>
-				<second>697</second>
-			</position>
-			<name>T_ReflectiveMap</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -257,16 +246,6 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Reflection</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[11]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>ReflectionMap</name>
 			</destination>
 		</item>
 	</edges>

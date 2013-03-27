@@ -14,12 +14,23 @@ enum MessageType
 	MtBye = 0xf2,
 	MtPing = 0xf3,
 	MtPong = 0xf4,
+	
 	MtFullState	= 0x11,
 	MtDeltaState = 0x12,
-	MtEvent = 0x13,
-	MtRelayUnreliable = 0x21,
-	MtRelayReliable = 0x22,
-	MtMasquerade = 0x23
+
+	MtEvent0 = 0x20,	//!< Never transmitted
+	MtEvent1 = 0x21,
+	MtEvent2 = 0x22,
+	MtEvent3 = 0x23,
+	MtEvent4 = 0x24,
+	MtEvent5 = 0x25,
+	MtEvent6 = 0x26,
+	MtEvent7 = 0x27,
+	MtEvent8 = 0x28,
+
+	MtRelayUnreliable = 0x81,
+	MtRelayReliable = 0x82,
+	MtMasquerade = 0x83
 };
 
 #pragma pack(1)
@@ -29,8 +40,8 @@ struct Message
 	{
 		HeaderSize = sizeof(uint8_t) + sizeof(uint32_t),
 		MessageSize = 1200,
-		StateSize = MessageSize - HeaderSize - sizeof(uint64_t),
-		EventSize = MessageSize - HeaderSize - sizeof(uint64_t),
+		StateSize = MessageSize - HeaderSize,
+		EventSize = MessageSize - HeaderSize,
 		RelaySize = MessageSize - HeaderSize - sizeof(uint64_t),
 		MasqueradeSize = MessageSize - HeaderSize - sizeof(uint64_t)
 	};

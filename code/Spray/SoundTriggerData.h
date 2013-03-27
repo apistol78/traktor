@@ -41,10 +41,13 @@ public:
 	const resource::Id< sound::Sound >& getSound() const { return m_sound; }
 
 private:
+	friend class SoundTrigger;
+
 	resource::Id< sound::Sound > m_sound;
 	bool m_positional;
 	bool m_follow;
 	bool m_repeat;
+	bool m_infinite;
 };
 
 	}

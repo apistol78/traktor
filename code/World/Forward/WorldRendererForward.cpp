@@ -49,6 +49,7 @@ render::handle_t s_techniqueDefault = 0;
 render::handle_t s_techniqueDepth = 0;
 render::handle_t s_techniqueShadow = 0;
 render::handle_t s_handleProjection = 0;
+render::handle_t s_handleReflectionMap = 0;
 
 		}
 
@@ -67,6 +68,7 @@ WorldRendererForward::WorldRendererForward()
 
 	// Global parameters.
 	s_handleProjection = render::getParameterHandle(L"Projection");
+	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
 }
 
 bool WorldRendererForward::create(
@@ -401,6 +403,13 @@ bool WorldRendererForward::create(
 		}
 	}
 
+	// Create global reflection map.
+	if (m_settings.reflectionMap)
+	{
+		if (!resourceManager->bind(m_settings.reflectionMap, m_reflectionMap))
+			log::warning << L"Unable to create reflection map" << Endl;
+	}
+
 	// Create "visual" and "intermediate" target.
 	if (m_antiAlias || m_visualPostProcess || m_gammaCorrectionPostProcess)
 	{
@@ -481,6 +490,7 @@ void WorldRendererForward::destroy()
 	safeDestroy(m_visualPostProcess);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
+	m_reflectionMap.clear();
 	safeDestroy(m_shadowMaskFilterTargetSet);
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
@@ -619,6 +629,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	render::ProgramParameters programParams;
 	programParams.beginParameters(m_globalContext);
 	programParams.setMatrixParameter(s_handleProjection, projection);
+	programParams.setTextureParameter(s_handleReflectionMap, m_reflectionMap);
 	programParams.endParameters(m_globalContext);
 
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.

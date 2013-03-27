@@ -122,8 +122,10 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 
 #if defined(__APPLE__)
 	m_edit->setFont(ui::Font(L"Courier New", 14));
+#elif defined(__LINUX__)
+	m_edit->setFont(ui::Font(L"Courier New", 14));
 #else
-	m_edit->setFont(ui::Font(L"Courier New", 16));
+	m_edit->setFont(ui::Font(L"Consolas", 14));
 #endif
 	m_edit->addChangeEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptChange));
 	m_edit->addDoubleClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventScriptDoubleClick));

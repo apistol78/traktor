@@ -125,7 +125,12 @@ bool NativeVolume::remove(const Path& filename)
 	return bool(unlink(wstombs(getSystemPath(filename)).c_str()) == 0);
 }
 
-bool NativeVolume::rename(const Path& fileName, const std::wstring& newName)
+bool NativeVolume::move(const Path& fileName, const std::wstring& newName, bool overwrite)
+{
+	return false;
+}
+
+bool NativeVolume::copy(const Path& fileName, const std::wstring& newName, bool overwrite)
 {
 	return false;
 }

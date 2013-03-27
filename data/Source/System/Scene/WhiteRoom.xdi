@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.scene.SceneAsset" version="4">
-	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="17">
+	<worldRenderSettings type="traktor.world.WorldRenderSettings" version="20">
 		<viewNearZ>0.1</viewNearZ>
 		<viewFarZ>10000</viewFarZ>
 		<linearLighting>true</linearLighting>
@@ -8,6 +8,7 @@
 		<depthPassEnabled>true</depthPassEnabled>
 		<shadowSettings>
 			<disabled>
+				<projection>SpUniform</projection>
 				<farZ>0</farZ>
 				<resolution>128</resolution>
 				<bias>0</bias>
@@ -20,6 +21,7 @@
 				<maskFilter>{00000000-0000-0000-0000-000000000000}</maskFilter>
 			</disabled>
 			<low>
+				<projection>SpUniform</projection>
 				<farZ>70</farZ>
 				<resolution>512</resolution>
 				<bias>0.15</bias>
@@ -32,6 +34,7 @@
 				<maskFilter>{7D4D38B9-1E43-8046-B1A4-705CFEF9B8EB}</maskFilter>
 			</low>
 			<medium>
+				<projection>SpUniform</projection>
 				<farZ>80</farZ>
 				<resolution>1024</resolution>
 				<bias>0.15</bias>
@@ -44,6 +47,7 @@
 				<maskFilter>{57FD53AF-547A-9F46-8C94-B4D24EFB63BC}</maskFilter>
 			</medium>
 			<high>
+				<projection>SpUniform</projection>
 				<farZ>120</farZ>
 				<resolution>1024</resolution>
 				<bias>0.15</bias>
@@ -55,7 +59,8 @@
 				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
 				<maskFilter>{FABC4017-4D65-604D-B9AB-9FC03FE3CE43}</maskFilter>
 			</high>
-			<highest>
+			<ultra>
+				<projection>SpUniform</projection>
 				<farZ>140</farZ>
 				<resolution>1024</resolution>
 				<bias>0.15</bias>
@@ -66,12 +71,13 @@
 				<maskDenominator>1</maskDenominator>
 				<maskProject>{F751F3EB-33D2-9247-9E3F-54B1A0E3522C}</maskProject>
 				<maskFilter>{5AFC153E-6FCE-3142-9E1B-DD3722DA447F}</maskFilter>
-			</highest>
+			</ultra>
 		</shadowSettings>
 		<fogEnabled>false</fogEnabled>
 		<fogDistance>150</fogDistance>
 		<fogRange>800</fogRange>
 		<fogColor>101, 157, 193, 255</fogColor>
+		<reflectionMap>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</reflectionMap>
 	</worldRenderSettings>
 	<postProcessSettings>{00000000-0000-0000-0000-000000000000}</postProcessSettings>
 	<layers>

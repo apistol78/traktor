@@ -495,6 +495,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	Ref< AutoScriptClass< BoxedGuid > > classBoxedGuid = new AutoScriptClass< BoxedGuid >();
 	classBoxedGuid->addConstructor();
 	classBoxedGuid->addConstructor< const std::wstring& >();
+	classBoxedGuid->addStaticMethod("create", &BoxedGuid::create);
 	classBoxedGuid->addMethod("set", &BoxedGuid::set);
 	classBoxedGuid->addMethod("format", &BoxedGuid::format);
 	classBoxedGuid->addMethod("isValid", &BoxedGuid::isValid);

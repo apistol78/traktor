@@ -24,6 +24,8 @@ class Sound;
 	namespace spray
 	{
 
+class SoundTriggerData;
+
 /*! \brief
  * \ingroup Spray
  */
@@ -32,15 +34,13 @@ class T_DLLCLASS SoundTrigger : public ITrigger
 	T_RTTI_CLASS;
 
 public:
-	SoundTrigger(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat);
+	SoundTrigger(const SoundTriggerData* data, const resource::Proxy< sound::Sound >& sound);
 
 	virtual Ref< ITriggerInstance > createInstance() const;
 
 private:
+	Ref< const SoundTriggerData > m_data;
 	resource::Proxy< sound::Sound > m_sound;
-	bool m_positional;
-	bool m_follow;
-	bool m_repeat;
 };
 
 	}

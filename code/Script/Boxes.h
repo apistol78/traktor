@@ -63,6 +63,8 @@ public:
 
 	explicit BoxedGuid(const std::wstring& value);
 
+	static Guid create() { return Guid::create(); }
+
 	void set(const std::wstring& str) { m_value = Guid(str); }
 
 	std::wstring format() const { return m_value.format(); }

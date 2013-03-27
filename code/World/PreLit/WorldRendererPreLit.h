@@ -139,6 +139,7 @@ private:
 	static render::handle_t ms_techniqueShadow;
 	static render::handle_t ms_handleTime;
 	static render::handle_t ms_handleProjection;
+	static render::handle_t ms_handleReflectionMap;
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
@@ -157,6 +158,7 @@ private:
 	RefArray< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
 	Ref< render::RenderTargetSet > m_lightMapTargetSet;
 	Ref< render::RenderContext > m_globalContext;
+	resource::Proxy< render::ITexture > m_reflectionMap;
 	Ref< PostProcess > m_shadowMaskProject;
 	Ref< PostProcess > m_shadowMaskFilter;
 	Ref< PostProcess > m_ambientOcclusion;
