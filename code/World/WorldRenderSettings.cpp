@@ -3,6 +3,7 @@
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStaticArray.h"
+#include "Render/ITexture.h"
 #include "Resource/Member.h"
 #include "World/WorldRenderSettings.h"
 #include "World/PostProcess/PostProcessSettings.h"
@@ -34,7 +35,7 @@ const wchar_t* c_ShadowSettings_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 19, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 20, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -66,6 +67,8 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< float >(L"fogDistance", fogDistance, AttributeRange(0.0f));
 	s >> Member< float >(L"fogRange", fogRange, AttributeRange(0.0f));
 	s >> Member< Color4ub >(L"fogColor", fogColor);
+	if (s.getVersion() >= 20)
+		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);
 
 	return true;
 }

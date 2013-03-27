@@ -26,6 +26,13 @@ class T_DLLCLASS ReverbFilter : public IFilter
 public:
 	ReverbFilter();
 
+	ReverbFilter(
+		int32_t delay,
+		float duration,
+		float cutOff,
+		float wet
+	);
+
 	virtual Ref< IFilterInstance > createInstance() const;
 
 	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
@@ -33,7 +40,6 @@ public:
 	virtual bool serialize(ISerializer& s);
 
 private:
-	uint32_t m_samplesLength;
 	int32_t m_delay;
 	float m_duration;
 	float m_cutOff;

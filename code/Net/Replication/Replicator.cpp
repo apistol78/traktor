@@ -589,52 +589,75 @@ void Replicator::sendEvents()
 	if (m_eventsOut.empty())
 		return;
 
-	for (std::list< Event >::const_iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
-		msg.type = MtEvent;
-		msg.time = uint32_t(m_time * 1000.0f);
+		std::vector< Event > peerEventsOut;
 
-		MemoryStream s(msg.event.data, sizeof(msg.event.data), false, true);
-		CompactSerializer cs(&s, &m_eventTypes[0]);
-		cs.writeObject(i->object);
-		cs.flush();
-
-		uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + s.tell();
-
-		if (i->handle == c_broadcastHandle)
+		// Collect events to peer.
+		for (std::list< Event >::const_iterator j = m_eventsOut.begin(); j != m_eventsOut.end(); ++j)
 		{
-			for (std::map< handle_t, Peer >::iterator j = m_peers.begin(); j != m_peers.end(); ++j)
+			if (j->handle == c_broadcastHandle || j->handle == i->first)
 			{
-				if (j->second.state != PsEstablished)
-					continue;
-
-				if (send(j->first, &msg, msgSize, true))
-					j->second.errorCount = 0;
-				else
-				{
-					log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (1)" << Endl;
-					
-					Event ev = *i;
-					ev.handle = j->first;
-					eventsOut.push_back(ev);
-
-					j->second.errorCount++;
-				}
+				peerEventsOut.push_back(*j);
+				peerEventsOut.back().handle = i->first;
 			}
 		}
-		else
+
+		if (peerEventsOut.empty())
+			continue;
+
+		// Pack as many events into same message as possible.
+		for (uint32_t j = 0; j < peerEventsOut.size(); )
 		{
-			std::map< handle_t, Peer >::iterator j = m_peers.find(i->handle);
-			if (j != m_peers.end())
+			uint32_t count = peerEventsOut.size() - j;
+			T_ASSERT (count > 0);
+
+			msg.type = MtEvent0;
+			msg.time = uint32_t(m_time * 1000.0f);
+
+			uint32_t totalPayLoadSize = 0;
+
+			uint8_t data[sizeof(msg.event.data)];
+			uint8_t* msgDataPtr = msg.event.data;
+			uint8_t* msgDataEndPtr = msgDataPtr + sizeof(msg.event.data);
+
+			uint32_t jj = j;
+			while (jj < peerEventsOut.size() && msg.type < MtEvent8)
 			{
-				if (send(j->first, &msg, msgSize, true))
-					j->second.errorCount = 0;
-				else
-				{
-					log::error << L"ERROR: Unable to send event to peer " << j->first << L" (" << j->second.errorCount << L") (2)" << Endl;
-					eventsOut.push_back(*i);
-					j->second.errorCount++;
-				}
+				MemoryStream s(data, sizeof(data), false, true);
+				CompactSerializer cs(&s, &m_eventTypes[0]);
+				cs.writeObject(peerEventsOut[jj].object);
+				cs.flush();
+
+				uint32_t dataSize = s.tell();
+				if (dataSize > uint32_t(msgDataEndPtr - msgDataPtr))
+					break;
+
+				std::memcpy(msgDataPtr, data, dataSize);
+				msgDataPtr += dataSize;
+
+				++jj;
+				++msg.type;
+			}
+
+			T_DEBUG(L"Packed " << (jj - j) << L" events in same message");
+
+			uint32_t msgSize = sizeof(uint8_t) + sizeof(uint32_t) + uint32_t(msgDataEndPtr - msgDataPtr);
+
+			if (send(i->first, &msg, msgSize, true))
+			{
+				i->second.errorCount = 0;
+				j = jj;
+			}
+			else
+			{
+				log::error << L"ERROR: Unable to send event(s) to peer " << i->first << L" (" << i->second.errorCount << L")" << Endl;
+				
+				for (; j < jj; ++j)
+					eventsOut.push_back(peerEventsOut[j]);
+
+				i->second.errorCount++;
+				break;
 			}
 		}
 	}
@@ -935,7 +958,7 @@ void Replicator::receiveMessages()
 				m_eventsIn.push_back(evt);
 			}
 		}
-		else if (msg.type == MtEvent)	// Event message.
+		else if (msg.type >= MtEvent1 && msg.type <= MtEvent8)	// Event message(s).
 		{
 			Peer& peer = m_peers[handle];
 			if (!peer.ghost)
@@ -950,16 +973,27 @@ void Replicator::receiveMessages()
 
 			if (!m_eventTypes.empty())
 			{
-				MemoryStream s(msg.event.data, sizeof(msg.event.data), true, false);
-				Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
+				const uint8_t* msgDataPtr = msg.event.data;
+				const uint8_t* msgDataEndPtr = msgDataPtr + sizeof(msg.event.data);
 
-				// Put an input event to notify listeners about received event.
-				Event e;
-				e.time = time;
-				e.eventId = IListener::ReBroadcastEvent;
-				e.handle = handle;
-				e.object = eventObject;
-				m_eventsIn.push_back(e);
+				uint32_t eventObjectCount = uint32_t(msg.type - MtEvent0);
+				for (uint32_t i = 0; i < eventObjectCount; ++i)
+				{
+					MemoryStream s(msgDataPtr, uint32_t(msgDataEndPtr - msgDataPtr));
+					Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
+					if (eventObject)
+					{
+						Event e;
+						e.time = time;
+						e.eventId = IListener::ReBroadcastEvent;
+						e.handle = handle;
+						e.object = eventObject;
+						m_eventsIn.push_back(e);
+					}
+					msgDataPtr += s.tell();
+				}
+
+				T_DEBUG(L"Received " << eventObjectCount << L" events in same message");
 			}
 		}
 	}

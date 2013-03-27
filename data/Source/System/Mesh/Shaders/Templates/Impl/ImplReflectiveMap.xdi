@@ -25,7 +25,7 @@ Tag_ReflectiveMap
 			<external>{00000000-0000-0000-0000-000000000000}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>526</first>
@@ -38,6 +38,7 @@ Tag_ReflectiveMap
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -54,23 +55,6 @@ Tag_ReflectiveMap
 				<second>149</second>
 			</position>
 			<name>T_Reflective</name>
-		</item>
-		<item type="traktor.render.Texture">
-			<comment/>
-			<position>
-				<first>616</first>
-				<second>244</second>
-			</position>
-			<external>{46ABEF4C-A855-0E43-9CEC-8124D2DEF32C}</external>
-			<type>PtTextureCube</type>
-		</item>
-		<item type="traktor.render.OutputPort">
-			<comment/>
-			<position>
-				<first>823</first>
-				<second>233</second>
-			</position>
-			<name>T_ReflectiveMap</name>
 		</item>
 	</nodes>
 	<edges>
@@ -111,16 +95,6 @@ Tag_ReflectiveMap
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
 				<name>Input</name>
 			</destination>
 		</item>

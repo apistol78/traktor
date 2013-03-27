@@ -57,6 +57,7 @@ render::handle_t WorldRendererPreLit::ms_techniquePreLitColor = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueGBuffer = 0;
 render::handle_t WorldRendererPreLit::ms_techniqueShadow = 0;
 render::handle_t WorldRendererPreLit::ms_handleProjection = 0;
+render::handle_t WorldRendererPreLit::ms_handleReflectionMap = 0;
 
 WorldRendererPreLit::WorldRendererPreLit()
 :	m_shadowsQuality(QuDisabled)
@@ -71,6 +72,7 @@ WorldRendererPreLit::WorldRendererPreLit()
 
 	// Global parameters.
 	ms_handleProjection = render::getParameterHandle(L"Projection");
+	ms_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
 }
 
 bool WorldRendererPreLit::create(
@@ -417,6 +419,13 @@ bool WorldRendererPreLit::create(
 		}
 	}
 
+	// Create global reflection map.
+	if (m_settings.reflectionMap)
+	{
+		if (!resourceManager->bind(m_settings.reflectionMap, m_reflectionMap))
+			log::warning << L"Unable to create reflection map" << Endl;
+	}
+
 	// Create "visual" and "intermediate" target.
 	{
 		render::RenderTargetSetCreateDesc desc;
@@ -534,6 +543,7 @@ void WorldRendererPreLit::destroy()
 	safeDestroy(m_ambientOcclusion);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
+	m_reflectionMap.clear();
 	m_shadowMaskFilterTargetSet.clear();
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
@@ -685,6 +695,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	render::ProgramParameters programParams;
 	programParams.beginParameters(m_globalContext);
 	programParams.setMatrixParameter(ms_handleProjection, projection);
+	programParams.setTextureParameter(ms_handleReflectionMap, m_reflectionMap);
 	programParams.endParameters(m_globalContext);
 
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.

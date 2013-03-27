@@ -106,6 +106,7 @@ private:
 	int32_t m_progress;
 	int32_t m_progressEnd;
 	int32_t m_succeeded;
+	int32_t m_succeededBuilt;
 	int32_t m_failed;
 
 	/*! \brief Update build reasons. */

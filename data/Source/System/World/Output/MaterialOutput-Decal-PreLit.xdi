@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="4">
 			<comment/>
 			<position>
 				<first>2285</first>
@@ -231,7 +231,7 @@
 			</position>
 			<swizzle>xyz</swizzle>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>525</first>
@@ -244,6 +244,7 @@
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
@@ -404,19 +405,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-8</first>
-				<second>368</second>
-			</position>
-			<name>ReflectionMap</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<defaultValue>0</defaultValue>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
 				<first>20</first>
-				<second>432</second>
+				<second>400</second>
 			</position>
 			<name>RimColor</name>
 			<connectable>true</connectable>
@@ -427,7 +417,7 @@
 			<comment/>
 			<position>
 				<first>3</first>
-				<second>400</second>
+				<second>368</second>
 			</position>
 			<name>RimIntensity</name>
 			<connectable>true</connectable>
@@ -480,6 +470,16 @@
 			<connectable>true</connectable>
 			<optional>true</optional>
 			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>1016</first>
+				<second>169</second>
+			</position>
+			<parameterName>ReflectionMap</parameterName>
+			<type>PtTextureCube</type>
+			<frequency>UfOnce</frequency>
 		</item>
 	</nodes>
 	<edges>
@@ -795,16 +795,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>ReflectionMap</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
@@ -825,7 +815,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[31]"/>
+				<node ref="/object/nodes/item[30]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -835,7 +825,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[31]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -855,7 +845,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[33]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -869,23 +859,23 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[35]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[34]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[35]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[35]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -899,13 +889,13 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -915,7 +905,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -925,12 +915,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[37]"/>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>State</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[37]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>ReflectionMap</name>
 			</destination>
 		</item>
 	</edges>

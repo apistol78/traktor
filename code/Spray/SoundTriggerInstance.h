@@ -33,6 +33,8 @@ class T_DLLCLASS SoundTriggerInstance : public ITriggerInstance
 	T_RTTI_CLASS;
 
 public:
+	virtual ~SoundTriggerInstance();
+
 	virtual void perform(Context& context, const Transform& transform, bool enable);
 
 	virtual void update(Context& context, const Transform& transform, bool enable);
@@ -45,10 +47,9 @@ private:
 	bool m_positional;
 	bool m_follow;
 	bool m_repeat;
+	bool m_infinite;
 
-	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat);
-
-	virtual ~SoundTriggerInstance();
+	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat, bool infinite);
 };
 
 	}

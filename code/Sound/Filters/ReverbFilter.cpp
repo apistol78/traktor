@@ -97,6 +97,19 @@ ReverbFilter::ReverbFilter()
 {
 }
 
+ReverbFilter::ReverbFilter(
+	int32_t delay,
+	float duration,
+	float cutOff,
+	float wet
+)
+:	m_delay(delay)
+,	m_duration(duration)
+,	m_cutOff(cutOff)
+,	m_wet(wet)
+{
+}
+
 Ref< IFilterInstance > ReverbFilter::createInstance() const
 {
 	Ref< ReverbFilterInstance > instance = new ReverbFilterInstance(m_delay);

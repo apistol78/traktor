@@ -10,12 +10,13 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SoundTriggerData", 2, SoundTriggerData, ITriggerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.SoundTriggerData", 3, SoundTriggerData, ITriggerData)
 
 SoundTriggerData::SoundTriggerData()
 :	m_positional(true)
 ,	m_follow(false)
 ,	m_repeat(false)
+,	m_infinite(false)
 {
 }
 
@@ -25,7 +26,7 @@ Ref< ITrigger > SoundTriggerData::createTrigger(resource::IResourceManager* reso
 	if (!resourceManager->bind(m_sound, sound))
 		return 0;
 
-	return new SoundTrigger(sound, m_positional, m_follow, m_repeat);
+	return new SoundTrigger(this, sound);
 }
 
 bool SoundTriggerData::serialize(ISerializer& s)
@@ -40,6 +41,9 @@ bool SoundTriggerData::serialize(ISerializer& s)
 		s >> Member< bool >(L"follow", m_follow);
 		s >> Member< bool >(L"repeat", m_repeat);
 	}
+
+	if (s.getVersion() >= 3)
+		s >> Member< bool >(L"infinite", m_infinite);
 
 	return true;
 }

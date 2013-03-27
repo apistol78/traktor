@@ -1,12 +1,10 @@
 #include <algorithm>
-#if defined(_PS3)
-#	include <calloca>
-#endif
 #include <limits>
 #include <sstream>
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/Endian.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/BinarySerializer.h"
@@ -208,12 +206,12 @@ bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::wstring& out
 {
 	if (u8len > 0)
 	{
-		uint8_t* buf = (uint8_t*)alloca(u8len * sizeof(uint8_t) + u8len * sizeof(wchar_t) + 8);
-		if (!buf)
+		AutoArrayPtr< uint8_t > buf(new uint8_t [u8len * sizeof(uint8_t) + u8len * sizeof(wchar_t) + 8]);
+		if (!buf.ptr())
 			return false;
 
-		uint8_t* u8str = buf;
-		wchar_t* wstr = (wchar_t*)(buf + u8len * sizeof(uint8_t));
+		uint8_t* u8str = buf.ptr();
+		wchar_t* wstr = (wchar_t*)(buf.ptr() + u8len * sizeof(uint8_t));
 		wchar_t* wptr = wstr;
 
 		if (!read_block(stream, u8str, u8len, sizeof(uint8_t)))
@@ -273,20 +271,55 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 	}
 }
 
+bool read_string(const Ref< IStream >& stream, uint32_t u8len, std::string& outString)
+{
+	if (u8len > 0)
+	{
+		AutoArrayPtr< uint8_t > buf(new uint8_t [u8len * sizeof(uint8_t) + u8len * sizeof(wchar_t) + 8]);
+		if (!buf.ptr())
+			return false;
+
+		uint8_t* u8str = buf.ptr();
+		if (!read_block(stream, u8str, u8len, sizeof(uint8_t)))
+			return false;
+
+		outString = std::string(u8str, u8str + u8len);
+	}
+	else
+		outString.clear();
+
+	return true;
+}
+
 bool read_string(const Ref< IStream >& stream, std::string& outString)
 {
-	std::wstring ws;
-	if (!read_string(stream, ws))
+	uint32_t u8len;
+
+	if (!read_primitive< uint32_t >(stream, u8len))
 		return false;
 
-	outString = wstombs(ws);
-	return true;
+	return read_string(stream, u8len, outString);
 }
 
 bool write_string(const Ref< IStream >& stream, const std::string& str)
 {
-	std::wstring ws = mbstows(str);
-	return write_string(stream, ws);
+	T_ASSERT (str.length() <= std::numeric_limits< uint16_t >::max());
+	
+	uint32_t length = uint32_t(str.length());
+	if (length > 0)
+	{
+		if (!write_primitive< uint32_t >(stream, length))
+			return false;
+
+		return write_block(stream, str.c_str(), length, sizeof(uint8_t));
+	}
+	else
+	{
+		if (!write_primitive< uint32_t >(stream, 0))
+			return false;
+
+		return true;
+	}
 }
 
 	}

@@ -4,7 +4,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>463</first>
+				<first>468</first>
 				<second>70</second>
 			</position>
 			<fragmentGuid>{4AC7418D-FF43-FE40-ADDC-33A162636FDC}</fragmentGuid>
@@ -27,7 +27,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>425</first>
+				<first>430</first>
 				<second>153</second>
 			</position>
 			<fragmentGuid>{68DA66E7-1D9E-FD4C-9692-D947BEA3EBAD}</fragmentGuid>
@@ -50,7 +50,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>435</first>
+				<first>440</first>
 				<second>303</second>
 			</position>
 			<fragmentGuid>{77489017-FBE8-4A4F-B11A-FDE48C69E021}</fragmentGuid>
@@ -125,7 +125,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>525</first>
+				<first>530</first>
 				<second>434</second>
 			</position>
 			<fragmentGuid>{57310F3A-FEB0-7644-B641-EC3876773470}</fragmentGuid>
@@ -143,7 +143,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>453</first>
+				<first>482</first>
 				<second>517</second>
 			</position>
 			<fragmentGuid>{859D3A98-EB16-0F4B-A766-34B6D65096AA}</fragmentGuid>
@@ -156,9 +156,6 @@
 			<outputPins>
 				<item>
 					<name>T_Reflective</name>
-				</item>
-				<item>
-					<name>T_ReflectiveMap</name>
 				</item>
 			</outputPins>
 			<values/>
@@ -181,10 +178,6 @@
 				</item>
 				<item>
 					<name>T_Reflective</name>
-					<optional>false</optional>
-				</item>
-				<item>
-					<name>T_ReflectiveMap</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -222,7 +215,7 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>484</first>
+				<first>489</first>
 				<second>236</second>
 			</position>
 			<fragmentGuid>{1E35F0A7-23A9-EA49-A518-125A77BAD564}</fragmentGuid>
@@ -419,16 +412,6 @@
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
 				<name>T_Reflective</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[5]"/>
-				<name>T_ReflectiveMap</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>T_ReflectiveMap</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">

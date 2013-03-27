@@ -77,6 +77,7 @@ PipelineBuilder::PipelineBuilder(
 ,	m_progress(0)
 ,	m_progressEnd(0)
 ,	m_succeeded(0)
+,	m_succeededBuilt(0)
 ,	m_failed(0)
 {
 }
@@ -100,6 +101,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	m_progress = 0;
 	m_progressEnd = dependencies.size();
 	m_succeeded = 0;
+	m_succeededBuilt = 0;
 	m_failed = 0;
 
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
@@ -155,7 +157,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())
-		log::info << L"Build finished; " << m_succeeded << L" succeeded, " << m_failed << L" failed" << Endl;
+		log::info << L"Build finished; " << m_succeeded << L" succeeded (" << m_succeededBuilt << L" built), " << m_failed << L" failed" << Endl;
 	else
 		log::info << L"Build finished; aborted" << Endl;
 
@@ -468,15 +470,14 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 		buildParams,
 		dependency->reason
 	);
+	if (result)
+		Atomic::increment(m_succeededBuilt);
 
 	double buildTime = timer.getElapsedTime();
 
 	log::info.setLocalTarget(infoTarget.getTarget());
 	log::warning.setLocalTarget(warningTarget.getTarget());
 	log::error.setLocalTarget(errorTarget.getTarget());
-
-	if (errorTarget.getCount() > 0)
-		result = false;
 
 	if (result)
 	{
@@ -506,7 +507,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 	log::info << (result ? L"Build successful" : L"Build failed") << Endl;
 
 	if (result)
-		return warningTarget.getCount() > 0 ? BrSucceededWithWarnings : BrSucceeded;
+		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BrSucceededWithWarnings : BrSucceeded;
 	else
 		return BrFailed;
 }

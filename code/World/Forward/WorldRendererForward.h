@@ -138,6 +138,7 @@ private:
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
 	Ref< render::RenderContext > m_globalContext;
+	resource::Proxy< render::ITexture > m_reflectionMap;
 	Ref< PostProcess > m_shadowMaskProject;
 	Ref< PostProcess > m_shadowMaskFilter;
 	Ref< PostProcess > m_ambientOcclusion;
