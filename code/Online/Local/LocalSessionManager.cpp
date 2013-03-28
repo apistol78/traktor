@@ -170,6 +170,11 @@ bool LocalSessionManager::buyDLC(const std::wstring& id) const
 	return false;
 }
 
+bool LocalSessionManager::navigateUrl(const net::Url& url) const
+{
+	return false;
+}
+
 uint64_t LocalSessionManager::getCurrentUserHandle() const
 {
 	return 0;

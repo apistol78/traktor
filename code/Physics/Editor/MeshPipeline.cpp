@@ -162,7 +162,7 @@ bool MeshPipeline::buildOutput(
 		}
 
 		centerOfGravity += Voffset / Scalar(Vtotal);
-		log::info << L"Hull volume " << Vtotal << L" unit³" << Endl;
+		log::info << L"Hull volume " << Vtotal << L" unit^3" << Endl;
 	}
 
 	// Log statistics.
@@ -182,7 +182,7 @@ bool MeshPipeline::buildOutput(
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
-		outputGuid		
+		outputGuid
 	);
 	if (!instance)
 	{

@@ -5,6 +5,7 @@
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Net/Url.h"
 #include "Online/Steam/SteamAchievements.h"
 #include "Online/Steam/SteamGameConfiguration.h"
 #include "Online/Steam/SteamLeaderboards.h"
@@ -240,6 +241,17 @@ bool SteamSessionManager::buyDLC(const std::wstring& id) const
 	if (i != m_dlcIds.end())
 	{
 		SteamFriends()->ActivateGameOverlayToStore(i->second, k_EOverlayToStoreFlag_AddToCartAndShow);
+		return true;
+	}
+	else
+		return false;
+}
+
+bool SteamSessionManager::navigateUrl(const net::Url& url) const
+{
+	if (url.valid())
+	{
+		SteamFriends()->ActivateGameOverlayToWebPage(wstombs(url.getString()).c_str());
 		return true;
 	}
 	else

@@ -74,6 +74,16 @@ void WorldRenderView::setTimes(float time, float deltaTime, float interval)
 	m_interval = interval;
 }
 
+void WorldRenderView::setEyePosition(const Vector4& eyePosition)
+{
+	m_eyePosition = eyePosition;
+}
+
+void WorldRenderView::setEyeDirection(const Vector4& eyeDirection)
+{
+	m_eyeDirection = eyeDirection;
+}
+
 void WorldRenderView::setInterocularDistance(float interocularDistance)
 {
 	m_interocularDistance = interocularDistance;

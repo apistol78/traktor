@@ -55,15 +55,12 @@ public:
 
 	const PointVector& getPoints() const { return m_points; }
 
-	//uint32_t getEmitted() const { return m_emitted; }
-
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 
 	Point* addPoints(uint32_t points)
 	{
 		uint32_t offset = m_points.size();
 		m_points.resize(offset + points);
-		//m_emitted += points;
 		return &m_points[offset];
 	}
 
@@ -72,12 +69,12 @@ private:
 	Vector4 m_position;
 	PointVector m_points;
 	PointVector m_renderPoints[4];
-	//uint32_t m_emitted;
 	float m_totalTime;
 	float m_emitFraction;
 	bool m_warm;
 	Aabb3 m_boundingBox;
 	uint32_t m_count;
+	uint32_t m_skip;
 
 #if !defined(T_MODIFIER_USE_PS3_SPURS)
 	mutable Ref< Job > m_job;

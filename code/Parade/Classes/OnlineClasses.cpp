@@ -1,5 +1,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Net/Url.h"
 #include "Online/IAchievements.h"
 #include "Online/ILeaderboards.h"
 #include "Online/ILobby.h"
@@ -133,6 +134,11 @@ Ref< online::Result > online_ISaveData_set(online::ISaveData* self, const std::w
 	sdd.title = saveDataTitle;
 	sdd.description = saveDataDescription;
 	return self->set(saveDataId, sdd, attachment, replace);
+}
+
+bool online_ISessionManager_navigateUrl(online::ISessionManager* self, const std::wstring& url)
+{
+	return self->navigateUrl(net::Url(url));
 }
 
 RefArray< online::IUser > online_ISessionManager_getFriends(online::ISessionManager* self, bool onlineOnly)
@@ -281,6 +287,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classISessionManager->addMethod("requireUserAttention", &online::ISessionManager::requireUserAttention);
 	classISessionManager->addMethod("haveDLC", &online::ISessionManager::haveDLC);
 	classISessionManager->addMethod("buyDLC", &online::ISessionManager::buyDLC);
+	classISessionManager->addMethod("navigateUrl", &online_ISessionManager_navigateUrl);
 	classISessionManager->addMethod("getFriends", &online_ISessionManager_getFriends);
 	classISessionManager->addMethod("findFriend", &online_ISessionManager_findFriend);
 	classISessionManager->addMethod("haveP2PData", &online::ISessionManager::haveP2PData);

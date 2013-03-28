@@ -205,12 +205,6 @@ void PointRenderer::render(
 		if (distance < cullNearDistance)
 			continue;
 
-		// Skip particles if further than lod distances.
-		if (distance > m_lod2Distance && (i & 3) > 0)
-			continue;
-		if (distance > m_lod1Distance && (i & 1) > 0)
-			continue;
-
 		// Calculate alpha based on point age and distance from near culling plane.
 		float age = clamp(point.age / point.maxAge, 0.0f, 1.0f);
 		float middle = age - middleAge;

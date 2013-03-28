@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace net
+	{
+
+class Url;
+
+	}
+
 	namespace online
 	{
 
@@ -44,6 +51,8 @@ public:
 	virtual bool haveDLC(const std::wstring& id) const = 0;
 
 	virtual bool buyDLC(const std::wstring& id) const = 0;
+
+	virtual bool navigateUrl(const net::Url& url) const = 0;
 
 	virtual uint64_t getCurrentUserHandle() const = 0;
 

@@ -65,6 +65,14 @@ bool EffectPipeline::buildDependencies(
 					pipelineDepends->addDependency(soundTrigger->getSound(), editor::PdfBuild);
 			}
 		}
+
+		const SoundTriggerData* soundTriggerEnable = dynamic_type_cast< const SoundTriggerData* >((*i)->getTriggerEnable());
+		if (soundTriggerEnable)
+			pipelineDepends->addDependency(soundTriggerEnable->getSound(), editor::PdfBuild);
+
+		const SoundTriggerData* soundTriggerDisable = dynamic_type_cast< const SoundTriggerData* >((*i)->getTriggerDisable());
+		if (soundTriggerDisable)
+			pipelineDepends->addDependency(soundTriggerDisable->getSound(), editor::PdfBuild);
 	}
 
 	return true;

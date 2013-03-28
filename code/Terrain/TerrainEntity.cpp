@@ -159,8 +159,8 @@ void TerrainEntity::render(
 	const Vector4& worldExtent = m_heightfield->getWorldExtent();
 
 	Matrix44 viewInv = worldRenderView.getView().inverse();
-	Vector4 eyePosition = viewInv.translation().xyz1();
-	Vector4 eyeDirection = viewInv.axisZ();
+	Vector4 eyePosition = worldRenderView.getEyePosition();
+	Vector4 eyeDirection = worldRenderView.getEyeDirection();
 
 	// Cull patches.
 	static AlignedVector< CullPatch > visiblePatches;

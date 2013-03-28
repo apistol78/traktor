@@ -612,6 +612,10 @@ void WorldRendererPreLit::endBuild(WorldRenderView& worldRenderView, int frame)
 
 	f.visual->clear();
 
+	Matrix44 viewInverse = worldRenderView.getView().inverse();
+	worldRenderView.setEyePosition(viewInverse.translation().xyz1());
+	worldRenderView.setEyeDirection(viewInverse.axisZ().xyz0());
+
 	// Prepare occluders.
 	if (f.culling)
 	{
@@ -1101,6 +1105,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 				shadowRenderView.setView(shadowLightView);
 				shadowRenderView.setViewFrustum(shadowFrustum);
 				shadowRenderView.setCullFrustum(shadowFrustum);
+				shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
 				shadowRenderView.setTimes(
 					worldRenderView.getTime(),
 					worldRenderView.getDeltaTime(),
