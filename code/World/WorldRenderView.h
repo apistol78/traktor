@@ -50,6 +50,10 @@ public:
 
 	void setTimes(float time, float deltaTime, float interval);
 
+	void setEyePosition(const Vector4& eyePosition);
+
+	void setEyeDirection(const Vector4& eyeDirection);
+
 	void setInterocularDistance(float interocularDistance);
 
 	void setDistortionValue(float distortionValue);
@@ -108,6 +112,14 @@ public:
 		return m_interval;
 	}
 
+	T_FORCE_INLINE const Vector4& getEyePosition() const {
+		return m_eyePosition;
+	}
+
+	T_FORCE_INLINE const Vector4& getEyeDirection() const {
+		return m_eyeDirection;
+	}
+
 	T_FORCE_INLINE float getInterocularDistance() const {
 		return m_interocularDistance;
 	}
@@ -133,6 +145,8 @@ private:
 	float m_time;
 	float m_deltaTime;
 	float m_interval;
+	Vector4 m_eyePosition;
+	Vector4 m_eyeDirection;
 	float m_interocularDistance;
 	float m_distortionValue;
 	float m_screenPlaneDistance;

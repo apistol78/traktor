@@ -25,13 +25,13 @@ bool ErrorDialog::create()
 		L"Error",
 		500,
 		300,
-		ui::Dialog::WsDefaultFixed,
+		ui::Dialog::WsDefaultResizable,
 		new ui::TableLayout(L"*,100%", L"100%", 0, 0)
 	))
 		return false;
 
 	Ref< ui::Image > imageError = new ui::Image();
-	imageError->create(this, ui::Bitmap::load(c_ResourceError, sizeof(c_ResourceError), L"png"));
+	imageError->create(this, ui::Bitmap::load(c_ResourceError, sizeof(c_ResourceError), L"png"), ui::Image::WsTransparent);
 
 	Ref< ui::Container > container = new ui::Container();
 	container->create(this, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 4, 4));

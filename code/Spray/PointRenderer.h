@@ -73,6 +73,10 @@ public:
 		world::IWorldRenderPass& worldRenderPass
 	);
 
+	float getLod1Distance() const { return m_lod1Distance; }
+
+	float getLod2Distance() const { return m_lod2Distance; }
+
 private:
 	enum { BufferCount = 4 };
 
@@ -88,8 +92,8 @@ private:
 
 	Ref< render::VertexBuffer > m_vertexBuffer[BufferCount];
 	Ref< render::IndexBuffer > m_indexBuffer;
-	Scalar m_lod1Distance;
-	Scalar m_lod2Distance;
+	float m_lod1Distance;
+	float m_lod2Distance;
 	uint32_t m_currentBuffer;
 	Vertex* m_vertex;
 	uint32_t m_vertexOffset;

@@ -59,7 +59,7 @@ void LodMeshEntity::precull(
 	world::WorldRenderView& worldRenderView
 )
 {
-	Vector4 eyePosition = worldRenderView.getView().inverse().translation();
+	const Vector4& eyePosition = worldRenderView.getEyePosition();
 	float lodDistance = (m_transform.get().translation() - eyePosition).length();
 
 	if (m_lodCullDistance >= FUZZY_EPSILON && lodDistance >= m_lodCullDistance)
@@ -76,7 +76,7 @@ void LodMeshEntity::render(
 	float /*distance*/
 )
 {
-	Vector4 eyePosition = worldRenderView.getView().inverse().translation();
+	const Vector4& eyePosition = worldRenderView.getEyePosition();
 	float lodDistance = (m_transform.get().translation() - eyePosition).length();
 
 	if (m_lodCullDistance >= FUZZY_EPSILON && lodDistance >= m_lodCullDistance)

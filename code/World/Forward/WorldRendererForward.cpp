@@ -554,6 +554,10 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 
 	f.visual->getRenderContext()->flush();
 
+	Matrix44 viewInverse = worldRenderView.getView().inverse();
+	worldRenderView.setEyePosition(viewInverse.translation().xyz1());
+	worldRenderView.setEyeDirection(viewInverse.axisZ().xyz0());
+
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
 	{
 		WorldRenderView depthRenderView = worldRenderView;
@@ -949,6 +953,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		shadowRenderView.setView(shadowLightView);
 		shadowRenderView.setViewFrustum(shadowFrustum);
 		shadowRenderView.setCullFrustum(shadowFrustum);
+		shadowRenderView.setEyePosition(worldRenderView.getEyePosition());
 		shadowRenderView.setTimes(
 			worldRenderView.getTime(),
 			worldRenderView.getDeltaTime(),

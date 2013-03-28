@@ -44,6 +44,8 @@ public:
 
 	virtual bool buyDLC(const std::wstring& id) const;
 
+	virtual bool navigateUrl(const net::Url& url) const;
+
 	virtual bool getFriends(RefArray< IUser >& outFriends, bool onlineOnly) const;
 
 	virtual bool findFriend(const std::wstring& name, Ref< IUser >& outFriend) const;

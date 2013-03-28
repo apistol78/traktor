@@ -59,11 +59,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object
 
 EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
 :	m_emitter(emitter)
-//,	m_emitted(0)
 ,	m_totalTime(0.0f)
 ,	m_emitFraction(0.0f)
 ,	m_warm(false)
-,	m_count(std::rand() & 15)
+,	m_count(0)
+,	m_skip(1)
 {
 	
 	int32_t pointCount = int32_t(c_maxEmitPerUpdate * 60 * duration);
@@ -245,7 +245,10 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	synchronize();
 
 	PointVector& renderPoints = m_renderPoints[m_count & 3];
-	renderPoints = m_points;
+	renderPoints.resize(0);
+
+	for (uint32_t i = 0; i < m_points.size(); i += m_skip)
+		renderPoints.push_back(m_points[i]);
 
 	if (!m_emitter->worldSpace())
 	{
@@ -279,6 +282,14 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& tran
 		m_emitter->getCullNearDistance(),
 		m_emitter->getFadeNearRange()
 	);
+
+	float distance = cameraPlane.distance(m_boundingBox.getCenter());
+	if (distance > pointRenderer->getLod2Distance())
+		m_skip = 4;
+	else if (distance > pointRenderer->getLod1Distance())
+		m_skip = 2;
+	else
+		m_skip = 1;
 }
 
 void EmitterInstance::synchronize() const

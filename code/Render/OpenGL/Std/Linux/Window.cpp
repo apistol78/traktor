@@ -223,7 +223,10 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 void Window::showCursor()
 {
 #if !defined(_DEBUG)
-	XUndefineCursor(m_display, DefaultRootWindow(m_display));
+	Cursor cursor;
+	cursor = XCreateFontCursor(m_display, XC_left_ptr);
+	XDefineCursor(m_display, DefaultRootWindow(m_display), cursor);
+	XFreeCursor(m_display, cursor);
 #endif
 }
 
