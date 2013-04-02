@@ -32,11 +32,13 @@ const uint32_t c_maxEmitPerUpdate = 4;
 const uint32_t c_maxEmitSingleShot = 10;
 #elif defined(_PS3)
 const uint32_t c_maxEmitPerUpdate = 6;
-const uint32_t c_maxEmitSingleShot = 2000;
+const uint32_t c_maxEmitSingleShot = 500;
 #else
 const uint32_t c_maxEmitPerUpdate = 16;
-const uint32_t c_maxEmitSingleShot = 3000;
+const uint32_t c_maxEmitSingleShot = 500;
 #endif
+
+const uint32_t c_maxAlive = c_maxEmitSingleShot;
 
 struct PointPredicate
 {
@@ -65,16 +67,9 @@ EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
 ,	m_count(0)
 ,	m_skip(1)
 {
-	
-	int32_t pointCount = int32_t(c_maxEmitPerUpdate * 60 * duration);
-	if (duration < 0.01f)
-		pointCount = c_maxEmitSingleShot;
-
-	m_points.reserve(pointCount);
-	m_renderPoints[0].reserve(pointCount);
-	m_renderPoints[1].reserve(pointCount);
-	m_renderPoints[2].reserve(pointCount);
-	m_renderPoints[3].reserve(pointCount);
+	m_points.reserve(c_maxAlive);
+	m_renderPoints[0].reserve(c_maxAlive);
+	m_renderPoints[1].reserve(c_maxAlive);
 }
 
 EmitterInstance::~EmitterInstance()
@@ -244,7 +239,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	// \fixme Should transform into render points as a "tail" job.
 	synchronize();
 
-	PointVector& renderPoints = m_renderPoints[m_count & 3];
+	PointVector& renderPoints = m_renderPoints[m_count & 1];
 	renderPoints.resize(0);
 
 	for (uint32_t i = 0; i < m_points.size(); i += m_skip)
@@ -266,7 +261,7 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& tran
 {
 	T_ASSERT (m_count > 0);
 
-	PointVector& renderPoints = m_renderPoints[(m_count - 1) & 3];
+	PointVector& renderPoints = m_renderPoints[(m_count - 1) & 1];
 
 	if (renderPoints.empty())
 		return;

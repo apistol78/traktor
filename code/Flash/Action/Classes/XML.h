@@ -32,6 +32,8 @@ class T_DLLCLASS XML : public XMLNode
 public:
 	XML(ActionContext* context);
 
+	virtual ~XML();
+
 	bool load(const std::wstring& url);
 
 private:
@@ -39,6 +41,8 @@ private:
 	Ref< Job > m_job;
 
 	void onFrame(CallArgs& ca);
+
+	void jobLoad(std::wstring url_);
 };
 
 	}

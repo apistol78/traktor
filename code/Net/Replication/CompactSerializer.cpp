@@ -677,12 +677,12 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 	{
 		ISerializable* object = 0;
 
-		uint8_t typeId = m_reader.readUnsigned(4);
+		uint8_t typeId = m_reader.readUnsigned(5);
 		
 		// Index into type table.
 		if (
 			typeId != 0x00 &&
-			typeId != 0x0f
+			typeId != 0x1f
 		)
 		{
 			const TypeInfo* type = m_types[typeId - 1];
@@ -696,7 +696,7 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 		}
 
 		// Explicit type name.
-		else if (typeId == 0x0f)
+		else if (typeId == 0x1f)
 		{
 			std::wstring typeName;
 			if (!read_string(m_reader, typeName))
@@ -733,13 +733,13 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 
 			if (m_types[typeId] == &type)
 			{
-				m_writer.writeUnsigned(4, typeId + 1);
+				m_writer.writeUnsigned(5, typeId + 1);
 				if (!serialize(object, type.getVersion()))
 					return false;
 			}
 			else
 			{
-				m_writer.writeUnsigned(4, 0x0f);
+				m_writer.writeUnsigned(5, 0x1f);
 				if (!write_string(m_writer, type.getName()))
 					return false;
 				if (!serialize(object, type.getVersion()))
@@ -747,7 +747,7 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 			}
 		}
 		else
-			m_writer.writeUnsigned(4, 0x00);
+			m_writer.writeUnsigned(5, 0x00);
 	}
 	return true;
 }

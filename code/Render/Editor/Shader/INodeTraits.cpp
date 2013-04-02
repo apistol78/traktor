@@ -1,7 +1,6 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/SmallMap.h"
-#include "Core/Thread/Acquire.h"
-#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/Atomic.h"
 #include "Render/Shader/Node.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 
@@ -12,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-Semaphore s_lock;
+int32_t s_lock = 0;
 SmallMap< const TypeInfo*, Ref< INodeTraits > > s_traits;
 
 		}
@@ -21,9 +20,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.INodeTraits", INodeTraits, Object)
 
 const INodeTraits* INodeTraits::find(const Node* node)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
+	// Spin lock thread until s_traits has been created.
+	while ((volatile int32_t &)s_lock == 1);
 
-	if (s_traits.empty())
+	// Should we create s_traits.
+	if (Atomic::increment(s_lock) == 1)
 	{
 		SmallMap< const TypeInfo*, Ref< INodeTraits > > traits;
 
@@ -44,6 +45,7 @@ const INodeTraits* INodeTraits::find(const Node* node)
 
 		// Update global traits.
 		s_traits = traits;
+		Atomic::increment(s_lock);
 	}
 
 	// Find traits from node type.

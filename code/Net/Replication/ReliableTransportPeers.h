@@ -62,8 +62,7 @@ private:
 	{
 		uint8_t type;
 		uint8_t sequence;
-		uint8_t checksum;
-		uint8_t payload[1200];
+		uint8_t payload[510];
 	};
 #pragma pack()
 
@@ -83,20 +82,12 @@ private:
 		std::list< ControlEnvelope > sent;
 		CircularVector< uint8_t, 16 > last0;
 		CircularVector< uint8_t, 16 > last1;
-		//uint8_t last0_0;
-		//uint8_t last0_1;
-		//uint8_t last1_0;
-		//uint8_t last1_1;
 		bool alive;
 		bool faulty;
 
 		Control()
 		:	sequence0(0)
 		,	sequence1(0)
-		//,	last0_0(0xff)
-		//,	last0_1(0xff)
-		//,	last1_0(0xff)
-		//,	last1_1(0xff)
 		,	alive(false)
 		,	faulty(false)
 		{

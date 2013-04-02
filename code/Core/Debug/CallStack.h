@@ -12,7 +12,7 @@ namespace traktor
  * \param outCs Array of call stack entries.
  * \return Number of call stack entries.
  */
-uint32_t T_DLLCLASS getCallStack(uint32_t ncs, void** outCs);
+uint32_t T_DLLCLASS getCallStack(uint32_t ncs, void** outCs, uint32_t skip);
 
 }
 

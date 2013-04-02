@@ -136,6 +136,7 @@ void JobQueue::threadWorker()
 	
 				job->m_finished = true;
 				job->m_stopped = true;
+				job->m_functor = 0;
 				job = 0;
 
 				Atomic::decrement(m_running);

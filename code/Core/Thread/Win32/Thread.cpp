@@ -1,3 +1,4 @@
+#include <process.h>
 #include "Core/Platform.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
@@ -16,7 +17,7 @@ struct THREADNAME_INFO
 	DWORD dwFlags;
 };
 
-DWORD WINAPI threadProc(LPVOID lparam)
+unsigned __stdcall threadProc(void* lparam)
 {
 	Functor* functor = reinterpret_cast< Functor* >(lparam);
 	(functor->operator())();
@@ -37,8 +38,6 @@ Thread::Thread(Functor* functor, const std::wstring& name, int32_t hardwareCore)
 
 Thread::~Thread()
 {
-	if (m_handle)
-		CloseHandle(m_handle);
 }
 
 bool Thread::start(Priority priority)
@@ -46,13 +45,13 @@ bool Thread::start(Priority priority)
 	if (m_handle)
 		return false;
 
-	m_handle = CreateThread(
-		NULL,
+	m_handle = (void*)_beginthreadex(
 		0,
-		(LPTHREAD_START_ROUTINE)threadProc,
-		(LPVOID)m_functor,
+		0,
+		&threadProc,
+		(void*)m_functor,
 		CREATE_SUSPENDED,
-		(LPDWORD)&m_id
+		&m_id
 	);
 	if (!m_handle)
 		return false;
@@ -67,7 +66,6 @@ bool Thread::start(Priority priority)
 #endif
 
 #if defined(_DEBUG)
-
 	THREADNAME_INFO threadInfo;
 	threadInfo.dwType = 0x1000;
 	threadInfo.szName = m_name.c_str();
@@ -76,14 +74,12 @@ bool Thread::start(Priority priority)
 	__try { RaiseException(0x406D1388, 0, sizeof(threadInfo) / sizeof(DWORD), (const ULONG_PTR*)&threadInfo); }
 	__except (EXCEPTION_CONTINUE_EXECUTION) {}
 
-#if defined(_XBOX)
+#	if defined(_XBOX)
 	PIXNameThread(m_name.c_str());
-#endif
-
+#	endif
 #endif
 
 	ResumeThread(m_handle);
-
 	return bool(m_handle != 0);
 }
 

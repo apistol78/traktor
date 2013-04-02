@@ -68,7 +68,7 @@ private:
 	Ref< const Emitter > m_emitter;
 	Vector4 m_position;
 	PointVector m_points;
-	PointVector m_renderPoints[4];
+	PointVector m_renderPoints[2];
 	float m_totalTime;
 	float m_emitFraction;
 	bool m_warm;

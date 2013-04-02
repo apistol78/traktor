@@ -6,6 +6,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Color4f.h"
+#include "Core/Math/Color4ub.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
@@ -349,6 +350,43 @@ private:
 	Color4f m_value;
 };
 
+class T_DLLCLASS BoxedColor4ub : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedColor4ub();
+
+	explicit BoxedColor4ub(const Color4ub& value);
+
+	explicit BoxedColor4ub(uint8_t r, uint8_t g, uint8_t b);
+
+	explicit BoxedColor4ub(uint8_t r, uint8_t g, uint8_t b, uint8_t a);
+
+	uint8_t getRed() const { return m_value.r; }
+
+	uint8_t getGreen() const { return m_value.g; }
+
+	uint8_t getBlue() const { return m_value.b; }
+
+	uint8_t getAlpha() const { return m_value.a; }
+
+	void setRed(uint8_t red) { m_value.r = red; }
+
+	void setGreen(uint8_t green) { m_value.g = green; }
+
+	void setBlue(uint8_t blue) { m_value.b = blue; }
+
+	void setAlpha(uint8_t alpha) { m_value.a = alpha; }
+
+	const Color4ub& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+private:
+	Color4ub m_value;
+};
+
 class T_DLLCLASS BoxedRefArray : public Boxed
 {
 	T_RTTI_CLASS;
@@ -602,6 +640,28 @@ struct CastAny < const Color4f&, false >
 	}
 	static Color4f get(const Any& value) {
 		return checked_type_cast< BoxedColor4f*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < Color4ub, false >
+{
+	static Any set(const Color4ub& value) {
+		return Any::fromObject(new BoxedColor4ub(value));
+	}
+	static Color4ub get(const Any& value) {
+		return checked_type_cast< BoxedColor4ub*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Color4ub&, false >
+{
+	static Any set(const Color4ub& value) {
+		return Any::fromObject(new BoxedColor4ub(value));
+	}
+	static Color4ub get(const Any& value) {
+		return checked_type_cast< BoxedColor4ub*, false >(value.getObject())->unbox();
 	}
 };
 

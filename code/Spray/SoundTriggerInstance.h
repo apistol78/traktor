@@ -47,9 +47,8 @@ private:
 	bool m_positional;
 	bool m_follow;
 	bool m_repeat;
-	bool m_infinite;
 
-	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat, bool infinite);
+	SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat);
 };
 
 	}

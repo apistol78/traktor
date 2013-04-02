@@ -397,6 +397,35 @@ std::wstring BoxedColor4f::toString() const
 	return ss.str();
 }
 
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Color4ub", BoxedColor4ub, Boxed)
+
+BoxedColor4ub::BoxedColor4ub(const Color4ub& value)
+:	m_value(value)
+{
+}
+
+BoxedColor4ub::BoxedColor4ub()
+:	m_value(255, 255, 255, 255)
+{
+}
+
+BoxedColor4ub::BoxedColor4ub(uint8_t red, uint8_t green, uint8_t blue)
+:	m_value(red, green, blue, 255)
+{
+}
+
+BoxedColor4ub::BoxedColor4ub(uint8_t red, uint8_t green, uint8_t blue, uint8_t alpha)
+:	m_value(red, green, blue, alpha)
+{
+}
+
+std::wstring BoxedColor4ub::toString() const
+{
+	StringOutputStream ss;
+	ss << int32_t(m_value.r) << L", " << int32_t(m_value.g) << L", " << int32_t(m_value.b) << L", " << int32_t(m_value.a);
+	return ss.str();
+}
+
 T_IMPLEMENT_RTTI_CLASS(L"traktor.Array", BoxedRefArray, Boxed)
 
 BoxedRefArray::BoxedRefArray()
@@ -608,6 +637,20 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedColor4f->addMethod("setBlue", &BoxedColor4f::setBlue);
 	classBoxedColor4f->addMethod("setAlpha", &BoxedColor4f::setAlpha);
 	scriptManager->registerClass(classBoxedColor4f);
+
+	Ref< AutoScriptClass< BoxedColor4ub > > classBoxedColor4ub = new AutoScriptClass< BoxedColor4ub >();
+	classBoxedColor4ub->addConstructor();
+	classBoxedColor4ub->addConstructor< uint8_t, uint8_t, uint8_t >();
+	classBoxedColor4ub->addConstructor< uint8_t, uint8_t, uint8_t, uint8_t >();
+	classBoxedColor4ub->addMethod("getRed", &BoxedColor4ub::getRed);
+	classBoxedColor4ub->addMethod("getGreen", &BoxedColor4ub::getGreen);
+	classBoxedColor4ub->addMethod("getBlue", &BoxedColor4ub::getBlue);
+	classBoxedColor4ub->addMethod("getAlpha", &BoxedColor4ub::getAlpha);
+	classBoxedColor4ub->addMethod("setRed", &BoxedColor4ub::setRed);
+	classBoxedColor4ub->addMethod("setGreen", &BoxedColor4ub::setGreen);
+	classBoxedColor4ub->addMethod("setBlue", &BoxedColor4ub::setBlue);
+	classBoxedColor4ub->addMethod("setAlpha", &BoxedColor4ub::setAlpha);
+	scriptManager->registerClass(classBoxedColor4ub);
 
 	Ref< AutoScriptClass< BoxedRefArray > > classBoxedRefArray = new AutoScriptClass< BoxedRefArray >();
 	classBoxedRefArray->addConstructor();

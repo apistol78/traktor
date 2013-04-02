@@ -38,6 +38,9 @@ public:
 	/*! \brief Add singleton after a dependent singleton. */
 	void addAfter(ISingleton* singleton, ISingleton* dependency);
 
+	/*! \brief Explicit destroy all singletons. */
+	void destroy();
+
 private:
 	std::vector< ISingleton* > m_singletons;
 
