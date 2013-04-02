@@ -159,16 +159,22 @@ Ref< db::Database > PipelineDependsParallel::getSourceDatabase() const
 
 Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid& instanceGuid)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_readCacheLock);
 	Ref< ISerializable > object;
 
-	std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
-	if (i != m_readCache.end())
-		object = i->second;
-	else
+	{
+		T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_readCacheLock);
+		std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
+		if (i != m_readCache.end())
+			object = i->second;
+	}
+
+	if (!object)
 	{
 		object = m_sourceDatabase->getObjectReadOnly(instanceGuid);
-		m_readCache[instanceGuid] = object;
+		{
+			T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_readCacheLock);
+			m_readCache[instanceGuid] = object;
+		}
 	}
 
 	return object;

@@ -2,6 +2,7 @@
 #define traktor_editor_PipelineDependsParallel_H
 
 #include <map>
+#include "Core/Thread/ReaderWriterLock.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/ThreadLocal.h"
 #include "Editor/IPipelineDepends.h"
@@ -86,7 +87,7 @@ private:
 	Ref< db::Database > m_sourceDatabase;
 	RefArray< PipelineDependency > m_dependencies;
 	ThreadLocal m_currentDependency;
-	Semaphore m_readCacheLock;
+	ReaderWriterLock m_readCacheLock;
 	Semaphore m_dependencyMapLock;
 	Semaphore m_dependenciesLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;

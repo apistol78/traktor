@@ -335,6 +335,8 @@ private:
 	bool send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable);
 
 	int32_t receive(Message* msg, handle_t& outPeerHandle);
+
+	bool findOptimalRelay(handle_t ignorePeerHandle0, handle_t ignorePeerHandle1, handle_t& outRelayPeerHandle) const;
 };
 
 	}

@@ -12,6 +12,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Singleton/SingletonManager.h"
 #include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Semaphore.h"
@@ -204,9 +205,13 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		new ui::WidgetFactoryWin32()
 	);
 
+#if !defined(_DEBUG)
 	try
+#endif
 	{
+#if !defined(_DEBUG)
 		PVOID eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
+#endif
 
 		// Override settings path either from command line or application bundle.
 		Path settingsPath = L"Application.config";
@@ -290,8 +295,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 			showErrorDialog(logTail->m_tail);
 		}
 
+#if !defined(_DEBUG)
 		RemoveVectoredExceptionHandler(eh);
+#endif
 	}
+#if !defined(_DEBUG)
 	catch (...)
 	{
 		HMODULE hCrashModule;
@@ -306,20 +314,24 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 
 		showErrorDialog(logTail->m_tail);
 	}
+#endif
 
 	ui::Application::getInstance()->finalize();
 
 #if !defined(_DEBUG)
 	if (logFile)
 	{
-		log::info   .setGlobalTarget(0);
-		log::warning.setGlobalTarget(0);
-		log::error  .setGlobalTarget(0);
-
 		logFile->close();
 		logFile;
 	}
 #endif
 
+	log::info   .setGlobalTarget(0);
+	log::warning.setGlobalTarget(0);
+	log::error  .setGlobalTarget(0);
+
+#if defined(_DEBUG)
+	SingletonManager::getInstance().destroy();
+#endif
 	return 0;
 }

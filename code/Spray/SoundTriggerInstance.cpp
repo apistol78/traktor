@@ -19,7 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundTriggerInstance", SoundTriggerInstan
 
 SoundTriggerInstance::~SoundTriggerInstance()
 {
-	if (m_infinite && m_handle)
+	if (m_handle)
 	{
 		m_handle->stop();
 		m_handle = 0;
@@ -77,12 +77,11 @@ void SoundTriggerInstance::update(Context& context, const Transform& transform, 
 	}
 }
 
-SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat, bool infinite)
+SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat)
 :	m_sound(sound)
 ,	m_positional(positional)
 ,	m_follow(follow)
 ,	m_repeat(repeat)
-,	m_infinite(infinite)
 {
 	s_handleEnable = sound::getParameterHandle(L"Enable");
 }

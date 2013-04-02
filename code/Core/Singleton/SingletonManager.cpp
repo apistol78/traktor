@@ -36,12 +36,17 @@ void SingletonManager::addAfter(ISingleton* singleton, ISingleton* dependency)
 	m_singletons.insert(++i, singleton);
 }
 
-SingletonManager::~SingletonManager()
+void SingletonManager::destroy()
 {
 	for (std::vector< ISingleton* >::iterator i = m_singletons.begin(); i != m_singletons.end(); ++i)
 		(*i)->destroy();
 
 	m_singletons.resize(0);
+}
+
+SingletonManager::~SingletonManager()
+{
+	destroy();
 }
 
 }

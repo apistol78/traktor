@@ -23,14 +23,14 @@ enum MessageType
 	MtEvent2 = 0x22,
 	MtEvent3 = 0x23,
 	MtEvent4 = 0x24,
-	MtEvent5 = 0x25,
-	MtEvent6 = 0x26,
-	MtEvent7 = 0x27,
-	MtEvent8 = 0x28,
 
-	MtRelayUnreliable = 0x81,
-	MtRelayReliable = 0x82,
-	MtMasquerade = 0x83
+	MtRelayUnreliable1 = 0x81,
+	MtRelayUnreliable2 = 0x82,
+
+	MtRelayReliable1 = 0x83,
+	MtRelayReliable2 = 0x84,
+
+	MtMasquerade = 0x90
 };
 
 #pragma pack(1)
@@ -39,11 +39,8 @@ struct Message
 	enum
 	{
 		HeaderSize = sizeof(uint8_t) + sizeof(uint32_t),
-		MessageSize = 1200,
-		StateSize = MessageSize - HeaderSize,
-		EventSize = MessageSize - HeaderSize,
-		RelaySize = MessageSize - HeaderSize - sizeof(uint64_t),
-		MasqueradeSize = MessageSize - HeaderSize - sizeof(uint64_t)
+		MessageSize = 510,
+		DataSize = MessageSize - HeaderSize - 2 * sizeof(uint64_t)
 	};
 
 	uint8_t type;
@@ -69,24 +66,25 @@ struct Message
 
 		struct
 		{
-			uint8_t data[StateSize];
+			uint8_t data[DataSize];
 		} state;
 
 		struct
 		{
-			uint8_t data[EventSize];
+			uint8_t data[DataSize];
 		} event;
 
 		struct 
 		{
+			uint64_t fromGlobalId;
 			uint64_t targetGlobalId;
-			uint8_t data[RelaySize];
+			uint8_t data[DataSize];
 		} relay;
 
 		struct 
 		{
 			uint64_t fromGlobalId;
-			uint8_t data[RelaySize];
+			uint8_t data[DataSize];
 		}
 		masquerade;
 

@@ -104,7 +104,7 @@ public:
 	}
 
 private:
-	enum { MaxStackDepth = 64 };
+	enum { MaxStackDepth = 256 };
 
 	static ActionValue ms_undefined;
 	ActionValue* m_stack;

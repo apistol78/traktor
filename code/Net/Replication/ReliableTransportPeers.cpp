@@ -20,25 +20,6 @@ const uint32_t c_windowSize = 200;	//< Number of reliable messages kept in sent 
 #	define T_RELIABLE_DEBUG(x)
 #endif
 
-#define T_CRC8_POLYNOMIAL (0x1070U << 3)
-
-uint8_t calculateChecksum(const void* data, uint32_t size)
-{
-	uint8_t crc = 0;
-	for (uint32_t i = 0; i < size; ++i)
-	{
-		uint16_t D = (crc ^ ((const uint8_t*)data)[i]) << 8;
-		for (int32_t j = 0; j < 8; ++j) 
-		{
-			if ((D & 0x8000) != 0)
-				D ^= T_CRC8_POLYNOMIAL;
-			D <<= 1;
-		}
-		crc = uint8_t(D >> 8);
-	}
-	return crc;
-}
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.ReliableTransportPeers", ReliableTransportPeers, IReplicatorPeers)
@@ -162,7 +143,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 	for (;;)
 	{
 		// Receive message.
-		int32_t nrecv = m_peers->receive(&e, size + 3, outFromHandle);
+		int32_t nrecv = m_peers->receive(&e, size + 2, outFromHandle);
 		if (nrecv <= 0)
 			return 0;
 
@@ -171,16 +152,8 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 		// Send back ACK if reliable message.
 		if (e.type == EtReliable)
 		{
-			if (nrecv < 3)
+			if (nrecv < 2)
 				return 0;
-
-			// Verify checksum.
-			uint8_t checksum = calculateChecksum(e.payload, nrecv - 3);
-			if (checksum != e.checksum)
-			{
-				T_RELIABLE_DEBUG(L"ERROR: Data corruption detected; message ignored");
-				return 0;
-			}
 
 			Envelope ack;
 			ack.type = EtAck;
@@ -194,8 +167,8 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 			ct.last1.push_back(e.sequence);
 			ct.faulty = false;
 
-			std::memcpy(data, e.payload, nrecv - 3);
-			return nrecv - 3;
+			std::memcpy(data, e.payload, nrecv - 2);
+			return nrecv - 2;
 		}
 
 		// If unreliable message then we just check for duplicate messages.
@@ -204,14 +177,6 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 			if (nrecv < 3)
 				return 0;
 
-			// Verify checksum.
-			uint8_t checksum = calculateChecksum(e.payload, nrecv - 3);
-			if (checksum != e.checksum)
-			{
-				T_RELIABLE_DEBUG(L"ERROR: Data corruption detected; message ignored");
-				return 0;
-			}
-
 			// We've already received this message.
 			if (ct.last0.find(e.sequence) >= 0)
 				continue;
@@ -219,8 +184,8 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 			ct.last0.push_back(e.sequence);
 			ct.faulty = false;
 
-			std::memcpy(data, e.payload, nrecv - 3);
-			return nrecv - 3;
+			std::memcpy(data, e.payload, nrecv - 2);
+			return nrecv - 2;
 		}
 
 		// Did we receive an ACK then remove message from sent queue.
@@ -253,14 +218,13 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 	Envelope e;
 	e.type = reliable ? EtReliable : EtUnreliable;
 	e.sequence = 0x00;
-	e.checksum = calculateChecksum(data, size);
 	std::memcpy(e.payload, data, size);
 
 	// Send message.
 	if (!reliable)
 	{
 		e.sequence = ct.sequence0;
-		if (!m_peers->send(handle, &e, 3 + size, false))
+		if (!m_peers->send(handle, &e, 2 + size, false))
 			return false;
 
 		ct.sequence0++;
@@ -268,7 +232,7 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 	else
 	{
 		e.sequence = ct.sequence1;
-		if (!m_peers->send(handle, &e, 3 + size, false))
+		if (!m_peers->send(handle, &e, 2 + size, false))
 			return false;
 
 		ct.sequence1++;
@@ -277,7 +241,7 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 		ce.time0 =
 		ce.time = m_timer.getElapsedTime();
 		ce.resent = false;
-		ce.size = 3 + size;
+		ce.size = 2 + size;
 		ce.envelope = e;
 		ct.sent.push_back(ce);
 	}

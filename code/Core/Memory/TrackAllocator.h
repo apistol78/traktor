@@ -33,6 +33,8 @@ private:
 		const char* tag;
 		size_t size;
 		void* at[8];
+
+		bool operator < (const Block& rh) const;
 	};
 
 	mutable Semaphore m_lock;

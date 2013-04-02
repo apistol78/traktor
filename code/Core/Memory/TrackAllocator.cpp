@@ -19,11 +19,11 @@ TrackAllocator::~TrackAllocator()
 {
 	if (!m_aliveBlocks.empty())
 	{
-		std::map< void*, uint32_t > frequency;
+		std::map< Block, uint32_t > frequency;
 
 #if defined(_WIN32)
 		wchar_t buf[512];
-		wsprintf(buf, L"Memory leak detected, following %d allocation(s) not freed:\n", m_aliveBlocks.size());
+		wsprintf(buf, L"\nMemory leak detected, following %d allocation(s) not freed:\n", m_aliveBlocks.size());
 		OutputDebugString(buf);
 
 		for (std::map< void*, Block >::const_iterator i = m_aliveBlocks.begin(); i != m_aliveBlocks.end(); ++i)
@@ -35,13 +35,21 @@ TrackAllocator::~TrackAllocator()
 				wsprintf(buf, L"   %d: 0x%p\n", j, i->second.at[j]);
 				OutputDebugString(buf);
 			}
-			frequency[i->second.at[0]]++;
+			frequency[i->second]++;
 		}
 
-		for (std::map< void*, uint32_t >::const_iterator i = frequency.begin(); i != frequency.end(); ++i)
+		OutputDebugString(L"\nLeak Path Frequency:\n");
+
+		for (std::map< Block, uint32_t >::const_iterator i = frequency.begin(); i != frequency.end(); ++i)
 		{
-			wsprintf(buf, L"0x%p: %d allocation(s)\n", i->first, i->second);
+			wsprintf(buf, L"0x%p: %d allocation(s)\n", i->first.at[0], i->second);
 			OutputDebugString(buf);
+
+			for (int j = 0; j < sizeof_array(i->first.at); ++j)
+			{
+				wsprintf(buf, L"   %d: 0x%p\n", j, i->first.at[j]);
+				OutputDebugString(buf);
+			}
 		}
 #else
 		std::wcout << L"Memory leak detected, following allocation(s) not freed:" << std::endl;
@@ -72,7 +80,7 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	for (int i = 0; i < sizeof_array(block.at); ++i)
 		block.at[i] = 0;
 
-	getCallStack(sizeof_array(block.at), block.at);
+	getCallStack(sizeof_array(block.at), block.at, 1);
 
 	m_aliveBlocks.insert(std::make_pair(ptr, block));
 	m_allocCount[block.at[0]]++;
@@ -89,6 +97,18 @@ void TrackAllocator::free(void* ptr)
 		m_aliveBlocks.erase(i);
 
 	m_systemAllocator->free(ptr);
+}
+
+bool TrackAllocator::Block::operator < (const Block& rh) const
+{
+	for (int32_t i = 0; i < sizeof_array(at); ++i)
+	{
+		if (at[i] < rh.at[i])
+			return true;
+		if (at[i] > rh.at[i])
+			return false;
+	}
+	return false;
 }
 
 }
