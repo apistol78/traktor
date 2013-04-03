@@ -283,6 +283,15 @@ void SoundPlayer::setListenerTransform(const Transform& listenerTransform)
 		m_surroundEnvironment->setListenerTransform(listenerTransform);
 }
 
+Transform SoundPlayer::getListenerTransform() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	if (m_surroundEnvironment)
+		return m_surroundEnvironment->getListenerTransform();
+	else
+		return Transform::identity();
+}
+
 void SoundPlayer::update(float dT)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

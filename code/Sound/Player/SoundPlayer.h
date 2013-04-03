@@ -45,6 +45,8 @@ public:
 
 	virtual void setListenerTransform(const Transform& listenerTransform);
 
+	virtual Transform getListenerTransform() const;
+
 	virtual void update(float dT);
 
 private:
@@ -62,7 +64,7 @@ private:
 		Ref< SoundHandle > handle;
 	};
 
-	Semaphore m_lock;
+	mutable Semaphore m_lock;
 	Ref< SoundSystem > m_soundSystem;
 	Ref< SurroundEnvironment > m_surroundEnvironment;
 	AlignedVector< Channel > m_channels;

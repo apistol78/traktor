@@ -42,6 +42,10 @@ public:
 	 */
 	virtual void setListenerTransform(const Transform& listenerTransform) = 0;
 
+	/*! \brief Get listener transform.
+	 */
+	virtual Transform getListenerTransform() const = 0;
+
 	/*! \brief Update sound player.
 	 */
 	virtual void update(float dT) = 0;
