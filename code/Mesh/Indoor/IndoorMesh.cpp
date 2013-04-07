@@ -117,7 +117,7 @@ void IndoorMesh::render(
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
-				m_shader->isOpaque(),
+				m_shader->getCurrentPriority(),
 				worldTransform.toMatrix44(),
 				getBoundingBox()
 			);
@@ -126,7 +126,7 @@ void IndoorMesh::render(
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(
-				m_shader->isOpaque() ? render::RfOpaque : render::RfAlphaBlend,
+				m_shader->getCurrentPriority(),
 				renderBlock
 			);
 		}

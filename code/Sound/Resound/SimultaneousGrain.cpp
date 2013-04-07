@@ -74,6 +74,11 @@ void SimultaneousGrain::updateCursor(ISoundBufferCursor* cursor) const
 		m_grains[i]->updateCursor(simultaneousCursor->m_grainCursors[i]);
 }
 
+const IGrain* SimultaneousGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+{
+	return this;
+}
+
 bool SimultaneousGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	SimultaneousGrainCursor* simultaneousCursor = static_cast< SimultaneousGrainCursor* >(cursor);

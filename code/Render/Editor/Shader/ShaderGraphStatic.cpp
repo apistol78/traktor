@@ -673,5 +673,34 @@ Ref< ShaderGraph > ShaderGraphStatic::cleanupRedundantSwizzles() const
 	return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 }
 
+Ref< ShaderGraph > ShaderGraphStatic::getStateResolved() const
+{
+	Ref< ShaderGraph > shaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+
+	RefArray< PixelOutput > pixelOutputNodes;
+	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
+
+	for (RefArray< PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
+	{
+		Ref< Edge > edge = shaderGraph->findEdge((*i)->getInputPin(4));
+		if (!edge)
+			continue;
+
+		Ref< State > state = dynamic_type_cast< State* >(edge->getSource()->getNode());
+		if (!state)
+			continue;
+
+		(*i)->setPriority(state->getPriority());
+		(*i)->setRenderState(state->getRenderState());
+
+		shaderGraph->removeEdge(edge);
+		shaderGraph->removeNode(state);
+
+		T_ASSERT (ShaderGraphValidator(shaderGraph).validateIntegrity());
+	}
+
+	return shaderGraph;
+}
+
 	}
 }

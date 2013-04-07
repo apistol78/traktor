@@ -93,6 +93,15 @@ void TriggerGrain::updateCursor(ISoundBufferCursor* cursor) const
 		m_grain->updateCursor(triggerCursor->m_cursor);
 }
 
+const IGrain* TriggerGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+{
+	const TriggerGrainCursor* triggerCursor = static_cast< const TriggerGrainCursor* >(cursor);
+	if (triggerCursor->m_cursor)
+		return m_grain->getCurrentGrain(triggerCursor->m_cursor);
+	else
+		return this;
+}
+
 bool TriggerGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	TriggerGrainCursor* triggerCursor = static_cast< TriggerGrainCursor* >(cursor);

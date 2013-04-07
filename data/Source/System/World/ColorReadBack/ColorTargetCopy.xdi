@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.world.PostProcessSettings" version="1">
+	<requireHighRange>false</requireHighRange>
+	<definitions/>
+	<steps>
+		<item type="traktor.world.PostProcessStepSimple">
+			<shader>{BB1CC1FC-F6E3-3647-BFF9-4E114FB0D6D6}</shader>
+			<sources>
+				<item>
+					<param>Source</param>
+					<source>InputColor</source>
+					<index>0</index>
+				</item>
+			</sources>
+		</item>
+	</steps>
+</object>

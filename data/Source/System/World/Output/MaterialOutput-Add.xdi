@@ -245,17 +245,6 @@
 			</position>
 			<value>1</value>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>1949</first>
-				<second>642</second>
-			</position>
-			<name>State</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<defaultValue>0</defaultValue>
-		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -496,16 +485,6 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Shadow</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[20]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>State</name>
 			</destination>
 		</item>
 	</edges>

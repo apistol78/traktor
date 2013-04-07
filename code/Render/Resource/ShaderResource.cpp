@@ -33,7 +33,7 @@ bool ShaderResource::Combination::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"mask", mask);
 	s >> Member< uint32_t >(L"value", value);
-	s >> Member< bool >(L"opaque", opaque);
+	s >> Member< uint32_t >(L"priority", priority);
 	s >> MemberRef< ISerializable >(L"program", program);
 	s >> MemberStlVector< Guid >(L"textures", textures);
 	return true;

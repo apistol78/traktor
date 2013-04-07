@@ -29,6 +29,8 @@ public:
 
 	void updateCursor(ISoundBufferCursor* cursor) const;
 
+	const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const;
+
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
 	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;

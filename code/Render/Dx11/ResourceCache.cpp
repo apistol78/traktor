@@ -88,6 +88,27 @@ ID3D11BlendState* ResourceCache::getBlendState(const D3D11_BLEND_DESC& bd)
 	return bs;
 }
 
+ID3D11SamplerState* ResourceCache::getSamplerState(const D3D11_SAMPLER_DESC& dsd)
+{
+	uint32_t h = hash(dsd);
+
+	SmallMap< uint32_t, ComRef< ID3D11SamplerState > >::iterator i = m_d3dSamplerStates.find(h);
+	if (i != m_d3dSamplerStates.end())
+		return i->second;
+	
+	ComRef< ID3D11SamplerState > ss;
+
+	HRESULT hr = m_d3dDevice->CreateSamplerState(
+		&dsd,
+		&ss.getAssign()
+	);
+	if (FAILED(hr))
+		return 0;
+
+	m_d3dSamplerStates.insert(std::make_pair(h, ss));
+	return ss;
+}
+
 ID3D11VertexShader* ResourceCache::getVertexShader(ID3DBlob* vertexShaderBlob, uint32_t vertexShaderHash)
 {
 	ComRef< ID3D11VertexShader > d3dVertexShader;

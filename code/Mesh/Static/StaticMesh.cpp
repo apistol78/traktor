@@ -53,6 +53,9 @@ void StaticMesh::render(
 			getBoundingBox()
 		);
 
+		if (parameterCallback)
+			parameterCallback->setCombination(m_shader);
+
 		render::IProgram* program = m_shader->getCurrentProgram();
 		if (!program)
 			continue;
@@ -71,18 +74,21 @@ void StaticMesh::render(
 		renderBlock->primitives = &meshParts[i->meshPart].primitives;
 
 		renderBlock->programParams->beginParameters(renderContext);
+		
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			m_shader->isOpaque(),
+			m_shader->getCurrentPriority(),
 			worldTransform.toMatrix44(),
 			getBoundingBox()
 		);
+		
 		if (parameterCallback)
 			parameterCallback->setParameters(renderBlock->programParams);
+
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			m_shader->isOpaque() ? render::RfOpaque : render::RfAlphaBlend,
+			m_shader->getCurrentPriority(),
 			renderBlock
 		);
 	}

@@ -15,9 +15,9 @@ namespace traktor
 
 struct KeyPoseAccessor
 {
-	static inline Scalar time(const Animation::KeyPose* keys, size_t nkeys, const Animation::KeyPose& key)
+	static inline float time(const Animation::KeyPose* keys, size_t nkeys, const Animation::KeyPose& key)
 	{
-		return Scalar(key.at);
+		return key.at;
 	}
 
 	static inline Pose value(const Animation::KeyPose& key)
@@ -26,10 +26,10 @@ struct KeyPoseAccessor
 	}
 
 	static inline Pose combine(
-		const Pose& v0, const Scalar& w0,
-		const Pose& v1, const Scalar& w1,
-		const Pose& v2, const Scalar& w2,
-		const Pose& v3, const Scalar& w3
+		const Pose& v0, float w0,
+		const Pose& v1, float w1,
+		const Pose& v2, float w2,
+		const Pose& v3, float w3
 	)
 	{
 		Pose pose;
@@ -49,8 +49,8 @@ struct KeyPoseAccessor
 			if (!indices(i))
 				continue;
 
-			pose.setJointOffset(i, v0.getJointOffset(i) * w0 + v1.getJointOffset(i) * w1 + v2.getJointOffset(i) * w2 + v3.getJointOffset(i) * w3);
-			pose.setJointOrientation(i, v0.getJointOrientation(i) * w0 + v1.getJointOrientation(i) * w1 + v2.getJointOrientation(i) * w2 + v3.getJointOrientation(i) * w3);
+			pose.setJointOffset(i, v0.getJointOffset(i) * Scalar(w0) + v1.getJointOffset(i) * Scalar(w1) + v2.getJointOffset(i) * Scalar(w2) + v3.getJointOffset(i) * Scalar(w3));
+			pose.setJointOrientation(i, v0.getJointOrientation(i) * Scalar(w0) + v1.getJointOrientation(i) * Scalar(w1) + v2.getJointOrientation(i) * Scalar(w2) + v3.getJointOrientation(i) * Scalar(w3));
 		}
 
 		return pose;
@@ -116,7 +116,7 @@ bool Animation::getPose(float at, Pose& outPose) const
 	size_t nposes = m_poses.size();
 	if (nposes > 2)
 	{
-		outPose = Hermite< KeyPose, Scalar, Pose, KeyPoseAccessor, ClampTime< Scalar > >(&m_poses[0], nposes).evaluate(Scalar(at));
+		outPose = Hermite< KeyPose, Pose, KeyPoseAccessor, ClampTime >(&m_poses[0], nposes).evaluate(at);
 		return true;
 	}
 	else if (nposes > 1)

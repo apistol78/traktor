@@ -57,7 +57,7 @@ void SkyEntity::render(
 	if (!program)
 		return;
 
-	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >();
+	render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("Sky");
 
 	// Render sky after all opaques but first of all alpha blended.
 	renderBlock->distance = std::numeric_limits< float >::max();
@@ -77,7 +77,7 @@ void SkyEntity::render(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(render::RfAlphaBlend, renderBlock);
+	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
 }
 
 Aabb3 SkyEntity::getBoundingBox() const

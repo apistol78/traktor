@@ -161,7 +161,7 @@ void FFTFilter::setFilter(const std::vector< std::pair< float, float > >& filter
 	for (uint32_t i = 0; i < N / 2; ++i)
 	{
 		float Hz = float(i * m_sampleRate) / (N / 2 - 1);
-		float Fr = Hermite< std::pair< float, float >, float, float, PairAccessor >(&filter[0], filter.size()).evaluate(Hz);
+		float Fr = Hermite< std::pair< float, float >, float, PairAccessor >(&filter[0], filter.size()).evaluate(Hz);
 
 		fr[i] = std::max(Fr, 0.0f);
 		fi[i] = 0.0f;

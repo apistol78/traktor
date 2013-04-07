@@ -90,7 +90,11 @@ private:
 bool Job::wait(int32_t timeout)
 {
 	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	while (!m_finished && !currentThread->stopped())
+	while (
+		!m_finished &&
+		!currentThread->stopped() &&
+		m_functor != 0
+	)
 	{
 		if (!m_jobFinishedEvent.wait(timeout >= 0 ? timeout : 100))
 		{

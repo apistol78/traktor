@@ -30,7 +30,13 @@ XML::~XML()
 {
 	if (m_job)
 	{
-		m_job->wait();
+		ActionObject* self = getAsObject(m_context);
+		T_ASSERT (self);
+
+		m_context->removeFrameListener(self);
+
+		m_job->stop();
+		m_job->wait(5000);
 		m_job = 0;
 	}
 }
@@ -77,15 +83,15 @@ void XML::onFrame(CallArgs& ca)
 void XML::jobLoad(std::wstring url_)
 {
 	net::Url url(url_);
-	if (!url.valid())
+	if (!url.valid() || m_job->stopped())
 		return;
 
 	Ref< net::UrlConnection > connection = net::UrlConnection::open(url);
-	if (!connection)
+	if (!connection || m_job->stopped())
 		return;
 
 	IStream* stream = connection->getStream();
-	if (!stream)
+	if (!stream || m_job->stopped())
 		return;
 
 	RefArray< XMLNode > elementStack;

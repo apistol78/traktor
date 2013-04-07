@@ -32,7 +32,7 @@ RenderSystemOpenGLES2::RenderSystemOpenGLES2()
 {
 }
 
-bool RenderSystemOpenGLES2::create(const RenderSystemCreateDesc& desc)
+bool RenderSystemOpenGLES2::create(const RenderSystemDesc& desc)
 {
 #if defined(_WIN32)
 	WNDCLASS wc;
@@ -85,6 +85,11 @@ void RenderSystemOpenGLES2::destroy()
 //	m_context = EGL_NO_CONTEXT;
 //	m_surface = EGL_NO_SURFACE;
 //#endif
+}
+
+bool RenderSystemOpenGLES2::reset(const RenderSystemDesc& desc)
+{
+	return true;
 }
 
 void RenderSystemOpenGLES2::getInformation(RenderSystemInformation& outInfo) const

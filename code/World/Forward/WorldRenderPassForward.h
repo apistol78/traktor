@@ -58,9 +58,9 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, bool opaque) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, bool opaque, const Matrix44& world, const Aabb3& bounds) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const;
 
 private:
 	render::handle_t m_technique;

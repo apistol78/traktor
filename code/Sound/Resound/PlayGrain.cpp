@@ -84,6 +84,11 @@ void PlayGrain::updateCursor(ISoundBufferCursor* cursor) const
 		playCursor->m_filterInstances.push_back((*i) ? (*i)->createInstance() : 0);
 }
 
+const IGrain* PlayGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+{
+	return this;
+}
+
 bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	PlayGrainCursor* playCursor = static_cast< PlayGrainCursor* >(cursor);

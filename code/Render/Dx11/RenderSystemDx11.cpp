@@ -33,7 +33,7 @@ RenderSystemDx11::RenderSystemDx11()
 {
 }
 
-bool RenderSystemDx11::create(const RenderSystemCreateDesc& desc)
+bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 {
 	ComRef< ID3D11Device > d3dDevice;
 	ComRef< ID3D11DeviceContext > d3dDeviceContext;
@@ -191,6 +191,13 @@ void RenderSystemDx11::destroy()
 		m_context->deleteResources();
 		m_context = 0;
 	}
+}
+
+bool RenderSystemDx11::reset(const RenderSystemDesc& desc)
+{
+	m_mipBias = desc.mipBias;
+	m_maxAnisotropy = clamp(desc.maxAnisotropy, 1, 16);
+	return true;
 }
 
 void RenderSystemDx11::getInformation(RenderSystemInformation& outInfo) const

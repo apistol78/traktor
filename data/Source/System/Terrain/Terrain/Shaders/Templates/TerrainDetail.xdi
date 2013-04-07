@@ -38,10 +38,6 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>ReflectionMap</name>
-					<optional>true</optional>
-				</item>
-				<item>
 					<name>RimColor</name>
 					<optional>true</optional>
 				</item>
@@ -74,10 +70,6 @@
 				</item>
 				<item>
 					<first>Reflection</first>
-					<second>0</second>
-				</item>
-				<item>
-					<first>ReflectionMap</first>
 					<second>0</second>
 				</item>
 				<item>
@@ -123,7 +115,7 @@
 				<second>-180</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment>
 			<![CDATA[
 Generated texture from surface cache.
@@ -140,6 +132,7 @@ Generated texture from surface cache.
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>

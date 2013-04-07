@@ -15,54 +15,51 @@ namespace traktor
  */
 template <
 	typename Key,
-	typename Time,
-	typename Control,
 	typename Value,
 	typename Accessor
 >
-class T_MATH_ALIGN16 TcbSpline : public ISpline< Key, Time, Value >
+class T_MATH_ALIGN16 TcbSpline : public ISpline< Value >
 {
 public:
-	TcbSpline(const Accessor& accessor)
+	TcbSpline(const Accessor& accessor, float Tend = -1.0f)
 	:	m_accessor(accessor)
+	,	m_Tend(Tend)
 	{
 	}
 
-	virtual Value evaluate(const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f)) const
+	virtual Value evaluate(float T) const
 	{
-		int32_t index = m_accessor.index(Tat, Tend);
+		int32_t index = m_accessor.index(T, m_Tend);
 		int32_t index_n1 = index - 1;
 		int32_t index_1 = index + 1;
 		int32_t index_2 = index + 2;
 
-		Time T0(m_accessor.time(index));
-		Time T1(m_accessor.time(index_1));
+		float T0 = m_accessor.time(index);
+		float T1 = m_accessor.time(index_1);
+
 		if (T0 > T1)
 		{
-			if (Tat > T0)
+			if (T > T0)
 			{
-				T1 += Tend;
+				T1 += m_Tend;
 			}
 			else
 			{
-				T0 -= Tend;
+				T0 -= m_Tend;
 			}
 		}
 
-		Control t = m_accessor.tension(index);
-		Control c = m_accessor.continuity(index);
-		Control b = m_accessor.bias(index);
+		float t = m_accessor.tension(index);
+		float c = m_accessor.continuity(index);
+		float b = m_accessor.bias(index);
 
-		const static Control c_one(1);
-		const static Control c_two(2);
+		float one_t = 1.0f - t;
+		float bc = b * c;
 
-		Control one_t = c_one - t;
-		Control bc = b * c;
-
-		Control k11 = (one_t * (c_one + c + b + bc)) / c_two;
-		Control k21 = (one_t * (c_one - c + b - bc)) / c_two;
-		Control k12 = (one_t * (c_one - c - b + bc)) / c_two;
-		Control k22 = (one_t * (c_one + c - b - bc)) / c_two;
+		float k11 = (one_t * (1.0f + c + b + bc)) / 2.0f;
+		float k21 = (one_t * (1.0f - c + b - bc)) / 2.0f;
+		float k12 = (one_t * (1.0f - c - b + bc)) / 2.0f;
+		float k22 = (one_t * (1.0f + c - b - bc)) / 2.0f;
 
 		Value v0 = m_accessor.value(index);
 		Value v1 = m_accessor.value(index_1);
@@ -83,14 +80,14 @@ public:
 			v1, -k22
 		);
 
-		Time T = (T1 > T0) ? (Tat - T0) / (T1 - T0) : Time(0.0f);
-		Time T2 = T * T;
-		Time T3 = T2 * T;
+		float Tc = (T1 > T0) ? (T - T0) / (T1 - T0) : 0.0f;
+		float T2 = Tc * Tc;
+		float T3 = T2 * Tc;
 
-		Time h1 =  Time(2.0f) * T3 - Time(3.0f) * T2 + Time(1.0f);
-		Time h2 = -Time(2.0f) * T3 + Time(3.0f) * T2;
-		Time h3 = T3 - Time(2.0f) * T2 + T;
-		Time h4 = T3 - T2;
+		float h1 =  2.0f * T3 - 3.0f * T2 + 1.0f;
+		float h2 = -2.0f * T3 + 3.0f * T2;
+		float h3 = T3 - 2.0f * T2 + Tc;
+		float h4 = T3 - T2;
 
 		return m_accessor.combine(
 			v0, h1,
@@ -102,6 +99,7 @@ public:
 
 private:
 	Accessor m_accessor;
+	float m_Tend;
 };
 
 }

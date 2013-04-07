@@ -24,20 +24,6 @@ namespace traktor
 
 class IRenderView;
 
-/*! \brief Render block type.
- * \ingroup Render
- */
-enum RenderBlockType
-{
-	RfSetup = 1,
-	RfOpaque = 2,
-	RfPostOpaque = 4,
-	RfAlphaBlend = 8,
-	RfPostAlphaBlend = 16,
-	RfOverlay = 32,
-	RfAll = (RfSetup | RfOpaque | RfPostOpaque | RfAlphaBlend | RfPostAlphaBlend | RfOverlay)
-};
-
 /*! \brief Deferred render context.
  * \ingroup Render
  *
@@ -92,7 +78,7 @@ public:
 	void draw(uint32_t type, RenderBlock* renderBlock);
 
 	/*! \brief Render blocks. */
-	void render(IRenderView* renderView, uint32_t flags, const ProgramParameters* globalParameters) const;
+	void render(IRenderView* renderView, uint32_t priorities, const ProgramParameters* globalParameters) const;
 
 	/*! \brief Flush blocks. */
 	void flush();

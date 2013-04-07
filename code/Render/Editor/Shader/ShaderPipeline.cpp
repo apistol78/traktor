@@ -40,19 +40,25 @@ namespace traktor
 		namespace
 		{
 
-bool isOpaque(const render::ShaderGraph* shaderGraph)
+uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 {
 	RefArray< render::PixelOutput > nodes;
 	if (shaderGraph->findNodesOf< render::PixelOutput >(nodes) == 0)
-		return true;
+		return 0;
 
+	uint32_t priority = 0;
 	for (RefArray< render::PixelOutput >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{
-		if ((*i)->getState().blendEnable)
-			return false;
+		if ((*i)->getPriority() != 0)
+			priority |= (*i)->getPriority();
+		else if ((*i)->getRenderState().blendEnable)
+			priority |= RpAlphaBlend;
 	}
 
-	return true;
+	if (priority == 0)
+		priority = RpOpaque;
+
+	return priority;
 }
 
 class FragmentReaderAdapter : public FragmentLinker::FragmentReader
@@ -128,6 +134,14 @@ struct BuildCombinationTask : public Object
 			return;
 		}
 
+		// Get output state resolved.
+		programGraph = ShaderGraphStatic(programGraph).getStateResolved();
+		if (!programGraph)
+		{
+			log::error << L"ShaderPipeline failed; unable to resolve render state" << Endl;
+			return;
+		}
+
 		// Merge identical branches.
 		programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 		if (!programGraph)
@@ -175,7 +189,7 @@ struct BuildCombinationTask : public Object
 		}
 
 		// Add meta tag to indicate if shader combination is opaque.
-		shaderResourceCombination->opaque = isOpaque(programGraph);
+		shaderResourceCombination->priority = getPriority(programGraph);
 
 		// Bind texture resources.
 		RefArray< Texture > textureNodes;
@@ -308,7 +322,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 51, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 52, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)

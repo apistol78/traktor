@@ -285,7 +285,7 @@ void PointRenderer::flush(
 			worldRenderPass.setProgramParameters(renderBlock->programParams, false);
 			renderBlock->programParams->endParameters(renderContext);
 
-			renderContext->draw(render::RfAlphaBlend, renderBlock);
+			renderContext->draw(i->shader->getCurrentPriority(), renderBlock);
 		}
 
 		m_batches[m_currentBuffer].resize(0);

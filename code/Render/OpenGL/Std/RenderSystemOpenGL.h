@@ -32,9 +32,11 @@ class T_DLLCLASS RenderSystemOpenGL : public IRenderSystem
 public:
 	RenderSystemOpenGL();
 
-	virtual bool create(const RenderSystemCreateDesc& desc);
+	virtual bool create(const RenderSystemDesc& desc);
 
 	virtual void destroy();
+
+	virtual bool reset(const RenderSystemDesc& desc);
 
 	virtual void getInformation(RenderSystemInformation& outInfo) const;
 

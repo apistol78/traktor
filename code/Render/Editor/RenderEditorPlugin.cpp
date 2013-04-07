@@ -34,7 +34,7 @@ bool RenderEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* sit
 	Ref< IRenderSystem > renderSystem = dynamic_type_cast< IRenderSystem* >(renderSystemType->createInstance());
 	T_ASSERT (renderSystem);
 
-	RenderSystemCreateDesc desc;
+	RenderSystemDesc desc;
 	desc.mipBias = m_editor->getSettings()->getProperty< PropertyFloat >(L"Editor.MipBias", 0.0f);
 	desc.maxAnisotropy = m_editor->getSettings()->getProperty< PropertyInteger >(L"Editor.MaxAnisotropy", 1);
 	desc.maxAnisotropy = std::max(desc.maxAnisotropy, 1);

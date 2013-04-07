@@ -57,6 +57,12 @@ void RepeatGrain::updateCursor(ISoundBufferCursor* cursor) const
 	return m_grain->updateCursor(repeatCursor->m_cursor);
 }
 
+const IGrain* RepeatGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+{
+	const RepeatGrainCursor* repeatCursor = static_cast< const RepeatGrainCursor* >(cursor);
+	return m_grain->getCurrentGrain(repeatCursor->m_cursor);
+}
+
 bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);

@@ -115,7 +115,7 @@ void InstanceMesh::render(
 			boundingBoxWorld
 		);
 
-		if (!m_shader->isOpaque())
+		if ((m_shader->getCurrentPriority() & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
 		{
 			haveAlphaBlend = true;
 			continue;
@@ -164,7 +164,7 @@ void InstanceMesh::render(
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(
 				renderBlock->programParams,
-				true,
+				m_shader->getCurrentPriority(),
 				boundingBoxCenter,
 				boundingBoxWorld
 			);
@@ -175,7 +175,7 @@ void InstanceMesh::render(
 			);
 			renderBlock->programParams->endParameters(renderContext);
 
-			renderContext->draw(render::RfOpaque, renderBlock);
+			renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
 
 			batchOffset += batchCount;
 		}
@@ -195,7 +195,7 @@ void InstanceMesh::render(
 				boundingBoxWorld
 			);
 
-			if (m_shader->isOpaque())
+			if ((m_shader->getCurrentPriority() & (render::RpAlphaBlend | render::RpPostAlphaBlend)) == 0)
 				continue;
 
 			render::IProgram* program = m_shader->getCurrentProgram();
@@ -241,7 +241,7 @@ void InstanceMesh::render(
 				renderBlock->programParams->beginParameters(renderContext);
 				worldRenderPass.setProgramParameters(
 					renderBlock->programParams,
-					false,
+					m_shader->getCurrentPriority(),
 					boundingBoxCenter,
 					boundingBoxWorld
 				);
@@ -252,7 +252,7 @@ void InstanceMesh::render(
 				);
 				renderBlock->programParams->endParameters(renderContext);
 
-				renderContext->draw(render::RfAlphaBlend, renderBlock);
+				renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
 
 				batchOffset += batchCount;
 			}

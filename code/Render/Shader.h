@@ -103,9 +103,9 @@ public:
 	 */
 	//@{
 
-	bool isOpaque() const { return m_currentOpaque; }
-
 	IProgram* getCurrentProgram() const { return m_currentProgram; }
+
+	uint32_t getCurrentPriority() const { return m_currentPriority; }
 
 	//@}
 
@@ -145,7 +145,7 @@ private:
 	{
 		uint32_t mask;
 		uint32_t value;
-		bool opaque;
+		uint32_t priority;
 		Ref< IProgram > program;
 	};
 
@@ -160,7 +160,7 @@ private:
 	uint32_t m_parameterValue;
 	Technique* m_currentTechnique;
 	IProgram* m_currentProgram;
-	bool m_currentOpaque;
+	uint32_t m_currentPriority;
 
 	void updateCurrentProgram();
 };

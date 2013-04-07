@@ -232,7 +232,7 @@ void UndergrowthEntity::render(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			render::RfOpaque,
+			render::RpOpaque,
 			renderBlock
 		);
 

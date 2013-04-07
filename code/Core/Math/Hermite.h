@@ -14,14 +14,13 @@ namespace traktor
  */
 template <
 	typename Key,
-	typename Time,
 	typename Value
 >
 struct HermiteAccessor
 {
-	static inline Time time(const Key* keys, size_t nkeys, const Key& key)
+	static inline float time(const Key* keys, size_t nkeys, const Key& key)
 	{
-		return Time(key.T);
+		return key.T;
 	}
 
 	static inline Value value(const Key& key)
@@ -30,10 +29,10 @@ struct HermiteAccessor
 	}
 
 	static inline Value combine(
-		const Value& v0, const Time& w0,
-		const Value& v1, const Time& w1,
-		const Value& v2, const Time& w2,
-		const Value& v3, const Time& w3
+		const Value& v0, float w0,
+		const Value& v1, float w1,
+		const Value& v2, float w2,
+		const Value& v3, float w3
 	)
 	{
 		return Value(v0 * w0 + v1 * w1 + v2 * w2 + v3 * w3);
@@ -45,27 +44,28 @@ struct HermiteAccessor
  */
 template <
 	typename Key,
-	typename Time,
 	typename Value,
-	typename Accessor = HermiteAccessor< Key, Time, Value >,
-	typename TimeControl = ClampTime< Time >
+	typename Accessor = HermiteAccessor< Key, Value >,
+	typename TimeControl = ClampTime
 >
-class Hermite : public ISpline< Key, Time, Value >
+class Hermite : public ISpline< Value >
 {
 public:
-	Hermite(const Key* keys, size_t nkeys)
+	Hermite(const Key* keys, size_t nkeys, float Tend = -1.0f, float stiffness = 0.5f)
 	:	m_keys(keys)
 	,	m_nkeys(nkeys)
+	,	m_Tend(Tend)
+	,	m_stiffness(stiffness)
 	{
 	}
 
-	virtual Value evaluate(const Time& Tat, const Time& Tend = Time(-1.0f), const Time& stiffness = Time(0.5f)) const
+	virtual Value evaluate(float T) const
 	{
 		T_ASSERT (m_nkeys >= 2);
 
-		Time Tfirst(Accessor::time(m_keys, m_nkeys, m_keys[0]));
-		Time Tlast(Accessor::time(m_keys, m_nkeys, m_keys[m_nkeys - 1]));
-		Time Tcurr = TimeControl::t(Tat, Tfirst, Tlast, Tend > Time(0.0f) ? Tend : Tlast);
+		float Tfirst = Accessor::time(m_keys, m_nkeys, m_keys[0]);
+		float Tlast = Accessor::time(m_keys, m_nkeys, m_keys[m_nkeys - 1]);
+		float Tcurr = TimeControl::t(T, Tfirst, Tlast, m_Tend > 0.0f ? m_Tend : Tlast);
 
 		int index = 0;
 		while (index < int(m_nkeys - 1) && Tcurr >= Accessor::time(m_keys, m_nkeys, m_keys[index + 1]))
@@ -81,11 +81,11 @@ public:
 		Value v0 = Accessor::value(cp0);
 		Value v1 = Accessor::value(cp1);
 
-		Time t0(Accessor::time(m_keys, m_nkeys, cp0));
-		Time t1(Accessor::time(m_keys, m_nkeys, cp1));
+		float t0 = Accessor::time(m_keys, m_nkeys, cp0);
+		float t1 = Accessor::time(m_keys, m_nkeys, cp1);
 
 		if (t0 >= t1)
-			t1 = Tend;
+			t1 = m_Tend;
 
 		const Key& cpp = m_keys[index_n1];
 		const Key& cpn = m_keys[index_2];
@@ -93,17 +93,17 @@ public:
 		Value vp = Accessor::value(cpp);
 		Value vn = Accessor::value(cpn);
 
-		Time t = (Tcurr - t0) / (t1 - t0);
-		Time t2 = t * t;
-		Time t3 = t2 * t;
+		float t = (Tcurr - t0) / (t1 - t0);
+		float t2 = t * t;
+		float t3 = t2 * t;
 
-		Time h2 = Time(3.0f) * t2 - t3 - t3;
-		Time h1 = Time(1.0f) - h2;
-		Time h4 = t3 - t2;
-		Time h3 = h4 - t2 + t;
+		float h2 = 3.0f * t2 - t3 - t3;
+		float h1 = 1.0f - h2;
+		float h4 = t3 - t2;
+		float h3 = h4 - t2 + t;
 
-		h3 *= stiffness;
-		h4 *= stiffness;
+		h3 *= m_stiffness;
+		h4 *= m_stiffness;
 
 		return Accessor::combine(
 			v0, h1 - h4,
@@ -116,6 +116,8 @@ public:
 private:
 	const Key* m_keys;
 	size_t m_nkeys;
+	float m_Tend;
+	float m_stiffness;
 };
 
 }

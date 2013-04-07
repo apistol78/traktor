@@ -50,10 +50,13 @@ public:
 	 * \param desc Create description.
 	 * \return True if successfully created.
 	 */
-	virtual bool create(const RenderSystemCreateDesc& desc) = 0;
+	virtual bool create(const RenderSystemDesc& desc) = 0;
 
 	/*! \brief Destroy render system. */
 	virtual void destroy() = 0;
+
+	/*! \brief Reset render system. */
+	virtual bool reset(const RenderSystemDesc& desc) = 0;
 
 	/*! \brief Get render system information. */
 	virtual void getInformation(RenderSystemInformation& outInfo) const = 0;

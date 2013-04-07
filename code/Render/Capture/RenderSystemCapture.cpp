@@ -13,7 +13,7 @@ RenderSystemCapture::RenderSystemCapture(IRenderSystem* renderSystem)
 {
 }
 
-bool RenderSystemCapture::create(const RenderSystemCreateDesc& desc)
+bool RenderSystemCapture::create(const RenderSystemDesc& desc)
 {
 	return m_renderSystem->create(desc);
 }
@@ -21,6 +21,11 @@ bool RenderSystemCapture::create(const RenderSystemCreateDesc& desc)
 void RenderSystemCapture::destroy()
 {
 	m_renderSystem->destroy();
+}
+
+bool RenderSystemCapture::reset(const RenderSystemDesc& desc)
+{
+	return m_renderSystem->reset(desc);
 }
 
 void RenderSystemCapture::getInformation(RenderSystemInformation& outInfo) const

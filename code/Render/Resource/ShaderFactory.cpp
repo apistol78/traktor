@@ -109,7 +109,7 @@ Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager,
 			Shader::Combination combination;
 			combination.mask = j->mask;
 			combination.value = j->value;
-			combination.opaque = j->opaque;
+			combination.priority = j->priority;
 			combination.program = m_renderSystem->createProgram(programResource);
 			if (!combination.program)
 				return 0;

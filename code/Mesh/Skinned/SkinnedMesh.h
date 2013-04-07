@@ -83,6 +83,9 @@ private:
 	SmallMap< render::handle_t, std::vector< Part > > m_parts;
 	std::map< std::wstring, int32_t > m_jointMap;
 	int32_t m_jointCount;
+#if defined(_DEBUG)
+	std::string m_name;
+#endif
 };
 
 	}

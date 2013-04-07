@@ -76,8 +76,8 @@ void RumbleEffect::setRumbleKeys(const std::vector< std::pair< float, InputRumbl
 
 void RumbleEffect::getRumble(float time, InputRumble& outRumble) const
 {
-	outRumble.lowFrequencyRumble = Hermite< std::pair< float, InputRumble >, float, float, RumbleAccessor< LF > >(&m_rumbleKeys[0], m_rumbleKeys.size()).evaluate(time);
-	outRumble.highFrequencyRumble = Hermite< std::pair< float, InputRumble >, float, float, RumbleAccessor< HF > >(&m_rumbleKeys[0], m_rumbleKeys.size()).evaluate(time);
+	outRumble.lowFrequencyRumble = Hermite< std::pair< float, InputRumble >, float, RumbleAccessor< LF > >(&m_rumbleKeys[0], m_rumbleKeys.size()).evaluate(time);
+	outRumble.highFrequencyRumble = Hermite< std::pair< float, InputRumble >, float, RumbleAccessor< HF > >(&m_rumbleKeys[0], m_rumbleKeys.size()).evaluate(time);
 }
 
 bool RumbleEffect::serialize(ISerializer& s)

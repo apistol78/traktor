@@ -25,7 +25,7 @@ public:
 	{
 	}
 
-	int32_t index(const Scalar& T, const Scalar& Tend) const
+	int32_t index(float T, float Tend) const
 	{
 		int32_t i = m_keys.size() - 1;
 		for (; i > 0; --i)
@@ -36,22 +36,22 @@ public:
 		return i;
 	}
 
-	Scalar time(int32_t index) const
+	float time(int32_t index) const
 	{
 		return Scalar(key(index).T);
 	}
 
-	Scalar tension(int32_t index) const
+	float tension(int32_t index) const
 	{
 		return key(index).tcb.x();
 	}
 
-	Scalar continuity(int32_t index) const
+	float continuity(int32_t index) const
 	{
 		return key(index).tcb.y();
 	}
 
-	Scalar bias(int32_t index) const
+	float bias(int32_t index) const
 	{
 		return key(index).tcb.z();
 	}
@@ -62,15 +62,15 @@ public:
 	}
 
 	TransformPath::Frame combine(
-		const TransformPath::Frame& v0, const Scalar& w0,
-		const TransformPath::Frame& v1, const Scalar& w1,
-		const TransformPath::Frame& v2, const Scalar& w2,
-		const TransformPath::Frame& v3, const Scalar& w3
+		const TransformPath::Frame& v0, float w0,
+		const TransformPath::Frame& v1, float w1,
+		const TransformPath::Frame& v2, float w2,
+		const TransformPath::Frame& v3, float w3
 	) const
 	{
 		TransformPath::Frame f;
-		f.position = v0.position * w0 + v1.position * w1 + v2.position * w2 + v3.position * w3;
-		f.orientation = v0.orientation * w0 + v1.orientation * w1 + v2.orientation * w2 + v3.orientation * w3;
+		f.position = v0.position * Scalar(w0) + v1.position * Scalar(w1) + v2.position * Scalar(w2) + v3.position * Scalar(w3);
+		f.orientation = v0.orientation * Scalar(w0) + v1.orientation * Scalar(w1) + v2.orientation * Scalar(w2) + v3.orientation * Scalar(w3);
 		return f;
 	}
 
@@ -97,7 +97,7 @@ public:
 	{
 	}
 
-	int32_t index(const Scalar& T, const Scalar& Tend) const
+	int32_t index(float T, float Tend) const
 	{
 		int32_t nkeys = int32_t(m_keys.size());
 
@@ -117,22 +117,22 @@ public:
 		return nkeys - 1;
 	}
 
-	Scalar time(int32_t index) const
+	float time(int32_t index) const
 	{
 		return Scalar(key(index).T);
 	}
 
-	Scalar tension(int32_t index) const
+	float tension(int32_t index) const
 	{
 		return key(index).tcb.x();
 	}
 
-	Scalar continuity(int32_t index) const
+	float continuity(int32_t index) const
 	{
 		return key(index).tcb.y();
 	}
 
-	Scalar bias(int32_t index) const
+	float bias(int32_t index) const
 	{
 		return key(index).tcb.z();
 	}
@@ -143,15 +143,15 @@ public:
 	}
 
 	TransformPath::Frame combine(
-		const TransformPath::Frame& v0, const Scalar& w0,
-		const TransformPath::Frame& v1, const Scalar& w1,
-		const TransformPath::Frame& v2, const Scalar& w2,
-		const TransformPath::Frame& v3, const Scalar& w3
+		const TransformPath::Frame& v0, float w0,
+		const TransformPath::Frame& v1, float w1,
+		const TransformPath::Frame& v2, float w2,
+		const TransformPath::Frame& v3, float w3
 	) const
 	{
 		TransformPath::Frame f;
-		f.position = v0.position * w0 + v1.position * w1 + v2.position * w2 + v3.position * w3;
-		f.orientation = v0.orientation * w0 + v1.orientation * w1 + v2.orientation * w2 + v3.orientation * w3;
+		f.position = v0.position * Scalar(w0) + v1.position * Scalar(w1) + v2.position * Scalar(w2) + v3.position * Scalar(w3);
+		f.orientation = v0.orientation * Scalar(w0) + v1.orientation * Scalar(w1) + v2.orientation * Scalar(w2) + v3.orientation * Scalar(w3);
 		return f;
 	}
 
@@ -175,10 +175,10 @@ struct PairAccessor
 	static inline float value(const std::pair< float, float >& key) { return key.second; }
 
 	static inline float combine(
-		const float& v0, const float& w0,
-		const float& v1, const float& w1,
-		const float& v2, const float& w2,
-		const float& v3, const float& w3
+		float v0, float w0,
+		float v1, float w1,
+		float v2, float w2,
+		float v3, float w3
 	)
 	{
 		return float(v0 * w0 + v1 * w1 + v2 * w2 + v3 * w3);
@@ -255,38 +255,37 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 		{
 			if (loop)
 			{
-				m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, ClosedUniformAccessor >(
-					ClosedUniformAccessor(m_keys)
+				m_spline.reset(new TcbSpline< Key, Frame, ClosedUniformAccessor >(
+					ClosedUniformAccessor(m_keys),
+					end
 				));
 			}
 			else
 			{
-				m_spline.reset(new TcbSpline< Key, Scalar, Scalar, Frame, OpenUniformAccessor >(
-					OpenUniformAccessor(m_keys)
+				m_spline.reset(new TcbSpline< Key, Frame, OpenUniformAccessor >(
+					OpenUniformAccessor(m_keys),
+					end
 				));
 			}
 
 			m_loop = loop;
 		}
 
-		Scalar Tat(at);
-		Scalar Tend(end);
-
 		if (m_loop)
 		{
-			while (Tat > Tend)
-				Tat -= Tend;
+			while (at > end)
+				at -= end;
 		}
 		else
 		{
-			Scalar Tfirst(m_keys.front().T);
-			if (Tat < Tfirst)
-				Tat = Tfirst;
-			if (Tat > Tend)
-				Tat = Tend;
+			float begin = m_keys.front().T;
+			if (at < begin)
+				at = begin;
+			if (at > end)
+				at = end;
 		}
 
-		Frame frame = m_spline->evaluate(Tat, Tend);
+		Frame frame = m_spline->evaluate(at);
 		frame.position = frame.position.xyz1();
 		frame.orientation = frame.orientation.xyz0();
 

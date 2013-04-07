@@ -180,7 +180,7 @@ void WorldRenderPassForward::setShaderCombination(render::Shader* shader, const 
 	}
 }
 
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, bool opaque) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const
 {
 	setWorldProgramParameters(programParams, Matrix44::identity());
 
@@ -194,7 +194,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	}
 }
 
-void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, bool opaque, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
 

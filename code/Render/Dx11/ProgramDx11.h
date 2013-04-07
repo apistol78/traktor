@@ -150,6 +150,7 @@ private:
 
 	bool createState(
 		ID3D11Device* d3dDevice,
+		ResourceCache& resourceCache,
 		float mipBias,
 		int32_t maxAnisotropy,
 		int32_t shaderType,

@@ -359,7 +359,7 @@ void TerrainEntity::render(
 
 			// Queue render block.
 			if (renderBlock)
-				worldContext.getRenderContext()->draw(render::RfOpaque, renderBlock);
+				worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
 
 			// Queue patch instance.
 #if defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
@@ -413,7 +413,7 @@ void TerrainEntity::render(
 
 		renderBlock->programParams->endParameters(worldContext.getRenderContext());
 
-		worldContext.getRenderContext()->draw(render::RfOpaque, renderBlock);
+		worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
 	}
 
 #else
@@ -453,7 +453,7 @@ void TerrainEntity::render(
 
 		renderBlock->programParams->endParameters(worldContext.getRenderContext());
 
-		worldContext.getRenderContext()->draw(render::RfOpaque, renderBlock);
+		worldContext.getRenderContext()->draw(render::RpOpaque, renderBlock);
 	}
 
 #endif

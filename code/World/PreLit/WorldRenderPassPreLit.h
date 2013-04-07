@@ -40,6 +40,7 @@ public:
 		float fogDistance,
 		float fogRange,
 		const Vector4& fogColor,
+		render::ISimpleTexture* colorMap,
 		render::ISimpleTexture* depthMap,
 		render::ISimpleTexture* normalMap,
 		render::ISimpleTexture* lightMap
@@ -58,9 +59,9 @@ public:
 
 	virtual void setShaderCombination(render::Shader* shader, const Matrix44& world, const Aabb3& bounds) const;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, bool opaque) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const;
 
-	virtual void setProgramParameters(render::ProgramParameters* programParams, bool opaque, const Matrix44& world, const Aabb3& bounds) const;
+	virtual void setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const;
 
 private:
 	render::handle_t m_technique;
@@ -69,6 +70,7 @@ private:
 	float m_fogDistance;
 	float m_fogRange;
 	Vector4 m_fogColor;
+	render::ISimpleTexture* m_colorMap;
 	render::ISimpleTexture* m_depthMap;
 	render::ISimpleTexture* m_normalMap;
 	render::ISimpleTexture* m_shadowMask;
@@ -77,6 +79,8 @@ private:
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
 
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
+
+	void setColorMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 

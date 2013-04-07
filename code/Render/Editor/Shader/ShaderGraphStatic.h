@@ -39,6 +39,8 @@ public:
 
 	Ref< ShaderGraph > cleanupRedundantSwizzles() const;
 
+	Ref< ShaderGraph > getStateResolved() const;
+
 private:
 	Ref< const ShaderGraph > m_shaderGraph;
 };

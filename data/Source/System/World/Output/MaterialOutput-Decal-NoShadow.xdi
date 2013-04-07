@@ -5,12 +5,16 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>373</second>
+				<second>333</second>
 			</position>
 			<fragmentGuid>{7F2F8712-3B18-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
 				<item>
 					<name>SurfaceColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewNormal</name>
 					<optional>false</optional>
 				</item>
 				<item>
@@ -26,11 +30,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Mask</name>
+					<name>Reflection</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>Reflection</name>
+					<name>Refractive</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -42,11 +46,11 @@
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>SpecularTerm</name>
+					<name>SpecularRoughness</name>
 					<optional>true</optional>
 				</item>
 				<item>
-					<name>State</name>
+					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -61,11 +65,11 @@
 					<second>0</second>
 				</item>
 				<item>
-					<first>Mask</first>
-					<second>1</second>
+					<first>Reflection</first>
+					<second>0</second>
 				</item>
 				<item>
-					<first>Reflection</first>
+					<first>Refractive</first>
 					<second>0</second>
 				</item>
 				<item>
@@ -77,12 +81,12 @@
 					<second>0</second>
 				</item>
 				<item>
-					<first>SpecularTerm</first>
-					<second>1</second>
+					<first>SpecularRoughness</first>
+					<second>0.8</second>
 				</item>
 				<item>
-					<first>State</first>
-					<second>0</second>
+					<first>SpecularTerm</first>
+					<second>1</second>
 				</item>
 			</values>
 		</item>
@@ -90,7 +94,7 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>140</second>
+				<second>105</second>
 			</position>
 			<fragmentGuid>{DB61FE22-1D18-0000-A7CB-095CD836EEAD}</fragmentGuid>
 			<inputPins>
@@ -138,10 +142,6 @@
 					<name>SpecularTerm</name>
 					<optional>true</optional>
 				</item>
-				<item>
-					<name>State</name>
-					<optional>true</optional>
-				</item>
 			</inputPins>
 			<outputPins/>
 			<values>
@@ -177,17 +177,13 @@
 					<first>SpecularTerm</first>
 					<second>1</second>
 				</item>
-				<item>
-					<first>State</first>
-					<second>0</second>
-				</item>
 			</values>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>574</second>
+				<second>561</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -311,7 +307,7 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>647</second>
+				<second>645</second>
 			</position>
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
@@ -604,16 +600,6 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Mask</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[14]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[2]"/>
 				<name>Mask</name>
 			</destination>
@@ -626,6 +612,26 @@
 			<destination>
 				<node ref="/object/nodes/item[12]"/>
 				<name>Mask</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>SpecularRoughness</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>ViewNormal</name>
 			</destination>
 		</item>
 	</edges>

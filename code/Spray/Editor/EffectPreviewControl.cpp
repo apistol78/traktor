@@ -445,7 +445,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			defaultPass
 		);
 
-		m_renderContext->render(m_renderView, render::RfAll, 0);
+		m_renderContext->render(m_renderView, render::RpAll, 0);
 		m_renderContext->flush();
 
 		m_lastDeltaTime = deltaTime;

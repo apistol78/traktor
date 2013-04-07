@@ -40,6 +40,11 @@ void MuteGrain::updateCursor(ISoundBufferCursor* cursor) const
 {
 }
 
+const IGrain* MuteGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+{
+	return this;
+}
+
 bool MuteGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	MuteGrainCursor* muteCursor = static_cast< MuteGrainCursor* >(cursor);
