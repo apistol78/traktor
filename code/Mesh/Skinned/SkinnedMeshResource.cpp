@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Misc/TString.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Serialization/MemberComposite.h"
@@ -57,6 +58,10 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 
 	skinnedMesh->m_jointMap = m_jointMap;
 	skinnedMesh->m_jointCount = jointMaxIndex + 1;
+
+#if defined(_DEBUG)
+	skinnedMesh->m_name = wstombs(name);
+#endif
 
 	return skinnedMesh;
 }

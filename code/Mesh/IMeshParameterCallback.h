@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_MESH_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class ProgramParameters;
+class Shader;
 
 	}
 
@@ -31,6 +32,8 @@ class ProgramParameters;
 class T_DLLCLASS IMeshParameterCallback
 {
 public:
+	virtual void setCombination(render::Shader* shader) const = 0;
+
 	virtual void setParameters(render::ProgramParameters* programParameters) const = 0;
 };
 

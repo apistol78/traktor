@@ -46,7 +46,7 @@ RenderSystemOpenGL::RenderSystemOpenGL()
 {
 }
 
-bool RenderSystemOpenGL::create(const RenderSystemCreateDesc& desc)
+bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -260,6 +260,12 @@ void RenderSystemOpenGL::destroy()
 	m_windowShared = 0;
 
 #endif
+}
+
+bool RenderSystemOpenGL::reset(const RenderSystemDesc& desc)
+{
+	m_maxAnisotrophy = (GLfloat)desc.maxAnisotropy;
+	return true;
 }
 
 void RenderSystemOpenGL::getInformation(RenderSystemInformation& outInfo) const

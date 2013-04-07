@@ -250,7 +250,7 @@ void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame,
 		programParams.setFloatParameter(m_handleScreenOffset, m_stereoscopicOffset);
 	programParams.endParameters(m_globalContext);
 
-	m_renderContexts[frame]->render(renderView, render::RfOverlay, &programParams);
+	m_renderContexts[frame]->render(renderView, render::RpOverlay, &programParams);
 
 	m_globalContext->flush();
 }
@@ -282,13 +282,13 @@ void AccDisplayRenderer::begin(
 			backgroundColor.green / 255.0f,
 			backgroundColor.blue / 255.0f
 		);
-		m_renderContext->draw(render::RfOverlay, renderBlock);
+		m_renderContext->draw(render::RpOverlay, renderBlock);
 	}
 	else
 	{
 		render::TargetClearRenderBlock* renderBlock = m_renderContext->alloc< render::TargetClearRenderBlock >("Flash clear (stencil)");
 		renderBlock->clearMask = render::CfStencil;
-		m_renderContext->draw(render::RfOverlay, renderBlock);
+		m_renderContext->draw(render::RpOverlay, renderBlock);
 	}
 
 	// Flush glyph cache is RT has become invalid.
@@ -468,7 +468,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		render::TargetBeginRenderBlock* renderBlockBegin = m_renderContext->alloc< render::TargetBeginRenderBlock >("Flash glyph render begin");
 		renderBlockBegin->renderTargetSet = m_renderTargetGlyphs;
 		renderBlockBegin->renderTargetIndex = 0;
-		m_renderContext->draw(render::RfOverlay, renderBlockBegin);
+		m_renderContext->draw(render::RpOverlay, renderBlockBegin);
 
 		// Clear previous glyph by drawing a solid quad at it's place.
 		m_quad->render(
@@ -500,7 +500,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 		);
 
 		render::TargetEndRenderBlock* renderBlockEnd = m_renderContext->alloc< render::TargetEndRenderBlock >("Flash glyph render end");
-		m_renderContext->draw(render::RfOverlay, renderBlockEnd);
+		m_renderContext->draw(render::RpOverlay, renderBlockEnd);
 
 		it1->second.index = index;
 	}

@@ -34,14 +34,14 @@ public:
 	{
 		uint32_t mask;
 		uint32_t value;
-		bool opaque;
+		uint32_t priority;
 		Ref< ISerializable > program;
 		std::vector< Guid > textures;
 
 		Combination()
 		:	mask(0)
 		,	value(0)
-		,	opaque(true)
+		,	priority(0)
 		{
 		}
 

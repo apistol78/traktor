@@ -22,6 +22,8 @@ public:
 
 	ID3D11BlendState* getBlendState(const D3D11_BLEND_DESC& bd);
 
+	ID3D11SamplerState* getSamplerState(const D3D11_SAMPLER_DESC& dsd);
+
 	ID3D11VertexShader* getVertexShader(ID3DBlob* vertexShaderBlob, uint32_t vertexShaderHash);
 
 	ID3D11PixelShader* getPixelShader(ID3DBlob* pixelShaderBlob, uint32_t pixelShaderHash);
@@ -31,6 +33,7 @@ private:
 	SmallMap< uint32_t, ComRef< ID3D11RasterizerState > > m_d3dRasterizerStates;
 	SmallMap< uint32_t, ComRef< ID3D11DepthStencilState > > m_d3dDepthStencilStates;
 	SmallMap< uint32_t, ComRef< ID3D11BlendState > > m_d3dBlendStates;
+	SmallMap< uint32_t, ComRef< ID3D11SamplerState > > m_d3dSamplerStates;
 	SmallMap< uint32_t, ComRef< ID3D11VertexShader > > m_d3dVertexShaders;
 	SmallMap< uint32_t, ComRef< ID3D11PixelShader > > m_d3dPixelShaders;
 };

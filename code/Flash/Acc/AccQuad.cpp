@@ -164,7 +164,7 @@ void AccQuad::render(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(render::RfOverlay, renderBlock);
+	renderContext->draw(render::RpOverlay, renderBlock);
 }
 
 	}

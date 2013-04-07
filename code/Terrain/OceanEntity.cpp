@@ -100,7 +100,7 @@ void OceanEntity::render(
 
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
-		m_shaderComposite->isOpaque()
+		m_shaderComposite->getCurrentPriority()
 	);
 
 	renderBlock->programParams->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
@@ -116,7 +116,7 @@ void OceanEntity::render(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(m_shaderComposite->isOpaque() ? render::RfOpaque : render::RfAlphaBlend, renderBlock);
+	renderContext->draw(m_shaderComposite->getCurrentPriority(), renderBlock);
 }
 
 void OceanEntity::setTransform(const Transform& transform)

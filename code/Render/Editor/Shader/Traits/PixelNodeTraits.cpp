@@ -51,7 +51,7 @@ PinType PixelNodeTraits::getInputPinType(
 {
 	const PixelOutput* pixelOutputNode = checked_type_cast< const PixelOutput* >(node);
 
-	RenderState rs = pixelOutputNode->getState();
+	RenderState rs = pixelOutputNode->getRenderState();
 
 	const OutputPin* statePin = shaderGraph->findSourcePin(pixelOutputNode->getInputPin(4));
 	if (statePin)
@@ -60,7 +60,7 @@ PinType PixelNodeTraits::getInputPinType(
 		if (!state)
 			return PntScalar4;
 
-		rs = state->get();
+		rs = state->getRenderState();
 	}
 
 	if (!rs.blendEnable && !rs.alphaTestEnable)

@@ -7,7 +7,7 @@
 namespace traktor
 {
 
-uint32_t getCallStack(uint32_t ncs, void** outCs)
+uint32_t getCallStack(uint32_t ncs, void** outCs, uint32_t skip)
 {
 #if defined(__LINUX__) || defined(__APPLE__)
 	return backtrace(

@@ -244,7 +244,7 @@ void AccGlyph::render(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(render::RfOverlay, renderBlock);
+	renderContext->draw(render::RpOverlay, renderBlock);
 
 	m_currentVertexBuffer = (m_currentVertexBuffer + 1) % sizeof_array(m_vertexBuffers);
 	m_vertex = 0;

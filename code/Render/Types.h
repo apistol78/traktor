@@ -21,6 +21,17 @@ namespace traktor
 /*! \ingroup Render */
 //@{
 
+enum RenderPriority
+{
+	RpSetup = 1,
+	RpOpaque = 2,
+	RpPostOpaque = 4,
+	RpAlphaBlend = 8,
+	RpPostAlphaBlend = 16,
+	RpOverlay = 32,
+	RpAll = (RpSetup | RpOpaque | RpPostOpaque | RpAlphaBlend | RpPostAlphaBlend | RpOverlay)
+};
+
 enum CullMode
 {
 	CmNever,
@@ -393,12 +404,12 @@ struct RenderSystemInformation
 };
 
 /*! \brief Descriptor for render system. */
-struct RenderSystemCreateDesc
+struct RenderSystemDesc
 {
 	float mipBias;
 	int32_t maxAnisotropy;
 
-	RenderSystemCreateDesc()
+	RenderSystemDesc()
 	:	mipBias(0.0f)
 	,	maxAnisotropy(1)
 	{

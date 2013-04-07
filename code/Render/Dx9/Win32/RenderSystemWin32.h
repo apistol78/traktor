@@ -44,9 +44,11 @@ class T_DLLCLASS RenderSystemWin32
 public:
 	RenderSystemWin32();
 
-	virtual bool create(const RenderSystemCreateDesc& desc);
+	virtual bool create(const RenderSystemDesc& desc);
 
 	virtual void destroy();
+
+	virtual bool reset(const RenderSystemDesc& desc);
 
 	virtual void getInformation(RenderSystemInformation& outInfo) const;
 

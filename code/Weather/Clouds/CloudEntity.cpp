@@ -476,7 +476,7 @@ void CloudEntity::renderCluster(
 				i += instanceCount;
 			}
 
-			renderContext->draw(render::RfOpaque, impostorRenderBlock);
+			renderContext->draw(render::RpOpaque, impostorRenderBlock);
 		}
 
 		m_lastCameraPosition = cameraPosition;
@@ -522,7 +522,7 @@ void CloudEntity::renderCluster(
 		renderBlock->programParams->setTextureParameter(m_handleImpostorTarget, m_impostorTargets[slice]->getColorTexture(0));
 		renderBlock->programParams->endParameters(renderContext);
 
-		renderContext->draw(render::RfAlphaBlend, renderBlock);
+		renderContext->draw(render::RpAlphaBlend, renderBlock);
 	}
 }
 

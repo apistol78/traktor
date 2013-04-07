@@ -60,12 +60,18 @@ void SkinnedMesh::render(
 			boundingBox
 		);
 
+		if (parameterCallback)
+			parameterCallback->setCombination(m_shader);
+
 		render::IProgram* program = m_shader->getCurrentProgram();
 		if (!program)
 			continue;
 
+#if !defined(_DEBUG)
 		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >("SkinnedMesh");
-
+#else
+		render::SimpleRenderBlock* renderBlock = renderContext->alloc< render::SimpleRenderBlock >(m_name.c_str());
+#endif
 		renderBlock->distance = distance;
 		renderBlock->program = program;
 		renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
@@ -76,7 +82,7 @@ void SkinnedMesh::render(
 		renderBlock->programParams->beginParameters(renderContext);
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
-			m_shader->isOpaque(),
+			m_shader->getCurrentPriority(),
 			world,
 			boundingBox
 		);
@@ -87,7 +93,7 @@ void SkinnedMesh::render(
 		renderBlock->programParams->endParameters(renderContext);
 
 		renderContext->draw(
-			m_shader->isOpaque() ? render::RfOpaque : render::RfAlphaBlend,
+			m_shader->getCurrentPriority(),
 			renderBlock
 		);
 	}

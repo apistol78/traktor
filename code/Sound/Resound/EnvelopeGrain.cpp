@@ -86,6 +86,11 @@ void EnvelopeGrain::updateCursor(ISoundBufferCursor* cursor) const
 		m_grains[i].grain->updateCursor(envelopeCursor->m_cursors[i]);
 }
 
+const IGrain* EnvelopeGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+{
+	return this;
+}
+
 bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);

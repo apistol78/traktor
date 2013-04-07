@@ -153,6 +153,7 @@ private:
 	Ref< render::RenderTargetSet > m_visualTargetSet;
 	Ref< render::RenderTargetSet > m_intermediateTargetSet;
 	Ref< render::RenderTargetSet > m_gbufferTargetSet;
+	Ref< render::RenderTargetSet > m_colorTargetSet;
 	Ref< render::RenderTargetSet > m_shadowTargetSet;
 	Ref< render::RenderTargetSet > m_shadowMaskProjectTargetSet;
 	RefArray< render::RenderTargetSet > m_shadowMaskFilterTargetSet;
@@ -161,6 +162,7 @@ private:
 	resource::Proxy< render::ITexture > m_reflectionMap;
 	Ref< PostProcess > m_shadowMaskProject;
 	Ref< PostProcess > m_shadowMaskFilter;
+	Ref< PostProcess > m_colorTargetCopy;
 	Ref< PostProcess > m_ambientOcclusion;
 	Ref< PostProcess > m_antiAlias;
 	Ref< PostProcess > m_visualPostProcess;

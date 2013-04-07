@@ -37,6 +37,8 @@ public:
 
 	virtual void updateCursor(ISoundBufferCursor* cursor) const;
 
+	virtual const IGrain* getCurrentGrain(const ISoundBufferCursor* cursor) const;
+
 	virtual bool getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const;
 
 private:

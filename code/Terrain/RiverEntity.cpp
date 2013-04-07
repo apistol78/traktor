@@ -49,7 +49,7 @@ struct ControlPointAccessor
 	}
 };
 
-typedef Hermite< RiverEntityData::ControlPoint, float, RiverEntityData::ControlPoint, ControlPointAccessor > hermite_t;
+typedef Hermite< RiverEntityData::ControlPoint, RiverEntityData::ControlPoint, ControlPointAccessor > hermite_t;
 
 		}
 
@@ -188,7 +188,7 @@ void RiverEntity::render(
 
 	renderBlock->programParams->endParameters(renderContext);
 
-	renderContext->draw(render::RfAlphaBlend, renderBlock);
+	renderContext->draw(m_shader->getCurrentPriority(), renderBlock);
 }
 
 Aabb3 RiverEntity::getBoundingBox() const

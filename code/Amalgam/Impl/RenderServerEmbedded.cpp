@@ -52,6 +52,19 @@ int32_t skipMipsFromQuality(int32_t quality)
 	return c_skipMips[quality];
 }
 
+int32_t maxAnisotropyFromQuality(int32_t quality)
+{
+	const int32_t c_maxAnisotropy[] =
+	{
+		1,	// Disabled
+		1,	// Low
+		4,	// Medium
+		8,	// High
+		16	// Ultra
+	};
+	return c_maxAnisotropy[quality];
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.RenderServerEmbedded", RenderServerEmbedded, RenderServer)
@@ -69,11 +82,13 @@ bool RenderServerEmbedded::create(PropertyGroup* settings, void* nativeWindowHan
 	if (!renderSystem)
 		return false;
 
-	render::RenderSystemCreateDesc rscd;
-	rscd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
-	rscd.maxAnisotropy = settings->getProperty< PropertyInteger >(L"Render.MaxAnisotropy", 2);
+	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
 
-	if (!renderSystem->create(rscd))
+	render::RenderSystemDesc rsd;
+	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
+	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
+
+	if (!renderSystem->create(rsd))
 	{
 		log::error << L"Render server failed; unable to create render system" << Endl;
 		return false;
@@ -149,16 +164,23 @@ int32_t RenderServerEmbedded::reconfigure(IEnvironment* environment, const Prope
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	int32_t result = CrUnaffected;
 
-	// Update texture quality; manifest through skipping high-detail mips.
 	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
-	int32_t skipMips = skipMipsFromQuality(textureQuality);
 
+	// Update texture quality; manifest through skipping high-detail mips.
+	int32_t skipMips = skipMipsFromQuality(textureQuality);
 	if (skipMips != m_textureFactory->getSkipMips())
 	{
 		m_textureFactory->setSkipMips(skipMips);
 		resourceManager->reload(type_of< render::ITexture >());
 		result |= CrAccepted;
 	}
+
+	// Reset render system.
+	render::RenderSystemDesc rsd;
+	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
+	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
+	if (!m_renderSystem->reset(rsd))
+		return CrFailed;
 
 	return result;
 }

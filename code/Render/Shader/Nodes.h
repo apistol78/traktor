@@ -610,9 +610,13 @@ public:
 
 	const std::wstring& getTechnique() const;
 
-	void setState(const RenderState& state);
+	void setPriority(uint32_t priority);
 
-	const RenderState& getState() const;
+	uint32_t getPriority() const;
+
+	void setRenderState(const RenderState& state);
+
+	const RenderState& getRenderState() const;
 
 	void setRegisterCount(uint32_t registerCount);
 
@@ -624,7 +628,8 @@ public:
 
 private:
 	std::wstring m_technique;
-	RenderState m_state;
+	uint32_t m_priority;
+	RenderState m_renderState;
 	uint32_t m_registerCount;
 };
 
@@ -793,14 +798,19 @@ class T_DLLCLASS State : public ImmutableNode
 public:
 	State();
 
-	void set(const RenderState& state);
+	void setPriority(uint32_t priority);
 
-	const RenderState& get() const;
+	uint32_t getPriority() const;
+
+	void setRenderState(const RenderState& renderState);
+
+	const RenderState& getRenderState() const;
 
 	virtual bool serialize(ISerializer& s);
 
 private:
-	RenderState m_state;
+	uint32_t m_priority;
+	RenderState m_renderState;
 };
 
 /*! \brief Step function. */

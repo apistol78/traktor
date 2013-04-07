@@ -34,6 +34,7 @@ namespace traktor
 		namespace
 		{
 
+const resource::Id< PostProcessSettings > c_colorTargetCopy(Guid(L"{7DCC28A2-C357-B54F-ACF4-8159301B1764}"));
 const resource::Id< PostProcessSettings > c_ambientOcclusionLow(Guid(L"{ED4F221C-BAB1-4645-BD08-84C5B3FA7C20}"));		//< SSAO, half size
 const resource::Id< PostProcessSettings > c_ambientOcclusionMedium(Guid(L"{A4249C8A-9A0D-B349-B0ED-E8B354CD7BDF}"));	//< SSAO, full size
 const resource::Id< PostProcessSettings > c_ambientOcclusionHigh(Guid(L"{37F82A38-D632-5541-9B29-E77C2F74B0C0}"));		//< HBAO, half size
@@ -130,6 +131,27 @@ bool WorldRendererPreLit::create(
 		if (!m_gbufferTargetSet)
 		{
 			log::error << L"Unable to create depth render target" << Endl;
+			return false;
+		}
+	}
+
+	// Create "color read-back" target.
+	{
+		render::RenderTargetSetCreateDesc desc;
+
+		desc.count = 1;
+		desc.width = width / 2;
+		desc.height = height / 2;
+		desc.multiSample = 0;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = false;
+		desc.preferTiled = true;
+		desc.targets[0].format = render::TfR11G11B10F;
+
+		m_colorTargetSet = renderSystem->createRenderTargetSet(desc);
+		if (!m_colorTargetSet)
+		{
+			log::error << L"Unable to create color read-back render target" << Endl;
 			return false;
 		}
 	}
@@ -272,6 +294,30 @@ bool WorldRendererPreLit::create(
 			safeDestroy(m_shadowTargetSet);
 			safeDestroy(m_shadowMaskProjectTargetSet);
 			m_shadowMaskFilterTargetSet.clear();
+		}
+	}
+
+	// Create "color read-back" copy processing.
+	{
+		resource::Proxy< PostProcessSettings > colorTargetCopy;
+
+		if (!resourceManager->bind(c_colorTargetCopy, colorTargetCopy))
+			log::warning << L"Unable to create color read-back processing; color read-back disabled" << Endl;
+
+		if (colorTargetCopy)
+		{
+			m_colorTargetCopy = new world::PostProcess();
+			if (!m_colorTargetCopy->create(
+				colorTargetCopy,
+				resourceManager,
+				renderSystem,
+				width,
+				height
+			))
+			{
+				log::warning << L"Unable to create color read-back processing; color read-back disabled" << Endl;
+				m_colorTargetCopy = 0;
+			}
 		}
 	}
 
@@ -541,6 +587,7 @@ void WorldRendererPreLit::destroy()
 	safeDestroy(m_visualPostProcess);
 	safeDestroy(m_antiAlias);
 	safeDestroy(m_ambientOcclusion);
+	safeDestroy(m_colorTargetCopy);
 	safeDestroy(m_shadowMaskFilter);
 	safeDestroy(m_shadowMaskProject);
 	m_reflectionMap.clear();
@@ -548,6 +595,7 @@ void WorldRendererPreLit::destroy()
 	safeDestroy(m_shadowMaskProjectTargetSet);
 	safeDestroy(m_shadowTargetSet);
 	safeDestroy(m_lightMapTargetSet);
+	safeDestroy(m_colorTargetSet);
 	safeDestroy(m_gbufferTargetSet);
 	safeDestroy(m_intermediateTargetSet);
 	safeDestroy(m_visualTargetSet);
@@ -717,7 +765,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 			m_renderView->clear(render::CfColor | render::CfDepth, clearColors, 1.0f, 0);
 
 			if (f.haveGBuffer)
-				f.gbuffer->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
+				f.gbuffer->getRenderContext()->render(m_renderView, render::RpOpaque, &programParams);
 
 			m_renderView->end();
 		}
@@ -746,7 +794,7 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 					{
 						const Color4f shadowClear(1.0f, 1.0f, 1.0f, 1.0f);
 						m_renderView->clear(render::CfColor | render::CfDepth, &shadowClear, 1.0f, 0);
-						f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
+						f.slice[j].shadow[i]->getRenderContext()->render(m_renderView, render::RpOpaque, 0);
 						m_renderView->end();
 					}
 					T_RENDER_POP_MARKER(m_renderView);
@@ -897,7 +945,36 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	if ((flags & WrfVisualOpaque) != 0)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual opaque");
-		f.visual->getRenderContext()->render(m_renderView, render::RfSetup | render::RfOpaque | render::RfPostOpaque, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RpSetup | render::RpOpaque, &programParams);
+		T_RENDER_POP_MARKER(m_renderView);
+
+		{
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy");
+			m_renderView->end();
+
+			m_renderView->begin(m_colorTargetSet, 0);
+
+			PostProcessStep::Instance::RenderParams params;
+			params.viewFrustum = f.viewFrustum;
+			params.projection = projection;
+			params.deltaTime = 0.0f;
+
+			m_colorTargetCopy->render(
+				m_renderView,
+				m_visualTargetSet,
+				0,
+				0,
+				params
+			);
+
+			m_renderView->end();
+
+			m_renderView->begin(m_visualTargetSet, 0);
+			T_RENDER_POP_MARKER(m_renderView);
+		}
+
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post opaque");
+		f.visual->getRenderContext()->render(m_renderView, render::RpPostOpaque, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 
 		if (m_ambientOcclusion)
@@ -925,7 +1002,36 @@ void WorldRendererPreLit::render(uint32_t flags, int frame, render::EyeType eye)
 	if ((flags & (WrfVisualAlphaBlend)) != 0)
 	{
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual alpha blend");
-		f.visual->getRenderContext()->render(m_renderView, render::RfAlphaBlend | render::RfPostAlphaBlend | render::RfOverlay, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, render::RpAlphaBlend, &programParams);
+		T_RENDER_POP_MARKER(m_renderView);
+
+		{
+			T_RENDER_PUSH_MARKER(m_renderView, "World: Color read-back copy");
+			m_renderView->end();
+
+			m_renderView->begin(m_colorTargetSet, 0);
+
+			PostProcessStep::Instance::RenderParams params;
+			params.viewFrustum = f.viewFrustum;
+			params.projection = projection;
+			params.deltaTime = 0.0f;
+
+			m_colorTargetCopy->render(
+				m_renderView,
+				m_visualTargetSet,
+				0,
+				0,
+				params
+			);
+
+			m_renderView->end();
+
+			m_renderView->begin(m_visualTargetSet, 0);
+			T_RENDER_POP_MARKER(m_renderView);
+		}
+
+		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual post alpha blend");
+		f.visual->getRenderContext()->render(m_renderView, render::RpPostAlphaBlend | render::RpOverlay, &programParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
@@ -1154,6 +1260,7 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 		m_settings.fogDistance,
 		m_settings.fogRange,
 		m_fogColor,
+		m_colorTargetSet->getColorTexture(0),
 		m_gbufferTargetSet->getColorTexture(0),
 		m_gbufferTargetSet->getColorTexture(1),
 		m_lightMapTargetSet->getColorTexture(0)

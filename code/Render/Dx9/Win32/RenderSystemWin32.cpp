@@ -62,7 +62,7 @@ RenderSystemWin32::RenderSystemWin32()
 {
 }
 
-bool RenderSystemWin32::create(const RenderSystemCreateDesc& desc)
+bool RenderSystemWin32::create(const RenderSystemDesc& desc)
 {
 	UINT d3dAdapter = D3DADAPTER_DEFAULT;
 	D3DDEVTYPE d3dDevType = D3DDEVTYPE_HAL;
@@ -198,6 +198,13 @@ void RenderSystemWin32::destroy()
 
 	m_d3dDevice.release();
 	m_d3d.release();
+}
+
+bool RenderSystemWin32::reset(const RenderSystemDesc& desc)
+{
+	m_parameterCache = new ParameterCache(m_d3dDevice, desc.mipBias, desc.maxAnisotropy);
+	m_maxAnisotropy = desc.maxAnisotropy;
+	return true;
 }
 
 void RenderSystemWin32::getInformation(RenderSystemInformation& outInfo) const

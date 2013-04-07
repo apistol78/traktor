@@ -28,7 +28,7 @@ RenderSystemDx10::RenderSystemDx10()
 {
 }
 
-bool RenderSystemDx10::create(const RenderSystemCreateDesc& desc)
+bool RenderSystemDx10::create(const RenderSystemDesc& desc)
 {
 	ComRef< ID3D10Device > d3dDevice;
 	ComRef< IDXGIFactory > dxgiFactory;
@@ -91,6 +91,12 @@ void RenderSystemDx10::destroy()
 		m_context->deleteResources();
 		m_context = 0;
 	}
+}
+
+bool RenderSystemDx10::reset(const RenderSystemDesc& desc)
+{
+	m_mipBias = desc.mipBias;
+	return true;
 }
 
 void RenderSystemDx10::getInformation(RenderSystemInformation& outInfo) const

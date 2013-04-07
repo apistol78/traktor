@@ -645,7 +645,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 			float farZ = m_settings.viewFarZ;
 			const Color4f depthColor(farZ, farZ, farZ, farZ);
 			m_renderView->clear(render::CfColor | render::CfDepth, &depthColor, 1.0f, 0);
-			f.depth->getRenderContext()->render(m_renderView, render::RfOpaque, &programParams);
+			f.depth->getRenderContext()->render(m_renderView, render::RpOpaque, &programParams);
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
@@ -669,7 +669,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 				{
 					const Color4f shadowClear(1.0f, 1.0f, 1.0f, 1.0f);
 					m_renderView->clear(render::CfColor | render::CfDepth, &shadowClear, 1.0f, 0);
-					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RfOpaque, 0);
+					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpOpaque, 0);
 					m_renderView->end();
 				}
 				T_RENDER_POP_MARKER(m_renderView);
@@ -738,12 +738,12 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	// Render visuals.
 	if ((flags & (WrfVisualOpaque | WrfVisualAlphaBlend)) != 0)
 	{
-		uint32_t renderFlags = render::RfSetup | render::RfOverlay;
+		uint32_t renderFlags = render::RpSetup | render::RpOverlay;
 
 		if (flags & WrfVisualOpaque)
-			renderFlags |= render::RfOpaque | render::RfPostOpaque;
+			renderFlags |= render::RpOpaque | render::RpPostOpaque;
 		if (flags & WrfVisualAlphaBlend)
-			renderFlags |= render::RfAlphaBlend | render::RfPostAlphaBlend;
+			renderFlags |= render::RpAlphaBlend | render::RpPostAlphaBlend;
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual");
 		f.visual->getRenderContext()->render(m_renderView, renderFlags, &programParams);

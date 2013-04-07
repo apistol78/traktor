@@ -31,9 +31,11 @@ class T_DLLCLASS RenderSystemCapture : public IRenderSystem
 public:
 	RenderSystemCapture(IRenderSystem* renderSystem);
 
-	virtual bool create(const RenderSystemCreateDesc& desc);
+	virtual bool create(const RenderSystemDesc& desc);
 
 	virtual void destroy();
+
+	virtual bool reset(const RenderSystemDesc& desc);
 
 	virtual void getInformation(RenderSystemInformation& outInfo) const;
 

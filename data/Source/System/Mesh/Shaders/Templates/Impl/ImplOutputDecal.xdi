@@ -38,6 +38,10 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>Refractive</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>RimColor</name>
 					<optional>true</optional>
 				</item>
@@ -51,10 +55,6 @@
 				</item>
 				<item>
 					<name>SpecularTerm</name>
-					<optional>true</optional>
-				</item>
-				<item>
-					<name>State</name>
 					<optional>true</optional>
 				</item>
 			</inputPins>
@@ -77,6 +77,10 @@
 					<second>0</second>
 				</item>
 				<item>
+					<first>Refractive</first>
+					<second>0</second>
+				</item>
+				<item>
 					<first>RimColor</first>
 					<second>0</second>
 				</item>
@@ -91,10 +95,6 @@
 				<item>
 					<first>SpecularTerm</first>
 					<second>1</second>
-				</item>
-				<item>
-					<first>State</first>
-					<second>0</second>
 				</item>
 			</values>
 		</item>

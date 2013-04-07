@@ -456,7 +456,10 @@ void BankAssetEditor::eventTimer(ui::Event* event)
 	if (!m_soundChannel)
 		return;
 
-	if (!m_soundChannel->isPlaying() && m_toolBarItemPlay->isToggled())
+	if (
+		!m_soundChannel->isPlaying() &&
+		m_toolBarItemPlay->isToggled()
+	)
 	{
 		if (!m_toolBarItemRepeat->isToggled())
 		{
@@ -478,6 +481,17 @@ void BankAssetEditor::eventTimer(ui::Event* event)
 					(*i)->getValue() / 100.0f
 				);
 			}
+		}
+	}
+
+	if (m_soundChannel->isPlaying())
+	{
+		const IGrain* currentGrain = m_bankBuffer->getCurrentGrain(m_soundChannel->getCursor());
+		if (currentGrain)
+		{
+			//const RefArray< GrainViewItem >& items = m_grainView->get();
+			//for (RefArray< GrainViewItem >::const_iterator i = items.begin(); i != items.end(); ++i)
+			//	(*i)->setCurrent((*i)->getGrain() == currentGrain);
 		}
 	}
 }

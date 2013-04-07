@@ -84,6 +84,11 @@ void BlendGrain::updateCursor(ISoundBufferCursor* cursor) const
 	m_grains[1]->updateCursor(blendCursor->m_cursors[1]);
 }
 
+const IGrain* BlendGrain::getCurrentGrain(const ISoundBufferCursor* cursor) const
+{
+	return this;
+}
+
 bool BlendGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, SoundBlock& outBlock) const
 {
 	BlendGrainCursor* blendCursor = static_cast< BlendGrainCursor* >(cursor);

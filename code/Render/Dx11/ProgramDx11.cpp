@@ -73,6 +73,7 @@ bool ProgramDx11::create(
 	// Create states.
 	if (!createState(
 		d3dDevice,
+		resourceCache,
 		mipBias,
 		1,
 		0,
@@ -85,6 +86,7 @@ bool ProgramDx11::create(
 
 	if (!createState(
 		d3dDevice,
+		resourceCache,
 		mipBias,
 		maxAnisotropy,
 		1,
@@ -452,6 +454,7 @@ void ProgramDx11::unbind(
 
 bool ProgramDx11::createState(
 	ID3D11Device* d3dDevice,
+	ResourceCache& resourceCache,
 	float mipBias,
 	int32_t maxAnisotropy,
 	int32_t shaderType,
@@ -596,10 +599,8 @@ bool ProgramDx11::createState(
 			if (maxAnisotropy <= 0 && dsd.Filter == D3D11_FILTER_ANISOTROPIC)
 				dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
 
-			ID3D11SamplerState* d3dSamplerState;
-
-			hr = d3dDevice->CreateSamplerState(&dsd, &d3dSamplerState);
-			if (FAILED(hr))
+			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(dsd);
+			if (!d3dSamplerState)
 				return false;
 
 			outState.d3dSamplerStates.push_back(d3dSamplerState);

@@ -37,13 +37,21 @@
 			<type>PtMatrix</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.PixelOutput" version="2">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>1009</first>
 				<second>481</second>
 			</position>
 			<technique>World_GBufferWrite</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -204,17 +212,6 @@
 				<first>442</first>
 				<second>423</second>
 			</position>
-		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>865</first>
-				<second>600</second>
-			</position>
-			<name>State</name>
-			<connectable>true</connectable>
-			<optional>true</optional>
-			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -406,16 +403,6 @@
 			<destination>
 				<node ref="/object/nodes/item[17]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[19]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[4]"/>
-				<name>State</name>
 			</destination>
 		</item>
 	</edges>

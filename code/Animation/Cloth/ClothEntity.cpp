@@ -220,14 +220,14 @@ void ClothEntity::render(
 	renderBlock->programParams->beginParameters(renderContext);
 	worldRenderPass.setProgramParameters(
 		renderBlock->programParams,
-		m_shader->isOpaque(),
+		m_shader->getCurrentPriority(),
 		m_transform.toMatrix44(),
 		m_aabb
 	);
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(
-		m_shader->isOpaque() ? render::RfOpaque : render::RfAlphaBlend,
+		m_shader->getCurrentPriority(),
 		renderBlock
 	);
 }

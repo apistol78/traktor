@@ -1070,13 +1070,14 @@ bool OutputPort::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 4, PixelOutput, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.PixelOutput", 5, PixelOutput, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_PixelOutput_i[] = { { L"Input", false }, { L"Input1", true }, { L"Input2", true }, { L"Input3", true }, { L"State", true }, 0 };
 
 PixelOutput::PixelOutput()
 :	ImmutableNode(c_PixelOutput_i, 0)
 ,	m_technique(L"Default")
+,	m_priority(0)
 ,	m_registerCount(0)
 {
 }
@@ -1091,14 +1092,24 @@ const std::wstring& PixelOutput::getTechnique() const
 	return m_technique;
 }
 
-void PixelOutput::setState(const RenderState& state)
+void PixelOutput::setPriority(uint32_t priority)
 {
-	m_state = state;
+	m_priority = priority;
 }
 
-const RenderState& PixelOutput::getState() const
+uint32_t PixelOutput::getPriority() const
 {
-	return m_state;
+	return m_priority;
+}
+
+void PixelOutput::setRenderState(const RenderState& renderState)
+{
+	m_renderState = renderState;
+}
+
+const RenderState& PixelOutput::getRenderState() const
+{
+	return m_renderState;
 }
 
 void PixelOutput::setRegisterCount(uint32_t registerCount)
@@ -1122,7 +1133,23 @@ bool PixelOutput::serialize(ISerializer& s)
 		return false;
 
 	s >> Member< std::wstring >(L"technique", m_technique);
-	s >> MemberRenderState(m_state);
+
+	if (s.getVersion() >= 5)
+	{
+		const MemberBitMask::Bit c_RenderPriorityBits[] =
+		{
+			{ L"setup", RpSetup },
+			{ L"opaque", RpOpaque },
+			{ L"postOpaque", RpPostOpaque },
+			{ L"alphaBlend", RpAlphaBlend },
+			{ L"postAlphaBlend", RpPostAlphaBlend },
+			{ L"overlay", RpOverlay },
+			0
+		};
+		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
+	}
+
+	s >> MemberRenderState(m_renderState);
 
 	if (s.getVersion() >= 3)
 		s >> Member< uint32_t >(L"registerCount", m_registerCount);
@@ -1436,23 +1463,34 @@ Sqrt::Sqrt()
 
 /*---------------------------------------------------------------------------*/
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 4, State, ImmutableNode)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.State", 5, State, ImmutableNode)
 
 const ImmutableNode::OutputPinDesc c_State_o[] = { L"Output", 0 };
 
 State::State()
 :	ImmutableNode(0, c_State_o)
+,	m_priority(0)
 {
 }
 
-void State::set(const RenderState& state)
+void State::setPriority(uint32_t priority)
 {
-	m_state = state;
+	m_priority = priority;
 }
 
-const RenderState& State::get() const
+uint32_t State::getPriority() const
 {
-	return m_state;
+	return m_priority;
+}
+
+void State::setRenderState(const RenderState& renderState)
+{
+	m_renderState = renderState;
+}
+
+const RenderState& State::getRenderState() const
+{
+	return m_renderState;
 }
 
 bool State::serialize(ISerializer& s)
@@ -1460,7 +1498,22 @@ bool State::serialize(ISerializer& s)
 	if (!Node::serialize(s))
 		return false;
 
-	s >> MemberRenderState(m_state);
+	if (s.getVersion() >= 5)
+	{
+		const MemberBitMask::Bit c_RenderPriorityBits[] =
+		{
+			{ L"setup", RpSetup },
+			{ L"opaque", RpOpaque },
+			{ L"postOpaque", RpPostOpaque },
+			{ L"alphaBlend", RpAlphaBlend },
+			{ L"postAlphaBlend", RpPostAlphaBlend },
+			{ L"overlay", RpOverlay },
+			0
+		};
+		s >> MemberBitMask(L"priority", m_priority, c_RenderPriorityBits);
+	}
+
+	s >> MemberRenderState(m_renderState);
 	return true;
 }
 

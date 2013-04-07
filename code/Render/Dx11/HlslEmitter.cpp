@@ -841,11 +841,7 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 		D3D11_STENCIL_OP_DECR
 	};
 
-	RenderState rs = node->getState();
-
-	const State* state = dynamic_type_cast< const State* >(cx.getInputNode(node, L"State"));
-	if (state)
-		rs = state->get();
+	RenderState rs = node->getRenderState();
 
 	cx.enterPixel();
 

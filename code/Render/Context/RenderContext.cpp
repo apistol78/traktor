@@ -67,31 +67,31 @@ void* RenderContext::alloc(int blockSize, int align)
 
 void RenderContext::draw(uint32_t type, RenderBlock* renderBlock)
 {
-	if (type == RfSetup)
+	if (type == RpSetup)
 		m_renderQueue[0].push_back(renderBlock);
-	else if (type == RfOpaque)
+	else if (type == RpOpaque)
 		m_renderQueue[1].push_back(renderBlock);
-	else if (type == RfPostOpaque)
+	else if (type == RpPostOpaque)
 		m_renderQueue[2].push_back(renderBlock);
-	else if (type == RfAlphaBlend)
+	else if (type == RpAlphaBlend)
 		m_renderQueue[3].push_back(renderBlock);
-	else if (type == RfPostAlphaBlend)
+	else if (type == RpPostAlphaBlend)
 		m_renderQueue[4].push_back(renderBlock);
-	else	// RbtOverlay
+	else if (type == RpOverlay)
 		m_renderQueue[5].push_back(renderBlock);
 }
 
-void RenderContext::render(render::IRenderView* renderView, uint32_t flags, const ProgramParameters* globalParameters) const
+void RenderContext::render(render::IRenderView* renderView, uint32_t priorities, const ProgramParameters* globalParameters) const
 {
 	// Render setup blocks unsorted.
-	if (flags & RfSetup)
+	if (priorities & RpSetup)
 	{
 		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[0].begin(); i != m_renderQueue[0].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
 
 	// Render opaque blocks, sorted by shader.
-	if (flags & RfOpaque)
+	if (priorities & RpOpaque)
 	{
 		std::sort(m_renderQueue[1].begin(), m_renderQueue[1].end(), SortOpaquePredicate);
 		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[1].begin(); i != m_renderQueue[1].end(); ++i)
@@ -99,14 +99,14 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t flags, cons
 	}
 
 	// Render post opaque blocks unsorted.
-	if (flags & RfPostOpaque)
+	if (priorities & RpPostOpaque)
 	{
 		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
 
 	// Render alpha blend blocks back to front.
-	if (flags & RfAlphaBlend)
+	if (priorities & RpAlphaBlend)
 	{
 		std::sort(m_renderQueue[3].begin(), m_renderQueue[3].end(), SortAlphaBlendPredicate);
 		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[3].begin(); i != m_renderQueue[3].end(); ++i)
@@ -114,14 +114,14 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t flags, cons
 	}
 
 	// Render post alpha blend blocks unsorted.
-	if (flags & RfPostAlphaBlend)
+	if (priorities & RpPostAlphaBlend)
 	{
 		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[4].begin(); i != m_renderQueue[4].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
 
 	// Render overlay blocks unsorted.
-	if (flags & RfOverlay)
+	if (priorities & RpOverlay)
 	{
 		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[5].begin(); i != m_renderQueue[5].end(); ++i)
 			(*i)->render(renderView, globalParameters);

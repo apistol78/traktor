@@ -392,7 +392,7 @@ void AccShape::render(
 			renderBlockSolid->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 			renderBlockSolid->programParams->setStencilReference(maskReference);
 			renderBlockSolid->programParams->endParameters(renderContext);
-			renderContext->draw(render::RfOverlay, renderBlockSolid);
+			renderContext->draw(render::RpOverlay, renderBlockSolid);
 		}
 
 		if (shaderTextured[i] && (m_batchFlags & BfHaveTextured) != 0)
@@ -411,7 +411,7 @@ void AccShape::render(
 			renderBlockTextured->programParams->setVectorParameter(m_shapeResources->m_handleCxFormAdd, Vector4(cxform.red[1], cxform.green[1], cxform.blue[1], cxform.alpha[1]));
 			renderBlockTextured->programParams->setStencilReference(maskReference);
 			renderBlockTextured->programParams->endParameters(renderContext);
-			renderContext->draw(render::RfOverlay, renderBlockTextured);
+			renderContext->draw(render::RpOverlay, renderBlockTextured);
 		}
 
 		for (AlignedVector< RenderBatch >::iterator j = m_renderBatches[i].begin(); j != m_renderBatches[i].end(); ++j)
@@ -426,7 +426,7 @@ void AccShape::render(
 					renderBlock->primitive = j->primitives.type;
 					renderBlock->offset = j->primitives.offset;
 					renderBlock->count = j->primitives.count;
-					renderContext->draw(render::RfOverlay, renderBlock);
+					renderContext->draw(render::RpOverlay, renderBlock);
 				}
 			}
 			else
@@ -452,7 +452,7 @@ void AccShape::render(
 					renderBlock->programParams->setMatrixParameter(m_shapeResources->m_handleTextureMatrix, textureMatrix);
 					renderBlock->programParams->setFloatParameter(m_shapeResources->m_handleTextureClamp, j->textureClamp ? 1.0f : 0.0f);
 					renderBlock->programParams->endParameters(renderContext);
-					renderContext->draw(render::RfOverlay, renderBlock);
+					renderContext->draw(render::RpOverlay, renderBlock);
 				}
 			}
 		}

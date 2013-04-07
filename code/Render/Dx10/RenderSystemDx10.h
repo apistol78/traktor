@@ -35,9 +35,11 @@ class T_DLLCLASS RenderSystemDx10 : public IRenderSystem
 public:
 	RenderSystemDx10();
 
-	virtual bool create(const RenderSystemCreateDesc& desc);
+	virtual bool create(const RenderSystemDesc& desc);
 
 	virtual void destroy();
+
+	virtual bool reset(const RenderSystemDesc& desc);
 
 	virtual void getInformation(RenderSystemInformation& outInfo) const;
 

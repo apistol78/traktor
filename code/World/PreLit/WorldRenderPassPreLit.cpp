@@ -20,6 +20,7 @@ render::handle_t s_handleProjection;
 render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleWorld;
+render::handle_t s_handleColorMap;
 render::handle_t s_handleLightMap;
 render::handle_t s_handleNormalMap;
 render::handle_t s_handleFogEnable;
@@ -30,7 +31,6 @@ render::handle_t s_handleShadowMask;
 render::handle_t s_handleDepthEnable;
 render::handle_t s_handleDepthMap;
 render::handle_t s_handleTime;
-
 render::handle_t s_handleLightPositionAndType;
 render::handle_t s_handleLightDirectionAndRange;
 render::handle_t s_handleLightSunColor;
@@ -48,6 +48,7 @@ void initializeHandles()
 	s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 	s_handleView = render::getParameterHandle(L"View");
 	s_handleWorld = render::getParameterHandle(L"World");
+	s_handleColorMap = render::getParameterHandle(L"ColorMap");
 	s_handleLightMap = render::getParameterHandle(L"LightMap");
 	s_handleNormalMap = render::getParameterHandle(L"NormalMap");
 	s_handleFogEnable = render::getParameterHandle(L"FogEnable");
@@ -58,7 +59,6 @@ void initializeHandles()
 	s_handleDepthEnable = render::getParameterHandle(L"DepthEnable");
 	s_handleDepthMap = render::getParameterHandle(L"DepthMap");
 	s_handleTime = render::getParameterHandle(L"Time");
-
 	s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
 	s_handleLightSunColor = render::getParameterHandle(L"LightSunColor");
@@ -79,6 +79,7 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 	float fogDistance,
 	float fogRange,
 	const Vector4& fogColor,
+	render::ISimpleTexture* colorMap,
 	render::ISimpleTexture* depthMap,
 	render::ISimpleTexture* normalMap,
 	render::ISimpleTexture* lightMap
@@ -89,6 +90,7 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 ,	m_fogDistance(fogDistance)
 ,	m_fogRange(fogRange)
 ,	m_fogColor(fogColor)
+,	m_colorMap(colorMap)
 ,	m_depthMap(depthMap)
 ,	m_normalMap(normalMap)
 ,	m_shadowMask(0)
@@ -107,6 +109,7 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 ,	m_fogDistance(0.0f)
 ,	m_fogRange(0.0f)
 ,	m_fogColor(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_colorMap(0)
 ,	m_depthMap(0)
 ,	m_shadowMask(0)
 ,	m_lightMap(0)
@@ -142,34 +145,36 @@ void WorldRenderPassPreLit::setShaderCombination(render::Shader* shader, const M
 	}
 }
 
-void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* programParams, bool opaque) const
+void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* programParams, uint32_t priority) const
 {
 	setWorldProgramParameters(programParams, Matrix44::identity());
 
 	if (m_technique == s_techniquePreLitColor)
 	{
+		setColorMapProgramParameters(programParams);
 		setDepthMapProgramParameters(programParams);
 		setLightMapProgramParameters(programParams);
 		setNormalMapProgramParameters(programParams);
 		setFogProgramParameters(programParams);
 
-		if (!opaque)
+		if ((priority & render::RpAlphaBlend | render::RpPostAlphaBlend) != 0)
 			setLightProgramParameters(programParams);
 	}
 }
 
-void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* programParams, bool opaque, const Matrix44& world, const Aabb3& bounds) const
+void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* programParams, uint32_t priority, const Matrix44& world, const Aabb3& bounds) const
 {
 	setWorldProgramParameters(programParams, world);
 
 	if (m_technique == s_techniquePreLitColor)
 	{
+		setColorMapProgramParameters(programParams);
 		setDepthMapProgramParameters(programParams);
 		setLightMapProgramParameters(programParams);
 		setNormalMapProgramParameters(programParams);
 		setFogProgramParameters(programParams);
 
-		if (!opaque)
+		if ((priority & render::RpAlphaBlend | render::RpPostAlphaBlend) != 0)
 			setLightProgramParameters(programParams);
 	}
 }
@@ -222,6 +227,12 @@ void WorldRenderPassPreLit::setLightProgramParameters(render::ProgramParameters*
 	programParams->setVectorArrayParameter(s_handleLightSunColor, lightSunColor, MaxForwardLightCount);
 	programParams->setVectorArrayParameter(s_handleLightBaseColor, lightBaseColor, MaxForwardLightCount);
 	programParams->setVectorArrayParameter(s_handleLightShadowColor, lightShadowColor, MaxForwardLightCount);
+}
+
+void WorldRenderPassPreLit::setColorMapProgramParameters(render::ProgramParameters* programParams) const
+{
+	if (m_colorMap)
+		programParams->setTextureParameter(s_handleColorMap, m_colorMap);
 }
 
 void WorldRenderPassPreLit::setShadowMapProgramParameters(render::ProgramParameters* programParams) const

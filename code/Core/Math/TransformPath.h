@@ -82,17 +82,17 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline float getStartTime() const { return !m_keys.empty() ? m_keys.front().T : 0.0f; }
+	float getStartTime() const { return !m_keys.empty() ? m_keys.front().T : 0.0f; }
 
-	inline float getEndTime() const { return !m_keys.empty() ? m_keys.back().T : 0.0f; }
+	float getEndTime() const { return !m_keys.empty() ? m_keys.back().T : 0.0f; }
 
-	inline const AlignedVector< Key >& getKeys() const { return m_keys; }
+	const AlignedVector< Key >& getKeys() const { return m_keys; }
 
-	inline AlignedVector< Key >& getKeys() { return m_keys; }
+	AlignedVector< Key >& getKeys() { return m_keys; }
 
 private:
 	AlignedVector< Key > m_keys;
-	mutable AutoPtr< ISpline< Key, Scalar, Frame > > m_spline;
+	mutable AutoPtr< ISpline< Frame > > m_spline;
 	mutable bool m_loop;
 };
 

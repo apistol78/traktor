@@ -52,7 +52,7 @@ RenderSystemSw::RenderSystemSw()
 {
 }
 
-bool RenderSystemSw::create(const RenderSystemCreateDesc& desc)
+bool RenderSystemSw::create(const RenderSystemDesc& desc)
 {
 #if defined(_WIN32)
 
@@ -91,6 +91,11 @@ void RenderSystemSw::destroy()
 	m_processor = 0;
 	m_displayModes.clear();
 	safeDestroy(m_graphicsSystem);
+}
+
+bool RenderSystemSw::reset(const RenderSystemDesc& desc)
+{
+	return true;
 }
 
 void RenderSystemSw::getInformation(RenderSystemInformation& outInfo) const

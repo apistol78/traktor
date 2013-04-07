@@ -866,11 +866,7 @@ bool emitPixelOutput(GlslContext& cx, PixelOutput* node)
 		GL_DECR_WRAP
 	};
 
-	RenderState rs = node->getState();
-
-	const State* state = dynamic_type_cast< const State* >(cx.getInputNode(node, L"State"));
-	if (state)
-		rs = state->get();
+	RenderState rs = node->getRenderState();
 
 	cx.enterFragment();
 
