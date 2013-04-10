@@ -38,11 +38,11 @@ public:
 	{
 	}
 
-	virtual void log(const std::wstring& str)
+	virtual void log(int32_t level, const std::wstring& str)
 	{
 		++m_count;
 		if (m_target)
-			m_target->log(str);
+			m_target->log(level, str);
 	}
 
 	ILogTarget* getTarget() const { return m_target; }
@@ -242,7 +242,16 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT (pipeline);
 
-	if (!pipeline->buildOutput(this, sourceAsset, 0, outputPath, outputGuid, buildParams, PbrSourceModified))
+	if (!pipeline->buildOutput(
+		this,
+		0,
+		sourceAsset,
+		0,
+		outputPath,
+		outputGuid,
+		buildParams,
+		PbrSourceModified
+	))
 		return false;
 
 #else
@@ -461,8 +470,10 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT (pipeline);
 
+
 	bool result = pipeline->buildOutput(
 		this,
+		dependency->sourceInstanceGuid.isNotNull() ? m_sourceDatabase->getInstance(dependency->sourceInstanceGuid) : 0,
 		dependency->sourceAsset,
 		dependency->sourceAssetHash,
 		dependency->outputPath,

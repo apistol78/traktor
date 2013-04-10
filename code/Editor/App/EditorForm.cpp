@@ -487,6 +487,10 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.LogVisible"))
 		m_logView->hide();
 
+	log::info.setGlobalTarget(m_logView->getLogTarget());
+	log::warning.setGlobalTarget(m_logView->getLogTarget());
+	log::error.setGlobalTarget(m_logView->getLogTarget());
+
 	Ref< ui::TabPage > tabPageBuild = new ui::TabPage();
 	tabPageBuild->create(m_tabOutput, i18n::Text(L"TITLE_BUILD"), new ui::FloodLayout());
 
@@ -771,6 +775,26 @@ void EditorForm::commitWorkspaceSettings()
 
 void EditorForm::revertWorkspaceSettings()
 {
+}
+
+Ref< ILogTarget > EditorForm::createLogTarget(const std::wstring& title)
+{
+	Ref< ui::TabPage > tabPageLog = new ui::TabPage();
+	if (!tabPageLog->create(m_tabOutput, title, new ui::FloodLayout()))
+		return 0;
+
+	Ref< LogView > logView = new LogView();
+	logView->create(tabPageLog);
+	logView->setText(title);
+
+	Ref< ui::TabPage > activePage = m_tabOutput->getActivePage();
+	
+	m_tabOutput->addPage(tabPageLog);
+
+	if (activePage)
+		m_tabOutput->setActivePage(activePage);
+
+	return logView->getLogTarget();
 }
 
 Ref< db::Database > EditorForm::getSourceDatabase() const

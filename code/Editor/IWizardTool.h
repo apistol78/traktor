@@ -24,6 +24,7 @@ class Widget;
 	{
 
 class Group;
+class Instance;
 
 	}
 
@@ -43,9 +44,17 @@ class T_DLLCLASS IWizardTool : public Object
 	T_RTTI_CLASS;
 
 public:
+	enum WizardFlags
+	{
+		WfGroup = 1,
+		WfInstance = 2
+	};
+
 	virtual std::wstring getDescription() const = 0;
 
-	virtual bool launch(ui::Widget* parent, IEditor* editor, db::Group* group) = 0;
+	virtual uint32_t getFlags() const = 0;
+
+	virtual bool launch(ui::Widget* parent, IEditor* editor, db::Group* group, db::Instance* instance) = 0;
 };
 
 	}

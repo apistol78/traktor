@@ -28,7 +28,7 @@ public:
 	{
 	}
 
-	virtual void log(const std::wstring& str)
+	virtual void log(int32_t level, const std::wstring& str)
 	{
 		(*m_stream) << str << Endl;
 	}
@@ -46,10 +46,10 @@ public:
 	{
 	}
 
-	virtual void log(const std::wstring& str)
+	virtual void log(int32_t level, const std::wstring& str)
 	{
-		m_target1->log(str);
-		m_target2->log(str);
+		m_target1->log(level, str);
+		m_target2->log(level, str);
 	}
 
 private:

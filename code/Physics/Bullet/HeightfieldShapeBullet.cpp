@@ -89,13 +89,13 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 
 	for (int32_t u = imnx; u < imxx; u += cx)
 	{
-		float mnx2 = u;
-		float mxx2 = u + cx;
+		float mnx2 = float(u);
+		float mxx2 = float(u + cx);
 
 		for (int32_t v = imnz; v < imxz; v += cz)
 		{
-			float mnz2 = v;
-			float mxz2 = v + cz;
+			float mnz2 = float(v);
+			float mxz2 = float(v + cz);
 
 			float h[] =
 			{

@@ -14,7 +14,9 @@ namespace traktor
 class ResourceCache : public Object
 {
 public:
-	ResourceCache(ID3D11Device* d3dDevice);
+	ResourceCache(ID3D11Device* d3dDevice, float mipBias, int32_t maxAnisotropy);
+
+	void reset(float mipBias, int32_t maxAnisotropy);
 
 	ID3D11RasterizerState* getRasterizerState(const D3D11_RASTERIZER_DESC& rd);
 
@@ -30,6 +32,8 @@ public:
 
 private:
 	ComRef< ID3D11Device > m_d3dDevice;
+	float m_mipBias;
+	int32_t m_maxAnisotropy;
 	SmallMap< uint32_t, ComRef< ID3D11RasterizerState > > m_d3dRasterizerStates;
 	SmallMap< uint32_t, ComRef< ID3D11DepthStencilState > > m_d3dDepthStencilStates;
 	SmallMap< uint32_t, ComRef< ID3D11BlendState > > m_d3dBlendStates;

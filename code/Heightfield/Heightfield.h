@@ -25,9 +25,11 @@ class T_DLLCLASS Heightfield : public Object
 
 public:
 	Heightfield(
-		uint32_t size,
+		int32_t size,
 		const Vector4& worldExtent
 	);
+
+	void setGridHeight(int32_t gridX, int32_t gridZ, float unitY);
 
 	float getGridHeightNearest(int32_t gridX, int32_t gridZ) const;
 
@@ -35,13 +37,21 @@ public:
 
 	float getWorldHeight(float worldX, float worldZ) const;
 
+	void gridToWorld(int32_t gridX, int32_t gridZ, float& outWorldX, float& outWorldZ) const;
+
 	void gridToWorld(float gridX, float gridZ, float& outWorldX, float& outWorldZ) const;
+
+	void worldToGrid(float worldX, float worldZ, int32_t& outGridX, int32_t& outGridZ) const;
 
 	void worldToGrid(float worldX, float worldZ, float& outGridX, float& outGridZ) const;
 
 	float unitToWorld(float unitY) const;
 
-	uint32_t getSize() const { return m_size; }
+	float worldToUnit(float worldY) const;
+
+	bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const;
+
+	int32_t getSize() const { return m_size; }
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
@@ -50,7 +60,7 @@ public:
 	const height_t* getHeights() const { return m_heights.c_ptr(); }
 
 private:
-	uint32_t m_size;
+	int32_t m_size;
 	Vector4 m_worldExtent;
 	AutoArrayPtr< height_t > m_heights;
 };

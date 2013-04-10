@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RENDER_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -23,7 +23,9 @@ class T_DLLCLASS TextureBatchWizardTool : public editor::IWizardTool
 public:
 	virtual std::wstring getDescription() const;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group);
+	virtual uint32_t getFlags() const;
+
+	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance);
 };
 
 	}

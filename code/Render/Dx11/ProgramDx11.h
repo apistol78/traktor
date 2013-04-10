@@ -31,7 +31,7 @@ public:
 
 	virtual ~ProgramDx11();
 
-	bool create(ID3D11Device* d3dDevice, ResourceCache& resourceCache, const ProgramResourceDx11* resource, float mipBias, int32_t maxAnisotropy);
+	bool create(ID3D11Device* d3dDevice, ResourceCache& resourceCache, const ProgramResourceDx11* resource);
 
 	virtual void destroy();
 
@@ -151,8 +151,6 @@ private:
 	bool createState(
 		ID3D11Device* d3dDevice,
 		ResourceCache& resourceCache,
-		float mipBias,
-		int32_t maxAnisotropy,
 		int32_t shaderType,
 		ID3DBlob* d3dShaderBlob,
 		const std::map< std::wstring, D3D11_SAMPLER_DESC >& d3dSamplers,

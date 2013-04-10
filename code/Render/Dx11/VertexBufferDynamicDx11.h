@@ -1,7 +1,8 @@
 #ifndef traktor_render_VertexBufferDynamicDx11_H
 #define traktor_render_VertexBufferDynamicDx11_H
 
-#include "Core/Thread/Semaphore.h"
+#include "Core/Misc/AutoPtr.h"
+#include "Core/Misc/ComRef.h"
 #include "Render/VertexElement.h"
 #include "Render/Dx11/VertexBufferDx11.h"
 
@@ -40,9 +41,8 @@ public:
 
 private:
 	Ref< ContextDx11 > m_context;
-	ComRef< ID3D11DeviceContext > m_d3dDeferredContext;
-	ComRef< ID3D11CommandList > m_d3dPendingCommandList;
-	Semaphore m_lock;
+	AutoArrayPtr< uint8_t > m_data;
+	bool m_dirty;
 
 	VertexBufferDynamicDx11(uint32_t bufferSize);
 };

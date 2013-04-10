@@ -17,7 +17,7 @@ class TargetManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetManager(TargetScriptDebuggerSessions* targetDebuggerSessions);
+	TargetManager(ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions);
 
 	bool create(uint16_t port);
 
@@ -30,6 +30,7 @@ public:
 	bool update();
 
 private:
+	Ref< ILogTarget > m_targetLog;
 	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< net::TcpSocket > m_listenSocket;
 	RefArray< TargetInstance > m_instances;

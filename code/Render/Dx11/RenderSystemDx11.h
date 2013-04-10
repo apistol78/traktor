@@ -79,8 +79,6 @@ private:
 	Ref< Window > m_window;
 	Ref< ResourceCache > m_resourceCache;
 	float m_displayAspect;
-	float m_mipBias;
-	int32_t m_maxAnisotropy;
 };
 
 	}

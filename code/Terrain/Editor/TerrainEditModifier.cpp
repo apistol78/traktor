@@ -1,0 +1,432 @@
+#include "Core/RefArray.h"
+#include "Core/Io/IStream.h"
+#include "Core/Log/Log.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
+#include "Drawing/Image.h"
+#include "Editor/IDocument.h"
+#include "Editor/IEditor.h"
+#include "Heightfield/Heightfield.h"
+#include "Heightfield/Editor/HeightfieldAsset.h"
+#include "Heightfield/Editor/HeightfieldFormat.h"
+#include "Render/IRenderSystem.h"
+#include "Render/ISimpleTexture.h"
+#include "Render/PrimitiveRenderer.h"
+#include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/TransformChain.h"
+#include "Terrain/Terrain.h"
+#include "Terrain/TerrainEntity.h"
+#include "Terrain/Editor/AverageBrush.h"
+#include "Terrain/Editor/ElevateBrush.h"
+#include "Terrain/Editor/FlattenBrush.h"
+#include "Terrain/Editor/SmoothBrush.h"
+#include "Terrain/Editor/TerrainAsset.h"
+#include "Terrain/Editor/TerrainEditModifier.h"
+#include "Ui/Command.h"
+
+namespace traktor
+{
+	namespace terrain
+	{
+		namespace
+		{
+
+Vector4 normalAt(const hf::Heightfield* heightfield, int32_t u, int32_t v)
+{
+	const float c_distance = 0.5f;
+	const float directions[][2] =
+	{
+		{ -c_distance, -c_distance },
+		{        0.0f, -c_distance },
+		{  c_distance, -c_distance },
+		{  c_distance,        0.0f },
+		{  c_distance,  c_distance },
+		{        0.0f,        0.0f },
+		{ -c_distance,  c_distance },
+		{ -c_distance,        0.0f }
+	};
+
+	float h0 = heightfield->getGridHeightNearest(u, v);
+
+	float h[sizeof_array(directions)];
+	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
+		h[i] = heightfield->getGridHeightBilinear(u + directions[i][0], v + directions[i][1]);
+
+	const Vector4& worldExtent = heightfield->getWorldExtent();
+	float sx = worldExtent.x() / heightfield->getSize();
+	float sy = worldExtent.y();
+	float sz = worldExtent.z() / heightfield->getSize();
+
+	Vector4 N = Vector4::zero();
+
+	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
+	{
+		uint32_t j = (i + 1) % sizeof_array(directions);
+
+		float dx1 = directions[i][0] * sx;
+		float dy1 = (h[i] - h0) * sy;
+		float dz1 = directions[i][1] * sz;
+
+		float dx2 = directions[j][0] * sx;
+		float dy2 = (h[j] - h0) * sy;
+		float dz2 = directions[j][1] * sz;
+
+		Vector4 n = cross(
+			Vector4(dx2, dy2, dz2),
+			Vector4(dx1, dy1, dz1)
+		);
+
+		N += n;
+	}
+
+	return N.normalized();
+}
+
+template < typename Visitor >
+void line(int32_t x0, int32_t y0, int32_t x1, int32_t y1, Visitor& visitor)
+{
+	float dx = float(x1 - x0);
+	float dy = float(y1 - y0);
+
+	visitor(x0, y0);
+	
+	if (std::abs(dx) > std::abs(dy) && dx != 0)
+	{
+		if (dx < 0)
+		{
+			std::swap(x0, x1);
+			std::swap(y0, y1);
+		}
+
+		float k = dy / dx;
+		float y = y0 + k;
+
+		for (int32_t x = x0 + 1; x < x1; ++x)
+		{
+			visitor(x, int32_t(y + 0.5f));
+			y += k;
+		}
+	}
+	else if (dy != 0)
+	{
+		if (dy < 0)
+		{
+			std::swap(x0, x1);
+			std::swap(y0, y1);
+		}
+
+		float k = dx / dy;
+		float x = x0 + k;
+
+		for (int32_t y = y0 + 1; y < y1; ++y)
+		{
+			visitor(int32_t(x + 0.5f), y);
+			x += k;
+		}
+	}
+}
+
+struct BrushVisitor
+{
+	//resource::Proxy< hf::Heightfield > heightfield;
+	//int32_t radius;
+	IBrush* brush;
+
+	void operator () (int32_t x, int32_t y)
+	{
+		brush->apply(x, y);
+
+		//for (int32_t iy = -radius; iy <= radius; ++iy)
+		//{
+		//	for (int32_t ix = -radius; ix <= radius; ++ix)
+		//	{
+		//		int32_t d = ix * ix + iy * iy;
+		//		if (d >= radius * radius)
+		//			continue;
+
+		//		float dh = 0.0025f * clamp(sinf((1.0f - sqrtf(float(d)) / radius) * PI / 4.0f), 0.0f, 1.0f);
+
+		//		float h = heightfield->getGridHeightNearest(x + ix, y + iy);
+		//		heightfield->setGridHeight(x + ix, y + iy, h + dh);
+		//	}
+		//}
+	}
+};
+
+		}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditModifier", TerrainEditModifier, scene::IModifier)
+
+TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
+:	m_context(context)
+,	m_center(Vector4::zero())
+{
+}
+
+void TerrainEditModifier::selectionChanged()
+{
+	m_heightfieldInstance = 0;
+	m_heightfieldAsset = 0;
+	m_heightfield.clear();
+	m_brush = 0;
+
+	// Get terrain entity from selection.
+	RefArray< scene::EntityAdapter > entityAdapters;
+	if (m_context->getEntities(entityAdapters, scene::SceneEditorContext::GfDefault | scene::SceneEditorContext::GfSelectedOnly | scene::SceneEditorContext::GfNoExternalChild) <= 0)
+		return;
+
+	m_entity = dynamic_type_cast< TerrainEntity* >(entityAdapters[0]->getEntity());
+	m_entityData = dynamic_type_cast< TerrainEntityData* >(entityAdapters[0]->getEntityData());
+
+	// Ensure we've both entity and it's data.
+	if (!m_entity || !m_entityData)
+	{
+		m_entity = 0;
+		m_entityData = 0;
+		return;
+	}
+
+	// Get runtime heightfield.
+	m_heightfield = m_entity->getTerrain()->getHeightfield();
+	if (!m_heightfield)
+	{
+		m_entity = 0;
+		m_entityData = 0;
+		return;
+	}
+
+	// Create default brush.
+	m_brush = new ElevateBrush(
+		m_heightfield,
+		int32_t(m_context->getGuideSize() + 0.5f)
+	);
+}
+
+bool TerrainEditModifier::cursorMoved(
+	const scene::TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
+	bool mouseDown
+)
+{
+	if (!m_entity)
+		return false;
+
+	Scalar distance;
+	if (m_heightfield->queryRay(
+		worldRayOrigin,
+		worldRayDirection,
+		distance
+	))
+		m_center = (worldRayOrigin + worldRayDirection * distance).xyz1();
+	else
+		m_center = Vector4::zero();
+
+	return true;
+}
+
+bool TerrainEditModifier::handleCommand(const ui::Command& command)
+{
+	if (!m_heightfield)
+		return false;
+
+	if (command == L"Terrain.Editor.AverageBrush")
+		m_brush = new AverageBrush(
+			m_heightfield,
+			int32_t(m_context->getGuideSize() + 0.5f)
+		);
+	else if (command == L"Terrain.Editor.ElevateBrush")
+		m_brush = new ElevateBrush(
+			m_heightfield,
+			int32_t(m_context->getGuideSize() + 0.5f)
+		);
+	else if (command == L"Terrain.Editor.FlattenBrush")
+		m_brush = new FlattenBrush(
+			m_heightfield,
+			int32_t(m_context->getGuideSize() + 0.5f)
+		);
+	else if (command == L"Terrain.Editor.SmoothBrush")
+		m_brush = new SmoothBrush(
+			m_heightfield,
+			int32_t(m_context->getGuideSize() + 0.5f)
+		);
+	else
+		return false;
+
+	log::info << L"** IN PROGRESS ** Brush selected " << type_name(m_brush) << Endl;
+	return true;
+}
+
+bool TerrainEditModifier::begin(const scene::TransformChain& transformChain)
+{
+	int32_t gx, gz;
+	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
+	m_brush->begin(gx, gz);
+	return true;
+}
+
+void TerrainEditModifier::apply(
+	const scene::TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
+	const Vector4& screenDelta,
+	const Vector4& viewDelta
+)
+{
+	if (!m_entity || m_center.w() <= FUZZY_EPSILON)
+		return;
+
+	Scalar distance;
+	if (!m_heightfield->queryRay(
+		worldRayOrigin,
+		worldRayDirection,
+		distance
+	))
+		return;
+
+	Vector4 center = (worldRayOrigin + worldRayDirection * distance).xyz1();
+
+	int32_t gx0, gz0;
+	int32_t gx1, gz1;
+
+	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx0, gz0);
+	m_heightfield->worldToGrid(center.x(), center.z(), gx1, gz1);
+
+	BrushVisitor visitor;
+	visitor.brush = m_brush;
+	line(gx0, gz0, gx1, gz1, visitor);
+
+	m_entity->updatePatches();
+	m_center = center;
+}
+
+void TerrainEditModifier::end(const scene::TransformChain& transformChain)
+{
+	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
+	T_ASSERT (sourceDatabase);
+
+	int32_t gx, gz;
+	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
+	m_brush->end(gx, gz);
+
+	//// Update normal map.
+	//{
+	//	int32_t size = m_heightfield->getSize();
+
+	//	Ref< drawing::Image > normalMap = new drawing::Image(drawing::PixelFormat::getX8R8G8B8(), size, size);
+	//	for (int32_t v = 0; v < size; ++v)
+	//	{
+	//		for (int32_t u = 0; u < size; ++u)
+	//		{
+	//			Vector4 normal = normalAt(m_heightfield, u, v);
+	//			normal = normal * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+	//			normalMap->setPixelUnsafe(u, v, Color4f(
+	//				normal.x(),
+	//				normal.y(),
+	//				normal.z()
+	//			));
+	//		}
+	//	}
+
+	//	render::SimpleTextureCreateDesc desc;
+	//	desc.width = size;
+	//	desc.height = size;
+	//	desc.mipCount = 1;
+	//	desc.format = render::TfR8G8B8A8;
+	//	desc.sRGB = false;
+	//	desc.immutable = true;
+	//	desc.initialData[0].data = normalMap->getData();
+	//	desc.initialData[0].pitch = size * 4;
+	//	desc.initialData[0].slicePitch = 0;
+
+	//	Ref< render::ISimpleTexture > texture = m_context->getRenderSystem()->createSimpleTexture(desc);
+	//	if (texture)
+	//		m_entity->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(texture);
+	//}
+
+	// Write modifications to heightfield.
+	if (!m_heightfieldInstance)
+	{
+		const resource::Id< Terrain >& terrain = m_entityData->getTerrain();
+		Ref< const TerrainAsset > terrainAsset = sourceDatabase->getObjectReadOnly< TerrainAsset >(terrain);
+		if (!terrainAsset)
+			return;
+
+		const resource::Id< hf::Heightfield >& heightfield = terrainAsset->getHeightfield();
+		m_heightfieldInstance = sourceDatabase->getInstance(heightfield);
+		if (!m_heightfieldInstance)
+			return;
+
+		if (!m_heightfieldInstance->checkout())
+		{
+			m_heightfieldInstance = 0;
+			return;
+		}
+		
+		m_heightfieldAsset = m_heightfieldInstance->getObject< hf::HeightfieldAsset >();
+		if (!m_heightfieldAsset)
+		{
+			m_heightfieldInstance->revert();
+			m_heightfieldInstance = 0;
+			return;
+		}
+
+		m_context->getDocument()->editInstance(
+			m_heightfieldInstance,
+			m_heightfieldAsset
+		);
+	}
+
+	if (m_heightfieldInstance)
+	{
+		Ref< IStream > data = m_heightfieldInstance->writeData(L"Data");
+		if (data)
+		{
+			hf::HeightfieldFormat().write(data, m_heightfield);
+			data->close();
+			data = 0;
+		}
+		m_context->getDocument()->setModified();
+	}
+}
+
+void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
+{
+	if (!m_entity || m_center.w() <= FUZZY_EPSILON)
+		return;
+
+	float radius = m_context->getGuideSize();
+
+	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
+	primitiveRenderer->pushDepthEnable(false);
+
+	for (int32_t i = 0; i < 16; ++i)
+	{
+		float a0 = TWO_PI * i / 16.0f;
+		float a1 = TWO_PI * (i + 1) / 16.0f;
+
+		float x0 = m_center.x() + cosf(a0) * radius;
+		float z0 = m_center.z() + sinf(a0) * radius;
+
+		float x1 = m_center.x() + cosf(a1) * radius;
+		float z1 = m_center.z() + sinf(a1) * radius;
+
+		float y0 = m_heightfield->getWorldHeight(x0, z0);
+		float y1 = m_heightfield->getWorldHeight(x1, z1);
+
+		primitiveRenderer->drawLine(
+			Vector4(x0, y0 + FUZZY_EPSILON, z0, 1.0f),
+			Vector4(x1, y1 + FUZZY_EPSILON, z1, 1.0f),
+			1.0f,
+			Color4ub(255, 0, 0, 180)
+		);
+	}
+
+	primitiveRenderer->popDepthEnable();
+}
+
+	}
+}

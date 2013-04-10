@@ -129,6 +129,9 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 
 	m_site->createAdditionalPanel(container, 200, false);
 
+	// Create target logging target.
+	m_targetLog = m_editor->createLogTarget(L"Target");
+
 	// Create threads.
 	m_threadHostEnumerator = ThreadManager::getInstance().create(makeFunctor(this, &EditorPlugin::threadHostEnumerator), L"Host enumerator");
 	m_threadHostEnumerator->start();
@@ -156,6 +159,7 @@ void EditorPlugin::destroy()
 		ThreadManager::getInstance().destroy(m_threadHostEnumerator);
 	}
 
+	m_targetLog = 0;
 	m_hostEnumerator = 0;
 	m_toolTargets = 0;
 	m_connectionManager = 0;
@@ -279,7 +283,7 @@ void EditorPlugin::handleWorkspaceOpened()
 		m_toolTargets->add(i->name);
 
 	// Create target manager.
-	m_targetManager = new TargetManager(m_targetDebuggerSessions);
+	m_targetManager = new TargetManager(m_targetLog, m_targetDebuggerSessions);
 	if (m_targetManager->create(
 		m_editor->getSettings()->getProperty< PropertyInteger >(L"Amalgam.TargetManagerPort", c_targetConnectionPort)
 	))

@@ -246,30 +246,6 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuGroup->add(new ui::MenuItem(L"-"));
 	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Paste"), i18n::Text(L"DATABASE_PASTE")));
 	
-	std::vector< const TypeInfo* > wizardToolTypes;
-	type_of< IWizardTool >().findAllOf(wizardToolTypes);
-
-	if (!wizardToolTypes.empty())
-	{
-		Ref< ui::MenuItem > menuWizard = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
-
-		int wizardId = 0;
-		for (std::vector< const TypeInfo* >::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
-		{
-			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >((*i)->createInstance());
-			if (!wizard)
-				continue;
-
-			std::wstring wizardDescription = wizard->getDescription();
-			T_ASSERT (!wizardDescription.empty());
-
-			menuWizard->add(new ui::MenuItem(ui::Command(wizardId++, L"Editor.Database.Wizard"), wizardDescription));
-			m_wizardTools.push_back(wizard);
-		}
-
-		m_menuGroup->add(menuWizard);
-	}
-
 	m_menuInstance = new ui::PopupMenu();
 	if (!m_menuInstance->create())
 		return false;
@@ -308,6 +284,39 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleRoot"), i18n::Text(L"DATABASE_TOGGLE_AS_ROOT")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
+
+	std::vector< const TypeInfo* > wizardToolTypes;
+	type_of< IWizardTool >().findAllOf(wizardToolTypes);
+
+	if (!wizardToolTypes.empty())
+	{
+		Ref< ui::MenuItem > menuGroupWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
+		Ref< ui::MenuItem > menuInstanceWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
+
+		int32_t nextWizardId = 0;
+		for (std::vector< const TypeInfo* >::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
+		{
+			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >((*i)->createInstance());
+			if (!wizard)
+				continue;
+
+			std::wstring wizardDescription = wizard->getDescription();
+			T_ASSERT (!wizardDescription.empty());
+
+			int32_t wizardId = nextWizardId++;
+
+			if ((wizard->getFlags() & IWizardTool::WfGroup) != 0)
+				menuGroupWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
+			if ((wizard->getFlags() & IWizardTool::WfInstance) != 0)
+				menuInstanceWizards->add(new ui::MenuItem(ui::Command(wizardId, L"Editor.Database.Wizard"), wizardDescription));
+
+			m_wizardTools.push_back(wizard);
+		}
+
+		m_menuGroup->add(menuGroupWizards);
+		m_menuInstance->add(menuInstanceWizards);
+		m_menuInstanceAsset->add(menuInstanceWizards);
+	}
 
 	addTimerEventHandler(createMethodHandler(this, &DatabaseView::eventTimer));
 
@@ -538,6 +547,12 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		{
 			m_editor->buildAsset(instance->getGuid(), true);
 		}
+		else if (command == L"Editor.Database.Wizard")
+		{
+			Ref< IWizardTool > wizard = m_wizardTools[command.getId()];
+			if (wizard->launch(this, m_editor, group, instance))
+				updateView();
+		}
 		else
 			return false;
 	}
@@ -648,7 +663,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		else if (command == L"Editor.Database.Wizard")
 		{
 			Ref< IWizardTool > wizard = m_wizardTools[command.getId()];
-			if (wizard->launch(this, m_editor, group))
+			if (wizard->launch(this, m_editor, group, 0))
 				updateView();
 		}
 		else

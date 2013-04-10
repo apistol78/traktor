@@ -55,7 +55,13 @@ void TranslateModifier::selectionChanged()
 	}
 }
 
-bool TranslateModifier::cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown)
+bool TranslateModifier::cursorMoved(
+	const TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
+	bool mouseDown
+)
 {
 	if (m_entityAdapters.empty())
 		return false;
@@ -162,13 +168,21 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 		return false;
 }
 
-void TranslateModifier::begin(const TransformChain& transformChain)
+bool TranslateModifier::begin(const TransformChain& transformChain)
 {
 	m_axisEnable = m_axisHot;
 	m_center0 = m_center;
+	return true;
 }
 
-void TranslateModifier::apply(const TransformChain& transformChain, const Vector4& screenDelta, const Vector4& viewDelta)
+void TranslateModifier::apply(
+	const TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
+	const Vector4& screenDelta,
+	const Vector4& viewDelta
+)
 {
 	Vector4 cp = transformChain.worldToClip(m_center);
 

@@ -57,6 +57,7 @@ public:
 
 private:
 	friend class TerrainFactory;
+	friend class TerrainEditModifier;
 
 	uint32_t m_detailSkip;
 	uint32_t m_patchDim;

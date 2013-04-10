@@ -2,7 +2,7 @@
 #define traktor_hf_HeightfieldAsset_H
 
 #include "Core/Math/Vector4.h"
-#include "Editor/Asset.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -17,28 +17,21 @@ namespace traktor
 	namespace hf
 	{
 
-class T_DLLCLASS HeightfieldAsset : public editor::Asset
+class T_DLLCLASS HeightfieldAsset : public ISerializable
 {
 	T_RTTI_CLASS;
 
 public:
 	HeightfieldAsset();
 
+	HeightfieldAsset(const Vector4& worldExtent);
+
 	virtual bool serialize(ISerializer& s);
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
-	uint32_t getDetailSkip() const { return m_detailSkip; }
-
-	bool getInvertX() const { return m_invertX; }
-
-	bool getInvertZ() const { return m_invertZ; }
-
 private:
 	Vector4 m_worldExtent;
-	uint32_t m_detailSkip;
-	bool m_invertX;
-	bool m_invertZ;
 };
 
 	}

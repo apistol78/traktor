@@ -123,6 +123,7 @@ bool BankPipeline::buildDependencies(
 
 bool BankPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
@@ -168,6 +169,7 @@ bool BankPipeline::buildOutput(
 
 	return editor::DefaultPipeline::buildOutput(
 		pipelineBuilder,
+		sourceInstance,
 		bankResource,
 		sourceAssetHash,
 		outputPath,

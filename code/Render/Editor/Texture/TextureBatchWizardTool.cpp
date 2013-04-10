@@ -21,7 +21,12 @@ std::wstring TextureBatchWizardTool::getDescription() const
 	return i18n::Text(L"TEXTURE_BATCH_WIZARDTOOL_DESCRIPTION");
 }
 
-bool TextureBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group)
+uint32_t TextureBatchWizardTool::getFlags() const
+{
+	return WfGroup;
+}
+
+bool TextureBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
 	TextureBatchDialog textureDialog(editor);
 

@@ -28,8 +28,6 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemDx11", 0, RenderSyst
 
 RenderSystemDx11::RenderSystemDx11()
 :	m_displayAspect(0.0f)
-,	m_mipBias(0.0f)
-,	m_maxAnisotropy(1)
 {
 }
 
@@ -163,6 +161,11 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 		return false;
 	}
 
+	// Do not allow more than 2 frames of latency.
+	hr = dxgiDevice->SetMaximumFrameLatency(2);
+	if (FAILED(hr))
+		log::warning << L"Unable to cap frame latency on DXGI output" << Endl;
+
 	DisplayMode dm = getCurrentDisplayMode();
 	m_displayAspect = float(dm.width) / dm.height;
 
@@ -174,10 +177,7 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 	}
 
 	m_context = new ContextDx11(d3dDevice, d3dDeviceContext, dxgiFactory, dxgiOutput);
-	m_resourceCache = new ResourceCache(d3dDevice);
-
-	m_mipBias = desc.mipBias;
-	m_maxAnisotropy = clamp(desc.maxAnisotropy, 1, 16);
+	m_resourceCache = new ResourceCache(d3dDevice, desc.mipBias, clamp(desc.maxAnisotropy, 1, 16));
 
 	return true;
 }
@@ -185,7 +185,6 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 void RenderSystemDx11::destroy()
 {
 	m_resourceCache = 0;
-
 	if (m_context)
 	{
 		m_context->deleteResources();
@@ -195,8 +194,7 @@ void RenderSystemDx11::destroy()
 
 bool RenderSystemDx11::reset(const RenderSystemDesc& desc)
 {
-	m_mipBias = desc.mipBias;
-	m_maxAnisotropy = clamp(desc.maxAnisotropy, 1, 16);
+	m_resourceCache->reset(desc.mipBias, clamp(desc.maxAnisotropy, 1, 16));
 	return true;
 }
 
@@ -396,7 +394,7 @@ Ref< IProgram > RenderSystemDx11::createProgram(const ProgramResource* programRe
 		return 0;
 
 	Ref< ProgramDx11 > program = new ProgramDx11(m_context);
-	if (!program->create(m_context->getD3DDevice(), *m_resourceCache, resource, m_mipBias, m_maxAnisotropy))
+	if (!program->create(m_context->getD3DDevice(), *m_resourceCache, resource))
 		return 0;
 
 	return program;

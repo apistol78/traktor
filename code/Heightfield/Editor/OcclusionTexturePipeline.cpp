@@ -1,4 +1,5 @@
 #include "Core/Functor/Functor.h"
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/RandomGeometry.h"
 #include "Core/Math/SahTree.h"
@@ -9,6 +10,8 @@
 #include "Core/Settings/PropertyString.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Drawing/Filters/ConvolutionFilter.h"
 #include "Drawing/Filters/MirrorFilter.h"
@@ -227,6 +230,7 @@ bool OcclusionTexturePipeline::buildDependencies(
 
 bool OcclusionTexturePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
@@ -237,35 +241,40 @@ bool OcclusionTexturePipeline::buildOutput(
 {
 	const OcclusionTextureAsset* asset = checked_type_cast< const OcclusionTextureAsset* >(sourceAsset);
 
-	// Get heightfield asset.
-	Ref< const HeightfieldAsset > heightfieldAsset = pipelineBuilder->getObjectReadOnly< HeightfieldAsset >(asset->m_heightfield);
-	if (!heightfieldAsset)
+	// Get heightfield asset and instance.
+	Ref< const db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(asset->m_heightfield);
+	if (!heightfieldAssetInstance)
 	{
-		log::error << L"Heightfield occlusion pipeline failed; unable to read heightfield asset" << Endl;
+		log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset instance" << Endl;
 		return false;
 	}
 
-	// Load heightfield from source file.
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), heightfieldAsset->getFileName().getOriginal());
-	if (!file)
+	Ref< const HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const HeightfieldAsset >();
+	if (!heightfieldAsset)
 	{
-		log::error << L"Heightfield occlusion pipeline failed; unable to open source (" << heightfieldAsset->getFileName().getOriginal() << L")" << Endl;
+		log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset" << Endl;
+		return false;
+	}
+
+	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
+	if (!sourceData)
+	{
+		log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
 		return false;
 	}
 
 	Ref< Heightfield > heightfield = HeightfieldFormat().read(
-		file,
-		heightfieldAsset->getFileName().getExtension(),
-		heightfieldAsset->getWorldExtent(),
-		heightfieldAsset->getInvertX(),
-		heightfieldAsset->getInvertZ(),
-		heightfieldAsset->getDetailSkip()
-		);
+		sourceData,
+		heightfieldAsset->getWorldExtent()
+	);
 	if (!heightfield)
 	{
-		log::error << L"Heightfield occlusion pipeline failed; unable to read heightfield source \"" << heightfieldAsset->getFileName().getOriginal() << L"\"" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
 		return 0;
 	}
+
+	sourceData->close();
+	sourceData = 0;
 
 	uint32_t size = heightfield->getSize();
 

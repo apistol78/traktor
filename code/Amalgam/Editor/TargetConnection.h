@@ -7,6 +7,9 @@
 
 namespace traktor
 {
+
+class ILogTarget;
+
 	namespace net
 	{
 
@@ -25,7 +28,7 @@ class TargetConnection : public Object
 	T_RTTI_CLASS;
 
 public:
-	TargetConnection(net::BidirectionalObjectTransport* transport, TargetScriptDebuggerSessions* targetDebuggerSessions);
+	TargetConnection(net::BidirectionalObjectTransport* transport, ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions);
 
 	virtual ~TargetConnection();
 
@@ -41,6 +44,7 @@ public:
 
 private:
 	Ref< net::BidirectionalObjectTransport > m_transport;
+	Ref< ILogTarget > m_targetLog;
 	Ref< TargetScriptDebuggerSessions > m_targetDebuggerSessions;
 	Ref< TargetScriptDebugger > m_targetDebugger;
 	TargetPerformance m_performance;

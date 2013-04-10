@@ -113,6 +113,8 @@ public:
 
 	virtual void revertWorkspaceSettings();
 
+	virtual Ref< ILogTarget > createLogTarget(const std::wstring& title);
+
 	virtual Ref< db::Database > getSourceDatabase() const;
 
 	virtual Ref< db::Database > getOutputDatabase() const;

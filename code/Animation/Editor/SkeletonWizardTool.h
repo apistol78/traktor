@@ -23,7 +23,9 @@ class T_DLLCLASS SkeletonWizardTool : public editor::IWizardTool
 public:
 	virtual std::wstring getDescription() const;
 
-	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group);
+	virtual uint32_t getFlags() const;
+
+	virtual bool launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance);
 };
 
 	}

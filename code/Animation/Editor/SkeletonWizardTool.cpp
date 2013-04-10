@@ -25,7 +25,12 @@ std::wstring SkeletonWizardTool::getDescription() const
 	return i18n::Text(L"SKELETON_WIZARDTOOL_DESCRIPTION");
 }
 
-bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group)
+uint32_t SkeletonWizardTool::getFlags() const
+{
+	return WfGroup;
+}
+
+bool SkeletonWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* /*instance*/)
 {
 	// Select source skeleton.
 	ui::FileDialog fileDialog;

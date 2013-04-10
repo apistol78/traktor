@@ -570,6 +570,10 @@
       <second>Execute tool</second>
     </item>
     <item>
+      <first>EXPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Export heightfield as mesh...</second>
+    </item>
+    <item>
       <first>FIND_IN_DATABASE</first>
       <second>Find in database</second>
     </item>

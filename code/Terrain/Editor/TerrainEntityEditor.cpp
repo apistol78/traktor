@@ -1,9 +1,11 @@
 #include "Heightfield/Heightfield.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Scene/Editor/EntityAdapter.h"
+#include "Scene/Editor/SceneEditorContext.h"
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainEntityData.h"
+#include "Terrain/Editor/TerrainEditModifier.h"
 #include "Terrain/Editor/TerrainEntityEditor.h"
 
 namespace traktor
@@ -28,6 +30,14 @@ bool TerrainEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4&
 	return false;
 }
 
+void TerrainEntityEditor::entitySelected(bool selected)
+{
+	if (selected)
+		getContext()->setModifier(new TerrainEditModifier(getContext()));
+	else
+		getContext()->setModifier(0);
+}
+
 bool TerrainEntityEditor::handleCommand(const ui::Command& command)
 {
 	return false;
@@ -35,53 +45,50 @@ bool TerrainEntityEditor::handleCommand(const ui::Command& command)
 
 void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	//const TerrainEntity* terrainEntity = checked_type_cast< const TerrainEntity*, true >(getEntityAdapter()->getEntity());
-	//if (terrainEntity)
-	//{
-	//	const AlignedVector< TerrainEntity::Patch >& patches = terrainEntity->getPatches();
-	//	uint32_t patchCount = terrainEntity->getPatchCount();
+	TerrainEntity* terrainEntity = checked_type_cast< TerrainEntity* >(getEntityAdapter()->getEntity());
 
-	//	const Vector4& worldExtent = terrainEntity->getTerrain()->getHeightfield()->getWorldExtent();
-	//	Vector4 patchExtent(worldExtent.x() / float(patchCount), worldExtent.y(), worldExtent.z() / float(patchCount), 0.0f);
+	const resource::Proxy< hf::Heightfield >& heightfield = terrainEntity->getTerrain()->getHeightfield();
 
-	//	Vector4 patchTopLeft = (-worldExtent * Scalar(0.5f)).xyz1();
-	//	Vector4 patchDeltaHalf = patchExtent * Vector4(0.5f, 0.0f, 0.5f, 0.0f);
-	//	Vector4 patchDeltaX = patchExtent * Vector4(1.0f, 0.0f, 0.0f, 0.0f);
-	//	Vector4 patchDeltaZ = patchExtent * Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+	const Vector4& worldExtent = heightfield->getWorldExtent();
 
-	//	for (uint32_t pz = 0; pz < patchCount; ++pz)
-	//	{
-	//		Vector4 patchOrigin = patchTopLeft;
-	//		for (uint32_t px = 0; px < patchCount; ++px)
-	//		{
-	//			uint32_t patchId = px + pz * patchCount;
-	//			const TerrainEntity::Patch& patch = patches[patchId];
+	int32_t x0 = int32_t(-worldExtent.x() / 2.0f);
+	int32_t x1 = int32_t( worldExtent.x() / 2.0f);
+	int32_t z0 = int32_t(-worldExtent.z() / 2.0f);
+	int32_t z1 = int32_t( worldExtent.z() / 2.0f);
 
-	//			Vector4 patchCenterWorld = (patchOrigin + patchDeltaHalf) * Vector4(1.0f, 0.0f, 1.0f, 0.0f) + Vector4(0.0f, (patch.minHeight + patch.maxHeight) * 0.5f, 0.0f, 1.0f);
+	const float c_epsilon = 0.1f;
 
-	//			Aabb3 patchAabb(
-	//				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4(-patchDeltaHalf.x(), patch.minHeight - FUZZY_EPSILON, -patchDeltaHalf.z(), 0.0f),
-	//				patchCenterWorld * Vector4(1.0f, 0.0f, 1.0f, 1.0f) + Vector4( patchDeltaHalf.x(), patch.maxHeight + FUZZY_EPSILON,  patchDeltaHalf.z(), 0.0f)
-	//			);
+	for (int32_t x = x0; x <= x1; x += 10)
+	{
+		for (int32_t z = z0; z < z1; z += 1)
+		{
+			float y0 = heightfield->getWorldHeight(float(x), float(z));
+			float y1 = heightfield->getWorldHeight(float(x), float(z + 1));
 
-	//			Vector4 extents[8];
-	//			patchAabb.getExtents(extents);
+			primitiveRenderer->drawLine(
+				Vector4(x, y0 + c_epsilon, z, 1.0f),
+				Vector4(x, y1 + c_epsilon, z + 1, 1.0f),
+				1.0f,
+				Color4ub(255, 255, 255, 80)
+			);
+		}
+	}
 
-	//			primitiveRenderer->drawSolidQuad(
-	//				extents[1],
-	//				extents[5],
-	//				extents[6],
-	//				extents[2],
-	//				Color4ub(128, 255, 0, 180)
-	//			);
+	for (int32_t z = z0; z <= z1; z += 10)
+	{
+		for (int32_t x = x0; x < x1; x += 1)
+		{
+			float y0 = heightfield->getWorldHeight(float(x), float(z));
+			float y1 = heightfield->getWorldHeight(float(x + 1), float(z));
 
-	//			primitiveRenderer->drawWireAabb(patchAabb, Color4ub(255, 255, 0, 255));
-
-	//			patchOrigin += patchDeltaX;
-	//		}
-	//		patchTopLeft += patchDeltaZ;
-	//	}
-	//}
+			primitiveRenderer->drawLine(
+				Vector4(x, y0 + c_epsilon, z, 1.0f),
+				Vector4(x + 1, y1 + c_epsilon, z, 1.0f),
+				1.0f,
+				Color4ub(255, 255, 255, 80)
+			);
+		}
+	}
 }
 
 TerrainEntityEditor::TerrainEntityEditor(scene::SceneEditorContext* context, scene::EntityAdapter* entityAdapter)

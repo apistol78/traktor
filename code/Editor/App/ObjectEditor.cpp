@@ -59,6 +59,11 @@ void ObjectEditor::revertWorkspaceSettings()
 	m_editor->revertWorkspaceSettings();
 }
 
+Ref< ILogTarget > ObjectEditor::createLogTarget(const std::wstring& title)
+{
+	return m_editor->createLogTarget(title);
+}
+
 Ref< db::Database > ObjectEditor::getSourceDatabase() const
 {
 	return m_editor->getSourceDatabase();

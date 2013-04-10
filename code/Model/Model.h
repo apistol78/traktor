@@ -91,6 +91,8 @@ public:
 
 	const std::vector< Polygon >& getPolygons() const { return m_polygons; }
 
+	std::vector< Polygon >& getPolygons() { return m_polygons; }
+
 	void reservePositions(uint32_t positionCapacity);
 
 	uint32_t addPosition(const Vector4& position);

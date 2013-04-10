@@ -40,6 +40,7 @@ public:
 
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
+		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const std::wstring& outputPath,

@@ -26,7 +26,13 @@ public:
 
 	virtual void selectionChanged();
 
-	virtual bool cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown);
+	virtual bool cursorMoved(
+		const TransformChain& transformChain,
+		const Vector2& cursorPosition,
+		const Vector4& worldRayOrigin,
+		const Vector4& worldRayDirection,
+		bool mouseDown
+	);
 
 	virtual bool handleCommand(const ui::Command& command);
 
@@ -35,9 +41,16 @@ public:
 	/*! \name Modifications */
 	//\{
 
-	virtual void begin(const TransformChain& transformChain);
+	virtual bool begin(const TransformChain& transformChain);
 
-	virtual void apply(const TransformChain& transformChain, const Vector4& screenDelta, const Vector4& viewDelta);
+	virtual void apply(
+		const TransformChain& transformChain,
+		const Vector2& cursorPosition,
+		const Vector4& worldRayOrigin,
+		const Vector4& worldRayDirection,
+		const Vector4& screenDelta,
+		const Vector4& viewDelta
+	);
 
 	virtual void end(const TransformChain& transformChain);
 
