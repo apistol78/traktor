@@ -574,6 +574,10 @@
       <second>Utför verktyg</second>
     </item>
     <item>
+      <first>EXPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Exportera höjdfält som modell...</second>
+    </item>    
+    <item>
       <first>FIND_IN_DATABASE</first>
       <second>Hitta i databas</second>
     </item>

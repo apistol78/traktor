@@ -12,7 +12,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_renderContextSize = 2 * 1024 * 1024;
+const uint32_t c_renderContextSize = 4 * 1024 * 1024;
 
 		}
 

@@ -25,7 +25,12 @@ std::wstring MeshAssetWizardTool::getDescription() const
 	return i18n::Text(L"MESHASSET_WIZARDTOOL_DESCRIPTION");
 }
 
-bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group)
+uint32_t MeshAssetWizardTool::getFlags() const
+{
+	return WfGroup;
+}
+
+bool MeshAssetWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
 	// Select source model.
 	ui::FileDialog fileDialog;

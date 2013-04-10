@@ -13,18 +13,13 @@ namespace traktor
 class LogTargetConsole : public ILogTarget
 {
 public:
-	LogTargetConsole(int32_t color)
-	:	m_color(color)
-	{
-	}
-
-	virtual void log(const std::wstring& str)
+	virtual void log(int32_t level, const std::wstring& str)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #if !defined(WINCE)
-		if (m_color == 0)
+		if (level == 0)
 			std::wcout << str << std::endl;
-		else if (m_color == 1)
+		else if (level == 1)
 			std::wcout << L"(WARN) " << str << std::endl;
 		else
 			std::wcerr << L"(ERROR) " << str << std::endl;
@@ -37,13 +32,12 @@ public:
 
 private:
 	Semaphore m_lock;
-	int32_t m_color;
 };
 
 class LogTargetDebug : public ILogTarget
 {
 public:
-	virtual void log(const std::wstring& str)
+	virtual void log(int32_t level, const std::wstring& str)
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 #if defined(_WIN32)
@@ -62,8 +56,9 @@ private:
 class LogStreamLocalBuffer : public IOutputStreamBuffer
 {
 public:
-	LogStreamLocalBuffer(const Ref< ILogTarget >& globalTarget)
-	:	m_globalTarget(globalTarget)
+	LogStreamLocalBuffer(int32_t level, const Ref< ILogTarget >& globalTarget)
+	:	m_level(level)
+	,	m_globalTarget(globalTarget)
 	{
 	}
 
@@ -115,10 +110,10 @@ public:
 			if (c == L'\n')
 			{
 				if (m_globalTarget)
-					m_globalTarget->log(m_buffer.str());
+					m_globalTarget->log(m_level, m_buffer.str());
 				
 				if (m_localTarget)
-					m_localTarget->log(m_buffer.str());
+					m_localTarget->log(m_level, m_buffer.str());
 
 				m_buffer.reset();
 			}
@@ -129,6 +124,7 @@ public:
 	}
 
 private:
+	int32_t m_level;
 	StringOutputStreamBuffer m_buffer;
 	const Ref< ILogTarget >& m_globalTarget;
 	Ref< ILogTarget > m_localTarget;
@@ -137,8 +133,9 @@ private:
 class LogStreamGlobalBuffer : public IOutputStreamBuffer
 {
 public:
-	LogStreamGlobalBuffer(ILogTarget* globalTarget)
-	:	m_globalTarget(globalTarget)
+	LogStreamGlobalBuffer(int32_t level, ILogTarget* globalTarget)
+	:	m_level(level)
+	,	m_globalTarget(globalTarget)
 	{
 	}
 	
@@ -157,7 +154,7 @@ public:
 		LogStreamLocalBuffer* os;
 		if ((os = static_cast< LogStreamLocalBuffer* >(m_buffers.get())) == 0)
 		{
-			os = new LogStreamLocalBuffer(m_globalTarget);
+			os = new LogStreamLocalBuffer(m_level, m_globalTarget);
 			T_SAFE_ADDREF(os);
 			m_buffers.set(os);
 		}
@@ -200,14 +197,15 @@ public:
 	}
 
 private:
+	int32_t m_level;
 	mutable ThreadLocal m_buffers;
 	Ref< ILogTarget > m_globalTarget;
 };
 
 	}
 
-LogStream::LogStream(ILogTarget* globalTarget)
-:	OutputStream(new LogStreamGlobalBuffer(globalTarget), LeUnix)
+LogStream::LogStream(int32_t level, ILogTarget* globalTarget)
+:	OutputStream(new LogStreamGlobalBuffer(level, globalTarget), LeUnix)
 {
 }
 
@@ -249,15 +247,15 @@ void LogStream::setLocalTarget(ILogTarget* target)
 	namespace log
 	{
 
-static LogTargetConsole infoTarget(0);
-static LogTargetConsole warningTarget(1);
-static LogTargetConsole errorTarget(2);
+static LogTargetConsole infoTarget;
+static LogTargetConsole warningTarget;
+static LogTargetConsole errorTarget;
 static LogTargetDebug debugTarget;
 
-LogStream info(&infoTarget);
-LogStream warning(&warningTarget);
-LogStream error(&errorTarget);
-LogStream debug(&debugTarget);
+LogStream info(0, &infoTarget);
+LogStream warning(1, &warningTarget);
+LogStream error(2, &errorTarget);
+LogStream debug(3, &debugTarget);
 
 	}
 }

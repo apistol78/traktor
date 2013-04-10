@@ -11,6 +11,7 @@ namespace traktor
 {
 
 class Guid;
+class ILogTarget;
 class ISerializable;
 class Object;
 class PropertyGroup;
@@ -71,6 +72,9 @@ public:
 	virtual void revertWorkspaceSettings() = 0;
 
 	/*! \} */
+
+	/*! \brief Create log targets. */
+	virtual Ref< ILogTarget > createLogTarget(const std::wstring& title) = 0;
 
 	/*! \brief Get source asset database. */
 	virtual Ref< db::Database > getSourceDatabase() const = 0;

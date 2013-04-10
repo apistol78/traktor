@@ -102,6 +102,7 @@ bool PipelineAgent::build(const PipelineDependency* dependency, Functor* functor
 {
 	AgentBuild agentBuild(
 		dependency->pipelineType->getName(),
+		dependency->sourceInstanceGuid,
 		dependency->sourceAsset,
 		dependency->sourceAssetHash,
 		dependency->outputPath,

@@ -1,5 +1,8 @@
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
 #include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -37,7 +40,7 @@ Vector4 normalAt(const Heightfield* heightfield, int32_t u, int32_t v)
 
 	float h[sizeof_array(directions)];
 	for (uint32_t i = 0; i < sizeof_array(directions); ++i)
-		h[i] = heightfield->getGridHeightNearest(u + directions[i][0], v + directions[i][1]);
+		h[i] = heightfield->getGridHeightBilinear(u + directions[i][0], v + directions[i][1]);
 
 	const Vector4& worldExtent = heightfield->getWorldExtent();
 	float sx = worldExtent.x() / heightfield->getSize();
@@ -102,6 +105,7 @@ bool HeightfieldTexturePipeline::buildDependencies(
 
 bool HeightfieldTexturePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
@@ -112,37 +116,42 @@ bool HeightfieldTexturePipeline::buildOutput(
 {
 	const HeightfieldTextureAsset* asset = checked_type_cast< const HeightfieldTextureAsset* >(sourceAsset);
 
-	// Get heightfield asset.
-	Ref< const HeightfieldAsset > heightfieldAsset = pipelineBuilder->getObjectReadOnly< HeightfieldAsset >(asset->m_heightfield);
-	if (!heightfieldAsset)
+	// Get heightfield asset and instance.
+	Ref< const db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(asset->m_heightfield);
+	if (!heightfieldAssetInstance)
 	{
-		log::error << L"Heightfield texture pipeline failed; unable to read heightfield asset" << Endl;
+		log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset instance" << Endl;
 		return false;
 	}
 
-	// Load heightfield from source file.
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), heightfieldAsset->getFileName().getOriginal());
-	if (!file)
+	Ref< const HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const HeightfieldAsset >();
+	if (!heightfieldAsset)
 	{
-		log::error << L"Heightfield texture pipeline failed; unable to open source (" << heightfieldAsset->getFileName().getOriginal() << L")" << Endl;
+		log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset" << Endl;
+		return false;
+	}
+
+	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
+	if (!sourceData)
+	{
+		log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
 		return false;
 	}
 
 	Ref< Heightfield > heightfield = HeightfieldFormat().read(
-		file,
-		heightfieldAsset->getFileName().getExtension(),
-		heightfieldAsset->getWorldExtent(),
-		heightfieldAsset->getInvertX(),
-		heightfieldAsset->getInvertZ(),
-		heightfieldAsset->getDetailSkip()
+		sourceData,
+		heightfieldAsset->getWorldExtent()
 	);
 	if (!heightfield)
 	{
-		log::error << L"Heightfield texture pipeline failed; unable to read heightfield source \"" << heightfieldAsset->getFileName().getOriginal() << L"\"" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
 		return 0;
 	}
 
-	uint32_t size = heightfield->getSize();
+	sourceData->close();
+	sourceData = 0;
+
+	int32_t size = heightfield->getSize();
 
 	if (asset->m_output == HeightfieldTextureAsset::OtHeights)
 	{

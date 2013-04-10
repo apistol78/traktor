@@ -20,9 +20,35 @@ uint32_t hash(const T& item)
 
 		}
 
-ResourceCache::ResourceCache(ID3D11Device* d3dDevice)
+ResourceCache::ResourceCache(ID3D11Device* d3dDevice, float mipBias, int32_t maxAnisotropy)
 :	m_d3dDevice(d3dDevice)
+,	m_mipBias(mipBias)
+,	m_maxAnisotropy(maxAnisotropy)
 {
+}
+
+void ResourceCache::reset(float mipBias, int32_t maxAnisotropy)
+{
+	m_mipBias = mipBias;
+	m_maxAnisotropy = maxAnisotropy;
+
+	for (SmallMap< uint32_t, ComRef< ID3D11SamplerState > >::iterator i = m_d3dSamplerStates.begin(); i != m_d3dSamplerStates.end(); ++i)
+	{
+		D3D11_SAMPLER_DESC dsd;
+
+		i->second->GetDesc(&dsd);
+
+		if (m_maxAnisotropy <= 1 && dsd.Filter == D3D11_FILTER_ANISOTROPIC)
+			dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+		dsd.MipLODBias += m_mipBias;
+		dsd.MaxAnisotropy = m_maxAnisotropy;
+
+		m_d3dDevice->CreateSamplerState(
+			&dsd,
+			&i->second.getAssign()
+		);
+	}
 }
 
 ID3D11RasterizerState* ResourceCache::getRasterizerState(const D3D11_RASTERIZER_DESC& rd)
@@ -97,9 +123,16 @@ ID3D11SamplerState* ResourceCache::getSamplerState(const D3D11_SAMPLER_DESC& dsd
 		return i->second;
 	
 	ComRef< ID3D11SamplerState > ss;
+	D3D11_SAMPLER_DESC dsd2 = dsd;
+
+	if (m_maxAnisotropy <= 1 && dsd2.Filter == D3D11_FILTER_ANISOTROPIC)
+		dsd2.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
+
+	dsd2.MipLODBias += m_mipBias;
+	dsd2.MaxAnisotropy = m_maxAnisotropy;
 
 	HRESULT hr = m_d3dDevice->CreateSamplerState(
-		&dsd,
+		&dsd2,
 		&ss.getAssign()
 	);
 	if (FAILED(hr))

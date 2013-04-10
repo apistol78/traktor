@@ -71,7 +71,13 @@ void RotateModifier::selectionChanged()
 	m_axisEnable = 0;
 }
 
-bool RotateModifier::cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown)
+bool RotateModifier::cursorMoved(
+	const TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
+	bool mouseDown
+)
 {
 	if (m_entityAdapters.empty())
 		return false;
@@ -202,11 +208,19 @@ bool RotateModifier::handleCommand(const ui::Command& command)
 	return true;
 }
 
-void RotateModifier::begin(const TransformChain& transformChain)
+bool RotateModifier::begin(const TransformChain& transformChain)
 {
+	return true;
 }
 
-void RotateModifier::apply(const TransformChain& transformChain, const Vector4& screenDelta, const Vector4& viewDelta)
+void RotateModifier::apply(
+	const TransformChain& transformChain,
+	const Vector2& cursorPosition,
+	const Vector4& worldRayOrigin,
+	const Vector4& worldRayDirection,
+	const Vector4& screenDelta,
+	const Vector4& viewDelta
+)
 {
 	const float c_constantDeltaScale = 0.02f;
 

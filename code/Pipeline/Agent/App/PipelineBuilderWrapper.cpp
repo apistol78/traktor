@@ -126,7 +126,16 @@ bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT (pipeline);
 
-	if (!pipeline->buildOutput(this, sourceAsset, 0, outputPath, outputGuid, buildParams, PbrSourceModified))
+	if (!pipeline->buildOutput(
+		this,
+		0,
+		sourceAsset,
+		0,
+		outputPath,
+		outputGuid,
+		buildParams,
+		PbrSynthesized
+	))
 		return false;
 
 	return true;

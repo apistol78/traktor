@@ -1,8 +1,10 @@
 #include <limits>
+#include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
+#include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -140,9 +142,9 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 							heightfield->getGridHeightNearest(gx1, gz1)
 						};
 
-						for (int lz = 0; lz <= lodSkip; ++lz)
+						for (uint32_t lz = 0; lz <= lodSkip; ++lz)
 						{
-							for (int lx = 0; lx <= lodSkip; ++lx)
+							for (uint32_t lx = 0; lx <= lodSkip; ++lx)
 							{
 								float fx = float(lx) / lodSkip;
 								float fz = float(lz) / lodSkip;
@@ -239,6 +241,7 @@ bool TerrainPipeline::buildDependencies(
 
 bool TerrainPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
@@ -249,36 +252,40 @@ bool TerrainPipeline::buildOutput(
 {
 	const TerrainAsset* terrainAsset = checked_type_cast< const TerrainAsset*, false >(sourceAsset);
 
-	// Get heightfield asset.
-	Ref< const hf::HeightfieldAsset > heightfieldAsset = pipelineBuilder->getObjectReadOnly< hf::HeightfieldAsset >(terrainAsset->getHeightfield());
-	if (!heightfieldAsset)
+	// Get heightfield asset and instance.
+	Ref< const db::Instance > heightfieldAssetInstance = pipelineBuilder->getSourceDatabase()->getInstance(terrainAsset->getHeightfield());
+	if (!heightfieldAssetInstance)
 	{
-		log::error << L"Terrain pipeline failed; unable to get heightfield asset" << Endl;
+		log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset instance" << Endl;
 		return false;
-
 	}
 
-	// Load heightfield from source file.
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), heightfieldAsset->getFileName().getOriginal());
-	if (!file)
+	Ref< const hf::HeightfieldAsset > heightfieldAsset = heightfieldAssetInstance->getObject< const hf::HeightfieldAsset >();
+	if (!heightfieldAsset)
 	{
-		log::error << L"Terrain pipeline failed; unable to open source (" << heightfieldAsset->getFileName().getOriginal() << L")" << Endl;
+		log::error << L"Heightfield texture pipeline failed; unable to get heightfield asset" << Endl;
+		return false;
+	}
+
+	Ref< IStream > sourceData = heightfieldAssetInstance->readData(L"Data");
+	if (!sourceData)
+	{
+		log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
 		return false;
 	}
 
 	Ref< hf::Heightfield > heightfield = hf::HeightfieldFormat().read(
-		file,
-		heightfieldAsset->getFileName().getExtension(),
-		heightfieldAsset->getWorldExtent(),
-		heightfieldAsset->getInvertX(),
-		heightfieldAsset->getInvertZ(),
-		heightfieldAsset->getDetailSkip()
+		sourceData,
+		heightfieldAsset->getWorldExtent()
 	);
 	if (!heightfield)
 	{
-		log::error << L"Terrain pipeline failed; unable to read heightfield source \"" << heightfieldAsset->getFileName().getOriginal() << L"\"" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
 		return 0;
 	}
+
+	sourceData->close();
+	sourceData = 0;
 
 	// Generate uids.
 	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);

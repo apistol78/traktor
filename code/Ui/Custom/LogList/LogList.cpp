@@ -170,21 +170,25 @@ void LogList::eventPaint(Event* event)
 		Size iconSize(m_icons->getSize().cy, m_icons->getSize().cy);
 		switch (i->logLevel)
 		{
+		case LvDebug:
 		case LvInfo:
 			canvas.setBackground(backgroundColor * c_levelColors[0]);
 			canvas.fillRect(rc);
 			canvas.drawBitmap(rc.getTopLeft(), Point(0, 0), iconSize, m_icons, BmAlpha);
 			break;
+
 		case LvWarning:
 			canvas.setBackground(backgroundColor * c_levelColors[1]);
 			canvas.fillRect(rc);
 			canvas.drawBitmap(rc.getTopLeft(), Point(iconSize.cx, 0), iconSize, m_icons, BmAlpha);
 			break;
+
 		case LvError:
 			canvas.setBackground(backgroundColor * c_levelColors[2]);
 			canvas.fillRect(rc);
 			canvas.drawBitmap(rc.getTopLeft(), Point(2 * iconSize.cx, 0), iconSize, m_icons, BmAlpha);
 			break;
+
 		default:
 			canvas.setBackground(backgroundColor * c_levelColors[0]);
 			canvas.fillRect(rc);

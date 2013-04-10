@@ -1,21 +1,27 @@
-//#include <algorithm>
-//#include <limits>
-//#include <cstdio>
-//#include "Core/Io/Path.h"
-//#include "Core/Log/Log.h"
-//#include "Core/Math/Const.h"
+#include <algorithm>
+#include <limits>
+#include <cstdio>
+
+extern "C"
+{
+	using std::FILE;
+	#include "lwo2.h"
+}
+
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Io/Path.h"
+#include "Core/Io/StreamCopy.h"
+#include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
-//#include "Core/Misc/TString.h"
-//#include "Core/Serialization/ISerializable.h"
-//#include "Core/Settings/PropertyBoolean.h"
-//#include "Core/Thread/Acquire.h"
-//#include "Core/Thread/Semaphore.h"
+#include "Core/Misc/TString.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Core/Settings/PropertyBoolean.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Semaphore.h"
 #include "Model/Model.h"
 #include "Model/Formats/ModelFormatLwo.h"
-#include "Model/Formats/LwLayer.h"
-#include "Model/Formats/LwObject.h"
-#include "Model/Formats/LwSurface.h"
-#include "Model/Formats/LwTags.h"
 
 namespace traktor
 {
@@ -23,177 +29,173 @@ namespace traktor
 	{
 		namespace
 		{
-//
-//#define ID_WGHT	LWID_('W','G','H','T')
-//#define ID_SPOT	LWID_('S','P','O','T')	// Absolute
-//#define ID_MORF	LWID_('M','O','R','F')	// Relative
-//#define ID_RGBA LWID_('R','G','B','A')	// Vertex color map.
-//#define ID_RGB  LWID_('R','G','B',' ')	// Vertex color map (no alpha).
-//
-//Semaphore s_lock;	//< LWO parser isn't thread-safe; it's having global variables for tracking IO bytes.
-//
-//const lwClip* findLwClip(const lwObject* lwo, int clipIndex)
-//{
-//	const lwClip* clip = lwo->clip;
-//	while (clip && clip->index != clipIndex)
-//		clip = clip->next;
-//	return clip;
-//}
-//
-//const lwTexture* getLwTexture(const lwTexture* tex)
-//{
-//	for (; tex; tex = tex->next)
-//	{
-//		if (tex->type == ID_IMAP && tex->param.imap.vmap_name)
-//			break;
-//	}
-//	return tex;
-//}
-//
-//std::wstring fixTextureFileName(const std::wstring& fileName)
-//{
-//	std::wstring textureName = fileName;
-//	size_t pos;
-//
-//	pos = textureName.find_last_of(L'/');
-//	if (pos != std::wstring::npos)
-//		textureName = textureName.substr(pos + 1);
-//
-//	pos = textureName.find(L'.');
-//	if (pos != std::wstring::npos)
-//		textureName = textureName.substr(0, pos);
-//
-//	return textureName;
-//}
-//
-//const lwVMapPt* findLwVMapPt(const lwVMapPt* vmaps, int nvmaps, const std::string& vmapName)
-//{
-//	for (int i = 0; i < nvmaps; ++i)
-//	{
-//		if (std::string(vmaps[i].vmap->name) == vmapName)
-//			return &vmaps[i];
-//	}
-//	return 0;
-//}
 
-bool createMaterials(const LwObject* lwo, Model* outModel)
+#define ID_WGHT	LWID_('W','G','H','T')
+#define ID_SPOT	LWID_('S','P','O','T')	// Absolute
+#define ID_MORF	LWID_('M','O','R','F')	// Relative
+#define ID_RGBA LWID_('R','G','B','A')	// Vertex color map.
+#define ID_RGB  LWID_('R','G','B',' ')	// Vertex color map (no alpha).
+
+Semaphore s_lock;	//< LWO parser isn't thread-safe; it's having global variables for tracking IO bytes.
+
+const lwClip* findLwClip(const lwObject* lwo, int clipIndex)
 {
-	const RefArray< LwSurface >& surfaces = lwo->getSurfaces();
-	for (RefArray< LwSurface >::const_iterator i = surfaces.begin(); i != surfaces.end(); ++i)
+	const lwClip* clip = lwo->clip;
+	while (clip && clip->index != clipIndex)
+		clip = clip->next;
+	return clip;
+}
+
+const lwTexture* getLwTexture(const lwTexture* tex)
+{
+	for (; tex; tex = tex->next)
 	{
-		const LwSurface* surface = *i;
-		T_ASSERT (surface);
+		if (tex->type == ID_IMAP && tex->param.imap.vmap_name)
+			break;
+	}
+	return tex;
+}
 
+std::wstring fixTextureFileName(const std::wstring& fileName)
+{
+	std::wstring textureName = fileName;
+	size_t pos;
+
+	pos = textureName.find_last_of(L'/');
+	if (pos != std::wstring::npos)
+		textureName = textureName.substr(pos + 1);
+
+	pos = textureName.find(L'.');
+	if (pos != std::wstring::npos)
+		textureName = textureName.substr(0, pos);
+
+	return textureName;
+}
+
+const lwVMapPt* findLwVMapPt(const lwVMapPt* vmaps, int nvmaps, const std::string& vmapName)
+{
+	for (int i = 0; i < nvmaps; ++i)
+	{
+		if (std::string(vmaps[i].vmap->name) == vmapName)
+			return &vmaps[i];
+	}
+	return 0;
+}
+
+bool createMaterials(const lwObject* lwo, Model* outModel)
+{
+	for (const lwSurface* surface = lwo->surf; surface; surface = surface->next)
+	{
 		Material material;
-		material.setName(surface->getName());
+		material.setName(mbstows(surface->name));
 
-		//const lwTexture* texDiffuse = getLwTexture(surface->color.tex);
-		//if (texDiffuse)
-		//{
-		//	const lwClip* clip = findLwClip(lwo, texDiffuse->param.imap.cindex);
-		//	if (clip)
-		//	{
-		//		Material::BlendOperator diffuseBlendOperator = Material::BoDecal;
-		//		switch (surface->color.tex->opac_type)
-		//		{
-		//		case 0:
-		//			diffuseBlendOperator = Material::BoDecal;
-		//			break;
-		//		case 3:
-		//			diffuseBlendOperator = Material::BoMultiply;
-		//			break;
-		//		case 5:
-		//			diffuseBlendOperator = Material::BoAlpha;
-		//			break;
-		//		case 7:
-		//			diffuseBlendOperator = Material::BoAdd;
-		//			break;
-		//		default:
-		//			log::warning << L"Unknown opacity type (" << surface->color.tex->opac_type << L") on surface \"" << material.getName() << L"\"" << Endl;
-		//		}
+		const lwTexture* texDiffuse = getLwTexture(surface->color.tex);
+		if (texDiffuse)
+		{
+			const lwClip* clip = findLwClip(lwo, texDiffuse->param.imap.cindex);
+			if (clip)
+			{
+				Material::BlendOperator diffuseBlendOperator = Material::BoDecal;
+				switch (surface->color.tex->opac_type)
+				{
+				case 0:
+					diffuseBlendOperator = Material::BoDecal;
+					break;
+				case 3:
+					diffuseBlendOperator = Material::BoMultiply;
+					break;
+				case 5:
+					diffuseBlendOperator = Material::BoAlpha;
+					break;
+				case 7:
+					diffuseBlendOperator = Material::BoAdd;
+					break;
+				default:
+					log::warning << L"Unknown opacity type (" << surface->color.tex->opac_type << L") on surface \"" << material.getName() << L"\"" << Endl;
+				}
 
-		//		std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-		//		material.setDiffuseMap(textureName);
-		//		material.setBlendOperator(diffuseBlendOperator);
-		//	}
-		//	else
-		//		T_DEBUG(L"No diffuse texture clip for surface \"" << material.getName() << L"\"");
-		//}
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
+				material.setDiffuseMap(textureName);
+				material.setBlendOperator(diffuseBlendOperator);
+			}
+			else
+				T_DEBUG(L"No diffuse texture clip for surface \"" << material.getName() << L"\"");
+		}
 
-		//const lwTexture* texSpecular = getLwTexture(surface->specularity.tex);
-		//if (texSpecular)
-		//{
-		//	const lwClip* clip = findLwClip(lwo, texSpecular->param.imap.cindex);
-		//	if (clip)
-		//	{
-		//		std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-		//		material.setSpecularMap(textureName);
-		//	}
-		//	else
-		//		T_DEBUG(L"No specular texture clip for surface \"" << mbstows(surface->name) << L"\"");
-		//}
+		const lwTexture* texSpecular = getLwTexture(surface->specularity.tex);
+		if (texSpecular)
+		{
+			const lwClip* clip = findLwClip(lwo, texSpecular->param.imap.cindex);
+			if (clip)
+			{
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
+				material.setSpecularMap(textureName);
+			}
+			else
+				T_DEBUG(L"No specular texture clip for surface \"" << mbstows(surface->name) << L"\"");
+		}
 
-		//const lwTexture* texEmissive = getLwTexture(surface->luminosity.tex);
-		//if (texEmissive)
-		//{
-		//	const lwClip* clip = findLwClip(lwo, texEmissive->param.imap.cindex);
-		//	if (clip)
-		//	{
-		//		std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-		//		material.setEmissiveMap(textureName);
-		//	}
-		//	else
-		//		T_DEBUG(L"No emissive texture clip for surface \"" << mbstows(surface->name) << L"\"");
-		//}
+		const lwTexture* texEmissive = getLwTexture(surface->luminosity.tex);
+		if (texEmissive)
+		{
+			const lwClip* clip = findLwClip(lwo, texEmissive->param.imap.cindex);
+			if (clip)
+			{
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
+				material.setEmissiveMap(textureName);
+			}
+			else
+				T_DEBUG(L"No emissive texture clip for surface \"" << mbstows(surface->name) << L"\"");
+		}
 
-		//const lwTexture* texReflective = getLwTexture(surface->reflection.val.tex);
-		//if (texReflective)
-		//{
-		//	const lwClip* clip = findLwClip(lwo, texReflective->param.imap.cindex);
-		//	if (clip)
-		//	{
-		//		std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-		//		material.setReflectiveMap(textureName);
-		//	}
-		//	else
-		//		T_DEBUG(L"No reflective texture clip for surface \"" << mbstows(surface->name) << L"\"");
-		//}
+		const lwTexture* texReflective = getLwTexture(surface->reflection.val.tex);
+		if (texReflective)
+		{
+			const lwClip* clip = findLwClip(lwo, texReflective->param.imap.cindex);
+			if (clip)
+			{
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
+				material.setReflectiveMap(textureName);
+			}
+			else
+				T_DEBUG(L"No reflective texture clip for surface \"" << mbstows(surface->name) << L"\"");
+		}
 
-		//const lwTexture* texBump = getLwTexture(surface->bump.tex);
-		//if (texBump)
-		//{
-		//	const lwClip* clip = findLwClip(lwo, texBump->param.imap.cindex);
-		//	if (clip)
-		//	{
-		//		std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-		//		material.setNormalMap(textureName);
-		//	}
-		//	else
-		//		T_DEBUG(L"No bump texture clip for surface \"" << mbstows(surface->name) << L"\"");
-		//}
+		const lwTexture* texBump = getLwTexture(surface->bump.tex);
+		if (texBump)
+		{
+			const lwClip* clip = findLwClip(lwo, texBump->param.imap.cindex);
+			if (clip)
+			{
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
+				material.setNormalMap(textureName);
+			}
+			else
+				T_DEBUG(L"No bump texture clip for surface \"" << mbstows(surface->name) << L"\"");
+		}
 
 		material.setColor(Color4ub(
-			uint8_t(surface->getColor().val.getRed() * 255.0f),
-			uint8_t(surface->getColor().val.getGreen() * 255.0f),
-			uint8_t(surface->getColor().val.getBlue() * 255.0f),
-			255 //uint8_t((1.0f - surface->transparency.val.val) * 255.0f)
+			uint8_t(surface->color.rgb[0] * 255.0f),
+			uint8_t(surface->color.rgb[1] * 255.0f),
+			uint8_t(surface->color.rgb[2] * 255.0f),
+			uint8_t((1.0f - surface->transparency.val.val) * 255.0f)
 		));
 
-		//if (surface->transparency.val.val >= FUZZY_EPSILON)
-		//	material.setBlendOperator(Material::BoAlpha);
+		if (surface->transparency.val.val >= FUZZY_EPSILON)
+			material.setBlendOperator(Material::BoAlpha);
 
-		//material.setDiffuseTerm(surface->diffuse.val);
-		//material.setSpecularTerm(surface->specularity.val);
-		//material.setSpecularRoughness(surface->glossiness.val);
-		//material.setEmissive(surface->luminosity.val);
-		//material.setReflective(surface->reflection.val.val);
-		//material.setRimLightIntensity(surface->glow.val);
+		material.setDiffuseTerm(surface->diffuse.val);
+		material.setSpecularTerm(surface->specularity.val);
+		material.setSpecularRoughness(surface->glossiness.val);
+		material.setEmissive(surface->luminosity.val);
+		material.setReflective(surface->reflection.val.val);
+		material.setRimLightIntensity(surface->glow.val);
 
-		//if ((surface->sideflags & 3) == 3)
-		//	material.setDoubleSided(true);
+		if ((surface->sideflags & 3) == 3)
+			material.setDoubleSided(true);
 
-		//if (surface->comment)
-		//	material.setProperty< PropertyBoolean >(mbstows(surface->comment), true);
+		if (surface->comment)
+			material.setProperty< PropertyBoolean >(mbstows(surface->comment), true);
 
 		outModel->addMaterial(material);
 	}
@@ -201,34 +203,40 @@ bool createMaterials(const LwObject* lwo, Model* outModel)
 	return true;
 }
 
-bool createMesh(const LwObject* lwo, Model* outModel, uint32_t importFlags)
+bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 {
-	const RefArray< LwLayer >& layers = lwo->getLayers();
+	uint32_t pointCount;
+	uint32_t polygonCount;
+	uint32_t positionBase;
 
 	// Count number of primitives.
-	uint32_t pointCount = 0;
-	uint32_t polygonCount = 0;
-
-	for (RefArray< LwLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+	pointCount = polygonCount = 0;
+	for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
 	{
-		pointCount += (*i)->getPoints().size();
-		polygonCount += (*i)->getPolygons().size();
+		pointCount += layer->point.count;
+		polygonCount += layer->polygon.count;
 	}
 
 	// Convert positions.
 	if (importFlags & ModelFormat::IfMeshPositions)
 	{
 		outModel->reservePositions(pointCount);
-
-		for (RefArray< LwLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
 		{
-			const AlignedVector< Vector4 >& points = (*i)->getPoints();
-			for (AlignedVector< Vector4 >::const_iterator j = points.begin(); j != points.end(); ++j)
-				outModel->addPosition(j->xyz1());
+			for (int i = 0; i < layer->point.count; ++i)
+			{
+				lwPoint* pnt = layer->point.pt + i;
+				Vector4 position(
+					pnt->pos[0],
+					pnt->pos[1],
+					pnt->pos[2],
+					1.0f
+				);
+				outModel->addPosition(position);
+			}
 		}
 	}
 
-	/*
 	// Convert blend targets.
 	if (importFlags & ModelFormat::IfMeshBlendTargets)
 	{
@@ -265,62 +273,54 @@ bool createMesh(const LwObject* lwo, Model* outModel, uint32_t importFlags)
 			positionBase += layer->point.count;
 		}
 	}
-	*/
 
 	// Convert polygons.
 	if (importFlags & (ModelFormat::IfMeshPolygons | ModelFormat::IfMeshVertices))
 	{
+		positionBase = 0;
+
 		if (importFlags & ModelFormat::IfMeshPolygons)
 			outModel->reservePolygons(polygonCount);
 
-		uint32_t pointBase = 0;
-
-		for (RefArray< LwLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+		for (lwLayer* layer = lwo->layer; layer; layer = layer->next)
 		{
-			const AlignedVector< LwPolygon >& polygons = (*i)->getPolygons();
-			for (AlignedVector< LwPolygon >::const_iterator j = polygons.begin(); j != polygons.end(); ++j)
+			for (int i = 0; i < layer->polygon.count; ++i)
 			{
-				const LwPolygon& pol = *j;
+				const lwPolygon* pol = layer->polygon.pol + i;
 
 				// Ignore all polygons which aren't plain faces.
-				if (pol.type != LwTags::FACE)
+				if (pol->type != ID_FACE)
 					continue;
 
-				/*
 				const lwSurface* surf = pol->surf;
 				const lwTexture* texDiffuse = getLwTexture(surf->color.tex);
 
 				int materialIndex = 0;
 				for (lwSurface* s = lwo->surf; s && s != surf; s = s->next)
 					materialIndex++;
-				*/
 
 				Polygon polygon;
-				polygon.setMaterial(pol.surfaceIndex);
-				polygon.setSmoothGroup(pol.smoothGroup);
-				/*
+				polygon.setMaterial(materialIndex);
 				polygon.setNormal(outModel->addUniqueNormal(Vector4(
 					pol->norm[0],
 					pol->norm[1],
 					pol->norm[2]
 				)));
-				*/
 
 				if (importFlags & ModelFormat::IfMeshVertices)
 				{
-					for (int32_t j = int32_t(pol.indices.size()) - 1; j >= 0; --j)
+					for (int32_t j = pol->nverts - 1; j >= 0; --j)
 					{
+						lwPoint* pnt = layer->point.pt + pol->v[j].index;
+
 						Vertex vertex;
-						vertex.setPosition(pointBase + pol.indices[j]);
-						/*
+						vertex.setPosition(positionBase + pol->v[j].index);
 						vertex.setNormal(outModel->addUniqueNormal(Vector4(
 							pol->v[j].norm[0],
 							pol->v[j].norm[1],
 							pol->v[j].norm[2]
 						)));
-						*/
 
-						/*
 						// Vertex colors.
 						for (int32_t k = 0; k < pnt->nvmaps; ++k)
 						{
@@ -392,7 +392,6 @@ bool createMesh(const LwObject* lwo, Model* outModel, uint32_t importFlags)
 								vertex.setJointInfluence(jointIndex, jointInfluence);
 							}
 						}
-						*/
 
 						int32_t vertexId = outModel->addUniqueVertex(vertex);
 						if (importFlags & ModelFormat::IfMeshPolygons)
@@ -404,7 +403,7 @@ bool createMesh(const LwObject* lwo, Model* outModel, uint32_t importFlags)
 					outModel->addPolygon(polygon);
 			}
 
-			pointBase += (*i)->getPoints().size();
+			positionBase += layer->point.count;
 		}
 	}
 
@@ -431,9 +430,25 @@ bool ModelFormatLwo::supportFormat(const std::wstring& extension) const
 
 Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 {
-	Ref< LwObject > lwo = new LwObject();
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 
-	if (!lwo->read(stream))
+	char tmp[L_tmpnam];
+	tmpnam(tmp);
+
+	Ref< IStream > tmpFile = FileSystem::getInstance().open(mbstows(tmp), File::FmWrite);
+	if (!tmpFile)
+		return 0;
+
+	if (!StreamCopy(tmpFile, stream).execute())
+		return 0;
+
+	tmpFile->close();
+	tmpFile = 0;
+
+	lwObject* lwo = lwGetObject(tmp, 0, 0);
+	FileSystem::getInstance().remove(mbstows(tmp));
+
+	if (!lwo)
 		return 0;
 
 	Ref< Model > md = new Model();
@@ -441,14 +456,22 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 	if (importFlags & IfMaterials)
 	{
 		if (!createMaterials(lwo, md))
+		{
+			lwFreeObject(lwo);
 			return 0;
+		}
 	}
 
 	if (importFlags & IfMesh)
 	{
 		if (!createMesh(lwo, md, importFlags))
+		{
+			lwFreeObject(lwo);
 			return 0;
+		}
 	}
+
+	lwFreeObject(lwo);
 
 	return md;
 }

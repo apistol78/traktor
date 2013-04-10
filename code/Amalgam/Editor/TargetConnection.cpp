@@ -1,8 +1,10 @@
+#include "Core/Log/Log.h"
+#include "Core/Thread/Acquire.h"
 #include "Amalgam/Editor/TargetConnection.h"
 #include "Amalgam/Editor/TargetScriptDebugger.h"
 #include "Amalgam/Editor/TargetScriptDebuggerSessions.h"
 #include "Amalgam/Impl/ScriptDebuggerHalted.h"
-#include "Core/Thread/Acquire.h"
+#include "Amalgam/Impl/TargetLog.h"
 #include "Net/BidirectionalObjectTransport.h"
 
 namespace traktor
@@ -12,8 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.TargetConnection", TargetConnection, Object)
 
-TargetConnection::TargetConnection(net::BidirectionalObjectTransport* transport, TargetScriptDebuggerSessions* targetDebuggerSessions)
+TargetConnection::TargetConnection(net::BidirectionalObjectTransport* transport, ILogTarget* targetLog, TargetScriptDebuggerSessions* targetDebuggerSessions)
 :	m_transport(transport)
+,	m_targetLog(targetLog)
 ,	m_targetDebuggerSessions(targetDebuggerSessions)
 {
 	m_targetDebugger = new TargetScriptDebugger(m_transport);
@@ -37,6 +40,8 @@ void TargetConnection::destroy()
 		m_targetDebuggerSessions = 0;
 		m_targetDebugger = 0;
 	}
+
+	m_targetLog = 0;
 
 	if (m_transport)
 	{
@@ -70,6 +75,12 @@ bool TargetConnection::update()
 			m_performance = *performance;
 			m_transport->flush< TargetPerformance >();
 		}
+	}
+
+	{
+		Ref< TargetLog > tlog;
+		if (m_transport->recv< TargetLog >(0, tlog) == net::BidirectionalObjectTransport::RtSuccess)
+			m_targetLog->log(tlog->getLevel(), tlog->getText());
 	}
 
 	{

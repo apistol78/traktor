@@ -27,6 +27,8 @@ public:
 
 	virtual bool queryRay(const Vector4& worldRayOrigin, const Vector4& worldRayDirection, Scalar& outDistance) const;
 
+	virtual void entitySelected(bool selected);
+
 	virtual bool handleCommand(const ui::Command& command);
 
 	virtual void drawGuide(render::PrimitiveRenderer* primitiveRenderer) const;

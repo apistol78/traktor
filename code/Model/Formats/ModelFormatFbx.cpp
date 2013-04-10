@@ -18,6 +18,10 @@ namespace traktor
 		namespace
 		{
 
+FbxManager* s_fbxManager = 0;
+FbxIOSettings* s_ioSettings = 0;
+FbxScene* s_scene = 0;
+
 class FbxIStreamWrap : public FbxStream
 {
 public:
@@ -649,55 +653,58 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(g_fbxLock);
 
-	FbxManager* sdkManager = FbxManager::Create();
-	if (!sdkManager)
+	if (!s_fbxManager)
 	{
-		log::error << L"Unable to import FBX model; failed to create FBX SDK instance" << Endl;
-		return 0;
+		s_fbxManager = FbxManager::Create();
+		if (!s_fbxManager)
+		{
+			log::error << L"Unable to import FBX model; failed to create FBX SDK instance" << Endl;
+			return 0;
+		}
+
+		s_ioSettings = FbxIOSettings::Create(s_fbxManager, IOSROOT);
+		s_fbxManager->SetIOSettings(s_ioSettings);
+
+		s_scene = FbxScene::Create(s_fbxManager, "");
 	}
 
-	FbxIOSettings* ios = FbxIOSettings::Create(sdkManager, IOSROOT);
-	sdkManager->SetIOSettings(ios);
-
-	FbxScene* scene = FbxScene::Create(sdkManager, "");
-	if (!scene)
-	{
-		log::error << L"Unable to import FBX model; failed to create FBX scene instance" << Endl;
-		return 0;
-	}
-
-	FbxImporter* importer = FbxImporter::Create(sdkManager, "");
-	if (!importer)
-	{
-		log::error << L"Unable to import FBX model; failed to create FBX importer instance" << Endl;
-		return 0;
-	}
-
-	FbxIOPluginRegistry* registry = sdkManager->GetIOPluginRegistry();
+	FbxIOPluginRegistry* registry = s_fbxManager->GetIOPluginRegistry();
 	int readerID = registry->FindReaderIDByExtension("fbx");
 
-	AutoPtr< FbxStream > fbxStream(new FbxIStreamWrap());
-	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, sdkManager->GetIOSettings());
-	if (!status)
+	FbxImporter* importer = FbxImporter::Create(s_fbxManager, "");
+	if (!importer)
 	{
-		log::error << L"Unable to import FBX model; failed to initialize FBX importer" << Endl;
+		log::error << L"Unable to import FBX model; failed to create FBX s_importer instance" << Endl;
 		return 0;
 	}
 
-	status = importer->Import(scene);
+	AutoPtr< FbxStream > fbxStream(new FbxIStreamWrap());
+	bool status = importer->Initialize(fbxStream.ptr(), stream, readerID, s_fbxManager->GetIOSettings());
 	if (!status)
 	{
-		log::error << L"Unable to import FBX model; FBX importer failed" << Endl;
+		log::error << L"Unable to import FBX model; failed to initialize FBX s_importer" << Endl;
 		return 0;
 	}
+
+	s_scene->Clear();
+
+	status = importer->Import(s_scene);
+	if (!status)
+	{
+		log::error << L"Unable to import FBX model; FBX s_importer failed" << Endl;
+		return 0;
+	}
+
+	importer->Destroy();
+	importer = 0;
 
 	// Calculate axis transformation.
-	FbxAxisSystem axisSystem = scene->GetGlobalSettings().GetAxisSystem();
+	FbxAxisSystem axisSystem = s_scene->GetGlobalSettings().GetAxisSystem();
 	bool lightwaveExported = false;
 
 	// \hack If exported from Lightwave then we need to correct buggy exporter.
 #if defined(T_USE_FBX_LIGHTWAVE_HACK)
-	FbxDocumentInfo* documentInfo = scene->GetDocumentInfo();
+	FbxDocumentInfo* documentInfo = s_scene->GetDocumentInfo();
 	if (documentInfo && documentInfo->mAuthor.Find("Lightwave") >= 0)
 		lightwaveExported = true;
 #endif
@@ -781,7 +788,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 
 	Ref< Model > model = new Model();
 
-	FbxNode* node = scene->GetRootNode();
+	FbxNode* node = s_scene->GetRootNode();
 	if (node)
 	{
 		int32_t childCount = node->GetChildCount();
@@ -794,7 +801,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 			FbxNodeAttribute::EType attributeType = childNode->GetNodeAttribute()->GetAttributeType();
 			if (attributeType == FbxNodeAttribute::eMesh)
 			{
-				if (!convertMesh(*model, scene, childNode, axisTransform, importFlags))
+				if (!convertMesh(*model, s_scene, childNode, axisTransform, importFlags))
 				{
 					log::error << L"Unable to import FBX model; failed to convert mesh" << Endl;
 					return 0;
@@ -828,9 +835,6 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 			}
 		}
 	}
-
-	importer->Destroy();
-	sdkManager->Destroy();
 
 	return model;
 }

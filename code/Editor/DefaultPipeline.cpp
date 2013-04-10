@@ -61,6 +61,7 @@ bool DefaultPipeline::buildDependencies(
 
 bool DefaultPipeline::buildOutput(
 	IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,

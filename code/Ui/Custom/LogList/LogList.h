@@ -36,7 +36,8 @@ public:
 	{
 		LvInfo		= 1 << 0,
 		LvWarning	= 1 << 1,
-		LvError		= 1 << 2
+		LvError		= 1 << 2,
+		LvDebug		= 1 << 3
 	};
 
 	LogList();

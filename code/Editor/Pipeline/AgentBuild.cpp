@@ -18,6 +18,7 @@ AgentBuild::AgentBuild()
 
 AgentBuild::AgentBuild(
 	const std::wstring& pipelineTypeName,
+	const Guid& sourceInstanceGuid,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
@@ -25,6 +26,7 @@ AgentBuild::AgentBuild(
 	uint32_t reason
 )
 :	m_pipelineTypeName(pipelineTypeName)
+,	m_sourceInstanceGuid(sourceInstanceGuid)
 ,	m_sourceAsset(sourceAsset)
 ,	m_sourceAssetHash(sourceAssetHash)
 ,	m_outputPath(outputPath)
@@ -36,6 +38,11 @@ AgentBuild::AgentBuild(
 const std::wstring& AgentBuild::getPipelineTypeName() const
 {
 	return m_pipelineTypeName;
+}
+
+const Guid& AgentBuild::getSourceInstanceGuid() const
+{
+	return m_sourceInstanceGuid;
 }
 
 const ISerializable* AgentBuild::getSourceAsset() const
@@ -66,6 +73,7 @@ uint32_t AgentBuild::getReason() const
 bool AgentBuild::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"pipelineTypeName", m_pipelineTypeName);
+	s >> Member< Guid >(L"sourceInstanceGuid", m_sourceInstanceGuid);
 	s >> MemberRef< const ISerializable >(L"sourceAsset", m_sourceAsset);
 	s >> Member< uint32_t >(L"sourceAssetHash", m_sourceAssetHash);
 	s >> Member< std::wstring >(L"outputPath", m_outputPath);

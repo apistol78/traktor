@@ -21,7 +21,12 @@ std::wstring SoundBatchWizardTool::getDescription() const
 	return i18n::Text(L"SOUND_BATCH_WIZARDTOOL_DESCRIPTION");
 }
 
-bool SoundBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group)
+uint32_t SoundBatchWizardTool::getFlags() const
+{
+	return WfGroup;
+}
+
+bool SoundBatchWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
 	SoundBatchDialog soundDialog(editor);
 

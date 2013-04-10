@@ -48,9 +48,7 @@ ProgramDx11::~ProgramDx11()
 bool ProgramDx11::create(
 	ID3D11Device* d3dDevice,
 	ResourceCache& resourceCache,
-	const ProgramResourceDx11* resource,
-	float mipBias,
-	int32_t maxAnisotropy
+	const ProgramResourceDx11* resource
 )
 {
 	// Get shaders; reuse existing if already created.
@@ -74,8 +72,6 @@ bool ProgramDx11::create(
 	if (!createState(
 		d3dDevice,
 		resourceCache,
-		mipBias,
-		1,
 		0,
 		resource->m_vertexShader,
 		resource->m_d3dVertexSamplers,
@@ -87,8 +83,6 @@ bool ProgramDx11::create(
 	if (!createState(
 		d3dDevice,
 		resourceCache,
-		mipBias,
-		maxAnisotropy,
 		1,
 		resource->m_pixelShader,
 		resource->m_d3dPixelSamplers,
@@ -455,8 +449,6 @@ void ProgramDx11::unbind(
 bool ProgramDx11::createState(
 	ID3D11Device* d3dDevice,
 	ResourceCache& resourceCache,
-	float mipBias,
-	int32_t maxAnisotropy,
 	int32_t shaderType,
 	ID3DBlob* d3dShaderBlob,
 	const std::map< std::wstring, D3D11_SAMPLER_DESC >& d3dSamplers,
@@ -593,13 +585,7 @@ bool ProgramDx11::createState(
 			if (it == d3dSamplers.end())
 				return false;
 
-			D3D11_SAMPLER_DESC dsd = it->second;
-			dsd.MipLODBias += mipBias;
-
-			if (maxAnisotropy <= 0 && dsd.Filter == D3D11_FILTER_ANISOTROPIC)
-				dsd.Filter = D3D11_FILTER_MIN_MAG_MIP_LINEAR;
-
-			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(dsd);
+			ID3D11SamplerState* d3dSamplerState = resourceCache.getSamplerState(it->second);
 			if (!d3dSamplerState)
 				return false;
 

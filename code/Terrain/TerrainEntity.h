@@ -108,6 +108,7 @@ public:
 	virtual void update(const world::UpdateParams& update);
 
 private:
+	friend class TerrainEditModifier;
 	friend class TerrainEntityEditor;
 
 	Ref< render::IRenderSystem > m_renderSystem;

@@ -21,7 +21,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 2, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 3, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -55,6 +55,7 @@ bool MeshPipeline::buildDependencies(
 
 bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
@@ -160,6 +161,9 @@ bool MeshPipeline::buildOutput(
 			Voffset += C * Scalar(V);
 			Vtotal += V;
 		}
+
+		for (AlignedVector< Vector4 >::iterator i = positions.begin(); i != positions.end(); ++i)
+			*i -= Voffset / Scalar(Vtotal);
 
 		centerOfGravity += Voffset / Scalar(Vtotal);
 		log::info << L"Hull volume " << Vtotal << L" unit^3" << Endl;

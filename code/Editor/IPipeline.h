@@ -73,6 +73,7 @@ public:
 	/*! \brief Build output asset.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
+	 * \param sourceInstance Source asset database instance; might be null if asset doesn't originate from database.
 	 * \param sourceAsset Source asset object.
 	 * \param sourceAssetHash Source asset hash key.
 	 * \param outputPath Output path in database.
@@ -83,6 +84,7 @@ public:
 	 */
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
+		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const std::wstring& outputPath,

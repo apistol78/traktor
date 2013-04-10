@@ -6,12 +6,20 @@
 #include "Core/Math/Matrix44.h"
 #include "Core/Math/Vector2.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SCENE_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace scene
 	{
 
-class TransformChain : public Object
+class T_DLLCLASS TransformChain : public Object
 {
 	T_RTTI_CLASS;
 

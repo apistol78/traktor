@@ -5,6 +5,14 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_SCENE_EDITOR_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace render
@@ -27,7 +35,7 @@ class Command;
 class TransformChain;
 
 /*! \brief Selection modifier abstraction. */
-class IModifier : public Object
+class T_DLLCLASS IModifier : public Object
 {
 	T_RTTI_CLASS;
 
@@ -37,7 +45,13 @@ public:
 
 	virtual void selectionChanged() = 0;
 
-	virtual bool cursorMoved(const TransformChain& transformChain, const Vector2& cursorPosition, bool mouseDown) = 0;
+	virtual bool cursorMoved(
+		const TransformChain& transformChain,
+		const Vector2& cursorPosition,
+		const Vector4& worldRayOrigin,
+		const Vector4& worldRayDirection,
+		bool mouseDown
+	) = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
 
@@ -46,9 +60,16 @@ public:
 	/*! \name Modifications */
 	//\{
 
-	virtual void begin(const TransformChain& transformChain) = 0;
+	virtual bool begin(const TransformChain& transformChain) = 0;
 
-	virtual void apply(const TransformChain& transformChain, const Vector4& screenDelta, const Vector4& viewDelta) = 0;
+	virtual void apply(
+		const TransformChain& transformChain,
+		const Vector2& cursorPosition,
+		const Vector4& worldRayOrigin,
+		const Vector4& worldRayDirection,
+		const Vector4& screenDelta,
+		const Vector4& viewDelta
+	) = 0;
 
 	virtual void end(const TransformChain& transformChain) = 0;
 

@@ -11,6 +11,7 @@ namespace traktor
 		{
 
 const Scalar c_snapDistance(0.02f);
+const Scalar c_snapDistanceSqr(c_snapDistance * c_snapDistance);
 
 		}
 
@@ -85,11 +86,14 @@ bool MergeModel::apply(Model& model) const
 			v.setJointInfluence(j, influence);
 		}
 
-		vertexMap[i] = model.addUniqueVertex(v);
+		vertexMap[i] = model.addVertex(v);
 	}
 
-	std::vector< Polygon > mergedPolygons = model.getPolygons();
-	std::vector< Polygon > outputPolygons; outputPolygons.reserve(sourcePolygons.size());
+	std::vector< Polygon >& mergedPolygons = model.getPolygons();
+	mergedPolygons.reserve(mergedPolygons.size() + sourcePolygons.size());
+
+	std::vector< Polygon > outputPolygons;
+	outputPolygons.reserve(sourcePolygons.size());
 
 	for (uint32_t i = 0; i < sourcePolygons.size(); ++i)
 	{
@@ -154,7 +158,7 @@ bool MergeModel::apply(Model& model) const
 			const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
 			Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-			if (distance > c_snapDistance * c_snapDistance)
+			if (distance > c_snapDistanceSqr)
 				continue;
 
 			uint32_t vertexCount = outputPolygon.getVertexCount();
@@ -170,7 +174,7 @@ bool MergeModel::apply(Model& model) const
 				const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
 				Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-				if (distance > c_snapDistance * c_snapDistance)
+				if (distance > c_snapDistanceSqr)
 				{
 					duplicate = false;
 					break;
@@ -191,7 +195,7 @@ bool MergeModel::apply(Model& model) const
 				const Vector4& mergedPosition = model.getVertexPosition(mergedVertex);
 
 				Scalar distance = (outputPosition - mergedPosition).xyz0().length2();
-				if (distance > c_snapDistance * c_snapDistance)
+				if (distance > c_snapDistanceSqr)
 				{
 					duplicate = false;
 					break;
@@ -210,8 +214,6 @@ bool MergeModel::apply(Model& model) const
 	}
 
 	mergedPolygons.insert(mergedPolygons.end(), outputPolygons.begin(), outputPolygons.end());
-	model.setPolygons(mergedPolygons);
-
 	return true;
 }
 

@@ -75,9 +75,19 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 		IModifier* modifier = context->getModifier();
 		if (modifier)
 		{
+			Vector4 worldRayOrigin, worldRayDirection;
+
+			renderControl->calculateRay(
+				m_mousePosition,
+				worldRayOrigin,
+				worldRayDirection
+			);
+
 			modifierHit = modifier->cursorMoved(
 				transformChain,
 				screenPosition,
+				worldRayOrigin,
+				worldRayDirection,
 				true
 			);
 		}
@@ -239,6 +249,13 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 		IModifier* modifier = context->getModifier();
 		T_ASSERT (modifier);
 
+		Vector4 worldRayOrigin, worldRayDirection;
+		renderControl->calculateRay(
+			m_mousePosition,
+			worldRayOrigin,
+			worldRayDirection
+		);
+
 		if (!m_modifyBegun)
 		{
 			// Clone selection set; clones will become selected.
@@ -248,10 +265,19 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 			// Notify modifier about modification begun.
 			if (modifier)
 			{
-				Vector2 screenPosition0(2.0f * float(m_mousePosition0.x) / innerRect.getWidth() - 1.0f, 1.0f - 2.0f * float(m_mousePosition0.y) / innerRect.getHeight());
-				modifier->cursorMoved(transformChain, screenPosition0, true);
-				modifier->cursorMoved(transformChain, screenPosition, false);
-				modifier->begin(transformChain);
+				Vector2 screenPosition0(
+					2.0f * float(m_mousePosition0.x) / innerRect.getWidth() - 1.0f,
+					1.0f - 2.0f * float(m_mousePosition0.y) / innerRect.getHeight()
+				);
+
+				modifier->cursorMoved(transformChain, screenPosition0, worldRayOrigin, worldRayDirection, true);
+				modifier->cursorMoved(transformChain, screenPosition, worldRayOrigin, worldRayDirection, false);
+				
+				if (!modifier->begin(transformChain))
+				{
+					m_modify = MtNothing;
+					return;
+				}
 			}
 
 			// Issue begin modification event.
@@ -262,6 +288,9 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 
 		modifier->apply(
 			transformChain,
+			screenPosition,
+			worldRayOrigin,
+			worldRayDirection,
 			mouseDelta,
 			viewDelta
 		);
@@ -287,10 +316,26 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 	{
 		IModifier* modifier = context->getModifier();
 		if (modifier)
-			modifier->cursorMoved(transformChain, screenPosition, false);
+		{
+			Vector4 worldRayOrigin, worldRayDirection;
+
+			renderControl->calculateRay(
+				m_mousePosition,
+				worldRayOrigin,
+				worldRayDirection
+			);
+
+			modifier->cursorMoved(
+				transformChain,
+				screenPosition,
+				worldRayOrigin,
+				worldRayDirection,
+				false
+			);
+		}
 	}
 
-	renderWidget->update();
+	renderWidget->update(0, true);
 
 	m_mousePosition = mousePosition;
 }

@@ -29,6 +29,7 @@ public:
 
 	AgentBuild(
 		const std::wstring& pipelineTypeName,
+		const Guid& sourceInstanceGuid,
 		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,
 		const std::wstring& outputPath,
@@ -37,6 +38,8 @@ public:
 	);
 
 	const std::wstring& getPipelineTypeName() const;
+
+	const Guid& getSourceInstanceGuid() const;
 
 	const ISerializable* getSourceAsset() const;
 
@@ -52,6 +55,7 @@ public:
 
 private:
 	std::wstring m_pipelineTypeName;
+	Guid m_sourceInstanceGuid;
 	Ref< const ISerializable > m_sourceAsset;
 	uint32_t m_sourceAssetHash;
 	std::wstring m_outputPath;

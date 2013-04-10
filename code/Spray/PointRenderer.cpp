@@ -52,7 +52,7 @@ const uint32_t c_pointCount = 1000;
 #elif defined(_PS3)
 const uint32_t c_pointCount = 3000;
 #else
-const uint32_t c_pointCount = 5000;
+const uint32_t c_pointCount = 8000;
 #endif
 
 const int32_t c_manyPointsThreshold = 100;	//<! Threshold, over this value are considered dense instances.
@@ -65,7 +65,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.PointRenderer", PointRenderer, Object)
 PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance)
 :	m_lod1Distance(lod1Distance)
 ,	m_lod2Distance(lod2Distance)
-,	m_currentBuffer(0)
 ,	m_vertex(0)
 ,	m_vertexOffset(0)
 {
@@ -76,11 +75,8 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, attrib2), 2));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
 
-	for (int i = 0; i < BufferCount; ++i)
-	{
-		m_vertexBuffer[i] = renderSystem->createVertexBuffer(vertexElements, c_pointCount * 4 * sizeof(Vertex), true);
-		T_ASSERT_M (m_vertexBuffer[i], L"Unable to create vertex buffer");
-	}
+	m_vertexBuffer = renderSystem->createVertexBuffer(vertexElements, c_pointCount * 4 * sizeof(Vertex), true);
+	T_ASSERT_M (m_vertexBuffer, L"Unable to create vertex buffer");
 
 	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_pointCount * 3 * 2 * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
@@ -117,13 +113,11 @@ void PointRenderer::destroy()
 	if (m_vertex)
 	{
 		m_vertex = 0;
-		m_vertexBuffer[m_currentBuffer]->unlock();
+		m_vertexBuffer->unlock();
 	}
 
 	safeDestroy(m_indexBuffer);
-
-	for (int i = 0; i < BufferCount; ++i)
-		safeDestroy(m_vertexBuffer[i]);
+	safeDestroy(m_vertexBuffer);
 }
 
 void PointRenderer::render(
@@ -148,7 +142,7 @@ void PointRenderer::render(
 	if (size <= 0)
 		return;
 
-	AlignedVector< Batch >& batches = m_batches[m_currentBuffer];
+	AlignedVector< Batch >& batches = m_batches;
 
 	batches.push_back(Batch());
 	batches.back().shader = shader;
@@ -158,7 +152,7 @@ void PointRenderer::render(
 
 	if (!m_vertex)
 	{
-		m_vertex = static_cast< Vertex* >(m_vertexBuffer[m_currentBuffer]->lock());
+		m_vertex = static_cast< Vertex* >(m_vertexBuffer->lock());
 		if (!m_vertex)
 			return;
 	}
@@ -254,9 +248,9 @@ void PointRenderer::flush(
 		T_ASSERT (m_vertex);
 
 		m_vertex = 0;
-		m_vertexBuffer[m_currentBuffer]->unlock();
+		m_vertexBuffer->unlock();
 
-		for (AlignedVector< Batch >::iterator i = m_batches[m_currentBuffer].begin(); i != m_batches[m_currentBuffer].end(); ++i)
+		for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 		{
 			if (!i->shader || !i->count)
 				continue;
@@ -274,7 +268,7 @@ void PointRenderer::flush(
 			renderBlock->program = program;
 			renderBlock->programParams = renderContext->alloc< render::ProgramParameters >();
 			renderBlock->indexBuffer = m_indexBuffer;
-			renderBlock->vertexBuffer = m_vertexBuffer[m_currentBuffer];
+			renderBlock->vertexBuffer = m_vertexBuffer;
 			renderBlock->primitive = render::PtTriangles;
 			renderBlock->offset = i->offset;
 			renderBlock->count = i->count;
@@ -288,12 +282,11 @@ void PointRenderer::flush(
 			renderContext->draw(i->shader->getCurrentPriority(), renderBlock);
 		}
 
-		m_batches[m_currentBuffer].resize(0);
-		m_currentBuffer = (m_currentBuffer + 1) % BufferCount;
+		m_batches.resize(0);
 		m_vertexOffset = 0;
 	}
 	else
-		m_batches[m_currentBuffer].resize(0);
+		m_batches.resize(0);
 }
 
 	}

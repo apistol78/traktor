@@ -48,6 +48,7 @@ bool AnimationPipeline::buildDependencies(
 
 bool AnimationPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,

@@ -1,4 +1,7 @@
+#include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Editor/App/LogView.h"
+#include "I18N/Text.h"
 #include "Ui/Bitmap.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
@@ -10,8 +13,6 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/LogList/LogList.h"
-#include "I18N/Text.h"
-#include "Core/Log/Log.h"
 
 // Resources
 #include "Resources/LogFilter.h"
@@ -27,24 +28,18 @@ namespace traktor
 class LogListTarget : public ILogTarget
 {
 public:
-	LogListTarget(ui::custom::LogList* logList, ui::custom::LogList::LogLevel logLevel, ILogTarget* previousTarget)
+	LogListTarget(ui::custom::LogList* logList)
 	:	m_logList(logList)
-	,	m_logLevel(logLevel)
-	,	m_previousTarget(previousTarget)
 	{
 	}
 
-	virtual void log(const std::wstring& str)
+	virtual void log(int32_t level, const std::wstring& str)
 	{
-		if (m_previousTarget)
-			m_previousTarget->log(str);
-		m_logList->add(m_logLevel, str);
+		m_logList->add((ui::custom::LogList::LogLevel)(1 << level), str);
 	}
 
 private:
 	ui::custom::LogList* m_logList;
-	ui::custom::LogList::LogLevel m_logLevel;
-	ILogTarget* m_previousTarget;
 };
 
 		}
@@ -100,29 +95,13 @@ bool LogView::create(ui::Widget* parent)
 	m_popup->add(new ui::MenuItem(L"-"));
 	m_popup->add(new ui::MenuItem(ui::Command(L"Editor.Log.Clear"), i18n::Text(L"LOG_CLEAR_ALL")));
 
-	m_originalTargets[0] = log::info.getGlobalTarget();
-	m_originalTargets[1] = log::warning.getGlobalTarget();
-	m_originalTargets[2] = log::error.getGlobalTarget();
-
-	m_newTargets[0] = new LogListTarget(m_log, ui::custom::LogList::LvInfo, m_originalTargets[0]);
-	m_newTargets[1] = new LogListTarget(m_log, ui::custom::LogList::LvWarning, m_originalTargets[1]);
-	m_newTargets[2] = new LogListTarget(m_log, ui::custom::LogList::LvError, m_originalTargets[2]);
-
-	log::info.setGlobalTarget(m_newTargets[0]);
-	log::warning.setGlobalTarget(m_newTargets[1]);
-	log::error.setGlobalTarget(m_newTargets[2]);
-
+	m_logTarget = new LogListTarget(m_log);
 	return true;
 }
 
 void LogView::destroy()
 {
-	log::error.setGlobalTarget(m_originalTargets[2]);
-	log::warning.setGlobalTarget(m_originalTargets[1]);
-	log::info.setGlobalTarget(m_originalTargets[0]);
-
-	m_popup->destroy();
-
+	safeDestroy(m_popup);
 	ui::Container::destroy();
 }
 

@@ -20,6 +20,10 @@ void TerrainEditorProfile::getCommands(
 ) const
 {
 	outCommands.push_back(ui::Command(L"Ocean.RandomizeWaves"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.AverageBrush"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.ElevateBrush"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.FlattenBrush"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothBrush"));
 }
 
 void TerrainEditorProfile::createEditorPlugins(

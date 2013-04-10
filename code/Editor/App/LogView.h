@@ -16,9 +16,9 @@ class PopupMenu;
 		namespace custom
 		{
 
-class ToolBarButton;
-class ToolBar;
 class LogList;
+class ToolBar;
+class ToolBarButton;
 
 		}
 	}
@@ -35,6 +35,8 @@ public:
 
 	void destroy();
 
+	ILogTarget* getLogTarget() const { return m_logTarget; }
+
 private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleInfo;
 	Ref< ui::custom::ToolBarButton > m_toolToggleWarning;
@@ -42,8 +44,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolFilter;
 	Ref< ui::custom::LogList > m_log;
 	Ref< ui::PopupMenu > m_popup;
-	ILogTarget* m_originalTargets[3];
-	ILogTarget* m_newTargets[3];
+	Ref< ILogTarget > m_logTarget;
 
 	void eventToolClick(ui::Event* event);
 

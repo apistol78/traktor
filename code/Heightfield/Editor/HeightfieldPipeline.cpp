@@ -44,13 +44,12 @@ bool HeightfieldPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	Ref< const HeightfieldAsset > heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
-	pipelineDepends->addDependency(Path(m_assetPath), heightfieldAsset->getFileName().getOriginal());
 	return true;
 }
 
 bool HeightfieldPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
 	const std::wstring& outputPath,
@@ -61,27 +60,25 @@ bool HeightfieldPipeline::buildOutput(
 {
 	Ref< const HeightfieldAsset > heightfieldAsset = checked_type_cast< const HeightfieldAsset* >(sourceAsset);
 
-	// Load heightfield from source file.
-	Ref< IStream > file = pipelineBuilder->openFile(Path(m_assetPath), heightfieldAsset->getFileName().getOriginal());
-	if (!file)
+	Ref< IStream > sourceData = sourceInstance->readData(L"Data");
+	if (!sourceData)
 	{
-		log::error << L"Heightfield pipeline failed; unable to open source (" << heightfieldAsset->getFileName().getOriginal() << L")" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to open heights" << Endl;
 		return false;
 	}
 
 	Ref< Heightfield > heightfield = HeightfieldFormat().read(
-		file,
-		heightfieldAsset->getFileName().getExtension(),
-		heightfieldAsset->getWorldExtent(),
-		heightfieldAsset->getInvertX(),
-		heightfieldAsset->getInvertZ(),
-		heightfieldAsset->getDetailSkip()
+		sourceData,
+		heightfieldAsset->getWorldExtent()
 	);
 	if (!heightfield)
 	{
-		log::error << L"Heightfield pipeline failed; unable to read heightfield source \"" << heightfieldAsset->getFileName().getOriginal() << L"\"" << Endl;
+		log::error << L"Heightfield pipeline failed; unable to read heights" << Endl;
 		return 0;
 	}
+
+	sourceData->close();
+	sourceData = 0;
 
 	// Create height field resource.
 	Ref< HeightfieldResource > resource = new HeightfieldResource();
@@ -97,26 +94,20 @@ bool HeightfieldPipeline::buildOutput(
 		return false;
 	}
 
-	Ref< IStream > stream = instance->writeData(L"Data");
-	if (!stream)
+	Ref< IStream > outputData = instance->writeData(L"Data");
+	if (!outputData)
 	{
 		log::error << L"Heightfield pipeline failed; unable to create data stream" << Endl;
 		instance->revert();
 		return false;
 	}
 
-	const height_t* heights = heightfield->getHeights();
-	uint32_t size = heightfield->getSize();
+	HeightfieldFormat().write(outputData, heightfield);
 
-	Writer(stream).write(
-		heights,
-		size * size,
-		sizeof(height_t)
-	);
-
-	stream->close();
+	outputData->close();
+	outputData = 0;
 	
-	resource->m_size = size;
+	resource->m_size = heightfield->getSize();
 	resource->m_worldExtent = heightfieldAsset->getWorldExtent();
 
 	instance->setObject(resource);
