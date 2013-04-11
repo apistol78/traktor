@@ -59,8 +59,7 @@ bool TranslateModifier::cursorMoved(
 	const TransformChain& transformChain,
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
-	const Vector4& worldRayDirection,
-	bool mouseDown
+	const Vector4& worldRayDirection
 )
 {
 	if (m_entityAdapters.empty())
@@ -168,7 +167,10 @@ bool TranslateModifier::handleCommand(const ui::Command& command)
 		return false;
 }
 
-bool TranslateModifier::begin(const TransformChain& transformChain)
+bool TranslateModifier::begin(
+	const TransformChain& transformChain,
+	int32_t mouseButton
+)
 {
 	m_axisEnable = m_axisHot;
 	m_center0 = m_center;

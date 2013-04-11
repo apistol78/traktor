@@ -1,6 +1,7 @@
 #ifndef traktor_terrain_TerrainEditModifier_H
 #define traktor_terrain_TerrainEditModifier_H
 
+#include "Core/Misc/AutoPtr.h"
 #include "Resource/Proxy.h"
 #include "Scene/Editor/IModifier.h"
 
@@ -21,6 +22,13 @@ class HeightfieldAsset;
 
 	}
 
+	namespace render
+	{
+
+class ISimpleTexture;
+
+	}
+
 	namespace scene
 	{
 
@@ -33,6 +41,9 @@ class SceneEditorContext;
 	{
 
 class IBrush;
+class IFallOff;
+class TerrainEntity;
+class TerrainEntityData;
 
 class TerrainEditModifier : public scene::IModifier
 {
@@ -47,13 +58,15 @@ public:
 		const scene::TransformChain& transformChain,
 		const Vector2& cursorPosition,
 		const Vector4& worldRayOrigin,
-		const Vector4& worldRayDirection,
-		bool mouseDown
+		const Vector4& worldRayDirection
 	);
 
 	virtual bool handleCommand(const ui::Command& command);
 
-	virtual bool begin(const scene::TransformChain& transformChain);
+	virtual bool begin(
+		const scene::TransformChain& transformChain,
+		int32_t mouseButton
+	);
 
 	virtual void apply(
 		const scene::TransformChain& transformChain,
@@ -68,6 +81,8 @@ public:
 
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const;
 
+	void setStrength(float strength) { m_strength = strength; }
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< terrain::TerrainEntity > m_entity;
@@ -75,7 +90,11 @@ private:
 	Ref< db::Instance > m_heightfieldInstance;
 	Ref< hf::HeightfieldAsset > m_heightfieldAsset;
 	resource::Proxy< hf::Heightfield > m_heightfield;
+	AutoArrayPtr< uint8_t > m_normalData;
+	Ref< render::ISimpleTexture > m_normalMap;
 	Ref< IBrush > m_brush;
+	Ref< IFallOff > m_fallOff;
+	float m_strength;
 	Vector4 m_center;
 };
 

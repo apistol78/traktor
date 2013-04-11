@@ -110,7 +110,10 @@ void SceneEditorContext::setControllerEditor(ISceneControllerEditor* controllerE
 void SceneEditorContext::setModifier(IModifier* modifier)
 {
 	if ((m_modifier = modifier) != 0)
+	{
 		m_modifier->selectionChanged();
+		raiseModifierChanged();
+	}
 }
 
 IModifier* SceneEditorContext::getModifier() const
@@ -618,6 +621,11 @@ void SceneEditorContext::raiseCameraMoved()
 	raiseEvent(EiCameraMoved, 0);
 }
 
+void SceneEditorContext::raiseModifierChanged()
+{
+	raiseEvent(EiModifierChanged, 0);
+}
+
 void SceneEditorContext::addPreModifyEventHandler(ui::EventHandler* eventHandler)
 {
 	addEventHandler(EiPreModify, eventHandler);
@@ -646,6 +654,11 @@ void SceneEditorContext::addSelectEventHandler(ui::EventHandler* eventHandler)
 void SceneEditorContext::addCameraMovedEventHandler(ui::EventHandler* eventHandler)
 {
 	addEventHandler(EiCameraMoved, eventHandler);
+}
+
+void SceneEditorContext::addModifierChangedEventHandler(ui::EventHandler* eventHandler)
+{
+	addEventHandler(EiModifierChanged, eventHandler);
 }
 
 	}

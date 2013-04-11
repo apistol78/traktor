@@ -50,7 +50,7 @@ bool ExportHeightfieldAsMeshWizardTool::launch(ui::Widget* parent, editor::IEdit
 	Path fileName;
 
 	ui::FileDialog saveAsDialog;
-	saveAsDialog.create(parent, L"Save heightfield mesh as...", L"All files;*.*", true);
+	saveAsDialog.create(parent, i18n::Text(L"EXPORT_HEIGHTFIELD_AS_MESH_WIZARDTOOL_FILE_TITLE"), L"All files;*.*", true);
 	if (saveAsDialog.showModal(fileName) != ui::DrOk)
 		return false;
 

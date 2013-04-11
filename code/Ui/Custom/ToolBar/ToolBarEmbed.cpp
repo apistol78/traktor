@@ -1,5 +1,6 @@
-#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
+#include "Core/Math/MathUtils.h"
 #include "Ui/Widget.h"
+#include "Ui/Custom/ToolBar/ToolBarEmbed.h"
 
 namespace traktor
 {
@@ -23,12 +24,16 @@ bool ToolBarEmbed::getToolTip(std::wstring& outToolTip) const
 
 Size ToolBarEmbed::getSize(const ToolBar* toolBar, int imageWidth, int imageHeight) const
 {
-	return Size(m_width, imageHeight);
+	Size preferedSize = m_widget->getPreferedSize();
+	return Size(
+		max(preferedSize.cx, m_width),
+		max(preferedSize.cy, imageHeight)
+	);
 }
 
 void ToolBarEmbed::paint(ToolBar* toolBar, Canvas& canvas, const Point& at, Bitmap* images, int imageWidth, int imageHeight)
 {
-	Rect rc(at, Size(m_width, imageHeight));
+	Rect rc(at, getSize(toolBar, imageWidth, imageHeight));
 	m_widget->setRect(rc);
 }
 

@@ -21,9 +21,9 @@ class FlattenBrush : public IBrush
 	T_RTTI_CLASS;
 
 public:
-	FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield, int32_t radius);
+	FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield);
 
-	virtual void begin(int32_t x, int32_t y);
+	virtual void begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength);
 
 	virtual void apply(int32_t x, int32_t y);
 
@@ -32,6 +32,8 @@ public:
 private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	int32_t m_radius;
+	const IFallOff* m_fallOff;
+	float m_strength;
 	float m_height;
 };
 

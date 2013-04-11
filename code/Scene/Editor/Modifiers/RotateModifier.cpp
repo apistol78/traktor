@@ -75,8 +75,7 @@ bool RotateModifier::cursorMoved(
 	const TransformChain& transformChain,
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
-	const Vector4& worldRayDirection,
-	bool mouseDown
+	const Vector4& worldRayDirection
 )
 {
 	if (m_entityAdapters.empty())
@@ -208,7 +207,10 @@ bool RotateModifier::handleCommand(const ui::Command& command)
 	return true;
 }
 
-bool RotateModifier::begin(const TransformChain& transformChain)
+bool RotateModifier::begin(
+	const TransformChain& transformChain,
+	int32_t mouseButton
+)
 {
 	return true;
 }
