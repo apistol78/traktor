@@ -432,8 +432,9 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 
-	char tmp[L_tmpnam];
-	tmpnam(tmp);
+	char* tmp = _tempnam("c:\\temp", "lwo");
+	if (!tmp)
+		return 0;
 
 	Ref< IStream > tmpFile = FileSystem::getInstance().open(mbstows(tmp), File::FmWrite);
 	if (!tmpFile)
