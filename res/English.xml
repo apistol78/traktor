@@ -571,6 +571,18 @@
     </item>
     <item>
       <first>EXPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Export heightfield...</second>
+    </item>
+    <item>
+      <first>EXPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE</first>
+      <second>Export heightfield...</second>
+    </item>
+    <item>
+      <first>EXPORT_HEIGHTFIELD_AS_MESH_WIZARDTOOL_DESCRIPTION</first>
+      <second>Export heightfield as mesh...</second>
+    </item>
+    <item>
+      <first>EXPORT_HEIGHTFIELD_AS_MESH_WIZARDTOOL_FILE_TITLE</first>
       <second>Export heightfield as mesh...</second>
     </item>
     <item>
@@ -646,12 +658,12 @@
       <second>Choose flash movie</second>
     </item>
     <item>
-      <first>IMPORT_HEIGHTFIELD_DESCRIPTION</first>
-      <second>Heightfield</second>
+      <first>IMPORT_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import heightfield...</second>
     </item>
     <item>
-      <first>IMPORT_HEIGHTFIELD_TITLE</first>
-      <second>Select heightfield source image</second>
+      <first>IMPORT_HEIGHTFIELD_WIZARDTOOL_FILE_TITLE</first>
+      <second>Import heightfield...</second>
     </item>
     <item>
       <first>IMPORT_MESH_BLEND</first>
@@ -1948,6 +1960,30 @@
     <item>
       <first>THEATER_EDITOR_GOTO_NEXT_KEY</first>
       <second>Goto next key</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_ELEVATE_BRUSH</first>
+      <second>Elevate brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_FLATTEN_BRUSH</first>
+      <second>Flatten brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_AVERAGE_BRUSH</first>
+      <second>Average brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SMOOTH_BRUSH</first>
+      <second>Smooth brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SMOOTH_FALLOFF</first>
+      <second>Smooth falloff</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_SHARP_FALLOFF</first>
+      <second>Smooth falloff</second>
     </item>
     <item>
       <first>TEXT_EDIT</first>

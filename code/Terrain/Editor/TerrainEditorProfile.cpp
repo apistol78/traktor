@@ -4,6 +4,7 @@
 #include "Terrain/EntityRenderer.h"
 #include "Terrain/TerrainFactory.h"
 #include "Terrain/Editor/OceanEntityEditorFactory.h"
+#include "Terrain/Editor/TerrainEditorPlugin.h"
 #include "Terrain/Editor/TerrainEditorProfile.h"
 #include "Terrain/Editor/TerrainEntityEditorFactory.h"
 #include "Ui/Command.h"
@@ -24,6 +25,8 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Terrain.Editor.ElevateBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.FlattenBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothBrush"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothFallOff"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.SharpFallOff"));
 }
 
 void TerrainEditorProfile::createEditorPlugins(
@@ -31,6 +34,7 @@ void TerrainEditorProfile::createEditorPlugins(
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
 ) const
 {
+	outEditorPlugins.push_back(new TerrainEditorPlugin(context));
 }
 
 void TerrainEditorProfile::createResourceFactories(

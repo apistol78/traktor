@@ -49,8 +49,7 @@ public:
 		const TransformChain& transformChain,
 		const Vector2& cursorPosition,
 		const Vector4& worldRayOrigin,
-		const Vector4& worldRayDirection,
-		bool mouseDown
+		const Vector4& worldRayDirection
 	) = 0;
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
@@ -60,7 +59,10 @@ public:
 	/*! \name Modifications */
 	//\{
 
-	virtual bool begin(const TransformChain& transformChain) = 0;
+	virtual bool begin(
+		const TransformChain& transformChain,
+		int32_t mouseButton
+	) = 0;
 
 	virtual void apply(
 		const TransformChain& transformChain,

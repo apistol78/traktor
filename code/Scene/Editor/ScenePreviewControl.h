@@ -87,6 +87,8 @@ private:
 
 	void eventToolBarActionClicked(ui::Event* event);
 
+	void eventModifierChanged(ui::Event* event);
+
 	void eventIdle(ui::Event* event);
 };
 

@@ -286,7 +286,8 @@ public:
 		EiPostFrame = ui::EiUser + 3,
 		EiPostBuild = ui::EiUser + 4,
 		EiSelect = ui::EiUser + 5,
-		EiCameraMoved = ui::EiUser + 6
+		EiCameraMoved = ui::EiUser + 6,
+		EiModifierChanged = ui::EiUser + 7
 	};
 
 	void raisePreModify();
@@ -301,6 +302,8 @@ public:
 
 	void raiseCameraMoved();
 
+	void raiseModifierChanged();
+
 	void addPreModifyEventHandler(ui::EventHandler* eventHandler);
 
 	void addPostModifyEventHandler(ui::EventHandler* eventHandler);
@@ -312,6 +315,8 @@ public:
 	void addSelectEventHandler(ui::EventHandler* eventHandler);
 
 	void addCameraMovedEventHandler(ui::EventHandler* eventHandler);
+
+	void addModifierChangedEventHandler(ui::EventHandler* eventHandler);
 
 	//@}
 

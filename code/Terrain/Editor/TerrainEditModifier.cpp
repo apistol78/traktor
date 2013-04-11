@@ -3,7 +3,6 @@
 #include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
-#include "Drawing/Image.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Heightfield/Heightfield.h"
@@ -20,7 +19,9 @@
 #include "Terrain/Editor/AverageBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
+#include "Terrain/Editor/SharpFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
+#include "Terrain/Editor/SmoothFallOff.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Command.h"
@@ -129,28 +130,11 @@ void line(int32_t x0, int32_t y0, int32_t x1, int32_t y1, Visitor& visitor)
 
 struct BrushVisitor
 {
-	//resource::Proxy< hf::Heightfield > heightfield;
-	//int32_t radius;
 	IBrush* brush;
 
 	void operator () (int32_t x, int32_t y)
 	{
 		brush->apply(x, y);
-
-		//for (int32_t iy = -radius; iy <= radius; ++iy)
-		//{
-		//	for (int32_t ix = -radius; ix <= radius; ++ix)
-		//	{
-		//		int32_t d = ix * ix + iy * iy;
-		//		if (d >= radius * radius)
-		//			continue;
-
-		//		float dh = 0.0025f * clamp(sinf((1.0f - sqrtf(float(d)) / radius) * PI / 4.0f), 0.0f, 1.0f);
-
-		//		float h = heightfield->getGridHeightNearest(x + ix, y + iy);
-		//		heightfield->setGridHeight(x + ix, y + iy, h + dh);
-		//	}
-		//}
 	}
 };
 
@@ -161,6 +145,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditModifier", TerrainEditModifi
 TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 :	m_context(context)
 ,	m_center(Vector4::zero())
+,	m_strength(1.0f)
 {
 }
 
@@ -196,19 +181,59 @@ void TerrainEditModifier::selectionChanged()
 		return;
 	}
 
+	// Create normal texture data.
+	int32_t size = m_heightfield->getSize();
+	m_normalData.reset(new uint8_t [size * size * 4]);
+
+	for (int32_t v = 0; v < size; ++v)
+	{
+		for (int32_t u = 0; u < size; ++u)
+		{
+			Vector4 normal = normalAt(m_heightfield, u, v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+			uint8_t nx = uint8_t(255 - normal.x() * 255);
+			uint8_t ny = uint8_t(normal.y() * 255);
+			uint8_t* ptr = &m_normalData[(u + v * size) * 4];
+			ptr[0] = 0;
+			ptr[1] = ny;
+			ptr[2] = 0;
+			ptr[3] = nx;
+		}
+	}
+
+	// Create non-compressed texture for normals.
+	render::SimpleTextureCreateDesc desc;
+	desc.width = size;
+	desc.height = size;
+	desc.mipCount = 1;
+	desc.format = render::TfR8G8B8A8;
+	desc.sRGB = false;
+	desc.immutable = false;
+
+	m_normalMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	if (m_normalMap)
+	{
+		// Transfer normals to texture.
+		render::ITexture::Lock nl;
+		if (m_normalMap->lock(0, nl))
+		{
+			std::memcpy(nl.bits, m_normalData.c_ptr(), size * size * 4);
+			m_normalMap->unlock(0);
+		}
+
+		// Replace normal map in resource with our texture.
+		m_entity->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
+	}
+
 	// Create default brush.
-	m_brush = new ElevateBrush(
-		m_heightfield,
-		int32_t(m_context->getGuideSize() + 0.5f)
-	);
+	m_brush = new ElevateBrush(m_heightfield);
+	m_fallOff = new SmoothFallOff();
 }
 
 bool TerrainEditModifier::cursorMoved(
 	const scene::TransformChain& transformChain,
 	const Vector2& cursorPosition,
 	const Vector4& worldRayOrigin,
-	const Vector4& worldRayDirection,
-	bool mouseDown
+	const Vector4& worldRayDirection
 )
 {
 	if (!m_entity)
@@ -233,37 +258,41 @@ bool TerrainEditModifier::handleCommand(const ui::Command& command)
 		return false;
 
 	if (command == L"Terrain.Editor.AverageBrush")
-		m_brush = new AverageBrush(
-			m_heightfield,
-			int32_t(m_context->getGuideSize() + 0.5f)
-		);
+		m_brush = new AverageBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.ElevateBrush")
-		m_brush = new ElevateBrush(
-			m_heightfield,
-			int32_t(m_context->getGuideSize() + 0.5f)
-		);
+		m_brush = new ElevateBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.FlattenBrush")
-		m_brush = new FlattenBrush(
-			m_heightfield,
-			int32_t(m_context->getGuideSize() + 0.5f)
-		);
+		m_brush = new FlattenBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.SmoothBrush")
-		m_brush = new SmoothBrush(
-			m_heightfield,
-			int32_t(m_context->getGuideSize() + 0.5f)
-		);
+		m_brush = new SmoothBrush(m_heightfield);
+	if (command == L"Terrain.Editor.SmoothFallOff")
+		m_fallOff = new SmoothFallOff();
+	else if (command == L"Terrain.Editor.SharpFallOff")
+		m_fallOff = new SharpFallOff();
 	else
 		return false;
 
-	log::info << L"** IN PROGRESS ** Brush selected " << type_name(m_brush) << Endl;
 	return true;
 }
 
-bool TerrainEditModifier::begin(const scene::TransformChain& transformChain)
+bool TerrainEditModifier::begin(
+	const scene::TransformChain& transformChain,
+	int32_t mouseButton
+)
 {
+	float worldRadius = m_context->getGuideSize();
+	int32_t gridRadius = int32_t(m_heightfield->getSize() * worldRadius / m_heightfield->getWorldExtent().x());
+
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
-	m_brush->begin(gx, gz);
+	m_brush->begin(
+		gx,
+		gz,
+		gridRadius,
+		m_fallOff,
+		m_strength * (mouseButton == 1 ? 1.0f : -1.0f)
+	);
+
 	return true;
 }
 
@@ -301,6 +330,45 @@ void TerrainEditModifier::apply(
 
 	m_entity->updatePatches();
 	m_center = center;
+
+	// Update normals.
+	{
+		float worldRadius = m_context->getGuideSize();
+		int32_t gridRadius = int32_t(m_heightfield->getSize() * worldRadius / m_heightfield->getWorldExtent().x());
+
+		int32_t size = m_heightfield->getSize();
+
+		int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
+		int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
+
+		mnx = clamp(mnx, 0, size - 1);
+		mxx = clamp(mxx, 0, size - 1);
+		mnz = clamp(mnz, 0, size - 1);
+		mxz = clamp(mxz, 0, size - 1);
+
+		for (int32_t v = mnz; v <= mxz; ++v)
+		{
+			for (int32_t u = mnx; u <= mxx; ++u)
+			{
+				Vector4 normal = normalAt(m_heightfield, u, v) * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
+				uint8_t nx = uint8_t(255 - normal.x() * 255);
+				uint8_t ny = uint8_t(normal.y() * 255);
+				uint8_t* ptr = &m_normalData[(u + v * size) * 4];
+				ptr[0] = 0;
+				ptr[1] = ny;
+				ptr[2] = 0;
+				ptr[3] = nx;
+			}
+		}
+
+		// Transfer normals to texture.
+		render::ITexture::Lock nl;
+		if (m_normalMap->lock(0, nl))
+		{
+			std::memcpy(nl.bits, m_normalData.c_ptr(), size * size * 4);
+			m_normalMap->unlock(0);
+		}
+	}
 }
 
 void TerrainEditModifier::end(const scene::TransformChain& transformChain)
@@ -311,41 +379,6 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 	m_brush->end(gx, gz);
-
-	//// Update normal map.
-	//{
-	//	int32_t size = m_heightfield->getSize();
-
-	//	Ref< drawing::Image > normalMap = new drawing::Image(drawing::PixelFormat::getX8R8G8B8(), size, size);
-	//	for (int32_t v = 0; v < size; ++v)
-	//	{
-	//		for (int32_t u = 0; u < size; ++u)
-	//		{
-	//			Vector4 normal = normalAt(m_heightfield, u, v);
-	//			normal = normal * Vector4(0.5f, 0.5f, 0.5f, 0.0f) + Vector4(0.5f, 0.5f, 0.5f, 0.0f);
-	//			normalMap->setPixelUnsafe(u, v, Color4f(
-	//				normal.x(),
-	//				normal.y(),
-	//				normal.z()
-	//			));
-	//		}
-	//	}
-
-	//	render::SimpleTextureCreateDesc desc;
-	//	desc.width = size;
-	//	desc.height = size;
-	//	desc.mipCount = 1;
-	//	desc.format = render::TfR8G8B8A8;
-	//	desc.sRGB = false;
-	//	desc.immutable = true;
-	//	desc.initialData[0].data = normalMap->getData();
-	//	desc.initialData[0].pitch = size * 4;
-	//	desc.initialData[0].slicePitch = 0;
-
-	//	Ref< render::ISimpleTexture > texture = m_context->getRenderSystem()->createSimpleTexture(desc);
-	//	if (texture)
-	//		m_entity->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(texture);
-	//}
 
 	// Write modifications to heightfield.
 	if (!m_heightfieldInstance)
@@ -386,10 +419,14 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		if (data)
 		{
 			hf::HeightfieldFormat().write(data, m_heightfield);
+			
 			data->close();
 			data = 0;
+	
+			m_context->getDocument()->setModified();
 		}
-		m_context->getDocument()->setModified();
+		else
+			log::error << L"Unable to write heights" << Endl;
 	}
 }
 
@@ -403,18 +440,16 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	primitiveRenderer->drawSolidPoint(m_center, 8, Color4ub(255, 0, 0, 255));
 	primitiveRenderer->pushDepthEnable(false);
 
-	for (int32_t i = 0; i < 16; ++i)
+	float a0 = 0.0f;
+	float x0 = m_center.x() + cosf(a0) * radius;
+	float z0 = m_center.z() + sinf(a0) * radius;
+	float y0 = m_heightfield->getWorldHeight(x0, z0);
+
+	for (int32_t i = 1; i <= 32; ++i)
 	{
-		float a0 = TWO_PI * i / 16.0f;
-		float a1 = TWO_PI * (i + 1) / 16.0f;
-
-		float x0 = m_center.x() + cosf(a0) * radius;
-		float z0 = m_center.z() + sinf(a0) * radius;
-
+		float a1 = TWO_PI * i / 32.0f;
 		float x1 = m_center.x() + cosf(a1) * radius;
 		float z1 = m_center.z() + sinf(a1) * radius;
-
-		float y0 = m_heightfield->getWorldHeight(x0, z0);
 		float y1 = m_heightfield->getWorldHeight(x1, z1);
 
 		primitiveRenderer->drawLine(
@@ -423,6 +458,11 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 			1.0f,
 			Color4ub(255, 0, 0, 180)
 		);
+
+		a0 = a1;
+		x0 = x1;
+		z0 = z1;
+		y0 = y1;
 	}
 
 	primitiveRenderer->popDepthEnable();

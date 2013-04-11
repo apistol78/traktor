@@ -114,6 +114,7 @@ bool ScenePreviewControl::create(ui::Widget* parent, SceneEditorContext* context
 		(*i)->create(this, m_toolBarActions);
 
 	m_context = context;
+	m_context->addModifierChangedEventHandler(ui::createMethodHandler(this, &ScenePreviewControl::eventModifierChanged));
 
 	// Create modifiers.
 	m_modifierTranslate = new TranslateModifier(m_context);
@@ -195,14 +196,10 @@ bool ScenePreviewControl::handleCommand(const ui::Command& command)
 	else if (command == L"Scene.Editor.Translate")
 	{
 		m_context->setModifier(m_modifierTranslate);
-		m_toolToggleTranslate->setToggled(true);
-		m_toolToggleRotate->setToggled(false);
 	}
 	else if (command == L"Scene.Editor.Rotate")
 	{
 		m_context->setModifier(m_modifierRotate);
-		m_toolToggleTranslate->setToggled(false);
-		m_toolToggleRotate->setToggled(true);
 	}
 	else if (command == L"Scene.Editor.TogglePick")
 	{
@@ -433,6 +430,13 @@ void ScenePreviewControl::eventToolBarActionClicked(ui::Event* event)
 {
 	const ui::Command& command = checked_type_cast< ui::CommandEvent* >(event)->getCommand();
 	handleCommand(command);
+}
+
+void ScenePreviewControl::eventModifierChanged(ui::Event* event)
+{
+	m_toolToggleTranslate->setToggled(m_context->getModifier() == m_modifierTranslate);
+	m_toolToggleRotate->setToggled(m_context->getModifier() == m_modifierRotate);
+	m_toolBarActions->update();
 }
 
 void ScenePreviewControl::eventIdle(ui::Event* event)

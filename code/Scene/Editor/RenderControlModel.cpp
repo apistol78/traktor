@@ -87,8 +87,7 @@ void RenderControlModel::eventButtonDown(ISceneRenderControl* renderControl, ui:
 				transformChain,
 				screenPosition,
 				worldRayOrigin,
-				worldRayDirection,
-				true
+				worldRayDirection
 			);
 		}
 
@@ -270,10 +269,10 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 					1.0f - 2.0f * float(m_mousePosition0.y) / innerRect.getHeight()
 				);
 
-				modifier->cursorMoved(transformChain, screenPosition0, worldRayOrigin, worldRayDirection, true);
-				modifier->cursorMoved(transformChain, screenPosition, worldRayOrigin, worldRayDirection, false);
+				modifier->cursorMoved(transformChain, screenPosition0, worldRayOrigin, worldRayDirection);
+				modifier->cursorMoved(transformChain, screenPosition, worldRayOrigin, worldRayDirection);
 				
-				if (!modifier->begin(transformChain))
+				if (!modifier->begin(transformChain, m_mouseButton))
 				{
 					m_modify = MtNothing;
 					return;
@@ -329,8 +328,7 @@ void RenderControlModel::eventMouseMove(ISceneRenderControl* renderControl, ui::
 				transformChain,
 				screenPosition,
 				worldRayOrigin,
-				worldRayDirection,
-				false
+				worldRayDirection
 			);
 		}
 	}
