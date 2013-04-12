@@ -16,6 +16,11 @@ const TypeInfoSet InputMappingEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool InputMappingEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IObjectEditor > InputMappingEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return new InputMappingEditor(editor);

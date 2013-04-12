@@ -28,8 +28,32 @@ namespace traktor
 {
 	namespace sound
 	{
+		namespace
+		{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 28, SoundPipeline, editor::IPipeline)
+const float c_isMuteThreshold = 16.0f / 32767.0f;
+
+bool isMute(const SoundBlock& soundBlock, uint32_t& outMuteOffset)
+{
+	for (uint32_t i = 0; i < soundBlock.maxChannel; ++i)
+	{
+		const float* samples = soundBlock.samples[i];
+		for (int32_t j = soundBlock.samplesCount - 1; j >= 0; --j)
+		{
+			if (abs(samples[j]) > c_isMuteThreshold)
+			{
+				outMuteOffset = j + 1;
+				return false;
+			}
+		}
+	}
+	outMuteOffset = 0;
+	return true;
+}
+
+		}
+
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 29, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 {
@@ -248,6 +272,7 @@ bool SoundPipeline::buildOutput(
 		uint32_t sampleRate = 0;
 		uint32_t samplesCount = 0;
 		uint32_t maxChannel = 0;
+		uint32_t mutedSamples = 0;
 
 		SoundBlock soundBlock;
 		std::memset(&soundBlock, 0, sizeof(soundBlock));
@@ -255,12 +280,45 @@ bool SoundPipeline::buildOutput(
 
 		while (decoder->getBlock(soundBlock))
 		{
-			if (soundBlock.samplesCount > 0 && soundBlock.maxChannel > 0)
+			if (
+				soundBlock.samplesCount > 0 &&
+				soundBlock.maxChannel > 0
+			)
 			{
-				if (!encoder->putBlock(soundBlock))
+				uint32_t muteOffset;
+				if (!isMute(soundBlock, muteOffset))
 				{
-					log::error << L"Failed to build sound asset, transcoding failed" << Endl;
-					return false;
+					T_ASSERT (muteOffset > 0);
+
+					if (mutedSamples > 0)
+					{
+						SoundBlock muteBlock;
+						std::memset(&muteBlock, 0, sizeof(muteBlock));
+						muteBlock.samplesCount = mutedSamples;
+						muteBlock.sampleRate = soundBlock.sampleRate;
+						muteBlock.maxChannel = soundBlock.maxChannel;
+
+						if (!encoder->putBlock(muteBlock))
+						{
+							log::error << L"Failed to build sound asset, transcoding failed" << Endl;
+							return false;
+						}
+
+						mutedSamples = 0;
+					}
+
+					mutedSamples += soundBlock.samplesCount - muteOffset;
+					soundBlock.samplesCount = muteOffset;
+
+					if (!encoder->putBlock(soundBlock))
+					{
+						log::error << L"Failed to build sound asset, transcoding failed" << Endl;
+						return false;
+					}
+				}
+				else
+				{
+					mutedSamples += soundBlock.samplesCount;
 				}
 			}
 
@@ -271,6 +329,8 @@ bool SoundPipeline::buildOutput(
 			std::memset(&soundBlock, 0, sizeof(soundBlock));
 			soundBlock.samplesCount = 4096;
 		}
+
+		log::info << L"Discarded " << mutedSamples << L" mute post sample(s)" << Endl;
 
 		safeDestroy(encoder);
 		safeDestroy(decoder);

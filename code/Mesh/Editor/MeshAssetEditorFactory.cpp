@@ -1,6 +1,6 @@
-#include "Mesh/Editor/MeshAssetEditorFactory.h"
-#include "Mesh/Editor/MeshAssetEditor.h"
 #include "Mesh/Editor/MeshAsset.h"
+#include "Mesh/Editor/MeshAssetEditor.h"
+#include "Mesh/Editor/MeshAssetEditorFactory.h"
 
 namespace traktor
 {
@@ -14,6 +14,11 @@ const TypeInfoSet MeshAssetEditorFactory::getEditableTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MeshAsset >());
 	return typeSet;
+}
+
+bool MeshAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
 }
 
 Ref< editor::IObjectEditor > MeshAssetEditorFactory::createObjectEditor(editor::IEditor* editor) const

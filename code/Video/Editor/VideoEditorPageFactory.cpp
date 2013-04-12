@@ -17,6 +17,11 @@ const TypeInfoSet VideoEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool VideoEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IEditorPage > VideoEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
 	return new VideoEditorPage(editor, site, document);

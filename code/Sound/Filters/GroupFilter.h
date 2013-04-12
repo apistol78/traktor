@@ -27,6 +27,8 @@ class T_DLLCLASS GroupFilter : public IFilter
 public:
 	GroupFilter();
 
+	GroupFilter(IFilter* filter1);
+
 	GroupFilter(IFilter* filter1, IFilter* filter2);
 
 	GroupFilter(IFilter* filter1, IFilter* filter2, IFilter* filter3);

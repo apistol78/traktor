@@ -17,6 +17,11 @@ const TypeInfoSet ScriptEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool ScriptEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IObjectEditor > ScriptEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return new ScriptEditor(editor);

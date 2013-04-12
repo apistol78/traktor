@@ -23,6 +23,8 @@ class T_DLLCLASS BankAssetEditorFactory : public editor::IObjectEditorFactory
 public:
 	virtual const TypeInfoSet getEditableTypes() const;
 
+	virtual bool needOutputResources(const TypeInfo& typeInfo) const;
+
 	virtual Ref< editor::IObjectEditor > createObjectEditor(editor::IEditor* editor) const;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const;

@@ -17,6 +17,11 @@ const TypeInfoSet SkeletonEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool SkeletonEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IEditorPage > SkeletonEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
 	return new SkeletonEditorPage(editor, site, document);

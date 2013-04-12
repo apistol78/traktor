@@ -3,6 +3,7 @@
 
 #include "Core/Containers/AlignedVector.h"
 #include "Core/Thread/Semaphore.h"
+#include "Core/Timer/Timer.h"
 #include "Sound/Player/ISoundPlayer.h"
 
 // import/export mechanism.
@@ -68,7 +69,7 @@ private:
 	Ref< SoundSystem > m_soundSystem;
 	Ref< SurroundEnvironment > m_surroundEnvironment;
 	AlignedVector< Channel > m_channels;
-	float m_time;
+	Timer m_timer;
 };
 
 	}

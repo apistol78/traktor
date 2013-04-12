@@ -155,6 +155,7 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 	const Scalar c_one(1.0f);
 	const Scalar c_zero(0.0f);
 
+	// Combine all channels into a mono channel.
 	for (uint32_t i = 0; i < outBlock.samplesCount; i += 4)
 	{
 		Vector4 s4 = Vector4::zero();
@@ -166,10 +167,6 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 		for (uint32_t j = 0; j < sizeof_array(c_speakersStereo); ++j)
 			s4.storeAligned(&sfi->m_buffer[c_speakersStereo[j].channel][i]);
 	}
-
-	outBlock.maxChannel = c_speakersStereoMaxChannel;
-	for (uint32_t j = 0; j < c_speakersStereoMaxChannel; ++j)
-		outBlock.samples[j] = sfi->m_buffer[j];
 
 	const Transform& listenerTransformInv = m_environment->getListenerTransformInv();
 
@@ -184,20 +181,37 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 
 	for (uint32_t i = 0; i < sizeof_array(c_speakersStereo); ++i)
 	{
-		float* samples = outBlock.samples[c_speakersStereo[i].channel];
-		T_ASSERT (alignUp(samples, 16) == samples);
+		float* inputSamples = outBlock.samples[c_speakersStereo[i].channel];
+		float* directionalSamples = sfi->m_buffer[c_speakersStereo[i].channel];
 
 		Scalar angleOffset = angleDifference(c_speakersStereo[i].angle, speakerAngle);
 		Scalar angleAtten = clamp(c_one - angleOffset / c_angleCone, c_zero, c_one);
-		Scalar attenuation = innerAtten + (angleAtten * distanceAtten) * (c_one - innerAtten);
+		Scalar directionalAtten = innerAtten + (angleAtten * distanceAtten) * (c_one - innerAtten);
 
-		for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
+		if (inputSamples)
 		{
-			Vector4 s4 = Vector4::loadAligned(&samples[j]);
-			s4 *= attenuation;
-			s4.storeAligned(&samples[j]);
+			for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
+			{
+				Vector4 si4 = Vector4::loadAligned(&inputSamples[j]);
+				Vector4 sd4 = Vector4::loadAligned(&directionalSamples[j]);
+				Vector4 s4 = sd4 * directionalAtten + si4 * innerAtten;
+				s4.storeAligned(&directionalSamples[j]);
+			}
 		}
+		else
+		{
+			for (uint32_t j = 0; j < outBlock.samplesCount; j += 4)
+			{
+				Vector4 sd4 = Vector4::loadAligned(&directionalSamples[j]);
+				Vector4 s4 = sd4 * directionalAtten;
+				s4.storeAligned(&directionalSamples[j]);
+			}
+		}
+
+		outBlock.samples[c_speakersStereo[i].channel] = directionalSamples;
 	}
+
+	outBlock.maxChannel = c_speakersStereoMaxChannel;
 }
 
 void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) const

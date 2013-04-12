@@ -230,6 +230,9 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 		middleRect2.left += 100;
 		canvas.drawText(middleRect2, L"Phys: " + toString(performance.activeBodyCount) + L"/" + toString(performance.bodyCount), ui::AnLeft, ui::AnCenter);
 
+		middleRect2.left += 100;
+		canvas.drawText(middleRect2, L"Snd: " + toString(performance.activeSoundChannels), ui::AnLeft, ui::AnCenter);
+
 		ui::Rect bottomRect = performanceRect;
 		bottomRect.top = performanceRect.top + 36;
 

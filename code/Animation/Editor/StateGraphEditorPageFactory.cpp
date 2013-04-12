@@ -17,6 +17,11 @@ const TypeInfoSet StateGraphEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool StateGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IEditorPage > StateGraphEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
 	return new StateGraphEditorPage(editor, site, document);

@@ -39,6 +39,7 @@ public:
 	uint32_t exclusiveResourcesCount;
 	uint32_t bodyCount;
 	uint32_t activeBodyCount;
+	uint32_t activeSoundChannels;
 
 	TargetPerformance();
 

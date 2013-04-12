@@ -16,6 +16,11 @@ const TypeInfoSet PostProcessEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool PostProcessEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IObjectEditor > PostProcessEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return new PostProcessEditor(editor);

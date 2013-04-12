@@ -16,6 +16,11 @@ const TypeInfoSet DictionaryEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool DictionaryEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IEditorPage > DictionaryEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
 	return new DictionaryEditorPage(editor, site, document);

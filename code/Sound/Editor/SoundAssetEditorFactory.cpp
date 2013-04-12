@@ -16,6 +16,11 @@ const TypeInfoSet SoundAssetEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool SoundAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return true;
+}
+
 Ref< editor::IObjectEditor > SoundAssetEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return new SoundAssetEditor(editor);

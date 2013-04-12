@@ -21,7 +21,7 @@ namespace traktor
 
 const float c_nearCutOff = 22050.0f;
 const float c_farCutOff = 0.1f;
-const float c_recentTimeOffset = 0.05f;
+const float c_recentTimeOffset = 1.0f / 60.0f;
 
 handle_t s_handleDistance = 0;
 handle_t s_handleVelocity = 0;
@@ -31,7 +31,6 @@ handle_t s_handleVelocity = 0;
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.SoundPlayer", SoundPlayer, ISoundPlayer)
 
 SoundPlayer::SoundPlayer()
-:	m_time(0.0f)
 {
 	s_handleDistance = getParameterHandle(L"Distance");
 	s_handleVelocity = getParameterHandle(L"Velocity");
@@ -50,6 +49,7 @@ bool SoundPlayer::create(SoundSystem* soundSystem, SurroundEnvironment* surround
 		m_channels.push_back(ch);
 	}
 
+	m_timer.start();
 	return true;
 }
 
@@ -76,59 +76,71 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 	if (!sound)
 		return 0;
 
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	float time = float(m_timer.getElapsedTime());
 
-	// First try to associate sound with non-playing channel;
-	// also check if sound has recently been played.
-	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 	{
-		if (!i->soundChannel->isPlaying())
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+		// First try to associate sound with non-playing channel;
+		// also check if sound has recently been played.
+		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		{
-			if (i->handle)
-				i->handle->detach();
+			Scalar channelDistance = (i->position - m_surroundEnvironment->getListenerTransform().translation()).xyz0().length();
+			if (
+				!i->soundChannel->isPlaying() ||
+				(i->position.w() > 0.5f && channelDistance > m_surroundEnvironment->getMaxDistance())
+			)
+			{
+				if (i->handle)
+					i->handle->detach();
 
-			i->position = Vector4::zero();
-			i->surroundFilter = 0;
-			i->lowPassFilter = 0;
-			i->echoFilter = 0;
-			i->sound = sound;
-			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
-			i->soundChannel->setFilter(0);
-			i->priority = priority;
-			i->time = m_time;
-			i->fadeOff = -1.0f;
-			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+				i->position = Vector4::zero();
+				i->surroundFilter = 0;
+				i->lowPassFilter = 0;
+				i->echoFilter = 0;
+				i->sound = sound;
+				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
+				i->soundChannel->setFilter(0);
+				i->priority = priority;
+				i->time = time;
+				i->fadeOff = -1.0f;
+				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
-			return i->handle;
+				return i->handle;
+			}
+			else if (i->time + c_recentTimeOffset >= time)
+			{
+				if (i->sound == sound)
+				{
+					i->time = time;
+					i->fadeOff = -1.0f;
+					return 0;
+				}
+			}
 		}
-		else if (i->time + c_recentTimeOffset >= m_time)
+
+		// Then try to associate sound with lesser priority channel.
+		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		{
-			if (i->sound == sound)
-				return 0;
-		}
-	}
+			if (priority >= i->priority)
+			{
+				if (i->handle)
+					i->handle->detach();
 
-	// Then try to associate sound with lesser priority channel.
-	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
-	{
-		if (priority < i->priority)
-		{
-			if (i->handle)
-				i->handle->detach();
+				i->position = Vector4::zero();
+				i->surroundFilter = 0;
+				i->lowPassFilter = 0;
+				i->echoFilter = 0;
+				i->sound = sound;
+				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
+				i->soundChannel->setFilter(0);
+				i->priority = priority;
+				i->time = time;
+				i->fadeOff = -1.0f;
+				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
-			i->position = Vector4::zero();
-			i->surroundFilter = 0;
-			i->lowPassFilter = 0;
-			i->echoFilter = 0;
-			i->sound = sound;
-			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
-			i->soundChannel->setFilter(0);
-			i->priority = priority;
-			i->time = m_time;
-			i->fadeOff = -1.0f;
-			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
-
-			return i->handle;
+				return i->handle;
+			}
 		}
 	}
 
@@ -143,14 +155,14 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 	if (!m_surroundEnvironment)
 		return play(sound, priority);
 
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 	float maxDistance = sound->getRange();
 	if (maxDistance <= m_surroundEnvironment->getInnerRadius())
 		maxDistance = m_surroundEnvironment->getMaxDistance();
 
+	Vector4 listenerPosition = m_surroundEnvironment->getListenerTransform().translation().xyz1();
+
 	// Calculate distance from listener.
-	Scalar distance = (position - m_surroundEnvironment->getListenerTransform().translation()).xyz0().length();
+	Scalar distance = (position - listenerPosition).xyz0().length();
 	if (distance > maxDistance)
 		return 0;
 
@@ -190,86 +202,100 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 	else
 		groupFilter = new GroupFilter(lowPassFilter, surroundFilter);
 
-	// First try to associate sound with non-playing channel;
-	// also check if sound has recently been played.
-	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
+	float time = float(m_timer.getElapsedTime());
+
 	{
-		if (!i->soundChannel->isPlaying())
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+		// First try to associate sound with non-playing channel (or far away);
+		// also check if sound has recently been played.
+		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		{
-			if (i->handle)
-				i->handle->detach();
+			Scalar channelDistance = (i->position - listenerPosition).xyz0().length();
+			if (
+				!i->soundChannel->isPlaying() ||
+				(i->position.w() > 0.5f && channelDistance > m_surroundEnvironment->getMaxDistance())
+			)
+			{
+				if (i->handle)
+					i->handle->detach();
 
-			i->position = position.xyz1();
-			i->surroundFilter = surroundFilter;
-			i->lowPassFilter = lowPassFilter;
-			i->echoFilter = echoFilter;
-			i->sound = sound;
-			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
-			i->soundChannel->setFilter(groupFilter);
-			i->priority = priority;
-			i->time = m_time;
-			i->fadeOff = -1.0f;
-			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+				i->position = position.xyz1();
+				i->surroundFilter = surroundFilter;
+				i->lowPassFilter = lowPassFilter;
+				i->echoFilter = echoFilter;
+				i->sound = sound;
+				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
+				i->soundChannel->setFilter(groupFilter);
+				i->priority = priority;
+				i->time = time;
+				i->fadeOff = -1.0f;
+				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
-			return i->handle; 
+				return i->handle; 
+			}
+			else if (i->time + c_recentTimeOffset >= time)
+			{
+				if (i->sound == sound)
+				{
+					i->time = time;
+					i->fadeOff = -1.0f;
+					return 0;
+				}
+			}
 		}
-		else if (i->time + c_recentTimeOffset >= m_time)
+
+		// Then try to associate sound with lesser priority channel.
+		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		{
-			if (i->sound == sound)
-				return 0;
+			if (priority > i->priority)
+			{
+				if (i->handle)
+					i->handle->detach();
+
+				i->position = position.xyz1();
+				i->surroundFilter = surroundFilter;
+				i->lowPassFilter = lowPassFilter;
+				i->echoFilter = echoFilter;
+				i->sound = sound;
+				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
+				i->soundChannel->setFilter(groupFilter);
+				i->priority = priority;
+				i->time = time;
+				i->fadeOff = -1.0f;
+				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+
+				return i->handle;
+			}
 		}
-	}
 
-	// Then try to associate sound with lesser priority channel.
-	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
-	{
-		if (priority < i->priority)
+		// Then try to associate sound with similar priority channel but further away.
+		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		{
-			if (i->handle)
-				i->handle->detach();
+			Scalar channelDistance = (i->position - listenerPosition).xyz0().length();
+			if (
+				priority == i->priority &&
+				i->position.w() > 0.5f &&
+				distance < channelDistance
+			)
+			{
+				if (i->handle)
+					i->handle->detach();
 
-			i->position = position.xyz1();
-			i->surroundFilter = surroundFilter;
-			i->lowPassFilter = lowPassFilter;
-			i->echoFilter = echoFilter;
-			i->sound = sound;
-			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
-			i->soundChannel->setFilter(groupFilter);
-			i->priority = priority;
-			i->time = m_time;
-			i->fadeOff = -1.0f;
-			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
+				i->position = position.xyz1();
+				i->surroundFilter = surroundFilter;
+				i->lowPassFilter = lowPassFilter;
+				i->echoFilter = echoFilter;
+				i->sound = sound;
+				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
+				i->soundChannel->setFilter(groupFilter);
+				i->priority = priority;
+				i->time = time;
+				i->fadeOff = -1.0f;
+				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
-			return i->handle;
-		}
-	}
-
-	// Then try to associate sound with similar priority channel but further away.
-	for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
-	{
-		Scalar channelDistance = (i->position - m_surroundEnvironment->getListenerTransform().translation()).length();
-		if (
-			priority == i->priority &&
-			i->position.w() < 0.5f &&
-			distance < channelDistance
-		)
-		{
-			if (i->handle)
-				i->handle->detach();
-
-			i->position = position.xyz1();
-			i->surroundFilter = surroundFilter;
-			i->lowPassFilter = lowPassFilter;
-			i->echoFilter = echoFilter;
-			i->sound = sound;
-			i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
-			i->soundChannel->setFilter(groupFilter);
-			i->priority = priority;
-			i->time = m_time;
-			i->fadeOff = -1.0f;
-			i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
-
-			return i->handle;
+				return i->handle;
+			}
 		}
 	}
 
@@ -298,8 +324,7 @@ void SoundPlayer::update(float dT)
 
 	if (m_surroundEnvironment)
 	{
-		Vector4 listenerPosition = m_surroundEnvironment->getListenerTransform().translation();
-		Scalar maxDistance = m_surroundEnvironment->getMaxDistance();
+		Vector4 listenerPosition = m_surroundEnvironment->getListenerTransform().translation().xyz1();
 
 		// Update surround and low pass filters on playing 3d sounds.
 		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
@@ -308,8 +333,12 @@ void SoundPlayer::update(float dT)
 			if (!i->soundChannel->isPlaying() || i->position.w() < 0.5f)
 				continue;
 
+			float maxDistance = i->sound->getRange();
+			if (maxDistance <= m_surroundEnvironment->getInnerRadius())
+				maxDistance = m_surroundEnvironment->getMaxDistance();
+
 			// Calculate distance from listener; stop sounds which has moved outside max listener distance.
-			Scalar distance = (i->position - listenerPosition).length();
+			Scalar distance = (i->position - listenerPosition).xyz0().length();
 			if (distance > maxDistance)
 			{
 				if (i->handle)
@@ -328,8 +357,10 @@ void SoundPlayer::update(float dT)
 			float cutOff = lerp(c_nearCutOff, c_farCutOff, std::sqrt(k0));
 
 			// Set filter parameters.
-			i->lowPassFilter->setCutOff(cutOff);
-			i->surroundFilter->setSpeakerPosition(i->position);
+			if (i->lowPassFilter)
+				i->lowPassFilter->setCutOff(cutOff);
+			if (i->surroundFilter)
+				i->surroundFilter->setSpeakerPosition(i->position);
 
 			// Set automatic sound parameters.
 			i->soundChannel->setParameter(s_handleDistance, k0);
@@ -347,13 +378,8 @@ void SoundPlayer::update(float dT)
 		if (i->fadeOff > 0.0f)
 			i->soundChannel->setVolume(i->fadeOff);
 		else
-		{
-			i->soundChannel->setVolume(1.0f);
 			i->soundChannel->stop();
-		}
 	}
-
-	m_time += dT;
 }
 
 	}

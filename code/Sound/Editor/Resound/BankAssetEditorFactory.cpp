@@ -16,6 +16,11 @@ const TypeInfoSet BankAssetEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool BankAssetEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return true;
+}
+
 Ref< editor::IObjectEditor > BankAssetEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return new BankAssetEditor(editor);

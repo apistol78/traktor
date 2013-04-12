@@ -965,6 +965,10 @@ bool EditorForm::openEditor(db::Instance* instance)
 	// Create new editor page.
 	if (editorPageFactory)
 	{
+		// Issue a build if resources need to be up-to-date.
+		if (editorPageFactory->needOutputResources(type_of(object)))
+			buildAsset(instance->getGuid(), false);
+
 		Ref< Document > document = new Document();
 		document->editInstance(instance, object);
 
@@ -1026,6 +1030,10 @@ bool EditorForm::openEditor(db::Instance* instance)
 	}
 	else if (objectEditorFactory)
 	{
+		// Issue a build if resources need to be up-to-date.
+		if (objectEditorFactory->needOutputResources(type_of(object)))
+			buildAsset(instance->getGuid(), false);
+
 		// Create object editor dialog.
 		Ref< ObjectEditorDialog > objectEditorDialog = new ObjectEditorDialog(m_mergedSettings, objectEditorFactory);
 		if (!objectEditorDialog->create(this, this, instance, object))

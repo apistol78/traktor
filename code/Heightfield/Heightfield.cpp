@@ -1,4 +1,5 @@
 #include <cmath>
+#include <limits>
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Winding3.h"
 #include "Heightfield/Heightfield.h"

@@ -6,9 +6,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_ANIMATION_EDITOR_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -22,6 +22,8 @@ class T_DLLCLASS AnimationEditorPageFactory : public editor::IEditorPageFactory
 
 public:
 	virtual const TypeInfoSet getEditableTypes() const;
+
+	virtual bool needOutputResources(const TypeInfo& typeInfo) const;
 
 	virtual Ref< editor::IEditorPage > createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const;
 
