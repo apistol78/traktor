@@ -113,10 +113,11 @@ bool EffectPreviewControl::create(
 
 	m_renderContext = new render::RenderContext(512 * 1024);
 	
-	m_soundSystem = soundSystem;
-
-	m_soundPlayer = new sound::SoundPlayer();
-	m_soundPlayer->create(m_soundSystem, 0);
+	if ((m_soundSystem = soundSystem) != 0)
+	{
+		m_soundPlayer = new sound::SoundPlayer();
+		m_soundPlayer->create(m_soundSystem, 0);
+	}
 
 	m_pointRenderer = new PointRenderer(renderSystem, 50.0f, 100.0f);
 

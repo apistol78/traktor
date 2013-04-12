@@ -17,6 +17,11 @@ const TypeInfoSet EffectEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool EffectEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return true;
+}
+
 Ref< editor::IEditorPage > EffectEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
 	return new EffectEditorPage(editor, site, document);

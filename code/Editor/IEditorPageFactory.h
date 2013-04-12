@@ -39,6 +39,8 @@ class T_DLLCLASS IEditorPageFactory : public Object
 public:
 	virtual const TypeInfoSet getEditableTypes() const = 0;
 
+	virtual bool needOutputResources(const TypeInfo& typeInfo) const = 0;
+
 	virtual Ref< IEditorPage > createEditorPage(IEditor* editor, IEditorPageSite* site, IDocument* document) const = 0;
 
 	virtual void getCommands(std::list< ui::Command >& outCommands) const = 0;

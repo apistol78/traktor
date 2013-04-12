@@ -32,6 +32,12 @@ GroupFilter::GroupFilter()
 {
 }
 
+GroupFilter::GroupFilter(IFilter* filter1)
+{
+	m_filters.resize(1);
+	m_filters[0] = filter1;
+}
+
 GroupFilter::GroupFilter(IFilter* filter1, IFilter* filter2)
 {
 	m_filters.resize(2);

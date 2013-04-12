@@ -1,6 +1,6 @@
+#include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPageFactory.h"
-#include "Render/Shader/ShaderGraph.h"
 #include "Ui/Command.h"
 
 namespace traktor
@@ -15,6 +15,11 @@ const TypeInfoSet ShaderGraphEditorPageFactory::getEditableTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ShaderGraph >());
 	return typeSet;
+}
+
+bool ShaderGraphEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
 }
 
 Ref< editor::IEditorPage > ShaderGraphEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const

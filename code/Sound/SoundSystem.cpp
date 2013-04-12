@@ -244,11 +244,11 @@ void SoundSystem::threadMixer()
 
 		for (int32_t i = 0; i < int32_t(channelsCount); ++i)
 		{
-			if (m_channels[i]->m_activeState.buffer)
+			if (m_channels[i]->m_state.buffer)
 			{
-				presence[i] = 1.0f + m_channels[i]->m_activeState.presence;
+				presence[i] = 1.0f + m_channels[i]->m_state.presence;
 				maxPresence = max(maxPresence, presence[i]);
-				m_channels[i]->m_activeState.presence = 0.0f;
+				m_channels[i]->m_state.presence = 0.0f;
 			}
 			else
 				presence[i] = 1.0f;
@@ -256,7 +256,7 @@ void SoundSystem::threadMixer()
 
 		for (uint32_t i = 0; i < m_duck[0].size(); ++i)
 		{
-			if (m_channels[i]->m_activeState.buffer)
+			if (m_channels[i]->m_state.buffer)
 			{
 				m_duck[0][i] = presence[i] / maxPresence;
 				m_duck[0][i] *= m_duck[0][i];
@@ -265,7 +265,7 @@ void SoundSystem::threadMixer()
 					m_duck[1][i] = m_duck[0][i];
 				else
 				{
-					float presenceRate = m_channels[i]->m_activeState.presenceRate;
+					float presenceRate = m_channels[i]->m_state.presenceRate;
 					m_duck[1][i] = min(m_duck[1][i] + float(deltaTime * presenceRate), 1.0f);
 				}
 			}
@@ -280,7 +280,7 @@ void SoundSystem::threadMixer()
 			T_ASSERT (m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
 			T_ASSERT (m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
 
-			float duck = m_volume * m_duck[1][i];
+			float duck = m_volume * (m_duck[1][i] * 0.5f + 0.5f);
 			for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 			{
 				if (!m_requestBlocks[i].samples[k])

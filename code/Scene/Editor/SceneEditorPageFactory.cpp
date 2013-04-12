@@ -23,6 +23,11 @@ const TypeInfoSet SceneEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool SceneEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return true;
+}
+
 Ref< editor::IEditorPage > SceneEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
 	return new SceneEditorPage(editor, site, document);

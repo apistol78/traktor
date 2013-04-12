@@ -10,6 +10,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Resource/IResourceManager.h"
 #include "Sound/ISoundDriver.h"
+#include "Sound/SoundChannel.h"
 #include "Sound/SoundDriverWriteOut.h"
 #include "Sound/SoundFactory.h"
 #include "Sound/SoundSystem.h"
@@ -163,6 +164,21 @@ void AudioServer::update(float dT, bool renderViewActive)
 
 	// Update sound player.
 	m_soundPlayer->update(dT);
+}
+
+uint32_t AudioServer::getActiveSoundChannels() const
+{
+	uint32_t activeCount = 0;
+	for (uint32_t i = 0; ; ++i)
+	{
+		sound::SoundChannel* channel = m_soundSystem->getChannel(i);
+		if (!channel)
+			break;
+
+		if (channel->isPlaying())
+			activeCount++;
+	}
+	return activeCount;
 }
 
 int32_t AudioServer::reconfigure(const PropertyGroup* settings)

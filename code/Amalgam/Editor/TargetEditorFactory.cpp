@@ -16,6 +16,11 @@ const TypeInfoSet TargetEditorFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool TargetEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IObjectEditor > TargetEditorFactory::createObjectEditor(editor::IEditor* editor) const
 {
 	return new TargetEditor(editor);

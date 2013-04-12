@@ -37,6 +37,8 @@ public:
 
 	void update(float dT, bool renderViewActive);
 
+	uint32_t getActiveSoundChannels() const;
+
 	virtual sound::SoundSystem* getSoundSystem();
 
 	virtual sound::ISoundPlayer* getSoundPlayer();

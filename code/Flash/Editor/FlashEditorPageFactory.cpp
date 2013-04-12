@@ -17,6 +17,11 @@ const TypeInfoSet FlashEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool FlashEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IEditorPage > FlashEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
 	return new FlashEditorPage(editor, site, document);

@@ -4,6 +4,14 @@
 #include "Core/Object.h"
 #include "Resource/Proxy.h"
 
+// import/export mechanism.
+#undef T_DLLCLASS
+#if defined(T_TERRAIN_EXPORT)
+#	define T_DLLCLASS T_DLLEXPORT
+#else
+#	define T_DLLCLASS T_DLLIMPORT
+#endif
+
 namespace traktor
 {
 	namespace hf
@@ -24,7 +32,7 @@ class Shader;
 	namespace terrain
 	{
 
-class Terrain : public Object
+class T_DLLCLASS Terrain : public Object
 {
 	T_RTTI_CLASS;
 

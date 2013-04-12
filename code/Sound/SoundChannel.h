@@ -89,12 +89,14 @@ private:
 		Ref< const IFilter > filter;
 		Ref< IFilterInstance > filterInstance;
 		float volume;
+		float pitch;
 		float presence;
 		float presenceRate;
 		uint32_t repeat;
 
 		State()
 		:	volume(1.0f)
+		,	pitch(1.0f)
 		,	presence(0.0f)
 		,	presenceRate(1.0f)
 		,	repeat(0)
@@ -107,12 +109,9 @@ private:
 	uint32_t m_hwSampleRate;	//< Hardware sample rate.
 	uint32_t m_hwFrameSamples;	//< Hardware frame size in samples.
 	Semaphore m_lock;
-	State m_currentState;
-	State m_activeState;
+	State m_state;
 	float* m_outputSamples[SbcMaxChannelCount];
 	uint32_t m_outputSamplesIn;
-	float m_pitch;
-	float m_volume;
 
 	SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRate, uint32_t hwFrameSamples);
 

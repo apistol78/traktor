@@ -819,6 +819,9 @@ bool Application::update()
 				);
 			}
 
+			if (m_audioServer)
+				performance.activeSoundChannels = m_audioServer->getActiveSoundChannels();
+
 			m_targetManagerConnection->getTransport()->send(&performance);
 		}
 #endif

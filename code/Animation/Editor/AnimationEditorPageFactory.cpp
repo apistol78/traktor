@@ -17,6 +17,11 @@ const TypeInfoSet AnimationEditorPageFactory::getEditableTypes() const
 	return typeSet;
 }
 
+bool AnimationEditorPageFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
+}
+
 Ref< editor::IEditorPage > AnimationEditorPageFactory::createEditorPage(editor::IEditor* editor, editor::IEditorPageSite* site, editor::IDocument* document) const
 {
 	return new AnimationEditorPage(editor, site, document);

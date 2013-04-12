@@ -1,5 +1,5 @@
-#include "Editor/App/DefaultObjectEditorFactory.h"
 #include "Editor/App/DefaultObjectEditor.h"
+#include "Editor/App/DefaultObjectEditorFactory.h"
 
 namespace traktor
 {
@@ -13,6 +13,11 @@ const TypeInfoSet DefaultObjectEditorFactory::getEditableTypes() const
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ISerializable >());
 	return typeSet;
+}
+
+bool DefaultObjectEditorFactory::needOutputResources(const TypeInfo& typeInfo) const
+{
+	return false;
 }
 
 Ref< IObjectEditor > DefaultObjectEditorFactory::createObjectEditor(IEditor* editor) const
