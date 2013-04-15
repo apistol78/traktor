@@ -98,9 +98,10 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t priorities,
 			(*i)->render(renderView, globalParameters);
 	}
 
-	// Render post opaque blocks unsorted.
+	// Render post opaque blocks, sorted by shader.
 	if (priorities & RpPostOpaque)
 	{
+		std::sort(m_renderQueue[2].begin(), m_renderQueue[2].end(), SortOpaquePredicate);
 		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[2].begin(); i != m_renderQueue[2].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}
@@ -113,9 +114,10 @@ void RenderContext::render(render::IRenderView* renderView, uint32_t priorities,
 			(*i)->render(renderView, globalParameters);
 	}
 
-	// Render post alpha blend blocks unsorted.
+	// Render post alpha blend blocks back to front.
 	if (priorities & RpPostAlphaBlend)
 	{
+		std::sort(m_renderQueue[4].begin(), m_renderQueue[4].end(), SortAlphaBlendPredicate);
 		for (AlignedVector< RenderBlock* >::const_iterator i = m_renderQueue[4].begin(); i != m_renderQueue[4].end(); ++i)
 			(*i)->render(renderView, globalParameters);
 	}

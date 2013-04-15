@@ -2,11 +2,13 @@
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
+#include "Render/ITexture.h"
 #include "Render/Resource/ShaderFactory.h"
 #include "Render/Resource/TextureFactory.h"
 #include "Resource/ResourceManager.h"
@@ -132,6 +134,8 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolToggleMove);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_RANDOMIZE_SEED"), ui::Command(L"Effect.Editor.RandomizeSeed"), 6));
+	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"EFFECT_EDITOR_BROWSE_BACKGROUND"), ui::Command(L"Effect.Editor.BrowseBackground"), 0));
 
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventToolClick));
 
@@ -232,6 +236,15 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 	{
 		m_previewControl->randomizeSeed();
 		m_previewControl->syncEffect();
+	}
+	else if (command == L"Effect.Editor.BrowseBackground")
+	{
+		Ref< db::Instance > textureInstance = m_editor->browseInstance(type_of< render::ITexture >());
+		if (textureInstance)
+		{
+			m_editor->buildAsset(textureInstance->getGuid(), false);
+			m_previewControl->setBackground(resource::Id< render::ISimpleTexture >(textureInstance->getGuid()));
+		}
 	}
 	else if (command == L"Editor.PropertiesChanging")
 	{

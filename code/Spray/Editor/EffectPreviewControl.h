@@ -3,6 +3,8 @@
 
 #include <map>
 #include "Core/Timer/Timer.h"
+#include "Resource/Id.h"
+#include "Resource/Proxy.h"
 #include "Spray/Point.h"
 #include "Spray/Types.h"
 #include "Ui/Widget.h"
@@ -36,6 +38,7 @@ class IResourceManager;
 
 class IRenderSystem;
 class IRenderView;
+class ISimpleTexture;
 class RenderContext;
 class PrimitiveRenderer;
 
@@ -81,6 +84,8 @@ public:
 
 	void setTotalTime(float totalTime);
 
+	void setBackground(const resource::Id< render::ISimpleTexture >& background);
+
 	void showGuide(bool guideVisible);
 
 	void showVelocity(bool velocityVisible);
@@ -96,7 +101,9 @@ public:
 private:
 	editor::IEditor* m_editor;
 	Ref< ui::EventHandler > m_idleHandler;
+	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< render::IRenderView > m_renderView;
+	resource::Proxy< render::ISimpleTexture > m_background;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	Ref< render::RenderContext > m_renderContext;
 	Ref< sound::SoundSystem > m_soundSystem;

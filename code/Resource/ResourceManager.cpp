@@ -103,11 +103,7 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	T_ASSERT (handle);
 
 	if (!handle->get())
-	{
 		load(guid, factory, type, handle);
-		if (!handle->get())
-			return 0;
-	}
 
 	return handle;
 }

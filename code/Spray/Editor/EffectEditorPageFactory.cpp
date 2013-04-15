@@ -36,6 +36,7 @@ void EffectEditorPageFactory::getCommands(std::list< ui::Command >& outCommands)
 	outCommands.push_back(ui::Command(L"Effect.Editor.ToggleGuide"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.ToggleVelocity"));
 	outCommands.push_back(ui::Command(L"Effect.Editor.RandomizeSeed"));
+	outCommands.push_back(ui::Command(L"Effect.Editor.BrowseBackground"));
 }
 
 	}
