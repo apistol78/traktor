@@ -21,11 +21,10 @@ world::Entity* findEntityDataProduct(const std::map< const world::EntityData*, R
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 1, TheaterControllerData, scene::ISceneControllerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerData", 2, TheaterControllerData, scene::ISceneControllerData)
 
 TheaterControllerData::TheaterControllerData()
 :	m_duration(0.0f)
-,	m_loop(true)
 {
 }
 
@@ -45,18 +44,20 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const std
 			lookAtEntity,
 			m_trackData[i]->getPath(),
 			m_trackData[i]->getLoopStart(),
-			m_trackData[i]->getLoopEnd(),
-			m_trackData[i]->getLoopEase()
+			m_trackData[i]->getLoopEnd()
 		);
 	}
-	return new TheaterController(m_duration, m_loop, tracks);
+	return new TheaterController(m_duration, tracks);
 }
 
 bool TheaterControllerData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"duration", m_duration);
-	if (s.getVersion() >= 1)
-		s >> Member< bool >(L"loop", m_loop);
+	if (s.getVersion() == 1)
+	{
+		bool loop = false;
+		s >> Member< bool >(L"loop", loop);
+	}
 	s >> MemberRefArray< TrackData >(L"trackData", m_trackData);
 	return true;
 }

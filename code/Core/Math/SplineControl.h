@@ -1,6 +1,8 @@
 #ifndef traktor_SplineControl_H
 #define traktor_SplineControl_H
 
+#include "Core/Config.h"
+
 namespace traktor
 {
 
@@ -9,7 +11,7 @@ namespace traktor
  */
 struct ClampTime
 {
-	static inline float t(float Tat, float Tfirst, float Tlast, float Tend)
+	static float t(float Tat, float Tfirst, float Tlast, float Tend)
 	{
 		float T = Tat;
 		if (T < Tfirst)
@@ -20,7 +22,7 @@ struct ClampTime
 			return T;
 	}
 
-	static inline int index(int i, int last)
+	static int32_t index(int32_t i, int last)
 	{
 		if (i < 0)
 			return 0;
@@ -36,7 +38,7 @@ struct ClampTime
  */
 struct WrapTime
 {
-	static inline float t(float Tat, float Tfirst, float Tlast, float Tend)
+	static float t(float Tat, float Tfirst, float Tlast, float Tend)
 	{
 		float T = Tat;
 		float range = Tend - Tfirst;
@@ -47,7 +49,7 @@ struct WrapTime
 		return T;
 	}
 
-	static inline int index(int i, int last)
+	static int32_t index(int32_t i, int32_t last)
 	{
 		while (i < 0)
 			i += last + 1;

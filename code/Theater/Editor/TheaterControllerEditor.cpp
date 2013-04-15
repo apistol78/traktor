@@ -176,7 +176,6 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 	m_trackSequencer->getSequenceItems(items, ui::custom::SequencerControl::GfSelectedOnly);
 
 	float duration = controllerData->getDuration();
-	bool loop = controllerData->getLoop();
 
 	const RefArray< TrackData >& trackData = controllerData->getTrackData();
 	for (RefArray< TrackData >::const_iterator i = trackData.begin(); i != trackData.end(); ++i)
@@ -194,11 +193,11 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		const TransformPath& path = (*i)->getPath();
 		int32_t steps = int32_t(duration) * 10;
 		
-		TransformPath::Frame F0 = path.evaluate(0.0f, duration, loop);
+		TransformPath::Frame F0 = path.evaluate(0.0f, duration);
 		for (int32_t i = 1; i < steps; ++i)
 		{
 			float T = (float(i) / steps) * duration;
-			TransformPath::Frame F1 = path.evaluate(T, duration, loop);
+			TransformPath::Frame F1 = path.evaluate(T, duration);
 
 			primitiveRenderer->drawLine(
 				F0.position,
@@ -212,7 +211,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		for (int32_t i = 0; i <= steps; ++i)
 		{
 			float T = (float(i) / steps) * duration;
-			TransformPath::Frame F0 = path.evaluate(T, duration, loop);
+			TransformPath::Frame F0 = path.evaluate(T, duration);
 
 			primitiveRenderer->drawSolidPoint(
 				F0.position,
@@ -417,8 +416,8 @@ void TheaterControllerEditor::easeVelocity()
 			const float c_measureStep = 1.0f / 1000.0f;
 			for (float T = T0; T <= T1 - c_measureStep; T += c_measureStep)
 			{
-				TransformPath::Frame Fc = path.evaluate(T, controllerData->getLoop());
-				TransformPath::Frame Fn = path.evaluate(T + c_measureStep, controllerData->getLoop());
+				TransformPath::Frame Fc = path.evaluate(T);
+				TransformPath::Frame Fn = path.evaluate(T + c_measureStep);
 				totalDistance += (Fn.position - Fc.position).length();
 			}
 

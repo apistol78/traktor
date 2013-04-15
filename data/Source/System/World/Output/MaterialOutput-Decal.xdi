@@ -404,7 +404,7 @@
 				<first>-292</first>
 				<second>762</second>
 			</position>
-			<value>0</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
@@ -583,16 +583,6 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Mask</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[13]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Mask</name>
 			</destination>
@@ -755,6 +745,16 @@
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Mask</name>
 			</destination>
 		</item>
 	</edges>
