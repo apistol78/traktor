@@ -1,14 +1,22 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>367</first>
 				<second>417</second>
 			</position>
 			<technique>World_ForwardColor</technique>
-			<cullMode>CmClockWise</cullMode>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
 			<blendSource>BfSourceAlpha</blendSource>
@@ -47,14 +55,22 @@
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>366</first>
 				<second>551</second>
 			</position>
 			<technique>World_PreLitColor</technique>
-			<cullMode>CmClockWise</cullMode>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
+			<cullMode>CmNever</cullMode>
 			<blendEnable>true</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
 			<blendSource>BfSourceAlpha</blendSource>

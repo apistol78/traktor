@@ -469,7 +469,7 @@
 				<first>2545</first>
 				<second>700</second>
 			</position>
-			<value>0</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.State" version="5">
 			<comment>

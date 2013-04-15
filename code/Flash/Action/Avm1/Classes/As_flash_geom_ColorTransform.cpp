@@ -11,7 +11,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.As_flash_geom_ColorTransform", As_flash_geom_ColorTransform, ActionClass)
 
 As_flash_geom_ColorTransform::As_flash_geom_ColorTransform(ActionContext* context)
-:	ActionClass(context, "flash.geom.Transform")
+:	ActionClass(context, "flash.geom.ColorTransform")
 {
 	Ref< ActionObject > prototype = new ActionObject(context);
 
@@ -24,6 +24,7 @@ As_flash_geom_ColorTransform::As_flash_geom_ColorTransform(ActionContext* contex
 	prototype->addProperty("redMultiplier", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_redMultiplier), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_redMultiplier));
 	prototype->addProperty("redOffset", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_redOffset), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_redOffset));
 	prototype->addProperty("rgb", createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_get_rgb), createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_set_rgb));
+	prototype->setMember("toString", ActionValue(createNativeFunction(context, this, &As_flash_geom_ColorTransform::ColorTransform_toString)));
 
 	prototype->setMember("constructor", ActionValue(this));
 	prototype->setReadOnly();
@@ -150,6 +151,11 @@ void As_flash_geom_ColorTransform::ColorTransform_set_rgb(ColorTransform* self, 
 	T_IF_VERBOSE(
 		log::warning << L"ColorTransform::set_rgb not implemented" << Endl;
 	)
+}
+
+std::wstring As_flash_geom_ColorTransform::ColorTransform_toString(const ColorTransform* self) const
+{
+	return L"{redMultiplier=0, greenMultiplier=0, blueMultiplier=0, alphaMultiplier=0, redOffset=0, greenOffset=0, blueOffset=0, alphaOffset=0}";
 }
 
 	}

@@ -1,4 +1,5 @@
 #include <limits>
+#include "Core/Log/Log.h"
 #include "Core/Math/Hermite.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/TcbSpline.h"
@@ -25,40 +26,68 @@ public:
 	{
 	}
 
-	int32_t index(float T, float Tend) const
+	void get(
+		float& inoutT,
+		float& outTension,
+		float& outBias,
+		float& outContinuity,
+		TransformPath::Frame& outV0,
+		TransformPath::Frame& outV1,
+		TransformPath::Frame& outVp,
+		TransformPath::Frame& outVn
+	) const
 	{
-		int32_t i = m_keys.size() - 1;
-		for (; i > 0; --i)
+		int32_t nkeys = int32_t(m_keys.size());
+		float T0, T1;
+
+		int32_t index = 0;
+		for (index = nkeys - 1; index > 0; --index)
 		{
-			if (T >= m_keys[i].T)
+			if (inoutT >= m_keys[index].T)
 				break;
 		}
-		return i;
-	}
 
-	float time(int32_t index) const
-	{
-		return Scalar(key(index).T);
-	}
+		T0 = m_keys[index].T;
 
-	float tension(int32_t index) const
-	{
-		return key(index).tcb.x();
-	}
+		outV0 = m_keys[index].value;
+		outTension = m_keys[index].tcb.x();
+		outBias = m_keys[index].tcb.y();
+		outContinuity = m_keys[index].tcb.z();
 
-	float continuity(int32_t index) const
-	{
-		return key(index).tcb.y();
-	}
+		int32_t index_1 = index + 1;
+		if (index_1 < nkeys)
+		{
+			T1 = m_keys[index_1].T;
+			outV1 = m_keys[index_1].value;
+		}
+		else
+		{
+			T1 = m_keys[nkeys - 1].T;
+			outV1 = m_keys[nkeys - 1].value;
+		}
 
-	float bias(int32_t index) const
-	{
-		return key(index).tcb.z();
-	}
+		int32_t index_p = index - 1;
+		if (index_p >= 0)
+			outVp = m_keys[index_p].value;
+		else
+		{
+			index_p = nkeys - 1;
+			outVp = m_keys[0].value;
+		}
 
-	const TransformPath::Frame& value(int32_t index) const
-	{
-		return key(index).value;
+		int32_t index_n = index_1 + 1;
+		if (index_n < nkeys)
+			outVn = m_keys[index_n].value;
+		else
+		{
+			index_n = nkeys - 1;
+			outVn = m_keys[nkeys - 1].value;
+		}
+
+		//log::info.setDecimals(2);
+		//log::info << L"0: " << inoutT << L" " << T0 << L" -> " << T1 << L"  " << index_p << L", [" << index << L"], " << index_1 << L", " << index_n << Endl;
+
+		inoutT = (inoutT - T0) / (T1 - T0);
 	}
 
 	TransformPath::Frame combine(
@@ -76,70 +105,161 @@ public:
 
 private:
 	const AlignedVector< TransformPath::Key >& m_keys;
-
-	const TransformPath::Key& key(int32_t index) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		if (index < 0)
-			index = 0;
-		if (index >= nkeys)
-			index = nkeys - 1;
-		return m_keys[index];
-	}
 };
 
 /*! \brief Closed uniform TCB spline accessor. */
 class T_MATH_ALIGN16 ClosedUniformAccessor
 {
 public:
-	ClosedUniformAccessor(const AlignedVector< TransformPath::Key >& keys)
+	ClosedUniformAccessor(const AlignedVector< TransformPath::Key >& keys, float Tend, float Tloop)
 	:	m_keys(keys)
-	{
-	}
-
-	int32_t index(float T, float Tend) const
+	,	m_Tend(Tend)
+	,	m_Tloop(Tloop)
+	,	m_Iloop(0)
 	{
 		int32_t nkeys = int32_t(m_keys.size());
-
-		float Tn = T;
-		while (Tn < 0.0f)
-			Tn += Tend;
-		while (Tn > Tend)
-			Tn -= Tend;
-
-		int32_t i = nkeys - 1;
-		for (; i >= 0; --i)
+		for (m_Iloop = nkeys - 1; m_Iloop >= 0; --m_Iloop)
 		{
-			if (Tn >= m_keys[i].T)
-				return i;
+			if (m_Tloop > m_keys[m_Iloop].T + FUZZY_EPSILON)
+				break;
 		}
-
-		return nkeys - 1;
 	}
 
-	float time(int32_t index) const
+	void get(
+		float& inoutT,
+		float& outTension,
+		float& outBias,
+		float& outContinuity,
+		TransformPath::Frame& outV0,
+		TransformPath::Frame& outV1,
+		TransformPath::Frame& outVp,
+		TransformPath::Frame& outVn
+	) const
 	{
-		return Scalar(key(index).T);
-	}
+		int32_t nkeys = int32_t(m_keys.size());
+		float T0, T1;
 
-	float tension(int32_t index) const
-	{
-		return key(index).tcb.x();
-	}
+		if (inoutT <= m_Tend)
+		{
+			// Initial lap
 
-	float continuity(int32_t index) const
-	{
-		return key(index).tcb.y();
-	}
+			int32_t index = 0;
+			for (index = nkeys - 1; index >= 0; --index)
+			{
+				if (inoutT >= m_keys[index].T)
+					break;
+			}
 
-	float bias(int32_t index) const
-	{
-		return key(index).tcb.z();
-	}
+			T0 = m_keys[index].T;
 
-	const TransformPath::Frame& value(int32_t index) const
-	{
-		return key(index).value;
+			outV0 = m_keys[index].value;
+			outTension = m_keys[index].tcb.x();
+			outBias = m_keys[index].tcb.y();
+			outContinuity = m_keys[index].tcb.z();
+
+			int32_t index_1 = index + 1;
+			if (index_1 < nkeys)
+			{
+				T1 = m_keys[index_1].T;
+				outV1 = m_keys[index_1].value;
+			}
+			else
+			{
+				index_1 = m_Iloop + 1;
+				T1 = m_Tend + (m_keys[index_1].T - m_Tloop);
+				outV1 = m_keys[index_1].value;
+			}
+
+			int32_t index_p = index - 1;
+			if (index_p >= 0)
+				outVp = m_keys[index_p].value;
+			else
+			{
+				index_p = nkeys - 1;
+				outVp = m_keys[0].value;
+			}
+
+			int32_t index_n = index_1 + 1;
+			if (index_n < nkeys)
+				outVn = m_keys[index_n].value;
+			else
+			{
+				index_n = m_Iloop + 1;
+				outVn = m_keys[index_n].value;
+			}
+
+			//log::info.setDecimals(2);
+			//log::info << L"1: " << inoutT << L" " << T0 << L" -> " << T1 << L"  " << index_p << L", [" << index << L"], " << index_1 << L", " << index_n << L"   loop " << m_Iloop << Endl;
+
+			inoutT = (inoutT - T0) / (T1 - T0);
+		}
+		else
+		{
+			// Loop lap
+
+			inoutT -= m_Tend;
+
+			while (inoutT > m_Tend - m_Tloop)
+				inoutT -= m_Tend - m_Tloop;
+
+			inoutT += m_Tloop;
+
+			int32_t index = 0;
+			for (index = nkeys - 1; index >= 0; --index)
+			{
+				if (inoutT >= m_keys[index].T)
+					break;
+			}
+
+			if (index <= m_Iloop)
+				index = nkeys - 1;
+
+			T0 = m_keys[index].T;
+
+			outV0 = m_keys[index].value;
+			outTension = m_keys[index].tcb.x();
+			outBias = m_keys[index].tcb.y();
+			outContinuity = m_keys[index].tcb.z();
+
+			int32_t index_1 = index + 1;
+			if (index_1 < nkeys)
+			{
+				T1 = m_keys[index_1].T;
+				outV1 = m_keys[index_1].value;
+			}
+			else
+			{
+				index_1 = m_Iloop + 1;
+				T1 = m_Tend + (m_keys[index_1].T - m_Tloop);
+				outV1 = m_keys[index_1].value;
+			}
+
+			int32_t index_p = index - 1;
+			if (index_p > m_Iloop)
+				outVp = m_keys[index_p].value;
+			else
+			{
+				index_p = nkeys - 1;
+				outVp = m_keys[nkeys - 1].value;
+			}
+
+			int32_t index_n = index_1 + 1;
+			if (index_n < nkeys)
+				outVn = m_keys[index_n].value;
+			else
+			{
+				index_n = m_Iloop + 1;
+				outVn = m_keys[index_n].value;
+			}
+
+			if (inoutT < T0)
+				inoutT += m_Tend - m_Tloop;
+
+			//log::info.setDecimals(2);
+			//log::info << L"2: " << inoutT << L" " << T0 << L" -> " << T1 << L"  " << index_p << L", [" << index << L"], " << index_1 << L", " << index_n << L"   loop " << m_Iloop << Endl;
+
+			inoutT = (inoutT - T0) / (T1 - T0);
+		}
 	}
 
 	TransformPath::Frame combine(
@@ -157,32 +277,9 @@ public:
 
 private:
 	const AlignedVector< TransformPath::Key >& m_keys;
-
-	const TransformPath::Key& key(int32_t index) const
-	{
-		int32_t nkeys = int32_t(m_keys.size());
-		while (index < 0)
-			index += nkeys;
-		index %= nkeys;
-		return m_keys[index];
-	}
-};
-
-struct PairAccessor
-{
-	static inline float time(const std::pair< float, float >& key) { return key.first; }
-	
-	static inline float value(const std::pair< float, float >& key) { return key.second; }
-
-	static inline float combine(
-		float v0, float w0,
-		float v1, float w1,
-		float v2, float w2,
-		float v3, float w3
-	)
-	{
-		return float(v0 * w0 + v1 * w1 + v2 * w2 + v3 * w3);
-	}
+	float m_Tend;
+	float m_Tloop;
+	int32_t m_Iloop;
 };
 
 	}
@@ -190,13 +287,11 @@ struct PairAccessor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.TransformPath", 0, TransformPath, ISerializable)
 
 TransformPath::TransformPath()
-:	m_loop(false)
 {
 }
 
 TransformPath::TransformPath(const TransformPath& path)
 :	m_keys(path.m_keys)
-,	m_loop(false)
 {
 }
 
@@ -236,13 +331,13 @@ void TransformPath::insert(float at, const Frame& frame)
 	m_spline.release();
 }
 
-TransformPath::Frame TransformPath::evaluate(float at, bool loop) const
+TransformPath::Frame TransformPath::evaluate(float at) const
 {
 	float Tend = getEndTime() + getStartTime();
-	return evaluate(at, Tend, loop);
+	return evaluate(at, Tend);
 }
 
-TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) const
+TransformPath::Frame TransformPath::evaluate(float at, float end) const
 {
 	size_t nkeys = m_keys.size();
 	if (nkeys == 0)
@@ -251,38 +346,35 @@ TransformPath::Frame TransformPath::evaluate(float at, float end, bool loop) con
 		return m_keys[0].value;
 	else
 	{
-		if (!m_spline.ptr() || m_loop != loop)
+		if (!m_spline.ptr())
 		{
-			if (loop)
-			{
-				m_spline.reset(new TcbSpline< Key, Frame, ClosedUniformAccessor >(
-					ClosedUniformAccessor(m_keys),
-					end
-				));
-			}
-			else
-			{
-				m_spline.reset(new TcbSpline< Key, Frame, OpenUniformAccessor >(
-					OpenUniformAccessor(m_keys),
-					end
-				));
-			}
-
-			m_loop = loop;
+			m_spline.reset(new TcbSpline< Key, Frame, OpenUniformAccessor >(
+				OpenUniformAccessor(m_keys)
+			));
 		}
 
-		if (m_loop)
+		Frame frame = m_spline->evaluate(at);
+		frame.position = frame.position.xyz1();
+		frame.orientation = frame.orientation.xyz0();
+
+		return frame;
+	}
+}
+
+TransformPath::Frame TransformPath::evaluate(float at, float end, float loop) const
+{
+	size_t nkeys = m_keys.size();
+	if (nkeys == 0)
+		return Frame();
+	else if (nkeys == 1)
+		return m_keys[0].value;
+	else
+	{
+		if (!m_spline.ptr())
 		{
-			while (at > end)
-				at -= end;
-		}
-		else
-		{
-			float begin = m_keys.front().T;
-			if (at < begin)
-				at = begin;
-			if (at > end)
-				at = end;
+			m_spline.reset(new TcbSpline< Key, Frame, ClosedUniformAccessor >(
+				ClosedUniformAccessor(m_keys, end, loop)
+			));
 		}
 
 		Frame frame = m_spline->evaluate(at);

@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_THEATER_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -24,7 +24,7 @@ class T_DLLCLASS TheaterController : public scene::ISceneController
 	T_RTTI_CLASS;
 
 public:
-	TheaterController(float duration, bool loop, const RefArray< Track >& tracks);
+	TheaterController(float duration, const RefArray< Track >& tracks);
 
 	virtual void update(scene::Scene* scene, float time, float deltaTime);
 
@@ -32,7 +32,6 @@ public:
 
 private:
 	float m_duration;
-	bool m_loop;
 	RefArray< Track > m_tracks;
 	float m_lastTime;
 };

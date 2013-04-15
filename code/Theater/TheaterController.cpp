@@ -12,9 +12,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterController", TheaterController, scene::ISceneController)
 
-TheaterController::TheaterController(float duration, bool loop, const RefArray< Track >& tracks)
+TheaterController::TheaterController(float duration, const RefArray< Track >& tracks)
 :	m_duration(duration)
-,	m_loop(loop)
 ,	m_tracks(tracks)
 ,	m_lastTime(-std::numeric_limits< float >::max())
 {
@@ -41,33 +40,15 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 
 		float loopStart = m_tracks[i]->getLoopStart();
 		float loopEnd = m_tracks[i]->getLoopEnd();
-		float loopEase = m_tracks[i]->getLoopEase();
 
-		if (loopStart < loopEnd && time >= loopEnd - loopEase)
+		if (loopStart + FUZZY_EPSILON < loopEnd)
 		{
-			float trackTime = std::fmod(time - loopStart, loopEnd - loopStart) + loopStart;
-
-			// Calculate looped frame.
-			frame = path.evaluate(trackTime, m_duration, m_loop);
+			frame = path.evaluate(time, loopEnd, loopStart);
 			transform = frame.transform();
-
-			if (trackTime >= loopEnd - loopEase)
-			{
-				float offset = trackTime - (loopEnd - loopEase);
-
-				// Calculate ease into frame.
-				TransformPath::Frame frame0 = path.evaluate(loopStart - loopEase + offset, m_duration, m_loop);
-				Transform transform0 = frame0.transform();
-
-				// Ease loop transition.
-				float blend = 1.0f - (cosf(PI * offset / loopEase) * 0.5f + 0.5f);
-				transform = lerp(transform, transform0, Scalar(blend));
-			}
 		}
 		else
 		{
-			// Calculate path frame.
-			frame = path.evaluate(time, m_duration, m_loop);
+			frame = path.evaluate(time, m_duration);
 			transform = frame.transform();
 		}
 

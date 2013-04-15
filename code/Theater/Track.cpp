@@ -12,15 +12,13 @@ Track::Track(
 	world::Entity* lookAtEntity,
 	const TransformPath& path,
 	float loopStart,
-	float loopEnd,
-	float loopEase
+	float loopEnd
 )
 :	m_entity(entity)
 ,	m_lookAtEntity(lookAtEntity)
 ,	m_path(path)
 ,	m_loopStart(loopStart)
 ,	m_loopEnd(loopEnd)
-,	m_loopEase(loopEase)
 {
 }
 
@@ -62,11 +60,6 @@ float Track::getLoopStart() const
 float Track::getLoopEnd() const
 {
 	return m_loopEnd;
-}
-
-float Track::getLoopEase() const
-{
-	return m_loopEase;
 }
 
 	}

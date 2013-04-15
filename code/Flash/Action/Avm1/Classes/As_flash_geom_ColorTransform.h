@@ -59,6 +59,8 @@ private:
 	avm_number_t ColorTransform_get_rgb(ColorTransform* self) const;
 
 	void ColorTransform_set_rgb(ColorTransform* self, avm_number_t value) const;
+
+	std::wstring ColorTransform_toString(const ColorTransform* self) const;
 };
 
 	}

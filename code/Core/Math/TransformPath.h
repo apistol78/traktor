@@ -68,9 +68,11 @@ public:
 
 	void insert(float at, const Frame& frame);
 
-	Frame evaluate(float at, bool loop) const;
+	Frame evaluate(float at) const;
 
-	Frame evaluate(float at, float end, bool loop) const;
+	Frame evaluate(float at, float end) const;
+
+	Frame evaluate(float at, float end, float loop) const;
 
 	Key* getClosestKey(float at);
 
@@ -93,7 +95,6 @@ public:
 private:
 	AlignedVector< Key > m_keys;
 	mutable AutoPtr< ISpline< Frame > > m_spline;
-	mutable bool m_loop;
 };
 
 }

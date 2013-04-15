@@ -14,37 +14,6 @@ namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-Ref< ISerializable > recursiveBuildOutput(editor::IPipelineBuilder* pipelineBuilder, const ISerializable* sourceObject)
-{
-	Ref< Reflection > reflection = Reflection::create(sourceObject);
-	if (!reflection)
-		return 0;
-
-	RefArray< ReflectionMember > objectMembers;
-	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
-
-	while (!objectMembers.empty())
-	{
-		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
-		objectMembers.pop_front();
-
-		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
-		{
-			objectMember->set(pipelineBuilder->buildOutput(entityData));
-		}
-		else if (objectMember->get())
-		{
-			objectMember->set(recursiveBuildOutput(pipelineBuilder, objectMember->get()));
-		}
-	}
-
-	return reflection->clone();
-}
-
-		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.EntityPipeline", 1, EntityPipeline, editor::IPipeline)
 
@@ -140,7 +109,31 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	return recursiveBuildOutput(pipelineBuilder, sourceAsset);
+	Ref< Reflection > reflection = Reflection::create(sourceAsset);
+	if (!reflection)
+		return 0;
+
+	RefArray< ReflectionMember > objectMembers;
+	reflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+
+	while (!objectMembers.empty())
+	{
+		Ref< RfmObject > objectMember = checked_type_cast< RfmObject*, false >(objectMembers.front());
+		objectMembers.pop_front();
+
+		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
+		{
+			objectMember->set(pipelineBuilder->buildOutput(entityData));
+		}
+		else if (objectMember->get())
+		{
+			Ref< Reflection > childReflection = Reflection::create(objectMember->get());
+			if (childReflection)
+				childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
+		}
+	}
+
+	return reflection->clone();
 }
 
 	}

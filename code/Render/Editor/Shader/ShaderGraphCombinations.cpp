@@ -6,6 +6,7 @@
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/ShaderGraphStatic.h"
 
 namespace traktor
 {
@@ -43,7 +44,15 @@ Ref< ShaderGraph > replaceBranch(const ShaderGraph* shaderGraph, Branch* branch,
 		));
 	}
 
-	return ShaderGraphOptimizer(shaderGraphResult).removeUnusedBranches();
+	shaderGraphResult = ShaderGraphOptimizer(shaderGraphResult).removeUnusedBranches();
+	if (!shaderGraphResult)
+		return 0;
+
+	shaderGraphResult = ShaderGraphStatic(shaderGraphResult).getConstantFolded();
+	if (!shaderGraphResult)
+		return 0;
+
+	return shaderGraphResult;
 }
 
 void buildCombinations(
@@ -153,44 +162,6 @@ Ref< const ShaderGraph > ShaderGraphCombinations::getCombinationShaderGraph(uint
 {
 	T_ASSERT (index < m_combinations.size());
 	return m_combinations[index].shaderGraph;
-
-	//Ref< ShaderGraph > shaderGraph = new ShaderGraph(
-	//	m_shaderGraph->getNodes(),
-	//	m_shaderGraph->getEdges()
-	//);
-
-	//RefArray< Branch > branches;
-	//shaderGraph->findNodesOf< Branch >(branches);
-
-	//for (RefArray< Branch >::const_iterator i = branches.begin(); i != branches.end(); ++i)
-	//{
-	//	std::vector< std::wstring >::const_iterator parameterIter = std::find(m_parameterNames.begin(), m_parameterNames.end(), (*i)->getParameterName());
-	//	uint32_t combinationMask = 1 << uint32_t(std::distance(m_parameterNames.begin(), parameterIter));
-
-	//	const InputPin* inputPin = (*i)->getInputPin((combination & combinationMask) == combinationMask ? /* True */ 0 : /* False */ 1);
-	//	T_ASSERT (inputPin);
-
-	//	const OutputPin* outputPin = (*i)->getOutputPin(/* Output */ 0);
-	//	T_ASSERT (outputPin);
-
-	//	Ref< Edge > sourceEdge = shaderGraph->findEdge(inputPin);
-	//	T_ASSERT (sourceEdge);
-
-	//	RefSet< Edge > destinationEdges;
-	//	shaderGraph->findEdges(outputPin, destinationEdges);
-
-	//	shaderGraph->removeEdge(sourceEdge);
-	//	for (RefSet< Edge >::const_iterator j = destinationEdges.begin(); j != destinationEdges.end(); ++j)
-	//	{
-	//		shaderGraph->removeEdge(*j);
-	//		shaderGraph->addEdge(new Edge(
-	//			sourceEdge->getSource(),
-	//			(*j)->getDestination()
-	//		));
-	//	}
-	//}
-
-	//return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
 }
 
 	}

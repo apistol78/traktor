@@ -32,13 +32,10 @@ public:
 
 	float getDuration() const { return m_duration; }
 
-	bool getLoop() const { return m_loop; }
-
 	RefArray< TrackData >& getTrackData() { return m_trackData; }
 
 private:
 	float m_duration;
-	bool m_loop;
 	RefArray< TrackData > m_trackData;
 };
 
