@@ -85,11 +85,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 		// also check if sound has recently been played.
 		for (AlignedVector< Channel >::iterator i = m_channels.begin(); i != m_channels.end(); ++i)
 		{
-			Scalar channelDistance = (i->position - m_surroundEnvironment->getListenerTransform().translation()).xyz0().length();
-			if (
-				!i->soundChannel->isPlaying() ||
-				(i->position.w() > 0.5f && channelDistance > m_surroundEnvironment->getMaxDistance())
-			)
+			if (!i->soundChannel->isPlaying())
 			{
 				if (i->handle)
 					i->handle->detach();
@@ -376,7 +372,7 @@ void SoundPlayer::update(float dT)
 
 		i->fadeOff -= std::min(dT, 1.0f / 60.0f);
 		if (i->fadeOff > 0.0f)
-			i->soundChannel->setVolume(i->fadeOff);
+			i->soundChannel->setVolume(i->fadeOff * i->sound->getVolume());
 		else
 			i->soundChannel->stop();
 	}

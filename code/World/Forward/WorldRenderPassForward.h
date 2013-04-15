@@ -40,6 +40,7 @@ public:
 		float fogDistance,
 		float m_fogRange,
 		const Vector4& fogColor,
+		render::ISimpleTexture* colorMap,
 		render::ISimpleTexture* depthMap,
 		render::ISimpleTexture* shadowMask
 	);
@@ -47,6 +48,7 @@ public:
 	WorldRenderPassForward(
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
+		render::ISimpleTexture* colorMap,
 		render::ISimpleTexture* depthMap
 	);
 
@@ -69,6 +71,7 @@ private:
 	float m_fogDistance;
 	float m_fogRange;
 	Vector4 m_fogColor;
+	render::ISimpleTexture* m_colorMap;
 	render::ISimpleTexture* m_depthMap;
 	render::ISimpleTexture* m_shadowMask;
 
@@ -79,6 +82,8 @@ private:
 	void setLightProgramParameters(render::ProgramParameters* programParams, const Matrix44& world, const Aabb3& bounds) const;
 
 	void setFogProgramParameters(render::ProgramParameters* programParams) const;
+
+	void setColorMapProgramParameters(render::ProgramParameters* programParams) const;
 
 	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
 

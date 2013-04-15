@@ -412,18 +412,6 @@ Lerp refraction amount on depth
 			</position>
 			<value>0.2</value>
 		</item>
-		<item type="traktor.render.Color">
-			<comment>
-			<![CDATA[
-Deep color
-			]]>
-			</comment>
-			<position>
-				<first>2624</first>
-				<second>714</second>
-			</position>
-			<color>0, 88, 96, 255</color>
-		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
@@ -446,22 +434,6 @@ Deep color
 				<first>2305</first>
 				<second>728</second>
 			</position>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>2146</first>
-				<second>792</second>
-			</position>
-			<value>5</value>
-		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>2360</first>
-				<second>809</second>
-			</position>
-			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -668,6 +640,39 @@ Amount of reflection on view angle.
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>2604</first>
+				<second>701</second>
+			</position>
+			<name>DeepColor</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>2116</first>
+				<second>776</second>
+			</position>
+			<name>DeepOffset</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>2274</first>
+				<second>808</second>
+			</position>
+			<name>DeepRange</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -1118,36 +1123,26 @@ Amount of reflection on view angle.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[24]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[42]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[24]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[42]"/>
+				<node ref="/object/nodes/item[41]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[43]"/>
+				<node ref="/object/nodes/item[42]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1157,8 +1152,18 @@ Amount of reflection on view angle.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[44]"/>
+				<node ref="/object/nodes/item[43]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[44]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[23]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1168,46 +1173,16 @@ Amount of reflection on view angle.
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[44]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[46]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[43]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[47]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[23]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[48]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[47]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Diffuse</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[47]"/>
+				<node ref="/object/nodes/item[44]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1217,7 +1192,7 @@ Amount of reflection on view angle.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>EyeDirection</name>
 			</destination>
 		</item>
@@ -1227,7 +1202,7 @@ Amount of reflection on view angle.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Normal</name>
 			</destination>
 		</item>
@@ -1237,33 +1212,33 @@ Amount of reflection on view angle.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Position</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[50]"/>
+				<node ref="/object/nodes/item[47]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Shadow</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[51]"/>
+				<node ref="/object/nodes/item[48]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>SpecularRoughness</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[49]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1273,31 +1248,31 @@ Amount of reflection on view angle.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[50]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[52]"/>
+				<node ref="/object/nodes/item[49]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[54]"/>
+				<node ref="/object/nodes/item[51]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[50]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[49]"/>
+				<node ref="/object/nodes/item[46]"/>
 				<name>Specular</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[53]"/>
+				<node ref="/object/nodes/item[50]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -1313,7 +1288,7 @@ Amount of reflection on view angle.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1323,41 +1298,41 @@ Amount of reflection on view angle.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[56]"/>
+				<node ref="/object/nodes/item[53]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[57]"/>
+				<node ref="/object/nodes/item[54]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[58]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[55]"/>
+				<node ref="/object/nodes/item[52]"/>
 				<name>Blend</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[58]"/>
+				<node ref="/object/nodes/item[55]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -1367,7 +1342,7 @@ Amount of reflection on view angle.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -1377,13 +1352,13 @@ Amount of reflection on view angle.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[59]"/>
+				<node ref="/object/nodes/item[56]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[60]"/>
+				<node ref="/object/nodes/item[57]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1393,7 +1368,7 @@ Amount of reflection on view angle.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[61]"/>
+				<node ref="/object/nodes/item[58]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1403,7 +1378,7 @@ Amount of reflection on view angle.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1413,7 +1388,7 @@ Amount of reflection on view angle.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[62]"/>
+				<node ref="/object/nodes/item[59]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -1427,8 +1402,38 @@ Amount of reflection on view angle.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[63]"/>
+				<node ref="/object/nodes/item[60]"/>
 				<name>ColorUV</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[60]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[61]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[24]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[62]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[43]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -1437,8 +1442,8 @@ Amount of reflection on view angle.
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[24]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item[42]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

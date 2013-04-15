@@ -432,7 +432,11 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(s_lock);
 
+#if defined(_WIN32)
 	char* tmp = _tempnam("c:\\temp", "lwo");
+#else
+	char* tmp = tempnam("/tmp", "lwo");
+#endif
 	if (!tmp)
 		return 0;
 

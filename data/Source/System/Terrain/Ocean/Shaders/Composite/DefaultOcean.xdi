@@ -8,10 +8,82 @@
 				<second>876</second>
 			</position>
 			<fragmentGuid>{A83199A9-70BA-B442-B9A2-3958B910766C}</fragmentGuid>
-			<inputPins/>
+			<inputPins>
+				<item>
+					<name>DeepColor</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>DeepOffset</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>DeepRange</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
 			<outputPins/>
 			<values/>
 		</item>
+		<item type="traktor.render.Color">
+			<comment>
+			<![CDATA[
+Deep color
+			]]>
+			</comment>
+			<position>
+				<first>1847</first>
+				<second>862</second>
+			</position>
+			<color>0, 88, 96, 255</color>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>1899</first>
+				<second>921</second>
+			</position>
+			<value>5</value>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>1896</first>
+				<second>962</second>
+			</position>
+			<value>0.1</value>
+		</item>
 	</nodes>
-	<edges/>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>DeepColor</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>DeepOffset</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>DeepRange</name>
+			</destination>
+		</item>
+	</edges>
 </object>

@@ -8,8 +8,10 @@
 #include "I18N/Text.h"
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/PrimitiveRenderer.h"
 #include "Render/Context/RenderContext.h"
+#include "Resource/IResourceManager.h"
 #include "Sound/SoundSystem.h"
 #include "Sound/Player/SoundPlayer.h"
 #include "Spray/Effect.h"
@@ -96,6 +98,8 @@ bool EffectPreviewControl::create(
 	if (!Widget::create(parent, style))
 		return false;
 
+	m_resourceManager = resourceManager;
+
 	render::RenderViewEmbeddedDesc desc;
 	desc.depthBits = 16;
 	desc.stencilBits = 0;
@@ -112,7 +116,7 @@ bool EffectPreviewControl::create(
 		return false;
 
 	m_renderContext = new render::RenderContext(512 * 1024);
-	
+
 	if ((m_soundSystem = soundSystem) != 0)
 	{
 		m_soundPlayer = new sound::SoundPlayer();
@@ -176,6 +180,11 @@ void EffectPreviewControl::setTotalTime(float totalTime)
 {
 	if (m_effectInstance)
 		m_effectInstance->setTime(totalTime);
+}
+
+void EffectPreviewControl::setBackground(const resource::Id< render::ISimpleTexture >& background)
+{
+	m_resourceManager->bind(background, m_background);
 }
 
 void EffectPreviewControl::showGuide(bool guideVisible)
@@ -348,6 +357,26 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 	if (m_primitiveRenderer->begin(m_renderView))
 	{
+		if (m_background)
+		{
+			m_primitiveRenderer->pushProjection(Matrix44::identity());
+			m_primitiveRenderer->pushView(Matrix44::identity());
+			m_primitiveRenderer->pushDepthEnable(false);
+
+			m_primitiveRenderer->drawTextureQuad(
+				Vector4(-1.0f,  1.0f, 1.0f, 1.0f), Vector2(0.0f, 0.0f),
+				Vector4( 1.0f,  1.0f, 1.0f, 1.0f), Vector2(1.0f, 0.0f),
+				Vector4( 1.0f, -1.0f, 1.0f, 1.0f), Vector2(1.0f, 1.0f),
+				Vector4(-1.0f, -1.0f, 1.0f, 1.0f), Vector2(0.0f, 1.0f),
+				Color4ub(255, 255, 255, 255),
+				m_background
+			);
+
+			m_primitiveRenderer->popDepthEnable();
+			m_primitiveRenderer->popView();
+			m_primitiveRenderer->popProjection();
+		}
+
 		m_primitiveRenderer->pushProjection(projectionTransform);
 		m_primitiveRenderer->pushView(viewTransform);
 
@@ -386,6 +415,9 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 					j->second->render(m_primitiveRenderer, source);
 			}
 		}
+
+		m_primitiveRenderer->popView();
+		m_primitiveRenderer->popProjection();
 
 		m_primitiveRenderer->end();
 	}
@@ -438,6 +470,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		world::WorldRenderPassForward defaultPass(
 			render::getParameterHandle(L"World_ForwardColor"),
 			worldRenderView,
+			m_background,
 			0
 		);
 

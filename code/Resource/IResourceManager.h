@@ -102,7 +102,7 @@ public:
 			return false;
 
 		outProxy = Proxy< ResourceType >(handle);
-		return true;
+		return bool(handle->get() != 0);
 	}
 
 	/*! \brief Bind handle to resource identifier.
@@ -119,7 +119,7 @@ public:
 			return false;
 
 		outProxy.replace(handle);
-		return true;
+		return bool(handle->get() != 0);
 	}
 };
 

@@ -48,6 +48,8 @@ bool CanvasDirect2DWin32::beginPaint(Window& hWnd, bool doubleBuffer, HDC hDC)
 		m_hDC = BeginPaint(hWnd, &m_ps);
 		if (!m_hDC)
 			return false;
+
+		m_ownDC = true;
 	}
 
 	RECT rcClient;
@@ -115,6 +117,8 @@ void CanvasDirect2DWin32::endPaint(Window& hWnd)
 
 	m_d2dForegroundBrush.release();
 	m_d2dBackgroundBrush.release();
+	m_d2dGradientStops.release();
+	m_dwTextFormat.release();
 
 	hr = m_d2dRenderTarget->EndDraw();
 	if (FAILED(hr))
@@ -125,6 +129,8 @@ void CanvasDirect2DWin32::endPaint(Window& hWnd)
 
 	if (m_ownDC)
 		EndPaint(hWnd, &m_ps);
+
+	m_hDC = NULL;
 }
 
 Size CanvasDirect2DWin32::getTextExtent(Window& hWnd, const std::wstring& text) const

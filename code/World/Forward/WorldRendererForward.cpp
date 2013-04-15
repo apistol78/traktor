@@ -564,6 +564,7 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 		WorldRenderPassForward pass(
 			s_techniqueDepth,
 			depthRenderView,
+			0,
 			0
 		);
 		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
@@ -963,6 +964,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		WorldRenderPassForward shadowPass(
 			s_techniqueShadow,
 			shadowRenderView,
+			0,
 			0
 		);
 		f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
@@ -979,6 +981,7 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		m_settings.fogDistance,
 		m_settings.fogRange,
 		m_fogColor,
+		0,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		m_shadowMaskFilterTargetSet->getColorTexture(0)
 	);
@@ -1004,6 +1007,7 @@ void WorldRendererForward::buildNoShadows(WorldRenderView& worldRenderView, Enti
 		m_settings.fogDistance,
 		m_settings.fogRange,
 		m_fogColor,
+		0,
 		f.haveDepth ? m_depthTargetSet->getColorTexture(0) : 0,
 		0
 	);

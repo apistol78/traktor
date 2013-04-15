@@ -20,6 +20,7 @@ render::handle_t s_handleProjection;
 render::handle_t s_handleSquareProjection;
 render::handle_t s_handleView;
 render::handle_t s_handleWorld;
+render::handle_t s_handleColorMap;
 render::handle_t s_handleLightEnableComplex;
 render::handle_t s_handleLightPositionAndType;
 render::handle_t s_handleLightDirectionAndRange;
@@ -46,6 +47,7 @@ void initializeHandles()
 	s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 	s_handleView = render::getParameterHandle(L"View");
 	s_handleWorld = render::getParameterHandle(L"World");
+	s_handleColorMap = render::getParameterHandle(L"ColorMap");
 	s_handleLightEnableComplex = render::getParameterHandle(L"LightEnableComplex");
 	s_handleLightPositionAndType = render::getParameterHandle(L"LightPositionAndType");
 	s_handleLightDirectionAndRange = render::getParameterHandle(L"LightDirectionAndRange");
@@ -75,6 +77,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 	float fogDistance,
 	float fogRange,
 	const Vector4& fogColor,
+	render::ISimpleTexture* colorMap,
 	render::ISimpleTexture* depthMap,
 	render::ISimpleTexture* shadowMask
 )
@@ -84,6 +87,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_fogDistance(fogDistance)
 ,	m_fogRange(fogRange)
 ,	m_fogColor(fogColor)
+,	m_colorMap(colorMap)
 ,	m_depthMap(depthMap)
 ,	m_shadowMask(shadowMask)
 {
@@ -93,6 +97,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 WorldRenderPassForward::WorldRenderPassForward(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
+	render::ISimpleTexture* colorMap,
 	render::ISimpleTexture* depthMap
 )
 :	m_technique(technique)
@@ -101,6 +106,7 @@ WorldRenderPassForward::WorldRenderPassForward(
 ,	m_fogDistance(0.0f)
 ,	m_fogRange(0.0f)
 ,	m_fogColor(0.0f, 0.0f, 0.0f, 0.0f)
+,	m_colorMap(colorMap)
 ,	m_depthMap(depthMap)
 ,	m_shadowMask(0)
 {
@@ -187,6 +193,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	// Set these parameters only if we're rendering using default technique.
 	if (m_technique == s_techniqueDefault)
 	{
+		setColorMapProgramParameters(programParams);
 		setLightProgramParameters(programParams);
 		setFogProgramParameters(programParams);
 		setShadowMapProgramParameters(programParams);
@@ -201,6 +208,7 @@ void WorldRenderPassForward::setProgramParameters(render::ProgramParameters* pro
 	// Set these parameters only if we're rendering using default technique.
 	if (m_technique == s_techniqueDefault)
 	{
+		setColorMapProgramParameters(programParams);
 		setLightProgramParameters(programParams, world, bounds);
 		setFogProgramParameters(programParams);
 		setShadowMapProgramParameters(programParams);
@@ -336,6 +344,12 @@ void WorldRenderPassForward::setFogProgramParameters(render::ProgramParameters* 
 		programParams->setVectorParameter(s_handleFogDistanceAndRange, Vector4(m_fogDistance, m_fogRange, 1.0f / m_fogDistance, 1.0f / m_fogRange));
 		programParams->setVectorParameter(s_handleFogColor, m_fogColor);
 	}
+}
+
+void WorldRenderPassForward::setColorMapProgramParameters(render::ProgramParameters* programParams) const
+{
+	if (m_colorMap)
+		programParams->setTextureParameter(s_handleColorMap, m_colorMap);
 }
 
 void WorldRenderPassForward::setShadowMapProgramParameters(render::ProgramParameters* programParams) const
