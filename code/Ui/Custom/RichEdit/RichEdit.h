@@ -132,7 +132,7 @@ private:
 
 	void updateScrollBars();
 
-	void deleteCharacters(bool backspace);
+	void deleteCharacters();
 
 	void insertCharacter(wchar_t ch);
 

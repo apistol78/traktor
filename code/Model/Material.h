@@ -34,6 +34,24 @@ public:
 		BoAlpha
 	};
 
+	struct Map
+	{
+		std::wstring name;
+		uint32_t channel;
+
+		Map()
+		:	name(L"")
+		,	channel(0)
+		{
+		}
+
+		Map(const std::wstring& name_, uint32_t channel_)
+		:	name(name_)
+		,	channel(channel_)
+		{
+		}
+	};
+
 	Material();
 
 	Material(const std::wstring& name);
@@ -42,25 +60,25 @@ public:
 	
 	const std::wstring& getName() const;
 
-	void setDiffuseMap(const std::wstring& diffuseMap);
+	void setDiffuseMap(const Map& diffuseMap);
 
-	const std::wstring& getDiffuseMap() const;
+	const Map& getDiffuseMap() const;
 
-	void setSpecularMap(const std::wstring& specularMap);
+	void setSpecularMap(const Map& specularMap);
 
-	const std::wstring& getSpecularMap() const;
+	const Map& getSpecularMap() const;
 
-	void setEmissiveMap(const std::wstring& emissiveMap);
+	void setEmissiveMap(const Map& emissiveMap);
 
-	const std::wstring& getEmissiveMap() const;
+	const Map& getEmissiveMap() const;
 
-	void setReflectiveMap(const std::wstring& reflectiveMap);
+	void setReflectiveMap(const Map& reflectiveMap);
 
-	const std::wstring& getReflectiveMap() const;
+	const Map& getReflectiveMap() const;
 
-	void setNormalMap(const std::wstring& normalMap);
+	void setNormalMap(const Map& normalMap);
 
-	const std::wstring& getNormalMap() const;
+	const Map& getNormalMap() const;
 
 	void setColor(const Color4ub& color);
 
@@ -100,11 +118,11 @@ public:
 	
 private:
 	std::wstring m_name;
-	std::wstring m_diffuseMap;
-	std::wstring m_specularMap;
-	std::wstring m_emissiveMap;
-	std::wstring m_reflectiveMap;
-	std::wstring m_normalMap;
+	Map m_diffuseMap;
+	Map m_specularMap;
+	Map m_emissiveMap;
+	Map m_reflectiveMap;
+	Map m_normalMap;
 	Color4ub m_color;
 	float m_diffuseTerm;
 	float m_specularTerm;

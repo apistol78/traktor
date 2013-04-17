@@ -4,7 +4,9 @@
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Database/Database.h"
+#include "Database/Group.h"
 #include "Database/Instance.h"
+#include "Database/Traverse.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
@@ -503,11 +505,23 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 	}
 	else if (command == L"ShaderGraph.Editor.OpenReferee")
 	{
-		Guid shaderGraphGuid = m_document->getInstance(0)->getGuid();
-		RefereeFilter filter(shaderGraphGuid);
-		Ref< db::Instance > refereeInstance = m_editor->browseInstance(&filter);
-		if (refereeInstance)
-			m_editor->openEditor(refereeInstance);
+		RefereeFilter filter(m_document->getInstance(0)->getGuid());
+		if ((ui::Application::getInstance()->getEventLoop()->getAsyncKeyState() & ui::KsShift) == 0)
+		{
+			Ref< db::Instance > refereeInstance = m_editor->browseInstance(&filter);
+			if (refereeInstance)
+				m_editor->openEditor(refereeInstance);
+		}
+		else
+		{
+			RefArray< db::Instance > shaderGraphs;
+			db::recursiveFindChildInstances(m_editor->getSourceDatabase()->getRootGroup(), db::FindInstanceByType(type_of< ShaderGraph >()), shaderGraphs);
+			for (RefArray< db::Instance >::const_iterator i = shaderGraphs.begin(); i != shaderGraphs.end(); ++i)
+			{
+				if (filter.acceptable(*i))
+					m_editor->openEditor(*i);
+			}
+		}
 	}
 	else if (command == L"ShaderGraph.Editor.Center")
 	{

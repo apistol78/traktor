@@ -114,6 +114,13 @@ void SoundChannel::setParameter(handle_t id, float parameter)
 		m_state.cursor->setParameter(id, parameter);
 }
 
+void SoundChannel::disableRepeat()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	if (m_state.cursor)
+		m_state.cursor->disableRepeat();
+}
+
 bool SoundChannel::play(const ISoundBuffer* buffer, float volume, float presence, float presenceRate, uint32_t repeat)
 {
 	if (!buffer)

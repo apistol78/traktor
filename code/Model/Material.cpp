@@ -9,11 +9,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.model.Material", Material, PropertyGroup)
 		
 Material::Material()
 :	m_name(L"")
-,	m_diffuseMap(L"")
-,	m_specularMap(L"")
-,	m_emissiveMap(L"")
-,	m_reflectiveMap(L"")
-,	m_normalMap(L"")
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
@@ -28,11 +23,6 @@ Material::Material()
 
 Material::Material(const std::wstring& name)
 :	m_name(name)
-,	m_diffuseMap(L"")
-,	m_specularMap(L"")
-,	m_emissiveMap(L"")
-,	m_reflectiveMap(L"")
-,	m_normalMap(L"")
 ,	m_color(255, 255, 255, 255)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
@@ -55,52 +45,52 @@ const std::wstring& Material::getName() const
 	return m_name;
 }
 
-void Material::setDiffuseMap(const std::wstring& diffuseMap)
+void Material::setDiffuseMap(const Map& diffuseMap)
 {
 	m_diffuseMap = diffuseMap;
 }
 
-const std::wstring& Material::getDiffuseMap() const
+const Material::Map& Material::getDiffuseMap() const
 {
 	return m_diffuseMap;
 }
 
-void Material::setSpecularMap(const std::wstring& specularMap)
+void Material::setSpecularMap(const Map& specularMap)
 {
 	m_specularMap = specularMap;
 }
 
-const std::wstring& Material::getSpecularMap() const
+const Material::Map& Material::getSpecularMap() const
 {
 	return m_specularMap;
 }
 
-void Material::setReflectiveMap(const std::wstring& reflectiveMap)
+void Material::setReflectiveMap(const Map& reflectiveMap)
 {
 	m_reflectiveMap = reflectiveMap;
 }
 
-const std::wstring& Material::getReflectiveMap() const
+const Material::Map& Material::getReflectiveMap() const
 {
 	return m_reflectiveMap;
 }
 
-void Material::setEmissiveMap(const std::wstring& emissiveMap)
+void Material::setEmissiveMap(const Map& emissiveMap)
 {
 	m_emissiveMap = emissiveMap;
 }
 
-const std::wstring& Material::getEmissiveMap() const
+const Material::Map& Material::getEmissiveMap() const
 {
 	return m_emissiveMap;
 }
 
-void Material::setNormalMap(const std::wstring& normalMap)
+void Material::setNormalMap(const Map& normalMap)
 {
 	m_normalMap = normalMap;
 }
 
-const std::wstring& Material::getNormalMap() const
+const Material::Map& Material::getNormalMap() const
 {
 	return m_normalMap;
 }

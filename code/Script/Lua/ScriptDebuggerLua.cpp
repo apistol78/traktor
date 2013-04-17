@@ -2,6 +2,7 @@
 #include "Core/Guid.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/Reflection/Reflection.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -34,12 +35,7 @@ std::wstring describeValue(lua_State* L, int32_t index)
 	{
 		Object* object = *reinterpret_cast< Object** >(lua_touserdata(L, index));
 		if (object)
-		{
-			if (const Boxed* box = dynamic_type_cast< const Boxed* >(object))
-				return box->toString();
-			else
-				return std::wstring(L"(") + type_name(object) + std::wstring(L")");
-		}
+			return std::wstring(L"(") + type_name(object) + std::wstring(L")");
 		else
 			return L"(null)";
 	}
@@ -74,10 +70,52 @@ Ref< Local > describeLocal(const std::wstring& name, lua_State* L, int32_t index
 		);
 	}
 	else
+	{
+		if (lua_isnumber(L, index))
+			return new LocalSimple(name, toString(lua_tonumber(L, index)));
+		
+		if (lua_isboolean(L, index))
+			return new LocalSimple(name, lua_toboolean(L, index) != 0 ? L"true" : L"false");
+
+		if (lua_isstring(L, index))
+			return new LocalSimple(name, mbstows(lua_tostring(L, index)));
+
+		if (lua_isuserdata(L, index))
+		{
+			Object* object = *reinterpret_cast< Object** >(lua_touserdata(L, index));
+			if (object)
+			{
+				if (const Boxed* box = dynamic_type_cast< const Boxed* >(object))
+					return new LocalSimple(name, box->toString());
+
+				if (const ISerializable* s = dynamic_type_cast< const ISerializable* >(object))
+				{
+					RefArray< Local > memberValues;
+
+					Ref< Reflection > reflection = Reflection::create(s);
+					if (reflection)
+					{
+						for (uint32_t i = 0; i < reflection->getMemberCount(); ++i)
+						{
+							const ReflectionMember* member = reflection->getMember(i);
+							T_ASSERT (member);
+
+							memberValues.push_back(new LocalSimple(member->getName(), L"(...)"));
+						}
+					}
+
+					return new LocalComposite(name, memberValues);
+				}
+
+				return new LocalSimple(name, std::wstring(L"(") + type_name(object) + std::wstring(L")"));
+			}
+		}
+
 		return new LocalSimple(
 			name,
-			describeValue(L, index)
+			L""
 		);
+	}
 }
 
 		}

@@ -18,6 +18,7 @@ struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	Ref< ISoundBuffer > m_soundBuffer;
 	Ref< ISoundBufferCursor > m_soundCursor;
 	RefArray< IFilterInstance > m_filterInstances;
+	bool m_repeat;
 	float m_gain;
 	float m_pitch;
 
@@ -25,6 +26,11 @@ struct PlayGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	{
 		if (m_soundCursor)
 			m_soundCursor->setParameter(id, parameter);
+	}
+
+	virtual void disableRepeat()
+	{
+		m_repeat = false;
 	}
 
 	virtual void reset()
@@ -66,6 +72,7 @@ Ref< ISoundBufferCursor > PlayGrain::createCursor() const
 	Ref< PlayGrainCursor > playCursor = new PlayGrainCursor();
 	playCursor->m_soundBuffer = soundBuffer;
 	playCursor->m_soundCursor = soundCursor;
+	playCursor->m_repeat = m_repeat;
 	playCursor->m_gain = clamp(m_gain.random(m_random), -1.0f, 1.0f);
 	playCursor->m_pitch = clamp(m_pitch.random(m_random), 0.5f, 1.5f);
 
@@ -105,7 +112,7 @@ bool PlayGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer, S
 		outBlock
 	))
 	{
-		if (m_repeat)
+		if (playCursor->m_repeat)
 		{
 			playCursor->m_soundCursor->reset();
 			if (!playCursor->m_soundBuffer->getBlock(

@@ -164,40 +164,62 @@ FbxMatrix getGeometricTransform(const FbxNode* fbxNode)
 	return FbxMatrix(t, r, s);
 }
 
-std::wstring getTextureName(const FbxSurfaceMaterial* material, const char* fbxPropertyName)
+const FbxTexture* getTexture(const FbxSurfaceMaterial* material, const char* fbxPropertyName)
 {
-	if (material && fbxPropertyName)
+	if (!material || !fbxPropertyName)
+		return 0;
+
+	const FbxProperty prop = material->FindProperty(fbxPropertyName);
+	if (!prop.IsValid())
+		return 0;
+
+	int fileTextureCount = prop.GetSrcObjectCount(FbxFileTexture::ClassId);
+	for (int i = 0; i < fileTextureCount; ++i)
 	{
-		const FbxProperty prop = material->FindProperty(fbxPropertyName);
-		if (prop.IsValid())
+		FbxFileTexture* fileTexture = FbxCast< FbxFileTexture >(prop.GetSrcObject(FbxFileTexture::ClassId, i));
+		if (fileTexture)
+			return fileTexture;
+	}
+
+	int layeredTextureCount = prop.GetSrcObjectCount(FbxLayeredTexture::ClassId);
+	if (layeredTextureCount)
+	{
+		for (int i = 0; i < layeredTextureCount; ++i)
 		{
-			int textureCount = prop.GetSrcObjectCount(FbxFileTexture::ClassId);
-			for (int i = 0; i < textureCount; ++i)
-			{
-				FbxFileTexture* texture = FbxCast< FbxFileTexture >(prop.GetSrcObject(FbxFileTexture::ClassId, i));
-				if (texture)
-				{
-					const Path texturePath(mbstows(texture->GetFileName()));
-					const std::wstring textureName = texturePath.getFileNameNoExtension();
-					return textureName;
-				}
-			}
-			int layeredTextureCount = prop.GetSrcObjectCount(FbxLayeredTexture::ClassId);
-			if (layeredTextureCount)
-			{
-				for (int i = 0; i < layeredTextureCount; ++i)
-				{
-					FbxLayeredTexture* layeredTexture = FbxCast< FbxLayeredTexture >(prop.GetSrcObject(FbxLayeredTexture::ClassId, i));
-					if (layeredTexture)
-						return std::wstring(mbstows(layeredTexture->GetName()));
-				}
-			}
+			FbxLayeredTexture* layeredTexture = FbxCast< FbxLayeredTexture >(prop.GetSrcObject(FbxLayeredTexture::ClassId, i));
+			if (layeredTexture)
+				return layeredTexture;
 		}
 	}
-	return std::wstring();
+
+	return 0;
 }
 
-bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matrix44& axisTransform, uint32_t importFlags)
+std::wstring getTextureName(const FbxTexture* texture)
+{
+	const FbxFileTexture* fileTexture = FbxCast< const FbxFileTexture >(texture);
+	if (fileTexture)
+	{
+		const Path texturePath(mbstows(fileTexture->GetFileName()));
+		return texturePath.getFileNameNoExtension();
+	}
+	else
+		return std::wstring(mbstows(texture->GetName()));
+}
+
+uint32_t uvChannel(std::vector< std::string >& inoutChannels, const std::string uvSet)
+{
+	std::vector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), uvSet);
+	if (i != inoutChannels.end())
+		return std::distance(inoutChannels.begin(), i);
+
+	uint32_t channel = uint32_t(inoutChannels.size());
+	inoutChannels.push_back(uvSet);
+
+	return channel;
+}
+
+bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matrix44& axisTransform, std::vector< std::string >& outChannels, uint32_t importFlags)
 {
 	int32_t vertexId = 0;
 
@@ -245,25 +267,37 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				prop = meshNode->GetNextProperty(prop);
 			}
 
-			std::wstring diffuseMap = getTextureName(material, FbxSurfaceMaterial::sDiffuse);
-			if (!diffuseMap.empty())
-				mm.setDiffuseMap(diffuseMap);
+			const FbxTexture* diffuseTexture = getTexture(material, FbxSurfaceMaterial::sDiffuse);
+			if (diffuseTexture)
+			{
+				uint32_t channel = uvChannel(outChannels, diffuseTexture->UVSet.Get().Buffer());
+				mm.setDiffuseMap(Material::Map(getTextureName(diffuseTexture), channel));
+			}
 
-			std::wstring specularMap = getTextureName(material, FbxSurfaceMaterial::sSpecular);
-			if (!specularMap.empty())
-				mm.setSpecularMap(specularMap);
+			const FbxTexture* specularTexture = getTexture(material, FbxSurfaceMaterial::sSpecular);
+			if (specularTexture)
+			{
+				uint32_t channel = uvChannel(outChannels, specularTexture->UVSet.Get().Buffer());
+				mm.setSpecularMap(Material::Map(getTextureName(specularTexture), channel));
+			}
 
-			std::wstring normalMap = getTextureName(material, FbxSurfaceMaterial::sNormalMap);
-			if (!normalMap.empty())
-				mm.setNormalMap(normalMap);
+			const FbxTexture* normalTexture = getTexture(material, FbxSurfaceMaterial::sNormalMap);
+			if (normalTexture)
+			{
+				uint32_t channel = uvChannel(outChannels, normalTexture->UVSet.Get().Buffer());
+				mm.setNormalMap(Material::Map(getTextureName(normalTexture), channel));
+			}
 
-			std::wstring transparencyMap = getTextureName(material, FbxSurfaceMaterial::sTransparentColor);
-			if (!transparencyMap.empty())
+			const FbxTexture* transparencyTexture = getTexture(material, FbxSurfaceMaterial::sTransparentColor);
+			if (transparencyTexture)
 				mm.setBlendOperator(Material::BoAlpha);
 
-			std::wstring emissiveMap = getTextureName(material, mayaExported ? FbxSurfaceMaterial::sAmbient : FbxSurfaceMaterial::sEmissive);
-			if (!emissiveMap.empty())
-				mm.setEmissiveMap(emissiveMap);
+			const FbxTexture* emissiveTexture = getTexture(material, mayaExported ? FbxSurfaceMaterial::sAmbient : FbxSurfaceMaterial::sEmissive);
+			if (emissiveTexture)
+			{
+				uint32_t channel = uvChannel(outChannels, emissiveTexture->UVSet.Get().Buffer());
+				mm.setEmissiveMap(Material::Map(getTextureName(emissiveTexture), channel));
+			}
 
 			if (material->GetClassId().Is(FbxSurfacePhong::ClassId))
 			{
@@ -481,6 +515,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 					FbxLayerElementUV* layerUVs = mesh->GetLayer(k)->GetUVs();
 					if (layerUVs)
 					{
+						uint32_t channel = uvChannel(outChannels, layerUVs->GetName());
 						switch (layerUVs->GetMappingMode())
 						{
 						case FbxLayerElement::eByControlPoint:
@@ -489,7 +524,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 							case FbxLayerElement::eDirect:
 								{
 									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(pointIndex));
-									vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
+									vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
 								}
 								break;
 
@@ -497,7 +532,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 								{
 									int32_t id = layerUVs->GetIndexArray().GetAt(pointIndex);
 									Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(id));
-									vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
+									vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
 								}
 								break;
 
@@ -515,7 +550,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 								case FbxLayerElement::eIndexToDirect:
 									{
 										Vector2 uv = convertVector2(layerUVs->GetDirectArray().GetAt(textureUVIndex));
-										vertex.setTexCoord(0, outModel.addUniqueTexCoord(uv));
+										vertex.setTexCoord(channel, outModel.addUniqueTexCoord(uv));
 									}
 									break;
 
@@ -787,6 +822,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 	}
 
 	Ref< Model > model = new Model();
+	std::vector< std::string > channels;
 
 	FbxNode* node = s_scene->GetRootNode();
 	if (node)
@@ -801,7 +837,7 @@ Ref< Model > ModelFormatFbx::read(IStream* stream, uint32_t importFlags) const
 			FbxNodeAttribute::EType attributeType = childNode->GetNodeAttribute()->GetAttributeType();
 			if (attributeType == FbxNodeAttribute::eMesh)
 			{
-				if (!convertMesh(*model, s_scene, childNode, axisTransform, importFlags))
+				if (!convertMesh(*model, s_scene, childNode, axisTransform, channels, importFlags))
 				{
 					log::error << L"Unable to import FBX model; failed to convert mesh" << Endl;
 					return 0;

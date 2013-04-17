@@ -335,11 +335,11 @@ void MeshAssetEditor::updateMaterialList()
 		{
 			std::wstring modelTextures[] =
 			{
-				i->getDiffuseMap(),
-				i->getSpecularMap(),
-				i->getEmissiveMap(),
-				i->getReflectiveMap(),
-				i->getNormalMap()
+				i->getDiffuseMap().name,
+				i->getSpecularMap().name,
+				i->getEmissiveMap().name,
+				i->getReflectiveMap().name,
+				i->getNormalMap().name
 			};
 
 			for (uint32_t j = 0; j < sizeof_array(modelTextures); ++j)

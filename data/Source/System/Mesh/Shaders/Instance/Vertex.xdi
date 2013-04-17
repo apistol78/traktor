@@ -168,7 +168,7 @@ translation
 				<first>1372</first>
 				<second>343</second>
 			</position>
-			<name>TexCoord</name>
+			<name>TexCoord0</name>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
@@ -176,7 +176,7 @@ translation
 				<first>1156</first>
 				<second>343</second>
 			</position>
-			<name>TexCoord</name>
+			<name>TexCoord0</name>
 			<usage>DuCustom</usage>
 			<type>DtHalf2</type>
 			<index>0</index>
@@ -463,7 +463,7 @@ translation
 				<first>1372</first>
 				<second>378</second>
 			</position>
-			<name>TexCoord2</name>
+			<name>TexCoord1</name>
 		</item>
 		<item type="traktor.render.VertexInput">
 			<comment/>
@@ -471,7 +471,7 @@ translation
 				<first>1156</first>
 				<second>378</second>
 			</position>
-			<name>TexCoord2</name>
+			<name>TexCoord1</name>
 			<usage>DuCustom</usage>
 			<type>DtHalf2</type>
 			<index>1</index>

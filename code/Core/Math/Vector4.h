@@ -117,6 +117,10 @@ public:
 
 	T_MATH_INLINE void set(int index, const Scalar& value);
 
+	T_MATH_INLINE Scalar min() const;
+
+	T_MATH_INLINE Scalar max() const;
+
 	T_MATH_INLINE Vector4& operator = (const Vector4& v);
 
 	T_MATH_INLINE Vector4 operator - () const;
@@ -193,6 +197,8 @@ T_MATH_INLINE T_DLLCLASS Vector4 select(const Vector4& condition, const Vector4&
 T_MATH_INLINE T_DLLCLASS bool compareAllGreaterEqual(const Vector4& l, const Vector4& r);
 
 T_MATH_INLINE T_DLLCLASS bool compareAllLessEqual(const Vector4& l, const Vector4& r);
+
+T_MATH_INLINE T_DLLCLASS bool compareFuzzyEqual(const Vector4& l, const Vector4& r);
 
 }
 

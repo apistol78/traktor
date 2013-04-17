@@ -39,6 +39,12 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 			m_parameter = parameter;
 	}
 
+	virtual void disableRepeat()
+	{
+		m_cursors[0]->disableRepeat();
+		m_cursors[1]->disableRepeat();
+	}
+
 	virtual void reset()
 	{
 		m_cursors[0]->reset();

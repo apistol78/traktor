@@ -82,8 +82,22 @@ const lwVMapPt* findLwVMapPt(const lwVMapPt* vmaps, int nvmaps, const std::strin
 	return 0;
 }
 
-bool createMaterials(const lwObject* lwo, Model* outModel)
+uint32_t uvChannel(std::vector< std::string >& inoutChannels, const std::string vmap)
 {
+	std::vector< std::string >::iterator i = std::find(inoutChannels.begin(), inoutChannels.end(), vmap);
+	if (i != inoutChannels.end())
+		return std::distance(inoutChannels.begin(), i);
+
+	uint32_t channel = uint32_t(inoutChannels.size());
+	inoutChannels.push_back(vmap);
+
+	return channel;
+}
+
+bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::string >& outChannels)
+{
+	uint32_t channel = 0;
+
 	for (const lwSurface* surface = lwo->surf; surface; surface = surface->next)
 	{
 		Material material;
@@ -92,6 +106,8 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 		const lwTexture* texDiffuse = getLwTexture(surface->color.tex);
 		if (texDiffuse)
 		{
+			uint32_t channel = uvChannel(outChannels, texDiffuse->param.imap.vmap_name);
+
 			const lwClip* clip = findLwClip(lwo, texDiffuse->param.imap.cindex);
 			if (clip)
 			{
@@ -115,7 +131,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 				}
 
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setDiffuseMap(textureName);
+				material.setDiffuseMap(Material::Map(textureName, channel));
 				material.setBlendOperator(diffuseBlendOperator);
 			}
 			else
@@ -125,11 +141,13 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 		const lwTexture* texSpecular = getLwTexture(surface->specularity.tex);
 		if (texSpecular)
 		{
+			uint32_t channel = uvChannel(outChannels, texSpecular->param.imap.vmap_name);
+
 			const lwClip* clip = findLwClip(lwo, texSpecular->param.imap.cindex);
 			if (clip)
 			{
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setSpecularMap(textureName);
+				material.setSpecularMap(Material::Map(textureName, channel));
 			}
 			else
 				T_DEBUG(L"No specular texture clip for surface \"" << mbstows(surface->name) << L"\"");
@@ -138,11 +156,13 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 		const lwTexture* texEmissive = getLwTexture(surface->luminosity.tex);
 		if (texEmissive)
 		{
+			uint32_t channel = uvChannel(outChannels, texEmissive->param.imap.vmap_name);
+
 			const lwClip* clip = findLwClip(lwo, texEmissive->param.imap.cindex);
 			if (clip)
 			{
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setEmissiveMap(textureName);
+				material.setEmissiveMap(Material::Map(textureName, channel));
 			}
 			else
 				T_DEBUG(L"No emissive texture clip for surface \"" << mbstows(surface->name) << L"\"");
@@ -151,11 +171,13 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 		const lwTexture* texReflective = getLwTexture(surface->reflection.val.tex);
 		if (texReflective)
 		{
+			uint32_t channel = uvChannel(outChannels, texReflective->param.imap.vmap_name);
+
 			const lwClip* clip = findLwClip(lwo, texReflective->param.imap.cindex);
 			if (clip)
 			{
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setReflectiveMap(textureName);
+				material.setReflectiveMap(Material::Map(textureName, channel));
 			}
 			else
 				T_DEBUG(L"No reflective texture clip for surface \"" << mbstows(surface->name) << L"\"");
@@ -164,11 +186,13 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 		const lwTexture* texBump = getLwTexture(surface->bump.tex);
 		if (texBump)
 		{
+			uint32_t channel = uvChannel(outChannels, texBump->param.imap.vmap_name);
+
 			const lwClip* clip = findLwClip(lwo, texBump->param.imap.cindex);
 			if (clip)
 			{
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setNormalMap(textureName);
+				material.setNormalMap(Material::Map(textureName, channel));
 			}
 			else
 				T_DEBUG(L"No bump texture clip for surface \"" << mbstows(surface->name) << L"\"");
@@ -203,7 +227,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel)
 	return true;
 }
 
-bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
+bool createMesh(const lwObject* lwo, Model* outModel, std::vector< std::string >& inoutChannels, uint32_t importFlags)
 {
 	uint32_t pointCount;
 	uint32_t polygonCount;
@@ -293,7 +317,7 @@ bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 					continue;
 
 				const lwSurface* surf = pol->surf;
-				const lwTexture* texDiffuse = getLwTexture(surf->color.tex);
+				T_ASSERT (surf);
 
 				int materialIndex = 0;
 				for (lwSurface* s = lwo->surf; s && s != surf; s = s->next)
@@ -350,27 +374,18 @@ bool createMesh(const lwObject* lwo, Model* outModel, uint32_t importFlags)
 						}
 
 						// UV maps.
-						uint32_t channel = 0;
-						for (const lwTexture* tex = texDiffuse; tex; tex = tex->next)
+						for (int32_t k = 0; k < pnt->nvmaps; ++k)
 						{
-							const lwVMapPt* vpt = findLwVMapPt(pol->v[j].vm, pol->v[j].nvmaps, tex->param.imap.vmap_name);
-							if (!vpt)
-								vpt = findLwVMapPt(pnt->vm, pnt->nvmaps, tex->param.imap.vmap_name);
+							const lwVMapPt* vpt = &pnt->vm[k];
+							uint32_t channel = uvChannel(inoutChannels, vpt->vmap->name);
 
-							if (vpt)
-							{
-								float u = vpt->vmap->val[vpt->index][0];
-								float v = vpt->vmap->val[vpt->index][1];
+							float u = vpt->vmap->val[vpt->index][0];
+							float v = vpt->vmap->val[vpt->index][1];
 
-								vertex.setTexCoord(channel, outModel->addUniqueTexCoord(Vector2(
-									u,
-									1.0f - v
-								)));
-							}
-							else
-								log::warning << L"Vertex " << j << L" doesn't exist in UV map \"" << mbstows(tex->param.imap.vmap_name) << L"\"" << Endl;
-
-							++channel;
+							vertex.setTexCoord(channel, outModel->addUniqueTexCoord(Vector2(
+								u,
+								1.0f - v
+							)));
 						}
 
 						// Convert weight maps into bones and influences.
@@ -457,10 +472,11 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 		return 0;
 
 	Ref< Model > md = new Model();
+	std::vector< std::string > channels;
 
 	if (importFlags & IfMaterials)
 	{
-		if (!createMaterials(lwo, md))
+		if (!createMaterials(lwo, md, channels))
 		{
 			lwFreeObject(lwo);
 			return 0;
@@ -469,7 +485,7 @@ Ref< Model > ModelFormatLwo::read(IStream* stream, uint32_t importFlags) const
 
 	if (importFlags & IfMesh)
 	{
-		if (!createMesh(lwo, md, importFlags))
+		if (!createMesh(lwo, md, channels, importFlags))
 		{
 			lwFreeObject(lwo);
 			return 0;

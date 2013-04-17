@@ -17,10 +17,10 @@
 					<name>Position</name>
 				</item>
 				<item>
-					<name>TexCoord</name>
+					<name>TexCoord0</name>
 				</item>
 				<item>
-					<name>TexCoord2</name>
+					<name>TexCoord1</name>
 				</item>
 				<item>
 					<name>ViewBinormal</name>
@@ -40,7 +40,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>973</first>
+				<first>970</first>
 				<second>459</second>
 			</position>
 			<name>T_ViewBinormal</name>
@@ -48,7 +48,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>973</first>
+				<first>970</first>
 				<second>395</second>
 			</position>
 			<name>T_ViewNormal</name>
@@ -56,15 +56,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>973</first>
-				<second>491</second>
-			</position>
-			<name>T_TexCoord</name>
-		</item>
-		<item type="traktor.render.OutputPort">
-			<comment/>
-			<position>
-				<first>973</first>
+				<first>970</first>
 				<second>427</second>
 			</position>
 			<name>T_ViewTangent</name>
@@ -72,7 +64,7 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>973</first>
+				<first>970</first>
 				<second>363</second>
 			</position>
 			<name>T_ViewPosition</name>
@@ -80,18 +72,34 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>973</first>
-				<second>523</second>
+				<first>970</first>
+				<second>555</second>
 			</position>
 			<name>T_Color</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>973</first>
+				<first>970</first>
 				<second>331</second>
 			</position>
 			<name>T_Position</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>970</first>
+				<second>523</second>
+			</position>
+			<name>T_TexCoord1</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>970</first>
+				<second>491</second>
+			</position>
+			<name>T_TexCoord0</name>
 		</item>
 	</nodes>
 	<edges>
@@ -101,17 +109,7 @@
 				<name>Color</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>TexCoord</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -131,7 +129,7 @@
 				<name>ViewTangent</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -151,7 +149,7 @@
 				<name>ViewPosition</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -159,6 +157,26 @@
 			<source>
 				<node ref="/object/nodes/item"/>
 				<name>Position</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>TexCoord0</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>TexCoord1</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>

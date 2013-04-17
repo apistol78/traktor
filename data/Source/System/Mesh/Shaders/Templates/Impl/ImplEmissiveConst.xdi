@@ -24,10 +24,21 @@ Tag_Emissive
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>562</first>
+				<first>490</first>
 				<second>424</second>
 			</position>
-			<name>T_TexCoord</name>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>490</first>
+				<second>463</second>
+			</position>
+			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>

@@ -4,7 +4,7 @@
 		<item type="traktor.render.Texture">
 			<comment>
 			<![CDATA[
-Tag_EmissiveMap
+Tag_ReflectiveMap
 			]]>
 			</comment>
 			<position>
@@ -43,13 +43,13 @@ Tag_EmissiveMap
 				<first>843</first>
 				<second>149</second>
 			</position>
-			<name>T_Emissive</name>
+			<name>T_Reflective</name>
 		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>259</first>
-				<second>233</second>
+				<first>318</first>
+				<second>217</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -59,8 +59,8 @@ Tag_EmissiveMap
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>259</first>
-				<second>272</second>
+				<first>318</first>
+				<second>256</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
@@ -101,7 +101,7 @@ Tag_EmissiveMap
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>

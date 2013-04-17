@@ -19,11 +19,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SoundTriggerInstance", SoundTriggerInstan
 
 SoundTriggerInstance::~SoundTriggerInstance()
 {
-	if (m_handle)
-	{
-		m_handle->stop();
-		m_handle = 0;
-	}
+	m_handle = 0;
 }
 
 void SoundTriggerInstance::perform(Context& context, const Transform& transform, bool enable)

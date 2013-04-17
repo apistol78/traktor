@@ -41,10 +41,21 @@ Tag_Reflective
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>501</first>
-				<second>586</second>
+				<first>484</first>
+				<second>566</second>
 			</position>
-			<name>T_TexCoord</name>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>484</first>
+				<second>605</second>
+			</position>
+			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>

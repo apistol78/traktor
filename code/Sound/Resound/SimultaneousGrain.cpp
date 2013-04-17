@@ -30,6 +30,12 @@ struct SimultaneousGrainCursor : public RefCountImpl< ISoundBufferCursor >
 			(*i)->setParameter(id, parameter);
 	}
 
+	virtual void disableRepeat()
+	{
+		for (RefArray< ISoundBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
+			(*i)->disableRepeat();
+	}
+
 	virtual void reset()
 	{
 		for (RefArray< ISoundBufferCursor >::iterator i = m_grainCursors.begin(); i != m_grainCursors.end(); ++i)
