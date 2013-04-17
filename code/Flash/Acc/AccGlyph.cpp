@@ -156,15 +156,21 @@ void AccGlyph::add(
 		return;
 
 	Matrix44 m1(
-		transform.e11, transform.e12, transform.e13, 0.0f,
-		transform.e21, transform.e22, transform.e23, 0.0f,
-		transform.e31, transform.e32, transform.e33, 0.0f,
+		transform.e11, transform.e12, std::floor(transform.e13), 0.0f,
+		transform.e21, transform.e22, std::floor(transform.e23), 0.0f,
+		transform.e31, transform.e32, std::floor(transform.e33), 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
+	SwfRect qb;
+	qb.min.x = std::ceil(bounds.min.x);
+	qb.min.y = std::ceil(bounds.min.y);
+	qb.max.x = std::floor(bounds.max.x);
+	qb.max.y = std::floor(bounds.max.y);
+
 	Matrix44 m2(
-		bounds.max.x - bounds.min.x, 0.0f, bounds.min.x, 0.0f,
-		0.0f, bounds.max.y - bounds.min.y, bounds.min.y, 0.0f,
+		qb.max.x - qb.min.x, 0.0f, qb.min.x, 0.0f,
+		0.0f, qb.max.y - qb.min.y, qb.min.y, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
@@ -189,8 +195,8 @@ void AccGlyph::add(
 		Vector4 pos = m * c_glyphTemplate[i].pos;
 		Vector2 texCoord = c_glyphTemplate[i].texCoord * texCoordScale + texCoordOffset;
 
-		vertex->pos[0] = pos.x();
-		vertex->pos[1] = pos.y();
+		vertex->pos[0] = std::floor(pos.x());
+		vertex->pos[1] = std::floor(pos.y());
 		vertex->pos[2] = sampleDistance;
 		vertex->texCoord[0] = texCoord.x;
 		vertex->texCoord[1] = texCoord.y;

@@ -123,6 +123,9 @@ void LightRenderer::render(
 	Scalar p11 = projection.get(0, 0);
 	Scalar p22 = projection.get(1, 1);
 
+	Vector4 sunColorAndIntensity = light.sunColor;
+	sunColorAndIntensity.set(3, dot3(light.sunColor, Vector4(0.2125f, 0.7154f, 0.0721f, 0.0f)));
+
 	if (light.type == LtDirectional)
 	{
 		Vector4 lightDirectionAndRange = view * light.direction.xyz0() + Vector4(0.0f, 0.0f, 0.0f, light.range);
@@ -130,14 +133,11 @@ void LightRenderer::render(
 		m_lightDirectionalShader->setCombination(s_handleShadowEnable, shadowMask != 0);
 		m_lightDirectionalShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightDirectionalShader->setTextureParameter(s_handleShadowMask, shadowMask);
-
 		m_lightDirectionalShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-
 		m_lightDirectionalShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightDirectionalShader->setTextureParameter(s_handleNormalMap, normalMap);
-
 		m_lightDirectionalShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
-		m_lightDirectionalShader->setVectorParameter(s_handleLightSunColor, light.sunColor);
+		m_lightDirectionalShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
 		m_lightDirectionalShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
 		m_lightDirectionalShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 
@@ -204,15 +204,12 @@ void LightRenderer::render(
 
 		// Render quad primitive.
 		m_lightPointShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
-
 		m_lightPointShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-
 		m_lightPointShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightPointShader->setTextureParameter(s_handleNormalMap, normalMap);
-
 		m_lightPointShader->setVectorParameter(s_handleLightPosition, lightPosition);
 		m_lightPointShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
-		m_lightPointShader->setVectorParameter(s_handleLightSunColor, light.sunColor);
+		m_lightPointShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
 		m_lightPointShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
 		m_lightPointShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 
@@ -281,17 +278,13 @@ void LightRenderer::render(
 		m_lightSpotShader->setCombination(s_handleShadowEnable, shadowMask != 0);
 		m_lightSpotShader->setFloatParameter(s_handleShadowMaskSize, 0.5f / shadowMaskSize);
 		m_lightSpotShader->setTextureParameter(s_handleShadowMask, shadowMask);
-
 		m_lightSpotShader->setVectorParameter(s_handleExtent, Vector4(mn.x(), mn.y(), mx.x(), mx.y()));
-
 		m_lightSpotShader->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-
 		m_lightSpotShader->setTextureParameter(s_handleDepthMap, depthMap);
 		m_lightSpotShader->setTextureParameter(s_handleNormalMap, normalMap);
-
 		m_lightSpotShader->setVectorParameter(s_handleLightPositionAndRadius, lightPositionAndRadius);
 		m_lightSpotShader->setVectorParameter(s_handleLightDirectionAndRange, lightDirectionAndRange);
-		m_lightSpotShader->setVectorParameter(s_handleLightSunColor, light.sunColor);
+		m_lightSpotShader->setVectorParameter(s_handleLightSunColor, sunColorAndIntensity);
 		m_lightSpotShader->setVectorParameter(s_handleLightBaseColor, light.baseColor);
 		m_lightSpotShader->setVectorParameter(s_handleLightShadowColor, light.shadowColor);
 

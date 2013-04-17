@@ -361,6 +361,10 @@ void SoundPlayer::update(float dT)
 			// Set automatic sound parameters.
 			i->soundChannel->setParameter(s_handleDistance, k0);
 			i->soundChannel->setParameter(s_handleVelocity, 0.0f);
+
+			// Disable repeat if no-one else then me have a reference to the handle.
+			if (!i->handle || i->handle->getReferenceCount() <= 1)
+				i->soundChannel->disableRepeat();
 		}
 	}
 

@@ -58,11 +58,16 @@ struct MaterialPredicate
 	inline bool operator () (const Material& a, const Material& b) const
 	{
 		return
-			a.getDiffuseMap() == b.getDiffuseMap() &&
-			a.getSpecularMap() == b.getSpecularMap() &&
-			a.getEmissiveMap() == b.getEmissiveMap() &&
-			a.getReflectiveMap() == b.getReflectiveMap() &&
-			a.getNormalMap() == b.getNormalMap() &&
+			a.getDiffuseMap().name == b.getDiffuseMap().name &&
+			a.getDiffuseMap().channel == b.getDiffuseMap().channel &&
+			a.getSpecularMap().name == b.getSpecularMap().name &&
+			a.getSpecularMap().channel == b.getSpecularMap().channel &&
+			a.getEmissiveMap().name == b.getEmissiveMap().name &&
+			a.getEmissiveMap().channel == b.getEmissiveMap().channel &&
+			a.getReflectiveMap().name == b.getReflectiveMap().name &&
+			a.getReflectiveMap().channel == b.getReflectiveMap().channel &&
+			a.getNormalMap().name == b.getNormalMap().name &&
+			a.getNormalMap().channel == b.getNormalMap().channel &&
 			a.getColor() == b.getColor() &&
 			compare(a.getDiffuseTerm(), b.getDiffuseTerm()) &&
 			compare(a.getSpecularTerm(), b.getSpecularTerm()) &&

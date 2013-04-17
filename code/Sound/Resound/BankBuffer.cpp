@@ -21,10 +21,15 @@ struct BankBufferCursor : public RefCountImpl< ISoundBufferCursor >
 			m_grainCursor->setParameter(id, parameter);
 	}
 
+	virtual void disableRepeat()
+	{
+		if (m_grainCursor)
+			m_grainCursor->disableRepeat();
+	}
+
 	virtual void reset()
 	{
 		m_grainIndex = 0;
-
 		if (m_grainCursor)
 			m_grainCursor->reset();
 	}

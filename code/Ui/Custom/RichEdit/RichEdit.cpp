@@ -39,8 +39,8 @@ RichEdit::RichEdit()
 ,	m_imageHeight(0)
 ,	m_imageCount(0)
 ,	m_caret(0)
-,	m_selectionStart(~0UL)
-,	m_selectionStop(0)
+,	m_selectionStart(-1)
+,	m_selectionStop(-1)
 {
 }
 
@@ -277,11 +277,11 @@ std::wstring RichEdit::getLine(int32_t line) const
 
 std::wstring RichEdit::getSelectedText() const
 {
-	if (m_selectionStart >= m_selectionStop || m_text.empty())
+	if (m_selectionStart < 0 || m_text.empty())
 		return L"";
 
 	const wchar_t* text = &m_text[0];
-	return std::wstring(text + m_selectionStart, text + m_selectionStop + 1);
+	return std::wstring(text + m_selectionStart, text + m_selectionStop);
 }
 
 bool RichEdit::scrollToLine(int32_t line)
@@ -302,8 +302,8 @@ bool RichEdit::showLine(int32_t line)
 		Font font = getFont();
 		Rect rc = getInnerRect();
 
-		uint32_t lineHeight = font.getSize() + 1;
-		uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
+		int32_t lineHeight = font.getSize() + 1;
+		int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 		int32_t top = m_scrollBarV->getPosition();
 
@@ -382,55 +382,69 @@ void RichEdit::updateScrollBars()
 	m_scrollBarH->update();
 }
 
-void RichEdit::deleteCharacters(bool backspace)
+void RichEdit::deleteCharacters()
 {
-	if (backspace && m_caret == 0)
+	int32_t start = m_caret;
+	int32_t stop = m_caret;
+
+	if (m_selectionStart >= 0)
+	{
+		start = m_selectionStart;
+		stop = m_selectionStop - 1;
+	}
+
+	stop = std::min(stop, int32_t(m_text.size() - 2));
+	if (stop < start)
 		return;
 
-	if (backspace)
-	{
-		m_text.erase(m_text.begin() + m_caret - 1);
-		m_meta.erase(m_meta.begin() + m_caret - 1);
-	}
-	else
-	{
-		m_text.erase(m_text.begin() + m_caret);
-		m_meta.erase(m_meta.begin() + m_caret);
-	}
+	m_text.erase(m_text.begin() + start, m_text.begin() + stop + 1);
+	m_meta.erase(m_meta.begin() + start, m_meta.begin() + stop + 1);
 
 	for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); )
 	{
-		if (m_caret == i->start)
+		if (
+			start == i->stop ||
+			(start <= i->start && stop >= i->stop)
+		)
 		{
-			if (i != m_lines.begin())
-			{
-				std::vector< Line >::iterator j = i - 1;
-				j->stop = i->stop - 1;
-			}
-			i = m_lines.erase(i);
-			continue;
+			int32_t tmp = i->start; i = m_lines.erase(i);
+			if (i != m_lines.end())
+				i->start = tmp;
 		}
-		else if (m_caret > i->start && m_caret <= i->stop)
-			i->stop--;
-		else if (m_caret < i->start)
-		{
-			i->start--;
-			i->stop--;
-		}
-		++i;
+		else
+			++i;
 	}
 
-	if (backspace)
-		--m_caret;
+	for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+	{
+		bool startIn = (start >= i->start && start <= i->stop);
+		bool stopIn = (stop >= i->start && stop <= i->stop);
+
+		if (startIn && stopIn)
+			i->stop -= (stop - start) + 1;
+		else if (startIn)
+			i->stop = start;
+		else if (stopIn)
+			i->start = stop;
+		else if (stop <= i->start)
+		{
+			i->start -= (stop - start) + 1;
+			i->stop -= (stop - start) + 1;
+		}
+	}
+
+	m_selectionStart = -1;
+	m_selectionStop = -1;
+	m_caret = start;
+
+	CHECK;
 
 	raiseEvent(EiContentChange, 0);
 }
 
 void RichEdit::insertCharacter(wchar_t ch)
 {
-	if (ch == 8)
-		deleteCharacters(true);
-	else if (ch == L'\n' || ch == L'\r')
+	if (ch == L'\n' || ch == L'\r')
 	{
 		m_text.insert(m_text.begin() + m_caret, L'\n');
 		m_meta.insert(m_meta.begin() + m_caret, 0);
@@ -511,15 +525,8 @@ void RichEdit::eventKeyDown(Event* event)
 {
 	KeyEvent* keyEvent = checked_type_cast< KeyEvent*, false >(event);
 
-	// Prepare selection before caret movement.
-	if (keyEvent->getKeyState() & KsShift)
-	{
-		if (m_selectionStart > m_selectionStop)
-		{
-			m_selectionStart =
-			m_selectionStop = m_caret;
-		}
-	}
+	int32_t caret = m_caret;
+	bool caretMovement = false;
 
 	switch (keyEvent->getVirtualKey())
 	{
@@ -535,6 +542,7 @@ void RichEdit::eventKeyDown(Event* event)
 				break;
 			}
 		}
+		caretMovement = true;
 		break;
 
 	case VkDown:
@@ -549,41 +557,60 @@ void RichEdit::eventKeyDown(Event* event)
 				break;
 			}
 		}
+		caretMovement = true;
 		break;
 
 	case VkLeft:
 		// Move caret left.
 		if (m_caret > 0)
 			--m_caret;
+		caretMovement = true;
 		break;
 
 	case VkRight:
 		// Move caret right.
 		if (m_caret < int32_t(m_text.size()) - 1)
 			++m_caret;
+		caretMovement = true;
 		break;
 
 	case VkHome:
-		// Move caret home.
-		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
 		{
-			if (m_caret > i->start && m_caret <= i->stop)
+			if ((keyEvent->getKeyState() & KsControl) == 0)
 			{
-				m_caret = i->start;
-				break;
+				for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+				{
+					if (m_caret > i->start && m_caret <= i->stop)
+					{
+						m_caret = i->start;
+						break;
+					}
+				}
 			}
+			else
+				m_caret = 0;
+
+			caretMovement = true;
 		}
 		break;
 
 	case VkEnd:
-		// Move caret end.
-		for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
 		{
-			if (m_caret >= i->start && m_caret < i->stop)
+			if ((keyEvent->getKeyState() & KsControl) == 0)
 			{
-				m_caret = i->stop;
-				break;
+				for (std::vector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
+				{
+					if (m_caret >= i->start && m_caret < i->stop)
+					{
+						m_caret = i->stop;
+						break;
+					}
+				}
 			}
+			else
+				m_caret = m_lines.back().stop;
+
+			caretMovement = true;
 		}
 		break;
 
@@ -608,6 +635,7 @@ void RichEdit::eventKeyDown(Event* event)
 				}
 			}
 		}
+		caretMovement = true;
 		break;
 
 	case VkPageDown:
@@ -631,21 +659,70 @@ void RichEdit::eventKeyDown(Event* event)
 				}
 			}
 		}
+		caretMovement = true;
+		break;
+
+	case VkBackSpace:
+		{
+			if (m_selectionStart < 0 && m_caret > 0)
+			{
+				m_caret--;
+				deleteCharacters();
+			}
+			else if (m_selectionStart >= 0)
+				deleteCharacters();
+		}
 		break;
 
 	case VkDelete:
-		deleteCharacters(false);
+		deleteCharacters();
 		break;
+
+	case VkShift:
+		return;
 		
 	default:
 		break;
 	}
 
-	// Expand selection based on caret movement.
-	if (keyEvent->getKeyState() & KsShift)
+	if ((keyEvent->getKeyState() & KsShift) != 0)
 	{
-		m_selectionStart = std::min(m_selectionStart, m_caret);
-		m_selectionStop = std::max(m_selectionStop, m_caret);
+		if (caretMovement)
+		{
+			if (m_selectionStart < 0)
+			{
+				m_selectionStart = std::min(caret, m_caret);
+				m_selectionStop = std::max(caret, m_caret);
+			}
+			else
+			{
+				bool caretAtSelectionHead = bool(caret == m_selectionStart);
+				bool caretAtSelectionTail = bool(caret == m_selectionStop);
+
+				if (caretAtSelectionHead && !caretAtSelectionTail)
+					m_selectionStart = m_caret;
+				else if (!caretAtSelectionHead && caretAtSelectionTail)
+					m_selectionStop = m_caret;
+				else
+				{
+					m_selectionStart = std::min(m_selectionStart, m_caret);
+					m_selectionStop = std::max(m_selectionStop, m_caret);
+				}
+
+				if (m_selectionStart > m_selectionStop)
+					std::swap(m_selectionStart, m_selectionStop);
+			}
+		}
+		else
+		{
+			m_selectionStart =
+			m_selectionStop = -1;
+		}
+	}
+	else if (keyEvent->getKeyState() == KsNone)
+	{
+		m_selectionStart =
+		m_selectionStop = -1;
 	}
 
 	updateScrollBars();
@@ -665,14 +742,10 @@ void RichEdit::eventKey(Event* event)
 	else if (ch == 24)
 	{
 		copy();
-		deleteCharacters(false);
+		deleteCharacters();
 	}
-	else
+	else if (ch != 8)
 		insertCharacter(ch);
-
-	// Remove selection.
-	m_selectionStart = ~0UL;
-	m_selectionStop = 0;
 
 	CHECK;
 
@@ -720,6 +793,10 @@ void RichEdit::eventButtonDown(Event* event)
 	}
 	else
 		m_caret = ln.stop;
+
+	// Remove selection.
+	m_selectionStart = -1;
+	m_selectionStop = -1;
 
 	update();
 }
@@ -799,7 +876,7 @@ void RichEdit::eventPaint(Event* event)
 			const Line& line = m_lines[i];
 
 			Rect textRc = lineRc;
-			uint32_t x = c_lineMargin + 2;
+			uint32_t x = 0;
 
 			// Non-empty line; format print.
 			for (int32_t j = line.start; j < line.stop; ++j)
@@ -808,33 +885,33 @@ void RichEdit::eventPaint(Event* event)
 
 				if (m_caret == j)
 				{
-					Rect caretRc = lineRc;
-					caretRc.left = lineRc.left + x - 1;
-					caretRc.right = caretRc.left + 1;
+					textRc.left = c_lineMargin + 2 + x - 1;
+					textRc.right = textRc.left + 1;
+
 					canvas.setBackground(Color4ub(0, 0, 0));
-					canvas.fillRect(caretRc);
+					canvas.fillRect(textRc);
 				}
 
 				bool solidBackground = false;
-				if (j >= m_selectionStart && j <= m_selectionStop)
+				if (j >= m_selectionStart && j < m_selectionStop)
 				{
-					canvas.setBackground(Color4ub(160, 160, 255));
+					canvas.setBackground(Color4ub(51, 153, 255));
+					canvas.setForeground(Color4ub(255, 255, 255));
 					solidBackground = true;
 				}
-				else if (attrib.backColor != Color4ub(255, 255, 255))
+				else
 				{
 					canvas.setBackground(attrib.backColor);
-					solidBackground = true;
+					canvas.setForeground(attrib.textColor);
+					solidBackground = bool(attrib.backColor != Color4ub(255, 255, 255));
 				}
-					
-				canvas.setForeground(attrib.textColor);
 
 				if (m_text[j] != '\t')
 				{
 					std::wstring ch(&m_text[j], &m_text[j + 1]);
 					int32_t chw = canvas.getTextExtent(ch).cx;
 
-					textRc.left = lineRc.left + x;
+					textRc.left = c_lineMargin + 2 + x;
 					textRc.right = textRc.left + chw;
 
 					if (solidBackground)
@@ -848,8 +925,8 @@ void RichEdit::eventPaint(Event* event)
 					// Adjust offset to nearest tab-stop.
 					int32_t nx = alignUp(x + 4 * 8, 4 * 8);
 
-					textRc.left = lineRc.left + x;
-					textRc.right = lineRc.left + nx;
+					textRc.left = c_lineMargin + 2 + x;
+					textRc.right = textRc.left + nx;
 
 					if (solidBackground)
 						canvas.fillRect(textRc);
@@ -861,11 +938,11 @@ void RichEdit::eventPaint(Event* event)
 			// Special condition; caret at the very end of a line.
 			if (m_caret == line.stop)
 			{
-				Rect caretRc = lineRc;
-				caretRc.left = lineRc.left + x - 1;
-				caretRc.right = caretRc.left + 1;
+				textRc.left = c_lineMargin + 2 + x - 1;
+				textRc.right = textRc.left + 1;
+
 				canvas.setBackground(Color4ub(0, 0, 0));
-				canvas.fillRect(caretRc);
+				canvas.fillRect(textRc);
 			}
 
 			lineRc = lineRc.offset(0, lineHeight);

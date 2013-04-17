@@ -16,6 +16,7 @@ struct InLoopOutGrainCursor : public RefCountImpl< ISoundBufferCursor >
 {
 	handle_t m_id;
 	bool m_parameter;
+	bool m_repeat;
 	Ref< IGrain > m_grain;
 	Ref< IGrain > m_loopGrain;
 	Ref< ISoundBufferCursor > m_cursor;
@@ -28,6 +29,11 @@ struct InLoopOutGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 		if (id == m_id)
 			m_parameter = bool(parameter >= 0.5f);
+	}
+
+	virtual void disableRepeat()
+	{
+		m_repeat = false;
 	}
 
 	virtual void reset()
@@ -64,6 +70,7 @@ Ref< ISoundBufferCursor > InLoopOutGrain::createCursor() const
 
 	iloCursor->m_id = m_id;
 	iloCursor->m_parameter = m_initial;
+	iloCursor->m_repeat = true;
 	iloCursor->m_grain = m_initial ? m_inGrain : m_outGrain;
 	iloCursor->m_cursor = iloCursor->m_grain->createCursor();
 	iloCursor->m_loopGrain = m_initial ? m_inLoopGrain : m_outLoopGrain;
@@ -95,6 +102,9 @@ bool InLoopOutGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mix
 		(iloCursor->m_loopGrain == m_outLoopGrain && iloCursor->m_parameter == true)
 	)
 	{
+		if (!iloCursor->m_repeat)
+			return false;
+
 		iloCursor->m_grain = iloCursor->m_parameter ? m_inGrain : m_outGrain;
 		iloCursor->m_cursor = iloCursor->m_grain->createCursor();
 		iloCursor->m_loopGrain = iloCursor->m_parameter ? m_inLoopGrain : m_outLoopGrain;
@@ -104,7 +114,12 @@ bool InLoopOutGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mix
 	if (iloCursor->m_loopGrain)
 	{
 		if (!iloCursor->m_loopGrain->getBlock(iloCursor->m_loopCursor, mixer, outBlock))
+		{
+			if (!iloCursor->m_repeat)
+				return false;
+
 			iloCursor->m_loopCursor = iloCursor->m_loopGrain->createCursor();
+		}
 	}
 
 	if (iloCursor->m_grain)

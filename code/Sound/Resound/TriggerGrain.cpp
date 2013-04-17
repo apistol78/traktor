@@ -44,6 +44,12 @@ struct TriggerGrainCursor : public RefCountImpl< ISoundBufferCursor >
 		m_parameter = parameter;
 	}
 
+	virtual void disableRepeat()
+	{
+		if (m_cursor)
+			m_cursor->disableRepeat();
+	}
+
 	virtual void reset()
 	{
 		if (m_cursor)

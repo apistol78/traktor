@@ -1,17 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>296</first>
-				<second>221</second>
-			</position>
-			<name>T_TexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.Texture">
 			<comment>
 			<![CDATA[
@@ -56,8 +45,40 @@ Tag_ReflectiveMap
 			</position>
 			<name>T_Reflective</name>
 		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>318</first>
+				<second>217</second>
+			</position>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>318</first>
+				<second>256</second>
+			</position>
+			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
 	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[1]"/>
@@ -65,17 +86,7 @@ Tag_ReflectiveMap
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[2]"/>
-				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>TexCoord</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -90,12 +101,12 @@ Tag_ReflectiveMap
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[4]"/>
-				<name>Input</name>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[1]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>

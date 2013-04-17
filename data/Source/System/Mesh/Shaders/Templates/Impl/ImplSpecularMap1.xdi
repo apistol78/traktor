@@ -1,10 +1,50 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>981</first>
+				<second>254</second>
+			</position>
+			<name>T_SpecularRoughness</name>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>981</first>
+				<second>217</second>
+			</position>
+			<name>T_SpecularTerm</name>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment>
+			<![CDATA[
+Tag_SpecularRoughness
+			]]>
+			</comment>
+			<position>
+				<first>677</first>
+				<second>309</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment>
+			<![CDATA[
+Tag_SpecularTerm
+			]]>
+			</comment>
+			<position>
+				<first>677</first>
+				<second>247</second>
+			</position>
+			<value>0</value>
+		</item>
 		<item type="traktor.render.Texture">
 			<comment>
 			<![CDATA[
-Tag_EmissiveMap
+Tag_SpecularMap
 			]]>
 			</comment>
 			<position>
@@ -29,6 +69,13 @@ Tag_EmissiveMap
 			<mipBias>0</mipBias>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>815</first>
+				<second>179</second>
+			</position>
+		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
@@ -37,19 +84,11 @@ Tag_EmissiveMap
 			</position>
 			<swizzle>x</swizzle>
 		</item>
-		<item type="traktor.render.OutputPort">
-			<comment/>
-			<position>
-				<first>843</first>
-				<second>149</second>
-			</position>
-			<name>T_Emissive</name>
-		</item>
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>259</first>
-				<second>233</second>
+				<first>307</first>
+				<second>242</second>
 			</position>
 			<name>T_TexCoord0</name>
 			<connectable>true</connectable>
@@ -59,8 +98,8 @@ Tag_EmissiveMap
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>259</first>
-				<second>272</second>
+				<first>307</first>
+				<second>281</second>
 			</position>
 			<name>T_TexCoord1</name>
 			<connectable>true</connectable>
@@ -71,31 +110,11 @@ Tag_EmissiveMap
 	<edges>
 		<item type="traktor.render.Edge">
 			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Texture</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[2]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[3]"/>
 				<name>Input</name>
 			</destination>
 		</item>
@@ -105,7 +124,57 @@ Tag_EmissiveMap
 				<name>Output</name>
 			</source>
 			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Texture</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
 				<node ref="/object/nodes/item[1]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
 				<name>TexCoord</name>
 			</destination>
 		</item>

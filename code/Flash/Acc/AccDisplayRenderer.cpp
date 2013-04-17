@@ -422,13 +422,13 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	if (!rectangleVisible(movie, m_viewSize, m_viewOffset, transform, bounds))
 		return;
 
-	// Keep 1:1 aspect ratio; use maximum bound dimension.
-	float gw = bounds.max.x - bounds.min.x;
-	float gh = bounds.max.y - bounds.min.y;
-	if (gw >= gh)
-		bounds.max.y = bounds.min.y + gw;
-	else
-		bounds.max.x = bounds.min.x + gh;
+	//// Keep 1:1 aspect ratio; use maximum bound dimension.
+	//float gw = bounds.max.x - bounds.min.x;
+	//float gh = bounds.max.y - bounds.min.y;
+	//if (gw >= gh)
+	//	bounds.max.y = bounds.min.y + gw;
+	//else
+	//	bounds.max.x = bounds.min.x + gh;
 
 	// Get cached glyph target.
 	if (it1->second.index < 0)

@@ -1,10 +1,10 @@
 #include <cmath>
 #include <limits>
-#include "Core/Math/Vector4.h"
 #include "Core/Math/Const.h"
 #if !defined(NDEBUG)
 #	include "Core/Math/Float.h"
 #endif
+#include "Core/Math/Vector4.h"
 
 namespace traktor
 {
@@ -100,6 +100,16 @@ T_MATH_INLINE void Vector4::set(float x, float y, float z, float w)
 	_z = z;
 	_w = w;
 	VALIDATE(*this);
+}
+
+T_MATH_INLINE Scalar Vector4::min() const
+{
+	return Scalar(traktor::min(traktor::min(_x, _y), traktor::min(_z, _w)));
+}
+
+T_MATH_INLINE Scalar Vector4::max() const
+{
+	return Scalar(traktor::max(traktor::max(_x, _y), traktor::max(_z, _w)));
 }
 
 T_MATH_INLINE Scalar Vector4::x() const
@@ -543,6 +553,11 @@ T_MATH_INLINE bool compareAllLessEqual(const Vector4& l, const Vector4& r)
 	return l._x <= r._x && l._y <= r._y && l._z <= r._z && l._w <= r._w;
 }
 
+T_MATH_INLINE bool compareFuzzyEqual(const Vector4& l, const Vector4& r)
+{
+	Vector4 d = (l - r).absolute();
+	return d.max() <= FUZZY_EPSILON;
+}
 
 #if defined(VALIDATE)
 #undef VALIDATE

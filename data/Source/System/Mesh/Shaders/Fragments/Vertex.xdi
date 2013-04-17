@@ -23,7 +23,7 @@
 				<first>145</first>
 				<second>312</second>
 			</position>
-			<name>TexCoord</name>
+			<name>TexCoord0</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>
@@ -67,7 +67,7 @@ This fragment is just a placeholder for an appropriate vertex fragment; it's aut
 				<first>145</first>
 				<second>340</second>
 			</position>
-			<name>TexCoord2</name>
+			<name>TexCoord1</name>
 		</item>
 		<item type="traktor.render.OutputPort">
 			<comment/>

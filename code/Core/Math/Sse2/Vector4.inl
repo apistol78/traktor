@@ -1,4 +1,5 @@
 #include <cmath>
+#include "Core/Math/Const.h"
 #include "Core/Math/Vector4.h"
 
 namespace traktor
@@ -62,6 +63,22 @@ T_MATH_INLINE const Vector4& Vector4::origo()
 T_MATH_INLINE void Vector4::set(float x, float y, float z, float w)
 {
 	m_data = _mm_set_ps(w, z, y, x);
+}
+
+T_MATH_INLINE Scalar Vector4::min() const
+{
+	Vector4 xxyy = shuffle< 0, 0, 1, 1 >();
+	Vector4 zzww = shuffle< 2, 2, 3, 3 >();
+	Vector4 t0 = traktor::min(xxyy, zzww);
+	return traktor::min(t0.shuffle< 3, 2, 1, 0 >(), t0).x();
+}
+
+T_MATH_INLINE Scalar Vector4::max() const
+{
+	Vector4 xxyy = shuffle< 0, 0, 1, 1 >();
+	Vector4 zzww = shuffle< 2, 2, 3, 3 >();
+	Vector4 t0 = traktor::max(xxyy, zzww);
+	return traktor::max(t0.shuffle< 3, 2, 1, 0 >(), t0).x();
 }
 
 T_MATH_INLINE Scalar Vector4::x() const
@@ -394,6 +411,12 @@ T_MATH_INLINE bool compareAllLessEqual(const Vector4& l, const Vector4& r)
 {
 	__m128 cmp = _mm_cmple_ps(l.m_data, r.m_data);
 	return _mm_movemask_ps(cmp) == 15;
+}
+
+T_MATH_INLINE bool compareFuzzyEqual(const Vector4& l, const Vector4& r)
+{
+	Vector4 d = (l - r).absolute();
+	return d.max() <= FUZZY_EPSILON;
 }
 
 }

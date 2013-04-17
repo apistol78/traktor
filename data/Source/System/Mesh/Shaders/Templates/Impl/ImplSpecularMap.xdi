@@ -29,17 +29,6 @@ Tag_SpecularRoughness
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort" version="1">
-			<comment/>
-			<position>
-				<first>296</first>
-				<second>221</second>
-			</position>
-			<name>T_TexCoord</name>
-			<connectable>true</connectable>
-			<optional>false</optional>
-			<defaultValue>0</defaultValue>
-		</item>
 		<item type="traktor.render.Scalar">
 			<comment>
 			<![CDATA[
@@ -63,9 +52,9 @@ Tag_SpecularMap
 				<second>140</second>
 			</position>
 			<external>{00000000-0000-0000-0000-000000000000}</external>
-      <type>PtTexture2D</type>
-    </item>
-		<item type="traktor.render.Sampler">
+			<type>PtTexture2D</type>
+		</item>
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>526</first>
@@ -77,6 +66,8 @@ Tag_SpecularMap
 			<addressU>AdWrap</addressU>
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
+			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -93,6 +84,28 @@ Tag_SpecularMap
 			</position>
 			<swizzle>x</swizzle>
 		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>307</first>
+				<second>242</second>
+			</position>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>307</first>
+				<second>281</second>
+			</position>
+			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -107,11 +120,11 @@ Tag_SpecularMap
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[5]"/>
+				<node ref="/object/nodes/item[4]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[6]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Texture</name>
 			</destination>
 		</item>
@@ -122,17 +135,27 @@ Tag_SpecularMap
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[6]"/>
-				<name>TexCoord</name>
+				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[7]"/>
-				<name>Input2</name>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -141,28 +164,18 @@ Tag_SpecularMap
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[7]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[1]"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>TexCoord</name>
 			</destination>
 		</item>
 	</edges>

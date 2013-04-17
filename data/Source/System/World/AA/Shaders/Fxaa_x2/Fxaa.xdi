@@ -23,13 +23,21 @@ Calculate direction
 				<second>68</second>
 			</position>
 		</item>
-		<item type="traktor.render.PixelOutput" version="4">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>6437</first>
 				<second>495</second>
 			</position>
 			<technique>Default</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmNever</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -68,7 +76,7 @@ Maximum
 				<first>6266</first>
 				<second>482</second>
 			</position>
-			<branch>BrDynamic</branch>
+			<branch>BrStatic</branch>
 			<operator>CoLessEqual</operator>
 		</item>
 		<item type="traktor.render.Mul">
@@ -85,7 +93,7 @@ Maximum
 				<second>79</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>4745</first>
@@ -98,6 +106,7 @@ Maximum
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -203,7 +212,7 @@ Maximum
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment>
 			<![CDATA[
 SE
@@ -220,6 +229,7 @@ SE
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -332,7 +342,7 @@ zw
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment>
 			<![CDATA[
 SW
@@ -349,6 +359,7 @@ SW
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -399,7 +410,7 @@ SW
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment>
 			<![CDATA[
 NE
@@ -416,6 +427,7 @@ NE
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -459,7 +471,7 @@ NE
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment>
 			<![CDATA[
 NW
@@ -476,6 +488,7 @@ NW
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment>
@@ -643,7 +656,7 @@ Span max
 			<type>PtTexture2D</type>
 			<frequency>UfFrame</frequency>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>4746</first>
@@ -656,6 +669,7 @@ Span max
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -697,7 +711,7 @@ Minimum
 				<first>6030</first>
 				<second>374</second>
 			</position>
-			<branch>BrDynamic</branch>
+			<branch>BrStatic</branch>
 			<operator>CoGreaterEqual</operator>
 		</item>
 		<item type="traktor.render.Add">
@@ -721,7 +735,7 @@ Minimum
 				<second>259</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>4747</first>
@@ -734,6 +748,7 @@ Minimum
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -757,7 +772,7 @@ Minimum
 			</position>
 			<value>0.5</value>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>4747</first>
@@ -770,6 +785,7 @@ Minimum
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
@@ -864,7 +880,7 @@ Minimum
 			</outputPins>
 			<values/>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment>
 			<![CDATA[
 Middle
@@ -881,6 +897,7 @@ Middle
 			<addressV>AdClamp</addressV>
 			<addressW>AdClamp</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>

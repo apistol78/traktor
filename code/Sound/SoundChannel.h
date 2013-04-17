@@ -59,6 +59,9 @@ public:
 	/*! \brief Set cursor parameter. */
 	void setParameter(handle_t id, float parameter);
 
+	/*! \brief Disable repeat on current sound. */
+	void disableRepeat();
+
 	/*! \brief Play sound through this channel.
 	 *
 	 * \param buffer Sound buffer.

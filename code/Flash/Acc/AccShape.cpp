@@ -262,8 +262,8 @@ bool AccShape::updateRenderable(
 
 				for (int k = 0; k < 3; ++k)
 				{
-					vertex->pos[0] = j->v[k].x;
-					vertex->pos[1] = j->v[k].y;
+					vertex->pos[0] = std::floor(j->v[k].x);
+					vertex->pos[1] = std::floor(j->v[k].y);
 					vertex->uv[0] = c_controlPoints[k][0];
 					vertex->uv[1] = c_controlPoints[k][1];
 					vertex->color[0] = color.r;
@@ -329,9 +329,9 @@ void AccShape::render(
 		return;
 
 	Matrix44 m(
-		transform.e11, transform.e12, transform.e13, 0.0f,
-		transform.e21, transform.e22, transform.e23, 0.0f,
-		transform.e31, transform.e32, transform.e33, 0.0f,
+		transform.e11, transform.e12, std::floor(transform.e13), 0.0f,
+		transform.e21, transform.e22, std::floor(transform.e23), 0.0f,
+		transform.e31, transform.e32, std::floor(transform.e33), 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 

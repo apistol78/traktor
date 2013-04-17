@@ -26,6 +26,10 @@ struct FlashSoundBufferCursor : public RefCountImpl< sound::ISoundBufferCursor >
 	{
 	}
 
+	virtual void disableRepeat()
+	{
+	}
+
 	virtual void reset()
 	{
 		m_position = 0;

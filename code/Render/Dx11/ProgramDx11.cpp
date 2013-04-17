@@ -22,6 +22,34 @@ namespace traktor
 
 render::handle_t s_targetSizeHandle = 0;
 
+bool storeIfNotEqual(const float* source, int length, float* dest)
+{
+	for (int i = 0; i < length; ++i)
+	{
+		if (abs(dest[i] - source[i]) > FUZZY_EPSILON)
+		{
+			for (; i < length; ++i)
+				dest[i] = source[i];
+			return true;
+		}
+	}
+	return false;
+}
+
+bool storeIfNotEqual(const Vector4* source, int length, float* dest)
+{
+	for (int i = 0; i < length; ++i)
+	{
+		if (!compareFuzzyEqual(Vector4::loadAligned(&dest[i * 4]), source[i]))
+		{
+			for (; i < length; ++i)
+				source[i].storeAligned(&dest[i * 4]);
+			return true;
+		}
+	}
+	return false;	
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramDx11", ProgramDx11, IProgram)
@@ -140,9 +168,8 @@ void ProgramDx11::setFloatArrayParameter(handle_t handle, const float* param, in
 	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		if (std::memcmp(&m_parameterFloatArray[i->second.offset], param, length * sizeof(float)) != 0)
+		if (storeIfNotEqual(param, length, &m_parameterFloatArray[i->second.offset]))
 		{
-			std::memcpy(&m_parameterFloatArray[i->second.offset], param, length * sizeof(float));
 			if (i->second.cbuffer[0])
 				i->second.cbuffer[0]->dirty = true;
 			if (i->second.cbuffer[1])
@@ -162,16 +189,21 @@ void ProgramDx11::setFloatArrayParameter(handle_t handle, const float* param, in
 
 void ProgramDx11::setVectorParameter(handle_t handle, const Vector4& param)
 {
+	setVectorArrayParameter(handle, &param, 1);
+}
+
+void ProgramDx11::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
+{
 	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
 	if (i != m_parameterMap.end())
 	{
-		if (Vector4::loadAligned(&m_parameterFloatArray[i->second.offset]) != param)
+		if (storeIfNotEqual(param, length, &m_parameterFloatArray[i->second.offset]))
 		{
-			param.storeAligned(&m_parameterFloatArray[i->second.offset]);
 			if (i->second.cbuffer[0])
 				i->second.cbuffer[0]->dirty = true;
 			if (i->second.cbuffer[1])
 				i->second.cbuffer[1]->dirty = true;
+
 #if defined(_DEBUG)
 			if (m_bindCount >= 1)
 			{
@@ -182,40 +214,6 @@ void ProgramDx11::setVectorParameter(handle_t handle, const Vector4& param)
 			}
 #endif
 		}
-	}
-}
-
-void ProgramDx11::setVectorArrayParameter(handle_t handle, const Vector4* param, int length)
-{
-	SmallMap< handle_t, ParameterMap >::iterator i = m_parameterMap.find(handle);
-	if (i != m_parameterMap.end())
-	{
-		int32_t j = 0;
-		for (; j < length; ++j)
-		{
-			if (Vector4::loadAligned(&m_parameterFloatArray[i->second.offset + j * 4]) != param[j])
-				break;
-		}
-		if (j >= length)
-			return;
-
-		for (; j < length; ++j)
-			param[j].storeAligned(&m_parameterFloatArray[i->second.offset + j * 4]);
-
-		if (i->second.cbuffer[0])
-			i->second.cbuffer[0]->dirty = true;
-		if (i->second.cbuffer[1])
-			i->second.cbuffer[1]->dirty = true;
-
-#if defined(_DEBUG)
-		if (m_bindCount >= 1)
-		{
-			if (i->second.cbuffer[0] && i->second.cbuffer[0]->name == L"cbOnce")
-				T_DEBUG(L"cbOnce modified vertex " << i->second.name);
-			if (i->second.cbuffer[1] && i->second.cbuffer[1]->name == L"cbOnce")
-				T_DEBUG(L"cbOnce modified pixel " << i->second.name);
-		}
-#endif
 	}
 }
 

@@ -19,6 +19,13 @@ struct RepeatGrainCursor : public RefCountImpl< ISoundBufferCursor >
 			m_cursor->setParameter(id, parameter);
 	}
 
+	virtual void disableRepeat()
+	{
+		m_count = ~0UL;
+		if (m_cursor)
+			m_cursor->disableRepeat();
+	}
+
 	virtual void reset()
 	{
 		if (m_cursor)
@@ -68,6 +75,9 @@ bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer,
 	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
 	if (!m_grain->getBlock(repeatCursor->m_cursor, mixer, outBlock))
 	{
+		if (repeatCursor->m_count == ~0UL)
+			return false;
+
 		if (m_count != 0 && ++repeatCursor->m_count >= m_count)
 			return false;
 

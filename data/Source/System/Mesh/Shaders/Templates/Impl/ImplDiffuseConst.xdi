@@ -2,7 +2,7 @@
 <object type="traktor.render.ShaderGraph">
 	<nodes>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>918</first>
 				<second>445</second>
@@ -10,7 +10,7 @@
 			<name>T_DiffuseTerm</name>
 		</item>
 		<item type="traktor.render.OutputPort">
-			<comment></comment>
+			<comment/>
 			<position>
 				<first>918</first>
 				<second>404</second>
@@ -18,28 +18,50 @@
 			<name>T_DiffuseColor</name>
 		</item>
 		<item type="traktor.render.Scalar">
-			<comment>Tag_DiffuseTerm</comment>
+			<comment>
+			<![CDATA[
+Tag_DiffuseTerm
+			]]>
+			</comment>
 			<position>
 				<first>699</first>
 				<second>339</second>
 			</position>
 			<value>0</value>
 		</item>
-		<item type="traktor.render.InputPort">
-			<comment></comment>
-			<position>
-				<first>562</first>
-				<second>424</second>
-			</position>
-			<name>T_TexCoord</name>
-		</item>
 		<item type="traktor.render.Color">
-			<comment>Tag_DiffuseColor</comment>
+			<comment>
+			<![CDATA[
+Tag_DiffuseColor
+			]]>
+			</comment>
 			<position>
 				<first>667</first>
 				<second>286</second>
 			</position>
 			<color>0, 0, 0, 0</color>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>460</first>
+				<second>396</second>
+			</position>
+			<name>T_TexCoord0</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>460</first>
+				<second>435</second>
+			</position>
+			<name>T_TexCoord1</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -55,7 +77,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
 			<destination>
