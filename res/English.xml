@@ -1962,6 +1962,10 @@
       <second>Goto next key</second>
     </item>
     <item>
+      <first>TERRAIN_EDITOR_EDIT_TERRAIN</first>
+      <second>Edit terrain</second>
+    </item>
+    <item>
       <first>TERRAIN_EDITOR_ELEVATE_BRUSH</first>
       <second>Elevate brush</second>
     </item>

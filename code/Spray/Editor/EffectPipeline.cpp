@@ -1,20 +1,20 @@
-#include "Spray/Editor/EffectPipeline.h"
+#include "Database/Instance.h"
+#include "Editor/IPipelineDepends.h"
+#include "Editor/IPipelineBuilder.h"
 #include "Spray/EffectData.h"
 #include "Spray/EffectLayerData.h"
 #include "Spray/EmitterData.h"
 #include "Spray/SequenceData.h"
 #include "Spray/SoundTriggerData.h"
+#include "Spray/Editor/EffectPipeline.h"
 #include "Spray/Sources/PointSetSourceData.h"
-#include "Editor/IPipelineDepends.h"
-#include "Editor/IPipelineBuilder.h"
-#include "Database/Instance.h"
 
 namespace traktor
 {
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", 1, EffectPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectPipeline", 2, EffectPipeline, editor::IPipeline)
 
 bool EffectPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -89,6 +89,19 @@ bool EffectPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
+	const EffectData* effectData = checked_type_cast< const EffectData* >(sourceAsset);
+
+	RefArray< EffectLayerData > effectLayers = effectData->getLayers();
+	RefArray< EffectLayerData >::iterator i = std::remove(effectLayers.begin(), effectLayers.end(), (EffectLayerData*)0);
+	effectLayers.erase(i, effectLayers.end());
+
+	Ref< EffectData > outEffectData = new EffectData(
+		effectData->getDuration(),
+		effectData->getLoopStart(),
+		effectData->getLoopEnd(),
+		effectLayers
+	);
+
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,
 		outputGuid
@@ -96,7 +109,7 @@ bool EffectPipeline::buildOutput(
 	if (!instance)
 		return false;
 
-	instance->setObject(sourceAsset);
+	instance->setObject(outEffectData);
 
 	return instance->commit();
 }

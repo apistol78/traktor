@@ -2,9 +2,12 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
+#include "Core/System/OS.h"
 #include "Database/Local/Perforce/PerforceClient.h"
 #include "Database/Local/Perforce/PerforceChangeList.h"
 #include "Database/Local/Perforce/PerforceChangeListFile.h"
+#include "Xml/Document.h"
+#include "Xml/Element.h"
 
 namespace traktor
 {
@@ -578,13 +581,44 @@ bool PerforceClient::establishConnection()
 
 	if (!m_clientDesc.m_host.empty())
 		m_p4client->SetHost(wstombs(m_clientDesc.m_host).c_str());
+	if (!m_clientDesc.m_port.empty())
+		m_p4client->SetPort(wstombs(m_clientDesc.m_port).c_str());
+	if (!m_clientDesc.m_user.empty())
+		m_p4client->SetUser(wstombs(m_clientDesc.m_user).c_str());
+	if (!m_clientDesc.m_client.empty())
+		m_p4client->SetClient(wstombs(m_clientDesc.m_client).c_str());
+	else
+	{
+		// No client specified; read last used client from p4v application settings.
+		Path applicationSettingsPath = OS::getInstance().getUserHomePath() + L"/../.p4qt/ApplicationSettings.xml";
+		Ref< xml::Document > doc = new xml::Document();
+		if (doc->loadFromFile(applicationSettingsPath))
+		{
+			Ref< xml::Element > lastConnection = doc->getSingle(L"/PropertyList/PropertyList[@varName=Connection]/String[@varName=LastConnection]");
+			if (lastConnection)
+			{
+				std::wstring v = lastConnection->getValue();
+				size_t p = v.find_last_of(L',');
+				if (p != v.npos)
+					m_clientDesc.m_client = v.substr(p + 2);
+			}
+		}
 
-	m_p4client->SetPort(wstombs(m_clientDesc.m_port).c_str());
-	m_p4client->SetUser(wstombs(m_clientDesc.m_user).c_str());
+		if (m_clientDesc.m_client.empty())
+			return false;
 
-	m_p4client->SetClient(wstombs(m_clientDesc.m_client).c_str());
+		m_p4client->SetClient(wstombs(m_clientDesc.m_client).c_str());
+	}
 
 	log::info << L"Perforce: Initialize client..." << Endl;
+	if (!m_clientDesc.m_host.empty())
+		log::info << L"\tHost \"" << m_clientDesc.m_host << L"\"" << Endl;
+	if (!m_clientDesc.m_port.empty())
+		log::info << L"\tPort \"" << m_clientDesc.m_port << L"\"" << Endl;
+	if (!m_clientDesc.m_user.empty())
+		log::info << L"\tUser \"" << m_clientDesc.m_user << L"\"" << Endl;
+	if (!m_clientDesc.m_client.empty())
+		log::info << L"\tClient \"" << m_clientDesc.m_client << L"\"" << Endl;
 
 	m_p4client->Init(&e);
 	if (e.Test())
@@ -620,6 +654,10 @@ bool PerforceClient::establishConnection()
 			return false;
 		}
 	}
+
+	m_clientDesc.m_host = mbstows(m_p4client->GetHost().Text());
+	m_clientDesc.m_port = mbstows(m_p4client->GetPort().Text());
+	m_clientDesc.m_user = mbstows(m_p4client->GetUser().Text());
 
 	log::info << L"Perforce: Connected successfully" << Endl;
 	return true;

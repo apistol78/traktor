@@ -140,6 +140,8 @@ private:
 
 	int32_t getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const;
 
+	Rect getEditRect() const;
+
 	void eventKeyDown(Event* event);
 
 	void eventKey(Event* event);

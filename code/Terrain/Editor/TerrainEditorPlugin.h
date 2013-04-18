@@ -24,6 +24,8 @@ class ToolBarEmbed;
 	namespace terrain
 	{
 
+class TerrainEditModifier;
+
 class TerrainEditorPlugin : public scene::ISceneEditorPlugin
 {
 	T_RTTI_CLASS;
@@ -37,6 +39,8 @@ public:
 
 private:
 	scene::SceneEditorContext* m_context;
+	Ref< TerrainEditModifier > m_terrainEditModifier;
+	Ref< ui::custom::ToolBarButton > m_toolToggleEditTerrain;
 	Ref< ui::custom::ToolBarButton > m_toolToggleElevate;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFlatten;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAverage;
@@ -48,6 +52,8 @@ private:
 	Ref< ui::custom::ToolBarEmbed > m_toolStrength;
 
 	void eventSliderStrengthChange(ui::Event* event);
+
+	void eventModifierChanged(ui::Event* event);
 };
 
 	}

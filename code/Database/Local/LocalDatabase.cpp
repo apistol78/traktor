@@ -67,17 +67,23 @@ bool LocalDatabase::open(const ConnectionString& connectionString)
 			log::error << L"Unable to create file store from \"" << fileStoreTypeName << L"\"" << Endl;
 			return false;
 		}
+
+		if (!fileStore->create(connectionString))
+		{
+			log::error << L"Unable to create file store  \"" << fileStoreTypeName << L"\"; using default file store" << Endl;
+			fileStore = 0;
+		}
 	}
 
 	// Fall back on default file store if none created.
 	if (!fileStore)
-		fileStore = new DefaultFileStore();
-
-	// Initialize file store.
-	if (!fileStore->create(connectionString))
 	{
-		log::error << L"Unable to create file store" << Endl;
-		return false;
+		fileStore = new DefaultFileStore();
+		if (!fileStore->create(connectionString))
+		{
+			log::error << L"Unable to create file store" << Endl;
+			return false;
+		}
 	}
 
 	// Create context.
