@@ -393,12 +393,15 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		if (!m_heightfieldInstance)
 			return;
 
-		if (!m_heightfieldInstance->checkout())
+		if (!m_context->getDocument()->containInstance(m_heightfieldInstance))
 		{
-			m_heightfieldInstance = 0;
-			return;
+			if (!m_heightfieldInstance->checkout())
+			{
+				m_heightfieldInstance = 0;
+				return;
+			}
 		}
-		
+
 		m_heightfieldAsset = m_heightfieldInstance->getObject< hf::HeightfieldAsset >();
 		if (!m_heightfieldAsset)
 		{

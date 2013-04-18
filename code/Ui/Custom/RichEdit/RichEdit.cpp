@@ -300,7 +300,7 @@ bool RichEdit::showLine(int32_t line)
 	if (m_scrollBarV->isVisible(false))
 	{
 		Font font = getFont();
-		Rect rc = getInnerRect();
+		Rect rc = getEditRect();
 
 		int32_t lineHeight = font.getSize() + 1;
 		int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
@@ -364,7 +364,7 @@ void RichEdit::addChangeEventHandler(EventHandler* eventHandler)
 void RichEdit::updateScrollBars()
 {
 	Font font = getFont();
-	Rect rc = getInnerRect();
+	Rect rc = getEditRect();
 
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = 0;
@@ -493,6 +493,31 @@ void RichEdit::insertCharacter(wchar_t ch)
 
 void RichEdit::scrollToCaret()
 {
+	if (m_scrollBarV->isVisible(false))
+	{
+		int32_t caretLine = getLineFromOffset(m_caret);
+
+		Font font = getFont();
+		Rect rc = getEditRect();
+
+		int32_t lineHeight = font.getSize() + 1;
+		int32_t pageLines = rc.getHeight() / lineHeight;
+
+		int32_t top = m_scrollBarV->getPosition();
+
+		if (caretLine < top)
+		{
+			m_scrollBarV->setPosition(caretLine);
+			m_scrollBarV->update();
+		}
+		else if (caretLine >= top + pageLines)
+		{
+			m_scrollBarV->setPosition(caretLine - pageLines + 1);
+			m_scrollBarV->update();
+		}
+
+		update();
+	}
 }
 
 int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32_t >& outStops) const
@@ -519,6 +544,16 @@ int32_t RichEdit::getCharacterStops(const std::wstring& text, std::vector< int32
 	}
 
 	return x;
+}
+
+Rect RichEdit::getEditRect() const
+{
+	Rect rc = getInnerRect();
+	if (m_scrollBarV->isVisible(false))
+		rc.right -= m_scrollBarV->getPreferedSize().cx;
+	if (m_scrollBarH->isVisible(false))
+		rc.bottom -= m_scrollBarH->getPreferedSize().cy;
+	return rc;
 }
 
 void RichEdit::eventKeyDown(Event* event)
@@ -618,7 +653,7 @@ void RichEdit::eventKeyDown(Event* event)
 		// Move caret one page up.
 		{
 			Font font = getFont();
-			Rect rc = getInnerRect();
+			Rect rc = getEditRect();
 
 			int32_t lineHeight = font.getSize();
 			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
@@ -642,7 +677,7 @@ void RichEdit::eventKeyDown(Event* event)
 		// Move caret one page down.
 		{
 			Font font = getFont();
-			Rect rc = getInnerRect();
+			Rect rc = getEditRect();
 
 			int32_t lineHeight = font.getSize();
 			int32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
@@ -760,9 +795,7 @@ void RichEdit::eventButtonDown(Event* event)
 	Point mousePosition = mouseEvent->getPosition();
 
 	Font font = getFont();
-	Rect rc = getInnerRect();
-	if (m_scrollBarV->isVisible(false))
-		rc.right -= m_scrollBarV->getPreferedSize().cx;
+	Rect rc = getEditRect();
 
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = m_scrollBarV->getPosition();

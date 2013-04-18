@@ -18720,19 +18720,20 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/include/p4</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
+						<item>libp4sslstub.lib</item>
 						<item>ws2_32.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -18745,19 +18746,20 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/include/p4</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
+						<item>libp4sslstub.lib</item>
 						<item>ws2_32.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -18770,19 +18772,20 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/include/p4</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
+						<item>libp4sslstub.lib</item>
 						<item>ws2_32.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -18795,19 +18798,20 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/include/p4</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2009.2.228098-vs2008_dyn/lib</item>
+						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
 						<item>librpc.lib</item>
 						<item>libsupp.lib</item>
+						<item>libp4sslstub.lib</item>
 						<item>ws2_32.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
@@ -18832,6 +18836,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[20]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>

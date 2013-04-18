@@ -26,13 +26,15 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditorPlugin", TerrainEditorPlug
 
 TerrainEditorPlugin::TerrainEditorPlugin(scene::SceneEditorContext* context)
 :	m_context(context)
+,	m_terrainEditModifier(new TerrainEditModifier(context))
 {
 }
 
 bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBar)
 {
-	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"png"), 6);
+	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"png"), 7);
 
+	m_toolToggleEditTerrain = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), ui::Command(L"Terrain.Editor.EditTerrain"), image + 6, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleElevate = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), ui::Command(L"Terrain.Editor.ElevateBrush"), image + 0, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFlatten = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), ui::Command(L"Terrain.Editor.FlattenBrush"), image + 1, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleAverage = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_AVERAGE_BRUSH"), ui::Command(L"Terrain.Editor.AverageBrush"), image + 3, ui::custom::ToolBarButton::BsDefaultToggle);
@@ -58,6 +60,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_toolToggleFallOffSmooth->setToggled(true);
 
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
+	toolBar->addItem(m_toolToggleEditTerrain);
 	toolBar->addItem(m_toolToggleElevate);
 	toolBar->addItem(m_toolToggleFlatten);
 	toolBar->addItem(m_toolToggleAverage);
@@ -68,11 +71,20 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 	toolBar->addItem(m_toolStrength);
 
+	m_context->addModifierChangedEventHandler(ui::createMethodHandler(this, &TerrainEditorPlugin::eventModifierChanged));
 	return true;
 }
 
 bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 {
+	{
+		if (command == L"Terrain.Editor.EditTerrain")
+		{
+			m_context->setModifier(m_terrainEditModifier);
+			return true;
+		}
+	}
+
 	{
 		ui::custom::ToolBarButton* toolSelected = 0;
 
@@ -118,6 +130,11 @@ void TerrainEditorPlugin::eventSliderStrengthChange(ui::Event* event)
 	if (modifier)
 		modifier->setStrength(m_sliderStrength->getValue() / 10.0f);
 	m_staticStrength->setText(toString(int32_t(m_sliderStrength->getValue() * 10)) + L"%");
+}
+
+void TerrainEditorPlugin::eventModifierChanged(ui::Event* event)
+{
+	m_toolToggleEditTerrain->setToggled(m_context->getModifier() == m_terrainEditModifier);
 }
 
 	}

@@ -5,7 +5,6 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/TerrainEntityData.h"
-#include "Terrain/Editor/TerrainEditModifier.h"
 #include "Terrain/Editor/TerrainEntityEditor.h"
 
 namespace traktor
@@ -32,10 +31,6 @@ bool TerrainEntityEditor::queryRay(const Vector4& worldRayOrigin, const Vector4&
 
 void TerrainEntityEditor::entitySelected(bool selected)
 {
-	if (selected)
-		getContext()->setModifier(new TerrainEditModifier(getContext()));
-	else
-		getContext()->setModifier(0);
 }
 
 bool TerrainEntityEditor::handleCommand(const ui::Command& command)
