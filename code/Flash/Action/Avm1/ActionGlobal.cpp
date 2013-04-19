@@ -33,6 +33,9 @@
 #include "Flash/Action/Avm1/Classes/AsXML.h"
 #include "Flash/Action/Avm1/Classes/AsXMLNode.h"
 
+// flash.display
+#include "Flash/Action/Avm1/Classes/As_flash_display_BitmapData.h"
+
 // flash.external
 #include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
 
@@ -99,6 +102,13 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	// flash.
 	Ref< ActionObject > flash = new ActionObject(context);
 	{
+		// flash.display.
+		Ref< ActionObject > display = new ActionObject(context);
+		{
+			display->setMember("BitmapData", ActionValue(new As_flash_display_BitmapData(context)));
+		}
+		flash->setMember("display", ActionValue(display));
+
 		// flash.external.
 		Ref< ActionObject > external = new ActionObject(context);
 		{

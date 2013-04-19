@@ -12,6 +12,7 @@
 #include "Flash/Action/ActionFunction.h"
 #include "Flash/Action/ActionValueArray.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
+#include "Flash/Action/Classes/BitmapData.h"
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
@@ -328,10 +329,12 @@ Ref< flash::ActionObject > FlashLayer::createObject() const
 	return new flash::ActionObject(cx);
 }
 
-Ref< flash::ActionObject > FlashLayer::createObject(const std::string& prototype) const
+Ref< flash::ActionObject > FlashLayer::createObject(uint32_t argc, const script::Any* argv) const
 {
-	if (!m_moviePlayer)
+	if (!m_moviePlayer || argc < 1)
 		return 0;
+
+	std::string prototype = argv[0].getString();
 
 	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
 	T_ASSERT (movieInstance);
@@ -362,9 +365,28 @@ Ref< flash::ActionObject > FlashLayer::createObject(const std::string& prototype
 	Ref< flash::ActionObject > self = new flash::ActionObject(cx, classPrototype);
 	self->setMember(flash::ActionContext::Id__ctor__, classFunctionValue);
 
-	classFunction->call(self);
+	flash::ActionValueArray args(cx->getPool(), argc - 1);
+	for (uint32_t i = 0; i < argc - 1; ++i)
+		args[i] = script::CastAny< flash::ActionValue >::get(argv[i + 1]);
+
+	classFunction->call(self, args);
 
 	return self;
+}
+
+Ref< flash::ActionObject > FlashLayer::createBitmap(drawing::Image* image) const
+{
+	if (!m_moviePlayer)
+		return 0;
+
+	flash::FlashSpriteInstance* movieInstance = m_moviePlayer->getMovieInstance();
+	T_ASSERT (movieInstance);
+
+	flash::ActionContext* cx = movieInstance->getContext();
+	T_ASSERT (cx);
+
+	Ref< flash::BitmapData > bitmap = new flash::BitmapData(image);
+	return bitmap->getAsObject(cx);
 }
 
 script::Any FlashLayer::externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv)

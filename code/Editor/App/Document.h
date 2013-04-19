@@ -46,6 +46,8 @@ public:
 
 	bool close();
 
+	const RefArray< db::Instance >& getInstances() const { return m_instances; }
+
 private:
 	struct HistoryState
 	{

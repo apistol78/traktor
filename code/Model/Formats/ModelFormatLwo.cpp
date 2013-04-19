@@ -131,7 +131,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 				}
 
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setDiffuseMap(Material::Map(textureName, channel));
+				material.setDiffuseMap(Material::Map(textureName, channel, true));
 				material.setBlendOperator(diffuseBlendOperator);
 			}
 			else
@@ -147,7 +147,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 			if (clip)
 			{
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setSpecularMap(Material::Map(textureName, channel));
+				material.setSpecularMap(Material::Map(textureName, channel, false));
 			}
 			else
 				T_DEBUG(L"No specular texture clip for surface \"" << mbstows(surface->name) << L"\"");
@@ -162,7 +162,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 			if (clip)
 			{
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setEmissiveMap(Material::Map(textureName, channel));
+				material.setEmissiveMap(Material::Map(textureName, channel, false));
 			}
 			else
 				T_DEBUG(L"No emissive texture clip for surface \"" << mbstows(surface->name) << L"\"");
@@ -177,7 +177,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 			if (clip)
 			{
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setReflectiveMap(Material::Map(textureName, channel));
+				material.setReflectiveMap(Material::Map(textureName, channel, false));
 			}
 			else
 				T_DEBUG(L"No reflective texture clip for surface \"" << mbstows(surface->name) << L"\"");
@@ -192,7 +192,7 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 			if (clip)
 			{
 				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
-				material.setNormalMap(Material::Map(textureName, channel));
+				material.setNormalMap(Material::Map(textureName, channel, false));
 			}
 			else
 				T_DEBUG(L"No bump texture clip for surface \"" << mbstows(surface->name) << L"\"");

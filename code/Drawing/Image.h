@@ -107,10 +107,10 @@ public:
 	const PixelFormat& getPixelFormat() const;
 	
 	/*! \brief Get width of image. */
-	const int32_t getWidth() const;
+	int32_t getWidth() const;
 
 	/*! \brief Get height of image. */
-	const int32_t getHeight() const;
+	int32_t getHeight() const;
 
 	/*! \brief Get image palette. */
 	Ref< Palette > getPalette() const;

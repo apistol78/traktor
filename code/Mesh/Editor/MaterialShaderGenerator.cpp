@@ -72,6 +72,18 @@ Guid lookupTexture(const std::map< std::wstring, Guid >& textures, const std::ws
 	return i != textures.end() ? i->second : Guid();
 }
 
+void propagateAnisotropic(render::ShaderGraph* shaderGraph, render::Texture* textureNode, bool anisotropic)
+{
+	std::vector< const render::InputPin* > destinationPins;
+	shaderGraph->findDestinationPins(textureNode->getOutputPin(0), destinationPins);
+	for (std::vector< const render::InputPin* >::iterator i = destinationPins.begin(); i != destinationPins.end(); ++i)
+	{
+		render::Sampler* samplerNode = dynamic_type_cast< render::Sampler* >((*i)->getNode());
+		if (samplerNode)
+			samplerNode->setUseAnisotropic(anisotropic);
+	}
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MaterialShaderGenerator", MaterialShaderGenerator, Object)
@@ -191,6 +203,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* diffuseTextureNode = checked_type_cast< render::Texture* >(*i);
 			diffuseTextureNode->setComment(L"");
 			diffuseTextureNode->setExternal(diffuseTexture);
+			propagateAnisotropic(materialShaderGraph, diffuseTextureNode, material.getDiffuseMap().anisotropic);
 		}
 		else if (comment == L"Tag_Emissive")
 		{
@@ -203,12 +216,14 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* emissiveTextureNode = checked_type_cast< render::Texture* >(*i);
 			emissiveTextureNode->setComment(L"");
 			emissiveTextureNode->setExternal(emissiveTexture);
+			propagateAnisotropic(materialShaderGraph, emissiveTextureNode, material.getEmissiveMap().anisotropic);
 		}
 		else if (comment == L"Tag_NormalMap")
 		{
 			render::Texture* normalTextureNode = checked_type_cast< render::Texture* >(*i);
 			normalTextureNode->setComment(L"");
 			normalTextureNode->setExternal(normalTexture);
+			propagateAnisotropic(materialShaderGraph, normalTextureNode, material.getNormalMap().anisotropic);
 		}
 		else if (comment == L"Tag_Reflective")
 		{
@@ -221,6 +236,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* reflectiveTextureNode = checked_type_cast< render::Texture* >(*i);
 			reflectiveTextureNode->setComment(L"");
 			reflectiveTextureNode->setExternal(reflectiveTexture);
+			propagateAnisotropic(materialShaderGraph, reflectiveTextureNode, material.getReflectiveMap().anisotropic);
 		}
 		else if (comment == L"Tag_RimIntensity")
 		{
@@ -239,6 +255,7 @@ Ref< render::ShaderGraph > MaterialShaderGenerator::generate(
 			render::Texture* specularTextureNode = checked_type_cast< render::Texture* >(*i);
 			specularTextureNode->setComment(L"");
 			specularTextureNode->setExternal(specularTexture);
+			propagateAnisotropic(materialShaderGraph, specularTextureNode, material.getSpecularMap().anisotropic);
 		}
 		else if (comment == L"Tag_SpecularRoughness")
 		{

@@ -1020,6 +1020,7 @@ bool EditorForm::openEditor(db::Instance* instance)
 		tabPage->update();
 
 		// Save references to editor in tab page's user data.
+		tabPage->setData(L"NEEDOUTPUTRESOURCES", new PropertyBoolean(editorPageFactory->needOutputResources(type_of(object))));
 		tabPage->setData(L"EDITORPAGESITE", site);
 		tabPage->setData(L"EDITORPAGE", editorPage);
 		tabPage->setData(L"DOCUMENT", document);
@@ -1493,6 +1494,71 @@ void EditorForm::updateAdditionalPanelMenu()
 	}
 }
 
+void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstances)
+{
+	std::vector< Guid > assetGuids;
+
+	PipelineFactory pipelineFactory(m_mergedSettings);
+	for (int i = 0; i < m_tab->getPageCount(); ++i)
+	{
+		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
+		T_ASSERT (tabPage);
+
+		Ref< PropertyBoolean > needOutputResources = tabPage->getData< PropertyBoolean >(L"NEEDOUTPUTRESOURCES");
+		T_ASSERT (needOutputResources);
+
+		if (!*needOutputResources)
+			continue;
+
+		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
+		T_ASSERT (editorPage);
+
+		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
+		T_ASSERT (document);
+
+		const RefArray< db::Instance >& instances = document->getInstances();
+		if (instances.empty())
+			continue;
+
+		PipelineDependsIncremental pipelineDepends(
+			&pipelineFactory,
+			0,
+			m_sourceDatabase
+		);
+
+		for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
+			pipelineDepends.addDependency(*j, PdfUse);
+
+		pipelineDepends.waitUntilFinished();
+
+		RefArray< PipelineDependency > dependencies;
+		pipelineDepends.getDependencies(dependencies);
+
+		bool buildInstances = false;
+
+		for (RefArray< PipelineDependency >::const_iterator j = dependencies.begin(); !buildInstances && j != dependencies.end(); ++j)
+		{
+			if (!(*j)->sourceInstanceGuid.isNotNull())
+				continue;
+
+			for (RefArray< db::Instance >::const_iterator k = modifiedInstances.begin(); !buildInstances && k != modifiedInstances.end(); ++k)
+			{
+				if ((*k)->getGuid() == (*j)->sourceInstanceGuid)
+					buildInstances = true;
+			}
+		}
+
+		if (buildInstances)
+		{
+			for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
+				assetGuids.push_back((*j)->getGuid());
+		}
+	}
+
+	if (!assetGuids.empty())
+		buildAssets(assetGuids, false);
+}
+
 void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lockBuild);
@@ -1829,6 +1895,8 @@ void EditorForm::saveCurrentDocument()
 		{
 			m_statusBar->setText(L"Document saved successfully");
 			log::info << L"Document saved successfully" << Endl;
+
+			buildDependent(document->getInstances());
 		}
 		else
 		{

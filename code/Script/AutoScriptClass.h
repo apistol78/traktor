@@ -17,21 +17,21 @@ struct T_NOVTABLE IConstructor
 {
 	virtual ~IConstructor() {}
 
-	virtual Ref< Object > construct(const Any* argv) const = 0;
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const = 0;
 };
 
 struct T_NOVTABLE IMethod
 {
 	virtual ~IMethod() {}
 
-	virtual Any invoke(Object* object, const Any* argv) const = 0;
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const = 0;
 };
 
 struct T_NOVTABLE IStaticMethod
 {
 	virtual ~IStaticMethod() {}
 
-	virtual Any invoke(const Any* argv) const = 0;
+	virtual Any invoke(uint32_t argc, const Any* argv) const = 0;
 };
 
 struct T_NOVTABLE IProperty
@@ -51,7 +51,7 @@ template<
 >
 struct Constructor_0 : public IConstructor
 {
-	virtual Ref< Object > construct(const Any* argv) const
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
 	{
 		return new ClassType();
 	}
@@ -63,7 +63,7 @@ template<
 >
 struct Constructor_1 : public IConstructor
 {
-	virtual Ref< Object > construct(const Any* argv) const
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
 	{
 		return new ClassType(
 			CastAny< Argument1Type >::get(argv[0])
@@ -78,7 +78,7 @@ template<
 >
 struct Constructor_2 : public IConstructor
 {
-	virtual Ref< Object > construct(const Any* argv) const
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
 	{
 		return new ClassType(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -95,7 +95,7 @@ template<
 >
 struct Constructor_3 : public IConstructor
 {
-	virtual Ref< Object > construct(const Any* argv) const
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
 	{
 		return new ClassType(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -114,7 +114,7 @@ template<
 >
 struct Constructor_4 : public IConstructor
 {
-	virtual Ref< Object > construct(const Any* argv) const
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
 	{
 		return new ClassType(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -135,7 +135,7 @@ template<
 >
 struct Constructor_5 : public IConstructor
 {
-	virtual Ref< Object > construct(const Any* argv) const
+	virtual Ref< Object > construct(uint32_t argc, const Any* argv) const
 	{
 		return new ClassType(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -368,6 +368,27 @@ struct MethodSignature_7 < ClassType, ReturnType, Argument1Type, Argument2Type, 
 	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type) const;
 };
 
+template <
+	typename ClassType,
+	typename ReturnType,
+	bool Const
+>
+struct MethodSignature_Variadic
+{
+	typedef ReturnType (ClassType::*method_t)(uint32_t argc, const Any* argv);
+	typedef ReturnType (*static_method_t)(uint32_t argc, const Any* argv);
+};
+
+template <
+	typename ClassType,
+	typename ReturnType
+>
+struct MethodSignature_Variadic < ClassType, ReturnType, true >
+{
+	typedef ReturnType (ClassType::*method_t)(uint32_t argc, const Any* argv) const;
+};
+
+
 /*! \} */
 
 /*! \name Method invocations */
@@ -389,7 +410,7 @@ struct Method_0 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)();
 		return CastAny< ReturnType >::set(returnValue);
@@ -411,7 +432,7 @@ struct Method_0 < ClassType, void, Const > : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType*, false >(object)->*m_method)();
 		return Any();
@@ -435,7 +456,7 @@ struct Method_1 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0])
@@ -460,7 +481,7 @@ struct Method_1 < ClassType, void, Argument1Type, Const > : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0])
@@ -487,7 +508,7 @@ struct Method_2 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -514,7 +535,7 @@ struct Method_2 < ClassType, void, Argument1Type, Argument2Type, Const > : publi
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -543,7 +564,7 @@ struct Method_3 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -572,7 +593,7 @@ struct Method_3 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -603,7 +624,7 @@ struct Method_4 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -634,7 +655,7 @@ struct Method_4 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -667,7 +688,7 @@ struct Method_5 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -700,7 +721,7 @@ struct Method_5 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -735,7 +756,7 @@ struct Method_6 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -770,7 +791,7 @@ struct Method_6 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -807,7 +828,7 @@ struct Method_7 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -844,7 +865,7 @@ struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(checked_type_cast< ClassType*, false >(object)->*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -855,6 +876,51 @@ struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 			CastAny< Argument6Type >::get(argv[5]),
 			CastAny< Argument7Type >::get(argv[6])
 		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	bool Const
+>
+class Method_Variadic : public IMethod
+{
+	typedef typename MethodSignature_Variadic< ClassType, ReturnType, Const >::method_t method_t;
+
+	method_t m_method;
+
+	Method_Variadic(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
+	{
+		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(argc, argv);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	bool Const
+>
+class Method_Variadic < ClassType, void, Const > : public IMethod
+{
+	typedef typename MethodSignature_Variadic< ClassType, void, Const >::method_t method_t;
+
+	method_t m_method;
+
+	Method_Variadic(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
+	{
+		(checked_type_cast< ClassType*, false >(object)->*m_method)(argc, argv);
 		return Any();
 	}
 };
@@ -879,7 +945,7 @@ struct MethodTrunk_0 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(checked_type_cast< ClassType*, false >(object));
 		return CastAny< ReturnType >::set(returnValue);
@@ -900,7 +966,7 @@ struct MethodTrunk_0< ClassType, void > : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(checked_type_cast< ClassType*, false >(object));
 		return Any();
@@ -924,7 +990,7 @@ struct MethodTrunk_1 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -949,7 +1015,7 @@ struct MethodTrunk_1 < ClassType, void, Argument1Type > : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -976,7 +1042,7 @@ struct MethodTrunk_2 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1003,7 +1069,7 @@ struct MethodTrunk_2 < ClassType, void, Argument1Type, Argument2Type > : public 
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1032,7 +1098,7 @@ struct MethodTrunk_3 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1061,7 +1127,7 @@ struct MethodTrunk_3 < ClassType, void, Argument1Type, Argument2Type, Argument3T
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1092,7 +1158,7 @@ struct MethodTrunk_4 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1123,7 +1189,7 @@ struct MethodTrunk_4 < ClassType, void, Argument1Type, Argument2Type, Argument3T
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1156,7 +1222,7 @@ struct MethodTrunk_5 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1191,7 +1257,7 @@ struct MethodTrunk_6 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1228,7 +1294,7 @@ struct MethodTrunk_7 : public IMethod
 	{
 	}
 
-	virtual Any invoke(Object* object, const Any* argv) const
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			checked_type_cast< ClassType*, false >(object),
@@ -1241,6 +1307,49 @@ struct MethodTrunk_7 : public IMethod
 			CastAny< Argument7Type >::get(argv[6])
 		);
 		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType
+>
+struct MethodTrunk_Variadic : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, uint32_t, const Any*);
+
+	method_t m_method;
+
+	MethodTrunk_Variadic(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(checked_type_cast< ClassType*, false >(object), argc, argv);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType
+>
+struct MethodTrunk_Variadic < ClassType, void > : public IMethod
+{
+	typedef void (*method_t)(ClassType*, uint32_t, const Any*);
+
+	method_t m_method;
+
+	MethodTrunk_Variadic(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
+	{
+		(*m_method)(checked_type_cast< ClassType*, false >(object), argc, argv);
+		return Any();
 	}
 };
 
@@ -1264,7 +1373,7 @@ struct StaticMethod_0 : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)();
 		return CastAny< ReturnType >::set(returnValue);
@@ -1285,7 +1394,7 @@ struct StaticMethod_0 < ClassType, void > : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		(*m_method)();
 		return Any();
@@ -1308,7 +1417,7 @@ struct StaticMethod_1 : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			CastAny< Argument1Type >::get(argv[0])
@@ -1332,7 +1441,7 @@ struct StaticMethod_1 < ClassType, void, Argument1Type > : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			CastAny< Argument1Type >::get(argv[0])
@@ -1358,7 +1467,7 @@ struct StaticMethod_2 : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1384,7 +1493,7 @@ struct StaticMethod_2 < ClassType, void, Argument1Type, Argument2Type > : public
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1412,7 +1521,7 @@ struct StaticMethod_3 : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1440,7 +1549,7 @@ struct StaticMethod_3 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1470,7 +1579,7 @@ struct StaticMethod_4 : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1500,7 +1609,7 @@ struct StaticMethod_4 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1532,7 +1641,7 @@ struct StaticMethod_5 : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1564,7 +1673,7 @@ struct StaticMethod_5 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1598,7 +1707,7 @@ struct StaticMethod_6 : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1632,7 +1741,7 @@ struct StaticMethod_6 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1668,7 +1777,7 @@ struct StaticMethod_7 : public IStaticMethod
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		ReturnType returnValue = (*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1704,7 +1813,7 @@ struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3
 	{
 	}
 
-	virtual Any invoke(const Any* argv) const
+	virtual Any invoke(uint32_t argc, const Any* argv) const
 	{
 		(*m_method)(
 			CastAny< Argument1Type >::get(argv[0]),
@@ -1715,6 +1824,49 @@ struct StaticMethod_7 < ClassType, void, Argument1Type, Argument2Type, Argument3
 			CastAny< Argument6Type >::get(argv[5]),
 			CastAny< Argument7Type >::get(argv[6])
 		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType
+>
+class StaticMethod_Variadic : public IStaticMethod
+{
+	typedef ReturnType (*method_t)(uint32_t, const Any*);
+
+	method_t m_method;
+
+	StaticMethod_Variadic(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(uint32_t argc, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(argc, argv);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType
+>
+class StaticMethod_Variadic < ClassType, void > : public IStaticMethod
+{
+	typedef void (*method_t)(uint32_t, const Any*);
+
+	method_t m_method;
+
+	StaticMethod_Variadic(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(uint32_t argc, const Any* argv) const
+	{
+		(*m_method)(argc, argv);
 		return Any();
 	}
 };
@@ -1779,12 +1931,18 @@ public:
 		for (std::vector< IConstructor* >::iterator i = m_constructors.begin(); i != m_constructors.end(); ++i)
 			delete *i;
 		
-		for (std::vector< std::pair< std::string, std::vector< IMethod* > > >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+		for (typename std::vector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 		{
-			for (std::vector< IMethod* >::iterator j = i->second.begin(); j != i->second.end(); ++j)
+			for (std::vector< IMethod* >::iterator j = i->methods.begin(); j != i->methods.end(); ++j)
 				delete *j;
 		}
-		
+
+		for (typename std::vector< StaticMethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
+		{
+			for (std::vector< IStaticMethod* >::iterator j = i->methods.begin(); j != i->methods.end(); ++j)
+				delete *j;
+		}
+
 		for (std::vector< std::pair< std::string, IProperty* > >::iterator i = m_properties.begin(); i != m_properties.end(); ++i)
 			delete i->second;
 
@@ -2130,6 +2288,30 @@ public:
 		addMethod(methodName, 7, new MethodTrunk_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
 	}
 
+	template <
+		typename ReturnType
+	>
+	void addVariadicMethod(const std::string& methodName, ReturnType (ClassType::*method)(uint32_t, const Any*))
+	{
+		addVariadicMethod(methodName, new Method_Variadic< ClassType, ReturnType, false >(method));
+	}
+
+	template <
+		typename ReturnType
+	>
+	void addVariadicMethod(const std::string& methodName, ReturnType (ClassType::*method)(uint32_t, const Any*) const)
+	{
+		addVariadicMethod(methodName, new Method_Variadic< ClassType, ReturnType, true >(method));
+	}
+
+	template <
+		typename ReturnType
+	>
+	void addVariadicMethod(const std::string& methodName, ReturnType (*method)(ClassType*, uint32_t, const Any*))
+	{
+		addVariadicMethod(methodName, new MethodTrunk_Variadic< ClassType, ReturnType >(method));
+	}
+
 	void setUnknownMethod(unknown_method_t unknown)
 	{
 		m_unknown = unknown;
@@ -2232,6 +2414,14 @@ public:
 		addStaticMethod(methodName, 7, new StaticMethod_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
 	}
 
+	template <
+		typename ReturnType
+	>
+	void addStaticVariadicMethod(const std::string& methodName, ReturnType (*method)(uint32_t, const Any*))
+	{
+		addVariadicMethod(methodName, new StaticMethod_Variadic< ClassType, ReturnType >(method));
+	}
+
 	/*! \} */
 
 	template <
@@ -2263,7 +2453,7 @@ public:
 	virtual Ref< Object > construct(const InvokeParam& param, uint32_t argc, const Any* argv) const
 	{
 		if (argc < m_constructors.size() && m_constructors[argc] != 0)
-			return m_constructors[argc]->construct(argv);
+			return m_constructors[argc]->construct(argc, argv);
 		else
 			return 0;
 	}
@@ -2275,14 +2465,17 @@ public:
 
 	virtual std::string getMethodName(uint32_t methodId) const
 	{
-		return m_methods[methodId].first;
+		return m_methods[methodId].name;
 	}
 
 	virtual Any invoke(const InvokeParam& param, uint32_t methodId, uint32_t argc, const Any* argv) const
 	{
-		const std::vector< IMethod* >& methods = m_methods[methodId].second;
+		const MethodInfo& info = m_methods[methodId];
+		const std::vector< IMethod* >& methods = info.methods;
 		if (argc < methods.size() && methods[argc] != 0)
-			return methods[argc]->invoke(param.object, argv);
+			return methods[argc]->invoke(param.object, argc, argv);
+		else if (info.variadic)
+			return info.variadic->invoke(param.object, argc, argv);
 		else
 			return Any();
 	}
@@ -2294,14 +2487,17 @@ public:
 
 	virtual std::string getStaticMethodName(uint32_t methodId) const
 	{
-		return m_staticMethods[methodId].first;
+		return m_staticMethods[methodId].name;
 	}
 
 	virtual Any invokeStatic(uint32_t methodId, uint32_t argc, const Any* argv) const
 	{
-		const std::vector< IStaticMethod* >& methods = m_staticMethods[methodId].second;
+		const StaticMethodInfo& info = m_staticMethods[methodId];
+		const std::vector< IStaticMethod* >& methods = info.methods;
 		if (argc < methods.size() && methods[argc] != 0)
-			return methods[argc]->invoke(argv);
+			return methods[argc]->invoke(argc, argv);
+		else if (info.variadic)
+			return info.variadic->invoke(argc, argv);
 		else
 			return Any();
 	}
@@ -2335,9 +2531,23 @@ public:
 	}
 
 private:
+	struct MethodInfo
+	{
+		std::string name;
+		std::vector< IMethod* > methods;
+		IMethod* variadic;
+	};
+
+	struct StaticMethodInfo
+	{
+		std::string name;
+		std::vector< IStaticMethod* > methods;
+		IStaticMethod* variadic;
+	};
+
 	std::vector< IConstructor* > m_constructors;
-	std::vector< std::pair< std::string, std::vector< IMethod* > > > m_methods;
-	std::vector< std::pair< std::string, std::vector< IStaticMethod* > > > m_staticMethods;
+	std::vector< MethodInfo > m_methods;
+	std::vector< StaticMethodInfo > m_staticMethods;
 	std::vector< std::pair< std::string, IProperty* > > m_properties;
 	unknown_method_t m_unknown;
 
@@ -2350,11 +2560,11 @@ private:
 
 	void addMethod(const std::string& methodName, size_t argc, IMethod* method)
 	{
-		for (std::vector< std::pair< std::string, std::vector< IMethod* > > >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+		for (typename std::vector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
 		{
-			if (i->first == methodName)
+			if (i->name == methodName)
 			{
-				std::vector< IMethod* >& methods = i->second;
+				std::vector< IMethod* >& methods = i->methods;
 				if (methods.size() < argc + 1)
 					methods.resize(argc + 1, 0);
 				methods[argc] = method;
@@ -2362,20 +2572,38 @@ private:
 			}
 		}
 
-		std::pair< std::string, std::vector< IMethod* > > m;
-		m.first = methodName;
-		m.second.resize(argc + 1, 0);
-		m.second[argc] = method;
+		MethodInfo m;
+		m.name = methodName;
+		m.methods.resize(argc + 1, 0);
+		m.methods[argc] = method;
+		m.variadic = 0;
+		m_methods.push_back(m);
+	}
+
+	void addVariadicMethod(const std::string& methodName, IMethod* method)
+	{
+		for (typename std::vector< MethodInfo >::iterator i = m_methods.begin(); i != m_methods.end(); ++i)
+		{
+			if (i->name == methodName)
+			{
+				i->variadic = method;
+				return;
+			}
+		}
+
+		MethodInfo m;
+		m.name = methodName;
+		m.variadic = method;
 		m_methods.push_back(m);
 	}
 
 	void addStaticMethod(const std::string& methodName, size_t argc, IStaticMethod* method)
 	{
-		for (std::vector< std::pair< std::string, std::vector< IStaticMethod* > > >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
+		for (typename std::vector< StaticMethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
 		{
-			if (i->first == methodName)
+			if (i->name == methodName)
 			{
-				std::vector< IStaticMethod* >& methods = i->second;
+				std::vector< IStaticMethod* >& methods = i->methods;
 				if (methods.size() < argc + 1)
 					methods.resize(argc + 1, 0);
 				methods[argc] = method;
@@ -2383,10 +2611,28 @@ private:
 			}
 		}
 
-		std::pair< std::string, std::vector< IStaticMethod* > > m;
-		m.first = methodName;
-		m.second.resize(argc + 1, 0);
-		m.second[argc] = method;
+		StaticMethodInfo m;
+		m.name = methodName;
+		m.methods.resize(argc + 1, 0);
+		m.methods[argc] = method;
+		m.variadic = 0;
+		m_staticMethods.push_back(m);
+	}
+
+	void addStaticVariadicMethod(const std::string& methodName, IStaticMethod* method)
+	{
+		for (typename std::vector< StaticMethodInfo >::iterator i = m_staticMethods.begin(); i != m_staticMethods.end(); ++i)
+		{
+			if (i->name == methodName)
+			{
+				i->variadic = method;
+				return;
+			}
+		}
+
+		StaticMethodInfo m;
+		m.name = methodName;
+		m.variadic = method;
 		m_staticMethods.push_back(m);
 	}
 };

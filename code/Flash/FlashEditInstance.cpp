@@ -2,10 +2,10 @@
 #include "Core/Misc/Split.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Thread/Acquire.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFont.h"
-#include "Flash/FlashMovie.h"
 #include "Flash/FlashTextFormat.h"
 #include "Flash/Action/ActionContext.h"
 #include "Html/Document.h"
@@ -146,13 +146,13 @@ std::wstring FlashEditInstance::getConcatedText() const
 
 bool FlashEditInstance::getTextExtents(float& outWidth, float& outHeight) const
 {
-	const FlashMovie* movie = getContext()->getMovie();
-	T_ASSERT (movie);
+	const FlashDictionary* dictionary = getContext()->getDictionary();
+	T_ASSERT (dictionary);
 
 	outWidth = 0;
 	outHeight = 0;
 
-	const FlashFont* font = movie->getFont(m_edit->getFontId());
+	const FlashFont* font = dictionary->getFont(m_edit->getFontId());
 	if (!font)
 		return false;
 

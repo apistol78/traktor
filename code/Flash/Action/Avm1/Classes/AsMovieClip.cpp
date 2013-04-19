@@ -1,19 +1,24 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/String.h"
+#include "Flash/FlashBitmap.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashCanvas.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFrame.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashMovieFactory.h"
-#include "Flash/FlashSpriteInstance.h"
+#include "Flash/FlashShape.h"
+#include "Flash/FlashShapeInstance.h"
 #include "Flash/FlashSprite.h"
+#include "Flash/FlashSpriteInstance.h"
 #include "Flash/IFlashMovieLoader.h"
 #include "Flash/SwfReader.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/Array.h"
+#include "Flash/Action/Classes/BitmapData.h"
 #include "Flash/Action/Classes/Transform.h"
 #include "Flash/Action/Avm1/Classes/AsMovieClip.h"
 
@@ -67,7 +72,16 @@ AsMovieClip::AsMovieClip(ActionContext* context)
 
 	prototype->setMember("attachAudio", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachAudio)));
 	// \fixme attachVideo
-	prototype->setMember("attachBitmap", ActionValue(createNativeFunction(context, this, &AsMovieClip::MovieClip_attachBitmap)));
+	prototype->setMember("attachBitmap", ActionValue(
+		createPolymorphicFunction(
+			context,
+			0,
+			0,
+			createNativeFunction(context, this, &AsMovieClip::MovieClip_attachBitmap_2),
+			createNativeFunction(context, this, &AsMovieClip::MovieClip_attachBitmap_3),
+			createNativeFunction(context, this, &AsMovieClip::MovieClip_attachBitmap_4)
+		)
+	));
 	prototype->setMember("attachMovie", ActionValue(
 		createPolymorphicFunction(
 			context,
@@ -216,11 +230,46 @@ void AsMovieClip::MovieClip_attachAudio(FlashSpriteInstance* self) const
 	)
 }
 
-void AsMovieClip::MovieClip_attachBitmap(FlashSpriteInstance* self) const
+void AsMovieClip::MovieClip_attachBitmap_2(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"MovieClip::attachBitmap not implemented" << Endl;
-	)
+	MovieClip_attachBitmap_4(self, bmp, depth, "auto", false);
+}
+
+void AsMovieClip::MovieClip_attachBitmap_3(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth, const std::string& pixelSnapping) const
+{
+	MovieClip_attachBitmap_4(self, bmp, depth, pixelSnapping, false);
+}
+
+void AsMovieClip::MovieClip_attachBitmap_4(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const
+{
+	ActionContext* context = self->getContext();
+	T_ASSERT (context);
+
+	// Get dictionary.
+	FlashDictionary* dictionary = context->getDictionary();
+	T_ASSERT (dictionary);
+
+	// Define bitmap symbol.
+	uint16_t bitmapId = dictionary->addBitmap(new FlashBitmap(bmp->getImage()));
+
+	// Create a quad shape.
+	Ref< FlashShape > shape = new FlashShape();
+	shape->create(
+		bitmapId,
+		bmp->getWidth() * 20.0f,
+		bmp->getHeight() * 20.0f
+	);
+
+	// Define shape character.
+	uint16_t shapeId = dictionary->addCharacter(shape);
+
+	// Create new instance of shape.
+	Ref< FlashShapeInstance > attachShapeInstance = checked_type_cast< FlashShapeInstance* >(shape->createInstance(context, self, "", 0, 0));
+	T_ASSERT (attachShapeInstance);
+
+	// Add new instance to display list.
+	FlashDisplayList& displayList = self->getDisplayList();
+	displayList.showObject(depth, shapeId, attachShapeInstance, true);
 }
 
 Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_3(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const
@@ -234,12 +283,12 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	T_ASSERT (context);
 
 	// Get root movie.
-	const FlashMovie* movie = context->getMovie();
-	T_ASSERT (movie);
+	const FlashDictionary* dictionary = context->getDictionary();
+	T_ASSERT (dictionary);
 
 	// Get movie clip ID from name.
 	uint16_t attachClipId;
-	if (!movie->getExportId(attachClipName, attachClipId))
+	if (!dictionary->getExportId(attachClipName, attachClipId))
 	{
 		T_IF_VERBOSE(
 			log::error << L"MovieClip.attachMovie, no such movie clip exported (" << mbstows(attachClipName) << L")" << Endl;
@@ -248,7 +297,7 @@ Ref< FlashSpriteInstance > AsMovieClip::MovieClip_attachMovie_4(FlashSpriteInsta
 	}
 
 	// Get movie clip character.
-	Ref< const FlashSprite > attachClip = dynamic_type_cast< const FlashSprite* >(movie->getCharacter(attachClipId));
+	Ref< const FlashSprite > attachClip = dynamic_type_cast< const FlashSprite* >(dictionary->getCharacter(attachClipId));
 	if (!attachClip)
 	{
 		T_IF_VERBOSE(

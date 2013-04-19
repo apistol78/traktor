@@ -2,7 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Color4ub.h"
 #include "Flash/FlashCanvas.h"
-#include "Flash/FlashMovie.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashShape.h"
 #include "Flash/FlashBitmap.h"
 #include "Flash/Acc/AccShape.h"
@@ -154,7 +154,7 @@ bool AccShape::createTesselation(const FlashCanvas& canvas)
 bool AccShape::updateRenderable(
 	AccShapeVertexPool* vertexPool,
 	AccTextureCache* textureCache,
-	const FlashMovie& movie,
+	const FlashDictionary& dictionary,
 	const AlignedVector< FlashFillStyle >& fillStyles,
 	const AlignedVector< FlashLineStyle >& lineStyles
 )
@@ -234,7 +234,7 @@ bool AccShape::updateRenderable(
 						m_batchFlags |= BfHaveSolid;
 					}
 
-					const FlashBitmap* bitmap = movie.getBitmap(style.getFillBitmap());
+					const FlashBitmap* bitmap = dictionary.getBitmap(style.getFillBitmap());
 					if (bitmap)
 					{
 						T_ASSERT_M (!texture, L"Cannot combine gradients and bitmaps");

@@ -3,6 +3,7 @@
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Flash/FlashBitmap.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashFont.h"
 #include "Flash/FlashMovie.h"
 #include "Flash/FlashSound.h"
@@ -51,74 +52,21 @@ void FlashMovie::defineCharacter(uint16_t characterId, FlashCharacter* character
 	m_characters[characterId] = character;
 }
 
-void FlashMovie::removeCharacter(FlashCharacter* character)
-{
-	for (SmallMap< uint16_t, Ref< FlashCharacter > >::iterator i = m_characters.begin(); i != m_characters.end(); ++i)
-	{
-		if (i->second == character)
-		{
-			m_characters.erase(i);
-			break;
-		}
-	}
-}
-
-const FlashFont* FlashMovie::getFont(uint16_t fontId) const
-{
-	SmallMap< uint16_t, Ref< FlashFont > >::const_iterator i = m_fonts.find(fontId);
-	return i != m_fonts.end() ? i->second.ptr() : 0;
-}
-
-const FlashBitmap* FlashMovie::getBitmap(uint16_t bitmapId) const
-{
-	SmallMap< uint16_t, Ref< FlashBitmap > >::const_iterator i = m_bitmaps.find(bitmapId);
-	return i != m_bitmaps.end() ? i->second.ptr() : 0;
-}
-
-const FlashSound* FlashMovie::getSound(uint16_t soundId) const
-{
-	SmallMap< uint16_t, Ref< FlashSound > >::const_iterator i = m_sounds.find(soundId);
-	return i != m_sounds.end() ? i->second.ptr() : 0;
-}
-
-const FlashCharacter* FlashMovie::getCharacter(uint16_t characterId) const
-{
-	SmallMap< uint16_t, Ref< FlashCharacter > >::const_iterator i = m_characters.find(characterId);
-	return i != m_characters.end() ? i->second.ptr() : 0;
-}
-
 void FlashMovie::setExport(const std::string& name, uint16_t exportId)
 {
 	m_exports[name] = exportId;
 }
 
-bool FlashMovie::getExportId(const std::string& name, uint16_t& outExportId) const
-{
-	SmallMap< std::string, uint16_t >::const_iterator i = m_exports.find(name);
-	if (i != m_exports.end())
-	{
-		outExportId = i->second;
-		return true;
-	}
-	return false;
-}
-
-bool FlashMovie::getExportName(uint16_t exportId, std::string& outName) const
-{
-	for (SmallMap< std::string, uint16_t >::const_iterator i = m_exports.begin(); i != m_exports.end(); ++i)
-	{
-		if (i->second == exportId)
-		{
-			outName = i->first;
-			return true;
-		}
-	}
-	return false;
-}
-
 Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovieLoader* movieLoader) const
 {
-	Ref< ActionContext > context = new ActionContext(m_vm, this, movieLoader);
+	Ref< FlashDictionary > dictionary = new FlashDictionary();
+	dictionary->m_fonts = m_fonts;
+	dictionary->m_bitmaps = m_bitmaps;
+	dictionary->m_sounds = m_sounds;
+	dictionary->m_characters = m_characters;
+	dictionary->m_exports = m_exports;
+
+	Ref< ActionContext > context = new ActionContext(m_vm, this, movieLoader, dictionary);
 
 	Ref< ActionGlobal > global = new ActionGlobal(context);
 	context->setGlobal(global);
@@ -135,10 +83,17 @@ Ref< FlashSpriteInstance > FlashMovie::createMovieClipInstance(const IFlashMovie
 
 Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpriteInstance* containerInstance) const
 {
+	Ref< FlashDictionary > dictionary = new FlashDictionary();
+	dictionary->m_fonts = m_fonts;
+	dictionary->m_bitmaps = m_bitmaps;
+	dictionary->m_sounds = m_sounds;
+	dictionary->m_characters = m_characters;
+	dictionary->m_exports = m_exports;
+
 	// Create context; share VM and global.
 	Ref< ActionContext > outerContext = containerInstance->getContext();
 
-	Ref< ActionContext > context = new ActionContext(outerContext->getVM(), this, outerContext->getMovieLoader());
+	Ref< ActionContext > context = new ActionContext(outerContext->getVM(), this, outerContext->getMovieLoader(), dictionary);
 	context->setGlobal(outerContext->getGlobal());
 
 	// Create instance of external movie.

@@ -1,5 +1,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Drawing/Image.h"
 #include "Net/Url.h"
 #include "Online/IAchievements.h"
 #include "Online/ILeaderboards.h"
@@ -309,6 +310,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< online::IUser > > classIUser = new script::AutoScriptClass< online::IUser >();
 	classIUser->addMethod("getName", &online_IUser_getName);
+	classIUser->addMethod("getImage", &online::IUser::getImage);
 	classIUser->addMethod("getGlobalId", &online::IUser::getGlobalId);
 	classIUser->addMethod("isFriend", &online::IUser::isFriend);
 	classIUser->addMethod("invite", &online::IUser::invite);

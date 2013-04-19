@@ -22,6 +22,14 @@ FlashBitmap::FlashBitmap()
 {
 }
 
+FlashBitmap::FlashBitmap(drawing::Image* image)
+:	m_width(0)
+,	m_height(0)
+,	m_bits(0)
+{
+	create(image);
+}
+
 FlashBitmap::~FlashBitmap()
 {
 	m_bits.release();

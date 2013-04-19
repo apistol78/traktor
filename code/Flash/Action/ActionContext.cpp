@@ -10,10 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.ActionContext", ActionContext, Collectable)
 
-ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie, const IFlashMovieLoader* movieLoader)
+ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie, const IFlashMovieLoader* movieLoader, FlashDictionary* dictionary)
 :	m_vm(vm)
 ,	m_movie(movie)
 ,	m_movieLoader(movieLoader)
+,	m_dictionary(dictionary)
 {
 	m_strings[""];	// 0
 	m_strings["__proto__"];

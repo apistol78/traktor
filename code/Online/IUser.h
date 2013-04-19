@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace online
 	{
 
@@ -22,6 +29,8 @@ class T_DLLCLASS IUser : public Object
 
 public:
 	virtual bool getName(std::wstring& outName) const = 0;
+
+	virtual Ref< drawing::Image > getImage() const = 0;
 
 	virtual uint64_t getGlobalId() const = 0;
 

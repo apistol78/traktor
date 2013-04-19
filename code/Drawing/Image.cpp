@@ -368,12 +368,12 @@ const PixelFormat& Image::getPixelFormat() const
 	return m_pixelFormat;
 }
 
-const int32_t Image::getWidth() const
+int32_t Image::getWidth() const
 {
 	return m_width;
 }
 
-const int32_t Image::getHeight() const
+int32_t Image::getHeight() const
 {
 	return m_height;
 }

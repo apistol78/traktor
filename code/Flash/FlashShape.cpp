@@ -144,7 +144,6 @@ bool FlashShape::create(const SwfRect& shapeBounds, const SwfShape* shape, const
 	m_paths.push_back(path);
 
 	m_shapeBounds = shapeBounds;
-
 	return true;
 }
 
@@ -218,6 +217,27 @@ bool FlashShape::create(const SwfShape* shape)
 	}
 
 	path.end(fillStyle0, fillStyle1, lineStyle);
+	m_paths.push_back(path);
+
+	return true;
+}
+
+bool FlashShape::create(uint16_t fillBitmap, float width, float height)
+{
+	m_fillStyles.resize(1);
+	m_fillStyles[0].create(fillBitmap, Matrix33(
+		20.0f, 0.0f, 0.0f,
+		0.0f, 20.0f, 0.0f,
+		0.0f, 0.0f, 1.0f
+	));
+
+	Path path;
+	path.moveTo(0.0f, 0.0f, Path::CmAbsolute);
+	path.lineTo(width, 0.0f, Path::CmAbsolute);
+	path.lineTo(width, height, Path::CmAbsolute);
+	path.lineTo(0.0f, height, Path::CmAbsolute);
+	path.lineTo(0.0f, 0.0f, Path::CmAbsolute);
+	path.end(1, 1, 0);
 	m_paths.push_back(path);
 
 	return true;

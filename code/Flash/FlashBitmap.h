@@ -35,6 +35,8 @@ class T_DLLCLASS FlashBitmap : public ISerializable
 public:
 	FlashBitmap();
 
+	FlashBitmap(drawing::Image* image);
+
 	virtual ~FlashBitmap();
 
 	/*! \brief Create bitmap from image.

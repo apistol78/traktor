@@ -1,21 +1,22 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Misc/Split.h"
-#include "Flash/FlashMovieRenderer.h"
-#include "Flash/FlashSpriteInstance.h"
-#include "Flash/FlashShapeInstance.h"
-#include "Flash/FlashMorphShapeInstance.h"
-#include "Flash/FlashTextInstance.h"
-#include "Flash/FlashEditInstance.h"
-#include "Flash/FlashButtonInstance.h"
-#include "Flash/FlashMovie.h"
-#include "Flash/FlashSprite.h"
-#include "Flash/FlashShape.h"
-#include "Flash/FlashText.h"
-#include "Flash/FlashEdit.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashButton.h"
+#include "Flash/FlashButtonInstance.h"
+#include "Flash/FlashEdit.h"
+#include "Flash/FlashEditInstance.h"
 #include "Flash/FlashFont.h"
+#include "Flash/FlashMorphShapeInstance.h"
+#include "Flash/FlashMovieRenderer.h"
+#include "Flash/FlashShape.h"
+#include "Flash/FlashShapeInstance.h"
+#include "Flash/FlashSprite.h"
+#include "Flash/FlashSpriteInstance.h"
+#include "Flash/FlashText.h"
+#include "Flash/FlashTextInstance.h"
 #include "Flash/IDisplayRenderer.h"
+#include "Flash/Action/ActionContext.h"
 
 namespace traktor
 {
@@ -51,8 +52,8 @@ FlashMovieRenderer::FlashMovieRenderer(IDisplayRenderer* displayRenderer)
 }
 
 void FlashMovieRenderer::renderFrame(
-	FlashMovie* movie,
 	FlashSpriteInstance* movieInstance,
+	const SwfRect& frameBounds,
 	float viewWidth,
 	float viewHeight,
 	const Vector4& viewOffset
@@ -60,15 +61,16 @@ void FlashMovieRenderer::renderFrame(
 {
 	const SwfColor& backgroundColor = movieInstance->getDisplayList().getBackgroundColor();
 	m_displayRenderer->begin(
-		*movie,
+		*movieInstance->getContext()->getDictionary(),
 		backgroundColor,
+		frameBounds,
 		viewWidth,
 		viewHeight,
 		viewOffset
 	);
 
 	renderSprite(
-		movie,
+		movieInstance->getContext()->getDictionary(),
 		movieInstance,
 		Matrix33::identity(),
 		movieInstance->getColorTransform(),
@@ -79,7 +81,7 @@ void FlashMovieRenderer::renderFrame(
 }
 
 void FlashMovieRenderer::renderSprite(
-	FlashMovie* movie,
+	FlashDictionary* dictionary,
 	FlashSpriteInstance* spriteInstance,
 	const Matrix33& transform,
 	const SwfCxTransform& cxTransform,
@@ -104,7 +106,7 @@ void FlashMovieRenderer::renderSprite(
 		if (!layer.clipDepth)
 		{
 			renderCharacter(
-				movie,
+				dictionary,
 				layer.instance,
 				transform,
 				cxTransform
@@ -116,7 +118,7 @@ void FlashMovieRenderer::renderSprite(
 			m_displayRenderer->beginMask(true);
 
 			renderCharacter(
-				movie,
+				dictionary,
 				layer.instance,
 				transform,
 				cxTransform
@@ -134,7 +136,7 @@ void FlashMovieRenderer::renderSprite(
 					continue;
 
 				renderCharacter(
-					movie,
+					dictionary,
 					clippedLayer.instance,
 					transform,
 					cxTransform
@@ -144,7 +146,7 @@ void FlashMovieRenderer::renderSprite(
 			m_displayRenderer->beginMask(false);
 
 			renderCharacter(
-				movie,
+				dictionary,
 				layer.instance,
 				transform,
 				cxTransform
@@ -157,7 +159,7 @@ void FlashMovieRenderer::renderSprite(
 	FlashCanvas* canvas = spriteInstance->getCanvas();
 	if (canvas)
 		m_displayRenderer->renderCanvas(
-			*movie,
+			*dictionary,
 			transform,
 			*canvas,
 			cxTransform
@@ -165,7 +167,7 @@ void FlashMovieRenderer::renderSprite(
 }
 
 void FlashMovieRenderer::renderCharacter(
-	FlashMovie* movie,
+	FlashDictionary* dictionary,
 	FlashCharacterInstance* characterInstance,
 	const Matrix33& transform,
 	const SwfCxTransform& cxTransform
@@ -180,7 +182,7 @@ void FlashMovieRenderer::renderCharacter(
 	if (shapeInstance)
 	{
 		m_displayRenderer->renderShape(
-			*movie,
+			*dictionary,
 			transform * shapeInstance->getTransform(),
 			*shapeInstance->getShape(),
 			concateCxTransform(cxTransform, characterInstance->getColorTransform())
@@ -193,7 +195,7 @@ void FlashMovieRenderer::renderCharacter(
 	if (morphInstance)
 	{
 		m_displayRenderer->renderMorphShape(
-			*movie,
+			*dictionary,
 			transform * morphInstance->getTransform(),
 			*morphInstance->getShape(),
 			concateCxTransform(cxTransform, characterInstance->getColorTransform())
@@ -215,7 +217,7 @@ void FlashMovieRenderer::renderCharacter(
 		const AlignedVector< FlashText::Character >& characters = text->getCharacters();
 		for (AlignedVector< FlashText::Character >::const_iterator i = characters.begin(); i != characters.end(); ++i)
 		{
-			const FlashFont* font = movie->getFont(i->fontId);
+			const FlashFont* font = dictionary->getFont(i->fontId);
 			if (!font)
 				continue;
 
@@ -231,7 +233,7 @@ void FlashMovieRenderer::renderCharacter(
 			float scaleOffset = i->height * scaleHeight;
 
 			m_displayRenderer->renderGlyph(
-				*movie,
+				*dictionary,
 				textTransform * translate(i->offsetX, i->offsetY) * scale(scaleOffset, scaleOffset),
 				*shape,
 				i->color,
@@ -250,7 +252,7 @@ void FlashMovieRenderer::renderCharacter(
 			return;
 
 		const FlashEdit* edit = editInstance->getEdit();
-		const FlashFont* font = movie->getFont(edit->getFontId());
+		const FlashFont* font = dictionary->getFont(edit->getFontId());
 		if (!font)
 			return;
 
@@ -357,7 +359,7 @@ void FlashMovieRenderer::renderCharacter(
 								continue;
 
 							m_displayRenderer->renderGlyph(
-								*movie,
+								*dictionary,
 								editTransform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
 								*glyphShape,
 								color,
@@ -403,7 +405,7 @@ void FlashMovieRenderer::renderCharacter(
 				continue;
 
 			renderCharacter(
-				movie,
+				dictionary,
 				referenceInstance,
 				buttonTransform * layer.placeMatrix,
 				concateCxTransform(cxTransform, buttonInstance->getColorTransform())
@@ -423,7 +425,7 @@ void FlashMovieRenderer::renderCharacter(
 			m_displayRenderer->beginMask(true);
 
 			renderSprite(
-				movie,
+				dictionary,
 				maskInstance,
 				transform * maskInstance->getTransform(),
 				maskInstance->getColorTransform(),
@@ -434,7 +436,7 @@ void FlashMovieRenderer::renderCharacter(
 		}
 
 		renderSprite(
-			movie,
+			dictionary,
 			spriteInstance,
 			transform * spriteInstance->getTransform(),
 			concateCxTransform(cxTransform, spriteInstance->getColorTransform()),
@@ -446,7 +448,7 @@ void FlashMovieRenderer::renderCharacter(
 			m_displayRenderer->beginMask(false);
 
 			renderSprite(
-				movie,
+				dictionary,
 				maskInstance,
 				transform * maskInstance->getTransform(),
 				maskInstance->getColorTransform(),

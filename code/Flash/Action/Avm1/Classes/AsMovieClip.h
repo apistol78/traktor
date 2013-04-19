@@ -10,6 +10,7 @@ namespace traktor
 
 struct CallArgs;
 class Array;
+class BitmapData;
 class FlashCharacterInstance;
 class FlashEditInstance;
 class FlashSpriteInstance;
@@ -34,7 +35,11 @@ public:
 private:
 	void MovieClip_attachAudio(FlashSpriteInstance* self) const;
 
-	void MovieClip_attachBitmap(FlashSpriteInstance* self) const;
+	void MovieClip_attachBitmap_2(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth) const;
+
+	void MovieClip_attachBitmap_3(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth, const std::string& pixelSnapping) const;
+
+	void MovieClip_attachBitmap_4(FlashSpriteInstance* self, const BitmapData* bmp, int32_t depth, const std::string& pixelSnapping, bool smoothing) const;
 
 	Ref< FlashSpriteInstance > MovieClip_attachMovie_3(FlashSpriteInstance* self, const std::string& attachClipName, const std::string& attachClipNewName, int32_t depth) const;
 
