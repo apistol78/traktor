@@ -1,6 +1,8 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Online/Steam/SteamUser.h"
 
 namespace traktor
@@ -27,6 +29,28 @@ bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 
 	outName = mbstows(Utf8Encoding(), name);
 	return true;
+}
+
+Ref< drawing::Image > SteamUser::getImage(uint64_t userHandle) const
+{
+	CSteamID id(userHandle);
+	if (!id.IsValid())
+		return 0;
+
+	int handle = SteamFriends()->GetMediumFriendAvatar(id);
+	if (!handle)
+		return 0;
+
+	Ref< drawing::Image > image = new drawing::Image(drawing::PixelFormat::getA8B8G8R8(), 64, 64);
+
+	if (!SteamUtils()->GetImageRGBA(
+		handle,
+		(uint8*)image->getData(),
+		image->getDataSize()
+	))
+		return 0;
+
+	return image;
 }
 
 bool SteamUser::isFriend(uint64_t userHandle)

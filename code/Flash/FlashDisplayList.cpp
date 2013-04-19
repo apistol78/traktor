@@ -1,7 +1,7 @@
 #include <algorithm>
 #include "Core/Log/Log.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashDisplayList.h"
-#include "Flash/FlashMovie.h"
 #include "Flash/FlashCharacter.h"
 #include "Flash/FlashCharacterInstance.h"
 #include "Flash/FlashFrame.h"
@@ -115,7 +115,7 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 
 			if (placeObject.has(FlashFrame::PfHasCharacterId) && placeObject.characterId != layer.id)
 			{
-				Ref< const FlashCharacter > character = m_context->getMovie()->getCharacter(placeObject.characterId);
+				Ref< const FlashCharacter > character = m_context->getDictionary()->getCharacter(placeObject.characterId);
 				if (character)
 				{
 					// Use previous instance transform if we're replacing an instance.

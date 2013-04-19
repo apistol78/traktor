@@ -14,6 +14,11 @@ bool LocalUser::getName(uint64_t userHandle, std::wstring& outName)
 	return true;
 }
 
+Ref< drawing::Image > LocalUser::getImage(uint64_t userHandle) const
+{
+	return 0;
+}
+
 bool LocalUser::isFriend(uint64_t userHandle)
 {
 	return true;

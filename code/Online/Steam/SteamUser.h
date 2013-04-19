@@ -19,6 +19,8 @@ public:
 
 	virtual bool getName(uint64_t userHandle, std::wstring& outName);
 
+	virtual Ref< drawing::Image > getImage(uint64_t userHandle) const;
+
 	virtual bool isFriend(uint64_t userHandle);
 
 	virtual bool invite(uint64_t userHandle);

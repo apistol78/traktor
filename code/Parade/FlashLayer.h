@@ -23,6 +23,13 @@ class IEnvironment;
 
 	}
 
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace flash
 	{
 
@@ -75,7 +82,9 @@ public:
 
 	Ref< flash::ActionObject > createObject() const;
 
-	Ref< flash::ActionObject > createObject(const std::string& prototype) const;
+	Ref< flash::ActionObject > createObject(uint32_t argc, const script::Any* argv) const;
+
+	Ref< flash::ActionObject > createBitmap(drawing::Image* image) const;
 
 	script::Any externalCall(const std::string& methodName, uint32_t argc, const script::Any* argv);
 

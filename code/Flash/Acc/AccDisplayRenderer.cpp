@@ -52,7 +52,7 @@ const SwfCxTransform c_cxfWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f
 const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
 
 bool rectangleVisible(
-	const FlashMovie& movie,
+	const Vector4& frameSize,
 	const Vector4& viewSize,
 	const Vector4& viewOffset,
 	const Matrix33& transform,
@@ -69,11 +69,10 @@ bool rectangleVisible(
 	Vector2 xmx(max(emn.x, emx.x), max(emn.y, emx.y));
 
 	// Transform from frame into normalized coordinates.
-	const SwfRect& frameBounds = movie.getFrameBounds();
-	xmn.x = (xmn.x - frameBounds.min.x) / (frameBounds.max.x - frameBounds.min.x);
-	xmn.y = (xmn.y - frameBounds.min.y) / (frameBounds.max.y - frameBounds.min.y);
-	xmx.x = (xmx.x - frameBounds.min.x) / (frameBounds.max.x - frameBounds.min.x);
-	xmx.y = (xmx.y - frameBounds.min.y) / (frameBounds.max.y - frameBounds.min.y);
+	xmn.x = (xmn.x - frameSize.x()) / (frameSize.z() - frameSize.x());
+	xmn.y = (xmn.y - frameSize.y()) / (frameSize.w() - frameSize.y());
+	xmx.x = (xmx.x - frameSize.x()) / (frameSize.z() - frameSize.x());
+	xmx.y = (xmx.y - frameSize.y()) / (frameSize.w() - frameSize.y());
 
 	// Scale into view.
 	xmn.x = (xmn.x * viewOffset.z()) + viewOffset.x();
@@ -255,21 +254,16 @@ void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame,
 	m_globalContext->flush();
 }
 
-void AccDisplayRenderer::preload(const FlashMovie& movie)
-{
-}
-
 void AccDisplayRenderer::begin(
-	const FlashMovie& movie,
+	const FlashDictionary& dictionary,
 	const SwfColor& backgroundColor,
+	const SwfRect& frameBounds,
 	float viewWidth,
 	float viewHeight,
 	const Vector4& viewOffset
 )
 {
-	const SwfRect& bounds = movie.getFrameBounds();
-
-	m_frameSize.set(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
+	m_frameSize.set(frameBounds.min.x, frameBounds.min.y, frameBounds.max.x, frameBounds.max.y);
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
 	m_viewOffset = viewOffset;
 
@@ -329,7 +323,7 @@ void AccDisplayRenderer::endMask()
 	}
 }
 
-void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfCxTransform& cxform)
 {
 	Ref< AccShape > accShape;
 
@@ -353,13 +347,13 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	if (!accShape->updateRenderable(
 		m_vertexPool,
 		m_textureCache,
-		movie,
+		dictionary,
 		shape.getFillStyles(),
 		shape.getLineStyles()
 	))
 		return;
 
-	if (!rectangleVisible(movie, m_viewSize, m_viewOffset, transform, accShape->getBounds()))
+	if (!rectangleVisible(m_frameSize, m_viewSize, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
 	renderEnqueuedGlyphs();
@@ -378,11 +372,11 @@ void AccDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tr
 	);
 }
 
-void AccDisplayRenderer::renderMorphShape(const FlashMovie& movie, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform)
 {
 }
 
-void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform)
 {
 	uint32_t tag = shape.getCacheTag();
 
@@ -409,7 +403,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	if (!accShape->updateRenderable(
 		m_vertexPool,
 		0,
-		movie,
+		dictionary,
 		shape.getFillStyles(),
 		shape.getLineStyles()
 	))
@@ -419,7 +413,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	}
 
 	SwfRect bounds = accShape->getBounds();
-	if (!rectangleVisible(movie, m_viewSize, m_viewOffset, transform, bounds))
+	if (!rectangleVisible(m_frameSize, m_viewSize, m_viewOffset, transform, bounds))
 		return;
 
 	//// Keep 1:1 aspect ratio; use maximum bound dimension.
@@ -530,7 +524,7 @@ void AccDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tr
 	);
 }
 
-void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
 {
 	Ref< AccShape > accShape;
 
@@ -554,13 +548,13 @@ void AccDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& t
 	if (!accShape->updateRenderable(
 		m_vertexPool,
 		m_textureCache,
-		movie,
+		dictionary,
 		canvas.getFillStyles(),
 		canvas.getLineStyles()
 	))
 		return;
 
-	if (!rectangleVisible(movie, m_viewSize, m_viewOffset, transform, accShape->getBounds()))
+	if (!rectangleVisible(m_frameSize, m_viewSize, m_viewOffset, transform, accShape->getBounds()))
 		return;
 
 	renderEnqueuedGlyphs();

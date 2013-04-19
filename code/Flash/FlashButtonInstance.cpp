@@ -1,8 +1,8 @@
 #include <limits>
 #include "Core/Misc/SafeDestroy.h"
-#include "Flash/FlashButtonInstance.h"
 #include "Flash/FlashButton.h"
-#include "Flash/FlashMovie.h"
+#include "Flash/FlashButtonInstance.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFrame.h"
 #include "Flash/Action/ActionFunction.h"
@@ -26,7 +26,7 @@ FlashButtonInstance::FlashButtonInstance(ActionContext* context, FlashCharacterI
 	const FlashButton::button_layers_t& layers = m_button->getButtonLayers();
 	for (FlashButton::button_layers_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
-		Ref< const FlashCharacter > character = context->getMovie()->getCharacter(i->characterId);
+		Ref< const FlashCharacter > character = context->getDictionary()->getCharacter(i->characterId);
 		if (!character)
 			continue;
 

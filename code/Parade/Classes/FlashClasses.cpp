@@ -1,3 +1,4 @@
+#include "Drawing/Image.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
@@ -21,9 +22,9 @@ Ref< flash::ActionObject > FlashLayer_createObject_0(FlashLayer* self)
 	return self->createObject();
 }
 
-Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, const std::string& prototype)
+Ref< flash::ActionObject > FlashLayer_createObject_1(FlashLayer* self, uint32_t argc, const script::Any* argv)
 {
-	return self->createObject(prototype);
+	return self->createObject(argc, argv);
 }
 
 		}
@@ -221,7 +222,8 @@ void registerFlashClasses(script::IScriptManager* scriptManager)
 	classFlashLayer->addMethod("getGlobal", &FlashLayer::getGlobal);
 	classFlashLayer->addMethod("getRoot", &FlashLayer::getRoot);
 	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_0);
-	classFlashLayer->addMethod("createObject", &FlashLayer_createObject_1);
+	classFlashLayer->addVariadicMethod("createObject", &FlashLayer_createObject_1);
+	classFlashLayer->addMethod("createBitmap", &FlashLayer::createBitmap);
 	classFlashLayer->addMethod("isVisible", &FlashLayer::isVisible);
 	classFlashLayer->addMethod("setVisible", &FlashLayer::setVisible);
 	classFlashLayer->setUnknownMethod(&FlashLayer::externalCall);

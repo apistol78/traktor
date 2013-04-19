@@ -38,16 +38,19 @@ public:
 	{
 		std::wstring name;
 		uint32_t channel;
+		bool anisotropic;
 
 		Map()
 		:	name(L"")
 		,	channel(0)
+		,	anisotropic(false)
 		{
 		}
 
-		Map(const std::wstring& name_, uint32_t channel_)
+		Map(const std::wstring& name_, uint32_t channel_, bool anisotropic_)
 		:	name(name_)
 		,	channel(channel_)
+		,	anisotropic(anisotropic_)
 		{
 		}
 	};

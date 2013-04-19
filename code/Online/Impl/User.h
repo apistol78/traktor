@@ -17,6 +17,8 @@ class User : public IUser
 public:
 	virtual bool getName(std::wstring& outName) const;
 
+	virtual Ref< drawing::Image > getImage() const;
+
 	virtual uint64_t getGlobalId() const;
 
 	virtual bool isFriend() const;

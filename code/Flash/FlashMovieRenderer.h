@@ -21,7 +21,7 @@ namespace traktor
 struct SwfCxTransform;
 
 class IDisplayRenderer;
-class FlashMovie;
+class FlashDictionary;
 class FlashSprite;
 class FlashSpriteInstance;
 class FlashCharacterInstance;
@@ -38,8 +38,8 @@ public:
 	FlashMovieRenderer(IDisplayRenderer* displayRenderer);
 
 	void renderFrame(
-		FlashMovie* movie,
 		FlashSpriteInstance* movieInstance,
+		const SwfRect& frameBounds,
 		float viewWidth,
 		float viewHeight,
 		const Vector4& viewOffset
@@ -49,7 +49,7 @@ private:
 	Ref< IDisplayRenderer > m_displayRenderer;
 
 	void renderSprite(
-		FlashMovie* movie,
+		FlashDictionary* dictionary,
 		FlashSpriteInstance* spriteInstance,
 		const Matrix33& transform,
 		const SwfCxTransform& cxTransform,
@@ -57,7 +57,7 @@ private:
 	);
 
 	void renderCharacter(
-		FlashMovie* movie,
+		FlashDictionary* dictionary,
 		FlashCharacterInstance* characterInstance,
 		const Matrix33& transform,
 		const SwfCxTransform& cxTransform

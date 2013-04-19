@@ -88,8 +88,6 @@ bool FlashMoviePlayer::create(FlashMovie* movie, int32_t width, int32_t height)
 	if (m_stage)
 		m_stage->eventResize(width, height);
 
-	// Preload resources into display renderer.
-	m_displayRenderer->preload(*m_movie);
 	return true;
 }
 
@@ -163,8 +161,8 @@ uint32_t FlashMoviePlayer::getFrameCount() const
 void FlashMoviePlayer::renderFrame()
 {
 	m_movieRenderer->renderFrame(
-		m_movie,
 		m_movieInstance,
+		m_movie->getFrameBounds(),
 		m_stage->getViewWidth(),
 		m_stage->getViewHeight(),
 		m_stage->getViewOffset()

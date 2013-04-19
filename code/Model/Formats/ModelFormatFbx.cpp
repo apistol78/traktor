@@ -271,21 +271,21 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 			if (diffuseTexture)
 			{
 				uint32_t channel = uvChannel(outChannels, diffuseTexture->UVSet.Get().Buffer());
-				mm.setDiffuseMap(Material::Map(getTextureName(diffuseTexture), channel));
+				mm.setDiffuseMap(Material::Map(getTextureName(diffuseTexture), channel, true));
 			}
 
 			const FbxTexture* specularTexture = getTexture(material, FbxSurfaceMaterial::sSpecular);
 			if (specularTexture)
 			{
 				uint32_t channel = uvChannel(outChannels, specularTexture->UVSet.Get().Buffer());
-				mm.setSpecularMap(Material::Map(getTextureName(specularTexture), channel));
+				mm.setSpecularMap(Material::Map(getTextureName(specularTexture), channel, false));
 			}
 
 			const FbxTexture* normalTexture = getTexture(material, FbxSurfaceMaterial::sNormalMap);
 			if (normalTexture)
 			{
 				uint32_t channel = uvChannel(outChannels, normalTexture->UVSet.Get().Buffer());
-				mm.setNormalMap(Material::Map(getTextureName(normalTexture), channel));
+				mm.setNormalMap(Material::Map(getTextureName(normalTexture), channel, false));
 			}
 
 			const FbxTexture* transparencyTexture = getTexture(material, FbxSurfaceMaterial::sTransparentColor);
@@ -296,7 +296,7 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 			if (emissiveTexture)
 			{
 				uint32_t channel = uvChannel(outChannels, emissiveTexture->UVSet.Get().Buffer());
-				mm.setEmissiveMap(Material::Map(getTextureName(emissiveTexture), channel));
+				mm.setEmissiveMap(Material::Map(getTextureName(emissiveTexture), channel, false));
 			}
 
 			if (material->GetClassId().Is(FbxSurfacePhong::ClassId))

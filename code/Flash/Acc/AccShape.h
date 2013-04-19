@@ -27,9 +27,9 @@ class VertexBuffer;
 
 class AccShapeResources;
 class AccTextureCache;
+class FlashDictionary;
 class FlashFillStyle;
 class FlashLineStyle;
-class FlashMovie;
 class FlashShape;
 struct SwfCxTransform;
 
@@ -52,7 +52,7 @@ public:
 	bool updateRenderable(
 		AccShapeVertexPool* vertexPool,
 		AccTextureCache* textureCache,
-		const FlashMovie& movie,
+		const FlashDictionary& dictionary,
 		const AlignedVector< FlashFillStyle >& fillStyles,
 		const AlignedVector< FlashLineStyle >& lineStyles
 	);

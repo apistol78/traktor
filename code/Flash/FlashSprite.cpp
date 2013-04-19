@@ -3,8 +3,8 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashFrame.h"
-#include "Flash/FlashMovie.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/Action/ActionContext.h"
@@ -101,7 +101,7 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 	}
 
 	std::string spriteClassName;
-	if (context->getMovie()->getExportName(getId(), spriteClassName))
+	if (context->getDictionary()->getExportName(getId(), spriteClassName))
 	{
 		ActionValue spriteClassValue;
 		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))
@@ -121,7 +121,7 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 
 	spriteInstance->updateDisplayList();
 
-	if (context->getMovie()->getExportName(getId(), spriteClassName))
+	if (context->getDictionary()->getExportName(getId(), spriteClassName))
 	{
 		ActionValue spriteClassValue;
 		if (context->getGlobal()->getMember(spriteClassName, spriteClassValue))

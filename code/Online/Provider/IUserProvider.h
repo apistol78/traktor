@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace online
 	{
 
@@ -22,6 +29,8 @@ class T_DLLCLASS IUserProvider : public Object
 
 public:
 	virtual bool getName(uint64_t userHandle, std::wstring& outName) = 0;
+
+	virtual Ref< drawing::Image > getImage(uint64_t userHandle) const = 0;
 
 	virtual bool isFriend(uint64_t userHandle) = 0;
 

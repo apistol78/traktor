@@ -13,6 +13,11 @@ bool User::getName(std::wstring& outName) const
 	return m_userProvider->getName(m_handle, outName);
 }
 
+Ref< drawing::Image > User::getImage() const
+{
+	return m_userProvider->getImage(m_handle);
+}
+
 uint64_t User::getGlobalId() const
 {
 	return m_handle;

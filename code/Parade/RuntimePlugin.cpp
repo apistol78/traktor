@@ -11,6 +11,7 @@
 #include "Parade/Classes/AnimationClasses.h"
 #include "Parade/Classes/CoreClasses.h"
 #include "Parade/Classes/DatabaseClasses.h"
+#include "Parade/Classes/DrawingClasses.h"
 #include "Parade/Classes/FlashClasses.h"
 #include "Parade/Classes/InputClasses.h"
 #include "Parade/Classes/MeshClasses.h"
@@ -43,6 +44,7 @@ bool RuntimePlugin::startup(amalgam::IEnvironment* environment)
 	T_ASSERT (scriptManager);
 
 	registerCoreClasses(scriptManager);
+	registerDrawingClasses(scriptManager);
 	registerDatabaseClasses(scriptManager);
 	registerResourceClasses(scriptManager);
 	registerRenderClasses(scriptManager);
