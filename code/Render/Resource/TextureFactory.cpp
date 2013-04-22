@@ -52,10 +52,14 @@ int32_t TextureFactory::getSkipMips() const
 const TypeInfoSet TextureFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< ICubeTexture >());
-	typeSet.insert(&type_of< ISimpleTexture >());
-	typeSet.insert(&type_of< ITexture >());
-	typeSet.insert(&type_of< IVolumeTexture >());
+	typeSet.insert(&type_of< TextureResource >());
+	return typeSet;
+}
+
+const TypeInfoSet TextureFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	type_of< ITexture >().findAllOf(typeSet);
 	return typeSet;
 }
 

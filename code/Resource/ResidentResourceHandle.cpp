@@ -7,8 +7,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.resource.ResidentResourceHandle", ResidentResourceHandle, IResourceHandle)
 
-ResidentResourceHandle::ResidentResourceHandle(const TypeInfo& resourceType)
+ResidentResourceHandle::ResidentResourceHandle(const TypeInfo& resourceType, bool persistent)
 :	m_resourceType(resourceType)
+,	m_persistent(persistent)
 {
 }
 

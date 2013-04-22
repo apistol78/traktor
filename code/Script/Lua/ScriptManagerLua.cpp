@@ -222,10 +222,10 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 
 	// Add entries to lookup table; flatten with all specialized types in order
 	// to reduce lookups required whe resolving script class.
-	std::vector< const TypeInfo* > derivedTypes;
+	TypeInfoSet derivedTypes;
 	exportType.findAllOf(derivedTypes);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = derivedTypes.begin(); i != derivedTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = derivedTypes.begin(); i != derivedTypes.end(); ++i)
 	{
 		SmallMap< const TypeInfo*, uint32_t >::const_iterator j = m_classRegistryLookup.find(*i);
 		if (j != m_classRegistryLookup.end())

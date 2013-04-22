@@ -4,10 +4,11 @@
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
-#include "Resource/ResidentResourceHandle.h"
-#include "Resource/IResourceFactory.h"
-#include "Resource/ResourceManager.h"
 #include "Resource/ExclusiveResourceHandle.h"
+#include "Resource/IResourceFactory.h"
+#include "Resource/ResourceBundle.h"
+#include "Resource/ResourceManager.h"
+#include "Resource/ResidentResourceHandle.h"
 
 namespace traktor
 {
@@ -52,6 +53,42 @@ void ResourceManager::removeAllFactories()
 	m_factories.clear();
 }
 
+bool ResourceManager::load(const ResourceBundle* bundle)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	const std::vector< std::pair< const TypeInfo*, Guid > >& resources = bundle->get();
+	for (std::vector< std::pair< const TypeInfo*, Guid > >::const_iterator i = resources.begin(); i != resources.end(); ++i)
+	{
+		const IResourceFactory* factory = findFactoryFromResourceType(*i->first);
+		if (!factory)
+			return 0;
+
+		bool cacheable = factory->isCacheable();
+		if (!cacheable)
+		{
+			log::warning << L"Non cacheable resource cannot be preloaded; skipped" << Endl;
+			continue;
+		}
+
+		Ref< ResidentResourceHandle >& residentHandle = m_residentHandles[i->second];
+		if (residentHandle == 0 || residentHandle->get() == 0)
+		{
+			if (!residentHandle)
+				residentHandle = new ResidentResourceHandle(*i->first, bundle->persistent());
+
+			load(i->second, factory, *i->first, residentHandle);
+			if (!residentHandle->get())
+			{
+				log::error << L"Unable to preload resource; skipped" << Endl;
+				continue;
+			}
+		}
+	}
+
+	return true;
+}
+
 Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& guid)
 {
 	Ref< IResourceHandle > handle;
@@ -59,7 +96,7 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	if (guid.isNull() || !guid.isValid())
 		return 0;
 
-	const IResourceFactory* factory = findFactory(type);
+	const IResourceFactory* factory = findFactoryFromProductType(type);
 	if (!factory)
 		return 0;
 
@@ -72,7 +109,7 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 			handle = i->second;
 		else
 		{
-			Ref< ResidentResourceHandle > residentHandle = new ResidentResourceHandle(type);
+			Ref< ResidentResourceHandle > residentHandle = new ResidentResourceHandle(type, false);
 			m_residentHandles[guid] = residentHandle;
 			handle = residentHandle;
 		}
@@ -118,10 +155,10 @@ void ResourceManager::reload(const Guid& guid)
 		const RefArray< ExclusiveResourceHandle >& handles = i0->second;
 		for (RefArray< ExclusiveResourceHandle >::const_iterator i = handles.begin(); i != handles.end(); ++i)
 		{
-			const TypeInfo& resourceType = (*i)->getResourceType();
-			const IResourceFactory* factory = findFactory(resourceType);
+			const TypeInfo& productType = (*i)->getProductType();
+			const IResourceFactory* factory = findFactoryFromProductType(productType);
 			if (factory)
-				load(guid, factory, resourceType, *i);
+				load(guid, factory, productType, *i);
 		}
 		return;
 	}
@@ -129,10 +166,10 @@ void ResourceManager::reload(const Guid& guid)
 	std::map< Guid, Ref< ResidentResourceHandle > >::iterator i1 = m_residentHandles.find(guid);
 	if (i1 != m_residentHandles.end())
 	{
-		const TypeInfo& resourceType = i1->second->getResourceType();
-		const IResourceFactory* factory = findFactory(resourceType);
+		const TypeInfo& productType = i1->second->getProductType();
+		const IResourceFactory* factory = findFactoryFromProductType(productType);
 		if (factory)
-			load(guid, factory, resourceType, i1->second);
+			load(guid, factory, productType, i1->second);
 		return;
 	}
 }
@@ -146,14 +183,14 @@ void ResourceManager::reload(const TypeInfo& type)
 		const RefArray< ExclusiveResourceHandle >& handles = i->second;
 		for (RefArray< ExclusiveResourceHandle >::const_iterator j = handles.begin(); j != handles.end(); ++j)
 		{
-			const TypeInfo& resourceType = (*j)->getResourceType();
-			if (is_type_of(type, resourceType))
+			const TypeInfo& productType = (*j)->getProductType();
+			if (is_type_of(type, productType))
 			{
-				const IResourceFactory* factory = findFactory(resourceType);
+				const IResourceFactory* factory = findFactoryFromProductType(productType);
 				if (factory)
 				{
 					(*j)->flush();
-					load(i->first, factory, resourceType, *j);
+					load(i->first, factory, productType, *j);
 				}
 			}
 		}
@@ -161,14 +198,14 @@ void ResourceManager::reload(const TypeInfo& type)
 
 	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
-		const TypeInfo& resourceType = i->second->getResourceType();
-		if (is_type_of(type, resourceType))
+		const TypeInfo& productType = i->second->getProductType();
+		if (is_type_of(type, productType))
 		{
-			const IResourceFactory* factory = findFactory(resourceType);
+			const IResourceFactory* factory = findFactoryFromProductType(productType);
 			if (factory)
 			{
 				i->second->flush();
-				load(i->first, factory, resourceType, i->second);
+				load(i->first, factory, productType, i->second);
 			}
 		}
 	}
@@ -180,7 +217,11 @@ void ResourceManager::unloadUnusedResident()
 	for (std::map< Guid, Ref< ResidentResourceHandle > >::iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
 	{
 		T_ASSERT (i->second);
-		if (i->second->getReferenceCount() <= 1 && i->second->get() != 0)
+		if (
+			!i->second->isPersistent() &&
+			i->second->getReferenceCount() <= 1 &&
+			i->second->get() != 0
+		)
 		{
 			if (m_verbose)
 				log::info << L"Unload resource \"" << i->first.format() << L"\" (" << type_name(i->second->get()) << L")" << Endl;
@@ -211,11 +252,22 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 	}
 }
 
-const IResourceFactory* ResourceManager::findFactory(const TypeInfo& type)
+const IResourceFactory* ResourceManager::findFactoryFromResourceType(const TypeInfo& type)
 {
 	for (RefArray< const IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
 	{
 		TypeInfoSet typeSet = (*i)->getResourceTypes();
+		if (std::find(typeSet.begin(), typeSet.end(), &type) != typeSet.end())
+			return *i;
+	}
+	return 0;
+}
+
+const IResourceFactory* ResourceManager::findFactoryFromProductType(const TypeInfo& type)
+{
+	for (RefArray< const IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
+	{
+		TypeInfoSet typeSet = (*i)->getProductTypes();
 		if (std::find(typeSet.begin(), typeSet.end(), &type) != typeSet.end())
 			return *i;
 	}
@@ -243,8 +295,6 @@ void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, co
 	Ref< Object > object = factory->create(this, resourceType, guid);
 	if (object)
 	{
-		T_ASSERT_M (is_type_of(resourceType, type_of(object)), L"Incorrect type of created resource");
-		
 		if (m_verbose)
 			log::info << L"Resource \"" << guid.format() << L"\" (" << type_name(object) << L") created" << Endl;
 

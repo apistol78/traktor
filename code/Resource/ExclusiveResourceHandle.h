@@ -38,7 +38,7 @@ public:
 
 	virtual void flush();
 
-	const TypeInfo& getResourceType() const { return m_resourceType; }
+	const TypeInfo& getProductType() const { return m_resourceType; }
 
 private:
 	const TypeInfo& m_resourceType;

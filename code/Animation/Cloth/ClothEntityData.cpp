@@ -19,8 +19,8 @@ ClothEntityData::ClothEntityData()
 :	m_resolutionX(10)
 ,	m_resolutionY(10)
 ,	m_scale(1.0f)
-,	m_damping(0.01f)
 ,	m_solverIterations(4)
+,	m_damping(0.01f)
 {
 }
 

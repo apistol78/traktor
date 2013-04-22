@@ -55,6 +55,10 @@ public:
 
 	const resource::Proxy< render::ISimpleTexture >& getHeightMap() const { return m_heightMap; }
 
+	const resource::Proxy< render::ISimpleTexture >& getSplatMap() const { return m_splatMap; }
+
+	const resource::Proxy< render::ISimpleTexture >& getCutMap() const { return m_cutMap; }
+
 	const resource::Proxy< render::Shader >& getTerrainCoarseShader() const { return m_terrainCoarseShader; }
 
 	const resource::Proxy< render::Shader >& getTerrainDetailShader() const { return m_terrainDetailShader; }
@@ -72,6 +76,8 @@ private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	resource::Proxy< render::ISimpleTexture > m_normalMap;
 	resource::Proxy< render::ISimpleTexture > m_heightMap;
+	resource::Proxy< render::ISimpleTexture > m_splatMap;
+	resource::Proxy< render::ISimpleTexture > m_cutMap;
 	resource::Proxy< render::Shader > m_terrainCoarseShader;
 	resource::Proxy< render::Shader > m_terrainDetailShader;
 	resource::Proxy< render::Shader > m_surfaceShader;

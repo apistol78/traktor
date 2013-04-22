@@ -29,7 +29,7 @@ bool PoseControllerPipeline::buildDependencies(
 ) const
 {
 	if (const StatePoseControllerData* statePoseControllerData = dynamic_type_cast< const StatePoseControllerData* >(sourceAsset))
-		pipelineDepends->addDependency(statePoseControllerData->getStateGraph(), editor::PdfBuild);
+		pipelineDepends->addDependency(statePoseControllerData->getStateGraph(), editor::PdfBuild | editor::PdfResource);
 	else if (const IKPoseControllerData* ikPoseContollerData = dynamic_type_cast< const IKPoseControllerData* >(sourceAsset))
 		pipelineDepends->addDependency(ikPoseContollerData->getNeutralPoseController());
 	else if (const RagDollPoseControllerData* ragDollPoseContollerData = dynamic_type_cast< const RagDollPoseControllerData* >(sourceAsset))

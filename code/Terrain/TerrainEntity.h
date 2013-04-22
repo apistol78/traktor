@@ -135,6 +135,8 @@ private:
 	render::handle_t m_handleSurface;
 	render::handle_t m_handleSurfaceOffset;
 	render::handle_t m_handleHeightfield;
+	render::handle_t m_handleSplatMap;
+	render::handle_t m_handleCutMap;
 	render::handle_t m_handleNormals;
 	render::handle_t m_handleEye;
 	render::handle_t m_handleWorldOrigin;

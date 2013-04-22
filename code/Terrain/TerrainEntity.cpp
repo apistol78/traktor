@@ -65,6 +65,8 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
 ,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
+,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
+,	m_handleCutMap(render::getParameterHandle(L"CutMap"))
 ,	m_handleNormals(render::getParameterHandle(L"Normals"))
 ,	m_handleEye(render::getParameterHandle(L"Eye"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
@@ -138,6 +140,9 @@ void TerrainEntity::render(
 
 	worldRenderPass.setShaderTechnique(detailShader);
 	worldRenderPass.setShaderCombination(detailShader);
+
+	coarseShader->setCombination(L"CutEnable", m_terrain->getCutMap());
+	detailShader->setCombination(L"CutEnable", m_terrain->getCutMap());
 
 	render::IProgram* coarseProgram = coarseShader->getCurrentProgram();
 	render::IProgram* detailProgram = detailShader->getCurrentProgram();
@@ -437,8 +442,10 @@ void TerrainEntity::render(
 		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
 
 		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+		renderBlock->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
+		renderBlock->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
 		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);

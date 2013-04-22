@@ -35,6 +35,8 @@ public:
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
+	virtual const TypeInfoSet getProductTypes() const;
+
 	virtual bool isCacheable() const;
 
 	virtual Ref< Object > create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const;

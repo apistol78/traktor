@@ -28,10 +28,10 @@ bool SettingsDialog::create(ui::Widget* parent, PropertyGroup* settings, const s
 	tab->create(this, ui::WsBorder);
 
 	// Create setting pages.
-	std::vector< const TypeInfo* > settingPageTypes;
+	TypeInfoSet settingPageTypes;
 	type_of< ISettingsPage >().findAllOf(settingPageTypes, false);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = settingPageTypes.begin(); i != settingPageTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = settingPageTypes.begin(); i != settingPageTypes.end(); ++i)
 	{
 		Ref< ISettingsPage > settingsPage = dynamic_type_cast< ISettingsPage* >((*i)->createInstance());
 		if (!settingsPage)

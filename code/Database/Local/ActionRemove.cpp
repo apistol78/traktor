@@ -84,5 +84,13 @@ void ActionRemove::clean(Context* context)
 		fileStore->clean(*i);
 }
 
+bool ActionRemove::redundant(const Action* action) const
+{
+	if (const ActionRemove* actionRemove = dynamic_type_cast< const ActionRemove* >(action))
+		return m_instancePath == actionRemove->m_instancePath;
+	else
+		return false;
+}
+
 	}
 }

@@ -7,8 +7,8 @@
 #include "Drawing/Filters/ScaleFilter.h"
 #include "I18N/Text.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Heightfield/Editor/ImportHeightfieldWizardTool.h"
 #include "Ui/FileDialog.h"
 
@@ -80,7 +80,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 
 	// Flip base image.
 	bool invertX = false;
-	bool invertZ = true;
+	bool invertZ = false;
 	if (invertX || invertZ)
 	{
 		drawing::MirrorFilter mirrorFilter(invertX, invertZ);
@@ -115,11 +115,17 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 
 	const height_t* sourceHeights = static_cast< const height_t* >(image->getData());
 	height_t* destinationHeights = heightfield->getHeights();
-
 	std::memcpy(
 		destinationHeights,
 		sourceHeights,
 		size * size * sizeof(height_t)
+	);
+
+	uint8_t* destinationCuts = heightfield->getCuts();
+	std::memset(
+		destinationCuts,
+		0xff,
+		size * size / 8
 	);
 
 	// Create heightfield asset.

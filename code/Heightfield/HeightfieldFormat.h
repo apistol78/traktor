@@ -7,7 +7,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_HEIGHTFIELD_EDITOR_EXPORT)
+#if defined(T_HEIGHTFIELD_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT

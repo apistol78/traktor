@@ -100,13 +100,32 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 
 void Replicator::destroy()
 {
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	if (!m_peers.empty())
 	{
-		sendBye(i->first);
-		if (i->second.ghost)
+		Message discard;
+		handle_t fromHandle;
+
+		// Send Bye message to all peers.
+		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+			sendBye(i->first);
+
+		// Massage transportation to ensure all messages have been sent.
+		while (m_replicatorPeers)
 		{
-			i->second.ghost->~Ghost();
-			getAllocator()->free(i->second.ghost);
+			receive(&discard, fromHandle);
+			if (m_replicatorPeers->update() <= 0)
+				break;
+		}
+
+		// Delete all peer control.
+		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+		{
+			if (i->second.ghost)
+			{
+				i->second.ghost->~Ghost();
+				getAllocator()->free(i->second.ghost);
+				i->second.ghost = 0;
+			}
 		}
 	}
 
@@ -135,16 +154,44 @@ bool Replicator::update(float T, float dT)
 	if (!m_replicatorPeers)
 		return false;
 
+	double T_0 = g_timer.getElapsedTime();
+
 	updatePeers(dT);
+
+	double T_1 = g_timer.getElapsedTime();
 
 	if (!m_replicatorPeers)
 		return false;
 
 	sendState(dT);
+
+	double T_2 = g_timer.getElapsedTime();
+
 	sendEvents();
+
+	double T_3 = g_timer.getElapsedTime();
+
 	sendPings(dT);
+
+	double T_4 = g_timer.getElapsedTime();
+
 	receiveMessages();
+
+	double T_5 = g_timer.getElapsedTime();
+
 	dispatchEventListeners();
+
+	double T_6 = g_timer.getElapsedTime();
+
+	if (T_6 - T_0 > 1.0)
+	{
+		log::debug << L"updatePeers " << int32_t((T_1 - T_0) * 1000.0) << L" ms" << Endl;
+		log::debug << L"sendState " << int32_t((T_2 - T_1) * 1000.0) << L" ms" << Endl;
+		log::debug << L"sendEvents " << int32_t((T_3 - T_2) * 1000.0) << L" ms" << Endl;
+		log::debug << L"sendPings " << int32_t((T_4 - T_3) * 1000.0) << L" ms" << Endl;
+		log::debug << L"receiveMessages " << int32_t((T_5 - T_4) * 1000.0) << L" ms" << Endl;
+		log::debug << L"dispatchEventListeners " << int32_t((T_6 - T_5) * 1000.0) << L" ms" << Endl;
+	}
 
 	m_time0 += dT;
 	m_time += dT;
@@ -1151,14 +1198,14 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 
 			if (targetPeerHandle != m_replicatorPeers->getGlobalId())
 			{
-				bool result;
 				Peer& targetPeer = m_peers[targetPeerHandle];
 				if (
 					first &&
 					targetPeer.relay &&
-					findOptimalRelay(fromPeerHandle, outPeerHandle, relayPeerHandle))
+					findOptimalRelay(fromPeerHandle, outPeerHandle, relayPeerHandle)
+				)
 				{
-					T_REPLICATOR_DEBUG(L"Relay message from peer " << outPeerHandle << " passed on further as no direct connection to target exist");
+					T_REPLICATOR_DEBUG(L"OK: Relay message from peer " << outPeerHandle << L" passed on further as no direct connection to target exist");
 					
 					// Increment message type; assume in order as to become
 					// second level relay message type.
@@ -1166,12 +1213,15 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 
 					// Resend relaying request further as we also depend
 					// on relaying to reach target peer.
-					result = m_replicatorPeers->send(
+					bool result = m_replicatorPeers->send(
 						relayPeerHandle,
 						&msg,
 						sizeof(Message),
 						reliable
 					);
+
+					if (!result)
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to relay message from peer " << outPeerHandle << L"; message lost (1)");
 				}
 				else
 				{
@@ -1181,18 +1231,17 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 						size
 					);
 
-					result = sendMasqueraded(
+					bool result = sendMasqueraded(
 						fromPeerHandle,
 						targetPeerHandle,
 						msg,
 						size,
 						reliable
 					);
+
+					if (!result)
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to relay message from peer " << outPeerHandle << L"; message lost (2)");
 				}
-
-				if (!result)
-					T_REPLICATOR_DEBUG(L"Unable to relay message from peer " << outPeerHandle << "; message lost");
-
 				continue;
 			}
 			else

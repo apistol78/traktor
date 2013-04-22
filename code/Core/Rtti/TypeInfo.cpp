@@ -189,14 +189,14 @@ const TypeInfo* TypeInfo::find(const std::wstring& name)
 	return 0;
 }
 
-void TypeInfo::findAllOf(std::vector< const TypeInfo* >& outTypes, bool inclusive) const
+void TypeInfo::findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive) const
 {
 	for (size_t i = 0; i < s_typeInfoCount; ++i)
 	{
 		if (is_type_of(*this, *s_typeInfoRegistry[i]))
 		{
 			if (inclusive || s_typeInfoRegistry[i] != this)
-				outTypes.push_back(s_typeInfoRegistry[i]);
+				outTypes.insert(s_typeInfoRegistry[i]);
 		}
 	}
 }

@@ -43,6 +43,8 @@ public:
 	virtual void removeFactory(const IResourceFactory* factory);
 
 	virtual void removeAllFactories();
+
+	virtual bool load(const ResourceBundle* bundle);
 	
 	virtual Ref< IResourceHandle > bind(const TypeInfo& type, const Guid& guid);
 
@@ -75,7 +77,9 @@ private:
 	mutable Semaphore m_lock;
 	bool m_verbose;
 
-	const IResourceFactory* findFactory(const TypeInfo& type);
+	const IResourceFactory* findFactoryFromResourceType(const TypeInfo& type);
+
+	const IResourceFactory* findFactoryFromProductType(const TypeInfo& type);
 
 	void load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle);
 };

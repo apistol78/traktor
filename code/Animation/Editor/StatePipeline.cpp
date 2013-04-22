@@ -30,7 +30,7 @@ bool StatePipeline::buildDependencies(
 ) const
 {
 	if (const StateNodeAnimation* state = dynamic_type_cast< const StateNodeAnimation* >(sourceAsset))
-		pipelineDepends->addDependency(state->getAnimation().getId(), editor::PdfBuild);
+		pipelineDepends->addDependency(state->getAnimation().getId(), editor::PdfBuild | editor::PdfResource);
 	else if (const StateGraph* stateGraph = dynamic_type_cast< const StateGraph* >(sourceAsset))
 	{
 		const RefArray< StateNode >& states = stateGraph->getStates();

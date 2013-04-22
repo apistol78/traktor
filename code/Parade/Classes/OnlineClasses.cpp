@@ -316,6 +316,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classIUser->addMethod("invite", &online::IUser::invite);
 	classIUser->addMethod("setPresenceValue", &online::IUser::setPresenceValue);
 	classIUser->addMethod("getPresenceValue", &online_IUser_getPresenceValue);
+	classIUser->addMethod("isP2PAllowed", &online::IUser::isP2PAllowed);
 	scriptManager->registerClass(classIUser);
 }
 

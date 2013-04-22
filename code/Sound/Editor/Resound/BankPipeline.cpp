@@ -77,7 +77,7 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 		buildGrainDependencies(pipelineDepends, triggerGrain->getGrain());
 
 	if (const PlayGrainData* playGrain = dynamic_type_cast< const PlayGrainData* >(grain))
-		pipelineDepends->addDependency(playGrain->getSound(), editor::PdfBuild);
+		pipelineDepends->addDependency(playGrain->getSound(), editor::PdfBuild | editor::PdfResource);
 }
 
 		}
@@ -123,6 +123,7 @@ bool BankPipeline::buildDependencies(
 
 bool BankPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
@@ -169,6 +170,7 @@ bool BankPipeline::buildOutput(
 
 	return editor::DefaultPipeline::buildOutput(
 		pipelineBuilder,
+		dependency,
 		sourceInstance,
 		bankResource,
 		sourceAssetHash,

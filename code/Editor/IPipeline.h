@@ -31,6 +31,7 @@ class Instance;
 class IPipelineSettings;
 class IPipelineDepends;
 class IPipelineBuilder;
+class PipelineDependency;
 
 /*! \brief Source asset pipeline.
  * \ingroup Editor
@@ -73,6 +74,7 @@ public:
 	/*! \brief Build output asset.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
+	 * \param dependency Current dependency.
 	 * \param sourceInstance Source asset database instance; might be null if asset doesn't originate from database.
 	 * \param sourceAsset Source asset object.
 	 * \param sourceAssetHash Source asset hash key.
@@ -84,6 +86,7 @@ public:
 	 */
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
+		const PipelineDependency* dependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,

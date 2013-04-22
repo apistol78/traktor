@@ -29,11 +29,11 @@ const INodeTraits* INodeTraits::find(const Node* node)
 		SmallMap< const TypeInfo*, Ref< INodeTraits > > traits;
 
 		// Find all concrete INodeTraits classes.
-		std::vector< const TypeInfo* > traitsTypes;
+		TypeInfoSet traitsTypes;
 		type_of< INodeTraits >().findAllOf(traitsTypes, false);
 
 		// Instantiate traits.
-		for (std::vector< const TypeInfo* >::const_iterator i = traitsTypes.begin(); i != traitsTypes.end(); ++i)
+		for (TypeInfoSet::const_iterator i = traitsTypes.begin(); i != traitsTypes.end(); ++i)
 		{
 			Ref< INodeTraits > tr = checked_type_cast< INodeTraits*, false >((*i)->createInstance());
 			T_ASSERT (tr);

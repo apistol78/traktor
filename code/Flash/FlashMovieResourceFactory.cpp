@@ -21,6 +21,14 @@ const TypeInfoSet FlashMovieResourceFactory::getResourceTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet FlashMovieResourceFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< FlashMovie >());
+	return typeSet;
+}
+
+
 bool FlashMovieResourceFactory::isCacheable() const
 {
 	return true;

@@ -45,9 +45,9 @@ void InetSimPeers::destroy()
 	safeDestroy(m_peers);
 }
 
-void InetSimPeers::update()
+int32_t InetSimPeers::update()
 {
-	m_peers->update();
+	return m_peers->update();
 }
 
 std::wstring InetSimPeers::getName() const

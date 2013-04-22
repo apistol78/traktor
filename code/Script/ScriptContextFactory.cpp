@@ -21,7 +21,14 @@ ScriptContextFactory::ScriptContextFactory(db::Database* database, IScriptManage
 const TypeInfoSet ScriptContextFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IScriptContext >());
+	type_of< IScriptResource >().findAllOf(typeSet);
+	return typeSet;
+}
+
+const TypeInfoSet ScriptContextFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	type_of< IScriptContext >().findAllOf(typeSet);
 	return typeSet;
 }
 

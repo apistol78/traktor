@@ -146,9 +146,9 @@ bool SceneEditorPage::create(ui::Container* parent)
 	);
 
 	// Create profiles, plugins, resource factories and entity editors.
-	std::vector< const TypeInfo* > profileTypes;
+	TypeInfoSet profileTypes;
 	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
-	for (std::vector< const TypeInfo* >::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
 	{
 		Ref< ISceneEditorProfile > profile = dynamic_type_cast< ISceneEditorProfile* >((*i)->createInstance());
 		if (!profile)

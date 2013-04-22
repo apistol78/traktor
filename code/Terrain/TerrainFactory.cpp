@@ -22,6 +22,13 @@ TerrainFactory::TerrainFactory(db::Database* db)
 const TypeInfoSet TerrainFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< TerrainResource >());
+	return typeSet;
+}
+
+const TypeInfoSet TerrainFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Terrain >());
 	return typeSet;
 }
@@ -48,6 +55,14 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 		return 0;
 	if (!resourceManager->bind(terrainResource->getHeightMap(), terrain->m_heightMap))
 		return 0;
+	if (!resourceManager->bind(terrainResource->getSplatMap(), terrain->m_splatMap))
+		return 0;
+
+	if (terrainResource->getCutMap())
+	{
+		if (!resourceManager->bind(terrainResource->getCutMap(), terrain->m_cutMap))
+			return 0;
+	}
 
 	if (!resourceManager->bind(terrainResource->getTerrainCoarseShader(), terrain->m_terrainCoarseShader))
 		return 0;

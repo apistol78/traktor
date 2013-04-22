@@ -51,7 +51,7 @@ NewInstanceDialog::NewInstanceDialog(const PropertyGroup* settings)
 
 bool NewInstanceDialog::create(ui::Widget* parent)
 {
-	std::vector< const TypeInfo* > types;
+	TypeInfoSet types;
 	type_of< ISerializable >().findAllOf(types);
 	if (types.empty())
 		return false;
@@ -102,7 +102,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	m_editInstanceName->create(bottom, i18n::Text(L"NEW_INSTANCE_DEFAULT_NAME"));
 
 	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"NEW_INSTANCE_GLOBAL"), 2, 3);
-	for (std::vector< const TypeInfo* >::iterator i = types.begin(); i != types.end(); ++i)
+	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const TypeInfo* type = *i;
 		T_ASSERT (type);

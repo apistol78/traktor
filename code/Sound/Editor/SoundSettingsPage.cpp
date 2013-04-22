@@ -83,10 +83,10 @@ bool SoundSettingsPage::create(ui::Container* parent, PropertyGroup* settings, c
 
 	std::wstring soundDriverType = settings->getProperty< PropertyString >(L"Editor.SoundDriver");
 
-	std::vector< const TypeInfo* > soundDriverTypes;
+	TypeInfoSet soundDriverTypes;
 	type_of< sound::ISoundDriver >().findAllOf(soundDriverTypes, false);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = soundDriverTypes.begin(); i != soundDriverTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = soundDriverTypes.begin(); i != soundDriverTypes.end(); ++i)
 	{
 		std::wstring name = (*i)->getName();
 		int32_t index = m_dropSoundDriver->add(name);

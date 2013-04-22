@@ -25,7 +25,7 @@ bool ClothEntityPipeline::buildDependencies(
 ) const
 {
 	if (const ClothEntityData* clothEntityData = dynamic_type_cast< const ClothEntityData* >(sourceAsset))
-		pipelineDepends->addDependency(clothEntityData->getShader(), editor::PdfBuild);
+		pipelineDepends->addDependency(clothEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
 	return true;
 }
 

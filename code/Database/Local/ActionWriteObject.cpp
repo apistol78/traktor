@@ -121,5 +121,14 @@ void ActionWriteObject::clean(Context* context)
 		fileStore->clean(instanceMetaPath);
 }
 
+bool ActionWriteObject::redundant(const Action* action) const
+{
+	const ActionWriteObject* actionWriteObject = dynamic_type_cast< const ActionWriteObject* >(action);
+	if (actionWriteObject)
+		return m_instancePath == actionWriteObject->m_instancePath;
+	else
+		return false;
+}
+
 	}
 }

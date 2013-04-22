@@ -21,6 +21,13 @@ const TypeInfoSet RumbleEffectFactory::getResourceTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet RumbleEffectFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< RumbleEffect >());
+	return typeSet;
+}
+
 bool RumbleEffectFactory::isCacheable() const
 {
 	return true;

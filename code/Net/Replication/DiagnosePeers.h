@@ -28,7 +28,7 @@ public:
 
 	virtual void destroy();
 
-	virtual void update();
+	virtual int32_t update();
 
 	virtual std::wstring getName() const;
 

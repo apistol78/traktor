@@ -21,6 +21,13 @@ const TypeInfoSet EntityEventResourceFactory::getResourceTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet EntityEventResourceFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< IEntityEventData >());
+	return typeSet;
+}
+
 bool EntityEventResourceFactory::isCacheable() const
 {
 	return true;

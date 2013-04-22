@@ -23,6 +23,13 @@ MaterialMaskFactory::MaterialMaskFactory(db::Database* db)
 const TypeInfoSet MaterialMaskFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< MaterialMaskResource >());
+	return typeSet;
+}
+
+const TypeInfoSet MaterialMaskFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< MaterialMask >());
 	return typeSet;
 }

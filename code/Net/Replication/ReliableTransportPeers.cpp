@@ -40,9 +40,12 @@ void ReliableTransportPeers::destroy()
 	safeDestroy(m_peers);
 }
 
-void ReliableTransportPeers::update()
+int32_t ReliableTransportPeers::update()
 {
-	m_peers->update();
+	T_ASSERT (m_peers);
+
+	// Update wrapped peers.
+	int32_t queued = m_peers->update();
 
 	// Get available peers.
 	std::vector< handle_t > handles;
@@ -97,7 +100,11 @@ void ReliableTransportPeers::update()
 			}
 			++j;
 		}
+
+		queued += i->second.sent.size();
 	}
+
+	return queued;
 }
 
 std::wstring ReliableTransportPeers::getName() const

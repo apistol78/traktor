@@ -6,8 +6,8 @@
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ISimpleTexture.h"
 #include "Render/PrimitiveRenderer.h"
@@ -17,6 +17,7 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/Editor/AverageBrush.h"
+#include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/SharpFallOff.h"
@@ -151,6 +152,8 @@ TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 
 void TerrainEditModifier::selectionChanged()
 {
+	render::SimpleTextureCreateDesc desc;
+
 	m_heightfieldInstance = 0;
 	m_heightfieldAsset = 0;
 	m_heightfield.clear();
@@ -181,10 +184,10 @@ void TerrainEditModifier::selectionChanged()
 		return;
 	}
 
-	// Create normal texture data.
 	int32_t size = m_heightfield->getSize();
-	m_normalData.reset(new uint8_t [size * size * 4]);
 
+	// Create normal texture data.
+	m_normalData.reset(new uint8_t [size * size * 4]);
 	for (int32_t v = 0; v < size; ++v)
 	{
 		for (int32_t u = 0; u < size; ++u)
@@ -201,7 +204,6 @@ void TerrainEditModifier::selectionChanged()
 	}
 
 	// Create non-compressed texture for normals.
-	render::SimpleTextureCreateDesc desc;
 	desc.width = size;
 	desc.height = size;
 	desc.mipCount = 1;
@@ -222,6 +224,39 @@ void TerrainEditModifier::selectionChanged()
 
 		// Replace normal map in resource with our texture.
 		m_entity->m_terrain->m_normalMap = resource::Proxy< render::ISimpleTexture >(m_normalMap);
+	}
+
+	// Create cut texture data.
+	m_cutData.reset(new uint8_t [size * size]);
+	for (int32_t v = 0; v < size; ++v)
+	{
+		for (int32_t u = 0; u < size; ++u)
+		{
+			m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0xff : 0x00;
+		}
+	}
+
+	// Create non-compressed texture for cut data.
+	desc.width = size;
+	desc.height = size;
+	desc.mipCount = 1;
+	desc.format = render::TfR8;
+	desc.sRGB = false;
+	desc.immutable = false;
+
+	m_cutMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	if (m_cutMap)
+	{
+		// Transfer normals to texture.
+		render::ITexture::Lock nl;
+		if (m_cutMap->lock(0, nl))
+		{
+			std::memcpy(nl.bits, m_cutData.c_ptr(), size * size);
+			m_cutMap->unlock(0);
+		}
+
+		// Replace normal map in resource with our texture.
+		m_entity->m_terrain->m_cutMap = resource::Proxy< render::ISimpleTexture >(m_cutMap);
 	}
 
 	// Create default brush.
@@ -259,6 +294,8 @@ bool TerrainEditModifier::handleCommand(const ui::Command& command)
 
 	if (command == L"Terrain.Editor.AverageBrush")
 		m_brush = new AverageBrush(m_heightfield);
+	else if (command == L"Terrain.Editor.CutBrush")
+		m_brush = new CutBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.ElevateBrush")
 		m_brush = new ElevateBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.FlattenBrush")
@@ -333,10 +370,10 @@ void TerrainEditModifier::apply(
 
 	// Update normals.
 	{
-		float worldRadius = m_context->getGuideSize();
-		int32_t gridRadius = int32_t(m_heightfield->getSize() * worldRadius / m_heightfield->getWorldExtent().x());
-
 		int32_t size = m_heightfield->getSize();
+
+		float worldRadius = m_context->getGuideSize();
+		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
 
 		int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
 		int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
@@ -367,6 +404,38 @@ void TerrainEditModifier::apply(
 		{
 			std::memcpy(nl.bits, m_normalData.c_ptr(), size * size * 4);
 			m_normalMap->unlock(0);
+		}
+	}
+
+	// Update cuts.
+	{
+		int32_t size = m_heightfield->getSize();
+
+		float worldRadius = m_context->getGuideSize();
+		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
+
+		int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
+		int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
+
+		mnx = clamp(mnx, 0, size - 1);
+		mxx = clamp(mxx, 0, size - 1);
+		mnz = clamp(mnz, 0, size - 1);
+		mxz = clamp(mxz, 0, size - 1);
+
+		for (int32_t v = mnz; v <= mxz; ++v)
+		{
+			for (int32_t u = mnx; u <= mxx; ++u)
+			{
+				m_cutData[u + v * size] = m_heightfield->getGridCut(u, v) ? 0xff : 0x00;
+			}
+		}
+
+		// Transfer cuts to texture.
+		render::ITexture::Lock cl;
+		if (m_cutMap->lock(0, cl))
+		{
+			std::memcpy(cl.bits, m_cutData.c_ptr(), size * size);
+			m_cutMap->unlock(0);
 		}
 	}
 }

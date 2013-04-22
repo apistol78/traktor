@@ -122,7 +122,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to get type permutation" << Endl;
+			log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << name << L"\"" << Endl;
 			return;
 		}
 
@@ -130,7 +130,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).getConstantFolded();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to perform constant folding" << Endl;
+			log::error << L"ShaderPipeline failed; unable to perform constant folding of \"" << name << L"\"" << Endl;
 			return;
 		}
 
@@ -138,7 +138,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).getStateResolved();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to resolve render state" << Endl;
+			log::error << L"ShaderPipeline failed; unable to resolve render state of \"" << name << L"\"" << Endl;
 			return;
 		}
 
@@ -146,7 +146,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphOptimizer(programGraph).mergeBranches();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to merge branches" << Endl;
+			log::error << L"ShaderPipeline failed; unable to merge branches of \"" << name << L"\"" << Endl;
 			return;
 		}
 
@@ -154,7 +154,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphOptimizer(programGraph).insertInterpolators(frequentUniformsAsLinear);
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to optimize shader graph" << Endl;
+			log::error << L"ShaderPipeline failed; unable to optimize shader graph \"" << name << L"\"" << Endl;
 			return;
 		}
 
@@ -162,7 +162,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).getSwizzledPermutation();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to perform swizzle optimization" << Endl;
+			log::error << L"ShaderPipeline failed; unable to perform swizzle optimization of \"" << name << L"\"" << Endl;
 			return;
 		}
 
@@ -170,7 +170,7 @@ struct BuildCombinationTask : public Object
 		programGraph = ShaderGraphStatic(programGraph).cleanupRedundantSwizzles();
 		if (!programGraph)
 		{
-			log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles" << Endl;
+			log::error << L"ShaderPipeline failed; unable to cleanup redundant swizzles of \"" << name << L"\"" << Endl;
 			return;
 		}
 
@@ -184,7 +184,7 @@ struct BuildCombinationTask : public Object
 		);
 		if (!programResource)
 		{
-			log::error << L"ShaderPipeline failed; unable to compile shader" << Endl;
+			log::error << L"ShaderPipeline failed; unable to compile shader \"" << name << L"\"" << Endl;
 			return;
 		}
 
@@ -419,7 +419,7 @@ bool ShaderPipeline::buildDependencies(
 	{
 		const Guid& textureGuid = (*i)->getExternal();
 		if (textureGuid.isNotNull())
-			pipelineDepends->addDependency(textureGuid, editor::PdfBuild);
+			pipelineDepends->addDependency(textureGuid, editor::PdfBuild | editor::PdfResource);
 	}
 
 	return true;
@@ -427,6 +427,7 @@ bool ShaderPipeline::buildDependencies(
 
 bool ShaderPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,

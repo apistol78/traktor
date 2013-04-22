@@ -27,7 +27,7 @@ class T_DLLCLASS ResidentResourceHandle : public IResourceHandle
 	T_RTTI_CLASS;
 
 public:
-	ResidentResourceHandle(const TypeInfo& type);
+	ResidentResourceHandle(const TypeInfo& type, bool persistent);
 
 	virtual void replace(Object* object);
 
@@ -35,10 +35,13 @@ public:
 
 	virtual void flush();
 
-	const TypeInfo& getResourceType() const { return m_resourceType; }
+	const TypeInfo& getProductType() const { return m_resourceType; }
+
+	bool isPersistent() const { return m_persistent; }
 
 private:
 	const TypeInfo& m_resourceType;
+	bool m_persistent;
 	mutable Ref< Object > m_object;
 };
 

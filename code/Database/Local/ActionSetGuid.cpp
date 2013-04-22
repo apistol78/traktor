@@ -89,5 +89,10 @@ void ActionSetGuid::clean(Context* context)
 		fileStore->clean(instanceMetaPath);
 }
 
+bool ActionSetGuid::redundant(const Action* action) const
+{
+	return false;
+}
+
 	}
 }

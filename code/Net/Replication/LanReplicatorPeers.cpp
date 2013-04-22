@@ -119,8 +119,9 @@ void LanReplicatorPeers::destroy()
 	safeDestroy(m_discoveryManager);
 }
 
-void LanReplicatorPeers::update()
+int32_t LanReplicatorPeers::update()
 {
+	return 0;
 }
 
 std::wstring LanReplicatorPeers::getName() const

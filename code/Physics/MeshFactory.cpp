@@ -20,6 +20,13 @@ MeshFactory::MeshFactory(db::Database* db)
 const TypeInfoSet MeshFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< MeshResource >());
+	return typeSet;
+}
+
+const TypeInfoSet MeshFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Mesh >());
 	return typeSet;
 }

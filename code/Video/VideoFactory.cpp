@@ -2,6 +2,7 @@
 #include "Database/Instance.h"
 #include "Video/Video.h"
 #include "Video/VideoFactory.h"
+#include "Video/VideoResource.h"
 #include "Video/Decoders/VideoDecoderTheora.h"
 
 namespace traktor
@@ -18,6 +19,13 @@ VideoFactory::VideoFactory(db::Database* database, render::IRenderSystem* render
 }
 
 const TypeInfoSet VideoFactory::getResourceTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< VideoResource >());
+	return typeSet;
+}
+
+const TypeInfoSet VideoFactory::getProductTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Video >());

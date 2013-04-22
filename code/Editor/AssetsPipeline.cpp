@@ -67,6 +67,7 @@ bool AssetsPipeline::buildDependencies(
 
 bool AssetsPipeline::buildOutput(
 	IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,

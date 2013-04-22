@@ -10,8 +10,8 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldTextureAsset.h"
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Shader/External.h"
@@ -31,6 +31,7 @@ const float c_terrainNormalScale = 0.8f;
 
 const Guid c_guidNormalMapSeed(L"{84F74E7F-4D02-40f6-A07A-EE9F5EF3CDB4}");
 const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
+const Guid c_guidCutMapSeed(L"{CFB69515-9263-4611-93B1-658D8CA6D861}");
 const Guid c_guidTerrainCoarseShaderSeed(L"{6643B92A-6676-41b9-9427-3569B2EA481B}");
 const Guid c_guidTerrainDetailShaderSeed(L"{1AC67694-4CF8-44ac-B78E-B1E79C9632C8}");
 const Guid c_guidSurfaceShaderSeed(L"{8481FC82-A8E8-49b8-906F-9F8F6365B1F5}");
@@ -182,7 +183,7 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 5, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 7, TerrainPipeline, editor::DefaultPipeline)
 
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -207,7 +208,8 @@ bool TerrainPipeline::buildDependencies(
 {
 	const TerrainAsset* terrainAsset = checked_type_cast< const TerrainAsset*, false >(sourceAsset);
 
-	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse | editor::PdfBuild);
+	pipelineDepends->addDependency(terrainAsset->getSplatMap(), editor::PdfBuild | editor::PdfResource);
+	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse | editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
 	pipelineDepends->addDependency(c_guidTerrainCoarseShaderTemplate, editor::PdfUse);
@@ -220,20 +222,28 @@ bool TerrainPipeline::buildDependencies(
 	// Synthesize ids.
 	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
 	Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
+	Guid cutMapGuid = combineGuids(c_guidCutMapSeed, outputGuid);
 
 	// Create normal map.
 	Ref< hf::HeightfieldTextureAsset > normalMapAsset = new hf::HeightfieldTextureAsset();
 	normalMapAsset->m_heightfield = terrainAsset->getHeightfield();
 	normalMapAsset->m_output = hf::HeightfieldTextureAsset::OtNormals;
 	normalMapAsset->m_scale = 1.0f;
-	pipelineDepends->addDependency(normalMapAsset, outputPath + L"/Normals", normalMapGuid, editor::PdfBuild);
+	pipelineDepends->addDependency(normalMapAsset, outputPath + L"/Normals", normalMapGuid, editor::PdfBuild | editor::PdfResource);
 
 	// Create height map.
 	Ref< hf::HeightfieldTextureAsset > heightMapAsset = new hf::HeightfieldTextureAsset();
 	heightMapAsset->m_heightfield = terrainAsset->getHeightfield();
 	heightMapAsset->m_output = hf::HeightfieldTextureAsset::OtHeights;
 	heightMapAsset->m_scale = 1.0f;
-	pipelineDepends->addDependency(heightMapAsset, outputPath + L"/Heights", heightMapGuid, editor::PdfBuild);
+	pipelineDepends->addDependency(heightMapAsset, outputPath + L"/Heights", heightMapGuid, editor::PdfBuild | editor::PdfResource);
+
+	// Create cut map. \fixme Do not build cut map if it's not used.
+	Ref< hf::HeightfieldTextureAsset > cutMapAsset = new hf::HeightfieldTextureAsset();
+	cutMapAsset->m_heightfield = terrainAsset->getHeightfield();
+	cutMapAsset->m_output = hf::HeightfieldTextureAsset::OtCuts;
+	cutMapAsset->m_scale = 1.0f;
+	pipelineDepends->addDependency(cutMapAsset, outputPath + L"/Cuts", cutMapGuid, editor::PdfBuild | editor::PdfResource);
 
 	pipelineDepends->addDependency< render::ShaderGraph >();
 	return true;
@@ -241,6 +251,7 @@ bool TerrainPipeline::buildDependencies(
 
 bool TerrainPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
@@ -287,9 +298,27 @@ bool TerrainPipeline::buildOutput(
 	sourceData->close();
 	sourceData = 0;
 
+	// Check if heightfield have cuts.
+	bool haveCuts = false;
+
+	const uint8_t* cuts = heightfield->getCuts();
+	if (cuts)
+	{
+		int32_t size = heightfield->getSize();
+		for (int32_t i = 0; i < size * size / 8; ++i)
+		{
+			if (cuts[i] != 0xff)
+			{
+				haveCuts = true;
+				break;
+			}
+		}
+	}
+
 	// Generate uids.
 	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
 	Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
+	Guid cutMapGuid = haveCuts ? combineGuids(c_guidCutMapSeed, outputGuid) : Guid();
 	Guid terrainCoarseShaderGuid = combineGuids(c_guidTerrainCoarseShaderSeed, outputGuid);
 	Guid terrainDetailShaderGuid = combineGuids(c_guidTerrainDetailShaderSeed, outputGuid);
 	Guid surfaceShaderGuid = combineGuids(c_guidSurfaceShaderSeed, outputGuid);
@@ -388,11 +417,15 @@ bool TerrainPipeline::buildOutput(
 	terrainResource->m_detailSkip = terrainAsset->getDetailSkip();
 	terrainResource->m_patchDim = terrainAsset->getPatchDim();
 	terrainResource->m_heightfield = terrainAsset->getHeightfield();
+	terrainResource->m_splatMap = terrainAsset->getSplatMap();
 	terrainResource->m_normalMap = resource::Id< render::ISimpleTexture >(normalMapGuid);
 	terrainResource->m_heightMap = resource::Id< render::ISimpleTexture >(heightMapGuid);
 	terrainResource->m_terrainCoarseShader = resource::Id< render::Shader >(terrainCoarseShaderGuid);
 	terrainResource->m_terrainDetailShader = resource::Id< render::Shader >(terrainDetailShaderGuid);
 	terrainResource->m_surfaceShader = resource::Id< render::Shader >(surfaceShaderGuid);
+
+	if (haveCuts)
+		terrainResource->m_cutMap = resource::Id< render::ISimpleTexture >(cutMapGuid);
 
 	// Calculate lod errors for each terrain patch.
 	calculatePatches(terrainAsset, heightfield, terrainResource->m_patches);

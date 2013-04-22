@@ -45,6 +45,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleFlatten;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAverage;
 	Ref< ui::custom::ToolBarButton > m_toolToggleSmooth;
+	Ref< ui::custom::ToolBarButton > m_toolToggleCut;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSmooth;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSharp;
 	Ref< ui::Slider > m_sliderStrength;

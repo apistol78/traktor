@@ -81,5 +81,13 @@ void ActionSetName::clean(Context* context)
 		fileStore->clean(oldInstanceObjectPath);
 }
 
+bool ActionSetName::redundant(const Action* action) const
+{
+	if (const ActionSetName* actionSetName = dynamic_type_cast< const ActionSetName* >(action))
+		return m_instancePath == actionSetName->m_instancePath;
+	else
+		return false;
+}
+
 	}
 }

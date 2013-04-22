@@ -285,7 +285,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
-	std::vector< const TypeInfo* > wizardToolTypes;
+	TypeInfoSet wizardToolTypes;
 	type_of< IWizardTool >().findAllOf(wizardToolTypes);
 
 	if (!wizardToolTypes.empty())
@@ -294,7 +294,7 @@ bool DatabaseView::create(ui::Widget* parent)
 		Ref< ui::MenuItem > menuInstanceWizards = new ui::MenuItem(i18n::Text(L"DATABASE_WIZARDS"));
 
 		int32_t nextWizardId = 0;
-		for (std::vector< const TypeInfo* >::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
+		for (TypeInfoSet::iterator i = wizardToolTypes.begin(); i != wizardToolTypes.end(); ++i)
 		{
 			Ref< IWizardTool > wizard = dynamic_type_cast< IWizardTool* >((*i)->createInstance());
 			if (!wizard)

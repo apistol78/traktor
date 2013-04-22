@@ -21,6 +21,13 @@ CloudMaskFactory::CloudMaskFactory(db::Database* db)
 const TypeInfoSet CloudMaskFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< CloudMaskResource >());
+	return typeSet;
+}
+
+const TypeInfoSet CloudMaskFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< CloudMask >());
 	return typeSet;
 }

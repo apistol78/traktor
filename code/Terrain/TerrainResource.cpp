@@ -13,7 +13,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainResource", 1, TerrainResource, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainResource", 3, TerrainResource, ISerializable)
 
 TerrainResource::TerrainResource()
 :	m_detailSkip(0)
@@ -23,12 +23,14 @@ TerrainResource::TerrainResource()
 
 bool TerrainResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 1);
+	T_ASSERT (s.getVersion() >= 3);
 	s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
 	s >> Member< uint32_t >(L"patchDim", m_patchDim);
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
 	s >> resource::Member< render::ISimpleTexture >(L"normalMap", m_normalMap);
 	s >> resource::Member< render::ISimpleTexture >(L"heightMap", m_heightMap);
+	s >> resource::Member< render::ISimpleTexture >(L"splatMap", m_splatMap);
+	s >> resource::Member< render::ISimpleTexture >(L"cutMap", m_cutMap);
 	s >> resource::Member< render::Shader >(L"terrainCoarseShader", m_terrainCoarseShader);
 	s >> resource::Member< render::Shader >(L"terrainDetailShader", m_terrainDetailShader);
 	s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);

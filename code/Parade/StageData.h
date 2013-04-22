@@ -52,6 +52,7 @@ private:
 	RefArray< LayerData > m_layers;
 	resource::Id< script::IScriptContext > m_script;
 	std::map< std::wstring, Guid > m_transitions;
+	Guid m_resourceBundle;
 };
 
 	}

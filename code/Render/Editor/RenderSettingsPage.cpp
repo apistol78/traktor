@@ -59,10 +59,10 @@ bool RenderSettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 
 	std::wstring renderSystemType = settings->getProperty< PropertyString >(L"Editor.RenderSystem");
 
-	std::vector< const TypeInfo* > renderSystemTypes;
+	TypeInfoSet renderSystemTypes;
 	type_of< render::IRenderSystem >().findAllOf(renderSystemTypes, false);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = renderSystemTypes.begin(); i != renderSystemTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = renderSystemTypes.begin(); i != renderSystemTypes.end(); ++i)
 	{
 		std::wstring name = (*i)->getName();
 		int32_t index = m_dropRenderSystem->add(name);
@@ -72,10 +72,10 @@ bool RenderSettingsPage::create(ui::Container* parent, PropertyGroup* settings, 
 	
 	std::wstring compilerType = settings->getProperty< PropertyString >(L"ShaderPipeline.ProgramCompiler");
 	
-	std::vector< const TypeInfo* > compilerTypes;
+	TypeInfoSet compilerTypes;
 	type_of< render::IProgramCompiler >().findAllOf(compilerTypes, false);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = compilerTypes.begin(); i != compilerTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = compilerTypes.begin(); i != compilerTypes.end(); ++i)
 	{
 		std::wstring name = (*i)->getName();
 		int32_t index = m_dropCompiler->add(name);

@@ -22,6 +22,7 @@ namespace traktor
 
 class IResourceFactory;
 class IResourceHandle;
+class ResourceBundle;
 
 /*! \brief Resource manager statistics.
  * \ingroup Resource
@@ -56,6 +57,13 @@ public:
 
 	/*! \brief Remove all resource factories. */
 	virtual void removeAllFactories() = 0;
+
+	/*! \brief Load all resources in bundle.
+	 *
+	 * \param bundle Resource bundle.
+	 * \return True if all resources loaded successfully.
+	 */
+	virtual bool load(const ResourceBundle* bundle) = 0;
 
 	/*! \brief Bind handle to resource identifier.
 	 *

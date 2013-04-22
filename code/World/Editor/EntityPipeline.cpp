@@ -70,15 +70,16 @@ bool EntityPipeline::buildDependencies(
 
 	// Add entity data dependencies.
 	if (const DecalEntityData* decalEntityData = dynamic_type_cast< const DecalEntityData* >(entityData))
-		pipelineDepends->addDependency(decalEntityData->getShader(), editor::PdfBuild);
+		pipelineDepends->addDependency(decalEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(entityData))
-		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild);
+		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild | editor::PdfResource);
 
 	return true;
 }
 
 bool EntityPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,

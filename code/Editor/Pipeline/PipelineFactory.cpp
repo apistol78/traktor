@@ -13,10 +13,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineFactory", PipelineFactory, Objec
 
 PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 {
-	std::vector< const TypeInfo* > pipelineTypes;
+	TypeInfoSet pipelineTypes;
 	type_of< IPipeline >().findAllOf(pipelineTypes, false);
 
-	for (std::vector< const TypeInfo* >::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
+	for (TypeInfoSet::iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
 	{
 		Ref< IPipeline > pipeline = dynamic_type_cast< IPipeline* >((*i)->createInstance());
 		if (pipeline)

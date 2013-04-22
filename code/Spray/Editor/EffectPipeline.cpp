@@ -48,11 +48,11 @@ bool EffectPipeline::buildDependencies(
 		const EmitterData* emitter = (*i)->getEmitter();
 		if (emitter)
 		{
-			pipelineDepends->addDependency(emitter->getShader(), editor::PdfBuild);
+			pipelineDepends->addDependency(emitter->getShader(), editor::PdfBuild | editor::PdfResource);
 
 			const PointSetSourceData* pointSetSource = dynamic_type_cast< const PointSetSourceData* >(emitter->getSource());
 			if (pointSetSource)
-				pipelineDepends->addDependency(pointSetSource->getPointSet(), editor::PdfBuild);
+				pipelineDepends->addDependency(pointSetSource->getPointSet(), editor::PdfBuild | editor::PdfResource);
 		}
 
 		const SequenceData* sequence = (*i)->getSequence();
@@ -62,17 +62,17 @@ bool EffectPipeline::buildDependencies(
 			{
 				const SoundTriggerData* soundTrigger = dynamic_type_cast< const SoundTriggerData* >(i->trigger);
 				if (soundTrigger)
-					pipelineDepends->addDependency(soundTrigger->getSound(), editor::PdfBuild);
+					pipelineDepends->addDependency(soundTrigger->getSound(), editor::PdfBuild | editor::PdfResource);
 			}
 		}
 
 		const SoundTriggerData* soundTriggerEnable = dynamic_type_cast< const SoundTriggerData* >((*i)->getTriggerEnable());
 		if (soundTriggerEnable)
-			pipelineDepends->addDependency(soundTriggerEnable->getSound(), editor::PdfBuild);
+			pipelineDepends->addDependency(soundTriggerEnable->getSound(), editor::PdfBuild | editor::PdfResource);
 
 		const SoundTriggerData* soundTriggerDisable = dynamic_type_cast< const SoundTriggerData* >((*i)->getTriggerDisable());
 		if (soundTriggerDisable)
-			pipelineDepends->addDependency(soundTriggerDisable->getSound(), editor::PdfBuild);
+			pipelineDepends->addDependency(soundTriggerDisable->getSound(), editor::PdfBuild | editor::PdfResource);
 	}
 
 	return true;
@@ -80,6 +80,7 @@ bool EffectPipeline::buildDependencies(
 
 bool EffectPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,

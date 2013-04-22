@@ -32,13 +32,14 @@ MeshFactory::MeshFactory(db::Database* database, render::IRenderSystem* renderSy
 const TypeInfoSet MeshFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< IMesh >());
-	typeSet.insert(&type_of< BlendMesh >());
-	typeSet.insert(&type_of< IndoorMesh >());
-	typeSet.insert(&type_of< InstanceMesh >());
-	typeSet.insert(&type_of< SkinnedMesh >());
-	typeSet.insert(&type_of< StaticMesh >());
-	typeSet.insert(&type_of< StreamMesh >());
+	type_of< IMeshResource >().findAllOf(typeSet);
+	return typeSet;
+}
+
+const TypeInfoSet MeshFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	type_of< IMesh >().findAllOf(typeSet);
 	return typeSet;
 }
 
@@ -74,12 +75,6 @@ Ref< Object > MeshFactory::create(resource::IResourceManager* resourceManager, c
 	if (!mesh)
 	{
 		log::error << L"Mesh factory failed; unable to create mesh" << Endl;
-		return 0;
-	}
-
-	if (!is_type_of(resourceType, type_of(mesh)))
-	{
-		log::error << L"Mesh factory failed; incorrect type of mesh, must be a " << resourceType.getName() << Endl;
 		return 0;
 	}
 	

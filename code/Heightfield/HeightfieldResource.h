@@ -27,14 +27,11 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	uint32_t getSize() const { return m_size; }
-
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
 private:
 	friend class HeightfieldPipeline;
 
-	uint32_t m_size;
 	Vector4 m_worldExtent;
 };
 
