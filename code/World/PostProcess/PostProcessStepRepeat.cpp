@@ -10,6 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepRepeat", 0, PostProcessStepRepeat, PostProcessStep)
 
+PostProcessStepRepeat::PostProcessStepRepeat()
+:	m_count(0)
+{
+}
+
 Ref< PostProcessStep::Instance > PostProcessStepRepeat::create(
 	resource::IResourceManager* resourceManager,
 	render::IRenderSystem* renderSystem,

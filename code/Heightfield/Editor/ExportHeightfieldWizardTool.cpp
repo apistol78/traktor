@@ -13,35 +13,35 @@ namespace traktor
 {
 	namespace hf
 	{
-//		namespace
-//		{
-//
-//Ref< Heightfield > readOld(IStream* stream, const Vector4& worldExtent)
-//{
-//	uint32_t fileSize = stream->available();
-//
-//	const uint32_t heightByteSize = 2;
-//
-//	uint32_t heights = fileSize / heightByteSize;
-//	uint32_t size = uint32_t(std::sqrt(float(heights)));
-//
-//	Ref< Heightfield > hf = new Heightfield(size, worldExtent);
-//
-//	stream->read(hf->getHeights(), size * size * sizeof(height_t));
-//
-//	stream->close();
-//
-//	uint8_t* destinationCuts = hf->getCuts();
-//	std::memset(
-//		destinationCuts,
-//		0xff,
-//		size * size / 8
-//	);
-//
-//	return hf;
-//}
-//
-//		}
+		namespace
+		{
+
+Ref< Heightfield > readOld(IStream* stream, const Vector4& worldExtent)
+{
+	uint32_t fileSize = stream->available();
+
+	const uint32_t heightByteSize = 2;
+
+	uint32_t heights = fileSize / heightByteSize;
+	uint32_t size = uint32_t(std::sqrt(float(heights)));
+
+	Ref< Heightfield > hf = new Heightfield(size, worldExtent);
+
+	stream->read(hf->getHeights(), size * size * sizeof(height_t));
+
+	stream->close();
+
+	uint8_t* destinationCuts = hf->getCuts();
+	std::memset(
+		destinationCuts,
+		0xff,
+		size * size / 8
+	);
+
+	return hf;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.ExportHeightfieldWizardTool", 0, ExportHeightfieldWizardTool, editor::IWizardTool)
 
@@ -70,11 +70,11 @@ bool ExportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 		heightfieldAsset->getWorldExtent()
 	);
 	if (!heightfield)
-		return false;
-
-	//Ref< Heightfield > heightfield = readOld(sourceData, heightfieldAsset->getWorldExtent());
-	//if (!heightfield)
-	//	return false;
+	{
+		heightfield = readOld(sourceData, heightfieldAsset->getWorldExtent());
+		if (!heightfield)
+			return false;
+	}
 
 	sourceData->close();
 	sourceData = 0;

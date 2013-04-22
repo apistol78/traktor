@@ -43,6 +43,8 @@ public:
 		Ref< Instance > m_instance;
 	};
 
+	PostProcessStepRepeat();
+
 	virtual Ref< Instance > create(
 		resource::IResourceManager* resourceManager,
 		render::IRenderSystem* renderSystem,
@@ -52,7 +54,7 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
-	inline const Ref< PostProcessStep >& getStep() const { return m_step; }
+	const Ref< PostProcessStep >& getStep() const { return m_step; }
 
 private:
 	uint32_t m_count;

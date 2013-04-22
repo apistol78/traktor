@@ -778,14 +778,21 @@ bool BinarySerializer::operator >> (const Member< void* >& m)
 			return false;
 
 		m.setBlobSize(size);
-		return read_block(m_stream, m.getBlob(), size, 1);
+
+		if (size > 0)
+			return read_block(m_stream, m.getBlob(), size, 1);
+		else
+			return true;
 	}
 	else
 	{
 		if (!write_primitive< uint32_t >(m_stream, uint32_t(m.getBlobSize())))
 			return false;
 
-		return write_block(m_stream, m.getBlob(), m.getBlobSize(), 1);
+		if (m.getBlobSize() > 0)
+			return write_block(m_stream, m.getBlob(), m.getBlobSize(), 1);
+		else
+			return true;
 	}
 }
 

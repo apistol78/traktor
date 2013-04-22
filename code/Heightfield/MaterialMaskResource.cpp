@@ -11,6 +11,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.MaterialMaskResource", 1, MaterialMaskResource, ISerializable)
 
+MaterialMaskResource::MaterialMaskResource()
+:	m_size(0)
+{
+}
+
 uint32_t MaterialMaskResource::getSize() const
 {
 	return m_size;

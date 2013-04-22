@@ -24,6 +24,8 @@ class T_DLLCLASS MaterialMaskResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
+	MaterialMaskResource();
+
 	uint32_t getSize() const;
 
 	const RefArray< MaterialMaskResourceLayer >& getLayers() const;

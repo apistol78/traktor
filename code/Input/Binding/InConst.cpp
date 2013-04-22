@@ -11,6 +11,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.input.InConst", 0, InConst, IInputNode)
 
 InConst::InConst()
+:	m_value(0.0f)
 {
 }
 

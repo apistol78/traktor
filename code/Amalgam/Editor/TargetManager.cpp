@@ -100,6 +100,7 @@ bool TargetManager::update()
 		if (socket)
 		{
 			Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(socket);
+			socket->setNoDelay(true);
 
 			// Target must send it's identifier upon connection.
 			Ref< TargetID > targetId;

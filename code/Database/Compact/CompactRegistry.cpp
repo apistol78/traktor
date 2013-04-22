@@ -83,8 +83,6 @@ bool CompactRegistry::removeGroup(CompactGroupEntry* groupEntry)
 		return false;
 
 	m_groupEntries.erase(i);
-	//Heap::getInstance().invalidateRefs(groupEntry);
-
 	return true;
 }
 
@@ -95,8 +93,6 @@ bool CompactRegistry::removeInstance(CompactInstanceEntry* instanceEntry)
 		return false;
 
 	m_instanceEntries.erase(i);
-	//Heap::getInstance().invalidateRefs(instanceEntry);
-
 	return true;
 }
 
@@ -107,8 +103,6 @@ bool CompactRegistry::removeBlock(CompactBlockEntry* blockEntry)
 		return false;
 
 	m_blockEntries.erase(i);
-	//Heap::getInstance().invalidateRefs(blockEntry);
-
 	return true;
 }
 

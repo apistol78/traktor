@@ -12,7 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.AgentConnect", 0, AgentConnect, ISerializable)
 
 AgentConnect::AgentConnect()
-:	m_streamServerPort(0)
+:	m_databasePort(0)
+,	m_streamServerPort(0)
 {
 }
 

@@ -92,6 +92,7 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 		Peer& peer = m_peers[*i];
 		peer.state = PsInitial;
 		peer.global = m_replicatorPeers->getPeerGlobalId(*i);
+		peer.name = m_replicatorPeers->getPeerName(*i);
 		peer.precursor = true;
 	}
 
@@ -154,44 +155,16 @@ bool Replicator::update(float T, float dT)
 	if (!m_replicatorPeers)
 		return false;
 
-	double T_0 = g_timer.getElapsedTime();
-
 	updatePeers(dT);
-
-	double T_1 = g_timer.getElapsedTime();
 
 	if (!m_replicatorPeers)
 		return false;
 
 	sendState(dT);
-
-	double T_2 = g_timer.getElapsedTime();
-
 	sendEvents();
-
-	double T_3 = g_timer.getElapsedTime();
-
 	sendPings(dT);
-
-	double T_4 = g_timer.getElapsedTime();
-
 	receiveMessages();
-
-	double T_5 = g_timer.getElapsedTime();
-
 	dispatchEventListeners();
-
-	double T_6 = g_timer.getElapsedTime();
-
-	if (T_6 - T_0 > 1.0)
-	{
-		log::debug << L"updatePeers " << int32_t((T_1 - T_0) * 1000.0) << L" ms" << Endl;
-		log::debug << L"sendState " << int32_t((T_2 - T_1) * 1000.0) << L" ms" << Endl;
-		log::debug << L"sendEvents " << int32_t((T_3 - T_2) * 1000.0) << L" ms" << Endl;
-		log::debug << L"sendPings " << int32_t((T_4 - T_3) * 1000.0) << L" ms" << Endl;
-		log::debug << L"receiveMessages " << int32_t((T_5 - T_4) * 1000.0) << L" ms" << Endl;
-		log::debug << L"dispatchEventListeners " << int32_t((T_6 - T_5) * 1000.0) << L" ms" << Endl;
-	}
 
 	m_time0 += dT;
 	m_time += dT;
@@ -446,7 +419,7 @@ void Replicator::updatePeers(float dT)
 		Peer& peer = i->second;
 		if (peer.state == PsEstablished)
 		{
-			T_REPLICATOR_DEBUG(L"WARNING: Peer " << i->first << L" connection suddenly terminated");
+			T_REPLICATOR_DEBUG(L"WARNING: Peer " << i->second.name << L" connection suddenly terminated");
 
 			// Need to notify listeners immediately as peer becomes dismounted.
 			for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
@@ -476,19 +449,21 @@ void Replicator::updatePeers(float dT)
 		if (peer.state == PsInitial)
 		{
 			peer.global = m_replicatorPeers->getPeerGlobalId(*i);
+			peer.name = m_replicatorPeers->getPeerName(*i);
+
 			if ((peer.timeUntilTx -= dT) <= 0.0f)
 			{
-				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer " << *i);
+				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer \"" << peer.name << L"\"");
 				
-				if (peer.pendingIAm >= 2)
+				if (peer.pendingIAm >= 4)
 				{
 					peer.relay = !peer.relay;
 					peer.pendingIAm = 0;
 
 					if (peer.relay)
-						{ T_REPLICATOR_DEBUG(L"WARNING: Unable to handshake directly with peer " << *i << L"; relaying through other peer(s)"); }
+						{ T_REPLICATOR_DEBUG(L"WARNING: Unable to handshake directly with peer \"" << peer.name << L"\"; using relaying"); }
 					else
-						{ T_REPLICATOR_DEBUG(L"WARNING: Unable to handshake with peer " << *i << L" through relay; using direct"); }
+						{ T_REPLICATOR_DEBUG(L"WARNING: Unable to handshake with peer \"" << peer.name << L"\" through relay; using direct"); }
 				}
 				
 				if (sendIAm(*i, 0, m_id))
@@ -505,13 +480,13 @@ void Replicator::updatePeers(float dT)
 
 			if (peer.pendingPing >= c_maxPendingPing)
 			{
-				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" doesn't respond to ping");
+				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" doesn't respond to ping");
 				failing = true;
 			}
 
 			if (peer.errorCount >= c_maxErrorCount)
 			{
-				T_REPLICATOR_DEBUG(L"WARNING: Peer " << *i << L" failing, unable to communicate with peer");
+				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" failing, unable to communicate with peer");
 				failing = true;
 			}
 
@@ -522,9 +497,9 @@ void Replicator::updatePeers(float dT)
 				peer.errorCount = 0;
 
 				if (peer.relay)
-					{ T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate directly with peer " << *i << L"; relaying through other peer(s)"); }
+					{ T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate directly with peer \"" << peer.name << L"\"; using relaying"); }
 				else
-					{ T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate with peer " << *i << L" through relay; using direct"); }
+					{ T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate with peer \"" << peer.name << L"\" through relay; using direct"); }
 			}
 		}
 	}
@@ -619,7 +594,7 @@ void Replicator::sendState(float dT)
 		}
 		else
 		{
-			log::error << L"ERROR: Unable to send state to peer " << i->first << L" (" << peer.errorCount << L")" << Endl;
+			log::error << L"ERROR: Unable to send state to peer " << peer.name << L" (" << peer.errorCount << L")" << Endl;
 			peer.timeUntilTx = c_farTimeUntilTx;
 			peer.errorCount++;
 			peer.stateCount = 0;
@@ -638,6 +613,11 @@ void Replicator::sendEvents()
 
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 	{
+		Peer& peer = i->second;
+
+		if (peer.state != PsEstablished || !peer.ghost)
+			continue;
+
 		std::vector< Event > peerEventsOut;
 
 		// Collect events to peer.
@@ -696,7 +676,7 @@ void Replicator::sendEvents()
 			}
 			else
 			{
-				log::error << L"ERROR: Unable to send event(s) to peer " << i->first << L" (" << i->second.errorCount << L")" << Endl;
+				log::error << L"ERROR: Unable to send event(s) to peer " << peer.name << L" (" << i->second.errorCount << L")" << Endl;
 				
 				for (; j < jj; ++j)
 					eventsOut.push_back(peerEventsOut[j]);
@@ -767,6 +747,8 @@ void Replicator::receiveMessages()
 			}
 			else if (msg.iam.sequence == 1 || msg.iam.sequence == 2)
 			{
+				Peer& peer = m_peers[handle];
+
 				// "I am" with sequence 1 can only be received if I was the handshake initiator.
 				// "I am" with sequence 2 can only be received if I was NOT the handshake initiator.
 
@@ -774,13 +756,11 @@ void Replicator::receiveMessages()
 				{
 					if (msg.iam.id != m_id)
 					{
-						T_REPLICATOR_DEBUG(L"ERROR: \"I am\" message with incorrect id from peer " << handle << L"; ignoring");
+						T_REPLICATOR_DEBUG(L"ERROR: \"I am\" message with incorrect id from peer \"" << peer.name << L"\"; ignoring");
 						continue;
 					}
 					sendIAm(handle, 2, msg.iam.id);
 				}
-
-				Peer& peer = m_peers[handle];
 
 				if (!peer.ghost)
 				{
@@ -810,7 +790,7 @@ void Replicator::receiveMessages()
 					evt.object = 0;
 					m_eventsIn.push_back(evt);
 
-					T_REPLICATOR_DEBUG(L"OK: Peer " << handle << L" connection established");
+					T_REPLICATOR_DEBUG(L"OK: Peer \"" << peer.name << L"\" connection established");
 				}
 
 				peer.lastTimeRemote = std::max(time, peer.lastTimeRemote + 1e-4f);
@@ -821,16 +801,15 @@ void Replicator::receiveMessages()
 		}
 		else if (msg.type == MtBye)
 		{
-			T_REPLICATOR_DEBUG(L"OK: Got \"Bye\" from peer " << handle);
-
 			Peer& peer = m_peers[handle];
+			T_REPLICATOR_DEBUG(L"OK: Got \"Bye\" from peer \"" << peer.name << L"\"");
 
 			if (
 				peer.state == PsEstablished &&
 				peer.ghost
 			)
 			{
-				T_REPLICATOR_DEBUG(L"OK: Established peer " << handle << L" gracefully disconnected; issue listener event");
+				T_REPLICATOR_DEBUG(L"OK: Established peer \"" << peer.name << L"\" gracefully disconnected; issue listener event");
 
 				// Need to notify listeners immediately as peer becomes dismounted.
 				for (RefArray< IListener >::iterator i = m_listeners.begin(); i != m_listeners.end(); ++i)
@@ -963,7 +942,7 @@ void Replicator::receiveMessages()
 						if (Sn)
 							state = peer.ghost->stateTemplate->unpack(Sn, msg.state.data, sizeof(msg.state.data));
 						else
-							T_REPLICATOR_DEBUG(L"ERROR: Received delta state from peer " << handle << L" but have no iframe; state ignored (2)");
+							T_REPLICATOR_DEBUG(L"ERROR: Received delta state from peer \"" << peer.name << L"\" but have no iframe; state ignored (2)");
 					}
 
 					if (state)
@@ -1005,7 +984,7 @@ void Replicator::receiveMessages()
 			Peer& peer = m_peers[handle];
 			if (!peer.ghost)
 			{
-				T_REPLICATOR_DEBUG(L"ERROR: Peer " << handle << L" partially connected but received MtEvent; ignoring");
+				T_REPLICATOR_DEBUG(L"ERROR: Peer \"" << peer.name << L"\" partially connected but received MtEvent; ignoring");
 				continue;
 			}
 
@@ -1177,7 +1156,12 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 		// Reset relaying to peer from whom I just received data; if we can receive from
 		// peer then we should be able to send to it as well.
 		Peer& peer = m_peers[outPeerHandle];
-		peer.relay = false;
+
+		if (peer.relay)
+		{
+			T_REPLICATOR_DEBUG(L"OK: Got direct message from peer \"" << peer.name << L"\" by whom we use relaying; use direct");
+			peer.relay = false;
+		}
 
 		if (
 			msg->type == MtRelayUnreliable1 ||
@@ -1198,6 +1182,7 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 
 			if (targetPeerHandle != m_replicatorPeers->getGlobalId())
 			{
+				Peer& fromPeer = m_peers[fromPeerHandle];
 				Peer& targetPeer = m_peers[targetPeerHandle];
 				if (
 					first &&
@@ -1205,7 +1190,7 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 					findOptimalRelay(fromPeerHandle, outPeerHandle, relayPeerHandle)
 				)
 				{
-					T_REPLICATOR_DEBUG(L"OK: Relay message from peer " << outPeerHandle << L" passed on further as no direct connection to target exist");
+					T_REPLICATOR_DEBUG(L"OK: Relay message from peer " << fromPeer.name << L" passed on further as no direct connection to target exist");
 					
 					// Increment message type; assume in order as to become
 					// second level relay message type.
@@ -1221,7 +1206,7 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 					);
 
 					if (!result)
-						T_REPLICATOR_DEBUG(L"ERROR: Unable to relay message from peer " << outPeerHandle << L"; message lost (1)");
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to relay message from peer " << fromPeer.name << L"; message lost (1)");
 				}
 				else
 				{
@@ -1240,7 +1225,7 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 					);
 
 					if (!result)
-						T_REPLICATOR_DEBUG(L"ERROR: Unable to relay message from peer " << outPeerHandle << L"; message lost (2)");
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to relay message from peer " << fromPeer.name << L"; message lost (2)");
 				}
 				continue;
 			}

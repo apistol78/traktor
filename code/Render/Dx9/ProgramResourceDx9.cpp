@@ -130,6 +130,8 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx9", 0, ProgramR
 ProgramResourceDx9::ProgramResourceDx9()
 :	m_vertexShaderHash(0)
 ,	m_pixelShaderHash(0)
+,	m_scalarParameterDataSize(0)
+,	m_textureParameterDataSize(0)
 {
 }
 

@@ -29,7 +29,7 @@ namespace traktor
 		{
 
 const uint16_t c_remoteDatabasePort = 34001;
-const uint16_t c_targetConnectionPort = 36000;
+const uint16_t c_targetConnectionPort = 34002;
 
 		}
 

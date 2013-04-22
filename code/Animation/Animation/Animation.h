@@ -31,6 +31,11 @@ public:
 		float at;
 		Pose pose;
 
+		KeyPose()
+		:	at(0.0f)
+		{
+		}
+
 		bool serialize(ISerializer& s);
 	};
 

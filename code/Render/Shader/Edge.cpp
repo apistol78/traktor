@@ -40,18 +40,24 @@ public:
 	{
 		if (s.getDirection() == ISerializer::SdWrite)
 		{
-			Ref< Node > node = m_pin->getNode();
+			Ref< Node > node = m_pin ? m_pin->getNode() : 0;
+			std::wstring name = m_pin ? m_pin->getName() : L"";
+
 			s >> MemberRef< Node >(L"node", node);
-			std::wstring name = m_pin->getName();
 			s >> Member< std::wstring >(L"name", name);
 		}
 		else	// SdRead
 		{
 			Ref< Node > node;
-			s >> MemberRef< Node >(L"node", node);
 			std::wstring name;
+
+			s >> MemberRef< Node >(L"node", node);
 			s >> Member< std::wstring >(L"name", name);
-			m_pin = PinAccessor::get(node, name);
+
+			if (node)
+				m_pin = PinAccessor::get(node, name);
+			else
+				m_pin = 0;
 		}
 		return true;
 	}

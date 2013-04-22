@@ -18,6 +18,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashBitmap", 0, FlashBitmap, ISe
 FlashBitmap::FlashBitmap()
 :	m_width(0)
 ,	m_height(0)
+,	m_mips(0)
 ,	m_bits(0)
 {
 }
@@ -25,6 +26,7 @@ FlashBitmap::FlashBitmap()
 FlashBitmap::FlashBitmap(drawing::Image* image)
 :	m_width(0)
 ,	m_height(0)
+,	m_mips(0)
 ,	m_bits(0)
 {
 	create(image);

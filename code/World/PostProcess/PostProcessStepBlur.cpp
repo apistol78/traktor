@@ -21,7 +21,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.PostProcessStepBlur", 2, PostProcessStepBlur, PostProcessStep)
 
 PostProcessStepBlur::PostProcessStepBlur()
-:	m_taps(15)
+:	m_direction(1.0f, 0.0f, 0.0f, 0.0f)
+,	m_taps(15)
 ,	m_blurType(BtGaussian)
 {
 }
