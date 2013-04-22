@@ -7,9 +7,9 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/HeightfieldResource.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldPipeline.h"
 
 namespace traktor
@@ -17,7 +17,7 @@ namespace traktor
 	namespace hf
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 1, HeightfieldPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.hf.HeightfieldPipeline", 2, HeightfieldPipeline, editor::IPipeline)
 
 bool HeightfieldPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -49,6 +49,7 @@ bool HeightfieldPipeline::buildDependencies(
 
 bool HeightfieldPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
@@ -107,7 +108,6 @@ bool HeightfieldPipeline::buildOutput(
 	outputData->close();
 	outputData = 0;
 	
-	resource->m_size = heightfield->getSize();
 	resource->m_worldExtent = heightfieldAsset->getWorldExtent();
 
 	instance->setObject(resource);

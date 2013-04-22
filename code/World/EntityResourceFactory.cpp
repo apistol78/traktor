@@ -17,7 +17,14 @@ EntityResourceFactory::EntityResourceFactory(db::Database* db)
 const TypeInfoSet EntityResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EntityData >());
+	type_of< EntityData >().findAllOf(typeSet);
+	return typeSet;
+}
+
+const TypeInfoSet EntityResourceFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	type_of< EntityData >().findAllOf(typeSet);
 	return typeSet;
 }
 

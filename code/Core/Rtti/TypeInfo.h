@@ -122,7 +122,7 @@ public:
 	 * \param outTypes Found types.
 	 * \param inclusive If this type should be included in result.
 	 */
-	void findAllOf(std::vector< const TypeInfo* >& outTypes, bool inclusive = true) const;
+	void findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive = true) const;
 
 private:
 	const wchar_t* m_name;

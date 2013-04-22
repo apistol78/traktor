@@ -27,8 +27,8 @@ bool AnimatedMeshEntityPipeline::buildDependencies(
 {
 	if (const AnimatedMeshEntityData* meshEntityData = dynamic_type_cast< const AnimatedMeshEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(meshEntityData->getMesh(), editor::PdfBuild);
-		pipelineDepends->addDependency(meshEntityData->getSkeleton(), editor::PdfBuild);
+		pipelineDepends->addDependency(meshEntityData->getMesh(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(meshEntityData->getSkeleton(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(meshEntityData->getPoseControllerData());
 	}
 	return true;

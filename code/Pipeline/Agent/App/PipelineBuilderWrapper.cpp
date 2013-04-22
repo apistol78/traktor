@@ -129,6 +129,7 @@ bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const
 	if (!pipeline->buildOutput(
 		this,
 		0,
+		0,
 		sourceAsset,
 		0,
 		outputPath,

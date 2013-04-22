@@ -55,7 +55,7 @@ SoundChannel::~SoundChannel()
 
 void SoundChannel::setVolume(float volume)
 {
-	m_state.volume = clamp(volume, 0.0f, 1.0f);
+	m_volume = clamp(volume, 0.0f, 1.0f);
 }
 
 void SoundChannel::setFilter(const IFilter* filter)
@@ -151,6 +151,7 @@ SoundChannel::SoundChannel(uint32_t id, Event& eventFinish, uint32_t hwSampleRat
 ,	m_eventFinish(eventFinish)
 ,	m_hwSampleRate(hwSampleRate)
 ,	m_hwFrameSamples(hwFrameSamples)
+,	m_volume(1.0f)
 ,	m_outputSamplesIn(0)
 {
 	const uint32_t outputSamplesCount = hwFrameSamples * c_outputSamplesBlockCount;
@@ -257,7 +258,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 						outputSamplesCount,
 						inputSamples,
 						soundBlock.samplesCount,
-						m_state.volume
+						m_volume * m_state.volume
 					);
 				else
 					mixer->mute(outputSamples, outputSamplesCount);
@@ -278,7 +279,7 @@ bool SoundChannel::getBlock(const ISoundMixer* mixer, double time, SoundBlock& o
 						outputSamples,
 						inputSamples,
 						soundBlock.samplesCount,
-						m_state.volume
+						m_volume * m_state.volume
 					);
 				else
 					mixer->mute(outputSamples, soundBlock.samplesCount);

@@ -141,5 +141,18 @@ void ActionWriteData::clean(Context* context)
 	}
 }
 
+bool ActionWriteData::redundant(const Action* action) const
+{
+	const ActionWriteData* actionWriteData = dynamic_type_cast< const ActionWriteData* >(action);
+	if (actionWriteData)
+	{
+		return 
+			m_instancePath == actionWriteData->m_instancePath &&
+			m_dataName == actionWriteData->m_dataName;
+	}
+	else
+		return false;
+}
+
 	}
 }

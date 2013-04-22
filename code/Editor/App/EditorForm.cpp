@@ -535,11 +535,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	setStoreObject(L"DiscoveryManager", m_discoveryManager);
 
 	// Create editor page factories.
-	std::vector< const TypeInfo* > editorPageFactoryTypes;
+	TypeInfoSet editorPageFactoryTypes;
 	type_of< IEditorPageFactory >().findAllOf(editorPageFactoryTypes, false);
 	if (!editorPageFactoryTypes.empty())
 	{
-		for (std::vector< const TypeInfo* >::iterator i = editorPageFactoryTypes.begin(); i != editorPageFactoryTypes.end(); ++i)
+		for (TypeInfoSet::const_iterator i = editorPageFactoryTypes.begin(); i != editorPageFactoryTypes.end(); ++i)
 		{
 			Ref< IEditorPageFactory > editorPageFactory = dynamic_type_cast< IEditorPageFactory* >((*i)->createInstance());
 			if (editorPageFactory)
@@ -548,11 +548,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	// Create object editor factories.
-	std::vector< const TypeInfo* > objectEditorFactoryTypes;
+	TypeInfoSet objectEditorFactoryTypes;
 	type_of< IObjectEditorFactory >().findAllOf(objectEditorFactoryTypes, false);
 	if (!objectEditorFactoryTypes.empty())
 	{
-		for (std::vector< const TypeInfo* >::iterator i = objectEditorFactoryTypes.begin(); i != objectEditorFactoryTypes.end(); ++i)
+		for (TypeInfoSet::const_iterator i = objectEditorFactoryTypes.begin(); i != objectEditorFactoryTypes.end(); ++i)
 		{
 			Ref< IObjectEditorFactory > objectEditorFactory = dynamic_type_cast< IObjectEditorFactory* >((*i)->createInstance());
 			if (objectEditorFactory)
@@ -561,11 +561,11 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	// Create editor plugin factories.
-	std::vector< const TypeInfo* > editorPluginFactoryTypes;
+	TypeInfoSet editorPluginFactoryTypes;
 	type_of< IEditorPluginFactory >().findAllOf(editorPluginFactoryTypes, false);
 	if (!editorPluginFactoryTypes.empty())
 	{
-		for (std::vector< const TypeInfo* >::iterator i = editorPluginFactoryTypes.begin(); i != editorPluginFactoryTypes.end(); ++i)
+		for (TypeInfoSet::iterator i = editorPluginFactoryTypes.begin(); i != editorPluginFactoryTypes.end(); ++i)
 		{
 			Ref< IEditorPluginFactory > editorPluginFactory = dynamic_type_cast< IEditorPluginFactory* >((*i)->createInstance());
 			if (editorPluginFactory)
@@ -586,14 +586,14 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	}
 
 	// Load tools and populate tool menu.
-	std::vector< const TypeInfo* > toolTypes;
+	TypeInfoSet toolTypes;
 	type_of< IEditorTool >().findAllOf(toolTypes, false);
 	if (!toolTypes.empty())
 	{
 		m_menuTools = new ui::MenuItem(i18n::Text(L"MENU_TOOLS"));
 
 		int32_t toolId = 0;
-		for (std::vector< const TypeInfo* >::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
+		for (TypeInfoSet::iterator i = toolTypes.begin(); i != toolTypes.end(); ++i)
 		{
 			Ref< IEditorTool > tool = dynamic_type_cast< IEditorTool* >((*i)->createInstance());
 			if (!tool)
@@ -1503,6 +1503,9 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
 		T_ASSERT (tabPage);
+
+		if (m_tab->getActivePage() == tabPage)
+			continue;
 
 		Ref< PropertyBoolean > needOutputResources = tabPage->getData< PropertyBoolean >(L"NEEDOUTPUTRESOURCES");
 		T_ASSERT (needOutputResources);

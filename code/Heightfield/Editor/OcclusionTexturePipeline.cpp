@@ -19,8 +19,8 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Heightfield/Editor/OcclusionTextureAsset.h"
 #include "Heightfield/Editor/OcclusionTexturePipeline.h"
 #include "Mesh/MeshEntityData.h"
@@ -230,6 +230,7 @@ bool OcclusionTexturePipeline::buildDependencies(
 
 bool OcclusionTexturePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,

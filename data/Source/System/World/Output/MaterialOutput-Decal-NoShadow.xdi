@@ -5,7 +5,7 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>333</second>
+				<second>327</second>
 			</position>
 			<fragmentGuid>{7F2F8712-3B18-0000-6B1C-E9A3CADFF480}</fragmentGuid>
 			<inputPins>
@@ -27,6 +27,10 @@
 				</item>
 				<item>
 					<name>Emissive</name>
+					<optional>true</optional>
+				</item>
+				<item>
+					<name>Mask</name>
 					<optional>true</optional>
 				</item>
 				<item>
@@ -63,6 +67,10 @@
 				<item>
 					<first>Emissive</first>
 					<second>0</second>
+				</item>
+				<item>
+					<first>Mask</first>
+					<second>1</second>
 				</item>
 				<item>
 					<first>Reflection</first>
@@ -183,7 +191,7 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>561</second>
+				<second>565</second>
 			</position>
 			<fragmentGuid>{6B7A8D95-D3D4-A94F-8A99-4943A2470A55}</fragmentGuid>
 			<inputPins>
@@ -307,7 +315,7 @@
 			<comment/>
 			<position>
 				<first>124</first>
-				<second>645</second>
+				<second>643</second>
 			</position>
 			<fragmentGuid>{A18C08DA-399A-B949-AD8D-4E22CFCC2FE4}</fragmentGuid>
 			<inputPins>
@@ -632,6 +640,16 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>ViewNormal</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[14]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Mask</name>
 			</destination>
 		</item>
 	</edges>

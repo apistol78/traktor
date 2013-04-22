@@ -3,9 +3,9 @@
 #include "Database/Instance.h"
 #include "I18N/Text.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/ExportHeightfieldAsMeshWizardTool.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Model/Model.h"
 #include "Model/ModelFormat.h"
 #include "Ui/FileDialog.h"
@@ -98,6 +98,18 @@ bool ExportHeightfieldAsMeshWizardTool::launch(ui::Widget* parent, editor::IEdit
 		int32_t offset = iz * outputSize;
 		for (int32_t ix = 0; ix < outputSize - 1; ++ix)
 		{
+			float wx, wz;
+			heightfield->gridToWorld(ix * step, iz * step, wx, wz);
+
+			if (!heightfield->getWorldCut(wx, wz))
+				continue;
+			if (!heightfield->getWorldCut(wx + step, wz))
+				continue;
+			if (!heightfield->getWorldCut(wx + step, wz + step))
+				continue;
+			if (!heightfield->getWorldCut(wx, wz + step))
+				continue;
+
 			int32_t indices[] =
 			{
 				offset + ix,

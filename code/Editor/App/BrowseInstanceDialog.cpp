@@ -87,11 +87,11 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	m_listInstances->addDoubleClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListDoubleClick));
 
 	// Create browse preview generators.
-	std::vector< const TypeInfo* > browsePreviewImplTypes;
+	TypeInfoSet browsePreviewImplTypes;
 	type_of< IBrowsePreview >().findAllOf(browsePreviewImplTypes, false);
-	for (std::vector< const TypeInfo* >::const_iterator j = browsePreviewImplTypes.begin(); j != browsePreviewImplTypes.end(); ++j)
+	for (TypeInfoSet::const_iterator i = browsePreviewImplTypes.begin(); i != browsePreviewImplTypes.end(); ++i)
 	{
-		Ref< const IBrowsePreview > browsePreview = checked_type_cast< const IBrowsePreview*, false >((*j)->createInstance());
+		Ref< const IBrowsePreview > browsePreview = checked_type_cast< const IBrowsePreview*, false >((*i)->createInstance());
 		m_browsePreview.push_back(browsePreview);
 	}
 

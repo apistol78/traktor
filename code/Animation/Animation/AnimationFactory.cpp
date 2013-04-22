@@ -27,6 +27,16 @@ const TypeInfoSet AnimationFactory::getResourceTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet AnimationFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< StateGraph >());
+	typeSet.insert(&type_of< Animation >());
+	typeSet.insert(&type_of< Skeleton >());
+	typeSet.insert(&type_of< Pose >());
+	return typeSet;
+}
+
 bool AnimationFactory::isCacheable() const
 {
 	return true;

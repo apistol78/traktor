@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Heightfield/Heightfield.h"
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/HeightfieldShapeBullet.h"
@@ -13,12 +14,12 @@ const int32_t c_maximumStep = 16;
 
 inline float quantizeMin(float v)
 {
-	return floorf(v - 1.0f);
+	return floorf(v);
 }
 
 inline float quantizeMax(float v)
 {
-	return ceilf(v + 1.0f);
+	return ceilf(v);
 }
 
 		}
@@ -89,38 +90,49 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 
 	for (int32_t u = imnx; u < imxx; u += cx)
 	{
-		float mnx2 = float(u);
-		float mxx2 = float(u + cx);
+		float mnx = float(u);
+		float mxx = float(u + cx);
 
 		for (int32_t v = imnz; v < imxz; v += cz)
 		{
-			float mnz2 = float(v);
-			float mxz2 = float(v + cz);
+			float mnz = float(v);
+			float mxz = float(v + cz);
+
+			bool c[] =
+			{
+				m_heightfield->getWorldCut(mnx, mnz),
+				m_heightfield->getWorldCut(mxx, mnz),
+				m_heightfield->getWorldCut(mxx, mxz),
+				m_heightfield->getWorldCut(mnx, mxz)
+			};
 
 			float h[] =
 			{
-				m_heightfield->getWorldHeight(mnx2, mnz2),
-				m_heightfield->getWorldHeight(mxx2, mnz2),
-				m_heightfield->getWorldHeight(mxx2, mxz2),
-				m_heightfield->getWorldHeight(mnx2, mxz2)
+				m_heightfield->getWorldHeight(mnx, mnz),
+				m_heightfield->getWorldHeight(mxx, mnz),
+				m_heightfield->getWorldHeight(mxx, mxz),
+				m_heightfield->getWorldHeight(mnx, mxz)
 			};
 
 			btVector3 triangles[][3] =
 			{
 				{
-					btVector3(mnx2, h[0], mnz2),
-					btVector3(mnx2, h[3], mxz2),
-					btVector3(mxx2, h[2], mxz2)
+					btVector3(mnx, h[0], mnz),
+					btVector3(mnx, h[3], mxz),
+					btVector3(mxx, h[2], mxz)
 				},
 				{
-					btVector3(mxx2, h[2], mxz2),
-					btVector3(mxx2, h[1], mnz2),
-					btVector3(mnx2, h[0], mnz2)
+					btVector3(mxx, h[2], mxz),
+					btVector3(mxx, h[1], mnz),
+					btVector3(mnx, h[0], mnz)
 				}
 			};
 
-			callback->processTriangle(triangles[0], 0, 0);
-			callback->processTriangle(triangles[1], 0, 1);
+			if (c[0] && c[3] && c[2])
+				callback->processTriangle(triangles[0], 0, 0);
+
+			if (c[2] && c[1] && c[0])
+				callback->processTriangle(triangles[1], 0, 1);
 		}
 	}
 }

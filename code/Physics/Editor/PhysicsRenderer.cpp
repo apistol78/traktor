@@ -13,19 +13,19 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.PhysicsRenderer", PhysicsRenderer, Obje
 
 PhysicsRenderer::PhysicsRenderer()
 {
-	std::vector< const TypeInfo* > jointRendererTypes;
+	TypeInfoSet jointRendererTypes;
 	type_of< IPhysicsJointRenderer >().findAllOf(jointRendererTypes, false);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = jointRendererTypes.begin(); i != jointRendererTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = jointRendererTypes.begin(); i != jointRendererTypes.end(); ++i)
 	{
 		Ref< IPhysicsJointRenderer > jointRenderer = checked_type_cast< IPhysicsJointRenderer*, false >((*i)->createInstance());
 		m_jointRenderers.insert(std::make_pair(&jointRenderer->getDescType(), jointRenderer));
 	}
 
-	std::vector< const TypeInfo* > shapeRendererTypes;
+	TypeInfoSet shapeRendererTypes;
 	type_of< IPhysicsShapeRenderer >().findAllOf(shapeRendererTypes, false);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = shapeRendererTypes.begin(); i != shapeRendererTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = shapeRendererTypes.begin(); i != shapeRendererTypes.end(); ++i)
 	{
 		Ref< IPhysicsShapeRenderer > shapeRenderer = checked_type_cast< IPhysicsShapeRenderer*, false >((*i)->createInstance());
 		m_shapeRenderers.insert(std::make_pair(&shapeRenderer->getDescType(), shapeRenderer));

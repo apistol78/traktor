@@ -43,6 +43,11 @@ bool User::getPresenceValue(const std::wstring& key, std::wstring& outValue) con
 	return m_userProvider->getPresenceValue(m_handle, key, outValue);
 }
 
+bool User::isP2PAllowed() const
+{
+	return m_userProvider->isP2PAllowed(m_handle);
+}
+
 bool User::sendP2PData(const void* data, size_t size)
 {
 	return m_userProvider->sendP2PData(m_handle, data, size);

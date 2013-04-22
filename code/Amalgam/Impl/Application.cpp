@@ -256,10 +256,10 @@ bool Application::create(
 	// Create plugins.
 	T_DEBUG(L"Creating plugins...");
 
-	std::vector< const TypeInfo* > pluginTypes;
+	TypeInfoSet pluginTypes;
 	type_of< IRuntimePlugin >().findAllOf(pluginTypes, false);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = pluginTypes.begin(); i != pluginTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = pluginTypes.begin(); i != pluginTypes.end(); ++i)
 	{
 		T_ASSERT (*i);
 

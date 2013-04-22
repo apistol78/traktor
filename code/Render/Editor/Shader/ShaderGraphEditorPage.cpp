@@ -220,10 +220,10 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_menuQuick->create(m_editorGraph);
 
 	// Setup node facades.
-	std::vector< const TypeInfo* > nodeTypes;
+	TypeInfoSet nodeTypes;
 	type_of< Node >().findAllOf(nodeTypes);
 
-	for (std::vector< const TypeInfo* >::const_iterator i = nodeTypes.begin(); i != nodeTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = nodeTypes.begin(); i != nodeTypes.end(); ++i)
 		m_nodeFacades[*i] = new DefaultNodeFacade(m_editorGraph);
 
 	m_nodeFacades[&type_of< Color >()] = new ColorNodeFacade(m_editorGraph);

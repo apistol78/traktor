@@ -21,6 +21,13 @@ const TypeInfoSet PostProcessFactory::getResourceTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet PostProcessFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< PostProcessSettings >());
+	return typeSet;
+}
+
 bool PostProcessFactory::isCacheable() const
 {
 	return true;

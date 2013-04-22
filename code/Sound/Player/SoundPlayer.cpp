@@ -21,7 +21,7 @@ namespace traktor
 
 const float c_nearCutOff = 22050.0f;
 const float c_farCutOff = 0.1f;
-const float c_recentTimeOffset = 1.0f / 60.0f;
+const float c_recentTimeOffset = 1.0f / 30.0f;
 
 handle_t s_handleDistance = 0;
 handle_t s_handleVelocity = 0;
@@ -97,6 +97,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->sound = sound;
 				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
 				i->soundChannel->setFilter(0);
+				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
 				i->time = time;
 				i->fadeOff = -1.0f;
@@ -130,6 +131,7 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->sound = sound;
 				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
 				i->soundChannel->setFilter(0);
+				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
 				i->time = time;
 				i->fadeOff = -1.0f;
@@ -223,6 +225,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->sound = sound;
 				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 				i->soundChannel->setFilter(groupFilter);
+				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
 				i->time = time;
 				i->fadeOff = -1.0f;
@@ -256,6 +259,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->sound = sound;
 				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 				i->soundChannel->setFilter(groupFilter);
+				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
 				i->time = time;
 				i->fadeOff = -1.0f;
@@ -285,6 +289,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->sound = sound;
 				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
 				i->soundChannel->setFilter(groupFilter);
+				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
 				i->time = time;
 				i->fadeOff = -1.0f;
@@ -376,7 +381,7 @@ void SoundPlayer::update(float dT)
 
 		i->fadeOff -= std::min(dT, 1.0f / 60.0f);
 		if (i->fadeOff > 0.0f)
-			i->soundChannel->setVolume(i->fadeOff * i->sound->getVolume());
+			i->soundChannel->setVolume(i->fadeOff);
 		else
 			i->soundChannel->stop();
 	}

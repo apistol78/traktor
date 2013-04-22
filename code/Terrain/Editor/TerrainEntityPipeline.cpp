@@ -32,21 +32,21 @@ bool TerrainEntityPipeline::buildDependencies(
 {
 	if (const TerrainEntityData* terrainEntityData = dynamic_type_cast< const TerrainEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(terrainEntityData->getTerrain(), editor::PdfBuild);
+		pipelineDepends->addDependency(terrainEntityData->getTerrain(), editor::PdfBuild | editor::PdfResource);
 	}
 	else if (const OceanEntityData* oceanEntityData = dynamic_type_cast< const OceanEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(oceanEntityData->getShaderComposite(), editor::PdfBuild);
+		pipelineDepends->addDependency(oceanEntityData->getShaderComposite(), editor::PdfBuild | editor::PdfResource);
 	}
 	else if (const RiverEntityData* riverEntityData = dynamic_type_cast< const RiverEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(riverEntityData->getShader(), editor::PdfBuild);
+		pipelineDepends->addDependency(riverEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
 	}
 	else if (const UndergrowthEntityData* undergrowthEntityData = dynamic_type_cast< const UndergrowthEntityData* >(sourceAsset))
 	{
-		pipelineDepends->addDependency(undergrowthEntityData->getTerrain(), editor::PdfBuild);
-		pipelineDepends->addDependency(undergrowthEntityData->getMaterialMask(), editor::PdfBuild);
-		pipelineDepends->addDependency(undergrowthEntityData->getShader(), editor::PdfBuild);
+		pipelineDepends->addDependency(undergrowthEntityData->getTerrain(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(undergrowthEntityData->getMaterialMask(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency(undergrowthEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
 	}
 	return true;
 }

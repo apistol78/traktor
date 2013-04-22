@@ -245,6 +245,7 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 	if (!pipeline->buildOutput(
 		this,
 		0,
+		0,
 		sourceAsset,
 		0,
 		outputPath,
@@ -473,6 +474,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 
 	bool result = pipeline->buildOutput(
 		this,
+		dependency,
 		dependency->sourceInstanceGuid.isNotNull() ? m_sourceDatabase->getInstance(dependency->sourceInstanceGuid) : 0,
 		dependency->sourceAsset,
 		dependency->sourceAssetHash,

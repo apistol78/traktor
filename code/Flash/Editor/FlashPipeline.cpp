@@ -76,32 +76,33 @@ bool FlashPipeline::buildDependencies(
 		pipelineDepends->addDependency(*i, editor::PdfBuild);
 
 	// AccShape
-	pipelineDepends->addDependency(c_idShaderSolid, editor::PdfBuild);	// Solid
-	pipelineDepends->addDependency(c_idShaderTextured, editor::PdfBuild);	// Textured
-	pipelineDepends->addDependency(c_idShaderSolidCurve, editor::PdfBuild);	// Solid Curve
-	pipelineDepends->addDependency(c_idShaderTexturedCurve, editor::PdfBuild);	// Textured Curve
-	pipelineDepends->addDependency(c_idShaderSolidMask, editor::PdfBuild);	// Solid Mask
-	pipelineDepends->addDependency(c_idShaderTexturedMask, editor::PdfBuild);	// Textured Mask
-	pipelineDepends->addDependency(c_idShaderSolidMaskCurve, editor::PdfBuild);	// Solid Mask Curve
-	pipelineDepends->addDependency(c_idShaderTexturedMaskCurve, editor::PdfBuild);	// Textured Mask Curve
-	pipelineDepends->addDependency(c_idShaderIncrementMask, editor::PdfBuild);	// Increment Mask
-	pipelineDepends->addDependency(c_idShaderDecrementMask, editor::PdfBuild);	// Decrement Mask
+	pipelineDepends->addDependency(c_idShaderSolid, editor::PdfBuild | editor::PdfResource);	// Solid
+	pipelineDepends->addDependency(c_idShaderTextured, editor::PdfBuild | editor::PdfResource);	// Textured
+	pipelineDepends->addDependency(c_idShaderSolidCurve, editor::PdfBuild | editor::PdfResource);	// Solid Curve
+	pipelineDepends->addDependency(c_idShaderTexturedCurve, editor::PdfBuild | editor::PdfResource);	// Textured Curve
+	pipelineDepends->addDependency(c_idShaderSolidMask, editor::PdfBuild | editor::PdfResource);	// Solid Mask
+	pipelineDepends->addDependency(c_idShaderTexturedMask, editor::PdfBuild | editor::PdfResource);	// Textured Mask
+	pipelineDepends->addDependency(c_idShaderSolidMaskCurve, editor::PdfBuild | editor::PdfResource);	// Solid Mask Curve
+	pipelineDepends->addDependency(c_idShaderTexturedMaskCurve, editor::PdfBuild | editor::PdfResource);	// Textured Mask Curve
+	pipelineDepends->addDependency(c_idShaderIncrementMask, editor::PdfBuild | editor::PdfResource);	// Increment Mask
+	pipelineDepends->addDependency(c_idShaderDecrementMask, editor::PdfBuild | editor::PdfResource);	// Decrement Mask
 
 	// AccQuad
-	pipelineDepends->addDependency(c_idShaderQuadSolid, editor::PdfBuild);	// Solid Quad
-	pipelineDepends->addDependency(c_idShaderQuadTextured, editor::PdfBuild);	// Textured Quad
-	pipelineDepends->addDependency(c_idShaderQuadSolidMask, editor::PdfBuild);	// Solid Mask Quad
-	pipelineDepends->addDependency(c_idShaderQuadTexturedMask, editor::PdfBuild);	// Textured Mask Quad
+	pipelineDepends->addDependency(c_idShaderQuadSolid, editor::PdfBuild | editor::PdfResource);	// Solid Quad
+	pipelineDepends->addDependency(c_idShaderQuadTextured, editor::PdfBuild | editor::PdfResource);	// Textured Quad
+	pipelineDepends->addDependency(c_idShaderQuadSolidMask, editor::PdfBuild | editor::PdfResource);	// Solid Mask Quad
+	pipelineDepends->addDependency(c_idShaderQuadTexturedMask, editor::PdfBuild | editor::PdfResource);	// Textured Mask Quad
 
 	// AccGlyph
-	pipelineDepends->addDependency(c_idShaderGlyph, editor::PdfBuild);	// Glyph
-	pipelineDepends->addDependency(c_idShaderGlyphMask, editor::PdfBuild);	// Glyph Mask
+	pipelineDepends->addDependency(c_idShaderGlyph, editor::PdfBuild | editor::PdfResource);	// Glyph
+	pipelineDepends->addDependency(c_idShaderGlyphMask, editor::PdfBuild | editor::PdfResource);	// Glyph Mask
 
 	return true;
 }
 
 bool FlashPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,

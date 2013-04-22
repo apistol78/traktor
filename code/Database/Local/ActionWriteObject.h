@@ -28,6 +28,8 @@ public:
 
 	virtual void clean(Context* context);
 
+	virtual bool redundant(const Action* action) const;
+
 	const Ref< IStream >& getStream() const { return m_objectStream; }
 
 private:

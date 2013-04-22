@@ -61,7 +61,7 @@ bool ScenePipeline::buildDependencies(
 ) const
 {
 	Ref< const SceneAsset > sceneAsset = checked_type_cast< const SceneAsset* >(sourceAsset);
-	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings(), editor::PdfBuild);
+	pipelineDepends->addDependency(sceneAsset->getPostProcessSettings(), editor::PdfBuild | editor::PdfResource);
 
 	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
 	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
@@ -70,13 +70,14 @@ bool ScenePipeline::buildDependencies(
 	pipelineDepends->addDependency(sceneAsset->getControllerData());
 
 	if (sceneAsset->getWorldRenderSettings())
-		pipelineDepends->addDependency(sceneAsset->getWorldRenderSettings()->reflectionMap, editor::PdfBuild);
+		pipelineDepends->addDependency(sceneAsset->getWorldRenderSettings()->reflectionMap, editor::PdfBuild | editor::PdfResource);
 
 	return true;
 }
 
 bool ScenePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,

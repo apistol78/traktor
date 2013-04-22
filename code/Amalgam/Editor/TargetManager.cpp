@@ -31,6 +31,7 @@ bool TargetManager::create(uint16_t port)
 	if (!m_listenSocket->listen())
 		return false;
 
+	log::info << L"Target manager @" << port << L" created" << Endl;
 	return true;
 }
 

@@ -78,6 +78,16 @@ void Transaction::destroy()
 
 void Transaction::add(Action* action)
 {
+	// Discard redundant actions.
+	for (RefArray< Action >::iterator i = m_actions.begin(); i != m_actions.end(); )
+	{
+		if ((*i)->redundant(action))
+			i = m_actions.erase(i);
+		else
+			++i;
+	}
+
+	// Finally add new action to tail.
 	m_actions.push_back(action);
 }
 

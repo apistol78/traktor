@@ -57,6 +57,13 @@ ShaderFactory::ShaderFactory(
 const TypeInfoSet ShaderFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< ShaderResource >());
+	return typeSet;
+}
+
+const TypeInfoSet ShaderFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Shader >());
 	return typeSet;
 }

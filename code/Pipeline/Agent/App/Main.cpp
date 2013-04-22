@@ -83,6 +83,7 @@ void threadProcessClient(
 
 		bool result = pipeline->buildOutput(
 			pipelineBuilder,
+			0,
 			agentBuild->getSourceInstanceGuid().isNotNull() ? sourceDatabase->getInstance(agentBuild->getSourceInstanceGuid()) : 0,
 			agentBuild->getSourceAsset(),
 			agentBuild->getSourceAssetHash(),
@@ -249,9 +250,9 @@ int main(int argc, const char** argv)
 	std::set< std::wstring > types;
 
 	/*
-	std::vector< const TypeInfo* > pipelineTypes;
+	TypeInfoSet pipelineTypes;
 	type_of< editor::IPipeline >().findAllOf(pipelineTypes, false);
-	for (std::vector< const TypeInfo* >::const_iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
+	for (TypeInfoSet::const_iterator i = pipelineTypes.begin(); i != pipelineTypes.end(); ++i)
 		types.insert((*i)->getName());
 
 	properties->setProperty< PropertyStringSet >(L"PipelineTypes", types);

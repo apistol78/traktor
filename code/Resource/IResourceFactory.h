@@ -37,9 +37,16 @@ public:
 	/*! \brief Get resource types.
 	 *
 	 * Return a set of resource types this factory
-	 * supports, i.e. is capable of creating.
+	 * accepts.
 	 */
 	virtual const TypeInfoSet getResourceTypes() const = 0;
+
+	/*! \brief Get product types.
+	 *
+	 * Return a set of product types this factory
+	 * creates.
+	 */
+	virtual const TypeInfoSet getProductTypes() const = 0;
 
 	/*! \brief Check if resource is cacheable.
 	 *

@@ -26,7 +26,7 @@ bool Hlsl::generate(
 
 	if (vertexOutputs.size() != 1 || pixelOutputs.size() != 1)
 	{
-		log::error << L"Unable to generate HLSL shader; incorrect number of outputs" << Endl;
+		log::error << L"Unable to generate HLSL shader; incorrect number of outputs (VS " << vertexOutputs.size() << L", PS " << pixelOutputs.size() << L")" << Endl;
 		return false;
 	}
 

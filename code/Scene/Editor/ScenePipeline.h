@@ -39,6 +39,7 @@ public:
 
 	virtual bool buildOutput(
 		editor::IPipelineBuilder* pipelineBuilder,
+		const editor::PipelineDependency* dependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,
 		uint32_t sourceAssetHash,

@@ -49,7 +49,7 @@ BrowseTypeDialog::BrowseTypeDialog(const PropertyGroup* settings)
 
 bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable, bool onlyInstantiable)
 {
-	std::vector< const TypeInfo* > types;
+	TypeInfoSet types;
 	if (base)
 		base->findAllOf(types);
 	else
@@ -102,7 +102,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	m_typeList->addDoubleClickEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventListDoubleClick));
 
 	Ref< ui::TreeViewItem > groupRoot = m_categoryTree->createItem(0, i18n::Text(L"BROWSE_TYPE_GLOBAL"), 2, 3);
-	for (std::vector< const TypeInfo* >::iterator i = types.begin(); i != types.end(); ++i)
+	for (TypeInfoSet::iterator i = types.begin(); i != types.end(); ++i)
 	{
 		const TypeInfo* type = *i;
 

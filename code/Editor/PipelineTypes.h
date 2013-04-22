@@ -12,7 +12,8 @@ namespace traktor
 enum PipelineDependencyFlags
 {
 	PdfBuild = 1,	//!< Build output from dependency.
-	PdfUse = 2		//!< Used by parent dependency; parent needs to be built if this dependency is modified.
+	PdfUse = 2,		//!< Used by parent dependency; parent needs to be built if this dependency is modified.
+	PdfResource = 4	//!< Dependent as a external resource during runtime.
 };
 
 /*! \brief Pipeline build reasons.

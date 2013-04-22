@@ -25,6 +25,8 @@ public:
 
 	virtual void clean(Context* context);
 
+	virtual bool redundant(const Action* action) const;
+
 private:
 	Path m_instancePath;
 	Path m_instancePathNew;

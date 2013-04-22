@@ -34,7 +34,8 @@ bool RiverEntityData::serialize(ISerializer& s)
 }
 
 RiverEntityData::ControlPoint::ControlPoint()
-:	width(0.0f)
+:	position(Vector4::zero())
+,	width(0.0f)
 ,	tension(1.0f)
 {
 }

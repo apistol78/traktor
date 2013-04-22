@@ -22,10 +22,10 @@ Ref< Model > ModelFormat::readAny(IStream* stream, const std::wstring& extension
 {
 	Ref< Model > md;
 
-	std::vector< const TypeInfo* > formatTypes;
+	TypeInfoSet formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes, false);
 
-	for (std::vector< const TypeInfo* >::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
+	for (TypeInfoSet::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
 	{
 		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >((*i)->createInstance());
 		if (!modelFormat)
@@ -53,10 +53,10 @@ bool ModelFormat::writeAny(const Path& filePath, const Model* model)
 
 bool ModelFormat::writeAny(IStream* stream, const std::wstring& extension, const Model* model)
 {
-	std::vector< const TypeInfo* > formatTypes;
+	TypeInfoSet formatTypes;
 	type_of< ModelFormat >().findAllOf(formatTypes);
 
-	for (std::vector< const TypeInfo* >::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
+	for (TypeInfoSet::iterator i = formatTypes.begin(); i != formatTypes.end(); ++i)
 	{
 		Ref< ModelFormat > modelFormat = dynamic_type_cast< ModelFormat* >((*i)->createInstance());
 		if (!modelFormat)

@@ -31,11 +31,11 @@ void OnlineReplicatorPeers::destroy()
 	m_lobby = 0;
 }
 
-void OnlineReplicatorPeers::update()
+int32_t OnlineReplicatorPeers::update()
 {
 	m_timeUntilQuery -= 1.0f / 60.0f;
 	if (m_timeUntilQuery > 0.0f)
-		return;
+		return 0;
 
 	// Get users still in lobby.
 	m_users = m_lobby->getParticipants();
@@ -49,6 +49,7 @@ void OnlineReplicatorPeers::update()
 	}
 
 	m_timeUntilQuery = 1.0f;
+	return 0;
 }
 
 std::wstring OnlineReplicatorPeers::getName() const
@@ -72,7 +73,10 @@ uint32_t OnlineReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerH
 {
 	outPeerHandles.reserve(m_userMap.size());
 	for (SmallMap< uint64_t, online::IUser* >::const_iterator i = m_userMap.begin(); i != m_userMap.end(); ++i)
-		outPeerHandles.push_back(handle_t(i->first));
+	{
+		if (i->second->isP2PAllowed())
+			outPeerHandles.push_back(handle_t(i->first));
+	}
 	return m_userMap.size();
 }
 

@@ -5,6 +5,7 @@
 #include "Database/Instance.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/HeightfieldFactory.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/HeightfieldResource.h"
 
 namespace traktor
@@ -20,6 +21,13 @@ HeightfieldFactory::HeightfieldFactory(db::Database* database)
 }
 
 const TypeInfoSet HeightfieldFactory::getResourceTypes() const
+{
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< HeightfieldResource >());
+	return typeSet;
+}
+
+const TypeInfoSet HeightfieldFactory::getProductTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Heightfield >());
@@ -45,15 +53,8 @@ Ref< Object > HeightfieldFactory::create(resource::IResourceManager* resourceMan
 	if (!stream)
 		return 0;
 
-	Ref< Heightfield > heightfield = new Heightfield(
-		resource->getSize(),
-		resource->getWorldExtent()
-	);
+	Ref< Heightfield > heightfield = HeightfieldFormat().read(stream, resource->getWorldExtent());
 
-	uint32_t size = resource->getSize();
-	height_t* heights = const_cast< height_t* >(heightfield->getHeights());
-	T_ASSERT_M (heights, L"No heights in heightfield");
-	Reader(stream).read(heights, size * size, sizeof(height_t));
 	stream->close();
 
 	return heightfield;

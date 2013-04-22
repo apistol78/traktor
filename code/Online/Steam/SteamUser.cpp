@@ -94,6 +94,11 @@ bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, s
 	return true;
 }
 
+bool SteamUser::isP2PAllowed(uint64_t userHandle) const
+{
+	return m_failing.find(userHandle) == m_failing.end();
+}
+
 bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 {
 	if (m_failing.find(userHandle) != m_failing.end())

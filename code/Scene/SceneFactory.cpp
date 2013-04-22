@@ -24,6 +24,13 @@ SceneFactory::SceneFactory(
 const TypeInfoSet SceneFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< SceneResource >());
+	return typeSet;
+}
+
+const TypeInfoSet SceneFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Scene >());
 	return typeSet;
 }

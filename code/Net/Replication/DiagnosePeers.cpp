@@ -28,9 +28,9 @@ void DiagnosePeers::destroy()
 	safeDestroy(m_peers);
 }
 
-void DiagnosePeers::update()
+int32_t DiagnosePeers::update()
 {
-	m_peers->update();
+	int32_t result = m_peers->update();
 
 	double T = m_timer.getElapsedTime();
 	if (T >= m_lastT + 10.0)
@@ -52,6 +52,8 @@ void DiagnosePeers::update()
 		m_received = 0;
 		m_lastT = T;
 	}
+
+	return result;
 }
 
 std::wstring DiagnosePeers::getName() const

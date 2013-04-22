@@ -19,7 +19,14 @@ SoundFactory::SoundFactory(db::Database* db)
 const TypeInfoSet SoundFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< Sound >());
+	type_of< ISoundResource >().findAllOf(typeSet);
+	return typeSet;
+}
+
+const TypeInfoSet SoundFactory::getProductTypes() const
+{
+	TypeInfoSet typeSet;
+	type_of< Sound >().findAllOf(typeSet);
 	return typeSet;
 }
 

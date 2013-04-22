@@ -80,6 +80,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCac
 TerrainSurfaceCache::TerrainSurfaceCache()
 :	m_clearCache(true)
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
+,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
 ,	m_handlePatchOrigin(render::getParameterHandle(L"PatchOrigin"))
@@ -224,6 +225,7 @@ void TerrainSurfaceCache::get(
 
 	render::Shader* shader = terrain->getSurfaceShader();
 	render::ISimpleTexture* heightMap = terrain->getHeightMap();
+	render::ISimpleTexture* splatMap = terrain->getSplatMap();
 
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
 
@@ -235,6 +237,7 @@ void TerrainSurfaceCache::get(
 
 	renderBlock->programParams->beginParameters(renderContext);
 	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
+	renderBlock->programParams->setTextureParameter(m_handleSplatMap, splatMap);
 	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
 	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
 	renderBlock->programParams->setVectorParameter(m_handlePatchOrigin, patchOriginM);

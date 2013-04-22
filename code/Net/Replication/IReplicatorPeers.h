@@ -24,7 +24,7 @@ class T_DLLCLASS IReplicatorPeers : public Object
 public:
 	virtual void destroy() = 0;
 
-	virtual void update() = 0;
+	virtual int32_t update() = 0;
 
 	// \{
 

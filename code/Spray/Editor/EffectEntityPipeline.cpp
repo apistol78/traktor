@@ -25,7 +25,7 @@ bool EffectEntityPipeline::buildDependencies(
 ) const
 {
 	const EffectEntityData* effectEntityData = checked_type_cast< const EffectEntityData* >(sourceAsset);
-	pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild);
+	pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild | editor::PdfResource);
 
 	return world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid);
 }

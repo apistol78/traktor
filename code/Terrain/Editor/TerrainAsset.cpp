@@ -2,6 +2,7 @@
 #include "Core/Serialization/MemberStl.h"
 #include "Heightfield/Heightfield.h"
 #include "Heightfield/MaterialMask.h"
+#include "Render/ISimpleTexture.h"
 #include "Render/Shader.h"
 #include "Resource/Member.h"
 #include "Terrain/Editor/TerrainAsset.h"
@@ -11,7 +12,7 @@ namespace traktor
 	namespace terrain
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainAsset", 2, TerrainAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.TerrainAsset", 3, TerrainAsset, ISerializable)
 
 TerrainAsset::TerrainAsset()
 :	m_detailSkip(2)
@@ -28,6 +29,10 @@ bool TerrainAsset::serialize(ISerializer& s)
 	}
 
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
+
+	if (s.getVersion() >= 3)
+		s >> resource::Member< render::ISimpleTexture >(L"splatMap", m_splatMap);
+
 	if (s.getVersion() >= 1)
 		s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
 	else

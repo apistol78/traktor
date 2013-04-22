@@ -27,7 +27,8 @@ public:
 	enum OutputType
 	{
 		OtHeights,
-		OtNormals
+		OtNormals,
+		OtCuts
 	};
 
 	resource::Id< Heightfield > m_heightfield;

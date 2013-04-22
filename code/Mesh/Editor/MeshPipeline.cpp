@@ -181,7 +181,7 @@ bool MeshPipeline::buildDependencies(
 	// Add dependencies to material textures.
 	const std::map< std::wstring, Guid >& materialTextures = asset->getMaterialTextures();
 	for (std::map< std::wstring, Guid >::const_iterator i = materialTextures.begin(); i != materialTextures.end(); ++i)
-		pipelineDepends->addDependency(i->second, editor::PdfBuild);
+		pipelineDepends->addDependency(i->second, editor::PdfBuild | editor::PdfResource);
 
 	pipelineDepends->addDependency< render::ShaderGraph >();
 	return true;
@@ -189,6 +189,7 @@ bool MeshPipeline::buildDependencies(
 
 bool MeshPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* /*sourceInstance*/,
 	const ISerializable* sourceAsset,
 	uint32_t /*sourceAssetHash*/,

@@ -8,8 +8,8 @@
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 #include "Heightfield/Heightfield.h"
+#include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
-#include "Heightfield/Editor/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldTextureAsset.h"
 #include "Heightfield/Editor/HeightfieldTexturePipeline.h"
 #include "Render/Editor/Texture/TextureOutput.h"
@@ -105,6 +105,7 @@ bool HeightfieldTexturePipeline::buildDependencies(
 
 bool HeightfieldTexturePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
 	uint32_t sourceAssetHash,
@@ -193,7 +194,7 @@ bool HeightfieldTexturePipeline::buildOutput(
 			outputMap
 		);
 	}
-	else	// OtNormals
+	else if (asset->m_output == HeightfieldTextureAsset::OtNormals)
 	{
 		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getX8R8G8B8(), size, size);
 		for (int32_t v = 0; v < size; ++v)
@@ -237,6 +238,48 @@ bool HeightfieldTexturePipeline::buildOutput(
 			outputMap
 		);
 	}
+	else if (asset->m_output == HeightfieldTextureAsset::OtCuts)
+	{
+		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getR8(), size, size);
+
+		for (int32_t v = 0; v < size; ++v)
+		{
+			for (int32_t u = 0; u < size; ++u)
+			{
+				float cut = heightfield->getGridCut(u, v) ? 1.0f : 0.0f;
+				outputMap->setPixelUnsafe(u, v, Color4f(cut, cut, cut, cut));
+			}
+		}
+
+		Ref< render::TextureOutput > output = new render::TextureOutput();
+		output->m_textureFormat = render::TfR8;
+		output->m_generateNormalMap = false;
+		output->m_scaleDepth = 0.0f;
+		output->m_generateMips = false;
+		output->m_keepZeroAlpha = false;
+		output->m_textureType = render::Tt2D;
+		output->m_hasAlpha = false;
+		output->m_ignoreAlpha = false;
+		output->m_scaleImage = false;
+		output->m_scaleWidth = 0;
+		output->m_scaleHeight = 0;
+		output->m_enableCompression = false;
+		output->m_enableNormalMapCompression = false;
+		output->m_inverseNormalMapY = false;
+		output->m_linearGamma = true;
+		output->m_generateSphereMap = false;
+		output->m_preserveAlphaCoverage = false;
+		output->m_alphaCoverageReference = 0.0f;
+
+		return pipelineBuilder->buildOutput(
+			output,
+			outputPath,
+			outputGuid,
+			outputMap
+		);
+	}
+	else
+		return false;
 }
 
 	}

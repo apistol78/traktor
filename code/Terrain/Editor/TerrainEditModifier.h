@@ -92,6 +92,8 @@ private:
 	resource::Proxy< hf::Heightfield > m_heightfield;
 	AutoArrayPtr< uint8_t > m_normalData;
 	Ref< render::ISimpleTexture > m_normalMap;
+	AutoArrayPtr< uint8_t > m_cutData;
+	Ref< render::ISimpleTexture > m_cutMap;
 	Ref< IBrush > m_brush;
 	Ref< IFallOff > m_fallOff;
 	float m_strength;
