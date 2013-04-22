@@ -62,6 +62,8 @@ bool TargetManagerConnection::connect(const std::wstring& host, uint16_t port, c
 		return false;
 	}
 
+	socket->setNoDelay(true);
+
 	m_transport = new net::BidirectionalObjectTransport(socket);
 
     TargetID targetId(id);

@@ -15,6 +15,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashText", 0, FlashText, FlashCharacter)
 
 FlashText::FlashText()
+:	m_textMatrix(Matrix33::identity())
 {
 }
 

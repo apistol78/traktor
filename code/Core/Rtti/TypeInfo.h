@@ -36,7 +36,7 @@ void T_DLLCLASS __forceLinkReference(const class TypeInfo& type);
 class IInstanceFactory : public IRefCount
 {
 public:
-	virtual ITypedObject* createInstance() const = 0;
+	virtual ITypedObject* createInstance(void* memory = 0) const = 0;
 };
 
 /*! \brief Default instance factory implementation.
@@ -46,9 +46,12 @@ template < typename T >
 class InstanceFactory : public RefCountImpl< IInstanceFactory >
 {
 public:
-	virtual ITypedObject* createInstance() const
+	virtual ITypedObject* createInstance(void* memory) const
 	{
-		return new T();
+		if (memory)
+			return new (memory) T();
+		else
+			return new T();
 	}
 };
 
@@ -109,7 +112,7 @@ public:
 	 *
 	 * \return New instance.
 	 */
-	ITypedObject* createInstance() const;
+	ITypedObject* createInstance(void* memory = 0) const;
 
 	/*! \brief Find type from string representation.
 	 *

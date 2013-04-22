@@ -36,9 +36,11 @@ public:
 		}
 		else	// SdWrite
 		{
-			blobSize = m_ref->GetBufferSize();
+			blobSize = m_ref ? m_ref->GetBufferSize() : 0;
 			T_ASSERT (blobSize < sizeof(blob));
-			std::memcpy(blob, m_ref->GetBufferPointer(), blobSize);
+
+			if (m_ref)
+				std::memcpy(blob, m_ref->GetBufferPointer(), blobSize);
 
 			if (!(s >> Member< void* >(getName(), blob, blobSize)))
 				return false;
@@ -130,6 +132,14 @@ private:
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ProgramResourceDx10", 0, ProgramResourceDx10, ProgramResource)
+
+ProgramResourceDx10::ProgramResourceDx10()
+:	m_stencilReference(0)
+{
+	std::memset(&m_d3dRasterizerDesc, 0, sizeof(m_d3dRasterizerDesc));
+	std::memset(&m_d3dDepthStencilDesc, 0, sizeof(m_d3dDepthStencilDesc));
+	std::memset(&m_d3dBlendDesc, 0, sizeof(m_d3dBlendDesc));
+}
 
 bool ProgramResourceDx10::serialize(ISerializer& s)
 {

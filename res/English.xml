@@ -286,6 +286,10 @@
       <second>Check assets</second>
     </item>
     <item>
+      <first>EDITOR_CHECK_SERIALIZABLE_CLASSES</first>
+      <second>Check serializable classes</second>
+    </item>
+    <item>
       <first>EDITOR_OPEN_PROJECT</first>
       <second>Open project</second>
     </item>

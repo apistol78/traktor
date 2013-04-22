@@ -16,13 +16,20 @@ bool MemberType::serialize(ISerializer& s) const
 	{
 		std::wstring name;
 		s >> Member< std::wstring >(getName(), name);
-		
-		m_type = TypeInfo::find(name);
-		return bool(m_type != 0);
+		if (!name.empty())
+		{
+			m_type = TypeInfo::find(name);
+			return bool(m_type != 0);
+		}
+		else
+		{
+			m_type = 0;
+			return true;
+		}
 	}
 	else	// SdWrite
 	{
-		std::wstring name = m_type->getName();
+		std::wstring name = m_type ? m_type->getName() : L"";
 		s >> Member< std::wstring >(getName(), name);
 	}
 	return true;

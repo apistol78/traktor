@@ -158,10 +158,10 @@ bool TypeInfo::isInstantiable() const
 	return m_factory != 0;
 }
 
-ITypedObject* TypeInfo::createInstance() const
+ITypedObject* TypeInfo::createInstance(void* memory) const
 {
 	if (m_factory)
-		return m_factory->createInstance();
+		return m_factory->createInstance(memory);
 	else
 		return 0;
 }

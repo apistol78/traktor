@@ -19,6 +19,8 @@ class ProgramResourceDx10 : public ProgramResource
 	T_RTTI_CLASS;
 
 public:
+	ProgramResourceDx10();
+
 	virtual bool serialize(ISerializer& s);
 
 private:

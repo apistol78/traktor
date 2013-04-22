@@ -127,6 +127,26 @@ const uint32_t c_offsetCollectingDependencies = 20;
 const uint32_t c_offsetBuildingAsset = 30;
 const uint32_t c_offsetFinished = 100;
 
+class LogDualTarget : public ILogTarget
+{
+public:
+	LogDualTarget(ILogTarget* target1, ILogTarget* target2)
+	:	m_target1(target1)
+	,	m_target2(target2)
+	{
+	}
+
+	virtual void log(int32_t level, const std::wstring& str)
+	{
+		m_target1->log(level, str);
+		m_target2->log(level, str);
+	}
+
+private:
+	Ref< ILogTarget > m_target1;
+	Ref< ILogTarget > m_target2;
+};
+
 struct StatusListener : public IPipelineBuilder::IListener
 {
 	Ref< BuildView > m_buildView;
@@ -487,9 +507,9 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.LogVisible"))
 		m_logView->hide();
 
-	log::info.setGlobalTarget(m_logView->getLogTarget());
-	log::warning.setGlobalTarget(m_logView->getLogTarget());
-	log::error.setGlobalTarget(m_logView->getLogTarget());
+	log::info.setGlobalTarget(new LogDualTarget(log::info.getGlobalTarget(), m_logView->getLogTarget()));
+	log::warning.setGlobalTarget(new LogDualTarget(log::warning.getGlobalTarget(), m_logView->getLogTarget()));
+	log::error.setGlobalTarget(new LogDualTarget(log::error.getGlobalTarget(), m_logView->getLogTarget()));
 
 	Ref< ui::TabPage > tabPageBuild = new ui::TabPage();
 	tabPageBuild->create(m_tabOutput, i18n::Text(L"TITLE_BUILD"), new ui::FloodLayout());

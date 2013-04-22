@@ -253,6 +253,7 @@ private:
 	{
 		PeerState state;
 		uint64_t global;
+		std::wstring name;
 		Ghost* ghost;
 		bool precursor;
 		bool relay;

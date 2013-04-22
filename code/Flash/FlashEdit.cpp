@@ -22,6 +22,10 @@ FlashEdit::FlashEdit()
 ,	m_multiLine(false)
 ,	m_renderHtml(false)
 {
+	m_textColor.red =
+	m_textColor.green =
+	m_textColor.blue =
+	m_textColor.alpha = 0;
 }
 
 FlashEdit::FlashEdit(

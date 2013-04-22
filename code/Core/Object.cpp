@@ -84,6 +84,11 @@ void* Object::operator new (size_t size)
 	return object;
 }
 
+void* Object::operator new (size_t size, void* memory)
+{
+	return memory;
+}
+
 void Object::operator delete (void* ptr)
 {
 	if (ptr)
@@ -101,6 +106,10 @@ void Object::operator delete (void* ptr)
 
 		Atomic::decrement(s_heapObjectCount);
 	}
+}
+
+void Object::operator delete (void* ptr, void* memory)
+{
 }
 
 void Object::setReferenceDebugger(IObjectRefDebugger* refDebugger)

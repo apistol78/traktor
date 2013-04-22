@@ -73,10 +73,7 @@ uint32_t OnlineReplicatorPeers::getPeerHandles(std::vector< handle_t >& outPeerH
 {
 	outPeerHandles.reserve(m_userMap.size());
 	for (SmallMap< uint64_t, online::IUser* >::const_iterator i = m_userMap.begin(); i != m_userMap.end(); ++i)
-	{
-		if (i->second->isP2PAllowed())
-			outPeerHandles.push_back(handle_t(i->first));
-	}
+		outPeerHandles.push_back(handle_t(i->first));
 	return m_userMap.size();
 }
 

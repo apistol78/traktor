@@ -10,6 +10,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.AgentStream", 0, AgentStream, ISerializable)
 
 AgentStream::AgentStream()
+:	m_publicId(0)
 {
 }
 
