@@ -23,7 +23,7 @@ class FlattenBrush : public IBrush
 public:
 	FlattenBrush(const resource::Proxy< hf::Heightfield >& heightfield);
 
-	virtual void begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength);
+	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color);
 
 	virtual void apply(int32_t x, int32_t y);
 

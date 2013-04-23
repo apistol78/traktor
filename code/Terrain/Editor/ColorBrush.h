@@ -1,27 +1,27 @@
-#ifndef traktor_terrain_AverageBrush_H
-#define traktor_terrain_AverageBrush_H
+#ifndef traktor_terrain_ColorBrush_H
+#define traktor_terrain_ColorBrush_H
 
-#include "Resource/Proxy.h"
+#include "Core/Math/Color4f.h"
 #include "Terrain/Editor/IBrush.h"
 
 namespace traktor
 {
-	namespace hf
+	namespace drawing
 	{
 
-class Heightfield;
+class Image;
 
 	}
 
 	namespace terrain
 	{
 
-class AverageBrush : public IBrush
+class ColorBrush : public IBrush
 {
 	T_RTTI_CLASS;
 
 public:
-	AverageBrush(const resource::Proxy< hf::Heightfield >& heightfield);
+	ColorBrush(drawing::Image* colorImage);
 
 	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color);
 
@@ -30,13 +30,14 @@ public:
 	virtual void end(int32_t x, int32_t y);
 
 private:
-	resource::Proxy< hf::Heightfield > m_heightfield;
+	Ref< drawing::Image > m_colorImage;
 	int32_t m_radius;
 	const IFallOff* m_fallOff;
 	float m_strength;
+	Color4f m_color;
 };
 
 	}
 }
 
-#endif	// traktor_terrain_AverageBrush_H
+#endif	// traktor_terrain_ColorBrush_H

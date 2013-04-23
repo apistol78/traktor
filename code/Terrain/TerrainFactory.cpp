@@ -51,6 +51,13 @@ Ref< Object > TerrainFactory::create(resource::IResourceManager* resourceManager
 
 	if (!resourceManager->bind(terrainResource->getHeightfield(), terrain->m_heightfield))
 		return 0;
+
+	if (terrainResource->getColorMap())
+	{
+		if (!resourceManager->bind(terrainResource->getColorMap(), terrain->m_colorMap))
+			return 0;
+	}
+
 	if (!resourceManager->bind(terrainResource->getNormalMap(), terrain->m_normalMap))
 		return 0;
 	if (!resourceManager->bind(terrainResource->getHeightMap(), terrain->m_heightMap))

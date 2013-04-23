@@ -169,14 +169,17 @@ void AudioServer::update(float dT, bool renderViewActive)
 uint32_t AudioServer::getActiveSoundChannels() const
 {
 	uint32_t activeCount = 0;
-	for (uint32_t i = 0; ; ++i)
+	if (m_soundPlayer)
 	{
-		sound::SoundChannel* channel = m_soundSystem->getChannel(i);
-		if (!channel)
-			break;
+		for (uint32_t i = 0; ; ++i)
+		{
+			sound::SoundChannel* channel = m_soundSystem->getChannel(i);
+			if (!channel)
+				break;
 
-		if (channel->isPlaying())
-			activeCount++;
+			if (channel->isPlaying())
+				activeCount++;
+		}
 	}
 	return activeCount;
 }

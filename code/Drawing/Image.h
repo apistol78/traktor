@@ -100,9 +100,12 @@ public:
 	/*! \brief Load image from resource. */
 	static Ref< Image > load(const void* resource, uint32_t size, const std::wstring& extension);
 
-	/*! \brief Save image. */
+	/*! \brief Save image as file. */
 	bool save(const Path& fileName);
-	
+
+	/*! \brief Save image into stream. */
+	bool save(IStream* stream, const std::wstring& extension);
+
 	/*! \brief Get current image format. */
 	const PixelFormat& getPixelFormat() const;
 	

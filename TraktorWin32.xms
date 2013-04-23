@@ -17532,6 +17532,10 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[15]/project/dependencies/item[8]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">

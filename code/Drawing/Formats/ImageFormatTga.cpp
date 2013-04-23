@@ -144,7 +144,7 @@ bool ImageFormatTga::write(IStream* stream, Image* image)
 		break;
 	case 32:
 		{
-			PixelFormat pixelFormat(32, 0xff000000, 0x00ff0000, 0x0000ff00, (1 << image->getPixelFormat().getAlphaBits()) - 1, false, false);
+			PixelFormat pixelFormat(32, 0x00ff0000, 0x0000ff00, 0x000000ff, ((1 << image->getPixelFormat().getAlphaBits()) - 1) << 24, false, false);
 			clone->convert(pixelFormat);
 		}
 		break;

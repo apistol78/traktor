@@ -68,8 +68,7 @@ EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
 ,	m_skip(1)
 {
 	m_points.reserve(c_maxAlive);
-	m_renderPoints[0].reserve(c_maxAlive);
-	m_renderPoints[1].reserve(c_maxAlive);
+	m_renderPoints.reserve(c_maxAlive);
 }
 
 EmitterInstance::~EmitterInstance()
@@ -239,18 +238,17 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	// \fixme Should transform into render points as a "tail" job.
 	synchronize();
 
-	PointVector& renderPoints = m_renderPoints[m_count & 1];
-	renderPoints.resize(0);
+	m_renderPoints.resize(0);
 
 	for (uint32_t i = 0; i < m_points.size(); i += m_skip)
-		renderPoints.push_back(m_points[i]);
+		m_renderPoints.push_back(m_points[i]);
 
 	if (!m_emitter->worldSpace())
 	{
-		for (uint32_t i = 0; i < renderPoints.size(); ++i)
+		for (uint32_t i = 0; i < m_renderPoints.size(); ++i)
 		{
-			renderPoints[i].position = transform * renderPoints[i].position.xyz1();
-			renderPoints[i].velocity = transform * renderPoints[i].velocity.xyz0();
+			m_renderPoints[i].position = transform * m_renderPoints[i].position.xyz1();
+			m_renderPoints[i].velocity = transform * m_renderPoints[i].velocity.xyz0();
 		}
 	}
 
@@ -261,18 +259,16 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& tran
 {
 	T_ASSERT (m_count > 0);
 
-	PointVector& renderPoints = m_renderPoints[(m_count - 1) & 1];
-
-	if (renderPoints.empty())
+	if (m_renderPoints.empty())
 		return;
 
 	if (m_emitter->getSort())
-		std::sort(renderPoints.begin(), renderPoints.end(), PointPredicate(cameraPlane));
+		std::sort(m_renderPoints.begin(), m_renderPoints.end(), PointPredicate(cameraPlane));
 
 	pointRenderer->render(
 		m_emitter->getShader(),
 		cameraPlane,
-		renderPoints,
+		m_renderPoints,
 		m_emitter->getMiddleAge(),
 		m_emitter->getCullNearDistance(),
 		m_emitter->getFadeNearRange()

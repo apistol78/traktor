@@ -6,6 +6,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Drawing/Image.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
@@ -13,6 +14,7 @@
 #include "Heightfield/HeightfieldFormat.h"
 #include "Heightfield/Editor/HeightfieldAsset.h"
 #include "Heightfield/Editor/HeightfieldTextureAsset.h"
+#include "Render/Editor/Texture/TextureOutput.h"
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -28,7 +30,9 @@ namespace traktor
 		{
 
 const float c_terrainNormalScale = 0.8f;
+const uint32_t c_cutsCountThreshold = 10;
 
+const Guid c_guidColorMapSeed(L"{E2A97254-B596-4665-900B-FB70A2267AF7}");
 const Guid c_guidNormalMapSeed(L"{84F74E7F-4D02-40f6-A07A-EE9F5EF3CDB4}");
 const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
 const Guid c_guidCutMapSeed(L"{CFB69515-9263-4611-93B1-658D8CA6D861}");
@@ -137,10 +141,10 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 						float h[] =
 						{
-							heightfield->getGridHeightNearest(gx0, gz0),
-							heightfield->getGridHeightNearest(gx1, gz0),
-							heightfield->getGridHeightNearest(gx0, gz1),
-							heightfield->getGridHeightNearest(gx1, gz1)
+							heightfield->getGridHeightBilinear(gx0, gz0),
+							heightfield->getGridHeightBilinear(gx1, gz0),
+							heightfield->getGridHeightBilinear(gx0, gz1),
+							heightfield->getGridHeightBilinear(gx1, gz1)
 						};
 
 						for (uint32_t lz = 0; lz <= lodSkip; ++lz)
@@ -161,7 +165,7 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 								float hr = lerp(h[1], h[3], fz);
 								float h1 = lerp(hl, hr, fx);
 
-								float h = heightfield->getGridHeightNearest(gx, gz);
+								float h = heightfield->getGridHeightBilinear(gx, gz);
 
 								float herr0 = abs(h - h0);
 								float herr1 = abs(h - h1);
@@ -183,7 +187,7 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 7, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 8, TerrainPipeline, editor::DefaultPipeline)
 
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -299,7 +303,7 @@ bool TerrainPipeline::buildOutput(
 	sourceData = 0;
 
 	// Check if heightfield have cuts.
-	bool haveCuts = false;
+	uint32_t cutsCount = 0;
 
 	const uint8_t* cuts = heightfield->getCuts();
 	if (cuts)
@@ -308,20 +312,41 @@ bool TerrainPipeline::buildOutput(
 		for (int32_t i = 0; i < size * size / 8; ++i)
 		{
 			if (cuts[i] != 0xff)
-			{
-				haveCuts = true;
-				break;
-			}
+				++cutsCount;
 		}
 	}
 
 	// Generate uids.
+	Guid colorMapGuid;
 	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
 	Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
-	Guid cutMapGuid = haveCuts ? combineGuids(c_guidCutMapSeed, outputGuid) : Guid();
+	Guid cutMapGuid = (cutsCount >= c_cutsCountThreshold) ? combineGuids(c_guidCutMapSeed, outputGuid) : Guid();
 	Guid terrainCoarseShaderGuid = combineGuids(c_guidTerrainCoarseShaderSeed, outputGuid);
 	Guid terrainDetailShaderGuid = combineGuids(c_guidTerrainDetailShaderSeed, outputGuid);
 	Guid surfaceShaderGuid = combineGuids(c_guidSurfaceShaderSeed, outputGuid);
+
+	// Create color texture.
+	Ref< IStream > file = sourceInstance->readData(L"Color");
+	if (file)
+	{
+		Ref< drawing::Image > colorImage = drawing::Image::load(file, L"tga");
+		if (!colorImage)
+		{
+			log::error << L"Terrain pipeline failed; unable to read attached color image" << Endl;
+			return false;
+		}
+
+		file->close();
+		file = 0;
+
+		colorMapGuid = combineGuids(c_guidColorMapSeed, outputGuid);
+
+		Ref< render::TextureOutput > colorTexture = new render::TextureOutput();
+		colorTexture->m_keepZeroAlpha = false;
+		colorTexture->m_ignoreAlpha = true;
+		colorTexture->m_linearGamma = true;
+		pipelineBuilder->buildOutput(colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
+	}
 
 	// Read surface shader and prepare with proper input and output ports.
 	Ref< const render::ShaderGraph > assetSurfaceShader = pipelineBuilder->getObjectReadOnly< render::ShaderGraph >(terrainAsset->getSurfaceShader());
@@ -417,14 +442,15 @@ bool TerrainPipeline::buildOutput(
 	terrainResource->m_detailSkip = terrainAsset->getDetailSkip();
 	terrainResource->m_patchDim = terrainAsset->getPatchDim();
 	terrainResource->m_heightfield = terrainAsset->getHeightfield();
-	terrainResource->m_splatMap = terrainAsset->getSplatMap();
+	terrainResource->m_colorMap = resource::Id< render::ISimpleTexture >(colorMapGuid);
 	terrainResource->m_normalMap = resource::Id< render::ISimpleTexture >(normalMapGuid);
 	terrainResource->m_heightMap = resource::Id< render::ISimpleTexture >(heightMapGuid);
+	terrainResource->m_splatMap = terrainAsset->getSplatMap();
 	terrainResource->m_terrainCoarseShader = resource::Id< render::Shader >(terrainCoarseShaderGuid);
 	terrainResource->m_terrainDetailShader = resource::Id< render::Shader >(terrainDetailShaderGuid);
 	terrainResource->m_surfaceShader = resource::Id< render::Shader >(surfaceShaderGuid);
 
-	if (haveCuts)
+	if (cutsCount >= c_cutsCountThreshold)
 		terrainResource->m_cutMap = resource::Id< render::ISimpleTexture >(cutMapGuid);
 
 	// Calculate lod errors for each terrain patch.

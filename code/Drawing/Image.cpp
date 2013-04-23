@@ -363,6 +363,21 @@ bool Image::save(const Path& fileName)
 	return result;
 }
 
+bool Image::save(IStream* stream, const std::wstring& extension)
+{
+	if (!m_data)
+		return false;
+
+	Ref< IImageFormat > imageFormat = IImageFormat::determineFormat(extension);
+	if (imageFormat == 0)
+		return false;
+
+	bool result = imageFormat->write(stream, this);
+	checkData(m_data, m_size);
+
+	return result;
+}
+
 const PixelFormat& Image::getPixelFormat() const
 {
 	return m_pixelFormat;

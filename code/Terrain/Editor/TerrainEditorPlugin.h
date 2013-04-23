@@ -15,6 +15,7 @@ class Static;
 		namespace custom
 		{
 
+class ColorControl;
 class ToolBarButton;
 class ToolBarEmbed;
 
@@ -40,7 +41,9 @@ public:
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< TerrainEditModifier > m_terrainEditModifier;
+	Ref< ui::Widget > m_parent;
 	Ref< ui::custom::ToolBarButton > m_toolToggleEditTerrain;
+	Ref< ui::custom::ToolBarButton > m_toolToggleColor;
 	Ref< ui::custom::ToolBarButton > m_toolToggleElevate;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFlatten;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAverage;
@@ -51,8 +54,12 @@ private:
 	Ref< ui::Slider > m_sliderStrength;
 	Ref< ui::Static > m_staticStrength;
 	Ref< ui::custom::ToolBarEmbed > m_toolStrength;
+	Ref< ui::custom::ColorControl > m_colorControl;
+	Ref< ui::custom::ToolBarEmbed > m_toolColor;
 
 	void eventSliderStrengthChange(ui::Event* event);
+
+	void eventColorClick(ui::Event* event);
 
 	void eventModifierChanged(ui::Event* event);
 };
