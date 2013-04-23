@@ -65,6 +65,7 @@ TerrainEntity::TerrainEntity(render::IRenderSystem* renderSystem)
 ,	m_handleSurface(render::getParameterHandle(L"Surface"))
 ,	m_handleSurfaceOffset(render::getParameterHandle(L"SurfaceOffset"))
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
+,	m_handleColorMap(render::getParameterHandle(L"ColorMap"))
 ,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
 ,	m_handleCutMap(render::getParameterHandle(L"CutMap"))
 ,	m_handleNormals(render::getParameterHandle(L"Normals"))
@@ -143,6 +144,9 @@ void TerrainEntity::render(
 
 	coarseShader->setCombination(L"CutEnable", m_terrain->getCutMap());
 	detailShader->setCombination(L"CutEnable", m_terrain->getCutMap());
+
+	coarseShader->setCombination(L"ColorEnable", m_terrain->getColorMap());
+	detailShader->setCombination(L"ColorEnable", m_terrain->getColorMap());
 
 	render::IProgram* coarseProgram = coarseShader->getCurrentProgram();
 	render::IProgram* detailProgram = detailShader->getCurrentProgram();
@@ -401,9 +405,12 @@ void TerrainEntity::render(
 		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
 		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
 
-		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+		renderBlock->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
 		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
+		renderBlock->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
+		renderBlock->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
 		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
 		renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, -worldExtent * Scalar(0.5f));
 		renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);
@@ -441,9 +448,10 @@ void TerrainEntity::render(
 		renderBlock->programParams->beginParameters(worldContext.getRenderContext());
 		worldRenderPass.setProgramParameters(renderBlock->programParams, true);
 
-		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
-		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
 		renderBlock->programParams->setTextureParameter(m_handleHeightfield, m_terrain->getHeightMap());
+		renderBlock->programParams->setTextureParameter(m_handleSurface, m_surfaceCache->getVirtualTexture());
+		renderBlock->programParams->setTextureParameter(m_handleColorMap, m_terrain->getColorMap());
+		renderBlock->programParams->setTextureParameter(m_handleNormals, m_terrain->getNormalMap());
 		renderBlock->programParams->setTextureParameter(m_handleSplatMap, m_terrain->getSplatMap());
 		renderBlock->programParams->setTextureParameter(m_handleCutMap, m_terrain->getCutMap());
 		renderBlock->programParams->setVectorParameter(m_handleEye, eyePosition);
@@ -488,13 +496,15 @@ bool TerrainEntity::updatePatches()
 	{
 		for (uint32_t px = 0; px < m_patchCount; ++px)
 		{
+			uint32_t patchId = px + pz * m_patchCount;
+
 			int32_t pminX = (heightfieldSize * px) / m_patchCount;
 			int32_t pminZ = (heightfieldSize * pz) / m_patchCount;
 			int32_t pmaxX = (heightfieldSize * (px + 1)) / m_patchCount;
 			int32_t pmaxZ = (heightfieldSize * (pz + 1)) / m_patchCount;
 
-			const Terrain::Patch& patchData = m_terrain->getPatches()[px + pz * m_patchCount];
-			Patch& patch = m_patches[px + pz * m_patchCount];
+			const Terrain::Patch& patchData = m_terrain->getPatches()[patchId];
+			Patch& patch = m_patches[patchId];
 
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 			float* vertex = static_cast< float* >(patch.vertexBuffer->lock());
@@ -530,6 +540,8 @@ bool TerrainEntity::updatePatches()
 #if !defined(T_USE_TERRAIN_VERTEX_TEXTURE_FETCH)
 			patch.vertexBuffer->unlock();
 #endif
+
+			m_surfaceCache->flush(patchId);
 		}
 	}
 

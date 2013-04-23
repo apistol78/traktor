@@ -5,6 +5,9 @@
 
 namespace traktor
 {
+
+class Color4f;
+
 	namespace terrain
 	{
 
@@ -15,7 +18,14 @@ class IBrush : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength) = 0;
+	enum Mode
+	{
+		MdColor = 1,
+		MdHeight = 2,
+		MdCut = 4
+	};
+
+	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color) = 0;
 
 	virtual void apply(int32_t x, int32_t y) = 0;
 

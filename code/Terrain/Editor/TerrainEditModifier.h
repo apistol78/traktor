@@ -1,6 +1,7 @@
 #ifndef traktor_terrain_TerrainEditModifier_H
 #define traktor_terrain_TerrainEditModifier_H
 
+#include "Core/Math/Color4f.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Resource/Proxy.h"
 #include "Scene/Editor/IModifier.h"
@@ -11,6 +12,13 @@ namespace traktor
 	{
 
 class Instance;
+
+	}
+
+	namespace drawing
+	{
+
+class Image;
 
 	}
 
@@ -83,20 +91,27 @@ public:
 
 	void setStrength(float strength) { m_strength = strength; }
 
+	void setColor(const Color4f& color) { m_color = color; }
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< terrain::TerrainEntity > m_entity;
 	Ref< terrain::TerrainEntityData > m_entityData;
+	Ref< db::Instance > m_terrainInstance;
 	Ref< db::Instance > m_heightfieldInstance;
 	Ref< hf::HeightfieldAsset > m_heightfieldAsset;
 	resource::Proxy< hf::Heightfield > m_heightfield;
+	Ref< drawing::Image > m_colorImage;
+	Ref< render::ISimpleTexture > m_colorMap;
 	AutoArrayPtr< uint8_t > m_normalData;
 	Ref< render::ISimpleTexture > m_normalMap;
 	AutoArrayPtr< uint8_t > m_cutData;
 	Ref< render::ISimpleTexture > m_cutMap;
 	Ref< IBrush > m_brush;
+	uint32_t m_brushMode;
 	Ref< IFallOff > m_fallOff;
 	float m_strength;
+	Color4f m_color;
 	Vector4 m_center;
 };
 

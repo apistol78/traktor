@@ -9,6 +9,8 @@
 #include "Ui/Slider.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
+#include "Ui/Custom/ColorPicker/ColorControl.h"
+#include "Ui/Custom/ColorPicker/ColorDialog.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarEmbed.h"
@@ -32,9 +34,12 @@ TerrainEditorPlugin::TerrainEditorPlugin(scene::SceneEditorContext* context)
 
 bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBar)
 {
-	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"png"), 8);
+	m_parent = parent;
+
+	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"png"), 9);
 
 	m_toolToggleEditTerrain = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), ui::Command(L"Terrain.Editor.EditTerrain"), image + 6, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleColor = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_COLOR_BRUSH"), ui::Command(L"Terrain.Editor.ColorBrush"), image + 8, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleElevate = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), ui::Command(L"Terrain.Editor.ElevateBrush"), image + 0, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFlatten = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), ui::Command(L"Terrain.Editor.FlattenBrush"), image + 1, ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleAverage = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_AVERAGE_BRUSH"), ui::Command(L"Terrain.Editor.AverageBrush"), image + 3, ui::custom::ToolBarButton::BsDefaultToggle);
@@ -56,12 +61,20 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_staticStrength->create(containerStrength, L"50%");
 
 	m_toolStrength = new ui::custom::ToolBarEmbed(containerStrength, 140);
+
+	m_colorControl = new ui::custom::ColorControl();
+	m_colorControl->create(toolBar, ui::WsNone);
+	m_colorControl->setColor(Color4ub(255, 255, 255, 255));
+	m_colorControl->addButtonUpEventHandler(ui::createMethodHandler(this, &TerrainEditorPlugin::eventColorClick));
+
+	m_toolColor = new ui::custom::ToolBarEmbed(m_colorControl, 32);
 	
 	m_toolToggleElevate->setToggled(true);
 	m_toolToggleFallOffSmooth->setToggled(true);
 
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 	toolBar->addItem(m_toolToggleEditTerrain);
+	toolBar->addItem(m_toolToggleColor);
 	toolBar->addItem(m_toolToggleElevate);
 	toolBar->addItem(m_toolToggleFlatten);
 	toolBar->addItem(m_toolToggleAverage);
@@ -72,6 +85,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	toolBar->addItem(m_toolToggleFallOffSharp);
 	toolBar->addItem(new ui::custom::ToolBarSeparator());
 	toolBar->addItem(m_toolStrength);
+	toolBar->addItem(m_toolColor);
 
 	m_context->addModifierChangedEventHandler(ui::createMethodHandler(this, &TerrainEditorPlugin::eventModifierChanged));
 	return true;
@@ -90,7 +104,9 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 	{
 		ui::custom::ToolBarButton* toolSelected = 0;
 
-		if (command == L"Terrain.Editor.ElevateBrush")
+		if (command == L"Terrain.Editor.ColorBrush")
+			toolSelected = m_toolToggleColor;
+		else if (command == L"Terrain.Editor.ElevateBrush")
 			toolSelected = m_toolToggleElevate;
 		else if (command == L"Terrain.Editor.FlattenBrush")
 			toolSelected = m_toolToggleFlatten;
@@ -103,6 +119,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 
 		if (toolSelected)
 		{
+			m_toolToggleColor->setToggled(m_toolToggleColor == toolSelected);
 			m_toolToggleElevate->setToggled(m_toolToggleElevate == toolSelected);
 			m_toolToggleFlatten->setToggled(m_toolToggleFlatten == toolSelected);
 			m_toolToggleAverage->setToggled(m_toolToggleAverage == toolSelected);
@@ -131,10 +148,31 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 
 void TerrainEditorPlugin::eventSliderStrengthChange(ui::Event* event)
 {
-	TerrainEditModifier* modifier = dynamic_type_cast< TerrainEditModifier* >(m_context->getModifier());
-	if (modifier)
-		modifier->setStrength(m_sliderStrength->getValue() / 10.0f);
+	m_terrainEditModifier->setStrength(m_sliderStrength->getValue() / 10.0f);
 	m_staticStrength->setText(toString(int32_t(m_sliderStrength->getValue() * 10)) + L"%");
+}
+
+void TerrainEditorPlugin::eventColorClick(ui::Event* event)
+{
+	ui::custom::ColorDialog colorDialog;
+	colorDialog.create(
+		m_parent,
+		i18n::Text(L"COLOR_DIALOG_TEXT"),
+		ui::custom::ColorDialog::WsDefaultFixed,
+		m_colorControl->getColor()
+	);
+	if (colorDialog.showModal() == ui::DrOk)
+	{
+		Color4ub color = colorDialog.getColor();
+		m_colorControl->setColor(color);
+		m_terrainEditModifier->setColor(Color4f(
+			color.r / 255.0f,
+			color.g / 255.0f,
+			color.b / 255.0f,
+			1.0f
+		));
+	}
+	colorDialog.destroy();
 }
 
 void TerrainEditorPlugin::eventModifierChanged(ui::Event* event)

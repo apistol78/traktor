@@ -90,6 +90,7 @@ private:
 	std::vector< Entry > m_entries;
 	bool m_clearCache;
 	render::handle_t m_handleHeightfield;
+	render::handle_t m_handleColorMap;
 	render::handle_t m_handleSplatMap;
 	render::handle_t m_handleWorldOrigin;
 	render::handle_t m_handleWorldExtent;

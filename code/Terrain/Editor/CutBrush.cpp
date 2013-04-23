@@ -18,10 +18,11 @@ CutBrush::CutBrush(const resource::Proxy< hf::Heightfield >& heightfield)
 {
 }
 
-void CutBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength)
+uint32_t CutBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color)
 {
 	m_radius = radius;
 	m_cut = (strength < 0.0f);
+	return MdCut;
 }
 
 void CutBrush::apply(int32_t x, int32_t y)

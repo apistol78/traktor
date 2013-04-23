@@ -80,6 +80,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainSurfaceCache", TerrainSurfaceCac
 TerrainSurfaceCache::TerrainSurfaceCache()
 :	m_clearCache(true)
 ,	m_handleHeightfield(render::getParameterHandle(L"Heightfield"))
+,	m_handleColorMap(render::getParameterHandle(L"ColorMap"))
 ,	m_handleSplatMap(render::getParameterHandle(L"SplatMap"))
 ,	m_handleWorldOrigin(render::getParameterHandle(L"WorldOrigin"))
 ,	m_handleWorldExtent(render::getParameterHandle(L"WorldExtent"))
@@ -224,8 +225,12 @@ void TerrainSurfaceCache::get(
 	patchExtentM += Vector4(2.0f / 4096.0f, 0.0f, 2.0f / 4096.0f, 0.0f) * Scalar(10.0f);
 
 	render::Shader* shader = terrain->getSurfaceShader();
+
 	render::ISimpleTexture* heightMap = terrain->getHeightMap();
+	render::ISimpleTexture* colorMap = terrain->getColorMap();
 	render::ISimpleTexture* splatMap = terrain->getSplatMap();
+
+	shader->setCombination(L"ColorEnable", colorMap != 0);
 
 	TerrainSurfaceRenderBlock* renderBlock = renderContext->alloc< TerrainSurfaceRenderBlock >("Terrain surface");
 
@@ -237,6 +242,7 @@ void TerrainSurfaceCache::get(
 
 	renderBlock->programParams->beginParameters(renderContext);
 	renderBlock->programParams->setTextureParameter(m_handleHeightfield, heightMap);
+	renderBlock->programParams->setTextureParameter(m_handleColorMap, colorMap);
 	renderBlock->programParams->setTextureParameter(m_handleSplatMap, splatMap);
 	renderBlock->programParams->setVectorParameter(m_handleWorldOrigin, worldOrigin);
 	renderBlock->programParams->setVectorParameter(m_handleWorldExtent, worldExtent);

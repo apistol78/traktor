@@ -150,7 +150,7 @@ bool Document::save()
 {
 	for (uint32_t i = 0; i < m_instances.size(); ++i)
 	{
-		if (!m_instances[i]->setObject(m_objects[i]))
+		if (m_objects[i] && !m_instances[i]->setObject(m_objects[i]))
 		{
 			log::error << L"Unable to save document; failed to set instance object" << Endl;
 			return false;
@@ -191,7 +191,6 @@ bool Document::close()
 	m_instances.clear();
 	m_objects.clear();
 	m_objectHashes.clear();
-	
 	m_undoHistory.clear();
 
 	return true;

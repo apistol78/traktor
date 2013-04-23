@@ -3,6 +3,8 @@
 #include "Core/Log/Log.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
 #include "Heightfield/Heightfield.h"
@@ -17,6 +19,7 @@
 #include "Terrain/Terrain.h"
 #include "Terrain/TerrainEntity.h"
 #include "Terrain/Editor/AverageBrush.h"
+#include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
@@ -145,19 +148,27 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditModifier", TerrainEditModifi
 
 TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 :	m_context(context)
-,	m_center(Vector4::zero())
+,	m_brushMode(0)
 ,	m_strength(1.0f)
+,	m_color(Color4f(1.0f, 1.0f, 1.0f, 1.0f))
+,	m_center(Vector4::zero())
 {
 }
 
 void TerrainEditModifier::selectionChanged()
 {
+	db::Database* sourceDatabase = m_context->getEditor()->getSourceDatabase();
+	T_ASSERT (sourceDatabase);
+
 	render::SimpleTextureCreateDesc desc;
 
+	m_terrainInstance = 0;
 	m_heightfieldInstance = 0;
 	m_heightfieldAsset = 0;
 	m_heightfield.clear();
+	m_colorImage = 0;
 	m_brush = 0;
+	m_brushMode = 0;
 
 	// Get terrain entity from selection.
 	RefArray< scene::EntityAdapter > entityAdapters;
@@ -184,7 +195,51 @@ void TerrainEditModifier::selectionChanged()
 		return;
 	}
 
+	// Get color image from terrain asset.
+	m_terrainInstance = sourceDatabase->getInstance(m_entityData->getTerrain());
+	if (m_terrainInstance)
+	{
+		Ref< IStream > file = m_terrainInstance->readData(L"Color");
+		if (file)
+		{
+			m_colorImage = drawing::Image::load(file, L"tga");
+			m_colorImage->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
+			file->close();
+			file = 0;
+		}
+	}
+
 	int32_t size = m_heightfield->getSize();
+
+	// Create color image if none attached.
+	if (!m_colorImage)
+	{
+		m_colorImage = new drawing::Image(drawing::PixelFormat::getR8G8B8A8().endianSwapped(), size, size);
+		m_colorImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
+	}
+
+	// Create non-compressed texture for colors.
+	desc.width = size;
+	desc.height = size;
+	desc.mipCount = 1;
+	desc.format = render::TfR8G8B8A8;
+	desc.sRGB = false;
+	desc.immutable = false;
+
+	m_colorMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	if (m_colorMap)
+	{
+		// Transfer colors to texture.
+		render::ITexture::Lock nl;
+		if (m_colorMap->lock(0, nl))
+		{
+			std::memcpy(nl.bits, m_colorImage->getData(), size * size * 4);
+			m_colorMap->unlock(0);
+		}
+
+		// Replace color map in resource with our texture.
+		m_entity->m_terrain->m_colorMap = resource::Proxy< render::ISimpleTexture >(m_colorMap);
+	}
 
 	// Create normal texture data.
 	m_normalData.reset(new uint8_t [size * size * 4]);
@@ -294,6 +349,8 @@ bool TerrainEditModifier::handleCommand(const ui::Command& command)
 
 	if (command == L"Terrain.Editor.AverageBrush")
 		m_brush = new AverageBrush(m_heightfield);
+	else if (command == L"Terrain.Editor.ColorBrush")
+		m_brush = new ColorBrush(m_colorImage);
 	else if (command == L"Terrain.Editor.CutBrush")
 		m_brush = new CutBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.ElevateBrush")
@@ -302,7 +359,7 @@ bool TerrainEditModifier::handleCommand(const ui::Command& command)
 		m_brush = new FlattenBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.SmoothBrush")
 		m_brush = new SmoothBrush(m_heightfield);
-	if (command == L"Terrain.Editor.SmoothFallOff")
+	else if (command == L"Terrain.Editor.SmoothFallOff")
 		m_fallOff = new SmoothFallOff();
 	else if (command == L"Terrain.Editor.SharpFallOff")
 		m_fallOff = new SharpFallOff();
@@ -322,12 +379,13 @@ bool TerrainEditModifier::begin(
 
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
-	m_brush->begin(
+	m_brushMode = m_brush->begin(
 		gx,
 		gz,
 		gridRadius,
 		m_fallOff,
-		m_strength * (mouseButton == 1 ? 1.0f : -1.0f)
+		m_strength * (mouseButton == 1 ? 1.0f : -1.0f),
+		m_color
 	);
 
 	return true;
@@ -368,21 +426,34 @@ void TerrainEditModifier::apply(
 	m_entity->updatePatches();
 	m_center = center;
 
-	// Update normals.
+	int32_t size = m_heightfield->getSize();
+
+	float worldRadius = m_context->getGuideSize();
+	int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
+
+	int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
+	int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
+
+	mnx = clamp(mnx, 0, size - 1);
+	mxx = clamp(mxx, 0, size - 1);
+	mnz = clamp(mnz, 0, size - 1);
+	mxz = clamp(mxz, 0, size - 1);
+
+	// Update colors.
+	if ((m_brushMode & IBrush::MdColor) != 0)
 	{
-		int32_t size = m_heightfield->getSize();
+		// Transfer colors to texture.
+		render::ITexture::Lock cl;
+		if (m_colorMap->lock(0, cl))
+		{
+			std::memcpy(cl.bits, m_colorImage->getData(), size * size * 4);
+			m_colorMap->unlock(0);
+		}
+	}
 
-		float worldRadius = m_context->getGuideSize();
-		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
-
-		int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
-		int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
-
-		mnx = clamp(mnx, 0, size - 1);
-		mxx = clamp(mxx, 0, size - 1);
-		mnz = clamp(mnz, 0, size - 1);
-		mxz = clamp(mxz, 0, size - 1);
-
+	// Update normals.
+	if ((m_brushMode & IBrush::MdHeight) != 0)
+	{
 		for (int32_t v = mnz; v <= mxz; ++v)
 		{
 			for (int32_t u = mnx; u <= mxx; ++u)
@@ -408,20 +479,8 @@ void TerrainEditModifier::apply(
 	}
 
 	// Update cuts.
+	if ((m_brushMode & IBrush::MdCut) != 0)
 	{
-		int32_t size = m_heightfield->getSize();
-
-		float worldRadius = m_context->getGuideSize();
-		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
-
-		int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
-		int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
-
-		mnx = clamp(mnx, 0, size - 1);
-		mxx = clamp(mxx, 0, size - 1);
-		mnz = clamp(mnz, 0, size - 1);
-		mxz = clamp(mxz, 0, size - 1);
-
 		for (int32_t v = mnz; v <= mxz; ++v)
 		{
 			for (int32_t u = mnx; u <= mxx; ++u)
@@ -449,8 +508,41 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 	m_brush->end(gx, gz);
 
+	// Write modifications to color.
+	if (
+		(m_brushMode & IBrush::MdColor) != 0 &&
+		m_terrainInstance
+	)
+	{
+		if (!m_context->getDocument()->containInstance(m_terrainInstance))
+		{
+			if (!m_terrainInstance->checkout())
+			{
+				m_terrainInstance = 0;
+				return;
+			}
+		}
+
+		Ref< IStream > file = m_terrainInstance->writeData(L"Color");
+		if (file)
+		{
+			m_colorImage->save(file, L"tga");
+			file->close();
+			file = 0;
+		}
+
+		m_context->getDocument()->editInstance(
+			m_terrainInstance,
+			0
+		);
+		m_context->getDocument()->setModified();
+	}
+
 	// Write modifications to heightfield.
-	if (!m_heightfieldInstance)
+	if (
+		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut)) != 0 &&
+		!m_heightfieldInstance
+	)
 	{
 		const resource::Id< Terrain >& terrain = m_entityData->getTerrain();
 		Ref< const TerrainAsset > terrainAsset = sourceDatabase->getObjectReadOnly< TerrainAsset >(terrain);
@@ -485,7 +577,10 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		);
 	}
 
-	if (m_heightfieldInstance)
+	if (
+		(m_brushMode & (IBrush::MdHeight | IBrush::MdCut)) != 0 &&
+		m_heightfieldInstance
+	)
 	{
 		Ref< IStream > data = m_heightfieldInstance->writeData(L"Data");
 		if (data)

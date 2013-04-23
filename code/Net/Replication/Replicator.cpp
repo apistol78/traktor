@@ -802,8 +802,6 @@ void Replicator::receiveMessages()
 		else if (msg.type == MtBye)
 		{
 			Peer& peer = m_peers[handle];
-			T_REPLICATOR_DEBUG(L"OK: Got \"Bye\" from peer \"" << peer.name << L"\"");
-
 			if (
 				peer.state == PsEstablished &&
 				peer.ghost
@@ -1190,7 +1188,7 @@ int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 					findOptimalRelay(fromPeerHandle, outPeerHandle, relayPeerHandle)
 				)
 				{
-					T_REPLICATOR_DEBUG(L"OK: Relay message from peer " << fromPeer.name << L" passed on further as no direct connection to target exist");
+					T_REPLICATOR_DEBUG(L"OK: Relay message from peer " << fromPeer.name << L" passed on further as no direct connection to target " << targetPeer.name << L" exist");
 					
 					// Increment message type; assume in order as to become
 					// second level relay message type.

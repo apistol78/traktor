@@ -54,6 +54,8 @@ public:
 
 	T_MATH_INLINE void setAlpha(const Scalar& alpha);
 
+	T_MATH_INLINE Color4f saturated() const;
+
 	static T_MATH_INLINE Color4f loadAligned(const float* in);
 
 	static T_MATH_INLINE Color4f loadUnaligned(const float* in);
