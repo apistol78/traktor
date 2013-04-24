@@ -25,7 +25,6 @@ class MaterialMask;
 	namespace render
 	{
 
-class ISimpleTexture;
 class Shader;
 
 	}
@@ -48,15 +47,12 @@ public:
 
 	const resource::Id< hf::Heightfield >& getHeightfield() const { return m_heightfield; }
 
-	const resource::Id< render::ISimpleTexture >& getSplatMap() const { return m_splatMap; }
-
 	const resource::Id< render::Shader >& getSurfaceShader() const { return m_surfaceShader; }
 
 private:
 	uint32_t m_detailSkip;
 	uint32_t m_patchDim;
 	resource::Id< hf::Heightfield > m_heightfield;
-	resource::Id< render::ISimpleTexture > m_splatMap;
 	resource::Id< render::Shader > m_surfaceShader;
 };
 

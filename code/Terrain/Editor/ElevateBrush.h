@@ -23,7 +23,7 @@ class ElevateBrush : public IBrush
 public:
 	ElevateBrush(const resource::Proxy< hf::Heightfield >& heightfield);
 
-	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color);
+	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material);
 
 	virtual void apply(int32_t x, int32_t y);
 

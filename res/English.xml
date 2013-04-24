@@ -590,6 +590,10 @@
       <second>Export heightfield as mesh...</second>
     </item>
     <item>
+      <first>NEW_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Create new heightfield...</second>
+    </item>    
+    <item>
       <first>FIND_IN_DATABASE</first>
       <second>Find in database</second>
     </item>
@@ -1968,6 +1972,22 @@
     <item>
       <first>TERRAIN_EDITOR_EDIT_TERRAIN</first>
       <second>Edit terrain</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_MATERIAL_BRUSH</first>
+      <second>Material brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_MATERIAL</first>
+      <second>Material</second>
+    </item>    
+    <item>
+      <first>TERRAIN_EDITOR_COLOR_BRUSH</first>
+      <second>Color brush</second>
+    </item>
+    <item>
+      <first>TERRAIN_EDITOR_CUT_BRUSH</first>
+      <second>Cut brush</second>
     </item>
     <item>
       <first>TERRAIN_EDITOR_ELEVATE_BRUSH</first>

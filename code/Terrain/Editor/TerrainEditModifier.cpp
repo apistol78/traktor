@@ -23,6 +23,8 @@
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
+#include "Terrain/Editor/MaterialBrush.h"
+#include "Terrain/Editor/NoiseBrush.h"
 #include "Terrain/Editor/SharpFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
 #include "Terrain/Editor/SmoothFallOff.h"
@@ -151,6 +153,7 @@ TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 ,	m_brushMode(0)
 ,	m_strength(1.0f)
 ,	m_color(Color4f(1.0f, 1.0f, 1.0f, 1.0f))
+,	m_material(0)
 ,	m_center(Vector4::zero())
 {
 }
@@ -166,6 +169,7 @@ void TerrainEditModifier::selectionChanged()
 	m_heightfieldInstance = 0;
 	m_heightfieldAsset = 0;
 	m_heightfield.clear();
+	m_splatImage = 0;
 	m_colorImage = 0;
 	m_brush = 0;
 	m_brushMode = 0;
@@ -195,8 +199,54 @@ void TerrainEditModifier::selectionChanged()
 		return;
 	}
 
-	// Get color image from terrain asset.
+	int32_t size = m_heightfield->getSize();
+
 	m_terrainInstance = sourceDatabase->getInstance(m_entityData->getTerrain());
+
+	// Get splat image from terrain asset.
+	if (m_terrainInstance)
+	{
+		Ref< IStream > file = m_terrainInstance->readData(L"Splat");
+		if (file)
+		{
+			m_splatImage = drawing::Image::load(file, L"tga");
+			m_splatImage->convert(drawing::PixelFormat::getR8G8B8A8().endianSwapped());
+			file->close();
+			file = 0;
+		}
+	}
+
+	// Create splat image if none attached.
+	if (!m_splatImage)
+	{
+		m_splatImage = new drawing::Image(drawing::PixelFormat::getR8G8B8A8().endianSwapped(), size, size);
+		m_splatImage->clear(Color4f(1.0f, 0.0f, 0.0f, 0.0f));
+	}
+
+	// Create non-compressed texture for splats.
+	desc.width = size;
+	desc.height = size;
+	desc.mipCount = 1;
+	desc.format = render::TfR8G8B8A8;
+	desc.sRGB = false;
+	desc.immutable = false;
+
+	m_splatMap = m_context->getRenderSystem()->createSimpleTexture(desc);
+	if (m_splatMap)
+	{
+		// Transfer splats to texture.
+		render::ITexture::Lock nl;
+		if (m_splatMap->lock(0, nl))
+		{
+			std::memcpy(nl.bits, m_splatImage->getData(), size * size * 4);
+			m_splatMap->unlock(0);
+		}
+
+		// Replace splat map in resource with our texture.
+		m_entity->m_terrain->m_splatMap = resource::Proxy< render::ISimpleTexture >(m_splatMap);
+	}
+
+	// Get color image from terrain asset.
 	if (m_terrainInstance)
 	{
 		Ref< IStream > file = m_terrainInstance->readData(L"Color");
@@ -208,8 +258,6 @@ void TerrainEditModifier::selectionChanged()
 			file = 0;
 		}
 	}
-
-	int32_t size = m_heightfield->getSize();
 
 	// Create color image if none attached.
 	if (!m_colorImage)
@@ -357,6 +405,10 @@ bool TerrainEditModifier::handleCommand(const ui::Command& command)
 		m_brush = new ElevateBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.FlattenBrush")
 		m_brush = new FlattenBrush(m_heightfield);
+	else if (command == L"Terrain.Editor.MaterialBrush")
+		m_brush = new MaterialBrush(m_splatImage);
+	else if (command == L"Terrain.Editor.NoiseBrush")
+		m_brush = new NoiseBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.SmoothBrush")
 		m_brush = new SmoothBrush(m_heightfield);
 	else if (command == L"Terrain.Editor.SmoothFallOff")
@@ -374,6 +426,9 @@ bool TerrainEditModifier::begin(
 	int32_t mouseButton
 )
 {
+	if (!m_heightfield)
+		return false;
+
 	float worldRadius = m_context->getGuideSize();
 	int32_t gridRadius = int32_t(m_heightfield->getSize() * worldRadius / m_heightfield->getWorldExtent().x());
 
@@ -385,7 +440,8 @@ bool TerrainEditModifier::begin(
 		gridRadius,
 		m_fallOff,
 		m_strength * (mouseButton == 1 ? 1.0f : -1.0f),
-		m_color
+		m_color,
+		m_material
 	);
 
 	return true;
@@ -438,6 +494,18 @@ void TerrainEditModifier::apply(
 	mxx = clamp(mxx, 0, size - 1);
 	mnz = clamp(mnz, 0, size - 1);
 	mxz = clamp(mxz, 0, size - 1);
+
+	// Update splats.
+	if ((m_brushMode & IBrush::MdSplat) != 0)
+	{
+		// Transfer splats to texture.
+		render::ITexture::Lock cl;
+		if (m_splatMap->lock(0, cl))
+		{
+			std::memcpy(cl.bits, m_splatImage->getData(), size * size * 4);
+			m_splatMap->unlock(0);
+		}
+	}
 
 	// Update colors.
 	if ((m_brushMode & IBrush::MdColor) != 0)
@@ -507,6 +575,36 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
 	m_brush->end(gx, gz);
+
+	// Write modifications to splats.
+	if (
+		(m_brushMode & IBrush::MdSplat) != 0 &&
+		m_terrainInstance
+	)
+	{
+		if (!m_context->getDocument()->containInstance(m_terrainInstance))
+		{
+			if (!m_terrainInstance->checkout())
+			{
+				m_terrainInstance = 0;
+				return;
+			}
+		}
+
+		Ref< IStream > file = m_terrainInstance->writeData(L"Splat");
+		if (file)
+		{
+			m_splatImage->save(file, L"tga");
+			file->close();
+			file = 0;
+		}
+
+		m_context->getDocument()->editInstance(
+			m_terrainInstance,
+			0
+		);
+		m_context->getDocument()->setModified();
+	}
 
 	// Write modifications to color.
 	if (
@@ -599,7 +697,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 
 void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	if (!m_entity || m_center.w() <= FUZZY_EPSILON)
+	if (!m_entity || !m_heightfield || m_center.w() <= FUZZY_EPSILON)
 		return;
 
 	float radius = m_context->getGuideSize();

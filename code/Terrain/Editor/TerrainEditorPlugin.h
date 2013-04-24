@@ -17,6 +17,7 @@ class Static;
 
 class ColorControl;
 class ToolBarButton;
+class ToolBarDropDown;
 class ToolBarEmbed;
 
 		}
@@ -43,11 +44,13 @@ private:
 	Ref< TerrainEditModifier > m_terrainEditModifier;
 	Ref< ui::Widget > m_parent;
 	Ref< ui::custom::ToolBarButton > m_toolToggleEditTerrain;
+	Ref< ui::custom::ToolBarButton > m_toolToggleMaterial;
 	Ref< ui::custom::ToolBarButton > m_toolToggleColor;
 	Ref< ui::custom::ToolBarButton > m_toolToggleElevate;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFlatten;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAverage;
 	Ref< ui::custom::ToolBarButton > m_toolToggleSmooth;
+	Ref< ui::custom::ToolBarButton > m_toolToggleNoise;
 	Ref< ui::custom::ToolBarButton > m_toolToggleCut;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSmooth;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSharp;
@@ -56,6 +59,7 @@ private:
 	Ref< ui::custom::ToolBarEmbed > m_toolStrength;
 	Ref< ui::custom::ColorControl > m_colorControl;
 	Ref< ui::custom::ToolBarEmbed > m_toolColor;
+	Ref< ui::custom::ToolBarDropDown > m_toolMaterial;
 
 	void eventSliderStrengthChange(ui::Event* event);
 

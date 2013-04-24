@@ -27,6 +27,8 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Terrain.Editor.CutBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.ElevateBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.FlattenBrush"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.MaterialBrush"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.NoiseBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothFallOff"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SharpFallOff"));
