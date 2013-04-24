@@ -19,11 +19,11 @@ SmoothBrush::SmoothBrush(const resource::Proxy< hf::Heightfield >& heightfield)
 {
 }
 
-uint32_t SmoothBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color)
+uint32_t SmoothBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material)
 {
 	m_radius = radius;
 	m_fallOff = fallOff;
-	m_strength = abs(strength);
+	m_strength = powf(abs(strength), 3.0f);
 	return MdHeight;
 }
 

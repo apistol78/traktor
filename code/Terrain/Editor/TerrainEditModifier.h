@@ -93,6 +93,8 @@ public:
 
 	void setColor(const Color4f& color) { m_color = color; }
 
+	void setMaterial(int32_t material) { m_material = material; }
+
 private:
 	scene::SceneEditorContext* m_context;
 	Ref< terrain::TerrainEntity > m_entity;
@@ -101,6 +103,8 @@ private:
 	Ref< db::Instance > m_heightfieldInstance;
 	Ref< hf::HeightfieldAsset > m_heightfieldAsset;
 	resource::Proxy< hf::Heightfield > m_heightfield;
+	Ref< drawing::Image > m_splatImage;
+	Ref< render::ISimpleTexture > m_splatMap;
 	Ref< drawing::Image > m_colorImage;
 	Ref< render::ISimpleTexture > m_colorMap;
 	AutoArrayPtr< uint8_t > m_normalData;
@@ -112,6 +116,7 @@ private:
 	Ref< IFallOff > m_fallOff;
 	float m_strength;
 	Color4f m_color;
+	int32_t m_material;
 	Vector4 m_center;
 };
 

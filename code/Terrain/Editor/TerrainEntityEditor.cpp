@@ -40,9 +40,13 @@ bool TerrainEntityEditor::handleCommand(const ui::Command& command)
 
 void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	TerrainEntity* terrainEntity = checked_type_cast< TerrainEntity* >(getEntityAdapter()->getEntity());
+	TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(getEntityAdapter()->getEntity());
+	if (!terrainEntity || !terrainEntity->getTerrain())
+		return;
 
 	const resource::Proxy< hf::Heightfield >& heightfield = terrainEntity->getTerrain()->getHeightfield();
+	if (!heightfield)
+		return;
 
 	const Vector4& worldExtent = heightfield->getWorldExtent();
 

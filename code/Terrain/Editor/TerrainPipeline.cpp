@@ -32,6 +32,7 @@ namespace traktor
 const float c_terrainNormalScale = 0.8f;
 const uint32_t c_cutsCountThreshold = 10;
 
+const Guid c_guidSplatMapSeed(L"{3BDF1640-E844-404b-85F2-277C022B8E23}");
 const Guid c_guidColorMapSeed(L"{E2A97254-B596-4665-900B-FB70A2267AF7}");
 const Guid c_guidNormalMapSeed(L"{84F74E7F-4D02-40f6-A07A-EE9F5EF3CDB4}");
 const Guid c_guidHeightMapSeed(L"{EA932687-BC1E-477f-BF70-A8715991258D}");
@@ -187,7 +188,7 @@ void calculatePatches(const TerrainAsset* terrainAsset, const hf::Heightfield* h
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 8, TerrainPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.TerrainPipeline", 9, TerrainPipeline, editor::DefaultPipeline)
 
 bool TerrainPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -212,7 +213,6 @@ bool TerrainPipeline::buildDependencies(
 {
 	const TerrainAsset* terrainAsset = checked_type_cast< const TerrainAsset*, false >(sourceAsset);
 
-	pipelineDepends->addDependency(terrainAsset->getSplatMap(), editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(terrainAsset->getHeightfield(), editor::PdfUse | editor::PdfBuild | editor::PdfResource);
 	pipelineDepends->addDependency(terrainAsset->getSurfaceShader(), editor::PdfUse);
 
@@ -318,6 +318,7 @@ bool TerrainPipeline::buildOutput(
 
 	// Generate uids.
 	Guid colorMapGuid;
+	Guid splatMapGuid = combineGuids(c_guidSplatMapSeed, outputGuid);
 	Guid normalMapGuid = combineGuids(c_guidNormalMapSeed, outputGuid);
 	Guid heightMapGuid = combineGuids(c_guidHeightMapSeed, outputGuid);
 	Guid cutMapGuid = (cutsCount >= c_cutsCountThreshold) ? combineGuids(c_guidCutMapSeed, outputGuid) : Guid();
@@ -346,6 +347,42 @@ bool TerrainPipeline::buildOutput(
 		colorTexture->m_ignoreAlpha = true;
 		colorTexture->m_linearGamma = true;
 		pipelineBuilder->buildOutput(colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
+	}
+
+	// Create splat texture.
+	file = sourceInstance->readData(L"Splat");
+	if (file)
+	{
+		Ref< drawing::Image > splatImage = drawing::Image::load(file, L"tga");
+		if (!splatImage)
+		{
+			log::error << L"Terrain pipeline failed; unable to read attached splat image" << Endl;
+			return false;
+		}
+
+		file->close();
+		file = 0;
+
+		Ref< render::TextureOutput > splatTexture = new render::TextureOutput();
+		splatTexture->m_keepZeroAlpha = false;
+		splatTexture->m_ignoreAlpha = false;
+		splatTexture->m_hasAlpha = true;
+		splatTexture->m_linearGamma = true;
+		pipelineBuilder->buildOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
+	}
+	else
+	{
+		// No splat image in instance; create simple default.
+		Ref< drawing::Image > splatImage = new drawing::Image(drawing::PixelFormat::getR8G8B8A8(), 1, 1);
+		splatImage->setPixel(0, 0, Color4f(1.0f, 0.0f, 0.0f, 0.0f));
+
+		Ref< render::TextureOutput > splatTexture = new render::TextureOutput();
+		splatTexture->m_keepZeroAlpha = false;
+		splatTexture->m_ignoreAlpha = false;
+		splatTexture->m_hasAlpha = true;
+		splatTexture->m_linearGamma = true;
+		splatTexture->m_enableCompression = false;
+		pipelineBuilder->buildOutput(splatTexture, outputPath + L"/Splat", splatMapGuid, splatImage);
 	}
 
 	// Read surface shader and prepare with proper input and output ports.
@@ -445,7 +482,7 @@ bool TerrainPipeline::buildOutput(
 	terrainResource->m_colorMap = resource::Id< render::ISimpleTexture >(colorMapGuid);
 	terrainResource->m_normalMap = resource::Id< render::ISimpleTexture >(normalMapGuid);
 	terrainResource->m_heightMap = resource::Id< render::ISimpleTexture >(heightMapGuid);
-	terrainResource->m_splatMap = terrainAsset->getSplatMap();
+	terrainResource->m_splatMap = resource::Id< render::ISimpleTexture >(splatMapGuid);
 	terrainResource->m_terrainCoarseShader = resource::Id< render::Shader >(terrainCoarseShaderGuid);
 	terrainResource->m_terrainDetailShader = resource::Id< render::Shader >(terrainDetailShaderGuid);
 	terrainResource->m_surfaceShader = resource::Id< render::Shader >(surfaceShaderGuid);

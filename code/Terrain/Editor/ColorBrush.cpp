@@ -19,11 +19,11 @@ ColorBrush::ColorBrush(drawing::Image* colorImage)
 {
 }
 
-uint32_t ColorBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color)
+uint32_t ColorBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material)
 {
 	m_radius = radius;
 	m_fallOff = fallOff;
-	m_strength = strength;
+	m_strength = powf(abs(strength), 2.0f);
 	m_color = color;
 	return MdColor;
 }
