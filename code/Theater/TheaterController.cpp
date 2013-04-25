@@ -40,15 +40,16 @@ void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 
 		float loopStart = m_tracks[i]->getLoopStart();
 		float loopEnd = m_tracks[i]->getLoopEnd();
+		float timeOffset = m_tracks[i]->getTimeOffset();
 
 		if (loopStart + FUZZY_EPSILON < loopEnd)
 		{
-			frame = path.evaluate(time, loopEnd, loopStart);
+			frame = path.evaluate(time + timeOffset, loopEnd, loopStart);
 			transform = frame.transform();
 		}
 		else
 		{
-			frame = path.evaluate(time, m_duration);
+			frame = path.evaluate(time + timeOffset, m_duration);
 			transform = frame.transform();
 		}
 

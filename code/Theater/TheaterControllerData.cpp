@@ -44,7 +44,8 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const std
 			lookAtEntity,
 			m_trackData[i]->getPath(),
 			m_trackData[i]->getLoopStart(),
-			m_trackData[i]->getLoopEnd()
+			m_trackData[i]->getLoopEnd(),
+			m_trackData[i]->getTimeOffset()
 		);
 	}
 	return new TheaterController(m_duration, tracks);
