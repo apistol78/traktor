@@ -34,7 +34,8 @@ public:
 		world::Entity* lookAtEntity,
 		const TransformPath& path,
 		float loopStart,
-		float loopEnd
+		float loopEnd,
+		float timeOffset
 	);
 
 	void setEntity(world::Entity* entity);
@@ -53,12 +54,15 @@ public:
 
 	float getLoopEnd() const;
 
+	float getTimeOffset() const;
+
 private:
 	Ref< world::Entity > m_entity;
 	Ref< world::Entity > m_lookAtEntity;
 	TransformPath m_path;
 	float m_loopStart;
 	float m_loopEnd;
+	float m_timeOffset;
 };
 
 	}

@@ -9,11 +9,12 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 3, TrackData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 4, TrackData, ISerializable)
 
 TrackData::TrackData()
 :	m_loopStart(0.0f)
 ,	m_loopEnd(0.0f)
+,	m_timeOffset(0.0f)
 {
 }
 
@@ -57,6 +58,11 @@ float TrackData::getLoopEnd() const
 	return m_loopEnd;
 }
 
+float TrackData::getTimeOffset() const
+{
+	return m_timeOffset;
+}
+
 bool TrackData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
@@ -77,6 +83,9 @@ bool TrackData::serialize(ISerializer& s)
 			s >> Member< float >(L"loopEase", loopEase);
 		}
 	}
+
+	if (s.getVersion() >= 4)
+		s >> Member< float >(L"timeOffset", m_timeOffset);
 
 	return true;
 }

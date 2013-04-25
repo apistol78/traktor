@@ -5,6 +5,7 @@
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
+#include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
 #include "Editor/TypeBrowseFilter.h"
@@ -334,7 +335,7 @@ void ScriptEditor::updateDependencyList()
 	{
 		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(*i);
 		if (scriptInstance)
-			m_dependencyList->add(scriptInstance->getName());
+			m_dependencyList->add(scriptInstance->getPath());
 		else
 			m_dependencyList->add(i->format());
 	}

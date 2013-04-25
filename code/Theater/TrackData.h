@@ -47,6 +47,8 @@ public:
 
 	float getLoopEnd() const;
 
+	float getTimeOffset() const;
+
 	virtual bool serialize(ISerializer& s);
 
 private:
@@ -55,6 +57,7 @@ private:
 	TransformPath m_path;
 	float m_loopStart;
 	float m_loopEnd;
+	float m_timeOffset;
 };
 
 	}
