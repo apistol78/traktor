@@ -11,43 +11,6 @@ namespace traktor
 {
 	namespace script
 	{
-		namespace
-		{
-
-std::wstring translateSource(const source_map_t& map, int32_t line)
-{
-	StringOutputStream ss;
-	for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
-	{
-		if (line >= i->line)
-		{
-			ss << i->name << L"(" << (line - i->line + 1) << L")";
-			return ss.str();
-		}
-	}
-	ss << L"< No source >(" << (line + 1) << L")";
-	return ss.str();
-}
-
-void translateError(const char* error, const source_map_t& map)
-{
-	if (error)
-	{
-		WildCompare wc(L"[*]:*:*");
-		std::vector< std::wstring > pieces;
-		if (wc.match(mbstows(error), WildCompare::CmIgnoreCase, &pieces))
-		{
-			int32_t line = parseString< int32_t >(pieces[1]) - 1;
-			log::error << L"Lua runtime error: " << translateSource(map, line) << L": " << trim(pieces[2]) << Endl;
-		}
-		else
-			log::error << L"Lua runtime error: " << mbstows(error) << Endl;
-	}
-	else
-		log::error << L"Unknown lua runtime error" << Endl;
-}
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptContextLua", ScriptContextLua, IScriptContext)
 
@@ -138,6 +101,10 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
 
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushcclosure(m_luaState, runtimeError, 1);
+		int32_t errfunc = lua_gettop(m_luaState);
+
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		lua_getfield(m_luaState, -1, functionName.c_str());
 
@@ -145,19 +112,15 @@ Any ScriptContextLua::executeFunction(const std::string& functionName, uint32_t 
 		{
 			for (uint32_t i = 0; i < argc; ++i)
 				m_scriptManager->pushAny(argv[i]);
-			int32_t err = lua_pcall(m_luaState, argc, 1, 0);
+
+			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 			if (err == 0)
 				returnValue = m_scriptManager->toAny(-1);
-			else
-			{
-				const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
-				translateError(err, m_map);
-			}
 		}
 		else
 			log::error << L"Unable to call " << mbstows(functionName) << L"; no such function" << Endl;
 
-		lua_pop(m_luaState, 2);
+		lua_pop(m_luaState, 3);
 	}
 	m_scriptManager->unlock();
 	return returnValue;
@@ -169,6 +132,10 @@ Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName,
 	m_scriptManager->lock(this);
 	{
 		CHECK_LUA_STACK(m_luaState, 0);
+
+		lua_pushlightuserdata(m_luaState, (void*)this);
+		lua_pushcclosure(m_luaState, runtimeError, 1);
+		int32_t errfunc = lua_gettop(m_luaState);
 
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_environmentRef);
 		lua_getfield(m_luaState, -1, methodName.c_str());
@@ -184,19 +151,14 @@ Any ScriptContextLua::executeMethod(Object* self, const std::string& methodName,
 				m_scriptManager->pushAny(argv[i]);
 		
 			// Call script function.
-			int32_t err = lua_pcall(m_luaState, argc, 1, 0);
+			int32_t err = lua_pcall(m_luaState, argc, 1, errfunc);
 			if (err == 0)
 				returnValue = m_scriptManager->toAny(-1);
-			else
-			{
-				const char* err = lua_tostring(m_luaState, lua_gettop(m_luaState));
-				translateError(err, m_map);
-			}
 		}
 		else
 			log::error << L"Unable to call " << mbstows(methodName) << L"; no such method" << Endl;
 
-		lua_pop(m_luaState, 2);
+		lua_pop(m_luaState, 3);
 	}
 	m_scriptManager->unlock();
 	return returnValue;
@@ -208,6 +170,16 @@ ScriptContextLua::ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* l
 ,	m_environmentRef(environmentRef)
 ,	m_map(map)
 {
+}
+
+int32_t ScriptContextLua::runtimeError(lua_State* luaState)
+{
+	ScriptContextLua* this_ = reinterpret_cast< ScriptContextLua* >(lua_touserdata(luaState, lua_upvalueindex(1)));
+	T_ASSERT (this_);
+	T_ASSERT (this_->m_scriptManager);
+	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
+	this_->m_scriptManager->breakDebugger(luaState);
+	return 0;
 }
 
 	}

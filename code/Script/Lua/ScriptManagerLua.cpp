@@ -307,7 +307,11 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	return new ScriptDebuggerLua(this, m_luaState);
+	
+	if (!m_debugger)
+		m_debugger = new ScriptDebuggerLua(this, m_luaState);
+
+	return m_debugger;
 }
 
 void ScriptManagerLua::collectGarbage()
@@ -481,6 +485,21 @@ void ScriptManagerLua::collectGarbageFull()
 	}
 	while (memoryUse != m_totalMemoryUse);
 	m_lastMemoryUse = m_totalMemoryUse;
+}
+
+void ScriptManagerLua::breakDebugger(lua_State* luaState)
+{
+	if (!m_debugger)
+		return;
+
+	lua_Debug ar;
+
+	std::memset(&ar, 0, sizeof(ar));
+	lua_getstack(luaState, 1, &ar);
+	lua_getinfo(luaState, "Snlu", &ar);
+
+	m_debugger->actionBreak();
+	m_debugger->analyzeState(luaState, &ar);
 }
 
 int ScriptManagerLua::classIndexLookup(lua_State* luaState)

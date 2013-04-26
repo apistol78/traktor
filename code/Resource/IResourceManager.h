@@ -31,6 +31,12 @@ struct ResourceManagerStatistics
 {
 	uint32_t residentCount;		//!< Number of resident resources.
 	uint32_t exclusiveCount;	//!< Number of exclusive (non-shareable) resources.
+
+	ResourceManagerStatistics()
+	:	residentCount(0)
+	,	exclusiveCount(0)
+	{
+	}
 };
 
 /*! \brief Resource manager interface.

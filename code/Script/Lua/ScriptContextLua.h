@@ -46,6 +46,8 @@ private:
 	source_map_t m_map;
 
 	ScriptContextLua(ScriptManagerLua* scriptManager, lua_State* luaState, int32_t environmentRef, const source_map_t& map);
+
+	static int32_t runtimeError(lua_State* luaState);
 };
 
 	}

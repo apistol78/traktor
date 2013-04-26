@@ -24,6 +24,7 @@ namespace traktor
 
 class Any;
 class ScriptContextLua;
+class ScriptDebuggerLua;
 
 /*! \brief LUA script manager.
  * \ingroup LUA Script
@@ -66,6 +67,7 @@ private:
 	std::vector< RegisteredClass > m_classRegistry;
 	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
 	RefArray< ScriptContextLua > m_contexts;
+	Ref< ScriptDebuggerLua > m_debugger;
 	Timer m_timer;
 	double m_collectStepFrequency;
 	int32_t m_collectSteps;
@@ -85,6 +87,8 @@ private:
 	Any toAny(int32_t index);
 
 	void collectGarbageFull();
+
+	void breakDebugger(lua_State* luaState);
 
 	static int classIndexLookup(lua_State* luaState);
 
