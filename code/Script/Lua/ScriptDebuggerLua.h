@@ -47,6 +47,8 @@ public:
 	virtual void removeListener(IListener* listener);
 
 private:
+	friend class ScriptManagerLua;
+
 	enum State
 	{
 		StRunning,
@@ -58,7 +60,7 @@ private:
 
 	ScriptManagerLua* m_scriptManager;
 	lua_State* m_luaState;
-	static std::list< ScriptDebuggerLua* > ms_instances;
+	static ScriptDebuggerLua* ms_instance;
 	Semaphore m_lock;
 	std::map< int32_t, std::set< Guid > > m_breakpoints;
 	std::set< IListener* > m_listeners;

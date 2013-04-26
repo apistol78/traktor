@@ -232,7 +232,8 @@ void ResourceManager::unloadUnusedResident()
 
 void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	if (!m_lock.wait(0))
+		return;
 
 	outStatistics.residentCount = 0;
 	for (std::map< Guid, Ref< ResidentResourceHandle > >::const_iterator i = m_residentHandles.begin(); i != m_residentHandles.end(); ++i)
@@ -250,6 +251,8 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 				++outStatistics.exclusiveCount;
 		}
 	}
+
+	m_lock.release();
 }
 
 const IResourceFactory* ResourceManager::findFactoryFromResourceType(const TypeInfo& type)
