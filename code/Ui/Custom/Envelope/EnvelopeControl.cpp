@@ -1,10 +1,11 @@
 #include <sstream>
-#include "Ui/Custom/Envelope/EnvelopeControl.h"
-#include "Ui/Custom/Envelope/EnvelopeEvaluator.h"
-#include "Ui/Custom/Envelope/EnvelopeKey.h"
+#include "Core/Math/MathUtils.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/PaintEvent.h"
+#include "Ui/Custom/Envelope/EnvelopeControl.h"
+#include "Ui/Custom/Envelope/EnvelopeEvaluator.h"
+#include "Ui/Custom/Envelope/EnvelopeKey.h"
 
 namespace traktor
 {
@@ -17,7 +18,7 @@ namespace traktor
 
 float scaleValue(float value, float minValue, float maxValue)
 {
-	return (value - minValue) / (maxValue - minValue);
+	return clamp((value - minValue) / (maxValue - minValue), minValue, maxValue);
 }
 
 			}
@@ -57,6 +58,12 @@ void EnvelopeControl::insertKey(EnvelopeKey* key)
 const RefArray< EnvelopeKey >& EnvelopeControl::getKeys() const
 {
 	return m_keys;
+}
+
+void EnvelopeControl::addRange(const Color4ub& color, float limit0, float limit1, float limit2, float limit3)
+{
+	Range r = { color, { limit0, limit1, limit2, limit3 } };
+	m_ranges.push_back(r);
 }
 
 void EnvelopeControl::addChangeEventHandler(EventHandler* eventHandler)
@@ -132,8 +139,11 @@ void EnvelopeControl::eventMouseMove(Event* e)
 
 	if (m_selectedKey->getT() != T || m_selectedKey->getValue() != value)
 	{
-		m_selectedKey->setT(T);
-		m_selectedKey->setValue(value);
+		if (!m_selectedKey->isFixedT())
+			m_selectedKey->setT(T);
+
+		if (!m_selectedKey->isFixedValue())
+			m_selectedKey->setValue(value);
 
 		Event changeEvent(this, m_selectedKey);
 		raiseEvent(EiContentChange, &changeEvent);
@@ -165,9 +175,50 @@ void EnvelopeControl::eventPaint(Event* e)
 		rcInner.bottom - y / 2 - 4
 	);
 
-	canvas.setForeground(Color4ub(180, 180, 180));
 	canvas.setBackground(Color4ub(255, 255, 255));
 	canvas.fillRect(rcInner);
+
+	for (std::vector< Range >::const_iterator i = m_ranges.begin(); i != m_ranges.end(); ++i)
+	{
+		int y0 = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(i->limits[0], m_minValue, m_maxValue) + 0.5f);
+		int y1 = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(i->limits[1], m_minValue, m_maxValue) + 0.5f);
+		int y2 = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(i->limits[2], m_minValue, m_maxValue) + 0.5f);
+		int y3 = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(i->limits[3], m_minValue, m_maxValue) + 0.5f);
+
+		canvas.setForeground(i->color * Color4ub(255, 255, 255, 0));
+		canvas.setBackground(i->color * Color4ub(255, 255, 255, 255));
+
+		if (y0 > y1)
+		{
+			canvas.fillGradientRect(Rect(
+				m_rcEnv.left,
+				y0,
+				m_rcEnv.right,
+				y1
+			));
+		}
+
+		if (y1 > y2)
+		{
+			canvas.fillRect(Rect(
+				m_rcEnv.left,
+				y1,
+				m_rcEnv.right,
+				y2
+			));
+		}
+
+		if (y2 > y3)
+		{
+			canvas.fillGradientRect(Rect(
+				m_rcEnv.left,
+				y3,
+				m_rcEnv.right,
+				y2
+			));
+		}
+	}
+
 	canvas.drawRect(m_rcEnv.inflate(1, 1));
 
 	canvas.setForeground(Color4ub(80, 80, 80));
@@ -190,33 +241,35 @@ void EnvelopeControl::eventPaint(Event* e)
 	{
 		if (m_selectedKey)
 		{
-			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * m_selectedKey->getT());
-			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_selectedKey->getValue(), m_minValue, m_maxValue));
+			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * m_selectedKey->getT() + 0.5f);
+			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_selectedKey->getValue(), m_minValue, m_maxValue) + 0.5f);
 			canvas.setForeground(Color4ub(200, 200, 200));
 			canvas.drawLine(m_rcEnv.left, sy, sx, sy);
+			canvas.drawLine(sx, m_rcEnv.bottom, sx, sy);
 		}
 
 		canvas.setForeground(Color4ub(0, 0, 0));
 
-		const float dT = 1.0f / 100.0f;
+		float dT = 1.0f / (rcInner.getSize().cx / 4.0f);
+
 		int px = m_rcEnv.left;
 		int py = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, 0.0f), m_minValue, m_maxValue));
 		for (float T = dT; T <= 1.0f; T += dT)
 		{
-			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * T);
-			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, T), m_minValue, m_maxValue));
+			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * T + 0.5f);
+			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(m_evaluator->evaluate(m_keys, T), m_minValue, m_maxValue) + 0.5f);
 			canvas.drawLine(px, py, sx, sy);
 			px = sx;
 			py = sy;
 		}
 
-		canvas.setBackground(Color4ub(0, 0, 0));
+		canvas.setBackground(Color4ub(100, 100, 100));
 
 		for (RefArray< EnvelopeKey >::iterator i = m_keys.begin(); i != m_keys.end(); ++i)
 		{
 			EnvelopeKey* key = *i;
-			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * key->getT());
-			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(key->getValue(), m_minValue, m_maxValue));
+			int sx = m_rcEnv.left + int(m_rcEnv.getWidth() * key->getT() + 0.5f);
+			int sy = m_rcEnv.bottom - int(m_rcEnv.getHeight() * scaleValue(key->getValue(), m_minValue, m_maxValue) + 0.5f);
 			canvas.fillRect(Rect(sx - 2, sy - 2, sx + 3, sy + 3));
 		}
 	}

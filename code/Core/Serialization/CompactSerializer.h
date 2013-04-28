@@ -1,5 +1,5 @@
-#ifndef traktor_net_CompactSerializer_H
-#define traktor_net_CompactSerializer_H
+#ifndef traktor_CompactSerializer_H
+#define traktor_CompactSerializer_H
 
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
@@ -7,7 +7,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_NET_EXPORT)
+#if defined(T_CORE_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT
@@ -15,8 +15,6 @@
 
 namespace traktor
 {
-	namespace net
-	{
 
 class T_DLLCLASS CompactSerializer : public Serializer
 {
@@ -92,7 +90,6 @@ private:
 	BitWriter m_writer;
 };
 
-	}
 }
 
 #endif	// traktor_net_CompactSerializer_H

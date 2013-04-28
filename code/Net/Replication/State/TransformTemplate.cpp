@@ -1,5 +1,6 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
+#include "Net/Replication/State/Config.h"
 #include "Net/Replication/State/TransformValue.h"
 #include "Net/Replication/State/TransformTemplate.h"
 
@@ -7,6 +8,22 @@ namespace traktor
 {
 	namespace net
 	{
+		namespace
+		{
+
+float errorV4(const Vector4& Vl, const Vector4& Vr)
+{
+	return (Vl - Vr).length();
+}
+
+float errorT(const Transform& Tl, const Transform& Tr)
+{
+	return 
+		errorV4(Tl.translation(), Tr.translation()) * c_errorScaleLinear +
+		errorV4(Tl.rotation().e, Tr.rotation().e) * c_errorScaleAngular;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.TransformTemplate", TransformTemplate, IValueTemplate)
 
@@ -51,11 +68,11 @@ Ref< const IValue > TransformTemplate::unpack(BitReader& reader) const
 	));
 }
 
-bool TransformTemplate::equal(const IValue* Vl, const IValue* Vr) const
+float TransformTemplate::error(const IValue* Vl, const IValue* Vr) const
 {
 	Transform tl = *checked_type_cast< const TransformValue* >(Vl);
 	Transform tr = *checked_type_cast< const TransformValue* >(Vr);
-	return tl == tr;
+	return errorT(tl, tr);
 }
 
 Ref< const IValue > TransformTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

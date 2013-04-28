@@ -265,8 +265,8 @@ void CanvasGdiPlusWin32::fillGradientRect(const Rect& rc, bool vertical)
 				tmp.left - 1, tmp.top - 1,
 				tmp.getWidth() + 2, tmp.getHeight() + 2
 			),
-			m_foreGround,
-			m_backGround,
+			rc.top < rc.bottom ? m_foreGround : m_backGround,
+			rc.top < rc.bottom ? m_backGround : m_foreGround,
 			vertical ? LinearGradientModeVertical : LinearGradientModeHorizontal
 		),
 		tmp.left,

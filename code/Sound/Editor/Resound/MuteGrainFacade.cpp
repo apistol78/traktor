@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.MuteGrainFacade", MuteGrainFacade, IGrainFacade)
 
+ui::Widget* MuteGrainFacade::createView(IGrainData* grain, ui::Widget* parent) const
+{
+	return 0;
+}
+
 int32_t MuteGrainFacade::getImage(const IGrainData* grain) const
 {
 	return 4;

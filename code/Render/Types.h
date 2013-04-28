@@ -408,10 +408,12 @@ struct RenderSystemDesc
 {
 	float mipBias;
 	int32_t maxAnisotropy;
+	bool verbose;
 
 	RenderSystemDesc()
 	:	mipBias(0.0f)
 	,	maxAnisotropy(1)
+	,	verbose(false)
 	{
 	}
 };

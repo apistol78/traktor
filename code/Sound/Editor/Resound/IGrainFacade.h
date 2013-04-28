@@ -6,6 +6,13 @@
 
 namespace traktor
 {
+	namespace ui
+	{
+
+class Widget;
+
+	}
+
 	namespace sound
 	{
 
@@ -16,6 +23,8 @@ class IGrainFacade : public Object
 	T_RTTI_CLASS;
 
 public:
+	virtual ui::Widget* createView(IGrainData* grain, ui::Widget* parent) const = 0;
+
 	virtual int32_t getImage(const IGrainData* grain) const = 0;
 
 	virtual std::wstring getText(const IGrainData* grain) const = 0;

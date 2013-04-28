@@ -9,6 +9,10 @@ namespace traktor
 	{
 
 const float c_maxRubberBandTime = 0.15f;
+const float c_errorScaleLinear = 1.0f;
+const float c_errorScaleAngular = 1.0f;
+const float c_errorScaleDiscontinuous = 2.0f;
+const float c_errorScaleContinuous = 1.0f;
 
 	}
 }

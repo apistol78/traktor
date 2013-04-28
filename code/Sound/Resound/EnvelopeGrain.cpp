@@ -50,10 +50,13 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.EnvelopeGrain", EnvelopeGrain, IGrain)
 
-EnvelopeGrain::EnvelopeGrain(handle_t id, const std::vector< Grain >& grains)
+EnvelopeGrain::EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, const float levels[3], float mid)
 :	m_id(id)
 ,	m_grains(grains)
 {
+	m_envelope.addKey(0.0f, levels[0]);
+	m_envelope.addKey( mid, levels[1]);
+	m_envelope.addKey(1.0f, levels[2]);
 }
 
 Ref< ISoundBufferCursor > EnvelopeGrain::createCursor() const
@@ -102,7 +105,7 @@ bool EnvelopeGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixe
 	EnvelopeGrainCursor* envelopeCursor = static_cast< EnvelopeGrainCursor* >(cursor);
 	T_ASSERT (envelopeCursor);
 
-	float p = envelopeCursor->m_parameter;
+	float p = clamp(m_envelope(envelopeCursor->m_parameter), 0.0f, 1.0f);
 	bool result = false;
 
 	for (uint32_t i = 0; i < m_grains.size(); ++i)

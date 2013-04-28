@@ -6,15 +6,12 @@
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributePoint.h"
 #include "Core/Serialization/AttributeRange.h"
-#include "Net/Replication/CompactSerializer.h"
-#include "Net/Replication/Pack.h"
+#include "Core/Serialization/CompactSerializer.h"
 
 namespace traktor
 {
-	namespace net
+	namespace
 	{
-		namespace
-		{
 
 bool read_bool(BitReader& r, bool& value)
 {
@@ -278,6 +275,67 @@ bool write_string(BitWriter& w, const std::string& str)
 	return write_string(w, ws);
 }
 
+Vector4 unpackUnit(const uint8_t u[3])
+{
+	Vector4 v(
+		u[0] / 127.0f - 1.0f,
+		u[1] / 127.0f - 1.0f,
+		u[2] / 127.0f - 1.0f
+	);
+
+	Scalar ln = v.length();
+	if (ln > FUZZY_EPSILON)
+		return v / ln;
+	else
+		return Vector4::zero();
+}
+
+void packUnit(const Vector4& u, uint8_t out[3])
+{
+	float x = 0.0f, y = 0.0f, z = 0.0f;
+	float dx = u.x() / 128.0f;
+	float dy = u.y() / 128.0f;
+	float dz = u.z() / 128.0f;
+
+	float md = std::numeric_limits< float >::max();
+	for (int32_t i = 0; i < 128; ++i)
+	{
+		x += dx;
+		y += dy;
+		z += dz;
+
+		int32_t ix = int32_t((x * 0.5f + 0.5f) * 255.0f);
+		int32_t iy = int32_t((y * 0.5f + 0.5f) * 255.0f);
+		int32_t iz = int32_t((z * 0.5f + 0.5f) * 255.0f);
+
+		T_ASSERT (ix >= 0 && ix <= 255);
+		T_ASSERT (iy >= 0 && iy <= 255);
+		T_ASSERT (iz >= 0 && iz <= 255);
+
+		Vector4 v(
+			ix / 127.0f - 1.0f,
+			iy / 127.0f - 1.0f,
+			iz / 127.0f - 1.0f
+		);
+
+		float D = (u * v.length() - v).length();
+		if (D < md)
+		{
+			out[0] = ix;
+			out[1] = iy;
+			out[2] = iz;
+			md = D;
+		}
+	}
+
+#if defined(_DEBUG)
+	Vector4 check = unpackUnit(out);
+	Vector4 error = (check - u).absolute();
+	Scalar E = horizontalAdd4(error);
+	T_ASSERT (E < 0.01f);
+#endif
+}
+
 template < typename AttributeType, typename MemberType >
 const AttributeType* findAttribute(const MemberType& m)
 {
@@ -285,9 +343,9 @@ const AttributeType* findAttribute(const MemberType& m)
 	return attributes ? attributes->find< AttributeType >() : 0;
 }
 
-		}
+	}
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.net.CompactSerializer", CompactSerializer, Serializer);
+T_IMPLEMENT_RTTI_CLASS(L"traktor.CompactSerializer", CompactSerializer, Serializer);
 
 CompactSerializer::CompactSerializer(IStream* stream, const TypeInfo** types)
 :	m_types(types)
@@ -685,6 +743,8 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 			typeId != 0x1f
 		)
 		{
+			T_FATAL_ASSERT (m_types);
+
 			const TypeInfo* type = m_types[typeId - 1];
 			T_FATAL_ASSERT (type);
 
@@ -724,14 +784,14 @@ bool CompactSerializer::operator >> (const Member< ISerializable* >& m)
 
 			// Find type in type table.
 			uint8_t typeId = 0;
-			while (m_types[typeId])
+			while (m_types && m_types[typeId])
 			{
 				if (m_types[typeId] == &type)
 					break;
 				++typeId;
 			}
 
-			if (m_types[typeId] == &type)
+			if (m_types && m_types[typeId] == &type)
 			{
 				m_writer.writeUnsigned(5, typeId + 1);
 				if (!serialize(object, type.getVersion()))
@@ -799,5 +859,4 @@ bool CompactSerializer::operator >> (const MemberEnumBase& m)
 	return this->operator >> (*(MemberComplex*)(&m));
 }
 
-	}
 }

@@ -23,12 +23,12 @@
 #include "Sound/Editor/SoundAsset.h"
 #include "Sound/Editor/Resound/BankAsset.h"
 #include "Sound/Editor/Resound/BankAssetEditor.h"
+#include "Sound/Editor/Resound/BankControl.h"
+#include "Sound/Editor/Resound/BankControlGrain.h"
 #include "Sound/Editor/Resound/BlendGrainFacade.h"
 #include "Sound/Editor/Resound/EnvelopeGrainFacade.h"
 #include "Sound/Editor/Resound/InLoopOutGrainFacade.h"
 #include "Sound/Editor/Resound/GrainProperties.h"
-#include "Sound/Editor/Resound/GrainView.h"
-#include "Sound/Editor/Resound/GrainViewItem.h"
 #include "Sound/Editor/Resound/MuteGrainFacade.h"
 #include "Sound/Editor/Resound/PlayGrainFacade.h"
 #include "Sound/Editor/Resound/RandomGrainFacade.h"
@@ -47,6 +47,8 @@
 #include "Ui/Events/MouseEvent.h"
 #include "Ui/Custom/Panel.h"
 #include "Ui/Custom/Splitter.h"
+#include "Ui/Custom/Envelope/DefaultEnvelopeEvaluator.h"
+#include "Ui/Custom/Envelope/EnvelopeControl.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 
@@ -95,37 +97,43 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	parent->startTimer(100);
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
-	splitter->create(parent, true, 40, true);
+	splitter->create(parent, true, 180);
 
-	Ref< ui::custom::Splitter > splitter2 = new ui::custom::Splitter();
-	splitter2->create(splitter, false, -150);
+	Ref< ui::custom::Splitter > splitterLeftH = new ui::custom::Splitter();
+	splitterLeftH->create(splitter, false, -150);
 
-	Ref< ui::custom::Panel > containerGrains = new ui::custom::Panel();
-	containerGrains->create(splitter2, L"Grains", new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	Ref< ui::custom::Splitter > splitterRightH = new ui::custom::Splitter();
+	splitterRightH->create(splitter, false, -150);
+
+	Ref< ui::custom::Panel > containerBank = new ui::custom::Panel();
+	containerBank->create(splitterLeftH, L"Grains", new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
 	m_toolBarItemPlay = new ui::custom::ToolBarButton(L"Play", ui::Command(L"Bank.PlayGrain"), 0, ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
 	m_toolBarItemRepeat = new ui::custom::ToolBarButton(L"Repeat", ui::Command(L"Bank.RepeatGrain"), 0, ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
 
 	m_toolBar = new ui::custom::ToolBar();
-	m_toolBar->create(containerGrains);
+	m_toolBar->create(containerBank);
 	m_toolBar->addItem(m_toolBarItemPlay);
 	m_toolBar->addItem(m_toolBarItemRepeat);
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventToolBarClick));
 
-	m_grainView = new GrainView();
-	m_grainView->create(containerGrains);
-	m_grainView->addEventHandler(ui::EiSelectionChange, ui::createMethodHandler(this, &BankAssetEditor::eventGrainSelect));
-	m_grainView->addButtonUpEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGrainButtonUp));
+	m_bankControl = new BankControl();
+	m_bankControl->create(containerBank);
+	m_bankControl->addEventHandler(ui::EiSelectionChange, ui::createMethodHandler(this, &BankAssetEditor::eventGrainSelect));
+	m_bankControl->addButtonUpEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventGrainButtonUp));
 
-	m_containerDynamicParameters = new ui::custom::Panel();
-	m_containerDynamicParameters->create(splitter2, L"Dynamic Parameters", new ui::TableLayout(L"*,100%", L"*", 4, 0));
+	m_containerParameters = new ui::custom::Panel();
+	m_containerParameters->create(splitterLeftH, L"Parameters", new ui::TableLayout(L"*,100%", L"*", 4, 0));
 
-	m_containerGrainProperties = new ui::Container();
-	m_containerGrainProperties->create(splitter, ui::WsClientBorder, new ui::TableLayout(L"100%", L"100%", 0, 4));
+	Ref< ui::custom::Panel > m_containerGrainProperties = new ui::custom::Panel();
+	m_containerGrainProperties->create(splitterRightH, L"Properties", new ui::TableLayout(L"100%", L"100%", 0, 0));
 
 	m_grainProperties = new GrainProperties(m_editor);
 	m_grainProperties->create(m_containerGrainProperties);
 	m_grainProperties->addEventHandler(ui::EiUser + 1, ui::createMethodHandler(this, &BankAssetEditor::eventGrainPropertiesChange));
+
+	m_containerGrainView = new ui::custom::Panel();
+	m_containerGrainView->create(splitterRightH, L"View", new ui::TableLayout(L"100%", L"100%", 0, 0));
 
 	m_menuGrains = new ui::PopupMenu();
 	m_menuGrains->create();
@@ -160,7 +168,7 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 		m_editor->getOutputDatabase()
 	));
 
-	updateGrainView();
+	updateBankControl();
 	updateProperties();
 	return true;
 }
@@ -192,7 +200,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 		IGrainData* parentGrain = 0;
 		IGrainFacade* parentGrainFacade = 0;
 
-		GrainViewItem* selectedItem = m_grainView->getSelected();
+		BankControlGrain* selectedItem = m_bankControl->getSelected();
 		if (selectedItem)
 		{
 			parentGrain = selectedItem->getGrain();
@@ -213,13 +221,13 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			else
 				m_asset->addGrain(grain);
 
-			updateGrainView();
+			updateBankControl();
 			updateProperties();
 		}
 	}
 	else if (command == L"Bank.RemoveGrain")
 	{
-		GrainViewItem* selectedItem = m_grainView->getSelected();
+		BankControlGrain* selectedItem = m_bankControl->getSelected();
 		if (selectedItem)
 		{
 			IGrainData* grain = selectedItem->getGrain();
@@ -239,7 +247,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			else
 				m_asset->removeGrain(grain);
 
-			updateGrainView();
+			updateBankControl();
 			updateProperties();
 		}
 	}
@@ -251,7 +259,7 @@ bool BankAssetEditor::handleCommand(const ui::Command& command)
 			RefArray< IGrain > grains;
 
 			// Play only selected grain.
-			GrainViewItem* selectedItem = m_grainView->getSelected();
+			BankControlGrain* selectedItem = m_bankControl->getSelected();
 			if (selectedItem)
 			{
 				IGrainData* grain = selectedItem->getGrain();
@@ -311,7 +319,7 @@ ui::Size BankAssetEditor::getPreferredSize() const
 	return ui::Size(800, 600);
 }
 
-void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGrainData >& grains)
+void BankAssetEditor::updateBankControl(BankControlGrain* parent, const RefArray< IGrainData >& grains)
 {
 	for (RefArray< IGrainData >::const_iterator i = grains.begin(); i != grains.end(); ++i)
 	{
@@ -322,28 +330,28 @@ void BankAssetEditor::updateGrainView(GrainViewItem* parent, const RefArray< IGr
 		if (!grainFacade)
 			continue;
 
-		Ref< GrainViewItem > item = new GrainViewItem(
+		Ref< BankControlGrain > item = new BankControlGrain(
 			parent,
 			*i,
 			grainFacade->getText(*i),
 			grainFacade->getImage(*i)
 		);
-		m_grainView->add(item);
+		m_bankControl->add(item);
 
 		RefArray< IGrainData > childGrains;
 		if (grainFacade->getChildren(*i, childGrains))
-			updateGrainView(item, childGrains);
+			updateBankControl(item, childGrains);
 	}
 }
 
-void BankAssetEditor::updateGrainView()
+void BankAssetEditor::updateBankControl()
 {
-	m_grainView->removeAll();
+	m_bankControl->removeAll();
 
 	const RefArray< IGrainData >& grains = m_asset->getGrains();
-	updateGrainView(0, grains);
+	updateBankControl(0, grains);
 
-	m_grainView->update();
+	m_bankControl->update();
 }
 
 void BankAssetEditor::updateProperties()
@@ -373,8 +381,8 @@ void BankAssetEditor::updateProperties()
 
 	// Destroy previous sliders.
 	m_sliderParameters.clear();
-	while (m_containerDynamicParameters->getLastChild())
-		m_containerDynamicParameters->getLastChild()->destroy();
+	while (m_containerParameters->getLastChild())
+		m_containerParameters->getLastChild()->destroy();
 
 	// Create slider for each dynamic property.
 	for (std::set< std::wstring >::const_iterator i = properties.begin(); i != properties.end(); ++i)
@@ -383,10 +391,10 @@ void BankAssetEditor::updateProperties()
 			continue;
 
 		Ref< ui::Static > staticParameter = new ui::Static();
-		staticParameter->create(m_containerDynamicParameters, *i);
+		staticParameter->create(m_containerParameters, *i);
 
 		Ref< ui::Slider > sliderParameter = new ui::Slider();
-		sliderParameter->create(m_containerDynamicParameters);
+		sliderParameter->create(m_containerParameters);
 		sliderParameter->setRange(0, 100);
 		sliderParameter->addChangeEventHandler(ui::createMethodHandler(this, &BankAssetEditor::eventParameterChange));
 		sliderParameter->setData(L"ID", new HandleWrapper(
@@ -396,7 +404,7 @@ void BankAssetEditor::updateProperties()
 		m_sliderParameters.push_back(sliderParameter);
 	}
 
-	m_containerDynamicParameters->update();
+	m_containerParameters->update();
 }
 
 void BankAssetEditor::eventParameterChange(ui::Event* event)
@@ -417,11 +425,25 @@ void BankAssetEditor::eventToolBarClick(ui::Event* event)
 
 void BankAssetEditor::eventGrainSelect(ui::Event* event)
 {
-	GrainViewItem* item = checked_type_cast< GrainViewItem* >(event->getItem());
+	BankControlGrain* item = checked_type_cast< BankControlGrain* >(event->getItem());
 	if (item)
+	{
+		safeDestroy(m_currentGrainView);
 		m_grainProperties->set(item->getGrain());
+
+		IGrainFacade* grainFacade = m_grainFacades[&type_of(item->getGrain())];
+		if (grainFacade)
+			m_currentGrainView = grainFacade->createView(item->getGrain(), m_containerGrainView);
+
+		if (m_currentGrainView)
+			m_currentGrainView->addEventHandler(ui::EiContentChange, ui::createMethodHandler(this, &BankAssetEditor::eventGrainViewChange));
+	}
 	else
+	{
+		safeDestroy(m_currentGrainView);
 		m_grainProperties->set(0);
+	}
+	m_containerGrainView->update();
 }
 
 void BankAssetEditor::eventGrainButtonUp(ui::Event* event)
@@ -429,7 +451,7 @@ void BankAssetEditor::eventGrainButtonUp(ui::Event* event)
 	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent*, false >(event);
 	if (mouseEvent->getButton() == ui::MouseEvent::BtRight)
 	{
-		Ref< ui::MenuItem > selectedItem = m_menuGrains->show(m_grainView, mouseEvent->getPosition());
+		Ref< ui::MenuItem > selectedItem = m_menuGrains->show(m_bankControl, mouseEvent->getPosition());
 		if (selectedItem)
 			handleCommand(selectedItem->getCommand());
 		mouseEvent->consume();
@@ -447,8 +469,26 @@ void BankAssetEditor::eventGrainPropertiesChange(ui::Event* event)
 			m_bankBuffer->updateCursor(cursor);
 	}
 
-	updateGrainView();
+	if (m_currentGrainView)
+		m_currentGrainView->update();
+
+	updateBankControl();
 	updateProperties();
+}
+
+void BankAssetEditor::eventGrainViewChange(ui::Event* event)
+{
+	// Stop playing if properties has changed, need to reflect changes
+	// without interference otherwise filter instances will be incorrect.
+	if (m_soundChannel && m_bankBuffer)
+	{
+		ISoundBufferCursor* cursor = m_soundChannel->getCursor();
+		if (cursor)
+			m_bankBuffer->updateCursor(cursor);
+	}
+
+	// \fixme
+	// m_grainProperties->reset();
 }
 
 void BankAssetEditor::eventTimer(ui::Event* event)
@@ -489,7 +529,7 @@ void BankAssetEditor::eventTimer(ui::Event* event)
 		const IGrain* currentGrain = m_bankBuffer->getCurrentGrain(m_soundChannel->getCursor());
 		if (currentGrain)
 		{
-			//const RefArray< GrainViewItem >& items = m_grainView->get();
+			//const RefArray< GrainViewItem >& items = m_bankControl->get();
 			//for (RefArray< GrainViewItem >::const_iterator i = items.begin(); i != items.end(); ++i)
 			//	(*i)->setCurrent((*i)->getGrain() == currentGrain);
 		}

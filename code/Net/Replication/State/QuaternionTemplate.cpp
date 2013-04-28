@@ -1,5 +1,6 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
+#include "Net/Replication/State/Config.h"
 #include "Net/Replication/State/QuaternionValue.h"
 #include "Net/Replication/State/QuaternionTemplate.h"
 
@@ -7,6 +8,15 @@ namespace traktor
 {
 	namespace net
 	{
+		namespace
+		{
+
+float errorV4(const Vector4& Vl, const Vector4& Vr)
+{
+	return (Vl - Vr).length();
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.QuaternionTemplate", QuaternionTemplate, IValueTemplate)
 
@@ -38,11 +48,11 @@ Ref< const IValue > QuaternionTemplate::unpack(BitReader& reader) const
 	));
 }
 
-bool QuaternionTemplate::equal(const IValue* Vl, const IValue* Vr) const
+float QuaternionTemplate::error(const IValue* Vl, const IValue* Vr) const
 {
 	Quaternion ql = *checked_type_cast< const QuaternionValue* >(Vl);
 	Quaternion qr = *checked_type_cast< const QuaternionValue* >(Vr);
-	return ql == qr;
+	return errorV4(ql.e, qr.e) * c_errorScaleContinuous;
 }
 
 Ref< const IValue > QuaternionTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

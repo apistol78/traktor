@@ -1,6 +1,8 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
 #include "Net/Replication/State/IValueTemplate.h"
 #include "Net/Replication/State/State.h"
 #include "Net/Replication/State/StateTemplate.h"
@@ -13,6 +15,7 @@ namespace traktor
 		{
 
 const float c_maxExtrapolationDelta = 2.0f;
+const float c_equalErrorThreshold = FUZZY_EPSILON;
 
 		}
 
@@ -105,7 +108,7 @@ uint32_t StateTemplate::pack(const State* Sn1, const State* S, void* buffer, uin
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
 		T_ASSERT (valueTemplate);
 
-		if (!valueTemplate->equal(Vn1[i], V[i]))
+		if (valueTemplate->error(Vn1[i], V[i]) > c_equalErrorThreshold)
 		{
 			writer.writeBit(1);
 			valueTemplate->pack(writer, V[i]);
@@ -159,6 +162,24 @@ Ref< const State > StateTemplate::unpack(const State* Sn1, const void* buffer, u
 	}
 
 	return new State(V);
+}
+
+float StateTemplate::error(const State* Sl, const State* Sr) const
+{
+	const RefArray< const IValue >& Vl = Sl->getValues();
+	const RefArray< const IValue >& Vr = Sr->getValues();
+
+	float E = 0.0f;
+	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
+	{
+		const IValueTemplate* valueTemplate = m_valueTemplates[i];
+		T_ASSERT (valueTemplate);
+
+		float e = valueTemplate->error(Vl[i], Vr[i]);
+		E = max(e, E);
+	}
+
+	return E;
 }
 
 	}

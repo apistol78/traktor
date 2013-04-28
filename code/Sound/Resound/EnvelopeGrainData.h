@@ -42,9 +42,15 @@ public:
 		bool serialize(ISerializer& s);
 	};
 
+	EnvelopeGrainData();
+
 	void addGrain(IGrainData* grain, float in, float out, float easeIn, float easeOut);
 
 	void removeGrain(IGrainData* grain);
+
+	void setLevels(const float levels[3]);
+
+	void setMid(float mid);
 
 	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
 
@@ -54,9 +60,15 @@ public:
 
 	const std::vector< GrainData >& getGrains() const { return m_grains; }
 
+	const float* getLevels() const { return m_levels; }
+
+	float getMid() const { return m_mid; }
+
 private:
 	std::wstring m_id;
 	std::vector< GrainData > m_grains;
+	float m_levels[3];
+	float m_mid;
 };
 
 	}

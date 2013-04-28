@@ -10,6 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.sound.RepeatGrainFacade", RepeatGrainFacade, IGrainFacade)
 
+ui::Widget* RepeatGrainFacade::createView(IGrainData* grain, ui::Widget* parent) const
+{
+	return 0;
+}
+
 int32_t RepeatGrainFacade::getImage(const IGrainData* grain) const
 {
 	return 2;

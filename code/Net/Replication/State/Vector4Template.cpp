@@ -26,6 +26,11 @@ float unpackScalar(BitReader& reader)
 	return (iv / 65535.0f) * 2.0f - 1.0f;
 }
 
+float errorV4(const Vector4& Vl, const Vector4& Vr)
+{
+	return (Vl - Vr).length();
+}
+
 float safeSqrt(float v)
 {
 	if (v > FUZZY_EPSILON)
@@ -153,29 +158,11 @@ Ref< const IValue > Vector4Template::unpack(BitReader& reader) const
 	}
 }
 
-bool Vector4Template::equal(const IValue* Vl, const IValue* Vr) const
+float Vector4Template::error(const IValue* Vl, const IValue* Vr) const
 {
 	Vector4 vl = *checked_type_cast< const Vector4Value* >(Vl);
 	Vector4 vr = *checked_type_cast< const Vector4Value* >(Vr);
-
-	if (!m_lowPrecision)
-		return vl == vr;
-	else
-	{
-		const float c_idleThresholdLowPrecision = 1.0f / 256.0f;
-
-		Vector4 va = (vl - vr).absolute();
-		if (va.x() > c_idleThresholdLowPrecision)
-			return false;
-		if (va.y() > c_idleThresholdLowPrecision)
-			return false;
-		if (va.z() > c_idleThresholdLowPrecision)
-			return false;
-		if (va.w() > c_idleThresholdLowPrecision)
-			return false;
-	}
-
-	return true;
+	return errorV4(vl, vr) * c_errorScaleContinuous;
 }
 
 Ref< const IValue > Vector4Template::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

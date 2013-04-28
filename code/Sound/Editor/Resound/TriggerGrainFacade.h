@@ -13,6 +13,8 @@ class TriggerGrainFacade : public IGrainFacade
 	T_RTTI_CLASS;
 
 public:
+	virtual ui::Widget* createView(IGrainData* grain, ui::Widget* parent) const;
+
 	virtual int32_t getImage(const IGrainData* grain) const;
 
 	virtual std::wstring getText(const IGrainData* grain) const;
