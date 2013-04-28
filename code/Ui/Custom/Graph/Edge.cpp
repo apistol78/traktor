@@ -102,7 +102,7 @@ void calculateSmoothSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 	outSpline.resize(30);
 	for (int i = 0; i < 30; ++i)
 	{
-		Vector2 p = envelope[i / 29.0f];
+		Vector2 p = envelope(i / 29.0f);
 		outSpline[i] = Point(int(p.x), int(p.y));
 	}
 }

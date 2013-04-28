@@ -2,6 +2,7 @@
 #include "Core/Io/BitWriter.h"
 #include "Net/Replication/State/BooleanValue.h"
 #include "Net/Replication/State/BooleanTemplate.h"
+#include "Net/Replication/State/Config.h"
 
 namespace traktor
 {
@@ -27,11 +28,11 @@ Ref< const IValue > BooleanTemplate::unpack(BitReader& reader) const
 	return new BooleanValue(f);
 }
 
-bool BooleanTemplate::equal(const IValue* Vl, const IValue* Vr) const
+float BooleanTemplate::error(const IValue* Vl, const IValue* Vr) const
 {
 	bool bl = *checked_type_cast< const BooleanValue* >(Vl);
 	bool br = *checked_type_cast< const BooleanValue* >(Vr);
-	return bl == br;
+	return bl != br ? c_errorScaleDiscontinuous : 0.0f;
 }
 
 Ref< const IValue > BooleanTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

@@ -1,6 +1,6 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
-#include "Core/Serialization/BinarySerializer.h"
+#include "Core/Serialization/CompactSerializer.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketStream.h"
 #include "Net/TcpSocket.h"
@@ -51,7 +51,7 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 	if (m_socket)
 	{
 		MemoryStream dms(m_buffer.ptr() + 4, 262144, false, true);
-		if (!BinarySerializer(&dms).writeObject(object))
+		if (!CompactSerializer(&dms, 0).writeObject(object))
 			return false;
 
 		uint32_t objectSize = dms.tell();
@@ -119,7 +119,7 @@ BidirectionalObjectTransport::Result BidirectionalObjectTransport::recv(const Ty
 		}
 
 		MemoryStream ms(m_buffer.ptr(), objectSize, true, false);
-		BinarySerializer s(&ms);
+		CompactSerializer s(&ms, 0);
 
 		Ref< ISerializable > object = s.readObject();
 		if (object)

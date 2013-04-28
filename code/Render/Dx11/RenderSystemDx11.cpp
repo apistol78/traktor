@@ -69,7 +69,8 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 			if (FAILED(hr))
 				continue;
 
-			log::info << L"Device " << (i + 1) << L" \"" << dad.Description << L"\" (" << dad.DeviceId << L")" << Endl;
+			if (desc.verbose)
+				log::info << L"Device " << (i + 1) << L" \"" << dad.Description << L"\" (" << dad.DeviceId << L")" << Endl;
 
 			if (dad.VendorId == 4098)	// AMD/ATI
 				dxgiAdapter = dxgiAdapterEnum;
@@ -129,17 +130,20 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 			return false;
 		}
 
-		log::info << L"Using DirectX 11 adapter:" << Endl;
-		log::info << IncreaseIndent;
-		log::info << L"Description " << dad.Description << Endl;
-		log::info << L"VendorId " << dad.VendorId << Endl;
-		log::info << L"DeviceId " << dad.DeviceId << Endl;
-		log::info << L"SubSysId " << dad.SubSysId << Endl;
-		log::info << L"Revision " << dad.Revision << Endl;
-		log::info << L"DedicatedVideoMemory " << uint64_t(dad.DedicatedVideoMemory / (1024*1024)) << L" MiB" << Endl;
-		log::info << L"DedicatedSystemMemory " << uint64_t(dad.DedicatedSystemMemory / (1024*1024)) << L" MiB" << Endl;
-		log::info << L"SharedSystemMemory " << uint64_t(dad.SharedSystemMemory / (1024*1024)) << L" MiB" << Endl;
-		log::info << DecreaseIndent;
+		if (desc.verbose)
+		{
+			log::info << L"Using DirectX 11 adapter:" << Endl;
+			log::info << IncreaseIndent;
+			log::info << L"Description " << dad.Description << Endl;
+			log::info << L"VendorId " << dad.VendorId << Endl;
+			log::info << L"DeviceId " << dad.DeviceId << Endl;
+			log::info << L"SubSysId " << dad.SubSysId << Endl;
+			log::info << L"Revision " << dad.Revision << Endl;
+			log::info << L"DedicatedVideoMemory " << uint64_t(dad.DedicatedVideoMemory / (1024*1024)) << L" MiB" << Endl;
+			log::info << L"DedicatedSystemMemory " << uint64_t(dad.DedicatedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+			log::info << L"SharedSystemMemory " << uint64_t(dad.SharedSystemMemory / (1024*1024)) << L" MiB" << Endl;
+			log::info << DecreaseIndent;
+		}
 	}
 	else
 		log::warning << L"Unable to get DirectX 11 adapter description, HRESULT " << int32_t(hr) << Endl;

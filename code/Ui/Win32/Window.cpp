@@ -145,7 +145,7 @@ void Window::registerDefaultClass()
 	WNDCLASS wc;
 
 	std::memset(&wc, 0, sizeof(wc));
-	wc.style         = CS_DBLCLKS;
+	wc.style         = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
 	wc.lpfnWndProc   = wndProc;
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = sizeof(void*);
@@ -174,7 +174,7 @@ void Window::registerDialogClass()
 	WNDCLASS wc;
 
 	std::memset(&wc, 0, sizeof(wc));
-	wc.style         = CS_DBLCLKS;
+	wc.style         = CS_VREDRAW | CS_HREDRAW | CS_DBLCLKS;
 	wc.lpfnWndProc   = dlgProc;
 	wc.cbClsExtra    = 0;
 	wc.cbWndExtra    = DLGWINDOWEXTRA + sizeof(void*);

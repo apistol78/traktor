@@ -2,6 +2,7 @@
 #define traktor_sound_EnvelopeGrain_H
 
 #include "Core/RefArray.h"
+#include "Core/Math/Envelope.h"
 #include "Sound/Resound/IGrain.h"
 
 // import/export mechanism.
@@ -34,7 +35,7 @@ public:
 		float easeOut;
 	};
 
-	EnvelopeGrain(handle_t id, const std::vector< Grain >& grains);
+	EnvelopeGrain(handle_t id, const std::vector< Grain >& grains, const float levels[3], float mid);
 
 	virtual Ref< ISoundBufferCursor > createCursor() const;
 
@@ -47,6 +48,7 @@ public:
 private:
 	handle_t m_id;
 	std::vector< Grain > m_grains;
+	Envelope< float, HermiteEvaluator< float > > m_envelope;
 };
 
 	}

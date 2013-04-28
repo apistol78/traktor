@@ -45,11 +45,11 @@ class ToolBarButton;
 
 class BankAsset;
 class BankBuffer;
+class BankControl;
+class BankControlGrain;
 class IGrainData;
 class IGrainFacade;
 class GrainProperties;
-class GrainView;
-class GrainViewItem;
 class SoundChannel;
 class SoundSystem;
 
@@ -77,21 +77,23 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarButton > m_toolBarItemPlay;
 	Ref< ui::custom::ToolBarButton > m_toolBarItemRepeat;
-	Ref< GrainView > m_grainView;
-	Ref< ui::custom::Panel > m_containerDynamicParameters;
+	Ref< BankControl > m_bankControl;
+	Ref< ui::custom::Panel > m_containerParameters;
 	RefArray< ui::Slider > m_sliderParameters;
-	Ref< ui::Container > m_containerGrainProperties;
+	Ref< ui::custom::Panel > m_containerGrainProperties;
 	Ref< GrainProperties > m_grainProperties;
+	Ref< ui::custom::Panel > m_containerGrainView;
 	Ref< ui::PopupMenu > m_menuGrains;
 	std::map< const TypeInfo*, Ref< IGrainFacade > > m_grainFacades;
+	Ref< ui::Widget > m_currentGrainView;
 	Ref< resource::IResourceManager > m_resourceManager;
 	Ref< SoundSystem > m_soundSystem;
 	Ref< SoundChannel > m_soundChannel;
 	Ref< BankBuffer > m_bankBuffer;
 
-	void updateGrainView(GrainViewItem* parent, const RefArray< IGrainData >& grains);
+	void updateBankControl(BankControlGrain* parent, const RefArray< IGrainData >& grains);
 
-	void updateGrainView();
+	void updateBankControl();
 
 	void updateProperties();
 
@@ -104,6 +106,8 @@ private:
 	void eventGrainButtonUp(ui::Event* event);
 
 	void eventGrainPropertiesChange(ui::Event* event);
+
+	void eventGrainViewChange(ui::Event* event);
 
 	void eventTimer(ui::Event* event);
 };

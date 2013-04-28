@@ -41,6 +41,8 @@ public:
 
 	void set(IGrainData* grain);
 
+	void reset();
+
 private:
 	editor::IEditor* m_editor;
 	Ref< ui::custom::AutoPropertyList > m_grainPropertyList;

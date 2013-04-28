@@ -109,14 +109,11 @@ Ref< const IValue > FloatTemplate::unpack(BitReader& reader) const
 	}
 }
 
-bool FloatTemplate::equal(const IValue* Vl, const IValue* Vr) const
+float FloatTemplate::error(const IValue* Vl, const IValue* Vr) const
 {
 	float fl = *checked_type_cast< const FloatValue* >(Vl);
 	float fr = *checked_type_cast< const FloatValue* >(Vr);
-	if (!m_lowPrecision)
-		return bool(abs(fl - fr) <= c_idleThreshold);
-	else
-		return bool(abs(fl - fr) <= c_idleThresholdLowPrecision);
+	return abs(fl - fr) * c_errorScaleContinuous;
 }
 
 Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

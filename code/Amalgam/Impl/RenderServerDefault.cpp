@@ -156,6 +156,7 @@ bool RenderServerDefault::create(PropertyGroup* settings)
 	render::RenderSystemDesc rsd;
 	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
+	rsd.verbose = true;
 
 	if (!renderSystem->create(rsd))
 	{

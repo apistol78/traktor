@@ -32,21 +32,16 @@ Vector4 clampV4(const Vector4& v, const Vector4& minV, const Vector4& maxV)
 	return max(min(v, maxV), minV);
 }
 
-bool fuzzyEqual(const Vector4& Vl, const Vector4& Vr, float epsilon)
+float errorV4(const Vector4& Vl, const Vector4& Vr)
 {
-	Vector4 dV = (Vl - Vr).absolute();
-	return
-		dV.x() <= epsilon &&
-		dV.y() <= epsilon &&
-		dV.z() <= epsilon &&
-		dV.w() <= epsilon;
+	return (Vl - Vr).length();
 }
 
-bool fuzzyEqual(const Transform& Tl, const Transform& Tr)
+float errorT(const Transform& Tl, const Transform& Tr)
 {
-	return
-		fuzzyEqual(Tl.translation(), Tr.translation(), 1e-4f) &&
-		fuzzyEqual(Tl.rotation().e, Tr.rotation().e, 1e-5f);
+	return 
+		errorV4(Tl.translation(), Tr.translation()) * c_errorScaleLinear +
+		errorV4(Tl.rotation().e, Tr.rotation().e) * c_errorScaleAngular;
 }
 
 float safeSqrt(float v)
@@ -281,19 +276,14 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	return new BodyStateValue(S);
 }
 
-bool BodyStateTemplate::equal(const IValue* Vl, const IValue* Vr) const
+float BodyStateTemplate::error(const IValue* Vl, const IValue* Vr) const
 {
 	const physics::BodyState& Sl = *checked_type_cast< const BodyStateValue* >(Vl);
 	const physics::BodyState& Sr = *checked_type_cast< const BodyStateValue* >(Vr);
-
-	if (!fuzzyEqual(Sl.getTransform(), Sr.getTransform()))
-		return false;
-	if (!fuzzyEqual(Sl.getLinearVelocity(), Sr.getLinearVelocity(), 1e-4f))
-		return false;
-	if (!fuzzyEqual(Sl.getAngularVelocity(), Sr.getAngularVelocity(), 1e-4f))
-		return false;
-
-	return true;
+	return
+		errorT(Sl.getTransform(), Sr.getTransform()) +
+		errorV4(Sl.getLinearVelocity(), Sr.getLinearVelocity()) * c_errorScaleLinear +
+		errorV4(Sl.getAngularVelocity(), Sr.getAngularVelocity()) * c_errorScaleAngular;
 }
 
 Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

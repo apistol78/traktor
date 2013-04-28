@@ -7,10 +7,10 @@
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Core/Misc/SafeDestroy.h"
-#include "Core/Thread/ThreadManager.h"
+#include "Core/Serialization/CompactSerializer.h"
 #include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Core/Timer/Timer.h"
-#include "Net/Replication/CompactSerializer.h"
 #include "Net/Replication/IReplicatorPeers.h"
 #include "Net/Replication/Message.h"
 #include "Net/Replication/Replicator.h"
@@ -27,8 +27,9 @@ const handle_t c_broadcastHandle = 0UL;
 const float c_initialTimeOffset = 0.05f;
 const float c_nearDistance = 14.0f;
 const float c_farDistance = 150.0f;
-const float c_nearTimeUntilTx = 1.0f / 16.0f;
-const float c_farTimeUntilTx = 1.0f / 9.0f;
+const float c_nearErrorThreshold = 0.1f;
+const float c_farErrorThreshold = 5.0f;
+const float c_timeUntilTx = 1.0f / 4.0f;
 const float c_timeUntilIAm = 3.0f;
 const float c_timeUntilPing = 1.5f;
 const float c_errorStateThreshold = 0.2f;
@@ -41,7 +42,7 @@ const uint32_t c_maxDeltaStates = 8;
 Timer g_timer;
 Random g_random;
 
-#define T_USE_DELTA_FRAMES 0
+#define T_USE_DELTA_FRAMES 1
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
 
 		}
@@ -532,7 +533,24 @@ void Replicator::sendState(float dT)
 
 		if (peer.state != PsEstablished || !peer.ghost)
 			continue;
-		if ((peer.timeUntilTx -= dT) > 0.0f)
+
+		bool shouldSend = bool((peer.timeUntilTx -= dT) <= 0.0f);
+
+		if (!shouldSend && peer.iframe)
+		{
+			float errorThreshold = c_farErrorThreshold;
+			if (peer.ghost->stateTemplate)
+			{
+				float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
+				float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
+				errorThreshold = lerp(c_nearErrorThreshold, c_farErrorThreshold, t);
+			}
+
+			float E = m_stateTemplate->error(peer.iframe, m_state);
+			shouldSend = bool(E >= errorThreshold);
+		}
+
+		if (!shouldSend)
 			continue;
 
 		uint32_t msgSize = Message::HeaderSize + sizeof(uint8_t);
@@ -579,15 +597,7 @@ void Replicator::sendState(float dT)
 
 		if (send(i->first, &msg, msgSize, false))
 		{
-			if (peer.ghost->stateTemplate)
-			{
-				float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
-				float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-				peer.timeUntilTx = lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
-			}
-			else
-				peer.timeUntilTx = c_farTimeUntilTx;
-
+			peer.timeUntilTx = c_timeUntilTx;
 			peer.errorCount = 0;
 			peer.stateCount++;
 			peer.iframe = m_state;
@@ -595,7 +605,7 @@ void Replicator::sendState(float dT)
 		else
 		{
 			log::error << L"ERROR: Unable to send state to peer " << peer.name << L" (" << peer.errorCount << L")" << Endl;
-			peer.timeUntilTx = c_farTimeUntilTx;
+			peer.timeUntilTx = c_timeUntilTx;
 			peer.errorCount++;
 			peer.stateCount = 0;
 			peer.iframe = 0;

@@ -62,6 +62,11 @@ void GrainProperties::set(IGrainData* grain)
 	m_grain = grain;
 }
 
+void GrainProperties::reset()
+{
+	set(m_grain);
+}
+
 bool GrainProperties::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);
