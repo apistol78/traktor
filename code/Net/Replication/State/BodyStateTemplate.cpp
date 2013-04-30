@@ -1,3 +1,4 @@
+#include <algorithm>
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
 #include "Core/Math/Const.h"
@@ -37,13 +38,6 @@ float errorV4(const Vector4& Vl, const Vector4& Vr)
 	return (Vl - Vr).length();
 }
 
-float errorT(const Transform& Tl, const Transform& Tr)
-{
-	return 
-		errorV4(Tl.translation(), Tr.translation()) * c_errorScaleLinear +
-		errorV4(Tl.rotation().e, Tr.rotation().e) * c_errorScaleAngular;
-}
-
 float safeSqrt(float v)
 {
 	if (v > FUZZY_EPSILON)
@@ -66,6 +60,12 @@ float safeDeltaTime(float v)
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BodyStateTemplate", BodyStateTemplate, IValueTemplate)
+
+BodyStateTemplate::BodyStateTemplate(float linearError, float angularError)
+:	m_linearError(linearError)
+,	m_angularError(angularError)
+{
+}
 
 void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 {
@@ -280,10 +280,16 @@ float BodyStateTemplate::error(const IValue* Vl, const IValue* Vr) const
 {
 	const physics::BodyState& Sl = *checked_type_cast< const BodyStateValue* >(Vl);
 	const physics::BodyState& Sr = *checked_type_cast< const BodyStateValue* >(Vr);
-	return
-		errorT(Sl.getTransform(), Sr.getTransform()) +
-		errorV4(Sl.getLinearVelocity(), Sr.getLinearVelocity()) * c_errorScaleLinear +
-		errorV4(Sl.getAngularVelocity(), Sr.getAngularVelocity()) * c_errorScaleAngular;
+
+	float errors[] =
+	{
+		errorV4(Sl.getTransform().translation(), Sr.getTransform().translation()) * m_linearError,
+		errorV4(Sl.getTransform().rotation().e, Sr.getTransform().rotation().e) * m_angularError,
+		errorV4(Sl.getLinearVelocity(), Sr.getLinearVelocity()) * m_linearError,
+		errorV4(Sl.getAngularVelocity(), Sr.getAngularVelocity()) * m_angularError
+	};
+
+	return *std::max_element(&errors[0], &errors[3]);
 }
 
 Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

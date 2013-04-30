@@ -54,7 +54,7 @@
 			<comment/>
 			<position>
 				<first>273</first>
-				<second>609</second>
+				<second>625</second>
 			</position>
 			<name>T_RimIntensity</name>
 			<connectable>true</connectable>
@@ -65,7 +65,7 @@
 			<comment/>
 			<position>
 				<first>289</first>
-				<second>575</second>
+				<second>593</second>
 			</position>
 			<name>T_RimColor</name>
 			<connectable>true</connectable>
@@ -76,7 +76,7 @@
 			<comment/>
 			<position>
 				<first>266</first>
-				<second>507</second>
+				<second>497</second>
 			</position>
 			<name>T_SpecularTerm</name>
 			<connectable>true</connectable>
@@ -87,7 +87,7 @@
 			<comment/>
 			<position>
 				<first>235</first>
-				<second>473</second>
+				<second>465</second>
 			</position>
 			<name>T_SpecularRoughness</name>
 			<connectable>true</connectable>
@@ -98,7 +98,7 @@
 			<comment/>
 			<position>
 				<first>274</first>
-				<second>439</second>
+				<second>433</second>
 			</position>
 			<name>T_DiffuseTerm</name>
 			<connectable>true</connectable>
@@ -109,7 +109,7 @@
 			<comment/>
 			<position>
 				<first>271</first>
-				<second>405</second>
+				<second>401</second>
 			</position>
 			<name>T_SurfaceColor</name>
 			<connectable>true</connectable>
@@ -131,7 +131,7 @@
 			<comment/>
 			<position>
 				<first>270</first>
-				<second>371</second>
+				<second>369</second>
 			</position>
 			<name>T_ViewPosition</name>
 			<connectable>true</connectable>
@@ -142,7 +142,7 @@
 			<comment/>
 			<position>
 				<first>294</first>
-				<second>541</second>
+				<second>561</second>
 			</position>
 			<name>T_Emissive</name>
 			<connectable>true</connectable>
@@ -153,9 +153,20 @@
 			<comment/>
 			<position>
 				<first>287</first>
-				<second>643</second>
+				<second>657</second>
 			</position>
 			<name>T_Reflective</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>268</first>
+				<second>529</second>
+			</position>
+			<name>T_Transparency</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>

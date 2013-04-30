@@ -32,7 +32,7 @@ float BooleanTemplate::error(const IValue* Vl, const IValue* Vr) const
 {
 	bool bl = *checked_type_cast< const BooleanValue* >(Vl);
 	bool br = *checked_type_cast< const BooleanValue* >(Vr);
-	return bl != br ? c_errorScaleDiscontinuous : 0.0f;
+	return bl != br ? 10.0f : 0.0f;
 }
 
 Ref< const IValue > BooleanTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

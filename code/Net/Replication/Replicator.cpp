@@ -28,8 +28,8 @@ const float c_initialTimeOffset = 0.05f;
 const float c_nearDistance = 14.0f;
 const float c_farDistance = 150.0f;
 const float c_nearErrorThreshold = 0.1f;
-const float c_farErrorThreshold = 5.0f;
-const float c_timeUntilTx = 1.0f / 4.0f;
+const float c_farErrorThreshold = 4.0f;
+const float c_timeUntilTx = 1.0f / 10.0f;
 const float c_timeUntilIAm = 3.0f;
 const float c_timeUntilPing = 1.5f;
 const float c_errorStateThreshold = 0.2f;
@@ -37,7 +37,7 @@ const float c_remoteOffsetThreshold = 0.1f;
 const float c_remoteOffsetLimit = 0.05f;
 const uint32_t c_maxPendingPing = 4;
 const uint32_t c_maxErrorCount = 2;
-const uint32_t c_maxDeltaStates = 8;
+const uint32_t c_maxDeltaStates = 16;
 
 Timer g_timer;
 Random g_random;
@@ -548,6 +548,8 @@ void Replicator::sendState(float dT)
 
 			float E = m_stateTemplate->error(peer.iframe, m_state);
 			shouldSend = bool(E >= errorThreshold);
+
+			//log::info << peer.name << L": Error " << E << L" (Threshold " << errorThreshold << L") -> " << (shouldSend ? L"Yes" : L"No") << Endl;
 		}
 
 		if (!shouldSend)

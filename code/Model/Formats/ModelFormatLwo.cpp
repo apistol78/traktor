@@ -153,6 +153,23 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 				T_DEBUG(L"No specular texture clip for surface \"" << mbstows(surface->name) << L"\"");
 		}
 
+		const lwTexture* texTransparency = getLwTexture(surface->transparency.val.tex);
+		if (texTransparency)
+		{
+			uint32_t channel = uvChannel(outChannels, texTransparency->param.imap.vmap_name);
+
+			const lwClip* clip = findLwClip(lwo, texTransparency->param.imap.cindex);
+			if (clip)
+			{
+				std::wstring textureName = fixTextureFileName(mbstows(clip->source.still.name));
+				material.setTransparencyMap(Material::Map(textureName, channel, false));
+			}
+			else
+				T_DEBUG(L"No transparency texture clip for surface \"" << mbstows(surface->name) << L"\"");
+
+			material.setBlendOperator(Material::BoAlpha);
+		}
+
 		const lwTexture* texEmissive = getLwTexture(surface->luminosity.tex);
 		if (texEmissive)
 		{
@@ -206,7 +223,10 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 		));
 
 		if (surface->transparency.val.val >= FUZZY_EPSILON)
+		{
+			material.setTransparency(surface->transparency.val.val);
 			material.setBlendOperator(Material::BoAlpha);
+		}
 
 		material.setDiffuseTerm(surface->diffuse.val);
 		material.setSpecularTerm(surface->specularity.val);
