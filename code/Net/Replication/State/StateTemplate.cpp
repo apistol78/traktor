@@ -15,7 +15,7 @@ namespace traktor
 		{
 
 const float c_maxExtrapolationDelta = 2.0f;
-const float c_equalErrorThreshold = FUZZY_EPSILON;
+const float c_equalErrorThreshold = 0.001f;
 
 		}
 

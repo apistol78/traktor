@@ -290,7 +290,11 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 
 			const FbxTexture* transparencyTexture = getTexture(material, FbxSurfaceMaterial::sTransparentColor);
 			if (transparencyTexture)
+			{
+				uint32_t channel = uvChannel(outChannels, transparencyTexture->UVSet.Get().Buffer());
+				mm.setTransparencyMap(Material::Map(getTextureName(transparencyTexture), channel, false));
 				mm.setBlendOperator(Material::BoAlpha);
+			}
 
 			const FbxTexture* emissiveTexture = getTexture(material, mayaExported ? FbxSurfaceMaterial::sAmbient : FbxSurfaceMaterial::sEmissive);
 			if (emissiveTexture)

@@ -337,6 +337,7 @@ void MeshAssetEditor::updateMaterialList()
 			{
 				i->getDiffuseMap().name,
 				i->getSpecularMap().name,
+				i->getTransparencyMap().name,
 				i->getEmissiveMap().name,
 				i->getReflectiveMap().name,
 				i->getNormalMap().name

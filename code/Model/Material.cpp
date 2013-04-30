@@ -13,6 +13,7 @@ Material::Material()
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
+,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
 ,	m_reflective(0.0f)
 ,	m_rimLightIntensity(0.0f)
@@ -27,6 +28,7 @@ Material::Material(const std::wstring& name)
 ,	m_diffuseTerm(1.0f)
 ,	m_specularTerm(1.0f)
 ,	m_specularRoughness(0.8f)
+,	m_transparency(0.0f)
 ,	m_emissive(0.0f)
 ,	m_reflective(0.0f)
 ,	m_rimLightIntensity(0.0f)
@@ -53,6 +55,16 @@ void Material::setDiffuseMap(const Map& diffuseMap)
 const Material::Map& Material::getDiffuseMap() const
 {
 	return m_diffuseMap;
+}
+
+void Material::setTransparencyMap(const Map& transparencyMap)
+{
+	m_transparencyMap = transparencyMap;
+}
+
+const Material::Map& Material::getTransparencyMap() const
+{
+	return m_transparencyMap;
 }
 
 void Material::setSpecularMap(const Map& specularMap)
@@ -133,6 +145,16 @@ void Material::setSpecularRoughness(float specularRoughness)
 float Material::getSpecularRoughness() const
 {
 	return m_specularRoughness;
+}
+
+void Material::setTransparency(float transparency)
+{
+	m_transparency = transparency;
+}
+
+float Material::getTransparency() const
+{
+	return m_transparency;
 }
 
 void Material::setEmissive(float emissive)

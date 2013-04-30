@@ -4,7 +4,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>641</first>
+				<first>670</first>
 				<second>290</second>
 			</position>
 			<name>T_ViewNormal</name>
@@ -15,7 +15,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>638</first>
+				<first>667</first>
 				<second>324</second>
 			</position>
 			<name>T_ViewPosition</name>
@@ -26,7 +26,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>639</first>
+				<first>668</first>
 				<second>358</second>
 			</position>
 			<name>T_SurfaceColor</name>
@@ -37,7 +37,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>642</first>
+				<first>671</first>
 				<second>392</second>
 			</position>
 			<name>T_DiffuseTerm</name>
@@ -48,7 +48,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>603</first>
+				<first>632</first>
 				<second>426</second>
 			</position>
 			<name>T_SpecularRoughness</name>
@@ -59,7 +59,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>634</first>
+				<first>663</first>
 				<second>460</second>
 			</position>
 			<name>T_SpecularTerm</name>
@@ -70,8 +70,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>657</first>
-				<second>528</second>
+				<first>686</first>
+				<second>562</second>
 			</position>
 			<name>T_RimColor</name>
 			<connectable>true</connectable>
@@ -81,8 +81,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>641</first>
-				<second>562</second>
+				<first>670</first>
+				<second>596</second>
 			</position>
 			<name>T_RimIntensity</name>
 			<connectable>true</connectable>
@@ -92,8 +92,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>654</first>
-				<second>596</second>
+				<first>684</first>
+				<second>630</second>
 			</position>
 			<name>T_Reflective</name>
 			<connectable>true</connectable>
@@ -103,10 +103,21 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>662</first>
-				<second>494</second>
+				<first>691</first>
+				<second>528</second>
 			</position>
 			<name>T_Emissive</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>665</first>
+				<second>494</second>
+			</position>
+			<name>T_Transparency</name>
 			<connectable>true</connectable>
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>

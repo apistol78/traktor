@@ -71,6 +71,10 @@ public:
 
 	const Map& getSpecularMap() const;
 
+	void setTransparencyMap(const Map& transparencyMap);
+
+	const Map& getTransparencyMap() const;
+
 	void setEmissiveMap(const Map& emissiveMap);
 
 	const Map& getEmissiveMap() const;
@@ -99,6 +103,10 @@ public:
 
 	float getSpecularRoughness() const;
 
+	void setTransparency(float transparency);
+
+	float getTransparency() const;
+
 	void setEmissive(float emissive);
 
 	float getEmissive() const;
@@ -123,6 +131,7 @@ private:
 	std::wstring m_name;
 	Map m_diffuseMap;
 	Map m_specularMap;
+	Map m_transparencyMap;
 	Map m_emissiveMap;
 	Map m_reflectiveMap;
 	Map m_normalMap;
@@ -130,6 +139,7 @@ private:
 	float m_diffuseTerm;
 	float m_specularTerm;
 	float m_specularRoughness;
+	float m_transparency;
 	float m_emissive;
 	float m_reflective;
 	float m_rimLightIntensity;

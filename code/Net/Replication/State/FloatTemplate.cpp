@@ -33,8 +33,9 @@ float safeDeltaTime(float v)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.FloatTemplate", FloatTemplate, IValueTemplate)
 
-FloatTemplate::FloatTemplate()
-:	m_min(std::numeric_limits< float >::max())
+FloatTemplate::FloatTemplate(float errorScale)
+:	m_errorScale(errorScale)
+,	m_min(std::numeric_limits< float >::max())
 ,	m_max(-std::numeric_limits< float >::max())
 ,	m_idle(0.0f)
 ,	m_lowPrecision(false)
@@ -113,7 +114,7 @@ float FloatTemplate::error(const IValue* Vl, const IValue* Vr) const
 {
 	float fl = *checked_type_cast< const FloatValue* >(Vl);
 	float fr = *checked_type_cast< const FloatValue* >(Vr);
-	return abs(fl - fr) * c_errorScaleContinuous;
+	return abs(fl - fr) * m_errorScale;
 }
 
 Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const

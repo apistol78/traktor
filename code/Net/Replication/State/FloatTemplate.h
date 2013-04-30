@@ -21,7 +21,7 @@ class T_DLLCLASS FloatTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	FloatTemplate();
+	FloatTemplate(float errorScale = 1.0f);
 
 	explicit FloatTemplate(float min, float max, bool lowPrecision);
 
@@ -36,6 +36,7 @@ public:
 	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const;
 
 private:
+	float m_errorScale;
 	float m_min;
 	float m_max;
 	float m_idle;
