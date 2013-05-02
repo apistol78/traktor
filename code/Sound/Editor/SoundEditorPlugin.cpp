@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
@@ -25,6 +26,8 @@ bool SoundEditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site
 
 void SoundEditorPlugin::destroy()
 {
+	Ref< SoundSystem > soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
+	safeDestroy(soundSystem);
 	m_editor->setStoreObject(L"SoundSystem", 0);
 }
 
@@ -65,6 +68,8 @@ void SoundEditorPlugin::handleWorkspaceOpened()
 
 void SoundEditorPlugin::handleWorkspaceClosed()
 {
+	Ref< SoundSystem > soundSystem = m_editor->getStoreObject< SoundSystem >(L"SoundSystem");
+	safeDestroy(soundSystem);
 	m_editor->setStoreObject(L"SoundSystem", 0);
 }
 
