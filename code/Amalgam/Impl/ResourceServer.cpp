@@ -1,3 +1,4 @@
+#include "Ai/NavMeshFactory.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Impl/ResourceServer.h"
 #include "Animation/Animation/AnimationFactory.h"
@@ -36,6 +37,7 @@ void ResourceServer::createResourceFactories(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	db::Database* database = environment->getDatabase();
 
+	m_resourceManager->addFactory(new ai::NavMeshFactory(database));
 	m_resourceManager->addFactory(new animation::AnimationFactory(database));
 	m_resourceManager->addFactory(new mesh::MeshFactory(database, renderSystem));
 	m_resourceManager->addFactory(new spray::EffectFactory(database));

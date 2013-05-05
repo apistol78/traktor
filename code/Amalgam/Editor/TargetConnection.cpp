@@ -79,13 +79,13 @@ bool TargetConnection::update()
 
 	{
 		Ref< TargetLog > tlog;
-		if (m_transport->recv< TargetLog >(0, tlog) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< TargetLog >(0, tlog) == net::BidirectionalObjectTransport::RtSuccess)
 			m_targetLog->log(tlog->getLevel(), tlog->getText());
 	}
 
 	{
 		Ref< ScriptDebuggerHalted > debugger;
-		if (m_transport->recv< ScriptDebuggerHalted >(0, debugger) == net::BidirectionalObjectTransport::RtSuccess)
+		while (m_transport->recv< ScriptDebuggerHalted >(0, debugger) == net::BidirectionalObjectTransport::RtSuccess)
 		{
 			const script::CallStack& cs = debugger->getCallStack();
 			m_targetDebugger->notifyListeners(cs);
