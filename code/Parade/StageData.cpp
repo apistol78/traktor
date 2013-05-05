@@ -24,6 +24,7 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< script::IScriptContext > script;
 
+#if !defined(_DEBUG)
 	// Load resource bundle.
 	if (m_resourceBundle.isNotNull())
 	{
@@ -31,6 +32,7 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 		if (resourceBundle)
 			resourceManager->load(resourceBundle);
 	}
+#endif
 
 	// Bind proxies to resource manager.
 	if (m_script && !resourceManager->bind(m_script, script))

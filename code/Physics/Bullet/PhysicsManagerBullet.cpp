@@ -508,7 +508,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		resource::Proxy< Mesh > mesh;
 		if (!resourceManager->bind(meshShape->getMesh(), mesh))
 		{
-			log::error << L"Unable to load mesh resource" << Endl;
+			log::error << L"Unable to load collision mesh resource " << Guid(meshShape->getMesh()).format() << Endl;
 			return 0;
 		}
 

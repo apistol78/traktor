@@ -60,6 +60,8 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 	const std::vector< std::pair< const TypeInfo*, Guid > >& resources = bundle->get();
 	for (std::vector< std::pair< const TypeInfo*, Guid > >::const_iterator i = resources.begin(); i != resources.end(); ++i)
 	{
+		T_DEBUG(L"Preloading " << int32_t(1 + std::distance(resources.begin(), i)) << L" / " << int32_t(resources.size()) << L" " << i->first->getName());
+
 		const IResourceFactory* factory = findFactoryFromResourceType(*i->first);
 		if (!factory)
 			return 0;

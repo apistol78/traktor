@@ -123,16 +123,14 @@ public:
 		return m_items[m_size - 1];
 	}
 
-	ItemType& operator [] (size_t index)
+	operator ItemType* ()
 	{
-		T_ASSERT (index < m_size);
-		return m_items[index];
+		return m_items;
 	}
 
-	const ItemType& operator [] (size_t index) const
+	operator const ItemType* () const
 	{
-		T_ASSERT (index < m_size);
-		return m_items[index];
+		return m_items;
 	}
 
 private:
