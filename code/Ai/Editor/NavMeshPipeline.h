@@ -21,6 +21,8 @@ class T_DLLCLASS NavMeshPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
+	NavMeshPipeline();
+
 	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual TypeInfoSet getAssetTypes() const;
@@ -47,6 +49,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	bool m_editor;
 };
 
 	}

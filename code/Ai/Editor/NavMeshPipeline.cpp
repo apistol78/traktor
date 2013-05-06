@@ -1,3 +1,4 @@
+#include <limits>
 #include <Recast.h>
 #include <DetourNavMesh.h>
 #include <DetourNavMeshBuilder.h>
@@ -12,6 +13,7 @@
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfpMemberType.h"
 #include "Core/Reflection/RfmObject.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
@@ -27,6 +29,7 @@
 #include "Model/ModelFormat.h"
 #include "Model/Operations/MergeModel.h"
 #include "Model/Operations/Triangulate.h"
+#include "Terrain/OceanEntityData.h"
 #include "Terrain/TerrainEntityData.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "World/Editor/LayerEntityData.h"
@@ -39,12 +42,30 @@ namespace traktor
 		namespace
 		{
 
+const float c_oceanThreshold = 0.5f;
+
 class BuildContext : public rcContext
 {
 protected:
 	virtual void doLog(const rcLogCategory /*category*/, const char* msg, const int /*len*/)
 	{
-		log::info << mbstows(msg) << Endl;
+		T_DEBUG(mbstows(msg));
+	}
+};
+
+struct NavMeshSourceModel
+{
+	Ref< const model::Model > model;
+	Transform transform;
+
+	NavMeshSourceModel()
+	{
+	}
+
+	NavMeshSourceModel(const model::Model* model_, const Transform& transform_)
+	:	model(model_)
+	,	transform(transform_)
+	{
 	}
 };
 
@@ -112,6 +133,10 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 		{
 			outEntityData.push_back(terrainEntityData);
 		}
+		else if (terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< terrain::OceanEntityData* >(objectMember->get()))
+		{
+			outEntityData.push_back(oceanEntityData);
+		}
 		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
 		{
 			if (layerEntityData->isDynamic())
@@ -136,11 +161,17 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 5, NavMeshPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 7, NavMeshPipeline, editor::DefaultPipeline)
+
+NavMeshPipeline::NavMeshPipeline()
+:	m_editor(false)
+{
+}
 
 bool NavMeshPipeline::create(const editor::IPipelineSettings* settings)
 {
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
+	m_editor = settings->getProperty< PropertyBoolean >(L"Pipeline.TargetEditor", false);
 	return true;
 }
 
@@ -189,13 +220,13 @@ bool NavMeshPipeline::buildOutput(
 
 	log::info << L"Found " << int32_t(entityData.size()) << L" entity(s)" << Endl;
 
-	RefArray< model::Model > navModels;
-	//Ref< model::Model > debugModel = new model::Model();
-	Aabb3 navModelsAabb;
-	uint32_t navModelsTriangleCount = 0;
+	AlignedVector< NavMeshSourceModel > navModels;
+	float oceanHeight = -std::numeric_limits< float >::max();
 
 	// Load all mesh models, translate and triangulate em.
 	{
+		log::info << L"Loading/generating source models..." << Endl;
+
 		std::map< std::wstring, Ref< const model::Model > > modelCache;
 		for (RefArray< world::EntityData >::const_iterator i = entityData.begin(); i != entityData.end(); ++i)
 		{
@@ -210,18 +241,7 @@ bool NavMeshPipeline::buildOutput(
 				std::map< std::wstring, Ref< const model::Model > >::const_iterator j = modelCache.find(meshAsset->getFileName().getOriginal());
 				if (j != modelCache.end())
 				{
-					Ref< model::Model > navModel = new model::Model(*j->second);
-
-					AlignedVector< Vector4 > positions = navModel->getPositions();
-					for (AlignedVector< Vector4 >::iterator k = positions.begin(); k != positions.end(); ++k)
-						*k = (*i)->getTransform() * k->xyz1();
-					navModel->setPositions(positions);
-
-					navModels.push_back(navModel);
-					navModelsAabb.contain(navModel->getBoundingBox());
-					navModelsTriangleCount += navModel->getPolygonCount();
-
-					//model::MergeModel(*navModel, Transform::identity()).apply(*debugModel);
+					navModels.push_back(NavMeshSourceModel(j->second, (*i)->getTransform()));
 				}
 				else
 				{
@@ -248,19 +268,7 @@ bool NavMeshPipeline::buildOutput(
 					model::Triangulate().apply(*meshModel);
 
 					modelCache[meshAsset->getFileName().getOriginal()] = meshModel;
-
-					Ref< model::Model > navModel = new model::Model(*meshModel);
-
-					AlignedVector< Vector4 > positions = navModel->getPositions();
-					for (AlignedVector< Vector4 >::iterator k = positions.begin(); k != positions.end(); ++k)
-						*k = (*i)->getTransform() * k->xyz1();
-					navModel->setPositions(positions);
-
-					navModels.push_back(navModel);
-					navModelsAabb.contain(navModel->getBoundingBox());
-					navModelsTriangleCount += navModel->getPolygonCount();
-
-					//model::MergeModel(*navModel, Transform::identity()).apply(*debugModel);
+					navModels.push_back(NavMeshSourceModel(meshModel, (*i)->getTransform()));
 				}
 			}
 			else if (const terrain::TerrainEntityData* terrainEntityData = dynamic_type_cast< const terrain::TerrainEntityData* >(*i))
@@ -293,7 +301,7 @@ bool NavMeshPipeline::buildOutput(
 				sourceData->close();
 				sourceData = 0;
 
-				int32_t step = 16;
+				int32_t step = 32;
 				int32_t size = heightfield->getSize();
 				int32_t outputSize = size / step;
 
@@ -361,18 +369,32 @@ bool NavMeshPipeline::buildOutput(
 					}
 				}
 
-				navModels.push_back(navModel);
-				navModelsAabb.contain(navModel->getBoundingBox());
-				navModelsTriangleCount += navModel->getPolygonCount();
+				navModels.push_back(NavMeshSourceModel(navModel, Transform::identity()));
+			}
+			else if (const terrain::OceanEntityData* oceanEntityData = dynamic_type_cast< const terrain::OceanEntityData* >(*i))
+			{
+				oceanHeight = max< float >(oceanHeight, oceanEntityData->getTransform().translation().y());
 			}
 		}
 	}
 
-	//model::ModelFormat::writeAny(L"data/Temp/NavMesh_source.obj", debugModel);
-	//debugModel = 0;
+	// Calculate aabb and count.
+	Aabb3 navModelsAabb;
+	uint32_t navModelsTriangleCount = 0;
+
+	for (AlignedVector< NavMeshSourceModel >::const_iterator i = navModels.begin(); i != navModels.end(); ++i)
+	{
+		const model::Model* navModel = i->model;
+		T_ASSERT (navModel);
+
+		navModelsAabb.contain(navModel->getBoundingBox());
+		navModelsTriangleCount += navModel->getPolygonCount();
+	}
+
+	log::info << L"\t" << navModelsTriangleCount << L" triangle(s) loaded" << Endl;
+	log::info << L"Generating navigation mesh..." << Endl;
 
 	BuildContext ctx;
-
 	rcConfig cfg;
 
 	std::memset(&cfg, 0, sizeof(cfg));
@@ -411,34 +433,55 @@ bool NavMeshPipeline::buildOutput(
 
 	std::memset(triAreas.ptr(), 0, navModelsTriangleCount * sizeof(uint8_t));
 
-	uint8_t* triAreaPtr = triAreas.ptr();
-	for (RefArray< model::Model >::const_iterator i = navModels.begin(); i != navModels.end(); ++i)
 	{
-		int32_t vertexCount = (*i)->getVertexCount();
-		int32_t triangleCount = (*i)->getPolygonCount();
+		AlignedVector< int32_t > indices;
 
-		AutoArrayPtr< float > vertices(new float [3 * vertexCount]);
-		for (int32_t j = 0; j < vertexCount; ++j)
+		uint8_t* triAreaPtr = triAreas.ptr();
+		for (AlignedVector< NavMeshSourceModel >::const_iterator i = navModels.begin(); i != navModels.end(); ++i)
 		{
-			const Vector4& position = (*i)->getVertexPosition(j);
-			copyUnaligned3(&vertices[j * 3], position);
+			int32_t vertexCount = i->model->getVertexCount();
+			int32_t triangleCount = i->model->getPolygonCount();
+
+			AutoArrayPtr< float > vertices(new float [3 * vertexCount]);
+			for (int32_t j = 0; j < vertexCount; ++j)
+			{
+				const Vector4& position = i->model->getVertexPosition(j);
+				copyUnaligned3(&vertices[j * 3], i->transform * position);
+			}
+
+			indices.resize(0);
+			indices.reserve(3 * triangleCount);
+
+			for (int32_t j = 0; j < triangleCount; ++j)
+			{
+				const model::Polygon& triangle = i->model->getPolygon(j);
+				T_ASSERT (triangle.getVertexCount() == 3);
+
+				if (oceanHeight > -std::numeric_limits< float >::max())
+				{
+					if (vertices[triangle.getVertex(0) * 3 + 1] < oceanHeight - c_oceanThreshold)
+						continue;
+					if (vertices[triangle.getVertex(1) * 3 + 1] < oceanHeight - c_oceanThreshold)
+						continue;
+					if (vertices[triangle.getVertex(2) * 3 + 1] < oceanHeight - c_oceanThreshold)
+						continue;
+				}
+
+				indices.push_back(triangle.getVertex(2));
+				indices.push_back(triangle.getVertex(1));
+				indices.push_back(triangle.getVertex(0));
+			}
+
+			T_ASSERT (indices.size() / 3 <= triangleCount);
+
+			if (!indices.empty())
+			{
+				rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, vertices.c_ptr(), vertexCount, &indices[0], indices.size() / 3, triAreaPtr);
+				rcRasterizeTriangles(&ctx, vertices.c_ptr(), vertexCount, &indices[0], triAreaPtr, indices.size() / 3, *solid, cfg.walkableClimb);
+			}
+
+			triAreaPtr += triangleCount;
 		}
-
-		AutoArrayPtr< int32_t > indices(new int32_t [3 * triangleCount]);
-		for (int32_t j = 0; j < triangleCount; ++j)
-		{
-			const model::Polygon& triangle = (*i)->getPolygon(j);
-			T_ASSERT (triangle.getVertexCount() == 3);
-
-			indices[j * 3 + 2] = triangle.getVertex(0);
-			indices[j * 3 + 1] = triangle.getVertex(1);
-			indices[j * 3 + 0] = triangle.getVertex(2);
-		}
-
-		rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, vertices.c_ptr(), vertexCount, indices.c_ptr(), triangleCount, triAreaPtr);
-		rcRasterizeTriangles(&ctx, vertices.c_ptr(), vertexCount, indices.c_ptr(), triAreaPtr, triangleCount, *solid, cfg.walkableClimb);
-
-		triAreaPtr += triangleCount;
 	}
 
 	//
@@ -457,7 +500,7 @@ bool NavMeshPipeline::buildOutput(
 	//
 
 	// Compact the heightfield so that it is faster to handle from now on.
-	// This will result more cache coherent data as well as the neighbours
+	// This will result more cache coherent data as well as the neighbors
 	// between walkable cells will be calculated.
 	rcCompactHeightfield* chf = rcAllocCompactHeightfield();
 	if (!chf)
@@ -482,7 +525,7 @@ bool NavMeshPipeline::buildOutput(
 	if (c_monotonePartitioning)
 	{
 		// Partition the walkable surface into simple regions without holes.
-		// Monotone partitioning does not need distancefield.
+		// Monotone partitioning does not need distance field.
 		if (!rcBuildRegionsMonotone(&ctx, *chf, 0, cfg.minRegionArea, cfg.mergeRegionArea))
 			return false;
 	}
@@ -541,6 +584,7 @@ bool NavMeshPipeline::buildOutput(
 	//
 	// Step 8. Create Detour navigation mesh.
 	//
+
 	for (int i = 0; i < pmesh->npolys; ++i)
 	{
 		if (pmesh->areas[i] == RC_WALKABLE_AREA)
@@ -621,7 +665,8 @@ bool NavMeshPipeline::buildOutput(
 	dtFree(navData);
 	navData = 0;
 
-	// Save pmesh for debugging.
+	// Save pmesh for debugging; only in editor.
+	if (m_editor)
 	{
 		Ref< model::Model > pmeshModel = new model::Model();
 
@@ -653,7 +698,9 @@ bool NavMeshPipeline::buildOutput(
 
 			pmeshModel->addPolygon(polygon);
 		}
-		
+
+		model::Triangulate().apply(*pmeshModel);
+
 		model::ModelFormat::writeAny(L"data/Temp/NavMesh_nav.obj", pmeshModel);
 	}
 

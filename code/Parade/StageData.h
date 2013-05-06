@@ -46,6 +46,8 @@ public:
 
 	virtual bool serialize(ISerializer& s);
 
+	const std::map< std::wstring, Guid >& getTransitions() const { return m_transitions; }
+
 private:
 	friend class StagePipeline;
 

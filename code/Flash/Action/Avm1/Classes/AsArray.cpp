@@ -85,6 +85,11 @@ void AsArray::construct(ActionObject* self, const ActionValueArray& args)
 
 ActionValue AsArray::xplicit(const ActionValueArray& args)
 {
+	if (args.size() > 0)
+	{
+		if (args[0].isObject())
+			return args[0];
+	}
 	return ActionValue();
 }
 
