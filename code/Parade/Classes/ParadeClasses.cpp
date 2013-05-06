@@ -1,5 +1,6 @@
 #include "Parade/AudioLayer.h"
 #include "Parade/Stage.h"
+#include "Parade/StageData.h"
 #include "Parade/StageLoader.h"
 #include "Parade/VideoLayer.h"
 #include "Parade/WorldLayer.h"
@@ -18,6 +19,39 @@ namespace traktor
 	{
 		namespace
 		{
+
+class BoxedTransition : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedTransition(const std::wstring& id, const Guid& reference)
+	:	m_id(id)
+	,	m_reference(reference)
+	{
+	}
+
+	const std::wstring& getId() const { return m_id; }
+
+	const Guid& getReference() const { return m_reference; }
+
+private:
+	std::wstring m_id;
+	Guid m_reference;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.parade.Transition", BoxedTransition, Object)
+
+RefArray< BoxedTransition > StageData_getTransitions(StageData* self)
+{
+	RefArray< BoxedTransition > out;
+
+	const std::map< std::wstring, Guid >& transitions = self->getTransitions();
+	for (std::map< std::wstring, Guid >::const_iterator i = transitions.begin(); i != transitions.end(); ++i)
+		out.push_back(new BoxedTransition(i->first, i->second));
+
+	return out;
+}
 
 Ref< world::Entity > WorldLayer_createEntity1(WorldLayer* self, const std::wstring& name, world::IEntitySchema* entitySchema)
 {
@@ -69,6 +103,15 @@ Ref< script::BoxedVector2 > WorldLayer_viewToScreen(WorldLayer* self, const Vect
 
 void registerParadeClasses(script::IScriptManager* scriptManager)
 {
+	Ref< script::AutoScriptClass< BoxedTransition > > classBoxedTransition = new script::AutoScriptClass< BoxedTransition >();
+	classBoxedTransition->addMethod("getId", &BoxedTransition::getId);
+	classBoxedTransition->addMethod("getReference", &BoxedTransition::getReference);
+	scriptManager->registerClass(classBoxedTransition);
+
+	Ref< script::AutoScriptClass< StageData > > classStageData = new script::AutoScriptClass< StageData >();
+	classStageData->addMethod("getTransitions", &StageData_getTransitions);
+	scriptManager->registerClass(classStageData);
+
 	Ref< script::AutoScriptClass< Stage > > classStage = new script::AutoScriptClass< Stage >();
 	classStage->addMethod("addLayer", &Stage::addLayer);
 	classStage->addMethod("removeLayer", &Stage::removeLayer);

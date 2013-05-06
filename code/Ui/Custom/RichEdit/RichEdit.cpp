@@ -350,6 +350,9 @@ bool RichEdit::paste()
 	if (!clipboard)
 		return false;
 
+	if (m_selectionStart >= 0)
+		deleteCharacters();
+
 	std::wstring pasteText = clipboard->getText();
 	insert(pasteText);
 
@@ -780,7 +783,11 @@ void RichEdit::eventKey(Event* event)
 		deleteCharacters();
 	}
 	else if (ch != 8)
+	{
+		if (m_selectionStart >= 0)
+			deleteCharacters();
 		insertCharacter(ch);
+	}
 
 	CHECK;
 
