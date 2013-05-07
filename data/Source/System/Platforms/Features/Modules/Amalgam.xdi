@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.amalgam.Feature">
-	<description>Amalgam - Startup framework</description>
+	<description>Amalgam - Application Framework</description>
 	<platforms>
 		<ios>true</ios>
 		<linux>true</linux>

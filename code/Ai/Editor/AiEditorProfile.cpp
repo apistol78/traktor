@@ -1,3 +1,4 @@
+#include "Ai/NavMeshEntityFactory.h"
 #include "Ai/NavMeshFactory.h"
 #include "Ai/Editor/AiEditorProfile.h"
 #include "Scene/Editor/SceneEditorContext.h"
@@ -35,6 +36,7 @@ void AiEditorProfile::createEntityFactories(
 	RefArray< const world::IEntityFactory >& outEntityFactories
 ) const
 {
+	outEntityFactories.push_back(new NavMeshEntityFactory(context->getResourceManager()));
 }
 
 void AiEditorProfile::createEntityRenderers(

@@ -1,3 +1,4 @@
+#include "Ai/NavMeshEntityFactory.h"
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Impl/AudioServer.h"
 #include "Amalgam/Impl/PhysicsServer.h"
@@ -113,11 +114,11 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	db::Database* database = environment->getDatabase();
 
-	resourceManager->addFactory(new world::PostProcessFactory(database));
-	resourceManager->addFactory(new world::EntityResourceFactory(database));
-	resourceManager->addFactory(new world::EntityEventResourceFactory(database));
-	resourceManager->addFactory(new terrain::TerrainFactory(database));
 	resourceManager->addFactory(new scene::SceneFactory(database, renderSystem, m_entityBuilder));
+	resourceManager->addFactory(new terrain::TerrainFactory(database));
+	resourceManager->addFactory(new world::PostProcessFactory(database));
+	resourceManager->addFactory(new world::EntityEventResourceFactory(database));
+	resourceManager->addFactory(new world::EntityResourceFactory(database));
 }
 
 void WorldServer::createEntityFactories(IEnvironment* environment)
@@ -127,14 +128,15 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
-	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager));
-	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new animation::AnimatedMeshEntityFactory(resourceManager, physicsManager));
 	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
+	m_entityBuilder->addFactory(new ai::NavMeshEntityFactory(resourceManager));
+	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, soundPlayer));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
+	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager));
 }
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)

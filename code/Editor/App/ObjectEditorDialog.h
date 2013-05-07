@@ -48,11 +48,14 @@ private:
 	Ref< IObjectEditor > m_objectEditor;
 	Ref< ObjectEditor > m_editor;
 	Ref< db::Instance > m_instance;
-	Ref< ISerializable > m_object;
+	uint32_t m_objectHash;
+	bool m_modified;
 
 	void eventClick(ui::Event* event);
 
 	void eventClose(ui::Event* event);
+
+	void eventTimer(ui::Event* event);
 };
 
 	}

@@ -91,6 +91,16 @@ void Transaction::add(Action* action)
 	m_actions.push_back(action);
 }
 
+Action* Transaction::get(const TypeInfo& actionType) const
+{
+	for (RefArray< Action >::const_iterator i = m_actions.begin(); i != m_actions.end(); )
+	{
+		if (is_type_a(actionType, type_of(*i)))
+			return *i;
+	}
+	return 0;
+}
+
 bool Transaction::commit(Context* context)
 {
 	T_ASSERT_M (m_locked, L"Transaction not created");

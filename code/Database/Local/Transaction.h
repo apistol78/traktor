@@ -36,6 +36,14 @@ public:
 
 	bool commit(Context* context);
 
+	Action* get(const TypeInfo& actionType) const;
+
+	template < typename ActionType >
+	ActionType* get() const
+	{
+		return checked_type_cast< ActionType*, true >(get(type_of< ActionType >()));
+	}
+
 private:
 	Ref< Mutex > m_lock;
 	RefArray< Action > m_actions;
