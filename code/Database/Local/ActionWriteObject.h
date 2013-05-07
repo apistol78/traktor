@@ -30,6 +30,8 @@ public:
 
 	virtual bool redundant(const Action* action) const;
 
+	const std::vector< uint8_t >& getBuffer() const { return m_objectBuffer; }
+
 	const Ref< IStream >& getStream() const { return m_objectStream; }
 
 private:

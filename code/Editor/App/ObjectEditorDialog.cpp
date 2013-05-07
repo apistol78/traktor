@@ -1,4 +1,5 @@
 #include "Core/Io/StringOutputStream.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Database/Instance.h"
@@ -22,6 +23,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.ObjectEditorDialog", ObjectEditorDialog,
 ObjectEditorDialog::ObjectEditorDialog(PropertyGroup* settings, const IObjectEditorFactory* objectEditorFactory)
 :	m_settings(settings)
 ,	m_objectEditorFactory(objectEditorFactory)
+,	m_objectHash(0)
+,	m_modified(false)
 {
 }
 
@@ -56,13 +59,15 @@ bool ObjectEditorDialog::create(IEditor* editor, ui::Widget* parent, db::Instanc
 
 	addClickEventHandler(ui::createMethodHandler(this, &ObjectEditorDialog::eventClick));
 	addCloseEventHandler(ui::createMethodHandler(this, &ObjectEditorDialog::eventClose));
+	addTimerEventHandler(ui::createMethodHandler(this, &ObjectEditorDialog::eventTimer));
 
 	m_instance = instance;
-	m_object = object;
+	m_objectHash = DeepHash(object).get();
 
 	if (!m_objectEditor->create(this, instance, object))
 		return false;
 
+	startTimer(500);
 	update();
 
 	return true;
@@ -91,7 +96,10 @@ bool ObjectEditorDialog::apply(bool keep)
 {
 	m_objectEditor->apply();
 	if (m_instance->commit(keep ? db::CfKeepCheckedOut : db::CfDefault))
+	{
+		m_objectHash = DeepHash(m_instance->getObject()).get();
 		return true;
+	}
 	else
 	{
 		ui::MessageBox::show(this, i18n::Text(L"OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_MESSAGE"), i18n::Text(L"OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_CAPTION"), ui::MbIconError | ui::MbOk);
@@ -138,6 +146,24 @@ void ObjectEditorDialog::eventClose(ui::Event* event)
 {
 	cancel();
 	event->consume();
+}
+
+void ObjectEditorDialog::eventTimer(ui::Event* event)
+{
+	// Apply changes to current object.
+	m_objectEditor->apply();
+
+	// Check if object has been modified since last update.
+	Ref< ISerializable > object = m_instance->getObject();
+	uint32_t objectHash = DeepHash(object).get();
+	bool modified = (objectHash != m_objectHash);
+	if (modified != m_modified)
+	{
+		StringOutputStream ss;
+		ss << L"Edit \"" << m_instance->getName() << L"\" (" << type_name(object) << (modified ? L")*" : L")");
+		setText(ss.str());
+		m_modified = modified;
+	}
 }
 
 	}

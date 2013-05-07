@@ -1,22 +1,23 @@
-#include <cstring>
 #include <algorithm>
+#include <cstring>
+#include "Core/Io/DynamicMemoryStream.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/MemoryStream.h"
+#include "Core/Log/Log.h"
+#include "Core/Serialization/BinarySerializer.h"
+#include "Database/Local/Context.h"
 #include "Database/Local/LocalInstance.h"
 #include "Database/Local/LocalInstanceMeta.h"
-#include "Database/Local/Context.h"
 #include "Database/Local/Transaction.h"
 #include "Database/Local/ActionSetGuid.h"
 #include "Database/Local/ActionSetName.h"
 #include "Database/Local/ActionRemove.h"
 #include "Database/Local/ActionRemoveAllData.h"
-#include "Database/Local/ActionWriteObject.h"
 #include "Database/Local/ActionWriteData.h"
+#include "Database/Local/ActionWriteObject.h"
 #include "Database/Local/PhysicalAccess.h"
-#include "Xml/XmlSerializer.h"
 #include "Xml/XmlDeserializer.h"
-#include "Core/Io/FileSystem.h"
-#include "Core/Io/DynamicMemoryStream.h"
-#include "Core/Log/Log.h"
-#include "Core/Serialization/BinarySerializer.h"
+#include "Xml/XmlSerializer.h"
 
 namespace traktor
 {
@@ -170,9 +171,25 @@ bool LocalInstance::remove()
 
 Ref< IStream > LocalInstance::readObject(const TypeInfo*& outSerializerType) const
 {
-	Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+	Ref< IStream > objectStream;
 
-	Ref< IStream > objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmRead);
+	if (m_transaction)
+	{
+		Ref< ActionWriteObject > action = m_transaction->get< ActionWriteObject >();
+		if (action)
+		{
+			const std::vector< uint8_t >& buffer = action->getBuffer();
+			if (!buffer.empty())
+				objectStream = new MemoryStream(&buffer[0], buffer.size());
+		}
+	}
+
+	if (!objectStream)
+	{
+		Path instanceObjectPath = getInstanceObjectPath(m_instancePath);
+		objectStream = FileSystem::getInstance().open(instanceObjectPath, File::FmRead);
+	}
+
 	if (!objectStream)
 		return 0;
 
