@@ -105,7 +105,7 @@ Ref< IInputSource > GenericInputSourceData::createInstance(DeviceControlManager*
 	return new GenericInputSource(this, deviceControlManager);
 }
 
-bool GenericInputSourceData::serialize(ISerializer& s)
+void GenericInputSourceData::serialize(ISerializer& s)
 {
 	s >> MemberEnum< InputCategory >(L"category", m_category, g_InputCategory_Keys);
 	s >> MemberEnum< InputDefaultControlType >(L"controlType", m_controlType, g_InputDefaultControlType_Keys);
@@ -115,7 +115,6 @@ bool GenericInputSourceData::serialize(ISerializer& s)
 		s >> Member< bool >(L"inverted", m_inverted);
 
 	s >> Member< int32_t >(L"index", m_index);
-	return true;
 }
 	
 	}

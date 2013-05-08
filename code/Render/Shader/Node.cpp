@@ -70,11 +70,10 @@ const OutputPin* Node::findOutputPin(const std::wstring& name) const
 	return 0;
 }
 
-bool Node::serialize(ISerializer& s)
+void Node::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"comment", m_comment, AttributeMultiLine());
 	s >> MemberStlPair< int, int >(L"position", m_position);
-	return true;
 }
 
 	}

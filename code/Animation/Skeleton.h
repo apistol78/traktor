@@ -37,7 +37,7 @@ public:
 
 	void findChildren(uint32_t index, std::vector< uint32_t >& outChildren) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	uint32_t getJointCount() const { return uint32_t(m_joints.size()); }
 

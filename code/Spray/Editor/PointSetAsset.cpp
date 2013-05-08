@@ -19,12 +19,10 @@ bool PointSetAsset::fromFaces() const
 	return m_fromFaces;
 }
 
-bool PointSetAsset::serialize(ISerializer& s)
+void PointSetAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
-
-	return s >> Member< bool >(L"fromFaces", m_fromFaces);
+	editor::Asset::serialize(s);
+	s >> Member< bool >(L"fromFaces", m_fromFaces);
 }
 
 	}

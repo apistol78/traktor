@@ -15,13 +15,10 @@ const TypeInfo* TextureAsset::getOutputType() const
 	return &type_of< TextureResource >();
 }
 
-bool TextureAsset::serialize(ISerializer& s)
+void TextureAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
-
+	editor::Asset::serialize(s);
 	s >> MemberComposite< TextureOutput, false >(L"output", m_output);
-	return true;
 }
 
 	}

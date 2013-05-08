@@ -16,7 +16,7 @@ class SteamGameConfiguration : public IGameConfiguration
 public:
 	SteamGameConfiguration();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class SteamSessionManager;

@@ -53,9 +53,9 @@ bool MRU::getUsedFiles(std::vector< Path >& outFilePaths) const
 	return true;
 }
 
-bool MRU::serialize(ISerializer& s)
+void MRU::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< std::wstring >(L"filePaths", m_filePaths);
+	s >> MemberStlVector< std::wstring >(L"filePaths", m_filePaths);
 }
 
 	}

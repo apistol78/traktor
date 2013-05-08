@@ -23,11 +23,10 @@ Ref< PostProcessStep::Instance > PostProcessStepSwapTargets::create(
 	);
 }
 
-bool PostProcessStepSwapTargets::serialize(ISerializer& s)
+void PostProcessStepSwapTargets::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"destination", m_destination);
 	s >> Member< std::wstring >(L"source", m_source);
-	return true;
 }
 
 // Instance

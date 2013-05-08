@@ -18,7 +18,7 @@ TerrainAsset::TerrainAsset()
 {
 }
 
-bool TerrainAsset::serialize(ISerializer& s)
+void TerrainAsset::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 4);
 
@@ -26,8 +26,6 @@ bool TerrainAsset::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"patchDim", m_patchDim);
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
 	s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
-
-	return true;
 }
 
 	}

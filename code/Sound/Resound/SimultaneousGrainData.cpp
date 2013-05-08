@@ -25,9 +25,9 @@ Ref< IGrain > SimultaneousGrainData::createInstance(resource::IResourceManager* 
 	return new SimultaneousGrain(grains);
 }
 
-bool SimultaneousGrainData::serialize(ISerializer& s)
+void SimultaneousGrainData::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
+	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }
 
 	}

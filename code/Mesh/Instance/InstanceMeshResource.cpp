@@ -202,7 +202,7 @@ Ref< IMesh > InstanceMeshResource::createMesh(
 	return instanceMesh;
 }
 
-bool InstanceMeshResource::serialize(ISerializer& s)
+void InstanceMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
 	s >> Member< bool >(L"haveOccluderMesh", m_haveOccluderMesh);
@@ -218,7 +218,6 @@ bool InstanceMeshResource::serialize(ISerializer& s)
 			MemberStlList< Part, MemberComposite< Part > >
 		>
 	>(L"parts", m_parts);
-	return true;
 }
 
 InstanceMeshResource::Part::Part()
@@ -226,11 +225,10 @@ InstanceMeshResource::Part::Part()
 {
 }
 
-bool InstanceMeshResource::Part::serialize(ISerializer& s)
+void InstanceMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	return true;
 }
 
 	}

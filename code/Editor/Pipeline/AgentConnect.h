@@ -48,7 +48,7 @@ public:
 
 	uint16_t getStreamServerPort() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_sessionId;

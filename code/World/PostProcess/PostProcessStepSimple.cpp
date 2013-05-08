@@ -38,11 +38,10 @@ Ref< PostProcessStep::Instance > PostProcessStepSimple::create(
 	return new InstanceSimple(this, shader, sources);
 }
 
-bool PostProcessStepSimple::serialize(ISerializer& s)
+void PostProcessStepSimple::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
-	return true;
 }
 
 PostProcessStepSimple::Source::Source()
@@ -50,12 +49,11 @@ PostProcessStepSimple::Source::Source()
 {
 }
 
-bool PostProcessStepSimple::Source::serialize(ISerializer& s)
+void PostProcessStepSimple::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< std::wstring >(L"source", source);
 	s >> Member< uint32_t >(L"index", index);
-	return true;
 }
 
 // Instance

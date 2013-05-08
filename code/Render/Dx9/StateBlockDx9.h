@@ -37,7 +37,7 @@ public:
 
 	StateBlockDx9& operator = (const StateBlockDx9& stateBlock);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	inline bool isOpaque() const { return m_opaque; }
 

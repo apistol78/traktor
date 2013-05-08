@@ -23,7 +23,7 @@ class T_DLLCLASS MemberType : public MemberComplex
 public:
 	MemberType(const wchar_t* const name, const TypeInfo*& type);
 
-	virtual bool serialize(ISerializer& s) const;
+	virtual void serialize(ISerializer& s) const;
 
 private:
 	const TypeInfo*& m_type;

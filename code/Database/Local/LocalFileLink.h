@@ -16,7 +16,7 @@ class LocalFileLink : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	inline const std::wstring& getPath() const { return m_path; }
 

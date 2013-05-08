@@ -126,7 +126,7 @@ bool FlashBitmap::create(drawing::Image* image)
 	return true;
 }
 
-bool FlashBitmap::serialize(ISerializer& s)
+void FlashBitmap::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"width", m_width);
 	s >> Member< uint32_t >(L"height", m_height);
@@ -147,8 +147,6 @@ bool FlashBitmap::serialize(ISerializer& s)
 	uint32_t size = mipChainSize * sizeof(SwfColor);
 
 	s >> Member< void* >(L"bits", bits, size);
-
-	return true;
 }
 
 	}

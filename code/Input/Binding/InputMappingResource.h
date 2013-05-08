@@ -35,7 +35,7 @@ public:
 
 	InputMappingStateData* getStateData() const { return m_stateData; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< InputMappingSourceData > m_sourceData;

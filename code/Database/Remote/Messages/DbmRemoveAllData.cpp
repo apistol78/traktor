@@ -14,10 +14,9 @@ DbmRemoveAllData::DbmRemoveAllData(uint32_t handle)
 {
 }
 
-bool DbmRemoveAllData::serialize(ISerializer& s)
+void DbmRemoveAllData::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
-	return true;
 }
 
 	}

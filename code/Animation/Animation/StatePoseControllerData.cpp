@@ -64,14 +64,11 @@ Ref< IPoseController > StatePoseControllerData::createInstance(resource::IResour
 	return poseController;
 }
 
-bool StatePoseControllerData::serialize(ISerializer& s)
+void StatePoseControllerData::serialize(ISerializer& s)
 {
 	s >> resource::Member< StateGraph >(L"stateGraph", m_stateGraph);
-
 	if (s.getVersion() >= 1)
 		s >> MemberComposite< Range< float > >(L"randomTimeOffset", m_randomTimeOffset);
-
-	return true;
 }
 
 	}

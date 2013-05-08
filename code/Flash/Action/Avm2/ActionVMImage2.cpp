@@ -7,9 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.ActionVMImage2", 0, ActionVMImage2, IActionVMImage)
 
-bool ActionVMImage2::serialize(ISerializer& s)
+void ActionVMImage2::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

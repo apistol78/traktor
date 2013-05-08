@@ -66,7 +66,7 @@ public:
 
 		ShadowSettings();
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	float viewNearZ;
@@ -83,7 +83,7 @@ public:
 
 	WorldRenderSettings();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 };
 
 	}

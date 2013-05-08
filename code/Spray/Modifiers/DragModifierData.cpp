@@ -21,11 +21,10 @@ Ref< Modifier > DragModifierData::createModifier(resource::IResourceManager* res
 	return new DragModifier(m_linearDrag, m_angularDrag);
 }
 
-bool DragModifierData::serialize(ISerializer& s)
+void DragModifierData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"linearDrag", m_linearDrag);
 	s >> Member< float >(L"angularDrag", m_angularDrag);
-	return true;
 }
 
 	}

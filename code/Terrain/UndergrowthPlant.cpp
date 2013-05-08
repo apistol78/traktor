@@ -9,9 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.terrain.UndergrowthPlant", 0, UndergrowthPlant, ISerializable)
 
-bool UndergrowthPlant::serialize(ISerializer& s)
+void UndergrowthPlant::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< int32_t >(L"plants", m_plants);
+	s >> MemberStlVector< int32_t >(L"plants", m_plants);
 }
 
 	}

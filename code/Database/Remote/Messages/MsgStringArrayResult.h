@@ -37,7 +37,7 @@ public:
 
 	const std::vector< std::wstring >& get() const { return m_values; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::vector< std::wstring > m_values;

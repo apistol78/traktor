@@ -29,11 +29,10 @@ const std::wstring& EvtGroupRenamed::getPreviousPath() const
 	return m_previousPath;
 }
 
-bool EvtGroupRenamed::serialize(ISerializer& s)
+void EvtGroupRenamed::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"previousPath", m_previousPath);
-	return true;
 }
 
 	}

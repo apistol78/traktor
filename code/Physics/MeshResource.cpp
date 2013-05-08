@@ -7,9 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshResource", 0, MeshResource, ISerializable)
 
-bool MeshResource::serialize(ISerializer& s)
+void MeshResource::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

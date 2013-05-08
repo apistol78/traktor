@@ -36,7 +36,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		if (s.getDirection() == ISerializer::SdWrite)
 		{
@@ -59,7 +59,6 @@ public:
 			else
 				m_pin = 0;
 		}
-		return true;
 	}
 
 private:
@@ -96,11 +95,10 @@ const InputPin* Edge::getDestination() const
 	return m_destination;
 }
 
-bool Edge::serialize(ISerializer& s)
+void Edge::serialize(ISerializer& s)
 {
 	s >> MemberPin< const OutputPin, OutputPinAccessor >(L"source", m_source);
 	s >> MemberPin< const InputPin, InputPinAccessor >(L"destination", m_destination);
-	return true;
 }
 
 	}

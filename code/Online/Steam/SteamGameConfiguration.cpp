@@ -19,7 +19,7 @@ SteamGameConfiguration::SteamGameConfiguration()
 {
 }
 
-bool SteamGameConfiguration::serialize(ISerializer& s)
+void SteamGameConfiguration::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 2)
 		s >> Member< uint32_t >(L"appId", m_appId);
@@ -40,8 +40,6 @@ bool SteamGameConfiguration::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 		s >> MemberStlMap< std::wstring, uint32_t >(L"dlcIds", m_dlcIds);
-
-	return true;
 }
 
 	}

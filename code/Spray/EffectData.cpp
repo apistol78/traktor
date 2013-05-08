@@ -49,13 +49,12 @@ Ref< Effect > EffectData::createEffect(resource::IResourceManager* resourceManag
 	);
 }
 
-bool EffectData::serialize(ISerializer& s)
+void EffectData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"duration", m_duration);
 	s >> Member< float >(L"loopStart", m_loopStart);
 	s >> Member< float >(L"loopEnd", m_loopEnd);
 	s >> MemberRefArray< EffectLayerData >(L"layers", m_layers);
-	return true;
 }
 
 	}

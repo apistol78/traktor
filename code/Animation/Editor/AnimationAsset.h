@@ -24,7 +24,7 @@ class T_DLLCLASS AnimationAsset : public editor::Asset
 public:
 	AnimationAsset();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const Vector4& getOffset() const { return m_offset; }
 

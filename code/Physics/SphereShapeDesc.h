@@ -30,7 +30,7 @@ public:
 
 	float getRadius() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	float m_radius;

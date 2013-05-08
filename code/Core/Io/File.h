@@ -84,7 +84,7 @@ public:
 
 	const DateTime& getLastWriteTime() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 protected:
 	Path m_path;

@@ -177,9 +177,9 @@ DateTime::operator uint64_t () const
 	return m_epoch;
 }
 
-bool DateTime::serialize(ISerializer& s)
+void DateTime::serialize(ISerializer& s)
 {
-	return s >> Member< uint64_t >(L"epoch", m_epoch);
+	s >> Member< uint64_t >(L"epoch", m_epoch);
 }
 
 }

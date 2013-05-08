@@ -18,12 +18,11 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< Guid >(L"id", m_ref.id);
 		s >> Member< std::wstring >(L"name", m_ref.name);
 		s >> Member< int32_t >(L"line", m_ref.line);
-		return true;
 	}
 
 private:
@@ -60,12 +59,11 @@ const source_map_t& ScriptResourceLua::getMap() const
 	return m_map;
 }
 
-bool ScriptResourceLua::serialize(ISerializer& s)
+void ScriptResourceLua::serialize(ISerializer& s)
 {
 	s >> Member< std::string >(L"fileName", m_fileName);
 	s >> Member< std::string >(L"script", m_script);
 	s >> MemberStlList< SourceMapping, MemberSourceMapping >(L"map", m_map);
-	return true;
 }
 
 	}

@@ -7,9 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshResource", 0, NavMeshResource, ISerializable)
 
-bool NavMeshResource::serialize(ISerializer& s)
+void NavMeshResource::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

@@ -115,7 +115,7 @@ const Guid& TargetConfiguration::getOnlineConfig() const
 	return m_onlineConfig;
 }
 
-bool TargetConfiguration::serialize(ISerializer& s)
+void TargetConfiguration::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< Guid >(L"platform", m_platform);
@@ -126,7 +126,6 @@ bool TargetConfiguration::serialize(ISerializer& s)
 	s >> Member< Guid >(L"startup", m_startup);
 	s >> Member< Guid >(L"onlineConfig", m_onlineConfig);
 	s >> Member< Guid >(L"defaultInput", m_defaultInput, AttributeType(type_of< input::InputMappingResource >()));
-	return true;
 }
 
 	}

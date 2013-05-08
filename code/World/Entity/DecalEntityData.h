@@ -34,7 +34,7 @@ class T_DLLCLASS DecalEntityData : public EntityData
 public:
 	DecalEntityData();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	float getSize() const { return m_size; }
 

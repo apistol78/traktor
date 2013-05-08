@@ -309,23 +309,19 @@ std::wstring MD5::format() const
 	return ss.str();    
 }
 
-bool MD5::serialize(ISerializer& s)
+void MD5::serialize(ISerializer& s)
 {
 	if (s.getDirection() == ISerializer::SdRead)
 	{
 		std::wstring md5;
-		if (!(s >> Member< std::wstring >(L"md5", md5)))
-			return false;
-		if (!create(md5))
-			return false;
+		s >> Member< std::wstring >(L"md5", md5);
+		create(md5);
 	}
 	else	// SdWrite
 	{
 		std::wstring md5 = format();
-		if (!(s >> Member< std::wstring >(L"md5", md5)))
-			return false;
+		s >> Member< std::wstring >(L"md5", md5);
 	}
-	return true;
 }
 
 bool MD5::operator == (const MD5& md5) const

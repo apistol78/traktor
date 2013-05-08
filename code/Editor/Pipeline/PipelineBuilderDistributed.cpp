@@ -46,8 +46,6 @@ bool PipelineBuilderDistributed::build(const RefArray< PipelineDependency >& dep
 	m_succeeded = 0;
 	m_failed = 0;
 
-	m_pipelineDb->beginTransaction();
-
 	RefArray< PipelineDependency > workSet = dependencies;
 	while (!workSet.empty())
 	{
@@ -60,8 +58,6 @@ bool PipelineBuilderDistributed::build(const RefArray< PipelineDependency >& dep
 
 	log::info << L"Waiting for agents to complete build..." << Endl;
 	m_agentsManager->waitUntilAllIdle();
-
-	m_pipelineDb->endTransaction();
 
 	// Log results.
 	if (!ThreadManager::getInstance().getCurrentThread()->stopped())

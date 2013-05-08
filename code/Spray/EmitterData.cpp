@@ -60,7 +60,7 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 	);
 }
 
-bool EmitterData::serialize(ISerializer& s)
+void EmitterData::serialize(ISerializer& s)
 {
 	s >> MemberRef< SourceData >(L"source", m_source);
 	s >> MemberRefArray< ModifierData >(L"modifiers", m_modifiers);
@@ -75,8 +75,6 @@ bool EmitterData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"worldSpace", m_worldSpace);
-
-	return true;
 }
 
 	}

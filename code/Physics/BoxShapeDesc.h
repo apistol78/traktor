@@ -31,7 +31,7 @@ public:
 
 	const Vector4& getExtent() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Vector4 m_extent;

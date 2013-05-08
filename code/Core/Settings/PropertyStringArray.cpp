@@ -17,9 +17,9 @@ PropertyStringArray::value_type_t PropertyStringArray::get(const IPropertyValue*
 	return value ? checked_type_cast< const PropertyStringArray* >(value)->m_value : value_type_t();
 }
 
-bool PropertyStringArray::serialize(ISerializer& s)
+void PropertyStringArray::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< std::wstring >(L"value", m_value);
+	s >> MemberStlVector< std::wstring >(L"value", m_value);
 }
 
 Ref< IPropertyValue > PropertyStringArray::join(const IPropertyValue* right) const

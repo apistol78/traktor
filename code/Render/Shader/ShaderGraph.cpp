@@ -153,15 +153,13 @@ void ShaderGraph::rewire(const OutputPin* outputPin, const OutputPin* newOutputP
 	updateAdjacency();
 }
 
-bool ShaderGraph::serialize(ISerializer& s)
+void ShaderGraph::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);
 	s >> MemberRefArray< Edge >(L"edges", m_edges);
 
 	if (s.getDirection() == ISerializer::SdRead)
 		updateAdjacency();
-
-	return true;
 }
 
 void ShaderGraph::updateAdjacency()

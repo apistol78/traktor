@@ -30,9 +30,8 @@ public:
 	/*! \brief Serialize object.
 	 *
 	 * \param s Serializer interface.
-	 * \return True if serialization successful.
 	 */
-	virtual bool serialize(ISerializer& s) = 0;
+	virtual void serialize(ISerializer& s) = 0;
 };
 
 }

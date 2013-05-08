@@ -57,15 +57,10 @@ void GroupEntityData::setTransform(const Transform& transform)
 	EntityData::setTransform(transform);
 }
 
-bool GroupEntityData::serialize(ISerializer& s)
+void GroupEntityData::serialize(ISerializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
-
-	if (!(s >> MemberRefArray< EntityData >(L"entityData", m_entityData)))
-		return false;
-
-	return true;
+	EntityData::serialize(s);
+	s >> MemberRefArray< EntityData >(L"entityData", m_entityData);
 }
 	
 	}

@@ -20,13 +20,10 @@ const std::wstring& EvtInstanceCreated::getGroupPath() const
 	return m_groupPath;
 }
 
-bool EvtInstanceCreated::serialize(ISerializer& s)
+void EvtInstanceCreated::serialize(ISerializer& s)
 {
-	if (!EvtInstance::serialize(s))
-		return false;
-
+	EvtInstance::serialize(s);
 	s >> Member< std::wstring >(L"groupPath", m_groupPath);
-	return true;
 }
 
 	}

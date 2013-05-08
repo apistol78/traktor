@@ -44,9 +44,9 @@ float SHCoeffs::operator * (const SHCoeffs& coeffs) const
 	return result;
 }
 
-bool SHCoeffs::serialize(ISerializer& s)
+void SHCoeffs::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< float >(L"coefficients", m_coefficients);
+	s >> MemberStlVector< float >(L"coefficients", m_coefficients);
 }
 
 	}

@@ -31,15 +31,13 @@ const RefArray< PostProcessStep >& PostProcessSettings::getSteps() const
 	return m_steps;
 }
 
-bool PostProcessSettings::serialize(ISerializer& s)
+void PostProcessSettings::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"requireHighRange", m_requireHighRange);
 
 	s >> MemberRefArray< PostProcessDefine >(L"definitions", m_definitions);
 	s >> MemberRefArray< PostProcessStep >(L"steps", m_steps);
-
-	return true;
 }
 
 	}

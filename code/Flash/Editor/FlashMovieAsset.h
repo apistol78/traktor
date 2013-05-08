@@ -21,7 +21,7 @@ class T_DLLCLASS FlashMovieAsset : public editor::Asset
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class FlashPipeline;

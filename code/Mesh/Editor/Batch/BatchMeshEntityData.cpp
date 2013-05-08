@@ -26,15 +26,12 @@ void BatchMeshEntityData::setTransform(const Transform& transform)
 	world::EntityData::setTransform(transform);
 }
 
-bool BatchMeshEntityData::serialize(ISerializer& s)
+void BatchMeshEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 	
 	s >> Member< Guid >(L"outputGuid", m_outputGuid);
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
-
-	return true;
 }
 
 	}

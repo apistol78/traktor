@@ -25,12 +25,10 @@ float SphereShapeDesc::getRadius() const
 	return m_radius;
 }
 
-bool SphereShapeDesc::serialize(ISerializer& s)
+void SphereShapeDesc::serialize(ISerializer& s)
 {
-	if (!ShapeDesc::serialize(s))
-		return false;
-
-	return s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
+	ShapeDesc::serialize(s);
+	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
 }
 
 	}

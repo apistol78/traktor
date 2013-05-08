@@ -21,9 +21,9 @@ const std::map< std::wstring, Ref< IInputSourceData > >& InputMappingSourceData:
 	return m_sourceData;
 }
 
-bool InputMappingSourceData::serialize(ISerializer& s)
+void InputMappingSourceData::serialize(ISerializer& s)
 {
-	return s >> MemberStlMap<
+	s >> MemberStlMap<
 		std::wstring,
 		Ref< IInputSourceData >,
 		MemberStlPair<

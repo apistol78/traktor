@@ -26,7 +26,7 @@ public:
 
 	virtual Ref< MeshEntity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 	
 	virtual void setTransform(const Transform& transform);
 

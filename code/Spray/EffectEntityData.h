@@ -44,7 +44,7 @@ class T_DLLCLASS EffectEntityData : public world::EntityData
 public:
 	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< Effect >& getEffect() const { return m_effect; }
 

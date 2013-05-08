@@ -32,6 +32,9 @@ XmlPullParser::Attributes::const_iterator findAttribute(const XmlPullParser::Att
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlDeserializer", XmlDeserializer, Serializer)
 
+#define T_CHECK_STATUS \
+	if (failed()) return;
+
 XmlDeserializer::XmlDeserializer(IStream* stream)
 :	m_xpp(stream)
 {
@@ -44,171 +47,132 @@ Serializer::Direction XmlDeserializer::getDirection() const
 	return Serializer::SdRead;
 }
 
-bool XmlDeserializer::operator >> (const Member< bool >& m)
+void XmlDeserializer::operator >> (const Member< bool >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = bool(m_value == L"true");
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< int8_t >& m)
+void XmlDeserializer::operator >> (const Member< int8_t >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< int32_t >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< uint8_t >& m)
+void XmlDeserializer::operator >> (const Member< uint8_t >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< uint32_t >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< int16_t >& m)
+void XmlDeserializer::operator >> (const Member< int16_t >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< int16_t >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< uint16_t >& m)
+void XmlDeserializer::operator >> (const Member< uint16_t >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< uint16_t >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< int32_t >& m)
+void XmlDeserializer::operator >> (const Member< int32_t >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< int32_t >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< uint32_t >& m)
+void XmlDeserializer::operator >> (const Member< uint32_t >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< uint32_t >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< int64_t >& m)
+void XmlDeserializer::operator >> (const Member< int64_t >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< int64_t >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< uint64_t >& m)
+void XmlDeserializer::operator >> (const Member< uint64_t >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< uint64_t >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< float >& m)
+void XmlDeserializer::operator >> (const Member< float >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< float >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< double >& m)
+void XmlDeserializer::operator >> (const Member< double >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = parseString< double >(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< std::string >& m)
+void XmlDeserializer::operator >> (const Member< std::string >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = wstombs(m_value);
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< std::wstring >& m)
+void XmlDeserializer::operator >> (const Member< std::wstring >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = m_value;
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Guid >& m)
+void XmlDeserializer::operator >> (const Member< Guid >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
-	Guid& guid = m;
-	if (!guid.create(m_value))
-		return false;
-
-	return true;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
+	((Guid&)m).create(m_value);
 }
 
-bool XmlDeserializer::operator >> (const Member< Path >& m)
+void XmlDeserializer::operator >> (const Member< Path >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
-	Path& path = m;
-	path = Path(m_value);
-
-	return true;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
+	((Path&)m) = Path(m_value);
 }
 
-bool XmlDeserializer::operator >> (const Member< Color4ub >& m)
+void XmlDeserializer::operator >> (const Member< Color4ub >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 
 	m_values.resize(0); m_values.reserve(4);
-	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4) != 4)
-		return false;
+	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4);
 
 	m->r = uint8_t(m_values[0]);
 	m->g = uint8_t(m_values[1]);
 	m->b = uint8_t(m_values[2]);
 	m->a = uint8_t(m_values[3]);
-
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Color4f >& m)
+void XmlDeserializer::operator >> (const Member< Color4f >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 
 	m_values.resize(0); m_values.reserve(4);
-	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4) != 4)
-		return false;
+	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4);
 
 	m->set(
 		m_values[0],
@@ -216,42 +180,34 @@ bool XmlDeserializer::operator >> (const Member< Color4f >& m)
 		m_values[2],
 		m_values[3]
 	);
-
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Scalar >& m)
+void XmlDeserializer::operator >> (const Member< Scalar >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
-
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 	m = Scalar(parseString< float >(m_value));
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Vector2 >& m)
+void XmlDeserializer::operator >> (const Member< Vector2 >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 
 	m_values.resize(0); m_values.reserve(2);
-	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 2) != 2)
-		return false;
+	Split< std::wstring, float >::any(m_value, L",", m_values, true, 2);
 
 	m->x = m_values[0];
 	m->y = m_values[1];
-
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Vector4 >& m)
+void XmlDeserializer::operator >> (const Member< Vector4 >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 
 	m_values.resize(0); m_values.reserve(4);
-	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4) != 4)
-		return false;
+	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4);
 
 	m->set(
 		m_values[0],
@@ -259,18 +215,15 @@ bool XmlDeserializer::operator >> (const Member< Vector4 >& m)
 		m_values[2],
 		m_values[3]
 	);
-
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Matrix33 >& m)
+void XmlDeserializer::operator >> (const Member< Matrix33 >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 
 	m_values.resize(0); m_values.reserve(3 * 3);
-	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 3 * 3) != 3 * 3)
-		return false;
+	Split< std::wstring, float >::any(m_value, L",", m_values, true, 3 * 3);
 
 	for (int r = 0; r < 3; ++r)
 	{
@@ -279,36 +232,30 @@ bool XmlDeserializer::operator >> (const Member< Matrix33 >& m)
 			m->e[r][c] = m_values[r * 3 + c];
 		}
 	}
-
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Matrix44 >& m)
+void XmlDeserializer::operator >> (const Member< Matrix44 >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 
 	m_values.resize(0); m_values.reserve(4 * 4);
-	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4 * 4) != 4 * 4)
-		return false;
+	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4 * 4);
 
 	for (int r = 0; r < 4; ++r)
 	{
 		for (int c = 0; c < 4; ++c)
 			(*m).set(r, c, Scalar(m_values[c + r * 4]));
 	}
-
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
+void XmlDeserializer::operator >> (const Member< Quaternion >& m)
 {
-	if (!nextElementValue(m.getName(), m_value))
-		return false;
+	T_CHECK_STATUS;
+	nextElementValue(m.getName(), m_value);
 
 	m_values.resize(0); m_values.reserve(4);
-	if (Split< std::wstring, float >::any(m_value, L",", m_values, true, 4) != 4)
-		return false;
+	Split< std::wstring, float >::any(m_value, L",", m_values, true, 4);
 
 	m->e.set(
 		m_values[0],
@@ -316,14 +263,14 @@ bool XmlDeserializer::operator >> (const Member< Quaternion >& m)
 		m_values[2],
 		m_values[3]
 	);
-
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
+void XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 {
-	if (!enterElement(m.getName()))
-		return false;
+	T_CHECK_STATUS;
+	
+	if (!ensure(enterElement(m.getName())))
+		return;
 
 	const XmlPullParser::Attributes& attr = m_xpp.getEvent().attr;
 	XmlPullParser::Attributes::const_iterator a;
@@ -331,11 +278,9 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 	if ((a = findAttribute(attr, L"ref")) != attr.end())
 	{
 		std::map< std::wstring, Ref< ISerializable > >::iterator i = m_refs.find(a->second);
-		if (i == m_refs.end())
-		{
-			log::error << L"No such reference, \"" << a->second << L"\"" << Endl;
-			return 0;
-		}
+		if (!ensure(i != m_refs.end()))
+			return;
+
 		m = m_refs[a->second];
 	}
 	else if ((a = findAttribute(attr, L"type")) != attr.end())
@@ -343,18 +288,12 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 		std::wstring typeName = a->second;
 
 		const TypeInfo* type = TypeInfo::find(typeName);
-		if (!type)
-		{
-			log::error << L"No such type, \"" << typeName << L"\"" << Endl;
-			return false;
-		}
+		if (!ensure(type != 0))
+			return;
 
 		Ref< ISerializable > o = checked_type_cast< ISerializable* >(type->createInstance());
-		if (!o)
-		{
-			log::error << L"Unable to instantiate type \"" << typeName << L"\"" << Endl;
-			return false;
-		}
+		if (!ensure(o != 0))
+			return;
 
 		int32_t version = 0;
 		if ((a = findAttribute(attr, L"version")) != attr.end())
@@ -364,13 +303,9 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 		T_ASSERT_M (version <= typeVersion, L"Serialized data has a higher version number than supported by the code");
 
 		rememberObject(o);
-		if (serialize(o, version))
-			m = o;
-		else
-		{
-			log::error << L"Unable to serialize object of type \"" << typeName << L"\"" << Endl;
-			return false;
-		}
+		serialize(o, version);
+
+		m = o;
 	}
 	else
 	{
@@ -378,19 +313,18 @@ bool XmlDeserializer::operator >> (const Member< ISerializable* >& m)
 		m = 0;
 	}
 
-	if (!leaveElement(m.getName()))
-		return false;
-
-	return true;
+	leaveElement(m.getName());
 }
 
-bool XmlDeserializer::operator >> (const Member< void* >& m)
+void XmlDeserializer::operator >> (const Member< void* >& m)
 {
-	if (!enterElement(m.getName()))
-		return false;
+	T_CHECK_STATUS;
 
-	if (m_xpp.next() != XmlPullParser::EtText)
-		return false;
+	if (!ensure(enterElement(m.getName())))
+		return;
+
+	if (!ensure(m_xpp.next() == XmlPullParser::EtText))
+		return;
 
 	std::vector< uint8_t > data = Base64().decode(m_xpp.getEvent().value);
 
@@ -402,21 +336,22 @@ bool XmlDeserializer::operator >> (const Member< void* >& m)
 	else
 		m.setBlobSize(0);
 
-	if (!leaveElement(m.getName()))
-		return false;
-
-	return true;
+	leaveElement(m.getName());
 }
 
-bool XmlDeserializer::operator >> (const MemberArray& m)
+void XmlDeserializer::operator >> (const MemberArray& m)
 {
-	if (!enterElement(m.getName()))
-		return false;
+	T_CHECK_STATUS;
+
+	if (!ensure(enterElement(m.getName())))
+		return;
 
 	m.reserve(0, 0);
 
 	for (size_t i = 0;; ++i)
 	{
+		T_CHECK_STATUS;
+
 		while (m_xpp.next() != XmlPullParser::EtEndDocument)
 		{
 			if (m_xpp.getEvent().type == XmlPullParser::EtStartElement)
@@ -433,38 +368,35 @@ bool XmlDeserializer::operator >> (const MemberArray& m)
 
 		m_xpp.push();
 
-		if (!m.read(*this))
-			return false;
+		m.read(*this);
 	}
 
 	m_stack.pop_back();
-
-	return true;
 }
 
-bool XmlDeserializer::operator >> (const MemberComplex& m)
+void XmlDeserializer::operator >> (const MemberComplex& m)
 {
-	if (m.getCompound() == true)
-	{
-		if (!enterElement(m.getName()))
-			return false;
-	}
-
-	if (!m.serialize(*this))
-		return false;
+	T_CHECK_STATUS;
 
 	if (m.getCompound() == true)
 	{
-		if (!leaveElement(m.getName()))
-			return false;
+		if (!ensure(enterElement(m.getName())))
+			return;
 	}
 
-	return true;
+	m.serialize(*this);
+
+	if (m.getCompound() == true)
+	{
+		if (!ensure(leaveElement(m.getName())))
+			return;
+	}
 }
 
-bool XmlDeserializer::operator >> (const MemberEnumBase& m)
+void XmlDeserializer::operator >> (const MemberEnumBase& m)
 {
-	return this->operator >> (*(MemberComplex*)(&m));
+	T_CHECK_STATUS;
+	this->operator >> (*(MemberComplex*)(&m));
 }
 
 std::wstring XmlDeserializer::stackPath()

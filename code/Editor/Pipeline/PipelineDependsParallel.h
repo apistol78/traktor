@@ -23,6 +23,7 @@ class JobQueue;
 	namespace editor
 	{
 
+class IPipelineDb;
 class PipelineDependencyCache;
 class PipelineFactory;
 
@@ -36,8 +37,9 @@ class T_DLLCLASS PipelineDependsParallel : public IPipelineDepends
 public:
 	PipelineDependsParallel(
 		PipelineFactory* pipelineFactory,
+		db::Database* sourceDatabase,
 		PipelineDependencyCache* dependencyCache,
-		db::Database* sourceDatabase
+		IPipelineDb* pipelineDb
 	);
 
 	virtual ~PipelineDependsParallel();
@@ -83,8 +85,9 @@ public:
 private:
 	Ref< JobQueue > m_jobQueue;
 	Ref< PipelineFactory > m_pipelineFactory;
-	Ref< PipelineDependencyCache > m_dependencyCache;
 	Ref< db::Database > m_sourceDatabase;
+	Ref< PipelineDependencyCache > m_dependencyCache;
+	Ref< IPipelineDb > m_pipelineDb;
 	RefArray< PipelineDependency > m_dependencies;
 	ThreadLocal m_currentDependency;
 	ReaderWriterLock m_readCacheLock;

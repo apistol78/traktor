@@ -39,7 +39,7 @@ class T_DLLCLASS TerrainAsset : public ISerializable
 public:
 	TerrainAsset();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	uint32_t getDetailSkip() const { return m_detailSkip; }
 

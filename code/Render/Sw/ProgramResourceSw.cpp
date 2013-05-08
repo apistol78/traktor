@@ -19,7 +19,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		const MemberEnum< CullMode >::Key kCullMode[] =
 		{
@@ -61,8 +61,6 @@ public:
 		s >> MemberEnum< BlendOperation >(L"blendOperation", m_ref.blendOperation, kBlendOperations);
 		s >> MemberEnum< BlendFactor >(L"blendSource", m_ref.blendSource, kBlendFactors);
 		s >> MemberEnum< BlendFactor >(L"blendDestination", m_ref.blendDestination, kBlendFactors);
-
-		return true;
 	}
 
 private:
@@ -95,7 +93,7 @@ ProgramResourceSw::ProgramResourceSw(
 {
 }
 
-bool ProgramResourceSw::serialize(ISerializer& s)
+void ProgramResourceSw::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 1);
 
@@ -122,8 +120,6 @@ bool ProgramResourceSw::serialize(ISerializer& s)
 
 	s >> MemberRenderStateDesc(L"renderState", m_renderState);
 	s >> Member< uint32_t >(L"interpolatorCount", m_interpolatorCount);
-
-	return true;
 }
 
 	}

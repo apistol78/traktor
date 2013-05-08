@@ -31,7 +31,7 @@ public:
 		uint32_t interpolatorCount
 	);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const IntrProgram& getVertexProgram() const { return m_vertexProgram; }
 

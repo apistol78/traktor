@@ -39,196 +39,167 @@ Serializer::Direction ApplyReflector::getDirection() const
 	return Serializer::SdRead;
 }
 
-bool ApplyReflector::operator >> (const Member< bool >& m)
+void ApplyReflector::operator >> (const Member< bool >& m)
 {
 	CheckPropertyItem* propertyItem = checked_type_cast< CheckPropertyItem*, false >(*m_propertyItemIterator++);
 	m = propertyItem->isChecked();
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< int8_t >& m)
+void ApplyReflector::operator >> (const Member< int8_t >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< int8_t >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< uint8_t >& m)
+void ApplyReflector::operator >> (const Member< uint8_t >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< uint8_t >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< int16_t >& m)
+void ApplyReflector::operator >> (const Member< int16_t >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< int16_t >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< uint16_t >& m)
+void ApplyReflector::operator >> (const Member< uint16_t >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< uint16_t >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< int32_t >& m)
+void ApplyReflector::operator >> (const Member< int32_t >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< int32_t >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< uint32_t >& m)
+void ApplyReflector::operator >> (const Member< uint32_t >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< uint32_t >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< int64_t >& m)
+void ApplyReflector::operator >> (const Member< int64_t >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< int64_t >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< uint64_t >& m)
+void ApplyReflector::operator >> (const Member< uint64_t >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< uint64_t >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< float >& m)
+void ApplyReflector::operator >> (const Member< float >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< float >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< double >& m)
+void ApplyReflector::operator >> (const Member< double >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = static_cast< double >(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< std::string >& m)
+void ApplyReflector::operator >> (const Member< std::string >& m)
 {
 	TextPropertyItem* propertyItem = checked_type_cast< TextPropertyItem*, false >(*m_propertyItemIterator++);
 	m = wstombs(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< std::wstring >& m)
+void ApplyReflector::operator >> (const Member< std::wstring >& m)
 {
 	TextPropertyItem* propertyItem = checked_type_cast< TextPropertyItem*, false >(*m_propertyItemIterator++);
 	m = propertyItem->getValue();
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Guid >& m)
+void ApplyReflector::operator >> (const Member< Guid >& m)
 {
 	BrowsePropertyItem* propertyItem = checked_type_cast< BrowsePropertyItem*, false >(*m_propertyItemIterator++);
 	m = propertyItem->getValue();
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Path >& m)
+void ApplyReflector::operator >> (const Member< Path >& m)
 {
 	FilePropertyItem* propertyItem = checked_type_cast< FilePropertyItem*, false >(*m_propertyItemIterator++);
 	m = propertyItem->getPath();
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Color4ub >& m)
+void ApplyReflector::operator >> (const Member< Color4ub >& m)
 {
 	ColorPropertyItem* propertyItem = checked_type_cast< ColorPropertyItem*, false >(*m_propertyItemIterator++);
 	m = propertyItem->getValue();
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Color4f >& m)
+void ApplyReflector::operator >> (const Member< Color4f >& m)
 {
 	VectorPropertyItem* propertyItem = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
 	const VectorPropertyItem::vector_t& value = propertyItem->getValue();
 	m = Color4f(value[0], value[1], value[2], value[3]);
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Scalar >& m)
+void ApplyReflector::operator >> (const Member< Scalar >& m)
 {
 	NumericPropertyItem* propertyItem = checked_type_cast< NumericPropertyItem*, false >(*m_propertyItemIterator++);
 	m = Scalar(static_cast< float >(propertyItem->getValue()));
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Vector2 >& m)
+void ApplyReflector::operator >> (const Member< Vector2 >& m)
 {
 	VectorPropertyItem* propertyItem = checked_type_cast< VectorPropertyItem*, false >(*m_propertyItemIterator++);
 	const VectorPropertyItem::vector_t& value = propertyItem->getValue();
 	m = Vector2(value[0], value[1]);
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Vector4 >& m)
+void ApplyReflector::operator >> (const Member< Vector4 >& m)
 {
 	PropertyItem* propertyItem = *m_propertyItemIterator++;
 	if (VectorPropertyItem* vectorPropertyItem = dynamic_type_cast< VectorPropertyItem* >(propertyItem))
 	{
 		const VectorPropertyItem::vector_t& value = vectorPropertyItem->getValue();
 		m = Vector4(value[0], value[1], value[2], value[3]);
-		return true;
 	}
 	else if (AnglesPropertyItem* anglesPropertyItem = dynamic_type_cast< AnglesPropertyItem* >(propertyItem))
 	{
 		m = anglesPropertyItem->getValue();
-		return true;
 	}
-	else
-		return false;
 }
 
-bool ApplyReflector::operator >> (const Member< Matrix33 >& m)
+void ApplyReflector::operator >> (const Member< Matrix33 >& m)
 {
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Matrix44 >& m)
+void ApplyReflector::operator >> (const Member< Matrix44 >& m)
 {
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< Quaternion >& m)
+void ApplyReflector::operator >> (const Member< Quaternion >& m)
 {
 	AnglesPropertyItem* propertyItem = checked_type_cast< AnglesPropertyItem*, false >(*m_propertyItemIterator++);
 	m = Quaternion::fromEulerAngles(propertyItem->getValue());
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< ISerializable* >& m)
+void ApplyReflector::operator >> (const Member< ISerializable* >& m)
 {
 	ObjectPropertyItem* propertyItem = checked_type_cast< ObjectPropertyItem*, false >(*m_propertyItemIterator++);
 	Ref< ISerializable > object = checked_type_cast< ISerializable* >(propertyItem->getObject());
 	if (object)
 	{
 		int version = type_of(object).getVersion();
-		if (!serialize(object, version))
-			return false;
+		serialize(object, version);
 	}
 	m = object;
-	return true;
 }
 
-bool ApplyReflector::operator >> (const Member< void* >& m)
+void ApplyReflector::operator >> (const Member< void* >& m)
 {
-	return false;
 }
 
-bool ApplyReflector::operator >> (const MemberArray& m)
+void ApplyReflector::operator >> (const MemberArray& m)
 {
 	ArrayPropertyItem* propertyItem = checked_type_cast< ArrayPropertyItem*, false >(*m_propertyItemIterator++);
 	m.reserve(0, 0);
@@ -242,21 +213,19 @@ bool ApplyReflector::operator >> (const MemberArray& m)
 			m_propertyItemIterator++;
 		}
 	}
-	return true;
 }
 
-bool ApplyReflector::operator >> (const MemberComplex& m)
+void ApplyReflector::operator >> (const MemberComplex& m)
 {
 	if (m.getCompound())
 		m_propertyItemIterator++;
-	return m.serialize(*this);
+	m.serialize(*this);
 }
 
-bool ApplyReflector::operator >> (const MemberEnumBase& m)
+void ApplyReflector::operator >> (const MemberEnumBase& m)
 {
 	ListPropertyItem* propertyItem = checked_type_cast< ListPropertyItem*, false >(*m_propertyItemIterator++);
 	m.set(propertyItem->getSelectedItem());
-	return true;
 }
 
 		}

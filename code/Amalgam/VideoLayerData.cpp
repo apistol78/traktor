@@ -39,15 +39,12 @@ Ref< Layer > VideoLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	);
 }
 
-bool VideoLayerData::serialize(ISerializer& s)
+void VideoLayerData::serialize(ISerializer& s)
 {
-	if (!LayerData::serialize(s))
-		return false;
+	LayerData::serialize(s);
 
 	s >> resource::Member< video::Video >(L"video", m_video);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-
-	return true;
 }
 
 	}

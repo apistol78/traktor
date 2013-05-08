@@ -73,8 +73,9 @@ bool TextureAssetPipeline::buildOutput(
 
 	file->close();
 
+	Ref< TextureOutput > output = new TextureOutput(asset->m_output);
 	return pipelineBuilder->buildOutput(
-		&asset->m_output,
+		output,
 		outputPath,
 		outputGuid,
 		image

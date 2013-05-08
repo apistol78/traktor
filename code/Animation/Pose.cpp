@@ -80,18 +80,16 @@ Pose::Joint& Pose::getEditJoint(uint32_t jointIndex)
 	return *m_joints.insert(m_joints.begin() + s, Joint(jointIndex));
 }
 
-bool Pose::serialize(ISerializer& s)
+void Pose::serialize(ISerializer& s)
 {
-	return s >> MemberAlignedVector< Joint, MemberComposite< Joint > >(L"joints", m_joints);
+	s >> MemberAlignedVector< Joint, MemberComposite< Joint > >(L"joints", m_joints);
 }
 
-bool Pose::Joint::serialize(ISerializer& s)
+void Pose::Joint::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"index", index);
 	s >> Member< Vector4 >(L"offset", offset, AttributeDirection());
-	//s >> Member< Vector4 >(L"orientation", orientation, AttributeAngles());
 	s >> MemberComposite< Rotator >(L"orientation", orientation);
-	return true;
 }
 
 	}

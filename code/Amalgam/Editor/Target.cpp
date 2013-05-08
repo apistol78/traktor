@@ -41,11 +41,10 @@ const RefArray< TargetConfiguration >& Target::getConfigurations() const
 	return m_configurations;
 }
 
-bool Target::serialize(ISerializer& s)
+void Target::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"identifier", m_identifier);
 	s >> MemberRefArray< TargetConfiguration>(L"configurations", m_configurations);
-	return true;
 }
 
 	}

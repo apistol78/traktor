@@ -33,9 +33,9 @@ public:
 
 	void close();
 
-	virtual void beginTransaction();
+	void beginTransaction();
 
-	virtual void endTransaction();
+	void endTransaction();
 
 	virtual void setDependency(const Guid& guid, const DependencyHash& hash);
 

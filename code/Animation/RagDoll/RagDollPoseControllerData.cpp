@@ -92,7 +92,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 	return poseController;
 }
 
-bool RagDollPoseControllerData::serialize(ISerializer& s)
+void RagDollPoseControllerData::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 	{
@@ -119,7 +119,6 @@ bool RagDollPoseControllerData::serialize(ISerializer& s)
 	{
 		s >> Member< float >(L"trackDuration", m_trackDuration);
 	}
-	return true;
 }
 
 	}

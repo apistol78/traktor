@@ -146,16 +146,15 @@ bool Animation::getPose(float at, Pose& outPose) const
 		return false;
 }
 
-bool Animation::serialize(ISerializer& s)
+void Animation::serialize(ISerializer& s)
 {
-	return s >> MemberAlignedVector< KeyPose, MemberComposite< KeyPose > >(L"poses", m_poses);
+	s >> MemberAlignedVector< KeyPose, MemberComposite< KeyPose > >(L"poses", m_poses);
 }
 
-bool Animation::KeyPose::serialize(ISerializer& s)
+void Animation::KeyPose::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"at", at, AttributeRange(0.0f));
 	s >> MemberComposite< Pose >(L"pose", pose);
-	return true;
 }
 
 	}

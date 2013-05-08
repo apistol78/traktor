@@ -92,9 +92,9 @@ Ref< PostProcessStep::Instance > PostProcessStepSmProj::create(
 	return new InstanceSmProj(this, shadowMapDiscRotation, shader);
 }
 
-bool PostProcessStepSmProj::serialize(ISerializer& s)
+void PostProcessStepSmProj::serialize(ISerializer& s)
 {
-	return s >> resource::Member< render::Shader >(L"shader", m_shader);
+	s >> resource::Member< render::Shader >(L"shader", m_shader);
 }
 
 // Instance

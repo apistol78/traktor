@@ -24,11 +24,10 @@ bool ResourceBundleAsset::persistent() const
 	return m_persistent;
 }
 
-bool ResourceBundleAsset::serialize(ISerializer& s)
+void ResourceBundleAsset::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< Guid >(L"resources", m_resources);
 	s >> Member< bool >(L"persistent", m_persistent);
-	return true;
 }
 
 	}

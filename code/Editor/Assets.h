@@ -25,7 +25,7 @@ class T_DLLCLASS Assets : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class AssetsPipeline;

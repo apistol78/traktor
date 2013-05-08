@@ -52,7 +52,7 @@ public:
 
 	virtual void setTransform(const Transform& transform);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	void setBodyDesc(BodyDesc* bodyDesc) { m_bodyDesc = bodyDesc; }
 

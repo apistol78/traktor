@@ -10,13 +10,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshEntityData", 0, NavMeshEntityData, world::EntityData)
 
-bool NavMeshEntityData::serialize(ISerializer& s)
+void NavMeshEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
-
+	world::EntityData::serialize(s);
 	s >> resource::Member< NavMesh >(L"navMesh", m_navMesh);
-	return true;
 }
 
 	}

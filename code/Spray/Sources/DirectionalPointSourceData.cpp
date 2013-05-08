@@ -42,10 +42,9 @@ Ref< Source > DirectionalPointSourceData::createSource(resource::IResourceManage
 	);
 }
 
-bool DirectionalPointSourceData::serialize(ISerializer& s)
+void DirectionalPointSourceData::serialize(ISerializer& s)
 {
-	if (!SourceData::serialize(s))
-		return false;
+	SourceData::serialize(s);
 
 	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
 	s >> Member< Vector4 >(L"direction", m_direction, AttributeDirection());
@@ -55,8 +54,6 @@ bool DirectionalPointSourceData::serialize(ISerializer& s)
 	s >> MemberComposite< Range< float > >(L"age", m_age);
 	s >> MemberComposite< Range< float > >(L"mass", m_mass);
 	s >> MemberComposite< Range< float > >(L"size", m_size);
-
-	return true;
 }
 
 	}

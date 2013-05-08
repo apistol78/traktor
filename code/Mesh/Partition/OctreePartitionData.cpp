@@ -21,11 +21,10 @@ Ref< IPartition > OctreePartitionData::createPartition() const
 	return new OctreePartition(new OctreeNode(m_nodeData), worldTechniques);
 }
 
-bool OctreePartitionData::serialize(ISerializer& s)
+void OctreePartitionData::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< std::wstring >(L"worldTechniques", m_worldTechniques);
 	s >> MemberRef< OctreeNodeData >(L"nodeData", m_nodeData);
-	return true;
 }
 
 	}

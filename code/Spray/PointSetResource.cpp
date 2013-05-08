@@ -7,9 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PointSetResource", 0, PointSetResource, ISerializable)
 
-bool PointSetResource::serialize(ISerializer& s)
+void PointSetResource::serialize(ISerializer& s)
 {
-	return true;
 }
 	
 	}

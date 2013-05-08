@@ -33,7 +33,7 @@ public:
 		const Transform& worldTransform
 	);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	IPoseControllerData* getNeutralPoseController() const { return m_neutralPoseController; }
 

@@ -43,7 +43,7 @@ public:
 
 		Constraint();
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	Ref< ArticulatedEntity > createEntity(
@@ -53,7 +53,7 @@ public:
 
 	virtual void setTransform(const Transform& transform);
 	
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const RefArray< world::EntityData >& getEntityData() const { return m_entityData; }
 

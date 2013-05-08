@@ -58,7 +58,7 @@ public:
 
 	bool operator < (const MD5& md5) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint8_t m_buffer[64];

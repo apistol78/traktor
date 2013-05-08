@@ -22,9 +22,9 @@ const std::wstring& ScriptResourceJs::getScript() const
 	return m_script;
 }
 
-bool ScriptResourceJs::serialize(ISerializer& s)
+void ScriptResourceJs::serialize(ISerializer& s)
 {
-	return s >> Member< std::wstring >(L"script", m_script);
+	s >> Member< std::wstring >(L"script", m_script);
 }
 
 	}

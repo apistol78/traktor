@@ -82,7 +82,7 @@ float InBoolean::evaluate(
 	return asFloat(result);
 }
 
-bool InBoolean::serialize(ISerializer& s)
+void InBoolean::serialize(ISerializer& s)
 {
 	const MemberEnum< Operator >::Key c_Operator_Keys[] =
 	{
@@ -95,8 +95,6 @@ bool InBoolean::serialize(ISerializer& s)
 	
 	s >> MemberRefArray< IInputNode >(L"source", m_source);
 	s >> MemberEnum< Operator >(L"op", m_op, c_Operator_Keys);
-	
-	return true;
 }
 	
 	}

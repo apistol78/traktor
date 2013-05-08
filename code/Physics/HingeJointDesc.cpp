@@ -75,7 +75,7 @@ bool HingeJointDesc::getAngularOnly() const
 	return m_angularOnly;
 }
 
-bool HingeJointDesc::serialize(ISerializer& s)
+void HingeJointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
@@ -88,8 +88,6 @@ bool HingeJointDesc::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"angularOnly", m_angularOnly);
-
-	return true;
 }
 
 	}

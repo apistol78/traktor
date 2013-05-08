@@ -148,9 +148,8 @@ void ActionVM1::execute(ActionFrame* frame) const
 #endif
 }
 
-bool ActionVM1::serialize(ISerializer& s)
+void ActionVM1::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

@@ -25,7 +25,7 @@ PipelineDependency::PipelineDependency()
 {
 }
 
-bool PipelineDependency::serialize(ISerializer& s)
+void PipelineDependency::serialize(ISerializer& s)
 {
 	s >> MemberType(L"pipelineType", pipelineType);
 	s >> Member< Guid >(L"sourceInstanceGuid", sourceInstanceGuid);
@@ -41,14 +41,12 @@ bool PipelineDependency::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"flags", flags);
 	s >> Member< uint32_t >(L"reason", reason);
 	s >> MemberRefArray< PipelineDependency >(L"children", children);
-	return true;
 }
 
-bool PipelineDependency::ExternalFile::serialize(ISerializer& s)
+void PipelineDependency::ExternalFile::serialize(ISerializer& s)
 {
 	s >> Member< Path >(L"filePath", filePath);
 	s >> MemberComposite< DateTime >(L"lastWriteTime", lastWriteTime);
-	return true;
 }
 
 	}

@@ -58,7 +58,7 @@ public:
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint16_t m_frameRate;

@@ -32,7 +32,7 @@ public:
 
 	const IInputNode* getSource() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 	
 private:
 	Ref< IInputNode > m_source;

@@ -81,12 +81,11 @@ void NormalizationFilter::apply(IFilterInstance* instance, SoundBlock& outBlock)
 	}
 }
 
-bool NormalizationFilter::serialize(ISerializer& s)
+void NormalizationFilter::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"targetEnergy", m_targetEnergy);
 	s >> Member< float >(L"energyThreshold", m_energyThreshold);
 	s >> Member< float >(L"attackRate", m_attackRate);
-	return true;
 }
 
 	}

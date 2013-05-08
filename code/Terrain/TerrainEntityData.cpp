@@ -22,10 +22,9 @@ TerrainEntityData::TerrainEntityData()
 {
 }
 
-bool TerrainEntityData::serialize(ISerializer& s)
+void TerrainEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);
 
@@ -51,8 +50,6 @@ bool TerrainEntityData::serialize(ISerializer& s)
 		{ 0 }
 	};
 	s >> MemberEnum< VisualizeMode >(L"visualizeMode", m_visualizeMode, c_VisualizeMode_Keys);
-
-	return true;
 }
 
 	}

@@ -14,7 +14,7 @@ class LocalGameConfiguration : public IGameConfiguration
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class LocalSessionManager;

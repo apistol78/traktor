@@ -14,9 +14,9 @@ DbmGetDataNames::DbmGetDataNames(uint32_t handle)
 {
 }
 
-bool DbmGetDataNames::serialize(ISerializer& s)
+void DbmGetDataNames::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

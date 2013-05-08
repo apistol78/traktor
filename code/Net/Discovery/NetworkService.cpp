@@ -33,15 +33,10 @@ const PropertyGroup* NetworkService::getProperties() const
 	return m_properties;
 }
 
-bool NetworkService::serialize(ISerializer& s)
+void NetworkService::serialize(ISerializer& s)
 {
-	if (s.getVersion() < 1)
-		return false;
-
 	s >> Member< std::wstring >(L"type", m_type);
 	s >> MemberRef< const PropertyGroup >(L"properties", m_properties);
-
-	return true;
 }
 
 	}

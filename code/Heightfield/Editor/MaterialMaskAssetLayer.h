@@ -26,7 +26,7 @@ public:
 
 	const RefArray< ISerializable >& getParams() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Color4ub m_color;

@@ -23,7 +23,7 @@ class T_DLLCLASS MeshAsset : public editor::Asset
 public:
 	MeshAsset();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	void setCalculateConvexHull(bool calculateConvexHull) { m_calculateConvexHull = calculateConvexHull; }
 

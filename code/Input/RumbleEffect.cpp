@@ -49,11 +49,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< float >(L"lowFrequencyRumble", m_ref.lowFrequencyRumble);
 		s >> Member< float >(L"highFrequencyRumble", m_ref.highFrequencyRumble);
-		return true;
 	}
 
 private:
@@ -80,7 +79,7 @@ void RumbleEffect::getRumble(float time, InputRumble& outRumble) const
 	outRumble.highFrequencyRumble = Hermite< std::pair< float, InputRumble >, float, RumbleAccessor< HF > >(&m_rumbleKeys[0], m_rumbleKeys.size()).evaluate(time);
 }
 
-bool RumbleEffect::serialize(ISerializer& s)
+void RumbleEffect::serialize(ISerializer& s)
 {
 	s >> MemberStlVector
 		< 
@@ -88,7 +87,6 @@ bool RumbleEffect::serialize(ISerializer& s)
 			MemberStlPair< float, InputRumble, Member< float >, MemberInputRumble >
 		>
 		(L"rumbleKeys", m_rumbleKeys);
-	return true;
 }
 
 	}

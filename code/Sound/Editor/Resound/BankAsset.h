@@ -33,7 +33,7 @@ public:
 
 	const RefArray< IGrainData >& getGrains() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class BankPipeline;

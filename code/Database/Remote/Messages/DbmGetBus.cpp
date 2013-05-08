@@ -9,9 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetBus", 0, DbmGetBus, IMessage)
 
-bool DbmGetBus::serialize(ISerializer& s)
+void DbmGetBus::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

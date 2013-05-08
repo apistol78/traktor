@@ -29,7 +29,7 @@ public:
 
 	const Guid& get() const { return m_value; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_value;

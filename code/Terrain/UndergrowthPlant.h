@@ -21,7 +21,7 @@ class T_DLLCLASS UndergrowthPlant : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const std::vector< int32_t >& getPlants() const { return m_plants; }
 

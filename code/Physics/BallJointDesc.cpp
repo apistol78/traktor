@@ -25,9 +25,9 @@ const Vector4& BallJointDesc::getAnchor() const
 	return m_anchor;
 }
 
-bool BallJointDesc::serialize(ISerializer& s)
+void BallJointDesc::serialize(ISerializer& s)
 {
-	return s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
+	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 }
 
 	}

@@ -21,7 +21,7 @@ TerrainResource::TerrainResource()
 {
 }
 
-bool TerrainResource::serialize(ISerializer& s)
+void TerrainResource::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 4);
 	s >> Member< uint32_t >(L"detailSkip", m_detailSkip);
@@ -36,14 +36,12 @@ bool TerrainResource::serialize(ISerializer& s)
 	s >> resource::Member< render::Shader >(L"terrainDetailShader", m_terrainDetailShader);
 	s >> resource::Member< render::Shader >(L"surfaceShader", m_surfaceShader);
 	s >> MemberStlVector< Patch, MemberComposite< Patch > >(L"patches", m_patches);
-	return true;
 }
 
-bool TerrainResource::Patch::serialize(ISerializer& s)
+void TerrainResource::Patch::serialize(ISerializer& s)
 {
 	s >> MemberStaticArray< float, 2 >(L"height", height);
 	s >> MemberStaticArray< float, 3 >(L"error", error);
-	return true;
 }
 
 	}

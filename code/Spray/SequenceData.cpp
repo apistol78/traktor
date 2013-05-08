@@ -27,16 +27,15 @@ Ref< Sequence > SequenceData::createSequence(resource::IResourceManager* resourc
 	return new Sequence(keys);
 }
 
-bool SequenceData::serialize(ISerializer& s)
+void SequenceData::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< Key, MemberComposite< Key > >(L"keys", m_keys);
+	s >> MemberStlVector< Key, MemberComposite< Key > >(L"keys", m_keys);
 }
 
-bool SequenceData::Key::serialize(ISerializer& s)
+void SequenceData::Key::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"T", T);
 	s >> MemberRef< ITriggerData >(L"trigger", trigger);
-	return true;
 }
 
 	}

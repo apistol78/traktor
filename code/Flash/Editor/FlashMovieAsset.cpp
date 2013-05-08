@@ -10,15 +10,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.flash.FlashMovieAsset", 1, FlashMovieAsset, editor::Asset)
 
-bool FlashMovieAsset::serialize(ISerializer& s)
+void FlashMovieAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
+	editor::Asset::serialize(s);
 
 	if (s.getVersion() >= 1)
 		s >> MemberStlVector< Guid >(L"dependentMovies", m_dependentMovies);
-
-	return true;
 }
 
 	}

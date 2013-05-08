@@ -19,9 +19,9 @@ Ref< PostProcessStep::Instance > PostProcessStepSetTarget::create(
 	return new InstanceSetTarget(render::getParameterHandle(m_target));
 }
 
-bool PostProcessStepSetTarget::serialize(ISerializer& s)
+void PostProcessStepSetTarget::serialize(ISerializer& s)
 {
-	return s >> Member< std::wstring >(L"target", m_target);
+	s >> Member< std::wstring >(L"target", m_target);
 }
 
 // Instance

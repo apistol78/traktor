@@ -62,12 +62,11 @@ const std::vector< std::wstring >& LocalInstanceMeta::getBlobs() const
 	return m_blobs;
 }
 
-bool LocalInstanceMeta::serialize(ISerializer& s)
+void LocalInstanceMeta::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"guid", m_guid);
 	s >> Member< std::wstring >(L"primaryType", m_primaryType);
 	s >> MemberStlVector< std::wstring >(L"blobs", m_blobs);
-	return true;
 }
 
 	}

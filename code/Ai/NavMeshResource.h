@@ -21,7 +21,7 @@ class T_DLLCLASS NavMeshResource : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 };
 
 	}

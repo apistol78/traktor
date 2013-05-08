@@ -54,10 +54,9 @@ Ref< ClothEntity > ClothEntityData::createEntity(
 	return clothEntity;
 }
 
-bool ClothEntityData::serialize(ISerializer& s)
+void ClothEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< uint32_t >(L"resolutionX", m_resolutionX);
@@ -66,15 +65,12 @@ bool ClothEntityData::serialize(ISerializer& s)
 	s >> MemberStlVector< Anchor, MemberComposite< Anchor > >(L"anchors", m_anchors);
 	s >> Member< uint32_t >(L"solverIterations", m_solverIterations);
 	s >> Member< float >(L"damping", m_damping);
-
-	return true;
 }
 
-bool ClothEntityData::Anchor::serialize(ISerializer& s)
+void ClothEntityData::Anchor::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"x", x);
 	s >> Member< uint32_t >(L"y", y);
-	return true;
 }
 
 	}

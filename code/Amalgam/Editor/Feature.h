@@ -30,7 +30,7 @@ public:
 
 		Platforms();
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	const std::wstring& getDescription() const { return m_description; }
@@ -43,7 +43,7 @@ public:
 
 	const PropertyGroup* getRuntimeProperties() const { return m_runtimeProperties; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_description;

@@ -12,14 +12,13 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 0, Feature, ISerializable)
 
-bool Feature::serialize(ISerializer& s)
+void Feature::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> MemberComposite< Platforms >(L"platforms", m_platforms);
 	s >> MemberRef< PropertyGroup >(L"pipelineProperties", m_pipelineProperties);
 	s >> MemberRef< PropertyGroup >(L"migrateProperties", m_migrateProperties);
 	s >> MemberRef< PropertyGroup >(L"runtimeProperties", m_runtimeProperties);
-	return true;
 }
 
 Feature::Platforms::Platforms()
@@ -34,7 +33,7 @@ Feature::Platforms::Platforms()
 {
 }
 
-bool Feature::Platforms::serialize(ISerializer& s)
+void Feature::Platforms::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"ios", ios);
 	s >> Member< bool >(L"linux", linuks);
@@ -44,7 +43,6 @@ bool Feature::Platforms::serialize(ISerializer& s)
 	s >> Member< bool >(L"win32", win32);
 	s >> Member< bool >(L"win64", win64);
 	s >> Member< bool >(L"xbox360", xbox360);
-	return true;
 }
 
 	}

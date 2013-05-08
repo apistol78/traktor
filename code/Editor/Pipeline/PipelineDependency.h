@@ -43,7 +43,7 @@ public:
 		Path filePath;
 		DateTime lastWriteTime;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	const TypeInfo* pipelineType;
@@ -63,7 +63,7 @@ public:
 
 	PipelineDependency();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 };
 
 	}

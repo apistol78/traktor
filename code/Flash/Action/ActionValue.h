@@ -124,7 +124,7 @@ public:
 	int32_t getStringId() const;
 
 	/*! \brief Serialize value. */
-	bool serialize(ISerializer& s);
+	void serialize(ISerializer& s);
 
 	/*! \brief Copy value. */
 	ActionValue& operator = (const ActionValue& v);

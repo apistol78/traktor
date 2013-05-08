@@ -58,7 +58,7 @@ public:
 		uint32_t height
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const std::wstring& getTarget() const { return m_target; }
 

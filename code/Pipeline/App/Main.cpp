@@ -277,8 +277,9 @@ int main(int argc, const char** argv)
 	{
 		pipelineDepends = new editor::PipelineDependsParallel(
 			&pipelineFactory,
+			sourceDatabase,
 			0,
-			sourceDatabase
+			0
 		);
 	}
 	else
@@ -292,6 +293,8 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << L"Collecting dependencies..." << Endl;
 	traktor::log::info << IncreaseIndent;
+
+	pipelineDb->beginTransaction();
 
 	if (cmdLine.getCount() > 0)
 	{
@@ -373,6 +376,7 @@ int main(int argc, const char** argv)
 	traktor::log::info << DecreaseIndent;
 	traktor::log::info << L"Finished" << Endl;
 
+	pipelineDb->endTransaction();
 	pipelineDb->close();
 	outputDatabase->close();
 	sourceDatabase->close();

@@ -37,7 +37,7 @@ public:
 		const Transform& worldTransform
 	);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	inline const resource::Id< StateGraph >& getStateGraph() const { return m_stateGraph; }
 

@@ -15,15 +15,12 @@ const RefArray< MaterialMaskAssetLayer >& MaterialMaskAsset::getLayers() const
 	return m_layers;
 }
 
-bool MaterialMaskAsset::serialize(ISerializer& s)
+void MaterialMaskAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
+	editor::Asset::serialize(s);
 
 	if (s.getVersion() >= 1)
 		s >> MemberRefArray< MaterialMaskAssetLayer >(L"layers", m_layers);
-
-	return true;
 }
 
 	}

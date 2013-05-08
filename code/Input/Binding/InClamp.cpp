@@ -61,11 +61,10 @@ float InClamp::evaluate(
 	return V;
 }
 
-bool InClamp::serialize(ISerializer& s)
+void InClamp::serialize(ISerializer& s)
 {
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> MemberStaticArray< float, 2 >(L"limit", m_limit);
-	return true;
 }
 	
 	}

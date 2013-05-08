@@ -67,12 +67,11 @@ float InHysteresis::evaluate(
 	return ihi->currentValue;
 }
 
-bool InHysteresis::serialize(ISerializer& s)
+void InHysteresis::serialize(ISerializer& s)
 {
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> MemberStaticArray< float, 2 >(L"limit", m_limit);
 	s >> MemberStaticArray< float, 2 >(L"output", m_output);
-	return true;
 }
 	
 	}

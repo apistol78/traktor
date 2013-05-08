@@ -12,18 +12,16 @@ MemberBitMask::MemberBitMask(const wchar_t* const name, uint32_t& bm, const Bit*
 {
 }
 
-bool MemberBitMask::serialize(ISerializer& s) const
+void MemberBitMask::serialize(ISerializer& s) const
 {
 	if (s.getDirection() == ISerializer::SdRead)
 		m_bm = 0;
 	for (int i = 0; m_bits[i].id; ++i)
 	{
 		bool bv = bool((m_bm & m_bits[i].mask) != 0);
-		if (!(s >> Member< bool >(m_bits[i].id, bv)))
-			return false;
+		s >> Member< bool >(m_bits[i].id, bv);
 		m_bm |= bv ? m_bits[i].mask : 0;
 	}
-	return true;
 }
 
 }

@@ -14,9 +14,9 @@ MsgStringResult::MsgStringResult(const std::wstring& value)
 {
 }
 
-bool MsgStringResult::serialize(ISerializer& s)
+void MsgStringResult::serialize(ISerializer& s)
 {
-	return s >> Member< std::wstring >(L"value", m_value);
+	s >> Member< std::wstring >(L"value", m_value);
 }
 
 	}

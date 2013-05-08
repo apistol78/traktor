@@ -25,7 +25,7 @@ class T_DLLCLASS BatchMeshEntityData : public world::EntityData
 public:
 	BatchMeshEntityData();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 	
 	virtual void setTransform(const Transform& transform);
 

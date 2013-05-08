@@ -89,7 +89,7 @@ public:
 	operator uint64_t () const;
 
 	/*! \brief Serialize object. */
-	bool serialize(ISerializer& s);
+	void serialize(ISerializer& s);
 
 private:
 	uint64_t m_epoch;

@@ -25,11 +25,10 @@ Ref< IGrain > RepeatGrainData::createInstance(resource::IResourceManager* resour
 	return new RepeatGrain(m_count, grain);
 }
 
-bool RepeatGrainData::serialize(ISerializer& s)
+void RepeatGrainData::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"count", m_count);
 	s >> MemberRef< IGrainData >(L"grain", m_grain);
-	return true;
 }
 
 	}

@@ -74,9 +74,9 @@ void GroupFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 		m_filters[i]->apply(gfi->m_instances[i], outBlock);
 }
 
-bool GroupFilter::serialize(ISerializer& s)
+void GroupFilter::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< IFilter >(L"filters", m_filters);
+	s >> MemberRefArray< IFilter >(L"filters", m_filters);
 }
 
 	}

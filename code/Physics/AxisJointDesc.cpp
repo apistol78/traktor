@@ -38,11 +38,10 @@ const Vector4& AxisJointDesc::getAxis() const
 	return m_axis;
 }
 
-bool AxisJointDesc::serialize(ISerializer& s)
+void AxisJointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
-	return true;
 }
 
 	}

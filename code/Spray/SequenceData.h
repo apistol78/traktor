@@ -39,12 +39,12 @@ public:
 		float T;
 		Ref< ITriggerData > trigger;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	Ref< Sequence > createSequence(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const std::vector< Key >& getKeys() const { return m_keys; }
 

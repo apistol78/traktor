@@ -12,8 +12,7 @@ Ref< Reflection > Reflection::create(const ISerializable* object)
 	Ref< Reflection > r = new Reflection(type_of(object));
 
 	ReflectionInspectSerializer s(r);
-	if (!s.serialize(const_cast< ISerializable* >(object), type_of(object).getVersion()))
-		return 0;
+	s.serialize(const_cast< ISerializable* >(object), type_of(object).getVersion());
 
 	return r;
 }
@@ -21,7 +20,8 @@ Ref< Reflection > Reflection::create(const ISerializable* object)
 bool Reflection::apply(ISerializable* object) const
 {
 	ReflectionApplySerializer s(this);
-	return s.serialize(object, type_of(object).getVersion());
+	s.serialize(object, type_of(object).getVersion());
+	return true;
 }
 
 Ref< ISerializable > Reflection::clone() const

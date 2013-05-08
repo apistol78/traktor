@@ -25,7 +25,7 @@ public:
 
 	const ActionValue& getConstData(uint16_t index) const { return m_constData[index]; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class ActionVM1;

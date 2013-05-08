@@ -21,10 +21,9 @@ SpotLightEntityData::SpotLightEntityData()
 {
 }
 
-bool SpotLightEntityData::serialize(ISerializer& s)
+void SpotLightEntityData::serialize(ISerializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
+	EntityData::serialize(s);
 
 	s >> Member< Vector4 >(L"sunColor", m_sunColor);
 	s >> Member< Vector4 >(L"baseColor", m_baseColor);
@@ -34,8 +33,6 @@ bool SpotLightEntityData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"castShadow", m_castShadow);
-
-	return true;
 }
 
 	}

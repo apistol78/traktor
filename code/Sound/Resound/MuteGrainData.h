@@ -25,7 +25,7 @@ public:
 
 	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	double getDuration() const { return m_duration; }
 

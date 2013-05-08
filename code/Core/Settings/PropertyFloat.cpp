@@ -17,9 +17,9 @@ PropertyFloat::value_type_t PropertyFloat::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyFloat* >(value)->m_value : false;
 }
 
-bool PropertyFloat::serialize(ISerializer& s)
+void PropertyFloat::serialize(ISerializer& s)
 {
-	return s >> Member< value_type_t >(L"value", m_value);
+	s >> Member< value_type_t >(L"value", m_value);
 }
 
 Ref< IPropertyValue > PropertyFloat::join(const IPropertyValue* right) const

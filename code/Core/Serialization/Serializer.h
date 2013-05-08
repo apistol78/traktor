@@ -24,6 +24,8 @@ class T_DLLCLASS Serializer : public ISerializer
 	T_RTTI_CLASS;
 
 public:
+	Serializer();
+
 	Ref< ISerializable > readObject();
 
 	bool writeObject(const ISerializable* o);
@@ -31,6 +33,8 @@ public:
 	virtual int getVersion() const;
 
 	virtual ISerializable* getCurrentObject();
+
+	virtual void failure();
 
 	template < typename T >
 	Ref< T > readObject()
@@ -40,10 +44,13 @@ public:
 	}
 
 protected:
-	bool serialize(ISerializable* inner, int version);
+	void serialize(ISerializable* inner, int version);
+
+	bool failed() const { return m_failure; }
 
 private:
 	std::list< std::pair< ISerializable*, int > > m_constructing;
+	bool m_failure;
 };
 
 }

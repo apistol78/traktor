@@ -53,12 +53,11 @@ Rotator Rotator::operator * (const Scalar& rh) const
 	);
 }
 
-bool Rotator::serialize(ISerializer& s)
+void Rotator::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"A", m_A);
 	s >> Member< Vector4 >(L"B", m_B);
 	s >> Member< Vector4 >(L"C", m_C);
-	return true;
 }
 
 	}

@@ -34,7 +34,7 @@ public:
 
 	uint16_t getLineWidth() const;
 
-	bool serialize(ISerializer& s);
+	void serialize(ISerializer& s);
 
 private:
 	SwfColor m_lineColor;

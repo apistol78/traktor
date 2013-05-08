@@ -72,7 +72,7 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 	return new Sound(soundBuffer, m_volume, m_presence, m_presenceRate, m_range);
 }
 
-bool StreamSoundResource::serialize(ISerializer& s)
+void StreamSoundResource::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 5);
 	s >> MemberType(L"decoderType", m_decoderType);
@@ -81,7 +81,6 @@ bool StreamSoundResource::serialize(ISerializer& s)
 	s >> Member< float >(L"presenceRate", m_presenceRate);
 	s >> Member< float >(L"range", m_range);
 	s >> Member< bool >(L"preload", m_preload);
-	return true;
 }
 
 	}

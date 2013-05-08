@@ -26,7 +26,7 @@ class T_DLLCLASS OctreePartitionData : public IPartitionData
 public:
 	virtual Ref< IPartition > createPartition() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class PartitionMeshConverter;

@@ -7,9 +7,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureResource", 0, TextureResource, ISerializable)
 
-bool TextureResource::serialize(ISerializer& s)
+void TextureResource::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

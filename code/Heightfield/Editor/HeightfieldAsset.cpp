@@ -20,11 +20,10 @@ HeightfieldAsset::HeightfieldAsset(const Vector4& worldExtent)
 {
 }
 
-bool HeightfieldAsset::serialize(ISerializer& s)
+void HeightfieldAsset::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 4);
 	s >> Member< Vector4 >(L"worldExtent", m_worldExtent, AttributeDirection());
-	return true;
 }
 
 	}

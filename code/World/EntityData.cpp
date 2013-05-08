@@ -30,11 +30,10 @@ const Transform& EntityData::getTransform() const
 	return m_transform;
 }
 
-bool EntityData::serialize(ISerializer& s)
+void EntityData::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberComposite< Transform >(L"transform", m_transform);
-	return true;
 }
 
 	}

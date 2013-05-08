@@ -21,9 +21,9 @@ PropertyObject::value_type_t PropertyObject::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyObject* >(value)->m_value : value_type_t(0);
 }
 
-bool PropertyObject::serialize(ISerializer& s)
+void PropertyObject::serialize(ISerializer& s)
 {
-	return s >> MemberRef< ISerializable >(L"value", m_value);
+	s >> MemberRef< ISerializable >(L"value", m_value);
 }
 
 Ref< IPropertyValue > PropertyObject::join(const IPropertyValue* right) const

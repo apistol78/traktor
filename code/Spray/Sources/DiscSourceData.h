@@ -28,7 +28,7 @@ public:
 
 	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Vector4 m_position;

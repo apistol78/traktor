@@ -78,7 +78,7 @@ float InCombine::evaluate(
 	return result;
 }
 
-bool InCombine::serialize(ISerializer& s)
+void InCombine::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< Entry, MemberComposite< Entry > >(L"entries", m_entries);
 	
@@ -94,16 +94,13 @@ bool InCombine::serialize(ISerializer& s)
 		};
 		s >> MemberEnum< CombineOperator >(L"operator", m_operator, c_CombineOperator_Keys);
 	}
-
-	return true;
 }
 
-bool InCombine::Entry::serialize(ISerializer& s)
+void InCombine::Entry::serialize(ISerializer& s)
 {
 	s >> MemberRef< IInputNode >(L"source", source);
 	s >> Member< float >(L"mul", mul);
 	s >> Member< float >(L"add", add);
-	return true;
 }
 	
 	}

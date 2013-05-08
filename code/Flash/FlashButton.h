@@ -69,7 +69,7 @@ public:
 			cxform.alpha[0] = 1.0f; cxform.alpha[1] = 0.0f;
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	struct ButtonCondition
@@ -84,7 +84,7 @@ public:
 		{
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	typedef AlignedVector< ButtonLayer > button_layers_t;
@@ -126,7 +126,7 @@ public:
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	button_layers_t m_layers;

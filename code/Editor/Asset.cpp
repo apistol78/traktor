@@ -28,9 +28,9 @@ const Path& Asset::getFileName() const
 	return m_fileName;
 }
 
-bool Asset::serialize(ISerializer& s)
+void Asset::serialize(ISerializer& s)
 {
-	return s >> Member< Path >(L"fileName", m_fileName);
+	s >> Member< Path >(L"fileName", m_fileName);
 }
 
 	}

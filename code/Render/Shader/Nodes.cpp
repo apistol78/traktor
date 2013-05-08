@@ -25,7 +25,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		const MemberEnum< CullMode >::Key kCullMode[] =
 		{
@@ -124,8 +124,6 @@ public:
 			s >> Member< uint32_t >(L"stencilReference", m_ref.stencilReference);
 			s >> Member< uint32_t >(L"stencilMask", m_ref.stencilMask);
 		}
-
-		return true;
 	}
 
 private:
@@ -223,15 +221,12 @@ std::wstring Clamp::getInformation() const
 	return ss.str();
 }
 
-bool Clamp::serialize(ISerializer& s)
+void Clamp::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	s >> Member< float >(L"min", m_min);
 	s >> Member< float >(L"max", m_max);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -262,14 +257,10 @@ std::wstring Branch::getInformation() const
 	return m_parameterName;
 }
 
-bool Branch::serialize(ISerializer& s)
+void Branch::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
-
+	Node::serialize(s);
 	s >> Member< std::wstring >(L"parameterName", m_parameterName);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -301,14 +292,10 @@ std::wstring Color::getInformation() const
 	return ss.str();
 }
 
-bool Color::serialize(ISerializer& s)
+void Color::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
-
+	Node::serialize(s);
 	s >> Member< traktor::Color4ub >(L"color", m_color);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -363,10 +350,9 @@ std::wstring Conditional::getInformation() const
 	return h[int(m_operator)];
 }
 
-bool Conditional::serialize(ISerializer& s)
+void Conditional::serialize(ISerializer& s)
 {
-	if (!ImmutableNode::serialize(s))
-		return false;
+	ImmutableNode::serialize(s);
 
 	const MemberEnum< Branch >::Key kBranch[] =
 	{
@@ -391,8 +377,6 @@ bool Conditional::serialize(ISerializer& s)
 		s >> MemberEnum< Branch >(L"branch", m_branch, kBranch);
 
 	s >> MemberEnum< Operator >(L"operator", m_operator, kOperator);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -449,10 +433,9 @@ std::wstring Derivative::getInformation() const
 	return L"";
 }
 
-bool Derivative::serialize(ISerializer& s)
+void Derivative::serialize(ISerializer& s)
 {
-	if (!ImmutableNode::serialize(s))
-		return false;
+	ImmutableNode::serialize(s);
 
 	const MemberEnum< Axis >::Key kAxis[] =
 	{
@@ -462,8 +445,6 @@ bool Derivative::serialize(ISerializer& s)
 	};
 
 	s >> MemberEnum< Axis >(L"axis", m_axis, kAxis);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -495,10 +476,9 @@ std::wstring Discard::getInformation() const
 	return h[int(m_operator)];
 }
 
-bool Discard::serialize(ISerializer& s)
+void Discard::serialize(ISerializer& s)
 {
-	if (!ImmutableNode::serialize(s))
-		return false;
+	ImmutableNode::serialize(s);
 
 	const MemberEnum< Operator >::Key kOperator[] =
 	{
@@ -512,7 +492,6 @@ bool Discard::serialize(ISerializer& s)
 	};
 
 	s >> MemberEnum< Operator >(L"operator", m_operator, kOperator);
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -653,10 +632,9 @@ std::wstring IndexedUniform::getInformation() const
 	return ss.str();
 }
 
-bool IndexedUniform::serialize(ISerializer& s)
+void IndexedUniform::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
 	{
@@ -681,8 +659,6 @@ bool IndexedUniform::serialize(ISerializer& s)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
 	
 	s >> Member< int32_t >(L"length", m_length);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -745,10 +721,9 @@ std::wstring InputPort::getInformation() const
 	return m_name;
 }
 
-bool InputPort::serialize(ISerializer& s)
+void InputPort::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	s >> Member< std::wstring >(L"name", m_name);
 
@@ -758,8 +733,6 @@ bool InputPort::serialize(ISerializer& s)
 		s >> Member< bool >(L"optional", m_optional);
 		s >> Member< float >(L"defaultValue", m_defaultValue);
 	}
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -826,15 +799,12 @@ std::wstring Iterate::getInformation() const
 	return ss.str();
 }
 
-bool Iterate::serialize(ISerializer& s)
+void Iterate::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	s >> Member< int32_t >(L"from", m_from);
 	s >> Member< int32_t >(L"to", m_to);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -895,10 +865,9 @@ std::wstring Log::getInformation() const
 	return L"";
 }
 
-bool Log::serialize(ISerializer& s)
+void Log::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	const MemberEnum< Base >::Key kBase[] =
 	{
@@ -908,7 +877,7 @@ bool Log::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	return s >> MemberEnum< Base >(L"base", m_base, kBase);
+	s >> MemberEnum< Base >(L"base", m_base, kBase);
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1058,14 +1027,10 @@ std::wstring OutputPort::getInformation() const
 	return m_name;
 }
 
-bool OutputPort::serialize(ISerializer& s)
+void OutputPort::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
-
+	Node::serialize(s);
 	s >> Member< std::wstring >(L"name", m_name);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1127,10 +1092,9 @@ std::wstring PixelOutput::getInformation() const
 	return m_technique;
 }
 
-bool PixelOutput::serialize(ISerializer& s)
+void PixelOutput::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	s >> Member< std::wstring >(L"technique", m_technique);
 
@@ -1153,8 +1117,6 @@ bool PixelOutput::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 		s >> Member< uint32_t >(L"registerCount", m_registerCount);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1348,7 +1310,7 @@ bool Sampler::getUseAnisotropic() const
 	return m_useAnisotropic;
 }
 
-bool Sampler::serialize(ISerializer& s)
+void Sampler::serialize(ISerializer& s)
 {
 	const MemberEnum< Filter >::Key kFilter[] =
 	{
@@ -1366,8 +1328,7 @@ bool Sampler::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	s >> MemberEnum< Filter >(L"minFilter", m_minFilter, kFilter);
 	s >> MemberEnum< Filter >(L"mipFilter", m_mipFilter, kFilter);
@@ -1381,8 +1342,6 @@ bool Sampler::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"useAnisotropic", m_useAnisotropic);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1414,14 +1373,10 @@ std::wstring Scalar::getInformation() const
 	return ss.str();
 }
 
-bool Scalar::serialize(ISerializer& s)
+void Scalar::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
-
+	Node::serialize(s);
 	s >> Member< float >(L"value", m_value);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1493,10 +1448,9 @@ const RenderState& State::getRenderState() const
 	return m_renderState;
 }
 
-bool State::serialize(ISerializer& s)
+void State::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	if (s.getVersion() >= 5)
 	{
@@ -1514,7 +1468,6 @@ bool State::serialize(ISerializer& s)
 	}
 
 	s >> MemberRenderState(m_renderState);
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1582,15 +1535,12 @@ std::wstring Sum::getInformation() const
 	return ss.str();
 }
 
-bool Sum::serialize(ISerializer& s)
+void Sum::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	s >> Member< int32_t >(L"from", m_from);
 	s >> Member< int32_t >(L"to", m_to);
-	
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1649,10 +1599,9 @@ const OutputPin* Switch::getOutputPin(int index) const
 	return m_outputPin;
 }
 
-bool Switch::serialize(ISerializer& s)
+void Switch::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	const MemberEnum< Branch >::Key kBranch[] =
 	{
@@ -1677,8 +1626,6 @@ bool Switch::serialize(ISerializer& s)
 			m_inputPins[2 + i] = new InputPin(this, ss.str(), false);
 		}
 	}
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1709,14 +1656,10 @@ std::wstring Swizzle::getInformation() const
 	return m_swizzle;
 }
 
-bool Swizzle::serialize(ISerializer& s)
+void Swizzle::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
-
+	Node::serialize(s);
 	s >> Member< std::wstring >(L"swizzle", m_swizzle);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1777,10 +1720,9 @@ ParameterType Texture::getParameterType() const
 	return m_type;
 }
 
-bool Texture::serialize(ISerializer& s)
+void Texture::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
 	{
@@ -1792,8 +1734,6 @@ bool Texture::serialize(ISerializer& s)
 
 	s >> Member< Guid >(L"external", m_external, AttributeType(type_of< render::ITexture >()));
 	s >> MemberEnum< ParameterType >(L"type", m_type, c_ParameterType_Keys);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1909,10 +1849,9 @@ std::wstring Uniform::getInformation() const
 	return m_parameterName;
 }
 
-bool Uniform::serialize(ISerializer& s)
+void Uniform::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	const MemberEnum< ParameterType >::Key kParameterType_Keys[] =
 	{
@@ -1938,8 +1877,6 @@ bool Uniform::serialize(ISerializer& s)
 	
 	if (s.getVersion() >= 1)
 		s >> MemberEnum< UpdateFrequency >(L"frequency", m_frequency, kUpdateFrequency_Keys);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -1971,14 +1908,10 @@ std::wstring Vector::getInformation() const
 	return ss.str();
 }
 
-bool Vector::serialize(ISerializer& s)
+void Vector::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
-
+	Node::serialize(s);
 	s >> Member< Vector4 >(L"value", m_value);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -2041,10 +1974,9 @@ std::wstring VertexInput::getInformation() const
 	return m_name;
 }
 
-bool VertexInput::serialize(ISerializer& s)
+void VertexInput::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	const MemberEnum< DataUsage >::Key kDataUsage[] =
 	{
@@ -2078,8 +2010,6 @@ bool VertexInput::serialize(ISerializer& s)
 	s >> MemberEnum< DataUsage >(L"usage", m_usage, kDataUsage);
 	s >> MemberEnum< DataType >(L"type", m_type, kDataType);
 	s >> Member< int32_t >(L"index", m_index);
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/
@@ -2109,17 +2039,12 @@ std::wstring VertexOutput::getInformation() const
 	return m_technique;
 }
 
-bool VertexOutput::serialize(ISerializer& s)
+void VertexOutput::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	if (s.getVersion() >= 1)
-	{
 		s >> Member< std::wstring >(L"technique", m_technique);
-	}
-
-	return true;
 }
 
 /*---------------------------------------------------------------------------*/

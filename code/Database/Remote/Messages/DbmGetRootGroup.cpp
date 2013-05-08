@@ -9,9 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.DbmGetRootGroup", 0, DbmGetRootGroup, IMessage)
 
-bool DbmGetRootGroup::serialize(ISerializer& s)
+void DbmGetRootGroup::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

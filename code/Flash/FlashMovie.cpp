@@ -113,7 +113,7 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 	return spriteInstance;
 }
 
-bool FlashMovie::serialize(ISerializer& s)
+void FlashMovie::serialize(ISerializer& s)
 {
 	s >> MemberRef< const IActionVM >(L"vm", m_vm);
 	s >> MemberSwfRect(L"frameBounds", m_frameBounds);
@@ -123,8 +123,6 @@ bool FlashMovie::serialize(ISerializer& s)
 	s >> MemberSmallMap< uint16_t, Ref< FlashSound >, Member< uint16_t >, MemberRef< FlashSound > >(L"sounds", m_sounds);
 	s >> MemberSmallMap< uint16_t, Ref< FlashCharacter >, Member< uint16_t >, MemberRef< FlashCharacter > >(L"characters", m_characters);
 	s >> MemberSmallMap< std::string, uint16_t >(L"exports", m_exports);
-
-	return true;
 }
 
 	}

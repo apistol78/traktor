@@ -48,35 +48,30 @@ public:
 		return m_ref.size();
 	}
 	
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
 		if (m_index < m_ref.size())
-		{
-			if (!(s >> ValueMember(L"item", m_ref[m_index])))
-				return false;
-		}
+			s >> ValueMember(L"item", m_ref[m_index]);
 		else
 		{
 			uint8_t zero[sizeof(ValueType)];
 			std::memset(zero, 0, sizeof(zero));
 
 			ValueType* item = new (zero) ValueType();
-			if (!item)
-				return false;
+			if (!s.ensure(item != 0))
+				return;
 
-			if (!(s >> ValueMember(L"item", *item)))
-				return false;
+			s >> ValueMember(L"item", *item);
 
 			m_ref.push_back(*item);
 			item->~ValueType();
 		}
 		++m_index;
-		return true;
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", m_ref[m_index++]);
+		s >> ValueMember(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool insert() const
@@ -130,15 +125,15 @@ public:
 		return m_ref.size();
 	}
 
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
 		m_ref.push_back(ValueType());
-		return s >> ValueMember(L"item", m_ref.back());
+		s >> ValueMember(L"item", m_ref.back());
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", *m_iter++);
+		s >> ValueMember(L"item", *m_iter++);
 	}
 
 	virtual bool insert() const
@@ -189,20 +184,17 @@ public:
 		return m_ref.size();
 	}
 
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
 		ValueType item;
-		if (!(s >> ValueMember(L"item", item)))
-			return false;
-
+		s >> ValueMember(L"item", item);
 		m_ref.insert(item);
-		return true;
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
 		ValueType v = *m_iter++;
-		return s >> ValueMember(L"item", v);
+		s >> ValueMember(L"item", v);
 	}
 
 	virtual bool insert() const
@@ -228,13 +220,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
-		if (!(s >> FirstMember(L"first", m_ref.first)))
-			return false;
-		if (!(s >> SecondMember(L"second", m_ref.second)))
-			return false;
-		return true;
+		s >> FirstMember(L"first", m_ref.first);
+		s >> SecondMember(L"second", m_ref.second);
 	}
 
 private:
@@ -272,22 +261,18 @@ public:
 		return m_ref.size();
 	}
 
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
 		typename PairMember::value_type item;
-		if (!(s >> PairMember(L"item", item)))
-			return false;
+		s >> PairMember(L"item", item);
 		m_ref[item.first] = item.second;
-		return true;
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
 		typename PairMember::value_type item = std::make_pair(m_iter->first, m_iter->second);
-		if (!(s >> PairMember(L"item", item)))
-			return false;
+		s >> PairMember(L"item", item);
 		++m_iter;
-		return true;
 	}
 
 	virtual bool insert() const

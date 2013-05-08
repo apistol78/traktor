@@ -51,7 +51,7 @@ const std::wstring& Transition::getCondition() const
 	return m_condition;
 }
 
-bool Transition::serialize(ISerializer& s)
+void Transition::serialize(ISerializer& s)
 {
 	const MemberEnum< Moment >::Key c_Moment_Keys[] =
 	{
@@ -65,8 +65,6 @@ bool Transition::serialize(ISerializer& s)
 	s >> Member< float >(L"duration", m_duration, AttributeRange(0.0f));
 	s >> MemberEnum< Moment >(L"moment", m_moment, c_Moment_Keys);
 	s >> Member< std::wstring >(L"condition", m_condition);
-
-	return true;
 }
 
 	}

@@ -63,7 +63,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 	return true;
 }
 
-bool PostProcessDefineTarget::serialize(ISerializer& s)
+void PostProcessDefineTarget::serialize(ISerializer& s)
 {
 	const MemberEnum< render::TextureFormat >::Key kFormats[] =
 	{
@@ -106,8 +106,6 @@ bool PostProcessDefineTarget::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< Color4f >(L"clearColor", m_clearColor);
-
-	return true;
 }
 
 	}

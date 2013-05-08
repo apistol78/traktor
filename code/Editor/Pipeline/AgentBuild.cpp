@@ -70,7 +70,7 @@ uint32_t AgentBuild::getReason() const
 	return m_reason;
 }
 
-bool AgentBuild::serialize(ISerializer& s)
+void AgentBuild::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"pipelineTypeName", m_pipelineTypeName);
 	s >> Member< Guid >(L"sourceInstanceGuid", m_sourceInstanceGuid);
@@ -79,7 +79,6 @@ bool AgentBuild::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"outputPath", m_outputPath);
 	s >> Member< Guid >(L"outputGuid", m_outputGuid);
 	s >> Member< uint32_t >(L"reason", m_reason);
-	return true;
 }
 
 	}

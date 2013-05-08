@@ -46,22 +46,18 @@ public:
 		return m_ref.size();
 	}
 
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
 		typename pair_member::value_type item;
-		if (!(s >> pair_member(L"item", item)))
-			return false;
+		s >> pair_member(L"item", item);
 		m_ref[item.first] = item.second;
-		return true;
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
 		typename pair_member::value_type item = std::make_pair(m_iter->first, m_iter->second);
-		if (!(s >> pair_member(L"item", item)))
-			return false;
+		s >> pair_member(L"item", item);
 		++m_iter;
-		return true;
 	}
 
 	virtual bool insert() const

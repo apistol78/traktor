@@ -38,7 +38,7 @@ Ref< IGrain > PlayGrainData::createInstance(resource::IResourceManager* resource
 	);
 }
 
-bool PlayGrainData::serialize(ISerializer& s)
+void PlayGrainData::serialize(ISerializer& s)
 {
 	s >> resource::Member< Sound >(L"sound", m_sound);
 	s >> MemberRefArray< IFilter >(L"filters", m_filters);
@@ -47,8 +47,6 @@ bool PlayGrainData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"repeat", m_repeat);
-
-	return true;
 }
 
 	}

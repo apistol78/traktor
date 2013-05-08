@@ -460,17 +460,16 @@ TransformPath::Frame* TransformPath::getClosestKeyFrame(float at)
 	return closestKey ? &closestKey->value : 0;
 }
 
-bool TransformPath::serialize(ISerializer& s)
+void TransformPath::serialize(ISerializer& s)
 {
-	return s >> MemberAlignedVector< Key, MemberComposite< Key > >(L"keys", m_keys);
+	s >> MemberAlignedVector< Key, MemberComposite< Key > >(L"keys", m_keys);
 }
 
-bool TransformPath::Key::serialize(ISerializer& s)
+void TransformPath::Key::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"T", T, AttributeRange(0.0f));
 	s >> Member< Vector4 >(L"tcb", tcb);
 	s >> MemberComposite< Frame >(L"value", value);
-	return true;
 }
 
 Transform TransformPath::Frame::transform() const
@@ -485,11 +484,10 @@ Transform TransformPath::Frame::transform() const
 	);
 }
 
-bool TransformPath::Frame::serialize(ISerializer& s)
+void TransformPath::Frame::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"position", position, AttributePoint());
 	s >> Member< Vector4 >(L"orientation", orientation, AttributeDirection());
-	return true;
 }
 
 }

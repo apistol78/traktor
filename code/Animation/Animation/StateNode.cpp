@@ -35,11 +35,10 @@ const std::pair< int, int >& StateNode::getPosition() const
 	return m_position;
 }
 
-bool StateNode::serialize(ISerializer& s)
+void StateNode::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberStlPair< int, int >(L"position", m_position);
-	return true;
 }
 
 	}

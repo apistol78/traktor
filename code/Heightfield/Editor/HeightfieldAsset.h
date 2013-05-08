@@ -26,7 +26,7 @@ public:
 
 	HeightfieldAsset(const Vector4& worldExtent);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 

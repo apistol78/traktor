@@ -23,7 +23,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
 		{
@@ -71,7 +71,6 @@ public:
 				);
 			}
 		}
-		return true;
 	}
 
 private:
@@ -89,7 +88,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		const MemberEnum< ParameterType >::Key c_ParameterType_Keys[] =
 		{
@@ -135,7 +134,6 @@ public:
 				);
 			}
 		}
-		return true;
 	}
 
 private:
@@ -166,19 +164,17 @@ public:
 		return m_pins.size();
 	}
 
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
 		if (m_index >= m_pins.size())
 			m_pins.push_back(0);
-		return s >> PinMember(L"item", m_pins[m_index++]);
+		s >> PinMember(L"item", m_pins[m_index++]);
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
-		if (m_index < m_pins.size())
-			return s >> PinMember(L"item", m_pins[m_index++]);
-		else
-			return false;
+		if (s.ensure(m_index < m_pins.size()))
+			s >> PinMember(L"item", m_pins[m_index++]);
 	}
 
 	virtual bool insert() const
@@ -237,17 +233,14 @@ const OutputPin* Script::getOutputPin(int index) const
 	return m_outputPins[index];
 }
 
-bool Script::serialize(ISerializer& s)
+void Script::serialize(ISerializer& s)
 {
-	if (!Node::serialize(s))
-		return false;
+	Node::serialize(s);
 
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberPinArray< MemberTypedInputPin >(L"inputPins", m_inputPins);
 	s >> MemberPinArray< MemberTypedOutputPin >(L"outputPins", m_outputPins);
 	s >> MemberStlMap< std::wstring, std::wstring >(L"scripts", m_scripts, AttributeMultiLine());
-
-	return true;
 }
 
 	}

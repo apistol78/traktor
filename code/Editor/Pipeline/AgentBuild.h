@@ -51,7 +51,7 @@ public:
 
 	uint32_t getReason() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_pipelineTypeName;

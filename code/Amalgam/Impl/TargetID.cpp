@@ -23,9 +23,9 @@ const Guid& TargetID::getId() const
 	return m_id;
 }
 
-bool TargetID::serialize(ISerializer& s)
+void TargetID::serialize(ISerializer& s)
 {
-	return s >> Member< Guid >(L"id", m_id);
+	s >> Member< Guid >(L"id", m_id);
 }
 
 	}

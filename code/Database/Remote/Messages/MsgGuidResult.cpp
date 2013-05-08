@@ -14,9 +14,9 @@ MsgGuidResult::MsgGuidResult(const Guid& value)
 {
 }
 
-bool MsgGuidResult::serialize(ISerializer& s)
+void MsgGuidResult::serialize(ISerializer& s)
 {
-	return s >> Member< Guid >(L"value", m_value);
+	s >> Member< Guid >(L"value", m_value);
 }
 
 	}

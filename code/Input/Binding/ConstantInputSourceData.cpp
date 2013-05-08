@@ -25,9 +25,9 @@ Ref< IInputSource > ConstantInputSourceData::createInstance(DeviceControlManager
 	return new ConstantInputSource(m_value);
 }
 
-bool ConstantInputSourceData::serialize(ISerializer& s)
+void ConstantInputSourceData::serialize(ISerializer& s)
 {
-	return s >> Member< float >(L"value", m_value);
+	s >> Member< float >(L"value", m_value);
 }
 	
 	}

@@ -14,9 +14,9 @@ DbmGetChildInstances::DbmGetChildInstances(uint32_t handle)
 {
 }
 
-bool DbmGetChildInstances::serialize(ISerializer& s)
+void DbmGetChildInstances::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

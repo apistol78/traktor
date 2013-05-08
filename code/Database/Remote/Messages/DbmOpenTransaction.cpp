@@ -14,9 +14,9 @@ DbmOpenTransaction::DbmOpenTransaction(uint32_t handle)
 {
 }
 
-bool DbmOpenTransaction::serialize(ISerializer& s)
+void DbmOpenTransaction::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

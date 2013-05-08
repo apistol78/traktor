@@ -19,11 +19,10 @@ const std::map< std::wstring, std::wstring >& DeployTool::getEnvironment() const
 	return m_environment;
 }
 
-bool DeployTool::serialize(ISerializer& s)
+void DeployTool::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"executable", m_executable);
 	s >> MemberStlMap< std::wstring, std::wstring >(L"environment", m_environment);
-	return true;
 }
 
 	}

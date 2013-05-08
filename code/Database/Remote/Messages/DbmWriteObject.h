@@ -30,7 +30,7 @@ public:
 
 	const std::wstring& getPrimaryTypeName() const { return m_primaryTypeName; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

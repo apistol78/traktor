@@ -15,11 +15,10 @@ DbmWriteObjectResult::DbmWriteObjectResult(uint32_t streamId, const std::wstring
 {
 }
 
-bool DbmWriteObjectResult::serialize(ISerializer& s)
+void DbmWriteObjectResult::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"streamId", m_streamId);
 	s >> Member< std::wstring >(L"serializerTypeName", m_serializerTypeName);
-	return true;
 }
 
 	}

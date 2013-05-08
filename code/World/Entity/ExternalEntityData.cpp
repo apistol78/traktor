@@ -29,15 +29,14 @@ const resource::Id< EntityData >& ExternalEntityData::getEntityData() const
 	return m_entityData;
 }
 
-bool ExternalEntityData::serialize(ISerializer& s)
+void ExternalEntityData::serialize(ISerializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
+	EntityData::serialize(s);
 
 	if (s.getVersion() >= 1)
-		return s >> resource::Member< EntityData >(L"entityData", m_entityData);
+		s >> resource::Member< EntityData >(L"entityData", m_entityData);
 	else
-		return s >> resource::Member< EntityData >(L"guid", m_entityData);
+		s >> resource::Member< EntityData >(L"guid", m_entityData);
 }
 
 	}

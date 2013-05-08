@@ -22,11 +22,10 @@ DbmGetEventResult::DbmGetEventResult(const IEvent* event, bool remote)
 {
 }
 
-bool DbmGetEventResult::serialize(ISerializer& s)
+void DbmGetEventResult::serialize(ISerializer& s)
 {
 	s >> MemberRef< const IEvent >(L"event", m_event);
 	s >> Member< bool >(L"remote", m_remote);
-	return true;
 }
 
 	}

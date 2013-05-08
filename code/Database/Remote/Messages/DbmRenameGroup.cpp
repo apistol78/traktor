@@ -15,11 +15,10 @@ DbmRenameGroup::DbmRenameGroup(uint32_t handle, const std::wstring& name)
 {
 }
 
-bool DbmRenameGroup::serialize(ISerializer& s)
+void DbmRenameGroup::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
 	s >> Member< std::wstring >(L"name", m_name);
-	return true;
 }
 
 	}

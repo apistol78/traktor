@@ -26,7 +26,7 @@ class T_DLLCLASS MaterialMaskAsset : public editor::Asset
 public:
 	const RefArray< MaterialMaskAssetLayer >& getLayers() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	RefArray< MaterialMaskAssetLayer > m_layers;

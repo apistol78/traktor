@@ -49,7 +49,7 @@ Ref< IInputSource > CombinedInputSourceData::createInstance(DeviceControlManager
 	return new CombinedInputSource(sources, m_mode);
 }
 
-bool CombinedInputSourceData::serialize(ISerializer& s)
+void CombinedInputSourceData::serialize(ISerializer& s)
 {
 	const MemberEnum< CombinedInputSource::CombineMode >::Key c_CombineMode_Keys[] =
 	{
@@ -61,8 +61,6 @@ bool CombinedInputSourceData::serialize(ISerializer& s)
 
 	s >> MemberRefArray< IInputSourceData >(L"sources", m_sources);
 	s >> MemberEnum< CombinedInputSource::CombineMode >(L"mode", m_mode, c_CombineMode_Keys);
-
-	return true;
 }
 	
 	}

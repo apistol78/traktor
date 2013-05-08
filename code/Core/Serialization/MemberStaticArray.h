@@ -37,30 +37,22 @@ public:
 		return ArraySize;
 	}
 
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
-		bool result = s >> ValueMember(
+		s >> ValueMember(
 			m_elementNames ? m_elementNames[m_index] : L"item",
 			m_arr[m_index]
 		);
-		if (!result)
-			return false;
-
 		++m_index;
-		return true;
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
-		bool result = s >> ValueMember(
+		s >> ValueMember(
 			m_elementNames ? m_elementNames[m_index] : L"item",
 			m_arr[m_index]
 		);
-		if (!result)
-			return false;
-
 		++m_index;
-		return true;
 	}
 
 	virtual bool insert() const

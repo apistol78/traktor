@@ -37,7 +37,7 @@ public:
 
 	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const = 0;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	float getConstantRate() const { return m_constantRate; }
 

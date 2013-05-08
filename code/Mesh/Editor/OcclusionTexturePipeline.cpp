@@ -92,8 +92,9 @@ bool OcclusionTexturePipeline::buildOutput(
 	}
 
 	// Run image through texture pipeline for compression etc.
+	Ref< render::TextureOutput > output = new render::TextureOutput(asset->m_output);
 	return pipelineBuilder->buildOutput(
-		&asset->m_output,
+		output,
 		outputPath,
 		outputGuid,
 		image

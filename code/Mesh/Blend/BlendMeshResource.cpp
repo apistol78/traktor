@@ -87,7 +87,7 @@ Ref< IMesh > BlendMeshResource::createMesh(
 	return blendMesh;
 }
 
-bool BlendMeshResource::serialize(ISerializer& s)
+void BlendMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
@@ -102,7 +102,6 @@ bool BlendMeshResource::serialize(ISerializer& s)
 		>
 	>(L"parts", m_parts);
 	s >> MemberStlMap< std::wstring, int >(L"targetMap", m_targetMap);
-	return true;
 }
 
 BlendMeshResource::Part::Part()
@@ -110,11 +109,10 @@ BlendMeshResource::Part::Part()
 {
 }
 
-bool BlendMeshResource::Part::serialize(ISerializer& s)
+void BlendMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	return true;
 }
 
 	}

@@ -1236,7 +1236,10 @@ bool EditorForm::createWorkspace()
 	m_dataBaseView->setDatabase(m_sourceDatabase);
 
 	// Create pipeline dependency cache.
-	m_dependencyCache = new PipelineDependencyCache();
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.UseDependencyCache", true))
+		m_dependencyCache = new PipelineDependencyCache();
+	else
+		m_dependencyCache = 0;
 
 	// Create stream server.
 	m_streamServer = new net::StreamServer();
@@ -1303,19 +1306,23 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	T_ASSERT (m_mergedSettings);
 
 	// Create pipeline dependency cache.
-	std::wstring dependencyCache = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.DependencyCache");
-	if (!dependencyCache.empty())
+	m_dependencyCache = 0;
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.UseDependencyCache", true))
 	{
-		Ref< IStream > dependencyCacheFile = FileSystem::getInstance().open(dependencyCache, File::FmRead);
-		if (dependencyCacheFile)
+		std::wstring dependencyCache = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.DependencyCache");
+		if (!dependencyCache.empty())
 		{
-			m_dependencyCache = BinarySerializer(dependencyCacheFile).readObject< PipelineDependencyCache >();
-			dependencyCacheFile->close();
-			dependencyCacheFile = 0;
+			Ref< IStream > dependencyCacheFile = FileSystem::getInstance().open(dependencyCache, File::FmRead);
+			if (dependencyCacheFile)
+			{
+				m_dependencyCache = BinarySerializer(dependencyCacheFile).readObject< PipelineDependencyCache >();
+				dependencyCacheFile->close();
+				dependencyCacheFile = 0;
+			}
 		}
+		if (!m_dependencyCache)
+			m_dependencyCache = new PipelineDependencyCache();
 	}
-	if (!m_dependencyCache)
-		m_dependencyCache = new PipelineDependencyCache();
 
 	// Open databases.
 	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
@@ -1633,8 +1640,9 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	{
 		pipelineDepends = new PipelineDependsParallel(
 			&pipelineFactory,
+			m_sourceDatabase,
 			m_dependencyCache,
-			m_sourceDatabase
+			pipelineDb
 		);
 	}
 	else
@@ -1651,16 +1659,14 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	m_buildProgress->setProgress(c_offsetCollectingDependencies);
 
+	pipelineDb->beginTransaction();
+
 	for (std::vector< Guid >::const_iterator i = assetGuids.begin(); i != assetGuids.end(); ++i)
 		pipelineDepends->addDependency(*i, editor::PdfBuild);
 
 	log::info << DecreaseIndent;
 
 	pipelineDepends->waitUntilFinished();
-
-	//Ref< IStream > s = FileSystem::getInstance().open(L"data/Temp/Pipeline.deb", File::FmWrite);
-	//xml::XmlSerializer(s).writeObject(m_dependencyCache);
-	//s->close();
 
 	RefArray< PipelineDependency > dependencies;
 	pipelineDepends->getDependencies(dependencies);
@@ -1703,6 +1709,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	log::info << IncreaseIndent;
 
 	pipelineBuilder->build(dependencies, rebuild);
+
+	pipelineDb->endTransaction();
 
 	m_buildView->endBuild();
 

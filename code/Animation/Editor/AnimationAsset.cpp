@@ -17,10 +17,9 @@ AnimationAsset::AnimationAsset()
 {
 }
 
-bool AnimationAsset::serialize(ISerializer& s)
+void AnimationAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
+	editor::Asset::serialize(s);
 
 	if (s.getVersion() >= 1)
 	{
@@ -28,8 +27,6 @@ bool AnimationAsset::serialize(ISerializer& s)
 		s >> Member< bool >(L"invertX", m_invertX);
 		s >> Member< bool >(L"invertZ", m_invertZ);
 	}
-
-	return true;
 }
 
 	}

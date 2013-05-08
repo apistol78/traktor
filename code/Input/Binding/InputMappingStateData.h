@@ -39,7 +39,7 @@ public:
 	
 	const std::map< std::wstring, Ref< InputStateData > >& getStateData() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	RefArray< IInputFilter > m_filters;

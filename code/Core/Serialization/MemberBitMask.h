@@ -28,7 +28,7 @@ public:
 
 	MemberBitMask(const wchar_t* const name, uint32_t& bm, const Bit* bits);
 
-	virtual bool serialize(ISerializer& s) const;
+	virtual void serialize(ISerializer& s) const;
 
 private:
 	const Bit* m_bits;

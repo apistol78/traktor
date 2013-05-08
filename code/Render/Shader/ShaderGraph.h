@@ -138,7 +138,7 @@ public:
 	void rewire(const OutputPin* outputPin, const OutputPin* newOutputPin);
 
 	/*! \brief Serialize graph. */
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	/*! \brief Get all nodes.
 	 *

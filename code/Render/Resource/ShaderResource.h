@@ -45,7 +45,7 @@ public:
 		{
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	struct Technique
@@ -59,14 +59,14 @@ public:
 		{
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	const std::map< std::wstring, uint32_t >& getParameterBits() const;
 
 	const std::vector< Technique >& getTechniques() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class ShaderPipeline;

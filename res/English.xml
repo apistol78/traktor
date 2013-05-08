@@ -422,6 +422,10 @@
       <second>Write access</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_PIPELINE_USE_DEPENDENCY_CACHE</first>
+      <second>Use dependency cache</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_SHORTCUT</first>
       <second>Shortcut</second>
     </item>

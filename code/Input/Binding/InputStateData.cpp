@@ -24,9 +24,9 @@ const IInputNode* InputStateData::getSource() const
 	return m_source;
 }
 
-bool InputStateData::serialize(ISerializer& s)
+void InputStateData::serialize(ISerializer& s)
 {
-	return s >> MemberRef< IInputNode >(L"source", m_source);
+	s >> MemberRef< IInputNode >(L"source", m_source);
 }
 
 	}

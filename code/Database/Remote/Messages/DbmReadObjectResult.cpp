@@ -15,11 +15,10 @@ DbmReadObjectResult::DbmReadObjectResult(uint32_t streamId, const std::wstring& 
 {
 }
 
-bool DbmReadObjectResult::serialize(ISerializer& s)
+void DbmReadObjectResult::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"streamId", m_streamId);
 	s >> Member< std::wstring >(L"serializerTypeName", m_serializerTypeName);
-	return true;
 }
 
 	}

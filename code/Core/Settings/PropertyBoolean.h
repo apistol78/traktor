@@ -28,7 +28,7 @@ public:
 
 	static value_type_t get(const IPropertyValue* value);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	operator value_type_t () const { return m_value; }
 

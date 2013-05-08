@@ -41,9 +41,9 @@ Ref< IInputSource > KeyboardInputSourceData::createInstance(DeviceControlManager
 	return new KeyboardInputSource(m_controlTypes, deviceControlManager);
 }
 
-bool KeyboardInputSourceData::serialize(ISerializer& s)
+void KeyboardInputSourceData::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< InputDefaultControlType, MemberInputDefaultControlType >(L"controlTypes", m_controlTypes);
+	s >> MemberStlVector< InputDefaultControlType, MemberInputDefaultControlType >(L"controlTypes", m_controlTypes);
 }
 	
 	}

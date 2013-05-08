@@ -14,9 +14,9 @@ const RefArray< ISerializable >& MaterialMaskResourceLayer::getParams() const
 	return m_params;
 }
 
-bool MaterialMaskResourceLayer::serialize(ISerializer& s)
+void MaterialMaskResourceLayer::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< ISerializable >(L"params", m_params);
+	s >> MemberRefArray< ISerializable >(L"params", m_params);
 }
 
 	}

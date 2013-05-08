@@ -35,7 +35,7 @@ public:
 
 	Action getAction() const { return m_action; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Action m_action;

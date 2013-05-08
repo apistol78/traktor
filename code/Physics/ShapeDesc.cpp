@@ -58,7 +58,7 @@ int32_t ShapeDesc::getMaterial() const
 	return m_material;
 }
 
-bool ShapeDesc::serialize(ISerializer& s)
+void ShapeDesc::serialize(ISerializer& s)
 {
 	s >> MemberComposite< Transform >(L"localTransform", m_localTransform);
 	s >> Member< uint32_t >(L"collisionGroup", m_collisionGroup, AttributeHex());
@@ -66,8 +66,6 @@ bool ShapeDesc::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 		s >> Member< int32_t >(L"material", m_material);
-
-	return true;
 }
 
 	}

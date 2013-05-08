@@ -115,7 +115,7 @@ StateBlockDx9& StateBlockDx9::operator = (const StateBlockDx9& stateBlock)
 	return *this;
 }
 
-bool StateBlockDx9::serialize(ISerializer& s)
+void StateBlockDx9::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< std::pair< uint32_t, uint32_t >, MemberStlPair< uint32_t, uint32_t > >(L"renderStates", m_renderStates);
 	s >> MemberStlMap< 
@@ -140,7 +140,6 @@ bool StateBlockDx9::serialize(ISerializer& s)
 		>(L"pixelSamplerStates", m_pixelSamplerStates);
 
 	s >> Member< bool >(L"opaque", m_opaque);
-	return true;
 }
 
 	}

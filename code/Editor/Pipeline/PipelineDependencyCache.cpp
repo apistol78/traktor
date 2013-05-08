@@ -28,9 +28,9 @@ PipelineDependency* PipelineDependencyCache::get(const Guid& dependencyGuid) con
 		return 0;
 }
 
-bool PipelineDependencyCache::serialize(ISerializer& s)
+void PipelineDependencyCache::serialize(ISerializer& s)
 {
-	return s >> MemberStlMap< Guid, Ref< PipelineDependency  >, MemberStlPair< Guid, Ref< PipelineDependency >, Member< Guid >, MemberRef< PipelineDependency > > >(L"dependencies", m_dependencies);
+	s >> MemberStlMap< Guid, Ref< PipelineDependency  >, MemberStlPair< Guid, Ref< PipelineDependency >, Member< Guid >, MemberRef< PipelineDependency > > >(L"dependencies", m_dependencies);
 }
 
 	}

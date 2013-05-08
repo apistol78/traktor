@@ -81,7 +81,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_parameterName;
@@ -105,7 +105,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	float m_min;
@@ -126,7 +126,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	traktor::Color4ub m_color;
@@ -176,7 +176,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Branch m_branch;
@@ -219,7 +219,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Axis m_axis;
@@ -249,7 +249,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Operator m_operator;
@@ -340,7 +340,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_parameterName;
@@ -375,7 +375,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -420,7 +420,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	int32_t m_from;
@@ -464,7 +464,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Base m_base;
@@ -574,7 +574,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -624,7 +624,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 	
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_technique;
@@ -730,7 +730,7 @@ public:
 
 	bool getUseAnisotropic() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Filter m_minFilter;
@@ -757,7 +757,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	float m_value;
@@ -806,7 +806,7 @@ public:
 
 	const RenderState& getRenderState() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_priority;
@@ -849,7 +849,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	int32_t m_from;
@@ -887,7 +887,7 @@ public:
 
 	virtual const OutputPin* getOutputPin(int index) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Branch m_branch;
@@ -910,7 +910,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_swizzle;
@@ -950,7 +950,7 @@ public:
 
 	ParameterType getParameterType() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_external;
@@ -1029,7 +1029,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_parameterName;
@@ -1051,7 +1051,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Vector4 m_value;
@@ -1083,7 +1083,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -1106,7 +1106,7 @@ public:
 
 	virtual std::wstring getInformation() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_technique;

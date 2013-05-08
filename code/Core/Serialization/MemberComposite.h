@@ -21,9 +21,9 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
-		return m_ref.serialize(s);
+		m_ref.serialize(s);
 	}
 	
 private:

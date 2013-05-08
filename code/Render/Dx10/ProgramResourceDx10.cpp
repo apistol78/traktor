@@ -20,7 +20,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		uint8_t blob[65535];
 		uint32_t blobSize;
@@ -28,8 +28,7 @@ public:
 		if (s.getDirection() == ISerializer::SdRead)
 		{
 			blobSize = sizeof(blob);
-			if (!(s >> Member< void* >(getName(), blob, blobSize)))
-				return false;
+			s >> Member< void* >(getName(), blob, blobSize);
 
 			D3D10CreateBlob(blobSize, &m_ref.getAssign());
 			std::memcpy(m_ref->GetBufferPointer(), blob, blobSize);
@@ -42,11 +41,8 @@ public:
 			if (m_ref)
 				std::memcpy(blob, m_ref->GetBufferPointer(), blobSize);
 
-			if (!(s >> Member< void* >(getName(), blob, blobSize)))
-				return false;
+			s >> Member< void* >(getName(), blob, blobSize);
 		}
-
-		return true;
 	}
 
 private:
@@ -62,10 +58,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		uint32_t size = sizeof(m_ref);
-		return s >> Member< void* >(getName(), (void*)&m_ref, size);
+		s >> Member< void* >(getName(), (void*)&m_ref, size);
 	}
 
 private:
@@ -81,10 +77,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		uint32_t size = sizeof(m_ref);
-		return s >> Member< void* >(getName(), (void*)&m_ref, size);
+		s >> Member< void* >(getName(), (void*)&m_ref, size);
 	}
 
 private:
@@ -100,10 +96,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		uint32_t size = sizeof(m_ref);
-		return s >> Member< void* >(getName(), (void*)&m_ref, size);
+		s >> Member< void* >(getName(), (void*)&m_ref, size);
 	}
 
 private:
@@ -119,10 +115,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		uint32_t size = sizeof(m_ref);
-		return s >> Member< void* >(getName(), (void*)&m_ref, size);
+		s >> Member< void* >(getName(), (void*)&m_ref, size);
 	}
 
 private:
@@ -141,7 +137,7 @@ ProgramResourceDx10::ProgramResourceDx10()
 	std::memset(&m_d3dBlendDesc, 0, sizeof(m_d3dBlendDesc));
 }
 
-bool ProgramResourceDx10::serialize(ISerializer& s)
+void ProgramResourceDx10::serialize(ISerializer& s)
 {
 	s >> MemberID3D10Blob(L"vertexShader", m_vertexShader);
 	s >> MemberID3D10Blob(L"pixelShader", m_pixelShader);
@@ -169,7 +165,6 @@ bool ProgramResourceDx10::serialize(ISerializer& s)
 			MemberD3D10_SAMPLER_DESC
 		>
 	>(L"d3dPixelSamplers", m_d3dPixelSamplers);
-	return true;
 }
 
 	}

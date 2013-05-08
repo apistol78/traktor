@@ -10,13 +10,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.OcclusionTextureAsset", 9, OcclusionTextureAsset, editor::Asset)
 
-bool OcclusionTextureAsset::serialize(ISerializer& s)
+void OcclusionTextureAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
-
+	editor::Asset::serialize(s);
 	s >> MemberComposite< render::TextureOutput, false >(L"output", m_output);
-	return true;
 }
 
 	}

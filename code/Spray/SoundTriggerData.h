@@ -36,7 +36,7 @@ public:
 
 	virtual Ref< ITrigger > createTrigger(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< sound::Sound >& getSound() const { return m_sound; }
 

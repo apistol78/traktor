@@ -38,7 +38,7 @@ public:
 	
 	virtual Ref< IInputSource > createInstance(DeviceControlManager* deviceControlManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	RefArray< IInputSourceData > m_sources;

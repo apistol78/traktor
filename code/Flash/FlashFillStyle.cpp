@@ -90,7 +90,7 @@ bool FlashFillStyle::create(uint16_t fillBitmap, const Matrix33& fillBitmapMatri
 	return true;
 }
 
-bool FlashFillStyle::serialize(ISerializer& s)
+void FlashFillStyle::serialize(ISerializer& s)
 {
 	const MemberEnum< GradientType >::Key kGradientType[] =
 	{
@@ -105,15 +105,12 @@ bool FlashFillStyle::serialize(ISerializer& s)
 	s >> Member< Matrix33 >(L"gradientMatrix", m_gradientMatrix);
 	s >> Member< uint16_t >(L"m_fillBitmap", m_fillBitmap);
 	s >> Member< Matrix33 >(L"fillBitmapMatrix", m_fillBitmapMatrix);
-
-	return true;
 }
 
-bool FlashFillStyle::ColorRecord::serialize(ISerializer& s)
+void FlashFillStyle::ColorRecord::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"ratio", ratio);
 	s >> MemberSwfColor(L"color", color);
-	return true;
 }
 
 	}

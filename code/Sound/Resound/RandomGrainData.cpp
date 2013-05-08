@@ -31,11 +31,10 @@ Ref< IGrain > RandomGrainData::createInstance(resource::IResourceManager* resour
 	return new RandomGrain(grains, m_humanize);
 }
 
-bool RandomGrainData::serialize(ISerializer& s)
+void RandomGrainData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 	s >> Member< bool >(L"humanize", m_humanize);
-	return true;
 }
 
 	}

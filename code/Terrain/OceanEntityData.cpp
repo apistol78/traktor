@@ -10,13 +10,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.terrain.OceanEntityData", 0, OceanEntityData, world::EntityData)
 
-bool OceanEntityData::serialize(ISerializer& s)
+void OceanEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
-
+	world::EntityData::serialize(s);
 	s >> resource::Member< render::Shader >(L"shaderComposite", m_shaderComposite);
-	return true;
 }
 
 	}

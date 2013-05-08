@@ -29,11 +29,10 @@ const std::wstring& AgentOpenFile::getFileName() const
 	return m_fileName;
 }
 
-bool AgentOpenFile::serialize(ISerializer& s)
+void AgentOpenFile::serialize(ISerializer& s)
 {
 	s >> Member< Path >(L"basePath", m_basePath);
 	s >> Member< std::wstring >(L"host", m_fileName);
-	return true;
 }
 
 	}

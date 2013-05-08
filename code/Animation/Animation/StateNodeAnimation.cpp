@@ -53,12 +53,10 @@ void StateNodeAnimation::evaluate(
 	m_animation->getPose(time, outPose);
 }
 
-bool StateNodeAnimation::serialize(ISerializer& s)
+void StateNodeAnimation::serialize(ISerializer& s)
 {
-	if (!StateNode::serialize(s))
-		return false;
+	StateNode::serialize(s);
 	s >> resource::MemberIdProxy< Animation >(L"animation", m_animation);
-	return true;
 }
 
 	}

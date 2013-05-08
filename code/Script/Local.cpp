@@ -23,10 +23,9 @@ const std::wstring& Local::getName() const
 	return m_name;
 }
 
-bool Local::serialize(ISerializer& s)
+void Local::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
-	return true;
 }
 
 	}

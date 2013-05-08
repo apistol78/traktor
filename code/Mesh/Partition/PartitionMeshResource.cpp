@@ -65,12 +65,11 @@ Ref< IMesh > PartitionMeshResource::createMesh(
 	return partitionMesh;
 }
 
-bool PartitionMeshResource::serialize(ISerializer& s)
+void PartitionMeshResource::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Part, MemberComposite< Part > >(L"parts", m_parts);
 	s >> MemberRef< IPartitionData >(L"partitionData", m_partitionData);
-	return true;
 }
 
 PartitionMeshResource::Part::Part()
@@ -78,12 +77,11 @@ PartitionMeshResource::Part::Part()
 {
 }
 
-bool PartitionMeshResource::Part::serialize(ISerializer& s)
+void PartitionMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
 	s >> MemberAabb(L"boundingBox", boundingBox);
-	return true;
 }
 
 	}

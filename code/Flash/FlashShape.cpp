@@ -254,17 +254,14 @@ Ref< FlashCharacterInstance > FlashShape::createInstance(
 	return new FlashShapeInstance(context, parent, this);
 }
 
-bool FlashShape::serialize(ISerializer& s)
+void FlashShape::serialize(ISerializer& s)
 {
-	if (!FlashCharacter::serialize(s))
-		return false;
+	FlashCharacter::serialize(s);
 
 	s >> MemberSwfRect(L"shapeBounds", m_shapeBounds);
 	s >> MemberStlList< Path, MemberComposite< Path > >(L"paths", m_paths);
 	s >> MemberAlignedVector< FlashFillStyle, MemberComposite< FlashFillStyle > >(L"fillStyles", m_fillStyles);
 	s >> MemberAlignedVector< FlashLineStyle, MemberComposite< FlashLineStyle > >(L"lineStyles", m_lineStyles);
-
-	return true;
 }
 
 	}

@@ -30,13 +30,12 @@ Ref< IGrain > BlendGrainData::createInstance(resource::IResourceManager* resourc
 	);
 }
 
-bool BlendGrainData::serialize(ISerializer& s)
+void BlendGrainData::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"id", m_id);
 
 	s >> MemberStaticArray< Ref< IGrainData >, 2, MemberRef< IGrainData > >(L"grains", m_grains);
-	return true;
 }
 
 	}

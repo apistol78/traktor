@@ -50,11 +50,10 @@ Ref< PostProcessStep::Instance > PostProcessStepLuminance::create(
 	);
 }
 
-bool PostProcessStepLuminance::serialize(ISerializer& s)
+void PostProcessStepLuminance::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> Member< std::wstring >(L"source", m_source);
-	return true;
 }
 
 // Instance

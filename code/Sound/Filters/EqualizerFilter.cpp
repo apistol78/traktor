@@ -66,9 +66,9 @@ void EqualizerFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) con
 	}
 }
 
-bool EqualizerFilter::serialize(ISerializer& s)
+void EqualizerFilter::serialize(ISerializer& s)
 {
-	return s >> Member< float >(L"gain", m_gain);
+	s >> Member< float >(L"gain", m_gain);
 }
 
 	}

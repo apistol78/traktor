@@ -23,7 +23,7 @@ class ProgramResourceDx9 : public ProgramResource
 public:
 	ProgramResourceDx9();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class ProgramWin32;

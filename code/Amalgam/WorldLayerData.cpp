@@ -42,10 +42,9 @@ Ref< Layer > WorldLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	);
 }
 
-bool WorldLayerData::serialize(ISerializer& s)
+void WorldLayerData::serialize(ISerializer& s)
 {
-	if (!LayerData::serialize(s))
-		return false;
+	LayerData::serialize(s);
 
 	s >> resource::Member< scene::Scene >(L"scene", m_scene);
 	s >> MemberStlMap<
@@ -58,8 +57,6 @@ bool WorldLayerData::serialize(ISerializer& s)
 			resource::Member< world::EntityData >
 		>
 	>(L"entities", m_entities);
-
-	return true;
 }
 
 	}

@@ -26,7 +26,7 @@ class T_DLLCLASS SpotLightEntityData : public EntityData
 public:
 	SpotLightEntityData();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const Vector4& getSunColor() const { return m_sunColor; }
 

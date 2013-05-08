@@ -19,9 +19,9 @@ int32_t CloudMaskResource::getSize() const
 	return m_size;
 }
 
-bool CloudMaskResource::serialize(ISerializer& s)
+void CloudMaskResource::serialize(ISerializer& s)
 {
-	return s >> Member< int32_t >(L"size", m_size);
+	s >> Member< int32_t >(L"size", m_size);
 }
 
 	}

@@ -85,7 +85,7 @@ Ref< IMesh > StaticMeshResource::createMesh(
 	return staticMesh;
 }
 
-bool StaticMeshResource::serialize(ISerializer& s)
+void StaticMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
 	s >> Member< bool >(L"haveOccluderMesh", m_haveOccluderMesh);
@@ -101,7 +101,6 @@ bool StaticMeshResource::serialize(ISerializer& s)
 			MemberStlList< Part, MemberComposite< Part > >
 		>
 	>(L"parts", m_parts);
-	return true;
 }
 
 StaticMeshResource::Part::Part()
@@ -109,11 +108,10 @@ StaticMeshResource::Part::Part()
 {
 }
 
-bool StaticMeshResource::Part::serialize(ISerializer& s)
+void StaticMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	return true;
 }
 
 	}

@@ -18,7 +18,7 @@ MeshAsset::MeshAsset()
 {
 }
 
-bool MeshAsset::serialize(ISerializer& s)
+void MeshAsset::serialize(ISerializer& s)
 {
 	const MemberEnum< MeshType >::Key c_MeshType_Keys[] =
 	{
@@ -33,8 +33,7 @@ bool MeshAsset::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	if (!editor::Asset::serialize(s))
-		return false;
+	editor::Asset::serialize(s);
 
 	s >> MemberEnum< MeshType >(L"meshType", m_meshType, c_MeshType_Keys);
 
@@ -55,8 +54,6 @@ bool MeshAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 5)
 		s >> Member< bool >(L"generateOccluder", m_generateOccluder);
-
-	return true;
 }
 
 	}

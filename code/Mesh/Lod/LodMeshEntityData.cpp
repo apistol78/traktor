@@ -60,16 +60,13 @@ void LodMeshEntityData::setTransform(const Transform& transform)
 	AbstractMeshEntityData::setTransform(transform);
 }
 
-bool LodMeshEntityData::serialize(ISerializer& s)
+void LodMeshEntityData::serialize(ISerializer& s)
 {
-	if (!AbstractMeshEntityData::serialize(s))
-		return false;
+	AbstractMeshEntityData::serialize(s);
 	
 	s >> MemberRefArray< AbstractMeshEntityData >(L"lods", m_lods);
 	s >> Member< float >(L"lodDistance", m_lodDistance, AttributeRange(0.0f));
 	s >> Member< float >(L"lodCullDistance", m_lodCullDistance, AttributeRange(0.0f));
-
-	return true;
 }
 
 	}

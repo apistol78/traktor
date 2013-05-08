@@ -48,10 +48,9 @@ Ref< Source > PointSetSourceData::createSource(resource::IResourceManager* resou
 	);
 }
 
-bool PointSetSourceData::serialize(ISerializer& s)
+void PointSetSourceData::serialize(ISerializer& s)
 {
-	if (!SourceData::serialize(s))
-		return false;
+	SourceData::serialize(s);
 
 	s >> resource::Member< PointSet >(L"pointSet", m_pointSet);
 	s >> Member< Vector4 >(L"offset", m_offset, AttributeDirection());
@@ -61,8 +60,6 @@ bool PointSetSourceData::serialize(ISerializer& s)
 	s >> MemberComposite< Range< float > >(L"age", m_age);
 	s >> MemberComposite< Range< float > >(L"mass", m_mass);
 	s >> MemberComposite< Range< float > >(L"size", m_size);
-
-	return true;
 }
 
 	}

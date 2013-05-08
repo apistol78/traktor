@@ -27,9 +27,8 @@ void DitherFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	}
 }
 
-bool DitherFilter::serialize(ISerializer& s)
+void DitherFilter::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

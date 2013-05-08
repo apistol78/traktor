@@ -35,7 +35,7 @@ Ref< IGrain > InLoopOutGrainData::createInstance(resource::IResourceManager* res
 	);
 }
 
-bool InLoopOutGrainData::serialize(ISerializer& s)
+void InLoopOutGrainData::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"id", m_id);
 	s >> Member< bool >(L"inital", m_inital);
@@ -43,7 +43,6 @@ bool InLoopOutGrainData::serialize(ISerializer& s)
 	s >> MemberRef< IGrainData >(L"inLoopGrain", m_inLoopGrain);
 	s >> MemberRef< IGrainData >(L"outGrain", m_outGrain);
 	s >> MemberRef< IGrainData >(L"outLoopGrain", m_outLoopGrain);
-	return true;
 }
 
 	}

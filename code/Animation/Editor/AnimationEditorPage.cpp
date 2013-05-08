@@ -110,9 +110,9 @@ public:
 		return m_pose;
 	}
 
-	virtual bool serialize(ISerializer& s)
+	virtual void serialize(ISerializer& s)
 	{
-		return s >> MemberComposite< Animation::KeyPose >(L"pose", m_pose);
+		s >> MemberComposite< Animation::KeyPose >(L"pose", m_pose);
 	}
 
 private:

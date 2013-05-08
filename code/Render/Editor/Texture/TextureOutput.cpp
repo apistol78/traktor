@@ -35,7 +35,7 @@ TextureOutput::TextureOutput()
 {
 }
 
-bool TextureOutput::serialize(ISerializer& s)
+void TextureOutput::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 6)
 	{
@@ -125,7 +125,6 @@ bool TextureOutput::serialize(ISerializer& s)
 		s >> Member< bool >(L"preserveAlphaCoverage", m_preserveAlphaCoverage);
 		s >> Member< float >(L"alphaCoverageReference", m_alphaCoverageReference, AttributeRange(0.0f, 1.0f));
 	}
-	return true;
 }
 
 	}

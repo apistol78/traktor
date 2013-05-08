@@ -29,7 +29,7 @@ class T_DLLCLASS InputMappingAsset : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const InputMappingSourceData* getSourceData() const { return m_sourceData; }
 

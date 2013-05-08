@@ -20,10 +20,9 @@ SoundAsset::SoundAsset()
 {
 }
 
-bool SoundAsset::serialize(ISerializer& s)
+void SoundAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
+	editor::Asset::serialize(s);
 
 	if (s.getVersion() >= 2)
 		s >> Member< Guid >(L"category", m_category, AttributeType(type_of< SoundCategory >()));
@@ -38,8 +37,6 @@ bool SoundAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 4)
 		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
-
-	return true;
 }
 
 	}

@@ -15,13 +15,9 @@ DmFindServices::DmFindServices(const Guid& managerGuid)
 {
 }
 
-bool DmFindServices::serialize(ISerializer& s)
+void DmFindServices::serialize(ISerializer& s)
 {
-	if (s.getVersion() < 1)
-		return false;
-
 	s >> Member< Guid >(L"managerGuid", m_managerGuid);
-	return true;
 }
 
 	}

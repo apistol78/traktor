@@ -20,11 +20,10 @@ const RefArray< ISerializable >& MaterialMaskAssetLayer::getParams() const
 	return m_params;
 }
 
-bool MaterialMaskAssetLayer::serialize(ISerializer& s)
+void MaterialMaskAssetLayer::serialize(ISerializer& s)
 {
 	s >> Member< Color4ub >(L"color", m_color);
 	s >> MemberRefArray< ISerializable >(L"params", m_params);
-	return true;
 }
 
 	}
