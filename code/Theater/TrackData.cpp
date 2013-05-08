@@ -63,7 +63,7 @@ float TrackData::getTimeOffset() const
 	return m_timeOffset;
 }
 
-bool TrackData::serialize(ISerializer& s)
+void TrackData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 
@@ -86,8 +86,6 @@ bool TrackData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 4)
 		s >> Member< float >(L"timeOffset", m_timeOffset);
-
-	return true;
 }
 
 	}

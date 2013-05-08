@@ -70,11 +70,10 @@ float InThreshold::evaluate(
 		return 0.0f;
 }
 
-bool InThreshold::serialize(ISerializer& s)
+void InThreshold::serialize(ISerializer& s)
 {
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> Member< float >(L"duration", m_duration);
-	return true;
 }
 	
 	}

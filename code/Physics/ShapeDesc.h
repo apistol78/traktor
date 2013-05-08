@@ -43,7 +43,7 @@ public:
 
 	int32_t getMaterial() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Transform m_localTransform;

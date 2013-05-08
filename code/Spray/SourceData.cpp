@@ -15,11 +15,10 @@ SourceData::SourceData()
 {
 }
 
-bool SourceData::serialize(ISerializer& s)
+void SourceData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"constantRate", m_constantRate);
 	s >> Member< float >(L"velocityRate", m_velocityRate);
-	return true;
 }
 
 	}

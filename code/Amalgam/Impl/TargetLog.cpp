@@ -20,11 +20,10 @@ TargetLog::TargetLog(int32_t level, const std::wstring& text)
 {
 }
 
-bool TargetLog::serialize(ISerializer& s)
+void TargetLog::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"level", m_level);
 	s >> Member< std::wstring >(L"text", m_text);
-	return true;
 }
 
 	}

@@ -34,7 +34,7 @@ const RefArray< IGrainData >& BankAsset::getGrains() const
 	return m_grains;
 }
 
-bool BankAsset::serialize(ISerializer& s)
+void BankAsset::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< Guid >(L"category", m_category, AttributeType(type_of< SoundCategory >()));
@@ -45,7 +45,7 @@ bool BankAsset::serialize(ISerializer& s)
 	if (s.getVersion() >= 3)
 		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
 
-	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
+	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }
 
 	}

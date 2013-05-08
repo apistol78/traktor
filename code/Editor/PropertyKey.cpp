@@ -21,7 +21,7 @@ PropertyKey::value_type_t PropertyKey::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyKey* >(value)->m_value : value_type_t(0, ui::VkNull);
 }
 
-bool PropertyKey::serialize(ISerializer& s)
+void PropertyKey::serialize(ISerializer& s)
 {
 	if (s.getDirection() == ISerializer::SdRead)
 	{
@@ -30,7 +30,7 @@ bool PropertyKey::serialize(ISerializer& s)
 		s >> Member< std::wstring >(L"key", keydesc);
 
 		if (keydesc.empty())
-			return false;
+			return;
 
 		size_t pos = keydesc.find_first_of(L',');
 
@@ -38,7 +38,7 @@ bool PropertyKey::serialize(ISerializer& s)
 		std::wstring key = pos != keydesc.npos ? keydesc.substr(pos + 1) : keydesc;
 
 		if (key.empty())
-			return false;
+			return;
 
 		m_value.first = 0;
 
@@ -55,7 +55,7 @@ bool PropertyKey::serialize(ISerializer& s)
 			else if (*i == L"KsShift")
 				m_value.first |= ui::KsShift;
 			else
-				return false;
+				return;
 		}
 
 		m_value.second = ui::Application::getInstance()->translateVirtualKey(key);
@@ -94,7 +94,6 @@ bool PropertyKey::serialize(ISerializer& s)
 
 		s >> Member< std::wstring >(L"key", keydesc);
 	}
-	return true;
 }
 
 Ref< IPropertyValue > PropertyKey::join(const IPropertyValue* right) const

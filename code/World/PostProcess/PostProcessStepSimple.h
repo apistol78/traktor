@@ -42,7 +42,7 @@ public:
 
 		Source();
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	class InstanceSimple : public Instance
@@ -82,7 +82,7 @@ public:
 		uint32_t height
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 

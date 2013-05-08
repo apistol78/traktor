@@ -35,7 +35,7 @@ public:
 
 	bool getRemote() const { return m_remote; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< const IEvent > m_event;

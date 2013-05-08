@@ -72,12 +72,11 @@ void CombFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	}
 }
 
-bool CombFilter::serialize(ISerializer& s)
+void CombFilter::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"samplesLength", m_samplesLength);
 	s >> Member< float >(L"feedBack", m_feedback);
 	s >> Member< float >(L"damp", m_damp);
-	return true;
 }
 
 	}

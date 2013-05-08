@@ -28,9 +28,9 @@ Ref< PostProcessStep::Instance > PostProcessStepChain::create(
 	return new InstanceChain(instances);
 }
 
-bool PostProcessStepChain::serialize(ISerializer& s)
+void PostProcessStepChain::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< PostProcessStep >(L"steps", m_steps);
+	s >> MemberRefArray< PostProcessStep >(L"steps", m_steps);
 }
 
 // Instance

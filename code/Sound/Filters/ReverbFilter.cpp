@@ -164,13 +164,12 @@ void ReverbFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	}
 }
 
-bool ReverbFilter::serialize(ISerializer& s)
+void ReverbFilter::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"delay", m_delay, AttributeRange(1));
 	s >> Member< float >(L"duration", m_duration, AttributeRange(0.0f));
 	s >> Member< float >(L"cutOff", m_cutOff, AttributeRange(0.0f));
 	s >> Member< float >(L"wet", m_wet, AttributeRange(0.0f, 1.0f));
-	return true;
 }
 
 	}

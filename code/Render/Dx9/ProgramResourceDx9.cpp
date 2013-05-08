@@ -20,7 +20,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		uint8_t blob[65535];
 		uint32_t blobSize;
@@ -28,8 +28,7 @@ public:
 		if (s.getDirection() == ISerializer::SdRead)
 		{
 			blobSize = sizeof(blob);
-			if (!(s >> Member< void* >(getName(), blob, blobSize)))
-				return false;
+			s >> Member< void* >(getName(), blob, blobSize);
 
 			if (blobSize > 0)
 			{
@@ -50,11 +49,8 @@ public:
 			else
 				blobSize = 0;
 
-			if (!(s >> Member< void* >(getName(), blob, blobSize)))
-				return false;
+			s >> Member< void* >(getName(), blob, blobSize);
 		}
-
-		return true;
 	}
 
 private:
@@ -70,13 +66,12 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint16_t >(L"registerIndex", m_ref.registerIndex);
 		s >> Member< uint16_t >(L"registerCount", m_ref.registerCount);
 		s >> Member< uint16_t >(L"offset", m_ref.offset);
 		s >> Member< uint16_t >(L"length", m_ref.length);
-		return true;
 	}
 
 private:
@@ -92,11 +87,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint16_t >(L"texture", m_ref.texture);
 		s >> Member< uint16_t >(L"stage", m_ref.stage);
-		return true;
 	}
 
 private:
@@ -112,11 +106,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< uint16_t >(L"texture", m_ref.texture);
 		s >> Member< uint16_t >(L"sizeIndex", m_ref.sizeIndex);
-		return true;
 	}
 
 private:
@@ -135,7 +128,7 @@ ProgramResourceDx9::ProgramResourceDx9()
 {
 }
 
-bool ProgramResourceDx9::serialize(ISerializer& s)
+void ProgramResourceDx9::serialize(ISerializer& s)
 {
 	s >> MemberID3DXBuffer(L"vertexShader", m_vertexShader);
 	s >> MemberID3DXBuffer(L"pixelShader", m_pixelShader);
@@ -152,7 +145,6 @@ bool ProgramResourceDx9::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"scalarParameterDataSize", m_scalarParameterDataSize);
 	s >> Member< uint32_t >(L"textureParameterDataSize", m_textureParameterDataSize);
 	s >> MemberComposite< StateBlockDx9 >(L"state", m_state);
-	return true;
 }
 
 	}

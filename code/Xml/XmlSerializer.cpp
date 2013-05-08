@@ -39,6 +39,9 @@ std::wstring characterEntity(const std::wstring& str)
 	
 T_IMPLEMENT_RTTI_CLASS(L"traktor.xml.XmlSerializer", XmlSerializer, Serializer)
 
+#define T_CHECK_STATUS \
+	if (failed()) return;
+
 XmlSerializer::XmlSerializer(IStream* stream)
 :	m_xml(stream, new Utf8Encoding())
 {
@@ -52,83 +55,84 @@ Serializer::Direction XmlSerializer::getDirection() const
 	return ISerializer::SdWrite;
 }
 
-bool XmlSerializer::operator >> (const Member< bool >& m)
+void XmlSerializer::operator >> (const Member< bool >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << (m ? L"true" : L"false") << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< int8_t >& m)
+void XmlSerializer::operator >> (const Member< int8_t >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m) << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< uint8_t >& m)
+void XmlSerializer::operator >> (const Member< uint8_t >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m) << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< int16_t >& m)
+void XmlSerializer::operator >> (const Member< int16_t >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m) << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< uint16_t >& m)
+void XmlSerializer::operator >> (const Member< uint16_t >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m) << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< int32_t >& m)
+void XmlSerializer::operator >> (const Member< int32_t >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< uint32_t >& m)
+void XmlSerializer::operator >> (const Member< uint32_t >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< int64_t >& m)
+void XmlSerializer::operator >> (const Member< int64_t >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< uint64_t >& m)
+void XmlSerializer::operator >> (const Member< uint64_t >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< float >& m)
+void XmlSerializer::operator >> (const Member< float >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< double >& m)
+void XmlSerializer::operator >> (const Member< double >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< std::string >& m)
+void XmlSerializer::operator >> (const Member< std::string >& m)
 {
+	T_CHECK_STATUS;
 	if (!m->empty())
 		m_xml << m_indent << L"<" << m.getName() << L">" << characterEntity(mbstows(m)) << L"</" << m.getName() << L">" << Endl;
 	else
 		m_xml << m_indent << L"<" << m.getName() << L"/>" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< std::wstring >& m)
+void XmlSerializer::operator >> (const Member< std::wstring >& m)
 {
+	T_CHECK_STATUS;
 	if (!m->empty())
 	{
 		const Attribute* attributes = m.getAttributes();
@@ -147,57 +151,55 @@ bool XmlSerializer::operator >> (const Member< std::wstring >& m)
 		}
 	}
 	else
-	{
 		m_xml << m_indent << L"<" << m.getName() << L"/>" << Endl;
-	}
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Guid >& m)
+void XmlSerializer::operator >> (const Member< Guid >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m->format() << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Path >& m)
+void XmlSerializer::operator >> (const Member< Path >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m->getOriginal() << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Color4ub >& m)
+void XmlSerializer::operator >> (const Member< Color4ub >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << int32_t(m->r) << L", " << int32_t(m->g) << L", " << int32_t(m->b) << L", " << int32_t(m->a) << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Color4f >& m)
+void XmlSerializer::operator >> (const Member< Color4f >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m->getRed() << L", " << m->getGreen() << L", " << m->getBlue() << L", " << m->getAlpha() << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Scalar >& m)
+void XmlSerializer::operator >> (const Member< Scalar >& m)
 {
+	T_CHECK_STATUS;
 	Scalar& v = m;
 	m_xml << m_indent << L"<" << m.getName() << L">" << float(v) << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Vector2 >& m)
+void XmlSerializer::operator >> (const Member< Vector2 >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m->x << L", " << m->y << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Vector4 >& m)
+void XmlSerializer::operator >> (const Member< Vector4 >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m->x() << L", " << m->y() << L", " << m->z() << L", " << m->w() << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Matrix33 >& m)
+void XmlSerializer::operator >> (const Member< Matrix33 >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
 	for (int r = 0; r < 3; ++r)
 	{
@@ -211,11 +213,11 @@ bool XmlSerializer::operator >> (const Member< Matrix33 >& m)
 		m_xml << Endl;
 	}
 	m_xml << m_indent << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Matrix44 >& m)
+void XmlSerializer::operator >> (const Member< Matrix44 >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
 	for (int r = 0; r < 4; ++r)
 	{
@@ -229,20 +231,19 @@ bool XmlSerializer::operator >> (const Member< Matrix44 >& m)
 		m_xml << Endl;
 	}
 	m_xml << m_indent << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< Quaternion >& m)
+void XmlSerializer::operator >> (const Member< Quaternion >& m)
 {
+	T_CHECK_STATUS;
 	m_xml << m_indent << L"<" << m.getName() << L">" << m->e.x() << L", " << m->e.y() << L", " << m->e.z() << L", " << m->e.w() << L"</" << m.getName() << L">" << Endl;
-	return true;
 }
 
-bool XmlSerializer::operator >> (const Member< ISerializable* >& m)
+void XmlSerializer::operator >> (const Member< ISerializable* >& m)
 {
-	ISerializable* o = *m;
-	bool result = true;
+	T_CHECK_STATUS;
 
+	ISerializable* o = *m;
 	std::map< ISerializable*, std::wstring >::iterator i = m_refs.find(o);
 	if (i != m_refs.end())
 	{
@@ -262,7 +263,7 @@ bool XmlSerializer::operator >> (const Member< ISerializable* >& m)
 		enterElement(m.getName());
 
 		rememberObject(o);
-		result = serialize(o, version);
+		serialize(o, version);
 
 		leaveElement();
 
@@ -275,12 +276,12 @@ bool XmlSerializer::operator >> (const Member< ISerializable* >& m)
 		enterElement(m.getName());
 		leaveElement();
 	}
-	
-	return result;
 }
 
-bool XmlSerializer::operator >> (const Member< void* >& m)
+void XmlSerializer::operator >> (const Member< void* >& m)
 {
+	T_CHECK_STATUS;
+
 	uint32_t size = m.getBlobSize();
 	uint8_t* blob = reinterpret_cast< uint8_t* >(m.getBlob());
 
@@ -301,12 +302,12 @@ bool XmlSerializer::operator >> (const Member< void* >& m)
 		enterElement(m.getName());
 		leaveElement();
 	}
-
-	return true;
 }
 
-bool XmlSerializer::operator >> (const MemberArray& m)
+void XmlSerializer::operator >> (const MemberArray& m)
 {
+	T_CHECK_STATUS;
+
 	if (m.size() > 0)
 	{
 		m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
@@ -314,10 +315,7 @@ bool XmlSerializer::operator >> (const MemberArray& m)
 		enterElement(m.getName());
 
 		for (size_t i = 0, size = m.size(); i < size; ++i)
-		{
-			if (!m.write(*this))
-				return false;
-		}
+			m.write(*this);
 
 		leaveElement();
 
@@ -330,32 +328,31 @@ bool XmlSerializer::operator >> (const MemberArray& m)
 		enterElement(m.getName());
 		leaveElement();
 	}
-
-	return true;
 }
 
-bool XmlSerializer::operator >> (const MemberComplex& m)
+void XmlSerializer::operator >> (const MemberComplex& m)
 {
+	T_CHECK_STATUS;
+
 	if (m.getCompound() == true)
 	{
 		m_xml << m_indent << L"<" << m.getName() << L">" << Endl;
 		enterElement(m.getName());
 	}
 
-	bool result = m.serialize(*this);
+	m.serialize(*this);
 
 	if (m.getCompound() == true)
 	{
 		leaveElement();
 		m_xml << m_indent << L"</" << m.getName() << L">" << Endl;
 	}
-
-	return result;
 }
 
-bool XmlSerializer::operator >> (const MemberEnumBase& m)
+void XmlSerializer::operator >> (const MemberEnumBase& m)
 {
-	return this->operator >> (*(MemberComplex*)(&m));
+	T_CHECK_STATUS;
+	this->operator >> (*(MemberComplex*)(&m));
 }
 
 std::wstring XmlSerializer::stackPath()

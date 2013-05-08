@@ -37,7 +37,7 @@ public:
 
 	const InputPin* getDestination() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	const OutputPin* m_source;

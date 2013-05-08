@@ -251,11 +251,18 @@ bool write_string(const Ref< IStream >& stream, const std::wstring& str)
 	uint32_t length = uint32_t(str.length());
 	if (length > 0)
 	{
-		uint8_t* u8str = (uint8_t*)alloca(length * 4);
+		AutoArrayPtr< uint8_t > buf(new uint8_t [length * 6]);
+		if (!buf.ptr())
+			return false;
+
+		std::memset(buf.ptr(), 0, length * 6);
+
+		uint8_t* u8str = (uint8_t*)buf.ptr();
 		uint32_t u8len;
 		
 		Utf8Encoding utf8enc;
 		u8len = utf8enc.translate(str.c_str(), length, u8str);
+		T_FATAL_ASSERT (u8len <= length * 6);
 
 		if (!write_primitive< uint32_t >(stream, u8len))
 			return false;
@@ -329,6 +336,9 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.BinarySerializer", BinarySerializer, Serializer
 // Disable "Unusual use of Boolean expression"
 /*lint -e514*/
 
+#define T_CHECK_STATUS \
+	if (failed()) return;
+
 BinarySerializer::BinarySerializer(IStream* stream)
 :	m_stream(stream)
 ,	m_direction(m_stream->canRead() ? SdRead : SdWrite)
@@ -342,125 +352,139 @@ Serializer::Direction BinarySerializer::getDirection() const
 	return m_direction;
 }
 
-bool BinarySerializer::operator >> (const Member< bool >& m)
+void BinarySerializer::operator >> (const Member< bool >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< bool >(m_stream, m);
+		read_primitive< bool >(m_stream, m);
 	else
-		return write_primitive< bool >(m_stream, m);
+		write_primitive< bool >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< int8_t >& m)
+void BinarySerializer::operator >> (const Member< int8_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< int8_t >(m_stream, m);
+		read_primitive< int8_t >(m_stream, m);
 	else
-		return write_primitive< int8_t >(m_stream, m);
+		write_primitive< int8_t >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< uint8_t >& m)
+void BinarySerializer::operator >> (const Member< uint8_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< uint8_t >(m_stream, m);
+		read_primitive< uint8_t >(m_stream, m);
 	else
-		return write_primitive< uint8_t >(m_stream, m);
+		write_primitive< uint8_t >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< int16_t >& m)
+void BinarySerializer::operator >> (const Member< int16_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< int16_t >(m_stream, m);
+		read_primitive< int16_t >(m_stream, m);
 	else
-		return write_primitive< int16_t >(m_stream, m);
+		write_primitive< int16_t >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< uint16_t >& m)
+void BinarySerializer::operator >> (const Member< uint16_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< uint16_t >(m_stream, m);
+		read_primitive< uint16_t >(m_stream, m);
 	else
-		return write_primitive< uint16_t >(m_stream, m);
+		write_primitive< uint16_t >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< int32_t >& m)
+void BinarySerializer::operator >> (const Member< int32_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< int32_t >(m_stream, m);
+		read_primitive< int32_t >(m_stream, m);
 	else
-		return write_primitive< int32_t >(m_stream, m);
+		write_primitive< int32_t >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< uint32_t >& m)
+void BinarySerializer::operator >> (const Member< uint32_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< uint32_t >(m_stream, m);
+		read_primitive< uint32_t >(m_stream, m);
 	else
-		return write_primitive< uint32_t >(m_stream, m);
+		write_primitive< uint32_t >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< int64_t >& m)
+void BinarySerializer::operator >> (const Member< int64_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< int64_t >(m_stream, m);
+		read_primitive< int64_t >(m_stream, m);
 	else
-		return write_primitive< int64_t >(m_stream, m);
+		write_primitive< int64_t >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< uint64_t >& m)
+void BinarySerializer::operator >> (const Member< uint64_t >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< uint64_t >(m_stream, m);
+		read_primitive< uint64_t >(m_stream, m);
 	else
-		return write_primitive< uint64_t >(m_stream, m);
+		write_primitive< uint64_t >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< float >& m)
+void BinarySerializer::operator >> (const Member< float >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< float >(m_stream, m);
+		read_primitive< float >(m_stream, m);
 	else
-		return write_primitive< float >(m_stream, m);
+		write_primitive< float >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< double >& m)
+void BinarySerializer::operator >> (const Member< double >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_primitive< double >(m_stream, m);
+		read_primitive< double >(m_stream, m);
 	else
-		return write_primitive< double >(m_stream, m);
+		write_primitive< double >(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< std::string >& m)
+void BinarySerializer::operator >> (const Member< std::string >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_string(m_stream, m);
+		read_string(m_stream, m);
 	else
-		return write_string(m_stream, m);
+		write_string(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< std::wstring >& m)
+void BinarySerializer::operator >> (const Member< std::wstring >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
-		return read_string(m_stream, m);
+		read_string(m_stream, m);
 	else
-		return write_string(m_stream, m);
+		write_string(m_stream, m);
 }
 
-bool BinarySerializer::operator >> (const Member< Guid >& m)
+void BinarySerializer::operator >> (const Member< Guid >& m)
 {
+	T_CHECK_STATUS;
+
 	Guid& guid = m;
 	if (m_direction == SdRead)
 	{
 		bool validGuid = false;
 		
 		if (!read_primitive< bool >(m_stream, validGuid))
-			return false;
+			return;
 
 		if (validGuid)
 		{
 			uint8_t data[16];
-			if (!read_block(m_stream, data, 16, 1))
-				return false;
+			read_block(m_stream, data, 16, 1);
 			guid = Guid(data);
 		}
 		else
@@ -470,192 +494,175 @@ bool BinarySerializer::operator >> (const Member< Guid >& m)
 	{
 		bool validGuid = guid.isValid();
 		if (!write_primitive< bool >(m_stream, validGuid))
-			return false;
+			return;
 
 		if (validGuid)
-		{
-			if (!write_block(m_stream, static_cast< const uint8_t* >(guid), 16, 1))
-				return false;
-		}
+			write_block(m_stream, static_cast< const uint8_t* >(guid), 16, 1);
 	}
-	return true;
 }
 
-bool BinarySerializer::operator >> (const Member< Path >& m)
+void BinarySerializer::operator >> (const Member< Path >& m)
 {
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
 	{
 		std::wstring path;
-		if (!read_string(m_stream, path))
-			return false;
+		read_string(m_stream, path);
 		*m = Path(path);
 	}
 	else
 	{
 		std::wstring path = m->getOriginal();
-		if (!write_string(m_stream, path))
-			return false;
+		write_string(m_stream, path);
 	}
-	return true;
 }
 
-bool BinarySerializer::operator >> (const Member< Color4ub >& m)
+void BinarySerializer::operator >> (const Member< Color4ub >& m)
 {
-	bool result = true;
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
 	{
-		result &= read_primitive< uint8_t >(m_stream, m->r);
-		result &= read_primitive< uint8_t >(m_stream, m->g);
-		result &= read_primitive< uint8_t >(m_stream, m->b);
-		result &= read_primitive< uint8_t >(m_stream, m->a);
+		read_primitive< uint8_t >(m_stream, m->r);
+		read_primitive< uint8_t >(m_stream, m->g);
+		read_primitive< uint8_t >(m_stream, m->b);
+		read_primitive< uint8_t >(m_stream, m->a);
 	}
 	else
 	{
-		result &= write_primitive< uint8_t >(m_stream, m->r);
-		result &= write_primitive< uint8_t >(m_stream, m->g);
-		result &= write_primitive< uint8_t >(m_stream, m->b);
-		result &= write_primitive< uint8_t >(m_stream, m->a);
+		write_primitive< uint8_t >(m_stream, m->r);
+		write_primitive< uint8_t >(m_stream, m->g);
+		write_primitive< uint8_t >(m_stream, m->b);
+		write_primitive< uint8_t >(m_stream, m->a);
 	}
-	return result;
 }
 
-bool BinarySerializer::operator >> (const Member< Color4f >& m)
+void BinarySerializer::operator >> (const Member< Color4f >& m)
 {
-	float T_MATH_ALIGN16 e[4];
-	bool result;
+	T_CHECK_STATUS;
 
+	float T_MATH_ALIGN16 e[4];
 	if (m_direction == SdRead)
 	{
-		result = read_primitives< float >(m_stream, e, 4);
+		read_primitives< float >(m_stream, e, 4);
 		(*m) = Color4f::loadUnaligned(e);
 	}
 	else
 	{
 		(*m).storeUnaligned(e);
-		result = write_primitives< float >(m_stream, e, 4);
+		write_primitives< float >(m_stream, e, 4);
 	}
-
-	return result;
 }
 
-bool BinarySerializer::operator >> (const Member< Scalar >& m)
+void BinarySerializer::operator >> (const Member< Scalar >& m)
 {
+	T_CHECK_STATUS;
+
 	Scalar& v = m;
 	if (m_direction == SdRead)
 	{
 		float tmp;
-		if (!read_primitive< float >(m_stream, tmp))
-			return false;
+		read_primitive< float >(m_stream, tmp);
 		v = Scalar(tmp);
 	}
 	else
-	{
-		if (!write_primitive< float >(m_stream, float(v)))
-			return false;
-	}
-	return true;
+		write_primitive< float >(m_stream, float(v));
 }
 
-bool BinarySerializer::operator >> (const Member< Vector2 >& m)
+void BinarySerializer::operator >> (const Member< Vector2 >& m)
 {
-	bool result = true;
+	T_CHECK_STATUS;
 	if (m_direction == SdRead)
 	{
-		result &= read_primitive< float >(m_stream, m->x);
-		result &= read_primitive< float >(m_stream, m->y);
+		read_primitive< float >(m_stream, m->x);
+		read_primitive< float >(m_stream, m->y);
 	}
 	else
 	{
-		result &= write_primitive< float >(m_stream, m->x);
-		result &= write_primitive< float >(m_stream, m->y);
+		write_primitive< float >(m_stream, m->x);
+		write_primitive< float >(m_stream, m->y);
 	}
-	return result;
 }
 
-bool BinarySerializer::operator >> (const Member< Vector4 >& m)
+void BinarySerializer::operator >> (const Member< Vector4 >& m)
 {
-	float T_MATH_ALIGN16 e[4];
-	bool result;
+	T_CHECK_STATUS;
 
+	float T_MATH_ALIGN16 e[4];
 	if (m_direction == SdRead)
 	{
-		result = read_primitives< float >(m_stream, e, 4);
+		read_primitives< float >(m_stream, e, 4);
 		(*m) = Vector4::loadUnaligned(e);
 	}
 	else
 	{
 		(*m).storeUnaligned(e);
-		result = write_primitives< float >(m_stream, e, 4);
+		write_primitives< float >(m_stream, e, 4);
 	}
-
-	return result;
 }
 
-bool BinarySerializer::operator >> (const Member< Matrix33 >& m)
+void BinarySerializer::operator >> (const Member< Matrix33 >& m)
 {
-	bool result = true;
+	T_CHECK_STATUS;
+
 	if (m_direction == SdRead)
 	{
 		for (int i = 0; i < 3 * 3; ++i)
-			result &= read_primitive< float >(m_stream, m->m[i]);
+			read_primitive< float >(m_stream, m->m[i]);
 	}
 	else
 	{
 		for (int i = 0; i < 3 * 3; ++i)
-			result &= write_primitive< float >(m_stream, m->m[i]);
+			write_primitive< float >(m_stream, m->m[i]);
 	}
-	return result;
 }
 
-bool BinarySerializer::operator >> (const Member< Matrix44 >& m)
+void BinarySerializer::operator >> (const Member< Matrix44 >& m)
 {
-	float T_MATH_ALIGN16 values[16];
-	bool result = true;
+	T_CHECK_STATUS;
 
+	float T_MATH_ALIGN16 values[16];
 	if (m_direction == SdRead)
 	{
-		result = read_primitives< float >(m_stream, values, 16);
+		read_primitives< float >(m_stream, values, 16);
 		(*m) = Matrix44::loadUnaligned(values);
 	}
 	else
 	{
 		(*m).storeUnaligned(values);
-		result = write_primitives< float >(m_stream, values, 16);
+		write_primitives< float >(m_stream, values, 16);
 	}
-
-	return result;
 }
 
-bool BinarySerializer::operator >> (const Member< Quaternion >& m)
+void BinarySerializer::operator >> (const Member< Quaternion >& m)
 {
-	float T_MATH_ALIGN16 e[4];
-	bool result;
+	T_CHECK_STATUS;
 
+	float T_MATH_ALIGN16 e[4];
 	if (m_direction == SdRead)
 	{
-		result = read_primitives< float >(m_stream, e, 4);
+		read_primitives< float >(m_stream, e, 4);
 		m->e = Vector4::loadUnaligned(e);
 	}
 	else
 	{
 		m->e.storeUnaligned(e);
-		result = write_primitives< float >(m_stream, e, 4);
+		write_primitives< float >(m_stream, e, 4);
 	}
-
-	return result;	
 }
 
-bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
+void BinarySerializer::operator >> (const Member< ISerializable* >& m)
 {
+	T_CHECK_STATUS;
+
 	if (m_direction == SdRead)
 	{
 		bool reference = false;
 		uint64_t hash = 0;
 
-		if (!read_primitive< bool >(m_stream, reference))
-			return false;
-		if (!read_primitive< uint64_t >(m_stream, hash))
-			return false;
+		if (!ensure(read_primitive< bool >(m_stream, reference)))
+			return;
+		if (!ensure(read_primitive< uint64_t >(m_stream, hash)))
+			return;
 
 		Ref< ISerializable > object;
 
@@ -664,48 +671,63 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 			if (!reference)
 			{
 				uint32_t typeHashOrLen;
-				std::wstring typeName;
+				const TypeInfo* type;
 				int32_t version;
 
-				if (!read_primitive< uint32_t >(m_stream, typeHashOrLen))
-					return false;
+				if (!ensure(read_primitive< uint32_t >(m_stream, typeHashOrLen)))
+				{
+					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read type hash" << Endl;
+					return;
+				}
 
 				if ((typeHashOrLen & 0x80000000) == 0x80000000)
-					typeName = m_typeReadCache[typeHashOrLen & 0x7fffffff];
+					type = m_typeReadCache[typeHashOrLen & 0x7fffffff];
 				else
 				{
-					if (!read_string(m_stream, typeHashOrLen, typeName))
-						return false;
+					std::wstring typeName;
+					if (!ensure(read_string(m_stream, typeHashOrLen, typeName)))
+					{
+						log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read type" << Endl;
+						return;
+					}
 
-					m_typeReadCache.push_back(typeName);
+					type = TypeInfo::find(typeName);
+					if (!ensure(type != 0))
+					{
+						log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such type \"" << typeName << L"\"" << Endl;
+						return;
+					}
+
+					m_typeReadCache.push_back(type);
 				}
+
+				T_ASSERT (type);
 				
-				const TypeInfo* type = TypeInfo::find(typeName);
-				if (type == 0)
+				object = checked_type_cast< ISerializable* >(type->createInstance());
+				if (!ensure(object != 0))
 				{
-					log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such type \"" << typeName << L"\"" << Endl;
-					return false;
-				}
-					
-				if (!(object = checked_type_cast< ISerializable* >(type->createInstance())))
-				{
-					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to create type \"" << typeName << L"\"" << Endl;
-					return false;
+					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to create type \"" << type->getName() << L"\"" << Endl;
+					return;
 				}
 
-				if (!read_primitive< int32_t >(m_stream, version))
-					return false;
+				if (!ensure(read_primitive< int32_t >(m_stream, version)))
+				{
+					log::error << L"Unable to serialize \"" << m.getName() << L"\"; unable to read version" << Endl;
+					return;
+				}
 
-				if (!serialize(object, version))
-					return false;
+				serialize(object, version);
 
 				m_readCache[hash] = object;
 			}
 			else
 			{
 				object = static_cast< ISerializable* >(m_readCache[hash]);
-				if (!object)
-					return false;
+				if (!ensure(object != 0))
+				{
+					log::error << L"Unable to serialize \"" << m.getName() << L"\"; no such reference" << Endl;
+					return;
+				}
 			}
 		}
 
@@ -714,16 +736,17 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 	else
 	{
 		Ref< ISerializable > object = *m;
-
 		if (object)
 		{
+			T_ASSERT (type_of(object).isInstantiable());
+
 			std::map< ISerializable*, uint64_t >::iterator i = m_writeCache.find(object);
 			if (i != m_writeCache.end())
 			{
 				if (!write_primitive< bool >(m_stream, true))
-					return false;
+					return;
 				if (!write_primitive< uint64_t >(m_stream, i->second))
-					return false;
+					return;
 			}
 			else
 			{
@@ -731,9 +754,9 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				uint64_t hash = m_nextCacheId++;
 
 				if (!write_primitive< bool >(m_stream, false))
-					return false;
+					return;
 				if (!write_primitive< uint64_t >(m_stream, hash))
-					return false;
+					return;
 
 				std::map< const TypeInfo*, uint32_t >::const_iterator i = m_typeWriteCache.find(&type_of(object));
 				if (i != m_typeWriteCache.end())
@@ -741,101 +764,100 @@ bool BinarySerializer::operator >> (const Member< ISerializable* >& m)
 				else
 				{
 					if (!write_string(m_stream, type_name(object)))
-						return false;
+						return;
 
 					m_typeWriteCache.insert(std::make_pair(&type_of(object), m_nextTypeCacheId++));
 				}
 
 				if (!write_primitive< int32_t >(m_stream, version))
-					return false;
+					return;
 
 				m_writeCache[object] = hash;
-				if (!serialize(object, version))
-					return false;
+				serialize(object, version);
 			}
 		}
 		else
 		{
-			if (!write_primitive< bool >(m_stream, false))
-				return false;
-			if (!write_primitive< uint64_t >(m_stream, 0ULL))
-				return false;
+			write_primitive< bool >(m_stream, false);
+			write_primitive< uint64_t >(m_stream, 0ULL);
 		}
 	}
-	return true;
 }
 
-bool BinarySerializer::operator >> (const Member< void* >& m)
+void BinarySerializer::operator >> (const Member< void* >& m)
 {
+	T_CHECK_STATUS;
+
 	if (m_direction == SdRead)
 	{
 		uint32_t size;
 			
-		if (!read_primitive< uint32_t >(m_stream, size))
-			return false;
+		if (!ensure(read_primitive< uint32_t >(m_stream, size)))
+			return;
 		
-		if (size > m.getBlobSize())
-			return false;
+		if (!ensure(size <= m.getBlobSize()))
+			return;
 
 		m.setBlobSize(size);
 
 		if (size > 0)
-			return read_block(m_stream, m.getBlob(), size, 1);
-		else
-			return true;
+			read_block(m_stream, m.getBlob(), size, 1);
 	}
 	else
 	{
-		if (!write_primitive< uint32_t >(m_stream, uint32_t(m.getBlobSize())))
-			return false;
+		uint32_t size = m.getBlobSize();
 
-		if (m.getBlobSize() > 0)
-			return write_block(m_stream, m.getBlob(), m.getBlobSize(), 1);
-		else
-			return true;
+		if (!ensure(write_primitive< uint32_t >(m_stream, size)))
+			return;
+
+		if (size > 0)
+			write_block(m_stream, m.getBlob(), size, 1);
 	}
 }
 
-bool BinarySerializer::operator >> (const MemberArray& m)
+void BinarySerializer::operator >> (const MemberArray& m)
 {
+	T_CHECK_STATUS;
+
 	if (m_direction == SdRead)
 	{
 		uint32_t size;
 
-		if (!read_primitive< uint32_t >(m_stream, size))
-			return false;
+		if (!ensure(read_primitive< uint32_t >(m_stream, size)))
+			return;
 		
 		m.reserve(size, size);
 		for (uint32_t i = 0; i < size; ++i)
 		{
-			if (!m.read(*this))
-				return false;
+			T_CHECK_STATUS;
+			m.read(*this);
 		}
 	}
 	else
 	{
 		uint32_t size = uint32_t(m.size());
 
-		if (!write_primitive< uint32_t >(m_stream, size))
-			return false;
+		if (!ensure(write_primitive< uint32_t >(m_stream, size)))
+			return;
 
 		for (uint32_t i = 0; i < size; ++i)
 		{
-			if (!m.write(*this))
-				return false;
+			T_CHECK_STATUS;
+			m.write(*this);
 		}
 	}
-	return true;
 }
 
-bool BinarySerializer::operator >> (const MemberComplex& m)
+void BinarySerializer::operator >> (const MemberComplex& m)
 {
-	return m.serialize(*this);
+	T_CHECK_STATUS;
+	m.serialize(*this);
 }
 
-bool BinarySerializer::operator >> (const MemberEnumBase& m)
+void BinarySerializer::operator >> (const MemberEnumBase& m)
 {
-	return m.serialize(*this);
+	T_CHECK_STATUS;
+	m.serialize(*this);
 }
 
 /*lint -restore*/

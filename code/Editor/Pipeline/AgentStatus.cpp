@@ -30,11 +30,10 @@ bool AgentStatus::getResult() const
 	return m_result;
 }
 
-bool AgentStatus::serialize(ISerializer& s)
+void AgentStatus::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"buildGuid", m_buildGuid);
 	s >> Member< bool >(L"result", m_result);
-	return true;
 }
 
 	}

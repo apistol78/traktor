@@ -20,9 +20,9 @@ Ref< const ShapeDesc > BodyDesc::getShape() const
 	return m_shape;
 }
 
-bool BodyDesc::serialize(ISerializer& s)
+void BodyDesc::serialize(ISerializer& s)
 {
-	return s >> MemberRef< ShapeDesc >(L"shape", m_shape);
+	s >> MemberRef< ShapeDesc >(L"shape", m_shape);
 }
 
 	}

@@ -33,7 +33,7 @@ class T_DLLCLASS OceanEntityData : public world::EntityData
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< render::Shader >& getShaderComposite() const { return m_shaderComposite; }
 

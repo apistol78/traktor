@@ -24,10 +24,9 @@ uint32_t AgentStream::getPublicId() const
 	return m_publicId;
 }
 
-bool AgentStream::serialize(ISerializer& s)
+void AgentStream::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"publicId", m_publicId);
-	return true;
 }
 
 	}

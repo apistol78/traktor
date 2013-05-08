@@ -50,7 +50,7 @@ public:
 		uint32_t height
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	inline const RefArray< PostProcessStep >& getSteps() const { return m_steps; }
 

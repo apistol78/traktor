@@ -31,7 +31,7 @@ public:
 
 	const resource::Id< Mesh >& getMesh() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	resource::Id< Mesh > m_mesh;

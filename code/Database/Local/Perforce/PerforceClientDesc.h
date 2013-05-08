@@ -29,7 +29,7 @@ public:
 	std::wstring m_client;
 	SecurityLevel m_securityLevel;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 };
 
 	}

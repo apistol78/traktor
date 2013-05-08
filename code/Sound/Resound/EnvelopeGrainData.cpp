@@ -74,7 +74,7 @@ Ref< IGrain > EnvelopeGrainData::createInstance(resource::IResourceManager* reso
 	);
 }
 
-bool EnvelopeGrainData::serialize(ISerializer& s)
+void EnvelopeGrainData::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"id", m_id);
@@ -86,18 +86,15 @@ bool EnvelopeGrainData::serialize(ISerializer& s)
 		s >> MemberStaticArray< float, sizeof_array(m_levels) >(L"levels", m_levels);
 		s >> Member< float >(L"mid", m_mid);
 	}
-
-	return true;
 }
 
-bool EnvelopeGrainData::GrainData::serialize(ISerializer& s)
+void EnvelopeGrainData::GrainData::serialize(ISerializer& s)
 {
 	s >> MemberRef< IGrainData >(L"grain", grain);
 	s >> Member< float >(L"in", in);
 	s >> Member< float >(L"out", out);
 	s >> Member< float >(L"easeIn", easeIn);
 	s >> Member< float >(L"easeOut", easeOut);
-	return true;
 }
 
 	}

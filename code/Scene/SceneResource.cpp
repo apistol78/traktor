@@ -107,13 +107,12 @@ Ref< ISceneControllerData > SceneResource::getControllerData() const
 	return m_controllerData;
 }
 
-bool SceneResource::serialize(ISerializer& s)
+void SceneResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
-	return true;
 }
 
 	}

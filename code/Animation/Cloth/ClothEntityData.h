@@ -44,7 +44,7 @@ public:
 		uint32_t x;
 		uint32_t y;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	ClothEntityData();
@@ -54,7 +54,7 @@ public:
 		render::IRenderSystem* renderSystem
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 

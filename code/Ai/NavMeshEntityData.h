@@ -26,7 +26,7 @@ class T_DLLCLASS NavMeshEntityData : public world::EntityData
 public:
 	const resource::Id< NavMesh >& get() const { return m_navMesh; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	resource::Id< NavMesh > m_navMesh;

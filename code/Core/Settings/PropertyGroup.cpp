@@ -158,9 +158,9 @@ Ref< PropertyGroup > PropertyGroup::mergeReplace(const PropertyGroup* rightGroup
 	return joinedGroup;
 }
 
-bool PropertyGroup::serialize(ISerializer& s)
+void PropertyGroup::serialize(ISerializer& s)
 {
-	return s >> MemberStlMap<
+	s >> MemberStlMap<
 		std::wstring,
 		Ref< IPropertyValue >,
 		MemberStlPair<

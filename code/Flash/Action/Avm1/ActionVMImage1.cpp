@@ -87,7 +87,7 @@ uint16_t ActionVMImage1::addConstData(const ActionValue& cd)
 	return uint16_t(m_constData.size() - 1);
 }
 
-bool ActionVMImage1::serialize(ISerializer& s)
+void ActionVMImage1::serialize(ISerializer& s)
 {
 	T_ASSERT (!m_prepared);
 
@@ -103,7 +103,6 @@ bool ActionVMImage1::serialize(ISerializer& s)
 		s >> Member< void* >(L"byteCode", data, size);
 
 	s >> MemberAlignedVector< ActionValue, MemberComposite< ActionValue > >(L"constData", m_constData);
-	return true;
 }
 
 	}

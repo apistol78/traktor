@@ -44,7 +44,7 @@ public:
 
 	Ref< SkyEntity > createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 

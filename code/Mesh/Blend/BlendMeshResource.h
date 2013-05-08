@@ -39,7 +39,7 @@ public:
 
 		Part();
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	virtual Ref< IMesh > createMesh(
@@ -50,7 +50,7 @@ public:
 		render::MeshFactory* meshFactory
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class BlendMeshConverter;

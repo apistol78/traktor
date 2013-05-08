@@ -25,12 +25,10 @@ const std::wstring& EvtInstanceRenamed::getPreviousName() const
 	return m_previousName;
 }
 
-bool EvtInstanceRenamed::serialize(ISerializer& s)
+void EvtInstanceRenamed::serialize(ISerializer& s)
 {
-	if (!EvtInstance::serialize(s))
-		return false;
-
-	return s >> Member< std::wstring >(L"previousName", m_previousName);
+	EvtInstance::serialize(s);
+	s >> Member< std::wstring >(L"previousName", m_previousName);
 }
 
 	}

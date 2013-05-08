@@ -40,11 +40,10 @@ Ref< IPoseController > IKPoseControllerData::createInstance(
 	return poseController;
 }
 
-bool IKPoseControllerData::serialize(ISerializer& s)
+void IKPoseControllerData::serialize(ISerializer& s)
 {
 	s >> MemberRef< IPoseControllerData >(L"neutralPoseController", m_neutralPoseController);
 	s >> Member< uint32_t >(L"solverIterations", m_solverIterations);
-	return true;
 }
 
 	}

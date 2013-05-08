@@ -29,7 +29,7 @@ public:
 
 	static value_type_t get(const IPropertyValue* value);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 protected:
 	virtual Ref< IPropertyValue > join(const IPropertyValue* right) const;

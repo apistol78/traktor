@@ -59,7 +59,7 @@ public:
 	T_MATH_INLINE bool operator != (const Transform& rh) const;
 
 #if !(defined(_PS3) && defined(SPU))
-	bool serialize(ISerializer& s);
+	void serialize(ISerializer& s);
 #endif
 
 	friend T_MATH_INLINE T_DLLCLASS Transform operator * (const Transform& rh, const Transform& lh);

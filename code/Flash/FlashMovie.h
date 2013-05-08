@@ -83,7 +83,7 @@ public:
 
 	const SmallMap< std::string, uint16_t >& getExports() const { return m_exports; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< const IActionVM > m_vm;

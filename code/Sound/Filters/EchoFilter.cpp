@@ -149,13 +149,12 @@ void EchoFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	}
 }
 
-bool EchoFilter::serialize(ISerializer& s)
+void EchoFilter::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"delay", m_delay);
 	s >> Member< float >(L"decay", m_decay);
 	s >> Member< Scalar >(L"wetMix", m_wetMix);
 	s >> Member< Scalar >(L"dryMix", m_dryMix);
-	return true;
 }
 
 	}

@@ -29,7 +29,7 @@ bool FlashSound::create(uint8_t channels, uint32_t sampleRate, uint32_t samplesC
 	return true;
 }
 
-bool FlashSound::serialize(ISerializer& s)
+void FlashSound::serialize(ISerializer& s)
 {
 	s >> Member< uint8_t >(L"channels", m_channels);
 	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
@@ -45,8 +45,6 @@ bool FlashSound::serialize(ISerializer& s)
 
 		s >> Member< void* >(L"samples", data, size);
 	}
-
-	return true;
 }
 
 	}

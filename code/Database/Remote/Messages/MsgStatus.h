@@ -39,7 +39,7 @@ public:
 
 	MsgStatusType getStatus() const { return (MsgStatusType)m_status; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	int32_t m_status;

@@ -17,13 +17,10 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
-		if (!(s >> Member< Vector4 >(L"mn", m_ref.mn, AttributePoint())))
-			return false;
-		if (!(s >> Member< Vector4 >(L"mx", m_ref.mx, AttributePoint())))
-			return false;
-		return true;
+		s >> Member< Vector4 >(L"mn", m_ref.mn, AttributePoint());
+		s >> Member< Vector4 >(L"mx", m_ref.mx, AttributePoint());
 	}
 
 private:

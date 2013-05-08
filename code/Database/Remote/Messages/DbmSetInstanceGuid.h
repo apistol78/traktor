@@ -31,7 +31,7 @@ public:
 
 	const Guid& getGuid() const { return m_guid; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

@@ -13,6 +13,7 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipeline.h"
+#include "Editor/IPipelineDb.h"
 #include "Editor/Pipeline/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependencyCache.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
@@ -27,12 +28,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDepend
 
 PipelineDependsParallel::PipelineDependsParallel(
 	PipelineFactory* pipelineFactory,
+	db::Database* sourceDatabase,
 	PipelineDependencyCache* dependencyCache,
-	db::Database* sourceDatabase
+	IPipelineDb* pipelineDb
 )
 :	m_pipelineFactory(pipelineFactory)
-,	m_dependencyCache(dependencyCache)
 ,	m_sourceDatabase(sourceDatabase)
+,	m_dependencyCache(dependencyCache)
+,	m_pipelineDb(pipelineDb)
 ,	m_cacheReuseCount(0)
 {
 	m_jobQueue = new JobQueue();
@@ -192,6 +195,7 @@ Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 	std::map< Guid, Ref< PipelineDependency > >::const_iterator i = m_dependencyMap.find(guid);
 	if (i != m_dependencyMap.end())
 	{
+		T_ASSERT (i->second);
 		i->second->flags |= flags;
 		if (parentDependency)
 			parentDependency->children.push_back(i->second);
@@ -345,10 +349,7 @@ void PipelineDependsParallel::addUniqueDependency(
 
 		// Remove from parent as well.
 		if (parentDependency)
-		{
-			RefArray< PipelineDependency >::iterator i = std::find(parentDependency->children.begin(), parentDependency->children.end(), currentDependency);
-			parentDependency->children.erase(i);
-		}
+			parentDependency->children.remove(currentDependency);
 	}
 }
 
@@ -410,6 +411,23 @@ void PipelineDependsParallel::updateDependencyHashes(
 	dependency->filesHash = 0;
 	for (std::vector< PipelineDependency::ExternalFile >::iterator i = dependency->files.begin(); i != dependency->files.end(); ++i)
 	{
+		if (m_pipelineDb)
+		{
+			Ref< File > file = FileSystem::getInstance().get(i->filePath);
+			if (file)
+			{
+				IPipelineDb::FileHash fileHash;
+				if (m_pipelineDb->getFile(i->filePath, fileHash))
+				{
+					if (fileHash.lastWriteTime == file->getLastWriteTime())
+					{
+						dependency->filesHash += fileHash.hash;
+						continue;
+					}
+				}
+			}
+		}
+
 		Ref< IStream > fileStream = FileSystem::getInstance().open(i->filePath, File::FmRead);
 		if (fileStream)
 		{
@@ -424,6 +442,19 @@ void PipelineDependsParallel::updateDependencyHashes(
 
 			dependency->filesHash += a32.get();
 			fileStream->close();
+
+			if (m_pipelineDb)
+			{
+				Ref< File > file = FileSystem::getInstance().get(i->filePath);
+				if (file)
+				{
+					IPipelineDb::FileHash fileHash;
+					fileHash.size = file->getSize();
+					fileHash.lastWriteTime = file->getLastWriteTime();
+					fileHash.hash = a32.get();
+					m_pipelineDb->setFile(i->filePath, fileHash);
+				}
+			}
 		}
 	}
 }

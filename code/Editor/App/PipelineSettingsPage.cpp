@@ -26,6 +26,12 @@ bool PipelineSettingsPage::create(ui::Container* parent, PropertyGroup* settings
 	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*", 0, 4)))
 		return false;
 
+	bool dependencyCache = settings->getProperty< PropertyBoolean >(L"Pipeline.UseDependencyCache", true);
+
+	m_checkDependencyCache = new ui::CheckBox();
+	m_checkDependencyCache->create(container, i18n::Text(L"EDITOR_SETTINGS_PIPELINE_USE_DEPENDENCY_CACHE"));
+	m_checkDependencyCache->setChecked(dependencyCache);
+
 	bool buildThreads = settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true);
 
 	m_checkBuildThreads = new ui::CheckBox();
@@ -96,6 +102,7 @@ void PipelineSettingsPage::destroy()
 
 bool PipelineSettingsPage::apply(PropertyGroup* settings)
 {
+	settings->setProperty< PropertyBoolean >(L"Pipeline.UseDependencyCache", m_checkDependencyCache->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", m_checkBuildThreads->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Pipeline.BuildDistributed", m_checkBuildDistributed->isChecked());
 

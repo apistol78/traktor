@@ -71,13 +71,12 @@ Ref< IMesh > IndoorMeshResource::createMesh(
 	return indoorMesh;
 }
 
-bool IndoorMeshResource::serialize(ISerializer& s)
+void IndoorMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< Sector, MemberComposite< Sector > >(L"sectors", m_sectors);
 	s >> MemberAlignedVector< Portal, MemberComposite< Portal > >(L"portals", m_portals);
-	return true;
 }
 
 IndoorMeshResource::Part::Part()
@@ -85,14 +84,13 @@ IndoorMeshResource::Part::Part()
 {
 }
 
-bool IndoorMeshResource::Part::serialize(ISerializer& s)
+void IndoorMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	return true;
 }
 
-bool IndoorMeshResource::Sector::serialize(ISerializer& s)
+void IndoorMeshResource::Sector::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"min", min);
 	s >> Member< Vector4 >(L"max", max);
@@ -106,15 +104,13 @@ bool IndoorMeshResource::Sector::serialize(ISerializer& s)
 			MemberStlList< Part, MemberComposite< Part > >
 		>
 	>(L"parts", parts);
-	return true;
 }
 
-bool IndoorMeshResource::Portal::serialize(ISerializer& s)
+void IndoorMeshResource::Portal::serialize(ISerializer& s)
 {
 	s >> MemberAlignedVector< Vector4 >(L"pts", pts);
 	s >> Member< int32_t >(L"sectorA", sectorA);
 	s >> Member< int32_t >(L"sectorB", sectorB);
-	return true;
 }
 
 	}

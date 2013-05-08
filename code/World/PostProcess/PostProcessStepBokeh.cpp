@@ -139,11 +139,10 @@ Ref< PostProcessStepBokeh::Instance > PostProcessStepBokeh::create(
 	);
 }
 
-bool PostProcessStepBokeh::serialize(ISerializer& s)
+void PostProcessStepBokeh::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
-	return true;
 }
 
 PostProcessStepBokeh::Source::Source()
@@ -151,12 +150,11 @@ PostProcessStepBokeh::Source::Source()
 {
 }
 
-bool PostProcessStepBokeh::Source::serialize(ISerializer& s)
+void PostProcessStepBokeh::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< std::wstring >(L"source", source);
 	s >> Member< uint32_t >(L"index", index);
-	return true;
 }
 
 // Instance

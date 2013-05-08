@@ -21,7 +21,7 @@ class ProgramResourceDx11 : public ProgramResource
 public:
 	ProgramResourceDx11();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class ProgramDx11;

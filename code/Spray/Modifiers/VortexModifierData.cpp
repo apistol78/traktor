@@ -33,7 +33,7 @@ Ref< Modifier > VortexModifierData::createModifier(resource::IResourceManager* r
 	);
 }
 
-bool VortexModifierData::serialize(ISerializer& s)
+void VortexModifierData::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"axis", m_axis, AttributeDirection());
 	s >> Member< float >(L"tangentForce", m_tangentForce);
@@ -41,7 +41,6 @@ bool VortexModifierData::serialize(ISerializer& s)
 	s >> Member< float >(L"normalDistance", m_normalDistance);
 	s >> Member< float >(L"normalDistanceForce", m_normalDistanceForce);
 	s >> Member< bool >(L"world", m_world);
-	return true;
 }
 
 	}

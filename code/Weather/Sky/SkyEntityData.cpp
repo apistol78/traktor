@@ -113,10 +113,9 @@ Ref< SkyEntity > SkyEntityData::createEntity(resource::IResourceManager* resourc
 	);
 }
 
-bool SkyEntityData::serialize(ISerializer& s)
+void SkyEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 
@@ -125,8 +124,6 @@ bool SkyEntityData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< float >(L"offset", m_offset);
-
-	return true;
 }
 
 	}

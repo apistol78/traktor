@@ -60,7 +60,7 @@ Ref< HierarchicalState > HierarchicalState::merge(const HierarchicalState* state
 	return merged;
 }
 
-bool HierarchicalState::serialize(ISerializer& s)
+void HierarchicalState::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"scrollPosition", m_scrollPosition);
 	s >> MemberStlMap< 
@@ -73,7 +73,6 @@ bool HierarchicalState::serialize(ISerializer& s)
 			MemberStlPair< bool, bool >
 		>
 	>(L"states", m_states);
-	return true;
 }
 
 	}

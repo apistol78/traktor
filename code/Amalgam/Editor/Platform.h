@@ -28,7 +28,7 @@ public:
 
 	const DeployTool& getDeployTool() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	int32_t m_iconIndex;

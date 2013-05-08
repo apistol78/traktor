@@ -14,9 +14,9 @@ MsgIntResult::MsgIntResult(int32_t value)
 {
 }
 
-bool MsgIntResult::serialize(ISerializer& s)
+void MsgIntResult::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"value", m_value);
+	s >> Member< uint32_t >(L"value", m_value);
 }
 
 	}

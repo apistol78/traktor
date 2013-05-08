@@ -20,9 +20,9 @@ const RefArray< world::EntityData >& EntityClipboardData::getEntityData() const
 	return m_entityData;
 }
 
-bool EntityClipboardData::serialize(ISerializer& s)
+void EntityClipboardData::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
+	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 }
 
 	}

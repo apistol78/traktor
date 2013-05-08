@@ -16,12 +16,11 @@ DbmCreateInstance::DbmCreateInstance(uint32_t handle, const std::wstring& name, 
 {
 }
 
-bool DbmCreateInstance::serialize(ISerializer& s)
+void DbmCreateInstance::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< Guid >(L"guid", m_guid);
-	return true;
 }
 
 	}

@@ -67,12 +67,11 @@ float InRemapAxis::evaluate(
 	return m_output[1];
 }
 
-bool InRemapAxis::serialize(ISerializer& s)
+void InRemapAxis::serialize(ISerializer& s)
 {
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> MemberStaticArray< float, 2 >(L"limit", m_limit);
 	s >> MemberStaticArray< float, 3 >(L"output", m_output);
-	return true;
 }
 	
 	}

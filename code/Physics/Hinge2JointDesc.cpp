@@ -105,7 +105,7 @@ float Hinge2JointDesc::getSuspensionStiffness() const
 	return m_suspensionStiffness;
 }
 
-bool Hinge2JointDesc::serialize(ISerializer& s)
+void Hinge2JointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"axis1", m_axis1, AttributeDirection());
@@ -115,7 +115,6 @@ bool Hinge2JointDesc::serialize(ISerializer& s)
 	s >> Member< bool >(L"suspensionEnable", m_suspensionEnable);
 	s >> Member< float >(L"suspensionDamping", m_suspensionDamping, AttributeRange(0.0f));
 	s >> Member< float >(L"suspensionStiffness", m_suspensionStiffness, AttributeRange(0.0f));
-	return true;
 }
 
 	}

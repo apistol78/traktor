@@ -33,9 +33,9 @@ const std::wstring& MsgStringArrayResult::get(uint32_t index) const
 	return m_values[index];
 }
 
-bool MsgStringArrayResult::serialize(ISerializer& s)
+void MsgStringArrayResult::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< std::wstring >(L"handles", m_values);
+	s >> MemberStlVector< std::wstring >(L"handles", m_values);
 }
 
 	}

@@ -22,12 +22,11 @@ SHMatrix::SHMatrix(int32_t rows, int32_t columns)
 {
 }
 
-bool SHMatrix::serialize(ISerializer& s)
+void SHMatrix::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"rows", m_rows);
 	s >> Member< int32_t >(L"columns", m_columns);
 	s >> MemberStlVector< float >(L"elements", m_elements);
-	return true;
 }
 
 	}

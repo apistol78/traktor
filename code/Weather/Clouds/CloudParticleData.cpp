@@ -27,7 +27,7 @@ CloudParticleData::CloudParticleData()
 {
 }
 
-bool CloudParticleData::serialize(ISerializer& s)
+void CloudParticleData::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"count", m_count);
 	s >> Member< float >(L"radiusMin", m_radiusMin, AttributeRange(0.0f));
@@ -41,7 +41,6 @@ bool CloudParticleData::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"octaves", m_octaves);
 	s >> Member< float >(L"persistence", m_persistence);
 	s >> Member< float >(L"noiseScale", m_noiseScale);
-	return true;
 }
 
 	}

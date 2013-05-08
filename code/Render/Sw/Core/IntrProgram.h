@@ -51,7 +51,7 @@ public:
 
 	void dump(OutputStream& os, const std::map< std::wstring, Variable* >& uniforms) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::vector< Instruction > m_instructions;

@@ -25,12 +25,10 @@ const Vector4& BoxShapeDesc::getExtent() const
 	return m_extent;
 }
 
-bool BoxShapeDesc::serialize(ISerializer& s)
+void BoxShapeDesc::serialize(ISerializer& s)
 {
-	if (!ShapeDesc::serialize(s))
-		return false;
-
-	return s >> Member< Vector4 >(L"extent", m_extent, AttributeDirection());
+	ShapeDesc::serialize(s);
+	s >> Member< Vector4 >(L"extent", m_extent, AttributeDirection());
 }
 
 	}

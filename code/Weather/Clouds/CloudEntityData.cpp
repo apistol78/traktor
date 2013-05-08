@@ -69,10 +69,9 @@ Ref< CloudEntity > CloudEntityData::createEntity(resource::IResourceManager* res
 	return 0;
 }
 
-bool CloudEntityData::serialize(ISerializer& s)
+void CloudEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> resource::Member< render::Shader >(L"particleShader", m_particleShader);
 	s >> resource::Member< render::ITexture >(L"particleTexture", m_particleTexture);
@@ -87,8 +86,6 @@ bool CloudEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"updatePositionThreshold", m_updatePositionThreshold, AttributeRange(0.0f));
 	s >> Member< float >(L"updateDirectionThreshold", m_updateDirectionThreshold, AttributeRange(0.0f, 180.0f));
 	s >> MemberComposite< CloudParticleData >(L"particleData", m_particleData);
-
-	return true;
 }
 
 	}

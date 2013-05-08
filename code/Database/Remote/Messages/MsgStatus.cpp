@@ -14,9 +14,9 @@ MsgStatus::MsgStatus(MsgStatusType status)
 {
 }
 
-bool MsgStatus::serialize(ISerializer& s)
+void MsgStatus::serialize(ISerializer& s)
 {
-	return s >> Member< int32_t >(L"status", m_status);
+	s >> Member< int32_t >(L"status", m_status);
 }
 
 	}

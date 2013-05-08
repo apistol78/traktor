@@ -20,12 +20,11 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< GLuint >(L"stage", m_ref.stage);
 		s >> Member< GLenum >(L"target", m_ref.target);
 		s >> Member< int32_t >(L"texture", m_ref.texture);
-		return true;
 	}
 
 private:
@@ -41,14 +40,13 @@ public:
 	{
 	}
 	
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< GLenum >(L"minFilter", m_ref.minFilter);
 		s >> Member< GLenum >(L"magFilter", m_ref.magFilter);
 		s >> Member< GLenum >(L"wrapS", m_ref.wrapS);
 		s >> Member< GLenum >(L"wrapT", m_ref.wrapT);
 		s >> Member< GLenum >(L"wrapR", m_ref.wrapR);
-		return true;
 	}
 	
 private:
@@ -64,7 +62,7 @@ public:
 	{
 	}
 	
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		s >> Member< GLboolean >(L"cullFaceEnable", m_ref.cullFaceEnable);
 		s >> Member< GLenum >(L"cullFace", m_ref.cullFace);
@@ -85,7 +83,6 @@ public:
 		s >> Member< GLenum >(L"stencilOpZFail", m_ref.stencilOpZFail);
 		s >> Member< GLenum >(L"stencilOpZPass", m_ref.stencilOpZPass);
 		s >> MemberStaticArray< SamplerStateOpenGL, 16, MemberSamplerStateOpenGL >(L"samplerStates", m_ref.samplerStates);
-		return true;
 	}
 	
 private:
@@ -117,7 +114,7 @@ ProgramResourceOpenGL::ProgramResourceOpenGL(
 {
 }
 
-bool ProgramResourceOpenGL::serialize(ISerializer& s)
+void ProgramResourceOpenGL::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 6);
 
@@ -127,8 +124,6 @@ bool ProgramResourceOpenGL::serialize(ISerializer& s)
 	s >> MemberStlVector< SamplerBindingOpenGL, MemberSamplerBindingOpenGL >(L"samplers", m_samplers);
 	s >> MemberRenderStateOpenGL(L"renderState", m_renderState);
 	s >> Member< uint32_t >(L"hash", m_hash);
-
-	return true;
 }
 
 	}

@@ -21,11 +21,10 @@ InputMappingResource::InputMappingResource(InputMappingSourceData* sourceData, I
 {
 }
 
-bool InputMappingResource::serialize(ISerializer& s)
+void InputMappingResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< InputMappingSourceData >(L"sourceData", m_sourceData);
 	s >> MemberRef< InputMappingStateData >(L"stateData", m_stateData);
-	return true;
 }
 
 	}

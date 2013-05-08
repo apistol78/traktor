@@ -14,9 +14,9 @@ DbmReadObject::DbmReadObject(uint32_t handle)
 {
 }
 
-bool DbmReadObject::serialize(ISerializer& s)
+void DbmReadObject::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

@@ -59,9 +59,9 @@ void Skeleton::findChildren(uint32_t index, std::vector< uint32_t >& outChildren
 	}
 }
 
-bool Skeleton::serialize(ISerializer& s)
+void Skeleton::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< Joint >(L"joints", m_joints);
+	s >> MemberRefArray< Joint >(L"joints", m_joints);
 }
 
 	}

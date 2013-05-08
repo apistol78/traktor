@@ -30,11 +30,10 @@ ISerializable* InstanceClipboardData::getObject() const
 	return m_object;
 }
 
-bool InstanceClipboardData::serialize(ISerializer& s)
+void InstanceClipboardData::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> MemberRef< ISerializable >(L"object", m_object);
-	return true;
 }
 
 	}

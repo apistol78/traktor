@@ -20,12 +20,10 @@ const resource::Id< Mesh >& MeshShapeDesc::getMesh() const
 	return m_mesh;
 }
 
-bool MeshShapeDesc::serialize(ISerializer& s)
+void MeshShapeDesc::serialize(ISerializer& s)
 {
-	if (!ShapeDesc::serialize(s))
-		return false;
-
-	return s >> resource::Member< Mesh >(L"mesh", m_mesh);
+	ShapeDesc::serialize(s);
+	s >> resource::Member< Mesh >(L"mesh", m_mesh);
 }
 
 	}

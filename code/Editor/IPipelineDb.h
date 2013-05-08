@@ -51,10 +51,6 @@ public:
 		uint32_t hash;
 	};
 
-	virtual void beginTransaction() = 0;
-
-	virtual void endTransaction() = 0;
-
 	virtual void setDependency(const Guid& guid, const DependencyHash& hash) = 0;
 
 	virtual bool getDependency(const Guid& guid, DependencyHash& outHash) const = 0;

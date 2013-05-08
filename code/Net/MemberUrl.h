@@ -20,22 +20,19 @@ public:
 	{
 	}
 	
-	virtual bool serialize(Serializer& s) const
+	virtual void serialize(Serializer& s) const
 	{
 		std::wstring url;
 		if (s.getDirection() == Serializer::SdRead)
 		{
-			if (!(s >> Member< std::wstring >(getName(), url)))
-				return false;
+			s >> Member< std::wstring >(getName(), url);
 			m_ref = Url(url);
 		}
 		else
 		{
 			url = m_ref.getString();
-			if (!(s >> Member< std::wstring >(getName(), url)))
-				return false;
+			s >> Member< std::wstring >(getName(), url);
 		}
-		return true;
 	}
 	
 private:

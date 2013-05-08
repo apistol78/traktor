@@ -28,7 +28,7 @@ public:
 
 	const Guid& getId() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_id;

@@ -12,7 +12,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.OctreeNodeData", 0, OctreeNodeData, ISerializable)
 
-bool OctreeNodeData::serialize(ISerializer& s)
+void OctreeNodeData::serialize(ISerializer& s)
 {
 	s >> MemberAabb(L"boundingBox", m_boundingBox);
 	s >> MemberStlMap
@@ -28,7 +28,6 @@ bool OctreeNodeData::serialize(ISerializer& s)
 			>
 		>(L"partIndices", m_partIndices);
 	s >> MemberStaticArray< Ref< OctreeNodeData >, 8, MemberRef< OctreeNodeData > >(L"children", m_children);
-	return true;
 }
 
 	}

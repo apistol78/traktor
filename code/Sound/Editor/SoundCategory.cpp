@@ -20,7 +20,7 @@ SoundCategory::SoundCategory()
 {
 }
 
-bool SoundCategory::serialize(ISerializer& s)
+void SoundCategory::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"parent", m_parent, AttributeType(type_of< SoundCategory >()));
 	s >> Member< float >(L"volume", m_volume);
@@ -33,8 +33,6 @@ bool SoundCategory::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 		s >> Member< float >(L"range", m_range, AttributeRange(0.0f));
-
-	return true;
 }
 
 	}

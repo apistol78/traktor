@@ -47,7 +47,7 @@ Ref< Sound > BankResource::createSound(resource::IResourceManager* resourceManag
 	return new Sound(new BankBuffer(grains), m_volume, m_presence, m_presenceRate, m_range);
 }
 
-bool BankResource::serialize(ISerializer& s)
+void BankResource::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 4);
 	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
@@ -55,7 +55,6 @@ bool BankResource::serialize(ISerializer& s)
 	s >> Member< float >(L"presence", m_presence);
 	s >> Member< float >(L"presenceRate", m_presenceRate);
 	s >> Member< float >(L"range", m_range);
-	return true;
 }
 
 	}

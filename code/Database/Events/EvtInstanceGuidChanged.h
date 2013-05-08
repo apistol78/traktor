@@ -27,7 +27,7 @@ public:
 
 	const Guid& getInstancePreviousGuid() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_instancePreviousGuid;

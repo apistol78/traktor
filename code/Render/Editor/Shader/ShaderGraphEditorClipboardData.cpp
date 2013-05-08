@@ -41,7 +41,7 @@ const ui::Rect& ShaderGraphEditorClipboardData::getBounds() const
 	return m_bounds;
 }
 
-bool ShaderGraphEditorClipboardData::serialize(ISerializer& s)
+void ShaderGraphEditorClipboardData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< Node >(L"nodes", m_nodes);
 	s >> MemberRefArray< Edge >(L"edges", m_edges);
@@ -49,7 +49,6 @@ bool ShaderGraphEditorClipboardData::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"boundsTop", m_bounds.top);
 	s >> Member< int32_t >(L"boundsRight", m_bounds.right);
 	s >> Member< int32_t >(L"boundsBottom", m_bounds.bottom);
-	return true;
 }
 
 	}

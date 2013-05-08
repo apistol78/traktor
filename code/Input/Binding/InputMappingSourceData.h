@@ -33,7 +33,7 @@ public:
 	
 	const std::map< std::wstring, Ref< IInputSourceData > >& getSourceData() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::map< std::wstring, Ref< IInputSourceData > > m_sourceData;

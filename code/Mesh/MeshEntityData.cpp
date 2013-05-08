@@ -61,12 +61,11 @@ Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resou
 	return meshEntity;
 }
 
-bool MeshEntityData::serialize(ISerializer& s)
+void MeshEntityData::serialize(ISerializer& s)
 {
-	if (!AbstractMeshEntityData::serialize(s))
-		return false;
+	AbstractMeshEntityData::serialize(s);
 
-	return s >> resource::Member< IMesh >(L"mesh", m_mesh);
+	s >> resource::Member< IMesh >(L"mesh", m_mesh);
 }
 
 	}

@@ -36,17 +36,14 @@ bool StaticBodyDesc::isKinematic() const
 	return m_kinematic;
 }
 
-bool StaticBodyDesc::serialize(ISerializer& s)
+void StaticBodyDesc::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 4);
 
-	if (!BodyDesc::serialize(s))
-		return false;
+	BodyDesc::serialize(s);
 
 	s >> Member< float >(L"friction", m_friction, AttributeRange(0.0f, 1.0f));
 	s >> Member< bool >(L"kinematic", m_kinematic);
-	
-	return true;
 }
 
 	}

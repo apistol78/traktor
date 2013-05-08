@@ -33,7 +33,7 @@ public:
 		const Transform& worldTransform
 	);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	IPoseControllerData* getTrackPoseController() const { return m_trackPoseController; }
 

@@ -148,10 +148,9 @@ UndergrowthEntity* UndergrowthEntityData::createEntity(resource::IResourceManage
 	);
 }
 
-bool UndergrowthEntityData::serialize(ISerializer& s)
+void UndergrowthEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);
 	s >> resource::Member< hf::MaterialMask >(L"materialMask", m_materialMask);
@@ -160,8 +159,6 @@ bool UndergrowthEntityData::serialize(ISerializer& s)
 	s >> Member< float >(L"spreadDistance", m_settings.spreadDistance);
 	s >> Member< float >(L"cellRadius", m_settings.cellRadius);
 	s >> Member< float >(L"plantScale", m_settings.plantScale);
-
-	return true;
 }
 
 	}

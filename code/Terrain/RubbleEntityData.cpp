@@ -56,16 +56,13 @@ Ref< world::Entity > RubbleEntityData::createEntity(resource::IResourceManager* 
 	return groupEntity;
 }
 
-bool RubbleEntityData::serialize(ISerializer& s)
+void RubbleEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> resource::Member< Terrain >(L"terrain", m_terrain);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 	s >> Member< uint32_t >(L"count", m_count);
-
-	return true;
 }
 
 	}

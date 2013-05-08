@@ -50,7 +50,7 @@ public:
 		{
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	FlashFillStyle();
@@ -73,7 +73,7 @@ public:
 
 	const Matrix33& getFillBitmapMatrix() const { return m_fillBitmapMatrix; }
 
-	bool serialize(ISerializer& s);
+	void serialize(ISerializer& s);
 
 private:
 	AlignedVector< ColorRecord > m_colorRecords;

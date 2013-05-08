@@ -33,7 +33,7 @@ const std::map< std::wstring, Ref< InputStateData > >& InputMappingStateData::ge
 	return m_stateData;
 }
 
-bool InputMappingStateData::serialize(ISerializer& s)
+void InputMappingStateData::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> MemberRefArray< IInputFilter >(L"filters", m_filters);
@@ -48,8 +48,6 @@ bool InputMappingStateData::serialize(ISerializer& s)
 			MemberRef< InputStateData >
 		>
 	>(L"stateData", m_stateData);
-	
-	return true;
 }
 
 	}

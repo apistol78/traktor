@@ -35,7 +35,7 @@ public:
 		float dT
 	) const;
 	
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 	
 private:
 	struct Entry
@@ -44,7 +44,7 @@ private:
 		float mul;
 		float add;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	enum CombineOperator

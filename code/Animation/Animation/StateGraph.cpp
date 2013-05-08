@@ -55,12 +55,11 @@ Ref< StateNode > StateGraph::getRootState() const
 	return m_rootState;
 }
 
-bool StateGraph::serialize(ISerializer& s)
+void StateGraph::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< StateNode >(L"states", m_states);
 	s >> MemberRefArray< Transition >(L"transitions", m_transitions);
 	s >> MemberRef< StateNode >(L"rootState", m_rootState);
-	return true;
 }
 
 	}

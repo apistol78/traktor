@@ -23,7 +23,7 @@ Joint::Joint()
 {
 }
 
-bool Joint::serialize(ISerializer& s)
+void Joint::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"parent", m_parent);
 	s >> Member< std::wstring >(L"name", m_name);
@@ -32,7 +32,6 @@ bool Joint::serialize(ISerializer& s)
 	s >> Member< bool >(L"enableLimits", m_enableLimits);
 	s >> Member< float >(L"twistLimit", m_twistLimit, AttributeRange(-PI, PI));
 	s >> Member< Vector2 >(L"coneLimit", m_coneLimit);
-	return true;
 }
 
 	}

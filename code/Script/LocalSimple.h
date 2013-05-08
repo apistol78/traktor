@@ -30,7 +30,7 @@ public:
 
 	const std::wstring& getValue() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_value;

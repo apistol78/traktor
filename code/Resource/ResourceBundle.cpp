@@ -31,11 +31,10 @@ bool ResourceBundle::persistent() const
 	return m_persistent;
 }
 
-bool ResourceBundle::serialize(ISerializer& s)
+void ResourceBundle::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< std::pair< const TypeInfo*, Guid >, MemberStlPair< const TypeInfo*, Guid, MemberType, Member< Guid > > >(L"resources", m_resources);
 	s >> Member< bool >(L"persistent", m_persistent);
-	return true;
 }
 
 	}

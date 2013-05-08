@@ -83,7 +83,7 @@ const RefArray< const IActionVMImage >& FlashFrame::getActionScripts() const
 	return m_actionScripts;
 }
 
-bool FlashFrame::serialize(ISerializer& s)
+void FlashFrame::serialize(ISerializer& s)
 {
 	s >> Member< std::string >(L"label", m_label);
 	s >> Member< bool >(L"backgroundColorChange", m_backgroundColorChange);
@@ -94,11 +94,9 @@ bool FlashFrame::serialize(ISerializer& s)
 	s >> MemberSmallMap< uint16_t, PlaceObject, Member< uint16_t >, MemberComposite< PlaceObject > >(L"placeObjects", m_placeObjects);
 	s >> MemberSmallMap< uint16_t, RemoveObject, Member< uint16_t >, MemberComposite< RemoveObject > >(L"removeObjects", m_removeObjects);
 	s >> MemberRefArray< const IActionVMImage >(L"actionScripts", m_actionScripts);
-
-	return true;
 }
 
-bool FlashFrame::PlaceObject::serialize(ISerializer& s)
+void FlashFrame::PlaceObject::serialize(ISerializer& s)
 {
 	s >> Member< uint16_t >(L"hasFlags", hasFlags);
 	s >> Member< uint16_t >(L"depth", depth);
@@ -134,19 +132,15 @@ bool FlashFrame::PlaceObject::serialize(ISerializer& s)
 
 	if (hasFlags & PfHasCharacterId)
 		s >> Member< uint16_t >(L"characterId", characterId);
-
-	return true;
 }
 
-bool FlashFrame::RemoveObject::serialize(ISerializer& s)
+void FlashFrame::RemoveObject::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"hasCharacterId", hasCharacterId);
 	s >> Member< uint16_t >(L"depth", depth);
 
 	if (hasCharacterId)
 		s >> Member< uint16_t >(L"characterId", characterId);
-
-	return true;
 }
 
 	}

@@ -84,19 +84,16 @@ const Matrix33& FlashText::getTextMatrix() const
 	return m_textMatrix;
 }
 
-bool FlashText::serialize(ISerializer& s)
+void FlashText::serialize(ISerializer& s)
 {
-	if (!FlashCharacter::serialize(s))
-		return false;
+	FlashCharacter::serialize(s);
 
 	s >> MemberSwfRect(L"textBounds", m_textBounds);
 	s >> Member< Matrix33 >(L"textMatrix", m_textMatrix);
 	s >> MemberAlignedVector< Character, MemberComposite< Character > >(L"characters", m_characters);
-
-	return true;
 }
 
-bool FlashText::Character::serialize(ISerializer& s)
+void FlashText::Character::serialize(ISerializer& s)
 {
 	s >> Member< uint16_t >(L"fontId", fontId);
 	s >> Member< int16_t >(L"offsetX", offsetX);
@@ -104,7 +101,6 @@ bool FlashText::Character::serialize(ISerializer& s)
 	s >> Member< int16_t >(L"height", height);
 	s >> MemberSwfColor(L"color", color);
 	s >> Member< uint32_t >(L"glyphIndexOrCode", glyphIndex);
-	return true;
 }
 
 	}

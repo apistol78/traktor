@@ -24,17 +24,15 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		Ref< ISerializable > rf = m_ref;
-		if (!(s >> Member< ISerializable* >(
+		s >> Member< ISerializable* >(
 			getName(),
 			rf, 
 			&type_of< class_type >()
-		)))
-			return false;
+		);
 		m_ref = checked_type_cast< class_type* >(rf);
-		return true;
 	}
 	
 private:

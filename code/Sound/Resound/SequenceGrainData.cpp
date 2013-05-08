@@ -25,9 +25,9 @@ Ref< IGrain > SequenceGrainData::createInstance(resource::IResourceManager* reso
 	return new SequenceGrain(grains);
 }
 
-bool SequenceGrainData::serialize(ISerializer& s)
+void SequenceGrainData::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< IGrainData >(L"grains", m_grains);
+	s >> MemberRefArray< IGrainData >(L"grains", m_grains);
 }
 
 	}

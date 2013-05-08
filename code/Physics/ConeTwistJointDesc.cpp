@@ -49,7 +49,7 @@ void ConeTwistJointDesc::setTwistAngle(float twistAngle)
 	m_twistAngle = twistAngle;
 }
 
-bool ConeTwistJointDesc::serialize(ISerializer& s)
+void ConeTwistJointDesc::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"anchor", m_anchor, AttributePoint());
 	s >> Member< Vector4 >(L"coneAxis", m_coneAxis, AttributeDirection());
@@ -57,7 +57,6 @@ bool ConeTwistJointDesc::serialize(ISerializer& s)
 	s >> Member< float >(L"coneAngle1", m_coneAngle1, AttributeRange(-PI, PI));
 	s >> Member< float >(L"coneAngle2", m_coneAngle2, AttributeRange(-PI, PI));
 	s >> Member< float >(L"twistAngle", m_twistAngle, AttributeRange(-PI, PI));
-	return true;
 }
 
 	}

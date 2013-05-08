@@ -14,11 +14,10 @@ HeightfieldResource::HeightfieldResource()
 {
 }
 
-bool HeightfieldResource::serialize(ISerializer& s)
+void HeightfieldResource::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 1);
 	s >> Member< Vector4 >(L"worldExtent", m_worldExtent);
-	return true;
 }
 
 	}

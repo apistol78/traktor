@@ -19,10 +19,9 @@ SkeletonAsset::SkeletonAsset()
 {
 }
 
-bool SkeletonAsset::serialize(ISerializer& s)
+void SkeletonAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
+	editor::Asset::serialize(s);
 
 	if (s.getVersion() >= 1)
 	{
@@ -36,8 +35,6 @@ bool SkeletonAsset::serialize(ISerializer& s)
 		s >> Member< bool >(L"invertX", m_invertX);
 		s >> Member< bool >(L"invertZ", m_invertZ);
 	}
-
-	return true;
 }
 
 

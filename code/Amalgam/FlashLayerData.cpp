@@ -39,16 +39,13 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	);
 }
 
-bool FlashLayerData::serialize(ISerializer& s)
+void FlashLayerData::serialize(ISerializer& s)
 {
-	if (!LayerData::serialize(s))
-		return false;
+	LayerData::serialize(s);
 
 	s >> resource::Member< flash::FlashMovie >(L"movie", m_movie);
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);
-
-	return true;
 }
 
 	}

@@ -78,12 +78,11 @@ float InPulse::evaluate(
 		return asFloat(true);
 }
 
-bool InPulse::serialize(ISerializer& s)
+void InPulse::serialize(ISerializer& s)
 {
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> Member< float >(L"delay", m_delay);
 	s >> Member< float >(L"interval", m_interval);
-	return true;
 }
 	
 	}

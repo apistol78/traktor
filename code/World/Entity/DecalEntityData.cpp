@@ -19,10 +19,9 @@ DecalEntityData::DecalEntityData()
 {
 }
 
-bool DecalEntityData::serialize(ISerializer& s)
+void DecalEntityData::serialize(ISerializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
+	EntityData::serialize(s);
 
 	s >> Member< float >(L"size", m_size, AttributeRange(0.0f));
 
@@ -33,8 +32,6 @@ bool DecalEntityData::serialize(ISerializer& s)
 		s >> Member< float >(L"alpha", m_alpha, AttributeRange(0.0f));
 
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
-
-	return true;
 }
 
 	}

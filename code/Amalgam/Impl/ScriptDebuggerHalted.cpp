@@ -18,10 +18,9 @@ ScriptDebuggerHalted::ScriptDebuggerHalted(const script::CallStack& callStack)
 {
 }
 
-bool ScriptDebuggerHalted::serialize(ISerializer& s)
+void ScriptDebuggerHalted::serialize(ISerializer& s)
 {
 	s >> MemberComposite< script::CallStack >(L"callStack", m_callStack);
-	return true;
 }
 
 	}

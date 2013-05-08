@@ -37,11 +37,10 @@ uint16_t FlashLineStyle::getLineWidth() const
 	return m_lineWidth;
 }
 
-bool FlashLineStyle::serialize(ISerializer& s)
+void FlashLineStyle::serialize(ISerializer& s)
 {
 	s >> MemberSwfColor(L"lineColor", m_lineColor);
 	s >> Member< uint16_t >(L"lineWidth", m_lineWidth);
-	return true;
 }
 
 	}

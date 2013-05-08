@@ -15,11 +15,10 @@ DbmSetInstanceGuid::DbmSetInstanceGuid(uint32_t handle, const Guid& guid)
 {
 }
 
-bool DbmSetInstanceGuid::serialize(ISerializer& s)
+void DbmSetInstanceGuid::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
 	s >> Member< Guid >(L"guid", m_guid);
-	return true;
 }
 
 	}

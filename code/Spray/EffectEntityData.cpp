@@ -25,12 +25,10 @@ Ref< EffectEntity > EffectEntityData::createEntity(resource::IResourceManager* r
 	);
 }
 
-bool EffectEntityData::serialize(ISerializer& s)
+void EffectEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
-
-	return s >> resource::Member< Effect >(L"effect", m_effect);
+	world::EntityData::serialize(s);
+	s >> resource::Member< Effect >(L"effect", m_effect);
 }
 
 	}

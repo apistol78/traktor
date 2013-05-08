@@ -62,7 +62,7 @@ Ref< ISceneControllerData > SceneAsset::getControllerData() const
 	return m_controllerData;
 }
 
-bool SceneAsset::serialize(ISerializer& s)
+void SceneAsset::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 3);
 
@@ -91,8 +91,6 @@ bool SceneAsset::serialize(ISerializer& s)
 	}
 	
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
-
-	return true;
 }
 
 	}

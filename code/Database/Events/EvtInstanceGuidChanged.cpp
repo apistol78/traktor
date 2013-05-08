@@ -25,12 +25,10 @@ const Guid& EvtInstanceGuidChanged::getInstancePreviousGuid() const
 	return m_instancePreviousGuid;
 }
 
-bool EvtInstanceGuidChanged::serialize(ISerializer& s)
+void EvtInstanceGuidChanged::serialize(ISerializer& s)
 {
-	if (!EvtInstance::serialize(s))
-		return false;
-
-	return s >> Member< Guid >(L"instancePreviousGuid", m_instancePreviousGuid);
+	EvtInstance::serialize(s);
+	s >> Member< Guid >(L"instancePreviousGuid", m_instancePreviousGuid);
 }
 
 	}

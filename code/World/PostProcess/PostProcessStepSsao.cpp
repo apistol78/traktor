@@ -120,14 +120,12 @@ Ref< PostProcessStep::Instance > PostProcessStepSsao::create(
 	return new InstanceSsao(this, sources, offsets, directions, shader, randomNormals, randomRotations);
 }
 
-bool PostProcessStepSsao::serialize(ISerializer& s)
+void PostProcessStepSsao::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	
 	if (s.getVersion() >= 1)
 		s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
-
-	return true;
 }
 
 PostProcessStepSsao::Source::Source()
@@ -135,12 +133,11 @@ PostProcessStepSsao::Source::Source()
 {
 }
 
-bool PostProcessStepSsao::Source::serialize(ISerializer& s)
+void PostProcessStepSsao::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< std::wstring >(L"source", source);
 	s >> Member< uint32_t >(L"index", index);
-	return true;
 }
 
 // Instance

@@ -17,11 +17,10 @@ DbmPutEvent::DbmPutEvent(uint32_t handle, const IEvent* event)
 {
 }
 
-bool DbmPutEvent::serialize(ISerializer& s)
+void DbmPutEvent::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
 	s >> MemberRef< const IEvent >(L"event", m_event);
-	return true;
 }
 
 	}

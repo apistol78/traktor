@@ -11,21 +11,19 @@ namespace traktor
 	namespace flash
 	{
 
-bool SubPathSegment::serialize(ISerializer& s)
+void SubPathSegment::serialize(ISerializer& s)
 {
 	s >> MemberEnumByValue< SubPathSegmentType, uint8_t >(L"type", type);
 	s >> Member< uint32_t >(L"pointsOffset", pointsOffset);
 	s >> Member< uint32_t >(L"pointsCount", pointsCount);
-	return true;
 }
 
-bool SubPath::serialize(ISerializer& s)
+void SubPath::serialize(ISerializer& s)
 {
 	s >> Member< uint16_t >(L"fillStyle0", fillStyle0);
 	s >> Member< uint16_t >(L"fillStyle1", fillStyle1);
 	s >> Member< uint16_t >(L"lineStyle", lineStyle);
 	s >> MemberStlVector< SubPathSegment, MemberComposite< SubPathSegment > >(L"segments", segments);
-	return true;
 }
 
 Path::Path()
@@ -93,13 +91,12 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 	}
 }
 
-bool Path::serialize(ISerializer& s)
+void Path::serialize(ISerializer& s)
 {
 	s >> Member< Vector2 >(L"cursor", m_cursor);
 	s >> MemberStlVector< Vector2 >(L"points", m_points);
 	s >> MemberStlList< SubPath, MemberComposite< SubPath > >(L"subPaths", m_subPaths);
 	s >> MemberComposite< SubPath >(L"current", m_current);
-	return true;
 }
 
 void Path::transform(CoordinateMode from, CoordinateMode to, float& x, float& y) const

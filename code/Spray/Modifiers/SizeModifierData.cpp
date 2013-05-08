@@ -20,9 +20,9 @@ Ref< Modifier > SizeModifierData::createModifier(resource::IResourceManager* res
 	return new SizeModifier(m_adjustRate);
 }
 
-bool SizeModifierData::serialize(ISerializer& s)
+void SizeModifierData::serialize(ISerializer& s)
 {
-	return s >> Member< float >(L"adjustRate", m_adjustRate);
+	s >> Member< float >(L"adjustRate", m_adjustRate);
 }
 
 	}

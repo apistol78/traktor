@@ -48,7 +48,7 @@ Ref< IMesh > StreamMeshResource::createMesh(
 	return streamMesh;
 }
 
-bool StreamMeshResource::serialize(ISerializer& s)
+void StreamMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 3, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
@@ -65,18 +65,16 @@ bool StreamMeshResource::serialize(ISerializer& s)
 			MemberStlList< Part, MemberComposite< Part > >
 		>
 	>(L"parts", m_parts);
-	return true;
 }
 
 StreamMeshResource::Part::Part()
 {
 }
 
-bool StreamMeshResource::Part::serialize(ISerializer& s)
+void StreamMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< std::wstring >(L"meshPart", meshPart);
-	return true;
 }
 
 	}

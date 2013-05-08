@@ -131,7 +131,7 @@ Ref< PostProcessStepBlur::Instance > PostProcessStepBlur::create(
 	);
 }
 
-bool PostProcessStepBlur::serialize(ISerializer& s)
+void PostProcessStepBlur::serialize(ISerializer& s)
 {
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberStlVector< Source, MemberComposite< Source > >(L"sources", m_sources);
@@ -149,7 +149,6 @@ bool PostProcessStepBlur::serialize(ISerializer& s)
 		};
 		s >> MemberEnum< BlurType >(L"blurType", m_blurType, c_BlurType_Keys);
 	}
-	return true;
 }
 
 PostProcessStepBlur::Source::Source()
@@ -157,12 +156,11 @@ PostProcessStepBlur::Source::Source()
 {
 }
 
-bool PostProcessStepBlur::Source::serialize(ISerializer& s)
+void PostProcessStepBlur::Source::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"param", param);
 	s >> Member< std::wstring >(L"source", source);
 	s >> Member< uint32_t >(L"index", index);
-	return true;
 }
 
 // Instance

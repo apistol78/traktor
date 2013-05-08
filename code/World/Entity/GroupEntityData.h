@@ -39,7 +39,7 @@ public:
 
 	virtual void setTransform(const Transform& transform);
 	
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 	
 private:
 	RefArray< EntityData > m_entityData;

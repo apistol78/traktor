@@ -33,7 +33,7 @@ public:
 
 	const IEvent* getEvent() const { return m_event; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

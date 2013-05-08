@@ -39,7 +39,7 @@ public:
 
 	virtual void apply(IFilterInstance* instance, SoundBlock& outBlock) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< SurroundEnvironment > m_environment;

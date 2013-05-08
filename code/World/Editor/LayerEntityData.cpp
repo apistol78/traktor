@@ -17,17 +17,14 @@ LayerEntityData::LayerEntityData()
 {
 }
 
-bool LayerEntityData::serialize(ISerializer& s)
+void LayerEntityData::serialize(ISerializer& s)
 {
-	if (!world::GroupEntityData::serialize(s))
-		return false;
+	world::GroupEntityData::serialize(s);
 
 	s >> Member< bool >(L"visible", m_visible);
 	s >> Member< bool >(L"locked", m_locked);
 	s >> Member< bool >(L"include", m_include);
 	s >> Member< bool >(L"dynamic", m_dynamic);
-
-	return true;
 }
 
 	}

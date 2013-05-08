@@ -50,7 +50,7 @@ public:
 
 	const AlignedVector< FlashLineStyle >& getLineStyles() const { return m_lineStyles; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	SwfRect m_shapeBounds;

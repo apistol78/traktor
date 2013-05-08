@@ -73,7 +73,7 @@ public:
 			return (hasFlags & placeFlag) != 0;
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	struct RemoveObject
@@ -88,7 +88,7 @@ public:
 		{
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	FlashFrame();
@@ -161,7 +161,7 @@ public:
 
 	/*! \brief
 	 */
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::string m_label;

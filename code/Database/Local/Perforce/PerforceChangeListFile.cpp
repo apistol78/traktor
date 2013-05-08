@@ -45,7 +45,7 @@ PerforceAction PerforceChangeListFile::getAction() const
 	return m_action;
 }
 
-bool PerforceChangeListFile::serialize(ISerializer& s)
+void PerforceChangeListFile::serialize(ISerializer& s)
 {
 	const MemberEnum< PerforceAction >::Key c_PerforceAction_Keys[] =
 	{
@@ -59,8 +59,6 @@ bool PerforceChangeListFile::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"depotPath", m_depotPath);
 	s >> Member< std::wstring >(L"localPath", m_localPath);
 	s >> MemberEnum< PerforceAction >(L"action", m_action, c_PerforceAction_Keys);
-
-	return true;
 }
 
 	}

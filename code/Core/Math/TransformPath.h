@@ -42,7 +42,7 @@ public:
 
 		Transform transform() const;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	struct Key
@@ -59,7 +59,7 @@ public:
 		
 		virtual ~Key() {}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	TransformPath();
@@ -82,7 +82,7 @@ public:
 
 	Frame* getClosestKeyFrame(float at);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	float getStartTime() const { return !m_keys.empty() ? m_keys.front().T : 0.0f; }
 

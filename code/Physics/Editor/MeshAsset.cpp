@@ -14,15 +14,12 @@ MeshAsset::MeshAsset()
 {
 }
 
-bool MeshAsset::serialize(ISerializer& s)
+void MeshAsset::serialize(ISerializer& s)
 {
-	if (!editor::Asset::serialize(s))
-		return false;
+	editor::Asset::serialize(s);
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"calculateConvexHull", m_calculateConvexHull);
-
-	return true;
 }
 
 	}

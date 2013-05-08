@@ -14,9 +14,9 @@ DbmGetInstanceName::DbmGetInstanceName(uint32_t handle)
 {
 }
 
-bool DbmGetInstanceName::serialize(ISerializer& s)
+void DbmGetInstanceName::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

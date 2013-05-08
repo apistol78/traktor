@@ -37,7 +37,7 @@ public:
 
 	HeightfieldTextureAsset();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 };
 
 	}

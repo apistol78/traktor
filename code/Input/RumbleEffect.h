@@ -32,7 +32,7 @@ public:
 
 	void getRumble(float time, InputRumble& outRumble) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::vector< std::pair< float, InputRumble > > m_rumbleKeys;

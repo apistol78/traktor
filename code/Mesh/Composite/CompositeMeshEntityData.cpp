@@ -37,11 +37,10 @@ void CompositeMeshEntityData::setTransform(const Transform& transform)
 	AbstractMeshEntityData::setTransform(transform);
 }
 
-bool CompositeMeshEntityData::serialize(ISerializer& s)
+void CompositeMeshEntityData::serialize(ISerializer& s)
 {
-	if (!AbstractMeshEntityData::serialize(s))
-		return false;
-	return s >> MemberRefArray< AbstractMeshEntityData >(L"entityData", m_entityData);
+	AbstractMeshEntityData::serialize(s);
+	s >> MemberRefArray< AbstractMeshEntityData >(L"entityData", m_entityData);
 }
 
 void CompositeMeshEntityData::addEntityData(AbstractMeshEntityData* entityData)

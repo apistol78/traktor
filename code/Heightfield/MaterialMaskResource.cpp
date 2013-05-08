@@ -26,14 +26,12 @@ const RefArray< MaterialMaskResourceLayer >& MaterialMaskResource::getLayers() c
 	return m_layers;
 }
 
-bool MaterialMaskResource::serialize(ISerializer& s)
+void MaterialMaskResource::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"size", m_size);
 
 	if (s.getVersion() >= 1)
 		s >> MemberRefArray< MaterialMaskResourceLayer >(L"layers", m_layers);
-
-	return true;
 }
 
 	}

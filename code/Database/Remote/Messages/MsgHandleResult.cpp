@@ -14,9 +14,9 @@ MsgHandleResult::MsgHandleResult(uint32_t handle)
 {
 }
 
-bool MsgHandleResult::serialize(ISerializer& s)
+void MsgHandleResult::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

@@ -24,11 +24,10 @@ const std::wstring& LocalSimple::getValue() const
 	return m_value;
 }
 
-bool LocalSimple::serialize(ISerializer& s)
+void LocalSimple::serialize(ISerializer& s)
 {
 	Local::serialize(s);
 	s >> Member< std::wstring >(L"value", m_value);
-	return true;
 }
 
 	}

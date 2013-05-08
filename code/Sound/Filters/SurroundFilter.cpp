@@ -282,11 +282,10 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 	}
 }
 
-bool SurroundFilter::serialize(ISerializer& s)
+void SurroundFilter::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"speakerPosition", m_speakerPosition, AttributePoint());
 	s >> Member< Scalar >(L"maxDistance", m_maxDistance);
-	return true;
 }
 
 	}

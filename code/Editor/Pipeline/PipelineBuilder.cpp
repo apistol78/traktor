@@ -1,3 +1,6 @@
+#if defined(_WIN32)
+#	include <cfloat>
+#endif
 #include "Core/Io/BufferedStream.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Reader.h"
@@ -92,6 +95,14 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	Timer timer;
 	timer.start();
 
+	// Ensure FP is in known state.
+#if defined(_WIN32)
+	uint32_t dummy;
+	_controlfp_s(&dummy, 0, 0);
+	_controlfp_s(&dummy,_PC_24, _MCW_PC);
+	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
+#endif
+
 	// Check which dependencies are dirty; ie. need to be rebuilt.
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		updateBuildReason(*i, rebuild);
@@ -106,8 +117,6 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 
 	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
 		m_workSet.push_back(std::make_pair< Ref< PipelineDependency >, Ref< const Object > >(*i, 0));
-
-	m_pipelineDb->beginTransaction();
 
 	int32_t cpuCores = OS::getInstance().getCPUCoreCount();
 	if (
@@ -150,8 +159,6 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 			0
 		);
 	}
-
-	m_pipelineDb->endTransaction();
 
 	T_DEBUG(L"Pipeline build; total " << int32_t(timer.getElapsedTime() * 1000) << L" ms");
 
@@ -419,6 +426,14 @@ void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool reb
 IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* dependency, const Object* buildParams)
 {
 	IPipelineDb::DependencyHash currentDependencyHash;
+
+	// Ensure FP is in known state.
+#if defined(_WIN32)
+	uint32_t dummy;
+	_controlfp_s(&dummy, 0, 0);
+	_controlfp_s(&dummy,_PC_24, _MCW_PC);
+	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
+#endif
 
 	// Create hash entry.
 	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();

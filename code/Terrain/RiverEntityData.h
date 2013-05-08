@@ -39,12 +39,12 @@ public:
 
 		ControlPoint();
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	RiverEntityData();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 

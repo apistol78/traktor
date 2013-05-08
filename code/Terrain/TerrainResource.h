@@ -42,12 +42,12 @@ public:
 		float height[2];
 		float error[3];
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	TerrainResource();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	uint32_t getDetailSkip() const { return m_detailSkip; }
 

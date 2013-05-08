@@ -78,7 +78,7 @@ float InTrigger::evaluate(
 		return asFloat(false);
 }
 
-bool InTrigger::serialize(ISerializer& s)
+void InTrigger::serialize(ISerializer& s)
 {
 	const MemberEnum< Flank >::Key c_Flank_Keys[] =
 	{
@@ -90,8 +90,6 @@ bool InTrigger::serialize(ISerializer& s)
 	s >> MemberRef< IInputNode >(L"source", m_source);
 	s >> MemberEnum< Flank >(L"flank", m_flank, c_Flank_Keys);
 	s >> Member< float >(L"duration", m_duration);
-	
-	return true;
 }
 	
 	}

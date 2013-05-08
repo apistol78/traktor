@@ -31,17 +31,14 @@ const resource::Id< hf::MaterialMask >& HeightfieldShapeDesc::getMaterialMask() 
 	return m_materialMask;
 }
 
-bool HeightfieldShapeDesc::serialize(ISerializer& s)
+void HeightfieldShapeDesc::serialize(ISerializer& s)
 {
-	if (!ShapeDesc::serialize(s))
-		return false;
+	ShapeDesc::serialize(s);
 
 	s >> resource::Member< hf::Heightfield >(L"heightfield", m_heightfield);
 
 	if (s.getVersion() >= 2)
 		s >> resource::Member< hf::MaterialMask >(L"materialMask", m_materialMask);
-
-	return true;
 }
 
 	}

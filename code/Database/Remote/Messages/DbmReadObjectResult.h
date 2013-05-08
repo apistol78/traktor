@@ -30,7 +30,7 @@ public:
 
 	const std::wstring& getSerializerTypeName() const { return m_serializerTypeName; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_streamId;

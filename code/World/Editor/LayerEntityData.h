@@ -29,7 +29,7 @@ class T_DLLCLASS LayerEntityData : public world::GroupEntityData
 public:
 	LayerEntityData();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	void setVisible(bool visible) { m_visible = visible; }
 

@@ -14,9 +14,9 @@ DbmGetChildGroups::DbmGetChildGroups(uint32_t handle)
 {
 }
 
-bool DbmGetChildGroups::serialize(ISerializer& s)
+void DbmGetChildGroups::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

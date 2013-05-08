@@ -25,7 +25,7 @@ public:
 
 	const RefArray< world::EntityData >& getEntityData() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	RefArray< world::EntityData > m_entityData;

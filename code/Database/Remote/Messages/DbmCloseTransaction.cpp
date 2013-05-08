@@ -14,9 +14,9 @@ DbmCloseTransaction::DbmCloseTransaction(uint32_t handle)
 {
 }
 
-bool DbmCloseTransaction::serialize(ISerializer& s)
+void DbmCloseTransaction::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

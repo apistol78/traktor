@@ -36,15 +36,12 @@ float CapsuleShapeDesc::getLength() const
 	return m_length;
 }
 
-bool CapsuleShapeDesc::serialize(ISerializer& s)
+void CapsuleShapeDesc::serialize(ISerializer& s)
 {
-	if (!ShapeDesc::serialize(s))
-		return false;
+	ShapeDesc::serialize(s);
 
 	s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
 	s >> Member< float >(L"length", m_length, AttributeRange(0.0f));
-
-	return true;
 }
 
 	}

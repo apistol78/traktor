@@ -96,7 +96,7 @@ const DateTime& File::getLastWriteTime() const
 	return m_lastWriteTime;
 }
 
-bool File::serialize(ISerializer& s)
+void File::serialize(ISerializer& s)
 {
 	s >> Member< Path >(L"path", m_path);
 	s >> Member< uint64_t >(L"size", m_size);
@@ -104,7 +104,6 @@ bool File::serialize(ISerializer& s)
 	s >> MemberComposite< DateTime >(L"creationTime", m_creationTime);
 	s >> MemberComposite< DateTime >(L"lastAccessTime", m_lastAccessTime);
 	s >> MemberComposite< DateTime >(L"lastWriteTime", m_lastWriteTime);
-	return true;
 }
 
 }

@@ -15,11 +15,10 @@ DbmWriteData::DbmWriteData(uint32_t handle, const std::wstring& name)
 {
 }
 
-bool DbmWriteData::serialize(ISerializer& s)
+void DbmWriteData::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
 	s >> Member< std::wstring >(L"name", m_name);
-	return true;
 }
 
 	}

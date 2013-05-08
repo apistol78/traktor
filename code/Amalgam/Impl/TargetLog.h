@@ -29,7 +29,7 @@ public:
 
 	const std::wstring& getText() const { return m_text; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	int32_t m_level;

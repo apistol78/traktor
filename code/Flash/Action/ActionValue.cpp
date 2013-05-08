@@ -271,7 +271,7 @@ int32_t ActionValue::getStringId() const
 	return refStringId(m_value.s);
 }
 
-bool ActionValue::serialize(ISerializer& s)
+void ActionValue::serialize(ISerializer& s)
 {
 	const MemberEnum< Type >::Key kType[] =
 	{
@@ -312,12 +312,7 @@ bool ActionValue::serialize(ISerializer& s)
 			}
 		}
 		break;
-
-	default:
-		return false;
 	}
-
-	return true;
 }
 
 ActionValue& ActionValue::operator = (const ActionValue& v)

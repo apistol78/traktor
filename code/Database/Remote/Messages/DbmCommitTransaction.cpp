@@ -14,9 +14,9 @@ DbmCommitTransaction::DbmCommitTransaction(uint32_t handle)
 {
 }
 
-bool DbmCommitTransaction::serialize(ISerializer& s)
+void DbmCommitTransaction::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

@@ -88,15 +88,12 @@ void ArticulatedEntityData::setTransform(const Transform& transform)
 	EntityData::setTransform(transform);
 }
 
-bool ArticulatedEntityData::serialize(ISerializer& s)
+void ArticulatedEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> MemberRefArray< world::EntityData >(L"entityData", m_entityData);
 	s >> MemberStlVector< Constraint, MemberComposite< Constraint > >(L"constraints", m_constraints);
-
-	return true;
 }
 
 ArticulatedEntityData::Constraint::Constraint()
@@ -105,12 +102,11 @@ ArticulatedEntityData::Constraint::Constraint()
 {
 }
 
-bool ArticulatedEntityData::Constraint::serialize(ISerializer& s)
+void ArticulatedEntityData::Constraint::serialize(ISerializer& s)
 {
 	s >> MemberRef< JointDesc >(L"jointDesc", jointDesc);
 	s >> Member< int32_t >(L"entityIndex1", entityIndex1);
 	s >> Member< int32_t >(L"entityIndex2", entityIndex2);
-	return true;
 }
 
 	}

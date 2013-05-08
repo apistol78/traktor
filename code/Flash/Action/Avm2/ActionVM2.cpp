@@ -520,9 +520,8 @@ void ActionVM2::execute(ActionFrame* frame) const
 	}
 }
 
-bool ActionVM2::serialize(ISerializer& s)
+void ActionVM2::serialize(ISerializer& s)
 {
-	return true;
 }
 
 	}

@@ -34,9 +34,9 @@ const std::map< std::wstring, std::wstring >& Dictionary::get() const
 	return m_map;
 }
 
-bool Dictionary::serialize(ISerializer& s)
+void Dictionary::serialize(ISerializer& s)
 {
-	return s >> MemberStlMap< std::wstring, std::wstring >(L"map", m_map);
+	s >> MemberStlMap< std::wstring, std::wstring >(L"map", m_map);
 }
 
 	}

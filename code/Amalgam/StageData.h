@@ -44,7 +44,7 @@ class T_DLLCLASS StageData : public ISerializable
 public:
 	virtual Ref< Stage > createInstance(amalgam::IEnvironment* environment, const Object* params) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const std::map< std::wstring, Guid >& getTransitions() const { return m_transitions; }
 

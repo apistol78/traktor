@@ -19,9 +19,9 @@ const Guid& EvtInstance::getInstanceGuid() const
 	return m_instanceGuid;
 }
 
-bool EvtInstance::serialize(ISerializer& s)
+void EvtInstance::serialize(ISerializer& s)
 {
-	return s >> Member< Guid >(L"instanceGuid", m_instanceGuid);
+	s >> Member< Guid >(L"instanceGuid", m_instanceGuid);
 }
 
 	}

@@ -19,7 +19,7 @@ ScriptDebuggerControl::ScriptDebuggerControl(Action action)
 {
 }
 
-bool ScriptDebuggerControl::serialize(ISerializer& s)
+void ScriptDebuggerControl::serialize(ISerializer& s)
 {
 	const MemberEnum< Action >::Key c_Action_Keys[] =
 	{
@@ -30,7 +30,6 @@ bool ScriptDebuggerControl::serialize(ISerializer& s)
 		{ 0 }
 	};
 	s >> MemberEnum< Action >(L"action", m_action, c_Action_Keys);
-	return true;
 }
 
 	}

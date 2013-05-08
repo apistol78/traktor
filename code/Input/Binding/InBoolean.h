@@ -49,7 +49,7 @@ public:
 		float dT
 	) const;
 	
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 	
 private:
 	RefArray< IInputNode > m_source;

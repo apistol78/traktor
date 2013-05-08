@@ -40,7 +40,7 @@ public:
 
 	const std::vector< float >& get() const { return m_coefficients; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::vector< float > m_coefficients;

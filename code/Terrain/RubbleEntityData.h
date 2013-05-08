@@ -43,7 +43,7 @@ public:
 
 	Ref< world::Entity > createEntity(resource::IResourceManager* resourceManager, const world::IEntityBuilder* builder) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 

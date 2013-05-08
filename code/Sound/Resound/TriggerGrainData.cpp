@@ -31,7 +31,7 @@ Ref< IGrain > TriggerGrainData::createInstance(resource::IResourceManager* resou
 	);
 }
 
-bool TriggerGrainData::serialize(ISerializer& s)
+void TriggerGrainData::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"id", m_id);
@@ -39,8 +39,6 @@ bool TriggerGrainData::serialize(ISerializer& s)
 	s >> Member< float >(L"position", m_position);
 	s >> Member< float >(L"rate", m_rate);
 	s >> MemberRef< IGrainData >(L"grain", m_grain);
-
-	return true;
 }
 
 	}

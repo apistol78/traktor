@@ -60,14 +60,13 @@ const RefArray< PerforceChangeListFile >& PerforceChangeList::getFiles() const
 	return m_files;
 }
 
-bool PerforceChangeList::serialize(ISerializer& s)
+void PerforceChangeList::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"change", m_change);
 	s >> Member< std::wstring >(L"user", m_user);
 	s >> Member< std::wstring >(L"client", m_client);
 	s >> Member< std::wstring >(L"description", m_description);
 	s >> MemberRefArray< PerforceChangeListFile >(L"files", m_files);
-	return true;
 }
 
 	}

@@ -48,7 +48,7 @@ struct SubPathSegment
 	{
 	}
 
-	bool serialize(ISerializer& s);
+	void serialize(ISerializer& s);
 };
 
 /*! \brief Sub path.
@@ -68,7 +68,7 @@ struct SubPath
 	{
 	}
 
-	bool serialize(ISerializer& s);
+	void serialize(ISerializer& s);
 };
 
 /*! \brief Shape path.
@@ -142,7 +142,7 @@ public:
 
 	/*! \brief Serialize path.
 	 */
-	bool serialize(ISerializer& s);
+	void serialize(ISerializer& s);
 
 private:
 	Vector2 m_cursor;

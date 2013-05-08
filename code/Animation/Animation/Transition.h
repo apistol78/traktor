@@ -46,7 +46,7 @@ public:
 
 	const std::wstring& getCondition() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< StateNode > m_from;

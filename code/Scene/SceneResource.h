@@ -77,7 +77,7 @@ public:
 
 	Ref< ISceneControllerData > getControllerData() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;

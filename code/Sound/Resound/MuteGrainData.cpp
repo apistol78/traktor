@@ -20,9 +20,9 @@ Ref< IGrain > MuteGrainData::createInstance(resource::IResourceManager* resource
 	return new MuteGrain(m_duration);
 }
 
-bool MuteGrainData::serialize(ISerializer& s)
+void MuteGrainData::serialize(ISerializer& s)
 {
-	return s >> Member< double >(L"duration", m_duration);
+	s >> Member< double >(L"duration", m_duration);
 }
 
 	}

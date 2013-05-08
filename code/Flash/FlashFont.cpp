@@ -123,7 +123,7 @@ FlashFont::CoordinateType FlashFont::getCoordinateType() const
 	return m_coordinateType;
 }
 
-bool FlashFont::serialize(ISerializer& s)
+void FlashFont::serialize(ISerializer& s)
 {
 	const MemberEnum< CoordinateType >::Key kCoordinateType[] =
 	{
@@ -141,8 +141,6 @@ bool FlashFont::serialize(ISerializer& s)
 	s >> MemberSmallMap< uint32_t, int16_t >(L"kerningLookup", m_kerningLookup);
 	s >> MemberSmallMap< uint16_t, uint16_t >(L"indexLookup", m_indexLookup);
 	s >> MemberEnum< CoordinateType >(L"coordinateType", m_coordinateType, kCoordinateType);
-
-	return true;
 }
 
 	}

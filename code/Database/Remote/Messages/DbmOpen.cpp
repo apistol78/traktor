@@ -14,9 +14,9 @@ DbmOpen::DbmOpen(const std::wstring& name)
 {
 }
 
-bool DbmOpen::serialize(ISerializer& s)
+void DbmOpen::serialize(ISerializer& s)
 {
-	return s >> Member< std::wstring >(L"name", m_name);
+	s >> Member< std::wstring >(L"name", m_name);
 }
 
 	}

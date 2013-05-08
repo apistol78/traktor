@@ -35,9 +35,9 @@ float InConst::evaluate(
 	return m_value;
 }
 
-bool InConst::serialize(ISerializer& s)
+void InConst::serialize(ISerializer& s)
 {
-	return s >> Member< float >(L"value", m_value);
+	s >> Member< float >(L"value", m_value);
 }
 	
 	}

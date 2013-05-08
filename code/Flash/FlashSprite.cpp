@@ -138,16 +138,13 @@ Ref< FlashCharacterInstance > FlashSprite::createInstance(
 	return spriteInstance;
 }
 
-bool FlashSprite::serialize(ISerializer& s)
+void FlashSprite::serialize(ISerializer& s)
 {
-	if (!FlashCharacter::serialize(s))
-		return false;
+	FlashCharacter::serialize(s);
 
 	s >> Member< uint16_t >(L"frameRate", m_frameRate);
 	s >> MemberRefArray< FlashFrame >(L"frames", m_frames);
 	s >> MemberRefArray< const IActionVMImage >(L"initActionScripts", m_initActionScripts);
-
-	return true;
 }
 
 	}

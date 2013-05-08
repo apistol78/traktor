@@ -33,7 +33,7 @@ public:
 
 	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< PointSet >& getPointSet() const { return m_pointSet; }
 

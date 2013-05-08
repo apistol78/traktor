@@ -22,7 +22,7 @@ Ref< Modifier > IntegrateModifierData::createModifier(resource::IResourceManager
 	return new IntegrateModifier(m_timeScale, m_linear, m_angular);
 }
 
-bool IntegrateModifierData::serialize(ISerializer& s)
+void IntegrateModifierData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"timeScale", m_timeScale);
 	
@@ -31,8 +31,6 @@ bool IntegrateModifierData::serialize(ISerializer& s)
 		s >> Member< bool >(L"linear", m_linear);
 		s >> Member< bool >(L"angular", m_angular);
 	}
-
-	return true;
 }
 
 	}

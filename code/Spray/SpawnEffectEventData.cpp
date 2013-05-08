@@ -22,11 +22,10 @@ Ref< world::IEntityEvent > SpawnEffectEventData::create(const world::IEntityBuil
 	return new SpawnEffectEvent(entityBuilder->getCompositeEntityBuilder(), m_effectData, m_follow);
 }
 
-bool SpawnEffectEventData::serialize(ISerializer& s)
+void SpawnEffectEventData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"effectData", m_effectData);
 	s >> Member< bool >(L"follow", m_follow);
-	return true;
 }
 
 	}

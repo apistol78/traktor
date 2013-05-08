@@ -29,11 +29,10 @@ Ref< PostProcessStep::Instance > PostProcessStepRepeat::create(
 	return new InstanceRepeat(m_count, instance);
 }
 
-bool PostProcessStepRepeat::serialize(ISerializer& s)
+void PostProcessStepRepeat::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"count", m_count);
 	s >> MemberRef< PostProcessStep >(L"step", m_step);
-	return true;
 }
 
 // Instance

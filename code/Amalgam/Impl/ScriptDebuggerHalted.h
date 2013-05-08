@@ -28,7 +28,7 @@ public:
 
 	const script::CallStack& getCallStack() const { return m_callStack; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	script::CallStack m_callStack;

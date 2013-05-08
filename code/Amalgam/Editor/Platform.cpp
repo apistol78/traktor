@@ -29,12 +29,11 @@ const DeployTool& Platform::getDeployTool() const
 #endif
 }
 
-bool Platform::serialize(ISerializer& s)
+void Platform::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"iconIndex", m_iconIndex);
 	s >> MemberComposite< DeployTool >(L"deployToolWin32", m_deployToolWin32);
 	s >> MemberComposite< DeployTool >(L"deployToolOsX", m_deployToolOsX);
-	return true;
 }
 
 	}

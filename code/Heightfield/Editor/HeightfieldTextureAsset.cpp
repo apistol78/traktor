@@ -19,20 +19,19 @@ HeightfieldTextureAsset::HeightfieldTextureAsset()
 {
 }
 
-bool HeightfieldTextureAsset::serialize(ISerializer& s)
+void HeightfieldTextureAsset::serialize(ISerializer& s)
 {
 	const MemberEnum< OutputType >::Key c_OutputType_Keys[] =
 	{
 		{ L"OtHeights", OtHeights },
 		{ L"OtNormals", OtNormals },
+		{ L"OtCuts", OtCuts },
 		{ 0, 0 }
 	};
 
 	s >> resource::Member< Heightfield >(L"heightfield", m_heightfield);
 	s >> MemberEnum< OutputType >(L"output", m_output, c_OutputType_Keys);
 	s >> Member< float >(L"scale", m_scale);
-
-	return true;
 }
 
 	}

@@ -69,10 +69,9 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 	);
 }
 
-bool AnimatedMeshEntityData::serialize(ISerializer& s)
+void AnimatedMeshEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 	
 	s >> resource::Member< mesh::SkinnedMesh >(L"mesh", m_mesh);
 	s >> resource::Member< Skeleton >(L"skeleton", m_skeleton);
@@ -83,8 +82,6 @@ bool AnimatedMeshEntityData::serialize(ISerializer& s)
 		s >> Member< bool >(L"normalizePose", m_normalizePose);
 		s >> Member< bool >(L"normalizeTransform", m_normalizeTransform);
 	}
-
-	return true;
 }
 
 	}

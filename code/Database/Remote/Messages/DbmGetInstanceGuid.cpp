@@ -14,9 +14,9 @@ DbmGetInstanceGuid::DbmGetInstanceGuid(uint32_t handle)
 {
 }
 
-bool DbmGetInstanceGuid::serialize(ISerializer& s)
+void DbmGetInstanceGuid::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

@@ -70,7 +70,7 @@ public:
 
 	Ref< PropertyGroup > mergeReplace(const PropertyGroup* rightGroup) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const std::map< std::wstring, Ref< IPropertyValue > >& getValues() const { return m_value; }
 

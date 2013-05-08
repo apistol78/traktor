@@ -9,9 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.editor.Assets", 0, Assets, ISerializable)
 
-bool Assets::serialize(ISerializer& s)
+void Assets::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< Guid >(L"dependencies", m_dependencies);
+	s >> MemberStlVector< Guid >(L"dependencies", m_dependencies);
 }
 
 	}

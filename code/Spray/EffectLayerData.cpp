@@ -65,7 +65,7 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 	);
 }
 
-bool EffectLayerData::serialize(ISerializer& s)
+void EffectLayerData::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"name", m_name);
@@ -80,8 +80,6 @@ bool EffectLayerData::serialize(ISerializer& s)
 		s >> MemberRef< ITriggerData >(L"triggerEnable", m_triggerEnable);
 		s >> MemberRef< ITriggerData >(L"triggerDisable", m_triggerDisable);
 	}
-
-	return true;
 }
 
 	}

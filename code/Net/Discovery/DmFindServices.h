@@ -18,7 +18,7 @@ public:
 
 	const Guid& getManagerGuid() const { return m_managerGuid; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_managerGuid;

@@ -35,7 +35,7 @@ public:
 
 	virtual const wchar_t* const get() const = 0;
 
-	virtual bool serialize(ISerializer& s) const;
+	virtual void serialize(ISerializer& s) const;
 
 private:
 	const Key* m_keys;
@@ -96,13 +96,11 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		ValueType value = static_cast< ValueType >(m_en);
-		if (!(s >> Member< ValueType >(getName(), value)))
-			return false;
+		s >> Member< ValueType >(getName(), value);
 		m_en = static_cast< EnumType >(value);
-		return true;
 	}
 
 private:

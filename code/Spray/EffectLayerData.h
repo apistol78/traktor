@@ -40,7 +40,7 @@ public:
 
 	Ref< EffectLayer > createEffectLayer(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	void setName(const std::wstring& name) { m_name = name; }
 

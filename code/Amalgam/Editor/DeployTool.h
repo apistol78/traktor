@@ -26,7 +26,7 @@ public:
 
 	const std::map< std::wstring, std::wstring >& getEnvironment() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_executable;

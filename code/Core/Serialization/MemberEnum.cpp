@@ -15,27 +15,23 @@ const MemberEnumBase::Key* MemberEnumBase::keys() const
 	return m_keys;
 }
 
-bool MemberEnumBase::serialize(ISerializer& s) const
+void MemberEnumBase::serialize(ISerializer& s) const
 {
 	if (s.getDirection() == ISerializer::SdRead)
 	{
 		std::wstring id;
-		if (!(s >> Member< std::wstring >(getName(), id)))
-			return false;
-
-		return set(id);
+		s >> Member< std::wstring >(getName(), id);
+		s.ensure(set(id));
 	}
 	else	/* ISerializer::SdWrite */
 	{
 		const wchar_t* id = get();
-		if (!id)
-			return false;
+		if (!s.ensure(id != 0))
+			return;
 
 		std::wstring ws(id);
-		if (!(s >> Member< std::wstring >(getName(), ws)))
-			return false;
+		s >> Member< std::wstring >(getName(), ws);
 	}
-	return true;
 }
 
 }

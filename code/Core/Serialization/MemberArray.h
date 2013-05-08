@@ -58,12 +58,12 @@ public:
 	/*!
 	 * Read next element from serializer.
 	 */
-	virtual bool read(ISerializer& s) const = 0;
+	virtual void read(ISerializer& s) const = 0;
 
 	/*!
 	 * Write next element to serializer.
 	 */
-	virtual bool write(ISerializer& s) const = 0;
+	virtual void write(ISerializer& s) const = 0;
 
 	/*!
 	* Insert default element, used by property list

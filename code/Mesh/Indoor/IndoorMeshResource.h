@@ -39,7 +39,7 @@ public:
 
 		Part();
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	typedef std::list< Part > parts_t;
@@ -50,7 +50,7 @@ public:
 		Vector4 max;
 		std::map< std::wstring, parts_t > parts;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	struct Portal
@@ -59,7 +59,7 @@ public:
 		int32_t sectorA;
 		int32_t sectorB;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	virtual Ref< IMesh > createMesh(
@@ -70,7 +70,7 @@ public:
 		render::MeshFactory* meshFactory
 	) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class IndoorMeshConverter;

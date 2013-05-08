@@ -38,7 +38,7 @@ public:
 
 	void getIndexMask(BitSet& outIndices) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	struct Joint
@@ -53,7 +53,7 @@ private:
 		{
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	AlignedVector< Joint > m_joints;

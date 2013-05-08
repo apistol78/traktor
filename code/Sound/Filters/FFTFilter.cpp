@@ -259,11 +259,10 @@ void FFTFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	}
 }
 
-bool FFTFilter::serialize(ISerializer& s)
+void FFTFilter::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
 	s >> MemberStaticArray< float, N >(L"filter", m_filter);
-	return true;
 }
 
 	}

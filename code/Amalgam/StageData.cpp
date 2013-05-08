@@ -52,7 +52,7 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 	return stage;
 }
 
-bool StageData::serialize(ISerializer& s)
+void StageData::serialize(ISerializer& s)
 {
 	s >> MemberRefArray< LayerData >(L"layers", m_layers);
 	s >> resource::Member< script::IScriptContext >(L"script", m_script);
@@ -60,8 +60,6 @@ bool StageData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< Guid >(L"resourceBundle", m_resourceBundle, AttributeType(type_of< resource::ResourceBundle >()));
-
-	return true;
 }
 
 	}

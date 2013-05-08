@@ -37,7 +37,7 @@ public:
 
 	const std::vector< std::wstring >& getBlobs() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_guid;

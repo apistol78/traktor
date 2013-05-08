@@ -44,15 +44,15 @@ public:
 		return m_ref.size();
 	}
 
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
 		m_ref.resize(m_index + 1);
-		return s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
+		s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
-		return s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
+		s >> MemberInplaceRef< Class >(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool insert() const

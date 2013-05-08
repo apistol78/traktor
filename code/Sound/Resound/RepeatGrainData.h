@@ -25,7 +25,7 @@ public:
 
 	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	uint32_t getCount() const { return m_count; }
 

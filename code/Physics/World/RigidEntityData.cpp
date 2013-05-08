@@ -64,18 +64,15 @@ void RigidEntityData::setTransform(const Transform& transform)
 	world::EntityData::setTransform(transform);
 }
 
-bool RigidEntityData::serialize(ISerializer& s)
+void RigidEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> MemberRef< BodyDesc >(L"bodyDesc", m_bodyDesc);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 
 	if (s.getVersion() >= 1)
 		s >> MemberRef< world::IEntityEventData >(L"eventCollide", m_eventCollide);
-
-	return true;
 }
 
 	}

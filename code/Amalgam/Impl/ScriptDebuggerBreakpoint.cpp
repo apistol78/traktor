@@ -22,12 +22,11 @@ ScriptDebuggerBreakpoint::ScriptDebuggerBreakpoint(bool add, const Guid& scriptI
 {
 }
 
-bool ScriptDebuggerBreakpoint::serialize(ISerializer& s)
+void ScriptDebuggerBreakpoint::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"add", m_add);
 	s >> Member< Guid >(L"scriptId", m_scriptId);
 	s >> Member< uint32_t >(L"lineNumber", m_lineNumber);
-	return true;
 }
 
 	}

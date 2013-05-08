@@ -54,7 +54,7 @@ public:
 
 	Ref< AnimatedMeshEntity > createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< mesh::SkinnedMesh >& getMesh() const { return m_mesh; }
 

@@ -28,7 +28,7 @@ public:
 
 	uint32_t getLastFrame() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	struct Input
@@ -37,7 +37,7 @@ private:
 		uint32_t end;
 		float value;
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	std::map< int, std::vector< Input > > m_data;

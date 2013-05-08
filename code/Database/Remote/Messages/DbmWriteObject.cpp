@@ -15,11 +15,10 @@ DbmWriteObject::DbmWriteObject(uint32_t handle, const std::wstring& primaryTypeN
 {
 }
 
-bool DbmWriteObject::serialize(ISerializer& s)
+void DbmWriteObject::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"handle", m_handle);
 	s >> Member< std::wstring >(L"primaryTypeName", m_primaryTypeName);
-	return true;
 }
 
 	}

@@ -24,7 +24,7 @@ class T_DLLCLASS DbmGetBus : public IMessage
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 };
 
 	}

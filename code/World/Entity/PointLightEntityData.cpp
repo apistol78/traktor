@@ -20,10 +20,9 @@ PointLightEntityData::PointLightEntityData()
 {
 }
 
-bool PointLightEntityData::serialize(ISerializer& s)
+void PointLightEntityData::serialize(ISerializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
+	EntityData::serialize(s);
 
 	s >> Member< Vector4 >(L"sunColor", m_sunColor);
 	s >> Member< Vector4 >(L"baseColor", m_baseColor);
@@ -37,8 +36,6 @@ bool PointLightEntityData::serialize(ISerializer& s)
 		s >> Member< float >(L"randomFlickerAmount", m_randomFlickerAmount, AttributeRange(0.0f, 1.0f));
 		s >> Member< float >(L"randomFlickerFilter", m_randomFlickerFilter, AttributeRange(0.0f, 1.0f));
 	}
-
-	return true;
 }
 
 	}

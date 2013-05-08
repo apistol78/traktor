@@ -17,10 +17,9 @@ DirectionalLightEntityData::DirectionalLightEntityData()
 {
 }
 
-bool DirectionalLightEntityData::serialize(ISerializer& s)
+void DirectionalLightEntityData::serialize(ISerializer& s)
 {
-	if (!EntityData::serialize(s))
-		return false;
+	EntityData::serialize(s);
 
 	s >> Member< Vector4 >(L"sunColor", m_sunColor);
 	s >> Member< Vector4 >(L"baseColor", m_baseColor);
@@ -28,8 +27,6 @@ bool DirectionalLightEntityData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"castShadow", m_castShadow);
-
-	return true;
 }
 
 	}

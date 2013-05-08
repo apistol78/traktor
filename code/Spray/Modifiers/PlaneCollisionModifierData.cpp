@@ -20,7 +20,7 @@ public:
 	{
 	}
 
-	virtual bool serialize(ISerializer& s) const
+	virtual void serialize(ISerializer& s) const
 	{
 		if (s.getDirection() == ISerializer::SdRead)
 		{
@@ -40,7 +40,6 @@ public:
 			s >> Member< Vector4 >(L"normal", normal, AttributeDirection());
 			s >> Member< float >(L"distance", distance);
 		}
-		return true;
 	}
 
 private:
@@ -62,11 +61,10 @@ Ref< Modifier > PlaneCollisionModifierData::createModifier(resource::IResourceMa
 	return new PlaneCollisionModifier(m_plane, m_restitution);
 }
 
-bool PlaneCollisionModifierData::serialize(ISerializer& s)
+void PlaneCollisionModifierData::serialize(ISerializer& s)
 {
 	s >> MemberPlane(L"plane", m_plane);
 	s >> Member< float >(L"restitution", m_restitution);
-	return true;
 }
 
 	}

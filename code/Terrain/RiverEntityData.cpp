@@ -19,18 +19,15 @@ RiverEntityData::RiverEntityData()
 {
 }
 
-bool RiverEntityData::serialize(ISerializer& s)
+void RiverEntityData::serialize(ISerializer& s)
 {
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 	s >> MemberAlignedVector< ControlPoint, MemberComposite< ControlPoint > >(L"path", m_path);
 
 	if (s.getVersion() >= 2)
 		s >> Member< float >(L"tileFactorV", m_tileFactorV, AttributeRange(0.0f));
-
-	return true;
 }
 
 RiverEntityData::ControlPoint::ControlPoint()
@@ -40,15 +37,13 @@ RiverEntityData::ControlPoint::ControlPoint()
 {
 }
 
-bool RiverEntityData::ControlPoint::serialize(ISerializer& s)
+void RiverEntityData::ControlPoint::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"position", position);
 	s >> Member< float >(L"width", width);
 
 	if (s.getVersion() >= 1)
 		s >> Member< float >(L"tension", tension, AttributeRange(0.1f, 10.0f));
-
-	return true;
 }
 
 	}

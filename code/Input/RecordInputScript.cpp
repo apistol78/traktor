@@ -44,9 +44,9 @@ uint32_t RecordInputScript::getLastFrame() const
 	return last;
 }
 
-bool RecordInputScript::serialize(ISerializer& s)
+void RecordInputScript::serialize(ISerializer& s)
 {
-	return s >> MemberStlMap<
+	s >> MemberStlMap<
 		int,
 		std::vector< Input >,
 		MemberStlPair<
@@ -61,12 +61,11 @@ bool RecordInputScript::serialize(ISerializer& s)
 	>(L"data", m_data);
 }
 
-bool RecordInputScript::Input::serialize(ISerializer& s)
+void RecordInputScript::Input::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"start", start);
 	s >> Member< uint32_t >(L"end", end);
 	s >> Member< float >(L"value", value);
-	return true;
 }
 
 	}

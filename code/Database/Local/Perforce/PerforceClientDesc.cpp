@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.PerforceClientDesc", 0, PerforceClientDesc, ISerializable)
 
-bool PerforceClientDesc::serialize(ISerializer& s)
+void PerforceClientDesc::serialize(ISerializer& s)
 {
 	const MemberEnum< SecurityLevel >::Key c_SecurityLevel_Keys[] =
 	{
@@ -25,8 +25,6 @@ bool PerforceClientDesc::serialize(ISerializer& s)
 	s >> Member< std::wstring >(L"password", m_password);
 	s >> Member< std::wstring >(L"client", m_client);
 	s >> MemberEnum< SecurityLevel >(L"securityLevel", m_securityLevel, c_SecurityLevel_Keys);
-
-	return true;
 }
 
 	}

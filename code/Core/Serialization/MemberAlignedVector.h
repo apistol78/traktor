@@ -43,27 +43,22 @@ public:
 		return m_ref.size();
 	}
 	
-	virtual bool read(ISerializer& s) const
+	virtual void read(ISerializer& s) const
 	{
 		if (m_index < m_ref.size())
-		{
-			if (!(s >> ValueMember(L"item", m_ref[m_index])))
-				return false;
-		}
+			s >> ValueMember(L"item", m_ref[m_index]);
 		else
 		{
 			ValueType item;
-			if (!(s >> ValueMember(L"item", item)))
-				return false;
+			s >> ValueMember(L"item", item);
 			m_ref.push_back(item);
 		}
 		++m_index;
-		return true;
 	}
 
-	virtual bool write(ISerializer& s) const
+	virtual void write(ISerializer& s) const
 	{
-		return s >> ValueMember(L"item", m_ref[m_index++]);
+		s >> ValueMember(L"item", m_ref[m_index++]);
 	}
 
 	virtual bool insert() const

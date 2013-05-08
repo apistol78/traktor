@@ -54,7 +54,7 @@ public:
 
 	const SwfColor* getBits() const { return m_bits.c_ptr(); }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_width;

@@ -35,7 +35,7 @@ public:
 
 	virtual Ref< world::IEntityEvent > create(const world::IEntityBuilder* entityBuilder) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< world::EntityData > m_effectData;

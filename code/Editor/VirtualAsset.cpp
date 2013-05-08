@@ -21,11 +21,10 @@ const Guid& VirtualAsset::getPlaceholderInstance() const
 	return m_placeholderInstance;
 }
 
-bool VirtualAsset::serialize(ISerializer& s)
+void VirtualAsset::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"sourceInstance", m_sourceInstance);
 	s >> Member< Guid >(L"placeholderInstance", m_placeholderInstance, AttributeType(type_of< VirtualPlaceholder >()));
-	return true;
 }
 
 	}

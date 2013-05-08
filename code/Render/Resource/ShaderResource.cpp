@@ -21,30 +21,27 @@ const std::vector< ShaderResource::Technique >& ShaderResource::getTechniques() 
 	return m_techniques;
 }
 
-bool ShaderResource::serialize(ISerializer& s)
+void ShaderResource::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 2);
 	s >> MemberStlMap< std::wstring, uint32_t >(L"parameterBits", m_parameterBits);
 	s >> MemberStlVector< Technique, MemberComposite< Technique > >(L"techniques", m_techniques);
-	return true;
 }
 
-bool ShaderResource::Combination::serialize(ISerializer& s)
+void ShaderResource::Combination::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"mask", mask);
 	s >> Member< uint32_t >(L"value", value);
 	s >> Member< uint32_t >(L"priority", priority);
 	s >> MemberRef< ISerializable >(L"program", program);
 	s >> MemberStlVector< Guid >(L"textures", textures);
-	return true;
 }
 
-bool ShaderResource::Technique::serialize(ISerializer& s)
+void ShaderResource::Technique::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< uint32_t >(L"mask", mask);
 	s >> MemberStlVector< Combination, MemberComposite< Combination > >(L"combinations", combinations);
-	return true;
 }
 
 	}

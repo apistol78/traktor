@@ -73,9 +73,9 @@ public:
 		return m_pending[localGuid];
 	}
 
-	virtual bool serialize(ISerializer& s)
+	virtual void serialize(ISerializer& s)
 	{
-		return s >> MemberStlMap<
+		s >> MemberStlMap<
 			Guid,
 			std::list< Entry >,
 			MemberStlPair<

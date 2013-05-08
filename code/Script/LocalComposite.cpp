@@ -24,11 +24,10 @@ const RefArray< Local >& LocalComposite::getValues() const
 	return m_values;
 }
 
-bool LocalComposite::serialize(ISerializer& s)
+void LocalComposite::serialize(ISerializer& s)
 {
 	Local::serialize(s);
 	s >> MemberRefArray< Local >(L"values", m_values);
-	return true;
 }
 
 	}

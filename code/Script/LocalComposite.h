@@ -31,7 +31,7 @@ public:
 
 	const RefArray< Local >& getValues() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	RefArray< Local > m_values;

@@ -24,7 +24,7 @@ class T_DLLCLASS SoundAsset : public editor::Asset
 public:
 	SoundAsset();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class SoundPipeline;

@@ -42,10 +42,9 @@ Ref< Source > SphereSourceData::createSource(resource::IResourceManager* resourc
 	);
 }
 
-bool SphereSourceData::serialize(ISerializer& s)
+void SphereSourceData::serialize(ISerializer& s)
 {
-	if (!SourceData::serialize(s))
-		return false;
+	SourceData::serialize(s);
 
 	s >> Member< Vector4 >(L"position", m_position, AttributePoint());
 	s >> MemberComposite< Range< float > >(L"radius", m_radius);
@@ -55,8 +54,6 @@ bool SphereSourceData::serialize(ISerializer& s)
 	s >> MemberComposite< Range< float > >(L"age", m_age);
 	s >> MemberComposite< Range< float > >(L"mass", m_mass);
 	s >> MemberComposite< Range< float > >(L"size", m_size);
-
-	return true;
 }
 
 	}

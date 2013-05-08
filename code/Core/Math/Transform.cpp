@@ -16,11 +16,10 @@ namespace traktor
 
 #if !(defined(_PS3) && defined(SPU))
 
-bool Transform::serialize(ISerializer& s)
+void Transform::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"translation", m_translation, AttributeDirection());
 	s >> Member< Quaternion >(L"rotation", m_rotation);
-	return true;
 }
 
 #endif

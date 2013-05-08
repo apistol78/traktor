@@ -29,7 +29,7 @@ Ref< ITrigger > SoundTriggerData::createTrigger(resource::IResourceManager* reso
 	return new SoundTrigger(this, sound);
 }
 
-bool SoundTriggerData::serialize(ISerializer& s)
+void SoundTriggerData::serialize(ISerializer& s)
 {
 	s >> resource::Member< sound::Sound >(L"sound", m_sound);
 
@@ -44,8 +44,6 @@ bool SoundTriggerData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 3)
 		s >> Member< bool >(L"infinite", m_infinite);
-
-	return true;
 }
 
 	}

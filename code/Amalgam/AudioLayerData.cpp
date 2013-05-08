@@ -35,16 +35,13 @@ Ref< Layer > AudioLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 	);
 }
 
-bool AudioLayerData::serialize(ISerializer& s)
+void AudioLayerData::serialize(ISerializer& s)
 {
-	if (!LayerData::serialize(s))
-		return false;
+	LayerData::serialize(s);
 
 	s >> resource::Member< sound::Sound >(L"sound", m_sound);
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"autoPlay", m_autoPlay);
-
-	return true;
 }
 
 	}

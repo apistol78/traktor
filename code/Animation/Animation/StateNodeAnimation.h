@@ -37,7 +37,7 @@ public:
 
 	virtual void evaluate(const StateContext& context, Pose& outPose);
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::IdProxy< Animation >& getAnimation() const { return m_animation; }
 

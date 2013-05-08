@@ -44,7 +44,7 @@ public:
 
 	inline float& w(int32_t row, int32_t column) { return m_elements[row + column * m_rows]; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	int32_t m_rows;

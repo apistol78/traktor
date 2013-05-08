@@ -32,10 +32,9 @@ int32_t FlashCharacter::getCacheTag() const
 	return m_tag;
 }
 
-bool FlashCharacter::serialize(ISerializer& s)
+void FlashCharacter::serialize(ISerializer& s)
 {
 	s >> Member< uint16_t >(L"id", m_id);
-	return true;
 }
 
 	}

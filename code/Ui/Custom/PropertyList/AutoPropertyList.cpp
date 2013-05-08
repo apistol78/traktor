@@ -36,8 +36,7 @@ bool AutoPropertyList::bind(ISerializable* object)
 	int32_t version = type_of(m_object).getVersion();
 
 	InspectReflector reflector(this);
-	if (!reflector.serialize(m_object, version))
-		return false;
+	reflector.serialize(m_object, version);
 
 	update();
 	return true;
@@ -52,8 +51,7 @@ bool AutoPropertyList::refresh()
 	int32_t version = type_of(m_object).getVersion();
 
 	InspectReflector reflector(this);
-	if (!reflector.serialize(m_object, version))
-		return false;
+	reflector.serialize(m_object, version);
 
 	update();
 	return true;
@@ -69,8 +67,7 @@ bool AutoPropertyList::refresh(PropertyItem* parent, ISerializable* object)
 		int32_t version = type_of(object).getVersion();
 
 		InspectReflector reflector(this, parent);
-		if (!reflector.serialize(object, version))
-			return false;
+		reflector.serialize(object, version);
 	}
 
 	update();
@@ -85,10 +82,12 @@ bool AutoPropertyList::apply()
 	int32_t version = type_of(m_object).getVersion();
 
 	ApplyReflector reflector(this);
-	return reflector.serialize(
+	reflector.serialize(
 		m_object,
 		version
 	);
+
+	return true;
 }
 
 bool AutoPropertyList::addObject(PropertyItem* parent, ISerializable* object)
@@ -100,8 +99,7 @@ bool AutoPropertyList::addObject(PropertyItem* parent, ISerializable* object)
 	InspectReflector reflector(this, parent);
 
 	Ref< ISerializable > mutableObject = object;
-	if (!(reflector >> Member< ISerializable* >(L"item", mutableObject)))
-		return false;
+	reflector >> Member< ISerializable* >(L"item", mutableObject);
 
 	update();
 	return true;

@@ -39,7 +39,7 @@ public:
 		{
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	EnvelopeGrainData();
@@ -54,7 +54,7 @@ public:
 
 	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const std::wstring& getId() const { return m_id; }
 

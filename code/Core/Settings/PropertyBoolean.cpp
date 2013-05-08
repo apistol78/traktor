@@ -17,9 +17,9 @@ PropertyBoolean::value_type_t PropertyBoolean::get(const IPropertyValue* value)
 	return value ? checked_type_cast< const PropertyBoolean* >(value)->m_value : false;
 }
 
-bool PropertyBoolean::serialize(ISerializer& s)
+void PropertyBoolean::serialize(ISerializer& s)
 {
-	return s >> Member< value_type_t >(L"value", m_value);
+	s >> Member< value_type_t >(L"value", m_value);
 }
 
 Ref< IPropertyValue > PropertyBoolean::join(const IPropertyValue* right) const

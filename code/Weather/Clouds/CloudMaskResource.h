@@ -25,7 +25,7 @@ public:
 
 	int32_t getSize() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	int32_t m_size;

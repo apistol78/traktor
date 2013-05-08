@@ -33,7 +33,7 @@ public:
 
 	const source_map_t& getMap() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::string m_fileName;

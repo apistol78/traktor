@@ -50,7 +50,7 @@ public:
 
 	virtual void evaluate(const StateContext& context, Pose& outPose) = 0;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;

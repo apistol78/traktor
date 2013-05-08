@@ -31,7 +31,7 @@ public:
 
 	uint32_t get(uint32_t index) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::vector< uint32_t > m_handles;

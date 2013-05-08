@@ -57,11 +57,10 @@ void RingModulationFilter::apply(IFilterInstance* instance, SoundBlock& outBlock
 	}
 }
 
-bool RingModulationFilter::serialize(ISerializer& s)
+void RingModulationFilter::serialize(ISerializer& s)
 {
 	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
 	s >> Member< uint32_t >(L"ringFrequency", m_ringFrequency);
-	return true;
 }
 
 	}

@@ -76,7 +76,7 @@ void IfInclusiveExclusive::evaluate(InputValueSet& valueSet) const
 	}
 }
 
-bool IfInclusiveExclusive::serialize(ISerializer& s)
+void IfInclusiveExclusive::serialize(ISerializer& s)
 {
 	const MemberEnum< Priority >::Key c_Priority_Keys[] =
 	{
@@ -88,8 +88,6 @@ bool IfInclusiveExclusive::serialize(ISerializer& s)
 	s >> MemberEnum< Priority >(L"priority", m_priority, c_Priority_Keys);
 	s >> MemberStlList< std::wstring >(L"inclusive", m_inclusive);
 	s >> MemberStlList< std::wstring >(L"exclusive", m_exclusive);
-	
-	return true;
 }
 
 	}

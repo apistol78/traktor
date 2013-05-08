@@ -39,7 +39,7 @@ public:
 			uint16_t code;
 		};
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	FlashText();
@@ -62,7 +62,7 @@ public:
 
 	const Matrix33& getTextMatrix() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	SwfRect m_textBounds;

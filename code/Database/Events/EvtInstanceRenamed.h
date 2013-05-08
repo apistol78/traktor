@@ -27,7 +27,7 @@ public:
 
 	const std::wstring& getPreviousName() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_previousName;

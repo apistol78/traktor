@@ -123,7 +123,7 @@ bool FlashEdit::renderHtml() const
 	return m_renderHtml;
 }
 
-bool FlashEdit::serialize(ISerializer& s)
+void FlashEdit::serialize(ISerializer& s)
 {
 	const MemberEnum< Align >::Key kAlign[] =
 	{
@@ -134,8 +134,7 @@ bool FlashEdit::serialize(ISerializer& s)
 		{ 0, 0 }
 	};
 
-	if (!FlashCharacter::serialize(s))
-		return false;
+	FlashCharacter::serialize(s);
 
 	s >> Member< uint16_t >(L"fontId", m_fontId);
 	s >> Member< uint16_t >(L"fontHeight", m_fontHeight);
@@ -148,8 +147,6 @@ bool FlashEdit::serialize(ISerializer& s)
 	s >> Member< bool >(L"wordWrap", m_wordWrap);
 	s >> Member< bool >(L"multiLine", m_multiLine);
 	s >> Member< bool >(L"renderHtml", m_renderHtml);
-
-	return true;
 }
 
 	}

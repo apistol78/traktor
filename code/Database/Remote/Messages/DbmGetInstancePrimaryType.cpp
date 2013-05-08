@@ -14,9 +14,9 @@ DbmGetInstancePrimaryType::DbmGetInstancePrimaryType(uint32_t handle)
 {
 }
 
-bool DbmGetInstancePrimaryType::serialize(ISerializer& s)
+void DbmGetInstancePrimaryType::serialize(ISerializer& s)
 {
-	return s >> Member< uint32_t >(L"handle", m_handle);
+	s >> Member< uint32_t >(L"handle", m_handle);
 }
 
 	}

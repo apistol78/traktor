@@ -36,7 +36,7 @@ public:
 		{
 		}
 
-		bool serialize(ISerializer& s);
+		void serialize(ISerializer& s);
 	};
 
 	/*! \brief Add key pose to animation.
@@ -92,7 +92,7 @@ public:
 	 */
 	bool getPose(float at, Pose& outPose) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	AlignedVector< KeyPose > m_poses;

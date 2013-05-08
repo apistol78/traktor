@@ -18,16 +18,11 @@ DmServiceInfo::DmServiceInfo(const Guid& managerGuid, const Guid& serviceGuid, I
 {
 }
 
-bool DmServiceInfo::serialize(ISerializer& s)
+void DmServiceInfo::serialize(ISerializer& s)
 {
-	if (s.getVersion() < 1)
-		return false;
-
 	s >> Member< Guid >(L"managerGuid", m_managerGuid);
 	s >> Member< Guid >(L"serviceGuid", m_serviceGuid);
 	s >> MemberRef< IService >(L"service", m_service);
-
-	return true;
 }
 
 	}

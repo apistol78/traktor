@@ -39,7 +39,7 @@ class T_DLLCLASS WorldLayerData : public LayerData
 public:
 	virtual Ref< Layer > createInstance(Stage* stage, amalgam::IEnvironment* environment) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class StagePipeline;

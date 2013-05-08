@@ -24,9 +24,9 @@ uint32_t MsgHandleArrayResult::get(uint32_t index) const
 	return m_handles[index];
 }
 
-bool MsgHandleArrayResult::serialize(ISerializer& s)
+void MsgHandleArrayResult::serialize(ISerializer& s)
 {
-	return s >> MemberStlVector< uint32_t >(L"handles", m_handles);
+	s >> MemberStlVector< uint32_t >(L"handles", m_handles);
 }
 
 	}

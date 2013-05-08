@@ -108,7 +108,7 @@ Ref< Sound > StaticSoundResource::createSound(resource::IResourceManager* resour
 	return new Sound(soundBuffer, m_volume, m_presence, m_presenceRate, m_range);
 }
 
-bool StaticSoundResource::serialize(ISerializer& s)
+void StaticSoundResource::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 4);
 	s >> Member< uint32_t >(L"sampleRate", m_sampleRate);
@@ -119,7 +119,6 @@ bool StaticSoundResource::serialize(ISerializer& s)
 	s >> Member< float >(L"presenceRate", m_presenceRate);
 	s >> Member< float >(L"range", m_range);
 	s >> MemberType(L"decoderType", m_decoderType);
-	return true;
 }
 
 	}

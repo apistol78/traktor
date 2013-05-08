@@ -31,7 +31,7 @@ public:
 
 	Ref< const ShapeDesc > getShape() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< ShapeDesc > m_shape;

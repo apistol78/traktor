@@ -33,7 +33,7 @@ public:
 
 	TerrainEntityData();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 

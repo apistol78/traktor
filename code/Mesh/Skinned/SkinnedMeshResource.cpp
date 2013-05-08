@@ -66,7 +66,7 @@ Ref< IMesh > SkinnedMeshResource::createMesh(
 	return skinnedMesh;
 }
 
-bool SkinnedMeshResource::serialize(ISerializer& s)
+void SkinnedMeshResource::serialize(ISerializer& s)
 {
 	T_ASSERT_M(s.getVersion() >= 4, L"Incorrect version");
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
@@ -81,7 +81,6 @@ bool SkinnedMeshResource::serialize(ISerializer& s)
 		>
 	>(L"parts", m_parts);
 	s >> MemberStlMap< std::wstring, int32_t >(L"jointMap", m_jointMap);
-	return true;
 }
 
 SkinnedMeshResource::Part::Part()
@@ -89,11 +88,10 @@ SkinnedMeshResource::Part::Part()
 {
 }
 
-bool SkinnedMeshResource::Part::serialize(ISerializer& s)
+void SkinnedMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	return true;
 }
 
 	}

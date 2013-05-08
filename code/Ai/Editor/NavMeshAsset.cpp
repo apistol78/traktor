@@ -25,7 +25,7 @@ NavMeshAsset::NavMeshAsset()
 {
 }
 
-bool NavMeshAsset::serialize(ISerializer& s)
+void NavMeshAsset::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"source", m_source);
 	s >> Member< float >(L"cellSize", m_cellSize);
@@ -40,7 +40,6 @@ bool NavMeshAsset::serialize(ISerializer& s)
 	s >> Member< float >(L"mergeRegionSize", m_mergeRegionSize);
 	s >> Member< float >(L"detailSampleDistance", m_detailSampleDistance);
 	s >> Member< float >(L"detailSampleMaxError", m_detailSampleMaxError);
-	return true;
 }
 
 	}

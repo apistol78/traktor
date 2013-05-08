@@ -38,7 +38,7 @@ public:
 
 	const ui::Rect& getBounds() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	RefArray< Node > m_nodes;

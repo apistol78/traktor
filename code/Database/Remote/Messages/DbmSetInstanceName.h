@@ -29,7 +29,7 @@ public:
 
 	const std::wstring& getName() const { return m_name; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_handle;

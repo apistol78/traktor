@@ -50,7 +50,7 @@ WorldRenderSettings::WorldRenderSettings()
 {
 }
 
-bool WorldRenderSettings::serialize(ISerializer& s)
+void WorldRenderSettings::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 17);
 
@@ -69,8 +69,6 @@ bool WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< Color4ub >(L"fogColor", fogColor);
 	if (s.getVersion() >= 20)
 		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);
-
-	return true;
 }
 
 WorldRenderSettings::ShadowSettings::ShadowSettings()
@@ -86,7 +84,7 @@ WorldRenderSettings::ShadowSettings::ShadowSettings()
 {
 }
 
-bool WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
+void WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 {
 	const MemberEnum< ShadowProjection >::Key c_ShadowProjection_Keys[] =
 	{
@@ -110,8 +108,6 @@ bool WorldRenderSettings::ShadowSettings::serialize(ISerializer& s)
 	s >> Member< int32_t >(L"maskDenominator", maskDenominator, AttributeRange(1));
 	s >> resource::Member< PostProcessSettings >(L"maskProject", maskProject);
 	s >> resource::Member< PostProcessSettings >(L"maskFilter", maskFilter);
-
-	return true;
 }
 
 	}

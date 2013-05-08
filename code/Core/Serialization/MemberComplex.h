@@ -31,7 +31,7 @@ public:
 	
 	bool getCompound() const;
 
-	virtual bool serialize(ISerializer& s) const = 0;
+	virtual void serialize(ISerializer& s) const = 0;
 	
 private:
 	const wchar_t* const m_name;

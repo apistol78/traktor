@@ -74,9 +74,9 @@ void LowPassFilter::apply(IFilterInstance* instance, SoundBlock& outBlock) const
 	}
 }
 
-bool LowPassFilter::serialize(ISerializer& s)
+void LowPassFilter::serialize(ISerializer& s)
 {
-	return s >> Member< float >(L"cutOff", m_cutOff);
+	s >> Member< float >(L"cutOff", m_cutOff);
 }
 
 	}

@@ -51,7 +51,7 @@ Ref< scene::ISceneController > TheaterControllerData::createController(const std
 	return new TheaterController(m_duration, tracks);
 }
 
-bool TheaterControllerData::serialize(ISerializer& s)
+void TheaterControllerData::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"duration", m_duration);
 	if (s.getVersion() == 1)
@@ -60,7 +60,6 @@ bool TheaterControllerData::serialize(ISerializer& s)
 		s >> Member< bool >(L"loop", loop);
 	}
 	s >> MemberRefArray< TrackData >(L"trackData", m_trackData);
-	return true;
 }
 
 	}

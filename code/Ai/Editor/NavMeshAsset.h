@@ -24,7 +24,7 @@ class T_DLLCLASS NavMeshAsset : public ISerializable
 public:
 	NavMeshAsset();
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	friend class NavMeshPipeline;

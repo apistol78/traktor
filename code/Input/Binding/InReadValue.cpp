@@ -34,9 +34,9 @@ float InReadValue::evaluate(
 	return valueSet.get(m_valueId);
 }
 
-bool InReadValue::serialize(ISerializer& s)
+void InReadValue::serialize(ISerializer& s)
 {
-	return s >> Member< std::wstring >(L"valueId", m_valueId);
+	s >> Member< std::wstring >(L"valueId", m_valueId);
 }
 	
 	}

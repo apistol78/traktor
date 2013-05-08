@@ -9,10 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.LayerData", LayerData, ISerializable)
 
-bool LayerData::serialize(ISerializer& s)
+void LayerData::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
-	return true;
 }
 
 	}

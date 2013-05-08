@@ -28,7 +28,7 @@ Ref< PathEntity > PathEntityData::createEntity(const world::IEntityBuilder* buil
 	);
 }
 
-bool PathEntityData::serialize(ISerializer& s)
+void PathEntityData::serialize(ISerializer& s)
 {
 	const MemberEnum< PathEntity::TimeMode >::Key c_TimeMode_Keys[] =
 	{
@@ -39,14 +39,11 @@ bool PathEntityData::serialize(ISerializer& s)
 		{ 0 }
 	};
 
-	if (!world::EntityData::serialize(s))
-		return false;
+	world::EntityData::serialize(s);
 
 	s >> MemberComposite< TransformPath >(L"path", m_path);
 	s >> MemberEnum< PathEntity::TimeMode >(L"timeMode", m_timeMode, c_TimeMode_Keys);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
-
-	return true;
 }
 
 	}

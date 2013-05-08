@@ -22,11 +22,10 @@ Ref< Modifier > GravityModifierData::createModifier(resource::IResourceManager* 
 	return new GravityModifier(m_gravity, m_world);
 }
 
-bool GravityModifierData::serialize(ISerializer& s)
+void GravityModifierData::serialize(ISerializer& s)
 {
 	s >> Member< Vector4 >(L"gravity", m_gravity, AttributeDirection());
 	s >> Member< bool >(L"world", m_world);
-	return true;
 }
 
 	}

@@ -34,7 +34,7 @@ public:
 
 	inline uint32_t getBlockId() const { return m_blockId; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	uint32_t m_blockId;
@@ -60,7 +60,7 @@ public:
 
 	inline const RefArray< CompactInstanceEntry >& getChildInstances() const { return m_childInstances; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -94,7 +94,7 @@ public:
 
 	inline std::map< std::wstring, Ref< CompactBlockEntry > >& getDataBlocks() { return m_dataBlocks; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	std::wstring m_name;
@@ -134,7 +134,7 @@ public:
 
 	inline const RefArray< CompactBlockEntry >& getBlockEntries() const { return m_blockEntries; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Ref< CompactGroupEntry > m_rootGroup;

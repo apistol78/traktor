@@ -17,9 +17,9 @@ PropertyStringSet::value_type_t PropertyStringSet::get(const IPropertyValue* val
 	return value ? checked_type_cast< const PropertyStringSet* >(value)->m_value : value_type_t();
 }
 
-bool PropertyStringSet::serialize(ISerializer& s)
+void PropertyStringSet::serialize(ISerializer& s)
 {
-	return s >> MemberStlSet< std::wstring >(L"value", m_value);
+	s >> MemberStlSet< std::wstring >(L"value", m_value);
 }
 
 Ref< IPropertyValue > PropertyStringSet::join(const IPropertyValue* right) const

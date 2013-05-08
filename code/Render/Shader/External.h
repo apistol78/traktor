@@ -67,7 +67,7 @@ public:
 
 	virtual const OutputPin* getOutputPin(int index) const;	
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	inline const std::map< std::wstring, float >& getValues() const { return m_values; }
 

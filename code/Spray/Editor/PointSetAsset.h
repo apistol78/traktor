@@ -25,7 +25,7 @@ public:
 
 	bool fromFaces() const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	bool m_fromFaces;

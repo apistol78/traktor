@@ -60,11 +60,11 @@ const std::wstring& Script::getText() const
 	return m_text;
 }
 
-bool Script::serialize(ISerializer& s)
+void Script::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> MemberStlVector< Guid, MemberDependency >(L"dependencies", m_dependencies);
-	return s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());
+	s >> Member< std::wstring >(L"text", m_text, AttributeMultiLine());
 }
 
 	}

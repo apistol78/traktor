@@ -28,7 +28,7 @@ public:
 
 	Ref< IService > getService() const { return m_service; }
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 private:
 	Guid m_managerGuid;

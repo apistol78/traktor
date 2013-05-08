@@ -26,7 +26,7 @@ public:
 
 	virtual Ref< IGrain > createInstance(resource::IResourceManager* resourceManager) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	void addGrain(IGrainData* grain) { m_grains.push_back(grain); }
 

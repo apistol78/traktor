@@ -102,12 +102,11 @@ float DynamicBodyDesc::getAngularThreshold() const
 	return m_angularThreshold;
 }
 
-bool DynamicBodyDesc::serialize(ISerializer& s)
+void DynamicBodyDesc::serialize(ISerializer& s)
 {
 	T_ASSERT (s.getVersion() >= 4);
 
-	if (!BodyDesc::serialize(s))
-		return false;
+	BodyDesc::serialize(s);
 
 	s >> Member< float >(L"mass", m_mass, AttributeRange(0.0f));
 	s >> Member< bool >(L"autoDeactivate", m_autoDeactivate);
@@ -121,8 +120,6 @@ bool DynamicBodyDesc::serialize(ISerializer& s)
 		s >> Member< float >(L"linearThreshold", m_linearThreshold, AttributeRange(0.0f));
 		s >> Member< float >(L"angularThreshold", m_angularThreshold, AttributeRange(0.0f));
 	}
-	
-	return true;
 }
 
 	}

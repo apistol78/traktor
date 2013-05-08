@@ -9,9 +9,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.db.LocalFileLink", 0, LocalFileLink, ISerializable)
 
-bool LocalFileLink::serialize(ISerializer& s)
+void LocalFileLink::serialize(ISerializer& s)
 {
-	return s >> Member< std::wstring >(L"path", m_path);
+	s >> Member< std::wstring >(L"path", m_path);
 }
 
 	}

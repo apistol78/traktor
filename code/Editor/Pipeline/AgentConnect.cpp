@@ -57,14 +57,13 @@ uint16_t AgentConnect::getStreamServerPort() const
 	return m_streamServerPort;
 }
 
-bool AgentConnect::serialize(ISerializer& s)
+void AgentConnect::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"sessionId", m_sessionId);
 	s >> MemberRef< const PropertyGroup >(L"settings", m_settings);
 	s >> Member< std::wstring >(L"host", m_host);
 	s >> Member< uint16_t >(L"databasePort", m_databasePort);
 	s >> Member< uint16_t >(L"streamServerPort", m_streamServerPort);
-	return true;
 }
 
 	}

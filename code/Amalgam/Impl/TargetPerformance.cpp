@@ -34,7 +34,7 @@ TargetPerformance::TargetPerformance()
 {
 }
 
-bool TargetPerformance::serialize(ISerializer& s)
+void TargetPerformance::serialize(ISerializer& s)
 {
 	s >> Member< float >(L"time", time);
 	s >> Member< float >(L"fps", fps);
@@ -55,7 +55,6 @@ bool TargetPerformance::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"bodyCount", bodyCount);
 	s >> Member< uint32_t >(L"activeBodyCount", activeBodyCount);
 	s >> Member< uint32_t >(L"activeSoundChannels", activeSoundChannels);
-	return true;
 }
 
 	}

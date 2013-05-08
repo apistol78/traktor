@@ -49,7 +49,7 @@ class T_DLLCLASS UndergrowthEntityData : public world::EntityData
 public:
 	UndergrowthEntity* createEntity(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem) const;
 
-	virtual bool serialize(ISerializer& s);
+	virtual void serialize(ISerializer& s);
 
 	const resource::Id< Terrain >& getTerrain() const { return m_terrain; }
 
