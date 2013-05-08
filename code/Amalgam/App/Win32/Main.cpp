@@ -1,4 +1,5 @@
 #include "Amalgam/App/Win32/ErrorDialog.h"
+#include "Amalgam/App/Win32/StackWalker.h"
 #include "Amalgam/Impl/Application.h"
 #include "Core/Io/FileOutputStreamBuffer.h"
 #include "Core/Io/FileSystem.h"
@@ -26,6 +27,20 @@ using namespace traktor;
 
 namespace
 {
+
+class StackWalkerToConsole : public StackWalker
+{
+protected:
+	// Overload to get less output by stackwalker.
+	virtual void OnSymInit(LPCSTR szSearchPath, DWORD symOptions, LPCSTR szUserName) {}	
+	virtual void OnDbgHelpErr(LPCSTR szFuncName, DWORD gle, DWORD64 addr) {}
+	virtual void OnLoadModule(LPCSTR img, LPCSTR mod, DWORD64 baseAddr, DWORD size, DWORD result, LPCSTR symType, LPCSTR pdbName, ULONGLONG fileVersion) {}
+
+	virtual void OnOutput(LPCSTR szText)
+	{
+		log::info << mbstows(szText);
+	}
+};
 
 class LogTailTarget : public ILogTarget
 {
@@ -134,11 +149,78 @@ bool checkPreconditions()
 	return true;
 }
 
-void* g_exceptionAddress = 0;
+std::wstring getExceptionString(DWORD exceptionCode)
+{
+	switch (exceptionCode)
+	{
+		case EXCEPTION_ACCESS_VIOLATION:		return L"EXCEPTION_ACCESS_VIOLATION";
+		case EXCEPTION_DATATYPE_MISALIGNMENT:	return L"EXCEPTION_DATATYPE_MISALIGNMENT";
+		case EXCEPTION_BREAKPOINT:				return L"EXCEPTION_BREAKPOINT";
+		case EXCEPTION_SINGLE_STEP:				return L"EXCEPTION_SINGLE_STEP";
+		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	return L"EXCEPTION_ARRAY_BOUNDS_EXCEEDED";
+		case EXCEPTION_FLT_DENORMAL_OPERAND:	return L"EXCEPTION_FLT_DENORMAL_OPERAND";
+		case EXCEPTION_FLT_DIVIDE_BY_ZERO:		return L"EXCEPTION_FLT_DIVIDE_BY_ZERO";
+		case EXCEPTION_FLT_INEXACT_RESULT:		return L"EXCEPTION_FLT_INEXACT_RESULT";
+		case EXCEPTION_FLT_INVALID_OPERATION:	return L"EXCEPTION_FLT_INVALID_OPERATION";
+		case EXCEPTION_FLT_OVERFLOW:			return L"EXCEPTION_FLT_OVERFLOW";
+		case EXCEPTION_FLT_STACK_CHECK:			return L"EXCEPTION_FLT_STACK_CHECK";
+		case EXCEPTION_FLT_UNDERFLOW:			return L"EXCEPTION_FLT_UNDERFLOW";
+		case EXCEPTION_INT_DIVIDE_BY_ZERO:		return L"EXCEPTION_INT_DIVIDE_BY_ZERO";
+		case EXCEPTION_INT_OVERFLOW:			return L"EXCEPTION_INT_OVERFLOW";
+		case EXCEPTION_PRIV_INSTRUCTION:		return L"EXCEPTION_PRIV_INSTRUCTION";
+		case EXCEPTION_IN_PAGE_ERROR:			return L"EXCEPTION_IN_PAGE_ERROR";
+		case EXCEPTION_ILLEGAL_INSTRUCTION:		return L"EXCEPTION_ILLEGAL_INSTRUCTION";
+		case EXCEPTION_NONCONTINUABLE_EXCEPTION:return L"EXCEPTION_NONCONTINUABLE_EXCEPTION";
+		case EXCEPTION_STACK_OVERFLOW:			return L"EXCEPTION_STACK_OVERFLOW";
+		case EXCEPTION_INVALID_DISPOSITION:		return L"EXCEPTION_INVALID_DISPOSITION";
+		case EXCEPTION_GUARD_PAGE:				return L"EXCEPTION_GUARD_PAGE";
+		default:								return L"UNKNOWN EXCEPTION";					
+	}
+}
 
+void* g_exceptionAddress = 0;
 LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 {
 	g_exceptionAddress = (void*)ep->ExceptionRecord->ExceptionAddress;
+	bool ouputCallStack = true;
+	
+	switch (ep->ExceptionRecord->ExceptionCode)
+	{
+		case EXCEPTION_ACCESS_VIOLATION:		
+		case EXCEPTION_DATATYPE_MISALIGNMENT:	
+		case EXCEPTION_STACK_OVERFLOW:			
+		case EXCEPTION_ILLEGAL_INSTRUCTION:		
+		case EXCEPTION_PRIV_INSTRUCTION:		
+		case EXCEPTION_IN_PAGE_ERROR:			
+		case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+		case EXCEPTION_INVALID_DISPOSITION:		
+		case EXCEPTION_GUARD_PAGE:				
+			ouputCallStack = true;
+			break;
+
+		case EXCEPTION_BREAKPOINT:				
+		case EXCEPTION_SINGLE_STEP:				
+		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	
+		case EXCEPTION_FLT_DENORMAL_OPERAND:	
+		case EXCEPTION_FLT_DIVIDE_BY_ZERO:		
+		case EXCEPTION_FLT_INEXACT_RESULT:		
+		case EXCEPTION_FLT_INVALID_OPERATION:	
+		case EXCEPTION_FLT_OVERFLOW:			
+		case EXCEPTION_FLT_STACK_CHECK:			
+		case EXCEPTION_FLT_UNDERFLOW:			
+		case EXCEPTION_INT_DIVIDE_BY_ZERO:		
+		case EXCEPTION_INT_OVERFLOW:			
+		default:								
+			ouputCallStack = false;
+			break;
+	}
+
+//	log::info << getExceptionString(ep->ExceptionRecord->ExceptionCode) << Endl;;	
+	if (ouputCallStack)
+	{
+		StackWalkerToConsole sw;
+		sw.ShowCallstack(GetCurrentThread(), ep->ContextRecord);
+	}
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
