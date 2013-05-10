@@ -189,6 +189,7 @@ bool TextureOutputPipeline::buildDependencies(
 
 bool TextureOutputPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -708,10 +709,16 @@ bool TextureOutputPipeline::buildOutput(
 				Ref< drawing::Image > mipImage = sliceImage->applyFilter(&mipScaleFilter);
 				T_ASSERT (mipImage);
 
+				uint32_t outputSize = getTextureMipPitch(
+					textureFormat,
+					mipSize,
+					mipSize
+				);
+
 				 writerData.write(
 					mipImage->getData(),
-					mipSize * mipSize,
-					sizeof(uint32_t)
+					outputSize,
+					1
 				);
 			}
 		}
@@ -840,10 +847,16 @@ bool TextureOutputPipeline::buildOutput(
 				Ref< drawing::Image > mipImage = sideImage->applyFilter(&mipScaleFilter);
 				T_ASSERT (mipImage);
 
+				uint32_t outputSize = getTextureMipPitch(
+					textureFormat,
+					mipSize,
+					mipSize
+				);
+
 				 writerData.write(
 					mipImage->getData(),
-					mipSize * mipSize,
-					sizeof(uint32_t)
+					outputSize,
+					1
 				);
 			}
 		}

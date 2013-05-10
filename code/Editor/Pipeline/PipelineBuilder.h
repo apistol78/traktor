@@ -35,7 +35,6 @@ class Group;
 
 class IPipelineCache;
 class IPipelineDb;
-class PipelineDependency;
 class PipelineFactory;
 
 /*! \brief Pipeline manager.
@@ -56,7 +55,7 @@ public:
 		bool threadedBuildEnable
 	);
 
-	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild);
+	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild);
 
 	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset);
 
@@ -94,32 +93,27 @@ private:
 	Ref< IPipelineDb > m_pipelineDb;
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
+	
 	Semaphore m_createOutputLock;
 	ReaderWriterLock m_readCacheLock;
 	Semaphore m_builtCacheLock;
 	Semaphore m_workSetLock;
-	std::list< std::pair< Ref< PipelineDependency >, Ref< const Object > > > m_workSet;
+
+	std::vector< uint32_t > m_reasons;
+
+	std::list< std::pair< uint32_t, Ref< const Object > > > m_workSet;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
 	std::map< uint32_t, built_cache_list_t > m_builtCache;
-	std::map< const TypeInfo*, double > m_buildTimes;
 	ThreadLocal m_buildInstances;
+
 	int32_t m_progress;
 	int32_t m_progressEnd;
 	int32_t m_succeeded;
 	int32_t m_succeededBuilt;
 	int32_t m_failed;
 
-	/*! \brief Update build reasons. */
-	void updateBuildReason(PipelineDependency* dependency, bool rebuild);
-
 	/*! \brief Perform build. */
-	BuildResult performBuild(PipelineDependency* dependency, const Object* buildParams);
-
-	/*! \brief Calculate global dependency hash; ie. including child dependencies. */
-	uint32_t calculateGlobalHash(const PipelineDependency* dependency) const;
-
-	/*! \brief Check if dependency needs to be built. */
-	bool needBuild(PipelineDependency* dependency) const;
+	BuildResult performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams);
 
 	/*! \brief Isolate instance in cache. */
 	bool putInstancesInCache(const Guid& guid, uint32_t hash, int32_t version, const RefArray< db::Instance >& instances);
@@ -128,10 +122,7 @@ private:
 	bool getInstancesFromCache(const Guid& guid, uint32_t hash, int32_t version);
 
 	/*! \brief Build thread method. */
-	void buildThread(
-		Thread* controlThread,
-		int32_t cpuCore
-	);
+	void buildThread(const IPipelineDependencySet* dependencySet, Thread* controlThread, int32_t cpuCore);
 };
 
 	}

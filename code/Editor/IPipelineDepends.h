@@ -32,7 +32,6 @@ class Instance;
 	{
 
 class IPipeline;
-class PipelineDependency;
 
 /*! \brief Pipeline dependency interface.
  * \ingroup Editor
@@ -80,9 +79,6 @@ public:
 
 	/*! \brief Wait until all dependency processing is complete before returning. */
 	virtual bool waitUntilFinished() = 0;
-
-	/*! \brief Get all generated dependencies. */
-	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const = 0;
 
 	/*! \brief Get access to source database. */
 	virtual Ref< db::Database > getSourceDatabase() const = 0;

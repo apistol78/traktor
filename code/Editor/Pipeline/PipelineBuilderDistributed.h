@@ -39,7 +39,7 @@ public:
 		IListener* listener
 	);
 
-	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild);
+	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild);
 
 	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset);
 
@@ -71,22 +71,13 @@ private:
 	int32_t m_succeeded;
 	int32_t m_failed;
 
-	/*! \brief Update build reasons. */
-	void updateBuildReason(PipelineDependency* dependency, bool rebuild);
-
 	/*! \brief Perform build. */
-	bool performBuild(PipelineDependency* dependency);
-
-	/*! \brief Calculate global dependency hash; ie. including child dependencies. */
-	uint32_t calculateGlobalHash(const PipelineDependency* dependency) const;
-
-	/*! \brief Check if dependency needs to be built. */
-	bool needBuild(PipelineDependency* dependency) const;
+	bool performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency);
 
 	/*! \brief */
-	void agentBuildSucceeded(PipelineDependency* dependency, uint32_t pipelineVersion, uint32_t hash, int32_t agentIndex);
+	void agentBuildSucceeded(const PipelineDependency* dependency, uint32_t pipelineVersion, uint32_t hash, int32_t agentIndex);
 
-	void agentBuildFailed(PipelineDependency* dependency, int32_t agentIndex);
+	void agentBuildFailed(const PipelineDependency* dependency, int32_t agentIndex);
 };
 
 	}

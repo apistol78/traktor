@@ -5,7 +5,8 @@
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IEditor.h"
-#include "Editor/Pipeline/PipelineDependency.h"
+#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependency.h"
 #include "I18N/Format.h"
 #include "I18N/Text.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -69,8 +70,8 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 
 	if (entityAdapter)
 	{
-		RefArray< editor::PipelineDependency > dependencies;
-		m_context->getEditor()->buildAssetDependencies(entityAdapter->getEntityData(), 1, dependencies);
+		Ref< editor::IPipelineDependencySet > dependencySet = m_context->getEditor()->buildAssetDependencies(entityAdapter->getEntityData(), 1);
+		T_ASSERT (dependencySet);
 
 		Ref< ui::TreeViewItem > entityRootItem = m_dependencyTree->createItem(0, entityAdapter->getName(), 15);
 		entityRootItem->expand();
@@ -78,9 +79,12 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 		std::map< const TypeInfo*, Ref< ui::TreeViewItem > > typeGroups;
 		std::set< Path > externalFiles;
 
-		for (RefArray< editor::PipelineDependency >::iterator i = dependencies.begin(); i != dependencies.end(); ++i)
+		for (uint32_t i = 0; i < dependencySet->size(); ++i)
 		{
-			const TypeInfo* assetType = &type_of((*i)->sourceAsset);
+			editor::PipelineDependency* dependency = dependencySet->get(i);
+			T_ASSERT (dependency);
+
+			const TypeInfo* assetType = &type_of(dependency->sourceAsset);
 			T_ASSERT (assetType);
 
 			Ref< ui::TreeViewItem > typeGroup = typeGroups[assetType];
@@ -90,10 +94,10 @@ void EntityDependencyInvestigator::setEntityAdapter(EntityAdapter* entityAdapter
 				typeGroups[assetType] = typeGroup;
 			}
 
-			Ref< ui::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, (*i)->outputPath, 2);
-			dependencyItem->setData(L"DEPENDENCY", (*i));
+			Ref< ui::TreeViewItem > dependencyItem = m_dependencyTree->createItem(typeGroup, dependency->outputPath, 2);
+			dependencyItem->setData(L"DEPENDENCY", dependency);
 
-			for (std::vector< editor::PipelineDependency::ExternalFile >::const_iterator j = (*i)->files.begin(); j != (*i)->files.end(); ++j)
+			for (std::vector< editor::PipelineDependency::ExternalFile >::const_iterator j = dependency->files.begin(); j != dependency->files.end(); ++j)
 				externalFiles.insert(j->filePath);
 		}
 

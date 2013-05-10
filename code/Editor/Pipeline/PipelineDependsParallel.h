@@ -24,7 +24,7 @@ class JobQueue;
 	{
 
 class IPipelineDb;
-class PipelineDependencyCache;
+class IPipelineDependencySet;
 class PipelineFactory;
 
 /*! \brief Parallel pipeline dependency walker.
@@ -38,7 +38,7 @@ public:
 	PipelineDependsParallel(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
-		PipelineDependencyCache* dependencyCache,
+		IPipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb
 	);
 
@@ -76,8 +76,6 @@ public:
 
 	virtual bool waitUntilFinished();
 
-	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const;
-
 	virtual Ref< db::Database > getSourceDatabase() const;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
@@ -86,16 +84,12 @@ private:
 	Ref< JobQueue > m_jobQueue;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
-	Ref< PipelineDependencyCache > m_dependencyCache;
+	Ref< IPipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
-	RefArray< PipelineDependency > m_dependencies;
 	ThreadLocal m_currentDependency;
 	ReaderWriterLock m_readCacheLock;
-	Semaphore m_dependencyMapLock;
-	Semaphore m_dependenciesLock;
+	Semaphore m_dependencySetLock;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
-	std::map< Guid, Ref< PipelineDependency > > m_dependencyMap;
-	int32_t m_cacheReuseCount;
 
 	Ref< PipelineDependency > findOrCreateDependency(
 		const Guid& guid,
@@ -112,8 +106,6 @@ private:
 		const std::wstring& outputPath,
 		const Guid& outputGuid
 	);
-
-	void addCachedDependency(PipelineDependency* dependency);
 
 	void updateDependencyHashes(
 		PipelineDependency* dependency,

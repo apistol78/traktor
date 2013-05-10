@@ -2,13 +2,13 @@
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Editor/IPipeline.h"
+#include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/AgentBuild.h"
 #include "Editor/Pipeline/AgentConnect.h"
 #include "Editor/Pipeline/AgentOpenFile.h"
 #include "Editor/Pipeline/AgentStatus.h"
 #include "Editor/Pipeline/AgentStream.h"
 #include "Editor/Pipeline/PipelineAgent.h"
-#include "Editor/Pipeline/PipelineDependency.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/SocketAddressIPv4.h"
 #include "Net/TcpSocket.h"
@@ -107,7 +107,7 @@ bool PipelineAgent::build(const PipelineDependency* dependency, Functor* functor
 		dependency->sourceAssetHash,
 		dependency->outputPath,
 		dependency->outputGuid,
-		dependency->reason
+		0/*dependency->reason*/
 	);
 	if (!m_transport->send(&agentBuild))
 	{

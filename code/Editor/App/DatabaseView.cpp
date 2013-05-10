@@ -15,12 +15,13 @@
 #include "Editor/Assets.h"
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPage.h"
+#include "Editor/IPipelineDependencySet.h"
 #include "Editor/IWizardTool.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "Editor/App/DatabaseView.h"
 #include "Editor/App/InstanceClipboardData.h"
 #include "Editor/App/NewInstanceDialog.h"
-#include "Editor/Pipeline/PipelineDependency.h"
+#include "Editor/PipelineDependency.h"
 #include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Bitmap.h"
@@ -776,20 +777,30 @@ void DatabaseView::filterType(db::Instance* instance)
 
 void DatabaseView::filterDependencies(db::Instance* instance)
 {
-	RefArray< PipelineDependency > dependencies;
-	if (instance && m_editor->buildAssetDependencies(instance->getObject(), ~0UL, dependencies))
+	if (!instance)
+		return;
+
+	Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies(instance->getObject(), ~0UL);
+	if (!dependencySet)
+		return;
+
+	std::set< Guid > guidSet;
+	guidSet.insert(instance->getGuid());
+
+	for (uint32_t i = 0; i < dependencySet->size(); ++i)
 	{
-		std::set< Guid > guidSet;
+		const PipelineDependency* dependency = dependencySet->get(i);
+		T_ASSERT (dependency);
 
-		guidSet.insert(instance->getGuid());
-		for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-			guidSet.insert((*i)->outputGuid);
-
-		m_editFilter->setText(L"");
-		m_filter = new GuidSetFilter(guidSet);
-		m_toolFilterType->setToggled(true);
-		m_toolFilterAssets->setToggled(false);
+		if (dependency->outputGuid.isNotNull())
+			guidSet.insert(dependency->outputGuid);
 	}
+
+	m_editFilter->setText(L"");
+	m_filter = new GuidSetFilter(guidSet);
+	m_toolFilterType->setToggled(true);
+	m_toolFilterAssets->setToggled(false);
+
 	updateView();
 }
 
@@ -832,11 +843,17 @@ void DatabaseView::eventToolSelectionClicked(ui::Event* event)
 			{
 				guidSet.insert((*i)->getGuid());
 
-				RefArray< PipelineDependency > dependencies;
-				if (m_editor->buildAssetDependencies((*i)->getObject(), ~0UL, dependencies))
+				Ref< IPipelineDependencySet > dependencySet = m_editor->buildAssetDependencies((*i)->getObject(), ~0UL);
+				if (!dependencySet)
+					continue;
+
+				for (uint32_t j = 0; j < dependencySet->size(); ++j)
 				{
-					for (RefArray< PipelineDependency >::const_iterator j = dependencies.begin(); j != dependencies.end(); ++j)
-						guidSet.insert((*j)->outputGuid);
+					const PipelineDependency* dependency = dependencySet->get(j);
+					T_ASSERT (dependency);
+
+					if (dependency->outputGuid.isNotNull())
+						guidSet.insert(dependency->outputGuid);
 				}
 			}
 

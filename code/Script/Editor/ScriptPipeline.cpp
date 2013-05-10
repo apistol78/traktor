@@ -113,6 +113,7 @@ bool ScriptPipeline::buildDependencies(
 
 bool ScriptPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -175,6 +176,7 @@ bool ScriptPipeline::buildOutput(
 
 	return DefaultPipeline::buildOutput(
 		pipelineBuilder,
+		dependencySet,
 		dependency,
 		sourceInstance,
 		resource,

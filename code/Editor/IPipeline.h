@@ -28,9 +28,10 @@ class Instance;
 	namespace editor
 	{
 
-class IPipelineSettings;
-class IPipelineDepends;
 class IPipelineBuilder;
+class IPipelineSettings;
+class IPipelineDependencySet;
+class IPipelineDepends;
 class PipelineDependency;
 
 /*! \brief Source asset pipeline.
@@ -74,6 +75,7 @@ public:
 	/*! \brief Build output asset.
 	 *
 	 * \param pipelineBuilder Pipeline builder.
+	 * \param dependencySet Dependency set.
 	 * \param dependency Current dependency.
 	 * \param sourceInstance Source asset database instance; might be null if asset doesn't originate from database.
 	 * \param sourceAsset Source asset object.
@@ -86,6 +88,7 @@ public:
 	 */
 	virtual bool buildOutput(
 		IPipelineBuilder* pipelineBuilder,
+		const IPipelineDependencySet* dependencySet,
 		const PipelineDependency* dependency,
 		const db::Instance* sourceInstance,
 		const ISerializable* sourceAsset,

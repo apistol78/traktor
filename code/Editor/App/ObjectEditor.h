@@ -73,7 +73,7 @@ public:
 
 	virtual void buildAssets(bool rebuild);
 
-	virtual bool buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies);
+	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth);
 
 	virtual void setStoreObject(const std::wstring& name, Object* object);
 

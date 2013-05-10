@@ -32,7 +32,6 @@ public:
 	virtual bool apply(PropertyGroup* settings);
 
 private:
-	Ref< ui::CheckBox > m_checkDependencyCache;
 	Ref< ui::CheckBox > m_checkBuildThreads;
 	Ref< ui::CheckBox > m_checkBuildDistributed;
 	Ref< ui::CheckBox > m_checkUseMemCached;

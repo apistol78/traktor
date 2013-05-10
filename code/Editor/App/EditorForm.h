@@ -71,7 +71,6 @@ class IObjectEditorFactory;
 class LogView;
 class MRU;
 class PipelineAgentsManager;
-class PipelineDependencyCache;
 class PropertiesView;
 
 /*! \brief Main editor form.
@@ -143,7 +142,7 @@ public:
 
 	virtual void buildAssets(bool rebuild);
 
-	virtual bool buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies);
+	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth);
 
 	virtual void setStoreObject(const std::wstring& name, Object* object);
 
@@ -164,7 +163,6 @@ private:
 	Ref< net::StreamServer > m_streamServer;
 	Ref< db::ConnectionManager > m_dbConnectionManager;
 	Ref< PipelineAgentsManager > m_agentsManager;
-	Ref< PipelineDependencyCache > m_dependencyCache;
 	std::map< std::wstring, Ref< Object > > m_objectStore;
 	Ref< MRU > m_mru;
 	std::list< ui::Command > m_shortcutCommands;

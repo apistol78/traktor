@@ -14,8 +14,8 @@
 #include "Database/Instance.h"
 #include "Editor/IPipeline.h"
 #include "Editor/IPipelineDb.h"
-#include "Editor/Pipeline/PipelineDependency.h"
-#include "Editor/Pipeline/PipelineDependencyCache.h"
+#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 
@@ -29,14 +29,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDepend
 PipelineDependsParallel::PipelineDependsParallel(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
-	PipelineDependencyCache* dependencyCache,
+	IPipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
-,	m_dependencyCache(dependencyCache)
+,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
-,	m_cacheReuseCount(0)
 {
 	m_jobQueue = new JobQueue();
 	m_jobQueue->create(4);
@@ -45,7 +44,6 @@ PipelineDependsParallel::PipelineDependsParallel(
 PipelineDependsParallel::~PipelineDependsParallel()
 {
 	safeDestroy(m_jobQueue);
-	log::debug << L"PipelineDependsParallel; reused " << m_cacheReuseCount << L" cache entries" << Endl;
 }
 
 void PipelineDependsParallel::addDependency(const ISerializable* sourceAsset)
@@ -150,11 +148,6 @@ bool PipelineDependsParallel::waitUntilFinished()
 	return m_jobQueue->wait();
 }
 
-void PipelineDependsParallel::getDependencies(RefArray< PipelineDependency >& outDependencies) const
-{
-	outDependencies = m_dependencies;
-}
-
 Ref< db::Database > PipelineDependsParallel::getSourceDatabase() const
 {
 	return m_sourceDatabase;
@@ -190,26 +183,30 @@ Ref< PipelineDependency > PipelineDependsParallel::findOrCreateDependency(
 	bool& outExists
 )
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_dependencyMapLock);
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_dependencySetLock);
 
-	std::map< Guid, Ref< PipelineDependency > >::const_iterator i = m_dependencyMap.find(guid);
-	if (i != m_dependencyMap.end())
+	uint32_t dependencyIndex = m_dependencySet->get(guid);
+	if (dependencyIndex != IPipelineDependencySet::DiInvalid)
 	{
-		T_ASSERT (i->second);
-		i->second->flags |= flags;
+		PipelineDependency* dependency = m_dependencySet->get(dependencyIndex);
+		T_ASSERT (dependency);
+
+		dependency->flags |= flags;
 		if (parentDependency)
-			parentDependency->children.push_back(i->second);
+			parentDependency->children.push_back(dependencyIndex);
+
 		outExists = true;
-		return i->second;
+		return dependency;
 	}
 
 	Ref< PipelineDependency > dependency = new PipelineDependency();
 	dependency->flags = flags;
+	
+	dependencyIndex = m_dependencySet->add(guid, dependency);
 	if (parentDependency)
-		parentDependency->children.push_back(dependency);
-	m_dependencyMap[guid] = dependency;
-	outExists = false;
+		parentDependency->children.push_back(dependencyIndex);
 
+	outExists = false;
 	return dependency;
 }
 
@@ -224,24 +221,12 @@ void PipelineDependsParallel::addUniqueDependency(
 {
 	const TypeInfo* pipelineType;
 	uint32_t pipelineHash;
-	uint32_t dependencyIndex;
 
 	// Find appropriate pipeline.
 	if (!m_pipelineFactory->findPipelineType(type_of(sourceAsset), pipelineType, pipelineHash))
 	{
 		log::error << L"Unable to add dependency to \"" << outputPath << L"\"; no pipeline found" << Endl;
 		return;
-	}
-
-	// Get cached dependency from last build.
-	Ref< PipelineDependency > cachedDependency = m_dependencyCache ? m_dependencyCache->get(outputGuid) : 0;
-	if (cachedDependency)
-	{
-		if (
-			cachedDependency->pipelineType != pipelineType ||
-			cachedDependency->pipelineHash != pipelineHash
-		)
-			cachedDependency = 0;
 	}
 
 	// Setup dependency.
@@ -251,51 +236,6 @@ void PipelineDependsParallel::addUniqueDependency(
 	currentDependency->sourceAsset = sourceAsset;
 	currentDependency->outputPath = outputPath;
 	currentDependency->outputGuid = outputGuid;
-	currentDependency->reason = PbrNone;
-
-	if (sourceInstance)
-		sourceInstance->getLastModifyDate(currentDependency->sourceInstanceLastModifyDate);
-
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_dependenciesLock);
-		dependencyIndex = uint32_t(m_dependencies.size());
-		m_dependencies.push_back(currentDependency);
-	}
-
-	// Check if cached dependency is still valid.
-	if (cachedDependency)
-	{
-		if (
-			currentDependency->sourceInstanceGuid == cachedDependency->sourceInstanceGuid &&
-			currentDependency->sourceInstanceLastModifyDate == cachedDependency->sourceInstanceLastModifyDate &&
-			currentDependency->outputPath == cachedDependency->outputPath &&
-			currentDependency->outputGuid == cachedDependency->outputGuid
-		)
-		{
-			// Check time stamps of each external file.
-			for (std::vector< PipelineDependency::ExternalFile >::const_iterator i = cachedDependency->files.begin(); i != cachedDependency->files.end(); ++i)
-			{
-				Ref< File > file = FileSystem::getInstance().get(i->filePath);
-				if (!file || file->getLastWriteTime() != i->lastWriteTime)
-				{
-					cachedDependency = 0;
-					break;
-				}
-			}
-
-			// Reuse hashes from cached dependency.
-			if (cachedDependency)
-			{
-				currentDependency->sourceAssetHash = cachedDependency->sourceAssetHash;
-				currentDependency->sourceDataHash = cachedDependency->sourceDataHash;
-				currentDependency->filesHash = cachedDependency->filesHash;
-				currentDependency->files = cachedDependency->files;
-				Atomic::increment(m_cacheReuseCount);
-			}
-		}
-		else
-			cachedDependency = 0;
-	}
 
 	bool result = true;
 
@@ -304,73 +244,24 @@ void PipelineDependsParallel::addUniqueDependency(
 		Ref< PipelineDependency > previousDependency = reinterpret_cast< PipelineDependency* >(m_currentDependency.get());
 		m_currentDependency.set(currentDependency);
 
-		if (cachedDependency)
-		{
-			for (RefArray< PipelineDependency >::const_iterator i = cachedDependency->children.begin(); i != cachedDependency->children.end(); ++i)
-				addCachedDependency(*i);
-		}
-		else
-			result = false;
+		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*currentDependency->pipelineType);
+		T_ASSERT (pipeline);
 
-		if (!result)
-		{
-			Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*currentDependency->pipelineType);
-			T_ASSERT (pipeline);
-
-			result = pipeline->buildDependencies(
-				this,
-				sourceInstance,
-				sourceAsset,
-				currentDependency->outputPath,
-				currentDependency->outputGuid
-			);
-		}
+		result = pipeline->buildDependencies(
+			this,
+			sourceInstance,
+			sourceAsset,
+			currentDependency->outputPath,
+			currentDependency->outputGuid
+		);
 
 		m_currentDependency.set(previousDependency);
 	}
 
 	if (result)
-	{
-		// Calculate new hashes if no cached dependency was used.
-		if (!cachedDependency)
-			updateDependencyHashes(currentDependency, sourceInstance);
-
-		// Add to dependency cache.
-		if (m_dependencyCache)
-			m_dependencyCache->put(outputGuid, currentDependency);
-	}
+		updateDependencyHashes(currentDependency, sourceInstance);
 	else
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_dependenciesLock);
-
-		// Pipeline build dependencies failed; remove dependency from array.
-		T_ASSERT (dependencyIndex < m_dependencies.size());
-		m_dependencies.erase(m_dependencies.begin() + dependencyIndex);
-
-		// Remove from parent as well.
-		if (parentDependency)
-			parentDependency->children.remove(currentDependency);
-	}
-}
-
-void PipelineDependsParallel::addCachedDependency(PipelineDependency* dependency)
-{
-	if (dependency->sourceInstanceGuid.isNotNull())
-	{
-		addDependency(
-			dependency->sourceInstanceGuid,
-			dependency->flags
-		);
-	}
-	else
-	{
-		addDependency(
-			dependency->sourceAsset,
-			dependency->outputPath,
-			dependency->outputGuid,
-			dependency->flags
-		);
-	}
+		currentDependency->flags |= PdfFailed;
 }
 
 void PipelineDependsParallel::updateDependencyHashes(

@@ -17,7 +17,7 @@ namespace traktor
 	namespace editor
 	{
 
-class PipelineDependencyCache;
+class IPipelineDependencySet;
 class PipelineFactory;
 
 /*! \brief Incremental pipeline dependency walker.
@@ -30,12 +30,10 @@ class T_DLLCLASS PipelineDependsIncremental : public IPipelineDepends
 public:
 	PipelineDependsIncremental(
 		PipelineFactory* pipelineFactory,
-		PipelineDependencyCache* dependencyCache,
 		db::Database* sourceDatabase,
+		IPipelineDependencySet* dependencySet,
 		uint32_t recursionDepth = ~0UL
 	);
-
-	virtual ~PipelineDependsIncremental();
 
 	virtual void addDependency(
 		const ISerializable* sourceAsset
@@ -69,25 +67,18 @@ public:
 
 	virtual bool waitUntilFinished();
 
-	virtual void getDependencies(RefArray< PipelineDependency >& outDependencies) const;
-
 	virtual Ref< db::Database > getSourceDatabase() const;
 
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
 	Ref< PipelineFactory > m_pipelineFactory;
-	Ref< PipelineDependencyCache > m_dependencyCache;
 	Ref< db::Database > m_sourceDatabase;
+	Ref< IPipelineDependencySet > m_dependencySet;
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;
-	RefArray< PipelineDependency > m_dependencies;
 	Ref< PipelineDependency > m_currentDependency;
 	std::map< Guid, Ref< ISerializable > > m_readCache;
-	std::map< Guid, PipelineDependency* > m_dependencyMap;
-	int32_t m_cacheReuseCount;
-
-	PipelineDependency* findDependency(const Guid& guid) const;
 
 	void addUniqueDependency(
 		const db::Instance* sourceInstance,
@@ -96,8 +87,6 @@ private:
 		const Guid& outputGuid,
 		uint32_t flags
 	);
-
-	void addCachedDependency(PipelineDependency* dependency);
 
 	void updateDependencyHashes(
 		PipelineDependency* dependency,

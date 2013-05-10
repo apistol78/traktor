@@ -84,6 +84,7 @@ void threadProcessClient(
 		bool result = pipeline->buildOutput(
 			pipelineBuilder,
 			0,
+			0,
 			agentBuild->getSourceInstanceGuid().isNotNull() ? sourceDatabase->getInstance(agentBuild->getSourceInstanceGuid()) : 0,
 			agentBuild->getSourceAsset(),
 			agentBuild->getSourceAssetHash(),
