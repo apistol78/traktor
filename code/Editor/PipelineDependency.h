@@ -48,7 +48,6 @@ public:
 
 	const TypeInfo* pipelineType;
 	Guid sourceInstanceGuid;
-	DateTime sourceInstanceLastModifyDate;
 	Ref< const ISerializable > sourceAsset;		/*!< Source asset. */
 	std::vector< ExternalFile > files;			/*!< External file dependencies. */
 	std::wstring outputPath;					/*!< Database output path. */
@@ -58,8 +57,7 @@ public:
 	uint32_t sourceDataHash;					/*!< Hash of source instance data. */
 	uint32_t filesHash;							/*!< Hash of external files. */
 	uint32_t flags;								/*!< Dependency flags. \sa PipelineDependencyFlags */
-	uint32_t reason;							/*!< Build reason, updated prior to being built. \sa PipelineBuildReason */
-	RefArray< PipelineDependency > children;	/*!< Child dependencies. */
+	std::vector< uint32_t > children;			/*!< Child dependencies. */
 
 	PipelineDependency();
 

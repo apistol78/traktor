@@ -123,6 +123,7 @@ bool BankPipeline::buildDependencies(
 
 bool BankPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -170,6 +171,7 @@ bool BankPipeline::buildOutput(
 
 	return editor::DefaultPipeline::buildOutput(
 		pipelineBuilder,
+		dependencySet,
 		dependency,
 		sourceInstance,
 		bankResource,

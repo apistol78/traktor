@@ -61,6 +61,7 @@ bool DefaultPipeline::buildDependencies(
 
 bool DefaultPipeline::buildOutput(
 	IPipelineBuilder* pipelineBuilder,
+	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

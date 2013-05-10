@@ -143,9 +143,9 @@ void ObjectEditor::buildAssets(bool rebuild)
 	m_editor->buildAssets(rebuild);
 }
 
-bool ObjectEditor::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies)
+Ref< IPipelineDependencySet > ObjectEditor::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth)
 {
-	return m_editor->buildAssetDependencies(asset, recursionDepth, outDependencies);
+	return m_editor->buildAssetDependencies(asset, recursionDepth);
 }
 
 void ObjectEditor::setStoreObject(const std::wstring& name, Object* object)

@@ -47,7 +47,7 @@ PipelineBuilderWrapper::PipelineBuilderWrapper(
 {
 }
 
-bool PipelineBuilderWrapper::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
+bool PipelineBuilderWrapper::build(const IPipelineDependencySet* dependencySet, bool rebuild)
 {
 	T_FATAL_ERROR;
 	return false;
@@ -128,6 +128,7 @@ bool PipelineBuilderWrapper::buildOutput(const ISerializable* sourceAsset, const
 
 	if (!pipeline->buildOutput(
 		this,
+		0,
 		0,
 		0,
 		sourceAsset,

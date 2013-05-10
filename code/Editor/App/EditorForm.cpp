@@ -35,6 +35,7 @@
 #include "Editor/IObjectEditor.h"
 #include "Editor/IObjectEditorFactory.h"
 #include "Editor/IPipeline.h"
+#include "Editor/PipelineDependency.h"
 #include "Editor/PropertyKey.h"
 #include "Editor/TypeBrowseFilter.h"
 #include "Editor/App/AboutDialog.h"
@@ -61,8 +62,7 @@
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineBuilderDistributed.h"
 #include "Editor/Pipeline/PipelineDb.h"
-#include "Editor/Pipeline/PipelineDependency.h"
-#include "Editor/Pipeline/PipelineDependencyCache.h"
+#include "Editor/Pipeline/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
@@ -1235,12 +1235,6 @@ bool EditorForm::createWorkspace()
 	updateTitle();
 	m_dataBaseView->setDatabase(m_sourceDatabase);
 
-	// Create pipeline dependency cache.
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.UseDependencyCache", true))
-		m_dependencyCache = new PipelineDependencyCache();
-	else
-		m_dependencyCache = 0;
-
 	// Create stream server.
 	m_streamServer = new net::StreamServer();
 	m_streamServer->create(34000);
@@ -1304,25 +1298,6 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 	// Create merged settings.
 	m_mergedSettings = m_globalSettings->mergeJoin(m_workspaceSettings);
 	T_ASSERT (m_mergedSettings);
-
-	// Create pipeline dependency cache.
-	m_dependencyCache = 0;
-	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.UseDependencyCache", true))
-	{
-		std::wstring dependencyCache = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.DependencyCache");
-		if (!dependencyCache.empty())
-		{
-			Ref< IStream > dependencyCacheFile = FileSystem::getInstance().open(dependencyCache, File::FmRead);
-			if (dependencyCacheFile)
-			{
-				m_dependencyCache = BinarySerializer(dependencyCacheFile).readObject< PipelineDependencyCache >();
-				dependencyCacheFile->close();
-				dependencyCacheFile = 0;
-			}
-		}
-		if (!m_dependencyCache)
-			m_dependencyCache = new PipelineDependencyCache();
-	}
 
 	// Open databases.
 	std::wstring sourceDatabase = m_mergedSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
@@ -1404,24 +1379,10 @@ void EditorForm::closeWorkspace()
 	safeClose(m_outputDatabase);
 	safeClose(m_sourceDatabase);
 
-	// Save dependency cache.
-	std::wstring dependencyCache = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.DependencyCache");
-	if (!dependencyCache.empty())
-	{
-		Ref< IStream > dependencyCacheFile = FileSystem::getInstance().open(dependencyCache, File::FmWrite);
-		if (dependencyCacheFile)
-		{
-			BinarySerializer(dependencyCacheFile).writeObject(m_dependencyCache);
-			dependencyCacheFile->close();
-			dependencyCacheFile = 0;
-		}
-	}
-
 	// Close settings; restore merged as being global.
 	m_workspacePath = L"";
 	m_workspaceSettings = 0;
 	m_mergedSettings = m_globalSettings;
-	m_dependencyCache = 0;
 
 	// Update UI views.
 	updateTitle();
@@ -1550,10 +1511,11 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 		if (instances.empty())
 			continue;
 
+		PipelineDependencySet dependencySet;
 		PipelineDependsIncremental pipelineDepends(
 			&pipelineFactory,
-			0,
-			m_sourceDatabase
+			m_sourceDatabase,
+			&dependencySet
 		);
 
 		for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
@@ -1561,23 +1523,21 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 
 		pipelineDepends.waitUntilFinished();
 
-		RefArray< PipelineDependency > dependencies;
-		pipelineDepends.getDependencies(dependencies);
-
 		bool buildInstances = false;
-
-		for (RefArray< PipelineDependency >::const_iterator j = dependencies.begin(); !buildInstances && j != dependencies.end(); ++j)
+		for (uint32_t j = 0; j < dependencySet.size(); ++j)
 		{
-			if (!(*j)->sourceInstanceGuid.isNotNull())
+			const PipelineDependency* dependency = dependencySet.get(j);
+			T_ASSERT (dependency);
+
+			if (!dependency->sourceInstanceGuid.isNotNull())
 				continue;
 
 			for (RefArray< db::Instance >::const_iterator k = modifiedInstances.begin(); !buildInstances && k != modifiedInstances.end(); ++k)
 			{
-				if ((*k)->getGuid() == (*j)->sourceInstanceGuid)
+				if ((*k)->getGuid() == dependency->sourceInstanceGuid)
 					buildInstances = true;
 			}
 		}
-
 		if (buildInstances)
 		{
 			for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
@@ -1633,6 +1593,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	// Create pipeline factory.
 	PipelineFactory pipelineFactory(m_mergedSettings);
+	PipelineDependencySet dependencySet;
 
 	// Build dependencies.
 	Ref< IPipelineDepends > pipelineDepends;
@@ -1641,7 +1602,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		pipelineDepends = new PipelineDependsParallel(
 			&pipelineFactory,
 			m_sourceDatabase,
-			m_dependencyCache,
+			&dependencySet,
 			pipelineDb
 		);
 	}
@@ -1649,8 +1610,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	{
 		pipelineDepends = new PipelineDependsIncremental(
 			&pipelineFactory,
-			m_dependencyCache,
-			m_sourceDatabase
+			m_sourceDatabase,
+			&dependencySet
 		);
 	}
 
@@ -1667,9 +1628,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	log::info << DecreaseIndent;
 
 	pipelineDepends->waitUntilFinished();
-
-	RefArray< PipelineDependency > dependencies;
-	pipelineDepends->getDependencies(dependencies);
 
 	double elapsedDependencies = timerBuild.getElapsedTime();
 	T_DEBUG(L"Scanned dependencies in " << elapsedDependencies << L" second(s)");
@@ -1702,13 +1660,13 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		);
 
 	if (rebuild)
-		log::info << L"Rebuilding " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
+		log::info << L"Rebuilding " << dependencySet.size() << L" asset(s)..." << Endl;
 	else
-		log::info << L"Building " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
+		log::info << L"Building " << dependencySet.size() << L" asset(s)..." << Endl;
 
 	log::info << IncreaseIndent;
 
-	pipelineBuilder->build(dependencies, rebuild);
+	pipelineBuilder->build(&dependencySet, rebuild);
 
 	pipelineDb->endTransaction();
 
@@ -1809,23 +1767,24 @@ void EditorForm::buildAssets(bool rebuild)
 	buildAssets(assetGuids, rebuild);
 }
 
-bool EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies)
+Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth)
 {
 	T_ASSERT (m_sourceDatabase);
+
+	Ref< IPipelineDependencySet > dependencySet = new PipelineDependencySet();
 
 	PipelineFactory pipelineFactory(m_mergedSettings);
 	PipelineDependsIncremental pipelineDepends(
 		&pipelineFactory,
-		0,
 		m_sourceDatabase,
+		dependencySet,
 		recursionDepth
 	);
 
 	pipelineDepends.addDependency(asset);
 	pipelineDepends.waitUntilFinished();
-	pipelineDepends.getDependencies(outDependencies);
 
-	return true;
+	return dependencySet;
 }
 
 void EditorForm::setStoreObject(const std::wstring& name, Object* object)

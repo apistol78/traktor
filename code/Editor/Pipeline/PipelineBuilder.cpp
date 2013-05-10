@@ -18,11 +18,12 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Isolate.h"
+#include "Editor/IPipeline.h"
 #include "Editor/IPipelineCache.h"
 #include "Editor/IPipelineDb.h"
-#include "Editor/IPipeline.h"
+#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
-#include "Editor/Pipeline/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 
 namespace traktor
@@ -57,6 +58,26 @@ private:
 	uint32_t m_count;
 };
 
+uint32_t calculateGlobalHash(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
+{
+	uint32_t hash =
+		dependency->pipelineHash +
+		dependency->sourceAssetHash +
+		dependency->sourceDataHash +
+		dependency->filesHash;
+
+	for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+	{
+		const PipelineDependency* childDependency = dependencySet->get(*i);
+		T_ASSERT (childDependency);
+
+		if ((childDependency->flags & PdfUse) != 0)
+			hash += calculateGlobalHash(dependencySet, childDependency);
+	}
+
+	return hash;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineBuilder", PipelineBuilder, IPipelineBuilder)
@@ -85,7 +106,7 @@ PipelineBuilder::PipelineBuilder(
 {
 }
 
-bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
+bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool rebuild)
 {
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 	T_ANONYMOUS_VAR(ScopeIndent)(log::warning);
@@ -103,25 +124,99 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
 #endif
 
-	// Check which dependencies are dirty; ie. need to be rebuilt.
-	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		updateBuildReason(*i, rebuild);
+	// Determine build reasons.
+	uint32_t dependencyCount = dependencySet->size();
+	
+	m_reasons.resize(dependencyCount, 0);
+	for (uint32_t i = 0; i < dependencyCount; ++i)
+	{
+		const PipelineDependency* dependency = dependencySet->get(i);
+		T_ASSERT (dependency);
+
+		if ((dependency->flags & PdfFailed) != 0)
+			continue;
+
+		// Have source asset been modified?
+		if (!rebuild)
+		{
+			uint32_t hash = calculateGlobalHash(dependencySet, dependency);
+
+			// Get hash entry from database.
+			IPipelineDb::DependencyHash previousDependencyHash;
+			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
+			{
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
+				m_reasons[i] |= PbrSourceModified;
+			}
+			else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
+			{
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
+				m_reasons[i] |= PbrSourceModified;
+			}
+			else if (previousDependencyHash.hash != hash)
+			{
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
+				m_reasons[i] |= PbrSourceModified;
+			}
+		}
+		else
+			m_reasons[i] |= PbrForced;
+	}
+
+	log::info << L"Analyzing build conditions..." << Endl;
+
+	for (uint32_t i = 0; i < dependencyCount; ++i)
+	{
+		const PipelineDependency* dependency = dependencySet->get(i);
+		T_ASSERT (dependency);
+
+		std::vector< uint32_t > children = dependency->children;
+		std::set< uint32_t > visited;
+
+		visited.insert(i);
+		while (!children.empty())
+		{
+			if (visited.find(children.back()) != visited.end())
+			{
+				children.pop_back();
+				continue;
+			}
+
+			const PipelineDependency* childDependency = dependencySet->get(children.back());
+			T_ASSERT (childDependency);
+
+			if ((childDependency->flags & PdfUse) == 0)
+			{
+				children.pop_back();
+				continue;
+			}
+
+			if ((m_reasons[children.back()] & PbrSourceModified) != 0)
+				m_reasons[i] |= PbrDependencyModified;
+			
+			visited.insert(children.back());
+			children.pop_back();
+			children.insert(children.end(), childDependency->children.begin(), childDependency->children.end());
+		}
+
+		if (m_reasons[i] != 0)
+			m_workSet.push_back(std::make_pair(i, Ref< const Object >()));
+	}
 
 	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
+	log::info << L"Dispatching builds..." << Endl;
+
 	m_progress = 0;
-	m_progressEnd = dependencies.size();
-	m_succeeded = 0;
+	m_progressEnd = m_workSet.size();
+	m_succeeded = dependencyCount - m_progressEnd;
 	m_succeededBuilt = 0;
 	m_failed = 0;
-
-	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		m_workSet.push_back(std::make_pair< Ref< PipelineDependency >, Ref< const Object > >(*i, 0));
 
 	int32_t cpuCores = OS::getInstance().getCPUCoreCount();
 	if (
 		m_threadedBuildEnable &&
-		int32_t(dependencies.size()) >= cpuCores * 2
+		m_workSet.size() >= cpuCores * 2
 	)
 	{
 		std::vector< Thread* > threads(cpuCores, (Thread*)0);
@@ -131,12 +226,14 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 				makeFunctor
 				<
 					PipelineBuilder,
+					const IPipelineDependencySet*,
 					Thread*,
 					int32_t
 				>
 				(
 					this,
 					&PipelineBuilder::buildThread,
+					dependencySet,
 					ThreadManager::getInstance().getCurrentThread(),
 					i
 				)
@@ -155,6 +252,7 @@ bool PipelineBuilder::build(const RefArray< PipelineDependency >& dependencies, 
 	else
 	{
 		buildThread(
+			dependencySet,
 			ThreadManager::getInstance().getCurrentThread(),
 			0
 		);
@@ -251,6 +349,7 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 
 	if (!pipeline->buildOutput(
 		this,
+		0,
 		0,
 		0,
 		sourceAsset,
@@ -394,36 +493,7 @@ Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, c
 	return m_pipelineDb->createReport(name, guid);
 }
 
-void PipelineBuilder::updateBuildReason(PipelineDependency* dependency, bool rebuild)
-{
-	// Have source asset been modified?
-	if (!rebuild)
-	{
-		uint32_t hash = calculateGlobalHash(dependency);
-
-		// Get hash entry from database.
-		IPipelineDb::DependencyHash previousDependencyHash;
-		if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
-		{
-			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
-			dependency->reason |= PbrSourceModified;
-		}
-		else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
-		{
-			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
-			dependency->reason |= PbrSourceModified;
-		}
-		else if (previousDependencyHash.hash != hash)
-		{
-			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
-			dependency->reason |= PbrSourceModified;
-		}
-	}
-	else
-		dependency->reason |= PbrForced;
-}
-
-IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* dependency, const Object* buildParams)
+IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams)
 {
 	IPipelineDb::DependencyHash currentDependencyHash;
 
@@ -437,19 +507,14 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 
 	// Create hash entry.
 	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
-	currentDependencyHash.hash = calculateGlobalHash(dependency);
+	currentDependencyHash.hash = calculateGlobalHash(dependencySet, dependency);
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)
 	{
-		if ((dependency->reason & PbrSourceModified) != 0)
-			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 		return BrSucceeded;
 	}
-
-	// Check if we need to build asset; check the entire dependency chain (will update reason if dependency dirty).
-	if (!needBuild(dependency))
-		return BrSucceeded;
 
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 
@@ -489,6 +554,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 
 	bool result = pipeline->buildOutput(
 		this,
+		dependencySet,
 		dependency,
 		dependency->sourceInstanceGuid.isNotNull() ? m_sourceDatabase->getInstance(dependency->sourceInstanceGuid) : 0,
 		dependency->sourceAsset,
@@ -496,7 +562,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 		dependency->outputPath,
 		dependency->outputGuid,
 		buildParams,
-		dependency->reason
+		0/*dependency->reason*/
 	);
 	if (result)
 		Atomic::increment(m_succeededBuilt);
@@ -538,45 +604,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(PipelineDependency* 
 		return (warningTarget.getCount() + errorTarget.getCount()) > 0 ? BrSucceededWithWarnings : BrSucceeded;
 	else
 		return BrFailed;
-}
-
-uint32_t PipelineBuilder::calculateGlobalHash(const PipelineDependency* dependency) const
-{
-	uint32_t hash =
-		dependency->pipelineHash +
-		dependency->sourceAssetHash +
-		dependency->sourceDataHash +
-		dependency->filesHash;
-
-	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
-	{
-		if (((*i)->flags & PdfUse) != 0)
-			hash += calculateGlobalHash(*i);
-	}
-
-	return hash;
-}
-
-bool PipelineBuilder::needBuild(PipelineDependency* dependency) const
-{
-	if (dependency->reason != PbrNone)
-		return true;
-
-	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
-	{
-		// Skip non-use dependencies; non-used dependencies are not critical for building
-		// given dependency.
-		if (((*i)->flags & PdfUse) == 0)
-			continue;
-
-		if (needBuild(*i))
-		{
-			dependency->reason |= PbrDependencyModified;
-			return true;
-		}
-	}
-
-	return false;
 }
 
 bool PipelineBuilder::putInstancesInCache(const Guid& guid, uint32_t hash, int32_t version, const RefArray< db::Instance >& instances)
@@ -645,26 +672,30 @@ bool PipelineBuilder::getInstancesFromCache(const Guid& guid, uint32_t hash, int
 }
 
 void PipelineBuilder::buildThread(
+	const IPipelineDependencySet* dependencySet,
 	Thread* controlThread,
 	int32_t cpuCore
 )
 {
 	while (!controlThread->stopped())
 	{
-		Ref< PipelineDependency > workDependency;
+		uint32_t workDependencyIndex;
 		Ref< const Object > workBuildParams;
 
 		{
 			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_workSetLock);
 			if (!m_workSet.empty())
 			{
-				workDependency = m_workSet.back().first;
+				workDependencyIndex = m_workSet.back().first;
 				workBuildParams = m_workSet.back().second;
 				m_workSet.pop_back();
 			}
 			else
 				break;
 		}
+
+		const PipelineDependency* workDependency = dependencySet->get(workDependencyIndex);
+		T_ASSERT (workDependency);
 
 		if (m_listener)
 			m_listener->beginBuild(
@@ -674,7 +705,7 @@ void PipelineBuilder::buildThread(
 				workDependency
 			);
 
-		BuildResult result = performBuild(workDependency, workBuildParams);
+		BuildResult result = performBuild(dependencySet, workDependency, workBuildParams);
 		if (result == BrSucceeded || result == BrSucceededWithWarnings)
 			++m_succeeded;
 		else

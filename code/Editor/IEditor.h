@@ -30,7 +30,7 @@ class Instance;
 
 class IEditorPage;
 class IBrowseFilter;
-class PipelineDependency;
+class IPipelineDependencySet;
 
 /*! \brief Editor base interface.
  * \ingroup Editor
@@ -122,10 +122,9 @@ public:
 	 *
 	 * \param asset Source asset.
 	 * \param recursionDepth Max dependency recursion depth.
-	 * \param outDependencies Set of dependency asset guid;s.
-	 * \return True if successful.
+	 * \return Dependency set.
 	 */
-	virtual bool buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth, RefArray< PipelineDependency >& outDependencies) = 0;
+	virtual Ref< IPipelineDependencySet > buildAssetDependencies(const ISerializable* asset, uint32_t recursionDepth) = 0;
 
 	/*! \brief Set object in object store.
 	 *

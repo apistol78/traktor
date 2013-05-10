@@ -42,7 +42,7 @@ public:
 		ReadOnlyObjectCache* objectCache
 	);
 
-	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild);
+	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild);
 
 	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset);
 

@@ -3,18 +3,43 @@
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
-#include "Editor/IPipelineDb.h"
 #include "Editor/IPipeline.h"
+#include "Editor/IPipelineDb.h"
+#include "Editor/IPipelineDependencySet.h"
+#include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineAgent.h"
 #include "Editor/Pipeline/PipelineAgentsManager.h"
 #include "Editor/Pipeline/PipelineBuilderDistributed.h"
-#include "Editor/Pipeline/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineFactory.h"
 
 namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+uint32_t calculateGlobalHash(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
+{
+	uint32_t hash =
+		dependency->pipelineHash +
+		dependency->sourceAssetHash +
+		dependency->sourceDataHash +
+		dependency->filesHash;
+
+	for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+	{
+		const PipelineDependency* childDependency = dependencySet->get(*i);
+		T_ASSERT (childDependency);
+
+		if ((childDependency->flags & PdfUse) != 0)
+			hash += calculateGlobalHash(dependencySet, childDependency);
+	}
+
+	return hash;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineBuilderDistributed", PipelineBuilderDistributed, IPipelineBuilder)
 
@@ -35,25 +60,103 @@ PipelineBuilderDistributed::PipelineBuilderDistributed(
 {
 }
 
-bool PipelineBuilderDistributed::build(const RefArray< PipelineDependency >& dependencies, bool rebuild)
+bool PipelineBuilderDistributed::build(const IPipelineDependencySet* dependencySet, bool rebuild)
 {
-	// Check which dependencies are dirty; ie. need to be rebuilt.
-	for (RefArray< PipelineDependency >::const_iterator i = dependencies.begin(); i != dependencies.end(); ++i)
-		updateBuildReason(*i, rebuild);
+	std::vector< uint32_t > reasons;
+
+	// Determine build reasons.
+	uint32_t dependencyCount = dependencySet->size();
+	reasons.resize(dependencyCount, 0);
+
+	for (uint32_t i = 0; i < dependencyCount; ++i)
+	{
+		const PipelineDependency* dependency = dependencySet->get(i);
+		T_ASSERT (dependency);
+
+		if ((dependency->flags & PdfFailed) != 0)
+			continue;
+
+		// Have source asset been modified?
+		if (!rebuild)
+		{
+			uint32_t hash = calculateGlobalHash(dependencySet, dependency);
+
+			// Get hash entry from database.
+			IPipelineDb::DependencyHash previousDependencyHash;
+			if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
+			{
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
+				reasons[i] |= PbrSourceModified;
+			}
+			else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
+			{
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
+				reasons[i] |= PbrSourceModified;
+			}
+			else if (previousDependencyHash.hash != hash)
+			{
+				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
+				reasons[i] |= PbrSourceModified;
+			}
+		}
+		else
+			reasons[i] |= PbrForced;
+	}
+
+	for (uint32_t i = 0; i < dependencyCount; ++i)
+	{
+		const PipelineDependency* dependency = dependencySet->get(i);
+		T_ASSERT (dependency);
+
+		std::vector< uint32_t > children = dependency->children;
+		std::set< uint32_t > visited;
+
+		visited.insert(i);
+		while (!children.empty())
+		{
+			if (visited.find(children.back()) != visited.end())
+			{
+				children.pop_back();
+				continue;
+			}
+
+			const PipelineDependency* childDependency = dependencySet->get(children.back());
+			T_ASSERT (childDependency);
+
+			if ((childDependency->flags & PdfUse) == 0)
+			{
+				children.pop_back();
+				continue;
+			}
+
+			if ((reasons[children.back()] & PbrSourceModified) != 0)
+				reasons[i] |= PbrDependencyModified;
+
+			visited.insert(children.back());
+			children.pop_back();
+			children.insert(children.end(), childDependency->children.begin(), childDependency->children.end());
+		}
+	}
 
 	m_progress = 0;
-	m_progressEnd = dependencies.size();
+	m_progressEnd = dependencyCount;
 	m_succeeded = 0;
 	m_failed = 0;
 
-	RefArray< PipelineDependency > workSet = dependencies;
-	while (!workSet.empty())
+	for (uint32_t i = 0; i < dependencyCount; ++i)
 	{
-		if (performBuild(workSet.back()))
-			++m_succeeded;
+		if (reasons[i] != 0)
+		{
+			const PipelineDependency* dependency = dependencySet->get(i);
+			T_ASSERT (dependency);
+
+			if (performBuild(dependencySet, dependency))
+				++m_succeeded;
+			else
+				++m_failed;
+		}
 		else
-			++m_failed;
-		workSet.pop_back();
+			++m_succeeded;
 	}
 
 	log::info << L"Waiting for agents to complete build..." << Endl;
@@ -128,136 +231,63 @@ Ref< IPipelineReport > PipelineBuilderDistributed::createReport(const std::wstri
 	return 0;
 }
 
-void PipelineBuilderDistributed::updateBuildReason(PipelineDependency* dependency, bool rebuild)
-{
-	// Have source asset been modified?
-	if (!rebuild)
-	{
-		uint32_t dependencyHash = calculateGlobalHash(dependency);
-
-		// Get hash entry from database.
-		IPipelineDb::DependencyHash previousDependencyHash;
-		if (!m_pipelineDb->getDependency(dependency->outputGuid, previousDependencyHash))
-		{
-			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; not hashed" << Endl;
-			dependency->reason |= PbrSourceModified;
-		}
-		else if (previousDependencyHash.pipelineVersion != dependency->pipelineType->getVersion())
-		{
-			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; pipeline version differ" << Endl;
-			dependency->reason |= PbrSourceModified;
-		}
-		else if (previousDependencyHash.hash != dependencyHash)
-		{
-			log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
-			dependency->reason |= PbrSourceModified;
-		}
-	}
-	else
-		dependency->reason |= PbrForced;
-}
-
-bool PipelineBuilderDistributed::performBuild(PipelineDependency* dependency)
+bool PipelineBuilderDistributed::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
 {
 	IPipelineDb::DependencyHash currentDependencyHash;
 	bool result = true;
 
 	// Create hash entry.
 	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
-	currentDependencyHash.hash = calculateGlobalHash(dependency);
+	currentDependencyHash.hash = calculateGlobalHash(dependencySet, dependency);
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)
 	{
-		if ((dependency->reason & PbrSourceModified) != 0)
-			m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
+		m_pipelineDb->setDependency(dependency->outputGuid, currentDependencyHash);
 		return true;
 	}
 
-	// Check if we need to build asset; check the entire dependency chain (will update reason if dependency dirty).
-	if (needBuild(dependency))
-	{
-		Ref< PipelineAgent > agent = m_agentsManager->getIdleAgent();
-		if (!agent)
-			return false;
+	Ref< PipelineAgent > agent = m_agentsManager->getIdleAgent();
+	if (!agent)
+		return false;
 
-		log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << dependency->pipelineType->getName() << L") on agent " << agent->getDescription() << L"..." << Endl;
+	log::info << L"Building asset \"" << dependency->outputPath << L"\" (" << dependency->pipelineType->getName() << L") on agent " << agent->getDescription() << L"..." << Endl;
 
-		Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
-		T_ASSERT (pipeline);
+	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
+	T_ASSERT (pipeline);
 
-		int32_t agentIndex = m_agentsManager->getAgentIndex(agent);
+	int32_t agentIndex = m_agentsManager->getAgentIndex(agent);
 
-		if (m_listener)
-			m_listener->beginBuild(
-				agentIndex,
-				m_progress,
-				m_progressEnd,
-				dependency
-			);
-
-		result = agent->build(
-			dependency,
-			makeFunctor(
-				this,
-				&PipelineBuilderDistributed::agentBuildSucceeded,
-				dependency,
-				currentDependencyHash.pipelineVersion,
-				currentDependencyHash.hash,
-				agentIndex
-			),
-			makeFunctor(
-				this,
-				&PipelineBuilderDistributed::agentBuildFailed,
-				dependency,
-				agentIndex
-			)
+	if (m_listener)
+		m_listener->beginBuild(
+			agentIndex,
+			m_progress,
+			m_progressEnd,
+			dependency
 		);
-	}
+
+	result = agent->build(
+		dependency,
+		makeFunctor(
+			this,
+			&PipelineBuilderDistributed::agentBuildSucceeded,
+			dependency,
+			currentDependencyHash.pipelineVersion,
+			currentDependencyHash.hash,
+			agentIndex
+		),
+		makeFunctor(
+			this,
+			&PipelineBuilderDistributed::agentBuildFailed,
+			dependency,
+			agentIndex
+		)
+	);
 
 	return result;
 }
 
-uint32_t PipelineBuilderDistributed::calculateGlobalHash(const PipelineDependency* dependency) const
-{
-	uint32_t hash =
-		dependency->pipelineHash +
-		dependency->sourceAssetHash +
-		dependency->sourceDataHash +
-		dependency->filesHash;
-
-	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
-	{
-		if (((*i)->flags & PdfUse) != 0)
-			hash += calculateGlobalHash(*i);
-	}
-
-	return hash;
-}
-
-bool PipelineBuilderDistributed::needBuild(PipelineDependency* dependency) const
-{
-	if (dependency->reason != PbrNone)
-		return true;
-
-	for (RefArray< PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
-	{
-		// Skip non-use dependencies; non-used dependencies are not critical for building
-		// given dependency.
-		if (((*i)->flags & PdfUse) == 0)
-			continue;
-
-		if (needBuild(*i))
-		{
-			dependency->reason |= PbrDependencyModified;
-			return true;
-		}
-	}
-
-	return false;
-}
-
-void PipelineBuilderDistributed::agentBuildSucceeded(PipelineDependency* dependency, uint32_t pipelineVersion, uint32_t hash, int32_t agentIndex)
+void PipelineBuilderDistributed::agentBuildSucceeded(const PipelineDependency* dependency, uint32_t pipelineVersion, uint32_t hash, int32_t agentIndex)
 {
 	IPipelineDb::DependencyHash dependencyHash;
 	dependencyHash.pipelineVersion = pipelineVersion;
@@ -276,7 +306,7 @@ void PipelineBuilderDistributed::agentBuildSucceeded(PipelineDependency* depende
 	Atomic::increment(m_progress);
 }
 
-void PipelineBuilderDistributed::agentBuildFailed(PipelineDependency* dependency, int32_t agentIndex)
+void PipelineBuilderDistributed::agentBuildFailed(const PipelineDependency* dependency, int32_t agentIndex)
 {
 	if (m_listener)
 		m_listener->endBuild(

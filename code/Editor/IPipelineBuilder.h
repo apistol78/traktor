@@ -32,6 +32,7 @@ class Instance;
 	{
 
 class IPipelineReport;
+class IPipelineDependencySet;
 class PipelineDependency;
 
 /*! \brief Pipeline builder interface.
@@ -69,7 +70,7 @@ public:
 		) const = 0;
 	};
 
-	virtual bool build(const RefArray< PipelineDependency >& dependencies, bool rebuild) = 0;
+	virtual bool build(const IPipelineDependencySet* dependencySet, bool rebuild) = 0;
 
 	virtual Ref< ISerializable > buildOutput(const ISerializable* sourceAsset) = 0;
 

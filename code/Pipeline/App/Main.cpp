@@ -31,6 +31,7 @@
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineDb.h"
+#include "Editor/Pipeline/PipelineDependencySet.h"
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
@@ -148,9 +149,9 @@ BOOL consoleCtrlHandler(DWORD fdwCtrlType)
 
 #endif
 
-void threadBuild(editor::PipelineBuilder& pipelineBuilder, const RefArray< editor::PipelineDependency >& dependencies, bool rebuild)
+void threadBuild(editor::PipelineBuilder& pipelineBuilder, const editor::PipelineDependencySet* dependencySet, bool rebuild)
 {
-	g_success = pipelineBuilder.build(dependencies, rebuild);
+	g_success = pipelineBuilder.build(dependencySet, rebuild);
 }
 
 int main(int argc, const char** argv)
@@ -270,6 +271,7 @@ int main(int argc, const char** argv)
 
 	// Create pipeline factory.
 	editor::PipelineFactory pipelineFactory(settings);
+	editor::PipelineDependencySet pipelineDependencySet;
 
 	// Collect dependencies.
 	Ref< editor::IPipelineDepends > pipelineDepends;
@@ -278,7 +280,7 @@ int main(int argc, const char** argv)
 		pipelineDepends = new editor::PipelineDependsParallel(
 			&pipelineFactory,
 			sourceDatabase,
-			0,
+			&pipelineDependencySet,
 			0
 		);
 	}
@@ -286,8 +288,8 @@ int main(int argc, const char** argv)
 	{
 		pipelineDepends = new editor::PipelineDependsIncremental(
 			&pipelineFactory,
-			0,
-			sourceDatabase
+			sourceDatabase,
+			&pipelineDependencySet
 		);
 	}
 
@@ -327,9 +329,6 @@ int main(int argc, const char** argv)
 
 	traktor::log::info << DecreaseIndent;
 
-	RefArray< editor::PipelineDependency > dependencies;
-	pipelineDepends->getDependencies(dependencies);
-
 	AutoPtr< StatusListener > statusListener;
 	if (cmdLine.hasOption('p', L"progress"))
 		statusListener.reset(new StatusListener());
@@ -347,14 +346,14 @@ int main(int argc, const char** argv)
 
 	bool rebuild = cmdLine.hasOption('f', L"force");
 	if (rebuild)
-		traktor::log::info << L"Rebuilding " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
+		traktor::log::info << L"Rebuilding " << pipelineDependencySet.size() << L" asset(s)..." << Endl;
 	else
-		traktor::log::info << L"Building " << uint32_t(dependencies.size()) << L" asset(s)..." << Endl;
+		traktor::log::info << L"Building " << pipelineDependencySet.size() << L" asset(s)..." << Endl;
 
 	traktor::log::info << IncreaseIndent;
 
 	Thread* bt = ThreadManager::getInstance().create(
-		makeStaticFunctor< editor::PipelineBuilder&, const RefArray< editor::PipelineDependency >&, bool >(&threadBuild, pipelineBuilder, dependencies, rebuild),
+		makeStaticFunctor< editor::PipelineBuilder&, const editor::PipelineDependencySet*, bool >(&threadBuild, pipelineBuilder, &pipelineDependencySet, rebuild),
 		L"Build thread"
 	);
 

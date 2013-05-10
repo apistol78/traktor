@@ -52,6 +52,7 @@ bool SkeletonPipeline::buildDependencies(
 
 bool SkeletonPipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,

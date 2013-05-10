@@ -3,8 +3,9 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDependencySet.h"
 #include "Editor/IPipelineDepends.h"
-#include "Editor/Pipeline/PipelineDependency.h"
+#include "Editor/PipelineDependency.h"
 #include "Resource/ResourceBundle.h"
 #include "Resource/Editor/ResourceBundleAsset.h"
 #include "Resource/Editor/ResourceBundlePipeline.h"
@@ -16,20 +17,23 @@ namespace traktor
 		namespace
 		{
 
-void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::PipelineDependency* dependency, std::vector< std::pair< const TypeInfo*, Guid > >& outResources)
+void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::IPipelineDependencySet* dependencySet, const editor::PipelineDependency* dependency, std::vector< std::pair< const TypeInfo*, Guid > >& outResources)
 {
-	for (RefArray< editor::PipelineDependency >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
+	for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
-		collectResources(pipelineBuilder, *i, outResources);
-		if (((*i)->flags & editor::PdfResource) != 0)
+		const editor::PipelineDependency* childDependency = dependencySet->get(*i);
+		T_ASSERT (childDependency);
+
+		collectResources(pipelineBuilder, dependencySet, childDependency, outResources);
+		if ((childDependency->flags & editor::PdfResource) != 0)
 		{
-			Ref< db::Instance > assetInstance = pipelineBuilder->getOutputDatabase()->getInstance((*i)->outputGuid);
+			Ref< db::Instance > assetInstance = pipelineBuilder->getOutputDatabase()->getInstance(childDependency->outputGuid);
 			if (!assetInstance)
 				continue;
 
 			outResources.push_back(std::make_pair(
 				assetInstance->getPrimaryType(),
-				(*i)->outputGuid
+				childDependency->outputGuid
 			));
 		}
 	}
@@ -72,6 +76,7 @@ bool ResourceBundlePipeline::buildDependencies(
 
 bool ResourceBundlePipeline::buildOutput(
 	editor::IPipelineBuilder* pipelineBuilder,
+	const editor::IPipelineDependencySet* dependencySet,
 	const editor::PipelineDependency* dependency,
 	const db::Instance* sourceInstance,
 	const ISerializable* sourceAsset,
@@ -87,7 +92,7 @@ bool ResourceBundlePipeline::buildOutput(
 
 	// Collect resources, should be in depth-first to reduce
 	// change of inter-dependencies.
-	collectResources(pipelineBuilder, dependency, resources);
+	collectResources(pipelineBuilder, dependencySet, dependency, resources);
 
 	log::info << L"Resource bundle; preload resources:" << Endl;
 	log::info << IncreaseIndent;
