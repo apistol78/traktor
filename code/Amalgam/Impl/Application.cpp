@@ -102,7 +102,7 @@ bool Application::create(
 
 	// Load dependent modules.
 #if !defined(T_STATIC)
-	std::set< std::wstring > modules = settings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
+	std::set< std::wstring > modules = defaultSettings->getProperty< PropertyStringSet >(L"Amalgam.Modules");
 	for (std::set< std::wstring >::const_iterator i = modules.begin(); i != modules.end(); ++i)
 	{
 		Ref< Library > library = new Library();

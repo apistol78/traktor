@@ -14,7 +14,7 @@
 namespace traktor
 {
 
-class Job;
+class Thread;
 
 	namespace flash
 	{
@@ -38,11 +38,11 @@ public:
 
 private:
 	ActionContext* m_context;
-	Ref< Job > m_job;
+	Thread* m_thread;
 
 	void onFrame(CallArgs& ca);
 
-	void jobLoad(std::wstring url_);
+	void threadLoad(std::wstring url_);
 };
 
 	}

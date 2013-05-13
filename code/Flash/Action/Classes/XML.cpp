@@ -1,10 +1,10 @@
 #include "Core/RefArray.h"
 #include "Core/Functor/Functor.h"
+#include "Core/Io/IStream.h"
 #include "Core/Misc/String.h"
-#include "Core/Thread/Job.h"
-#include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Classes/XML.h"
@@ -23,21 +23,21 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.XML", XML, XMLNode)
 XML::XML(ActionContext* context)
 :	XMLNode("XML", XMLNode::NtElement, L"", L"")
 ,	m_context(context)
+,	m_thread(0)
 {
 }
 
 XML::~XML()
 {
-	if (m_job)
+	if (m_thread)
 	{
 		ActionObject* self = getAsObject(m_context);
 		T_ASSERT (self);
 
 		m_context->removeFrameListener(self);
 
-		m_job->stop();
-		m_job->wait(5000);
-		m_job = 0;
+		ThreadPool::getInstance().stop(m_thread);
+		m_thread = 0;
 	}
 }
 
@@ -46,11 +46,11 @@ bool XML::load(const std::wstring& url_)
 	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
-	if (m_job)
+	if (m_thread)
 		return false;
 
-	m_job = JobManager::getInstance().add(makeFunctor< XML, std::wstring >(this, &XML::jobLoad, url_));
-	if (!m_job)
+	m_thread = ThreadPool::getInstance().spawn(makeFunctor< XML, std::wstring >(this, &XML::threadLoad, url_));
+	if (!m_thread)
 		return false;
 
 	self->setMember("onFrame", ActionValue(createNativeFunction(m_context, this, &XML::onFrame)));
@@ -64,9 +64,9 @@ void XML::onFrame(CallArgs& ca)
 	ActionObject* self = getAsObject(m_context);
 	T_ASSERT (self);
 
-	if (m_job->wait(0))
+	if (m_thread->wait(0))
 	{
-		m_job = 0;
+		m_thread = 0;
 
 		m_context->removeFrameListener(self);
 
@@ -80,26 +80,32 @@ void XML::onFrame(CallArgs& ca)
 	}
 }
 
-void XML::jobLoad(std::wstring url_)
+void XML::threadLoad(std::wstring url_)
 {
 	net::Url url(url_);
-	if (!url.valid() || m_job->stopped())
+	if (!url.valid() || m_thread->stopped())
 		return;
 
 	Ref< net::UrlConnection > connection = net::UrlConnection::open(url);
-	if (!connection || m_job->stopped())
+	if (!connection || m_thread->stopped())
 		return;
 
 	IStream* stream = connection->getStream();
-	if (!stream || m_job->stopped())
+	if (!stream || m_thread->stopped())
 		return;
 
 	RefArray< XMLNode > elementStack;
 	elementStack.push_back(this);
 
 	xml::XmlPullParser parser(stream);
-	while (!m_job->stopped())
+	while (!m_thread->stopped())
 	{
+		if (stream->available() <= 0)
+		{
+			m_thread->sleep(100);
+			continue;
+		}
+
 		xml::XmlPullParser::EventType eventType = parser.next();
 
 		if (eventType == xml::XmlPullParser::EtEndDocument)
