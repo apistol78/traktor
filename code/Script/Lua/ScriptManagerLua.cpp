@@ -5,10 +5,10 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Thread/Acquire.h"
 #include "Script/Boxes.h"
-#include "Script/Delegate.h"
 #include "Script/IScriptClass.h"
 #include "Script/Lua/ScriptContextLua.h"
 #include "Script/Lua/ScriptDebuggerLua.h"
+#include "Script/Lua/ScriptDelegateLua.h"
 #include "Script/Lua/ScriptManagerLua.h"
 #include "Script/Lua/ScriptResourceLua.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
@@ -59,7 +59,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.script.TableContainerLua", TableContainerLua, O
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptManagerLua", 0, ScriptManagerLua, IScriptManager)
 
 ScriptManagerLua::ScriptManagerLua()
-:	m_currentContext(0)
+:	m_lockContext(0)
 ,	m_collectStepFrequency(10.0)
 ,	m_collectSteps(-1)
 ,	m_totalMemoryUse(0)
@@ -78,7 +78,6 @@ ScriptManagerLua::ScriptManagerLua()
 	lua_register(m_luaState, "print", luaPrint);
 
 	registerBoxClasses(this);
-	registerDelegateClasses(this);
 
 	// Create table containing weak references to C++ object wrappers.
 	{
@@ -292,13 +291,9 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	);
 
 	// Call script.
-	m_currentContext = context;
-
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
 	lua_setfenv(m_luaState, -2);
 	lua_call(m_luaState, 0, 0);
-
-	m_currentContext = 0;
 
 	m_contexts.push_back(context);
 	return context;
@@ -350,12 +345,11 @@ void ScriptManagerLua::destroyContext(ScriptContextLua* context)
 void ScriptManagerLua::lock(ScriptContextLua* context)
 {
 	m_lock.wait();
-	m_currentContext = context;
+	m_lockContext = context;
 }
 
 void ScriptManagerLua::unlock()
 {
-	m_currentContext = 0;
 	m_lock.release();
 }
 
@@ -369,11 +363,17 @@ void ScriptManagerLua::pushObject(Object* object)
 		return;
 	}
 
-	// If this is a wrapped LUA table then unwrap table and push as is.
+	// If this is a wrapped LUA table or function then unwrap and push as is.
 	if (&type_of(object) == &type_of< TableContainerLua >())
 	{
 		TableContainerLua* tableContainer = checked_type_cast< TableContainerLua*, false >(object);
 		tableContainer->push();
+		return;
+	}
+	else if (&type_of(object) == &type_of< ScriptDelegateLua >())
+	{
+		ScriptDelegateLua* delegateContainer = checked_type_cast< ScriptDelegateLua*, false >(object);
+		delegateContainer->push();
 		return;
 	}
 
@@ -452,6 +452,12 @@ Any ScriptManagerLua::toAny(int32_t index)
 		Object* object = *reinterpret_cast< Object** >(lua_touserdata(m_luaState, index));
 		if (object)
 			return Any::fromObject(object);
+	}
+	if (lua_isfunction(m_luaState, index))
+	{
+		// Box LUA function into C++ container.
+		lua_pushvalue(m_luaState, index);
+		return Any::fromObject(new ScriptDelegateLua(this, m_lockContext, m_luaState));
 	}
 	if (lua_istable(m_luaState, index))
 	{
@@ -543,7 +549,6 @@ int ScriptManagerLua::classCallConstructor(lua_State* luaState)
 		argv[i - 2] = manager->toAny(i);
 
 	IScriptClass::InvokeParam param;
-	param.context = manager->m_currentContext;
 	param.object = 0;
 
 	Any returnValue = Any::fromObject(scriptClass->construct(param, top - 1, argv));
@@ -585,7 +590,6 @@ int ScriptManagerLua::classCallMethod(lua_State* luaState)
 		argv[i - 2] = manager->toAny(i);
 
 	IScriptClass::InvokeParam param;
-	param.context = manager->m_currentContext;
 	param.object = object;
 
 #if defined(T_SCRIPT_PROFILE_CALLS)
@@ -667,7 +671,6 @@ int ScriptManagerLua::classCallUnknownMethod(lua_State* luaState)
 		argv[i - 2] = manager->toAny(i);
 
 	IScriptClass::InvokeParam param;
-	param.context = manager->m_currentContext;
 	param.object = object;
 
 #if defined(T_SCRIPT_PROFILE_CALLS)

@@ -101,6 +101,8 @@ public:
 
 	void setControllerEnable(bool controllerEnable);
 
+	void resetController();
+
 	world::PostProcess* getPostProcess() const;
 
 	bool worldToView(const Vector4& worldPosition, Vector4& outViewPosition) const;
@@ -129,6 +131,7 @@ private:
 	Ref< world::GroupEntity > m_dynamicEntities;
 	float m_alternateTime;
 	float m_deltaTime;
+	float m_controllerTime;
 	float m_fieldOfView;
 	bool m_controllerEnable;
 

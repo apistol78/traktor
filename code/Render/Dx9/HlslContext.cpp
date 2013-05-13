@@ -83,6 +83,83 @@ void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, Hlsl
 	m_currentShader->associateVariable(outputPin, variable);
 }
 
+bool HlslContext::isPinsConnected(const OutputPin* outputPin, const InputPin* inputPin) const
+{
+	const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
+	if (!sourceOutputPin)
+		return false;
+
+	std::set< const OutputPin* > visitedOutputPins;
+	visitedOutputPins.insert(sourceOutputPin);
+
+	std::vector< const OutputPin* > outputPins;
+	outputPins.push_back(sourceOutputPin);
+
+	while (!outputPins.empty())
+	{
+		const OutputPin* sourceOutputPin = outputPins.back(); outputPins.pop_back();
+		T_ASSERT (sourceOutputPin);
+
+		if (sourceOutputPin == outputPin)
+			return true;
+
+		const Node* node = sourceOutputPin->getNode();
+		for (int32_t i = 0; i < node->getInputPinCount(); ++i)
+		{
+			const InputPin* nodeInputPin = node->getInputPin(i);
+			T_ASSERT (nodeInputPin);
+
+			const OutputPin* nodeSourceOutputPin = m_shaderGraph->findSourcePin(nodeInputPin);
+			if (
+				nodeSourceOutputPin &&
+				visitedOutputPins.find(nodeSourceOutputPin) == visitedOutputPins.end()
+				)
+			{
+				outputPins.push_back(nodeSourceOutputPin);
+				visitedOutputPins.insert(nodeSourceOutputPin);
+			}
+		}
+	}
+
+	return false;
+}
+
+void HlslContext::findExternalInputs(Node* node, const std::wstring& inputPinName, const std::wstring& dependentOutputPinName, std::vector< const InputPin* >& outInputPins) const
+{
+	const OutputPin* dependentOutputPin = node->findOutputPin(dependentOutputPinName);
+	T_ASSERT (dependentOutputPin);
+
+	std::set< const OutputPin* > visitedOutputPins;
+	visitedOutputPins.insert(dependentOutputPin);
+
+	std::vector< const InputPin* > inputPins;
+	inputPins.push_back(node->findInputPin(inputPinName));
+
+	while (!inputPins.empty())
+	{
+		const InputPin* inputPin = inputPins.back(); inputPins.pop_back();
+		T_ASSERT (inputPin);
+
+		if (!isPinsConnected(dependentOutputPin, inputPin))
+			outInputPins.push_back(inputPin);
+		else
+		{
+			const OutputPin* outputPin = m_shaderGraph->findSourcePin(inputPin);
+			if (
+				!outputPin ||
+				visitedOutputPins.find(outputPin) != visitedOutputPins.end()
+				)
+				continue;
+
+			visitedOutputPins.insert(outputPin);
+
+			const Node* node = outputPin->getNode();
+			for (int32_t i = 0; i < node->getInputPinCount(); ++i)
+				inputPins.push_back(node->getInputPin(i));
+		}
+	}
+}
+
 void HlslContext::enterVertex()
 {
 	m_currentShader = &m_vertexShader;

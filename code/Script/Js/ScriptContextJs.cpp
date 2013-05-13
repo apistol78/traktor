@@ -322,7 +322,6 @@ v8::Handle< v8::Value > ScriptContextJs::invokeConstructor(const v8::Arguments& 
 			argv[i] = constructorData->scriptContext->fromValue(arguments[i]);
 
 		IScriptClass::InvokeParam param;
-		param.context = constructorData->scriptContext;
 		param.object = 0;
 
 		Ref< Object > object = constructorData->scriptClass->construct(param, arguments.Length(), argv);
@@ -356,7 +355,6 @@ v8::Handle< v8::Value > ScriptContextJs::invokeMethod(const v8::Arguments& argum
 		argv[i] = functionData->scriptContext->fromValue(arguments[i]);
 
 	IScriptClass::InvokeParam param;
-	param.context = functionData->scriptContext;
 	param.object = object;
 
 	Any result = functionData->scriptClass->invoke(

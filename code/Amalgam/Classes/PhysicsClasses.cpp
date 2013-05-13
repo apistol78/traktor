@@ -10,7 +10,7 @@
 #include "Physics/World/RigidEntity.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
-#include "Script/Delegate.h"
+#include "Script/IScriptDelegate.h"
 #include "Script/IScriptManager.h"
 
 namespace traktor
@@ -61,7 +61,7 @@ class CollisionListener : public physics::CollisionListener
 	T_RTTI_CLASS;
 
 public:
-	CollisionListener(script::Delegate* delegate)
+	CollisionListener(script::IScriptDelegate* delegate)
 	:	m_delegate(delegate)
 	{
 	}
@@ -75,11 +75,11 @@ public:
 			script::Any::fromObject(new CollisionContact(collisionInfo.contacts))
 		};
 		if (m_delegate)
-			m_delegate->invoke(sizeof_array(argv), argv);
+			m_delegate->call(sizeof_array(argv), argv);
 	}
 
 private:
-	Ref< script::Delegate > m_delegate;
+	Ref< script::IScriptDelegate > m_delegate;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.CollisionListener", CollisionListener, physics::CollisionListener)
@@ -307,7 +307,7 @@ void registerPhysicsClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classCollisionListener);
 
 	Ref< script::AutoScriptClass< CollisionListener > > classCollisionListenerDelegate = new script::AutoScriptClass< CollisionListener >();
-	classCollisionListenerDelegate->addConstructor< script::Delegate* >();
+	classCollisionListenerDelegate->addConstructor< script::IScriptDelegate* >();
 	scriptManager->registerClass(classCollisionListenerDelegate);
 }
 
