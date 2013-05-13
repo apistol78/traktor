@@ -33,8 +33,7 @@ class T_DLLCLASS IScriptClass : public Object
 public:
 	struct InvokeParam
 	{
-		IScriptContext* context;	//< Caller context.
-		Object* object;				//< Current object.
+		Object* object; //< Current object.
 	};
 
 	/*! \brief Get exported native type. */

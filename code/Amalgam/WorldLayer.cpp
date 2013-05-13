@@ -46,6 +46,7 @@ WorldLayer::WorldLayer(
 ,	m_dynamicEntities(new world::GroupEntity())
 ,	m_alternateTime(0.0f)
 ,	m_deltaTime(0.0f)
+,	m_controllerTime(-1.0f)
 ,	m_fieldOfView(70.0f)
 ,	m_controllerEnable(true)
 {
@@ -104,22 +105,35 @@ void WorldLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 	if (!m_worldRenderer)
 		return;
 
-	world::UpdateParams up;
-	up.totalTime = info.getSimulationTime();
-	up.deltaTime = info.getSimulationDeltaTime();
-	up.alternateTime = m_alternateTime;
-
 	// Update scene controller.
-	m_scene->update(up, m_controllerEnable, false);
+	if (m_controllerEnable)
+	{
+		if (m_controllerTime < 0.0f)
+			m_controllerTime = info.getSimulationTime();
 
-	// Update all entities; calling manually because we have exclusive control
-	// of dynamic entities and an explicit render root group.
-	m_renderGroup->update(up);
+		world::UpdateParams up;
+		up.totalTime = info.getSimulationTime() - m_controllerTime;
+		up.deltaTime = info.getSimulationDeltaTime();
+		up.alternateTime = m_alternateTime;
 
-	// Update entity events.
-	world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
-	if (eventManager)
-		eventManager->update(up);
+		m_scene->update(up, true, false);
+	}
+
+	{
+		world::UpdateParams up;
+		up.totalTime = info.getSimulationTime();
+		up.deltaTime = info.getSimulationDeltaTime();
+		up.alternateTime = m_alternateTime;
+
+		// Update all entities; calling manually because we have exclusive control
+		// of dynamic entities and an explicit render root group.
+		m_renderGroup->update(up);
+
+		// Update entity events.
+		world::IEntityEventManager* eventManager = m_environment->getWorld()->getEntityEventManager();
+		if (eventManager)
+			eventManager->update(up);
+	}
 
 	// In case not explicitly set we update the alternative time also.
 	m_alternateTime += info.getSimulationDeltaTime();
@@ -288,6 +302,11 @@ void WorldLayer::setControllerEnable(bool controllerEnable)
 world::PostProcess* WorldLayer::getPostProcess() const
 {
 	return m_worldRenderer->getVisualPostProcess();
+}
+
+void WorldLayer::resetController()
+{
+	m_controllerTime = -1.0f;
 }
 
 bool WorldLayer::worldToView(const Vector4& worldPosition, Vector4& outViewPosition) const

@@ -254,6 +254,7 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classWorldLayer->addMethod("removeEntity", &WorldLayer::removeEntity);
 	classWorldLayer->addMethod("getEntitySchema", &WorldLayer::getEntitySchema);
 	classWorldLayer->addMethod("setControllerEnable", &WorldLayer::setControllerEnable);
+	classWorldLayer->addMethod("resetController", &WorldLayer::resetController);
 	classWorldLayer->addMethod("getPostProcess", &WorldLayer::getPostProcess);
 	classWorldLayer->addMethod("worldToView", &WorldLayer_worldToView);
 	classWorldLayer->addMethod("viewToWorld", &WorldLayer_viewToWorld);

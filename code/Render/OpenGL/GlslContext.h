@@ -37,6 +37,10 @@ public:
 
 	void emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable);
 
+	bool isPinsConnected(const OutputPin* outputPin, const InputPin* inputPin) const;
+
+	void findExternalInputs(Node* node, const std::wstring& inputPinName, const std::wstring& dependentOutputPinName, std::vector< const InputPin* >& outInputPins) const;
+
 	void enterVertex();
 
 	void enterFragment();

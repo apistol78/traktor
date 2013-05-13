@@ -198,7 +198,7 @@ bool ScriptDebuggerLua::actionStepOver()
 
 void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 {
-	ScriptContextLua* currentContext = m_scriptManager->m_currentContext;
+	ScriptContextLua* currentContext = m_scriptManager->m_lockContext;
 	if (!currentContext)
 		return;
 
@@ -335,7 +335,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 
 void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
 {
-	ScriptContextLua* currentContext = m_scriptManager->m_currentContext;
+	ScriptContextLua* currentContext = m_scriptManager->m_lockContext;
 	T_ASSERT (currentContext);
 
 	lua_Debug ar;

@@ -53,6 +53,7 @@ public:
 private:
 	friend class ScriptContextLua;
 	friend class ScriptDebuggerLua;
+	friend class ScriptDelegateLua;
 
 	struct RegisteredClass
 	{
@@ -63,10 +64,10 @@ private:
 	lua_State* m_luaState;
 	int32_t m_objectTableRef;
 	mutable Semaphore m_lock;
-	ScriptContextLua* m_currentContext;
 	std::vector< RegisteredClass > m_classRegistry;
 	SmallMap< const TypeInfo*, uint32_t > m_classRegistryLookup;
 	RefArray< ScriptContextLua > m_contexts;
+	ScriptContextLua* m_lockContext;
 	Ref< ScriptDebuggerLua > m_debugger;
 	Timer m_timer;
 	double m_collectStepFrequency;

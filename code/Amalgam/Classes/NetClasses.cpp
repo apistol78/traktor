@@ -10,7 +10,7 @@
 #include "Net/Replication/State/StateTemplate.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
-#include "Script/Delegate.h"
+#include "Script/IScriptDelegate.h"
 #include "Script/IScriptManager.h"
 
 namespace traktor
@@ -25,7 +25,7 @@ class ReplicatorListener : public net::Replicator::IListener
 	T_RTTI_CLASS;
 
 public:
-	ReplicatorListener(script::Delegate* delegate)
+	ReplicatorListener(script::IScriptDelegate* delegate)
 	:	m_delegate(delegate)
 	{
 	}
@@ -41,11 +41,11 @@ public:
 			script::CastAny< Object* >::set((Object*)eventObject)
 		};
 		if (m_delegate)
-			m_delegate->invoke(sizeof_array(argv), argv);
+			m_delegate->call(sizeof_array(argv), argv);
 	}
 
 private:
-	Ref< script::Delegate > m_delegate;
+	Ref< script::IScriptDelegate > m_delegate;
 };
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.ReplicatorListener", ReplicatorListener, net::Replicator::IListener)
@@ -90,7 +90,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classReplicatorIListener);
 
 	Ref< script::AutoScriptClass< ReplicatorListener > > classReplicatorListener = new script::AutoScriptClass< ReplicatorListener >();
-	classReplicatorListener->addConstructor< script::Delegate* >();
+	classReplicatorListener->addConstructor< script::IScriptDelegate* >();
 	scriptManager->registerClass(classReplicatorListener);
 
 	Ref< script::AutoScriptClass< net::Replicator > > classReplicator = new script::AutoScriptClass< net::Replicator >();

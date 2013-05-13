@@ -499,6 +499,14 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT (out);
 
+	// Find non-dependent, external, input pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const InputPin* > inputPins;
+	cx.findExternalInputs(node, L"Input", L"N", inputPins);
+	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
+		cx.emitInput(*i);
+
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
 	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
@@ -1377,6 +1385,14 @@ bool emitSum(GlslContext& cx, Sum* node)
 	// the type of the input branch.
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT (out);
+
+	// Find non-dependent, external, input pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const InputPin* > inputPins;
+	cx.findExternalInputs(node, L"Input", L"N", inputPins);
+	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
+		cx.emitInput(*i);
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
