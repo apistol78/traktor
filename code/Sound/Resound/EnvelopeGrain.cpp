@@ -31,6 +31,9 @@ struct EnvelopeGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	{
 		if (m_id == id)
 			m_parameter = parameter;
+
+		for (RefArray< ISoundBufferCursor >::iterator i = m_cursors.begin(); i != m_cursors.end(); ++i)
+			(*i)->setParameter(id, parameter);
 	}
 
 	virtual void disableRepeat()

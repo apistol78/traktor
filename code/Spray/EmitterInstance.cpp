@@ -35,7 +35,7 @@ const uint32_t c_maxEmitPerUpdate = 6;
 const uint32_t c_maxEmitSingleShot = 500;
 #else
 const uint32_t c_maxEmitPerUpdate = 16;
-const uint32_t c_maxEmitSingleShot = 500;
+const uint32_t c_maxEmitSingleShot = 400;
 #endif
 
 const uint32_t c_maxAlive = c_maxEmitSingleShot;
@@ -123,14 +123,14 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		if (source)
 		{
 			uint32_t avail = m_points.capacity() - size;
-			Vector4 dm = T.translation() - m_position;
+			Vector4 dm = (T.translation() - m_position).xyz0();
 
 			if (!singleShot)
 			{
 				float emitVelocity = context.deltaTime > FUZZY_EPSILON ? source->getVelocityRate() * (dm.length() / context.deltaTime) : 0.0f;
 				float emitConstant = source->getConstantRate() * context.deltaTime;
 				float emit = emitVelocity + emitConstant + m_emitFraction;
-				uint32_t emitCountFrame = uint32_t(emit + 0.5f);
+				uint32_t emitCountFrame = uint32_t(emit);
 
 				// Emit in multiple frames; estimate number of particles to emit.
 				if (emitCountFrame > 0)

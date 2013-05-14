@@ -178,6 +178,7 @@ int32_t ScriptContextLua::runtimeError(lua_State* luaState)
 	T_ASSERT (this_);
 	T_ASSERT (this_->m_scriptManager);
 	log::error << L"LUA RUNTIME ERROR; Debugger halted if attached." << Endl;
+	dumpStack(luaState, log::error);
 	this_->m_scriptManager->breakDebugger(luaState);
 	return 0;
 }

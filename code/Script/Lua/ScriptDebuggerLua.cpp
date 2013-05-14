@@ -344,21 +344,25 @@ void ScriptDebuggerLua::captureCallStack(lua_State* L, CallStack& outCallStack)
 	for (int level = 0; lua_getstack(L, level, &ar); ++level)
 	{
 		lua_getinfo(L, "Snlu", &ar);
-		T_ASSERT (ar.currentline >= 1);
 
 		Guid currentId;
 		std::wstring currentName;
-		int32_t currentLine = ar.currentline - 1;
+		int32_t currentLine = 0;
 
-		const source_map_t& map = currentContext->m_map;
-		for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
+		if (ar.currentline >= 1)
 		{
-			if (currentLine >= i->line)
+			currentLine = ar.currentline - 1;
+
+			const source_map_t& map = currentContext->m_map;
+			for (source_map_t::const_reverse_iterator i = map.rbegin(); i != map.rend(); ++i)
 			{
-				currentId = i->id;
-				currentName = i->name;
-				currentLine = currentLine - i->line;
-				break;
+				if (currentLine >= i->line)
+				{
+					currentId = i->id;
+					currentName = i->name;
+					currentLine = currentLine - i->line;
+					break;
+				}
 			}
 		}
 
