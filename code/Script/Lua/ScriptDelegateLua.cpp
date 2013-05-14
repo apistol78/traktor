@@ -44,6 +44,8 @@ Any ScriptDelegateLua::call(int32_t argc, const Any* argv)
 		int32_t err = lua_pcall(m_luaState, argc, 1, 0);
 		if (err == 0)
 			returnValue = m_manager->toAny(-1);
+
+		lua_pop(m_luaState, 1);
 	}
 	m_manager->unlock();
 	return returnValue;

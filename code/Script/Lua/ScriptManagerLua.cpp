@@ -108,6 +108,8 @@ void ScriptManagerLua::destroy()
 	if (!m_luaState)
 		return;
 
+	m_debugger = 0;
+
 	while (!m_contexts.empty())
 		m_contexts.back()->destroy();
 
@@ -186,7 +188,7 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 		}
 	}
 
-	if (exportedAsRoot && scriptClass->haveUnknown())
+	if (/*exportedAsRoot && */scriptClass->haveUnknown())
 	{
 		lua_pushlightuserdata(m_luaState, (void*)this);
 		lua_pushlightuserdata(m_luaState, (void*)scriptClass);

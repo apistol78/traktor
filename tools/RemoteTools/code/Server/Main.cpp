@@ -13,6 +13,7 @@
 #include <Core/Settings/PropertyStringArray.h>
 #include <Core/System/IProcess.h>
 #include <Core/System/OS.h>
+#include <Core/Thread/Mutex.h>
 #include <Core/Thread/Thread.h>
 #include <Core/Thread/ThreadManager.h>
 #include <Net/Network.h>
@@ -59,6 +60,7 @@ std::wstring g_scratchPath;
 std::map< std::wstring, uint32_t > g_fileHashes;
 
 #if defined(_WIN32)
+Mutex g_globalMutex(Guid(L"{DDB3D52F-8893-4f83-9FCD-D8A73211CC96}"));
 Ref< ui::PopupMenu > g_popupMenu;
 Ref< ui::NotificationIcon > g_notificationIcon;
 
@@ -287,6 +289,11 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 {
 	std::vector< std::wstring > argv;
 
+	// If global mutex already was created then
+	// the server is already running.
+	if (g_globalMutex.existing())
+		return 0;
+
 	TCHAR szFilename[MAX_PATH] = _T("");
 	GetModuleFileName(NULL, szFilename, sizeof(szFilename));
 	argv.push_back(tstows(szFilename));
@@ -304,7 +311,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	T_FORCE_LINK_REF(PropertyInteger);
 
-	traktor::log::info << L"Traktor RemoteServer 1.8" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.8.1" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -324,7 +331,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.8 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.8.1 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
 #endif
 

@@ -20,6 +20,7 @@
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
+#include "Ui/Custom/Sequencer/Track.h"
 #include "World/EntityData.h"
 
 // Resources
@@ -245,6 +246,8 @@ void TheaterControllerEditor::updateSequencer()
 		Ref< ui::custom::Sequence > trackSequence = new ui::custom::Sequence((*i)->getEntityData()->getName());
 		trackSequence->setData(L"TRACK", *i);
 
+		trackSequence->addKey(new ui::custom::Track(100, 2000));
+
 		TransformPath& path = (*i)->getPath();
 		AlignedVector< TransformPath::Key >& keys = path.getKeys();
 
@@ -317,7 +320,7 @@ void TheaterControllerEditor::captureEntities()
 		}
 	}
 
-	m_context->buildEntities();
+	m_context->buildController();
 }
 
 void TheaterControllerEditor::deleteSelectedKey()
@@ -351,7 +354,7 @@ void TheaterControllerEditor::deleteSelectedKey()
 		}
 	}
 
-	m_context->buildEntities();
+	m_context->buildController();
 }
 
 void TheaterControllerEditor::setLookAtEntity()
@@ -379,7 +382,7 @@ void TheaterControllerEditor::setLookAtEntity()
 			trackData->setLookAtEntityData(0);
 	}
 
-	m_context->buildEntities();
+	m_context->buildController();
 }
 
 void TheaterControllerEditor::easeVelocity()
@@ -432,7 +435,7 @@ void TheaterControllerEditor::easeVelocity()
 
 	updateSequencer();
 
-	m_context->buildEntities();
+	m_context->buildController();
 }
 
 void TheaterControllerEditor::gotoPreviousKey()
@@ -507,14 +510,16 @@ void TheaterControllerEditor::eventSequencerKeyMove(ui::Event* event)
 	const ui::CommandEvent* commandEvent = checked_type_cast< const ui::CommandEvent* >(event);
 	const ui::Command& command = commandEvent->getCommand();
 
-	ui::custom::Tick* tick = checked_type_cast< ui::custom::Tick*, false >(commandEvent->getItem());
+	ui::custom::Tick* tick = dynamic_type_cast< ui::custom::Tick* >(commandEvent->getItem());
+	if (tick)
+	{
+		TransformPathKeyWrapper* keyWrapper = static_cast< TransformPathKeyWrapper* >(tick->getData(L"KEY").ptr());
+		T_ASSERT (keyWrapper);
 
-	TransformPathKeyWrapper* keyWrapper = static_cast< TransformPathKeyWrapper* >(tick->getData(L"KEY").ptr());
-	T_ASSERT (keyWrapper);
+		keyWrapper->m_key.T = tick->getTime() / 1000.0f;
 
-	keyWrapper->m_key.T = tick->getTime() / 1000.0f;
-
-	m_context->buildEntities();
+		m_context->buildController();
+	}
 }
 
 void TheaterControllerEditor::eventContextPostFrame(ui::Event* event)

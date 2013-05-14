@@ -84,10 +84,10 @@ public:
 			outVn = m_keys[nkeys - 1].value;
 		}
 
-		//log::info.setDecimals(2);
-		//log::info << L"0: " << inoutT << L" " << T0 << L" -> " << T1 << L"  " << index_p << L", [" << index << L"], " << index_1 << L", " << index_n << Endl;
-
-		inoutT = (inoutT - T0) / (T1 - T0);
+		if (T0 < T1 - FUZZY_EPSILON)
+			inoutT = (inoutT - T0) / (T1 - T0);
+		else
+			inoutT = 0.0f;
 	}
 
 	TransformPath::Frame combine(

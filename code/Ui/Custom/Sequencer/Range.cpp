@@ -62,7 +62,7 @@ void Range::paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcCl
 	int x1 = sequence->clientFromTime(m_start) - scrollOffset;
 	int x2 = sequence->clientFromTime(m_end) - scrollOffset;
 
-	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.top + x2, rcClient.top + c_sequenceHeight - 3);
+	Rect rc(rcClient.left + x1, rcClient.top + 2, rcClient.left + x2, rcClient.top + c_sequenceHeight - 3);
 
 	canvas.setForeground(Color4ub(220, 255, 220));
 	canvas.setBackground(Color4ub(180, 230, 180));

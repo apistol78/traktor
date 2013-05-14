@@ -37,6 +37,9 @@ struct BlendGrainCursor : public RefCountImpl< ISoundBufferCursor >
 	{
 		if (id == m_id)
 			m_parameter = parameter;
+
+		m_cursors[0]->setParameter(id, parameter);
+		m_cursors[1]->setParameter(id, parameter);
 	}
 
 	virtual void disableRepeat()

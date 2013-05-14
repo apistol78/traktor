@@ -1,5 +1,5 @@
 #include <cstring>
-#include "Core/Log/Log.h"
+#include "Core/Io/OutputStream.h"
 #include "Core/Memory/IAllocator.h"
 #include "Core/Memory/MemoryConfig.h"
 #include "Script/Lua/ScriptUtilitiesLua.h"
@@ -9,31 +9,28 @@ namespace traktor
 	namespace script
 	{
 
-void stackDump(lua_State* luaState)
+void dumpStack(lua_State* luaState, OutputStream& os)
 {
 	int32_t top = lua_gettop(luaState);
-
-	T_DEBUG(L"Total in stack " << top);
-
 	for (int32_t i = 1; i <= top; ++i)
 	{
 		int t = lua_type(luaState, i);
 		switch (t)
 		{
 		case LUA_TSTRING:
-			T_DEBUG(L"\tstring: \"" << mbstows(lua_tostring(luaState, i)) << L"\"");
+			os << i << L".\tstring: \"" << mbstows(lua_tostring(luaState, i)) << L"\"" << Endl;
 			break;
 
 		case LUA_TBOOLEAN:
-			T_DEBUG(L"\tboolean: " << (lua_toboolean(luaState, i) ? L"true" : L"false"));
+			os << i << L".\tboolean: " << (lua_toboolean(luaState, i) ? L"true" : L"false") << Endl;
 			break;
 
 		case LUA_TNUMBER:
-			T_DEBUG(L"\tnumber: " << lua_tonumber(luaState, i));
+			os << i << L".\tnumber: " << lua_tonumber(luaState, i) << Endl;
 			break;
 
 		default:  /* other values */
-			T_DEBUG(L"\tother: " << mbstows(lua_typename(luaState, t)));
+			os << i << L".\tother: " << mbstows(lua_typename(luaState, t)) << Endl;
 			break;
 		}
 	}

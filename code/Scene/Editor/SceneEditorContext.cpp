@@ -384,6 +384,36 @@ void SceneEditorContext::buildEntities()
 	raisePostBuild();
 }
 
+void SceneEditorContext::buildController()
+{
+	T_ASSERT (m_scene);
+
+	Ref< ISceneController > controller;
+	if (m_sceneAsset->getControllerData())
+	{
+		RefArray< EntityAdapter > entityAdapters;
+		getEntities(entityAdapters);
+
+		std::map< const world::EntityData*, Ref< world::Entity > > entityProducts;
+		for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+			entityProducts.insert(std::make_pair(
+				(*i)->getEntityData(),
+				(*i)->getEntity()
+			));
+
+		controller = m_sceneAsset->getControllerData()->createController(entityProducts);
+	}
+
+	// Create our scene.
+	m_scene = new Scene(
+		controller,
+		m_scene->getEntitySchema(),
+		m_scene->getRootEntity(),
+		m_scene->getWorldRenderSettings(),
+		m_scene->getPostProcessSettings()
+	);
+}
+
 void SceneEditorContext::selectEntity(EntityAdapter* entityAdapter, bool select)
 {
 	if (entityAdapter && entityAdapter->m_selected != select)

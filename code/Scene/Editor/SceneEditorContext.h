@@ -202,6 +202,8 @@ public:
 
 	void buildEntities();
 
+	void buildController();
+
 	void selectEntity(EntityAdapter* entityAdapter, bool select = true);
 
 	void selectAllEntities(bool select = true);

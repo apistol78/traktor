@@ -13,6 +13,9 @@ extern "C"
 
 namespace traktor
 {
+
+class OutputStream;
+
 	namespace script
 	{
 
@@ -41,7 +44,7 @@ private:
 #	define CHECK_LUA_STACK(state, expectedOffset)
 #endif
 
-void stackDump(lua_State* luaState);
+void dumpStack(lua_State* luaState, OutputStream& os);
 
 #if defined(_DEBUG)
 #	define DUMP_LUA_STACK(state) stackDump(state)
