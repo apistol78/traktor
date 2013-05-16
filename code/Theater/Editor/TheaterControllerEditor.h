@@ -9,6 +9,7 @@ namespace traktor
 	{
 
 class Event;
+class ListBox;
 
 		namespace custom
 		{
@@ -39,14 +40,17 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command);
 
+	virtual void update();
+
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer);
 
 private:
+	Ref< ui::ListBox > m_listActs;
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::SequencerControl > m_trackSequencer;
 	Ref< scene::SceneEditorContext > m_context;
 
-	void updateSequencer();
+	void updateView();
 
 	void captureEntities();
 
@@ -59,6 +63,8 @@ private:
 	void gotoPreviousKey();
 
 	void gotoNextKey();
+
+	void eventActSelected(ui::Event* event);
 
 	void eventToolBarClick(ui::Event* event);
 

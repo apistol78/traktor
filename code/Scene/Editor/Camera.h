@@ -18,6 +18,8 @@ namespace traktor
 	namespace scene
 	{
 
+class EntityAdapter;
+
 /*! \brief Preview render camera. */
 class T_DLLCLASS Camera : public Object
 {
@@ -33,6 +35,10 @@ public:
 	void move(const Vector4& direction);
 
 	void rotate(float dy, float dx);
+
+	void setFollowEntity(EntityAdapter* followEntity);
+
+	void setLookAtEntity(EntityAdapter* lookAtEntity);
 
 	Matrix44 getWorld() const;
 
@@ -50,6 +56,8 @@ private:
 	bool m_enable;
 	Vector4 m_position;
 	Quaternion m_orientation;
+	Ref< EntityAdapter > m_followEntity;
+	Ref< EntityAdapter > m_lookAtEntity;
 };
 
 	}

@@ -1,6 +1,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Scene/Editor/Camera.h"
+#include "Scene/Editor/EntityAdapter.h"
 
 namespace traktor
 {
@@ -46,9 +47,37 @@ void Camera::rotate(float dy, float dx)
 	m_orientation = m_orientation.normalized();
 }
 
+void Camera::setFollowEntity(EntityAdapter* followEntity)
+{
+	m_followEntity = followEntity;
+}
+
+void Camera::setLookAtEntity(EntityAdapter* lookAtEntity)
+{
+	m_lookAtEntity = lookAtEntity;
+}
+
 Matrix44 Camera::getWorld() const
 {
-	return translate(m_position) * m_orientation.toMatrix44();
+	Matrix44 world = translate(m_position) * m_orientation.toMatrix44();
+	if (m_followEntity || m_lookAtEntity)
+	{
+		if (m_followEntity)
+			world = m_followEntity->getTransform().toMatrix44();
+
+		if (m_lookAtEntity)
+		{
+			Vector4 origin = world.translation().xyz1();
+			Vector4 target = m_lookAtEntity->getTransform().translation().xyz1();
+
+			world = lookAt(
+				origin,
+				target,
+				m_followEntity ? world.axisY() : Vector4(0.0f, 1.0f, 0.0f, 0.0f)
+			).inverse();
+		}
+	}
+	return world;
 }
 
 Matrix44 Camera::getView() const

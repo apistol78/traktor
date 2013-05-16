@@ -95,8 +95,6 @@ private:
 	Ref< ui::PopupMenu > m_entityMenu;
 	Ref< ui::PopupMenu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
-	Ref< ui::custom::ToolBarButton > m_toolLookAtEntity;
-	Ref< ui::custom::ToolBarButton > m_toolFollowEntity;
 	Ref< ui::custom::ToolBar > m_entityToolBar;
 	Ref< ui::Bitmap > m_imageHidden;
 	Ref< ui::Bitmap > m_imageVisible;
@@ -127,10 +125,6 @@ private:
 	void updateStatusBar();
 
 	bool addEntity();
-
-	bool updateLookAtEntity();
-
-	bool updateFollowEntity();
 
 	bool moveToEntity();
 

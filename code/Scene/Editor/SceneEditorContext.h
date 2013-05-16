@@ -166,10 +166,6 @@ public:
 	 */
 	Camera* getCamera(int index) const;
 
-	void setFollowEntityAdapter(EntityAdapter* followEntityAdapter);
-
-	void setLookAtEntityAdapter(EntityAdapter* lookAtEntityAdapter);
-
 	void moveToEntityAdapter(EntityAdapter* entityAdapter);
 
 	//@}
@@ -272,10 +268,6 @@ public:
 
 	const RefArray< EntityAdapter > getLayerEntityAdapters() { return m_layerEntityAdapters; }
 
-	EntityAdapter* getFollowEntityAdapter() { return m_followEntityAdapter; }
-
-	EntityAdapter* getLookAtEntityAdapter() { return m_lookAtEntityAdapter; }
-
 	//@}
 
 	/*! \name Events. */
@@ -349,8 +341,6 @@ private:
 	Ref< Scene > m_scene;
 	RefArray< EntityAdapter > m_layerEntityAdapters;
 	SmallMap< const world::Entity*, EntityAdapter* > m_entityAdapterMap;
-	Ref< EntityAdapter > m_followEntityAdapter;
-	Ref< EntityAdapter > m_lookAtEntityAdapter;
 };
 
 	}

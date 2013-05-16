@@ -195,6 +195,11 @@ Vector4 BodyHavok::getVelocityAt(const Vector4& at, bool localSpace) const
 	return fromHkVector4(velocity);
 }
 
+bool BodyHavok::solveStateConstraint(const BodyState& state)
+{
+	return false;
+}
+
 bool BodyHavok::setState(const BodyState& state)
 {
 	setTransform(state.getTransform());

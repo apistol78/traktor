@@ -51,6 +51,8 @@ public:
 
 	virtual bool handleCommand(const ui::Command& command) = 0;
 
+	virtual void update() = 0;
+
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) = 0;
 };
 

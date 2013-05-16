@@ -1,9 +1,12 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/Float.h"
 #include "I18N/Text.h"
 #include "Render/PrimitiveRenderer.h"
+#include "Scene/Scene.h"
 #include "Scene/Editor/EntityAdapter.h"
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Theater/ActData.h"
 #include "Theater/TheaterController.h"
 #include "Theater/TheaterControllerData.h"
 #include "Theater/TrackData.h"
@@ -11,16 +14,19 @@
 #include "Ui/Bitmap.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
+#include "Ui/ListBox.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
+#include "Ui/Events/EditEvent.h"
+#include "Ui/Custom/EditList.h"
+#include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Tick.h"
-#include "Ui/Custom/Sequencer/Track.h"
 #include "World/EntityData.h"
 
 // Resources
@@ -68,12 +74,23 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.theater.TheaterControllerEditor", TheaterContro
 
 bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Container* parent)
 {
-	Ref< ui::Container > container = new ui::Container();
-	if (!container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
+	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();
+	splitter->create(parent, true, 100);
+
+	Ref< ui::Container > containerActs = new ui::Container();
+	if (!containerActs->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"100%", 0, 0)))
+		return false;
+
+	m_listActs = new ui::ListBox();
+	m_listActs->create(containerActs, L"", ui::ListBox::WsSingle);
+	m_listActs->addSelectEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventActSelected));
+
+	Ref< ui::Container > containerSequencer = new ui::Container();
+	if (!containerSequencer->create(splitter, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0)))
 		return false;
 
 	m_toolBar = new ui::custom::ToolBar();
-	m_toolBar->create(container);
+	m_toolBar->create(containerSequencer);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceTheater, sizeof(c_ResourceTheater), L"png"), 6);
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_CAPTURE_ENTITIES"), ui::Command(L"Theater.CaptureEntities"), 0));
 	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"THEATER_EDITOR_DELETE_SELECTED_KEY"), ui::Command(L"Theater.DeleteSelectedKey"), 1));
@@ -85,7 +102,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventToolBarClick));
 
 	m_trackSequencer = new ui::custom::SequencerControl();
-	if (!m_trackSequencer->create(container))
+	if (!m_trackSequencer->create(containerSequencer))
 		return false;
 
 	m_trackSequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventSequencerCursorMove));
@@ -94,7 +111,7 @@ bool TheaterControllerEditor::create(scene::SceneEditorContext* context, ui::Con
 	m_context = context;
 	m_context->addPostFrameEventHandler(ui::createMethodHandler(this, &TheaterControllerEditor::eventContextPostFrame));
 
-	updateSequencer();
+	updateView();
 	return true;
 }
 
@@ -117,21 +134,25 @@ void TheaterControllerEditor::entityRemoved(scene::EntityAdapter* entityAdapter)
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
 
-	RefArray< TrackData >& trackData = controllerData->getTrackData();
-	for (RefArray< TrackData >::iterator i = trackData.begin(); i != trackData.end(); )
+	RefArray< ActData >& acts = controllerData->getActs();
+	for (RefArray< ActData >::iterator i = acts.begin(); i != acts.end(); ++i)
 	{
-		if ((*i)->getEntityData() == entityAdapter->getEntityData())
-			i = trackData.erase(i);
-		else
-			++i;
+		RefArray< TrackData >& tracks = (*i)->getTracks();
+		for (RefArray< TrackData >::iterator i = tracks.begin(); i != tracks.end(); )
+		{
+			if ((*i)->getEntityData() == entityAdapter->getEntityData())
+				i = tracks.erase(i);
+			else
+				++i;
+		}
 	}
 
-	updateSequencer();
+	updateView();
 }
 
 void TheaterControllerEditor::propertiesChanged()
 {
-	updateSequencer();
+	updateView();
 }
 
 bool TheaterControllerEditor::handleCommand(const ui::Command& command)
@@ -139,12 +160,12 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 	if (command == L"Theater.CaptureEntities")
 	{
 		captureEntities();
-		updateSequencer();
+		updateView();
 	}
 	else if (command == L"Theater.DeleteSelectedKey")
 	{
 		deleteSelectedKey();
-		updateSequencer();
+		updateView();
 	}
 	else if (command == L"Theater.SetLookAtEntity")
 	{
@@ -168,18 +189,36 @@ bool TheaterControllerEditor::handleCommand(const ui::Command& command)
 	return true;
 }
 
+void TheaterControllerEditor::update()
+{
+	if (!m_context->isPlaying())
+	{
+		int32_t selected = m_listActs->getSelected();
+		if (selected >= 0)
+		{
+			Ref< TheaterController > controller = checked_type_cast< TheaterController*, false >(m_context->getScene()->getController());
+			controller->setCurrentAct(selected);
+		}
+	}
+}
+
 void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 {
+	int32_t selected = m_listActs->getSelected();
+	if (selected < 0)
+		return;
+
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData*, false >(sceneAsset->getControllerData());
+	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< ActData > act = controllerData->getActs().at(selected);
 
 	RefArray< ui::custom::SequenceItem > items;
 	m_trackSequencer->getSequenceItems(items, ui::custom::SequencerControl::GfSelectedOnly);
 
-	float duration = controllerData->getDuration();
+	float duration = act->getDuration();
 
-	const RefArray< TrackData >& trackData = controllerData->getTrackData();
-	for (RefArray< TrackData >::const_iterator i = trackData.begin(); i != trackData.end(); ++i)
+	const RefArray< TrackData >& tracks = act->getTracks();
+	for (RefArray< TrackData >::const_iterator i = tracks.begin(); i != tracks.end(); ++i)
 	{
 		Color4ub pathColor(180, 180, 80, 120);
 		for (RefArray< ui::custom::SequenceItem >::const_iterator j = items.begin(); j != items.end(); ++j)
@@ -195,7 +234,7 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 		int32_t steps = int32_t(duration) * 10;
 		
 		TransformPath::Frame F0 = path.evaluate(0.0f, duration);
-		for (int32_t i = 1; i < steps; ++i)
+		for (int32_t i = 1; i <= steps; ++i)
 		{
 			float T = (float(i) / steps) * duration;
 			TransformPath::Frame F1 = path.evaluate(T, duration);
@@ -233,56 +272,80 @@ void TheaterControllerEditor::draw(render::PrimitiveRenderer* primitiveRenderer)
 	}
 }
 
-void TheaterControllerEditor::updateSequencer()
+void TheaterControllerEditor::updateView()
 {
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData*, false >(sceneAsset->getControllerData());
 
+	RefArray< ActData >& acts = controllerData->getActs();
+
+	int32_t selected = m_listActs->getSelected();
+	if (selected >= int32_t(acts.size()))
+		selected = -1;
+
+	m_listActs->removeAll();
+	for (RefArray< ActData >::iterator i = acts.begin(); i != acts.end(); ++i)
+		m_listActs->add((*i)->getName(), *i);
+
+	m_listActs->select(selected);
+
 	m_trackSequencer->removeAllSequenceItems();
 
-	RefArray< TrackData >& trackData = controllerData->getTrackData();
-	for (RefArray< TrackData >::iterator i = trackData.begin(); i != trackData.end(); ++i)
+	if (selected >= 0)
 	{
-		Ref< ui::custom::Sequence > trackSequence = new ui::custom::Sequence((*i)->getEntityData()->getName());
-		trackSequence->setData(L"TRACK", *i);
-
-		trackSequence->addKey(new ui::custom::Track(100, 2000));
-
-		TransformPath& path = (*i)->getPath();
-		AlignedVector< TransformPath::Key >& keys = path.getKeys();
-
-		for (AlignedVector< TransformPath::Key >::iterator j = keys.begin(); j != keys.end(); ++j)
+		RefArray< TrackData >& tracks = acts[selected]->getTracks();
+		for (RefArray< TrackData >::iterator i = tracks.begin(); i != tracks.end(); ++i)
 		{
-			int32_t tickTime = int32_t(j->T * 1000.0f);
+			Ref< ui::custom::Sequence > trackSequence = new ui::custom::Sequence((*i)->getEntityData()->getName());
+			trackSequence->setData(L"TRACK", *i);
 
-			Ref< ui::custom::Tick > tick = new ui::custom::Tick(tickTime);
-			tick->setData(L"KEY", new TransformPathKeyWrapper(*j));
+			TransformPath& path = (*i)->getPath();
+			AlignedVector< TransformPath::Key >& keys = path.getKeys();
 
-			trackSequence->addKey(tick);
+			for (AlignedVector< TransformPath::Key >::iterator j = keys.begin(); j != keys.end(); ++j)
+			{
+				int32_t tickTime = int32_t(j->T * 1000.0f);
+
+				Ref< ui::custom::Tick > tick = new ui::custom::Tick(tickTime);
+				tick->setData(L"KEY", new TransformPathKeyWrapper(*j));
+
+				trackSequence->addKey(tick);
+			}
+
+			m_trackSequencer->addSequenceItem(trackSequence);
 		}
 
-		m_trackSequencer->addSequenceItem(trackSequence);
+		m_trackSequencer->setLength(int32_t(acts[selected]->getDuration() * 1000.0f));
+		m_trackSequencer->setCursor(int32_t(m_context->getTime() * 1000.0f));
 	}
-
-	m_trackSequencer->setLength(int32_t(controllerData->getDuration() * 1000.0f));
-	m_trackSequencer->setCursor(int32_t(m_context->getTime() * 1000.0f));
 
 	m_trackSequencer->update();
 }
 
 void TheaterControllerEditor::captureEntities()
 {
-	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
-	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	int32_t selected = m_listActs->getSelected();
+	if (selected < 0)
+	{
+		log::warning << L"Unable to capture entities; no act selected" << Endl;
+		return;
+	}
 
 	RefArray< scene::EntityAdapter > selectedEntities;
 	m_context->getEntities(selectedEntities, scene::SceneEditorContext::GfDescendants | scene::SceneEditorContext::GfSelectedOnly);
 	if (selectedEntities.empty())
+	{
+		log::warning << L"Unable to capture entities; no entities selected" << Endl;
 		return;
+	}
+
+	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
+	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< ActData > act = controllerData->getActs().at(selected);
 
 	float time = m_context->getTime();
 
-	RefArray< TrackData >& trackData = controllerData->getTrackData();
+	RefArray< TrackData >& tracks = act->getTracks();
 	for (RefArray< scene::EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 	{
 		Transform transform = (*i)->getTransform();
@@ -292,14 +355,14 @@ void TheaterControllerEditor::captureEntities()
 
 		Ref< TrackData > instanceTrackData;
 
-		RefArray< TrackData >::iterator j = std::find_if(trackData.begin(), trackData.end(), FindTrackData(entityData));
-		if (j != trackData.end())
+		RefArray< TrackData >::iterator j = std::find_if(tracks.begin(), tracks.end(), FindTrackData(entityData));
+		if (j != tracks.end())
 			instanceTrackData = *j;
 		else
 		{
 			instanceTrackData = new TrackData();
 			instanceTrackData->setEntityData(entityData);
-			trackData.push_back(instanceTrackData);
+			tracks.push_back(instanceTrackData);
 		}
 
 		T_ASSERT (instanceTrackData);
@@ -433,21 +496,29 @@ void TheaterControllerEditor::easeVelocity()
 			keys[i].T = lerp(keys[i].T, Ts + (distances[i] / totalDistance) * (Te - Ts), c_smoothFactor);
 	}
 
-	updateSequencer();
+	updateView();
 
 	m_context->buildController();
 }
 
 void TheaterControllerEditor::gotoPreviousKey()
 {
+	int32_t selected = m_listActs->getSelected();
+	if (selected < 0)
+	{
+		log::warning << L"Unable to goto key entities; no act selected" << Endl;
+		return;
+	}
+
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< ActData > act = controllerData->getActs().at(selected);
 
 	float time = m_context->getTime();
 	float previousTime = 0.0f;
 
-	const RefArray< TrackData >& trackData = controllerData->getTrackData();
-	for (RefArray< TrackData >::const_iterator i = trackData.begin(); i != trackData.end(); ++i)
+	const RefArray< TrackData >& tracks = act->getTracks();
+	for (RefArray< TrackData >::const_iterator i = tracks.begin(); i != tracks.end(); ++i)
 	{
 		TransformPath& path = (*i)->getPath();
 		TransformPath::Key* key = path.getClosestPreviousKey(time);
@@ -466,14 +537,22 @@ void TheaterControllerEditor::gotoPreviousKey()
 
 void TheaterControllerEditor::gotoNextKey()
 {
+	int32_t selected = m_listActs->getSelected();
+	if (selected < 0)
+	{
+		log::warning << L"Unable to goto key entities; no act selected" << Endl;
+		return;
+	}
+
 	Ref< scene::SceneAsset > sceneAsset = m_context->getSceneAsset();
 	Ref< TheaterControllerData > controllerData = checked_type_cast< TheaterControllerData* >(sceneAsset->getControllerData());
+	Ref< ActData > act = controllerData->getActs().at(selected);
 
 	float time = m_context->getTime();
-	float nextTime = controllerData->getDuration();
+	float nextTime = act->getDuration();
 
-	const RefArray< TrackData >& trackData = controllerData->getTrackData();
-	for (RefArray< TrackData >::const_iterator i = trackData.begin(); i != trackData.end(); ++i)
+	const RefArray< TrackData >& tracks = act->getTracks();
+	for (RefArray< TrackData >::const_iterator i = tracks.begin(); i != tracks.end(); ++i)
 	{
 		TransformPath& path = (*i)->getPath();
 		TransformPath::Key* key = path.getClosestNextKey(time);
@@ -488,6 +567,11 @@ void TheaterControllerEditor::gotoNextKey()
 
 	m_context->setTime(nextTime);
 	m_context->setPlaying(false);
+}
+
+void TheaterControllerEditor::eventActSelected(ui::Event* event)
+{
+	updateView();
 }
 
 void TheaterControllerEditor::eventToolBarClick(ui::Event* event)

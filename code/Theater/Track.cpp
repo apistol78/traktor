@@ -13,7 +13,9 @@ Track::Track(
 	const TransformPath& path,
 	float loopStart,
 	float loopEnd,
-	float timeOffset
+	float timeOffset,
+	float wobbleMagnitude,
+	float wobbleRate
 )
 :	m_entity(entity)
 ,	m_lookAtEntity(lookAtEntity)
@@ -21,6 +23,8 @@ Track::Track(
 ,	m_loopStart(loopStart)
 ,	m_loopEnd(loopEnd)
 ,	m_timeOffset(timeOffset)
+,	m_wobbleMagnitude(wobbleMagnitude)
+,	m_wobbleRate(wobbleRate)
 {
 }
 
@@ -67,6 +71,16 @@ float Track::getLoopEnd() const
 float Track::getTimeOffset() const
 {
 	return m_timeOffset;
+}
+
+float Track::getWobbleMagnitude() const
+{
+	return m_wobbleMagnitude;
+}
+
+float Track::getWobbleRate() const
+{
+	return m_wobbleRate;
 }
 
 	}

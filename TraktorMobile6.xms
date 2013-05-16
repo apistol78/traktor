@@ -104,8 +104,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.bullet-2.80</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531</sourcePath>
+			<name>Extern.bullet</name>
+			<sourcePath>$(BULLET_SDK)</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -113,8 +113,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -132,8 +132,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -151,8 +151,8 @@
 					<targetProfile>TpDebug</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>_DEBUG</item>
@@ -170,8 +170,8 @@
 					<targetProfile>TpRelease</targetProfile>
 					<precompiledHeader/>
 					<includePaths>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>NDEBUG</item>
@@ -5362,8 +5362,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
@@ -5382,8 +5382,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_BULLET_EXPORT</item>
@@ -5402,8 +5402,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -5422,8 +5422,8 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/bullet-2.80-rev2531/src</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>

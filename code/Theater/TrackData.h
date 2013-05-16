@@ -49,6 +49,10 @@ public:
 
 	float getTimeOffset() const;
 
+	float getWobbleMagnitude() const;
+
+	float getWobbleRate() const;
+
 	virtual void serialize(ISerializer& s);
 
 private:
@@ -58,6 +62,8 @@ private:
 	float m_loopStart;
 	float m_loopEnd;
 	float m_timeOffset;
+	float m_wobbleMagnitude;
+	float m_wobbleRate;
 };
 
 	}

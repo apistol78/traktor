@@ -35,7 +35,9 @@ public:
 		const TransformPath& path,
 		float loopStart,
 		float loopEnd,
-		float timeOffset
+		float timeOffset,
+		float wobbleMagnitude,
+		float wobbleRate
 	);
 
 	void setEntity(world::Entity* entity);
@@ -56,6 +58,10 @@ public:
 
 	float getTimeOffset() const;
 
+	float getWobbleMagnitude() const;
+
+	float getWobbleRate() const;
+
 private:
 	Ref< world::Entity > m_entity;
 	Ref< world::Entity > m_lookAtEntity;
@@ -63,6 +69,8 @@ private:
 	float m_loopStart;
 	float m_loopEnd;
 	float m_timeOffset;
+	float m_wobbleMagnitude;
+	float m_wobbleRate;
 };
 
 	}

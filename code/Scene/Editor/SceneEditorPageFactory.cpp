@@ -45,8 +45,6 @@ void SceneEditorPageFactory::getCommands(std::list< ui::Command >& outCommands) 
 	outCommands.push_back(ui::Command(L"Scene.Editor.ToggleSnap"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.IncreaseSnap"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.DecreaseSnap"));
-	outCommands.push_back(ui::Command(L"Scene.Editor.LookAtEntity"));
-	outCommands.push_back(ui::Command(L"Scene.Editor.FollowEntity"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.MoveToEntity"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Rewind"));
 	outCommands.push_back(ui::Command(L"Scene.Editor.Play"));

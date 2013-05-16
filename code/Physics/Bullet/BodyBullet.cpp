@@ -245,6 +245,27 @@ Vector4 BodyBullet::getVelocityAt(const Vector4& at, bool localSpace) const
 	);
 }
 
+bool BodyBullet::solveStateConstraint(const BodyState& state)
+{
+	Transform transform = getTransform();
+	
+	Vector4 linearError = state.getTransform().translation() - transform.translation();
+	if (linearError.length() < 10.0f)
+	{
+		setTransform(Transform(
+			transform.translation(),
+			state.getTransform().rotation()
+		));
+
+		setLinearVelocity(linearError + state.getLinearVelocity());
+		setAngularVelocity(state.getAngularVelocity());
+	}
+	else
+		setState(state);
+
+	return true;
+}
+
 bool BodyBullet::setState(const BodyState& state)
 {
 	setTransform(state.getTransform());

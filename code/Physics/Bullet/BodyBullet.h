@@ -91,6 +91,8 @@ public:
 
 	virtual Vector4 getVelocityAt(const Vector4& at, bool localSpace) const;
 
+	virtual bool solveStateConstraint(const BodyState& state);
+
 	virtual bool setState(const BodyState& state);
 
 	virtual BodyState getState() const;

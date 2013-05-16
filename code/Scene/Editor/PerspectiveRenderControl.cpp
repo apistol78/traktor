@@ -398,8 +398,6 @@ void PerspectiveRenderControl::moveCamera(MoveCameraMode mode, const Vector4& mo
 		m_camera->move(delta.shuffle< 0, 1, 2, 3 >());
 		break;
 	}
-
-	constrainCamera();
 }
 
 void PerspectiveRenderControl::showSelectionRectangle(const ui::Rect& rect)
@@ -434,35 +432,6 @@ void PerspectiveRenderControl::updateWorldRenderView()
 
 	if (m_worldRenderer)
 		m_worldRenderer->createRenderView(worldView, m_worldRenderView);
-}
-
-void PerspectiveRenderControl::constrainCamera()
-{
-	EntityAdapter* followEntityAdapter = m_context->getFollowEntityAdapter();
-	EntityAdapter* lookAtEntityAdapter = m_context->getLookAtEntityAdapter();
-
-	if (followEntityAdapter || lookAtEntityAdapter)
-	{
-		Matrix44 M = m_camera->getWorld();
-
-		if (followEntityAdapter)
-			M = followEntityAdapter->getTransform().toMatrix44();
-
-		if (lookAtEntityAdapter)
-		{
-			Vector4 origin = M.translation().xyz1();
-			Vector4 target = lookAtEntityAdapter->getTransform().translation().xyz1();
-
-			M = lookAt(
-				origin,
-				target,
-				followEntityAdapter ? M.axisY() : Vector4(0.0f, 1.0f, 0.0f, 0.0f)
-			).inverse();
-		}
-
-		m_camera->setPosition(M.translation().xyz1());
-		m_camera->setOrientation(Quaternion(M));
-	}
 }
 
 Matrix44 PerspectiveRenderControl::getProjectionTransform() const
@@ -549,10 +518,6 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 	if (!m_renderView || !m_primitiveRenderer || !m_worldRenderer)
 		return;
 
-	// Constrain camera; do it continously as target entities might have
-	// been moved.
-	constrainCamera();
-
 	// Get current transformations.
 	Matrix44 projection = getProjectionTransform();
 	Matrix44 view = getViewTransform();
@@ -633,7 +598,7 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 
 		// Draw controller guides.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
-		if (controllerEditor && m_guideEnable)
+		if (controllerEditor)
 			controllerEditor->draw(m_primitiveRenderer);
 
 		// Draw modifier.

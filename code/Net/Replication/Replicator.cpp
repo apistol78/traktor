@@ -35,6 +35,7 @@ const float c_timeUntilPing = 1.5f;
 const float c_errorStateThreshold = 0.2f;
 const float c_remoteOffsetThreshold = 0.1f;
 const float c_remoteOffsetLimit = 0.05f;
+const uint32_t c_maxPendingIAm = 2;
 const uint32_t c_maxPendingPing = 4;
 const uint32_t c_maxErrorCount = 2;
 const uint32_t c_maxDeltaStates = 16;
@@ -109,7 +110,10 @@ void Replicator::destroy()
 
 		// Send Bye message to all peers.
 		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-			sendBye(i->first);
+		{
+			if (i->second.state == PsEstablished)
+				sendBye(i->first);
+		}
 
 		// Massage transportation to ensure all messages have been sent.
 		while (m_replicatorPeers)
@@ -454,9 +458,7 @@ void Replicator::updatePeers(float dT)
 
 			if ((peer.timeUntilTx -= dT) <= 0.0f)
 			{
-				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer \"" << peer.name << L"\"");
-				
-				if (peer.pendingIAm >= 4)
+				if (peer.pendingIAm >= c_maxPendingIAm)
 				{
 					peer.relay = !peer.relay;
 					peer.pendingIAm = 0;
@@ -466,9 +468,17 @@ void Replicator::updatePeers(float dT)
 					else
 						{ T_REPLICATOR_DEBUG(L"WARNING: Unable to handshake with peer \"" << peer.name << L"\" through relay; using direct"); }
 				}
-				
+
+				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer \"" << peer.name << L"\" (" << peer.pendingIAm << (peer.relay ? L" R" : L"") << L")");
+
 				if (sendIAm(*i, 0, m_id))
 					peer.pendingIAm++;
+				else
+				{
+					{ T_REPLICATOR_DEBUG(L"ERROR: Unable to send \"I am\" to peer \"" << peer.name << L"\""); }
+					peer.relay = !peer.relay;
+					peer.pendingIAm = 0;
+				}
 
 				peer.timeUntilTx = c_timeUntilIAm * (1.0f + g_random.nextFloat());
 			}

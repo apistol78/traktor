@@ -299,22 +299,22 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 	{
 	}
 
-	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1)
+	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1)
 	{
-		if (m_colObj == colObj0)
+		if (m_colObj == colObj0->getCollisionObject())
 		{
 			T_ASSERT (colObj1);
 
-			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj1->getUserPointer());
+			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj1->getCollisionObject()->getUserPointer());
 			T_ASSERT (bodyBullet);
 
 			m_outResult.push_back(bodyBullet);
 		}
-		else if (m_colObj == colObj1)
+		else if (m_colObj == colObj1->getCollisionObject())
 		{
 			T_ASSERT (colObj0);
 
-			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj0->getUserPointer());
+			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj0->getCollisionObject()->getUserPointer());
 			T_ASSERT (bodyBullet);
 
 			m_outResult.push_back(bodyBullet);
@@ -369,7 +369,6 @@ PhysicsManagerBullet::~PhysicsManagerBullet()
 bool PhysicsManagerBullet::create(float simulationDeltaTime)
 {
 	btDefaultCollisionConstructionInfo info;
-	info.m_defaultStackAllocatorSize = 512 * 1024;
 
 	m_simulationDeltaTime = simulationDeltaTime;
 	m_configuration = new btDefaultCollisionConfiguration(info);

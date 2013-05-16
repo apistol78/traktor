@@ -191,7 +191,12 @@ bool NavMeshPipeline::buildDependencies(
 ) const
 {
 	const NavMeshAsset* asset = checked_type_cast< const NavMeshAsset*, false >(sourceAsset);
-	pipelineDepends->addDependency(asset->m_source, editor::PdfUse);
+
+	// As editor doesn't use navigation mesh then we don't
+	// have this dependency.
+	if (!m_editor)
+		pipelineDepends->addDependency(asset->m_source, editor::PdfUse);
+
 	return true;
 }
 
@@ -209,6 +214,10 @@ bool NavMeshPipeline::buildOutput(
 ) const
 {
 	const NavMeshAsset* asset = checked_type_cast< const NavMeshAsset*, false >(sourceAsset);
+
+	// Skip navigation mesh generation in editor.
+	if (m_editor)
+		return true;
 
 	Ref< const ISerializable > sourceData = pipelineBuilder->getObjectReadOnly(asset->m_source);
 	if (!sourceData)
