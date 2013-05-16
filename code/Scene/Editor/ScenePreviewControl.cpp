@@ -13,6 +13,7 @@
 #include "Scene/Scene.h"
 #include "Scene/Editor/ScenePreviewControl.h"
 #include "Scene/Editor/SceneEditorContext.h"
+#include "Scene/Editor/ISceneControllerEditor.h"
 #include "Scene/Editor/ISceneEditorProfile.h"
 #include "Scene/Editor/ISceneEditorPlugin.h"
 #include "Scene/Editor/DefaultRenderControl.h"
@@ -454,6 +455,11 @@ void ScenePreviewControl::eventIdle(ui::Event* event)
 
 		float scaledTime = m_context->getTime();
 		float scaledDeltaTime = m_context->isPlaying() ? deltaTime * m_context->getTimeScale() : 0.0f;
+
+		// Update scene controller editor.
+		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
+		if (controllerEditor)
+			controllerEditor->update();
 
 		// Use physics; update in steps of 1/60th of a second.
 		if (m_context->getPhysicsEnable())

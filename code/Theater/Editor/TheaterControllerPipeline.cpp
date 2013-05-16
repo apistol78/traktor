@@ -1,5 +1,6 @@
 #include "Core/Serialization/DeepClone.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Theater/ActData.h"
 #include "Theater/TheaterControllerData.h"
 #include "Theater/TrackData.h"
 #include "Theater/Editor/TheaterControllerPipeline.h"
@@ -66,15 +67,19 @@ Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 	if (!controllerData)
 		return 0;
 
-	RefArray< TrackData >& trackData = controllerData->getTrackData();
-	for (uint32_t i = 0; i < trackData.size(); ++i)
+	RefArray< ActData >& acts = controllerData->getActs();
+	for (uint32_t i = 0; i < acts.size(); ++i)
 	{
-		Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(pipelineBuilder->buildOutput(trackData[i]->getEntityData()));
-		Ref< world::EntityData > lookAtEntityData = checked_type_cast< world::EntityData* >(pipelineBuilder->buildOutput(trackData[i]->getLookAtEntityData()));
+		RefArray< TrackData >& tracks = acts[i]->getTracks();
+		for (uint32_t j = 0; j < tracks.size(); ++j)
+		{
+			Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(pipelineBuilder->buildOutput(tracks[j]->getEntityData()));
+			Ref< world::EntityData > lookAtEntityData = checked_type_cast< world::EntityData* >(pipelineBuilder->buildOutput(tracks[j]->getLookAtEntityData()));
 
-		trackData[i] = new TrackData(*trackData[i]);
-		trackData[i]->setEntityData(entityData);
-		trackData[i]->setLookAtEntityData(lookAtEntityData);
+			tracks[j] = new TrackData(*tracks[j]);
+			tracks[j]->setEntityData(entityData);
+			tracks[j]->setLookAtEntityData(lookAtEntityData);
+		}
 	}
 
 	return controllerData;

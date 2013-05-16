@@ -628,7 +628,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 
 		// Draw controller guides.
 		Ref< ISceneControllerEditor > controllerEditor = m_context->getControllerEditor();
-		if (controllerEditor && m_guideEnable)
+		if (controllerEditor)
 			controllerEditor->draw(m_primitiveRenderer);
 
 		// Draw modifier.

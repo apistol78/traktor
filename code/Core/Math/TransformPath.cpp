@@ -43,16 +43,13 @@ public:
 		int32_t index = 0;
 		for (index = nkeys - 1; index > 0; --index)
 		{
-			if (inoutT >= m_keys[index].T)
+			if (inoutT >= m_keys[index].T + FUZZY_EPSILON)
 				break;
 		}
 
 		T0 = m_keys[index].T;
 
 		outV0 = m_keys[index].value;
-		outTension = m_keys[index].tcb.x();
-		outBias = m_keys[index].tcb.y();
-		outContinuity = m_keys[index].tcb.z();
 
 		int32_t index_1 = index + 1;
 		if (index_1 < nkeys)
@@ -88,6 +85,10 @@ public:
 			inoutT = (inoutT - T0) / (T1 - T0);
 		else
 			inoutT = 0.0f;
+
+		outTension = lerp(m_keys[index].tcb.x(), m_keys[index_1].tcb.x(), inoutT);
+		outBias = lerp(m_keys[index].tcb.y(), m_keys[index].tcb.y(), inoutT);
+		outContinuity = lerp(m_keys[index].tcb.z(), m_keys[index].tcb.z(), inoutT);
 	}
 
 	TransformPath::Frame combine(
@@ -153,9 +154,6 @@ public:
 			T0 = m_keys[index].T;
 
 			outV0 = m_keys[index].value;
-			outTension = m_keys[index].tcb.x();
-			outBias = m_keys[index].tcb.y();
-			outContinuity = m_keys[index].tcb.z();
 
 			int32_t index_1 = index + 1;
 			if (index_1 < nkeys)
@@ -188,10 +186,11 @@ public:
 				outVn = m_keys[index_n].value;
 			}
 
-			//log::info.setDecimals(2);
-			//log::info << L"1: " << inoutT << L" " << T0 << L" -> " << T1 << L"  " << index_p << L", [" << index << L"], " << index_1 << L", " << index_n << L"   loop " << m_Iloop << Endl;
-
 			inoutT = (inoutT - T0) / (T1 - T0);
+
+			outTension = lerp(m_keys[index].tcb.x(), m_keys[index_1].tcb.x(), inoutT);
+			outBias = lerp(m_keys[index].tcb.y(), m_keys[index].tcb.y(), inoutT);
+			outContinuity = lerp(m_keys[index].tcb.z(), m_keys[index].tcb.z(), inoutT);
 		}
 		else
 		{
@@ -217,9 +216,6 @@ public:
 			T0 = m_keys[index].T;
 
 			outV0 = m_keys[index].value;
-			outTension = m_keys[index].tcb.x();
-			outBias = m_keys[index].tcb.y();
-			outContinuity = m_keys[index].tcb.z();
 
 			int32_t index_1 = index + 1;
 			if (index_1 < nkeys)
@@ -255,10 +251,11 @@ public:
 			if (inoutT < T0)
 				inoutT += m_Tend - m_Tloop;
 
-			//log::info.setDecimals(2);
-			//log::info << L"2: " << inoutT << L" " << T0 << L" -> " << T1 << L"  " << index_p << L", [" << index << L"], " << index_1 << L", " << index_n << L"   loop " << m_Iloop << Endl;
-
 			inoutT = (inoutT - T0) / (T1 - T0);
+
+			outTension = lerp(m_keys[index].tcb.x(), m_keys[index_1].tcb.x(), inoutT);
+			outBias = lerp(m_keys[index].tcb.y(), m_keys[index].tcb.y(), inoutT);
+			outContinuity = lerp(m_keys[index].tcb.z(), m_keys[index].tcb.z(), inoutT);
 		}
 	}
 

@@ -17,23 +17,26 @@ namespace traktor
 	namespace theater
 	{
 
-class Track;
+class Act;
 
 class T_DLLCLASS TheaterController : public scene::ISceneController
 {
 	T_RTTI_CLASS;
 
 public:
-	TheaterController(float duration, const RefArray< Track >& tracks);
+	TheaterController(const RefArray< const Act >& acts);
 
 	virtual void update(scene::Scene* scene, float time, float deltaTime);
 
-	RefArray< Track >& getTracks() { return m_tracks; }
+	void setCurrentAct(uint32_t current);
+
+	uint32_t getCurrentAct() const { return m_current; }
 
 private:
-	float m_duration;
-	RefArray< Track > m_tracks;
+	RefArray< const Act > m_acts;
+	uint32_t m_current;
 	float m_lastTime;
+	float m_actTime;
 };
 
 	}

@@ -89,7 +89,6 @@ void SceneEditorContext::destroy()
 	m_sceneAsset = 0;
 	m_scene = 0;
 	m_layerEntityAdapters.clear();
-	m_followEntityAdapter = 0;
 }
 
 void SceneEditorContext::addEditorProfile(ISceneEditorProfile* editorProfile)
@@ -186,16 +185,6 @@ Camera* SceneEditorContext::getCamera(int index) const
 	T_ASSERT (index >= 0)
 	T_ASSERT (index < sizeof_array(m_cameras));
 	return m_cameras[index];
-}
-
-void SceneEditorContext::setFollowEntityAdapter(EntityAdapter* followEntityAdapter)
-{
-	m_followEntityAdapter = followEntityAdapter;
-}
-
-void SceneEditorContext::setLookAtEntityAdapter(EntityAdapter* lookAtEntityAdapter)
-{
-	m_lookAtEntityAdapter = lookAtEntityAdapter;
 }
 
 void SceneEditorContext::moveToEntityAdapter(EntityAdapter* entityAdapter)

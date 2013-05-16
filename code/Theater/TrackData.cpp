@@ -1,3 +1,4 @@
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
@@ -9,12 +10,14 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 4, TrackData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TrackData", 5, TrackData, ISerializable)
 
 TrackData::TrackData()
 :	m_loopStart(0.0f)
 ,	m_loopEnd(0.0f)
 ,	m_timeOffset(0.0f)
+,	m_wobbleMagnitude(0.0f)
+,	m_wobbleRate(0.0f)
 {
 }
 
@@ -63,6 +66,16 @@ float TrackData::getTimeOffset() const
 	return m_timeOffset;
 }
 
+float TrackData::getWobbleMagnitude() const
+{
+	return m_wobbleMagnitude;
+}
+
+float TrackData::getWobbleRate() const
+{
+	return m_wobbleRate;
+}
+
 void TrackData::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
@@ -86,6 +99,12 @@ void TrackData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 4)
 		s >> Member< float >(L"timeOffset", m_timeOffset);
+
+	if (s.getVersion() >= 5)
+	{
+		s >> Member< float >(L"wobbleMagnitude", m_wobbleMagnitude, AttributeRange(0.0f));
+		s >> Member< float >(L"wobbleRate", m_wobbleRate, AttributeRange(0.0f));
+	}
 }
 
 	}

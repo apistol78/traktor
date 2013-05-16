@@ -4,6 +4,7 @@
 #include "Core/Settings/PropertyInteger.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
+#include "Scene/Editor/Camera.h"
 #include "Scene/Editor/DebugRenderControl.h"
 #include "Scene/Editor/DefaultRenderControl.h"
 #include "Scene/Editor/OrthogonalRenderControl.h"
@@ -22,6 +23,7 @@
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 
 // Resources
+#include "Resources/EntityEdit.h"
 #include "Resources/SceneEdit.h"
 
 namespace traktor
@@ -62,6 +64,7 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		return false;
 
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceSceneEdit, sizeof(c_ResourceSceneEdit), L"png"), 17);
+	m_toolBar->addImage(ui::Bitmap::load(c_ResourceEntityEdit, sizeof(c_ResourceEntityEdit), L"png"), 5);
 
 	m_toolView = new ui::custom::ToolBarDropDown(ui::Command(L"Scene.Editor.View"), 100, i18n::Text(L"SCENE_EDITOR_VIEW_MODE"));
 	m_toolView->add(i18n::Text(L"SCENE_EDITOR_VIEW_PERSPECTIVE"));
@@ -93,6 +96,20 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 		ui::Command(1, L"Scene.Editor.TogglePostProcess"),
 		6,
 		postProcessEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
+	);
+
+	m_toolToggleFollowEntity = new ui::custom::ToolBarButton(
+		i18n::Text(L"SCENE_EDITOR_FOLLOW_ENTITY"),
+		ui::Command(L"Scene.Editor.ToggleFollowEntity"),
+		17 + 4,
+		ui::custom::ToolBarButton::BsDefaultToggle
+	);
+
+	m_toolToggleLookAtEntity = new ui::custom::ToolBarButton(
+		i18n::Text(L"SCENE_EDITOR_LOOK_AT_ENTITY"),
+		ui::Command(L"Scene.Editor.ToggleLookAtEntity"),
+		17 + 3,
+		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolAspect = new ui::custom::ToolBarDropDown(ui::Command(1, L"Scene.Editor.Aspect"), 60, i18n::Text(L"SCENE_EDITOR_ASPECT"));
@@ -134,6 +151,8 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addItem(m_toolToggleGrid);
 	m_toolBar->addItem(m_toolToggleGuide);
 	m_toolBar->addItem(m_toolTogglePostProcess);
+	m_toolBar->addItem(m_toolToggleFollowEntity);
+	m_toolBar->addItem(m_toolToggleLookAtEntity);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
 	m_toolBar->addItem(m_toolAspect);
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
@@ -143,6 +162,10 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &DefaultRenderControl::eventToolClick));
 
 	createRenderControl(viewType);
+
+	Ref< Camera > camera = m_context->getCamera(m_cameraId);
+	camera->setFollowEntity(0);
+	camera->setLookAtEntity(0);
 
 	return true;
 }
@@ -367,6 +390,30 @@ void DefaultRenderControl::eventToolClick(ui::Event* event)
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.EnablePostProcess"));
 		else
 			m_renderControl->handleCommand(ui::Command(L"Scene.Editor.DisablePostProcess"));
+	}
+	else if (cmdEvent->getCommand() == L"Scene.Editor.ToggleFollowEntity")
+	{
+		Ref< Camera > camera = m_context->getCamera(m_cameraId);
+		if (m_toolToggleFollowEntity->isToggled())
+		{
+			RefArray< EntityAdapter > selectedEntities;
+			if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
+				camera->setFollowEntity(selectedEntities[0]);
+		}
+		else
+			camera->setFollowEntity(0);
+	}
+	else if (cmdEvent->getCommand() == L"Scene.Editor.ToggleLookAtEntity")
+	{
+		Ref< Camera > camera = m_context->getCamera(m_cameraId);
+		if (m_toolToggleFollowEntity->isToggled())
+		{
+			RefArray< EntityAdapter > selectedEntities;
+			if (m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants) == 1)
+				camera->setLookAtEntity(selectedEntities[0]);
+		}
+		else
+			camera->setLookAtEntity(0);
 	}
 	else if (cmdEvent->getCommand() == L"Scene.Editor.Aspect")
 	{

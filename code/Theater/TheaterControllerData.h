@@ -17,26 +17,21 @@ namespace traktor
 	namespace theater
 	{
 
-class TrackData;
+class ActData;
 
 class T_DLLCLASS TheaterControllerData : public scene::ISceneControllerData
 {
 	T_RTTI_CLASS;
 
 public:
-	TheaterControllerData();
-
 	virtual Ref< scene::ISceneController > createController(const std::map< const world::EntityData*, Ref< world::Entity > >& entityProducts) const;
 
 	virtual void serialize(ISerializer& s);
 
-	float getDuration() const { return m_duration; }
-
-	RefArray< TrackData >& getTrackData() { return m_trackData; }
+	RefArray< ActData >& getActs() { return m_acts; }
 
 private:
-	float m_duration;
-	RefArray< TrackData > m_trackData;
+	RefArray< ActData > m_acts;
 };
 
 	}

@@ -186,6 +186,11 @@ Vector4 BodyPhysX::getVelocityAt(const Vector4& at, bool localSpace) const
 	return fromNxVec3(m_actor->getPointVelocity(toNxVec3(at_)), 0.0f);
 }
 
+bool BodyPhysX::solveStateConstraint(const BodyState& state)
+{
+	return false;
+}
+
 bool BodyPhysX::setState(const BodyState& state)
 {
 	setTransform(state.getTransform());

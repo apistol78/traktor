@@ -67,6 +67,8 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleGrid;
 	Ref< ui::custom::ToolBarButton > m_toolToggleGuide;
 	Ref< ui::custom::ToolBarButton > m_toolTogglePostProcess;
+	Ref< ui::custom::ToolBarButton > m_toolToggleFollowEntity;
+	Ref< ui::custom::ToolBarButton > m_toolToggleLookAtEntity;
 	Ref< ui::custom::ToolBarDropDown > m_toolView;
 	Ref< ui::custom::ToolBarDropDown > m_toolAspect;
 	Ref< ui::custom::ToolBarDropDown > m_toolShadows;
