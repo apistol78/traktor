@@ -33,6 +33,7 @@ public:
 private:
 	friend class SoundPipeline;
 
+	std::wstring m_category;
 	uint32_t m_sampleRate;
 	uint32_t m_samplesCount;
 	uint32_t m_channelsCount;

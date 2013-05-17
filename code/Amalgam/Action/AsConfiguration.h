@@ -75,6 +75,10 @@ public:
 
 	void setRumbleEnable(bool rumbleEnable);
 
+	float getVolume() const;
+
+	void setVolume(float volume);
+
 	float getVolume(const std::wstring& category) const;
 
 	void setVolume(const std::wstring& category, float volume);
@@ -94,6 +98,7 @@ private:
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
 	bool m_rumbleEnable;
+	float m_masterVolume;
 	std::map< std::wstring, float > m_volumes;
 };
 

@@ -41,6 +41,9 @@ class T_DLLCLASS SoundChannel : public Object
 public:
 	virtual ~SoundChannel();
 
+	/*! \brief Get category. */
+	handle_t getCategory() const;
+
 	/*! \brief Set channel volume. */
 	void setVolume(float volume);
 
@@ -65,13 +68,21 @@ public:
 	/*! \brief Play sound through this channel.
 	 *
 	 * \param buffer Sound buffer.
+	 * \param category Sound category.
 	 * \param volume Sound volume.
 	 * \param presence Sound presence.
 	 * \param presenceRate Sound presence recover rate.
 	 * \param repeat Number of times to repreat sound.
 	 * \return True if sound is playing successfully.
 	 */
-	bool play(const ISoundBuffer* buffer, float volume, float presence, float presenceRate, uint32_t repeat = 0);
+	bool play(
+		const ISoundBuffer* buffer,
+		handle_t category,
+		float volume,
+		float presence,
+		float presenceRate,
+		uint32_t repeat = 0
+	);
 
 	/*! \brief Check if there are a sound playing in this channel. */
 	bool isPlaying() const;
@@ -91,6 +102,7 @@ private:
 		Ref< ISoundBufferCursor > cursor;
 		Ref< const IFilter > filter;
 		Ref< IFilterInstance > filterInstance;
+		handle_t category;
 		float volume;
 		float pitch;
 		float presence;
@@ -98,7 +110,8 @@ private:
 		uint32_t repeat;
 
 		State()
-		:	volume(1.0f)
+		:	category(0)
+		,	volume(1.0f)
 		,	pitch(1.0f)
 		,	presence(0.0f)
 		,	presenceRate(1.0f)

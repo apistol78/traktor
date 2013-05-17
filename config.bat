@@ -3,7 +3,7 @@
 set TRAKTOR_HOME=%~dp0
 set STEAMWORKS_SDK=%TRAKTOR_HOME%3rdp\steamworks-sdk-123a
 set FBX_SDK=%TRAKTOR_HOME%3rdp\FbxSdk\2013.1
-set BULLET_SDK=%TRAKTOR_HOME%3rdp\bullet-2.81-rev2643
+set BULLET_SDK=%TRAKTOR_HOME%3rdp\bullet-2.80-rev2531
 
 set PATH=%PATH%;%TRAKTOR_HOME%build\win32\releaseshared
 set PATH=%PATH%;%TRAKTOR_HOME%build\win32\debugshared

@@ -5,6 +5,7 @@
 #include "Core/Object.h"
 #include "Core/RefArray.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Thread/Event.h"
 #include "Core/Thread/Semaphore.h"
 #include "Core/Thread/Thread.h"
@@ -62,13 +63,13 @@ public:
 	 *
 	 * \param volume Volume (0-1)
 	 */
-	void setVolume(const std::wstring& category, float volume);
+	void setVolume(handle_t category, float volume);
 
 	/*! \brief Get category volume.
 	 *
 	 * \return Category volume.
 	 */
-	float getVolume(const std::wstring& category) const;
+	float getVolume(handle_t category) const;
 
 	/*! \brief Set global combination matrix.
 	 *
@@ -96,6 +97,7 @@ private:
 	Ref< ISoundMixer > m_mixer;
 	SoundSystemCreateDesc m_desc;
 	float m_volume;
+	SmallMap< handle_t, float > m_categoryVolumes;
 	Thread* m_threadMixer;
 	Thread* m_threadSubmit;
 	Event m_channelFinishEvent;

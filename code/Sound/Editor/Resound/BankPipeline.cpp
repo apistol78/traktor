@@ -1,5 +1,6 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "Sound/Resound/BankResource.h"
@@ -82,7 +83,7 @@ void buildGrainDependencies(editor::IPipelineDepends* pipelineDepends, const IGr
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 6, BankPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.BankPipeline", 8, BankPipeline, editor::DefaultPipeline)
 
 TypeInfoSet BankPipeline::getAssetTypes() const
 {
@@ -136,14 +137,21 @@ bool BankPipeline::buildOutput(
 {
 	const BankAsset* bankAsset = checked_type_cast< const BankAsset*, false >(sourceAsset);
 
+	bool categorized = false;
+	std::wstring configurationId;
 	float volume = 1.0f;
 	float presence = bankAsset->m_presence;
 	float presenceRate = bankAsset->m_presenceRate;
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(bankAsset->m_category);
+	
+	if (category)
+		configurationId = category->getConfigurationId();
+
 	while (category)
 	{
+		categorized = true;
 		volume *= category->getVolume();
 
 		if (presence <= FUZZY_EPSILON)
@@ -157,12 +165,18 @@ bool BankPipeline::buildOutput(
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
-	log::info << L"Category volume " << int32_t(volume * 100.0f) << L"%" << Endl;
-	log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
-	log::info << L"Category range " << range << Endl;
+	if (categorized)
+	{
+		log::info << L"Category volume " << int32_t(volume * 100.0f) << L" %" << Endl;
+		log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
+		log::info << L"Category range " << range << Endl;
+	}
+	else
+		log::warning << L"Uncategorized sound \"" << sourceInstance->getName() << L"\"" << Endl;
 
 	Ref< BankResource > bankResource = new BankResource(
 		bankAsset->m_grains,
+		configurationId,
 		volume,
 		presence,
 		presenceRate,

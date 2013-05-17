@@ -580,10 +580,20 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 
 		createInstanceGrid();
 	}
-	else if (command == L"Scene.Editor.UnockEntities")
+	else if (command == L"Scene.Editor.UnlockEntities")
 	{
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+			(*i)->setLocked(false);
+
+		createInstanceGrid();
+	}
+	else if (command == L"Scene.Editor.UnlockAllEntities")
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants);
 
 		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 			(*i)->setLocked(false);
@@ -594,6 +604,16 @@ bool SceneEditorPage::handleCommand(const ui::Command& command)
 	{
 		RefArray< EntityAdapter > selectedEntities;
 		m_context->getEntities(selectedEntities, SceneEditorContext::GfSelectedOnly | SceneEditorContext::GfDescendants);
+
+		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
+			(*i)->setVisible(true);
+
+		createInstanceGrid();
+	}
+	else if (command == L"Scene.Editor.ShowAllEntities")
+	{
+		RefArray< EntityAdapter > selectedEntities;
+		m_context->getEntities(selectedEntities, SceneEditorContext::GfDescendants);
 
 		for (RefArray< EntityAdapter >::iterator i = selectedEntities.begin(); i != selectedEntities.end(); ++i)
 			(*i)->setVisible(true);

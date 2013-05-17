@@ -155,7 +155,7 @@ void SoundAssetEditor::eventToolBarClick(ui::Event* event)
 		return;
 	}
 
-	m_soundChannel->play(buffer, 1.0f, 0.0f, 1.0f);
+	m_soundChannel->play(buffer, 0, 1.0f, 0.0f, 1.0f);
 }
 
 void SoundAssetEditor::eventPropertyCommand(ui::Event* event)

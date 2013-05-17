@@ -87,6 +87,10 @@ private:
 
 	void Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const;
 
+	float Configuration_getMasterVolume(const AsConfiguration* self) const;
+
+	void Configuration_setMasterVolume(AsConfiguration* self, float volume) const;
+
 	float Configuration_getVolume(const AsConfiguration* self, const std::wstring& category) const;
 
 	void Configuration_setVolume(AsConfiguration* self, const std::wstring& category, float volume) const;

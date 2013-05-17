@@ -1192,7 +1192,7 @@ struct PolymorphicNativeFunction : public INativeFunction
 	}
 };
 
-Ref< ActionFunctionNative > createPolymorphicFunction(
+Ref< ActionFunctionNative > T_DLLCLASS createPolymorphicFunction(
 	ActionContext* context,
 	ActionFunctionNative* fnptr_0,
 	ActionFunctionNative* fnptr_1 = 0,

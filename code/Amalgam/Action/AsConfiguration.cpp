@@ -28,6 +28,7 @@ AsConfiguration::AsConfiguration()
 ,	m_ambientOcclusionQuality(QtMedium)
 ,	m_antiAliasQuality(QtMedium)
 ,	m_rumbleEnable(true)
+,	m_masterVolume(1.0f)
 {
 }
 
@@ -50,8 +51,9 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtMedium);
 	current->m_antiAliasQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", QtMedium);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
+	current->m_masterVolume = settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f);
 
-	const PropertyGroup* volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
+	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
 	if (volumes)
 	{
 		const std::map< std::wstring, Ref< IPropertyValue > >& cv = volumes->getValues();
@@ -181,6 +183,16 @@ void AsConfiguration::setRumbleEnable(bool rumbleEnable)
 	m_rumbleEnable = rumbleEnable;
 }
 
+float AsConfiguration::getVolume() const
+{
+	return m_masterVolume;
+}
+
+void AsConfiguration::setVolume(float volume)
+{
+	m_masterVolume = volume;
+}
+
 float AsConfiguration::getVolume(const std::wstring& category) const
 {
 	std::map< std::wstring, float >::const_iterator i = m_volumes.find(category);
@@ -209,6 +221,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", m_ambientOcclusionQuality);
 	settings->setProperty< PropertyInteger >(L"World.AntiAliasQuality", m_antiAliasQuality);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
+	settings->setProperty< PropertyFloat >(L"Audio.MasterVolume", m_masterVolume);
 
 	for (std::map< std::wstring, float >::const_iterator i = m_volumes.begin(); i != m_volumes.end(); ++i)
 		settings->setProperty< PropertyFloat >(L"Audio.Volumes/" + i->first, i->second);
