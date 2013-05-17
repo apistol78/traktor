@@ -9,7 +9,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundCategory", 3, SoundCategory, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundCategory", 4, SoundCategory, ISerializable)
 
 
 SoundCategory::SoundCategory()
@@ -23,6 +23,10 @@ SoundCategory::SoundCategory()
 void SoundCategory::serialize(ISerializer& s)
 {
 	s >> Member< Guid >(L"parent", m_parent, AttributeType(type_of< SoundCategory >()));
+
+	if (s.getVersion() >= 4)
+		s >> Member< std::wstring >(L"configurationId", m_configurationId);
+
 	s >> Member< float >(L"volume", m_volume);
 
 	if (s.getVersion() >= 1)

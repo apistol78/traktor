@@ -15,7 +15,7 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 5, StreamSoundResource, ISoundResource)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.StreamSoundResource", 6, StreamSoundResource, ISoundResource)
 
 StreamSoundResource::StreamSoundResource()
 :	m_decoderType(0)
@@ -69,13 +69,21 @@ Ref< Sound > StreamSoundResource::createSound(resource::IResourceManager* resour
 		return 0;
 	}
 
-	return new Sound(soundBuffer, m_volume, m_presence, m_presenceRate, m_range);
+	return new Sound(
+		soundBuffer,
+		getParameterHandle(m_category),
+		m_volume,
+		m_presence,
+		m_presenceRate,
+		m_range
+	);
 }
 
 void StreamSoundResource::serialize(ISerializer& s)
 {
-	T_ASSERT (s.getVersion() >= 5);
+	T_ASSERT (s.getVersion() >= 6);
 	s >> MemberType(L"decoderType", m_decoderType);
+	s >> Member< std::wstring >(L"category", m_category);
 	s >> Member< float >(L"volume", m_volume);
 	s >> Member< float >(L"presence", m_presence);
 	s >> Member< float >(L"presenceRate", m_presenceRate);

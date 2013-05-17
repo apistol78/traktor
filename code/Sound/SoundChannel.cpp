@@ -53,6 +53,11 @@ SoundChannel::~SoundChannel()
 	Alloc::freeAlign(m_outputSamples[0]);
 }
 
+handle_t SoundChannel::getCategory() const
+{
+	return m_state.category;
+}
+
 void SoundChannel::setVolume(float volume)
 {
 	m_volume = clamp(volume, 0.0f, 1.0f);
@@ -121,7 +126,14 @@ void SoundChannel::disableRepeat()
 		m_state.cursor->disableRepeat();
 }
 
-bool SoundChannel::play(const ISoundBuffer* buffer, float volume, float presence, float presenceRate, uint32_t repeat)
+bool SoundChannel::play(
+	const ISoundBuffer* buffer,
+	handle_t category,
+	float volume,
+	float presence,
+	float presenceRate,
+	uint32_t repeat
+)
 {
 	if (!buffer)
 		return false;
@@ -136,6 +148,7 @@ bool SoundChannel::play(const ISoundBuffer* buffer, float volume, float presence
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 		m_state.buffer = buffer;
 		m_state.cursor = cursor;
+		m_state.category = category;
 		m_state.volume = volume;
 		m_state.pitch = 1.0f;
 		m_state.presence = presence;

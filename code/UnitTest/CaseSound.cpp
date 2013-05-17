@@ -103,7 +103,7 @@ void CaseSound::run()
 	TestSoundBuffer soundBuffer;
 
 	timer.start();
-	soundSystem.getChannel(0)->play(&soundBuffer, 1.0f, 0.0f, 0.0f);
+	soundSystem.getChannel(0)->play(&soundBuffer, 0, 1.0f, 0.0f, 0.0f);
 
 	signal.wait();
 

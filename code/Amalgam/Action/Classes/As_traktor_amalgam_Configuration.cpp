@@ -46,6 +46,8 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	// Input
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable));
 
+	prototype->setMember("getMasterVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getMasterVolume)));
+	prototype->setMember("setMasterVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setMasterVolume)));
 	prototype->setMember("getVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getVolume)));
 	prototype->setMember("setVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setVolume)));
 	prototype->setMember("apply", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_apply)));
@@ -212,6 +214,16 @@ bool As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable(const AsCo
 void As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const
 {
 	self->setRumbleEnable(rumbleEnable);
+}
+
+float As_traktor_amalgam_Configuration::Configuration_getMasterVolume(const AsConfiguration* self) const
+{
+	return self->getVolume();
+}
+
+void As_traktor_amalgam_Configuration::Configuration_setMasterVolume(AsConfiguration* self, float volume) const
+{
+	self->setVolume(volume);
 }
 
 float As_traktor_amalgam_Configuration::Configuration_getVolume(const AsConfiguration* self, const std::wstring& category) const

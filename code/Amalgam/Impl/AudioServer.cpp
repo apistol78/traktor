@@ -77,7 +77,7 @@ bool AudioServer::create(const PropertyGroup* settings)
 	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
 
 	// Set category volumes.
-	const PropertyGroup* volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
+	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
 	if (volumes)
 	{
 		const std::map< std::wstring, Ref< IPropertyValue > >& cv = volumes->getValues();
@@ -85,7 +85,10 @@ bool AudioServer::create(const PropertyGroup* settings)
 		{
 			const std::wstring& category = i->first;
 			float volume = PropertyFloat::get(i->second);
-			m_soundSystem->setVolume(category, volume);
+			m_soundSystem->setVolume(
+				sound::getParameterHandle(category),
+				volume
+			);
 		}
 	}
 
@@ -193,7 +196,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
 
 	// Set category volumes.
-	const PropertyGroup* volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
+	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
 	if (volumes)
 	{
 		const std::map< std::wstring, Ref< IPropertyValue > >& cv = volumes->getValues();
@@ -201,7 +204,10 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 		{
 			const std::wstring& category = i->first;
 			float volume = PropertyFloat::get(i->second);
-			m_soundSystem->setVolume(category, volume);
+			m_soundSystem->setVolume(
+				sound::getParameterHandle(category),
+				volume
+			);
 		}
 	}
 

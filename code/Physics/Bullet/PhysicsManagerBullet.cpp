@@ -299,6 +299,7 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 	{
 	}
 
+#if 0
 	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObjectWrapper* colObj0, int partId0, int index0, const btCollisionObjectWrapper* colObj1, int partId1, int index1)
 	{
 		if (m_colObj == colObj0->getCollisionObject())
@@ -321,6 +322,30 @@ struct ContactResultCallback : public btCollisionWorld::ContactResultCallback
 		}
 		return 0.0f;
 	}
+#else
+	virtual	btScalar addSingleResult(btManifoldPoint& cp, const btCollisionObject* colObj0, int partId0, int index0, const btCollisionObject* colObj1, int partId1, int index1)
+	{
+		if (m_colObj == colObj0)
+		{
+			T_ASSERT (colObj1);
+
+			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj1->getUserPointer());
+			T_ASSERT (bodyBullet);
+
+			m_outResult.push_back(bodyBullet);
+		}
+		else if (m_colObj == colObj1)
+		{
+			T_ASSERT (colObj0);
+
+			BodyBullet* bodyBullet = reinterpret_cast< BodyBullet* >(colObj0->getUserPointer());
+			T_ASSERT (bodyBullet);
+
+			m_outResult.push_back(bodyBullet);
+		}
+		return 0.0f;
+	}
+#endif
 };
 
 void deleteShape(btCollisionShape* shape)

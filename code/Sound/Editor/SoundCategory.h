@@ -27,6 +27,8 @@ public:
 
 	const Guid& getParent() const { return m_parent; }
 
+	const std::wstring& getConfigurationId() const { return m_configurationId; }
+
 	float getVolume() const { return m_volume; }
 
 	float getPresence() const { return m_presence; }
@@ -37,6 +39,7 @@ public:
 
 private:
 	Guid m_parent;
+	std::wstring m_configurationId;
 	float m_volume;
 	float m_presence;
 	float m_presenceRate;

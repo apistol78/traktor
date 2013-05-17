@@ -29,6 +29,7 @@ class T_DLLCLASS Sound : public Object
 public:
 	Sound(
 		ISoundBuffer* buffer,
+		handle_t category,
 		float volume,
 		float presence,
 		float presenceRate,
@@ -36,6 +37,8 @@ public:
 	);
 
 	ISoundBuffer* getBuffer() const { return m_buffer; }
+
+	uint32_t getCategory() const { return m_category; }
 
 	float getVolume() const { return m_volume; }
 
@@ -47,6 +50,7 @@ public:
 
 private:
 	Ref< ISoundBuffer > m_buffer;
+	handle_t m_category;
 	float m_volume;
 	float m_presence;
 	float m_presenceRate;

@@ -53,7 +53,7 @@ bool isMute(const SoundBlock& soundBlock, uint32_t& outMuteOffset)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 29, SoundPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.sound.SoundPipeline", 31, SoundPipeline, editor::IPipeline)
 
 SoundPipeline::SoundPipeline()
 {
@@ -140,14 +140,21 @@ bool SoundPipeline::buildOutput(
 		return false;
 	}
 
+	bool categorized = false;
+	std::wstring configurationId;
 	float volume = 1.0f;
 	float presence = soundAsset->m_presence;
 	float presenceRate = soundAsset->m_presenceRate;
 	float range = 0.0f;
 
 	Ref< const SoundCategory > category = pipelineBuilder->getObjectReadOnly< SoundCategory >(soundAsset->m_category);
+
+	if (category)
+		configurationId = category->getConfigurationId();
+
 	while (category)
 	{
+		categorized = true;
 		volume *= category->getVolume();
 
 		if (presence <= FUZZY_EPSILON)
@@ -161,15 +168,21 @@ bool SoundPipeline::buildOutput(
 		category = pipelineBuilder->getObjectReadOnly< SoundCategory >(category->getParent());
 	}
 
-	log::info << L"Category volume " << int32_t(volume * 100.0f) << L" %" << Endl;
-	log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
-	log::info << L"Category range " << range << Endl;
+	if (categorized)
+	{
+		log::info << L"Category volume " << int32_t(volume * 100.0f) << L" %" << Endl;
+		log::info << L"Category presence " << presence << L", rate " << int32_t(presenceRate * 100.0f) << L" d%" << Endl;
+		log::info << L"Category range " << range << Endl;
+	}
+	else
+		log::warning << L"Uncategorized sound \"" << sourceInstance->getName() << L"\"" << Endl;
 
 	if (soundAsset->m_stream)
 	{
 		Ref< StreamSoundResource > resource = new StreamSoundResource();
 
 		resource->m_decoderType = &type_of(decoder);
+		resource->m_category = configurationId;
 		resource->m_volume = volume;
 		resource->m_presence = presence;
 		resource->m_presenceRate = presenceRate;
@@ -339,6 +352,7 @@ bool SoundPipeline::buildOutput(
 
 		sourceStream->close();
 
+		resource->m_category = configurationId;
 		resource->m_sampleRate = sampleRate;
 		resource->m_samplesCount = samplesCount;
 		resource->m_channelsCount = maxChannel;

@@ -156,13 +156,15 @@ float SoundSystem::getVolume() const
 	return m_volume;
 }
 
-void SoundSystem::setVolume(const std::wstring& category, float volume)
+void SoundSystem::setVolume(handle_t category, float volume)
 {
+	m_categoryVolumes[category] = volume;
 }
 
-float SoundSystem::getVolume(const std::wstring& category) const
+float SoundSystem::getVolume(handle_t category) const
 {
-	return 1.0f;
+	SmallMap< handle_t, float >::const_iterator i = m_categoryVolumes.find(category);
+	return i != m_categoryVolumes.end() ? i->second : 1.0f;
 }
 
 void SoundSystem::setCombineMatrix(float cm[SbcMaxChannelCount][SbcMaxChannelCount])
@@ -280,7 +282,9 @@ void SoundSystem::threadMixer()
 			T_ASSERT (m_requestBlocks[i].sampleRate == m_desc.driverDesc.sampleRate);
 			T_ASSERT (m_requestBlocks[i].samplesCount == m_desc.driverDesc.frameSamples);
 
-			float duck = m_volume * (m_duck[1][i] * 0.5f + 0.5f);
+			float categoryVolume = getVolume(m_channels[i]->getCategory());
+			float duck = m_volume * categoryVolume * (m_duck[1][i] * 0.5f + 0.5f);
+
 			for (uint32_t k = 0; k < m_requestBlocks[i].maxChannel; ++k)
 			{
 				if (!m_requestBlocks[i].samples[k])

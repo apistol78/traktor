@@ -95,7 +95,13 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->lowPassFilter = 0;
 				i->echoFilter = 0;
 				i->sound = sound;
-				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
+				i->soundChannel->play(
+					sound->getBuffer(),
+					sound->getCategory(),
+					sound->getVolume(),
+					sound->getPresence(),
+					sound->getPresenceRate()
+				);
 				i->soundChannel->setFilter(0);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
@@ -129,7 +135,13 @@ Ref< ISoundHandle > SoundPlayer::play(const Sound* sound, uint32_t priority)
 				i->lowPassFilter = 0;
 				i->echoFilter = 0;
 				i->sound = sound;
-				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), sound->getPresence(), sound->getPresenceRate());
+				i->soundChannel->play(
+					sound->getBuffer(),
+					sound->getCategory(),
+					sound->getVolume(),
+					sound->getPresence(),
+					sound->getPresenceRate()
+				);
 				i->soundChannel->setFilter(0);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
@@ -223,7 +235,13 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->lowPassFilter = lowPassFilter;
 				i->echoFilter = echoFilter;
 				i->sound = sound;
-				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
+				i->soundChannel->play(
+					sound->getBuffer(),
+					sound->getCategory(),
+					sound->getVolume(),
+					presence,
+					sound->getPresenceRate()
+				);
 				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
@@ -257,7 +275,13 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->lowPassFilter = lowPassFilter;
 				i->echoFilter = echoFilter;
 				i->sound = sound;
-				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
+				i->soundChannel->play(
+					sound->getBuffer(),
+					sound->getCategory(),
+					sound->getVolume(),
+					presence,
+					sound->getPresenceRate()
+				);
 				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
@@ -287,7 +311,13 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->lowPassFilter = lowPassFilter;
 				i->echoFilter = echoFilter;
 				i->sound = sound;
-				i->soundChannel->play(sound->getBuffer(), sound->getVolume(), presence, sound->getPresenceRate());
+				i->soundChannel->play(
+					sound->getBuffer(),
+					sound->getCategory(),
+					sound->getVolume(),
+					presence,
+					sound->getPresenceRate()
+				);
 				i->soundChannel->setFilter(groupFilter);
 				i->soundChannel->setVolume(1.0f);
 				i->priority = priority;
