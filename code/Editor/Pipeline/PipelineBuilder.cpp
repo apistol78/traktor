@@ -291,18 +291,6 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 				if (j->sourceAsset == sourceAsset)
 					return j->product;
 			}
-
-			// Hash matching but no product found; need to clone a product.
-			Ref< ISerializable > product = DeepClone(i->second.front().product).create();
-			if (!product)
-				return 0;
-
-			BuiltCacheEntry bce;
-			bce.sourceAsset = sourceAsset;
-			bce.product = product;
-			bcl.push_back(bce);
-
-			return product;
 		}
 	}
 
@@ -314,9 +302,6 @@ Ref< ISerializable > PipelineBuilder::buildOutput(const ISerializable* sourceAss
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*pipelineType);
 	T_ASSERT (pipeline);
-
-	Timer timer;
-	timer.start();
 
 	Ref< ISerializable > product = pipeline->buildOutput(this, sourceAsset);
 	if (!product)
@@ -384,6 +369,34 @@ bool PipelineBuilder::buildOutput(const ISerializable* sourceAsset, const std::w
 #endif
 
 	return true;
+}
+
+Ref< ISerializable > PipelineBuilder::getBuildProduct(const ISerializable* sourceAsset)
+{
+	if (!sourceAsset)
+		return 0;
+
+	uint32_t sourceHash = DeepHash(sourceAsset).get();
+
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_builtCacheLock);
+
+		std::map< uint32_t, built_cache_list_t >::iterator i = m_builtCache.find(sourceHash);
+		if (i != m_builtCache.end())
+		{
+			built_cache_list_t& bcl = i->second;
+			T_ASSERT (!bcl.empty());
+
+			// Return same instance as before if pointer and hash match.
+			for (built_cache_list_t::const_iterator j = bcl.begin(); j != bcl.end(); ++j)
+			{
+				if (j->sourceAsset == sourceAsset)
+					return j->product;
+			}
+		}
+	}
+
+	return 0;
 }
 
 Ref< db::Database > PipelineBuilder::getSourceDatabase() const

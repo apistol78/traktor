@@ -38,7 +38,8 @@ public:
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< sound::Sound >& sound,
-		bool autoPlay
+		bool autoPlay,
+		bool repeat
 	);
 
 	virtual ~AudioLayer();
@@ -79,6 +80,7 @@ private:
 	resource::Proxy< sound::Sound > m_sound;
 	Ref< sound::ISoundHandle > m_handle;
 	bool m_autoPlay;
+	bool m_repeat;
 	AlignedVector< Tween > m_tweens;
 };
 

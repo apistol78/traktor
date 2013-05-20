@@ -190,7 +190,7 @@ inline std::wstring trim(const std::wstring& a)
  * \ingroup Core
  */
 template < typename ValueType >
-inline std::wstring toString(ValueType value)
+std::wstring toString(ValueType value)
 {
 	StringOutputStream ss; ss << value;
 	return ss.str();
@@ -222,7 +222,7 @@ inline std::wstring toString(double value, int32_t decimals = 6)
  * \ingroup Core
  */
 template < typename ValueType >
-inline ValueType parseString(const std::string& text, const ValueType& defaultValue)
+ValueType parseString(const std::string& text, const ValueType& defaultValue)
 {
 	ValueType value = defaultValue;
 	if (startsWith< std::string >(text, "0x"))
@@ -236,7 +236,7 @@ inline ValueType parseString(const std::string& text, const ValueType& defaultVa
  * \ingroup Core
  */
 template < typename ValueType >
-inline ValueType parseString(const std::string& text)
+ValueType parseString(const std::string& text)
 {
 	return parseString(text, std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0);
 }
@@ -245,7 +245,7 @@ inline ValueType parseString(const std::string& text)
  * \ingroup Core
  */
 template < typename ValueType >
-inline ValueType parseString(const std::wstring& text, const ValueType& defaultValue)
+ValueType parseString(const std::wstring& text, const ValueType& defaultValue)
 {
 	ValueType value = defaultValue;
 	if (startsWith< std::wstring >(text, L"0x"))
@@ -255,11 +255,23 @@ inline ValueType parseString(const std::wstring& text, const ValueType& defaultV
 	return value;
 }
 
+/*! \brief Convert literal to boolean.
+ * \ingroup Core
+ */
+template < >
+inline float parseString< float >(const std::wstring& text, const float& defaultValue)
+{
+	float value = defaultValue;
+	std::wstringstream(text) >> value;
+	return (value != -value) ? value : 0.0f;
+}
+
+
 /*! \brief Convert literal to value.
  * \ingroup Core
  */
 template < typename ValueType >
-inline ValueType parseString(const std::wstring& text)
+ValueType parseString(const std::wstring& text)
 {
 	return parseString(text, std::numeric_limits< ValueType >::has_signaling_NaN ?  std::numeric_limits< ValueType >::signaling_NaN() : 0);
 }

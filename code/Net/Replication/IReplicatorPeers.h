@@ -22,27 +22,46 @@ class T_DLLCLASS IReplicatorPeers : public Object
 	T_RTTI_CLASS;
 
 public:
+	struct PeerInfo
+	{
+		handle_t handle;
+		std::wstring name;
+		uint8_t status;
+		bool relayed;
+
+		PeerInfo()
+		:	handle(0x00)
+		,	status(0)
+		,	relayed(false)
+		{
+		}
+	};
+
 	virtual void destroy() = 0;
 
 	virtual int32_t update() = 0;
 
-	// \{
+	virtual void setStatus(uint8_t status) = 0;
+
+	//! \{
+
+	virtual handle_t getHandle() const = 0;
 
 	virtual std::wstring getName() const = 0;
 
-	virtual uint64_t getGlobalId() const = 0;
+	//! \}
+
+	//! \{
 
 	virtual handle_t getPrimaryPeerHandle() const = 0;
 
+	virtual bool setPrimaryPeerHandle(handle_t handle) = 0;
+
 	//! \}
 
-	// \{
+	//! \{
 
-	virtual uint32_t getPeerHandles(std::vector< handle_t >& outPeerHandles) const = 0;
-
-	virtual std::wstring getPeerName(handle_t handle) const = 0;
-
-	virtual uint64_t getPeerGlobalId(handle_t handle) const = 0;
+	virtual uint32_t getPeers(std::vector< PeerInfo >& outPeers) const = 0;
 
 	virtual int32_t receive(void* data, int32_t size, handle_t& outFromHandle) = 0;
 

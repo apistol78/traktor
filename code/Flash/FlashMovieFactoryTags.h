@@ -233,6 +233,17 @@ public:
 	virtual bool read(SwfReader* swf, ReadContext& context);
 };
 
+class FlashTagStartSound : public FlashTag
+{
+public:
+	FlashTagStartSound(int32_t startType);
+
+	virtual bool read(SwfReader* swf, ReadContext& context);
+
+private:
+	int32_t m_startType;
+};
+
 class FlashTagUnsupported : public FlashTag
 {
 public:

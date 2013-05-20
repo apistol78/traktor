@@ -68,7 +68,7 @@ SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 	// probably fail faster than gethostbyname.
 	uint32_t ia = inet_addr(wstombs(host).c_str());
 
-#if !defined(_XBOX)
+#if !defined(_XBOX) && !defined(EMSCRIPTEN)
 	if (ia == INADDR_NONE)
 	{
 		hostent* hostent = gethostbyname(wstombs(host).c_str());

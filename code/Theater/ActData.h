@@ -46,6 +46,8 @@ public:
 
 	float getDuration() const { return m_duration; }
 
+	const RefArray< TrackData >& getTracks() const { return m_tracks; }
+
 	RefArray< TrackData >& getTracks() { return m_tracks; }
 
 private:

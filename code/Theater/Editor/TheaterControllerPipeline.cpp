@@ -1,4 +1,4 @@
-#include "Core/Serialization/DeepClone.h"
+#include "Core/Log/Log.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Theater/ActData.h"
 #include "Theater/TheaterControllerData.h"
@@ -11,7 +11,7 @@ namespace traktor
 	namespace theater
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerPipeline", 0, TheaterControllerPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.theater.TheaterControllerPipeline", 1, TheaterControllerPipeline, editor::IPipeline)
 
 bool TheaterControllerPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -62,21 +62,39 @@ Ref< ISerializable > TheaterControllerPipeline::buildOutput(
 ) const
 {
 	const TheaterControllerData* sourceControllerData = checked_type_cast< const TheaterControllerData*, false >(sourceAsset);
+	const RefArray< ActData >& sourceActs = sourceControllerData->getActs();
+
+	Ref< TheaterControllerData > controllerData = new TheaterControllerData();
 	
-	Ref< TheaterControllerData > controllerData = new TheaterControllerData(*sourceControllerData);
-	if (!controllerData)
-		return 0;
-
 	RefArray< ActData >& acts = controllerData->getActs();
-	for (uint32_t i = 0; i < acts.size(); ++i)
-	{
-		RefArray< TrackData >& tracks = acts[i]->getTracks();
-		for (uint32_t j = 0; j < tracks.size(); ++j)
-		{
-			Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(pipelineBuilder->buildOutput(tracks[j]->getEntityData()));
-			Ref< world::EntityData > lookAtEntityData = checked_type_cast< world::EntityData* >(pipelineBuilder->buildOutput(tracks[j]->getLookAtEntityData()));
+	acts.resize(sourceActs.size());
 
-			tracks[j] = new TrackData(*tracks[j]);
+	for (uint32_t i = 0; i < sourceActs.size(); ++i)
+	{
+		const RefArray< TrackData >& sourceTracks = sourceActs[i]->getTracks();
+
+		acts[i] = new ActData(*sourceActs[i]);
+
+		RefArray< TrackData >& tracks = acts[i]->getTracks();
+		tracks.resize(sourceTracks.size());
+
+		for (uint32_t j = 0; j < sourceTracks.size(); ++j)
+		{
+			Ref< world::EntityData > entityData = checked_type_cast< world::EntityData* >(pipelineBuilder->getBuildProduct(sourceTracks[j]->getEntityData()));
+			Ref< world::EntityData > lookAtEntityData = checked_type_cast< world::EntityData* >(pipelineBuilder->getBuildProduct(sourceTracks[j]->getLookAtEntityData()));
+
+			if (!entityData && sourceTracks[j]->getEntityData())
+			{
+				log::error << L"Theater pipeline failed; unable to get product of entity data" << Endl;
+				return 0;
+			}
+			if (!lookAtEntityData && sourceTracks[j]->getLookAtEntityData())
+			{
+				log::error << L"Theater pipeline failed; unable to get product of entity data" << Endl;
+				return 0;
+			}
+
+			tracks[j] = new TrackData(*sourceTracks[j]);
 			tracks[j]->setEntityData(entityData);
 			tracks[j]->setLookAtEntityData(lookAtEntityData);
 		}

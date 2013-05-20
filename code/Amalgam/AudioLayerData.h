@@ -40,6 +40,7 @@ private:
 
 	resource::Id< sound::Sound > m_sound;
 	bool m_autoPlay;
+	bool m_repeat;
 };
 
 	}

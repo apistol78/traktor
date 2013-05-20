@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.Feature">
+	<description>Emscripten</description>
+	<platforms>
+		<ios>false</ios>
+		<linux>false</linux>
+		<mobile6>false</mobile6>
+		<osx>false</osx>
+		<ps3>false</ps3>
+		<win32>true</win32>
+		<win64>false</win64>
+		<xbox360>false</xbox360>
+	</platforms>
+	<pipelineProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Editor.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Database</item>
+						<item>Traktor.Database.Local</item>
+						<item>Traktor.Resource.Editor</item>
+					</value>
+				</second>
+			</item>
+			<item>
+				<first>Pipeline.Db</first>
+				<second type="traktor.PropertyString">
+					<value>fileName=temp/Pipeline.db</value>
+				</second>
+			</item>
+		</value>
+	</pipelineProperties>
+	<migrateProperties type="traktor.PropertyGroup">
+		<value>
+			<item>
+				<first>Migrate.Modules</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Traktor.Database</item>
+						<item>Traktor.Database.Compact</item>
+						<item>Traktor.Database.Local</item>
+					</value>
+				</second>
+			</item>
+		</value>
+	</migrateProperties>
+	<runtimeProperties/>
+</object>

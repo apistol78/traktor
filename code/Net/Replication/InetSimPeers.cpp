@@ -50,14 +50,19 @@ int32_t InetSimPeers::update()
 	return m_peers->update();
 }
 
+void InetSimPeers::setStatus(uint8_t status)
+{
+	m_peers->setStatus(status);
+}
+
+handle_t InetSimPeers::getHandle() const
+{
+	return m_peers->getHandle();
+}
+
 std::wstring InetSimPeers::getName() const
 {
 	return m_peers->getName();
-}
-
-uint64_t InetSimPeers::getGlobalId() const
-{
-	return m_peers->getGlobalId();
 }
 
 handle_t InetSimPeers::getPrimaryPeerHandle() const
@@ -65,19 +70,14 @@ handle_t InetSimPeers::getPrimaryPeerHandle() const
 	return m_peers->getPrimaryPeerHandle();
 }
 
-uint32_t InetSimPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
+bool InetSimPeers::setPrimaryPeerHandle(handle_t handle)
 {
-	return m_peers->getPeerHandles(outPeerHandles);
+	return m_peers->setPrimaryPeerHandle(handle);
 }
 
-uint64_t InetSimPeers::getPeerGlobalId(handle_t handle) const
+uint32_t InetSimPeers::getPeers(std::vector< PeerInfo >& outPeers) const
 {
-	return m_peers->getPeerGlobalId(handle);
-}
-
-std::wstring InetSimPeers::getPeerName(handle_t handle) const
-{
-	return m_peers->getPeerName(handle);
+	return m_peers->getPeers(outPeers);
 }
 
 int32_t InetSimPeers::receive(void* data, int32_t size, handle_t& outFromHandle)

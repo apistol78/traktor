@@ -2,7 +2,6 @@
 #include "Core/Reflection/Reflection.h"
 #include "Core/Reflection/RfmObject.h"
 #include "Core/Reflection/RfpMemberType.h"
-#include "Core/Serialization/DeepClone.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
@@ -112,7 +111,7 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	Ref< Reflection > reflection = Reflection::create(DeepClone(sourceAsset).create());
+	Ref< Reflection > reflection = Reflection::create(sourceAsset);
 	if (!reflection)
 		return 0;
 

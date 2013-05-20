@@ -48,6 +48,8 @@ public:
 
 	virtual bool buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams);
 
+	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset);
+
 	virtual Ref< db::Database > getSourceDatabase() const;
 
 	virtual Ref< db::Database > getOutputDatabase() const;

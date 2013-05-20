@@ -1,3 +1,4 @@
+#include <cmath>
 #include "Amalgam/IEnvironment.h"
 #include "Amalgam/Impl/InputServer.h"
 #include "Core/Log/Log.h"
@@ -457,7 +458,7 @@ bool InputServer::isIdle() const
 	for (std::map< std::wstring, Ref< input::InputState > >::const_iterator i = states.begin(); i != states.end(); ++i)
 	{
 		float dV = i->second->getValue() - i->second->getPreviousValue();
-		if (abs(dV) > FUZZY_EPSILON)
+		if (std::abs(dV) > FUZZY_EPSILON)
 			return false;
 	}
 

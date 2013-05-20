@@ -810,13 +810,14 @@ bool FlashTagDefineSprite::read(SwfReader* swf, ReadContext& context)
 	tagReaders[TiPlaceObject3] = new FlashTagPlaceObject(3);
 	tagReaders[TiRemoveObject] = new FlashTagRemoveObject(1);
 	tagReaders[TiRemoveObject2] = new FlashTagRemoveObject(2);
+	tagReaders[TiStartSound] = new FlashTagStartSound(1);
+	tagReaders[TiStartSound2] = new FlashTagStartSound(2);
 	tagReaders[TiShowFrame] = new FlashTagShowFrame();
 	tagReaders[TiFrameLabel] = new FlashTagFrameLabel();
 
 	// Define readers for tags which isn't planed to be implemented.
 	tagReaders[13] = new FlashTagUnsupported(13);
 	tagReaders[14] = new FlashTagUnsupported(14);
-	tagReaders[15] = new FlashTagUnsupported(15);
 	tagReaders[18] = new FlashTagUnsupported(18);
 	tagReaders[19] = new FlashTagUnsupported(19);
 	tagReaders[45] = new FlashTagUnsupported(45);
@@ -1262,6 +1263,35 @@ bool FlashTagDefineSound::read(SwfReader* swf, ReadContext& context)
 	}
 
 	context.movie->defineSound(soundId, sound);
+	return true;
+}
+
+// ============================================================================
+// Start sound
+
+FlashTagStartSound::FlashTagStartSound(int32_t startType)
+:	m_startType(startType)
+{
+}
+
+bool FlashTagStartSound::read(SwfReader* swf, ReadContext& context)
+{
+	BitReader& bs = swf->getBitReader();
+
+	if (m_startType == 1)
+	{
+		uint16_t soundId = bs.readUInt16();
+
+		SwfSoundInfo* soundInfo = swf->readSoundInfo();
+		if (!soundInfo)
+			return false;
+
+		context.frame->startSound(soundId);
+	}
+	else
+		// \fixme
+		return false;
+
 	return true;
 }
 

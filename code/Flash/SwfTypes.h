@@ -406,6 +406,12 @@ struct SwfFilter
 	};
 };
 
+struct SwfSoundInfo
+{
+	bool syncStop;
+	bool syncNoMultiple;
+};
+
 enum SwfEventType
 {
 	EvtMouseWheel		= (1 << 21),

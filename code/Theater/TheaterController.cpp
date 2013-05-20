@@ -1,5 +1,6 @@
 #include <limits>
 #include "Core/Math/Const.h"
+#include "Core/Math/MathUtils.h"
 #include "Theater/Act.h"
 #include "Theater/TheaterController.h"
 
@@ -20,7 +21,7 @@ TheaterController::TheaterController(const RefArray< const Act >& acts)
 
 void TheaterController::update(scene::Scene* scene, float time, float deltaTime)
 {
-	if (m_acts.empty() || abs(time - m_lastTime) <= FUZZY_EPSILON)
+	if (m_acts.empty() || traktor::abs(time - m_lastTime) <= FUZZY_EPSILON)
 		return;
 
 	if (m_actTime < 0.0f || m_actTime > time)

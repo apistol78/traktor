@@ -46,6 +46,21 @@ Random g_random;
 #define T_USE_DELTA_FRAMES 1
 #define T_REPLICATOR_DEBUG(x) traktor::log::info << x << traktor::Endl
 
+struct PredHandle
+{
+	handle_t handle;
+
+	PredHandle(handle_t handle_)
+	:	handle(handle_)
+	{
+	}
+
+	bool operator () (const IReplicatorPeers::PeerInfo info) const
+	{
+		return info.handle == handle;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator", Replicator, Object)
@@ -70,13 +85,13 @@ Replicator::~Replicator()
 
 bool Replicator::create(IReplicatorPeers* replicatorPeers)
 {
-	std::vector< handle_t > handles;
+	std::vector< IReplicatorPeers::PeerInfo > info;
 
 	m_replicatorPeers = replicatorPeers;
 	m_state = 0;
 
 	m_replicatorPeers->update();
-	m_replicatorPeers->getPeerHandles(handles);
+	m_replicatorPeers->getPeers(info);
 
 	// Discard any pending data.
 	for (;;)
@@ -89,12 +104,11 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 	}
 
 	// Create non-established entries for each peer.
-	for (std::vector< handle_t >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+	for (std::vector< IReplicatorPeers::PeerInfo >::const_iterator i = info.begin(); i != info.end(); ++i)
 	{
-		Peer& peer = m_peers[*i];
+		Peer& peer = m_peers[i->handle];
 		peer.state = PsInitial;
-		peer.global = m_replicatorPeers->getPeerGlobalId(*i);
-		peer.name = m_replicatorPeers->getPeerName(*i);
+		peer.name = i->name;
 		peer.precursor = true;
 	}
 
@@ -177,6 +191,12 @@ bool Replicator::update(float T, float dT)
 	return bool(m_replicatorPeers != 0);
 }
 
+void Replicator::setStatus(uint8_t status)
+{
+	T_ASSERT (m_replicatorPeers);
+	m_replicatorPeers->setStatus(status);
+}
+
 void Replicator::setOrigin(const Vector4& origin)
 {
 	m_origin = origin;
@@ -220,7 +240,7 @@ void Replicator::broadcastEvent(const ISerializable* eventObject)
 
 bool Replicator::isPrimary() const
 {
-	return m_replicatorPeers->getPrimaryPeerHandle() == m_replicatorPeers->getGlobalId();
+	return m_replicatorPeers->getPrimaryPeerHandle() == m_replicatorPeers->getHandle();
 }
 
 uint32_t Replicator::getPeerCount() const
@@ -237,7 +257,14 @@ handle_t Replicator::getPeerHandle(uint32_t peerIndex) const
 
 std::wstring Replicator::getPeerName(handle_t peerHandle) const
 {
-	return m_replicatorPeers->getPeerName(peerHandle);
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	return i != m_peers.end() ? i->second.name : L"";
+}
+
+uint8_t Replicator::getPeerStatus(handle_t peerHandle) const
+{
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	return i != m_peers.end() ? i->second.status : 0;
 }
 
 int32_t Replicator::getPeerLatency(handle_t peerHandle) const
@@ -285,10 +312,13 @@ bool Replicator::isPeerConnected(handle_t peerHandle) const
 bool Replicator::isPeerRelayed(handle_t peerHandle) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i == m_peers.end() || i->second.state != PsEstablished)
-		return false;
-	else
-		return i->second.relay;
+	return i != m_peers.end() ? i->second.relayed : false;
+}
+
+bool Replicator::setPeerPrimary(handle_t peerHandle)
+{
+	T_ASSERT (m_replicatorPeers);
+	return m_replicatorPeers->setPrimaryPeerHandle(peerHandle);
 }
 
 handle_t Replicator::getPrimaryPeerHandle() const
@@ -404,18 +434,18 @@ Ref< const State > Replicator::getLoopBackState() const
 
 void Replicator::updatePeers(float dT)
 {
-	std::vector< handle_t > handles;
-	handles.reserve(m_peers.size());
+	std::vector< IReplicatorPeers::PeerInfo > info;
+	info.reserve(m_peers.size());
 
 	// Massage replicator peers back-end first and
 	// then get fresh list of peer handles.
 	m_replicatorPeers->update();
-	m_replicatorPeers->getPeerHandles(handles);
+	m_replicatorPeers->getPeers(info);
 
 	// Keep list of un-fresh handles.
 	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); )
 	{
-		if (std::find(handles.begin(), handles.end(), i->first) != handles.end())
+		if (std::find_if(info.begin(), info.end(), PredHandle(i->first)) != info.end())
 		{
 			++i;
 			continue;
@@ -446,37 +476,24 @@ void Replicator::updatePeers(float dT)
 	}
 
 	// Iterate all handles, check error state or send "I am" to new peers.
-	for (std::vector< handle_t >::const_iterator i = handles.begin(); i != handles.end(); ++i)
+	for (std::vector< IReplicatorPeers::PeerInfo >::const_iterator i = info.begin(); i != info.end(); ++i)
 	{
-		Peer& peer = m_peers[*i];
+		Peer& peer = m_peers[i->handle];
 
 		// Issue "I am" to unestablished peers.
 		if (peer.state == PsInitial)
 		{
-			peer.global = m_replicatorPeers->getPeerGlobalId(*i);
-			peer.name = m_replicatorPeers->getPeerName(*i);
+			peer.name = i->name;
 
 			if ((peer.timeUntilTx -= dT) <= 0.0f)
 			{
-				if (peer.pendingIAm >= c_maxPendingIAm)
-				{
-					peer.relay = !peer.relay;
-					peer.pendingIAm = 0;
+				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer \"" << peer.name << L"\" (" << peer.pendingIAm << L")");
 
-					if (peer.relay)
-						{ T_REPLICATOR_DEBUG(L"WARNING: Unable to handshake directly with peer \"" << peer.name << L"\"; using relaying"); }
-					else
-						{ T_REPLICATOR_DEBUG(L"WARNING: Unable to handshake with peer \"" << peer.name << L"\" through relay; using direct"); }
-				}
-
-				T_REPLICATOR_DEBUG(L"OK: Unestablished peer found; sending \"I am\" to peer \"" << peer.name << L"\" (" << peer.pendingIAm << (peer.relay ? L" R" : L"") << L")");
-
-				if (sendIAm(*i, 0, m_id))
+				if (sendIAm(i->handle, 0, m_id))
 					peer.pendingIAm++;
 				else
 				{
-					{ T_REPLICATOR_DEBUG(L"ERROR: Unable to send \"I am\" to peer \"" << peer.name << L"\""); }
-					peer.relay = !peer.relay;
+					T_REPLICATOR_DEBUG(L"ERROR: Unable to send \"I am\" to peer \"" << peer.name << L"\"");
 					peer.pendingIAm = 0;
 				}
 
@@ -503,16 +520,14 @@ void Replicator::updatePeers(float dT)
 
 			if (failing)
 			{
-				peer.relay = !peer.relay;
 				peer.pendingPing = 0;
 				peer.errorCount = 0;
-
-				if (peer.relay)
-					{ T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate directly with peer \"" << peer.name << L"\"; using relaying"); }
-				else
-					{ T_REPLICATOR_DEBUG(L"WARNING: Unable to communcate with peer \"" << peer.name << L"\" through relay; using direct"); }
 			}
 		}
+
+		// Save info about peer.
+		peer.status = i->status;
+		peer.relayed = i->relayed;
 	}
 }
 
@@ -1121,207 +1136,19 @@ void Replicator::adjustTime(float offset)
 		i->time += offset;
 }
 
-bool Replicator::sendMasqueraded(handle_t fromPeerHandle, handle_t targetPeerHandle, const Message* msg, uint32_t size, bool reliable)
-{
-	Message mm;
-	mm.type = MtMasquerade;
-	mm.time = uint32_t(m_time * 1000.0f);
-	mm.masquerade.fromGlobalId = fromPeerHandle;
-	std::memcpy(mm.masquerade.data, msg, size);
-	return m_replicatorPeers->send(targetPeerHandle, &mm, Message::HeaderSize + sizeof(uint64_t) + size, reliable);
-}
-
-bool Replicator::sendRelay(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)
-{
-	handle_t relayPeerHandle;
-	if (findOptimalRelay(peerHandle, peerHandle, relayPeerHandle))
-	{
-		Message mr;
-		mr.type = reliable ? MtRelayReliable1 : MtRelayUnreliable1;
-		mr.time = uint32_t(m_time * 1000.0f);
-		mr.relay.fromGlobalId = m_replicatorPeers->getGlobalId();
-		mr.relay.targetGlobalId = peerHandle;
-		std::memcpy(mr.relay.data, msg, size);
-		return m_replicatorPeers->send(relayPeerHandle, &mr, Message::HeaderSize + 2 * sizeof(uint64_t) + size, reliable);
-	}
-	else
-		return m_replicatorPeers->send(peerHandle, msg, size, reliable);
-}
-
 bool Replicator::send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)
 {
 	T_ASSERT (size <= Message::MessageSize);
-
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	if (i == m_peers.end())
-		return false;
-
-	if (!i->second.relay)
+	if (i != m_peers.end())
 		return m_replicatorPeers->send(peerHandle, msg, size, reliable);
 	else
-		return sendRelay(peerHandle, msg, size, reliable);
+		return false;
 }
 
 int32_t Replicator::receive(Message* msg, handle_t& outPeerHandle)
 {
-	handle_t relayPeerHandle;
-	int32_t size;
-
-	for (;;)
-	{
-		size = m_replicatorPeers->receive(msg, sizeof(Message), outPeerHandle);
-		if (size <= 0)
-			return size;
-
-		// Reset relaying to peer from whom I just received data; if we can receive from
-		// peer then we should be able to send to it as well.
-		Peer& peer = m_peers[outPeerHandle];
-
-		if (peer.relay)
-		{
-			T_REPLICATOR_DEBUG(L"OK: Got direct message from peer \"" << peer.name << L"\" by whom we use relaying; use direct");
-			peer.relay = false;
-		}
-
-		if (
-			msg->type == MtRelayUnreliable1 ||
-			msg->type == MtRelayUnreliable2 ||
-			msg->type == MtRelayReliable1 ||
-			msg->type == MtRelayReliable2
-		)
-		{
-			size -= Message::HeaderSize + 2 * sizeof(uint64_t);
-			if (size <= 0)
-				return size;
-
-			bool first = bool(msg->type == MtRelayUnreliable1 || msg->type == MtRelayReliable1);
-			bool reliable = bool(msg->type == MtRelayReliable1 || msg->type == MtRelayReliable2);
-
-			handle_t fromPeerHandle = msg->relay.fromGlobalId;
-			handle_t targetPeerHandle = msg->relay.targetGlobalId;
-
-			if (targetPeerHandle != m_replicatorPeers->getGlobalId())
-			{
-				Peer& fromPeer = m_peers[fromPeerHandle];
-				Peer& targetPeer = m_peers[targetPeerHandle];
-				if (
-					first &&
-					targetPeer.relay &&
-					findOptimalRelay(fromPeerHandle, outPeerHandle, relayPeerHandle)
-				)
-				{
-					T_REPLICATOR_DEBUG(L"OK: Relay message from peer " << fromPeer.name << L" passed on further as no direct connection to target " << targetPeer.name << L" exist");
-					
-					// Increment message type; assume in order as to become
-					// second level relay message type.
-					msg->type++;
-
-					// Resend relaying request further as we also depend
-					// on relaying to reach target peer.
-					bool result = m_replicatorPeers->send(
-						relayPeerHandle,
-						&msg,
-						sizeof(Message),
-						reliable
-					);
-
-					if (!result)
-						T_REPLICATOR_DEBUG(L"ERROR: Unable to relay message from peer " << fromPeer.name << L"; message lost (1)");
-				}
-				else
-				{
-					std::memmove(
-						msg,
-						msg->relay.data,
-						size
-					);
-
-					bool result = sendMasqueraded(
-						fromPeerHandle,
-						targetPeerHandle,
-						msg,
-						size,
-						reliable
-					);
-
-					if (!result)
-						T_REPLICATOR_DEBUG(L"ERROR: Unable to relay message from peer " << fromPeer.name << L"; message lost (2)");
-				}
-				continue;
-			}
-			else
-			{
-				// A relay message to myself; this should never happen but to be safe
-				// we just unwrap message and treat it as an ordinary message.
-				std::memmove(
-					msg,
-					msg->relay.data,
-					size
-				);
-			}
-		}
-		else if (msg->type == MtMasquerade)
-		{
-			size -= Message::HeaderSize + sizeof(uint64_t);
-			if (size <= 0)
-				return size;
-
-			outPeerHandle = msg->masquerade.fromGlobalId;
-			std::memmove(
-				msg,
-				msg->masquerade.data,
-				size
-			);
-		}
-
-		break;
-	}
-
-	return size;
-}
-
-bool Replicator::findOptimalRelay(handle_t ignorePeerHandle0, handle_t ignorePeerHandle1, handle_t& outRelayPeerHandle) const
-{
-	float relayPeerLatency = std::numeric_limits< float >::max();
-	outRelayPeerHandle = 0;
-
-	// Find optimal relay peer; use peer with least latency and no errors.
-	for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		if (
-			i->first != ignorePeerHandle0 &&
-			i->first != ignorePeerHandle1 &&
-			i->second.state == PsEstablished &&
-			i->second.relay == false &&
-			i->second.errorCount == 0 &&
-			i->second.latencyMedian < relayPeerLatency
-		)
-		{
-			outRelayPeerHandle = i->first;
-			relayPeerLatency = i->second.latencyMedian;
-		}
-	}
-
-	// If no optimal relay peer found; use least bad.
-	if (!outRelayPeerHandle)
-	{
-		for (std::map< handle_t, Peer >::const_iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-		{
-			if (
-				i->first != ignorePeerHandle0 &&
-				i->first != ignorePeerHandle1 &&
-				i->second.state == PsEstablished &&
-				i->second.relay == false &&
-				i->second.latencyMedian < relayPeerLatency
-			)
-			{
-				outRelayPeerHandle = i->first;
-				relayPeerLatency = i->second.latencyMedian;
-			}
-		}
-	}
-
-	return outRelayPeerHandle != 0;
+	return m_replicatorPeers->receive(msg, sizeof(Message), outPeerHandle);
 }
 
 	}

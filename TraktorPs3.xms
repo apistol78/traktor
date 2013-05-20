@@ -3767,6 +3767,10 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[12]"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[25]"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">

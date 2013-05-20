@@ -4,6 +4,7 @@
 #include "Amalgam/Impl/LibraryHelper.h"
 #include "Amalgam/Impl/RenderServerDefault.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Core/Math/Float.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyBoolean.h"
@@ -103,8 +104,8 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 				continue;
 
 			int32_t match =
-				std::abs((int32_t)(check.width - criteria.width)) +
-				std::abs((int32_t)(check.height - criteria.height));
+				traktor::abs((int32_t)(check.width - criteria.width)) +
+				traktor::abs((int32_t)(check.height - criteria.height));
 
 			if (
 				match < bestMatch ||

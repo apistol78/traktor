@@ -1,13 +1,13 @@
-#include <cmath>
+#include "Core/Math/Const.h"
+#include "Core/Math/Envelope.h"
+#include "Core/Math/MathUtils.h"
+#include "Core/Math/Vector2.h"
+#include "Ui/Canvas.h"
+#include "Ui/Event.h"
 #include "Ui/Custom/Graph/Edge.h"
 #include "Ui/Custom/Graph/Pin.h"
 #include "Ui/Custom/Graph/Node.h"
 #include "Ui/Custom/Graph/PaintSettings.h"
-#include "Ui/Event.h"
-#include "Ui/Canvas.h"
-#include "Core/Math/Vector2.h"
-#include "Core/Math/Const.h"
-#include "Core/Math/Envelope.h"
 
 namespace traktor
 {
@@ -29,7 +29,7 @@ void calculateLinearSpline(Point s1, Point d1, std::vector< Point >& outSpline)
 	d.x -= c_destPinOffset;
 
 	Point r(d.x - s.x, d.y - s.y);
-	Point ar(std::abs(r.x), std::abs(r.y));
+	Point ar(traktor::abs(r.x), traktor::abs(r.y));
 	Point c((s.x + d.x) / 2, (s.y + d.y) / 2);
 
 	Point m1, m2;
@@ -179,7 +179,7 @@ bool Edge::hit(const PaintSettings* paintSettings, const Point& p) const
 		Vector2 V = v.perpendicular();
 		Vector2 R = Vector2(float(s.x), float(s.y)) - P;
 
-		float D = abs(dot(V, R) / V.length());
+		float D = traktor::abs(dot(V, R) / V.length());
 		if (D > 4.0f)
 			continue;
 

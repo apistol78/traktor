@@ -48,15 +48,15 @@ int32_t ReliableTransportPeers::update()
 	int32_t queued = m_peers->update();
 
 	// Get available peers.
-	std::vector< handle_t > handles;
-	m_peers->getPeerHandles(handles);
+	m_info.resize(0);
+	m_peers->getPeers(m_info);
 
 	// Add or remove control entries.
 	for (std::map< handle_t, Control >::iterator i = m_control.begin(); i != m_control.end(); ++i)
 		i->second.alive = false;
 
-	for (std::vector< handle_t >::const_iterator i = handles.begin(); i != handles.end(); ++i)
-		m_control[*i].alive = true;
+	for (std::vector< PeerInfo >::const_iterator i = m_info.begin(); i != m_info.end(); ++i)
+		m_control[i->handle].alive = true;
 
 	std::map< handle_t, Control > controls;
 	for (std::map< handle_t, Control >::iterator i = m_control.begin(); i != m_control.end(); ++i)
@@ -107,14 +107,19 @@ int32_t ReliableTransportPeers::update()
 	return queued;
 }
 
+void ReliableTransportPeers::setStatus(uint8_t status)
+{
+	m_peers->setStatus(status);
+}
+
+handle_t ReliableTransportPeers::getHandle() const
+{
+	return m_peers->getHandle();
+}
+
 std::wstring ReliableTransportPeers::getName() const
 {
 	return m_peers->getName();
-}
-
-uint64_t ReliableTransportPeers::getGlobalId() const
-{
-	return m_peers->getGlobalId();
 }
 
 handle_t ReliableTransportPeers::getPrimaryPeerHandle() const
@@ -122,25 +127,15 @@ handle_t ReliableTransportPeers::getPrimaryPeerHandle() const
 	return m_peers->getPrimaryPeerHandle();
 }
 
-uint32_t ReliableTransportPeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
+bool ReliableTransportPeers::setPrimaryPeerHandle(handle_t handle)
 {
-	outPeerHandles.resize(0);
-	for (std::map< handle_t, Control >::const_iterator i = m_control.begin(); i != m_control.end(); ++i)
-	{
-		if (!i->second.faulty)
-			outPeerHandles.push_back(i->first);
-	}
-	return outPeerHandles.size();
+	return m_peers->setPrimaryPeerHandle(handle);
 }
 
-std::wstring ReliableTransportPeers::getPeerName(handle_t handle) const
+uint32_t ReliableTransportPeers::getPeers(std::vector< PeerInfo >& outPeers) const
 {
-	return m_peers->getPeerName(handle);
-}
-
-uint64_t ReliableTransportPeers::getPeerGlobalId(handle_t handle) const
-{
-	return m_peers->getPeerGlobalId(handle);
+	outPeers = m_info;
+	return outPeers.size();
 }
 
 int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outFromHandle)

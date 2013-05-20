@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
@@ -14,7 +15,7 @@ namespace traktor
 	namespace flash
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashFrame", 0, FlashFrame, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.flash.FlashFrame", 1, FlashFrame, ISerializable)
 
 FlashFrame::FlashFrame()
 :	m_backgroundColorChange(false)
@@ -68,6 +69,11 @@ void FlashFrame::addActionScript(const IActionVMImage* actionScript)
 	m_actionScripts.push_back(actionScript);
 }
 
+void FlashFrame::startSound(uint16_t soundId)
+{
+	m_startSounds.push_back(soundId);
+}
+
 const SmallMap< uint16_t, FlashFrame::PlaceObject >& FlashFrame::getPlaceObjects() const
 {
 	return m_placeObjects;
@@ -78,6 +84,11 @@ const SmallMap< uint16_t, FlashFrame::RemoveObject >& FlashFrame::getRemoveObjec
 	return m_removeObjects;
 }
 
+const AlignedVector< uint16_t >& FlashFrame::getStartSounds() const
+{
+	return m_startSounds;
+}
+
 const RefArray< const IActionVMImage >& FlashFrame::getActionScripts() const
 {
 	return m_actionScripts;
@@ -85,6 +96,8 @@ const RefArray< const IActionVMImage >& FlashFrame::getActionScripts() const
 
 void FlashFrame::serialize(ISerializer& s)
 {
+	T_ASSERT (s.getVersion() >= 1);
+
 	s >> Member< std::string >(L"label", m_label);
 	s >> Member< bool >(L"backgroundColorChange", m_backgroundColorChange);
 	
@@ -93,6 +106,7 @@ void FlashFrame::serialize(ISerializer& s)
 
 	s >> MemberSmallMap< uint16_t, PlaceObject, Member< uint16_t >, MemberComposite< PlaceObject > >(L"placeObjects", m_placeObjects);
 	s >> MemberSmallMap< uint16_t, RemoveObject, Member< uint16_t >, MemberComposite< RemoveObject > >(L"removeObjects", m_removeObjects);
+	s >> MemberAlignedVector< uint16_t >(L"startSounds", m_startSounds);
 	s >> MemberRefArray< const IActionVMImage >(L"actionScripts", m_actionScripts);
 }
 

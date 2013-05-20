@@ -76,6 +76,8 @@ public:
 
 	virtual bool buildOutput(const ISerializable* sourceAsset, const std::wstring& outputPath, const Guid& outputGuid, const Object* buildParams = 0) = 0;
 
+	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) = 0;
+
 	virtual Ref< db::Database > getSourceDatabase() const = 0;
 
 	virtual Ref< db::Database > getOutputDatabase() const = 0;

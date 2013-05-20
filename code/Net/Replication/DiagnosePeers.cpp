@@ -37,14 +37,14 @@ int32_t DiagnosePeers::update()
 	{
 		if (m_lastT > 0.0)
 		{
-			std::vector< handle_t > handles;
-			m_peers->getPeerHandles(handles);
+			std::vector< PeerInfo > info;
+			m_peers->getPeers(info);
 
 			double dT = T - m_lastT;
 			double up = m_sent * 8.0 / (dT * 1024.0);
 			double down = m_received * 8.0 / (dT * 1024.0);
 
-			log::info << L"Network traffic (" << int32_t(handles.size()) << L" peer(s)) :" << int32_t(T) << Endl;
+			log::info << L"Network traffic (" << int32_t(info.size()) << L" peer(s)) :" << int32_t(T) << Endl;
 			log::info << L"  U " << up << L" kbps" << Endl;
 			log::info << L"  D " << down << L" kbps" << Endl;
 		}
@@ -56,14 +56,19 @@ int32_t DiagnosePeers::update()
 	return result;
 }
 
+void DiagnosePeers::setStatus(uint8_t status)
+{
+	m_peers->setStatus(status);
+}
+
+handle_t DiagnosePeers::getHandle() const
+{
+	return m_peers->getHandle();
+}
+
 std::wstring DiagnosePeers::getName() const
 {
 	return m_peers->getName();
-}
-
-uint64_t DiagnosePeers::getGlobalId() const
-{
-	return m_peers->getGlobalId();
 }
 
 handle_t DiagnosePeers::getPrimaryPeerHandle() const
@@ -71,19 +76,14 @@ handle_t DiagnosePeers::getPrimaryPeerHandle() const
 	return m_peers->getPrimaryPeerHandle();
 }
 
-uint32_t DiagnosePeers::getPeerHandles(std::vector< handle_t >& outPeerHandles) const
+bool DiagnosePeers::setPrimaryPeerHandle(handle_t handle)
 {
-	return m_peers->getPeerHandles(outPeerHandles);
+	return m_peers->setPrimaryPeerHandle(handle);
 }
 
-uint64_t DiagnosePeers::getPeerGlobalId(handle_t handle) const
+uint32_t DiagnosePeers::getPeers(std::vector< PeerInfo >& outPeers) const
 {
-	return m_peers->getPeerGlobalId(handle);
-}
-
-std::wstring DiagnosePeers::getPeerName(handle_t handle) const
-{
-	return m_peers->getPeerName(handle);
+	return m_peers->getPeers(outPeers);
 }
 
 int32_t DiagnosePeers::receive(void* data, int32_t size, handle_t& outFromHandle)

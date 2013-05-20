@@ -28,6 +28,8 @@ public:
 
 	virtual void serialize(ISerializer& s);
 
+	const RefArray< ActData >& getActs() const { return m_acts; }
+
 	RefArray< ActData >& getActs() { return m_acts; }
 
 private:

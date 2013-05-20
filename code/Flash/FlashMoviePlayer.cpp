@@ -3,6 +3,7 @@
 #include "Core/Math/Const.h"
 #include "Core/System/OS.h"
 #include "Core/Timer/Timer.h"
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashMoviePlayer.h"
 #include "Flash/FlashMovieRenderer.h"
 #include "Flash/FlashMovie.h"
@@ -259,6 +260,11 @@ void FlashMoviePlayer::executeFrame()
 	// Notify frame listeners.
 	context->notifyFrameListeners(avm_number_t(m_timeCurrent));
 
+	// Trigger sounds placed in this frame.
+	if (m_soundPlayer)
+		m_movieInstance->updateSounds(m_soundPlayer);
+
+	// End of frame events.
 	m_movieInstance->postDispatchEvents();
 	context->setMovieClip(current);
 

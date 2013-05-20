@@ -28,7 +28,8 @@ public:
 	{
 		OtHeights,
 		OtNormals,
-		OtCuts
+		OtCuts,
+		OtUnwrap
 	};
 
 	resource::Id< Heightfield > m_heightfield;

@@ -1,5 +1,8 @@
 #include <limits>
+#include "Flash/FlashDictionary.h"
 #include "Flash/FlashCanvas.h"
+#include "Flash/FlashSound.h"
+#include "Flash/FlashSoundPlayer.h"
 #include "Flash/FlashSprite.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashFrame.h"
@@ -23,6 +26,7 @@ FlashSpriteInstance::FlashSpriteInstance(ActionContext* context, FlashCharacterI
 ,	m_nextFrame(0)
 ,	m_lastUpdateFrame(~0U)
 ,	m_lastExecutedFrame(~0U)
+,	m_lastSoundFrame(~0U)
 ,	m_skipEnterFrame(0)
 ,	m_initialized(false)
 ,	m_removed(false)
@@ -177,6 +181,31 @@ void FlashSpriteInstance::updateDisplayList()
 FlashDisplayList& FlashSpriteInstance::getDisplayList()
 {
 	return m_displayList;
+}
+
+void FlashSpriteInstance::updateSounds(FlashSoundPlayer* soundPlayer)
+{
+	if (m_lastSoundFrame != m_currentFrame)
+	{
+		FlashFrame* frame = m_sprite->getFrame(m_currentFrame);
+		if (frame)
+		{
+			const AlignedVector< uint16_t >& startSounds = frame->getStartSounds();
+			for (AlignedVector< uint16_t >::const_iterator i = startSounds.begin(); i != startSounds.end(); ++i)
+			{
+				const FlashSound* sound = getContext()->getDictionary()->getSound(*i);
+				if (sound)
+					soundPlayer->play(sound);
+			}
+		}
+		m_lastSoundFrame = m_currentFrame;
+	}
+
+	for (RefArray< FlashCharacterInstance >::const_iterator i = m_visibleCharacters.begin(); i != m_visibleCharacters.end(); ++i)
+	{
+		if (&type_of(*i) == &type_of< FlashSpriteInstance >())
+			static_cast< FlashSpriteInstance* >(*i)->updateSounds(soundPlayer);
+	}
 }
 
 void FlashSpriteInstance::removeMovieClip()

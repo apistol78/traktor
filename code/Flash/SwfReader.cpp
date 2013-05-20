@@ -704,6 +704,43 @@ bool SwfReader::readFilterList(AlignedVector< SwfFilter* >& outFilterList)
 	return true;
 }
 
+SwfSoundInfo* SwfReader::readSoundInfo()
+{
+	SwfSoundInfo* info = m_pool->alloc< SwfSoundInfo >();
+
+	m_bs->skip(2);
+
+	info->syncStop = m_bs->readBit();
+	info->syncNoMultiple = m_bs->readBit();
+
+	bool hasEnvelope = m_bs->readBit();
+	bool hasLoops = m_bs->readBit();
+	bool hasOutPoint = m_bs->readBit();
+	bool hasInPoint = m_bs->readBit();
+	
+	if (hasInPoint)
+		{ uint32_t inPoint = m_bs->readUInt32(); }
+
+	if (hasOutPoint)
+		{ uint32_t outPoint = m_bs->readUInt32(); }
+
+	if (hasLoops)
+		{ uint16_t loops = m_bs->readUInt16(); }
+
+	if (hasEnvelope)
+	{
+		uint8_t envPoints = m_bs->readUInt8();
+		for (int i = 0; i < envPoints; ++i)
+		{
+			uint32_t pos44 = m_bs->readUInt32();
+			uint16_t leftLevel = m_bs->readUInt16();
+			uint16_t rightLevel = m_bs->readUInt16();
+		}
+	}
+
+	return info;
+}
+
 SwfCxTransform SwfReader::readCxTransform(bool withAlpha)
 {
 	SwfCxTransform cxTransform;
