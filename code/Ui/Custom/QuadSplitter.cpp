@@ -1,4 +1,5 @@
 #include <algorithm>
+#include "Core/Math/MathUtils.h"
 #include "Ui/Custom/QuadSplitter.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Events/MouseEvent.h"
@@ -283,8 +284,8 @@ void QuadSplitter::eventMouseMove(Event* event)
 	}
 	else
 	{
-		bool rangeX = abs(mousePosition.x - splitterPosition.x) <= c_splitterSize / 2;
-		bool rangeY = abs(mousePosition.y - splitterPosition.y) <= c_splitterSize / 2;
+		bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= c_splitterSize / 2;
+		bool rangeY = traktor::abs(mousePosition.y - splitterPosition.y) <= c_splitterSize / 2;
 
 		if (rangeX || rangeY)
 		{
@@ -310,8 +311,8 @@ void QuadSplitter::eventButtonDown(Event* event)
 	Point mousePosition = static_cast< MouseEvent* >(event)->getPosition();
 	Point splitterPosition = getAbsolutePosition();
 
-	bool rangeX = abs(mousePosition.x - splitterPosition.x) <= c_splitterSize / 2;
-	bool rangeY = abs(mousePosition.y - splitterPosition.y) <= c_splitterSize / 2;
+	bool rangeX = traktor::abs(mousePosition.x - splitterPosition.x) <= c_splitterSize / 2;
+	bool rangeY = traktor::abs(mousePosition.y - splitterPosition.y) <= c_splitterSize / 2;
 
 	if (rangeX || rangeY)
 	{

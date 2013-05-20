@@ -8413,6 +8413,10 @@
 								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[11]/dependencies/item/project"/>
 							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[26]"/>
+							</item>
 						</dependencies>
 					</project>
 				</item>

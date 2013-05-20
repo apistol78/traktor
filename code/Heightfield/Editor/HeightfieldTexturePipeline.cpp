@@ -279,6 +279,97 @@ bool HeightfieldTexturePipeline::buildOutput(
 			outputMap
 		);
 	}
+	else if (asset->m_output == HeightfieldTextureAsset::OtUnwrap)
+	{
+		Ref< drawing::Image > outputMap = new drawing::Image(drawing::PixelFormat::getRGBAF32(), size, size);
+
+		const Vector4& worldExtent = heightfield->getWorldExtent();
+		for (int32_t v = 0; v < size; ++v)
+		{
+			for (int32_t u = 0; u < size; ++u)
+			{
+				float h = heightfield->getGridHeightNearest(u, v) * worldExtent.y();
+				float hu = heightfield->getGridHeightNearest(u + 1, v) * worldExtent.y();
+				float hv = heightfield->getGridHeightNearest(u, v + 1) * worldExtent.y();
+				outputMap->setPixelUnsafe(u, v, Color4f(abs(hu - h), abs(hv - h), 0.0f, 1.0f));
+			}
+		}
+
+		Color4f ct;
+
+		for (int32_t v = 0; v < size; ++v)
+		{
+			Scalar total(0.0f);
+			for (int32_t u = 0; u < size; ++u)
+			{
+				outputMap->getPixelUnsafe(u, v, ct);
+
+				Scalar du = ct.getRed();
+
+				ct.setRed(total);
+				outputMap->setPixelUnsafe(u, v, ct);
+
+				total += du * Scalar(0.5f) + Scalar(0.5f);
+			}
+			for (int32_t u = 0; u < size; ++u)
+			{
+				outputMap->getPixelUnsafe(u, v, ct);
+				ct.setRed(ct.getRed() / total);
+				outputMap->setPixelUnsafe(u, v, ct);
+			}
+		}
+
+		for (int32_t u = 0; u < size; ++u)
+		{
+			Scalar total(0.0f);
+			for (int32_t v = 0; v < size; ++v)
+			{
+				outputMap->getPixelUnsafe(u, v, ct);
+
+				Scalar dv = ct.getGreen();
+
+				ct.setGreen(total);
+				outputMap->setPixelUnsafe(u, v, ct);
+
+				total += dv * Scalar(0.5f) + Scalar(0.5f);
+			}
+			for (int32_t v = 0; v < size; ++v)
+			{
+				outputMap->getPixelUnsafe(u, v, ct);
+				ct.setGreen(ct.getGreen() / total);
+				outputMap->setPixelUnsafe(u, v, ct);
+			}
+		}
+
+		outputMap->save(L"data/temp/Unwrap.png");
+
+		Ref< render::TextureOutput > output = new render::TextureOutput();
+		output->m_textureFormat = render::TfR8G8B8A8;
+		output->m_generateNormalMap = false;
+		output->m_scaleDepth = 0.0f;
+		output->m_generateMips = false;
+		output->m_keepZeroAlpha = false;
+		output->m_textureType = render::Tt2D;
+		output->m_hasAlpha = false;
+		output->m_ignoreAlpha = false;
+		output->m_scaleImage = false;
+		output->m_scaleWidth = 0;
+		output->m_scaleHeight = 0;
+		output->m_enableCompression = false;
+		output->m_enableNormalMapCompression = false;
+		output->m_inverseNormalMapY = false;
+		output->m_linearGamma = true;
+		output->m_generateSphereMap = false;
+		output->m_preserveAlphaCoverage = false;
+		output->m_alphaCoverageReference = 0.0f;
+
+		return pipelineBuilder->buildOutput(
+			output,
+			outputPath,
+			outputGuid,
+			outputMap
+		);
+	}
 	else
 		return false;
 }

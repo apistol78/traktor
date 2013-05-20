@@ -12,6 +12,7 @@
 #include "Online/IStatistics.h"
 #include "Online/IUser.h"
 #include "Online/LobbyFilter.h"
+#include "Online/OnlinePeers.h"
 #include "Online/Score.h"
 #include "Script/AutoScriptClass.h"
 #include "Script/Boxes.h"
@@ -318,6 +319,10 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classIUser->addMethod("getPresenceValue", &online_IUser_getPresenceValue);
 	classIUser->addMethod("isP2PAllowed", &online::IUser::isP2PAllowed);
 	scriptManager->registerClass(classIUser);
+
+	Ref< script::AutoScriptClass< online::OnlinePeers > > classOnlinePeers = new script::AutoScriptClass< online::OnlinePeers >();
+	classOnlinePeers->addConstructor< online::ISessionManager*, online::ILobby* >();
+	scriptManager->registerClass(classOnlinePeers);
 }
 
 	}

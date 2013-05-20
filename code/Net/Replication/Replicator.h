@@ -84,6 +84,10 @@ public:
 	 */
 	bool update(float T, float dT);
 
+	/*! \brief Set our status.
+	 */
+	void setStatus(uint8_t status);
+
 	/*! \brief Set our origin.
 	 *
 	 * Origin is used to determine which frequency
@@ -126,6 +130,10 @@ public:
 	 */
 	std::wstring getPeerName(handle_t peerHandle) const;
 
+	/*! \brief Get peer status.
+	 */
+	uint8_t getPeerStatus(handle_t peerHandle) const;
+
 	/*! \brief Get peer minimum latency.
 	 * \return Latency in milliseconds.
 	 */
@@ -153,6 +161,10 @@ public:
 	/*! \brief Check if peer is relayed.
 	 */
 	bool isPeerRelayed(handle_t peerHandle) const;
+
+	/*! \brief Set primary peer; only valid if we're primary in the first place.
+	 */
+	bool setPeerPrimary(handle_t peerHandle);
 
 	/*! \brief Get handle of primary peer.
 	 *
@@ -252,11 +264,11 @@ private:
 	struct Peer
 	{
 		PeerState state;
-		uint64_t global;
 		std::wstring name;
 		Ghost* ghost;
 		bool precursor;
-		bool relay;
+		bool relayed;
+		uint8_t status;
 		float timeUntilTx;
 		float lastTimeLocal;
 		float lastTimeRemote;
@@ -273,10 +285,10 @@ private:
 
 		Peer()
 		:	state(PsInitial)
-		,	global(0)
 		,	ghost(0)
 		,	precursor(false)
-		,	relay(false)
+		,	relayed(false)
+		,	status(0)
 		,	timeUntilTx(0.0f)
 		,	lastTimeLocal(0.0f)
 		,	lastTimeRemote(0.0f)
@@ -329,15 +341,9 @@ private:
 
 	void adjustTime(float offset);
 
-	bool sendMasqueraded(handle_t fromPeerHandle, handle_t targetPeerHandle, const Message* msg, uint32_t size, bool reliable);
-
-	bool sendRelay(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable);
-
 	bool send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable);
 
 	int32_t receive(Message* msg, handle_t& outPeerHandle);
-
-	bool findOptimalRelay(handle_t ignorePeerHandle0, handle_t ignorePeerHandle1, handle_t& outRelayPeerHandle) const;
 };
 
 	}

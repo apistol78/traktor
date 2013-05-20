@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.amalgam.Platform">
+	<iconIndex>0</iconIndex>
+	<deployToolWin32>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-emscripten.bat</executable>
+		<environment/>
+	</deployToolWin32>
+	<deployToolOsX>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-emscripten.sh</executable>
+		<environment/>
+	</deployToolOsX>
+</object>

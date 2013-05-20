@@ -47,21 +47,7 @@ public:
 
 	void defineCharacter(uint16_t characterId, FlashCharacter* character);
 
-	//void removeCharacter(FlashCharacter* character);
-
-	//const FlashFont* getFont(uint16_t fontId) const;
-
-	//const FlashBitmap* getBitmap(uint16_t bitmapId) const;
-
-	//const FlashSound* getSound(uint16_t soundId) const;
-
-	//const FlashCharacter* getCharacter(uint16_t characterId) const;
-
 	void setExport(const std::string& name, uint16_t exportId);
-
-	//bool getExportId(const std::string& name, uint16_t& outExportId) const;
-
-	//bool getExportName(uint16_t exportId, std::string& outName) const;
 
 	Ref< FlashSpriteInstance > createMovieClipInstance(const IFlashMovieLoader* movieLoader) const;
 

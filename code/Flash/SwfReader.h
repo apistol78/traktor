@@ -124,6 +124,10 @@ public:
 
 	bool readFilterList(AlignedVector< SwfFilter* >& outFilterList);
 
+	/*! \brief Read sound.
+	 */
+	SwfSoundInfo* readSoundInfo();
+
 	/*! \name Simple types */
 	//@{
 

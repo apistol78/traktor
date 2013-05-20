@@ -2,8 +2,7 @@
 #include "Online/ISessionManager.h"
 #include "Net/Replication/DiagnosePeers.h"
 #include "Net/Replication/InetSimPeers.h"
-#include "Net/Replication/LanReplicatorPeers.h"
-#include "Net/Replication/OnlineReplicatorPeers.h"
+#include "Net/Replication/RelayPeers.h"
 #include "Net/Replication/ReliableTransportPeers.h"
 #include "Net/Replication/Replicator.h"
 #include "Net/Replication/State/State.h"
@@ -37,7 +36,7 @@ public:
 			script::CastAny< Object* >::set(replicator),
 			script::CastAny< float >::set(eventTime),
 			script::CastAny< int32_t >::set(int32_t(eventId)),
-			script::CastAny< uint64_t >::set(peerHandle),
+			script::CastAny< uint8_t >::set(peerHandle),
 			script::CastAny< Object* >::set((Object*)eventObject)
 		};
 		if (m_delegate)
@@ -72,15 +71,9 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classInetSimPeers->addConstructor< net::IReplicatorPeers*, float, float, float >();
 	scriptManager->registerClass(classInetSimPeers);
 
-	Ref< script::AutoScriptClass< net::LanReplicatorPeers > > classLanReplicatorPeers = new script::AutoScriptClass< net::LanReplicatorPeers >();
-	classLanReplicatorPeers->addConstructor();
-	classLanReplicatorPeers->addMethod("create", &net::LanReplicatorPeers::create);
-	scriptManager->registerClass(classLanReplicatorPeers);
-
-	Ref< script::AutoScriptClass< net::OnlineReplicatorPeers > > classOnlineReplicatorPeers = new script::AutoScriptClass< net::OnlineReplicatorPeers >();
-	classOnlineReplicatorPeers->addConstructor();
-	classOnlineReplicatorPeers->addMethod("create", &net::OnlineReplicatorPeers::create);
-	scriptManager->registerClass(classOnlineReplicatorPeers);
+	Ref< script::AutoScriptClass< net::RelayPeers > > classRelayPeers = new script::AutoScriptClass< net::RelayPeers >();
+	classRelayPeers->addConstructor< net::IReplicatorPeers* >();
+	scriptManager->registerClass(classRelayPeers);
 
 	Ref< script::AutoScriptClass< net::ReliableTransportPeers > > classReliableTransportPeers = new script::AutoScriptClass< net::ReliableTransportPeers >();
 	classReliableTransportPeers->addConstructor< net::IReplicatorPeers* >();
@@ -100,6 +93,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("addEventType", &net::Replicator::addEventType);
 	classReplicator->addMethod("addListener", &net::Replicator::addListener);
 	classReplicator->addMethod("update", &net::Replicator::update);
+	classReplicator->addMethod("setStatus", &net::Replicator::setStatus);
 	classReplicator->addMethod("setOrigin", &net::Replicator::setOrigin);
 	classReplicator->addMethod("setStateTemplate", &net::Replicator::setStateTemplate);
 	classReplicator->addMethod("setState", &net::Replicator::setState);
@@ -109,12 +103,14 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getPeerCount", &net::Replicator::getPeerCount);
 	classReplicator->addMethod("getPeerHandle", &net::Replicator::getPeerHandle);
 	classReplicator->addMethod("getPeerName", &net::Replicator::getPeerName);
+	classReplicator->addMethod("getPeerStatus", &net::Replicator::getPeerStatus);
 	classReplicator->addMethod("getPeerLatency", &net::Replicator::getPeerLatency);
 	classReplicator->addMethod("getPeerReversedLatency", &net::Replicator::getPeerReversedLatency);
 	classReplicator->addMethod("getBestReversedLatency", &net::Replicator::getBestReversedLatency);
 	classReplicator->addMethod("getWorstReversedLatency", &net::Replicator::getWorstReversedLatency);
 	classReplicator->addMethod("isPeerConnected", &net::Replicator::isPeerConnected);
 	classReplicator->addMethod("isPeerRelayed", &net::Replicator::isPeerRelayed);
+	classReplicator->addMethod("setPeerPrimary", &net::Replicator::setPeerPrimary);
 	classReplicator->addMethod("getPrimaryPeerHandle", &net::Replicator::getPrimaryPeerHandle);
 	classReplicator->addMethod("isPeerPrimary", &net::Replicator::isPeerPrimary);
 	classReplicator->addMethod("areAllPeersConnected", &net::Replicator::areAllPeersConnected);

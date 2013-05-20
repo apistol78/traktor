@@ -30,17 +30,17 @@ public:
 
 	virtual int32_t update();
 
-	virtual std::wstring getName() const;
+	virtual void setStatus(uint8_t status);
 
-	virtual uint64_t getGlobalId() const;
+	virtual handle_t getHandle() const;
+
+	virtual std::wstring getName() const;
 
 	virtual handle_t getPrimaryPeerHandle() const;
 
-	virtual uint32_t getPeerHandles(std::vector< handle_t >& outPeerHandles) const;
+	virtual bool setPrimaryPeerHandle(handle_t handle);
 
-	virtual std::wstring getPeerName(handle_t handle) const;
-
-	virtual uint64_t getPeerGlobalId(handle_t handle) const;
+	virtual uint32_t getPeers(std::vector< PeerInfo >& outPeers) const;
 
 	virtual int32_t receive(void* data, int32_t size, handle_t& outFromHandle);
 

@@ -137,6 +137,16 @@ public:
 			return m_ptr < r.m_ptr;
 		}
 
+		bool operator > (const const_iterator& r) const
+		{
+			return m_ptr > r.m_ptr;
+		}
+
+		bool operator >= (const const_iterator& r) const
+		{
+			return m_ptr >= r.m_ptr;
+		}
+
 		difference_type operator - (const const_iterator& r) const
 		{
 			return difference_type(m_ptr - r.m_ptr);
@@ -226,6 +236,16 @@ public:
 		bool operator < (const iterator& r) const
 		{
 			return _O::m_ptr < r.m_ptr;
+		}
+
+		bool operator > (const iterator& r) const
+		{
+			return _O::m_ptr > r.m_ptr;
+		}
+
+		bool operator >= (const iterator& r) const
+		{
+			return _O::m_ptr >= r.m_ptr;
 		}
 
 		difference_type operator - (const const_iterator& r) const

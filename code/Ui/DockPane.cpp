@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/MathUtils.h"
 #include "Ui/Application.h"
 #include "Ui/DockPane.h"
 #include "Ui/MethodHandler.h"
@@ -188,9 +189,9 @@ void DockPane::dock(Widget* widget, bool detachable, Direction direction, int sp
 			if (m_parent)
 			{
 				if (m_parent->m_split < 0)
-					m_parent->m_split = -abs(split);
+					m_parent->m_split = -traktor::abs(split);
 				else
-					m_parent->m_split = abs(split);
+					m_parent->m_split = traktor::abs(split);
 			}
 		}
 	}

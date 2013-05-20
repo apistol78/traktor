@@ -1,3 +1,4 @@
+#include "Core/Math/MathUtils.h"
 #include "Ui/Dock.h"
 #include "Ui/DockPane.h"
 #include "Ui/ToolForm.h"
@@ -328,7 +329,7 @@ void Dock::eventFormNcButtonUp(Event* event)
 		int dy = position.y - pane->m_rect.getCenter().y;
 
 		DockPane::Direction direction;
-		if (abs(dx) > abs(dy))
+		if (traktor::abs(dx) > traktor::abs(dy))
 			direction = dx > 0 ? DockPane::DrEast : DockPane::DrWest;
 		else
 			direction = dy > 0 ? DockPane::DrSouth : DockPane::DrNorth;

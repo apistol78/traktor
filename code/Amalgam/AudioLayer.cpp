@@ -17,12 +17,14 @@ AudioLayer::AudioLayer(
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< sound::Sound >& sound,
-	bool autoPlay
+	bool autoPlay,
+	bool repeat
 )
 :	Layer(stage, name)
 ,	m_environment(environment)
 ,	m_sound(sound)
 ,	m_autoPlay(autoPlay)
+,	m_repeat(repeat)
 {
 }
 
@@ -101,6 +103,9 @@ void AudioLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 		sound::ISoundPlayer* soundPlayer = m_environment->getAudio()->getSoundPlayer();
 		if (soundPlayer)
 			m_handle = soundPlayer->play(m_sound, 0);
+
+		if (!m_repeat)
+			m_autoPlay = false;
 	}
 
 	if (m_handle)

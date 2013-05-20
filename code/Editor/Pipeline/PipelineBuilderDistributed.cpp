@@ -183,6 +183,12 @@ bool PipelineBuilderDistributed::buildOutput(const ISerializable* sourceAsset, c
 	return false;
 }
 
+Ref< ISerializable > PipelineBuilderDistributed::getBuildProduct(const ISerializable* sourceAsset)
+{
+	T_FATAL_ERROR;
+	return 0;
+}
+
 Ref< db::Database > PipelineBuilderDistributed::getSourceDatabase() const
 {
 	T_FATAL_ERROR;

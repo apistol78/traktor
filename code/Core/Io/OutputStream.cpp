@@ -78,6 +78,9 @@ const wchar_t* ftoa__(T value, int fractions, wchar_t* buf)
 	bool negative = value < 0;
 	T un = negative ? -value : value;
 
+	if (negative && un == value)
+		value = un;
+
 	wchar_t* p = &buf[size - 1];
 	*p-- = L'\0';
 

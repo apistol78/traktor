@@ -27,6 +27,7 @@ public:
 		bool win32;
 		bool win64;
 		bool xbox360;
+		bool emscripten;
 
 		Platforms();
 

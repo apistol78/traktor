@@ -20,6 +20,7 @@ namespace traktor
 class ActionContext;
 class FlashCanvas;
 class FlashCharacter;
+class FlashSoundPlayer;
 class FlashSprite;
 
 /*! \brief Flash sprite instance.
@@ -53,6 +54,8 @@ public:
 	void updateDisplayList();
 
 	FlashDisplayList& getDisplayList();
+
+	void updateSounds(FlashSoundPlayer* soundPlayer);
 
 	void removeMovieClip();
 
@@ -119,6 +122,7 @@ private:
 	uint32_t m_nextFrame;
 	uint32_t m_lastUpdateFrame;
 	uint32_t m_lastExecutedFrame;
+	uint32_t m_lastSoundFrame;
 	uint32_t m_skipEnterFrame;
 	bool m_initialized;
 	bool m_removed;

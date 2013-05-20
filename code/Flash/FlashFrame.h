@@ -141,6 +141,10 @@ public:
 	 */
 	void addActionScript(const IActionVMImage* actionScript);
 
+	/*! \brief Start sound.
+	 */
+	void startSound(uint16_t soundId);
+
 	/*! \brief Get place object descriptions by this frame.
 	 *
 	 * \return Place object descriptions.
@@ -152,6 +156,10 @@ public:
 	 * \return Remove object descriptions.
 	 */
 	const SmallMap< uint16_t, RemoveObject >& getRemoveObjects() const;
+
+	/*! \brief Get start sounds.
+	 */
+	const AlignedVector< uint16_t >& getStartSounds() const;
 
 	/*! \brief Get action scripts associated with this frame.
 	 *
@@ -169,6 +177,7 @@ private:
 	SwfColor m_backgroundColor;
 	SmallMap< uint16_t, PlaceObject > m_placeObjects;
 	SmallMap< uint16_t, RemoveObject > m_removeObjects;
+	AlignedVector< uint16_t > m_startSounds;
 	RefArray< const IActionVMImage > m_actionScripts;
 };
 

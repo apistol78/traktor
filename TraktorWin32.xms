@@ -13403,6 +13403,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/3rdp/angle/src</item>
 									<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 								</includePaths>
 								<definitions>
 									<item>WIN32</item>
@@ -13413,7 +13414,9 @@
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 								</definitions>
-								<libraryPaths/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
+								</libraryPaths>
 								<libraries>
 									<item>d3d9.lib</item>
 									<item>dxguid.lib</item>
@@ -13430,6 +13433,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/3rdp/angle/src</item>
 									<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 								</includePaths>
 								<definitions>
 									<item>ANGLE_DISABLE_TRACE</item>
@@ -13442,7 +13446,9 @@
 									<item>NOMINMAX</item>
 									<item>_SECURE_SCL=0</item>
 								</definitions>
-								<libraryPaths/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
+								</libraryPaths>
 								<libraries>
 									<item>d3d9.lib</item>
 									<item>dxguid.lib</item>
@@ -13459,6 +13465,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/3rdp/angle/src</item>
 									<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -13466,7 +13473,9 @@
 									<item>_CRT_SECURE_NO_DEPRECATE</item>
 									<item>NOMINMAX</item>
 								</definitions>
-								<libraryPaths/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
+								</libraryPaths>
 								<libraries>
 									<item>d3d9.lib</item>
 									<item>dxguid.lib</item>
@@ -13483,6 +13492,7 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/3rdp/angle/src</item>
 									<item>$(TRAKTOR_HOME)/3rdp/angle/include</item>
+									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/Include</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -13491,7 +13501,9 @@
 									<item>NOMINMAX</item>
 									<item>_SECURE_SCL=0</item>
 								</definitions>
-								<libraryPaths/>
+								<libraryPaths>
+									<item>$(TRAKTOR_HOME)/3rdp/DirectX SDK (June 2010)/lib/x86</item>
+								</libraryPaths>
 								<libraries>
 									<item>d3d9.lib</item>
 									<item>dxguid.lib</item>
@@ -18958,6 +18970,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>

@@ -9,10 +9,11 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.AudioLayerData", 1, AudioLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.AudioLayerData", 2, AudioLayerData, LayerData)
 
 AudioLayerData::AudioLayerData()
 :	m_autoPlay(true)
+,	m_repeat(true)
 {
 }
 
@@ -31,7 +32,8 @@ Ref< Layer > AudioLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 		m_name,
 		environment,
 		sound,
-		m_autoPlay
+		m_autoPlay,
+		m_repeat
 	);
 }
 
@@ -42,6 +44,8 @@ void AudioLayerData::serialize(ISerializer& s)
 	s >> resource::Member< sound::Sound >(L"sound", m_sound);
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"autoPlay", m_autoPlay);
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"repeat", m_repeat);
 }
 
 	}
