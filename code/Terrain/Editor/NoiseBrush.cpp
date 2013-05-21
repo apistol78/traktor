@@ -54,5 +54,10 @@ void NoiseBrush::end(int32_t x, int32_t y)
 {
 }
 
+Ref< IBrush > NoiseBrush::clone() const
+{
+	return new NoiseBrush(m_heightfield);
+}
+
 	}
 }

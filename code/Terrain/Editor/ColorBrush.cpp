@@ -51,5 +51,10 @@ void ColorBrush::end(int32_t x, int32_t y)
 {
 }
 
+Ref< IBrush > ColorBrush::clone() const
+{
+	return new ColorBrush(m_colorImage);
+}
+
 	}
 }

@@ -70,15 +70,15 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 ,	m_vertexOffset(0)
 {
 	std::vector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(Vertex, positionAndOrientation), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, velocityAndRandom), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, attrib1), 1));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, attrib2), 2));
-	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(Vertex), L"Incorrect size of vertex");
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(EmitterVertex, positionAndOrientation), 0));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, velocityAndRandom), 0));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, attrib1), 1));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, attrib2), 2));
+	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(EmitterVertex), L"Incorrect size of vertex");
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
 	{
-		m_vertexBuffers[i] = renderSystem->createVertexBuffer(vertexElements, c_pointCount * 4 * sizeof(Vertex), true);
+		m_vertexBuffers[i] = renderSystem->createVertexBuffer(vertexElements, c_pointCount * 4 * sizeof(EmitterVertex), true);
 		T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
 	}
 
@@ -144,7 +144,7 @@ void PointRenderer::render(
 
 	if (!m_vertex)
 	{
-		m_vertex = static_cast< Vertex* >(m_vertexBuffers[m_count]->lock());
+		m_vertex = static_cast< EmitterVertex* >(m_vertexBuffers[m_count]->lock());
 		if (!m_vertex)
 			return;
 	}

@@ -10,9 +10,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_SPRAY_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -21,9 +21,10 @@ namespace traktor
 	{
 
 struct Context;
-class PointRenderer;
 class Effect;
 class EffectLayerInstance;
+class PointRenderer;
+class TrailRenderer;
 
 /*! \brief
  * \ingroup Spray
@@ -39,7 +40,13 @@ public:
 
 	void synchronize();
 
-	void render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane) const;
+	void render(
+		PointRenderer* pointRenderer,
+		TrailRenderer* trailRenderer,
+		const Transform& transform,
+		const Vector4& cameraPosition,
+		const Plane& cameraPlane
+	) const;
 
 	void setTime(float time) { m_time = time; }
 

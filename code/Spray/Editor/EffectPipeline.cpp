@@ -6,6 +6,7 @@
 #include "Spray/EmitterData.h"
 #include "Spray/SequenceData.h"
 #include "Spray/SoundTriggerData.h"
+#include "Spray/TrailData.h"
 #include "Spray/Editor/EffectPipeline.h"
 #include "Spray/Sources/PointSetSourceData.h"
 
@@ -54,6 +55,10 @@ bool EffectPipeline::buildDependencies(
 			if (pointSetSource)
 				pipelineDepends->addDependency(pointSetSource->getPointSet(), editor::PdfBuild | editor::PdfResource);
 		}
+
+		const TrailData* trail = (*i)->getTrail();
+		if (trail)
+			pipelineDepends->addDependency(trail->getShader(), editor::PdfBuild | editor::PdfResource);
 
 		const SequenceData* sequence = (*i)->getSequence();
 		if (sequence)

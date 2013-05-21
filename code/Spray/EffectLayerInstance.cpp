@@ -3,6 +3,7 @@
 #include "Spray/EmitterInstance.h"
 #include "Spray/ITriggerInstance.h"
 #include "Spray/SequenceInstance.h"
+#include "Spray/TrailInstance.h"
 
 namespace traktor
 {
@@ -20,12 +21,14 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectLayerInstance", EffectLayerInstance
 EffectLayerInstance::EffectLayerInstance(
 	const EffectLayer* layer,
 	EmitterInstance* emitterInstance,
+	TrailInstance* trailInstance,
 	SequenceInstance* sequenceInstance,
 	ITriggerInstance* triggerInstanceEnable,
 	ITriggerInstance* triggerInstanceDisable
 )
 :	m_layer(layer)
 ,	m_emitterInstance(emitterInstance)
+,	m_trailInstance(trailInstance)
 ,	m_sequenceInstance(sequenceInstance)
 ,	m_triggerInstanceEnable(triggerInstanceEnable)
 ,	m_triggerInstanceDisable(triggerInstanceDisable)
@@ -59,6 +62,12 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 		}
 	}
 
+	if (m_trailInstance)
+	{
+		if (time >= m_start - FUZZY_EPSILON)
+			m_trailInstance->update(context, transform, enable);
+	}
+
 	if (m_sequenceInstance)
 	{
 		if (time >= m_start - FUZZY_EPSILON)
@@ -90,10 +99,19 @@ void EffectLayerInstance::synchronize()
 		m_emitterInstance->synchronize();
 }
 
-void EffectLayerInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane, float time) const
+void EffectLayerInstance::render(
+	PointRenderer* pointRenderer,
+	TrailRenderer* trailRenderer,
+	const Transform& transform,
+	const Vector4& cameraPosition,
+	const Plane& cameraPlane,
+	float time
+) const
 {
 	if (m_emitterInstance && time >= m_start)
 		m_emitterInstance->render(pointRenderer, transform, cameraPlane);
+	if (m_trailInstance && time >= m_start)
+		m_trailInstance->render(trailRenderer, transform, cameraPosition, cameraPlane);
 }
 
 Aabb3 EffectLayerInstance::getBoundingBox() const

@@ -54,12 +54,16 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleCut;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSmooth;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFallOffSharp;
+	Ref< ui::custom::ToolBarButton > m_toolToggleSymmetryX;
+	Ref< ui::custom::ToolBarButton > m_toolToggleSymmetryZ;
 	Ref< ui::Slider > m_sliderStrength;
 	Ref< ui::Static > m_staticStrength;
 	Ref< ui::custom::ToolBarEmbed > m_toolStrength;
 	Ref< ui::custom::ColorControl > m_colorControl;
 	Ref< ui::custom::ToolBarEmbed > m_toolColor;
 	Ref< ui::custom::ToolBarDropDown > m_toolMaterial;
+
+	void updateModifierState();
 
 	void eventSliderStrengthChange(ui::Event* event);
 

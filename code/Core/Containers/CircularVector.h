@@ -98,7 +98,17 @@ public:
 		return m_items[m_back > 0 ? (m_back - 1) : Capacity - 1];
 	}
 
+	ItemType& back()
+	{
+		return m_items[m_back > 0 ? (m_back - 1) : Capacity - 1];
+	}
+
 	const ItemType& front() const
+	{
+		return m_items[m_front];
+	}
+
+	ItemType& front()
 	{
 		return m_items[m_front];
 	}

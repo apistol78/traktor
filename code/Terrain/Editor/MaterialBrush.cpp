@@ -1,3 +1,4 @@
+#include <numeric>
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
 #include "Drawing/Image.h"
@@ -8,6 +9,18 @@ namespace traktor
 {
 	namespace terrain
 	{
+		namespace
+		{
+
+const int32_t c_others[4][3] =
+{
+	{ 1, 2, 3 },
+	{ 0, 2, 3 },
+	{ 0, 1, 3 },
+	{ 0, 1, 2 }
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.MaterialBrush", MaterialBrush, IBrush)
 
@@ -30,7 +43,9 @@ uint32_t MaterialBrush::begin(int32_t x, int32_t y, int32_t radius, const IFallO
 
 void MaterialBrush::apply(int32_t x, int32_t y)
 {
+	float T_MATH_ALIGN16 weights[4];
 	Color4f targetColor;
+
 	for (int32_t iy = -m_radius; iy <= m_radius; ++iy)
 	{
 		for (int32_t ix = -m_radius; ix <= m_radius; ++ix)
@@ -43,26 +58,39 @@ void MaterialBrush::apply(int32_t x, int32_t y)
 
 			m_splatImage->getPixel(x + ix, y + iy, targetColor);
 
-			Color4f targetWeight(0.0f, 0.0f, 0.0f, 0.0f);
-			targetWeight.set(m_material, Scalar(a));
+			targetColor.storeAligned(weights);
 
-			targetColor += targetWeight;
-			targetColor = Color4f(((const Vector4&)targetColor).normalized());
+			float w = clamp(weights[m_material] + a, 0.0f, 1.0f);
 
-			m_splatImage->setPixel(x + ix, y + iy, targetColor);
+			weights[m_material] = w;
 
+			float s[3], st = 0.0f;
+			for (int32_t i = 0; i < 3; ++i)
+			{
+				float& other = weights[c_others[m_material][i]];
+				st += (s[i] = other);
+			}
+			if (st > FUZZY_EPSILON)
+			{
+				for (int32_t i = 0; i < 3; ++i)
+				{
+					float& other = weights[c_others[m_material][i]];
+					other = clamp(other, 0.0f, (s[i] / st) * (1.0f - w));
+				}
+			}
 
-			//Scalar targetWeight = targetColor.get(m_material);
-
-			//Scalar weight = (targetWeight * Scalar(1.0f - a) + m_color * Scalar(a))
-
-			//m_splatImage->setPixel(x + ix, y + iy, (targetColor * Scalar(1.0f - a) + m_color * Scalar(a)).saturated());
+			m_splatImage->setPixel(x + ix, y + iy, Color4f(weights));
 		}
 	}
 }
 
 void MaterialBrush::end(int32_t x, int32_t y)
 {
+}
+
+Ref< IBrush > MaterialBrush::clone() const
+{
+	return new MaterialBrush(m_splatImage);
 }
 
 	}

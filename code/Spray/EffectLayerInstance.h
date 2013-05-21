@@ -25,6 +25,8 @@ class EmitterInstance;
 class ITriggerInstance;
 class PointRenderer;
 class SequenceInstance;
+class TrailInstance;
+class TrailRenderer;
 
 class T_DLLCLASS EffectLayerInstance : public Object
 {
@@ -34,6 +36,7 @@ public:
 	EffectLayerInstance(
 		const EffectLayer* layer,
 		EmitterInstance* emitterInstance,
+		TrailInstance* trailInstance,
 		SequenceInstance* sequenceInstance,
 		ITriggerInstance* triggerInstanceEnable,
 		ITriggerInstance* triggerInstanceDisable
@@ -43,13 +46,21 @@ public:
 
 	void synchronize();
 
-	void render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane, float time) const;
+	void render(
+		PointRenderer* pointRenderer,
+		TrailRenderer* trailRenderer,
+		const Transform& transform,
+		const Vector4& cameraPosition,
+		const Plane& cameraPlane,
+		float time
+	) const;
 
 	Aabb3 getBoundingBox() const;
 
 private:
 	Ref< const EffectLayer > m_layer;
 	Ref< EmitterInstance > m_emitterInstance;
+	Ref< TrailInstance > m_trailInstance;
 	Ref< SequenceInstance > m_sequenceInstance;
 	Ref< ITriggerInstance > m_triggerInstanceEnable;
 	Ref< ITriggerInstance > m_triggerInstanceDisable;

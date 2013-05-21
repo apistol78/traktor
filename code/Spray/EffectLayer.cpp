@@ -3,6 +3,7 @@
 #include "Spray/Emitter.h"
 #include "Spray/ITrigger.h"
 #include "Spray/Sequence.h"
+#include "Spray/Trail.h"
 
 namespace traktor
 {
@@ -15,6 +16,7 @@ EffectLayer::EffectLayer(
 	float time,
 	float duration,
 	Emitter* emitter,
+	Trail* trail,
 	Sequence* sequence,
 	ITrigger* triggerEnable,
 	ITrigger* triggerDisable
@@ -22,6 +24,7 @@ EffectLayer::EffectLayer(
 :	m_time(time)
 ,	m_duration(duration)
 ,	m_emitter(emitter)
+,	m_trail(trail)
 ,	m_sequence(sequence)
 ,	m_triggerEnable(triggerEnable)
 ,	m_triggerDisable(triggerDisable)
@@ -31,6 +34,7 @@ EffectLayer::EffectLayer(
 Ref< EffectLayerInstance > EffectLayer::createInstance() const
 {
 	Ref< EmitterInstance > emitterInstance;
+	Ref< TrailInstance > trailInstance;
 	Ref< SequenceInstance > sequenceInstance;
 	Ref< ITriggerInstance > triggerInstanceEnable;
 	Ref< ITriggerInstance > triggerInstanceDisable;
@@ -39,6 +43,13 @@ Ref< EffectLayerInstance > EffectLayer::createInstance() const
 	{
 		emitterInstance = m_emitter->createInstance(m_duration);
 		if (!emitterInstance)
+			return 0;
+	}
+
+	if (m_trail)
+	{
+		trailInstance = m_trail->createInstance();
+		if (!trailInstance)
 			return 0;
 	}
 
@@ -66,6 +77,7 @@ Ref< EffectLayerInstance > EffectLayer::createInstance() const
 	return new EffectLayerInstance(
 		this,
 		emitterInstance,
+		trailInstance,
 		sequenceInstance,
 		triggerInstanceEnable,
 		triggerInstanceDisable

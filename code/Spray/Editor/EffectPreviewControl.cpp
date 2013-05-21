@@ -19,6 +19,7 @@
 #include "Spray/EffectInstance.h"
 #include "Spray/Emitter.h"
 #include "Spray/PointRenderer.h"
+#include "Spray/TrailRenderer.h"
 #include "Spray/Editor/BoxSourceRenderer.h"
 #include "Spray/Editor/ConeSourceRenderer.h"
 #include "Spray/Editor/DiscSourceRenderer.h"
@@ -124,6 +125,7 @@ bool EffectPreviewControl::create(
 	}
 
 	m_pointRenderer = new PointRenderer(renderSystem, 50.0f, 100.0f);
+	m_trailRenderer = new TrailRenderer(renderSystem);
 
 	addButtonDownEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonDown));
 	addButtonUpEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonUp));
@@ -150,6 +152,8 @@ void EffectPreviewControl::destroy()
 	}
 
 	safeDestroy(m_primitiveRenderer);
+	safeDestroy(m_trailRenderer);
+	safeDestroy(m_pointRenderer);
 
 	if (m_renderView)
 	{
@@ -350,10 +354,9 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 	);
 
 	Matrix44 viewInverse = viewTransform.inverseOrtho();
-	Plane cameraPlane(
-		viewInverse.axisZ(),
-		viewInverse.translation()
-	);
+
+	Vector4 cameraPosition = viewInverse.translation().xyz1();
+	Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
 
 	if (m_primitiveRenderer->begin(m_renderView))
 	{
@@ -444,7 +447,13 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 
 		m_effectInstance->update(m_context, effectTransform, true);
 		m_effectInstance->synchronize();
-		m_effectInstance->render(m_pointRenderer, Transform::identity(), cameraPlane);
+		m_effectInstance->render(
+			m_pointRenderer,
+			m_trailRenderer,
+			Transform::identity(),
+			cameraPosition,
+			cameraPlane
+		);
 
 		Frustum viewFrustum;
 		viewFrustum.buildPerspective(80.0f * PI / 180.0f, aspect, 0.1f, 2000.0f);
@@ -474,10 +483,8 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 			0
 		);
 
-		m_pointRenderer->flush(
-			m_renderContext,
-			defaultPass
-		);
+		m_pointRenderer->flush(m_renderContext, defaultPass);
+		m_trailRenderer->flush(m_renderContext, defaultPass);
 
 		m_renderContext->render(m_renderView, render::RpAll, 0);
 		m_renderContext->flush();

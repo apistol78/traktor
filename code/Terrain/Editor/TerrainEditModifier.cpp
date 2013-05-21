@@ -28,6 +28,7 @@
 #include "Terrain/Editor/SharpFallOff.h"
 #include "Terrain/Editor/SmoothBrush.h"
 #include "Terrain/Editor/SmoothFallOff.h"
+#include "Terrain/Editor/SymmetricalBrush.h"
 #include "Terrain/Editor/TerrainAsset.h"
 #include "Terrain/Editor/TerrainEditModifier.h"
 #include "Ui/Command.h"
@@ -151,6 +152,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.TerrainEditModifier", TerrainEditModifi
 TerrainEditModifier::TerrainEditModifier(scene::SceneEditorContext* context)
 :	m_context(context)
 ,	m_brushMode(0)
+,	m_symmetry(0)
 ,	m_strength(1.0f)
 ,	m_color(Color4f(1.0f, 1.0f, 1.0f, 1.0f))
 ,	m_material(0)
@@ -171,7 +173,8 @@ void TerrainEditModifier::selectionChanged()
 	m_heightfield.clear();
 	m_splatImage = 0;
 	m_colorImage = 0;
-	m_brush = 0;
+	m_drawBrush = 0;
+	m_spatialBrush = 0;
 	m_brushMode = 0;
 
 	// Get terrain entity from selection.
@@ -363,7 +366,8 @@ void TerrainEditModifier::selectionChanged()
 	}
 
 	// Create default brush.
-	m_brush = new ElevateBrush(m_heightfield);
+	m_drawBrush = new ElevateBrush(m_heightfield);
+	m_spatialBrush = m_drawBrush;
 	m_fallOff = new SmoothFallOff();
 }
 
@@ -392,33 +396,7 @@ bool TerrainEditModifier::cursorMoved(
 
 bool TerrainEditModifier::handleCommand(const ui::Command& command)
 {
-	if (!m_heightfield)
-		return false;
-
-	if (command == L"Terrain.Editor.AverageBrush")
-		m_brush = new AverageBrush(m_heightfield);
-	else if (command == L"Terrain.Editor.ColorBrush")
-		m_brush = new ColorBrush(m_colorImage);
-	else if (command == L"Terrain.Editor.CutBrush")
-		m_brush = new CutBrush(m_heightfield);
-	else if (command == L"Terrain.Editor.ElevateBrush")
-		m_brush = new ElevateBrush(m_heightfield);
-	else if (command == L"Terrain.Editor.FlattenBrush")
-		m_brush = new FlattenBrush(m_heightfield);
-	else if (command == L"Terrain.Editor.MaterialBrush")
-		m_brush = new MaterialBrush(m_splatImage);
-	else if (command == L"Terrain.Editor.NoiseBrush")
-		m_brush = new NoiseBrush(m_heightfield);
-	else if (command == L"Terrain.Editor.SmoothBrush")
-		m_brush = new SmoothBrush(m_heightfield);
-	else if (command == L"Terrain.Editor.SmoothFallOff")
-		m_fallOff = new SmoothFallOff();
-	else if (command == L"Terrain.Editor.SharpFallOff")
-		m_fallOff = new SharpFallOff();
-	else
-		return false;
-
-	return true;
+	return false;
 }
 
 bool TerrainEditModifier::begin(
@@ -434,7 +412,8 @@ bool TerrainEditModifier::begin(
 
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
-	m_brushMode = m_brush->begin(
+
+	m_brushMode = m_spatialBrush->begin(
 		gx,
 		gz,
 		gridRadius,
@@ -476,24 +455,29 @@ void TerrainEditModifier::apply(
 	m_heightfield->worldToGrid(center.x(), center.z(), gx1, gz1);
 
 	BrushVisitor visitor;
-	visitor.brush = m_brush;
+	visitor.brush = m_spatialBrush;
 	line(gx0, gz0, gx1, gz1, visitor);
 
 	m_entity->updatePatches();
 	m_center = center;
 
 	int32_t size = m_heightfield->getSize();
+	int32_t mnx = 0, mxx = size - 1;
+	int32_t mnz = 0, mxz = size - 1;
 
-	float worldRadius = m_context->getGuideSize();
-	int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
+	if (m_symmetry == 0)
+	{
+		float worldRadius = m_context->getGuideSize();
+		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
 
-	int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
-	int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
+		int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
+		int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
 
-	mnx = clamp(mnx, 0, size - 1);
-	mxx = clamp(mxx, 0, size - 1);
-	mnz = clamp(mnz, 0, size - 1);
-	mxz = clamp(mxz, 0, size - 1);
+		mnx = clamp(mnx, 0, size - 1);
+		mxx = clamp(mxx, 0, size - 1);
+		mnz = clamp(mnz, 0, size - 1);
+		mxz = clamp(mxz, 0, size - 1);
+	}
 
 	// Update splats.
 	if ((m_brushMode & IBrush::MdSplat) != 0)
@@ -574,7 +558,7 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 
 	int32_t gx, gz;
 	m_heightfield->worldToGrid(m_center.x(), m_center.z(), gx, gz);
-	m_brush->end(gx, gz);
+	m_spatialBrush->end(gx, gz);
 
 	// Write modifications to splats.
 	if (
@@ -731,6 +715,82 @@ void TerrainEditModifier::draw(render::PrimitiveRenderer* primitiveRenderer) con
 	}
 
 	primitiveRenderer->popDepthEnable();
+}
+
+void TerrainEditModifier::setBrush(const std::wstring& brush)
+{
+	if (brush == L"Terrain.Editor.AverageBrush")
+		m_drawBrush = new AverageBrush(m_heightfield);
+	else if (brush == L"Terrain.Editor.ColorBrush")
+		m_drawBrush = new ColorBrush(m_colorImage);
+	else if (brush == L"Terrain.Editor.CutBrush")
+		m_drawBrush = new CutBrush(m_heightfield);
+	else if (brush == L"Terrain.Editor.ElevateBrush")
+		m_drawBrush = new ElevateBrush(m_heightfield);
+	else if (brush == L"Terrain.Editor.FlattenBrush")
+		m_drawBrush = new FlattenBrush(m_heightfield);
+	else if (brush == L"Terrain.Editor.MaterialBrush")
+		m_drawBrush = new MaterialBrush(m_splatImage);
+	else if (brush == L"Terrain.Editor.NoiseBrush")
+		m_drawBrush = new NoiseBrush(m_heightfield);
+	else if (brush == L"Terrain.Editor.SmoothBrush")
+		m_drawBrush = new SmoothBrush(m_heightfield);
+
+	m_spatialBrush = m_drawBrush;
+	if (m_symmetry & 1)
+	{
+		int32_t scale[] = { -1, 1 };
+		int32_t offset[] = { m_heightfield->getSize(), 0 };
+		m_spatialBrush = new SymmetricalBrush(scale, offset, m_spatialBrush);
+	}
+	if (m_symmetry & 2)
+	{
+		int32_t scale[] = { 1, -1 };
+		int32_t offset[] = { 0, m_heightfield->getSize() };
+		m_spatialBrush = new SymmetricalBrush(scale, offset, m_spatialBrush);
+	}
+}
+
+void TerrainEditModifier::setFallOff(const std::wstring& fallOff)
+{
+	if (fallOff == L"Terrain.Editor.SmoothFallOff")
+		m_fallOff = new SmoothFallOff();
+	else if (fallOff == L"Terrain.Editor.SharpFallOff")
+		m_fallOff = new SharpFallOff();
+}
+
+void TerrainEditModifier::setSymmetry(uint32_t symmetry)
+{
+	m_symmetry = symmetry;
+
+	m_spatialBrush = m_drawBrush;
+	if (m_symmetry & 1)
+	{
+		int32_t scale[] = { -1, 1 };
+		int32_t offset[] = { m_heightfield->getSize(), 0 };
+		m_spatialBrush = new SymmetricalBrush(scale, offset, m_spatialBrush);
+	}
+	if (m_symmetry & 2)
+	{
+		int32_t scale[] = { 1, -1 };
+		int32_t offset[] = { 0, m_heightfield->getSize() };
+		m_spatialBrush = new SymmetricalBrush(scale, offset, m_spatialBrush);
+	}
+}
+
+void TerrainEditModifier::setStrength(float strength)
+{
+	m_strength = strength;
+}
+
+void TerrainEditModifier::setColor(const Color4f& color)
+{
+	m_color = color;
+}
+
+void TerrainEditModifier::setMaterial(int32_t material)
+{
+	m_material = material;
 }
 
 	}

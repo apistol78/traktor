@@ -58,5 +58,10 @@ void SmoothBrush::end(int32_t x, int32_t y)
 {
 }
 
+Ref< IBrush > SmoothBrush::clone() const
+{
+	return new SmoothBrush(m_heightfield);
+}
+
 	}
 }
