@@ -69,5 +69,10 @@ void AverageBrush::end(int32_t x, int32_t y)
 {
 }
 
+Ref< IBrush > AverageBrush::clone() const
+{
+	return new AverageBrush(m_heightfield);
+}
+
 	}
 }

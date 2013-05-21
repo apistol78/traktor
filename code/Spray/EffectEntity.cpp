@@ -32,10 +32,10 @@ EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Ef
 	m_context.soundPlayer = soundPlayer;
 }
 
-void EffectEntity::render(const Plane& cameraPlane, PointRenderer* pointRenderer)
+void EffectEntity::render(const Vector4& cameraPosition, const Plane& cameraPlane, PointRenderer* pointRenderer, TrailRenderer* trailRenderer)
 {
 	if (m_effectInstance)
-		m_effectInstance->render(pointRenderer, m_transform, cameraPlane);
+		m_effectInstance->render(pointRenderer, trailRenderer, m_transform, cameraPosition, cameraPlane);
 }
 
 void EffectEntity::setTransform(const Transform& transform)

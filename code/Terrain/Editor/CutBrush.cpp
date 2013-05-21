@@ -44,5 +44,10 @@ void CutBrush::end(int32_t x, int32_t y)
 {
 }
 
+Ref< IBrush > CutBrush::clone() const
+{
+	return new CutBrush(m_heightfield);
+}
+
 	}
 }

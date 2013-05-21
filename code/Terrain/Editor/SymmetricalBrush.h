@@ -1,27 +1,19 @@
-#ifndef traktor_terrain_CutBrush_H
-#define traktor_terrain_CutBrush_H
+#ifndef traktor_terrain_SymmetricalBrush_H
+#define traktor_terrain_SymmetricalBrush_H
 
-#include "Resource/Proxy.h"
 #include "Terrain/Editor/IBrush.h"
 
 namespace traktor
 {
-	namespace hf
-	{
-
-class Heightfield;
-
-	}
-
 	namespace terrain
 	{
 
-class CutBrush : public IBrush
+class SymmetricalBrush : public IBrush
 {
 	T_RTTI_CLASS;
 
 public:
-	CutBrush(const resource::Proxy< hf::Heightfield >& heightfield);
+	SymmetricalBrush(const int32_t scale[2], const int32_t offset[2], IBrush* brush);
 
 	virtual uint32_t begin(int32_t x, int32_t y, int32_t radius, const IFallOff* fallOff, float strength, const Color4f& color, int32_t material);
 
@@ -32,12 +24,12 @@ public:
 	virtual Ref< IBrush > clone() const;
 
 private:
-	resource::Proxy< hf::Heightfield > m_heightfield;
-	int32_t m_radius;
-	bool m_cut;
+	int32_t m_scale[2];
+	int32_t m_offset[2];
+	Ref< IBrush > m_brush[2];
 };
 
 	}
 }
 
-#endif	// traktor_terrain_CutBrush_H
+#endif	// traktor_terrain_SymmetricalBrush_H

@@ -170,13 +170,16 @@ void RenderControlModel::eventButtonUp(ISceneRenderControl* renderControl, ui::W
 				if ((event->getKeyState() & (ui::KsShift | ui::KsControl)) == 0)
 					context->selectAllEntities(false);
 
-				// Toggle selection if ctrl is being held.
-				if ((event->getKeyState() & ui::KsControl) == 0)
-					context->selectEntity(entityAdapter, true);
-				else
-					context->selectEntity(entityAdapter, !entityAdapter->isSelected());
+				if (entityAdapter)
+				{
+					// Toggle selection if ctrl is being held.
+					if ((event->getKeyState() & ui::KsControl) == 0)
+						context->selectEntity(entityAdapter, true);
+					else
+						context->selectEntity(entityAdapter, !entityAdapter->isSelected());
 
-				context->raiseSelect(this);
+					context->raiseSelect(this);
+				}
 			}
 		}
 

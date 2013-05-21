@@ -32,6 +32,8 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothBrush"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SmoothFallOff"));
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SharpFallOff"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.SymmetryX"));
+	outCommands.push_back(ui::Command(L"Terrain.Editor.SymmetryZ"));
 }
 
 void TerrainEditorProfile::createEditorPlugins(

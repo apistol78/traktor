@@ -43,7 +43,7 @@ class IWorldRenderPass;
 	namespace spray
 	{
 
-struct Vertex;
+struct EmitterVertex;
 
 /*! \brief Particle renderer.
  * \ingroup Spray
@@ -88,12 +88,12 @@ private:
 	};
 #pragma pack()
 
-	Ref< render::VertexBuffer > m_vertexBuffers[4];
+	Ref< render::VertexBuffer > m_vertexBuffers[8];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	float m_lod1Distance;
 	float m_lod2Distance;
 	uint32_t m_count;
-	Vertex* m_vertex;
+	EmitterVertex* m_vertex;
 	uint32_t m_vertexOffset;
 	AlignedVector< Batch > m_batches;
 

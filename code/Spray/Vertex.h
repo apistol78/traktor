@@ -7,7 +7,7 @@ namespace traktor
 	{
 
 #pragma pack(1)
-struct Vertex
+struct EmitterVertex
 {
 	struct PositionAndOrientation
 	{
@@ -37,6 +37,14 @@ struct Vertex
 		float age;
 	}
 	attrib2;
+};
+#pragma pack()
+
+#pragma pack(1)
+struct TrailVertex
+{
+	float position[4];
+	float uv[4];
 };
 #pragma pack()
 

@@ -38,6 +38,7 @@ class ISoundPlayer;
 class Effect;
 class EffectInstance;
 class PointRenderer;
+class TrailRenderer;
 
 /*! \brief Effect entity.
  * \ingroup Spray
@@ -49,7 +50,7 @@ class T_DLLCLASS EffectEntity : public world::Entity
 public:
 	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::ISoundPlayer* soundPlayer);
 
-	void render(const Plane& cameraPlane, PointRenderer* pointRenderer);
+	void render(const Vector4& cameraPosition, const Plane& cameraPlane, PointRenderer* pointRenderer, TrailRenderer* trailRenderer);
 
 	virtual void setTransform(const Transform& transform);
 

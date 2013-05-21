@@ -27,6 +27,7 @@ class EffectLayer;
 class EmitterData;
 class ITriggerData;
 class SequenceData;
+class TrailData;
 
 /*! \brief Effect layer persistent data.
  * \ingroup Spray
@@ -56,6 +57,8 @@ public:
 
 	EmitterData* getEmitter() const { return m_emitter; }
 
+	TrailData* getTrail() const { return m_trail; }
+
 	SequenceData* getSequence() const { return m_sequence; }
 
 	ITriggerData* getTriggerEnable() const { return m_triggerEnable; }
@@ -67,6 +70,7 @@ private:
 	float m_time;
 	float m_duration;
 	Ref< EmitterData > m_emitter;
+	Ref< TrailData > m_trail;
 	Ref< SequenceData > m_sequence;
 	Ref< ITriggerData > m_triggerEnable;
 	Ref< ITriggerData > m_triggerDisable;

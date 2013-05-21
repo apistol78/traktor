@@ -47,5 +47,10 @@ void ElevateBrush::end(int32_t x, int32_t y)
 {
 }
 
+Ref< IBrush > ElevateBrush::clone() const
+{
+	return new ElevateBrush(m_heightfield);
+}
+
 	}
 }

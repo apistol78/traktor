@@ -89,11 +89,17 @@ public:
 
 	virtual void draw(render::PrimitiveRenderer* primitiveRenderer) const;
 
-	void setStrength(float strength) { m_strength = strength; }
+	void setBrush(const std::wstring& brush);
 
-	void setColor(const Color4f& color) { m_color = color; }
+	void setFallOff(const std::wstring& fallOff);
 
-	void setMaterial(int32_t material) { m_material = material; }
+	void setSymmetry(uint32_t symmetry);
+
+	void setStrength(float strength);
+
+	void setColor(const Color4f& color);
+
+	void setMaterial(int32_t material);
 
 private:
 	scene::SceneEditorContext* m_context;
@@ -111,9 +117,11 @@ private:
 	Ref< render::ISimpleTexture > m_normalMap;
 	AutoArrayPtr< uint8_t > m_cutData;
 	Ref< render::ISimpleTexture > m_cutMap;
-	Ref< IBrush > m_brush;
+	Ref< IBrush > m_drawBrush;
+	Ref< IBrush > m_spatialBrush;
 	uint32_t m_brushMode;
 	Ref< IFallOff > m_fallOff;
+	uint32_t m_symmetry;
 	float m_strength;
 	Color4f m_color;
 	int32_t m_material;

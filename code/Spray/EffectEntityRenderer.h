@@ -23,8 +23,9 @@ class IRenderSystem;
 	namespace spray
 	{
 
-class PointRenderer;
 class EffectEntity;
+class PointRenderer;
+class TrailRenderer;
 
 /*! \brief Effect entity renderer.
  * \ingroup Spray
@@ -59,6 +60,7 @@ public:
 
 private:
 	Ref< PointRenderer > m_pointRenderer;
+	Ref< TrailRenderer > m_trailRenderer;
 };
 
 	}

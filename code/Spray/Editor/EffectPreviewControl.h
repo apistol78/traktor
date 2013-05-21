@@ -55,11 +55,11 @@ class SoundSystem;
 	namespace spray
 	{
 
-class PointRenderer;
 class Effect;
 class EffectInstance;
-
+class PointRenderer;
 class SourceRenderer;
+class TrailRenderer;
 
 class T_DLLCLASS EffectPreviewControl : public ui::Widget
 {
@@ -109,6 +109,7 @@ private:
 	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< PointRenderer > m_pointRenderer;
+	Ref< TrailRenderer > m_trailRenderer;
 	Ref< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;
 	Color4ub m_colorClear;

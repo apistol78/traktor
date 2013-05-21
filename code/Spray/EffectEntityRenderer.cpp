@@ -2,6 +2,7 @@
 #include "Spray/EffectEntity.h"
 #include "Spray/Effect.h"
 #include "Spray/PointRenderer.h"
+#include "Spray/TrailRenderer.h"
 #include "World/IWorldCulling.h"
 #include "World/IWorldRenderPass.h"
 #include "World/WorldContext.h"
@@ -16,6 +17,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRender
 
 EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance)
 :	m_pointRenderer(new PointRenderer(renderSystem, lod1Distance, lod2Distance))
+,	m_trailRenderer(new TrailRenderer(renderSystem))
 {
 }
 
@@ -64,14 +66,14 @@ void EffectEntityRenderer::render(
 		return;
 
 	Matrix44 viewInverse = worldRenderView.getView().inverseOrtho();
-	Plane cameraPlane(
-		viewInverse.axisZ(),
-		viewInverse.translation()
-	);
+	Vector4 cameraPosition = viewInverse.translation().xyz1();
+	Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
 
 	effectEntity->render(
+		cameraPosition,
 		cameraPlane,
-		m_pointRenderer
+		m_pointRenderer,
+		m_trailRenderer
 	);
 }
 
@@ -81,10 +83,8 @@ void EffectEntityRenderer::flush(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	m_pointRenderer->flush(
-		worldContext.getRenderContext(),
-		worldRenderPass
-	);
+	m_pointRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
+	m_trailRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
 }
 
 	}
