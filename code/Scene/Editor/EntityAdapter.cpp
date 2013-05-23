@@ -180,11 +180,18 @@ const RefArray< EntityAdapter >& EntityAdapter::getChildren() const
 	return m_children;
 }
 
+EntityAdapter* EntityAdapter::findChildAdapterFromEntity(const world::Entity* entity) const
+{
+	SmallMap< const world::Entity*, EntityAdapter* >::const_iterator i = m_childMap.find(entity);
+	return i != m_childMap.end() ? i->second : 0;
+}
+
 void EntityAdapter::link(EntityAdapter* child)
 {
 	T_ASSERT_M (child->m_parent == 0, L"Child already linked to another parent");
 	child->m_parent = this;
 	m_children.push_back(child);
+	m_childMap[child->getEntity()] = child;
 }
 
 void EntityAdapter::unlink(EntityAdapter* child)
@@ -194,7 +201,9 @@ void EntityAdapter::unlink(EntityAdapter* child)
 
 	RefArray< EntityAdapter >::iterator i = std::find(m_children.begin(), m_children.end(), child);
 	T_ASSERT (i != m_children.end());
+
 	m_children.erase(i);
+	m_childMap.remove(child->getEntity());
 
 	child->m_parent = 0;
 }

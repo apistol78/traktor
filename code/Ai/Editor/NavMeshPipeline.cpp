@@ -139,7 +139,7 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 		}
 		else if (world::LayerEntityData* layerEntityData = dynamic_type_cast< world::LayerEntityData* >(objectMember->get()))
 		{
-			if (layerEntityData->isDynamic())
+			if (layerEntityData->isDynamic() || !layerEntityData->isInclude())
 				continue;
 
 			collectNavigationEntities(
@@ -215,8 +215,9 @@ bool NavMeshPipeline::buildOutput(
 {
 	const NavMeshAsset* asset = checked_type_cast< const NavMeshAsset*, false >(sourceAsset);
 
-	// Skip navigation mesh generation in editor.
-	if (m_editor)
+	// Skip navigation mesh generation in editor; allow editor to build
+	// if being forced.
+	if (m_editor && (reason & editor::PbrForced) == 0)
 		return true;
 
 	Ref< const ISerializable > sourceData = pipelineBuilder->getObjectReadOnly(asset->m_source);

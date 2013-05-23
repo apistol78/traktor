@@ -115,7 +115,7 @@ private:
 	int32_t m_failed;
 
 	/*! \brief Perform build. */
-	BuildResult performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams);
+	BuildResult performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason);
 
 	/*! \brief Isolate instance in cache. */
 	bool putInstancesInCache(const Guid& guid, uint32_t hash, int32_t version, const RefArray< db::Instance >& instances);

@@ -30,6 +30,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyBullet", BodyBullet, Body)
 BodyBullet::BodyBullet(
 	IWorldCallback* callback,
 	btDynamicsWorld* dynamicsWorld,
+	float simulationDeltaTime,
 	btRigidBody* body,
 	btCollisionShape* shape,
 	const Vector4& centerOfGravity,
@@ -39,6 +40,7 @@ BodyBullet::BodyBullet(
 )
 :	m_callback(callback)
 ,	m_dynamicsWorld(dynamicsWorld)
+,	m_simulationDeltaTime(simulationDeltaTime)
 ,	m_body(body)
 ,	m_shape(shape)
 ,	m_centerOfGravity(centerOfGravity)
@@ -250,15 +252,13 @@ bool BodyBullet::solveStateConstraint(const BodyState& state)
 	Transform transform = getTransform();
 	
 	Vector4 linearError = state.getTransform().translation() - transform.translation();
-	if (linearError.length() < 10.0f)
-	{
-		setTransform(Transform(
-			transform.translation(),
-			state.getTransform().rotation()
-		));
+	Vector4 angularError = (state.getTransform().rotation() * transform.rotation().inverse()).toAxisAngle();
 
-		setLinearVelocity(linearError + state.getLinearVelocity());
-		setAngularVelocity(state.getAngularVelocity());
+	if (linearError.length() < 10.0f && angularError.length() < PI)
+	{
+		const Scalar tau(0.75f);
+		setLinearVelocity(Scalar(1.0f / m_simulationDeltaTime) * linearError * tau + state.getLinearVelocity());
+		setAngularVelocity(Scalar(1.0f / m_simulationDeltaTime) * angularError * tau + state.getAngularVelocity());
 	}
 	else
 		setState(state);

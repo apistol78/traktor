@@ -1,6 +1,7 @@
 #ifndef traktor_net_RelayPeers_H
 #define traktor_net_RelayPeers_H
 
+#include <map>
 #include "Net/Replication/IReplicatorPeers.h"
 
 // import/export mechanism.
@@ -56,8 +57,30 @@ private:
 	};
 #pragma pack()
 
+	enum StateFlags
+	{
+		SfSent = 1,
+		SfReceived = 2,
+		SfRelayed = 4
+	};
+
+	struct State
+	{
+		uint8_t flags;
+
+		State()
+		:	flags(0)
+		{
+		}
+	};
+
 	Ref< IReplicatorPeers > m_peers;
 	std::vector< PeerInfo > m_info;
+	mutable std::map< handle_t, State > m_state;
+
+	bool sendDirect(const Envelope& e, uint32_t payloadSize, bool reliable);
+
+	bool sendRelay(const Envelope& e, uint32_t payloadSize, bool reliable);
 };
 
 	}

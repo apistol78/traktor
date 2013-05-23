@@ -278,7 +278,6 @@ private:
 		float latencyReversed;
 		int32_t pendingIAm;
 		int32_t pendingPing;
-		int32_t packetCount;
 		int32_t stateCount;
 		int32_t errorCount;
 		Ref< const State > iframe;
@@ -297,7 +296,6 @@ private:
 		,	latencyReversed(0.05f)
 		,	pendingIAm(0)
 		,	pendingPing(0)
-		,	packetCount(0)
 		,	stateCount(0)
 		,	errorCount(0)
 		{

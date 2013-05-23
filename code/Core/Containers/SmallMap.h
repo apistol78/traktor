@@ -120,6 +120,13 @@ public:
 		return m_data.erase(first, last);
 	}
 
+	void remove(const Key& key)
+	{
+		iterator it = find(key);
+		if (it != end())
+			erase(it);
+	}
+
 	void clear()
 	{
 		m_data.clear();

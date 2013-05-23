@@ -67,17 +67,21 @@ public:
 		Vector4 p = PositionAccessor::get(v);
 		Vector4 pq = p / m_cellSize;
 
-		int32_t x = int32_t(pq.x());
-		int32_t y = int32_t(pq.y());
-		int32_t z = int32_t(pq.z());
+		int32_t mnx = int32_t(pq.x() - distance);
+		int32_t mny = int32_t(pq.y() - distance);
+		int32_t mnz = int32_t(pq.z() - distance);
 
-		for (int32_t iz = -1; iz <= 1; ++iz)
+		int32_t mxx = int32_t(pq.x() + distance + 0.5f);
+		int32_t mxy = int32_t(pq.y() + distance + 0.5f);
+		int32_t mxz = int32_t(pq.z() + distance + 0.5f);
+
+		for (int32_t iz = mnz; iz <= mxz; ++iz)
 		{
-			for (int32_t iy = -1; iy <= 1; ++iy)
+			for (int32_t iy = mny; iy <= mxy; ++iy)
 			{
-				for (int32_t ix = -1; ix <= 1; ++ix)
+				for (int32_t ix = mnx; ix <= mxx; ++ix)
 				{
-					uint32_t hash = HashFunction::get(x + ix, y + iy, z + iz);
+					uint32_t hash = HashFunction::get(ix, iy, iz);
 
 					SmallMap< uint32_t, AlignedVector< uint32_t > >::const_iterator i = m_indices.find(hash);
 					if (i == m_indices.end())

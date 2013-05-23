@@ -108,7 +108,7 @@ bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 	if (!id.IsValid())
 		return false;
 
-	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), k_EP2PSendUnreliableNoDelay);
+	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), k_EP2PSendUnreliable);
 }
 
 void SteamUser::receivedP2PData(uint64_t userHandle)
