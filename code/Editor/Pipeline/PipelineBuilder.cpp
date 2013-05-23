@@ -506,7 +506,7 @@ Ref< IPipelineReport > PipelineBuilder::createReport(const std::wstring& name, c
 	return m_pipelineDb->createReport(name, guid);
 }
 
-IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams)
+IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency, const Object* buildParams, uint32_t reason)
 {
 	IPipelineDb::DependencyHash currentDependencyHash;
 
@@ -575,7 +575,7 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 		dependency->outputPath,
 		dependency->outputGuid,
 		buildParams,
-		0/*dependency->reason*/
+		reason
 	);
 	if (result)
 		Atomic::increment(m_succeededBuilt);
@@ -718,7 +718,7 @@ void PipelineBuilder::buildThread(
 				workDependency
 			);
 
-		BuildResult result = performBuild(dependencySet, workDependency, workBuildParams);
+		BuildResult result = performBuild(dependencySet, workDependency, workBuildParams, m_reasons[workDependencyIndex]);
 		if (result == BrSucceeded || result == BrSucceededWithWarnings)
 			++m_succeeded;
 		else

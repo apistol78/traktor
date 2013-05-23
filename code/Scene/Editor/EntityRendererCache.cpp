@@ -30,17 +30,7 @@ EntityAdapter* EntityRendererCache::begin(const world::Entity* entity)
 		if (parentRenderAdapter->getEntity() == entity)
 			currentEntityAdapter = parentRenderAdapter;
 		else
-		{
-			const RefArray< EntityAdapter >& childrenAdapters = parentRenderAdapter->getChildren();
-			for (RefArray< EntityAdapter >::const_iterator i = childrenAdapters.begin(); i != childrenAdapters.end(); ++i)
-			{
-				if ((*i)->getEntity() == entity)
-				{
-					currentEntityAdapter = (*i);
-					break;
-				}
-			}
-		}			
+			currentEntityAdapter = parentRenderAdapter->findChildAdapterFromEntity(entity);
 
 		m_entityStack.push_back(currentEntityAdapter);
 		return currentEntityAdapter;

@@ -38,7 +38,7 @@ const float c_remoteOffsetLimit = 0.05f;
 const uint32_t c_maxPendingIAm = 2;
 const uint32_t c_maxPendingPing = 4;
 const uint32_t c_maxErrorCount = 2;
-const uint32_t c_maxDeltaStates = 16;
+const uint32_t c_maxDeltaStates = 4;
 
 Timer g_timer;
 Random g_random;
@@ -561,7 +561,10 @@ void Replicator::sendState(float dT)
 
 		bool shouldSend = bool((peer.timeUntilTx -= dT) <= 0.0f);
 
-		if (!shouldSend && peer.iframe)
+		if (
+			!shouldSend &&
+			peer.iframe
+		)
 		{
 			float errorThreshold = c_farErrorThreshold;
 			if (peer.ghost->stateTemplate)
@@ -573,8 +576,6 @@ void Replicator::sendState(float dT)
 
 			float E = m_stateTemplate->error(peer.iframe, m_state);
 			shouldSend = bool(E >= errorThreshold);
-
-			//log::info << peer.name << L": Error " << E << L" (Threshold " << errorThreshold << L") -> " << (shouldSend ? L"Yes" : L"No") << Endl;
 		}
 
 		if (!shouldSend)
@@ -587,7 +588,6 @@ void Replicator::sendState(float dT)
 		// an iframe and we're not experiencing package loss.
 		if (
 			peer.iframe &&
-			peer.packetCount > 0 &&
 			peer.stateCount % c_maxDeltaStates > 0
 		)
 		{
@@ -620,6 +620,7 @@ void Replicator::sendState(float dT)
 			msgSize += iframeSize;
 			msg.type = MtFullState;
 			peer.stateCount = 0;
+			peer.iframe = 0;
 		}
 
 		if (send(i->first, &msg, msgSize, false))
@@ -952,7 +953,6 @@ void Replicator::receiveMessages()
 					}
 				}
 
-				peer.packetCount++;
 				peer.lastTimeLocal = m_time;
 				peer.lastTimeRemote = time;
 			}
@@ -1000,8 +1000,6 @@ void Replicator::receiveMessages()
 					else
 						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state (2)");
 				}
-
-				peer.packetCount++;
 			}
 
 			// Put an input event to notify listeners about new state.
@@ -1023,7 +1021,6 @@ void Replicator::receiveMessages()
 				continue;
 			}
 
-			peer.packetCount++;
 			peer.lastTimeLocal = m_time;
 			peer.lastTimeRemote = time;
 

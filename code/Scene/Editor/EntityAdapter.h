@@ -6,6 +6,7 @@
 #include "Core/RefArray.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Containers/SmallMap.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -118,6 +119,8 @@ public:
 
 	const RefArray< EntityAdapter >& getChildren() const;
 
+	EntityAdapter* findChildAdapterFromEntity(const world::Entity* entity) const;
+
 	void link(EntityAdapter* child);
 
 	void unlink(EntityAdapter* child);
@@ -174,6 +177,7 @@ private:
 	Ref< world::Entity > m_entity;
 	EntityAdapter* m_parent;
 	RefArray< EntityAdapter > m_children;
+	SmallMap< const world::Entity*, EntityAdapter* > m_childMap;
 	Ref< IEntityEditor > m_entityEditor;
 	bool m_selected;
 	bool m_expanded;

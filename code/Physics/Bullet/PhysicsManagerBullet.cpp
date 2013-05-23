@@ -634,6 +634,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		Ref< BodyBullet > staticBody = new BodyBullet(
 			this,
 			m_dynamicsWorld,
+			m_simulationDeltaTime,
 			rigidBody,
 			shape,
 			centerOfGravity,
@@ -680,6 +681,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		Ref< BodyBullet > dynamicBody = new BodyBullet(
 			this,
 			m_dynamicsWorld,
+			m_simulationDeltaTime,
 			rigidBody,
 			shape,
 			centerOfGravity,

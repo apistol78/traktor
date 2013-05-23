@@ -132,7 +132,8 @@ int32_t OnlinePeers::update()
 		for (RefArray< IUser >::const_iterator i = users.begin(); i != users.end(); ++i)
 		{
 			uint64_t globalId = (*i)->getGlobalId();
-			T_ASSERT (globalId != 0);
+			if (globalId == 0)
+				continue;
 
 			SmallMap< uint64_t, net::handle_t >::const_iterator j = m_idMap.find(globalId);
 			if (j == m_idMap.end())

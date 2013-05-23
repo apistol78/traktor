@@ -35,6 +35,7 @@ public:
 	BodyBullet(
 		IWorldCallback* callback,
 		btDynamicsWorld* dynamicsWorld,
+		float simulationDeltaTime,
 		btRigidBody* body,
 		btCollisionShape* shape,
 		const Vector4& centerOfGravity,
@@ -120,6 +121,7 @@ public:
 private:
 	IWorldCallback* m_callback;
 	btDynamicsWorld* m_dynamicsWorld;
+	float m_simulationDeltaTime;
 	btRigidBody* m_body;
 	btCollisionShape* m_shape;
 	Vector4 m_centerOfGravity;
