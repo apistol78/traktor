@@ -44,7 +44,7 @@ private:
 #	define CHECK_LUA_STACK(state, expectedOffset)
 #endif
 
-void dumpStack(lua_State* luaState, OutputStream& os);
+void dumpStack(lua_State* luaState, OutputStream& os, int32_t base = 1);
 
 #if defined(_DEBUG)
 #	define DUMP_LUA_STACK(state) stackDump(state)

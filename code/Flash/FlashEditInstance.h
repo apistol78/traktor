@@ -20,6 +20,7 @@ namespace traktor
 
 class FlashEdit;
 class FlashTextFormat;
+class TextLayout;
 
 /*! \brief Dynamic text character instance.
  * \ingroup Flash
@@ -29,8 +30,6 @@ class T_DLLCLASS FlashEditInstance : public FlashCharacterInstance
 	T_RTTI_CLASS;
 
 public:
-	typedef std::list< std::wstring > text_t;
-
 	FlashEditInstance(ActionContext* context, FlashCharacterInstance* parent, const FlashEdit* edit, const std::wstring& html);
 
 	const FlashEdit* getEdit() const;
@@ -38,6 +37,14 @@ public:
 	bool parseText(const std::wstring& text);
 
 	bool parseHtml(const std::wstring& html);
+
+	const SwfColor& getTextColor() const;
+
+	void setTextColor(const SwfColor& textColor);
+
+	float getLetterSpacing() const;
+
+	void setLetterSpacing(float letterSpacing);
 
 	Ref< FlashTextFormat > getTextFormat() const;
 
@@ -47,30 +54,24 @@ public:
 
 	void setTextFormat(const FlashTextFormat* textFormat, int32_t beginIndex, int32_t endIndex);
 
-	text_t getText() const;
+	std::wstring getText() const;
 
-	std::wstring getConcatedText() const;
-
-	bool getTextExtents(float& outWidth, float& outHeight) const;
+	const TextLayout* getTextLayout() const;
 
 	virtual SwfRect getBounds() const;
 
 	virtual void eventKey(wchar_t unicode);
-
-	const SwfColor& getTextColor() const { return m_textColor; }
-
-	void setTextColor(const SwfColor& textColor) { m_textColor = textColor; }
-
-	void setLetterSpacing(float letterSpacing) { m_letterSpacing = letterSpacing; }
-
-	float getLetterSpacing() const { return m_letterSpacing; }
 
 private:
 	mutable Semaphore m_lock;
 	Ref< const FlashEdit > m_edit;
 	SwfColor m_textColor;
 	float m_letterSpacing;
-	text_t m_text;
+	std::wstring m_text;
+	bool m_html;
+	Ref< TextLayout > m_layout;
+
+	void updateLayout();
 };
 
 	}

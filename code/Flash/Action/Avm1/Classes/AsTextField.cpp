@@ -6,6 +6,7 @@
 #include "Flash/FlashEditInstance.h"
 #include "Flash/FlashSpriteInstance.h"
 #include "Flash/FlashTextFormat.h"
+#include "Flash/TextLayout.h"
 #include "Flash/Action/ActionContext.h"
 #include "Flash/Action/ActionFunctionNative.h"
 #include "Flash/Action/Avm1/Classes/AsTextField.h"
@@ -489,14 +490,12 @@ std::wstring AsTextField::TextField_get_htmlText(FlashEditInstance* self) const
 
 void AsTextField::TextField_set_htmlText(FlashEditInstance* self, const std::wstring& htmlText) const
 {
-	T_IF_VERBOSE(
-		log::warning << L"TextField::set_htmlText not implemented" << Endl;
-	)
+	self->parseHtml(htmlText);
 }
 
 int32_t AsTextField::TextField_get_length(FlashEditInstance* self) const
 {
-	return int32_t(self->getConcatedText().length());
+	return int32_t(self->getText().length());
 }
 
 int32_t AsTextField::TextField_get_maxChars(FlashEditInstance* self) const
@@ -772,7 +771,7 @@ std::wstring AsTextField::TextField_get_target(FlashEditInstance* self) const
 
 std::wstring AsTextField::TextField_get_text(FlashEditInstance* self) const
 {
-	return self->getConcatedText();
+	return self->getText();
 }
 
 void AsTextField::TextField_set_text(FlashEditInstance* self, const std::wstring& text) const
@@ -801,20 +800,24 @@ void AsTextField::TextField_set_textColor(FlashEditInstance* self, avm_number_t 
 
 avm_number_t AsTextField::TextField_get_textWidth(FlashEditInstance* self) const
 {
-	float width, height;
-	if (self->getTextExtents(width, height))
-		return avm_number_t(width);
-	else
-		return avm_number_t(0);
+	//float width, height;
+	//if (self->getTextExtents(width, height))
+	//	return avm_number_t(width);
+	//else
+	//	return avm_number_t(0);
+
+	return self->getTextLayout()->getWidth();
 }
 
 avm_number_t AsTextField::TextField_get_textHeight(FlashEditInstance* self) const
 {
-	float width, height;
-	if (self->getTextExtents(width, height))
-		return avm_number_t(height);
-	else
-		return avm_number_t(0);
+	//float width, height;
+	//if (self->getTextExtents(width, height))
+	//	return avm_number_t(height);
+	//else
+	//	return avm_number_t(0);
+
+	return self->getTextLayout()->getHeight();
 }
 
 avm_number_t AsTextField::TextField_get_thickness(FlashEditInstance* self) const

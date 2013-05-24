@@ -9,10 +9,10 @@ namespace traktor
 	namespace script
 	{
 
-void dumpStack(lua_State* luaState, OutputStream& os)
+void dumpStack(lua_State* luaState, OutputStream& os, int32_t base)
 {
 	int32_t top = lua_gettop(luaState);
-	for (int32_t i = 1; i <= top; ++i)
+	for (int32_t i = base; i <= top; ++i)
 	{
 		int t = lua_type(luaState, i);
 		switch (t)

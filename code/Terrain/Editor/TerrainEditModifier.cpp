@@ -470,8 +470,8 @@ void TerrainEditModifier::apply(
 		float worldRadius = m_context->getGuideSize();
 		int32_t gridRadius = int32_t(size * worldRadius / m_heightfield->getWorldExtent().x());
 
-		int32_t mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
-		int32_t mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
+		mnx = min(gx0 - gridRadius, gx1 - gridRadius), mxx = max(gx0 + gridRadius, gx1 + gridRadius);
+		mnz = min(gz0 - gridRadius, gz1 - gridRadius), mxz = max(gz0 + gridRadius, gz1 + gridRadius);
 
 		mnx = clamp(mnx, 0, size - 1);
 		mxx = clamp(mxx, 0, size - 1);

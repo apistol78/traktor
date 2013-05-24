@@ -302,6 +302,8 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	{
 		const ScriptContextLua* sourceContext = checked_type_cast< const ScriptContextLua*, false >(contextPrototype);
 
+		int32_t top = lua_gettop(m_luaState) + 1;
+
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, sourceContext->m_environmentRef);
 		lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, environmentRef);
 		lua_pushnil(m_luaState);
@@ -309,7 +311,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		// -3 = sourceContext->m_environmentRef
 		// -2 = environmentRef
 		// -1 = nil
-		while (lua_next(m_luaState, -2))
+		while (lua_next(m_luaState, -3))
 		{
 			// -4 = sourceContext->m_environmentRef
 			// -3 = environmentRef
