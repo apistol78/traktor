@@ -37,7 +37,7 @@ bool VideoFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > VideoFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
+Ref< Object > VideoFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
 	Ref< db::Instance > instance = m_database->getInstance(guid);
 	if (!instance)

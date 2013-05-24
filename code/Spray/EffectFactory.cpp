@@ -40,7 +40,7 @@ bool EffectFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
+Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
 	if (is_type_a< EffectData >(resourceType) || is_type_a< Effect >(resourceType))
 	{

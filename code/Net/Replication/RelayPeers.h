@@ -67,9 +67,11 @@ private:
 	struct State
 	{
 		uint8_t flags;
+		handle_t relayer;
 
 		State()
 		:	flags(0)
+		,	relayer(0)
 		{
 		}
 	};

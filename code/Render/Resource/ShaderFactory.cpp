@@ -73,7 +73,7 @@ bool ShaderFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
+Ref< Object > ShaderFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
 	Ref< ShaderResource > shaderResource = m_database->getObjectReadOnly< ShaderResource >(guid);
 	if (!shaderResource)

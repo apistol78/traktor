@@ -297,7 +297,7 @@ void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, co
 	Timer timer;
 	timer.start();
 
-	Ref< Object > object = factory->create(this, resourceType, guid);
+	Ref< Object > object = factory->create(this, resourceType, guid, handle->get());
 	if (object)
 	{
 		if (m_verbose)

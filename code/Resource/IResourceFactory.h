@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_RESOURCE_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -67,10 +67,10 @@ public:
 	 * \param resourceManager Resource manager.
 	 * \param resourceType Type of resource.
 	 * \param guid Guid of resource.
-	 * \param outCacheable If resource is cacheable (default set to true).
+	 * \param original Previously created resource if any; null if first time create.
 	 * \return Resource instance.
 	 */
-	virtual Ref< Object > create(IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const = 0;
+	virtual Ref< Object > create(IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const = 0;
 };
 	
 	}

@@ -72,7 +72,7 @@ public:
 	 * \param scriptResource Script resource.
 	 * \return Script context interface.
 	 */
-	virtual Ref< IScriptContext > createContext(const IScriptResource* scriptResource) = 0;
+	virtual Ref< IScriptContext > createContext(const IScriptResource* scriptResource, const IScriptContext* contextPrototype) = 0;
 
 	/*! \brief Create debugger.
 	 *

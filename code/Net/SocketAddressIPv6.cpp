@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.SocketAddressIPv6", SocketAddressIPv6, SocketAddress)
 
-#if !defined(_PS3)
+#if !defined(_PS3) && !defined(EMSCRIPTEN)
 
 SocketAddressIPv6::SocketAddressIPv6()
 :	m_info(0)
