@@ -16,6 +16,7 @@
 #include "Flash/FlashText.h"
 #include "Flash/FlashTextInstance.h"
 #include "Flash/IDisplayRenderer.h"
+#include "Flash/TextLayout.h"
 #include "Flash/Action/ActionContext.h"
 
 namespace traktor
@@ -35,11 +36,6 @@ SwfCxTransform concateCxTransform(const SwfCxTransform& cxt1, const SwfCxTransfo
 		{ cxt1.alpha[0] * cxt2.alpha[0], clamp(cxt1.alpha[1] + cxt1.alpha[0] * cxt2.alpha[1], 0.0f, 1.0f) }
 	};
 	return cxtr;
-}
-
-bool isWhiteSpace(wchar_t ch)
-{
-	return ch == 0 || ch == L' ' || ch == L'\t' || ch == L'\n' || ch == L'\r';
 }
 
 		}
@@ -251,133 +247,40 @@ void FlashMovieRenderer::renderCharacter(
 		if (!editInstance->isVisible())
 			return;
 
-		const FlashEdit* edit = editInstance->getEdit();
-		const FlashFont* font = dictionary->getFont(edit->getFontId());
-		if (!font)
-			return;
-
 		Matrix33 editTransform = transform * editInstance->getTransform();
 
-		float fontScale =
-			font->getCoordinateType() == FlashFont::CtTwips ? 
-			1.0f / 1000.0f :
-			1.0f / (20.0f * 1000.0f);
-		float fontHeight = edit->getFontHeight();
+		const TextLayout* layout = editInstance->getTextLayout();
+		T_ASSERT (layout);
 
-		const SwfRect& bounds = edit->getTextBounds();
-		bool wordWrap = edit->wordWrap();
+		const AlignedVector< TextLayout::Line >& lines = layout->getLines();
+		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
 
-		const SwfColor& color = editInstance->getTextColor();
-		float letterSpacing = editInstance->getLetterSpacing() * 200.0f * 2000.0f / fontHeight;
-		FlashEditInstance::text_t text = editInstance->getText();
-
-		const float c_magicX = 32.0f * 20.0f;
-
-		float offsetY = fontHeight;
-
-		// Get space width.
-		uint16_t spaceGlyphIndex = font->lookupIndex(L' ');
-		int16_t spaceWidth = font->getAdvance(spaceGlyphIndex);
-
-		// Render text lines.
-		std::vector< std::wstring > words;
-		std::vector< float > widths;
-		for (FlashEditInstance::text_t::const_iterator i = text.begin(); i != text.end(); ++i)
+		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
 		{
-			words.resize(0);
-			Split< std::wstring >::any(*i, L" \t", words);
-
-			// Calculate width of each word.
-			widths.resize(words.size());
-			for (uint32_t j = 0; j < words.size(); ++j)
+			for (AlignedVector< TextLayout::Word >::const_iterator j = i->words.begin(); j != i->words.end(); ++j)
 			{
-				const std::wstring& word = words[j];
-				uint32_t wordLength = word.length();
+				const TextLayout::Attribute& attrib = attribs[j->attrib];
+				const AlignedVector< TextLayout::Character >& chars = j->chars;
 
-				float wordWidth = 0.0f;
-				for (uint32_t k = 0; k < wordLength; ++k)
+				float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
+				float fontScale = coordScale * layout->getFontHeight();
+
+				for (uint32_t k = 0; k < chars.size(); ++k)
 				{
-					uint16_t glyphIndex = font->lookupIndex(word[k]);
-					int16_t glyphAdvance = font->getAdvance(glyphIndex);
-					if (k < wordLength - 1)
-						glyphAdvance += font->lookupKerning(word[k], word[k + 1]);
-					wordWidth += glyphAdvance - c_magicX + letterSpacing;
+					uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
+
+					const FlashShape* glyphShape = attrib.font->getShape(glyphIndex);
+					if (!glyphShape)
+						continue;
+
+					m_displayRenderer->renderGlyph(
+						*dictionary,
+						editTransform * translate(chars[k].x, i->y) * scale(fontScale, fontScale),
+						*glyphShape,
+						attrib.color,
+						concateCxTransform(cxTransform, characterInstance->getColorTransform())
+					);
 				}
-
-				widths[j] = wordWidth * fontScale * fontHeight;
-			}
-
-			// Pack as many words as fits in bounds (only if word wrap enabled); then render each line.
-			if (words.empty())
-				offsetY += fontHeight;
-
-			uint32_t wordOffsetStart = 0;
-			uint32_t wordOffsetEnd = 0;
-
-			while (wordOffsetStart < words.size())
-			{
-				float lineWidth = 0.0f;
-				while (wordOffsetEnd < words.size())
-				{
-					float wordWidth = widths[wordOffsetEnd];
-
-					if (wordOffsetStart >= wordOffsetEnd)
-						lineWidth = wordWidth;
-					else
-					{
-						wordWidth += spaceWidth * fontScale * fontHeight;
-						if (wordWrap && lineWidth + wordWidth >= bounds.max.x - bounds.min.x)
-							break;
-						lineWidth += wordWidth;
-					}
-
-					wordOffsetEnd++;
-				}
-
-				// Calculate line horizontal offset.
-				float offsetX = 0.0f;
-				if (edit->getAlign() == FlashEdit::AnCenter)
-					offsetX = (bounds.max.x - bounds.min.x - lineWidth) / 2.0f;
-				else if (edit->getAlign() == FlashEdit::AnRight)
-					offsetX = bounds.max.x - bounds.min.x - lineWidth;
-
-				// Render each word.
-				while (wordOffsetStart < wordOffsetEnd)
-				{
-					const std::wstring& word = words[wordOffsetStart++];
-					uint32_t wordLength = word.length();
-
-					for (uint32_t i = 0; i < wordLength; ++i)
-					{
-						wchar_t ch = word[i];
-						uint16_t glyphIndex = font->lookupIndex(ch);
-
-						if (!isWhiteSpace(ch))
-						{
-							const FlashShape* glyphShape = font->getShape(glyphIndex);
-							if (!glyphShape)
-								continue;
-
-							m_displayRenderer->renderGlyph(
-								*dictionary,
-								editTransform * translate(offsetX, offsetY) * scale(fontScale * fontHeight, fontScale * fontHeight),
-								*glyphShape,
-								color,
-								concateCxTransform(cxTransform, characterInstance->getColorTransform())
-							);
-						}
-
-						int16_t glyphAdvance = font->getAdvance(glyphIndex);
-						if (i < wordLength - 1)
-							glyphAdvance += font->lookupKerning(word[i], word[i + 1]);
-
-						offsetX += (glyphAdvance - c_magicX + letterSpacing) * fontScale * fontHeight;
-					}
-
-					offsetX += spaceWidth * fontScale * fontHeight;
-				}
-
-				offsetY += fontHeight;
 			}
 		}
 
