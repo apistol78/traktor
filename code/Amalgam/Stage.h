@@ -89,8 +89,6 @@ public:
 
 	void render(render::EyeType eye, uint32_t frame);
 
-	//void leave();
-
 	void reconfigured();
 
 	amalgam::IEnvironment* getEnvironment() { return m_environment; }
@@ -111,8 +109,6 @@ private:
 	bool m_initialized;
 	bool m_running;
 	float m_fade;
-
-	void flushScript();
 
 	bool validateScriptContext();
 

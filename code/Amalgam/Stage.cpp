@@ -219,21 +219,10 @@ void Stage::reconfigured()
 		(*i)->reconfigured();
 }
 
-void Stage::flushScript()
-{
-	m_initialized = false;
-}
-
 bool Stage::validateScriptContext()
 {
 	if (!m_scriptContext)
 		return false;
-
-	if (m_scriptContext.changed())
-	{
-		m_initialized = false;
-		m_scriptContext.consume();
-	}
 
 	if (!m_initialized)
 	{

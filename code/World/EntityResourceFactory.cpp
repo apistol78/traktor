@@ -33,7 +33,7 @@ bool EntityResourceFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > EntityResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
+Ref< Object > EntityResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
 	return m_db->getObjectReadOnly< EntityData >(guid);
 }

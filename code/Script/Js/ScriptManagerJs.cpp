@@ -33,7 +33,7 @@ Ref< IScriptResource > ScriptManagerJs::compile(const std::wstring& fileName, co
 	return new ScriptResourceJs(script);
 }
 
-Ref< IScriptContext > ScriptManagerJs::createContext(const IScriptResource* scriptResource)
+Ref< IScriptContext > ScriptManagerJs::createContext(const IScriptResource* scriptResource, const IScriptContext* contextPrototype)
 {
 	Ref< ScriptContextJs > scriptContext = new ScriptContextJs();
 	if (!scriptContext->create(m_registeredClasses, scriptResource))

@@ -33,7 +33,7 @@ bool PostProcessFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > PostProcessFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
+Ref< Object > PostProcessFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
 	return m_db->getObjectReadOnly< PostProcessSettings >(guid);
 }

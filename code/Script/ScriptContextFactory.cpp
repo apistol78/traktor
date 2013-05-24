@@ -37,7 +37,7 @@ bool ScriptContextFactory::isCacheable() const
 	return false;
 }
 
-Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
+Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
 	Ref< IScriptResource > scriptResource = m_database->getObjectReadOnly< IScriptResource >(guid);
 	if (!scriptResource)
@@ -46,7 +46,7 @@ Ref< Object > ScriptContextFactory::create(resource::IResourceManager* resourceM
 		return 0;
 	}
 
-	Ref< IScriptContext > scriptContext = m_scriptManager->createContext(scriptResource);
+	Ref< IScriptContext > scriptContext = m_scriptManager->createContext(scriptResource, checked_type_cast< const IScriptContext* >(current));
 	if (!scriptContext)
 	{
 		log::error << L"Unable to create script context; create context failed" << Endl;

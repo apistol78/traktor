@@ -105,28 +105,13 @@ int32_t RelayPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 		else
 		{
 			bool reliable = bool((e.flags & 0x80) == 0x80);
-			if (!m_peers->send(e.to, &e, nrecv, reliable))
+			if (!sendDirect(e, nrecv - 3, reliable))
 			{
 				uint8_t count = e.flags & 0x7f;
 				if (++count < 64)
 				{
 					e.flags = (e.flags & 0x80) | count;
-
-					std::vector< uint8_t > peerHandles;
-					for (std::vector< PeerInfo >::iterator i = m_info.begin(); i != m_info.end(); ++i)
-					{
-						if (i->handle != e.from && i->handle != e.to)
-							peerHandles.push_back(i->handle);
-						else if (i->handle == e.to)
-							i->relayed = true;
-					}
-
-					std::random_shuffle(peerHandles.begin(), peerHandles.end());
-					for (std::vector< uint8_t >::const_iterator i = peerHandles.begin(); i != peerHandles.end(); ++i)
-					{
-						if (m_peers->send(*i, &e, nrecv, reliable))
-							break;
-					}
+					sendRelay(e, nrecv - 3, reliable);
 				}
 			}
 		}
@@ -138,6 +123,8 @@ int32_t RelayPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 
 bool RelayPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
+	State& state = m_state[handle];
+
 	// Create transport envelope.
 	Envelope e;
 	e.flags = (reliable ? 0x80 : 0x00);
@@ -146,31 +133,31 @@ bool RelayPeers::send(handle_t handle, const void* data, int32_t size, bool reli
 	std::memcpy(e.payload, data, size);
 
 	// Send message; reverse order if already sent directly but nothing received.
-	uint32_t flags = m_state[handle].flags & (SfSent | SfReceived);
+	uint32_t flags = state.flags & (SfSent | SfReceived);
 	if (
 		flags == 0 ||
 		flags == (SfSent | SfReceived)
 	)
 	{
-		m_state[handle].flags |= SfSent;
+		state.flags |= SfSent;
 
 		if (sendDirect(e, size, reliable))
 			return true;
 		if (sendRelay(e, size, reliable))
 			return true;
 
-		m_state[handle].flags &= ~SfSent;
+		state.flags &= ~SfSent;
 	}
 	else
 	{
-		m_state[handle].flags |= SfSent;
+		state.flags |= SfSent;
 
 		if (sendRelay(e, size, reliable))
 			return true;
 		if (sendDirect(e, size, reliable))
 			return true;
 
-		m_state[handle].flags &= ~SfSent;
+		state.flags &= ~SfSent;
 	}
 
 	return false;
@@ -187,26 +174,52 @@ bool RelayPeers::sendDirect(const Envelope& e, uint32_t payloadSize, bool reliab
 
 bool RelayPeers::sendRelay(const Envelope& e, uint32_t payloadSize, bool reliable)
 {
+	State& state = m_state[e.to];
+
+	// Prefer relaying through same peer as last time.
+	if (state.relayer)
+	{
+		// Ensure relayer peer havn't deteriorated into require relaying itself.
+		const State& rs = m_state[state.relayer];
+		if ((rs.flags & SfRelayed) != 0)
+		{
+			if (m_peers->send(state.relayer, &e, payloadSize + 3, reliable))
+			{
+				state.flags |= SfRelayed;
+				return true;
+			}
+		}
+		else
+			state.relayer = 0;
+	}
+
+	// Collect relayer peer candidates.
 	std::vector< uint8_t > peerHandles;
 	peerHandles.reserve(m_info.size());
 
 	for (std::vector< PeerInfo >::iterator i = m_info.begin(); i != m_info.end(); ++i)
 	{
-		if (i->handle != e.from && i->handle != e.to)
+		if (
+			i->handle != e.from &&
+			i->handle != e.to &&
+			(m_state[i->handle].flags & SfRelayed) == 0
+		)
 			peerHandles.push_back(i->handle);
 	}
 
+	// Randomize and then try each one in turn, pick first successful.
 	std::random_shuffle(peerHandles.begin(), peerHandles.end());
 	for (std::vector< uint8_t >::const_iterator i = peerHandles.begin(); i != peerHandles.end(); ++i)
 	{
 		if (m_peers->send(*i, &e, payloadSize + 3, reliable))
 		{
-			m_state[e.to].flags |= SfRelayed;
+			state.flags |= SfRelayed;
+			state.relayer = *i;
 			return true;
 		}
 	}
 
-	m_state[e.to].flags &= ~SfRelayed;
+	state.flags &= ~SfRelayed;
 	return false;
 }
 

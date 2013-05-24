@@ -518,6 +518,9 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
 #endif
 
+	if (!dependency->pipelineType)
+		return BrFailed;
+
 	// Create hash entry.
 	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
 	currentDependencyHash.hash = calculateGlobalHash(dependencySet, dependency);
@@ -563,7 +566,6 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 
 	Ref< IPipeline > pipeline = m_pipelineFactory->findPipeline(*dependency->pipelineType);
 	T_ASSERT (pipeline);
-
 
 	bool result = pipeline->buildOutput(
 		this,

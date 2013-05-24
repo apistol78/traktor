@@ -38,7 +38,7 @@ bool NavMeshFactory::isCacheable() const
 	return true;
 }
 
-Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid) const
+Ref< Object > NavMeshFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
 	Ref< db::Instance > instance = m_db->getInstance(guid);
 	if (!instance)
