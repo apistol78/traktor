@@ -11,10 +11,10 @@ namespace traktor
 		{
 
 const double c_resendTime = 1.0f;	//< Resend reliable message after N seconds.
-const double c_discardTime = 20.0f;	//< Discard reliable message after N seconds.
+const double c_discardTime = 10.0f;	//< Discard reliable message after N seconds.
 const uint32_t c_windowSize = 200;	//< Number of reliable messages kept in sent queue.
 
-#if 0
+#if 1
 #	define T_RELIABLE_DEBUG(x) traktor::log::info << x << traktor::Endl
 #else
 #	define T_RELIABLE_DEBUG(x)
@@ -37,15 +37,29 @@ ReliableTransportPeers::~ReliableTransportPeers()
 
 void ReliableTransportPeers::destroy()
 {
+	//while (m_peers)
+	//{
+	//	if (!update())
+	//		break;
+
+	//	uint32_t queued = 0;
+	//	for (std::map< handle_t, Control >::iterator i = m_control.begin(); i != m_control.end(); ++i)
+	//		queued += i->second.sent.size();
+
+	//	if (!queued)
+	//		break;
+	//}
+
 	safeDestroy(m_peers);
 }
 
-int32_t ReliableTransportPeers::update()
+bool ReliableTransportPeers::update()
 {
 	T_ASSERT (m_peers);
 
 	// Update wrapped peers.
-	int32_t queued = m_peers->update();
+	if (!m_peers->update())
+		return false;
 
 	// Get available peers.
 	m_info.resize(0);
@@ -81,14 +95,14 @@ int32_t ReliableTransportPeers::update()
 		{
 			if ((time - j->time0) >= c_discardTime)
 			{
-				T_RELIABLE_DEBUG(L"ERROR: No response from peer " << i->first << L" in " << c_discardTime << L" second(s); message(s) discarded");
+				T_RELIABLE_DEBUG(L"ERROR: No response from peer " << int32_t(i->first) << L" in " << c_discardTime << L" second(s); message(s) discarded");
 				i->second.sent.clear();
 				i->second.faulty = true;
 				break;
 			}
 			if ((time - j->time) >= c_resendTime)
 			{
-				T_RELIABLE_DEBUG(L"OK: No response from peer " << i->first << L" in " << c_resendTime << L" second(s); message " << int32_t(j->envelope.sequence) << L" resent");
+				T_RELIABLE_DEBUG(L"OK: No response from peer " << int32_t(i->first) << L" in " << c_resendTime << L" second(s); message " << int32_t(j->envelope.sequence) << L" resent");
 				m_peers->send(
 					i->first,
 					&j->envelope,
@@ -100,16 +114,19 @@ int32_t ReliableTransportPeers::update()
 			}
 			++j;
 		}
-
-		queued += i->second.sent.size();
 	}
 
-	return queued;
+	return true;
 }
 
 void ReliableTransportPeers::setStatus(uint8_t status)
 {
 	m_peers->setStatus(status);
+}
+
+void ReliableTransportPeers::setConnectionState(uint64_t connectionState)
+{
+	m_peers->setConnectionState(connectionState);
 }
 
 handle_t ReliableTransportPeers::getHandle() const
@@ -198,7 +215,7 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 				if (i->envelope.sequence == e.sequence)
 				{
 					if (i->resent)
-					{ T_RELIABLE_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" to peer " << outFromHandle << L" finally ACK;ed"); }
+					{ T_RELIABLE_DEBUG(L"OK: Resent message " << int32_t(i->envelope.sequence) << L" to peer " << int32_t(outFromHandle) << L" finally ACK;ed"); }
 
 					ct.sent.erase(i);
 					ct.faulty = false;
@@ -215,6 +232,13 @@ int32_t ReliableTransportPeers::receive(void* data, int32_t size, handle_t& outF
 bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
 	Control& ct = m_control[handle];
+
+	// Do not send to this peer if it has been deemed faulty.
+	// This will cause the relaying layer to step in and
+	// send this data through another path through the
+	// topology (assuming relaying layer is being used).
+	if (ct.faulty)
+		return false;
 
 	// Create transport envelope.
 	Envelope e;

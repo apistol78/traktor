@@ -28,9 +28,11 @@ public:
 
 	virtual void destroy();
 
-	virtual int32_t update();
+	virtual bool update();
 
 	virtual void setStatus(uint8_t status);
+
+	virtual void setConnectionState(uint64_t connectionState);
 	
 	virtual handle_t getHandle() const;
 
@@ -57,21 +59,14 @@ private:
 	};
 #pragma pack()
 
-	enum StateFlags
-	{
-		SfSent = 1,
-		SfReceived = 2,
-		SfRelayed = 4
-	};
-
 	struct State
 	{
-		uint8_t flags;
 		handle_t relayer;
+		uint64_t connectionState;
 
 		State()
-		:	flags(0)
-		,	relayer(0)
+		:	relayer(0)
+		,	connectionState(0)
 		{
 		}
 	};
@@ -79,6 +74,8 @@ private:
 	Ref< IReplicatorPeers > m_peers;
 	std::vector< PeerInfo > m_info;
 	mutable std::map< handle_t, State > m_state;
+	mutable uint64_t m_connectionState;
+	mutable uint64_t m_connectionStateLast;
 
 	bool sendDirect(const Envelope& e, uint32_t payloadSize, bool reliable);
 

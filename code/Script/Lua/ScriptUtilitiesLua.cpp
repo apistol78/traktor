@@ -61,11 +61,14 @@ void* luaAlloc(void* ud, void* ptr, size_t osize, size_t nsize)
 
 		return nptr;
 	}
-	else
+	else if (ptr && osize > 0)
 	{
 		getAllocator()->free(ptr);
-		return 0;
+
+		T_ASSERT (osize <= allocTotal);
+		allocTotal -= osize;
 	}
+	return 0;
 }
 
 int luaPrint(lua_State *L)

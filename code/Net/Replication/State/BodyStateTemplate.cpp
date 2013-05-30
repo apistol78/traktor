@@ -72,7 +72,7 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);
 	const Transform& T = v.getTransform();
 
-#if 1
+#if 0
 
 	float e[4];
 
@@ -172,7 +172,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	Vector4 linearVelocity, angularVelocity;
 	Transform T;
 
-#if 1
+#if 0
 
 	uint32_t ut[3], ur[3];
 	uint32_t ulv[3], uav[3];
@@ -294,9 +294,6 @@ float BodyStateTemplate::error(const IValue* Vl, const IValue* Vr) const
 
 Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
 {
-	const Vector4 c_linearAccThreshold(10.0f, 10.0f, 10.0f, 0.0f);
-	const Vector4 c_angularAccThreshold(0.3f, 0.3f, 0.3f, 0.0f);
-
 	Scalar dT_0(safeDeltaTime(T - T0));
 	Scalar dT_n1_0(safeDeltaTime(T0 - Tn1));
 	Scalar dT_n2_n1(safeDeltaTime(Tn1 - Tn2));
@@ -305,48 +302,34 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	const physics::BodyState& S0 = *checked_type_cast< const BodyStateValue* >(V0);
 	const physics::BodyState& S = *checked_type_cast< const BodyStateValue* >(V);
 
-	Vector4 Al = (S0.getLinearVelocity() - Sn1.getLinearVelocity()) / dT_n1_0;
-	//Vector4 Aa = (S0.getAngularVelocity() - Sn1.getAngularVelocity()) / dT_n1_0;
-
-	Al = clampV4(Al, -c_linearAccThreshold, c_linearAccThreshold);
-	//Aa = clampV4(Aa, -c_angularAccThreshold, c_angularAccThreshold);
-
-	//Vector4 Al_prim = Vector4::zero();
-	//Vector4 Aa_prim = Vector4::zero();
-
-	//if (Vn2)
-	//{
-	//	const physics::BodyState& Sn2 = *checked_type_cast< const BodyStateValue* >(Vn2);
-
-	//	Vector4 Al_n2_n1 = (Sn1.getLinearVelocity() - Sn2.getLinearVelocity()) / dT_n2_n1;
-	//	Vector4 Aa_n2_n1 = (Sn1.getAngularVelocity() - Sn2.getAngularVelocity()) / dT_n2_n1;
-
-	//	Al_prim = (Al - Al_n2_n1) / Scalar(dT_n1_0);
-	//	Aa_prim = (Aa - Aa_n2_n1) / Scalar(dT_n1_0);
-
-	//	Al_prim = clampV4(Al_prim, -c_linearAccThreshold, c_linearAccThreshold);
-	//	Aa_prim = clampV4(Aa_prim, -c_angularAccThreshold, c_angularAccThreshold);
-	//}
-
 	Vector4 Vl = S0.getLinearVelocity().xyz0();
-	Vector4 Va = S0.getAngularVelocity().xyz0();
+	Vector4 Vl_n1 = Sn1.getLinearVelocity().xyz0();
+	Quaternion Va = Quaternion::fromAxisAngle(S0.getAngularVelocity());
+	Quaternion Va_n1 = Quaternion::fromAxisAngle(Sn1.getAngularVelocity());
 
 	Vector4 P = S0.getTransform().translation().xyz1();
 	Quaternion R = S0.getTransform().rotation();
 
-	//Al += Al_prim * /*Scalar(0.5f) * */dT_0; // * dT_0;
-	//Aa += Aa_prim * /*Scalar(0.5f) * */dT_0; // * dT_0;
+	P = (Vl * dT_0) + P;
+	R = Quaternion::fromAxisAngle(S0.getAngularVelocity() * dT_0) * R;
 
-	Vl += Al * dT_0;
-	//Va += Aa * dT_0;
+	Vl = lerp(Vl_n1, Vl, Scalar(T - Tn1) / dT_n1_0);
 
-	P += Vl * dT_0;
-	R = Quaternion::fromAxisAngle(Va * dT_0) * R;
+	Quaternion Qdiff = Va * Va_n1.inverse();
+	Vector4 Vdiff = Qdiff.toAxisAngle();
+	Scalar angleDiff = Vdiff.length();
+	if (abs(angleDiff) > FUZZY_EPSILON)
+	{
+		Va = Quaternion::fromAxisAngle(
+			Vdiff / angleDiff,
+			angleDiff * Scalar(T - Tn1) / dT_n1_0
+		) * Va_n1;
+	}
 
 	physics::BodyState Sf;
 	Sf.setTransform(Transform(P, R.normalized()));
 	Sf.setLinearVelocity(Vl);
-	Sf.setAngularVelocity(Va);
+	Sf.setAngularVelocity(Va.toAxisAngle());
 
 	float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
 	Sf = Sf.interpolate(S, Scalar(k_T));

@@ -1,7 +1,9 @@
+#include "Core/Io/IStream.h"
 #include "Online/ILobby.h"
 #include "Online/ISessionManager.h"
 #include "Net/Replication/DiagnosePeers.h"
 #include "Net/Replication/InetSimPeers.h"
+#include "Net/Replication/RecordPeers.h"
 #include "Net/Replication/RelayPeers.h"
 #include "Net/Replication/ReliableTransportPeers.h"
 #include "Net/Replication/Replicator.h"
@@ -68,8 +70,13 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classDiagnosePeers);
 
 	Ref< script::AutoScriptClass< net::InetSimPeers > > classInetSimPeers = new script::AutoScriptClass< net::InetSimPeers >();
-	classInetSimPeers->addConstructor< net::IReplicatorPeers*, float, float, float >();
+	classInetSimPeers->addConstructor< net::IReplicatorPeers* >();
+	classInetSimPeers->addMethod("setPeerConnectionState", &net::InetSimPeers::setPeerConnectionState);
 	scriptManager->registerClass(classInetSimPeers);
+
+	Ref< script::AutoScriptClass< net::RecordPeers > > classRecordPeers = new script::AutoScriptClass< net::RecordPeers >();
+	classRecordPeers->addConstructor< net::IReplicatorPeers*, IStream* >();
+	scriptManager->registerClass(classRecordPeers);
 
 	Ref< script::AutoScriptClass< net::RelayPeers > > classRelayPeers = new script::AutoScriptClass< net::RelayPeers >();
 	classRelayPeers->addConstructor< net::IReplicatorPeers* >();
@@ -93,6 +100,8 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("addEventType", &net::Replicator::addEventType);
 	classReplicator->addMethod("addListener", &net::Replicator::addListener);
 	classReplicator->addMethod("update", &net::Replicator::update);
+	classReplicator->addMethod("getHandle", &net::Replicator::getHandle);
+	classReplicator->addMethod("getName", &net::Replicator::getName);
 	classReplicator->addMethod("setStatus", &net::Replicator::setStatus);
 	classReplicator->addMethod("setOrigin", &net::Replicator::setOrigin);
 	classReplicator->addMethod("setStateTemplate", &net::Replicator::setStateTemplate);

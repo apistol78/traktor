@@ -125,7 +125,7 @@ void Sequence::mouseDown(SequencerControl* sequencer, const Point& at, const Rec
 			rcKey.left += separator - scrollOffset;
 			rcKey.right += separator - scrollOffset;
 
-			if (rcKey.inside(at))
+			if (at.x >= rcKey.left && at.x <= rcKey.right)
 			{
 				m_previousPosition = at.x;
 				m_selectedKey = key;

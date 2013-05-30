@@ -13,20 +13,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.InetSimPeers", InetSimPeers, IReplicatorPeers)
 
-InetSimPeers::InetSimPeers(
-	IReplicatorPeers* peers,
-	float latencyMin,
-	float latencyMax,
-	float packetLossRate
-)
+InetSimPeers::InetSimPeers(IReplicatorPeers* peers)
 :	m_peers(peers)
-,	m_latencyMin(latencyMin)
-,	m_latencyMax(latencyMax)
-,	m_packetLossRate(packetLossRate)
-,	m_txThread(0)
 {
-	m_txThread = ThreadManager::getInstance().create(makeFunctor(this, &InetSimPeers::threadTx));
-	m_txThread->start();
 }
 
 InetSimPeers::~InetSimPeers()
@@ -36,16 +25,10 @@ InetSimPeers::~InetSimPeers()
 
 void InetSimPeers::destroy()
 {
-	if (m_txThread)
-	{
-		m_txThread->stop();
-		m_txThread = 0;
-	}
-
 	safeDestroy(m_peers);
 }
 
-int32_t InetSimPeers::update()
+bool InetSimPeers::update()
 {
 	return m_peers->update();
 }
@@ -53,6 +36,11 @@ int32_t InetSimPeers::update()
 void InetSimPeers::setStatus(uint8_t status)
 {
 	m_peers->setStatus(status);
+}
+
+void InetSimPeers::setConnectionState(uint64_t connectionState)
+{
+	m_peers->setConnectionState(connectionState);
 }
 
 handle_t InetSimPeers::getHandle() const
@@ -82,64 +70,30 @@ uint32_t InetSimPeers::getPeers(std::vector< PeerInfo >& outPeers) const
 
 int32_t InetSimPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
-	return m_peers->receive(data, size, outFromHandle);
+	for (;;)
+	{
+		int32_t result = m_peers->receive(data, size, outFromHandle);
+		if (result <= 0)
+			return result;
+
+		uint8_t state = m_state[outFromHandle];
+		if ((state & 0x02) == 0x00)
+			return result;
+	}
 }
 
 bool InetSimPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
-	if (!reliable && m_packetLossRate >= m_random.nextFloat())
-		return true;
+	uint8_t state = m_state[handle];
+	if ((state & 0x01) == 0x01)
+		return false;
 
-	float T = float(m_timer.getElapsedTime()) + lerp(m_latencyMin, m_latencyMax, m_random.nextFloat());
-
-	Packet p;
-	p.T = T;
-	p.handle = handle;
-	p.data = new uint8_t [size];
-	p.size = size;
-	p.reliable = reliable;
-
-	std::memcpy(p.data, data, size);
-
-	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_txLock);
-		m_tx.push_back(p);
-	}
-
-	m_txEvent.broadcast();
-
-	return true;
+	return m_peers->send(handle, data, size, reliable);
 }
 
-void InetSimPeers::threadTx()
+void InetSimPeers::setPeerConnectionState(handle_t peer, bool sendEnable, bool receiveEnable)
 {
-	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
-	while (!currentThread->stopped())
-	{
-		if (!m_txEvent.wait(100))
-			continue;
-
-		for (;;)
-		{
-			Packet p;
-
-			{
-				T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_txLock);
-				if (m_tx.empty())
-					break;
-
-				p = m_tx.front();
-				m_tx.pop_front();
-			}
-
-			while (p.T > m_timer.getElapsedTime())
-				currentThread->sleep(10);
-
-			m_peers->send(p.handle, p.data, p.size, p.reliable);
-
-			delete[] p.data;
-		}
-	}
+	m_state[peer] = ((!sendEnable) ? 0x01 : 0x00) | ((!receiveEnable) ? 0x02 : 0x00);
 }
 
 	}

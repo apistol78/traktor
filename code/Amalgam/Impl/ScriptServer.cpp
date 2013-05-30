@@ -86,10 +86,10 @@ int32_t ScriptServer::reconfigure(const PropertyGroup* settings)
 	return CrUnaffected;
 }
 
-void ScriptServer::update()
+void ScriptServer::cleanup(bool full)
 {
 	T_ASSERT (m_scriptManager);
-	m_scriptManager->collectGarbage();
+	m_scriptManager->collectGarbage(full);
 }
 
 script::IScriptManager* ScriptServer::getScriptManager()

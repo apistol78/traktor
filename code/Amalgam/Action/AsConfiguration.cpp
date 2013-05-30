@@ -38,7 +38,8 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	T_ASSERT (settings);
 
 	Ref< AsConfiguration > current = new AsConfiguration();
-	
+	current->m_settings = settings;
+
 	current->m_displayModeWidth = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Width", 1280);
 	current->m_displayModeHeight = settings->getProperty< PropertyInteger >(L"Render.DisplayMode/Height", 720);
 	current->m_fullscreen = settings->getProperty< PropertyBoolean >(L"Render.FullScreen", false);
@@ -204,6 +205,23 @@ void AsConfiguration::setVolume(const std::wstring& category, float volume)
 	m_volumes[category] = volume;
 }
 
+bool AsConfiguration::getBoolean(const std::wstring& name) const
+{
+	std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = m_user.find(name);
+	if (i != m_user.end())
+		return PropertyBoolean::get(i->second);
+
+	if (m_settings)
+		return m_settings->getProperty< PropertyBoolean >(name);
+	else
+		return false;
+}
+
+void AsConfiguration::setBoolean(const std::wstring& name, bool value)
+{
+	m_user[name] = new PropertyBoolean(value);
+}
+
 bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 {
 	PropertyGroup* settings = environment->getSettings();
@@ -225,6 +243,9 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 
 	for (std::map< std::wstring, float >::const_iterator i = m_volumes.begin(); i != m_volumes.end(); ++i)
 		settings->setProperty< PropertyFloat >(L"Audio.Volumes/" + i->first, i->second);
+
+	for (std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = m_user.begin(); i != m_user.end(); ++i)
+		settings->setProperty(i->first, i->second);
 
 	return environment->reconfigure();
 }

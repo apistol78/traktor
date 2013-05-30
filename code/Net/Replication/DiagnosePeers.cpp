@@ -28,9 +28,9 @@ void DiagnosePeers::destroy()
 	safeDestroy(m_peers);
 }
 
-int32_t DiagnosePeers::update()
+bool DiagnosePeers::update()
 {
-	int32_t result = m_peers->update();
+	bool result = m_peers->update();
 
 	double T = m_timer.getElapsedTime();
 	if (T >= m_lastT + 10.0)
@@ -59,6 +59,11 @@ int32_t DiagnosePeers::update()
 void DiagnosePeers::setStatus(uint8_t status)
 {
 	m_peers->setStatus(status);
+}
+
+void DiagnosePeers::setConnectionState(uint64_t connectionState)
+{
+	m_peers->setConnectionState(connectionState);
 }
 
 handle_t DiagnosePeers::getHandle() const

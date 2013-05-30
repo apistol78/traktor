@@ -1,4 +1,6 @@
 #include "Amalgam/Classes/CoreClasses.h"
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyFloat.h"
@@ -17,6 +19,30 @@ namespace traktor
 	{
 		namespace
 		{
+
+FileSystem* FileSystem_getInstance()
+{
+	return &FileSystem::getInstance();
+}
+
+Path FileSystem_getAbsolutePath_1(FileSystem* self, const Path& relativePath)
+{
+	return self->getAbsolutePath(relativePath);
+}
+
+Path FileSystem_getAbsolutePath_2(FileSystem* self, const Path& basePath, const Path& relativePath)
+{
+	return self->getAbsolutePath(basePath, relativePath);
+}
+
+Ref< Path > FileSystem_getRelativePath(FileSystem* self, const Path& absolutePath, const Path& relativeToPath)
+{
+	Path relativePath;
+	if (self->getRelativePath(absolutePath, relativeToPath, relativePath))
+		return new Path(relativePath);
+	else
+		return 0;
+}
 
 void PropertyGroup_setProperty(PropertyGroup* self, const std::wstring& propertyName, const script::Any& value)
 {
@@ -49,6 +75,48 @@ script::Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& p
 
 void registerCoreClasses(script::IScriptManager* scriptManager)
 {
+	Ref< script::AutoScriptClass< Path > > classPath = new script::AutoScriptClass< Path >();
+	classPath->addConstructor();
+	classPath->addConstructor< const std::wstring& >();
+	classPath->addMethod("getOriginal", &Path::getOriginal);
+	classPath->addMethod("hasVolume", &Path::hasVolume);
+	classPath->addMethod("getVolume", &Path::getVolume);
+	classPath->addMethod("isRelative", &Path::isRelative);
+	classPath->addMethod("getFileName", &Path::getFileName);
+	classPath->addMethod("getFileNameNoExtension", &Path::getFileNameNoExtension);
+	classPath->addMethod("getPathOnly", &Path::getPathOnly);
+	classPath->addMethod("getPathOnlyNoVolume", &Path::getPathOnlyNoVolume);
+	classPath->addMethod("getPathName", &Path::getPathName);
+	classPath->addMethod("getPathNameNoExtension", &Path::getPathNameNoExtension);
+	classPath->addMethod("getPathNameNoVolume", &Path::getPathNameNoVolume);
+	classPath->addMethod("getExtension", &Path::getExtension);
+	classPath->addMethod("normalized", &Path::normalized);
+	scriptManager->registerClass(classPath);
+
+	Ref< script::AutoScriptClass< IStream > > classIStream = new script::AutoScriptClass< IStream >();
+	classIStream->addMethod("close", &IStream::close);
+	classIStream->addMethod("canRead", &IStream::canRead);
+	classIStream->addMethod("canWrite", &IStream::canWrite);
+	classIStream->addMethod("canSeek", &IStream::canSeek);
+	classIStream->addMethod("tell", &IStream::tell);
+	classIStream->addMethod("available", &IStream::available);
+	classIStream->addMethod("flush", &IStream::flush);
+	scriptManager->registerClass(classIStream);
+
+	Ref< script::AutoScriptClass< FileSystem > > classFileSystem = new script::AutoScriptClass< FileSystem >();
+	classFileSystem->addStaticMethod("getInstance", &FileSystem_getInstance);
+	classFileSystem->addMethod("open", &FileSystem::open);
+	classFileSystem->addMethod("exist", &FileSystem::exist);
+	classFileSystem->addMethod("remove", &FileSystem::remove);
+	classFileSystem->addMethod("makeDirectory", &FileSystem::makeDirectory);
+	classFileSystem->addMethod("makeAllDirectories", &FileSystem::makeAllDirectories);
+	classFileSystem->addMethod("removeDirectory", &FileSystem::removeDirectory);
+	classFileSystem->addMethod("renameDirectory", &FileSystem::renameDirectory);
+	classFileSystem->addMethod("getAbsolutePath", &FileSystem_getAbsolutePath_1);
+	classFileSystem->addMethod("getAbsolutePath", &FileSystem_getAbsolutePath_2);
+	classFileSystem->addMethod("getRelativePath", &FileSystem_getRelativePath);
+	scriptManager->registerClass(classFileSystem);
+
 	Ref< script::AutoScriptClass< IPropertyValue > > classIPropertyValue = new script::AutoScriptClass< IPropertyValue >();
 	scriptManager->registerClass(classIPropertyValue);
 

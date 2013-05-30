@@ -1,6 +1,7 @@
 #ifndef traktor_physics_BodyState_H
 #define traktor_physics_BodyState_H
 
+#include "Core/Math/Const.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector4.h"
 
@@ -48,9 +49,20 @@ struct BodyState
 	BodyState interpolate(const BodyState& stateTarget, const Scalar& interpolate) const
 	{
 		BodyState state;
+
 		state.m_transform = lerp(m_transform, stateTarget.m_transform, interpolate);
 		state.m_linearVelocity = lerp(m_linearVelocity, stateTarget.m_linearVelocity, interpolate);
-		state.m_angularVelocity = lerp(m_angularVelocity, stateTarget.m_angularVelocity, interpolate);
+
+		Quaternion Qv0 = Quaternion::fromAxisAngle(m_angularVelocity);
+		Quaternion Qv1 = Quaternion::fromAxisAngle(stateTarget.m_angularVelocity);
+		Quaternion Qdiff = Qv1 * Qv0.inverse();
+		Vector4 Vdiff = Qdiff.toAxisAngle();
+		Scalar angleDiff = Vdiff.length();
+		if (abs(angleDiff) > FUZZY_EPSILON)
+			state.m_angularVelocity = Vector4(Vdiff / angleDiff).xyz0() * (angleDiff * interpolate);
+		else
+			state.m_angularVelocity = stateTarget.m_angularVelocity;
+
 		return state;
 	}
 

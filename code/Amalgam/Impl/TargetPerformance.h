@@ -28,10 +28,12 @@ public:
 	float render;
 	float physics;
 	float input;
+	float garbageCollect;
 	float steps;
 	float interval;
 	uint32_t collisions;
 	uint32_t memInUse;
+	uint32_t memInUseScript;
 	uint32_t heapObjects;
 	uint32_t drawCalls;
 	uint32_t primitiveCount;

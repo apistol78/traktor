@@ -46,8 +46,13 @@ Ref< IScriptDebugger > ScriptManagerJs::createDebugger()
 	return 0;
 }
 
-void ScriptManagerJs::collectGarbage()
+void ScriptManagerJs::collectGarbage(bool full)
 {
+}
+
+void ScriptManagerJs::getStatistics(ScriptStatistics& outStatistics) const
+{
+	outStatistics.memoryUsage = 0;
 }
 
 	}

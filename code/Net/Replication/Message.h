@@ -52,11 +52,6 @@ struct Message
 
 		struct
 		{
-			handle_t globalId;
-		} disconnect;
-
-		struct
-		{
 			uint8_t data[DataSize];
 		} state;
 

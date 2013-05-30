@@ -31,9 +31,11 @@ public:
 
 	virtual void destroy();
 
-	virtual int32_t update();
+	virtual bool update();
 
 	virtual void setStatus(uint8_t status);
+
+	virtual void setConnectionState(uint64_t connectionState);
 	
 	virtual handle_t getHandle() const;
 

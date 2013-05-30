@@ -84,6 +84,14 @@ public:
 	 */
 	bool update(float T, float dT);
 
+	/*! \brief Get our handle.
+	 */
+	handle_t getHandle() const;
+
+	/*! \brief Get our name.
+	 */
+	std::wstring getName() const;
+
 	/*! \brief Set our status.
 	 */
 	void setStatus(uint8_t status);
@@ -267,7 +275,7 @@ private:
 		std::wstring name;
 		Ghost* ghost;
 		bool precursor;
-		bool relayed;
+		bool direct;
 		uint8_t status;
 		float timeUntilTx;
 		float lastTimeLocal;
@@ -286,7 +294,7 @@ private:
 		:	state(PsInitial)
 		,	ghost(0)
 		,	precursor(false)
-		,	relayed(false)
+		,	direct(false)
 		,	status(0)
 		,	timeUntilTx(0.0f)
 		,	lastTimeLocal(0.0f)

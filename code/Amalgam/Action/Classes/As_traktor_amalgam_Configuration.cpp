@@ -46,11 +46,16 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	// Input
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable));
 
+	// Audio
 	prototype->setMember("getMasterVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getMasterVolume)));
 	prototype->setMember("setMasterVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setMasterVolume)));
 	prototype->setMember("getVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getVolume)));
 	prototype->setMember("setVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setVolume)));
 	prototype->setMember("apply", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_apply)));
+
+	// User
+	prototype->setMember("getBoolean", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getBoolean)));
+	prototype->setMember("setBoolean", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setBoolean)));
 
 	prototype->setMember("constructor", flash::ActionValue(this));
 	prototype->setReadOnly();
@@ -234,6 +239,16 @@ float As_traktor_amalgam_Configuration::Configuration_getVolume(const AsConfigur
 void As_traktor_amalgam_Configuration::Configuration_setVolume(AsConfiguration* self, const std::wstring& category, float volume) const
 {
 	self->setVolume(category, volume);
+}
+
+bool As_traktor_amalgam_Configuration::Configuration_getBoolean(AsConfiguration* self, const std::wstring& name) const
+{
+	return self->getBoolean(name);
+}
+
+void As_traktor_amalgam_Configuration::Configuration_setBoolean(AsConfiguration* self, const std::wstring& name, bool value) const
+{
+	self->setBoolean(name, value);
 }
 
 bool As_traktor_amalgam_Configuration::Configuration_apply(AsConfiguration* self) const

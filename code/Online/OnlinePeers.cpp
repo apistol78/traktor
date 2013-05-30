@@ -27,11 +27,20 @@ OnlinePeers::OnlinePeers(ISessionManager* sessionManager, ILobby* lobby)
 
 void OnlinePeers::destroy()
 {
-	m_lobby = 0;
+	if (m_lobby)
+	{
+		m_lobby->setParticipantMetaValue(L"__STATUS__", L"0");
+		m_lobby->setParticipantMetaValue(L"__CONNECTION_STATE__", L"0");
+		m_lobby = 0;
+	}
 }
 
-int32_t OnlinePeers::update()
+bool OnlinePeers::update()
 {
+	// Ensure we're still connected to back-end.
+	if (!m_sessionManager->isConnected())
+		return false;
+
 	// Get lobby users.
 	RefArray< IUser > users = m_lobby->getParticipants();
 
@@ -139,7 +148,6 @@ int32_t OnlinePeers::update()
 			if (j == m_idMap.end())
 			{
 				// New user connected to lobby.
-				T_ONLINE_PEERS_DEBUG(L"OK: New user in lobby");
 				std::wstring tmp;
 				if (m_lobby->getMetaValue(L"__ID__" + toString< uint64_t >(globalId), tmp))
 				{
@@ -176,12 +184,17 @@ int32_t OnlinePeers::update()
 			i = m_userMap.erase(i);
 	}
 
-	return 0;
+	return true;
 }
 
 void OnlinePeers::setStatus(uint8_t status)
 {
 	m_lobby->setParticipantMetaValue(L"__STATUS__", toString< int32_t >(status));
+}
+
+void OnlinePeers::setConnectionState(uint64_t connectionState)
+{
+	m_lobby->setParticipantMetaValue(L"__CONNECTION_STATE__", toString< uint64_t >(connectionState));
 }
 
 net::handle_t OnlinePeers::getHandle() const
@@ -222,12 +235,14 @@ uint32_t OnlinePeers::getPeers(std::vector< PeerInfo >& outPeers) const
 	for (SmallMap< net::handle_t, Ref< IUser > >::const_iterator i = m_userMap.begin(); i != m_userMap.end(); ++i)
 	{
 		info.handle = i->first;
-		info.relayed = false;
+		info.direct = true;
 
 		i->second->getName(info.name);
 
 		if (m_lobby->getParticipantMetaValue(i->second, L"__STATUS__", tmp))
 			info.status = parseString< int32_t >(tmp);
+		if (m_lobby->getParticipantMetaValue(i->second, L"__CONNECTION_STATE__", tmp))
+			info.connectionState = parseString< uint64_t >(tmp);
 
 		outPeers.push_back(info);
 	}

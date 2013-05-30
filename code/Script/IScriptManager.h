@@ -33,6 +33,14 @@ public:
 	virtual void otherError(const std::wstring& message) = 0;
 };
 
+/*! \brief
+ * \ingroup Script
+ */
+struct ScriptStatistics
+{
+	uint32_t memoryUsage;
+};
+
 /*! \brief Script manager.
  * \ingroup Script
  *
@@ -92,7 +100,11 @@ public:
 	 * If this isn't called the normal garbage collection frequency
 	 * should be used as dictated by the scripting language.
 	 */
-	virtual void collectGarbage() = 0;
+	virtual void collectGarbage(bool full) = 0;
+
+	/*! \brief
+	 */
+	virtual void getStatistics(ScriptStatistics& outStatistics) const = 0;
 };
 
 	}

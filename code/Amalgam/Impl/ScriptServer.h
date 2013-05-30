@@ -39,7 +39,7 @@ public:
 
 	int32_t reconfigure(const PropertyGroup* settings);
 
-	void update();
+	void cleanup(bool full);
 
 	virtual script::IScriptManager* getScriptManager();
 

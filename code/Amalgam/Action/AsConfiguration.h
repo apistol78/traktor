@@ -8,6 +8,9 @@
 
 namespace traktor
 {
+
+class IPropertyValue;
+
 	namespace amalgam
 	{
 
@@ -83,9 +86,14 @@ public:
 
 	void setVolume(const std::wstring& category, float volume);
 
+	bool getBoolean(const std::wstring& name) const;
+
+	void setBoolean(const std::wstring& name, bool value);
+
 	bool apply(amalgam::IEnvironment* environment);
 
 private:
+	Ref< const PropertyGroup > m_settings;
 	int32_t m_displayModeWidth;
 	int32_t m_displayModeHeight;
 	bool m_fullscreen;
@@ -100,6 +108,7 @@ private:
 	bool m_rumbleEnable;
 	float m_masterVolume;
 	std::map< std::wstring, float > m_volumes;
+	std::map< std::wstring, Ref< IPropertyValue > > m_user;
 };
 
 	}

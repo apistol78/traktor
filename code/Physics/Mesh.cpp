@@ -10,11 +10,16 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_version = 3;
+const uint32_t c_version = 4;
 
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Mesh", Mesh, Object)
+
+Mesh::Mesh()
+:	m_margin(0.0f)
+{
+}
 
 void Mesh::setVertices(const AlignedVector< Vector4 >& vertices)
 {
@@ -56,6 +61,16 @@ const Vector4& Mesh::getOffset() const
 	return m_offset;
 }
 
+void Mesh::setMargin(float margin)
+{
+	m_margin = margin;
+}
+
+float Mesh::getMargin() const
+{
+	return m_margin;
+}
+
 bool Mesh::read(IStream* stream)
 {
 	Reader rd(stream);
@@ -93,6 +108,8 @@ bool Mesh::read(IStream* stream)
 	rd >> offset[2];
 	m_offset = Vector4::loadUnaligned(offset);
 
+	rd >> m_margin;
+
 	return true;
 }
 
@@ -119,6 +136,8 @@ bool Mesh::write(IStream* stream)
 	wr << offset[0];
 	wr << offset[1];
 	wr << offset[2];
+
+	wr << m_margin;
 
 	return true;
 }
