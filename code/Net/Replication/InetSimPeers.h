@@ -1,11 +1,7 @@
 #ifndef traktor_net_InetSimPeers_H
 #define traktor_net_InetSimPeers_H
 
-#include <list>
-#include "Core/Math/Random.h"
-#include "Core/Thread/Event.h"
-#include "Core/Thread/Semaphore.h"
-#include "Core/Timer/Timer.h"
+#include <map>
 #include "Net/Replication/IReplicatorPeers.h"
 
 // import/export mechanism.
@@ -18,9 +14,6 @@
 
 namespace traktor
 {
-
-class Thread;
-
 	namespace net
 	{
 
@@ -29,20 +22,17 @@ class T_DLLCLASS InetSimPeers : public IReplicatorPeers
 	T_RTTI_CLASS;
 
 public:
-	InetSimPeers(
-		IReplicatorPeers* peers,
-		float latencyMin,
-		float latencyMax,
-		float packetLossRate
-	);
+	InetSimPeers(IReplicatorPeers* peers);
 
 	virtual ~InetSimPeers();
 
 	virtual void destroy();
 
-	virtual int32_t update();
+	virtual bool update();
 
 	virtual void setStatus(uint8_t status);
+
+	virtual void setConnectionState(uint64_t connectionState);
 
 	virtual handle_t getHandle() const;
 
@@ -58,28 +48,11 @@ public:
 
 	virtual bool send(handle_t handle, const void* data, int32_t size, bool reliable);
 
+	void setPeerConnectionState(handle_t peer, bool sendEnable, bool receiveEnable);
+
 private:
-	struct Packet
-	{
-		float T;
-		handle_t handle;
-		uint8_t* data;
-		int32_t size;
-		bool reliable;
-	};
-
 	Ref< IReplicatorPeers > m_peers;
-	float m_latencyMin;
-	float m_latencyMax;
-	float m_packetLossRate;
-	Timer m_timer;
-	Random m_random;
-	std::list< Packet > m_tx;
-	Thread* m_txThread;
-	Event m_txEvent;
-	Semaphore m_txLock;
-
-	void threadTx();
+	std::map< handle_t, uint32_t > m_state;
 };
 
 	}

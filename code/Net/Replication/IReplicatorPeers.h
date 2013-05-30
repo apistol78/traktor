@@ -27,21 +27,25 @@ public:
 		handle_t handle;
 		std::wstring name;
 		uint8_t status;
-		bool relayed;
+		bool direct;
+		uint64_t connectionState;
 
 		PeerInfo()
 		:	handle(0x00)
 		,	status(0)
-		,	relayed(false)
+		,	direct(false)
+		,	connectionState(0)
 		{
 		}
 	};
 
 	virtual void destroy() = 0;
 
-	virtual int32_t update() = 0;
+	virtual bool update() = 0;
 
 	virtual void setStatus(uint8_t status) = 0;
+
+	virtual void setConnectionState(uint64_t connectionState) = 0;
 
 	//! \{
 

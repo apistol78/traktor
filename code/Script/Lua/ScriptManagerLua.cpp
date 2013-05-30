@@ -62,6 +62,7 @@ ScriptManagerLua::ScriptManagerLua()
 :	m_lockContext(0)
 ,	m_collectStepFrequency(10.0)
 ,	m_collectSteps(-1)
+,	m_collectTargetSteps(0.0f)
 ,	m_totalMemoryUse(0)
 ,	m_lastMemoryUse(0)
 {
@@ -377,32 +378,17 @@ Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 	return m_debugger;
 }
 
-void ScriptManagerLua::collectGarbage()
+void ScriptManagerLua::collectGarbage(bool full)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	if (!full)
+		collectGarbagePartial();
+	else
+		collectGarbageFull();
+}
 
-	double collectTime = m_timer.getElapsedTime();
-
-	int32_t targetSteps = std::min(int32_t(collectTime * m_collectStepFrequency), c_maxTargetSteps);
-	if (m_collectSteps < 0)
-	{
-		lua_gc(m_luaState, LUA_GCSTOP, 0);
-		m_collectSteps = targetSteps;
-	}
-
-	while (m_collectSteps < targetSteps)
-	{
-		lua_gc(m_luaState, LUA_GCSTEP, 0);
-		++m_collectSteps;
-	}
-
-	if (m_lastMemoryUse > 0 && m_totalMemoryUse > m_lastMemoryUse)
-	{
-		size_t garbageProduced = m_totalMemoryUse - m_lastMemoryUse;
-		m_collectStepFrequency = clamp((30.0f * garbageProduced) / (16*1024), 1.0f, 120.0f);
-	}
-
-	m_lastMemoryUse = m_totalMemoryUse;
+void ScriptManagerLua::getStatistics(ScriptStatistics& outStatistics) const
+{
+	outStatistics.memoryUsage = m_totalMemoryUse;
 }
 
 void ScriptManagerLua::destroyContext(ScriptContextLua* context)
@@ -558,6 +544,44 @@ void ScriptManagerLua::collectGarbageFull()
 		lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 	}
 	while (memoryUse != m_totalMemoryUse);
+	m_lastMemoryUse = m_totalMemoryUse;
+}
+
+void ScriptManagerLua::collectGarbagePartial()
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	if (m_collectSteps < 0)
+	{
+		lua_gc(m_luaState, LUA_GCSTOP, 0);
+		m_collectSteps = 0;
+	}
+
+	m_collectTargetSteps += float(m_timer.getDeltaTime() * m_collectStepFrequency);
+
+	int32_t targetSteps = int32_t(m_collectTargetSteps);
+	while (m_collectSteps < targetSteps)
+	{
+		lua_gc(m_luaState, LUA_GCSTEP, 0);
+		++m_collectSteps;
+	}
+
+	if (m_lastMemoryUse <= 0)
+		m_lastMemoryUse = m_totalMemoryUse;
+
+	if (m_totalMemoryUse > m_lastMemoryUse)
+	{
+		size_t garbageProduced = m_totalMemoryUse - m_lastMemoryUse;
+		m_collectStepFrequency = max< float >(
+			clamp((30.0f * garbageProduced) / (16*1024), 1.0f, 120.0f),
+			m_collectStepFrequency
+		);
+	}
+	else
+	{
+		m_collectStepFrequency = max< float >(1.0f, m_collectStepFrequency - 1.0f);
+	}
+
 	m_lastMemoryUse = m_totalMemoryUse;
 }
 

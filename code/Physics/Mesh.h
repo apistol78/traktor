@@ -36,6 +36,8 @@ public:
 	};
 #pragma pack()
 
+	Mesh();
+
 	void setVertices(const AlignedVector< Vector4 >& vertices);
 
 	const AlignedVector< Vector4 >& getVertices() const;
@@ -52,6 +54,10 @@ public:
 
 	const Vector4& getOffset() const;
 
+	void setMargin(float margin);
+
+	float getMargin() const;
+
 	bool read(IStream* stream);
 
 	bool write(IStream* stream);
@@ -61,6 +67,7 @@ private:
 	std::vector< Triangle > m_shapeTriangles;
 	std::vector< Triangle > m_hullTriangles;
 	Vector4 m_offset;
+	float m_margin;
 };
 
 	}

@@ -25,19 +25,18 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const float c_initialTimeOffset = 0.05f;
-const float c_nearDistance = 14.0f;
+const float c_nearDistance = 30.0f;
 const float c_farDistance = 150.0f;
 const float c_nearErrorThreshold = 0.1f;
 const float c_farErrorThreshold = 4.0f;
-const float c_timeUntilTx = 1.0f / 10.0f;
-const float c_timeUntilIAm = 3.0f;
-const float c_timeUntilPing = 1.5f;
+const float c_timeUntilTx = 1.0f / 5.0f;
+const float c_timeUntilIAm = 1.0f;
+const float c_timeUntilPing = 2.0f;
 const float c_errorStateThreshold = 0.2f;
 const float c_remoteOffsetThreshold = 0.1f;
 const float c_remoteOffsetLimit = 0.05f;
-const uint32_t c_maxPendingIAm = 2;
-const uint32_t c_maxPendingPing = 4;
-const uint32_t c_maxErrorCount = 2;
+const uint32_t c_maxPendingPing = 16;
+const uint32_t c_maxErrorCount = 64;
 const uint32_t c_maxDeltaStates = 4;
 
 Timer g_timer;
@@ -119,22 +118,11 @@ void Replicator::destroy()
 {
 	if (!m_peers.empty())
 	{
-		Message discard;
-		handle_t fromHandle;
-
 		// Send Bye message to all peers.
 		for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
 		{
 			if (i->second.state == PsEstablished)
 				sendBye(i->first);
-		}
-
-		// Massage transportation to ensure all messages have been sent.
-		while (m_replicatorPeers)
-		{
-			receive(&discard, fromHandle);
-			if (m_replicatorPeers->update() <= 0)
-				break;
 		}
 
 		// Delete all peer control.
@@ -155,8 +143,8 @@ void Replicator::destroy()
 	m_listeners.clear();
 	m_eventTypes.clear();
 
+	safeDestroy(m_replicatorPeers);
 	m_state = 0;
-	m_replicatorPeers = 0;
 }
 
 void Replicator::addEventType(const TypeInfo& eventType)
@@ -189,6 +177,16 @@ bool Replicator::update(float T, float dT)
 	m_time += dT;
 
 	return bool(m_replicatorPeers != 0);
+}
+
+handle_t Replicator::getHandle() const
+{
+	return m_replicatorPeers->getHandle();
+}
+
+std::wstring Replicator::getName() const
+{
+	return m_replicatorPeers->getName();
 }
 
 void Replicator::setStatus(uint8_t status)
@@ -312,7 +310,7 @@ bool Replicator::isPeerConnected(handle_t peerHandle) const
 bool Replicator::isPeerRelayed(handle_t peerHandle) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
-	return i != m_peers.end() ? i->second.relayed : false;
+	return i != m_peers.end() ? !i->second.direct : false;
 }
 
 bool Replicator::setPeerPrimary(handle_t peerHandle)
@@ -439,7 +437,13 @@ void Replicator::updatePeers(float dT)
 
 	// Massage replicator peers back-end first and
 	// then get fresh list of peer handles.
-	m_replicatorPeers->update();
+	if (!m_replicatorPeers->update())
+	{
+		T_REPLICATOR_DEBUG(L"ERROR: Connection to game lost (1)");
+		destroy();
+		return;
+	}
+
 	m_replicatorPeers->getPeers(info);
 
 	// Keep list of un-fresh handles.
@@ -476,6 +480,7 @@ void Replicator::updatePeers(float dT)
 	}
 
 	// Iterate all handles, check error state or send "I am" to new peers.
+	bool connectionLost = false;
 	for (std::vector< IReplicatorPeers::PeerInfo >::const_iterator i = info.begin(); i != info.end(); ++i)
 	{
 		Peer& peer = m_peers[i->handle];
@@ -504,30 +509,25 @@ void Replicator::updatePeers(float dT)
 		// Check if peer doesn't respond, timeout;ed or unable to communicate.
 		else if (peer.state == PsEstablished)
 		{
-			bool failing = false;
-
-			if (peer.pendingPing >= c_maxPendingPing)
-			{
-				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" doesn't respond to ping");
-				failing = true;
-			}
-
 			if (peer.errorCount >= c_maxErrorCount)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" failing, unable to communicate with peer");
-				failing = true;
-			}
-
-			if (failing)
-			{
+				peer.state = PsDisconnected;
 				peer.pendingPing = 0;
 				peer.errorCount = 0;
+				connectionLost = true;
 			}
 		}
 
 		// Save info about peer.
 		peer.status = i->status;
-		peer.relayed = i->relayed;
+		peer.direct = i->direct;
+	}
+
+	if (connectionLost)
+	{
+		T_REPLICATOR_DEBUG(L"ERROR: Connection to game lost (2)");
+		destroy();
 	}
 }
 
@@ -556,7 +556,7 @@ void Replicator::sendState(float dT)
 	{
 		Peer& peer = i->second;
 
-		if (peer.state != PsEstablished || !peer.ghost)
+		if (peer.state != PsEstablished || !peer.ghost || !peer.ghost->stateTemplate)
 			continue;
 
 		bool shouldSend = bool((peer.timeUntilTx -= dT) <= 0.0f);

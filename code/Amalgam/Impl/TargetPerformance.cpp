@@ -19,10 +19,12 @@ TargetPerformance::TargetPerformance()
 ,	render(0.0f)
 ,	physics(0.0f)
 ,	input(0.0f)
+,	garbageCollect(0.0f)
 ,	steps(0.0f)
 ,	interval(0.0f)
 ,	collisions(0)
 ,	memInUse(0)
+,	memInUseScript(0)
 ,	heapObjects(0)
 ,	drawCalls(0)
 ,	primitiveCount(0)
@@ -43,10 +45,12 @@ void TargetPerformance::serialize(ISerializer& s)
 	s >> Member< float >(L"render", render);
 	s >> Member< float >(L"physics", physics);
 	s >> Member< float >(L"input", input);
+	s >> Member< float >(L"garbageCollect", garbageCollect);
 	s >> Member< float >(L"steps", steps);
 	s >> Member< float >(L"interval", interval);
 	s >> Member< uint32_t >(L"collisions", collisions);
 	s >> Member< uint32_t >(L"memInUse", memInUse);
+	s >> Member< uint32_t >(L"memInUseScript", memInUseScript);
 	s >> Member< uint32_t >(L"heapObjects", heapObjects);
 	s >> Member< uint32_t >(L"drawCalls", drawCalls);
 	s >> Member< uint32_t >(L"primitiveCount", primitiveCount);

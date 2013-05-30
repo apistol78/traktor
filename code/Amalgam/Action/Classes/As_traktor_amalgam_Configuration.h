@@ -95,6 +95,10 @@ private:
 
 	void Configuration_setVolume(AsConfiguration* self, const std::wstring& category, float volume) const;
 
+	bool Configuration_getBoolean(AsConfiguration* self, const std::wstring& name) const;
+
+	void Configuration_setBoolean(AsConfiguration* self, const std::wstring& name, bool value) const;
+
 	bool Configuration_apply(AsConfiguration* self) const;
 };
 

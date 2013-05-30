@@ -123,9 +123,15 @@ T_MATH_INLINE Quaternion Quaternion::inverse() const
 
 T_MATH_INLINE Vector4 Quaternion::toAxisAngle() const
 {
-	Scalar scale = reciprocalSquareRoot(dot3(e, e));
-	Scalar angle = Scalar(2.0f * acosf(e.w()));
-	return Vector4(e * scale * angle).xyz0();
+	Scalar ln = dot3(e, e);
+	if (abs(ln) >= FUZZY_EPSILON)
+	{
+		Scalar scale = reciprocalSquareRoot(ln);
+		Scalar angle = Scalar(2.0f * acosf(e.w()));
+		return Vector4(e * scale * angle).xyz0();
+	}
+	else
+		return Vector4::zero();
 }
 
 T_MATH_INLINE Quaternion Quaternion::fromAxisAngle(const Vector4& axisAngle)

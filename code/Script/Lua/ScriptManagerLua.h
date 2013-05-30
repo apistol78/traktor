@@ -48,7 +48,9 @@ public:
 
 	virtual Ref< IScriptDebugger > createDebugger();
 
-	virtual void collectGarbage();
+	virtual void collectGarbage(bool full);
+
+	virtual void getStatistics(ScriptStatistics& outStatistics) const;
 
 private:
 	friend class ScriptContextLua;
@@ -70,8 +72,9 @@ private:
 	ScriptContextLua* m_lockContext;
 	Ref< ScriptDebuggerLua > m_debugger;
 	Timer m_timer;
-	double m_collectStepFrequency;
+	float m_collectStepFrequency;
 	int32_t m_collectSteps;
+	float m_collectTargetSteps;
 	size_t m_totalMemoryUse;
 	size_t m_lastMemoryUse;
 
@@ -88,6 +91,8 @@ private:
 	Any toAny(int32_t index);
 
 	void collectGarbageFull();
+
+	void collectGarbagePartial();
 
 	void breakDebugger(lua_State* luaState);
 

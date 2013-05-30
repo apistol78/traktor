@@ -42,6 +42,7 @@
 #include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
 #include "Resource/IResourceManager.h"
+#include "Script/IScriptManager.h"
 
 namespace traktor
 {
@@ -487,6 +488,11 @@ bool Application::update()
 			log::info << L"Leaving state \"" << type_name(m_stateManager->getCurrent()) << L"\"..." << Endl;
 			m_stateManager->leaveCurrent();
 
+			// Cleanup script garbage.
+			log::info << L"Performing full garbage collect cycle..." << Endl;
+			if (m_scriptServer)
+				m_scriptServer->cleanup(true);
+
 			// Cleanup resources used by former state.
 			log::info << L"Cleaning resident resources..." << Endl;
 			m_resourceServer->performCleanup();
@@ -507,9 +513,19 @@ bool Application::update()
 		}
 	}
 
+	double gcDuration = 0.0;
+	double updateDuration = 0.0;
+	double physicsDuration = 0.0;
+	double inputDuration = 0.0;
+	float updateInterval = 0.0f;
+	int32_t updateCount = 0;
+
 	// Update scripting language runtime.
+	double gcTimeStart = m_timer.getElapsedTime();
 	if (m_scriptServer)
-		m_scriptServer->update();
+		m_scriptServer->cleanup(false);
+	double gcTimeEnd = m_timer.getElapsedTime();
+	gcDuration = gcTimeEnd - gcTimeStart;
 
 	if ((currentState = m_stateManager->getCurrent()) != 0)
 	{
@@ -542,12 +558,6 @@ bool Application::update()
 			m_inputServer->updateRumble(m_updateInfo.m_frameDeltaTime, m_updateControl.m_pause);
 
 		// Update active state; fixed time step if physics manager is available.
-		double updateDuration = 0.0;
-		double physicsDuration = 0.0;
-		double inputDuration = 0.0;
-		float updateInterval = 0.0f;
-		int32_t updateCount = 0;
-
 		physics::PhysicsManager* physicsManager = m_physicsServer ? m_physicsServer->getPhysicsManager() : 0;
 		if (physicsManager && !m_updateControl.m_pause)
 		{
@@ -786,6 +796,9 @@ bool Application::update()
 			resource::ResourceManagerStatistics rms;
 			m_resourceServer->getResourceManager()->getStatistics(rms);
 
+			script::ScriptStatistics ss;
+			m_scriptServer->getScriptManager()->getStatistics(ss);
+
 			TargetPerformance performance;
 			performance.time = m_updateInfo.m_totalTime;
 			performance.fps = m_fps;
@@ -795,10 +808,12 @@ bool Application::update()
 				performance.physics = float(physicsDuration / updateCount);
 				performance.input = float(inputDuration / updateCount);
 			}
+			performance.garbageCollect = float(gcDuration);
 			performance.steps = float(updateCount);
 			performance.interval = updateInterval;
 			performance.collisions = m_renderCollisions;
 			performance.memInUse = Alloc::allocated();
+			performance.memInUseScript = ss.memoryUsage;
 			performance.heapObjects = Object::getHeapObjectCount();
 			performance.build = float(buildTimeEnd - buildTimeStart);
 #	if !defined(_PS3)

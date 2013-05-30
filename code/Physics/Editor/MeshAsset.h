@@ -29,10 +29,15 @@ public:
 
 	bool getCalculateConvexHull() const { return m_calculateConvexHull; }
 
+	void setMargin(float margin) { m_margin = margin; }
+
+	float getMargin() const { return m_margin; }
+
 private:
 	friend class MeshPipeline;
 
 	bool m_calculateConvexHull;
+	float m_margin;
 };
 
 	}

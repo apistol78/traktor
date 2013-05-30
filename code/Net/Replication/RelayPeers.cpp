@@ -11,7 +11,7 @@ namespace traktor
 		namespace
 		{
 
-#if 0
+#if 1
 #	define T_RELAY_DEBUG(x) traktor::log::info << x << traktor::Endl
 #else
 #	define T_RELAY_DEBUG(x)
@@ -23,6 +23,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.RelayPeers", RelayPeers, IReplicatorPeers)
 
 RelayPeers::RelayPeers(IReplicatorPeers* peers)
 :	m_peers(peers)
+,	m_connectionState(0)
+,	m_connectionStateLast(0)
 {
 }
 
@@ -36,19 +38,37 @@ void RelayPeers::destroy()
 	safeDestroy(m_peers);
 }
 
-int32_t RelayPeers::update()
+bool RelayPeers::update()
 {
 	T_ASSERT (m_peers);
+
+	if (!m_peers->update())
+		return false;
 
 	m_info.resize(0);
 	m_peers->getPeers(m_info);
 
-	return m_peers->update();
+	for (std::vector< PeerInfo >::iterator i = m_info.begin(); i != m_info.end(); ++i)
+		i->direct = bool((m_connectionState & (1ULL << i->handle)) != 0);
+
+	// Expose our connection state bitmask.
+	if (m_connectionStateLast != m_connectionState)
+	{
+		m_peers->setConnectionState(m_connectionState | 1);
+		m_connectionStateLast = m_connectionState;
+	}
+
+	return true;
 }
 
 void RelayPeers::setStatus(uint8_t status)
 {
 	m_peers->setStatus(status);
+}
+
+void RelayPeers::setConnectionState(uint64_t connectionState)
+{
+	m_peers->setConnectionState(connectionState);
 }
 
 handle_t RelayPeers::getHandle() const
@@ -74,10 +94,6 @@ bool RelayPeers::setPrimaryPeerHandle(handle_t handle)
 uint32_t RelayPeers::getPeers(std::vector< PeerInfo >& outPeers) const
 {
 	outPeers = m_info;
-
-	for (std::vector< PeerInfo >::iterator i = outPeers.begin(); i != outPeers.end(); ++i)
-		i->relayed = bool((m_state[i->handle].flags & SfRelayed) != 0);
-
 	return outPeers.size();
 }
 
@@ -91,8 +107,6 @@ int32_t RelayPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 		int32_t nrecv = m_peers->receive(&e, size + 3, outFromHandle);
 		if (nrecv <= 0)
 			return 0;
-
-		m_state[outFromHandle].flags |= SfReceived;
 
 		// Check destination.
 		if (e.to == m_peers->getHandle())
@@ -132,62 +146,45 @@ bool RelayPeers::send(handle_t handle, const void* data, int32_t size, bool reli
 	e.to = handle;
 	std::memcpy(e.payload, data, size);
 
-	// Send message; reverse order if already sent directly but nothing received.
-	uint32_t flags = state.flags & (SfSent | SfReceived);
-	if (
-		flags == 0 ||
-		flags == (SfSent | SfReceived)
-	)
-	{
-		state.flags |= SfSent;
-
-		if (sendDirect(e, size, reliable))
-			return true;
-		if (sendRelay(e, size, reliable))
-			return true;
-
-		state.flags &= ~SfSent;
-	}
-	else
-	{
-		state.flags |= SfSent;
-
-		if (sendRelay(e, size, reliable))
-			return true;
-		if (sendDirect(e, size, reliable))
-			return true;
-
-		state.flags &= ~SfSent;
-	}
+	// Send message, always try direct before relaying.
+	if (sendDirect(e, size, reliable))
+		return true;
+	if (sendRelay(e, size, reliable))
+		return true;
 
 	return false;
 }
 
 bool RelayPeers::sendDirect(const Envelope& e, uint32_t payloadSize, bool reliable)
 {
-	if (!m_peers->send(e.to, &e, payloadSize + 3, reliable))
+	if (m_peers->send(e.to, &e, payloadSize + 3, reliable))
+	{
+		m_connectionState |= (1ULL << e.to);
+		return true;
+	}
+	else
+	{
+		m_connectionState &= ~(1ULL << e.to);
 		return false;
-
-	m_state[e.to].flags &= ~SfRelayed;
-	return true;
+	}
 }
 
 bool RelayPeers::sendRelay(const Envelope& e, uint32_t payloadSize, bool reliable)
 {
 	State& state = m_state[e.to];
 
+	m_connectionState &= ~(1ULL << e.to);
+
 	// Prefer relaying through same peer as last time.
 	if (state.relayer)
 	{
-		// Ensure relayer peer havn't deteriorated into require relaying itself.
-		const State& rs = m_state[state.relayer];
-		if ((rs.flags & SfRelayed) != 0)
+		// Ensure relayer peer still is direct connected.
+		if ((m_connectionState & (1ULL << state.relayer)) != 0)
 		{
 			if (m_peers->send(state.relayer, &e, payloadSize + 3, reliable))
-			{
-				state.flags |= SfRelayed;
 				return true;
-			}
+			else
+				m_connectionState &= ~(1ULL << state.relayer);
 		}
 		else
 			state.relayer = 0;
@@ -202,9 +199,23 @@ bool RelayPeers::sendRelay(const Envelope& e, uint32_t payloadSize, bool reliabl
 		if (
 			i->handle != e.from &&
 			i->handle != e.to &&
-			(m_state[i->handle].flags & SfRelayed) == 0
+			(m_connectionState & (1ULL << i->handle)) != 0 &&	// Are we able to send to peer?
+			(i->connectionState & (1ULL << e.to)) != 0			// Are peer able to send to target?
 		)
 			peerHandles.push_back(i->handle);
+	}
+
+	if (peerHandles.empty())
+	{
+		for (std::vector< PeerInfo >::iterator i = m_info.begin(); i != m_info.end(); ++i)
+		{
+			if (
+				i->handle != e.from &&
+				i->handle != e.to &&
+				(m_connectionState & (1ULL << i->handle)) != 0	// Are we able to send to peer?
+			)
+				peerHandles.push_back(i->handle);
+		}
 	}
 
 	// Randomize and then try each one in turn, pick first successful.
@@ -213,13 +224,14 @@ bool RelayPeers::sendRelay(const Envelope& e, uint32_t payloadSize, bool reliabl
 	{
 		if (m_peers->send(*i, &e, payloadSize + 3, reliable))
 		{
-			state.flags |= SfRelayed;
 			state.relayer = *i;
 			return true;
 		}
+		else
+			m_connectionState &= ~(1ULL << *i);
 	}
 
-	state.flags &= ~SfRelayed;
+	T_ASSERT (state.relayer == 0);
 	return false;
 }
 

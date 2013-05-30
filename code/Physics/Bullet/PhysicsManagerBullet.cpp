@@ -576,6 +576,8 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			shape = new btBvhTriangleMeshShape(indexVertexArray, false);
 		}
 
+		shape->setMargin(mesh->getMargin());
+
 		centerOfGravity = mesh->getOffset();
 	}
 	else if (const SphereShapeDesc* sphereShape = dynamic_type_cast< const SphereShapeDesc* >(shapeDesc))

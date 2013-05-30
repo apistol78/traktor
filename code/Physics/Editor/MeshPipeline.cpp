@@ -10,6 +10,7 @@
 #include "Model/ModelFormat.h"
 #include "Model/Operations/CalculateConvexHull.h"
 #include "Model/Operations/CleanDuplicates.h"
+#include "Model/Operations/ScaleAlongNormal.h"
 #include "Model/Operations/Triangulate.h"
 #include "Physics/Mesh.h"
 #include "Physics/MeshResource.h"
@@ -21,7 +22,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 3, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 4, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -101,6 +102,10 @@ bool MeshPipeline::buildOutput(
 		return false;
 	}
 
+	// Shrink model by margin.
+	model::ScaleAlongNormal(-meshAsset->m_margin).apply(*model);
+
+	// Cleanup model suitable for physics.
 	model->clear(model::Model::CfMaterials | model::Model::CfColors | model::Model::CfNormals | model::Model::CfTexCoords | model::Model::CfJoints);
 	model::CleanDuplicates().apply(*model);
 	model::Triangulate().apply(*model);
@@ -179,12 +184,14 @@ bool MeshPipeline::buildOutput(
 		log::info << int32_t(meshHullTriangles.size()) << L" hull triangle(s)" << Endl;
 		log::info << L"Offset " << centerOfGravity << Endl;
 	}
+	log::info << meshAsset->m_margin << L" unit(s) margin" << Endl;
 
 	Mesh mesh;
 	mesh.setVertices(positions);
 	mesh.setShapeTriangles(meshShapeTriangles);
 	mesh.setHullTriangles(meshHullTriangles);
 	mesh.setOffset(centerOfGravity);
+	mesh.setMargin(meshAsset->m_margin);
 
 	Ref< db::Instance > instance = pipelineBuilder->createOutputInstance(
 		outputPath,

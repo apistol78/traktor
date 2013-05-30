@@ -1,5 +1,5 @@
-#ifndef traktor_net_DiagnosePeers_H
-#define traktor_net_DiagnosePeers_H
+#ifndef traktor_net_RecordPeers_H
+#define traktor_net_RecordPeers_H
 
 #include "Core/Timer/Timer.h"
 #include "Net/Replication/IReplicatorPeers.h"
@@ -14,17 +14,20 @@
 
 namespace traktor
 {
+
+class IStream;
+
 	namespace net
 	{
 
-class T_DLLCLASS DiagnosePeers : public IReplicatorPeers
+class T_DLLCLASS RecordPeers : public IReplicatorPeers
 {
 	T_RTTI_CLASS;
 
 public:
-	DiagnosePeers(IReplicatorPeers* peers);
+	RecordPeers(IReplicatorPeers* peers, IStream* stream);
 
-	virtual ~DiagnosePeers();
+	virtual ~RecordPeers();
 
 	virtual void destroy();
 
@@ -49,14 +52,24 @@ public:
 	virtual bool send(handle_t handle, const void* data, int32_t size, bool reliable);
 
 private:
+	struct Entry 
+	{
+		float time;
+		uint8_t direction;
+		handle_t handle;
+		int32_t size;
+		uint8_t data[1500];
+	};
+
 	Ref< IReplicatorPeers > m_peers;
+	Ref< IStream > m_stream;
 	Timer m_timer;
-	double m_lastT;
-	uint32_t m_sent;
-	uint32_t m_received;
+	handle_t m_handle;
+	std::wstring m_name;
+	std::vector< PeerInfo > m_info;
 };
 
 	}
 }
 
-#endif	// traktor_net_DiagnosePeers_H
+#endif	// traktor_net_RecordPeers_H
