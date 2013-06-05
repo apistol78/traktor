@@ -64,8 +64,6 @@ Ref< ArticulatedEntity > ArticulatedEntityData::createEntity(
 			if (!joint)
 				return 0;
 
-			joint->setEnable(true);
-
 			joints[i] = joint;
 		}
 	}

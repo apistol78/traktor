@@ -61,6 +61,8 @@ public:
 
 	const std::vector< Material >& getMaterials() const { return m_materials; }
 
+	void reserveVertices(uint32_t vertexCapacity) { m_vertices.reserve(vertexCapacity); }
+
 	uint32_t addVertex(const Vertex& vertex);
 
 	uint32_t addUniqueVertex(const Vertex& vertex);
@@ -99,6 +101,8 @@ public:
 
 	uint32_t addUniquePosition(const Vector4& position);
 
+	uint32_t getPositionCount() const { return m_positions.size(); }
+
 	const Vector4& getPosition(uint32_t index) const { return m_positions.get(index); }
 
 	const Vector4& getVertexPosition(uint32_t vertexIndex) const { return getPosition(getVertex(vertexIndex).getPosition()); }
@@ -111,21 +115,29 @@ public:
 
 	uint32_t addUniqueColor(const Vector4& color);
 
+	uint32_t getColorCount() const { return m_colors.size(); }
+
 	const Vector4& getColor(uint32_t index) const { return m_colors.get(index); }
 
 	void setColors(const AlignedVector< Vector4 >& colors) { m_colors.replace(colors); }
 
 	const AlignedVector< Vector4 >& getColors() const { return m_colors.values(); }
 
+	void reserveColors(uint32_t colorCapacity);
+
 	uint32_t addNormal(const Vector4& normal);
 
 	uint32_t addUniqueNormal(const Vector4& normal);
+
+	uint32_t getNormalCount() const { return m_normals.size(); }
 
 	const Vector4& getNormal(uint32_t index) const { return m_normals.get(index); }
 
 	void setNormals(const AlignedVector< Vector4 >& normals) { m_normals.replace(normals); }
 
 	const AlignedVector< Vector4 >& getNormals() const { return m_normals.values(); }
+
+	void reserveNormals(uint32_t normalCapacity);
 
 	uint32_t addTexCoord(const Vector2& texCoord);
 

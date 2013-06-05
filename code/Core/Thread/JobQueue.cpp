@@ -1,7 +1,6 @@
 #include "Core/Misc/String.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobQueue.h"
-#include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
 
 namespace traktor
@@ -19,7 +18,7 @@ JobQueue::~JobQueue()
 	destroy();
 }
 
-bool JobQueue::create(uint32_t workerThreads)
+bool JobQueue::create(uint32_t workerThreads, Thread::Priority priority)
 {
 	m_workerThreads.resize(workerThreads);
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
@@ -32,7 +31,7 @@ bool JobQueue::create(uint32_t workerThreads)
 			L"Job queue, worker thread " + toString(i)
 		);
 		if (m_workerThreads[i])
-			m_workerThreads[i]->start(Thread::Normal);
+			m_workerThreads[i]->start(priority);
 		else
 			return false;
 	}

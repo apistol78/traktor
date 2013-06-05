@@ -85,13 +85,17 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		if (fileCacheEnable)
 		{
 			std::wstring fileCachePath = m_globalSettings->getProperty< PropertyString >(L"Pipeline.FileCache.Path", L"");
-			bool fileCacheRead = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", false);
-			bool fileCacheWrite = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", false);
+			fileCachePath = FileSystem::getInstance().getAbsolutePath(fileCachePath).getPathName();
+			if (!fileCachePath.empty())
+			{
+				bool fileCacheRead = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", false);
+				bool fileCacheWrite = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", false);
 
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
-			pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.FileCache.Path", fileCachePath);
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", fileCacheRead);
-			pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", fileCacheWrite);
+				pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache", true);
+				pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.FileCache.Path", fileCachePath);
+				pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Read", fileCacheRead);
+				pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.FileCache.Write", fileCacheWrite);
+			}
 		}
 
 		bool memCachedEnable = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.MemCached", false);
@@ -125,7 +129,6 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 	}
 
 	sourceDatabaseCs.set(L"fileStore", L"");
-	sourceDatabaseCs.set(L"eventFile", L"false");
 
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.SourceDatabase", sourceDatabaseCs.format());
 	pipelineConfiguration->setProperty< PropertyString >(L"Editor.OutputDatabase", outputDatabaseCs.format());

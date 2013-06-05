@@ -39,6 +39,10 @@ public:
 	 * \return Stream to shared memory, null if failed to acquire access.
 	 */
 	virtual Ref< IStream > write() = 0;
+
+	/*! \brief Clear shared memory.
+	 */
+	virtual bool clear() = 0;
 };
 
 }

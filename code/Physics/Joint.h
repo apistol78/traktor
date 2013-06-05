@@ -38,20 +38,6 @@ public:
 	 * to world.
 	 */
 	virtual Body* getBody2() = 0;
-
-	/*! \brief Set joint enable state.
-	 *
-	 * Disabled joints are removed from simulation.
-	 *
-	 * \param enable Enable state.
-	 */
-	virtual void setEnable(bool enable) = 0;
-
-	/*! \brief Get joint enable state.
-	 *
-	 * \return Enable state.
-	 */
-	virtual bool isEnable() const = 0;
 };
 
 	}

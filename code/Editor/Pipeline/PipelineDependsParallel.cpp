@@ -6,6 +6,7 @@
 #include "Core/Misc/Save.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Core/System/OS.h"
 #include "Core/Thread/Acquire.h"
 #include "Core/Thread/JobManager.h"
 #include "Core/Thread/Thread.h"
@@ -38,7 +39,10 @@ PipelineDependsParallel::PipelineDependsParallel(
 ,	m_pipelineDb(pipelineDb)
 {
 	m_jobQueue = new JobQueue();
-	m_jobQueue->create(4);
+	m_jobQueue->create(
+		OS::getInstance().getCPUCoreCount(),
+		Thread::Above
+	);
 }
 
 PipelineDependsParallel::~PipelineDependsParallel()

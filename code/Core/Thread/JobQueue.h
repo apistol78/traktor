@@ -5,6 +5,7 @@
 #include "Core/RefArray.h"
 #include "Core/Containers/ThreadsafeFifo.h"
 #include "Core/Thread/Event.h"
+#include "Core/Thread/Thread.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +20,6 @@ namespace traktor
 
 class Job;
 class Functor;
-class Thread;
 
 /*! \brief Job queue.
  * \ingroup Core
@@ -38,7 +38,7 @@ public:
 	 * \param workerThreads Number of worker threads.
 	 * \return True if successfully created.
 	 */
-	bool create(uint32_t workerThreads);
+	bool create(uint32_t workerThreads, Thread::Priority priority);
 
 	/*! \brief Destroy queue. */
 	void destroy();

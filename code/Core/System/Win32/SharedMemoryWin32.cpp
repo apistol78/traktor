@@ -193,4 +193,22 @@ Ref< IStream > SharedMemoryWin32::write()
 	return new SharedWriterStream(header, header + 1, m_size);
 }
 
+bool SharedMemoryWin32::clear()
+{
+	Header* header = static_cast< Header* >(m_ptr);
+	if (!header)
+		return false;
+
+	// Wait until no writers.
+	while (InterlockedCompareExchange(&header->writerCount, 1, 0) != 0)
+		Sleep(0);
+
+	// Wait until no readers.
+	while (InterlockedCompareExchange(&header->readerCount, 0, 0) != 0)
+		Sleep(0);
+
+	header->dataSize = 0;
+	return true;
+}
+
 }

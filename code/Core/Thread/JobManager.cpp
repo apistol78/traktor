@@ -15,7 +15,10 @@ JobManager& JobManager::getInstance()
 		SingletonManager::getInstance().addBefore(s_instance, &ThreadManager::getInstance());
 
 		s_instance->m_queue = new JobQueue();
-		s_instance->m_queue->create(OS::getInstance().getCPUCoreCount());
+		s_instance->m_queue->create(
+			OS::getInstance().getCPUCoreCount(),
+			Thread::Normal
+		);
 	}
 	return *s_instance;
 }

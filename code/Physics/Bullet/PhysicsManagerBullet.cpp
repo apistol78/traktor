@@ -944,21 +944,18 @@ Ref< Joint > PhysicsManagerBullet::createJoint(const JointDesc* desc, const Tran
 	return joint;
 }
 
-void PhysicsManagerBullet::update()
+void PhysicsManagerBullet::update(bool issueCollisionEvents)
 {
 	T_ASSERT (m_dynamicsWorld);
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
-	//// Save current state of all dynamic bodies.
-	//for (RefArray< DynamicBodyBullet >::iterator i = m_dynamicBodies.begin(); i != m_dynamicBodies.end(); ++i)
-	//	(*i)->setPreviousState((*i)->getState());
-
 	// Step simulation.
 	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime, 0);
 
 	// Issue collision events.
+	if (issueCollisionEvents)
 	{
 		CollisionInfo info;
 
@@ -1007,6 +1004,23 @@ void PhysicsManagerBullet::update()
 			}
 		}
 	}
+	else
+	{
+		int32_t manifoldCount = m_dispatcher->getNumManifolds();
+		for (int32_t i = 0; i < manifoldCount; ++i)
+		{
+			btPersistentManifold* manifold = m_dispatcher->getManifoldByIndexInternal(i);
+			T_ASSERT (manifold);
+
+			manifold->m_fresh = false;
+		}
+	}
+}
+
+RefArray< Body > PhysicsManagerBullet::getBodies() const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	return (RefArray< Body >&)m_bodies;
 }
 
 uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const
@@ -1403,7 +1417,7 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 		if (clusterId1 != ~0UL && clusterId1 == body2->getClusterId())
 			return;
 
-		// Filter collision on collision group and mask first.
+		// Filter collision on collision group and mask.
 		uint32_t group1 = body1->getCollisionGroup();
 		uint32_t mask1 = body1->getCollisionMask();
 
@@ -1412,14 +1426,6 @@ void PhysicsManagerBullet::nearCallback(btBroadphasePair& collisionPair, btColli
 
 		if ((group1 & mask2) == 0 && (group2 & mask1) == 0)
 			return;
-
-		// Skip bodies which are directly connected through a joint.
-		const std::vector< Joint* >& joints = body1->getJoints();
-		for (std::vector< Joint* >::const_iterator i = joints.begin(); i != joints.end(); ++i)
-		{
-			if ((*i)->getBody1() == body2 || (*i)->getBody2() == body2)
-				return;
-		}
 	}
 
 	btCollisionDispatcher::defaultNearCallback(collisionPair, dispatcher, dispatchInfo);

@@ -117,6 +117,14 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 		outConsumedChars = int(ws);
 		return true;
 	}
+	else if (
+		word == L"assert"
+	)
+	{
+		outState = StSpecial;
+		outConsumedChars = int(ws);
+		return true;
+	}
 
 	// Default as text.
 	outState = StDefault;

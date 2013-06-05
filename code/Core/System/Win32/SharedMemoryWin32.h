@@ -32,6 +32,8 @@ public:
 
 	virtual Ref< IStream > write();
 
+	virtual bool clear();
+
 private:
 	HANDLE m_hMap;
 	void* m_ptr;

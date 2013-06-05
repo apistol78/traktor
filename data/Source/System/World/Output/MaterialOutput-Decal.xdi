@@ -42,6 +42,10 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>RefractiveAmount</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>RimColor</name>
 					<optional>true</optional>
 				</item>
@@ -78,6 +82,10 @@
 				</item>
 				<item>
 					<first>Refractive</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>RefractiveAmount</first>
 					<second>0</second>
 				</item>
 				<item>
@@ -240,7 +248,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-428</first>
+				<first>-427</first>
 				<second>302</second>
 			</position>
 			<name>SurfaceColor</name>
@@ -251,7 +259,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-425</first>
+				<first>-424</first>
 				<second>334</second>
 			</position>
 			<name>DiffuseTerm</name>
@@ -262,7 +270,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-425</first>
+				<first>-424</first>
 				<second>494</second>
 			</position>
 			<name>ViewNormal</name>
@@ -273,7 +281,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-413</first>
+				<first>-412</first>
 				<second>526</second>
 			</position>
 			<name>Reflection</name>
@@ -284,7 +292,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-426</first>
+				<first>-425</first>
 				<second>558</second>
 			</position>
 			<name>RimIntensity</name>
@@ -295,7 +303,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-409</first>
+				<first>-408</first>
 				<second>590</second>
 			</position>
 			<name>RimColor</name>
@@ -306,7 +314,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-433</first>
+				<first>-432</first>
 				<second>366</second>
 			</position>
 			<name>SpecularTerm</name>
@@ -317,7 +325,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-428</first>
+				<first>-427</first>
 				<second>462</second>
 			</position>
 			<name>ViewPosition</name>
@@ -328,7 +336,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-464</first>
+				<first>-463</first>
 				<second>398</second>
 			</position>
 			<name>SpecularRoughness</name>
@@ -339,7 +347,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-388</first>
+				<first>-387</first>
 				<second>622</second>
 			</position>
 			<name>Mask</name>
@@ -350,7 +358,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-405</first>
+				<first>-404</first>
 				<second>430</second>
 			</position>
 			<name>Emissive</name>
@@ -398,7 +406,7 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>-413</first>
+				<first>-412</first>
 				<second>654</second>
 			</position>
 			<name>Refractive</name>
@@ -406,22 +414,33 @@
 			<optional>true</optional>
 			<defaultValue>0</defaultValue>
 		</item>
-		<item type="traktor.render.Scalar">
-			<comment/>
-			<position>
-				<first>-292</first>
-				<second>762</second>
-			</position>
-			<value>0.1</value>
-		</item>
 		<item type="traktor.render.Conditional" version="1">
 			<comment/>
 			<position>
-				<first>-129</first>
-				<second>710</second>
+				<first>-116</first>
+				<second>670</second>
 			</position>
 			<branch>BrAuto</branch>
 			<operator>CoGreater</operator>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>-281</first>
+				<second>738</second>
+			</position>
+			<value>0</value>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-454</first>
+				<second>686</second>
+			</position>
+			<name>RefractiveAmount</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -681,18 +700,8 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>Reference</name>
+				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -701,13 +710,13 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[18]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>CaseFalse</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[18]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -717,7 +726,7 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[18]"/>
+				<node ref="/object/nodes/item[17]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -748,16 +757,6 @@
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[17]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[18]"/>
-				<name>CaseTrue</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[18]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -773,6 +772,36 @@
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Mask</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<name>CaseTrue</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[18]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[17]"/>
+				<name>Reference</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[19]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>RefractiveAmount</name>
 			</destination>
 		</item>
 	</edges>

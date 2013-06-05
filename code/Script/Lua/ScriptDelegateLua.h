@@ -18,7 +18,7 @@ class ScriptDelegateLua : public IScriptDelegate
 	T_RTTI_CLASS;
 
 public:
-	ScriptDelegateLua(ScriptManagerLua* manager, ScriptContextLua* context, lua_State* luaState);
+	ScriptDelegateLua(ScriptManagerLua* manager, ScriptContextLua* context, lua_State*& luaState);
 
 	virtual ~ScriptDelegateLua();
 
@@ -29,7 +29,7 @@ public:
 private:
 	ScriptManagerLua* m_manager;
 	ScriptContextLua* m_context;
-	lua_State* m_luaState;
+	lua_State*& m_luaState;
 	int32_t m_functionRef;
 };
 

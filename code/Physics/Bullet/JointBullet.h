@@ -36,8 +36,11 @@ public:
 	,	m_constraint(constraint)
 	,	m_body1(body1)
 	,	m_body2(body2)
-	,	m_enable(false)
 	{
+		if (m_body1)
+			m_body1->addConstraint(m_constraint);
+		if (m_body2)
+			m_body2->addConstraint(m_constraint);
 	}
 
 	virtual ~JointBullet()
@@ -47,21 +50,16 @@ public:
 
 	virtual void destroy()
 	{
-		invokeOnce< IWorldCallback, Joint*, btTypedConstraint* >(m_callback, &IWorldCallback::destroyConstraint, this, m_constraint);
+		if (m_body1)
+			m_body1->removeConstraint(m_constraint);
+		if (m_body2)
+			m_body2->removeConstraint(m_constraint);
 
-		if (m_enable)
-		{
-			if (m_body1)
-				m_body1->removeJoint(this);
-			if (m_body2)
-				m_body2->removeJoint(this);
-		}
+		invokeOnce< IWorldCallback, Joint*, btTypedConstraint* >(m_callback, &IWorldCallback::destroyConstraint, this, m_constraint);
 
 		m_constraint = 0;
 		m_body1 = 0;
 		m_body2 = 0;
-
-		m_enable = false;
 	}
 
 	virtual Body* getBody1()
@@ -74,44 +72,11 @@ public:
 		return m_body2;
 	}
 
-	virtual void setEnable(bool enable)
-	{
-		T_ASSERT (m_callback);
-
-		if (enable == m_enable)
-			return;
-
-		if (enable)
-		{
-			if (m_body1)
-				m_body1->addJoint(this);
-			if (m_body2)
-				m_body2->addJoint(this);
-			m_callback->insertConstraint(m_constraint);
-		}
-		else
-		{
-			if (m_body1)
-				m_body1->removeJoint(this);
-			if (m_body2)
-				m_body2->removeJoint(this);
-			m_callback->removeConstraint(m_constraint);
-		}
-
-		m_enable = enable;
-	}
-
-	virtual bool isEnable() const
-	{
-		return m_enable;
-	}
-
 protected:
 	IWorldCallback* m_callback;
 	Constraint* m_constraint;
 	Ref< BodyBullet > m_body1;
 	Ref< BodyBullet > m_body2;
-	bool m_enable;
 };
 
 	}

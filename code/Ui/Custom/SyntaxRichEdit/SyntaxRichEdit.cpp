@@ -21,6 +21,7 @@ SyntaxRichEdit::SyntaxRichEdit()
 ,	m_attributeFunction(0)
 ,	m_attributeType(0)
 ,	m_attributeKeyword(0)
+,	m_attributeSpecial(0)
 ,	m_attributeError(0)
 {
 }
@@ -37,6 +38,7 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
 	m_attributeFunction = addAttribute(Color4ub(120, 40, 40), Color4ub(255, 255, 255), false, false, false);	// Function
 	m_attributeType = addAttribute(Color4ub(160, 40, 255), Color4ub(255, 255, 255), false, false, false);	// Type
 	m_attributeKeyword = addAttribute(Color4ub(0, 0, 255), Color4ub(255, 255, 255), false, false, false);	// Keyword
+	m_attributeSpecial = addAttribute(Color4ub(255, 140, 0), Color4ub(255, 255, 255), false, false, false);	// Special
 	m_attributeError = addAttribute(Color4ub(255, 255, 255), Color4ub(255, 0, 0), false, false, false);		// Error
 
 	addChangeEventHandler(createMethodHandler(this, &SyntaxRichEdit::eventChange));
@@ -127,6 +129,10 @@ void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
 
 					case SyntaxLanguage::StKeyword:
 						setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
+						break;
+
+					case SyntaxLanguage::StSpecial:
+						setAttribute(startOffset, endOffset - startOffset, m_attributeSpecial);
 						break;
 						
 					default:

@@ -300,7 +300,7 @@ Ref< IProcess > OS::execute(
 		T_ASSERT (size_t(p - environment.ptr()) == size);
 	}
 
-	if (!detach)
+	//if (!detach)
 	{
 		StringOutputStream ss;
 		ss << L"\"" << fileAbs.getPathName() << L"\"";
@@ -371,7 +371,11 @@ Ref< IProcess > OS::execute(
 		DWORD dwCreationFlags = CREATE_NEW_PROCESS_GROUP;
 
 		if (mute)
+		{
 			dwCreationFlags = CREATE_NO_WINDOW;
+			if (detach)
+				dwCreationFlags |= DETACHED_PROCESS;
+		}
 		else
 			dwCreationFlags = CREATE_NEW_CONSOLE;
 
@@ -411,54 +415,54 @@ Ref< IProcess > OS::execute(
 			hStdErrWrite
 		);
 	}
-	else	// Detached process; use ShellExecute path instead due to UAC.
-	{
-
-#if !defined(WINCE)
-		_tcscpy_s(cmd, wstots(fileAbs.getPathName()).c_str());
-		_tcscpy_s(par, wstots(commandLine).c_str());
-		_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
-#else
-		_tcscpy_s(cmd, sizeof_array(cmd), wstots(fileAbs.getPathName()).c_str());
-		_tcscpy_s(par, sizeof_array(par), wstots(commandLine).c_str());
-		_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectoryAbs.getPathName()).c_str());
-#endif
-
-		SHELLEXECUTEINFO xi;
-
-		std::memset(&xi, 0, sizeof(xi));
-		xi.cbSize = sizeof(xi);
-		xi.fMask = 0;
-		xi.hwnd = NULL;
-		xi.lpVerb = L"runas";
-		xi.lpFile = cmd;
-		xi.lpParameters = par;
-		xi.lpDirectory = cwd;
-#if !defined(WINCE)
-		xi.nShow = mute ? SW_HIDE : SW_NORMAL;
-#else
-		xi.nShow = SW_HIDE;
-#endif
-
-		if (!ShellExecuteEx(&xi))
-			return 0;
-
-		return new ProcessWin32(
-			xi.hProcess,
-#if !defined(WINCE)
-			GetProcessId(xi.hProcess),
-#else
-			0,
-#endif
-			NULL,
-			hStdInRead,
-			hStdInWrite,
-			hStdOutRead,
-			hStdOutWrite,
-			hStdErrRead,
-			hStdErrWrite
-		);
-	}
+//	else	// Detached process; use ShellExecute path instead due to UAC.
+//	{
+//
+//#if !defined(WINCE)
+//		_tcscpy_s(cmd, wstots(fileAbs.getPathName()).c_str());
+//		_tcscpy_s(par, wstots(commandLine).c_str());
+//		_tcscpy_s(cwd, wstots(workingDirectoryAbs.getPathName()).c_str());
+//#else
+//		_tcscpy_s(cmd, sizeof_array(cmd), wstots(fileAbs.getPathName()).c_str());
+//		_tcscpy_s(par, sizeof_array(par), wstots(commandLine).c_str());
+//		_tcscpy_s(cwd, sizeof_array(cwd), wstots(workingDirectoryAbs.getPathName()).c_str());
+//#endif
+//
+//		SHELLEXECUTEINFO xi;
+//
+//		std::memset(&xi, 0, sizeof(xi));
+//		xi.cbSize = sizeof(xi);
+//		xi.fMask = 0;
+//		xi.hwnd = NULL;
+//		xi.lpVerb = L"runas";
+//		xi.lpFile = cmd;
+//		xi.lpParameters = par;
+//		xi.lpDirectory = cwd;
+//#if !defined(WINCE)
+//		xi.nShow = mute ? SW_HIDE : SW_NORMAL;
+//#else
+//		xi.nShow = SW_HIDE;
+//#endif
+//
+//		if (!ShellExecuteEx(&xi))
+//			return 0;
+//
+//		return new ProcessWin32(
+//			xi.hProcess,
+//#if !defined(WINCE)
+//			GetProcessId(xi.hProcess),
+//#else
+//			0,
+//#endif
+//			NULL,
+//			hStdInRead,
+//			hStdInWrite,
+//			hStdOutRead,
+//			hStdOutWrite,
+//			hStdErrRead,
+//			hStdErrWrite
+//		);
+//	}
 }
 
 Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t size) const

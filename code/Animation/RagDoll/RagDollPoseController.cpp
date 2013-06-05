@@ -386,19 +386,9 @@ void RagDollPoseController::setEnable(bool enable)
 			if (*i)
 				(*i)->setEnable(true);
 		}
-		for (RefArray< physics::Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-		{
-			if (*i)
-				(*i)->setEnable(true);
-		}
 	}
 	else
 	{
-		for (RefArray< physics::Joint >::iterator i = m_joints.begin(); i != m_joints.end(); ++i)
-		{
-			if (*i)
-				(*i)->setEnable(false);
-		}
 		for (RefArray< physics::Body >::iterator i = m_limbs.begin(); i != m_limbs.end(); ++i)
 		{
 			if (*i)

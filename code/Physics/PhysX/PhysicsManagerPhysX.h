@@ -48,7 +48,9 @@ public:
 
 	virtual Ref< Joint > createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2);
 
-	virtual void update();
+	virtual void update(bool issueCollisionEvents);
+
+	virtual RefArray< Body > getBodies() const;
 
 	virtual uint32_t getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const;
 

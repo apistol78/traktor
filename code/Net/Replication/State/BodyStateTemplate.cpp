@@ -292,15 +292,32 @@ float BodyStateTemplate::error(const IValue* Vl, const IValue* Vr) const
 	return *std::max_element(&errors[0], &errors[3]);
 }
 
-Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const
+Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
 {
+	const physics::BodyState& Sn2 = *checked_type_cast< const BodyStateValue* >(Vn2);
+	const physics::BodyState& Sn1 = *checked_type_cast< const BodyStateValue* >(Vn1);
+	const physics::BodyState& S0 = *checked_type_cast< const BodyStateValue* >(V0);
+
 	Scalar dT_0(safeDeltaTime(T - T0));
 	Scalar dT_n1_0(safeDeltaTime(T0 - Tn1));
 	Scalar dT_n2_n1(safeDeltaTime(Tn1 - Tn2));
 
-	const physics::BodyState& Sn1 = *checked_type_cast< const BodyStateValue* >(Vn1);
-	const physics::BodyState& S0 = *checked_type_cast< const BodyStateValue* >(V0);
-	const physics::BodyState& S = *checked_type_cast< const BodyStateValue* >(V);
+	if (T <= Tn2)
+		return Vn2;
+
+	if (T <= Tn1)
+	{
+		return new BodyStateValue(
+			Sn2.interpolate(Sn1, Scalar(T - Tn2) / dT_n2_n1)
+		);
+	}
+
+	if (T <= T0)
+	{
+		return new BodyStateValue(
+			Sn1.interpolate(S0, Scalar(T - Tn1) / dT_n1_0)
+		);
+	}
 
 	Vector4 Vl = S0.getLinearVelocity().xyz0();
 	Vector4 Vl_n1 = Sn1.getLinearVelocity().xyz0();
@@ -330,9 +347,6 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	Sf.setTransform(Transform(P, R.normalized()));
 	Sf.setLinearVelocity(Vl);
 	Sf.setAngularVelocity(Va.toAxisAngle());
-
-	float k_T = clamp((T - T0) / c_maxRubberBandTime, 0.0f, 0.9f);
-	Sf = Sf.interpolate(S, Scalar(k_T));
 
 	return new BodyStateValue(Sf);
 }
