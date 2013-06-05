@@ -21,7 +21,7 @@ class T_DLLCLASS BodyStateTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	BodyStateTemplate(float linearError = 0.5f, float angularError = 4.0f);
+	BodyStateTemplate(float linearError = 0.5f, float angularError = 8.0f);
 
 	virtual void pack(BitWriter& writer, const IValue* V) const;
 
@@ -29,7 +29,7 @@ public:
 
 	virtual float error(const IValue* Vl, const IValue* Vr) const;
 
-	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, const IValue* V, float T) const;
+	virtual Ref< const IValue > extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const;
 
 private:
 	float m_linearError;

@@ -443,11 +443,16 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 	return outJoint;
 }
 
-void PhysicsManagerPhysX::update()
+void PhysicsManagerPhysX::update(bool issueCollisionEvents)
 {
 	m_scene->flushStream();
 	m_scene->simulate(m_simulationDeltaTime);
 	m_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+}
+
+RefArray< Body > PhysicsManagerPhysX::getBodies() const
+{
+	return (RefArray< Body >&)m_bodies;
 }
 
 uint32_t PhysicsManagerPhysX::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const

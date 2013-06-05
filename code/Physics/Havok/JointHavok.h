@@ -49,15 +49,6 @@ public:
 		return m_body2;
 	}
 
-	virtual void setEnable(bool enable)
-	{
-	}
-
-	virtual bool isEnable() const
-	{
-		return false;
-	}
-
 protected:
 	DestroyCallbackHavok* m_callback;
 	HvkRef< hkpConstraintInstance > m_constraint;

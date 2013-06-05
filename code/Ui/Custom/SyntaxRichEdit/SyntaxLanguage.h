@@ -37,7 +37,8 @@ public:
 		StComment,
 		StFunction,
 		StType,
-		StKeyword
+		StKeyword,
+		StSpecial
 	};
 
 	/*! \brief Consume line text.

@@ -130,6 +130,31 @@ private:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.QueryResult", QueryResult, Object)
 
+class BodyState : public Object
+{
+	T_RTTI_CLASS;
+
+public:
+	BodyState()
+	{
+	}
+
+	BodyState(const physics::BodyState& state)
+	:	m_state(state)
+	{
+	}
+
+	operator const physics::BodyState& () const
+	{
+		return m_state;
+	}
+
+private:
+	physics::BodyState m_state;
+};
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.BodyState", BodyState, Object)
+
 Ref< QueryResult > physics_PhysicsManager_queryPoint(physics::PhysicsManager* this_, const Vector4& at, float margin)
 {
 	physics::QueryResult result;
@@ -204,6 +229,25 @@ Ref< QueryResult > physics_PhysicsManager_querySweep_2(
 		return 0;
 }
 
+void physics_Body_solveStateConstraint(physics::Body* this_, const BodyState* state)
+{
+	if (state)
+		this_->solveStateConstraint(*state);
+}
+
+bool physics_Body_setState(physics::Body* this_, const BodyState* state)
+{
+	if (state)
+		return this_->setState(*state);
+	else
+		return false;
+}
+
+Ref< BodyState > physics_Body_getState(physics::Body* this_)
+{
+	return new BodyState(this_->getState());
+}
+
 		}
 
 void registerPhysicsClasses(script::IScriptManager* scriptManager)
@@ -217,11 +261,16 @@ void registerPhysicsClasses(script::IScriptManager* scriptManager)
 	classQueryResult->addMethod("material", &QueryResult::material);
 	scriptManager->registerClass(classQueryResult);
 
+	Ref< script::AutoScriptClass< BodyState > > classBodyState = new script::AutoScriptClass< BodyState >();
+	scriptManager->registerClass(classBodyState);
+
 	Ref< script::AutoScriptClass< physics::PhysicsManager > > classPhysicsManager = new script::AutoScriptClass< physics::PhysicsManager >();
 	classPhysicsManager->addMethod("addCollisionListener", &physics::PhysicsManager::addCollisionListener);
 	classPhysicsManager->addMethod("removeCollisionListener", &physics::PhysicsManager::removeCollisionListener);
 	classPhysicsManager->addMethod("setGravity", &physics::PhysicsManager::setGravity);
 	classPhysicsManager->addMethod("getGravity", &physics::PhysicsManager::getGravity);
+	classPhysicsManager->addMethod("update", &physics::PhysicsManager::update);
+	classPhysicsManager->addMethod("getBodies", &physics::PhysicsManager::getBodies);
 	classPhysicsManager->addMethod("queryPoint", &physics_PhysicsManager_queryPoint);
 	classPhysicsManager->addMethod("queryRay", &physics_PhysicsManager_queryRay);
 	classPhysicsManager->addMethod("querySphere", &physics_PhysicsManager_querySphere);
@@ -232,7 +281,9 @@ void registerPhysicsClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< physics::Body > > classBody = new script::AutoScriptClass< physics::Body >();
 	classBody->addMethod("setTransform", &physics::Body::setTransform);
 	classBody->addMethod("getTransform", &physics::Body::getTransform);
+	classBody->addMethod("getCenterTransform", &physics::Body::getCenterTransform);
 	classBody->addMethod("isStatic", &physics::Body::isStatic);
+	classBody->addMethod("isKinematic", &physics::Body::isKinematic);
 	classBody->addMethod("setActive", &physics::Body::setActive);
 	classBody->addMethod("isActive", &physics::Body::isActive);
 	classBody->addMethod("setEnable", &physics::Body::setEnable);
@@ -250,6 +301,9 @@ void registerPhysicsClasses(script::IScriptManager* scriptManager)
 	classBody->addMethod("setAngularVelocity", &physics::Body::setAngularVelocity);
 	classBody->addMethod("getAngularVelocity", &physics::Body::getAngularVelocity);
 	classBody->addMethod("getVelocityAt", &physics::Body::getVelocityAt);
+	classBody->addMethod("solveStateConstraint", &physics_Body_solveStateConstraint);
+	classBody->addMethod("setState", &physics_Body_setState);
+	classBody->addMethod("getState", &physics_Body_getState);
 	classBody->addMethod("addCollisionListener", &physics::Body::addCollisionListener);
 	classBody->addMethod("removeCollisionListener", &physics::Body::removeCollisionListener);
 	classBody->addMethod("removeAllCollisionListeners", &physics::Body::removeAllCollisionListeners);
@@ -260,8 +314,6 @@ void registerPhysicsClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< physics::Joint > > classJoint = new script::AutoScriptClass< physics::Joint >();
 	classJoint->addMethod("getBody1", &physics::Joint::getBody1);
 	classJoint->addMethod("getBody2", &physics::Joint::getBody2);
-	classJoint->addMethod("setEnable", &physics::Joint::setEnable);
-	classJoint->addMethod("isEnable", &physics::Joint::isEnable);
 	scriptManager->registerClass(classJoint);
 
 	Ref< script::AutoScriptClass< physics::BallJoint > > classBallJoint = new script::AutoScriptClass< physics::BallJoint >();

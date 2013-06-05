@@ -3,6 +3,7 @@
 #include "Core/Math/Float.h"
 #include "Core/Misc/InvokeOnce.h"
 #include "Physics/BodyState.h"
+#include "Physics/Joint.h"
 #include "Physics/Bullet/Conversion.h"
 #include "Physics/Bullet/BodyBullet.h"
 #include "Physics/Bullet/Types.h"
@@ -99,7 +100,7 @@ bool BodyBullet::isKinematic() const
 void BodyBullet::setActive(bool active)
 {
 	if (!m_body->isKinematicObject())
-		m_body->setActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
+		m_body->forceActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
 }
 
 bool BodyBullet::isActive() const
@@ -113,9 +114,19 @@ void BodyBullet::setEnable(bool enable)
 		return;
 
 	if (enable)
+	{
 		m_callback->insertBody(m_body, (uint16_t)m_collisionGroup, (uint16_t)m_collisionMask);
+
+		for (std::vector< btTypedConstraint* >::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
+			m_callback->insertConstraint(*i);
+	}
 	else
+	{
+		for (std::vector< btTypedConstraint* >::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
+			m_callback->removeConstraint(*i);
+
 		m_callback->removeBody(m_body);
+	}
 
 	m_enable = enable;
 }
@@ -283,17 +294,22 @@ BodyState BodyBullet::getState() const
 	return state;
 }
 
-void BodyBullet::addJoint(Joint* joint)
+void BodyBullet::addConstraint(btTypedConstraint* constraint)
 {
-	m_joints.push_back(joint);
+	m_constraints.push_back(constraint);
+	if (m_enable)
+		m_callback->insertConstraint(constraint);
 }
 
-void BodyBullet::removeJoint(Joint* joint)
+void BodyBullet::removeConstraint(btTypedConstraint* constraint)
 {
-	std::vector< Joint* >::iterator i = std::find(m_joints.begin(), m_joints.end(), joint);
-	T_ASSERT (i != m_joints.end());
-
-	m_joints.erase(i);
+	std::vector< btTypedConstraint* >::iterator i = std::find(m_constraints.begin(), m_constraints.end(), constraint);
+	if (i != m_constraints.end())
+	{
+		if (m_enable)
+			m_callback->removeConstraint(constraint);
+		m_constraints.erase(i);
+	}
 }
 
 Transform BodyBullet::getBodyTransform() const

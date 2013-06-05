@@ -19,7 +19,7 @@ class T_DLLCLASS StateTemplate : public Object
 public:
 	void declare(const IValueTemplate* value);
 
-	Ref< const State > extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, const State* S, float T) const;
+	Ref< const State > extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, float T) const;
 
 	uint32_t pack(const State* S, void* buffer, uint32_t bufferSize) const;
 

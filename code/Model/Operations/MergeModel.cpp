@@ -39,6 +39,11 @@ bool MergeModel::apply(Model& model) const
 	std::vector< uint32_t > vertexMap;
 	vertexMap.resize(sourceVertices.size(), c_InvalidIndex);
 
+	model.reservePositions(model.getPositionCount() + m_sourceModel.getPositionCount());
+	model.reserveColors(model.getColorCount() + m_sourceModel.getColorCount());
+	model.reserveNormals(model.getNormalCount() + m_sourceModel.getNormalCount());
+	model.reserveVertices(model.getVertexCount() + m_sourceModel.getVertexCount());
+
 	for (size_t i = 0; i < sourceVertices.size(); ++i)
 	{
 		const Vertex& sourceVertex = sourceVertices[i];

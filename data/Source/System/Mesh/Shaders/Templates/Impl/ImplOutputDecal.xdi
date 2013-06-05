@@ -42,6 +42,10 @@
 					<optional>true</optional>
 				</item>
 				<item>
+					<name>RefractiveAmount</name>
+					<optional>true</optional>
+				</item>
+				<item>
 					<name>RimColor</name>
 					<optional>true</optional>
 				</item>
@@ -78,6 +82,10 @@
 				</item>
 				<item>
 					<first>Refractive</first>
+					<second>0</second>
+				</item>
+				<item>
+					<first>RefractiveAmount</first>
 					<second>0</second>
 				</item>
 				<item>

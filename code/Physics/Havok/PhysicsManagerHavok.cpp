@@ -602,10 +602,15 @@ Ref< Joint > PhysicsManagerHavok::createJoint(const JointDesc* desc, const Trans
 	return joint;
 }
 
-void PhysicsManagerHavok::update()
+void PhysicsManagerHavok::update(bool issueCollisionEvents)
 {
 	T_ASSERT (m_world);
 	m_world->stepDeltaTime(m_simulationDeltaTime);
+}
+
+RefArray< Body > PhysicsManagerHavok::getBodies() const
+{
+	return (RefArray< Body >&)m_bodies;
 }
 
 uint32_t PhysicsManagerHavok::getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const

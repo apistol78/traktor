@@ -59,6 +59,8 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classState);
 
 	Ref< script::AutoScriptClass< net::StateTemplate > > classStateTemplate = new script::AutoScriptClass< net::StateTemplate >();
+	classStateTemplate->addMethod("extrapolate", &net::StateTemplate::extrapolate);
+	classStateTemplate->addMethod("error", &net::StateTemplate::error);
 	scriptManager->registerClass(classStateTemplate);
 
 	Ref< script::AutoScriptClass< net::IReplicatorPeers > > classIReplicatorPeers = new script::AutoScriptClass< net::IReplicatorPeers >();
@@ -127,6 +129,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getGhostObject", &net::Replicator::getGhostObject);
 	classReplicator->addMethod("setGhostOrigin", &net::Replicator::setGhostOrigin);
 	classReplicator->addMethod("setGhostStateTemplate", &net::Replicator::setGhostStateTemplate);
+	classReplicator->addMethod("getGhostStateTime", &net::Replicator::getGhostStateTime);
 	classReplicator->addMethod("getGhostState", &net::Replicator::getGhostState);
 	classReplicator->addMethod("getLoopBackState", &net::Replicator::getLoopBackState);
 	classReplicator->addMethod("getState", &net::Replicator::getState);

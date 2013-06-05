@@ -49,6 +49,7 @@ private:
 	int32_t m_attributeFunction;
 	int32_t m_attributeType;
 	int32_t m_attributeKeyword;
+	int32_t m_attributeSpecial;
 	int32_t m_attributeError;
 
 	void updateLanguage(int fromLine, int toLine);

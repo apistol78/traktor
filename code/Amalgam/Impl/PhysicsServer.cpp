@@ -61,7 +61,7 @@ int32_t PhysicsServer::reconfigure(const PropertyGroup* settings)
 
 void PhysicsServer::update()
 {
-	m_physicsManager->update();
+	m_physicsManager->update(true);
 }
 
 physics::PhysicsManager* PhysicsServer::getPhysicsManager()

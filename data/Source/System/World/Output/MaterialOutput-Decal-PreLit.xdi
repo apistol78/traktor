@@ -455,8 +455,8 @@
 		<item type="traktor.render.InputPort" version="1">
 			<comment/>
 			<position>
-				<first>1829</first>
-				<second>1228</second>
+				<first>2499</first>
+				<second>796</second>
 			</position>
 			<name>Refractive</name>
 			<connectable>true</connectable>
@@ -469,7 +469,7 @@
 				<first>2545</first>
 				<second>700</second>
 			</position>
-			<value>0.1</value>
+			<value>0</value>
 		</item>
 		<item type="traktor.render.State" version="5">
 			<comment>
@@ -781,8 +781,8 @@ No refraction; render as normal opaque geometry.
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>1851</first>
-				<second>1146</second>
+				<first>1845</first>
+				<second>1147</second>
 			</position>
 			<fragmentGuid>{645D00CF-9F76-0F49-9451-04C9945D5E8A}</fragmentGuid>
 			<inputPins>
@@ -890,6 +890,17 @@ No refraction; render as normal opaque geometry.
 				</item>
 			</outputPins>
 			<values/>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>1777</first>
+				<second>1226</second>
+			</position>
+			<name>RefractiveAmount</name>
+			<connectable>true</connectable>
+			<optional>true</optional>
+			<defaultValue>0</defaultValue>
 		</item>
 	</nodes>
 	<edges>
@@ -1625,16 +1636,6 @@ No refraction; render as normal opaque geometry.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[36]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[53]"/>
-				<name>Blend</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[53]"/>
 				<name>Output</name>
 			</source>
@@ -1821,6 +1822,16 @@ No refraction; render as normal opaque geometry.
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[63]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[53]"/>
+				<name>Blend</name>
 			</destination>
 		</item>
 	</edges>

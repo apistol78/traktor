@@ -146,7 +146,13 @@ public:
 
 	void reserve(size_t capacity)
 	{
+		m_indices.reserve(capacity / 2);
 		m_values.reserve(capacity);
+	}
+
+	uint32_t size() const
+	{
+		return m_values.size();
 	}
 
 	const AlignedVector< ValueType >& values() const

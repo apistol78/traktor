@@ -197,6 +197,11 @@ uint32_t Model::addUniqueColor(const Vector4& color)
 	return id != m_colors.InvalidIndex ? id : m_colors.add(color);
 }
 
+void Model::reserveColors(uint32_t colorCapacity)
+{
+	m_colors.reserve(colorCapacity);
+}
+
 uint32_t Model::addNormal(const Vector4& normal)
 {
 	return m_normals.add(normal);
@@ -212,6 +217,11 @@ uint32_t Model::addUniqueNormal(const Vector4& normal)
 	);
 	uint32_t id = m_normals.get(quantizedNormal, 0.008f);
 	return id != m_normals.InvalidIndex ? id : m_normals.add(quantizedNormal);
+}
+
+void Model::reserveNormals(uint32_t normalCapacity)
+{
+	m_normals.reserve(normalCapacity);
 }
 
 uint32_t Model::addTexCoord(const Vector2& texCoord)

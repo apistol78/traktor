@@ -7,8 +7,6 @@
 #include "Editor/IPipelineDepends.h"
 #include "World/EntityData.h"
 #include "World/Editor/EntityPipeline.h"
-#include "World/Entity/DecalEntityData.h"
-#include "World/Entity/ExternalEntityData.h"
 
 namespace traktor
 {
@@ -67,12 +65,6 @@ bool EntityPipeline::buildDependencies(
 				childReflection->findMembers(RfpMemberType(type_of< RfmObject >()), objectMembers);
 		}
 	}
-
-	// Add entity data dependencies.
-	if (const DecalEntityData* decalEntityData = dynamic_type_cast< const DecalEntityData* >(entityData))
-		pipelineDepends->addDependency(decalEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
-	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(entityData))
-		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild | editor::PdfResource);
 
 	return true;
 }

@@ -186,41 +186,41 @@ LONG WINAPI exceptionVectoredHandler(struct _EXCEPTION_POINTERS* ep)
 	
 	switch (ep->ExceptionRecord->ExceptionCode)
 	{
-		case EXCEPTION_ACCESS_VIOLATION:		
-		case EXCEPTION_DATATYPE_MISALIGNMENT:	
-		case EXCEPTION_STACK_OVERFLOW:			
-		case EXCEPTION_ILLEGAL_INSTRUCTION:		
-		case EXCEPTION_PRIV_INSTRUCTION:		
-		case EXCEPTION_IN_PAGE_ERROR:			
-		case EXCEPTION_NONCONTINUABLE_EXCEPTION:
-		case EXCEPTION_INVALID_DISPOSITION:		
-		case EXCEPTION_GUARD_PAGE:				
-			ouputCallStack = true;
-			break;
+	case EXCEPTION_ACCESS_VIOLATION:		
+	case EXCEPTION_DATATYPE_MISALIGNMENT:	
+	case EXCEPTION_STACK_OVERFLOW:			
+	case EXCEPTION_ILLEGAL_INSTRUCTION:		
+	case EXCEPTION_PRIV_INSTRUCTION:		
+	case EXCEPTION_IN_PAGE_ERROR:			
+	case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+	case EXCEPTION_INVALID_DISPOSITION:		
+	case EXCEPTION_GUARD_PAGE:				
+		ouputCallStack = true;
+		break;
 
-		case EXCEPTION_BREAKPOINT:				
-		case EXCEPTION_SINGLE_STEP:				
-		case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	
-		case EXCEPTION_FLT_DENORMAL_OPERAND:	
-		case EXCEPTION_FLT_DIVIDE_BY_ZERO:		
-		case EXCEPTION_FLT_INEXACT_RESULT:		
-		case EXCEPTION_FLT_INVALID_OPERATION:	
-		case EXCEPTION_FLT_OVERFLOW:			
-		case EXCEPTION_FLT_STACK_CHECK:			
-		case EXCEPTION_FLT_UNDERFLOW:			
-		case EXCEPTION_INT_DIVIDE_BY_ZERO:		
-		case EXCEPTION_INT_OVERFLOW:			
-		default:								
-			ouputCallStack = false;
-			break;
+	case EXCEPTION_BREAKPOINT:				
+	case EXCEPTION_SINGLE_STEP:				
+	case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:	
+	case EXCEPTION_FLT_DENORMAL_OPERAND:	
+	case EXCEPTION_FLT_DIVIDE_BY_ZERO:		
+	case EXCEPTION_FLT_INEXACT_RESULT:		
+	case EXCEPTION_FLT_INVALID_OPERATION:	
+	case EXCEPTION_FLT_OVERFLOW:			
+	case EXCEPTION_FLT_STACK_CHECK:			
+	case EXCEPTION_FLT_UNDERFLOW:			
+	case EXCEPTION_INT_DIVIDE_BY_ZERO:		
+	case EXCEPTION_INT_OVERFLOW:			
+	default:								
+		ouputCallStack = false;
+		break;
 	}
 
-//	log::info << getExceptionString(ep->ExceptionRecord->ExceptionCode) << Endl;;	
 	if (ouputCallStack)
 	{
 		StackWalkerToConsole sw;
 		sw.ShowCallstack(GetCurrentThread(), ep->ContextRecord);
 	}
+
 	return EXCEPTION_CONTINUE_SEARCH;
 }
 
@@ -287,11 +287,14 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		new ui::WidgetFactoryWin32()
 	);
 
+	Ref< amalgam::Application > application;
+
 #if !defined(_DEBUG)
 	try
 #endif
 	{
 #if !defined(_DEBUG)
+		SetErrorMode(SEM_NOGPFAULTERRORBOX);
 		PVOID eh = AddVectoredExceptionHandler(1, exceptionVectoredHandler);
 #endif
 
@@ -344,7 +347,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		}
 
 		// Create amalgam application.
-		Ref< amalgam::Application > application = new amalgam::Application();
+		application = new amalgam::Application();
 		if (application->create(
 			defaultSettings,
 			settings,
@@ -394,6 +397,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		else
 			log::error << L"Unhandled exception occurred at 0x" << g_exceptionAddress << Endl;
 
+		safeDestroy(application);
 		showErrorDialog(logTail->m_tail);
 	}
 #endif

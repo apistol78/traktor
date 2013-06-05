@@ -9,7 +9,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.script.ScriptDelegateLua", ScriptDelegateLua, IScriptDelegate)
 
-ScriptDelegateLua::ScriptDelegateLua(ScriptManagerLua* manager, ScriptContextLua* context, lua_State* luaState)
+ScriptDelegateLua::ScriptDelegateLua(ScriptManagerLua* manager, ScriptContextLua* context, lua_State*& luaState)
 :	m_manager(manager)
 ,	m_context(context)
 ,	m_luaState(luaState)
@@ -20,17 +20,20 @@ ScriptDelegateLua::ScriptDelegateLua(ScriptManagerLua* manager, ScriptContextLua
 
 ScriptDelegateLua::~ScriptDelegateLua()
 {
-	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_functionRef);
+	if (m_luaState)
+		luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_functionRef);
 }
 
 void ScriptDelegateLua::push()
 {
+	T_ASSERT (m_luaState);
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_functionRef);
 	T_ASSERT (lua_isfunction(m_luaState, -1));
 }
 
 Any ScriptDelegateLua::call(int32_t argc, const Any* argv)
 {
+	T_ASSERT (m_luaState);
 	Any returnValue;
 	m_manager->lock(m_context);
 	{

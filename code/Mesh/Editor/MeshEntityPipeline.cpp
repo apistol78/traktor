@@ -24,9 +24,6 @@ bool MeshEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (!world::EntityPipeline::buildDependencies(pipelineDepends, sourceInstance, sourceAsset, outputPath, outputGuid))
-		return false;
-
 	if (const MeshEntityData* meshEntityData = dynamic_type_cast< const MeshEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(meshEntityData->getMesh(), editor::PdfBuild | editor::PdfResource);
 

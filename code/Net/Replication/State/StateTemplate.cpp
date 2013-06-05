@@ -14,7 +14,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_maxExtrapolationDelta = 2.0f;
+const float c_maxExtrapolationDelta = 0.15f;
 const float c_equalErrorThreshold = 0.001f;
 
 		}
@@ -26,13 +26,12 @@ void StateTemplate::declare(const IValueTemplate* value)
 	m_valueTemplates.push_back(value);
 }
 
-Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, const State* S, float T) const
+Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, float T) const
 {
-	if (T > T0 + c_maxExtrapolationDelta || !S)
-		return 0;
-
-	const RefArray< const IValue >& V = S->getValues();
 	RefArray< const IValue > Vr(m_valueTemplates.size());
+
+	if (T > T0 + c_maxExtrapolationDelta)
+		T = T0 + c_maxExtrapolationDelta;
 
 	if (Sn2 && Sn1 && S0)
 	{
@@ -45,7 +44,8 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
 			T_ASSERT (valueTemplate);
 
-			Vr[i] = valueTemplate->extrapolate(Vn2[i], Tn2, Vn1[i], Tn1, V0[i], T0, V[i], T);
+			Vr[i] = valueTemplate->extrapolate(Vn2[i], Tn2, Vn1[i], Tn1, V0[i], T0, T);
+			T_ASSERT (Vr[i]);
 		}
 	}
 	else if (Sn1 && S0)
@@ -58,7 +58,8 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
 			T_ASSERT (valueTemplate);
 
-			Vr[i] = valueTemplate->extrapolate(0, 0.0f, Vn1[i], Tn1, V0[i], T0, V[i], T);
+			Vr[i] = valueTemplate->extrapolate(Vn1[i], Tn1 - FUZZY_EPSILON, Vn1[i], Tn1, V0[i], T0, T);
+			T_ASSERT (Vr[i]);
 		}
 	}
 	else if (S0)
@@ -71,8 +72,11 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			T_ASSERT (valueTemplate);
 
 			Vr[i] = V0[i];
+			T_ASSERT (Vr[i]);
 		}
 	}
+	else
+		return 0;
 
 	return new State(Vr);
 }

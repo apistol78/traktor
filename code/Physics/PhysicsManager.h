@@ -164,8 +164,14 @@ public:
 	 * including physics, collision and joints.
 	 * Time step is fixed and set when the physics
 	 * manager is created.
+	 *
+	 * \param issueCollisionEvents Issue listeners for new collision events.
 	 */
-	virtual void update() = 0;
+	virtual void update(bool issueCollisionEvents) = 0;
+
+	/*! \brief Get bodies.
+	 */
+	virtual RefArray< Body > getBodies() const = 0;
 
 	/*! \brief Get colliding pairs.
 	 *
