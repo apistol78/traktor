@@ -1,6 +1,6 @@
 <?xml version="1.0"?>
 <object type="traktor.i18n.Dictionary">
-	<map>
+  <map>
     <item>
       <first>AMALGAM_TARGETS</first>
       <second>Targets</second>
@@ -66,41 +66,41 @@
       <second>Toggle twist lock</second>
     </item>
     <item>
-			<first>BROWSE_INSTANCE_GROUPS</first>
-			<second>Database</second>
-		</item>
+      <first>BROWSE_INSTANCE_GROUPS</first>
+      <second>Database</second>
+    </item>
     <item>
       <first>BROWSE_INSTANCE_INSTANCES</first>
       <second>Instances</second>
     </item>
-		<item>
-			<first>BROWSE_INSTANCE_TITLE</first>
-			<second>Select instance</second>
-		</item>
-		<item>
-			<first>BROWSE_TYPE_CATEGORY</first>
-			<second>Category</second>
-		</item>
+    <item>
+      <first>BROWSE_INSTANCE_TITLE</first>
+      <second>Select instance</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_CATEGORY</first>
+      <second>Category</second>
+    </item>
     <item>
       <first>BROWSE_TYPE_GLOBAL</first>
       <second>Global</second>
     </item>
     <item>
-			<first>BROWSE_TYPE_ICON</first>
-			<second>Icon</second>
-		</item>
-		<item>
-			<first>BROWSE_TYPE_SMALL</first>
-			<second>Small</second>
-		</item>
-		<item>
-			<first>BROWSE_TYPE_TITLE</first>
-			<second>Select type</second>
-		</item>
-		<item>
-			<first>BROWSE_TYPE_TYPES</first>
-			<second>Types</second>
-		</item>
+      <first>BROWSE_TYPE_ICON</first>
+      <second>Icon</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_SMALL</first>
+      <second>Small</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_TITLE</first>
+      <second>Select type</second>
+    </item>
+    <item>
+      <first>BROWSE_TYPE_TYPES</first>
+      <second>Types</second>
+    </item>
     <item>
       <first>BUILDING_ASSETS_MESSAGE</first>
       <second>Building assets...</second>
@@ -130,25 +130,37 @@
       <second>Converting database</second>
     </item>
     <item>
-			<first>CONVERT_DATABASE_DESCRIPTION</first>
-			<second>Convert database</second>
-		</item>
+      <first>CONVERT_DATABASE_DESCRIPTION</first>
+      <second>Convert database</second>
+    </item>
+    <item>
+      <first>CROP_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
+      <second>Crop heightfield...</second>
+    </item>
+    <item>
+      <first>CROP_HEIGHTFIELD_WIZARDTOOL_TITLE</first>
+      <second>Crop heightfield</second>
+    </item>
+    <item>
+      <first>CROP_HEIGHTFIELD_WIZARDTOOL_MESSAGE</first>
+      <second>Enter crop rectangle dimensions</second>
+    </item>
     <item>
       <first>DATABASE_BUILD</first>
       <second>Build</second>
     </item>
-	<item>
-		<first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
-		<second>Edit instance with default editor...</second>
+    <item>
+      <first>DATABASE_DEFAULT_EDIT_INSTANCE</first>
+      <second>Edit instance with default editor...</second>
     </item>
-	<item>
-		<first>DATABASE_CLONE</first>
-		<second>Clone</second>
-	</item>
-	<item>
-		<first>DATABASE_DELETE</first>
-		<second>Delete</second>
-	</item>
+    <item>
+      <first>DATABASE_CLONE</first>
+      <second>Clone</second>
+    </item>
+    <item>
+      <first>DATABASE_DELETE</first>
+      <second>Delete</second>
+    </item>
     <item>
       <first>DATABASE_COPY</first>
       <second>Copy</second>
@@ -158,17 +170,17 @@
       <second>Paste</second>
     </item>
     <item>
-			<first>DATABASE_DELETE_ARE_YOU_SURE</first>
-			<second>Are you sure you want to delete?</second>
-		</item>
-		<item>
-			<first>DATABASE_DELETE_GROUP</first>
-			<second>Delete group</second>
-		</item>
-		<item>
-			<first>DATABASE_DELETE_INSTANCE</first>
-			<second>Delete instance</second>
-		</item>
+      <first>DATABASE_DELETE_ARE_YOU_SURE</first>
+      <second>Are you sure you want to delete?</second>
+    </item>
+    <item>
+      <first>DATABASE_DELETE_GROUP</first>
+      <second>Delete group</second>
+    </item>
+    <item>
+      <first>DATABASE_DELETE_INSTANCE</first>
+      <second>Delete instance</second>
+    </item>
     <item>
       <first>DATABASE_EDIT</first>
       <second>Edit...</second>
@@ -197,10 +209,10 @@
       <first>DATABASE_FILTER_SHOW_FILTERED</first>
       <second>Show filtered</second>
     </item>
-		<item>
-			<first>DATABASE_IMPORT</first>
-			<second>Import</second>
-		</item>
+    <item>
+      <first>DATABASE_IMPORT</first>
+      <second>Import</second>
+    </item>
     <item>
       <first>DATABASE_IMPORT_DIALOG_TITLE</first>
       <second>Import</second>
@@ -214,25 +226,25 @@
       <second>Importing</second>
     </item>
     <item>
-			<first>DATABASE_LOADING_MESSAGE</first>
-			<second>Loading database...</second>
-		</item>
-		<item>
-			<first>DATABASE_LOADING_TITLE</first>
-			<second>Loading</second>
-		</item>
-		<item>
-			<first>DATABASE_NEW_GROUP</first>
-			<second>New group</second>
-		</item>
+      <first>DATABASE_LOADING_MESSAGE</first>
+      <second>Loading database...</second>
+    </item>
+    <item>
+      <first>DATABASE_LOADING_TITLE</first>
+      <second>Loading</second>
+    </item>
+    <item>
+      <first>DATABASE_NEW_GROUP</first>
+      <second>New group</second>
+    </item>
     <item>
       <first>DATABASE_NEW_GROUP_UNNAMED</first>
       <second>Unnamed</second>
     </item>
     <item>
-			<first>DATABASE_NEW_INSTANCE</first>
-			<second>New instance...</second>
-		</item>
+      <first>DATABASE_NEW_INSTANCE</first>
+      <second>New instance...</second>
+    </item>
     <item>
       <first>DATABASE_OPEN_DIALOG_TITLE</first>
       <second>Choose databas</second>
@@ -242,9 +254,9 @@
       <second>Rebuild</second>
     </item>
     <item>
-			<first>DATABASE_RENAME</first>
-			<second>Rename</second>
-		</item>
+      <first>DATABASE_RENAME</first>
+      <second>Rename</second>
+    </item>
     <item>
       <first>DATABASE_REPLACE_INSTANCE</first>
       <second>Replace instance</second>
@@ -253,22 +265,22 @@
       <first>DATABASE_SHOW_EDITABLE</first>
       <second>Show editable</second>
     </item>
-		<item>
-			<first>DATABASE_SYSTEM</first>
-			<second>System</second>
-		</item>
+    <item>
+      <first>DATABASE_SYSTEM</first>
+      <second>System</second>
+    </item>
     <item>
       <first>DATABASE_TOGGLE_AS_ROOT</first>
       <second>Toggle root</second>
     </item>
-		<item>
-			<first>DATABASE_USER</first>
-			<second>User</second>
-		</item>
-		<item>
-			<first>DATABASE_WIZARDS</first>
-			<second>Wizards</second>
-		</item>
+    <item>
+      <first>DATABASE_USER</first>
+      <second>User</second>
+    </item>
+    <item>
+      <first>DATABASE_WIZARDS</first>
+      <second>Wizards</second>
+    </item>
     <item>
       <first>EDITOR_ABOUT_TITLE</first>
       <second>About</second>
@@ -397,10 +409,10 @@
       <first>EDITOR_SETTINGS_PIPELINE</first>
       <second>Pipeline</second>
     </item>
-  	<item>
-  		<first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
-  		<second>Use multiple build threads</second>
-  	</item>
+    <item>
+      <first>EDITOR_SETTINGS_PIPELINE_BUILD_THREADS</first>
+      <second>Use multiple build threads</second>
+    </item>
     <item>
       <first>EDITOR_SETTINGS_PIPELINE_BUILD_DISTRIBUTED</first>
       <second>Use distributed build</second>
@@ -520,19 +532,19 @@
     <item>
       <first>EDITOR_SETTINGS_TITLE</first>
       <second>Settings</second>
-    </item>    
+    </item>
     <item>
       <first>EDITOR_WORKSPACE_TITLE</first>
       <second>Workspace</second>
     </item>
-		<item>
-			<first>EDIT_BATCH_DESCRIPTION</first>
-			<second>Edit import batch...</second>
-		</item>
-		<item>
-			<first>EDIT_BATCH_TITLE</first>
-			<second>Edit import batch</second>
-		</item>
+    <item>
+      <first>EDIT_BATCH_DESCRIPTION</first>
+      <second>Edit import batch...</second>
+    </item>
+    <item>
+      <first>EDIT_BATCH_TITLE</first>
+      <second>Edit import batch</second>
+    </item>
     <item>
       <first>EFFECT_EDITOR_TOGGLE_GUIDE</first>
       <second>Show guide lines</second>
@@ -596,39 +608,39 @@
     <item>
       <first>NEW_HEIGHTFIELD_WIZARDTOOL_DESCRIPTION</first>
       <second>Create new heightfield...</second>
-    </item>    
+    </item>
     <item>
       <first>FIND_IN_DATABASE</first>
       <second>Find in database</second>
     </item>
     <item>
-			<first>IMPORT_ANIMATION_DESCRIPTION</first>
-			<second>Animation...</second>
-		</item>
+      <first>IMPORT_ANIMATION_DESCRIPTION</first>
+      <second>Animation...</second>
+    </item>
     <item>
       <first>IMPORT_ANIMATION_TITLE</first>
       <second>Import animation</second>
     </item>
     <item>
-			<first>IMPORT_BATCH_ADD</first>
-			<second>Add...</second>
-		</item>
-		<item>
-			<first>IMPORT_BATCH_DESCRIPTION</first>
-			<second>Import batch...</second>
-		</item>
-		<item>
-			<first>IMPORT_BATCH_DOMAIN</first>
-			<second>Domain</second>
-		</item>
+      <first>IMPORT_BATCH_ADD</first>
+      <second>Add...</second>
+    </item>
+    <item>
+      <first>IMPORT_BATCH_DESCRIPTION</first>
+      <second>Import batch...</second>
+    </item>
+    <item>
+      <first>IMPORT_BATCH_DOMAIN</first>
+      <second>Domain</second>
+    </item>
     <item>
       <first>IMPORT_BATCH_ENTER_GROUP_PATH</first>
       <second>Enter group path</second>
     </item>
     <item>
-			<first>IMPORT_BATCH_GROUP</first>
-			<second>Group</second>
-		</item>
+      <first>IMPORT_BATCH_GROUP</first>
+      <second>Group</second>
+    </item>
     <item>
       <first>IMPORT_BATCH_GROUP_PATH</first>
       <second>Group path</second>
@@ -640,31 +652,31 @@
     <item>
       <first>IMPORT_BATCH_MODIFIED_TITLE</first>
       <second>Setup modified</second>
-    </item>    
+    </item>
     <item>
-			<first>IMPORT_BATCH_NA</first>
-			<second>N/A</second>
-		</item>
-		<item>
-			<first>IMPORT_BATCH_NAME</first>
-			<second>Name</second>
-		</item>
-		<item>
-			<first>IMPORT_BATCH_REMOVE</first>
-			<second>Remove</second>
-		</item>
-		<item>
-			<first>IMPORT_BATCH_TITLE</first>
-			<second>Import batch</second>
-		</item>
-		<item>
-			<first>IMPORT_BATCH_TYPE</first>
-			<second>Type</second>
-		</item>
-		<item>
-			<first>IMPORT_FLASH_DESCRIPTION</first>
-			<second>Flash...</second>
-		</item>
+      <first>IMPORT_BATCH_NA</first>
+      <second>N/A</second>
+    </item>
+    <item>
+      <first>IMPORT_BATCH_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>IMPORT_BATCH_REMOVE</first>
+      <second>Remove</second>
+    </item>
+    <item>
+      <first>IMPORT_BATCH_TITLE</first>
+      <second>Import batch</second>
+    </item>
+    <item>
+      <first>IMPORT_BATCH_TYPE</first>
+      <second>Type</second>
+    </item>
+    <item>
+      <first>IMPORT_FLASH_DESCRIPTION</first>
+      <second>Flash...</second>
+    </item>
     <item>
       <first>IMPORT_FLASH_TITLE</first>
       <second>Choose flash movie</second>
@@ -684,11 +696,11 @@
     <item>
       <first>IMPORT_MESH_CREATE_SHADERS</first>
       <second>Create shaders</second>
-    </item>    
+    </item>
     <item>
-			<first>IMPORT_MESH_DESCRIPTION</first>
-			<second>Mesh...</second>
-		</item>
+      <first>IMPORT_MESH_DESCRIPTION</first>
+      <second>Mesh...</second>
+    </item>
     <item>
       <first>IMPORT_MESH_IMPORT_TEXTURES</first>
       <second>Import textures</second>
@@ -700,7 +712,7 @@
     <item>
       <first>IMPORT_MESH_INSTANCE</first>
       <second>Instance</second>
-    </item>    
+    </item>
     <item>
       <first>IMPORT_MESH_MATERIAL_NAME</first>
       <second>Material</second>
@@ -716,63 +728,63 @@
     <item>
       <first>IMPORT_MESH_STATIC</first>
       <second>Static</second>
-    </item>    
+    </item>
     <item>
-			<first>IMPORT_MESH_TITLE</first>
-			<second>Import mesh</second>
-		</item>
-		<item>
-			<first>IMPORT_PHYSICS_DESCRIPTION</first>
-			<second>Collision mesh...</second>
-		</item>
-		<item>
-			<first>IMPORT_SOUND_DESCRIPTION</first>
-			<second>Sound...</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_DESCRIPTION</first>
-			<second>Texture...</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_ENABLE_COMPRESSION</first>
-			<second>Enable compression</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_GENERATE_MIPS</first>
-			<second>Generate mipmaps</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_GENERATE_NORMALMAP</first>
-			<second>Generate normalmap</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_IGNORE_ALPHA</first>
-			<second>Ignore alpha</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_IS_CUBEMAP</first>
-			<second>Is cubemap</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_KEEP_ZERO_ALPHA</first>
-			<second>Keep zero alpha when generating mipmaps</second>
-		</item>
+      <first>IMPORT_MESH_TITLE</first>
+      <second>Import mesh</second>
+    </item>
+    <item>
+      <first>IMPORT_PHYSICS_DESCRIPTION</first>
+      <second>Collision mesh...</second>
+    </item>
+    <item>
+      <first>IMPORT_SOUND_DESCRIPTION</first>
+      <second>Sound...</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_DESCRIPTION</first>
+      <second>Texture...</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_ENABLE_COMPRESSION</first>
+      <second>Enable compression</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_GENERATE_MIPS</first>
+      <second>Generate mipmaps</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_GENERATE_NORMALMAP</first>
+      <second>Generate normalmap</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_IGNORE_ALPHA</first>
+      <second>Ignore alpha</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_IS_CUBEMAP</first>
+      <second>Is cubemap</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_KEEP_ZERO_ALPHA</first>
+      <second>Keep zero alpha when generating mipmaps</second>
+    </item>
     <item>
       <first>IMPORT_TEXTURE_LINEAR_GAMMA</first>
       <second>Linear gamma</second>
     </item>
-		<item>
-			<first>IMPORT_TEXTURE_SCALE_DEPTH</first>
-			<second>Scale depth</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_SCALE_IMAGE</first>
-			<second>Scale image</second>
-		</item>
-		<item>
-			<first>IMPORT_TEXTURE_TITLE</first>
-			<second>Import texture</second>
-		</item>
+    <item>
+      <first>IMPORT_TEXTURE_SCALE_DEPTH</first>
+      <second>Scale depth</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_SCALE_IMAGE</first>
+      <second>Scale image</second>
+    </item>
+    <item>
+      <first>IMPORT_TEXTURE_TITLE</first>
+      <second>Import texture</second>
+    </item>
     <item>
       <first>LOG_COPY</first>
       <second>Copy</second>
@@ -782,9 +794,9 @@
       <second>Copy filtered</second>
     </item>
     <item>
-			<first>LOG_CLEAR_ALL</first>
-			<second>Clear all</second>
-		</item>
+      <first>LOG_CLEAR_ALL</first>
+      <second>Clear all</second>
+    </item>
     <item>
       <first>LOG_VIEW_INFO</first>
       <second>View information</second>
@@ -809,58 +821,58 @@
       <first>MENU_BUILD_REBUILD</first>
       <second>Rebuild</second>
     </item>
-		<item>
-			<first>MENU_EDIT</first>
-			<second>Edit</second>
-		</item>
-		<item>
-			<first>MENU_EDIT_COPY</first>
-			<second>Copy</second>
-		</item>
-		<item>
-			<first>MENU_EDIT_CUT</first>
-			<second>Cut</second>
-		</item>
-		<item>
-			<first>MENU_EDIT_DELETE</first>
-			<second>Delete</second>
-		</item>
-		<item>
-			<first>MENU_EDIT_PASTE</first>
-			<second>Paste</second>
-		</item>
-		<item>
-			<first>MENU_EDIT_REDO</first>
-			<second>Redo</second>
-		</item>
-		<item>
-			<first>MENU_EDIT_SELECT_ALL</first>
-			<second>Select all</second>
-		</item>
-		<item>
-			<first>MENU_EDIT_SETTINGS</first>
-			<second>Settings...</second>
-		</item>
-		<item>
-			<first>MENU_EDIT_UNDO</first>
-			<second>Undo</second>
-		</item>
+    <item>
+      <first>MENU_EDIT</first>
+      <second>Edit</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_COPY</first>
+      <second>Copy</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_CUT</first>
+      <second>Cut</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_DELETE</first>
+      <second>Delete</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_PASTE</first>
+      <second>Paste</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_REDO</first>
+      <second>Redo</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_SELECT_ALL</first>
+      <second>Select all</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_SETTINGS</first>
+      <second>Settings...</second>
+    </item>
+    <item>
+      <first>MENU_EDIT_UNDO</first>
+      <second>Undo</second>
+    </item>
     <item>
       <first>MENU_EDIT_WORKSPACE</first>
       <second>Workspace...</second>
     </item>
-		<item>
-			<first>MENU_FILE</first>
-			<second>File</second>
-		</item>
+    <item>
+      <first>MENU_FILE</first>
+      <second>File</second>
+    </item>
     <item>
       <first>MENU_FILE_CLOSE_PROJECT</first>
       <second>Close project</second>
     </item>
     <item>
-			<first>MENU_FILE_EXIT</first>
-			<second>Exit</second>
-		</item>
+      <first>MENU_FILE_EXIT</first>
+      <second>Exit</second>
+    </item>
     <item>
       <first>MENU_FILE_NEW_PROJECT</first>
       <second>New project...</second>
@@ -882,49 +894,49 @@
       <second>Open workspace...</second>
     </item>
     <item>
-			<first>MENU_FILE_SAVE</first>
-			<second>Save...</second>
-		</item>
-		<item>
-			<first>MENU_FILE_SAVE_ALL</first>
-			<second>Save all</second>
-		</item>
-		<item>
-			<first>MENU_HELP</first>
-			<second>Help</second>
-		</item>
-		<item>
-			<first>MENU_HELP_ABOUT</first>
-			<second>About...</second>
-		</item>
-		<item>
-			<first>MENU_TOOLS</first>
-			<second>Tools</second>
-		</item>
-		<item>
-			<first>MENU_VIEW</first>
-			<second>View</second>
-		</item>
-		<item>
-			<first>MENU_VIEW_DATABASE</first>
-			<second>Database</second>
-		</item>
-		<item>
-			<first>MENU_VIEW_HEAP</first>
-			<second>Heap</second>
-		</item>
-		<item>
-			<first>MENU_VIEW_LOG</first>
-			<second>Log</second>
-		</item>
+      <first>MENU_FILE_SAVE</first>
+      <second>Save...</second>
+    </item>
+    <item>
+      <first>MENU_FILE_SAVE_ALL</first>
+      <second>Save all</second>
+    </item>
+    <item>
+      <first>MENU_HELP</first>
+      <second>Help</second>
+    </item>
+    <item>
+      <first>MENU_HELP_ABOUT</first>
+      <second>About...</second>
+    </item>
+    <item>
+      <first>MENU_TOOLS</first>
+      <second>Tools</second>
+    </item>
+    <item>
+      <first>MENU_VIEW</first>
+      <second>View</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_DATABASE</first>
+      <second>Database</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_HEAP</first>
+      <second>Heap</second>
+    </item>
+    <item>
+      <first>MENU_VIEW_LOG</first>
+      <second>Log</second>
+    </item>
     <item>
       <first>MENU_VIEW_OTHER</first>
       <second>Other windows...</second>
     </item>
-		<item>
-			<first>MENU_VIEW_PROPERTIES</first>
-			<second>Properties</second>
-		</item>
+    <item>
+      <first>MENU_VIEW_PROPERTIES</first>
+      <second>Properties</second>
+    </item>
     <item>
       <first>MESHASSET_EDITOR_TEMPLATE</first>
       <second>Template</second>
@@ -1041,42 +1053,42 @@
       <first>MESHASSET_WIZARDTOOL_FILE_TITLE</first>
       <second>Select source model</second>
     </item>
-		<item>
-			<first>NEW_BATCH_DESCRIPTION</first>
-			<second>New import batch...</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_CATEGORY</first>
-			<second>Category</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_DEFAULT_NAME</first>
-			<second>Unnamed</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_GLOBAL</first>
-			<second>Global</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_ICON</first>
-			<second>Icon</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_NAME</first>
-			<second>Name</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_SMALL</first>
-			<second>Small</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_TITLE</first>
-			<second>New instance</second>
-		</item>
-		<item>
-			<first>NEW_INSTANCE_TYPES</first>
-			<second>Types</second>
-		</item>
+    <item>
+      <first>NEW_BATCH_DESCRIPTION</first>
+      <second>New import batch...</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_CATEGORY</first>
+      <second>Category</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_DEFAULT_NAME</first>
+      <second>Unnamed</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_GLOBAL</first>
+      <second>Global</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_ICON</first>
+      <second>Icon</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_SMALL</first>
+      <second>Small</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_TITLE</first>
+      <second>New instance</second>
+    </item>
+    <item>
+      <first>NEW_INSTANCE_TYPES</first>
+      <second>Types</second>
+    </item>
     <item>
       <first>OBJECTEDITOR_ERROR_UNABLE_TO_COMMIT_CAPTION</first>
       <second>Unable to commit</second>
@@ -1112,11 +1124,11 @@
     <item>
       <first>RESOUND_BLEND_GRAIN_TEXT</first>
       <second>Blend</second>
-    </item>    
+    </item>
     <item>
       <first>RESOUND_ENVELOPE_GRAIN_TEXT</first>
       <second>Envelope</second>
-    </item>    
+    </item>
     <item>
       <first>RESOUND_MUTE_GRAIN_TEXT</first>
       <second>{0} ms</second>
@@ -1140,19 +1152,19 @@
     <item>
       <first>RESOUND_SIMULTANEOUS_GRAIN_TEXT</first>
       <second>{0} child(ren)</second>
-    </item> 
+    </item>
     <item>
       <first>RESOUND_TRIGGER_GRAIN_TEXT</first>
       <second>Trigger</second>
-    </item>    
+    </item>
     <item>
       <first>STATUS_BUILDING</first>
       <second>Building assets...</second>
     </item>
     <item>
-			<first>STATUS_IDLE</first>
-			<second>Ready</second>
-		</item>
+      <first>STATUS_IDLE</first>
+      <second>Ready</second>
+    </item>
     <item>
       <first>STATUS_FINDING_PIPELINES</first>
       <second>Finding pipelines...</second>
@@ -1856,7 +1868,7 @@
     <item>
       <first>SHADERGRAPH_NODE_TRUNCATE</first>
       <second>Truncate</second>
-    </item>    
+    </item>
     <item>
       <first>SHADERGRAPH_NODE_TYPE</first>
       <second>Type</second>
@@ -1880,7 +1892,7 @@
     <item>
       <first>SKELETON_WIZARDTOOL_DESCRIPTION</first>
       <second>Import skeleton...</second>
-    </item>    
+    </item>
     <item>
       <first>SOUND_BATCH_WIZARDTOOL_DESCRIPTION</first>
       <second>Import sound batch...</second>
@@ -1900,7 +1912,7 @@
     <item>
       <first>SOUND_BATCH_FILE_TITLE</first>
       <second>Add sounds</second>
-    </item>   
+    </item>
     <item>
       <first>STATEGRAPH_ALIGN_LEFT</first>
       <second>Align left</second>
@@ -1984,7 +1996,7 @@
     <item>
       <first>TERRAIN_EDITOR_MATERIAL</first>
       <second>Material</second>
-    </item>    
+    </item>
     <item>
       <first>TERRAIN_EDITOR_COLOR_BRUSH</first>
       <second>Color brush</second>
@@ -2049,22 +2061,22 @@
       <first>TITLE_BUILD</first>
       <second>Build</second>
     </item>
-		<item>
-			<first>TITLE_DATABASE</first>
-			<second>Database</second>
-		</item>
-		<item>
-			<first>TITLE_LOG</first>
-			<second>Log</second>
-		</item>
+    <item>
+      <first>TITLE_DATABASE</first>
+      <second>Database</second>
+    </item>
+    <item>
+      <first>TITLE_LOG</first>
+      <second>Log</second>
+    </item>
     <item>
       <first>TITLE_OUTPUT</first>
       <second>Output</second>
     </item>
-		<item>
-			<first>TITLE_PROPERTIES</first>
-			<second>Properties</second>
-		</item>
+    <item>
+      <first>TITLE_PROPERTIES</first>
+      <second>Properties</second>
+    </item>
     <item>
       <first>TOOLBAR_BUILD</first>
       <second>Build assets</second>
@@ -2073,33 +2085,33 @@
       <first>TOOLBAR_CANCEL_BUILD</first>
       <second>Cancel build</second>
     </item>
-		<item>
-			<first>TOOLBAR_COPY</first>
-			<second>Copy</second>
-		</item>
-		<item>
-			<first>TOOLBAR_CUT</first>
-			<second>Cut</second>
-		</item>
-		<item>
-			<first>TOOLBAR_PASTE</first>
-			<second>Paste</second>
-		</item>
+    <item>
+      <first>TOOLBAR_COPY</first>
+      <second>Copy</second>
+    </item>
+    <item>
+      <first>TOOLBAR_CUT</first>
+      <second>Cut</second>
+    </item>
+    <item>
+      <first>TOOLBAR_PASTE</first>
+      <second>Paste</second>
+    </item>
     <item>
       <first>TOOLBAR_REBUILD</first>
       <second>Rebuild assets</second>
     </item>
-		<item>
-			<first>TOOLBAR_REDO</first>
-			<second>Redo</second>
-		</item>
-		<item>
-			<first>TOOLBAR_SAVE</first>
-			<second>Save</second>
-		</item>
-		<item>
-			<first>TOOLBAR_UNDO</first>
-			<second>Undo</second>
-		</item>
-	</map>
+    <item>
+      <first>TOOLBAR_REDO</first>
+      <second>Redo</second>
+    </item>
+    <item>
+      <first>TOOLBAR_SAVE</first>
+      <second>Save</second>
+    </item>
+    <item>
+      <first>TOOLBAR_UNDO</first>
+      <second>Undo</second>
+    </item>
+  </map>
 </object>

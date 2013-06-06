@@ -123,7 +123,7 @@ public:
 		RefArray< Body >& outResult
 	) const;
 
-	virtual void getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const;
+	virtual void getStatistics(PhysicsStatistics& outStatistics) const;
 
 private:
 	float m_simulationDeltaTime;

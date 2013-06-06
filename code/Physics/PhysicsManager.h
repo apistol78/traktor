@@ -56,6 +56,16 @@ struct CollisionPair
 	Ref< Body > body2;
 };
 
+/*! \brief Runtime statistics.
+ * \ingroup Physics
+ */
+struct PhysicsStatistics
+{
+	uint32_t bodyCount;
+	uint32_t activeCount;
+	uint32_t manifoldCount;
+};
+
 /*! \brief Physics manager.
  * \ingroup Physics
  */
@@ -336,15 +346,12 @@ public:
 		RefArray< Body >& outResult
 	) const = 0;
 
-	/*! \brief Get number of bodies within world.
+	/*! \brief Get runtime statistics.
 	 *
 	 * This method is mostly used for debugging
 	 * purposes to ensure bodies go to sleep etc.
-	 *
-	 * \param outCount Number of bodies.
-	 * \param outActiveCount Number of active bodies.
 	 */
-	virtual void getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const = 0;
+	virtual void getStatistics(PhysicsStatistics& outStatistics) const = 0;
 
 private:
 	RefArray< CollisionListener > m_collisionListeners;

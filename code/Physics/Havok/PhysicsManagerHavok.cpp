@@ -848,16 +848,8 @@ void PhysicsManagerHavok::queryOverlap(
 {
 }
 
-void PhysicsManagerHavok::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const
+void PhysicsManagerHavok::getStatistics(PhysicsStatistics& outStatistics) const
 {
-	outCount = uint32_t(m_bodies.size());
-
-	outActiveCount = 0;
-	for (RefArray< BodyHavok >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
-	{
-		if ((*i)->isActive())
-			++outActiveCount;
-	}
 }
 
 void PhysicsManagerHavok::destroyBody(Body* body, const HvkRef< hkpRigidBody >& rigidBody)

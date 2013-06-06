@@ -58,13 +58,19 @@ private:
 	uint32_t m_count;
 };
 
-uint32_t calculateGlobalHash(const IPipelineDependencySet* dependencySet, const PipelineDependency* dependency)
+void calculateGlobalHash(
+	const IPipelineDependencySet* dependencySet,
+	const PipelineDependency* dependency,
+	uint32_t& outPipelineHash,
+	uint32_t& outSourceAssetHash,
+	uint32_t& outSourceDataHash,
+	uint32_t& outFilesHash
+)
 {
-	uint32_t hash =
-		dependency->pipelineHash +
-		dependency->sourceAssetHash +
-		dependency->sourceDataHash +
-		dependency->filesHash;
+	outPipelineHash += dependency->pipelineHash;
+	outSourceAssetHash += dependency->sourceAssetHash;
+	outSourceDataHash += dependency->sourceDataHash;
+	outFilesHash += dependency->filesHash;
 
 	for (std::vector< uint32_t >::const_iterator i = dependency->children.begin(); i != dependency->children.end(); ++i)
 	{
@@ -72,10 +78,15 @@ uint32_t calculateGlobalHash(const IPipelineDependencySet* dependencySet, const 
 		T_ASSERT (childDependency);
 
 		if ((childDependency->flags & PdfUse) != 0)
-			hash += calculateGlobalHash(dependencySet, childDependency);
+			calculateGlobalHash(
+				dependencySet,
+				childDependency,
+				outPipelineHash,
+				outSourceAssetHash,
+				outSourceDataHash,
+				outFilesHash
+			);
 	}
-
-	return hash;
 }
 
 		}
@@ -139,7 +150,21 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 		// Have source asset been modified?
 		if (!rebuild)
 		{
-			uint32_t hash = calculateGlobalHash(dependencySet, dependency);
+			uint32_t pipelineHash = 0;
+			uint32_t sourceAssetHash = 0;
+			uint32_t sourceDataHash = 0;
+			uint32_t filesHash = 0;
+
+			calculateGlobalHash(
+				dependencySet,
+				dependency,
+				pipelineHash,
+				sourceAssetHash,
+				sourceDataHash,
+				filesHash
+			);
+
+			uint32_t hash = pipelineHash + sourceAssetHash + sourceDataHash + filesHash;
 
 			// Get hash entry from database.
 			IPipelineDb::DependencyHash previousDependencyHash;
@@ -156,6 +181,17 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 			else if (previousDependencyHash.hash != hash)
 			{
 				log::info << L"Asset \"" << dependency->outputPath << L"\" modified; source has been modified" << Endl;
+
+#if defined(_DEBUG)
+				log::info << IncreaseIndent;
+				log::info << L"("; FormatHex(log::info, previousDependencyHash.hash, 8); log::info << L" != "; FormatHex(log::info, hash, 8); log::info << L")" << Endl;
+				log::info << L"Pipeline hash "; FormatHex(log::info, pipelineHash, 8); log::info << Endl;
+				log::info << L"Source asset hash "; FormatHex(log::info, sourceAssetHash, 8); log::info << Endl;
+				log::info << L"Source data hash "; FormatHex(log::info, sourceDataHash, 8); log::info << Endl;
+				log::info << L"File(s) hash "; FormatHex(log::info, filesHash, 8); log::info << Endl;
+				log::info << DecreaseIndent;
+#endif
+
 				m_reasons[i] |= PbrSourceModified;
 			}
 		}
@@ -521,9 +557,23 @@ IPipelineBuilder::BuildResult PipelineBuilder::performBuild(const IPipelineDepen
 	if (!dependency->pipelineType)
 		return BrFailed;
 
+	uint32_t pipelineHash = 0;
+	uint32_t sourceAssetHash = 0;
+	uint32_t sourceDataHash = 0;
+	uint32_t filesHash = 0;
+
+	calculateGlobalHash(
+		dependencySet,
+		dependency,
+		pipelineHash,
+		sourceAssetHash,
+		sourceDataHash,
+		filesHash
+	);
+
 	// Create hash entry.
 	currentDependencyHash.pipelineVersion = dependency->pipelineType->getVersion();
-	currentDependencyHash.hash = calculateGlobalHash(dependencySet, dependency);
+	currentDependencyHash.hash = pipelineHash + sourceAssetHash + sourceDataHash + filesHash;
 
 	// Skip no-build asset; just update hash.
 	if ((dependency->flags & PdfBuild) == 0)

@@ -4,7 +4,7 @@
 #include "Core/Memory/FastAllocator.h"
 #include "Core/Memory/SystemConstruct.h"
 #include "Core/Misc/Align.h"
-#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Atomic.h"
 
 namespace traktor
 {
@@ -26,8 +26,8 @@ const uint32_t c_blockCounts[] =
 	8192,				// 128
 	4096				// 256
 #else
-	65536,				// 16
-	65536,				// 32
+	131072,				// 16
+	131072,				// 32
 	36864,				// 64
 	16384,				// 128
 	8192				// 256
@@ -39,16 +39,22 @@ const uint32_t c_blockCounts[] =
 FastAllocator::FastAllocator(IAllocator* systemAllocator)
 :	m_systemAllocator(systemAllocator)
 {
-	for (size_t i = 0; i < sizeof_array(m_blockAlloc); ++i)
-		m_blockAlloc[i] = 0;
+	for (size_t i = 0; i < sizeof_array(c_blockCounts); ++i)
+	{
+		uint32_t qsize = 1UL << (i + 4);
+		m_blockAlloc[i] = allocConstruct< BlockAllocator >(
+			m_systemAllocator->alloc(qsize * c_blockCounts[i], 16, T_FILE_LINE),
+			c_blockCounts[i],
+			qsize
+		);
+		m_blockAllocLock[i] = 0;
+	}
 }
 
 FastAllocator::~FastAllocator()
 {
 	for (size_t i = 0; i < sizeof_array(m_blockAlloc); ++i)
 	{
-		if (!m_blockAlloc[i])
-			continue;
 		m_systemAllocator->free(m_blockAlloc[i]->top());
 		freeDestruct(m_blockAlloc[i]);
 	}
@@ -60,8 +66,6 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 
 	if (size > 0 && size <= 256 && align <= 16)
 	{
-		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-
 		if (size < 16)
 			size = 16;
 
@@ -73,14 +77,17 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 		qid -= 4;
 
 		BlockAllocator* blockAlloc = m_blockAlloc[qid];
-		if (!blockAlloc)
-			m_blockAlloc[qid] = blockAlloc = allocConstruct< BlockAllocator >(
-				m_systemAllocator->alloc(qsize * c_blockCounts[qid], 16, T_FILE_LINE),
-				c_blockCounts[qid],
-				qsize
-			);
+		T_ASSERT (blockAlloc)
 
-		p = blockAlloc->alloc();
+		{
+			while (Atomic::exchange(m_blockAllocLock[qid], 1) != 0)
+				;
+
+			p = blockAlloc->alloc();
+
+			Atomic::exchange(m_blockAllocLock[qid], 0);
+		}
+
 		T_ASSERT (alignUp((uint8_t*)p, 16) == p);
 	}
 	
@@ -95,10 +102,14 @@ void FastAllocator::free(void* ptr)
 {
 	for (size_t i = 0; i < sizeof_array(m_blockAlloc); ++i)
 	{
-		if (m_blockAlloc[i] && m_blockAlloc[i]->belong(ptr))
+		if (m_blockAlloc[i]->belong(ptr))
 		{
-			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+			while (Atomic::exchange(m_blockAllocLock[i], 1) != 0)
+				;
+
 			m_blockAlloc[i]->free(ptr);
+
+			Atomic::exchange(m_blockAllocLock[i], 0);
 			return;
 		}
 	}

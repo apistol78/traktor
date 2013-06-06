@@ -1,7 +1,8 @@
 #ifndef traktor_model_Grid3_H
 #define traktor_model_Grid3_H
 
-#include "Core/Containers/SmallMap.h"
+#include <map>
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 
 namespace traktor
@@ -83,7 +84,7 @@ public:
 				{
 					uint32_t hash = HashFunction::get(ix, iy, iz);
 
-					SmallMap< uint32_t, AlignedVector< uint32_t > >::const_iterator i = m_indices.find(hash);
+					std::map< uint32_t, AlignedVector< uint32_t > >::const_iterator i = m_indices.find(hash);
 					if (i == m_indices.end())
 						continue;
 
@@ -146,7 +147,6 @@ public:
 
 	void reserve(size_t capacity)
 	{
-		m_indices.reserve(capacity / 2);
 		m_values.reserve(capacity);
 	}
 
@@ -162,7 +162,7 @@ public:
 
 private:
 	Scalar m_cellSize;
-	SmallMap< uint32_t, AlignedVector< uint32_t > > m_indices;
+	std::map< uint32_t, AlignedVector< uint32_t > > m_indices;
 	AlignedVector< ValueType > m_values;
 };
 

@@ -244,15 +244,9 @@ void ToolBar::eventPaint(Event* event)
 
 	Color4ub c1 = getSystemColor(ScMenuBackground);
 	Color4ub c0 = lerp(c1, Color4ub(255, 255, 255), 0.5f);
-	Color4ub c2 = lerp(c1, Color4ub(0, 0, 0), 0.2f);
 
-	canvas.setForeground(c0);
-	canvas.setBackground(c1);
-	canvas.fillGradientRect(Rect(rc.left, rc.top, rc.right, mid + 1));
-
-	canvas.setForeground(c1);
-	canvas.setBackground(c2);
-	canvas.fillGradientRect(Rect(rc.left, mid - 1, rc.right, rc.bottom));
+	canvas.setBackground(c0);
+	canvas.fillRect(Rect(rc.left, rc.top, rc.right, rc.bottom));
 
 	if (m_style & WsUnderline)
 	{

@@ -95,7 +95,7 @@ struct StatusListener : public editor::IPipelineBuilder::IListener
 		const editor::PipelineDependency* dependency
 	) const
 	{
-		std::wcout << L":" << index << L":" << count << std::endl;
+		log::info << L":" << index << L":" << count << Endl;
 	}
 
 	virtual void endBuild(
@@ -173,6 +173,19 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 
 	g_databaseConnections[connectionString] = database;
 	return database;
+}
+
+
+void updateDatabases()
+{
+	Ref< const db::IEvent > event;
+	bool remote;
+
+	for (std::map< std::wstring, Ref< db::Database > >::iterator i = g_databaseConnections.begin(); i != g_databaseConnections.end(); ++i)
+	{
+		while (i->second->getEvent(event, remote))
+			;
+	}
 }
 
 
@@ -487,7 +500,7 @@ bool perform(const PipelineParameters* params)
 
 	// Execute build thread; keep watching if we've
 	// received a break signal thus terminate thread early.
-	bt->start();
+	bt->start(Thread::Above);
 	while (!bt->wait(100))
 	{
 		if (g_receivedBreakSignal)
@@ -527,26 +540,28 @@ int slave(const CommandLine& cmdLine)
 		return 1;
 	}
 
-	traktor::log::info << L"Waiting for master..." << Endl;
-
-	for (;;)
+	while (!g_receivedBreakSignal)
 	{
-		if (socket.select(true, false, false, 1000) <= 0)
+		updateDatabases();
+
+		if (socket.select(true, false, false, 250) <= 0)
 			continue;
 
 		Ref< net::TcpSocket > client = socket.accept();
 		if (!client)
 			continue;
 
+		client->setNoDelay(true);
+
 		Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(client);
 
-		Ref< ILogTarget > infoTarget    = log::info.   getGlobalTarget();
-		Ref< ILogTarget > warningTarget = log::warning.getGlobalTarget();
-		Ref< ILogTarget > errorTarget   = log::error.  getGlobalTarget();
+		Ref< ILogTarget > infoTarget    = traktor::log::info.   getGlobalTarget();
+		Ref< ILogTarget > warningTarget = traktor::log::warning.getGlobalTarget();
+		Ref< ILogTarget > errorTarget   = traktor::log::error.  getGlobalTarget();
 
-		log::info   .setGlobalTarget(new LogRedirect(infoTarget,    transport));
-		log::warning.setGlobalTarget(new LogRedirect(warningTarget, transport));
-		log::error  .setGlobalTarget(new LogRedirect(errorTarget,   transport));
+		traktor::log::info   .setGlobalTarget(new LogRedirect(infoTarget,    transport));
+		traktor::log::warning.setGlobalTarget(new LogRedirect(warningTarget, transport));
+		traktor::log::error  .setGlobalTarget(new LogRedirect(errorTarget,   transport));
 
 		Ref< PipelineParameters > params;
 		transport->recv< PipelineParameters >(1000, params);
@@ -556,9 +571,9 @@ int slave(const CommandLine& cmdLine)
 		else
 			traktor::log::error << L"Unable to read pipeline parameters" << Endl;
 
-		log::info   .setGlobalTarget(infoTarget);
-		log::warning.setGlobalTarget(warningTarget);
-		log::error  .setGlobalTarget(errorTarget);
+		traktor::log::info   .setGlobalTarget(infoTarget);
+		traktor::log::warning.setGlobalTarget(warningTarget);
+		traktor::log::error  .setGlobalTarget(errorTarget);
 
 		transport->close();
 		transport = 0;
@@ -569,6 +584,26 @@ int slave(const CommandLine& cmdLine)
 
 int master(const CommandLine& cmdLine)
 {
+	Ref< traktor::IStream > logFile;
+
+	if (cmdLine.hasOption('l', L"log"))
+	{
+		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
+		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
+		{
+			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
+			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
+
+			traktor::log::info   .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
+			traktor::log::warning.setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
+			traktor::log::error  .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
+
+			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
+		}
+		else
+			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
+	}
+
 	if (!g_pipelineMutex.existing())
 	{
 		// Get full path to our executable.
@@ -613,6 +648,8 @@ int master(const CommandLine& cmdLine)
 		return 1;
 	}
 
+	socket.setNoDelay(true);
+
 	std::wstring settingsFile = L"Traktor.Editor";
 	if (cmdLine.hasOption('s', L"settings"))
 		settingsFile = cmdLine.getOption('s', L"settings").getString();
@@ -641,22 +678,34 @@ int master(const CommandLine& cmdLine)
 			{
 			default:
 			case 0:
-				log::info << plog->getText() << Endl;
+				traktor::log::info << plog->getText() << Endl;
 				break;
 			case 1:
-				log::warning << plog->getText() << Endl;
+				traktor::log::warning << plog->getText() << Endl;
 				break;
 			case 2:
-				log::error << plog->getText() << Endl;
+				traktor::log::error << plog->getText() << Endl;
 				break;
 			case 3:
-				log::debug << plog->getText() << Endl;
+				traktor::log::debug << plog->getText() << Endl;
 				break;
 			}
 		}
 	}
 
 	socket.close();
+
+	if (logFile)
+	{
+		traktor::log::info.setBuffer(0);
+		traktor::log::warning.setBuffer(0);
+		traktor::log::error.setBuffer(0);
+		traktor::log::debug.setBuffer(0);
+
+		logFile->close();
+		logFile = 0;
+	}
+
 	return 0;
 }
 

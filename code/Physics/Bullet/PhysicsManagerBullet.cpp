@@ -1338,16 +1338,23 @@ void PhysicsManagerBullet::queryOverlap(
 	m_dynamicsWorld->contactTest(rigidBody, callback);
 }
 
-void PhysicsManagerBullet::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const
+void PhysicsManagerBullet::getStatistics(PhysicsStatistics& outStatistics) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	outStatistics.bodyCount = 0;
+	outStatistics.activeCount = 0;
+	outStatistics.manifoldCount = 0;
+
 	const btCollisionObjectArray& collisionObjects = m_dynamicsWorld->getCollisionObjectArray();
 	for (int i = 0; i < collisionObjects.size(); ++i)
 	{
-		++outCount;
+		++outStatistics.bodyCount;
 		if (collisionObjects[i]->isActive())
-			++outActiveCount;
+			++outStatistics.activeCount;
 	}
+
+	outStatistics.manifoldCount = m_dispatcher->getNumManifolds();
 }
 
 void PhysicsManagerBullet::insertBody(btRigidBody* rigidBody, uint16_t collisionGroup, uint16_t collisionFilter)

@@ -828,10 +828,12 @@ bool Application::update()
 
 			if (m_physicsServer)
 			{
-				m_physicsServer->getPhysicsManager()->getBodyCount(
-					performance.bodyCount,
-					performance.activeBodyCount
-				);
+				physics::PhysicsStatistics ps;
+				m_physicsServer->getPhysicsManager()->getStatistics(ps);
+
+				performance.bodyCount = ps.bodyCount;
+				performance.activeBodyCount = ps.activeCount;
+				performance.manifoldCount = ps.manifoldCount;
 			}
 
 			if (m_audioServer)
