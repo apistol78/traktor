@@ -1,3 +1,6 @@
+#if defined(_WIN32)
+#	include <cfloat>
+#endif
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -273,6 +276,14 @@ void PipelineDependsParallel::updateDependencyHashes(
 	const db::Instance* sourceInstance
 ) const
 {
+	// Ensure FP is in known state.
+#if defined(_WIN32)
+	uint32_t dummy;
+	_controlfp_s(&dummy, 0, 0);
+	_controlfp_s(&dummy,_PC_24, _MCW_PC);
+	_controlfp_s(&dummy,_RC_NEAR, _MCW_RC);
+#endif
+
 	// Calculate source of source asset.
 	dependency->sourceAssetHash = DeepHash(dependency->sourceAsset).get();
 

@@ -3,7 +3,6 @@
 
 #include "Core/Ref.h"
 #include "Core/Memory/IAllocator.h"
-#include "Core/Thread/Semaphore.h"
 
 namespace traktor
 {
@@ -29,9 +28,9 @@ public:
 	virtual void free(void* ptr);
 	
 private:
-	Semaphore m_lock;
 	Ref< IAllocator > m_systemAllocator;
-	BlockAllocator* m_blockAlloc[16];
+	BlockAllocator* m_blockAlloc[5];
+	int32_t m_blockAllocLock[5];
 };
 
 }

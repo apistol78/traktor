@@ -311,25 +311,25 @@ void WorldLayer::resetController()
 
 bool WorldLayer::worldToView(const Vector4& worldPosition, Vector4& outViewPosition) const
 {
-	outViewPosition = m_worldRenderView.getView() * worldPosition.xyz1();
+	outViewPosition = m_worldRenderView.getView() * worldPosition;
 	return true;
 }
 
 bool WorldLayer::viewToWorld(const Vector4& viewPosition, Vector4& outWorldPosition) const
 {
-	outWorldPosition = m_worldRenderView.getView().inverse() * viewPosition.xyz1();
+	outWorldPosition = m_worldRenderView.getView().inverse() * viewPosition;
 	return true;
 }
 
 bool WorldLayer::worldToScreen(const Vector4& worldPosition, Vector2& outScreenPosition) const
 {
-	Vector4 viewPosition = m_worldRenderView.getView() * worldPosition.xyz1();
+	Vector4 viewPosition = m_worldRenderView.getView() * worldPosition;
 	return viewToScreen(viewPosition, outScreenPosition);
 }
 
 bool WorldLayer::viewToScreen(const Vector4& viewPosition, Vector2& outScreenPosition) const
 {
-	Vector4 clipPosition = m_worldRenderView.getProjection() * viewPosition.xyz1();
+	Vector4 clipPosition = m_worldRenderView.getProjection() * viewPosition;
 	if (clipPosition.w() <= 0.0f)
 		return false;
 	clipPosition /= clipPosition.w();

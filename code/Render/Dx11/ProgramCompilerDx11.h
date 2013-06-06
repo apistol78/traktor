@@ -16,6 +16,8 @@ class ProgramCompilerDx11 : public IProgramCompiler
 	T_RTTI_CLASS;
 
 public:
+	ProgramCompilerDx11();
+
 	virtual const wchar_t* getPlatformSignature() const;
 
 	virtual Ref< ProgramResource > compile(

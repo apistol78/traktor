@@ -585,7 +585,7 @@ void PhysicsManagerPhysX::queryOverlap(
 {
 }
 
-void PhysicsManagerPhysX::getBodyCount(uint32_t& outCount, uint32_t& outActiveCount) const
+void PhysicsManagerPhysX::getStatistics(PhysicsStatistics& outStatistics) const
 {
 }
 

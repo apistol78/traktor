@@ -50,11 +50,13 @@ public:
 
 	bool empty() const
 	{
-		return m_size == 0;
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
+		return m_items.empty();
 	}
 
 	uint32_t size() const
 	{
+		T_ANONYMOUS_VAR(Acquire< LockType >)(m_lock);
 		return m_size;
 	}
 
