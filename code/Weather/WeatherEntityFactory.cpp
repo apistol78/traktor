@@ -25,6 +25,11 @@ const TypeInfoSet WeatherEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet WeatherEntityFactory::getEntityEventTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > WeatherEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	if (const SkyEntityData* skyEntityData = dynamic_type_cast< const SkyEntityData* >(&entityData))
@@ -33,6 +38,11 @@ Ref< world::Entity > WeatherEntityFactory::createEntity(const world::IEntityBuil
 		return cloudEntityData->createEntity(m_resourceManager, m_renderSystem);
 	else
 		return 0;
+}
+
+Ref< world::IEntityEvent > WeatherEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
+{
+	return 0;
 }
 
 	}

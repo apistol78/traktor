@@ -39,9 +39,9 @@ const IEntityFactory* EntityBuilderWithSchema::getFactory(const EntityData* enti
 	return m_entityBuilder->getFactory(entityData);
 }
 
-const IEntityBuilder* EntityBuilderWithSchema::getCompositeEntityBuilder() const
+const IEntityFactory* EntityBuilderWithSchema::getFactory(const IEntityEventData* entityEventData) const
 {
-	return m_entityBuilder->getCompositeEntityBuilder();
+	return m_entityBuilder->getFactory(entityEventData);
 }
 
 Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) const
@@ -75,6 +75,16 @@ Ref< Entity > EntityBuilderWithSchema::create(const EntityData* entityData) cons
 		(*m_outEntityProducts)[entityData] = entity;
 
 	return entity;
+}
+
+Ref< IEntityEvent > EntityBuilderWithSchema::create(const IEntityEventData* entityEventData) const
+{
+	return m_entityBuilder->create(entityEventData);
+}
+
+const IEntityBuilder* EntityBuilderWithSchema::getCompositeEntityBuilder() const
+{
+	return m_entityBuilder->getCompositeEntityBuilder();
 }
 
 	}

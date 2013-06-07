@@ -1,5 +1,6 @@
 #include "Spray/Editor/EffectEntityPipeline.h"
 #include "Spray/EffectEntityData.h"
+#include "Spray/SoundEventData.h"
 #include "Editor/IPipelineDepends.h"
 
 namespace traktor
@@ -12,6 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", 1, EffectE
 TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< SoundEventData >());
 	typeSet.insert(&type_of< EffectEntityData >());
 	return typeSet;
 }
@@ -24,8 +26,10 @@ bool EffectEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const EffectEntityData* effectEntityData = checked_type_cast< const EffectEntityData* >(sourceAsset);
-	pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild | editor::PdfResource);
+	if (const SoundEventData* soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
+		pipelineDepends->addDependency(soundEventData->m_sound, editor::PdfBuild | editor::PdfResource);
+	else if (const EffectEntityData* effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
+		pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild | editor::PdfResource);
 
 	return true;
 }
@@ -35,9 +39,11 @@ Ref< ISerializable > EffectEntityPipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	const EffectEntityData* effectEntityData = checked_type_cast< const EffectEntityData* >(sourceAsset);
-	if (effectEntityData->getEffect().isNull())
-		return 0;
+	if (const EffectEntityData* effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
+	{
+		if (effectEntityData->getEffect().isNull())
+			return 0;
+	}
 
 	return world::EntityPipeline::buildOutput(pipelineBuilder, sourceAsset);
 }

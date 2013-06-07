@@ -33,11 +33,11 @@ class T_DLLCLASS SpawnEffectEventData : public world::IEntityEventData
 public:
 	SpawnEffectEventData();
 
-	virtual Ref< world::IEntityEvent > create(const world::IEntityBuilder* entityBuilder) const;
-
 	virtual void serialize(ISerializer& s);
 
 private:
+	friend class EffectEntityFactory;
+
 	Ref< world::EntityData > m_effectData;
 	bool m_follow;
 };

@@ -58,6 +58,17 @@ private:
 	uint32_t m_count;
 };
 
+struct WorkSetSortPredicate
+{
+	bool operator () (const std::pair< uint32_t, Ref< const Object > >& a, const std::pair< uint32_t, Ref< const Object > >& b) const
+	{
+		if (a.second && !b.second)
+			return true;
+		else
+			return false;
+	}
+};
+
 void calculateGlobalHash(
 	const IPipelineDependencySet* dependencySet,
 	const PipelineDependency* dependency,
@@ -242,6 +253,9 @@ bool PipelineBuilder::build(const IPipelineDependencySet* dependencySet, bool re
 	T_DEBUG(L"Pipeline build; analyzed build reasons in " << int32_t(timer.getDeltaTime() * 1000) << L" ms");
 
 	log::info << L"Dispatching builds..." << Endl;
+
+	// Sort work set to build those with user parameters first.
+	m_workSet.sort(WorkSetSortPredicate());
 
 	m_progress = 0;
 	m_progressEnd = m_workSet.size();

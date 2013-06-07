@@ -10,12 +10,13 @@ namespace traktor
 	namespace world
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DecalEntityData", 2, DecalEntityData, EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.world.DecalEntityData", 3, DecalEntityData, EntityData)
 
 DecalEntityData::DecalEntityData()
 :	m_size(1.0f)
 ,	m_thickness(1.0f)
 ,	m_alpha(2.0f)
+,	m_cullDistance(100.0f)
 {
 }
 
@@ -30,6 +31,9 @@ void DecalEntityData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< float >(L"alpha", m_alpha, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 3)
+		s >> Member< float >(L"cullDistance", m_cullDistance, AttributeRange(0.0f));
 
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
 }

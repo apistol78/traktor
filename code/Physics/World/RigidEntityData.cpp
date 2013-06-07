@@ -43,7 +43,7 @@ Ref< RigidEntity > RigidEntityData::createEntity(
 	Ref< world::IEntityEvent > eventCollide;
 	if (m_eventCollide)
 	{
-		eventCollide = m_eventCollide->create(entityBuilder);
+		eventCollide = entityBuilder->create(m_eventCollide);
 		if (!eventCollide)
 			return 0;
 	}

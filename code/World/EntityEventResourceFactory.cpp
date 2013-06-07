@@ -1,5 +1,6 @@
 #include "Database/Database.h"
 #include "World/EntityEventResourceFactory.h"
+#include "World/EntityEventSetData.h"
 #include "World/IEntityEventData.h"
 
 namespace traktor
@@ -17,6 +18,7 @@ EntityEventResourceFactory::EntityEventResourceFactory(db::Database* db)
 const TypeInfoSet EntityEventResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< EntityEventSetData >());
 	typeSet.insert(&type_of< IEntityEventData >());
 	return typeSet;
 }
@@ -24,6 +26,7 @@ const TypeInfoSet EntityEventResourceFactory::getResourceTypes() const
 const TypeInfoSet EntityEventResourceFactory::getProductTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< EntityEventSetData >());
 	typeSet.insert(&type_of< IEntityEventData >());
 	return typeSet;
 }
@@ -35,7 +38,12 @@ bool EntityEventResourceFactory::isCacheable() const
 
 Ref< Object > EntityEventResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
-	return m_db->getObjectReadOnly< IEntityEventData >(guid);
+	if (is_type_a< EntityEventSetData >(resourceType))
+		return m_db->getObjectReadOnly< EntityEventSetData >(guid);
+	else if (is_type_a< IEntityEventData >(resourceType))
+		return m_db->getObjectReadOnly< IEntityEventData >(guid);
+	else
+		return 0;
 }
 
 	}

@@ -22,9 +22,19 @@ const TypeInfoSet ClothEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet ClothEntityFactory::getEntityEventTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > ClothEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
 	return checked_type_cast< const ClothEntityData* >(&entityData)->createEntity(m_resourceManager, m_renderSystem);
+}
+
+Ref< world::IEntityEvent > ClothEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
+{
+	return 0;
 }
 
 	}

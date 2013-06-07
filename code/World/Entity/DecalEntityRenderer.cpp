@@ -30,7 +30,6 @@ render::handle_t s_handleAge;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
 
-const Scalar c_cullDistance(100.0f);
 const uint32_t c_maxRenderDecals = 100;
 
 		}
@@ -118,9 +117,10 @@ void DecalEntityRenderer::render(
 
 	float s = decalEntity->getSize();
 	float t = decalEntity->getThickness();
+	float d = decalEntity->getCullDistance();
 
 	Vector4 center = worldRenderView.getView() * transform.translation().xyz1();
-	if (center.length2() > c_cullDistance * c_cullDistance)
+	if (center.length2() > d * d)
 		return;
 
 	Scalar radius = Scalar(std::sqrt(s * s + s * s + t * t));

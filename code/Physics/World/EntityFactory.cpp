@@ -30,6 +30,11 @@ const TypeInfoSet EntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet EntityFactory::getEntityEventTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< world::Entity > EntityFactory::createEntity(
 	const world::IEntityBuilder* builder,
 	const world::EntityData& entityData
@@ -41,6 +46,11 @@ Ref< world::Entity > EntityFactory::createEntity(
 	if (const ArticulatedEntityData* articulatedEntityData = dynamic_type_cast< const ArticulatedEntityData* >(&entityData))
 		return articulatedEntityData->createEntity(builder, m_physicsManager);
 
+	return 0;
+}
+
+Ref< world::IEntityEvent > EntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
+{
 	return 0;
 }
 

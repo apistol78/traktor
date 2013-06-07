@@ -27,8 +27,10 @@ bool RigidEntityPipeline::buildDependencies(
 ) const
 {
 	if (const RigidEntityData* rigidEntityData = dynamic_type_cast< const RigidEntityData* >(sourceAsset))
+	{
 		pipelineDepends->addDependency(rigidEntityData->getBodyDesc());
-
+		pipelineDepends->addDependency(rigidEntityData->getEntityData());
+	}
 	return true;
 }
 

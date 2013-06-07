@@ -41,8 +41,7 @@ namespace traktor
 
 const int32_t c_margin = 12;
 
-template < typename PipelineType >
-Ref< ISerializable > resolveAllExternal(PipelineType* pipeline, const ISerializable* object)
+Ref< ISerializable > resolveAllExternal(editor::IPipelineCommon* pipeline, const ISerializable* object)
 {
 	Ref< Reflection > reflection = Reflection::create(object);
 

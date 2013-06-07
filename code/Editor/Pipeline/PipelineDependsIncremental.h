@@ -31,6 +31,7 @@ public:
 	PipelineDependsIncremental(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
+		db::Database* outputDatabase,
 		IPipelineDependencySet* dependencySet,
 		uint32_t recursionDepth = ~0UL
 	);
@@ -69,11 +70,14 @@ public:
 
 	virtual Ref< db::Database > getSourceDatabase() const;
 
+	virtual Ref< db::Database > getOutputDatabase() const;
+
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
+	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineDependencySet > m_dependencySet;
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;

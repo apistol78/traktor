@@ -1,9 +1,8 @@
 #ifndef traktor_editor_IPipelineBuilder_H
 #define traktor_editor_IPipelineBuilder_H
 
-#include "Core/Guid.h"
-#include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Editor/IPipelineCommon.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -16,14 +15,12 @@
 namespace traktor
 {
 
-class ISerializable;
 class IStream;
 class Path;
 
 	namespace db
 	{
 
-class Database;
 class Instance;
 
 	}
@@ -38,7 +35,7 @@ class PipelineDependency;
 /*! \brief Pipeline builder interface.
  * \ingroup Editor
  */
-class T_DLLCLASS IPipelineBuilder : public Object
+class T_DLLCLASS IPipelineBuilder : public IPipelineCommon
 {
 	T_RTTI_CLASS;
 
@@ -78,13 +75,7 @@ public:
 
 	virtual Ref< ISerializable > getBuildProduct(const ISerializable* sourceAsset) = 0;
 
-	virtual Ref< db::Database > getSourceDatabase() const = 0;
-
-	virtual Ref< db::Database > getOutputDatabase() const = 0;
-
 	virtual Ref< db::Instance > createOutputInstance(const std::wstring& instancePath, const Guid& instanceGuid) = 0;
-
-	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid) = 0;
 
 	virtual Ref< IStream > openFile(const Path& basePath, const std::wstring& fileName) = 0;
 
@@ -93,12 +84,6 @@ public:
 	virtual Ref< IStream > openTemporaryFile(const std::wstring& fileName) = 0;
 
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid) = 0;
-
-	template < typename T >
-	Ref< const T > getObjectReadOnly(const Guid& guid)
-	{
-		return dynamic_type_cast< const T* >(getObjectReadOnly(guid));
-	}
 };
 
 	}

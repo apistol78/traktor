@@ -6,6 +6,7 @@
 #include "Editor/IPipelineBuilder.h"
 #include "Editor/IPipelineDepends.h"
 #include "World/EntityData.h"
+#include "World/IEntityEventData.h"
 #include "World/Editor/EntityPipeline.h"
 
 namespace traktor
@@ -28,6 +29,7 @@ TypeInfoSet EntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< EntityData >());
+	typeSet.insert(&type_of< IEntityEventData >());
 	return typeSet;
 }
 
@@ -39,9 +41,7 @@ bool EntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	const EntityData* entityData = checked_type_cast< const EntityData*, false >(sourceAsset);
-
-	Ref< Reflection > reflection = Reflection::create(entityData);
+	Ref< Reflection > reflection = Reflection::create(sourceAsset);
 	if (!reflection)
 		return false;
 
@@ -57,6 +57,10 @@ bool EntityPipeline::buildDependencies(
 		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
 		{
 			pipelineDepends->addDependency(entityData);
+		}
+		else if (const IEntityEventData* entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
+		{
+			pipelineDepends->addDependency(entityEventData);
 		}
 		else if (objectMember->get())
 		{
@@ -82,15 +86,15 @@ bool EntityPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
-	Ref< EntityData > entityData = checked_type_cast< EntityData*, true >(pipelineBuilder->buildOutput(sourceAsset));
-	if (!entityData)
+	Ref< ISerializable > outputAsset = pipelineBuilder->buildOutput(sourceAsset);
+	if (!outputAsset)
 		return false;
 
 	Ref< db::Instance > outputInstance = pipelineBuilder->createOutputInstance(outputPath, outputGuid);
 	if (!outputInstance)
 		return false;
 
-	outputInstance->setObject(entityData);
+	outputInstance->setObject(outputAsset);
 
 	if (!outputInstance->commit())
 		return false;
@@ -118,6 +122,10 @@ Ref< ISerializable > EntityPipeline::buildOutput(
 		if (const EntityData* entityData = dynamic_type_cast< const EntityData* >(objectMember->get()))
 		{
 			objectMember->set(pipelineBuilder->buildOutput(entityData));
+		}
+		else if (const IEntityEventData* entityEventData = dynamic_type_cast< const IEntityEventData* >(objectMember->get()))
+		{
+			objectMember->set(pipelineBuilder->buildOutput(entityEventData));
 		}
 		else if (objectMember->get())
 		{

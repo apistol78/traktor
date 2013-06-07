@@ -41,6 +41,11 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	return typeSet;
 }
 
+const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
+{
+	return TypeInfoSet();
+}
+
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
 {
 	if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(&entityData))
@@ -81,6 +86,7 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 			decalData->getSize(),
 			decalData->getThickness(),
 			decalData->getAlpha(),
+			decalData->getCullDistance(),
 			shader
 		);
 
@@ -129,6 +135,11 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		return new NullEntity(nullData->getTransform());
 	}
 
+	return 0;
+}
+
+Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const
+{
 	return 0;
 }
 
