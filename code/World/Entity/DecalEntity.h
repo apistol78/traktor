@@ -30,6 +30,7 @@ public:
 		float size,
 		float thickness,
 		float alpha,
+		float cullDistance,
 		const resource::Proxy< render::Shader >& shader
 	);
 
@@ -49,6 +50,8 @@ public:
 
 	float getAlpha() const { return clamp((m_alpha - m_age) * 2.0f, 0.0f, 1.0f); }
 
+	float getCullDistance() const { return m_cullDistance; }
+
 	float getAge() const { return m_age; }
 
 private:
@@ -56,6 +59,7 @@ private:
 	float m_size;
 	float m_thickness;
 	float m_alpha;
+	float m_cullDistance;
 	float m_age;
 	resource::Proxy< render::Shader > m_shader;
 };

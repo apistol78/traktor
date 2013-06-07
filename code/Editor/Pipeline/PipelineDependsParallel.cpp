@@ -33,11 +33,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsParallel", PipelineDepend
 PipelineDependsParallel::PipelineDependsParallel(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
+	db::Database* outputDatabase,
 	IPipelineDependencySet* dependencySet,
 	IPipelineDb* pipelineDb
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
+,	m_outputDatabase(outputDatabase)
 ,	m_dependencySet(dependencySet)
 ,	m_pipelineDb(pipelineDb)
 {
@@ -158,6 +160,11 @@ bool PipelineDependsParallel::waitUntilFinished()
 Ref< db::Database > PipelineDependsParallel::getSourceDatabase() const
 {
 	return m_sourceDatabase;
+}
+
+Ref< db::Database > PipelineDependsParallel::getOutputDatabase() const
+{
+	return m_outputDatabase;
 }
 
 Ref< const ISerializable > PipelineDependsParallel::getObjectReadOnly(const Guid& instanceGuid)

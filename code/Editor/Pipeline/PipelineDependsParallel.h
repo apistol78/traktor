@@ -38,6 +38,7 @@ public:
 	PipelineDependsParallel(
 		PipelineFactory* pipelineFactory,
 		db::Database* sourceDatabase,
+		db::Database* outputDatabase,
 		IPipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb
 	);
@@ -78,12 +79,15 @@ public:
 
 	virtual Ref< db::Database > getSourceDatabase() const;
 
+	virtual Ref< db::Database > getOutputDatabase() const;
+
 	virtual Ref< const ISerializable > getObjectReadOnly(const Guid& instanceGuid);
 
 private:
 	Ref< JobQueue > m_jobQueue;
 	Ref< PipelineFactory > m_pipelineFactory;
 	Ref< db::Database > m_sourceDatabase;
+	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineDependencySet > m_dependencySet;
 	Ref< IPipelineDb > m_pipelineDb;
 	ThreadLocal m_currentDependency;

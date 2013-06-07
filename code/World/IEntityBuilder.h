@@ -18,6 +18,8 @@ namespace traktor
 
 class Entity;
 class EntityData;
+class IEntityEvent;
+class IEntityEventData;
 class IEntityFactory;
 
 /*! \brief Entity builder interface.
@@ -34,7 +36,11 @@ public:
 
 	virtual const IEntityFactory* getFactory(const EntityData* entityData) const = 0;
 
+	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const = 0;
+
 	virtual Ref< Entity > create(const EntityData* entityData) const = 0;
+
+	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const = 0;
 
 	virtual const IEntityBuilder* getCompositeEntityBuilder() const = 0;
 
@@ -42,6 +48,12 @@ public:
 	Ref< EntityType > create(const EntityData* entityData) const
 	{
 		return checked_type_cast< EntityType*, true >(create(entityData));
+	}
+
+	template < typename EntityEventType >
+	Ref< EntityEventType > create(const IEntityEventData* entityEventData) const
+	{
+		return checked_type_cast< EntityEventType*, true >(create(entityEventData));
 	}
 };
 

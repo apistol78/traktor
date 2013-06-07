@@ -64,14 +64,14 @@ uint32_t getPriority(const render::ShaderGraph* shaderGraph)
 class FragmentReaderAdapter : public FragmentLinker::FragmentReader
 {
 public:
-	FragmentReaderAdapter(editor::IPipelineBuilder* pipelineBuilder)
-	:	m_pipelineBuilder(pipelineBuilder)
+	FragmentReaderAdapter(editor::IPipelineCommon* pipeline)
+	:	m_pipeline(pipeline)
 	{
 	}
 
 	virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid)
 	{
-		Ref< const ShaderGraph > shaderGraph = m_pipelineBuilder->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+		Ref< const ShaderGraph > shaderGraph = m_pipeline->getObjectReadOnly< ShaderGraph >(fragmentGuid);
 		if (shaderGraph && ShaderGraphValidator(shaderGraph).validateIntegrity())
 			return shaderGraph;
 		else
@@ -79,7 +79,7 @@ public:
 	}
 
 private:
-	Ref< editor::IPipelineBuilder > m_pipelineBuilder;
+	Ref< editor::IPipelineCommon > m_pipeline;
 };
 
 struct BuildCombinationTask : public Object
@@ -322,7 +322,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 53, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 54, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)

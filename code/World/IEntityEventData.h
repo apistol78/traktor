@@ -16,18 +16,12 @@ namespace traktor
 	namespace world
 	{
 
-class IEntityBuilder;
-class IEntityEvent;
-
 /*! \brief
  * \ingroup World
  */
 class T_DLLCLASS IEntityEventData : public ISerializable
 {
 	T_RTTI_CLASS;
-
-public:
-	virtual Ref< IEntityEvent > create(const IEntityBuilder* entityBuilder) const = 0;
 };
 
 	}

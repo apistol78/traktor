@@ -157,7 +157,6 @@ void threadBuild(editor::PipelineBuilder& pipelineBuilder, const editor::Pipelin
 	g_success = pipelineBuilder.build(dependencySet, rebuild);
 }
 
-
 Ref< db::Database > openDatabase(const std::wstring& connectionString, bool create)
 {
 	std::map< std::wstring, Ref< db::Database > >::iterator i = g_databaseConnections.find(connectionString);
@@ -174,7 +173,6 @@ Ref< db::Database > openDatabase(const std::wstring& connectionString, bool crea
 	g_databaseConnections[connectionString] = database;
 	return database;
 }
-
 
 void updateDatabases()
 {
@@ -429,6 +427,7 @@ bool perform(const PipelineParameters* params)
 		pipelineDepends = new editor::PipelineDependsParallel(
 			&pipelineFactory,
 			sourceDatabase,
+			outputDatabase,
 			&pipelineDependencySet,
 			0
 		);
@@ -438,6 +437,7 @@ bool perform(const PipelineParameters* params)
 		pipelineDepends = new editor::PipelineDependsIncremental(
 			&pipelineFactory,
 			sourceDatabase,
+			outputDatabase,
 			&pipelineDependencySet
 		);
 	}
@@ -525,7 +525,11 @@ bool perform(const PipelineParameters* params)
 
 int slave(const CommandLine& cmdLine)
 {
-	traktor::log::info << L"Entering slave mode..." << Endl;
+#if defined(_WIN32)
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)consoleCtrlHandler, TRUE);
+#endif
+
+	traktor::log::info << L"Waiting..." << Endl;
 
 	net::TcpSocket socket;
 	if (!socket.bind(net::SocketAddressIPv4(52100)))
@@ -579,6 +583,7 @@ int slave(const CommandLine& cmdLine)
 		transport = 0;
 	}
 
+	traktor::log::info << L"Bye" << Endl;
 	return 0;
 }
 
@@ -641,14 +646,14 @@ int master(const CommandLine& cmdLine)
 		}
 	}
 
-	net::TcpSocket socket;
-	if (!socket.connect(net::SocketAddressIPv4(L"localhost", 52100)))
+	Ref< net::TcpSocket > socket = new net::TcpSocket();
+	if (!socket->connect(net::SocketAddressIPv4(L"localhost", 52100)))
 	{
 		traktor::log::error << L"Unable to establish connection with pipeline slave" << Endl;
 		return 1;
 	}
 
-	socket.setNoDelay(true);
+	socket->setNoDelay(true);
 
 	std::wstring settingsFile = L"Traktor.Editor";
 	if (cmdLine.hasOption('s', L"settings"))
@@ -663,7 +668,7 @@ int master(const CommandLine& cmdLine)
 		roots
 	);
 
-	Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(&socket);
+	Ref< net::BidirectionalObjectTransport > transport = new net::BidirectionalObjectTransport(socket);
 
 	transport->send(&params);
 	for (;;)
@@ -693,7 +698,8 @@ int master(const CommandLine& cmdLine)
 		}
 	}
 
-	socket.close();
+	transport->close();
+	transport = 0;
 
 	if (logFile)
 	{

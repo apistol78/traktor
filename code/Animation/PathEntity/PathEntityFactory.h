@@ -26,7 +26,11 @@ class T_DLLCLASS PathEntityFactory : public world::IEntityFactory
 public:
 	virtual const TypeInfoSet getEntityTypes() const;
 
+	virtual const TypeInfoSet getEntityEventTypes() const;
+
 	virtual Ref< world::Entity > createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const;
+
+	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const;
 };
 
 	}

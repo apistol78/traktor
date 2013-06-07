@@ -42,12 +42,15 @@ public:
 
 	float getAlpha() const { return m_alpha; }
 
+	float getCullDistance() const { return m_cullDistance; }
+
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
 private:
 	float m_size;
 	float m_thickness;
 	float m_alpha;
+	float m_cullDistance;
 	resource::Id< render::Shader > m_shader;
 };
 

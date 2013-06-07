@@ -40,10 +40,13 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 ,	m_index(0)
 ,	m_updateController(true)
 {
-	calculateJointTransforms(
-		m_skeleton,
-		m_jointTransforms
-	);
+	if (m_skeleton)
+	{
+		calculateJointTransforms(
+			m_skeleton,
+			m_jointTransforms
+		);
+	}
 }
 
 AnimatedMeshEntity::~AnimatedMeshEntity()

@@ -12,12 +12,14 @@ DecalEntity::DecalEntity(
 	float size,
 	float thickness,
 	float alpha,
+	float cullDistance,
 	const resource::Proxy< render::Shader >& shader
 )
 :	m_transform(transform)
 ,	m_size(size)
 ,	m_thickness(thickness)
 ,	m_alpha(alpha)
+,	m_cullDistance(cullDistance)
 ,	m_age(0.0f)
 ,	m_shader(shader)
 {

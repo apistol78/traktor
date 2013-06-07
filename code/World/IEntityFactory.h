@@ -17,6 +17,8 @@ namespace traktor
 	{
 
 class IEntityBuilder;
+class IEntityEvent;
+class IEntityEventData;
 class Entity;
 class EntityData;
 
@@ -30,9 +32,16 @@ class T_DLLCLASS IEntityFactory : public Object
 public:
 	virtual const TypeInfoSet getEntityTypes() const = 0;
 
+	virtual const TypeInfoSet getEntityEventTypes() const = 0;
+
 	virtual Ref< Entity > createEntity(
 		const IEntityBuilder* builder,
 		const EntityData& entityData
+	) const = 0;
+
+	virtual Ref< IEntityEvent > createEntityEvent(
+		const IEntityBuilder* builder,
+		const IEntityEventData& entityEventData
 	) const = 0;
 };
 

@@ -26,11 +26,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDependsIncremental", PipelineDep
 PipelineDependsIncremental::PipelineDependsIncremental(
 	PipelineFactory* pipelineFactory,
 	db::Database* sourceDatabase,
+	db::Database* outputDatabase,
 	IPipelineDependencySet* dependencySet,
 	uint32_t recursionDepth
 )
 :	m_pipelineFactory(pipelineFactory)
 ,	m_sourceDatabase(sourceDatabase)
+,	m_outputDatabase(outputDatabase)
 ,	m_dependencySet(dependencySet)
 ,	m_maxRecursionDepth(recursionDepth)
 ,	m_currentRecursionDepth(0)
@@ -232,6 +234,11 @@ bool PipelineDependsIncremental::waitUntilFinished()
 Ref< db::Database > PipelineDependsIncremental::getSourceDatabase() const
 {
 	return m_sourceDatabase;
+}
+
+Ref< db::Database > PipelineDependsIncremental::getOutputDatabase() const
+{
+	return m_outputDatabase;
 }
 
 Ref< const ISerializable > PipelineDependsIncremental::getObjectReadOnly(const Guid& instanceGuid)

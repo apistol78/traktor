@@ -35,7 +35,11 @@ public:
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
+	virtual const TypeInfoSet getEntityEventTypes() const;
+
 	virtual Ref< Entity > createEntity(const IEntityBuilder* builder, const EntityData& entityData) const;
+
+	virtual Ref< IEntityEvent > createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const;
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;

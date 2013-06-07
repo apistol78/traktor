@@ -32,7 +32,11 @@ public:
 
 	virtual const world::IEntityFactory* getFactory(const world::EntityData* entityData) const;
 
+	virtual const world::IEntityFactory* getFactory(const world::IEntityEventData* entityEventData) const;
+
 	virtual Ref< world::Entity > create(const world::EntityData* entityData) const;
+
+	virtual Ref< world::IEntityEvent > create(const world::IEntityEventData* entityEventData) const;
 
 	virtual const world::IEntityBuilder* getCompositeEntityBuilder() const;
 

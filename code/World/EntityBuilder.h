@@ -33,9 +33,13 @@ public:
 
 	virtual const IEntityFactory* getFactory(const EntityData* entityData) const;
 
-	virtual const IEntityBuilder* getCompositeEntityBuilder() const;
+	virtual const IEntityFactory* getFactory(const IEntityEventData* entityEventData) const;
 
 	virtual Ref< Entity > create(const EntityData* entityData) const;
+
+	virtual Ref< IEntityEvent > create(const IEntityEventData* entityEventData) const;
+
+	virtual const IEntityBuilder* getCompositeEntityBuilder() const;
 
 private:
 	mutable Semaphore m_lock;

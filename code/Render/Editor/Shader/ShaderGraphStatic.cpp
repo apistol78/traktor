@@ -158,7 +158,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getPlatformPermutation(const std::wstring&
 		}
 	}
 
-	return ShaderGraphOptimizer(shaderGraph).removeUnusedBranches();
+	return shaderGraph;
 }
 
 Ref< ShaderGraph > ShaderGraphStatic::getTypePermutation() const
