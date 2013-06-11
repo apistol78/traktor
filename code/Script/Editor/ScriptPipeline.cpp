@@ -63,7 +63,7 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 8, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 9, ScriptPipeline, editor::DefaultPipeline)
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {

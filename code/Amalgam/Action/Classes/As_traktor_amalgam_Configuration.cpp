@@ -47,6 +47,7 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable));
 
 	// Audio
+	prototype->addProperty("autoMute", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_autoMute), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_autoMute));
 	prototype->setMember("getMasterVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getMasterVolume)));
 	prototype->setMember("setMasterVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setMasterVolume)));
 	prototype->setMember("getVolume", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getVolume)));
@@ -219,6 +220,16 @@ bool As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable(const AsCo
 void As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const
 {
 	self->setRumbleEnable(rumbleEnable);
+}
+
+bool As_traktor_amalgam_Configuration::Configuration_get_autoMute(const AsConfiguration* self) const
+{
+	return self->getAutoMute();
+}
+
+void As_traktor_amalgam_Configuration::Configuration_set_autoMute(AsConfiguration* self, bool autoMute) const
+{
+	self->setAutoMute(autoMute);
 }
 
 float As_traktor_amalgam_Configuration::Configuration_getMasterVolume(const AsConfiguration* self) const

@@ -499,7 +499,8 @@ void FlashSpriteInstance::eventKeyDown(int32_t keyCode)
 		(*i)->eventKeyDown(keyCode);
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnKeyDown, ActionValue());
+	if (FlashCharacterInstance::getFocus() == this)
+		executeScriptEvent(ActionContext::IdOnKeyDown, ActionValue());
 
 	FlashCharacterInstance::eventKeyDown(keyCode);
 
@@ -518,7 +519,8 @@ void FlashSpriteInstance::eventKeyUp(int32_t keyCode)
 		(*i)->eventKeyUp(keyCode);
 
 	// Issue script assigned event.
-	executeScriptEvent(ActionContext::IdOnKeyUp, ActionValue());
+	if (FlashCharacterInstance::getFocus() == this)
+		executeScriptEvent(ActionContext::IdOnKeyUp, ActionValue());
 
 	FlashCharacterInstance::eventKeyUp(keyCode);
 

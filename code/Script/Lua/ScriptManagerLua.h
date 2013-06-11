@@ -111,6 +111,10 @@ private:
 	static int classEqualMethod(lua_State* luaState);
 
 	static int luaPanic(lua_State* luaState);
+
+	static int luaDumpWriter(lua_State* luaState, const void* p, size_t sz, void* ud);
+
+	static const char* luaDumpReader(lua_State* luaState, void* data, size_t* size);
 };
 
 	}

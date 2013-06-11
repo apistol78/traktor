@@ -100,7 +100,7 @@ void TrailRenderer::render(
 		Vector4 vp0 = points[i - 1];
 		Vector4 vp1 = points[i];
 
-		Vector4 direction = (vp1 - vp0);
+		Vector4 direction = (vp1 - vp0).xyz0();
 		Vector4 up = Vector4::zero();
 
 		Scalar ln = direction.length();

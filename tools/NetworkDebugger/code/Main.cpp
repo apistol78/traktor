@@ -88,7 +88,9 @@ class Entry : public Object
 	T_RTTI_CLASS;
 
 public:
+	bool status;
 	int32_t time;
+	int32_t deltaTime;
 	uint8_t direction;
 	uint8_t handle;
 	int32_t size;
@@ -266,6 +268,7 @@ bool MainForm::create()
 
 	m_listBox = new ui::ListBox();
 	m_listBox->create(splitter);
+	m_listBox->setFont(ui::Font(L"Courier New", 14));
 
 	update();
 	show();
@@ -314,6 +317,8 @@ void MainForm::eventSelect(ui::Event* event)
 						else
 							ss << L"Relay";
 					}
+					else
+						ss << L"<<< Self >>>";
 
 					m_listBox->add(ss.str());
 				}
@@ -322,10 +327,16 @@ void MainForm::eventSelect(ui::Event* event)
 			Entry* entry = dynamic_type_cast< Entry* >(key->getData(L"ENTRY"));
 			if (entry)
 			{
-				m_listBox->add(L"Time " + toString< int32_t >(entry->time));
+				m_listBox->add(L"Time " + toString< int32_t >(entry->time) + L", dT " + toString< int32_t >(entry->deltaTime) + L" ms");
 				m_listBox->add(entry->direction == 0 ? L"Receive" : L"Sent");
 				m_listBox->add(toString< int32_t >(entry->size) + L" byte(s)");
 				m_listBox->add(L"");
+
+				if (!entry->status)
+				{
+					m_listBox->add(L"FAILED");
+					m_listBox->add(L"");
+				}
 
 				RefArray< IDecoder > decoders;
 				decoders.push_back(new ReliableDecoder());
@@ -360,6 +371,22 @@ void MainForm::eventSelect(ui::Event* event)
 					{
 						if (j + i < entry->size)
 							FormatHex(ss, entry->data[j + i], 2) << L" ";
+						else
+							ss << L"   ";
+					}
+
+					ss << L"   ";
+
+					for (uint32_t j = 0; j < 16; ++j)
+					{
+						if (j + i < entry->size)
+						{
+							char ch = entry->data[j + i];
+							if (isgraph(ch))
+								ss << wchar_t(ch);
+							else
+								ss << L'.';
+						}
 					}
 
 					m_listBox->add(ss.str());
@@ -383,13 +410,14 @@ void MainForm::eventFileDrop(ui::Event* event)
 		{
 			std::map< uint8_t, Ref< ui::custom::SequenceGroup > > sequences;
 			int32_t duration = 0;
+			int32_t lastTime[] = { 0, 0 };
 
 			while (file->available() > 0)
 			{
 				Reader r(file);
 
 				uint8_t cmd;
-				uint32_t time;
+				int32_t time;
 
 				r >> cmd;
 				r >> time;
@@ -429,13 +457,15 @@ void MainForm::eventFileDrop(ui::Event* event)
 						checked_type_cast< ui::custom::Sequence* >(group->getChildItems().at(0))->addKey(tick);
 					}
 				}
-				else if (cmd == 0x01 || cmd == 0x02)
+				else if (cmd == 0x01 || cmd == 0x02 || cmd == 0x03)
 				{
 					Ref< Entry > e = new Entry();
 
 					std::memset(e->data, 0, sizeof(e->data));
 
+					e->status = (cmd != 0x03);
 					e->time = time;
+					e->deltaTime = time - lastTime[(cmd == 0x01 ? 0 : 1)];
 					e->direction = (cmd == 0x01 ? 0 : 1);
 
 					r >> e->handle;
@@ -461,6 +491,8 @@ void MainForm::eventFileDrop(ui::Event* event)
 						checked_type_cast< ui::custom::Sequence* >(group->getChildItems().at(2))->addKey(tick);
 					else
 						checked_type_cast< ui::custom::Sequence* >(group->getChildItems().at(1))->addKey(tick);
+
+					lastTime[(cmd == 0x01 ? 0 : 1)] = time;
 				}
 
 				duration = std::max< int32_t >(duration, time);

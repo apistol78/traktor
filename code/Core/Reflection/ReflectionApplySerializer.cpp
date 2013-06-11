@@ -220,22 +220,29 @@ void ReflectionApplySerializer::operator >> (const MemberArray& m)
 
 void ReflectionApplySerializer::operator >> (const MemberComplex& m)
 {
-	Ref< const RfmCompound > compoundMember = dynamic_type_cast< const RfmCompound* >(getNextMember());
-	if (!compoundMember)
-		return;
+	uint32_t currentMemberIndex;
+	Ref< const RfmCompound > currentCompoundMember;
 
-	uint32_t currentMemberIndex = m_memberIndex;
-	Ref< const RfmCompound > currentCompoundMember = m_compoundMember;
+	if (m.getCompound())
+	{
+		Ref< const RfmCompound > compoundMember = dynamic_type_cast< const RfmCompound* >(getNextMember());
+		if (!compoundMember)
+			return;
 
-	m_memberIndex = 0;
-	m_compoundMember = compoundMember;
+		currentMemberIndex = m_memberIndex;
+		currentCompoundMember = m_compoundMember;
+
+		m_memberIndex = 0;
+		m_compoundMember = compoundMember;
+	}
 
 	m.serialize(*this);
 
-	T_ASSERT (m_memberIndex == m_compoundMember->getMemberCount());
-
-	m_memberIndex = currentMemberIndex;
-	m_compoundMember = currentCompoundMember;
+	if (m.getCompound())
+	{
+		m_memberIndex = currentMemberIndex;
+		m_compoundMember = currentCompoundMember;
+	}
 }
 
 void ReflectionApplySerializer::operator >> (const MemberEnumBase& m)

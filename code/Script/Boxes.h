@@ -7,6 +7,7 @@
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Color4f.h"
 #include "Core/Math/Color4ub.h"
+#include "Core/Math/Plane.h"
 #include "Core/Math/Quaternion.h"
 #include "Core/Math/Transform.h"
 #include "Core/Math/Vector2.h"
@@ -228,6 +229,10 @@ public:
 	Vector4 getAxisAngle() const;
 
 	static Quaternion identity() { return Quaternion::identity(); }
+
+	static Quaternion fromEulerAngles(float head, float pitch, float bank);
+
+	static Quaternion fromAxisAngle(const Vector4& axisAngle);
 	
 	const Quaternion& unbox() const { return m_value; }
 
@@ -235,6 +240,43 @@ public:
 
 private:
 	Quaternion m_value;
+};
+
+class T_DLLCLASS BoxedPlane : public Boxed
+{
+	T_RTTI_CLASS;
+
+public:
+	BoxedPlane();
+
+	explicit BoxedPlane(const Plane& value);
+
+	explicit BoxedPlane(const Vector4& normal, float distance);
+
+	explicit BoxedPlane(const Vector4& normal, const Vector4& pointInPlane);
+
+	explicit BoxedPlane(const Vector4& a, const Vector4& b, const Vector4& c);
+
+	explicit BoxedPlane(float a, float b, float c, float d);
+
+	void setNormal(const Vector4& normal) { m_value.setNormal(normal); }
+
+	void setDistance(float distance) { m_value.setDistance(Scalar(distance)); }
+
+	Vector4 normal() const { return m_value.normal(); }
+
+	float distance() const { return m_value.distance(); }
+
+	float distanceToPoint(const Vector4& point) const { return m_value.distance(point); }
+
+	Vector4 project(const Vector4& v) const { return m_value.project(v); }
+
+	const Plane& unbox() const { return m_value; }
+
+	virtual std::wstring toString() const;
+
+private:
+	Plane m_value;
 };
 
 class T_DLLCLASS BoxedTransform : public Boxed
@@ -257,6 +299,12 @@ public:
 	Vector4 axisY() const;
 
 	Vector4 axisZ() const;
+
+	Plane planeX() const;
+
+	Plane planeY() const;
+
+	Plane planeZ() const;
 
 	Transform inverse() const;
 
@@ -575,6 +623,28 @@ struct CastAny < const Quaternion&, false >
     static Quaternion get(const Any& value) {
         return checked_type_cast< BoxedQuaternion*, false >(value.getObject())->unbox();
     }
+};
+
+template < >
+struct CastAny < Plane, false >
+{
+	static Any set(const Plane& value) {
+		return Any::fromObject(new BoxedPlane(value));
+	}
+	static Plane get(const Any& value) {
+		return checked_type_cast< BoxedPlane*, false >(value.getObject())->unbox();
+	}
+};
+
+template < >
+struct CastAny < const Plane&, false >
+{
+	static Any set(const Plane& value) {
+		return Any::fromObject(new BoxedPlane(value));
+	}
+	static Plane get(const Any& value) {
+		return checked_type_cast< BoxedPlane*, false >(value.getObject())->unbox();
+	}
 };
 
 template < >

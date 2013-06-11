@@ -16,6 +16,11 @@ void RfmCompound::addMember(ReflectionMember* member)
 	m_members.push_back(member);
 }
 
+void RfmCompound::removeMember(ReflectionMember* member)
+{
+	m_members.remove(member);
+}
+
 uint32_t RfmCompound::getMemberCount() const
 {
 	return m_members.size();

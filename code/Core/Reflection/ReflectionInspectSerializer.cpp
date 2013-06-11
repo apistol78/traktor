@@ -162,16 +162,22 @@ void ReflectionInspectSerializer::operator >> (const MemberArray& m)
 
 void ReflectionInspectSerializer::operator >> (const MemberComplex& m)
 {
-	Ref< RfmCompound > compoundMember = new RfmCompound(m.getName());
-
 	Ref< RfmCompound > currentCompoundMember = m_compoundMember;
-	m_compoundMember = compoundMember;
+	Ref< RfmCompound > compoundMember;
+
+	if (m.getCompound())
+	{
+		compoundMember = new RfmCompound(m.getName());
+		m_compoundMember = compoundMember;
+	}
 
 	m.serialize(*this);
 
-	m_compoundMember = currentCompoundMember;
-
-	addMember(compoundMember);
+	if (m.getCompound())
+	{
+		m_compoundMember = currentCompoundMember;
+		addMember(compoundMember);
+	}
 }
 
 void ReflectionInspectSerializer::operator >> (const MemberEnumBase& m)

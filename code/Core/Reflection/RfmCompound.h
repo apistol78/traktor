@@ -29,6 +29,8 @@ public:
 
 	void addMember(ReflectionMember* member);
 
+	void removeMember(ReflectionMember* member);
+
 	uint32_t getMemberCount() const;
 
 	ReflectionMember* getMember(uint32_t index) const;

@@ -87,6 +87,10 @@ private:
 
 	void Configuration_set_rumbleEnable(AsConfiguration* self, bool rumbleEnable) const;
 
+	bool Configuration_get_autoMute(const AsConfiguration* self) const;
+
+	void Configuration_set_autoMute(AsConfiguration* self, bool autoMute) const;
+
 	float Configuration_getMasterVolume(const AsConfiguration* self) const;
 
 	void Configuration_setMasterVolume(AsConfiguration* self, float volume) const;
