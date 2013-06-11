@@ -29,6 +29,7 @@ AsConfiguration::AsConfiguration()
 ,	m_antiAliasQuality(QtMedium)
 ,	m_rumbleEnable(true)
 ,	m_masterVolume(1.0f)
+,	m_autoMute(true)
 {
 }
 
@@ -53,6 +54,7 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_antiAliasQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", QtMedium);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
 	current->m_masterVolume = settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f);
+	current->m_autoMute = settings->getProperty< PropertyBoolean >(L"Audio.AutoMute", true);
 
 	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
 	if (volumes)
@@ -205,6 +207,16 @@ void AsConfiguration::setVolume(const std::wstring& category, float volume)
 	m_volumes[category] = volume;
 }
 
+bool AsConfiguration::getAutoMute() const
+{
+	return m_autoMute;
+}
+
+void AsConfiguration::setAutoMute(bool autoMute)
+{
+	m_autoMute = autoMute;
+}
+
 bool AsConfiguration::getBoolean(const std::wstring& name) const
 {
 	std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = m_user.find(name);
@@ -240,6 +252,7 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.AntiAliasQuality", m_antiAliasQuality);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
 	settings->setProperty< PropertyFloat >(L"Audio.MasterVolume", m_masterVolume);
+	settings->setProperty< PropertyBoolean >(L"Audio.AutoMute", m_autoMute);
 
 	for (std::map< std::wstring, float >::const_iterator i = m_volumes.begin(); i != m_volumes.end(); ++i)
 		settings->setProperty< PropertyFloat >(L"Audio.Volumes/" + i->first, i->second);

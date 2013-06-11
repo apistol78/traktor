@@ -86,6 +86,10 @@ public:
 
 	void setVolume(const std::wstring& category, float volume);
 
+	bool getAutoMute() const;
+
+	void setAutoMute(bool autoMute);
+
 	bool getBoolean(const std::wstring& name) const;
 
 	void setBoolean(const std::wstring& name, bool value);
@@ -107,6 +111,7 @@ private:
 	Quality m_antiAliasQuality;
 	bool m_rumbleEnable;
 	float m_masterVolume;
+	bool m_autoMute;
 	std::map< std::wstring, float > m_volumes;
 	std::map< std::wstring, Ref< IPropertyValue > > m_user;
 };

@@ -45,6 +45,8 @@ private:
 	float m_breakThreshold;
 	CircularVector< Vector4, 16 > T_MATH_ALIGN16 m_points;
 	Vector4 m_last;
+	Vector4 m_time;
+	Vector4 m_count;
 };
 
 	}

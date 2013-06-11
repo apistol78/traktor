@@ -137,37 +137,35 @@ uint32_t RecordPeers::getPeers(std::vector< PeerInfo >& outPeers) const
 int32_t RecordPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
 	int32_t result = m_peers->receive(data, size, outFromHandle);
-	if (result <= 0)
-		return result;
+	if (result > 0)
+	{
+		Writer w(m_stream);
+		
+		w << uint8_t(0x01);
+		w << uint32_t(m_timer.getElapsedTime() * 1000.0f);
 
-	Writer w(m_stream);
-	
-	w << uint8_t(0x01);
-	w << uint32_t(m_timer.getElapsedTime() * 1000.0f);
+		w << outFromHandle;
+		w << result;
 
-	w << outFromHandle;
-	w << result;
-	w.write(data, 1, result);
-
+		w.write(data, 1, result);
+	}
 	return result;
 }
 
 bool RecordPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
 {
 	bool result = m_peers->send(handle, data, size, reliable);
-	if (!result)
-		return false;
 
 	Writer w(m_stream);
 
-	w << uint8_t(0x02);
+	w << uint8_t(result ? 0x02 : 0x03);
 	w << uint32_t(m_timer.getElapsedTime() * 1000.0f);
 
 	w << handle;
 	w << size;
 	w.write(data, 1, size);
 
-	return true;
+	return result;
 }
 
 	}

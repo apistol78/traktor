@@ -1,5 +1,8 @@
 #include <limits>
 #include "Core/Math/Const.h"
+#include "Core/Reflection/Reflection.h"
+#include "Core/Reflection/RfmArray.h"
+#include "Core/Reflection/RfmObject.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Editor/IEditor.h"
@@ -71,9 +74,37 @@ bool DefaultEntityEditor::removeChildEntity(EntityAdapter* childEntityAdapter) c
 	world::EntityData* entityData = m_entityAdapter->getEntityData();
 	world::EntityData* childEntityData = childEntityAdapter->getEntityData();
 
-	if (world::GroupEntityData* groupEntityData = dynamic_type_cast< world::GroupEntityData* >(entityData))
+	Ref< Reflection > r = Reflection::create(entityData);
+	T_ASSERT (r);
+
+	uint32_t removedCount = 0;
+	for (uint32_t j = 0; j < r->getMemberCount(); ++j)
 	{
-		groupEntityData->removeEntityData(childEntityData);
+		RfmObject* ro = dynamic_type_cast< RfmObject* >(r->getMember(j));
+		if (ro != 0 && ro->get() == childEntityData)
+		{
+			ro->set(0);
+			removedCount++;
+		}
+
+		RfmArray* ra = dynamic_type_cast< RfmArray* >(r->getMember(j));
+		if (ra != 0)
+		{
+			for (uint32_t k = 0; k < ra->getMemberCount(); ++k)
+			{
+				RfmObject* ro = dynamic_type_cast< RfmObject* >(ra->getMember(k));
+				if (ro != 0 && ro->get() == childEntityData)
+				{
+					ra->removeMember(ro);
+					removedCount++;
+				}
+			}
+		}
+	}
+
+	if (removedCount > 0)
+	{
+		r->apply(entityData);
 		return true;
 	}
 

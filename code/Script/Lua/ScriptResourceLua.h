@@ -1,7 +1,7 @@
 #ifndef traktor_script_ScriptResourceLua_H
 #define traktor_script_ScriptResourceLua_H
 
-#include "Core/Containers/AlignedVector.h"
+#include "Core/Misc/AutoPtr.h"
 #include "Script/IScriptResource.h"
 #include "Script/Types.h"
 
@@ -25,20 +25,15 @@ class T_DLLCLASS ScriptResourceLua : public IScriptResource
 public:
 	ScriptResourceLua();
 
-	ScriptResourceLua(const std::string& fileName, const std::string& script, const source_map_t& map);
-
-	const std::string& getFileName() const;
-
-	const std::string& getScript() const;
-
-	const source_map_t& getMap() const;
-
 	virtual void serialize(ISerializer& s);
 
 private:
+	friend class ScriptManagerLua;
+
 	std::string m_fileName;
-	std::string m_script;
 	source_map_t m_map;
+	uint32_t m_bufferSize;
+	AutoArrayPtr< uint8_t > m_buffer;
 };
 
 	}

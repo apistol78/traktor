@@ -279,10 +279,58 @@ Vector4 BoxedQuaternion::getAxisAngle() const
 	return m_value.toAxisAngle();
 }
 
+Quaternion BoxedQuaternion::fromEulerAngles(float head, float pitch, float bank)
+{
+	return Quaternion::fromEulerAngles(head, pitch, bank);
+}
+
+Quaternion BoxedQuaternion::fromAxisAngle(const Vector4& axisAngle)
+{
+	return Quaternion::fromAxisAngle(axisAngle);
+}
+
 std::wstring BoxedQuaternion::toString() const
 {
 	StringOutputStream ss;
 	ss << m_value.e.x() << L", " << m_value.e.y() << L", " << m_value.e.z() << L", " << m_value.e.w();
+	return ss.str();
+}
+
+T_IMPLEMENT_RTTI_CLASS(L"traktor.Plane", BoxedPlane, Boxed)
+
+BoxedPlane::BoxedPlane()
+{
+}
+
+BoxedPlane::BoxedPlane(const Plane& value)
+:	m_value(value)
+{
+}
+
+BoxedPlane::BoxedPlane(const Vector4& normal, float distance)
+:	m_value(normal, Scalar(distance))
+{
+}
+
+BoxedPlane::BoxedPlane(const Vector4& normal, const Vector4& pointInPlane)
+:	m_value(normal, pointInPlane)
+{
+}
+
+BoxedPlane::BoxedPlane(const Vector4& a, const Vector4& b, const Vector4& c)
+:	m_value(a, b, c)
+{
+}
+
+BoxedPlane::BoxedPlane(float a, float b, float c, float d)
+:	m_value(a, b, c, d)
+{
+}
+
+std::wstring BoxedPlane::toString() const
+{
+	StringOutputStream ss;
+	ss << m_value.normal().x() << L", " << m_value.normal().y() << L", " << m_value.normal().z() << L", " << m_value.distance();
 	return ss.str();
 }
 
@@ -325,6 +373,21 @@ Vector4 BoxedTransform::axisY() const
 Vector4 BoxedTransform::axisZ() const
 {
 	return m_value.axisZ();
+}
+
+Plane BoxedTransform::planeX() const
+{
+	return Plane(m_value.axisX(), m_value.translation());
+}
+
+Plane BoxedTransform::planeY() const
+{
+	return Plane(m_value.axisY(), m_value.translation());
+}
+
+Plane BoxedTransform::planeZ() const
+{
+	return Plane(m_value.axisZ(), m_value.translation());
 }
 
 Transform BoxedTransform::inverse() const
@@ -593,7 +656,24 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedQuaternion->addMethod("getEulerAngles", &BoxedQuaternion::getEulerAngles);
 	classBoxedQuaternion->addMethod("getAxisAngle", &BoxedQuaternion::getAxisAngle);
 	classBoxedQuaternion->addStaticMethod("identity", &BoxedQuaternion::identity);
+	classBoxedQuaternion->addStaticMethod("fromEulerAngles", &BoxedQuaternion::fromEulerAngles);
+	classBoxedQuaternion->addStaticMethod("fromAxisAngle", &BoxedQuaternion::fromAxisAngle);
 	scriptManager->registerClass(classBoxedQuaternion);
+
+	Ref< AutoScriptClass< BoxedPlane > > classBoxedPlane = new AutoScriptClass< BoxedPlane >();
+	classBoxedPlane->addConstructor();
+	classBoxedPlane->addConstructor< const Plane& >();
+	classBoxedPlane->addConstructor< const Vector4&, float >();
+	classBoxedPlane->addConstructor< const Vector4&, const Vector4& >();
+	classBoxedPlane->addConstructor< const Vector4&, const Vector4&, const Vector4& >();
+	classBoxedPlane->addConstructor< float, float, float, float >();
+	classBoxedPlane->addMethod("setNormal", &BoxedPlane::setNormal);
+	classBoxedPlane->addMethod("setDistance", &BoxedPlane::setDistance);
+	classBoxedPlane->addMethod("normal", &BoxedPlane::normal);
+	classBoxedPlane->addMethod("distance", &BoxedPlane::distance);
+	classBoxedPlane->addMethod("distanceToPoint", &BoxedPlane::distanceToPoint);
+	classBoxedPlane->addMethod("project", &BoxedPlane::project);
+	scriptManager->registerClass(classBoxedPlane);
 	
 	Ref< AutoScriptClass< BoxedTransform > > classBoxedTransform = new AutoScriptClass< BoxedTransform >();
 	classBoxedTransform->addConstructor();
@@ -603,6 +683,9 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedTransform->addMethod("axisX", &BoxedTransform::axisX);
 	classBoxedTransform->addMethod("axisY", &BoxedTransform::axisY);
 	classBoxedTransform->addMethod("axisZ", &BoxedTransform::axisZ);
+	classBoxedTransform->addMethod("planeX", &BoxedTransform::planeX);
+	classBoxedTransform->addMethod("planeY", &BoxedTransform::planeY);
+	classBoxedTransform->addMethod("planeZ", &BoxedTransform::planeZ);
 	classBoxedTransform->addMethod("inverse", &BoxedTransform::inverse);
 	classBoxedTransform->addMethod("concat", &BoxedTransform::concat);
 	classBoxedTransform->addMethod("transform", &BoxedTransform::transform);

@@ -25,7 +25,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.AudioServer", AudioServer, IAudioServer)
 
 AudioServer::AudioServer()
-:	m_soundMuted(false)
+:	m_autoMute(true)
+,	m_soundMuted(false)
 ,	m_soundMutedVolume(1.0f)
 {
 }
@@ -75,6 +76,7 @@ bool AudioServer::create(const PropertyGroup* settings)
 
 	// Set master volume.
 	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
+	m_autoMute = settings->getProperty< PropertyBoolean >(L"Audio.AutoMute", true);
 
 	// Set category volumes.
 	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");
@@ -134,35 +136,38 @@ void AudioServer::update(float dT, bool renderViewActive)
 	if (!m_soundSystem || !m_soundPlayer)
 		return;
 
-	if (!renderViewActive)
+	if (m_autoMute)
 	{
-		// Should we become muted?
-		if (!m_soundMuted)
+		if (!renderViewActive)
 		{
-			T_DEBUG(L"Audio server muted; application inactive");
-			m_soundMutedVolume = m_soundSystem->getVolume();
-			m_soundMuted = true;
+			// Should we become muted?
+			if (!m_soundMuted)
+			{
+				T_DEBUG(L"Audio server muted; application inactive");
+				m_soundMutedVolume = m_soundSystem->getVolume();
+				m_soundMuted = true;
+			}
+
+			// Fade down volume until zero.
+			float volume = m_soundSystem->getVolume();
+			volume = std::max(volume - dT, 0.0f);
+			m_soundSystem->setVolume(volume);
 		}
-
-		// Fade down volume until zero.
-		float volume = m_soundSystem->getVolume();
-		volume = std::max(volume - dT, 0.0f);
-		m_soundSystem->setVolume(volume);
-	}
-	// Fade up volume until "un-muted".
-	else if (m_soundMuted)
-	{
-		float volume = m_soundSystem->getVolume();
-
-		volume += dT;
-		if (volume >= m_soundMutedVolume)
+		// Fade up volume until "un-muted".
+		else if (m_soundMuted)
 		{
-			T_DEBUG(L"Audio server un-muted; application active");
-			volume = m_soundMutedVolume;
-			m_soundMuted = false;
-		}
+			float volume = m_soundSystem->getVolume();
 
-		m_soundSystem->setVolume(volume);
+			volume += dT;
+			if (volume >= m_soundMutedVolume)
+			{
+				T_DEBUG(L"Audio server un-muted; application active");
+				volume = m_soundMutedVolume;
+				m_soundMuted = false;
+			}
+
+			m_soundSystem->setVolume(volume);
+		}
 	}
 
 	// Update sound player.
@@ -194,6 +199,7 @@ int32_t AudioServer::reconfigure(const PropertyGroup* settings)
 
 	// Set master volume.
 	m_soundSystem->setVolume(settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f));
+	m_autoMute = settings->getProperty< PropertyBoolean >(L"Audio.AutoMute", true);
 
 	// Set category volumes.
 	Ref< const PropertyGroup > volumes = settings->getProperty< PropertyGroup >(L"Audio.Volumes");

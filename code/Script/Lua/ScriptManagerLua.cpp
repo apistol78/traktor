@@ -1,3 +1,4 @@
+#include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -243,7 +244,50 @@ void ScriptManagerLua::registerClass(IScriptClass* scriptClass)
 
 Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, const std::wstring& script, const source_map_t* map, IErrorCallback* errorCallback) const
 {
-	return new ScriptResourceLua(wstombs(fileName), wstombs(script), map ? *map : source_map_t());
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	CHECK_LUA_STACK(m_luaState, 0);
+
+	std::string metaFileName = "@" + wstombs(Utf8Encoding(), fileName);
+	std::string text = wstombs(Utf8Encoding(), script);
+
+	int32_t result = luaL_loadbuffer(
+		m_luaState,
+		text.c_str(),
+		text.length(),
+		metaFileName.c_str()
+	);
+	if (result != 0)
+	{
+		log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
+		lua_pop(m_luaState, 1);
+		return 0;
+	}
+
+	DynamicMemoryStream stream(false, true);
+
+	result = lua_dump(m_luaState, &luaDumpWriter, reinterpret_cast< void* >(&stream));
+	if (result != 0)
+	{
+		log::error << L"LUA dump error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
+		lua_pop(m_luaState, 1);
+		return 0;
+	}
+
+	lua_pop(m_luaState, 1);
+
+	const std::vector< uint8_t >& buffer = stream.getBuffer();
+	T_ASSERT (!buffer.empty());
+
+	Ref< ScriptResourceLua > resource = new ScriptResourceLua();
+
+	resource->m_fileName = wstombs(fileName);
+	resource->m_map = map ? *map : source_map_t();
+	resource->m_bufferSize = uint32_t(buffer.size());
+	resource->m_buffer.reset(new uint8_t [buffer.size()]);
+
+	std::memcpy(resource->m_buffer.ptr(), &buffer[0], buffer.size());
+
+	return resource;
 }
 
 Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scriptResource, const IScriptContext* contextPrototype)
@@ -268,15 +312,8 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	lua_pop(m_luaState, 1);
 
 	// Load script into environment.
-	std::string fileName = "@" + scriptResourceLua->getFileName();
-	const std::string& text = scriptResourceLua->getScript();
-
-	int32_t result = luaL_loadbuffer(
-		m_luaState,
-		text.c_str(),
-		text.length(),
-		fileName.c_str()
-	);
+	std::string fileName = "@" + scriptResourceLua->m_fileName;
+	int result = lua_load(m_luaState, &luaDumpReader, (void*)scriptResourceLua, fileName.c_str());
 
 	if (result != 0)
 	{
@@ -290,7 +327,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 		this,
 		m_luaState,
 		environmentRef,
-		scriptResourceLua->getMap()
+		scriptResourceLua->m_map
 	);
 
 	// Call script.
@@ -811,6 +848,19 @@ int ScriptManagerLua::luaPanic(lua_State* luaState)
 {
 	log::error << L"LUA PANIC; Unrecoverable error \"" << mbstows(lua_tostring(luaState, lua_gettop(luaState))) << L"\"" << Endl;
 	return 0;
+}
+
+int ScriptManagerLua::luaDumpWriter(lua_State* luaState, const void* p, size_t sz, void* ud)
+{
+	IStream* stream = reinterpret_cast< IStream* >(ud);
+	return stream->write(p, sz) == sz ? 0 : 1;
+}
+
+const char* ScriptManagerLua::luaDumpReader(lua_State* luaState, void* data, size_t* size)
+{
+	ScriptResourceLua* resource = reinterpret_cast< ScriptResourceLua* >(data);
+	*size = size_t(resource->m_bufferSize);
+	return reinterpret_cast< const char* >(resource->m_buffer.c_ptr());
 }
 
 	}
