@@ -181,6 +181,19 @@ Ref< QueryResult > physics_PhysicsManager_queryRay(
 		return 0;
 }
 
+bool physics_PhysicsManager_queryShadowRay(
+	physics::PhysicsManager* this_,
+	const Vector4& at,
+	const Vector4& direction,
+	float maxLength,
+	uint32_t group,
+	uint32_t queryTypes,
+	const physics::Body* ignoreBody
+)
+{
+	return this_->queryShadowRay(at, direction, maxLength, group, queryTypes, ignoreBody);
+}
+
 RefArray< physics::Body > physics_PhysicsManager_querySphere(
 	physics::PhysicsManager* this_,
 	const Vector4& at,
@@ -273,6 +286,7 @@ void registerPhysicsClasses(script::IScriptManager* scriptManager)
 	classPhysicsManager->addMethod("getBodies", &physics::PhysicsManager::getBodies);
 	classPhysicsManager->addMethod("queryPoint", &physics_PhysicsManager_queryPoint);
 	classPhysicsManager->addMethod("queryRay", &physics_PhysicsManager_queryRay);
+	classPhysicsManager->addMethod("queryShadowRay", &physics_PhysicsManager_queryShadowRay);
 	classPhysicsManager->addMethod("querySphere", &physics_PhysicsManager_querySphere);
 	classPhysicsManager->addMethod("querySweep", &physics_PhysicsManager_querySweep_1);
 	classPhysicsManager->addMethod("querySweep", &physics_PhysicsManager_querySweep_2);
