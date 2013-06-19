@@ -501,7 +501,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	Ref< ui::TabPage > tabPageLog = new ui::TabPage();
 	tabPageLog->create(m_tabOutput, i18n::Text(L"TITLE_LOG"), new ui::FloodLayout());
 
-	m_logView = new LogView();
+	m_logView = new LogView(this);
 	m_logView->create(tabPageLog);
 	m_logView->setText(i18n::Text(L"TITLE_LOG"));
 	if (!m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.LogVisible"))
@@ -803,7 +803,7 @@ Ref< ILogTarget > EditorForm::createLogTarget(const std::wstring& title)
 	if (!tabPageLog->create(m_tabOutput, title, new ui::FloodLayout()))
 		return 0;
 
-	Ref< LogView > logView = new LogView();
+	Ref< LogView > logView = new LogView(this);
 	logView->create(tabPageLog);
 	logView->setText(title);
 

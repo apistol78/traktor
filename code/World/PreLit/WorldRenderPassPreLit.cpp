@@ -266,6 +266,8 @@ void WorldRenderPassPreLit::setFogProgramParameters(render::ProgramParameters* p
 		programParams->setVectorParameter(s_handleFogDistanceAndRange, Vector4(m_fogDistance, m_fogRange, 1.0f / m_fogDistance, 1.0f / m_fogRange));
 		programParams->setVectorParameter(s_handleFogColor, m_fogColor);
 	}
+	else
+		programParams->setVectorParameter(s_handleFogDistanceAndRange, Vector4::zero());
 }
 
 	}

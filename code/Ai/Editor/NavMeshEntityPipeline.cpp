@@ -7,7 +7,7 @@ namespace traktor
 	namespace ai
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshEntityPipeline", 0, NavMeshEntityPipeline, world::EntityPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshEntityPipeline", 1, NavMeshEntityPipeline, world::EntityPipeline)
 
 TypeInfoSet NavMeshEntityPipeline::getAssetTypes() const
 {

@@ -37,7 +37,7 @@ bool Guid::create(const std::wstring& s)
 
 	m_valid = false;
 
-	if (s.length() != 38)
+	if (s.length() < 38)
 		return false;
 
 	if (s[0] != L'{' || s[9] != L'-' || s[14] != L'-' || s[19] != L'-' || s[24] != L'-' || s[37] != L'}')

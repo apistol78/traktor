@@ -41,7 +41,6 @@ public:
 
 private:
 	SceneEditorContext* m_context;
-	RefArray< EntityAdapter > m_entityStack;
 };
 
 	}

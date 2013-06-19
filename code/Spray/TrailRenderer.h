@@ -52,11 +52,13 @@ public:
 
 	void render(
 		render::Shader* shader,
-		const CircularVector< Vector4, 16 >& points,
+		const CircularVector< Vector4, 32 >& points,
 		const Vector4& cameraPosition,
 		const Plane& cameraPlane,
 		float width,
-		float lengthTreshold
+		float lengthTreshold,
+		float time,
+		float age
 	);
 
 	void flush(
@@ -69,6 +71,7 @@ private:
 	{
 		render::Shader* shader;
 		uint32_t points;
+		Vector4 timeAndAge;
 	};
 
 	Ref< render::VertexBuffer > m_vertexBuffers[8];

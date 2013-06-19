@@ -65,13 +65,7 @@ bool ScenePipeline::buildDependencies(
 
 	const RefArray< world::LayerEntityData >& layers = sceneAsset->getLayers();
 	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
-	{
-		if (!(*i))
-			continue;
-
-		if ((*i)->isInclude() || m_targetEditor)
-			pipelineDepends->addDependency(*i);
-	}
+		pipelineDepends->addDependency(*i);
 
 	pipelineDepends->addDependency(sceneAsset->getControllerData());
 

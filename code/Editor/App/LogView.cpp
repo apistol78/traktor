@@ -1,5 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Database/Database.h"
+#include "Database/Instance.h"
+#include "Editor/IEditor.h"
 #include "Editor/App/LogView.h"
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
@@ -12,7 +15,6 @@
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
-#include "Ui/Custom/LogList/LogList.h"
 
 // Resources
 #include "Resources/LogFilter.h"
@@ -45,6 +47,11 @@ private:
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.LogView", LogView, ui::Container)
+
+LogView::LogView(IEditor* editor)
+:	m_editor(editor)
+{
+}
 
 bool LogView::create(ui::Widget* parent)
 {
@@ -85,7 +92,7 @@ bool LogView::create(ui::Widget* parent)
 	m_toolFilter->addClickEventHandler(ui::createMethodHandler(this, &LogView::eventToolClick));
 
 	m_log = new ui::custom::LogList();
-	m_log->create(this, ui::WsNone);
+	m_log->create(this, ui::WsNone, this);
 	m_log->addButtonDownEventHandler(ui::createMethodHandler(this, &LogView::eventButtonDown));
 
 	m_popup = new ui::PopupMenu();
@@ -139,6 +146,16 @@ void LogView::eventButtonDown(ui::Event* event)
 		m_log->copyLog(m_log->getFilter());
 	else if (selected->getCommand() == L"Editor.Log.Clear")
 		m_log->removeAll();
+}
+
+bool LogView::lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const
+{
+	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(symbolId);
+	if (!instance)
+		return false;
+
+	outSymbol = instance->getPath();
+	return true;
 }
 
 	}

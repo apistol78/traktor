@@ -2,6 +2,7 @@
 #define traktor_editor_LogView_H
 
 #include "Ui/Container.h"
+#include "Ui/Custom/LogList/LogList.h"
 
 namespace traktor
 {
@@ -16,7 +17,6 @@ class PopupMenu;
 		namespace custom
 		{
 
-class LogList;
 class ToolBar;
 class ToolBarButton;
 
@@ -26,11 +26,17 @@ class ToolBarButton;
 	namespace editor
 	{
 
-class LogView : public ui::Container
+class IEditor;
+
+class LogView
+:	public ui::Container
+,	public ui::custom::LogList::ISymbolLookup
 {
 	T_RTTI_CLASS;
 
 public:
+	LogView(IEditor* editor);
+
 	bool create(ui::Widget* parent);
 
 	void destroy();
@@ -38,6 +44,7 @@ public:
 	ILogTarget* getLogTarget() const { return m_logTarget; }
 
 private:
+	IEditor* m_editor;
 	Ref< ui::custom::ToolBarButton > m_toolToggleInfo;
 	Ref< ui::custom::ToolBarButton > m_toolToggleWarning;
 	Ref< ui::custom::ToolBarButton > m_toolToggleError;
@@ -49,6 +56,8 @@ private:
 	void eventToolClick(ui::Event* event);
 
 	void eventButtonDown(ui::Event* event);
+
+	virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const;
 };
 
 	}

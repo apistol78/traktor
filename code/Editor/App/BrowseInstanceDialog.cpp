@@ -1,7 +1,9 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyObject.h"
 #include "Core/Thread/Thread.h"
-#include "Core/Thread/ThreadManager.h"
+#include "Core/Thread/ThreadPool.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -10,18 +12,19 @@
 #include "Editor/App/BrowseInstanceDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
+#include "Ui/FloodLayout.h"
+#include "Ui/HierarchicalState.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
-#include "Ui/FloodLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
 #include "Ui/MethodHandler.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PreviewList/PreviewItem.h"
 #include "Ui/Custom/PreviewList/PreviewItems.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
+#include "Ui/Events/CommandEvent.h"
 
 // Resources
 #include "Resources/Files.h"
@@ -32,6 +35,36 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
+{
+	RefArray< db::Instance > childInstances;
+	group->getChildInstances(childInstances);
+
+	// Does this group contain a valid instance?
+	for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
+	{
+		if (filter->acceptable(*i))
+			return true;
+	}
+
+	RefArray< db::Group > childGroups;
+	group->getChildGroups(childGroups);
+
+	// No instances at this level, check if any child group contains valid instances.
+	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	{
+		if (recursiveIncludeGroup(*i, filter))
+			return true;
+	}
+
+	// No instances found at any level from this group and below.
+	return false;
+}
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseInstanceDialog", BrowseInstanceDialog, ui::ConfigDialog)
 
@@ -96,11 +129,9 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 	}
 
 	// Spawn preview generator thread.
-	m_threadGeneratePreview = ThreadManager::getInstance().create(
-		makeFunctor(this, &BrowseInstanceDialog::threadGeneratePreview),
-		L"Preview generator"
+	m_threadGeneratePreview = ThreadPool::getInstance().spawn(
+		makeFunctor(this, &BrowseInstanceDialog::threadGeneratePreview)
 	);
-	m_threadGeneratePreview->start();
 
 	// Traverse database and filter out items.
 	buildGroupItems(
@@ -110,6 +141,11 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 		filter
 	);
 
+	// Restore last state.
+	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< PropertyObject >(L"Editor.BrowseInstanceTreeState"));
+	if (state)
+		m_treeDatabase->applyState(state);
+
 	return true;
 }
 
@@ -117,12 +153,17 @@ void BrowseInstanceDialog::destroy()
 {
 	if (m_threadGeneratePreview)
 	{
-		m_threadGeneratePreview->stop();
-		ThreadManager::getInstance().destroy(m_threadGeneratePreview);
+		ThreadPool::getInstance().stop(m_threadGeneratePreview);
 		m_threadGeneratePreview = 0;
 	}
 
 	m_previewTasks.clear();
+
+	if (m_settings)
+	{
+		Ref< ui::HierarchicalState > state = m_treeDatabase->captureState();
+		m_settings->setProperty< PropertyObject >(L"Editor.BrowseInstanceTreeState", state);
+	}
 
 	ui::ConfigDialog::destroy();
 }
@@ -130,37 +171,6 @@ void BrowseInstanceDialog::destroy()
 Ref< db::Instance > BrowseInstanceDialog::getInstance()
 {
 	return m_instance;
-}
-
-namespace
-{
-
-	bool recursiveIncludeGroup(db::Group* group, const IBrowseFilter* filter)
-	{
-		RefArray< db::Instance > childInstances;
-		group->getChildInstances(childInstances);
-
-		// Does this group contain a valid instance?
-		for (RefArray< db::Instance >::iterator i = childInstances.begin(); i != childInstances.end(); ++i)
-		{
-			if (filter->acceptable(*i))
-				return true;
-		}
-
-		RefArray< db::Group > childGroups;
-		group->getChildGroups(childGroups);
-
-		// No instances at this level, check if any child group contains valid instances.
-		for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
-		{
-			if (recursiveIncludeGroup(*i, filter))
-				return true;
-		}
-
-		// No instances found at any level from this group and below.
-		return false;
-	}
-
 }
 
 void BrowseInstanceDialog::buildGroupItems(ui::TreeView* treeView, ui::TreeViewItem* parent, db::Group* group, const IBrowseFilter* filter)
