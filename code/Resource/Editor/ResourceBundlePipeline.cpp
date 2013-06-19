@@ -39,6 +39,14 @@ void collectResources(editor::IPipelineBuilder* pipelineBuilder, const editor::I
 	}
 }
 
+struct ResourceTypePred
+{
+	bool operator () (const std::pair< const TypeInfo*, Guid >& lh, const std::pair< const TypeInfo*, Guid >& rh) const
+	{
+		return lh.first < rh.first;
+	}
+};
+
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.editor.ResourceBundlePipeline", 1, ResourceBundlePipeline, editor::IPipeline)
@@ -94,6 +102,10 @@ bool ResourceBundlePipeline::buildOutput(
 	// change of inter-dependencies.
 	collectResources(pipelineBuilder, dependencySet, dependency, resources);
 
+	// Sort bundle resources on type.
+	std::sort(resources.begin(), resources.end(), ResourceTypePred());
+
+#if defined(_DEBUG)
 	log::info << L"Resource bundle; preload resources:" << Endl;
 	log::info << IncreaseIndent;
 
@@ -102,7 +114,7 @@ bool ResourceBundlePipeline::buildOutput(
 		Ref< db::Instance > instance = pipelineBuilder->getOutputDatabase()->getInstance(i->second);
 		if (instance)
 		{
-			if (i->first->getName())
+			if (i->first && i->first->getName())
 				log::info << L"\"" << instance->getPath() << L"\" as " << i->first->getName() << Endl;
 			else
 				log::info << L"\"" << instance->getPath() << L"\"" << Endl;
@@ -110,6 +122,7 @@ bool ResourceBundlePipeline::buildOutput(
 	}
 
 	log::info << DecreaseIndent;
+#endif
 
 	Ref< ResourceBundle > bundle = new ResourceBundle(resources, bundleAsset->persistent());
 

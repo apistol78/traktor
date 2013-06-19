@@ -31,16 +31,18 @@ class NewInstanceDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	NewInstanceDialog(const PropertyGroup* settings);
+	NewInstanceDialog(PropertyGroup* settings);
 
 	bool create(ui::Widget* parent);
+
+	virtual void destroy();
 
 	const TypeInfo* getType() const;
 
 	const std::wstring& getInstanceName() const;
 
 private:
-	Ref< const PropertyGroup > m_settings;
+	Ref< PropertyGroup > m_settings;
 	Ref< ui::TreeView > m_categoryTree;
 	Ref< ui::custom::PreviewList > m_typeList;
 	Ref< ui::Edit > m_editInstanceName;

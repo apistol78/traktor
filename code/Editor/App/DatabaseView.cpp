@@ -401,7 +401,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 		}
 		else if (command == L"Editor.Database.ReplaceInstance")	// Replace instance
 		{
-			BrowseTypeDialog browseTypeDlg(m_editor->getSettings());
+			BrowseTypeDialog browseTypeDlg(m_editor->checkoutGlobalSettings());
 			browseTypeDlg.create(this, &type_of< ISerializable >(), true, true);
 
 			if (browseTypeDlg.showModal() == ui::DrOk)
@@ -561,7 +561,7 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 	{
 		if (command == L"Editor.Database.NewInstance")	// New instance...
 		{
-			NewInstanceDialog newInstanceDlg(m_editor->getSettings());
+			NewInstanceDialog newInstanceDlg(m_editor->checkoutGlobalSettings());
 			newInstanceDlg.create(this);
 
 			if (newInstanceDlg.showModal() == ui::DrOk)

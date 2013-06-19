@@ -15,6 +15,9 @@
 
 namespace traktor
 {
+
+class Guid;
+
 	namespace ui
 	{
 
@@ -40,9 +43,14 @@ public:
 		LvDebug		= 1 << 3
 	};
 
+	struct ISymbolLookup
+	{
+		virtual bool lookupLogSymbol(const Guid& symbolId, std::wstring& outSymbol) const = 0;
+	};
+
 	LogList();
 
-	bool create(Widget* parent, int style);
+	bool create(Widget* parent, int style, const ISymbolLookup* lookup);
 
 	void add(LogLevel level, const std::wstring& text);
 
@@ -66,6 +74,7 @@ private:
 
 	typedef std::list< Entry > log_list_t;
 
+	const ISymbolLookup* m_lookup;
 	Ref< ScrollBar > m_scrollBar;
 	Ref< Bitmap > m_icons;
 	log_list_t m_pending;

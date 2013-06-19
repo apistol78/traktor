@@ -1,3 +1,4 @@
+#include "Core/Guid.h"
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
@@ -28,13 +29,14 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.LogList", LogList, Widget)
 
 LogList::LogList()
-:	m_itemHeight(0)
+:	m_lookup(0)
+,	m_itemHeight(0)
 ,	m_filter(LvInfo | LvWarning | LvError)
 ,	m_nextThreadIndex(0)
 {
 }
 
-bool LogList::create(Widget* parent, int style)
+bool LogList::create(Widget* parent, int style, const ISymbolLookup* lookup)
 {
 	if (!Widget::create(parent, style | WsDoubleBuffer))
 		return false;
@@ -55,6 +57,8 @@ bool LogList::create(Widget* parent, int style)
 	m_itemHeight = abs(getFont().getSize()) + 4;
 	m_itemHeight = std::max< int >(m_itemHeight, m_icons->getSize().cy);
 
+	m_lookup = lookup;
+
 	startTimer(100, 0);
 
 	return true;
@@ -62,17 +66,43 @@ bool LogList::create(Widget* parent, int style)
 
 void LogList::add(LogLevel level, const std::wstring& text)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
-	
 	Entry e;
 	e.threadId = ThreadManager::getInstance().getCurrentThread()->id();
 	e.logLevel = level;
 	e.logText = text;
 
-	m_pending.push_back(e);
+	// Parse embedded guid;s in log.
+	if (m_lookup)
+	{
+		size_t i = 0;
+		for (;;)
+		{
+			size_t j = e.logText.find(L'{', i);
+			if (j == std::wstring::npos)
+				break;
 
-	if (m_threadIndices.find(e.threadId) == m_threadIndices.end())
-		m_threadIndices.insert(std::make_pair(e.threadId, m_nextThreadIndex++));
+			Guid id(e.logText.substr(j));
+			if (id.isValid())
+			{
+				std::wstring symbol;
+				if (m_lookup->lookupLogSymbol(id, symbol))
+				{
+					e.logText = e.logText.substr(0, j) + symbol + e.logText.substr(j + 38);
+					continue;
+				}
+			}
+
+			i = j + 1;
+		}
+	}
+
+	// Add to pending list; coalesced before control is redrawn.
+	{
+		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_pendingLock);
+		m_pending.push_back(e);
+		if (m_threadIndices.find(e.threadId) == m_threadIndices.end())
+			m_threadIndices.insert(std::make_pair(e.threadId, m_nextThreadIndex++));
+	}
 }
 
 void LogList::removeAll()

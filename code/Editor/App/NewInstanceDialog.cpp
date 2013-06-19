@@ -1,20 +1,23 @@
 #include "Core/Misc/Split.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyObject.h"
 #include "Editor/App/NewInstanceDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
 #include "Ui/Edit.h"
+#include "Ui/HierarchicalState.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/PreviewList/PreviewItem.h"
 #include "Ui/Custom/PreviewList/PreviewItems.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
+#include "Ui/Events/CommandEvent.h"
 
 // Resources
 #include "Resources/Files.h"
@@ -43,7 +46,7 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.NewInstanceDialog", NewInstanceDialog, ui::ConfigDialog)
 
-NewInstanceDialog::NewInstanceDialog(const PropertyGroup* settings)
+NewInstanceDialog::NewInstanceDialog(PropertyGroup* settings)
 :	m_settings(settings)
 ,	m_type(0)
 {
@@ -144,7 +147,23 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	groupRoot->expand();
 	m_categoryTree->update();
 
+	// Restore last state.
+	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< PropertyObject >(L"Editor.NewInstanceTreeState"));
+	if (state)
+		m_categoryTree->applyState(state);
+
 	return true;
+}
+
+void NewInstanceDialog::destroy()
+{
+	if (m_settings)
+	{
+		Ref< ui::HierarchicalState > state = m_categoryTree->captureState();
+		m_settings->setProperty< PropertyObject >(L"Editor.NewInstanceTreeState", state);
+	}
+
+	ui::ConfigDialog::destroy();
 }
 
 const TypeInfo* NewInstanceDialog::getType() const

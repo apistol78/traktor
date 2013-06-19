@@ -116,7 +116,14 @@ void EffectLayerInstance::render(
 
 Aabb3 EffectLayerInstance::getBoundingBox() const
 {
-	return m_emitterInstance ? m_emitterInstance->getBoundingBox() : Aabb3();
+	Aabb3 boundingBox;
+
+	if (m_emitterInstance)
+		boundingBox.contain(m_emitterInstance->getBoundingBox());
+	if (m_trailInstance)
+		boundingBox.contain(m_trailInstance->getBoundingBox());
+
+	return boundingBox;
 }
 
 	}

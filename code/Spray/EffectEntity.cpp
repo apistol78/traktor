@@ -5,6 +5,7 @@
 #include "Spray/EffectInstance.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/Emitter.h"
+#include "Spray/Trail.h"
 
 namespace traktor
 {
@@ -85,12 +86,20 @@ void EffectEntity::update(const world::UpdateParams& update)
 			for (RefArray< EffectLayer >::const_iterator i = layers.begin(); i != layers.end(); ++i)
 			{
 				const Emitter* emitter = (*i)->getEmitter();
-				if (!emitter)
-					continue;
+				if (emitter)
+				{
+					const resource::Proxy< render::Shader >& emitterShader = emitter->getShader();
+					if (emitterShader)
+						emitterShader->getTechniques(m_techniques);
+				}
 
-				const resource::Proxy< render::Shader >& shader = emitter->getShader();
-				if (shader)
-					shader->getTechniques(m_techniques);
+				const Trail* trail = (*i)->getTrail();
+				if (trail)
+				{
+					const resource::Proxy< render::Shader >& trailShader = trail->getShader();
+					if (trailShader)
+						trailShader->getTechniques(m_techniques);
+				}
 			}
 		}
 		m_effect.consume();

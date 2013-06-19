@@ -1,18 +1,21 @@
 #include "Core/Misc/Split.h"
 #include "Core/Settings/PropertyInteger.h"
+#include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyObject.h"
 #include "Editor/App/BrowseTypeDialog.h"
 #include "I18N/Text.h"
 #include "Ui/Bitmap.h"
-#include "Ui/Static.h"
+#include "Ui/HierarchicalState.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/Static.h"
 #include "Ui/TableLayout.h"
 #include "Ui/TreeView.h"
 #include "Ui/TreeViewItem.h"
-#include "Ui/Events/CommandEvent.h"
 #include "Ui/Custom/Splitter.h"
 #include "Ui/Custom/PreviewList/PreviewItem.h"
 #include "Ui/Custom/PreviewList/PreviewItems.h"
 #include "Ui/Custom/PreviewList/PreviewList.h"
+#include "Ui/Events/CommandEvent.h"
 
 // Resources
 #include "Resources/Files.h"
@@ -41,7 +44,7 @@ public:
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.BrowseTypeDialog", BrowseTypeDialog, ui::ConfigDialog)
 
-BrowseTypeDialog::BrowseTypeDialog(const PropertyGroup* settings)
+BrowseTypeDialog::BrowseTypeDialog(PropertyGroup* settings)
 :	m_settings(settings)
 ,	m_type(0)
 {
@@ -145,7 +148,23 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 	groupRoot->expand();
 	m_categoryTree->update();
 
+	// Restore last state.
+	Ref< ui::HierarchicalState > state = dynamic_type_cast< ui::HierarchicalState* >(m_settings->getProperty< PropertyObject >(L"Editor.BrowseTypeTreeState"));
+	if (state)
+		m_categoryTree->applyState(state);
+
 	return true;
+}
+
+void BrowseTypeDialog::destroy()
+{
+	if (m_settings)
+	{
+		Ref< ui::HierarchicalState > state = m_categoryTree->captureState();
+		m_settings->setProperty< PropertyObject >(L"Editor.BrowseTypeTreeState", state);
+	}
+
+	ui::ConfigDialog::destroy();
 }
 
 const TypeInfo* BrowseTypeDialog::getSelectedType() const

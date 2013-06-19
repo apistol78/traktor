@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Render/Shader.h"
 #include "Spray/TrailInstance.h"
 #include "Spray/TrailRenderer.h"
@@ -19,51 +20,84 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.TrailInstance", TrailInstance, Object)
 TrailInstance::TrailInstance(
 	const resource::Proxy< render::Shader >& shader,
 	float width,
+	float age,
 	float lengthThreshold,
 	float breakThreshold
 )
 :	m_shader(shader)
 ,	m_width(width)
+,	m_age(age)
 ,	m_lengthThreshold(lengthThreshold)
 ,	m_breakThreshold(breakThreshold)
 ,	m_last(Vector4::zero())
 ,	m_time(Vector4::zero())
-,	m_count(Vector4::zero())
 {
-	m_points.push_back(Vector4::zero());
 }
 
 void TrailInstance::update(Context& context, const Transform& transform, bool enable)
 {
-	while (!m_points.empty())
+	if (!m_points.empty())
 	{
 		Scalar w = (m_time - m_points.front()).w();
-		if (w > 1.0f)
+		if (w >= m_age)
 			m_points.pop_front();
-		else
-			break;
 	}
 
 	if (enable)
 	{
 		Vector4 position = transform.translation().xyz1();
 
-		Scalar ln = (position - m_last).length2();
-		if (ln >= m_lengthThreshold * m_lengthThreshold)
+		if (m_points.empty())
 		{
-			if (m_breakThreshold > FUZZY_EPSILON && ln >= m_breakThreshold * m_breakThreshold)
-				m_points.clear();
-
-			m_points.push_back(position.xyz0() + m_count);
-			
 			m_last = position;
-			m_count += Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+			m_points.push_back(position.xyz0() + m_time);
+			m_boundingBox.contain(position);
+		}
+
+		if (m_breakThreshold > FUZZY_EPSILON)
+		{
+			Scalar ln = (position - m_last).length2();
+			if (ln >= m_lengthThreshold * m_lengthThreshold)
+			{
+				if (ln >= m_breakThreshold * m_breakThreshold)
+					m_points.clear();
+
+				m_points.push_back(position.xyz0() + m_time);
+				m_boundingBox.contain(position);
+
+				m_last = position;
+			}
+			else
+				m_points.back() = position.xyz0() + m_time;
+
+			m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
 		}
 		else
-			m_points.back() = position;
-	}
+		{
+			Vector4 direction = (position - m_last).xyz0();
+			Scalar ln = direction.length();
 
-	m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
+			Vector4 step = direction * Scalar(m_lengthThreshold) / ln;
+
+			int32_t nsteps = int32_t(ln / m_lengthThreshold);
+			for (int32_t i = 0; i < nsteps; ++i)
+			{
+				m_last += step; 
+
+				m_points.push_back(m_last.xyz0() + m_time - Vector4(0.0f, 0.0f, 0.0f, context.deltaTime * float(nsteps - i - 1) / nsteps));
+				m_boundingBox.contain(m_last);
+
+				ln -= Scalar(m_lengthThreshold);
+			}
+
+			if (ln > FUZZY_EPSILON)
+				m_points.back() = position.xyz0() + m_time;
+
+			m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
+		}
+	}
+	else
+		m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
 }
 
 void TrailInstance::render(TrailRenderer* trailRenderer, const Transform& transform, const Vector4& cameraPosition, const Plane& cameraPlane)
@@ -74,7 +108,9 @@ void TrailInstance::render(TrailRenderer* trailRenderer, const Transform& transf
 		cameraPosition,
 		cameraPlane,
 		m_width,
-		m_lengthThreshold
+		m_lengthThreshold,
+		m_time.w(),
+		m_age
 	);
 }
 

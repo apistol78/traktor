@@ -16,13 +16,7 @@ EntityRendererCache::EntityRendererCache(SceneEditorContext* context)
 
 EntityAdapter* EntityRendererCache::begin(const world::Entity* entity)
 {
-	EntityAdapter* parentRenderAdapter = 0;
-
-	if (!m_entityStack.empty())
-		parentRenderAdapter = m_entityStack.back();
-	else
-		parentRenderAdapter = m_context->findAdapterFromEntity(entity);
-
+	EntityAdapter* parentRenderAdapter = m_context->findAdapterFromEntity(entity);
 	if (parentRenderAdapter)
 	{
 		EntityAdapter* currentEntityAdapter = 0;
@@ -32,7 +26,6 @@ EntityAdapter* EntityRendererCache::begin(const world::Entity* entity)
 		else
 			currentEntityAdapter = parentRenderAdapter->findChildAdapterFromEntity(entity);
 
-		m_entityStack.push_back(currentEntityAdapter);
 		return currentEntityAdapter;
 	}
 	else
@@ -41,8 +34,6 @@ EntityAdapter* EntityRendererCache::begin(const world::Entity* entity)
 
 void EntityRendererCache::end()
 {
-	if (!m_entityStack.empty())
-		m_entityStack.pop_back();
 }
 
 	}

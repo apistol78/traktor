@@ -165,7 +165,10 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	Ref< db::Instance > sourceAssetInstance = m_sourceDatabase->getInstance(sourceAssetGuid);
 	if (!sourceAssetInstance)
 	{
-		log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance" << Endl;
+		if (m_currentDependency)
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")" << Endl;
+		else
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; no such instance" << Endl;
 		return;
 	}
 
@@ -173,7 +176,10 @@ void PipelineDependsIncremental::addDependency(const Guid& sourceAssetGuid, uint
 	Ref< ISerializable > sourceAsset = sourceAssetInstance->getObject();
 	if (!sourceAsset)
 	{
-		log::error << L"Unable to add dependency to \"" << sourceAssetInstance->getName() << L"\"; failed to checkout instance" << Endl;
+		if (m_currentDependency)
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance (referenced by \"" << m_currentDependency->sourceInstanceGuid.format() << L"\")" << Endl;
+		else
+			log::error << L"Unable to add dependency to \"" << sourceAssetGuid.format() << L"\"; failed to checkout instance" << Endl;
 		return;
 	}
 

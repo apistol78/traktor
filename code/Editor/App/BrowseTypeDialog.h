@@ -30,14 +30,16 @@ class BrowseTypeDialog : public ui::ConfigDialog
 	T_RTTI_CLASS;
 
 public:
-	BrowseTypeDialog(const PropertyGroup* settings);
+	BrowseTypeDialog(PropertyGroup* settings);
 
 	bool create(ui::Widget* parent, const TypeInfo* base, bool onlyEditable, bool onlyInstantiable);
+
+	virtual void destroy();
 
 	const TypeInfo* getSelectedType() const;
 
 private:
-	Ref< const PropertyGroup > m_settings;
+	Ref< PropertyGroup > m_settings;
 	Ref< ui::TreeView > m_categoryTree;
 	Ref< ui::custom::PreviewList > m_typeList;
 	const TypeInfo* m_type;
