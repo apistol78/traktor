@@ -283,11 +283,11 @@ bool ScriptProcessor::generateFromSource(const Solution* solution, const Project
 	ss << L"\toutput:printSection(" << id << L")" << Endl;
 	ss << L"end" << Endl;
 
-	Ref< script::IScriptResource > scriptResource = m_scriptManager->compile(ss.str(), false, 0);
+	Ref< script::IScriptResource > scriptResource = m_scriptManager->compile(L"", ss.str(), 0, 0);
 	if (!scriptResource)
 		return false;
 
-	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext(scriptResource);
+	Ref< script::IScriptContext > scriptContext = m_scriptManager->createContext(scriptResource, 0);
 	if (!scriptContext)
 		return false;
 

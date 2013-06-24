@@ -81,7 +81,7 @@ void PartitionMeshResource::Part::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"shaderTechnique", shaderTechnique);
 	s >> Member< uint32_t >(L"meshPart", meshPart);
-	s >> MemberAabb(L"boundingBox", boundingBox);
+	s >> MemberAabb3(L"boundingBox", boundingBox);
 }
 
 	}

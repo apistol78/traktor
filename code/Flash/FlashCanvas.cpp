@@ -9,12 +9,12 @@ namespace traktor
 		namespace
 		{
 
-void expandBounds(SwfRect& bounds, avm_number_t x, avm_number_t y)
+void expandBounds(Aabb2& bounds, avm_number_t x, avm_number_t y)
 {
-	bounds.min.x = std::min< float >(bounds.min.x, x);
-	bounds.min.y = std::min< float >(bounds.min.y, y);
-	bounds.max.x = std::max< float >(bounds.max.x, x);
-	bounds.max.y = std::max< float >(bounds.max.y, y);
+	bounds.mn.x = std::min< float >(bounds.mn.x, x);
+	bounds.mn.y = std::min< float >(bounds.mn.y, y);
+	bounds.mx.x = std::max< float >(bounds.mx.x, x);
+	bounds.mx.y = std::max< float >(bounds.mx.y, y);
 }
 
 		}
@@ -42,8 +42,8 @@ int32_t FlashCanvas::getDirtyTag() const
 void FlashCanvas::clear()
 {
 	m_paths.clear();
-	m_bounds.min = Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max());
-	m_bounds.max = Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max());
+	m_bounds.mn = Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max());
+	m_bounds.mx = Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max());
 	m_fillStyles.clear();
 	m_lineStyles.clear();
 	++m_dirtyTag;

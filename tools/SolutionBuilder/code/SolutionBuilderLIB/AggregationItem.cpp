@@ -26,9 +26,8 @@ const std::wstring& AggregationItem::getTargetPath() const
 	return m_targetPath;
 }
 
-bool AggregationItem::serialize(ISerializer& s)
+void AggregationItem::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"sourceFile", m_sourceFile);
 	s >> Member< std::wstring >(L"targetPath", m_targetPath);
-	return true;
 }

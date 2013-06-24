@@ -50,7 +50,7 @@ Vector4 findMinimumQuantizationError(const Vector4& unit)
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BfnTexturePipeline", 1, BfnTexturePipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.BfnTexturePipeline", 4, BfnTexturePipeline, editor::DefaultPipeline)
 
 TypeInfoSet BfnTexturePipeline::getAssetTypes() const
 {
@@ -91,7 +91,7 @@ bool BfnTexturePipeline::buildOutput(
 
 	if (asset->m_bestFitFactorOnly)
 	{
-		const int32_t c_size = 512;
+		const int32_t c_size = 256;
 
 		image = new drawing::Image(drawing::PixelFormat::getR8(), 6 * c_size, c_size);
 		image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
@@ -104,7 +104,7 @@ bool BfnTexturePipeline::buildOutput(
 				float nu = float(u) / (c_size - 1) * 2.0f - 1.0f;
 				Vector4 n = Vector4(nu, 1.0f, nv).normalized();
 				Vector4 qn = findMinimumQuantizationError(n);
-				float qnln = qn.length() + 0.5f / 256.0f;
+				float qnln = qn.length(); // + 0.5f / 256.0f;
 				
 				for (int32_t side = 0; side < 6; ++side)
 					image->setPixel(u + side * c_size, v, Color4f(qnln, qnln, qnln, qnln));

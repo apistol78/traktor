@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
@@ -24,11 +25,11 @@ FlashShape::FlashShape()
 FlashShape::FlashShape(uint16_t id)
 :	FlashCharacter(id)
 {
-	m_shapeBounds.min.x = m_shapeBounds.max.x =
-	m_shapeBounds.min.y = m_shapeBounds.max.y = 0.0f;
+	m_shapeBounds.mn.x = m_shapeBounds.mx.x =
+	m_shapeBounds.mn.y = m_shapeBounds.mx.y = 0.0f;
 }
 
-bool FlashShape::create(const SwfRect& shapeBounds, const SwfShape* shape, const SwfStyles* styles)
+bool FlashShape::create(const Aabb2& shapeBounds, const SwfShape* shape, const SwfStyles* styles)
 {
 	uint16_t fillStyle0 = 0;
 	uint16_t fillStyle1 = 0;
@@ -217,6 +218,8 @@ bool FlashShape::create(const SwfShape* shape)
 	}
 
 	path.end(fillStyle0, fillStyle1, lineStyle);
+	
+	m_shapeBounds = path.getBounds();
 	m_paths.push_back(path);
 
 	return true;
@@ -238,6 +241,8 @@ bool FlashShape::create(uint16_t fillBitmap, float width, float height)
 	path.lineTo(0.0f, height, Path::CmAbsolute);
 	path.lineTo(0.0f, 0.0f, Path::CmAbsolute);
 	path.end(1, 1, 0);
+
+	m_shapeBounds = path.getBounds();
 	m_paths.push_back(path);
 
 	return true;
@@ -258,7 +263,7 @@ void FlashShape::serialize(ISerializer& s)
 {
 	FlashCharacter::serialize(s);
 
-	s >> MemberSwfRect(L"shapeBounds", m_shapeBounds);
+	s >> MemberAabb2(L"shapeBounds", m_shapeBounds);
 	s >> MemberStlList< Path, MemberComposite< Path > >(L"paths", m_paths);
 	s >> MemberAlignedVector< FlashFillStyle, MemberComposite< FlashFillStyle > >(L"fillStyles", m_fillStyles);
 	s >> MemberAlignedVector< FlashLineStyle, MemberComposite< FlashLineStyle > >(L"lineStyles", m_lineStyles);

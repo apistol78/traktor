@@ -80,7 +80,7 @@ public:
 	virtual void begin(
 		const FlashDictionary& dictionary,
 		const SwfColor& backgroundColor,
-		const SwfRect& frameBounds,
+		const Aabb2& frameBounds,
 		float viewWidth,
 		float viewHeight,
 		const Vector4& viewOffset
@@ -94,7 +94,7 @@ public:
 
 	virtual void renderMorphShape(const FlashDictionary& dictionary, const Matrix33& transform, const FlashMorphShape& shape, const SwfCxTransform& cxform);
 
-	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform);
+	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter);
 
 	virtual void renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform);
 
@@ -138,6 +138,7 @@ private:
 	bool m_maskWrite;
 	bool m_maskIncrement;
 	uint8_t m_maskReference;
+	uint8_t m_glyphFilter;
 	render::handle_t m_handleScreenOffset;
 
 	void renderEnqueuedGlyphs();

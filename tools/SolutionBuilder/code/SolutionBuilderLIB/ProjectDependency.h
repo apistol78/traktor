@@ -22,7 +22,7 @@ public:
 
 	virtual bool resolve(SolutionLoader* solutionLoader);
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	traktor::Ref< Project > m_project;

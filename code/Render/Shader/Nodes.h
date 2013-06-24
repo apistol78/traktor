@@ -402,7 +402,7 @@ public:
 	Interpolator();
 };
 
-/*! \brief Iterator. */
+/*! \brief Iterate. */
 class T_DLLCLASS Iterate : public ImmutableNode
 {
 	T_RTTI_CLASS;
@@ -425,6 +425,41 @@ public:
 private:
 	int32_t m_from;
 	int32_t m_to;
+};
+
+/*! \brief 2-D iterate. */
+class T_DLLCLASS Iterate2d : public ImmutableNode
+{
+	T_RTTI_CLASS;
+
+public:
+	Iterate2d(int32_t fromX = 0, int32_t toX = 0, int32_t fromY = 0, int32_t toY = 0);
+
+	void setFromX(int32_t fromX);
+
+	int32_t getFromX() const;
+
+	void setToX(int32_t toX);
+
+	int32_t getToX() const;
+
+	void setFromY(int32_t fromY);
+
+	int32_t getFromY() const;
+
+	void setToY(int32_t toY);
+
+	int32_t getToY() const;
+
+	virtual std::wstring getInformation() const;
+
+	virtual void serialize(ISerializer& s);
+
+private:
+	int32_t m_fromX;
+	int32_t m_toX;
+	int32_t m_fromY;
+	int32_t m_toY;
 };
 
 /*! \brief Length of geometrical vector. */

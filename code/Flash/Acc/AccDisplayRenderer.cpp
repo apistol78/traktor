@@ -40,7 +40,7 @@ const uint32_t c_cacheGlyphSize = 32;
 #else
 const uint32_t c_cacheGlyphSize = 128;
 #endif
-const uint32_t c_cacheGlyphMargin = 4;
+const uint32_t c_cacheGlyphMargin = 0;
 const uint32_t c_cacheGlyphCountX = 16;
 const uint32_t c_cacheGlyphCountY = 8;
 const uint32_t c_cacheGlyphCount = c_cacheGlyphCountX * c_cacheGlyphCountY;
@@ -48,7 +48,8 @@ const uint32_t c_cacheGlyphDimX = c_cacheGlyphSize * c_cacheGlyphCountX;
 const uint32_t c_cacheGlyphDimY = c_cacheGlyphSize * c_cacheGlyphCountY;
 
 const SwfCxTransform c_cxfZero = { { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 0.0f }, { 0.0f, 1.0f } };
-const SwfCxTransform c_cxfWhite = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 1.0f, 0.0f } };
+const SwfCxTransform c_cxfYellow = { { 0.0f, 1.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } };
+const SwfCxTransform c_cxfGreen = { { 0.0f, 0.0f }, { 0.0f, 1.0f }, { 0.0f, 0.0f }, { 1.0f, 0.0f } };
 const SwfCxTransform c_cxfIdentity = { { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f }, { 1.0f, 0.0f } };
 
 bool rectangleVisible(
@@ -56,15 +57,15 @@ bool rectangleVisible(
 	const Vector4& viewSize,
 	const Vector4& viewOffset,
 	const Matrix33& transform,
-	const SwfRect& bounds
+	const Aabb2& bounds
 )
 {
-	if (bounds.max.x <= bounds.min.x || bounds.max.y <= bounds.min.y)
+	if (bounds.mx.x <= bounds.mn.x || bounds.mx.y <= bounds.mn.y)
 		return false;
 
 	// Transform rectangle into frame.
-	Vector2 emn = transform * bounds.min;
-	Vector2 emx = transform * bounds.max;
+	Vector2 emn = transform * bounds.mn;
+	Vector2 emx = transform * bounds.mx;
 	Vector2 xmn(min(emn.x, emx.x), min(emn.y, emx.y));
 	Vector2 xmx(max(emn.x, emx.x), max(emn.y, emx.y));
 
@@ -104,6 +105,7 @@ AccDisplayRenderer::AccDisplayRenderer()
 ,	m_maskWrite(false)
 ,	m_maskIncrement(false)
 ,	m_maskReference(0)
+,	m_glyphFilter(0)
 ,	m_handleScreenOffset(render::getParameterHandle(L"Flash_ScreenOffset"))
 {
 }
@@ -177,7 +179,7 @@ bool AccDisplayRenderer::create(
 
 	m_renderContexts.resize(frameCount);
 	for (uint32_t i = 0; i < frameCount; ++i)
-		m_renderContexts[i] = new render::RenderContext(256 * 1024);
+		m_renderContexts[i] = new render::RenderContext(1024 * 1024);
 
 	// Allocate "global" parameter context; as it's reset for each render
 	// call this can be fairly small.
@@ -257,13 +259,13 @@ void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame,
 void AccDisplayRenderer::begin(
 	const FlashDictionary& dictionary,
 	const SwfColor& backgroundColor,
-	const SwfRect& frameBounds,
+	const Aabb2& frameBounds,
 	float viewWidth,
 	float viewHeight,
 	const Vector4& viewOffset
 )
 {
-	m_frameSize.set(frameBounds.min.x, frameBounds.min.y, frameBounds.max.x, frameBounds.max.y);
+	m_frameSize.set(frameBounds.mn.x, frameBounds.mn.y, frameBounds.mx.x, frameBounds.mx.y);
 	m_viewSize.set(viewWidth, viewHeight, 1.0f / viewWidth, 1.0f / viewHeight);
 	m_viewOffset = viewOffset;
 
@@ -376,8 +378,14 @@ void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, con
 {
 }
 
-void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter)
 {
+	if (m_glyphFilter != filter)
+	{
+		renderEnqueuedGlyphs();
+		m_glyphFilter = filter;
+	}
+
 	uint32_t tag = shape.getCacheTag();
 
 	SmallMap< int32_t, GlyphCache >::iterator it1 = m_glyphCache.find(tag);
@@ -412,17 +420,15 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 		return;
 	}
 
-	SwfRect bounds = accShape->getBounds();
+	Aabb2 bounds = accShape->getBounds();
 	if (!rectangleVisible(m_frameSize, m_viewSize, m_viewOffset, transform, bounds))
 		return;
 
-	//// Keep 1:1 aspect ratio; use maximum bound dimension.
-	//float gw = bounds.max.x - bounds.min.x;
-	//float gh = bounds.max.y - bounds.min.y;
-	//if (gw >= gh)
-	//	bounds.max.y = bounds.min.y + gw;
-	//else
-	//	bounds.max.x = bounds.min.x + gh;
+	float cachePixelDx = 1.0f / c_cacheGlyphDimX;
+	float cachePixelDy = 1.0f / c_cacheGlyphDimY;
+
+	// Always use maximum glyph bounds.
+	bounds.mx = bounds.mn + fontMaxDimension;
 
 	// Get cached glyph target.
 	if (it1->second.index < 0)
@@ -441,10 +447,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 		int32_t column = index & (c_cacheGlyphCountX - 1);
 		int32_t row = index / c_cacheGlyphCountX;
 
-		float cachePixelDx = 1.0f / c_cacheGlyphDimX;
-		float cachePixelDy = 1.0f / c_cacheGlyphDimY;
-
-		Vector4 frameSize(bounds.min.x, bounds.min.y, bounds.max.x, bounds.max.y);
+		Vector4 frameSize(bounds.mn.x, bounds.mn.y, bounds.mx.x, bounds.mx.y);
 		Vector4 viewSize(0.0f, 0.0f, 0.0f, 0.0f);
 		Vector4 viewOffset(
 			float(column) / c_cacheGlyphCountX,
@@ -479,7 +482,6 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 			0
 		);
 
-		// Draw new glyph.
 		accShape->render(
 			m_renderContext,
 			Matrix33::identity(),
@@ -487,7 +489,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 			viewSize,
 			viewOffsetWithMargin,
 			0.0f,
-			c_cxfWhite,
+			c_cxfYellow,
 			false,
 			false,
 			false
@@ -579,7 +581,7 @@ void AccDisplayRenderer::end()
 
 #if T_DEBUG_GLYPH_CACHE
 	// Overlay glyph cache.
-	const SwfRect bounds = { Vector2(0.0f, 0.0f), Vector2(c_cacheGlyphCountX * 1024, c_cacheGlyphCountY * 1024) };
+	const Aabb2 bounds = { Vector2(0.0f, 0.0f), Vector2(c_cacheGlyphCountX * 1024, c_cacheGlyphCountY * 1024) };
 	m_quad->render(
 		m_renderContext,
 		bounds,
@@ -632,7 +634,8 @@ void AccDisplayRenderer::renderEnqueuedGlyphs()
 		m_viewOffset,
 		1.0f,
 		m_renderTargetGlyphs->getColorTexture(0),
-		m_maskReference
+		m_maskReference,
+		m_glyphFilter
 	);
 }
 

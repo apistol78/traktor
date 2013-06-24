@@ -61,7 +61,7 @@ public:
 
 	Ref< FlashSpriteInstance > clone() const;
 
-	SwfRect getLocalBounds() const;
+	Aabb2 getLocalBounds() const;
 
 	void setMask(FlashSpriteInstance* maskInstance);
 
@@ -105,7 +105,7 @@ public:
 
 	virtual void eventMouseMove1(int32_t x, int32_t y, int32_t button);
 
-	virtual SwfRect getBounds() const;
+	virtual Aabb2 getBounds() const;
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;

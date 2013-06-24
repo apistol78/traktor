@@ -17,7 +17,7 @@ public:
 
 	void getSystemFiles(const traktor::Path& sourcePath, std::set< traktor::Path >& outFiles) const;
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_fileName;

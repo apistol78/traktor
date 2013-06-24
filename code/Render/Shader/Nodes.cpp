@@ -809,6 +809,79 @@ void Iterate::serialize(ISerializer& s)
 
 /*---------------------------------------------------------------------------*/
 
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Iterate2d", 0, Iterate2d, ImmutableNode)
+
+const ImmutableNode::InputPinDesc c_Iterate2d_i[] = { { L"Input", false }, { L"Initial", true }, { L"Condition", true }, 0 };
+const ImmutableNode::OutputPinDesc c_Iterate2d_o[] = { L"X", L"Y", L"Output", 0 };
+
+Iterate2d::Iterate2d(int32_t fromX, int32_t toX, int32_t fromY, int32_t toY)
+:	ImmutableNode(c_Iterate2d_i, c_Iterate2d_o)
+,	m_fromX(fromX)
+,	m_toX(toX)
+,	m_fromY(fromY)
+,	m_toY(toY)
+{
+}
+
+void Iterate2d::setFromX(int32_t fromX)
+{
+	m_fromX = fromX;
+}
+
+int32_t Iterate2d::getFromX() const
+{
+	return m_fromX;
+}
+
+void Iterate2d::setToX(int32_t toX)
+{
+	m_toX = toX;
+}
+
+int32_t Iterate2d::getToX() const
+{
+	return m_toX;
+}
+
+void Iterate2d::setFromY(int32_t fromY)
+{
+	m_fromY = fromY;
+}
+
+int32_t Iterate2d::getFromY() const
+{
+	return m_fromY;
+}
+
+void Iterate2d::setToY(int32_t toY)
+{
+	m_toY = toY;
+}
+
+int32_t Iterate2d::getToY() const
+{
+	return m_toY;
+}
+
+std::wstring Iterate2d::getInformation() const
+{
+	StringOutputStream ss;
+	ss << m_fromX << L" -> " << m_toX << L", " << m_fromY << L" -> " << m_toY;
+	return ss.str();
+}
+
+void Iterate2d::serialize(ISerializer& s)
+{
+	Node::serialize(s);
+
+	s >> Member< int32_t >(L"fromX", m_fromX);
+	s >> Member< int32_t >(L"toX", m_toX);
+	s >> Member< int32_t >(L"fromY", m_fromY);
+	s >> Member< int32_t >(L"toY", m_toY);
+}
+
+/*---------------------------------------------------------------------------*/
+
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.Length", 0, Length, ImmutableNode)
 
 const ImmutableNode::InputPinDesc c_Length_i[] = { { L"Input", false }, 0 };

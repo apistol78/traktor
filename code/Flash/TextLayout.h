@@ -54,7 +54,7 @@ public:
 
 	void begin();
 
-	void setBounds(const SwfRect& bounds);
+	void setBounds(const Aabb2& bounds);
 
 	void setLetterSpacing(float letterSpacing);
 
@@ -86,7 +86,7 @@ private:
 	AlignedVector< Attribute > m_attribs;
 	AlignedVector< Line > m_lines;
 	int32_t m_currentAttrib;
-	SwfRect m_bounds;
+	Aabb2 m_bounds;
 	float m_letterSpacing;
 	float m_fontHeight;
 	bool m_wordWrap;

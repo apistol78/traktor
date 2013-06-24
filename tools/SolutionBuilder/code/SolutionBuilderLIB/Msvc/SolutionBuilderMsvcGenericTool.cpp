@@ -22,9 +22,8 @@ bool SolutionBuilderMsvcGenericTool::generate(GeneratorContext& context, Solutio
 	return true;
 }
 
-bool SolutionBuilderMsvcGenericTool::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcGenericTool::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"toolName", m_toolName);
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
-	return true;
 }

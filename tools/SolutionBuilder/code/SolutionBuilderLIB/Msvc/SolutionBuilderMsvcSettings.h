@@ -11,7 +11,7 @@ class SolutionBuilderMsvcSettings : public traktor::ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 	inline const std::wstring& getSLNVersion() const { return m_slnVersion; }
 

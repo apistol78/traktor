@@ -31,17 +31,6 @@ private:
 	SwfCxTransform& m_ref;
 };
 
-class MemberSwfRect : public MemberComplex
-{
-public:
-	MemberSwfRect(const wchar_t* const name, SwfRect& ref);
-
-	virtual void serialize(ISerializer& s) const;
-
-private:
-	SwfRect& m_ref;
-};
-
 	}
 }
 

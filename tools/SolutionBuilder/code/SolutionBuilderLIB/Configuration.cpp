@@ -122,7 +122,7 @@ const std::wstring& Configuration::getAdditionalLinkerOptions() const
 	return m_additionalLinkerOptions;
 }
 
-bool Configuration::serialize(traktor::ISerializer& s)
+void Configuration::serialize(traktor::ISerializer& s)
 {
 	traktor::MemberEnum< TargetFormat >::Key kTargetFormat[] =
 	{
@@ -154,6 +154,4 @@ bool Configuration::serialize(traktor::ISerializer& s)
 		s >> traktor::Member< std::wstring >(L"additionalCompilerOptions", m_additionalCompilerOptions);
 		s >> traktor::Member< std::wstring >(L"additionalLinkerOptions", m_additionalLinkerOptions);
 	}
-
-	return true;
 }

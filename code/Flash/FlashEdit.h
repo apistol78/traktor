@@ -39,7 +39,7 @@ public:
 		uint16_t id,
 		uint16_t fontId,
 		uint16_t fontHeight,
-		const SwfRect& textBounds,
+		const Aabb2& textBounds,
 		const SwfColor& textColor,	
 		const std::wstring& initialText,
 		Align align,
@@ -74,7 +74,7 @@ public:
 	 *
 	 * \return Bounding box.
 	 */
-	const SwfRect& getTextBounds() const;
+	const Aabb2& getTextBounds() const;
 
 	/*! \brief Get text color.
 	 *
@@ -129,7 +129,7 @@ public:
 private:
 	uint16_t m_fontId;
 	uint16_t m_fontHeight;
-	SwfRect m_textBounds;
+	Aabb2 m_textBounds;
 	SwfColor m_textColor;
 	std::wstring m_initialText;
 	Align m_align;

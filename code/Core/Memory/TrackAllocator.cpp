@@ -1,5 +1,5 @@
 #include <iostream>
-#if !defined(_WIN32) && !defined(_PS3)
+#if !defined(_WIN32) && !defined(_PS3) && !defined(__ANDROID__)
 #	include <execinfo.h>
 #endif
 #include "Core/Platform.h"

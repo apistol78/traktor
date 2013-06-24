@@ -11,8 +11,6 @@ namespace traktor
 		namespace
 		{
 
-const float c_magicX = 32.0f * 20.0f;
-
 bool isWhiteSpace(wchar_t ch)
 {
 	return ch == 0 || ch == L' ' || ch == L'\t' || ch == L'\n' || ch == L'\r';
@@ -53,7 +51,7 @@ void TextLayout::begin()
 	m_lines.push_back(ln);
 }
 
-void TextLayout::setBounds(const SwfRect& bounds)
+void TextLayout::setBounds(const Aabb2& bounds)
 {
 	m_bounds = bounds;
 }
@@ -100,7 +98,7 @@ void TextLayout::insertText(const std::wstring& text)
 	float coordScale = attrib.font->getCoordinateType() == FlashFont::CtTwips ? 1.0f / 1000.0f : 1.0f / (20.0f * 1000.0f);
 	float fontScale = coordScale * m_fontHeight;
 	float letterSpacing = m_letterSpacing * 200.0f * 2000.0f / m_fontHeight;
-	float boundsWidth = m_bounds.max.x - m_bounds.min.x;
+	float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
 
 	uint16_t spaceGlyphIndex = attrib.font->lookupIndex(L' ');
 	int16_t spaceWidth = attrib.font->getAdvance(spaceGlyphIndex);
@@ -121,7 +119,7 @@ void TextLayout::insertText(const std::wstring& text)
 			if (j < word.length() - 1)
 				glyphAdvance += attrib.font->lookupKerning(word[j], word[j + 1]);
 
-			wordWidth += (glyphAdvance - c_magicX + letterSpacing) * fontScale;
+			wordWidth += (glyphAdvance + letterSpacing) * fontScale;
 		}
 
 		if (m_wordWrap)
@@ -154,7 +152,7 @@ void TextLayout::insertText(const std::wstring& text)
 				w.chars.push_back(chr);
 			}
 
-			m_cursorX += (glyphAdvance - c_magicX + letterSpacing) * fontScale;
+			m_cursorX += (glyphAdvance + letterSpacing) * fontScale;
 		}
 
 		if (!w.chars.empty())
@@ -177,7 +175,7 @@ void TextLayout::newLine()
 
 void TextLayout::end()
 {
-	float boundsWidth = m_bounds.max.x - m_bounds.min.x;
+	float boundsWidth = m_bounds.mx.x - m_bounds.mn.x;
 	for (AlignedVector< Line >::iterator i = m_lines.begin(); i != m_lines.end(); ++i)
 	{
 		i->y += m_fontHeight;

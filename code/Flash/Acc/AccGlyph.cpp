@@ -1,4 +1,5 @@
 #include "Core/Log/Log.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Flash/SwfTypes.h"
 #include "Flash/Acc/AccGlyph.h"
@@ -20,8 +21,9 @@ namespace traktor
 #pragma pack(1)
 struct Vertex
 {
-	float pos[3];
+	float pos[2];
 	float texCoord[2];
+	float texOffsetAndScale[4];
 	uint8_t color[4];
 };
 #pragma pack()
@@ -29,8 +31,6 @@ struct Vertex
 const resource::Id< render::Shader > c_idShaderGlyph(Guid(L"{A8BC2D03-EB52-B744-8D4B-29E39FF0B4F5}"));
 const resource::Id< render::Shader > c_idShaderGlyphMask(Guid(L"{C8FEF24B-D775-A14D-9FF3-E34A17495FB4}"));
 const uint32_t c_glyphCount = 1000;
-const float c_minSampleDistance = 1.0f;
-const float c_maxSampleDistance = 4.0f;
 
 const struct TemplateVertex
 {
@@ -39,10 +39,10 @@ const struct TemplateVertex
 }
 c_glyphTemplate[4] =
 {
-	{ Vector4(0.0f, 0.0f, 1.0f, 0.0f), Vector2(0.0f, 0.0f) },
-	{ Vector4(1.0f, 0.0f, 1.0f, 0.0f), Vector2(1.0f, 0.0f) },
-	{ Vector4(1.0f, 1.0f, 1.0f, 0.0f), Vector2(1.0f, 1.0f) },
-	{ Vector4(0.0f, 1.0f, 1.0f, 0.0f), Vector2(0.0f, 1.0f) }
+	{ Vector4(-0.1f, -0.1f, 1.0f, 0.0f), Vector2(-0.1f, -0.1f) },
+	{ Vector4( 1.1f, -0.1f, 1.0f, 0.0f), Vector2( 1.1f, -0.1f) },
+	{ Vector4( 1.1f,  1.1f, 1.0f, 0.0f), Vector2( 1.1f,  1.1f) },
+	{ Vector4(-0.1f,  1.1f, 1.0f, 0.0f), Vector2(-0.1f,  1.1f) }
 };
 
 bool s_handleInitialized = false;
@@ -51,6 +51,7 @@ render::handle_t s_handleViewSize;
 render::handle_t s_handleViewOffset;
 render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleTexture;
+render::handle_t s_handleOutlineEnable;
 
 		}
 
@@ -75,6 +76,7 @@ bool AccGlyph::create(
 		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
 		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
 		s_handleTexture = render::getParameterHandle(L"Flash_Texture");
+		s_handleOutlineEnable = render::getParameterHandle(L"Flash_OutlineEnable");
 		s_handleInitialized = true;
 	}
 
@@ -85,8 +87,9 @@ bool AccGlyph::create(
 		return false;
 
 	std::vector< render::VertexElement > vertexElements;
-	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat3, offsetof(Vertex, pos)));
+	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat2, offsetof(Vertex, pos)));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat2, offsetof(Vertex, texCoord)));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(Vertex, texOffsetAndScale), 1));
 	vertexElements.push_back(render::VertexElement(render::DuColor, render::DtByte4N, offsetof(Vertex, color)));
 	T_ASSERT (render::getVertexSize(vertexElements) == sizeof(Vertex));
 
@@ -134,7 +137,7 @@ void AccGlyph::destroy()
 }
 
 void AccGlyph::add(
-	const SwfRect& bounds,
+	const Aabb2& bounds,
 	const Matrix33& transform,
 	const SwfCxTransform& cxform,
 	const Vector4& textureOffset
@@ -162,23 +165,20 @@ void AccGlyph::add(
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
-	SwfRect qb;
-	qb.min.x = std::ceil(bounds.min.x);
-	qb.min.y = std::ceil(bounds.min.y);
-	qb.max.x = std::floor(bounds.max.x);
-	qb.max.y = std::floor(bounds.max.y);
+	Aabb2 qb;
+	qb.mn.x = std::ceil(bounds.mn.x);
+	qb.mn.y = std::ceil(bounds.mn.y);
+	qb.mx.x = std::floor(bounds.mx.x);
+	qb.mx.y = std::floor(bounds.mx.y);
 
 	Matrix44 m2(
-		qb.max.x - qb.min.x, 0.0f, qb.min.x, 0.0f,
-		0.0f, qb.max.y - qb.min.y, qb.min.y, 0.0f,
+		qb.mx.x - qb.mn.x, 0.0f, qb.mn.x, 0.0f,
+		0.0f, qb.mx.y - qb.mn.y, qb.mn.y, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);
 
 	Matrix44 m = m1 * m2;
-	Vector2 texCoordOffset(textureOffset.x(), textureOffset.y());
-	Vector2 texCoordScale(textureOffset.z(), textureOffset.w());
-
 	uint8_t color[4] =
 	{
 		uint8_t(cxform.red[0] * 255),
@@ -187,23 +187,25 @@ void AccGlyph::add(
 		uint8_t(cxform.alpha[0] * 255)
 	};
 
-	float sampleDistance = clamp(1.0f / (m1(0, 0) * 11.0f), c_minSampleDistance, c_maxSampleDistance);
-
 	Vertex* vertex = (Vertex*)m_vertex;
 	for (uint32_t i = 0; i < sizeof_array(c_glyphTemplate); ++i)
 	{
 		Vector4 pos = m * c_glyphTemplate[i].pos;
-		Vector2 texCoord = c_glyphTemplate[i].texCoord * texCoordScale + texCoordOffset;
 
-		vertex->pos[0] = std::floor(pos.x());
-		vertex->pos[1] = std::floor(pos.y());
-		vertex->pos[2] = sampleDistance;
-		vertex->texCoord[0] = texCoord.x;
-		vertex->texCoord[1] = texCoord.y;
+		vertex->pos[0] = pos.x();
+		vertex->pos[1] = pos.y();
+		vertex->texCoord[0] = c_glyphTemplate[i].texCoord.x;
+		vertex->texCoord[1] = c_glyphTemplate[i].texCoord.y;
 		vertex->color[0] = color[0];
 		vertex->color[1] = color[1];
 		vertex->color[2] = color[2];
 		vertex->color[3] = color[3];
+
+		vertex->texOffsetAndScale[0] = textureOffset.x();
+		vertex->texOffsetAndScale[1] = textureOffset.y();
+
+		vertex->texOffsetAndScale[2] = bounds.mx.x - bounds.mn.x;
+		vertex->texOffsetAndScale[3] = bounds.mx.y - bounds.mn.y;
 
 		vertex++;
 	}
@@ -219,7 +221,8 @@ void AccGlyph::render(
 	const Vector4& viewOffset,
 	float screenOffsetScale,
 	render::ITexture* texture,
-	uint8_t maskReference
+	uint8_t maskReference,
+	uint8_t glyphFilter
 )
 {
 	if (!m_vertex || !m_count)
@@ -229,8 +232,13 @@ void AccGlyph::render(
 
 	vertexBuffer->unlock();
 
+	render::Shader* shader = (maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask;
+	T_ASSERT (shader);
+
+	shader->setCombination(s_handleOutlineEnable, glyphFilter != 0);
+
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Flash AccGlyph");
-	renderBlock->program = ((maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask)->getCurrentProgram();
+	renderBlock->program = shader->getCurrentProgram();
 	renderBlock->indexBuffer = m_indexBuffer;
 	renderBlock->vertexBuffer = vertexBuffer;
 	renderBlock->primitive = render::PtTriangles;
@@ -247,7 +255,6 @@ void AccGlyph::render(
 	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
 	renderBlock->programParams->setStencilReference(maskReference);
 	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
-
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(render::RpOverlay, renderBlock);

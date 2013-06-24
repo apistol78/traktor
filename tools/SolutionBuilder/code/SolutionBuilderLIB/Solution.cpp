@@ -116,7 +116,7 @@ const RefArray< Aggregation >& Solution::getAggregations() const
 	return m_aggregations;
 }
 
-bool Solution::serialize(traktor::ISerializer& s)
+void Solution::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"rootPath", m_rootPath);
@@ -128,7 +128,5 @@ bool Solution::serialize(traktor::ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> MemberRefArray< Aggregation >(L"aggregations", m_aggregations);
-
-	return true;
 }
 

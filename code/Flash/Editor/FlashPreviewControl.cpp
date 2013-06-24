@@ -258,10 +258,10 @@ ui::Size FlashPreviewControl::getPreferedSize() const
 	if (!m_movie)
 		return ui::Size(400, 300);
 
-	flash::SwfRect bounds = m_movie->getFrameBounds();
+	Aabb2 bounds = m_movie->getFrameBounds();
 
-	int width = int(bounds.max.x / 20.0f);
-	int height = int(bounds.max.y / 20.0f);
+	int width = int(bounds.mx.x / 20.0f);
+	int height = int(bounds.mx.y / 20.0f);
 
 	return ui::Size(width, height);
 }
@@ -270,8 +270,8 @@ ui::Point FlashPreviewControl::getTwips(const ui::Point& pt) const
 {
 	ui::Size innerSize = getInnerRect().getSize();
 
-	float x = (pt.x * m_movie->getFrameBounds().max.x) / float(innerSize.cx);
-	float y = (pt.y * m_movie->getFrameBounds().max.y) / float(innerSize.cy);
+	float x = (pt.x * m_movie->getFrameBounds().mx.x) / float(innerSize.cx);
+	float y = (pt.y * m_movie->getFrameBounds().mx.y) / float(innerSize.cy);
 
 	return ui::Point(int(x), int(y));
 }

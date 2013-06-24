@@ -1,6 +1,7 @@
 #include <sstream>
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Flash/FlashText.h"
@@ -19,7 +20,7 @@ FlashText::FlashText()
 {
 }
 
-FlashText::FlashText(uint16_t id, const SwfRect& textBounds, const Matrix33& textMatrix)
+FlashText::FlashText(uint16_t id, const Aabb2& textBounds, const Matrix33& textMatrix)
 :	FlashCharacter(id)
 ,	m_textBounds(textBounds)
 ,	m_textMatrix(textMatrix)
@@ -74,7 +75,7 @@ Ref< FlashCharacterInstance > FlashText::createInstance(
 	return new FlashTextInstance(context, parent, this);
 }
 
-const SwfRect& FlashText::getTextBounds() const
+const Aabb2& FlashText::getTextBounds() const
 {
 	return m_textBounds;
 }
@@ -88,7 +89,7 @@ void FlashText::serialize(ISerializer& s)
 {
 	FlashCharacter::serialize(s);
 
-	s >> MemberSwfRect(L"textBounds", m_textBounds);
+	s >> MemberAabb2(L"textBounds", m_textBounds);
 	s >> Member< Matrix33 >(L"textMatrix", m_textMatrix);
 	s >> MemberAlignedVector< Character, MemberComposite< Character > >(L"characters", m_characters);
 }

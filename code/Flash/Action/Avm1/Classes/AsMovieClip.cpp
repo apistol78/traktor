@@ -455,11 +455,10 @@ Ref< FlashEditInstance > AsMovieClip::MovieClip_createTextField(
 	ActionContext* context = self->getContext();
 	T_ASSERT (context);
 
-	SwfRect bounds =
-	{
+	Aabb2 bounds(
 		Vector2(0.0f, 0.0f),
 		Vector2(width, height)
-	};
+	);
 	SwfColor color = { 0, 0, 0, 0 };
 
 	// Create edit character.
@@ -634,14 +633,14 @@ bool AsMovieClip::MovieClip_hitTest_1(const FlashSpriteInstance* self, const Fla
 	if (!shape)
 		return false;
 
-	SwfRect bounds = self->getBounds();
-	SwfRect shapeBounds = shape->getBounds();
+	Aabb2 bounds = self->getBounds();
+	Aabb2 shapeBounds = shape->getBounds();
 
 	return
-		(bounds.min.x < shapeBounds.max.x) &&
-		(bounds.min.y < shapeBounds.max.y) &&
-		(bounds.max.x > shapeBounds.min.x) &&
-		(bounds.max.y > shapeBounds.min.y);
+		(bounds.mn.x < shapeBounds.mx.x) &&
+		(bounds.mn.y < shapeBounds.mx.y) &&
+		(bounds.mx.x > shapeBounds.mn.x) &&
+		(bounds.mx.y > shapeBounds.mn.y);
 }
 
 bool AsMovieClip::MovieClip_hitTest_2(const FlashSpriteInstance* self, avm_number_t x, avm_number_t y) const
@@ -651,8 +650,8 @@ bool AsMovieClip::MovieClip_hitTest_2(const FlashSpriteInstance* self, avm_numbe
 	Vector2 L = Tinv * Vector2(x, y);
 
 	// Check if inside bounding box.
-	SwfRect bounds = self->getLocalBounds();
-	return (L.x >= bounds.min.x && L.y >= bounds.min.y && L.x <= bounds.max.x && L.y <= bounds.max.y);
+	Aabb2 bounds = self->getLocalBounds();
+	return (L.x >= bounds.mn.x && L.y >= bounds.mn.y && L.x <= bounds.mx.x && L.y <= bounds.mx.y);
 }
 
 void AsMovieClip::MovieClip_lineGradientStyle(FlashSpriteInstance* self) const
@@ -916,14 +915,14 @@ int32_t AsMovieClip::MovieClip_get_framesloaded(const FlashSpriteInstance* self)
 
 float AsMovieClip::MovieClip_get_height(const FlashSpriteInstance* self) const
 {
-	SwfRect bounds = self->getBounds();
-	return (bounds.max.y - bounds.min.y) / 20.0f;
+	Aabb2 bounds = self->getBounds();
+	return (bounds.mx.y - bounds.mn.y) / 20.0f;
 }
 
 void AsMovieClip::MovieClip_set_height(FlashSpriteInstance* self, float height) const
 {
-	SwfRect bounds = self->getLocalBounds();
-	float extent = (bounds.max.y - bounds.min.y) / 20.0f;
+	Aabb2 bounds = self->getLocalBounds();
+	float extent = (bounds.mx.y - bounds.mn.y) / 20.0f;
 	if (abs(extent) <= FUZZY_EPSILON)
 		return;
 
@@ -1200,14 +1199,14 @@ void AsMovieClip::MovieClip_set_visible(FlashSpriteInstance* self, bool visible)
 
 float AsMovieClip::MovieClip_get_width(const FlashSpriteInstance* self) const
 {
-	SwfRect bounds = self->getBounds();
-	return (bounds.max.x - bounds.min.x) / 20.0f;
+	Aabb2 bounds = self->getBounds();
+	return (bounds.mx.x - bounds.mn.x) / 20.0f;
 }
 
 void AsMovieClip::MovieClip_set_width(FlashSpriteInstance* self, float width) const
 {
-	SwfRect bounds = self->getLocalBounds();
-	float extent = (bounds.max.x - bounds.min.x) / 20.0f;
+	Aabb2 bounds = self->getLocalBounds();
+	float extent = (bounds.mx.x - bounds.mn.x) / 20.0f;
 	if (abs(extent) <= FUZZY_EPSILON)
 		return;
 

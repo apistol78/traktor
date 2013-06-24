@@ -21,6 +21,7 @@
 #include "Render/Resource/FragmentLinker.h"
 #include "Render/Resource/ProgramResource.h"
 #include "Render/Resource/ShaderResource.h"
+#include "Render/Shader/Edge.h"
 #include "Render/Shader/External.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
@@ -115,11 +116,11 @@ struct BuildCombinationTask : public Object
 			shaderResourceCombination->value |= parameterBits.find(*j)->second;
 
 		// Generate combination shader graph.
-		Ref< const ShaderGraph > programGraph = combinations->getCombinationShaderGraph(combination);
-		T_ASSERT (programGraph);
+		Ref< const ShaderGraph > combinationGraph = combinations->getCombinationShaderGraph(combination);
+		T_ASSERT (combinationGraph);
 
 		// Freeze type permutation.
-		programGraph = ShaderGraphStatic(programGraph).getTypePermutation();
+		Ref< ShaderGraph > programGraph = ShaderGraphStatic(combinationGraph).getTypePermutation();
 		if (!programGraph)
 		{
 			log::error << L"ShaderPipeline failed; unable to get type permutation of \"" << name << L"\"" << Endl;
@@ -174,6 +175,40 @@ struct BuildCombinationTask : public Object
 			return;
 		}
 
+		// Replace texture nodes with uniforms; keep list of texture references in shader resource.
+		RefArray< Texture > textureNodes;
+		programGraph->findNodesOf< Texture >(textureNodes);
+
+		for (RefArray< Texture >::iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
+		{
+			const Guid& textureGuid = (*i)->getExternal();
+			int32_t textureIndex;
+
+			std::vector< Guid >::iterator it = std::find(shaderResourceCombination->textures.begin(), shaderResourceCombination->textures.end(), textureGuid);
+			if (it != shaderResourceCombination->textures.end())
+				textureIndex = std::distance(shaderResourceCombination->textures.begin(), it);
+			else
+			{
+				textureIndex = int32_t(shaderResourceCombination->textures.size());
+				shaderResourceCombination->textures.push_back(textureGuid);
+			}
+
+			Ref< Uniform > textureUniform = new Uniform(
+				getParameterNameFromTextureReferenceIndex(textureIndex),
+				(*i)->getParameterType(),
+				UfOnce
+			);
+
+			const OutputPin* textureUniformOutput = textureUniform->getOutputPin(0);
+			T_ASSERT (textureUniformOutput);
+
+			const OutputPin* textureNodeOutput = (*i)->getOutputPin(0);
+			T_ASSERT (textureNodeOutput);
+
+			programGraph->rewire(textureNodeOutput, textureUniformOutput);
+			programGraph->addNode(textureUniform);
+		}
+
 		// Compile shader program.
 		Ref< ProgramResource > programResource = programCompiler->compile(
 			programGraph,
@@ -190,17 +225,6 @@ struct BuildCombinationTask : public Object
 
 		// Add meta tag to indicate if shader combination is opaque.
 		shaderResourceCombination->priority = getPriority(programGraph);
-
-		// Bind texture resources.
-		RefArray< Texture > textureNodes;
-		programGraph->findNodesOf< Texture >(textureNodes);
-
-		for (RefArray< Texture >::iterator i = textureNodes.begin(); i != textureNodes.end(); ++i)
-		{
-			const Guid& textureGuid = (*i)->getExternal();
-			if (textureGuid.isNotNull())
-				shaderResourceCombination->textures.push_back(textureGuid);
-		}
 
 		shaderResourceCombination->program = programResource;
 		result = true;
@@ -322,7 +346,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 54, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 55, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)

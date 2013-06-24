@@ -49,7 +49,7 @@ public:
 
 	void curveTo(avm_number_t controlX, avm_number_t controlY, avm_number_t anchorX, avm_number_t anchorY);
 
-	const SwfRect& getBounds() const { return m_bounds; }
+	const Aabb2& getBounds() const { return m_bounds; }
 
 	const std::list< Path >& getPaths() const { return m_paths; }
 
@@ -60,7 +60,7 @@ public:
 private:
 	int32_t m_cacheTag;
 	int32_t m_dirtyTag;
-	SwfRect m_bounds;
+	Aabb2 m_bounds;
 	std::list< Path > m_paths;
 	AlignedVector< FlashLineStyle > m_lineStyles;
 	AlignedVector< FlashFillStyle > m_fillStyles;

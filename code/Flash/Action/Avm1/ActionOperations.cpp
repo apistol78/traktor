@@ -501,16 +501,16 @@ void opx_getProperty(ExecutionState& state)
 	// _width
 	case 8:
 		{
-			SwfRect bounds = movieClip->getBounds();
-			stack.push(ActionValue((bounds.max.x - bounds.min.x) / 20.0f));
+			Aabb2 bounds = movieClip->getBounds();
+			stack.push(ActionValue((bounds.mx.x - bounds.mn.x) / 20.0f));
 		}
 		break;
 
 	// _height
 	case 9:
 		{
-			SwfRect bounds = movieClip->getBounds();
-			stack.push(ActionValue((bounds.max.y - bounds.min.y) / 20.0f));
+			Aabb2 bounds = movieClip->getBounds();
+			stack.push(ActionValue((bounds.mx.y - bounds.mn.y) / 20.0f));
 		}
 		break;
 

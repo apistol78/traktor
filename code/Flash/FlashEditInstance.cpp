@@ -253,11 +253,11 @@ const TextLayout* FlashEditInstance::getTextLayout() const
 	return m_layout;
 }
 
-SwfRect FlashEditInstance::getBounds() const
+Aabb2 FlashEditInstance::getBounds() const
 {
-	SwfRect textBounds = m_edit->getTextBounds();
-	textBounds.min = getTransform() * textBounds.min;
-	textBounds.max = getTransform() * textBounds.max;
+	Aabb2 textBounds = m_edit->getTextBounds();
+	textBounds.mn = getTransform() * textBounds.mn;
+	textBounds.mx = getTransform() * textBounds.mx;
 	return textBounds;
 }
 

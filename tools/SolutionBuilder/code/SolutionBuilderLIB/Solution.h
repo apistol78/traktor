@@ -40,7 +40,7 @@ public:
 
 	const traktor::RefArray< Aggregation >& getAggregations() const;
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_name;

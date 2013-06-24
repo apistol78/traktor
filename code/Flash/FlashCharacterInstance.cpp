@@ -21,6 +21,7 @@ FlashCharacterInstance::FlashCharacterInstance(ActionContext* context, const cha
 ,	m_parent(parent)
 ,	m_visible(true)
 ,	m_enabled(true)
+,	m_filter(0)
 {
 	Atomic::increment(ms_instanceCount);
 
@@ -110,6 +111,16 @@ Matrix33 FlashCharacterInstance::getFullTransform() const
 		return m_parent->getFullTransform() * m_transform;
 	else
 		return m_transform;
+}
+
+void FlashCharacterInstance::setFilter(uint8_t filter)
+{
+	m_filter = filter;
+}
+
+uint8_t FlashCharacterInstance::getFilter() const
+{
+	return m_filter;
 }
 
 void FlashCharacterInstance::setVisible(bool visible)

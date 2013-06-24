@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/Containers/AlignedVector.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
 #include "Core/Math/Matrix44.h"
 #include "Flash/Polygon.h"
@@ -74,7 +75,7 @@ public:
 
 	void preBuild();
 
-	const SwfRect& getBounds() const { return m_bounds; }
+	const Aabb2& getBounds() const { return m_bounds; }
 
 private:
 	struct TesselationBatch
@@ -96,7 +97,7 @@ private:
 	uint32_t m_tesselationTriangleCount;
 	AccShapeVertexPool::Range m_vertexRange;
 	AlignedVector< RenderBatch > m_renderBatches[3];
-	SwfRect m_bounds;
+	Aabb2 m_bounds;
 	uint8_t m_batchFlags;
 	bool m_needUpdate;
 };

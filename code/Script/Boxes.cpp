@@ -729,6 +729,7 @@ void registerBoxClasses(IScriptManager* scriptManager)
 	classBoxedColor4ub->addMethod("getGreen", &BoxedColor4ub::getGreen);
 	classBoxedColor4ub->addMethod("getBlue", &BoxedColor4ub::getBlue);
 	classBoxedColor4ub->addMethod("getAlpha", &BoxedColor4ub::getAlpha);
+	classBoxedColor4ub->addMethod("getARGB", &BoxedColor4ub::getARGB);
 	classBoxedColor4ub->addMethod("setRed", &BoxedColor4ub::setRed);
 	classBoxedColor4ub->addMethod("setGreen", &BoxedColor4ub::setGreen);
 	classBoxedColor4ub->addMethod("setBlue", &BoxedColor4ub::setBlue);

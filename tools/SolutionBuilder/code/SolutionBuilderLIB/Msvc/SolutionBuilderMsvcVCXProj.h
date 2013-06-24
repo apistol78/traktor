@@ -14,6 +14,8 @@ class SolutionBuilderMsvcVCXProj : public SolutionBuilderMsvcProject
 	T_RTTI_CLASS;
 
 public:
+	SolutionBuilderMsvcVCXProj();
+
 	virtual std::wstring getPlatform() const;
 
 	virtual bool getInformation(
@@ -31,12 +33,14 @@ public:
 		Project* project
 	) const;
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_platform;
 	std::wstring m_keyword;
 	std::wstring m_toolset;
+	std::wstring m_targetPrefixes[4];
+	std::wstring m_targetExts[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsDebug[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXDefinition > m_buildDefinitionsRelease[4];
 	traktor::RefArray< SolutionBuilderMsvcVCXBuildTool > m_buildTools;

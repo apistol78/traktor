@@ -30,7 +30,7 @@ public:
 
 	const FlashShape* getShape() const;
 
-	virtual SwfRect getBounds() const;
+	virtual Aabb2 getBounds() const;
 
 private:
 	Ref< const FlashShape > m_shape;

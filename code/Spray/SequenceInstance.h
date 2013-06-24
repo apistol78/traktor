@@ -42,7 +42,6 @@ private:
 
 	std::vector< Key > m_keys;
 	int32_t m_index;
-	float m_lastT;
 
 	SequenceInstance(const std::vector< Key >& keys);
 };

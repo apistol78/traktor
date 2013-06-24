@@ -102,9 +102,8 @@ bool SolutionBuilderMsvcCompilerTool::generate(GeneratorContext& context, Soluti
 	return true;
 }
 
-bool SolutionBuilderMsvcCompilerTool::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcCompilerTool::serialize(traktor::ISerializer& s)
 {
 	s >> Member< bool >(L"resolvePaths", m_resolvePaths);
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
-	return true;
 }

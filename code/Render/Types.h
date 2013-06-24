@@ -642,19 +642,19 @@ typedef uint32_t handle_t;
  */
 handle_t T_DLLCLASS getParameterHandle(const std::wstring& name);
 
-/*! \brief Synthesize parameter name from guid.
+/*! \brief Synthesize parameter name from index.
  *
- * \param guid Guid to generate parameter name from.
+ * \param index Texture reference index.
  * \return Parameter name.
  */
-std::wstring T_DLLCLASS getParameterNameFromGuid(const Guid& guid);
+std::wstring T_DLLCLASS getParameterNameFromTextureReferenceIndex(int32_t index);
 
-/*! \brief Synthesize parameter handle from guid.
+/*! \brief Synthesize parameter handle from index.
  *
- * \param guid Guid to generate parameter name from.
+ * \param index Texture reference index.
  * \return Parameter handle.
  */
-handle_t T_DLLCLASS getParameterHandleFromGuid(const Guid& guid);
+handle_t T_DLLCLASS getParameterHandleFromTextureReferenceIndex(int32_t index);
 
 /*! \brief Return human readable description of data usage. */
 std::wstring T_DLLCLASS getDataUsageName(DataUsage usage);

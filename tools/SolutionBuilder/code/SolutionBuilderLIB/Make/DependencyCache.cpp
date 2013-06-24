@@ -36,14 +36,13 @@ bool DependencyCache::get(const std::wstring& key, const MD5& md5, std::set< std
 	return true;
 }
 
-bool DependencyCache::serialize(ISerializer& s)
+void DependencyCache::serialize(ISerializer& s)
 {
-	return s >> MemberStlMap< std::wstring, CacheItem, MemberStlPair< std::wstring, CacheItem, Member< std::wstring >, MemberComposite< CacheItem > > >(L"cache", m_cache);
+	s >> MemberStlMap< std::wstring, CacheItem, MemberStlPair< std::wstring, CacheItem, Member< std::wstring >, MemberComposite< CacheItem > > >(L"cache", m_cache);
 }
 
-bool DependencyCache::CacheItem::serialize(ISerializer& s)
+void DependencyCache::CacheItem::serialize(ISerializer& s)
 {
 	s >> MemberStaticArray< uint32_t, 4 >(L"md5", md5);
 	s >> MemberStlSet< std::wstring >(L"dependencies", dependencies);
-	return true;
 }

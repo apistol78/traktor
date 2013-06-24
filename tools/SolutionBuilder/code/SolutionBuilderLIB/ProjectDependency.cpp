@@ -41,13 +41,10 @@ bool ProjectDependency::resolve(SolutionLoader* solutionLoader)
 	return true;
 }
 
-bool ProjectDependency::serialize(traktor::ISerializer& s)
+void ProjectDependency::serialize(traktor::ISerializer& s)
 {
 	if (s.getVersion() >= 1)
-	{
-		if (!Dependency::serialize(s))
-			return false;
-	}
+		Dependency::serialize(s);
 
-	return s >> traktor::MemberRef< Project >(L"project", m_project);
+	s >> traktor::MemberRef< Project >(L"project", m_project);
 }

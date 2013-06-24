@@ -14,8 +14,8 @@ const std::wstring& Filter::getName() const
 	return m_name;
 }
 
-bool Filter::serialize(traktor::ISerializer& s)
+void Filter::serialize(traktor::ISerializer& s)
 {
 	s >> traktor::Member< std::wstring >(L"name", m_name);
-	return ProjectItem::serialize(s);
+	ProjectItem::serialize(s);
 }

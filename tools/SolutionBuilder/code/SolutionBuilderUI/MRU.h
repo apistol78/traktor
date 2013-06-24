@@ -17,7 +17,7 @@ public:
 	/*! \brief Get array of most recently used files. */
 	bool getUsedFiles(std::vector< traktor::Path >& outFilePaths) const;
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	std::vector< std::wstring > m_filePaths;

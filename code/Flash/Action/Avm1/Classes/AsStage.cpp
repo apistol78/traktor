@@ -34,8 +34,8 @@ AsStage::AsStage(ActionContext* context)
 	const FlashMovie* movie = context->getMovie();
 	T_ASSERT (movie);
 
-	m_width = int32_t((movie->getFrameBounds().max.x - movie->getFrameBounds().min.x) / 20.0f);
-	m_height = int32_t((movie->getFrameBounds().max.y - movie->getFrameBounds().min.y) / 20.0f);
+	m_width = int32_t((movie->getFrameBounds().mx.x - movie->getFrameBounds().mn.x) / 20.0f);
+	m_height = int32_t((movie->getFrameBounds().mx.y - movie->getFrameBounds().mn.y) / 20.0f);
 
 	m_viewWidth = m_width;
 	m_viewHeight = m_height;
@@ -80,15 +80,15 @@ Vector2 AsStage::toStage(const Vector2& pos)
 	const FlashMovie* movie = getContext()->getMovie();
 	T_ASSERT (movie);
 
-	SwfRect bounds = movie->getFrameBounds();
+	Aabb2 bounds = movie->getFrameBounds();
 
 	// Normalize screen coordinates into -1 to 1 ranges.
 	float sx = 2.0f * pos.x / m_viewWidth - 1.0f;
 	float sy = 2.0f * pos.y / m_viewHeight - 1.0f;
 
 	// Inverse transform into stage coordinates.
-	float tx = (((sx + 1.0f) / 2.0f - m_viewOffset.x()) / m_viewOffset.z()) * (bounds.max.x - bounds.min.x) + bounds.min.x;
-	float ty = (((sy + 1.0f) / 2.0f - m_viewOffset.y()) / m_viewOffset.w()) * (bounds.max.y - bounds.min.y) + bounds.min.y;
+	float tx = (((sx + 1.0f) / 2.0f - m_viewOffset.x()) / m_viewOffset.z()) * (bounds.mx.x - bounds.mn.x) + bounds.mn.x;
+	float ty = (((sy + 1.0f) / 2.0f - m_viewOffset.y()) / m_viewOffset.w()) * (bounds.mx.y - bounds.mn.y) + bounds.mn.y;
 	
 	return Vector2(tx, ty);
 }
@@ -104,11 +104,11 @@ void AsStage::updateViewOffset()
 	const FlashMovie* movie = getContext()->getMovie();
 	T_ASSERT (movie);
 
-	SwfRect bounds = movie->getFrameBounds();
+	Aabb2 bounds = movie->getFrameBounds();
 
 	if (m_scaleMode == SmShowAll)
 	{
-		float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
+		float frameAspect = (bounds.mx.x - bounds.mn.x) / (bounds.mx.y - bounds.mn.y);
 		float scaleX = frameAspect / aspectRatio;
 		if (scaleX <= 1.0f)
 		{
@@ -151,7 +151,7 @@ void AsStage::updateViewOffset()
 	}
 	else if (m_scaleMode == SmNoBorder)
 	{
-		float frameAspect = (bounds.max.x - bounds.min.x) / (bounds.max.y - bounds.min.y);
+		float frameAspect = (bounds.mx.x - bounds.mn.x) / (bounds.mx.y - bounds.mn.y);
 		float scaleX = frameAspect / aspectRatio;
 		if (scaleX <= 1.0f)
 		{
@@ -197,8 +197,8 @@ void AsStage::updateViewOffset()
 		float viewWidth = m_viewWidth * 20.0f;
 		float viewHeight = m_viewHeight * 20.0f;
 
-		float boundsWidth = (bounds.max.x - bounds.min.x);
-		float boundsHeight = (bounds.max.y - bounds.min.y);
+		float boundsWidth = (bounds.mx.x - bounds.mn.x);
+		float boundsHeight = (bounds.mx.y - bounds.mn.y);
 
 		float scaleX = boundsWidth / viewWidth;
 		float scaleY = boundsHeight / viewHeight;

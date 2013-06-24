@@ -21,7 +21,7 @@ bool Dependency::shouldLinkWithProduct() const
 	return m_linkWithProduct;
 }
 
-bool Dependency::serialize(ISerializer& s)
+void Dependency::serialize(ISerializer& s)
 {
-	return s >> Member< bool >(L"linkWithProduct", m_linkWithProduct);
+	s >> Member< bool >(L"linkWithProduct", m_linkWithProduct);
 }

@@ -17,7 +17,7 @@
 #	if defined(WINCE)
 #		define T_UNALIGNED __unaligned
 #	endif
-#elif defined(__GNUC__)
+#elif defined(__GNUC__) || defined(__ANDROID__)
 #	if !defined(T_STATIC)
 #		define T_DLLIMPORT __attribute__((visibility("default")))
 #		define T_DLLEXPORT __attribute__((visibility("default")))
@@ -124,6 +124,10 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 // Use these macros in c/d tors only.
+#if defined(__ANDROID__)
+#	define T_EXCEPTION_GUARD_BEGIN
+#	define T_EXCEPTION_GUARD_END
+#endif
 #if !defined(T_EXCEPTION_GUARD_BEGIN)
 #	define T_EXCEPTION_GUARD_BEGIN try {
 #endif

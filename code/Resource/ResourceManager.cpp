@@ -64,7 +64,10 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 
 		const IResourceFactory* factory = findFactoryFromResourceType(*i->first);
 		if (!factory)
+		{
+			log::error << L"Unable to preload " << *i->first->getName() << L" resource; no resource factory for specified type" << Endl;
 			return 0;
+		}
 
 		bool cacheable = factory->isCacheable();
 		if (!cacheable)
@@ -82,7 +85,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 			load(i->second, factory, *i->first, residentHandle);
 			if (!residentHandle->get())
 			{
-				log::error << L"Unable to preload resource; skipped" << Endl;
+				log::error << L"Unable to preload " << *i->first->getName() << L" resource; skipped" << Endl;
 				continue;
 			}
 		}
@@ -96,11 +99,18 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	Ref< IResourceHandle > handle;
 
 	if (guid.isNull() || !guid.isValid())
+	{
+		if (!guid.isValid())
+			log::error << L"Unable to find " << type.getName() << L" resource; invalid id" << Endl;
 		return 0;
+	}
 
 	const IResourceFactory* factory = findFactoryFromProductType(type);
 	if (!factory)
+	{
+		log::error << L"Unable to find " << type.getName() << L" resource; no factory for specified type" << Endl;
 		return 0;
+	}
 
 	bool cacheable = factory->isCacheable();
 	if (cacheable)
@@ -310,7 +320,7 @@ void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, co
 		// to be able to run.
 		currentThread->sleep(0);
 	}
-	else if (m_verbose)
+	else
 		log::error << L"Unable to create resource \"" << guid.format() << L"\" (" << resourceType.getName() << L")" << Endl;
 
 	// Accumulate time spend on creating resources.

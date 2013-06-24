@@ -49,7 +49,7 @@ FlashMovieRenderer::FlashMovieRenderer(IDisplayRenderer* displayRenderer)
 
 void FlashMovieRenderer::renderFrame(
 	FlashSpriteInstance* movieInstance,
-	const SwfRect& frameBounds,
+	const Aabb2& frameBounds,
 	float viewWidth,
 	float viewHeight,
 	const Vector4& viewOffset
@@ -231,9 +231,11 @@ void FlashMovieRenderer::renderCharacter(
 			m_displayRenderer->renderGlyph(
 				*dictionary,
 				textTransform * translate(i->offsetX, i->offsetY) * scale(scaleOffset, scaleOffset),
+				font->getMaxDimension(),
 				*shape,
 				i->color,
-				concateCxTransform(cxTransform, characterInstance->getColorTransform())
+				concateCxTransform(cxTransform, characterInstance->getColorTransform()),
+				textInstance->getFilter()
 			);
 		}
 
@@ -276,9 +278,11 @@ void FlashMovieRenderer::renderCharacter(
 					m_displayRenderer->renderGlyph(
 						*dictionary,
 						editTransform * translate(chars[k].x, i->y) * scale(fontScale, fontScale),
+						attrib.font->getMaxDimension(),
 						*glyphShape,
 						attrib.color,
-						concateCxTransform(cxTransform, characterInstance->getColorTransform())
+						concateCxTransform(cxTransform, characterInstance->getColorTransform()),
+						editInstance->getFilter()
 					);
 				}
 			}

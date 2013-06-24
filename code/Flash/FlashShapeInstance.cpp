@@ -19,11 +19,11 @@ const FlashShape* FlashShapeInstance::getShape() const
 	return m_shape;
 }
 
-SwfRect FlashShapeInstance::getBounds() const
+Aabb2 FlashShapeInstance::getBounds() const
 {
-	SwfRect bounds = m_shape->getShapeBounds();
-	bounds.min = getTransform() * bounds.min;
-	bounds.max = getTransform() * bounds.max;
+	Aabb2 bounds = m_shape->getShapeBounds();
+	bounds.mn = getTransform() * bounds.mn;
+	bounds.mx = getTransform() * bounds.mx;
 	return bounds;
 }
 

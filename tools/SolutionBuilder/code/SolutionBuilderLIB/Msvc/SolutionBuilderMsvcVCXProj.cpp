@@ -33,7 +33,19 @@ namespace
 
 }
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 1, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"SolutionBuilderMsvcVCXProj", 2, SolutionBuilderMsvcVCXProj, SolutionBuilderMsvcProject)
+
+SolutionBuilderMsvcVCXProj::SolutionBuilderMsvcVCXProj()
+{
+	m_targetPrefixes[0] = L"";
+	m_targetPrefixes[1] = L"";
+	m_targetPrefixes[2] = L"";
+	m_targetPrefixes[3] = L"";
+	m_targetExts[0] = L".lib";
+	m_targetExts[1] = L".dll";
+	m_targetExts[2] = L".exe";
+	m_targetExts[3] = L".exe";
+}
 
 std::wstring SolutionBuilderMsvcVCXProj::getPlatform() const
 {
@@ -68,13 +80,17 @@ bool SolutionBuilderMsvcVCXProj::generate(
 	return true;
 }
 
-
-bool SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"platform", m_platform);
 	s >> Member< std::wstring >(L"keyword", m_keyword);
 	if (s.getVersion() >= 1)
 		s >> Member< std::wstring >(L"toolset", m_toolset);
+	if (s.getVersion() >= 2)
+	{
+		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetPrefixes) >(L"targetPrefixes", m_targetPrefixes);
+		s >> MemberStaticArray< std::wstring, sizeof_array(m_targetExts) >(L"targetExts", m_targetExts);
+	}
 	s >> MemberStaticArray<
 			RefArray< SolutionBuilderMsvcVCXDefinition >,
 			sizeof_array(m_buildDefinitionsDebug),
@@ -86,7 +102,6 @@ bool SolutionBuilderMsvcVCXProj::serialize(traktor::ISerializer& s)
 			MemberRefArray< SolutionBuilderMsvcVCXDefinition >
 		>(L"buildDefinitionsRelease", m_buildDefinitionsRelease);
 	s >> MemberRefArray< SolutionBuilderMsvcVCXBuildTool >(L"buildTools", m_buildTools);
-	return true;
 }
 
 bool SolutionBuilderMsvcVCXProj::generateProject(
@@ -211,23 +226,22 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 	{
 		Ref< const Configuration > configuration = *i;
 		std::wstring name = configuration->getName();
+		std::wstring projectName = m_targetPrefixes[int(configuration->getTargetFormat())] + project->getName();
 
-		std::wstring projectName = project->getName();
 		if (configuration->getTargetProfile() == Configuration::TpDebug)
 			projectName += L"_d";
 
 		os << L"<IntDir Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">$(Configuration)\\</IntDir>" << Endl;
 		os << L"<OutDir Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">$(SolutionDir)$(Configuration)\\</OutDir>" << Endl;
 		os << L"<TargetName Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">" << projectName << L"</TargetName>" << Endl;
+		os << L"<TargetExt Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">" << m_targetExts[int(configuration->getTargetFormat())] << L"</TargetExt>" << Endl;
 
 		switch (configuration->getTargetFormat())
 		{
 		case Configuration::TfStaticLibrary:
-			os << L"<TargetExt Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">.lib</TargetExt>" << Endl;
 			break;
 
 		case Configuration::TfSharedLibrary:
-			os << L"<TargetExt Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">.dll</TargetExt>" << Endl;
 			if (configuration->getTargetProfile() == Configuration::TpRelease)
 				os << L"<LinkIncremental Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">false</LinkIncremental>" << Endl;
 			else
@@ -237,7 +251,6 @@ bool SolutionBuilderMsvcVCXProj::generateProject(
 
 		case Configuration::TfExecutable:
 		case Configuration::TfExecutableConsole:
-			os << L"<TargetExt Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">.exe</TargetExt>" << Endl;
 			if (configuration->getTargetProfile() == Configuration::TpRelease)
 				os << L"<LinkIncremental Condition=\"'$(Configuration)|$(Platform)'=='" << name << L"|" << m_platform << L"'\">false</LinkIncremental>" << Endl;
 			else

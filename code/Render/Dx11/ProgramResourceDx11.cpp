@@ -22,7 +22,7 @@ public:
 
 	virtual void serialize(ISerializer& s) const
 	{
-		uint8_t blob[65535];
+		uint8_t blob[131072];
 		uint32_t blobSize;
 
 		if (s.getDirection() == ISerializer::SdRead)

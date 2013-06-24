@@ -143,8 +143,8 @@ void SwDisplayRenderer::renderShape(const FlashMovie& movie, const Matrix33& tra
 
 	const AlignedVector< FlashFillStyle >& fillStyles = shape.getFillStyles();
 
-	float frameWidth = movie.getFrameBounds().max.x;
-	float frameHeight = movie.getFrameBounds().max.y;
+	float frameWidth = movie.getFrameBounds().mx.x;
+	float frameHeight = movie.getFrameBounds().mx.y;
 	float screenScale = ((m_width / frameWidth) + (m_height / frameHeight)) / 2.0f;
 
 	const std::list< Path >& paths = shape.getPaths();
@@ -347,12 +347,12 @@ void SwDisplayRenderer::renderMorphShape(const FlashMovie& movie, const Matrix33
 {
 }
 
-void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform)
+void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter)
 {
 	Matrix33 rasterTransform = transform * m_transform;
 
-	float frameWidth = movie.getFrameBounds().max.x;
-	float frameHeight = movie.getFrameBounds().max.y;
+	float frameWidth = movie.getFrameBounds().mx.x;
+	float frameHeight = movie.getFrameBounds().mx.y;
 	float screenScale = ((m_width / frameWidth) + (m_height / frameHeight)) / 2.0f;
 
 	const std::list< Path >& paths = glyphShape.getPaths();

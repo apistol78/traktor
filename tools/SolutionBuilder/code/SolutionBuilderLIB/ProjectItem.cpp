@@ -21,7 +21,7 @@ const RefArray< ProjectItem >& ProjectItem::getItems() const
 	return m_items;
 }
 
-bool ProjectItem::serialize(ISerializer& s)
+void ProjectItem::serialize(ISerializer& s)
 {
-	return s >> MemberRefArray< ProjectItem >(L"items", m_items);
+	s >> MemberRefArray< ProjectItem >(L"items", m_items);
 }

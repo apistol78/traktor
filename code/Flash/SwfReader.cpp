@@ -796,17 +796,17 @@ SwfKerningRecord SwfReader::readKerningRecord(bool wideCodes)
 	return kerningRecord;
 }
 
-SwfRect SwfReader::readRect()
+Aabb2 SwfReader::readRect()
 {
-	SwfRect rect;
+	Aabb2 rect;
 
 	m_bs->alignByte();
 
 	uint32_t nbits = m_bs->readUnsigned(5);
-	rect.min.x = float(m_bs->readSigned(nbits));
-	rect.max.x = float(m_bs->readSigned(nbits));
-	rect.min.y = float(m_bs->readSigned(nbits));
-	rect.max.y = float(m_bs->readSigned(nbits));
+	rect.mn.x = float(m_bs->readSigned(nbits));
+	rect.mx.x = float(m_bs->readSigned(nbits));
+	rect.mn.y = float(m_bs->readSigned(nbits));
+	rect.mx.y = float(m_bs->readSigned(nbits));
 
 	m_bs->alignByte();
 

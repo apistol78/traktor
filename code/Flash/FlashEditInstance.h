@@ -58,7 +58,7 @@ public:
 
 	const TextLayout* getTextLayout() const;
 
-	virtual SwfRect getBounds() const;
+	virtual Aabb2 getBounds() const;
 
 	virtual void eventKey(wchar_t unicode);
 

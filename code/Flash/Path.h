@@ -4,7 +4,7 @@
 #include <vector>
 #include <list>
 #include "Core/Config.h"
-#include "Core/Math/Vector2.h"
+#include "Core/Math/Aabb2.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -121,6 +121,10 @@ public:
 	 * \param lineStyle Index to line style, 0 = no style.
 	 */
 	void end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle);
+
+	/*! \brief Get bounds.
+	 */
+	Aabb2 getBounds() const;
 
 	/*! \brief Get cursor position.
 	 *

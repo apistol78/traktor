@@ -2,6 +2,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberAlignedVector.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
@@ -24,11 +25,11 @@ FlashMorphShape::FlashMorphShape()
 FlashMorphShape::FlashMorphShape(uint16_t id)
 :	FlashCharacter(id)
 {
-	m_shapeBounds.min.x = m_shapeBounds.max.x =
-	m_shapeBounds.min.y = m_shapeBounds.max.y = 0.0f;
+	m_shapeBounds.mn.x = m_shapeBounds.mx.x =
+	m_shapeBounds.mn.y = m_shapeBounds.mx.y = 0.0f;
 }
 
-bool FlashMorphShape::create(const SwfRect& shapeBounds, const SwfShape* startShape, const SwfShape* endShape, const SwfStyles* startStyles, const SwfStyles* endStyles)
+bool FlashMorphShape::create(const Aabb2& shapeBounds, const SwfShape* startShape, const SwfShape* endShape, const SwfStyles* startStyles, const SwfStyles* endStyles)
 {
 	uint16_t fillStyle0 = 0;
 	uint16_t fillStyle1 = 0;
@@ -155,7 +156,7 @@ void FlashMorphShape::serialize(ISerializer& s)
 {
 	FlashCharacter::serialize(s);
 
-	s >> MemberSwfRect(L"shapeBounds", m_shapeBounds);
+	s >> MemberAabb2(L"shapeBounds", m_shapeBounds);
 	s >> MemberStlList< Path, MemberComposite< Path > >(L"paths", m_paths);
 	s >> MemberAlignedVector< FlashFillStyle, MemberComposite< FlashFillStyle > >(L"fillStyles", m_fillStyles);
 	s >> MemberAlignedVector< FlashLineStyle, MemberComposite< FlashLineStyle > >(L"lineStyles", m_lineStyles);

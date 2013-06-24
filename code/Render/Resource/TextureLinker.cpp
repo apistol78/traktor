@@ -16,13 +16,13 @@ TextureLinker::TextureLinker(TextureReader& textureReader)
 bool TextureLinker::link(const ShaderResource::Combination& shaderCombination, IProgram* program)
 {
 	const std::vector< Guid >& textures = shaderCombination.textures;
-	for (std::vector< Guid >::const_iterator i = textures.begin(); i != textures.end(); ++i)
+	for (uint32_t i = 0; i < textures.size(); ++i)
 	{
-		Ref< ITexture > texture = m_textureReader.read(*i);
+		Ref< ITexture > texture = m_textureReader.read(textures[i]);
 		if (!texture)
 			return false;
 
-		handle_t parameterHandle = getParameterHandleFromGuid(*i);
+		handle_t parameterHandle = getParameterHandleFromTextureReferenceIndex(i);
 		program->setTextureParameter(parameterHandle, texture);
 	}
 	return true;

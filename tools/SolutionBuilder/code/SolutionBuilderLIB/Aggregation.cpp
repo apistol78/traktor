@@ -69,7 +69,7 @@ const RefArray< Dependency >& Aggregation::getDependencies() const
 	return m_dependencies;
 }
 
-bool Aggregation::serialize(ISerializer& s)
+void Aggregation::serialize(ISerializer& s)
 {
 	s >> Member< bool >(L"enable", m_enable);
 	s >> Member< std::wstring >(L"name", m_name);
@@ -78,5 +78,4 @@ bool Aggregation::serialize(ISerializer& s)
 		s >> MemberRefArray< AggregationItem >(L"items", m_items);
 
 	s >> MemberRefArray< Dependency >(L"dependencies", m_dependencies);
-	return true;
 }

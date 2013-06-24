@@ -1,5 +1,6 @@
 #include <algorithm>
 #include "Core/Containers/SmallMap.h"
+#include "Core/Misc/String.h"
 #include "Core/Singleton/ISingleton.h"
 #include "Core/Singleton/SingletonManager.h"
 #include "Core/Thread/Acquire.h"
@@ -114,23 +115,14 @@ handle_t getParameterHandle(const std::wstring& name)
 	return s_handleRegistry.getHandle(name);
 }
 
-std::wstring getParameterNameFromGuid(const Guid& guid)
+std::wstring getParameterNameFromTextureReferenceIndex(int32_t index)
 {
-	const wchar_t hex[] = { L"0123456789ABCDEF" };
-	wchar_t name[] = { L"pmg_00000000000000000000000000000000" };
-
-	for (int i = 0; i < 16; ++i)
-	{
-		name[4 + i * 2] = hex[guid[i] >> 4];
-		name[5 + i * 2] = hex[guid[i] & 0x0f];
-	}
-
-	return name;
+	return std::wstring(L"__texRef") + toString(index);
 }
 
-handle_t getParameterHandleFromGuid(const Guid& guid)
+handle_t getParameterHandleFromTextureReferenceIndex(int32_t index)
 {
-	return s_handleRegistry.getHandle(getParameterNameFromGuid(guid));
+	return s_handleRegistry.getHandle(getParameterNameFromTextureReferenceIndex(index));
 }
 
 std::wstring getDataUsageName(DataUsage usage)

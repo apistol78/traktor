@@ -1560,18 +1560,6 @@ bool emitTargetSize(HlslContext& cx, TargetSize* node)
 	return true;
 }
 
-bool emitTexture(HlslContext& cx, Texture* node)
-{
-	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
-	cx.getShader().defineTexture(parameterName);
-	cx.getShader().createVariable(
-		node->findOutputPin(L"Output"),
-		parameterName,
-		hlsl_from_parameter_type(node->getParameterType())
-	);
-	return true;
-}
-
 bool emitTextureSize(HlslContext& cx, TextureSize* node)
 {
 	HlslVariable* in = cx.emitInput(node, L"Input");
@@ -1860,7 +1848,6 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
-	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);

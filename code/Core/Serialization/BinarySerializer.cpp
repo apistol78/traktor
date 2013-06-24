@@ -1,4 +1,5 @@
 #include <algorithm>
+#include <cstring>
 #include <limits>
 #include <sstream>
 #include "Core/Io/IStream.h"

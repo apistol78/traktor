@@ -54,6 +54,7 @@ public:
 		uint16_t depth;
 		uint8_t bitmapCaching;
 		uint8_t blendMode;
+		uint8_t filter;
 		SmallMap< uint32_t, Ref< const IActionVMImage > > events;
 		uint16_t clipDepth;
 		std::string name;
@@ -65,6 +66,9 @@ public:
 		PlaceObject()
 		:	hasFlags(0)
 		,	depth(0)
+		,	bitmapCaching(0)
+		,	blendMode(0)
+		,	filter(0)
 		{
 		}
 
