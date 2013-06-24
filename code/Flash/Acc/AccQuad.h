@@ -2,6 +2,7 @@
 #define traktor_flash_AccQuad_H
 
 #include "Core/Object.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Math/Matrix33.h"
 #include "Resource/Proxy.h"
 
@@ -28,7 +29,6 @@ class VertexBuffer;
 	namespace flash
 	{
 
-struct SwfRect;
 struct SwfCxTransform;
 
 /*! \brief Simple unit-quad shape.
@@ -46,7 +46,7 @@ public:
 
 	void render(
 		render::RenderContext* renderContext,
-		const SwfRect& bounds,
+		const Aabb2& bounds,
 		const Matrix33& transform,
 		const Vector4& frameSize,
 		const Vector4& viewSize,

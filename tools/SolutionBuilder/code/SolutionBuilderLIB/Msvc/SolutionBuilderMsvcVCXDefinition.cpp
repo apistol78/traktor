@@ -68,19 +68,17 @@ bool SolutionBuilderMsvcVCXDefinition::generate(
 	return true;
 }
 
-bool SolutionBuilderMsvcVCXDefinition::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcVCXDefinition::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"fileTypes", m_fileTypes);
 	s >> MemberStlVector< Option, MemberComposite< Option > >(L"options", m_options);
-	return true;
 }
 
-bool SolutionBuilderMsvcVCXDefinition::Option::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcVCXDefinition::Option::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", name);
 	s >> Member< std::wstring >(L"value", value);
-	return true;
 }
 
 void SolutionBuilderMsvcVCXDefinition::collectAdditionalLibraries(

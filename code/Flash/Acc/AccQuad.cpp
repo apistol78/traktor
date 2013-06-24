@@ -98,7 +98,7 @@ void AccQuad::destroy()
 
 void AccQuad::render(
 	render::RenderContext* renderContext,
-	const SwfRect& bounds,
+	const Aabb2& bounds,
 	const Matrix33& transform,
 	const Vector4& frameSize,
 	const Vector4& viewSize,
@@ -118,8 +118,8 @@ void AccQuad::render(
 	);
 
 	Matrix44 m2(
-		bounds.max.x - bounds.min.x, 0.0f, bounds.min.x, 0.0f,
-		0.0f, bounds.max.y - bounds.min.y, bounds.min.y, 0.0f,
+		bounds.mx.x - bounds.mn.x, 0.0f, bounds.mn.x, 0.0f,
+		0.0f, bounds.mx.y - bounds.mn.y, bounds.mn.y, 0.0f,
 		0.0f, 0.0f, 1.0f, 0.0f,
 		0.0f, 0.0f, 0.0f, 1.0f
 	);

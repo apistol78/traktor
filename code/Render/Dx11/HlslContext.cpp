@@ -152,13 +152,10 @@ bool HlslContext::isPinsConnected(const OutputPin* outputPin, const InputPin* in
 	return false;
 }
 
-void HlslContext::findExternalInputs(Node* node, const std::wstring& inputPinName, const std::wstring& dependentOutputPinName, std::vector< const InputPin* >& outInputPins) const
+void HlslContext::findExternalInputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const InputPin* >& outInputPins) const
 {
-	const OutputPin* dependentOutputPin = node->findOutputPin(dependentOutputPinName);
-	T_ASSERT (dependentOutputPin);
-
 	std::set< const OutputPin* > visitedOutputPins;
-	visitedOutputPins.insert(dependentOutputPin);
+	visitedOutputPins.insert(dependentOutputPins.begin(), dependentOutputPins.end());
 
 	std::vector< const InputPin* > inputPins;
 	inputPins.push_back(node->findInputPin(inputPinName));
@@ -168,7 +165,11 @@ void HlslContext::findExternalInputs(Node* node, const std::wstring& inputPinNam
 		const InputPin* inputPin = inputPins.back(); inputPins.pop_back();
 		T_ASSERT (inputPin);
 
-		if (!isPinsConnected(dependentOutputPin, inputPin))
+		bool isConnected = false;
+		for (std::vector< const OutputPin* >::const_iterator i = dependentOutputPins.begin(); i != dependentOutputPins.end(); ++i)
+			isConnected |= isPinsConnected(*i, inputPin);
+
+		if (!isConnected)
 			outInputPins.push_back(inputPin);
 		else
 		{

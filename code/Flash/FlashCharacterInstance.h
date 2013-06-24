@@ -102,6 +102,14 @@ public:
 
 	/*! \brief
 	 */
+	void setFilter(uint8_t filter);
+
+	/*! \brief
+	 */
+	uint8_t getFilter() const;
+
+	/*! \brief
+	 */
 	void setVisible(bool visible);
 
 	/*! \brief
@@ -182,7 +190,7 @@ public:
 	 *
 	 * \return Bounding box.
 	 */
-	virtual SwfRect getBounds() const = 0;
+	virtual Aabb2 getBounds() const = 0;
 
 	//@}
 
@@ -207,6 +215,7 @@ private:
 	bool m_enabled;
 	SwfCxTransform m_cxform;
 	Matrix33 m_transform;
+	uint8_t m_filter;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
 };
 

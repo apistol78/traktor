@@ -1710,6 +1710,10 @@
       <second>Iterate</second>
     </item>
     <item>
+      <first>SHADERGRAPH_NODE_ITERATE2D</first>
+      <second>Iterate 2D</second>
+    </item>    
+    <item>
       <first>SHADERGRAPH_NODE_LENGTH</first>
       <second>Length</second>
     </item>

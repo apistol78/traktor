@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberEnum.h"
 #include "Flash/FlashEdit.h"
 #include "Flash/FlashEditInstance.h"
@@ -32,7 +33,7 @@ FlashEdit::FlashEdit(
 	uint16_t id,
 	uint16_t fontId,
 	uint16_t fontHeight,
-	const SwfRect& textBounds,
+	const Aabb2& textBounds,
 	const SwfColor& textColor,
 	const std::wstring& initialText,
 	Align align,
@@ -78,7 +79,7 @@ uint16_t FlashEdit::getFontHeight() const
 	return m_fontHeight;
 }
 
-const SwfRect& FlashEdit::getTextBounds() const
+const Aabb2& FlashEdit::getTextBounds() const
 {
 	return m_textBounds;
 }
@@ -138,7 +139,7 @@ void FlashEdit::serialize(ISerializer& s)
 
 	s >> Member< uint16_t >(L"fontId", m_fontId);
 	s >> Member< uint16_t >(L"fontHeight", m_fontHeight);
-	s >> MemberSwfRect(L"textBounds", m_textBounds);
+	s >> MemberAabb2(L"textBounds", m_textBounds);
 	s >> MemberSwfColor(L"textColor", m_textColor);
 	s >> Member< std::wstring >(L"initialText", m_initialText);
 	s >> MemberEnum< Align >(L"m_align", m_align, kAlign);

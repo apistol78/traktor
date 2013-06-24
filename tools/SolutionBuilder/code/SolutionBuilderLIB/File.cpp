@@ -38,8 +38,8 @@ void File::getSystemFiles(const traktor::Path& sourcePath, std::set< traktor::Pa
 	}
 }
 
-bool File::serialize(traktor::ISerializer& s)
+void File::serialize(traktor::ISerializer& s)
 {
 	s >> traktor::Member< std::wstring >(L"fileName", m_fileName);
-	return ProjectItem::serialize(s);
+	ProjectItem::serialize(s);
 }

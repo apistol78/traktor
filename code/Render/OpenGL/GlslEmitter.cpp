@@ -1638,18 +1638,6 @@ bool emitTargetSize(GlslContext& cx, TargetSize* node)
 	return true;
 }
 
-bool emitTexture(GlslContext& cx, Texture* node)
-{
-	std::wstring textureName = getParameterNameFromGuid(node->getExternal());
-	cx.getShader().createVariable(
-		node->findOutputPin(L"Output"),
-		textureName,
-		glsl_from_parameter_type(node->getParameterType())
-	);
-	cx.defineTexture(textureName);
-	return true;
-}
-
 bool emitTextureSize(GlslContext& cx, TextureSize* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
@@ -1979,7 +1967,6 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
-	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);

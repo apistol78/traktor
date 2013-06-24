@@ -44,7 +44,7 @@ public:
 	virtual void begin(
 		const FlashDictionary& dictionary,
 		const SwfColor& backgroundColor,
-		const SwfRect& frameBounds,
+		const Aabb2& frameBounds,
 		float viewWidth,
 		float viewHeight,
 		const Vector4& viewOffset
@@ -81,11 +81,12 @@ public:
 	 *
 	 * \param dictionary Flash character dictionary.
 	 * \param transform Shape transform.
+	 * \param fontMaxDimension Max font glyph size.
 	 * \param glyphShape Shape
 	 * \param color Color
 	 * \param cxform Color transform.
 	 */
-	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform) = 0;
+	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter) = 0;
 
 	/*! \brief Render canvas.
 	 *

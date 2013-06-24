@@ -34,14 +34,10 @@ bool SolutionBuilderMsvcVCXCustomBuildTool::generateProject(
 	return true;
 }
 
-bool SolutionBuilderMsvcVCXCustomBuildTool::serialize(ISerializer& s)
+void SolutionBuilderMsvcVCXCustomBuildTool::serialize(ISerializer& s)
 {
-	if (!SolutionBuilderMsvcVCXBuildTool::serialize(s))
-		return false;
-
+	SolutionBuilderMsvcVCXBuildTool::serialize(s);
 	s >> Member< std::wstring >(L"command", m_command);
 	s >> Member< std::wstring >(L"message", m_message);
 	s >> Member< std::wstring >(L"outputs", m_outputs);
-
-	return true;
 }

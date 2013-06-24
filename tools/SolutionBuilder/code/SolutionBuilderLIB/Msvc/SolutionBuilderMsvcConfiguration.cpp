@@ -42,9 +42,8 @@ bool SolutionBuilderMsvcConfiguration::generate(
 	return true;
 }
 
-bool SolutionBuilderMsvcConfiguration::serialize(ISerializer& s)
+void SolutionBuilderMsvcConfiguration::serialize(ISerializer& s)
 {
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
 	s >> MemberStaticArray< RefArray< SolutionBuilderMsvcTool >, 2, MemberRefArray< SolutionBuilderMsvcTool > >(L"tools", m_tools);
-	return true;
 }

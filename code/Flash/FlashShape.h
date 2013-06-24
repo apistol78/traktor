@@ -32,7 +32,7 @@ public:
 
 	FlashShape(uint16_t id);
 
-	bool create(const SwfRect& shapeBounds, const SwfShape* shape, const SwfStyles* styles);
+	bool create(const Aabb2& shapeBounds, const SwfShape* shape, const SwfStyles* styles);
 
 	bool create(const SwfShape* shape);
 
@@ -46,7 +46,7 @@ public:
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 	) const;
 
-	const SwfRect& getShapeBounds() const { return m_shapeBounds; }
+	const Aabb2& getShapeBounds() const { return m_shapeBounds; }
 
 	const std::list< Path >& getPaths() const { return m_paths; }
 
@@ -57,7 +57,7 @@ public:
 	virtual void serialize(ISerializer& s);
 
 private:
-	SwfRect m_shapeBounds;
+	Aabb2 m_shapeBounds;
 	std::list< Path > m_paths;
 	AlignedVector< FlashFillStyle > m_fillStyles;
 	AlignedVector< FlashLineStyle > m_lineStyles;

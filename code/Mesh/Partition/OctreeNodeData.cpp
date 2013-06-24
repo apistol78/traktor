@@ -14,7 +14,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.mesh.OctreeNodeData", 0, OctreeNodeData
 
 void OctreeNodeData::serialize(ISerializer& s)
 {
-	s >> MemberAabb(L"boundingBox", m_boundingBox);
+	s >> MemberAabb3(L"boundingBox", m_boundingBox);
 	s >> MemberStlMap
 		<
 			uint8_t,

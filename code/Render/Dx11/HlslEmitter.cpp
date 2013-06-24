@@ -479,8 +479,12 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 	// Find non-dependent, external, input pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
+	std::vector< const OutputPin* > dependentOutputPins(1);
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+
 	std::vector< const InputPin* > inputPins;
-	cx.findExternalInputs(node, L"Input", L"N", inputPins);
+	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
+
 	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
 		cx.emitInput(*i);
 
@@ -531,6 +535,104 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 	// output stream.
 	f << fs.str();
 	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	return true;
+}
+
+bool emitIterate2d(HlslContext& cx, Iterate2d* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(HlslShader::BtBody);
+	std::wstring inputName;
+
+	// Create iterator variables.
+	HlslVariable* X = cx.emitOutput(node, L"X", HtFloat);
+	T_ASSERT (X);
+
+	HlslVariable* Y = cx.emitOutput(node, L"Y", HtFloat);
+	T_ASSERT (Y);
+
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	HlslVariable* out = cx.emitOutput(node, L"Output", HtVoid);
+	T_ASSERT (out);
+
+	// Find non-dependent, external, input pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const OutputPin* > dependentOutputPins(2);
+	dependentOutputPins[0] = node->findOutputPin(L"X");
+	dependentOutputPins[1] = node->findOutputPin(L"Y");
+
+	std::vector< const InputPin* > inputPins;
+	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
+
+	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
+		cx.emitInput(*i);
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(HlslShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	HlslVariable* input = cx.emitInput(node, L"Input");
+	if (!input)
+		return false;
+
+	// Emit post condition if connected; break iteration if condition is false.
+	HlslVariable* condition = cx.emitInput(node, L"Condition");
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(HtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
+
+	inputName = input->getName();
+
+	// Modify output variable; need to have input variable ready as it
+	// will determine output type.
+	out->setType(input->getType());
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(HlslShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	HlslVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+		assign(cx, f, out) << initial->cast(out->getType()) << L";" << Endl;
+	else
+		assign(cx, f, out) << L"0;" << Endl;
+
+	// Write outer for-loop statement.
+	if (cx.inPixel())
+		f << L"[unroll]" << Endl;
+	f << L"for (float " << X->getName() << L" = " << node->getFromX() << L"; " << X->getName() << L" <= " << node->getToX() << L"; ++" << X->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	if (cx.inPixel())
+		f << L"[unroll]" << Endl;
+	f << L"for (float " << Y->getName() << L" = " << node->getFromY() << L"; " << Y->getName() << L" <= " << node->getToY() << L"; ++" << Y->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	// Emit outer loop post condition.
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(HtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
 
 	f << DecreaseIndent;
 	f << L"}" << Endl;	
@@ -1355,8 +1457,12 @@ bool emitSum(HlslContext& cx, Sum* node)
 	// Find non-dependent, external, input pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
+	std::vector< const OutputPin* > dependentOutputPins(1);
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+
 	std::vector< const InputPin* > inputPins;
-	cx.findExternalInputs(node, L"Input", L"N", inputPins);
+	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
+
 	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
 		cx.emitInput(*i);
 
@@ -1599,40 +1705,6 @@ bool emitTargetSize(HlslContext& cx, TargetSize* node)
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat2);
 	assign(cx, f, out) << L"_dx11_targetSize.xy;" << Endl;
 	cx.getShader().allocateTargetSize();
-	return true;
-}
-
-bool emitTexture(HlslContext& cx, Texture* node)
-{
-	std::wstring textureName = getParameterNameFromGuid(node->getExternal());
-	
-	cx.getShader().createVariable(
-		node->findOutputPin(L"Output"),
-		textureName,
-		hlsl_from_parameter_type(node->getParameterType())
-	);
-
-	const std::set< std::wstring >& uniforms = cx.getShader().getUniforms();
-	if (uniforms.find(textureName) == uniforms.end())
-	{
-		StringOutputStream& fu = cx.getShader().getOutputStream(HlslShader::BtTextures);
-		switch (node->getParameterType())
-		{
-		case PtTexture2D:
-			fu << L"Texture2D " << textureName << L";" << Endl;
-			break;
-
-		case PtTexture3D:
-			fu << L"Texture3D " << textureName << L";" << Endl;
-			break;
-
-		case PtTextureCube:
-			fu << L"TextureCube " << textureName << L";" << Endl;
-			break;
-		}
-		cx.getShader().addUniform(textureName);
-	}
-
 	return true;
 }
 
@@ -1925,6 +1997,7 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
+	m_emitters[&type_of< Iterate2d >()] = new EmitterCast< Iterate2d >(emitIterate2d);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
@@ -1957,7 +2030,6 @@ HlslEmitter::HlslEmitter()
 	m_emitters[&type_of< Switch >()] = new EmitterCast< Switch >(emitSwitch);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
-	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);

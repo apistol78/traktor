@@ -14,7 +14,7 @@ public:
 
 	bool get(const std::wstring& key, const traktor::MD5& md5, std::set< std::wstring >& outDependencies) const;
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	struct CacheItem
@@ -22,7 +22,7 @@ private:
 		uint32_t md5[4];
 		std::set< std::wstring > dependencies;
 
-		bool serialize(traktor::ISerializer& s);
+		void serialize(traktor::ISerializer& s);
 	};
 
 	std::map< std::wstring, CacheItem > m_cache;

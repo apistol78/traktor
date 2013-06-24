@@ -241,13 +241,9 @@ Ref< FlashSpriteInstance > FlashSpriteInstance::clone() const
 	return cloneInstance;
 }
 
-SwfRect FlashSpriteInstance::getLocalBounds() const
+Aabb2 FlashSpriteInstance::getLocalBounds() const
 {
-	SwfRect bounds =
-	{
-		Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max()),
-		Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max())
-	};
+	Aabb2 bounds;
 
 	if (m_canvas)
 		bounds = m_canvas->getBounds();
@@ -256,12 +252,7 @@ SwfRect FlashSpriteInstance::getLocalBounds() const
 	for (FlashDisplayList::layer_map_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
 	{
 		T_ASSERT (i->second.instance);
-
-		SwfRect layerBounds = i->second.instance->getBounds();
-		bounds.min.x = std::min(bounds.min.x, layerBounds.min.x);
-		bounds.min.y = std::min(bounds.min.y, layerBounds.min.y);
-		bounds.max.x = std::max(bounds.max.x, layerBounds.max.x);
-		bounds.max.y = std::max(bounds.max.y, layerBounds.max.y);
+		bounds.contain(i->second.instance->getBounds());
 	}
 
 	return bounds;
@@ -550,8 +541,8 @@ void FlashSpriteInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent(ActionContext::IdOnMouseDown, ActionValue());
 
 	// Check if we're inside then issue press events.
-	SwfRect bounds = getLocalBounds();
-	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
+	Aabb2 bounds = getLocalBounds();
+	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 	if (inside)
 	{
 		executeScriptEvent(ActionContext::IdOnPress, ActionValue());
@@ -587,8 +578,8 @@ void FlashSpriteInstance::eventMouseUp(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent(ActionContext::IdOnMouseUp, ActionValue());
 
 	// Check if we're inside then issue press events.
-	SwfRect bounds = getLocalBounds();
-	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
+	Aabb2 bounds = getLocalBounds();
+	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 	if (inside && m_press)
 		executeScriptEvent(ActionContext::IdOnRelease, ActionValue());
 
@@ -621,8 +612,8 @@ void FlashSpriteInstance::eventMouseMove0(int32_t x, int32_t y, int32_t button)
 	executeScriptEvent(ActionContext::IdOnMouseMove, ActionValue());
 
 	// Roll over and out event handling.
-	SwfRect bounds = getLocalBounds();
-	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
+	Aabb2 bounds = getLocalBounds();
+	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 	if (inside != m_inside)
 	{
 		if (!inside)
@@ -647,8 +638,8 @@ void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 	m_mouseY = int32_t(xy.y / 20.0f);
 
 	// Roll over and out event handling.
-	SwfRect bounds = getLocalBounds();
-	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
+	Aabb2 bounds = getLocalBounds();
+	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 	if (inside != m_inside)
 	{
 		if (inside)
@@ -669,13 +660,13 @@ void FlashSpriteInstance::eventMouseMove1(int32_t x, int32_t y, int32_t button)
 	context->setMovieClip(current);
 }
 
-SwfRect FlashSpriteInstance::getBounds() const
+Aabb2 FlashSpriteInstance::getBounds() const
 {
-	SwfRect bounds = getLocalBounds();
+	Aabb2 bounds = getLocalBounds();
 
 	Matrix33 transform = getTransform();
-	bounds.min = transform * bounds.min;
-	bounds.max = transform * bounds.max;
+	bounds.mn = transform * bounds.mn;
+	bounds.mx = transform * bounds.mx;
 
 	return bounds;
 }

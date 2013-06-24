@@ -36,17 +36,5 @@ void MemberSwfCxTransform::serialize(ISerializer& s) const
 	s >> MemberStaticArray< float, 2 >(L"alpha", m_ref.alpha);
 }
 
-MemberSwfRect::MemberSwfRect(const wchar_t* const name, SwfRect& ref)
-:	MemberComplex(name, true)
-,	m_ref(ref)
-{
-}
-
-void MemberSwfRect::serialize(ISerializer& s) const
-{
-	s >> Member< Vector2 >(L"min", m_ref.min);
-	s >> Member< Vector2 >(L"max", m_ref.max);
-}
-
 	}
 }

@@ -121,6 +121,9 @@ void FlashFrame::PlaceObject::serialize(ISerializer& s)
 	if (hasFlags & PfHasBlendMode)
 		s >> Member< uint8_t >(L"blendMode", blendMode);
 
+	if (hasFlags & PfHasFilters)
+		s >> Member< uint8_t >(L"filter", filter);
+
 	if (hasFlags & PfHasActions)
 		s >> MemberSmallMap<
 			uint32_t,

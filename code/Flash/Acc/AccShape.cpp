@@ -118,8 +118,8 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 	}
 
 	// Calculate bounding box.
-	m_bounds.min.x = m_bounds.min.y =  std::numeric_limits< float >::max();
-	m_bounds.max.x = m_bounds.max.y = -std::numeric_limits< float >::max();
+	m_bounds.mn.x = m_bounds.mn.y =  std::numeric_limits< float >::max();
+	m_bounds.mx.x = m_bounds.mx.y = -std::numeric_limits< float >::max();
 
 	for (AlignedVector< TesselationBatch >::const_iterator i = m_tesselationBatches.begin(); i != m_tesselationBatches.end(); ++i)
 	{
@@ -127,10 +127,10 @@ bool AccShape::createTesselation(const std::list< Path >& paths)
 		{
 			for (int k = 0; k < 3; ++k)
 			{
-				m_bounds.min.x = min(m_bounds.min.x, j->v[k].x);
-				m_bounds.min.y = min(m_bounds.min.y, j->v[k].y);
-				m_bounds.max.x = max(m_bounds.max.x, j->v[k].x);
-				m_bounds.max.y = max(m_bounds.max.y, j->v[k].y);
+				m_bounds.mn.x = min(m_bounds.mn.x, j->v[k].x);
+				m_bounds.mn.y = min(m_bounds.mn.y, j->v[k].y);
+				m_bounds.mx.x = max(m_bounds.mx.x, j->v[k].x);
+				m_bounds.mx.y = max(m_bounds.mx.y, j->v[k].y);
 			}
 		}
 	}

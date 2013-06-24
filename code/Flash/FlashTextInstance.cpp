@@ -19,11 +19,11 @@ const FlashText* FlashTextInstance::getText() const
 	return m_text;
 }
 
-SwfRect FlashTextInstance::getBounds() const
+Aabb2 FlashTextInstance::getBounds() const
 {
-	SwfRect textBounds = m_text->getTextBounds();
-	textBounds.min = getTransform() * textBounds.min;
-	textBounds.max = getTransform() * textBounds.max;
+	Aabb2 textBounds = m_text->getTextBounds();
+	textBounds.mn = getTransform() * textBounds.mn;
+	textBounds.mx = getTransform() * textBounds.mx;
 	return textBounds;
 }
 

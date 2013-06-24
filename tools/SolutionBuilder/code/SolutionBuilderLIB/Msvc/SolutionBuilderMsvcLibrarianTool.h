@@ -18,7 +18,7 @@ public:
 		traktor::OutputStream& os
 	) const;
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	std::map< std::wstring, std::wstring > m_staticOptions;

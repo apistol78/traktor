@@ -91,6 +91,14 @@ void Path::end(uint16_t fillStyle0, uint16_t fillStyle1, uint16_t lineStyle)
 	}
 }
 
+Aabb2 Path::getBounds() const
+{
+	Aabb2 bounds;
+	for (std::vector< Vector2 >::const_iterator i = m_points.begin(); i != m_points.end(); ++i)
+		bounds.contain(*i);
+	return bounds;
+}
+
 void Path::serialize(ISerializer& s)
 {
 	s >> Member< Vector2 >(L"cursor", m_cursor);

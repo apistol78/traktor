@@ -31,8 +31,7 @@ bool SolutionBuilderMsvcLibrarianTool::generate(GeneratorContext& context, Solut
 	return true;
 }
 
-bool SolutionBuilderMsvcLibrarianTool::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcLibrarianTool::serialize(traktor::ISerializer& s)
 {
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
-	return true;
 }

@@ -50,7 +50,7 @@ public:
 	 *
 	 * \return Button bounds in local space.
 	 */
-	SwfRect getLocalBounds() const;
+	Aabb2 getLocalBounds() const;
 
 	/*! \brief Get button character.
 	 *
@@ -65,7 +65,7 @@ public:
 
 	virtual void eventMouseMove0(int x, int y, int button);
 
-	virtual SwfRect getBounds() const;
+	virtual Aabb2 getBounds() const;
 
 protected:
 	virtual void trace(const IVisitor& visitor) const;

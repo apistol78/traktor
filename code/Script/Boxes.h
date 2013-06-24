@@ -419,6 +419,8 @@ public:
 
 	uint8_t getAlpha() const { return m_value.a; }
 
+	uint32_t getARGB() const { return m_value.getARGB(); }
+
 	void setRed(uint8_t red) { m_value.r = red; }
 
 	void setGreen(uint8_t green) { m_value.g = green; }

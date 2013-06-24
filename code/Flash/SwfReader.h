@@ -135,7 +135,7 @@ public:
 
 	SwfKerningRecord readKerningRecord(bool wideCodes);
 
-	SwfRect readRect();
+	Aabb2 readRect();
 
 	SwfColor readRgb();
 

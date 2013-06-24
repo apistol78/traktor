@@ -28,6 +28,7 @@ TypeInfoSet IterativeNodeTraits::getNodeTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< Iterate >());
+	typeSet.insert(&type_of< Iterate2d >());
 	typeSet.insert(&type_of< Sum >());
 	return typeSet;
 }
@@ -38,9 +39,20 @@ PinType IterativeNodeTraits::getOutputPinType(
 	const PinType* inputPinTypes
 ) const
 {
-	if (outputPin->getName() == L"N")
+	if (
+		outputPin->getName() == L"N" ||
+		outputPin->getName() == L"X" ||
+		outputPin->getName() == L"Y"
+	)
 		return PntScalar1;
 	else if (is_a< Iterate >(node))
+	{
+		return std::max< PinType >(
+			inputPinTypes[0],			// Input
+			inputPinTypes[1]			// Initial
+		);
+	}
+	else if (is_a< Iterate2d >(node))
 	{
 		return std::max< PinType >(
 			inputPinTypes[0],			// Input
@@ -116,10 +128,19 @@ PinOrderType IterativeNodeTraits::evaluateOrder(
 	bool frequentAsLinear
 ) const
 {
-	if (nodeOutputPin->getName() == L"N")
+	if (
+		nodeOutputPin->getName() == L"N" ||
+		nodeOutputPin->getName() == L"X" ||
+		nodeOutputPin->getName() == L"Y"
+	)
 		return PotConstant;
 	
 	if (is_a< Iterate >(node))
+		return pinOrderMax(
+			inputPinOrders[0],
+			inputPinOrders[1]
+		);
+	else if (is_a< Iterate2d >(node))
 		return pinOrderMax(
 			inputPinOrders[0],
 			inputPinOrders[1]

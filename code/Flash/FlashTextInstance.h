@@ -30,7 +30,7 @@ public:
 
 	const FlashText* getText() const;
 
-	virtual SwfRect getBounds() const;
+	virtual Aabb2 getBounds() const;
 
 private:
 	Ref< const FlashText > m_text;

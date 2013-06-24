@@ -1,5 +1,6 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
+#include "Core/Serialization/MemberAabb.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberSmallMap.h"
 #include "Flash/FlashBitmap.h"
@@ -25,7 +26,7 @@ FlashMovie::FlashMovie()
 {
 }
 
-FlashMovie::FlashMovie(const IActionVM* vm, const SwfRect& frameBounds, FlashSprite* movieClip)
+FlashMovie::FlashMovie(const IActionVM* vm, const Aabb2& frameBounds, FlashSprite* movieClip)
 :	m_vm(vm)
 ,	m_frameBounds(frameBounds)
 ,	m_movieClip(movieClip)
@@ -116,7 +117,7 @@ Ref< FlashSpriteInstance > FlashMovie::createExternalMovieClipInstance(FlashSpri
 void FlashMovie::serialize(ISerializer& s)
 {
 	s >> MemberRef< const IActionVM >(L"vm", m_vm);
-	s >> MemberSwfRect(L"frameBounds", m_frameBounds);
+	s >> MemberAabb2(L"frameBounds", m_frameBounds);
 	s >> MemberRef< FlashSprite >(L"movieClip", m_movieClip);
 	s >> MemberSmallMap< uint16_t, Ref< FlashFont >, Member< uint16_t >, MemberRef< FlashFont > >(L"fonts", m_fonts);
 	s >> MemberSmallMap< uint16_t, Ref< FlashBitmap >, Member< uint16_t >, MemberRef< FlashBitmap > >(L"bitmaps", m_bitmaps);

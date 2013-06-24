@@ -108,7 +108,7 @@ const RefArray< Dependency >& Project::getDependencies() const
 	return m_dependencies;
 }
 
-bool Project::serialize(ISerializer& s)
+void Project::serialize(ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"enable", m_enable);
@@ -139,6 +139,4 @@ bool Project::serialize(ISerializer& s)
 	}
 	else
 		s >> MemberRefArray< Dependency >(L"dependencies", m_dependencies);
-
-	return true;
 }

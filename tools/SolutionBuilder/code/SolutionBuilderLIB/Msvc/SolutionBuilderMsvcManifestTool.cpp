@@ -36,10 +36,9 @@ bool SolutionBuilderMsvcManifestTool::generate(GeneratorContext& context, Soluti
 	return true;
 }
 
-bool SolutionBuilderMsvcManifestTool::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcManifestTool::serialize(traktor::ISerializer& s)
 {
 	s >> Member< std::wstring >(L"manifest", m_manifest);
-	return true;
 }
 
 void SolutionBuilderMsvcManifestTool::findManifests(GeneratorContext& context, Solution* solution, Project* project, const RefArray< ProjectItem >& items) const

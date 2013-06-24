@@ -856,13 +856,6 @@ void emitTan(EmitterContext& cx, Tan* node)
 	cx.emitInstruction(OpTan, out, theta);
 }
 
-void emitTexture(EmitterContext& cx, Texture* node)
-{
-	std::wstring parameterName = getParameterNameFromGuid(node->getExternal());
-	Variable* out = cx.emitOutput(node, L"Output", VtTexture);
-	out->reg = cx.allocSampler(parameterName);
-}
-
 void emitTransform(EmitterContext& cx, Transform* node)
 {
 	Variable* in = cx.emitInput(node, L"Input");
@@ -1085,7 +1078,6 @@ Emitter::Emitter()
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
-	m_emitters[&type_of< Texture >()] = new EmitterCast< Texture >(emitTexture);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);

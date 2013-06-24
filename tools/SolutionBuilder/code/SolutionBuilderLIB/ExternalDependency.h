@@ -28,7 +28,7 @@ public:
 
 	virtual bool resolve(SolutionLoader* solutionLoader);
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	std::wstring m_solutionFileName;

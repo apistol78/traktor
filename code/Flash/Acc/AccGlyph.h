@@ -29,7 +29,6 @@ class VertexBuffer;
 	namespace flash
 	{
 
-struct SwfRect;
 struct SwfCxTransform;
 
 class AccGlyph : public Object
@@ -47,7 +46,7 @@ public:
 	void destroy();
 
 	void add(
-		const SwfRect& bounds,
+		const Aabb2& bounds,
 		const Matrix33& transform,
 		const SwfCxTransform& cxform,
 		const Vector4& textureOffset
@@ -60,7 +59,8 @@ public:
 		const Vector4& viewOffset,
 		float screenOffsetScale,
 		render::ITexture* texture,
-		uint8_t maskReference
+		uint8_t maskReference,
+		uint8_t glyphFilter
 	);
 
 private:

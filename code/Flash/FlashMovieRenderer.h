@@ -39,7 +39,7 @@ public:
 
 	void renderFrame(
 		FlashSpriteInstance* movieInstance,
-		const SwfRect& frameBounds,
+		const Aabb2& frameBounds,
 		float viewWidth,
 		float viewHeight,
 		const Vector4& viewOffset

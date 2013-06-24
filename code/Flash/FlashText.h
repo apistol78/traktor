@@ -44,7 +44,7 @@ public:
 
 	FlashText();
 
-	FlashText(uint16_t id, const SwfRect& textBounds, const Matrix33& textMatrix);
+	FlashText(uint16_t id, const Aabb2& textBounds, const Matrix33& textMatrix);
 
 	bool create(const AlignedVector< SwfTextRecord* >& textRecords);
 
@@ -58,14 +58,14 @@ public:
 		const SmallMap< uint32_t, Ref< const IActionVMImage > >* events
 	) const;
 
-	const SwfRect& getTextBounds() const;
+	const Aabb2& getTextBounds() const;
 
 	const Matrix33& getTextMatrix() const;
 
 	virtual void serialize(ISerializer& s);
 
 private:
-	SwfRect m_textBounds;
+	Aabb2 m_textBounds;
 	Matrix33 m_textMatrix;
 	AlignedVector< Character > m_characters;
 };

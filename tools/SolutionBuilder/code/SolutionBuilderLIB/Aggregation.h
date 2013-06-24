@@ -46,7 +46,7 @@ public:
 
 	//@}
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	bool m_enable;

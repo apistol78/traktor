@@ -15,7 +15,7 @@ public:
 
 	const traktor::RefArray< ProjectItem >& getItems() const;
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	traktor::RefArray< ProjectItem > m_items;

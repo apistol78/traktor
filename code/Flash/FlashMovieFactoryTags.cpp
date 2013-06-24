@@ -54,11 +54,11 @@ bool FlashTagDefineShape::read(SwfReader* swf, ReadContext& context)
 	BitReader& bs = swf->getBitReader();
 
 	uint16_t shapeId = bs.readUInt16();
-	SwfRect shapeBounds = swf->readRect();
+	Aabb2 shapeBounds = swf->readRect();
 
 	if (m_shapeType == 4)
 	{
-		/*SwfRect edgeBounds = */swf->readRect();
+		/*Aabb2 edgeBounds = */swf->readRect();
 
 		bs.skip(5);
 
@@ -96,13 +96,13 @@ bool FlashTagDefineMorphShape::read(SwfReader* swf, ReadContext& context)
 	BitReader& bs = swf->getBitReader();
 
 	uint16_t shapeId = swf->getBitReader().readUInt16();
-	SwfRect startBounds = swf->readRect();
-	/*SwfRect endBounds = */swf->readRect();
+	Aabb2 startBounds = swf->readRect();
+	/*Aabb2 endBounds = */swf->readRect();
 
 	if (m_shapeType == 2)
 	{
-		/*SwfRect startEdgeBounds = */swf->readRect();
-		/*SwfRect endEdgeBounds = */swf->readRect();
+		/*Aabb2 startEdgeBounds = */swf->readRect();
+		/*Aabb2 endEdgeBounds = */swf->readRect();
 
 		bs.skip(6);
 		/*bool nonScalingStrokes = */bs.readBit();
@@ -224,7 +224,7 @@ bool FlashTagDefineFont::read(SwfReader* swf, ReadContext& context)
 
 		int16_t ascent = 0, descent = 0, leading = 0;
 		AlignedVector< int16_t > advanceTable;
-		AlignedVector< SwfRect > boundsTable;
+		AlignedVector< Aabb2 > boundsTable;
 		AlignedVector< SwfKerningRecord > kerningTable;
 
 		if (hasLayout)
@@ -280,7 +280,7 @@ bool FlashTagDefineText::read(SwfReader* swf, ReadContext& context)
 	BitReader& bs = swf->getBitReader();
 
 	uint16_t textId = bs.readUInt16();
-	SwfRect textBounds = swf->readRect();
+	Aabb2 textBounds = swf->readRect();
 	SwfMatrix textMatrix = swf->readMatrix();
 
 	uint8_t numGlyphBits = bs.readUInt8();
@@ -315,7 +315,7 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	BitReader& bs = swf->getBitReader();
 
 	uint16_t textId = bs.readUInt16();
-	SwfRect textBounds = swf->readRect();
+	Aabb2 textBounds = swf->readRect();
 	SwfColor textColor = { 255, 255, 255, 255 };
 
 	bs.alignByte();
@@ -965,6 +965,9 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 				AlignedVector< SwfFilter* > filterList;
 				if (!swf->readFilterList(filterList))
 					return false;
+
+				if (!filterList.empty())
+					placeObject.filter = filterList.front()->filterId;
 			}
 
 			if (placeObject.has(FlashFrame::PfHasBlendMode))

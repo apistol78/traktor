@@ -138,7 +138,7 @@ bool SolutionBuilderMsvcLinkerTool::generate(GeneratorContext& context, Solution
 	return true;
 }
 
-bool SolutionBuilderMsvcLinkerTool::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcLinkerTool::serialize(traktor::ISerializer& s)
 {
 	if (s.getVersion() >= 1)
 	{
@@ -146,7 +146,6 @@ bool SolutionBuilderMsvcLinkerTool::serialize(traktor::ISerializer& s)
 		s >> Member< bool >(L"resolveFullLibraryPaths", m_resolveFullLibraryPaths);
 	}
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
-	return true;
 }
 
 void SolutionBuilderMsvcLinkerTool::findDefinitions(GeneratorContext& context, Solution* solution, Project* project, const RefArray< ProjectItem >& items) const

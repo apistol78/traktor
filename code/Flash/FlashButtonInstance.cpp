@@ -62,13 +62,9 @@ uint8_t FlashButtonInstance::getState() const
 	return m_state;
 }
 
-SwfRect FlashButtonInstance::getLocalBounds() const
+Aabb2 FlashButtonInstance::getLocalBounds() const
 {
-	SwfRect bounds =
-	{
-		Vector2( std::numeric_limits< float >::max(),  std::numeric_limits< float >::max()),
-		Vector2(-std::numeric_limits< float >::max(), -std::numeric_limits< float >::max())
-	};
+	Aabb2 bounds;
 
 	const FlashButton::button_layers_t& layers = m_button->getButtonLayers();
 	for (FlashButton::button_layers_t::const_iterator i = layers.begin(); i != layers.end(); ++i)
@@ -77,11 +73,7 @@ SwfRect FlashButtonInstance::getLocalBounds() const
 		if (!characterInstance)
 			continue;
 
-		SwfRect characterBounds = characterInstance->getBounds();
-		bounds.min.x = std::min(bounds.min.x, characterBounds.min.x);
-		bounds.min.y = std::min(bounds.min.y, characterBounds.min.y);
-		bounds.max.x = std::max(bounds.max.x, characterBounds.max.x);
-		bounds.max.y = std::max(bounds.max.y, characterBounds.max.y);
+		bounds.contain(characterInstance->getBounds());
 	}
 
 	return bounds;
@@ -128,8 +120,8 @@ void FlashButtonInstance::eventMouseMove0(int x, int y, int button)
 	Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
 
 	// Roll over and out event handling.
-	SwfRect bounds = getLocalBounds();
-	bool inside = (xy.x >= bounds.min.x && xy.y >= bounds.min.y && xy.x <= bounds.max.x && xy.y <= bounds.max.y);
+	Aabb2 bounds = getLocalBounds();
+	bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
 	if (inside != m_inside)
 	{
 		if (inside)
@@ -164,13 +156,13 @@ void FlashButtonInstance::eventMouseMove0(int x, int y, int button)
 	}
 }
 
-SwfRect FlashButtonInstance::getBounds() const
+Aabb2 FlashButtonInstance::getBounds() const
 {
-	SwfRect bounds = getLocalBounds();
+	Aabb2 bounds = getLocalBounds();
 
 	Matrix33 transform = getTransform();
-	bounds.min = transform * bounds.min;
-	bounds.max = transform * bounds.max;
+	bounds.mn = transform * bounds.mn;
+	bounds.mx = transform * bounds.mx;
 
 	return bounds;
 }

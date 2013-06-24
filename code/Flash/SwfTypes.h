@@ -2,7 +2,7 @@
 #define traktor_flash_SwfTypes_H
 
 #include "Core/Config.h"
-#include "Core/Math/Vector2.h"
+#include "Core/Math/Aabb2.h"
 #include "Core/Containers/AlignedVector.h"
 
 namespace traktor
@@ -12,12 +12,6 @@ namespace traktor
 
 //@{
 /*! \ingroup Flash */
-
-struct SwfRect
-{
-	Vector2 min;
-	Vector2 max;
-};
 
 struct SwfColor
 {
@@ -52,7 +46,7 @@ struct SwfHeader
 	uint8_t signature[3];
 	uint8_t version;
 	uint32_t fileSize;
-	SwfRect frameRect; 
+	Aabb2 frameRect; 
 	uint16_t frameRate;
 	uint16_t frameCount;
 };

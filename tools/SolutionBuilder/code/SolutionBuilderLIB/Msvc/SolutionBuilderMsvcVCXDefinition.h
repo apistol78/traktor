@@ -23,7 +23,7 @@ public:
 		traktor::OutputStream& os
 	) const;
 
-	virtual bool serialize(traktor::ISerializer& s);
+	virtual void serialize(traktor::ISerializer& s);
 
 private:
 	struct Option
@@ -31,7 +31,7 @@ private:
 		std::wstring name;
 		std::wstring value;
 
-		bool serialize(traktor::ISerializer& s);
+		void serialize(traktor::ISerializer& s);
 	};
 
 	std::wstring m_name;

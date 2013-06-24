@@ -143,7 +143,7 @@ bool SolutionBuilderMsvcVCProj::generate(
 	return true;
 }
 
-bool SolutionBuilderMsvcVCProj::serialize(traktor::ISerializer& s)
+void SolutionBuilderMsvcVCProj::serialize(traktor::ISerializer& s)
 {
 	s >> MemberStlMap< std::wstring, std::wstring >(L"staticOptions", m_staticOptions);
 	s >> Member< std::wstring >(L"platform", m_platform);
@@ -158,7 +158,6 @@ bool SolutionBuilderMsvcVCProj::serialize(traktor::ISerializer& s)
 			MemberRef< SolutionBuilderMsvcTool >
 		>
 	>(L"customTools", m_customTools);
-	return true;
 }
 
 bool SolutionBuilderMsvcVCProj::addItem(GeneratorContext& context, Solution* solution, Project* project, ProjectItem* item, OutputStream& os) const

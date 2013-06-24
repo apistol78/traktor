@@ -48,9 +48,8 @@ bool SolutionBuilderMsvcVCXBuildTool::generateFilter(
 	return true;
 }
 
-bool SolutionBuilderMsvcVCXBuildTool::serialize(ISerializer& s)
+void SolutionBuilderMsvcVCXBuildTool::serialize(ISerializer& s)
 {
 	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< std::wstring >(L"fileType", m_fileType);
-	return true;
 }

@@ -37,7 +37,7 @@ class T_DLLCLASS FlashMovie : public ISerializable
 public:
 	FlashMovie();
 
-	FlashMovie(const IActionVM* vm, const SwfRect& frameBounds, FlashSprite* movieClip);
+	FlashMovie(const IActionVM* vm, const Aabb2& frameBounds, FlashSprite* movieClip);
 
 	void defineFont(uint16_t fontId, FlashFont* font);
 
@@ -55,7 +55,7 @@ public:
 
 	const IActionVM* getVM() const { return m_vm; }
 
-	const SwfRect& getFrameBounds() const { return m_frameBounds; }
+	const Aabb2& getFrameBounds() const { return m_frameBounds; }
 
 	const FlashSprite* getMovieClip() const { return m_movieClip; }
 
@@ -73,7 +73,7 @@ public:
 
 private:
 	Ref< const IActionVM > m_vm;
-	SwfRect m_frameBounds;
+	Aabb2 m_frameBounds;
 	Ref< FlashSprite > m_movieClip;
 	SmallMap< uint16_t, Ref< FlashFont > > m_fonts;
 	SmallMap< uint16_t, Ref< FlashBitmap > > m_bitmaps;
