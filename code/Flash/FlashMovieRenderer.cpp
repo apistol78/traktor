@@ -235,7 +235,8 @@ void FlashMovieRenderer::renderCharacter(
 				*shape,
 				i->color,
 				concateCxTransform(cxTransform, characterInstance->getColorTransform()),
-				textInstance->getFilter()
+				textInstance->getFilter(),
+				textInstance->getFilterColor()
 			);
 		}
 
@@ -282,7 +283,8 @@ void FlashMovieRenderer::renderCharacter(
 						*glyphShape,
 						attrib.color,
 						concateCxTransform(cxTransform, characterInstance->getColorTransform()),
-						editInstance->getFilter()
+						editInstance->getFilter(),
+						editInstance->getFilterColor()
 					);
 				}
 			}

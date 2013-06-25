@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.parade.StageData">
+<object type="traktor.amalgam.StageData">
 	<layers>
-		<item type="traktor.parade.WorldLayerData">
+		<item type="traktor.amalgam.WorldLayerData">
 			<name>World</name>
 			<script>{E4B5ED63-6A4E-2C45-9B3A-FD44B759CE60}</script>
 			<scene>{73682B2D-B449-CD4E-BDB9-F7B079C30079}</scene>

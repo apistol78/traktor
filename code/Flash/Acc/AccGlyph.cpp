@@ -51,6 +51,7 @@ render::handle_t s_handleViewSize;
 render::handle_t s_handleViewOffset;
 render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleTexture;
+render::handle_t s_handleFilterColor;
 render::handle_t s_handleOutlineEnable;
 
 		}
@@ -76,6 +77,7 @@ bool AccGlyph::create(
 		s_handleViewOffset = render::getParameterHandle(L"Flash_ViewOffset");
 		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
 		s_handleTexture = render::getParameterHandle(L"Flash_Texture");
+		s_handleFilterColor = render::getParameterHandle(L"Flash_FilterColor");
 		s_handleOutlineEnable = render::getParameterHandle(L"Flash_OutlineEnable");
 		s_handleInitialized = true;
 	}
@@ -222,7 +224,8 @@ void AccGlyph::render(
 	float screenOffsetScale,
 	render::ITexture* texture,
 	uint8_t maskReference,
-	uint8_t glyphFilter
+	uint8_t glyphFilter,
+	const SwfColor& glyphFilterColor
 )
 {
 	if (!m_vertex || !m_count)
@@ -255,6 +258,15 @@ void AccGlyph::render(
 	renderBlock->programParams->setFloatParameter(s_handleScreenOffsetScale, screenOffsetScale);
 	renderBlock->programParams->setStencilReference(maskReference);
 	renderBlock->programParams->setTextureParameter(s_handleTexture, texture);
+
+	if (glyphFilter != 0)
+		renderBlock->programParams->setVectorParameter(s_handleFilterColor, Vector4(
+			glyphFilterColor.red / 255.0f,
+			glyphFilterColor.green / 255.0f,
+			glyphFilterColor.blue / 255.0f,
+			glyphFilterColor.alpha / 255.0f
+		));
+
 	renderBlock->programParams->endParameters(renderContext);
 
 	renderContext->draw(render::RpOverlay, renderBlock);

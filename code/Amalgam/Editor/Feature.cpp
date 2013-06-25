@@ -10,7 +10,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 1, Feature, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Feature", 2, Feature, ISerializable)
 
 void Feature::serialize(ISerializer& s)
 {
@@ -31,6 +31,7 @@ Feature::Platforms::Platforms()
 ,	win64(false)
 ,	xbox360(false)
 ,	emscripten(false)
+,	android(false)
 {
 }
 
@@ -47,6 +48,9 @@ void Feature::Platforms::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 1)
 		s >> Member< bool >(L"emscripten", emscripten);
+
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"android", android);
 }
 
 	}

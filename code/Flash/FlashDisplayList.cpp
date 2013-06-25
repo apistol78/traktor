@@ -152,7 +152,10 @@ void FlashDisplayList::updateFrame(FlashCharacterInstance* ownerInstance, const 
 				layer.instance->setTransform(placeObject.matrix);
 
 			if (placeObject.has(FlashFrame::PfHasFilters))
+			{
 				layer.instance->setFilter(placeObject.filter);
+				layer.instance->setFilterColor(placeObject.filterColor);
+			}
 
 			if (placeObject.has(FlashFrame::PfHasClipDepth))
 				layer.clipDepth = placeObject.clipDepth + c_depthOffset;

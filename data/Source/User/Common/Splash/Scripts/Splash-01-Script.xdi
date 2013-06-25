@@ -6,16 +6,36 @@
 -- Splash common script
 -- Will exit to "NEXT" stage after 5 seconds.
 
-local _timeUntilNext
+m_loadAsyncHandle = nil
+m_timeUntilNext = 0
 
-function layerInit(stage)
-	_timeUntilNext = 5
+function initialize()
+	local inputSystem = environment:getInput():getInputSystem()
+	local renderView = environment:getRender():getRenderView()
+
+	m_loadAsyncHandle = stage:loadStageAsync("NEXT", nil)
+	if m_loadAsyncHandle == nil then
+		print("Unable to create async stage loader")
+		stage:terminate()
+	end
+
+	m_timeUntilNext = 5
+
+	inputSystem:setExclusive(false)
+	renderView:showCursor()
 end
 
-function layerUpdate(stage, info)
-	_timeUntilNext = _timeUntilNext - info:getSimulationDeltaTime()
-	if _timeUntilNext < 0 then
-		stage:gotoStage("NEXT", nil)
+function update(control, info)
+	m_timeUntilNext = m_timeUntilNext - info:getSimulationDeltaTime()
+	if m_timeUntilNext < 0 and m_loadAsyncHandle:ready() then
+		if m_loadAsyncHandle:succeeded() then
+			control:setPause(false)
+			stage:gotoStage(m_loadAsyncHandle:get())
+		else
+			stage:terminate()
+		end
+	elseif m_timeUntilNext < 0 then
+		control:setPause(true)
 	end
 end
 

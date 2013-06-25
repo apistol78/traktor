@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Split.h"

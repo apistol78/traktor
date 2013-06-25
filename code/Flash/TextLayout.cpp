@@ -1,3 +1,4 @@
+#include <cstring>
 #include <limits>
 #include "Core/Math/Const.h"
 #include "Core/Misc/StringSplit.h"

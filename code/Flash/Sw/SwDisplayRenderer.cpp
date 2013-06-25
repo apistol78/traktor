@@ -347,7 +347,7 @@ void SwDisplayRenderer::renderMorphShape(const FlashMovie& movie, const Matrix33
 {
 }
 
-void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter)
+void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
 {
 	Matrix33 rasterTransform = transform * m_transform;
 

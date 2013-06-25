@@ -5,6 +5,14 @@ set STEAMWORKS_SDK=%TRAKTOR_HOME%3rdp\steamworks-sdk-123a
 set FBX_SDK=%TRAKTOR_HOME%3rdp\FbxSdk\2013.1
 set BULLET_SDK=%TRAKTOR_HOME%3rdp\bullet-2.80-rev2531
 
+set CLANG_BIN=%TRAKTOR_HOME%3rdp\clang
+set EMSCRIPTEN=%TRAKTOR_HOME%3rdp\emscripten
+set EMSCRIPTEN_ROOT=%EMSCRIPTEN%
+set EMCC_BIN=%EMSCRIPTEN%
+set EMCC_WEBBROWSER_EXE="c:\Program Files (x86)\Google\Chrome\Application\chrome.exe"
+set LLVM_ROOT=%CLANG_BIN%
+set TEMP_DIR=%TRAKTOR_HOME%build\emscripten\tmp
+
 set PATH=%PATH%;%TRAKTOR_HOME%build\win32\releaseshared
 set PATH=%PATH%;%TRAKTOR_HOME%build\win32\debugshared
 

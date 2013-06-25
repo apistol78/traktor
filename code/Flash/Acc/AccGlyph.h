@@ -60,7 +60,8 @@ public:
 		float screenOffsetScale,
 		render::ITexture* texture,
 		uint8_t maskReference,
-		uint8_t glyphFilter
+		uint8_t glyphFilter,
+		const SwfColor& glyphFilterColor
 	);
 
 private:

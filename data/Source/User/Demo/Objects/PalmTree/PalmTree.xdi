@@ -1,14 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.mesh.MeshAsset" version="4">
+<object type="traktor.mesh.MeshAsset" version="6">
 	<fileName>User/Demo/Objects/PalmTree.lwo</fileName>
 	<meshType>MtStatic</meshType>
-	<materialShaders>
-		<item>
-			<first>Sand</first>
-			<second>{FA13775F-AC04-D44A-A593-A04B25B23E2F}</second>
-		</item>
-	</materialShaders>
+	<materialTemplates/>
+	<materialShaders/>
 	<materialTextures/>
 	<bakeOcclusion>false</bakeOcclusion>
 	<cullDistantFaces>false</cullDistantFaces>
+	<generateOccluder>false</generateOccluder>
 </object>

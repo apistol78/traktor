@@ -311,7 +311,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 
 	T_FORCE_LINK_REF(PropertyInteger);
 
-	traktor::log::info << L"Traktor RemoteServer 1.8.1" << Endl;
+	traktor::log::info << L"Traktor RemoteServer 1.8.2" << Endl;
 
 	if (cmdLine.getCount() <= 0)
 	{
@@ -331,7 +331,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	g_popupMenu->add(new ui::MenuItem(ui::Command(L"RemoteServer.Exit"), L"Exit"));
 
 	g_notificationIcon = new ui::NotificationIcon();
-	g_notificationIcon->create(L"Traktor RemoteServer 1.8.1 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
+	g_notificationIcon->create(L"Traktor RemoteServer 1.8.2 (" + g_scratchPath + L")", ui::Bitmap::load(c_ResourceNotificationIdle, sizeof(c_ResourceNotificationIdle), L"png"));
 	g_notificationIcon->addButtonDownEventHandler(ui::createFunctionHandler(&eventNotificationButtonDown));
 #endif
 
@@ -377,6 +377,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	platforms.push_back(L"Win32");
 	platforms.push_back(L"Win64");
 	platforms.push_back(L"XBox360");
+	platforms.push_back(L"Emscripten");
+	platforms.push_back(L"Android");
 #elif defined(__APPLE__)
 	platforms.push_back(L"iPad");
 	platforms.push_back(L"iPhone");

@@ -10,7 +10,7 @@ local _cameraPosition
 local _mode
 
 -- Initialize layer
-function layerInit(stage)
+function initialize()
 	_cameraHead = 0
 	_cameraPitch = 0
 	_cameraPosition = Vector4(0, 0, 0, 1)
@@ -18,8 +18,8 @@ function layerInit(stage)
 end
 
 -- Update layer
-function layerUpdate(stage, info)
-	local inputMapping = stage:getEnvironment():getInput():getInputMapping()
+function update(control, info)
+	local inputMapping = environment:getInput():getInputMapping()
 	local dT = info:getSimulationDeltaTime()
 
 	-- First check if user wants to terminate.
@@ -32,14 +32,14 @@ function layerUpdate(stage, info)
 		-- Animation mode
 		if inputMapping:isStatePressed("STATE_TOGGLE_MODE") then
 			_mode = 1
-			_self:setControllerEnable(false)
+			world:setControllerEnable(false)
 			print("Enter free look mode")
 		end
 	else
 		-- Free look mode
 		if inputMapping:isStatePressed("STATE_TOGGLE_MODE") then
 			_mode = 0
-			_self:setControllerEnable(true)
+			world:setControllerEnable(true)
 			print("Enter animation mode")
 		else
 			local lookHead = inputMapping:getStateValue("STATE_LOOK_HEAD")
@@ -57,7 +57,7 @@ function layerUpdate(stage, info)
 
 			_cameraPosition = _cameraPosition:add(motion)
 
-			_camera = _self:getEntity("Camera")
+			_camera = world:getEntity("Camera")
 			_camera:setTransform(Transform(
 				_cameraPosition:xyz1(),
 				orientation

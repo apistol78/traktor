@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.db.LocalInstanceMeta">
 	<guid>{C6225B33-BD04-8649-8E37-AEAC9A7E43FB}</guid>
-	<primaryType>traktor.parade.StageData</primaryType>
+	<primaryType>traktor.amalgam.StageData</primaryType>
 	<blobs/>
 </object>

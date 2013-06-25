@@ -6131,615 +6131,6 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Terrain.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Terrain/Editor</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_TERRAIN_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_TERRAIN_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>Resources</name>
-					<items>
-						<item type="File">
-							<fileName>../../../res/toolbar/Terrain.png</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[12]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[36]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[12]/dependencies/item[5]/project/dependencies/item[4]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Ui</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Ui</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_UI_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_UI_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>Itf</name>
-								<items>
-									<item type="File">
-										<fileName>Itf/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Resources</name>
-								<items>
-									<item type="File">
-										<fileName>../../res/DockBottom.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../res/DockLeft.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../res/DockRight.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../res/DockTop.png</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Events</name>
-								<items>
-									<item type="File">
-										<fileName>Events/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[12]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[19]"/>
-							</item>
-						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Ui.Custom</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_UI_CUSTOM_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_UI_CUSTOM_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-							<item type="Filter">
-								<name>ColorPicker</name>
-								<items>
-									<item type="File">
-										<fileName>ColorPicker/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Envelope</name>
-								<items>
-									<item type="File">
-										<fileName>Envelope/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Graph</name>
-								<items>
-									<item type="File">
-										<fileName>Graph/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Layer</name>
-								<items>
-									<item type="File">
-										<fileName>Layer/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>PropertyList</name>
-								<items>
-									<item type="File">
-										<fileName>PropertyList/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Sequencer</name>
-								<items>
-									<item type="File">
-										<fileName>Sequencer/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Tab</name>
-								<items>
-									<item type="File">
-										<fileName>Tab/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>ToolBar</name>
-								<items>
-									<item type="File">
-										<fileName>ToolBar/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>LogList</name>
-								<items>
-									<item type="File">
-										<fileName>LogList/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>GridView</name>
-								<items>
-									<item type="File">
-										<fileName>GridView/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>GradientStatic</name>
-								<items>
-									<item type="File">
-										<fileName>GradientStatic/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Resources</name>
-								<items>
-									<item type="File">
-										<fileName>../../../res/graph/Shadow.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Background.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Grid.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/InOut.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Input.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Ipol.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Node.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Output.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Pin.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerHidden.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/LayerVisible.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Collapse.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Expand.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Unchecked.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Checked.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/Log.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/ProgressBar.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/SmallPen.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/SmallCross.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/SmallDots.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/SmallPlus.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/Comment.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/preview/PreviewFrame.png</fileName>
-										<items/>
-									</item>
-									<item type="File">
-										<fileName>../../../res/graph/External.png</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>StatusBar</name>
-								<items>
-									<item type="File">
-										<fileName>StatusBar/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>SyntaxRichEdit</name>
-								<items>
-									<item type="File">
-										<fileName>SyntaxRichEdit/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>Auto</name>
-								<items>
-									<item type="File">
-										<fileName>Auto/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>PreviewList</name>
-								<items>
-									<item type="File">
-										<fileName>PreviewList/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>RichEdit</name>
-								<items>
-									<item type="File">
-										<fileName>RichEdit/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-							<item type="Filter">
-								<name>BuildChart</name>
-								<items>
-									<item type="File">
-										<fileName>BuildChart/*.*</fileName>
-										<items/>
-									</item>
-								</items>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[12]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[37]/dependencies/item[5]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[19]"/>
-							</item>
-						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[12]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[20]/dependencies/item[8]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Traktor.Theater</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Theater</sourcePath>
 			<configurations>
@@ -6833,8 +6224,485 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[37]/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[37]/dependencies/item[7]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Ui</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Ui</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>Itf</name>
+					<items>
+						<item type="File">
+							<fileName>Itf/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>../../res/DockBottom.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../res/DockLeft.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../res/DockRight.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../res/DockTop.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Events</name>
+					<items>
+						<item type="File">
+							<fileName>Events/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[12]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[19]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Ui.Custom</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Ui/Custom</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_CUSTOM_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_UI_CUSTOM_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="Filter">
+					<name>ColorPicker</name>
+					<items>
+						<item type="File">
+							<fileName>ColorPicker/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Envelope</name>
+					<items>
+						<item type="File">
+							<fileName>Envelope/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Graph</name>
+					<items>
+						<item type="File">
+							<fileName>Graph/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Layer</name>
+					<items>
+						<item type="File">
+							<fileName>Layer/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>PropertyList</name>
+					<items>
+						<item type="File">
+							<fileName>PropertyList/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Sequencer</name>
+					<items>
+						<item type="File">
+							<fileName>Sequencer/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Tab</name>
+					<items>
+						<item type="File">
+							<fileName>Tab/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>ToolBar</name>
+					<items>
+						<item type="File">
+							<fileName>ToolBar/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>LogList</name>
+					<items>
+						<item type="File">
+							<fileName>LogList/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>GridView</name>
+					<items>
+						<item type="File">
+							<fileName>GridView/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>GradientStatic</name>
+					<items>
+						<item type="File">
+							<fileName>GradientStatic/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Resources</name>
+					<items>
+						<item type="File">
+							<fileName>../../../res/graph/Shadow.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/Background.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/Grid.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/InOut.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/Input.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/Ipol.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/Node.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/Output.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/Pin.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/LayerHidden.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/LayerVisible.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/Collapse.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/Expand.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/Unchecked.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/Checked.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/Log.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/ProgressBar.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/SmallPen.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/SmallCross.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/SmallDots.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/SmallPlus.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/Comment.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/preview/PreviewFrame.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/graph/External.png</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>StatusBar</name>
+					<items>
+						<item type="File">
+							<fileName>StatusBar/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>SyntaxRichEdit</name>
+					<items>
+						<item type="File">
+							<fileName>SyntaxRichEdit/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Auto</name>
+					<items>
+						<item type="File">
+							<fileName>Auto/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>PreviewList</name>
+					<items>
+						<item type="File">
+							<fileName>PreviewList/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>RichEdit</name>
+					<items>
+						<item type="File">
+							<fileName>RichEdit/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>BuildChart</name>
+					<items>
+						<item type="File">
+							<fileName>BuildChart/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[12]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[38]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[19]"/>
+				</item>
+			</dependencies>
+		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Weather</name>
@@ -7322,11 +7190,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[47]"/>
+					<project ref="/object/projects/item[46]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[46]"/>
+					<project ref="/object/projects/item[45]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -7537,7 +7405,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[49]"/>
+					<project ref="/object/projects/item[48]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -7758,15 +7626,15 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[51]"/>
+					<project ref="/object/projects/item[50]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[46]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[47]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[48]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -7930,7 +7798,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[51]"/>
+					<project ref="/object/projects/item[50]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -7966,11 +7834,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[50]"/>
+					<project ref="/object/projects/item[49]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[41]"/>
+					<project ref="/object/projects/item[40]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -8187,7 +8055,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[38]"/>
+					<project ref="/object/projects/item[37]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -8289,11 +8157,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[53]"/>
+					<project ref="/object/projects/item[52]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[37]/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[38]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -8301,7 +8169,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[37]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[39]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -8398,8 +8266,8 @@
 			</items>
 			<dependencies/>
 		</item>
-		<item ref="/object/projects/item[53]/dependencies/item[22]/project/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[53]/dependencies/item[22]/project"/>
+		<item ref="/object/projects/item[52]/dependencies/item[22]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[52]/dependencies/item[22]/project"/>
 	</projects>
 	<aggregations/>
 </object>
