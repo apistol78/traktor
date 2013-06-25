@@ -1,13 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.render.ShaderGraph">
 	<nodes>
-		<item type="traktor.render.PixelOutput" version="3">
+		<item type="traktor.render.PixelOutput" version="5">
 			<comment/>
 			<position>
 				<first>1007</first>
 				<second>380</second>
 			</position>
 			<technique>Default</technique>
+			<priority>
+				<setup>false</setup>
+				<opaque>false</opaque>
+				<postOpaque>false</postOpaque>
+				<alphaBlend>false</alphaBlend>
+				<postAlphaBlend>false</postAlphaBlend>
+				<overlay>false</overlay>
+			</priority>
 			<cullMode>CmClockWise</cullMode>
 			<blendEnable>false</blendEnable>
 			<blendOperation>BoAdd</blendOperation>
@@ -25,6 +33,7 @@
 			<alphaTestEnable>false</alphaTestEnable>
 			<alphaTestFunction>CfLess</alphaTestFunction>
 			<alphaTestReference>128</alphaTestReference>
+			<alphaToCoverageEnable>false</alphaToCoverageEnable>
 			<wireframe>false</wireframe>
 			<stencilEnable>false</stencilEnable>
 			<stencilFail>SoKeep</stencilFail>
@@ -60,13 +69,13 @@ Tag_DiffuseColor
 					<name>Color</name>
 				</item>
 				<item>
-					<name>TexCoord</name>
+					<name>Position</name>
 				</item>
 				<item>
-					<name>TexCoord2</name>
+					<name>TexCoord0</name>
 				</item>
 				<item>
-					<name>UserParameter</name>
+					<name>TexCoord1</name>
 				</item>
 				<item>
 					<name>ViewBinormal</name>
@@ -79,21 +88,6 @@ Tag_DiffuseColor
 				</item>
 				<item>
 					<name>ViewTangent</name>
-				</item>
-				<item>
-					<name>WorldBinormal</name>
-				</item>
-				<item>
-					<name>WorldEyeDirection</name>
-				</item>
-				<item>
-					<name>WorldNormal</name>
-				</item>
-				<item>
-					<name>WorldPosition</name>
-				</item>
-				<item>
-					<name>WorldTangent</name>
 				</item>
 			</outputPins>
 			<values/>

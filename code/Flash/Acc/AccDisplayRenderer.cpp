@@ -378,12 +378,13 @@ void AccDisplayRenderer::renderMorphShape(const FlashDictionary& dictionary, con
 {
 }
 
-void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter)
+void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& shape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor)
 {
 	if (m_glyphFilter != filter)
 	{
 		renderEnqueuedGlyphs();
 		m_glyphFilter = filter;
+		m_glyphFilterColor = filterColor;
 	}
 
 	uint32_t tag = shape.getCacheTag();
@@ -635,7 +636,8 @@ void AccDisplayRenderer::renderEnqueuedGlyphs()
 		1.0f,
 		m_renderTargetGlyphs->getColorTexture(0),
 		m_maskReference,
-		m_glyphFilter
+		m_glyphFilter,
+		m_glyphFilterColor
 	);
 }
 

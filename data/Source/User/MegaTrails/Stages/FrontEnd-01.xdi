@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.parade.StageData">
+<object type="traktor.amalgam.StageData">
 	<layers>
-		<item type="traktor.parade.FlashLayerData" version="1">
+		<item type="traktor.amalgam.FlashLayerData" version="1">
 			<name>UI</name>
 			<script>{3D550E54-7509-594A-B8B5-EF5E7B990727}</script>
 			<movie>{6D9F20DE-0AE0-7644-88E6-456EEC98FB14}</movie>

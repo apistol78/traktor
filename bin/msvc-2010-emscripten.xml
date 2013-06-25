@@ -20,36 +20,6 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
-            <item>
-              <name>DebugInformationFormat</name>
-              <value>ProgramDatabase</value>
-            </item>
-            <item>
-              <name>MinimalRebuild</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Disabled</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDebugDLL</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
           </options>
         </item>
       </item>
@@ -67,36 +37,6 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
-            <item>
-              <name>DebugInformationFormat</name>
-              <value>ProgramDatabase</value>
-            </item>
-            <item>
-              <name>MinimalRebuild</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Disabled</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDebugDLL</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -110,40 +50,6 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-            </item>
-            <item>
-              <name>GenerateDebugInformation</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME)_d.pdb</value>
-            </item>
-            <item>
-              <name>ImportLibrary</name>
-              <value>$(OutDir)%(PROJECT_NAME)_d.lib</value>
-            </item>
-            <item>
-              <name>RandomizedBaseAddress</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>SubSystem</name>
-              <value>Windows</value>
-            </item>
-            <item>
-              <name>ModuleDefinitionFile</name>
-              <value>%(MODULE_DEFINITION_FILE)</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>Manifest</name>
-          <fileTypes/>
-          <options>
-            <item>
-              <name>AdditionalManifestFiles</name>
-              <value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
             </item>
           </options>
         </item>
@@ -162,36 +68,6 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
-            <item>
-              <name>DebugInformationFormat</name>
-              <value>ProgramDatabase</value>
-            </item>
-            <item>
-              <name>MinimalRebuild</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Disabled</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDebugDLL</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -205,36 +81,6 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-            </item>
-            <item>
-              <name>GenerateDebugInformation</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME)_d.pdb</value>
-            </item>
-            <item>
-              <name>RandomizedBaseAddress</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>SubSystem</name>
-              <value>Windows</value>
-            </item>
-            <item>
-              <name>ModuleDefinitionFile</name>
-              <value>%(MODULE_DEFINITION_FILE)</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>Manifest</name>
-          <fileTypes/>
-          <options>
-            <item>
-              <name>AdditionalManifestFiles</name>
-              <value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
             </item>
           </options>
         </item>
@@ -253,36 +99,6 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
-            <item>
-              <name>DebugInformationFormat</name>
-              <value>ProgramDatabase</value>
-            </item>
-            <item>
-              <name>MinimalRebuild</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Disabled</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDebugDLL</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -296,36 +112,6 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-            </item>
-            <item>
-              <name>GenerateDebugInformation</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME)_d.pdb</value>
-            </item>
-            <item>
-              <name>RandomizedBaseAddress</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>SubSystem</name>
-              <value>Console</value>
-            </item>
-            <item>
-              <name>ModuleDefinitionFile</name>
-              <value>%(MODULE_DEFINITION_FILE)</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>Manifest</name>
-          <fileTypes/>
-          <options>
-            <item>
-              <name>AdditionalManifestFiles</name>
-              <value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
             </item>
           </options>
         </item>
@@ -346,56 +132,6 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>IntrinsicFunctions</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>FavorSizeOrSpeed</name>
-              <value>Speed</value>
-            </item>
-            <item>
-              <name>FloatingPointModel</name>
-              <value>Fast</value>
-            </item>
-            <item>
-              <name>InlineFunctionExpansion</name>
-              <value>AnySuitable</value>
-            </item>
-            <item>
-              <name>OmitFramePointers</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Full</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDLL</value>
-            </item>
-            <item>
-              <name>RuntimeTypeInfo</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
           </options>
         </item>
       </item>
@@ -413,56 +149,6 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>IntrinsicFunctions</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>FavorSizeOrSpeed</name>
-              <value>Speed</value>
-            </item>
-            <item>
-              <name>FloatingPointModel</name>
-              <value>Fast</value>
-            </item>
-            <item>
-              <name>InlineFunctionExpansion</name>
-              <value>AnySuitable</value>
-            </item>
-            <item>
-              <name>OmitFramePointers</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Full</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDLL</value>
-            </item>
-            <item>
-              <name>RuntimeTypeInfo</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -476,40 +162,6 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-            </item>
-            <item>
-              <name>GenerateDebugInformation</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME).pdb</value>
-            </item>
-            <item>
-              <name>ImportLibrary</name>
-              <value>$(OutDir)%(PROJECT_NAME).lib</value>
-            </item>
-            <item>
-              <name>RandomizedBaseAddress</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>SubSystem</name>
-              <value>Windows</value>
-            </item>
-            <item>
-              <name>ModuleDefinitionFile</name>
-              <value>%(MODULE_DEFINITION_FILE)</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>Manifest</name>
-          <fileTypes/>
-          <options>
-            <item>
-              <name>AdditionalManifestFiles</name>
-              <value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
             </item>
           </options>
         </item>
@@ -528,56 +180,6 @@
               <name>PreprocessorDefinitions</name>
               <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>IntrinsicFunctions</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>FavorSizeOrSpeed</name>
-              <value>Speed</value>
-            </item>
-            <item>
-              <name>FloatingPointModel</name>
-              <value>Fast</value>
-            </item>
-            <item>
-              <name>InlineFunctionExpansion</name>
-              <value>AnySuitable</value>
-            </item>
-            <item>
-              <name>OmitFramePointers</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Full</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDLL</value>
-            </item>
-            <item>
-              <name>RuntimeTypeInfo</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
-            </item>
           </options>
         </item>
         <item type="SolutionBuilderMsvcVCXDefinition">
@@ -591,36 +193,6 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-            </item>
-            <item>
-              <name>GenerateDebugInformation</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME).pdb</value>
-            </item>
-            <item>
-              <name>RandomizedBaseAddress</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>SubSystem</name>
-              <value>Windows</value>
-            </item>
-            <item>
-              <name>ModuleDefinitionFile</name>
-              <value>%(MODULE_DEFINITION_FILE)</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>Manifest</name>
-          <fileTypes/>
-          <options>
-            <item>
-              <name>AdditionalManifestFiles</name>
-              <value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
             </item>
           </options>
         </item>
@@ -637,57 +209,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
-            </item>
-            <item>
-              <name>BufferSecurityCheck</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>IntrinsicFunctions</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>FavorSizeOrSpeed</name>
-              <value>Speed</value>
-            </item>
-            <item>
-              <name>FloatingPointModel</name>
-              <value>Fast</value>
-            </item>
-            <item>
-              <name>InlineFunctionExpansion</name>
-              <value>AnySuitable</value>
-            </item>
-            <item>
-              <name>OmitFramePointers</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>Optimization</name>
-              <value>Full</value>
-            </item>
-            <item>
-              <name>RuntimeLibrary</name>
-              <value>MultiThreadedDLL</value>
-            </item>
-            <item>
-              <name>RuntimeTypeInfo</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>WarningLevel</name>
-              <value>Level3</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>ResourceCompile</name>
-          <fileTypes>rc</fileTypes>
-          <options>
-            <item>
-              <name>AdditionalIncludeDirectories</name>
-              <value>$(IntDir);%(AdditionalIncludeDirectories)</value>
+              <value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>
@@ -702,36 +224,6 @@
             <item>
               <name>AdditionalLibraryDirectories</name>
               <value>%(PROJECT_LIBRARY_PATHS);$(OutDir);%(AdditionalLibraryDirectories)</value>
-            </item>
-            <item>
-              <name>GenerateDebugInformation</name>
-              <value>true</value>
-            </item>
-            <item>
-              <name>ProgramDatabaseFile</name>
-              <value>$(OutDir)%(PROJECT_NAME).pdb</value>
-            </item>
-            <item>
-              <name>RandomizedBaseAddress</name>
-              <value>false</value>
-            </item>
-            <item>
-              <name>SubSystem</name>
-              <value>Console</value>
-            </item>
-            <item>
-              <name>ModuleDefinitionFile</name>
-              <value>%(MODULE_DEFINITION_FILE)</value>
-            </item>
-          </options>
-        </item>
-        <item type="SolutionBuilderMsvcVCXDefinition">
-          <name>Manifest</name>
-          <fileTypes/>
-          <options>
-            <item>
-              <name>AdditionalManifestFiles</name>
-              <value>$(TRAKTOR_HOME)/res/manifest.xml;%(AdditionalManifestFiles)</value>
             </item>
           </options>
         </item>

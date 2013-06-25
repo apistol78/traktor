@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/RenderTargetOpenGLES2.h"
 

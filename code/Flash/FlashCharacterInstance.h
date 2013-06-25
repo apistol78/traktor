@@ -110,6 +110,14 @@ public:
 
 	/*! \brief
 	 */
+	void setFilterColor(const SwfColor& filterColor);
+
+	/*! \brief
+	 */
+	const SwfColor& getFilterColor() const;
+
+	/*! \brief
+	 */
 	void setVisible(bool visible);
 
 	/*! \brief
@@ -216,6 +224,7 @@ private:
 	SwfCxTransform m_cxform;
 	Matrix33 m_transform;
 	uint8_t m_filter;
+	SwfColor m_filterColor;
 	SmallMap< uint32_t, Ref< const IActionVMImage > > m_eventScripts;
 };
 

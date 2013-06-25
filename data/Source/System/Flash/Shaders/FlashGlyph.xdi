@@ -141,30 +141,30 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>746</first>
-				<second>-316</second>
+				<first>991</first>
+				<second>-200</second>
 			</position>
-			<swizzle>000x</swizzle>
+			<swizzle>111x</swizzle>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>890</first>
-				<second>-352</second>
+				<first>1166</first>
+				<second>-295</second>
 			</position>
 		</item>
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1255</first>
-				<second>-414</second>
+				<first>1560</first>
+				<second>-398</second>
 			</position>
 			<parameterName>Flash_OutlineEnable</parameterName>
 		</item>
 		<item type="traktor.render.Iterate">
 			<comment/>
 			<position>
-				<first>188</first>
+				<first>95</first>
 				<second>-10</second>
 			</position>
 			<from>0</from>
@@ -224,14 +224,14 @@
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>345</first>
+				<first>252</first>
 				<second>-136</second>
 			</position>
 		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>131</first>
+				<first>38</first>
 				<second>-103</second>
 			</position>
 			<value>4</value>
@@ -269,13 +269,13 @@
 				<first>1102</first>
 				<second>197</second>
 			</position>
-			<value>2</value>
+			<value>1.5</value>
 		</item>
 		<item type="traktor.render.Lerp">
 			<comment/>
 			<position>
-				<first>1149</first>
-				<second>-248</second>
+				<first>1381</first>
+				<second>-263</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -315,29 +315,54 @@
 				<second>-100</second>
 			</position>
 		</item>
-		<item type="traktor.render.Pow">
-			<comment/>
-			<position>
-				<first>574</first>
-				<second>-222</second>
-			</position>
-		</item>
 		<item type="traktor.render.Clamp">
 			<comment/>
 			<position>
-				<first>407</first>
-				<second>-259</second>
+				<first>418</first>
+				<second>-184</second>
 			</position>
 			<min>0</min>
 			<max>1</max>
 		</item>
+		<item type="traktor.render.Uniform" version="1">
+			<comment/>
+			<position>
+				<first>548</first>
+				<second>-312</second>
+			</position>
+			<parameterName>Flash_FilterColor</parameterName>
+			<type>PtVector</type>
+			<frequency>UfFrame</frequency>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>752</first>
+				<second>-244</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>862</first>
+				<second>-217</second>
+			</position>
+		</item>
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>504</first>
-				<second>-281</second>
+				<first>466</first>
+				<second>-266</second>
 			</position>
 			<value>0.6</value>
+		</item>
+		<item type="traktor.render.Pow">
+			<comment/>
+			<position>
+				<first>570</first>
+				<second>-224</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -399,16 +424,6 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[6]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input1</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -653,42 +668,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[19]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[31]"/>
-				<name>Output</name>
-			</source>
-			<destination>
 				<node ref="/object/nodes/item[30]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Exponent</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -698,6 +683,66 @@
 			</source>
 			<destination>
 				<node ref="/object/nodes/item"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[31]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[6]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Exponent</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[8]"/>
 				<name>Input</name>
 			</destination>
 		</item>

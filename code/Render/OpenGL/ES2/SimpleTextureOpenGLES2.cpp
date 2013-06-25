@@ -1,7 +1,8 @@
+#include <cstring>
+#include "Core/Log/Log.h"
 #include "Render/OpenGL/Platform.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/ES2/SimpleTextureOpenGLES2.h"
-#include "Core/Log/Log.h"
 
 namespace traktor
 {

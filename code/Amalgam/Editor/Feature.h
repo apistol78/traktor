@@ -28,6 +28,7 @@ public:
 		bool win64;
 		bool xbox360;
 		bool emscripten;
+		bool android;
 
 		Platforms();
 

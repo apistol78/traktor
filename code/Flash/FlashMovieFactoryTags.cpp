@@ -967,7 +967,11 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 					return false;
 
 				if (!filterList.empty())
+				{
 					placeObject.filter = filterList.front()->filterId;
+					if (placeObject.filter == 2)
+						placeObject.filterColor = filterList.front()->glow.glowColor;
+				}
 			}
 
 			if (placeObject.has(FlashFrame::PfHasBlendMode))

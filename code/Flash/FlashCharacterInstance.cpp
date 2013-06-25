@@ -123,6 +123,16 @@ uint8_t FlashCharacterInstance::getFilter() const
 	return m_filter;
 }
 
+void FlashCharacterInstance::setFilterColor(const SwfColor& filterColor)
+{
+	m_filterColor = filterColor;
+}
+
+const SwfColor& FlashCharacterInstance::getFilterColor() const
+{
+	return m_filterColor;
+}
+
 void FlashCharacterInstance::setVisible(bool visible)
 {
 	m_visible = visible;
