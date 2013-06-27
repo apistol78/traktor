@@ -52,7 +52,9 @@ render::handle_t s_handleViewOffset;
 render::handle_t s_handleScreenOffsetScale;
 render::handle_t s_handleTexture;
 render::handle_t s_handleFilterColor;
-render::handle_t s_handleOutlineEnable;
+render::handle_t s_handleTechniqueDefault;
+render::handle_t s_handleTechniqueDropShadow;
+render::handle_t s_handleTechniqueGlow;
 
 		}
 
@@ -78,7 +80,9 @@ bool AccGlyph::create(
 		s_handleScreenOffsetScale = render::getParameterHandle(L"Flash_ScreenOffsetScale");
 		s_handleTexture = render::getParameterHandle(L"Flash_Texture");
 		s_handleFilterColor = render::getParameterHandle(L"Flash_FilterColor");
-		s_handleOutlineEnable = render::getParameterHandle(L"Flash_OutlineEnable");
+		s_handleTechniqueDefault = render::getParameterHandle(L"Default");
+		s_handleTechniqueDropShadow = render::getParameterHandle(L"DropShadow");
+		s_handleTechniqueGlow = render::getParameterHandle(L"Glow");
 		s_handleInitialized = true;
 	}
 
@@ -238,7 +242,12 @@ void AccGlyph::render(
 	render::Shader* shader = (maskReference == 0) ? m_shaderGlyph : m_shaderGlyphMask;
 	T_ASSERT (shader);
 
-	shader->setCombination(s_handleOutlineEnable, glyphFilter != 0);
+	const render::handle_t techniques[] = { s_handleTechniqueDefault, s_handleTechniqueDropShadow, 0, s_handleTechniqueGlow };
+	T_ASSERT (glyphFilter < sizeof_array(techniques));
+
+	shader->setTechnique(techniques[glyphFilter]);
+	if (!shader->getCurrentProgram())
+		return;
 
 	render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Flash AccGlyph");
 	renderBlock->program = shader->getCurrentProgram();

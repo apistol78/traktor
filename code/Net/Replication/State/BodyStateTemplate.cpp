@@ -67,6 +67,11 @@ BodyStateTemplate::BodyStateTemplate(float linearError, float angularError)
 {
 }
 
+const TypeInfo& BodyStateTemplate::getValueType() const
+{
+	return type_of< BodyStateValue >();
+}
+
 void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);

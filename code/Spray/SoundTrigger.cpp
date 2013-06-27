@@ -21,7 +21,8 @@ Ref< ITriggerInstance > SoundTrigger::createInstance() const
 		m_sound,
 		m_data->m_positional,
 		m_data->m_follow,
-		m_data->m_repeat
+		m_data->m_repeat,
+		m_data->m_infinite
 	);
 }
 

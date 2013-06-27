@@ -23,6 +23,8 @@ class T_DLLCLASS BodyStateTemplate : public IValueTemplate
 public:
 	BodyStateTemplate(float linearError = 0.5f, float angularError = 8.0f);
 
+	virtual const TypeInfo& getValueType() const;
+
 	virtual void pack(BitWriter& writer, const IValue* V) const;
 
 	virtual Ref< const IValue > unpack(BitReader& reader) const;

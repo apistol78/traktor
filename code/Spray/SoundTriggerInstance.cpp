@@ -68,16 +68,21 @@ void SoundTriggerInstance::update(Context& context, const Transform& transform, 
 	}
 	else
 	{
-		m_handle->setParameter(s_handleEnable, 0.0f);
+		if (!m_infinite)
+			m_handle->setParameter(s_handleEnable, 0.0f);
+		else
+			m_handle->stop();
+
 		m_handle = 0;
 	}
 }
 
-SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat)
+SoundTriggerInstance::SoundTriggerInstance(const resource::Proxy< sound::Sound >& sound, bool positional, bool follow, bool repeat, bool infinite)
 :	m_sound(sound)
 ,	m_positional(positional)
 ,	m_follow(follow)
 ,	m_repeat(repeat)
+,	m_infinite(infinite)
 {
 	s_handleEnable = sound::getParameterHandle(L"Enable");
 }

@@ -122,7 +122,10 @@ void FlashFrame::PlaceObject::serialize(ISerializer& s)
 		s >> Member< uint8_t >(L"blendMode", blendMode);
 
 	if (hasFlags & PfHasFilters)
+	{
 		s >> Member< uint8_t >(L"filter", filter);
+		s >> MemberSwfColor(L"filterColor", filterColor);
+	}
 
 	if (hasFlags & PfHasActions)
 		s >> MemberSmallMap<

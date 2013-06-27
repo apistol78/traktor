@@ -169,8 +169,10 @@ void FlashMovieRenderer::renderCharacter(
 	const SwfCxTransform& cxTransform
 )
 {
+	SwfCxTransform cxTransform2 = concateCxTransform(cxTransform, characterInstance->getColorTransform());
+
 	// Don't render completely transparent shapes.
-	if (cxTransform.alpha[0] + cxTransform.alpha[1] <= FUZZY_EPSILON)
+	if (cxTransform2.alpha[0] + cxTransform2.alpha[1] <= FUZZY_EPSILON)
 		return;
 
 	// Render basic shapes.
@@ -181,7 +183,7 @@ void FlashMovieRenderer::renderCharacter(
 			*dictionary,
 			transform * shapeInstance->getTransform(),
 			*shapeInstance->getShape(),
-			concateCxTransform(cxTransform, characterInstance->getColorTransform())
+			cxTransform2
 		);
 		return;
 	}
@@ -194,7 +196,7 @@ void FlashMovieRenderer::renderCharacter(
 			*dictionary,
 			transform * morphInstance->getTransform(),
 			*morphInstance->getShape(),
-			concateCxTransform(cxTransform, characterInstance->getColorTransform())
+			cxTransform2
 		);
 		return;
 	}
@@ -234,7 +236,7 @@ void FlashMovieRenderer::renderCharacter(
 				font->getMaxDimension(),
 				*shape,
 				i->color,
-				concateCxTransform(cxTransform, characterInstance->getColorTransform()),
+				cxTransform2,
 				textInstance->getFilter(),
 				textInstance->getFilterColor()
 			);
@@ -282,7 +284,7 @@ void FlashMovieRenderer::renderCharacter(
 						attrib.font->getMaxDimension(),
 						*glyphShape,
 						attrib.color,
-						concateCxTransform(cxTransform, characterInstance->getColorTransform()),
+						cxTransform2,
 						editInstance->getFilter(),
 						editInstance->getFilterColor()
 					);
@@ -317,7 +319,7 @@ void FlashMovieRenderer::renderCharacter(
 				dictionary,
 				referenceInstance,
 				buttonTransform * layer.placeMatrix,
-				concateCxTransform(cxTransform, buttonInstance->getColorTransform())
+				cxTransform2
 			);
 		}
 
@@ -348,7 +350,7 @@ void FlashMovieRenderer::renderCharacter(
 			dictionary,
 			spriteInstance,
 			transform * spriteInstance->getTransform(),
-			concateCxTransform(cxTransform, spriteInstance->getColorTransform()),
+			cxTransform2,
 			false
 		);
 

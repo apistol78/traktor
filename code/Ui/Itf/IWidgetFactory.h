@@ -37,6 +37,7 @@ class IStatic;
 class IToolForm;
 class ITreeView;
 class IUserWidget;
+class IWebBrowser;
 class INative;
 class IBitmap;
 class IClipboard;
@@ -96,6 +97,8 @@ public:
 	virtual ITreeView* createTreeView(EventSubject* owner) = 0;
 
 	virtual IUserWidget* createUserWidget(EventSubject* owner) = 0;
+
+	virtual IWebBrowser* createWebBrowser(EventSubject* owner) = 0;
 
 	virtual INative* createNative(EventSubject* owner) = 0;
 

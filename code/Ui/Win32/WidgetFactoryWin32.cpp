@@ -152,6 +152,11 @@ IUserWidget* WidgetFactoryWin32::createUserWidget(EventSubject* owner)
 	return new UserWidgetWin32(owner);
 }
 
+IWebBrowser* WidgetFactoryWin32::createWebBrowser(EventSubject* owner)
+{
+	return 0;
+}
+
 INative* WidgetFactoryWin32::createNative(EventSubject* owner)
 {
 	return new NativeWin32(owner);
