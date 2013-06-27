@@ -1,8 +1,10 @@
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
 #include "Core/Io/MemoryStream.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/MathUtils.h"
+#include "Net/Replication/State/IValue.h"
 #include "Net/Replication/State/IValueTemplate.h"
 #include "Net/Replication/State/State.h"
 #include "Net/Replication/State/StateTemplate.h"
@@ -26,6 +28,28 @@ void StateTemplate::declare(const IValueTemplate* value)
 	m_valueTemplates.push_back(value);
 }
 
+bool StateTemplate::match(const State* S) const
+{
+	if (!S)
+		return false;
+
+	const RefArray< const IValue >& V = S->getValues();
+	if (V.size() != m_valueTemplates.size())
+		return false;
+
+	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
+	{
+		const IValueTemplate* valueTemplate = m_valueTemplates[i];
+		T_ASSERT (valueTemplate);
+
+		const TypeInfo& valueType = valueTemplate->getValueType();
+		if (!is_type_a(valueType, type_of(V[i])))
+			return false;
+	}
+
+	return true;
+}
+
 Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, float T) const
 {
 	RefArray< const IValue > Vr(m_valueTemplates.size());
@@ -39,10 +63,25 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 		const RefArray< const IValue >& Vn1 = Sn1->getValues();
 		const RefArray< const IValue >& V0 = S0->getValues();
 
+		if (
+			Vn2.size() != m_valueTemplates.size() ||
+			Vn1.size() != m_valueTemplates.size() ||
+			V0.size() != m_valueTemplates.size()
+		)
+			return 0;
+
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
 			T_ASSERT (valueTemplate);
+
+			const TypeInfo& valueType = valueTemplate->getValueType();
+			if (
+				!is_type_a(valueType, type_of(Vn2[i])) ||
+				!is_type_a(valueType, type_of(Vn1[i])) ||
+				!is_type_a(valueType, type_of(V0[i]))
+			)
+				return 0;
 
 			Vr[i] = valueTemplate->extrapolate(Vn2[i], Tn2, Vn1[i], Tn1, V0[i], T0, T);
 			T_ASSERT (Vr[i]);
@@ -53,10 +92,23 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 		const RefArray< const IValue >& Vn1 = Sn1->getValues();
 		const RefArray< const IValue >& V0 = S0->getValues();
 
+		if (
+			Vn1.size() != m_valueTemplates.size() ||
+			V0.size() != m_valueTemplates.size()
+		)
+			return 0;
+
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
 			T_ASSERT (valueTemplate);
+
+			const TypeInfo& valueType = valueTemplate->getValueType();
+			if (
+				!is_type_a(valueType, type_of(Vn1[i])) ||
+				!is_type_a(valueType, type_of(V0[i]))
+			)
+				return 0;
 
 			Vr[i] = valueTemplate->extrapolate(Vn1[i], Tn1 - FUZZY_EPSILON, Vn1[i], Tn1, V0[i], T0, T);
 			T_ASSERT (Vr[i]);
@@ -66,10 +118,17 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 	{
 		const RefArray< const IValue >& V0 = S0->getValues();
 
+		if (V0.size() != m_valueTemplates.size())
+			return 0;
+
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
 			T_ASSERT (valueTemplate);
+
+			const TypeInfo& valueType = valueTemplate->getValueType();
+			if (!is_type_a(valueType, type_of(V0[i])))
+				return 0;
 
 			Vr[i] = V0[i];
 			T_ASSERT (Vr[i]);
@@ -136,9 +195,17 @@ Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
 		T_ASSERT (valueTemplate);
 
+		// Ensure stream doesn't run out of data unexpected.
+		if (stream.available() <= 0)
+			return 0;
+
 		if ((V[i] = valueTemplate->unpack(reader)) == 0)
 			return 0;
 	}
+
+	// Must have read all data from buffer.
+	if (stream.available() > 0)
+		return 0;
 
 	return new State(V);
 }
@@ -156,6 +223,10 @@ Ref< const State > StateTemplate::unpack(const State* Sn1, const void* buffer, u
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
 		T_ASSERT (valueTemplate);
 
+		// Ensure stream doesn't run out of data unexpected.
+		if (stream.available() <= 0)
+			return 0;
+
 		if (reader.readBit())
 		{
 			if ((V[i] = valueTemplate->unpack(reader)) == 0)
@@ -164,6 +235,10 @@ Ref< const State > StateTemplate::unpack(const State* Sn1, const void* buffer, u
 		else
 			V[i] = Vn1[i];
 	}
+
+	// Must have read all data from buffer.
+	if (stream.available() > 0)
+		return 0;
 
 	return new State(V);
 }

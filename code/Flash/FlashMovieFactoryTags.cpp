@@ -968,8 +968,10 @@ bool FlashTagPlaceObject::read(SwfReader* swf, ReadContext& context)
 
 				if (!filterList.empty())
 				{
-					placeObject.filter = filterList.front()->filterId;
-					if (placeObject.filter == 2)
+					placeObject.filter = filterList.front()->filterId + 1;
+					if (placeObject.filter == 1)	// Drop shadow
+						placeObject.filterColor = filterList.front()->dropShadow.dropShadowColor;
+					if (placeObject.filter == 3)	// Glow
 						placeObject.filterColor = filterList.front()->glow.glowColor;
 				}
 			}

@@ -61,6 +61,11 @@ FloatTemplate::FloatTemplate(float min, float max, float idle, bool lowPrecision
 {
 }
 
+const TypeInfo& FloatTemplate::getValueType() const
+{
+	return type_of< FloatValue >();
+}
+
 void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	float f = *checked_type_cast< const FloatValue* >(V);

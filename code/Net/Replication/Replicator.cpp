@@ -420,7 +420,7 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, float timeOffs
 				timeOffset
 			);
 		else
-			return i->second.ghost->S0;
+			return 0;
 	}
 	else
 	{
@@ -592,7 +592,7 @@ void Replicator::sendState(float dT)
 		if (!shouldSend)
 			continue;
 
-		uint32_t msgSize = Message::HeaderSize + sizeof(uint8_t);
+		uint32_t msgSize = Message::HeaderSize;
 
 #if T_USE_DELTA_FRAMES
 		// Send delta frames only if we've successfully sent
@@ -916,6 +916,10 @@ void Replicator::receiveMessages()
 			if (!peer.ghost)
 				continue;
 
+			int32_t stateDataSize = size - Message::HeaderSize;
+			if (stateDataSize <= 0)
+				continue;
+
 			bool stateValid = false;
 
 			// Ignore old messages; as we're using unreliable transportation
@@ -937,9 +941,9 @@ void Replicator::receiveMessages()
 					Ref< const State > state;
 
 					if (msg.type == MtFullState)
-						state = peer.ghost->stateTemplate->unpack(msg.state.data, sizeof(msg.state.data));
+						state = peer.ghost->stateTemplate->unpack(msg.state.data, stateDataSize);
 					else if (peer.ghost->S0)
-						state = peer.ghost->stateTemplate->unpack(peer.ghost->S0, msg.state.data, sizeof(msg.state.data));
+						state = peer.ghost->stateTemplate->unpack(peer.ghost->S0, msg.state.data, stateDataSize);
 
 					if (state)
 					{
@@ -975,7 +979,7 @@ void Replicator::receiveMessages()
 					Ref< const State > state;
 
 					if (msg.type == MtFullState)
-						state = peer.ghost->stateTemplate->unpack(msg.state.data, sizeof(msg.state.data));
+						state = peer.ghost->stateTemplate->unpack(msg.state.data, stateDataSize);
 					else
 					{
 						Ref< const State > Sn;
@@ -986,7 +990,7 @@ void Replicator::receiveMessages()
 							Sn = peer.ghost->Sn2;
 
 						if (Sn)
-							state = peer.ghost->stateTemplate->unpack(Sn, msg.state.data, sizeof(msg.state.data));
+							state = peer.ghost->stateTemplate->unpack(Sn, msg.state.data, stateDataSize);
 						else
 							T_REPLICATOR_DEBUG(L"ERROR: Received delta state from peer \"" << peer.name << L"\" but have no iframe; state ignored (2)");
 					}

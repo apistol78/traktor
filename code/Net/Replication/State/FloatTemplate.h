@@ -27,6 +27,8 @@ public:
 
 	explicit FloatTemplate(float min, float max, float idle, bool lowPrecision);
 
+	virtual const TypeInfo& getValueType() const;
+
 	virtual void pack(BitWriter& writer, const IValue* V) const;
 
 	virtual Ref< const IValue > unpack(BitReader& reader) const;

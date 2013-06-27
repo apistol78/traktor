@@ -23,6 +23,8 @@ class T_DLLCLASS BooleanTemplate : public IValueTemplate
 public:
 	BooleanTemplate(float threshold = 0.95f);
 
+	virtual const TypeInfo& getValueType() const;
+
 	virtual void pack(BitWriter& writer, const IValue* V) const;
 
 	virtual Ref< const IValue > unpack(BitReader& reader) const;

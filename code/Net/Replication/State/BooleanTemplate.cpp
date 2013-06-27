@@ -32,6 +32,11 @@ BooleanTemplate::BooleanTemplate(float threshold)
 {
 }
 
+const TypeInfo& BooleanTemplate::getValueType() const
+{
+	return type_of< BooleanValue >();
+}
+
 void BooleanTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	bool f = *checked_type_cast< const BooleanValue* >(V);
