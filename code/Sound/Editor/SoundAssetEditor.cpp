@@ -52,7 +52,7 @@ bool SoundAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISeria
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(container);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Play", ui::Command(L"Sound.Play"), 0, ui::custom::ToolBarButton::BsText));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(L"Play", ui::Command(L"Sound.Play")));
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &SoundAssetEditor::eventToolBarClick));
 
 	m_propertyList = new ui::custom::AutoPropertyList();

@@ -55,6 +55,7 @@
 #include "Editor/App/PropertiesView.h"
 #include "Editor/App/SettingsDialog.h"
 #include "Editor/App/ThumbnailGenerator.h"
+#include "Editor/App/WebBrowserPage.h"
 #include "Editor/App/WorkspaceDialog.h"
 #include "Editor/Pipeline/FilePipelineCache.h"
 #include "Editor/Pipeline/MemCachedPipelineCache.h"
@@ -448,17 +449,17 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(this, ui::WsNone);
 	m_toolBar->addImage(ui::Bitmap::load(c_ResourceStandard16, sizeof(c_ResourceStandard16), L"png"), 12);
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), ui::Command(L"Editor.Save"), 2));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_SAVE"), 2, ui::Command(L"Editor.Save")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), ui::Command(L"Editor.Cut"), 3));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), ui::Command(L"Editor.Copy"), 4));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), ui::Command(L"Editor.Paste"), 5));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CUT"), 3, ui::Command(L"Editor.Cut")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 4, ui::Command(L"Editor.Copy")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_PASTE"), 5, ui::Command(L"Editor.Paste")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), ui::Command(L"Editor.Undo"), 6));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), ui::Command(L"Editor.Redo"), 7));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_UNDO"), 6, ui::Command(L"Editor.Undo")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_REDO"), 7, ui::Command(L"Editor.Redo")));
 	m_toolBar->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), ui::Command(L"Editor.Build"), 8));
-	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), ui::Command(L"Editor.CancelBuild"), 10));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_BUILD"), 8, ui::Command(L"Editor.Build")));
+	m_toolBar->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_CANCEL_BUILD"), 10, ui::Command(L"Editor.CancelBuild")));
 	m_toolBar->addClickEventHandler(ui::createMethodHandler(this, &EditorForm::eventToolClicked));
 
 	updateTitle();
@@ -808,11 +809,8 @@ Ref< ILogTarget > EditorForm::createLogTarget(const std::wstring& title)
 	logView->setText(title);
 
 	Ref< ui::TabPage > activePage = m_tabOutput->getActivePage();
-	
 	m_tabOutput->addPage(tabPageLog);
-
-	if (activePage)
-		m_tabOutput->setActivePage(activePage);
+	m_tabOutput->setActivePage(activePage);
 
 	return logView->getLogTarget();
 }
@@ -914,16 +912,11 @@ bool EditorForm::openEditor(db::Instance* instance)
 		T_ASSERT (tabPage);
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		T_ASSERT (document);
-
-		if (document->containInstance(instance))
+		if (document && document->containInstance(instance))
 		{
 			Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-			T_ASSERT (editorPage);
-
 			setActiveEditorPage(editorPage);
 			m_tab->setActivePage(tabPage);
-
 			return true;
 		}
 	}
@@ -1260,6 +1253,16 @@ bool EditorForm::createWorkspace()
 	for (RefArray< EditorPluginSite >::iterator i = m_editorPluginSites.begin(); i != m_editorPluginSites.end(); ++i)
 		(*i)->handleWorkspaceOpened();
 
+	// Create "Home" page.
+	Ref< ui::TabPage > tabPage = new ui::TabPage();
+	tabPage->create(m_tab, L"Home", 0, new ui::FloodLayout());
+
+	Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
+	homePage->create(tabPage);
+
+	m_tab->addPage(tabPage);
+	m_tab->update(0, true);
+
 	return true;
 }
 
@@ -1350,6 +1353,16 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		(*i)->handleWorkspaceOpened();
 
 	m_mru->usedFile(workspacePath);
+
+	// Create "Home" page.
+	Ref< ui::TabPage > tabPage = new ui::TabPage();
+	tabPage->create(m_tab, L"Home", 0, new ui::FloodLayout());
+
+	Ref< WebBrowserPage > homePage = new WebBrowserPage(this);
+	homePage->create(tabPage);
+
+	m_tab->addPage(tabPage);
+	m_tab->update(0, true);
 
 	saveRecent(L"Traktor.Editor.mru", m_mru);
 	updateMRU();
@@ -1496,16 +1509,16 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 			continue;
 
 		Ref< PropertyBoolean > needOutputResources = tabPage->getData< PropertyBoolean >(L"NEEDOUTPUTRESOURCES");
-		T_ASSERT (needOutputResources);
-
-		if (!*needOutputResources)
+		if (!needOutputResources || !*needOutputResources)
 			continue;
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
+		if (!editorPage)
+			continue;
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		T_ASSERT (document);
+		if (!document)
+			continue;
 
 		const RefArray< db::Instance >& instances = document->getInstances();
 		if (instances.empty())
@@ -1874,10 +1887,12 @@ void EditorForm::saveCurrentDocument()
 	if (tabPage)
 	{
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
+		if (!editorPage)
+			return;
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		T_ASSERT (document);
+		if (!document)
+			return;
 
 		ui::Command shouldSave(L"Editor.ShouldSave");
 		editorPage->handleCommand(shouldSave);
@@ -2046,16 +2061,16 @@ void EditorForm::closeAllOtherEditors()
 		m_tab->removePage(tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
-		T_ASSERT (editorPage != m_activeEditorPage);
-
-		editorPage->deactivate();
-		editorPage->destroy();
+		if (editorPage)
+		{
+			T_ASSERT (editorPage != m_activeEditorPage);
+			editorPage->deactivate();
+			editorPage->destroy();
+		}
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		T_ASSERT (document);
-
-		document->close();
+		if (document)
+			document->close();
 	}
 
 	m_tab->update();
@@ -2067,9 +2082,8 @@ void EditorForm::findInDatabase()
 	T_ASSERT (tabPage);
 
 	Ref< db::Instance > instance = tabPage->getData< db::Instance >(L"PRIMARY");
-	T_ASSERT (instance);
-
-	highlightInstance(instance);
+	if (instance)
+		highlightInstance(instance);
 }
 
 void EditorForm::activatePreviousEditor()
@@ -2078,8 +2092,6 @@ void EditorForm::activatePreviousEditor()
 	if (previousTabPage)
 	{
 		Ref< IEditorPage > editorPage = previousTabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
-
 		setActiveEditorPage(editorPage);
 	}
 }
@@ -2090,8 +2102,6 @@ void EditorForm::activateNextEditor()
 	if (nextTabPage)
 	{
 		Ref< IEditorPage > editorPage = nextTabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
-
 		setActiveEditorPage(editorPage);
 	}
 }
@@ -2450,10 +2460,7 @@ void EditorForm::eventTabSelChange(ui::Event* event)
 {
 	Ref< ui::CommandEvent > commandEvent = checked_type_cast< ui::CommandEvent* >(event);
 	Ref< ui::TabPage > tabPage = checked_type_cast< ui::TabPage* >(commandEvent->getItem());
-
 	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-	T_ASSERT (editorPage);
-
 	setActiveEditorPage(editorPage);
 }
 
@@ -2482,23 +2489,23 @@ void EditorForm::eventTabClose(ui::Event* event)
 	m_tab->removePage(tabPage);
 
 	Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-	T_ASSERT (editorPage);
-	T_ASSERT (m_activeEditorPage == editorPage);
-
-	editorPage->deactivate();
-	editorPage->destroy();
-	editorPage = 0;
-
-	m_activeEditorPage = 0;
+	if (editorPage)
+	{
+		T_ASSERT (m_activeEditorPage == editorPage);
+		editorPage->deactivate();
+		editorPage->destroy();
+		editorPage = 0;
+		m_activeEditorPage = 0;
+	}
 
 	Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-	T_ASSERT (document);
-	T_ASSERT (m_activeDocument == document);
-
-	document->close();
-	document = 0;
-
-	m_activeDocument = 0;
+	if (document)
+	{
+		T_ASSERT (m_activeDocument == document);
+		document->close();
+		document = 0;
+		m_activeDocument = 0;
+	}
 
 	tabPage->destroy();
 	tabPage = 0;
@@ -2509,8 +2516,6 @@ void EditorForm::eventTabClose(ui::Event* event)
 	if (tabPage)
 	{
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
-
 		setActiveEditorPage(editorPage);
 	}
 
@@ -2543,17 +2548,19 @@ void EditorForm::eventClose(ui::Event* event)
 		m_tab->removePage(tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
-
-		editorPage->deactivate();
-		editorPage->destroy();
-		editorPage = 0;
+		if (editorPage)
+		{
+			editorPage->deactivate();
+			editorPage->destroy();
+			editorPage = 0;
+		}
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		T_ASSERT (document);
-
-		document->close();
-		document = 0;
+		if (document)
+		{
+			document->close();
+			document = 0;
+		}
 	}
 
 	// Save panes visible.

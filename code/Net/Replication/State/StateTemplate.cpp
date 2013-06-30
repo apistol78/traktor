@@ -195,10 +195,6 @@ Ref< const State > StateTemplate::unpack(const void* buffer, uint32_t bufferSize
 		const IValueTemplate* valueTemplate = m_valueTemplates[i];
 		T_ASSERT (valueTemplate);
 
-		// Ensure stream doesn't run out of data unexpected.
-		if (stream.available() <= 0)
-			return 0;
-
 		if ((V[i] = valueTemplate->unpack(reader)) == 0)
 			return 0;
 	}

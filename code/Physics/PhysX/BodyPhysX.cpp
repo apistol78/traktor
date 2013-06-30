@@ -208,5 +208,9 @@ BodyState BodyPhysX::getState() const
 	return state;
 }
 
+void BodyPhysX::integrate()
+{
+}
+
 	}
 }

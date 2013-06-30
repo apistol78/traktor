@@ -196,17 +196,17 @@ bool AnimationEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->create(m_sequencerPanel);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceSkeleton, sizeof(c_ResourceSkeleton), L"png"), 5);
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_REWIND"), ui::Command(L"Animation.Editor.Rewind"), 0));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_PLAY"), ui::Command(L"Animation.Editor.Play"), 1));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_STOP"), ui::Command(L"Animation.Editor.Stop"), 2));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_FORWARD"), ui::Command(L"Animation.Editor.Forward"), 3));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_REWIND"), 0, ui::Command(L"Animation.Editor.Rewind")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_PLAY"), 1, ui::Command(L"Animation.Editor.Play")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_STOP"), 2, ui::Command(L"Animation.Editor.Stop")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_FORWARD"), 3, ui::Command(L"Animation.Editor.Forward")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKELETON"), ui::Command(L"Animation.Editor.BrowseSkeleton"), 6));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKIN"), ui::Command(L"Animation.Editor.BrowseSkin"), 9));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKELETON"), 6, ui::Command(L"Animation.Editor.BrowseSkeleton")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_BROWSE_SKIN"), 9, ui::Command(L"Animation.Editor.BrowseSkin")));
 	m_toolBarPlay->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TRAIL"), ui::Command(L"Animation.Editor.ToggleTrail"), 7, m_showGhostTrail ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TWIST_LOCK"), ui::Command(L"Animation.Editor.ToggleTwistLock"), 8, m_twistLock ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_IK"), ui::Command(L"Animation.Editor.ToggleIK"), 10, m_ikEnabled ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TRAIL"), 7, ui::Command(L"Animation.Editor.ToggleTrail"), m_showGhostTrail ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_TWIST_LOCK"), 8, ui::Command(L"Animation.Editor.ToggleTwistLock"), m_twistLock ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(i18n::Text(L"ANIMATION_EDITOR_TOGGLE_IK"), 10, ui::Command(L"Animation.Editor.ToggleIK"), m_ikEnabled ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle));
 	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &AnimationEditorPage::eventToolClick));
 
 	m_sequencer = new ui::custom::SequencerControl();

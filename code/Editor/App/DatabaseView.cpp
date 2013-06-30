@@ -196,24 +196,24 @@ bool DatabaseView::create(ui::Widget* parent)
 
 	m_toolFilterType = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
-		ui::Command(L"Database.Filter"),
 		0,
+		ui::Command(L"Database.Filter"),
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 	m_toolSelection->addItem(m_toolFilterType);
 
 	m_toolFilterAssets = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_ASSETS"),
-		ui::Command(L"Database.FilterAssets"),
 		1,
+		ui::Command(L"Database.FilterAssets"),
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 	m_toolSelection->addItem(m_toolFilterAssets);
 
 	m_toolFilterShow = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER_SHOW_FILTERED"),
-		ui::Command(L"Database.ShowFiltered"),
 		2,
+		ui::Command(L"Database.ShowFiltered"),
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 	m_toolSelection->addItem(m_toolFilterShow);

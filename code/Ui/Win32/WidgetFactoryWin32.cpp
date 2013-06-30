@@ -23,6 +23,7 @@
 #include "Ui/Win32/ToolFormWin32.h"
 #include "Ui/Win32/TreeViewWin32.h"
 #include "Ui/Win32/UserWidgetWin32.h"
+#include "Ui/Win32/WebBrowserWin32.h"
 #include "Ui/Win32/NativeWin32.h"
 #include "Ui/Win32/BitmapWin32.h"
 #include "Ui/Win32/ClipboardWin32.h"
@@ -154,7 +155,7 @@ IUserWidget* WidgetFactoryWin32::createUserWidget(EventSubject* owner)
 
 IWebBrowser* WidgetFactoryWin32::createWebBrowser(EventSubject* owner)
 {
-	return 0;
+	return new WebBrowserWin32(owner);
 }
 
 INative* WidgetFactoryWin32::createNative(EventSubject* owner)

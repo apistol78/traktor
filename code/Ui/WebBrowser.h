@@ -27,6 +27,10 @@ public:
 	bool create(Widget* parent, const std::wstring& url);
 
 	void navigate(const std::wstring& url);
+
+	void forward();
+
+	void back();
 };
 
 	}

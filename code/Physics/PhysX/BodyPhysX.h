@@ -83,6 +83,8 @@ public:
 
 	virtual BodyState getState() const;
 
+	virtual void integrate();
+
 	NxActor* getActor() const { return m_actor; }
 
 private:

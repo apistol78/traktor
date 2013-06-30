@@ -27,6 +27,12 @@ bool WorkspaceDialog::create(ui::Widget* parent, PropertyGroup* settings)
 	if (!containerInner->create(this, ui::WsNone, new ui::TableLayout(L"*,100%", L"*", 8, 4)))
 		return false;
 
+	Ref< ui::Static > staticHomeUrl = new ui::Static();
+	staticHomeUrl->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_HOME_URL"));
+
+	m_editHomeUrl = new ui::Edit();
+	m_editHomeUrl->create(containerInner, settings->getProperty< PropertyString >(L"Editor.HomeUrl"));
+
 	Ref< ui::Static > staticSourceDatabase = new ui::Static();
 	staticSourceDatabase->create(containerInner, i18n::Text(L"EDITOR_SETTINGS_SOURCE_DATABASE"));
 
@@ -53,6 +59,7 @@ void WorkspaceDialog::eventDialogClick(ui::Event* event)
 {
 	if (checked_type_cast< ui::CommandEvent* >(event)->getCommand() == ui::DrOk)
 	{
+		m_settings->setProperty< PropertyString >(L"Editor.HomeUrl", m_editHomeUrl->getText());
 		m_settings->setProperty< PropertyString >(L"Editor.SourceDatabase", m_editSourceDatabase->getText());
 		m_settings->setProperty< PropertyString >(L"Editor.OutputDatabase", m_editOutputDatabase->getText());
 		m_settings->setProperty< PropertyString >(L"Pipeline.AssetPath", m_editAssetPath->getText());

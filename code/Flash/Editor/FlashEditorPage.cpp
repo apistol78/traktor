@@ -108,10 +108,10 @@ bool FlashEditorPage::create(ui::Container* parent)
 	m_toolBarPlay->create(container);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourcePlayback, sizeof(c_ResourcePlayback), L"png"), 6);
 	m_toolBarPlay->addImage(ui::Bitmap::load(c_ResourceAspect, sizeof(c_ResourceAspect), L"png"), 2);
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", ui::Command(L"Flash.Editor.Rewind"), 0));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", ui::Command(L"Flash.Editor.Play"), 1));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", ui::Command(L"Flash.Editor.Stop"), 2));
-	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", ui::Command(L"Flash.Editor.Forward"), 3));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Rewind", 0, ui::Command(L"Flash.Editor.Rewind")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Play", 1, ui::Command(L"Flash.Editor.Play")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Stop", 2, ui::Command(L"Flash.Editor.Stop")));
+	m_toolBarPlay->addItem(new ui::custom::ToolBarButton(L"Forward", 3, ui::Command(L"Flash.Editor.Forward")));
 	m_toolBarPlay->addClickEventHandler(ui::createMethodHandler(this, &FlashEditorPage::eventToolClick));
 
 	Ref< ui::custom::Splitter > splitter = new ui::custom::Splitter();

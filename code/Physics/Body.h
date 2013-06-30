@@ -138,6 +138,9 @@ public:
 	/*! \brief Get complete state of body. */
 	virtual BodyState getState() const = 0;
 
+	/*! \brief Perform manual integration of body. */
+	virtual void integrate() = 0;
+
 	/*! \brief Add collision listener callback.
 	 *
 	 * Callbacks are issued every time a new collision

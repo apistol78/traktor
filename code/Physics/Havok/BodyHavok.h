@@ -83,6 +83,8 @@ public:
 
 	virtual BodyState getState() const;
 
+	virtual void integrate();
+
 	const HvkRef< hkpRigidBody >& getRigidBody() const { return m_rigidBody; }
 
 private:
