@@ -49,14 +49,7 @@ BodyBullet::BodyBullet(
 ,	m_collisionMask(collisionMask)
 ,	m_material(material)
 ,	m_enable(false)
-,	m_lastActiveState(body->getActivationState())
-,	m_lastActiveTime(body->getDeactivationTime())
 {
-	if (!m_body->isStaticOrKinematicObject())
-	{
-		m_callback->insertBody(m_body, (uint16_t)m_collisionGroup, (uint16_t)m_collisionMask);
-		m_body->forceActivationState(DISABLE_SIMULATION);
-	}
 }
 
 void BodyBullet::destroy()
@@ -106,8 +99,7 @@ bool BodyBullet::isKinematic() const
 
 void BodyBullet::setActive(bool active)
 {
-	if (m_enable && !m_body->isKinematicObject())
-		m_body->forceActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
+	m_body->forceActivationState(active ? ACTIVE_TAG : ISLAND_SLEEPING);
 }
 
 bool BodyBullet::isActive() const
@@ -120,36 +112,17 @@ void BodyBullet::setEnable(bool enable)
 	if (enable == m_enable)
 		return;
 
-	if (!m_body->isStaticOrKinematicObject())
+	if (!enable)
 	{
-		if (!enable)
-		{
-			m_lastActiveState = m_body->getActivationState();
-			m_lastActiveTime = m_body->getDeactivationTime();
-			m_body->forceActivationState(DISABLE_SIMULATION);
-		}
-		else
-		{
-			m_body->forceActivationState(m_lastActiveState);
-			m_body->setDeactivationTime(m_lastActiveTime);
-		}
+		for (std::vector< btTypedConstraint* >::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
+			m_callback->removeConstraint(*i);
+		m_callback->removeBody(m_body);
 	}
 	else
 	{
-		if (!enable)
-		{
-			for (std::vector< btTypedConstraint* >::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
-				m_callback->removeConstraint(*i);
-
-			m_callback->removeBody(m_body);
-		}
-		else
-		{
-			m_callback->insertBody(m_body, (uint16_t)m_collisionGroup, (uint16_t)m_collisionMask);
-
-			for (std::vector< btTypedConstraint* >::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
-				m_callback->insertConstraint(*i);
-		}
+		m_callback->insertBody(m_body, (uint16_t)m_collisionGroup, (uint16_t)m_collisionMask);
+		for (std::vector< btTypedConstraint* >::iterator i = m_constraints.begin(); i != m_constraints.end(); ++i)
+			m_callback->insertConstraint(*i);
 	}
 
 	m_enable = enable;
@@ -318,14 +291,39 @@ BodyState BodyBullet::getState() const
 	return state;
 }
 
+void BodyBullet::integrate()
+{
+	btTransform T1;
+
+	if (!m_constraints.empty())
+	{
+		btConstraintSolver* constraintSolver = m_dynamicsWorld->getConstraintSolver();
+		T_ASSERT (constraintSolver);
+
+		constraintSolver->solveGroup(
+			(btCollisionObject**)&m_body,
+			1,
+			0,
+			0,
+			&m_constraints[0],
+			m_constraints.size(),
+			m_dynamicsWorld->getSolverInfo(),
+			0,
+			m_dynamicsWorld->getStackAlloc(),
+			m_dynamicsWorld->getDispatcher()
+		);
+	}
+
+	m_body->integrateVelocities(m_simulationDeltaTime);
+	m_body->predictIntegratedTransform(m_simulationDeltaTime, T1);
+	m_body->setCenterOfMassTransform(T1);
+	m_body->clearForces();
+}
+
 void BodyBullet::addConstraint(btTypedConstraint* constraint)
 {
 	m_constraints.push_back(constraint);
-	
-	if (
-		m_enable ||
-		!m_body->isStaticOrKinematicObject()
-	)
+	if (m_enable)
 		m_callback->insertConstraint(constraint);
 }
 
@@ -334,12 +332,8 @@ void BodyBullet::removeConstraint(btTypedConstraint* constraint)
 	std::vector< btTypedConstraint* >::iterator i = std::find(m_constraints.begin(), m_constraints.end(), constraint);
 	if (i != m_constraints.end())
 	{
-		if (
-			m_enable ||
-			!m_body->isStaticOrKinematicObject()
-		)
+		if (m_enable)
 			m_callback->removeConstraint(constraint);
-
 		m_constraints.erase(i);
 	}
 }

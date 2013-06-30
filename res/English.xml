@@ -394,6 +394,10 @@
       <second>Shader compiler</second>
     </item>
     <item>
+      <first>EDITOR_SETTINGS_HOME_URL</first>
+      <second>Home URL</second>
+    </item>
+    <item>
       <first>EDITOR_SETTINGS_OPEN_LAST_PROJECT</first>
       <second>Open last project at startup</second>
     </item>

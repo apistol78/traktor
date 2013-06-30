@@ -108,8 +108,8 @@ bool BankAssetEditor::create(ui::Widget* parent, db::Instance* instance, ISerial
 	Ref< ui::custom::Panel > containerBank = new ui::custom::Panel();
 	containerBank->create(splitterLeftH, L"Grains", new ui::TableLayout(L"100%", L"*,100%", 0, 0));
 
-	m_toolBarItemPlay = new ui::custom::ToolBarButton(L"Play", ui::Command(L"Bank.PlayGrain"), 0, ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
-	m_toolBarItemRepeat = new ui::custom::ToolBarButton(L"Repeat", ui::Command(L"Bank.RepeatGrain"), 0, ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	m_toolBarItemPlay = new ui::custom::ToolBarButton(L"Play", 0, ui::Command(L"Bank.PlayGrain"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
+	m_toolBarItemRepeat = new ui::custom::ToolBarButton(L"Repeat", 0, ui::Command(L"Bank.RepeatGrain"), ui::custom::ToolBarButton::BsText | ui::custom::ToolBarButton::BsToggle);
 
 	m_toolBar = new ui::custom::ToolBar();
 	m_toolBar->create(containerBank);

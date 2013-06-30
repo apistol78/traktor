@@ -38,11 +38,17 @@ public:
 		BsDefaultToggled = BsDefault | BsToggled
 	};
 
-	ToolBarButton(const std::wstring& text, const Command& command, uint32_t imageIndex, int style = BsDefault);
+	ToolBarButton(const std::wstring& text, uint32_t imageIndex, const Command& command, int32_t style = BsIcon);
+
+	ToolBarButton(const std::wstring& text, const Command& command, int32_t style = BsText);
 
 	void setText(const std::wstring& text);
 
 	const std::wstring& getText() const;
+
+	void setImage(uint32_t imageIndex);
+
+	uint32_t getImage() const;
 
 	void setToggled(bool toggled);
 
@@ -75,8 +81,8 @@ private:
 	std::wstring m_text;
 	Command m_command;
 	uint32_t m_imageIndex;
-	int m_style;
-	int m_state;
+	int32_t m_style;
+	int32_t m_state;
 };
 
 		}

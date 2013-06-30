@@ -40,19 +40,19 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 
 	int32_t image = toolBar->addImage(ui::Bitmap::load(c_ResourceTerrain, sizeof(c_ResourceTerrain), L"png"), 13);
 
-	m_toolToggleEditTerrain = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), ui::Command(L"Terrain.Editor.EditTerrain"), image + 6, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleMaterial = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_MATERIAL_BRUSH"), ui::Command(L"Terrain.Editor.MaterialBrush"), image + 9, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleColor = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_COLOR_BRUSH"), ui::Command(L"Terrain.Editor.ColorBrush"), image + 8, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleElevate = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), ui::Command(L"Terrain.Editor.ElevateBrush"), image + 0, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleFlatten = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), ui::Command(L"Terrain.Editor.FlattenBrush"), image + 1, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleAverage = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_AVERAGE_BRUSH"), ui::Command(L"Terrain.Editor.AverageBrush"), image + 3, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleSmooth = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_BRUSH"), ui::Command(L"Terrain.Editor.SmoothBrush"), image + 2, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleNoise = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_NOISE_BRUSH"), ui::Command(L"Terrain.Editor.NoiseBrush"), image + 10, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleCut = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_CUT_BRUSH"), ui::Command(L"Terrain.Editor.CutBrush"), image + 7, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleFallOffSmooth = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_FALLOFF"), ui::Command(L"Terrain.Editor.SmoothFallOff"), image + 4, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleFallOffSharp = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_FALLOFF"), ui::Command(L"Terrain.Editor.SharpFallOff"), image + 5, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleSymmetryX = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SYMMETRY_X"), ui::Command(L"Terrain.Editor.SymmetryX"), image + 11, ui::custom::ToolBarButton::BsDefaultToggle);
-	m_toolToggleSymmetryZ = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SYMMETRY_Z"), ui::Command(L"Terrain.Editor.SymmetryZ"), image + 12, ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleEditTerrain = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), image + 6, ui::Command(L"Terrain.Editor.EditTerrain"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleMaterial = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_MATERIAL_BRUSH"), image + 9, ui::Command(L"Terrain.Editor.MaterialBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleColor = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_COLOR_BRUSH"), image + 8, ui::Command(L"Terrain.Editor.ColorBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleElevate = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), image + 0, ui::Command(L"Terrain.Editor.ElevateBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleFlatten = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), image + 1, ui::Command(L"Terrain.Editor.FlattenBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleAverage = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_AVERAGE_BRUSH"), image + 3, ui::Command(L"Terrain.Editor.AverageBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleSmooth = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_BRUSH"), image + 2, ui::Command(L"Terrain.Editor.SmoothBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleNoise = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_NOISE_BRUSH"), image + 10, ui::Command(L"Terrain.Editor.NoiseBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleCut = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_CUT_BRUSH"), image + 7, ui::Command(L"Terrain.Editor.CutBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleFallOffSmooth = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SMOOTH_FALLOFF"), image + 4, ui::Command(L"Terrain.Editor.SmoothFallOff"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleFallOffSharp = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SHARP_FALLOFF"), image + 5, ui::Command(L"Terrain.Editor.SharpFallOff"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleSymmetryX = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SYMMETRY_X"), image + 11, ui::Command(L"Terrain.Editor.SymmetryX"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleSymmetryZ = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_SYMMETRY_Z"), image + 12, ui::Command(L"Terrain.Editor.SymmetryZ"), ui::custom::ToolBarButton::BsDefaultToggle);
 
 	Ref< ui::Container > containerStrength = new ui::Container();
 	containerStrength->create(toolBar, ui::WsNone, new ui::TableLayout(L"100,35", L"24", 2, 2));

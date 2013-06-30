@@ -63,13 +63,13 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_toolBarGraph = new ui::custom::ToolBar();
 	m_toolBarGraph->create(container);
 	m_toolBarGraph->addImage(ui::Bitmap::load(c_ResourceAlignment, sizeof(c_ResourceAlignment), L"png"), 14);
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), ui::Command(L"StateGraph.Editor.AlignLeft"), 0));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), ui::Command(L"StateGraph.Editor.AlignRight"), 1));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), ui::Command(L"StateGraph.Editor.AlignTop"), 2));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_BOTTOM"), ui::Command(L"StateGraph.Editor.AlignBottom"), 3));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_LEFT"), 0, ui::Command(L"StateGraph.Editor.AlignLeft")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_RIGHT"), 1, ui::Command(L"StateGraph.Editor.AlignRight")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_TOP"), 2, ui::Command(L"StateGraph.Editor.AlignTop")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_ALIGN_BOTTOM"), 3, ui::Command(L"StateGraph.Editor.AlignBottom")));
 	m_toolBarGraph->addItem(new ui::custom::ToolBarSeparator());
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), ui::Command(L"StateGraph.Editor.EvenSpaceVertically"), 4));
-	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), ui::Command(L"StateGraph.Editor.EventSpaceHorizontally"), 5));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_VERTICALLY"), 4, ui::Command(L"StateGraph.Editor.EvenSpaceVertically")));
+	m_toolBarGraph->addItem(new ui::custom::ToolBarButton(i18n::Text(L"STATEGRAPH_EVEN_HORIZONTALLY"), 5, ui::Command(L"StateGraph.Editor.EventSpaceHorizontally")));
 	m_toolBarGraph->addClickEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventToolBarGraphClick));
 
 	// Create state graph editor control.
@@ -96,8 +96,8 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 	m_toolBarPreview = new ui::custom::ToolBar();
 	m_toolBarPreview->create(containerPreview);
-	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh"), 0, ui::custom::ToolBarButton::BsText));
-	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton"), 0, ui::custom::ToolBarButton::BsText));
+	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
+	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
 	m_toolBarPreview->addClickEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventToolBarPreviewClick));
 
 	m_previewControl = new AnimationPreviewControl(m_editor);

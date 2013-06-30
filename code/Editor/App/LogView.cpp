@@ -60,22 +60,22 @@ bool LogView::create(ui::Widget* parent)
 
 	m_toolToggleInfo = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_INFO"),
-		ui::Command(L"Editor.Log.ToggleLevel"),
 		0,
+		ui::Command(L"Editor.Log.ToggleLevel"),
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
 	m_toolToggleWarning = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_WARNING"),
-		ui::Command(L"Editor.Log.ToggleLevel"),
 		1,
+		ui::Command(L"Editor.Log.ToggleLevel"),
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
 	m_toolToggleError = new ui::custom::ToolBarButton(
 		i18n::Text(L"LOG_VIEW_ERROR"),
-		ui::Command(L"Editor.Log.ToggleLevel"),
 		2,
+		ui::Command(L"Editor.Log.ToggleLevel"),
 		ui::custom::ToolBarButton::BsDefaultToggled
 	);
 
@@ -87,7 +87,7 @@ bool LogView::create(ui::Widget* parent)
 	m_toolFilter->addItem(m_toolToggleWarning);
 	m_toolFilter->addItem(m_toolToggleError);
 	m_toolFilter->addItem(new ui::custom::ToolBarSeparator());
-	m_toolFilter->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), ui::Command(L"Editor.Log.Copy"), 7));
+	m_toolFilter->addItem(new ui::custom::ToolBarButton(i18n::Text(L"TOOLBAR_COPY"), 7, ui::Command(L"Editor.Log.Copy")));
 
 	m_toolFilter->addClickEventHandler(ui::createMethodHandler(this, &LogView::eventToolClick));
 

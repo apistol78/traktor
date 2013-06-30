@@ -79,36 +79,36 @@ bool DefaultRenderControl::create(ui::Widget* parent, SceneEditorContext* contex
 
 	m_toolToggleGrid = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GRID"),
-		ui::Command(1, L"Scene.Editor.ToggleGrid"),
 		16,
+		ui::Command(1, L"Scene.Editor.ToggleGrid"),
 		gridEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolToggleGuide = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_GUIDE"),
-		ui::Command(1, L"Scene.Editor.ToggleGuide"),
 		5,
+		ui::Command(1, L"Scene.Editor.ToggleGuide"),
 		guideEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolTogglePostProcess = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_TOGGLE_POSTPROCESS"),
-		ui::Command(1, L"Scene.Editor.TogglePostProcess"),
 		6,
+		ui::Command(1, L"Scene.Editor.TogglePostProcess"),
 		postProcessEnable ? ui::custom::ToolBarButton::BsDefaultToggled : ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolToggleFollowEntity = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_FOLLOW_ENTITY"),
-		ui::Command(L"Scene.Editor.ToggleFollowEntity"),
 		17 + 4,
+		ui::Command(L"Scene.Editor.ToggleFollowEntity"),
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 
 	m_toolToggleLookAtEntity = new ui::custom::ToolBarButton(
 		i18n::Text(L"SCENE_EDITOR_LOOK_AT_ENTITY"),
-		ui::Command(L"Scene.Editor.ToggleLookAtEntity"),
 		17 + 3,
+		ui::Command(L"Scene.Editor.ToggleLookAtEntity"),
 		ui::custom::ToolBarButton::BsDefaultToggle
 	);
 

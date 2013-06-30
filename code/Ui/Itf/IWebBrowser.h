@@ -17,6 +17,10 @@ public:
 	virtual bool create(IWidget* parent, const std::wstring& url) = 0;
 
 	virtual void navigate(const std::wstring& url) = 0;
+
+	virtual void forward() = 0;
+
+	virtual void back() = 0;
 };
 
 	}

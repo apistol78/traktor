@@ -39,5 +39,17 @@ void WebBrowser::navigate(const std::wstring& url)
 	static_cast< IWebBrowser* >(m_widget)->navigate(url);
 }
 
+void WebBrowser::forward()
+{
+	T_ASSERT (m_widget);
+	static_cast< IWebBrowser* >(m_widget)->forward();
+}
+
+void WebBrowser::back()
+{
+	T_ASSERT (m_widget);
+	static_cast< IWebBrowser* >(m_widget)->back();
+}
+
 	}
 }

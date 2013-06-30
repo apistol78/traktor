@@ -55,8 +55,8 @@ bool SoundBatchDialog::create(ui::Widget* parent)
 		return false;
 
 	soundListTools->addImage(ui::Bitmap::load(c_ResourcePlusMinus, sizeof(c_ResourcePlusMinus), L"png"), 4);
-	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_ADD"), ui::Command(L"SoundBatch.Add"), 0));
-	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_REMOVE"), ui::Command(L"SoundBatch.Remove"), 1));
+	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_ADD"), 0, ui::Command(L"SoundBatch.Add")));
+	soundListTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SOUND_BATCH_REMOVE"), 1, ui::Command(L"SoundBatch.Remove")));
 	soundListTools->addClickEventHandler(ui::createMethodHandler(this, &SoundBatchDialog::eventSoundListToolClick));
 
 	m_soundList = new ui::ListBox();

@@ -98,6 +98,8 @@ public:
 
 	virtual BodyState getState() const;
 
+	virtual void integrate();
+
 	void addConstraint(btTypedConstraint* constraint);
 
 	void removeConstraint(btTypedConstraint* constraint);
@@ -130,8 +132,6 @@ private:
 	int32_t m_material;
 	std::vector< btTypedConstraint* > m_constraints;
 	bool m_enable;
-	int32_t m_lastActiveState;
-	float m_lastActiveTime;
 };
 
 	}

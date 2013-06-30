@@ -54,10 +54,10 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 		return false;
 
 	m_debuggerTools->addImage(ui::Bitmap::load(c_ResourceDebug, sizeof(c_ResourceDebug), L"png"), 4);
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), ui::Command(L"Script.Editor.Continue"), 1));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), ui::Command(L"Script.Editor.Break"), 0));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), ui::Command(L"Script.Editor.StepInto"), 2));
-	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), ui::Command(L"Script.Editor.StepOver"), 3));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_CONTINUE"), 1, ui::Command(L"Script.Editor.Continue")));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_BREAK"), 0, ui::Command(L"Script.Editor.Break")));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_INTO"), 2, ui::Command(L"Script.Editor.StepInto")));
+	m_debuggerTools->addItem(new ui::custom::ToolBarButton(i18n::Text(L"SCRIPT_EDITOR_STEP_OVER"), 3, ui::Command(L"Script.Editor.StepOver")));
 	m_debuggerTools->addClickEventHandler(ui::createMethodHandler(this, &ScriptDebuggerView::eventDebuggerToolClick));
 
 	Ref< ui::Tab > tabDebugger = new ui::Tab();

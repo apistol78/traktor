@@ -217,5 +217,9 @@ BodyState BodyHavok::getState() const
 	return state;
 }
 
+void BodyHavok::integrate()
+{
+}
+
 	}
 }

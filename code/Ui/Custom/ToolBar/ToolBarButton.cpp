@@ -13,10 +13,21 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.ToolBarButton", ToolBarButton, ToolBarItem)
 
-ToolBarButton::ToolBarButton(const std::wstring& text, const Command& command, uint32_t imageIndex, int style)
+ToolBarButton::ToolBarButton(const std::wstring& text, uint32_t imageIndex, const Command& command, int32_t style)
 :	m_text(text)
 ,	m_command(command)
 ,	m_imageIndex(imageIndex)
+,	m_style(style)
+,	m_state(BstNormal)
+{
+	if ((m_style & BsToggled) == BsToggled)
+		setToggled(true);
+}
+
+ToolBarButton::ToolBarButton(const std::wstring& text, const Command& command, int32_t style)
+:	m_text(text)
+,	m_command(command)
+,	m_imageIndex(-1)
 ,	m_style(style)
 ,	m_state(BstNormal)
 {
@@ -32,6 +43,16 @@ void ToolBarButton::setText(const std::wstring& text)
 const std::wstring& ToolBarButton::getText() const
 {
 	return m_text;
+}
+
+void ToolBarButton::setImage(uint32_t imageIndex)
+{
+	m_imageIndex = imageIndex;
+}
+
+uint32_t ToolBarButton::getImage() const
+{
+	return m_imageIndex;
 }
 
 void ToolBarButton::setToggled(bool toggled)
