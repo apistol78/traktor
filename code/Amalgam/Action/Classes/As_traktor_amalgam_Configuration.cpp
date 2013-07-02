@@ -57,6 +57,10 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	// User
 	prototype->setMember("getBoolean", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getBoolean)));
 	prototype->setMember("setBoolean", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setBoolean)));
+	prototype->setMember("getInteger", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getInteger)));
+	prototype->setMember("setInteger", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setInteger)));
+	prototype->setMember("getFloat", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_getFloat)));
+	prototype->setMember("setFloat", flash::ActionValue(flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_setFloat)));
 
 	prototype->setMember("constructor", flash::ActionValue(this));
 	prototype->setReadOnly();
@@ -260,6 +264,26 @@ bool As_traktor_amalgam_Configuration::Configuration_getBoolean(AsConfiguration*
 void As_traktor_amalgam_Configuration::Configuration_setBoolean(AsConfiguration* self, const std::wstring& name, bool value) const
 {
 	self->setBoolean(name, value);
+}
+
+int32_t As_traktor_amalgam_Configuration::Configuration_getInteger(AsConfiguration* self, const std::wstring& name) const
+{
+	return self->getInteger(name);
+}
+
+void As_traktor_amalgam_Configuration::Configuration_setInteger(AsConfiguration* self, const std::wstring& name, int32_t value) const
+{
+	self->setInteger(name, value);
+}
+
+float As_traktor_amalgam_Configuration::Configuration_getFloat(AsConfiguration* self, const std::wstring& name) const
+{
+	return self->getFloat(name);
+}
+
+void As_traktor_amalgam_Configuration::Configuration_setFloat(AsConfiguration* self, const std::wstring& name, float value) const
+{
+	self->setFloat(name, value);
 }
 
 bool As_traktor_amalgam_Configuration::Configuration_apply(AsConfiguration* self) const

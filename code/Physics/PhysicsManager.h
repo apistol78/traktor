@@ -179,6 +179,10 @@ public:
 	 */
 	virtual void update(bool issueCollisionEvents) = 0;
 
+	/*! \brief Solve joint constraints applied to given bodies.
+	 */
+	virtual void solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints) = 0;
+
 	/*! \brief Get bodies.
 	 */
 	virtual RefArray< Body > getBodies() const = 0;

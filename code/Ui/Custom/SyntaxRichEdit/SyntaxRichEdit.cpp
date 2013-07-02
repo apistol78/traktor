@@ -45,19 +45,24 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
 	return true;
 }
 
-void SyntaxRichEdit::setLanguage(SyntaxLanguage* language)
+void SyntaxRichEdit::setLanguage(const SyntaxLanguage* language)
 {
 	m_language = language;
 	updateLanguage(0, getLineCount() - 1);
 }
 
-void SyntaxRichEdit::setErrorHighlight(int line)
+const SyntaxLanguage* SyntaxRichEdit::getLanguage() const
+{
+	return m_language;
+}
+
+void SyntaxRichEdit::setErrorHighlight(int32_t line)
 {
 	updateLanguage(0, getLineCount() - 1);
 	if (line >= 0)
 	{
-		int offset = getLineOffset(line);
-		int length = getLineLength(line);
+		int32_t offset = getLineOffset(line);
+		int32_t length = getLineLength(line);
 		setAttribute(offset, length, m_attributeError);
 	}
 }
@@ -77,22 +82,22 @@ void SyntaxRichEdit::getOutline(std::list< SyntaxOutline >& outOutline) const
 	}
 }
 
-void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
+void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 {
 	if (!m_language)
 		return;
 
 	SyntaxLanguage::State currentState = SyntaxLanguage::StInvalid;
-	int startOffset = getLineOffset(fromLine);
-	int endOffset = startOffset;
+	int32_t startOffset = getLineOffset(fromLine);
+	int32_t endOffset = startOffset;
 
-	for (int line = fromLine; line <= toLine; ++line)
+	for (int32_t line = fromLine; line <= toLine; ++line)
 	{
 		std::wstring text = getLine(line);
-		for (int i = 0; i < int(text.length()); )
+		for (int32_t i = 0; i < int32_t(text.length()); )
 		{
 			SyntaxLanguage::State state = SyntaxLanguage::StInvalid;
-			int consumedChars = 0;
+			int32_t consumedChars = 0;
 
 			if (!m_language->consume(text.substr(i), state, consumedChars))
 				break;
@@ -200,8 +205,8 @@ void SyntaxRichEdit::updateLanguage(int fromLine, int toLine)
 
 void SyntaxRichEdit::eventChange(Event* event)
 {
-	int caretOffset = getCaretOffset();
-	int caretLine = getLineFromOffset(caretOffset);
+	int32_t caretOffset = getCaretOffset();
+	int32_t caretLine = getLineFromOffset(caretOffset);
 	updateLanguage(caretLine, caretLine);
 }
 

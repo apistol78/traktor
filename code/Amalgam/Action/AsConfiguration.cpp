@@ -234,6 +234,40 @@ void AsConfiguration::setBoolean(const std::wstring& name, bool value)
 	m_user[name] = new PropertyBoolean(value);
 }
 
+int32_t AsConfiguration::getInteger(const std::wstring& name) const
+{
+	std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = m_user.find(name);
+	if (i != m_user.end())
+		return PropertyInteger::get(i->second);
+
+	if (m_settings)
+		return m_settings->getProperty< PropertyInteger >(name);
+	else
+		return false;
+}
+
+void AsConfiguration::setInteger(const std::wstring& name, int32_t value)
+{
+	m_user[name] = new PropertyInteger(value);
+}
+
+float AsConfiguration::getFloat(const std::wstring& name) const
+{
+	std::map< std::wstring, Ref< IPropertyValue > >::const_iterator i = m_user.find(name);
+	if (i != m_user.end())
+		return PropertyFloat::get(i->second);
+
+	if (m_settings)
+		return m_settings->getProperty< PropertyFloat >(name);
+	else
+		return false;
+}
+
+void AsConfiguration::setFloat(const std::wstring& name, float value)
+{
+	m_user[name] = new PropertyFloat(value);
+}
+
 bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 {
 	PropertyGroup* settings = environment->getSettings();

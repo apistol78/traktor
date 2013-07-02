@@ -208,7 +208,7 @@ BodyState BodyPhysX::getState() const
 	return state;
 }
 
-void BodyPhysX::integrate()
+void BodyPhysX::integrate(float deltaTime)
 {
 }
 

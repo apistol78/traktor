@@ -5,7 +5,7 @@
 #include <map>
 #include "Core/RefArray.h"
 #include "Core/Containers/CircularVector.h"
-#include "Core/Math/Vector4.h"
+#include "Core/Math/Transform.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Net/Replication/ReplicatorTypes.h"
 
@@ -101,7 +101,7 @@ public:
 	 * Origin is used to determine which frequency
 	 * of transmission to use to each peer.
 	 */
-	void setOrigin(const Vector4& origin);
+	void setOrigin(const Transform& origin);
 
 	/*!
 	 */
@@ -204,7 +204,7 @@ public:
 	 * Ghost origin is used to determine which frequency
 	 * of transmission to use for each peer.
 	 */
-	void setGhostOrigin(handle_t peerHandle, const Vector4& origin);
+	void setGhostOrigin(handle_t peerHandle, const Transform& origin);
 
 	/*!
 	 */
@@ -236,7 +236,15 @@ public:
 private:
 	enum { MaxRoundTrips = 17 };
 
-	struct Event
+	struct EventIn
+	{
+		float time;
+		uint32_t eventId;
+		handle_t handle;
+		Ref< const Object > object;
+	};
+
+	struct EventOut
 	{
 		float time;
 		uint32_t eventId;
@@ -246,7 +254,7 @@ private:
 
 	struct Ghost
 	{
-		Vector4 origin;
+		Transform origin;
 		Ref< Object > object;
 		Ref< const StateTemplate > stateTemplate;
 		Ref< const State > Sn2;
@@ -309,12 +317,12 @@ private:
 	std::vector< const TypeInfo* > m_eventTypes;
 	Ref< IReplicatorPeers > m_replicatorPeers;
 	RefArray< IListener > m_listeners;
-	Vector4 m_origin;
+	Transform m_origin;
 	Ref< const StateTemplate > m_stateTemplate;
 	Ref< const State > m_state;
 	std::map< handle_t, Peer > m_peers;
-	std::list< Event > m_eventsIn;
-	std::list< Event > m_eventsOut;
+	std::list< EventIn > m_eventsIn;
+	std::list< EventOut > m_eventsOut;
 	float m_time0;
 	float m_time;
 	uint32_t m_pingCount;

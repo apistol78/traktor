@@ -10,6 +10,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageLua", 0, SyntaxLanguageLua, SyntaxLanguage)
 
+std::wstring SyntaxLanguageLua::lineComment() const
+{
+	return L"--";
+}
+
 bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());

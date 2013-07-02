@@ -1017,6 +1017,36 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 	}
 }
 
+void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	btCollisionObject* btBodies[32];
+	btTypedConstraint* btConstraints[32];
+
+	for (uint32_t i = 0; i < bodies.size(); ++i)
+		btBodies[i] = static_cast< BodyBullet* >(bodies[i])->getBtRigidBody();
+
+	for (uint32_t i = 0; i < joints.size(); ++i)
+		btConstraints[i] = static_cast< btTypedConstraint* >(joints[i]->getInternal());
+
+	btConstraintSolver* constraintSolver = m_dynamicsWorld->getConstraintSolver();
+	T_ASSERT (constraintSolver);
+
+	constraintSolver->solveGroup(
+		btBodies,
+		bodies.size(),
+		0,
+		0,
+		btConstraints,
+		joints.size(),
+		m_dynamicsWorld->getSolverInfo(),
+		0,
+		m_dynamicsWorld->getStackAlloc(),
+		m_dynamicsWorld->getDispatcher()
+	);
+}
+
 RefArray< Body > PhysicsManagerBullet::getBodies() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

@@ -38,6 +38,10 @@ public:
 	 * to world.
 	 */
 	virtual Body* getBody2() = 0;
+
+	/*! \brief
+	 */
+	virtual void* getInternal() = 0;
 };
 
 	}

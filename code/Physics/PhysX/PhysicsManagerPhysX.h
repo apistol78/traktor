@@ -50,6 +50,8 @@ public:
 
 	virtual void update(bool issueCollisionEvents);
 
+	virtual void solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints);
+
 	virtual RefArray< Body > getBodies() const;
 
 	virtual uint32_t getCollidingPairs(std::vector< CollisionPair >& outCollidingPairs) const;

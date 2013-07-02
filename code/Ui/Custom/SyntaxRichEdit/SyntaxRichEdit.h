@@ -34,14 +34,18 @@ public:
 
 	bool create(Widget* parent, const std::wstring& text = L"", int style = WsClientBorder);
 
-	void setLanguage(SyntaxLanguage* language);
+	void setLanguage(const SyntaxLanguage* language);
 
-	void setErrorHighlight(int line);
+	const SyntaxLanguage* getLanguage() const;
+
+	void setErrorHighlight(int32_t line);
 
 	void getOutline(std::list< SyntaxOutline >& outOutline) const;
 
+	void updateLanguage(int32_t fromLine, int32_t toLine);
+
 private:
-	Ref< SyntaxLanguage > m_language;
+	Ref< const SyntaxLanguage > m_language;
 	int32_t m_attributeDefault;
 	int32_t m_attributeString;
 	int32_t m_attributeNumber;
@@ -51,8 +55,6 @@ private:
 	int32_t m_attributeKeyword;
 	int32_t m_attributeSpecial;
 	int32_t m_attributeError;
-
-	void updateLanguage(int fromLine, int toLine);
 
 	void eventChange(Event* event);
 };

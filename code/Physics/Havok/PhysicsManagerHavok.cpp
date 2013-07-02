@@ -608,6 +608,10 @@ void PhysicsManagerHavok::update(bool issueCollisionEvents)
 	m_world->stepDeltaTime(m_simulationDeltaTime);
 }
 
+void PhysicsManagerHavok::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
+{
+}
+
 RefArray< Body > PhysicsManagerHavok::getBodies() const
 {
 	return (RefArray< Body >&)m_bodies;

@@ -61,7 +61,13 @@ public:
 
 	int32_t getLineLength(int32_t line) const;
 
+	void setLine(int32_t line, const std::wstring& text);
+
 	std::wstring getLine(int32_t line) const;
+
+	int32_t getSelectionStartOffset() const;
+
+	int32_t getSelectionStopOffset() const;
 
 	std::wstring getSelectedText() const;
 

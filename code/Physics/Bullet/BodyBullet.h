@@ -98,7 +98,7 @@ public:
 
 	virtual BodyState getState() const;
 
-	virtual void integrate();
+	virtual void integrate(float deltaTime);
 
 	void addConstraint(btTypedConstraint* constraint);
 

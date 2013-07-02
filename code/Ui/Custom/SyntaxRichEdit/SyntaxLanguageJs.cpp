@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageJs", 0, SyntaxLanguageJs, SyntaxLanguage)
 
+std::wstring SyntaxLanguageJs::lineComment() const
+{
+	return L"//";
+}
+
 bool SyntaxLanguageJs::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());

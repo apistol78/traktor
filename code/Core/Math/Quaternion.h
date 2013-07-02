@@ -43,6 +43,8 @@ public:
 
 	T_MATH_INLINE Quaternion inverse() const;
 
+	T_MATH_INLINE Quaternion nearest(const Quaternion& q) const;
+
 	T_MATH_INLINE Vector4 toAxisAngle() const;
 
 	static T_MATH_INLINE Quaternion fromAxisAngle(const Vector4& axisAngle);
@@ -59,6 +61,8 @@ public:
 
 	static T_MATH_INLINE Quaternion fromEulerAngles(const Vector4& angles);
 
+	T_MATH_INLINE Quaternion operator - () const;
+
 	T_MATH_INLINE Quaternion& operator *= (const Quaternion& r);
 
 	T_MATH_INLINE bool operator == (const Quaternion& v) const;
@@ -67,12 +71,16 @@ public:
 
 	friend T_MATH_INLINE T_DLLCLASS Quaternion operator + (const Quaternion& l, const Quaternion& r);
 
+	friend T_MATH_INLINE T_DLLCLASS Quaternion operator - (const Quaternion& l, const Quaternion& r);
+
 	friend T_MATH_INLINE T_DLLCLASS Quaternion operator * (const Quaternion& l, float r);
 
 	friend T_MATH_INLINE T_DLLCLASS Quaternion operator * (const Quaternion& l, const Quaternion& r);
 
 	friend T_MATH_INLINE T_DLLCLASS Vector4 operator * (const Quaternion& q, const Vector4& v);
 };
+
+T_MATH_INLINE T_DLLCLASS Scalar dot(const Quaternion& a, const Quaternion& b);
 
 T_MATH_INLINE T_DLLCLASS Quaternion lerp(const Quaternion& a, const Quaternion& b, float c);
 

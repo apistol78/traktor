@@ -9,6 +9,11 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ui.custom.SyntaxLanguageHlsl", 0, SyntaxLanguageHlsl, SyntaxLanguage)
 
+std::wstring SyntaxLanguageHlsl::lineComment() const
+{
+	return L"//";
+}
+
 bool SyntaxLanguageHlsl::consume(const std::wstring& text, State& outState, int& outConsumedChars) const
 {
 	int ln = int(text.length());

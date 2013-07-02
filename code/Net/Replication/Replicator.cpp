@@ -14,6 +14,7 @@
 #include "Net/Replication/IReplicatorPeers.h"
 #include "Net/Replication/Message.h"
 #include "Net/Replication/Replicator.h"
+#include "Net/Replication/State/State.h"
 #include "Net/Replication/State/StateTemplate.h"
 
 namespace traktor
@@ -26,9 +27,9 @@ namespace traktor
 const handle_t c_broadcastHandle = 0UL;
 const float c_initialTimeOffset = 0.05f;
 const float c_nearDistance = 30.0f;
-const float c_farDistance = 150.0f;
+const float c_farDistance = 250.0f;
 const float c_nearErrorThreshold = 0.1f;
-const float c_farErrorThreshold = 4.0f;
+const float c_farErrorThreshold = 3.0f;
 const float c_timeUntilTx = 1.0f / 5.0f;
 const float c_timeUntilIAm = 1.0f;
 const float c_timeUntilPing = 2.0f;
@@ -68,7 +69,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.Replicator.IListener", Replicator::IListene
 
 Replicator::Replicator()
 :	m_id(0)
-,	m_origin(0.0f, 0.0f, 0.0f, 1.0f)
+,	m_origin(Transform::identity())
 ,	m_time0(0.0f)
 ,	m_time(0.0f)
 ,	m_pingCount(0)
@@ -195,7 +196,7 @@ void Replicator::setStatus(uint8_t status)
 	m_replicatorPeers->setStatus(status);
 }
 
-void Replicator::setOrigin(const Vector4& origin)
+void Replicator::setOrigin(const Transform& origin)
 {
 	m_origin = origin;
 }
@@ -218,7 +219,7 @@ void Replicator::setState(const State* state)
 
 void Replicator::sendEvent(handle_t peerHandle, const ISerializable* eventObject)
 {
-	Event e;
+	EventOut e;
 	e.time = 0.0f;
 	e.eventId = 0;
 	e.handle = peerHandle;
@@ -228,7 +229,7 @@ void Replicator::sendEvent(handle_t peerHandle, const ISerializable* eventObject
 
 void Replicator::broadcastEvent(const ISerializable* eventObject)
 {
-	Event e;
+	EventOut e;
 	e.time = 0.0f;
 	e.eventId = 0;
 	e.handle = c_broadcastHandle;
@@ -365,7 +366,7 @@ Object* Replicator::getGhostObject(handle_t peerHandle) const
 	}
 }
 
-void Replicator::setGhostOrigin(handle_t peerHandle, const Vector4& origin)
+void Replicator::setGhostOrigin(handle_t peerHandle, const Transform& origin)
 {
 	std::map< handle_t, Peer >::iterator i = m_peers.find(peerHandle);
 	if (i != m_peers.end() && i->second.ghost)
@@ -580,7 +581,8 @@ void Replicator::sendState(float dT)
 			float errorThreshold = c_farErrorThreshold;
 			if (peer.ghost->stateTemplate)
 			{
-				float distanceToPeer = (peer.ghost->origin - m_origin).xyz0().length();
+				Vector4 ghostToPlayer = m_origin.translation() - peer.ghost->origin.translation();
+				Scalar distanceToPeer = ghostToPlayer.length();
 				float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
 				errorThreshold = lerp(c_nearErrorThreshold, c_farErrorThreshold, t);
 			}
@@ -654,7 +656,7 @@ void Replicator::sendState(float dT)
 
 void Replicator::sendEvents()
 {
-	std::list< Event > eventsOut;
+	std::list< EventOut > eventsOut;
 	Message msg;
 
 	if (m_eventsOut.empty())
@@ -667,10 +669,10 @@ void Replicator::sendEvents()
 		if (peer.state != PsEstablished || !peer.ghost)
 			continue;
 
-		std::vector< Event > peerEventsOut;
+		std::vector< EventOut > peerEventsOut;
 
 		// Collect events to peer.
-		for (std::list< Event >::const_iterator j = m_eventsOut.begin(); j != m_eventsOut.end(); ++j)
+		for (std::list< EventOut >::const_iterator j = m_eventsOut.begin(); j != m_eventsOut.end(); ++j)
 		{
 			if (j->handle == c_broadcastHandle || j->handle == i->first)
 			{
@@ -833,7 +835,7 @@ void Replicator::receiveMessages()
 					++peer.pendingPing;
 
 					// Issue connect event to listeners.
-					Event evt;
+					EventIn evt;
 					evt.eventId = IListener::ReConnected;
 					evt.handle = handle;
 					evt.object = 0;
@@ -920,7 +922,7 @@ void Replicator::receiveMessages()
 			if (stateDataSize <= 0)
 				continue;
 
-			bool stateValid = false;
+			Ref< const State > state;
 
 			// Ignore old messages; as we're using unreliable transportation
 			// messages can arrive out-of-order.
@@ -938,8 +940,6 @@ void Replicator::receiveMessages()
 
 				if (peer.ghost->stateTemplate)
 				{
-					Ref< const State > state;
-
 					if (msg.type == MtFullState)
 						state = peer.ghost->stateTemplate->unpack(msg.state.data, stateDataSize);
 					else if (peer.ghost->S0)
@@ -963,21 +963,28 @@ void Replicator::receiveMessages()
 						peer.ghost->Tn1 = peer.ghost->T0 + offset;
 						peer.ghost->S0 = state;
 						peer.ghost->T0 = time + offset;
-
-						stateValid = true;
 					}
 				}
 
 				peer.lastTimeLocal = m_time;
 				peer.lastTimeRemote = time;
+
+				// Put an input event to notify listeners about new state.
+				if (peer.ghost && peer.ghost->S0)
+				{
+					EventIn evt;
+					evt.time = peer.ghost->T0;
+					evt.eventId = IListener::ReState;
+					evt.handle = handle;
+					evt.object = peer.ghost->S0;
+					m_eventsIn.push_back(evt);
+				}
 			}
 			else
 			{
 				// Received an old out-of-order package.
 				if (peer.ghost->stateTemplate)
 				{
-					Ref< const State > state;
-
 					if (msg.type == MtFullState)
 						state = peer.ghost->stateTemplate->unpack(msg.state.data, stateDataSize);
 					else
@@ -1003,28 +1010,16 @@ void Replicator::receiveMessages()
 							peer.ghost->Tn2 = peer.ghost->Tn1;
 							peer.ghost->Sn1 = state;
 							peer.ghost->Tn1 = time;
-							stateValid = true;
 						}
 						else if (time > peer.ghost->Tn2)
 						{
 							peer.ghost->Sn2 = state;
 							peer.ghost->Tn2 = time;
-							stateValid = true;
 						}
 					}
 					else
 						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack ghost state (2)");
 				}
-			}
-
-			// Put an input event to notify listeners about new state.
-			if (stateValid)
-			{
-				Event evt;
-				evt.eventId = IListener::ReState;
-				evt.handle = handle;
-				evt.object = 0;
-				m_eventsIn.push_back(evt);
 			}
 		}
 		else if (msg.type >= MtEvent1 && msg.type <= MtEvent4)	// Event message(s).
@@ -1051,7 +1046,7 @@ void Replicator::receiveMessages()
 					Ref< ISerializable > eventObject = CompactSerializer(&s, &m_eventTypes[0]).readObject< ISerializable >();
 					if (eventObject)
 					{
-						Event e;
+						EventIn e;
 						e.time = time;
 						e.eventId = IListener::ReBroadcastEvent;
 						e.handle = handle;
@@ -1067,9 +1062,9 @@ void Replicator::receiveMessages()
 
 void Replicator::dispatchEventListeners()
 {
-	for (std::list< Event >::const_iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
+	for (std::list< EventIn >::const_iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
 	{
-		const Event& event = *i;
+		const EventIn& event = *i;
 		for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
 			(*j)->notify(this, event.time, event.eventId, event.handle, event.object);
 	}
@@ -1142,9 +1137,9 @@ void Replicator::adjustTime(float offset)
 	}
 
 	// Adjust on all queued events also.
-	for (std::list< Event >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
+	for (std::list< EventIn >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
 		i->time += offset;
-	for (std::list< Event >::iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
+	for (std::list< EventOut >::iterator i = m_eventsOut.begin(); i != m_eventsOut.end(); ++i)
 		i->time += offset;
 }
 

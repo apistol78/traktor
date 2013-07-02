@@ -83,7 +83,7 @@ public:
 
 	virtual BodyState getState() const;
 
-	virtual void integrate();
+	virtual void integrate(float deltaTime);
 
 	const HvkRef< hkpRigidBody >& getRigidBody() const { return m_rigidBody; }
 

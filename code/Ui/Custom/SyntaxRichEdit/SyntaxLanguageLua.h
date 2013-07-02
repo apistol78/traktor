@@ -26,6 +26,8 @@ class T_DLLCLASS SyntaxLanguageLua : public SyntaxLanguage
 	T_RTTI_CLASS;
 
 public:
+	virtual std::wstring lineComment() const;
+
 	virtual bool consume(const std::wstring& text, State& outState, int& outConsumedChars) const;
 
 	virtual void outline(int32_t line, const std::wstring& text, std::list< SyntaxOutline >& outOutline) const;

@@ -21,11 +21,9 @@ class T_DLLCLASS FloatTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	FloatTemplate(float errorScale = 1.0f);
+	FloatTemplate(float errorScale);
 
-	explicit FloatTemplate(float min, float max, bool lowPrecision);
-
-	explicit FloatTemplate(float min, float max, float idle, bool lowPrecision);
+	explicit FloatTemplate(float errorScale, float min, float max, bool lowPrecision);
 
 	virtual const TypeInfo& getValueType() const;
 
@@ -41,9 +39,7 @@ private:
 	float m_errorScale;
 	float m_min;
 	float m_max;
-	float m_idle;
 	bool m_lowPrecision;
-	bool m_haveIdle;
 };
 
 	}
