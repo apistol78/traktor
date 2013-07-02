@@ -291,32 +291,13 @@ BodyState BodyBullet::getState() const
 	return state;
 }
 
-void BodyBullet::integrate()
+void BodyBullet::integrate(float deltaTime)
 {
-	btTransform T1;
-
-	if (!m_constraints.empty())
-	{
-		btConstraintSolver* constraintSolver = m_dynamicsWorld->getConstraintSolver();
-		T_ASSERT (constraintSolver);
-
-		constraintSolver->solveGroup(
-			(btCollisionObject**)&m_body,
-			1,
-			0,
-			0,
-			&m_constraints[0],
-			m_constraints.size(),
-			m_dynamicsWorld->getSolverInfo(),
-			0,
-			m_dynamicsWorld->getStackAlloc(),
-			m_dynamicsWorld->getDispatcher()
-		);
-	}
-
-	m_body->integrateVelocities(m_simulationDeltaTime);
-	m_body->predictIntegratedTransform(m_simulationDeltaTime, T1);
-	m_body->setCenterOfMassTransform(T1);
+	btTransform predictedTransform;
+	m_body->applyCentralForce(m_dynamicsWorld->getGravity());
+	m_body->integrateVelocities(deltaTime);
+	m_body->predictIntegratedTransform(deltaTime, predictedTransform);
+	m_body->setCenterOfMassTransform(predictedTransform);
 	m_body->clearForces();
 }
 

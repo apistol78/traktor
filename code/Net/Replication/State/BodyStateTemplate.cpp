@@ -16,34 +16,9 @@ namespace traktor
 		namespace
 		{
 
-void packScalar(BitWriter& writer, float v)
-{
-	uint16_t iv = uint16_t(clamp(v * 0.5f + 0.5f, 0.0f, 1.0f) * 65535.0f);
-	writer.writeUnsigned(16, iv);
-}
-
-float unpackScalar(BitReader& reader)
-{
-	uint16_t iv = reader.readUnsigned(16);
-	return (iv / 65535.0f) * 2.0f - 1.0f;
-}
-
-Vector4 clampV4(const Vector4& v, const Vector4& minV, const Vector4& maxV)
-{
-	return max(min(v, maxV), minV);
-}
-
 float errorV4(const Vector4& Vl, const Vector4& Vr)
 {
 	return (Vl - Vr).length();
-}
-
-float safeSqrt(float v)
-{
-	if (v > FUZZY_EPSILON)
-		return std::sqrt(v);
-	else
-		return 0.0f;
 }
 
 float safeDeltaTime(float v)
@@ -325,33 +300,18 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	}
 
 	Vector4 Vl = S0.getLinearVelocity().xyz0();
-	Vector4 Vl_n1 = Sn1.getLinearVelocity().xyz0();
-	Quaternion Va = Quaternion::fromAxisAngle(S0.getAngularVelocity());
-	Quaternion Va_n1 = Quaternion::fromAxisAngle(Sn1.getAngularVelocity());
+	Vector4 Va = S0.getAngularVelocity();
 
 	Vector4 P = S0.getTransform().translation().xyz1();
 	Quaternion R = S0.getTransform().rotation();
 
-	P = (Vl * dT_0) + P;
+	P = P + (Vl * dT_0);
 	R = Quaternion::fromAxisAngle(S0.getAngularVelocity() * dT_0) * R;
-
-	Vl = lerp(Vl_n1, Vl, Scalar(T - Tn1) / dT_n1_0);
-
-	Quaternion Qdiff = Va * Va_n1.inverse();
-	Vector4 Vdiff = Qdiff.toAxisAngle();
-	Scalar angleDiff = Vdiff.length();
-	if (abs(angleDiff) > FUZZY_EPSILON)
-	{
-		Va = Quaternion::fromAxisAngle(
-			Vdiff / angleDiff,
-			angleDiff * Scalar(T - Tn1) / dT_n1_0
-		) * Va_n1;
-	}
 
 	physics::BodyState Sf;
 	Sf.setTransform(Transform(P, R.normalized()));
 	Sf.setLinearVelocity(Vl);
-	Sf.setAngularVelocity(Va.toAxisAngle());
+	Sf.setAngularVelocity(Va);
 
 	return new BodyStateValue(Sf);
 }

@@ -50,6 +50,11 @@ public:
 		return m_body2;
 	}
 
+	virtual void* getInternal()
+	{
+		return m_joint;
+	}
+
 protected:
 	DestroyCallbackPhysX* m_callback;
 	NxJoint* m_joint;

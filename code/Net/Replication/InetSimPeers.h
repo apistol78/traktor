@@ -1,7 +1,9 @@
 #ifndef traktor_net_InetSimPeers_H
 #define traktor_net_InetSimPeers_H
 
+#include <list>
 #include <map>
+#include "Core/Timer/Timer.h"
 #include "Net/Replication/IReplicatorPeers.h"
 
 // import/export mechanism.
@@ -51,8 +53,19 @@ public:
 	void setPeerConnectionState(handle_t peer, bool sendEnable, bool receiveEnable);
 
 private:
+	struct SendQueueItem
+	{
+		double time;
+		handle_t handle;
+		uint8_t data[2048];
+		int32_t size;
+		bool reliable;
+	};
+
+	Timer m_timer;
 	Ref< IReplicatorPeers > m_peers;
 	std::map< handle_t, uint32_t > m_state;
+	std::list< SendQueueItem* > m_sendQueue;
 };
 
 	}

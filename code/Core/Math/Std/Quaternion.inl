@@ -121,6 +121,16 @@ T_MATH_INLINE Quaternion Quaternion::inverse() const
 	return Quaternion(e * Vector4(-1.0f, -1.0f, -1.0f, 1.0f));
 }
 
+T_MATH_INLINE Quaternion Quaternion::nearest(const Quaternion& q) const
+{
+	Quaternion diff = *this - q;
+	Quaternion sum = *this + q;
+	if (dot(diff, diff) < dot(sum, sum))
+		return q;
+	else
+		return -q;
+}
+
 T_MATH_INLINE Vector4 Quaternion::toAxisAngle() const
 {
 	Scalar ln = dot3(e, e);
@@ -247,6 +257,11 @@ T_MATH_INLINE Quaternion Quaternion::fromEulerAngles(const Vector4& angles)
 	return Qh * Qp * Qb;
 }
 
+T_MATH_INLINE Quaternion Quaternion::operator - () const
+{
+	return Quaternion(-e);
+}
+
 T_MATH_INLINE Quaternion& Quaternion::operator *= (const Quaternion& r)
 {
 	*this = *this * r;
@@ -266,6 +281,11 @@ T_MATH_INLINE bool Quaternion::operator != (const Quaternion& v) const
 T_MATH_INLINE Quaternion operator + (const Quaternion& l, const Quaternion& r)
 {
 	return Quaternion(l.e + r.e);
+}
+
+T_MATH_INLINE Quaternion operator - (const Quaternion& l, const Quaternion& r)
+{
+	return Quaternion(l.e - r.e);
 }
 
 T_MATH_INLINE Quaternion operator * (const Quaternion& l, float r)
@@ -298,6 +318,11 @@ T_MATH_INLINE Vector4 operator * (const Quaternion& q, const Vector4& v)
 	Quaternion qv(v.xyz0());
 	Quaternion qvp = q * qv * q.inverse();
 	return qvp.e.xyz0() + v * Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+}
+
+T_MATH_INLINE Scalar dot(const Quaternion& a, const Quaternion& b)
+{
+	return dot4(a.e, b.e);
 }
 
 T_MATH_INLINE Quaternion lerp(const Quaternion& a, const Quaternion& b, float c)

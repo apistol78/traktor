@@ -16,7 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_maxExtrapolationDelta = 0.15f;
+const float c_maxExtrapolationDelta = 1.0f;
 const float c_equalErrorThreshold = 0.001f;
 
 		}

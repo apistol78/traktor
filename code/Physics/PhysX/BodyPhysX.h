@@ -83,7 +83,7 @@ public:
 
 	virtual BodyState getState() const;
 
-	virtual void integrate();
+	virtual void integrate(float deltaTime);
 
 	NxActor* getActor() const { return m_actor; }
 

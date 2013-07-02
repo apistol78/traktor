@@ -450,6 +450,10 @@ void PhysicsManagerPhysX::update(bool issueCollisionEvents)
 	m_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
 }
 
+void PhysicsManagerPhysX::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
+{
+}
+
 RefArray< Body > PhysicsManagerPhysX::getBodies() const
 {
 	return (RefArray< Body >&)m_bodies;

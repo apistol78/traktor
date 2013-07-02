@@ -94,6 +94,14 @@ public:
 
 	void setBoolean(const std::wstring& name, bool value);
 
+	int32_t getInteger(const std::wstring& name) const;
+
+	void setInteger(const std::wstring& name, int32_t value);
+
+	float getFloat(const std::wstring& name) const;
+
+	void setFloat(const std::wstring& name, float value);
+
 	bool apply(amalgam::IEnvironment* environment);
 
 private:

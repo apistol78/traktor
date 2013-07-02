@@ -49,6 +49,11 @@ public:
 		return m_body2;
 	}
 
+	virtual void* getInternal()
+	{
+		return m_constraint;
+	}
+
 protected:
 	DestroyCallbackHavok* m_callback;
 	HvkRef< hkpConstraintInstance > m_constraint;

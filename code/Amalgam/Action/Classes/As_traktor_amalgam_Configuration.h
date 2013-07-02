@@ -103,6 +103,14 @@ private:
 
 	void Configuration_setBoolean(AsConfiguration* self, const std::wstring& name, bool value) const;
 
+	int32_t Configuration_getInteger(AsConfiguration* self, const std::wstring& name) const;
+
+	void Configuration_setInteger(AsConfiguration* self, const std::wstring& name, int32_t value) const;
+
+	float Configuration_getFloat(AsConfiguration* self, const std::wstring& name) const;
+
+	void Configuration_setFloat(AsConfiguration* self, const std::wstring& name, float value) const;
+
 	bool Configuration_apply(AsConfiguration* self) const;
 };
 

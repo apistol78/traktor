@@ -261,6 +261,32 @@ int32_t RichEdit::getLineLength(int32_t line) const
 	return line < int32_t(m_lines.size()) ? (m_lines[line].stop - m_lines[line].start) : 0;
 }
 
+void RichEdit::setLine(int32_t line, const std::wstring& text)
+{
+	if (line >= int32_t(m_lines.size()))
+		return;
+
+	Line& ln = m_lines[line];
+
+	m_text.erase(m_text.begin() + ln.start, m_text.begin() + ln.stop);
+	m_meta.erase(m_meta.begin() + ln.start, m_meta.begin() + ln.stop);
+
+	for (uint32_t i = 0; i < text.size(); ++i)
+	{
+		m_text.insert(m_text.begin() + ln.start + i, text[i]);
+		m_meta.insert(m_meta.begin() + ln.start + i, 0);
+	}
+
+	int32_t adjust = text.size() - (ln.stop - ln.start);
+	for (uint32_t i = line + 1; i < m_lines.size(); ++i)
+	{
+		m_lines[i].start += adjust;
+		m_lines[i].stop += adjust;
+	}
+
+	ln.stop = ln.start + text.size();
+}
+
 std::wstring RichEdit::getLine(int32_t line) const
 {
 	if (line < int32_t(m_lines.size()))
@@ -273,6 +299,16 @@ std::wstring RichEdit::getLine(int32_t line) const
 	}
 	else
 		return L"";
+}
+
+int32_t RichEdit::getSelectionStartOffset() const
+{
+	return m_selectionStart;
+}
+
+int32_t RichEdit::getSelectionStopOffset() const
+{
+	return m_selectionStop;
 }
 
 std::wstring RichEdit::getSelectedText() const

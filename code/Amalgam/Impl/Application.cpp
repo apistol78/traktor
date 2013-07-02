@@ -885,7 +885,7 @@ void Application::threadDatabase()
 			{
 				for (std::vector< Guid >::iterator i = eventIds.begin(); i != eventIds.end(); ++i)
 				{
-					T_DEBUG(L"External database event; reloading resource \"" << i->format() << L"\"");
+					log::info << L"Data modified; reloading resource \"" << i->format() << L"\"..." << Endl;
 					resourceManager->reload(*i);
 				}
 			}

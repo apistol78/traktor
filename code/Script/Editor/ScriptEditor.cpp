@@ -112,8 +112,13 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 	splitterWork->create(m_splitter, false, -200);
 
 	Ref< ui::Container > containerEdit = new ui::Container();
-	if (!containerEdit->create(splitterWork, ui::WsNone, new ui::TableLayout(L"100%", L"100%,*", 0, 0)))
+	if (!containerEdit->create(splitterWork, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%,*", 0, 0)))
 		return false;
+
+	Ref< ui::custom::ToolBar > toolBarEdit = new ui::custom::ToolBar();
+	toolBarEdit->create(containerEdit);
+	toolBarEdit->addItem(new ui::custom::ToolBarButton(L"Toggle comments", ui::Command(L"Script.Editor.ToggleComments")));
+	toolBarEdit->addClickEventHandler(ui::createMethodHandler(this, &ScriptEditor::eventToolBarEditClick));
 
 	m_edit = new ui::custom::SyntaxRichEdit();
 	if (!m_edit->create(containerEdit, m_script->getText()))
@@ -414,6 +419,37 @@ void ScriptEditor::eventDependencyListDoubleClick(ui::Event* event)
 		Ref< db::Instance > scriptInstance = m_editor->getSourceDatabase()->getInstance(dependencies[selectedIndex]);
 		if (scriptInstance)
 			m_editor->openEditor(scriptInstance);
+	}
+}
+
+void ScriptEditor::eventToolBarEditClick(ui::Event* event)
+{
+	const ui::Command& command = checked_type_cast< const ui::CommandEvent* >(event)->getCommand();
+	if (command == L"Script.Editor.ToggleComments")
+	{
+		int32_t startOffset = m_edit->getSelectionStartOffset();
+		int32_t stopOffset = m_edit->getSelectionStopOffset();
+		if (startOffset >= 0 && stopOffset >= 0)
+		{
+			std::wstring lineComment = m_edit->getLanguage()->lineComment();
+			T_ASSERT (!lineComment.empty());
+
+			int32_t startLine = m_edit->getLineFromOffset(startOffset);
+			int32_t stopLine = m_edit->getLineFromOffset(stopOffset);
+
+			for (int32_t i = startLine; i < stopLine; ++i)
+			{
+				std::wstring line = m_edit->getLine(i);
+				if (startsWith(line, lineComment))
+					line = line.substr(2);
+				else
+					line = lineComment + line;
+				m_edit->setLine(i, line);
+			}
+
+			m_edit->updateLanguage(startLine, stopLine);
+			m_edit->update();
+		}
 	}
 }
 

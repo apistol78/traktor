@@ -41,6 +41,10 @@ public:
 		StSpecial
 	};
 
+	/*! \brief Return line comment token.
+	 */
+	virtual std::wstring lineComment() const = 0;
+
 	/*! \brief Consume line text.
 	 *
 	 * \param text Single line of text, same line will continue until fully consumed.

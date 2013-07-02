@@ -120,6 +120,8 @@ private:
 
 	void eventDebuggerToolClick(ui::Event* event);
 
+	void eventToolBarEditClick(ui::Event* event);
+
 	void eventScriptChange(ui::Event* event);
 
 	void eventScriptDoubleClick(ui::Event* event);

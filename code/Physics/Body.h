@@ -139,7 +139,7 @@ public:
 	virtual BodyState getState() const = 0;
 
 	/*! \brief Perform manual integration of body. */
-	virtual void integrate() = 0;
+	virtual void integrate(float deltaTime) = 0;
 
 	/*! \brief Add collision listener callback.
 	 *

@@ -217,7 +217,7 @@ BodyState BodyHavok::getState() const
 	return state;
 }
 
-void BodyHavok::integrate()
+void BodyHavok::integrate(float deltaTime)
 {
 }
 

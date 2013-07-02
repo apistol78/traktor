@@ -15,9 +15,6 @@ namespace traktor
 		namespace
 		{
 
-const float c_idleThreshold = 1e-5f;
-const float c_idleThresholdLowPrecision = 1.0f / 256.0f;
-
 float safeDeltaTime(float v)
 {
 	float av = std::abs(v);
@@ -37,27 +34,15 @@ FloatTemplate::FloatTemplate(float errorScale)
 :	m_errorScale(errorScale)
 ,	m_min(std::numeric_limits< float >::max())
 ,	m_max(-std::numeric_limits< float >::max())
-,	m_idle(0.0f)
 ,	m_lowPrecision(false)
-,	m_haveIdle(false)
 {
 }
 
-FloatTemplate::FloatTemplate(float min, float max, bool lowPrecision)
-:	m_min(min)
+FloatTemplate::FloatTemplate(float errorScale, float min, float max, bool lowPrecision)
+:	m_errorScale(errorScale)
+,	m_min(min)
 ,	m_max(max)
-,	m_idle(0.0f)
 ,	m_lowPrecision(lowPrecision)
-,	m_haveIdle(false)
-{
-}
-
-FloatTemplate::FloatTemplate(float min, float max, float idle, bool lowPrecision)
-:	m_min(min)
-,	m_max(max)
-,	m_idle(idle)
-,	m_lowPrecision(lowPrecision)
-,	m_haveIdle(true)
 {
 }
 
@@ -69,21 +54,6 @@ const TypeInfo& FloatTemplate::getValueType() const
 void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 {
 	float f = *checked_type_cast< const FloatValue* >(V);
-
-	//if (m_haveIdle)
-	//{
-	//	bool idle = false;
-	//	
-	//	if (!m_lowPrecision)
-	//		idle = bool(abs(f - m_idle) <= c_idleThreshold);
-	//	else
-	//		idle = bool(abs(f - m_idle) <= c_idleThresholdLowPrecision);
-
-	//	writer.writeBit(idle);
-	//	if (idle)
-	//		return;
-	//}
-
 	if (!m_lowPrecision)
 		writer.writeUnsigned(32, *(uint32_t*)&f);
 	else
@@ -95,13 +65,6 @@ void FloatTemplate::pack(BitWriter& writer, const IValue* V) const
 
 Ref< const IValue > FloatTemplate::unpack(BitReader& reader) const
 {
-	//if (m_haveIdle)
-	//{
-	//	bool idle = reader.readBit();
-	//	if (idle)
-	//		return new FloatValue(m_idle);
-	//}
-
 	if (!m_lowPrecision)
 	{
 		uint32_t u = reader.readUnsigned(32);
@@ -134,27 +97,16 @@ Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, con
 	if (T <= Tn2)
 		return Vn2;
 
+	float Fo = 0.0f;
 	if (T <= Tn1)
-	{
-		return new FloatValue(
-			lerp(Fn2, Fn1, (T - Tn2) / dT_n2_n1)
-		);
-	}
-
-	if (T <= T0)
-	{
-		return new FloatValue(
-			lerp(Fn1, F0, (T - Tn1) / dT_n1_0)
-		);
-	}
-
-	float k = (T - T0) / dT_n1_0;
-	float Ff = F0 + (F0 - Fn1) * k;
+		Fo = lerp(Fn2, Fn1, (T - Tn2) / dT_n2_n1);
+	else
+		Fo = lerp(Fn1, F0, (T - Tn1) / dT_n1_0);
 
 	if (m_min < m_max)
-		Ff = clamp(Ff, m_min, m_max);
+		Fo = clamp(Fo, m_min, m_max);
 
-	return new FloatValue(Ff);
+	return new FloatValue(Fo);
 }
 
 	}

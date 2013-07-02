@@ -16,6 +16,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.InetSimPeers", InetSimPeers, IReplicatorPee
 InetSimPeers::InetSimPeers(IReplicatorPeers* peers)
 :	m_peers(peers)
 {
+	m_timer.start();
 }
 
 InetSimPeers::~InetSimPeers()
@@ -30,7 +31,30 @@ void InetSimPeers::destroy()
 
 bool InetSimPeers::update()
 {
-	return m_peers->update();
+	if (!m_peers->update())
+		return false;
+
+	double time = m_timer.getElapsedTime();
+	while (!m_sendQueue.empty())
+	{
+		SendQueueItem* s = m_sendQueue.front();
+		T_ASSERT (s);
+
+		if (s->time + 0.2 > time)
+			break;
+
+		m_peers->send(
+			s->handle,
+			s->data,
+			s->size,
+			s->reliable
+		);
+
+		m_sendQueue.pop_front();
+		delete s;
+	}
+
+	return true;
 }
 
 void InetSimPeers::setStatus(uint8_t status)
@@ -88,7 +112,16 @@ bool InetSimPeers::send(handle_t handle, const void* data, int32_t size, bool re
 	if ((state & 0x01) == 0x01)
 		return false;
 
-	return m_peers->send(handle, data, size, reliable);
+	SendQueueItem* s = new SendQueueItem();
+	s->time = m_timer.getElapsedTime();
+	s->handle = handle;
+	s->size = size;
+	s->reliable = reliable;
+
+	std::memcpy(s->data, data, size);
+
+	m_sendQueue.push_back(s);
+	return true;
 }
 
 void InetSimPeers::setPeerConnectionState(handle_t peer, bool sendEnable, bool receiveEnable)
