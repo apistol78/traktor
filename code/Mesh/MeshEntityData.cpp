@@ -23,7 +23,12 @@ namespace traktor
 	namespace mesh
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshEntityData", 0, MeshEntityData, AbstractMeshEntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.mesh.MeshEntityData", 1, MeshEntityData, AbstractMeshEntityData)
+
+MeshEntityData::MeshEntityData()
+:	m_screenSpaceCulling(true)
+{
+}
 
 void MeshEntityData::setMesh(const resource::Id< IMesh >& mesh)
 {
@@ -44,19 +49,19 @@ Ref< MeshEntity > MeshEntityData::createEntity(resource::IResourceManager* resou
 	Ref< MeshEntity > meshEntity;
 
 	if (is_a< BlendMesh >(mesh.getResource()))
-		meshEntity = new BlendMeshEntity(getTransform(), resource::Proxy< BlendMesh >(mesh.getHandle()));
+		meshEntity = new BlendMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< BlendMesh >(mesh.getHandle()));
 	else if (is_a< IndoorMesh >(mesh.getResource()))
-		meshEntity = new IndoorMeshEntity(getTransform(), resource::Proxy< IndoorMesh >(mesh.getHandle()));
+		meshEntity = new IndoorMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< IndoorMesh >(mesh.getHandle()));
 	else if (is_a< InstanceMesh >(mesh.getResource()))
-		meshEntity = new InstanceMeshEntity(getTransform(), resource::Proxy< InstanceMesh >(mesh.getHandle()));
+		meshEntity = new InstanceMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< InstanceMesh >(mesh.getHandle()));
 	else if (is_a< PartitionMesh >(mesh.getResource()))
-		meshEntity = new PartitionMeshEntity(getTransform(), resource::Proxy< PartitionMesh >(mesh.getHandle()));
+		meshEntity = new PartitionMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< PartitionMesh >(mesh.getHandle()));
 	else if (is_a< SkinnedMesh >(mesh.getResource()))
-		meshEntity = new SkinnedMeshEntity(getTransform(), resource::Proxy< SkinnedMesh >(mesh.getHandle()));
+		meshEntity = new SkinnedMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< SkinnedMesh >(mesh.getHandle()));
 	else if (is_a< StaticMesh >(mesh.getResource()))
-		meshEntity = new StaticMeshEntity(getTransform(), resource::Proxy< StaticMesh >(mesh.getHandle()));
+		meshEntity = new StaticMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< StaticMesh >(mesh.getHandle()));
 	else if (is_a< StreamMesh >(mesh.getResource()))
-		meshEntity = new StreamMeshEntity(getTransform(), resource::Proxy< StreamMesh >(mesh.getHandle()));
+		meshEntity = new StreamMeshEntity(getTransform(), m_screenSpaceCulling, resource::Proxy< StreamMesh >(mesh.getHandle()));
 
 	return meshEntity;
 }
@@ -66,6 +71,8 @@ void MeshEntityData::serialize(ISerializer& s)
 	AbstractMeshEntityData::serialize(s);
 
 	s >> resource::Member< IMesh >(L"mesh", m_mesh);
+	if (s.getVersion() >= 1)
+		s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
 }
 
 	}

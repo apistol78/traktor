@@ -15,7 +15,7 @@ LodMeshEntity::LodMeshEntity(
 	float lodDistance,
 	float lodCullDistance
 )
-:	MeshEntity(transform)
+:	MeshEntity(transform, true)
 ,	m_lods(lods)
 ,	m_lodDistance(lodDistance)
 ,	m_lodCullDistance(lodCullDistance)

@@ -10,8 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.IndoorMeshEntity", IndoorMeshEntity, MeshEntity)
 
-IndoorMeshEntity::IndoorMeshEntity(const Transform& transform, const resource::Proxy< IndoorMesh >& mesh)
-:	MeshEntity(transform)
+IndoorMeshEntity::IndoorMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< IndoorMesh >& mesh)
+:	MeshEntity(transform, screenSpaceCulling)
 ,	m_mesh(mesh)
 {
 }

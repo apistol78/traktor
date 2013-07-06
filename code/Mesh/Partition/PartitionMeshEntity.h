@@ -24,7 +24,7 @@ class T_DLLCLASS PartitionMeshEntity : public MeshEntity
 	T_RTTI_CLASS;
 
 public:
-	PartitionMeshEntity(const Transform& transform, const resource::Proxy< PartitionMesh >& mesh);
+	PartitionMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< PartitionMesh >& mesh);
 	
 	virtual Aabb3 getBoundingBox() const;
 

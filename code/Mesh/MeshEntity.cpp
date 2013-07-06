@@ -7,9 +7,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.MeshEntity", MeshEntity, world::Entity)
 
-MeshEntity::MeshEntity(const Transform& transform)
+MeshEntity::MeshEntity(const Transform& transform, bool screenSpaceCulling)
 :	m_transform(transform)
 ,	m_parameterCallback(0)
+,	m_screenSpaceCulling(screenSpaceCulling)
 {
 }
 

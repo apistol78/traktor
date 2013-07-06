@@ -68,6 +68,7 @@ private:
 	Ref< IPoseControllerData > m_poseController;
 	bool m_normalizePose;
 	bool m_normalizeTransform;
+	bool m_screenSpaceCulling;
 };
 
 	}

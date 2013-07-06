@@ -9,7 +9,7 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.CompositeMeshEntity", CompositeMeshEntity, MeshEntity)
 
 CompositeMeshEntity::CompositeMeshEntity(const Transform& transform)
-:	MeshEntity(transform)
+:	MeshEntity(transform, true)
 {
 }
 

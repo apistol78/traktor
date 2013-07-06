@@ -9,8 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.StreamMeshEntity", StreamMeshEntity, MeshEntity)
 
-StreamMeshEntity::StreamMeshEntity(const Transform& transform, const resource::Proxy< StreamMesh >& mesh)
-:	MeshEntity(transform)
+StreamMeshEntity::StreamMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< StreamMesh >& mesh)
+:	MeshEntity(transform, screenSpaceCulling)
 ,	m_mesh(mesh)
 ,	m_frame(0)
 {

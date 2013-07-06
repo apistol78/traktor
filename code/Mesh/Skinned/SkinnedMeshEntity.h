@@ -25,7 +25,7 @@ class T_DLLCLASS SkinnedMeshEntity : public MeshEntity
 	T_RTTI_CLASS;
 
 public:
-	SkinnedMeshEntity(const Transform& transform, const resource::Proxy< SkinnedMesh >& mesh);
+	SkinnedMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< SkinnedMesh >& mesh);
 
 	void setJointTransforms(const AlignedVector< Matrix44 >& jointTransforms);
 

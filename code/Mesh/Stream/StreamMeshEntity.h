@@ -23,7 +23,7 @@ class T_DLLCLASS StreamMeshEntity : public MeshEntity
 	T_RTTI_CLASS;
 
 public:
-	StreamMeshEntity(const Transform& transform, const resource::Proxy< StreamMesh >& mesh);
+	StreamMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< StreamMesh >& mesh);
 
 	uint32_t getFrameCount() const;
 

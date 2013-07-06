@@ -14,11 +14,12 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshEntityData", 1, AnimatedMeshEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.AnimatedMeshEntityData", 2, AnimatedMeshEntityData, world::EntityData)
 
 AnimatedMeshEntityData::AnimatedMeshEntityData()
 :	m_normalizePose(false)
 ,	m_normalizeTransform(false)
+,	m_screenSpaceCulling(true)
 {
 }
 
@@ -65,7 +66,8 @@ Ref< AnimatedMeshEntity > AnimatedMeshEntityData::createEntity(resource::IResour
 		poseController,
 		jointRemap,
 		m_normalizePose,
-		m_normalizeTransform
+		m_normalizeTransform,
+		m_screenSpaceCulling
 	);
 }
 
@@ -82,6 +84,9 @@ void AnimatedMeshEntityData::serialize(ISerializer& s)
 		s >> Member< bool >(L"normalizePose", m_normalizePose);
 		s >> Member< bool >(L"normalizeTransform", m_normalizeTransform);
 	}
+
+	if (s.getVersion() >= 2)
+		s >> Member< bool >(L"screenSpaceCulling", m_screenSpaceCulling);
 }
 
 	}

@@ -24,7 +24,7 @@ class T_DLLCLASS IndoorMeshEntity : public MeshEntity
 	T_RTTI_CLASS;
 
 public:
-	IndoorMeshEntity(const Transform& transform, const resource::Proxy< IndoorMesh >& mesh);
+	IndoorMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< IndoorMesh >& mesh);
 
 	virtual Aabb3 getBoundingBox() const;
 

@@ -51,51 +51,54 @@ inline bool isMeshVisible(
 
 #if T_ENABLE_SCREENSPACE_CULLING
 
-	// Project bounding box extents onto view plane.
-	Vector4 extents[8];
-	meshBoundingBox.getExtents(extents);
-
-	Vector4 mn(
-		std::numeric_limits< float >::max(),
-		std::numeric_limits< float >::max(),
-		std::numeric_limits< float >::max(),
-		std::numeric_limits< float >::max()
-	);
-	Vector4 mx(
-		-std::numeric_limits< float >::max(),
-		-std::numeric_limits< float >::max(),
-		-std::numeric_limits< float >::max(),
-		-std::numeric_limits< float >::max()
-	);
-
-	Matrix44 worldViewProj = projection * worldView;
-
-	for (int i = 0; i < sizeof_array(extents); ++i)
+	if (minScreenArea > FUZZY_EPSILON)
 	{
-		Vector4 p = worldViewProj * extents[i];
-		if (p.w() <= 0.0f)
+		// Project bounding box extents onto view plane.
+		Vector4 extents[8];
+		meshBoundingBox.getExtents(extents);
+
+		Vector4 mn(
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max(),
+			std::numeric_limits< float >::max()
+		);
+		Vector4 mx(
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max(),
+			-std::numeric_limits< float >::max()
+		);
+
+		Matrix44 worldViewProj = projection * worldView;
+
+		for (int i = 0; i < sizeof_array(extents); ++i)
 		{
-			// Bounding box clipped to view plane; assume it's visible.
-			outDistance = center.z() + radius;
-			return true;
+			Vector4 p = worldViewProj * extents[i];
+			if (p.w() <= 0.0f)
+			{
+				// Bounding box clipped to view plane; assume it's visible.
+				outDistance = center.z() + radius;
+				return true;
+			}
+
+			// Homogeneous divide.
+			p /= p.w();
+
+			// Track screen space extents.
+			mn = min(mn, p);
+			mx = max(mx, p);
 		}
 
-		// Homogeneous divide.
-		p /= p.w();
+		// Ensure we're visible.
+		if (mn.x() > 1.0f || mn.y() > 1.0f || mx.x() < -1.0f || mx.y() < -1.0f)
+			return false;
 
-		// Track screen space extents.
-		mn = min(mn, p);
-		mx = max(mx, p);
+		// Calculate screen area, cull if it's below threshold.
+		Vector4 e = mx - mn;
+		if (e.x() * e.y() < minScreenArea)
+			return false;
 	}
-
-	// Ensure we're visible.
-	if (mn.x() > 1.0f || mn.y() > 1.0f || mx.x() < -1.0f || mx.y() < -1.0f)
-		return false;
-
-	// Calculate screen area, cull if it's below threshold.
-	Vector4 e = mx - mn;
-	if (e.x() * e.y() < minScreenArea)
-		return false;
 
 #endif
 

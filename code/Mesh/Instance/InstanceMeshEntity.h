@@ -24,7 +24,7 @@ class T_DLLCLASS InstanceMeshEntity : public MeshEntity
 	T_RTTI_CLASS;
 
 public:
-	InstanceMeshEntity(const Transform& transform, const resource::Proxy< InstanceMesh >& mesh);
+	InstanceMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< InstanceMesh >& mesh);
 	
 	virtual Aabb3 getBoundingBox() const;
 
