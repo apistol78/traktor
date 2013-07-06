@@ -26,7 +26,7 @@ class T_DLLCLASS BlendMeshEntity : public MeshEntity
 	T_RTTI_CLASS;
 
 public:
-	BlendMeshEntity(const Transform& transform, const resource::Proxy< BlendMesh >& mesh);
+	BlendMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< BlendMesh >& mesh);
 
 	void setBlendWeights(const std::vector< float >& blendWeights);
 

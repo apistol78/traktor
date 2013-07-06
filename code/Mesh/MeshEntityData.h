@@ -25,6 +25,8 @@ class T_DLLCLASS MeshEntityData : public AbstractMeshEntityData
 	T_RTTI_CLASS;
 
 public:
+	MeshEntityData();
+
 	void setMesh(const resource::Id< IMesh >& mesh);
 
 	const resource::Id< IMesh >& getMesh() const;
@@ -35,6 +37,7 @@ public:
 
 private:
 	resource::Id< IMesh > m_mesh;
+	bool m_screenSpaceCulling;
 };
 
 	}

@@ -45,7 +45,8 @@ public:
 		IPoseController* poseController,
 		const std::vector< int32_t >& jointRemap,
 		bool normalizePose,
-		bool normalizeTransform
+		bool normalizeTransform,
+		bool screenSpaceCulling
 	);
 
 	virtual ~AnimatedMeshEntity();

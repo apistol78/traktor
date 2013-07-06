@@ -42,7 +42,7 @@ class T_DLLCLASS MeshEntity : public world::Entity
 	T_RTTI_CLASS;
 
 public:
-	MeshEntity(const Transform& transform);
+	MeshEntity(const Transform& transform, bool screenSpaceCulling);
 
 	virtual void update(const world::UpdateParams& update);
 
@@ -70,9 +70,12 @@ public:
 
 	const IMeshParameterCallback* getParameterCallback() const { return m_parameterCallback; }
 
+	bool getScreenSpaceCulling() const { return m_screenSpaceCulling; }
+
 protected:
 	IntervalTransform m_transform;
 	const IMeshParameterCallback* m_parameterCallback;
+	bool m_screenSpaceCulling;
 
 	/*! \brief Calculate render transform.
 	 *

@@ -27,10 +27,11 @@ namespace traktor
 const handle_t c_broadcastHandle = 0UL;
 const float c_initialTimeOffset = 0.05f;
 const float c_nearDistance = 30.0f;
-const float c_farDistance = 250.0f;
-const float c_nearErrorThreshold = 0.1f;
-const float c_farErrorThreshold = 3.0f;
+const float c_farDistance = 200.0f;
+const float c_nearErrorThreshold = 0.2f;
+const float c_farErrorThreshold = 6.0f;
 const float c_timeUntilTx = 1.0f / 5.0f;
+const float c_timeUntilTxMin = 1.0f / 20.0f;
 const float c_timeUntilIAm = 1.0f;
 const float c_timeUntilPing = 2.0f;
 const float c_errorStateThreshold = 0.2f;
@@ -571,6 +572,8 @@ void Replicator::sendState(float dT)
 		if (peer.state != PsEstablished || !peer.ghost || !peer.ghost->stateTemplate)
 			continue;
 
+		peer.timeUntilTxMin -= dT;
+
 		bool shouldSend = bool((peer.timeUntilTx -= dT) <= 0.0f);
 
 		if (
@@ -579,7 +582,11 @@ void Replicator::sendState(float dT)
 		)
 		{
 			float errorThreshold = c_farErrorThreshold;
-			if (peer.ghost->stateTemplate)
+
+			// Scale error threshold only if at least N ms has passed;
+			// else always use higher threshold to prevent excessive
+			// sending of states.
+			if (peer.timeUntilTxMin <= 0.0f)
 			{
 				Vector4 ghostToPlayer = m_origin.translation() - peer.ghost->origin.translation();
 				Scalar distanceToPeer = ghostToPlayer.length();
@@ -639,6 +646,7 @@ void Replicator::sendState(float dT)
 		if (send(i->first, &msg, msgSize, false))
 		{
 			peer.timeUntilTx = c_timeUntilTx;
+			peer.timeUntilTxMin = c_timeUntilTxMin;
 			peer.errorCount = 0;
 			peer.stateCount++;
 			peer.iframe = m_state;
@@ -647,6 +655,7 @@ void Replicator::sendState(float dT)
 		{
 			log::error << L"ERROR: Unable to send state to peer " << peer.name << L" (" << peer.errorCount << L")" << Endl;
 			peer.timeUntilTx = c_timeUntilTx;
+			peer.timeUntilTxMin = c_timeUntilTxMin;
 			peer.errorCount++;
 			peer.stateCount = 0;
 			peer.iframe = 0;
@@ -829,6 +838,7 @@ void Replicator::receiveMessages()
 				{
 					peer.state = PsEstablished;
 					peer.timeUntilTx = 0.0f;
+					peer.timeUntilTxMin = 0.0f;
 
 					// Send ping to peer.
 					sendPing(handle);

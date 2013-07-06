@@ -10,8 +10,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.mesh.PartitionMeshEntity", PartitionMeshEntity, MeshEntity)
 
-PartitionMeshEntity::PartitionMeshEntity(const Transform& transform, const resource::Proxy< PartitionMesh >& mesh)
-:	MeshEntity(transform)
+PartitionMeshEntity::PartitionMeshEntity(const Transform& transform, bool screenSpaceCulling, const resource::Proxy< PartitionMesh >& mesh)
+:	MeshEntity(transform, screenSpaceCulling)
 ,	m_mesh(mesh)
 {
 }

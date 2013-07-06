@@ -16,8 +16,7 @@ namespace traktor
 		namespace
 		{
 
-const float c_maxExtrapolationDelta = 1.0f;
-const float c_equalErrorThreshold = 0.001f;
+const float c_equalErrorThreshold = 0.01f;
 
 		}
 
@@ -53,9 +52,6 @@ bool StateTemplate::match(const State* S) const
 Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const State* Sn1, float Tn1, const State* S0, float T0, float T) const
 {
 	RefArray< const IValue > Vr(m_valueTemplates.size());
-
-	if (T > T0 + c_maxExtrapolationDelta)
-		T = T0 + c_maxExtrapolationDelta;
 
 	if (Sn2 && Sn1 && S0)
 	{

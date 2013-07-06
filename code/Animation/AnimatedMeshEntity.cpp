@@ -27,9 +27,10 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 	IPoseController* poseController,
 	const std::vector< int32_t >& jointRemap,
 	bool normalizePose,
-	bool normalizeTransform
+	bool normalizeTransform,
+	bool screenSpaceCulling
 )
-:	mesh::MeshEntity(transform)
+:	mesh::MeshEntity(transform, screenSpaceCulling)
 ,	m_mesh(mesh)
 ,	m_skeleton(skeleton)
 ,	m_poseController(poseController)

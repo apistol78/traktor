@@ -184,6 +184,7 @@ void AnimationPreviewControl::updatePreview()
 		m_poseController,
 		jointRemap,
 		false,
+		false,
 		false
 	);
 }
