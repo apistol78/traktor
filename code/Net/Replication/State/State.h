@@ -30,6 +30,11 @@ public:
 
 	const RefArray< const IValue >& getValues() const { return m_values; }
 
+	const IValue* getValue(uint32_t index) const { return m_values[index]; }
+
+	template < typename ValueType >
+	typename ValueType::value_return_t getValue(uint32_t index) const { return *checked_type_cast< const ValueType*, false >(getValue(index)); }
+
 	/*! \group Pack values */
 	// \{
 

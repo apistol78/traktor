@@ -21,6 +21,8 @@ public:
 	virtual void forward() = 0;
 
 	virtual void back() = 0;
+
+	virtual void reload(bool forced) = 0;
 };
 
 	}

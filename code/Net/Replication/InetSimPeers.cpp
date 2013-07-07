@@ -15,6 +15,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.InetSimPeers", InetSimPeers, IReplicatorPee
 
 InetSimPeers::InetSimPeers(IReplicatorPeers* peers)
 :	m_peers(peers)
+,	m_noisyTime(0.0)
 {
 	m_timer.start();
 }
@@ -34,13 +35,12 @@ bool InetSimPeers::update()
 	if (!m_peers->update())
 		return false;
 
-	double time = m_timer.getElapsedTime();
 	while (!m_sendQueue.empty())
 	{
 		SendQueueItem* s = m_sendQueue.front();
 		T_ASSERT (s);
 
-		if (s->time + 0.2 > time)
+		if (s->time + 0.2 > m_noisyTime)
 			break;
 
 		m_peers->send(
@@ -54,6 +54,7 @@ bool InetSimPeers::update()
 		delete s;
 	}
 
+	m_noisyTime += m_timer.getDeltaTime() + (m_random.nextDouble() * 0.01 - 0.005);
 	return true;
 }
 
@@ -111,6 +112,9 @@ bool InetSimPeers::send(handle_t handle, const void* data, int32_t size, bool re
 	uint8_t state = m_state[handle];
 	if ((state & 0x01) == 0x01)
 		return false;
+
+	if (m_random.nextDouble() <= 0.01)
+		return true;
 
 	SendQueueItem* s = new SendQueueItem();
 	s->time = m_timer.getElapsedTime();

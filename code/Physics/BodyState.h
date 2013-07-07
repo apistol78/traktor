@@ -59,10 +59,14 @@ struct BodyState
 
 		Vector4 Vdiff = Qdiff.toAxisAngle();
 		Scalar angleDiff = Vdiff.length();
+
 		if (angleDiff > FUZZY_EPSILON)
-			state.m_angularVelocity = Vector4(Vdiff / angleDiff).xyz0() * (angleDiff * interpolate);
+		{
+			Quaternion QdiffLerp = Quaternion::fromAxisAngle(Vdiff / angleDiff, angleDiff * interpolate);
+			state.m_angularVelocity = (QdiffLerp * Qv0).toAxisAngle();
+		}
 		else
-			state.m_angularVelocity = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
+			state.m_angularVelocity = m_angularVelocity;
 
 		return state;
 	}

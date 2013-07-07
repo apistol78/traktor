@@ -1,8 +1,10 @@
 #if defined(_WIN32)
 #	include <windows.h>
 #endif
+#include "Core/Log/Log.h"
 #include "UnitTest/CaseAtomic.h"
 #include "UnitTest/CaseBitReader.h"
+#include "UnitTest/CaseBodyState.h"
 #include "UnitTest/CaseClone.h"
 #include "UnitTest/CaseCycleDebugger.h"
 #include "UnitTest/CaseMeta.h"
@@ -15,6 +17,7 @@
 #include "UnitTest/CaseSmallMap.h"
 #include "UnitTest/CaseQuaternion.h"
 #include "UnitTest/CaseTransform.h"
+#include "UnitTest/CaseValueTemplate.h"
 #include "UnitTest/CaseWinding.h"
 #include "UnitTest/CasePath.h"
 #include "UnitTest/CaseXmlPullParser.h"
@@ -23,7 +26,6 @@
 #include "UnitTest/CaseRenderSw.h"
 #include "UnitTest/CaseSound.h"
 #include "UnitTest/CaseStreamCopy.h"
-#include "Core/Log/Log.h"
 
 using namespace traktor;
 
@@ -37,8 +39,8 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 {
 	Case::Context context;
 
-	log::info << L"Case clone" << Endl;
-	traktor::CaseClone().execute(context);
+	//log::info << L"Case clone" << Endl;
+	//traktor::CaseClone().execute(context);
 
 	//log::info << L"Case cycle debugger" << Endl;
 	//traktor::CaseCycleDebugger().execute(context);
@@ -48,6 +50,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//log::info << L"Case bitreader" << Endl;
 	//traktor::CaseBitReader().execute(context);
+
+	//log::info << L"Case bodystate" << Endl;
+	//traktor::CaseBodyState().execute(context);
 
 	//log::info << L"Case meta" << Endl;
 	//traktor::CaseMeta().execute(context);
@@ -78,6 +83,9 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR, int)
 
 	//log::info << L"Case transform" << Endl;
 	//traktor::CaseTransform().execute(context);
+
+	log::info << L"Case value template" << Endl;
+	traktor::CaseValueTemplate().execute(context);
 
 	//log::info << L"Case winding" << Endl;
 	//traktor::CaseWinding().execute(context);

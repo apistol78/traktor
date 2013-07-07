@@ -31,6 +31,8 @@ public:
 	void forward();
 
 	void back();
+
+	void reload(bool forced);
 };
 
 	}
