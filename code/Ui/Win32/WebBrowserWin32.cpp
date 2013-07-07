@@ -526,6 +526,14 @@ void WebBrowserWin32::back()
 	m_webBrowser->GoBack();
 }
 
+void WebBrowserWin32::reload(bool forced)
+{
+	VARIANT v;
+	v.vt = VT_I4;
+	v.intVal = forced ? REFRESH_COMPLETELY : REFRESH_NORMAL;
+	m_webBrowser->Refresh2(&v);
+}
+
 LRESULT WebBrowserWin32::eventSize(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, bool& outPass)
 {
 	if (m_webBrowser)

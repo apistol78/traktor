@@ -231,14 +231,18 @@ public:
 
 	/*! \brief Get network time.
 	 */
-	float getTime() const { return m_time; }
+	float getTime() const { return m_time / 1000.0f; }
+
+	/*! \brief
+	 */
+	void setDeltaCompressionEnable(bool deltaCompression) { m_deltaCompression = deltaCompression; }
 
 private:
 	enum { MaxRoundTrips = 17 };
 
 	struct EventIn
 	{
-		float time;
+		int32_t time;
 		uint32_t eventId;
 		handle_t handle;
 		Ref< const Object > object;
@@ -246,7 +250,6 @@ private:
 
 	struct EventOut
 	{
-		float time;
 		uint32_t eventId;
 		handle_t handle;
 		Ref< const ISerializable > object;
@@ -260,9 +263,9 @@ private:
 		Ref< const State > Sn2;
 		Ref< const State > Sn1;
 		Ref< const State > S0;
-		float Tn2;
-		float Tn1;
-		float T0;
+		int32_t Tn2;
+		int32_t Tn1;
+		int32_t T0;
 	};
 
 	enum PeerState
@@ -280,14 +283,14 @@ private:
 		bool precursor;
 		bool direct;
 		uint8_t status;
-		float timeUntilTx;
-		float timeUntilTxMin;
-		float lastTimeLocal;
-		float lastTimeRemote;
-		CircularVector< float, MaxRoundTrips > roundTrips;
-		float latencyMedian;
-		float latencyMinimum;
-		float latencyReversed;
+		int32_t timeUntilTx;
+		int32_t timeUntilTxMin;
+		int32_t lastTimeLocal;
+		int32_t lastTimeRemote;
+		CircularVector< int32_t, MaxRoundTrips > roundTrips;
+		int32_t latencyMedian;
+		int32_t latencyMinimum;
+		int32_t latencyReversed;
 		int32_t pendingIAm;
 		int32_t pendingPing;
 		int32_t stateCount;
@@ -300,13 +303,13 @@ private:
 		,	precursor(false)
 		,	direct(false)
 		,	status(0)
-		,	timeUntilTx(0.0f)
-		,	timeUntilTxMin(0.0f)
-		,	lastTimeLocal(0.0f)
-		,	lastTimeRemote(0.0f)
-		,	latencyMedian(0.05f)
-		,	latencyMinimum(0.05f)
-		,	latencyReversed(0.05f)
+		,	timeUntilTx(0)
+		,	timeUntilTxMin(0)
+		,	lastTimeLocal(0)
+		,	lastTimeRemote(0)
+		,	latencyMedian(0)
+		,	latencyMinimum(0)
+		,	latencyReversed(0)
 		,	pendingIAm(0)
 		,	pendingPing(0)
 		,	stateCount(0)
@@ -325,18 +328,19 @@ private:
 	std::map< handle_t, Peer > m_peers;
 	std::list< EventIn > m_eventsIn;
 	std::list< EventOut > m_eventsOut;
-	float m_time0;
-	float m_time;
+	int32_t m_time0;
+	int32_t m_time;
 	uint32_t m_pingCount;
-	float m_timeUntilPing;
+	uint32_t m_timeUntilPing;
+	bool m_deltaCompression;
 
-	void updatePeers(float dT);
+	void updatePeers(int32_t dT);
 
-	void sendState(float dT);
+	void sendState(int32_t dT);
 
 	void sendEvents();
 
-	void sendPings(float dT);
+	void sendPings(int32_t dT);
 
 	void receiveMessages();
 
@@ -348,9 +352,9 @@ private:
 
 	bool sendPing(handle_t peerHandle);
 
-	bool sendPong(handle_t peerHandle, uint32_t time0);
+	bool sendPong(handle_t peerHandle, int32_t time0);
 
-	void adjustTime(float offset);
+	void adjustTime(int32_t offset);
 
 	bool send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable);
 

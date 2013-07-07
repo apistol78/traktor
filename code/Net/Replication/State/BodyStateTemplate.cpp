@@ -1,6 +1,7 @@
 #include <algorithm>
 #include "Core/Io/BitReader.h"
 #include "Core/Io/BitWriter.h"
+#include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
@@ -30,6 +31,39 @@ float safeDeltaTime(float v)
 		return 1.0f * sign(v);
 	else
 		return v;
+}
+
+physics::BodyState interpolate(const physics::BodyState& bs0, float T0, const physics::BodyState& bs1, float T1, float T)
+{
+#if 0
+
+	physics::BodyState state;
+
+	state.setTransform(lerp(bs0.getTransform(), bs1.getTransform(), Scalar( (T - T0) / (T1 - T0) )));
+
+	state.setLinearVelocity(
+		(bs1.getTransform().translation() - bs0.getTransform().translation()) / Scalar(T1 - T0)
+	);
+
+	Quaternion Qv0 = bs0.getTransform().rotation();
+	Quaternion Qv1 = Qv0.nearest(bs1.getTransform().rotation());
+	Quaternion Qdiff = Qv1 * Qv0.inverse();
+
+	Vector4 Vdiff = Qdiff.toAxisAngle();
+	Scalar angleDiff = Vdiff.length();
+
+	if (angleDiff > FUZZY_EPSILON)
+		state.setAngularVelocity(Vdiff / Scalar(T1 - T0));
+	else
+		state.setAngularVelocity(Vector4::zero());
+
+	return state;
+
+#else
+
+	return bs0.interpolate(bs1, Scalar( (T - T0) / (T1 - T0) ));
+
+#endif
 }
 
 		}
@@ -288,14 +322,14 @@ Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2,
 	if (T <= Tn1)
 	{
 		return new BodyStateValue(
-			Sn2.interpolate(Sn1, Scalar(T - Tn2) / dT_n2_n1)
+			interpolate(Sn2, Tn2, Sn1, Tn1, T)
 		);
 	}
 
 	if (T <= T0)
 	{
 		return new BodyStateValue(
-			Sn1.interpolate(S0, Scalar(T - Tn1) / dT_n1_0)
+			interpolate(Sn1, Tn1, S0, T0, T)
 		);
 	}
 

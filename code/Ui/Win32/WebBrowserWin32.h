@@ -27,6 +27,8 @@ public:
 
 	virtual void back();
 
+	virtual void reload(bool forced);
+
 private:
 	ComRef< ::IOleClientSite > m_clientSite;
 	ComRef< ::IStorage > m_storage;

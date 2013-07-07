@@ -134,6 +134,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getLoopBackState", &net::Replicator::getLoopBackState);
 	classReplicator->addMethod("getState", &net::Replicator::getState);
 	classReplicator->addMethod("getTime", &net::Replicator::getTime);
+	classReplicator->addMethod("setDeltaCompressionEnable", &net::Replicator::setDeltaCompressionEnable);
 	scriptManager->registerClass(classReplicator);
 }
 

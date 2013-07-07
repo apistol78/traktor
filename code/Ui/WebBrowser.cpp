@@ -51,5 +51,11 @@ void WebBrowser::back()
 	static_cast< IWebBrowser* >(m_widget)->back();
 }
 
+void WebBrowser::reload(bool forced)
+{
+	T_ASSERT (m_widget);
+	static_cast< IWebBrowser* >(m_widget)->reload(forced);
+}
+
 	}
 }

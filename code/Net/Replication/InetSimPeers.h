@@ -3,6 +3,7 @@
 
 #include <list>
 #include <map>
+#include "Core/Math/Random.h"
 #include "Core/Timer/Timer.h"
 #include "Net/Replication/IReplicatorPeers.h"
 
@@ -63,6 +64,8 @@ private:
 	};
 
 	Timer m_timer;
+	Random m_random;
+	double m_noisyTime;
 	Ref< IReplicatorPeers > m_peers;
 	std::map< handle_t, uint32_t > m_state;
 	std::list< SendQueueItem* > m_sendQueue;

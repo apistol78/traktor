@@ -33,6 +33,7 @@ bool WebBrowserPage::create(ui::Widget* parent)
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Home", ui::Command(L"Editor.WebBrowser.Home")));
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Back", ui::Command(L"Editor.WebBrowser.Back")));
 	toolbar->addItem(new ui::custom::ToolBarButton(L"Forward", ui::Command(L"Editor.WebBrowser.Forward")));
+	toolbar->addItem(new ui::custom::ToolBarButton(L"Reload", ui::Command(L"Editor.WebBrowser.Reload")));
 	toolbar->addClickEventHandler(ui::createMethodHandler(this, &WebBrowserPage::eventToolClick));
 
 	m_browser = new ui::WebBrowser();
@@ -53,6 +54,8 @@ void WebBrowserPage::eventToolClick(ui::Event* event)
 		m_browser->back();
 	else if (cmdEvent->getCommand() == L"Editor.WebBrowser.Forward")
 		m_browser->forward();
+	else if (cmdEvent->getCommand() == L"Editor.WebBrowser.Reload")
+		m_browser->reload(false);
 }
 
 	}
