@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -27,7 +28,10 @@ bool SteamStatistics::enumerate(std::map< std::wstring, int32_t >& outStats)
 		if (haveStats)
 		{
 			if (!SteamUserStats()->GetStat(wstombs(*i).c_str(), &value))
+			{
+				log::error << L"Unable to enumerate statistics; Statistic \"" << *i << L"\" not available" << Endl;
 				return false;
+			}
 		}
 		outStats.insert(std::make_pair(
 			*i,
