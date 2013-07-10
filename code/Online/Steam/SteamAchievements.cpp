@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Online/Steam/SteamAchievements.h"
 #include "Online/Steam/SteamSessionManager.h"
@@ -25,7 +26,10 @@ bool SteamAchievements::enumerate(std::map< std::wstring, bool >& outAchievement
 		if (haveStats)
 		{
 			if (!SteamUserStats()->GetAchievement(wstombs(*i).c_str(), &achieved))
+			{
+				log::error << L"Unable to enumerate achievements; Achievement \"" << *i << L"\" not available" << Endl;
 				return false;
+			}
 		}
 		outAchievements.insert(std::make_pair(
 			*i,

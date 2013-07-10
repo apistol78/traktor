@@ -1,4 +1,5 @@
 #include "Core/RefArray.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/TString.h"
 #include "Core/Thread/Thread.h"
 #include "Core/Thread/ThreadManager.h"
@@ -138,8 +139,10 @@ bool SteamLeaderboards::enumerate(std::map< std::wstring, LeaderboardData >& out
 	{
 		Ref< FindLeaderboardCall > call = FindLeaderboardCall::create(*i, outLeaderboards[*i]);
 		if (!call)
+		{
+			log::error << L"Unable to enumerate leaderboards; Leaderboard \"" << *i << L"\" not available" << Endl;
 			return false;
-
+		}
 		calls.push_back(call);
 	}
 
