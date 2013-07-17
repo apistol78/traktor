@@ -13,6 +13,8 @@
 #include "Amalgam/Editor/Tool/MigrateTargetAction.h"
 #include "Amalgam/Editor/Ui/TargetListControl.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
+#include "Amalgam/Impl/CaptureScreenShot.h"
+#include "Amalgam/Impl/CapturedScreenShot.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -26,11 +28,16 @@
 #include "Database/Group.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
+#include "Drawing/Image.h"
+#include "Drawing/PixelFormat.h"
 #include "Editor/IEditorPage.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
+#include "Net/BidirectionalObjectTransport.h"
 #include "Net/Discovery/DiscoveryManager.h"
+#include "Ui/Application.h"
 #include "Ui/CheckBox.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MenuItem.h"
@@ -126,6 +133,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_targetList->create(container);
 	m_targetList->addPlayEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListPlay));
 	m_targetList->addStopEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListStop));
+	m_targetList->addCaptureEventHandler(ui::createMethodHandler(this, &EditorPlugin::eventTargetListCapture));
 
 	m_site->createAdditionalPanel(container, 200, false);
 
@@ -442,6 +450,45 @@ void EditorPlugin::eventTargetListStop(ui::Event* event)
 	}
 
 	m_targetList->requestUpdate();
+}
+
+void EditorPlugin::eventTargetListCapture(ui::Event* event)
+{
+	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
+	
+	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
+	int32_t connectionId = cmdEvent->getCommand().getId();
+
+	RefArray< TargetConnection > connections = targetInstance->getConnections();
+	if (connectionId >= 0 && connectionId < int32_t(connections.size()))
+	{
+		TargetConnection* connection = connections[connectionId];
+		T_ASSERT (connection);
+
+		connection->getTransport()->send(new CaptureScreenShot());
+
+		Ref< CapturedScreenShot > capturedScreenShot;
+		if (connection->getTransport()->recv< CapturedScreenShot >(1000, capturedScreenShot) == net::BidirectionalObjectTransport::RtSuccess)
+		{
+			drawing::Image image(
+				drawing::PixelFormat::getA8B8G8R8(),
+				capturedScreenShot->getWidth(),
+				capturedScreenShot->getHeight()
+			);
+
+			std::memcpy(
+				image.getData(),
+				capturedScreenShot->getData().c_ptr(),
+				image.getDataSize()
+			);
+
+			ui::Application::getInstance()->getClipboard()->setImage(&image);
+
+			log::info << L"Screen capture ready in clipboard" << Endl;
+		}
+		else
+			log::error << L"Timeout while capturing screenshot" << Endl;
+	}
 }
 
 void EditorPlugin::eventToolBarClick(ui::Event* event)

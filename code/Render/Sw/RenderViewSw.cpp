@@ -380,6 +380,11 @@ void RenderViewSw::getStatistics(RenderViewStatistics& outStatistics) const
 {
 }
 
+bool RenderViewSw::getBackBufferContent(void* buffer) const
+{
+	return false;
+}
+
 void RenderViewSw::fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const
 {
 	const std::vector< VertexElement >& vertexElements = m_currentVertexBuffer->getVertexElements();

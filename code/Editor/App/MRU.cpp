@@ -53,6 +53,11 @@ bool MRU::getUsedFiles(std::vector< Path >& outFilePaths) const
 	return true;
 }
 
+Path MRU::getMostRecentlyUseFile() const
+{
+	return !m_filePaths.empty() ? m_filePaths.front() : Path();
+}
+
 void MRU::serialize(ISerializer& s)
 {
 	s >> MemberStlVector< std::wstring >(L"filePaths", m_filePaths);

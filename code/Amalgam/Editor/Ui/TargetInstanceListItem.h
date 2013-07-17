@@ -31,6 +31,7 @@ private:
 	Ref< DropListCell > m_hostsCell;
 	Ref< ButtonCell > m_playCell;
 	RefArray< ButtonCell > m_stopCells;
+	RefArray< ButtonCell > m_captureCells;
 	Ref< TargetInstance > m_instance;
 };
 

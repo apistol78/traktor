@@ -128,6 +128,8 @@ private:
 
 	void eventTargetListStop(ui::Event* event);
 
+	void eventTargetListCapture(ui::Event* event);
+
 	void eventTimer(ui::Event* event);
 
 	void threadHostEnumerator();

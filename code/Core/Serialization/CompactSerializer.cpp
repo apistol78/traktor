@@ -802,7 +802,41 @@ void CompactSerializer::operator >> (const Member< ISerializable* >& m)
 
 void CompactSerializer::operator >> (const Member< void* >& m)
 {
-	T_FATAL_ERROR;
+	T_CHECK_STATUS;
+
+	if (m_direction == SdRead)
+	{
+		uint32_t size;
+			
+		if (!ensure(read_uint32(m_reader, size)))
+			return;
+		
+		if (!ensure(size <= m.getBlobSize()))
+			return;
+
+		m.setBlobSize(size);
+
+		if (size > 0)
+		{
+			m_reader.alignByte();
+			if (!ensure(m_reader.getStream()->read(m.getBlob(), size)))
+				return;
+		}
+	}
+	else
+	{
+		uint32_t size = m.getBlobSize();
+
+		if (!ensure(write_uint32(m_writer, size)))
+			return;
+
+		if (size > 0)
+		{
+			m_writer.flush();
+			if (!ensure(m_writer.getStream()->write(m.getBlob(), size)))
+				return;
+		}
+	}
 }
 
 void CompactSerializer::operator >> (const MemberArray& m)
@@ -811,20 +845,18 @@ void CompactSerializer::operator >> (const MemberArray& m)
 
 	if (m_direction == SdRead)
 	{
-		uint8_t size;
-		if (!ensure(read_uint8(m_reader, size)))
+		uint32_t size;
+		if (!ensure(read_uint32(m_reader, size)))
 			return;
 
 		m.reserve(size, size);
-		for (uint8_t i = 0; i < size; ++i)
+		for (uint32_t i = 0; i < size; ++i)
 			m.read(*this);
 	}
 	else
 	{
-		T_FATAL_ASSERT (m.size() < 255);
-
-		uint8_t size = uint8_t(m.size());
-		if (!ensure(write_uint8(m_writer, size)))
+		uint32_t size = m.size();
+		if (!ensure(write_uint32(m_writer, size)))
 			return;
 
 		for (uint32_t i = 0; i < size; ++i)

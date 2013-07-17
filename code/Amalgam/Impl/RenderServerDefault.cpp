@@ -139,8 +139,9 @@ bool findDisplayMode(render::IRenderSystem* renderSystem, const render::DisplayM
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.RenderServerDefault", RenderServerDefault, RenderServer)
 
-RenderServerDefault::RenderServerDefault()
-:	m_screenAspectRatio(1.0f)
+RenderServerDefault::RenderServerDefault(net::BidirectionalObjectTransport* transport)
+:	RenderServer(transport)
+,	m_screenAspectRatio(1.0f)
 {
 }
 
@@ -436,6 +437,8 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 
 RenderServer::UpdateResult RenderServerDefault::update(PropertyGroup* settings)
 {
+	RenderServer::update(settings);
+
 #if !defined(_PS3)
 
 	if (!m_renderView)

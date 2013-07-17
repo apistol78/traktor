@@ -54,7 +54,8 @@ enum ClipboardContentType
 {
 	CtEmpty,
 	CtObject,
-	CtText
+	CtText,
+	CtImage
 };
 
 enum Cursor

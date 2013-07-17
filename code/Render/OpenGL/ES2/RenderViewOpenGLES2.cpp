@@ -628,6 +628,11 @@ void RenderViewOpenGLES2::getStatistics(RenderViewStatistics& outStatistics) con
 {
 }
 
+bool RenderViewOpenGLES2::getBackBufferContent(void* buffer) const
+{
+	return false;
+}
+
 	}
 }
 

@@ -703,6 +703,14 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	update();
 	show();
 
+	// Open recently used workspace.
+	if (m_mergedSettings->getProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace", false))
+	{
+		Path workspacePath = m_mru->getMostRecentlyUseFile();
+		if (!workspacePath.empty())
+			openWorkspace(workspacePath);
+	}
+
 	// Start thread and timer.
 	m_threadAssetMonitor = ThreadManager::getInstance().create(makeFunctor(this, &EditorForm::threadAssetMonitor), L"Asset monitor");
 	m_threadAssetMonitor->start();

@@ -278,5 +278,10 @@ void RenderViewCapture::getStatistics(RenderViewStatistics& outStatistics) const
 	m_renderView->getStatistics(outStatistics);
 }
 
+bool RenderViewCapture::getBackBufferContent(void* buffer) const
+{
+	return m_renderView->getBackBufferContent(buffer);
+}
+
 	}
 }

@@ -31,22 +31,34 @@ uint32_t CropHeightfieldWizardTool::getFlags() const
 bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* editor, db::Group* group, db::Instance* instance)
 {
 	if (!instance->checkout())
+	{
+		log::error << L"Unable to checkout heightfield asset" << Endl;
 		return false;
+	}
 
 	Ref< HeightfieldAsset > heightfieldAsset = instance->getObject< HeightfieldAsset >();
 	if (!heightfieldAsset)
+	{
+		log::error << L"Unable to get heightfield asset from instance" << Endl;
 		return false;
+	}
 
 	Ref< IStream > sourceData = instance->readData(L"Data");
 	if (!sourceData)
+	{
+		log::error << L"Unable to open heightfield data stream" << Endl;
 		return false;
+	}
 
 	Ref< Heightfield > heightfield = HeightfieldFormat().read(
 		sourceData,
 		heightfieldAsset->getWorldExtent()
 	);
 	if (!heightfield)
+	{
+		log::error << L"Unable to read heightfield from data stream" << Endl;
 		return false;
+	}
 
 	sourceData->close();
 	sourceData = 0;
@@ -74,6 +86,12 @@ bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edit
 	int32_t y = parseString< int32_t >(fields[1].value);
 	int32_t size = parseString< int32_t >(fields[2].value);
 
+	if (size <= 0)
+	{
+		log::error << L"Invalid size; must be greater or equal to one" << Endl;
+		return false;
+	}
+
 	float factor = float(size) / heightfield->getSize();
 
 	Ref< Heightfield > cropped = new Heightfield(
@@ -88,8 +106,8 @@ bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edit
 			int32_t sx = ix + x;
 			int32_t sy = iy + y;
 
-			sx = clamp(sx, 0, heightfield->getSize());
-			sy = clamp(sy, 0, heightfield->getSize());
+			sx = clamp(sx, 0, heightfield->getSize() - 1);
+			sy = clamp(sy, 0, heightfield->getSize() - 1);
 
 			float h = heightfield->getGridHeightNearest(sx, sy);
 			bool c = heightfield->getGridCut(sx, sy);

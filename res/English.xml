@@ -146,6 +146,18 @@
       <second>Enter crop rectangle dimensions</second>
     </item>
     <item>
+      <first>CROP_TERRAIN_WIZARDTOOL_DESCRIPTION</first>
+      <second>Crop terrain maps...</second>
+    </item>
+    <item>
+      <first>CROP_TERRAIN_WIZARDTOOL_TITLE</first>
+      <second>Crop terrain maps</second>
+    </item>
+    <item>
+      <first>CROP_TERRAIN_WIZARDTOOL_MESSAGE</first>
+      <second>Enter crop rectangle dimensions</second>
+    </item>    
+    <item>
       <first>DATABASE_BUILD</first>
       <second>Build</second>
     </item>
@@ -324,6 +336,10 @@
     <item>
       <first>EDITOR_SETTINGS_ASSET_PATH</first>
       <second>Asset path</second>
+    </item>
+    <item>
+      <first>EDITOR_SETTINGS_AUTOOPEN_RECENT_WORKSPACE</first>
+      <second>Auto-open most recently used workspace</second>
     </item>
     <item>
       <first>EDITOR_SETTINGS_AUTOSAVE</first>

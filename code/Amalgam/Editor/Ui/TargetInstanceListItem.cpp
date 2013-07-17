@@ -110,16 +110,31 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 	controlRect.bottom = controlRect.top + c_performanceHeight;
 
 	m_stopCells.resize(connections.size());
+	m_captureCells.resize(connections.size());
+
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		if (!m_stopCells[i])
 			m_stopCells[i] = new ButtonCell(s_bitmapTargetControl, 2, true, ui::EiUser + 2, m_instance, ui::Command(i, L"Amalgam.Stop"));
+
+		if (!m_captureCells[i])
+			m_captureCells[i] = new ButtonCell(s_bitmapTargetControl, 2, true, ui::EiUser + 3, m_instance, ui::Command(i, L"Amalgam.Capture"));
 
 		widget->placeCell(
 			m_stopCells[i],
 			ui::Rect(
 				controlRect.right - 24 * 1 - 4,
 				controlRect.top,
+				controlRect.right - 24 * 0 - 4,
+				(controlRect.top + controlRect.bottom) / 2
+			)
+		);
+
+		widget->placeCell(
+			m_captureCells[i],
+			ui::Rect(
+				controlRect.right - 24 * 1 - 4,
+				(controlRect.top + controlRect.bottom) / 2,
 				controlRect.right - 24 * 0 - 4,
 				controlRect.bottom
 			)
@@ -250,14 +265,6 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 
 		bottomRect.left += 100;
 		canvas.drawText(bottomRect, L"Res: " + toString(performance.residentResourcesCount) + L", " + toString(performance.exclusiveResourcesCount), ui::AnLeft, ui::AnCenter);
-
-		canvas.drawBitmap(
-			ui::Point(performanceRect.right - 24 * 1 - 4, performanceRect.getCenter().y - 10),
-			ui::Point(2 * 19, 0),
-			ui::Size(19, 19),
-			s_bitmapTargetControl,
-			ui::BmAlpha
-		);
 
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}

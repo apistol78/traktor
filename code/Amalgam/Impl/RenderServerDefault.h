@@ -5,13 +5,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-	
-class TextureFactory;
-
-	}
-
 	namespace amalgam
 	{
 
@@ -20,7 +13,7 @@ class RenderServerDefault : public RenderServer
 	T_RTTI_CLASS;
 
 public:
-	RenderServerDefault();
+	RenderServerDefault(net::BidirectionalObjectTransport* transport);
 
 	bool create(PropertyGroup* settings);
 
@@ -47,9 +40,6 @@ public:
 	virtual int32_t getMultiSample() const;
 
 private:
-	Ref< render::IRenderSystem > m_renderSystem;
-	Ref< render::IRenderView > m_renderView;
-	Ref< render::TextureFactory > m_textureFactory;
 	render::DisplayMode m_originalDisplayMode;
 	render::RenderViewDefaultDesc m_renderViewDesc;
 	float m_screenAspectRatio;

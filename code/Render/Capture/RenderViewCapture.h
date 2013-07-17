@@ -78,6 +78,8 @@ public:
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
 
+	virtual bool getBackBufferContent(void* buffer) const;
+
 private:
 	Ref< IRenderSystem > m_renderSystem;
 	Ref< IRenderView > m_renderView;

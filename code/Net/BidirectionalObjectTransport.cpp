@@ -12,6 +12,8 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_maxObjectSize = 10 * 1024 * 1024;
+
 struct ObjectTypePred
 {
 	const TypeInfo& m_objectType;
@@ -34,7 +36,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.BidirectionalObjectTransport", Bidirectiona
 BidirectionalObjectTransport::BidirectionalObjectTransport(TcpSocket* socket)
 :	m_socket(socket)
 {
-	m_buffer.reset(new uint8_t [4 + 262144]);
+	m_buffer.reset(new uint8_t [4 + c_maxObjectSize]);
 }
 
 void BidirectionalObjectTransport::close()
@@ -50,12 +52,12 @@ bool BidirectionalObjectTransport::send(const ISerializable* object)
 {
 	if (m_socket)
 	{
-		MemoryStream dms(m_buffer.ptr() + 4, 262144, false, true);
+		MemoryStream dms(m_buffer.ptr() + 4, c_maxObjectSize, false, true);
 		if (!CompactSerializer(&dms, 0).writeObject(object))
 			return false;
 
 		uint32_t objectSize = dms.tell();
-		if (objectSize >= 262144)
+		if (objectSize >= c_maxObjectSize)
 		{
 			log::error << L"BidirectionalObjectTransport failed; object too big" << Endl;
 			return false;
