@@ -262,8 +262,8 @@ bool AccShape::updateRenderable(
 
 				for (int k = 0; k < 3; ++k)
 				{
-					vertex->pos[0] = std::floor(j->v[k].x);
-					vertex->pos[1] = std::floor(j->v[k].y);
+					vertex->pos[0] = j->v[k].x;
+					vertex->pos[1] = j->v[k].y;
 					vertex->uv[0] = c_controlPoints[k][0];
 					vertex->uv[1] = c_controlPoints[k][1];
 					vertex->color[0] = color.r;

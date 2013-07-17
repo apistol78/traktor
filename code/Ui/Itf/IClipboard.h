@@ -10,6 +10,13 @@ namespace traktor
 
 class ISerializable;
 
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace ui
 	{
 
@@ -25,11 +32,15 @@ public:
 
 	virtual bool setText(const std::wstring& text) = 0;
 
+	virtual bool setImage(const drawing::Image* image) = 0;
+
 	virtual ClipboardContentType getContentType() const = 0;
 
 	virtual Ref< ISerializable > getObject() const = 0;
 
 	virtual std::wstring getText() const = 0;
+
+	virtual Ref< const drawing::Image > getImage() const = 0;
 };
 
 	}

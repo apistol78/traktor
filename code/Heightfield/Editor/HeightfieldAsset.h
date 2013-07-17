@@ -30,8 +30,11 @@ public:
 
 	const Vector4& getWorldExtent() const { return m_worldExtent; }
 
+	float getVistaDistance() const { return m_vistaDistance; }
+
 private:
 	Vector4 m_worldExtent;
+	float m_vistaDistance;
 };
 
 	}

@@ -711,6 +711,11 @@ void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.duration = 0.0;
 }
 
+bool RenderViewOpenGL::getBackBufferContent(void* buffer) const
+{
+	return false;
+}
+
 #if defined(_WIN32)
 
 bool RenderViewOpenGL::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)

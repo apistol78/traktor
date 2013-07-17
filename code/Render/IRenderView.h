@@ -163,6 +163,9 @@ public:
 	/*! \brief Get render view statistics. */
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const = 0;
 
+	/*! \brief Get backbuffer content. */
+	virtual bool getBackBufferContent(void* buffer) const = 0;
+
 	//@}
 };
 

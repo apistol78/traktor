@@ -22,11 +22,15 @@ public:
 
 	virtual bool setText(const std::wstring& text);
 
+	virtual bool setImage(const drawing::Image* image);
+
 	virtual ClipboardContentType getContentType() const;
 
 	virtual Ref< ISerializable > getObject() const;
 
 	virtual std::wstring getText() const;
+
+	virtual Ref< const drawing::Image > getImage() const;
 
 private:
 	uint32_t m_objectFormat;

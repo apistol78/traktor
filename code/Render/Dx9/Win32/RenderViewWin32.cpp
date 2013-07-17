@@ -359,6 +359,11 @@ void RenderViewWin32::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.duration = 0.0;
 }
 
+bool RenderViewWin32::getBackBufferContent(void* buffer) const
+{
+	return false;
+}
+
 void RenderViewWin32::bindTargets()
 {
 	T_ASSERT (m_targetDirty);

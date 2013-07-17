@@ -17,6 +17,13 @@ namespace traktor
 
 class ISerializable;
 
+	namespace drawing
+	{
+
+class Image;
+
+	}
+
 	namespace ui
 	{
 
@@ -40,11 +47,15 @@ public:
 
 	bool setText(const std::wstring& text);
 
+	bool setImage(const drawing::Image* image);
+
 	ClipboardContentType getContentType() const;
 
 	Ref< ISerializable > getObject() const;
 
 	std::wstring getText() const;
+
+	Ref< const drawing::Image > getImage() const;
 
 private:
 	IClipboard* m_clipboard;

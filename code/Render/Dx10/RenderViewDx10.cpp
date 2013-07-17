@@ -647,6 +647,11 @@ void RenderViewDx10::getStatistics(RenderViewStatistics& outStatistics) const
 	outStatistics.duration = 0.0;
 }
 
+bool RenderViewDx10::getBackBufferContent(void* buffer) const
+{
+	return false;
+}
+
 bool RenderViewDx10::windowListenerEvent(Window* window, UINT message, WPARAM wParam, LPARAM lParam, LRESULT& outResult)
 {
 	if (message == WM_CLOSE)

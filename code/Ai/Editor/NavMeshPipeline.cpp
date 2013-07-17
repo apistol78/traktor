@@ -162,7 +162,7 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 8, NavMeshPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 10, NavMeshPipeline, editor::DefaultPipeline)
 
 NavMeshPipeline::NavMeshPipeline()
 :	m_editor(false)
@@ -316,8 +316,34 @@ bool NavMeshPipeline::buildOutput(
 				sourceData->close();
 				sourceData = 0;
 
-				int32_t step = 32;
 				int32_t size = heightfield->getSize();
+				int32_t ix0, iz0;
+				int32_t ix1, iz1;
+
+				float vistaDistance = heightfieldAsset->getVistaDistance();
+				if (vistaDistance > FUZZY_EPSILON)
+				{
+					heightfield->worldToGrid(-vistaDistance / 2.0f, -vistaDistance / 2.0f, ix0, iz0);
+					heightfield->worldToGrid( vistaDistance / 2.0f,  vistaDistance / 2.0f, ix1, iz1);
+
+					ix0 = clamp(ix0, 0, size);
+					iz0 = clamp(iz0, 0, size);
+					ix1 = clamp(ix1, 0, size);
+					iz1 = clamp(iz1, 0, size);
+				}
+				else
+				{
+					ix0 = 0;
+					iz0 = 0;
+					ix1 = size;
+					iz1 = size;
+				}
+
+				log::info << L"NavMesh terrain, using (" << ix0 << L", " << iz0 << L", " << ix1 << L", " << iz1 << L") of totally (0, 0, " << size << L", " << size << L")" << Endl;
+
+				size = max(ix1 - ix0, iz1 - iz0);
+
+				const int32_t step = 64;
 				int32_t outputSize = size / step;
 
 				Ref< model::Model > navModel = new model::Model();
@@ -325,9 +351,9 @@ bool NavMeshPipeline::buildOutput(
 				navModel->reservePositions(outputSize * outputSize);
 
 				model::Vertex vertex;
-				for (int32_t iz = 0; iz < size; iz += step)
+				for (int32_t iz = iz0; iz < iz1; iz += step)
 				{
-					for (int32_t ix = 0; ix < size; ix += step)
+					for (int32_t ix = ix0; ix < ix1; ix += step)
 					{
 						float wx, wz;
 						heightfield->gridToWorld(ix, iz, wx, wz);
@@ -351,7 +377,7 @@ bool NavMeshPipeline::buildOutput(
 					for (int32_t ix = 0; ix < outputSize - 1; ++ix)
 					{
 						float wx, wz;
-						heightfield->gridToWorld(ix * step, iz * step, wx, wz);
+						heightfield->gridToWorld(ix0 + ix * step, iz0 + iz * step, wx, wz);
 
 						if (!heightfield->getWorldCut(wx, wz))
 							continue;
@@ -461,7 +487,7 @@ bool NavMeshPipeline::buildOutput(
 		AlignedVector< int32_t > indices;
 
 		uint8_t* triAreaPtr = triAreas.ptr();
-		for (AlignedVector< NavMeshSourceModel >::const_iterator i = navModels.begin(); i != navModels.end(); ++i)
+		for (AlignedVector< NavMeshSourceModel >::iterator i = navModels.begin(); i != navModels.end(); ++i)
 		{
 			int32_t vertexCount = i->model->getVertexCount();
 			int32_t triangleCount = i->model->getPolygonCount();
@@ -503,6 +529,8 @@ bool NavMeshPipeline::buildOutput(
 				rcMarkWalkableTriangles(&ctx, cfg.walkableSlopeAngle, vertices.c_ptr(), vertexCount, &indices[0], indices.size() / 3, triAreaPtr);
 				rcRasterizeTriangles(&ctx, vertices.c_ptr(), vertexCount, &indices[0], triAreaPtr, indices.size() / 3, *solid, cfg.walkableClimb);
 			}
+
+			i->model = 0;
 
 			triAreaPtr += triangleCount;
 		}

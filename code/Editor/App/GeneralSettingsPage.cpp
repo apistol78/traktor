@@ -33,6 +33,10 @@ bool GeneralSettingsPage::create(ui::Container* parent, PropertyGroup* settings,
 	m_editDictionary = new ui::Edit();
 	m_editDictionary->create(containerInner, settings->getProperty< PropertyString >(L"Editor.Dictionary"));
 
+	m_checkAutoOpen = new ui::CheckBox();
+	m_checkAutoOpen->create(container, i18n::Text(L"EDITOR_SETTINGS_AUTOOPEN_RECENT_WORKSPACE"));
+	m_checkAutoOpen->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace"));
+
 	m_checkAutoSave = new ui::CheckBox();
 	m_checkAutoSave->create(container, i18n::Text(L"EDITOR_SETTINGS_AUTOSAVE"));
 	m_checkAutoSave->setChecked(settings->getProperty< PropertyBoolean >(L"Editor.AutoSave"));
@@ -56,6 +60,7 @@ void GeneralSettingsPage::destroy()
 bool GeneralSettingsPage::apply(PropertyGroup* settings)
 {
 	settings->setProperty< PropertyString >(L"Editor.Dictionary", m_editDictionary->getText());
+	settings->setProperty< PropertyBoolean >(L"Editor.AutoOpenRecentlyUsedWorkspace", m_checkAutoOpen->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.AutoSave", m_checkAutoSave->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenSourceModified", m_checkBuildWhenSourceModified->isChecked());
 	settings->setProperty< PropertyBoolean >(L"Editor.BuildWhenAssetModified", m_checkBuildWhenAssetModified->isChecked());

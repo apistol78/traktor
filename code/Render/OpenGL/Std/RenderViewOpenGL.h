@@ -118,6 +118,8 @@ public:
 
 	virtual void getStatistics(RenderViewStatistics& outStatistics) const;
 
+	virtual bool getBackBufferContent(void* buffer) const;
+
 private:
 	struct TargetScope
 	{

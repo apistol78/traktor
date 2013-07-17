@@ -39,6 +39,12 @@ bool Clipboard::setText(const std::wstring& text)
 	return m_clipboard->setText(text);
 }
 
+bool Clipboard::setImage(const drawing::Image* image)
+{
+	T_ASSERT (m_clipboard);
+	return m_clipboard->setImage(image);
+}
+
 ClipboardContentType Clipboard::getContentType() const
 {
 	T_ASSERT (m_clipboard);
@@ -55,6 +61,12 @@ std::wstring Clipboard::getText() const
 {
 	T_ASSERT (m_clipboard);
 	return m_clipboard->getText();
+}
+
+Ref< const drawing::Image > Clipboard::getImage() const
+{
+	T_ASSERT (m_clipboard);
+	return m_clipboard->getImage();
 }
 
 	}

@@ -32,6 +32,7 @@ public:
 
 private:
 	Ref< ui::Edit > m_editDictionary;
+	Ref< ui::CheckBox > m_checkAutoOpen;
 	Ref< ui::CheckBox > m_checkAutoSave;
 	Ref< ui::CheckBox > m_checkBuildWhenSourceModified;
 	Ref< ui::CheckBox > m_checkBuildWhenAssetModified;
