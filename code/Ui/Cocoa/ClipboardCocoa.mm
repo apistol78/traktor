@@ -54,6 +54,11 @@ bool ClipboardCocoa::setText(const std::wstring& text)
 	return true;
 }
 
+bool ClipboardCocoa::setImage(const drawing::Image *image)
+{
+	return false;
+}
+
 ClipboardContentType ClipboardCocoa::getContentType() const
 {
 	NSPasteboard* pb = [NSPasteboard generalPasteboard];
@@ -87,6 +92,11 @@ Ref< ISerializable > ClipboardCocoa::getObject() const
 std::wstring ClipboardCocoa::getText() const
 {
 	return L"";
+}
+
+Ref< const drawing::Image > ClipboardCocoa::getImage() const
+{
+	return 0;
 }
 
 	}

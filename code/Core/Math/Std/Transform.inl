@@ -104,7 +104,7 @@ T_MATH_INLINE bool Transform::operator != (const Transform& rh) const
 T_MATH_INLINE T_DLLCLASS Transform operator * (const Transform& lh, const Transform& rh)
 {
 	return Transform(
-		lh.translation() + lh.rotation() * rh.translation(),
+		(lh.translation() + lh.rotation() * rh.translation()).xyz0(),
 		(lh.rotation() * rh.rotation()).normalized()
 	);
 }
@@ -117,7 +117,7 @@ T_MATH_INLINE T_DLLCLASS Vector4 operator * (const Transform& tf, const Vector4&
 Transform lerp(const Transform& a, const Transform& b, const Scalar& c)
 {
 	return Transform(
-		lerp(a.translation(), b.translation(), c),
+		lerp(a.translation(), b.translation(), c).xyz0(),
 		slerp(a.rotation(), b.rotation(), c).normalized()
 	);
 }

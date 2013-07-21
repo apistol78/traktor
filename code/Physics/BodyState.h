@@ -63,7 +63,7 @@ struct BodyState
 		if (angleDiff > FUZZY_EPSILON)
 		{
 			Quaternion QdiffLerp = Quaternion::fromAxisAngle(Vdiff / angleDiff, angleDiff * interpolate);
-			state.m_angularVelocity = (QdiffLerp * Qv0).toAxisAngle();
+			state.m_angularVelocity = (QdiffLerp * Qv0).normalized().toAxisAngle();
 		}
 		else
 			state.m_angularVelocity = m_angularVelocity;

@@ -8,6 +8,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Writer.h"
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/TString.h"
@@ -442,9 +443,9 @@ bool NavMeshPipeline::buildOutput(
 	cfg.cs = asset->m_cellSize;
 	cfg.ch = asset->m_cellHeight;
 	cfg.walkableSlopeAngle = asset->m_agentSlope;
-	cfg.walkableHeight = int(std::ceilf(asset->m_agentHeight / cfg.ch));
-	cfg.walkableClimb = int(std::floorf(asset->m_agentClimb / cfg.ch));
-	cfg.walkableRadius = int(std::ceilf(asset->m_agentRadius / cfg.cs));
+	cfg.walkableHeight = int(std::ceil(asset->m_agentHeight / cfg.ch));
+	cfg.walkableClimb = int(std::floor(asset->m_agentClimb / cfg.ch));
+	cfg.walkableRadius = int(std::ceil(asset->m_agentRadius / cfg.cs));
 	cfg.maxEdgeLen = int(asset->m_maxEdgeLength / asset->m_cellSize);
 	cfg.maxSimplificationError = asset->m_maxSimplificationError;
 	cfg.minRegionArea = int(asset->m_minRegionSize * asset->m_minRegionSize);

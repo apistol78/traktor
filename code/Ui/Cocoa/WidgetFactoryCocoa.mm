@@ -146,6 +146,11 @@ IUserWidget* WidgetFactoryCocoa::createUserWidget(EventSubject* owner)
 	return new UserWidgetCocoa(owner);
 }
 
+IWebBrowser* WidgetFactoryCocoa::createWebBrowser(EventSubject* owner)
+{
+	return 0;
+}
+
 INative* WidgetFactoryCocoa::createNative(EventSubject* owner)
 {
 	return 0;

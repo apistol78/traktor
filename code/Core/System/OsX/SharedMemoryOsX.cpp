@@ -56,4 +56,10 @@ Ref< IStream > SharedMemoryOsX::write()
 	return new MemoryStream(m_buffer, m_size, false, true);
 }
 
+bool SharedMemoryOsX::clear()
+{
+	std::memset(m_buffer, 0, m_size);
+	return true;
+}
+
 }

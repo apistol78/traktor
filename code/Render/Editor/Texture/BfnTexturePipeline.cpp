@@ -16,7 +16,7 @@ namespace traktor
 
 float quantize255(float value)
 {
-	float q = std::floorf(value * 127.5f + 127.5f);
+	float q = std::floor(value * 127.5f + 127.5f);
 	return 2.0f * q / 255.0f - 1.0f;
 }
 

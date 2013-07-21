@@ -2032,15 +2032,15 @@ void EditorForm::closeAllEditors()
 		m_tab->removePage(tabPage);
 
 		Ref< IEditorPage > editorPage = tabPage->getData< IEditorPage >(L"EDITORPAGE");
-		T_ASSERT (editorPage);
-
-		editorPage->deactivate();
-		editorPage->destroy();
+		if (editorPage)
+		{
+			editorPage->deactivate();
+			editorPage->destroy();
+		}
 
 		Ref< Document > document = tabPage->getData< Document >(L"DOCUMENT");
-		T_ASSERT (document);
-
-		document->close();
+		if (document)
+			document->close();
 	}
 
 	m_tab->update();
