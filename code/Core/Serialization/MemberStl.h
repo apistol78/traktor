@@ -6,6 +6,7 @@
 #include <map>
 #include <set>
 #include <vector>
+#include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberArray.h"
 #include "Core/Serialization/MemberComplex.h"

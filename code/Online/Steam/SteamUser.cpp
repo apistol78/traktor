@@ -99,6 +99,19 @@ bool SteamUser::isP2PAllowed(uint64_t userHandle) const
 	return m_failing.find(userHandle) == m_failing.end();
 }
 
+bool SteamUser::isP2PRelayed(uint64_t userHandle) const
+{
+	CSteamID id(userHandle);
+	if (!id.IsValid())
+		return false;
+
+	P2PSessionState_t ss;
+	if (!SteamNetworking()->GetP2PSessionState(id, &ss))
+		return false;
+
+	return ss.m_bUsingRelay;
+}
+
 bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 {
 	if (m_failing.find(userHandle) != m_failing.end())

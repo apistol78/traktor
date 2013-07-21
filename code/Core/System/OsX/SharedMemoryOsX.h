@@ -19,6 +19,8 @@ public:
 	
 	virtual Ref< IStream > write();
 	
+	virtual bool clear();
+	
 private:
 	uint32_t m_size;
 	void* m_buffer;

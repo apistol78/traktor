@@ -933,12 +933,15 @@ void Replicator::receiveMessages()
 			if (msg.time > peer.lastTimeRemote)
 			{
 				// Check network time.
-				int32_t offset = msg.time + peer.latencyReversed - m_time;
-				int32_t adjust = offset < 30 ? offset / 4 : offset / 2;
-				if (abs(adjust) > 8)
+				if (m_replicatorPeers->getPrimaryPeerHandle() == handle)
 				{
-					T_REPLICATOR_DEBUG(L"OK: Adjusting time with " << adjust << L" ms");
-					adjustTime(adjust);
+					int32_t offset = msg.time + peer.latencyReversed - m_time;
+					int32_t adjust = offset < 30 ? offset / 4 : offset / 2;
+					if (abs(adjust) > 1)
+					{
+						T_REPLICATOR_DEBUG(L"OK: Adjusting time with " << adjust << L" ms");
+						adjustTime(adjust);
+					}
 				}
 
 				if (peer.ghost->stateTemplate)

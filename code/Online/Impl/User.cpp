@@ -48,6 +48,11 @@ bool User::isP2PAllowed() const
 	return m_userProvider->isP2PAllowed(m_handle);
 }
 
+bool User::isP2PRelayed() const
+{
+	return m_userProvider->isP2PRelayed(m_handle);
+}
+
 bool User::sendP2PData(const void* data, size_t size)
 {
 	return m_userProvider->sendP2PData(m_handle, data, size);

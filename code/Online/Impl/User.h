@@ -31,6 +31,8 @@ public:
 
 	virtual bool isP2PAllowed() const;
 
+	virtual bool isP2PRelayed() const;
+
 	virtual bool sendP2PData(const void* data, size_t size);
 
 private:

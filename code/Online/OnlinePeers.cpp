@@ -235,7 +235,7 @@ uint32_t OnlinePeers::getPeers(std::vector< PeerInfo >& outPeers) const
 	for (SmallMap< net::handle_t, Ref< IUser > >::const_iterator i = m_userMap.begin(); i != m_userMap.end(); ++i)
 	{
 		info.handle = i->first;
-		info.direct = true;
+		info.direct = !i->second->isP2PRelayed();
 
 		i->second->getName(info.name);
 

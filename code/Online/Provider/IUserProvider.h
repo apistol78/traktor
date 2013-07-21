@@ -42,6 +42,8 @@ public:
 
 	virtual bool isP2PAllowed(uint64_t userHandle) const = 0;
 
+	virtual bool isP2PRelayed(uint64_t userHandle) const = 0;
+
 	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size) = 0;
 };
 

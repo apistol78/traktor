@@ -43,7 +43,7 @@ bool ErrorDialog::create()
 	staticText->create(containerText, L"Unfortunately there has been an error");
 
 	m_listLog = new ui::custom::LogList();
-	m_listLog->create(containerText, ui::WsClientBorder);
+	m_listLog->create(containerText, ui::WsClientBorder, 0);
 
 	Ref< ui::Container > containerButtons = new ui::Container();
 	containerButtons->create(container, ui::WsNone, new ui::TableLayout(L"100%,*,*", L"*", 0, 4));
