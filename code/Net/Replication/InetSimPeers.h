@@ -54,7 +54,7 @@ public:
 	void setPeerConnectionState(handle_t peer, bool sendEnable, bool receiveEnable);
 
 private:
-	struct SendQueueItem
+	struct QueueItem
 	{
 		double time;
 		handle_t handle;
@@ -68,7 +68,8 @@ private:
 	double m_noisyTime;
 	Ref< IReplicatorPeers > m_peers;
 	std::map< handle_t, uint32_t > m_state;
-	std::list< SendQueueItem* > m_sendQueue;
+	std::list< QueueItem* > m_sendQueue;
+	std::list< QueueItem* > m_receiveQueue;
 };
 
 	}

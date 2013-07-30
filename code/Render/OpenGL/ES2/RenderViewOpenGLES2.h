@@ -100,7 +100,6 @@ private:
 	Ref< StateCache > m_stateCache;
 	std::stack< RenderTargetStack > m_renderTargetStack;
 	Viewport m_viewport;
-	GLint m_primaryDepth;
 };
 
 #endif

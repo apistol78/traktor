@@ -145,10 +145,10 @@
                   <first>PreprocessorDefinitions</first>
                   <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
-				<item>
-				  <first>ExceptionHandling</first>
-				  <second>2</second>
-				</item>
+                <item>
+                  <first>ExceptionHandling</first>
+                  <second>2</second>
+                </item>
                 <item>
                   <first>Optimization</first>
                   <second>3</second>
@@ -181,10 +181,10 @@
                   <first>BufferSecurityCheck</first>
                   <second>false</second>
                 </item>
-				<item>
-				  <first>EnableEnhancedInstructionSet</first>
-				  <second>1</second>
-				</item>
+                <item>
+                  <first>EnableEnhancedInstructionSet</first>
+                  <second>1</second>
+                </item>
                 <item>
                   <first>FloatingPointModel</first>
                   <second>2</second>
@@ -199,6 +199,10 @@
                 </item>
                 <item>
                   <first>WarningLevel</first>
+                  <second>3</second>
+                </item>
+                <item>
+                  <first>DebugInformationFormat</first>
                   <second>3</second>
                 </item>
               </staticOptions>
@@ -272,10 +276,10 @@
                   <first>PreprocessorDefinitions</first>
                   <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
-				<item>
-				  <first>ExceptionHandling</first>
-				  <second>2</second>
-				</item>
+                <item>
+                  <first>ExceptionHandling</first>
+                  <second>2</second>
+                </item>
                 <item>
                   <first>Optimization</first>
                   <second>0</second>
@@ -371,10 +375,10 @@
                   <first>PreprocessorDefinitions</first>
                   <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
-				<item>
-				  <first>ExceptionHandling</first>
-				  <second>2</second>
-				</item>
+                <item>
+                  <first>ExceptionHandling</first>
+                  <second>2</second>
+                </item>
                 <item>
                   <first>Optimization</first>
                   <second>3</second>
@@ -407,10 +411,10 @@
                   <first>BufferSecurityCheck</first>
                   <second>false</second>
                 </item>
-				<item>
-				  <first>EnableEnhancedInstructionSet</first>
-				  <second>1</second>
-				</item>
+                <item>
+                  <first>EnableEnhancedInstructionSet</first>
+                  <second>1</second>
+                </item>
                 <item>
                   <first>FloatingPointModel</first>
                   <second>2</second>
@@ -425,6 +429,10 @@
                 </item>
                 <item>
                   <first>WarningLevel</first>
+                  <second>3</second>
+                </item>
+                <item>
+                  <first>DebugInformationFormat</first>
                   <second>3</second>
                 </item>
               </staticOptions>
@@ -457,10 +465,10 @@
                   <first>OptimizeReferences</first>
                   <second>2</second>
                 </item>
-				<item>
-				  <first>LinkTimeCodeGeneration</first>
-				  <second>0</second>
-				</item>
+                <item>
+                  <first>LinkTimeCodeGeneration</first>
+                  <second>0</second>
+                </item>
                 <item>
                   <first>RandomizedBaseAddress</first>
                   <second>1</second>
@@ -545,10 +553,10 @@
                   <first>PreprocessorDefinitions</first>
                   <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
-				<item>
-				  <first>ExceptionHandling</first>
-				  <second>2</second>
-				</item>
+                <item>
+                  <first>ExceptionHandling</first>
+                  <second>2</second>
+                </item>
                 <item>
                   <first>Optimization</first>
                   <second>0</second>
@@ -640,10 +648,10 @@
                   <first>PreprocessorDefinitions</first>
                   <second>WIN32;_WINDOWS;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
-				<item>
-				  <first>ExceptionHandling</first>
-				  <second>2</second>
-				</item>
+                <item>
+                  <first>ExceptionHandling</first>
+                  <second>2</second>
+                </item>
                 <item>
                   <first>Optimization</first>
                   <second>3</second>
@@ -676,10 +684,10 @@
                   <first>BufferSecurityCheck</first>
                   <second>false</second>
                 </item>
-				<item>
-				  <first>EnableEnhancedInstructionSet</first>
-				  <second>1</second>
-				</item>
+                <item>
+                  <first>EnableEnhancedInstructionSet</first>
+                  <second>1</second>
+                </item>
                 <item>
                   <first>FloatingPointModel</first>
                   <second>2</second>
@@ -696,6 +704,10 @@
                   <first>WarningLevel</first>
                   <second>3</second>
                 </item>
+                <item>
+                  <first>DebugInformationFormat</first>
+                  <second>3</second>
+                </item>                
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -726,10 +738,10 @@
                   <first>OptimizeReferences</first>
                   <second>2</second>
                 </item>
-				<item>
-				  <first>LinkTimeCodeGeneration</first>
-				  <second>0</second>
-				</item>
+                <item>
+                  <first>LinkTimeCodeGeneration</first>
+                  <second>0</second>
+                </item>
                 <item>
                   <first>RandomizedBaseAddress</first>
                   <second>1</second>
@@ -738,10 +750,10 @@
                   <first>DataExecutionPrevention</first>
                   <second>0</second>
                 </item>
-				<item>
-				  <first>GenerateDebugInformation</first>
-				  <second>true</second>
-				</item>				
+                <item>
+                  <first>GenerateDebugInformation</first>
+                  <second>true</second>
+                </item>				
               </staticOptions>
             </item>
             <item type="SolutionBuilderMsvcGenericTool">
@@ -810,10 +822,10 @@
                   <first>PreprocessorDefinitions</first>
                   <second>WIN32;_CONSOLE;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
-				<item>
-				  <first>ExceptionHandling</first>
-				  <second>2</second>
-				</item>
+                <item>
+                  <first>ExceptionHandling</first>
+                  <second>2</second>
+                </item>
                 <item>
                   <first>Optimization</first>
                   <second>0</second>
@@ -905,10 +917,10 @@
                   <first>PreprocessorDefinitions</first>
                   <second>WIN32;_CONSOLE;UNICODE;_UNICODE;_SECURE_SCL=0</second>
                 </item>
-				<item>
-				  <first>ExceptionHandling</first>
-				  <second>2</second>
-				</item>
+                <item>
+                  <first>ExceptionHandling</first>
+                  <second>2</second>
+                </item>
                 <item>
                   <first>Optimization</first>
                   <second>3</second>
@@ -941,10 +953,10 @@
                   <first>BufferSecurityCheck</first>
                   <second>false</second>
                 </item>
-				<item>
-				  <first>EnableEnhancedInstructionSet</first>
-				  <second>1</second>
-				</item>
+                <item>
+                  <first>EnableEnhancedInstructionSet</first>
+                  <second>1</second>
+                </item>
                 <item>
                   <first>FloatingPointModel</first>
                   <second>2</second>
@@ -959,6 +971,10 @@
                 </item>
                 <item>
                   <first>WarningLevel</first>
+                  <second>3</second>
+                </item>
+                <item>
+                  <first>DebugInformationFormat</first>
                   <second>3</second>
                 </item>
               </staticOptions>

@@ -3,76 +3,66 @@
 	<dependencies/>
 	<text>
 	<![CDATA[
-local _camera
-local _cameraPosition
-local _cameraRotation
 
-local _player
-local _playerPosition
-local _playerRotation
-local _playerDirection
+m_camera = nil
+m_cameraPosition = nil
+m_cameraRotation = nil
 
-local _gridX
-local _gridZ
+m_player = nil
+m_playerPosition = nil
+m_playerRotation = nil
+m_playerDirection = nil
 
--- Initialize layer
-function layerInit(stage)
+m_gridX = 0
+m_gridZ = 0
 
-	_camera = _self:getEntity("Camera")
-	_cameraPosition = _camera:getTransform():translation()
-	_cameraRotation = Quaternion(0, 1.2, 0)
+function initialize()
+
+	m_camera = world:getEntity("Camera")
+	m_cameraPosition = m_camera:getTransform():translation()
+	m_cameraRotation = Quaternion(0, 1.2, 0)
 	
-	_playerPosition = Vector4(
-		_cameraPosition:x(),
+	m_playerPosition = Vector4(
+		m_cameraPosition:x(),
 		0.5,
-		_cameraPosition:z()
+		m_cameraPosition:z()
 	)
-	_playerRotation = 0
-	_playerDirection = Vector4(0, 0, 1, 0)
+	m_playerRotation = 0
+	m_playerDirection = Vector4(0, 0, 1, 0)
 
-	-- Get position from existing player.
-	if _player ~= nil then
-		_playerPosition = _player:getTransform():translation():xyz0()
-	end
-
-	_player = _self:createEntity("Player")
-	_player:setTransform(Transform(
-		_playerPosition,
+	m_player = world:createEntity("Player")
+	m_player:setTransform(Transform(
+		m_playerPosition,
 		Quaternion(0, 0, 0)
 	))
-	_self:addEntity(_player)
-	
-	_gridX = 0
-	_gridZ = 0
+	world:addEntity(m_player)
 end
 
--- Update layer
-function layerUpdate(stage, info)
+function update(control, info)
 	local dT = info:getSimulationDeltaTime()
-	local env = stage:getEnvironment()
-	local im = env:getInput():getInputMapping()
+	local im = environment:getInput():getInputMapping()
 	
 	
 	local gridSizeX = 14
 	local gridSizeZ = 8
-	local gridViewCenterX = _gridX * gridSizeX
-	local gridViewCenterZ = _gridZ * gridSizeZ
+	local gridViewCenterX = m_gridX * gridSizeX
+	local gridViewCenterZ = m_gridZ * gridSizeZ
 	local gridViewMinX = gridViewCenterX - gridSizeX / 2
 	local gridViewMinZ = gridViewCenterZ - gridSizeZ / 2
 	local gridViewMaxX = gridViewCenterX + gridSizeX / 2
 	local gridViewMaxZ = gridViewCenterZ + gridSizeZ / 2
 	
 	
-	_cameraPosition = Vector4(
+	m_cameraPosition = Vector4(
 		gridViewCenterX,
-		_cameraPosition:y(),
+		m_cameraPosition:y(),
 		gridViewCenterZ - 3
 	)
 	
 	
-	_camera:setTransform(Transform(
-		_cameraPosition,
-		_cameraRotation
+	m_camera:setTransform(Transform(
+		m_cameraPosition,
+		m_cameraRotation
 	))
 
 	local dm = im:getStateValue("STATE_PLAYER_MOVE")
@@ -80,8 +70,8 @@ function layerUpdate(stage, info)
 
 	-- Update player controller.
 	local motionVelocity = Vector4(dr * 4, 0, -dm * 4);
-	local velocity = _player:getBody():getLinearVelocity()
-	_player:getBody():addLinearImpulse(
+	local velocity = m_player:getBody():getLinearVelocity()
+	m_player:getBody():addLinearImpulse(
 		Vector4(
 			(motionVelocity:x() - velocity:x()) * dT,
 			0,
@@ -93,35 +83,35 @@ function layerUpdate(stage, info)
 	-- Calculate player orientation.
 	if velocity:length() > 0.1 then
 
-		_playerDirection = velocity:normalized():mulf(0.1):add(_playerDirection:mulf(0.9))
-		_playerRotation = math.atan2(-_playerDirection:z(), _playerDirection:x()) + 3.142/2
+		m_playerDirection = velocity:normalized():mulf(0.1):add(m_playerDirection:mulf(0.9))
+		m_playerRotation = math.atan2(-m_playerDirection:z(), m_playerDirection:x()) + 3.142/2
 
 --		local rotation = math.atan2(-velocity:z(), velocity:x()) + 3.142/2
---		_playerRotation = _playerRotation * 0.9 + rotation * 0.1
+--		m_playerRotation = m_playerRotation * 0.9 + rotation * 0.1
 	end
 
 	-- Force angular velocity to be zero; don't want to tip over.
 	-- Also ensure orientation is fixed.
-	_player:getBody():setAngularVelocity(Vector4(0, 0, 0, 0))
-	local bodyTransform = _player:getBody():getTransform()
-	_player:getBody():setTransform(Transform(
+	m_player:getBody():setAngularVelocity(Vector4(0, 0, 0, 0))
+	local bodyTransform = m_player:getBody():getTransform()
+	m_player:getBody():setTransform(Transform(
 		bodyTransform:translation(),
-		Quaternion(_playerRotation, 0, 0)
+		Quaternion(m_playerRotation, 0, 0)
 	))
 
 	-- Update grid position from player's current position.
-	_playerPosition = _player:getTransform():translation()
-	if _playerPosition:x() < gridViewMinX then
-		_gridX = _gridX - 1
+	m_playerPosition = m_player:getTransform():translation()
+	if m_playerPosition:x() < gridViewMinX then
+		m_gridX = m_gridX - 1
 	end
-	if _playerPosition:x() > gridViewMaxX then
-		_gridX = _gridX + 1
+	if m_playerPosition:x() > gridViewMaxX then
+		m_gridX = m_gridX + 1
 	end
-	if _playerPosition:z() < gridViewMinZ then
-		_gridZ = _gridZ - 1
+	if m_playerPosition:z() < gridViewMinZ then
+		m_gridZ = m_gridZ - 1
 	end
-	if _playerPosition:z() > gridViewMaxZ then
-		_gridZ = _gridZ + 1
+	if m_playerPosition:z() > gridViewMaxZ then
+		m_gridZ = m_gridZ + 1
 	end
 end
 

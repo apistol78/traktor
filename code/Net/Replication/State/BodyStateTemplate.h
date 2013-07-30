@@ -21,7 +21,7 @@ class T_DLLCLASS BodyStateTemplate : public IValueTemplate
 	T_RTTI_CLASS;
 
 public:
-	BodyStateTemplate(float linearError = 8.0f, float angularError = 12.0f);
+	BodyStateTemplate(float linearError = 8.0f, float angularError = 24.0f);
 
 	virtual const TypeInfo& getValueType() const;
 

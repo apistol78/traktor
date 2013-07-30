@@ -129,7 +129,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 27, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 28, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_skipMips(0)
@@ -391,7 +391,11 @@ bool TextureOutputPipeline::buildOutput(
 	// Convert into linear gamma, do it before we're converting image
 	// format as it's possible source image has float format thus
 	// resulting in greater accuracy.
-	if (!textureOutput->m_linearGamma && std::abs(m_gamma - 1.0f) > FUZZY_EPSILON)
+	if (
+		!textureOutput->m_enableNormalMapCompression &&
+		!textureOutput->m_linearGamma &&
+		std::abs(m_gamma - 1.0f) > FUZZY_EPSILON
+	)
 	{
 		if (m_sRGB)
 			sRGB = true;
@@ -406,7 +410,7 @@ bool TextureOutputPipeline::buildOutput(
 	// Multiply with alpha.
 	if (textureOutput->m_premultiplyAlpha)
 	{
-		log::info << L"Premultiply with alpha..." << Endl;
+		log::info << L"Pre-multiply with alpha..." << Endl;
 		drawing::PremultiplyAlphaFilter preAlphaFilter;
 		image = image->applyFilter(&preAlphaFilter);
 	}
@@ -556,10 +560,10 @@ bool TextureOutputPipeline::buildOutput(
 
 		// Generate each mip level.
 		{
-			RefArray< ScaleTextureTask > tasks;
-			RefArray< Job > jobs;
+			//RefArray< ScaleTextureTask > tasks;
+			//RefArray< Job > jobs;
 
-			log::info << L"Executing mip generation task(s)..." << Endl;
+			//log::info << L"Executing mip generation task(s)..." << Endl;
 
 			// Estimate alpha coverage if desired.
 			float alphaCoverage = -1.0f;
@@ -585,7 +589,8 @@ bool TextureOutputPipeline::buildOutput(
 				int32_t mipWidth = std::max(width >> i, 1);
 				int32_t mipHeight = std::max(height >> i, 1);
 
-				log::info << L"Executing mip generation task " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
+				//log::info << L"Executing mip generation task " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
+				log::info << L"Generating mip " << i << L" (" << mipWidth << L"*" << mipHeight << L")..." << Endl;
 
 				// Create chain of image filters.
 				Ref< drawing::ChainFilter > taskFilters = new drawing::ChainFilter();
@@ -613,27 +618,32 @@ bool TextureOutputPipeline::buildOutput(
 				task->alphaCoverageDesired = alphaCoverage;
 				task->alphaCoverageRef = textureOutput->m_alphaCoverageReference;
 
-				Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
-				T_ASSERT (job);
+				//Ref< Job > job = JobManager::getInstance().add(makeFunctor(task.ptr(), &ScaleTextureTask::execute));
+				//T_ASSERT (job);
 
-				tasks.push_back(task);
-				jobs.push_back(job);
-			}
+				//tasks.push_back(task);
+				//jobs.push_back(job);
 
-			log::info << L"Collecting task(s)..." << Endl;
+				task->execute();
 
-			for (size_t i = 0; i < jobs.size(); ++i)
-			{
-				jobs[i]->wait();
-				jobs[i] = 0;
-
-				mipImages[i] = tasks[i]->output;
+				mipImages[i] = task->output;
 				T_ASSERT (mipImages[i]);
-
-				tasks[i] = 0;
 			}
 
-			log::info << L"All task(s) collected" << Endl;
+			//log::info << L"Collecting task(s)..." << Endl;
+
+			//for (size_t i = 0; i < jobs.size(); ++i)
+			//{
+			//	jobs[i]->wait();
+			//	jobs[i] = 0;
+
+			//	mipImages[i] = tasks[i]->output;
+			//	T_ASSERT (mipImages[i]);
+
+			//	tasks[i] = 0;
+			//}
+
+			//log::info << L"All task(s) collected" << Endl;
 		}
 
 		Ref< ICompressor > compressor;

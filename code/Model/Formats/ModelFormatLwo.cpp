@@ -216,9 +216,9 @@ bool createMaterials(const lwObject* lwo, Model* outModel, std::vector< std::str
 		}
 
 		material.setColor(Color4ub(
-			uint8_t(surface->color.rgb[0] * 255.0f),
-			uint8_t(surface->color.rgb[1] * 255.0f),
-			uint8_t(surface->color.rgb[2] * 255.0f),
+			uint8_t(std::pow(surface->color.rgb[0], 2.2f) * 255.0f),
+			uint8_t(std::pow(surface->color.rgb[1], 2.2f) * 255.0f),
+			uint8_t(std::pow(surface->color.rgb[2], 2.2f) * 255.0f),
 			uint8_t((1.0f - surface->transparency.val.val) * 255.0f)
 		));
 

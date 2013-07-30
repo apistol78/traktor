@@ -121,6 +121,12 @@ bool RenderTargetSetOpenGLES2::create(const RenderTargetSetCreateDesc& desc)
 			type = GL_UNSIGNED_BYTE;
 			break;
 
+		case TfR11G11B10F:
+			internalFormat = GL_RGBA;
+			format = GL_RGBA;
+			type = GL_UNSIGNED_BYTE;
+			break;
+
 #if defined(GL_HALF_FLOAT_OES)
 		case TfR16G16B16A16F:
 			internalFormat = GL_RGBA;

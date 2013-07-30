@@ -59,6 +59,8 @@ public:
 	
 	void bindPrimary();
 
+	GLuint getPrimaryDepth() const;
+
 private:
 	static ThreadLocal ms_contextStack;
 #if defined(TARGET_OS_IPHONE)
@@ -71,6 +73,7 @@ private:
 	static EGLConfig ms_config;
 	EGLSurface m_surface;
 	EGLContext m_context;
+	GLuint m_primaryDepth;
 #endif
 	Semaphore m_lock;
 	std::vector< IDeleteCallback* > m_deleteResources;

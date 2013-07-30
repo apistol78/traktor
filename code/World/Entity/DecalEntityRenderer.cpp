@@ -30,7 +30,7 @@ render::handle_t s_handleAge;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
 
-const uint32_t c_maxRenderDecals = 100;
+const uint32_t c_maxRenderDecals = 32;
 
 		}
 
@@ -153,8 +153,7 @@ void DecalEntityRenderer::flush(
 		DecalEntity* decal = m_decalEntities[i];
 		T_ASSERT (decal);
 
-		Transform transform;
-		decal->getTransform(transform);
+		const Transform& transform = decal->getTransform();
 
 		render::Shader* shader = decal->getShader();
 		T_ASSERT (shader);

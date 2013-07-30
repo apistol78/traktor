@@ -210,13 +210,6 @@ bool RenderViewOpenGLES2::begin(EyeType eye)
 		m_viewport.farZ
 	));
 
-	//glGetFramebufferAttachmentParameteriv(
-	//	GL_FRAMEBUFFER, 
-	//	GL_DEPTH_ATTACHMENT,
-	//	GL_FRAMEBUFFER_ATTACHMENT_OBJECT_NAME,
-	//	&m_primaryDepth
-	//);
-
 	return true;
 }
 
@@ -230,7 +223,7 @@ bool RenderViewOpenGLES2::begin(RenderTargetSet* renderTargetSet, int renderTarg
 {
 	RenderTargetSetOpenGLES2* rts = checked_type_cast< RenderTargetSetOpenGLES2* >(renderTargetSet);
 
-	if (!rts->bind(/*m_primaryDepth*/0, renderTarget))
+	if (!rts->bind(m_context->getPrimaryDepth(), renderTarget))
 		return false;
 	
 	RenderTargetStack s;

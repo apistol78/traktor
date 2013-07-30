@@ -102,7 +102,7 @@ bool JobQueue::wait(int32_t timeout)
 void JobQueue::stop()
 {
 	for (uint32_t i = 0; i < uint32_t(m_workerThreads.size()); ++i)
-		m_workerThreads[i]->stop(0);
+		m_workerThreads[i]->stop();
 }
 
 int32_t JobQueue::getPendingCount() const

@@ -415,6 +415,25 @@ void ContextOpenGLES2::bindPrimary()
 		getWidth(),
 		getHeight()
 	));
+
+#if defined(T_OPENGL_ES2_HAVE_EGL)
+	if (!m_primaryDepth)
+	{
+		T_OGL_SAFE(glGenRenderbuffers(1, &m_primaryDepth));
+		T_OGL_SAFE(glBindRenderbuffer(GL_RENDERBUFFER, m_primaryDepth));
+		T_OGL_SAFE(glRenderbufferStorage(
+			GL_RENDERBUFFER,
+			GL_DEPTH_COMPONENT16,
+			getWidth(),
+			getHeight()
+		));
+	}
+#endif
+}
+
+GLuint ContextOpenGLES2::getPrimaryDepth() const
+{
+	return m_primaryDepth;
 }
 
 #if defined(TARGET_OS_IPHONE)
@@ -426,6 +445,7 @@ ContextOpenGLES2::ContextOpenGLES2(EAGLContextWrapper* context)
 ContextOpenGLES2::ContextOpenGLES2(EGLSurface surface, EGLContext context)
 :	m_surface(surface)
 ,	m_context(context)
+,	m_primaryDepth(0)
 {
 }
 #endif

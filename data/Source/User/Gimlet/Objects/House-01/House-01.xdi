@@ -1,17 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.mesh.MeshAsset" version="3">
+<object type="traktor.mesh.MeshAsset" version="6">
 	<fileName>User/Gimlet/Objects/House-01.lwo</fileName>
 	<meshType>MtStatic</meshType>
-	<materialShaders>
-		<item>
-			<first>Roof</first>
-			<second>{B383C6A3-875B-1C40-9B5E-D1A0B5B38957}</second>
-		</item>
-		<item>
-			<first>Wall</first>
-			<second>{D53EC18C-E635-9349-A628-B353888C0706}</second>
-		</item>
-	</materialShaders>
+	<materialTemplates/>
+	<materialShaders/>
+	<materialTextures/>
 	<bakeOcclusion>false</bakeOcclusion>
 	<cullDistantFaces>false</cullDistantFaces>
+	<generateOccluder>false</generateOccluder>
 </object>
