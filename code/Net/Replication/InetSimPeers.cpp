@@ -37,7 +37,7 @@ bool InetSimPeers::update()
 
 	while (!m_sendQueue.empty())
 	{
-		SendQueueItem* s = m_sendQueue.front();
+		QueueItem* s = m_sendQueue.front();
 		T_ASSERT (s);
 
 		if (s->time + 0.2 > m_noisyTime)
@@ -54,7 +54,29 @@ bool InetSimPeers::update()
 		delete s;
 	}
 
-	m_noisyTime += m_timer.getDeltaTime() + (m_random.nextDouble() * 0.01 - 0.005);
+	for (;;)
+	{
+		handle_t handle;
+		uint8_t data[2048];
+		int32_t size = sizeof(data);
+
+		int32_t result = m_peers->receive(data, size, handle);
+		if (result <= 0)
+			break;
+
+		QueueItem* r = new QueueItem();
+		r->time = m_timer.getElapsedTime();
+		r->handle = handle;
+		r->size = size;
+		r->reliable = true;
+
+		std::memcpy(r->data, data, size);
+
+		m_receiveQueue.push_back(r);
+	}
+
+	//m_noisyTime += m_timer.getDeltaTime() + (m_random.nextDouble() * 0.01 - 0.005);
+	m_noisyTime = m_timer.getElapsedTime();
 	return true;
 }
 
@@ -95,16 +117,22 @@ uint32_t InetSimPeers::getPeers(std::vector< PeerInfo >& outPeers) const
 
 int32_t InetSimPeers::receive(void* data, int32_t size, handle_t& outFromHandle)
 {
-	for (;;)
-	{
-		int32_t result = m_peers->receive(data, size, outFromHandle);
-		if (result <= 0)
-			return result;
+	if (m_receiveQueue.empty())
+		return 0;
 
-		uint8_t state = m_state[outFromHandle];
-		if ((state & 0x02) == 0x00)
-			return result;
-	}
+	QueueItem* r = m_receiveQueue.front();
+	if (r->time + 0.2 > m_noisyTime)
+		return 0;
+
+	size = std::min(size, r->size);
+
+	std::memcpy(data, r->data, size);
+	outFromHandle = r->handle;
+
+	delete r;
+	m_receiveQueue.pop_front();
+
+	return size;
 }
 
 bool InetSimPeers::send(handle_t handle, const void* data, int32_t size, bool reliable)
@@ -116,7 +144,7 @@ bool InetSimPeers::send(handle_t handle, const void* data, int32_t size, bool re
 	if (m_random.nextDouble() <= 0.01)
 		return true;
 
-	SendQueueItem* s = new SendQueueItem();
+	QueueItem* s = new QueueItem();
 	s->time = m_timer.getElapsedTime();
 	s->handle = handle;
 	s->size = size;

@@ -35,10 +35,8 @@ const int32_t c_timeUntilTxMin = 60;
 const int32_t c_timeUntilIAm = 1000;
 const int32_t c_timeUntilPing = 2000;
 const float c_errorStateThreshold = 0.2f;
-const int32_t c_remoteOffsetThreshold = 100;
-const int32_t c_remoteOffsetLimit = 50;
 const uint32_t c_maxPendingPing = 16;
-const uint32_t c_maxErrorCount = 64;
+const uint32_t c_maxErrorCount = 128;
 const uint32_t c_maxDeltaStates = 4;
 
 Timer g_timer;
@@ -391,6 +389,15 @@ void Replicator::setGhostStateTemplate(handle_t peerHandle, const StateTemplate*
 	}
 	else
 		T_REPLICATOR_DEBUG(L"ERROR: Trying to get ghost state of unknown peer handle " << peerHandle);
+}
+
+const StateTemplate* Replicator::getGhostStateTemplate(handle_t peerHandle) const
+{
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	if (i != m_peers.end() && i->second.ghost)
+		return i->second.ghost->stateTemplate;
+	else
+		return 0;
 }
 
 float Replicator::getGhostStateTime(handle_t peerHandle) const
@@ -935,13 +942,10 @@ void Replicator::receiveMessages()
 				// Check network time.
 				if (m_replicatorPeers->getPrimaryPeerHandle() == handle)
 				{
-					int32_t offset = msg.time + peer.latencyReversed - m_time;
+					int32_t offset = msg.time + peer.latencyMedian - m_time;
 					int32_t adjust = offset < 30 ? offset / 4 : offset / 2;
-					if (abs(adjust) > 1)
-					{
-						T_REPLICATOR_DEBUG(L"OK: Adjusting time with " << adjust << L" ms");
+					if (abs(adjust) > 2)
 						adjustTime(adjust);
-					}
 				}
 
 				if (peer.ghost->stateTemplate)
@@ -968,12 +972,25 @@ void Replicator::receiveMessages()
 				// Put an input event to notify listeners about new state.
 				if (peer.ghost && peer.ghost->S0)
 				{
-					EventIn evt;
-					evt.time = peer.ghost->T0;
-					evt.eventId = IListener::ReState;
-					evt.handle = handle;
-					evt.object = peer.ghost->S0;
-					m_eventsIn.push_back(evt);
+					std::list< EventIn >::iterator it = m_eventsIn.begin();
+					for (; it != m_eventsIn.end(); ++it)
+					{
+						if (it->eventId == IListener::ReState && it->handle == handle)
+						{
+							it->time = peer.ghost->T0;
+							it->object = peer.ghost->S0;
+							break;
+						}
+					}
+					if (it == m_eventsIn.end())
+					{
+						EventIn evt;
+						evt.time = peer.ghost->T0;
+						evt.eventId = IListener::ReState;
+						evt.handle = handle;
+						evt.object = peer.ghost->S0;
+						m_eventsIn.push_back(evt);
+					}
 				}
 			}
 			else
@@ -1120,21 +1137,21 @@ void Replicator::adjustTime(int32_t offset)
 {
 	m_time += offset;
 
-	// Also adjust all old states as well.
-	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	{
-		Ghost* ghost = i->second.ghost;
-		if (!ghost)
-			continue;
+	//// Also adjust all old states as well.
+	//for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	//{
+	//	Ghost* ghost = i->second.ghost;
+	//	if (!ghost)
+	//		continue;
 
-		ghost->Tn2 += offset;
-		ghost->Tn1 += offset;
-		ghost->T0 += offset;
-	}
+	//	ghost->Tn2 += offset;
+	//	ghost->Tn1 += offset;
+	//	ghost->T0 += offset;
+	//}
 
-	// Adjust on all queued events also.
-	for (std::list< EventIn >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
-		i->time += offset;
+	//// Adjust on all queued events also.
+	//for (std::list< EventIn >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
+	//	i->time += offset;
 }
 
 bool Replicator::send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)

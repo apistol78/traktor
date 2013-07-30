@@ -42,6 +42,8 @@ public:
 
 	virtual void update(const UpdateParams& update);
 
+	const Transform& getTransform() const { return m_transform; }
+
 	float getSize() const { return m_size; }
 
 	float getThickness() const { return m_thickness; }

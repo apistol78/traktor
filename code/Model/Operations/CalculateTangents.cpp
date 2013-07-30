@@ -106,14 +106,23 @@ bool CalculateTangents::apply(Model& model) const
 		ep[1] = ep[1].normalized();
 
 		TangentBase& tb = polygonTangentBases[i];
-		tb.normal = cross(ep[0], ep[1]);
-		tb.tangent = cross(Vector4(0.0f, 1.0f, 0.0f, 0.0f), tb.normal);
-		tb.binormal = cross(tb.tangent, tb.normal);
+		tb.normal = cross(ep[0], ep[1]).normalized();
+
+		if (abs(dot3(Vector4(0.0f, 1.0f, 0.0f, 0.0f), tb.normal)) < Scalar(1.0f - FUZZY_EPSILON))
+			tb.tangent = cross(Vector4(0.0f, 1.0f, 0.0f, 0.0f), tb.normal).normalized();
+		else
+			tb.tangent = cross(Vector4(1.0f, 0.0f, 0.0f, 0.0f), tb.normal).normalized();
+
+		tb.binormal = cross(tb.tangent, tb.normal).normalized();
 
 		T_ASSERT (tb.normal.length() > FUZZY_EPSILON);
 		tb.normal = tb.normal.normalized();
 
-		if (v[0]->getTexCoord(0) != c_InvalidIndex && v[1]->getTexCoord(0) != c_InvalidIndex && v[2]->getTexCoord(0) != c_InvalidIndex)
+		if (
+			v[0]->getTexCoord(0) != c_InvalidIndex &&
+			v[1]->getTexCoord(0) != c_InvalidIndex &&
+			v[2]->getTexCoord(0) != c_InvalidIndex
+		)
 		{
 			Vector2 tc[] =
 			{
@@ -161,7 +170,7 @@ bool CalculateTangents::apply(Model& model) const
 		log::warning << L"Degenerate " << degenerated << L" polygon(s) found in model" << Endl;
 
 	if (invalid)
-		log::warning << L"Invalid tangent space vectors; " << invalid << L" invalid texture coordinate(s)" << Endl;
+		log::warning << L"Invalid tangent space vectors; " << invalid << L" invalid UV base(s) of " << uint32_t(polygons.size()) << Endl;
 
 	// Normalize polygon tangent bases.
 	for (AlignedVector< TangentBase >::iterator i = polygonTangentBases.begin(); i != polygonTangentBases.end(); ++i)
@@ -183,9 +192,12 @@ bool CalculateTangents::apply(Model& model) const
 		const std::vector< uint32_t >& vertices = polygon.getVertices();
 		for (std::vector< uint32_t >::const_iterator j = vertices.begin(); j != vertices.end(); ++j)
 		{
-			vertexTangentBases[*j].normal += polygonTangentBases[i].normal;
-			vertexTangentBases[*j].tangent += polygonTangentBases[i].tangent;
-			vertexTangentBases[*j].binormal += polygonTangentBases[i].binormal;
+			if (polygonTangentBases[i].normal.length() > FUZZY_EPSILON)
+				vertexTangentBases[*j].normal += polygonTangentBases[i].normal;
+			if (polygonTangentBases[i].tangent.length() > FUZZY_EPSILON)
+				vertexTangentBases[*j].tangent += polygonTangentBases[i].tangent;
+			if (polygonTangentBases[i].binormal.length() > FUZZY_EPSILON)
+				vertexTangentBases[*j].binormal += polygonTangentBases[i].binormal;
 		}
 	}
 

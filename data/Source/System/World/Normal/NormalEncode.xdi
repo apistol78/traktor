@@ -4,16 +4,16 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>2189</first>
-				<second>467</second>
+				<first>2567</first>
+				<second>480</second>
 			</position>
 			<name>Output</name>
 		</item>
 		<item type="traktor.render.MulAdd">
 			<comment/>
 			<position>
-				<first>1997</first>
-				<second>477</second>
+				<first>2375</first>
+				<second>490</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -121,10 +121,17 @@
 		<item type="traktor.render.Scalar">
 			<comment/>
 			<position>
-				<first>1870</first>
-				<second>529</second>
+				<first>2248</first>
+				<second>542</second>
 			</position>
 			<value>0.5</value>
+		</item>
+		<item type="traktor.render.Platform">
+			<comment/>
+			<position>
+				<first>2050</first>
+				<second>420</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -300,7 +307,17 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[2]"/>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[15]"/>
 				<name>Output</name>
 			</source>
 			<destination>
@@ -310,12 +327,22 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
+				<node ref="/object/nodes/item[7]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[3]"/>
-				<name>Input1</name>
+				<node ref="/object/nodes/item[15]"/>
+				<name>OpenGL ES2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Other</name>
 			</destination>
 		</item>
 	</edges>

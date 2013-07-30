@@ -1,20 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.physics.RigidEntityData">
+<object type="traktor.physics.RigidEntityData" version="1">
 	<name>Bucket</name>
 	<transform>
 		<translation>0, 0, 0, 0</translation>
 		<rotation>0, 0, 0, 1</rotation>
 	</transform>
 	<bodyDesc type="traktor.physics.DynamicBodyDesc" version="5">
-		<shape type="traktor.physics.CylinderShapeDesc" version="1">
+		<shape type="traktor.physics.CylinderShapeDesc" version="3">
 			<localTransform>
-				<translation>0, 0.168, 0, 0</translation>
+				<translation>0, 0.21, 0, 0</translation>
 				<rotation>0.707107, 0, 0, 0.707107</rotation>
 			</localTransform>
 			<collisionGroup>1</collisionGroup>
 			<collisionMask>1</collisionMask>
-			<radius>0.125</radius>
-			<length>0.32</length>
+			<material>0</material>
+			<radius>0.2</radius>
+			<length>0.42</length>
 		</shape>
 		<mass>0.1</mass>
 		<autoDeactivate>true</autoDeactivate>
@@ -25,12 +26,14 @@
 		<linearThreshold>0.8</linearThreshold>
 		<angularThreshold>1</angularThreshold>
 	</bodyDesc>
-	<entityData type="traktor.mesh.MeshEntityData">
+	<entityData type="traktor.mesh.MeshEntityData" version="1">
 		<name>Bucket mesh</name>
 		<transform>
 			<translation>0, 0, 0, 0</translation>
 			<rotation>0, 0, 0, 1</rotation>
 		</transform>
 		<mesh>{F7F05D9E-EF86-294E-BCEC-57C1608943BB}</mesh>
+		<screenSpaceCulling>true</screenSpaceCulling>
 	</entityData>
+	<eventCollide/>
 </object>

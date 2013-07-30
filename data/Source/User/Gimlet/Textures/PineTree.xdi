@@ -1,19 +1,25 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.TextureAsset" version="3">
+<object type="traktor.render.TextureAsset" version="9">
 	<fileName>User/Gimlet/Textures/PineTree.png</fileName>
+	<textureFormat>TfInvalid</textureFormat>
 	<generateNormalMap>false</generateNormalMap>
 	<scaleDepth>0</scaleDepth>
 	<generateMips>true</generateMips>
 	<keepZeroAlpha>false</keepZeroAlpha>
-	<isCubeMap>false</isCubeMap>
+	<textureType>Tt2D</textureType>
 	<hasAlpha>false</hasAlpha>
 	<ignoreAlpha>false</ignoreAlpha>
+	<premultiplyAlpha>false</premultiplyAlpha>
 	<scaleImage>true</scaleImage>
 	<scaleWidth>256</scaleWidth>
 	<scaleHeight>256</scaleHeight>
+	<flipX>false</flipX>
+	<flipY>false</flipY>
 	<enableCompression>true</enableCompression>
 	<enableNormalMapCompression>false</enableNormalMapCompression>
 	<inverseNormalMapY>false</inverseNormalMapY>
-	<linearGamma>true</linearGamma>
+	<linearGamma>false</linearGamma>
 	<generateSphereMap>false</generateSphereMap>
+	<preserveAlphaCoverage>false</preserveAlphaCoverage>
+	<alphaCoverageReference>0.5</alphaCoverageReference>
 </object>

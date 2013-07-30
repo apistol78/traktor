@@ -117,7 +117,7 @@ handle_t getParameterHandle(const std::wstring& name)
 
 std::wstring getParameterNameFromTextureReferenceIndex(int32_t index)
 {
-	return std::wstring(L"__texRef") + toString(index);
+	return std::wstring(L"linkage_texRef") + toString(index);
 }
 
 handle_t getParameterHandleFromTextureReferenceIndex(int32_t index)

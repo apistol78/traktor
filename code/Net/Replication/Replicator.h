@@ -210,12 +210,11 @@ public:
 	 */
 	void setGhostStateTemplate(handle_t peerHandle, const StateTemplate* stateTemplate);
 
+	const StateTemplate* getGhostStateTemplate(handle_t peerHandle) const;
 
 	float getGhostStateTime(handle_t peerHandle) const;
 
-
 	Ref< const State > getGhostState(handle_t peerHandle, float T) const;
-
 
 	/*! \brief Get loopback state.
 	 *

@@ -129,6 +129,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getGhostObject", &net::Replicator::getGhostObject);
 	classReplicator->addMethod("setGhostOrigin", &net::Replicator::setGhostOrigin);
 	classReplicator->addMethod("setGhostStateTemplate", &net::Replicator::setGhostStateTemplate);
+	classReplicator->addMethod("getGhostStateTemplate", &net::Replicator::getGhostStateTemplate);
 	classReplicator->addMethod("getGhostStateTime", &net::Replicator::getGhostStateTime);
 	classReplicator->addMethod("getGhostState", &net::Replicator::getGhostState);
 	classReplicator->addMethod("getLoopBackState", &net::Replicator::getLoopBackState);

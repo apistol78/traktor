@@ -86,28 +86,6 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	physics::BodyState v = *checked_type_cast< const BodyStateValue* >(V);
 	const Transform& T = v.getTransform();
 
-#if 0
-
-	float e[4];
-
-	T.translation().storeUnaligned(e);
-	for (uint32_t i = 0; i < 3; ++i)
-		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
-
-	T.rotation().toAxisAngle().storeUnaligned(e);
-	for (uint32_t i = 0; i < 3; ++i)
-		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
-
-	v.getLinearVelocity().storeUnaligned(e);
-	for (uint32_t i = 0; i < 3; ++i)
-		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
-
-	v.getAngularVelocity().storeUnaligned(e);
-	for (uint32_t i = 0; i < 3; ++i)
-		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
-
-#else
-
 	float e[4];
 	uint8_t u[3];
 
@@ -130,107 +108,45 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 
 	{
 		Vector4 linearVelocity = v.getLinearVelocity().xyz0();
-		float ln = linearVelocity.length();
-		if (abs(ln) > 1.0f/512.0f)
-		{
-			// 1
-			writer.writeBit(true);
+		Scalar ln = linearVelocity.length();
 
-			linearVelocity /= Scalar(ln);
+		if (ln > FUZZY_EPSILON)
+			linearVelocity /= ln;
 
-			// 3 * 8
-			packUnit(linearVelocity, u);
-			writer.writeUnsigned(8, u[0]);
-			writer.writeUnsigned(8, u[1]);
-			writer.writeUnsigned(8, u[2]);
+		// 3 * 8
+		packUnit(linearVelocity, u);
+		writer.writeUnsigned(8, u[0]);
+		writer.writeUnsigned(8, u[1]);
+		writer.writeUnsigned(8, u[2]);
 
-			// 16
-			uint32_t uln = std::min< uint32_t >(uint32_t(ln * 512.0f), 65535);
-			writer.writeUnsigned(16, uln);
-		}
-		else
-			// 1
-			writer.writeBit(false);
+		// 32		
+		e[0] = ln;
+		writer.writeUnsigned(32, *(uint32_t*)&e[0]);
 	}
 
 	{
 		Vector4 angularVelocity = v.getAngularVelocity().xyz0();
-		float ln = angularVelocity.length();
-		if (abs(ln) > 1.0f/512.0f)
-		{
-			// 1
-			writer.writeBit(true);
+		Scalar ln = angularVelocity.length();
 
-			angularVelocity /= Scalar(ln);
+		if (ln > FUZZY_EPSILON)
+			angularVelocity /= ln;
 
-			// 3 * 8
-			packUnit(angularVelocity, u);
-			writer.writeUnsigned(8, u[0]);
-			writer.writeUnsigned(8, u[1]);
-			writer.writeUnsigned(8, u[2]);
+		// 3 * 8
+		packUnit(angularVelocity, u);
+		writer.writeUnsigned(8, u[0]);
+		writer.writeUnsigned(8, u[1]);
+		writer.writeUnsigned(8, u[2]);
 
-			// 16
-			uint32_t uln = std::min< uint32_t >(uint32_t(ln * 512.0f), 65535);
-			writer.writeUnsigned(16, uln);
-		}
-		else
-			// 1
-			writer.writeBit(false);
+		// 32		
+		e[0] = ln;
+		writer.writeUnsigned(32, *(uint32_t*)&e[0]);
 	}
-
-#endif
 }
 
 Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 {
 	Vector4 linearVelocity, angularVelocity;
 	Transform T;
-
-#if 0
-
-	uint32_t ut[3], ur[3];
-	uint32_t ulv[3], uav[3];
-
-	for (uint32_t i = 0; i < 3; ++i)
-		ut[i] = reader.readUnsigned(32);
-	for (uint32_t i = 0; i < 3; ++i)
-		ur[i] = reader.readUnsigned(32);
-	for (uint32_t i = 0; i < 3; ++i)
-		ulv[i] = reader.readUnsigned(32);
-	for (uint32_t i = 0; i < 3; ++i)
-		uav[i] = reader.readUnsigned(32);
-
-	T = Transform(
-		Vector4(
-			*(float*)&ut[0],
-			*(float*)&ut[1],
-			*(float*)&ut[2],
-			1.0f
-		),
-		Quaternion::fromAxisAngle(
-			Vector4(
-				*(float*)&ur[0],
-				*(float*)&ur[1],
-				*(float*)&ur[2],
-				0.0f
-			)
-		).normalized()
-	);
-
-	linearVelocity = Vector4(
-		*(float*)&ulv[0],
-		*(float*)&ulv[1],
-		*(float*)&ulv[2],
-		0.0f
-	);
-	angularVelocity = Vector4(
-		*(float*)&uav[0],
-		*(float*)&uav[1],
-		*(float*)&uav[2],
-		0.0f
-	);
-
-#else
 
 	uint32_t uf[3];
 	uint8_t u[3];
@@ -254,33 +170,21 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 		Quaternion::fromAxisAngle(R, *(float*)&ua).normalized()
 	);
 
-	linearVelocity = Vector4::zero();
-	if (reader.readBit())
-	{
-		uint8_t u[3];
-		u[0] = reader.readUnsigned(8);
-		u[1] = reader.readUnsigned(8);
-		u[2] = reader.readUnsigned(8);
-		linearVelocity = unpackUnit(u);
+	u[0] = reader.readUnsigned(8);
+	u[1] = reader.readUnsigned(8);
+	u[2] = reader.readUnsigned(8);
+	linearVelocity = unpackUnit(u);
 
-		float ln2 = reader.readUnsigned(16) / 512.0f;
-		linearVelocity *= Scalar(ln2);
-	}
+	uint32_t ulnv = reader.readUnsigned(32);
+	linearVelocity *= Scalar(*(float*)&ulnv);
 
-	angularVelocity = Vector4::zero();
-	if (reader.readBit())
-	{
-		uint8_t u[3];
-		u[0] = reader.readUnsigned(8);
-		u[1] = reader.readUnsigned(8);
-		u[2] = reader.readUnsigned(8);
-		angularVelocity = unpackUnit(u);
+	u[0] = reader.readUnsigned(8);
+	u[1] = reader.readUnsigned(8);
+	u[2] = reader.readUnsigned(8);
+	angularVelocity = unpackUnit(u);
 
-		float ln2 = reader.readUnsigned(16) / 512.0f;
-		angularVelocity *= Scalar(ln2);
-	}
-
-#endif
+	uint32_t ulna = reader.readUnsigned(32);
+	angularVelocity *= Scalar(*(float*)&ulna);
 
 	physics::BodyState S;
 	S.setTransform(T);
