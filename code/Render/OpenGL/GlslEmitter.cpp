@@ -635,18 +635,55 @@ bool emitMatrixOut(GlslContext& cx, MatrixOut* node)
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
+
 	GlslVariable* xaxis = cx.emitOutput(node, L"XAxis", GtFloat4);
 	if (xaxis)
-		assign(f, xaxis) << in->getName() << L"._11_21_31_41;" << Endl;
+	{
+		assign(f, xaxis) <<
+			L"vec4(" << 
+				in->getName() << L"[0][0], " <<
+				in->getName() << L"[1][0], " <<
+				in->getName() << L"[2][0], " <<
+				in->getName() << L"[3][0]" <<
+			L");" << Endl;
+	}
+
 	GlslVariable* yaxis = cx.emitOutput(node, L"YAxis", GtFloat4);
 	if (yaxis)
-		assign(f, yaxis) << in->getName() << L"._12_22_32_42;" << Endl;
+	{
+		assign(f, yaxis) <<
+			L"vec4(" << 
+				in->getName() << L"[0][1], " <<
+				in->getName() << L"[1][1], " <<
+				in->getName() << L"[2][1], " <<
+				in->getName() << L"[3][1]" <<
+			L");" << Endl;
+	}
+
 	GlslVariable* zaxis = cx.emitOutput(node, L"ZAxis", GtFloat4);
 	if (zaxis)
-		assign(f, zaxis) << in->getName() << L"._13_23_33_43;" << Endl;
+	{
+		assign(f, zaxis) <<
+			L"vec4(" << 
+				in->getName() << L"[0][2], " <<
+				in->getName() << L"[1][2], " <<
+				in->getName() << L"[2][2], " <<
+				in->getName() << L"[3][2]" <<
+			L");" << Endl;
+	}
+
 	GlslVariable* translate = cx.emitOutput(node, L"Translate", GtFloat4);
 	if (translate)
-		assign(f, translate) << in->getName() << L"._14_24_34_44;" << Endl;
+	{
+		assign(f, translate) <<
+			L"vec4(" << 
+				in->getName() << L"[0][3], " <<
+				in->getName() << L"[1][3], " <<
+				in->getName() << L"[2][3], " <<
+				in->getName() << L"[3][3]" <<
+			L");" << Endl;
+	}
+
 	return true;
 }
 

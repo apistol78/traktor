@@ -53,6 +53,14 @@
 					<value>true</value>
 				</second>
 			</item>
+			<item>
+				<first>ScriptPipeline.PreprocessorDefinitions</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>PS3</item>
+					</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

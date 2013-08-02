@@ -1,20 +1,21 @@
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Mesh/Instance/InstanceMesh.h"
+#include "Render/Shader.h"
+#include "Resource/IResourceManager.h"
+#include "Resource/Member.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterData.h"
 #include "Spray/SourceData.h"
 #include "Spray/ModifierData.h"
-#include "Render/Shader.h"
-#include "Resource/IResourceManager.h"
-#include "Resource/Member.h"
 
 namespace traktor
 {
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 2, EmitterData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 3, EmitterData, ISerializable)
 
 EmitterData::EmitterData()
 :	m_middleAge(0.2f)
@@ -32,7 +33,12 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 		return 0;
 
 	resource::Proxy< render::Shader > shader;
-	if (!resourceManager->bind(m_shader, shader))
+	resource::Proxy< mesh::InstanceMesh > mesh;
+
+	if (
+		!resourceManager->bind(m_shader, shader) &&
+		!resourceManager->bind(m_mesh, mesh)
+	)
 		return 0;
 
 	Ref< Source > source = m_source->createSource(resourceManager);
@@ -51,6 +57,7 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 		source,
 		modifiers,
 		shader,
+		mesh,
 		m_middleAge,
 		m_cullNearDistance,
 		m_fadeNearRange,
@@ -65,6 +72,10 @@ void EmitterData::serialize(ISerializer& s)
 	s >> MemberRef< SourceData >(L"source", m_source);
 	s >> MemberRefArray< ModifierData >(L"modifiers", m_modifiers);
 	s >> resource::Member< render::Shader >(L"shader", m_shader);
+
+	if (s.getVersion() >= 3)
+		s >> resource::Member< mesh::InstanceMesh >(L"mesh", m_mesh);
+
 	s >> Member< float >(L"middleAge", m_middleAge);
 	s >> Member< float >(L"cullNearDistance", m_cullNearDistance);
 	s >> Member< float >(L"fadeNearRange", m_fadeNearRange);

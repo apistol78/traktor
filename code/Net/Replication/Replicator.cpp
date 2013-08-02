@@ -108,6 +108,7 @@ bool Replicator::create(IReplicatorPeers* replicatorPeers)
 		Peer& peer = m_peers[i->handle];
 		peer.state = PsInitial;
 		peer.name = i->name;
+		peer.endSite = i->endSite;
 		peer.precursor = true;
 	}
 
@@ -257,6 +258,12 @@ std::wstring Replicator::getPeerName(handle_t peerHandle) const
 {
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
 	return i != m_peers.end() ? i->second.name : L"";
+}
+
+Object* Replicator::getPeerEndSite(handle_t peerHandle) const
+{
+	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
+	return i != m_peers.end() ? i->second.endSite : 0;
 }
 
 uint8_t Replicator::getPeerStatus(handle_t peerHandle) const
@@ -509,6 +516,7 @@ void Replicator::updatePeers(int32_t dT)
 		if (peer.state == PsInitial)
 		{
 			peer.name = i->name;
+			peer.endSite = i->endSite;
 
 			if ((peer.timeUntilTx -= dT) <= 0)
 			{

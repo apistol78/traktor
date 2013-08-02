@@ -99,7 +99,7 @@ CFArrayRef getValidDisplayModes()
 			continue;
 			
 		int32_t bitsPerPixel = getDictionaryLong(mode, kCGDisplayBitsPerPixel);
-		if (bitsPerPixel < 15)
+		if (bitsPerPixel < 24)
 			continue;
 			
 		if (!CFDictionaryContainsKey(mode, kCGDisplayModeIsSafeForHardware))
@@ -291,12 +291,8 @@ void* cglwCreateWindow(const std::wstring& title, const DisplayMode& displayMode
 	// Present window.
 	[windowData->window makeKeyAndOrderFront: nil];
 	[windowData->window makeMainWindow];
-	
-	if (fullscreen)
-		CGDisplayHideCursor(kCGDirectMainDisplay);
-	
-	[pool release];	
-	
+
+	[pool release];
 	return windowData;
 }
 
@@ -304,6 +300,8 @@ void cglwDestroyWindow(void* windowHandle)
 {
 	WindowData* windowData = static_cast< WindowData* >(windowHandle);
 	
+	CGDisplayShowCursor(kCGDirectMainDisplay);
+
 	if (windowData->fullscreen)
 		CGDisplayRelease(kCGDirectMainDisplay);
 	
@@ -340,8 +338,6 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 				displayMode.height
 			);
 			[windowData->delegate resizedSinceLast];
-
-			CGDisplayHideCursor(kCGDirectMainDisplay);
 		}
 		else
 		{
@@ -361,8 +357,6 @@ bool cglwModifyWindow(void* windowHandle, const DisplayMode& displayMode, bool f
 			[windowData->delegate resizedSinceLast];
 
 			[windowData->window center];
-			
-			CGDisplayShowCursor(kCGDirectMainDisplay);
 		}
 		
 		windowData->fullscreen = fullscreen;
@@ -418,6 +412,14 @@ bool cglwIsActive(void* windowHandle)
 		return false;
 
 	return true;
+}
+
+void cglwSetCursorVisible(void* windowHandle, bool visible)
+{
+	if (visible)
+		CGDisplayShowCursor(kCGDirectMainDisplay);
+	else
+		CGDisplayHideCursor(kCGDirectMainDisplay);
 }
 
 bool cglwUpdateWindow(void* windowHandle, RenderEvent& outEvent)

@@ -37,6 +37,20 @@ bool SyntaxLanguageLua::consume(const std::wstring& text, State& outState, int& 
 		}
 	}
 
+	// Preprocessor
+	if (text[0] == L'#')
+	{
+		outState = StPreprocessor;
+		outConsumedChars = 1;
+		for (int i = 1; i < ln; ++i)
+		{
+			if (text[i] == L'\n' || text[i] == L'\r')
+				break;
+			++outConsumedChars;
+		}
+		return true;
+	}
+
 	// String
 	if (text[0] == L'\"')
 	{

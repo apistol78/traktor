@@ -18,6 +18,7 @@
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectInstance.h"
 #include "Spray/Emitter.h"
+#include "Spray/MeshRenderer.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/TrailRenderer.h"
 #include "Spray/Editor/BoxSourceRenderer.h"
@@ -125,6 +126,7 @@ bool EffectPreviewControl::create(
 	}
 
 	m_pointRenderer = new PointRenderer(renderSystem, 50.0f, 100.0f);
+	m_meshRenderer = new MeshRenderer();
 	m_trailRenderer = new TrailRenderer(renderSystem);
 
 	addButtonDownEventHandler(ui::createMethodHandler(this, &EffectPreviewControl::eventButtonDown));
@@ -153,6 +155,7 @@ void EffectPreviewControl::destroy()
 
 	safeDestroy(m_primitiveRenderer);
 	safeDestroy(m_trailRenderer);
+	safeDestroy(m_meshRenderer);
 	safeDestroy(m_pointRenderer);
 
 	if (m_renderView)
@@ -449,6 +452,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		m_effectInstance->synchronize();
 		m_effectInstance->render(
 			m_pointRenderer,
+			m_meshRenderer,
 			m_trailRenderer,
 			Transform::identity(),
 			cameraPosition,
@@ -469,10 +473,10 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		world::Light globalLight;
 		globalLight.type = world::LtDirectional;
 		globalLight.position = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
-		globalLight.direction = Vector4(0.0f, 0.0f, 1.0f, 0.0f);
+		globalLight.direction = Vector4(0.0f, -1.0f, 1.0f, 0.0f).normalized();
 		globalLight.sunColor = Vector4(1.0f, 1.0f, 1.0f, 1.0f);
-		globalLight.baseColor = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
-		globalLight.shadowColor = Vector4(0.0f, 0.0f, 0.0f, 1.0f);
+		globalLight.baseColor = Vector4(0.75f, 0.75f, 0.75f, 1.0f);
+		globalLight.shadowColor = Vector4(0.5f, 0.5f, 0.5f, 1.0f);
 		globalLight.range = Scalar(0.0f);
 		worldRenderView.addLight(globalLight);
 
@@ -484,6 +488,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		);
 
 		m_pointRenderer->flush(m_renderContext, defaultPass);
+		m_meshRenderer->flush(m_renderContext, defaultPass);
 		m_trailRenderer->flush(m_renderContext, defaultPass);
 
 		m_renderContext->render(m_renderView, render::RpAll, 0);

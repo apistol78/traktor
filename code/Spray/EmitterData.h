@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace mesh
+	{
+
+class InstanceMesh;
+
+	}
+
 	namespace resource
 	{
 
@@ -54,10 +61,13 @@ public:
 
 	const resource::Id< render::Shader >& getShader() const { return m_shader; }
 
+	const resource::Id< mesh::InstanceMesh >& getMesh() const { return m_mesh; }
+
 private:
 	Ref< SourceData > m_source;
 	RefArray< ModifierData > m_modifiers;
 	resource::Id< render::Shader > m_shader;
+	resource::Id< mesh::InstanceMesh > m_mesh;
 	float m_middleAge;
 	float m_cullNearDistance;
 	float m_fadeNearRange;

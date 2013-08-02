@@ -54,6 +54,7 @@ private:
 	int32_t m_attributeType;
 	int32_t m_attributeKeyword;
 	int32_t m_attributeSpecial;
+	int32_t m_attributePreprocessor;
 	int32_t m_attributeError;
 
 	void eventChange(Event* event);

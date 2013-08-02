@@ -57,6 +57,7 @@ class SoundSystem;
 
 class Effect;
 class EffectInstance;
+class MeshRenderer;
 class PointRenderer;
 class SourceRenderer;
 class TrailRenderer;
@@ -109,6 +110,7 @@ private:
 	Ref< sound::SoundSystem > m_soundSystem;
 	Ref< sound::SoundPlayer > m_soundPlayer;
 	Ref< PointRenderer > m_pointRenderer;
+	Ref< MeshRenderer > m_meshRenderer;
 	Ref< TrailRenderer > m_trailRenderer;
 	Ref< Effect > m_effect;
 	Ref< EffectInstance > m_effectInstance;

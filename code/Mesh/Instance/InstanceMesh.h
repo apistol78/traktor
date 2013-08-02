@@ -75,6 +75,8 @@ public:
 	const Aabb3& getBoundingBox() const;
 
 	bool supportTechnique(render::handle_t technique) const;
+
+	void getTechniques(std::set< render::handle_t >& outHandles) const;
 	
 	void precull(
 		world::IWorldCulling* worldCulling,

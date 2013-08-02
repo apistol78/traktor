@@ -11,7 +11,9 @@ bool isInputAllowed();
 bool getMouseRange(float& outMaxX, float& outMaxY);
         
 bool getMousePosition(float& outX, float& outY);
-	
+
+bool getMouseCenterPosition(float& outX, float& outY);
+
 	}
 }
 

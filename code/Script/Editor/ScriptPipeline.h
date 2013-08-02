@@ -17,6 +17,7 @@ namespace traktor
 	{
 
 class IScriptManager;
+class Preprocessor;
 
 /*! \brief Script pipeline.
  * \ingroup Script
@@ -53,6 +54,7 @@ public:
 
 private:
 	Ref< IScriptManager > m_scriptManager;
+	Ref< Preprocessor > m_preprocessor;
 	std::wstring m_scriptOutputPath;
 };
 

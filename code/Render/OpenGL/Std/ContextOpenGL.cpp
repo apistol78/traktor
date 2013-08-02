@@ -209,8 +209,8 @@ bool ContextOpenGL::enter()
 #if !defined(__LINUX__) && !defined(__APPLE__)
 	if (glDebugMessageCallbackARB)
 	{
-		T_OGL_SAFE(glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, GL_TRUE));
-		T_OGL_SAFE(glDebugMessageCallbackARB(&debugCallbackARB, 0));
+		glDebugMessageControlARB(GL_DONT_CARE, GL_DONT_CARE, GL_DONT_CARE, 0, 0, GL_TRUE);
+		glDebugMessageCallbackARB(&debugCallbackARB, 0);
 #	if defined(_WIN32)
 #		if defined(_DEBUG)
 		glEnable(GL_DEBUG_OUTPUT_SYNCHRONOUS);
@@ -221,12 +221,14 @@ bool ContextOpenGL::enter()
 	}
 	if (glDebugMessageCallbackAMD)
 	{
-		T_OGL_SAFE(glDebugMessageEnableAMD(0, 0, 0, NULL, GL_TRUE));
-		T_OGL_SAFE(glDebugMessageCallbackAMD(&debugCallbackAMD, 0));
+		glDebugMessageEnableAMD(0, 0, 0, NULL, GL_TRUE);
+		glDebugMessageCallbackAMD(&debugCallbackAMD, 0);
 	}
 #endif
 
-	T_OGL_SAFE(glDisable(GL_DITHER));
+	// Flush GL error stack.
+	while (glGetError() != GL_NO_ERROR)
+		;
 
 	stack->push_back(this);
 	return true;
@@ -352,7 +354,7 @@ uint32_t ContextOpenGL::createRenderStateObject(const RenderStateOpenGL& renderS
 	if (i != m_renderStateListCache.end())
 		return i->second;
 
-	uint32_t list = m_renderStateList.size();
+	uint32_t list = m_renderStateList.size() + 1;
 
 	m_renderStateList.push_back(renderState);
 	if (m_renderStateList.back().cullFace == GL_FRONT)
@@ -389,7 +391,7 @@ uint32_t ContextOpenGL::createSamplerStateObject(const SamplerStateOpenGL& sampl
 	if (i != m_samplerStateListCache.end())
 		return i->second;
 
-	uint32_t list = m_samplerStateList.size();
+	uint32_t list = m_samplerStateList.size() + 1;
 	m_samplerStateList.push_back(samplerState);
 	m_samplerStateListCache.insert(std::make_pair(adler.get(), list));
 
@@ -402,8 +404,9 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 	if (renderStateObject == m_currentRenderStateList)
 		return;
 
-	T_ASSERT (renderStateObject < m_renderStateList.size());
-	const RenderStateOpenGL& rs = m_renderStateList[renderStateObject];
+	T_ASSERT (renderStateObject > 0);
+	T_ASSERT (renderStateObject <= m_renderStateList.size());
+	const RenderStateOpenGL& rs = m_renderStateList[renderStateObject - 1];
 
 	if (rs.cullFaceEnable)
 		{ T_OGL_SAFE(glEnable(GL_CULL_FACE)); }
@@ -448,12 +451,15 @@ void ContextOpenGL::bindRenderStateObject(uint32_t renderStateObject)
 
 void ContextOpenGL::bindSamplerStateObject(GLenum textureTarget, uint32_t samplerStateObject, bool haveMips, GLfloat maxAnisotropy)
 {
-	T_ASSERT (samplerStateObject < m_samplerStateList.size());
-	const SamplerStateOpenGL& ss = m_samplerStateList[samplerStateObject];
+	T_ASSERT (samplerStateObject > 0);
+	T_ASSERT (samplerStateObject <= m_samplerStateList.size());
+	const SamplerStateOpenGL& ss = m_samplerStateList[samplerStateObject - 1];
 
 	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_S, ss.wrapS));
 	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_T, ss.wrapT));
-	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_R, ss.wrapR));
+
+	if (textureTarget != GL_TEXTURE_2D)
+		T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_WRAP_R, ss.wrapR));
 
 	T_OGL_SAFE(glTexParameteri(textureTarget, GL_TEXTURE_MAG_FILTER, ss.magFilter));
 

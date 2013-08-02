@@ -33,6 +33,7 @@ public:
 
 private:
 	Plane m_plane;
+	float m_radius;
 	float m_restitution;
 };
 

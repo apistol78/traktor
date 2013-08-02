@@ -37,6 +37,7 @@ class ISoundPlayer;
 
 class Effect;
 class EffectInstance;
+class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;
 
@@ -50,7 +51,13 @@ class T_DLLCLASS EffectEntity : public world::Entity
 public:
 	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::ISoundPlayer* soundPlayer);
 
-	void render(const Vector4& cameraPosition, const Plane& cameraPlane, PointRenderer* pointRenderer, TrailRenderer* trailRenderer);
+	void render(
+		const Vector4& cameraPosition,
+		const Plane& cameraPlane,
+		PointRenderer* pointRenderer,
+		MeshRenderer* meshRenderer,
+		TrailRenderer* trailRenderer
+	);
 
 	virtual void setTransform(const Transform& transform);
 

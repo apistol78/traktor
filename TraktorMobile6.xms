@@ -6088,6 +6088,10 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[17]/dependencies/item[7]/project"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[11]/dependencies/item[3]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item type="Project" version="1">

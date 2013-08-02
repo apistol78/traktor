@@ -38,7 +38,8 @@ public:
 		StFunction,
 		StType,
 		StKeyword,
-		StSpecial
+		StSpecial,
+		StPreprocessor
 	};
 
 	/*! \brief Return line comment token.

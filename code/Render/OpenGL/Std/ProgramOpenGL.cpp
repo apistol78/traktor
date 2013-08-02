@@ -88,8 +88,6 @@ ITextureBinding* getTextureBinding(ITexture* texture)
 		return 0;
 }
 
-std::map< uint32_t, ProgramOpenGL* > s_programCache;
-
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ProgramOpenGL", ProgramOpenGL, IProgram)
@@ -125,12 +123,6 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 	char errorBuf[32000];
 	GLsizei errorBufLen;
 	GLint status;
-	
-	uint32_t hash = resourceOpenGL->getHash();
-
-	std::map< uint32_t, ProgramOpenGL* >::iterator i = s_programCache.find(hash);
-	if (i != s_programCache.end())
-		return i->second;
 	
 	const std::string& vertexShader = resourceOpenGL->getVertexShader();
 	const std::string& fragmentShader = resourceOpenGL->getFragmentShader();
@@ -174,10 +166,7 @@ Ref< ProgramOpenGL > ProgramOpenGL::create(ContextOpenGL* resourceContext, const
 		}
 	}
 	
-	Ref< ProgramOpenGL > program = new ProgramOpenGL(resourceContext, programObject, resource);
-	s_programCache.insert(std::make_pair(hash, program));
-	
-	return program;
+	return new ProgramOpenGL(resourceContext, programObject, resource);
 }
 
 void ProgramOpenGL::destroy()
@@ -185,15 +174,6 @@ void ProgramOpenGL::destroy()
 	if (ms_activeProgram == this)
 		ms_activeProgram = 0;
 		
-	for (std::map< uint32_t, ProgramOpenGL* >::iterator i = s_programCache.begin(); i != s_programCache.end(); ++i)
-	{
-		if (i->second == this)
-		{
-			s_programCache.erase(i);
-			break;
-		}
-	}
-
 	if (m_program)
 	{
 		if (m_resourceContext)
@@ -356,9 +336,9 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 				sampler.object = renderContext->createSamplerStateObject(m_renderState.samplerStates[sampler.stage]);
 
 			ITextureBinding* tb = getTextureBinding(resolved);
-			if (tb)
-				tb->bindTexture(renderContext, sampler.object);
+			T_FATAL_ASSERT (tb);
 
+			tb->bindTexture(renderContext, sampler.object);
 			T_OGL_SAFE(glUniform1i(sampler.location, sampler.stage));
 		}
 
@@ -376,10 +356,9 @@ bool ProgramOpenGL::activate(ContextOpenGL* renderContext, float targetSize[2])
 				continue;
 
 			ITextureBinding* tb = getTextureBinding(resolved);
-			T_ASSERT (tb);
+			T_FATAL_ASSERT (tb);
 
-			if (tb)
-				tb->bindSize(textureSize.location);
+			tb->bindSize(textureSize.location);
 		}
 
 		m_textureDirty = false;
@@ -456,6 +435,9 @@ ProgramOpenGL::ProgramOpenGL(ContextOpenGL* resourceContext, GLuint program, con
 		sampler.object = 0;
 
 		m_samplers.push_back(sampler);
+
+		if (sampler.location < 0)
+			log::warning << L"No GL sampler defined for texture \"" << texture << L"\"" << Endl;
 	}
 
 	// Map texture size parameters.

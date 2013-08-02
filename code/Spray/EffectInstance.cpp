@@ -40,6 +40,7 @@ void EffectInstance::synchronize()
 
 void EffectInstance::render(
 	PointRenderer* pointRenderer,
+	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
 	const Transform& transform,
 	const Vector4& cameraPosition,
@@ -47,7 +48,7 @@ void EffectInstance::render(
 ) const
 {
 	for (RefArray< EffectLayerInstance >::const_iterator i = m_layerInstances.begin(); i != m_layerInstances.end(); ++i)
-		(*i)->render(pointRenderer, trailRenderer, transform, cameraPosition, cameraPlane, m_time);
+		(*i)->render(pointRenderer, meshRenderer, trailRenderer, transform, cameraPosition, cameraPlane, m_time);
 }
 
 	}

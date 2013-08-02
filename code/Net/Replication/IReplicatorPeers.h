@@ -29,6 +29,7 @@ public:
 		uint8_t status;
 		bool direct;
 		uint64_t connectionState;
+		Ref< Object > endSite;
 
 		PeerInfo()
 		:	handle(0x00)

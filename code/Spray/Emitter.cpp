@@ -15,6 +15,7 @@ Emitter::Emitter(
 	Source* source,
 	const RefArray< Modifier >& modifiers,
 	const resource::Proxy< render::Shader >& shader,
+	const resource::Proxy< mesh::InstanceMesh >& mesh,
 	float middleAge,
 	float cullNearDistance,
 	float fadeNearRange,
@@ -25,6 +26,7 @@ Emitter::Emitter(
 :	m_source(source)
 ,	m_modifiers(modifiers)
 ,	m_shader(shader)
+,	m_mesh(mesh)
 ,	m_middleAge(middleAge)
 ,	m_cullNearDistance(cullNearDistance)
 ,	m_fadeNearRange(fadeNearRange)

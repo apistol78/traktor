@@ -23,7 +23,7 @@ struct T_MATH_ALIGN16 InstanceMeshData
 {
 	float rotation[4];
 	float translation[3];
-	float dummy;
+	float scale;
 };
 #pragma pack()
 
@@ -33,6 +33,7 @@ inline InstanceMeshData packInstanceMeshData(const Transform& transform)
 
 	transform.rotation().e.storeAligned(imd.rotation);
 	transform.translation().storeAligned(imd.translation);
+	imd.scale = 1.0f;
 
 	return imd;
 }

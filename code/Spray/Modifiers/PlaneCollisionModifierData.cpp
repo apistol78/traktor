@@ -1,4 +1,5 @@
 #include "Core/Serialization/AttributeDirection.h"
+#include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Spray/Modifiers/PlaneCollisionModifier.h"
@@ -48,22 +49,27 @@ private:
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PlaneCollisionModifierData", 0, PlaneCollisionModifierData, ModifierData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.PlaneCollisionModifierData", 1, PlaneCollisionModifierData, ModifierData)
 
 PlaneCollisionModifierData::PlaneCollisionModifierData()
 :	m_plane(0.0f, 1.0f, 0.0f, 0.0f)
+,	m_radius(1.0f)
 ,	m_restitution(1.0f)
 {
 }
 
 Ref< Modifier > PlaneCollisionModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
-	return new PlaneCollisionModifier(m_plane, m_restitution);
+	return new PlaneCollisionModifier(m_plane, m_radius, m_restitution);
 }
 
 void PlaneCollisionModifierData::serialize(ISerializer& s)
 {
 	s >> MemberPlane(L"plane", m_plane);
+
+	if (s.getVersion() >= 1)
+		s >> Member< float >(L"radius", m_radius, AttributeRange(0.0f));
+
 	s >> Member< float >(L"restitution", m_restitution);
 }
 

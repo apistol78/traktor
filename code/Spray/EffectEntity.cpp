@@ -1,4 +1,5 @@
 #include "Core/Timer/Timer.h"
+#include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Shader.h"
 #include "Spray/EffectEntity.h"
 #include "Spray/Effect.h"
@@ -33,10 +34,23 @@ EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Ef
 	m_context.soundPlayer = soundPlayer;
 }
 
-void EffectEntity::render(const Vector4& cameraPosition, const Plane& cameraPlane, PointRenderer* pointRenderer, TrailRenderer* trailRenderer)
+void EffectEntity::render(
+	const Vector4& cameraPosition,
+	const Plane& cameraPlane,
+	PointRenderer* pointRenderer,
+	MeshRenderer* meshRenderer,
+	TrailRenderer* trailRenderer
+)
 {
 	if (m_effectInstance)
-		m_effectInstance->render(pointRenderer, trailRenderer, m_transform, cameraPosition, cameraPlane);
+		m_effectInstance->render(
+			pointRenderer,
+			meshRenderer,
+			trailRenderer,
+			m_transform,
+			cameraPosition,
+			cameraPlane
+		);
 }
 
 void EffectEntity::setTransform(const Transform& transform)
@@ -91,6 +105,10 @@ void EffectEntity::update(const world::UpdateParams& update)
 					const resource::Proxy< render::Shader >& emitterShader = emitter->getShader();
 					if (emitterShader)
 						emitterShader->getTechniques(m_techniques);
+
+					const resource::Proxy< mesh::InstanceMesh >& emitterMesh = emitter->getMesh();
+					if (emitterMesh)
+						emitterMesh->getTechniques(m_techniques);
 				}
 
 				const Trail* trail = (*i)->getTrail();

@@ -138,6 +138,10 @@ public:
 	 */
 	std::wstring getPeerName(handle_t peerHandle) const;
 
+	/*! \brief Get peer end site object.
+	 */
+	Object* getPeerEndSite(handle_t peerHandle) const;
+
 	/*! \brief Get peer status.
 	 */
 	uint8_t getPeerStatus(handle_t peerHandle) const;
@@ -278,6 +282,7 @@ private:
 	{
 		PeerState state;
 		std::wstring name;
+		Object* endSite;
 		Ghost* ghost;
 		bool precursor;
 		bool direct;
@@ -298,6 +303,7 @@ private:
 
 		Peer()
 		:	state(PsInitial)
+		,	endSite(0)
 		,	ghost(0)
 		,	precursor(false)
 		,	direct(false)

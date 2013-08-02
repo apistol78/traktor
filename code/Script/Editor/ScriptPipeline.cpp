@@ -6,6 +6,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
@@ -13,6 +14,7 @@
 #include "Editor/IPipelineSettings.h"
 #include "Script/IScriptManager.h"
 #include "Script/IScriptResource.h"
+#include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptPipeline.h"
 
@@ -63,7 +65,7 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 9, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 10, ScriptPipeline, editor::DefaultPipeline)
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -80,6 +82,14 @@ bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 	m_scriptManager = dynamic_type_cast< IScriptManager* >(scriptManagerType->createInstance());
 	T_ASSERT (m_scriptManager);
 
+	// Create preprocessor.
+	m_preprocessor = new Preprocessor();
+	
+	std::set< std::wstring > definitions = settings->getProperty< PropertyStringSet >(L"ScriptPipeline.PreprocessorDefinitions");
+	for (std::set< std::wstring >::const_iterator i = definitions.begin(); i != definitions.end(); ++i)
+		m_preprocessor->setDefinition(*i);
+
+	// Create debug output directory.
 	m_scriptOutputPath = settings->getProperty< PropertyString >(L"ScriptPipeline.OutputPath", L"");
 	if (!m_scriptOutputPath.empty())
 		FileSystem::getInstance().makeAllDirectories(m_scriptOutputPath);
@@ -145,21 +155,21 @@ bool ScriptPipeline::buildOutput(
 		map.line = line;
 		sm.push_back(map);
 
-		// Concatenate and count lines.
+		// Count lines.
 		StringSplit< std::wstring > split(i->script->getText(), L"\r\n");
 		for (StringSplit< std::wstring >::const_iterator j = split.begin(); j != split.end(); ++j)
-		{
-			ss << *j << Endl;
 			++line;
-		}
-	}
 
-	// Compile script; save binary blobs if possible.
-	Ref< IScriptResource > resource = m_scriptManager->compile(outputGuid.format() + L".lua", ss.str(), &sm, 0);
-	if (!resource)
-	{
-		log::error << L"Script pipeline failed; unable to compile script" << Endl;
-		return false;
+		// Execute preprocessor on script.
+		std::wstring text;
+		if (!m_preprocessor->evaluate(i->script->getText(), text))
+		{
+			log::error << L"Script pipeline failed; unable to preprocess script" << Endl;
+			return false;
+		}
+
+		// Concatenate scripts.
+		ss << text << Endl;
 	}
 
 	// Output script source into temp folder; this can be useful for debugging.
@@ -172,6 +182,14 @@ bool ScriptPipeline::buildOutput(
 			scriptFile->close();
 			scriptFile = 0;
 		}
+	}
+
+	// Compile script; save binary blobs if possible.
+	Ref< IScriptResource > resource = m_scriptManager->compile(outputGuid.format() + L".lua", ss.str(), &sm, 0);
+	if (!resource)
+	{
+		log::error << L"Script pipeline failed; unable to compile script" << Endl;
+		return false;
 	}
 
 	return DefaultPipeline::buildOutput(

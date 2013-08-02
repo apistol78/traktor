@@ -31,6 +31,14 @@
 					<value>fileName=temp/Pipeline.db</value>
 				</second>
 			</item>
+			<item>
+				<first>ScriptPipeline.PreprocessorDefinitions</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>ANDROID</item>
+					</value>
+				</second>
+			</item>
 		</value>
 	</pipelineProperties>
 	<migrateProperties type="traktor.PropertyGroup">

@@ -1,6 +1,7 @@
 #include "Spray/EffectEntityRenderer.h"
 #include "Spray/EffectEntity.h"
 #include "Spray/Effect.h"
+#include "Spray/MeshRenderer.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/TrailRenderer.h"
 #include "World/IWorldCulling.h"
@@ -17,6 +18,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityRenderer", EffectEntityRender
 
 EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance)
 :	m_pointRenderer(new PointRenderer(renderSystem, lod1Distance, lod2Distance))
+,	m_meshRenderer(new MeshRenderer())
 ,	m_trailRenderer(new TrailRenderer(renderSystem))
 {
 }
@@ -73,6 +75,7 @@ void EffectEntityRenderer::render(
 		cameraPosition,
 		cameraPlane,
 		m_pointRenderer,
+		m_meshRenderer,
 		m_trailRenderer
 	);
 }
@@ -84,6 +87,7 @@ void EffectEntityRenderer::flush(
 )
 {
 	m_pointRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
+	m_meshRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
 	m_trailRenderer->flush(worldContext.getRenderContext(), worldRenderPass);
 }
 
