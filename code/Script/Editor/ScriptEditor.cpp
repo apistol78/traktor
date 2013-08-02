@@ -11,6 +11,7 @@
 #include "Editor/TypeBrowseFilter.h"
 #include "I18N/Text.h"
 #include "Script/CallStack.h"
+#include "Script/Editor/Preprocessor.h"
 #include "Script/Editor/Script.h"
 #include "Script/Editor/ScriptDebuggerView.h"
 #include "Script/Editor/ScriptEditor.h"
@@ -174,6 +175,9 @@ bool ScriptEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 		m_compileCountDown = 1;
 	}
 
+	// Create preprocessor.
+	m_preprocessor = new Preprocessor();
+
 	// Get debugger implementation.
 	m_scriptDebuggerSessions = m_editor->getStoreObject< IScriptDebuggerSessions >(L"ScriptDebuggerSessions");
 	if (m_scriptDebuggerSessions)
@@ -192,6 +196,7 @@ void ScriptEditor::destroy()
 	}
 
 	m_scriptManager = 0;
+	m_preprocessor = 0;
 
 	safeDestroy(m_splitter);
 }
@@ -480,7 +485,9 @@ void ScriptEditor::eventTimer(ui::Event* event)
 	if (--m_compileCountDown == 0 && m_scriptManager)
 	{
 		// Take snapshot of script and try to compile it.
-		std::wstring script = m_edit->getText();
+		std::wstring script;
+		m_preprocessor->evaluate(m_edit->getText(), script);
+
 		if (m_scriptManager->compile(L"", script, 0, this))
 		{
 			// Reset error status.

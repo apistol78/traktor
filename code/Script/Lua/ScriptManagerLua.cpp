@@ -77,6 +77,7 @@ ScriptManagerLua::ScriptManagerLua()
 	luaopen_string(m_luaState);
 	luaopen_math(m_luaState);
 	luaopen_os(m_luaState);
+	luaopen_bit(m_luaState);
 
 	lua_register(m_luaState, "print", luaPrint);
 

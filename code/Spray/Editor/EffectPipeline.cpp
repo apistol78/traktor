@@ -50,6 +50,7 @@ bool EffectPipeline::buildDependencies(
 		if (emitter)
 		{
 			pipelineDepends->addDependency(emitter->getShader(), editor::PdfBuild | editor::PdfResource);
+			pipelineDepends->addDependency(emitter->getMesh(), editor::PdfBuild | editor::PdfResource);
 
 			const PointSetSourceData* pointSetSource = dynamic_type_cast< const PointSetSourceData* >(emitter->getSource());
 			if (pointSetSource)

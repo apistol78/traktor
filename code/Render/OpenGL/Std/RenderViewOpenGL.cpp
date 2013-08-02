@@ -122,15 +122,6 @@ bool RenderViewOpenGL::createPrimaryTarget()
 {
 	T_ANONYMOUS_VAR(IContext::Scope)(m_resourceContext);
 
-	Viewport viewport;
-	viewport.left = 0;
-	viewport.top = 0;
-	viewport.width = m_renderContext->getWidth();
-	viewport.height = m_renderContext->getHeight();
-	viewport.nearZ = 0.0f;
-	viewport.farZ = 1.0f;
-	setViewport(viewport);
-
 	m_primaryTargetDesc.count = 1;
 	m_primaryTargetDesc.width = m_renderContext->getWidth();
 	m_primaryTargetDesc.height = m_renderContext->getHeight();
@@ -306,7 +297,9 @@ void RenderViewOpenGL::showCursor()
 {
 	if (!m_cursorVisible)
 	{
-#if defined(__LINUX__)
+#if defined(__APPLE__)
+	cglwSetCursorVisible(m_windowHandle, true);
+#elif defined(__LINUX__)
 		m_window->showCursor();
 #endif
 		m_cursorVisible = true;
@@ -317,7 +310,9 @@ void RenderViewOpenGL::hideCursor()
 {
 	if (m_cursorVisible)
 	{
-#if defined(__LINUX__)
+#if defined(__APPLE__)
+		cglwSetCursorVisible(m_windowHandle, false);
+#elif defined(__LINUX__)
 		m_window->hideCursor();
 #endif
 		m_cursorVisible = false;

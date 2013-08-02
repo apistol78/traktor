@@ -23,6 +23,7 @@ struct Context;
 class EffectLayer;
 class EmitterInstance;
 class ITriggerInstance;
+class MeshRenderer;
 class PointRenderer;
 class SequenceInstance;
 class TrailInstance;
@@ -48,6 +49,7 @@ public:
 
 	void render(
 		PointRenderer* pointRenderer,
+		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
 		const Transform& transform,
 		const Vector4& cameraPosition,

@@ -15,6 +15,13 @@
 
 namespace traktor
 {
+	namespace mesh
+	{
+
+class InstanceMesh;
+
+	}
+
 	namespace render
 	{
 
@@ -41,6 +48,7 @@ public:
 		Source* source,
 		const RefArray< Modifier >& modifiers,
 		const resource::Proxy< render::Shader >& shader,
+		const resource::Proxy< mesh::InstanceMesh >& mesh,
 		float middleAge,
 		float cullNearDistance,
 		float fadeNearRange,
@@ -56,6 +64,8 @@ public:
 	const RefArray< Modifier >& getModifiers() const { return m_modifiers; }
 
 	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
+
+	const resource::Proxy< mesh::InstanceMesh >& getMesh() const { return m_mesh; }
 
 	float getMiddleAge() const { return m_middleAge; }
 
@@ -73,6 +83,7 @@ private:
 	Ref< Source > m_source;
 	RefArray< Modifier > m_modifiers;
 	resource::Proxy< render::Shader > m_shader;
+	resource::Proxy< mesh::InstanceMesh > m_mesh;
 	float m_middleAge;
 	float m_cullNearDistance;
 	float m_fadeNearRange;

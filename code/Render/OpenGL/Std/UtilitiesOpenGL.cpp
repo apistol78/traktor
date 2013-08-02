@@ -13,7 +13,7 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 	{
 	case TfR8:
 		outPixelSize = 1;
-		outComponents = 1;
+		outComponents = GL_R8;
 		outFormat = GL_RED;
 		outType = GL_UNSIGNED_BYTE;
 		break;
@@ -27,21 +27,21 @@ bool convertTextureFormat(TextureFormat textureFormat, int& outPixelSize, GLint&
 
 	case TfR32G32B32A32F:
 		outPixelSize = 16;
-		outComponents = 4;
+		outComponents = GL_RGBA32F;
 		outFormat = GL_RGBA;
 		outType = GL_FLOAT;
 		break;
 
 	case TfR16F:
 		outPixelSize = 2;
-		outComponents = 1;
+		outComponents = GL_R16F;
 		outFormat = GL_RED;
 		outType = GL_HALF_FLOAT;
 		break;
 
 	case TfR32F:
 		outPixelSize = 4;
-		outComponents = 1;
+		outComponents = GL_R32F;
 		outFormat = GL_RED;
 		outType = GL_FLOAT;
 		break;
@@ -119,7 +119,7 @@ bool convertTextureFormat_sRGB(TextureFormat textureFormat, int& outPixelSize, G
 		outType = GL_UNSIGNED_BYTE;
 #else
 		outPixelSize = 1;
-		outComponents = 1;
+		outComponents = GL_R8;
 		outFormat = GL_RED;
 		outType = GL_UNSIGNED_BYTE;
 #endif

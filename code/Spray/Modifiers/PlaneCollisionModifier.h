@@ -25,7 +25,7 @@ class T_DLLCLASS PlaneCollisionModifier : public Modifier
 	T_RTTI_CLASS;
 
 public:
-	PlaneCollisionModifier(const Plane& plane, float restitution);
+	PlaneCollisionModifier(const Plane& plane, float radius, float restitution);
 
 #if defined(T_MODIFIER_USE_PS3_SPURS)
 	virtual void update(SpursJobQueue* jobQueue, const Scalar& deltaTime, const Transform& transform, PointVector& points) const;
@@ -35,6 +35,7 @@ public:
 
 private:
 	Plane m_plane;
+	Scalar m_radius;
 	Scalar m_restitution;
 };
 

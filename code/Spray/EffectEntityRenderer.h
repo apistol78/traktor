@@ -24,6 +24,7 @@ class IRenderSystem;
 	{
 
 class EffectEntity;
+class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;
 
@@ -60,6 +61,7 @@ public:
 
 private:
 	Ref< PointRenderer > m_pointRenderer;
+	Ref< MeshRenderer > m_meshRenderer;
 	Ref< TrailRenderer > m_trailRenderer;
 };
 

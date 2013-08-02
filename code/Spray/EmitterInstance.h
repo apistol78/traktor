@@ -27,6 +27,7 @@ class Job;
 	{
 
 class Emitter;
+class MeshRenderer;
 class PointRenderer;
 
 /*! \brief Emitter instance.
@@ -43,7 +44,12 @@ public:
 
 	void update(Context& context, const Transform& transform, bool emit, bool singleShot);
 
-	void render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane);
+	void render(
+		PointRenderer* pointRenderer,
+		MeshRenderer* meshRenderer,
+		const Transform& transform,
+		const Plane& cameraPlane
+	);
 
 	void synchronize() const;
 

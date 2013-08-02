@@ -101,6 +101,7 @@ void EffectLayerInstance::synchronize()
 
 void EffectLayerInstance::render(
 	PointRenderer* pointRenderer,
+	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
 	const Transform& transform,
 	const Vector4& cameraPosition,
@@ -109,7 +110,7 @@ void EffectLayerInstance::render(
 ) const
 {
 	if (m_emitterInstance && time >= m_start)
-		m_emitterInstance->render(pointRenderer, transform, cameraPlane);
+		m_emitterInstance->render(pointRenderer, meshRenderer, transform, cameraPlane);
 	if (m_trailInstance && time >= m_start)
 		m_trailInstance->render(trailRenderer, transform, cameraPosition, cameraPlane);
 }

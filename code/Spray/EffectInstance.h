@@ -23,6 +23,7 @@ namespace traktor
 struct Context;
 class Effect;
 class EffectLayerInstance;
+class MeshRenderer;
 class PointRenderer;
 class TrailRenderer;
 
@@ -42,6 +43,7 @@ public:
 
 	void render(
 		PointRenderer* pointRenderer,
+		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,
 		const Transform& transform,
 		const Vector4& cameraPosition,

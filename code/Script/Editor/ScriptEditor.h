@@ -48,6 +48,7 @@ class ToolBar;
 
 class IScriptContext;
 class IScriptManager;
+class Preprocessor;
 class Script;
 
 class T_DLLCLASS ScriptEditor
@@ -76,6 +77,7 @@ private:
 	Ref< Script > m_script;
 	Ref< IScriptDebuggerSessions > m_scriptDebuggerSessions;
 	Ref< IScriptManager > m_scriptManager;
+	Ref< Preprocessor > m_preprocessor;
 	Ref< ui::custom::Splitter > m_splitter;
 	Ref< ui::custom::GridView > m_outlineGrid;
 	Ref< ui::ListBox > m_dependencyList;

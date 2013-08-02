@@ -1,3 +1,4 @@
+#import <ApplicationServices/ApplicationServices.h>
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Input/OsX/InputDeviceMouseOsX.h"
@@ -65,6 +66,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.input.InputDeviceMouseOsX", InputDeviceMouseOsX
 
 InputDeviceMouseOsX::InputDeviceMouseOsX(IOHIDDeviceRef deviceRef)
 :	m_deviceRef(deviceRef)
+,	m_exclusive(false)
 ,	m_lastMouseValid(false)
 {
 	if (m_deviceRef)
@@ -248,6 +250,14 @@ void InputDeviceMouseOsX::readState()
         m_axis[4] = 0;
     }
 	
+	// If mouse capture is exclusive then move cursor to center of key window.
+	if (m_exclusive)
+	{
+		float centerX, centerY;
+		if (getMouseCenterPosition(centerX, centerY))
+			CGWarpMouseCursorPosition(CGPointMake(centerX, centerY));
+	}
+	
 	// As long as user keps mouse button pressed we cannot
 	// leave invalid state.
 	if (mouseValid && !m_lastMouseValid)
@@ -275,6 +285,7 @@ void InputDeviceMouseOsX::setRumble(const InputRumble& rumble)
 
 void InputDeviceMouseOsX::setExclusive(bool exclusive)
 {
+	m_exclusive = exclusive;
 }
 
 void InputDeviceMouseOsX::callbackRemoval(void* context, IOReturn result, void* sender)

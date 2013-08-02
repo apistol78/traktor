@@ -39,7 +39,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderTargetSetOpenGL", RenderTargetSetO
 
 RenderTargetSetOpenGL::RenderTargetSetOpenGL(ContextOpenGL* resourceContext)
 :	m_resourceContext(resourceContext)
-,	m_targetFBO(~0UL)
+,	m_targetFBO(0)
 ,	m_depthBuffer(0)
 {
 }
@@ -244,7 +244,7 @@ void RenderTargetSetOpenGL::blit()
 bool RenderTargetSetOpenGL::createFramebuffer(GLuint primaryDepthBuffer)
 {
 	// Already created?
-	if (m_targetFBO != ~0UL)
+	if (m_targetFBO != 0)
 		return true;
 		
 	T_OGL_SAFE(glGenFramebuffers(1, &m_targetFBO));

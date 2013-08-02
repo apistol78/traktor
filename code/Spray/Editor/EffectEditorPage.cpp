@@ -7,6 +7,7 @@
 #include "Editor/IEditor.h"
 #include "Editor/IEditorPageSite.h"
 #include "I18N/Text.h"
+#include "Mesh/MeshFactory.h"
 #include "Render/IRenderSystem.h"
 #include "Render/ITexture.h"
 #include "Render/Resource/ShaderFactory.h"
@@ -97,6 +98,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	T_ASSERT (database);
 
 	m_resourceManager = new resource::ResourceManager(true);
+	m_resourceManager->addFactory(new mesh::MeshFactory(database, renderSystem));
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new sound::SoundFactory(database));

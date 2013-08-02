@@ -236,6 +236,7 @@ uint32_t OnlinePeers::getPeers(std::vector< PeerInfo >& outPeers) const
 	{
 		info.handle = i->first;
 		info.direct = !i->second->isP2PRelayed();
+		info.endSite = i->second;
 
 		i->second->getName(info.name);
 

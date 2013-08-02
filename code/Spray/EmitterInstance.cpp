@@ -1,10 +1,12 @@
 #include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
+#include "Mesh/Instance/InstanceMesh.h"
 #include "Render/Shader.h"
 #include "Spray/Emitter.h"
 #include "Spray/EmitterInstance.h"
 #include "Spray/Types.h"
+#include "Spray/MeshRenderer.h"
 #include "Spray/Modifier.h"
 #include "Spray/PointRenderer.h"
 #include "Spray/Source.h"
@@ -255,7 +257,12 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	m_count++;
 }
 
-void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& transform, const Plane& cameraPlane)
+void EmitterInstance::render(
+	PointRenderer* pointRenderer,
+	MeshRenderer* meshRenderer,
+	const Transform& transform,
+	const Plane& cameraPlane
+)
 {
 	T_ASSERT (m_count > 0);
 
@@ -265,14 +272,25 @@ void EmitterInstance::render(PointRenderer* pointRenderer, const Transform& tran
 	if (m_emitter->getSort())
 		std::sort(m_renderPoints.begin(), m_renderPoints.end(), PointPredicate(cameraPlane));
 
-	pointRenderer->render(
-		m_emitter->getShader(),
-		cameraPlane,
-		m_renderPoints,
-		m_emitter->getMiddleAge(),
-		m_emitter->getCullNearDistance(),
-		m_emitter->getFadeNearRange()
-	);
+	if (m_emitter->getShader())
+	{
+		pointRenderer->render(
+			m_emitter->getShader(),
+			cameraPlane,
+			m_renderPoints,
+			m_emitter->getMiddleAge(),
+			m_emitter->getCullNearDistance(),
+			m_emitter->getFadeNearRange()
+		);
+	}
+
+	if (m_emitter->getMesh())
+	{
+		meshRenderer->render(
+			m_emitter->getMesh(),
+			m_renderPoints
+		);
+	}
 
 	float distance = cameraPlane.distance(m_boundingBox.getCenter());
 	if (distance > pointRenderer->getLod2Distance())

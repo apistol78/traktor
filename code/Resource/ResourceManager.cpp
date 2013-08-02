@@ -101,14 +101,14 @@ Ref< IResourceHandle > ResourceManager::bind(const TypeInfo& type, const Guid& g
 	if (guid.isNull() || !guid.isValid())
 	{
 		if (!guid.isValid())
-			log::error << L"Unable to find " << type.getName() << L" resource; invalid id" << Endl;
+			log::error << L"Unable to create " << type.getName() << L" resource; invalid id" << Endl;
 		return 0;
 	}
 
 	const IResourceFactory* factory = findFactoryFromProductType(type);
 	if (!factory)
 	{
-		log::error << L"Unable to find " << type.getName() << L" resource; no factory for specified type" << Endl;
+		log::error << L"Unable to create " << type.getName() << L" resource; no factory for specified type" << Endl;
 		return 0;
 	}
 

@@ -10,13 +10,14 @@ namespace traktor
 
 bool isInputAllowed()
 {
+	if (![NSApp isActive])
+		return false;
+
 	NSWindow* keyWindow = [NSApp keyWindow];
 	if (!keyWindow)
 		return false;
-		
-	NSPoint mouseLocationScreen = [NSEvent mouseLocation];
-	NSPoint mouseLocation = [keyWindow convertScreenToBase: mouseLocationScreen];
 
+	NSPoint mouseLocationScreen = [NSEvent mouseLocation];
 	NSRect contentRect = [keyWindow contentRectForFrameRect: [keyWindow frame]];
 	if (
 		mouseLocationScreen.x < contentRect.origin.x ||
@@ -59,6 +60,20 @@ bool getMousePosition(float& outX, float& outY)
     outY = contentRect.origin.y + contentRect.size.height - mouseLocationScreen.y;
     
     return true;
+}
+
+bool getMouseCenterPosition(float& outX, float& outY)
+{
+	NSWindow* keyWindow = [NSApp keyWindow];
+	if (!keyWindow)
+		return false;
+
+	NSRect contentRect = [keyWindow contentRectForFrameRect: [keyWindow frame]];
+
+	outX = contentRect.origin.x + contentRect.size.width / 2;
+	outY = contentRect.origin.y + contentRect.size.height / 2;
+
+	return true;
 }
 
 	}

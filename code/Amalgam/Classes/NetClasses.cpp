@@ -114,6 +114,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	classReplicator->addMethod("getPeerCount", &net::Replicator::getPeerCount);
 	classReplicator->addMethod("getPeerHandle", &net::Replicator::getPeerHandle);
 	classReplicator->addMethod("getPeerName", &net::Replicator::getPeerName);
+	classReplicator->addMethod("getPeerEndSite", &net::Replicator::getPeerEndSite);
 	classReplicator->addMethod("getPeerStatus", &net::Replicator::getPeerStatus);
 	classReplicator->addMethod("getPeerLatency", &net::Replicator::getPeerLatency);
 	classReplicator->addMethod("getPeerReversedLatency", &net::Replicator::getPeerReversedLatency);

@@ -22,6 +22,7 @@ SyntaxRichEdit::SyntaxRichEdit()
 ,	m_attributeType(0)
 ,	m_attributeKeyword(0)
 ,	m_attributeSpecial(0)
+,	m_attributePreprocessor(0)
 ,	m_attributeError(0)
 {
 }
@@ -31,15 +32,16 @@ bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
 	if (!RichEdit::create(parent, text/*, style*/))
 		return false;
 
-	m_attributeDefault = addAttribute(Color4ub(0, 0, 0), Color4ub(255, 255, 255), false, false, false);		// Default
-	m_attributeString = addAttribute(Color4ub(120, 120, 120), Color4ub(255, 255, 255), false, false, false);	// String
-	m_attributeNumber = addAttribute(Color4ub(0, 0, 120), Color4ub(255, 255, 255), false, false, false);		// Number
-	m_attributeComment = addAttribute(Color4ub(40, 120, 40), Color4ub(255, 255, 255), false, true, false);	// Comment
-	m_attributeFunction = addAttribute(Color4ub(120, 40, 40), Color4ub(255, 255, 255), false, false, false);	// Function
-	m_attributeType = addAttribute(Color4ub(160, 40, 255), Color4ub(255, 255, 255), false, false, false);	// Type
-	m_attributeKeyword = addAttribute(Color4ub(0, 0, 255), Color4ub(255, 255, 255), false, false, false);	// Keyword
-	m_attributeSpecial = addAttribute(Color4ub(255, 140, 0), Color4ub(255, 255, 255), false, false, false);	// Special
-	m_attributeError = addAttribute(Color4ub(255, 255, 255), Color4ub(255, 0, 0), false, false, false);		// Error
+	m_attributeDefault = addAttribute(Color4ub(0, 0, 0), Color4ub(255, 255, 255), false, false, false);				// Default
+	m_attributeString = addAttribute(Color4ub(120, 120, 120), Color4ub(255, 255, 255), false, false, false);		// String
+	m_attributeNumber = addAttribute(Color4ub(0, 0, 120), Color4ub(255, 255, 255), false, false, false);			// Number
+	m_attributeComment = addAttribute(Color4ub(40, 120, 40), Color4ub(255, 255, 255), false, true, false);			// Comment
+	m_attributeFunction = addAttribute(Color4ub(120, 40, 40), Color4ub(255, 255, 255), false, false, false);		// Function
+	m_attributeType = addAttribute(Color4ub(160, 40, 255), Color4ub(255, 255, 255), false, false, false);			// Type
+	m_attributeKeyword = addAttribute(Color4ub(0, 0, 255), Color4ub(255, 255, 255), false, false, false);			// Keyword
+	m_attributeSpecial = addAttribute(Color4ub(255, 140, 0), Color4ub(255, 255, 255), false, false, false);			// Special
+	m_attributePreprocessor = addAttribute(Color4ub(0, 140, 255), Color4ub(255, 255, 255), false, false, false);	// Preprocessor
+	m_attributeError = addAttribute(Color4ub(255, 255, 255), Color4ub(255, 0, 0), false, false, false);				// Error
 
 	addChangeEventHandler(createMethodHandler(this, &SyntaxRichEdit::eventChange));
 	return true;
@@ -139,7 +141,11 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 					case SyntaxLanguage::StSpecial:
 						setAttribute(startOffset, endOffset - startOffset, m_attributeSpecial);
 						break;
-						
+
+					case SyntaxLanguage::StPreprocessor:
+						setAttribute(startOffset, endOffset - startOffset, m_attributePreprocessor);
+						break;
+
 					default:
 						break;
 					}
@@ -195,6 +201,14 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 			setAttribute(startOffset, endOffset - startOffset, m_attributeKeyword);
 			break;
 			
+		case SyntaxLanguage::StSpecial:
+			setAttribute(startOffset, endOffset - startOffset, m_attributeSpecial);
+			break;
+
+		case SyntaxLanguage::StPreprocessor:
+			setAttribute(startOffset, endOffset - startOffset, m_attributePreprocessor);
+			break;
+
 		default:
 			break;
 		}
