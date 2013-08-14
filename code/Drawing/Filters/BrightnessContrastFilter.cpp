@@ -14,10 +14,8 @@ BrightnessContrastFilter::BrightnessContrastFilter(float brightness, float contr
 {
 }
 
-Ref< Image > BrightnessContrastFilter::apply(const Image* image) const
+void BrightnessContrastFilter::apply(Image* image) const
 {
-	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	
 	Color4f in;
 	Color4f c(m_contrast, m_contrast, m_contrast, 1.0f);
 	Color4f b(m_brightness, m_brightness, m_brightness, 0.0f);
@@ -27,11 +25,9 @@ Ref< Image > BrightnessContrastFilter::apply(const Image* image) const
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			image->getPixelUnsafe(x, y, in);
-			final->setPixelUnsafe(x, y, in * c + b);
+			image->setPixelUnsafe(x, y, in * c + b);
 		}
 	}
-
-	return final;
 }
 	
 	}

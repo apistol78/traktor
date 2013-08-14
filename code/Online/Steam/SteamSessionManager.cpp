@@ -327,8 +327,6 @@ uint32_t SteamSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t
 		return false;
 
 	outFromUserHandle = fromUserID.ConvertToUint64();
-
-	m_user->receivedP2PData(outFromUserHandle);
 	return receivedSize;
 }
 

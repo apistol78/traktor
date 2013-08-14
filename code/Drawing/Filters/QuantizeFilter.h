@@ -27,7 +27,7 @@ public:
 	QuantizeFilter(int steps);
 
 protected:
-	virtual Ref< Image > apply(const Image* image) const;
+	virtual void apply(Image* image) const;
 
 private:
 	int m_steps;

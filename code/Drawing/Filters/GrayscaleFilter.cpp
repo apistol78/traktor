@@ -8,9 +8,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.GrayScaleFilter", GrayscaleFilter, IImageFilter)
 
-Ref< Image > GrayscaleFilter::apply(const Image* image) const
+void GrayscaleFilter::apply(Image* image) const
 {
-	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color4f in;
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
@@ -19,10 +18,9 @@ Ref< Image > GrayscaleFilter::apply(const Image* image) const
 			image->getPixelUnsafe(x, y, in);
 			float luminance = 0.2126f * in.getRed() + 0.7152f * in.getGreen() + 0.0722f * in.getBlue();
 			Color4f out(luminance, luminance, luminance, in.getAlpha());
-			final->setPixelUnsafe(x, y, out);
+			image->setPixelUnsafe(x, y, out);
 		}
 	}
-	return final;
 }
 
 	}

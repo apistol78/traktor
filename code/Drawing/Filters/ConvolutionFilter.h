@@ -32,7 +32,7 @@ public:
 	static Ref< ConvolutionFilter > createEmboss();
 
 protected:
-	virtual Ref< Image > apply(const Image* image) const;
+	virtual void apply(Image* image) const;
 
 private:
 	Matrix33 m_matrix;

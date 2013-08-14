@@ -64,7 +64,7 @@ void CaseValueTemplate::run()
 
 	{
 		net::StateTemplate st;
-		st.declare(new net::FloatTemplate(1.0f, 0.0f, 2.5f, true));
+		st.declare(new net::FloatTemplate(1.0f, 0.0f, 2.5f, net::Ftp8));
 
 		net::State s0;
 		s0.pack< net::FloatValue >(0.0f);

@@ -2442,62 +2442,6 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
 						<enable>true</enable>
-						<name>Traktor.I18N</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/I18N</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[12]"/>
-							</item>
-						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
 						<name>Traktor.Compress</name>
 						<sourcePath>$(TRAKTOR_HOME)/code/Compress</sourcePath>
 						<configurations>
@@ -3024,7 +2968,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -3367,8 +3311,60 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[19]/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[19]/dependencies/item[4]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.I18N</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/I18N</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[12]"/>
+				</item>
+			</dependencies>
+		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Input</name>
@@ -3892,7 +3888,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+								<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -4173,11 +4169,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+		<item ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.Ps3</name>
@@ -4252,11 +4248,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+		<item ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Scene</name>
@@ -4310,7 +4306,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4367,7 +4363,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4434,7 +4430,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[8]/project"/>
+		<item ref="/object/projects/item[19]/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Spray</name>
@@ -4519,11 +4515,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4567,7 +4563,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4628,11 +4624,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4768,11 +4764,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -4883,11 +4879,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -4954,7 +4950,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[4]/project"/>
+		<item ref="/object/projects/item[19]/dependencies/item[3]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Input.Ps3</name>
@@ -5071,11 +5067,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[4]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -5152,7 +5148,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -5375,11 +5371,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -5485,7 +5481,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[22]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -5509,11 +5505,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -5525,7 +5521,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -5561,9 +5557,9 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[19]/dependencies/item[8]/project/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[19]/dependencies/item[4]/project/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[19]/dependencies/item[4]/project/dependencies/item[3]/project"/>
+		<item ref="/object/projects/item[19]/dependencies/item[7]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[19]/dependencies/item[3]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[19]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[27]/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
@@ -5639,7 +5635,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[3]/project"/>
+					<project ref="/object/projects/item[22]"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -5663,11 +5659,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -5679,7 +5675,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[19]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>

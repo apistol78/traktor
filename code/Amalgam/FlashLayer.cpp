@@ -5,6 +5,7 @@
 #include "Amalgam/Stage.h"
 #include "Amalgam/Action/Classes/As_traktor_amalgam_Configuration.h"
 #include "Amalgam/Action/Classes/As_traktor_amalgam_DisplayMode.h"
+#include "Amalgam/Action/Classes/As_traktor_amalgam_I18N.h"
 #include "Amalgam/Action/Classes/As_traktor_amalgam_InputFabricator.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
@@ -460,13 +461,14 @@ void FlashLayer::createMoviePlayer()
 	if (!asTraktor)
 		asTraktor = new flash::ActionObject(context);
 	{
-		Ref< flash::ActionObject > asParade = new flash::ActionObject(context);
+		Ref< flash::ActionObject > asAmalgam = new flash::ActionObject(context);
 		{
-			asParade->setMember("Configuration", flash::ActionValue(new As_traktor_amalgam_Configuration(context, m_environment)));
-			asParade->setMember("DisplayMode", flash::ActionValue(new As_traktor_amalgam_DisplayMode(context, m_environment)));
-			asParade->setMember("InputFabricator", flash::ActionValue(new As_traktor_amalgam_InputFabricator(context, m_environment)));
+			asAmalgam->setMember("Configuration", flash::ActionValue(new As_traktor_amalgam_Configuration(context, m_environment)));
+			asAmalgam->setMember("DisplayMode", flash::ActionValue(new As_traktor_amalgam_DisplayMode(context, m_environment)));
+			asAmalgam->setMember("I18N", flash::ActionValue(new As_traktor_amalgam_I18N(context)));
+			asAmalgam->setMember("InputFabricator", flash::ActionValue(new As_traktor_amalgam_InputFabricator(context, m_environment)));
 		}
-		asTraktor->setMember("amalgam", flash::ActionValue(asParade));
+		asTraktor->setMember("amalgam", flash::ActionValue(asAmalgam));
 	}
 	moviePlayer->setGlobal("traktor", flash::ActionValue(asTraktor));
 

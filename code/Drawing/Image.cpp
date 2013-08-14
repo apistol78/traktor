@@ -255,12 +255,10 @@ void Image::setSpanUnsafe(int32_t y, const Color4f* span)
 	);
 }
 
-Ref< Image > Image::applyFilter(const IImageFilter* imageFilter) const
+void Image::apply(const IImageFilter* imageFilter)
 {
-	Ref< Image > image = imageFilter->apply(this);
+	imageFilter->apply(this);
 	checkData(m_data, m_size);
-	checkData(image->m_data, image->m_size);
-	return image;
 }
 
 void Image::convert(const PixelFormat& intoPixelFormat, Palette* intoPalette)
@@ -285,6 +283,24 @@ void Image::convert(const PixelFormat& intoPixelFormat, Palette* intoPalette)
 	m_pixelFormat = intoPixelFormat;
 
 	checkData(m_data, m_size);
+}
+
+void Image::swap(Image* source)
+{
+	freeData(m_data, m_size);
+
+	m_pixelFormat = source->m_pixelFormat;
+	m_width = source->m_width;
+	m_height = source->m_height;
+	m_pitch = source->m_pitch;
+	m_palette = source->m_palette;
+	m_size = source->m_size;
+	m_data = source->m_data;
+	m_imageInfo = source->m_imageInfo;
+
+	source->m_palette = 0;
+	source->m_data = 0;
+	source->m_imageInfo = 0;
 }
 
 Ref< Image > Image::load(const Path& fileName)

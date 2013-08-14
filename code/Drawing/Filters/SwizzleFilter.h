@@ -28,7 +28,7 @@ public:
 	SwizzleFilter(const std::wstring& swizzle);
 
 protected:
-	virtual Ref< Image > apply(const Image* image) const;
+	virtual void apply(Image* image) const;
 
 private:
 	wchar_t m_swizzle[4];

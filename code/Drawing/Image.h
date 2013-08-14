@@ -86,10 +86,13 @@ public:
 	void setSpanUnsafe(int32_t y, const Color4f* span);
 	
 	/*! \brief Apply filter on entire image. */
-	Ref< Image > applyFilter(const IImageFilter* imageFilter) const;
+	void apply(const IImageFilter* imageFilter);
 
 	/*! \brief Convert format of image. */
 	void convert(const PixelFormat& intoPixelFormat, Palette* intoPalette = 0);
+
+	/*! \brief Swap content of source image. */
+	void swap(Image* source);
 
 	/*! \brief Load image from file. */
 	static Ref< Image > load(const Path& fileName);

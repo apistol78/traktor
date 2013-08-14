@@ -3,8 +3,10 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Format.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
@@ -131,6 +133,7 @@ bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 	m_assetPath = settings->getProperty< PropertyString >(L"Pipeline.AssetPath", L"");
 	m_promoteHalf = settings->getProperty< PropertyBoolean >(L"MeshPipeline.PromoteHalf", false);
 	m_enableBakeOcclusion = settings->getProperty< PropertyBoolean >(L"MeshPipeline.BakeOcclusion", true);
+	m_includeOnlyTechniques = settings->getProperty< PropertyStringSet >(L"ShaderPipeline.IncludeOnlyTechniques");
 	return true;
 }
 
@@ -382,6 +385,21 @@ bool MeshPipeline::buildOutput(
 
 		// Extract each material technique.
 		std::set< std::wstring > materialTechniqueNames = render::ShaderGraphTechniques(materialShaderGraph).getNames();
+		if (!m_includeOnlyTechniques.empty())
+		{
+			std::set< std::wstring > keepTechniqueNames;
+			for (std::set< std::wstring >::const_iterator i = m_includeOnlyTechniques.begin(); i != m_includeOnlyTechniques.end(); ++i)
+			{
+				WildCompare wc(*i);
+				for (std::set< std::wstring >::const_iterator j = materialTechniqueNames.begin(); j != materialTechniqueNames.end(); ++j)
+				{
+					if (wc.match(*j))
+						keepTechniqueNames.insert(*j);
+				}
+			}
+			materialTechniqueNames = keepTechniqueNames;
+		}
+
 		for (std::set< std::wstring >::iterator j = materialTechniqueNames.begin(); j != materialTechniqueNames.end(); ++j)
 		{
 			Ref< render::ShaderGraph > materialTechniqueShaderGraph = render::ShaderGraphTechniques(materialShaderGraph).generate(*j);

@@ -84,8 +84,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 	if (invertX || invertZ)
 	{
 		drawing::MirrorFilter mirrorFilter(invertX, invertZ);
-		image = image->applyFilter(&mirrorFilter);
-		T_ASSERT (image);
+		image->apply(&mirrorFilter);
 	}
 
 	uint32_t size = image->getWidth();
@@ -103,8 +102,7 @@ bool ImportHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* ed
 			drawing::ScaleFilter::MnAverage,
 			drawing::ScaleFilter::MgLinear
 		);
-		image = image->applyFilter(&scaleFilter);
-		T_ASSERT (image);
+		image->apply(&scaleFilter);
 	}
 
 	// Create heightfield.

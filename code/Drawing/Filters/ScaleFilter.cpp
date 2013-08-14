@@ -27,7 +27,7 @@ ScaleFilter::ScaleFilter(
 {
 }
 
-Ref< Image > ScaleFilter::apply(const Image* image) const
+void ScaleFilter::apply(Image* image) const
 {
 	Ref< Image > final = new Image(image->getPixelFormat(), m_width, m_height, image->getPalette());
 	Color4f in, out;
@@ -185,8 +185,8 @@ Ref< Image > ScaleFilter::apply(const Image* image) const
 			}
 		}
 	}
-	
-	return final;
+
+	image->swap(final);
 }
 	
 	}

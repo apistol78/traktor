@@ -340,7 +340,7 @@ void MainForm::eventSelect(ui::Event* event)
 
 				RefArray< IDecoder > decoders;
 				decoders.push_back(new ReliableDecoder());
-				decoders.push_back(new RelayDecoder());
+				//decoders.push_back(new RelayDecoder());
 				decoders.push_back(new ReplicatorDecoder());
 
 				const uint8_t* ptr = entry->data;
@@ -381,7 +381,7 @@ void MainForm::eventSelect(ui::Event* event)
 					{
 						if (j + i < entry->size)
 						{
-							char ch = entry->data[j + i];
+							unsigned char ch = entry->data[j + i];
 							if (isgraph(ch))
 								ss << wchar_t(ch);
 							else

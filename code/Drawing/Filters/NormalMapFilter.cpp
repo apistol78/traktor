@@ -13,9 +13,9 @@ NormalMapFilter::NormalMapFilter(float scale)
 {
 }
 
-Ref< Image > NormalMapFilter::apply(const Image* image) const
+void NormalMapFilter::apply(Image* image) const
 {
-	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
+	Ref< Image > final = image->clone(false);
 	Color4f in0, in1, in2;
 	Scalar c[3];
 
@@ -43,7 +43,7 @@ Ref< Image > NormalMapFilter::apply(const Image* image) const
 		}
 	}
 
-	return final;
+	image->swap(final);
 }
 	
 	}

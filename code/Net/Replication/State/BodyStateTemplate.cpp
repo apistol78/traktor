@@ -3,6 +3,7 @@
 #include "Core/Io/BitWriter.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Half.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Net/Replication/Pack.h"
@@ -25,8 +26,8 @@ float errorV4(const Vector4& Vl, const Vector4& Vr)
 float safeDeltaTime(float v)
 {
 	float av = std::abs(v);
-	if (av < 1e-5f)
-		return 1e-5f * sign(v);
+	if (av < 1.0f/60.0f)
+		return 1.0f/60.0f * sign(v);
 	else if (av > 1.0f)
 		return 1.0f * sign(v);
 	else
@@ -35,14 +36,15 @@ float safeDeltaTime(float v)
 
 physics::BodyState interpolate(const physics::BodyState& bs0, float T0, const physics::BodyState& bs1, float T1, float T)
 {
+	Scalar dT_0_1 = Scalar(safeDeltaTime(T1 - T0));
+
 #if 0
 
 	physics::BodyState state;
 
-	state.setTransform(lerp(bs0.getTransform(), bs1.getTransform(), Scalar( (T - T0) / (T1 - T0) )));
-
+	state.setTransform(lerp(bs0.getTransform(), bs1.getTransform(), Scalar(T - T0) / dT_0_1));
 	state.setLinearVelocity(
-		(bs1.getTransform().translation() - bs0.getTransform().translation()) / Scalar(T1 - T0)
+		(bs1.getTransform().translation() - bs0.getTransform().translation()) / dT_0_1
 	);
 
 	Quaternion Qv0 = bs0.getTransform().rotation();
@@ -53,7 +55,7 @@ physics::BodyState interpolate(const physics::BodyState& bs0, float T0, const ph
 	Scalar angleDiff = Vdiff.length();
 
 	if (angleDiff > FUZZY_EPSILON)
-		state.setAngularVelocity(Vdiff / Scalar(T1 - T0));
+		state.setAngularVelocity(Vdiff / dT_0_1);
 	else
 		state.setAngularVelocity(Vector4::zero());
 
@@ -61,7 +63,7 @@ physics::BodyState interpolate(const physics::BodyState& bs0, float T0, const ph
 
 #else
 
-	return bs0.interpolate(bs1, Scalar( (T - T0) / (T1 - T0) ));
+	return bs0.interpolate(bs1, Scalar(T - T0) / dT_0_1);
 
 #endif
 }
@@ -94,7 +96,7 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	for (uint32_t i = 0; i < 3; ++i)
 		writer.writeUnsigned(32, *(uint32_t*)&e[i]);
 
-	// 3 * 8 + 32
+	// 3 * 8 + 16
 	Vector4 R = T.rotation().toAxisAngle();
 	float a = R.length();
 	if (abs(a) > FUZZY_EPSILON)
@@ -104,7 +106,7 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 	writer.writeUnsigned(8, u[0]);
 	writer.writeUnsigned(8, u[1]);
 	writer.writeUnsigned(8, u[2]);
-	writer.writeUnsigned(32, *(uint32_t*)&a);
+	writer.writeUnsigned(16, floatToHalf(a));
 
 	{
 		Vector4 linearVelocity = v.getLinearVelocity().xyz0();
@@ -119,9 +121,9 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 		writer.writeUnsigned(8, u[1]);
 		writer.writeUnsigned(8, u[2]);
 
-		// 32		
-		e[0] = ln;
-		writer.writeUnsigned(32, *(uint32_t*)&e[0]);
+		// 16
+		half_t lnf16 = floatToHalf(ln);
+		writer.writeUnsigned(16, lnf16);
 	}
 
 	{
@@ -137,9 +139,9 @@ void BodyStateTemplate::pack(BitWriter& writer, const IValue* V) const
 		writer.writeUnsigned(8, u[1]);
 		writer.writeUnsigned(8, u[2]);
 
-		// 32		
-		e[0] = ln;
-		writer.writeUnsigned(32, *(uint32_t*)&e[0]);
+		// 16
+		half_t lnf16 = floatToHalf(ln);
+		writer.writeUnsigned(16, lnf16);
 	}
 }
 
@@ -158,7 +160,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	u[1] = reader.readUnsigned(8);
 	u[2] = reader.readUnsigned(8);
 	Vector4 R = unpackUnit(u);
-	uint32_t ua = reader.readUnsigned(32);
+	float Ra = halfToFloat(reader.readUnsigned(16));
 
 	T = Transform(
 		Vector4(
@@ -167,7 +169,7 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 			*(float*)&uf[2],
 			1.0f
 		),
-		Quaternion::fromAxisAngle(R, *(float*)&ua).normalized()
+		Quaternion::fromAxisAngle(R, Ra).normalized()
 	);
 
 	u[0] = reader.readUnsigned(8);
@@ -175,16 +177,16 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	u[2] = reader.readUnsigned(8);
 	linearVelocity = unpackUnit(u);
 
-	uint32_t ulnv = reader.readUnsigned(32);
-	linearVelocity *= Scalar(*(float*)&ulnv);
+	half_t lnvf16 = reader.readUnsigned(16);
+	linearVelocity *= Scalar(halfToFloat(lnvf16));
 
 	u[0] = reader.readUnsigned(8);
 	u[1] = reader.readUnsigned(8);
 	u[2] = reader.readUnsigned(8);
 	angularVelocity = unpackUnit(u);
 
-	uint32_t ulna = reader.readUnsigned(32);
-	angularVelocity *= Scalar(*(float*)&ulna);
+	half_t lnaf16 = reader.readUnsigned(16);
+	angularVelocity *= Scalar(halfToFloat(lnaf16));
 
 	physics::BodyState S;
 	S.setTransform(T);

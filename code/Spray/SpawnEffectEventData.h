@@ -40,6 +40,7 @@ private:
 
 	Ref< world::EntityData > m_effectData;
 	bool m_follow;
+	bool m_useRotation;
 };
 
 	}

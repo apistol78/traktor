@@ -288,6 +288,7 @@ void EmitterInstance::render(
 	{
 		meshRenderer->render(
 			m_emitter->getMesh(),
+			m_emitter->meshOrientationFromVelocity(),
 			m_renderPoints
 		);
 	}

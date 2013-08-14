@@ -29,7 +29,7 @@ public:
 	TransformFilter(const Color4f& Km, const Color4f& Kc);
 
 protected:
-	virtual Ref< Image > apply(const Image* image) const;
+	virtual void apply(Image* image) const;
 
 private:
 	Color4f m_Km;

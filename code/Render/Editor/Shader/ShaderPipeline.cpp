@@ -3,11 +3,13 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
+#include "Core/Misc/WildCompare.h"
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberStl.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyInteger.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Settings/PropertyStringSet.h"
 #include "Core/Thread/Job.h"
 #include "Core/Thread/JobManager.h"
 #include "Database/Database.h"
@@ -374,6 +376,7 @@ bool ShaderPipeline::create(const editor::IPipelineSettings* settings)
 		return false;
 	}
 
+	m_includeOnlyTechniques = settings->getProperty< PropertyStringSet >(L"ShaderPipeline.IncludeOnlyTechniques");
 	m_frequentUniformsAsLinear = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.FrequentUniformsAsLinear", m_frequentUniformsAsLinear);
 	m_optimize = settings->getProperty< PropertyInteger >(L"ShaderPipeline.Optimize", m_optimize);
 	m_validate = settings->getProperty< PropertyBoolean >(L"ShaderPipeline.Validate", m_validate);
@@ -501,7 +504,22 @@ bool ShaderPipeline::buildOutput(
 
 	// Generate shader graphs from techniques and combinations.
 	ShaderGraphTechniques techniques(shaderGraph);
+
 	std::set< std::wstring > techniqueNames = techniques.getNames();
+	if (!m_includeOnlyTechniques.empty())
+	{
+		std::set< std::wstring > keepTechniqueNames;
+		for (std::set< std::wstring >::const_iterator i = m_includeOnlyTechniques.begin(); i != m_includeOnlyTechniques.end(); ++i)
+		{
+			WildCompare wc(*i);
+			for (std::set< std::wstring >::const_iterator j = techniqueNames.begin(); j != techniqueNames.end(); ++j)
+			{
+				if (wc.match(*j))
+					keepTechniqueNames.insert(*j);
+			}
+		}
+		techniqueNames = keepTechniqueNames;
+	}
 
 	for (std::set< std::wstring >::iterator i = techniqueNames.begin(); i != techniqueNames.end(); ++i)
 	{

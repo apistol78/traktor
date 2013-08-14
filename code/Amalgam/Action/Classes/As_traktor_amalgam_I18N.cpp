@@ -1,21 +1,21 @@
-#include "I18N/Format.h"
+#include "Amalgam/Action/Classes/As_traktor_amalgam_I18N.h"
 #include "Flash/Action/ActionFunctionNative.h"
-#include "Flash/Action/Avm1/Classes/AsI18N.h"
+#include "I18N/Format.h"
 
 namespace traktor
 {
-	namespace flash
+	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.flash.AsI18N", AsI18N, ActionObject)
+T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.As_traktor_amalgam_I18N", As_traktor_amalgam_I18N, ActionObject)
 
-AsI18N::AsI18N(ActionContext* context)
-:	ActionObject(context)
+As_traktor_amalgam_I18N::As_traktor_amalgam_I18N(flash::ActionContext* context)
+:	flash::ActionObject(context)
 {
-	setMember("format", ActionValue(createNativeFunction(context, this, &AsI18N::I18N_format)));
+	setMember("format", flash::ActionValue(createNativeFunction(context, this, &As_traktor_amalgam_I18N::I18N_format)));
 }
 
-void AsI18N::I18N_format(CallArgs& ca)
+void As_traktor_amalgam_I18N::I18N_format(flash::CallArgs& ca)
 {
 	std::wstring text;
 
@@ -62,7 +62,7 @@ void AsI18N::I18N_format(CallArgs& ca)
 		break;
 	}
 
-	ca.ret = ActionValue(text);
+	ca.ret = flash::ActionValue(text);
 }
 
 	}

@@ -227,7 +227,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 
 int32_t WorldServer::getFrameCount() const
 {
-	return 3;
+	return 2;
 }
 
 	}

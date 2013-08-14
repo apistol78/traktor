@@ -54,7 +54,8 @@ public:
 		float fadeNearRange,
 		float warmUp,
 		bool sort,
-		bool worldSpace
+		bool worldSpace,
+		bool meshOrientationFromVelocity
 	);
 
 	Ref< EmitterInstance > createInstance(float duration) const;
@@ -79,6 +80,8 @@ public:
 
 	bool worldSpace() const { return m_worldSpace; }
 
+	bool meshOrientationFromVelocity() const { return m_meshOrientationFromVelocity; }
+
 private:
 	Ref< Source > m_source;
 	RefArray< Modifier > m_modifiers;
@@ -90,6 +93,7 @@ private:
 	float m_warmUp;
 	bool m_sort;
 	bool m_worldSpace;
+	bool m_meshOrientationFromVelocity;
 };
 
 	}

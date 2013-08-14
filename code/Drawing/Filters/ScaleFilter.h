@@ -50,7 +50,7 @@ public:
 	);
 
 protected:
-	virtual Ref< Image > apply(const Image* image) const;
+	virtual void apply(Image* image) const;
 
 private:
 	int32_t m_width;

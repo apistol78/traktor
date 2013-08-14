@@ -15,7 +15,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 3, EmitterData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EmitterData", 4, EmitterData, ISerializable)
 
 EmitterData::EmitterData()
 :	m_middleAge(0.2f)
@@ -24,6 +24,7 @@ EmitterData::EmitterData()
 ,	m_warmUp(0.0f)
 ,	m_sort(false)
 ,	m_worldSpace(true)
+,	m_meshOrientationFromVelocity(true)
 {
 }
 
@@ -63,7 +64,8 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 		m_fadeNearRange,
 		m_warmUp,
 		m_sort,
-		m_worldSpace
+		m_worldSpace,
+		m_meshOrientationFromVelocity
 	);
 }
 
@@ -86,6 +88,9 @@ void EmitterData::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 2)
 		s >> Member< bool >(L"worldSpace", m_worldSpace);
+
+	if (s.getVersion() >= 4)
+		s >> Member< bool >(L"meshOrientationFromVelocity", m_meshOrientationFromVelocity);
 }
 
 	}

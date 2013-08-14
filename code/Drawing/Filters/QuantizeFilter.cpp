@@ -14,10 +14,8 @@ QuantizeFilter::QuantizeFilter(int steps)
 {
 }
 
-Ref< Image > QuantizeFilter::apply(const Image* image) const
+void QuantizeFilter::apply(Image* image) const
 {
-	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	
 	Color4f in;
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
@@ -30,11 +28,9 @@ Ref< Image > QuantizeFilter::apply(const Image* image) const
 			in.setBlue(Scalar(std::floor(in.getBlue() * m_steps + 0.5f) / m_steps));
 			in.setAlpha(Scalar(std::floor(in.getAlpha() * m_steps + 0.5f) / m_steps));
 
-			final->setPixelUnsafe(x, y, in);
+			image->setPixelUnsafe(x, y, in);
 		}
 	}
-
-	return final;
 }
 
 	}

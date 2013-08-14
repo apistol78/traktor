@@ -58,7 +58,7 @@ Ref< drawing::Image > ThumbnailGenerator::get(const Path& fileName, int32_t widt
 		drawing::ScaleFilter::MnAverage,
 		drawing::ScaleFilter::MgNearest
 	);
-	image = image->applyFilter(&scale);
+	image->apply(&scale);
 
 	if (image->getPixelFormat().getAlphaBits() > 0 && visibleAlpha)
 	{

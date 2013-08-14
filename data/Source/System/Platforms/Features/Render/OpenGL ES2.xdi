@@ -56,6 +56,14 @@
 				</second>
 			</item>
 			<item>
+				<first>ShaderPipeline.IncludeOnlyTechniques</first>
+				<second type="traktor.PropertyStringSet">
+					<value>
+						<item>Default</item>
+					</value>
+				</second>
+			</item>
+			<item>
 				<first>ShaderPipeline.ParametersFile</first>
 				<second type="traktor.PropertyString">
 					<value>temp/Parameters.txt</value>

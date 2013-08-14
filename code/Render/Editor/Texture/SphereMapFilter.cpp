@@ -8,12 +8,12 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SphereMapFilter", SphereMapFilter, drawing::IImageFilter)
 
-Ref< drawing::Image > SphereMapFilter::apply(const drawing::Image* image) const
+void SphereMapFilter::apply(drawing::Image* image) const
 {
 	int32_t width = image->getWidth();
 	int32_t height = image->getHeight();
 
-	Ref< drawing::Image > sphereImage = new drawing::Image(image->getPixelFormat(), height, height);
+	Ref< drawing::Image > sphereImage = image->clone();
 
 	for (int y = 0; y < height; ++y)
 	{
@@ -70,7 +70,7 @@ Ref< drawing::Image > SphereMapFilter::apply(const drawing::Image* image) const
 		}
 	}
 
-	return sphereImage;
+	image->swap(sphereImage);
 }
 
 	}

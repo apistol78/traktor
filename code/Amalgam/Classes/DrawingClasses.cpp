@@ -49,7 +49,7 @@ void registerDrawingClasses(script::IScriptManager* scriptManager)
 	classImage->addMethod("clear", &drawing::Image::clear);
 	classImage->addMethod("getPixel", &drawing_Image_getPixel);
 	classImage->addMethod("setPixel", &drawing::Image::setPixel);
-	classImage->addMethod("applyFilter", &drawing::Image::applyFilter);
+	classImage->addMethod("apply", &drawing::Image::apply);
 	classImage->addStaticMethod("loadFromFile", &drawing_Image_loadFromFile);
 	classImage->addStaticMethod("loadFromStream", &drawing_Image_loadFromStream);
 	classImage->addMethod("save", &drawing_Image_save);

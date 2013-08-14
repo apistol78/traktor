@@ -14,6 +14,14 @@
 
 namespace traktor
 {
+	namespace world
+	{
+
+class PostProcessSettings;
+class WorldRenderSettings;
+
+	}
+
 	namespace scene
 	{
 
@@ -29,6 +37,8 @@ private:
 
 	Guid m_scene;
 	std::list< std::wstring > m_includeLayers;
+	Ref< world::WorldRenderSettings > m_overrideWorldRenderSettings;
+	resource::Id< world::PostProcessSettings > m_overridePostProcessSettings;
 };
 
 	}

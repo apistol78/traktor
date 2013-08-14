@@ -88,7 +88,7 @@ private:
 	};
 #pragma pack()
 
-	Ref< render::VertexBuffer > m_vertexBuffers[8];
+	Ref< render::VertexBuffer > m_vertexBuffers[12];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	float m_lod1Distance;
 	float m_lod2Distance;

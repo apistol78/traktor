@@ -14,7 +14,6 @@
 #include "Flash/Action/Avm1/Classes/AsDate.h"
 #include "Flash/Action/Avm1/Classes/AsError.h"
 #include "Flash/Action/Avm1/Classes/AsFunction.h"
-#include "Flash/Action/Avm1/Classes/AsI18N.h"
 #include "Flash/Action/Avm1/Classes/AsKey.h"
 #include "Flash/Action/Avm1/Classes/AsLoadVars.h"
 #include "Flash/Action/Avm1/Classes/AsLocalConnection.h"
@@ -84,7 +83,6 @@ ActionGlobal::ActionGlobal(ActionContext* context)
 	setMember("Date", ActionValue(new AsDate(context)));
 	setMember("Error", ActionValue(new AsError(context)));
 	setMember("Function", ActionValue(new AsFunction(context)));
-	setMember("I18N", ActionValue(new AsI18N(context)));
 	setMember("LoadVars", ActionValue(new AsLoadVars(context)));
 	setMember("LocalConnection", ActionValue(new AsLocalConnection(context)));
 	setMember("Math", ActionValue(new AsMath(context)));

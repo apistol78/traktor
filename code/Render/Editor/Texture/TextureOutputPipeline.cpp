@@ -68,16 +68,14 @@ bool isBinaryAlpha(const drawing::Image* image)
 
 struct ScaleTextureTask : public Object
 {
-	Ref< const drawing::Image > image;
+	Ref< drawing::Image > image;
 	Ref< drawing::IImageFilter > filter;
-	Ref< drawing::Image > output;
 	float alphaCoverageDesired;
 	float alphaCoverageRef;
 
 	void execute()
 	{
-		output = image->applyFilter(filter);
-		T_ASSERT (output);
+		image->apply(filter);
 
 		if (alphaCoverageDesired > 0.0f)
 		{
@@ -89,17 +87,17 @@ struct ScaleTextureTask : public Object
 			{
 				float alphaCoverageMip = 0.0f;
 
-				for (int32_t y = 0; y < output->getHeight(); ++y)
+				for (int32_t y = 0; y < image->getHeight(); ++y)
 				{
-					for (int32_t x = 0; x < output->getWidth(); ++x)
+					for (int32_t x = 0; x < image->getWidth(); ++x)
 					{
 						Color4f color;
-						output->getPixelUnsafe(x, y, color);
+						image->getPixelUnsafe(x, y, color);
 						alphaCoverageMip += (color.getAlpha() > alphaRefMid) ? 1.0f : 0.0f;
 					}
 				}
 
-				alphaCoverageMip /= float(output->getWidth() * output->getHeight());
+				alphaCoverageMip /= float(image->getWidth() * image->getHeight());
 
 				if (alphaCoverageMip > alphaCoverageDesired + FUZZY_EPSILON)
 					alphaRefMin = alphaRefMid;
@@ -113,14 +111,14 @@ struct ScaleTextureTask : public Object
 
 			float alphaScale = alphaCoverageRef / alphaRefMid;
 
-			for (int32_t y = 0; y < output->getHeight(); ++y)
+			for (int32_t y = 0; y < image->getHeight(); ++y)
 			{
-				for (int32_t x = 0; x < output->getWidth(); ++x)
+				for (int32_t x = 0; x < image->getWidth(); ++x)
 				{
 					Color4f color;
-					output->getPixelUnsafe(x, y, color);
+					image->getPixelUnsafe(x, y, color);
 					color.setAlpha(clamp(color.getAlpha() * Scalar(alphaScale), Scalar(0.0f), Scalar(1.0f)));
-					output->setPixelUnsafe(x, y, color);
+					image->setPixelUnsafe(x, y, color);
 				}
 			}
 		}
@@ -377,7 +375,7 @@ bool TextureOutputPipeline::buildOutput(
 	if (textureOutput->m_flipX || textureOutput->m_flipY)
 	{
 		drawing::MirrorFilter mirrorFilter(textureOutput->m_flipX, textureOutput->m_flipY);
-		image = image->applyFilter(&mirrorFilter);
+		image->apply(&mirrorFilter);
 	}
 
 	// Generate sphere map from cube map.
@@ -385,7 +383,7 @@ bool TextureOutputPipeline::buildOutput(
 	{
 		log::info << L"Generating sphere map..." << Endl;
 		SphereMapFilter sphereMapFilter;
-		image = image->applyFilter(&sphereMapFilter);
+		image->apply(&sphereMapFilter);
 	}
 
 	// Convert into linear gamma, do it before we're converting image
@@ -403,7 +401,7 @@ bool TextureOutputPipeline::buildOutput(
 		{
 			log::info << L"Converting into linear gamma..." << Endl;
 			drawing::GammaFilter gammaFilter(m_gamma);
-			image = image->applyFilter(&gammaFilter);
+			image->apply(&gammaFilter);
 		}
 	}
 
@@ -412,7 +410,7 @@ bool TextureOutputPipeline::buildOutput(
 	{
 		log::info << L"Pre-multiply with alpha..." << Endl;
 		drawing::PremultiplyAlphaFilter preAlphaFilter;
-		image = image->applyFilter(&preAlphaFilter);
+		image->apply(&preAlphaFilter);
 	}
 
 	// Convert image into proper format.
@@ -423,7 +421,7 @@ bool TextureOutputPipeline::buildOutput(
 	{
 		log::info << L"Generating normal map..." << Endl;
 		drawing::NormalMapFilter filter(textureOutput->m_scaleDepth);
-		image = image->applyFilter(&filter);
+		image->apply(&filter);
 		isNormalMap = true;
 	}
 
@@ -432,7 +430,7 @@ bool TextureOutputPipeline::buildOutput(
 	{
 		log::info << L"Converting normal map..." << Endl;
 		drawing::TransformFilter transformFilter(Color4f(1.0f, -1.0f, 1.0f, 1.0f), Color4f(0.0f, 1.0f, 0.0f, 0.0f));
-		image = image->applyFilter(&transformFilter);
+		image->apply(&transformFilter);
 		isNormalMap = true;
 	}
 
@@ -613,7 +611,7 @@ bool TextureOutputPipeline::buildOutput(
 					taskFilters->add(mipFilters);
 
 				Ref< ScaleTextureTask > task = new ScaleTextureTask();
-				task->image = image;
+				task->image = image->clone();
 				task->filter = taskFilters;
 				task->alphaCoverageDesired = alphaCoverage;
 				task->alphaCoverageRef = textureOutput->m_alphaCoverageReference;
@@ -626,7 +624,7 @@ bool TextureOutputPipeline::buildOutput(
 
 				task->execute();
 
-				mipImages[i] = task->output;
+				mipImages[i] = task->image;
 				T_ASSERT (mipImages[i]);
 			}
 
@@ -716,8 +714,7 @@ bool TextureOutputPipeline::buildOutput(
 					drawing::ScaleFilter::MgLinear,
 					textureOutput->m_keepZeroAlpha
 				);
-				Ref< drawing::Image > mipImage = sliceImage->applyFilter(&mipScaleFilter);
-				T_ASSERT (mipImage);
+				sliceImage->apply(&mipScaleFilter);
 
 				uint32_t outputSize = getTextureMipPitch(
 					textureFormat,
@@ -726,7 +723,7 @@ bool TextureOutputPipeline::buildOutput(
 				);
 
 				 writerData.write(
-					mipImage->getData(),
+					sliceImage->getData(),
 					outputSize,
 					1
 				);
@@ -839,7 +836,7 @@ bool TextureOutputPipeline::buildOutput(
 				{
 					// Flip -Z as it's defined up-side down in this layout.
 					drawing::MirrorFilter filter(true, true);
-					sideImage = sideImage->applyFilter(&filter);
+					sideImage->apply(&filter);
 				}
 			}
 
@@ -854,8 +851,7 @@ bool TextureOutputPipeline::buildOutput(
 					drawing::ScaleFilter::MgLinear,
 					textureOutput->m_keepZeroAlpha
 				);
-				Ref< drawing::Image > mipImage = sideImage->applyFilter(&mipScaleFilter);
-				T_ASSERT (mipImage);
+				sideImage->apply(&mipScaleFilter);
 
 				uint32_t outputSize = getTextureMipPitch(
 					textureFormat,
@@ -864,7 +860,7 @@ bool TextureOutputPipeline::buildOutput(
 				);
 
 				 writerData.write(
-					mipImage->getData(),
+					sideImage->getData(),
 					outputSize,
 					1
 				);

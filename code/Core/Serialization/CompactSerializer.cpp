@@ -1,10 +1,12 @@
 #include "Core/Io/IStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Half.h"
 #include "Core/Math/MathUtils.h"
 #include "Core/Misc/TString.h"
 #include "Core/Serialization/AttributeDirection.h"
 #include "Core/Serialization/AttributePoint.h"
+#include "Core/Serialization/AttributePrecision.h"
 #include "Core/Serialization/AttributeRange.h"
 #include "Core/Serialization/CompactSerializer.h"
 
@@ -74,6 +76,12 @@ bool read_uint32(BitReader& r, uint32_t& value)
 		value = r.readUnsigned(32);
 	else
 		value = r.readUnsigned(16);
+	return true;
+}
+
+bool read_half(BitReader& r, half_t& value)
+{
+	value = r.readUnsigned(16);
 	return true;
 }
 
@@ -177,6 +185,12 @@ bool write_uint32(BitWriter& w, uint32_t v)
 		w.writeBit(false);
 		w.writeUnsigned(16, v);
 	}
+	return true;
+}
+
+bool write_half(BitWriter& w, half_t v)
+{
+	w.writeUnsigned(16, v);
 	return true;
 }
 
@@ -609,14 +623,15 @@ void CompactSerializer::operator >> (const Member< Vector4 >& m)
 {
 	T_CHECK_STATUS;
 
+	AttributePrecision::PrecisionType precision = AttributePrecision::AtFull;
 	float T_MATH_ALIGN16 e[4];
 	uint32_t count = 4;
 
-	const AttributeDirection* direction = findAttribute< AttributeDirection >(m);
-	if (direction)
+	const AttributeDirection* attrDirection = findAttribute< AttributeDirection >(m);
+	if (attrDirection)
 	{
 		// If unit direction then serialize in packed 24-bit form.
-		if (direction->getUnit())
+		if (attrDirection->getUnit())
 		{
 			if (m_direction == SdRead)
 			{
@@ -646,24 +661,51 @@ void CompactSerializer::operator >> (const Member< Vector4 >& m)
 		count = 3;
 	}
 
-	const AttributePoint* point = findAttribute< AttributePoint >(m);
-	if (point)
+	const AttributePoint* attrPoint = findAttribute< AttributePoint >(m);
+	if (attrPoint)
 	{
 		e[3] = 1.0f;
 		count = 3;
 	}
 
+	const AttributePrecision* attrPrecision = findAttribute< AttributePrecision >(m);
+	if (attrPrecision)
+		precision = attrPrecision->getPrecision();
+
 	if (m_direction == SdRead)
 	{
-		for (uint32_t i = 0; i < count; ++i)
-			read_float(m_reader, e[i]);
+		if (precision == AttributePrecision::AtFull)
+		{
+			for (uint32_t i = 0; i < count; ++i)
+				read_float(m_reader, e[i]);
+		}
+		else if (precision == AttributePrecision::AtHalf)
+		{
+			for (uint32_t i = 0; i < count; ++i)
+			{
+				half_t he;
+				read_half(m_reader, he);
+				e[i] = halfToFloat(he);
+			}
+		}
 		(*m) = Vector4::loadUnaligned(e);
 	}
 	else
 	{
 		(*m).storeUnaligned(e);
-		for (uint32_t i = 0; i < count; ++i)
-			write_float(m_writer, e[i]);
+		if (precision == AttributePrecision::AtFull)
+		{
+			for (uint32_t i = 0; i < count; ++i)
+				write_float(m_writer, e[i]);
+		}
+		else if (precision == AttributePrecision::AtHalf)
+		{
+			for (uint32_t i = 0; i < count; ++i)
+			{
+				half_t he = floatToHalf(e[i]);
+				write_half(m_writer, he);
+			}
+		}
 	}
 }
 

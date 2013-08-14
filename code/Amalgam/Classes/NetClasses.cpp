@@ -1,6 +1,7 @@
 #include "Core/Io/IStream.h"
 #include "Online/ILobby.h"
 #include "Online/ISessionManager.h"
+#include "Net/Replication/BandwidthLimitPeers.h"
 #include "Net/Replication/DiagnosePeers.h"
 #include "Net/Replication/InetSimPeers.h"
 #include "Net/Replication/RecordPeers.h"
@@ -66,6 +67,10 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< net::IReplicatorPeers > > classIReplicatorPeers = new script::AutoScriptClass< net::IReplicatorPeers >();
 	classIReplicatorPeers->addMethod("destroy", &net::IReplicatorPeers::destroy);
 	scriptManager->registerClass(classIReplicatorPeers);
+
+	Ref< script::AutoScriptClass< net::BandwidthLimitPeers > > classBandwidthLimitPeers = new script::AutoScriptClass< net::BandwidthLimitPeers >();
+	classBandwidthLimitPeers->addConstructor< net::IReplicatorPeers*, int32_t, bool, bool >();
+	scriptManager->registerClass(classBandwidthLimitPeers);
 
 	Ref< script::AutoScriptClass< net::DiagnosePeers > > classDiagnosePeers = new script::AutoScriptClass< net::DiagnosePeers >();
 	classDiagnosePeers->addConstructor< net::IReplicatorPeers* >();

@@ -13,11 +13,13 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SpawnEffectEvent", SpawnEffectEvent, worl
 SpawnEffectEvent::SpawnEffectEvent(
 	const world::IEntityBuilder* entityBuilder,
 	const world::EntityData* effectData,
-	bool follow
+	bool follow,
+	bool useRotation
 )
 :	m_entityBuilder(entityBuilder)
 ,	m_effectData(effectData)
 ,	m_follow(follow)
+,	m_useRotation(useRotation)
 {
 }
 
@@ -25,7 +27,7 @@ Ref< world::IEntityEventInstance > SpawnEffectEvent::createInstance(world::Entit
 {
 	Ref< EffectEntity > effect = m_entityBuilder->create< EffectEntity >(m_effectData);
 	if (effect)
-		return new SpawnEffectEventInstance(sender, Toffset, effect, m_follow);
+		return new SpawnEffectEventInstance(this, sender, Toffset, effect);
 	else
 		return 0;
 }

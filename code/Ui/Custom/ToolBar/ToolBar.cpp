@@ -91,13 +91,13 @@ uint32_t ToolBar::addImage(Bitmap* image, uint32_t imageCount)
 
 	// Create disabled image
 	{
-		Ref< drawing::Image > image = m_imageEnabled->getImage();
+		Ref< drawing::Image > image = m_imageEnabled->getImage()->clone();
 
 		drawing::GrayscaleFilter grayscaleFilter;
-		image = image->applyFilter(&grayscaleFilter);
+		image->apply(&grayscaleFilter);
 
 		drawing::BrightnessContrastFilter brigtnessContrastFilter(0.4f, 0.6f);
-		image = image->applyFilter(&brigtnessContrastFilter);
+		image->apply(&brigtnessContrastFilter);
 
 		m_imageDisabled = new ui::Bitmap(image);
 	}
