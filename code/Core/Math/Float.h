@@ -19,6 +19,11 @@ inline bool isInfinite(float value)
 	return (bits & 0x7f800000) == 0x7f800000 && (bits & 0x7fffff) == 0;
 }
 
+inline bool isNanOrInfinite(float value)
+{
+	return isNan(value) || isInfinite(value);
+}
+
 inline float lerp(float a, float b, float c)
 {
 	return a * (1.0f - c) + b * c;

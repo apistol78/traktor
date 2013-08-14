@@ -55,6 +55,7 @@ public:
 
 	void render(
 		mesh::InstanceMesh* mesh,
+		bool meshOrientationFromVelocity,
 		const PointVector& points
 	);
 
@@ -64,7 +65,7 @@ public:
 	);
 
 private:
-	SmallMap< Ref< mesh::InstanceMesh >, PointVector > m_meshes;
+	SmallMap< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > > m_meshes;
 };
 
 	}

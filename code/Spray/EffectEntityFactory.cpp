@@ -54,7 +54,12 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 	}
 	else if (const SpawnEffectEventData* spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(&entityEventData))
 	{
-		return new SpawnEffectEvent(builder->getCompositeEntityBuilder(), spawnEventData->m_effectData, spawnEventData->m_follow);
+		return new SpawnEffectEvent(
+			builder->getCompositeEntityBuilder(),
+			spawnEventData->m_effectData,
+			spawnEventData->m_follow,
+			spawnEventData->m_useRotation
+		);
 	}
 	else
 		return 0;

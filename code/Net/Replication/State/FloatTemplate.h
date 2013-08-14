@@ -16,6 +16,14 @@ namespace traktor
 	namespace net
 	{
 
+enum FloatTemplatePrecision
+{
+	Ftp32,
+	Ftp16,
+	Ftp8,
+	Ftp4
+};
+
 class T_DLLCLASS FloatTemplate : public IValueTemplate
 {
 	T_RTTI_CLASS;
@@ -23,7 +31,7 @@ class T_DLLCLASS FloatTemplate : public IValueTemplate
 public:
 	FloatTemplate(float errorScale);
 
-	explicit FloatTemplate(float errorScale, float min, float max, bool lowPrecision);
+	explicit FloatTemplate(float errorScale, float min, float max, FloatTemplatePrecision precision);
 
 	virtual const TypeInfo& getValueType() const;
 
@@ -39,7 +47,7 @@ private:
 	float m_errorScale;
 	float m_min;
 	float m_max;
-	bool m_lowPrecision;
+	FloatTemplatePrecision m_precision;
 };
 
 	}

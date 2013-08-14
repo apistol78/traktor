@@ -13,7 +13,7 @@ class SphereMapFilter : public drawing::IImageFilter
 	T_RTTI_CLASS;
 
 protected:
-	virtual Ref< drawing::Image > apply(const drawing::Image* image) const;
+	virtual void apply(drawing::Image* image) const;
 };
 
 	}

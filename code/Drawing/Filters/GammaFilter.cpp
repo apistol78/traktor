@@ -32,9 +32,8 @@ GammaFilter::GammaFilter(float gammaR, float gammaG, float gammaB, float gammaA)
 	m_gamma[3] = gammaA;
 }
 
-Ref< Image > GammaFilter::apply(const Image* image) const
+void GammaFilter::apply(Image* image) const
 {
-	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color4f in;
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
@@ -47,10 +46,9 @@ Ref< Image > GammaFilter::apply(const Image* image) const
 				std::pow(in.getBlue(), m_gamma[2]),
 				std::pow(in.getAlpha(), m_gamma[3])
 			);
-			final->setPixelUnsafe(x, y, out);
+			image->setPixelUnsafe(x, y, out);
 		}
 	}
-	return final;
 }
 	
 	}

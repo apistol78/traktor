@@ -16,7 +16,7 @@ MirrorFilter::MirrorFilter(bool flipHorizontal, bool flipVertical)
 {
 }
 
-Ref< Image > MirrorFilter::apply(const Image* image) const
+void MirrorFilter::apply(Image* image) const
 {
 	int32_t imageWidth = image->getWidth();
 	int32_t imageHeight = image->getHeight();
@@ -24,7 +24,7 @@ Ref< Image > MirrorFilter::apply(const Image* image) const
 	int32_t pixelPitch = image->getPixelFormat().getByteSize();
 	int32_t rowPitch = imageWidth * pixelPitch;
 
-	Ref< Image > final = new Image(image->getPixelFormat(), imageWidth, imageHeight, image->getPalette());
+	Ref< Image > final = image->clone(false);
 
 	const uint8_t* source = static_cast< const uint8_t* >(image->getData());
 	uint8_t* destination = static_cast< uint8_t* >(final->getData());
@@ -52,7 +52,7 @@ Ref< Image > MirrorFilter::apply(const Image* image) const
 		}
 	}
 
-	return final;
+	image->swap(final);
 }
 
 	}

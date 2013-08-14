@@ -27,7 +27,7 @@ class T_DLLCLASS I18N : public ISingleton
 public:
 	static I18N& getInstance();
 
-	void appendDictionary(Dictionary* dictionary, bool overrideExisting = false);
+	void appendDictionary(const Dictionary* dictionary, bool overrideExisting = false);
 
 	Ref< Dictionary > getMasterDictionary();
 

@@ -18,9 +18,8 @@ SwizzleFilter::SwizzleFilter(const std::wstring& swizzle)
 	m_swizzle[3] = swizzle[3];
 }
 
-Ref< Image > SwizzleFilter::apply(const Image* image) const
+void SwizzleFilter::apply(Image* image) const
 {
-	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
 	Color4f in, out;
 
 	for (int32_t y = 0; y < image->getHeight(); ++y)
@@ -52,10 +51,9 @@ Ref< Image > SwizzleFilter::apply(const Image* image) const
 					break;
 				}
 			}
-			final->setPixelUnsafe(x, y, out);
+			image->setPixelUnsafe(x, y, out);
 		}
 	}
-	return final;
 }
 
 	}

@@ -27,15 +27,19 @@ public:
 	SpawnEffectEvent(
 		const world::IEntityBuilder* entityBuilder,
 		const world::EntityData* effectData,
-		bool follow
+		bool follow,
+		bool useRotation
 	);
 
 	virtual Ref< world::IEntityEventInstance > createInstance(world::Entity* sender, const Transform& Toffset) const;
 
 private:
+	friend class SpawnEffectEventInstance;
+
 	Ref< const world::IEntityBuilder > m_entityBuilder;
 	Ref< const world::EntityData > m_effectData;
 	bool m_follow;
+	bool m_useRotation;
 };
 
 	}

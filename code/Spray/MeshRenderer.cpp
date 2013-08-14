@@ -23,15 +23,17 @@ void MeshRenderer::destroy()
 
 void MeshRenderer::render(
 	mesh::InstanceMesh* mesh,
+	bool meshOrientationFromVelocity,
 	const PointVector& points
 )
 {
-	PointVector& p = m_meshes[mesh];
+	PointVector& p = m_meshes[mesh].first;
 	p.insert(
 		p.end(),
 		points.begin(),
 		points.end()
 	);
+	m_meshes[mesh].second = meshOrientationFromVelocity;
 }
 
 void MeshRenderer::flush(
@@ -40,22 +42,24 @@ void MeshRenderer::flush(
 )
 {
 	AlignedVector< mesh::InstanceMesh::instance_distance_t > instances;
-	for (SmallMap< Ref< mesh::InstanceMesh >, PointVector >::const_iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
+	for (SmallMap< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > >::const_iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
 	{
 		if (!i->first->supportTechnique(worldRenderPass.getTechnique()))
 			continue;
 
-		instances.resize(i->second.size());
-		for (uint32_t j = 0; j < i->second.size(); ++j)
+		instances.resize(i->second.first.size());
+		for (uint32_t j = 0; j < i->second.first.size(); ++j)
 		{
-			Quaternion R = Quaternion::fromAxisAngle(
-				cross(i->second[j].velocity, Vector4(0.0f, 1.0f, 0.0f)).normalized(),
-				i->second[j].orientation
-			);
+			Quaternion R =
+				i->second.second ? Quaternion::fromAxisAngle(
+					cross(i->second.first[j].velocity, Vector4(0.0f, 1.0f, 0.0f)).normalized(),
+					i->second.first[j].orientation
+				) :
+				Quaternion::identity();
 
 			R.e.storeUnaligned(instances[j].first.rotation);
-			i->second[j].position.storeUnaligned(instances[j].first.translation);
-			instances[j].first.scale = i->second[j].size;
+			i->second.first[j].position.storeUnaligned(instances[j].first.translation);
+			instances[j].first.scale = i->second.first[j].size;
 			instances[j].second = 0.0f;
 		}
 

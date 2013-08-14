@@ -16,7 +16,7 @@ TransformFilter::TransformFilter(const Color4f& Km, const Color4f& Kc)
 {
 }
 
-Ref< Image > TransformFilter::apply(const Image* image) const
+void TransformFilter::apply(Image* image) const
 {
 	Color4f in;
 
@@ -25,7 +25,6 @@ Ref< Image > TransformFilter::apply(const Image* image) const
 
 	AlignedVector< Color4f > span(width);
 
-	Ref< Image > final = image->clone(false);
 	for (int32_t y = 0; y < height; ++y)
 	{
 		image->getSpanUnsafe(y, &span[0]);
@@ -46,10 +45,8 @@ Ref< Image > TransformFilter::apply(const Image* image) const
 		for (; x < width; ++x)
 			span[x] = span[x] * Km + Kc;
 
-		final->setSpanUnsafe(y, &span[0]);
+		image->setSpanUnsafe(y, &span[0]);
 	}
-
-	return final;
 }
 	
 	}

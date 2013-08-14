@@ -5,6 +5,7 @@
 #include "Scene/Editor/SceneAsset.h"
 #include "Scene/Editor/ScenePermutationAsset.h"
 #include "Scene/Editor/ScenePermutationPipeline.h"
+#include "World/WorldRenderSettings.h"
 #include "World/Editor/LayerEntityData.h"
 
 namespace traktor
@@ -48,6 +49,13 @@ bool ScenePermutationPipeline::buildDependencies(
 	}
 
 	pipelineDepends->addDependency(scenePermutationAsset->m_scene, editor::PdfUse);
+
+	if (scenePermutationAsset->m_overridePostProcessSettings)
+		pipelineDepends->addDependency(scenePermutationAsset->m_overridePostProcessSettings, editor::PdfBuild | editor::PdfResource);
+
+	if (scenePermutationAsset->m_overrideWorldRenderSettings)
+		pipelineDepends->addDependency(scenePermutationAsset->m_overrideWorldRenderSettings->reflectionMap, editor::PdfBuild | editor::PdfResource);
+
 	return true;
 }
 
@@ -73,6 +81,12 @@ bool ScenePermutationPipeline::buildOutput(
 
 	Ref< SceneAsset > scenePermutation = DeepClone(templateScene).create< SceneAsset >();
 	T_ASSERT (scenePermutation);
+
+	if (scenePermutationAsset->m_overrideWorldRenderSettings)
+		scenePermutation->setWorldRenderSettings(scenePermutationAsset->m_overrideWorldRenderSettings);
+
+	if (scenePermutationAsset->m_overridePostProcessSettings)
+		scenePermutation->setPostProcessSettings(scenePermutationAsset->m_overridePostProcessSettings);
 
 	const RefArray< world::LayerEntityData >& layers = scenePermutation->getLayers();
 	for (RefArray< world::LayerEntityData >::const_iterator i = layers.begin(); i != layers.end(); ++i)

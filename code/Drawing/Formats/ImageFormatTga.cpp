@@ -97,7 +97,7 @@ Ref< Image > ImageFormatTga::read(IStream* stream)
 			if (hz || ve)
 			{
 				MirrorFilter mirrorFilter(hz, ve);
-				image = image->applyFilter(&mirrorFilter);
+				image->apply(&mirrorFilter);
 			}
 		}
 	}

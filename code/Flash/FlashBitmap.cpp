@@ -105,7 +105,8 @@ bool FlashBitmap::create(drawing::Image* image)
 		if (i > 0)
 		{
 			drawing::ScaleFilter scaleFilter(mipWidth, mipHeight, drawing::ScaleFilter::MnAverage, drawing::ScaleFilter::MgLinear);
-			clone = clone->applyFilter(&scaleFilter);
+			clone = clone->clone();
+			clone->apply(&scaleFilter);
 		}
 
 		std::memcpy(

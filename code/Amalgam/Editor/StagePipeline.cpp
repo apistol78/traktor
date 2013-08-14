@@ -55,6 +55,7 @@ bool StagePipeline::buildDependencies(
 	}
 
 	pipelineDepends->addDependency(stageData->m_resourceBundle, editor::PdfBuild);
+	pipelineDepends->addDependency(stageData->m_localizationDictionary, editor::PdfBuild);
 
 	return true;
 }

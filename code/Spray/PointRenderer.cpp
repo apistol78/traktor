@@ -52,11 +52,11 @@ const uint32_t c_pointCount = 1000;
 #elif defined(_PS3)
 const uint32_t c_pointCount = 3000;
 #else
-const uint32_t c_pointCount = 8000;
+const uint32_t c_pointCount = 10000;
 #endif
 
-const int32_t c_manyPointsThreshold = 100;	//<! Threshold, over this value are considered dense instances.
-const int32_t c_fewPointsHole = 40;			//<! Always keep this number of points available for sparse instances.
+//const int32_t c_manyPointsThreshold = 100;	//<! Threshold, over this value are considered dense instances.
+//const int32_t c_fewPointsHole = 80;			//<! Always keep this number of points available for sparse instances.
 
 		}
 
@@ -135,8 +135,8 @@ void PointRenderer::render(
 	T_ASSERT (size > 0);
 
 	int32_t avail = c_pointCount - pointOffset;
-	if (size >= c_manyPointsThreshold)
-		avail -= c_fewPointsHole;
+	//if (size >= c_manyPointsThreshold)
+	//	avail -= c_fewPointsHole;
 
 	size = std::min(size, avail);
 	if (size <= 0)

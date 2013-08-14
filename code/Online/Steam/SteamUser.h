@@ -35,11 +35,7 @@ public:
 
 	virtual bool sendP2PData(uint64_t userHandle, const void* data, size_t size);
 
-	void receivedP2PData(uint64_t userHandle);
-
 private:
-	std::set< uint64_t > m_failing;
-
 	STEAM_CALLBACK(SteamUser, OnP2PSessionConnectFail, P2PSessionConnectFail_t, m_callbackSessionConnectFail);
 };
 

@@ -13,18 +13,10 @@ void ChainFilter::add(IImageFilter* filter)
 	m_filters.push_back(filter);
 }
 
-Ref< Image > ChainFilter::apply(const Image* image) const
+void ChainFilter::apply(Image* image) const
 {
-	Ref< const Image > source = image;
-	Ref< Image > target;
-
 	for (RefArray< IImageFilter >::const_iterator i = m_filters.begin(); i != m_filters.end(); ++i)
-	{
-		target = source->applyFilter(*i);
-		source = target;
-	}
-
-	return target;
+		image->apply(*i);
 }
 
 	}

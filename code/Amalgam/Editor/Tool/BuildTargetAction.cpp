@@ -120,7 +120,7 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 
 	// Set database connection strings.
 	db::ConnectionString sourceDatabaseCs = m_globalSettings->getProperty< PropertyString >(L"Editor.SourceDatabase");
-	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=db;binary=true");
+	db::ConnectionString outputDatabaseCs(L"provider=traktor.db.LocalDatabase;groupPath=" + FileSystem::getInstance().getAbsolutePath(m_outputPath + L"/db").getPathName() + L";binary=true");
 
 	if (sourceDatabaseCs.have(L"groupPath"))
 	{

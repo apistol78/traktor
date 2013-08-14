@@ -154,7 +154,7 @@ bool OnlinePeers::update()
 					uint8_t handle = parseString< uint8_t >(tmp);
 					if (handle != 0x00)
 					{
-						T_ONLINE_PEERS_DEBUG(L"OK: Get peer global handle " << int32_t(handle));
+						T_ONLINE_PEERS_DEBUG(L"OK: Got peer global handle " << int32_t(handle));
 						m_idMap[globalId] = handle;
 						m_userMap[handle] = *i;
 					}

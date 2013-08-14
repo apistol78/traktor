@@ -10,7 +10,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.TonemapFilter", TonemapFilter, IImageFilter)
 
-Ref< Image > TonemapFilter::apply(const Image* image) const
+void TonemapFilter::apply(Image* image) const
 {
 	Color4f in;
 
@@ -25,18 +25,14 @@ Ref< Image > TonemapFilter::apply(const Image* image) const
 	}
 	intensity /= Scalar(float(image->getWidth() * image->getHeight()));
 
-	Ref< Image > final = new Image(PixelFormat::getR8G8B8(), image->getWidth(), image->getHeight(), image->getPalette());
-
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
 		for (int32_t x = 0; x < image->getWidth(); ++x)
 		{
 			image->getPixelUnsafe(x, y, in);
-			final->setPixelUnsafe(x, y, in / intensity);
+			image->setPixelUnsafe(x, y, in / intensity);
 		}
 	}
-
-	return final;
 }
 	
 	}

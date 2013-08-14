@@ -9,10 +9,8 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.drawing.NormalizeFilter", NormalizeFilter, IImageFilter)
 
-Ref< Image > NormalizeFilter::apply(const Image* image) const
+void NormalizeFilter::apply(Image* image) const
 {
-	Ref< Image > final = new Image(image->getPixelFormat(), image->getWidth(), image->getHeight(), image->getPalette());
-	
 	Color4f in;
 	for (int32_t y = 0; y < image->getHeight(); ++y)
 	{
@@ -45,11 +43,9 @@ Ref< Image > NormalizeFilter::apply(const Image* image) const
 				nz * 0.5f + 0.5f,
 				in.getAlpha()
 			);
-			final->setPixelUnsafe(x, y, out);
+			image->setPixelUnsafe(x, y, out);
 		}
 	}
-
-	return final;
 }
 
 	}

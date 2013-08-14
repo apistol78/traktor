@@ -21,7 +21,8 @@ Emitter::Emitter(
 	float fadeNearRange,
 	float warmUp,
 	bool sort,
-	bool worldSpace
+	bool worldSpace,
+	bool meshOrientationFromVelocity
 )
 :	m_source(source)
 ,	m_modifiers(modifiers)
@@ -33,6 +34,7 @@ Emitter::Emitter(
 ,	m_warmUp(warmUp)
 ,	m_sort(sort)
 ,	m_worldSpace(worldSpace)
+,	m_meshOrientationFromVelocity(meshOrientationFromVelocity)
 {
 }
 

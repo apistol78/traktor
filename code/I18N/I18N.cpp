@@ -18,7 +18,7 @@ I18N& I18N::getInstance()
 	return *s_instance;
 }
 
-void I18N::appendDictionary(Dictionary* dictionary, bool overrideExisting)
+void I18N::appendDictionary(const Dictionary* dictionary, bool overrideExisting)
 {
 	const std::map< std::wstring, std::wstring >& map = dictionary->get();
 	for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)

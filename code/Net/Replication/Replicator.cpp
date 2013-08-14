@@ -26,15 +26,12 @@ namespace traktor
 
 const handle_t c_broadcastHandle = 0UL;
 const int32_t c_initialTimeOffset = 50;
-const float c_nearDistance = 30.0f;
-const float c_farDistance = 200.0f;
-const float c_nearErrorThreshold = 0.2f;
-const float c_farErrorThreshold = 6.0f;
-const int32_t c_timeUntilTx = 200;
-const int32_t c_timeUntilTxMin = 60;
-const int32_t c_timeUntilIAm = 1000;
+const float c_nearDistance = 10.0f;
+const float c_farDistance = 100.0f;
+const int32_t c_nearTimeUntilTx = 100;
+const int32_t c_farTimeUntilTx = 300;
+const int32_t c_timeUntilIAm = 500;
 const int32_t c_timeUntilPing = 2000;
-const float c_errorStateThreshold = 0.2f;
 const uint32_t c_maxPendingPing = 16;
 const uint32_t c_maxErrorCount = 128;
 const uint32_t c_maxDeltaStates = 4;
@@ -499,6 +496,8 @@ void Replicator::updatePeers(int32_t dT)
 
 			peer.state = PsDisconnected;
 			peer.iframe = 0;
+			peer.pendingPing = 0;
+			peer.errorCount = 0;
 
 			++i;
 		}
@@ -507,7 +506,6 @@ void Replicator::updatePeers(int32_t dT)
 	}
 
 	// Iterate all handles, check error state or send "I am" to new peers.
-	bool connectionLost = false;
 	for (std::vector< IReplicatorPeers::PeerInfo >::const_iterator i = info.begin(); i != info.end(); ++i)
 	{
 		Peer& peer = m_peers[i->handle];
@@ -540,22 +538,27 @@ void Replicator::updatePeers(int32_t dT)
 			if (peer.errorCount >= c_maxErrorCount)
 			{
 				T_REPLICATOR_DEBUG(L"WARNING: Peer \"" << peer.name << L"\" failing, unable to communicate with peer");
+
+				// Need to notify listeners immediately as peer becomes dismounted.
+				for (RefArray< IListener >::iterator j = m_listeners.begin(); j != m_listeners.end(); ++j)
+					(*j)->notify(this, 0, IListener::ReDisconnected, i->handle, 0);
+
+				if (peer.ghost)
+				{
+					peer.ghost->~Ghost(); getAllocator()->free(peer.ghost);
+					peer.ghost = 0;
+				}
+
 				peer.state = PsDisconnected;
+				peer.iframe = 0;
 				peer.pendingPing = 0;
 				peer.errorCount = 0;
-				connectionLost = true;
 			}
 		}
 
 		// Save info about peer.
 		peer.status = i->status;
 		peer.direct = i->direct;
-	}
-
-	if (connectionLost)
-	{
-		T_REPLICATOR_DEBUG(L"ERROR: Connection to game lost (2)");
-		destroy();
 	}
 }
 
@@ -585,32 +588,7 @@ void Replicator::sendState(int32_t dT)
 		if (peer.state != PsEstablished || !peer.ghost || !peer.ghost->stateTemplate)
 			continue;
 
-		peer.timeUntilTxMin -= dT;
-
 		bool shouldSend = bool((peer.timeUntilTx -= dT) <= 0);
-
-		if (
-			!shouldSend &&
-			peer.iframe
-		)
-		{
-			float errorThreshold = c_farErrorThreshold;
-
-			// Scale error threshold only if at least N ms has passed;
-			// else always use higher threshold to prevent excessive
-			// sending of states.
-			if (peer.timeUntilTxMin <= 0)
-			{
-				Vector4 ghostToPlayer = m_origin.translation() - peer.ghost->origin.translation();
-				Scalar distanceToPeer = ghostToPlayer.length();
-				float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
-				errorThreshold = lerp(c_nearErrorThreshold, c_farErrorThreshold, t);
-			}
-
-			float E = m_stateTemplate->error(peer.iframe, m_state);
-			shouldSend = bool(E >= errorThreshold);
-		}
-
 		if (!shouldSend)
 			continue;
 
@@ -657,21 +635,25 @@ void Replicator::sendState(int32_t dT)
 
 		if (send(i->first, &msg, msgSize, false))
 		{
-			peer.timeUntilTx = c_timeUntilTx;
-			peer.timeUntilTxMin = c_timeUntilTxMin;
+			peer.timeUntilTx = c_farTimeUntilTx;
 			peer.errorCount = 0;
 			peer.stateCount++;
 			peer.iframe = m_state;
 		}
 		else
 		{
-			log::error << L"ERROR: Unable to send state to peer " << peer.name << L" (" << peer.errorCount << L")" << Endl;
-			peer.timeUntilTx = c_timeUntilTx;
-			peer.timeUntilTxMin = c_timeUntilTxMin;
+			if (!peer.errorCount)
+				log::error << L"ERROR: Unable to send state to peer " << peer.name << Endl;
+			peer.timeUntilTx = c_farTimeUntilTx;
 			peer.errorCount++;
 			peer.stateCount = 0;
 			peer.iframe = 0;
 		}
+
+		Vector4 ghostToPlayer = m_origin.translation() - peer.ghost->origin.translation();
+		Scalar distanceToPeer = ghostToPlayer.length();
+		float t = clamp((distanceToPeer - c_nearDistance) / (c_farDistance - c_nearDistance), 0.0f, 1.0f);
+		peer.timeUntilTx = (int32_t)lerp(c_nearTimeUntilTx, c_farTimeUntilTx, t);
 	}
 }
 
@@ -748,7 +730,8 @@ void Replicator::sendEvents()
 			}
 			else
 			{
-				log::error << L"ERROR: Unable to send event(s) to peer " << peer.name << L" (" << i->second.errorCount << L")" << Endl;
+				if (!i->second.errorCount)
+					log::error << L"ERROR: Unable to send event(s) to peer " << peer.name << Endl;
 				
 				for (; j < jj; ++j)
 					eventsOut.push_back(peerEventsOut[j]);
@@ -847,7 +830,6 @@ void Replicator::receiveMessages()
 				{
 					peer.state = PsEstablished;
 					peer.timeUntilTx = 0;
-					peer.timeUntilTxMin = 0;
 
 					// Send ping to peer.
 					sendPing(handle);
@@ -1144,22 +1126,6 @@ bool Replicator::sendPong(handle_t peerHandle, int32_t time0)
 void Replicator::adjustTime(int32_t offset)
 {
 	m_time += offset;
-
-	//// Also adjust all old states as well.
-	//for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
-	//{
-	//	Ghost* ghost = i->second.ghost;
-	//	if (!ghost)
-	//		continue;
-
-	//	ghost->Tn2 += offset;
-	//	ghost->Tn1 += offset;
-	//	ghost->T0 += offset;
-	//}
-
-	//// Adjust on all queued events also.
-	//for (std::list< EventIn >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
-	//	i->time += offset;
 }
 
 bool Replicator::send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)

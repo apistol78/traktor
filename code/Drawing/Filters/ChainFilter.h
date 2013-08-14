@@ -28,7 +28,7 @@ public:
 	void add(IImageFilter* filter);
 
 protected:
-	virtual Ref< Image > apply(const Image* image) const;
+	virtual void apply(Image* image) const;
 
 private:
 	RefArray< IImageFilter > m_filters;

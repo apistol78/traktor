@@ -288,7 +288,7 @@ private:
 		bool direct;
 		uint8_t status;
 		int32_t timeUntilTx;
-		int32_t timeUntilTxMin;
+		//int32_t timeUntilTxMin;
 		int32_t lastTimeLocal;
 		int32_t lastTimeRemote;
 		CircularVector< int32_t, MaxRoundTrips > roundTrips;
@@ -309,7 +309,7 @@ private:
 		,	direct(false)
 		,	status(0)
 		,	timeUntilTx(0)
-		,	timeUntilTxMin(0)
+		//,	timeUntilTxMin(0)
 		,	lastTimeLocal(0)
 		,	lastTimeRemote(0)
 		,	latencyMedian(0)

@@ -15,8 +15,8 @@ namespace traktor
 float safeDeltaTime(float v)
 {
 	float av = std::abs(v);
-	if (av < 1e-5f)
-		return 1e-5f * sign(v);
+	if (av < 1.0f/60.0f)
+		return 1.0f/60.0f * sign(v);
 	else if (av > 1.0f)
 		return 1.0f * sign(v);
 	else

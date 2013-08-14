@@ -24,7 +24,7 @@ class T_DLLCLASS GrayscaleFilter : public IImageFilter
 	T_RTTI_CLASS;
 
 protected:
-	virtual Ref< Image > apply(const Image* image) const;
+	virtual void apply(Image* image) const;
 };
 	
 	}

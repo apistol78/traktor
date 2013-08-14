@@ -96,7 +96,7 @@ bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, s
 
 bool SteamUser::isP2PAllowed(uint64_t userHandle) const
 {
-	return m_failing.find(userHandle) == m_failing.end();
+	return true;
 }
 
 bool SteamUser::isP2PRelayed(uint64_t userHandle) const
@@ -114,20 +114,11 @@ bool SteamUser::isP2PRelayed(uint64_t userHandle) const
 
 bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 {
-	if (m_failing.find(userHandle) != m_failing.end())
-		return false;
-
 	CSteamID id(userHandle);
 	if (!id.IsValid())
 		return false;
 
 	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), k_EP2PSendUnreliableNoDelay);
-}
-
-void SteamUser::receivedP2PData(uint64_t userHandle)
-{
-	if (m_failing.erase(userHandle) > 0)
-		log::info << L"Steam; P2P session recovered peer " << userHandle << Endl;
 }
 
 void SteamUser::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PSessionConnectFail)
@@ -142,17 +133,14 @@ void SteamUser::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PSessionConn
 	};
 
 	uint64_t userHandle = uint64_t(pP2PSessionConnectFail->m_steamIDRemote.ConvertToUint64()); 
-	if (m_failing.insert(userHandle).second)
+	const char* name = SteamFriends()->GetFriendPersonaName(pP2PSessionConnectFail->m_steamIDRemote);
+	if (name)
 	{
-		const char* name = SteamFriends()->GetFriendPersonaName(pP2PSessionConnectFail->m_steamIDRemote);
-		if (name)
-		{
-			std::wstring wname = mbstows(Utf8Encoding(), name);
-			log::error << L"Steam; P2P session connect fail to peer \"" << wname << L"\", m_eP2PSessionError = " << int32_t(pP2PSessionConnectFail->m_eP2PSessionError) << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
-		}
-		else
-			log::error << L"Steam; P2P session connect fail to peer " << userHandle << L", m_eP2PSessionError = " << int32_t(pP2PSessionConnectFail->m_eP2PSessionError) << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
+		std::wstring wname = mbstows(Utf8Encoding(), name);
+		log::error << L"Steam; P2P session connect fail to peer \"" << wname << L"\", m_eP2PSessionError = " << int32_t(pP2PSessionConnectFail->m_eP2PSessionError) << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
 	}
+	else
+		log::error << L"Steam; P2P session connect fail to peer " << userHandle << L", m_eP2PSessionError = " << int32_t(pP2PSessionConnectFail->m_eP2PSessionError) << L" (" << hr[pP2PSessionConnectFail->m_eP2PSessionError] << L")" << Endl;
 }
 
 	}
