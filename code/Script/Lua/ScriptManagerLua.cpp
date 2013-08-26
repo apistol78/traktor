@@ -612,7 +612,7 @@ void ScriptManagerLua::collectGarbagePartial()
 	{
 		size_t garbageProduced = m_totalMemoryUse - m_lastMemoryUse;
 		m_collectStepFrequency = max< float >(
-			clamp((30.0f * garbageProduced) / (16*1024), 1.0f, 120.0f),
+			clamp((60.0f * garbageProduced) / (16*1024), 1.0f, 200.0f),
 			m_collectStepFrequency
 		);
 	}

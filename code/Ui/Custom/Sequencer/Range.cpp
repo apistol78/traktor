@@ -17,9 +17,10 @@ const int c_sequenceHeight = 22;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Range", Range, Key)
 
-Range::Range(int start, int end)
+Range::Range(int start, int end, bool movable)
 :	m_start(start)
 ,	m_end(end)
+,	m_movable(movable)
 {
 }
 
@@ -45,8 +46,11 @@ int Range::getEnd() const
 
 void Range::move(int offset)
 {
-	m_start += offset;
-	m_end += offset;
+	if (m_movable)
+	{
+		m_start += offset;
+		m_end += offset;
+	}
 }
 
 void Range::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const

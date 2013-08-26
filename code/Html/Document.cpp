@@ -352,7 +352,7 @@ void Document::setDocumentElement(Element* docElement)
 	m_docElement = docElement;
 }
 
-Ref< Element > Document::getDocumentElement() const
+Element* Document::getDocumentElement() const
 {
 	return m_docElement;
 }

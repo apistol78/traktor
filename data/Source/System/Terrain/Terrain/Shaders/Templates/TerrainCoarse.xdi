@@ -181,16 +181,16 @@
 		<item type="traktor.render.Branch">
 			<comment/>
 			<position>
-				<first>1082</first>
-				<second>-68</second>
+				<first>1119</first>
+				<second>-138</second>
 			</position>
 			<parameterName>VisualizeLods</parameterName>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
 			<comment/>
 			<position>
-				<first>867</first>
-				<second>-55</second>
+				<first>904</first>
+				<second>-125</second>
 			</position>
 			<parameterName>PatchLodColor</parameterName>
 			<type>PtVector</type>
@@ -392,6 +392,36 @@ Generated texture from surface cache.
 				<second>-184</second>
 			</position>
 			<value>1</value>
+		</item>
+		<item type="traktor.render.Swizzle">
+			<comment/>
+			<position>
+				<first>1024</first>
+				<second>2</second>
+			</position>
+			<swizzle>w</swizzle>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>1385</first>
+				<second>-55</second>
+			</position>
+		</item>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>1057</first>
+				<second>52</second>
+			</position>
+			<value>16</value>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>1177</first>
+				<second>-18</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -743,6 +773,66 @@ Generated texture from surface cache.
 			<destination>
 				<node ref="/object/nodes/item[27]"/>
 				<name>True</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[13]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[11]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[10]"/>
+				<name>Emissive</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[34]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[32]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[35]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[33]"/>
+				<name>Input2</name>
 			</destination>
 		</item>
 	</edges>

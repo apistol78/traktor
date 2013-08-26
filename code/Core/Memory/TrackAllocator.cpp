@@ -17,12 +17,24 @@ TrackAllocator::TrackAllocator(IAllocator* systemAllocator)
 
 TrackAllocator::~TrackAllocator()
 {
+	wchar_t buf[512];
+
+#if defined(_WIN32)
+	wsprintf(buf, L"\nAllocation stats:\n");
+	OutputDebugString(buf);
+
+	for (std::map< void*, Stats >::const_iterator i = m_allocStats.begin(); i != m_allocStats.end(); ++i)
+	{
+		wsprintf(buf, L"0x%p, %d time(s) totally %d byte(s), tag \"%S\"\n", i->first, i->second.count, i->second.memory, i->second.tag);
+		OutputDebugString(buf);
+	}
+#endif
+
 	if (!m_aliveBlocks.empty())
 	{
 		std::map< Block, uint32_t > frequency;
 
 #if defined(_WIN32)
-		wchar_t buf[512];
 		wsprintf(buf, L"\nMemory leak detected, following %d allocation(s) not freed:\n", m_aliveBlocks.size());
 		OutputDebugString(buf);
 
@@ -83,7 +95,10 @@ void* TrackAllocator::alloc(size_t size, size_t align, const char* const tag)
 	getCallStack(sizeof_array(block.at), block.at, 1);
 
 	m_aliveBlocks.insert(std::make_pair(ptr, block));
-	m_allocCount[block.at[0]]++;
+	
+	m_allocStats[block.at[0]].tag = tag;
+	m_allocStats[block.at[0]].count++;
+	m_allocStats[block.at[0]].memory += size;
 
 	return ptr;
 }

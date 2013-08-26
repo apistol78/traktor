@@ -61,7 +61,6 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 
 	Ref< script::AutoScriptClass< net::StateTemplate > > classStateTemplate = new script::AutoScriptClass< net::StateTemplate >();
 	classStateTemplate->addMethod("extrapolate", &net::StateTemplate::extrapolate);
-	classStateTemplate->addMethod("error", &net::StateTemplate::error);
 	scriptManager->registerClass(classStateTemplate);
 
 	Ref< script::AutoScriptClass< net::IReplicatorPeers > > classIReplicatorPeers = new script::AutoScriptClass< net::IReplicatorPeers >();

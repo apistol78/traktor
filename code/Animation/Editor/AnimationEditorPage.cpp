@@ -548,7 +548,7 @@ void AnimationEditorPage::updateSequencer()
 	{
 		int ms = int(m_animation->getKeyPose(i).at * 1000.0f);
 
-		Ref< ui::custom::Tick > tick = new ui::custom::Tick(ms);
+		Ref< ui::custom::Tick > tick = new ui::custom::Tick(ms, true);
 		tick->setData(L"ID", new PoseIdData(i));
 
 		sequence->addKey(tick);

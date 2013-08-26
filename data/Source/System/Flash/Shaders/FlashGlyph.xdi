@@ -308,7 +308,7 @@
 			<comment/>
 			<position>
 				<first>1381</first>
-				<second>-263</second>
+				<second>-260</second>
 			</position>
 		</item>
 		<item type="traktor.render.Mul">
@@ -479,16 +479,6 @@
 		</item>
 	</nodes>
 	<edges>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[1]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item"/>
-				<name>Input</name>
-			</destination>
-		</item>
 		<item type="traktor.render.Edge">
 			<source>
 				<node ref="/object/nodes/item[2]"/>
@@ -917,6 +907,16 @@
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<name>Blend</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

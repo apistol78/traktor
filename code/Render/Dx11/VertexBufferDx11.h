@@ -26,10 +26,13 @@ public:
 
 	const std::vector< D3D11_INPUT_ELEMENT_DESC >& getD3D11InputElements() const { return m_d3dInputElements; }
 
+	uint32_t getD3D11InputElementsHash() const { return m_d3dInputElementsHash; }
+
 protected:
 	ComRef< ID3D11Buffer > m_d3dBuffer;
 	UINT m_d3dStride;
 	std::vector< D3D11_INPUT_ELEMENT_DESC > m_d3dInputElements;
+	uint32_t m_d3dInputElementsHash;
 
 	VertexBufferDx11(uint32_t bufferSize);
 };

@@ -46,6 +46,7 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolToggleEditTerrain;
 	Ref< ui::custom::ToolBarButton > m_toolToggleMaterial;
 	Ref< ui::custom::ToolBarButton > m_toolToggleColor;
+	Ref< ui::custom::ToolBarButton > m_toolToggleEmissive;
 	Ref< ui::custom::ToolBarButton > m_toolToggleElevate;
 	Ref< ui::custom::ToolBarButton > m_toolToggleFlatten;
 	Ref< ui::custom::ToolBarButton > m_toolToggleAverage;

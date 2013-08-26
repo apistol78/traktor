@@ -26,11 +26,11 @@ class T_DLLCLASS Marker : public Key
 	T_RTTI_CLASS;
 
 public:
-	Marker(int time);
+	Marker(int32_t time, bool movable);
 
-	void setTime(int time);
+	void setTime(int32_t time);
 
-	int getTime() const;
+	int32_t getTime() const;
 
 	virtual void move(int offset);
 
@@ -39,7 +39,8 @@ public:
 	virtual void paint(ui::Canvas& canvas, const Sequence* sequence, const Rect& rcClient, int scrollOffset);
 
 private:
-	int m_time;
+	int32_t m_time;
+	bool m_movable;
 };
 
 		}

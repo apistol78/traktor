@@ -42,7 +42,12 @@ void ColorBrush::apply(int32_t x, int32_t y)
 			float a = m_fallOff->evaluate(1.0f - sqrtf(float(d)) / m_radius) * m_strength;
 
 			m_colorImage->getPixel(x + ix, y + iy, targetColor);
-			m_colorImage->setPixel(x + ix, y + iy, (targetColor * Scalar(1.0f - a) + m_color * Scalar(a)).saturated());
+
+			Scalar alpha = targetColor.getAlpha();
+			targetColor = targetColor * Scalar(1.0f - a) + m_color * Scalar(a);
+			targetColor.setAlpha(alpha);
+
+			m_colorImage->setPixel(x + ix, y + iy, targetColor.saturated());
 		}
 	}
 }

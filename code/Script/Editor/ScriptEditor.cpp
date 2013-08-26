@@ -213,7 +213,7 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 	{
 		ui::custom::InputDialog::Field fields[] =
 		{
-			{ L"Find", L"", 0 }
+			{ L"Find", L"", 0, 0 }
 		};
 
 		Ref< ui::custom::InputDialog > dialogFind = new ui::custom::InputDialog();
@@ -235,8 +235,8 @@ bool ScriptEditor::handleCommand(const ui::Command& command)
 	{
 		ui::custom::InputDialog::Field fields[] =
 		{
-			{ L"Search", L"", 0 },
-			{ L"Replace with", L"", 0 },
+			{ L"Search", L"", 0, 0 },
+			{ L"Replace with", L"", 0, 0 },
 		};
 
 		Ref< ui::custom::InputDialog > dialogReplace = new ui::custom::InputDialog();

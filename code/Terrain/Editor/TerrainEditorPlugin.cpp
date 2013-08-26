@@ -43,6 +43,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	m_toolToggleEditTerrain = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EDIT_TERRAIN"), image + 6, ui::Command(L"Terrain.Editor.EditTerrain"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleMaterial = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_MATERIAL_BRUSH"), image + 9, ui::Command(L"Terrain.Editor.MaterialBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleColor = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_COLOR_BRUSH"), image + 8, ui::Command(L"Terrain.Editor.ColorBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
+	m_toolToggleEmissive = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_EMISSIVE_BRUSH"), image + 8, ui::Command(L"Terrain.Editor.EmissiveBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleElevate = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_ELEVATE_BRUSH"), image + 0, ui::Command(L"Terrain.Editor.ElevateBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleFlatten = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_FLATTEN_BRUSH"), image + 1, ui::Command(L"Terrain.Editor.FlattenBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
 	m_toolToggleAverage = new ui::custom::ToolBarButton(i18n::Text(L"TERRAIN_EDITOR_AVERAGE_BRUSH"), image + 3, ui::Command(L"Terrain.Editor.AverageBrush"), ui::custom::ToolBarButton::BsDefaultToggle);
@@ -89,6 +90,7 @@ bool TerrainEditorPlugin::create(ui::Widget* parent, ui::custom::ToolBar* toolBa
 	toolBar->addItem(m_toolToggleEditTerrain);
 	toolBar->addItem(m_toolToggleMaterial);
 	toolBar->addItem(m_toolToggleColor);
+	toolBar->addItem(m_toolToggleEmissive);
 	toolBar->addItem(m_toolToggleElevate);
 	toolBar->addItem(m_toolToggleFlatten);
 	toolBar->addItem(m_toolToggleAverage);
@@ -129,6 +131,8 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 			toolSelected = m_toolToggleMaterial;
 		else if (command == L"Terrain.Editor.ColorBrush")
 			toolSelected = m_toolToggleColor;
+		else if (command == L"Terrain.Editor.EmissiveBrush")
+			toolSelected = m_toolToggleEmissive;
 		else if (command == L"Terrain.Editor.ElevateBrush")
 			toolSelected = m_toolToggleElevate;
 		else if (command == L"Terrain.Editor.FlattenBrush")
@@ -146,6 +150,7 @@ bool TerrainEditorPlugin::handleCommand(const ui::Command& command)
 		{
 			m_toolToggleMaterial->setToggled(m_toolToggleMaterial == toolSelected);
 			m_toolToggleColor->setToggled(m_toolToggleColor == toolSelected);
+			m_toolToggleEmissive->setToggled(m_toolToggleEmissive == toolSelected);
 			m_toolToggleElevate->setToggled(m_toolToggleElevate == toolSelected);
 			m_toolToggleFlatten->setToggled(m_toolToggleFlatten == toolSelected);
 			m_toolToggleAverage->setToggled(m_toolToggleAverage == toolSelected);
@@ -206,6 +211,8 @@ void TerrainEditorPlugin::updateModifierState()
 		m_terrainEditModifier->setBrush(L"Terrain.Editor.MaterialBrush");
 	else if (m_toolToggleColor->isToggled())
 		m_terrainEditModifier->setBrush(L"Terrain.Editor.ColorBrush");
+	else if (m_toolToggleEmissive->isToggled())
+		m_terrainEditModifier->setBrush(L"Terrain.Editor.EmissiveBrush");
 	else if (m_toolToggleElevate->isToggled())
 		m_terrainEditModifier->setBrush(L"Terrain.Editor.ElevateBrush");
 	else if (m_toolToggleFlatten->isToggled())

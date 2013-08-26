@@ -31,6 +31,7 @@
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Custom/ToolBar/ToolBarSeparator.h"
 #include "Ui/Custom/Sequencer/Marker.h"
+#include "Ui/Custom/Sequencer/MovedEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Custom/Sequencer/Range.h"
@@ -153,6 +154,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_sequencer->create(splitter, ui::WsDoubleBuffer | ui::WsClientBorder);
 	m_sequencer->addSelectEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerSelect));
 	m_sequencer->addCursorMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventTimeCursorMove));
+	m_sequencer->addMovedSequenceItemEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerRearranged));
 	m_sequencer->addKeyMoveEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventKeyMove));
 	m_sequencer->addClickEventHandler(ui::createMethodHandler(this, &EffectEditorPage::eventLayerClick));
 
@@ -356,14 +358,15 @@ void EffectEditorPage::updateSequencer()
 			float end = (*i)->getTime() + (*i)->getDuration();
 			Ref< ui::custom::Range > layerRange = new ui::custom::Range(
 				int32_t(start * 1000.0f),
-				int32_t(end * 1000.0f)
+				int32_t(end * 1000.0f),
+				true
 			);
 			layerRange->setData(L"LAYER", *i);
 			layerItem->addKey(layerRange);
 		}
 		else
 		{
-			Ref< ui::custom::Tick > layerTick = new ui::custom::Tick(int32_t(start * 1000.0f));
+			Ref< ui::custom::Tick > layerTick = new ui::custom::Tick(int32_t(start * 1000.0f), true);
 			layerTick->setData(L"LAYER", *i);
 			layerItem->addKey(layerTick);
 		}
@@ -375,7 +378,7 @@ void EffectEditorPage::updateSequencer()
 			const std::vector< SequenceData::Key >& keys = sequence->getKeys();
 			for (int32_t j = 0; j < int32_t(keys.size()); ++j)
 			{
-				Ref< ui::custom::Marker > sequenceMarker = new ui::custom::Marker(int32_t(keys[j].T * 1000.0f));
+				Ref< ui::custom::Marker > sequenceMarker = new ui::custom::Marker(int32_t(keys[j].T * 1000.0f), true);
 				sequenceMarker->setData(L"SEQUENCE", new SequenceDataKey(sequence, j));
 				sequenceMarker->setData(L"LAYER", *i);
 				layerItem->addKey(sequenceMarker);
@@ -427,6 +430,22 @@ void EffectEditorPage::eventTimeCursorMove(ui::Event* event)
 	m_previewControl->setTimeScale(0.0f);
 	m_previewControl->setTotalTime(time);
 	m_previewControl->syncEffect();
+}
+
+void EffectEditorPage::eventLayerRearranged(ui::Event* event)
+{
+	ui::custom::MovedEvent* movedEvent = checked_type_cast< ui::custom::MovedEvent* >(event);
+	
+	Ref< EffectLayerData > movedLayer = checked_type_cast< ui::custom::SequenceItem*, false >(movedEvent->getItem())->getData< EffectLayerData >(L"LAYER");
+	T_ASSERT (movedLayer);
+
+	RefArray< EffectLayerData > layers = m_effectData->getLayers();
+	
+	layers.remove(movedLayer);
+	layers.insert(layers.begin() + movedEvent->getMovedTo(), movedLayer);
+
+	m_effectData->setLayers(layers);
+	updateEffectPreview();
 }
 
 void EffectEditorPage::eventKeyMove(ui::Event* event)

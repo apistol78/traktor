@@ -306,7 +306,7 @@ void TheaterControllerEditor::updateView()
 			{
 				int32_t tickTime = int32_t(j->T * 1000.0f);
 
-				Ref< ui::custom::Tick > tick = new ui::custom::Tick(tickTime);
+				Ref< ui::custom::Tick > tick = new ui::custom::Tick(tickTime, true);
 				tick->setData(L"KEY", new TransformPathKeyWrapper(*j));
 
 				trackSequence->addKey(tick);

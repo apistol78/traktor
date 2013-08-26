@@ -2,18 +2,101 @@
 #include "Editor/IDocument.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Editor/DictionaryEditorPage.h"
+#include "I18N/Editor/Translator.h"
 #include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/TableLayout.h"
+#include "Ui/Custom/InputDialog.h"
 #include "Ui/Custom/GridView/GridColumn.h"
 #include "Ui/Custom/GridView/GridItem.h"
 #include "Ui/Custom/GridView/GridRow.h"
 #include "Ui/Custom/GridView/GridView.h"
-#include "Ui/Custom/InputDialog.h"
+#include "Ui/Custom/ToolBar/ToolBar.h"
+#include "Ui/Custom/ToolBar/ToolBarButton.h"
 
 namespace traktor
 {
 	namespace i18n
 	{
+		namespace
+		{
+
+const wchar_t* c_languages[] =
+{
+	L"Swedish", L"sv",
+	L"Afrikaans", L"af",
+	L"Albanian", L"sq",
+	L"Arabic", L"ar",
+	L"Armenian", L"hy",
+	L"Azerbaijani", L"az",
+	L"Basque", L"eu",
+	L"Bengali; bangla", L"bn",
+	L"Bosnian", L"bs",
+	L"Bulgarian", L"bg",
+	L"Cebuano", L"ceb",
+	L"Danish", L"da",
+	L"Dutch", L"nl",
+	L"English", L"en",
+	L"Esperanto", L"eo",
+	L"Estonian", L"et",
+	L"Filipino", L"tl",
+	L"Finnish", L"fi",
+	L"French", L"fr",
+	L"Galician", L"gl",
+	L"Georgian", L"ka",
+	L"German", L"de",
+	L"Greek", L"el",
+	L"Gujarati", L"gu",
+	L"Haitian", L"ht",
+	L"Hebrew", L"iw",
+	L"Hindi", L"hi",
+	L"Hmong", L"hmn",
+	L"Indonesian", L"id",
+	L"Irish", L"ga",
+	L"Icelandic", L"is",
+	L"Italian", L"it",
+	L"Japanese", L"ja",
+	L"Javanese", L"jw",
+	L"Yiddish", L"yi",
+	L"kanaresiska", L"kn",
+	L"Catalan", L"ca",
+	L"Khmer", L"km",
+	L"Chinese", L"zh-CN",
+	L"Korean", L"ko",
+	L"Croatian", L"hr",
+	L"Lao", L"lo",
+	L"Latin", L"la",
+	L"Latvian", L"lv",
+	L"Lithuanian", L"lt",
+	L"Macedonian", L"mk",
+	L"Malay", L"ms",
+	L"Maltese", L"mt",
+	L"Marathi", L"mr",
+	L"Norwegian", L"no",
+	L"Persian", L"fa",
+	L"Polish", L"pl",
+	L"Portuguese", L"pt",
+	L"Romanian", L"ro",
+	L"Russian", L"ru",
+	L"Serbian", L"sr",
+	L"Slovak", L"sk",
+	L"Slovenian", L"sl",
+	L"Spanish", L"es",
+	L"Swahili", L"sw",
+	L"Tamil", L"ta",
+	L"telugu", L"te",
+	L"Thai", L"th",
+	L"Turkish", L"tr",
+	L"Ukrainian", L"uk",
+	L"Hungarian", L"hu",
+	L"Urdu", L"ur",
+	L"Vietnamese", L"vi",
+	L"Belarusian", L"be",
+	L"Welsh", L"cy",
+	0
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.i18n.DictionaryEditorPage", DictionaryEditorPage, editor::IEditorPage)
 
@@ -30,10 +113,18 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 	if (!m_dictionary)
 		return false;
 
+	Ref< ui::Container > container = new ui::Container();
+	container->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+
+	Ref< ui::custom::ToolBar > toolBar = new ui::custom::ToolBar();
+	toolBar->create(container);
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Translate...", ui::Command(L"I18N.Editor.Translate")));
+	toolBar->addClickEventHandler(ui::createMethodHandler(this, &DictionaryEditorPage::eventToolClick));
+
 	m_gridDictionary = new ui::custom::GridView();
-	m_gridDictionary->create(parent, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Id", 100));
-	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 400));
+	m_gridDictionary->create(container, ui::custom::GridView::WsColumnHeader | ui::WsDoubleBuffer);
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Id", 300));
+	m_gridDictionary->addColumn(new ui::custom::GridColumn(L"Text", 800));
 	m_gridDictionary->addDoubleClickEventHandler(ui::createMethodHandler(this, &DictionaryEditorPage::eventGridDoubleClick));
 
 	const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
@@ -76,6 +167,61 @@ void DictionaryEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
 }
 
+void DictionaryEditorPage::eventToolClick(ui::Event* event)
+{
+	ui::custom::InputDialog::Field fields[] =
+	{
+		{
+			L"From language",
+			L"",
+			0,
+			c_languages
+		},
+		{
+			L"To language",
+			L"",
+			0,
+			c_languages
+		}
+	};
+
+	ui::custom::InputDialog inputDialog;
+	inputDialog.create(
+		m_gridDictionary,
+		L"Translate",
+		L"Automatic translate word(s)",
+		fields,
+		sizeof_array(fields)
+	);
+	if (inputDialog.showModal() == ui::DrOk)
+	{
+		m_document->push();
+
+		RefArray< ui::custom::GridRow > selectedRows;
+		m_gridDictionary->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
+
+		Translator translator(fields[0].value, fields[1].value);
+
+		for (RefArray< ui::custom::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+		{
+			std::wstring source = checked_type_cast< ui::custom::GridItem*, false >((*i)->get(1))->getText();
+			std::wstring out;
+
+			if (translator.translate(source, out))
+			{
+				m_dictionary->set(
+					checked_type_cast< ui::custom::GridItem*, false >((*i)->get(0))->getText(),
+					out
+				);
+				checked_type_cast< ui::custom::GridItem*, false >((*i)->get(1))->setText(out);
+			}
+		}
+
+		m_gridDictionary->update();
+	}
+	inputDialog.destroy();
+}
+
 void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 {
 	RefArray< ui::custom::GridRow > selectedRows;
@@ -88,6 +234,7 @@ void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
 			{
 				L"Localized text",
 				checked_type_cast< ui::custom::GridItem*, false >(selectedRows[0]->get(1))->getText(),
+				0,
 				0
 			}
 		};

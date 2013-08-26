@@ -1,3 +1,4 @@
+#include "Core/Misc/Adler32.h"
 #include "Render/Dx11/ContextDx11.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/TypesDx11.h"
@@ -42,6 +43,7 @@ Ref< VertexBufferStaticDx11 > VertexBufferStaticDx11::create(
 		T_ASSERT (vertexElements[i].getDataUsage() < sizeof_array(c_dxgiInputSemantic));
 		T_ASSERT (vertexElements[i].getDataType() < sizeof_array(c_dxgiInputType));
 
+		std::memset(&vb->m_d3dInputElements[i], 0, sizeof(D3D11_INPUT_ELEMENT_DESC));
 		vb->m_d3dInputElements[i].SemanticName = c_dxgiInputSemantic[vertexElements[i].getDataUsage()];
 		vb->m_d3dInputElements[i].SemanticIndex = vertexElements[i].getIndex();
 		vb->m_d3dInputElements[i].Format = c_dxgiInputType[vertexElements[i].getDataType()];
@@ -50,6 +52,13 @@ Ref< VertexBufferStaticDx11 > VertexBufferStaticDx11::create(
 		vb->m_d3dInputElements[i].InputSlotClass = D3D11_INPUT_PER_VERTEX_DATA;
 		vb->m_d3dInputElements[i].InstanceDataStepRate = 0;
 	}
+
+	Adler32 hash;
+	hash.begin();
+	hash.feed(&vb->m_d3dInputElements[0], vb->m_d3dInputElements.size() * sizeof(D3D11_INPUT_ELEMENT_DESC));
+	hash.end();
+
+	vb->m_d3dInputElementsHash = hash.get();
 
 	return vb;
 }

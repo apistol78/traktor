@@ -3,6 +3,7 @@
 #include "Core/Io/MemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
 #include "Net/Replication/State/IValue.h"
 #include "Net/Replication/State/IValueTemplate.h"
@@ -53,6 +54,10 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 {
 	RefArray< const IValue > Vr(m_valueTemplates.size());
 
+	// Ensure times are valid.
+	if (isNanOrInfinite(Tn2) || isNanOrInfinite(Tn1) || isNanOrInfinite(T0) || isNanOrInfinite(T))
+		return 0;
+
 	if (Sn2 && Sn1 && S0)
 	{
 		const RefArray< const IValue >& Vn2 = Sn2->getValues();
@@ -64,6 +69,11 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			Vn1.size() != m_valueTemplates.size() ||
 			V0.size() != m_valueTemplates.size()
 		)
+			return 0;
+
+		if (Tn2 > Tn1 - FUZZY_EPSILON)
+			return 0;
+		if (Tn1 > T0 - FUZZY_EPSILON)
 			return 0;
 
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
@@ -94,6 +104,9 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 		)
 			return 0;
 
+		if (Tn1 > T0 - FUZZY_EPSILON)
+			return 0;
+
 		for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 		{
 			const IValueTemplate* valueTemplate = m_valueTemplates[i];
@@ -106,7 +119,7 @@ Ref< const State > StateTemplate::extrapolate(const State* Sn2, float Tn2, const
 			)
 				return 0;
 
-			Vr[i] = valueTemplate->extrapolate(Vn1[i], Tn1 - FUZZY_EPSILON, Vn1[i], Tn1, V0[i], T0, T);
+			Vr[i] = valueTemplate->extrapolate(Vn1[i], 0.0f, Vn1[i], Tn1, V0[i], T0, T);
 			T_ASSERT (Vr[i]);
 		}
 	}
@@ -233,24 +246,6 @@ Ref< const State > StateTemplate::unpack(const State* Sn1, const void* buffer, u
 		return 0;
 
 	return new State(V);
-}
-
-float StateTemplate::error(const State* Sl, const State* Sr) const
-{
-	const RefArray< const IValue >& Vl = Sl->getValues();
-	const RefArray< const IValue >& Vr = Sr->getValues();
-
-	float E = 0.0f;
-	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
-	{
-		const IValueTemplate* valueTemplate = m_valueTemplates[i];
-		T_ASSERT (valueTemplate);
-
-		float e = valueTemplate->error(Vl[i], Vr[i]);
-		E = max(e, E);
-	}
-
-	return E;
 }
 
 	}

@@ -611,7 +611,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		m_context->getD3DDevice(),
 		m_context->getD3DDeviceContext(),
 		m_stateCache,
-		size_t(m_currentVertexBuffer.ptr()),
+		m_currentVertexBuffer->getD3D11InputElementsHash(),
 		m_currentVertexBuffer->getD3D11InputElements(),
 		rs.targetSize
 	))
@@ -680,7 +680,7 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 		m_context->getD3DDevice(),
 		m_context->getD3DDeviceContext(),
 		m_stateCache,
-		size_t(m_currentVertexBuffer.ptr()),
+		m_currentVertexBuffer->getD3D11InputElementsHash(),
 		m_currentVertexBuffer->getD3D11InputElements(),
 		rs.targetSize
 	))

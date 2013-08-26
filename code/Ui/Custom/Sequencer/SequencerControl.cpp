@@ -11,6 +11,7 @@
 #include "Ui/Events/PaintEvent.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/FocusEvent.h"
+#include "Ui/Custom/Sequencer/MovedEvent.h"
 #include "Ui/Custom/Sequencer/SequencerControl.h"
 #include "Ui/Custom/Sequencer/SequenceItem.h"
 #include "Ui/Custom/Sequencer/SequenceGroup.h"
@@ -36,6 +37,8 @@ SequencerControl::SequencerControl()
 ,	m_timeScale(8)
 ,	m_length(5000)
 ,	m_cursor(0)
+,	m_moveTrack(0)
+,	m_dropIndex(-1)
 {
 }
 
@@ -112,6 +115,14 @@ int32_t SequencerControl::getCursor() const
 void SequencerControl::addSequenceItem(SequenceItem* sequenceItem)
 {
 	m_sequenceItems.push_back(sequenceItem);
+	updateScrollBars();
+}
+
+void SequencerControl::addSequenceItemBefore(SequenceItem* beforeItem, SequenceItem* sequenceItem)
+{
+	RefArray< SequenceItem >::iterator i = std::find(m_sequenceItems.begin(), m_sequenceItems.end(), beforeItem);
+	T_ASSERT (i != m_sequenceItems.end());
+	m_sequenceItems.insert(i, sequenceItem);
 	updateScrollBars();
 }
 
@@ -196,6 +207,11 @@ void SequencerControl::addKeyMoveEventHandler(EventHandler* eventHandler)
 void SequencerControl::addGroupVisibleEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiGroupVisible, eventHandler);
+}
+
+void SequencerControl::addMovedSequenceItemEventHandler(EventHandler* eventHandler)
+{
+	addEventHandler(EiMovedSequenceItem, eventHandler);
 }
 
 void SequencerControl::addClickEventHandler(EventHandler* eventHandler)
@@ -314,9 +330,11 @@ void SequencerControl::eventButtonDown(Event* e)
 		raiseEvent(EiSelectionChange, &cmdEvent);
 	}
 
+	m_startPosition = position;
+
 	if (position.x >= rc.left + m_separator)
 	{
-		setCapture();
+		m_moveTrack = 0;
 
 		m_cursor = (position.x - m_separator + m_scrollBarH->getPosition()) * m_timeScale;
 		m_cursor = std::max< int >(m_cursor, 0);
@@ -325,7 +343,13 @@ void SequencerControl::eventButtonDown(Event* e)
 		CommandEvent cmdEvent(this, 0, Command(m_cursor));
 		raiseEvent(EiCursorMove, &cmdEvent);
 	}
+	else if (m_mouseTrackItem.item)
+	{
+		m_moveTrack = 1;
+		m_dropIndex = -1;
+	}
 
+	setCapture();
 	update();
 
 	e->consume();
@@ -336,6 +360,30 @@ void SequencerControl::eventButtonUp(Event* e)
 	MouseEvent* m = static_cast< MouseEvent* >(e);
 	if (!hasCapture())
 		return;
+
+	// Issue drop event.
+	if (m_moveTrack == 2 && m_dropIndex >= 0)
+	{
+		T_ASSERT (m_mouseTrackItem.item);
+
+		// Get all items, including descendants.
+		RefArray< SequenceItem > sequenceItems;
+		getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
+
+		if (m_dropIndex < m_sequenceItems.size())
+		{
+			SequenceItem* beforeItem = sequenceItems[m_dropIndex];
+			if (beforeItem->getParentItem())
+				beforeItem->getParentItem()->addChildItemBefore(beforeItem, m_mouseTrackItem.item);
+			else
+				addSequenceItemBefore(beforeItem, m_mouseTrackItem.item);
+		}
+		else
+			addSequenceItem(m_mouseTrackItem.item);
+
+		MovedEvent movedEvent(this, m_mouseTrackItem.item, m_dropIndex);
+		raiseEvent(EiMovedSequenceItem, &movedEvent);
+	}
 
 	// Issue local mouse up event on tracked sequence item.
 	if (m_mouseTrackItem.item)
@@ -354,7 +402,11 @@ void SequencerControl::eventButtonUp(Event* e)
 		m_mouseTrackItem.item = 0;
 	}
 
+	m_moveTrack = 0;
+	m_dropIndex = -1;
+
 	releaseCapture();
+	update();
 
 	e->consume();
 }
@@ -365,40 +417,76 @@ void SequencerControl::eventMouseMove(Event* e)
 	if (!hasCapture())
 		return;
 
-	// Calculate current cursor display position.
-	int scrollOffsetX = m_scrollBarH->getPosition();
+	e->consume();
 
-	int cursor;
-	cursor = (m->getPosition().x - m_separator + scrollOffsetX) * m_timeScale;
-	cursor = std::max< int >(cursor, 0);
-	cursor = std::min< int >(cursor, m_length);
+	Point position = m->getPosition();
 
-	if (cursor == m_cursor)
-		return;
-
-	m_cursor = cursor;
-	update();
-
-	CommandEvent cmdEvent(this, 0, Command(m_cursor));
-	raiseEvent(EiCursorMove, &cmdEvent);
-
-	// Notify track item mouse move.
-	if (m_mouseTrackItem.item)
+	// Check if begin moving.
+	if (m_moveTrack == 1)
 	{
-		m_mouseTrackItem.item->mouseMove(
-			this,
-			Point(
-				m->getPosition().x - m_mouseTrackItem.rc.left,
-				m->getPosition().y - m_mouseTrackItem.rc.top
-			),
-			m_mouseTrackItem.rc,
-			m->getButton(),
-			m_separator,
-			m_scrollBarH->getPosition()
-		);
+		Size diff = m_startPosition - position;
+		if (abs(diff.cx) > 2 || abs(diff.cy) > 2)
+		{
+			removeSequenceItem(m_mouseTrackItem.item);
+			update();
+			m_moveTrack = 2;
+		}
+		return;
 	}
 
-	e->consume();
+	// In case we're plain moving.
+	if (m_moveTrack == 2)
+	{
+		// Get all items, including descendants.
+		RefArray< SequenceItem > sequenceItems;
+		getSequenceItems(sequenceItems, GfDescendants | GfExpandedOnly);
+
+		int sequenceId = (position.y + c_sequenceHeight / 2 + m_scrollBarV->getPosition()) / c_sequenceHeight;
+		if (sequenceId >= 0 && sequenceId < int(sequenceItems.size()))
+			m_dropIndex = sequenceId;
+		else
+			m_dropIndex = int(sequenceItems.size());
+
+		update();
+		return;
+	}
+
+	// Editing tickers.
+	if (m_moveTrack == 0)
+	{
+		// Calculate current cursor display position.
+		int scrollOffsetX = m_scrollBarH->getPosition();
+
+		int cursor;
+		cursor = (m->getPosition().x - m_separator + scrollOffsetX) * m_timeScale;
+		cursor = std::max< int >(cursor, 0);
+		cursor = std::min< int >(cursor, m_length);
+
+		if (cursor == m_cursor)
+			return;
+
+		m_cursor = cursor;
+		update();
+
+		CommandEvent cmdEvent(this, 0, Command(m_cursor));
+		raiseEvent(EiCursorMove, &cmdEvent);
+
+		// Notify track item mouse move.
+		if (m_mouseTrackItem.item)
+		{
+			m_mouseTrackItem.item->mouseMove(
+				this,
+				Point(
+					m->getPosition().x - m_mouseTrackItem.rc.left,
+					m->getPosition().y - m_mouseTrackItem.rc.top
+				),
+				m_mouseTrackItem.rc,
+				m->getButton(),
+				m_separator,
+				m_scrollBarH->getPosition()
+			);
+		}
+	}
 }
 
 void SequencerControl::eventMouseWheel(Event* e)
@@ -481,6 +569,16 @@ void SequencerControl::eventPaint(Event* e)
 	{
 		canvas.setForeground(Color4ub(0, 0, 0));
 		canvas.drawLine(x, rc.top, x, rc.bottom - scrollHeight - 1);
+	}
+
+	// Draw drop position.
+	if (m_dropIndex >= 0)
+	{
+		int32_t y = rc.top - scrollOffsetY + m_dropIndex * c_sequenceHeight;
+		canvas.setForeground(Color4ub(0, 0, 0));
+		canvas.drawLine(rc.left, y - 1, rc.right, y - 1);
+		canvas.drawLine(rc.left, y, rc.right, y);
+		canvas.drawLine(rc.left, y + 1, rc.right, y + 1);
 	}
 
 	// Draw time information.

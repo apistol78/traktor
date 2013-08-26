@@ -255,9 +255,6 @@ int32_t OnlinePeers::receive(void* data, int32_t size, net::handle_t& outFromHan
 {
 	Ref< IUser > fromUser;
 	int32_t nrecv;
-
-	if (!m_sessionManager->haveP2PData())
-		return 0;
 	
 	nrecv = m_sessionManager->receiveP2PData(data, size, fromUser);
 	if (!nrecv)

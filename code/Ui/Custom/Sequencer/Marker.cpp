@@ -17,24 +17,26 @@ const int c_sequenceHeight = 22;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Marker", Marker, Key)
 
-Marker::Marker(int time)
+Marker::Marker(int32_t time, bool movable)
 :	m_time(time)
+,	m_movable(movable)
 {
 }
 
-void Marker::setTime(int time)
+void Marker::setTime(int32_t time)
 {
 	m_time = time;
 }
 
-int Marker::getTime() const
+int32_t Marker::getTime() const
 {
 	return m_time;
 }
 
 void Marker::move(int offset)
 {
-	m_time += offset;
+	if (m_movable)
+		m_time += offset;
 }
 
 void Marker::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const

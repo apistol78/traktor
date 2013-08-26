@@ -45,7 +45,7 @@ public:
 	
 	void setDocumentElement(Element* docElement);
 
-	Ref< Element > getDocumentElement() const;
+	Element* getDocumentElement() const;
 	
 private:
 	bool m_parseComments;

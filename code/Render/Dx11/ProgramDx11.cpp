@@ -149,7 +149,7 @@ void ProgramDx11::destroy()
 		m_context->releaseComRef(m_pixelState.cbuffer[i].d3dBuffer);
 	m_context->releaseComRef(m_pixelState.d3dSamplerStates);
 	m_context->releaseComRef(m_d3dVertexShaderBlob);
-	for (SmallMap< size_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.begin(); i != m_d3dInputLayouts.end(); ++i)
+	for (SmallMap< uint32_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.begin(); i != m_d3dInputLayouts.end(); ++i)
 		m_context->releaseComRef(i->second);
 	m_d3dInputLayouts.clear();
 	m_context->releaseComRef(m_d3dInputLayout);
@@ -282,7 +282,7 @@ bool ProgramDx11::bind(
 	ID3D11Device* d3dDevice,
 	ID3D11DeviceContext* d3dDeviceContext,
 	StateCache& stateCache,
-	size_t d3dInputElementsHash,
+	uint32_t d3dInputElementsHash,
 	const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements,
 	const int32_t targetSize[2]
 )
@@ -404,7 +404,7 @@ bool ProgramDx11::bind(
 		if (m_d3dInputLayout != 0)
 			d3dDeviceContext->IASetInputLayout(NULL);
 
-		SmallMap< size_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.find(d3dInputElementsHash);
+		SmallMap< uint32_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.find(d3dInputElementsHash);
 		if (i != m_d3dInputLayouts.end())
 			m_d3dInputLayout = i->second;
 		else

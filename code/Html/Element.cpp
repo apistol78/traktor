@@ -50,17 +50,17 @@ void Element::setAttribute(const std::wstring& name, const std::wstring& value)
 	attr->setValue(value);
 }
 
-Ref< Attribute > Element::getFirstAttribute() const
+Attribute* Element::getFirstAttribute() const
 {
 	return m_firstAttribute;
 }
 
-Ref< Attribute > Element::getLastAttribute() const
+Attribute* Element::getLastAttribute() const
 {
 	return m_lastAttribute;
 }
 
-Ref< Attribute > Element::getAttribute(const std::wstring& name) const
+Attribute* Element::getAttribute(const std::wstring& name) const
 {
 	Ref< Attribute > attr;
 	for (attr = m_firstAttribute; attr != 0; attr = attr->getNext())
@@ -71,7 +71,7 @@ Ref< Attribute > Element::getAttribute(const std::wstring& name) const
 	return attr;
 }
 
-Ref< Element > Element::getPreviousElementSibling() const
+Element* Element::getPreviousElementSibling() const
 {
 	Ref< Node > node = getPreviousSibling();
 	while (node)
@@ -83,7 +83,7 @@ Ref< Element > Element::getPreviousElementSibling() const
 	return static_cast< Element* >(node.ptr());
 }
 
-Ref< Element > Element::getNextElementSibling() const
+Element* Element::getNextElementSibling() const
 {
 	Ref< Node > node = getNextSibling();
 	while (node)
@@ -95,7 +95,7 @@ Ref< Element > Element::getNextElementSibling() const
 	return static_cast< Element* >(node.ptr());
 }
 
-Ref< Element > Element::getFirstElementChild() const
+Element* Element::getFirstElementChild() const
 {
 	Ref< Node > node = getFirstChild();
 	while (node)
@@ -107,7 +107,7 @@ Ref< Element > Element::getFirstElementChild() const
 	return static_cast< Element* >(node.ptr());
 }
 
-Ref< Element > Element::getLastElementChild() const
+Element* Element::getLastElementChild() const
 {
 	Ref< Node > node = getLastChild();
 	while (node)

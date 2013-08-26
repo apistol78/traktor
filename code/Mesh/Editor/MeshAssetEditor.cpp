@@ -425,6 +425,7 @@ void MeshAssetEditor::createMaterialShader()
 	{
 		L"",
 		materialName,
+		0,
 		0
 	};
 
