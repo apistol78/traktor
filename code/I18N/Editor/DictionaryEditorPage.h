@@ -68,6 +68,8 @@ private:
 	Ref< ui::custom::GridView > m_gridDictionary;
 	Ref< Dictionary > m_dictionary;
 
+	void eventToolClick(ui::Event* event);
+
 	void eventGridDoubleClick(ui::Event* event);
 };
 

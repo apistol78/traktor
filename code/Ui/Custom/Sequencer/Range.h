@@ -26,7 +26,7 @@ class T_DLLCLASS Range : public Key
 	T_RTTI_CLASS;
 
 public:
-	Range(int start, int end);
+	Range(int start, int end, bool movable);
 
 	void setStart(int start);
 
@@ -45,6 +45,7 @@ public:
 private:
 	int m_start;
 	int m_end;
+	bool m_movable;
 };
 
 		}

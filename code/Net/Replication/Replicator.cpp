@@ -28,8 +28,8 @@ const handle_t c_broadcastHandle = 0UL;
 const int32_t c_initialTimeOffset = 50;
 const float c_nearDistance = 10.0f;
 const float c_farDistance = 100.0f;
-const int32_t c_nearTimeUntilTx = 100;
-const int32_t c_farTimeUntilTx = 300;
+const int32_t c_nearTimeUntilTx = 80;
+const int32_t c_farTimeUntilTx = 200;
 const int32_t c_timeUntilIAm = 500;
 const int32_t c_timeUntilPing = 2000;
 const uint32_t c_maxPendingPing = 16;
@@ -421,15 +421,24 @@ Ref< const State > Replicator::getGhostState(handle_t peerHandle, float timeOffs
 	std::map< handle_t, Peer >::const_iterator i = m_peers.find(peerHandle);
 	if (i != m_peers.end() && i->second.ghost)
 	{
-		const StateTemplate* stateTemplate = i->second.ghost->stateTemplate;
+		const Peer& peer = i->second;
+
+		float delta = timeOffset - peer.ghost->T0 / 1000.0f;
+		if (abs(delta) > 0.3f)
+			T_REPLICATOR_DEBUG(L"WARNING: Peer " << peer.name << L" extrapolation delta out-of-range, delta = " << delta);
+
+		delta = clamp(delta, -0.3f, 0.3f);
+		timeOffset = peer.ghost->T0 / 1000.0f + delta;
+
+		const StateTemplate* stateTemplate = peer.ghost->stateTemplate;
 		if (stateTemplate)
 			return stateTemplate->extrapolate(
-				i->second.ghost->Sn2,
-				i->second.ghost->Tn2 / 1000.0f,
-				i->second.ghost->Sn1,
-				i->second.ghost->Tn1 / 1000.0f,
-				i->second.ghost->S0,
-				i->second.ghost->T0 / 1000.0f,
+				peer.ghost->Sn2,
+				peer.ghost->Tn2 / 1000.0f,
+				peer.ghost->Sn1,
+				peer.ghost->Tn1 / 1000.0f,
+				peer.ghost->S0,
+				peer.ghost->T0 / 1000.0f,
 				timeOffset
 			);
 		else
@@ -954,13 +963,20 @@ void Replicator::receiveMessages()
 						peer.ghost->S0 = state;
 						peer.ghost->T0 = msg.time;
 					}
+					else
+						T_REPLICATOR_DEBUG(L"ERROR: Unable to unpack state of peer " << peer.name);
 				}
 
 				peer.lastTimeLocal = m_time;
 				peer.lastTimeRemote = msg.time;
 
 				// Put an input event to notify listeners about new state.
-				if (peer.ghost && peer.ghost->S0)
+				if (
+					peer.ghost &&
+					peer.ghost->S0 &&
+					peer.ghost->Sn1 &&
+					peer.ghost->Sn2
+				)
 				{
 					std::list< EventIn >::iterator it = m_eventsIn.begin();
 					for (; it != m_eventsIn.end(); ++it)
@@ -1126,6 +1142,22 @@ bool Replicator::sendPong(handle_t peerHandle, int32_t time0)
 void Replicator::adjustTime(int32_t offset)
 {
 	m_time += offset;
+
+	// Also adjust all old states as well.
+	for (std::map< handle_t, Peer >::iterator i = m_peers.begin(); i != m_peers.end(); ++i)
+	{
+		Ghost* ghost = i->second.ghost;
+		if (!ghost)
+			continue;
+
+		ghost->Tn2 += offset;
+		ghost->Tn1 += offset;
+		ghost->T0 += offset;
+	}
+
+	// Adjust on all queued events also.
+	for (std::list< EventIn >::iterator i = m_eventsIn.begin(); i != m_eventsIn.end(); ++i)
+		i->time += offset;
 }
 
 bool Replicator::send(handle_t peerHandle, const Message* msg, uint32_t size, bool reliable)

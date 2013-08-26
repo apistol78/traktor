@@ -54,6 +54,8 @@ public:
 
 	float getLoopEnd() const { return m_loopEnd; }
 
+	void setLayers(const RefArray< EffectLayerData >& layers) { m_layers = layers; }
+
 	const RefArray< EffectLayerData >& getLayers() const { return m_layers; }
 	
 private:

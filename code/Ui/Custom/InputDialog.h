@@ -7,9 +7,9 @@
 // import/export mechanism.
 #undef T_DLLCLASS
 #if defined(T_UI_CUSTOM_EXPORT)
-#define T_DLLCLASS T_DLLEXPORT
+#	define T_DLLCLASS T_DLLEXPORT
 #else
-#define T_DLLCLASS T_DLLIMPORT
+#	define T_DLLCLASS T_DLLIMPORT
 #endif
 
 namespace traktor
@@ -17,7 +17,6 @@ namespace traktor
 	namespace ui
 	{
 
-class Edit;
 class EditValidator;
 
 		namespace custom
@@ -36,6 +35,7 @@ public:
 		std::wstring title;
 		std::wstring value;
 		Ref< EditValidator > validator;
+		const wchar_t** values;
 	};
 
 	InputDialog();
@@ -52,7 +52,7 @@ public:
 
 private:
 	Field* m_outFields;
-	RefArray< Edit > m_editFields;
+	RefArray< Widget > m_editFields;
 };
 
 		}

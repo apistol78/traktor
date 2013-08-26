@@ -37,10 +37,24 @@ private:
 		bool operator < (const Block& rh) const;
 	};
 
+	struct Stats
+	{
+		const char* tag;
+		uint32_t count;
+		size_t memory;
+
+		Stats()
+		:	tag(0)
+		,	count(0)
+		,	memory(0)
+		{
+		}
+	};
+
 	mutable Semaphore m_lock;
 	Ref< IAllocator > m_systemAllocator;
 	std::map< void*, Block > m_aliveBlocks;
-	std::map< void*, uint32_t > m_allocCount;
+	std::map< void*, Stats > m_allocStats;
 };
 
 }

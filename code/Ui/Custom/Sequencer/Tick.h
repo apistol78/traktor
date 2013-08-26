@@ -26,7 +26,7 @@ class T_DLLCLASS Tick : public Key
 	T_RTTI_CLASS;
 
 public:
-	Tick(int time);
+	Tick(int time, bool movable);
 
 	void setTime(int time);
 
@@ -40,6 +40,7 @@ public:
 
 private:
 	int m_time;
+	bool m_movable;
 };
 
 		}

@@ -36,7 +36,8 @@ public:
 	{
 		EiCursorMove = EiUser,
 		EiKeyMove = EiUser + 1,
-		EiGroupVisible = EiUser + 2
+		EiGroupVisible = EiUser + 2,
+		EiMovedSequenceItem = EiUser + 3
 	};
 
 	enum GetSequenceFlags
@@ -69,6 +70,8 @@ public:
 
 	void addSequenceItem(SequenceItem* sequenceItem);
 
+	void addSequenceItemBefore(SequenceItem* beforeItem, SequenceItem* sequenceItem);
+
 	void removeSequenceItem(SequenceItem* sequenceItem);
 
 	void removeAllSequenceItems();
@@ -82,6 +85,8 @@ public:
 	void addKeyMoveEventHandler(EventHandler* eventHandler);
 
 	void addGroupVisibleEventHandler(EventHandler* eventHandler);
+
+	void addMovedSequenceItemEventHandler(EventHandler* eventHandler);
 
 	void addClickEventHandler(EventHandler* eventHandler);
 
@@ -100,6 +105,9 @@ private:
 	int32_t m_timeScale;
 	int32_t m_length;
 	int32_t m_cursor;
+	Point m_startPosition;
+	int32_t m_moveTrack;
+	int32_t m_dropIndex;
 	
 	void updateScrollBars();
 

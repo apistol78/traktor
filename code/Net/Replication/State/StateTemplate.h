@@ -31,8 +31,6 @@ public:
 
 	Ref< const State > unpack(const State* Sn1, const void* buffer, uint32_t bufferSize) const;
 
-	float error(const State* Sl, const State* Sr) const;
-
 private:
 	RefArray< const IValueTemplate > m_valueTemplates;
 };

@@ -51,6 +51,17 @@ void SequenceItem::addChildItem(SequenceItem* childItem)
 	m_childItems.push_back(childItem);
 }
 
+void SequenceItem::addChildItemBefore(SequenceItem* beforeChildItem, SequenceItem* childItem)
+{
+	T_ASSERT_M (!childItem->m_parent, L"Item already has a parent");
+	childItem->m_parent = this;
+
+	RefArray< SequenceItem >::iterator i = std::find(m_childItems.begin(), m_childItems.end(), childItem);
+	T_ASSERT (i != m_childItems.end());
+
+	m_childItems.insert(i, childItem);
+}
+
 void SequenceItem::removeChildItem(SequenceItem* childItem)
 {
 	T_ASSERT_M (childItem->m_parent == this, L"Item not a child to this item");

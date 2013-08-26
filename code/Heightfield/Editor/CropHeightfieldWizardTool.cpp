@@ -65,9 +65,9 @@ bool CropHeightfieldWizardTool::launch(ui::Widget* parent, editor::IEditor* edit
 
 	ui::custom::InputDialog::Field fields[] =
 	{
-		{ L"Left", L"0", new ui::NumericEditValidator(false) },
-		{ L"Top", L"0", new ui::NumericEditValidator(false) },
-		{ L"Size", toString(heightfield->getSize()), new ui::NumericEditValidator(false, 1) }
+		{ L"Left", L"0", new ui::NumericEditValidator(false), 0 },
+		{ L"Top", L"0", new ui::NumericEditValidator(false), 0 },
+		{ L"Size", toString(heightfield->getSize()), new ui::NumericEditValidator(false, 1), 0 }
 	};
 
 	ui::custom::InputDialog inputDialog;

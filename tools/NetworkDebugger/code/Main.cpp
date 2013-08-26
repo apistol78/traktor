@@ -451,7 +451,7 @@ void MainForm::eventFileDrop(ui::Event* event)
 							m_sequencer->addSequenceItem(group);
 						}
 
-						Ref< ui::custom::Tick > tick = new ui::custom::Tick(info->time);
+						Ref< ui::custom::Tick > tick = new ui::custom::Tick(info->time, false);
 						tick->setData(L"INFO", info);
 
 						checked_type_cast< ui::custom::Sequence* >(group->getChildItems().at(0))->addKey(tick);
@@ -484,7 +484,7 @@ void MainForm::eventFileDrop(ui::Event* event)
 						m_sequencer->addSequenceItem(group);
 					}
 
-					Ref< ui::custom::Tick > tick = new ui::custom::Tick(e->time);
+					Ref< ui::custom::Tick > tick = new ui::custom::Tick(e->time, false);
 					tick->setData(L"ENTRY", e);
 					
 					if (cmd == 0x01)

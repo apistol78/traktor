@@ -22,6 +22,7 @@
 #include "Terrain/Editor/ColorBrush.h"
 #include "Terrain/Editor/CutBrush.h"
 #include "Terrain/Editor/ElevateBrush.h"
+#include "Terrain/Editor/EmissiveBrush.h"
 #include "Terrain/Editor/FlattenBrush.h"
 #include "Terrain/Editor/MaterialBrush.h"
 #include "Terrain/Editor/NoiseBrush.h"
@@ -266,7 +267,7 @@ void TerrainEditModifier::selectionChanged()
 	if (!m_colorImage)
 	{
 		m_colorImage = new drawing::Image(drawing::PixelFormat::getR8G8B8A8().endianSwapped(), size, size);
-		m_colorImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.5f));
+		m_colorImage->clear(Color4f(0.5f, 0.5f, 0.5f, 0.0f));
 	}
 
 	// Create non-compressed texture for colors.
@@ -723,6 +724,8 @@ void TerrainEditModifier::setBrush(const std::wstring& brush)
 		m_drawBrush = new AverageBrush(m_heightfield);
 	else if (brush == L"Terrain.Editor.ColorBrush")
 		m_drawBrush = new ColorBrush(m_colorImage);
+	else if (brush == L"Terrain.Editor.EmissiveBrush")
+		m_drawBrush = new EmissiveBrush(m_colorImage);
 	else if (brush == L"Terrain.Editor.CutBrush")
 		m_drawBrush = new CutBrush(m_heightfield);
 	else if (brush == L"Terrain.Editor.ElevateBrush")

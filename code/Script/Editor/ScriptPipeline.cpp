@@ -65,7 +65,7 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 10, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 11, ScriptPipeline, editor::DefaultPipeline)
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -181,6 +181,16 @@ bool ScriptPipeline::buildOutput(
 			FileOutputStream(scriptFile, new Utf8Encoding()) << ss.str() << Endl;
 			scriptFile->close();
 			scriptFile = 0;
+		}
+
+		Ref< IStream > mapFile = FileSystem::getInstance().open(m_scriptOutputPath + L"/" + outputGuid.format() + L".map", File::FmWrite);
+		if (mapFile)
+		{
+			FileOutputStream fs(mapFile, new Utf8Encoding());
+			for (source_map_t::const_iterator i = sm.begin(); i != sm.end(); ++i)
+				fs << i->id.format() << L" " << i->name << L" " << i->line << Endl;
+			mapFile->close();
+			mapFile = 0;
 		}
 	}
 

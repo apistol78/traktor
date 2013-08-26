@@ -53,6 +53,8 @@ public:
 
 	void addChildItem(SequenceItem* childItem);
 
+	void addChildItemBefore(SequenceItem* beforeChildItem, SequenceItem* childItem);
+
 	void removeChildItem(SequenceItem* childItem);
 
 	RefArray< SequenceItem >& getChildItems();

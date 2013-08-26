@@ -1,6 +1,6 @@
-#include "Ui/Custom/Sequencer/Track.h"
-#include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Canvas.h"
+#include "Ui/Custom/Sequencer/Sequence.h"
+#include "Ui/Custom/Sequencer/Track.h"
 
 namespace traktor
 {
@@ -11,9 +11,10 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Track", Track, Key)
 
-Track::Track(int start, int end)
+Track::Track(int start, int end, bool movable)
 :	m_start(start)
 ,	m_end(end)
+,	m_movable(movable)
 {
 }
 
@@ -39,8 +40,11 @@ int Track::getEnd() const
 
 void Track::move(int offset)
 {
-	m_start += offset;
-	m_end += offset;
+	if (m_movable)
+	{
+		m_start += offset;
+		m_end += offset;
+	}
 }
 
 void Track::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const

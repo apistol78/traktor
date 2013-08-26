@@ -150,11 +150,15 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	Vector4 linearVelocity, angularVelocity;
 	Transform T;
 
-	uint32_t uf[3];
+	float f[4];
 	uint8_t u[3];
 
 	for (uint32_t i = 0; i < 3; ++i)
-		uf[i] = reader.readUnsigned(32);
+	{
+		uint32_t uf = reader.readUnsigned(32);
+		f[i] = *(float*)&uf;
+		T_FATAL_ASSERT(!isNanOrInfinite(f[i]));
+	}
 
 	u[0] = reader.readUnsigned(8);
 	u[1] = reader.readUnsigned(8);
@@ -163,13 +167,10 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	float Ra = halfToFloat(reader.readUnsigned(16));
 
 	T = Transform(
-		Vector4(
-			*(float*)&uf[0],
-			*(float*)&uf[1],
-			*(float*)&uf[2],
-			1.0f
-		),
-		Quaternion::fromAxisAngle(R, Ra).normalized()
+		Vector4(f[0], f[1], f[2], 1.0f),
+		(abs(Ra) > FUZZY_EPSILON && R.length() > FUZZY_EPSILON) ? 
+			Quaternion::fromAxisAngle(R, Ra).normalized() :
+			Quaternion::identity()
 	);
 
 	u[0] = reader.readUnsigned(8);

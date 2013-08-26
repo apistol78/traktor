@@ -104,6 +104,8 @@ private:
 
 	void eventTimeCursorMove(ui::Event* event);
 
+	void eventLayerRearranged(ui::Event* event);
+
 	void eventKeyMove(ui::Event* event);
 
 	void eventLayerClick(ui::Event* event);

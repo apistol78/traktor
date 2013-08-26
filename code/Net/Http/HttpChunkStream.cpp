@@ -10,7 +10,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.HttpChunkStream", HttpChunkStream, IStream)
 
 HttpChunkStream::HttpChunkStream(IStream* stream)
 :	m_stream(stream)
-,	m_available(0)
+,	m_available(-1)
 {
 	T_ASSERT (m_stream->canRead());
 }
@@ -59,7 +59,7 @@ int HttpChunkStream::seek(SeekOriginType origin, int offset)
 
 int HttpChunkStream::read(void* block, int nbytes)
 {
-	if (m_available <= 0)
+	if (m_available == -1)
 	{
 		char buf[16];
 		char* p = buf;
@@ -91,6 +91,9 @@ int HttpChunkStream::read(void* block, int nbytes)
 		std::sscanf(buf, "%x", &m_available);
 #endif
 	}
+
+	if (m_available <= 0)
+		return 0;
 
 	int32_t nread = m_stream->read(block, std::min< int32_t >(nbytes, m_available));
 	if (nread > 0)

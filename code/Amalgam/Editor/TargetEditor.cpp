@@ -310,7 +310,7 @@ void TargetEditor::eventButtonNewTargetConfigurationClick(ui::Event* event)
 {
 	ui::custom::InputDialog::Field fields[] =
 	{
-		{ L"Name", L"", 0 }
+		{ L"Name", L"", 0, 0 }
 	};
 
 	Ref< ui::custom::InputDialog > dialogInputName = new ui::custom::InputDialog();
@@ -341,7 +341,7 @@ void TargetEditor::eventButtonCloneTargetConfigurationClick(ui::Event* event)
 
 	ui::custom::InputDialog::Field fields[] =
 	{
-		{ L"Name", targetConfiguration->getName(), 0 }
+		{ L"Name", targetConfiguration->getName(), 0, 0 }
 	};
 
 	Ref< ui::custom::InputDialog > dialogInputName = new ui::custom::InputDialog();

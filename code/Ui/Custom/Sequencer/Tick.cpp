@@ -1,6 +1,6 @@
-#include "Ui/Custom/Sequencer/Tick.h"
-#include "Ui/Custom/Sequencer/Sequence.h"
 #include "Ui/Canvas.h"
+#include "Ui/Custom/Sequencer/Sequence.h"
+#include "Ui/Custom/Sequencer/Tick.h"
 
 namespace traktor
 {
@@ -17,8 +17,9 @@ const int c_sequenceHeight = 22;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.ui.custom.Tick", Tick, Key)
 
-Tick::Tick(int time)
+Tick::Tick(int time, bool movable)
 :	m_time(time)
+,	m_movable(movable)
 {
 }
 
@@ -34,7 +35,8 @@ int Tick::getTime() const
 
 void Tick::move(int offset)
 {
-	m_time += offset;
+	if (m_movable)
+		m_time += offset;
 }
 
 void Tick::getRect(const Sequence* sequence, const Rect& rcClient, Rect& outRect) const

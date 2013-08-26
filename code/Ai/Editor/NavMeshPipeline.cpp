@@ -459,6 +459,8 @@ bool NavMeshPipeline::buildOutput(
 
 	rcCalcGridSize(cfg.bmin, cfg.bmax, cfg.cs, &cfg.width, &cfg.height);
 
+	log::info << L"NavMesh heightfield size " << cfg.width << L" * " << cfg.height << Endl;
+
 	rcHeightfield* solid = rcAllocHeightfield();
 	if (!solid)
 	{

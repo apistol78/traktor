@@ -345,7 +345,8 @@ bool TerrainPipeline::buildOutput(
 
 		Ref< render::TextureOutput > colorTexture = new render::TextureOutput();
 		colorTexture->m_keepZeroAlpha = false;
-		colorTexture->m_ignoreAlpha = true;
+		colorTexture->m_ignoreAlpha = false;
+		colorTexture->m_hasAlpha = true;
 		colorTexture->m_linearGamma = true;
 		pipelineBuilder->buildOutput(colorTexture, outputPath + L"/Colors", colorMapGuid, colorImage);
 	}

@@ -55,7 +55,7 @@ public:
 		ID3D11Device* d3dDevice,
 		ID3D11DeviceContext* d3dDeviceContext,
 		StateCache& stateCache,
-		size_t d3dInputElementsHash,
+		uint32_t d3dInputElementsHash,
 		const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements,
 		const int32_t targetSize[2]
 	);
@@ -136,9 +136,9 @@ private:
 	State m_vertexState;
 	State m_pixelState;
 	ComRef< ID3DBlob > m_d3dVertexShaderBlob;
-	SmallMap< size_t, ComRef< ID3D11InputLayout > > m_d3dInputLayouts;
+	SmallMap< uint32_t, ComRef< ID3D11InputLayout > > m_d3dInputLayouts;
 	ComRef< ID3D11InputLayout > m_d3dInputLayout;
-	size_t m_d3dInputElementsHash;
+	uint32_t m_d3dInputElementsHash;
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterFloatArray;
 	RefArray< ITexture > m_parameterTextureArray;

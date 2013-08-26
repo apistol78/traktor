@@ -324,7 +324,7 @@ uint32_t SteamSessionManager::receiveP2PData(void* data, uint32_t size, uint64_t
 	CSteamID fromUserID;
 
 	if (!SteamNetworking()->ReadP2PPacket(data, size, &receivedSize, &fromUserID))
-		return false;
+		return 0;
 
 	outFromUserHandle = fromUserID.ConvertToUint64();
 	return receivedSize;

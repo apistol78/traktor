@@ -14,25 +14,29 @@ namespace traktor
 	namespace physics
 	{
 
+#if !defined(T_CONVERT_ASSERT)
+#	define T_CONVERT_ASSERT T_ASSERT
+#endif
+
 /*! \ingroup Bullet */
 //@{
 
 /*! \brief Convert from Bullet vector. */
 inline Vector4 fromBtVector3(const btVector3& v, float w)
 {
-	T_ASSERT (!isNan((v).x()));
-	T_ASSERT (!isNan((v).y()));
-	T_ASSERT (!isNan((v).z()));
-	T_ASSERT (!isNan(w));
+	T_CONVERT_ASSERT (!isNanOrInfinite((v).x()));
+	T_CONVERT_ASSERT (!isNanOrInfinite((v).y()));
+	T_CONVERT_ASSERT (!isNanOrInfinite((v).z()));
+	T_CONVERT_ASSERT (!isNanOrInfinite(w));
 	return Vector4(v.x(), v.y(), v.z(), w);
 }
 
 /*! \brief Convert to Bullet vector. */
 inline btVector3 toBtVector3(const Vector4& v)
 {
-	T_ASSERT (!isNan((v).x()));
-	T_ASSERT (!isNan((v).y()));
-	T_ASSERT (!isNan((v).z()));
+	T_CONVERT_ASSERT (!isNanOrInfinite((v).x()));
+	T_CONVERT_ASSERT (!isNanOrInfinite((v).y()));
+	T_CONVERT_ASSERT (!isNanOrInfinite((v).z()));
 	return btVector3(v.x(), v.y(), v.z());
 }
 
