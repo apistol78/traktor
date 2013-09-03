@@ -3,7 +3,12 @@
 
 #include "Physics/PhysX/Types.h"
 
-class NxJoint;
+namespace physx
+{
+
+class PxJoint;
+
+}
 
 namespace traktor
 {
@@ -17,7 +22,7 @@ template < typename Outer >
 class JointPhysX : public Outer
 {
 public:
-	JointPhysX(DestroyCallbackPhysX* callback, NxJoint* joint, Body* body1, Body* body2)
+	JointPhysX(DestroyCallbackPhysX* callback, physx::PxJoint* joint, Body* body1, Body* body2)
 	:	m_callback(callback)
 	,	m_joint(joint)
 	,	m_body1(body1)
@@ -34,7 +39,7 @@ public:
 	{
 		if (m_callback && m_joint)
 		{
-			m_callback->destroyJoint(this, *m_joint);
+			m_callback->destroyJoint(this, m_joint);
 			m_callback = 0;
 		}
 		m_joint = 0;
@@ -57,7 +62,7 @@ public:
 
 protected:
 	DestroyCallbackPhysX* m_callback;
-	NxJoint* m_joint;
+	physx::PxJoint* m_joint;
 	Ref< Body > m_body1;
 	Ref< Body > m_body2;
 };

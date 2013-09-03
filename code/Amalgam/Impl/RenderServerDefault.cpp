@@ -156,6 +156,7 @@ bool RenderServerDefault::create(PropertyGroup* settings)
 	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
 
 	render::RenderSystemDesc rsd;
+	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
 	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
 	rsd.verbose = true;
@@ -427,6 +428,7 @@ int32_t RenderServerDefault::reconfigure(IEnvironment* environment, const Proper
 
 	// Reset render system.
 	render::RenderSystemDesc rsd;
+	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
 	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
 	if (!m_renderSystem->reset(rsd))

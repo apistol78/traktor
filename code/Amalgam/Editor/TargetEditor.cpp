@@ -3,6 +3,7 @@
 #include "Amalgam/Editor/Target.h"
 #include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/TargetEditor.h"
+#include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Database/Database.h"
@@ -152,10 +153,16 @@ bool TargetEditor::create(ui::Widget* parent, db::Instance* instance, ISerializa
 
 	for (RefArray< db::Instance >::const_iterator i = featureInstances.begin(); i != featureInstances.end(); ++i)
 	{
-		EditFeature ef;
-		ef.feature = (*i)->getObject< Feature >();
-		ef.featureInstance = (*i);
-		m_features.push_back(ef);
+		if (*i)
+		{
+			EditFeature ef;
+			ef.feature = (*i)->getObject< Feature >();
+			ef.featureInstance = (*i);
+			if (ef.feature)
+				m_features.push_back(ef);
+			else
+				log::error << L"Unable to read feature \"" << (*i)->getName() << L"\"" << Endl;
+		}
 	}
 
 	m_features.sort();

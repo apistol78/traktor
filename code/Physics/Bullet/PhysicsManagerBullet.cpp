@@ -11,6 +11,7 @@
 #include "Physics/BoxShapeDesc.h"
 #include "Physics/CapsuleShapeDesc.h"
 #include "Physics/CollisionListener.h"
+#include "Physics/CompoundShapeDesc.h"
 #include "Physics/ConeTwistJointDesc.h"
 #include "Physics/CylinderShapeDesc.h"
 #include "Physics/DynamicBodyDesc.h"
@@ -379,6 +380,8 @@ PhysicsManagerBullet::PhysicsManagerBullet()
 ,	m_broadphase(0)
 ,	m_solver(0)
 ,	m_dynamicsWorld(0)
+,	m_queryCountLast(0)
+,	m_queryCount(0)
 {
 }
 
@@ -1015,6 +1018,9 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 			manifold->m_fresh = false;
 		}
 	}
+
+	m_queryCountLast = m_queryCount;
+	m_queryCount = 0;
 }
 
 void PhysicsManagerBullet::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
@@ -1094,6 +1100,7 @@ uint32_t PhysicsManagerBullet::getCollidingPairs(std::vector< CollisionPair >& o
 
 bool PhysicsManagerBullet::queryPoint(const Vector4& at, float margin, QueryResult& outResult) const
 {
+	++m_queryCount;
 	return false;
 }
 
@@ -1108,6 +1115,7 @@ bool PhysicsManagerBullet::queryRay(
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	++m_queryCount;
 
 	btVector3 from = toBtVector3(at);
 	btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
@@ -1160,6 +1168,7 @@ bool PhysicsManagerBullet::queryShadowRay(
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	++m_queryCount;
 
 	btVector3 from = toBtVector3(at);
 	btVector3 to = toBtVector3(at + direction * Scalar(maxLength));
@@ -1183,6 +1192,7 @@ uint32_t PhysicsManagerBullet::querySphere(
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	++m_queryCount;
 
 	outBodies.resize(0);
 	for (RefArray< BodyBullet >::const_iterator i = m_bodies.begin(); i != m_bodies.end(); ++i)
@@ -1223,6 +1233,7 @@ bool PhysicsManagerBullet::querySweep(
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	++m_queryCount;
 
 	btSphereShape sphereShape(radius);
 	btTransform from, to;
@@ -1270,6 +1281,7 @@ bool PhysicsManagerBullet::querySweep(
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	++m_queryCount;
 
 	btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
 	btCollisionShape* shape = rigidBody->getCollisionShape();
@@ -1331,6 +1343,7 @@ void PhysicsManagerBullet::querySweep(
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	++m_queryCount;
 
 	btSphereShape sphereShape(radius);
 	btTransform from, to;
@@ -1360,6 +1373,7 @@ void PhysicsManagerBullet::queryOverlap(
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	++m_queryCount;
 
 	btRigidBody* rigidBody = checked_type_cast< const BodyBullet* >(body)->getBtRigidBody();
 	T_ASSERT (rigidBody);
@@ -1375,6 +1389,7 @@ void PhysicsManagerBullet::getStatistics(PhysicsStatistics& outStatistics) const
 	outStatistics.bodyCount = 0;
 	outStatistics.activeCount = 0;
 	outStatistics.manifoldCount = 0;
+	outStatistics.queryCount = m_queryCountLast;
 
 	const btCollisionObjectArray& collisionObjects = m_dynamicsWorld->getCollisionObjectArray();
 	for (int i = 0; i < collisionObjects.size(); ++i)

@@ -145,6 +145,8 @@ private:
 	mutable Semaphore m_lock;
 	RefArray< BodyBullet > m_bodies;
 	RefArray< Joint > m_joints;
+	uint32_t m_queryCountLast;
+	mutable uint32_t m_queryCount;
 
 	static PhysicsManagerBullet* ms_this;
 

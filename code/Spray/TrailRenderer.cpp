@@ -120,13 +120,13 @@ void TrailRenderer::render(
 
 		up = cross(direction, (vp0 + vp1) * Scalar(0.5f) - cameraPosition).normalized() * www0;
 
-		(vp1 + up).storeUnaligned(vertex->position);
+		(vp1 + up).storeAligned(vertex->position);
 		vertex->uv[0] = 0.0f;
 		vertex->uv[1] = v;
 		vertex->uv[2] = 1.0f;
 		++vertex;
 
-		(vp1 - up).storeUnaligned(vertex->position);
+		(vp1 - up).storeAligned(vertex->position);
 		vertex->uv[0] = 1.0f;
 		vertex->uv[1] = v;
 		vertex->uv[2] = 1.0f;
@@ -153,13 +153,13 @@ void TrailRenderer::render(
 
 			up = cross(direction, vp - cameraPosition).normalized() * www0;
 
-			(vp + up).storeUnaligned(vertex->position);
+			(vp + up).storeAligned(vertex->position);
 			vertex->uv[0] = 0.0f;
 			vertex->uv[1] = v;
 			vertex->uv[2] = 0.0f;
 			++vertex;
 
-			(vp - up).storeUnaligned(vertex->position);
+			(vp - up).storeAligned(vertex->position);
 			vertex->uv[0] = 1.0f;
 			vertex->uv[1] = v;
 			vertex->uv[2] = 0.0f;

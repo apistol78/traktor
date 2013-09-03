@@ -54,28 +54,49 @@ bool RenderSystemDx11::create(const RenderSystemDesc& desc)
 
 	if (dxgiFactory)
 	{
-		// Prefer AMD or NVidia adapters; if none is found fallback on all others.
-		for (int32_t i = 0; dxgiFactory->EnumAdapters1(i, &dxgiAdapterEnum.getAssign()) != DXGI_ERROR_NOT_FOUND; ++i)
+		if (desc.adapter < 0)
 		{
-			// Ensure the adapter have a connected output.
-			hr = dxgiAdapterEnum->EnumOutputs(0, &dxgiOutput.getAssign());
+			// Prefer AMD or NVidia adapters; if none is found fallback on all others.
+			for (int32_t i = 0; dxgiFactory->EnumAdapters1(i, &dxgiAdapterEnum.getAssign()) != DXGI_ERROR_NOT_FOUND; ++i)
+			{
+				// Ensure the adapter have a connected output.
+				hr = dxgiAdapterEnum->EnumOutputs(0, &dxgiOutput.getAssign());
+				if (FAILED(hr))
+					continue;
+
+				// Get adapter description.
+				DXGI_ADAPTER_DESC1 dad;
+
+				hr = dxgiAdapterEnum->GetDesc1(&dad);
+				if (FAILED(hr))
+					continue;
+
+				if (desc.verbose)
+					log::info << L"Adapter " << i << L" \"" << dad.Description << L"\" (" << dad.DeviceId << L")" << Endl;
+
+				if (dad.VendorId == 4098)	// AMD/ATI
+					dxgiAdapter = dxgiAdapterEnum;
+				if (dad.VendorId == 4318)	// NVidia
+					dxgiAdapter = dxgiAdapterEnum;
+			}
+		}
+		else
+		{
+			hr = dxgiFactory->EnumAdapters1(desc.adapter, &dxgiAdapter.getAssign());
 			if (FAILED(hr))
-				continue;
+			{
+				log::error << L"No adapter with index " << desc.adapter << L" found" << Endl;
+				return false;
+			}
 
 			// Get adapter description.
 			DXGI_ADAPTER_DESC1 dad;
-
-			hr = dxgiAdapterEnum->GetDesc1(&dad);
-			if (FAILED(hr))
-				continue;
-
-			if (desc.verbose)
-				log::info << L"Device " << (i + 1) << L" \"" << dad.Description << L"\" (" << dad.DeviceId << L")" << Endl;
-
-			if (dad.VendorId == 4098)	// AMD/ATI
-				dxgiAdapter = dxgiAdapterEnum;
-			if (dad.VendorId == 4318)	// NVidia
-				dxgiAdapter = dxgiAdapterEnum;
+			hr = dxgiAdapter->GetDesc1(&dad);
+			if (SUCCEEDED(hr))
+			{
+				if (desc.verbose)
+					log::info << L"Adapter " << desc.adapter << L" \"" << dad.Description << L"\" (" << dad.DeviceId << L")" << Endl;
+			}
 		}
 
 		// In case we didn't find an suitable adapter we need to get the factory

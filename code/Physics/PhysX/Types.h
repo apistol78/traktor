@@ -1,8 +1,13 @@
 #ifndef traktor_physics_physx_Types_H
 #define traktor_physics_physx_Types_H
 
-class NxActor;
-class NxJoint;
+namespace physx
+{
+
+class PxRigidActor;
+class PxJoint;
+
+}
 
 namespace traktor
 {
@@ -17,9 +22,9 @@ class Joint;
  */
 struct DestroyCallbackPhysX
 {
-	virtual void destroyBody(Body* owner, NxActor& actor) = 0;
+	virtual void destroyBody(Body* owner, physx::PxRigidActor* actor) = 0;
 
-	virtual void destroyJoint(Joint* owner, NxJoint& joint) = 0;
+	virtual void destroyJoint(Joint* owner, physx::PxJoint* joint) = 0;
 };
 
 	}

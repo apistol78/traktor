@@ -1,4 +1,3 @@
-#include "Mesh/Instance/InstanceMesh.h"
 #include "Spray/MeshRenderer.h"
 #include "World/IWorldRenderPass.h"
 
@@ -6,6 +5,12 @@ namespace traktor
 {
 	namespace spray
 	{
+		namespace
+		{
+
+const uint32_t c_maxInstances = 16;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.MeshRenderer", MeshRenderer, Object)
 
@@ -28,12 +33,15 @@ void MeshRenderer::render(
 )
 {
 	PointVector& p = m_meshes[mesh].first;
-	p.insert(
-		p.end(),
-		points.begin(),
-		points.end()
-	);
-	m_meshes[mesh].second = meshOrientationFromVelocity;
+	if (p.size() <= c_maxInstances)
+	{
+		p.insert(
+			p.end(),
+			points.begin(),
+			points.end()
+		);
+		m_meshes[mesh].second = meshOrientationFromVelocity;
+	}
 }
 
 void MeshRenderer::flush(
@@ -41,13 +49,15 @@ void MeshRenderer::flush(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	AlignedVector< mesh::InstanceMesh::instance_distance_t > instances;
-	for (SmallMap< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > >::const_iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
+	for (std::map< Ref< mesh::InstanceMesh >, std::pair< PointVector, bool > >::iterator i = m_meshes.begin(); i != m_meshes.end(); ++i)
 	{
 		if (!i->first->supportTechnique(worldRenderPass.getTechnique()))
+		{
+			i->second.first.resize(0);
 			continue;
+		}
 
-		instances.resize(i->second.first.size());
+		m_instances.resize(i->second.first.size());
 		for (uint32_t j = 0; j < i->second.first.size(); ++j)
 		{
 			Quaternion R =
@@ -57,19 +67,20 @@ void MeshRenderer::flush(
 				) :
 				Quaternion::identity();
 
-			R.e.storeUnaligned(instances[j].first.rotation);
-			i->second.first[j].position.storeUnaligned(instances[j].first.translation);
-			instances[j].first.scale = i->second.first[j].size;
-			instances[j].second = 0.0f;
+			R.e.storeUnaligned(m_instances[j].first.rotation);
+			i->second.first[j].position.storeUnaligned(m_instances[j].first.translation);
+			m_instances[j].first.scale = i->second.first[j].size;
+			m_instances[j].second = 0.0f;
 		}
 
 		i->first->render(
 			renderContext,
 			worldRenderPass,
-			instances
+			m_instances
 		);
+
+		i->second.first.resize(0);
 	}
-	m_meshes.clear();
 }
 
 	}

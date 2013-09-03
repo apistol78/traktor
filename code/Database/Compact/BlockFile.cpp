@@ -12,6 +12,9 @@ namespace traktor
 		namespace
 		{
 
+const uint32_t c_version = 2;
+const uint32_t c_maxBlockCount = 8192;
+
 struct BlockPred
 {
 	uint32_t m_id;
@@ -181,7 +184,7 @@ bool BlockFile::open(const Path& fileName, bool readOnly, bool flushAlways)
 	reader >> magic;
 	reader >> version;
 
-	if (magic != 'TBLK' || version != 1)
+	if (magic != 'TBLK' || version != c_version)
 		return false;
 	
 	uint32_t blockCount;
@@ -196,7 +199,7 @@ bool BlockFile::open(const Path& fileName, bool readOnly, bool flushAlways)
 		reader >> block.size;
 	}
 
-	m_stream->seek(IStream::SeekSet, 3 * sizeof(uint32_t) + 4096 * (sizeof(uint32_t) + sizeof(Block)));
+	m_stream->seek(IStream::SeekSet, 3 * sizeof(uint32_t) + c_maxBlockCount * (sizeof(uint32_t) + sizeof(Block)));
 
 	m_fileName = fileName;
 	m_flushAlways = flushAlways;
@@ -307,7 +310,7 @@ void BlockFile::flushTOC()
 	Writer writer(m_stream);
 
 	writer << uint32_t('TBLK');
-	writer << uint32_t(1);
+	writer << c_version;
 
 	uint32_t blockCount = uint32_t(m_blocks.size());
 	writer << blockCount;
@@ -319,7 +322,7 @@ void BlockFile::flushTOC()
 		writer << i->size;
 	}
 
-	uint32_t padSize = 3 * sizeof(uint32_t) + 4096 * (sizeof(uint32_t) + sizeof(Block)) - m_stream->tell();
+	uint32_t padSize = 3 * sizeof(uint32_t) + c_maxBlockCount * (sizeof(uint32_t) + sizeof(Block)) - m_stream->tell();
 	for (uint32_t i = 0; i < padSize; ++i)
 	{
 		uint8_t padDummy = 0x00;

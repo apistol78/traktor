@@ -7,7 +7,7 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.HingeJointPhysX", HingeJointPhysX, HingeJoint)
 
-HingeJointPhysX::HingeJointPhysX(DestroyCallbackPhysX* callback, NxJoint* joint, Body* body1, Body* body2)
+HingeJointPhysX::HingeJointPhysX(DestroyCallbackPhysX* callback, physx::PxJoint* joint, Body* body1, Body* body2)
 :	JointPhysX< HingeJoint >(callback, joint, body1, body2)
 {
 }
