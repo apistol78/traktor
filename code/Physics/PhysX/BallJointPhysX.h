@@ -25,7 +25,7 @@ class T_DLLCLASS BallJointPhysX : public JointPhysX< BallJoint >
 	T_RTTI_CLASS;
 
 public:
-	BallJointPhysX(DestroyCallbackPhysX* callback, NxJoint* joint, Body* body1, Body* body2);
+	BallJointPhysX(DestroyCallbackPhysX* callback, physx::PxJoint* joint, Body* body1, Body* body2);
 
 	virtual void setAnchor(const Vector4& anchor);
 

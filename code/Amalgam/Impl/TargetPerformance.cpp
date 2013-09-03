@@ -33,6 +33,7 @@ TargetPerformance::TargetPerformance()
 ,	bodyCount(0)
 ,	activeBodyCount(0)
 ,	manifoldCount(0)
+,	queryCount(0)
 ,	activeSoundChannels(0)
 {
 }
@@ -60,6 +61,7 @@ void TargetPerformance::serialize(ISerializer& s)
 	s >> Member< uint32_t >(L"bodyCount", bodyCount);
 	s >> Member< uint32_t >(L"activeBodyCount", activeBodyCount);
 	s >> Member< uint32_t >(L"manifoldCount", manifoldCount);
+	s >> Member< uint32_t >(L"queryCount", queryCount);
 	s >> Member< uint32_t >(L"activeSoundChannels", activeSoundChannels);
 }
 

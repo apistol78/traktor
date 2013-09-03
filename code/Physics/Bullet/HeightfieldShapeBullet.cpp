@@ -93,6 +93,14 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 		float mnx = float(u);
 		float mxx = float(u + cx);
 
+		float mnz = float(imnz);
+		float mxz = float(imnz + cz);
+
+		bool cp0 = m_heightfield->getWorldCut(mnx, mnz);
+		bool cp1 = m_heightfield->getWorldCut(mxx, mnz);
+		float hp0 = m_heightfield->getWorldHeight(mnx, mnz);
+		float hp1 = m_heightfield->getWorldHeight(mxx, mnz);
+
 		for (int32_t v = imnz; v < imxz; v += cz)
 		{
 			float mnz = float(v);
@@ -100,19 +108,25 @@ void HeightfieldShapeBullet::processAllTriangles(btTriangleCallback* callback, c
 
 			bool c[] =
 			{
-				m_heightfield->getWorldCut(mnx, mnz),
-				m_heightfield->getWorldCut(mxx, mnz),
+				cp0,
+				cp1,
 				m_heightfield->getWorldCut(mxx, mxz),
 				m_heightfield->getWorldCut(mnx, mxz)
 			};
 
+			cp0 = c[3];
+			cp1 = c[2];
+
 			float h[] =
 			{
-				m_heightfield->getWorldHeight(mnx, mnz),
-				m_heightfield->getWorldHeight(mxx, mnz),
+				hp0,
+				hp1,
 				m_heightfield->getWorldHeight(mxx, mxz),
 				m_heightfield->getWorldHeight(mnx, mxz)
 			};
+
+			hp0 = h[3];
+			hp1 = h[2];
 
 			btVector3 triangles[][3] =
 			{

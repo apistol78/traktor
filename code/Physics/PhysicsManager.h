@@ -64,6 +64,7 @@ struct PhysicsStatistics
 	uint32_t bodyCount;
 	uint32_t activeCount;
 	uint32_t manifoldCount;
+	uint32_t queryCount;
 };
 
 /*! \brief Physics manager.

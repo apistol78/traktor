@@ -25,7 +25,7 @@ class T_DLLCLASS ConeTwistJointPhysX : public JointPhysX< ConeTwistJoint >
 	T_RTTI_CLASS;
 
 public:
-	ConeTwistJointPhysX(DestroyCallbackPhysX* callback, NxJoint* joint, Body* body1, Body* body2);
+	ConeTwistJointPhysX(DestroyCallbackPhysX* callback, physx::PxJoint* joint, Body* body1, Body* body2);
 };
 
 	}

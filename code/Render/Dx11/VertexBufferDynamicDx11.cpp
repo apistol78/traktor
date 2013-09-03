@@ -35,7 +35,7 @@ Ref< VertexBufferDynamicDx11 > VertexBufferDynamicDx11::create(
 	Ref< VertexBufferDynamicDx11 > vb = new VertexBufferDynamicDx11(bufferSize);
 
 	vb->m_context = context;
-	vb->m_data.reset(new uint8_t [bufferSize]);
+	vb->m_data.reset((uint8_t*)Alloc::acquireAlign(bufferSize, 16, T_FILE_LINE));
 	vb->m_dirty = false;
 	vb->m_d3dBuffer = d3dBuffer;
 	vb->m_d3dStride = getVertexSize(vertexElements);

@@ -12,8 +12,13 @@
 #	define T_DLLCLASS T_DLLIMPORT
 #endif
 
-class NxPhysicsSDK;
-class NxScene;
+namespace physx
+{
+
+class PxPhysics;
+class PxScene;
+
+}
 
 namespace traktor
 {
@@ -129,13 +134,14 @@ public:
 
 private:
 	float m_simulationDeltaTime;
-	NxPhysicsSDK* m_sdk;
-	NxScene* m_scene;
+	physx::PxPhysics* m_sdk;
+	physx::PxCooking* m_cooking;
+	physx::PxScene* m_scene;
 	RefArray< BodyPhysX > m_bodies;
 
-	virtual void destroyBody(Body* owner, NxActor& actor);
+	virtual void destroyBody(Body* owner, physx::PxRigidActor* actor);
 
-	virtual void destroyJoint(Joint* owner, NxJoint& joint);
+	virtual void destroyJoint(Joint* owner, physx::PxJoint* joint);
 };
 
 	}

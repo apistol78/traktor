@@ -42,6 +42,7 @@ public:
 	uint32_t bodyCount;
 	uint32_t activeBodyCount;
 	uint32_t manifoldCount;
+	uint32_t queryCount;
 	uint32_t activeSoundChannels;
 
 	TargetPerformance();

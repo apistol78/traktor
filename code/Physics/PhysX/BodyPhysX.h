@@ -27,7 +27,12 @@ class T_DLLCLASS BodyPhysX : public Body
 	T_RTTI_CLASS;
 
 public:
-	BodyPhysX(DestroyCallbackPhysX* callback, NxActor* actor);
+	BodyPhysX(
+		DestroyCallbackPhysX* callback,
+		physx::PxScene* scene,
+		physx::PxRigidActor* actor,
+		const Vector4& centerOfGravity
+	);
 
 	virtual void destroy();
 
@@ -85,11 +90,14 @@ public:
 
 	virtual void integrate(float deltaTime);
 
-	NxActor* getActor() const { return m_actor; }
+	physx::PxRigidActor* getPxRigidActor() const { return m_actor; }
 
 private:
 	DestroyCallbackPhysX* m_callback;
-	NxActor* m_actor;
+	physx::PxScene* m_scene;
+	physx::PxRigidActor* m_actor;
+	Vector4 m_centerOfGravity;
+	bool m_enabled;
 };
 
 	}

@@ -1,7 +1,17 @@
 #include <algorithm>
-#include <NxPhysics.h>
-#include <NxCooking.h>
-#include <NxStream.h>
+
+// PhysX
+#include <PxPhysicsAPI.h>
+#include <extensions\PxExtensionsAPI.h>
+#include <extensions\PxDefaultErrorCallback.h>
+#include <extensions\PxDefaultAllocator.h>
+#include <extensions\PxDefaultSimulationFilterShader.h>
+#include <extensions\PxDefaultCpuDispatcher.h>
+#include <extensions\PxShapeExt.h>
+#include <extensions\PxSimpleFactory.h>
+#include <foundation\PxFoundation.h>
+
+// Traktor
 #include "Core/Io/DynamicMemoryStream.h"
 #include "Core/Log/Log.h"
 #include "Heightfield/Heightfield.h"
@@ -23,8 +33,8 @@
 #include "Physics/PhysX/ConeTwistJointPhysX.h"
 #include "Physics/PhysX/Conversion.h"
 #include "Physics/PhysX/HingeJointPhysX.h"
-#include "Physics/PhysX/NxStreamWrapper.h"
 #include "Physics/PhysX/PhysicsManagerPhysX.h"
+#include "Physics/PhysX/PxMemoryStreams.h"
 #include "Resource/IResourceManager.h"
 
 namespace traktor
@@ -34,16 +44,47 @@ namespace traktor
 		namespace
 		{
 
-const NxCollisionGroup c_defaultGroup = 0;
-const NxCollisionGroup c_ignoreBodyGroup = 1;
+physx::PxDefaultErrorCallback g_defaultErrorCallback;
+physx::PxDefaultAllocator g_defaultAllocatorCallback;
 
-void setActorGroup(NxActor *actor, NxCollisionGroup group)
+physx::PxFilterFlags collisionFilterShader(	
+	physx::PxFilterObjectAttributes attributes0, physx::PxFilterData filterData0, 
+	physx::PxFilterObjectAttributes attributes1, physx::PxFilterData filterData1,
+	physx::PxPairFlags& pairFlags, const void* constantBlock, physx::PxU32 constantBlockSize)
 {
-	NxU32 count = actor->getNbShapes();
-	NxShape* const* shapes = actor->getShapes();
-	while (count--)
-		shapes[count]->setGroup(group);
+	pairFlags = physx::PxPairFlag::eCONTACT_DEFAULT;
+
+	if ((filterData0.word0 & filterData1.word1) || (filterData1.word0 & filterData0.word1))
+		pairFlags |= physx::PxPairFlag::eNOTIFY_TOUCH_FOUND;
+
+	return physx::PxFilterFlag::eDEFAULT;
 }
+
+class IgnoreBodyFilter : public physx::PxSceneQueryFilterCallback
+{
+public:
+	IgnoreBodyFilter(const Body* ignoreBody)
+	:	m_ignoreBody(ignoreBody)
+	{
+	}
+
+	virtual physx::PxSceneQueryHitType::Enum preFilter(const physx::PxFilterData& filterData, physx::PxShape* shape, physx::PxSceneQueryFilterFlags& filterFlags)
+	{
+		const Body* body = reinterpret_cast< const Body* >(shape->userData);
+		if (body == m_ignoreBody)
+			return physx::PxSceneQueryHitType::eNONE;
+		else
+			return physx::PxSceneQueryHitType::eTOUCH;
+	}
+
+	virtual physx::PxSceneQueryHitType::Enum postFilter(const physx::PxFilterData& filterData, const physx::PxSceneQueryHit& hit)
+	{
+		return physx::PxSceneQueryHitType::eTOUCH;
+	}
+
+private:
+	const Body* m_ignoreBody;
+};
 
 		}
 
@@ -52,6 +93,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.PhysicsManagerPhysX", 0, Physic
 PhysicsManagerPhysX::PhysicsManagerPhysX()
 :	m_simulationDeltaTime(0.0f)
 ,	m_sdk(0)
+,	m_cooking(0)
 ,	m_scene(0)
 {
 }
@@ -63,34 +105,55 @@ PhysicsManagerPhysX::~PhysicsManagerPhysX()
 
 bool PhysicsManagerPhysX::create(float simulationDeltaTime)
 {
-	NxSDKCreateError errorCode = NXCE_NO_ERROR;
-	NxPhysicsSDKDesc sdkDesc;
-	NxSceneDesc sceneDesc;
+	physx::PxFoundation* foundation = PxCreateFoundation(PX_PHYSICS_VERSION, g_defaultAllocatorCallback, g_defaultErrorCallback);
+	if (!foundation) 
+	{
+		log::error << L"Unable to create PhysX foundation" << Endl;
+		return false;
+	}
 
-	m_sdk = NxCreatePhysicsSDK(NX_PHYSICS_SDK_VERSION, NULL, 0, sdkDesc, &errorCode);
+	m_sdk = PxCreatePhysics(PX_PHYSICS_VERSION, *foundation, physx::PxTolerancesScale());
 	if (!m_sdk) 
 	{
 		log::error << L"Unable to initialize the PhysX SDK" << Endl;
 		return false;
 	}
 
-	m_sdk->setParameter(NX_SKIN_WIDTH, 0.01f);
+	m_cooking = PxCreateCooking(PX_PHYSICS_VERSION, *foundation, physx::PxCookingParams());
 
-	sceneDesc.gravity = NxVec3(0.0f, -9.81f, 0.0f);
+	if (m_sdk->getPvdConnectionManager())
+	{
+		const char* pvdHostIP = "127.0.0.1";
+		const int port = 5425;
+		const unsigned int timeout = 100;
+
+		physx::PxVisualDebuggerConnectionFlags connectionFlags =
+			physx::PxVisualDebuggerConnectionFlag::Debug |
+			physx::PxVisualDebuggerConnectionFlag::Profile |
+			physx::PxVisualDebuggerConnectionFlag::Memory;
+
+		PVD::PvdConnection* connection = physx::PxVisualDebuggerExt::createConnection(
+			m_sdk->getPvdConnectionManager(),
+			pvdHostIP,
+			port,
+			timeout,
+			connectionFlags
+		);
+		if (!connection)
+			log::warning << L"Unable to connect to PhysX PVD" << Endl;
+	}
+
+	physx::PxSceneDesc sceneDesc(m_sdk->getTolerancesScale());
+	sceneDesc.gravity = physx::PxVec3(0.0f, -9.8f, 0.0f);
+	sceneDesc.cpuDispatcher = physx::PxDefaultCpuDispatcherCreate(1);
+	sceneDesc.filterShader = collisionFilterShader;
+
 	m_scene = m_sdk->createScene(sceneDesc);
 	if (!m_scene) 
 	{
 		log::error << L"Unable to create a PhysX scene" << Endl;
 		return false;
 	}
-
-	// Adjust default material.
-	NxMaterial* defaultMaterial = m_scene->getMaterialFromIndex(0);
-	T_ASSERT (defaultMaterial);
-
-	defaultMaterial->setRestitution(0.05f);
-	defaultMaterial->setStaticFriction(0.1f);
-	defaultMaterial->setDynamicFriction(0.75f);
 
 	m_simulationDeltaTime = simulationDeltaTime;
 	return true;
@@ -101,26 +164,30 @@ void PhysicsManagerPhysX::destroy()
 	if (m_scene)
 	{
 		T_ASSERT (m_sdk);
-		m_sdk->releaseScene(*m_scene);
+		m_scene->release();
 		m_scene = 0;
+	}
+	if (m_cooking)
+	{
+		T_ASSERT (m_sdk);
+		m_cooking->release();
+		m_cooking = 0;
 	}
 	if (m_sdk)
 	{
-		NxReleasePhysicsSDK(m_sdk);
+		m_sdk->release();
 		m_sdk = 0;
 	}
 }
 
 void PhysicsManagerPhysX::setGravity(const Vector4& gravity)
 {
-	m_scene->setGravity(toNxVec3(gravity));
+	m_scene->setGravity(toPxVec3(gravity));
 }
 
 Vector4 PhysicsManagerPhysX::getGravity() const
 {
-	NxVec3 gravity;
-	m_scene->getGravity(gravity);
-	return fromNxVec3(gravity, 0.0f);
+	return fromPxVec3(m_scene->getGravity(), 0.0f);
 }
 
 Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resourceManager, const BodyDesc* desc)
@@ -135,37 +202,35 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		return 0;
 	}
 
-	NxShapeDesc* actorShapeDesc = 0;
-	NxVec3 actorShapeOffset(0.0f, 0.0f, 0.0f);
+	physx::PxGeometry* geometry = 0;
+	Vector4 centerOfGravity = Vector4::origo();
 
 	if (const BoxShapeDesc* boxShape = dynamic_type_cast< const BoxShapeDesc* >(shapeDesc))
 	{
-		NxBoxShapeDesc* boxShapeDesc = new NxBoxShapeDesc();
-		boxShapeDesc->dimensions = toNxVec3(boxShape->getExtent());
-		actorShapeDesc = boxShapeDesc;
+		physx::PxBoxGeometry* boxGeometry = new physx::PxBoxGeometry(
+			toPxVec3(boxShape->getExtent())
+		);
+		geometry = boxGeometry;
 	}
 	else if (const CapsuleShapeDesc* capsuleShape = dynamic_type_cast< const CapsuleShapeDesc* >(shapeDesc))
 	{
 		float radius = capsuleShape->getRadius();
 		float length = capsuleShape->getLength() - radius * 2.0f;
-
-		NxCapsuleShapeDesc* capsuleShapeDesc = new NxCapsuleShapeDesc();
-		capsuleShapeDesc->height = length;
-		capsuleShapeDesc->radius = radius;
-
-		actorShapeDesc = capsuleShapeDesc;
+		physx::PxCapsuleGeometry* capsuleGeometry = new physx::PxCapsuleGeometry(
+			radius,
+			length
+		);
+		geometry = capsuleGeometry;
 	}
 	else if (const CylinderShapeDesc* cylinderShape = dynamic_type_cast< const CylinderShapeDesc* >(shapeDesc))
 	{
 		float radius = cylinderShape->getRadius();
 		float length = cylinderShape->getLength() - radius * 2.0f;
-
-		// As PhysX doesn't support cylinders we approximate with a capsule instead.
-		NxCapsuleShapeDesc* capsuleShapeDesc = new NxCapsuleShapeDesc();
-		capsuleShapeDesc->height = length;
-		capsuleShapeDesc->radius = radius;
-
-		actorShapeDesc = capsuleShapeDesc;
+		physx::PxCapsuleGeometry* capsuleGeometry = new physx::PxCapsuleGeometry(
+			radius,
+			length
+		);
+		geometry = capsuleGeometry;
 	}
 	else if (const MeshShapeDesc* meshShape = dynamic_type_cast< const MeshShapeDesc* >(shapeDesc))
 	{
@@ -180,71 +245,39 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
 		const std::vector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
 
-		if (is_a< StaticBodyDesc >(desc))
-		{
-			NxTriangleMeshDesc meshDesc;
-			meshDesc.numVertices = NxU32(vertices.size());
-			meshDesc.numTriangles = NxU32(shapeTriangles.size());
-			meshDesc.pointStrideBytes = sizeof(Vector4);
-			meshDesc.triangleStrideBytes = sizeof(Mesh::Triangle);
-			meshDesc.points = &vertices[0];
-			meshDesc.triangles = &shapeTriangles[0];
-			meshDesc.flags = NX_MF_FLIPNORMALS;
+		physx::PxTriangleMeshDesc meshDesc;
+		meshDesc.points.count = vertices.size();
+		meshDesc.points.stride = sizeof(Vector4);
+		meshDesc.points.data = vertices.c_ptr();
+		meshDesc.triangles.count = shapeTriangles.size();
+		meshDesc.triangles.stride = sizeof(Mesh::Triangle);
+		meshDesc.triangles.data = &shapeTriangles[0];
+		meshDesc.flags = physx::PxMeshFlag::eFLIPNORMALS;
 
-			std::vector< uint8_t > buffer;
+		MemoryOutputStream writeBuffer;
+		bool status = m_cooking->cookTriangleMesh(meshDesc, writeBuffer);
+		if( !status)
+			return 0;
 
-			NxCookingInterface* cooking = NxGetCookingLib(NX_PHYSICS_SDK_VERSION);
-			T_ASSERT (cooking);
+		MemoryInputData readBuffer(writeBuffer.getData(), writeBuffer.getSize());
+		physx::PxTriangleMesh* triangleMesh = m_sdk->createTriangleMesh(readBuffer);
+		if (!triangleMesh)
+			return 0;
 
-			DynamicMemoryStream ws(buffer, false, true);
-			NxStreamWrapper nxws(ws);
+		physx::PxTriangleMeshGeometry* triangleMeshGeometry = new physx::PxTriangleMeshGeometry(
+			triangleMesh
+		);
+		geometry = triangleMeshGeometry;
 
-			cooking->NxInitCooking();
-			cooking->NxCookTriangleMesh(meshDesc, nxws);
-
-			DynamicMemoryStream rs(buffer, true, false);
-
-			NxTriangleMeshShapeDesc* meshShapeDesc = new NxTriangleMeshShapeDesc();
-			meshShapeDesc->meshData = m_sdk->createTriangleMesh(NxStreamWrapper(rs));
-			T_ASSERT (meshShapeDesc->meshData);
-
-			actorShapeDesc = meshShapeDesc;
-		}
-		else	// Assume dynamic body.
-		{
-			NxConvexMeshDesc meshDesc;
-			meshDesc.numVertices = NxU32(vertices.size());
-			meshDesc.pointStrideBytes = sizeof(Vector4);
-			meshDesc.points = &vertices[0];
-			meshDesc.flags = NX_CF_COMPUTE_CONVEX;
-
-			std::vector< uint8_t > buffer;
-
-			NxCookingInterface* cooking = NxGetCookingLib(NX_PHYSICS_SDK_VERSION);
-			T_ASSERT (cooking);
-
-			DynamicMemoryStream ws(buffer, false, true);
-			NxStreamWrapper nxws(ws);
-
-			cooking->NxInitCooking();
-			cooking->NxCookConvexMesh(meshDesc, nxws);
-
-			DynamicMemoryStream rs(buffer, true, false);
-			NxStreamWrapper nxrs(rs);
-
-			NxConvexShapeDesc* meshShapeDesc = new NxConvexShapeDesc();
-			meshShapeDesc->meshData = m_sdk->createConvexMesh(nxrs);
-			T_ASSERT (meshShapeDesc->meshData);
-
-			actorShapeDesc = meshShapeDesc;
-			actorShapeOffset += toNxVec3(mesh->getOffset());
-		}
+		centerOfGravity = mesh->getOffset();
 	}
 	else if (const SphereShapeDesc* sphereShape = dynamic_type_cast< const SphereShapeDesc* >(shapeDesc))
 	{
-		NxSphereShapeDesc* sphereShapeDesc = new NxSphereShapeDesc();
-		sphereShapeDesc->radius = sphereShape->getRadius();
-		actorShapeDesc = sphereShapeDesc;
+		float radius = sphereShape->getRadius();
+		physx::PxSphereGeometry* sphereGeometry = new physx::PxSphereGeometry(
+			radius
+		);
+		geometry = sphereGeometry;
 	}
 	else if (const HeightfieldShapeDesc* heightfieldShape = dynamic_type_cast< const HeightfieldShapeDesc* >(shapeDesc))
 	{
@@ -256,54 +289,46 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		}
 
 		const hf::height_t* heights = heightfield->getHeights();
+		T_ASSERT (heights);
 
-		NxHeightFieldDesc heightFieldDesc;
-		heightFieldDesc.nbColumns = heightfield->getSize();
-		heightFieldDesc.nbRows = heightfield->getSize();
-		heightFieldDesc.convexEdgeThreshold = 0;
-		heightFieldDesc.samples = new NxU32 [heightfield->getSize() * heightfield->getSize()];
-		heightFieldDesc.sampleStride = sizeof(NxU32);
-		heightFieldDesc.verticalExtent = -1000;
+		physx::PxU8* pxh = new physx::PxU8 [heightfield->getSize() * heightfield->getSize()];
+		physx::PxU8* ptr = pxh;
 
-		NxU8* ptr = static_cast< NxU8* >(heightFieldDesc.samples);
-		for (uint32_t z = 0; z < heightfield->getSize(); ++z)
+		for (int32_t z = 0; z < heightfield->getSize(); ++z)
 		{
-			for (uint32_t x = 0; x < heightfield->getSize(); ++x)
+			for (int32_t x = 0; x < heightfield->getSize(); ++x)
 			{
 				hf::height_t height = heights[z + x * heightfield->getSize()];
 
-				NxHeightFieldSample* sample = reinterpret_cast< NxHeightFieldSample* >(ptr);
+				*(physx::PxI16*)ptr = physx::PxI16(int32_t(height) - 32767);
+				ptr[2] = 0;
+				ptr[3] = 0;
 
-				sample->height = NxI16(int32_t(height) - 32767);
-				sample->materialIndex0 = 0;
-				sample->materialIndex1 = 0;
-				sample->tessFlag = 0;
-
-				ptr += heightFieldDesc.sampleStride;
+				ptr += 4;
 			}
 		}
 
-		NxHeightField* heightFieldData = m_sdk->createHeightField(heightFieldDesc);
-		delete[] heightFieldDesc.samples;
+		physx::PxHeightFieldDesc hfDesc;
+		hfDesc.format = physx::PxHeightFieldFormat::eS16_TM;
+		hfDesc.nbColumns = heightfield->getSize();
+		hfDesc.nbRows = heightfield->getSize();
+		hfDesc.samples.data = pxh;
+		hfDesc.samples.stride = sizeof(physx::PxU32);
 
-		if (!heightFieldData)
-		{
-			log::error << L"Unable to create heightfield" << Endl;
-			return 0;
-		}
+		physx::PxHeightField* pxhf = m_sdk->createHeightField(hfDesc);
+		T_ASSERT (pxhf);
 
-		NxHeightFieldShapeDesc* heightFieldShapeDesc = new NxHeightFieldShapeDesc();
-		heightFieldShapeDesc->heightField = heightFieldData;
-		heightFieldShapeDesc->heightScale = heightfield->getWorldExtent().y() / 65536.0f;
-		heightFieldShapeDesc->rowScale = heightfield->getWorldExtent().x() / heightfield->getSize();
-		heightFieldShapeDesc->columnScale = heightfield->getWorldExtent().z() / heightfield->getSize();
-		heightFieldShapeDesc->materialIndexHighBits = 0;
-		heightFieldShapeDesc->holeMaterial = 2;
-		heightFieldShapeDesc->localPose.t.set(-heightfield->getWorldExtent().x() * 0.5f, 0.0f, -heightfield->getWorldExtent().z() * 0.5f);
-
-		actorShapeDesc = heightFieldShapeDesc;
+		physx::PxHeightFieldGeometry* heightfieldGeometry = new physx::PxHeightFieldGeometry(
+			pxhf,
+			physx::PxMeshGeometryFlags(0),
+			heightfield->getWorldExtent().y() / 65535.0f,
+			heightfield->getWorldExtent().x() / heightfield->getSize(),
+			heightfield->getWorldExtent().z() / heightfield->getSize()
+		);
+		geometry = heightfieldGeometry;
 	}
-	else
+	
+	if (!geometry)
 	{
 		log::error << L"Unsupported shape type \"" << type_name(shapeDesc) << L"\"" << Endl;
 		return 0;
@@ -317,50 +342,67 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 
 	if (const StaticBodyDesc* staticDesc = dynamic_type_cast< const StaticBodyDesc* >(desc))
 	{
-		NxActorDesc actorDesc;
-		actorDesc.shapes.pushBack(actorShapeDesc);
-		actorDesc.globalPose.t = actorShapeOffset;
-
-		NxActor* actor = m_scene->createActor(actorDesc);
-		if (!actor)
+		physx::PxRigidStatic* rigidBody = m_sdk->createRigidStatic(toPxTransform(Transform::identity()));
+		if (!rigidBody)
 		{
-			log::error << L"Unable to create PhysX actor" << Endl;
+			log::error << L"Unable to create PhysX rigid body" << Endl;
 			return 0;
 		}
 
-		setActorGroup(actor, c_defaultGroup);
+		physx::PxMaterial* material = m_sdk->createMaterial(staticDesc->getFriction(), staticDesc->getFriction(), 0.1f);
+		if (!material)
+			return 0;
 
-		Ref< BodyPhysX > staticBody = new BodyPhysX(this, actor);
-		body = staticBody;
+		physx::PxShape* shape = rigidBody->createShape(*geometry, *material);
+		T_ASSERT (shape);
 
+		physx::PxFilterData filterData;
+		filterData.word0 = shapeDesc->getCollisionGroup();
+		filterData.word1 = shapeDesc->getCollisionMask();
+		shape->setSimulationFilterData(filterData);
+		shape->setQueryFilterData(filterData);
+
+		Ref< BodyPhysX > staticBody = new BodyPhysX(this, m_scene, rigidBody, centerOfGravity);
 		m_bodies.push_back(staticBody);
+
+		shape->userData = staticBody;
+		body = staticBody;
 	}
 	else if (const DynamicBodyDesc* dynamicDesc = dynamic_type_cast< const DynamicBodyDesc* >(desc))
 	{
-		NxBodyDesc bodyDesc;
-		bodyDesc.mass = dynamicDesc->getMass();
-
-		NxActorDesc actorDesc;
-		actorDesc.shapes.pushBack(actorShapeDesc);
-		actorDesc.globalPose.t = actorShapeOffset;
-		actorDesc.body = &bodyDesc;
-		
-		NxActor* actor = m_scene->createActor(actorDesc);
-		if (!actor)
+		physx::PxRigidDynamic* rigidBody = m_sdk->createRigidDynamic(toPxTransform(Transform::identity()));
+		if (!rigidBody)
 		{
 			log::error << L"Unable to create PhysX actor" << Endl;
 			return 0;
 		}
 
-		setActorGroup(actor, c_defaultGroup);
+		rigidBody->setLinearDamping(dynamicDesc->getLinearDamping());
+		rigidBody->setAngularDamping(dynamicDesc->getAngularDamping());
+
+		physx::PxMaterial* material = m_sdk->createMaterial(dynamicDesc->getFriction(), dynamicDesc->getFriction(), 0.1f);
+		if (!material)
+			return 0;
+
+		physx::PxShape* shape = rigidBody->createShape(*geometry, *material);
+		T_ASSERT (shape);
+
+		physx::PxFilterData filterData;
+		filterData.word0 = shapeDesc->getCollisionGroup();
+		filterData.word1 = shapeDesc->getCollisionMask();
+		shape->setSimulationFilterData(filterData);
+		shape->setQueryFilterData(filterData);
+
+		physx::PxRigidBodyExt::setMassAndUpdateInertia(*rigidBody, dynamicDesc->getMass());
 
 		if (!dynamicDesc->getActive())
-			actor->putToSleep();
+			rigidBody->putToSleep();
 
-		Ref< BodyPhysX > dynamicBody = new BodyPhysX(this, actor);
-		body = dynamicBody;
-
+		Ref< BodyPhysX > dynamicBody = new BodyPhysX(this, m_scene, rigidBody, centerOfGravity);
 		m_bodies.push_back(dynamicBody);
+
+		shape->userData = dynamicBody;
+		body = dynamicBody;
 	}
 	else
 	{
@@ -368,30 +410,35 @@ Ref< Body > PhysicsManagerPhysX::createBody(resource::IResourceManager* resource
 		return 0;
 	}
 
-	delete actorShapeDesc;
+	delete geometry;
 	return body;
 }
 
 Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Transform& transform, Body* body1, Body* body2)
 {
-	NxActor* actor1 = body1 ? checked_type_cast< BodyPhysX* >(body1)->getActor() : 0;
-	NxActor* actor2 = body2 ? checked_type_cast< BodyPhysX* >(body2)->getActor() : 0;
+	physx::PxRigidActor* actor1 = body1 ? checked_type_cast< BodyPhysX* >(body1)->getPxRigidActor() : 0;
+	physx::PxRigidActor* actor2 = body2 ? checked_type_cast< BodyPhysX* >(body2)->getPxRigidActor() : 0;
 
 	Ref< Joint > outJoint;
 
 	if (const BallJointDesc* ballDesc = dynamic_type_cast< const BallJointDesc* >(desc))
 	{
-		NxSphericalJointDesc jointDesc;
-		jointDesc.actor[0] = actor1;
-		jointDesc.actor[1] = actor2;
-		jointDesc.setGlobalAnchor(toNxVec3(transform * ballDesc->getAnchor().xyz1()));
-		
-		NxJoint* joint = m_scene->createJoint(jointDesc);
-		if (!joint)
-			return 0;
+		Vector4 anchorW = transform * ballDesc->getAnchor().xyz1();
 
-		outJoint = new BallJointPhysX(this, joint, body1, body2);
+		Transform local1 = body1->getTransform().inverse() * Transform(anchorW);
+		Transform local2 = body2->getTransform().inverse() * Transform(anchorW);
+
+		physx::PxSphericalJoint* sphereJoint = physx::PxSphericalJointCreate(
+			*m_sdk,
+			actor1,
+			toPxTransform(local1),
+			actor2,
+			toPxTransform(local2)
+		);
+
+		outJoint = new BallJointPhysX(this, sphereJoint, body1, body2);
 	}
+	/*
 	else if (const ConeTwistJointDesc* coneTwistDesc = dynamic_type_cast< const ConeTwistJointDesc* >(desc))
 	{
 		float coneAngle1, coneAngle2;
@@ -410,8 +457,8 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 		jointDesc.swing2Limit.value = coneAngle2;
 		jointDesc.twistLimit.low.value = -coneTwistDesc->getTwistAngle();
 		jointDesc.twistLimit.high.value = coneTwistDesc->getTwistAngle();
-		jointDesc.setGlobalAnchor(toNxVec3(transform * coneTwistDesc->getAnchor().xyz1()));
-		jointDesc.setGlobalAxis(toNxVec3(transform * coneTwistDesc->getTwistAxis().xyz0()));
+		jointDesc.setGlobalAnchor(toPxVec3(transform * coneTwistDesc->getAnchor().xyz1()));
+		jointDesc.setGlobalAxis(toPxVec3(transform * coneTwistDesc->getTwistAxis().xyz0()));
 
 		NxJoint* joint = m_scene->createJoint(jointDesc);
 		if (!joint)
@@ -419,20 +466,24 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 
 		outJoint = new ConeTwistJointPhysX(this, joint, body1, body2);
 	}
+	*/
 	else if (const HingeJointDesc* hingeDesc = dynamic_type_cast< const HingeJointDesc* >(desc))
 	{
-		NxCylindricalJointDesc jointDesc;
+		Vector4 anchorW = transform * hingeDesc->getAnchor().xyz1();
+		Vector4 axisW = transform * hingeDesc->getAxis().xyz0();
 
-		jointDesc.actor[0] = actor1;
-		jointDesc.actor[1] = actor2;
-		jointDesc.setGlobalAnchor(toNxVec3(transform * hingeDesc->getAnchor().xyz1()));
-		jointDesc.setGlobalAxis(toNxVec3(transform * hingeDesc->getAxis().xyz1()));
+		Transform local1 = body1->getTransform().inverse() * Transform(anchorW, Quaternion(Vector4(1.0f, 0.0f, 0.0f), axisW));
+		Transform local2 = body2->getTransform().inverse() * Transform(anchorW, Quaternion(Vector4(1.0f, 0.0f, 0.0f), axisW));
 
-		NxJoint* joint = m_scene->createJoint(jointDesc);
-		if (!joint)
-			return 0;
+		physx::PxRevoluteJoint* revoluteJoint = physx::PxRevoluteJointCreate(
+			*m_sdk,
+			actor1,
+			toPxTransform(local1),
+			actor2,
+			toPxTransform(local2)
+		);
 
-		outJoint = new HingeJointPhysX(this, joint, body1, body2);
+		outJoint = new HingeJointPhysX(this, revoluteJoint, body1, body2);
 	}
 	else
 	{
@@ -445,9 +496,8 @@ Ref< Joint > PhysicsManagerPhysX::createJoint(const JointDesc* desc, const Trans
 
 void PhysicsManagerPhysX::update(bool issueCollisionEvents)
 {
-	m_scene->flushStream();
 	m_scene->simulate(m_simulationDeltaTime);
-	m_scene->fetchResults(NX_RIGID_BODY_FINISHED, true);
+	m_scene->fetchResults(true);
 }
 
 void PhysicsManagerPhysX::solveConstraints(const RefArray< Body >& bodies, const RefArray< Joint >& joints)
@@ -483,41 +533,50 @@ bool PhysicsManagerPhysX::queryRay(
 	QueryResult& outResult
 ) const
 {
-	NxRaycastHit hit;
+	physx::PxRaycastHit hit;
 
-	// Move ignore actor into disabled group.
-	if (ignoreBody)
+	if (!ignoreBody)
 	{
-		NxActor* actor = checked_type_cast< const BodyPhysX* >(ignoreBody)->getActor();
-		setActorGroup(actor, c_ignoreBodyGroup);
+		physx::PxSceneQueryFilterData filterData;
+		filterData.data.word0 = group;
+		filterData.flags = physx::PxSceneQueryFilterFlag::eDYNAMIC | physx::PxSceneQueryFilterFlag::eSTATIC;
+
+		if (!m_scene->raycastSingle(
+			toPxVec3(at),
+			toPxVec3(direction),
+			maxLength,
+			physx::PxSceneQueryFlag::eIMPACT | physx::PxSceneQueryFlag::eNORMAL | physx::PxSceneQueryFlag::eDISTANCE,
+			hit,
+			filterData
+		))
+			return false;
+	}
+	else
+	{
+		IgnoreBodyFilter filter(ignoreBody);
+
+		physx::PxSceneQueryFilterData filterData;
+		filterData.data.word0 = group;
+		filterData.flags = physx::PxSceneQueryFilterFlag::eDYNAMIC | physx::PxSceneQueryFilterFlag::eSTATIC | physx::PxSceneQueryFilterFlag::ePREFILTER;
+
+		if (!m_scene->raycastSingle(
+			toPxVec3(at),
+			toPxVec3(direction),
+			maxLength,
+			physx::PxSceneQueryFlag::eIMPACT | physx::PxSceneQueryFlag::eNORMAL | physx::PxSceneQueryFlag::eDISTANCE,
+			hit,
+			filterData,
+			&filter
+		))
+			return false;
 	}
 
-	NxShape* hitShape = m_scene->raycastClosestShape(
-		NxRay(toNxVec3(at), toNxVec3(direction)),
-		NX_ALL_SHAPES,
-		hit,
-		(1 << c_defaultGroup),
-		maxLength,
-		NX_RAYCAST_DISTANCE | NX_RAYCAST_IMPACT | NX_RAYCAST_FACE_NORMAL
-	);
+	outResult.distance = hit.distance;
+	outResult.position = fromPxVec3(hit.impact, 1.0f);
+	outResult.normal = fromPxVec3(hit.normal, 0.0f);
+	outResult.body = reinterpret_cast< Body* >(hit.shape->userData);
 
-	if (hitShape)
-	{
-		outResult.distance = hit.distance;
-		outResult.position = fromNxVec3(hit.worldImpact, 1.0f);
-		outResult.normal = fromNxVec3(hit.worldNormal, 0.0f);
-	}
-
-	// Restore ignore actor into active group.
-	if (ignoreBody)
-	{
-		NxActor* actor = checked_type_cast< const BodyPhysX* >(ignoreBody)->getActor();
-		T_ASSERT_M (hitShape != *actor->getShapes(), L"Collision with masked shape");
-
-		setActorGroup(actor, c_defaultGroup);
-	}
-
-	return bool(hitShape != 0);
+	return true;
 }
 
 bool PhysicsManagerPhysX::queryShadowRay(
@@ -529,7 +588,13 @@ bool PhysicsManagerPhysX::queryShadowRay(
 	const Body* ignoreBody
 ) const
 {
-	return false;
+	physx::PxRaycastHit hit;
+	return m_scene->raycastAny(
+		toPxVec3(at),
+		toPxVec3(direction),
+		maxLength,
+		hit
+	);
 }
 
 uint32_t PhysicsManagerPhysX::querySphere(
@@ -591,21 +656,23 @@ void PhysicsManagerPhysX::queryOverlap(
 
 void PhysicsManagerPhysX::getStatistics(PhysicsStatistics& outStatistics) const
 {
+	outStatistics.bodyCount = m_bodies.size();
+	outStatistics.activeCount = 0;
+	outStatistics.manifoldCount = 0;
+	outStatistics.queryCount = 0;
 }
 
-void PhysicsManagerPhysX::destroyBody(Body* owner, NxActor& actor)
+void PhysicsManagerPhysX::destroyBody(Body* owner, physx::PxRigidActor* actor)
 {
 	RefArray< BodyPhysX >::iterator i = std::find(m_bodies.begin(), m_bodies.end(), owner);
 	if (i != m_bodies.end())
 		m_bodies.erase(i);
-	if (m_scene)
-		m_scene->releaseActor(actor);
+	actor->release();
 }
 
-void PhysicsManagerPhysX::destroyJoint(Joint* owner, NxJoint& joint)
+void PhysicsManagerPhysX::destroyJoint(Joint* owner, physx::PxJoint* joint)
 {
-	if (m_scene)
-		m_scene->releaseJoint(joint);
+	joint->release();
 }
 
 	}

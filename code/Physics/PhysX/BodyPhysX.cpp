@@ -1,4 +1,4 @@
-#include <NxPhysics.h>
+#include <PxPhysicsAPI.h>
 #include "Core/Math/Float.h"
 #include "Physics/PhysX/BodyPhysX.h"
 #include "Physics/PhysX/Conversion.h"
@@ -23,9 +23,17 @@ inline Vector4 convert(const BodyPhysX* body, const Vector4& v, bool localSpace)
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.BodyPhysX", BodyPhysX, Body)
 
-BodyPhysX::BodyPhysX(DestroyCallbackPhysX* callback, NxActor* actor)
+BodyPhysX::BodyPhysX(
+	DestroyCallbackPhysX* callback,
+	physx::PxScene* scene,
+	physx::PxRigidActor* actor,
+	const Vector4& centerOfGravity
+)
 :	m_callback(callback)
+,	m_scene(scene)
 ,	m_actor(actor)
+,	m_centerOfGravity(centerOfGravity)
+,	m_enabled(false)
 {
 }
 
@@ -33,7 +41,7 @@ void BodyPhysX::destroy()
 {
 	if (m_callback)
 	{
-		m_callback->destroyBody(this, *m_actor);
+		m_callback->destroyBody(this, m_actor);
 		m_callback = 0;
 	}
 	m_actor = 0;
@@ -42,49 +50,60 @@ void BodyPhysX::destroy()
 
 void BodyPhysX::setTransform(const Transform& transform)
 {
-	m_actor->setGlobalPose(toNxMat34(transform));
+	m_actor->setGlobalPose(toPxTransform(transform * Transform(m_centerOfGravity)));
 }
 
 Transform BodyPhysX::getTransform() const
 {
-	return fromNxMat34(m_actor->getGlobalPose());
+	return fromPxTransform(m_actor->getGlobalPose()) * Transform(-m_centerOfGravity);
 }
 
 Transform BodyPhysX::getCenterTransform() const
 {
-	return getTransform();
+	return fromPxTransform(m_actor->getGlobalPose());
 }
 
 bool BodyPhysX::isStatic() const
 {
-	return !m_actor->isDynamic();
+	return m_actor->is< physx::PxRigidStatic >() != 0;
 }
 
 bool BodyPhysX::isKinematic() const
 {
-	return false;
+	return m_actor->is< physx::PxRigidStatic >() != 0;
 }
 
 void BodyPhysX::setActive(bool active)
 {
+	physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
 	if (!active)
-		m_actor->putToSleep();
+		bodyDynamic->putToSleep();
 	else
-		m_actor->wakeUp();
+		bodyDynamic->wakeUp();
 }
 
 bool BodyPhysX::isActive() const
 {
-	return !m_actor->isSleeping();
+	physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
+	return !bodyDynamic->isSleeping();
 }
 
 void BodyPhysX::setEnable(bool enable)
 {
+	if (enable != m_enabled)
+	{
+		if (enable)
+			m_scene->addActor(*m_actor);
+		else
+			m_scene->removeActor(*m_actor);
+
+		m_enabled = enable;
+	}
 }
 
 bool BodyPhysX::isEnable() const
 {
-	return true;
+	return m_enabled;
 }
 
 void BodyPhysX::reset()
@@ -95,52 +114,63 @@ void BodyPhysX::reset()
 
 void BodyPhysX::setMass(float mass, const Vector4& inertiaTensor)
 {
-	m_actor->setMass(mass);
-	m_actor->setMassSpaceInertiaTensor(toNxVec3(inertiaTensor));
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
+	rigidBody->setMass(mass);
+	rigidBody->setMassSpaceInertiaTensor(toPxVec3(inertiaTensor));
 }
 
 float BodyPhysX::getInverseMass() const
 {
-	return 1.0f / m_actor->getMass();
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
+	return 1.0f / rigidBody->getMass();
 }
 
 Matrix33 BodyPhysX::getInertiaTensorInverseWorld() const
 {
-	return fromNxMat33(
-		m_actor->getGlobalInertiaTensorInverse()
-	);
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
+	physx::PxVec3 inertiaTensor = rigidBody->getMassSpaceInertiaTensor();
+	return Matrix33(
+		inertiaTensor.x, 0.0f, 0.0f,
+		0.0f, inertiaTensor.y, 0.0f,
+		0.0f, 0.0f, inertiaTensor.z
+	).inverse();
 }
 
 void BodyPhysX::addForceAt(const Vector4& at, const Vector4& force, bool localSpace)
 {
-	Vector4 at_ = convert(this, at.xyz1(), localSpace);
+	Vector4 at0 = (localSpace ? (at + m_centerOfGravity) : at).xyz1();
+	Vector4 at_ = convert(this, at0.xyz1(), localSpace);
 	Vector4 force_ = convert(this, force.xyz0(), localSpace);
-	m_actor->addForceAtPos(
-		toNxVec3(force_),
-		toNxVec3(at_)
+	physx::PxRigidBodyExt::addForceAtPos(
+		*m_actor->is< physx::PxRigidBody >(),
+		toPxVec3(force_),
+		toPxVec3(at_)
 	);
 }
 
 void BodyPhysX::addTorque(const Vector4& torque, bool localSpace)
 {
+	physx::PxRigidDynamic* bodyDynamic = m_actor->is< physx::PxRigidDynamic >();
 	Vector4 torque_ = convert(this, torque.xyz0(), localSpace);
-	m_actor->addTorque(
-		toNxVec3(torque_)
+	bodyDynamic->addTorque(
+		toPxVec3(torque_)
 	);
 }
 
 void BodyPhysX::addLinearImpulse(const Vector4& linearImpulse, bool localSpace)
 {
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
 	Vector4 linearImpulse_ = convert(this, linearImpulse.xyz0(), localSpace);
-	Vector4 momentum = fromNxVec3(m_actor->getLinearMomentum(), 0.0f);
-	m_actor->setLinearMomentum(toNxVec3(momentum + linearImpulse_));
+	Vector4 momentum = fromPxVec3(rigidBody->getLinearVelocity(), 0.0f);
+	rigidBody->setLinearVelocity(toPxVec3(momentum + linearImpulse_));
 }
 
 void BodyPhysX::addAngularImpulse(const Vector4& angularImpulse, bool localSpace)
 {
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
 	Vector4 angularImpulse_ = convert(this, angularImpulse.xyz0(), localSpace);
-	Vector4 momentum = fromNxVec3(m_actor->getAngularMomentum(), 0.0f);
-	m_actor->setAngularMomentum(toNxVec3(momentum + angularImpulse_));
+	Vector4 momentum = fromPxVec3(rigidBody->getAngularVelocity(), 0.0f);
+	rigidBody->setAngularVelocity(toPxVec3(momentum + angularImpulse_));
 }
 
 void BodyPhysX::addImpulse(const Vector4& at, const Vector4& impulse, bool localSpace)
@@ -162,28 +192,34 @@ void BodyPhysX::addImpulse(const Vector4& at, const Vector4& impulse, bool local
 
 void BodyPhysX::setLinearVelocity(const Vector4& linearVelocity)
 {
-	m_actor->setLinearVelocity(toNxVec3(linearVelocity));
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
+	rigidBody->setLinearVelocity(toPxVec3(linearVelocity));
 }
 
 Vector4 BodyPhysX::getLinearVelocity() const
 {
-	return fromNxVec3(m_actor->getLinearVelocity(), 0.0f);
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
+	return fromPxVec3(rigidBody->getLinearVelocity(), 0.0f);
 }
 
 void BodyPhysX::setAngularVelocity(const Vector4& angularVelocity)
 {
-	m_actor->setAngularVelocity(toNxVec3(angularVelocity));
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
+	rigidBody->setAngularVelocity(toPxVec3(angularVelocity));
 }
 
 Vector4 BodyPhysX::getAngularVelocity() const
 {
-	return fromNxVec3(m_actor->getAngularVelocity(), 0.0f);
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
+	return fromPxVec3(rigidBody->getAngularVelocity(), 0.0f);
 }
 
 Vector4 BodyPhysX::getVelocityAt(const Vector4& at, bool localSpace) const
 {
+	physx::PxRigidBody* rigidBody = m_actor->is< physx::PxRigidBody >();
 	Vector4 at_ = convert(this, at, localSpace);
-	return fromNxVec3(m_actor->getPointVelocity(toNxVec3(at_)), 0.0f);
+	physx::PxVec3 velocity = physx::PxRigidBodyExt::getVelocityAtPos(*rigidBody, toPxVec3(at_));
+	return fromPxVec3(velocity, 0.0f);
 }
 
 bool BodyPhysX::solveStateConstraint(const BodyState& state)

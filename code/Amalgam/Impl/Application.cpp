@@ -834,6 +834,7 @@ bool Application::update()
 				performance.bodyCount = ps.bodyCount;
 				performance.activeBodyCount = ps.activeCount;
 				performance.manifoldCount = ps.manifoldCount;
+				performance.queryCount = ps.queryCount;
 			}
 
 			if (m_audioServer)

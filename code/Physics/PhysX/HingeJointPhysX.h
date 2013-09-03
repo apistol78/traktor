@@ -25,7 +25,7 @@ class T_DLLCLASS HingeJointPhysX : public JointPhysX< HingeJoint >
 	T_RTTI_CLASS;
 
 public:
-	HingeJointPhysX(DestroyCallbackPhysX* callback, NxJoint* joint, Body* body1, Body* body2);
+	HingeJointPhysX(DestroyCallbackPhysX* callback, physx::PxJoint* joint, Body* body1, Body* body2);
 
 	virtual Vector4 getAnchor() const;
 

@@ -12583,20 +12583,23 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Foundation/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Physics/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/PhysXLoader/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Cooking/include</item>
+						<item>$(PHYSX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_PHYSX_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/lib/Win32</item>
+						<item>$(PHYSX_SDK)/lib/win32</item>
 					</libraryPaths>
 					<libraries>
-						<item>PhysXLoader.lib</item>
+						<item>PhysX3DEBUG_x86.lib</item>
+						<item>PxTaskDEBUG.lib</item>
+						<item>PhysX3ExtensionsDEBUG.lib</item>
+						<item>PhysX3CommonDEBUG_x86.lib</item>
+						<item>PhysX3CookingDEBUG_x86.lib</item>
+						<item>PhysXVisualDebuggerSDKDEBUG.lib</item>
+						<item>RepX3DEBUG.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12608,20 +12611,21 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Foundation/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Physics/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/PhysXLoader/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Cooking/include</item>
+						<item>$(PHYSX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_PHYSICS_PHYSX_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/lib/Win32</item>
+						<item>$(PHYSX_SDK)/lib/win32</item>
 					</libraryPaths>
 					<libraries>
-						<item>PhysXLoader.lib</item>
+						<item>PhysX3_x86.lib</item>
+						<item>PxTask.lib</item>
+						<item>PhysX3Extensions.lib</item>
+						<item>PhysX3Common_x86.lib</item>
+						<item>PhysX3Cooking_x86.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12633,20 +12637,23 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Foundation/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Physics/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/PhysXLoader/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Cooking/include</item>
+						<item>$(PHYSX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/lib/Win32</item>
+						<item>$(PHYSX_SDK)/lib/win32</item>
 					</libraryPaths>
 					<libraries>
-						<item>PhysXLoader.lib</item>
+						<item>PhysX3DEBUG_x86.lib</item>
+						<item>PxTaskDEBUG.lib</item>
+						<item>PhysX3ExtensionsDEBUG.lib</item>
+						<item>PhysX3CommonDEBUG_x86.lib</item>
+						<item>PhysX3CookingDEBUG_x86.lib</item>
+						<item>PhysXVisualDebuggerSDKDEBUG.lib</item>
+						<item>RepX3DEBUG.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -12658,20 +12665,21 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Foundation/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Physics/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/PhysXLoader/include</item>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/Cooking/include</item>
+						<item>$(PHYSX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/NVIDIA PhysX SDK/v2.8.1/SDKs/lib/Win32</item>
+						<item>$(PHYSX_SDK)/lib/win32</item>
 					</libraryPaths>
 					<libraries>
-						<item>PhysXLoader.lib</item>
+						<item>PhysX3_x86.lib</item>
+						<item>PxTask.lib</item>
+						<item>PhysX3Extensions.lib</item>
+						<item>PhysX3Common_x86.lib</item>
+						<item>PhysX3Cooking_x86.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -20961,7 +20969,7 @@
 		<item ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[25]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[100]/dependencies/item[8]/project/dependencies/item[25]/project"/>
 		<item type="Project" version="1">
-			<enable>true</enable>
+			<enable>false</enable>
 			<name>Traktor.Net.RelayServer.App</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Net/RelayServer/App</sourcePath>
 			<configurations>

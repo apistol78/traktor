@@ -41,7 +41,7 @@ public:
 
 private:
 	Ref< ContextDx11 > m_context;
-	AutoArrayPtr< uint8_t > m_data;
+	AutoArrayPtr< uint8_t, AllocFreeAlign > m_data;
 	bool m_dirty;
 
 	VertexBufferDynamicDx11(uint32_t bufferSize);

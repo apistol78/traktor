@@ -11,7 +11,7 @@
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
-//#define T_USE_UPDATE_JOBS
+#define T_USE_UPDATE_JOBS
 
 namespace traktor
 {
