@@ -75,6 +75,9 @@ bool CalculateTangents::apply(Model& model) const
 		const Polygon& polygon = polygons[i];
 		uint32_t baseIndex;
 
+		if (polygon.getVertexCount() < 3)
+			continue;
+
 		if (!findBaseIndex(model, polygon, baseIndex))
 		{
 			++degenerated;
@@ -82,8 +85,6 @@ bool CalculateTangents::apply(Model& model) const
 		}
 
 		const std::vector< uint32_t >& vertices = polygon.getVertices();
-		T_ASSERT (vertices.size() == 3);
-
 		const Vertex* v[] =
 		{
 			&model.getVertex(vertices[baseIndex]),
