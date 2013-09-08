@@ -13,6 +13,17 @@ namespace traktor
 const Scalar c_snapDistance(0.02f);
 const Scalar c_snapDistanceSqr(c_snapDistance * c_snapDistance);
 
+int32_t predicateAxis(float a, float b)
+{
+	float dab = a - b;
+	if (dab < -FUZZY_EPSILON)
+		return -1;
+	else if (dab > FUZZY_EPSILON)
+		return 1;
+	else
+		return 0;
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.model.MergeModel", MergeModel, IModelOperation)
@@ -91,7 +102,7 @@ bool MergeModel::apply(Model& model) const
 			v.setJointInfluence(j, influence);
 		}
 
-		vertexMap[i] = model.addVertex(v);
+		vertexMap[i] = model.addUniqueVertex(v);
 	}
 
 	std::vector< Polygon >& mergedPolygons = model.getPolygons();
@@ -121,10 +132,15 @@ bool MergeModel::apply(Model& model) const
 		for (uint32_t j = 0; j < outputVertices.size(); ++j)
 		{
 			const Vector4& position = model.getVertexPosition(outputVertices[j]);
+
+			int32_t cx = predicateAxis(position.x(), minPosition.x());
+			int32_t cy = predicateAxis(position.y(), minPosition.y());
+			int32_t cz = predicateAxis(position.z(), minPosition.z());
+
 			if (
-				position.x() < minPosition.x() &&
-				position.y() < minPosition.y() &&
-				position.z() < minPosition.z()
+				cx < 0 ||
+				(cx == 0 && cy < 0) ||
+				(cx == 0 && cy == 0 && cz < 0)
 			)
 			{
 				minPositionIndex = j;
