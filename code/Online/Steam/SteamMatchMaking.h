@@ -42,6 +42,8 @@ public:
 
 	virtual bool getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const;
 
+	virtual bool getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const;
+
 	virtual bool invite(uint64_t lobbyHandle, uint64_t userHandle);
 
 	virtual bool getIndex(uint64_t lobbyHandle, int32_t& outIndex) const;

@@ -24,6 +24,12 @@ void MeshEditorProfile::getCommands(
 {
 }
 
+void MeshEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+}
+
 void MeshEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins

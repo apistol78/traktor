@@ -25,7 +25,12 @@ bool performCall(SteamSessionManager* sessionManager, CallType& call)
 		if (!call.IsActive())
 			break;
 		if (currentThread)
-			currentThread->sleep(100);
+		{
+			if (!currentThread->stopped())
+				currentThread->sleep(100);
+			else
+				return false;
+		}
 	}
 	return true;
 }
@@ -190,7 +195,13 @@ bool SteamMatchMaking::joinLobby(uint64_t lobbyHandle)
 		result = false;
 
 	if (result)
+	{
 		m_joinedLobby = lobbyHandle;
+
+		// Expose my joined lobby to all my friends which is running the same game.
+		std::wstring id = toString(lobbyHandle);
+		SteamFriends()->SetRichPresence("InLobby", wstombs(id).c_str());
+	}
 
 	return result;
 }
@@ -201,8 +212,9 @@ bool SteamMatchMaking::leaveLobby(uint64_t lobbyHandle)
 		return false;
 
 	SteamMatchmaking()->LeaveLobby(lobbyHandle);
-	m_joinedLobby = 0;
+	SteamFriends()->SetRichPresence("InLobby", 0);
 
+	m_joinedLobby = 0;
 	return true;
 }
 
@@ -280,6 +292,35 @@ bool SteamMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCo
 bool SteamMatchMaking::getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
 	outCount = SteamMatchmaking()->GetLobbyMemberLimit(lobbyHandle);
+	return true;
+}
+
+bool SteamMatchMaking::getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const
+{
+	outCount = 0;
+
+	if (!m_joinedLobby)
+		return true;
+
+	int friendCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
+	if (friendCount < 0)
+		return false;
+
+	for (int i = 0; i < friendCount; ++i)
+	{
+		CSteamID id = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
+		if (SteamFriends()->GetFriendPersonaState(id) != k_EPersonaStateOnline)
+			continue;
+
+		const char* inLobby = SteamFriends()->GetFriendRichPresence(id, "InLobby");
+		if (!inLobby)
+			continue;
+
+		uint64_t inLobbyId = parseString< uint64_t >(mbstows(inLobby));
+		if (m_joinedLobby == inLobbyId)
+			++outCount;
+	}
+
 	return true;
 }
 

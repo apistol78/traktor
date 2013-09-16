@@ -34,11 +34,11 @@ bool MoveQuery::update(const Vector4& currentPosition, Vector4& outMoveToPositio
 {
 	if (m_steerPathCount <= 0)
 	{
-		float startPosition[4];
-		currentPosition.storeUnaligned(startPosition);
+		float T_MATH_ALIGN16 startPosition[4];
+		currentPosition.storeAligned(startPosition);
 
-		float endPosition[4];
-		m_endPosition.storeUnaligned(endPosition);
+		float T_MATH_ALIGN16 endPosition[4];
+		m_endPosition.storeAligned(endPosition);
 
 		dtStatus status = m_navQuery->findStraightPath(
 			startPosition,
@@ -70,14 +70,9 @@ bool MoveQuery::update(const Vector4& currentPosition, Vector4& outMoveToPositio
 		Vector2(steerTo.x(), steerTo.z())
 	);
 	Vector2 pt = sub.project(Vector2(currentPosition.x(), currentPosition.z()));
-	float k = dot(pt - sub.p[0], sub.delta()) / (sub.length() * sub.length());
 
-	//log::info << L"Steer iter   " << (m_steerPathIter + 1) << L"/" << m_steerPathCount << Endl;
-	//log::info << L"  current    " << currentPosition << Endl;
-	//log::info << L"  target     " << m_endPosition << Endl;
-	//log::info << L"  steer from " << steerFrom << Endl;
-	//log::info << L"  steer to   " << steerTo << Endl;
-	//log::info << L"  k          " << k << Endl;
+	float sl = sub.length();
+	float k = abs(sl) > FUZZY_EPSILON ? dot(pt - sub.p[0], sub.delta()) / (sl * sl) : 0.0f;
 
 	if (k > 1.0f)
 		m_steerPathIter++;

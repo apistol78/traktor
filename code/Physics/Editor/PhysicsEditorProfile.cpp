@@ -21,6 +21,14 @@ void PhysicsEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Physics.ToggleMeshTriangles"));
 }
 
+void PhysicsEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+	outIds.insert(L"Physics.Joints");
+	outIds.insert(L"Physics.Shapes");
+}
+
 void PhysicsEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins

@@ -174,53 +174,59 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 
 	if (is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()))
 	{
-		Vector4 lightPosition = transform.translation();
-		Vector4 lightDirection = -transform.axisY();
-		Vector4 lightX = transform.axisX();
-		Vector4 lightZ = transform.axisZ();
+		if (m_context->shouldDrawGuide(L"Entity.Light"))
+		{
+			Vector4 lightPosition = transform.translation();
+			Vector4 lightDirection = -transform.axisY();
+			Vector4 lightX = transform.axisX();
+			Vector4 lightZ = transform.axisZ();
 
-		primitiveRenderer->drawLine(
-			lightPosition - lightDirection * Scalar(0.5f),
-			lightPosition + lightDirection * Scalar(0.5f),
-			5.0f,
-			Color4ub(255, 255, 0)
-		);
-		primitiveRenderer->drawArrowHead(
-			lightPosition + lightDirection * Scalar(0.5f),
-			lightPosition + lightDirection * Scalar(0.7f),
-			0.5f,
-			Color4ub(255, 255, 0)
-		);
+			primitiveRenderer->drawLine(
+				lightPosition - lightDirection * Scalar(0.5f),
+				lightPosition + lightDirection * Scalar(0.5f),
+				5.0f,
+				Color4ub(255, 255, 0)
+			);
+			primitiveRenderer->drawArrowHead(
+				lightPosition + lightDirection * Scalar(0.5f),
+				lightPosition + lightDirection * Scalar(0.7f),
+				0.5f,
+				Color4ub(255, 255, 0)
+			);
 
-		primitiveRenderer->pushWorld(transform.toMatrix44());
-		primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
-		primitiveRenderer->popWorld();
+			primitiveRenderer->pushWorld(transform.toMatrix44());
+			primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
+			primitiveRenderer->popWorld();
+		}
 	}
 	else
 	{
 		if (!m_entityAdapter->getParent())
 			return;
 
-		primitiveRenderer->pushWorld(transform.toMatrix44());
-		if (m_entityAdapter->isSelected())
+		if (m_context->shouldDrawGuide(L"Entity.BoundingBox"))
 		{
-			primitiveRenderer->drawSolidAabb(boundingBox, m_colorBoundingBoxFaceSel);
-			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBoxSel);
-		}
-		else
-			primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBox);
-		primitiveRenderer->popWorld();
-
-		if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
-		{
-			AlignedVector< EntityAdapter::SnapPoint > snapPoints = m_entityAdapter->getSnapPoints();
-			for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator i = snapPoints.begin(); i != snapPoints.end(); ++i)
+			primitiveRenderer->pushWorld(transform.toMatrix44());
+			if (m_entityAdapter->isSelected())
 			{
-				primitiveRenderer->drawSolidPoint(
-					i->position,
-					4.0f,
-					m_colorSnap
-				);
+				primitiveRenderer->drawSolidAabb(boundingBox, m_colorBoundingBoxFaceSel);
+				primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBoxSel);
+			}
+			else
+				primitiveRenderer->drawWireAabb(boundingBox, m_colorBoundingBox);
+			primitiveRenderer->popWorld();
+
+			if (m_entityAdapter->isSelected() && m_context->getSnapMode() == SceneEditorContext::SmNeighbour)
+			{
+				AlignedVector< EntityAdapter::SnapPoint > snapPoints = m_entityAdapter->getSnapPoints();
+				for (AlignedVector< EntityAdapter::SnapPoint >::const_iterator i = snapPoints.begin(); i != snapPoints.end(); ++i)
+				{
+					primitiveRenderer->drawSolidPoint(
+						i->position,
+						4.0f,
+						m_colorSnap
+					);
+				}
 			}
 		}
 	}

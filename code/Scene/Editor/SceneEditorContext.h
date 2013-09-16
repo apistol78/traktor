@@ -192,6 +192,10 @@ public:
 
 	void drawGuide(render::PrimitiveRenderer* primitiveRenderer, EntityAdapter* entityAdapter);
 
+	void setDrawGuide(const std::wstring& guideId, bool shouldDraw);
+
+	bool shouldDrawGuide(const std::wstring& guideId) const;
+
 	//@}
 
 	void setSceneAsset(SceneAsset* sceneAsset);
@@ -328,6 +332,7 @@ private:
 	RefArray< ISceneEditorPlugin > m_editorPlugins;
 	Ref< ISceneControllerEditor > m_controllerEditor;
 	Ref< IModifier > m_modifier;
+	std::map< std::wstring, bool > m_drawGuide;
 	float m_guideSize;
 	bool m_pickEnable;
 	SnapMode m_snapMode;

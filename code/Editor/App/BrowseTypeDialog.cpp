@@ -100,7 +100,7 @@ bool BrowseTypeDialog::create(ui::Widget* parent, const TypeInfo* base, bool onl
 		return false;
 
 	m_typeList = new ui::custom::PreviewList();
-	if (!m_typeList->create(right, ui::WsClientBorder | ui::WsDoubleBuffer))
+	if (!m_typeList->create(right, ui::WsClientBorder | ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
 	m_typeList->addDoubleClickEventHandler(ui::createMethodHandler(this, &BrowseTypeDialog::eventListDoubleClick));
 

@@ -82,6 +82,12 @@ public:
 		std::list< ui::Command >& outCommands
 	) const = 0;
 
+	/*! \brief Get guide draw ids.
+	 */
+	virtual void getGuideDrawIds(
+		std::set< std::wstring >& outIds
+	) const = 0;
+
 	/*! \brief Create plugins.
 	 *
 	 * \param context Scene editor context.

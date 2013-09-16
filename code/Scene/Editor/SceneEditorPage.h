@@ -29,9 +29,10 @@ class IEditorPageSite;
 
 class Bitmap;
 class Container;
-class PopupMenu;
 class Event;
 class Font;
+class PopupMenu;
+class Tab;
 
 		namespace custom
 		{
@@ -91,7 +92,9 @@ private:
 	Ref< ScenePreviewControl > m_editControl;
 	Ref< ui::custom::StatusBar > m_statusBar;
 	Ref< ui::Container > m_entityPanel;
+	Ref< ui::Tab > m_tabMisc;
 	Ref< EntityDependencyInvestigator > m_entityDependencyPanel;
+	Ref< ui::custom::GridView > m_gridGuides;
 	Ref< ui::PopupMenu > m_entityMenu;
 	Ref< ui::PopupMenu > m_entityMenuExternal;
 	Ref< ui::Container > m_controllerPanel;
@@ -129,6 +132,8 @@ private:
 	bool moveToEntity();
 
 	void eventEntityToolClick(ui::Event* event);
+
+	void eventGuideClick(ui::Event* event);
 
 	void eventInstanceSelect(ui::Event* event);
 

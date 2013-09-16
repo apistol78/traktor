@@ -7,6 +7,7 @@
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Animation/Editor/SkeletonAsset.h"
 #include "Animation/Editor/StateGraphEditorPage.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Database/Instance.h"
 #include "Editor/IDocument.h"
 #include "Editor/IEditor.h"
@@ -90,21 +91,21 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 	m_menuPopup->add(new ui::MenuItem(ui::Command(L"StateGraph.Editor.SetRoot"), i18n::Text(L"STATEGRAPH_SET_ROOT")));
 
 	// Create preview panel.
-	Ref< ui::Container > containerPreview = new ui::Container();
-	containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
-	containerPreview->setText(L"Animation Preview");
+	m_containerPreview = new ui::Container();
+	m_containerPreview->create(parent, ui::WsNone, new ui::TableLayout(L"100%", L"*,100%", 0, 0));
+	m_containerPreview->setText(L"Animation Preview");
 
 	m_toolBarPreview = new ui::custom::ToolBar();
-	m_toolBarPreview->create(containerPreview);
+	m_toolBarPreview->create(m_containerPreview);
 	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Mesh...", ui::Command(L"StateGraph.Editor.BrowseMesh")));
 	m_toolBarPreview->addItem(new ui::custom::ToolBarButton(L"Skeleton...", ui::Command(L"StateGraph.Editor.BrowseSkeleton")));
 	m_toolBarPreview->addClickEventHandler(ui::createMethodHandler(this, &StateGraphEditorPage::eventToolBarPreviewClick));
 
 	m_previewControl = new AnimationPreviewControl(m_editor);
-	m_previewControl->create(containerPreview);
+	m_previewControl->create(m_containerPreview);
 	m_previewControl->setPoseController(new StatePoseController(resource::Proxy< StateGraph >(m_stateGraph)));
 
-	m_site->createAdditionalPanel(containerPreview, 450, false);
+	m_site->createAdditionalPanel(m_containerPreview, 450, false);
 
 	createEditorNodes(
 		m_stateGraph->getStates(),
@@ -122,8 +123,9 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 
 void StateGraphEditorPage::destroy()
 {
-	m_editorGraph->destroy();
-	m_menuPopup->destroy();
+	m_site->destroyAdditionalPanel(m_containerPreview);
+	safeDestroy(m_editorGraph);
+	safeDestroy(m_menuPopup);
 }
 
 void StateGraphEditorPage::activate()

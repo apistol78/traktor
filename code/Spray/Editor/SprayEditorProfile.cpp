@@ -19,6 +19,12 @@ void SprayEditorProfile::getCommands(
 {
 }
 
+void SprayEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+}
+
 void SprayEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins

@@ -43,6 +43,14 @@ void DefaultEditorProfile::getCommands(
 {
 }
 
+void DefaultEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+	outIds.insert(L"Entity.Light");
+	outIds.insert(L"Entity.BoundingBox");
+}
+
 void DefaultEditorProfile::createEditorPlugins(
 	SceneEditorContext* context,
 	RefArray< ISceneEditorPlugin >& outEditorPlugins

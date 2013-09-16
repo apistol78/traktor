@@ -31,43 +31,46 @@ bool ClothEntityEditor::handleCommand(const ui::Command& command)
 
 void ClothEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	Ref< ClothEntity > clothEntity = checked_type_cast< ClothEntity* >(getEntityAdapter()->getEntity());
-
-	Aabb3 boundingBox = clothEntity->getBoundingBox();
-	Transform transform;
-
-	clothEntity->getTransform(transform);
-	primitiveRenderer->pushWorld(transform.toMatrix44());
-	primitiveRenderer->drawWireAabb(boundingBox, Color4ub(255, 255, 0, 200));
-
-	if (getEntityAdapter()->isSelected())
+	if (getContext()->shouldDrawGuide(L"Animation.Cloth"))
 	{
-		const AlignedVector< ClothEntity::Node >& nodes = clothEntity->getNodes();
-		const AlignedVector< ClothEntity::Edge >& edges = clothEntity->getEdges();
+		Ref< ClothEntity > clothEntity = checked_type_cast< ClothEntity* >(getEntityAdapter()->getEntity());
 
-		for (AlignedVector< ClothEntity::Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
-		{
-			primitiveRenderer->drawLine(
-				nodes[i->index[0]].position[0],
-				nodes[i->index[1]].position[0],
-				Color4ub(255, 255, 255)
-			);
-		}
+		Aabb3 boundingBox = clothEntity->getBoundingBox();
+		Transform transform;
 
-		for (AlignedVector< ClothEntity::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+		clothEntity->getTransform(transform);
+		primitiveRenderer->pushWorld(transform.toMatrix44());
+		primitiveRenderer->drawWireAabb(boundingBox, Color4ub(255, 255, 0, 200));
+
+		if (getEntityAdapter()->isSelected())
 		{
-			if (i->invMass <= Scalar(FUZZY_EPSILON))
+			const AlignedVector< ClothEntity::Node >& nodes = clothEntity->getNodes();
+			const AlignedVector< ClothEntity::Edge >& edges = clothEntity->getEdges();
+
+			for (AlignedVector< ClothEntity::Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
 			{
-				primitiveRenderer->drawSolidAabb(
-					i->position[0],
-					Vector4(0.1f, 0.05f, 0.05f, 0.05f),
-					Color4ub(255, 0, 255, 128)
+				primitiveRenderer->drawLine(
+					nodes[i->index[0]].position[0],
+					nodes[i->index[1]].position[0],
+					Color4ub(255, 255, 255)
 				);
 			}
-		}
-	}
 
-	primitiveRenderer->popWorld();
+			for (AlignedVector< ClothEntity::Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
+			{
+				if (i->invMass <= Scalar(FUZZY_EPSILON))
+				{
+					primitiveRenderer->drawSolidAabb(
+						i->position[0],
+						Vector4(0.1f, 0.05f, 0.05f, 0.05f),
+						Color4ub(255, 0, 255, 128)
+					);
+				}
+			}
+		}
+
+		primitiveRenderer->popWorld();
+	}
 }
 
 	}

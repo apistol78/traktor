@@ -29,6 +29,15 @@ void AnimationEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Animation.Editor.Reset"));
 }
 
+void AnimationEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+	outIds.insert(L"Animation.Cloth");
+	outIds.insert(L"Animation.Path");
+	outIds.insert(L"Animation.Skeleton");
+}
+
 void AnimationEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins

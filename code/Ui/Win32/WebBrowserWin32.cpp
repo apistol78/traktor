@@ -431,7 +431,7 @@ WebBrowserWin32::WebBrowserWin32(EventSubject* owner)
 
 bool WebBrowserWin32::create(IWidget* parent, const std::wstring& url)
 {
-	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS;
+	DWORD dwStyle = WS_CHILD | WS_VISIBLE | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_TABSTOP;
 #if !defined(WINCE)
 	DWORD dwStyleEx = WS_EX_CONTROLPARENT;
 #else

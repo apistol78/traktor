@@ -72,7 +72,8 @@ public:
 
 private:
 	Ref< const Emitter > m_emitter;
-	Vector4 m_position;
+	Transform m_transform;
+	Plane m_sortPlane;
 	PointVector m_points;
 	PointVector m_renderPoints;
 	float m_totalTime;
@@ -85,7 +86,7 @@ private:
 #if !defined(T_MODIFIER_USE_PS3_SPURS)
 	mutable Ref< Job > m_job;
 
-	void updateTask(float deltaTime, const Transform& transform, size_t last);
+	void updateTask(float deltaTime);
 #endif
 };
 

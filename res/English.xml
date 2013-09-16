@@ -1255,7 +1255,7 @@
     </item>
     <item>
       <first>SCENE_EDITOR_DEPENDENCY_INVESTIGATOR</first>
-      <second>Dependency investigator</second>
+      <second>Dependencies</second>
     </item>
     <item>
       <first>SCENE_EDITOR_DEPENDENCY_FILES</first>
@@ -1294,6 +1294,18 @@
       <second>Total time {0} ms, FPS {1}</second>
     </item>
     <item>
+      <first>SCENE_EDITOR_GUIDES</first>
+      <second>Guides</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_GUIDES_NAME</first>
+      <second>Name</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_GUIDES_VISIBLE</first>
+      <second>Visible</second>
+    </item>
+    <item>
       <first>SCENE_EDITOR_LOADING_TITLE</first>
       <second>Loading</second>
     </item>
@@ -1304,6 +1316,10 @@
     <item>
       <first>SCENE_EDITOR_LOADING</first>
       <second>Loading scene...</second>
+    </item>
+    <item>
+      <first>SCENE_EDITOR_MISC</first>
+      <second>Misc</second>
     </item>
     <item>
       <first>SCENE_EDITOR_MOVE_ENTITY_INTO_VIEW</first>

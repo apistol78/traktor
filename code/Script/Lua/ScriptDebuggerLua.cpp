@@ -329,7 +329,7 @@ void ScriptDebuggerLua::analyzeState(lua_State* L, lua_Debug* ar)
 		{
 			currentThread->sleep(100);
 		}
-		while (m_state == StHalted);
+		while (m_state == StHalted && !currentThread->stopped());
 	}
 }
 

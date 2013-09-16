@@ -42,7 +42,7 @@ private:
 	dtNavMeshQuery* m_navQuery;
 	uint32_t m_path[256];
 	int32_t m_pathCount;
-	float m_steerPath[MaxSteerPoints * 3];
+	float m_steerPath[MaxSteerPoints * 3 + 1];
 	uint8_t m_steerPathFlags[MaxSteerPoints];
 	uint32_t m_steerPathPolys[MaxSteerPoints];
 	int32_t m_steerPathCount;

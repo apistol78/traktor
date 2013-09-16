@@ -42,7 +42,7 @@ bool PropertiesView::create(ui::Widget* parent)
 		return false;
 
 	m_propertyList = new ui::custom::AutoPropertyList();
-	m_propertyList->create(this, ui::WsDoubleBuffer, this);
+	m_propertyList->create(this, ui::WsDoubleBuffer | ui::WsTabStop, this);
 	m_propertyList->addCommandEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertyCommand));
 	m_propertyList->addChangeEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertyChange));
 	m_propertyList->addSelectEventHandler(ui::createMethodHandler(this, &PropertiesView::eventPropertySelect));

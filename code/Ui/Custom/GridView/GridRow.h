@@ -53,7 +53,9 @@ public:
 
 	const int32_t getMinimumHeight() const { return m_minimumHeight; }
 
-	void add(GridCell* item);
+	uint32_t add(GridCell* item);
+
+	void set(uint32_t index, GridCell* item);
 
 	Ref< GridCell > get(uint32_t index) const;
 

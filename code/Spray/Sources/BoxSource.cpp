@@ -22,8 +22,8 @@ BoxSource::BoxSource(
 	const Range< float >& size
 )
 :	Source(constantRate, velocityRate)
-,	m_position(position)
-,	m_extent(extent)
+,	m_position(position.xyz1())
+,	m_extent(extent.xyz0())
 ,	m_velocity(velocity)
 ,	m_orientation(orientation)
 ,	m_angularVelocity(angularVelocity)

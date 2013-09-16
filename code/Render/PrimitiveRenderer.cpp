@@ -596,7 +596,7 @@ void PrimitiveRenderer::drawWireFrame(
 	float length
 )
 {
-	pushWorld(frame);
+	pushWorld(getWorld() * frame);
 
 	drawLine(Vector4::origo(), Vector4(length, 0.0f, 0.0f, 1.0f), 1.0f, Color4ub(255, 0, 0, 255));
 	drawLine(Vector4::origo(), Vector4(0.0f, length, 0.0f, 1.0f), 1.0f, Color4ub(0, 255, 0, 255));

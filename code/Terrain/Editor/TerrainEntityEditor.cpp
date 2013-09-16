@@ -44,48 +44,51 @@ void TerrainEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 	if (!terrainEntity || !terrainEntity->getTerrain())
 		return;
 
-	const resource::Proxy< hf::Heightfield >& heightfield = terrainEntity->getTerrain()->getHeightfield();
-	if (!heightfield)
-		return;
-
-	const Vector4& worldExtent = heightfield->getWorldExtent();
-
-	int32_t x0 = int32_t(-worldExtent.x() / 2.0f);
-	int32_t x1 = int32_t( worldExtent.x() / 2.0f);
-	int32_t z0 = int32_t(-worldExtent.z() / 2.0f);
-	int32_t z1 = int32_t( worldExtent.z() / 2.0f);
-
-	const float c_epsilon = 0.1f;
-
-	for (int32_t x = x0; x <= x1; x += 10)
+	if (getContext()->shouldDrawGuide(L"Terrain.Heightfield"))
 	{
-		for (int32_t z = z0; z < z1; z += 1)
-		{
-			float y0 = heightfield->getWorldHeight(float(x), float(z));
-			float y1 = heightfield->getWorldHeight(float(x), float(z + 1));
+		const resource::Proxy< hf::Heightfield >& heightfield = terrainEntity->getTerrain()->getHeightfield();
+		if (!heightfield)
+			return;
 
-			primitiveRenderer->drawLine(
-				Vector4(x, y0 + c_epsilon, z, 1.0f),
-				Vector4(x, y1 + c_epsilon, z + 1, 1.0f),
-				1.0f,
-				Color4ub(255, 255, 255, 80)
-			);
+		const Vector4& worldExtent = heightfield->getWorldExtent();
+
+		int32_t x0 = int32_t(-worldExtent.x() / 2.0f);
+		int32_t x1 = int32_t( worldExtent.x() / 2.0f);
+		int32_t z0 = int32_t(-worldExtent.z() / 2.0f);
+		int32_t z1 = int32_t( worldExtent.z() / 2.0f);
+
+		const float c_epsilon = 0.1f;
+
+		for (int32_t x = x0; x <= x1; x += 10)
+		{
+			for (int32_t z = z0; z < z1; z += 1)
+			{
+				float y0 = heightfield->getWorldHeight(float(x), float(z));
+				float y1 = heightfield->getWorldHeight(float(x), float(z + 1));
+
+				primitiveRenderer->drawLine(
+					Vector4(x, y0 + c_epsilon, z, 1.0f),
+					Vector4(x, y1 + c_epsilon, z + 1, 1.0f),
+					1.0f,
+					Color4ub(255, 255, 255, 80)
+				);
+			}
 		}
-	}
 
-	for (int32_t z = z0; z <= z1; z += 10)
-	{
-		for (int32_t x = x0; x < x1; x += 1)
+		for (int32_t z = z0; z <= z1; z += 10)
 		{
-			float y0 = heightfield->getWorldHeight(float(x), float(z));
-			float y1 = heightfield->getWorldHeight(float(x + 1), float(z));
+			for (int32_t x = x0; x < x1; x += 1)
+			{
+				float y0 = heightfield->getWorldHeight(float(x), float(z));
+				float y1 = heightfield->getWorldHeight(float(x + 1), float(z));
 
-			primitiveRenderer->drawLine(
-				Vector4(x, y0 + c_epsilon, z, 1.0f),
-				Vector4(x + 1, y1 + c_epsilon, z, 1.0f),
-				1.0f,
-				Color4ub(255, 255, 255, 80)
-			);
+				primitiveRenderer->drawLine(
+					Vector4(x, y0 + c_epsilon, z, 1.0f),
+					Vector4(x + 1, y1 + c_epsilon, z, 1.0f),
+					1.0f,
+					Color4ub(255, 255, 255, 80)
+				);
+			}
 		}
 	}
 }

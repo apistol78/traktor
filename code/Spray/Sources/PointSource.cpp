@@ -21,7 +21,7 @@ PointSource::PointSource(
 	const Range< float >& size
 )
 :	Source(constantRate, velocityRate)
-,	m_position(position)
+,	m_position(position.xyz1())
 ,	m_velocity(velocity)
 ,	m_orientation(orientation)
 ,	m_angularVelocity(angularVelocity)
@@ -46,7 +46,7 @@ void PointSource::emit(
 	while (emitCount-- > 0)
 	{
 		point->position = position - deltaMotion * Scalar(context.random.nextFloat());
-		point->velocity = context.random.nextUnit() * Scalar(m_velocity.random(context.random));
+		point->velocity = context.random.nextUnit().xyz0() * Scalar(m_velocity.random(context.random));
 		point->orientation = m_orientation.random(context.random);
 		point->angularVelocity = m_angularVelocity.random(context.random);
 		point->color = Vector4::one();

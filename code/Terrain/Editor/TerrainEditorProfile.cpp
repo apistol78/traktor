@@ -37,6 +37,13 @@ void TerrainEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Terrain.Editor.SymmetryZ"));
 }
 
+void TerrainEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+	outIds.insert(L"Terrain.Heightfield");
+}
+
 void TerrainEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins
