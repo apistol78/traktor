@@ -31,15 +31,17 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 	if (dtStatusFailed(status))
 		return 0;
 
-	float startPos[4], endPos[4];
-	startPosition.storeUnaligned(startPos);
-	endPosition.storeUnaligned(endPos);
+	float T_MATH_ALIGN16 startPos[4];
+	float T_MATH_ALIGN16 endPos[4];
+	startPosition.storeAligned(startPos);
+	endPosition.storeAligned(endPos);
 
 	Ref< MoveQuery > outputQuery = new MoveQuery();
 	outputQuery->m_navQuery = navQuery;
 
 	dtPolyRef startRef, endRef;
-	float startPosN[4], endPosN[4];
+	float T_MATH_ALIGN16 startPosN[4];
+	float T_MATH_ALIGN16 endPosN[4];
 
 	status = outputQuery->m_navQuery->findNearestPoly(
 		startPos,
@@ -67,8 +69,8 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 		return 0;
 	}
 
-	outputQuery->m_startPosition = Vector4::loadUnaligned(startPosN).xyz1();
-	outputQuery->m_endPosition = Vector4::loadUnaligned(endPosN).xyz1();
+	outputQuery->m_startPosition = Vector4::loadAligned(startPosN).xyz1();
+	outputQuery->m_endPosition = Vector4::loadAligned(endPosN).xyz1();
 
 	status = outputQuery->m_navQuery->findPath(
 		startRef,
@@ -93,6 +95,43 @@ Ref< MoveQuery > NavMesh::createMoveQuery(const Vector4& startPosition, const Ve
 	}
 
 	return outputQuery;
+}
+
+bool NavMesh::findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) const
+{
+	dtStatus status;
+
+	dtNavMeshQuery* navQuery = dtAllocNavMeshQuery();
+	if (!navQuery)
+		return false;
+
+	dtQueryFilter* filter = new dtQueryFilter();
+
+	float T_MATH_ALIGN16 startPos[4];
+	searchFrom.storeAligned(startPos);
+
+	dtPolyRef startRef;
+	float T_MATH_ALIGN16 startPosN[4];
+
+	status = navQuery->findNearestPoly(
+		startPos,
+		c_searchExtents,
+		filter,
+		&startRef,
+		startPosN
+	);
+	if (dtStatusFailed(status))
+	{
+		dtFreeNavMeshQuery(navQuery);
+		delete filter;
+		return false;
+	}
+
+	outPoint = Vector4::loadAligned(startPosN).xyz1();
+
+	dtFreeNavMeshQuery(navQuery);
+	delete filter;
+	return true;
 }
 
 	}

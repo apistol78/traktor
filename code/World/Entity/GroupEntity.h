@@ -54,7 +54,7 @@ public:
 	template < typename EntityType >
 	int getEntitiesOf(RefArray< EntityType >& outEntities) const
 	{
-		return getEntitiesOf(EntityType::getClassType(), reinterpret_cast< RefArray< Entity >& >(outEntities));
+		return getEntitiesOf(type_of< EntityType >(), reinterpret_cast< RefArray< Entity >& >(outEntities));
 	}
 
 	template < typename EntityType >

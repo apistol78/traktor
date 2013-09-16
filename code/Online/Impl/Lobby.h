@@ -35,6 +35,8 @@ public:
 
 	virtual uint32_t getMaxParticipantCount() const;
 
+	virtual uint32_t getFriendsCount() const;
+
 	virtual bool invite(const IUser* user);
 
 	virtual int32_t getIndex() const;

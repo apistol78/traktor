@@ -46,34 +46,37 @@ void RigidEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) 
 	Ref< RigidEntityData > rigidEntityData = checked_type_cast< RigidEntityData* >(getEntityAdapter()->getEntityData());
 	Ref< RigidEntity > rigidEntity = dynamic_type_cast< RigidEntity* >(getEntityAdapter()->getEntity());
 
-	const BodyDesc* bodyDesc = rigidEntityData->getBodyDesc();
-	if (bodyDesc)
+	if (getContext()->shouldDrawGuide(L"Physics.Shapes"))
 	{
-		const ShapeDesc* shapeDesc = bodyDesc->getShape();
-		if (shapeDesc)
+		const BodyDesc* bodyDesc = rigidEntityData->getBodyDesc();
+		if (bodyDesc)
 		{
-			Transform body1Transform0 = getEntityAdapter()->getTransform0();
-			Transform body1Transform = getEntityAdapter()->getTransform();
+			const ShapeDesc* shapeDesc = bodyDesc->getShape();
+			if (shapeDesc)
+			{
+				Transform body1Transform0 = getEntityAdapter()->getTransform0();
+				Transform body1Transform = getEntityAdapter()->getTransform();
 
-			m_physicsRenderer.draw(
-				getContext()->getResourceManager(),
-				primitiveRenderer,
-				body1Transform0,
-				body1Transform,
-				shapeDesc
-			);
+				m_physicsRenderer.draw(
+					getContext()->getResourceManager(),
+					primitiveRenderer,
+					body1Transform0,
+					body1Transform,
+					shapeDesc
+				);
+			}
 		}
-	}
 
-	if (rigidEntity)
-	{
-		Body* body = rigidEntity->getBody();
-		if (body)
+		if (rigidEntity)
 		{
-			Transform bodyTransform = body->getCenterTransform();
-			primitiveRenderer->pushWorld(bodyTransform.toMatrix44());
-			primitiveRenderer->drawSolidPoint(Vector4::origo(), 8.0f, Color4ub(255, 255, 0, 255));
-			primitiveRenderer->popWorld();
+			Body* body = rigidEntity->getBody();
+			if (body)
+			{
+				Transform bodyTransform = body->getCenterTransform();
+				primitiveRenderer->pushWorld(bodyTransform.toMatrix44());
+				primitiveRenderer->drawSolidPoint(Vector4::origo(), 8.0f, Color4ub(255, 255, 0, 255));
+				primitiveRenderer->popWorld();
+			}
 		}
 	}
 }

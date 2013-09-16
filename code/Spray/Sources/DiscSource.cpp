@@ -23,8 +23,8 @@ DiscSource::DiscSource(
 	const Range< float >& size
 )
 :	Source(constantRate, velocityRate)
-,	m_position(position)
-,	m_normal(normal)
+,	m_position(position.xyz1())
+,	m_normal(normal.xyz0())
 ,	m_radius(radius)
 ,	m_velocity(velocity)
 ,	m_orientation(orientation)

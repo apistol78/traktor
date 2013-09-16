@@ -130,6 +130,15 @@ uint32_t Lobby::getMaxParticipantCount() const
 		return 0;
 }
 
+uint32_t Lobby::getFriendsCount() const
+{
+	uint32_t count;
+	if (m_matchMakingProvider && m_matchMakingProvider->getFriendsCount(m_handle, count))
+		return count;
+	else
+		return 0;
+}
+
 bool Lobby::invite(const IUser* user)
 {
 	const User* userImpl = dynamic_type_cast< const User* >(user);

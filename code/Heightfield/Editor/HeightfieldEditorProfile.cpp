@@ -16,6 +16,12 @@ void HeightfieldEditorProfile::getCommands(
 {
 }
 
+void HeightfieldEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+}
+
 void HeightfieldEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins

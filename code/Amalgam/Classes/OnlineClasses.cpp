@@ -261,6 +261,7 @@ void registerOnlineClasses(script::IScriptManager* scriptManager)
 	classILobby->addMethod("getParticipants", &online::ILobby::getParticipants);
 	classILobby->addMethod("getParticipantCount", &online::ILobby::getParticipantCount);
 	classILobby->addMethod("getMaxParticipantCount", &online::ILobby::getMaxParticipantCount);
+	classILobby->addMethod("getFriendsCount", &online::ILobby::getFriendsCount);
 	classILobby->addMethod("invite", &online::ILobby::invite);
 	classILobby->addMethod("getIndex", &online::ILobby::getIndex);
 	classILobby->addMethod("setOwner", &online::ILobby::setOwner);

@@ -576,7 +576,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		else
 		{
 			MeshProxyIndexVertexArray* indexVertexArray = new MeshProxyIndexVertexArray(mesh);
-			shape = new btBvhTriangleMeshShape(indexVertexArray, false);
+			shape = new btBvhTriangleMeshShape(indexVertexArray, true);
 		}
 
 		shape->setMargin(mesh->getMargin());

@@ -70,13 +70,13 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 		return false;
 
 	m_gradientControl = new ColorGradientControl();
-	m_gradientControl->create(this, WsClientBorder, initialColor);
+	m_gradientControl->create(this, WsClientBorder | WsTabStop, initialColor);
 	m_gradientControl->addColorSelectEventHandler(createMethodHandler(this, &ColorDialog::eventGradientColorSelect));
 
 	m_colorGradient = new ColorGradient();
 
 	m_sliderColorControl = new ColorSliderControl();
-	m_sliderColorControl->create(this, WsClientBorder, m_colorGradient);
+	m_sliderColorControl->create(this, WsClientBorder | WsTabStop, m_colorGradient);
 	m_sliderColorControl->addColorSelectEventHandler(createMethodHandler(this, &ColorDialog::eventSliderColorSelect));
 
 	if (style & WsAlpha)
@@ -85,7 +85,7 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 		m_alphaGradient->color = initialColor;
 
 		m_sliderAlphaControl = new ColorSliderControl();
-		m_sliderAlphaControl->create(this, WsClientBorder, m_alphaGradient);
+		m_sliderAlphaControl->create(this, WsClientBorder | WsTabStop, m_alphaGradient);
 		m_sliderAlphaControl->addColorSelectEventHandler(createMethodHandler(this, &ColorDialog::eventSliderAlphaSelect));
 	}
 
@@ -96,21 +96,21 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 	labelR->create(container, L"R:");
 
 	m_editColor[0] = new Edit();
-	m_editColor[0]->create(container, toString< int32_t >(initialColor.r), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[0]->create(container, toString< int32_t >(initialColor.r), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[0]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
 
 	Ref< Static > labelG = new Static();
 	labelG->create(container, L"G:");
 
 	m_editColor[1] = new Edit();
-	m_editColor[1]->create(container, toString< int32_t >(initialColor.g), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[1]->create(container, toString< int32_t >(initialColor.g), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[1]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
 
 	Ref< Static > labelB = new Static();
 	labelB->create(container, L"B:");
 
 	m_editColor[2] = new Edit();
-	m_editColor[2]->create(container, toString< int32_t >(initialColor.b), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
+	m_editColor[2]->create(container, toString< int32_t >(initialColor.b), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
 	m_editColor[2]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
 
 	if (style & WsAlpha)
@@ -119,12 +119,12 @@ bool ColorDialog::create(Widget* parent, const std::wstring& text, int style, co
 		labelA->create(container, L"A:");
 
 		m_editColor[3] = new Edit();
-		m_editColor[3]->create(container, toString< int32_t >(initialColor.a), WsClientBorder, new NumericEditValidator(false, 0, 255, 0));
+		m_editColor[3]->create(container, toString< int32_t >(initialColor.a), WsClientBorder | WsTabStop, new NumericEditValidator(false, 0, 255, 0));
 		m_editColor[3]->addFocusEventHandler(createMethodHandler(this, &ColorDialog::eventEditFocus));
 	}
 
 	m_colorControl = new ColorControl();
-	m_colorControl->create(container, WsClientBorder);
+	m_colorControl->create(container, WsClientBorder | WsTabStop);
 	m_colorControl->setColor(initialColor);
 
 	m_color = initialColor;

@@ -17,9 +17,9 @@
 #	include "Spray/Ps3/Spu/JobModifierUpdate.h"
 #endif
 
-//#if !TARGET_OS_IPHONE && !defined(_WINCE)
-//#	define T_USE_UPDATE_JOBS
-//#endif
+#if !TARGET_OS_IPHONE && !defined(_WINCE)
+#	define T_USE_UPDATE_JOBS
+#endif
 
 namespace traktor
 {
@@ -63,6 +63,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EmitterInstance", EmitterInstance, Object
 
 EmitterInstance::EmitterInstance(const Emitter* emitter, float duration)
 :	m_emitter(emitter)
+,	m_transform(Transform::identity())
+,	m_sortPlane(Vector4(0.0f, 0.0f, -1.0f), Scalar(0.0f))
 ,	m_totalTime(0.0f)
 ,	m_emitFraction(0.0f)
 ,	m_warm(false)
@@ -80,13 +82,13 @@ EmitterInstance::~EmitterInstance()
 
 void EmitterInstance::update(Context& context, const Transform& transform, bool emit, bool singleShot)
 {
-	Transform T = m_emitter->worldSpace() ? transform : Transform::identity();
+	synchronize();
 
 	// Warm up instance.
 	if (!m_warm)
 	{
 		m_warm = true;
-		m_position = T.translation();
+		m_transform = transform;
 
 		if (m_emitter->getWarmUp() >= FUZZY_EPSILON)
 		{
@@ -98,13 +100,14 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 			for (; time < m_emitter->getWarmUp(); time += c_warmUpDeltaTime)
 				update(warmContext, transform, true, false);
 
-			warmContext.deltaTime = m_emitter->getWarmUp() - time;
+			warmContext.deltaTime = m_emitter->getWarmUp() - time + c_warmUpDeltaTime;
 			if (warmContext.deltaTime >= FUZZY_EPSILON)
 				update(warmContext, transform, true, false);
 		}
 	}
 
-	//synchronize();
+	Vector4 lastPosition = m_transform.translation();
+	m_transform = transform;
 
 	// Erase dead particles.
 	size_t size = m_points.size();
@@ -125,7 +128,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		if (source)
 		{
 			uint32_t avail = m_points.capacity() - size;
-			Vector4 dm = (T.translation() - m_position).xyz0();
+			Vector4 dm = (lastPosition - m_transform.translation()).xyz0();
 
 			if (!singleShot)
 			{
@@ -142,7 +145,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 					{
 						source->emit(
 							context,
-							T,
+							m_emitter->worldSpace() ? m_transform : Transform::identity(),
 							dm,
 							emitCount,
 							*this
@@ -161,7 +164,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				{
 					source->emit(
 						context,
-						T,
+						m_emitter->worldSpace() ? m_transform : Transform::identity(),
 						dm,
 						emitCount,
 						*this
@@ -171,8 +174,6 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		}
 	}
 
-	// Save current position as we need it to calculate velocity next update.
-	m_position = T.translation();
 	m_totalTime += context.deltaTime;
 
 	// Calculate bounding box; do this before modifiers as modifiers are executed
@@ -200,6 +201,8 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 		SpursJobQueue* jobQueue = SprayJobQueue::getInstance().getJobQueue();
 		T_ASSERT (jobQueue);
 
+		Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
+
 		const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
 		for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
 		{
@@ -207,7 +210,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 				(*i)->update(
 					jobQueue,
 					Scalar(context.deltaTime),
-					T,
+					updateTransform,
 					m_points
 				);
 		}
@@ -222,39 +225,18 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 	if (size >= 16)
 	{
 		JobManager& jobManager = JobManager::getInstance();
-		m_job = jobManager.add(makeFunctor< EmitterInstance, float, const Transform&, size_t >(
+		m_job = jobManager.add(makeFunctor< EmitterInstance, float >(
 			this,
 			&EmitterInstance::updateTask,
-			context.deltaTime,
-			T,
-			size
+			context.deltaTime
 		));
 	}
 	else
-		updateTask(context.deltaTime, T, size);
+		updateTask(context.deltaTime);
 #	else
-	updateTask(context.deltaTime, T, size);
+	updateTask(context.deltaTime);
 #	endif
 #endif
-
-	// \fixme Should transform into render points as a "tail" job.
-	synchronize();
-
-	m_renderPoints.resize(0);
-
-	for (uint32_t i = 0; i < m_points.size(); i += m_skip)
-		m_renderPoints.push_back(m_points[i]);
-
-	if (!m_emitter->worldSpace())
-	{
-		for (uint32_t i = 0; i < m_renderPoints.size(); ++i)
-		{
-			m_renderPoints[i].position = transform * m_renderPoints[i].position.xyz1();
-			m_renderPoints[i].velocity = transform * m_renderPoints[i].velocity.xyz0();
-		}
-	}
-
-	m_count++;
 }
 
 void EmitterInstance::render(
@@ -266,11 +248,12 @@ void EmitterInstance::render(
 {
 	T_ASSERT (m_count > 0);
 
+	synchronize();
+
+	m_sortPlane = cameraPlane;
+
 	if (m_renderPoints.empty())
 		return;
-
-	if (m_emitter->getSort())
-		std::sort(m_renderPoints.begin(), m_renderPoints.end(), PointPredicate(cameraPlane));
 
 	if (m_emitter->getShader())
 	{
@@ -325,15 +308,42 @@ void EmitterInstance::synchronize() const
 }
 
 #if !defined(T_MODIFIER_USE_PS3_SPURS)
-void EmitterInstance::updateTask(float deltaTime, const Transform& transform, size_t last)
+void EmitterInstance::updateTask(float deltaTime)
 {
+	Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
 	Scalar deltaTimeScalar(deltaTime);
+
 	const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
 	for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
 	{
 		if (*i)
-			(*i)->update(deltaTimeScalar, transform, m_points, 0, last);
+			(*i)->update(
+				deltaTimeScalar,
+				updateTransform,
+				m_points,
+				0,
+				m_points.size()
+			);
 	}
+
+	m_renderPoints.resize(0);
+
+	for (uint32_t i = 0; i < m_points.size(); i += m_skip)
+		m_renderPoints.push_back(m_points[i]);
+
+	if (!m_emitter->worldSpace())
+	{
+		for (uint32_t i = 0; i < m_renderPoints.size(); ++i)
+		{
+			m_renderPoints[i].position = m_transform * m_renderPoints[i].position;
+			m_renderPoints[i].velocity = m_transform * m_renderPoints[i].velocity;
+		}
+	}
+
+	if (m_emitter->getSort())
+		std::sort(m_renderPoints.begin(), m_renderPoints.end(), PointPredicate(m_sortPlane));
+
+	m_count++;
 }
 #endif
 

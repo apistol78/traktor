@@ -20,6 +20,10 @@ public:
 		std::list< ui::Command >& outCommands
 	) const;
 
+	virtual void getGuideDrawIds(
+		std::set< std::wstring >& outIds
+	) const;
+
 	virtual void createEditorPlugins(
 		SceneEditorContext* context,
 		RefArray< ISceneEditorPlugin >& outEditorPlugins

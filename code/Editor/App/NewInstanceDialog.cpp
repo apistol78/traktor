@@ -92,7 +92,7 @@ bool NewInstanceDialog::create(ui::Widget* parent)
 	listLabel->create(right, i18n::Text(L"NEW_INSTANCE_TYPES"));
 
 	m_typeList = new ui::custom::PreviewList();
-	if (!m_typeList->create(right, ui::WsClientBorder | ui::WsDoubleBuffer))
+	if (!m_typeList->create(right, ui::WsClientBorder | ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
 
 	Ref< ui::Container > bottom = new ui::Container();

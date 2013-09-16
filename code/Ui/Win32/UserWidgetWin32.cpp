@@ -21,6 +21,8 @@ bool UserWidgetWin32::create(IWidget* parent, int style)
 
 	if (style & WsBorder)
 		dwStyle |= WS_BORDER;
+	if (style & WsTabStop)
+		dwStyle |= WS_TABSTOP;
 	if (style & WsClientBorder)
 		dwStyleEx |= WS_EX_CLIENTEDGE;
 #if !defined(WINCE)

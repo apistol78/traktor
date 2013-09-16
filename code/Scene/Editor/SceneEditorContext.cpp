@@ -249,6 +249,17 @@ void SceneEditorContext::drawGuide(render::PrimitiveRenderer* primitiveRenderer,
 	}
 }
 
+void SceneEditorContext::setDrawGuide(const std::wstring& guideId, bool shouldDraw)
+{
+	m_drawGuide[guideId] = shouldDraw;
+}
+
+bool SceneEditorContext::shouldDrawGuide(const std::wstring& guideId) const
+{
+	std::map< std::wstring, bool >::const_iterator i = m_drawGuide.find(guideId);
+	return i != m_drawGuide.end() ? i->second : true;
+}
+
 void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 {
 	m_sceneAsset = sceneAsset;

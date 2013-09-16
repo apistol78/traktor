@@ -45,9 +45,16 @@ void GridRow::setMinimumHeight(int32_t minimumHeight)
 	m_minimumHeight = minimumHeight;
 }
 
-void GridRow::add(GridCell* item)
+uint32_t GridRow::add(GridCell* item)
 {
 	m_items.push_back(item);
+	return m_items.size() - 1;
+}
+
+void GridRow::set(uint32_t index, GridCell* item)
+{
+	if (index < m_items.size())
+		m_items[index] = item;
 }
 
 Ref< GridCell > GridRow::get(uint32_t index) const

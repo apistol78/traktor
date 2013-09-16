@@ -77,14 +77,25 @@ bool EventLoopWin32::process(EventSubject* owner)
 		if (dispatch)
 		{
 			HWND hwndFocus = GetFocus();
+			HWND hwndTop = hwndFocus;
 
-			TranslateMessage(&msg);
-			DispatchMessage(&msg);
+			for (; GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
+				;
 
-			if (hwndFocus != GetFocus())
+			BOOL handled = FALSE;
+			if (hwndTop != NULL)
+				handled = IsDialogMessage(hwndTop, &msg);
+
+			if (!handled)
 			{
-				FocusEvent focusEvent(owner, 0, true);
-				owner->raiseEvent(EiFocus, &focusEvent);
+				TranslateMessage(&msg);
+				DispatchMessage(&msg);
+
+				if (hwndFocus != GetFocus())
+				{
+					FocusEvent focusEvent(owner, 0, true);
+					owner->raiseEvent(EiFocus, &focusEvent);
+				}
 			}
 		}
 	}
@@ -105,19 +116,32 @@ int EventLoopWin32::execute(EventSubject* owner)
 			if (dispatch)
 			{
 				HWND hwndFocus = GetFocus();
+				HWND hwndTop = hwndFocus;
 
-				TranslateMessage(&msg);
-				DispatchMessage(&msg);
+				for (; GetParent(hwndTop) != NULL; hwndTop = GetParent(hwndTop))
+					;
 
-				if (hwndFocus != GetFocus())
+				BOOL handled = FALSE;
+				if (hwndTop != NULL)
+					handled = IsDialogMessage(hwndTop, &msg);
+
+				if (!handled)
 				{
-					FocusEvent focusEvent(owner, 0, true);
-					owner->raiseEvent(EiFocus, &focusEvent);
+					TranslateMessage(&msg);
+					DispatchMessage(&msg);
+
+					if (hwndFocus != GetFocus())
+					{
+						FocusEvent focusEvent(owner, 0, true);
+						owner->raiseEvent(EiFocus, &focusEvent);
+					}
 				}
 			}
+
 			m_idle = false;
 			continue;
 		}
+
 		if (!m_idle)
 		{
 			IdleEvent idleEvent(owner);

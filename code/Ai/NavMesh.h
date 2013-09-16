@@ -30,6 +30,8 @@ public:
 
 	Ref< MoveQuery > createMoveQuery(const Vector4& startPosition, const Vector4& endPosition);
 
+	bool findClosestPoint(const Vector4& searchFrom, Vector4& outPoint) const;
+
 private:
 	friend class NavMeshFactory;
 

@@ -22,7 +22,7 @@ SphereSource::SphereSource(
 	const Range< float >& size
 )
 :	Source(constantRate, velocityRate)
-,	m_position(position)
+,	m_position(position.xyz1())
 ,	m_radius(radius)
 ,	m_velocity(velocity)
 ,	m_orientation(orientation)

@@ -27,49 +27,52 @@ void ArticulatedEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRend
 	if (!articulatedEntityData)
 		return;
 
-	const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
-	Transform transform = articulatedEntityData->getTransform();
-
-	const RefArray< scene::EntityAdapter >& constraintChildren = getEntityAdapter()->getChildren();
-
-	for (uint32_t i = 0; i < uint32_t(constraints.size()); ++i)
+	if (getContext()->shouldDrawGuide(L"Physics.Joints"))
 	{
-		const ArticulatedEntityData::Constraint& constraint = constraints[i];
-		if (constraint.entityIndex1 < 0)
-			continue;
+		const std::vector< ArticulatedEntityData::Constraint >& constraints = articulatedEntityData->getConstraints();
+		Transform transform = articulatedEntityData->getTransform();
 
-		scene::EntityAdapter* entity1 = constraintChildren[constraint.entityIndex1];
-		if (!entity1)
-			continue;
+		const RefArray< scene::EntityAdapter >& constraintChildren = getEntityAdapter()->getChildren();
 
-		scene::EntityAdapter* entity2 = (constraint.entityIndex2 >= 0) ? constraintChildren[constraint.entityIndex2] : 0;
-		if (entity2)
+		for (uint32_t i = 0; i < uint32_t(constraints.size()); ++i)
 		{
-			Transform body1Transform0 = entity1->getTransform0();
-			Transform body1Transform = entity1->getTransform();
-			Transform body2Transform0 = entity2->getTransform0();
-			Transform body2Transform = entity2->getTransform();
+			const ArticulatedEntityData::Constraint& constraint = constraints[i];
+			if (constraint.entityIndex1 < 0)
+				continue;
 
-			m_physicsRenderer.draw(
-				primitiveRenderer,
-				body1Transform0,
-				body1Transform,
-				body2Transform0,
-				body2Transform,
-				constraint.jointDesc
-			);
-		}
-		else
-		{
-			Transform body1Transform0 = entity1->getTransform0();
-			Transform body1Transform = entity1->getTransform();
+			scene::EntityAdapter* entity1 = constraintChildren[constraint.entityIndex1];
+			if (!entity1)
+				continue;
 
-			m_physicsRenderer.draw(
-				primitiveRenderer,
-				body1Transform0,
-				body1Transform,
-				constraint.jointDesc
-			);
+			scene::EntityAdapter* entity2 = (constraint.entityIndex2 >= 0) ? constraintChildren[constraint.entityIndex2] : 0;
+			if (entity2)
+			{
+				Transform body1Transform0 = entity1->getTransform0();
+				Transform body1Transform = entity1->getTransform();
+				Transform body2Transform0 = entity2->getTransform0();
+				Transform body2Transform = entity2->getTransform();
+
+				m_physicsRenderer.draw(
+					primitiveRenderer,
+					body1Transform0,
+					body1Transform,
+					body2Transform0,
+					body2Transform,
+					constraint.jointDesc
+				);
+			}
+			else
+			{
+				Transform body1Transform0 = entity1->getTransform0();
+				Transform body1Transform = entity1->getTransform();
+
+				m_physicsRenderer.draw(
+					primitiveRenderer,
+					body1Transform0,
+					body1Transform,
+					constraint.jointDesc
+				);
+			}
 		}
 	}
 }

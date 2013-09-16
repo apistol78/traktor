@@ -100,7 +100,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 		return false;
 
 	m_treeDatabase = new ui::TreeView();
-	if (!m_treeDatabase->create(left, ui::WsClientBorder | ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines))
+	if (!m_treeDatabase->create(left, ui::WsClientBorder | ui::WsTabStop | ui::TreeView::WsTreeButtons | ui::TreeView::WsTreeLines))
 		return false;
 	m_treeDatabase->addImage(ui::Bitmap::load(c_ResourceFiles, sizeof(c_ResourceFiles), L"png"), 4);
 	m_treeDatabase->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventTreeItemSelected));
@@ -114,7 +114,7 @@ bool BrowseInstanceDialog::create(ui::Widget* parent, db::Database* database, co
 		return false;
 
 	m_listInstances = new ui::custom::PreviewList();
-	if (!m_listInstances->create(right, ui::WsClientBorder | ui::WsDoubleBuffer))
+	if (!m_listInstances->create(right, ui::WsClientBorder | ui::WsDoubleBuffer | ui::WsTabStop))
 		return false;
 	m_listInstances->addSelectEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListItemSelected));
 	m_listInstances->addDoubleClickEventHandler(ui::createMethodHandler(this, &BrowseInstanceDialog::eventListDoubleClick));

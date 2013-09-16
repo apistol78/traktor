@@ -41,6 +41,8 @@
 #include "Ui/MenuItem.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/PopupMenu.h"
+#include "Ui/Tab.h"
+#include "Ui/TabPage.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Events/CommandEvent.h"
 #include "Ui/Events/MouseEvent.h"
@@ -103,6 +105,9 @@ SceneEditorPage::SceneEditorPage(editor::IEditor* editor, editor::IEditorPageSit
 
 bool SceneEditorPage::create(ui::Container* parent)
 {
+	std::set< std::wstring > guideIds;
+
+	// Get render system from store.
 	render::IRenderSystem* renderSystem = m_editor->getStoreObject< render::IRenderSystem >(L"RenderSystem");
 	if (!renderSystem)
 		return false;
@@ -145,7 +150,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 		physicsManager
 	);
 
-	// Create profiles, plugins, resource factories and entity editors.
+	// Create profiles, plugins, resource factories, entity editors and guide ids.
 	TypeInfoSet profileTypes;
 	type_of< ISceneEditorProfile >().findAllOf(profileTypes);
 	for (TypeInfoSet::const_iterator i = profileTypes.begin(); i != profileTypes.end(); ++i)
@@ -165,6 +170,8 @@ bool SceneEditorPage::create(ui::Container* parent)
 		profile->createResourceFactories(m_context, resourceFactories);
 		for (RefArray< const resource::IResourceFactory >::iterator j = resourceFactories.begin(); j != resourceFactories.end(); ++j)
 			resourceManager->addFactory(*j);
+
+		profile->getGuideDrawIds(guideIds);
 	}
 
 	// Create editor panel.
@@ -224,11 +231,45 @@ bool SceneEditorPage::create(ui::Container* parent)
 
 	m_site->createAdditionalPanel(m_entityPanel, 300, false);
 
-	// Create dependency panel.
-	m_entityDependencyPanel = new EntityDependencyInvestigator(m_context);
-	m_entityDependencyPanel->create(parent);
+	m_tabMisc = new ui::Tab();
+	m_tabMisc->create(parent, ui::Tab::WsLine);
+	m_tabMisc->setText(i18n::Text(L"SCENE_EDITOR_MISC"));
 
-	m_site->createAdditionalPanel(m_entityDependencyPanel, 300, false);
+	// Create dependency panel.
+	Ref< ui::TabPage > tabPageDependencies = new ui::TabPage();
+	tabPageDependencies->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_DEPENDENCY_INVESTIGATOR"), new ui::FloodLayout());
+
+	m_entityDependencyPanel = new EntityDependencyInvestigator(m_context);
+	m_entityDependencyPanel->create(tabPageDependencies);
+
+	// Create guide visibility panel.
+	Ref< ui::TabPage > tabPageGuides = new ui::TabPage();
+	tabPageGuides->create(m_tabMisc, i18n::Text(L"SCENE_EDITOR_GUIDES"), new ui::FloodLayout());
+
+	m_gridGuides = new ui::custom::GridView();
+	m_gridGuides->create(tabPageGuides, ui::WsDoubleBuffer | ui::WsTabStop);
+	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_NAME"), 150));
+	m_gridGuides->addColumn(new ui::custom::GridColumn(i18n::Text(L"SCENE_EDITOR_GUIDES_VISIBLE"), 50));
+
+	for (std::set< std::wstring >::const_iterator i = guideIds.begin(); i != guideIds.end(); ++i)
+	{
+		bool shouldDraw = m_editor->getSettings()->getProperty< PropertyBoolean >(L"SceneEditor.Guides/" + *i, true);
+		m_context->setDrawGuide(*i, shouldDraw);
+
+		Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+		row->add(new ui::custom::GridItem(*i));
+		row->add(new ui::custom::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
+		m_gridGuides->addRow(row);
+	}
+
+	m_gridGuides->addClickEventHandler(ui::createMethodHandler(this, &SceneEditorPage::eventGuideClick));
+
+	// Add pages.
+	m_tabMisc->addPage(tabPageDependencies);
+	m_tabMisc->addPage(tabPageGuides);
+	m_tabMisc->setActivePage(tabPageDependencies);
+
+	m_site->createAdditionalPanel(m_tabMisc, 300, false);
 
 	// Create controller panel.
 	m_controllerPanel = new ui::Container();
@@ -263,14 +304,14 @@ void SceneEditorPage::destroy()
 
 	// Destroy panels.
 	m_site->destroyAdditionalPanel(m_entityPanel);
-	m_site->destroyAdditionalPanel(m_entityDependencyPanel);
+	m_site->destroyAdditionalPanel(m_tabMisc);
 	m_site->destroyAdditionalPanel(m_controllerPanel);
 
 	// Destroy widgets.
 	safeDestroy(m_editPanel);
 	safeDestroy(m_editControl);
 	safeDestroy(m_entityPanel);
-	safeDestroy(m_entityDependencyPanel);
+	safeDestroy(m_tabMisc);
 	safeDestroy(m_entityMenu);
 	safeDestroy(m_entityMenuExternal);
 	safeDestroy(m_controllerPanel);
@@ -996,6 +1037,21 @@ void SceneEditorPage::eventEntityToolClick(ui::Event* event)
 {
 	ui::CommandEvent* commandEvent = checked_type_cast< ui::CommandEvent* >(event);
 	handleCommand(commandEvent->getCommand());
+}
+
+void SceneEditorPage::eventGuideClick(ui::Event* event)
+{
+	ui::custom::GridRow* row = checked_type_cast< ui::custom::GridRow*, false >(event->getItem());
+	std::wstring id = checked_type_cast< const ui::custom::GridItem*, false >(row->get(0))->getText();
+
+	bool shouldDraw = !m_context->shouldDrawGuide(id);
+	m_context->setDrawGuide(id, shouldDraw);
+
+	row->set(1, new ui::custom::GridItem(shouldDraw ? m_imageVisible : m_imageHidden));
+	m_gridGuides->requestUpdate();
+
+	m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"SceneEditor.Guides/" + id, shouldDraw);
+	m_editor->commitGlobalSettings();
 }
 
 void SceneEditorPage::eventInstanceSelect(ui::Event* event)

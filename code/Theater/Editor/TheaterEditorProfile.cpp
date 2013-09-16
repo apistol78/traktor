@@ -20,6 +20,12 @@ void TheaterEditorProfile::getCommands(
 	outCommands.push_back(ui::Command(L"Theater.GotoNextKey"));
 }
 
+void TheaterEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+}
+
 void TheaterEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins

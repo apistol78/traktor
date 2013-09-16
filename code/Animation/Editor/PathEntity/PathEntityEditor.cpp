@@ -73,63 +73,66 @@ bool PathEntityEditor::handleCommand(const ui::Command& command)
 
 void PathEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer) const
 {
-	Ref< PathEntity > pathEntity = checked_type_cast< PathEntity* >(getEntityAdapter()->getEntity());
-
-	// Draw entity's path.
-	const TransformPath& path = pathEntity->getPath();
-	const AlignedVector< TransformPath::Key >& keys = path.getKeys();
-
-	for (AlignedVector< TransformPath::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
+	if (getContext()->shouldDrawGuide(L"Animation.Path"))
 	{
-		primitiveRenderer->drawWireAabb(
-			i->value.position,
-			Vector4(0.2f, 0.2f, 0.2f),
-			Color4ub(255, 255, 0)
-		);
-	}
+		Ref< PathEntity > pathEntity = checked_type_cast< PathEntity* >(getEntityAdapter()->getEntity());
 
-	if (keys.size() >= 2)
-	{
-		// Draw linear curve.
-		for (uint32_t i = 0; i < keys.size() - 1; ++i)
+		// Draw entity's path.
+		const TransformPath& path = pathEntity->getPath();
+		const AlignedVector< TransformPath::Key >& keys = path.getKeys();
+
+		for (AlignedVector< TransformPath::Key >::const_iterator i = keys.begin(); i != keys.end(); ++i)
 		{
-			primitiveRenderer->drawLine(
-				keys[i].value.position,
-				keys[i + 1].value.position,
-				Color4ub(0, 255, 0)
+			primitiveRenderer->drawWireAabb(
+				i->value.position,
+				Vector4(0.2f, 0.2f, 0.2f),
+				Color4ub(255, 255, 0)
 			);
 		}
 
-		// Draw evaluated curve.
-		bool loop = (pathEntity->getTimeMode() == PathEntity::TmLoop);
-		float st = keys.front().T;
-		float et = keys.back().T;
-		for (uint32_t i = 0; i < 40; ++i)
+		if (keys.size() >= 2)
 		{
-			float t1 = st + (i * (et - st)) / 40.0f;
-			float t2 = st + ((i + 1) * (et - st)) / 40.0f;
-			primitiveRenderer->drawLine(
-				path.evaluate(t1, loop).position,
-				path.evaluate(t2, loop).position,
-				Color4ub(170, 170, 255)
-			);
+			// Draw linear curve.
+			for (uint32_t i = 0; i < keys.size() - 1; ++i)
+			{
+				primitiveRenderer->drawLine(
+					keys[i].value.position,
+					keys[i + 1].value.position,
+					Color4ub(0, 255, 0)
+				);
+			}
+
+			// Draw evaluated curve.
+			bool loop = (pathEntity->getTimeMode() == PathEntity::TmLoop);
+			float st = keys.front().T;
+			float et = keys.back().T;
+			for (uint32_t i = 0; i < 40; ++i)
+			{
+				float t1 = st + (i * (et - st)) / 40.0f;
+				float t2 = st + ((i + 1) * (et - st)) / 40.0f;
+				primitiveRenderer->drawLine(
+					path.evaluate(t1, loop).position,
+					path.evaluate(t2, loop).position,
+					Color4ub(170, 170, 255)
+				);
+			}
+
+			// Draw cursor.
+			Vector4 cursor = path.evaluate(m_time, false).position;
+			primitiveRenderer->drawSolidPoint(cursor, 3.0f, Color4ub(255, 255, 255, 200));
 		}
 
-		// Draw cursor.
-		Vector4 cursor = path.evaluate(m_time, false).position;
-		primitiveRenderer->drawSolidPoint(cursor, 3.0f, Color4ub(255, 255, 255, 200));
-	}
+		// Draw attached entity's bounding box.
+		if (world::Entity* attachedEntity = pathEntity->getEntity())
+		{
+			Transform transform;
+			if (!attachedEntity->getTransform(transform))
+				transform = Transform::identity();
 
-	// Draw attached entity's bounding box.
-	if (world::Entity* attachedEntity = pathEntity->getEntity())
-	{
-		Transform transform;
-		if (!attachedEntity->getTransform(transform))
-			transform = Transform::identity();
-
-		primitiveRenderer->pushWorld(transform.toMatrix44());
-		primitiveRenderer->drawWireAabb(attachedEntity->getBoundingBox(), Color4ub(255, 255, 0));
-		primitiveRenderer->popWorld();
+			primitiveRenderer->pushWorld(transform.toMatrix44());
+			primitiveRenderer->drawWireAabb(attachedEntity->getBoundingBox(), Color4ub(255, 255, 0));
+			primitiveRenderer->popWorld();
+		}
 	}
 }
 

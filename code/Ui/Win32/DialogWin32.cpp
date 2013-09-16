@@ -138,7 +138,7 @@ int DialogWin32::showModal()
 	{
 		if (PeekMessage(&msg, NULL, 0, 0, PM_REMOVE))
 		{
-			//if (!IsDialogMessage(m_hWnd, &msg))
+			if (!IsDialogMessage(m_hWnd, &msg))
 			{
 				TranslateMessage(&msg);
 				DispatchMessage(&msg);

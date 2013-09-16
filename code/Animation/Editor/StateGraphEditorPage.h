@@ -27,6 +27,7 @@ class IEditorPageSite;
 	namespace ui
 	{
 
+class Container;
 class Event;
 class PopupMenu;
 class Point;
@@ -78,6 +79,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBarGraph;
 	Ref< ui::custom::GraphControl > m_editorGraph;
 	Ref< ui::PopupMenu > m_menuPopup;
+	Ref< ui::Container > m_containerPreview;
 	Ref< ui::custom::ToolBar > m_toolBarPreview;
 	Ref< AnimationPreviewControl > m_previewControl;
 

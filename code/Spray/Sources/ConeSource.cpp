@@ -24,8 +24,8 @@ ConeSource::ConeSource(
 	const Range< float >& size
 )
 :	Source(constantRate, velocityRate)
-,	m_position(position)
-,	m_normal(normal)
+,	m_position(position.xyz1())
+,	m_normal(normal.xyz0())
 ,	m_angle1s(sinf(angle1))
 ,	m_angle2s(sinf(angle2))
 ,	m_velocity(velocity)

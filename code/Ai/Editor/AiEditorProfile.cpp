@@ -16,6 +16,12 @@ void AiEditorProfile::getCommands(
 {
 }
 
+void AiEditorProfile::getGuideDrawIds(
+	std::set< std::wstring >& outIds
+) const
+{
+}
+
 void AiEditorProfile::createEditorPlugins(
 	scene::SceneEditorContext* context,
 	RefArray< scene::ISceneEditorPlugin >& outEditorPlugins

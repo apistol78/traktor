@@ -41,11 +41,18 @@ public:
 	{
 	}
 
+	virtual ~BlockReadStream()
+	{
+		close();
+	}
+
 	virtual void close()
 	{
-		T_ASSERT (m_stream);
-		m_blockFile->returnReadStream(m_stream);
-		m_stream = 0;
+		if (m_stream)
+		{
+			m_blockFile->returnReadStream(m_stream);
+			m_stream = 0;
+		}
 	}
 
 private:
@@ -68,14 +75,19 @@ public:
 		m_outBlock.size = 0;
 	}
 
+	virtual ~BlockWriteStream()
+	{
+		close();
+	}
+
 	virtual void close()
 	{
-		T_ASSERT (m_stream);
-
-		m_outBlock.size = m_stream->tell() - m_outBlock.offset;
-		m_stream = 0;
-
-		m_blockFile->needFlushTOC();
+		if (m_stream)
+		{
+			m_outBlock.size = m_stream->tell() - m_outBlock.offset;
+			m_blockFile->needFlushTOC();
+			m_stream = 0;
+		}
 	}
 	
 	virtual bool canRead() const

@@ -44,13 +44,13 @@ bool InputDialog::create(
 		if (!m_outFields[i].values)
 		{
 			Ref< Edit > edit = new Edit();
-			edit->create(container, m_outFields[i].value, WsClientBorder, m_outFields[i].validator);
+			edit->create(container, m_outFields[i].value, WsClientBorder | WsTabStop, m_outFields[i].validator);
 			m_editFields.push_back(edit);
 		}
 		else
 		{
 			Ref< DropDown > dropDown = new DropDown();
-			dropDown->create(container, m_outFields[i].value, WsClientBorder);
+			dropDown->create(container, m_outFields[i].value, WsClientBorder | WsTabStop);
 			for (const wchar_t** it = m_outFields[i].values; *it; it += 2)
 			{
 				T_ASSERT (*it);

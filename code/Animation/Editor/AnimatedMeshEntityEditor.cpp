@@ -39,65 +39,68 @@ void AnimatedMeshEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRen
 	const AnimatedMeshEntityData* animatedEntityData = checked_type_cast< const AnimatedMeshEntityData* >(getEntityAdapter()->getEntityData());
 	/*const*/ AnimatedMeshEntity* animatedEntity = dynamic_type_cast< /*const*/ AnimatedMeshEntity* >(getEntityAdapter()->getEntity());
 
-	primitiveRenderer->pushWorld(getEntityAdapter()->getTransform().toMatrix44());
-	primitiveRenderer->pushDepthEnable(false);
-
-	if (animatedEntity)
+	if (getContext()->shouldDrawGuide(L"Animation.Skeleton"))
 	{
-		const resource::Proxy< Skeleton >& skeleton = animatedEntity->getSkeleton();
+		primitiveRenderer->pushWorld(getEntityAdapter()->getTransform().toMatrix44());
+		primitiveRenderer->pushDepthEnable(false);
 
-		AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
-		if (poseTransforms.empty())
-			calculateJointTransforms(skeleton, poseTransforms);
-
-		if (poseTransforms.size() == skeleton->getJointCount())
+		if (animatedEntity)
 		{
-			for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+			const resource::Proxy< Skeleton >& skeleton = animatedEntity->getSkeleton();
+
+			AlignedVector< Transform > poseTransforms = animatedEntity->getPoseTransforms();
+			if (poseTransforms.empty())
+				calculateJointTransforms(skeleton, poseTransforms);
+
+			if (poseTransforms.size() == skeleton->getJointCount())
 			{
-				const Joint* joint = skeleton->getJoint(i);
-
-				Color4ub color = Color4ub(255, 255, 0, 128);
-
-				primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
-
-				if (joint->getParent() >= 0)
+				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
 				{
-					const Joint* parent = skeleton->getJoint(joint->getParent());
-					T_ASSERT (parent);
+					const Joint* joint = skeleton->getJoint(i);
 
-					Vector4 start = poseTransforms[joint->getParent()].translation();
-					Vector4 end = poseTransforms[i].translation();
+					Color4ub color = Color4ub(255, 255, 0, 128);
 
-					Vector4 z = (end - start).normalized();
-					Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
-					Vector4 x = cross(y, z);
+					primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
 
-					Scalar radius(parent->getRadius());
-					x *= radius;
-					y *= radius;
-					z *= radius;
+					if (joint->getParent() >= 0)
+					{
+						const Joint* parent = skeleton->getJoint(joint->getParent());
+						T_ASSERT (parent);
 
-					primitiveRenderer->drawLine(start, start + z + x + y, color);
-					primitiveRenderer->drawLine(start, start + z - x + y, color);
-					primitiveRenderer->drawLine(start, start + z + x - y, color);
-					primitiveRenderer->drawLine(start, start + z - x - y, color);
+						Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
+						Vector4 end = poseTransforms[i].translation().xyz1();
 
-					primitiveRenderer->drawLine(start + z + x + y, end, color);
-					primitiveRenderer->drawLine(start + z - x + y, end, color);
-					primitiveRenderer->drawLine(start + z + x - y, end, color);
-					primitiveRenderer->drawLine(start + z - x - y, end, color);
+						Vector4 z = (end - start).normalized();
+						Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+						Vector4 x = cross(y, z);
 
-					primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
-					primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
-					primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
-					primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+						Scalar radius(parent->getRadius());
+						x *= radius;
+						y *= radius;
+						z *= radius;
+
+						primitiveRenderer->drawLine(start, start + z + x + y, color);
+						primitiveRenderer->drawLine(start, start + z - x + y, color);
+						primitiveRenderer->drawLine(start, start + z + x - y, color);
+						primitiveRenderer->drawLine(start, start + z - x - y, color);
+
+						primitiveRenderer->drawLine(start + z + x + y, end, color);
+						primitiveRenderer->drawLine(start + z - x + y, end, color);
+						primitiveRenderer->drawLine(start + z + x - y, end, color);
+						primitiveRenderer->drawLine(start + z - x - y, end, color);
+
+						primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
+						primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
+						primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
+						primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+					}
 				}
 			}
 		}
-	}
 
-	primitiveRenderer->popDepthEnable();
-	primitiveRenderer->popWorld();
+		primitiveRenderer->popDepthEnable();
+		primitiveRenderer->popWorld();
+	}
 
 	scene::DefaultEntityEditor::drawGuide(primitiveRenderer);
 }
