@@ -91,7 +91,7 @@ private:
 	/*! \name IErrorCallback */
 	/*! \{ */
 
-	virtual void syntaxError(uint32_t line, const std::wstring& message);
+	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message);
 
 	virtual void otherError(const std::wstring& message);
 

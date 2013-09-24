@@ -176,8 +176,8 @@ void SurroundFilter::applyStereo(IFilterInstance* instance, SoundBlock& outBlock
 
 	const Scalar& innerRadius = m_environment->getInnerRadius();
 
-	Scalar innerAtten = c_one - clamp(speakerDistance / innerRadius, c_zero, c_one);
-	Scalar distanceAtten = c_one - clamp(speakerDistance / m_maxDistance, c_zero, c_one);
+	Scalar innerAtten = c_one - clamp(squareRoot(speakerDistance / innerRadius), c_zero, c_one);
+	Scalar distanceAtten = c_one - clamp(squareRoot(speakerDistance / m_maxDistance), c_zero, c_one);
 
 	for (uint32_t i = 0; i < sizeof_array(c_speakersStereo); ++i)
 	{
@@ -245,8 +245,8 @@ void SurroundFilter::applyFull(IFilterInstance* instance, SoundBlock& outBlock) 
 
 	const Scalar& innerRadius = m_environment->getInnerRadius();
 
-	Scalar distanceAtten = clamp(c_one - speakerDistance / m_maxDistance, c_zero, c_one);
-	Scalar innerAtten = clamp(speakerDistance / innerRadius, c_zero, c_one);
+	Scalar distanceAtten = c_one - clamp(squareRoot(speakerDistance / m_maxDistance), c_zero, c_one);
+	Scalar innerAtten = clamp(squareRoot(speakerDistance / innerRadius), c_zero, c_one);
 
 	if (distanceAtten >= FUZZY_EPSILON)
 	{

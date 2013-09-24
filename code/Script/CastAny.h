@@ -19,9 +19,6 @@ namespace traktor
 template < typename Type, bool IsTypePtr = IsPointer< Type >::value >
 struct CastAny
 {
-	//static Any set(Type value) {
-	//	return Any(value);
-	//}
 };
 
 template < >

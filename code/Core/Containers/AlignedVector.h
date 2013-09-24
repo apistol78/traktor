@@ -630,6 +630,40 @@ public:
 		return iterator(&m_data[offset]);
 	}
 
+	/*! \brief Insert elements into vector.
+	 *
+	 * \param where Iterator at element.
+	 * \param from Iterator at first insert element.
+	 * \param to Iterator at last insert element.
+	 * \return Iterator at new element.
+	 */
+	iterator insert(const iterator& where, const ItemType* from, const ItemType* to)
+	{
+		size_t size = m_size;
+		size_t offset = size_t(where.m_ptr - m_data);
+		size_t count = size_t(to - from);
+
+		grow(count);
+
+		// Initialize grown items.
+		for (size_t i = 0; i < count; ++i)
+			Constructor::construct(m_data[i + size], ItemType());
+
+		// Move items to make room for items to be inserted.
+		size_t move = std::min< size_t >(size, count);
+		for (size_t i = offset; i < offset + move; ++i)
+			m_data[i + count] = m_data[i];
+
+		// Copy insert items into location.
+		for (size_t i = 0; i < count; ++i)
+		{
+			Constructor::destroy(m_data[i + offset]);
+			Constructor::construct(m_data[i + offset], from[i]);
+		}
+
+		return iterator(&m_data[offset]);
+	}
+
 	ItemType& operator [] (size_t index)
 	{
 		T_ASSERT (index < m_size);

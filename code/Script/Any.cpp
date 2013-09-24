@@ -256,16 +256,6 @@ std::wstring Any::getWideString() const
 	return L"";
 }
 
-Object* Any::getObject() const
-{
-	return m_type == AtObject ? m_data.m_object : 0;
-}
-
-const TypeInfo* Any::getTypeInfo() const
-{
-	return m_type == AtTypeInfo ? m_data.m_typeInfo : 0;
-}
-
 Any& Any::operator = (const Any& src)
 {
 	if (m_type == AtString)

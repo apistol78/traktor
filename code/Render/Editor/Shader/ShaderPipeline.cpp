@@ -348,7 +348,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.CachedProgramHints", CachedProgramHints,
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 56, ShaderPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.ShaderPipeline", 57, ShaderPipeline, editor::IPipeline)
 
 ShaderPipeline::ShaderPipeline()
 :	m_frequentUniformsAsLinear(false)
@@ -598,6 +598,8 @@ bool ShaderPipeline::buildOutput(
 
 			stats.vertexCost += tasks[i]->stats.vertexCost;
 			stats.pixelCost += tasks[i]->stats.pixelCost;
+			stats.vertexSize += tasks[i]->stats.vertexSize;
+			stats.pixelSize += tasks[i]->stats.pixelSize;
 		}
 		else
 			++failed;
@@ -650,6 +652,7 @@ bool ShaderPipeline::buildOutput(
 		report->set(L"path", outputPath);
 		report->set(L"vertexCost", stats.vertexCost);
 		report->set(L"pixelCost", stats.pixelCost);
+		report->set(L"size", stats.vertexSize + stats.pixelSize);
 	}
 
 #if defined(_DEBUG)

@@ -33,10 +33,14 @@ public:
 	{
 		uint32_t vertexCost;
 		uint32_t pixelCost;
+		uint32_t vertexSize;
+		uint32_t pixelSize;
 
 		Stats()
 		:	vertexCost(0)
 		,	pixelCost(0)
+		,	vertexSize(0)
+		,	pixelSize(0)
 		{
 		}
 	};

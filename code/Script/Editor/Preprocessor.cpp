@@ -322,17 +322,16 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output) co
 	std::stack< int32_t > keep;
 	keep.push(0);
 
-	StringSplit< std::wstring > split(source, L"\r\n");
+	StringSplit< std::wstring > split(source, L"\n");
 	for (StringSplit< std::wstring >::const_iterator i = split.begin(); i != split.end(); ++i)
 	{
 		std::wstring line = trim(*i);
-		if (line.empty())
-			continue;
-
-		if (line[0] == L'#')
+		if (!line.empty() && line[0] == L'#')
 		{
 			int32_t keyword = PkwUnknown;
 			std::wstring expression;
+
+			ss << Endl;
 
 			size_t sep = line.find_first_of(L" \t");
 			if (sep != line.npos)
@@ -404,9 +403,12 @@ bool Preprocessor::evaluate(const std::wstring& source, std::wstring& output) co
 				break;
 			}
 		}
-		else if (keep.top() == 0)
+		else
 		{
-			ss << *i << Endl;
+			if (keep.top() == 0)
+				ss << *i << Endl;
+			else
+				ss << Endl;
 		}
 	}
 

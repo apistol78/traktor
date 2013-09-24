@@ -127,7 +127,7 @@ struct ScaleTextureTask : public Object
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 28, TextureOutputPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureOutputPipeline", 29, TextureOutputPipeline, editor::IPipeline)
 
 TextureOutputPipeline::TextureOutputPipeline()
 :	m_skipMips(0)
@@ -312,7 +312,7 @@ bool TextureOutputPipeline::buildOutput(
 
 		// Determine texture compression format.
 		if (
-			textureOutput->m_textureType == Tt2D &&
+			(textureOutput->m_textureType == Tt2D || textureOutput->m_textureType == TtCube) &&
 			(textureOutput->m_enableCompression || textureOutput->m_enableNormalMapCompression)
 		)
 		{
@@ -840,6 +840,9 @@ bool TextureOutputPipeline::buildOutput(
 				}
 			}
 
+			RefArray< drawing::Image > mipImages(mipCount);
+
+			// Generate each mip level.
 			for (int i = 0; i < mipCount; ++i)
 			{
 				int mipSize = sideSize >> i;
@@ -853,18 +856,18 @@ bool TextureOutputPipeline::buildOutput(
 				);
 				sideImage->apply(&mipScaleFilter);
 
-				uint32_t outputSize = getTextureMipPitch(
-					textureFormat,
-					mipSize,
-					mipSize
-				);
-
-				 writerData.write(
-					sideImage->getData(),
-					outputSize,
-					1
-				);
+				mipImages[i] = sideImage->clone();
 			}
+
+			Ref< ICompressor > compressor;
+			if (textureFormat >= TfDXT1 && textureFormat <= TfDXT5)
+				compressor = new DxtnCompressor();
+			else if (textureFormat >= TfPVRTC1 && textureFormat <= TfPVRTC4)
+				compressor = new PvrtcCompressor();
+			else
+				compressor = new UnCompressor();
+
+			compressor->compress(writerData, mipImages, textureFormat, needAlpha, m_compressionQuality);
 		}
 
 		streamData->close();

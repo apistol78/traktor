@@ -15,6 +15,7 @@
 #include "World/Entity/NullEntity.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/TransientEntity.h"
+#include "World/Entity/VolumeEntity.h"
 
 namespace traktor
 {
@@ -152,6 +153,10 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< world::TransientEntity > > classTransientEntity = new script::AutoScriptClass< world::TransientEntity >();
 	classTransientEntity->addConstructor< world::GroupEntity*, world::Entity*, float >();
 	scriptManager->registerClass(classTransientEntity);
+
+	Ref< script::AutoScriptClass< world::VolumeEntity > > classVolumeEntity = new script::AutoScriptClass< world::VolumeEntity >();
+	classVolumeEntity->addMethod("inside", &world::VolumeEntity::inside);
+	scriptManager->registerClass(classVolumeEntity);
 
 	Ref< script::AutoScriptClass< world::PostProcess > > classPostProcess = new script::AutoScriptClass< world::PostProcess >();
 	classPostProcess->addMethod("setParameter", &world_PostProcess_setParameter);

@@ -65,9 +65,9 @@ public:
 
 	std::wstring getWideString() const;
 
-	Object* getObject() const;
+	Object* getObject() const { return m_type == AtObject ? m_data.m_object : 0; }
 
-	const TypeInfo* getTypeInfo() const;
+	const TypeInfo* getTypeInfo() const { return m_type == AtTypeInfo ? m_data.m_typeInfo : 0; }
 
 	bool isVoid() const { return m_type == AtVoid; }
 

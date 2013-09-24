@@ -72,7 +72,7 @@ void GridHeaderCell::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 		if (m_columns.size() == 1)
 			width = rect.getWidth();
 
-		canvas.setForeground(getSystemColor(ScWindowText));
+		canvas.setForeground(widget->isEnable() ? getSystemColor(ScWindowText) : getSystemColor(ScDisabledText));
 		canvas.drawText(Rect(left + 2, rect.top, left + width - 2, rect.bottom), column->getTitle(), AnLeft, AnCenter);
 
 		if (i > 0)

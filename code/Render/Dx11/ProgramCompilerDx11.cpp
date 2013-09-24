@@ -238,6 +238,15 @@ Ref< ProgramResource > ProgramCompilerDx11::compile(
 	resource->m_d3dVertexSamplers = hlslProgram.getD3DVertexSamplers();
 	resource->m_d3dPixelSamplers = hlslProgram.getD3DPixelSamplers();
 
+	// Estimate cost from number of bytes in each shader.
+	if (outStats)
+	{
+		outStats->vertexCost = resource->m_vertexShader->GetBufferSize();
+		outStats->pixelCost = resource->m_pixelShader->GetBufferSize();
+		outStats->vertexSize = resource->m_vertexShader->GetBufferSize();
+		outStats->pixelSize = resource->m_pixelShader->GetBufferSize();
+	}
+
 	return resource;
 }
 

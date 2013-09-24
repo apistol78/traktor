@@ -66,7 +66,6 @@ void FlashMovieRenderer::renderFrame(
 	);
 
 	renderSprite(
-		movieInstance->getContext()->getDictionary(),
 		movieInstance,
 		Matrix33::identity(),
 		movieInstance->getColorTransform(),
@@ -77,7 +76,6 @@ void FlashMovieRenderer::renderFrame(
 }
 
 void FlashMovieRenderer::renderSprite(
-	FlashDictionary* dictionary,
 	FlashSpriteInstance* spriteInstance,
 	const Matrix33& transform,
 	const SwfCxTransform& cxTransform,
@@ -86,6 +84,9 @@ void FlashMovieRenderer::renderSprite(
 {
 	if (!spriteInstance->isVisible() && !renderAsMask)
 		return;
+
+	FlashDictionary* dictionary = spriteInstance->getContext()->getDictionary();
+	T_ASSERT (dictionary);
 
 	const FlashDisplayList& displayList = spriteInstance->getDisplayList();
 	const FlashDisplayList::layer_map_t& layers = displayList.getLayers();
@@ -102,7 +103,6 @@ void FlashMovieRenderer::renderSprite(
 		if (!layer.clipDepth)
 		{
 			renderCharacter(
-				dictionary,
 				layer.instance,
 				transform,
 				cxTransform
@@ -114,7 +114,6 @@ void FlashMovieRenderer::renderSprite(
 			m_displayRenderer->beginMask(true);
 
 			renderCharacter(
-				dictionary,
 				layer.instance,
 				transform,
 				cxTransform
@@ -132,7 +131,6 @@ void FlashMovieRenderer::renderSprite(
 					continue;
 
 				renderCharacter(
-					dictionary,
 					clippedLayer.instance,
 					transform,
 					cxTransform
@@ -142,7 +140,6 @@ void FlashMovieRenderer::renderSprite(
 			m_displayRenderer->beginMask(false);
 
 			renderCharacter(
-				dictionary,
 				layer.instance,
 				transform,
 				cxTransform
@@ -163,7 +160,6 @@ void FlashMovieRenderer::renderSprite(
 }
 
 void FlashMovieRenderer::renderCharacter(
-	FlashDictionary* dictionary,
 	FlashCharacterInstance* characterInstance,
 	const Matrix33& transform,
 	const SwfCxTransform& cxTransform
@@ -174,6 +170,9 @@ void FlashMovieRenderer::renderCharacter(
 	// Don't render completely transparent shapes.
 	if (cxTransform2.alpha[0] + cxTransform2.alpha[1] <= FUZZY_EPSILON)
 		return;
+
+	FlashDictionary* dictionary = characterInstance->getContext()->getDictionary();
+	T_ASSERT (dictionary);
 
 	// Render basic shapes.
 	FlashShapeInstance* shapeInstance = dynamic_type_cast< FlashShapeInstance* >(characterInstance);
@@ -316,7 +315,6 @@ void FlashMovieRenderer::renderCharacter(
 				continue;
 
 			renderCharacter(
-				dictionary,
 				referenceInstance,
 				buttonTransform * layer.placeMatrix,
 				cxTransform2
@@ -336,7 +334,6 @@ void FlashMovieRenderer::renderCharacter(
 			m_displayRenderer->beginMask(true);
 
 			renderSprite(
-				dictionary,
 				maskInstance,
 				transform * maskInstance->getTransform(),
 				maskInstance->getColorTransform(),
@@ -347,7 +344,6 @@ void FlashMovieRenderer::renderCharacter(
 		}
 
 		renderSprite(
-			dictionary,
 			spriteInstance,
 			transform * spriteInstance->getTransform(),
 			cxTransform2,
@@ -359,7 +355,6 @@ void FlashMovieRenderer::renderCharacter(
 			m_displayRenderer->beginMask(false);
 
 			renderSprite(
-				dictionary,
 				maskInstance,
 				transform * maskInstance->getTransform(),
 				maskInstance->getColorTransform(),

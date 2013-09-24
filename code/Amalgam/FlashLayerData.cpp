@@ -2,6 +2,7 @@
 #include "Amalgam/FlashLayerData.h"
 #include "Amalgam/IEnvironment.h"
 #include "Core/Serialization/ISerializer.h"
+#include "Core/Serialization/MemberStl.h"
 #include "Flash/FlashMovie.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
@@ -11,7 +12,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", 0, FlashLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", 1, FlashLayerData, LayerData)
 
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)
@@ -34,6 +35,7 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 		m_name,
 		environment,
 		movie,
+		m_externalMovies,
 		m_clearBackground,
 		m_enableSound
 	);
@@ -44,6 +46,19 @@ void FlashLayerData::serialize(ISerializer& s)
 	LayerData::serialize(s);
 
 	s >> resource::Member< flash::FlashMovie >(L"movie", m_movie);
+
+	if (s.getVersion() >= 1)
+		s >> MemberStlMap<
+			std::wstring,
+			resource::Id< flash::FlashMovie >,
+			MemberStlPair<
+				std::wstring,
+				resource::Id< flash::FlashMovie >,
+				Member< std::wstring >,
+				resource::Member< flash::FlashMovie >
+			>
+		>(L"externalMovies", m_externalMovies);
+
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);
 }
