@@ -14,6 +14,8 @@
 #include "World/Entity/PointLightEntityData.h"
 #include "World/Entity/SpotLightEntity.h"
 #include "World/Entity/SpotLightEntityData.h"
+#include "World/Entity/VolumeEntity.h"
+#include "World/Entity/VolumeEntityData.h"
 #include "World/Entity/WorldEntityFactory.h"
 
 namespace traktor
@@ -35,9 +37,10 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 	typeSet.insert(&type_of< GroupEntityData >());
 	typeSet.insert(&type_of< DecalEntityData >());
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
+	typeSet.insert(&type_of< NullEntityData >());
 	typeSet.insert(&type_of< PointLightEntityData >());
 	typeSet.insert(&type_of< SpotLightEntityData >());
-	typeSet.insert(&type_of< NullEntityData >());
+	typeSet.insert(&type_of< VolumeEntityData >());
 	return typeSet;
 }
 
@@ -133,6 +136,11 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 	if (const NullEntityData* nullData = dynamic_type_cast< const NullEntityData* >(&entityData))
 	{
 		return new NullEntity(nullData->getTransform());
+	}
+
+	if (const VolumeEntityData* volumeData = dynamic_type_cast< const VolumeEntityData* >(&entityData))
+	{
+		return new VolumeEntity(volumeData);
 	}
 
 	return 0;

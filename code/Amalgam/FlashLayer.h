@@ -3,6 +3,7 @@
 
 #include "Amalgam/Layer.h"
 #include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
+#include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "Script/Any.h"
 
@@ -56,6 +57,7 @@ public:
 		const std::wstring& name,
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< flash::FlashMovie >& movie,
+		const std::map< std::wstring, resource::Id< flash::FlashMovie > >& externalMovies,
 		bool clearBackground,
 		bool enableSound
 	);
@@ -95,6 +97,7 @@ public:
 private:
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< flash::FlashMovie > m_movie;
+	std::map< std::wstring, resource::Id< flash::FlashMovie > > m_externalMovies;
 	Ref< flash::FlashMoviePlayer > m_moviePlayer;
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::ISoundRenderer > m_soundRenderer;

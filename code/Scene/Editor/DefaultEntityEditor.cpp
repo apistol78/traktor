@@ -16,6 +16,8 @@
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/SpotLightEntity.h"
+#include "World/Entity/VolumeEntity.h"
+#include "World/Entity/VolumeEntityData.h"
 
 namespace traktor
 {
@@ -37,7 +39,8 @@ bool DefaultEntityEditor::isPickable() const
 	if (
 		is_a< world::DirectionalLightEntity >(m_entityAdapter->getEntity()) ||
 		is_a< world::PointLightEntity >(m_entityAdapter->getEntity()) ||
-		is_a< world::SpotLightEntity >(m_entityAdapter->getEntity())
+		is_a< world::SpotLightEntity >(m_entityAdapter->getEntity()) ||
+		is_a< world::VolumeEntity >(m_entityAdapter->getEntity())
 	)
 		return false;
 	else
@@ -196,6 +199,21 @@ void DefaultEntityEditor::drawGuide(render::PrimitiveRenderer* primitiveRenderer
 
 			primitiveRenderer->pushWorld(transform.toMatrix44());
 			primitiveRenderer->drawWireAabb(Aabb3(Vector4(-0.25f, -0.25f, -0.25f, 1.0f), Vector4(0.25f, 0.25f, 0.25f, 1.0f)), m_colorBoundingBox);
+			primitiveRenderer->popWorld();
+		}
+	}
+	else if (const world::VolumeEntityData* volumeEntity = dynamic_type_cast< const world::VolumeEntityData* >(m_entityAdapter->getEntityData()))
+	{
+		if (m_context->shouldDrawGuide(L"Entity.Volumes"))
+		{
+			Transform T = getEntityAdapter()->getTransform();
+			primitiveRenderer->pushWorld(T.toMatrix44());
+			const AlignedVector< Aabb3 >& volumes = volumeEntity->getVolumes();
+			for (AlignedVector< Aabb3 >::const_iterator i = volumes.begin(); i != volumes.end(); ++i)
+			{
+				primitiveRenderer->drawSolidAabb(*i, Color4ub(120, 255, 120, 80));
+				primitiveRenderer->drawWireAabb(*i, Color4ub(120, 255, 120, 255));
+			}
 			primitiveRenderer->popWorld();
 		}
 	}

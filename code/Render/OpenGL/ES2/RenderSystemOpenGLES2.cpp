@@ -5,6 +5,7 @@
 #include "Core/Serialization/ISerializable.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/Platform.h"
+#include "Render/OpenGL/ES2/CubeTextureOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderSystemOpenGLES2.h"
 #include "Render/OpenGL/ES2/RenderViewOpenGLES2.h"
 #include "Render/OpenGL/ES2/ProgramCompilerOpenGLES2.h"
@@ -254,7 +255,16 @@ Ref< ISimpleTexture > RenderSystemOpenGLES2::createSimpleTexture(const SimpleTex
 
 Ref< ICubeTexture > RenderSystemOpenGLES2::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
+#if !defined(T_OFFLINE_ONLY)
+	T_ANONYMOUS_VAR(IContext::Scope)(m_globalContext);
+	Ref< CubeTextureOpenGLES2 > texture = new CubeTextureOpenGLES2(m_globalContext);
+	if (texture->create(desc))
+		return texture;
+	else
+		return texture;
+#else
 	return 0;
+#endif
 }
 
 Ref< IVolumeTexture > RenderSystemOpenGLES2::createVolumeTexture(const VolumeTextureCreateDesc& desc)

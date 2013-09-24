@@ -119,7 +119,7 @@ void GridItem::paint(AutoWidget* widget, Canvas& canvas, const Rect& rect)
 		if (m_font)
 			canvas.setFont(*m_font);
 
-		canvas.setForeground(getSystemColor(ScWindowText));
+		canvas.setForeground(widget->isEnable() ? getSystemColor(ScWindowText) : getSystemColor(ScDisabledText));
 		canvas.drawText(rcText, m_text, AnLeft, AnCenter);
 
 		if (m_font)

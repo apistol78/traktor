@@ -68,6 +68,28 @@ uint32_t translateInputKeyCode(uint32_t inputKeyCode)
 	return 0;
 }
 
+class CustomFlashMovieLoader : public flash::FlashMovieLoader
+{
+public:
+	CustomFlashMovieLoader(db::Database* database, const std::map< std::wstring, resource::Id< flash::FlashMovie > >& externalMovies)
+	:	flash::FlashMovieLoader(database)
+	,	m_externalMovies(externalMovies)
+	{
+	}
+
+	virtual Ref< flash::FlashMovie > load(const std::wstring& name) const
+	{
+		std::map< std::wstring, resource::Id< flash::FlashMovie > >::const_iterator i = m_externalMovies.find(name);
+		if (i != m_externalMovies.end())
+			return flash::FlashMovieLoader::load(((const Guid&)i->second).format());
+		else
+			return flash::FlashMovieLoader::load(name);
+	}
+
+private:
+	const std::map< std::wstring, resource::Id< flash::FlashMovie > >& m_externalMovies;
+};
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.FlashLayer", FlashLayer, Layer)
@@ -77,12 +99,14 @@ FlashLayer::FlashLayer(
 	const std::wstring& name,
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< flash::FlashMovie >& movie,
+	const std::map< std::wstring, resource::Id< flash::FlashMovie > >& externalMovies,
 	bool clearBackground,
 	bool enableSound
 )
 :	Layer(stage, name)
 ,	m_environment(environment)
 ,	m_movie(movie)
+,	m_externalMovies(externalMovies)
 ,	m_clearBackground(clearBackground)
 ,	m_enableSound(enableSound)
 ,	m_visible(true)
@@ -445,7 +469,7 @@ void FlashLayer::createMoviePlayer()
 	Ref< flash::FlashMoviePlayer > moviePlayer = new flash::FlashMoviePlayer(
 		displayRenderer,
 		soundRenderer,
-		new flash::FlashMovieLoader(m_environment->getDatabase())
+		new CustomFlashMovieLoader(m_environment->getDatabase(), m_externalMovies)
 	);
 	if (!moviePlayer->create(m_movie, width, height))
 	{

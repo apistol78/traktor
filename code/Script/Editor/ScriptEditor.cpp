@@ -267,7 +267,7 @@ ui::Size ScriptEditor::getPreferredSize() const
 	return ui::Size(1000, 800);
 }
 
-void ScriptEditor::syntaxError(uint32_t line, const std::wstring& message)
+void ScriptEditor::syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message)
 {
 	StringOutputStream ss;
 	ss << L"Syntax error (" << line << L") : " << message;

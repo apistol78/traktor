@@ -98,30 +98,35 @@ bool CubeTextureOpenGL::create(const CubeTextureCreateDesc& desc)
 		{
 			for (int i = 0; i < desc.mipCount; ++i)
 			{
-				uint32_t side = m_side >> i;
-
-				T_ASSERT (desc.initialData[face * desc.mipCount + i].pitch >= side * m_pixelSize);
-				const uint8_t* s = static_cast< const uint8_t* >(desc.initialData[face * desc.mipCount + i].data);
-				uint8_t* d = m_data.ptr();
-				
-				for (int y = 0; y < side; ++y)
+				uint32_t side = getTextureMipSize(m_side, i);
+				if (desc.format >= TfDXT1 && desc.format <= TfDXT5)
 				{
-					std::memcpy(d, s, side * m_pixelSize);
-					s += desc.initialData[face * desc.mipCount + i].pitch;
-					d += side * m_pixelSize;
+					uint32_t mipPitch = getTextureMipPitch(desc.format, side, side);
+					T_OGL_SAFE(glCompressedTexImage2D(
+						c_cubeFaces[face],
+						i,
+						m_components,
+						side,
+						side,
+						0,
+						mipPitch,
+						desc.initialData[face * desc.mipCount + i].data
+					));
 				}
-
-				T_OGL_SAFE(glTexImage2D(
-					c_cubeFaces[face],
-					i,
-					m_components,
-					side,
-					side,
-					0,
-					m_format,
-					m_type,
-					&m_data[0]
-				));
+				else
+				{
+					T_OGL_SAFE(glTexImage2D(
+						c_cubeFaces[face],
+						i,
+						m_components,
+						side,
+						side,
+						0,
+						m_format,
+						m_type,
+						desc.initialData[face * desc.mipCount + i].data
+					));
+				}
 			}
 		}
 	}

@@ -49,7 +49,6 @@ private:
 	Ref< IDisplayRenderer > m_displayRenderer;
 
 	void renderSprite(
-		FlashDictionary* dictionary,
 		FlashSpriteInstance* spriteInstance,
 		const Matrix33& transform,
 		const SwfCxTransform& cxTransform,
@@ -57,7 +56,6 @@ private:
 	);
 
 	void renderCharacter(
-		FlashDictionary* dictionary,
 		FlashCharacterInstance* characterInstance,
 		const Matrix33& transform,
 		const SwfCxTransform& cxTransform

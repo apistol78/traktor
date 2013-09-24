@@ -71,6 +71,7 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Function", 200));
 	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Line", 100));
 	m_callStackGrid->addColumn(new ui::custom::GridColumn(L"Script", 200));
+	m_callStackGrid->setEnable(false);
 
 	tabDebugger->addPage(tabPageCallStack);
 
@@ -81,6 +82,7 @@ bool ScriptDebuggerView::create(ui::Widget* parent)
 	m_localsGrid->create(tabPageLocals, ui::WsDoubleBuffer | ui::custom::GridView::WsColumnHeader);
 	m_localsGrid->addColumn(new ui::custom::GridColumn(L"Name", 200));
 	m_localsGrid->addColumn(new ui::custom::GridColumn(L"Value", 300));
+	m_localsGrid->setEnable(false);
 
 	tabDebugger->addPage(tabPageLocals);
 
@@ -98,7 +100,15 @@ void ScriptDebuggerView::destroy()
 bool ScriptDebuggerView::handleCommand(const ui::Command& command)
 {
 	if (command == L"Script.Editor.Continue")
+	{
+		m_callStackGrid->setEnable(false);
+		m_callStackGrid->update();
+
+		m_localsGrid->setEnable(false);
+		m_localsGrid->update();
+
 		m_scriptDebugger->actionContinue();
+	}
 	else if (command == L"Script.Editor.Break")
 		m_scriptDebugger->actionBreak();
 	else if (command == L"Script.Editor.StepInto")
@@ -139,6 +149,7 @@ void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, cons
 {
 	const script::CallStack::Frame& currentFrame = callStack.getCurrentFrame();
 
+	m_callStackGrid->setEnable(true);
 	m_callStackGrid->removeAllRows();
 
 	const std::list< script::CallStack::Frame >& frames = callStack.getFrames();
@@ -151,6 +162,7 @@ void ScriptDebuggerView::breakpointReached(IScriptDebugger* scriptDebugger, cons
 		m_callStackGrid->addRow(row);
 	}
 
+	m_localsGrid->setEnable(true);
 	m_localsGrid->removeAllRows();
 
 	const RefArray< script::Local >& locals = currentFrame.locals;

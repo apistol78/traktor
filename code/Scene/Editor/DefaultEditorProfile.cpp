@@ -49,6 +49,7 @@ void DefaultEditorProfile::getGuideDrawIds(
 {
 	outIds.insert(L"Entity.Light");
 	outIds.insert(L"Entity.BoundingBox");
+	outIds.insert(L"Entity.Volumes");
 }
 
 void DefaultEditorProfile::createEditorPlugins(

@@ -1,3 +1,4 @@
+#include "Core/Log/Log.h"
 #include "Core/Math/Log2.h"
 #include "Core/Memory/Alloc.h"
 #include "Core/Memory/BlockAllocator.h"
@@ -5,6 +6,8 @@
 #include "Core/Memory/SystemConstruct.h"
 #include "Core/Misc/Align.h"
 #include "Core/Thread/Atomic.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 
 namespace traktor
 {
@@ -28,9 +31,9 @@ const uint32_t c_blockCounts[] =
 #else
 	131072,				// 16
 	131072,				// 32
-	36864,				// 64
+	40960,				// 64
 	16384,				// 128
-	8192				// 256
+	16384				// 256
 #endif
 };
 
@@ -48,6 +51,7 @@ FastAllocator::FastAllocator(IAllocator* systemAllocator)
 			qsize
 		);
 		m_blockAllocLock[i] = 0;
+		m_blockAllocFull[i] = 0;
 	}
 }
 
@@ -81,11 +85,20 @@ void* FastAllocator::alloc(size_t size, size_t align, const char* const tag)
 
 		{
 			while (Atomic::exchange(m_blockAllocLock[qid], 1) != 0)
-				;
+				ThreadManager::getInstance().getCurrentThread()->yield();
 
 			p = blockAlloc->alloc();
 
 			Atomic::exchange(m_blockAllocLock[qid], 0);
+		}
+
+		if (!p)
+		{
+#if 0
+			if (!m_blockAllocFull[qid])
+				log::debug << L"Out of " << size << L" blocks in fast allocator" << Endl;
+#endif
+			m_blockAllocFull[qid] = 1;
 		}
 
 		T_ASSERT (alignUp((uint8_t*)p, 16) == p);
@@ -104,12 +117,15 @@ void FastAllocator::free(void* ptr)
 	{
 		if (m_blockAlloc[i]->belong(ptr))
 		{
-			while (Atomic::exchange(m_blockAllocLock[i], 1) != 0)
-				;
+			{
+				while (Atomic::exchange(m_blockAllocLock[i], 1) != 0)
+					ThreadManager::getInstance().getCurrentThread()->yield();
 
-			m_blockAlloc[i]->free(ptr);
+				m_blockAlloc[i]->free(ptr);
 
-			Atomic::exchange(m_blockAllocLock[i], 0);
+				Atomic::exchange(m_blockAllocLock[i], 0);
+			}
+			m_blockAllocFull[i] = 0;
 			return;
 		}
 	}

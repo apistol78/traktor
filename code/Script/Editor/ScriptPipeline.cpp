@@ -4,6 +4,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Settings/PropertyStringSet.h"
@@ -63,9 +64,22 @@ bool resolveScript(editor::IPipelineBuilder* pipelineBuilder, const Guid& script
 	return true;
 }
 
+struct ErrorCallback : public IErrorCallback
+{
+	virtual void syntaxError(const std::wstring& name, uint32_t line, const std::wstring& message)
+	{
+		log::error << name << L" (" << line << L"): " << message << Endl;
+	}
+
+	virtual void otherError(const std::wstring& message)
+	{
+		log::error << message << Endl;
+	}
+};
+
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 11, ScriptPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 16, ScriptPipeline, editor::DefaultPipeline)
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -155,18 +169,22 @@ bool ScriptPipeline::buildOutput(
 		map.line = line;
 		sm.push_back(map);
 
-		// Count lines.
-		StringSplit< std::wstring > split(i->script->getText(), L"\r\n");
-		for (StringSplit< std::wstring >::const_iterator j = split.begin(); j != split.end(); ++j)
-			++line;
+		// Ensure no double character line breaks.
+		std::wstring source = i->script->getText();
+		source = replaceAll< std::wstring >(source, L"\r\n", L"\n");
 
 		// Execute preprocessor on script.
 		std::wstring text;
-		if (!m_preprocessor->evaluate(i->script->getText(), text))
+		if (!m_preprocessor->evaluate(source, text))
 		{
 			log::error << L"Script pipeline failed; unable to preprocess script" << Endl;
 			return false;
 		}
+
+		// Count lines.
+		StringSplit< std::wstring > split(text, L"\n");
+		for (StringSplit< std::wstring >::const_iterator j = split.begin(); j != split.end(); ++j)
+			++line;
 
 		// Concatenate scripts.
 		ss << text << Endl;
@@ -195,7 +213,8 @@ bool ScriptPipeline::buildOutput(
 	}
 
 	// Compile script; save binary blobs if possible.
-	Ref< IScriptResource > resource = m_scriptManager->compile(outputGuid.format() + L".lua", ss.str(), &sm, 0);
+	ErrorCallback errorCallback;
+	Ref< IScriptResource > resource = m_scriptManager->compile(outputGuid.format() + L".lua", ss.str(), &sm, &errorCallback);
 	if (!resource)
 	{
 		log::error << L"Script pipeline failed; unable to compile script" << Endl;

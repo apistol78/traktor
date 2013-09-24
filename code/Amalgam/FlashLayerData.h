@@ -39,6 +39,7 @@ private:
 	friend class StagePipeline;
 
 	resource::Id< flash::FlashMovie > m_movie;
+	std::map< std::wstring, resource::Id< flash::FlashMovie > > m_externalMovies;
 	bool m_clearBackground;
 	bool m_enableSound;
 };

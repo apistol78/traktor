@@ -9,6 +9,12 @@ namespace traktor
 {
 	namespace editor
 	{
+		namespace
+		{
+
+const int32_t c_version = 1;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDbReport", PipelineDbReport, IPipelineReport)
 
@@ -31,8 +37,33 @@ PipelineDbReport::~PipelineDbReport()
 	if (m_ivalues.empty() && m_svalues.empty())
 		return;
 
+	bool haveTable = m_connection->tableExists(m_table);
+
+	// Ensure table version.
+	if (haveTable)
+	{
+		haveTable = false;
+		if (m_connection->tableExists(m_table + L"_Version"))
+		{
+			Ref< sql::IResultSet > rs;
+			rs = m_connection->executeQuery(L"select * from " + m_table + L"_Version");
+			if (rs && rs->next())
+			{
+				if (rs->getInt32(0) == c_version)
+					haveTable = true;
+			}
+		}
+
+		// Drop table if incorrect version.
+		if (!haveTable)
+		{
+			m_connection->executeUpdate(L"drop table " + m_table);
+			m_connection->executeUpdate(L"drop table " + m_table + L"_Version");
+		}
+	}
+
 	// Create table if it doesn't exist.
-	if (!m_connection->tableExists(m_table))
+	if (!haveTable)
 	{
 		ss <<
 			L"create table " << m_table << L" (" <<
@@ -44,6 +75,8 @@ PipelineDbReport::~PipelineDbReport()
 			ss << L", " << i->first << L" varchar";
 		ss << L")";
 		m_connection->executeUpdate(ss.str());
+		m_connection->executeUpdate(L"create table " + m_table + L"_Version (major integer)");
+		m_connection->executeUpdate(L"insert into " + m_table + L"_Version (major) values (" + toString(c_version) + L")");
 	}
 	// Remove report if it already exists.
 	else

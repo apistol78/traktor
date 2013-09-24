@@ -460,6 +460,7 @@ bool MeshPipeline::buildOutput(
 		}
 	}
 
+#if defined(_DEBUG)
 	// Dump information about mesh.
 	log::info << polygonCount << L" polygon(s)" << Endl;
 	log::info << L"Bounding box (" << boundingBox.mn << L")-(" << boundingBox.mx << L")" << Endl;
@@ -481,6 +482,7 @@ bool MeshPipeline::buildOutput(
 	}
 
 	log::info << DecreaseIndent;
+#endif
 
 	// Merge all shader technique fragments into a single material shader.
 	Ref< render::ShaderGraph > materialShaderGraph = new render::ShaderGraph();

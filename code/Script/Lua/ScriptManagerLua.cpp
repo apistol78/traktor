@@ -260,7 +260,41 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, c
 	);
 	if (result != 0)
 	{
-		log::error << L"LUA load error \"" << mbstows(lua_tostring(m_luaState, -1)) << L"\"" << Endl;
+		std::wstring error = mbstows(lua_tostring(m_luaState, -1));
+
+		size_t p0 = error.find(L':');
+		T_ASSERT (p0 != error.npos);
+
+		error = error.substr(p0 + 1);
+
+		size_t p1 = error.find(L':');
+		T_ASSERT (p1 != error.npos);
+
+		int32_t line = parseString< int32_t >(error.substr(0, p1));
+		error = trim(error.substr(p1 + 1));
+
+		if (map)
+		{
+			for (source_map_t::const_reverse_iterator i = map->rbegin(); i != map->rend(); ++i)
+			{
+				if (line >= i->line)
+				{
+					if (errorCallback)
+						errorCallback->syntaxError(i->name, line - i->line, error);
+					else
+						log::error << i->name << L" (" << (line - i->line) << L"): " << error << Endl;
+					break;
+				}
+			}
+		}
+		else
+		{
+			if (errorCallback)
+				errorCallback->syntaxError(fileName, line, error);
+			else
+				log::error << fileName << L" (" << line << L"): " << error << Endl;
+		}
+
 		lua_pop(m_luaState, 1);
 		return 0;
 	}

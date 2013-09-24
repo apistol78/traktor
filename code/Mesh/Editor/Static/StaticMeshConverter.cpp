@@ -199,6 +199,7 @@ bool StaticMeshConverter::convert(
 
 	renderMesh->getIndexBuffer()->unlock();
 
+#if defined(_DEBUG)
 	// Dump index ranges.
 	log::info << L"Index ranges" << Endl;
 	log::info << IncreaseIndent;
@@ -217,6 +218,7 @@ bool StaticMeshConverter::convert(
 	}
 
 	log::info << DecreaseIndent;
+#endif
 
 	// Build parts.
 	std::vector< render::Mesh::Part > meshParts;

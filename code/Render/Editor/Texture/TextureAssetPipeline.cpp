@@ -13,7 +13,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureAssetPipeline", 4, TextureAssetPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.TextureAssetPipeline", 5, TextureAssetPipeline, editor::DefaultPipeline)
 
 bool TextureAssetPipeline::create(const editor::IPipelineSettings* settings)
 {

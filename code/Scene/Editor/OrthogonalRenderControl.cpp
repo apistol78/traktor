@@ -531,7 +531,7 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 						(rx - lx) / 10.0f,
 						(by - ty) / 10.0f
 					)
-				)) - 1
+				) - 1)
 			);
 
 			if (m_context->getSnapMode() == SceneEditorContext::SmGrid)
