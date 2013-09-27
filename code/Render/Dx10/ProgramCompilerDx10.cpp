@@ -38,5 +38,27 @@ Ref< ProgramResource > ProgramCompilerDx10::compile(
 	return programResource;
 }
 
+bool ProgramCompilerDx10::generate(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	std::wstring& outShader
+) const
+{
+	HlslProgram hlslProgram;
+	if (!Hlsl().generate(shaderGraph, hlslProgram))
+		return false;
+
+	outShader =
+		std::wstring(L"// Vertex shader\n") +
+		std::wstring(L"\n") +
+		hlslProgram.getVertexShader() +
+		std::wstring(L"\n") +
+		std::wstring(L"// Pixel shader\n") +
+		std::wstring(L"\n") +
+		hlslProgram.getPixelShader();
+
+	return true;
+}
+
 	}
 }

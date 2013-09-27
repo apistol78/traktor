@@ -4,8 +4,8 @@
 		<item type="traktor.render.VertexInput">
 			<comment/>
 			<position>
-				<first>-367</first>
-				<second>165</second>
+				<first>-399</first>
+				<second>167</second>
 			</position>
 			<name>Position</name>
 			<usage>DuPosition</usage>
@@ -72,10 +72,10 @@
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>-157</first>
-				<second>176</second>
+				<first>-190</first>
+				<second>167</second>
 			</position>
-			<swizzle>xy10</swizzle>
+			<swizzle>xy1</swizzle>
 		</item>
 		<item type="traktor.render.Transform">
 			<comment/>
@@ -87,8 +87,8 @@
 		<item type="traktor.render.OutputPort">
 			<comment/>
 			<position>
-				<first>3103</first>
-				<second>515</second>
+				<first>2842</first>
+				<second>435</second>
 			</position>
 			<name>Output</name>
 		</item>
@@ -277,69 +277,41 @@
 				<second>385</second>
 			</position>
 		</item>
-		<item type="traktor.render.Mul">
-			<comment/>
-			<position>
-				<first>2337</first>
-				<second>368</second>
-			</position>
-		</item>
 		<item type="traktor.render.TargetSize">
 			<comment/>
 			<position>
-				<first>2095</first>
-				<second>474</second>
-			</position>
-		</item>
-		<item type="traktor.render.Div">
-			<comment/>
-			<position>
-				<first>2678</first>
-				<second>383</second>
+				<first>2120</first>
+				<second>537</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2988</first>
-				<second>515</second>
+				<first>2727</first>
+				<second>435</second>
 			</position>
 			<swizzle>xy</swizzle>
 		</item>
 		<item type="traktor.render.Div">
 			<comment/>
 			<position>
-				<first>2535</first>
-				<second>511</second>
+				<first>2267</first>
+				<second>487</second>
 			</position>
 		</item>
 		<item type="traktor.render.Vector">
 			<comment/>
 			<position>
-				<first>2325</first>
-				<second>509</second>
+				<first>2057</first>
+				<second>485</second>
 			</position>
 			<value>-0.5, -0.5, 0, 0</value>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>2819</first>
-				<second>495</second>
-			</position>
-		</item>
-		<item type="traktor.render.Round">
-			<comment/>
-			<position>
-				<first>2521</first>
-				<second>368</second>
-			</position>
-		</item>
-		<item type="traktor.render.Truncate">
-			<comment/>
-			<position>
-				<first>2521</first>
-				<second>288</second>
+				<first>2558</first>
+				<second>415</second>
 			</position>
 		</item>
 	</nodes>
@@ -422,16 +394,6 @@
 			<destination>
 				<node ref="/object/nodes/item[9]"/>
 				<name>Transform</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[8]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[9]"/>
-				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -636,16 +598,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[5]"/>
 				<name>Output</name>
 			</source>
@@ -666,32 +618,12 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[35]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Output</name>
 			</source>
 			<destination>
 				<node ref="/object/nodes/item[10]"/>
 				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Input2</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[33]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[34]"/>
-				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
@@ -706,21 +638,21 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[33]"/>
+				<node ref="/object/nodes/item[32]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[37]"/>
+				<node ref="/object/nodes/item[35]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[36]"/>
+				<node ref="/object/nodes/item[34]"/>
 				<name>Input1</name>
 			</destination>
 		</item>
@@ -730,17 +662,7 @@
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[38]"/>
-				<name>Input1</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[36]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[38]"/>
 				<name>Input2</name>
 			</destination>
 		</item>
@@ -756,42 +678,32 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[32]"/>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[39]"/>
+				<node ref="/object/nodes/item[33]"/>
 				<name>Input</name>
 			</destination>
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[38]"/>
+				<node ref="/object/nodes/item[29]"/>
 				<name>Output</name>
 			</source>
 			<destination>
-				<node ref="/object/nodes/item[35]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[32]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[40]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
-				<node ref="/object/nodes/item[40]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[34]"/>
+				<node ref="/object/nodes/item[36]"/>
 				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[9]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

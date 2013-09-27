@@ -1,6 +1,5 @@
-#pragma optimize("", off)
-
 #include "Core/Log/Log.h"
+#include "Core/Math/Const.h"
 #include "Model/Model.h"
 #include "Model/Operations/MergeCoplanarAdjacents.h"
 

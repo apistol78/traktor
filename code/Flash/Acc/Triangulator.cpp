@@ -54,7 +54,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 
 		if (!i->curve)
 		{
-			if (abs< float >(i->v[0].y - i->v[1].y) > FUZZY_EPSILON)
+			if (abs< float >(i->v[0].y - i->v[1].y) > /*FUZZY_EPSILON*/10.0f)
 			{
 				s.v[0] = i->v[0];
 				s.v[1] = i->v[1];
@@ -78,7 +78,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 				Bezier2nd b0, b1;
 				b.split(Tlmmy, b0, b1);
 
-				if (abs< float >(b0.cp0.y - b0.cp2.y) > FUZZY_EPSILON)
+				if (abs< float >(b0.cp0.y - b0.cp2.y) > /*FUZZY_EPSILON*/10.0f)
 				{
 					s.v[0] = b0.cp0;
 					s.v[1] = b0.cp2;
@@ -92,7 +92,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 					pys.insert(s.v[1].y);
 				}
 
-				if (abs< float >(b1.cp0.y - b1.cp2.y) > FUZZY_EPSILON)
+				if (abs< float >(b1.cp0.y - b1.cp2.y) > /*FUZZY_EPSILON*/10.0f)
 				{
 					s.v[0] = b1.cp0;
 					s.v[1] = b1.cp2;
@@ -108,7 +108,7 @@ void Triangulator::triangulate(const AlignedVector< Segment >& segments, Aligned
 			}
 			else
 			{
-				if (abs< float >(b.cp0.y - b.cp2.y) > FUZZY_EPSILON)
+				if (abs< float >(b.cp0.y - b.cp2.y) > /*FUZZY_EPSILON*/10.0f)
 				{
 					s.v[0] = b.cp0;
 					s.v[1] = b.cp2;

@@ -27,6 +27,12 @@ public:
 		IProgramHints* hints,
 		Stats* outStats
 	) const;
+
+	virtual bool generate(
+		const ShaderGraph* shaderGraph,
+		int32_t optimize,
+		std::wstring& outShader
+	) const;
 };
 
 	}

@@ -27,6 +27,7 @@ class IEditorPageSite;
 	namespace ui
 	{
 
+class Container;
 class Event;
 class Point;
 class PopupMenu;
@@ -51,6 +52,7 @@ class Node;
 class NodeFacade;
 class QuickMenuTool;
 class ShaderGraph;
+class ShaderViewer;
 
 class T_DLLEXPORT ShaderGraphEditorPage : public editor::IEditorPage
 {
@@ -81,6 +83,7 @@ private:
 	Ref< ui::custom::ToolBar > m_toolBar;
 	Ref< ui::custom::ToolBarDropDown > m_toolPlatform;
 	Ref< ui::custom::GraphControl > m_editorGraph;
+	Ref< ShaderViewer > m_shaderViewer;
 	Ref< ui::PopupMenu > m_menuPopup;
 	Ref< QuickMenuTool > m_menuQuick;
 	std::map< const TypeInfo*, Ref< NodeFacade > > m_nodeFacades;

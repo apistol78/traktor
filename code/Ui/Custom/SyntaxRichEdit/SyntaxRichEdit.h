@@ -32,7 +32,7 @@ class T_DLLCLASS SyntaxRichEdit : public RichEdit
 public:
 	SyntaxRichEdit();
 
-	bool create(Widget* parent, const std::wstring& text = L"", int style = WsClientBorder);
+	bool create(Widget* parent, const std::wstring& text = L"", int32_t style = WsClientBorder | WsDoubleBuffer);
 
 	void setLanguage(const SyntaxLanguage* language);
 
@@ -43,6 +43,8 @@ public:
 	void getOutline(std::list< SyntaxOutline >& outOutline) const;
 
 	void updateLanguage(int32_t fromLine, int32_t toLine);
+
+	virtual void setText(const std::wstring& text);
 
 private:
 	Ref< const SyntaxLanguage > m_language;

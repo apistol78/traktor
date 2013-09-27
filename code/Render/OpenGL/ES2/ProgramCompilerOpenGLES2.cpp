@@ -94,5 +94,27 @@ Ref< ProgramResource > ProgramCompilerOpenGLES2::compile(
 	return resource;
 }
 
+bool ProgramCompilerOpenGLES2::generate(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	std::wstring& outShader
+) const
+{
+	GlslProgram glslProgram;
+	if (!Glsl().generate(shaderGraph, glslProgram))
+		return false;
+
+	outShader =
+		std::wstring(L"// Vertex shader\n") +
+		std::wstring(L"\n") +
+		glslProgram.getVertexShader() +
+		std::wstring(L"\n") +
+		std::wstring(L"// Fragment shader\n") +
+		std::wstring(L"\n") +
+		glslProgram.getFragmentShader();
+
+	return true;
+}
+
 	}
 }

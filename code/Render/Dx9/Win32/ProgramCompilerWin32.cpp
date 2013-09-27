@@ -363,5 +363,27 @@ Ref< ProgramResource > ProgramCompilerWin32::compile(
 	return resource;
 }
 
+bool ProgramCompilerWin32::generate(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	std::wstring& outShader
+) const
+{
+	HlslProgram hlslProgram;
+	if (!Hlsl().generate(shaderGraph, 0, hlslProgram))
+		return false;
+
+	outShader =
+		std::wstring(L"// Vertex shader\n") +
+		std::wstring(L"\n") +
+		hlslProgram.getVertexShader() +
+		std::wstring(L"\n") +
+		std::wstring(L"// Pixel shader\n") +
+		std::wstring(L"\n") +
+		hlslProgram.getPixelShader();
+
+	return true;
+}
+
 	}
 }
