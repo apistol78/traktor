@@ -178,9 +178,6 @@ std::wstring HlslShader::getGeneratedShader()
 {
 	StringOutputStream ss;
 
-	ss << L"// THIS SHADER IS AUTOMATICALLY GENERATED! DO NOT EDIT!" << Endl;
-	ss << Endl;
-
 	std::wstring cbufferOnceText = getOutputStream(BtCBufferOnce).str();
 	if (!cbufferOnceText.empty())
 	{

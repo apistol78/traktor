@@ -87,10 +87,10 @@ public:
 	std::wstring getGeneratedShader();
 
 private:
-	typedef std::map< const OutputPin*, HlslVariable* > scope_t;
+	typedef std::map< const OutputPin*, Ref< HlslVariable > > scope_t;
 
 	ShaderType m_shaderType;
-	std::map< std::wstring, HlslVariable* > m_inputVariables;
+	std::map< std::wstring, Ref< HlslVariable > > m_inputVariables;
 	std::list< scope_t > m_variables;
 	int32_t m_interpolatorCount;
 	int32_t m_booleanRegisterCount;

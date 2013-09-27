@@ -105,6 +105,13 @@ bool emitConditional(HlslContext& cx, Conditional* node)
 	HlslVariable caseTrue, caseFalse;
 	std::wstring caseTrueBranch, caseFalseBranch;
 
+	// Find common input pins from both sides of branch;
+	// emit those before condition in order to have them evaluated outside of conditional.
+	std::vector< const InputPin* > inputPins;
+	cx.findCommonInputs(node, L"CaseTrue", L"CaseFalse", inputPins);
+	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
+		cx.emitInput(*i);
+
 	// Emit true branch.
 	{
 		StringOutputStream fs;
@@ -1519,6 +1526,51 @@ bool emitSwizzle(HlslContext& cx, Swizzle* node)
 	const HlslType types[] = { HtFloat, HtFloat2, HtFloat3, HtFloat4 };
 	HlslType type = types[map.length() - 1];
 
+	// Check if input is a constant Vector node; thus pack directly instead of swizzle.
+	const Vector* constVector = dynamic_type_cast< const Vector* >(cx.getInputNode(node, L"Input"));
+	if (constVector)
+	{
+		HlslVariable* out = cx.emitOutput(node, L"Output", type);
+		StringOutputStream ss;
+		ss << hlsl_type_name(type, cx.inPixel()) << L"(";
+		for (size_t i = 0; i < map.length(); ++i)
+		{
+			if (i > 0)
+				ss << L", ";
+
+			switch (map[i])
+			{
+			case '0':
+				ss << L"0.0f";
+				break;
+
+			case '1':
+				ss << L"1.0f";
+				break;
+
+			case 'x':
+				ss << constVector->get().x();
+				break;
+
+			case 'y':
+				ss << constVector->get().y();
+				break;
+
+			case 'z':
+				ss << constVector->get().z();
+				break;
+
+			case 'w':
+				ss << constVector->get().w();
+				break;
+			}
+		}
+		ss << L")";
+		assign(cx, f, out) << ss.str() << L";" << Endl;
+		return true;
+	}
+
+	// Not constant input; need to evaluate input further.
 	HlslVariable* in = cx.emitInput(node, L"Input");
 	if (!in)
 		return false;
@@ -1941,9 +1993,6 @@ bool emitVertexOutput(HlslContext& cx, VertexOutput* node)
 		fb << L"o.Position = " << in->getName() << L";" << Endl;
 		break;
 	}
-
-	StringOutputStream& fpi = cx.getPixelShader().getOutputStream(HlslShader::BtInput);
-	fpi << L"float4 Position : SV_Position;" << Endl;
 
 	return true;
 }

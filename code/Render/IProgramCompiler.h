@@ -67,6 +67,22 @@ public:
 		IProgramHints* hints,
 		Stats* outStats
 	) const = 0;
+
+	/*! \brief Generate render specific shader if possible.
+	 *
+	 * \note This is only used to aid optimization of shader graphs
+	 * from within the editor.
+	 *
+	 * \param shaderGraph Program shader graph.
+	 * \param optimize Optimization level (0-4; 0 = No optimization; 4 = Maximum optimization).
+	 * \param outShader Output render specific shader.
+	 * \return True if shader was successfully generated.
+	 */
+	virtual bool generate(
+		const ShaderGraph* shaderGraph,
+		int32_t optimize,
+		std::wstring& outShader
+	) const = 0;
 };
 
 	}

@@ -1,8 +1,10 @@
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
+#include "Core/Settings/PropertyString.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
 #include "Database/Instance.h"
@@ -12,17 +14,21 @@
 #include "Editor/IEditorPageSite.h"
 #include "Editor/IBrowseFilter.h"
 #include "I18N/Text.h"
+#include "Render/IProgramCompiler.h"
 #include "Render/Editor/Texture/TextureAsset.h"
 #include "Render/Shader/ShaderGraph.h"
 #include "Render/Shader/Edge.h"
 #include "Render/Editor/Shader/NodeCategories.h"
 #include "Render/Editor/Shader/NodeFacade.h"
+#include "Render/Editor/Shader/ShaderGraphCombinations.h"
 #include "Render/Editor/Shader/ShaderGraphEditorClipboardData.h"
 #include "Render/Editor/Shader/ShaderGraphEditorPage.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
-#include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
+#include "Render/Editor/Shader/ShaderGraphStatic.h"
+#include "Render/Editor/Shader/ShaderGraphTechniques.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
+#include "Render/Editor/Shader/ShaderViewer.h"
 #include "Render/Editor/Shader/QuickMenuTool.h"
 #include "Render/Editor/Shader/Facades/DefaultNodeFacade.h"
 #include "Render/Editor/Shader/Facades/ColorNodeFacade.h"
@@ -34,10 +40,11 @@
 #include "Render/Editor/Shader/Facades/ExternalNodeFacade.h"
 #include "Render/Editor/Shader/Facades/TextureNodeFacade.h"
 #include "Ui/Application.h"
+#include "Ui/Bitmap.h"
 #include "Ui/Clipboard.h"
 #include "Ui/Command.h"
-#include "Ui/Bitmap.h"
 #include "Ui/Container.h"
+#include "Ui/FloodLayout.h"
 #include "Ui/PopupMenu.h"
 #include "Ui/MenuItem.h"
 #include "Ui/MessageBox.h"
@@ -181,6 +188,11 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_editorGraph->addEdgeConnectEventHandler(ui::createMethodHandler(this, &ShaderGraphEditorPage::eventEdgeConnect));
 	m_editorGraph->addEdgeDisconnectEventHandler(ui::createMethodHandler(this, &ShaderGraphEditorPage::eventEdgeDisconnect));
 
+	// Create shader graph output view.
+	m_shaderViewer = new ShaderViewer(m_editor);
+	m_shaderViewer->create(parent);
+	m_site->createAdditionalPanel(m_shaderViewer, 400, false);
+
 	// Modify graph control settings.
 	Ref< ui::custom::PaintSettings > paintSettings = m_editorGraph->getPaintSettings();
 	paintSettings->setSmoothSpline(m_editor->getSettings()->getProperty< PropertyBoolean >(L"ShaderEditor.SmoothSpline"));
@@ -253,8 +265,10 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 void ShaderGraphEditorPage::destroy()
 {
+	m_site->destroyAdditionalPanel(m_shaderViewer);
 	m_nodeFacades.clear();
 	safeDestroy(m_editorGraph);
+	safeDestroy(m_shaderViewer);
 	safeDestroy(m_menuPopup);
 	safeDestroy(m_menuQuick);
 }
@@ -758,6 +772,8 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 void ShaderGraphEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
+	if (m_shaderGraph)
+		m_shaderViewer->reflect(m_shaderGraph);
 }
 
 void ShaderGraphEditorPage::createEditorNodes(const RefArray< Node >& shaderNodes, const RefArray< Edge >& shaderEdges)
@@ -918,6 +934,10 @@ void ShaderGraphEditorPage::updateGraph()
 		else
 			nodeFacade->setValidationIndicator(*i, true);
 	}
+
+	// If validation succeeded then update generated shader as well.
+	if (validationResult)
+		m_shaderViewer->reflect(m_shaderGraph);
 
 	// Redraw editor graph.
 	m_editorGraph->update();

@@ -27,9 +27,9 @@ SyntaxRichEdit::SyntaxRichEdit()
 {
 }
 
-bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int style)
+bool SyntaxRichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 {
-	if (!RichEdit::create(parent, text/*, style*/))
+	if (!RichEdit::create(parent, text, style))
 		return false;
 
 	m_attributeDefault = addAttribute(Color4ub(0, 0, 0), Color4ub(255, 255, 255), false, false, false);				// Default
@@ -215,6 +215,12 @@ void SyntaxRichEdit::updateLanguage(int32_t fromLine, int32_t toLine)
 	}
 
 	setAttribute(endOffset, 0, m_attributeDefault);
+}
+
+void SyntaxRichEdit::setText(const std::wstring& text)
+{
+	RichEdit::setText(text);
+	updateLanguage(0, getLineCount());
 }
 
 void SyntaxRichEdit::eventChange(Event* event)

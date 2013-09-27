@@ -57,10 +57,27 @@ private:
 	Ref< ILogTarget > m_target2;
 };
 
-bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
+int32_t recursiveCountGroups(db::Group* group)
+{
+	RefArray< db::Group > childGroups;
+	group->getChildGroups(childGroups);
+
+	int32_t localCount = 1;
+	for (RefArray< db::Group >::iterator i = childGroups.begin(); i != childGroups.end(); ++i)
+	{
+		T_ASSERT (*i);
+		localCount += recursiveCountGroups(*i);
+	}
+
+	return localCount;
+}
+
+bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup, int32_t& groupIndex, int32_t groupCount)
 {
 	T_ANONYMOUS_VAR(ScopeIndent)(log::info);
 	traktor::log::info << IncreaseIndent;
+
+	log::info << L":" << groupIndex << L":" << groupCount << Endl;
 
 	RefArray< db::Instance > childInstances;
 	sourceGroup->getChildInstances(childInstances);
@@ -127,6 +144,8 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 		}
 	}
 
+	++groupIndex;
+
 	RefArray< db::Group > childGroups;
 	sourceGroup->getChildGroups(childGroups);
 
@@ -148,7 +167,7 @@ bool recursiveConvertInstances(db::Group* targetGroup, db::Group* sourceGroup)
 			}
 		}
 
-		if (!recursiveConvertInstances(targetChildGroup, sourceChildGroup))
+		if (!recursiveConvertInstances(targetChildGroup, sourceChildGroup, groupIndex, groupCount))
 			return false;
 	}
 
@@ -292,7 +311,12 @@ int main(int argc, const char** argv)
 	Ref< db::Group > targetGroup = destinationDb->getRootGroup();
 	if (sourceGroup && targetGroup)
 	{
-		if (!recursiveConvertInstances(targetGroup, sourceGroup))
+		// Count number of groups; quicker than number of instances but
+		// should be sufficient for progress information.
+		int32_t groupIndex = 0;
+		int32_t groupCount = recursiveCountGroups(sourceGroup);
+
+		if (!recursiveConvertInstances(targetGroup, sourceGroup, groupIndex, groupCount))
 			return 5;
 	}
 

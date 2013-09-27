@@ -23,10 +23,7 @@ struct Vertex
 	float position[3];
 };
 
-render::handle_t s_handleDecalSize;
-render::handle_t s_handleDecalThickness;
-render::handle_t s_handleAlpha;
-render::handle_t s_handleAge;
+render::handle_t s_handleDecalParams;
 render::handle_t s_handleMagicCoeffs;
 render::handle_t s_handleWorldViewInv;
 
@@ -38,10 +35,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.DecalEntityRenderer", DecalEntityRenderer
 
 DecalEntityRenderer::DecalEntityRenderer(render::IRenderSystem* renderSystem)
 {
-	s_handleDecalSize = render::getParameterHandle(L"DecalSize");
-	s_handleDecalThickness = render::getParameterHandle(L"DecalThinkness");
-	s_handleAlpha = render::getParameterHandle(L"Alpha");
-	s_handleAge = render::getParameterHandle(L"Age");
+	s_handleDecalParams = render::getParameterHandle(L"DecalParams");
 	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
 	s_handleWorldViewInv = render::getParameterHandle(L"WorldViewInv");
 
@@ -153,8 +147,6 @@ void DecalEntityRenderer::flush(
 		DecalEntity* decal = m_decalEntities[i];
 		T_ASSERT (decal);
 
-		const Transform& transform = decal->getTransform();
-
 		render::Shader* shader = decal->getShader();
 		T_ASSERT (shader);
 
@@ -165,7 +157,10 @@ void DecalEntityRenderer::flush(
 		if (!program)
 			continue;
 
-		Matrix44 worldView = view * transform.toMatrix44();
+		const Transform& transform = decal->getTransform();
+		
+		Matrix44 world = transform.toMatrix44();
+		Matrix44 worldView = view * world;
 		Matrix44 worldViewInv = worldView.inverse();
 
 		render::IndexedRenderBlock* renderBlock = renderContext->alloc< render::IndexedRenderBlock >("Decal");
@@ -186,14 +181,16 @@ void DecalEntityRenderer::flush(
 		worldRenderPass.setProgramParameters(
 			renderBlock->programParams,
 			true,
-			transform.toMatrix44(),
+			world,
 			decal->getBoundingBox()
 		);
 
-		renderBlock->programParams->setFloatParameter(s_handleDecalSize, decal->getSize());
-		renderBlock->programParams->setFloatParameter(s_handleDecalThickness, decal->getThickness());
-		renderBlock->programParams->setFloatParameter(s_handleAlpha, decal->getAlpha());
-		renderBlock->programParams->setFloatParameter(s_handleAge, decal->getAge());
+		renderBlock->programParams->setVectorParameter(s_handleDecalParams, Vector4(
+			decal->getSize(),
+			decal->getThickness(),
+			decal->getAlpha(),
+			decal->getAge()
+		));
 		renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, magicCoeffs);
 		renderBlock->programParams->setMatrixParameter(s_handleWorldViewInv, worldViewInv);
 		renderBlock->programParams->endParameters(renderContext);

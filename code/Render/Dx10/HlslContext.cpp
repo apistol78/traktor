@@ -8,6 +8,9 @@
 #include "Render/Shader/InputPin.h"
 #include "Render/Shader/OutputPin.h"
 
+// \fixme
+#include "Render/Editor/Shader/ShaderGraphUtilities.h"
+
 namespace traktor
 {
 	namespace render
@@ -176,7 +179,7 @@ void HlslContext::findExternalInputs(Node* node, const std::wstring& inputPinNam
 			if (
 				!outputPin ||
 				visitedOutputPins.find(outputPin) != visitedOutputPins.end()
-				)
+			)
 				continue;
 
 			visitedOutputPins.insert(outputPin);
@@ -185,6 +188,74 @@ void HlslContext::findExternalInputs(Node* node, const std::wstring& inputPinNam
 			for (int32_t i = 0; i < node->getInputPinCount(); ++i)
 				inputPins.push_back(node->getInputPin(i));
 		}
+	}
+}
+
+void HlslContext::findCommonInputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const InputPin* >& outInputPins) const
+{
+	struct Collect1
+	{
+		std::set< const OutputPin* > outputs;
+
+		bool operator () (Node* node)
+		{
+			return true;
+		}
+
+		bool operator () (Edge* edge)
+		{
+			outputs.insert(edge->getSource());
+			return true;
+		}
+	};
+
+	struct Collect2
+	{
+		std::set< const OutputPin* >* candidates; 
+		std::set< const OutputPin* > common;
+
+		bool operator () (Node* node)
+		{
+			return true;
+		}
+
+		bool operator () (Edge* edge)
+		{
+			const OutputPin* outputPin = edge->getSource();
+			if (candidates->find(outputPin) != candidates->end())
+			{
+				common.insert(outputPin);
+				return false;
+			}
+			else
+				return true;
+		}
+	};
+
+	const OutputPin* outputPin1 = m_shaderGraph->findSourcePin(node->findInputPin(inputPin1));
+	const OutputPin* outputPin2 = m_shaderGraph->findSourcePin(node->findInputPin(inputPin2));
+
+	if (outputPin1 != outputPin2)
+	{
+		Collect1 visitor1;
+		ShaderGraphTraverse(m_shaderGraph, outputPin1->getNode()).preorder(visitor1);
+
+		Collect2 visitor2;
+		visitor2.candidates = &visitor1.outputs;
+		ShaderGraphTraverse(m_shaderGraph, outputPin2->getNode()).preorder(visitor2);
+
+		for (std::set< const OutputPin* >::const_iterator i = visitor2.common.begin(); i != visitor2.common.end(); ++i)
+		{
+			std::vector< const InputPin* > inputPins;
+			m_shaderGraph->findDestinationPins(*i, inputPins);
+			outInputPins.insert(outInputPins.end(), inputPins.begin(), inputPins.end());
+		}
+	}
+	else
+	{
+		// Apparently both inputs are connected to same output; thus
+		// no need to traverse in order to find the intersection.
+		m_shaderGraph->findDestinationPins(outputPin1, outInputPins);
 	}
 }
 

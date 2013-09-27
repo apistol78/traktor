@@ -33,7 +33,7 @@ class T_DLLCLASS RichEdit : public Widget
 public:
 	RichEdit();
 
-	bool create(Widget* parent, const std::wstring& text);
+	bool create(Widget* parent, const std::wstring& text = L"", int32_t style = WsClientBorder | WsDoubleBuffer);
 
 	virtual void setText(const std::wstring& text);
 	

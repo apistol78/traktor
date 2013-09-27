@@ -132,6 +132,13 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	GlslVariable caseTrue, caseFalse;
 	std::wstring caseTrueBranch, caseFalseBranch;
 
+	// Find common input pins from both sides of branch;
+	// emit those before condition in order to have them evaluated outside of conditional.
+	std::vector< const InputPin* > inputPins;
+	cx.findCommonInputs(node, L"CaseTrue", L"CaseFalse", inputPins);
+	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
+		cx.emitInput(*i);
+
 	// Emit true branch.
 	{
 		StringOutputStream fs;

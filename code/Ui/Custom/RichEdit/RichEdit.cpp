@@ -44,9 +44,9 @@ RichEdit::RichEdit()
 {
 }
 
-bool RichEdit::create(Widget* parent, const std::wstring& text)
+bool RichEdit::create(Widget* parent, const std::wstring& text, int32_t style)
 {
-	if (!Widget::create(parent, WsClientBorder | WsDoubleBuffer))
+	if (!Widget::create(parent, style))
 		return false;
 
 	addKeyDownEventHandler(createMethodHandler(this, &RichEdit::eventKeyDown));
@@ -86,20 +86,21 @@ bool RichEdit::create(Widget* parent, const std::wstring& text)
 void RichEdit::setText(const std::wstring& text)
 {
 	m_text.clear();
+	m_lines.clear();
 
 	if (!text.empty())
 	{
-		StringSplit< std::wstring > ss(text, L"\n\r");
+		StringSplit< std::wstring > ss(replaceAll< std::wstring >(text, L"\n\r", L"\n"), L"\n");
 		for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
 		{
-			const std::wstring& text = *i;
+			const std::wstring& ln = *i;
 
 			Line line;
 			line.start = m_text.size();
-			line.stop = line.start + text.length();
+			line.stop = line.start + ln.length();
 			m_lines.push_back(line);
 
-			m_text.insert(m_text.end(), text.begin(), text.end());
+			m_text.insert(m_text.end(), ln.begin(), ln.end());
 			m_text.push_back(L'\n');
 		}
 	}
@@ -909,7 +910,7 @@ void RichEdit::eventPaint(Event* event)
 
 	uint32_t lineCount = m_lines.size();
 	uint32_t lineOffset = m_scrollBarV->getPosition();
-	uint32_t lineHeight = font.getSize() + 1;
+	uint32_t lineHeight = abs(font.getSize()) + 1;
 	uint32_t pageLines = (rc.getHeight() + lineHeight - 1) / lineHeight;
 
 	// Background

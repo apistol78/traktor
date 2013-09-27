@@ -24,7 +24,6 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 	Stats* outStats
 ) const
 {
-	// Generate GLSL shader.
 	GlslProgram glslProgram;
 	if (!Glsl().generate(shaderGraph, glslProgram))
 		return 0;
@@ -34,6 +33,28 @@ Ref< ProgramResource > ProgramCompilerOpenGL::compile(
 		return 0;
 
 	return resource;
+}
+
+bool ProgramCompilerOpenGL::generate(
+	const ShaderGraph* shaderGraph,
+	int32_t optimize,
+	std::wstring& outShader
+) const
+{
+	GlslProgram glslProgram;
+	if (!Glsl().generate(shaderGraph, glslProgram))
+		return false;
+
+	outShader =
+		std::wstring(L"// Vertex shader\n") +
+		std::wstring(L"\n") +
+		glslProgram.getVertexShader() +
+		std::wstring(L"\n") +
+		std::wstring(L"// Fragment shader\n") +
+		std::wstring(L"\n") +
+		glslProgram.getFragmentShader();
+
+	return true;
 }
 
 	}

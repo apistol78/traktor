@@ -89,11 +89,15 @@ bool SyntaxLanguageHlsl::consume(const std::wstring& text, State& outState, int&
 	std::wstring word = text.substr(0, ws);
 	if (
 		word == L"break" ||
+		word == L"case" ||
+		word == L"const" ||
 		word == L"continue" ||
 		word == L"else" ||
 		word == L"for" ||
 		word == L"if" ||
 		word == L"return" ||
+		word == L"struct" ||
+		word == L"switch" ||
 		word == L"while"
 	)
 	{
@@ -103,12 +107,20 @@ bool SyntaxLanguageHlsl::consume(const std::wstring& text, State& outState, int&
 	}
 
 	if (
+		word == L"cbuffer" ||
 		word == L"float" ||
 		word == L"float2" ||
 		word == L"float3" ||
 		word == L"float4" ||
+		word == L"float4x4" ||
+		word == L"half" ||
+		word == L"half2" ||
+		word == L"half3" ||
+		word == L"half4" ||
+		word == L"half4x4" ||
 		word == L"texture" ||
-		word == L"sampler"
+		word == L"sampler" ||
+		word == L"void"
 	)
 	{
 		outState = StType;
@@ -117,7 +129,12 @@ bool SyntaxLanguageHlsl::consume(const std::wstring& text, State& outState, int&
 	}
 
 	if (
+		word == L"discard" ||
 		word == L"dot" ||
+		word == L"lerp" ||
+		word == L"normalize" ||
+		word == L"pow" ||
+		word == L"saturate" ||
 		word == L"tex2D" ||
 		word == L"tex2Dlod"
 	)

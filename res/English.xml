@@ -1930,6 +1930,10 @@
       <second>Vertex output</second>
     </item>
     <item>
+      <first>SHADERGRAPH_VIEWER</first>
+      <second>Generated</second>
+    </item>
+    <item>
       <first>SKELETON_WIZARDTOOL_DESCRIPTION</first>
       <second>Import skeleton...</second>
     </item>
