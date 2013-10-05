@@ -772,7 +772,7 @@ bool ShaderGraphEditorPage::handleCommand(const ui::Command& command)
 
 void ShaderGraphEditorPage::handleDatabaseEvent(const Guid& eventId)
 {
-	if (m_shaderGraph)
+	if (m_shaderGraph && m_shaderViewer->isVisible(true))
 		m_shaderViewer->reflect(m_shaderGraph);
 }
 
@@ -936,7 +936,7 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// If validation succeeded then update generated shader as well.
-	if (validationResult)
+	if (validationResult && m_shaderViewer->isVisible(true))
 		m_shaderViewer->reflect(m_shaderGraph);
 
 	// Redraw editor graph.

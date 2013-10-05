@@ -49,7 +49,7 @@ void ButtonCell::mouseUp(ui::custom::AutoWidget* widget, const ui::Point& positi
 void ButtonCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect)
 {
 	ui::Size bitmapSize = m_bitmap->getSize();
-	ui::Size glyphSize(bitmapSize.cx / 3, bitmapSize.cy / 2);
+	ui::Size glyphSize(bitmapSize.cx / 4, bitmapSize.cy / 2);
 
 	ui::Point position = rect.getTopLeft();
 	position.y += (rect.getHeight() - glyphSize.cy) / 2;

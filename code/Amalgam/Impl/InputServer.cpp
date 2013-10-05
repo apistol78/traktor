@@ -76,8 +76,9 @@ bool anyControlPressed(input::InputSystem* inputSystem, input::InputCategory dev
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.InputServer", InputServer, IInputServer)
 
-bool InputServer::create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow)
+bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow)
 {
+	m_settings = settings;
 	m_inputSystem = new input::InputSystem();
 
 #if defined(_WIN32)
@@ -463,6 +464,30 @@ bool InputServer::isIdle() const
 	}
 
 	return true;
+}
+
+void InputServer::apply()
+{
+	if (m_inputMappingSourceData)
+		m_settings->setProperty< PropertyObject >(L"Input.Sources", m_inputMappingSourceData);
+}
+
+void InputServer::revert()
+{
+	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(m_settings->getProperty< PropertyObject >(L"Input.Sources"));
+	if (!m_inputMappingSourceData)
+		m_inputMappingSourceData = m_inputMappingDefaultSourceData;
+
+	if (m_inputMappingSourceData && m_inputMappingStateData)
+	{
+		if (!m_inputMapping)
+			m_inputMapping = new input::InputMapping();
+
+		m_inputMapping->create(m_inputSystem, m_inputMappingSourceData, m_inputMappingStateData);
+		m_inputMapping->update(1.0f / 60.0f);
+	}
+	else
+		m_inputMapping = 0;
 }
 
 input::InputSystem* InputServer::getInputSystem()

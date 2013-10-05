@@ -371,6 +371,42 @@ struct MethodSignature_7 < ClassType, ReturnType, Argument1Type, Argument2Type, 
 template <
 	typename ClassType,
 	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type,
+	typename Argument8Type,
+	bool Const
+>
+struct MethodSignature_8
+{
+	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
+	typedef ReturnType (*static_method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type,
+	typename Argument8Type
+>
+struct MethodSignature_8 < ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, true >
+{
+	typedef ReturnType (ClassType::*method_t)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type) const;
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
 	bool Const
 >
 struct MethodSignature_Variadic
@@ -883,6 +919,85 @@ struct Method_7 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, 
 template <
 	typename ClassType,
 	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type,
+	typename Argument8Type,
+	bool Const
+>
+struct Method_8 : public IMethod
+{
+	typedef typename MethodSignature_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, Const >::method_t method_t;
+
+	method_t m_method;
+
+	Method_8(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
+	{
+		ReturnType returnValue = (checked_type_cast< ClassType*, false >(object)->*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5]),
+			CastAny< Argument7Type >::get(argv[6]),
+			CastAny< Argument8Type >::get(argv[7])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type,
+	typename Argument8Type,
+	bool Const
+>
+struct Method_8 < ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, Const > : public IMethod
+{
+	typedef typename MethodSignature_8< ClassType, void, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, Const >::method_t method_t;
+
+	method_t m_method;
+
+	Method_8(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
+	{
+		(checked_type_cast< ClassType*, false >(object)->*m_method)(
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5]),
+			CastAny< Argument7Type >::get(argv[6]),
+			CastAny< Argument7Type >::get(argv[7])
+		);
+		return Any();
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
 	bool Const
 >
 class Method_Variadic : public IMethod
@@ -1305,6 +1420,46 @@ struct MethodTrunk_7 : public IMethod
 			CastAny< Argument5Type >::get(argv[4]),
 			CastAny< Argument6Type >::get(argv[5]),
 			CastAny< Argument7Type >::get(argv[6])
+		);
+		return CastAny< ReturnType >::set(returnValue);
+	}
+};
+
+template <
+	typename ClassType,
+	typename ReturnType,
+	typename Argument1Type,
+	typename Argument2Type,
+	typename Argument3Type,
+	typename Argument4Type,
+	typename Argument5Type,
+	typename Argument6Type,
+	typename Argument7Type,
+	typename Argument8Type
+>
+struct MethodTrunk_8 : public IMethod
+{
+	typedef ReturnType (*method_t)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type);
+
+	method_t m_method;
+
+	MethodTrunk_8(method_t method)
+	:	m_method(method)
+	{
+	}
+
+	virtual Any invoke(Object* object, uint32_t argc, const Any* argv) const
+	{
+		ReturnType returnValue = (*m_method)(
+			checked_type_cast< ClassType*, false >(object),
+			CastAny< Argument1Type >::get(argv[0]),
+			CastAny< Argument2Type >::get(argv[1]),
+			CastAny< Argument3Type >::get(argv[2]),
+			CastAny< Argument4Type >::get(argv[3]),
+			CastAny< Argument5Type >::get(argv[4]),
+			CastAny< Argument6Type >::get(argv[5]),
+			CastAny< Argument7Type >::get(argv[6]),
+			CastAny< Argument8Type >::get(argv[7])
 		);
 		return CastAny< ReturnType >::set(returnValue);
 	}
@@ -2286,6 +2441,54 @@ public:
 	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type))
 	{
 		addMethod(methodName, 7, new MethodTrunk_7< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type,
+		typename Argument6Type,
+		typename Argument7Type,
+		typename Argument8Type
+	>
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type))
+	{
+		addMethod(methodName, 8, new Method_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, false >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type,
+		typename Argument6Type,
+		typename Argument7Type,
+		typename Argument8Type
+	>
+	void addMethod(const std::string& methodName, ReturnType (ClassType::*method)(Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type) const)
+	{
+		addMethod(methodName, 8, new Method_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type, true >(method));
+	}
+
+	template <
+		typename ReturnType,
+		typename Argument1Type,
+		typename Argument2Type,
+		typename Argument3Type,
+		typename Argument4Type,
+		typename Argument5Type,
+		typename Argument6Type,
+		typename Argument7Type,
+		typename Argument8Type
+	>
+	void addMethod(const std::string& methodName, ReturnType (*method)(ClassType*, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type))
+	{
+		addMethod(methodName, 8, new MethodTrunk_8< ClassType, ReturnType, Argument1Type, Argument2Type, Argument3Type, Argument4Type, Argument5Type, Argument6Type, Argument7Type, Argument8Type >(method));
 	}
 
 	template <

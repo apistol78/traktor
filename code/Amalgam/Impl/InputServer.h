@@ -35,7 +35,7 @@ class InputServer : public IInputServer
 	T_RTTI_CLASS;
 
 public:
-	bool create(const PropertyGroup* defaultSettings, const PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow);
+	bool create(const PropertyGroup* defaultSettings, PropertyGroup* settings, db::Database* db, const SystemWindow& systemWindow);
 
 	void destroy();
 
@@ -59,6 +59,10 @@ public:
 
 	virtual bool isIdle() const;
 
+	virtual void apply();
+
+	virtual void revert();
+
 	virtual input::InputSystem* getInputSystem();
 
 	virtual input::InputMapping* getInputMapping();
@@ -66,6 +70,7 @@ public:
 	virtual input::RumbleEffectPlayer* getRumbleEffectPlayer();
 
 private:
+	Ref< PropertyGroup > m_settings;
 	Ref< input::InputSystem > m_inputSystem;
 	Ref< input::InputMapping > m_inputMapping;
 	Ref< input::InputMappingSourceData > m_inputMappingDefaultSourceData;

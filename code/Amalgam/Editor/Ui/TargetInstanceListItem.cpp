@@ -118,7 +118,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 			m_stopCells[i] = new ButtonCell(s_bitmapTargetControl, 2, true, ui::EiUser + 2, m_instance, ui::Command(i, L"Amalgam.Stop"));
 
 		if (!m_captureCells[i])
-			m_captureCells[i] = new ButtonCell(s_bitmapTargetControl, 2, true, ui::EiUser + 3, m_instance, ui::Command(i, L"Amalgam.Capture"));
+			m_captureCells[i] = new ButtonCell(s_bitmapTargetControl, 3, true, ui::EiUser + 3, m_instance, ui::Command(i, L"Amalgam.Capture"));
 
 		widget->placeCell(
 			m_stopCells[i],
@@ -198,8 +198,12 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 	canvas.setFont(performanceFont);
 
 	performanceRect = rect;
+	performanceRect.right -= 34;
 	performanceRect.top = rect.top + 28;
 	performanceRect.bottom = performanceRect.top + c_performanceHeight;
+
+	canvas.setClipRect(performanceRect);
+
 	for (uint32_t i = 0; i < connections.size(); ++i)
 	{
 		const TargetPerformance& performance = connections[i]->getPerformance();
@@ -269,6 +273,7 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 		performanceRect = performanceRect.offset(0, performanceRect.getHeight());
 	}
 
+	canvas.resetClipRect();
 	canvas.setFont(widgetFont);
 
 	m_playCell->setEnable(m_instance->getState() == TsIdle);

@@ -9,7 +9,6 @@
 #include "Net/Replication/Pack.h"
 #include "Net/Replication/State/BodyStateValue.h"
 #include "Net/Replication/State/BodyStateTemplate.h"
-#include "Net/Replication/State/Config.h"
 
 namespace traktor
 {

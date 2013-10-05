@@ -708,7 +708,15 @@ void RenderViewOpenGL::getStatistics(RenderViewStatistics& outStatistics) const
 
 bool RenderViewOpenGL::getBackBufferContent(void* buffer) const
 {
-	return false;
+	if (!m_renderContext->enter())
+		return false;
+
+	m_primaryTarget->bind(m_renderContext, m_primaryTarget->getDepthBuffer(), 0);
+
+	T_OGL_SAFE(glReadPixels(0, 0, m_primaryTargetDesc.width, m_primaryTargetDesc.height, GL_RGBA, GL_UNSIGNED_BYTE, buffer));
+
+	m_renderContext->leave();
+	return true;
 }
 
 #if defined(_WIN32)

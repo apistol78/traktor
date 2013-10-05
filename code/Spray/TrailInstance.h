@@ -47,7 +47,7 @@ private:
 	float m_age;
 	float m_lengthThreshold;
 	float m_breakThreshold;
-	CircularVector< Vector4, 32 > T_MATH_ALIGN16 m_points;
+	CircularVector< Vector4, 64 > T_MATH_ALIGN16 m_points;
 	Vector4 m_last;
 	Vector4 m_time;
 	Aabb3 m_boundingBox;

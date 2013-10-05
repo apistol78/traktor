@@ -25,12 +25,19 @@ public:
 	typedef float value_argument_t;
 	typedef float value_return_t;
 
+	FloatValue()
+	:	m_value(0.0f)
+	{
+	}
+
 	FloatValue(float value)
 	:	m_value(value)
 	{
 	}
 
 	operator float () const { return m_value; }
+
+	virtual void serialize(ISerializer& s);
 
 private:
 	float m_value;

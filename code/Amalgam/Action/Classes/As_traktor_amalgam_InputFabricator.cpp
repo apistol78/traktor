@@ -64,5 +64,17 @@ void As_traktor_amalgam_InputFabricator::InputFabricator_fabricateSource(flash::
 	ca.ret = flash::ActionValue(r);
 }
 
+void As_traktor_amalgam_InputFabricator::InputFabricator_apply(flash::CallArgs& ca)
+{
+	Ref< AsInputFabricator > inp = ca.self->getRelay< AsInputFabricator >();
+	inp->apply();
+}
+
+void As_traktor_amalgam_InputFabricator::InputFabricator_revert(flash::CallArgs& ca)
+{
+	Ref< AsInputFabricator > inp = ca.self->getRelay< AsInputFabricator >();
+	inp->revert();
+}
+
 	}
 }

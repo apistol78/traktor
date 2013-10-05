@@ -20,7 +20,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_stripeLength = 32;
+const uint32_t c_stripeLength = 64;
 const uint32_t c_trailCount = 8;
 
 render::handle_t s_handleTimeAndAge = 0;
@@ -71,7 +71,7 @@ void TrailRenderer::destroy()
 
 void TrailRenderer::render(
 	render::Shader* shader,
-	const CircularVector< Vector4, 32 >& points,
+	const CircularVector< Vector4, 64 >& points,
 	const Vector4& cameraPosition,
 	const Plane& cameraPlane,
 	float width,

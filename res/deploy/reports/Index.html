@@ -38,21 +38,29 @@
 <?--
 		local db = Connection.connect("fileName=temp/Pipeline.db")
 
-		local rs = db:executeQuery("select sum(dataSize) from Report_Texture")
-		rs:next()
-		local textureSize = rs:getInt32(0) / 1024
+		local textureSize = 0
+		if db:tableExists("Report_Texture") then
+			local rs = db:executeQuery("select sum(dataSize) from Report_Texture"); rs:next()
+			textureSize = rs:getInt32(0) / 1024
+		end
 
-		local rs = db:executeQuery("select sum(size) from Report_Mesh")
-		rs:next()
-		local meshSize = rs:getInt32(0) / 1024
+		local meshSize = 0
+		if db:tableExists("Report_Mesh") then
+			local rs = db:executeQuery("select sum(size) from Report_Mesh"); rs:next()
+			meshSize = rs:getInt32(0) / 1024
+		end
 
-		local rs = db:executeQuery("select sum(size) from Report_Shader")
-		rs:next()
-		local shaderSize = rs:getInt32(0) / 1024
+		local shaderSize = 0
+		if db:tableExists("Report_Shader") then
+			local rs = db:executeQuery("select sum(size) from Report_Shader"); rs:next()
+			shaderSize = rs:getInt32(0) / 1024
+		end
 
-		local rs = db:executeQuery("select sum(size) from Report_Sound")
-		rs:next()
-		local soundSize = rs:getInt32(0) / 1024
+		local soundSize = 0
+		if db:tableExists("Report_Sound") then
+			local rs = db:executeQuery("select sum(size) from Report_Sound"); rs:next()
+			soundSize = rs:getInt32(0) / 1024
+		end
 --?>
 
 		<script type="text/javascript" src="https://www.google.com/jsapi"></script>
