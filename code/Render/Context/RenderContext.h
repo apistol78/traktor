@@ -83,7 +83,7 @@ public:
 	/*! \brief Flush blocks. */
 	void flush();
 
-	uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - m_heap.ptr()); }
+	uint32_t getAllocatedSize() const { return uint32_t(m_heapPtr - m_heap.c_ptr()); }
 
 private:
 	AutoPtr< uint8_t, AllocFreeAlign > m_heap;

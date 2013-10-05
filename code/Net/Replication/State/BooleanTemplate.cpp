@@ -3,7 +3,6 @@
 #include "Core/Math/MathUtils.h"
 #include "Net/Replication/State/BooleanValue.h"
 #include "Net/Replication/State/BooleanTemplate.h"
-#include "Net/Replication/State/Config.h"
 
 namespace traktor
 {

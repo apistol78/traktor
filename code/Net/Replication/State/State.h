@@ -1,8 +1,8 @@
 #ifndef traktor_net_State_H
 #define traktor_net_State_H
 
-#include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Serialization/ISerializable.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -19,7 +19,7 @@ namespace traktor
 
 class IValue;
 
-class T_DLLCLASS State : public Object
+class T_DLLCLASS State : public ISerializable
 {
 	T_RTTI_CLASS;
 
@@ -58,6 +58,8 @@ public:
 	typename ValueType::value_return_t unpack() { return *checked_type_cast< const ValueType*, false >(unpack()); }
 
 	// \}
+
+	virtual void serialize(ISerializer& s);
 
 private:
 	RefArray< const IValue > m_values;

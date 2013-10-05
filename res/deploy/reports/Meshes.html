@@ -58,36 +58,40 @@
 				<th>Size (KiB)</th>
 			</tr>
 <?--
-		local index = 0
-		local totalSize = 0
-		local totalPols = 0
+		if db:tableExists("Report_Mesh") then
 
-		local rs = db:executeQuery("select * from Report_Mesh order by size desc")
-		while rs:next() do
-			if index % 2 == 1 then
-				output:print("<tr class=\"alt\">")
-			else
-				output:print("<tr>")
+			local index = 0
+			local totalSize = 0
+			local totalPols = 0
+
+			local rs = db:executeQuery("select * from Report_Mesh order by size desc")
+			while rs:next() do
+				if index % 2 == 1 then
+					output:print("<tr class=\"alt\">")
+				else
+					output:print("<tr>")
+				end
+
+				output:print("<td>" .. rs:getStringByName("path") .. "</td>")
+				output:print("<td>" .. types[rs:getInt32ByName("type")] .. "</td>")
+				output:print("<td>" .. rs:getInt32ByName("polygonCount") .. "</td>")
+				output:print("<td>" .. math.ceil(rs:getInt32ByName("size") / 1024) .. "</td>")
+				
+				output:printLn("</tr>");
+
+				index = index + 1
+				totalSize = totalSize + rs:getInt32ByName("size")
+				totalPols = totalPols + rs:getInt32ByName("polygonCount")
 			end
 
-			output:print("<td>" .. rs:getStringByName("path") .. "</td>")
-			output:print("<td>" .. types[rs:getInt32ByName("type")] .. "</td>")
-			output:print("<td>" .. rs:getInt32ByName("polygonCount") .. "</td>")
-			output:print("<td>" .. math.ceil(rs:getInt32ByName("size") / 1024) .. "</td>")
-			
-			output:printLn("</tr>");
+			output:print("<tr class=\"total\">")
+			output:print("<td>Total, " .. index .. " mesh(es)</td>")
+			output:print("<td/>")
+			output:print("<td>" .. totalPols .. "</td>")
+			output:print("<td>" .. math.ceil(totalSize / 1024) .. " KiB</td>")
+			output:print("</tr>")
 
-			index = index + 1
-			totalSize = totalSize + rs:getInt32ByName("size")
-			totalPols = totalPols + rs:getInt32ByName("polygonCount")
 		end
-
-		output:print("<tr class=\"total\">")
-		output:print("<td>Total, " .. index .. " mesh(es)</td>")
-		output:print("<td/>")
-		output:print("<td>" .. totalPols .. "</td>")
-		output:print("<td>" .. math.ceil(totalSize / 1024) .. " KiB</td>")
-		output:print("</tr>")
 --?>
 		</table>
 		<br/>

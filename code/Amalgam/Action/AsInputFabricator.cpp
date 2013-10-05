@@ -41,5 +41,15 @@ bool AsInputFabricator::resetInputSource(const std::wstring& sourceId)
 	return m_environment->getInput()->resetInputSource(sourceId);
 }
 
+void AsInputFabricator::apply()
+{
+	m_environment->getInput()->apply();
+}
+
+void AsInputFabricator::revert()
+{
+	m_environment->getInput()->revert();
+}
+
 	}
 }

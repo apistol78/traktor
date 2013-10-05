@@ -26,12 +26,18 @@ public:
 	typedef const physics::BodyState& value_argument_t;
 	typedef physics::BodyState value_return_t;
 
+	BodyStateValue()
+	{
+	}
+
 	BodyStateValue(const physics::BodyState& value)
 	:	m_value(value)
 	{
 	}
 
 	operator const physics::BodyState& () const { return m_value; }
+
+	virtual void serialize(ISerializer& s);
 
 private:
 	physics::BodyState m_value;

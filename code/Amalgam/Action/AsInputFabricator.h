@@ -26,6 +26,10 @@ public:
 
 	bool resetInputSource(const std::wstring& sourceId);
 
+	void apply();
+
+	void revert();
+
 private:
 	amalgam::IEnvironment* m_environment;
 };

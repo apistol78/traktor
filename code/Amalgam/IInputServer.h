@@ -49,6 +49,10 @@ public:
 
 	virtual bool isIdle() const = 0;
 
+	virtual void apply() = 0;
+
+	virtual void revert() = 0;
+
 	virtual input::InputSystem* getInputSystem() = 0;
 
 	virtual input::InputMapping* getInputMapping() = 0;

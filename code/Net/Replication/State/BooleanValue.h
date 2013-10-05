@@ -25,12 +25,19 @@ public:
 	typedef bool value_argument_t;
 	typedef bool value_return_t;
 
+	BooleanValue()
+	:	m_value(false)
+	{
+	}
+
 	BooleanValue(bool value)
 	:	m_value(value)
 	{
 	}
 
 	operator bool () const { return m_value; }
+
+	virtual void serialize(ISerializer& s);
 
 private:
 	bool m_value;

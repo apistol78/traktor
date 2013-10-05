@@ -78,7 +78,10 @@ void BodyBullet::setTransform(const Transform& transform)
 Transform BodyBullet::getTransform() const
 {
 	T_ASSERT (m_body);
-	return fromBtTransform(m_body->getWorldTransform()) * Transform(-m_centerOfGravity);
+	if (m_body)
+		return fromBtTransform(m_body->getWorldTransform()) * Transform(-m_centerOfGravity);
+	else
+		return Transform::identity();
 }
 
 Transform BodyBullet::getCenterTransform() const

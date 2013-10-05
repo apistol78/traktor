@@ -48,38 +48,42 @@
 				<th>Size (KiB)</th>
 			</tr>
 <?--
-		local index = 0
-		local totalVertexCost = 0
-		local totalPixelCost = 0
-		local totalSize = 0
+		if db:tableExists("Report_Shader") then
 
-		local rs = db:executeQuery("select * from Report_Shader order by pixelCost desc")
-		while rs:next() do
-			if index % 2 == 1 then
-				output:print("<tr class=\"alt\">")
-			else
-				output:print("<tr>")
+			local index = 0
+			local totalVertexCost = 0
+			local totalPixelCost = 0
+			local totalSize = 0
+
+			local rs = db:executeQuery("select * from Report_Shader order by pixelCost desc")
+			while rs:next() do
+				if index % 2 == 1 then
+					output:print("<tr class=\"alt\">")
+				else
+					output:print("<tr>")
+				end
+
+				output:print("<td>" .. rs:getStringByName("path") .. "</td>")
+				output:print("<td>" .. rs:getInt32ByName("vertexCost") .. "</td>")
+				output:print("<td>" .. rs:getInt32ByName("pixelCost") .. "</td>")
+				output:print("<td>" .. math.ceil(rs:getInt32ByName("size") / 1024).. "</td>")
+
+				output:printLn("</tr>")
+
+				index = index + 1
+				totalVertexCost = totalVertexCost + rs:getInt32ByName("vertexCost")
+				totalPixelCost = totalPixelCost + rs:getInt32ByName("pixelCost")
+				totalSize = totalSize + rs:getInt32ByName("size")
 			end
 
-			output:print("<td>" .. rs:getStringByName("path") .. "</td>")
-			output:print("<td>" .. rs:getInt32ByName("vertexCost") .. "</td>")
-			output:print("<td>" .. rs:getInt32ByName("pixelCost") .. "</td>")
-			output:print("<td>" .. math.ceil(rs:getInt32ByName("size") / 1024).. "</td>")
+			output:print("<tr class=\"total\">")
+			output:print("<td>Total, " .. index .. " shader(s)</td>")
+			output:print("<td>" .. totalVertexCost .. "</td>")
+			output:print("<td>" .. totalPixelCost .. "</td>")
+			output:print("<td>" .. math.ceil(totalSize / 1024) .. "KiB</tb>")
+			output:print("</tr>")
 
-			output:printLn("</tr>")
-
-			index = index + 1
-			totalVertexCost = totalVertexCost + rs:getInt32ByName("vertexCost")
-			totalPixelCost = totalPixelCost + rs:getInt32ByName("pixelCost")
-			totalSize = totalSize + rs:getInt32ByName("size")
 		end
-
-		output:print("<tr class=\"total\">")
-		output:print("<td>Total, " .. index .. " shader(s)</td>")
-		output:print("<td>" .. totalVertexCost .. "</td>")
-		output:print("<td>" .. totalPixelCost .. "</td>")
-		output:print("<td>" .. math.ceil(totalSize / 1024) .. "KiB</tb>")
-		output:print("</tr>")
 --?>
 		</table>
 		<br/>

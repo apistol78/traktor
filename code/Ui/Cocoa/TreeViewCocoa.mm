@@ -69,12 +69,12 @@ bool TreeViewCocoa::create(IWidget* parent, int style)
 
 int TreeViewCocoa::addImage(IBitmap* image, int imageCount)
 {
-	Ref< drawing::Image > images = image->getImage();
+	Ref< drawing::Image > images = image->getImage()->clone();
 	if (!images)
 		return 0;
 		
 	drawing::MirrorFilter mirrorFilter(false, true);
-	images = images->applyFilter(&mirrorFilter);
+	images->apply(&mirrorFilter);
 	
 	int32_t width = images->getWidth() / imageCount;
 	int32_t height = images->getHeight();

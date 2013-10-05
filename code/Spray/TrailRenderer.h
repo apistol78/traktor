@@ -52,7 +52,7 @@ public:
 
 	void render(
 		render::Shader* shader,
-		const CircularVector< Vector4, 32 >& points,
+		const CircularVector< Vector4, 64 >& points,
 		const Vector4& cameraPosition,
 		const Plane& cameraPlane,
 		float width,
@@ -74,7 +74,7 @@ private:
 		Vector4 timeAndAge;
 	};
 
-	Ref< render::VertexBuffer > m_vertexBuffers[8];
+	Ref< render::VertexBuffer > m_vertexBuffers[64];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	uint32_t m_count;
 	TrailVertex* m_vertex;

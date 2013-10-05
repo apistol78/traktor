@@ -50,60 +50,64 @@
 				<th>Size (KiB)</th>
 			</tr>
 <?--
-		local index = 0
-		local totalStreamSize = 0
-		local totalStaticSize = 0
+		if db:tableExists("Report_Sound") then
 
-		local rs = db:executeQuery("select * from Report_Sound order by size desc")
-		while rs:next() do
-			if index % 2 == 1 then
-				output:print("<tr class=\"alt\">")
-			else
-				output:print("<tr>")
+			local index = 0
+			local totalStreamSize = 0
+			local totalStaticSize = 0
+
+			local rs = db:executeQuery("select * from Report_Sound order by size desc")
+			while rs:next() do
+				if index % 2 == 1 then
+					output:print("<tr class=\"alt\">")
+				else
+					output:print("<tr>")
+				end
+
+				local type = rs:getInt32ByName("type")
+				local typeName = ""
+				if type == 0 then
+					typeName = "Stream"
+				else
+					typeName = "Static"
+				end
+
+				local preload = "No"
+				if rs:getInt32ByName("preload") ~= 0 then
+					preload = "Yes"
+				end
+
+				output:print("<td>" .. rs:getStringByName("path") .. "</td>")
+				output:print("<td>" .. typeName .. "</td>")
+				output:print("<td>" .. preload .. "</td>")
+				if type ~= 0 then
+					output:print("<td>" .. rs:getInt32ByName("sampleRate") .. "</td>")
+					output:print("<td>" .. rs:getInt32ByName("channelsCount") .. "</td>")
+				else
+					output:print("<td/><td/>")
+				end
+				output:print("<td>" .. math.ceil(rs:getInt32ByName("size") / 1024) .. "</td>")
+
+				output:printLn("</tr>")
+
+				index = index + 1
+				if type == 0 then
+					totalStreamSize = totalStreamSize + rs:getInt32ByName("size")
+				else
+					totalStaticSize = totalStaticSize + rs:getInt32ByName("size")
+				end
 			end
 
-			local type = rs:getInt32ByName("type")
-			local typeName = ""
-			if type == 0 then
-				typeName = "Stream"
-			else
-				typeName = "Static"
-			end
+			output:print("<tr class=\"total\">")
+			output:print("<td>Total, " .. index .. " sound(s)</td>")
+			output:print("<td/>")
+			output:print("<td/>")
+			output:print("<td/>")
+			output:print("<td/>")
+			output:print("<td>" .. math.ceil((totalStreamSize + totalStaticSize) / 1024) .. " KiB</td>")
+			output:print("</tr>")
 
-			local preload = "No"
-			if rs:getInt32ByName("preload") ~= 0 then
-				preload = "Yes"
-			end
-
-			output:print("<td>" .. rs:getStringByName("path") .. "</td>")
-			output:print("<td>" .. typeName .. "</td>")
-			output:print("<td>" .. preload .. "</td>")
-			if type ~= 0 then
-				output:print("<td>" .. rs:getInt32ByName("sampleRate") .. "</td>")
-				output:print("<td>" .. rs:getInt32ByName("channelsCount") .. "</td>")
-			else
-				output:print("<td/><td/>")
-			end
-			output:print("<td>" .. math.ceil(rs:getInt32ByName("size") / 1024) .. "</td>")
-
-			output:printLn("</tr>")
-
-			index = index + 1
-			if type == 0 then
-				totalStreamSize = totalStreamSize + rs:getInt32ByName("size")
-			else
-				totalStaticSize = totalStaticSize + rs:getInt32ByName("size")
-			end
 		end
-
-		output:print("<tr class=\"total\">")
-		output:print("<td>Total, " .. index .. " sound(s)</td>")
-		output:print("<td/>")
-		output:print("<td/>")
-		output:print("<td/>")
-		output:print("<td/>")
-		output:print("<td>" .. math.ceil((totalStreamSize + totalStaticSize) / 1024) .. " KiB</td>")
-		output:print("</tr>")
 --?>
 		</table>
 		<br/>

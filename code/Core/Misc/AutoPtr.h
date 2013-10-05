@@ -98,7 +98,12 @@ namespace traktor
 			}
 		}
 
-		Type* ptr() const
+		Type* ptr()
+		{
+			return m_ptr;
+		}
+
+		const Type* c_ptr() const
 		{
 			return m_ptr;
 		}
@@ -109,7 +114,12 @@ namespace traktor
 			m_ptr = ptr;
 		}
 
-		Type* operator -> () const
+		Type* operator -> ()
+		{
+			return ptr();
+		}
+
+		const Type* operator -> () const
 		{
 			return ptr();
 		}
