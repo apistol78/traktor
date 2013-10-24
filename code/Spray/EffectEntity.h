@@ -32,6 +32,13 @@ class ISoundPlayer;
 
 	}
 
+	namespace world
+	{
+
+class IEntityEventManager;
+
+	}
+
 	namespace spray
 	{
 
@@ -49,7 +56,7 @@ class T_DLLCLASS EffectEntity : public world::Entity
 	T_RTTI_CLASS;
 
 public:
-	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::ISoundPlayer* soundPlayer);
+	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
 
 	void render(
 		const Vector4& cameraPosition,

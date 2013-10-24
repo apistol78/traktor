@@ -345,5 +345,15 @@
 				<name>Other</name>
 			</destination>
 		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[7]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[15]"/>
+				<name>Software</name>
+			</destination>
+		</item>
 	</edges>
 </object>

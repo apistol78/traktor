@@ -21,6 +21,12 @@
 #elif defined(_PS3)			// PS3
 #	include "Core/Io/Ps3/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME
+#elif defined(__EMSCRIPTEN__)	// Emscripten
+#	include "Core/Io/Emscripten/NativeVolume.h"
+#	define HAS_NATIVE_VOLUME
+#elif defined(__PNACL__)	// PNaCl
+#	include "Core/Io/PNaCl/NativeVolume.h"
+#	define HAS_NATIVE_VOLUME
 #else						// LINUX
 #	include "Core/Io/Linux/NativeVolume.h"
 #	define HAS_NATIVE_VOLUME

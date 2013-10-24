@@ -1,5 +1,8 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Thread/Acquire.h"
+#include "Core/Thread/Thread.h"
+#include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Editor/IEditor.h"
 #include "I18N/Text.h"
@@ -28,7 +31,19 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.ShaderViewer", ShaderViewer, ui::Contain
 
 ShaderViewer::ShaderViewer(editor::IEditor* editor)
 :	m_editor(editor)
+,	m_reflectThread(0)
 {
+}
+
+void ShaderViewer::destroy()
+{
+	if (m_reflectThread)
+	{
+		m_reflectThread->stop();
+		ThreadManager::getInstance().destroy(m_reflectThread);
+		m_reflectThread = 0;
+	}
+	ui::Container::destroy();
 }
 
 bool ShaderViewer::create(ui::Widget* parent)
@@ -65,39 +80,64 @@ bool ShaderViewer::create(ui::Widget* parent)
 	m_shaderEdit->setFont(ui::Font(L"Consolas", 14));
 #endif
 
+	// Create reflector thread.
+	m_reflectThread = ThreadManager::getInstance().create(makeFunctor(this, &ShaderViewer::threadReflect), L"Shader reflector");
+	T_ASSERT (m_reflectThread);
+	m_reflectThread->start();
+
 	return true;
 }
 
 void ShaderViewer::reflect(const ShaderGraph* shaderGraph)
 {
-	m_shaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
-	T_ASSERT (m_shaderGraph);
-
-	class FragmentReaderAdapter : public FragmentLinker::FragmentReader
-	{
-	public:
-		FragmentReaderAdapter(db::Database* db)
-		:	m_db(db)
-		{
-		}
-
-		virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid)
-		{
-			return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
-		}
-
-	private:
-		Ref< db::Database > m_db;
-	};
-
-	// Link shader fragments.
-	FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
-	m_shaderGraph = FragmentLinker(fragmentReader).resolve(m_shaderGraph, true);
-
-	updateViews();
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_reflectLock);
+	m_reflectShaderGraph = DeepClone(shaderGraph).create< ShaderGraph >();
+	T_ASSERT (m_reflectShaderGraph);
 }
 
-void ShaderViewer::updateViews()
+void ShaderViewer::threadReflect()
+{
+	Thread* currentThread = ThreadManager::getInstance().getCurrentThread();
+	while (!currentThread->stopped())
+	{
+		{
+			T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_reflectLock);
+			m_shaderGraph = m_reflectShaderGraph;
+			m_reflectShaderGraph = 0;
+		}
+
+		if (!m_shaderGraph)
+		{
+			currentThread->sleep(250);
+			continue;
+		}
+
+		class FragmentReaderAdapter : public FragmentLinker::FragmentReader
+		{
+		public:
+			FragmentReaderAdapter(db::Database* db)
+			:	m_db(db)
+			{
+			}
+
+			virtual Ref< const ShaderGraph > read(const Guid& fragmentGuid)
+			{
+				return m_db->getObjectReadOnly< ShaderGraph >(fragmentGuid);
+			}
+
+		private:
+			Ref< db::Database > m_db;
+		};
+
+		// Link shader fragments.
+		FragmentReaderAdapter fragmentReader(m_editor->getSourceDatabase());
+		m_shaderGraph = FragmentLinker(fragmentReader).resolve(m_shaderGraph, true);
+
+		threadUpdateViews();
+	}
+}
+
+void ShaderViewer::threadUpdateViews()
 {
 	std::wstring programCompilerTypeName = m_compilerTool->getSelectedItem();
 	std::vector< Guid > textureIds;
@@ -228,7 +268,9 @@ void ShaderViewer::updateViews()
 
 void ShaderViewer::eventShaderToolsClick(ui::Event* event)
 {
-	updateViews();
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_reflectLock);
+	m_reflectShaderGraph = DeepClone(m_shaderGraph).create< ShaderGraph >();
+	T_ASSERT (m_reflectShaderGraph);
 }
 
 	}

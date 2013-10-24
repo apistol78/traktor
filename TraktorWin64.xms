@@ -7,7 +7,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.Expat</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</sourcePath>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -6728,7 +6728,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_XML_EXPORT</item>
@@ -6746,7 +6746,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_XML_EXPORT</item>
@@ -6764,7 +6764,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -6782,7 +6782,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -7237,13 +7237,20 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
 						<item>_DEBUG</item>
+						<item>FBXSDK_NEW_API</item>
+						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(FBX_SDK)/lib/vs2008/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -7255,13 +7262,20 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
 						<item>NDEBUG</item>
+						<item>FBXSDK_NEW_API</item>
+						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(FBX_SDK)/lib/vs2008/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -7273,13 +7287,20 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
+						<item>FBXSDK_NEW_API</item>
+						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(FBX_SDK)/lib/vs2008/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -7291,13 +7312,20 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
+						<item>FBXSDK_NEW_API</item>
+						<item>FBXSDK_SHARED</item>
 					</definitions>
-					<libraryPaths/>
-					<libraries/>
+					<libraryPaths>
+						<item>$(FBX_SDK)/lib/vs2008/x64</item>
+					</libraryPaths>
+					<libraries>
+						<item>fbxsdk-2013.1.lib</item>
+					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
 				</item>
@@ -7899,6 +7927,15 @@
 												</item>
 											</items>
 										</item>
+										<item type="Filter">
+											<name>Stream</name>
+											<items>
+												<item type="File">
+													<fileName>Stream/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
 									</items>
 									<dependencies>
 										<item type="ProjectDependency" version="1">
@@ -8185,6 +8222,411 @@
 												</items>
 												<dependencies/>
 											</project>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Database.Remote</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote</sourcePath>
+									<configurations>
+										<item type="Configuration" version="1">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>_DEBUG</item>
+												<item>T_DATABASE_REMOTE_EXPORT</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>NDEBUG</item>
+												<item>T_DATABASE_REMOTE_EXPORT</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+										<item type="Filter">
+											<name>Messages</name>
+											<items>
+												<item type="File">
+													<fileName>Messages/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Database.Remote.Server</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server</sourcePath>
+									<configurations>
+										<item type="Configuration" version="1">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Traktor.Database.Compact</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Database/Compact</sourcePath>
+												<configurations>
+													<item type="Configuration" version="1">
+														<name>DebugShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_DATABASE_COMPACT_EXPORT</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>ReleaseShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_DATABASE_COMPACT_EXPORT</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+												</items>
+												<dependencies>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item[15]/dependencies/item/project"/>
+													</item>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+													</item>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
+													</item>
+												</dependencies>
+											</project>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Traktor.Database.Local</name>
+												<sourcePath>$(TRAKTOR_HOME)/code/Database/Local</sourcePath>
+												<configurations>
+													<item type="Configuration" version="1">
+														<name>DebugShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_DATABASE_LOCAL_EXPORT</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>ReleaseShared</name>
+														<targetFormat>TfSharedLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_DATABASE_LOCAL_EXPORT</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/code</item>
+														</includePaths>
+														<definitions>
+															<item>T_STATIC</item>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+												</configurations>
+												<items>
+													<item type="File">
+														<fileName>*.*</fileName>
+														<items/>
+													</item>
+												</items>
+												<dependencies>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item[15]/dependencies/item/project"/>
+													</item>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+													</item>
+													<item type="ProjectDependency" version="1">
+														<linkWithProduct>true</linkWithProduct>
+														<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+													</item>
+												</dependencies>
+											</project>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -8526,6 +8968,15 @@
 								<items>
 									<item type="File">
 										<fileName>RichEdit/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>BuildChart</name>
+								<items>
+									<item type="File">
+										<fileName>BuildChart/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -9032,8 +9483,8 @@
 								<linkWithProduct>true</linkWithProduct>
 								<project type="Project" version="1">
 									<enable>true</enable>
-									<name>Traktor.Physics.Bullet</name>
-									<sourcePath>$(TRAKTOR_HOME)/code/Physics/Bullet</sourcePath>
+									<name>Traktor.World.Editor</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
 									<configurations>
 										<item type="Configuration" version="1">
 											<name>DebugShared</name>
@@ -9042,11 +9493,9 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(BULLET_SDK)/include</item>
-												<item>$(BULLET_SDK)/src</item>
 											</includePaths>
 											<definitions>
-												<item>T_PHYSICS_BULLET_EXPORT</item>
+												<item>T_WORLD_EDITOR_EXPORT</item>
 												<item>_DEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -9061,11 +9510,9 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(BULLET_SDK)/include</item>
-												<item>$(BULLET_SDK)/src</item>
 											</includePaths>
 											<definitions>
-												<item>T_PHYSICS_BULLET_EXPORT</item>
+												<item>T_WORLD_EDITOR_EXPORT</item>
 												<item>NDEBUG</item>
 											</definitions>
 											<libraryPaths/>
@@ -9080,8 +9527,6 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(BULLET_SDK)/include</item>
-												<item>$(BULLET_SDK)/src</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9099,8 +9544,6 @@
 											<precompiledHeader/>
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
-												<item>$(BULLET_SDK)/include</item>
-												<item>$(BULLET_SDK)/src</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9125,19 +9568,11 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[1]"/>
-										</item>
-										<item type="ProjectDependency" version="1">
-											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 										</item>
 									</dependencies>
 								</project>
@@ -9151,105 +9586,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[10]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.World.Editor</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/World/Editor</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_WORLD_EDITOR_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_WORLD_EDITOR_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
-							</item>
-						</dependencies>
-					</project>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -9445,18 +9782,19 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
 												<item>_DEBUG</item>
+												<item>FBXSDK_NEW_API</item>
+												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/lib</item>
+												<item>$(FBX_SDK)/lib/vs2008/x64</item>
 											</libraryPaths>
 											<libraries>
-												<item>wininet.lib</item>
-												<item>fbxsdk_md2008_amd64d.lib</item>
+												<item>fbxsdk-2013.1.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -9469,18 +9807,19 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
 												<item>NDEBUG</item>
+												<item>FBXSDK_NEW_API</item>
+												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/lib</item>
+												<item>$(FBX_SDK)/lib/vs2008/x64</item>
 											</libraryPaths>
 											<libraries>
-												<item>wininet.lib</item>
-												<item>fbxsdk_md2008_amd64.lib</item>
+												<item>fbxsdk-2013.1.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -9493,18 +9832,19 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>_DEBUG</item>
+												<item>FBXSDK_NEW_API</item>
+												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/lib</item>
+												<item>$(FBX_SDK)/lib/vs2008/x64</item>
 											</libraryPaths>
 											<libraries>
-												<item>wininet.lib</item>
-												<item>fbxsdk_md2008_amd64d.lib</item>
+												<item>fbxsdk-2013.1.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -9517,18 +9857,19 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
 												<item>NDEBUG</item>
+												<item>FBXSDK_NEW_API</item>
+												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2011.3.1/lib</item>
+												<item>$(FBX_SDK)/lib/vs2008/x64</item>
 											</libraryPaths>
 											<libraries>
-												<item>wininet.lib</item>
-												<item>fbxsdk_md2008_amd64.lib</item>
+												<item>fbxsdk-2013.1.lib</item>
 											</libraries>
 											<additionalCompilerOptions/>
 											<additionalLinkerOptions/>
@@ -9544,6 +9885,15 @@
 											<items>
 												<item type="File">
 													<fileName>Formats/*.*</fileName>
+													<items/>
+												</item>
+											</items>
+										</item>
+										<item type="Filter">
+											<name>Operations</name>
+											<items>
+												<item type="File">
+													<fileName>Operations/*.*</fileName>
 													<items/>
 												</item>
 											</items>
@@ -9743,7 +10093,7 @@
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
-											<project ref="/object/projects/item[16]/dependencies/item[13]/project/dependencies/item[5]/project"/>
+											<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 										</item>
 										<item type="ProjectDependency" version="1">
 											<linkWithProduct>true</linkWithProduct>
@@ -9770,7 +10120,7 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -9787,200 +10137,24 @@
 						</dependencies>
 					</project>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[10]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[15]/dependencies/item/project"/>
 		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Database.Compact</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Database/Compact</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_DATABASE_COMPACT_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_DATABASE_COMPACT_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Database.Local</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Database/Local</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_DATABASE_LOCAL_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_DATABASE_LOCAL_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
-				</item>
-			</dependencies>
-		</item>
+		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project"/>
 		<item type="Project" version="1">
@@ -10151,10 +10325,6 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
 					<project type="Project" version="1">
 						<enable>true</enable>
 						<name>Traktor.Ui.Win32</name>
@@ -10302,105 +10472,23 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Render.Capture</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_RENDER_CAPTURE_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_RENDER_CAPTURE_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-							</item>
-						</dependencies>
-					</project>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -10695,10 +10783,9 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 								</includePaths>
 								<definitions>
 									<item>T_SOUND_EXPORT</item>
@@ -10718,10 +10805,9 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 								</includePaths>
 								<definitions>
 									<item>T_SOUND_EXPORT</item>
@@ -10741,10 +10827,9 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -10764,10 +10849,9 @@
 								<includePaths>
 									<item>$(TRAKTOR_HOME)/code</item>
 									<item>$(TRAKTOR_HOME)/3rdp/flac-1.2.1/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libogg-1.3.0/include</item>
-									<item>$(TRAKTOR_HOME)/3rdp/libvorbis-1.3.3/include</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/src/libmpg123</item>
 									<item>$(TRAKTOR_HOME)/3rdp/mpg123-1.13.2/ports/Msvc++</item>
+									<item>$(TRAKTOR_HOME)/3rdp/stb_vorbis</item>
 								</includePaths>
 								<definitions>
 									<item>T_STATIC</item>
@@ -10812,6 +10896,15 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>Player</name>
+								<items>
+									<item type="File">
+										<fileName>Player/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
 						<dependencies>
 							<item type="ProjectDependency" version="1">
@@ -10825,14 +10918,6 @@
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[4]"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[6]"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[7]"/>
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
@@ -11153,8 +11238,89 @@
 									<dependencies/>
 								</project>
 							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Extern.stb_vorbis</name>
+									<sourcePath>$(TRAKTOR_HOME)/3rdp/stb_vorbis</sourcePath>
+									<configurations>
+										<item type="Configuration" version="1">
+											<name>DebugShared</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths/>
+											<definitions>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseShared</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths/>
+											<definitions>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths/>
+											<definitions>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths/>
+											<definitions>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+									</items>
+									<dependencies/>
+								</project>
+							</item>
 						</dependencies>
 					</project>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -11489,6 +11655,10 @@
 								<items>
 									<item type="File">
 										<fileName>../../../res/resound/Grain.png</fileName>
+										<items/>
+									</item>
+									<item type="File">
+										<fileName>../../../res/toolbar/PlusMinus.png</fileName>
 										<items/>
 									</item>
 								</items>
@@ -12073,11 +12243,121 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[15]/dependencies/item[2]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[13]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[13]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[15]/dependencies/item[5]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Physics.Bullet</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Physics/Bullet</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_PHYSICS_BULLET_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_PHYSICS_BULLET_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(BULLET_SDK)/include</item>
+						<item>$(BULLET_SDK)/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[1]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+				</item>
+			</dependencies>
+		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Physics.Editor</name>
@@ -12181,7 +12461,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[13]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -12201,7 +12481,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -12216,7 +12496,7 @@
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Pipeline.App</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Pipeline</sourcePath>
+			<sourcePath>$(TRAKTOR_HOME)/code/Pipeline/App</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -12307,6 +12587,18 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -12558,7 +12850,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[16]/dependencies/item[13]/project/dependencies/item[8]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Render.OpenGL</name>
@@ -12571,12 +12863,13 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glext</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
 						<item>_DEBUG</item>
 						<item>T_OPENGL_STD</item>
+						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -12593,12 +12886,13 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glext</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_RENDER_OPENGL_EXPORT</item>
 						<item>NDEBUG</item>
 						<item>T_OPENGL_STD</item>
+						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -12615,12 +12909,13 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glext</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 						<item>T_OPENGL_STD</item>
+						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -12637,12 +12932,13 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/glext</item>
+						<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 						<item>T_OPENGL_STD</item>
+						<item>GLEW_STATIC</item>
 					</definitions>
 					<libraryPaths/>
 					<libraries>
@@ -12685,6 +12981,91 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project type="Project" version="1">
+						<enable>true</enable>
+						<name>Extern.glew-1.9.0</name>
+						<sourcePath>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/src</sourcePath>
+						<configurations>
+							<item type="Configuration" version="1">
+								<name>DebugShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>GLEW_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseShared</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>GLEW_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>DebugStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpDebug</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+								</includePaths>
+								<definitions>
+									<item>_DEBUG</item>
+									<item>GLEW_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+							<item type="Configuration" version="1">
+								<name>ReleaseStatic</name>
+								<targetFormat>TfStaticLibrary</targetFormat>
+								<targetProfile>TpRelease</targetProfile>
+								<precompiledHeader/>
+								<includePaths>
+									<item>$(TRAKTOR_HOME)/3rdp/glew-1.9.0/include</item>
+								</includePaths>
+								<definitions>
+									<item>NDEBUG</item>
+									<item>GLEW_STATIC</item>
+								</definitions>
+								<libraryPaths/>
+								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
+							</item>
+						</configurations>
+						<items>
+							<item type="File">
+								<fileName>glew.c</fileName>
+								<items/>
+							</item>
+						</items>
+						<dependencies/>
+					</project>
 				</item>
 			</dependencies>
 		</item>
@@ -13915,11 +14296,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[13]/project/dependencies/item[5]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -14158,7 +14539,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -14302,7 +14683,27 @@
 							</item>
 							<item type="ProjectDependency" version="1">
 								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[16]/dependencies/item[13]/project/dependencies/item[8]/project"/>
+								<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[12]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
 							</item>
 						</dependencies>
 					</project>
@@ -14311,11 +14712,23 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[16]/dependencies/item[7]/project"/>
 				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[8]/project"/>
+				</item>
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[7]/project"/>
-		<item ref="/object/projects/item[23]/dependencies/item[8]/project"/>
+		<item ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>false</enable>
 			<name>Traktor.Ui.Wx</name>
@@ -14693,7 +15106,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[11]/project"/>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -14706,7 +15119,7 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[15]/dependencies/item[1]/project"/>
-		<item ref="/object/projects/item[16]/dependencies/item[11]/project"/>
+		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
 		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
@@ -14812,112 +15225,13 @@
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
 				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Database.Remote</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>_DEBUG</item>
-						<item>T_DATABASE_REMOTE_EXPORT</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>NDEBUG</item>
-						<item>T_DATABASE_REMOTE_EXPORT</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-				<item type="Filter">
-					<name>Messages</name>
-					<items>
-						<item type="File">
-							<fileName>Messages/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
-				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
 				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
 			</dependencies>
 		</item>
+		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Database.Remote.Client</name>
@@ -15009,7 +15323,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[76]"/>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[6]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -15017,113 +15331,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Database.Remote.Server</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Database/Remote/Server</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_DATABASE_REMOTE_SERVER_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[20]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[76]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-				</item>
-			</dependencies>
-		</item>
+		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Database.Remote.Server.App</name>
@@ -15217,19 +15425,113 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[78]"/>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[19]"/>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[2]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[20]"/>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[23]/dependencies/item[11]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Render.Capture</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Render/Capture</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_CAPTURE_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_RENDER_CAPTURE_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project"/>
@@ -15563,7 +15865,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[24]/dependencies/item[7]/project/dependencies/item[5]/project"/>
+		<item ref="/object/projects/item[24]/dependencies/item[7]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[3]/project"/>
 		<item ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[2]/project/dependencies/item[2]/project"/>
 		<item type="Project" version="1">
@@ -15589,10 +15891,10 @@
 					</libraryPaths>
 					<libraries>
 						<item>d3d11.lib</item>
-						<item>d3dx11d.lib</item>
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -15615,10 +15917,10 @@
 					</libraryPaths>
 					<libraries>
 						<item>d3d11.lib</item>
-						<item>d3dx11.lib</item>
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -15641,10 +15943,10 @@
 					</libraryPaths>
 					<libraries>
 						<item>d3d11.lib</item>
-						<item>d3dx11d.lib</item>
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -15667,10 +15969,10 @@
 					</libraryPaths>
 					<libraries>
 						<item>d3d11.lib</item>
-						<item>d3dx11.lib</item>
 						<item>dxgi.lib</item>
 						<item>d3dcompiler.lib</item>
 						<item>dxguid.lib</item>
+						<item>d3d9.lib</item>
 					</libraries>
 					<additionalCompilerOptions/>
 					<additionalLinkerOptions/>
@@ -15819,11 +16121,11 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[20]"/>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[78]"/>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -15937,11 +16239,20 @@
 										<fileName>Impl/*.*</fileName>
 										<items/>
 									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Action</name>
+								<items>
+									<item type="File">
+										<fileName>Action/*.*</fileName>
+										<items/>
+									</item>
 									<item type="Filter">
-										<name>Std</name>
+										<name>Classes</name>
 										<items>
 											<item type="File">
-												<fileName>Impl/Std/*.*</fileName>
+												<fileName>Action/Classes/*.*</fileName>
 												<items/>
 											</item>
 										</items>
@@ -15949,19 +16260,19 @@
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Actions</name>
+								<name>Events</name>
 								<items>
 									<item type="File">
-										<fileName>Actions/*.*</fileName>
+										<fileName>Events/*.*</fileName>
 										<items/>
 									</item>
 								</items>
 							</item>
 							<item type="Filter">
-								<name>Resources</name>
+								<name>Classes</name>
 								<items>
 									<item type="File">
-										<fileName>../../res/Amalgam/Error.png</fileName>
+										<fileName>Classes/*.*</fileName>
 										<items/>
 									</item>
 								</items>
@@ -16185,6 +16496,305 @@
 								<linkWithProduct>true</linkWithProduct>
 								<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
 							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Ai</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Ai</sourcePath>
+									<configurations>
+										<item type="Configuration" version="1">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+											</includePaths>
+											<definitions>
+												<item>T_AI_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+											</includePaths>
+											<definitions>
+												<item>T_AI_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+												<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project type="Project" version="1">
+												<enable>true</enable>
+												<name>Extern.detour</name>
+												<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour</sourcePath>
+												<configurations>
+													<item type="Configuration" version="1">
+														<name>DebugShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>ReleaseShared</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>DebugStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpDebug</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+														</includePaths>
+														<definitions>
+															<item>_DEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+													<item type="Configuration" version="1">
+														<name>ReleaseStatic</name>
+														<targetFormat>TfStaticLibrary</targetFormat>
+														<targetProfile>TpRelease</targetProfile>
+														<precompiledHeader/>
+														<includePaths>
+															<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+														</includePaths>
+														<definitions>
+															<item>NDEBUG</item>
+														</definitions>
+														<libraryPaths/>
+														<libraries/>
+														<additionalCompilerOptions/>
+														<additionalLinkerOptions/>
+													</item>
+												</configurations>
+												<items>
+													<item type="Filter">
+														<name>Source</name>
+														<items>
+															<item type="File">
+																<fileName>Source/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+													<item type="Filter">
+														<name>Include</name>
+														<items>
+															<item type="File">
+																<fileName>Include/*.*</fileName>
+																<items/>
+															</item>
+														</items>
+													</item>
+												</items>
+												<dependencies/>
+											</project>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+							</item>
+							<item type="ProjectDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<project type="Project" version="1">
+									<enable>true</enable>
+									<name>Traktor.Theater</name>
+									<sourcePath>$(TRAKTOR_HOME)/code/Theater</sourcePath>
+									<configurations>
+										<item type="Configuration" version="1">
+											<name>DebugShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_THEATER_EXPORT</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseShared</name>
+											<targetFormat>TfSharedLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_THEATER_EXPORT</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>DebugStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpDebug</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>_DEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+										<item type="Configuration" version="1">
+											<name>ReleaseStatic</name>
+											<targetFormat>TfStaticLibrary</targetFormat>
+											<targetProfile>TpRelease</targetProfile>
+											<precompiledHeader/>
+											<includePaths>
+												<item>$(TRAKTOR_HOME)/code</item>
+											</includePaths>
+											<definitions>
+												<item>T_STATIC</item>
+												<item>NDEBUG</item>
+											</definitions>
+											<libraryPaths/>
+											<libraries/>
+											<additionalCompilerOptions/>
+											<additionalLinkerOptions/>
+										</item>
+									</configurations>
+									<items>
+										<item type="File">
+											<fileName>*.*</fileName>
+											<items/>
+										</item>
+									</items>
+									<dependencies>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[6]/project"/>
+										</item>
+									</dependencies>
+								</project>
+							</item>
 						</dependencies>
 					</project>
 				</item>
@@ -16203,6 +16813,10 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[52]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
 				</item>
 			</dependencies>
 		</item>
@@ -16403,101 +17017,7 @@
 		<item ref="/object/projects/item[47]/dependencies/item[4]/project"/>
 		<item ref="/object/projects/item[63]/dependencies/item[10]/project"/>
 		<item ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Theater</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Theater</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_THEATER_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_THEATER_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[6]/project"/>
-				</item>
-			</dependencies>
-		</item>
+		<item ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[27]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Theater.Editor</name>
@@ -16598,7 +17118,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[99]"/>
+					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[27]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -16743,273 +17263,6 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Traktor.Parade</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Parade</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_PARADE_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_PARADE_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="Filter">
-					<name>Classes</name>
-					<items>
-						<item type="File">
-							<fileName>Classes/*.*</fileName>
-							<items/>
-						</item>
-					</items>
-				</item>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[24]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[30]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[23]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[5]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[6]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[51]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[24]/dependencies/item[7]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[60]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[99]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[85]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
-			<name>Traktor.Parade.Editor</name>
-			<sourcePath>$(TRAKTOR_HOME)/code/Parade/Editor</sourcePath>
-			<configurations>
-				<item type="Configuration" version="1">
-					<name>DebugShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_PARADE_EDITOR_EXPORT</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseShared</name>
-					<targetFormat>TfSharedLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_PARADE_EDITOR_EXPORT</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>DebugStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpDebug</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>_DEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-				<item type="Configuration" version="1">
-					<name>ReleaseStatic</name>
-					<targetFormat>TfStaticLibrary</targetFormat>
-					<targetProfile>TpRelease</targetProfile>
-					<precompiledHeader/>
-					<includePaths>
-						<item>$(TRAKTOR_HOME)/code</item>
-					</includePaths>
-					<definitions>
-						<item>T_STATIC</item>
-						<item>NDEBUG</item>
-					</definitions>
-					<libraryPaths/>
-					<libraries/>
-					<additionalCompilerOptions/>
-					<additionalLinkerOptions/>
-				</item>
-			</configurations>
-			<items>
-				<item type="File">
-					<fileName>*.*</fileName>
-					<items/>
-				</item>
-			</items>
-			<dependencies>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[102]"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[15]/dependencies/item/project"/>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
-				</item>
-			</dependencies>
-		</item>
-		<item type="Project" version="1">
-			<enable>true</enable>
 			<name>Traktor.Amalgam.App</name>
 			<sourcePath>$(TRAKTOR_HOME)/code/Amalgam/App</sourcePath>
 			<configurations>
@@ -17098,7 +17351,15 @@
 					<name>Resources</name>
 					<items>
 						<item type="File">
-							<fileName>../../../res/Amalgam/Error.png</fileName>
+							<fileName>$(TRAKTOR_HOME)/res/Amalgam/Error.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.ico</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>$(TRAKTOR_HOME)/res/Traktor.Amalgam.rc</fileName>
 							<items/>
 						</item>
 					</items>
@@ -17123,7 +17384,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[23]/dependencies/item[8]/project"/>
+					<project ref="/object/projects/item[23]/dependencies/item[7]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -17132,6 +17393,608 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[51]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[24]/dependencies/item[7]/project/dependencies/item[4]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Online.Steam</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Online/Steam</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(STEAMWORKS_SDK)/public</item>
+					</includePaths>
+					<definitions>
+						<item>T_ONLINE_STEAM_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/win64</item>
+					</libraryPaths>
+					<libraries>
+						<item>steam_api64.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(STEAMWORKS_SDK)/public</item>
+					</includePaths>
+					<definitions>
+						<item>T_ONLINE_STEAM_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/win64</item>
+					</libraryPaths>
+					<libraries>
+						<item>steam_api64.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(STEAMWORKS_SDK)/public</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/win64</item>
+					</libraryPaths>
+					<libraries>
+						<item>steam_api64.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(STEAMWORKS_SDK)/public</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/win64</item>
+					</libraryPaths>
+					<libraries>
+						<item>steam_api64.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[1]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[23]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item ref="/object/projects/item[46]/dependencies/item[2]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.recast</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="Filter">
+					<name>Source</name>
+					<items>
+						<item type="File">
+							<fileName>Source/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+				<item type="Filter">
+					<name>Include</name>
+					<items>
+						<item type="File">
+							<fileName>Include/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
+		<item ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[25]/project/dependencies/item[1]/project"/>
+		<item ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[25]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Ai.Editor</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Ai/Editor</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+					</includePaths>
+					<definitions>
+						<item>T_AI_EDITOR_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+					</includePaths>
+					<definitions>
+						<item>T_AI_EDITOR_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Recast/Include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/recastnavigation/Detour/Include</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[106]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[2]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[12]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[13]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[12]/project/dependencies/item[5]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[25]/project/dependencies/item[1]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[91]/dependencies/item[9]/project/dependencies/item[25]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[8]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[5]/project/dependencies/item[4]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[63]/dependencies/item[10]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[62]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[63]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Database.Local.P4</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Database/Local/Perforce</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(P4_X64_SDK)/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(P4_X64_SDK)/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>libp4sslstub.lib</item>
+						<item>ws2_32.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(P4_X64_SDK)/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(P4_X64_SDK)/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>libp4sslstub.lib</item>
+						<item>ws2_32.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(P4_X64_SDK)/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(P4_X64_SDK)/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>libp4sslstub.lib</item>
+						<item>ws2_32.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(P4_X64_SDK)/include/p4</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths>
+						<item>$(P4_X64_SDK)/lib</item>
+					</libraryPaths>
+					<libraries>
+						<item>libclient.lib</item>
+						<item>librpc.lib</item>
+						<item>libsupp.lib</item>
+						<item>libp4sslstub.lib</item>
+						<item>ws2_32.lib</item>
+					</libraries>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[7]/project/dependencies/item[3]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project/dependencies/item[1]/project"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Pipeline.Report.App</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Pipeline/Report/App</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfExecutableConsole</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[5]/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[51]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[54]"/>
 				</item>
 			</dependencies>
 		</item>

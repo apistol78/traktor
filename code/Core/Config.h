@@ -17,7 +17,7 @@
 #	if defined(WINCE)
 #		define T_UNALIGNED __unaligned
 #	endif
-#elif defined(__GNUC__) || defined(__ANDROID__)
+#elif defined(__GNUC__) || defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__PNACL__)
 #	if !defined(T_STATIC)
 #		define T_DLLIMPORT __attribute__((visibility("default")))
 #		define T_DLLEXPORT __attribute__((visibility("default")))
@@ -68,7 +68,7 @@
 // Both Xenon and PS3 use a PowerPC derivate.
 #	define T_BIG_ENDIAN
 
-#elif defined(_WIN32)
+#elif defined(_WIN32) || defined(__EMSCRIPTEN__) || defined(__PNACL__)
 
 // Assume little endian on Win32 as it's probably most common.
 #	define T_LITTLE_ENDIAN
@@ -124,7 +124,7 @@ typedef unsigned __int64 uint64_t;
 #endif
 
 // Use these macros in c/d tors only.
-#if defined(__ANDROID__)
+#if defined(__ANDROID__) || defined(__EMSCRIPTEN__) || defined(__PNACL__)
 #	define T_EXCEPTION_GUARD_BEGIN
 #	define T_EXCEPTION_GUARD_END
 #endif

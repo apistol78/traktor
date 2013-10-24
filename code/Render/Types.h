@@ -406,13 +406,15 @@ struct RenderSystemInformation
 /*! \brief Descriptor for render system. */
 struct RenderSystemDesc
 {
+	void* nativeHandle;
 	int32_t adapter;
 	float mipBias;
 	int32_t maxAnisotropy;
 	bool verbose;
 
 	RenderSystemDesc()
-	:	adapter(-1)
+	:	nativeHandle(0)
+	,	adapter(-1)
 	,	mipBias(0.0f)
 	,	maxAnisotropy(1)
 	,	verbose(false)

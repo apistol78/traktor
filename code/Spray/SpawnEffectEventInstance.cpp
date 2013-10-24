@@ -17,8 +17,13 @@ SpawnEffectEventInstance::SpawnEffectEventInstance(const SpawnEffectEvent* spawn
 ,	m_effectEntity(effectEntity)
 {
 	Transform T;
-	m_sender->getTransform(T);
-	T = T * m_Toffset;
+	if (m_sender)
+	{
+		m_sender->getTransform(T);
+		T = T * m_Toffset;
+	}
+	else
+		T = m_Toffset;
 
 	if (m_spawnEffect->m_useRotation)
 		m_effectEntity->setTransform(T);
@@ -31,8 +36,11 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 	if (m_spawnEffect->m_follow)
 	{
 		Transform T;
-		m_sender->getTransform(T);
-		T = T * m_Toffset;
+		if (m_sender)
+		{
+			m_sender->getTransform(T);
+			T = T * m_Toffset;
+		}
 
 		if (m_spawnEffect->m_useRotation)
 			m_effectEntity->setTransform(T);

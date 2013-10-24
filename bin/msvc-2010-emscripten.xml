@@ -18,7 +18,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>
@@ -35,7 +35,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>
@@ -66,7 +66,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>
@@ -97,7 +97,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);WIN32;_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+              <value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>
@@ -130,7 +130,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>
@@ -147,7 +147,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>
@@ -178,7 +178,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+              <value>%(PROJECT_DEFINITIONS);UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>
@@ -209,7 +209,7 @@
             </item>
             <item>
               <name>PreprocessorDefinitions</name>
-              <value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;%(PreprocessorDefinitions)</value>
+              <value>%(PROJECT_DEFINITIONS);_CONSOLE;UNICODE;_UNICODE;__EMSCRIPTEN__;%(PreprocessorDefinitions)</value>
             </item>
           </options>
         </item>

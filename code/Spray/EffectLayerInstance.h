@@ -22,7 +22,6 @@ namespace traktor
 struct Context;
 class EffectLayer;
 class EmitterInstance;
-class ITriggerInstance;
 class MeshRenderer;
 class PointRenderer;
 class SequenceInstance;
@@ -38,9 +37,7 @@ public:
 		const EffectLayer* layer,
 		EmitterInstance* emitterInstance,
 		TrailInstance* trailInstance,
-		SequenceInstance* sequenceInstance,
-		ITriggerInstance* triggerInstanceEnable,
-		ITriggerInstance* triggerInstanceDisable
+		SequenceInstance* sequenceInstance
 	);
 
 	void update(Context& context, const Transform& transform, float time, bool enable);
@@ -64,8 +61,6 @@ private:
 	Ref< EmitterInstance > m_emitterInstance;
 	Ref< TrailInstance > m_trailInstance;
 	Ref< SequenceInstance > m_sequenceInstance;
-	Ref< ITriggerInstance > m_triggerInstanceEnable;
-	Ref< ITriggerInstance > m_triggerInstanceDisable;
 	float m_start;
 	float m_end;
 	bool m_singleShotFired;

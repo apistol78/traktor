@@ -16,6 +16,7 @@ enum Opcode
 	OpNop,
 	OpFetchConstant,
 	OpFetchTargetSize,
+	OpFetchTextureSize,
 	OpFetchUniform,
 	OpFetchIndexedUniform,
 	OpFetchVarying,
@@ -24,7 +25,7 @@ enum Opcode
 	OpAbs,
 	OpIncrement,
 	OpDecrement,
-	OpAdd,					// 11
+	OpAdd,					// 12
 	OpDiv,
 	OpMul,
 	OpMulAdd,
@@ -34,8 +35,9 @@ enum Opcode
 	OpExp,
 	OpFraction,
 	OpNeg,
-	OpPow,					// 21
+	OpPow,					// 22
 	OpSqrt,
+	OpRecipSqrt,
 	OpSub,
 	OpAcos,
 	OpAtan,
@@ -44,17 +46,21 @@ enum Opcode
 	OpTan,
 	OpCross,
 	OpDot3,
-	OpDot4,					// 31
+	OpDot4,					// 33
 	OpLength,
 	OpNormalize,
 	OpTransform,
 	OpTranspose,
 	OpClamp,
+	OpTrunc,
+	OpRound,
 	OpLerp,
 	OpMixIn,
+	OpMin,
 	OpMax,
+	OpSign,
 	OpSampler,
-	OpSwizzle,				// 41
+	OpSwizzle,				// 47
 	OpSet,
 	OpExpandWithZero,
 	OpCompareGreaterEqual,
@@ -63,7 +69,7 @@ enum Opcode
 	OpCompareNotEqual,
 	OpJumpIfZero,
 	OpJump,
-	OpTrace					// 51
+	OpTrace					// 57
 };
 
 static const wchar_t* c_opcodeText[] =
@@ -71,6 +77,7 @@ static const wchar_t* c_opcodeText[] =
 	L"OpNop",
 	L"OpFetchConstant",
 	L"OpFetchTargetSize",
+	L"OpFetchTextureSize",
 	L"OpFetchUniform",
 	L"OpFetchIndexedUniform",
 	L"OpFetchVarying",
@@ -91,6 +98,7 @@ static const wchar_t* c_opcodeText[] =
 	L"OpNeg",
 	L"OpPow",
 	L"OpSqrt",
+	L"OpRecipSqrt",
 	L"OpSub",
 	L"OpAcos",
 	L"OpAtan",
@@ -105,9 +113,13 @@ static const wchar_t* c_opcodeText[] =
 	L"OpTransform",
 	L"OpTranspose",
 	L"OpClamp",
+	L"OpTrunc",
+	L"OpRound",
 	L"OpLerp",
 	L"OpMixIn",
+	L"OpMin",
 	L"OpMax",
+	L"OpSign",
 	L"OpSampler",
 	L"OpSwizzle",
 	L"OpSet",

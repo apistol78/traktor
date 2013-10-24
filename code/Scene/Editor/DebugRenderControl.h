@@ -1,7 +1,9 @@
 #ifndef traktor_scene_DebugRenderControl_H
 #define traktor_scene_DebugRenderControl_H
 
+#include "Core/Math/Vector2.h"
 #include "Scene/Editor/ISceneRenderControl.h"
+#include "Ui/Point.h"
 #include "Ui/Size.h"
 
 namespace traktor
@@ -65,6 +67,20 @@ private:
 	Ref< render::IRenderView > m_renderView;
 	Ref< render::PrimitiveRenderer > m_primitiveRenderer;
 	ui::Size m_dirtySize;
+	Vector2 m_renderOffset;
+	float m_renderScale;
+	ui::Point m_moveMouseOrigin;
+	Vector2 m_moveRenderOffset;
+
+	void eventButtonDown(ui::Event* event);
+
+	void eventButtonUp(ui::Event* event);
+
+	void eventDoubleClick(ui::Event* event);
+
+	void eventMouseMove(ui::Event* event);
+
+	void eventMouseWheel(ui::Event* event);
 
 	void eventSize(ui::Event* event);
 

@@ -33,6 +33,7 @@ public:
 private:
 	int32_t m_iconIndex;
 	DeployTool m_deployToolWin32;
+	DeployTool m_deployToolWin64;
 	DeployTool m_deployToolOsX;
 };
 

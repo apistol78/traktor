@@ -23,7 +23,7 @@ Timer g_randomTimer;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntity", EffectEntity, world::Entity)
 
-EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, sound::ISoundPlayer* soundPlayer)
+EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer)
 :	m_transform(transform)
 ,	m_effect(effect)
 ,	m_counter(0)
@@ -31,6 +31,7 @@ EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Ef
 {
 	m_context.deltaTime = 0.0f;
 	m_context.random = RandomGeometry(uint32_t(g_randomTimer.getElapsedTime() * 10000.0f));
+	m_context.eventManager = eventManager;
 	m_context.soundPlayer = soundPlayer;
 }
 

@@ -1,10 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.amalgam.Platform">
+<object type="traktor.amalgam.Platform" version="1">
 	<iconIndex>6</iconIndex>
 	<deployToolWin32>
 		<executable>$(TRAKTOR_HOME)/bin/deploy/win32/deploy-ipad.bat</executable>
 		<environment/>
 	</deployToolWin32>
+	<deployToolWin64>
+		<executable>$(TRAKTOR_HOME)/bin/deploy/win64/deploy-ipad.bat</executable>
+		<environment/>
+	</deployToolWin64>
 	<deployToolOsX>
 		<executable>$(TRAKTOR_HOME)/bin/deploy/osx/deploy-ipad.sh</executable>
 		<environment/>

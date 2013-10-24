@@ -196,19 +196,9 @@ void NativeVolume::mountVolumes(FileSystem& fileSystem)
 
 std::wstring NativeVolume::getSystemPath(const Path& path) const
 {
-	std::wstringstream ss;
-
-	if (path.isRelative())
-	{
-		std::wstring tmp = m_currentDirectory.getPathNameNoVolume();
-		ss << tmp << L"/" << path.getPathName();
-	}
-	else
-	{
-		ss << path.getPathNameNoVolume();
-	}
-
-	return ss.str();
+	std::wstring systemPath = path.getPathNameNoVolume();
+	log::info << L"\"" << path.getPathName() << L"\" => \"" << systemPath << L"\"" << Endl;
+	return systemPath;
 }
 
 }

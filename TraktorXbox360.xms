@@ -174,8 +174,8 @@
 		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.expat-2.0.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</sourcePath>
+			<name>Extern.expat-2.1.0</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
@@ -3235,7 +3235,7 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>
@@ -3253,7 +3253,7 @@
 																	<precompiledHeader/>
 																	<includePaths>
 																		<item>$(TRAKTOR_HOME)/code</item>
-																		<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+																		<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 																	</includePaths>
 																	<definitions>
 																		<item>T_STATIC</item>

@@ -247,11 +247,24 @@ void PerspectiveRenderControl::updateWorldRenderer()
 
 		updateWorldRenderView();
 
-		// Expose world targets to debug view.
+		m_context->clearDebugTextures();
+
 		RefArray< render::ITexture > worldTargets;
 		m_worldRenderer->getTargets(worldTargets);
+
 		for (uint32_t i = 0; i < worldTargets.size(); ++i)
-			m_context->setDebugTexture(i, worldTargets[i]);
+			m_context->addDebugTexture(worldTargets[i]);
+
+		world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
+		if (postProcess)
+		{
+			RefArray< render::RenderTargetSet > postProcessTargets;
+			postProcess->getTargets(postProcessTargets);
+
+			for (RefArray< render::RenderTargetSet >::const_iterator i = postProcessTargets.begin(); i != postProcessTargets.end(); ++i)
+				m_context->addDebugTexture((*i)->getColorTexture(0));
+		}
+
 	}
 }
 

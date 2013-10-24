@@ -1,9 +1,10 @@
 #include "Spray/EffectLayerInstance.h"
 #include "Spray/EffectLayer.h"
 #include "Spray/EmitterInstance.h"
-#include "Spray/ITriggerInstance.h"
 #include "Spray/SequenceInstance.h"
 #include "Spray/TrailInstance.h"
+#include "World/IEntityEvent.h"
+#include "World/IEntityEventManager.h"
 
 namespace traktor
 {
@@ -22,16 +23,12 @@ EffectLayerInstance::EffectLayerInstance(
 	const EffectLayer* layer,
 	EmitterInstance* emitterInstance,
 	TrailInstance* trailInstance,
-	SequenceInstance* sequenceInstance,
-	ITriggerInstance* triggerInstanceEnable,
-	ITriggerInstance* triggerInstanceDisable
+	SequenceInstance* sequenceInstance
 )
 :	m_layer(layer)
 ,	m_emitterInstance(emitterInstance)
 ,	m_trailInstance(trailInstance)
 ,	m_sequenceInstance(sequenceInstance)
-,	m_triggerInstanceEnable(triggerInstanceEnable)
-,	m_triggerInstanceDisable(triggerInstanceDisable)
 ,	m_start(m_layer->getTime())
 ,	m_end(m_layer->getTime() + m_layer->getDuration())
 ,	m_singleShotFired(false)
@@ -74,22 +71,14 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 			m_sequenceInstance->update(context, transform, time - m_start, enable);
 	}
 
-	if (m_triggerInstanceEnable || m_triggerInstanceDisable)
+	if (enable != m_enable && (m_layer->getTriggerEnable() || m_layer->getTriggerDisable()))
 	{
-		if (enable != m_enable)
-		{
-			if (m_triggerInstanceEnable)
-				m_triggerInstanceEnable->perform(context, transform, enable);
-			if (m_triggerInstanceDisable)
-				m_triggerInstanceDisable->perform(context, transform, !enable);
-
-			m_enable = enable;
-		}
-
-		if (m_triggerInstanceEnable)
-			m_triggerInstanceEnable->update(context, transform, m_enable);
-		if (m_triggerInstanceDisable)
-			m_triggerInstanceDisable->update(context, transform, !m_enable);
+		if (context.eventManager)
+			context.eventManager->raise(
+				enable ? m_layer->getTriggerEnable() : m_layer->getTriggerDisable(),
+				0,
+				transform
+			);
 	}
 }
 

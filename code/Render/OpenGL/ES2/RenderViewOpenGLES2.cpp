@@ -107,7 +107,7 @@ bool RenderViewOpenGLES2::isActive() const
 
 bool RenderViewOpenGLES2::isFullScreen() const
 {
-#if defined(T_OPENGL_ES2_HAVE_EGL)
+#if defined(T_OPENGL_ES2_HAVE_EGL) || defined(__PNACL__)
 	return false;
 #else
 	return true;

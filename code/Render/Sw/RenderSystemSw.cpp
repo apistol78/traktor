@@ -3,6 +3,7 @@
 #include "Core/Misc/String.h"
 #include "Graphics/IGraphicsSystem.h"
 #include "Render/VertexElement.h"
+#include "Render/Sw/CubeTextureSw.h"
 #include "Render/Sw/RenderSystemSw.h"
 #include "Render/Sw/RenderViewSw.h"
 #include "Render/Sw/VertexBufferSw.h"
@@ -21,16 +22,16 @@
 #	endif
 #endif
 
-#if defined(_WIN32) && !defined(WINCE) && !defined(_WIN64)
-#	include "Render/Sw/Core/x86/JitX86.h"
-typedef traktor::render::JitX86 ProcessorImpl;
-#elif !defined(WINCE)
+//#if defined(_WIN32) && !defined(WINCE) && !defined(_WIN64)
+//#	include "Render/Sw/Core/x86/JitX86.h"
+//typedef traktor::render::JitX86 ProcessorImpl;
+//#elif !defined(WINCE)
 #	include "Render/Sw/Core/Interpreter.h"
 typedef traktor::render::Interpreter ProcessorImpl;
-#else
-#	include "Render/Sw/Core/InterpreterFixed.h"
-typedef traktor::render::InterpreterFixed ProcessorImpl;
-#endif
+//#else
+//#	include "Render/Sw/Core/InterpreterFixed.h"
+//typedef traktor::render::InterpreterFixed ProcessorImpl;
+//#endif
 
 namespace traktor
 {
@@ -251,14 +252,19 @@ Ref< IndexBuffer > RenderSystemSw::createIndexBuffer(IndexType indexType, uint32
 Ref< ISimpleTexture > RenderSystemSw::createSimpleTexture(const SimpleTextureCreateDesc& desc)
 {
 	Ref< SimpleTextureSw > texture = new SimpleTextureSw();
-	if (!texture->create(desc))
+	if (texture->create(desc))
+		return texture;
+	else
 		return 0;
-	return texture;
 }
 
 Ref< ICubeTexture > RenderSystemSw::createCubeTexture(const CubeTextureCreateDesc& desc)
 {
-	return 0;
+	Ref< CubeTextureSw > texture = new CubeTextureSw();
+	if (texture->create(desc))
+		return texture;
+	else
+		return 0;
 }
 
 Ref< IVolumeTexture > RenderSystemSw::createVolumeTexture(const VolumeTextureCreateDesc& desc)

@@ -22,4 +22,9 @@ Ref< IStream > SharedMemoryEmscripten::write()
 	return new MemoryStream(m_data.ptr(), m_size, false, true);
 }
 
+bool SharedMemoryEmscripten::clear()
+{
+	return false;
+}
+
 }

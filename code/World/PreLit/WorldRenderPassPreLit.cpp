@@ -157,7 +157,7 @@ void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* prog
 		setNormalMapProgramParameters(programParams);
 		setFogProgramParameters(programParams);
 
-		if ((priority & render::RpAlphaBlend | render::RpPostAlphaBlend) != 0)
+		if ((priority & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
 			setLightProgramParameters(programParams);
 	}
 }
@@ -174,7 +174,7 @@ void WorldRenderPassPreLit::setProgramParameters(render::ProgramParameters* prog
 		setNormalMapProgramParameters(programParams);
 		setFogProgramParameters(programParams);
 
-		if ((priority & render::RpAlphaBlend | render::RpPostAlphaBlend) != 0)
+		if ((priority & (render::RpAlphaBlend | render::RpPostAlphaBlend)) != 0)
 			setLightProgramParameters(programParams);
 	}
 }

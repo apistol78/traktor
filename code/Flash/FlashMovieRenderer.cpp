@@ -258,6 +258,9 @@ void FlashMovieRenderer::renderCharacter(
 
 		const AlignedVector< TextLayout::Line >& lines = layout->getLines();
 		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
+		
+		bool haveFocus = bool(FlashCharacterInstance::getFocus() == editInstance);
+		int32_t caret = editInstance->getCaret();
 
 		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
 		{
@@ -271,6 +274,16 @@ void FlashMovieRenderer::renderCharacter(
 
 				for (uint32_t k = 0; k < chars.size(); ++k)
 				{
+					if (haveFocus && caret-- == 0)
+					{
+						m_displayRenderer->renderCaret(
+							editTransform * translate(chars[k].x, i->y) * scale(fontScale, fontScale),
+							attrib.font->getMaxDimension(),
+							attrib.color,
+							cxTransform2
+						);
+					}
+
 					uint16_t glyphIndex = attrib.font->lookupIndex(chars[k].ch);
 
 					const FlashShape* glyphShape = attrib.font->getShape(glyphIndex);

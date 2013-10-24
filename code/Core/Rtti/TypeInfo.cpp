@@ -1,4 +1,8 @@
-#if !defined(_WIN32)
+
+// If non zero then registry size is fixed.
+#define T_REGISTRY_SIZE 16384
+
+#if T_REGISTRY_SIZE != 0 && !defined(_WIN32)
 #	include <alloca.h>
 #endif
 #include "Core/Misc/TString.h"
@@ -10,8 +14,12 @@ namespace traktor
 	{
 
 static uint32_t s_typeInfoCount = 0;
+#if T_REGISTRY_SIZE == 0
 static uint32_t s_typeInfoRegistrySize = 0;
 static const TypeInfo** s_typeInfoRegistry = 0;
+#else
+static const TypeInfo* s_typeInfoRegistry[T_REGISTRY_SIZE];
+#endif
 
 int32_t safeStringCompare(const wchar_t* a, const wchar_t* b)
 {
@@ -35,12 +43,14 @@ int32_t safeStringCompare(const wchar_t* a, const wchar_t* b)
 
 void __registerTypeInfo(const TypeInfo* typeInfo)
 {
+#if T_REGISTRY_SIZE == 0
 	if (!s_typeInfoRegistry)
 	{
 		s_typeInfoRegistrySize = 1024;
 		s_typeInfoRegistry = reinterpret_cast< const TypeInfo** >(std::malloc(s_typeInfoRegistrySize * sizeof(const TypeInfo*)));
 		T_ASSERT (s_typeInfoRegistry);
 	}
+#endif
 
 	const wchar_t* typeName = typeInfo->getName();
 	if (!typeName)
@@ -69,12 +79,16 @@ void __registerTypeInfo(const TypeInfo* typeInfo)
 
 	s_typeInfoRegistry[index] = typeInfo;
 
+#if T_REGISTRY_SIZE == 0
 	if (++s_typeInfoCount >= s_typeInfoRegistrySize)
 	{
 		s_typeInfoRegistrySize += 1024;
 		s_typeInfoRegistry = reinterpret_cast< const TypeInfo** >(std::realloc(s_typeInfoRegistry, s_typeInfoRegistrySize * sizeof(const TypeInfo*)));
 		T_ASSERT (s_typeInfoRegistry);
 	}
+#else
+	++s_typeInfoCount;
+#endif
 }
 
 void __unregisterTypeInfo(const TypeInfo* typeInfo)
@@ -203,11 +217,13 @@ void TypeInfo::findAllOf(std::set< const TypeInfo* >& outTypes, bool inclusive) 
 
 void __forceLinkReference(const TypeInfo& type)
 {
+#if !defined(__EMSCRIPTEN__)
 	wchar_t* dummy = static_cast< wchar_t* >(alloca(256 * sizeof(wchar_t)));
-#if defined(_WIN32)
+#	if defined(_WIN32)
 	wcscpy_s(dummy, 256, type.getName());
-#else
+#	else
 	wcscpy(dummy, type.getName());
+#	endif
 #endif
 }
 

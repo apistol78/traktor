@@ -18,7 +18,7 @@ namespace traktor
  * \ingroup Core
  */
 template < typename PrimitiveType >
-class T_DLLCLASS RfmPrimitive : public ReflectionMember
+class RfmPrimitive : public ReflectionMember
 {
 	T_RTTI_CLASS;
 

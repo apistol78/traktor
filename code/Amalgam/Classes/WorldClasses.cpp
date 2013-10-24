@@ -6,6 +6,9 @@
 #include "World/EntityBuilderWithSchema.h"
 #include "World/EntityData.h"
 #include "World/EntitySchema.h"
+#include "World/IEntityEvent.h"
+#include "World/IEntityEventData.h"
+#include "World/IEntityEventManager.h"
 #include "World/IEntityFactory.h"
 #include "World/IEntityRenderer.h"
 #include "World/PostProcess/PostProcess.h"
@@ -66,6 +69,15 @@ void world_Entity_update(world::Entity* this_, float totalTime, float deltaTime)
 
 void registerWorldClasses(script::IScriptManager* scriptManager)
 {
+	Ref< script::AutoScriptClass< world::IEntityEventData > > classIEntityEventData = new script::AutoScriptClass< world::IEntityEventData >();
+	scriptManager->registerClass(classIEntityEventData);
+
+	Ref< script::AutoScriptClass< world::IEntityEvent > > classIEntityEvent = new script::AutoScriptClass< world::IEntityEvent >();
+	scriptManager->registerClass(classIEntityEvent);
+
+	Ref< script::AutoScriptClass< world::IEntityEventManager > > classIEntityEventManager = new script::AutoScriptClass< world::IEntityEventManager >();
+	scriptManager->registerClass(classIEntityEventManager);
+
 	Ref< script::AutoScriptClass< world::IEntitySchema > > classIEntitySchema = new script::AutoScriptClass< world::IEntitySchema >();
 	classIEntitySchema->addMethod< world::Entity*, uint32_t >("getEntity", &world::IEntitySchema::getEntity);
 	classIEntitySchema->addMethod< world::Entity*, const std::wstring&, uint32_t >("getEntity", &world::IEntitySchema::getEntity);

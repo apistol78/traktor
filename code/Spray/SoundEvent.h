@@ -32,7 +32,7 @@ public:
 		bool follow
 	);
 
-	virtual Ref< world::IEntityEventInstance > createInstance(world::Entity* sender, const Transform& Toffset) const;
+	virtual Ref< world::IEntityEventInstance > createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const;
 
 private:
 	sound::ISoundPlayer* m_soundPlayer;

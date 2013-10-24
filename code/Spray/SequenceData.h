@@ -13,17 +13,17 @@
 
 namespace traktor
 {
-	namespace resource
+	namespace world
 	{
 
-class IResourceManager;
+class IEntityBuilder;
+class IEntityEventData;
 
 	}
 
 	namespace spray
 	{
 
-class ITriggerData;
 class Sequence;
 
 /*! \brief Trigger sequence persistent data.
@@ -37,12 +37,12 @@ public:
 	struct Key
 	{
 		float T;
-		Ref< ITriggerData > trigger;
+		Ref< world::IEntityEventData > event;
 
 		void serialize(ISerializer& s);
 	};
 
-	Ref< Sequence > createSequence(resource::IResourceManager* resourceManager) const;
+	Ref< Sequence > createSequence(const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s);
 

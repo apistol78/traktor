@@ -1,19 +1,20 @@
-#include "Spray/EffectLayer.h"
-#include "Spray/EffectLayerData.h"
-#include "Spray/EmitterData.h"
-#include "Spray/ITriggerData.h"
-#include "Spray/SequenceData.h"
-#include "Spray/TrailData.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/Member.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Spray/EffectLayer.h"
+#include "Spray/EffectLayerData.h"
+#include "Spray/EmitterData.h"
+#include "Spray/SequenceData.h"
+#include "Spray/TrailData.h"
+#include "World/IEntityBuilder.h"
+#include "World/IEntityEventData.h"
 
 namespace traktor
 {
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 3, EffectLayerData, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectLayerData", 4, EffectLayerData, ISerializable)
 
 EffectLayerData::EffectLayerData()
 :	m_time(0.0f)
@@ -21,13 +22,13 @@ EffectLayerData::EffectLayerData()
 {
 }
 
-Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager* resourceManager) const
+Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
 {
 	Ref< Emitter > emitter;
 	Ref< Trail > trail;
 	Ref< Sequence > sequence;
-	Ref< ITrigger > triggerEnable;
-	Ref< ITrigger > triggerDisable;
+	Ref< world::IEntityEvent > triggerEnable;
+	Ref< world::IEntityEvent > triggerDisable;
 
 	if (m_emitter)
 	{
@@ -43,23 +44,23 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 			return 0;
 	}
 
-	if (m_sequence)
+	if (m_sequence && entityBuilder)
 	{
-		sequence = m_sequence->createSequence(resourceManager);
+		sequence = m_sequence->createSequence(entityBuilder);
 		if (!sequence)
 			return 0;
 	}
 
-	if (m_triggerEnable)
+	if (m_triggerEnable && entityBuilder)
 	{
-		triggerEnable = m_triggerEnable->createTrigger(resourceManager);
+		triggerEnable = entityBuilder->create(m_triggerEnable);
 		if (!triggerEnable)
 			return 0;
 	}
 
-	if (m_triggerDisable)
+	if (m_triggerDisable && entityBuilder)
 	{
-		triggerDisable = m_triggerDisable->createTrigger(resourceManager);
+		triggerDisable = entityBuilder->create(m_triggerDisable);
 		if (triggerDisable)
 			return 0;
 	}
@@ -77,23 +78,16 @@ Ref< EffectLayer > EffectLayerData::createEffectLayer(resource::IResourceManager
 
 void EffectLayerData::serialize(ISerializer& s)
 {
-	if (s.getVersion() >= 1)
-		s >> Member< std::wstring >(L"name", m_name);
+	T_FATAL_ASSERT (s.getVersion() >= 4);
 
+	s >> Member< std::wstring >(L"name", m_name);
 	s >> Member< float >(L"time", m_time);
 	s >> Member< float >(L"duration", m_duration);
 	s >> MemberRef< EmitterData >(L"emitter", m_emitter);
-
-	if (s.getVersion() >= 3)
-		s >> MemberRef< TrailData >(L"trail", m_trail);
-
+	s >> MemberRef< TrailData >(L"trail", m_trail);
 	s >> MemberRef< SequenceData >(L"sequence", m_sequence);
-
-	if (s.getVersion() >= 2)
-	{
-		s >> MemberRef< ITriggerData >(L"triggerEnable", m_triggerEnable);
-		s >> MemberRef< ITriggerData >(L"triggerDisable", m_triggerDisable);
-	}
+	s >> MemberRef< world::IEntityEventData >(L"triggerEnable", m_triggerEnable);
+	s >> MemberRef< world::IEntityEventData >(L"triggerDisable", m_triggerDisable);
 }
 
 	}

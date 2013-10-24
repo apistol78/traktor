@@ -1,6 +1,3 @@
-
-#define T_XML_PARSER_THREAD 0
-
 #include <sstream>
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -8,16 +5,12 @@
 #include "Core/Misc/TString.h"
 #include "Xml/XmlPullParser.h"
 
-#if T_XML_PARSER_THREAD
-#	include "Core/Thread/Job.h"
-#	include "Core/Thread/JobManager.h"
-#	include "Core/Thread/Event.h"
-#	include "Core/Thread/ThreadManager.h"
-#endif
-
 #define XML_STATIC
-
-#if defined(_WIN32)
+#if defined(__PNACL__)
+#	include "pnaclconfig.h"
+#elif defined(__EMSCRIPTEN__)
+#	include "emscriptenconfig.h"
+#elif defined(_WIN32)
 #	include "winconfig.h"
 #elif defined(__APPLE__)
 #	include "macconfig.h"
@@ -86,22 +79,11 @@ private:
 	uint8_t m_buf[4096];
 	bool m_done;
 	std::vector< wchar_t > m_cdata;
-	XmlPullParser::Event m_eventQueue[2048];
-	volatile uint32_t m_eventQueueHead;
-	volatile uint32_t m_eventQueueTail;
-
-#if T_XML_PARSER_THREAD
-	Ref< Job > m_parseJob;
-	Thread* m_threadJob;
-	Event m_eventQueuePush;
-	Event m_eventQueuePop;
-#endif
+	XmlPullParser::Event m_eventQueue[1024];
+	uint32_t m_eventQueueHead;
+	uint32_t m_eventQueueTail;
 
 	bool parse();
-
-#if T_XML_PARSER_THREAD
-	void parseJob();
-#endif
 
 	XmlPullParser::Event* allocEvent();
 
@@ -124,9 +106,6 @@ XmlPullParserImpl::XmlPullParserImpl(IStream* stream)
 ,	m_done(false)
 ,	m_eventQueueHead(0)
 ,	m_eventQueueTail(0)
-#if T_XML_PARSER_THREAD
-,	m_threadJob(0)
-#endif
 {
 	m_parser = XML_ParserCreate(0);
 	T_ASSERT_M (m_parser, L"Unable to create XML parser");
@@ -138,44 +117,16 @@ XmlPullParserImpl::XmlPullParserImpl(IStream* stream)
 
 	m_eventQueue[0].type = XmlPullParser::EtStartDocument;
 	m_eventQueueTail++;
-
-#if T_XML_PARSER_THREAD
-	m_parseJob = JobManager::getInstance().add(makeFunctor(this, &XmlPullParserImpl::parseJob));
-#endif
 }
 
 XmlPullParserImpl::~XmlPullParserImpl()
 {
-#if T_XML_PARSER_THREAD
-	if (m_parseJob)
-	{
-		m_parseJob->wait();
-		m_parseJob = 0;
-	}
-#endif
 	if (m_parser)
 		XML_ParserFree(m_parser);
 }
 
 bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 {
-#if T_XML_PARSER_THREAD
-
-	// Wait until any event has been pushed.
-	while (m_eventQueueHead == m_eventQueueTail)
-	{
-		if (!m_eventQueuePush.wait(60000))
-		{
-			log::error << L"Unexpected timeout when waiting for XML event" << Endl;
-			return false;
-		}
-	}
-
-	outEvent = m_eventQueue[m_eventQueueHead];
-	m_eventQueueHead = (m_eventQueueHead + 1) % sizeof_array(m_eventQueue);
-	m_eventQueuePop.broadcast();
-
-#else
 	while (m_eventQueueHead == m_eventQueueTail)
 	{
 		if (!parse())
@@ -183,7 +134,6 @@ bool XmlPullParserImpl::get(XmlPullParser::Event& outEvent)
 	}
 	outEvent = m_eventQueue[m_eventQueueHead];
 	m_eventQueueHead = (m_eventQueueHead + 1) % sizeof_array(m_eventQueue);
-#endif
 	return true;
 }
 
@@ -231,33 +181,8 @@ bool XmlPullParserImpl::parse()
 	return true;
 }
 
-#if T_XML_PARSER_THREAD
-void XmlPullParserImpl::parseJob()
-{
-	m_threadJob = ThreadManager::getInstance().getCurrentThread();
-	while (m_parser)
-	{
-		if (!parse())
-			break;
-	}
-}
-#endif
-
 XmlPullParser::Event* XmlPullParserImpl::allocEvent()
 {
-#if T_XML_PARSER_THREAD
-	// Wait until there is enough room for another event.
-	int32_t tail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
-	while (tail == m_eventQueueHead)
-	{
-		if (!m_eventQueuePop.wait(10000))
-		{
-			log::error << L"Unexpected timeout when waiting for XML consumer" << Endl;
-			return 0;
-		}
-	}
-#endif
-
 	XmlPullParser::Event& evt = m_eventQueue[m_eventQueueTail];
 	evt.type = XmlPullParser::EtInvalid;
 	evt.value.clear();
@@ -268,9 +193,6 @@ XmlPullParser::Event* XmlPullParserImpl::allocEvent()
 void XmlPullParserImpl::pushEvent()
 {
 	m_eventQueueTail = (m_eventQueueTail + 1) % sizeof_array(m_eventQueue);
-#if T_XML_PARSER_THREAD
-	m_eventQueuePush.broadcast();
-#endif
 }
 
 void XmlPullParserImpl::pushCharacterData()
@@ -282,10 +204,10 @@ void XmlPullParserImpl::pushCharacterData()
 	const wchar_t* ss = &m_cdata[0];
 	const wchar_t* es = &m_cdata[len - 1];
 
-	while ((*ss == ' ' || *ss == '\t' || *ss == 10) && ss < es)
+	while ((*ss == ' ' || *ss == '\t' || *ss == 9 || *ss == 10) && ss < es)
 		++ss;
 
-	while ((*es == ' ' || *es == '\t' || *es == 10) && ss < es)
+	while ((*es == ' ' || *es == '\t' || *es == 9 || *es == 10) && ss < es)
 		--es;
 
 	if (ss <= es)

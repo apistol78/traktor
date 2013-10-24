@@ -3,6 +3,8 @@
 #include "World/IEntityBuilder.h"
 #include "World/Entity/DecalEntity.h"
 #include "World/Entity/DecalEntityData.h"
+#include "World/Entity/DecalEvent.h"
+#include "World/Entity/DecalEventData.h"
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
@@ -46,7 +48,9 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 
 const TypeInfoSet WorldEntityFactory::getEntityEventTypes() const
 {
-	return TypeInfoSet();
+	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< DecalEventData >());
+	return typeSet;
 }
 
 Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, const EntityData& entityData) const
@@ -148,6 +152,18 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 
 Ref< IEntityEvent > WorldEntityFactory::createEntityEvent(const IEntityBuilder* builder, const IEntityEventData& entityEventData) const
 {
+	if (const DecalEventData* decalData = dynamic_type_cast< const DecalEventData* >(&entityEventData))
+	{
+		Ref< DecalEvent > decal = new DecalEvent();
+
+		decal->m_size = decalData->getSize();
+		decal->m_thickness = decalData->getThickness();
+		decal->m_alpha = decalData->getAlpha();
+		decal->m_cullDistance = decalData->getCullDistance();
+
+		if (m_resourceManager->bind(decalData->getShader(), decal->m_shader))
+			return decal;
+	}
 	return 0;
 }
 

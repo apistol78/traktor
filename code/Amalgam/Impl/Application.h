@@ -64,6 +64,7 @@ public:
 	bool create(
 		const PropertyGroup* defaultSettings,
 		PropertyGroup* settings,
+		void* nativeHandle,
 		void* nativeWindowHandle
 	);
 

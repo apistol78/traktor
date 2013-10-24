@@ -103,6 +103,13 @@ inline int clip(
 	return outCount;
 }
 
+void normalizePosition(varying_data_t& postVS)
+{
+	Vector4& cs = postVS[0];
+	if (cs.w() > FUZZY_EPSILON)
+		cs /= cs.w();
+}
+
 		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.render.RenderViewSw", RenderViewSw, IRenderView)
@@ -452,15 +459,8 @@ void RenderViewSw::projectScreen(FragmentContext& context) const
 	for (uint32_t i = 0; i < context.clippedCount; ++i)
 	{
 		const Vector4& position = context.clippedVaryings[i][0];
-		float iw = 1.0f / position.w();
-
-#if defined(_DEBUG)
-		if (isInfinite(iw))
-			iw = 1.0f;
-#endif
-
-		context.screen[i].x = (position.x() * iw * 0.5f + 0.5f) * rs.viewPort.width + rs.viewPort.left;
-		context.screen[i].y = (0.5f - position.y() * iw * 0.5f) * rs.viewPort.height + rs.viewPort.top;
+		context.screen[i].x = (position.x() * 0.5f + 0.5f) * rs.viewPort.width + rs.viewPort.left;
+		context.screen[i].y = (0.5f - position.y() * 0.5f) * rs.viewPort.height + rs.viewPort.top;
 	}
 }
 
@@ -505,6 +505,11 @@ void RenderViewSw::drawIndexed(const Primitives& primitives)
 				executeVertexShader(context.vertexVaryings[0], context.interpolatorVaryings[0]);
 				executeVertexShader(context.vertexVaryings[1], context.interpolatorVaryings[1]);
 				executeVertexShader(context.vertexVaryings[2], context.interpolatorVaryings[2]);
+
+				// Perform homogenization.
+				normalizePosition(context.interpolatorVaryings[0]);
+				normalizePosition(context.interpolatorVaryings[1]);
+				normalizePosition(context.interpolatorVaryings[2]);
 
 				// Clip to view planes.
 				clipPlanes(context, 3);
@@ -670,6 +675,11 @@ void RenderViewSw::drawNonIndexed(const Primitives& primitives)
 				executeVertexShader(context.vertexVaryings[0], context.interpolatorVaryings[0]);
 				executeVertexShader(context.vertexVaryings[1], context.interpolatorVaryings[1]);
 				executeVertexShader(context.vertexVaryings[2], context.interpolatorVaryings[2]);
+
+				// Perform homogenization.
+				normalizePosition(context.interpolatorVaryings[0]);
+				normalizePosition(context.interpolatorVaryings[1]);
+				normalizePosition(context.interpolatorVaryings[2]);
 
 				// Clip to view planes.
 				clipPlanes(context, 3);

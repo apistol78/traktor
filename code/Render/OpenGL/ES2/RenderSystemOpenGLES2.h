@@ -70,6 +70,7 @@ public:
 	virtual void getStatistics(RenderSystemStatistics& outStatistics) const;
 
 private:
+	void* m_nativeHandle;
 	Ref< ContextOpenGLES2 > m_globalContext;
 
 #if defined(_WIN32)

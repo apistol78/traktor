@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Render/OpenGL/Platform.h"

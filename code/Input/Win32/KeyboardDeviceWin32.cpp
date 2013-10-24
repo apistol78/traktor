@@ -15,9 +15,9 @@ KeyboardDeviceWin32::KeyboardDeviceWin32(HWND hWnd)
 ,	m_pWndProc(0)
 {
 	// Subclass window to get access to window events.
-	m_pWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWL_WNDPROC);
-	SetWindowLongPtr(m_hWnd, GWL_WNDPROC, (LONG)&KeyboardDeviceWin32::wndProc);
-	SetWindowLongPtr(m_hWnd, GWL_USERDATA, (LONG)this);
+	m_pWndProc = (WNDPROC)GetWindowLongPtr(m_hWnd, GWLP_WNDPROC);
+	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG)&KeyboardDeviceWin32::wndProc);
+	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, (LONG)this);
 
 	// Set initally reset.
 	resetState();
@@ -26,8 +26,8 @@ KeyboardDeviceWin32::KeyboardDeviceWin32(HWND hWnd)
 KeyboardDeviceWin32::~KeyboardDeviceWin32()
 {
 	// Restore original window proc.
-	SetWindowLongPtr(m_hWnd, GWL_WNDPROC, (LONG)m_pWndProc);
-	SetWindowLongPtr(m_hWnd, GWL_USERDATA, 0);
+	SetWindowLongPtr(m_hWnd, GWLP_WNDPROC, (LONG)m_pWndProc);
+	SetWindowLongPtr(m_hWnd, GWLP_USERDATA, 0);
 }
 
 std::wstring KeyboardDeviceWin32::getName() const
@@ -160,7 +160,7 @@ void KeyboardDeviceWin32::setExclusive(bool exclusive)
 
 LRESULT WINAPI KeyboardDeviceWin32::wndProc(HWND hWnd, UINT uMsg, WPARAM wParam, LPARAM lParam)
 {
-	KeyboardDeviceWin32* this_ = reinterpret_cast< KeyboardDeviceWin32* >(GetWindowLongPtr(hWnd, GWL_USERDATA));
+	KeyboardDeviceWin32* this_ = reinterpret_cast< KeyboardDeviceWin32* >(GetWindowLongPtr(hWnd, GWLP_USERDATA));
 	T_ASSERT (this_);
 
 	if (uMsg == WM_CHAR)

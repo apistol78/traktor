@@ -178,7 +178,7 @@ void StateCache::setElementArrayBuffer(GLint elemArrayBuffer)
 
 void StateCache::setVertexArrayObject(GLint vertexArrayObject)
 {
-#if defined(GL_OES_vertex_array_object)
+#if defined(GL_OES_vertex_array_object) && !defined(__PNACL__)
 	//if (m_vertexArrayObject != vertexArrayObject)
 	{
 		T_OGL_SAFE(glBindVertexArrayOES(vertexArrayObject));

@@ -5,6 +5,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Math/Float.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Net/Replication/State/IValue.h"
 #include "Net/Replication/State/IValueTemplate.h"
 #include "Net/Replication/State/State.h"
@@ -177,13 +178,10 @@ uint32_t StateTemplate::pack(const State* Sn1, const State* S, void* buffer, uin
 
 	for (uint32_t i = 0; i < m_valueTemplates.size(); ++i)
 	{
-		const IValueTemplate* valueTemplate = m_valueTemplates[i];
-		T_ASSERT (valueTemplate);
-
-		if (valueTemplate->error(Vn1[i], V[i]) > c_equalErrorThreshold)
+		if (DeepHash(Vn1[i]) != DeepHash(V[i]))
 		{
 			writer.writeBit(1);
-			valueTemplate->pack(writer, V[i]);
+			m_valueTemplates[i]->pack(writer, V[i]);
 		}
 		else
 			writer.writeBit(0);

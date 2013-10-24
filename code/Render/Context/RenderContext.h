@@ -35,12 +35,6 @@ class T_DLLCLASS RenderContext : public Object
 	T_RTTI_CLASS;
 
 public:
-#if defined(WINCE)
-	enum { DefaultHeapSize = 512 * 1024 };
-#else
-	enum { DefaultHeapSize = 1 * 1024 * 1024 };
-#endif
-
 	RenderContext(uint32_t heapSize);
 
 	virtual ~RenderContext();

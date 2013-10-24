@@ -23,6 +23,8 @@ class Database;
 	namespace world
 	{
 
+class IEntityBuilder;
+
 /*! \brief
  * \ingroup World
  */
@@ -31,7 +33,7 @@ class T_DLLCLASS EntityEventResourceFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	EntityEventResourceFactory(db::Database* db);
+	EntityEventResourceFactory(db::Database* db, const IEntityBuilder* entityBuilder);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -43,6 +45,7 @@ public:
 
 private:
 	Ref< db::Database > m_db;
+	Ref< const IEntityBuilder > m_entityBuilder;
 };
 
 	}

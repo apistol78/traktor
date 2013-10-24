@@ -1,8 +1,10 @@
-#include <limits>
+#pragma optimize( "", off )
+
 #include <algorithm>
-#include "Render/Sw/Emitter/EmitterContext.h"
-#include "Render/Shader/ShaderGraph.h"
+#include <limits>
 #include "Core/Log/Log.h"
+#include "Render/Shader/ShaderGraph.h"
+#include "Render/Sw/Emitter/EmitterContext.h"
 
 namespace traktor
 {
@@ -40,28 +42,36 @@ EmitterContext::EmitterContext(const ShaderGraph* shaderGraph, Parameters& param
 		m_states[0].free[i] =
 		m_states[1].free[i] = true;
 	}
+	enterPixel();
+}
+
+EmitterContext::~EmitterContext()
+{
+	for (std::map< const OutputPin*, TransientInput >::iterator i = m_states[0].inputs.begin(); i != m_states[0].inputs.end(); ++i)
+		freeTemporary(i->second.var);
+	for (std::map< const OutputPin*, TransientInput >::iterator i = m_states[1].inputs.begin(); i != m_states[1].inputs.end(); ++i)
+		freeTemporary(i->second.var);
 }
 
 void EmitterContext::emit(Node* node)
 {
-	m_scope.push(InputScope());
-	
+	Scope scope;
+	scope.node = node;
+	m_scope.push_back(scope);
+
 	m_emitter.emit(*this, node);
-
-	InputScope& scope = m_scope.top();
-	for (std::vector< const OutputPin* >::const_iterator i = scope.inputReferences.begin(); i != scope.inputReferences.end(); ++i)
+	
+	const Scope& back = m_scope.back();
+	for (std::vector< const OutputPin* >::const_iterator i = back.usedRefs.begin(); i != back.usedRefs.end(); ++i)
 	{
-		std::map< const OutputPin*, TransientInput >::iterator j = m_inputs.find(*i);
-		T_ASSERT (j != m_inputs.end());
-		T_ASSERT (j->second.count > 0);
-		if (--j->second.count <= 0)
-		{
-			freeTemporary(j->second.var);
-			//m_inputs.erase(j);
-		}
+		std::map< const OutputPin*, TransientInput >::iterator j = m_currentState->inputs.find(*i);
+		T_FATAL_ASSERT(j != m_currentState->inputs.end());
+		j->second.count--;
 	}
+	
+	collectInputs(m_currentState->inputs);
 
-	m_scope.pop();
+	m_scope.pop_back();
 }
 
 Variable* EmitterContext::emitInput(const InputPin* inputPin)
@@ -71,18 +81,15 @@ Variable* EmitterContext::emitInput(const InputPin* inputPin)
 		return 0;
 
 	// Emit source pin if not visited already.
-	std::map< const OutputPin*, TransientInput >::iterator i = m_inputs.find(sourcePin);
-	if (i == m_inputs.end())
+	std::map< const OutputPin*, TransientInput >::iterator i = m_currentState->inputs.find(sourcePin);
+	if (i == m_currentState->inputs.end() || i->second.count == 0)
 	{
 		emit(sourcePin->getNode());
-		i = m_inputs.find(sourcePin);
-		T_ASSERT (i != m_inputs.end());
+		i = m_currentState->inputs.find(sourcePin);
+		T_FATAL_ASSERT (i != m_currentState->inputs.end());
 	}
-	T_ASSERT (i->second.count > 0);
 
-	InputScope& scope = m_scope.top();
-	scope.inputReferences.push_back(sourcePin);
-
+	m_scope.back().usedRefs.push_back(i->first);
 	return i->second.var;
 }
 
@@ -94,23 +101,22 @@ Variable* EmitterContext::emitInput(Node* node, const std::wstring& inputPinName
 	return emitInput(inputPin);
 }
 
-Variable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, VariableType type)
+Variable* EmitterContext::emitOutput(Node* node, const std::wstring& outputPinName, VariableType type, bool force)
 {
 	const OutputPin* outputPin = node->findOutputPin(outputPinName);
 	T_ASSERT_M (outputPin, L"Unable to find output pin");
 
-	std::vector< const InputPin* > destinationPins;
-	m_shaderGraph->findDestinationPins(outputPin, destinationPins);
-	if (destinationPins.empty())
+	uint32_t count = m_shaderGraph->getDestinationCount(outputPin);
+	if (count == 0 && !force)
 		return 0;
 
 	Variable* var = allocTemporary(type);
 	T_FATAL_ASSERT (var);
 
-	TransientInput input;
+	TransientInput& input = m_currentState->inputs[outputPin];
 	input.var = var;
-	input.count = uint32_t(destinationPins.size());
-	m_inputs[outputPin] = input;
+	input.count = count;
+	input.forced = force;
 
 	return var;
 }
@@ -274,7 +280,10 @@ Variable* EmitterContext::allocTemporary(VariableType variableType)
 	}
 
 	if (reg < 0)
+	{
+		log::error << L"Out of registers; allocate temporary failed" << Endl;
 		return 0;
+	}
 
 	Variable* var = new Variable();
 
@@ -363,6 +372,28 @@ const RenderStateDesc& EmitterContext::getRenderState() const
 uint32_t EmitterContext::getInterpolatorCount() const
 {
 	return m_interpolatorCount;
+}
+
+void EmitterContext::collectInputs(std::map< const OutputPin*, TransientInput >& inputs)
+{
+	for (std::map< const OutputPin*, TransientInput >::iterator i = inputs.begin(); i != inputs.end(); ++i)
+	{
+		if (i->second.count > 0)
+			continue;
+
+		bool inScope = false;
+		for (std::vector< Scope >::iterator j = m_scope.begin(); j != m_scope.end(); ++j)
+		{
+			if (j->node == i->first->getNode())
+			{
+				inScope = true;
+				break;
+			}
+		}
+
+		if (!inScope)
+			freeTemporary(i->second.var);
+	}
 }
 
 	}

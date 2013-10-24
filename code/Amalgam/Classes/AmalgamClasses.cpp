@@ -182,6 +182,7 @@ void registerAmalgamClasses(script::IScriptManager* scriptManager)
 	classWorldServer->addMethod("removeEntityRenderer", &amalgam::IWorldServer::removeEntityRenderer);
 	classWorldServer->addMethod("getEntityBuilder", &amalgam::IWorldServer::getEntityBuilder);
 	classWorldServer->addMethod("getEntityRenderers", &amalgam::IWorldServer::getEntityRenderers);
+	classWorldServer->addMethod("getEntityEventManager", &amalgam::IWorldServer::getEntityEventManager);
 	classWorldServer->addMethod("getFrameCount", &amalgam::IWorldServer::getFrameCount);
 	scriptManager->registerClass(classWorldServer);
 

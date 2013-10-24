@@ -13,12 +13,18 @@
 
 namespace traktor
 {
+	namespace world
+	{
+
+class IEntityEvent;
+
+	}
+
 	namespace spray
 	{
 
 class EffectLayerInstance;
 class Emitter;
-class ITrigger;
 class Sequence;
 class Trail;
 
@@ -36,8 +42,8 @@ public:
 		Emitter* emitter,
 		Trail* trail,
 		Sequence* sequence,
-		ITrigger* triggerEnable,
-		ITrigger* triggerDisable
+		const world::IEntityEvent* triggerEnable,
+		const world::IEntityEvent* triggerDisable
 	);
 
 	Ref< EffectLayerInstance > createInstance() const;
@@ -52,9 +58,9 @@ public:
 
 	const Sequence* getSequence() const { return m_sequence; }
 
-	const ITrigger* getTriggerEnable() const { return m_triggerEnable; }
+	const world::IEntityEvent* getTriggerEnable() const { return m_triggerEnable; }
 
-	const ITrigger* getTriggerDisable() const { return m_triggerDisable; }
+	const world::IEntityEvent* getTriggerDisable() const { return m_triggerDisable; }
 
 private:
 	float m_time;
@@ -62,8 +68,8 @@ private:
 	Ref< Emitter > m_emitter;
 	Ref< Trail > m_trail;
 	Ref< Sequence > m_sequence;
-	Ref< ITrigger > m_triggerEnable;
-	Ref< ITrigger > m_triggerDisable;
+	Ref< const world::IEntityEvent > m_triggerEnable;
+	Ref< const world::IEntityEvent > m_triggerDisable;
 };
 
 	}

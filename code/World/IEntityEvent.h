@@ -21,6 +21,7 @@ class Transform;
 
 class Entity;
 class IEntityEventInstance;
+class IEntityEventManager;
 
 /*! \brief
  * \ingroup World
@@ -30,7 +31,7 @@ class T_DLLCLASS IEntityEvent : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< IEntityEventInstance > createInstance(Entity* sender, const Transform& Toffset) const = 0;
+	virtual Ref< IEntityEventInstance > createInstance(IEntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const = 0;
 };
 
 	}

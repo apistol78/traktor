@@ -1004,6 +1004,10 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 			{
 				notifyCollisionListeners(info);
 				manifold->m_fresh = false;
+
+				// Only issue one new collision per update; distribute over
+				// several updates to prevent CPU overload.
+				break;
 			}
 		}
 	}

@@ -35,12 +35,13 @@ void ResourceServer::destroy()
 void ResourceServer::createResourceFactories(IEnvironment* environment)
 {
 	render::IRenderSystem* renderSystem = environment->getRender()->getRenderSystem();
+	const world::IEntityBuilder* entityBuilder = environment->getWorld()->getEntityBuilder();
 	db::Database* database = environment->getDatabase();
 
 	m_resourceManager->addFactory(new ai::NavMeshFactory(database));
 	m_resourceManager->addFactory(new animation::AnimationFactory(database));
 	m_resourceManager->addFactory(new mesh::MeshFactory(database, renderSystem));
-	m_resourceManager->addFactory(new spray::EffectFactory(database));
+	m_resourceManager->addFactory(new spray::EffectFactory(database, entityBuilder));
 	m_resourceManager->addFactory(new flash::FlashMovieResourceFactory(database));
 	m_resourceManager->addFactory(new hf::HeightfieldFactory(database));
 	m_resourceManager->addFactory(new hf::MaterialMaskFactory(database));

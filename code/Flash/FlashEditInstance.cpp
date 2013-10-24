@@ -109,6 +109,7 @@ FlashEditInstance::FlashEditInstance(ActionContext* context, FlashCharacterInsta
 ,	m_textColor(edit->getTextColor())
 ,	m_letterSpacing(0.0f)
 ,	m_html(false)
+,	m_caret(0)
 ,	m_layout(new TextLayout())
 {
 	if (m_edit->renderHtml())
@@ -245,6 +246,11 @@ std::wstring FlashEditInstance::getText() const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	return m_text;
+}
+
+int32_t FlashEditInstance::getCaret() const
+{
+	return m_caret;
 }
 
 const TextLayout* FlashEditInstance::getTextLayout() const

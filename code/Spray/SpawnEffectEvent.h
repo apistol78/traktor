@@ -1,20 +1,22 @@
 #ifndef traktor_spray_SpawnEffectEvent_H
 #define traktor_spray_SpawnEffectEvent_H
 
+#include "Resource/Proxy.h"
 #include "World/IEntityEvent.h"
 
 namespace traktor
 {
-	namespace world
+	namespace sound
 	{
 
-class EntityData;
-class IEntityBuilder;
+class ISoundPlayer;
 
 	}
 
 	namespace spray
 	{
+
+class Effect;
 
 /*! \brief
  * \ingroup Spray
@@ -25,19 +27,19 @@ class SpawnEffectEvent : public world::IEntityEvent
 
 public:
 	SpawnEffectEvent(
-		const world::IEntityBuilder* entityBuilder,
-		const world::EntityData* effectData,
+		sound::ISoundPlayer* soundPlayer,
+		const resource::Proxy< Effect >& effect,
 		bool follow,
 		bool useRotation
 	);
 
-	virtual Ref< world::IEntityEventInstance > createInstance(world::Entity* sender, const Transform& Toffset) const;
+	virtual Ref< world::IEntityEventInstance > createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const;
 
 private:
 	friend class SpawnEffectEventInstance;
 
-	Ref< const world::IEntityBuilder > m_entityBuilder;
-	Ref< const world::EntityData > m_effectData;
+	Ref< sound::ISoundPlayer > m_soundPlayer;
+	resource::Proxy< Effect > m_effect;
 	bool m_follow;
 	bool m_useRotation;
 };

@@ -6,6 +6,7 @@
 #include "Render/PrimitiveRenderer.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Widget.h"
+#include "Ui/Events/MouseEvent.h"
 #include "Ui/Events/SizeEvent.h"
 #include "Ui/Itf/IWidget.h"
 
@@ -18,6 +19,10 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.render.DebugRenderControl", DebugRenderControl,
 
 DebugRenderControl::DebugRenderControl()
 :	m_dirtySize(0, 0)
+,	m_renderOffset(0.0f, 0.0f)
+,	m_renderScale(4.0f)
+,	m_moveMouseOrigin(0, 0)
+,	m_moveRenderOffset(0.0f, 0.0f)
 {
 }
 
@@ -48,6 +53,11 @@ bool DebugRenderControl::create(ui::Widget* parent, SceneEditorContext* context)
 	))
 		return false;
 
+	m_renderWidget->addButtonDownEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventButtonDown));
+	m_renderWidget->addButtonUpEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventButtonUp));
+	m_renderWidget->addDoubleClickEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventDoubleClick));
+	m_renderWidget->addMouseMoveEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventMouseMove));
+	m_renderWidget->addMouseWheelEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventMouseWheel));
 	m_renderWidget->addSizeEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventSize));
 	m_renderWidget->addPaintEventHandler(ui::createMethodHandler(this, &DebugRenderControl::eventPaint));
 
@@ -120,6 +130,52 @@ void DebugRenderControl::showSelectionRectangle(const ui::Rect& rect)
 {
 }
 
+void DebugRenderControl::eventButtonDown(ui::Event* event)
+{
+	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
+	m_renderWidget->setCapture();
+	m_moveMouseOrigin = mouseEvent->getPosition();
+	m_moveRenderOffset = m_renderOffset;
+}
+
+void DebugRenderControl::eventButtonUp(ui::Event* event)
+{
+	m_renderWidget->releaseCapture();
+}
+
+void DebugRenderControl::eventDoubleClick(ui::Event* event)
+{
+	m_renderOffset = Vector2(0.0f, 0.0f);
+	m_renderScale = 4.0f;
+	m_moveMouseOrigin = ui::Point(0, 0);
+	m_moveRenderOffset = Vector2(0.0f, 0.0f);
+
+	m_renderWidget->update();
+}
+
+void DebugRenderControl::eventMouseMove(ui::Event* event)
+{
+	ui::MouseEvent* mouseEvent = checked_type_cast< ui::MouseEvent* >(event);
+
+	if (!m_renderWidget->hasCapture())
+		return;
+
+	ui::Size moveDelta = mouseEvent->getPosition() - m_moveMouseOrigin;
+	m_renderOffset = m_moveRenderOffset + Vector2(moveDelta.cx / 100.0f, -moveDelta.cy / 100.0f);
+
+	m_renderWidget->update();
+}
+
+void DebugRenderControl::eventMouseWheel(ui::Event* event)
+{
+	int32_t rotation = static_cast< ui::MouseEvent* >(event)->getWheelRotation();
+
+	m_renderScale += rotation * 1.0f;
+	m_renderScale = clamp(m_renderScale, 0.1f, 100.0f);
+
+	m_renderWidget->update();
+}
+
 void DebugRenderControl::eventSize(ui::Event* event)
 {
 	if (!m_renderView || !m_renderWidget->isVisible(true))
@@ -152,61 +208,58 @@ void DebugRenderControl::eventPaint(ui::Event* event)
 			128
 		);
 
-		float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
-
-		Matrix44 projection;
-		if (ratio < 1.0f)
+		const RefArray< render::ITexture >& textures = m_context->getDebugTextures();
+		if (!textures.empty())
 		{
-			projection = orthoLh(
-				4.1f,
-				4.1f / ratio,
-				-1.0f,
-				1.0f
-			);
-		}
-		else
-		{
-			projection = orthoLh(
-				4.1f * ratio,
-				4.1f,
-				-1.0f,
-				1.0f
-			);
-		}
+			int32_t size = int32_t(std::sqrt(float(textures.size())) + 0.5f);
+			float ratio = float(m_dirtySize.cx) / m_dirtySize.cy;
 
-		m_primitiveRenderer->begin(m_renderView);
-		m_primitiveRenderer->setClipDistance(100.0f);
-		m_primitiveRenderer->pushProjection(projection);
-		m_primitiveRenderer->pushView(Matrix44::identity());
-		m_primitiveRenderer->pushDepthEnable(false);
-
-		for (uint32_t i = 0; i < 4; ++i)
-		{
-			float ox = float((i % 2) * 2) - 1.0f;
-			float oy = 1.0f - float((i / 2) * 2);
-
-			m_primitiveRenderer->drawWireQuad(
-				Vector4(-1.0f + ox,  1.0f + oy, 0.0f, 1.0f),
-				Vector4( 1.0f + ox,  1.0f + oy, 0.0f, 1.0f),
-				Vector4( 1.0f + ox, -1.0f + oy, 0.0f, 1.0f),
-				Vector4(-1.0f + ox, -1.0f + oy, 0.0f, 1.0f),
-				Color4ub(0, 0, 0)
-			);
-
-			if (m_context->getDebugTexture(i))
+			Matrix44 projection;
+			if (ratio < 1.0f)
 			{
+				projection = orthoLh(
+					m_renderScale,
+					m_renderScale / ratio,
+					-1.0f,
+					1.0f
+				);
+			}
+			else
+			{
+				projection = orthoLh(
+					m_renderScale * ratio,
+					m_renderScale,
+					-1.0f,
+					1.0f
+				);
+			}
+
+			m_primitiveRenderer->begin(m_renderView);
+			m_primitiveRenderer->setClipDistance(100.0f);
+			m_primitiveRenderer->pushProjection(projection);
+			m_primitiveRenderer->pushView(Matrix44::identity());
+			m_primitiveRenderer->pushDepthEnable(false);
+
+			for (uint32_t i = 0; i < textures.size(); ++i)
+			{
+				float ox =  float(i % size) * 2.1f;
+				float oy = -float(i / size) * 2.1f;
+
+				ox += m_renderOffset.x;
+				oy += m_renderOffset.y;
+
 				m_primitiveRenderer->drawTextureQuad(
 					Vector4(-1.0f + ox,  1.0f + oy, 0.0f, 1.0f), Vector2(0.0f, 0.0f),
 					Vector4( 1.0f + ox,  1.0f + oy, 0.0f, 1.0f), Vector2(1.0f, 0.0f),
 					Vector4( 1.0f + ox, -1.0f + oy, 0.0f, 1.0f), Vector2(1.0f, 1.0f),
 					Vector4(-1.0f + ox, -1.0f + oy, 0.0f, 1.0f), Vector2(0.0f, 1.0f),
 					Color4ub(255, 255, 255),
-					m_context->getDebugTexture(i)
+					textures[i]
 				);
 			}
-		}
 
-		m_primitiveRenderer->end();
+			m_primitiveRenderer->end();
+		}
 
 		m_renderView->end();
 		m_renderView->present();

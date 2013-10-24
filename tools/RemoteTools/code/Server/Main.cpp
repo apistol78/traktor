@@ -379,13 +379,20 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPSTR szCmdLine, int)
 	platforms.push_back(L"XBox360");
 	platforms.push_back(L"Emscripten");
 	platforms.push_back(L"Android");
+	platforms.push_back(L"PNaCl");
 #elif defined(__APPLE__)
 	platforms.push_back(L"iPad");
 	platforms.push_back(L"iPhone");
 	platforms.push_back(L"Mac OSX");
+	platforms.push_back(L"Emscripten");
+	platforms.push_back(L"Android");
+	platforms.push_back(L"PNaCl");
 #elif defined(__LINUX__)
 	platforms.push_back(L"Linux32");
 	platforms.push_back(L"Linux64");
+	platforms.push_back(L"Emscripten");
+	platforms.push_back(L"Android");
+	platforms.push_back(L"PNaCl");
 #endif
 	properties->setProperty< PropertyStringArray >(L"Platforms", platforms);
 

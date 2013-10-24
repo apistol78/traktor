@@ -36,7 +36,7 @@ void T_DLLCLASS __forceLinkReference(const class TypeInfo& type);
 class IInstanceFactory : public IRefCount
 {
 public:
-	virtual ITypedObject* createInstance(void* memory = 0) const = 0;
+	virtual ITypedObject* createInstance(void* memory) const = 0;
 };
 
 /*! \brief Default instance factory implementation.
@@ -110,6 +110,7 @@ public:
 
 	/*! \brief Create new instance of type.
 	 *
+	 * \param memory Optional pointer to memory location.
 	 * \return New instance.
 	 */
 	ITypedObject* createInstance(void* memory = 0) const;

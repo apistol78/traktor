@@ -1,10 +1,14 @@
 #ifndef traktor_render_ShaderViewer_H
 #define traktor_render_ShaderViewer_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Ui/Container.h"
 
 namespace traktor
 {
+
+class Thread;
+
 	namespace editor
 	{
 
@@ -36,6 +40,8 @@ class ShaderViewer : public ui::Container
 public:
 	ShaderViewer(editor::IEditor* editor);
 
+	virtual void destroy();
+
 	bool create(ui::Widget* parent);
 
 	void reflect(const ShaderGraph* shaderGraph);
@@ -45,9 +51,14 @@ private:
 	Ref< ui::custom::ToolBar > m_shaderTools;
 	Ref< ui::custom::ToolBarDropDown > m_compilerTool;
 	Ref< ui::custom::SyntaxRichEdit > m_shaderEdit;
+	Thread* m_reflectThread;
+	Semaphore m_reflectLock;
+	Ref< ShaderGraph > m_reflectShaderGraph;
 	Ref< ShaderGraph > m_shaderGraph;
 
-	void updateViews();
+	void threadReflect();
+
+	void threadUpdateViews();
 
 	void eventShaderToolsClick(ui::Event* event);
 };

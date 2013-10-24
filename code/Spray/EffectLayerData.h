@@ -20,12 +20,19 @@ class IResourceManager;
 
 	}
 
+	namespace world
+	{
+
+class IEntityBuilder;
+class IEntityEventData;
+
+	}
+
 	namespace spray
 	{
 
 class EffectLayer;
 class EmitterData;
-class ITriggerData;
 class SequenceData;
 class TrailData;
 
@@ -39,7 +46,7 @@ class T_DLLCLASS EffectLayerData : public ISerializable
 public:
 	EffectLayerData();
 
-	Ref< EffectLayer > createEffectLayer(resource::IResourceManager* resourceManager) const;
+	Ref< EffectLayer > createEffectLayer(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s);
 
@@ -61,9 +68,9 @@ public:
 
 	SequenceData* getSequence() const { return m_sequence; }
 
-	ITriggerData* getTriggerEnable() const { return m_triggerEnable; }
+	world::IEntityEventData* getTriggerEnable() const { return m_triggerEnable; }
 
-	ITriggerData* getTriggerDisable() const { return m_triggerDisable; }
+	world::IEntityEventData* getTriggerDisable() const { return m_triggerDisable; }
 
 private:
 	std::wstring m_name;
@@ -72,8 +79,8 @@ private:
 	Ref< EmitterData > m_emitter;
 	Ref< TrailData > m_trail;
 	Ref< SequenceData > m_sequence;
-	Ref< ITriggerData > m_triggerEnable;
-	Ref< ITriggerData > m_triggerDisable;
+	Ref< world::IEntityEventData > m_triggerEnable;
+	Ref< world::IEntityEventData > m_triggerDisable;
 };
 
 	}

@@ -1,6 +1,6 @@
-#include "Core/Log/Log.h"
-#include "Spray/ITriggerInstance.h"
+#include "Spray/Sequence.h"
 #include "Spray/SequenceInstance.h"
+#include "World/IEntityEventManager.h"
 
 namespace traktor
 {
@@ -11,31 +11,24 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SequenceInstance", SequenceInstance, Obje
 
 void SequenceInstance::update(Context& context, const Transform& transform, float T, bool enable)
 {
-	int32_t index = 0;
+	const std::vector< Sequence::Key >& keys = m_sequence->m_keys;
 
-	for (; index < m_keys.size(); ++index)
+	int32_t index = 0;
+	for (; index < int32_t(keys.size()); ++index)
 	{
-		if (T >= m_keys[index].T)
+		if (T >= keys[index].T)
 			break;
 	}
 
-	if (index < m_keys.size())
+	if (index != m_index && index < int32_t(keys.size()))
 	{
-		if (index != m_index)
-		{
-			if (m_keys[index].trigger)
-				m_keys[index].trigger->perform(context, transform, enable);
-
-			m_index = index;
-		}
-
-		if (m_keys[index].trigger)
-			m_keys[index].trigger->update(context, transform, enable);
+		context.eventManager->raise(keys[index].event, 0, transform);
+		m_index = index;
 	}
 }
 
-SequenceInstance::SequenceInstance(const std::vector< Key >& keys)
-:	m_keys(keys)
+SequenceInstance::SequenceInstance(const Sequence* sequence)
+:	m_sequence(sequence)
 ,	m_index(-1)
 {
 }
