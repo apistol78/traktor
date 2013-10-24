@@ -1,5 +1,6 @@
 #include "Resource/IResourceManager.h"
 #include "Sound/Sound.h"
+#include "Spray/Effect.h"
 #include "Spray/EffectEntity.h"
 #include "Spray/EffectEntityData.h"
 #include "Spray/EffectEntityFactory.h"
@@ -16,8 +17,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory, world::IEntityFactory)
 
-EffectEntityFactory::EffectEntityFactory(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer)
+EffectEntityFactory::EffectEntityFactory(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer)
 :	m_resourceManager(resourceManager)
+,	m_eventManager(eventManager)
 ,	m_soundPlayer(soundPlayer)
 {
 }
@@ -39,7 +41,7 @@ const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
 
 Ref< world::Entity > EffectEntityFactory::createEntity(const world::IEntityBuilder* builder, const world::EntityData& entityData) const
 {
-	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager, m_soundPlayer);
+	return checked_type_cast< const EffectEntityData* >(&entityData)->createEntity(m_resourceManager, m_eventManager, m_soundPlayer);
 }
 
 Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
@@ -54,11 +56,15 @@ Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::I
 	}
 	else if (const SpawnEffectEventData* spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(&entityEventData))
 	{
+		resource::Proxy< Effect > effect;
+		if (!m_resourceManager->bind(spawnEventData->getEffect(), effect))
+			return 0;
+
 		return new SpawnEffectEvent(
-			builder->getCompositeEntityBuilder(),
-			spawnEventData->m_effectData,
-			spawnEventData->m_follow,
-			spawnEventData->m_useRotation
+			m_soundPlayer,
+			effect,
+			spawnEventData->getFollow(),
+			spawnEventData->getUseRotation()
 		);
 	}
 	else

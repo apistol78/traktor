@@ -798,6 +798,8 @@ bool emitPixelOutput(HlslContext& cx, PixelOutput* node)
 	cx.enterPixel();
 
 	HlslVariable* in = cx.emitInput(node, L"Input");
+	if (!in)
+		return false;
 
 	StringOutputStream& fpo = cx.getPixelShader().getOutputStream(HlslShader::BtOutput);
 	fpo << L"float4 Color0 : SV_Target0;" << Endl;

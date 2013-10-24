@@ -28,6 +28,13 @@ class ISoundPlayer;
 
 	}
 
+	namespace world
+	{
+
+class IEntityEventManager;
+
+	}
+
 	namespace spray
 	{
 
@@ -42,7 +49,7 @@ class T_DLLCLASS EffectEntityData : public world::EntityData
 	T_RTTI_CLASS;
 
 public:
-	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer) const;
+	Ref< EffectEntity > createEntity(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer) const;
 
 	virtual void serialize(ISerializer& s);
 

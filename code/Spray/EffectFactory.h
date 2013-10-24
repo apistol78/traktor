@@ -20,6 +20,13 @@ class Database;
 
 	}
 
+	namespace world
+	{
+
+class IEntityBuilder;
+
+	}
+
 	namespace spray
 	{
 
@@ -31,7 +38,7 @@ class T_DLLCLASS EffectFactory : public resource::IResourceFactory
 	T_RTTI_CLASS;
 
 public:
-	EffectFactory(db::Database* db);
+	EffectFactory(db::Database* db, const world::IEntityBuilder* entityBuilder);
 
 	virtual const TypeInfoSet getResourceTypes() const;
 
@@ -43,6 +50,7 @@ public:
 
 private:
 	Ref< db::Database > m_db;
+	Ref< const world::IEntityBuilder > m_entityBuilder;
 };
 
 	}

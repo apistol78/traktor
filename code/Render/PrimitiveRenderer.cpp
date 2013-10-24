@@ -803,7 +803,12 @@ void PrimitiveRenderer::drawTextureTriangle(
 	Vector4 v3 = m_worldViewProj * Vector4(vert3.x(), vert3.y(), vert3.z(), 1.0f);
 
 	uint8_t shaderId = m_depthEnable.back() ? SiTextureDepth : SiTexture;
-	if (m_batches.empty() || m_batches.back().shaderId != shaderId || m_batches.back().primitives.type != PtTriangles)
+	if (
+		m_batches.empty() ||
+		m_batches.back().shaderId != shaderId ||
+		m_batches.back().texture != texture ||
+		m_batches.back().primitives.type != PtTriangles
+	)
 	{
 		Batch batch;
 		batch.shaderId = shaderId;

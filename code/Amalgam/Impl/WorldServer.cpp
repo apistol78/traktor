@@ -117,7 +117,7 @@ void WorldServer::createResourceFactories(IEnvironment* environment)
 	resourceManager->addFactory(new scene::SceneFactory(database, renderSystem, m_entityBuilder));
 	resourceManager->addFactory(new terrain::TerrainFactory(database));
 	resourceManager->addFactory(new world::PostProcessFactory(database));
-	resourceManager->addFactory(new world::EntityEventResourceFactory(database));
+	resourceManager->addFactory(new world::EntityEventResourceFactory(database, m_entityBuilder));
 	resourceManager->addFactory(new world::EntityResourceFactory(database));
 }
 
@@ -133,7 +133,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
 	m_entityBuilder->addFactory(new ai::NavMeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
-	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, soundPlayer));
+	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager));

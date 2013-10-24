@@ -5,20 +5,12 @@
 #include "Script/IScriptResource.h"
 #include "Script/Types.h"
 
-// import/export mechanism.
-#undef T_DLLCLASS
-#if defined(T_SCRIPT_LUA_EXPORT)
-#	define T_DLLCLASS T_DLLEXPORT
-#else
-#	define T_DLLCLASS T_DLLIMPORT
-#endif
-
 namespace traktor
 {
 	namespace script
 	{
 
-class T_DLLCLASS ScriptResourceLua : public IScriptResource
+class ScriptResourceLua : public IScriptResource
 {
 	T_RTTI_CLASS;
 
@@ -32,6 +24,7 @@ private:
 
 	std::string m_fileName;
 	source_map_t m_map;
+	bool m_precompiled;
 	uint32_t m_bufferSize;
 	AutoArrayPtr< uint8_t > m_buffer;
 };

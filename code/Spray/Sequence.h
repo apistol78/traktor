@@ -13,17 +13,16 @@
 
 namespace traktor
 {
-	namespace resource
+	namespace world
 	{
 
-class IResourceManager;
+class IEntityEvent;
 
 	}
 
 	namespace spray
 	{
 
-class ITrigger;
 class SequenceInstance;
 
 /*! \brief Trigger sequence.
@@ -37,7 +36,7 @@ public:
 	struct Key
 	{
 		float T;
-		Ref< ITrigger > trigger;
+		Ref< world::IEntityEvent > event;
 	};
 
 	Sequence(const std::vector< Key >& keys);
@@ -45,6 +44,8 @@ public:
 	Ref< SequenceInstance > createInstance() const;
 
 private:
+	friend class SequenceInstance;
+
 	std::vector< Key > m_keys;
 };
 

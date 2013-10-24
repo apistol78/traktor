@@ -1,4 +1,5 @@
 #include "World/EntityEventManager.h"
+#include "World/EntityEventSet.h"
 #include "World/IEntityEvent.h"
 #include "World/IEntityEventInstance.h"
 
@@ -20,9 +21,19 @@ void EntityEventManager::raise(const IEntityEvent* event, Entity* sender, const 
 	if (!event || m_eventInstances.size() >= c_maxEventInstances)
 		return;
 
-	Ref< IEntityEventInstance > eventInstance = event->createInstance(sender, Toffset);
+	Ref< IEntityEventInstance > eventInstance = event->createInstance(this, sender, Toffset);
 	if (eventInstance)
 		m_eventInstances.push_back(eventInstance);
+}
+
+void EntityEventManager::raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
+{
+	if (!eventSet || eventId.empty())
+		return;
+
+	const IEntityEvent* event = eventSet->getEvent(eventId);
+	if (event)
+		raise(event, sender, Toffset);
 }
 
 void EntityEventManager::update(const UpdateParams& update)

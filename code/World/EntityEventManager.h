@@ -29,6 +29,8 @@ class T_DLLCLASS EntityEventManager : public IEntityEventManager
 public:
 	virtual void raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset);
 
+	virtual void raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset);
+
 	virtual void update(const UpdateParams& update);
 
 	virtual void build(IWorldRenderer* worldRenderer);

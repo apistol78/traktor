@@ -536,6 +536,10 @@ void SwDisplayRenderer::renderGlyph(const FlashMovie& movie, const Matrix33& tra
 	}
 }
 
+void SwDisplayRenderer::renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfColor& color, const SwfCxTransform& cxform)
+{
+}
+
 void SwDisplayRenderer::renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
 {
 }

@@ -77,8 +77,7 @@ void SceneEditorContext::destroy()
 	m_sourceDb = 0;
 	m_resourceManager = 0;
 	m_renderSystem = 0;
-	for (int32_t i = 0; i < sizeof_array(m_debugTexture); ++i)
-		m_debugTexture[i] = 0;
+	m_debugTextures.clear();
 	m_physicsManager = 0;
 	m_editorProfiles.clear();
 	m_editorPlugins.clear();
@@ -595,14 +594,19 @@ void SceneEditorContext::cloneSelected()
 	raiseSelect(this);
 }
 
-void SceneEditorContext::setDebugTexture(uint32_t index, render::ITexture* debugTexture)
+void SceneEditorContext::clearDebugTextures()
 {
-	m_debugTexture[index] = debugTexture;
+	m_debugTextures.resize(0);
 }
 
-render::ITexture* SceneEditorContext::getDebugTexture(uint32_t index)
+void SceneEditorContext::addDebugTexture(render::ITexture* debugTexture)
 {
-	return m_debugTexture[index];
+	m_debugTextures.push_back(debugTexture);
+}
+
+const RefArray< render::ITexture >& SceneEditorContext::getDebugTextures() const
+{
+	return m_debugTextures;
 }
 
 ISceneEditorPlugin* SceneEditorContext::getEditorPluginOf(const TypeInfo& pluginType) const

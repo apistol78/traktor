@@ -273,7 +273,6 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 {
 	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
 
-#if !defined(T_OPENGL_ES2)
 	// Emit input and reference branches.
 	GlslVariable* in = cx.emitInput(node, L"Input");
 	GlslVariable* ref = cx.emitInput(node, L"Reference");
@@ -306,9 +305,6 @@ bool emitDiscard(GlslContext& cx, Discard* node)
 	}
 
 	f << L"\tdiscard;" << Endl;
-#else
-	log::warning << L"\"Discard\" node disabled; causing severe performance penalty in OpenGL ES 2.0 renderer" << Endl;
-#endif
 
 	GlslVariable* pass = cx.emitInput(node, L"Pass");
 	if (!pass)
@@ -1109,6 +1105,9 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	case GtTextureCube:
 		target = GL_TEXTURE_CUBE_MAP;
 		break;
+
+	default:
+		return false;
 	}
 
 	// Calculate sampler hash.
@@ -1178,6 +1177,9 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		case GtTextureCube:
 			fu << L"uniform samplerCube " << samplerName << L";" << Endl;
 			break;
+
+		default:
+			return false;
 		}
 		cx.getShader().addUniform(samplerName);
 	}
@@ -1210,6 +1212,9 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		case GtTextureCube:
 			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
+
+		default:
+			return false;
 		}
 #endif
 	}
@@ -1243,6 +1248,9 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		case GtTextureCube:
 			assign(f, out) << L"textureCube(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
+
+		default:
+			return false;
 		}
 #endif
 	}
@@ -1934,6 +1942,8 @@ bool emitVertexOutput(GlslContext& cx, VertexOutput* node)
 
 struct Emitter
 {
+	virtual ~Emitter() {}
+
 	virtual bool emit(GlslContext& c, Node* node) = 0;
 };
 

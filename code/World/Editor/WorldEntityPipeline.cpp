@@ -2,6 +2,7 @@
 #include "Editor/IPipelineDepends.h"
 #include "World/Editor/WorldEntityPipeline.h"
 #include "World/Entity/DecalEntityData.h"
+#include "World/Entity/DecalEventData.h"
 #include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
 #include "World/Entity/GroupEntityData.h"
@@ -20,6 +21,7 @@ TypeInfoSet WorldEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< DecalEntityData >());
+	typeSet.insert(&type_of< DecalEventData >());
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
 	typeSet.insert(&type_of< ExternalEntityData >());
 	typeSet.insert(&type_of< GroupEntityData >());
@@ -39,6 +41,8 @@ bool WorldEntityPipeline::buildDependencies(
 {
 	if (const DecalEntityData* decalEntityData = dynamic_type_cast< const DecalEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(decalEntityData->getShader(), editor::PdfBuild | editor::PdfResource);
+	else if (const DecalEventData* decalEventData = dynamic_type_cast< const DecalEventData* >(sourceAsset))
+		pipelineDepends->addDependency(decalEventData->getShader(), editor::PdfBuild | editor::PdfResource);
 	else if (const ExternalEntityData* externalEntityData = dynamic_type_cast< const ExternalEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(externalEntityData->getEntityData(), editor::PdfBuild | editor::PdfResource);
 	else if (const GroupEntityData* groupEntityData = dynamic_type_cast< const GroupEntityData* >(sourceAsset))

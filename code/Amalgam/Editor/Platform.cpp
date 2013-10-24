@@ -8,7 +8,7 @@ namespace traktor
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Platform", 0, Platform, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.amalgam.Platform", 1, Platform, ISerializable)
 
 Platform::Platform()
 :	m_iconIndex(0)
@@ -24,6 +24,8 @@ const DeployTool& Platform::getDeployTool() const
 {
 #if TARGET_OS_MAC
 	return m_deployToolOsX;
+#elif defined(_WIN64)
+	return m_deployToolWin64;
 #else
 	return m_deployToolWin32;
 #endif
@@ -33,6 +35,10 @@ void Platform::serialize(ISerializer& s)
 {
 	s >> Member< int32_t >(L"iconIndex", m_iconIndex);
 	s >> MemberComposite< DeployTool >(L"deployToolWin32", m_deployToolWin32);
+
+	if (s.getVersion() >= 1)
+		s >> MemberComposite< DeployTool >(L"deployToolWin64", m_deployToolWin64);
+
 	s >> MemberComposite< DeployTool >(L"deployToolOsX", m_deployToolOsX);
 }
 

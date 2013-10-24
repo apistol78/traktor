@@ -191,6 +191,12 @@ render::RenderTargetSet* PostProcess::getTarget(render::handle_t id)
 	return m_targets[id].target;
 }
 
+void PostProcess::getTargets(RefArray< render::RenderTargetSet >& outTargets) const
+{
+	for (SmallMap< render::handle_t, Target >::const_iterator i = m_targets.begin(); i != m_targets.end(); ++i)
+		outTargets.push_back(i->second.target);
+}
+
 void PostProcess::swapTargets(render::handle_t id0, render::handle_t id1)
 {
 	std::swap(m_targets[id0], m_targets[id1]);

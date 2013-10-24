@@ -17,11 +17,6 @@ namespace traktor
 		namespace
 		{
 
-float errorV4(const Vector4& Vl, const Vector4& Vr)
-{
-	return (Vl - Vr).length();
-}
-
 float safeDeltaTime(float v)
 {
 	float av = std::abs(v);
@@ -194,22 +189,6 @@ Ref< const IValue > BodyStateTemplate::unpack(BitReader& reader) const
 	S.setAngularVelocity(angularVelocity);
 
 	return new BodyStateValue(S);
-}
-
-float BodyStateTemplate::error(const IValue* Vl, const IValue* Vr) const
-{
-	const physics::BodyState& Sl = *checked_type_cast< const BodyStateValue* >(Vl);
-	const physics::BodyState& Sr = *checked_type_cast< const BodyStateValue* >(Vr);
-
-	float errors[] =
-	{
-		errorV4(Sl.getTransform().translation(), Sr.getTransform().translation()) * m_linearError,
-		errorV4(Sl.getTransform().rotation().e, Sr.getTransform().rotation().e) * m_angularError,
-		errorV4(Sl.getLinearVelocity(), Sr.getLinearVelocity()) * m_linearError,
-		errorV4(Sl.getAngularVelocity(), Sr.getAngularVelocity()) * m_angularError
-	};
-
-	return *std::max_element(&errors[0], &errors[3]);
 }
 
 Ref< const IValue > BodyStateTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const

@@ -1,7 +1,6 @@
 #include "Spray/EffectLayer.h"
 #include "Spray/EffectLayerInstance.h"
 #include "Spray/Emitter.h"
-#include "Spray/ITrigger.h"
 #include "Spray/Sequence.h"
 #include "Spray/Trail.h"
 
@@ -18,8 +17,8 @@ EffectLayer::EffectLayer(
 	Emitter* emitter,
 	Trail* trail,
 	Sequence* sequence,
-	ITrigger* triggerEnable,
-	ITrigger* triggerDisable
+	const world::IEntityEvent* triggerEnable,
+	const world::IEntityEvent* triggerDisable
 )
 :	m_time(time)
 ,	m_duration(duration)
@@ -36,8 +35,6 @@ Ref< EffectLayerInstance > EffectLayer::createInstance() const
 	Ref< EmitterInstance > emitterInstance;
 	Ref< TrailInstance > trailInstance;
 	Ref< SequenceInstance > sequenceInstance;
-	Ref< ITriggerInstance > triggerInstanceEnable;
-	Ref< ITriggerInstance > triggerInstanceDisable;
 
 	if (m_emitter)
 	{
@@ -60,27 +57,11 @@ Ref< EffectLayerInstance > EffectLayer::createInstance() const
 			return 0;
 	}
 
-	if (m_triggerEnable)
-	{
-		triggerInstanceEnable = m_triggerEnable->createInstance();
-		if (!triggerInstanceEnable)
-			return 0;
-	}
-
-	if (m_triggerDisable)
-	{
-		triggerInstanceDisable = m_triggerDisable->createInstance();
-		if (!triggerInstanceDisable)
-			return 0;
-	}
-
 	return new EffectLayerInstance(
 		this,
 		emitterInstance,
 		trailInstance,
-		sequenceInstance,
-		triggerInstanceEnable,
-		triggerInstanceDisable
+		sequenceInstance
 	);
 }
 

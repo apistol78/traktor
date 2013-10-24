@@ -15,7 +15,7 @@ class RenderServerEmbedded : public RenderServer
 public:
 	RenderServerEmbedded(net::BidirectionalObjectTransport* transport);
 
-	bool create(PropertyGroup* settings, void* nativeWindowHandle);
+	bool create(PropertyGroup* settings, void* nativeHandle, void* nativeWindowHandle);
 
 	virtual void destroy();
 

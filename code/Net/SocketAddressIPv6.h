@@ -43,7 +43,7 @@ public:
 	const addrinfo* getAddrInfo(int socktype) const;
 	
 private:
-#if !defined(_PS3) && !defined(EMSCRIPTEN)
+#if !defined(_PS3) && !defined(__EMSCRIPTEN__) && !defined(__PNACL__)
 	addrinfo* m_info;
 #endif
 };

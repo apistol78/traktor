@@ -1,10 +1,11 @@
 #include "Core/Math/Float.h"
 #include "Core/Memory/Alloc.h"
 #include "Render/VertexElement.h"
+#include "Render/Sw/CubeTextureSw.h"
 #include "Render/Sw/ProgramSw.h"
-#include "Render/Sw/SimpleTextureSw.h"
 #include "Render/Sw/RenderTargetSw.h"
 #include "Render/Sw/Samplers.h"
+#include "Render/Sw/SimpleTextureSw.h"
 
 namespace traktor
 {
@@ -163,6 +164,8 @@ void ProgramSw::setTextureParameter(handle_t handle, ITexture* texture)
 
 		if (is_a< SimpleTextureSw >(resolved))
 			m_samplers[i->second] = new SimpleTextureSampler< AddressWrap, AddressWrap >(static_cast< SimpleTextureSw* >(resolved.ptr()));
+		else if (is_a< CubeTextureSw >(resolved))
+			m_samplers[i->second] = new CubeTextureSampler< AddressWrap, AddressWrap, AddressWrap >(static_cast< CubeTextureSw* >(resolved.ptr()));
 		else if (is_a< RenderTargetSw >(resolved))
 			m_samplers[i->second] = new RenderTargetSampler< AddressWrap, AddressWrap >(static_cast< RenderTargetSw* >(resolved.ptr()));
 	}

@@ -15,6 +15,8 @@ namespace traktor
 class AbstractSampler : public Object
 {
 public:
+	virtual Vector4 getSize() const = 0;
+
 	virtual Vector4 get(const Vector4& texCoord) const = 0;
 };
 

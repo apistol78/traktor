@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/RefArray.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/Adler32.h"
@@ -7,6 +8,8 @@
 
 #if TARGET_OS_IPHONE
 #	include "Render/OpenGL/ES2/IPhone/EAGLContextWrapper.h"
+#elif defined(__PNACL__)
+#	include "Render/OpenGL/ES2/PNaCl/PPContextWrapper.h"
 #endif
 
 #if !defined(T_OFFLINE_ONLY)
@@ -115,7 +118,7 @@ bool ContextOpenGLES2::initialize()
 	return true;
 }
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext(void* nativeHandle)
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 #	if defined(_WIN32)
@@ -156,40 +159,35 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createResourceContext()
 	}
 
 	return new ContextOpenGLES2(surface, context);
-
 #elif TARGET_OS_IPHONE
-
 	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
-	if (!wrapper->create())
-		return 0;
-
-	return new ContextOpenGLES2(wrapper);
-
-#else
-
-	return 0;
-
+	if (wrapper->create())
+		return new ContextOpenGLES2(wrapper);
+#elif defined(__PNACL__)
+	Ref< PPContextWrapper > wrapper = PPContextWrapper::createResourceContext((pp::Instance*)nativeHandle);
+	if (wrapper)
+		return new ContextOpenGLES2(wrapper);
 #endif
+	return 0;
 }
 
-Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
-	ContextOpenGLES2* resourceContext,
-	void* nativeWindowHandle
-)
+Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, void* nativeWindowHandle)
 {
 #if TARGET_OS_IPHONE
-
 	EAGLContextWrapper* wrapper = new EAGLContextWrapper();
-	if (!wrapper->create(
+	if (wrapper->create(
 		resourceContext ? resourceContext->m_context : 0,
 		nativeWindowHandle
 	))
-		return 0;
-
-	return new ContextOpenGLES2(wrapper);
-
+		return new ContextOpenGLES2(wrapper);
+#elif defined(__PNACL__)
+	Ref< PPContextWrapper > wrapper = PPContextWrapper::createRenderContext(
+		(pp::Instance*)nativeHandle,
+		resourceContext ? resourceContext->m_context : 0
+	);
+	if (wrapper)
+		return new ContextOpenGLES2(wrapper);
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-
 	EGLNativeWindowType nativeWindow = (EGLNativeWindowType)nativeWindowHandle;
 
 	EGLSurface surface = eglCreateWindowSurface(ms_display, ms_config, nativeWindow, 0);
@@ -222,10 +220,8 @@ Ref< ContextOpenGLES2 > ContextOpenGLES2::createContext(
 	}
 
 	return new ContextOpenGLES2(surface, context);
-
-#else
-	return 0;
 #endif
+	return 0;
 }
 
 bool ContextOpenGLES2::enter()
@@ -242,6 +238,8 @@ bool ContextOpenGLES2::enter()
 
 #if TARGET_OS_IPHONE
 	if (!EAGLContextWrapper::setCurrent(m_context))
+#elif defined(__PNACL__)
+	if (!m_context->makeCurrent())
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	if (!eglMakeCurrent(ms_display, m_surface, m_surface, m_context))
 #endif
@@ -269,17 +267,16 @@ void ContextOpenGLES2::leave()
 	stack->pop_back();
 
 #if TARGET_OS_IPHONE
-
 	if (!stack->empty())
 		EAGLContextWrapper::setCurrent(stack->back()->m_context);
 	else
 		EAGLContextWrapper::setCurrent(0);
-
+#elif defined(__PNACL__)
+	if (!stack->empty())
+		stack->back()->m_context->makeCurrent();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
-
 	eglMakeCurrent(ms_display, EGL_NO_SURFACE, EGL_NO_SURFACE, EGL_NO_CONTEXT);
 	eglReleaseThread();
-
 	if (!stack->empty())
 		eglMakeCurrent(
 			ms_display,
@@ -287,7 +284,6 @@ void ContextOpenGLES2::leave()
 			stack->back()->m_surface,
 			stack->back()->m_context
 		);
-
 #endif
 
 	m_lock.release();
@@ -349,12 +345,18 @@ GLuint ContextOpenGLES2::createShaderObject(const char* shader, GLenum shaderTyp
 
 bool ContextOpenGLES2::resize(int32_t width, int32_t height)
 {
+#if defined(__PNACL__)
+	return m_context->resize(width, height);
+#else
 	return false;
+#endif
 }
 
 int32_t ContextOpenGLES2::getWidth() const
 {
 #if TARGET_OS_IPHONE
+	return m_context->getWidth();
+#elif defined(__PNACL__)
 	return m_context->getWidth();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint width;
@@ -368,6 +370,8 @@ int32_t ContextOpenGLES2::getWidth() const
 int32_t ContextOpenGLES2::getHeight() const
 {
 #if TARGET_OS_IPHONE
+	return m_context->getHeight();
+#elif defined(__PNACL__)
 	return m_context->getHeight();
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	EGLint height;
@@ -391,6 +395,8 @@ void ContextOpenGLES2::swapBuffers()
 {
 #if defined(T_OPENGL_ES2_HAVE_EGL)
 	eglSwapBuffers(ms_display, m_surface);
+#elif defined(__PNACL__)
+	m_context->swapBuffers();
 #elif TARGET_OS_IPHONE
 	m_context->swapBuffers();
 #endif
@@ -433,11 +439,20 @@ void ContextOpenGLES2::bindPrimary()
 
 GLuint ContextOpenGLES2::getPrimaryDepth() const
 {
+#if defined(T_OPENGL_ES2_HAVE_EGL)
 	return m_primaryDepth;
+#else
+	return 0;
+#endif
 }
 
 #if defined(TARGET_OS_IPHONE)
 ContextOpenGLES2::ContextOpenGLES2(EAGLContextWrapper* context)
+:	m_context(context)
+{
+}
+#elif defined(__PNACL__)
+ContextOpenGLES2::ContextOpenGLES2(PPContextWrapper* context)
 :	m_context(context)
 {
 }

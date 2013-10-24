@@ -84,6 +84,7 @@ Application::Application()
 bool Application::create(
 	const PropertyGroup* defaultSettings,
 	PropertyGroup* settings,
+	void* nativeHandle,
 	void* nativeWindowHandle
 )
 {
@@ -146,14 +147,14 @@ bool Application::create(
 	if (nativeWindowHandle)
 	{
 		Ref< RenderServerEmbedded > renderServer = new RenderServerEmbedded(m_targetManagerConnection ? m_targetManagerConnection->getTransport() : 0);
-		if (!renderServer->create(settings, nativeWindowHandle))
+		if (!renderServer->create(settings, nativeHandle, nativeWindowHandle))
 			return false;
 		m_renderServer = renderServer;
 	}
 	else
 	{
 		Ref< RenderServerDefault > renderServer = new RenderServerDefault(m_targetManagerConnection ? m_targetManagerConnection->getTransport() : 0);
-		if (!renderServer->create(settings))
+		if (!renderServer->create(settings, nativeHandle))
 			return false;
 		m_renderServer = renderServer;
 	}
@@ -339,7 +340,6 @@ bool Application::create(
 		if (state)
 			break;
 	}
-
 	if (!state)
 	{
 		log::error << L"Application failed; unable to create initial state" << Endl;
@@ -400,7 +400,6 @@ void Application::destroy()
 	JobManager::getInstance().stop();
 
 	safeDestroy(m_stateManager);
-
 	safeDestroy(m_resourceServer);
 	safeDestroy(m_worldServer);
 	safeDestroy(m_scriptServer);

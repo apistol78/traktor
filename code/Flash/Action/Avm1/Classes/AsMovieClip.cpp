@@ -1218,17 +1218,15 @@ void AsMovieClip::MovieClip_set_width(FlashSpriteInstance* self, float width) co
 
 float AsMovieClip::MovieClip_get_x(const FlashSpriteInstance* self) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	return T.x / 20.0f;
+	const Matrix33& m = self->getTransform();
+	return m.e13 / 20.0f;
 }
 
 void AsMovieClip::MovieClip_set_x(FlashSpriteInstance* self, float x) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	T.x = x * 20.0f;
-	self->setTransform(composeTransform(T, S, R));
+	Matrix33 m = self->getTransform();
+	m.e13 = x * 20.0f;
+	self->setTransform(m);
 }
 
 int32_t AsMovieClip::MovieClip_get_xmouse(const FlashSpriteInstance* self) const
@@ -1253,17 +1251,15 @@ void AsMovieClip::MovieClip_set_xscale(FlashSpriteInstance* self, float x) const
 
 float AsMovieClip::MovieClip_get_y(const FlashSpriteInstance* self) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	return T.y / 20.0f;
+	const Matrix33& m = self->getTransform();
+	return m.e23 / 20.0f;
 }
 
 void AsMovieClip::MovieClip_set_y(FlashSpriteInstance* self, float y) const
 {
-	Vector2 T, S; float R;
-	decomposeTransform(self->getTransform(), T, S, R);
-	T.y = y * 20.0f;
-	self->setTransform(composeTransform(T, S, R));
+	Matrix33 m = self->getTransform();
+	m.e23 = y * 20.0f;
+	self->setTransform(m);
 }
 
 int32_t AsMovieClip::MovieClip_get_ymouse(const FlashSpriteInstance* self) const

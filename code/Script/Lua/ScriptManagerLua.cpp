@@ -77,7 +77,9 @@ ScriptManagerLua::ScriptManagerLua()
 	luaopen_string(m_luaState);
 	luaopen_math(m_luaState);
 	luaopen_os(m_luaState);
+#if defined(LUA_BITLIBNAME)
 	luaopen_bit(m_luaState);
+#endif
 
 	lua_register(m_luaState, "print", luaPrint);
 
@@ -299,6 +301,7 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, c
 		return 0;
 	}
 
+#if defined(T_USE_LUA_DUMP)
 	DynamicMemoryStream stream(false, true);
 
 	result = lua_dump(m_luaState, &luaDumpWriter, reinterpret_cast< void* >(&stream));
@@ -315,13 +318,23 @@ Ref< IScriptResource > ScriptManagerLua::compile(const std::wstring& fileName, c
 	T_ASSERT (!buffer.empty());
 
 	Ref< ScriptResourceLua > resource = new ScriptResourceLua();
-
 	resource->m_fileName = wstombs(fileName);
 	resource->m_map = map ? *map : source_map_t();
+	resource->m_precompiled = true;
 	resource->m_bufferSize = uint32_t(buffer.size());
 	resource->m_buffer.reset(new uint8_t [buffer.size()]);
-
 	std::memcpy(resource->m_buffer.ptr(), &buffer[0], buffer.size());
+#else
+	lua_pop(m_luaState, 1);
+
+	Ref< ScriptResourceLua > resource = new ScriptResourceLua();
+	resource->m_fileName = wstombs(fileName);
+	resource->m_map = map ? *map : source_map_t();
+	resource->m_precompiled = false;
+	resource->m_bufferSize = uint32_t(text.size());
+	resource->m_buffer.reset(new uint8_t [text.size()]);
+	std::memcpy(resource->m_buffer.ptr(), text.c_str(), text.size());
+#endif
 
 	return resource;
 }
@@ -349,7 +362,22 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 
 	// Load script into environment.
 	std::string fileName = "@" + scriptResourceLua->m_fileName;
-	int result = lua_load(m_luaState, &luaDumpReader, (void*)scriptResourceLua, fileName.c_str());
+	int32_t result;
+	
+	if (scriptResourceLua->m_precompiled)
+		result = lua_load(
+			m_luaState,
+			&luaDumpReader,
+			(void*)scriptResourceLua,
+			fileName.c_str()
+		);
+	else
+		result = luaL_loadbuffer(
+			m_luaState,
+			(const char*)scriptResourceLua->m_buffer.c_ptr(),
+			scriptResourceLua->m_bufferSize,
+			fileName.c_str()
+		);
 
 	if (result != 0)
 	{

@@ -27,8 +27,9 @@ namespace traktor
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.RenderSystemOpenGLES2", 0, RenderSystemOpenGLES2, IRenderSystem)
 
 RenderSystemOpenGLES2::RenderSystemOpenGLES2()
+:	m_nativeHandle(0)
 #if defined(_WIN32)
-:	m_hWnd(0)
+,	m_hWnd(0)
 #endif
 {
 }
@@ -57,16 +58,15 @@ bool RenderSystemOpenGLES2::create(const RenderSystemDesc& desc)
 #endif
 
 #if !defined(T_OFFLINE_ONLY)
-
 	if (!ContextOpenGLES2::initialize())
 		return false;
 
-	m_globalContext = ContextOpenGLES2::createResourceContext();
+	m_globalContext = ContextOpenGLES2::createResourceContext(desc.nativeHandle);
 	if (!m_globalContext)
 		return false;
-
 #endif
 
+	m_nativeHandle = desc.nativeHandle;
 	return true;
 }
 
@@ -201,6 +201,13 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewDefau
 	desc2.stereoscopic = false;
 
 	return createRenderView(desc2);
+#elif defined(__PNACL__)
+	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
+		m_globalContext,
+		m_nativeHandle,
+		0
+	);
+	return new RenderViewOpenGLES2(m_globalContext, context);
 #else
 	return 0;
 #endif
@@ -211,6 +218,7 @@ Ref< IRenderView > RenderSystemOpenGLES2::createRenderView(const RenderViewEmbed
 #if !defined(T_OFFLINE_ONLY)
 	Ref< ContextOpenGLES2 > context = ContextOpenGLES2::createContext(
 		m_globalContext,
+		m_nativeHandle,
 		desc.nativeWindowHandle
 	);
 	return new RenderViewOpenGLES2(m_globalContext, context);

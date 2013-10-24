@@ -1,12 +1,12 @@
-#include "Render/Sw/Emitter/Emitter.h"
-#include "Render/Sw/Emitter/EmitterContext.h"
-#include "Render/Sw/Core/Types.h"
-#include "Render/Sw/VaryingUtils.h"
+#pragma optimize( "", off )
+
+#include "Core/Log/Log.h"
 #include "Render/VertexElement.h"
 #include "Render/Shader/Nodes.h"
-#include "Core/Log/Log.h"
-
-#pragma optimize("", off)
+#include "Render/Sw/Core/Types.h"
+#include "Render/Sw/VaryingUtils.h"
+#include "Render/Sw/Emitter/Emitter.h"
+#include "Render/Sw/Emitter/EmitterContext.h"
 
 namespace traktor
 {
@@ -305,6 +305,74 @@ void emitInterpolator(EmitterContext& cx, Interpolator* node)
 	cx.emitInstruction(OpFetchVarying, out, pi);
 }
 
+void emitInstance(EmitterContext& cx, Instance* node)
+{
+	Variable* in = cx.emitConstant(0.0f);
+	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
+	cx.emitInstruction(OpFetchConstant, out, in);
+}
+
+void emitIterate(EmitterContext& cx, Iterate* node)
+{
+	int from = node->getFrom();
+	int to = node->getTo();
+	int count = to - from;
+	if (count < 0 || count >= 256)
+		log::error << L"Too many iterations in Iterate node" << Endl;
+
+	// Setup counter, load with initial value.
+	Variable* N = cx.emitOutput(node, L"N", VtFloat, true);
+	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(float(from)));
+
+	Variable* tmp1 = cx.allocTemporary(VtFloat);
+	cx.emitInstruction(OpFetchConstant, tmp1, cx.emitConstant(float(to)));
+
+	// Initialize output accumulator.
+	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	Variable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+	{
+		Instruction is0(OpMove, out->reg, initial->reg, 0, 0, 0);
+		cx.emitInstruction(is0);
+	}
+	else
+	{
+		Instruction is0(OpSet, out->reg, 0, 0xff, 0, 0);
+		cx.emitInstruction(is0);
+	}
+
+	uint32_t address = cx.getCurrentAddress();
+
+	Variable* in = cx.emitInput(node, L"Input");
+	Variable* xin = expandTypes(cx, in, VtFloat4);
+	cx.emitInstruction(OpMove, out, xin);
+	collapseTypes(cx, in, xin);
+
+	// Check condition.
+	Variable* cond = cx.emitInput(node, L"Condition");
+	if (cond)
+	{
+		// \fixme
+	}
+
+	// Increment counter, repeat loop if not at target.
+	cx.emitInstruction(OpIncrement, N);
+
+	Variable* tmp2 = cx.allocTemporary(VtFloat);
+	cx.emitInstruction(OpCompareGreater, tmp2, N, tmp1);
+
+	Instruction inst(OpJumpIfZero, tmp2->reg, getRelativeOffset(cx.getCurrentAddress(), address));
+	cx.emitInstruction(inst);
+
+	cx.freeTemporary(tmp2);
+	cx.freeTemporary(tmp1);
+}
+
+void emitIterate2d(EmitterContext& cx, Iterate2d* node)
+{
+	// \fixme
+}
+
 void emitIndexedUniform(EmitterContext& cx, IndexedUniform* node)
 {
 	VariableType variableType;
@@ -441,6 +509,40 @@ void emitMatrixIn(EmitterContext& cx, MatrixIn* node)
 	cx.freeTemporary(tmp);
 }
 
+void emitMatrixOut(EmitterContext& cx, MatrixOut* node)
+{
+	Variable* in = cx.emitInput(node, L"Input");
+
+	Variable* axisX = cx.emitOutput(node, L"XAxis", VtFloat4);
+	Variable* axisY = cx.emitOutput(node, L"YAxis", VtFloat4);
+	Variable* axisZ = cx.emitOutput(node, L"ZAxis", VtFloat4);
+	Variable* translate = cx.emitOutput(node, L"Translate", VtFloat4);
+
+	if (axisX)
+	{
+		Instruction is(OpMove, axisX->reg, in->reg, 0, 0, 0);
+		cx.emitInstruction(is);
+	}
+
+	if (axisY)
+	{
+		Instruction is(OpMove, axisY->reg, in->reg + 1, 0, 0, 0);
+		cx.emitInstruction(is);
+	}
+
+	if (axisZ)
+	{
+		Instruction is(OpMove, axisZ->reg, in->reg + 2, 0, 0, 0);
+		cx.emitInstruction(is);
+	}
+
+	if (translate)
+	{
+		Instruction is(OpMove, translate->reg, in->reg + 3, 0, 0, 0);
+		cx.emitInstruction(is);
+	}
+}
+
 void emitMax(EmitterContext& cx, Max* node)
 {
 	Variable* in1 = cx.emitInput(node, L"Input1");
@@ -451,6 +553,21 @@ void emitMax(EmitterContext& cx, Max* node)
 	Variable* xin2 = expandTypes(cx, in2, out->type);
 
 	cx.emitInstruction(OpMax, out, xin1, xin2);
+
+	collapseTypes(cx, in1, xin1);
+	collapseTypes(cx, in2, xin2);
+}
+
+void emitMin(EmitterContext& cx, Min* node)
+{
+	Variable* in1 = cx.emitInput(node, L"Input1");
+	Variable* in2 = cx.emitInput(node, L"Input2");
+	Variable* out = cx.emitOutput(node, L"Output", std::max(in1->type, in2->type));
+
+	Variable* xin1 = expandTypes(cx, in1, out->type);
+	Variable* xin2 = expandTypes(cx, in2, out->type);
+
+	cx.emitInstruction(OpMin, out, xin1, xin2);
 
 	collapseTypes(cx, in1, xin1);
 	collapseTypes(cx, in2, xin2);
@@ -569,15 +686,17 @@ void emitPixelOutput(EmitterContext& cx, PixelOutput* node)
 	Variable* out = cx.emitVarying(0);
 	cx.emitInstruction(OpStoreVarying, out, in);
 
-	//RenderStateDesc state;
-	//state.depthEnable = node->getDepthEnable();
-	//state.depthWriteEnable = node->getDepthWriteEnable();
-	//state.cullMode = node->getCullMode();
-	//state.blendEnable = node->getBlendEnable();
-	//state.blendOperation = node->getBlendOperation();
-	//state.blendSource = node->getBlendSource();
-	//state.blendDestination = node->getBlendDestination();
-	//cx.setRenderState(state);
+	RenderState rs = node->getRenderState();
+
+	RenderStateDesc state;
+	state.depthEnable = rs.depthEnable;
+	state.depthWriteEnable = rs.depthWriteEnable;
+	state.cullMode = rs.cullMode;
+	state.blendEnable = rs.blendEnable;
+	state.blendOperation = rs.blendOperation;
+	state.blendSource = rs.blendSource;
+	state.blendDestination = rs.blendDestination;
+	cx.setRenderState(state);
 }
 
 void emitReflect(EmitterContext& cx, Reflect* node)
@@ -601,6 +720,20 @@ void emitReflect(EmitterContext& cx, Reflect* node)
 	collapseTypes(cx, tmp2, xtmp2);
 
 	cx.emitInstruction(OpSub, out, tmp3, direction);
+}
+
+void emitRecipSqrt(EmitterContext& cx, RecipSqrt* node)
+{
+	Variable* in = cx.emitInput(node, L"Input");
+	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	cx.emitInstruction(OpRecipSqrt, out, in);
+}
+
+void emitRound(EmitterContext& cx, Round* node)
+{
+	Variable* in = cx.emitInput(node, L"Input");
+	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	cx.emitInstruction(OpRound, out, in);
 }
 
 void emitPow(EmitterContext& cx, Pow* node)
@@ -669,6 +802,13 @@ void emitScalar(EmitterContext& cx, Scalar* node)
 	cx.emitInstruction(OpFetchConstant, out, in);
 }
 
+void emitSign(EmitterContext& cx, Sign* node)
+{
+	Variable* in = cx.emitInput(node, L"Input");
+	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	cx.emitInstruction(OpSign, out, in);
+}
+
 void emitSin(EmitterContext& cx, Sin* node)
 {
 	Variable* theta = cx.emitInput(node, L"Theta");
@@ -707,7 +847,7 @@ void emitSum(EmitterContext& cx, Sum* node)
 		log::error << L"Too many iterations in Sum node" << Endl;
 
 	// Setup counter, load with initial value.
-	Variable* N = cx.emitOutput(node, L"N", VtFloat);
+	Variable* N = cx.emitOutput(node, L"N", VtFloat, true);
 	cx.emitInstruction(OpFetchConstant, N, cx.emitConstant(float(from)));
 
 	Variable* tmp1 = cx.allocTemporary(VtFloat);
@@ -856,6 +996,14 @@ void emitTan(EmitterContext& cx, Tan* node)
 	cx.emitInstruction(OpTan, out, theta);
 }
 
+void emitTextureSize(EmitterContext& cx, TextureSize* node)
+{
+	Variable* texture = cx.emitInput(node, L"Input");
+	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	Instruction inst(OpFetchTextureSize, out->reg, texture->reg, 0, 0, 0);
+	cx.emitInstruction(inst);
+}
+
 void emitTransform(EmitterContext& cx, Transform* node)
 {
 	Variable* in = cx.emitInput(node, L"Input");
@@ -869,6 +1017,13 @@ void emitTranspose(EmitterContext& cx, Transpose* node)
 	Variable* in = cx.emitInput(node, L"Input");
 	Variable* out = cx.emitOutput(node, L"Output", in->type);
 	cx.emitInstruction(OpTranspose, out, in);
+}
+
+void emitTruncate(EmitterContext& cx, Truncate* node)
+{
+	Variable* in = cx.emitInput(node, L"Input");
+	Variable* out = cx.emitOutput(node, L"Output", in->type);
+	cx.emitInstruction(OpTrunc, out, in);
 }
 
 void emitUniform(EmitterContext& cx, Uniform* node)
@@ -1054,11 +1209,16 @@ Emitter::Emitter()
 	m_emitters[&type_of< FragmentPosition >()] = new EmitterCast< FragmentPosition >(emitFragmentPosition);
 	m_emitters[&type_of< IndexedUniform >()] = new EmitterCast< IndexedUniform >(emitIndexedUniform);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
+	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
+	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
+	m_emitters[&type_of< Iterate2d >()] = new EmitterCast< Iterate2d >(emitIterate2d);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);
 	m_emitters[&type_of< MatrixIn >()] = new EmitterCast< MatrixIn >(emitMatrixIn);
+	m_emitters[&type_of< MatrixOut >()] = new EmitterCast< MatrixOut >(emitMatrixOut);
 	m_emitters[&type_of< Max >()] = new EmitterCast< Max >(emitMax);
+	m_emitters[&type_of< Min >()] = new EmitterCast< Min >(emitMin);
 	m_emitters[&type_of< MixIn >()] = new EmitterCast< MixIn >(emitMixIn);
 	m_emitters[&type_of< MixOut >()] = new EmitterCast< MixOut >(emitMixOut);
 	m_emitters[&type_of< Mul >()] = new EmitterCast< Mul >(emitMul);
@@ -1068,8 +1228,11 @@ Emitter::Emitter()
 	m_emitters[&type_of< Pow >()] = new EmitterCast< Pow >(emitPow);
 	m_emitters[&type_of< PixelOutput >()] = new EmitterCast< PixelOutput >(emitPixelOutput);
 	m_emitters[&type_of< Reflect >()] = new EmitterCast< Reflect >(emitReflect);
+	m_emitters[&type_of< RecipSqrt >() ] = new EmitterCast< RecipSqrt >(emitRecipSqrt);
+	m_emitters[&type_of< Round >()] = new EmitterCast< Round >(emitRound);
 	m_emitters[&type_of< Sampler >()] = new EmitterCast< Sampler >(emitSampler);
 	m_emitters[&type_of< Scalar >()] = new EmitterCast< Scalar >(emitScalar);
+	m_emitters[&type_of< Sign >()] = new EmitterCast< Sign >(emitSign);
 	m_emitters[&type_of< Sin >()] = new EmitterCast< Sin >(emitSin);
 	m_emitters[&type_of< Sqrt >()] = new EmitterCast< Sqrt >(emitSqrt);
 	m_emitters[&type_of< Sub >()] = new EmitterCast< Sub >(emitSub);
@@ -1078,8 +1241,10 @@ Emitter::Emitter()
 	m_emitters[&type_of< Swizzle >()] = new EmitterCast< Swizzle >(emitSwizzle);
 	m_emitters[&type_of< TargetSize >()] = new EmitterCast< TargetSize >(emitTargetSize);
 	m_emitters[&type_of< Tan >()] = new EmitterCast< Tan >(emitTan);
+	m_emitters[&type_of< TextureSize >()] = new EmitterCast< TextureSize >(emitTextureSize);
 	m_emitters[&type_of< Transform >()] = new EmitterCast< Transform >(emitTransform);
 	m_emitters[&type_of< Transpose >()] = new EmitterCast< Transpose >(emitTranspose);
+	m_emitters[&type_of< Truncate >()] = new EmitterCast< Truncate >(emitTruncate);
 	m_emitters[&type_of< Uniform >()] = new EmitterCast< Uniform >(emitUniform);
 	m_emitters[&type_of< Vector >()] = new EmitterCast< Vector >(emitVector);
 	m_emitters[&type_of< VertexInput >()] = new EmitterCast< VertexInput >(emitVertexInput);

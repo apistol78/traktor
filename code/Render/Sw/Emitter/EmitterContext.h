@@ -41,6 +41,8 @@ public:
 
 	EmitterContext(const ShaderGraph* shaderGraph, Parameters& parameters);
 
+	virtual ~EmitterContext();
+
 	/*! \name Node emitter */
 	//@{
 
@@ -50,7 +52,7 @@ public:
 
 	Variable* emitInput(Node* node, const std::wstring& inputPinName);
 
-	Variable* emitOutput(Node* node, const std::wstring& outputPinName, VariableType type);
+	Variable* emitOutput(Node* node, const std::wstring& outputPinName, VariableType type, bool force = false);
 
 	//@}
 
@@ -120,22 +122,25 @@ public:
 	uint32_t getInterpolatorCount() const;
 
 private:
-	struct State
+	struct Scope
 	{
-		IntrProgram program;
-		std::bitset< 256 > free;
-		std::set< Variable* > vars;
+		Node* node;
+		std::vector< const OutputPin* > usedRefs;
 	};
 
 	struct TransientInput
 	{
 		Variable* var;
-		uint32_t count;
+		int32_t count;
+		bool forced;
 	};
 
-	struct InputScope
+	struct State
 	{
-		std::vector< const OutputPin* > inputReferences;
+		IntrProgram program;
+		std::bitset< 256 > free;
+		std::set< Variable* > vars;
+		std::map< const OutputPin*, TransientInput > inputs;
 	};
 
 	Emitter m_emitter;
@@ -143,11 +148,12 @@ private:
 	Parameters& m_parameters;
 	State m_states[2];
 	State* m_currentState;
-	std::map< const OutputPin*, TransientInput > m_inputs;
-	std::stack< InputScope > m_scope;
+	std::vector< Scope > m_scope;
 	uint32_t m_interpolatorCount;
 	uint32_t m_samplerCount;
 	RenderStateDesc m_renderState;
+
+	void collectInputs(std::map< const OutputPin*, TransientInput >& inputs);
 };
 
 	}

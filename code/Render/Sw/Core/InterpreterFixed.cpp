@@ -199,6 +199,9 @@ void InterpreterFixed::execute(
 			dest.w = fixedSqrt(R[i->src[0]].w);
 			break;
 
+		case OpRecipSqrt:
+			break;
+
 		case OpSub:
 			dest = R[i->src[0]] - R[i->src[1]];
 			break;
@@ -313,6 +316,12 @@ void InterpreterFixed::execute(
 			}
 			break;
 
+		case OpTrunc:
+			break;
+
+		case OpRound:
+			break;
+
 		case OpLerp:
 			{
 				fp32_t b = R[i->src[0]].x;
@@ -331,11 +340,28 @@ void InterpreterFixed::execute(
 			}
 			break;
 
+		case OpMin:
+			dest.x = std::min(R[i->src[0]].x, R[i->src[1]].x);
+			dest.y = std::min(R[i->src[0]].y, R[i->src[1]].y);
+			dest.z = std::min(R[i->src[0]].z, R[i->src[1]].z);
+			dest.w = std::min(R[i->src[0]].w, R[i->src[1]].w);
+			break;
+
 		case OpMax:
 			dest.x = std::max(R[i->src[0]].x, R[i->src[1]].x);
 			dest.y = std::max(R[i->src[0]].y, R[i->src[1]].y);
 			dest.z = std::max(R[i->src[0]].z, R[i->src[1]].z);
 			dest.w = std::max(R[i->src[0]].w, R[i->src[1]].w);
+			break;
+
+		case OpSign:
+			{
+				fp32_t x = (R[i->src[0]].x >= 0 ? toFixed(1.0f) : toFixed(-1.0f));
+				fp32_t y = (R[i->src[0]].y >= 0 ? toFixed(1.0f) : toFixed(-1.0f));
+				fp32_t z = (R[i->src[0]].z >= 0 ? toFixed(1.0f) : toFixed(-1.0f));
+				fp32_t w = (R[i->src[0]].w >= 0 ? toFixed(1.0f) : toFixed(-1.0f));
+				dest.set(x, y, z, w);
+			}
 			break;
 
 		case OpSampler:

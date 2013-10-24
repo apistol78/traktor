@@ -110,13 +110,6 @@ Ref< const IValue > FloatTemplate::unpack(BitReader& reader) const
 	return 0;
 }
 
-float FloatTemplate::error(const IValue* Vl, const IValue* Vr) const
-{
-	float fl = *checked_type_cast< const FloatValue* >(Vl);
-	float fr = *checked_type_cast< const FloatValue* >(Vr);
-	return abs(fl - fr) * m_errorScale;
-}
-
 Ref< const IValue > FloatTemplate::extrapolate(const IValue* Vn2, float Tn2, const IValue* Vn1, float Tn1, const IValue* V0, float T0, float T) const
 {
 	float Fn2 = *checked_type_cast< const FloatValue* >(Vn2);

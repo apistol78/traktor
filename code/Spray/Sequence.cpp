@@ -1,4 +1,3 @@
-#include "Spray/ITrigger.h"
 #include "Spray/Sequence.h"
 #include "Spray/SequenceInstance.h"
 
@@ -16,16 +15,7 @@ Sequence::Sequence(const std::vector< Key >& keys)
 
 Ref< SequenceInstance > Sequence::createInstance() const
 {
-	std::vector< SequenceInstance::Key > keys;
-
-	keys.resize(m_keys.size());
-	for (size_t i = 0; i < m_keys.size(); ++i)
-	{
-		keys[i].T = m_keys[i].T;
-		keys[i].trigger = m_keys[i].trigger ? m_keys[i].trigger->createInstance() : 0;
-	}
-
-	return new SequenceInstance(keys);
+	return new SequenceInstance(this);
 }
 
 	}

@@ -9,7 +9,7 @@
 
 // import/export mechanism.
 #undef T_DLLCLASS
-#if defined(T_SCRIPT_LUA_EXPORT)
+#if defined(T_SCRIPT_LUA_EXPORT) || defined(T_SCRIPT_LUAJIT_EXPORT)
 #	define T_DLLCLASS T_DLLEXPORT
 #else
 #	define T_DLLCLASS T_DLLIMPORT

@@ -35,6 +35,10 @@ struct CopyVisitor
 
 bool insideCycle(const ShaderGraph* shaderGraph, const OutputPin* outputPin)
 {
+	// No input pins on node means it cannot be part of a cycle.
+	if (outputPin->getNode()->getInputPinCount() <= 0)
+		return false;
+
 	std::deque< const OutputPin* > scanOutputPins;
 	std::set< const OutputPin* > scannedOutputPins;
 

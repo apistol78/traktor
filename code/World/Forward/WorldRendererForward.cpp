@@ -137,7 +137,7 @@ bool WorldRendererForward::create(
 		renderSystem->getInformation(info);
 
 		int32_t maxResolution = m_shadowSettings.resolution;
-		if (info.dedicatedMemoryTotal >= 0 && info.dedicatedMemoryTotal < 512 * 1024 * 1024)
+		if (info.dedicatedMemoryTotal < 512 * 1024 * 1024)
 			maxResolution /= 2;
 
 		int32_t resolution = min< int32_t >(nearestLog2(int32_t(max< int32_t >(width, height) * 1.9f)), maxResolution);

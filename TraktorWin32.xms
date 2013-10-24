@@ -6,8 +6,8 @@
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
-			<name>Extern.expat-2.0.0</name>
-			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</sourcePath>
+			<name>Extern.expat-2.1.0</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</sourcePath>
 			<configurations>
 				<item type="Configuration" version="1">
 					<name>DebugShared</name>
@@ -6272,7 +6272,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_XML_EXPORT</item>
@@ -6290,7 +6290,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_XML_EXPORT</item>
@@ -6308,7 +6308,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -6326,7 +6326,7 @@
 														<precompiledHeader/>
 														<includePaths>
 															<item>$(TRAKTOR_HOME)/code</item>
-															<item>$(TRAKTOR_HOME)/3rdp/expat-2.0.0/lib</item>
+															<item>$(TRAKTOR_HOME)/3rdp/expat-2.1.0/lib</item>
 														</includePaths>
 														<definitions>
 															<item>T_STATIC</item>
@@ -6777,7 +6777,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
@@ -6786,7 +6786,7 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+						<item>$(FBX_SDK)/lib/vs2008/x86</item>
 					</libraryPaths>
 					<libraries>
 						<item>fbxsdk-2013.1.lib</item>
@@ -6802,7 +6802,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
@@ -6811,7 +6811,7 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+						<item>$(FBX_SDK)/lib/vs2008/x86</item>
 					</libraryPaths>
 					<libraries>
 						<item>fbxsdk-2013.1.lib</item>
@@ -6827,7 +6827,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6836,7 +6836,7 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+						<item>$(FBX_SDK)/lib/vs2008/x86</item>
 					</libraryPaths>
 					<libraries>
 						<item>fbxsdk-2013.1.lib</item>
@@ -6852,7 +6852,7 @@
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
 						<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(FBX_SDK)/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6861,7 +6861,7 @@
 						<item>FBXSDK_SHARED</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+						<item>$(FBX_SDK)/lib/vs2008/x86</item>
 					</libraryPaths>
 					<libraries>
 						<item>fbxsdk-2013.1.lib</item>
@@ -9176,7 +9176,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -9185,7 +9185,7 @@
 												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+												<item>$(FBX_SDK)/lib/vs2008/x86</item>
 											</libraryPaths>
 											<libraries>
 												<item>fbxsdk-2013.1.lib</item>
@@ -9201,7 +9201,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -9210,7 +9210,7 @@
 												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+												<item>$(FBX_SDK)/lib/vs2008/x86</item>
 											</libraryPaths>
 											<libraries>
 												<item>fbxsdk-2013.1.lib</item>
@@ -9226,7 +9226,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9235,7 +9235,7 @@
 												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+												<item>$(FBX_SDK)/lib/vs2008/x86</item>
 											</libraryPaths>
 											<libraries>
 												<item>fbxsdk-2013.1.lib</item>
@@ -9251,7 +9251,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(FBX_SDK)/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -9260,7 +9260,7 @@
 												<item>FBXSDK_SHARED</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/vs2008/x86</item>
+												<item>$(FBX_SDK)/lib/vs2008/x86</item>
 											</libraryPaths>
 											<libraries>
 												<item>fbxsdk-2013.1.lib</item>
@@ -11350,100 +11350,6 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Traktor.Graphics.Gdi</name>
-						<sourcePath>$(TRAKTOR_HOME)/code/Graphics/Gdi</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_GRAPHICS_GDI_EXPORT</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfSharedLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_GRAPHICS_GDI_EXPORT</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>_DEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths>
-									<item>$(TRAKTOR_HOME)/code</item>
-								</includePaths>
-								<definitions>
-									<item>T_STATIC</item>
-									<item>NDEBUG</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>*.*</fileName>
-								<items/>
-							</item>
-						</items>
-						<dependencies>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[15]/dependencies/item/project"/>
-							</item>
-							<item type="ProjectDependency" version="1">
-								<linkWithProduct>true</linkWithProduct>
-								<project ref="/object/projects/item[29]/dependencies/item[8]/project"/>
-							</item>
-						</dependencies>
-					</project>
-				</item>
-				<item type="ProjectDependency" version="1">
-					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[3]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
@@ -11618,7 +11524,97 @@
 			</dependencies>
 		</item>
 		<item ref="/object/projects/item[29]/dependencies/item[8]/project"/>
-		<item ref="/object/projects/item[29]/dependencies/item[9]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Graphics.Gdi</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Graphics/Gdi</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_GRAPHICS_GDI_EXPORT</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_GRAPHICS_GDI_EXPORT</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[29]/dependencies/item[8]/project"/>
+				</item>
+			</dependencies>
+		</item>
 		<item ref="/object/projects/item[28]/dependencies/item[6]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[8]/project/dependencies/item[11]/project"/>
 		<item type="Project" version="1">
@@ -15823,7 +15819,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[29]/dependencies/item[9]/project"/>
+					<project ref="/object/projects/item[31]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -16372,7 +16368,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
@@ -16390,7 +16386,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_SCRIPT_LUA_EXPORT</item>
@@ -16408,7 +16404,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16426,7 +16422,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
+						<item>$(TRAKTOR_HOME)/3rdp/lua-5.1.4/src</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -16455,92 +16451,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project type="Project" version="1">
-						<enable>true</enable>
-						<name>Extern.LuaJIT-2.0.0</name>
-						<sourcePath>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</sourcePath>
-						<configurations>
-							<item type="Configuration" version="1">
-								<name>DebugShared</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths/>
-								<definitions>
-									<item>_DEBUG</item>
-									<item>_CRT_SECURE_NO_WARNINGS</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseShared</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths/>
-								<definitions>
-									<item>NDEBUG</item>
-									<item>_CRT_SECURE_NO_WARNINGS</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>DebugStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpDebug</targetProfile>
-								<precompiledHeader/>
-								<includePaths/>
-								<definitions>
-									<item>_DEBUG</item>
-									<item>_CRT_SECURE_NO_WARNINGS</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-							<item type="Configuration" version="1">
-								<name>ReleaseStatic</name>
-								<targetFormat>TfStaticLibrary</targetFormat>
-								<targetProfile>TpRelease</targetProfile>
-								<precompiledHeader/>
-								<includePaths/>
-								<definitions>
-									<item>NDEBUG</item>
-									<item>_CRT_SECURE_NO_WARNINGS</item>
-								</definitions>
-								<libraryPaths/>
-								<libraries/>
-								<additionalCompilerOptions/>
-								<additionalLinkerOptions/>
-							</item>
-						</configurations>
-						<items>
-							<item type="File">
-								<fileName>lj_*.c</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>lib_*.c</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>*.h</fileName>
-								<items/>
-							</item>
-							<item type="File">
-								<fileName>../lj_vm.obj</fileName>
-								<items/>
-							</item>
-						</items>
-						<dependencies/>
-					</project>
+					<project ref="/object/projects/item[9]"/>
 				</item>
 			</dependencies>
 		</item>
@@ -16660,7 +16571,7 @@
 				</item>
 			</dependencies>
 		</item>
-		<item ref="/object/projects/item[29]/dependencies/item[12]/project"/>
+		<item ref="/object/projects/item[29]/dependencies/item[11]/project"/>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Traktor.Sound.WinMM</name>
@@ -17152,7 +17063,7 @@
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
-					<project ref="/object/projects/item[29]/dependencies/item[12]/project"/>
+					<project ref="/object/projects/item[29]/dependencies/item[11]/project"/>
 				</item>
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
@@ -18396,7 +18307,92 @@
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project/dependencies/item[2]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project/dependencies/item[1]/project"/>
 		<item ref="/object/projects/item[16]/dependencies/item[3]/project/dependencies/item[4]/project"/>
-		<item ref="/object/projects/item[64]/dependencies/item[2]/project"/>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Extern.LuaJIT-2.0.0</name>
+			<sourcePath>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>_CRT_SECURE_NO_WARNINGS</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>_CRT_SECURE_NO_WARNINGS</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>_DEBUG</item>
+						<item>_CRT_SECURE_NO_WARNINGS</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths/>
+					<definitions>
+						<item>NDEBUG</item>
+						<item>_CRT_SECURE_NO_WARNINGS</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>lj_*.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>lib_*.c</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>*.h</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>../lj_vm.obj</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies/>
+		</item>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>Extern.libtheora-1.1.1</name>
@@ -18760,14 +18756,14 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/include/p4</item>
+						<item>$(P4_X86_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/lib</item>
+						<item>$(P4_X86_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -18786,14 +18782,14 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/include/p4</item>
+						<item>$(P4_X86_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_DATABASE_LOCAL_P4_EXPORT</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/lib</item>
+						<item>$(P4_X86_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -18812,14 +18808,14 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/include/p4</item>
+						<item>$(P4_X86_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/lib</item>
+						<item>$(P4_X86_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -18838,14 +18834,14 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/include/p4</item>
+						<item>$(P4_X86_SDK)/include/p4</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/p4api-2013.1.610569-vs2008_dyn/lib</item>
+						<item>$(P4_X86_SDK)/lib</item>
 					</libraryPaths>
 					<libraries>
 						<item>libclient.lib</item>
@@ -21157,6 +21153,109 @@
 				<item type="ProjectDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<project ref="/object/projects/item[64]"/>
+				</item>
+			</dependencies>
+		</item>
+		<item type="Project" version="1">
+			<enable>true</enable>
+			<name>Traktor.Script.LuaJIT</name>
+			<sourcePath>$(TRAKTOR_HOME)/code/Script/Lua</sourcePath>
+			<configurations>
+				<item type="Configuration" version="1">
+					<name>DebugShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCRIPT_LUAJIT_EXPORT</item>
+						<item>_DEBUG</item>
+						<item>T_USE_LUA_DUMP</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseShared</name>
+					<targetFormat>TfSharedLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_SCRIPT_LUAJIT_EXPORT</item>
+						<item>NDEBUG</item>
+						<item>T_USE_LUA_DUMP</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>DebugStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpDebug</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>_DEBUG</item>
+						<item>T_USE_LUA_DUMP</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+				<item type="Configuration" version="1">
+					<name>ReleaseStatic</name>
+					<targetFormat>TfStaticLibrary</targetFormat>
+					<targetProfile>TpRelease</targetProfile>
+					<precompiledHeader/>
+					<includePaths>
+						<item>$(TRAKTOR_HOME)/code</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/src</item>
+					</includePaths>
+					<definitions>
+						<item>T_STATIC</item>
+						<item>NDEBUG</item>
+						<item>T_USE_LUA_DUMP</item>
+					</definitions>
+					<libraryPaths/>
+					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
+				</item>
+			</configurations>
+			<items>
+				<item type="File">
+					<fileName>*.*</fileName>
+					<items/>
+				</item>
+			</items>
+			<dependencies>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[92]"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[15]/dependencies/item/project"/>
+				</item>
+				<item type="ProjectDependency" version="1">
+					<linkWithProduct>true</linkWithProduct>
+					<project ref="/object/projects/item[61]"/>
 				</item>
 			</dependencies>
 		</item>

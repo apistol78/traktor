@@ -27,6 +27,13 @@ class ISoundPlayer;
 
 	}
 
+	namespace world
+	{
+
+class IEntityEventManager;
+
+	}
+
 	namespace spray
 	{
 
@@ -38,7 +45,7 @@ class T_DLLCLASS EffectEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EffectEntityFactory(resource::IResourceManager* resourceManager, sound::ISoundPlayer* soundPlayer);
+	EffectEntityFactory(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -50,6 +57,7 @@ public:
 
 private:
 	resource::IResourceManager* m_resourceManager;
+	world::IEntityEventManager* m_eventManager;
 	sound::ISoundPlayer* m_soundPlayer;
 };
 

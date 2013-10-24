@@ -351,6 +351,7 @@ int WINAPI WinMain(HINSTANCE, HINSTANCE, LPWSTR szCmdLine, int)
 		if (application->create(
 			defaultSettings,
 			settings,
+			0,
 			0
 		))
 		{

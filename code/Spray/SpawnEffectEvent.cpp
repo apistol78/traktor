@@ -1,7 +1,6 @@
 #include "Spray/EffectEntity.h"
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventInstance.h"
-#include "World/IEntityBuilder.h"
 
 namespace traktor
 {
@@ -11,25 +10,22 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SpawnEffectEvent", SpawnEffectEvent, world::IEntityEvent)
 
 SpawnEffectEvent::SpawnEffectEvent(
-	const world::IEntityBuilder* entityBuilder,
-	const world::EntityData* effectData,
+	sound::ISoundPlayer* soundPlayer,
+	const resource::Proxy< Effect >& effect,
 	bool follow,
 	bool useRotation
 )
-:	m_entityBuilder(entityBuilder)
-,	m_effectData(effectData)
+:	m_soundPlayer(soundPlayer)
+,	m_effect(effect)
 ,	m_follow(follow)
 ,	m_useRotation(useRotation)
 {
 }
 
-Ref< world::IEntityEventInstance > SpawnEffectEvent::createInstance(world::Entity* sender, const Transform& Toffset) const
+Ref< world::IEntityEventInstance > SpawnEffectEvent::createInstance(world::IEntityEventManager* eventManager, world::Entity* sender, const Transform& Toffset) const
 {
-	Ref< EffectEntity > effect = m_entityBuilder->create< EffectEntity >(m_effectData);
-	if (effect)
-		return new SpawnEffectEventInstance(this, sender, Toffset, effect);
-	else
-		return 0;
+	Ref< EffectEntity > effect = new EffectEntity(Toffset, m_effect, eventManager, m_soundPlayer);
+	return new SpawnEffectEventInstance(this, sender, Toffset, effect);
 }
 
 	}

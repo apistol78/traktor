@@ -28,8 +28,9 @@ SoundEventInstance::SoundEventInstance(
 {
 	if (m_positional)
 	{
-		Transform T;
-		m_sender->getTransform(T);
+		Transform T = Transform::identity();
+		if (m_sender)
+			m_sender->getTransform(T);
 		m_handle = m_soundPlayer->play3d(m_sound, (T * m_Toffset).translation(), 16);
 	}
 	else
@@ -43,8 +44,9 @@ bool SoundEventInstance::update(const world::UpdateParams& update)
 
 	if (m_positional && m_follow)
 	{
-		Transform T;
-		m_sender->getTransform(T);
+		Transform T = Transform::identity();
+		if (m_sender)
+			m_sender->getTransform(T);
 		m_handle->setPosition((T * m_Toffset).translation());
 	}
 

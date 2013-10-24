@@ -5,10 +5,10 @@
 #include "Spray/EffectLayerData.h"
 #include "Spray/EmitterData.h"
 #include "Spray/SequenceData.h"
-#include "Spray/SoundTriggerData.h"
 #include "Spray/TrailData.h"
 #include "Spray/Editor/EffectPipeline.h"
 #include "Spray/Sources/PointSetSourceData.h"
+#include "World/IEntityEventData.h"
 
 namespace traktor
 {
@@ -65,20 +65,11 @@ bool EffectPipeline::buildDependencies(
 		if (sequence)
 		{
 			for (std::vector< SequenceData::Key >::const_iterator i = sequence->getKeys().begin(); i != sequence->getKeys().end(); ++i)
-			{
-				const SoundTriggerData* soundTrigger = dynamic_type_cast< const SoundTriggerData* >(i->trigger);
-				if (soundTrigger)
-					pipelineDepends->addDependency(soundTrigger->getSound(), editor::PdfBuild | editor::PdfResource);
-			}
+				pipelineDepends->addDependency(i->event);
 		}
 
-		const SoundTriggerData* soundTriggerEnable = dynamic_type_cast< const SoundTriggerData* >((*i)->getTriggerEnable());
-		if (soundTriggerEnable)
-			pipelineDepends->addDependency(soundTriggerEnable->getSound(), editor::PdfBuild | editor::PdfResource);
-
-		const SoundTriggerData* soundTriggerDisable = dynamic_type_cast< const SoundTriggerData* >((*i)->getTriggerDisable());
-		if (soundTriggerDisable)
-			pipelineDepends->addDependency(soundTriggerDisable->getSound(), editor::PdfBuild | editor::PdfResource);
+		pipelineDepends->addDependency((*i)->getTriggerEnable());
+		pipelineDepends->addDependency((*i)->getTriggerDisable());
 	}
 
 	return true;

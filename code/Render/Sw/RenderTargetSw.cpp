@@ -16,7 +16,7 @@ RenderTargetSw::RenderTargetSw()
 
 bool RenderTargetSw::create(const RenderTargetSetCreateDesc& setDesc, const RenderTargetCreateDesc& desc)
 {
-	if (desc.format >= TfR16G16B16A16F)
+	if (desc.format >= TfDXT1)
 		return false;
 	if (setDesc.width <= 0 || setDesc.height <= 0)
 		return false;

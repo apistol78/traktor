@@ -192,6 +192,7 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 	m_shaderViewer = new ShaderViewer(m_editor);
 	m_shaderViewer->create(parent);
 	m_site->createAdditionalPanel(m_shaderViewer, 400, false);
+	m_shaderViewer->setVisible(m_editor->getSettings()->getProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", true));
 
 	// Modify graph control settings.
 	Ref< ui::custom::PaintSettings > paintSettings = m_editorGraph->getPaintSettings();
@@ -265,7 +266,14 @@ bool ShaderGraphEditorPage::create(ui::Container* parent)
 
 void ShaderGraphEditorPage::destroy()
 {
-	m_site->destroyAdditionalPanel(m_shaderViewer);
+	if (m_shaderViewer)
+	{
+		m_editor->checkoutGlobalSettings()->setProperty< PropertyBoolean >(L"ShaderEditor.ShaderViewVisible", m_shaderViewer->isVisible(true));
+		m_editor->commitGlobalSettings();
+
+		m_site->destroyAdditionalPanel(m_shaderViewer);
+	}
+
 	m_nodeFacades.clear();
 	safeDestroy(m_editorGraph);
 	safeDestroy(m_shaderViewer);
@@ -936,7 +944,7 @@ void ShaderGraphEditorPage::updateGraph()
 	}
 
 	// If validation succeeded then update generated shader as well.
-	if (validationResult && m_shaderViewer->isVisible(true))
+	if (validationResult)
 		m_shaderViewer->reflect(m_shaderGraph);
 
 	// Redraw editor graph.

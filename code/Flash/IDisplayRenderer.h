@@ -88,6 +88,15 @@ public:
 	 */
 	virtual void renderGlyph(const FlashDictionary& dictionary, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor) = 0;
 
+	/*! \brief Render text input caret.
+	 *
+	 * \param transform Shape transform.
+	 * \param fontMaxDimension Max font glyph size.
+	 * \param color Color
+	 * \param cxform Color transform.
+	 */
+	virtual void renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfColor& color, const SwfCxTransform& cxform) = 0;
+
 	/*! \brief Render canvas.
 	 *
 	 * \param dictionary Flash character dictionary.

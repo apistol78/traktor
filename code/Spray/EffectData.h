@@ -21,6 +21,13 @@ class IResourceManager;
 
 	}
 
+	namespace world
+	{
+
+class IEntityBuilder;
+
+	}
+
 	namespace spray
 	{
 
@@ -44,7 +51,9 @@ public:
 		const RefArray< EffectLayerData >& layers
 	);
 
-	Ref< Effect > createEffect(resource::IResourceManager* resourceManager) const;
+	Ref< Effect > createEffect(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const;
+
+	void addLayer(EffectLayerData* layer);
 
 	virtual void serialize(ISerializer& s);
 

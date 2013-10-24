@@ -1,6 +1,7 @@
 #ifndef traktor_spray_SpawnEffectEventData_H
 #define traktor_spray_SpawnEffectEventData_H
 
+#include "Resource/Id.h"
 #include "World/IEntityEventData.h"
 
 // import/export mechanism.
@@ -13,15 +14,10 @@
 
 namespace traktor
 {
-	namespace world
-	{
-
-class EntityData;
-
-	}
-
 	namespace spray
 	{
+
+class Effect;
 
 /*! \brief
  * \ingroup Spray
@@ -35,10 +31,14 @@ public:
 
 	virtual void serialize(ISerializer& s);
 
-private:
-	friend class EffectEntityFactory;
+	const resource::Id< Effect >& getEffect() const { return m_effect; }
 
-	Ref< world::EntityData > m_effectData;
+	bool getFollow() const { return m_follow; }
+
+	bool getUseRotation() const { return m_useRotation; }
+
+private:
+	resource::Id< Effect > m_effect;
 	bool m_follow;
 	bool m_useRotation;
 };

@@ -418,6 +418,9 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 			a.sqrtps(xmmw(a, i.dest), xmmr(a, i.src[0]));
 			break;
 
+		case OpRecipSqrt:
+			break;
+
 		case OpSub:
 			a.movaps(xmmw(a, i.dest), xmmr(a, i.src[0]));
 			a.subps(xmmr(a, i.dest), xmmr(a, i.src[1]));
@@ -724,6 +727,12 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 			a.movaps(xmmw(a, i.dest), xmmr(a, R0));
 			break;
 
+		case OpTrunc:
+			break;
+
+		case OpRound:
+			break;
+
 		case OpLerp:
 			a.movaps(xmmw(a, R0), xmmr(a, i.src[0]));	// xmm0 = { blend, ... }
 			a.shufps(xmmr(a, R0), xmmr(a, R0), SSE_SHUFFLE_MASK(0, 0, 0, 0));
@@ -752,9 +761,19 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 			a.addps(xmmr(a, i.dest), xmmr(a, R0));	
 			break;
 
+		case OpMin:
+			a.movaps(xmmw(a, i.dest), xmmr(a, i.src[0]));
+			a.minps(xmmr(a, i.dest), xmmr(a, i.src[1]));
+			break;
+
 		case OpMax:
 			a.movaps(xmmw(a, i.dest), xmmr(a, i.src[0]));
 			a.maxps(xmmr(a, i.dest), xmmr(a, i.src[1]));
+			break;
+
+		case OpSign:
+			a.movaps(xmmw(a, i.dest), xmmr(a, i.src[0]));
+			// \fixme
 			break;
 
 		case OpSampler:

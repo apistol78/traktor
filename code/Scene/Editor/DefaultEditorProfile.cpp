@@ -68,7 +68,7 @@ void DefaultEditorProfile::createResourceFactories(
 	outResourceFactories.push_back(new render::TextureFactory(context->getResourceDatabase(), context->getRenderSystem(), 0));
 	outResourceFactories.push_back(new weather::CloudMaskFactory(context->getResourceDatabase()));
 	outResourceFactories.push_back(new world::EntityResourceFactory(context->getResourceDatabase()));
-	outResourceFactories.push_back(new world::EntityEventResourceFactory(context->getResourceDatabase()));
+	//outResourceFactories.push_back(new world::EntityEventResourceFactory(context->getResourceDatabase()));
 	outResourceFactories.push_back(new world::PostProcessFactory(context->getResourceDatabase()));
 }
 

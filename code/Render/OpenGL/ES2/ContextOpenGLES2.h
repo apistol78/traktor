@@ -17,6 +17,7 @@ namespace traktor
 #if !defined(T_OFFLINE_ONLY)
 
 class EAGLContextWrapper;
+class PPContextWrapper;
 
 /*! \brief OpenGL ES2 context.
  * \ingroup OGL
@@ -28,12 +29,9 @@ class ContextOpenGLES2 : public IContext
 public:
 	static bool initialize();
 
-	static Ref< ContextOpenGLES2 > createResourceContext();
+	static Ref< ContextOpenGLES2 > createResourceContext(void* nativeHandle);
 
-	static Ref< ContextOpenGLES2 > createContext(
-		ContextOpenGLES2* resourceContext,
-		void* nativeWindowHandle
-	);
+	static Ref< ContextOpenGLES2 > createContext(ContextOpenGLES2* resourceContext, void* nativeHandle, void* nativeWindowHandle);
 
 	virtual bool enter();
 
@@ -65,6 +63,8 @@ private:
 	static ThreadLocal ms_contextStack;
 #if defined(TARGET_OS_IPHONE)
 	EAGLContextWrapper* m_context;
+#elif defined(__PNACL__)
+	Ref< PPContextWrapper > m_context;
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 #	if defined(_WIN32)
 	static HWND ms_hWnd;
@@ -81,6 +81,8 @@ private:
 
 #if defined(TARGET_OS_IPHONE)
 	ContextOpenGLES2(EAGLContextWrapper* context);
+#elif defined(__PNACL__)
+	ContextOpenGLES2(PPContextWrapper* context);
 #elif defined(T_OPENGL_ES2_HAVE_EGL)
 	ContextOpenGLES2(EGLSurface surface, EGLContext context);
 #endif

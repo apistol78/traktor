@@ -31,12 +31,12 @@ EffectData::EffectData(
 {
 }
 
-Ref< Effect > EffectData::createEffect(resource::IResourceManager* resourceManager) const
+Ref< Effect > EffectData::createEffect(resource::IResourceManager* resourceManager, const world::IEntityBuilder* entityBuilder) const
 {
 	RefArray< EffectLayer > effectLayers;
 	for (RefArray< EffectLayerData >::const_iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 	{
-		Ref< EffectLayer > effectLayer = (*i)->createEffectLayer(resourceManager);
+		Ref< EffectLayer > effectLayer = (*i)->createEffectLayer(resourceManager, entityBuilder);
 		if (effectLayer)
 			effectLayers.push_back(effectLayer);
 	}
@@ -47,6 +47,11 @@ Ref< Effect > EffectData::createEffect(resource::IResourceManager* resourceManag
 		m_loopEnd,
 		effectLayers
 	);
+}
+
+void EffectData::addLayer(EffectLayerData* layer)
+{
+	m_layers.push_back(layer);
 }
 
 void EffectData::serialize(ISerializer& s)

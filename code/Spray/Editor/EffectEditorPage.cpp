@@ -1,5 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Database/Instance.h"
@@ -19,9 +20,12 @@
 #include "Spray/EffectFactory.h"
 #include "Spray/EffectLayerData.h"
 #include "Spray/SequenceData.h"
+#include "Spray/Editor/ClipboardData.h"
 #include "Spray/Editor/EffectEditorPage.h"
 #include "Spray/Editor/EffectPreviewControl.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/Container.h"
 #include "Ui/MethodHandler.h"
@@ -103,7 +107,7 @@ bool EffectEditorPage::create(ui::Container* parent)
 	m_resourceManager->addFactory(new render::TextureFactory(database, renderSystem, 0));
 	m_resourceManager->addFactory(new render::ShaderFactory(database, renderSystem));
 	m_resourceManager->addFactory(new sound::SoundFactory(database));
-	m_resourceManager->addFactory(new EffectFactory(database));
+	m_resourceManager->addFactory(new EffectFactory(database, 0));
 
 	m_effectData = m_document->getObject< EffectData >(0);
 	if (!m_effectData)
@@ -259,6 +263,37 @@ bool EffectEditorPage::handleCommand(const ui::Command& command)
 		updateSequencer();
 		updateEffectPreview();
 	}
+	else if (command == L"Editor.Copy")
+	{
+		RefArray< ui::custom::SequenceItem > selectedItems;
+		if (m_sequencer->getSequenceItems(selectedItems, ui::custom::SequencerControl::GfSelectedOnly) > 0)
+		{
+			Ref< ClipboardData > clipboardData = new ClipboardData();
+			for (RefArray< ui::custom::SequenceItem >::iterator i = selectedItems.begin(); i != selectedItems.end(); ++i)
+			{
+				Ref< EffectLayerData > layer = (*i)->getData< EffectLayerData >(L"LAYER");
+				T_ASSERT (layer);
+
+				clipboardData->addLayer(layer);
+			}
+			ui::Application::getInstance()->getClipboard()->setObject(clipboardData);
+		}
+	}
+	else if (command == L"Editor.Paste")
+	{
+		Ref< ClipboardData > clipboardData = dynamic_type_cast< ClipboardData* >(
+			ui::Application::getInstance()->getClipboard()->getObject()
+		);
+		if (clipboardData)
+		{
+			const RefArray< const EffectLayerData >& layers = clipboardData->getLayers();
+			for (RefArray< const EffectLayerData >::const_iterator i = layers.begin(); i != layers.end(); ++i)
+				m_effectData->addLayer(DeepClone(*i).create< EffectLayerData >());
+
+			updateSequencer();
+			updateEffectPreview();
+		}
+	}
 	else if (command == L"Editor.Undo")
 	{
 		if (m_document->undo())
@@ -320,7 +355,7 @@ void EffectEditorPage::updateEffectPreview()
 			layersData
 		);
 
-		Ref< Effect > effect = effectData->createEffect(m_resourceManager);
+		Ref< Effect > effect = effectData->createEffect(m_resourceManager, 0);
 		m_previewControl->setEffect(effect);
 
 		float time = m_sequencer->getCursor() / 1000.0f;

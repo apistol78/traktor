@@ -56,6 +56,8 @@ public:
 
 	std::wstring getText() const;
 
+	int32_t getCaret() const;
+
 	const TextLayout* getTextLayout() const;
 
 	virtual Aabb2 getBounds() const;
@@ -69,6 +71,7 @@ private:
 	float m_letterSpacing;
 	std::wstring m_text;
 	bool m_html;
+	int32_t m_caret;
 	Ref< TextLayout > m_layout;
 
 	void updateLayout();

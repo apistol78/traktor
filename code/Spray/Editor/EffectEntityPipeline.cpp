@@ -1,7 +1,8 @@
-#include "Spray/Editor/EffectEntityPipeline.h"
+#include "Editor/IPipelineDepends.h"
 #include "Spray/EffectEntityData.h"
 #include "Spray/SoundEventData.h"
-#include "Editor/IPipelineDepends.h"
+#include "Spray/SpawnEffectEventData.h"
+#include "Spray/Editor/EffectEntityPipeline.h"
 
 namespace traktor
 {
@@ -13,8 +14,9 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.EffectEntityPipeline", 1, EffectE
 TypeInfoSet EffectEntityPipeline::getAssetTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< SoundEventData >());
 	typeSet.insert(&type_of< EffectEntityData >());
+	typeSet.insert(&type_of< SoundEventData >());
+	typeSet.insert(&type_of< SpawnEffectEventData >());
 	return typeSet;
 }
 
@@ -26,10 +28,12 @@ bool EffectEntityPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
-	if (const SoundEventData* soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
-		pipelineDepends->addDependency(soundEventData->m_sound, editor::PdfBuild | editor::PdfResource);
-	else if (const EffectEntityData* effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
+	if (const EffectEntityData* effectEntityData = dynamic_type_cast< const EffectEntityData* >(sourceAsset))
 		pipelineDepends->addDependency(effectEntityData->getEffect(), editor::PdfBuild | editor::PdfResource);
+	else if (const SoundEventData* soundEventData = dynamic_type_cast< const SoundEventData* >(sourceAsset))
+		pipelineDepends->addDependency(soundEventData->m_sound, editor::PdfBuild | editor::PdfResource);
+	else if (const SpawnEffectEventData* spawnEventData = dynamic_type_cast< const SpawnEffectEventData* >(sourceAsset))
+		pipelineDepends->addDependency(spawnEventData->getEffect(), editor::PdfBuild | editor::PdfResource);
 
 	return true;
 }

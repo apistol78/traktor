@@ -14,8 +14,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectFactory", EffectFactory, resource::IResourceFactory)
 
-EffectFactory::EffectFactory(db::Database* db)
+EffectFactory::EffectFactory(db::Database* db, const world::IEntityBuilder* entityBuilder)
 :	m_db(db)
+,	m_entityBuilder(entityBuilder)
 {
 }
 
@@ -46,7 +47,7 @@ Ref< Object > EffectFactory::create(resource::IResourceManager* resourceManager,
 	{
 		Ref< EffectData > effectData = m_db->getObjectReadOnly< EffectData >(guid);
 		if (effectData)
-			return effectData->createEffect(resourceManager);
+			return effectData->createEffect(resourceManager, m_entityBuilder);
 		else
 			return 0;
 	}

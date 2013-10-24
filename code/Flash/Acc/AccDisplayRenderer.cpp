@@ -527,6 +527,27 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	);
 }
 
+void AccDisplayRenderer::renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfColor& color, const SwfCxTransform& cxform)
+{
+	Aabb2 bounds;
+	bounds.mn = -fontMaxDimension / 2.0f;
+	bounds.mx = fontMaxDimension / 2.0f;
+
+	m_quad->render(
+		m_renderContext,
+		bounds,
+		transform,
+		m_frameSize,
+		m_viewSize,
+		m_viewOffset,
+		0.0f,
+		cxform,
+		0,
+		Vector4::zero(),
+		m_maskReference
+	);
+}
+
 void AccDisplayRenderer::renderCanvas(const FlashDictionary& dictionary, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform)
 {
 	Ref< AccShape > accShape;

@@ -1,8 +1,8 @@
 #ifndef traktor_SharedMemoryEmscripten_H
 #define traktor_SharedMemoryEmscripten_H
 
-#include "Core/System/ISharedMemory.h"
 #include "Core/Misc/AutoPtr.h"
+#include "Core/System/ISharedMemory.h"
 
 namespace traktor
 {
@@ -17,6 +17,8 @@ public:
 	virtual Ref< IStream > read(bool exclusive);
 
 	virtual Ref< IStream > write();
+
+	virtual bool clear();
 
 private:
 	AutoArrayPtr< uint8_t > m_data;

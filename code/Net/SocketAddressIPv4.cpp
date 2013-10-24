@@ -13,7 +13,6 @@
 #if defined(__LINUX__)
 #   include <sys/ioctl.h>
 #   include <sys/sysctl.h>
-//#   include <sys/sockio.h>
 #   include <net/if.h>
 #   include <netinet/if_ether.h>
 #endif
@@ -64,11 +63,15 @@ SocketAddressIPv4::SocketAddressIPv4(const uint8_t addr[4], uint16_t port)
 
 SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 {
+	uint32_t ia = INADDR_NONE;
+
 	// Try to resolve address, first try string denoted IP number as it will
 	// probably fail faster than gethostbyname.
-	uint32_t ia = inet_addr(wstombs(host).c_str());
+#if !defined(__PNACL__)
+	ia = inet_addr(wstombs(host).c_str());
+#endif
 
-#if !defined(_XBOX) && !defined(EMSCRIPTEN)
+#if !defined(_XBOX) && !defined(__EMSCRIPTEN__)
 	if (ia == INADDR_NONE)
 	{
 		hostent* hostent = gethostbyname(wstombs(host).c_str());

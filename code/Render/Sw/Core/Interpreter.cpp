@@ -81,7 +81,13 @@ void Interpreter::execute(
 	#define R(i) registers[(i)]
 
 	const std::vector< Instruction >& instructions = img->program.getInstructions();
-	for (std::vector< Instruction >::const_iterator i = instructions.begin(); i != instructions.end(); ++i)
+	uint32_t executed = 0;
+
+	for (
+		std::vector< Instruction >::const_iterator i = instructions.begin();
+		i != instructions.end() && executed < 500;
+		++i, ++executed
+	)
 	{
 		Vector4& dest = R(i->dest);
 		switch (i->op)
@@ -97,6 +103,23 @@ void Interpreter::execute(
 		case OpFetchTargetSize:
 			dest = targetSize;
 			CHECK(dest);
+			break;
+
+		case OpFetchTextureSize:
+			{
+				if (inSamplers)
+				{
+					const AbstractSampler* sampler = inSamplers[i->src[0]];
+					if (sampler)
+					{
+						dest = sampler->getSize();
+						CHECK(dest);
+						break;
+					}
+				}
+				dest = Vector4::zero();
+				CHECK(dest);
+			}
 			break;
 
 		case OpFetchUniform:
@@ -262,6 +285,22 @@ void Interpreter::execute(
 			}
 			break;
 
+		case OpRecipSqrt:
+			{
+				Scalar x = max(R(i->src[0]).x(), Scalar(0.0f));
+				Scalar y = max(R(i->src[0]).y(), Scalar(0.0f));
+				Scalar z = max(R(i->src[0]).z(), Scalar(0.0f));
+				Scalar w = max(R(i->src[0]).w(), Scalar(0.0f));
+				dest.set(
+					reciprocalSquareRoot(x),
+					reciprocalSquareRoot(y),
+					reciprocalSquareRoot(z),
+					reciprocalSquareRoot(w)
+				);
+				CHECK(dest);
+			}
+			break;
+
 		case OpSub:
 			dest = R(i->src[0]) - R(i->src[1]);
 			CHECK(dest);
@@ -402,6 +441,28 @@ void Interpreter::execute(
 			}
 			break;
 
+		case OpTrunc:
+			{
+				float x = std::floorf(R(i->src[0]).x());
+				float y = std::floorf(R(i->src[0]).y());
+				float z = std::floorf(R(i->src[0]).z());
+				float w = std::floorf(R(i->src[0]).w());
+				dest.set(x, y, z, w);
+				CHECK(dest);
+			}
+			break;
+
+		case OpRound:
+			{
+				float x = std::floorf(R(i->src[0]).x() + 0.5f);
+				float y = std::floorf(R(i->src[0]).y() + 0.5f);
+				float z = std::floorf(R(i->src[0]).z() + 0.5f);
+				float w = std::floorf(R(i->src[0]).w() + 0.5f);
+				dest.set(x, y, z, w);
+				CHECK(dest);
+			}
+			break;
+
 		case OpLerp:
 			{
 				Scalar s = R(i->src[0]).x();
@@ -421,9 +482,25 @@ void Interpreter::execute(
 			}
 			break;
 
+		case OpMin:
+			dest = min(R(i->src[0]), R(i->src[1]));
+			CHECK(dest);
+			break;
+
 		case OpMax:
 			dest = max(R(i->src[0]), R(i->src[1]));
 			CHECK(dest);
+			break;
+
+		case OpSign:
+			{
+				float x = sign(R(i->src[0]).x());
+				float y = sign(R(i->src[1]).y());
+				float z = sign(R(i->src[2]).z());
+				float w = sign(R(i->src[3]).z());
+				dest.set(x, y, z, w);
+				CHECK(dest);
+			}
 			break;
 
 		case OpSampler:

@@ -40,10 +40,10 @@ private:
 		Ref< ITriggerInstance > trigger;	
 	};
 
-	std::vector< Key > m_keys;
+	Ref< const Sequence > m_sequence;
 	int32_t m_index;
 
-	SequenceInstance(const std::vector< Key >& keys);
+	SequenceInstance(const Sequence* sequence);
 };
 
 	}

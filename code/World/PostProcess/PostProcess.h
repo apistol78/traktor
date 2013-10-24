@@ -84,6 +84,8 @@ public:
 
 	render::RenderTargetSet* getTarget(render::handle_t id);
 
+	void getTargets(RefArray< render::RenderTargetSet >& outTargets) const;
+
 	void swapTargets(render::handle_t id0, render::handle_t id1);
 
 	void setParameter(render::handle_t handle, bool value);

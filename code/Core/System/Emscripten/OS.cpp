@@ -32,51 +32,27 @@ OS& OS::getInstance()
 
 uint32_t OS::getCPUCoreCount() const
 {
-	return 4;
+	return 1;
 }
 
 std::wstring OS::getCommandLine() const
 {
-	char cmdLine[1024] = { '\0' };
-	FILE* fp = fopen("/proc/self/cmdline", "r");
-	if (fp)
-	{
-		fgets(cmdLine, sizeof(cmdLine), fp);
-		fclose(fp);
-	}
-	return mbstows(cmdLine);
+	return L"";
 }
 
 std::wstring OS::getComputerName() const
 {
-	char name[1024];
-
-	if (gethostname(name, sizeof_array(name)) != -1)
-		return mbstows(name);
-
 	return L"Unavailable";
 }
 
 std::wstring OS::getCurrentUser() const
 {
-	passwd* pwd = getpwuid(geteuid());
-	if (!pwd)
-		return L"Unavailable";
-
-	const char* who = pwd->pw_name;
-	if (!who)
-		return L"Unavailable";
-
-	return mbstows(who);
+	return L"Unavailable";
 }
 
 std::wstring OS::getUserHomePath() const
 {
-	std::wstring home;
-	if (getEnvironment(L"HOME", home))
-		return home;
-	else
-		return L"~";
+	return L".";
 }
 
 std::wstring OS::getUserApplicationDataPath() const

@@ -145,7 +145,7 @@ RenderServerDefault::RenderServerDefault(net::BidirectionalObjectTransport* tran
 {
 }
 
-bool RenderServerDefault::create(PropertyGroup* settings)
+bool RenderServerDefault::create(PropertyGroup* settings, void* nativeHandle)
 {
 	std::wstring renderType = settings->getProperty< PropertyString >(L"Render.Type");
 
@@ -156,6 +156,7 @@ bool RenderServerDefault::create(PropertyGroup* settings)
 	int32_t textureQuality = settings->getProperty< PropertyInteger >(L"Render.TextureQuality", 2);
 
 	render::RenderSystemDesc rsd;
+	rsd.nativeHandle = nativeHandle;
 	rsd.adapter = settings->getProperty< PropertyInteger >(L"Render.Adapter", -1);
 	rsd.mipBias = settings->getProperty< PropertyFloat >(L"Render.MipBias", 0.0f);
 	rsd.maxAnisotropy = maxAnisotropyFromQuality(textureQuality);
