@@ -517,7 +517,7 @@ void ScriptManagerLua::pushObject(Object* object)
 		lua_pushnil(m_luaState);
 		return;
 	}
-
+   
 	// If this is a wrapped LUA table or function then unwrap and push as is.
 	if (&type_of(object) == &type_of< TableContainerLua >())
 	{
@@ -534,7 +534,7 @@ void ScriptManagerLua::pushObject(Object* object)
 
 	// Have we already pushed this object before and it's still alive in script-land then reuse it.
 	lua_rawgeti(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
-	lua_rawgeti(m_luaState, -1, int32_t(object));
+	lua_rawgeti(m_luaState, -1, int32_t(uint64_t(object)));
 	if (lua_isuserdata(m_luaState, -1))
 	{
 		lua_remove(m_luaState, -2);
@@ -565,8 +565,8 @@ void ScriptManagerLua::pushObject(Object* object)
 	lua_setmetatable(m_luaState, -2);
 
 	// Store object in weak table.
-	lua_rawseti(m_luaState, -2, int32_t(object));
-	lua_rawgeti(m_luaState, -1, int32_t(object));
+	lua_rawseti(m_luaState, -2, int32_t(uint64_t(object)));
+	lua_rawgeti(m_luaState, -1, int32_t(uint64_t(object)));
 
 	// Remove weak table from stack.
 	lua_remove(m_luaState, -2);

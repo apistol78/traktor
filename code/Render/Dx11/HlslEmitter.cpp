@@ -486,8 +486,9 @@ bool emitIterate(HlslContext& cx, Iterate* node)
 	// Find non-dependent, external, input pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > dependentOutputPins(1);
+	std::vector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output");
 
 	std::vector< const InputPin* > inputPins;
 	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
@@ -569,9 +570,10 @@ bool emitIterate2d(HlslContext& cx, Iterate2d* node)
 	// Find non-dependent, external, input pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > dependentOutputPins(2);
+	std::vector< const OutputPin* > dependentOutputPins(3);
 	dependentOutputPins[0] = node->findOutputPin(L"X");
 	dependentOutputPins[1] = node->findOutputPin(L"Y");
+	dependentOutputPins[2] = node->findOutputPin(L"Output");
 
 	std::vector< const InputPin* > inputPins;
 	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
@@ -1464,8 +1466,9 @@ bool emitSum(HlslContext& cx, Sum* node)
 	// Find non-dependent, external, input pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
-	std::vector< const OutputPin* > dependentOutputPins(1);
+	std::vector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output");
 
 	std::vector< const InputPin* > inputPins;
 	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);

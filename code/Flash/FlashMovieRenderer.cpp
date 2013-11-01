@@ -259,8 +259,12 @@ void FlashMovieRenderer::renderCharacter(
 		const AlignedVector< TextLayout::Line >& lines = layout->getLines();
 		const AlignedVector< TextLayout::Attribute >& attribs = layout->getAttributes();
 		
+		const SwfCxTransform white = { { 0, 255 }, { 0, 255 }, { 0, 255 }, { 0, 255 } };
 		bool haveFocus = bool(FlashCharacterInstance::getFocus() == editInstance);
 		int32_t caret = editInstance->getCaret();
+		Vector2 caretSize(100.0f, editInstance->getBounds().getExtent().y * 2.0f);
+		const float caretOffset = 100.0f;
+		float caretEndPosition = 0.0f;
 
 		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
 		{
@@ -277,10 +281,9 @@ void FlashMovieRenderer::renderCharacter(
 					if (haveFocus && caret-- == 0)
 					{
 						m_displayRenderer->renderCaret(
-							editTransform * translate(chars[k].x, i->y) * scale(fontScale, fontScale),
-							attrib.font->getMaxDimension(),
-							attrib.color,
-							cxTransform2
+							editTransform * translate(chars[k].x + caretOffset, caretSize.y / 2.0f),
+							caretSize,
+							white
 						);
 					}
 
@@ -300,8 +303,19 @@ void FlashMovieRenderer::renderCharacter(
 						editInstance->getFilter(),
 						editInstance->getFilterColor()
 					);
+
+					caretEndPosition = chars[k].x + glyphShape->getShapeBounds().getExtent().x * 2.0f * fontScale;
 				}
 			}
+		}
+
+		if (haveFocus && caret-- == 0)
+		{
+			m_displayRenderer->renderCaret(
+				editTransform * translate(caretEndPosition + caretOffset, caretSize.y / 2.0f),
+				caretSize,
+				white
+			);
 		}
 
 		return;

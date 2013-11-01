@@ -95,7 +95,7 @@ public:
 	 * \param color Color
 	 * \param cxform Color transform.
 	 */
-	virtual void renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfColor& color, const SwfCxTransform& cxform) = 0;
+	virtual void renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfCxTransform& cxform) = 0;
 
 	/*! \brief Render canvas.
 	 *

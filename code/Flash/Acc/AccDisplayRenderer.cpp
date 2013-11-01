@@ -527,7 +527,7 @@ void AccDisplayRenderer::renderGlyph(const FlashDictionary& dictionary, const Ma
 	);
 }
 
-void AccDisplayRenderer::renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfColor& color, const SwfCxTransform& cxform)
+void AccDisplayRenderer::renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfCxTransform& cxform)
 {
 	Aabb2 bounds;
 	bounds.mn = -fontMaxDimension / 2.0f;

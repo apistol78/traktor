@@ -189,6 +189,11 @@ void RenderViewDefaultWin32::hideCursor()
 {
 }
 
+bool RenderViewDefaultWin32::isCursorVisible() const
+{
+	return true;
+}
+
 SystemWindow RenderViewDefaultWin32::getSystemWindow()
 {
 	SystemWindow sw;

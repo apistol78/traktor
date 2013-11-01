@@ -7,18 +7,18 @@ namespace traktor
 {
 	namespace world
 	{
-		namespace
-		{
-
-const uint32_t c_maxEventInstances = 16;
-
-		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.EntityEventManager", EntityEventManager, IEntityEventManager)
 
+EntityEventManager::EntityEventManager(uint32_t maxEventInstances)
+:	m_maxEventInstances(maxEventInstances)
+{
+	m_eventInstances.reserve(maxEventInstances);
+}
+
 void EntityEventManager::raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset)
 {
-	if (!event || m_eventInstances.size() >= c_maxEventInstances)
+	if (!event || m_eventInstances.size() >= m_maxEventInstances)
 		return;
 
 	Ref< IEntityEventInstance > eventInstance = event->createInstance(this, sender, Toffset);

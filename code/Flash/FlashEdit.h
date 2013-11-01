@@ -45,6 +45,7 @@ public:
 		Align align,
 		uint16_t leftMargin,
 		uint16_t rightMargin,
+		bool readOnly,
 		bool wordWrap,
 		bool multiLine,
 		bool renderHtml
@@ -106,6 +107,12 @@ public:
 	 */
 	uint16_t getRightMargin() const;
 
+	/*! \brief Read only.
+	 *
+	 * \return True if read-only.
+	 */
+	bool readOnly() const;
+
 	/*! \brief Word wrap enabled.
 	 *
 	 * \return True if word wrap is enabled.
@@ -135,6 +142,7 @@ private:
 	Align m_align;
 	uint16_t m_leftMargin;
 	uint16_t m_rightMargin;
+	bool m_readOnly;
 	bool m_wordWrap;
 	bool m_multiLine;
 	bool m_renderHtml;

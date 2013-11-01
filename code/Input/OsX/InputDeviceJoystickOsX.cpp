@@ -186,7 +186,7 @@ void InputDeviceJoystickOsX::callbackValue(void* context, IOReturn result, void*
 		return;
 		
 	uint32_t usage = (uint32_t)IOHIDElementGetUsage(element);
-	if (usage == ~0UL)
+	if (usage == uint32_t(~0UL))
 		return;
 		
 	int32_t v = (int32_t)IOHIDValueGetIntegerValue(value);

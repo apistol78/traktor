@@ -2,6 +2,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <fcntl.h>
+#include <unistd.h>
 #include "Core/Io/MemoryStream.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/System/OsX/SharedMemoryOsX.h"

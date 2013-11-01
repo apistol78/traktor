@@ -48,6 +48,8 @@ ActionContext::ActionContext(const IActionVM* vm, const FlashMovie* movie, const
 	m_strings["onSetFocus"];
 	m_strings["onKillFocus"];
 	m_strings["onMouseWheel"];
+	m_strings["onChanged"];
+	m_strings["onScroller"];
 }
 
 void ActionContext::setGlobal(ActionObject* global)

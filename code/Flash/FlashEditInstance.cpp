@@ -125,75 +125,42 @@ const FlashEdit* FlashEditInstance::getEdit() const
 
 bool FlashEditInstance::parseText(const std::wstring& text)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	if (!internalParseText(text))
+		return false;
 	
-	const FlashDictionary* dictionary = getContext()->getDictionary();
-	T_ASSERT (dictionary);
+	m_caret = 0;
 
-	const FlashFont* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT (font);
-
-	m_layout->begin();
-
-	m_layout->setBounds(m_edit->getTextBounds());
-	m_layout->setLetterSpacing(m_letterSpacing);
-	m_layout->setFontHeight(m_edit->getFontHeight());
-	m_layout->setWordWrap(m_edit->wordWrap());
-	m_layout->setAlignment((TextLayout::Align)m_edit->getAlign());
-	m_layout->setAttribute(font, m_textColor);
-
-	if (m_edit->multiLine())
+	if (m_layout)
 	{
-		StringSplit< std::wstring > ss(text, L"\n");
-		for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+		const AlignedVector< TextLayout::Line >& lines = m_layout->getLines();
+		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
 		{
-			m_layout->insertText(*i);
-			m_layout->newLine();
+			const AlignedVector< TextLayout::Word >& words = lines.back().words;
+			for (AlignedVector< TextLayout::Word >::const_iterator j = words.begin(); j != words.end(); ++j)
+				m_caret += j->chars.size();
 		}
 	}
-	else
-		m_layout->insertText(text);
-	
-	m_layout->end();
-
-	m_text = text;
-	m_html = false;
 
 	return true;
 }
 
 bool FlashEditInstance::parseHtml(const std::wstring& html)
 {
-	html::Document document(false);
-	if (!document.loadFromText(html))
+	if (!internalParseHtml(html))
 		return false;
 
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_caret = 0;
 
-	const FlashDictionary* dictionary = getContext()->getDictionary();
-	T_ASSERT (dictionary);
-
-	const FlashFont* font = dictionary->getFont(m_edit->getFontId());
-	T_ASSERT (font);
-
-	m_layout->begin();
-
-	m_layout->setBounds(m_edit->getTextBounds());
-	m_layout->setLetterSpacing(m_letterSpacing);
-	m_layout->setFontHeight(m_edit->getFontHeight());
-	m_layout->setWordWrap(m_edit->wordWrap());
-	m_layout->setAlignment((TextLayout::Align)m_edit->getAlign());
-	m_layout->setAttribute(font, m_textColor);
-
-	const html::Element* element = document.getDocumentElement();
-	T_ASSERT (element);
-
-	traverseHtmlDOM(element, font, m_textColor, m_layout);
-
-	m_layout->end();
-
-	m_text = html;
-	m_html = true;
+	if (m_layout)
+	{
+		const AlignedVector< TextLayout::Line >& lines = m_layout->getLines();
+		for (AlignedVector< TextLayout::Line >::const_iterator i = lines.begin(); i != lines.end(); ++i)
+		{
+			const AlignedVector< TextLayout::Word >& words = lines.back().words;
+			for (AlignedVector< TextLayout::Word >::const_iterator j = words.begin(); j != words.end(); ++j)
+				m_caret += j->chars.size();
+		}
+	}
 
 	return true;
 }
@@ -283,20 +250,120 @@ void FlashEditInstance::eventKey(wchar_t unicode)
 	if (unicode == L'\b')
 	{
 		if (!m_text.empty())
+		{
 			m_text = m_text.substr(0, m_text.length() - 1);
+			m_caret--;
+		}
 	}
 	else
+	{
 		m_text += unicode;
+		m_caret++;
+	}
 	
-	parseText(m_text);
+	internalParseText(m_text);
+
+	executeScriptEvent(ActionContext::IdOnChanged, ActionValue(getAsObject()));
+}
+
+void FlashEditInstance::eventMouseDown(int32_t x, int32_t y, int32_t button)
+{
+	if (!m_edit->readOnly())
+	{
+		Vector2 xy = getFullTransform().inverse() * Vector2(x, y);
+		Aabb2 bounds = m_edit->getTextBounds();
+
+		bool inside = (xy.x >= bounds.mn.x && xy.y >= bounds.mn.y && xy.x <= bounds.mx.x && xy.y <= bounds.mx.y);
+		if (inside)
+			FlashCharacterInstance::setFocus(this);
+		else
+			FlashCharacterInstance::setFocus(0);
+	}
+
+	FlashCharacterInstance::eventMouseDown(x, y, button);
+}
+
+bool FlashEditInstance::internalParseText(const std::wstring& text)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	
+	const FlashDictionary* dictionary = getContext()->getDictionary();
+	T_ASSERT (dictionary);
+
+	const FlashFont* font = dictionary->getFont(m_edit->getFontId());
+	T_ASSERT (font);
+
+	m_layout->begin();
+
+	m_layout->setBounds(m_edit->getTextBounds());
+	m_layout->setLetterSpacing(m_letterSpacing);
+	m_layout->setFontHeight(m_edit->getFontHeight());
+	m_layout->setWordWrap(m_edit->wordWrap());
+	m_layout->setAlignment((TextLayout::Align)m_edit->getAlign());
+	m_layout->setAttribute(font, m_textColor);
+
+	if (m_edit->multiLine())
+	{
+		StringSplit< std::wstring > ss(text, L"\n");
+		for (StringSplit< std::wstring >::const_iterator i = ss.begin(); i != ss.end(); ++i)
+		{
+			m_layout->insertText(*i);
+			m_layout->newLine();
+		}
+	}
+	else
+		m_layout->insertText(text);
+	
+	m_layout->end();
+
+	m_text = text;
+	m_html = false;
+
+	return true;
+}
+
+bool FlashEditInstance::internalParseHtml(const std::wstring& html)
+{
+	html::Document document(false);
+	if (!document.loadFromText(html))
+		return false;
+
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
+	const FlashDictionary* dictionary = getContext()->getDictionary();
+	T_ASSERT (dictionary);
+
+	const FlashFont* font = dictionary->getFont(m_edit->getFontId());
+	T_ASSERT (font);
+
+	m_layout->begin();
+
+	m_layout->setBounds(m_edit->getTextBounds());
+	m_layout->setLetterSpacing(m_letterSpacing);
+	m_layout->setFontHeight(m_edit->getFontHeight());
+	m_layout->setWordWrap(m_edit->wordWrap());
+	m_layout->setAlignment((TextLayout::Align)m_edit->getAlign());
+	m_layout->setAttribute(font, m_textColor);
+
+	const html::Element* element = document.getDocumentElement();
+	T_ASSERT (element);
+
+	traverseHtmlDOM(element, font, m_textColor, m_layout);
+
+	m_layout->end();
+
+	m_text = html;
+	m_html = true;
+
+	return true;
 }
 
 void FlashEditInstance::updateLayout()
 {
 	if (m_html)
-		parseHtml(m_text);
+		internalParseHtml(m_text);
 	else
-		parseText(m_text);
+		internalParseText(m_text);
 }
 
 	}

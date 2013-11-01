@@ -60,7 +60,7 @@ ProgramDx11* ProgramDx11::ms_activeProgram = 0;
 ProgramDx11::ProgramDx11(ContextDx11* context)
 :	m_context(context)
 ,	m_stencilReference(0)
-,	m_d3dInputElementsHash(0)
+,	m_d3dVertexShaderHash(0)
 ,	m_parameterTextureArrayDirty(false)
 #if defined(_DEBUG)
 ,	m_bindCount(0)
@@ -96,6 +96,7 @@ bool ProgramDx11::create(
 	}
 
 	m_d3dVertexShaderBlob = resource->m_vertexShader;
+	m_d3dVertexShaderHash = resource->m_vertexShaderHash;
 
 	// Create states.
 	if (!createState(
@@ -149,10 +150,6 @@ void ProgramDx11::destroy()
 		m_context->releaseComRef(m_pixelState.cbuffer[i].d3dBuffer);
 	m_context->releaseComRef(m_pixelState.d3dSamplerStates);
 	m_context->releaseComRef(m_d3dVertexShaderBlob);
-	for (SmallMap< uint32_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.begin(); i != m_d3dInputLayouts.end(); ++i)
-		m_context->releaseComRef(i->second);
-	m_d3dInputLayouts.clear();
-	m_context->releaseComRef(m_d3dInputLayout);
 
 	m_parameterMap.clear();
 	m_parameterFloatArray.resize(0);
@@ -287,8 +284,6 @@ bool ProgramDx11::bind(
 	const int32_t targetSize[2]
 )
 {
-	HRESULT hr;
-
 	// Set states.
 	stateCache.setRasterizerState(m_d3dRasterizerState);
 	stateCache.setDepthStencilState(m_d3dDepthStencilState, m_stencilReference);
@@ -397,37 +392,7 @@ bool ProgramDx11::bind(
 	// Bind shaders.
 	stateCache.setVertexShader(m_d3dVertexShader);
 	stateCache.setPixelShader(m_d3dPixelShader);
-
-	// Remap input layout if it has changed since last use of this shader.
-	if (m_d3dInputElementsHash != d3dInputElementsHash || ms_activeProgram != this)
-	{
-		if (m_d3dInputLayout != 0)
-			d3dDeviceContext->IASetInputLayout(NULL);
-
-		SmallMap< uint32_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.find(d3dInputElementsHash);
-		if (i != m_d3dInputLayouts.end())
-			m_d3dInputLayout = i->second;
-		else
-		{
-			// Layout hasn't been mapped yet; create new input layout.
-			hr = d3dDevice->CreateInputLayout(
-				&d3dInputElements[0],
-				UINT(d3dInputElements.size()),
-				m_d3dVertexShaderBlob->GetBufferPointer(),
-				m_d3dVertexShaderBlob->GetBufferSize(),
-				&m_d3dInputLayout.getAssign()
-			);
-			if (FAILED(hr))
-				return false;
-
-			// Save layout for later binding.
-			m_d3dInputLayouts[d3dInputElementsHash] = m_d3dInputLayout;
-		}
-
-		m_d3dInputElementsHash = d3dInputElementsHash;
-	}
-
-	d3dDeviceContext->IASetInputLayout(m_d3dInputLayout);
+	stateCache.setInputLayout(m_d3dVertexShaderHash, m_d3dVertexShaderBlob, d3dInputElementsHash, d3dInputElements);
 
 #if defined(_DEBUG)
 	++m_bindCount;

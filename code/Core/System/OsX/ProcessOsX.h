@@ -2,6 +2,7 @@
 #define traktor_ProcessOsX_H
 
 #include <spawn.h>
+#include <sys/wait.h>
 #include "Core/System/IProcess.h"
 
 namespace traktor

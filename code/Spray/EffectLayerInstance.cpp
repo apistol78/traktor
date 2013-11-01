@@ -76,8 +76,8 @@ void EffectLayerInstance::update(Context& context, const Transform& transform, f
 		if (context.eventManager)
 			context.eventManager->raise(
 				enable ? m_layer->getTriggerEnable() : m_layer->getTriggerDisable(),
-				0,
-				transform
+				context.owner,
+				context.owner ? transform : Transform::identity()
 			);
 	}
 }

@@ -15,6 +15,39 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+bool doesInputPropagateToNode(const ShaderGraph* shaderGraph, const InputPin* inputPin, Node* targetNode)
+{
+	struct FindInputPin
+	{
+		const InputPin* inputPin;
+		Node* targetNode;
+		bool found;
+
+		bool operator () (Node* node)
+		{
+			found |= bool(inputPin->getNode() == targetNode);
+			return !found;
+		}
+
+		bool operator () (Edge* edge)
+		{
+			return true;
+		}
+	};
+
+	FindInputPin visitor;
+	visitor.inputPin = inputPin;
+	visitor.targetNode = targetNode;
+	visitor.found = false;
+	ShaderGraphTraverse(shaderGraph, targetNode).preorder(visitor);
+
+	return visitor.found;
+}
+
+		}
 
 HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
@@ -248,7 +281,12 @@ void HlslContext::findCommonInputs(Node* node, const std::wstring& inputPin1, co
 		{
 			std::vector< const InputPin* > inputPins;
 			m_shaderGraph->findDestinationPins(*i, inputPins);
-			outInputPins.insert(outInputPins.end(), inputPins.begin(), inputPins.end());
+
+			for (std::vector< const InputPin* >::const_iterator j = inputPins.begin(); j != inputPins.end(); ++j)
+			{
+				if (doesInputPropagateToNode(m_shaderGraph, *j, node))
+					outInputPins.push_back(*j);
+			}
 		}
 	}
 	else

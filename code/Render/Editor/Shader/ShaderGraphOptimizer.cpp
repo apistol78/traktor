@@ -267,18 +267,29 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 	RefArray< PixelOutput > pixelOutputNodes;
 	shaderGraph->findNodesOf< PixelOutput >(pixelOutputNodes);
 
+	m_visited.clear();
 	for (RefArray< PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
-	{
-		m_visited.clear();
 		insertInterpolators(shaderGraph, *i);
-	}
 	
+#if defined(_DEBUG)
 	T_DEBUG(L"Inserted " << m_insertedCount << L" interpolator(s)");
+	T_DEBUG(L"  " << int32_t(m_visited.size()) << L" visited node(s)");
+	T_DEBUG(L"  " << int32_t(m_shaderGraph->getNodes().size()) << L" original node(s)");
+	for (RefArray< Node >::const_iterator i = m_shaderGraph->getNodes().begin(); i != m_shaderGraph->getNodes().end(); ++i)
+	{
+		if (m_visited.find(*i) == m_visited.end())
+			T_DEBUG(L"     " << type_name(*i) << L" \"" << (*i)->getInformation() << L"\" not visited");
+	}
+#endif
+
 	return shaderGraph;
 }
 
 void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* node) const
 {
+	// Should never reach vertex inputs.
+	T_FATAL_ASSERT(!is_a< VertexInput >(node));
+
 	// If we've reached an (manually placed) interpolator
 	// then stop even if order to high.
 	if (is_a< Interpolator >(node))
@@ -303,13 +314,14 @@ void ShaderGraphOptimizer::insertInterpolators(ShaderGraph* shaderGraph, Node* n
 		Ref< Node > sourceNode = sourceOutputPin->getNode();
 		T_ASSERT (sourceNode);
 
-		bool cycle = insideCycle(m_shaderGraph, sourceOutputPin);
-		PinOrderType inputOrder = ShaderGraphOrderEvaluator(m_shaderGraph, m_frequentUniformsAsLinear).evaluate(sourceOutputPin);
+		bool vertexMandatory = is_a< VertexInput >(sourceNode);
+		bool cycle = insideCycle(shaderGraph, sourceOutputPin);
+		PinOrderType inputOrder = ShaderGraphOrderEvaluator(shaderGraph, m_frequentUniformsAsLinear).evaluate(sourceOutputPin);
 
-		if (!cycle && inputOrder <= PotLinear)
+		if (vertexMandatory || (!cycle && inputOrder <= PotLinear))
 		{
 			// We've reached low enough order; insert interpolator if linear and stop.
-			if (inputOrder == PotLinear)
+			if (vertexMandatory || inputOrder == PotLinear)
 			{
 				// Remove edge; replace with interpolator.
 				Ref< Edge > edge = shaderGraph->findEdge(inputPin);

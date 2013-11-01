@@ -113,7 +113,7 @@ bool SceneEditorPage::create(ui::Container* parent)
 		return false;
 
 	// Create world event manager.
-	Ref< world::EntityEventManager > eventManager = new world::EntityEventManager();
+	Ref< world::EntityEventManager > eventManager = new world::EntityEventManager(64);
 
 	// Get physics manager type.
 	std::wstring physicsManagerTypeName = m_editor->getSettings()->getProperty< PropertyString >(L"SceneEditor.PhysicsManager");

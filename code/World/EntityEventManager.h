@@ -27,6 +27,8 @@ class T_DLLCLASS EntityEventManager : public IEntityEventManager
 	T_RTTI_CLASS;
 
 public:
+	EntityEventManager(uint32_t maxEventsInstances);
+
 	virtual void raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset);
 
 	virtual void raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset);
@@ -36,6 +38,7 @@ public:
 	virtual void build(IWorldRenderer* worldRenderer);
 
 private:
+	uint32_t m_maxEventInstances;
 	RefArray< IEntityEventInstance > m_eventInstances;
 };
 

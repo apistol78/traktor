@@ -84,7 +84,7 @@ Ref< IInputSourceData > InputSourceFabricator::update()
 						// source and finish.
 						
 						bool inverted = false;
-						if (m_category == CtMouse)
+						if (m_category == CtMouse || m_category == CtJoystick)
 						{
 							if (dV < 0.0f)
 								inverted = true;

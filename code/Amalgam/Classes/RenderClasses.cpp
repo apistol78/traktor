@@ -18,6 +18,7 @@ void registerRenderClasses(script::IScriptManager* scriptManager)
 	classRenderView->addMethod("isFullScreen", &render::IRenderView::isFullScreen);
 	classRenderView->addMethod("showCursor", &render::IRenderView::showCursor);
 	classRenderView->addMethod("hideCursor", &render::IRenderView::hideCursor);
+	classRenderView->addMethod("isCursorVisible", &render::IRenderView::isCursorVisible);
 	classRenderView->addMethod("setGamma", &render::IRenderView::setGamma);
 	scriptManager->registerClass(classRenderView);
 }

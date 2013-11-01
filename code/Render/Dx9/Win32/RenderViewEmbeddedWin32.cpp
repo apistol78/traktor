@@ -88,6 +88,11 @@ void RenderViewEmbeddedWin32::hideCursor()
 {
 }
 
+bool RenderViewEmbeddedWin32::isCursorVisible() const
+{
+	return true;
+}
+
 SystemWindow RenderViewEmbeddedWin32::getSystemWindow()
 {
 	SystemWindow sw;

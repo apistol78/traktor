@@ -410,9 +410,34 @@ void RenderViewDx11::hideCursor()
 	m_cursorVisible = false;
 }
 
+bool RenderViewDx11::isCursorVisible() const
+{
+	return m_cursorVisible;
+}
+
 bool RenderViewDx11::setGamma(float gamma)
 {
-	return false;
+	ComRef< IDXGIOutput > dxgiOutput;
+	DXGI_GAMMA_CONTROL gc;
+	HRESULT hr;
+
+	hr = m_dxgiSwapChain->GetContainingOutput(&dxgiOutput.getAssign());
+	if (FAILED(hr))
+		return false;
+
+	hr = dxgiOutput->GetGammaControl(&gc);
+	if (FAILED(hr))
+		return false;
+
+	for (int32_t i = 0; i < sizeof_array(gc.GammaCurve); ++i)
+	{
+		gc.GammaCurve[i].Red =
+		gc.GammaCurve[i].Green =
+		gc.GammaCurve[i].Blue = std::powf(float(i) / (sizeof_array(gc.GammaCurve) - 1), gamma);
+	}
+
+	dxgiOutput->SetGammaControl(&gc);
+	return true;
 }
 
 void RenderViewDx11::setViewport(const Viewport& viewport)
@@ -829,8 +854,6 @@ void RenderViewDx11::bindTargets()
 
 	m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
 	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
-
-	m_stateCache.reset();
 
 	m_targetsDirty = false;
 }

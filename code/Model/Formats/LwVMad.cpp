@@ -42,7 +42,7 @@ bool LwVMad::read(const LwChunk& chunk, IStream* stream)
 		if (!lwRead< float >(stream, e, m_dimension))
 			return false;
 
-		uint64_t key = (polygon << 32ULL) | vertex;
+		uint64_t key = (uint64_t(polygon) << 32ULL) | vertex;
 
 		m_vm[key] = m_values.size();
 		m_values.insert(m_values.end(), &e[0], &e[m_dimension]);

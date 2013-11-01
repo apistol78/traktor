@@ -29,6 +29,8 @@ private:
 	friend class BfnTexturePipeline;
 
 	bool m_bestFitFactorOnly;
+	bool m_collapseSymmetry;
+	int32_t m_size;
 };
 
 	}

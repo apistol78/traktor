@@ -149,12 +149,12 @@ bool LwObject::read(IStream* stream)
 
 				if (type == LwTags::SURF)
 				{
-					if (ptag >= 0 && ptag < layer->m_polygons.size())
+					if (ptag < layer->m_polygons.size())
 						layer->m_polygons[ptag].surfaceTag = tags;
 				}
 				else if (type == LwTags::SMGP)
 				{
-					if (ptag >= 0 && ptag < layer->m_polygons.size())
+					if (ptag < layer->m_polygons.size())
 						layer->m_polygons[ptag].smoothGroup = tags;
 				}
 			}

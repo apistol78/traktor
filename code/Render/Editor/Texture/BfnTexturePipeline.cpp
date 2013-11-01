@@ -91,33 +91,63 @@ bool BfnTexturePipeline::buildOutput(
 
 	if (asset->m_bestFitFactorOnly)
 	{
-		const int32_t c_size = 256;
+		int32_t size = asset->m_size;
 
-		image = new drawing::Image(drawing::PixelFormat::getR8(), 6 * c_size, c_size);
-		image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
-
-		for (int32_t v = 0; v < c_size; ++v)
+		if (!asset->m_collapseSymmetry)
 		{
-			float nv = float(v) / (c_size - 1) * 2.0f - 1.0f;
-			for (int32_t u = 0; u < c_size; ++u)
-			{
-				float nu = float(u) / (c_size - 1) * 2.0f - 1.0f;
-				Vector4 n = Vector4(nu, 1.0f, nv).normalized();
-				Vector4 qn = findMinimumQuantizationError(n);
-				float qnln = qn.length(); // + 0.5f / 256.0f;
-				
-				for (int32_t side = 0; side < 6; ++side)
-					image->setPixel(u + side * c_size, v, Color4f(qnln, qnln, qnln, qnln));
-			}
-		}
+			image = new drawing::Image(drawing::PixelFormat::getR8(), 6 * size, size);
+			image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
 
-		output = new TextureOutput();
-		output->m_textureFormat = TfR8;
-		output->m_generateMips = false;
-		output->m_keepZeroAlpha = false;
-		output->m_textureType = TtCube;
-		output->m_enableCompression = false;
-		output->m_linearGamma = true;
+			for (int32_t v = 0; v < size; ++v)
+			{
+				float nv = float(v) / (size - 1) * 2.0f - 1.0f;
+				for (int32_t u = 0; u < size; ++u)
+				{
+					float nu = float(u) / (size - 1) * 2.0f - 1.0f;
+					Vector4 n = Vector4(nu, 1.0f, nv).normalized();
+					Vector4 qn = findMinimumQuantizationError(n);
+					float qnln = qn.length();
+				
+					for (int32_t side = 0; side < 6; ++side)
+						image->setPixel(u + side * size, v, Color4f(qnln, qnln, qnln, qnln));
+				}
+			}
+
+			output = new TextureOutput();
+			output->m_textureFormat = TfR8;
+			output->m_generateMips = false;
+			output->m_keepZeroAlpha = false;
+			output->m_textureType = TtCube;
+			output->m_enableCompression = false;
+			output->m_linearGamma = true;
+		}
+		else
+		{
+			image = new drawing::Image(drawing::PixelFormat::getR8(), size, size);
+			image->clear(Color4f(0.0f, 0.0f, 0.0f, 0.0f));
+
+			for (int32_t v = 0; v < size; ++v)
+			{
+				float nv = float(v) / (size - 1) * 2.0f - 1.0f;
+				for (int32_t u = 0; u < size; ++u)
+				{
+					float nu = float(u) / (size - 1) * 2.0f - 1.0f;
+					Vector4 n = Vector4(nu, 1.0f, nv).normalized();
+					Vector4 qn = findMinimumQuantizationError(n);
+					float qnln = qn.length();
+				
+					image->setPixel(u, v, Color4f(qnln, qnln, qnln, qnln));
+				}
+			}
+
+			output = new TextureOutput();
+			output->m_textureFormat = TfR8;
+			output->m_generateMips = false;
+			output->m_keepZeroAlpha = false;
+			output->m_textureType = Tt2D;
+			output->m_enableCompression = false;
+			output->m_linearGamma = true;
+		}
 	}
 
 	if (!image || !output)

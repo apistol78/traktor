@@ -75,7 +75,7 @@ bool RepeatGrain::getBlock(ISoundBufferCursor* cursor, const ISoundMixer* mixer,
 	RepeatGrainCursor* repeatCursor = static_cast< RepeatGrainCursor* >(cursor);
 	if (!m_grain->getBlock(repeatCursor->m_cursor, mixer, outBlock))
 	{
-		if (repeatCursor->m_count == ~0UL)
+		if (repeatCursor->m_count == uint32_t(~0UL))
 			return false;
 
 		if (m_count != 0 && ++repeatCursor->m_count >= m_count)

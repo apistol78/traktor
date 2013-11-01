@@ -319,6 +319,11 @@ void RenderViewOpenGL::hideCursor()
 	}
 }
 
+bool RenderViewOpenGL::isCursorVisible() const
+{
+	return m_cursorVisible;
+}
+
 bool RenderViewOpenGL::setGamma(float gamma)
 {
 	return false;

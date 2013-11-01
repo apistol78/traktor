@@ -181,9 +181,9 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 			}
 		}
 
-		// Propagate mouse input to movie.
+		// Propagate mouse input to movie; don't send mouse events if mouse cursor isn't visible.
 		input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, 0, true);
-		if (mouseDevice)
+		if (mouseDevice && renderView->isCursorVisible())
 		{
 			int32_t positionX, positionY;
 			mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);

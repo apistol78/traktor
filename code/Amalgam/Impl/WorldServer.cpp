@@ -89,7 +89,8 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_entityRenderers->add(new weather::WeatherEntityRenderer());
 	m_entityRenderers->add(new terrain::EntityRenderer());
 
-	m_eventManager = new world::EntityEventManager();
+	int32_t maxEventInstances = settings->getProperty< PropertyInteger >(L"World.MaxEventInstances", 64);
+	m_eventManager = new world::EntityEventManager(maxEventInstances);
 
 	m_shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
 	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);

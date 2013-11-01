@@ -67,7 +67,9 @@ public:
 		IdOnFrame = 28,
 		IdOnSetFocus = 29,
 		IdOnKillFocus = 30,
-		IdOnMouseWheel = 31
+		IdOnMouseWheel = 31,
+		IdOnChanged = 32,
+		IdOnScroller = 33
 	};
 
 	ActionContext(const IActionVM* vm, const FlashMovie* movie, const IFlashMovieLoader* movieLoader, FlashDictionary* dictionary);

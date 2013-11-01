@@ -376,6 +376,11 @@ void RenderViewDx10::hideCursor()
 {
 }
 
+bool RenderViewDx10::isCursorVisible() const
+{
+	return true;
+}
+
 bool RenderViewDx10::setGamma(float gamma)
 {
 	return false;
