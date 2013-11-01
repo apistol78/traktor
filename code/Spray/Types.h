@@ -15,6 +15,7 @@ class ISoundPlayer;
 	namespace world
 	{
 
+class Entity;
 class IEntityEventManager;
 
 	}
@@ -29,6 +30,7 @@ struct Context
 {
 	float deltaTime;
 	RandomGeometry random;
+	world::Entity* owner;
 	world::IEntityEventManager* eventManager;
 	sound::ISoundPlayer* soundPlayer;
 };

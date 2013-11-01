@@ -326,10 +326,10 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 
 	/*
 	bool password = bs.readBit();
-	bool readonly = bs.readBit();
 	*/
-	bs.skip(2);
-	
+	bs.skip(1);
+
+	bool readOnly = bs.readBit();
 	bool hasColor = bs.readBit();
 	bool hasMaxLength = bs.readBit();
 	bool hasFont = bs.readBit();
@@ -401,6 +401,7 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 		(FlashEdit::Align)align,
 		leftMargin,
 		rightMargin,
+		readOnly,
 		wordWrap,
 		multiLine,
 		html

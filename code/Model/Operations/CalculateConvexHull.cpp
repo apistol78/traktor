@@ -161,7 +161,7 @@ bool CalculateConvexHull::apply(Model& model) const
 			for (uint32_t k = 0; k < 3; ++k)
 			{
 				uint32_t n = adjacency[j].n[k];
-				if (n != ~0UL && !visible[j] && visible[n])
+				if (n != uint32_t(~0UL) && !visible[j] && visible[n])
 				{
 					silouette.push_back(std::make_pair(
 						faces[j].i[k],

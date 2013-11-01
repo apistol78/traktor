@@ -136,9 +136,7 @@ private:
 	State m_vertexState;
 	State m_pixelState;
 	ComRef< ID3DBlob > m_d3dVertexShaderBlob;
-	SmallMap< uint32_t, ComRef< ID3D11InputLayout > > m_d3dInputLayouts;
-	ComRef< ID3D11InputLayout > m_d3dInputLayout;
-	uint32_t m_d3dInputElementsHash;
+	uint32_t m_d3dVertexShaderHash;
 	SmallMap< handle_t, ParameterMap > m_parameterMap;
 	AlignedVector< float > m_parameterFloatArray;
 	RefArray< ITexture > m_parameterTextureArray;

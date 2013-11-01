@@ -51,6 +51,7 @@ public:
 		const resource::Proxy< mesh::InstanceMesh >& mesh,
 		float middleAge,
 		float cullNearDistance,
+		float cullMeshDistance,
 		float fadeNearRange,
 		float warmUp,
 		bool sort,
@@ -72,6 +73,8 @@ public:
 
 	float getCullNearDistance() const { return m_cullNearDistance; }
 
+	float getCullMeshDistance() const { return m_cullMeshDistance; }
+
 	float getFadeNearRange() const { return m_fadeNearRange; }
 
 	float getWarmUp() const { return m_warmUp; }
@@ -89,6 +92,7 @@ private:
 	resource::Proxy< mesh::InstanceMesh > m_mesh;
 	float m_middleAge;
 	float m_cullNearDistance;
+	float m_cullMeshDistance;
 	float m_fadeNearRange;
 	float m_warmUp;
 	bool m_sort;

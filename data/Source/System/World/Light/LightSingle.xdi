@@ -86,7 +86,7 @@
 				<first>822</first>
 				<second>562</second>
 			</position>
-			<value>16</value>
+			<value>32</value>
 		</item>
 		<item type="traktor.render.Mul">
 			<comment/>
@@ -159,7 +159,7 @@
 				<first>533</first>
 				<second>558</second>
 			</position>
-			<value>0.25</value>
+			<value>0.1</value>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>

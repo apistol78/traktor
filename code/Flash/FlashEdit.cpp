@@ -19,6 +19,7 @@ FlashEdit::FlashEdit()
 ,	m_align(AnLeft)
 ,	m_leftMargin(0)
 ,	m_rightMargin(0)
+,	m_readOnly(true)
 ,	m_wordWrap(false)
 ,	m_multiLine(false)
 ,	m_renderHtml(false)
@@ -39,6 +40,7 @@ FlashEdit::FlashEdit(
 	Align align,
 	uint16_t leftMargin,
 	uint16_t rightMargin,
+	bool readOnly,
 	bool wordWrap,
 	bool multiLine,
 	bool renderHtml
@@ -52,6 +54,7 @@ FlashEdit::FlashEdit(
 ,	m_align(align)
 ,	m_leftMargin(leftMargin)
 ,	m_rightMargin(rightMargin)
+,	m_readOnly(readOnly)
 ,	m_wordWrap(wordWrap)
 ,	m_multiLine(multiLine)
 ,	m_renderHtml(renderHtml)
@@ -109,6 +112,11 @@ uint16_t FlashEdit::getRightMargin() const
 	return m_rightMargin;
 }
 
+bool FlashEdit::readOnly() const
+{
+	return m_readOnly;
+}
+
 bool FlashEdit::wordWrap() const
 {
 	return m_wordWrap;
@@ -145,6 +153,7 @@ void FlashEdit::serialize(ISerializer& s)
 	s >> MemberEnum< Align >(L"m_align", m_align, kAlign);
 	s >> Member< uint16_t >(L"leftMargin", m_leftMargin);
 	s >> Member< uint16_t >(L"rightMargin", m_rightMargin);
+	s >> Member< bool >(L"readOnly", m_readOnly);
 	s >> Member< bool >(L"wordWrap", m_wordWrap);
 	s >> Member< bool >(L"multiLine", m_multiLine);
 	s >> Member< bool >(L"renderHtml", m_renderHtml);

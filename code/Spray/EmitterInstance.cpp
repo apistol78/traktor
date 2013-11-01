@@ -252,6 +252,14 @@ void EmitterInstance::render(
 
 	m_sortPlane = cameraPlane;
 
+	float distance = cameraPlane.distance(transform.translation());
+	if (distance > pointRenderer->getLod2Distance())
+		m_skip = 4;
+	else if (distance > pointRenderer->getLod1Distance())
+		m_skip = 2;
+	else
+		m_skip = 1;
+
 	if (m_renderPoints.empty())
 		return;
 
@@ -267,7 +275,7 @@ void EmitterInstance::render(
 		);
 	}
 
-	if (m_emitter->getMesh())
+	if (m_emitter->getMesh() && distance < m_emitter->getCullMeshDistance())
 	{
 		meshRenderer->render(
 			m_emitter->getMesh(),
@@ -275,14 +283,6 @@ void EmitterInstance::render(
 			m_renderPoints
 		);
 	}
-
-	float distance = cameraPlane.distance(m_boundingBox.getCenter());
-	if (distance > pointRenderer->getLod2Distance())
-		m_skip = 4;
-	else if (distance > pointRenderer->getLod1Distance())
-		m_skip = 2;
-	else
-		m_skip = 1;
 }
 
 void EmitterInstance::synchronize() const

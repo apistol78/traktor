@@ -196,7 +196,7 @@ void InputDeviceMouseOsX::readState()
 			continue;
 
 		uint32_t usage = (uint32_t)IOHIDElementGetUsage(e);
-		if (usage == ~0UL)
+		if (usage == uint32_t(~0UL))
 			continue;
 			
 		uint32_t page = (uint32_t)IOHIDElementGetUsagePage(e);

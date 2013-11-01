@@ -71,6 +71,31 @@ script::Any PropertyGroup_getProperty(PropertyGroup* self, const std::wstring& p
 		return script::Any();
 }
 
+bool PropertyBoolean_get(PropertyBoolean* self)
+{
+	return PropertyBoolean::get(self);
+}
+
+float PropertyFloat_get(PropertyFloat* self)
+{
+	return PropertyFloat::get(self);
+}
+
+int32_t PropertyInteger_get(PropertyInteger* self)
+{
+	return PropertyInteger::get(self);
+}
+
+Object* PropertyObject_get(PropertyObject* self)
+{
+	return PropertyObject::get(self);
+}
+
+std::wstring PropertyString_get(PropertyString* self)
+{
+	return PropertyString::get(self);
+}
+
 		}
 
 void registerCoreClasses(script::IScriptManager* scriptManager)
@@ -123,6 +148,7 @@ void registerCoreClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< PropertyBoolean > > classPropertyBoolean = new script::AutoScriptClass< PropertyBoolean >();
 	classPropertyBoolean->addConstructor();
 	classPropertyBoolean->addConstructor< bool >();
+	classPropertyBoolean->addMethod("get", &PropertyBoolean_get);
 	scriptManager->registerClass(classPropertyBoolean);
 
 	Ref< script::AutoScriptClass< PropertyColor > > classPropertyColor = new script::AutoScriptClass< PropertyColor >();
@@ -132,6 +158,7 @@ void registerCoreClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< PropertyFloat > > classPropertyFloat = new script::AutoScriptClass< PropertyFloat >();
 	classPropertyFloat->addConstructor();
 	classPropertyFloat->addConstructor< float >();
+	classPropertyFloat->addMethod("get", &PropertyFloat_get);
 	scriptManager->registerClass(classPropertyFloat);
 
 	Ref< script::AutoScriptClass< PropertyGroup > > classPropertyGroup = new script::AutoScriptClass< PropertyGroup >();
@@ -143,15 +170,18 @@ void registerCoreClasses(script::IScriptManager* scriptManager)
 	Ref< script::AutoScriptClass< PropertyInteger > > classPropertyInteger = new script::AutoScriptClass< PropertyInteger >();
 	classPropertyInteger->addConstructor();
 	classPropertyInteger->addConstructor< int32_t >();
+	classPropertyInteger->addMethod("get", &PropertyInteger_get);
 	scriptManager->registerClass(classPropertyInteger);
 
 	Ref< script::AutoScriptClass< PropertyObject > > classPropertyObject = new script::AutoScriptClass< PropertyObject >();
 	classPropertyObject->addConstructor();
+	classPropertyObject->addMethod("get", &PropertyObject_get);
 	scriptManager->registerClass(classPropertyObject);
 
 	Ref< script::AutoScriptClass< PropertyString > > classPropertyString = new script::AutoScriptClass< PropertyString >();
 	classPropertyString->addConstructor();
 	classPropertyString->addConstructor< const std::wstring& >();
+	classPropertyString->addMethod("get", &PropertyString_get);
 	scriptManager->registerClass(classPropertyString);
 
 	Ref< script::AutoScriptClass< PropertyStringArray > > classPropertyStringArray = new script::AutoScriptClass< PropertyStringArray >();

@@ -77,6 +77,11 @@ void RenderViewCapture::hideCursor()
 	m_renderView->hideCursor();
 }
 
+bool RenderViewCapture::isCursorVisible() const
+{
+	return m_renderView->isCursorVisible();
+}
+
 bool RenderViewCapture::setGamma(float gamma)
 {
 	return m_renderView->setGamma(gamma);

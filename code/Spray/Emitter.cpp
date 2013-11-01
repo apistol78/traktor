@@ -18,6 +18,7 @@ Emitter::Emitter(
 	const resource::Proxy< mesh::InstanceMesh >& mesh,
 	float middleAge,
 	float cullNearDistance,
+	float cullMeshDistance,
 	float fadeNearRange,
 	float warmUp,
 	bool sort,
@@ -30,6 +31,7 @@ Emitter::Emitter(
 ,	m_mesh(mesh)
 ,	m_middleAge(middleAge)
 ,	m_cullNearDistance(cullNearDistance)
+,	m_cullMeshDistance(cullMeshDistance)
 ,	m_fadeNearRange(fadeNearRange)
 ,	m_warmUp(warmUp)
 ,	m_sort(sort)

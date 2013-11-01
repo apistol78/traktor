@@ -1,3 +1,4 @@
+#include <unistd.h>
 #include "Core/System/Osx/ProcessOsX.h"
 
 namespace traktor

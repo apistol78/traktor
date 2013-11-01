@@ -31,6 +31,7 @@ EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Ef
 {
 	m_context.deltaTime = 0.0f;
 	m_context.random = RandomGeometry(uint32_t(g_randomTimer.getElapsedTime() * 10000.0f));
+	m_context.owner = this;
 	m_context.eventManager = eventManager;
 	m_context.soundPlayer = soundPlayer;
 }

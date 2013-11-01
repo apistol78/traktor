@@ -4,8 +4,8 @@
 		<item type="traktor.render.External" version="1">
 			<comment/>
 			<position>
-				<first>2966</first>
-				<second>573</second>
+				<first>3255</first>
+				<second>448</second>
 			</position>
 			<fragmentGuid>{69565123-2C4A-8742-970C-FE8022249942}</fragmentGuid>
 			<inputPins>
@@ -20,15 +20,15 @@
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>2662</first>
-				<second>554</second>
+				<first>3061</first>
+				<second>444</second>
 			</position>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>2558</first>
-				<second>535</second>
+				<first>2890</first>
+				<second>517</second>
 			</position>
 			<swizzle>000x</swizzle>
 		</item>

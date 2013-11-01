@@ -122,6 +122,11 @@ void RenderViewOpenGLES2::hideCursor()
 {
 }
 
+bool RenderViewOpenGLES2::isCursorVisible() const
+{
+	return true;
+}
+
 bool RenderViewOpenGLES2::setGamma(float gamma)
 {
 	return false;

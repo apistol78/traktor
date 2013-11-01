@@ -64,6 +64,8 @@ public:
 
 	virtual void eventKey(wchar_t unicode);
 
+	virtual void eventMouseDown(int32_t x, int32_t y, int32_t button);
+
 private:
 	mutable Semaphore m_lock;
 	Ref< const FlashEdit > m_edit;
@@ -73,6 +75,10 @@ private:
 	bool m_html;
 	int32_t m_caret;
 	Ref< TextLayout > m_layout;
+
+	bool internalParseText(const std::wstring& text);
+
+	bool internalParseHtml(const std::wstring& html);
 
 	void updateLayout();
 };

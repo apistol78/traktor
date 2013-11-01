@@ -48,6 +48,8 @@ public:
 
 	virtual void hideCursor();
 
+	virtual bool isCursorVisible() const;
+
 	virtual bool setGamma(float gamma);
 
 	virtual void setViewport(const Viewport& viewport);

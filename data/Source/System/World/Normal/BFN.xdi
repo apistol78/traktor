@@ -1,4 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="traktor.render.BfnTextureAsset">
+<object type="traktor.render.BfnTextureAsset" version="1">
 	<bestFitFactorOnly>true</bestFitFactorOnly>
+	<collapseSymmetry>true</collapseSymmetry>
+	<size>512</size>
 </object>

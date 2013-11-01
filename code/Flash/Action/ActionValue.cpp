@@ -312,6 +312,9 @@ void ActionValue::serialize(ISerializer& s)
 			}
 		}
 		break;
+            
+    default:
+        break;
 	}
 }
 

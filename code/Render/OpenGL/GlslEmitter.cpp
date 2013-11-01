@@ -1197,6 +1197,9 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		case GtTextureCube:
 			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
 			break;
+                
+        default:
+            return false;
 		}
 #else
 		switch (texture->getType())
@@ -1233,6 +1236,9 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 		case GtTextureCube:
 			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
 			break;
+                
+        default:
+            return false;
 		}
 #else
 		switch (texture->getType())

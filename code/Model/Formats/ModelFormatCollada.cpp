@@ -618,7 +618,7 @@ public:
 			uint32_t jointIndex = m_vertexWeightData.m_indicies[offset + m_vertexWeightData.m_jointInput.offset];
 			uint32_t weightIndex = m_vertexWeightData.m_indicies[offset + m_vertexWeightData.m_weightInput.offset];
 
-			if (jointIndex != ~0UL && weightIndex < m_weights.getCount())
+			if (jointIndex != uint32_t(~0UL) && weightIndex < m_weights.getCount())
 			{
 				float weight = m_weights.getDataWeight(weightIndex);
 				vertex.setJointInfluence(jointIndex, weight);

@@ -229,6 +229,11 @@ void RenderViewSw::hideCursor()
 {
 }
 
+bool RenderViewSw::isCursorVisible() const
+{
+	return true;
+}
+
 bool RenderViewSw::setGamma(float gamma)
 {
 	return false;

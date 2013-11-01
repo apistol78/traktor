@@ -56,6 +56,8 @@ public:
 
 	virtual void hideCursor();
 
+	virtual bool isCursorVisible() const;
+
 	virtual SystemWindow getSystemWindow();
 
 	// \name Swap-chain management

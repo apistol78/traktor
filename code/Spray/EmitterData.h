@@ -70,6 +70,7 @@ private:
 	resource::Id< mesh::InstanceMesh > m_mesh;
 	float m_middleAge;
 	float m_cullNearDistance;
+	float m_cullMeshDistance;
 	float m_fadeNearRange;
 	float m_warmUp;
 	bool m_sort;

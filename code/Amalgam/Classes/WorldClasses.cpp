@@ -114,6 +114,7 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classIEntityRenderer);
 
 	Ref< script::AutoScriptClass< world::EntityData > > classEntityData = new script::AutoScriptClass< world::EntityData >();
+	classEntityData->addMethod("setName", &world::EntityData::setName);
 	classEntityData->addMethod("getName", &world::EntityData::getName);
 	classEntityData->addMethod("setTransform", &world::EntityData::setTransform);
 	classEntityData->addMethod("getTransform", &world::EntityData::getTransform);

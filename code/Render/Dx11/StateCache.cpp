@@ -13,20 +13,10 @@ const float c_blendFactors[] = { 1.0f, 1.0f, 1.0f, 1.0f };
 
 StateCache::StateCache(ID3D11DeviceContext* d3dDeviceContext)
 :	m_d3dDeviceContext(d3dDeviceContext)
-,	m_stencilReference(0)
 ,	m_d3dTopology(D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED)
+,	m_d3dSignatureHash(0)
+,	m_stencilReference(0)
 {
-}
-
-void StateCache::reset()
-{
-	m_d3dRasterizerState = 0;
-	m_d3dDepthStencilState = 0;
-	m_d3dBlendState = 0;
-	m_d3dVertexShader = 0;
-	m_d3dPixelShader = 0;
-	m_stencilReference = 0;
-	m_d3dTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 }
 
 void StateCache::setRasterizerState(ID3D11RasterizerState* d3dRasterizerState)
@@ -81,6 +71,44 @@ void StateCache::setTopology(D3D11_PRIMITIVE_TOPOLOGY d3dTopology)
 	{
 		m_d3dDeviceContext->IASetPrimitiveTopology(d3dTopology);
 		m_d3dTopology = d3dTopology;
+	}
+}
+
+void StateCache::setInputLayout(uint32_t d3dVertexShaderHash, ID3DBlob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements)
+{
+	uint64_t d3dSignatureHash = (uint64_t(d3dVertexShaderHash) << 32) | d3dInputElementsHash;
+	if (m_d3dSignatureHash != d3dSignatureHash)
+	{
+		ID3D11InputLayout* d3dInputLayout = 0;
+		SmallMap< uint64_t, ComRef< ID3D11InputLayout > >::iterator i = m_d3dInputLayouts.find(d3dSignatureHash);
+		if (i != m_d3dInputLayouts.end())
+			d3dInputLayout = i->second;
+		else
+		{
+			HRESULT hr;
+
+			// Get device from context.
+			ComRef< ID3D11Device > d3dDevice;
+			m_d3dDeviceContext->GetDevice(&d3dDevice.getAssign());
+			T_ASSERT (d3dDevice);
+
+			// Layout hasn't been mapped yet; create new input layout.
+			hr = d3dDevice->CreateInputLayout(
+				&d3dInputElements[0],
+				UINT(d3dInputElements.size()),
+				d3dVertexShaderBlob->GetBufferPointer(),
+				d3dVertexShaderBlob->GetBufferSize(),
+				&d3dInputLayout
+			);
+			T_ASSERT (SUCCEEDED(hr));
+			T_ASSERT (d3dInputLayout);
+
+			// Save layout for later binding.
+			m_d3dInputLayouts[d3dSignatureHash] = d3dInputLayout;
+		}
+
+		m_d3dSignatureHash = d3dSignatureHash;
+		m_d3dDeviceContext->IASetInputLayout(d3dInputLayout);
 	}
 }
 

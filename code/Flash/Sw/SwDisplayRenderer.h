@@ -50,7 +50,7 @@ public:
 
 	virtual void renderGlyph(const FlashMovie& movie, const Matrix33& transform, const Vector2& fontMaxDimension, const FlashShape& glyphShape, const SwfColor& color, const SwfCxTransform& cxform, uint8_t filter, const SwfColor& filterColor);
 
-	virtual void renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfColor& color, const SwfCxTransform& cxform);
+	virtual void renderCaret(const Matrix33& transform, const Vector2& fontMaxDimension, const SwfCxTransform& cxform);
 
 	virtual void renderCanvas(const FlashMovie& movie, const Matrix33& transform, const FlashCanvas& canvas, const SwfCxTransform& cxform);
 
