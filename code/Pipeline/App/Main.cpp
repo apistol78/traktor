@@ -522,7 +522,6 @@ bool perform(const PipelineParameters* params)
 	return g_success;
 }
 
-
 int slave(const CommandLine& cmdLine)
 {
 #if defined(_WIN32)
@@ -715,6 +714,68 @@ int master(const CommandLine& cmdLine)
 	return 0;
 }
 
+int standalone(const CommandLine& cmdLine)
+{
+#if defined(_WIN32)
+	SetConsoleCtrlHandler((PHANDLER_ROUTINE)consoleCtrlHandler, TRUE);
+#endif
+
+	traktor::log::info << L"Standalone Mode" << Endl;
+
+	Ref< traktor::IStream > logFile;
+
+	if (cmdLine.hasOption('l', L"log"))
+	{
+		std::wstring logPath = cmdLine.getOption('l', L"log").getString();
+		if ((logFile = FileSystem::getInstance().open(logPath, File::FmWrite)) != 0)
+		{
+			Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
+			Ref< LogStreamTarget > logStreamTarget = new LogStreamTarget(logStream);
+
+			traktor::log::info   .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::info   .getGlobalTarget()));
+			traktor::log::warning.setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::warning.getGlobalTarget()));
+			traktor::log::error  .setGlobalTarget(new LogDualTarget(logStreamTarget, traktor::log::error  .getGlobalTarget()));
+
+			traktor::log::info << L"Log file \"Application.log\" created" << Endl;
+		}
+		else
+			traktor::log::error << L"Unable to create log file; logging only to std pipes" << Endl;
+	}
+
+	std::vector< Guid > roots;
+	if (cmdLine.getCount() > 0)
+	{
+		for (int32_t i = 0; i < cmdLine.getCount(); ++i)
+		{
+			Guid assetGuid(cmdLine.getString(i));
+			if (assetGuid.isNull() || !assetGuid.isValid())
+			{
+				traktor::log::error << L"Invalid root asset guid (" << i << L")" << Endl;
+				return 1;
+			}
+			roots.push_back(assetGuid);
+		}
+	}
+
+	std::wstring settingsFile = L"Traktor.Editor";
+	if (cmdLine.hasOption('s', L"settings"))
+		settingsFile = cmdLine.getOption('s', L"settings").getString();
+
+	PipelineParameters params(
+		FileSystem::getInstance().getAbsolutePath(L"").getPathName(),
+		settingsFile,
+		cmdLine.hasOption('p', L"progress"),
+		cmdLine.hasOption('f', L"force"),
+		cmdLine.hasOption('n', L"no-cache"),
+		roots
+	);
+
+	perform(&params);
+
+	traktor::log::info << L"Bye" << Endl;
+	return 0;
+}
+
 int main(int argc, const char** argv)
 {
 	int32_t result = 0;
@@ -724,6 +785,8 @@ int main(int argc, const char** argv)
 	CommandLine cmdLine(argc, argv);
 	if (cmdLine.hasOption(L"slave"))
 		result = slave(cmdLine);
+	else if (cmdLine.hasOption(L"standalone"))
+		result = standalone(cmdLine);
 	else
 		result = master(cmdLine);
 
