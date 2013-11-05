@@ -325,17 +325,18 @@ std::wstring NativeVolume::getSystemPath(const Path& path) const
 {
 	std::wstringstream ss;
 
-	if (path.hasVolume())
+	Path npath = path.normalized();
+	if (npath.hasVolume())
 	{
-		T_ASSERT (path.getVolume() == m_currentDirectory.getVolume());
-		ss << path.getPathName();
+		T_ASSERT (npath.getVolume() == m_currentDirectory.getVolume());
+		ss << npath.getPathName();
 	}
 	else
 	{
-		if (path.isRelative())
-			ss << m_currentDirectory.getPathName() << L"/" << path.getPathName();
+		if (npath.isRelative())
+			ss << m_currentDirectory.getPathName() << L"/" << npath.getPathName();
 		else
-			ss << m_currentDirectory.getVolume() << L":" << path.getPathName();
+			ss << m_currentDirectory.getVolume() << L":" << npath.getPathName();
 	}
 
 	return replaceAll(ss.str(), L'/', L'\\');
