@@ -1,14 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
-<object type="Solution">
+<object type="Solution" version="2">
 	<name>SolutionBuilder</name>
 	<rootPath>$(TRAKTOR_HOME)/tools/SolutionBuilder/build/linux</rootPath>
+	<definitions/>
 	<projects>
 		<item type="Project" version="1">
 			<enable>true</enable>
 			<name>SolutionBuilder</name>
 			<sourcePath>$(TRAKTOR_HOME)/tools/SolutionBuilder/code/SolutionBuilder</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -22,8 +23,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutableConsole</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -37,6 +40,8 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
 			</configurations>
 			<items>
@@ -53,7 +58,7 @@
 						<name>SolutionBuilderLIB</name>
 						<sourcePath>$(TRAKTOR_HOME)/tools/SolutionBuilder/code/SolutionBuilderLIB</sourcePath>
 						<configurations>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>DebugStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpDebug</targetProfile>
@@ -67,8 +72,10 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
-							<item type="Configuration">
+							<item type="Configuration" version="1">
 								<name>ReleaseStatic</name>
 								<targetFormat>TfStaticLibrary</targetFormat>
 								<targetProfile>TpRelease</targetProfile>
@@ -82,6 +89,8 @@
 								</definitions>
 								<libraryPaths/>
 								<libraries/>
+								<additionalCompilerOptions/>
+								<additionalLinkerOptions/>
 							</item>
 						</configurations>
 						<items>
@@ -125,8 +134,42 @@
 									</item>
 								</items>
 							</item>
+							<item type="Filter">
+								<name>GraphViz</name>
+								<items>
+									<item type="File">
+										<fileName>GraphViz/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
+							<item type="Filter">
+								<name>Eclipse</name>
+								<items>
+									<item type="File">
+										<fileName>Eclipse/*.*</fileName>
+										<items/>
+									</item>
+								</items>
+							</item>
 						</items>
-						<dependencies/>
+						<dependencies>
+							<item type="ExternalDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
+								<projectName>Traktor.Core</projectName>
+							</item>
+							<item type="ExternalDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
+								<projectName>Traktor.Script</projectName>
+							</item>
+							<item type="ExternalDependency" version="1">
+								<linkWithProduct>true</linkWithProduct>
+								<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
+								<projectName>Traktor.Script.Lua</projectName>
+							</item>
+						</dependencies>
 					</project>
 				</item>
 				<item type="ExternalDependency" version="1">
@@ -147,7 +190,7 @@
 			<name>SolutionBuilderUI</name>
 			<sourcePath>$(TRAKTOR_HOME)/tools/SolutionBuilder/code/SolutionBuilderUI</sourcePath>
 			<configurations>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>DebugStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpDebug</targetProfile>
@@ -161,8 +204,10 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
-				<item type="Configuration">
+				<item type="Configuration" version="1">
 					<name>ReleaseStatic</name>
 					<targetFormat>TfExecutable</targetFormat>
 					<targetProfile>TpRelease</targetProfile>
@@ -176,11 +221,21 @@
 					</definitions>
 					<libraryPaths/>
 					<libraries/>
+					<additionalCompilerOptions/>
+					<additionalLinkerOptions/>
 				</item>
 			</configurations>
 			<items>
 				<item type="File">
 					<fileName>*.*</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>../../../../res/Solution.png</fileName>
+					<items/>
+				</item>
+				<item type="File">
+					<fileName>../../../../res/TraktorSmall.png</fileName>
 					<items/>
 				</item>
 			</items>
@@ -212,14 +267,15 @@
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
-					<projectName>Traktor.Ui.Wx</projectName>
+					<projectName>Traktor.Xml</projectName>
 				</item>
 				<item type="ExternalDependency" version="1">
 					<linkWithProduct>true</linkWithProduct>
 					<solutionFileName>$(TRAKTOR_HOME)/TraktorLinux.xms</solutionFileName>
-					<projectName>Traktor.Xml</projectName>
+					<projectName>Traktor.Ui.Gtk</projectName>
 				</item>
 			</dependencies>
 		</item>
 	</projects>
+	<aggregations/>
 </object>
