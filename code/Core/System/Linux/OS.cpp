@@ -6,6 +6,7 @@
 #include <sys/types.h>
 #include <sys/stat.h>
 #include <pwd.h>
+#include <unistd.h>
 #include "Core/Io/Path.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/String.h"
