@@ -55,6 +55,7 @@
 --?>
 					<Add option="-march=pentium4" />
 					<Add option="-g" />
+					<Add option="-m32" />
 					<Add option="-fPIC" />
 					<Add option="-DUNICODE" />
 					<Add option="-D_UNICODE" />
@@ -63,6 +64,7 @@
 					else
 --?>
 					<Add option="-march=pentium4" />
+					<Add option="-m32" />
 					<Add option="-O3" />
 					<Add option="-fPIC" />
 					<Add option="-DUNICODE" />
@@ -245,6 +247,7 @@ end
 					<Add option="-Wl,-R\\$$ORIGIN" /><?--
 					end
 --?>
+					<Add option="-m32" />
 				</Linker><?--
 				end
 --?>
