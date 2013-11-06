@@ -3,6 +3,7 @@
 #include <sys/stat.h>
 #include <dirent.h>
 #include <errno.h>
+#include <unistd.h>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/Linux/NativeVolume.h"
 #include "Core/Io/Linux/NativeStream.h"
