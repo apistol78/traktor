@@ -1,6 +1,7 @@
 #include <cstring>
 #include <pthread.h>
 #include <sched.h>
+#include <unistd.h>
 #include <sys/time.h>
 #include "Core/Thread/Thread.h"
 #include "Core/Functor/Functor.h"
