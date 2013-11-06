@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
 #include "Database/Group.h"

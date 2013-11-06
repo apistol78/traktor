@@ -1,3 +1,5 @@
+#include "Core/Math/Transform.h"
+#include "World/Entity.h"
 #include "World/Entity/DecalEvent.h"
 #include "World/Entity/DecalEventInstance.h"
 
@@ -18,7 +20,15 @@ DecalEvent::DecalEvent()
 
 Ref< IEntityEventInstance > DecalEvent::createInstance(IEntityEventManager* eventManager, Entity* sender, const Transform& Toffset) const
 {
-	return new DecalEventInstance(this, Toffset);
+	Transform T;
+
+	// Calculate world transform from sender and offset.
+	if (sender && sender->getTransform(T))
+		T = T * Toffset;
+	else
+		T = Toffset;
+
+	return new DecalEventInstance(this, T);
 }
 
 	}

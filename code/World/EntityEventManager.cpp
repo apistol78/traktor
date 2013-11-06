@@ -16,24 +16,28 @@ EntityEventManager::EntityEventManager(uint32_t maxEventInstances)
 	m_eventInstances.reserve(maxEventInstances);
 }
 
-void EntityEventManager::raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset)
+IEntityEventInstance* EntityEventManager::raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset)
 {
 	if (!event || m_eventInstances.size() >= m_maxEventInstances)
-		return;
+		return 0;
 
 	Ref< IEntityEventInstance > eventInstance = event->createInstance(this, sender, Toffset);
 	if (eventInstance)
 		m_eventInstances.push_back(eventInstance);
+
+	return eventInstance;
 }
 
-void EntityEventManager::raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
+IEntityEventInstance* EntityEventManager::raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset)
 {
 	if (!eventSet || eventId.empty())
-		return;
+		return 0;
 
 	const IEntityEvent* event = eventSet->getEvent(eventId);
-	if (event)
-		raise(event, sender, Toffset);
+	if (!event)
+		return 0;
+
+	return raise(event, sender, Toffset);
 }
 
 void EntityEventManager::update(const UpdateParams& update)

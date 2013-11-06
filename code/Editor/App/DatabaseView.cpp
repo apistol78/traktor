@@ -192,7 +192,7 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_toolSelection = new ui::custom::ToolBar();
 	if (!m_toolSelection->create(this))
 		return false;
-	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 3);
+	m_toolSelection->addImage(ui::Bitmap::load(c_ResourceDatabaseView, sizeof(c_ResourceDatabaseView), L"png"), 4);
 
 	m_toolFilterType = new ui::custom::ToolBarButton(
 		i18n::Text(L"DATABASE_FILTER"),
@@ -218,6 +218,14 @@ bool DatabaseView::create(ui::Widget* parent)
 	);
 	m_toolSelection->addItem(m_toolFilterShow);
 
+	m_toolFavoritesShow = new ui::custom::ToolBarButton(
+		i18n::Text(L"DATABASE_FILTER_SHOW_FAVORITES"),
+		3,
+		ui::Command(L"Database.ShowFavorites"),
+		ui::custom::ToolBarButton::BsDefaultToggle
+	);
+	m_toolSelection->addItem(m_toolFavoritesShow);
+
 	m_toolSelection->addItem(new ui::custom::ToolBarSeparator());
 
 	m_editFilter = new ui::Edit();
@@ -237,16 +245,28 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_treeDatabase->addDragEventHandler(ui::createMethodHandler(this, &DatabaseView::eventInstanceDrag));
 	m_treeDatabase->setEnable(false);
 		
-	m_menuGroup = new ui::PopupMenu();
-	if (!m_menuGroup->create())
+	m_menuGroup[0] = new ui::PopupMenu();
+	m_menuGroup[1] = new ui::PopupMenu();
+	if (!m_menuGroup[0]->create() || !m_menuGroup[1]->create())
 		return false;
-	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
-	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
-	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
-	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
-	m_menuGroup->add(new ui::MenuItem(L"-"));
-	m_menuGroup->add(new ui::MenuItem(ui::Command(L"Editor.Paste"), i18n::Text(L"DATABASE_PASTE")));
-	
+	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
+	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
+	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuGroup[0]->add(new ui::MenuItem(L"-"));
+	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Database.FavoriteEntireGroup"), i18n::Text(L"DATABASE_FAVORITE_ENTIRE_GROUP")));
+	m_menuGroup[0]->add(new ui::MenuItem(L"-"));
+	m_menuGroup[0]->add(new ui::MenuItem(ui::Command(L"Editor.Paste"), i18n::Text(L"DATABASE_PASTE")));
+
+	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewInstance"), i18n::Text(L"DATABASE_NEW_INSTANCE")));
+	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Database.NewGroup"), i18n::Text(L"DATABASE_NEW_GROUP")));
+	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rename"), i18n::Text(L"DATABASE_RENAME")));
+	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Delete"), i18n::Text(L"DATABASE_DELETE")));
+	m_menuGroup[1]->add(new ui::MenuItem(L"-"));
+	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Database.UnFavoriteEntireGroup"), i18n::Text(L"DATABASE_UNFAVORITE_ENTIRE_GROUP")));
+	m_menuGroup[1]->add(new ui::MenuItem(L"-"));
+	m_menuGroup[1]->add(new ui::MenuItem(ui::Command(L"Editor.Paste"), i18n::Text(L"DATABASE_PASTE")));
+
 	m_menuInstance = new ui::PopupMenu();
 	if (!m_menuInstance->create())
 		return false;
@@ -262,6 +282,8 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
 	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleRoot"), i18n::Text(L"DATABASE_TOGGLE_AS_ROOT")));
+	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleFavorite"), i18n::Text(L"DATABASE_TOGGLE_AS_FAVORITE")));
+	m_menuInstance->add(new ui::MenuItem(L"-"));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstance->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
@@ -283,6 +305,8 @@ bool DatabaseView::create(ui::Widget* parent)
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.FilterInstanceDepends"), i18n::Text(L"DATABASE_FILTER_DEPENDENCIES")));
 	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleRoot"), i18n::Text(L"DATABASE_TOGGLE_AS_ROOT")));
+	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.ToggleFavorite"), i18n::Text(L"DATABASE_TOGGLE_AS_FAVORITE")));
+	m_menuInstanceAsset->add(new ui::MenuItem(L"-"));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Build"), i18n::Text(L"DATABASE_BUILD")));
 	m_menuInstanceAsset->add(new ui::MenuItem(ui::Command(L"Editor.Database.Rebuild"), i18n::Text(L"DATABASE_REBUILD")));
 
@@ -314,7 +338,8 @@ bool DatabaseView::create(ui::Widget* parent)
 			m_wizardTools.push_back(wizard);
 		}
 
-		m_menuGroup->add(menuGroupWizards);
+		m_menuGroup[0]->add(menuGroupWizards);
+		m_menuGroup[1]->add(menuGroupWizards);
 		m_menuInstance->add(menuInstanceWizards);
 		m_menuInstanceAsset->add(menuInstanceWizards);
 	}
@@ -327,7 +352,8 @@ bool DatabaseView::create(ui::Widget* parent)
 
 void DatabaseView::destroy()
 {
-	safeDestroy(m_menuGroup);
+	safeDestroy(m_menuGroup[1]);
+	safeDestroy(m_menuGroup[0]);
 	safeDestroy(m_menuInstance);
 	safeDestroy(m_menuInstanceAsset);
 	ui::Container::destroy();
@@ -349,10 +375,15 @@ void DatabaseView::updateView()
 	if (m_db)
 	{
 		m_rootInstances.clear();
+		m_favoriteInstances.clear();
 
 		std::vector< std::wstring > rootInstances = m_editor->getSettings()->getProperty< PropertyStringArray >(L"Editor.RootInstances");
 		for (std::vector< std::wstring >::const_iterator i = rootInstances.begin(); i != rootInstances.end(); ++i)
 			m_rootInstances.insert(Guid(*i));
+
+		std::vector< std::wstring > favoriteInstances = m_editor->getSettings()->getProperty< PropertyStringArray >(L"Editor.FavoriteInstances");
+		for (std::vector< std::wstring >::const_iterator i = favoriteInstances.begin(); i != favoriteInstances.end(); ++i)
+			m_favoriteInstances.insert(Guid(*i));
 
 		buildTreeItem(m_treeDatabase, 0, m_db->getRootGroup());
 		setEnable(true);
@@ -540,6 +571,26 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			updateView();
 		}
+		else if (command == L"Editor.Database.ToggleFavorite")	// Toggle favorite flag.
+		{
+			Guid instanceGuid = instance->getGuid();
+
+			std::set< Guid >::iterator i = m_favoriteInstances.find(instanceGuid);
+			if (i == m_favoriteInstances.end())
+				m_favoriteInstances.insert(instanceGuid);
+			else
+				m_favoriteInstances.erase(i);
+
+			std::vector< std::wstring > favoriteInstances;
+			for (std::set< Guid >::iterator i = m_favoriteInstances.begin(); i != m_favoriteInstances.end(); ++i)
+				favoriteInstances.push_back(i->format());
+
+			Ref< PropertyGroup > globalSettings = m_editor->checkoutGlobalSettings();
+			globalSettings->setProperty< PropertyStringArray >(L"Editor.FavoriteInstances", favoriteInstances);
+			m_editor->commitGlobalSettings();
+
+			updateView();
+		}
 		else if (command == L"Editor.Database.Build")	// Build asset
 		{
 			m_editor->buildAsset(instance->getGuid(), false);
@@ -661,6 +712,36 @@ bool DatabaseView::handleCommand(const ui::Command& command)
 
 			m_treeDatabase->update();
 		}
+		else if (command == L"Editor.Database.FavoriteEntireGroup" || command == L"Editor.Database.UnFavoriteEntireGroup")
+		{
+			bool addToFavorites = bool(command == L"Editor.Database.FavoriteEntireGroup");
+
+			RefArray< db::Instance > instances;
+			db::recursiveFindChildInstances(group, db::FindInstanceAll(), instances);
+
+			for (RefArray< db::Instance >::iterator i = instances.begin(); i != instances.end(); ++i)
+			{
+				Guid instanceGuid = (*i)->getGuid();
+				if (addToFavorites)
+					m_favoriteInstances.insert(instanceGuid);
+				else
+				{
+					std::set< Guid >::iterator i = m_favoriteInstances.find(instanceGuid);
+					if (i != m_favoriteInstances.end())
+						m_favoriteInstances.erase(i);
+				}
+			}
+
+			std::vector< std::wstring > favoriteInstances;
+			for (std::set< Guid >::iterator i = m_favoriteInstances.begin(); i != m_favoriteInstances.end(); ++i)
+				favoriteInstances.push_back(i->format());
+
+			Ref< PropertyGroup > globalSettings = m_editor->checkoutGlobalSettings();
+			globalSettings->setProperty< PropertyStringArray >(L"Editor.FavoriteInstances", favoriteInstances);
+			m_editor->commitGlobalSettings();
+
+			updateView();
+		}
 		else if (command == L"Editor.Database.Wizard")
 		{
 			Ref< IWizardTool > wizard = m_wizardTools[command.getId()];
@@ -718,6 +799,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 		buildTreeItem(treeView, groupItem, *i);
 
 	bool showFiltered = m_toolFilterShow->isToggled();
+	bool showFavorites = m_toolFavoritesShow->isToggled();
 
 	RefArray< db::Instance > childInstances;
 	group->getChildInstances(childInstances);
@@ -727,6 +809,12 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 		const TypeInfo* primaryType = (*i)->getPrimaryType();
 		if (!primaryType)
 			continue;
+
+		if (showFavorites)
+		{
+			if (m_favoriteInstances.find((*i)->getGuid()) == m_favoriteInstances.end())
+				continue;
+		}
 
 		int32_t iconIndex = getIconIndex(primaryType);
 
@@ -755,7 +843,7 @@ Ref< ui::TreeViewItem > DatabaseView::buildTreeItem(ui::TreeView* treeView, ui::
 	}
 
 	// Remove group if it's empty.
-	if (!m_filter->acceptEmptyGroups() && !groupItem->hasChildren())
+	if ((showFavorites || !m_filter->acceptEmptyGroups()) && !groupItem->hasChildren())
 	{
 		treeView->removeItem(groupItem);
 		groupItem = 0;
@@ -932,7 +1020,8 @@ void DatabaseView::eventInstanceButtonDown(ui::Event* event)
 	}
 	else if (group)
 	{
-		Ref< ui::MenuItem > selected = m_menuGroup->show(m_treeDatabase, mouseEvent->getPosition());
+		bool showFavorites = m_toolFavoritesShow->isToggled();
+		Ref< ui::MenuItem > selected = m_menuGroup[showFavorites ? 1 : 0]->show(m_treeDatabase, mouseEvent->getPosition());
 		if (selected)
 			handleCommand(selected->getCommand());
 	}

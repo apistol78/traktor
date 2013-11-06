@@ -39,7 +39,7 @@ public:
 
 	bool isPinsConnected(const OutputPin* outputPin, const InputPin* inputPin) const;
 
-	void findExternalInputs(Node* node, const std::wstring& inputPinName, const std::wstring& dependentOutputPinName, std::vector< const InputPin* >& outInputPins) const;
+	void findExternalInputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const InputPin* >& outInputPins) const;
 
 	void findCommonInputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const InputPin* >& outInputPins) const;
 

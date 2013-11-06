@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/RefArray.h"
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
@@ -99,7 +100,7 @@ void line(int32_t x0, int32_t y0, int32_t x1, int32_t y1, Visitor& visitor)
 	float dy = float(y1 - y0);
 
 	visitor(x0, y0);
-	
+
 	if (std::abs(dx) > std::abs(dy) && dx != 0)
 	{
 		if (dx < 0)
@@ -669,10 +670,10 @@ void TerrainEditModifier::end(const scene::TransformChain& transformChain)
 		if (data)
 		{
 			hf::HeightfieldFormat().write(data, m_heightfield);
-			
+
 			data->close();
 			data = 0;
-	
+
 			m_context->getDocument()->setModified();
 		}
 		else

@@ -1,10 +1,13 @@
-#include <sstream>
 #include <algorithm>
+#include <sstream>
+#include "Core/Misc/String.h"
+#include "Ui/Application.h"
+#include "Ui/Clipboard.h"
+#include "Ui/Edit.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/NumericEditValidator.h"
 #include "Ui/Custom/PropertyList/NumericPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Edit.h"
-#include "Ui/NumericEditValidator.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Events/FocusEvent.h"
 #include "Ui/Events/MouseEvent.h"
 
@@ -190,6 +193,31 @@ void NumericPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	};
 	canvas.setBackground(value > m_limitMin ? Color4ub(80, 80, 80) : Color4ub(180, 180, 180));
 	canvas.fillPolygon(dw, 3);
+}
+
+bool NumericPropertyItem::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (clipboard)
+		return clipboard->setText(toString(m_value));
+	else
+		return false;
+}
+
+bool NumericPropertyItem::paste()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	double value = parseString< double >(clipboard->getText());
+	if (value != std::numeric_limits< double >::signaling_NaN())
+	{
+		m_value = value;
+		return true;
+	}
+	else
+		return false;
 }
 
 void NumericPropertyItem::eventEditFocus(Event* event)

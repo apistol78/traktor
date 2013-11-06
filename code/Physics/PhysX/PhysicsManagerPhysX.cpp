@@ -63,15 +63,15 @@ physx::PxFilterFlags collisionFilterShader(
 class IgnoreBodyFilter : public physx::PxSceneQueryFilterCallback
 {
 public:
-	IgnoreBodyFilter(const Body* ignoreBody)
-	:	m_ignoreBody(ignoreBody)
+	IgnoreBodyFilter(uint32_t ignoreClusterId)
+	:	m_ignoreClusterId(ignoreClusterId)
 	{
 	}
 
 	virtual physx::PxSceneQueryHitType::Enum preFilter(const physx::PxFilterData& filterData, physx::PxShape* shape, physx::PxSceneQueryFilterFlags& filterFlags)
 	{
 		const Body* body = reinterpret_cast< const Body* >(shape->userData);
-		if (body == m_ignoreBody)
+		if (body->getClusterId() == m_ignoreClusterId)
 			return physx::PxSceneQueryHitType::eNONE;
 		else
 			return physx::PxSceneQueryHitType::eTOUCH;
@@ -83,7 +83,7 @@ public:
 	}
 
 private:
-	const Body* m_ignoreBody;
+	uint32_t m_ignoreClusterId;
 };
 
 		}
@@ -528,14 +528,14 @@ bool PhysicsManagerPhysX::queryRay(
 	const Vector4& direction,
 	float maxLength,
 	uint32_t group,
-	const Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	bool ignoreBackFace,
 	QueryResult& outResult
 ) const
 {
 	physx::PxRaycastHit hit;
 
-	if (!ignoreBody)
+	if (ignoreClusterId == 0)
 	{
 		physx::PxSceneQueryFilterData filterData;
 		filterData.data.word0 = group;
@@ -553,7 +553,7 @@ bool PhysicsManagerPhysX::queryRay(
 	}
 	else
 	{
-		IgnoreBodyFilter filter(ignoreBody);
+		IgnoreBodyFilter filter(ignoreClusterId);
 
 		physx::PxSceneQueryFilterData filterData;
 		filterData.data.word0 = group;
@@ -585,7 +585,7 @@ bool PhysicsManagerPhysX::queryShadowRay(
 	float maxLength,
 	uint32_t group,
 	uint32_t queryTypes,
-	const Body* ignoreBody
+	uint32_t ignoreClusterId
 ) const
 {
 	physx::PxRaycastHit hit;
@@ -614,7 +614,7 @@ bool PhysicsManagerPhysX::querySweep(
 	float maxLength,
 	float radius,
 	uint32_t group,
-	const Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	QueryResult& outResult
 ) const
 {
@@ -628,7 +628,7 @@ bool PhysicsManagerPhysX::querySweep(
 	const Vector4& direction,
 	float maxLength,
 	uint32_t group,
-	const Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	QueryResult& outResult
 ) const
 {
@@ -641,7 +641,7 @@ void PhysicsManagerPhysX::querySweep(
 	float maxLength,
 	float radius,
 	uint32_t group,
-	const Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	RefArray< Body >& outResult
 ) const
 {

@@ -30,6 +30,10 @@ bool AnimatedMeshEntityPipeline::buildDependencies(
 		pipelineDepends->addDependency(meshEntityData->getMesh(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(meshEntityData->getSkeleton(), editor::PdfBuild | editor::PdfResource);
 		pipelineDepends->addDependency(meshEntityData->getPoseControllerData());
+
+		const std::vector< AnimatedMeshEntityData::Binding >& bindings = meshEntityData->getBindings();
+		for (std::vector< AnimatedMeshEntityData::Binding >::const_iterator i = bindings.begin(); i != bindings.end(); ++i)
+			pipelineDepends->addDependency(i->entityData);
 	}
 	return true;
 }

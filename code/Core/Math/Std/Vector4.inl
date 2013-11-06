@@ -154,6 +154,14 @@ T_MATH_INLINE Scalar Vector4::length2() const
 	return dot4(*this, *this);
 }
 
+T_MATH_INLINE Scalar Vector4::normalize()
+{
+	VALIDATE(*this);
+	Scalar ln = length();
+	*this /= ln;
+	return ln;
+}
+
 T_MATH_INLINE Vector4 Vector4::normalized() const
 {
 	VALIDATE(*this);

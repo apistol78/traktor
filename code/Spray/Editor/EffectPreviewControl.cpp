@@ -78,6 +78,7 @@ EffectPreviewControl::EffectPreviewControl(editor::IEditor* editor)
 {
 	m_context.deltaTime = 0.0f;
 	m_context.random = RandomGeometry(c_initialRandomSeed);
+	m_context.eventManager = 0;
 	m_context.soundPlayer = 0;
 
 	m_sourceRenderers[&type_of< BoxSource >()] = new BoxSourceRenderer();
@@ -223,6 +224,7 @@ void EffectPreviewControl::syncEffect()
 	Context syncContext;
 	syncContext.deltaTime = 0.0f;
 	syncContext.random = RandomGeometry(m_randomSeed);
+	syncContext.eventManager = 0;
 	syncContext.soundPlayer = 0;
 
 	float currentTime = m_effectInstance->getTime();

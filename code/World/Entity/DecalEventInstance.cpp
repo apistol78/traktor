@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "World/IWorldRenderer.h"
 #include "World/Entity/DecalEntity.h"
 #include "World/Entity/DecalEvent.h"
@@ -24,16 +25,23 @@ DecalEventInstance::DecalEventInstance(const DecalEvent* event, const Transform&
 
 bool DecalEventInstance::update(const UpdateParams& update)
 {
-	m_entity->update(update);
-	if (m_entity->getAlpha() > FUZZY_EPSILON)
-		return true;
-	else
-		return false;
+	if (m_entity)
+	{
+		m_entity->update(update);
+		if (m_entity->getAlpha() > FUZZY_EPSILON)
+			return true;
+	}
+	return false;
 }
 
 void DecalEventInstance::build(IWorldRenderer* worldRenderer)
 {
 	worldRenderer->build(m_entity);
+}
+
+void DecalEventInstance::cancel()
+{
+	safeDestroy(m_entity);
 }
 
 	}

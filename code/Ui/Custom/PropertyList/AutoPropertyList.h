@@ -40,6 +40,8 @@ public:
 	 * Use this method when adding an object to an array item.
 	 */
 	bool addObject(PropertyItem* parent, ISerializable* object);
+
+	virtual bool paste();
 	
 private:
 	Ref< ISerializable > m_object;

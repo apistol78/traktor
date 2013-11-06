@@ -44,7 +44,11 @@ public:
 
 	Rotator operator + (const Rotator& rh) const;
 
+	Rotator& operator += (const Rotator& rh);
+
 	Rotator operator * (const Scalar& rh) const;
+
+	Rotator& operator *= (const Scalar& rh);
 
 	virtual void serialize(ISerializer& s);
 

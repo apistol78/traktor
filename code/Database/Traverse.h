@@ -135,6 +135,14 @@ struct FindGroupByName
 	}
 };
 
+struct FindInstanceAll
+{
+	bool operator () (const Instance* instance) const
+	{
+		return true;
+	}
+};
+
 struct FindInstanceByGuid
 {
 	const Guid& instanceGuid;

@@ -10,13 +10,14 @@ namespace traktor
 	namespace sound
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", 4, SoundAsset, editor::Asset)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.sound.SoundAsset", 5, SoundAsset, editor::Asset)
 
 SoundAsset::SoundAsset()
 :	m_stream(false)
 ,	m_preload(true)
 ,	m_presence(0.0f)
 ,	m_presenceRate(0.25f)
+,	m_volume(1.0f)
 {
 }
 
@@ -37,6 +38,9 @@ void SoundAsset::serialize(ISerializer& s)
 
 	if (s.getVersion() >= 4)
 		s >> Member< float >(L"presenceRate", m_presenceRate, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 5)
+		s >> Member< float >(L"volume", m_volume, AttributeRange(0.0f, 1.0f));
 }
 
 	}

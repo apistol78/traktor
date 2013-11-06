@@ -170,12 +170,12 @@ Ref< QueryResult > physics_PhysicsManager_queryRay(
 	const Vector4& direction,
 	float maxLength,
 	uint32_t group,
-	const physics::Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	bool ignoreBackFace
 )
 {
 	physics::QueryResult result;
-	if (this_->queryRay(at, direction, maxLength, group, ignoreBody, ignoreBackFace, result))
+	if (this_->queryRay(at, direction, maxLength, group, ignoreClusterId, ignoreBackFace, result))
 		return new QueryResult(result);
 	else
 		return 0;
@@ -188,10 +188,10 @@ bool physics_PhysicsManager_queryShadowRay(
 	float maxLength,
 	uint32_t group,
 	uint32_t queryTypes,
-	const physics::Body* ignoreBody
+	uint32_t ignoreClusterId
 )
 {
-	return this_->queryShadowRay(at, direction, maxLength, group, queryTypes, ignoreBody);
+	return this_->queryShadowRay(at, direction, maxLength, group, queryTypes, ignoreClusterId);
 }
 
 RefArray< physics::Body > physics_PhysicsManager_querySphere(
@@ -214,11 +214,11 @@ Ref< QueryResult > physics_PhysicsManager_querySweep_1(
 	float maxLength,
 	float radius,
 	uint32_t group,
-	const physics::Body* ignoreBody
+	uint32_t ignoreClusterId
 )
 {
 	physics::QueryResult result;
-	if (this_->querySweep(at, direction, maxLength, radius, group, ignoreBody, result))
+	if (this_->querySweep(at, direction, maxLength, radius, group, ignoreClusterId, result))
 		return new QueryResult(result);
 	else
 		return 0;
@@ -232,11 +232,11 @@ Ref< QueryResult > physics_PhysicsManager_querySweep_2(
 	const Vector4& direction,
 	float maxLength,
 	uint32_t group,
-	const physics::Body* ignoreBody
+	uint32_t ignoreClusterId
 )
 {
 	physics::QueryResult result;
-	if (this_->querySweep(body, orientation, at, direction, maxLength, group, ignoreBody, result))
+	if (this_->querySweep(body, orientation, at, direction, maxLength, group, ignoreClusterId, result))
 		return new QueryResult(result);
 	else
 		return 0;

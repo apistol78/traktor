@@ -35,6 +35,13 @@ class IResourceManager;
 
 	}
 
+	namespace world
+	{
+
+class IEntityBuilder;
+
+	}
+
 	namespace animation
 	{
 
@@ -50,9 +57,17 @@ class T_DLLCLASS AnimatedMeshEntityData : public world::EntityData
 	T_RTTI_CLASS;
 
 public:
+	struct Binding
+	{
+		std::wstring jointName;
+		Ref< world::EntityData > entityData;
+
+		void serialize(ISerializer& s);
+	};
+
 	AnimatedMeshEntityData();
 
-	Ref< AnimatedMeshEntity > createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager) const;
+	Ref< AnimatedMeshEntity > createEntity(resource::IResourceManager* resourceManager, physics::PhysicsManager* physicsManager, const world::IEntityBuilder* entityBuilder) const;
 
 	virtual void serialize(ISerializer& s);
 
@@ -62,6 +77,8 @@ public:
 
 	IPoseControllerData* getPoseControllerData() const { return m_poseController; }
 
+	const std::vector< Binding >& getBindings() const { return m_bindings; }
+
 private:
 	resource::Id< mesh::SkinnedMesh > m_mesh;
 	resource::Id< Skeleton > m_skeleton;
@@ -69,6 +86,7 @@ private:
 	bool m_normalizePose;
 	bool m_normalizeTransform;
 	bool m_screenSpaceCulling;
+	std::vector< Binding > m_bindings;
 };
 
 	}

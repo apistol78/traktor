@@ -29,9 +29,9 @@ class T_DLLCLASS EntityEventManager : public IEntityEventManager
 public:
 	EntityEventManager(uint32_t maxEventsInstances);
 
-	virtual void raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset);
+	virtual IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset);
 
-	virtual void raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset);
+	virtual IEntityEventInstance* raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset);
 
 	virtual void update(const UpdateParams& update);
 

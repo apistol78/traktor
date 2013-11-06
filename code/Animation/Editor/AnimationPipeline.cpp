@@ -1,6 +1,7 @@
 #include "Animation/Animation/Animation.h"
 #include "Animation/Editor/AnimationAsset.h"
 #include "Animation/Editor/AnimationFormatBvh.h"
+#include "Animation/Editor/AnimationFormatLws.h"
 #include "Animation/Editor/AnimationPipeline.h"
 #include "Core/Io/FileSystem.h"
 #include "Core/Io/IStream.h"
@@ -9,6 +10,7 @@
 #include "Core/Settings/PropertyString.h"
 #include "Database/Instance.h"
 #include "Editor/IPipelineBuilder.h"
+#include "Editor/IPipelineDepends.h"
 #include "Editor/IPipelineSettings.h"
 
 namespace traktor
@@ -16,7 +18,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 2, AnimationPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.AnimationPipeline", 4, AnimationPipeline, editor::IPipeline)
 
 bool AnimationPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -43,6 +45,8 @@ bool AnimationPipeline::buildDependencies(
 	const Guid& outputGuid
 ) const
 {
+	Ref< const AnimationAsset > animationAsset = checked_type_cast< const AnimationAsset* >(sourceAsset);
+	pipelineDepends->addDependency(m_assetPath, animationAsset->getFileName().getPathName());
 	return true;
 }
 
@@ -66,6 +70,8 @@ bool AnimationPipeline::buildOutput(
 
 	if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"bvh") == 0)
 		format = new AnimationFormatBvh();
+	else if (compareIgnoreCase< std::wstring >(fileName.getExtension(), L"lws") == 0)
+		format = new AnimationFormatLws();
 
 	if (!format)
 	{

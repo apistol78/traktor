@@ -1,9 +1,11 @@
-#include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
-#include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Custom/MiniButton.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
+#include "Ui/Custom/MiniButton.h"
+#include "Ui/Custom/PropertyList/BrowsePropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyList.h"
 
 // Resources
 #include "Resources/SmallPen.h"
@@ -139,6 +141,31 @@ void BrowsePropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 		canvas.setForeground(currentColor);
 
 	canvas.setFont(getPropertyList()->getFont());
+}
+
+bool BrowsePropertyItem::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (clipboard)
+		return clipboard->setText(m_value.format());
+	else
+		return false;
+}
+
+bool BrowsePropertyItem::paste()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	Guid value(clipboard->getText());
+	if (value.isNotNull())
+	{
+		m_value = value;
+		return true;
+	}
+	else
+		return false;
 }
 
 void BrowsePropertyItem::eventEditClick(Event* event)

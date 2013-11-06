@@ -636,7 +636,7 @@ bool PhysicsManagerHavok::queryRay(
 	const Vector4& direction,
 	float maxLength,
 	uint32_t group,
-	const Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	bool ignoreBackFace,
 	QueryResult& outResult
 ) const
@@ -648,23 +648,23 @@ bool PhysicsManagerHavok::queryRay(
 	input.m_to = toHkVector4(at + direction * Scalar(maxLength));
 	input.m_enableShapeCollectionFilter = false;
 
-	if (ignoreBody)
-	{
-		IgnoreBodyClosestRayHitCollector collector(
-			static_cast< const BodyHavok* >(ignoreBody)->getRigidBody()->getCollidableRw()
-		);
+	//if (ignoreBody)
+	//{
+	//	IgnoreBodyClosestRayHitCollector collector(
+	//		static_cast< const BodyHavok* >(ignoreBody)->getRigidBody()->getCollidableRw()
+	//	);
 
-		m_world->castRay(input, collector);
-		if (!collector.hasHit())
-			return false;
+	//	m_world->castRay(input, collector);
+	//	if (!collector.hasHit())
+	//		return false;
 
-		const hkpWorldRayCastOutput& hit = collector.getHit();
+	//	const hkpWorldRayCastOutput& hit = collector.getHit();
 
-		outResult.distance = hit.m_hitFraction * maxLength;
-		outResult.position = at + direction * Scalar(outResult.distance);
-		outResult.normal = fromHkVector4(hit.m_normal);
-	}
-	else
+	//	outResult.distance = hit.m_hitFraction * maxLength;
+	//	outResult.position = at + direction * Scalar(outResult.distance);
+	//	outResult.normal = fromHkVector4(hit.m_normal);
+	//}
+	//else
 	{
 		hkpClosestRayHitCollector collector;
 
@@ -757,7 +757,7 @@ bool PhysicsManagerHavok::querySweep(
 	float maxLength,
 	float radius,
 	uint32_t group,
-	const Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	QueryResult& outResult
 ) const
 {
@@ -771,24 +771,24 @@ bool PhysicsManagerHavok::querySweep(
 	hkpLinearCastInput li;
 	li.m_to = toHkVector4(at + direction * Scalar(maxLength));
 
-	if (ignoreBody)
-	{
-		IgnoreBodyClosestContactCollector collector(
-			static_cast< const BodyHavok* >(ignoreBody)->getRigidBody()->getCollidableRw()
-		);
+	//if (ignoreBody)
+	//{
+	//	IgnoreBodyClosestContactCollector collector(
+	//		static_cast< const BodyHavok* >(ignoreBody)->getRigidBody()->getCollidableRw()
+	//	);
 
-		m_world->linearCast(&sphereColl, li, collector);
-		if (!collector.hasHit())
-			return false;
+	//	m_world->linearCast(&sphereColl, li, collector);
+	//	if (!collector.hasHit())
+	//		return false;
 
-		const hkContactPoint& hit = collector.getHitContact();
+	//	const hkContactPoint& hit = collector.getHitContact();
 
-		outResult.body = 0;
-		outResult.position = fromHkVector4(hit.getPosition());
-		outResult.normal = fromHkVector4(hit.getNormal());
-		outResult.distance = hit.getDistance() + radius;
-	}
-	else
+	//	outResult.body = 0;
+	//	outResult.position = fromHkVector4(hit.getPosition());
+	//	outResult.normal = fromHkVector4(hit.getNormal());
+	//	outResult.distance = hit.getDistance() + radius;
+	//}
+	//else
 	{
 		hkpSimpleClosestContactCollector collector;
 
@@ -813,7 +813,7 @@ bool PhysicsManagerHavok::queryShadowRay(
 	float maxLength,
 	uint32_t group,
 	uint32_t queryTypes,
-	const Body* ignoreBody
+	uint32_t ignoreClusterId
 ) const
 {
 	return false;
@@ -826,7 +826,7 @@ bool PhysicsManagerHavok::querySweep(
 	const Vector4& direction,
 	float maxLength,
 	uint32_t group,
-	const Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	QueryResult& outResult
 ) const
 {
@@ -839,7 +839,7 @@ void PhysicsManagerHavok::querySweep(
 	float maxLength,
 	float radius,
 	uint32_t group,
-	const Body* ignoreBody,
+	uint32_t ignoreClusterId,
 	RefArray< Body >& outResult
 ) const
 {

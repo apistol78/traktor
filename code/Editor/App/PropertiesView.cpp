@@ -87,6 +87,25 @@ Ref< ISerializable > PropertiesView::getPropertyObject()
 	return m_propertyObject;
 }
 
+bool PropertiesView::handleCommand(const ui::Command& command)
+{
+	if (command == L"Editor.Copy")
+		return m_propertyList->copy();
+	else if (command == L"Editor.Paste")
+	{
+		if (m_propertyList->paste())
+		{
+			m_propertyList->apply();
+			m_editor->getActiveEditorPage()->handleCommand(ui::Command(L"Editor.PropertiesChanged"));
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
+}
+
 bool PropertiesView::resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const
 {
 	Ref< db::Instance > instance = m_editor->getSourceDatabase()->getInstance(guid);

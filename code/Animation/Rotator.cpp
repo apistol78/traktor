@@ -44,6 +44,12 @@ Rotator Rotator::operator + (const Rotator& rh) const
 	);
 }
 
+Rotator& Rotator::operator += (const Rotator& rh)
+{
+	*this = *this + rh;
+	return *this;
+}
+
 Rotator Rotator::operator * (const Scalar& rh) const
 {
 	return Rotator(
@@ -51,6 +57,12 @@ Rotator Rotator::operator * (const Scalar& rh) const
 		m_B * rh,
 		m_C * rh
 	);
+}
+
+Rotator& Rotator::operator *= (const Scalar& rh)
+{
+	*this = *this * rh;
+	return *this;
 }
 
 void Rotator::serialize(ISerializer& s)

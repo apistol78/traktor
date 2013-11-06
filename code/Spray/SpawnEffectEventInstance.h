@@ -30,6 +30,8 @@ public:
 
 	virtual void build(world::IWorldRenderer* worldRenderer);
 
+	virtual void cancel();
+
 private:
 	const SpawnEffectEvent* m_spawnEffect;
 	Ref< world::Entity > m_sender;

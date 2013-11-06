@@ -1,7 +1,8 @@
-#include "Ui/Custom/PropertyList/AutoPropertyList.h"
-#include "Ui/Custom/PropertyList/PropertyItem.h"
-#include "Ui/Custom/PropertyList/InspectReflector.h"
 #include "Ui/Custom/PropertyList/ApplyReflector.h"
+#include "Ui/Custom/PropertyList/AutoPropertyList.h"
+#include "Ui/Custom/PropertyList/InspectReflector.h"
+#include "Ui/Custom/PropertyList/ObjectPropertyItem.h"
+#include "Ui/Custom/PropertyList/PropertyItem.h"
 
 namespace traktor
 {
@@ -44,6 +45,8 @@ bool AutoPropertyList::bind(ISerializable* object)
 
 bool AutoPropertyList::refresh()
 {
+	Ref< HierarchicalState > state = captureState();
+
 	removeAllPropertyItems();
 	if (!m_object)
 		return true;
@@ -53,12 +56,15 @@ bool AutoPropertyList::refresh()
 	InspectReflector reflector(this);
 	reflector.serialize(m_object, version);
 
+	applyState(state);
 	update();
 	return true;
 }
 
 bool AutoPropertyList::refresh(PropertyItem* parent, ISerializable* object)
 {
+	Ref< HierarchicalState > state = captureState();
+
 	removeAllChildren(this, parent);
 	parent->collapse();
 
@@ -70,6 +76,7 @@ bool AutoPropertyList::refresh(PropertyItem* parent, ISerializable* object)
 		reflector.serialize(object, version);
 	}
 
+	applyState(state);
 	update();
 	return true;
 }
@@ -94,6 +101,7 @@ bool AutoPropertyList::addObject(PropertyItem* parent, ISerializable* object)
 {
 	T_ASSERT_M (m_object, L"No object currently bound to property list");
 
+	Ref< HierarchicalState > state = captureState();
 	parent->collapse();
 
 	InspectReflector reflector(this, parent);
@@ -101,8 +109,26 @@ bool AutoPropertyList::addObject(PropertyItem* parent, ISerializable* object)
 	Ref< ISerializable > mutableObject = object;
 	reflector >> Member< ISerializable* >(L"item", mutableObject);
 
+	applyState(state);
 	update();
 	return true;
+}
+
+bool AutoPropertyList::paste()
+{
+	RefArray< PropertyItem > selectedItems;
+	getPropertyItems(selectedItems, GfDescendants | GfSelectedOnly);
+	if (selectedItems.size() == 1 && selectedItems[0]->paste())
+	{
+		if (ObjectPropertyItem* objectItem = dynamic_type_cast< ObjectPropertyItem* >(selectedItems[0]))
+			refresh(objectItem, checked_type_cast< ISerializable*, true >(objectItem->getObject()));
+		else
+			update();
+
+		return true;
+	}
+	else
+		return false;
 }
 
 		}

@@ -38,12 +38,19 @@ class T_DLLCLASS AnimatedMeshEntity : public mesh::MeshEntity
 	T_RTTI_CLASS;
 
 public:
+	struct Binding
+	{
+		render::handle_t jointHandle;
+		Ref< world::Entity > entity;
+	};
+
 	AnimatedMeshEntity(
 		const Transform& transform,
 		const resource::Proxy< mesh::SkinnedMesh >& mesh,
 		const resource::Proxy< Skeleton >& skeleton,
 		IPoseController* poseController,
 		const std::vector< int32_t >& jointRemap,
+		const std::vector< Binding >& bindings,
 		bool normalizePose,
 		bool normalizeTransform,
 		bool screenSpaceCulling
@@ -96,6 +103,7 @@ private:
 	resource::Proxy< Skeleton > m_skeleton;
 	Ref< IPoseController > m_poseController;
 	std::vector< int32_t > m_jointRemap;
+	std::vector< Binding > m_bindings;
 	bool m_normalizePose;
 	bool m_normalizeTransform;
 	AlignedVector< Transform > m_jointTransforms;

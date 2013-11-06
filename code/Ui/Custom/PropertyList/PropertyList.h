@@ -85,6 +85,10 @@ public:
 
 	void applyState(const HierarchicalState* state);
 
+	virtual bool copy();
+
+	virtual bool paste();
+
 	void addSelectEventHandler(EventHandler* eventHandler);
 
 	void addCommandEventHandler(EventHandler* eventHandler);

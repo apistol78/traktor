@@ -22,7 +22,11 @@ void SequenceInstance::update(Context& context, const Transform& transform, floa
 
 	if (index != m_index && index < int32_t(keys.size()))
 	{
-		context.eventManager->raise(keys[index].event, context.owner, context.owner ? transform : Transform::identity());
+		context.eventManager->raise(
+			keys[index].event,
+			context.owner,
+			context.owner ? Transform::identity() : transform
+		);
 		m_index = index;
 	}
 }

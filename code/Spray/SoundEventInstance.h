@@ -44,6 +44,8 @@ public:
 
 	virtual void build(world::IWorldRenderer* worldRenderer);
 
+	virtual void cancel();
+
 private:
 	Ref< world::Entity > m_sender;
 	Transform m_Toffset;

@@ -11,7 +11,7 @@ namespace traktor
 		{
 
 const double c_resendTime = 1.0f;	//< Resend reliable message after N seconds.
-const double c_discardTime = 10.0f;	//< Discard reliable message after N seconds.
+const double c_discardTime = 30.0f;	//< Discard reliable message after N seconds.
 const uint32_t c_windowSize = 200;	//< Number of reliable messages kept in sent queue.
 
 #if 1
@@ -24,8 +24,9 @@ const uint32_t c_windowSize = 200;	//< Number of reliable messages kept in sent 
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.net.ReliableTransportPeers", ReliableTransportPeers, IReplicatorPeers)
 
-ReliableTransportPeers::ReliableTransportPeers(IReplicatorPeers* peers)
+ReliableTransportPeers::ReliableTransportPeers(IReplicatorPeers* peers, bool sendFaulty)
 :	m_peers(peers)
+,	m_sendFaulty(sendFaulty)
 {
 	m_timer.start();
 }
@@ -237,7 +238,7 @@ bool ReliableTransportPeers::send(handle_t handle, const void* data, int32_t siz
 	// This will cause the relaying layer to step in and
 	// send this data through another path through the
 	// topology (assuming relaying layer is being used).
-	if (ct.faulty)
+	if (!m_sendFaulty && ct.faulty)
 		return false;
 
 	// Create transport envelope.

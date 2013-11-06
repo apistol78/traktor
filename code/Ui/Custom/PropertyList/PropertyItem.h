@@ -63,6 +63,7 @@ public:
 	const RefArray< PropertyItem >& getChildItems() const;
 
 protected:
+	friend class AutoPropertyList;
 	friend class PropertyList;
 
 	void setPropertyList(PropertyList* propertyList);
@@ -98,6 +99,10 @@ protected:
 	virtual void paintText(Canvas& canvas, const Rect& rc);
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
+
+	virtual bool copy();
+
+	virtual bool paste();
 
 private:
 	PropertyList* m_propertyList;

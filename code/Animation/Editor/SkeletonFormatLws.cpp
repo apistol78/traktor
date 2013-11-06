@@ -5,6 +5,7 @@
 #include "Animation/Editor/LwsParser/LwsDocument.h"
 #include "Animation/Editor/LwsParser/LwsGroup.h"
 #include "Animation/Editor/LwsParser/LwsValue.h"
+#include "Core/Misc/String.h"
 
 namespace traktor
 {
@@ -13,18 +14,15 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.animation.SkeletonFormatLws", SkeletonFormatLws, ISkeletonFormat)
 
-Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const
+Ref< Skeleton > SkeletonFormatLws::create(LwsDocument* document) const
 {
-	Ref< LwsDocument > document = LwsDocument::parse(stream);
-	if (!document)
-		return 0;
-
 	LwsGroup* rootGroup = document->getRootGroup();
 	T_ASSERT (rootGroup);
 
 	Ref< Skeleton > skeleton = new Skeleton();
 	Ref< Joint > current;
 
+	std::map< std::wstring, int32_t > nameCount;
 	std::map< int32_t, int32_t > mm;
 	int32_t id = 0;
 	int32_t numChannels = 0;
@@ -56,83 +54,36 @@ Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset
 
 			if (current != 0 && value->getName() == L"BoneWeightMapName" && value->getCount() >= 1)
 			{
-				current->setName(value->getString(0));
+				std::wstring jointName = value->getString(0);
+
+				int32_t jointNameIndex = nameCount[jointName]++;
+				if (jointNameIndex > 0)
+					jointName += L"_" + toString(jointNameIndex);
+
+				current->setName(jointName);
 			}
 
-			if (current != 0 && value->getName() == L"NumChannels" && value->getCount() >= 1)
+			if (current != 0 && value->getName() == L"BoneRestPosition" && value->getCount() >= 3)
 			{
-				numChannels = value->getInteger(0);
+				Transform T = current->getTransform();
+				T = Transform(
+					T.translation() + Vector4(value->getFloat(0), value->getFloat(1), value->getFloat(2), 0.0f),
+					T.rotation()
+				);
+				current->setTransform(T);
 			}
 
-			if (current != 0 && numChannels > 0 && value->getName() == L"Channel" && value->getCount() >= 1)
+			if (current != 0 && value->getName() == L"BoneRestDirection" && value->getCount() >= 3)
 			{
-				int32_t channel = value->getInteger(0);
-
-				const LwsGroup* group = dynamic_type_cast< const LwsGroup* >(rootGroup->get(i + 1));
-				if (group && group->getName() == L"Envelope")
-				{
-					const LwsValue* key = dynamic_type_cast< const LwsValue* >(group->find(L"Key"));
-					if (key && key->getCount() >= 1)
-					{
-						Transform T = current->getTransform();
-
-						float kv = key->getFloat(0);
-						switch (channel)
-						{
-						// X
-						case 0:
-							T = Transform(
-								T.translation() + Vector4(kv, 0.0f, 0.0f, 0.0f),
-								T.rotation()
-							);
-							break;
-
-						// Y
-						case 1:
-							T = Transform(
-								T.translation() + Vector4(0.0f, kv, 0.0f, 0.0f),
-								T.rotation()
-							);
-							break;
-
-						// Z
-						case 2:
-							T = Transform(
-								T.translation() + Vector4(0.0f, 0.0f, kv, 0.0f),
-								T.rotation()
-							);
-							break;
-
-						// Head
-						case 3:
-							T = Transform(
-								T.translation(),
-								Quaternion::fromEulerAngles(kv, 0.0f, 0.0f) * T.rotation()
-							);
-							break;
-
-						// Pitch
-						case 4:
-							T = Transform(
-								T.translation(),
-								Quaternion::fromEulerAngles(0.0f, kv, 0.0f) * T.rotation()
-							);
-							break;
-
-						// Bank
-						case 5:
-							T = Transform(
-								T.translation(),
-								Quaternion::fromEulerAngles(0.0f, 0.0f, kv) * T.rotation()
-							);
-							break;
-						}
-
-						current->setTransform(T);
-					}
-				}
-
-				--numChannels;
+				Transform T = current->getTransform();
+				T = Transform(
+					T.translation(),
+					Quaternion::fromEulerAngles(value->getFloat(0), 0.0f, 0.0f) *
+					Quaternion::fromEulerAngles(0.0f, value->getFloat(1), 0.0f) *
+					Quaternion::fromEulerAngles(0.0f, 0.0f, value->getFloat(2)) *
+					T.rotation()
+				);
+				current->setTransform(T);
 			}
 
 			if (current != 0 && value->getName() == L"ParentItem" && value->getCount() >= 1)
@@ -153,6 +104,15 @@ Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset
 		skeleton->addJoint(current);
 
 	return skeleton;
+}
+
+Ref< Skeleton > SkeletonFormatLws::import(IStream* stream, const Vector4& offset, float radius, bool invertX, bool invertZ) const
+{
+	Ref< LwsDocument > document = LwsDocument::parse(stream);
+	if (!document)
+		return 0;
+
+	return create(document);
 }
 
 	}
