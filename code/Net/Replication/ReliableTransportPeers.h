@@ -25,7 +25,7 @@ class T_DLLCLASS ReliableTransportPeers : public IReplicatorPeers
 	T_RTTI_CLASS;
 
 public:
-	ReliableTransportPeers(IReplicatorPeers* peers);
+	ReliableTransportPeers(IReplicatorPeers* peers, bool sendFaulty);
 
 	virtual ~ReliableTransportPeers();
 
@@ -96,6 +96,7 @@ private:
 		}
 	};
 
+	bool m_sendFaulty;
 	Ref< IReplicatorPeers > m_peers;
 	Timer m_timer;
 	std::vector< PeerInfo > m_info;

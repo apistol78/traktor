@@ -30,6 +30,8 @@ public:
 	virtual bool update(const UpdateParams& update) = 0;
 
 	virtual void build(IWorldRenderer* worldRenderer) = 0;
+
+	virtual void cancel() = 0;
 };
 
 	}

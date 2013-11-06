@@ -1,10 +1,12 @@
+#include "Ui/Application.h"
+#include "Ui/Bitmap.h"
+#include "Ui/Clipboard.h"
+#include "Ui/Command.h"
+#include "Ui/Edit.h"
+#include "Ui/MethodHandler.h"
+#include "Ui/Custom/MiniButton.h"
 #include "Ui/Custom/PropertyList/TextPropertyItem.h"
 #include "Ui/Custom/PropertyList/PropertyList.h"
-#include "Ui/Custom/MiniButton.h"
-#include "Ui/Edit.h"
-#include "Ui/Bitmap.h"
-#include "Ui/Command.h"
-#include "Ui/MethodHandler.h"
 #include "Ui/Events/FocusEvent.h"
 
 // Resources
@@ -115,6 +117,25 @@ void TextPropertyItem::mouseButtonDown(MouseEvent* event)
 void TextPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 	canvas.drawText(rc.inflate(-2, -2), m_value, AnLeft, AnCenter);
+}
+
+bool TextPropertyItem::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (clipboard)
+		return clipboard->setText(m_value);
+	else
+		return false;
+}
+
+bool TextPropertyItem::paste()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	m_value = clipboard->getText();
+	return true;
 }
 
 void TextPropertyItem::eventEditFocus(Event* event)

@@ -72,7 +72,7 @@ void VortexModifier::update(SpursJobQueue* jobQueue, const Scalar& deltaTime, co
 void VortexModifier::update(const Scalar& deltaTime, const Transform& transform, PointVector& points, size_t first, size_t last) const
 {
 	Vector4 axis = m_world ? m_axis : transform * m_axis;
-	Vector4 center = transform.translation();
+	Vector4 center = m_world ? transform.translation() : Vector4::origo();
 
 	for (size_t i = first; i < last; ++i)
 	{

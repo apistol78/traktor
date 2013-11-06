@@ -505,8 +505,13 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	// Find non-dependent, external, input pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
+	std::vector< const OutputPin* > dependentOutputPins(2);
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output");
+
 	std::vector< const InputPin* > inputPins;
-	cx.findExternalInputs(node, L"Input", L"N", inputPins);
+	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
+
 	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
 		cx.emitInput(*i);
 
@@ -555,6 +560,101 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	// output stream.
 	f << fs.str();
 	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	return true;
+}
+
+bool emitIterate2d(GlslContext& cx, Iterate2d* node)
+{
+	StringOutputStream& f = cx.getShader().getOutputStream(GlslShader::BtBody);
+	std::wstring inputName;
+
+	// Create iterator variables.
+	GlslVariable* X = cx.emitOutput(node, L"X", GtFloat);
+	T_ASSERT (X);
+
+	GlslVariable* Y = cx.emitOutput(node, L"Y", GtFloat);
+	T_ASSERT (Y);
+
+	// Create void output variable; change type later when we know
+	// the type of the input branch.
+	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
+	T_ASSERT (out);
+
+	// Find non-dependent, external, input pins from input branch;
+	// we emit those first in order to have them evaluated
+	// outside of iteration.
+	std::vector< const OutputPin* > dependentOutputPins(3);
+	dependentOutputPins[0] = node->findOutputPin(L"X");
+	dependentOutputPins[1] = node->findOutputPin(L"Y");
+	dependentOutputPins[2] = node->findOutputPin(L"Output");
+
+	std::vector< const InputPin* > inputPins;
+	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
+
+	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
+		cx.emitInput(*i);
+
+	// Write input branch in a temporary output stream.
+	StringOutputStream fs;
+	cx.getShader().pushOutputStream(GlslShader::BtBody, &fs);
+	cx.getShader().pushScope();
+
+	GlslVariable* input = cx.emitInput(node, L"Input");
+	if (!input)
+		return false;
+
+	// Emit post condition if connected; break iteration if condition is false.
+	GlslVariable* condition = cx.emitInput(node, L"Condition");
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
+
+	inputName = input->getName();
+
+	// Modify output variable; need to have input variable ready as it
+	// will determine output type.
+	out->setType(input->getType());
+
+	cx.getShader().popScope();
+	cx.getShader().popOutputStream(GlslShader::BtBody);
+
+	// As we now know the type of output variable we can safely
+	// initialize it.
+	GlslVariable* initial = cx.emitInput(node, L"Initial");
+	if (initial)
+		assign(f, out) << initial->cast(out->getType()) << L";" << Endl;
+	else
+		assign(f, out) << expandScalar(0.0f, out->getType()) << L";" << Endl;
+
+	// Write outer for-loop statement.
+	f << L"for (float " << X->getName() << L" = " << node->getFromX() << L"; " << X->getName() << L" <= " << node->getToX() << L"; ++" << X->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	f << L"for (float " << Y->getName() << L" = " << node->getFromY() << L"; " << Y->getName() << L" <= " << node->getToY() << L"; ++" << Y->getName() << L")" << Endl;
+	f << L"{" << Endl;
+	f << IncreaseIndent;
+
+	// Insert input branch here; it's already been generated in a temporary
+	// output stream.
+	f << fs.str();
+	f << out->getName() << L" = " << inputName << L";" << Endl;
+
+	f << DecreaseIndent;
+	f << L"}" << Endl;	
+
+	// Emit outer loop post condition.
+	if (condition)
+	{
+		fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
+		fs << L"\tbreak;" << Endl;
+	}
 
 	f << DecreaseIndent;
 	f << L"}" << Endl;	
@@ -1447,8 +1547,13 @@ bool emitSum(GlslContext& cx, Sum* node)
 	// Find non-dependent, external, input pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
+	std::vector< const OutputPin* > dependentOutputPins(2);
+	dependentOutputPins[0] = node->findOutputPin(L"N");
+	dependentOutputPins[1] = node->findOutputPin(L"Output");
+
 	std::vector< const InputPin* > inputPins;
-	cx.findExternalInputs(node, L"Input", L"N", inputPins);
+	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
+
 	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
 		cx.emitInput(*i);
 
@@ -1995,6 +2100,7 @@ GlslEmitter::GlslEmitter()
 	m_emitters[&type_of< Instance >()] = new EmitterCast< Instance >(emitInstance);
 	m_emitters[&type_of< Interpolator >()] = new EmitterCast< Interpolator >(emitInterpolator);
 	m_emitters[&type_of< Iterate >()] = new EmitterCast< Iterate >(emitIterate);
+	m_emitters[&type_of< Iterate2d >()] = new EmitterCast< Iterate2d >(emitIterate2d);
 	m_emitters[&type_of< Length >()] = new EmitterCast< Length >(emitLength);
 	m_emitters[&type_of< Lerp >()] = new EmitterCast< Lerp >(emitLerp);
 	m_emitters[&type_of< Log >()] = new EmitterCast< Log >(emitLog);

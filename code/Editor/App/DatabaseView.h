@@ -76,16 +76,18 @@ private:
 	Ref< ui::custom::ToolBarButton > m_toolFilterType;
 	Ref< ui::custom::ToolBarButton > m_toolFilterAssets;
 	Ref< ui::custom::ToolBarButton > m_toolFilterShow;
+	Ref< ui::custom::ToolBarButton > m_toolFavoritesShow;
 	Ref< ui::Edit > m_editFilter;
 	Ref< ui::TreeView > m_treeDatabase;
 	Ref< ui::HierarchicalState > m_treeState;
-	Ref< ui::PopupMenu > m_menuGroup;
+	Ref< ui::PopupMenu > m_menuGroup[2];
 	Ref< ui::PopupMenu > m_menuInstance;
 	Ref< ui::PopupMenu > m_menuInstanceAsset;
 	Ref< db::Database > m_db;
 	Ref< Filter > m_filter;
 	RefArray< IWizardTool > m_wizardTools;
 	std::set< Guid > m_rootInstances;
+	std::set< Guid > m_favoriteInstances;
 	std::wstring m_filterText;
 
 	int32_t getIconIndex(const TypeInfo* instanceType) const;

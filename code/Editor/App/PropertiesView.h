@@ -46,6 +46,8 @@ public:
 
 	Ref< ISerializable > getPropertyObject();
 
+	bool handleCommand(const ui::Command& command);
+
 	virtual bool resolvePropertyGuid(const Guid& guid, std::wstring& resolved) const;
 
 private:

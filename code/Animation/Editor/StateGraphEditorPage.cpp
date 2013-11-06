@@ -124,6 +124,7 @@ bool StateGraphEditorPage::create(ui::Container* parent)
 void StateGraphEditorPage::destroy()
 {
 	m_site->destroyAdditionalPanel(m_containerPreview);
+	safeDestroy(m_containerPreview);
 	safeDestroy(m_editorGraph);
 	safeDestroy(m_menuPopup);
 }
@@ -155,6 +156,14 @@ bool StateGraphEditorPage::dropInstance(db::Instance* instance, const ui::Point&
 
 		bindStateNodes();
 		updateGraph();
+	}
+	else if (is_type_of< mesh::MeshAsset >(*primaryType))
+	{
+		m_previewControl->setMesh(resource::Id< mesh::SkinnedMesh >(instance->getGuid()));
+	}
+	else if (is_type_of< SkeletonAsset >(*primaryType))
+	{
+		m_previewControl->setSkeleton(resource::Id< animation::Skeleton >(instance->getGuid()));
 	}
 	else
 		return false;

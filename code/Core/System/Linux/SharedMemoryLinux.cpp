@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Core/Io/MemoryStream.h"
 #include "Core/System/Linux/SharedMemoryLinux.h"
 
@@ -20,6 +21,12 @@ Ref< IStream > SharedMemoryLinux::read(bool exclusive)
 Ref< IStream > SharedMemoryLinux::write()
 {
 	return new MemoryStream(m_data.ptr(), m_size, false, true);
+}
+
+bool SharedMemoryLinux::clear()
+{
+	std::memset(m_data.ptr(), 0, m_size);
+	return true;
 }
 
 }

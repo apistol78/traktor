@@ -16,6 +16,8 @@ class StateCache : public Object
 public:
 	StateCache(ID3D11DeviceContext* d3dDeviceContext);
 
+	void reset();
+
 	void setRasterizerState(ID3D11RasterizerState* d3dRasterizerState);
 
 	void setDepthStencilState(ID3D11DepthStencilState* d3dDepthStencilState, UINT stencilReference);

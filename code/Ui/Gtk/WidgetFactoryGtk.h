@@ -67,6 +67,8 @@ public:
 
 	virtual IUserWidget* createUserWidget(EventSubject* owner);
 
+	virtual IWebBrowser* createWebBrowser(EventSubject* owner);
+
 	virtual INative* createNative(EventSubject* owner);
 
 	virtual IBitmap* createBitmap();

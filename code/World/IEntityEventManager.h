@@ -20,6 +20,7 @@ namespace traktor
 class Entity;
 class EntityEventSet;
 class IEntityEvent;
+class IEntityEventInstance;
 class IWorldRenderer;
 struct UpdateParams;
 
@@ -31,9 +32,9 @@ class T_DLLCLASS IEntityEventManager : public Object
 	T_RTTI_CLASS;
 
 public:
-	virtual void raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset = Transform()) = 0;
+	virtual IEntityEventInstance* raise(const IEntityEvent* event, Entity* sender, const Transform& Toffset = Transform()) = 0;
 
-	virtual void raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset = Transform()) = 0;
+	virtual IEntityEventInstance* raise(const EntityEventSet* eventSet, const std::wstring& eventId, Entity* sender, const Transform& Toffset = Transform()) = 0;
 
 	virtual void update(const UpdateParams& update) = 0;
 

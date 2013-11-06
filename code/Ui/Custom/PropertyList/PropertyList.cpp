@@ -281,6 +281,29 @@ void PropertyList::applyState(const HierarchicalState* state)
 	m_scrollBar->setPosition(state->getScrollPosition());
 }
 
+bool PropertyList::copy()
+{
+	RefArray< PropertyItem > selectedItems;
+	getPropertyItems(selectedItems, GfDescendants | GfSelectedOnly);
+	if (selectedItems.size() == 1)
+		return selectedItems[0]->copy();
+	else
+		return false;
+}
+
+bool PropertyList::paste()
+{
+	RefArray< PropertyItem > selectedItems;
+	getPropertyItems(selectedItems, GfDescendants | GfSelectedOnly);
+	if (selectedItems.size() == 1 && selectedItems[0]->paste())
+	{
+		update();
+		return true;
+	}
+	else
+		return false;
+}
+
 void PropertyList::addSelectEventHandler(EventHandler* eventHandler)
 {
 	addEventHandler(EiSelectionChange, eventHandler);

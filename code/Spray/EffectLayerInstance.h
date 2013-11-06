@@ -16,6 +16,13 @@
 
 namespace traktor
 {
+	namespace world
+	{
+
+class IEntityEventInstance;
+
+	}
+
 	namespace spray
 	{
 
@@ -40,6 +47,8 @@ public:
 		SequenceInstance* sequenceInstance
 	);
 
+	virtual ~EffectLayerInstance();
+
 	void update(Context& context, const Transform& transform, float time, bool enable);
 
 	void synchronize();
@@ -61,6 +70,7 @@ private:
 	Ref< EmitterInstance > m_emitterInstance;
 	Ref< TrailInstance > m_trailInstance;
 	Ref< SequenceInstance > m_sequenceInstance;
+	Ref< world::IEntityEventInstance > m_triggerInstance;
 	float m_start;
 	float m_end;
 	bool m_singleShotFired;

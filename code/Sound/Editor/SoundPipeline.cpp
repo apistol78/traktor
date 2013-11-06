@@ -142,7 +142,7 @@ bool SoundPipeline::buildOutput(
 
 	bool categorized = false;
 	std::wstring configurationId;
-	float volume = 1.0f;
+	float volume = soundAsset->m_volume;
 	float presence = soundAsset->m_presence;
 	float presenceRate = soundAsset->m_presenceRate;
 	float range = 0.0f;

@@ -40,7 +40,10 @@ SoundEventInstance::SoundEventInstance(
 bool SoundEventInstance::update(const world::UpdateParams& update)
 {
 	if (!m_handle || !m_handle->isPlaying())
+	{
+		m_handle = 0;
 		return false;
+	}
 
 	if (m_positional && m_follow)
 	{
@@ -55,6 +58,15 @@ bool SoundEventInstance::update(const world::UpdateParams& update)
 
 void SoundEventInstance::build(world::IWorldRenderer* worldRenderer)
 {
+}
+
+void SoundEventInstance::cancel()
+{
+	if (m_handle)
+	{
+		m_handle->stop();
+		m_handle = 0;
+	}
 }
 
 	}

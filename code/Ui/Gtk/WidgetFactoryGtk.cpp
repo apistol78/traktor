@@ -136,6 +136,11 @@ IUserWidget* WidgetFactoryGtk::createUserWidget(EventSubject* owner)
 	return new UserWidgetGtk(owner);
 }
 
+IWebBrowser* WidgetFactoryGtk::createWebBrowser(EventSubject* owner)
+{
+	return 0;
+}
+
 INative* WidgetFactoryGtk::createNative(EventSubject* owner)
 {
 	return 0;

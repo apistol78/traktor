@@ -1,6 +1,9 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Math/MathUtils.h"
+#include "Core/Serialization/ISerializable.h"
+#include "Ui/Application.h"
 #include "Ui/Bitmap.h"
+#include "Ui/Clipboard.h"
 #include "Ui/Command.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/Custom/MiniButton.h"
@@ -98,6 +101,37 @@ void ObjectPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 	StringOutputStream ss;
 	ss << L"{ " << type_name(m_object) << L" }";
 	canvas.drawText(rc.inflate(-2, -2), ss.str(), AnLeft, AnCenter);
+}
+
+bool ObjectPropertyItem::copy()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (clipboard)
+	{
+		ISerializable* serializableObject = dynamic_type_cast< ISerializable* >(m_object);
+		if (serializableObject)
+			return clipboard->setObject(serializableObject);
+		else
+			return false;
+	}
+	else
+		return false;
+}
+
+bool ObjectPropertyItem::paste()
+{
+	Clipboard* clipboard = Application::getInstance()->getClipboard();
+	if (!clipboard)
+		return false;
+
+	Ref< ISerializable > object = clipboard->getObject();
+	if (object && (!m_objectType || is_type_of(*m_objectType, type_of(object))))
+	{
+		m_object = object;
+		return true;
+	}
+
+	return false;
 }
 
 void ObjectPropertyItem::eventClick(Event* event)

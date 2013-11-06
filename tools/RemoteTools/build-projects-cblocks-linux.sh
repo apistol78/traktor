@@ -3,4 +3,4 @@
 # Source environment configuration.
 . "`dirname \"$BASH_SOURCE\"`/../../config.sh"
 
-wine $TRAKTOR_HOME/bin/win32/SolutionBuilder -f=cblocks RemoteToolsLinux.xms
+$TRAKTOR_HOME/bin/linux/SolutionBuilder -f=cblocks RemoteToolsLinux.xms

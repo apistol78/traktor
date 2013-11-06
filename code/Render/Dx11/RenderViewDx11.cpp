@@ -855,6 +855,7 @@ void RenderViewDx11::bindTargets()
 	m_context->getD3DDeviceContext()->OMSetRenderTargets(2, rs.d3dRenderView, rs.d3dDepthStencilView);
 	m_context->getD3DDeviceContext()->RSSetViewports(1, &rs.d3dViewport);
 
+	m_stateCache.reset();
 	m_targetsDirty = false;
 }
 

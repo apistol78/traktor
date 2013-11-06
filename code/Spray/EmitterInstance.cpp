@@ -1,3 +1,4 @@
+#include <stdlib.h>
 #include "Core/Functor/Functor.h"
 #include "Core/Misc/SafeDestroy.h"
 #include "Core/Thread/JobManager.h"
@@ -42,20 +43,17 @@ const uint32_t c_maxEmitSingleShot = 400;
 
 const uint32_t c_maxAlive = c_maxEmitSingleShot;
 
-struct PointPredicate
+#if defined(_WIN32) || defined(__APPLE__)
+int pointPredicate(void* context, const void* lh, const void* rh)
+#else
+int pointPredicate(const void* lh, const void* rh, void* context)
+#endif
 {
-	const Plane& m_cameraPlane;
-
-	PointPredicate(const Plane& cameraPlane)
-	:	m_cameraPlane(cameraPlane)
-	{
-	}
-
-	bool operator () (const Point& pl, const Point& pr) const
-	{
-		return m_cameraPlane.distance(pl.position) > m_cameraPlane.distance(pr.position);
-	}
-};
+	const Plane& cameraPlane = *static_cast< const Plane* >(context);
+	const Point& plh = *static_cast< const Point* >(lh);
+	const Point& prh = *static_cast< const Point* >(rh);
+	return (cameraPlane.distance(plh.position) > cameraPlane.distance(prh.position)) ? 1 : -1;
+}
 
 		}
 
@@ -340,8 +338,14 @@ void EmitterInstance::updateTask(float deltaTime)
 		}
 	}
 
-	if (m_emitter->getSort())
-		std::sort(m_renderPoints.begin(), m_renderPoints.end(), PointPredicate(m_sortPlane));
+	if (m_emitter->getSort() && !m_renderPoints.empty())
+#if defined(_WIN32)
+		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
+#elif defined(__LINUX__)
+		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
+#else
+		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), &m_sortPlane, &pointPredicate);
+#endif
 
 	m_count++;
 }

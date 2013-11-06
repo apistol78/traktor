@@ -202,6 +202,14 @@
       <second>Explore...</second>
     </item>
     <item>
+      <first>DATABASE_FAVORITE_ENTIRE_GROUP</first>
+      <second>Favorite entire group</second>
+    </item>
+    <item>
+      <first>DATABASE_UNFAVORITE_ENTIRE_GROUP</first>
+      <second>Remove entire group from favorites</second>
+    </item>
+    <item>
       <first>DATABASE_FILTER</first>
       <second>Filter</second>
     </item>
@@ -221,6 +229,10 @@
       <first>DATABASE_FILTER_SHOW_FILTERED</first>
       <second>Show filtered</second>
     </item>
+    <item>
+      <first>DATABASE_FILTER_SHOW_FAVORITES</first>
+      <second>Show favorites</second>
+    </item>    
     <item>
       <first>DATABASE_IMPORT</first>
       <second>Import</second>
@@ -285,6 +297,10 @@
       <first>DATABASE_TOGGLE_AS_ROOT</first>
       <second>Toggle root</second>
     </item>
+    <item>
+      <first>DATABASE_TOGGLE_AS_FAVORITE</first>
+      <second>Toggle favorite</second>
+    </item>    
     <item>
       <first>DATABASE_USER</first>
       <second>User</second>

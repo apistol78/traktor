@@ -101,6 +101,8 @@ public:
 
 	T_MATH_INLINE Scalar length2() const;
 
+	T_MATH_INLINE Scalar normalize();
+
 	T_MATH_INLINE Vector4 normalized() const;
 
 	T_MATH_INLINE Vector4 absolute() const;

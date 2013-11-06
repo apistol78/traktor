@@ -217,6 +217,7 @@ int main(int argc, const char** argv)
 	if (application->create(
 		defaultSettings,
 		settings,
+		0,
 		0
 	))
 	{

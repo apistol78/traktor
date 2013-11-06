@@ -123,11 +123,11 @@ function insertLibrary(outLibraries, library)
 	table.insert(outLibraries, library)
 end
 
-function collectLinkProducts(solution, project, configuration, outLibraries, outLibraryPaths)
+function collectLinkProducts(solution, project, configuration, outLibraries, outLibrariesExternal, outLibraryPaths)
 
 	local libraries = configuration:getLibraries()
 	for i = 0, libraries:size() - 1 do
-		insertLibrary(outLibraries, libraries:get(i))
+		insertLibrary(outLibrariesExternal, libraries:get(i))
 	end
 
 	local libraryPaths = configuration:getLibraryPaths()
@@ -161,6 +161,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 					localProject,
 					localConfig,
 					outLibraries,
+					outLibrariesExternal,
 					outLibraryPaths
 				)
 			end
@@ -185,6 +186,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 					externalProject,
 					externalConfig,
 					outLibraries,
+					outLibrariesExternal,
 					outLibraryPaths
 				)
 			end
@@ -193,6 +195,7 @@ function collectLinkProducts(solution, project, configuration, outLibraries, out
 end
 
 					local libraries = {}
+					local librariesExternal = {}
 					local libraryPaths = {}
 
 					table.insert(libraryPaths, "../" .. configuration:getName())
@@ -201,6 +204,7 @@ end
 						project,
 						configuration,
 						libraries,
+						librariesExternal,
 						libraryPaths
 					)
 
@@ -208,8 +212,22 @@ end
 --?>
 					<Add directory="<?-- output:print(lp) --?>" /><?--
 					end
-
+--?>
+					<!-- Dependencies --><?--
 					for i, lib in ipairs(libraries) do
+						local lib0 = string.sub(lib, 1, 1)
+						if not (lib0 == "'" or lib0 == "`") then
+--?>
+					<Add library="<?-- output:print(lib) --?>" /><?--
+						else
+--?>
+					<Add option="<?-- output:print(lib) --?>" /><?--
+						end
+					end
+
+--?>
+					<!-- External --><?--
+					for i, lib in ipairs(librariesExternal) do
 						local lib0 = string.sub(lib, 1, 1)
 						if not (lib0 == "'" or lib0 == "`") then
 --?>

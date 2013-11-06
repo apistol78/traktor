@@ -68,7 +68,7 @@ public:
 		const Vector4& direction,
 		float maxLength,
 		uint32_t group,
-		const Body* ignoreBody,
+		uint32_t ignoreClusterId,
 		bool ignoreBackFace,
 		QueryResult& outResult
 	) const;
@@ -79,7 +79,7 @@ public:
 		float maxLength,
 		uint32_t group,
 		uint32_t queryTypes,
-		const Body* ignoreBody
+		uint32_t ignoreClusterId
 	) const;
 
 	virtual uint32_t querySphere(
@@ -96,7 +96,7 @@ public:
 		float maxLength,
 		float radius,
 		uint32_t group,
-		const Body* ignoreBody,
+		uint32_t ignoreClusterId,
 		QueryResult& outResult
 	) const;
 
@@ -107,7 +107,7 @@ public:
 		const Vector4& direction,
 		float maxLength,
 		uint32_t group,
-		const Body* ignoreBody,
+		uint32_t ignoreClusterId,
 		QueryResult& outResult
 	) const;
 
@@ -117,7 +117,7 @@ public:
 		float maxLength,
 		float radius,
 		uint32_t group,
-		const Body* ignoreBody,
+		uint32_t ignoreClusterId,
 		RefArray< Body >& outResult
 	) const;
 

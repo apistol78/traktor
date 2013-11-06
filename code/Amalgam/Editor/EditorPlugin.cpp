@@ -1,3 +1,4 @@
+#include <cstring>
 #include "Amalgam/Editor/EditorPlugin.h"
 #include "Amalgam/Editor/HostEnumerator.h"
 #include "Amalgam/Editor/Platform.h"
@@ -342,7 +343,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 	int32_t deployHostId = targetInstance->getDeployHostId();
 	if (deployHostId >= 0)
 		m_hostEnumerator->getHost(deployHostId, deployHost);
-	
+
 	// Resolve absolute output path.
 	std::wstring outputPath = FileSystem::getInstance().getAbsolutePath(targetInstance->getOutputPath()).getPathName();
 
@@ -435,7 +436,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 void EditorPlugin::eventTargetListStop(ui::Event* event)
 {
 	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-	
+
 	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
 	int32_t connectionId = cmdEvent->getCommand().getId();
 
@@ -455,7 +456,7 @@ void EditorPlugin::eventTargetListStop(ui::Event* event)
 void EditorPlugin::eventTargetListCapture(ui::Event* event)
 {
 	ui::CommandEvent* cmdEvent = checked_type_cast< ui::CommandEvent*, false >(event);
-	
+
 	TargetInstance* targetInstance = checked_type_cast< TargetInstance*, false >(cmdEvent->getItem());
 	int32_t connectionId = cmdEvent->getCommand().getId();
 

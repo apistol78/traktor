@@ -89,7 +89,7 @@ void registerNetClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classRelayPeers);
 
 	Ref< script::AutoScriptClass< net::ReliableTransportPeers > > classReliableTransportPeers = new script::AutoScriptClass< net::ReliableTransportPeers >();
-	classReliableTransportPeers->addConstructor< net::IReplicatorPeers* >();
+	classReliableTransportPeers->addConstructor< net::IReplicatorPeers*, bool >();
 	scriptManager->registerClass(classReliableTransportPeers);
 
 	Ref< script::AutoScriptClass< net::Replicator::IListener > > classReplicatorIListener = new script::AutoScriptClass< net::Replicator::IListener >();

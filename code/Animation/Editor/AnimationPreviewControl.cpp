@@ -1,6 +1,7 @@
 #include "Animation/AnimatedMeshEntity.h"
 #include "Animation/Joint.h"
 #include "Animation/Skeleton.h"
+#include "Animation/SkeletonUtils.h"
 #include "Animation/Animation/AnimationFactory.h"
 #include "Animation/Editor/AnimationPreviewControl.h"
 #include "Core/Math/Plane.h"
@@ -177,12 +178,14 @@ void AnimationPreviewControl::updatePreview()
 		}
 	}
 
+	std::vector< AnimatedMeshEntity::Binding > noBindings;
 	m_entity = new AnimatedMeshEntity(
 		Transform::identity(),
 		m_mesh,
 		m_skeleton,
 		m_poseController,
 		jointRemap,
+		noBindings,
 		false,
 		false,
 		false
@@ -399,6 +402,64 @@ void AnimationPreviewControl::eventPaint(ui::Event* event)
 				(x == 0) ? 2.0f : 0.0f,
 				m_colorGrid
 			);
+		}
+
+		if (m_entity && m_entity->getSkeleton())
+		{
+			m_primitiveRenderer->pushDepthEnable(false);
+
+			const resource::Proxy< Skeleton >& skeleton = m_entity->getSkeleton();
+
+			AlignedVector< Transform > poseTransforms = m_entity->getPoseTransforms();
+			if (poseTransforms.empty())
+				calculateJointTransforms(skeleton, poseTransforms);
+
+			if (poseTransforms.size() == skeleton->getJointCount())
+			{
+				for (uint32_t i = 0; i < skeleton->getJointCount(); ++i)
+				{
+					const Joint* joint = skeleton->getJoint(i);
+
+					Color4ub color = Color4ub(255, 255, 0, 128);
+
+					m_primitiveRenderer->drawWireFrame(poseTransforms[i].toMatrix44(), joint->getRadius() * 4.0f);
+
+					if (joint->getParent() >= 0)
+					{
+						const Joint* parent = skeleton->getJoint(joint->getParent());
+						T_ASSERT (parent);
+
+						Vector4 start = poseTransforms[joint->getParent()].translation().xyz1();
+						Vector4 end = poseTransforms[i].translation().xyz1();
+
+						Vector4 z = (end - start).normalized();
+						Vector4 y = cross(z, Vector4(0.0f, 1.0f, 0.0f, 0.0f));
+						Vector4 x = cross(y, z);
+
+						Scalar radius(parent->getRadius());
+						x *= radius;
+						y *= radius;
+						z *= radius;
+
+						m_primitiveRenderer->drawLine(start, start + z + x + y, color);
+						m_primitiveRenderer->drawLine(start, start + z - x + y, color);
+						m_primitiveRenderer->drawLine(start, start + z + x - y, color);
+						m_primitiveRenderer->drawLine(start, start + z - x - y, color);
+
+						m_primitiveRenderer->drawLine(start + z + x + y, end, color);
+						m_primitiveRenderer->drawLine(start + z - x + y, end, color);
+						m_primitiveRenderer->drawLine(start + z + x - y, end, color);
+						m_primitiveRenderer->drawLine(start + z - x - y, end, color);
+
+						m_primitiveRenderer->drawLine(start + z + x + y, start + z - x + y, color);
+						m_primitiveRenderer->drawLine(start + z - x + y, start + z - x - y, color);
+						m_primitiveRenderer->drawLine(start + z - x - y, start + z + x - y, color);
+						m_primitiveRenderer->drawLine(start + z + x - y, start + z + x + y, color);
+					}
+				}
+			}
+
+			m_primitiveRenderer->popDepthEnable();
 		}
 
 		m_primitiveRenderer->end();

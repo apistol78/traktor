@@ -26,6 +26,7 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 	const resource::Proxy< Skeleton >& skeleton,
 	IPoseController* poseController,
 	const std::vector< int32_t >& jointRemap,
+	const std::vector< Binding >& bindings,
 	bool normalizePose,
 	bool normalizeTransform,
 	bool screenSpaceCulling
@@ -35,6 +36,7 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 ,	m_skeleton(skeleton)
 ,	m_poseController(poseController)
 ,	m_jointRemap(jointRemap)
+,	m_bindings(bindings)
 ,	m_normalizePose(normalizePose)
 ,	m_normalizeTransform(normalizeTransform)
 ,	m_totalTime(0.0f)
@@ -58,7 +60,13 @@ AnimatedMeshEntity::~AnimatedMeshEntity()
 void AnimatedMeshEntity::destroy()
 {
 	synchronize();
+	
 	safeDestroy(m_poseController);
+
+	for (std::vector< Binding >::iterator i = m_bindings.begin(); i != m_bindings.end(); ++i)
+		safeDestroy(i->entity);
+	m_bindings.clear();
+
 	mesh::MeshEntity::destroy();
 }
 
@@ -128,6 +136,9 @@ void AnimatedMeshEntity::render(
 		getParameterCallback()
 	);
 
+	for (std::vector< Binding >::iterator i = m_bindings.begin(); i != m_bindings.end(); ++i)
+		worldContext.build(worldRenderView, worldRenderPass, i->entity);
+
 	m_updateController = true;
 }
 
@@ -179,6 +190,15 @@ void AnimatedMeshEntity::update(const world::UpdateParams& update)
 	{
 		m_index = 1 - m_index;
 		m_skinTransforms[m_index] = m_skinTransforms[1 - m_index];
+	}
+
+	// Update entity to joint bindings.
+	for (std::vector< Binding >::iterator i = m_bindings.begin(); i != m_bindings.end(); ++i)
+	{
+		Transform T;
+		if (getPoseTransform(i->jointHandle, T))
+			i->entity->setTransform(m_transform.get() * T);
+		i->entity->update(update);
 	}
 
 	mesh::MeshEntity::update(update);

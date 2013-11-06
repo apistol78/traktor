@@ -34,6 +34,7 @@ private:
 	bool m_preload;
 	float m_presence;
 	float m_presenceRate;
+	float m_volume;
 };
 
 	}

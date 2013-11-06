@@ -1,3 +1,4 @@
+#include <cstring>
 #include <limits>
 #include <Recast.h>
 #include <DetourNavMesh.h>

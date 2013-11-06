@@ -21,9 +21,9 @@ struct MouseControlMap
 }
 c_mouseControlMap[] =
 {
-	{ DtAxisX, -1, true, true, L"Axis X" },
-	{ DtAxisY, -2, true, true, L"Axis Y" },
-	{ DtAxisZ, -3, true, true, L"Wheel" },
+	{ DtAxisX, -1, true, false, L"Axis X" },
+	{ DtAxisY, -2, true, false, L"Axis Y" },
+	{ DtAxisZ, -3, true, false, L"Wheel" },
 	{ DtButton1, 0, false, true, L"Button 1" },
 	{ DtButton2, 1, false, true, L"Button 2" },
 	{ DtButton3, 2, false, true, L"Button 3" },

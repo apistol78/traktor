@@ -658,6 +658,7 @@ bool EditorForm::create(const CommandLine& cmdLine)
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Rebuild"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.CancelBuild"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.ToggleRoot"));
+	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.ToggleFavorite"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.Build"));
 	m_shortcutCommands.push_back(ui::Command(L"Editor.Database.Rebuild"));
 
@@ -2372,11 +2373,18 @@ bool EditorForm::handleCommand(const ui::Command& command)
 	{
 		result = false;
 
-		// Propagate command to database view; if it containts focus.
+		// Propagate command to database view; if it contains focus.
 		if (!result)
 		{
 			if (m_dataBaseView->containFocus())
 				result = m_dataBaseView->handleCommand(command);
+		}
+
+		// Propagate command to properties view; if it contains focus.
+		if (!result)
+		{
+			if (m_propertiesView->containFocus())
+				result = m_propertiesView->handleCommand(command);
 		}
 
 		// Propagate command to active editor; if it contains focus.

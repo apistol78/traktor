@@ -13,6 +13,77 @@ namespace traktor
 {
 	namespace render
 	{
+		namespace
+		{
+
+struct Collect1
+{
+	std::set< const OutputPin* > outputs;
+
+	bool operator () (Node* node)
+	{
+		return true;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		outputs.insert(edge->getSource());
+		return true;
+	}
+};
+
+struct Collect2
+{
+	std::set< const OutputPin* >* candidates;
+	std::set< const OutputPin* > common;
+
+	bool operator () (Node* node)
+	{
+		return true;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		const OutputPin* outputPin = edge->getSource();
+		if (candidates->find(outputPin) != candidates->end())
+		{
+			common.insert(outputPin);
+			return false;
+		}
+		else
+			return true;
+	}
+};
+
+struct FindInputPin
+{
+	const InputPin* inputPin;
+	Node* targetNode;
+	bool found;
+
+	bool operator () (Node* node)
+	{
+		found |= bool(inputPin->getNode() == targetNode);
+		return !found;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		return true;
+	}
+};
+
+bool doesInputPropagateToNode(const ShaderGraph* shaderGraph, const InputPin* inputPin, Node* targetNode)
+{
+	FindInputPin visitor;
+	visitor.inputPin = inputPin;
+	visitor.targetNode = targetNode;
+	visitor.found = false;
+	ShaderGraphTraverse(shaderGraph, targetNode).preorder(visitor);
+	return visitor.found;
+}
+
+		}
 
 GlslContext::GlslContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)
@@ -126,13 +197,10 @@ bool GlslContext::isPinsConnected(const OutputPin* outputPin, const InputPin* in
 	return false;
 }
 
-void GlslContext::findExternalInputs(Node* node, const std::wstring& inputPinName, const std::wstring& dependentOutputPinName, std::vector< const InputPin* >& outInputPins) const
+void GlslContext::findExternalInputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const InputPin* >& outInputPins) const
 {
-	const OutputPin* dependentOutputPin = node->findOutputPin(dependentOutputPinName);
-	T_ASSERT (dependentOutputPin);
-
 	std::set< const OutputPin* > visitedOutputPins;
-	visitedOutputPins.insert(dependentOutputPin);
+	visitedOutputPins.insert(dependentOutputPins.begin(), dependentOutputPins.end());
 
 	std::vector< const InputPin* > inputPins;
 	inputPins.push_back(node->findInputPin(inputPinName));
@@ -142,7 +210,11 @@ void GlslContext::findExternalInputs(Node* node, const std::wstring& inputPinNam
 		const InputPin* inputPin = inputPins.back(); inputPins.pop_back();
 		T_ASSERT (inputPin);
 
-		if (!isPinsConnected(dependentOutputPin, inputPin))
+		bool isConnected = false;
+		for (std::vector< const OutputPin* >::const_iterator i = dependentOutputPins.begin(); i != dependentOutputPins.end(); ++i)
+			isConnected |= isPinsConnected(*i, inputPin);
+
+		if (!isConnected)
 			outInputPins.push_back(inputPin);
 		else
 		{
@@ -164,62 +236,31 @@ void GlslContext::findExternalInputs(Node* node, const std::wstring& inputPinNam
 
 void GlslContext::findCommonInputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const InputPin* >& outInputPins) const
 {
-	struct Collect1
-	{
-		std::set< const OutputPin* > outputs;
-
-		bool operator () (Node* node)
-		{
-			return true;
-		}
-
-		bool operator () (Edge* edge)
-		{
-			outputs.insert(edge->getSource());
-			return true;
-		}
-	};
-
-	struct Collect2
-	{
-		std::set< const OutputPin* >* candidates; 
-		std::set< const OutputPin* > common;
-
-		bool operator () (Node* node)
-		{
-			return true;
-		}
-
-		bool operator () (Edge* edge)
-		{
-			const OutputPin* outputPin = edge->getSource();
-			if (candidates->find(outputPin) != candidates->end())
-			{
-				common.insert(outputPin);
-				return false;
-			}
-			else
-				return true;
-		}
-	};
-
 	const OutputPin* outputPin1 = m_shaderGraph->findSourcePin(node->findInputPin(inputPin1));
 	const OutputPin* outputPin2 = m_shaderGraph->findSourcePin(node->findInputPin(inputPin2));
 
 	if (outputPin1 != outputPin2)
 	{
+		ShaderGraphTraverse traverse1(m_shaderGraph, outputPin1->getNode());
+		ShaderGraphTraverse traverse2(m_shaderGraph, outputPin2->getNode());
+
 		Collect1 visitor1;
-		ShaderGraphTraverse(m_shaderGraph, outputPin1->getNode()).preorder(visitor1);
+		traverse1.preorder< Collect1 >(visitor1);
 
 		Collect2 visitor2;
 		visitor2.candidates = &visitor1.outputs;
-		ShaderGraphTraverse(m_shaderGraph, outputPin2->getNode()).preorder(visitor2);
+		traverse2.preorder< Collect2 >(visitor2);
 
 		for (std::set< const OutputPin* >::const_iterator i = visitor2.common.begin(); i != visitor2.common.end(); ++i)
 		{
 			std::vector< const InputPin* > inputPins;
 			m_shaderGraph->findDestinationPins(*i, inputPins);
-			outInputPins.insert(outInputPins.end(), inputPins.begin(), inputPins.end());
+
+			for (std::vector< const InputPin* >::const_iterator j = inputPins.begin(); j != inputPins.end(); ++j)
+			{
+				if (doesInputPropagateToNode(m_shaderGraph, *j, node))
+					outInputPins.push_back(*j);
+			}
 		}
 	}
 	else
@@ -280,7 +321,7 @@ void GlslContext::setRequireDerivatives()
 {
 	m_requireDerivatives = true;
 }
-	
+
 bool GlslContext::getRequireDerivatives() const
 {
 	return m_requireDerivatives;

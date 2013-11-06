@@ -248,6 +248,16 @@ void PropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 {
 }
 
+bool PropertyItem::copy()
+{
+	return false;
+}
+
+bool PropertyItem::paste()
+{
+	return false;
+}
+
 void PropertyItem::updateChildrenInPlaceControls()
 {
 	bool expanded = m_expanded;

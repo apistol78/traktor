@@ -25,6 +25,8 @@ public:
 
 	virtual void build(IWorldRenderer* worldRenderer);
 
+	virtual void cancel();
+
 private:
 	Ref< DecalEntity > m_entity;
 };

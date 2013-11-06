@@ -1,3 +1,4 @@
+#include <cstdlib>
 #include "Core/Log/Log.h"
 #include "Core/Misc/AutoPtr.h"
 #include "Core/Serialization/DeepHash.h"

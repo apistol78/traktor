@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Spray/EffectEntity.h"
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventInstance.h"
@@ -33,6 +34,9 @@ SpawnEffectEventInstance::SpawnEffectEventInstance(const SpawnEffectEvent* spawn
 
 bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 {
+	if (!m_effectEntity)
+		return false;
+
 	if (m_spawnEffect->m_follow)
 	{
 		Transform T;
@@ -56,6 +60,11 @@ bool SpawnEffectEventInstance::update(const world::UpdateParams& update)
 void SpawnEffectEventInstance::build(world::IWorldRenderer* worldRenderer)
 {
 	worldRenderer->build(m_effectEntity);
+}
+
+void SpawnEffectEventInstance::cancel()
+{
+	safeDestroy(m_effectEntity);
 }
 
 	}

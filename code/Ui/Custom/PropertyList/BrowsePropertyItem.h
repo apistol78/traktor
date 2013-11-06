@@ -51,6 +51,10 @@ protected:
 
 	virtual void paintValue(Canvas& canvas, const Rect& rc);
 
+	virtual bool copy();
+
+	virtual bool paste();
+
 private:
 	Guid m_value;
 	const TypeInfo* m_filterType;
