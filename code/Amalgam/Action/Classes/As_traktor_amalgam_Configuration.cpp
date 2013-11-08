@@ -40,8 +40,8 @@ As_traktor_amalgam_Configuration::As_traktor_amalgam_Configuration(flash::Action
 	prototype->addProperty("ambientOcclusionQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_ambientOcclusionQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_ambientOcclusionQuality));
 	prototype->addProperty("antiAliasQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_antiAliasQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_antiAliasQuality));
 	prototype->addProperty("terrainQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_terrainQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_terrainQuality));
-	prototype->addProperty("waterQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_waterQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_waterQuality));
-	prototype->addProperty("undergrowthQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_undergrowthQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_undergrowthQuality));
+	prototype->addProperty("particleQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_particleQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_particleQuality));
+	prototype->addProperty("oceanQuality", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_oceanQuality), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_oceanQuality));
 
 	// Input
 	prototype->addProperty("rumbleEnable", flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable), flash::createNativeFunction(context, this, &As_traktor_amalgam_Configuration::Configuration_set_rumbleEnable));
@@ -198,22 +198,24 @@ void As_traktor_amalgam_Configuration::Configuration_set_terrainQuality(AsConfig
 {
 }
 
-int32_t As_traktor_amalgam_Configuration::Configuration_get_waterQuality(const AsConfiguration* self) const
+int32_t As_traktor_amalgam_Configuration::Configuration_get_particleQuality(const AsConfiguration* self) const
 {
-	return 0;
+	return self->getParticleQuality();
 }
 
-void As_traktor_amalgam_Configuration::Configuration_set_waterQuality(AsConfiguration* self, int32_t waterQuality) const
+void As_traktor_amalgam_Configuration::Configuration_set_particleQuality(AsConfiguration* self, int32_t particleQuality) const
 {
+	self->setParticleQuality((AsConfiguration::Quality)particleQuality);
 }
 
-int32_t As_traktor_amalgam_Configuration::Configuration_get_undergrowthQuality(const AsConfiguration* self) const
+int32_t As_traktor_amalgam_Configuration::Configuration_get_oceanQuality(const AsConfiguration* self) const
 {
-	return 0;
+	return self->getOceanQuality();
 }
 
-void As_traktor_amalgam_Configuration::Configuration_set_undergrowthQuality(AsConfiguration* self, int32_t undergrowthQuality) const
+void As_traktor_amalgam_Configuration::Configuration_set_oceanQuality(AsConfiguration* self, int32_t oceanQuality) const
 {
+	self->setOceanQuality((AsConfiguration::Quality)oceanQuality);
 }
 
 bool As_traktor_amalgam_Configuration::Configuration_get_rumbleEnable(const AsConfiguration* self) const

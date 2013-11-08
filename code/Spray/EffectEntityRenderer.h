@@ -38,6 +38,8 @@ class T_DLLCLASS EffectEntityRenderer : public world::IEntityRenderer
 public:
 	EffectEntityRenderer(render::IRenderSystem* renderSystem, float lod1Distance, float lod2Distance);
 
+	void setLodDistances(float lod1Distance, float lod2Distance);
+
 	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void precull(

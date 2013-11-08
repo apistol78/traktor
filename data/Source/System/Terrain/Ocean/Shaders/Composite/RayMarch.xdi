@@ -1,0 +1,177 @@
+<?xml version="1.0" encoding="utf-8"?>
+<object type="traktor.render.ShaderGraph">
+	<nodes>
+		<item type="traktor.render.Scalar">
+			<comment/>
+			<position>
+				<first>206</first>
+				<second>457</second>
+			</position>
+			<value>40</value>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-17</first>
+				<second>557</second>
+			</position>
+			<name>ViewOrigin</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.InputPort" version="1">
+			<comment/>
+			<position>
+				<first>-45</first>
+				<second>669</second>
+			</position>
+			<name>ViewStepDirection</name>
+			<connectable>true</connectable>
+			<optional>false</optional>
+			<defaultValue>0</defaultValue>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>430</first>
+				<second>461</second>
+			</position>
+			<fragmentGuid>{297E9BD9-ABED-F04B-B8BD-16E426407B6E}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>MarchDistance</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewOrigin</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewStepDirection</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+				<item>
+					<name>SubMarchDistance</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>848</first>
+				<second>496</second>
+			</position>
+			<fragmentGuid>{297E9BD9-ABED-F04B-B8BD-16E426407B6E}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>MarchDistance</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewOrigin</name>
+					<optional>false</optional>
+				</item>
+				<item>
+					<name>ViewStepDirection</name>
+					<optional>false</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>Output</name>
+				</item>
+				<item>
+					<name>SubMarchDistance</name>
+				</item>
+			</outputPins>
+			<values/>
+		</item>
+		<item type="traktor.render.OutputPort">
+			<comment/>
+			<position>
+				<first>1161</first>
+				<second>516</second>
+			</position>
+			<name>Output</name>
+		</item>
+	</nodes>
+	<edges>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[1]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>ViewOrigin</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>ViewStepDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>ViewOrigin</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[2]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>ViewStepDirection</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[3]"/>
+				<name>MarchDistance</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>SubMarchDistance</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[4]"/>
+				<name>MarchDistance</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[4]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[5]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+	</edges>
+</object>

@@ -62,7 +62,8 @@ public:
 	void render(
 		render::RenderContext* renderContext,
 		world::WorldRenderView& worldRenderView,
-		world::IWorldRenderPass& worldRenderPass
+		world::IWorldRenderPass& worldRenderPass,
+		bool reflectionEnable
 	);
 
 	virtual void setTransform(const Transform& transform);

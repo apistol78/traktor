@@ -23,6 +23,11 @@ EffectEntityRenderer::EffectEntityRenderer(render::IRenderSystem* renderSystem, 
 {
 }
 
+void EffectEntityRenderer::setLodDistances(float lod1Distance, float lod2Distance)
+{
+	m_pointRenderer->setLodDistances(lod1Distance, lod2Distance);
+}
+
 const TypeInfoSet EffectEntityRenderer::getEntityTypes() const
 {
 	TypeInfoSet typeSet;

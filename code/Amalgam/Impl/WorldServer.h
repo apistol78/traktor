@@ -9,6 +9,20 @@ namespace traktor
 
 class PropertyGroup;
 
+	namespace spray
+	{
+
+class EffectEntityRenderer;
+
+	}
+
+	namespace terrain
+	{
+
+class EntityRenderer;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -60,10 +74,14 @@ private:
 	Ref< world::IEntityEventManager > m_eventManager;
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
+	Ref< spray::EffectEntityRenderer > m_effectEntityRenderer;
+	Ref< terrain::EntityRenderer > m_terrainEntityRenderer;
 	const TypeInfo* m_worldType;
 	world::Quality m_shadowQuality;
 	world::Quality m_ambientOcclusionQuality;
 	world::Quality m_antiAliasQuality;
+	world::Quality m_particleQuality;
+	world::Quality m_oceanQuality;
 };
 
 	}

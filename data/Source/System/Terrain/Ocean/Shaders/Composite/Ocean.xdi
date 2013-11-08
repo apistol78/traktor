@@ -42,6 +42,10 @@
 					<optional>false</optional>
 				</item>
 				<item>
+					<name>WorldPosition</name>
+					<optional>false</optional>
+				</item>
+				<item>
 					<name>DiffuseTerm</name>
 					<optional>true</optional>
 				</item>
@@ -423,6 +427,14 @@ Surface point
 			<optional>false</optional>
 			<defaultValue>0</defaultValue>
 		</item>
+		<item type="traktor.render.Vector">
+			<comment/>
+			<position>
+				<first>1205</first>
+				<second>791</second>
+			</position>
+			<value>0, 1, 0, 0</value>
+		</item>
 	</nodes>
 	<edges>
 		<item type="traktor.render.Edge">
@@ -757,16 +769,6 @@ Surface point
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[30]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[29]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[8]"/>
 				<name>Output</name>
 			</source>
@@ -873,6 +875,26 @@ Surface point
 			<destination>
 				<node ref="/object/nodes/item"/>
 				<name>DeepRange</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[30]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[29]"/>
+				<name>Input</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[8]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item"/>
+				<name>WorldPosition</name>
 			</destination>
 		</item>
 	</edges>

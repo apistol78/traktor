@@ -53,6 +53,7 @@
 
 					if configuration:getTargetProfile() == "Debug" then
 --?>
+					<Add option="-m32" />
 					<Add option="-march=pentium4" />
 					<Add option="-g" />
 					<Add option="-m32" />
@@ -63,6 +64,7 @@
 					
 					else
 --?>
+					<Add option="-m32" />
 					<Add option="-march=pentium4" />
 					<Add option="-m32" />
 					<Add option="-O3" />

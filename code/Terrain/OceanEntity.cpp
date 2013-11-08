@@ -63,7 +63,8 @@ bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IR
 void OceanEntity::render(
 	render::RenderContext* renderContext,
 	world::WorldRenderView& worldRenderView,
-	world::IWorldRenderPass& worldRenderPass
+	world::IWorldRenderPass& worldRenderPass,
+	bool reflectionEnable
 )
 {
 	const Frustum& viewFrustum = worldRenderView.getViewFrustum();
@@ -84,6 +85,8 @@ void OceanEntity::render(
 
 	worldRenderPass.setShaderTechnique(m_shaderComposite);
 	worldRenderPass.setShaderCombination(m_shaderComposite);
+
+	m_shaderComposite->setCombination(L"ReflectionEnable", reflectionEnable);
 
 	render::IProgram* program = m_shaderComposite->getCurrentProgram();
 	if (!program)

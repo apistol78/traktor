@@ -29,7 +29,7 @@
 			<external>{DE17AA8C-526F-5D4A-BB05-BBD50D564FFA}</external>
 			<type>PtTexture2D</type>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>739</first>
@@ -42,6 +42,7 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Swizzle">
 			<comment/>
@@ -165,7 +166,7 @@
 				<second>467</second>
 			</position>
 		</item>
-		<item type="traktor.render.Sampler" version="1">
+		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
 				<first>731</first>
@@ -178,6 +179,7 @@
 			<addressV>AdWrap</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
+			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.External" version="1">
 			<comment/>
@@ -219,7 +221,7 @@
 				<first>1085</first>
 				<second>211</second>
 			</position>
-			<value>0, 5, 0, 0</value>
+			<value>0, 8, 0, 0</value>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>

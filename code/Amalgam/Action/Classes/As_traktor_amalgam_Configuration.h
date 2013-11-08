@@ -75,13 +75,13 @@ private:
 
 	void Configuration_set_terrainQuality(AsConfiguration* self, int32_t terrainQuality) const;
 
-	int32_t Configuration_get_waterQuality(const AsConfiguration* self) const;
+	int32_t Configuration_get_particleQuality(const AsConfiguration* self) const;
 
-	void Configuration_set_waterQuality(AsConfiguration* self, int32_t waterQuality) const;
+	void Configuration_set_particleQuality(AsConfiguration* self, int32_t particleQuality) const;
 
-	int32_t Configuration_get_undergrowthQuality(const AsConfiguration* self) const;
+	int32_t Configuration_get_oceanQuality(const AsConfiguration* self) const;
 
-	void Configuration_set_undergrowthQuality(AsConfiguration* self, int32_t undergrowthQuality) const;
+	void Configuration_set_oceanQuality(AsConfiguration* self, int32_t oceanQuality) const;
 
 	bool Configuration_get_rumbleEnable(const AsConfiguration* self) const;
 
