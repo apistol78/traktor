@@ -21,6 +21,10 @@ class T_DLLCLASS EntityRenderer : public world::IEntityRenderer
 	T_RTTI_CLASS;
 
 public:
+	EntityRenderer(bool oceanReflectionEnable);
+
+	void setOceanDynamicReflectionEnable(bool oceanReflectionEnable);
+
 	virtual const TypeInfoSet getEntityTypes() const;
 
 	virtual void precull(
@@ -41,6 +45,9 @@ public:
 		world::WorldRenderView& worldRenderView,
 		world::IWorldRenderPass& worldRenderPass
 	);
+
+private:
+	bool m_oceanReflectionEnable;
 };
 
 	}

@@ -74,6 +74,14 @@ public:
 
 	void setAntiAliasQuality(Quality antiAliasQuality);
 
+	Quality getParticleQuality() const;
+
+	void setParticleQuality(Quality particleQuality);
+
+	Quality getOceanQuality() const;
+
+	void setOceanQuality(Quality oceanQuality);
+
 	bool getRumbleEnable() const;
 
 	void setRumbleEnable(bool rumbleEnable);
@@ -117,6 +125,8 @@ private:
 	Quality m_shadowQuality;
 	Quality m_ambientOcclusionQuality;
 	Quality m_antiAliasQuality;
+	Quality m_particleQuality;
+	Quality m_oceanQuality;
 	bool m_rumbleEnable;
 	float m_masterVolume;
 	bool m_autoMute;

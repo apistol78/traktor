@@ -11,6 +11,7 @@
 #include "Animation/PathEntity/PathEntityFactory.h"
 #include "Animation/PathEntity/PathEntityRenderer.h"
 #include "Core/Log/Log.h"
+#include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -46,6 +47,19 @@ namespace traktor
 {
 	namespace amalgam
 	{
+		namespace
+		{
+
+const float c_sprayLodDistances[][2] =
+{
+	{ 0.0f, 0.0f },
+	{ 10.0f, 20.0f },
+	{ 40.0f, 90.0f },
+	{ 60.0f, 140.0f },
+	{ 100.0f, 200.0f }
+};
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.WorldServer", WorldServer, IWorldServer)
 
@@ -54,6 +68,8 @@ WorldServer::WorldServer()
 ,	m_shadowQuality(world::QuMedium)
 ,	m_ambientOcclusionQuality(world::QuMedium)
 ,	m_antiAliasQuality(world::QuMedium)
+,	m_particleQuality(world::QuMedium)
+,	m_oceanQuality(world::QuMedium)
 {
 }
 
@@ -68,12 +84,22 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 		return false;
 	}
 
+	m_shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
+	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
+	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
+	m_particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
+	m_oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
+
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
 	m_entityBuilder = new world::EntityBuilder();
 
-	float sprayLod1Distance = settings->getProperty< PropertyFloat >(L"World.SprayLod1", 40.0f);
-	float sprayLod2Distance = settings->getProperty< PropertyFloat >(L"World.SprayLod2", 90.0f);
+	float sprayLod1Distance = c_sprayLodDistances[m_particleQuality][0];
+	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
+	m_effectEntityRenderer = new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance);
+
+	bool oceanReflectionEnable = bool(m_oceanQuality >= world::QuHigh);
+	m_terrainEntityRenderer = new terrain::EntityRenderer(oceanReflectionEnable);
 
 	m_entityRenderers = new world::WorldEntityRenderers();
 	m_entityRenderers->add(new world::DecalEntityRenderer(m_renderServer->getRenderSystem()));
@@ -82,19 +108,15 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_entityRenderers->add(new world::TransientEntityRenderer());
 	m_entityRenderers->add(new mesh::MeshEntityRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshEntityRenderer());
-	m_entityRenderers->add(new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance));
+	m_entityRenderers->add(m_effectEntityRenderer);
 	m_entityRenderers->add(new animation::ClothEntityRenderer());
 	m_entityRenderers->add(new animation::PathEntityRenderer());
 	m_entityRenderers->add(new physics::EntityRenderer());
 	m_entityRenderers->add(new weather::WeatherEntityRenderer());
-	m_entityRenderers->add(new terrain::EntityRenderer());
+	m_entityRenderers->add(m_terrainEntityRenderer);
 
 	int32_t maxEventInstances = settings->getProperty< PropertyInteger >(L"World.MaxEventInstances", 64);
 	m_eventManager = new world::EntityEventManager(maxEventInstances);
-
-	m_shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
-	m_ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
-	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 
 	return true;
 }
@@ -145,17 +167,32 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	world::Quality shadowQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", world::QuMedium);
 	world::Quality ambientOcclusionQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", world::QuMedium);
 	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
-	
+	world::Quality particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
+	world::Quality oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
+
+	// Check if we need to be reconfigured.
 	if (
 		shadowQuality == m_shadowQuality &&
 		ambientOcclusionQuality == m_ambientOcclusionQuality &&
-		antiAliasQuality == m_antiAliasQuality
+		antiAliasQuality == m_antiAliasQuality &&
+		particleQuality == m_particleQuality &&
+		oceanQuality == m_oceanQuality
 	)
 		return CrUnaffected;
 
+	// Adjust in-place systems.
+	float sprayLod1Distance = c_sprayLodDistances[m_particleQuality][0];
+	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
+	m_effectEntityRenderer->setLodDistances(sprayLod1Distance, sprayLod2Distance);
+
+	bool oceanReflectionEnable = bool(oceanQuality >= world::QuHigh);
+	m_terrainEntityRenderer->setOceanDynamicReflectionEnable(oceanReflectionEnable);
+
+	// Save ghost configuration state.
 	m_shadowQuality = shadowQuality;
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
+	m_oceanQuality = oceanQuality;
 
 	return CrAccepted;
 }

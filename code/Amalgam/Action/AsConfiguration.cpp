@@ -27,6 +27,8 @@ AsConfiguration::AsConfiguration()
 ,	m_shadowQuality(QtMedium)
 ,	m_ambientOcclusionQuality(QtMedium)
 ,	m_antiAliasQuality(QtMedium)
+,	m_particleQuality(QtMedium)
+,	m_oceanQuality(QtMedium)
 ,	m_rumbleEnable(true)
 ,	m_masterVolume(1.0f)
 ,	m_autoMute(true)
@@ -52,6 +54,8 @@ Ref< AsConfiguration > AsConfiguration::getCurrent(amalgam::IEnvironment* enviro
 	current->m_shadowQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ShadowQuality", QtMedium);
 	current->m_ambientOcclusionQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", QtMedium);
 	current->m_antiAliasQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", QtMedium);
+	current->m_particleQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", QtMedium);
+	current->m_oceanQuality = (Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", QtMedium);
 	current->m_rumbleEnable = settings->getProperty< PropertyBoolean >(L"Input.Rumble", true);
 	current->m_masterVolume = settings->getProperty< PropertyFloat >(L"Audio.MasterVolume", 1.0f);
 	current->m_autoMute = settings->getProperty< PropertyBoolean >(L"Audio.AutoMute", true);
@@ -176,6 +180,26 @@ void AsConfiguration::setAntiAliasQuality(Quality antiAliasQuality)
 	m_antiAliasQuality = antiAliasQuality;
 }
 
+AsConfiguration::Quality AsConfiguration::getParticleQuality() const
+{
+	return m_particleQuality;
+}
+
+void AsConfiguration::setParticleQuality(Quality particleQuality)
+{
+	m_particleQuality = particleQuality;
+}
+
+AsConfiguration::Quality AsConfiguration::getOceanQuality() const
+{
+	return m_oceanQuality;
+}
+
+void AsConfiguration::setOceanQuality(Quality oceanQuality)
+{
+	m_oceanQuality = oceanQuality;
+}
+
 bool AsConfiguration::getRumbleEnable() const
 {
 	return m_rumbleEnable;
@@ -284,6 +308,8 @@ bool AsConfiguration::apply(amalgam::IEnvironment* environment)
 	settings->setProperty< PropertyInteger >(L"World.ShadowQuality", m_shadowQuality);
 	settings->setProperty< PropertyInteger >(L"World.AmbientOcclusionQuality", m_ambientOcclusionQuality);
 	settings->setProperty< PropertyInteger >(L"World.AntiAliasQuality", m_antiAliasQuality);
+	settings->setProperty< PropertyInteger >(L"World.ParticleQuality", m_particleQuality);
+	settings->setProperty< PropertyInteger >(L"World.OceanQuality", m_oceanQuality);
 	settings->setProperty< PropertyBoolean >(L"Input.Rumble", m_rumbleEnable);
 	settings->setProperty< PropertyFloat >(L"Audio.MasterVolume", m_masterVolume);
 	settings->setProperty< PropertyBoolean >(L"Audio.AutoMute", m_autoMute);

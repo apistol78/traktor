@@ -13,6 +13,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.EntityRenderer", EntityRenderer, world::IEntityRenderer)
 
+EntityRenderer::EntityRenderer(bool oceanReflectionEnable)
+:	m_oceanReflectionEnable(oceanReflectionEnable)
+{
+}
+
+void EntityRenderer::setOceanDynamicReflectionEnable(bool oceanReflectionEnable)
+{
+	m_oceanReflectionEnable = oceanReflectionEnable;
+}
+
 const TypeInfoSet EntityRenderer::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
@@ -41,7 +51,7 @@ void EntityRenderer::render(
 	if (TerrainEntity* terrainEntity = dynamic_type_cast< TerrainEntity* >(entity))
 		terrainEntity->render(worldContext, worldRenderView, worldRenderPass);
 	else if (OceanEntity* oceanEntity = dynamic_type_cast< OceanEntity* >(entity))
-		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
+		oceanEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass, m_oceanReflectionEnable);
 	else if (RiverEntity* riverEntity = dynamic_type_cast< RiverEntity* >(entity))
 		riverEntity->render(worldContext.getRenderContext(), worldRenderView, worldRenderPass);
 	else if (UndergrowthEntity* undergrowthEntity = dynamic_type_cast< UndergrowthEntity* >(entity))

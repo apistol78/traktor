@@ -26,7 +26,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.net.StateTemplate", StateTemplate, Object)
 
 void StateTemplate::declare(const IValueTemplate* value)
 {
-	m_valueTemplates.push_back(value);
+	if (value)
+		m_valueTemplates.push_back(value);
 }
 
 bool StateTemplate::match(const State* S) const

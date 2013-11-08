@@ -73,6 +73,12 @@ public:
 		world::IWorldRenderPass& worldRenderPass
 	);
 
+	void setLodDistances(float lod1Distance, float lod2Distance)
+	{
+		m_lod1Distance = lod1Distance;
+		m_lod2Distance = lod2Distance;
+	}
+
 	float getLod1Distance() const { return m_lod1Distance; }
 
 	float getLod2Distance() const { return m_lod2Distance; }
