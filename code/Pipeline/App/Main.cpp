@@ -26,9 +26,11 @@
 #include "Core/Thread/ThreadManager.h"
 #include "Database/Database.h"
 #include "Database/Group.h"
+#include "Database/IEvent.h"
 #include "Database/Instance.h"
 #include "Database/Traverse.h"
 #include "Database/Compact/CompactDatabase.h"
+#include "Database/Events/EvtInstanceCommitted.h"
 #include "Database/Local/LocalDatabase.h"
 #include "Editor/Assets.h"
 #include "Editor/IPipeline.h"
@@ -182,7 +184,19 @@ void updateDatabases()
 	for (std::map< std::wstring, Ref< db::Database > >::iterator i = g_databaseConnections.begin(); i != g_databaseConnections.end(); ++i)
 	{
 		while (i->second->getEvent(event, remote))
-			;
+		{
+			if (remote)
+			{
+				if (const db::EvtInstanceCommitted* instanceCommited = dynamic_type_cast< const db::EvtInstanceCommitted* >(event))
+				{
+					Ref< db::Instance > instance = i->second->getInstance(instanceCommited->getInstanceGuid());
+					if (instance)
+						log::info << L"Database event; instance \"" << instance->getName() << L"\" committed" << Endl;
+					else
+						log::info << L"Database event; instance \"" << instanceCommited->getInstanceGuid().format() << L"\" committed" << Endl;
+				}
+			}
+		}
 	}
 }
 

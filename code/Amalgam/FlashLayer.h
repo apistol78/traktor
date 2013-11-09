@@ -42,6 +42,21 @@ class ISoundRenderer;
 
 	}
 
+	namespace render
+	{
+
+class RenderTargetSet;		
+
+	}
+
+	namespace world
+	{
+
+class PostProcess;
+class PostProcessSettings;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -58,6 +73,7 @@ public:
 		amalgam::IEnvironment* environment,
 		const resource::Proxy< flash::FlashMovie >& movie,
 		const std::map< std::wstring, resource::Id< flash::FlashMovie > >& externalMovies,
+		const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
 		bool clearBackground,
 		bool enableSound
 	);
@@ -101,6 +117,11 @@ private:
 	Ref< flash::FlashMoviePlayer > m_moviePlayer;
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::ISoundRenderer > m_soundRenderer;
+
+	Ref< render::RenderTargetSet > m_postTargetSet;
+	resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
+	Ref< world::PostProcess > m_postProcess;
+
 	bool m_clearBackground;
 	bool m_enableSound;
 	bool m_visible;

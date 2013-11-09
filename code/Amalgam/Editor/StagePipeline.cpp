@@ -44,6 +44,7 @@ bool StagePipeline::buildDependencies(
 			pipelineDepends->addDependency(flashLayer->m_movie, editor::PdfBuild);
 			for (std::map< std::wstring, resource::Id< flash::FlashMovie > >::const_iterator i = flashLayer->m_externalMovies.begin(); i != flashLayer->m_externalMovies.end(); ++i)
 				pipelineDepends->addDependency(i->second, editor::PdfBuild);
+			pipelineDepends->addDependency(flashLayer->m_postProcess, editor::PdfBuild);
 		}
 		else if (const VideoLayerData* videoLayer = dynamic_type_cast< const VideoLayerData* >(*i))
 		{

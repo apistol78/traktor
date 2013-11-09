@@ -21,6 +21,13 @@ class FlashMovie;
 
 	}
 
+	namespace world
+	{
+
+class PostProcessSettings;
+
+	}
+
 	namespace amalgam
 	{
 
@@ -40,6 +47,7 @@ private:
 
 	resource::Id< flash::FlashMovie > m_movie;
 	std::map< std::wstring, resource::Id< flash::FlashMovie > > m_externalMovies;
+	resource::Id< world::PostProcessSettings > m_postProcess;
 	bool m_clearBackground;
 	bool m_enableSound;
 };

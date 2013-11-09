@@ -23,8 +23,12 @@
 #include "Flash/Sound/SoundRenderer.h"
 #include "Input/IInputDevice.h"
 #include "Input/InputSystem.h"
+#include "Render/IRenderSystem.h"
 #include "Render/IRenderView.h"
+#include "Render/RenderTargetSet.h"
 #include "Script/Any.h"
+#include "World/PostProcess/PostProcess.h"
+#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
@@ -100,6 +104,7 @@ FlashLayer::FlashLayer(
 	amalgam::IEnvironment* environment,
 	const resource::Proxy< flash::FlashMovie >& movie,
 	const std::map< std::wstring, resource::Id< flash::FlashMovie > >& externalMovies,
+	const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
 	bool clearBackground,
 	bool enableSound
 )
@@ -107,6 +112,7 @@ FlashLayer::FlashLayer(
 ,	m_environment(environment)
 ,	m_movie(movie)
 ,	m_externalMovies(externalMovies)
+,	m_postProcessSettings(postProcessSettings)
 ,	m_clearBackground(clearBackground)
 ,	m_enableSound(enableSound)
 ,	m_visible(true)
@@ -140,12 +146,47 @@ void FlashLayer::prepare()
 		m_movie.consume();
 	}
 
+	if (m_postProcessSettings.changed())
+	{
+		m_postProcess = 0;
+		m_postTargetSet = 0;
+		m_postProcessSettings.consume();
+	}
+
 	// Re-create movie player.
 	if (!m_moviePlayer)
 	{
 		createMoviePlayer();
 		if (!m_moviePlayer)
 			return;
+	}
+
+	// Re-create post processing.
+	if (m_postProcessSettings && !m_postProcess)
+	{
+		resource::IResourceManager* resourceManager = m_environment->getResource()->getResourceManager();
+		render::IRenderSystem* renderSystem = m_environment->getRender()->getRenderSystem();
+		render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+
+		int32_t width = renderView->getWidth();
+		int32_t height = renderView->getHeight();
+
+		m_postProcess = new world::PostProcess();
+		m_postProcess->create(m_postProcessSettings, resourceManager, renderSystem, width, height);
+
+		render::RenderTargetSetCreateDesc desc;
+		desc.count = 1;
+		desc.width = width;
+		desc.height = height;
+		desc.multiSample = 0;
+		desc.createDepthStencil = false;
+		desc.usingPrimaryDepthStencil = true;
+		desc.preferTiled = false;
+		desc.ignoreStencil = false;
+		desc.generateMips = false;
+		desc.targets[0].format = render::TfR8G8B8A8;
+		desc.targets[0].sRGB = false;
+		m_postTargetSet = renderSystem->createRenderTargetSet(desc);
 	}
 }
 
@@ -282,29 +323,58 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
 	T_ASSERT (renderView);
 
-	m_displayRenderer->render(
-		renderView,
-		frame,
-		eye
-	);
+	if (m_postProcess)
+	{
+		if (renderView->begin(m_postTargetSet, 0))
+		{
+			const static Color4f clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+			renderView->clear(render::CfColor | render::CfDepth, &clearColor, 1.0f, 0);
+
+			m_displayRenderer->render(
+				renderView,
+				frame,
+				eye
+			);
+
+			renderView->end();
+
+			world::PostProcessStep::Instance::RenderParams params;
+			m_postProcess->render(
+				renderView,
+				m_postTargetSet,
+				0,
+				0,
+				params
+			);
+		}
+	}
+	else
+	{
+		m_displayRenderer->render(
+			renderView,
+			frame,
+			eye
+		);
+	}
 }
 
 void FlashLayer::reconfigured()
 {
-	if (!m_moviePlayer)
-		return;
+	// Post resize to movie player; adjust width to keep aspect ratio.
+	if (m_moviePlayer)
+	{
+		render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+		float viewRatio = m_environment->getRender()->getViewAspectRatio();
+		float aspectRatio = m_environment->getRender()->getAspectRatio();
 
-	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
+		int32_t width = int32_t(renderView->getWidth() * aspectRatio / viewRatio);
+		int32_t height = renderView->getHeight();
 
-	int32_t width = renderView->getWidth();
-	int32_t height = renderView->getHeight();
+		m_moviePlayer->postViewResize(width, height);
+	}
 
-	float viewRatio = m_environment->getRender()->getViewAspectRatio();
-	float aspectRatio = m_environment->getRender()->getAspectRatio();
-
-	width = int32_t(width * aspectRatio / viewRatio);
-
-	m_moviePlayer->postViewResize(width, height);
+	// Discard post processing; need to be fully re-created if used.
+	m_postProcess = 0;
 }
 
 flash::FlashMoviePlayer* FlashLayer::getMoviePlayer()

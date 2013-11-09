@@ -23,6 +23,18 @@ namespace traktor
 		namespace
 		{
 
+render::handle_t s_handleReflectionEnable;
+render::handle_t s_handleViewEdgeTopLeft;
+render::handle_t s_handleViewEdgeTopRight;
+render::handle_t s_handleViewEdgeBottomLeft;
+render::handle_t s_handleViewEdgeBottomRight;
+render::handle_t s_handleMagicCoeffs;
+render::handle_t s_handleView;
+render::handle_t s_handleViewInverse;
+render::handle_t s_handleProjection;
+render::handle_t s_handleEye;
+render::handle_t s_handleOceanAltitude;
+
 struct OceanRenderBlock : public render::RenderBlock
 {
 	render::ScreenRenderer* screenRenderer;
@@ -45,6 +57,17 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.terrain.OceanEntity", OceanEntity, world::Entit
 OceanEntity::OceanEntity()
 :	m_transform(Transform::identity())
 {
+	s_handleReflectionEnable = render::getParameterHandle(L"ReflectionEnable");
+	s_handleViewEdgeTopLeft = render::getParameterHandle(L"ViewEdgeTopLeft");
+	s_handleViewEdgeTopRight = render::getParameterHandle(L"ViewEdgeTopRight");
+	s_handleViewEdgeBottomLeft = render::getParameterHandle(L"ViewEdgeBottomLeft");
+	s_handleViewEdgeBottomRight = render::getParameterHandle(L"ViewEdgeBottomRight");
+	s_handleMagicCoeffs = render::getParameterHandle(L"MagicCoeffs");
+	s_handleView = render::getParameterHandle(L"View");
+	s_handleViewInverse = render::getParameterHandle(L"ViewInverse");
+	s_handleProjection = render::getParameterHandle(L"Projection");
+	s_handleEye = render::getParameterHandle(L"Eye");
+	s_handleOceanAltitude = render::getParameterHandle(L"OceanAltitude");
 }
 
 bool OceanEntity::create(resource::IResourceManager* resourceManager, render::IRenderSystem* renderSystem, const OceanEntityData& data)
@@ -86,7 +109,7 @@ void OceanEntity::render(
 	worldRenderPass.setShaderTechnique(m_shaderComposite);
 	worldRenderPass.setShaderCombination(m_shaderComposite);
 
-	m_shaderComposite->setCombination(L"ReflectionEnable", reflectionEnable);
+	m_shaderComposite->setCombination(s_handleReflectionEnable, reflectionEnable);
 
 	render::IProgram* program = m_shaderComposite->getCurrentProgram();
 	if (!program)
@@ -106,16 +129,16 @@ void OceanEntity::render(
 		m_shaderComposite->getCurrentPriority()
 	);
 
-	renderBlock->programParams->setVectorParameter(L"ViewEdgeTopLeft", viewEdgeTopLeft);
-	renderBlock->programParams->setVectorParameter(L"ViewEdgeTopRight", viewEdgeTopRight);
-	renderBlock->programParams->setVectorParameter(L"ViewEdgeBottomLeft", viewEdgeBottomLeft);
-	renderBlock->programParams->setVectorParameter(L"ViewEdgeBottomRight", viewEdgeBottomRight);
-	renderBlock->programParams->setVectorParameter(L"MagicCoeffs", Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
-	renderBlock->programParams->setMatrixParameter(L"View", view);
-	renderBlock->programParams->setMatrixParameter(L"ViewInverse", viewInv);
-	renderBlock->programParams->setMatrixParameter(L"Projection", projection);
-	renderBlock->programParams->setVectorParameter(L"Eye", eye);
-	renderBlock->programParams->setFloatParameter(L"OceanAltitude", m_transform.translation().y());
+	renderBlock->programParams->setVectorParameter(s_handleViewEdgeTopLeft, viewEdgeTopLeft);
+	renderBlock->programParams->setVectorParameter(s_handleViewEdgeTopRight, viewEdgeTopRight);
+	renderBlock->programParams->setVectorParameter(s_handleViewEdgeBottomLeft, viewEdgeBottomLeft);
+	renderBlock->programParams->setVectorParameter(s_handleViewEdgeBottomRight, viewEdgeBottomRight);
+	renderBlock->programParams->setVectorParameter(s_handleMagicCoeffs, Vector4(1.0f / p11, 1.0f / p22, 0.0f, 0.0f));
+	renderBlock->programParams->setMatrixParameter(s_handleView, view);
+	renderBlock->programParams->setMatrixParameter(s_handleViewInverse, viewInv);
+	renderBlock->programParams->setMatrixParameter(s_handleProjection, projection);
+	renderBlock->programParams->setVectorParameter(s_handleEye, eye);
+	renderBlock->programParams->setFloatParameter(s_handleOceanAltitude, m_transform.translation().y());
 
 	renderBlock->programParams->endParameters(renderContext);
 
