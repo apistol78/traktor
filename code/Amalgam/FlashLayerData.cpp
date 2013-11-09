@@ -6,13 +6,14 @@
 #include "Flash/FlashMovie.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
+#include "World/PostProcess/PostProcessSettings.h"
 
 namespace traktor
 {
 	namespace amalgam
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", 1, FlashLayerData, LayerData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.amalgam.FlashLayerData", 2, FlashLayerData, LayerData)
 
 FlashLayerData::FlashLayerData()
 :	m_clearBackground(false)
@@ -24,10 +25,17 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 {
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 	resource::Proxy< flash::FlashMovie > movie;
+	resource::Proxy< world::PostProcessSettings > postProcess;
 
 	// Bind proxies to resource manager.
 	if (!resourceManager->bind(m_movie, movie))
 		return 0;
+	
+	if (m_postProcess)
+	{
+		if (!resourceManager->bind(m_postProcess, postProcess))
+			return 0;
+	}
 
 	// Create layer instance.
 	return new FlashLayer(
@@ -36,6 +44,7 @@ Ref< Layer > FlashLayerData::createInstance(Stage* stage, amalgam::IEnvironment*
 		environment,
 		movie,
 		m_externalMovies,
+		postProcess,
 		m_clearBackground,
 		m_enableSound
 	);
@@ -58,6 +67,9 @@ void FlashLayerData::serialize(ISerializer& s)
 				resource::Member< flash::FlashMovie >
 			>
 		>(L"externalMovies", m_externalMovies);
+
+	if (s.getVersion() >= 2)
+		s >> resource::Member< world::PostProcessSettings >(L"postProcess", m_postProcess);
 
 	s >> Member< bool >(L"clearBackground", m_clearBackground);
 	s >> Member< bool >(L"enableSound", m_enableSound);

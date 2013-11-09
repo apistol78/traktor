@@ -267,13 +267,17 @@ bool Database::getEvent(Ref< const IEvent >& outEvent, bool& outRemote)
 					group = childGroup;
 				else
 				{
-					group->internalAddExtGroup(*i);
+					if (!group->internalAddExtGroup(*i))
+						log::error << L"Unable to add instance; Remotely created group not found" << Endl;
 					group = findChildGroup(group, FindGroupByName(*i));
 				}
 			}
 
 			if (group)
-				group->internalAddExtInstance(created->getInstanceGuid());
+			{
+				if (!group->internalAddExtInstance(created->getInstanceGuid()))
+					log::error << L"Unable to add instance; Remotely created instance not found" << Endl;
+			}
 
 			m_instanceMap.clear();
 			buildInstanceMap(m_rootGroup, m_instanceMap);
