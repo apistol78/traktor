@@ -1,4 +1,5 @@
 #include <cstring>
+#include <limits>
 #include "Compress/Zip/InflateStreamZip.h"
 #include "Core/Io/MemoryStream.h"
 #include "Core/Io/StringOutputStream.h"
