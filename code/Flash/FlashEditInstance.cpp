@@ -239,7 +239,7 @@ void FlashEditInstance::eventKey(wchar_t unicode)
 	if (getFocus() != this)
 		return;
 
-	if (unicode == L'\n' || unicode == L'\r')
+	if (unicode == L'\n' || unicode == L'\r' || unicode == L'\t')
 		return;
 
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
@@ -255,7 +255,7 @@ void FlashEditInstance::eventKey(wchar_t unicode)
 			m_caret--;
 		}
 	}
-	else
+	else if (m_text.length() < m_edit->getMaxLength())
 	{
 		m_text += unicode;
 		m_caret++;

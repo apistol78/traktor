@@ -72,7 +72,7 @@ void EffectEntityRenderer::render(
 	)
 		return;
 
-	Matrix44 viewInverse = worldRenderView.getView().inverseOrtho();
+	Matrix44 viewInverse = worldRenderView.getView().inverse();
 	Vector4 cameraPosition = viewInverse.translation().xyz1();
 	Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
 

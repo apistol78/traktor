@@ -98,11 +98,9 @@ void CaseTransform::run()
 
 		Vector4 PtI = t4.inverse() * Pt4;
 		Vector4 PmI = m4.inverse() * Pt4;
-		Vector4 PmOI = m4.inverseOrtho() * Pt4;
 
 		CASE_ASSERT_COMPARE(PtI, P, compareVectorEqual);
 		CASE_ASSERT_COMPARE(PmI, P, compareVectorEqual);
-		CASE_ASSERT_COMPARE(PmOI, P, compareVectorEqual);
 	}
 }
 

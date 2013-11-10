@@ -61,11 +61,6 @@ void CaseMatrix44::run()
 
 	CASE_ASSERT_EQUAL(int32_t(md.determinant()), 1);
 
-	Matrix44 mdi1 = md.inverse();
-	Matrix44 mdi2 = md.inverseOrtho();
-
-	CASE_ASSERT_COMPARE(mdi1, mdi2, compareMatrixEqual);
-
 	Matrix44 mx = rotateX(PI / 2.0f);
 	Matrix44 my = rotateY(PI / 2.0f);
 	Matrix44 mz = rotateZ(PI / 2.0f);
