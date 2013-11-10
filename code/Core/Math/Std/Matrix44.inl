@@ -224,39 +224,6 @@ T_MATH_INLINE Matrix44 Matrix44::inverse() const
 	);
 }
 
-T_MATH_INLINE Matrix44 Matrix44::inverseOrtho() const
-{
-	Scalar s = determinant();
-
-	if (abs(s) <= FUZZY_EPSILON)
-		return Matrix44::identity();
-
-	s = Scalar(1.0f) / s;
-
-	return Matrix44(
-		s * (m_c[1].y() * m_c[2].z() - m_c[1].z() * m_c[2].y()),
-		s * (m_c[2].y() * m_c[0].z() - m_c[2].z() * m_c[0].y()),
-		s * (m_c[0].y() * m_c[1].z() - m_c[0].z() * m_c[1].y()),
-		0.0f,
-
-		s * (m_c[1].z() * m_c[2].x() - m_c[1].x() * m_c[2].z()),
-		s * (m_c[2].z() * m_c[0].x() - m_c[2].x() * m_c[0].z()),
-		s * (m_c[0].z() * m_c[1].x() - m_c[0].x() * m_c[1].z()),
-		0.0f,
-
-		s * (m_c[1].x() * m_c[2].y() - m_c[1].y() * m_c[2].x()),
-		s * (m_c[2].x() * m_c[0].y() - m_c[2].y() * m_c[0].x()),
-		s * (m_c[0].x() * m_c[1].y() - m_c[0].y() * m_c[1].x()),
-		0.0f,
-
-		s * (m_c[1].x() * (m_c[2].z() * m_c[3].y() - m_c[2].y() * m_c[3].z()) + m_c[1].y() * (m_c[2].x() * m_c[3].z() - m_c[2].z() * m_c[3].x()) + m_c[1].z() * (m_c[2].y() * m_c[3].x() - m_c[2].x() * m_c[3].y())),
-		s * (m_c[2].x() * (m_c[0].z() * m_c[3].y() - m_c[0].y() * m_c[3].z()) + m_c[2].y() * (m_c[0].x() * m_c[3].z() - m_c[0].z() * m_c[3].x()) + m_c[2].z() * (m_c[0].y() * m_c[3].x() - m_c[0].x() * m_c[3].y())),
-		s * (m_c[3].x() * (m_c[0].z() * m_c[1].y() - m_c[0].y() * m_c[1].z()) + m_c[3].y() * (m_c[0].x() * m_c[1].z() - m_c[0].z() * m_c[1].x()) + m_c[3].z() * (m_c[0].y() * m_c[1].x() - m_c[0].x() * m_c[1].y())),
-		1.0f
-	)
-	.transpose();	// @fixme remove transpose...
-}
-
 T_MATH_INLINE Matrix44 Matrix44::loadAligned(const float* in)
 {
 	Matrix44 m;

@@ -333,7 +333,7 @@ void AnimationPreviewControl::eventPaint(ui::Event* event)
 		1000.0f
 	);
 
-	Matrix44 viewInverse = viewTransform.inverseOrtho();
+	Matrix44 viewInverse = viewTransform.inverse();
 	Plane cameraPlane(
 		viewInverse.axisZ(),
 		viewInverse.translation()

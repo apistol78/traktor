@@ -671,7 +671,7 @@ void PrimitiveRenderer::drawSolidAabb(
 	if (aabb.empty())
 		return;
 
-	Vector4 eyeCenter = m_worldView.inverseOrtho().translation();
+	Vector4 eyeCenter = m_worldView.inverse().translation();
 
 	Vector4 extents[8];
 	aabb.getExtents(extents);

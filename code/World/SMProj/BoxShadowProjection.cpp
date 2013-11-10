@@ -56,7 +56,7 @@ void BoxShadowProjection::calculate(
 		shadowBox.getCenter().xyz1()
 	);
 
-	outLightView = outLightView.inverseOrtho();
+	outLightView = outLightView.inverse();
 
 	outLightProjection = orthoLh(
 		maxX - minX,

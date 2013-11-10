@@ -338,7 +338,7 @@ bool PerspectiveRenderControl::calculateRay(const ui::Point& position, Vector4& 
 	Vector4 viewRayDirection = lerp(viewEdgeTop, viewEdgeBottom, fy).normalized().xyz0();
 
 	// Transform ray into world space.
-	Matrix44 viewInv = m_worldRenderView.getView().inverseOrtho();
+	Matrix44 viewInv = m_worldRenderView.getView().inverse();
 	outWorldRayOrigin = viewInv.translation().xyz1();
 	outWorldRayDirection = viewInv * viewRayDirection;
 

@@ -73,8 +73,6 @@ public:
 
 	T_MATH_INLINE Matrix44 inverse() const;
 
-	T_MATH_INLINE Matrix44 inverseOrtho() const;
-
 	/*! \brief Load elements column major.
 	 *
 	 * \param in Pointer to 16 floats.

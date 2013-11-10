@@ -148,10 +148,20 @@ void SoundMixer::stretch(float* lsb, uint32_t lcount, const float* rsb, uint32_t
 
 	if (lcount != rcount)
 	{
-		for (uint32_t s = 0; s < lcount; ++s)
+		T_ASSERT (rcount < 65536);
+		uint32_t f = (rcount << 16) / lcount;
+
+		for (uint32_t s = 0; s < lcount; s += 4)
 		{
-			uint32_t s0 = (s * rcount) / lcount;
-			lsb[s] = rsb[s0] * factor;
+			uint32_t s0 = s * f;
+			uint32_t s1 = s0 + f;
+			uint32_t s2 = s1 + f;
+			uint32_t s3 = s2 + f;
+
+			lsb[s + 0] = rsb[s0 >> 16] * factor;
+			lsb[s + 1] = rsb[s1 >> 16] * factor;
+			lsb[s + 2] = rsb[s2 >> 16] * factor;
+			lsb[s + 3] = rsb[s3 >> 16] * factor;
 		}
 	}
 	else

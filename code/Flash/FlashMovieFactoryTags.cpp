@@ -359,6 +359,7 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 
 	uint16_t fontId = 0;
 	uint16_t fontHeight = 10;
+	uint16_t maxLength = std::numeric_limits< uint16_t >::max();
 	if (hasFont)
 	{
 		fontId = bs.readUInt16();
@@ -367,9 +368,7 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 	if (hasColor)
 		textColor = swf->readRgba();
 	if (hasMaxLength)
-	{
-		/*uint16_t maxLength = */bs.readUInt16();
-	}
+		maxLength = bs.readUInt16();
 
 	uint8_t align = 0;
 	uint16_t leftMargin = 0, rightMargin = 0;
@@ -397,6 +396,7 @@ bool FlashTagDefineEditText::read(SwfReader* swf, ReadContext& context)
 		fontHeight,
 		textBounds,
 		textColor,
+		maxLength,
 		initialText,
 		(FlashEdit::Align)align,
 		leftMargin,
