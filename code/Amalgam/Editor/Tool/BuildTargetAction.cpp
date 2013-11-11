@@ -114,6 +114,11 @@ bool BuildTargetAction::execute(IProgressListener* progressListener)
 		}
 	}
 
+	// Use instance cache path from global configuration.
+	std::wstring cachePath = m_globalSettings->getProperty< PropertyString >(L"Pipeline.CachePath");
+	cachePath = FileSystem::getInstance().getAbsolutePath(cachePath).getPathName();
+	pipelineConfiguration->setProperty< PropertyString >(L"Pipeline.CachePath", cachePath);
+
 	// Merge threaded build configuration from global configuration.
 	bool buildThreads = m_globalSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true);
 	pipelineConfiguration->setProperty< PropertyBoolean >(L"Pipeline.BuildThreads", buildThreads);

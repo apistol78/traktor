@@ -22,6 +22,7 @@
 #include "Editor/IPipelineCache.h"
 #include "Editor/IPipelineDb.h"
 #include "Editor/IPipelineDependencySet.h"
+#include "Editor/IPipelineInstanceCache.h"
 #include "Editor/PipelineDependency.h"
 #include "Editor/Pipeline/PipelineBuilder.h"
 #include "Editor/Pipeline/PipelineFactory.h"
@@ -110,6 +111,7 @@ PipelineBuilder::PipelineBuilder(
 	db::Database* outputDatabase,
 	IPipelineCache* cache,
 	IPipelineDb* pipelineDb,
+	IPipelineInstanceCache* instanceCache,
 	IListener* listener,
 	bool threadedBuildEnable
 )
@@ -118,6 +120,7 @@ PipelineBuilder::PipelineBuilder(
 ,	m_outputDatabase(outputDatabase)
 ,	m_cache(cache)
 ,	m_pipelineDb(pipelineDb)
+,	m_instanceCache(instanceCache)
 ,	m_listener(listener)
 ,	m_threadedBuildEnable(threadedBuildEnable)
 ,	m_progress(0)
@@ -509,27 +512,7 @@ Ref< db::Instance > PipelineBuilder::createOutputInstance(const std::wstring& in
 
 Ref< const ISerializable > PipelineBuilder::getObjectReadOnly(const Guid& instanceGuid)
 {
-	Ref< ISerializable > object;
-
-	// Get object from cache if already acquired.
-	{
-		m_readCacheLock.acquireReader();
-		std::map< Guid, Ref< ISerializable > >::iterator i = m_readCache.find(instanceGuid);
-		if (i != m_readCache.end())
-			object = i->second;
-		m_readCacheLock.releaseReader();
-	}
-
-	// If not acquired then read from database.
-	if (!object)
-	{
-		m_readCacheLock.acquireWriter();
-		object = m_sourceDatabase->getObjectReadOnly(instanceGuid);
-		m_readCache[instanceGuid] = object;
-		m_readCacheLock.releaseWriter();
-	}
-
-	return object;
+	return m_instanceCache->getObjectReadOnly(instanceGuid);
 }
 
 Ref< IStream > PipelineBuilder::openFile(const Path& basePath, const std::wstring& fileName)

@@ -67,6 +67,7 @@
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
+#include "Editor/Pipeline/PipelineInstanceCache.h"
 #include "I18N/I18N.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Text.h"
@@ -1352,6 +1353,12 @@ bool EditorForm::openWorkspace(const Path& workspacePath)
 		outputDatabase
 	);
 
+	// Open pipeline database.
+	std::wstring pipelineDbConnectionStr = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.Db");
+
+	m_pipelineDb = new PipelineDb();
+	m_pipelineDb->open(pipelineDbConnectionStr);
+
 	// Expose servers as stock objects.
 	setStoreObject(L"StreamServer", m_streamServer);
 	setStoreObject(L"DbConnectionManager", m_dbConnectionManager);
@@ -1396,6 +1403,9 @@ void EditorForm::closeWorkspace()
 	safeDestroy(m_agentsManager);
 	safeDestroy(m_dbConnectionManager);
 	safeDestroy(m_streamServer);
+
+	// Close pipeline database.
+	safeClose(m_pipelineDb);
 
 	// Close databases.
 	safeClose(m_outputDatabase);
@@ -1506,9 +1516,12 @@ void EditorForm::updateAdditionalPanelMenu()
 
 void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstances)
 {
+	std::wstring cachePath = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.CachePath");
 	std::vector< Guid > assetGuids;
 
 	PipelineFactory pipelineFactory(m_mergedSettings);
+	PipelineInstanceCache pipelineInstanceCache(m_sourceDatabase, cachePath);
+
 	for (int i = 0; i < m_tab->getPageCount(); ++i)
 	{
 		Ref< ui::TabPage > tabPage = m_tab->getPage(i);
@@ -1538,7 +1551,9 @@ void EditorForm::buildDependent(const RefArray< db::Instance >& modifiedInstance
 			&pipelineFactory,
 			m_sourceDatabase,
 			m_outputDatabase,
-			&dependencySet
+			&dependencySet,
+			m_pipelineDb,
+			&pipelineInstanceCache
 		);
 
 		for (RefArray< db::Instance >::const_iterator j = instances.begin(); j != instances.end(); ++j)
@@ -1581,16 +1596,6 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	m_buildProgress->setVisible(true);
 	m_buildProgress->setProgress(0);
-
-	std::wstring pipelineDbConnectionStr = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.Db");
-
-	Ref< PipelineDb > pipelineDb = new PipelineDb();
-	if (!pipelineDb->open(pipelineDbConnectionStr))
-	{
-		traktor::log::error << L"Unable to connect to pipeline database" << Endl;
-		return;
-	}
-
 	m_buildProgress->setProgress(c_offsetFindingPipelines);
 
 	// Create cache if enabled.
@@ -1614,9 +1619,12 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		}
 	}
 
+	std::wstring cachePath = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.CachePath");
+
 	// Create pipeline factory.
 	PipelineFactory pipelineFactory(m_mergedSettings);
 	PipelineDependencySet dependencySet;
+	PipelineInstanceCache instanceCache(m_sourceDatabase, cachePath);
 
 	// Build dependencies.
 	Ref< IPipelineDepends > pipelineDepends;
@@ -1627,7 +1635,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	//		m_sourceDatabase,
 	//		m_outputDatabase,
 	//		&dependencySet,
-	//		pipelineDb
+	//		m_pipelineDb
 	//	);
 	//}
 	//else
@@ -1636,7 +1644,9 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			&pipelineFactory,
 			m_sourceDatabase,
 			m_outputDatabase,
-			&dependencySet
+			&dependencySet,
+			m_pipelineDb,
+			&instanceCache
 		);
 	}
 
@@ -1645,7 +1655,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	m_buildProgress->setProgress(c_offsetCollectingDependencies);
 
-	pipelineDb->beginTransaction();
+	m_pipelineDb->beginTransaction();
 
 	for (std::vector< Guid >::const_iterator i = assetGuids.begin(); i != assetGuids.end(); ++i)
 		pipelineDepends->addDependency(*i, editor::PdfBuild);
@@ -1655,7 +1665,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 	pipelineDepends->waitUntilFinished();
 
 	double elapsedDependencies = timerBuild.getElapsedTime();
-	T_DEBUG(L"Scanned dependencies in " << elapsedDependencies << L" second(s)");
+	log::info << L"Collected " << dependencySet.size() << L" dependencies in " << elapsedDependencies << L" second(s)" << Endl;
 
 	m_buildView->beginBuild();
 
@@ -1672,7 +1682,8 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 			m_sourceDatabase,
 			m_outputDatabase,
 			pipelineCache,
-			pipelineDb,
+			m_pipelineDb,
+			&instanceCache,
 			&listener,
 			m_mergedSettings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
 		);
@@ -1680,7 +1691,7 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 		pipelineBuilder = new PipelineBuilderDistributed(
 			m_agentsManager,
 			&pipelineFactory,
-			pipelineDb,
+			m_pipelineDb,
 			&listener
 		);
 
@@ -1693,14 +1704,12 @@ void EditorForm::buildAssetsThread(std::vector< Guid > assetGuids, bool rebuild)
 
 	pipelineBuilder->build(&dependencySet, rebuild);
 
-	pipelineDb->endTransaction();
+	m_pipelineDb->endTransaction();
 
 	m_buildView->endBuild();
 
 	if (pipelineCache)
 		pipelineCache->destroy();
-
-	pipelineDb->close();
 
 	double elapsedTotal = timerBuild.getElapsedTime();
 
@@ -1798,12 +1807,18 @@ Ref< IPipelineDependencySet > EditorForm::buildAssetDependencies(const ISerializ
 
 	Ref< IPipelineDependencySet > dependencySet = new PipelineDependencySet();
 
+	std::wstring cachePath = m_mergedSettings->getProperty< PropertyString >(L"Pipeline.CachePath");
+
 	PipelineFactory pipelineFactory(m_mergedSettings);
+	PipelineInstanceCache instanceCache(m_sourceDatabase, cachePath);
+
 	PipelineDependsIncremental pipelineDepends(
 		&pipelineFactory,
 		m_sourceDatabase,
 		m_outputDatabase,
 		dependencySet,
+		m_pipelineDb,
+		&instanceCache,
 		recursionDepth
 	);
 

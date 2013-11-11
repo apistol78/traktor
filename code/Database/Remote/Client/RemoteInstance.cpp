@@ -138,6 +138,11 @@ uint32_t RemoteInstance::getDataNames(std::vector< std::wstring >& outDataNames)
 	return uint32_t(outDataNames.size());
 }
 
+bool RemoteInstance::getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const
+{
+	return false;
+}
+
 bool RemoteInstance::removeAllData()
 {
 	Ref< MsgStatus > result = m_connection->sendMessage< MsgStatus >(DbmRemoveAllData(m_handle));

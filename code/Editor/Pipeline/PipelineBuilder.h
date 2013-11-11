@@ -35,6 +35,7 @@ class Group;
 
 class IPipelineCache;
 class IPipelineDb;
+class IPipelineInstanceCache;
 class PipelineFactory;
 
 /*! \brief Pipeline manager.
@@ -51,6 +52,7 @@ public:
 		db::Database* outputDatabase,
 		IPipelineCache* cache,
 		IPipelineDb* db,
+		IPipelineInstanceCache* instanceCache,
 		IListener* listener,
 		bool threadedBuildEnable
 	);
@@ -93,6 +95,7 @@ private:
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineCache > m_cache;
 	Ref< IPipelineDb > m_pipelineDb;
+	Ref< IPipelineInstanceCache > m_instanceCache;
 	IListener* m_listener;
 	bool m_threadedBuildEnable;
 	

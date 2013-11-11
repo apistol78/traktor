@@ -141,6 +141,13 @@ uint32_t Instance::getDataNames(std::vector< std::wstring >& dataNames) const
 	return m_providerInstance->getDataNames(dataNames);
 }
 
+bool Instance::getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ASSERT (m_providerInstance);
+	return m_providerInstance->getDataLastWriteTime(dataName, outLastWriteTime);
+}
+
 Ref< IStream > Instance::readData(const std::wstring& dataName) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

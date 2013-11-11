@@ -42,6 +42,7 @@
 #include "Editor/Pipeline/PipelineDependsIncremental.h"
 #include "Editor/Pipeline/PipelineDependsParallel.h"
 #include "Editor/Pipeline/PipelineFactory.h"
+#include "Editor/Pipeline/PipelineInstanceCache.h"
 #include "Net/BidirectionalObjectTransport.h"
 #include "Net/Network.h"
 #include "Net/SocketAddressIPv4.h"
@@ -400,14 +401,20 @@ bool perform(const PipelineParameters* params)
 		return false;
 	}
 
-	std::wstring pipelineDbConnectionStr = settings->getProperty< PropertyString >(L"Pipeline.Db");
+	std::wstring connectionString = settings->getProperty< PropertyString >(L"Pipeline.Db");
+	std::wstring cachePath = settings->getProperty< PropertyString >(L"Pipeline.CachePath");
 
 	Ref< editor::PipelineDb > pipelineDb = new editor::PipelineDb();
-	if (!pipelineDb->open(pipelineDbConnectionStr))
+	if (!pipelineDb->open(connectionString))
 	{
 		traktor::log::error << L"Unable to connect to pipeline database" << Endl;
 		return false;
 	}
+
+	Ref< editor::PipelineInstanceCache > pipelineInstanceCache = new editor::PipelineInstanceCache(
+		sourceDatabase,
+		cachePath
+	);
 
 	// Create cache if enabled.
 	Ref< editor::IPipelineCache > pipelineCache;
@@ -443,7 +450,7 @@ bool perform(const PipelineParameters* params)
 	//		sourceDatabase,
 	//		outputDatabase,
 	//		&pipelineDependencySet,
-	//		0
+	//		pipelineDb
 	//	);
 	//}
 	//else
@@ -452,7 +459,9 @@ bool perform(const PipelineParameters* params)
 			&pipelineFactory,
 			sourceDatabase,
 			outputDatabase,
-			&pipelineDependencySet
+			&pipelineDependencySet,
+			pipelineDb,
+			pipelineInstanceCache
 		);
 	}
 
@@ -496,6 +505,7 @@ bool perform(const PipelineParameters* params)
 		outputDatabase,
 		pipelineCache,
 		pipelineDb,
+		pipelineInstanceCache,
 		statusListener.ptr(),
 		settings->getProperty< PropertyBoolean >(L"Pipeline.BuildThreads", true)
 	);

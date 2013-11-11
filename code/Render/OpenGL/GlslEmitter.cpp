@@ -529,7 +529,7 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 		GlslVariable* condition = cx.emitInput(node, L"Condition");
 		if (condition)
 		{
-			fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
+			fs << L"if (" << condition->cast(GtFloat) << L" == 0)" << Endl;
 			fs << L"\tbreak;" << Endl;
 		}
 
@@ -611,7 +611,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	GlslVariable* condition = cx.emitInput(node, L"Condition");
 	if (condition)
 	{
-		fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
+		fs << L"if (" << condition->cast(GtFloat) << L" == 0)" << Endl;
 		fs << L"\tbreak;" << Endl;
 	}
 
@@ -652,7 +652,7 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	// Emit outer loop post condition.
 	if (condition)
 	{
-		fs << L"if (!(bool)" << condition->cast(GtFloat) << L")" << Endl;
+		fs << L"if (" << condition->cast(GtFloat) << L" == 0)" << Endl;
 		fs << L"\tbreak;" << Endl;
 	}
 

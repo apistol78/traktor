@@ -1,7 +1,7 @@
 #ifndef traktor_editor_PipelineDb_H
 #define traktor_editor_PipelineDb_H
 
-#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/ReaderWriterLock.h"
 #include "Editor/IPipelineDb.h"
 
 // import/export mechanism.
@@ -29,6 +29,8 @@ class T_DLLCLASS PipelineDb : public IPipelineDb
 	T_RTTI_CLASS;
 
 public:
+	PipelineDb();
+
 	bool open(const std::wstring& connectionString);
 
 	void close();
@@ -48,8 +50,9 @@ public:
 	virtual Ref< IPipelineReport > createReport(const std::wstring& name, const Guid& guid);
 
 private:
-	mutable Semaphore m_lock;
+	mutable ReaderWriterLock m_lock;
 	Ref< sql::IConnection > m_connection;
+	bool m_transaction;
 };
 
 	}

@@ -241,6 +241,18 @@ uint32_t LocalInstance::getDataNames(std::vector< std::wstring >& outDataNames) 
 	return uint32_t(outDataNames.size());
 }
 
+bool LocalInstance::getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const
+{
+	Ref< File > instanceDataFile = FileSystem::getInstance().get(getInstanceDataPath(m_instancePath, dataName));
+	if (instanceDataFile)
+	{
+		outLastWriteTime = instanceDataFile->getLastWriteTime();
+		return true;
+	}
+	else
+		return false;
+}
+
 bool LocalInstance::removeAllData()
 {
 	if (!m_transaction)
