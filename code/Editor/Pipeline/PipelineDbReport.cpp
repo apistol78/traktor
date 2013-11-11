@@ -1,6 +1,6 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Thread/Acquire.h"
-#include "Core/Thread/Semaphore.h"
+#include "Core/Thread/ReaderWriterLock.h"
 #include "Editor/Pipeline/PipelineDbReport.h"
 #include "Sql/IConnection.h"
 #include "Sql/IResultSet.h"
@@ -18,7 +18,7 @@ const int32_t c_version = 1;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDbReport", PipelineDbReport, IPipelineReport)
 
-PipelineDbReport::PipelineDbReport(Semaphore& lock, sql::IConnection* connection, const std::wstring& table, const Guid& guid)
+PipelineDbReport::PipelineDbReport(ReaderWriterLock& lock, sql::IConnection* connection, const std::wstring& table, const Guid& guid)
 :	m_lock(lock)
 ,	m_connection(connection)
 ,	m_table(table)
@@ -29,7 +29,7 @@ PipelineDbReport::PipelineDbReport(Semaphore& lock, sql::IConnection* connection
 PipelineDbReport::~PipelineDbReport()
 {
 	T_EXCEPTION_GUARD_BEGIN;
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
 
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;

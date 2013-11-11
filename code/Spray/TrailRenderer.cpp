@@ -37,7 +37,8 @@ TrailRenderer::TrailRenderer(render::IRenderSystem* renderSystem)
 
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(TrailVertex, position), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, uv), 0));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, direction), 0));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(TrailVertex, uv), 1));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(TrailVertex), L"Incorrect size of vertex");
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
@@ -112,21 +113,22 @@ void TrailRenderer::render(
 		Vector4 vp1 = points[i];
 
 		Vector4 direction = (vp1 - vp0).xyz0();
-		Vector4 up = Vector4::zero();
 		Scalar ln = direction.length();
 
 		if (ln <= FUZZY_EPSILON)
 			continue;
 
-		up = cross(direction, (vp0 + vp1) * Scalar(0.5f) - cameraPosition).normalized() * www0;
+		Vector4 up = cross(direction, (vp0 + vp1) * Scalar(0.5f) - cameraPosition).normalized() * www0;
 
-		(vp1 + up).storeAligned(vertex->position);
+		vp1.storeAligned(vertex->position);
+		up.storeAligned(vertex->direction);
 		vertex->uv[0] = 0.0f;
 		vertex->uv[1] = v;
 		vertex->uv[2] = 1.0f;
 		++vertex;
 
-		(vp1 - up).storeAligned(vertex->position);
+		vp1.storeAligned(vertex->position);
+		(-up).storeAligned(vertex->direction);
 		vertex->uv[0] = 1.0f;
 		vertex->uv[1] = v;
 		vertex->uv[2] = 1.0f;
@@ -148,18 +150,22 @@ void TrailRenderer::render(
 
 		if (ln > FUZZY_EPSILON)
 		{
+			direction /= ln;
+
 			Scalar k = clamp(Scalar(1.0f) + (Scalar(time - age) - vp0.w()) / (vp1.w() - vp0.w()), Scalar(0.0f), Scalar(1.0f));
 			Vector4 vp = lerp(vp0, vp1, k);
 
 			up = cross(direction, vp - cameraPosition).normalized() * www0;
 
-			(vp + up).storeAligned(vertex->position);
+			vp.storeAligned(vertex->position);
+			up.storeAligned(vertex->direction);
 			vertex->uv[0] = 0.0f;
 			vertex->uv[1] = v;
 			vertex->uv[2] = 0.0f;
 			++vertex;
 
-			(vp - up).storeAligned(vertex->position);
+			vp.storeAligned(vertex->position);
+			(-up).storeAligned(vertex->direction);
 			vertex->uv[0] = 1.0f;
 			vertex->uv[1] = v;
 			vertex->uv[2] = 0.0f;

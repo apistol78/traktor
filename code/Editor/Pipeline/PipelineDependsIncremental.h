@@ -2,6 +2,7 @@
 #define traktor_editor_PipelineDependsIncremental_H
 
 #include <map>
+#include "Core/Timer/Timer.h"
 #include "Editor/IPipelineDepends.h"
 
 // import/export mechanism.
@@ -17,7 +18,9 @@ namespace traktor
 	namespace editor
 	{
 
+class IPipelineDb;
 class IPipelineDependencySet;
+class IPipelineInstanceCache;
 class PipelineFactory;
 
 /*! \brief Incremental pipeline dependency walker.
@@ -33,6 +36,8 @@ public:
 		db::Database* sourceDatabase,
 		db::Database* outputDatabase,
 		IPipelineDependencySet* dependencySet,
+		IPipelineDb* pipelineDb,
+		IPipelineInstanceCache* instanceCache,
 		uint32_t recursionDepth = ~0UL
 	);
 
@@ -79,10 +84,17 @@ private:
 	Ref< db::Database > m_sourceDatabase;
 	Ref< db::Database > m_outputDatabase;
 	Ref< IPipelineDependencySet > m_dependencySet;
+	Ref< IPipelineDb > m_pipelineDb;
+	Ref< IPipelineInstanceCache > m_instanceCache;
 	uint32_t m_maxRecursionDepth;
 	uint32_t m_currentRecursionDepth;
 	Ref< PipelineDependency > m_currentDependency;
-	std::map< Guid, Ref< ISerializable > > m_readCache;
+
+//#if defined(_DEBUG)
+	Timer m_timer;
+	std::vector< double > m_buildDepTimeStack;
+	std::map< const TypeInfo*, std::pair< int32_t, double > > m_buildDepTimes;
+//#endif
 
 	void addUniqueDependency(
 		const db::Instance* sourceInstance,
@@ -95,7 +107,12 @@ private:
 	void updateDependencyHashes(
 		PipelineDependency* dependency,
 		const db::Instance* sourceInstance
-	) const;
+	);
+
+	void updateDependencyHashesJob(
+		PipelineDependency* dependency,
+		const db::Instance* sourceInstance
+	);
 };
 
 	}

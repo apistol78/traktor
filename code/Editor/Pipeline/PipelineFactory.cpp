@@ -23,10 +23,37 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 		{
 			PipelineSettings pipelineSettings(settings);
 			if (pipeline->create(&pipelineSettings))
-				m_pipelines.push_back(std::make_pair(
-					pipeline,
-					pipelineSettings.getHash()
-				));
+			{
+				TypeInfoSet assetTypes = pipeline->getAssetTypes();
+				for (TypeInfoSet::const_iterator j = assetTypes.begin(); j != assetTypes.end(); ++j)
+				{
+					TypeInfoSet buildableTypes;
+					(*j)->findAllOf(buildableTypes);
+
+					for (TypeInfoSet::const_iterator k = buildableTypes.begin(); k != buildableTypes.end(); ++k)
+					{
+						SmallMap< const TypeInfo*, PipelineMatch >::iterator it = m_pipelineMap.find(*k);
+						if (it != m_pipelineMap.end())
+						{
+							uint32_t currentDistance = type_difference(*(*j), *(*k));
+							if (currentDistance < it->second.distance)
+							{
+								it->second.pipeline = pipeline;
+								it->second.hash = pipelineSettings.getHash();
+								it->second.distance = currentDistance;
+							}
+						}
+						else
+						{
+							PipelineMatch& pm = m_pipelineMap[*k];
+							pm.pipeline = pipeline;
+							pm.hash = pipelineSettings.getHash();
+							pm.distance = type_difference(*(*j), *(*k));
+						}
+					}
+				}
+				m_pipelines[&type_of(pipeline)] = pipeline;
+			}
 			else
 				log::error << L"Failed to create pipeline \"" << type_name(pipeline) << L"\"" << Endl;
 		}
@@ -35,8 +62,11 @@ PipelineFactory::PipelineFactory(const PropertyGroup* settings)
 
 PipelineFactory::~PipelineFactory()
 {
-	for (std::vector< std::pair< Ref< IPipeline >, uint32_t > >::iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
-		i->first->destroy();
+	for (SmallMap< const TypeInfo*, Ref< IPipeline > >::iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
+		i->second->destroy();
+
+	m_pipelines.clear();
+	m_pipelineMap.clear();
 }
 
 bool PipelineFactory::findPipelineType(const TypeInfo& sourceType, const TypeInfo*& outPipelineType, uint32_t& outPipelineHash) const
@@ -44,47 +74,21 @@ bool PipelineFactory::findPipelineType(const TypeInfo& sourceType, const TypeInf
 	outPipelineType = 0;
 	outPipelineHash = 0;
 
-	uint32_t best = std::numeric_limits< uint32_t >::max();
-	for (std::vector< std::pair< Ref< IPipeline >, uint32_t > >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
+	SmallMap< const TypeInfo*, PipelineMatch >::const_iterator i = m_pipelineMap.find(&sourceType);
+	if (i != m_pipelineMap.end())
 	{
-		TypeInfoSet typeSet = i->first->getAssetTypes();
-		for (TypeInfoSet::iterator j = typeSet.begin(); j != typeSet.end(); ++j)
-		{
-			uint32_t distance = 0;
-
-			// Calculate distance in type hierarchy.
-			const TypeInfo* type = &sourceType;
-			while (type)
-			{
-				if (type == *j)
-					break;
-
-				++distance;
-				type = type->getSuper();
-			}
-
-			// Keep closest matching type.
-			if (type && distance < best)
-			{
-				outPipelineType = &type_of(i->first);
-				outPipelineHash = i->second;
-				if ((best = distance) == 0)
-					break;
-			}
-		}
+		outPipelineType = &type_of(i->second.pipeline);
+		outPipelineHash = i->second.hash;
+		return true;
 	}
-
-	return bool(outPipelineType != 0);
+	else
+		return false;
 }
 
 IPipeline* PipelineFactory::findPipeline(const TypeInfo& pipelineType) const
 {
-	for (std::vector< std::pair< Ref< IPipeline >, uint32_t > >::const_iterator i = m_pipelines.begin(); i != m_pipelines.end(); ++i)
-	{
-		if (is_type_a(pipelineType, type_of(i->first)))
-			return i->first;
-	}
-	return 0;
+	SmallMap< const TypeInfo*, Ref< IPipeline > >::const_iterator i = m_pipelines.find(&pipelineType);
+	return i != m_pipelines.end() ? i->second : 0;
 }
 
 	}

@@ -44,6 +44,7 @@ struct EmitterVertex
 struct TrailVertex
 {
 	float position[4];
+	float direction[4];
 	float uv[4];
 };
 #pragma pack()

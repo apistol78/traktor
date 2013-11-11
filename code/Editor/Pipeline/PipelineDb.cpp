@@ -19,6 +19,11 @@ const int32_t c_version = 4;
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.editor.PipelineDb", PipelineDb, IPipelineDb)
 
+PipelineDb::PipelineDb()
+:	m_transaction(false)
+{
+}
+
 bool PipelineDb::open(const std::wstring& connectionString)
 {
 	Ref< sql::ConnectionSqlite3 > connection = new sql::ConnectionSqlite3();
@@ -96,19 +101,29 @@ void PipelineDb::close()
 
 void PipelineDb::beginTransaction()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_connection->executeUpdate(L"begin transaction");
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
+	m_transaction = false;
 }
 
 void PipelineDb::endTransaction()
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_connection->executeUpdate(L"commit transaction");
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
+	if (m_transaction)
+	{
+		m_connection->executeUpdate(L"commit transaction");
+		m_transaction = false;
+	}
 }
 
 void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
+
+	if (!m_transaction)
+	{
+		m_connection->executeUpdate(L"begin transaction");
+		m_transaction = true;
+	}
 
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
@@ -126,7 +141,7 @@ void PipelineDb::setDependency(const Guid& guid, const DependencyHash& hash)
 
 bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
@@ -145,7 +160,13 @@ bool PipelineDb::getDependency(const Guid& guid, DependencyHash& outHash) const
 
 void PipelineDb::setFile(const Path& path, const FileHash& file)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireWriter)(m_lock);
+
+	if (!m_transaction)
+	{
+		m_connection->executeUpdate(L"begin transaction");
+		m_transaction = true;
+	}
 
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
@@ -164,7 +185,7 @@ void PipelineDb::setFile(const Path& path, const FileHash& file)
 
 bool PipelineDb::getFile(const Path& path, FileHash& outFile)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
 
 	Ref< sql::IResultSet > rs;
 	StringOutputStream ss;
@@ -184,6 +205,14 @@ bool PipelineDb::getFile(const Path& path, FileHash& outFile)
 
 Ref< IPipelineReport > PipelineDb::createReport(const std::wstring& name, const Guid& guid)
 {
+	T_ANONYMOUS_VAR(ReaderWriterLock::AcquireReader)(m_lock);
+
+	if (!m_transaction)
+	{
+		m_connection->executeUpdate(L"begin transaction");
+		m_transaction = true;
+	}
+
 	return new PipelineDbReport(m_lock, m_connection, L"Report_" + name, guid);
 }
 

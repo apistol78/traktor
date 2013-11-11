@@ -1,9 +1,10 @@
 #ifndef traktor_editor_PipelineFactory_H
 #define traktor_editor_PipelineFactory_H
 
-#include <vector>
+//#include <vector>
 #include "Core/Object.h"
 #include "Core/Ref.h"
+#include "Core/Containers/SmallMap.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -37,7 +38,16 @@ public:
 	IPipeline* findPipeline(const TypeInfo& pipelineType) const;
 
 private:
-	std::vector< std::pair< Ref< IPipeline >, uint32_t > > m_pipelines;
+	struct PipelineMatch
+	{
+		IPipeline* pipeline;
+		uint32_t hash;
+		uint32_t distance;
+	};
+
+	//std::vector< std::pair< Ref< IPipeline >, uint32_t > > m_pipelines;
+	SmallMap< const TypeInfo*, Ref< IPipeline > > m_pipelines;
+	SmallMap< const TypeInfo*, PipelineMatch > m_pipelineMap;
 };
 
 	}

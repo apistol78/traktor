@@ -67,6 +67,8 @@ public:
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& dataNames) const;
 
+	virtual bool getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const;
+
 	virtual Ref< IStream > readData(const std::wstring& dataName) const;
 
 	template < typename T >

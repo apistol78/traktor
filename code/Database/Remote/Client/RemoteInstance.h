@@ -51,6 +51,8 @@ public:
 
 	virtual bool removeAllData();
 
+	virtual bool getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const;
+
 	virtual Ref< IStream > readData(const std::wstring& dataName) const;
 
 	virtual Ref< IStream > writeData(const std::wstring& dataName);

@@ -51,6 +51,8 @@ public:
 
 	virtual uint32_t getDataNames(std::vector< std::wstring >& outDataNames) const;
 
+	virtual bool getDataLastWriteTime(const std::wstring& dataName, DateTime& outLastWriteTime) const;
+
 	virtual bool removeAllData();
 
 	virtual Ref< IStream > readData(const std::wstring& dataName) const;
