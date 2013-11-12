@@ -231,7 +231,7 @@
 					<optional>false</optional>
 				</item>
 				<item>
-					<name>Distance</name>
+					<name>ViewPosition</name>
 					<optional>false</optional>
 				</item>
 			</inputPins>
@@ -476,16 +476,6 @@
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[4]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[16]"/>
-				<name>Distance</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[3]"/>
 				<name>Output</name>
 			</source>
@@ -592,6 +582,16 @@
 			<destination>
 				<node ref="/object/nodes/item[15]"/>
 				<name>ReflectionMap</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[3]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[16]"/>
+				<name>ViewPosition</name>
 			</destination>
 		</item>
 	</edges>

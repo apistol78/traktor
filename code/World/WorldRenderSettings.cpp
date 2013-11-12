@@ -35,7 +35,7 @@ const wchar_t* c_ShadowSettings_elementNames[] =
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 20, WorldRenderSettings, ISerializable)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.world.WorldRenderSettings", 21, WorldRenderSettings, ISerializable)
 
 WorldRenderSettings::WorldRenderSettings()
 :	viewNearZ(1.0f)
@@ -44,8 +44,10 @@ WorldRenderSettings::WorldRenderSettings()
 ,	occlusionCullingEnabled(false)
 ,	depthPassEnabled(true)
 ,	fogEnabled(false)
-,	fogDistance(90.0f)
-,	fogRange(10.0f)
+,	fogDistanceY(0.0f)
+,	fogDistanceZ(90.0f)
+,	fogDensityY(0.0f)
+,	fogDensityZ(0.0f)
 ,	fogColor(255, 255, 255, 255)
 {
 }
@@ -59,14 +61,24 @@ void WorldRenderSettings::serialize(ISerializer& s)
 	s >> Member< bool >(L"linearLighting", linearLighting);
 	s >> Member< bool >(L"occlusionCullingEnabled", occlusionCullingEnabled);
 	s >> Member< bool >(L"depthPassEnabled", depthPassEnabled);
+
 	if (s.getVersion() >= 19)
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames);
 	else
 		s >> MemberStaticArray< ShadowSettings, sizeof_array(shadowSettings), MemberComposite< ShadowSettings > >(L"shadowSettings", shadowSettings, c_ShadowSettings_elementNames18);
+
 	s >> Member< bool >(L"fogEnabled", fogEnabled);
-	s >> Member< float >(L"fogDistance", fogDistance, AttributeRange(0.0f));
-	s >> Member< float >(L"fogRange", fogRange, AttributeRange(0.0f));
+
+	if (s.getVersion() >= 21)
+	{
+		s >> Member< float >(L"fogDistanceY", fogDistanceY);
+		s >> Member< float >(L"fogDistanceZ", fogDistanceZ, AttributeRange(0.0f));
+		s >> Member< float >(L"fogDensityY", fogDensityY, AttributeRange(0.0f, 1.0f));
+		s >> Member< float >(L"fogDensityZ", fogDensityZ, AttributeRange(0.0f, 1.0f));
+	}
+
 	s >> Member< Color4ub >(L"fogColor", fogColor);
+
 	if (s.getVersion() >= 20)
 		s >> resource::Member< render::ITexture >(L"reflectionMap", reflectionMap);
 }

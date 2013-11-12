@@ -76,8 +76,10 @@ public:
 	bool depthPassEnabled;
 	ShadowSettings shadowSettings[QuLast];
 	bool fogEnabled;
-	float fogDistance;
-	float fogRange;
+	float fogDistanceY;
+	float fogDistanceZ;
+	float fogDensityY;
+	float fogDensityZ;
 	Color4ub fogColor;
 	resource::Id< render::ITexture > reflectionMap;
 
