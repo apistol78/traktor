@@ -24,7 +24,7 @@ render::handle_t s_handleColorMap;
 render::handle_t s_handleLightMap;
 render::handle_t s_handleNormalMap;
 render::handle_t s_handleFogEnable;
-render::handle_t s_handleFogDistanceAndRange;
+render::handle_t s_handleFogDistanceAndDensity;
 render::handle_t s_handleFogColor;
 render::handle_t s_handleShadowEnable;
 render::handle_t s_handleShadowMask;
@@ -52,7 +52,7 @@ void initializeHandles()
 	s_handleLightMap = render::getParameterHandle(L"LightMap");
 	s_handleNormalMap = render::getParameterHandle(L"NormalMap");
 	s_handleFogEnable = render::getParameterHandle(L"FogEnable");
-	s_handleFogDistanceAndRange = render::getParameterHandle(L"FogDistanceAndRange");
+	s_handleFogDistanceAndDensity = render::getParameterHandle(L"FogDistanceAndDensity");
 	s_handleFogColor = render::getParameterHandle(L"FogColor");
 	s_handleShadowEnable = render::getParameterHandle(L"ShadowEnable");
 	s_handleShadowMask = render::getParameterHandle(L"ShadowMask");
@@ -76,8 +76,10 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 	render::handle_t technique,
 	const WorldRenderView& worldRenderView,
 	bool fogEnabled,
-	float fogDistance,
-	float fogRange,
+	float fogDistanceY,
+	float fogDistanceZ,
+	float fogDensityY,
+	float fogDensityZ,
 	const Vector4& fogColor,
 	render::ISimpleTexture* colorMap,
 	render::ISimpleTexture* depthMap,
@@ -87,8 +89,10 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
 ,	m_fogEnabled(fogEnabled)
-,	m_fogDistance(fogDistance)
-,	m_fogRange(fogRange)
+,	m_fogDistanceY(fogDistanceY)
+,	m_fogDistanceZ(fogDistanceZ)
+,	m_fogDensityY(fogDensityY)
+,	m_fogDensityZ(fogDensityZ)
 ,	m_fogColor(fogColor)
 ,	m_colorMap(colorMap)
 ,	m_depthMap(depthMap)
@@ -106,8 +110,10 @@ WorldRenderPassPreLit::WorldRenderPassPreLit(
 :	m_technique(technique)
 ,	m_worldRenderView(worldRenderView)
 ,	m_fogEnabled(false)
-,	m_fogDistance(0.0f)
-,	m_fogRange(0.0f)
+,	m_fogDistanceY(0.0f)
+,	m_fogDistanceZ(0.0f)
+,	m_fogDensityY(0.0f)
+,	m_fogDensityZ(0.0f)
 ,	m_fogColor(0.0f, 0.0f, 0.0f, 0.0f)
 ,	m_colorMap(0)
 ,	m_depthMap(0)
@@ -263,11 +269,11 @@ void WorldRenderPassPreLit::setFogProgramParameters(render::ProgramParameters* p
 {
 	if (m_fogEnabled)
 	{
-		programParams->setVectorParameter(s_handleFogDistanceAndRange, Vector4(m_fogDistance, m_fogRange, 1.0f / m_fogDistance, 1.0f / m_fogRange));
+		programParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4(m_fogDistanceY, m_fogDistanceZ, m_fogDensityY, m_fogDensityZ));
 		programParams->setVectorParameter(s_handleFogColor, m_fogColor);
 	}
 	else
-		programParams->setVectorParameter(s_handleFogDistanceAndRange, Vector4::zero());
+		programParams->setVectorParameter(s_handleFogDistanceAndDensity, Vector4::zero());
 }
 
 	}

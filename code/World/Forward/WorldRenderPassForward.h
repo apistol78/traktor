@@ -37,8 +37,10 @@ public:
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
 		bool fogEnabled,
-		float fogDistance,
-		float m_fogRange,
+		float fogDistanceY,
+		float fogDistanceZ,
+		float fogDensityY,
+		float fogDensityZ,
 		const Vector4& fogColor,
 		render::ISimpleTexture* colorMap,
 		render::ISimpleTexture* depthMap,
@@ -68,8 +70,10 @@ private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
 	bool m_fogEnabled;
-	float m_fogDistance;
-	float m_fogRange;
+	float m_fogDistanceY;
+	float m_fogDistanceZ;
+	float m_fogDensityY;
+	float m_fogDensityZ;
 	Vector4 m_fogColor;
 	render::ISimpleTexture* m_colorMap;
 	render::ISimpleTexture* m_depthMap;
