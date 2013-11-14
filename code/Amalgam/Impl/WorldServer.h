@@ -13,6 +13,7 @@ class PropertyGroup;
 	{
 
 class EffectEntityRenderer;
+class FeedbackManager;
 
 	}
 
@@ -61,6 +62,8 @@ public:
 
 	virtual world::IEntityEventManager* getEntityEventManager();
 
+	virtual spray::IFeedbackManager* getFeedbackManager();
+
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,
 		const world::PostProcessSettings* postProcessSettings
@@ -75,6 +78,7 @@ private:
 	Ref< IRenderServer > m_renderServer;
 	Ref< IResourceServer > m_resourceServer;
 	Ref< spray::EffectEntityRenderer > m_effectEntityRenderer;
+	Ref< spray::FeedbackManager > m_feedbackManager;
 	Ref< terrain::EntityRenderer > m_terrainEntityRenderer;
 	const TypeInfo* m_worldType;
 	world::Quality m_shadowQuality;

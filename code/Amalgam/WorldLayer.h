@@ -5,6 +5,7 @@
 #include "Amalgam/Layer.h"
 #include "Core/RefArray.h"
 #include "Resource/Proxy.h"
+#include "Spray/Feedback/IFeedbackListener.h"
 #include "World/WorldRenderView.h"
 
 // import/export mechanism.
@@ -46,7 +47,9 @@ class PostProcess;
 	namespace amalgam
 	{
 
-class T_DLLCLASS WorldLayer : public Layer
+class T_DLLCLASS WorldLayer
+:	public Layer
+,	public spray::IFeedbackListener
 {
 	T_RTTI_CLASS;
 
@@ -121,6 +124,9 @@ public:
 
 	float getAlternateTime() const;
 
+protected:
+	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count);
+
 private:
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< scene::Scene > m_scene;
@@ -129,6 +135,7 @@ private:
 	world::WorldRenderView m_worldRenderView;
 	Ref< world::GroupEntity > m_renderGroup;
 	Ref< world::GroupEntity > m_dynamicEntities;
+	Transform m_cameraOffset;
 	float m_alternateTime;
 	float m_deltaTime;
 	float m_controllerTime;

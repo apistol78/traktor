@@ -27,6 +27,7 @@
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Script/Any.h"
+#include "Spray/Feedback/IFeedbackManager.h"
 #include "World/PostProcess/PostProcess.h"
 #include "World/PostProcess/PostProcessSettings.h"
 
@@ -116,11 +117,16 @@ FlashLayer::FlashLayer(
 ,	m_clearBackground(clearBackground)
 ,	m_enableSound(enableSound)
 ,	m_visible(true)
+,	m_offset(0.0f, 0.0f)
 ,	m_lastX(-1)
 ,	m_lastY(-1)
 ,	m_lastButton(0)
 ,	m_lastWheel(0)
 {
+	// Register ourself for UI shake.
+	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	if (feedbackManager)
+		feedbackManager->addListener(spray::FbtUI, this);
 }
 
 FlashLayer::~FlashLayer()
@@ -130,7 +136,13 @@ FlashLayer::~FlashLayer()
 
 void FlashLayer::destroy()
 {
+	// Remove ourself from feedback manager.
+	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	if (feedbackManager)
+		feedbackManager->removeListener(spray::FbtUI, this);
+
 	m_movie.clear();
+
 	safeDestroy(m_moviePlayer);
 	safeDestroy(m_displayRenderer);
 	safeDestroy(m_soundRenderer);
@@ -333,7 +345,8 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 			m_displayRenderer->render(
 				renderView,
 				frame,
-				eye
+				eye,
+				m_offset
 			);
 
 			renderView->end();
@@ -353,7 +366,8 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 		m_displayRenderer->render(
 			renderView,
 			frame,
-			eye
+			eye,
+			m_offset
 		);
 	}
 }
@@ -593,6 +607,12 @@ flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodNam
 	);
 
 	return script::CastAny< flash::ActionValue >::get(ret);
+}
+
+void FlashLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)
+{
+	T_ASSERT (count >= 2);
+	m_offset = Vector2(values[0] * 0.01f, values[1] * 0.01f);
 }
 
 	}

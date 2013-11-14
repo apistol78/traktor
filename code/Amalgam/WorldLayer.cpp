@@ -8,6 +8,7 @@
 #include "Render/IRenderView.h"
 #include "Render/RenderTargetSet.h"
 #include "Scene/Scene.h"
+#include "Spray/Feedback/FeedbackManager.h"
 #include "World/IWorldRenderer.h"
 #include "World/WorldRenderSettings.h"
 #include "World/Entity.h"
@@ -52,6 +53,11 @@ WorldLayer::WorldLayer(
 {
 	// Get initial field of view.
 	m_fieldOfView = m_environment->getSettings()->getProperty< PropertyFloat >(L"World.FieldOfView", 70.0f);
+
+	// Register ourself for camera shake.
+	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	if (feedbackManager)
+		feedbackManager->addListener(spray::FbtCamera, this);
 }
 
 WorldLayer::~WorldLayer()
@@ -61,6 +67,11 @@ WorldLayer::~WorldLayer()
 
 void WorldLayer::destroy()
 {
+	// Remove ourself from feedback manager.
+	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
+	if (feedbackManager)
+		feedbackManager->removeListener(spray::FbtCamera, this);
+
 	m_scene.clear();
 	m_entities.clear();
 
@@ -148,7 +159,7 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 	world::NullEntity* cameraEntity = m_scene->getEntitySchema()->getEntity< world::NullEntity >(L"Camera");
 	if (cameraEntity)
 	{
-		Transform view = cameraEntity->getTransform(info.getInterval());
+		Transform view = cameraEntity->getTransform(info.getInterval()) * m_cameraOffset;
 		m_worldRenderView.setView(view.inverse().toMatrix44());
 	}
 
@@ -375,6 +386,15 @@ void WorldLayer::setAlternateTime(float alternateTime)
 float WorldLayer::getAlternateTime() const
 {
 	return m_alternateTime;
+}
+
+void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)
+{
+	T_ASSERT (count >= 3);
+	m_cameraOffset = Transform(
+		Vector4(values[0], values[1], values[2]),
+		Quaternion::identity()
+	);
 }
 
 void WorldLayer::createWorldRenderer()

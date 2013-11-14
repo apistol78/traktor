@@ -121,21 +121,31 @@ void TextPropertyItem::paintValue(Canvas& canvas, const Rect& rc)
 
 bool TextPropertyItem::copy()
 {
-	Clipboard* clipboard = Application::getInstance()->getClipboard();
-	if (clipboard)
-		return clipboard->setText(m_value);
+	if (!m_editor->isVisible(false))
+	{
+		Clipboard* clipboard = Application::getInstance()->getClipboard();
+		if (clipboard)
+			return clipboard->setText(m_value);
+		else
+			return false;
+	}
 	else
 		return false;
 }
 
 bool TextPropertyItem::paste()
 {
-	Clipboard* clipboard = Application::getInstance()->getClipboard();
-	if (!clipboard)
-		return false;
+	if (!m_editor->isVisible(false))
+	{
+		Clipboard* clipboard = Application::getInstance()->getClipboard();
+		if (!clipboard)
+			return false;
 
-	m_value = clipboard->getText();
-	return true;
+		m_value = clipboard->getText();
+		return true;
+	}
+	else
+		return false;
 }
 
 void TextPropertyItem::eventEditFocus(Event* event)

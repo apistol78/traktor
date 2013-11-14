@@ -325,7 +325,7 @@ void FlashPreviewControl::eventPaint(ui::Event* event)
 			0
 		);
 
-		m_displayRenderer->render(m_renderView, 0, render::EtCyclop);
+		m_displayRenderer->render(m_renderView, 0, render::EtCyclop, Vector2(0.0f, 0.0f));
 
 		m_renderView->end();
 		m_renderView->present();

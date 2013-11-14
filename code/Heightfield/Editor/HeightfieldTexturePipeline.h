@@ -1,6 +1,7 @@
 #ifndef traktor_hf_HeightfieldTextureAssetPipeline_H
 #define traktor_hf_HeightfieldTextureAssetPipeline_H
 
+#include "Core/Thread/Semaphore.h"
 #include "Editor/DefaultPipeline.h"
 
 // import/export mechanism.
@@ -48,6 +49,7 @@ public:
 
 private:
 	std::wstring m_assetPath;
+	mutable Semaphore m_lock;
 };
 
 	}

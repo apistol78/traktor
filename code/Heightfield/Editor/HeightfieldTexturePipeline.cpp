@@ -1,6 +1,7 @@
 #include "Core/Io/IStream.h"
 #include "Core/Log/Log.h"
 #include "Core/Settings/PropertyString.h"
+#include "Core/Thread/Acquire.h"
 #include "Database/Database.h"
 #include "Database/Instance.h"
 #include "Drawing/Image.h"
@@ -116,6 +117,11 @@ bool HeightfieldTexturePipeline::buildOutput(
 	uint32_t reason
 ) const
 {
+	// Due to memory usage of this pipeline we need to serialize
+	// building of these assets. Pipeline should try reduce number
+	// of concurrent builds with same pipeline type.
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+
 	const HeightfieldTextureAsset* asset = checked_type_cast< const HeightfieldTextureAsset* >(sourceAsset);
 
 	// Get heightfield asset and instance.

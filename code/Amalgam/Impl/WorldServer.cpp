@@ -24,6 +24,7 @@
 #include "Scene/SceneFactory.h"
 #include "Spray/EffectEntityFactory.h"
 #include "Spray/EffectEntityRenderer.h"
+#include "Spray/Feedback/FeedbackManager.h"
 #include "Terrain/EntityFactory.h"
 #include "Terrain/EntityRenderer.h"
 #include "Terrain/TerrainFactory.h"
@@ -94,6 +95,8 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_resourceServer = resourceServer;
 	m_entityBuilder = new world::EntityBuilder();
 
+	m_feedbackManager = new spray::FeedbackManager();
+
 	float sprayLod1Distance = c_sprayLodDistances[m_particleQuality][0];
 	float sprayLod2Distance = c_sprayLodDistances[m_particleQuality][1];
 	m_effectEntityRenderer = new spray::EffectEntityRenderer(m_renderServer->getRenderSystem(), sprayLod1Distance, sprayLod2Distance);
@@ -156,7 +159,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
 	m_entityBuilder->addFactory(new ai::NavMeshEntityFactory(resourceManager));
 	m_entityBuilder->addFactory(new mesh::MeshEntityFactory(resourceManager));
-	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer));
+	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager));
@@ -230,6 +233,11 @@ world::WorldEntityRenderers* WorldServer::getEntityRenderers()
 world::IEntityEventManager* WorldServer::getEntityEventManager()
 {
 	return m_eventManager;
+}
+
+spray::IFeedbackManager* WorldServer::getFeedbackManager()
+{
+	return m_feedbackManager;
 }
 
 Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
