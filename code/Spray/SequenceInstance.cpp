@@ -12,9 +12,11 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.SequenceInstance", SequenceInstance, Obje
 void SequenceInstance::update(Context& context, const Transform& transform, float T, bool enable)
 {
 	const std::vector< Sequence::Key >& keys = m_sequence->m_keys;
+	if (keys.empty())
+		return;
 
 	int32_t index = 0;
-	for (; index < int32_t(keys.size()); ++index)
+	for (index = int32_t(keys.size() - 1); index >= 0; --index)
 	{
 		if (T >= keys[index].T)
 			break;

@@ -60,7 +60,20 @@ void DefaultObjectEditor::apply()
 
 bool DefaultObjectEditor::handleCommand(const ui::Command& command)
 {
-	return false;
+	if (command == L"Editor.Copy")
+		return m_propertyList->copy();
+	else if (command == L"Editor.Paste")
+	{
+		if (m_propertyList->paste())
+		{
+			m_propertyList->apply();
+			return true;
+		}
+		else
+			return false;
+	}
+	else
+		return false;
 }
 
 ui::Size DefaultObjectEditor::getPreferredSize() const

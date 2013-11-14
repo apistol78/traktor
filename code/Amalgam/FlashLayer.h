@@ -2,10 +2,12 @@
 #define traktor_amalgam_FlashLayer_H
 
 #include "Amalgam/Layer.h"
+#include "Core/Math/Vector2.h"
 #include "Flash/Action/Avm1/Classes/As_flash_external_ExternalInterface.h"
 #include "Resource/Id.h"
 #include "Resource/Proxy.h"
 #include "Script/Any.h"
+#include "Spray/Feedback/IFeedbackListener.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -63,6 +65,7 @@ class PostProcessSettings;
 class T_DLLCLASS FlashLayer
 :	public Layer
 ,	public flash::IExternalCall
+,	public spray::IFeedbackListener
 {
 	T_RTTI_CLASS;
 
@@ -117,14 +120,13 @@ private:
 	Ref< flash::FlashMoviePlayer > m_moviePlayer;
 	Ref< flash::AccDisplayRenderer > m_displayRenderer;
 	Ref< flash::ISoundRenderer > m_soundRenderer;
-
 	Ref< render::RenderTargetSet > m_postTargetSet;
 	resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
 	Ref< world::PostProcess > m_postProcess;
-
 	bool m_clearBackground;
 	bool m_enableSound;
 	bool m_visible;
+	Vector2 m_offset;
 	int32_t m_lastX;
 	int32_t m_lastY;
 	int32_t m_lastButton;
@@ -133,6 +135,8 @@ private:
 	void createMoviePlayer();
 
 	virtual flash::ActionValue dispatchExternalCall(const std::string& methodName, int32_t argc, const flash::ActionValue* argv);
+
+	virtual void feedbackValues(spray::FeedbackType type, const float* values, int32_t count);
 };
 
 	}

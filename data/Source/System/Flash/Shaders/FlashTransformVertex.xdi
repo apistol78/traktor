@@ -242,7 +242,7 @@
 				<second>394</second>
 			</position>
 			<parameterName>Flash_ScreenOffset</parameterName>
-			<type>PtScalar</type>
+			<type>PtVector</type>
 			<frequency>UfDraw</frequency>
 		</item>
 		<item type="traktor.render.Swizzle">
@@ -251,7 +251,7 @@
 				<first>2034</first>
 				<second>384</second>
 			</position>
-			<swizzle>x000</swizzle>
+			<swizzle>xy00</swizzle>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>

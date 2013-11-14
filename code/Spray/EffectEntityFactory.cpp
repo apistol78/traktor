@@ -8,6 +8,10 @@
 #include "Spray/SoundEventData.h"
 #include "Spray/SpawnEffectEvent.h"
 #include "Spray/SpawnEffectEventData.h"
+#include "Spray/Feedback/EnvelopeFeedbackEvent.h"
+#include "Spray/Feedback/EnvelopeFeedbackEventData.h"
+#include "Spray/Feedback/OscillateFeedbackEvent.h"
+#include "Spray/Feedback/OscillateFeedbackEventData.h"
 #include "World/IEntityBuilder.h"
 
 namespace traktor
@@ -17,10 +21,16 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.EffectEntityFactory", EffectEntityFactory, world::IEntityFactory)
 
-EffectEntityFactory::EffectEntityFactory(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer)
+EffectEntityFactory::EffectEntityFactory(
+	resource::IResourceManager* resourceManager,
+	world::IEntityEventManager* eventManager,
+	sound::ISoundPlayer* soundPlayer,
+	IFeedbackManager* feedbackManager
+)
 :	m_resourceManager(resourceManager)
 ,	m_eventManager(eventManager)
 ,	m_soundPlayer(soundPlayer)
+,	m_feedbackManager(feedbackManager)
 {
 }
 
@@ -34,6 +44,8 @@ const TypeInfoSet EffectEntityFactory::getEntityTypes() const
 const TypeInfoSet EffectEntityFactory::getEntityEventTypes() const
 {
 	TypeInfoSet typeSet;
+	typeSet.insert(&type_of< EnvelopeFeedbackEventData >());
+	typeSet.insert(&type_of< OscillateFeedbackEventData >());
 	typeSet.insert(&type_of< SoundEventData >());
 	typeSet.insert(&type_of< SpawnEffectEventData >());
 	return typeSet;
@@ -46,7 +58,15 @@ Ref< world::Entity > EffectEntityFactory::createEntity(const world::IEntityBuild
 
 Ref< world::IEntityEvent > EffectEntityFactory::createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const
 {
-	if (const SoundEventData* soundEventData = dynamic_type_cast< const SoundEventData* >(&entityEventData))
+	if (const EnvelopeFeedbackEventData* envelopeFeedbackEventData = dynamic_type_cast< const EnvelopeFeedbackEventData* >(&entityEventData))
+	{
+		return new EnvelopeFeedbackEvent(envelopeFeedbackEventData, m_feedbackManager);
+	}
+	else if (const OscillateFeedbackEventData* oscillateFeedbackEventData = dynamic_type_cast< const OscillateFeedbackEventData* >(&entityEventData))
+	{
+		return new OscillateFeedbackEvent(oscillateFeedbackEventData, m_feedbackManager);
+	}
+	else if (const SoundEventData* soundEventData = dynamic_type_cast< const SoundEventData* >(&entityEventData))
 	{
 		resource::Proxy< sound::Sound > sound;
 		if (!m_resourceManager->bind(soundEventData->m_sound, sound))

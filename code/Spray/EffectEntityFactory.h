@@ -37,6 +37,8 @@ class IEntityEventManager;
 	namespace spray
 	{
 
+class IFeedbackManager;
+
 /*! \brief Effect entity factory.
  * \ingroup Spray
  */
@@ -45,7 +47,12 @@ class T_DLLCLASS EffectEntityFactory : public world::IEntityFactory
 	T_RTTI_CLASS;
 
 public:
-	EffectEntityFactory(resource::IResourceManager* resourceManager, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
+	EffectEntityFactory(
+		resource::IResourceManager* resourceManager,
+		world::IEntityEventManager* eventManager,
+		sound::ISoundPlayer* soundPlayer,
+		IFeedbackManager* feedbackManager
+	);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -56,9 +63,10 @@ public:
 	virtual Ref< world::IEntityEvent > createEntityEvent(const world::IEntityBuilder* builder, const world::IEntityEventData& entityEventData) const;
 
 private:
-	resource::IResourceManager* m_resourceManager;
-	world::IEntityEventManager* m_eventManager;
-	sound::ISoundPlayer* m_soundPlayer;
+	Ref< resource::IResourceManager > m_resourceManager;
+	Ref< world::IEntityEventManager > m_eventManager;
+	Ref< sound::ISoundPlayer > m_soundPlayer;
+	Ref< IFeedbackManager > m_feedbackManager;
 };
 
 	}

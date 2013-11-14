@@ -13,6 +13,13 @@
 
 namespace traktor
 {
+	namespace spray
+	{
+
+class IFeedbackManager;
+
+	}
+
 	namespace world
 	{
 
@@ -53,6 +60,8 @@ public:
 	virtual world::WorldEntityRenderers* getEntityRenderers() = 0;
 
 	virtual world::IEntityEventManager* getEntityEventManager() = 0;
+
+	virtual spray::IFeedbackManager* getFeedbackManager() = 0;
 
 	virtual Ref< world::IWorldRenderer > createWorldRenderer(
 		const world::WorldRenderSettings* worldRenderSettings,
