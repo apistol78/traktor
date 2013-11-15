@@ -122,6 +122,7 @@ private:
 		Frustum viewFrustum;
 		Light lights[MaxLightCount];
 		uint32_t lightCount;
+		Vector4 godRayDirection;
 		bool haveGBuffer;
 		bool haveShadows[MaxLightCount];
 

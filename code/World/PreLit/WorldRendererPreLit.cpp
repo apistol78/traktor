@@ -1047,6 +1047,7 @@ void WorldRendererPreLit::endRender(int frame, render::EyeType eye, float deltaT
 	params.viewToLight = Matrix44::identity(); //f.viewToLightSpace;
 	params.view = f.view;
 	params.projection = f.projection;
+	params.godRayDirection = f.godRayDirection;
 	params.deltaTime = deltaTime;
 
 	m_renderView->end();
@@ -1273,6 +1274,7 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 	f.projection = worldRenderView.getProjection();
 	f.view = worldRenderView.getView();
 	f.viewFrustum = worldRenderView.getViewFrustum();
+	f.godRayDirection = worldRenderView.getGodRayDirection();
 }
 
 	}

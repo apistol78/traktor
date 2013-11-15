@@ -19,6 +19,7 @@ WorldRenderView::WorldRenderView()
 ,	m_interocularDistance(4.5f)
 ,	m_distortionValue(0.8f)
 ,	m_screenPlaneDistance(13.0f)
+,	m_godRayDirection(Vector4::zero())
 {
 	for (int i = 0; i < MaxLightCount; ++i)
 	{
@@ -97,6 +98,11 @@ void WorldRenderView::setDistortionValue(float distortionValue)
 void WorldRenderView::setScreenPlaneDistance(float screenPlaneDistance)
 {
 	m_screenPlaneDistance = screenPlaneDistance;
+}
+
+void WorldRenderView::setGodRayDirection(const Vector4& direction)
+{
+	m_godRayDirection = direction;
 }
 
 void WorldRenderView::addLight(const Light& light)

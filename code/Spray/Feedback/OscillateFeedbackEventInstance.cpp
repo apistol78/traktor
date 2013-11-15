@@ -19,7 +19,9 @@ OscillateFeedbackEventInstance::OscillateFeedbackEventInstance(const OscillateFe
 
 bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 {
+	bool finished = true;
 	float values[4];
+
 	for (int32_t i = 0; i < 4; ++i)
 	{
 		const OscillateFeedbackEventData::OscillatingValue& ov = m_data->getValue(i);
@@ -28,6 +30,7 @@ bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 			float f = m_time / ov.duration;
 			float v = std::sin(ov.frequency * f * PI) * (1.0f - f * f * f) * ov.magnitude;
 			values[i] = v;
+			finished = false;
 		}
 		else
 			values[i] = 0.0f;
@@ -37,7 +40,7 @@ bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 		m_feedbackManager->apply(m_data->getType(), values, sizeof_array(values));
 
 	m_time += update.deltaTime;
-	return true;
+	return !finished;
 }
 
 void OscillateFeedbackEventInstance::build(world::IWorldRenderer* worldRenderer)
