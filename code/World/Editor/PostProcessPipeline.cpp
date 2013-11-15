@@ -7,6 +7,7 @@
 #include "World/PostProcess/PostProcessStepBlur.h"
 #include "World/PostProcess/PostProcessStepBokeh.h"
 #include "World/PostProcess/PostProcessStepChain.h"
+#include "World/PostProcess/PostProcessStepGodRay.h"
 #include "World/PostProcess/PostProcessStepGrain.h"
 #include "World/PostProcess/PostProcessStepLuminance.h"
 #include "World/PostProcess/PostProcessStepRepeat.h"
@@ -66,6 +67,8 @@ bool PostProcessPipeline::buildDependencies(
 			for (RefArray< PostProcessStep >::const_iterator i = steps.begin(); i != steps.end(); ++i)
 				ss.push_back(*i);
 		}
+		else if (const PostProcessStepGodRay* stepGodRay = dynamic_type_cast< const PostProcessStepGodRay* >(step))
+			pipelineDepends->addDependency(stepGodRay->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const PostProcessStepGrain* stepGrain = dynamic_type_cast< const PostProcessStepGrain* >(step))
 			pipelineDepends->addDependency(stepGrain->getShader(), editor::PdfBuild | editor::PdfResource);
 		else if (const PostProcessStepLuminance* stepLuminance = dynamic_type_cast< const PostProcessStepLuminance* >(step))

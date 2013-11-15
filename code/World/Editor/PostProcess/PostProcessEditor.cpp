@@ -9,6 +9,7 @@
 #include "World/PostProcess/PostProcessStepBlur.h"
 #include "World/PostProcess/PostProcessStepBokeh.h"
 #include "World/PostProcess/PostProcessStepChain.h"
+#include "World/PostProcess/PostProcessStepGodRay.h"
 #include "World/PostProcess/PostProcessStepGrain.h"
 #include "World/PostProcess/PostProcessStepLuminance.h"
 #include "World/PostProcess/PostProcessStepRepeat.h"
@@ -24,6 +25,7 @@
 #include "World/Editor/PostProcess/PostProcessStepBlurFacade.h"
 #include "World/Editor/PostProcess/PostProcessStepBokehFacade.h"
 #include "World/Editor/PostProcess/PostProcessStepChainFacade.h"
+#include "World/Editor/PostProcess/PostProcessStepGodRayFacade.h"
 #include "World/Editor/PostProcess/PostProcessStepGrainFacade.h"
 #include "World/Editor/PostProcess/PostProcessStepLuminanceFacade.h"
 #include "World/Editor/PostProcess/PostProcessStepRepeatFacade.h"
@@ -86,6 +88,7 @@ bool PostProcessEditor::create(ui::Widget* parent, db::Instance* instance, ISeri
 	m_postProcessStepFacades[&type_of< PostProcessStepBlur >()] = new PostProcessStepBlurFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepBokeh >()] = new PostProcessStepBokehFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepChain >()] = new PostProcessStepChainFacade();
+	m_postProcessStepFacades[&type_of< PostProcessStepGodRay >()] = new PostProcessStepGodRayFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepGrain >()] = new PostProcessStepGrainFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepLuminance >()] = new PostProcessStepLuminanceFacade();
 	m_postProcessStepFacades[&type_of< PostProcessStepRepeat >()] = new PostProcessStepRepeatFacade();

@@ -60,6 +60,8 @@ public:
 
 	void setScreenPlaneDistance(float screenPlaneDistance);
 
+	void setGodRayDirection(const Vector4& direction);
+
 	void addLight(const Light& light);
 
 	void resetLights();
@@ -131,7 +133,11 @@ public:
 	T_FORCE_INLINE float getScreenPlaneDistance() const {
 		return m_screenPlaneDistance;
 	}
-	
+
+	T_FORCE_INLINE const Vector4& getGodRayDirection() const {
+		return m_godRayDirection;
+	}
+
 private:
 	Frustum m_viewFrustum;
 	Frustum m_cullFrustum;
@@ -150,6 +156,7 @@ private:
 	float m_interocularDistance;
 	float m_distortionValue;
 	float m_screenPlaneDistance;
+	Vector4 m_godRayDirection;
 };
 	
 	}

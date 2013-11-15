@@ -8,6 +8,8 @@
 #include "World/Entity/DirectionalLightEntity.h"
 #include "World/Entity/DirectionalLightEntityData.h"
 #include "World/Entity/ExternalEntityData.h"
+#include "World/Entity/GodRayEntity.h"
+#include "World/Entity/GodRayEntityData.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/GroupEntityData.h"
 #include "World/Entity/NullEntity.h"
@@ -36,6 +38,7 @@ const TypeInfoSet WorldEntityFactory::getEntityTypes() const
 {
 	TypeInfoSet typeSet;
 	typeSet.insert(&type_of< ExternalEntityData >());
+	typeSet.insert(&type_of< GodRayEntityData >());
 	typeSet.insert(&type_of< GroupEntityData >());
 	typeSet.insert(&type_of< DecalEntityData >());
 	typeSet.insert(&type_of< DirectionalLightEntityData >());
@@ -65,6 +68,11 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		resolvedEntityData->setTransform(externalEntityData->getTransform());
 
 		return builder->create(resolvedEntityData);
+	}
+
+	if (const GodRayEntityData* godRayData = dynamic_type_cast< const GodRayEntityData* >(&entityData))
+	{
+		return new GodRayEntity(godRayData->getTransform());
 	}
 
 	if (const GroupEntityData* groupData = dynamic_type_cast< const GroupEntityData* >(&entityData))

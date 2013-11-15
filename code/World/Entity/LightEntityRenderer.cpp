@@ -1,6 +1,7 @@
 #include <limits>
 #include "World/WorldRenderView.h"
 #include "World/Entity/DirectionalLightEntity.h"
+#include "World/Entity/GodRayEntity.h"
 #include "World/Entity/LightEntityRenderer.h"
 #include "World/Entity/PointLightEntity.h"
 #include "World/Entity/SpotLightEntity.h"
@@ -18,6 +19,7 @@ const TypeInfoSet LightEntityRenderer::getEntityTypes() const
 	typeSet.insert(&type_of< DirectionalLightEntity >());
 	typeSet.insert(&type_of< PointLightEntity >());
 	typeSet.insert(&type_of< SpotLightEntity >());
+	typeSet.insert(&type_of< GodRayEntity >());
 	return typeSet;
 }
 
@@ -105,6 +107,12 @@ void LightEntityRenderer::render(
 		light.castShadow = spotLightEntity->getCastShadow();
 
 		worldRenderView.addLight(light);
+	}
+	else if (const GodRayEntity* godRayEntity = dynamic_type_cast< const GodRayEntity* >(entity))
+	{
+		Transform transform;
+		godRayEntity->getTransform(transform);
+		worldRenderView.setGodRayDirection(transform.axisZ());
 	}
 }
 

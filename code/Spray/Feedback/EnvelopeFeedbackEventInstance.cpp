@@ -46,18 +46,26 @@ EnvelopeFeedbackEventInstance::EnvelopeFeedbackEventInstance(const EnvelopeFeedb
 
 bool EnvelopeFeedbackEventInstance::update(const world::UpdateParams& update)
 {
+	float duration = 0.0f;
 	float values[4];
+
 	for (int32_t i = 0; i < 4; ++i)
 	{
 		const std::vector< EnvelopeFeedbackEventData::TimedValue >& envelope = m_data->getEnvelope(i);
-		values[i] = Hermite< EnvelopeFeedbackEventData::TimedValue, float, TimedValueAccessor >(&envelope[0], envelope.size()).evaluate(m_time);
+		if (!envelope.empty())
+		{
+			values[i] = Hermite< EnvelopeFeedbackEventData::TimedValue, float, TimedValueAccessor >(&envelope[0], envelope.size()).evaluate(m_time);
+			duration = max(duration, envelope.back().at);
+		}
+		else
+			values[i] = 0.0f;
 	}
 
 	if (m_feedbackManager)
 		m_feedbackManager->apply(m_data->getType(), values, sizeof_array(values));
 
 	m_time += update.deltaTime;
-	return true;
+	return m_time < duration;
 }
 
 void EnvelopeFeedbackEventInstance::build(world::IWorldRenderer* worldRenderer)
