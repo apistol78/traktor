@@ -95,9 +95,9 @@ void PostProcessStepGodRay::InstanceGodRay::render(
 	
 	// If light is behind camera near plane then skip god rays; but
 	// ensure target is cleared so no lingering rays are kept.
-	if (lightPosition.w() <= 0.0f)
+	if (params.godRayDirection.length2() <= FUZZY_EPSILON || lightPosition.w() <= 0.0f)
 	{
-		const Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+		const static Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
 		renderView->clear(render::CfColor, &c_clearColor, 0.0f, 0);
 		return;
 	}
