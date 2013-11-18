@@ -3,6 +3,7 @@
 #include "Amalgam/Impl/InputServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
+#include "Core/Serialization/DeepClone.h"
 #include "Core/Serialization/DeepHash.h"
 #include "Core/Settings/PropertyBoolean.h"
 #include "Core/Settings/PropertyGroup.h"
@@ -145,7 +146,7 @@ bool InputServer::create(const PropertyGroup* defaultSettings, PropertyGroup* se
 
 	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< PropertyObject >(L"Input.Sources"));
 	if (!m_inputMappingSourceData)
-		m_inputMappingSourceData = m_inputMappingDefaultSourceData;
+		m_inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 
 	if (settings->getProperty< PropertyBoolean >(L"Input.Rumble", true))
 		m_rumbleEffectPlayer = new input::RumbleEffectPlayer();
@@ -182,7 +183,7 @@ int32_t InputServer::reconfigure(const PropertyGroup* settings)
 
 	Ref< input::InputMappingSourceData > inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(settings->getProperty< PropertyObject >(L"Input.Sources"));
 	if (!inputMappingSourceData)
-		inputMappingSourceData = m_inputMappingDefaultSourceData;
+		inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 
 	if (DeepHash(inputMappingSourceData) != DeepHash(m_inputMappingSourceData))
 	{
@@ -476,7 +477,7 @@ void InputServer::revert()
 {
 	m_inputMappingSourceData = dynamic_type_cast< input::InputMappingSourceData* >(m_settings->getProperty< PropertyObject >(L"Input.Sources"));
 	if (!m_inputMappingSourceData)
-		m_inputMappingSourceData = m_inputMappingDefaultSourceData;
+		m_inputMappingSourceData = DeepClone(m_inputMappingDefaultSourceData).create< input::InputMappingSourceData >();
 
 	if (m_inputMappingSourceData && m_inputMappingStateData)
 	{

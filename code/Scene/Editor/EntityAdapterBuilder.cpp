@@ -9,6 +9,7 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityFactory.h"
+#include "World/Entity/GroupEntity.h"
 #include "World/Entity/NullEntity.h"
 
 namespace traktor
@@ -77,11 +78,30 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 	{
 		Ref< EntityAdapter > entityAdapter = *i;
 
-		// Destroy existing entity; will be re-created.
+		// Get cache entry from type of entity data.
+		Cache* cache = 0;
+		if (entityAdapter->getEntityData())
+		{
+			const TypeInfo& entityDataType = type_of(entityAdapter->getEntityData());
+			cache = &m_cache[&entityDataType];
+		}
+
+		// Cache leaf entities; else just remove from adapter.
 		Ref< world::Entity > entity = entityAdapter->getEntity();
 		if (entity)
 		{
-			entity->destroy();
+			if (
+				cache &&
+				entityAdapter->getChildren().empty()
+			)
+			{
+				const world::EntityData* entityData = entityAdapter->getEntityData();
+				T_FATAL_ASSERT (entityData);
+
+				uint32_t hash = DeepHash(entityData).get();
+				cache->leafEntities[hash].push_back(entity);
+			}
+
 			entityAdapter->setEntity(0);
 		}
 
@@ -90,12 +110,9 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 		if (parent)
 			parent->unlink(entityAdapter);
 
-		// Insert into map from instance guid to adapters.
-		if (entityAdapter->getEntityData())
-		{
-			const TypeInfo& entityDataType = type_of(entityAdapter->getEntityData());
-			m_cachedAdapters[&entityDataType].push_back(entityAdapter);
-		}
+		// Save adapter for easy re-use.
+		if (cache)
+			cache->adapters.push_back(entityAdapter);
 
 		// Release entity data reference.
 		entityAdapter->setEntityData(0);
@@ -104,6 +121,22 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 	m_adapterCount = 0;
 
 	T_ASSERT (!m_rootAdapter);
+}
+
+EntityAdapterBuilder::~EntityAdapterBuilder()
+{
+	log::debug << L"Entity builder performance" << Endl;
+	log::debug << IncreaseIndent;
+
+	double totalTime = 0.0;
+	for (std::map< const TypeInfo*, std::pair< int32_t, double > >::const_iterator i = m_buildTimes.begin(); i != m_buildTimes.end(); ++i)
+	{
+		log::debug << i->first->getName() << L" : " << int32_t(i->second.second * 1000.0) << L" ms in " << i->second.first << L" count(s) (" << int32_t(i->second.second * 100000.0 / i->second.first) / 100.0 << L" ms/call)" << Endl;
+		totalTime += i->second.second;
+	}
+
+	log::debug << L"Total : " << int32_t(totalTime * 1000.0) << L" ms" << Endl;
+	log::debug << DecreaseIndent;
 }
 
 void EntityAdapterBuilder::addFactory(const world::IEntityFactory* entityFactory)
@@ -133,12 +166,13 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	if (!entityData)
 		return 0;
 
+	Cache& cache = m_cache[&type_of(entityData)];
+
 	// Get adapter; reuse adapters containing same type of entity.
-	RefArray< EntityAdapter >& cachedAdapters = m_cachedAdapters[&type_of(entityData)];
-	if (!cachedAdapters.empty())
+	if (!cache.adapters.empty())
 	{
-		entityAdapter = cachedAdapters.front();
-		cachedAdapters.pop_front();
+		entityAdapter = cache.adapters.front();
+		cache.adapters.pop_front();
 	}
 	else
 		entityAdapter = new EntityAdapter();
@@ -160,7 +194,41 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	Ref< world::Entity > entity;
 	{
 		T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
-		if (!(entity = entityFactory->createEntity(this, *entityData)))
+
+		// See if we can find an entity in the leaf hash.
+		if (!cache.leafEntities.empty())
+		{
+			uint32_t hash = DeepHash(entityData).get();
+			RefArray< world::Entity >& entities = cache.leafEntities[hash];
+			if (!entities.empty())
+			{
+				entity = entities.front();
+				entities.pop_front();
+			}
+		}
+
+		// If no leaf entity then we need to re-create the entity.
+		if (!entity)
+		{
+			if (m_buildTimeStack.empty())
+				m_timer.start();
+
+			m_buildTimeStack.push_back(m_timer.getElapsedTime());
+
+			entity = entityFactory->createEntity(this, *entityData);
+
+			double duration = m_timer.getElapsedTime() - m_buildTimeStack.back();
+			m_buildTimes[&type_of(entityData)].first++;
+			m_buildTimes[&type_of(entityData)].second += duration;
+			m_buildTimeStack.pop_back();
+
+			// Remove duration from parent build steps; not inclusive times.
+			for (std::vector< double >::iterator i = m_buildTimeStack.begin(); i != m_buildTimeStack.end(); ++i)
+				*i += duration;
+		}
+
+		// If still no entity then we create a null placeholder.
+		if (!entity)
 		{
 			log::warning << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using null entity as placeholder" << Endl;
 			entity = new world::NullEntity(entityData->getTransform());

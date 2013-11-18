@@ -69,7 +69,8 @@ private:
 		}
 	};
 
-	RefArray< const IResourceFactory > m_factories;
+	std::map< const TypeInfo*, Ref< const IResourceFactory > > m_resourceToFactory;
+	std::map< const TypeInfo*, Ref< const IResourceFactory > > m_productToFactory;
 	std::map< Guid, Ref< ResidentResourceHandle > > m_residentHandles;
 	std::map< Guid, RefArray< ExclusiveResourceHandle > > m_exclusiveHandles;
 	std::map< const TypeInfo*, TimeCount > m_times;

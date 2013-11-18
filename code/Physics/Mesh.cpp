@@ -10,7 +10,7 @@ namespace traktor
 		namespace
 		{
 
-const uint32_t c_version = 4;
+const uint32_t c_version = 5;
 
 		}
 
@@ -49,6 +49,16 @@ void Mesh::setHullTriangles(const std::vector< Triangle >& hullTriangles)
 const std::vector< Mesh::Triangle >& Mesh::getHullTriangles() const
 {
 	return m_hullTriangles;
+}
+
+void Mesh::setHullIndices(const std::vector< uint32_t >& hullIndices)
+{
+	m_hullIndices = hullIndices;
+}
+
+const std::vector< uint32_t >& Mesh::getHullIndices() const
+{
+	return m_hullIndices;
 }
 
 void Mesh::setOffset(const Vector4& offset)
@@ -90,6 +100,9 @@ bool Mesh::read(IStream* stream)
 	uint32_t hullTriangleCount;
 	rd >> hullTriangleCount;
 
+	uint32_t hullIndexCount;
+	rd >> hullIndexCount;
+
 	m_vertices.resize(vertexCount);
 	if (vertexCount > 0)
 		rd.read(&m_vertices[0], vertexCount, sizeof(Vector4));
@@ -101,6 +114,10 @@ bool Mesh::read(IStream* stream)
 	m_hullTriangles.resize(hullTriangleCount);
 	if (hullTriangleCount > 0)
 		rd.read(&m_hullTriangles[0], hullTriangleCount, sizeof(Triangle));
+
+	m_hullIndices.resize(hullIndexCount);
+	if (hullIndexCount > 0)
+		rd.read(&m_hullIndices[0], hullIndexCount, sizeof(uint32_t));
 
 	float offset[4] = { 0.0f, 0.0f, 0.0f, 0.0f };
 	rd >> offset[0];
@@ -121,7 +138,8 @@ bool Mesh::write(IStream* stream)
 	wr << uint32_t(m_vertices.size());
 	wr << uint32_t(m_shapeTriangles.size());
 	wr << uint32_t(m_hullTriangles.size());
-	
+	wr << uint32_t(m_hullIndices.size());
+
 	if (!m_vertices.empty())
 		wr.write(&m_vertices[0], int(m_vertices.size()), sizeof(Vector4));
 
@@ -130,6 +148,9 @@ bool Mesh::write(IStream* stream)
 
 	if (!m_hullTriangles.empty())
 		wr.write(&m_hullTriangles[0], int(m_hullTriangles.size()), sizeof(Triangle));
+
+	if (!m_hullIndices.empty())
+		wr.write(&m_hullIndices[0], int(m_hullIndices.size()), sizeof(uint32_t));
 
 	float offset[4];
 	m_offset.storeUnaligned(offset);
