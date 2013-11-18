@@ -25,6 +25,8 @@ As_traktor_amalgam_InputFabricator::As_traktor_amalgam_InputFabricator(flash::Ac
 	prototype->setMember("isFabricating", flash::ActionValue(flash::createNativeFunction(context, &AsInputFabricator::isFabricating)));
 	prototype->setMember("abortedFabricating", flash::ActionValue(flash::createNativeFunction(context, &AsInputFabricator::abortedFabricating)));
 	prototype->setMember("resetInputSource", flash::ActionValue(flash::createNativeFunction(context, &AsInputFabricator::resetInputSource)));
+	prototype->setMember("apply", flash::ActionValue(flash::createNativeFunction(context, &AsInputFabricator::apply)));
+	prototype->setMember("revert", flash::ActionValue(flash::createNativeFunction(context, &AsInputFabricator::revert)));
 
 	prototype->setMember("constructor", flash::ActionValue(this));
 	prototype->setReadOnly();
@@ -62,18 +64,6 @@ void As_traktor_amalgam_InputFabricator::InputFabricator_fabricateSource(flash::
 	);
 
 	ca.ret = flash::ActionValue(r);
-}
-
-void As_traktor_amalgam_InputFabricator::InputFabricator_apply(flash::CallArgs& ca)
-{
-	Ref< AsInputFabricator > inp = ca.self->getRelay< AsInputFabricator >();
-	inp->apply();
-}
-
-void As_traktor_amalgam_InputFabricator::InputFabricator_revert(flash::CallArgs& ca)
-{
-	Ref< AsInputFabricator > inp = ca.self->getRelay< AsInputFabricator >();
-	inp->revert();
 }
 
 	}

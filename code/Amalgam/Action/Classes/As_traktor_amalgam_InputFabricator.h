@@ -27,10 +27,6 @@ private:
 	amalgam::IEnvironment* m_environment;
 
 	void InputFabricator_fabricateSource(flash::CallArgs& ca);
-
-	void InputFabricator_apply(flash::CallArgs& ca);
-
-	void InputFabricator_revert(flash::CallArgs& ca);
 };
 
 	}

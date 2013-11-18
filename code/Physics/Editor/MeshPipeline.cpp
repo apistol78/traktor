@@ -22,7 +22,7 @@ namespace traktor
 	namespace physics
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 4, MeshPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.physics.MeshPipeline", 5, MeshPipeline, editor::IPipeline)
 
 bool MeshPipeline::create(const editor::IPipelineSettings* settings)
 {
@@ -121,6 +121,7 @@ bool MeshPipeline::buildOutput(
 
 	std::vector< Mesh::Triangle > meshShapeTriangles;
 	std::vector< Mesh::Triangle > meshHullTriangles;
+	std::vector< uint32_t > meshHullIndices;
 
 	const std::vector< model::Polygon >& shapeTriangles = model->getPolygons();
 	for (std::vector< model::Polygon >::const_iterator i = shapeTriangles.begin(); i != shapeTriangles.end(); ++i)
@@ -141,6 +142,7 @@ bool MeshPipeline::buildOutput(
 		model::Model hull = *model;
 		model::CalculateConvexHull().apply(hull);
 
+		// Extract hull triangles.
 		const std::vector< model::Polygon >& hullTriangles = hull.getPolygons();
 		for (std::vector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
 		{
@@ -152,6 +154,15 @@ bool MeshPipeline::buildOutput(
 
 			meshHullTriangles.push_back(hullTriangle);
 		}
+
+		// Extract hull indices.
+		std::set< uint32_t > uniqueIndices;
+		for (std::vector< model::Polygon >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
+		{
+			for (int j = 0; j < 3; ++j)
+				uniqueIndices.insert(hull.getVertex(i->getVertex(j)).getPosition());
+		}
+		meshHullIndices = std::vector< uint32_t >(uniqueIndices.begin(), uniqueIndices.end());
 
 		// Improve center of gravity by weighting in volumes of each hull face tetrahedron.
 		Vector4 Voffset = Vector4::zero();
@@ -190,6 +201,7 @@ bool MeshPipeline::buildOutput(
 	mesh.setVertices(positions);
 	mesh.setShapeTriangles(meshShapeTriangles);
 	mesh.setHullTriangles(meshHullTriangles);
+	mesh.setHullIndices(meshHullIndices);
 	mesh.setOffset(centerOfGravity);
 	mesh.setMargin(meshAsset->m_margin);
 

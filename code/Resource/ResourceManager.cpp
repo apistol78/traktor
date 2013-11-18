@@ -29,7 +29,8 @@ ResourceManager::~ResourceManager()
 
 void ResourceManager::destroy()
 {
-	m_factories.clear();
+	m_resourceToFactory.clear();
+	m_productToFactory.clear();
 	m_residentHandles.clear();
 	m_exclusiveHandles.clear();
 	m_times.clear();
@@ -38,19 +39,28 @@ void ResourceManager::destroy()
 void ResourceManager::addFactory(const IResourceFactory* factory)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_factories.push_back(factory);
+	{
+		TypeInfoSet typeSet = factory->getResourceTypes();
+		for (TypeInfoSet::const_iterator i = typeSet.begin(); i != typeSet.end(); ++i)
+			m_resourceToFactory[*i] = factory;
+	}
+	{
+		TypeInfoSet typeSet = factory->getProductTypes();
+		for (TypeInfoSet::const_iterator i = typeSet.begin(); i != typeSet.end(); ++i)
+			m_productToFactory[*i] = factory;
+	}
 }
 
 void ResourceManager::removeFactory(const IResourceFactory* factory)
 {
-	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_factories.remove(factory);
+	T_FATAL_ERROR;
 }
 
 void ResourceManager::removeAllFactories()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	m_factories.clear();
+	m_resourceToFactory.clear();
+	m_productToFactory.clear();
 }
 
 bool ResourceManager::load(const ResourceBundle* bundle)
@@ -269,24 +279,14 @@ void ResourceManager::getStatistics(ResourceManagerStatistics& outStatistics) co
 
 const IResourceFactory* ResourceManager::findFactoryFromResourceType(const TypeInfo& type)
 {
-	for (RefArray< const IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
-	{
-		TypeInfoSet typeSet = (*i)->getResourceTypes();
-		if (std::find(typeSet.begin(), typeSet.end(), &type) != typeSet.end())
-			return *i;
-	}
-	return 0;
+	std::map< const TypeInfo*, Ref< const IResourceFactory > >::const_iterator i = m_resourceToFactory.find(&type);
+	return i != m_resourceToFactory.end() ? i->second : 0;
 }
 
 const IResourceFactory* ResourceManager::findFactoryFromProductType(const TypeInfo& type)
 {
-	for (RefArray< const IResourceFactory >::iterator i = m_factories.begin(); i != m_factories.end(); ++i)
-	{
-		TypeInfoSet typeSet = (*i)->getProductTypes();
-		if (std::find(typeSet.begin(), typeSet.end(), &type) != typeSet.end())
-			return *i;
-	}
-	return 0;
+	std::map< const TypeInfo*, Ref< const IResourceFactory > >::const_iterator i = m_productToFactory.find(&type);
+	return i != m_productToFactory.end() ? i->second : 0;
 }
 
 void ResourceManager::load(const Guid& guid, const IResourceFactory* factory, const TypeInfo& resourceType, IResourceHandle* handle)

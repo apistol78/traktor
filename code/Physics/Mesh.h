@@ -50,6 +50,10 @@ public:
 
 	const std::vector< Triangle >& getHullTriangles() const;
 
+	void setHullIndices(const std::vector< uint32_t >& hullIndices);
+
+	const std::vector< uint32_t >& getHullIndices() const;
+
 	void setOffset(const Vector4& offset);
 
 	const Vector4& getOffset() const;
@@ -66,6 +70,7 @@ private:
 	AlignedVector< Vector4 > m_vertices;
 	std::vector< Triangle > m_shapeTriangles;
 	std::vector< Triangle > m_hullTriangles;
+	std::vector< uint32_t > m_hullIndices;
 	Vector4 m_offset;
 	float m_margin;
 };

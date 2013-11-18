@@ -73,7 +73,7 @@ private:
 	Ref< PropertyGroup > m_settings;
 	Ref< input::InputSystem > m_inputSystem;
 	Ref< input::InputMapping > m_inputMapping;
-	Ref< input::InputMappingSourceData > m_inputMappingDefaultSourceData;
+	Ref< const input::InputMappingSourceData > m_inputMappingDefaultSourceData;
 	Ref< input::InputMappingSourceData > m_inputMappingSourceData;
 	Ref< const input::InputMappingStateData > m_inputMappingStateData;
 	Ref< input::InputSourceFabricator > m_inputSourceFabricator;

@@ -3,6 +3,7 @@
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Timer/Timer.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/ISceneController.h"
 #include "Scene/ISceneControllerData.h"
@@ -266,6 +267,12 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 
 void SceneEditorContext::buildEntities()
 {
+	double T[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+
+	Timer timer;
+	timer.start();
+	T[0] = timer.getElapsedTime();
+
 	m_scene = 0;
 
 	if (m_sceneAsset)
@@ -289,6 +296,8 @@ void SceneEditorContext::buildEntities()
 			for (RefArray< const world::IEntityFactory >::iterator j = entityFactories.begin(); j != entityFactories.end(); ++j)
 				entityAdapterBuilder->addFactory(*j);
 		}
+
+		T[1] = timer.getElapsedTime();
 
 		// Create root group entity as scene instances doesn't have a concept of layers.
 		Ref< world::GroupEntity > rootGroupEntity = new world::GroupEntity();
@@ -339,6 +348,8 @@ void SceneEditorContext::buildEntities()
 			rootGroupEntity->addEntity(layerEntity);
 		}
 
+		T[2] = timer.getElapsedTime();
+
 		// Update scene controller also.
 		Ref< ISceneController > controller;
 		if (m_sceneAsset->getControllerData())
@@ -358,6 +369,8 @@ void SceneEditorContext::buildEntities()
 
 		T_DEBUG(entityAdapterBuilder->getAdapterCount() << L" entity adapter(s) built");
 
+		T[3] = timer.getElapsedTime();
+
 		// Bind post process settings.
 		resource::Proxy< world::PostProcessSettings > postProcessSettings;
 		m_resourceManager->bind(m_sceneAsset->getPostProcessSettings(), postProcessSettings);
@@ -372,6 +385,8 @@ void SceneEditorContext::buildEntities()
 		);
 	}
 
+	T[4] = timer.getElapsedTime();
+
 	// Create map from entity to adapter.
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
@@ -381,6 +396,12 @@ void SceneEditorContext::buildEntities()
 		m_entityAdapterMap.insert((*i)->getEntity(), *i);
 
 	raisePostBuild();
+
+	T[5] = timer.getElapsedTime();
+
+	log::debug << L"Scene build profile:" << Endl;
+	for (int32_t i = 0; i < sizeof_array(T) - 1; ++i)
+		log::debug << L"  T " << i << L"_" << (i + 1) << L": " << int32_t((T[i + 1] - T[i]) * 1000.0) << L" ms" << Endl;
 }
 
 void SceneEditorContext::buildController()
@@ -441,10 +462,10 @@ uint32_t SceneEditorContext::getEntities(RefArray< EntityAdapter >& outEntityAda
 	if (m_layerEntityAdapters.empty())
 		return 0;
 
-	std::stack< range_t > stack;
-	RefArray< EntityAdapter > rootEntityAdapters = m_layerEntityAdapters;
+	outEntityAdapters.reserve(4096);
 
-	stack.push(std::make_pair(rootEntityAdapters.begin(), rootEntityAdapters.end()));
+	std::stack< range_t > stack;
+	stack.push(std::make_pair(m_layerEntityAdapters.begin(), m_layerEntityAdapters.end()));
 	while (!stack.empty())
 	{
 		range_t& r = stack.top();

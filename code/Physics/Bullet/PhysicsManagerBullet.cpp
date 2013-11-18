@@ -554,6 +554,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 		const AlignedVector< Vector4 >& vertices = mesh->getVertices();
 		const std::vector< Mesh::Triangle >& shapeTriangles = mesh->getShapeTriangles();
 		const std::vector< Mesh::Triangle >& hullTriangles = mesh->getHullTriangles();
+		const std::vector< uint32_t >& hullIndices = mesh->getHullIndices();
 
 		if (is_a< DynamicBodyDesc >(desc))
 		{
@@ -563,19 +564,10 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 				return 0;
 			}
 
-			// Extract hull points.
-			std::set< uint32_t > hullIndices;
-			for (std::vector< Mesh::Triangle >::const_iterator i = hullTriangles.begin(); i != hullTriangles.end(); ++i)
-			{
-				hullIndices.insert(i->indices[0]);
-				hullIndices.insert(i->indices[1]);
-				hullIndices.insert(i->indices[2]);
-			}
-
 			// Build point list, only hull points.
 			AlignedVector< Vector4 > hullPoints;
 			hullPoints.reserve(hullIndices.size());
-			for (std::set< uint32_t >::iterator j = hullIndices.begin(); j != hullIndices.end(); ++j)
+			for (std::vector< uint32_t >::const_iterator j = hullIndices.begin(); j != hullIndices.end(); ++j)
 				hullPoints.push_back(vertices[*j]);
 
 			// Create Bullet shape.

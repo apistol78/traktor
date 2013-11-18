@@ -4,6 +4,7 @@
 #include <map>
 #include "Core/Guid.h"
 #include "Core/RefArray.h"
+#include "Core/Timer/Timer.h"
 #include "World/IEntityBuilder.h"
 
 namespace traktor
@@ -26,6 +27,8 @@ public:
 		const RefArray< const IEntityEditorFactory >& entityEditorFactories
 	);
 
+	virtual ~EntityAdapterBuilder();
+
 	virtual void addFactory(const world::IEntityFactory* entityFactory);
 
 	virtual void removeFactory(const world::IEntityFactory* entityFactory);
@@ -45,13 +48,23 @@ public:
 	uint32_t getAdapterCount() const;
 
 private:
+	struct Cache
+	{
+		RefArray< EntityAdapter > adapters;
+		std::map< uint32_t, RefArray< world::Entity > > leafEntities;
+	};
+
 	Ref< SceneEditorContext > m_context;
 	Ref< world::IEntityBuilder > m_entityBuilder;
 	RefArray< const IEntityEditorFactory > m_entityEditorFactories;
-	mutable std::map< const TypeInfo*, RefArray< EntityAdapter > > m_cachedAdapters;
+	mutable std::map< const TypeInfo*, Cache > m_cache;
 	mutable Ref< EntityAdapter > m_currentAdapter;
 	mutable Ref< EntityAdapter > m_rootAdapter;
 	mutable uint32_t m_adapterCount;
+
+	mutable Timer m_timer;
+	mutable std::vector< double > m_buildTimeStack;
+	mutable std::map< const TypeInfo*, std::pair< int32_t, double > > m_buildTimes;
 };
 
 	}
