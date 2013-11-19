@@ -47,7 +47,7 @@ bool SimpleTextureSw::create(const SimpleTextureCreateDesc& desc)
 					break;
 
 				case TfR8G8B8A8:
-					*dst = (src[3] << 24) | (src[0] << 16) | (src[1] << 8) | src[2];
+					*dst = (src[3] << 24) | (src[2] << 16) | (src[1] << 8) | src[0];
 					break;
 
 				case TfR16G16B16A16F:

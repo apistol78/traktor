@@ -221,7 +221,7 @@ bool EditorPlugin::handleCommand(const ui::Command& command, bool result_)
 				Action action;
 
 				// Add build output data action.
-				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
+				action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
 				action.action = new BuildTargetAction(
 					m_editor->getSourceDatabase(),
 					m_editor->getSettings(),
@@ -349,6 +349,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 
 	// Set target's state to pending as actions can be queued up to be performed much later.
 	targetInstance->setState(TsPending);
+	targetInstance->setBuildProgress(0);
 
 	{
 		T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_targetActionQueueLock);
@@ -359,7 +360,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 		Action action;
 
 		// Add build output data action.
-		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
+		action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsBuilding);
 		action.action = new BuildTargetAction(
 			m_editor->getSourceDatabase(),
 			m_editor->getSettings(),
@@ -383,7 +384,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
 
 			// Add deploy and launch actions.
-			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
+			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsDeploying);
 			action.action = new DeployTargetAction(
 				m_editor->getSourceDatabase(),
 				m_editor->getSettings(),
@@ -398,7 +399,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 			);
 			chain.actions.push_back(action);
 
-			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsPending);
+			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsLaunching);
 			action.action = new LaunchTargetAction(
 				m_editor->getSourceDatabase(),
 				m_editor->getSettings(),
@@ -413,7 +414,7 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 		else if ((event->getKeyState() & ui::KsControl) != 0)
 		{
 			// Add migrate actions.
-			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsProgress);
+			action.listener = new TargetInstanceProgressListener(m_targetList, targetInstance, TsMigrating);
 			action.action = new MigrateTargetAction(
 				m_editor->getSourceDatabase(),
 				m_editor->getSettings(),

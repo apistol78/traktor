@@ -26,16 +26,18 @@ const uint32_t c_trigResolution = 65536;
 #define REGISTERS					ecx
 #define CONTEXT						esi
 #define CONTEXT_OFFSET_CONSTANTS	0
-#define CONTEXT_OFFSET_TARGETSIZE	4
-#define CONTEXT_OFFSET_UNIFORMS		8
-#define CONTEXT_OFFSET_VARYINGS		12
-#define CONTEXT_OFFSET_SAMPLERS		16
-#define CONTEXT_OFFSET_OUT			20
+#define CONTEXT_OFFSET_INSTANCE		4
+#define CONTEXT_OFFSET_TARGETSIZE	8
+#define CONTEXT_OFFSET_UNIFORMS		12
+#define CONTEXT_OFFSET_VARYINGS		16
+#define CONTEXT_OFFSET_SAMPLERS		20
+#define CONTEXT_OFFSET_OUT			24
 
 #pragma pack(1)
 struct ExecuteContext
 {
 	void* constants;
+	void* instance;
 	void* targetSize;
 	void* uniforms;
 	void* varyings;
@@ -296,6 +298,11 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 		case OpFetchConstant:
 			a.lea(eax, CONTEXT, CONTEXT_OFFSET_CONSTANTS);
 			a.movaps(xmmw(a, i.dest), eax, i.src[0] * 16);
+			break;
+
+		case OpFetchInstance:
+			a.lea(eax, CONTEXT, CONTEXT_OFFSET_INSTANCE);
+			a.movaps(xmmw(a, i.dest), eax, 0);
 			break;
 
 		case OpFetchTargetSize:
@@ -892,6 +899,7 @@ void JitX86::destroy(image_t image) const
 
 void JitX86::execute(
 	const image_t image,
+	int32_t instance,
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
 	const Vector4& targetSize,
@@ -902,6 +910,12 @@ void JitX86::execute(
 	InternalImage* i = reinterpret_cast< InternalImage* >(image);
 	void* native = i->native;
 
+	float T_ALIGN16 instance4f[4];
+	instance4f[0] =
+	instance4f[1] =
+	instance4f[2] =
+	instance4f[3] = float(instance);
+
 	float T_ALIGN16 registers[258 * 4];
 #if defined(_DEBUG)
 	memset(registers, 0, sizeof(registers));
@@ -909,6 +923,7 @@ void JitX86::execute(
 
 	ExecuteContext T_ALIGN16 context;
 	context.constants = (void*)i->constants;
+	context.instance = (void*)instance4f;
 	context.targetSize = (void*)&targetSize;
 	context.uniforms = (void*)inUniforms;
 	context.varyings = (void*)inVaryings;

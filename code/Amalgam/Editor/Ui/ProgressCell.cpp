@@ -53,6 +53,11 @@ ProgressCell::ProgressCell()
 	m_imageProgressBar = ui::Bitmap::load(c_ResourceProgressBar, sizeof(c_ResourceProgressBar), L"png");
 }
 
+void ProgressCell::setText(const std::wstring& text)
+{
+	m_text = text;
+}
+
 void ProgressCell::setProgress(int32_t progress)
 {
 	m_progress = progress;
@@ -75,6 +80,11 @@ void ProgressCell::paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, con
 			rect2.right = rect2.left + x;
 			drawSkin(canvas, rect2, m_imageProgressBar, 0);
 		}
+	}
+	if (!m_text.empty())
+	{
+		ui::Rect rect2 = rect; rect2.left += 2;
+		canvas.drawText(rect2, m_text, ui::AnLeft, ui::AnCenter);
 	}
 }
 

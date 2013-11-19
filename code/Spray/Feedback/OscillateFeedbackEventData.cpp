@@ -23,6 +23,7 @@ void OscillateFeedbackEventData::serialize(ISerializer& s)
 	{
 		{ L"FbtNone", FbtNone },
 		{ L"FbtCamera", FbtCamera },
+		{ L"FbtPostProcess", FbtPostProcess },
 		{ L"FbtUI", FbtUI },
 		{ 0 }
 	};

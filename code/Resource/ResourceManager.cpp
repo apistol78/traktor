@@ -75,7 +75,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 		const IResourceFactory* factory = findFactoryFromResourceType(*i->first);
 		if (!factory)
 		{
-			log::error << L"Unable to preload " << *i->first->getName() << L" resource; no resource factory for specified type" << Endl;
+			log::error << L"Unable to preload resource " << i->second.format() << L"; no resource factory for type " << (i->first != 0 ? i->first->getName() : L"(null)") << Endl;
 			return 0;
 		}
 
@@ -95,7 +95,7 @@ bool ResourceManager::load(const ResourceBundle* bundle)
 			load(i->second, factory, *i->first, residentHandle);
 			if (!residentHandle->get())
 			{
-				log::error << L"Unable to preload " << *i->first->getName() << L" resource; skipped" << Endl;
+				log::error << L"Unable to preload resource " << i->second.format() << L"; skipped" << Endl;
 				continue;
 			}
 		}

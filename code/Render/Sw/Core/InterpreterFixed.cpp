@@ -69,6 +69,7 @@ void InterpreterFixed::destroy(image_t image) const
 
 void InterpreterFixed::execute(
 	const image_t image,
+	int32_t instance,
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
 	const Vector4& targetSize,
@@ -92,6 +93,15 @@ void InterpreterFixed::execute(
 
 		case OpFetchConstant:
 			dest = img->constants[i->src[0]];
+			break;
+
+		case OpFetchInstance:
+			dest = toFixed(Vector4(
+				float(instance),
+				float(instance),
+				float(instance),
+				float(instance)
+			));
 			break;
 
 		case OpFetchTargetSize:

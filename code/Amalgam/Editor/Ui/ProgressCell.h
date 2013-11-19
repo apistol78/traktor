@@ -14,12 +14,15 @@ class ProgressCell : public ui::custom::AutoWidgetCell
 public:
 	ProgressCell();
 
+	void setText(const std::wstring& text);
+
 	void setProgress(int32_t progress);
 
 	virtual void paint(ui::custom::AutoWidget* widget, ui::Canvas& canvas, const ui::Rect& rect);
 
 private:
 	Ref< ui::Bitmap > m_imageProgressBar;
+	std::wstring m_text;
 	int32_t m_progress;
 };
 

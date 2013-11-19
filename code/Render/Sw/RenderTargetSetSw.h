@@ -38,13 +38,13 @@ public:
 
 	virtual bool read(int index, void* buffer) const;
 
-	uint16_t* getDepthSurface() { return m_depthSurface.ptr(); }
+	float* getDepthSurface() { return m_depthSurface.ptr(); }
 
 	bool usingPrimaryDepth() const { return m_usingPrimaryDepth; }
 
 private:
 	RefArray< RenderTargetSw > m_colorTargets;
-	AutoArrayPtr< uint16_t > m_depthSurface;
+	AutoArrayPtr< float, AllocFreeAlign > m_depthSurface;
 	int m_width;
 	int m_height;
 	bool m_usingPrimaryDepth;

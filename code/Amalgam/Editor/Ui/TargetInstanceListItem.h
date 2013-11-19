@@ -1,6 +1,7 @@
 #ifndef traktor_amalgam_TargetInstanceListItem_H
 #define traktor_amalgam_TargetInstanceListItem_H
 
+#include "Amalgam/Editor/TargetInstance.h"
 #include "Core/RefArray.h"
 #include "Ui/Custom/Auto/AutoWidgetCell.h"
 
@@ -13,7 +14,6 @@ class ButtonCell;
 class DropListCell;
 class HostEnumerator;
 class ProgressCell;
-class TargetInstance;
 
 class TargetInstanceListItem : public ui::custom::AutoWidgetCell
 {
@@ -33,6 +33,7 @@ private:
 	RefArray< ButtonCell > m_stopCells;
 	RefArray< ButtonCell > m_captureCells;
 	Ref< TargetInstance > m_instance;
+	TargetState m_lastInstanceState;
 };
 
 	}

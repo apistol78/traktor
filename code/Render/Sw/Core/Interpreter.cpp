@@ -67,6 +67,7 @@ void Interpreter::destroy(image_t image) const
 
 void Interpreter::execute(
 	const image_t image,
+	int32_t instance,
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
 	const Vector4& targetSize,
@@ -97,6 +98,16 @@ void Interpreter::execute(
 
 		case OpFetchConstant:
 			dest = img->program.getConstant(i->src[0]);
+			CHECK(dest);
+			break;
+
+		case OpFetchInstance:
+			dest = Vector4(
+				float(instance),
+				float(instance),
+				float(instance),
+				float(instance)
+			);
 			CHECK(dest);
 			break;
 

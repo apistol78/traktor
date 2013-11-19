@@ -1,6 +1,7 @@
+#include "Core/Misc/Align.h"
+#include "Render/Types.h"
 #include "Render/Sw/RenderTargetSetSw.h"
 #include "Render/Sw/RenderTargetSw.h"
-#include "Render/Types.h"
 
 namespace traktor
 {
@@ -38,7 +39,11 @@ bool RenderTargetSetSw::create(const RenderTargetSetCreateDesc& desc)
 		if (m_usingPrimaryDepth)
 			return false;
 
-		m_depthSurface.reset(new uint16_t [desc.width * desc.height]);
+		m_depthSurface.reset((float*)Alloc::acquireAlign(
+			alignUp(desc.width * desc.height, 4) * sizeof(float),
+			16,
+			T_FILE_LINE
+		));
 	}
 
 	return true;

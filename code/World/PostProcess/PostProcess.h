@@ -92,6 +92,8 @@ public:
 
 	void setParameter(render::handle_t handle, float value);
 
+	void setParameter(render::handle_t handle, const Vector4& value);
+
 	void prepareShader(render::Shader* shader) const;
 
 	bool requireHighRange() const;
@@ -118,6 +120,7 @@ private:
 	RefArray< PostProcessStep::Instance > m_instances;
 	SmallMap< render::handle_t, bool > m_booleanParameters;
 	SmallMap< render::handle_t, float > m_scalarParameters;
+	SmallMap< render::handle_t, Vector4 > m_vectorParameters;
 	Ref< render::RenderTargetSet > m_currentTarget;
 	bool m_requireHighRange;
 	Semaphore m_lock;

@@ -27,7 +27,10 @@ class TargetConnection;
 enum TargetState
 {
 	TsIdle,
-	TsProgress,
+	TsBuilding,
+	TsDeploying,
+	TsLaunching,
+	TsMigrating,
 	TsPending
 };
 

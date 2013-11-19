@@ -307,9 +307,8 @@ void emitInterpolator(EmitterContext& cx, Interpolator* node)
 
 void emitInstance(EmitterContext& cx, Instance* node)
 {
-	Variable* in = cx.emitConstant(0.0f);
 	Variable* out = cx.emitOutput(node, L"Output", VtFloat);
-	cx.emitInstruction(OpFetchConstant, out, in);
+	cx.emitInstruction(OpFetchInstance, out);
 }
 
 void emitIterate(EmitterContext& cx, Iterate* node)

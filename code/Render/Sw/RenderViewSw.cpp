@@ -54,19 +54,14 @@ inline uint16_t to565(const Vector4& rgb)
 
 inline Vector4 from565(uint16_t rgb)
 {
-	uint8_t r = (rgb & 0xf800) << 3;
-	uint8_t g = (rgb & 0x07e0) << 2;
-	uint8_t b = (rgb & 0x001f) << 3;
+	uint32_t r = (rgb & 0xf800) >> 8;
+	uint32_t g = (rgb & 0x07e0) >> 3;
+	uint32_t b = (rgb & 0x001f) << 3;
 	return Vector4(
 		r / 255.0f,
 		g / 255.0f,
 		b / 255.0f
 	);
-}
-
-inline uint16_t toDepth(float v)
-{
-	return uint16_t(v * 65535.0f);
 }
 
 struct AxisX { static float get(const Vector2& v) { return v.x; } };
@@ -120,11 +115,16 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::IGraphicsSyst
 ,	m_processor(processor)
 ,	m_depthBuffer(0)
 ,	m_viewPort(0, 0, 0, 0, 0, 0)
+,	m_instance(0)
 {
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	m_depthBuffer.reset(new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height]);
+	m_depthBuffer.reset((float*)Alloc::acquireAlign(
+		alignUp(m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height, 4) * sizeof(float),
+		16,
+		T_FILE_LINE
+	));
 	m_viewPort = Viewport(0, 0, m_frameBufferSurfaceDesc.width, m_frameBufferSurfaceDesc.height, 0.0f, 1.0f);
 
 	m_targetSize.set(
@@ -187,7 +187,11 @@ bool RenderViewSw::reset(int32_t width, int32_t height)
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	m_depthBuffer.reset(new uint16_t [m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height]);
+	m_depthBuffer.reset((float*)Alloc::acquireAlign(
+		alignUp(m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height, 4) * sizeof(float),
+		16,
+		T_FILE_LINE
+	));
 	m_viewPort.width = width / c_targetScale;
 	m_viewPort.height = height / c_targetScale;
 
@@ -273,7 +277,7 @@ bool RenderViewSw::begin(EyeType eye)
 		frameBuffer,
 		m_frameBufferSurfaceDesc.pitch,
 		m_depthBuffer.ptr(),
-		m_frameBufferSurfaceDesc.width * sizeof(uint16_t)
+		m_frameBufferSurfaceDesc.width * sizeof(uint32_t)
 	};
 
 	m_renderStateStack.push_back(rs);
@@ -300,13 +304,13 @@ bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 		rt->getColorSurface(),
 		rt->getWidth() * sizeof(uint16_t),
 		rts->getDepthSurface(),
-		rt->getWidth() * sizeof(uint16_t)
+		rt->getWidth() * sizeof(uint32_t)
 	};
 
 	if (rts->usingPrimaryDepth())
 	{
 		rs.depthTarget = m_depthBuffer.ptr();
-		rs.depthTargetPitch = m_frameBufferSurfaceDesc.width * sizeof(uint16_t);
+		rs.depthTargetPitch = m_frameBufferSurfaceDesc.width * sizeof(uint32_t);
 	}
 
 	m_renderStateStack.push_back(rs);
@@ -334,15 +338,15 @@ void RenderViewSw::clear(uint32_t clearMask, const Color4f* colors, float depth,
 	}
 	if (clearMask & CfDepth)
 	{
-		uint16_t* depthTarget = rs.depthTarget;
+		float* depthTarget = rs.depthTarget;
 		if (depthTarget)
 		{
-			uint16_t clearDepth = toDepth(1.0f - depth);
+			Vector4 depth4f(depth, depth, depth, depth);
 			for (int32_t y = 0; y < rs.height; ++y)
 			{
-				for (int32_t x = 0; x < rs.width; ++x)
-					depthTarget[x] = clearDepth;
-				depthTarget += rs.depthTargetPitch / sizeof(uint16_t);
+				for (int32_t x = 0; x < rs.width; x += 4)
+					depth4f.storeAligned(&depthTarget[x]);
+				depthTarget += rs.depthTargetPitch / sizeof(uint32_t);
 			}
 		}
 	}
@@ -353,6 +357,7 @@ void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 	m_currentVertexBuffer = checked_type_cast< VertexBufferSw* >(vertexBuffer);
 	m_currentIndexBuffer = checked_type_cast< IndexBufferSw* >(indexBuffer);
 	m_currentProgram = checked_type_cast< ProgramSw * >(program);
+	m_instance = 0;
 
 	if (primitives.indexed)
 		drawIndexed(primitives);
@@ -362,6 +367,20 @@ void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IP
 
 void RenderViewSw::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, IProgram* program, const Primitives& primitives, uint32_t instanceCount)
 {
+	m_currentVertexBuffer = checked_type_cast< VertexBufferSw* >(vertexBuffer);
+	m_currentIndexBuffer = checked_type_cast< IndexBufferSw* >(indexBuffer);
+	m_currentProgram = checked_type_cast< ProgramSw * >(program);
+
+	if (primitives.indexed)
+	{
+		for (m_instance = 0; m_instance < instanceCount; ++m_instance)
+			drawIndexed(primitives);
+	}
+	else
+	{
+		for (m_instance = 0; m_instance < instanceCount; ++m_instance)
+			drawNonIndexed(primitives);
+	}
 }
 
 void RenderViewSw::end()
@@ -422,6 +441,7 @@ void RenderViewSw::executeVertexShader(const varying_data_t& vertexVarying, vary
 
 	m_processor->execute(
 		m_currentProgram->getVertexProgram(),
+		m_instance,
 		m_currentProgram->getParameters(),		// Uniforms
 		(const Vector4*)&vertexVarying,			// Vertex varyings
 		m_targetSize,							// Target size
@@ -824,7 +844,7 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 	uint32_t icount = m_currentProgram->getInterpolatorCount();
 
 	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint16_t);
-	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(uint16_t);
+	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(uint32_t);
 
 	// Calculate barycentric coordinates.
 	const Vector2* T = context.triangle;
@@ -847,8 +867,8 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 	T_ALIGN16 varying_data_t pixelVaryings;
 	T_ALIGN16 varying_data_t fragmentVaryings;
 
-	scalar_t w1 = surfaceInterpolators[0][0].w();
-	scalar_t w2 = surfaceInterpolators[1][0].w();
+	scalar_t z1 = surfaceInterpolators[0][0].z();
+	scalar_t z2 = surfaceInterpolators[1][0].z();
 	scalar_t ix = scalar_t(1.0f / float(x2 - x1));
 
 	for (uint32_t i = 0; i < 6 + icount; ++i)
@@ -862,10 +882,9 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 	for (int x = 0; x < x2 - x1; ++x, ++colorTargetOffset, ++depthTargetOffset)
 	{
 		scalar_t t = scalar_t(x * ix);
-		scalar_t w = lerp(w1, w2, t);
-		uint16_t fragmentDepth = toDepth(scalar_t(1.0f) / w);
+		scalar_t z = lerp(z1, z2, t);
 
-		//if (!context.depthEnable || fragmentDepth > rs.depthTarget[depthTargetOffset])
+		if (!context.depthEnable || z <= rs.depthTarget[depthTargetOffset])
 		{
 			// Calculate per pixel varyings.
 			for (uint32_t i = 0; i < 6 + icount; ++i)
@@ -877,6 +896,7 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 			// Execute pixel program.
 			m_processor->execute(
 				pixelProgram,
+				m_instance,
 				parameters,
 				pixelVaryings,
 				m_targetSize,
@@ -893,7 +913,7 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 			rs.colorTarget[colorTargetOffset] = fragmentColor;
 
 			if (context.depthWriteEnable)
-				rs.depthTarget[depthTargetOffset] = fragmentDepth;
+				rs.depthTarget[depthTargetOffset] = z;
 		}
 	}
 }
@@ -908,7 +928,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 	uint32_t icount = m_currentProgram->getInterpolatorCount();
 
 	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint16_t);
-	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(uint16_t);
+	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(uint32_t);
 
 	// Calculate barycentric coordinates.
 	const Vector2* T = context.triangle;
@@ -931,8 +951,8 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 	varying_data_t pixelVaryings;
 	varying_data_t fragmentVaryings;
 
-	scalar_t w1 = surfaceInterpolators[0][0].w();
-	scalar_t w2 = surfaceInterpolators[1][0].w();
+	scalar_t z1 = surfaceInterpolators[0][0].z();
+	scalar_t z2 = surfaceInterpolators[1][0].z();
 	scalar_t ix = scalar_t(1.0f / float(x2 - x1));
 
 	// Only interpolate DuCustom across surface.
@@ -945,10 +965,9 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 	for (int x = 0; x < x2 - x1; ++x, ++colorTargetOffset, ++depthTargetOffset)
 	{
 		scalar_t t = scalar_t(x * ix);
-		scalar_t w = lerp(w1, w2, t);
-		uint16_t fragmentDepth = toDepth(scalar_t(1.0f) / w);
+		scalar_t z = lerp(z1, z2, t);
 
-		//if (!context.depthEnable || fragmentDepth > rs.depthTarget[depthTargetOffset])
+		if (!context.depthEnable || z <= rs.depthTarget[depthTargetOffset])
 		{
 			// Calculate per pixel varyings.
 			for (uint32_t i = 0; i < 6 + icount; ++i)
@@ -960,6 +979,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 			// Execute pixel program.
 			m_processor->execute(
 				pixelProgram,
+				m_instance,
 				parameters,
 				pixelVaryings,
 				m_targetSize,
@@ -1076,7 +1096,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 			rs.colorTarget[colorTargetOffset] = to565(color);
 
 			if (context.depthWriteEnable)
-				rs.depthTarget[depthTargetOffset] = fragmentDepth;
+				rs.depthTarget[depthTargetOffset] = z;
 		}
 	}
 }

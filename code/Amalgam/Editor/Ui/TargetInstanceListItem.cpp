@@ -3,12 +3,12 @@
 #include "Amalgam/Editor/Platform.h"
 #include "Amalgam/Editor/TargetConfiguration.h"
 #include "Amalgam/Editor/TargetConnection.h"
-#include "Amalgam/Editor/TargetInstance.h"
 #include "Amalgam/Editor/Ui/ButtonCell.h"
 #include "Amalgam/Editor/Ui/DropListCell.h"
 #include "Amalgam/Editor/Ui/ProgressCell.h"
 #include "Amalgam/Editor/Ui/TargetInstanceListItem.h"
 #include "Core/Misc/String.h"
+#include "I18N/Text.h"
 #include "Ui/Application.h"
 #include "Ui/Custom/Auto/AutoWidget.h"
 
@@ -46,6 +46,7 @@ std::wstring formatPerformanceValue(float value)
 
 TargetInstanceListItem::TargetInstanceListItem(HostEnumerator* hostEnumerator, TargetInstance* instance)
 :	m_instance(instance)
+,	m_lastInstanceState((TargetState)-1)
 {
 	if (!s_bitmapPlatforms)
 		s_bitmapPlatforms = ui::Bitmap::load(c_ResourcePlatforms, sizeof(c_ResourcePlatforms), L"png");
@@ -83,7 +84,7 @@ void TargetInstanceListItem::placeCells(ui::custom::AutoWidget* widget, const ui
 		);
 	}
 
-	if (m_instance->getState() == TsProgress)
+	if (m_instance->getState() != TsIdle)
 	{
 		widget->placeCell(
 			m_progressCell,
@@ -170,7 +171,23 @@ void TargetInstanceListItem::paint(ui::custom::AutoWidget* widget, ui::Canvas& c
 	canvas.setForeground(ui::getSystemColor(ui::ScButtonShadow));
 	canvas.drawLine(rect.left, rect.bottom - 1, rect.right, rect.bottom - 1);
 
-	if (m_instance->getState() == TsProgress)
+	if (m_instance->getState() != m_lastInstanceState)
+	{
+		const wchar_t* c_textIds[] =
+		{
+			L"AMALGAM_STATE_IDLE",
+			L"AMALGAM_STATE_BUILDING",
+			L"AMALGAM_STATE_DEPLOYING",
+			L"AMALGAM_STATE_LAUNCHING",
+			L"AMALGAM_STATE_MIGRATING",
+			L"AMALGAM_STATE_PENDING"
+		};
+		T_FATAL_ASSERT(m_instance->getState() < sizeof_array(c_textIds));
+		m_progressCell->setText(i18n::Text(c_textIds[m_instance->getState()]));
+		m_lastInstanceState = m_instance->getState();
+	}
+
+	if (m_instance->getState() != TsIdle)
 	{
 		int32_t progress = m_instance->getBuildProgress();
 		m_progressCell->setProgress(progress);
