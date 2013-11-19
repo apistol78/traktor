@@ -107,15 +107,16 @@ public:
 	 * \return Resource proxy.
 	 */
 	template < 
-		typename ResourceType
+		typename ResourceType,
+		typename ProductType
 	>
-	bool bind(const Id< ResourceType >& id, Proxy< ResourceType >& outProxy)
+	bool bind(const Id< ResourceType >& id, Proxy< ProductType >& outProxy)
 	{
-		Ref< IResourceHandle > handle = bind(type_of< ResourceType >(), id);
+		Ref< IResourceHandle > handle = bind(type_of< ProductType >(), id);
 		if (!handle)
 			return false;
 
-		outProxy = Proxy< ResourceType >(handle);
+		outProxy = Proxy< ProductType >(handle);
 		return bool(handle->get() != 0);
 	}
 

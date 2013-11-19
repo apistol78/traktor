@@ -19,6 +19,7 @@
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/NullEntity.h"
 #include "World/Entity/TransientEntity.h"
+#include "World/PostProcess/PostProcess.h"
 
 namespace traktor
 {
@@ -28,6 +29,7 @@ namespace traktor
 		{
 
 const Color4f c_clearColor(0.0f, 0.0f, 0.0f, 0.0f);
+render::handle_t s_handleFeedback;
 
 		}
 
@@ -57,7 +59,13 @@ WorldLayer::WorldLayer(
 	// Register ourself for camera shake.
 	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
 	if (feedbackManager)
+	{
 		feedbackManager->addListener(spray::FbtCamera, this);
+		feedbackManager->addListener(spray::FbtPostProcess, this);
+	}
+
+	// Get parameter handles.
+	s_handleFeedback = render::getParameterHandle(L"Feedback");
 }
 
 WorldLayer::~WorldLayer()
@@ -70,7 +78,10 @@ void WorldLayer::destroy()
 	// Remove ourself from feedback manager.
 	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
 	if (feedbackManager)
+	{
+		feedbackManager->removeListener(spray::FbtPostProcess, this);
 		feedbackManager->removeListener(spray::FbtCamera, this);
+	}
 
 	m_scene.clear();
 	m_entities.clear();
@@ -390,11 +401,21 @@ float WorldLayer::getAlternateTime() const
 
 void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)
 {
-	T_ASSERT (count >= 3);
-	m_cameraOffset = Transform(
-		Vector4(values[0], values[1], values[2]),
-		Quaternion::identity()
-	);
+	if (type == spray::FbtCamera)
+	{
+		T_ASSERT (count >= 3);
+		m_cameraOffset = Transform(
+			Vector4(values[0], values[1], values[2]),
+			Quaternion::identity()
+		);
+	}
+	else if (type == spray::FbtPostProcess)
+	{
+		T_ASSERT (count >= 4);
+		world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
+		if (postProcess)
+			postProcess->setParameter(s_handleFeedback, Vector4::loadUnaligned(values));
+	}
 }
 
 void WorldLayer::createWorldRenderer()

@@ -37,6 +37,7 @@ public:
 
 	virtual void execute(
 		const image_t image,
+		int32_t instance,
 		const Vector4* inUniforms,
 		const Vector4* inVaryings,
 		const Vector4& targetSize,

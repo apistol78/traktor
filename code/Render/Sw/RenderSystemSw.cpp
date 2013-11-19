@@ -22,16 +22,16 @@
 #	endif
 #endif
 
-//#if defined(_WIN32) && !defined(WINCE) && !defined(_WIN64)
-//#	include "Render/Sw/Core/x86/JitX86.h"
-//typedef traktor::render::JitX86 ProcessorImpl;
-//#elif !defined(WINCE)
+#if defined(_WIN32) && !defined(WINCE) && !defined(_WIN64)
+#	include "Render/Sw/Core/x86/JitX86.h"
+typedef traktor::render::JitX86 ProcessorImpl;
+#elif !defined(WINCE)
 #	include "Render/Sw/Core/Interpreter.h"
 typedef traktor::render::Interpreter ProcessorImpl;
-//#else
-//#	include "Render/Sw/Core/InterpreterFixed.h"
-//typedef traktor::render::InterpreterFixed ProcessorImpl;
-//#endif
+#else
+#	include "Render/Sw/Core/InterpreterFixed.h"
+typedef traktor::render::InterpreterFixed ProcessorImpl;
+#endif
 
 namespace traktor
 {

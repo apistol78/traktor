@@ -14,6 +14,30 @@
       <second>Runtime tweaks</second>
     </item>
     <item>
+      <first>AMALGAM_STATE_IDLE</first>
+      <second></second>
+    </item>
+    <item>
+      <first>AMALGAM_STATE_BUILDING</first>
+      <second>Building...</second>
+    </item>
+    <item>
+      <first>AMALGAM_STATE_DEPLOYING</first>
+      <second>Deploying...</second>
+    </item>
+    <item>
+      <first>AMALGAM_STATE_LAUNCHING</first>
+      <second>Launching...</second>
+    </item>
+    <item>
+      <first>AMALGAM_STATE_MIGRATING</first>
+      <second>Migrating...</second>
+    </item>
+    <item>
+      <first>AMALGAM_STATE_PENDING</first>
+      <second>Pending...</second>
+    </item>
+    <item>
       <first>ANIMATION_EDITOR_BROWSE_SKELETON</first>
       <second>Browse skeleton...</second>
     </item>
@@ -329,6 +353,9 @@
       <first>EDITOR_CHECK_SERIALIZABLE_CLASSES</first>
       <second>Check serializable classes</second>
     </item>
+    <item>
+      <first>EDITOR_DELETE_EMPTY_GROUPS</first>
+      <second>Delete empty database groups</second>
     <item>
       <first>EDITOR_OPEN_PROJECT</first>
       <second>Open project</second>

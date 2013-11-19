@@ -101,7 +101,7 @@ private:
 		uint32_t height;
 		uint16_t* colorTarget;
 		uint32_t colorTargetPitch;	//< Color target pitch in bytes.
-		uint16_t* depthTarget;
+		float* depthTarget;
 		uint32_t depthTargetPitch;	//< Depth target pitch in bytes.
 	};
 
@@ -141,7 +141,7 @@ private:
 	//@{
 	Ref< graphics::ISurface > m_frameBufferSurface;
 	graphics::SurfaceDesc m_frameBufferSurfaceDesc;
-	AutoArrayPtr< uint16_t > m_depthBuffer;
+	AutoArrayPtr< float, AllocFreeAlign > m_depthBuffer;
 	//@}
 
 	std::list< RenderState > m_renderStateStack;
@@ -150,6 +150,7 @@ private:
 	Ref< ProgramSw > m_currentProgram;
 	Viewport m_viewPort;
 	Vector4 m_targetSize;
+	int32_t m_instance;
 
 	void fetchVertex(uint32_t index, varying_data_t& outVertexVarying) const;
 

@@ -18,9 +18,10 @@ namespace traktor
 
 enum FeedbackType
 {
-	FbtNone,
-	FbtCamera,
-	FbtUI
+	FbtNone			= 0,
+	FbtCamera		= 1,
+	FbtPostProcess	= 2,
+	FbtUI			= 3
 };
 
 class T_DLLCLASS IFeedbackListener

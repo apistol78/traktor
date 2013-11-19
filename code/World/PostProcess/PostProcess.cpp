@@ -214,12 +214,20 @@ void PostProcess::setParameter(render::handle_t handle, float value)
 	m_scalarParameters[handle] = value;
 }
 
+void PostProcess::setParameter(render::handle_t handle, const Vector4& value)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_vectorParameters[handle] = value;
+}
+
 void PostProcess::prepareShader(render::Shader* shader) const
 {
 	for (SmallMap< render::handle_t, bool >::const_iterator i = m_booleanParameters.begin(); i != m_booleanParameters.end(); ++i)
 		shader->setCombination(i->first, i->second);
 	for (SmallMap< render::handle_t, float >::const_iterator i = m_scalarParameters.begin(); i != m_scalarParameters.end(); ++i)
 		shader->setFloatParameter(i->first, i->second);
+	for (SmallMap< render::handle_t, Vector4 >::const_iterator i = m_vectorParameters.begin(); i != m_vectorParameters.end(); ++i)
+		shader->setVectorParameter(i->first, i->second);
 }
 
 bool PostProcess::requireHighRange() const

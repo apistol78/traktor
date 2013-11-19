@@ -22,8 +22,8 @@ EntityEventResourceFactory::EntityEventResourceFactory(db::Database* db, const I
 const TypeInfoSet EntityEventResourceFactory::getResourceTypes() const
 {
 	TypeInfoSet typeSet;
-	typeSet.insert(&type_of< EntityEventSet >());
-	typeSet.insert(&type_of< IEntityEvent >());
+	typeSet.insert(&type_of< EntityEventSetData >());
+	typeSet.insert(&type_of< IEntityEventData >());
 	return typeSet;
 }
 
@@ -42,7 +42,7 @@ bool EntityEventResourceFactory::isCacheable() const
 
 Ref< Object > EntityEventResourceFactory::create(resource::IResourceManager* resourceManager, const TypeInfo& resourceType, const Guid& guid, const Object* current) const
 {
-	if (is_type_a< EntityEventSet >(resourceType))
+	if (is_type_a< EntityEventSet >(resourceType) || is_type_a< EntityEventSetData >(resourceType))
 	{
 		Ref< const EntityEventSetData > eventSetData = m_db->getObjectReadOnly< EntityEventSetData >(guid);
 		if (!eventSetData)
@@ -54,7 +54,7 @@ Ref< Object > EntityEventResourceFactory::create(resource::IResourceManager* res
 
 		return eventSet;
 	}
-	else if (is_type_a< IEntityEvent >(resourceType))
+	else if (is_type_a< IEntityEvent >(resourceType) || is_type_a< IEntityEventData >(resourceType))
 	{
 		Ref< const IEntityEventData > eventData = m_db->getObjectReadOnly< IEntityEventData >(guid);
 		if (!eventData)
