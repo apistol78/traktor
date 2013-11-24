@@ -866,6 +866,10 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 			a.jmp(offset + i.offset);
 			break;
 
+		case OpDiscard:
+			a.ret();
+			break;
+
 		case OpTrace:
 			break;
 
@@ -897,7 +901,7 @@ void JitX86::destroy(image_t image) const
 	Alloc::freeAlign(i);
 }
 
-void JitX86::execute(
+bool JitX86::execute(
 	const image_t image,
 	int32_t instance,
 	const Vector4* inUniforms,
@@ -911,15 +915,12 @@ void JitX86::execute(
 	void* native = i->native;
 
 	float T_ALIGN16 instance4f[4];
+	float T_ALIGN16 registers[258 * 4];
+
 	instance4f[0] =
 	instance4f[1] =
 	instance4f[2] =
 	instance4f[3] = float(instance);
-
-	float T_ALIGN16 registers[258 * 4];
-#if defined(_DEBUG)
-	memset(registers, 0, sizeof(registers));
-#endif
 
 	ExecuteContext T_ALIGN16 context;
 	context.constants = (void*)i->constants;
@@ -936,6 +937,8 @@ void JitX86::execute(
 		lea CONTEXT, context
 		call dword ptr [native]
 	}
+
+	return true;
 }
 
 	}

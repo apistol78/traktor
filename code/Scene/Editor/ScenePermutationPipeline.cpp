@@ -72,6 +72,25 @@ bool ScenePermutationPipeline::buildOutput(
 	uint32_t reason
 ) const
 {
+	Ref< const SceneAsset > scenePermutation = checked_type_cast< const SceneAsset*, true >(buildOutput(pipelineBuilder, sourceAsset));
+	if (!scenePermutation)
+	{
+		log::error << L"Scene permutation pipeline failed; unable to generate scene permutation" << Endl;
+		return false;
+	}
+
+	return pipelineBuilder->buildOutput(
+		scenePermutation,
+		outputPath,
+		outputGuid
+	);
+}
+
+Ref< ISerializable > ScenePermutationPipeline::buildOutput(
+	editor::IPipelineBuilder* pipelineBuilder,
+	const ISerializable* sourceAsset
+) const
+{
 	const ScenePermutationAsset* scenePermutationAsset = checked_type_cast< const ScenePermutationAsset*, false >(sourceAsset);
 	
 	Ref< const SceneAsset > templateScene = pipelineBuilder->getObjectReadOnly< SceneAsset >(scenePermutationAsset->m_scene);
@@ -100,20 +119,7 @@ bool ScenePermutationPipeline::buildOutput(
 		}
 	}
 
-	return pipelineBuilder->buildOutput(
-		scenePermutation,
-		outputPath,
-		outputGuid
-	);
-}
-
-Ref< ISerializable > ScenePermutationPipeline::buildOutput(
-	editor::IPipelineBuilder* pipelineBuilder,
-	const ISerializable* sourceAsset
-) const
-{
-	T_FATAL_ERROR;
-	return 0;
+	return scenePermutation;
 }
 
 	}

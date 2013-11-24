@@ -65,7 +65,7 @@ void Interpreter::destroy(image_t image) const
 	delete img;
 }
 
-void Interpreter::execute(
+bool Interpreter::execute(
 	const image_t image,
 	int32_t instance,
 	const Vector4* inUniforms,
@@ -661,6 +661,9 @@ void Interpreter::execute(
 			std::advance(i, i->offset - 1);
 			break;
 
+		case OpDiscard:
+			return false;
+
 		case OpTrace:
 			log::info << L"TRACE " << int32_t(i->dest) << Endl;
 			break;
@@ -669,6 +672,7 @@ void Interpreter::execute(
 			T_ASSERT (0);
 		}
 	}
+	return true;
 }
 
 	}

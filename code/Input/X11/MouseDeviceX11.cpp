@@ -296,7 +296,11 @@ void MouseDeviceX11::consumeEvent(XEvent& evt)
 			if (event->deviceid != m_deviceId)
 				return;
 
-			const double* values = event->raw_values;
+			// Use filtered values if available; otherwise use the values directly from the device.
+			const double* values = event->valuators.values;
+			if (!values)
+				values = event->raw_values;
+
 			for (uint32_t i = 0, j = 0; i < event->valuators.mask_len * 8; ++i)
 			{
 				if (!XIMaskIsSet(event->valuators.mask, i))

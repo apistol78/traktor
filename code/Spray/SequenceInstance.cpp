@@ -22,7 +22,7 @@ void SequenceInstance::update(Context& context, const Transform& transform, floa
 			break;
 	}
 
-	if (index != m_index && index < int32_t(keys.size()))
+	if (index != m_index && index >= 0 && index < int32_t(keys.size()))
 	{
 		context.eventManager->raise(
 			keys[index].event,

@@ -216,6 +216,48 @@ void emitDerivative(EmitterContext& cx, Derivative* node)
 
 void emitDiscard(EmitterContext& cx, Discard* node)
 {
+	Variable* in = cx.emitInput(node, L"Input");
+	Variable* ref = cx.emitInput(node, L"Reference");
+
+	Variable* tmp = cx.allocTemporary(in->type);
+
+	switch (node->getOperator())
+	{
+	case Conditional::CoLess:
+		cx.emitInstruction(OpCompareGreaterEqual, tmp, in, ref);
+		break;
+
+	case Conditional::CoLessEqual:
+		cx.emitInstruction(OpCompareGreater, tmp, in, ref);
+		break;
+
+	case Conditional::CoEqual:
+		cx.emitInstruction(OpCompareNotEqual, tmp, in, ref);
+		break;
+
+	case Conditional::CoNotEqual:
+		cx.emitInstruction(OpCompareEqual, tmp, in, ref);
+		break;
+
+	case Conditional::CoGreater:
+		cx.emitInstruction(OpCompareGreaterEqual, tmp, ref, in);
+		break;
+
+	case Conditional::CoGreaterEqual:
+		cx.emitInstruction(OpCompareGreater, tmp, ref, in);
+		break;
+	}
+
+	Instruction is(OpJumpIfZero, tmp->reg, 0, 0, 0, 0);
+	uint32_t offsetJump = cx.emitInstruction(is);
+
+	cx.freeTemporary(tmp);
+
+	cx.emitInstruction(OpDiscard);
+
+	is.offset = getRelativeOffset(offsetJump, cx.getCurrentAddress());
+	cx.emitInstruction(offsetJump, is);
+
 	Variable* pass = cx.emitInput(node, L"Pass");
 	Variable* out = cx.emitOutput(node, L"Output", pass->type);
 	cx.emitInstruction(OpMove, out, pass);

@@ -170,8 +170,7 @@ Ref< ISerializable > ScenePipeline::buildOutput(
 	const ISerializable* sourceAsset
 ) const
 {
-	T_FATAL_ERROR;
-	return 0;
+	return DeepClone(sourceAsset).create< SceneAsset >();
 }
 
 	}

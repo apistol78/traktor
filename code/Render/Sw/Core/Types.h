@@ -70,7 +70,8 @@ enum Opcode
 	OpCompareNotEqual,
 	OpJumpIfZero,
 	OpJump,
-	OpTrace					// 58
+	OpDiscard,
+	OpTrace					// 59
 };
 
 static const wchar_t* c_opcodeText[] =
@@ -132,6 +133,7 @@ static const wchar_t* c_opcodeText[] =
 	L"OpCompareNotEqual",
 	L"OpJumpIfZero",
 	L"OpJump",
+	L"OpDiscard",
 	L"OpTrace"
 };
 

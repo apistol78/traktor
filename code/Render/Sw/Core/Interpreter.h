@@ -32,7 +32,7 @@ public:
 
 	virtual void destroy(image_t image) const;
 
-	virtual void execute(
+	virtual bool execute(
 		const image_t image,
 		int32_t instance,
 		const Vector4* inUniforms,

@@ -164,7 +164,7 @@ void collectNavigationEntities(const ISerializable* object, const Transform& tra
 
 		}
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 10, NavMeshPipeline, editor::DefaultPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.ai.NavMeshPipeline", 11, NavMeshPipeline, editor::DefaultPipeline)
 
 NavMeshPipeline::NavMeshPipeline()
 :	m_editor(false)
@@ -227,6 +227,13 @@ bool NavMeshPipeline::buildOutput(
 	if (!sourceData)
 	{
 		log::error << L"NavMesh pipeline failed; unable to read source data" << Endl;
+		return false;
+	}
+
+	sourceData = pipelineBuilder->buildOutput(sourceData);
+	if (!sourceData)
+	{
+		log::error << L"NavMesh pipeline failed; unable to pipeline source data" << Endl;
 		return false;
 	}
 

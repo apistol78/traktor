@@ -40,11 +40,14 @@ public:
 
 	float* getDepthSurface() { return m_depthSurface.ptr(); }
 
+	uint8_t* getStencilSurface() { return m_stencilSurface.ptr(); }
+
 	bool usingPrimaryDepth() const { return m_usingPrimaryDepth; }
 
 private:
 	RefArray< RenderTargetSw > m_colorTargets;
 	AutoArrayPtr< float, AllocFreeAlign > m_depthSurface;
+	AutoArrayPtr< uint8_t, AllocFreeAlign > m_stencilSurface;
 	int m_width;
 	int m_height;
 	bool m_usingPrimaryDepth;

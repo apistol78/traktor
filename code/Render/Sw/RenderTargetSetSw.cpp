@@ -44,6 +44,12 @@ bool RenderTargetSetSw::create(const RenderTargetSetCreateDesc& desc)
 			16,
 			T_FILE_LINE
 		));
+
+		m_stencilSurface.reset((uint8_t*)Alloc::acquireAlign(
+			alignUp(desc.width * desc.height, 4) * sizeof(uint8_t),
+			16,
+			T_FILE_LINE
+		));
 	}
 
 	return true;
@@ -60,6 +66,7 @@ void RenderTargetSetSw::destroy()
 
 	m_colorTargets.resize(0);
 	m_depthSurface.release();
+	m_stencilSurface.release();
 }
 
 int RenderTargetSetSw::getWidth() const
