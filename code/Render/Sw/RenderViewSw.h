@@ -1,10 +1,8 @@
 #ifndef traktor_render_RenderViewSw_H
 #define traktor_render_RenderViewSw_H
 
-#include <list>
 #include "Core/Math/Vector2.h"
 #include "Core/Math/Vector4.h"
-#include "Core/Misc/AutoPtr.h"
 #include "Graphics/ISurface.h"
 #include "Render/IRenderView.h"
 #include "Render/Sw/VaryingUtils.h"
@@ -22,6 +20,7 @@ class IGraphicsSystem;
 	{
 
 class RenderSystemSw;
+class RenderTargetSetSw;
 class VertexBufferSw;
 class IndexBufferSw;
 class ProgramSw;
@@ -100,9 +99,11 @@ private:
 		uint32_t width;
 		uint32_t height;
 		uint16_t* colorTarget;
-		uint32_t colorTargetPitch;	//< Color target pitch in bytes.
+		uint32_t colorTargetPitch;		//< Color target pitch in bytes.
 		float* depthTarget;
-		uint32_t depthTargetPitch;	//< Depth target pitch in bytes.
+		uint32_t depthTargetPitch;		//< Depth target pitch in bytes.
+		uint8_t* stencilTarget;
+		uint32_t stencilTargetPitch;	//< Stencil target pitch in bytes.
 	};
 
 	struct FragmentContext
@@ -141,10 +142,10 @@ private:
 	//@{
 	Ref< graphics::ISurface > m_frameBufferSurface;
 	graphics::SurfaceDesc m_frameBufferSurfaceDesc;
-	AutoArrayPtr< float, AllocFreeAlign > m_depthBuffer;
+	Ref< RenderTargetSetSw > m_primaryTarget;
 	//@}
 
-	std::list< RenderState > m_renderStateStack;
+	std::vector< RenderState > m_renderStateStack;
 	Ref< VertexBufferSw > m_currentVertexBuffer;
 	Ref< IndexBufferSw > m_currentIndexBuffer;
 	Ref< ProgramSw > m_currentProgram;

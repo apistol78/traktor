@@ -1,3 +1,8 @@
+#include <execinfo.h>
+#include <signal.h>
+#include <stdio.h>
+#include <stdlib.h>
+#include <unistd.h>
 #include "Amalgam/IOnlineServer.h"
 #include "Amalgam/Impl/Application.h"
 #include "Amalgam/Impl/Environment.h"
@@ -7,13 +12,14 @@
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/CommandLine.h"
+#include "Core/Misc/SafeDestroy.h"
+#include "Core/Misc/TString.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/System/OS.h"
-#include "Online/ISaveData.h"
-#include "Online/ISessionManager.h"
 #include "Xml/XmlDeserializer.h"
+#include "Xml/XmlSerializer.h"
 
 using namespace traktor;
 
@@ -34,66 +40,53 @@ Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 	return settings;
 }
 
-Ref< PropertyGroup > loadSettings(amalgam::IEnvironment* environment, const std::wstring& saveDataId)
+bool saveSettings(const PropertyGroup* settings, const Path& settingsFile)
 {
-	amalgam::IOnlineServer* onlineServer = environment->getOnline();
-	T_ASSERT (onlineServer);
+	T_ASSERT (settings);
 
-	online::ISaveData* saveData = onlineServer->getSessionManager()->getSaveData();
-	T_ASSERT (saveData);
+	Ref< traktor::IStream > file = FileSystem::getInstance().open(settingsFile, File::FmWrite);
+	if (!file)
+		return false;
 
-	Ref< online::AttachmentResult > result = saveData->get(saveDataId);
-	if (result->succeeded())
-	{
-		Ref< PropertyGroup > userSettingsGroup = dynamic_type_cast< PropertyGroup* >(result->get());
-		if (userSettingsGroup)
-			return userSettingsGroup;
-		else
-			traktor::log::error << L"Failed to load settings; incorrect type of attachment" << Endl;
-	}
-	else
-		traktor::log::error << L"Failed to load settings; unable to read save data" << Endl;
+	bool result = xml::XmlSerializer(file).writeObject(settings);
+	file->close();
 
-	return 0;
+	return result;
 }
 
-void saveSettings(amalgam::IEnvironment* environment, const PropertyGroup* settings, const std::wstring& saveDataId, const online::SaveDataDesc& saveDataDesc, bool block)
+void signalHandler(int sig)
 {
-	amalgam::IOnlineServer* onlineServer = environment->getOnline();
-	T_ASSERT (onlineServer);
+	void* array[100];
 
-	online::ISaveData* saveData = onlineServer->getSessionManager()->getSaveData();
-	T_ASSERT (saveData);
+	traktor::log::error << L"Error: signal " << sig << Endl;
 
-	if (onlineServer && onlineServer->getSessionManager())
+	size_t size = backtrace(array, sizeof_array(array));
+	char** strings = backtrace_symbols(array, size);
+	if (strings)
 	{
-		online::ISaveData* saveData = onlineServer->getSessionManager()->getSaveData();
-		if (saveData)
-		{
-			Ref< online::Result > result = saveData->set(saveDataId, saveDataDesc, settings, true);
-			if (block)
-			{
-				if (!result || !result->succeeded())
-					traktor::log::error << L"Failed to save settings; unable to create save data" << Endl;
-			}
-			else
-			{
-				if (!result)
-					traktor::log::error << L"Failed to save settings; unable to create save data" << Endl;
-			}
-		}
-		else
-			traktor::log::error << L"Failed to save settings; no save data implementation" << Endl;
+		for (size_t i = 0; i < size; ++i)
+			traktor::log::error << mbstows(strings[i] ? strings[i] : "<null>") << Endl;
+		free(strings);
 	}
-	else
-		traktor::log::error << L"Failed to save settings; no online implementation" << Endl;
+
+	exit(1);
 }
 
 }
 
 int main(int argc, const char** argv)
 {
+	// Install crash/exception signal handlers first of all things.
+	signal(SIGBUS, signalHandler);
+	signal(SIGFPE, signalHandler);
+	signal(SIGILL, signalHandler);
+	signal(SIGSEGV, signalHandler);
+	signal(SIGSYS, signalHandler);
+
 	CommandLine cmdLine(argc, argv);
+
+	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
+	FileSystem::getInstance().makeAllDirectories(writablePath);
 
 	Path settingsPath = L"Application.config";
 	if (cmdLine.getCount() >= 1)
@@ -105,23 +98,42 @@ int main(int argc, const char** argv)
 	if (!defaultSettings)
 	{
 		traktor::log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L"); please reinstall application" << Endl;
+		traktor::log::error << L"Please reinstall application." << Endl;
 		return 0;
 	}
 
-	Path workingDirectory = FileSystem::getInstance().getAbsolutePath(settingsPath).getPathOnly();
-	FileSystem::getInstance().setCurrentVolumeAndDirectory(workingDirectory);
-
-	std::wstring settingsSaveDataId = defaultSettings->getProperty< PropertyString >(L"Amalgam.SettingsSaveDataId");
-
-	online::SaveDataDesc settingsSaveDataDesc;
-	settingsSaveDataDesc.title = defaultSettings->getProperty< PropertyString >(L"Amalgam.SettingsSaveDataTitle");
-	settingsSaveDataDesc.description = defaultSettings->getProperty< PropertyString >(L"Amalgam.SettingsSaveDataDesc");
-
-	if (settingsSaveDataId.empty())
-		traktor::log::warning << L"No settings save data id found; user settings not loaded/saved" << Endl;
-
 	Ref< PropertyGroup > settings = DeepClone(defaultSettings).create< PropertyGroup >();
 	T_FATAL_ASSERT (settings);
+
+	// Merge user settings into application settings.
+	if (!cmdLine.hasOption('s', L"no-settings"))
+	{
+		Path userSettingsPath;
+		Ref< PropertyGroup > userSettings;
+
+		// First try to load user settings from current working directory; ie. same directory as
+		// the main executable.
+		userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+		userSettings = loadSettings(userSettingsPath);
+
+		// Try to load user settings from user's application data path; sometimes it's not possible
+		// to store user settings alongside executable due to restrictive privileges.
+		if (!userSettings)
+		{
+			userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+			userSettings = loadSettings(userSettingsPath);
+		}
+
+		if (userSettings)
+			settings = settings->mergeReplace(userSettings);
+	}
+
+	if (!settings)
+	{
+		traktor::log::error << L"Unable to read application settings (" << settingsPath.getPathName() << L")." << Endl;
+		traktor::log::error << L"Please reinstall application." << Endl;
+		return 1;
+	}
 
 	Ref< amalgam::Application > application = new amalgam::Application();
 	if (application->create(
@@ -131,42 +143,26 @@ int main(int argc, const char** argv)
 		0
 	))
 	{
-		amalgam::Environment* environment = checked_type_cast< amalgam::Environment* >(application->getEnvironment());
-		T_ASSERT (environment);
-
-		amalgam::IOnlineServer* onlineServer = environment->getOnline();
-
-		// Load user settings from save-data; need to reconfigure environment if settings exist.
-		if (!settingsSaveDataId.empty())
-		{
-			Ref< PropertyGroup > userSettings = loadSettings(environment, settingsSaveDataId);
-			if (userSettings)
-			{
-				settings = settings->mergeJoin(userSettings);
-				environment->executeReconfigure();
-			}
-		}
-
 		// Enter main loop.
 		for (;;)
 		{
 			if (!application->update())
 				break;
-
-			// Check if configuration has changed; in such case begin saving new configuration.
-			if (environment->shouldReconfigure())
-			{
-				log::debug << L"Configuration changed; saving settings..." << Endl;
-				saveSettings(environment, settings, settingsSaveDataId, settingsSaveDataDesc, false);
-			}
 		}
 
-		// Save user settings as a save-data.
-		saveSettings(environment, settings, settingsSaveDataId, settingsSaveDataDesc, true);
+		safeDestroy(application);
 
-		log::debug << L"Destroying application..." << Endl;
-		application->destroy();
-		application = 0;
+		// Save user settings.
+		if (!cmdLine.hasOption('s', L"no-settings"))
+		{
+			Path userSettingsPath = settingsPath.getPathNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+			if (!saveSettings(settings, userSettingsPath))
+			{
+				userSettingsPath = writablePath + L"/" + settingsPath.getFileNameNoExtension() + L"." + OS::getInstance().getCurrentUser() + L"." + settingsPath.getExtension();
+				if (!saveSettings(settings, userSettingsPath))
+					traktor::log::error << L"Unable to save user settings; user changes not saved" << Endl;
+			}
+		}
 	}
 
 	traktor::log::info << L"Bye" << Endl;

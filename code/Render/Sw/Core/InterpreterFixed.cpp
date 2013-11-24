@@ -67,7 +67,7 @@ void InterpreterFixed::destroy(image_t image) const
 	delete img;
 }
 
-void InterpreterFixed::execute(
+bool InterpreterFixed::execute(
 	const image_t image,
 	int32_t instance,
 	const Vector4* inUniforms,
@@ -497,6 +497,9 @@ void InterpreterFixed::execute(
 			std::advance(i, i->offset - 1);
 			break;
 
+		case OpDiscard:
+			return false;
+
 		case OpTrace:
 			log::info << L"TRACE " << int32_t(i->dest) << Endl;
 			break;
@@ -505,6 +508,7 @@ void InterpreterFixed::execute(
 			T_BREAKPOINT;
 		}
 	}
+	return true;
 }
 
 	}

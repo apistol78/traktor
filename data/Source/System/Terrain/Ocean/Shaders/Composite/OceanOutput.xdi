@@ -1000,8 +1000,8 @@ Amount of reflection on view angle.
 		<item type="traktor.render.Sampler" version="2">
 			<comment/>
 			<position>
-				<first>3459</first>
-				<second>709</second>
+				<first>3457</first>
+				<second>677</second>
 			</position>
 			<minFilter>FtLinear</minFilter>
 			<mipFilter>FtLinear</mipFilter>
@@ -1034,8 +1034,8 @@ Amount of reflection on view angle.
 		<item type="traktor.render.Swizzle">
 			<comment/>
 			<position>
-				<first>3624</first>
-				<second>781</second>
+				<first>3918</first>
+				<second>739</second>
 			</position>
 			<swizzle>xyz0</swizzle>
 		</item>
@@ -1096,15 +1096,15 @@ Amount of reflection on view angle.
 		<item type="traktor.render.Mul">
 			<comment/>
 			<position>
-				<first>3748</first>
-				<second>718</second>
+				<first>4067</first>
+				<second>669</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
 			<comment/>
 			<position>
-				<first>3863</first>
-				<second>624</second>
+				<first>4182</first>
+				<second>575</second>
 			</position>
 		</item>
 		<item type="traktor.render.Add">
@@ -1146,6 +1146,56 @@ Amount of reflection on view angle.
 				<second>1138</second>
 			</position>
 			<value>0.1</value>
+		</item>
+		<item type="traktor.render.External" version="1">
+			<comment/>
+			<position>
+				<first>3590</first>
+				<second>652</second>
+			</position>
+			<fragmentGuid>{3F793E9D-73C9-8A44-B342-907FB4A2190D}</fragmentGuid>
+			<inputPins>
+				<item>
+					<name>Index</name>
+					<optional>true</optional>
+				</item>
+			</inputPins>
+			<outputPins>
+				<item>
+					<name>BaseColor</name>
+				</item>
+				<item>
+					<name>Direction</name>
+				</item>
+				<item>
+					<name>Position</name>
+				</item>
+				<item>
+					<name>Range</name>
+				</item>
+				<item>
+					<name>ShadowColor</name>
+				</item>
+				<item>
+					<name>SunColor</name>
+				</item>
+				<item>
+					<name>Type</name>
+				</item>
+			</outputPins>
+			<values>
+				<item>
+					<first>Index</first>
+					<second>0</second>
+				</item>
+			</values>
+		</item>
+		<item type="traktor.render.Mul">
+			<comment/>
+			<position>
+				<first>3769</first>
+				<second>702</second>
+			</position>
 		</item>
 	</nodes>
 	<edges>
@@ -2361,16 +2411,6 @@ Amount of reflection on view angle.
 		</item>
 		<item type="traktor.render.Edge">
 			<source>
-				<node ref="/object/nodes/item[100]"/>
-				<name>Output</name>
-			</source>
-			<destination>
-				<node ref="/object/nodes/item[103]"/>
-				<name>Input</name>
-			</destination>
-		</item>
-		<item type="traktor.render.Edge">
-			<source>
 				<node ref="/object/nodes/item[101]"/>
 				<name>Output</name>
 			</source>
@@ -2567,6 +2607,36 @@ Amount of reflection on view angle.
 			<destination>
 				<node ref="/object/nodes/item[18]"/>
 				<name>ViewPosition</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[100]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[119]"/>
+				<name>Input1</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[118]"/>
+				<name>SunColor</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[119]"/>
+				<name>Input2</name>
+			</destination>
+		</item>
+		<item type="traktor.render.Edge">
+			<source>
+				<node ref="/object/nodes/item[119]"/>
+				<name>Output</name>
+			</source>
+			<destination>
+				<node ref="/object/nodes/item[103]"/>
+				<name>Input</name>
 			</destination>
 		</item>
 	</edges>

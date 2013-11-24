@@ -59,6 +59,11 @@ bool Window::create(int32_t width, int32_t height)
         WhitePixel(m_display, m_screen)
     );
 
+	// Initially place window centered on desktop.
+	int32_t centerX = (XDisplayWidth(m_display, m_screen) - width) / 2;
+	int32_t centerY = (XDisplayHeight(m_display, m_screen)- height) / 2;
+    XMoveWindow(m_display, m_window, centerX, centerY);
+
     XSelectInput(
 		m_display,
 		m_window,
@@ -215,6 +220,11 @@ void Window::setWindowedStyle(int32_t width, int32_t height)
 	);
 
 	XResizeWindow(m_display, m_window, width, height);
+
+	int32_t centerX = (XDisplayWidth(m_display, m_screen) - width) / 2;
+	int32_t centerY = (XDisplayHeight(m_display, m_screen)- height) / 2;
+    XMoveWindow(m_display, m_window, centerX, centerY);
+
 	XFlush(m_display);
 
 	m_fullScreen = false;

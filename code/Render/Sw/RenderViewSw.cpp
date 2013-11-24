@@ -113,18 +113,26 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::IGraphicsSyst
 :	m_renderSystem(renderSystem)
 ,	m_graphicsSystem(graphicsSystem)
 ,	m_processor(processor)
-,	m_depthBuffer(0)
 ,	m_viewPort(0, 0, 0, 0, 0, 0)
 ,	m_instance(0)
 {
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	m_depthBuffer.reset((float*)Alloc::acquireAlign(
-		alignUp(m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height, 4) * sizeof(float),
-		16,
-		T_FILE_LINE
-	));
+	RenderTargetSetCreateDesc desc;
+	desc.count = 0;
+	desc.width = m_frameBufferSurfaceDesc.width;
+	desc.height = m_frameBufferSurfaceDesc.height;
+	desc.multiSample = 0;
+	desc.createDepthStencil = true;
+	desc.usingPrimaryDepthStencil = false;
+	desc.preferTiled = false;
+	desc.ignoreStencil = false;
+	desc.generateMips = false;
+
+	m_primaryTarget = new RenderTargetSetSw();
+	m_primaryTarget->create(desc);
+
 	m_viewPort = Viewport(0, 0, m_frameBufferSurfaceDesc.width, m_frameBufferSurfaceDesc.height, 0.0f, 1.0f);
 
 	m_targetSize.set(
@@ -138,7 +146,6 @@ RenderViewSw::RenderViewSw(RenderSystemSw* renderSystem, graphics::IGraphicsSyst
 RenderViewSw::~RenderViewSw()
 {
 	T_ASSERT (!m_graphicsSystem);
-	m_depthBuffer.release();
 }
 
 bool RenderViewSw::nextEvent(RenderEvent& outEvent)
@@ -187,11 +194,20 @@ bool RenderViewSw::reset(int32_t width, int32_t height)
 	m_frameBufferSurface = m_graphicsSystem->getSecondarySurface();
 	m_frameBufferSurface->getSurfaceDesc(m_frameBufferSurfaceDesc);
 
-	m_depthBuffer.reset((float*)Alloc::acquireAlign(
-		alignUp(m_frameBufferSurfaceDesc.width * m_frameBufferSurfaceDesc.height, 4) * sizeof(float),
-		16,
-		T_FILE_LINE
-	));
+	RenderTargetSetCreateDesc desc;
+	desc.count = 0;
+	desc.width = m_frameBufferSurfaceDesc.width;
+	desc.height = m_frameBufferSurfaceDesc.height;
+	desc.multiSample = 0;
+	desc.createDepthStencil = true;
+	desc.usingPrimaryDepthStencil = false;
+	desc.preferTiled = false;
+	desc.ignoreStencil = false;
+	desc.generateMips = false;
+
+	m_primaryTarget = new RenderTargetSetSw();
+	m_primaryTarget->create(desc);
+
 	m_viewPort.width = width / c_targetScale;
 	m_viewPort.height = height / c_targetScale;
 
@@ -276,8 +292,10 @@ bool RenderViewSw::begin(EyeType eye)
 		m_frameBufferSurfaceDesc.height,
 		frameBuffer,
 		m_frameBufferSurfaceDesc.pitch,
-		m_depthBuffer.ptr(),
-		m_frameBufferSurfaceDesc.width * sizeof(uint32_t)
+		m_primaryTarget->getDepthSurface(),
+		m_frameBufferSurfaceDesc.width * sizeof(float),
+		m_primaryTarget->getStencilSurface(),
+		m_frameBufferSurfaceDesc.width * sizeof(uint8_t),
 	};
 
 	m_renderStateStack.push_back(rs);
@@ -304,13 +322,17 @@ bool RenderViewSw::begin(RenderTargetSet* renderTargetSet, int renderTarget)
 		rt->getColorSurface(),
 		rt->getWidth() * sizeof(uint16_t),
 		rts->getDepthSurface(),
-		rt->getWidth() * sizeof(uint32_t)
+		rt->getWidth() * sizeof(float),
+		rts->getStencilSurface(),
+		rt->getWidth() * sizeof(uint8_t)
 	};
 
 	if (rts->usingPrimaryDepth())
 	{
-		rs.depthTarget = m_depthBuffer.ptr();
-		rs.depthTargetPitch = m_frameBufferSurfaceDesc.width * sizeof(uint32_t);
+		rs.depthTarget = m_primaryTarget->getDepthSurface();
+		rs.depthTargetPitch = m_frameBufferSurfaceDesc.width * sizeof(float);
+		rs.stencilTarget = m_primaryTarget->getStencilSurface();
+		rs.stencilTargetPitch = m_frameBufferSurfaceDesc.width * sizeof(uint8_t);
 	}
 
 	m_renderStateStack.push_back(rs);
@@ -844,7 +866,7 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 	uint32_t icount = m_currentProgram->getInterpolatorCount();
 
 	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint16_t);
-	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(uint32_t);
+	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(float);
 
 	// Calculate barycentric coordinates.
 	const Vector2* T = context.triangle;
@@ -877,8 +899,6 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 		surfaceInterpolators[1][i] = context.clippedVaryings[I[0]][i] * alpha2 + context.clippedVaryings[I[1]][i] * beta2 + context.clippedVaryings[I[2]][i] * gamma2;
 	}
 
-	uint16_t fragmentColor = 0;
-
 	for (int x = 0; x < x2 - x1; ++x, ++colorTargetOffset, ++depthTargetOffset)
 	{
 		scalar_t t = scalar_t(x * ix);
@@ -894,7 +914,7 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 			}
 
 			// Execute pixel program.
-			m_processor->execute(
+			bool kept = m_processor->execute(
 				pixelProgram,
 				m_instance,
 				parameters,
@@ -903,17 +923,17 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 				samplers,
 				fragmentVaryings
 			);
+			if (kept)
+			{
+				// Write color to current target.
+				Vector4& color = fragmentVaryings[0];
+				color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
+				color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
+				rs.colorTarget[colorTargetOffset] = to565(color);
 
-			// Write color to current target.
-			Vector4& color = fragmentVaryings[0];
-			color = max(color, Vector4(0.0f, 0.0f, 0.0f, 0.0f));
-			color = min(color, Vector4(1.0f, 1.0f, 1.0f, 1.0f));
-			fragmentColor = to565(color);
-
-			rs.colorTarget[colorTargetOffset] = fragmentColor;
-
-			if (context.depthWriteEnable)
-				rs.depthTarget[depthTargetOffset] = z;
+				if (context.depthWriteEnable)
+					rs.depthTarget[depthTargetOffset] = z;
+			}
 		}
 	}
 }
@@ -928,7 +948,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 	uint32_t icount = m_currentProgram->getInterpolatorCount();
 
 	uint32_t colorTargetOffset = x1 + y * rs.colorTargetPitch / sizeof(uint16_t);
-	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(uint32_t);
+	uint32_t depthTargetOffset = x1 + y * rs.depthTargetPitch / sizeof(float);
 
 	// Calculate barycentric coordinates.
 	const Vector2* T = context.triangle;
@@ -977,7 +997,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 			}
 
 			// Execute pixel program.
-			m_processor->execute(
+			bool kept = m_processor->execute(
 				pixelProgram,
 				m_instance,
 				parameters,
@@ -986,117 +1006,119 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				samplers,
 				fragmentVaryings
 			);
-
-			// Write color to current target.
-			Vector4& color = fragmentVaryings[0];
-			Vector4 destination = from565(rs.colorTarget[colorTargetOffset]);
-
-			switch (m_currentProgram->getRenderState().blendSource)
+			if (kept)
 			{
-			case BfOne:
-				break;
+				// Write color to current target.
+				Vector4& color = fragmentVaryings[0];
+				Vector4 destination = from565(rs.colorTarget[colorTargetOffset]);
 
-			case BfZero:
-				color.set(0.0f, 0.0f, 0.0f, 0.0f);
-				break;
+				switch (m_currentProgram->getRenderState().blendSource)
+				{
+				case BfOne:
+					break;
 
-			case BfSourceColor:
-				color *= color;
-				break;
+				case BfZero:
+					color.set(0.0f, 0.0f, 0.0f, 0.0f);
+					break;
 
-			case BfOneMinusSourceColor:
-				color *= scalar_t(1.0f) - color;
-				break;
+				case BfSourceColor:
+					color *= color;
+					break;
 
-			case BfDestinationColor:
-				color *= destination;
-				break;
+				case BfOneMinusSourceColor:
+					color *= scalar_t(1.0f) - color;
+					break;
 
-			case BfOneMinusDestinationColor:
-				color *= scalar_t(1.0f) - destination;
-				break;
+				case BfDestinationColor:
+					color *= destination;
+					break;
 
-			case BfSourceAlpha:
-				color *= color.w();
-				break;
+				case BfOneMinusDestinationColor:
+					color *= scalar_t(1.0f) - destination;
+					break;
 
-			case BfOneMinusSourceAlpha:
-				color *= scalar_t(1.0f) - color.w();
-				break;
+				case BfSourceAlpha:
+					color *= color.w();
+					break;
 
-			case BfDestinationAlpha:
-				color *= destination.w();
-				break;
+				case BfOneMinusSourceAlpha:
+					color *= scalar_t(1.0f) - color.w();
+					break;
 
-			case BfOneMinusDestinationAlpha:
-				color *= scalar_t(1.0f) - destination.w();
-				break;
+				case BfDestinationAlpha:
+					color *= destination.w();
+					break;
+
+				case BfOneMinusDestinationAlpha:
+					color *= scalar_t(1.0f) - destination.w();
+					break;
+				}
+				
+				switch (m_currentProgram->getRenderState().blendDestination)
+				{
+				case BfOne:
+					break;
+
+				case BfZero:
+					destination.set(0.0f, 0.0f, 0.0f, 0.0f);
+					break;
+
+				case BfSourceColor:
+					destination *= color;
+					break;
+
+				case BfOneMinusSourceColor:
+					destination *= scalar_t(1.0f) - color;
+					break;
+
+				case BfDestinationColor:
+					destination *= destination;
+					break;
+
+				case BfOneMinusDestinationColor:
+					destination *= scalar_t(1.0f) - destination;
+					break;
+
+				case BfSourceAlpha:
+					destination *= color.w();
+					break;
+
+				case BfOneMinusSourceAlpha:
+					destination *= scalar_t(1.0f) - color.w();
+					break;
+
+				case BfDestinationAlpha:
+					destination *= destination.w();
+					break;
+
+				case BfOneMinusDestinationAlpha:
+					destination *= scalar_t(1.0f) - destination.w();
+					break;
+				}
+
+				switch (m_currentProgram->getRenderState().blendOperation)
+				{
+				case BoAdd:
+					color = color + destination;
+					break;
+
+				case BoSubtract:
+					color = color - destination;
+					break;
+
+				case BoReverseSubtract:
+					color = destination - color;
+					break;
+				}
+
+				color = max(color, Vector4::zero());
+				color = min(color, Vector4::one());
+
+				rs.colorTarget[colorTargetOffset] = to565(color);
+
+				if (context.depthWriteEnable)
+					rs.depthTarget[depthTargetOffset] = z;
 			}
-			
-			switch (m_currentProgram->getRenderState().blendDestination)
-			{
-			case BfOne:
-				break;
-
-			case BfZero:
-				destination.set(0.0f, 0.0f, 0.0f, 0.0f);
-				break;
-
-			case BfSourceColor:
-				destination *= color;
-				break;
-
-			case BfOneMinusSourceColor:
-				destination *= scalar_t(1.0f) - color;
-				break;
-
-			case BfDestinationColor:
-				destination *= destination;
-				break;
-
-			case BfOneMinusDestinationColor:
-				destination *= scalar_t(1.0f) - destination;
-				break;
-
-			case BfSourceAlpha:
-				destination *= color.w();
-				break;
-
-			case BfOneMinusSourceAlpha:
-				destination *= scalar_t(1.0f) - color.w();
-				break;
-
-			case BfDestinationAlpha:
-				destination *= destination.w();
-				break;
-
-			case BfOneMinusDestinationAlpha:
-				destination *= scalar_t(1.0f) - destination.w();
-				break;
-			}
-
-			switch (m_currentProgram->getRenderState().blendOperation)
-			{
-			case BoAdd:
-				color = color + destination;
-				break;
-
-			case BoSubtract:
-				color = color - destination;
-				break;
-
-			case BoReverseSubtract:
-				color = destination - color;
-				break;
-			}
-
-			color = max(color, Vector4::zero());
-			color = min(color, Vector4::one());
-
-			rs.colorTarget[colorTargetOffset] = to565(color);
-
-			if (context.depthWriteEnable)
-				rs.depthTarget[depthTargetOffset] = z;
 		}
 	}
 }
