@@ -1,5 +1,6 @@
 #include <cstring>
 #include "Core/Log/Log.h"
+#include "Core/Math/MathConfig.h"
 #include "Render/VertexElement.h"
 #include "Render/OpenGL/IContext.h"
 #include "Render/OpenGL/Std/VertexBufferDynamicVBO.h"
@@ -26,6 +27,50 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 		delete this;
 	}
 };
+
+#if defined(T_MATH_USE_SSE2)
+void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
+{
+	uint32_t i = 0;
+	for (; i + 128 <= size; i += 128)
+	{
+		__m128i d0 = _mm_load_si128((__m128i*)&src[i + 0 * 16]);
+		__m128i d1 = _mm_load_si128((__m128i*)&src[i + 1 * 16]);
+		__m128i d2 = _mm_load_si128((__m128i*)&src[i + 2 * 16]);
+		__m128i d3 = _mm_load_si128((__m128i*)&src[i + 3 * 16]);
+		__m128i d4 = _mm_load_si128((__m128i*)&src[i + 4 * 16]);
+		__m128i d5 = _mm_load_si128((__m128i*)&src[i + 5 * 16]);
+		__m128i d6 = _mm_load_si128((__m128i*)&src[i + 6 * 16]);
+		__m128i d7 = _mm_load_si128((__m128i*)&src[i + 7 * 16]);
+		_mm_stream_si128((__m128i*)&dst[i + 0 * 16], d0);
+		_mm_stream_si128((__m128i*)&dst[i + 1 * 16], d1);
+		_mm_stream_si128((__m128i*)&dst[i + 2 * 16], d2);
+		_mm_stream_si128((__m128i*)&dst[i + 3 * 16], d3);
+		_mm_stream_si128((__m128i*)&dst[i + 4 * 16], d4);
+		_mm_stream_si128((__m128i*)&dst[i + 5 * 16], d5);
+		_mm_stream_si128((__m128i*)&dst[i + 6 * 16], d6);
+		_mm_stream_si128((__m128i*)&dst[i + 7 * 16], d7);
+	}
+	for (; i + 16 <= size; i += 16)
+	{
+		__m128i d = _mm_load_si128((__m128i*)&src[i]);
+		_mm_stream_si128((__m128i *)&dst[i], d);
+	}
+	for (; i + 4 <= size; i += 4)
+	{
+		*(uint32_t*)&dst[i] = *(const uint32_t*)&src[i];
+	}
+	for (; i < size; i++)
+	{
+		dst[i] = src[i];
+	}
+}
+#else
+void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
+{
+	std::memcpy(dst, src, size);
+}
+#endif
 
 		}
 
@@ -139,7 +184,7 @@ VertexBufferDynamicVBO::VertexBufferDynamicVBO(IContext* resourceContext, const 
 
 		m_attributeDesc[usageIndex].offset = vertexElements[i].getOffset();
 	}
-	
+
 	m_data.resize(getBufferSize(), 0);
 	m_dirty = true;
 }
@@ -157,14 +202,14 @@ void VertexBufferDynamicVBO::destroy()
 			m_resourceContext->deleteResource(new DeleteBufferCallback(m_buffer));
 		m_buffer = 0;
 	}
-	
+
 	m_data.resize(0);
 }
 
 void* VertexBufferDynamicVBO::lock()
 {
 	T_ASSERT_M(!m_lock, L"Vertex buffer already locked");
-	
+
 	m_lock = &m_data[0];
 	return m_lock;
 }
@@ -187,7 +232,7 @@ void VertexBufferDynamicVBO::unlock()
 	m_lock = 0;
 	m_dirty = true;
 	m_attributeLocs = 0;
-	
+
 	setContentValid(true);
 }
 
@@ -202,15 +247,15 @@ void VertexBufferDynamicVBO::activate(const GLint* attributeLocs)
 
 		T_OGL_SAFE(glBindVertexArray(m_array));
 		T_OGL_SAFE(glBindBuffer(GL_ARRAY_BUFFER, m_buffer));
-	
+
 		if (m_dirty)
 		{
 			GLvoid* mapped = glMapBuffer(GL_ARRAY_BUFFER, GL_WRITE_ONLY);
 			if (!mapped)
 				return;
-				
-			std::memcpy(mapped, &m_data[0], getBufferSize());
-			
+
+			copyBuffer((uint8_t*)mapped, (const uint8_t*)&m_data[0], getBufferSize());
+
 			T_OGL_SAFE(glUnmapBuffer(GL_ARRAY_BUFFER));
 			m_dirty = false;
 		}

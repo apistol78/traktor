@@ -1256,7 +1256,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 
 	HlslVariable* out = cx.emitOutput(node, L"Output", HtFloat4);
 
-	if (cx.inPixel())
+	if (cx.inPixel() && !node->getIgnoreMips())
 	{
 		switch (texture->getType())
 		{
@@ -1269,8 +1269,7 @@ bool emitSampler(HlslContext& cx, Sampler* node)
 			break;
 		}
 	}
-
-	if (cx.inVertex())
+	else
 	{
 		switch (texture->getType())
 		{

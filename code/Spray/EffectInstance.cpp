@@ -21,13 +21,15 @@ EffectInstance::EffectInstance(const Effect* effect)
 void EffectInstance::update(Context& context, const Transform& transform, bool enable)
 {
 	m_time += context.deltaTime;
-	if (m_loopEnable && m_time >= m_effect->getLoopEnd())
-		m_time = m_effect->getLoopStart();
+
+	float time = m_time;
+	if (m_loopEnable && time >= m_effect->getLoopEnd())
+		time = std::fmod(time - m_effect->getLoopStart(), m_effect->getLoopEnd() - m_effect->getLoopStart()) + m_effect->getLoopStart();
 
 	m_boundingBox = Aabb3();
 	for (RefArray< EffectLayerInstance >::iterator i = m_layerInstances.begin(); i != m_layerInstances.end(); ++i)
 	{
-		(*i)->update(context, transform, m_time, enable);
+		(*i)->update(context, transform, time, enable);
 		m_boundingBox.contain((*i)->getBoundingBox());
 	}
 }

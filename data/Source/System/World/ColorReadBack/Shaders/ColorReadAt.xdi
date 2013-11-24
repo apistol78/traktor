@@ -9,7 +9,7 @@
 			</position>
 			<name>Output</name>
 		</item>
-		<item type="traktor.render.Sampler" version="2">
+		<item type="traktor.render.Sampler" version="3">
 			<comment/>
 			<position>
 				<first>1069</first>
@@ -22,6 +22,7 @@
 			<addressV>AdMirror</addressV>
 			<addressW>AdWrap</addressW>
 			<mipBias>0</mipBias>
+			<ignoreMips>true</ignoreMips>
 			<useAnisotropic>false</useAnisotropic>
 		</item>
 		<item type="traktor.render.Uniform" version="1">
