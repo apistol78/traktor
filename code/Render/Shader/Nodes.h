@@ -761,6 +761,10 @@ public:
 
 	float getMipBias() const;
 
+	void setIgnoreMips(bool ignoreMips);
+
+	bool getIgnoreMips() const;
+
 	void setUseAnisotropic(bool useAnisotropic);
 
 	bool getUseAnisotropic() const;
@@ -775,6 +779,7 @@ private:
 	Address m_addressV;
 	Address m_addressW;
 	float m_mipBias;
+	bool m_ignoreMips;
 	bool m_useAnisotropic;
 };
 

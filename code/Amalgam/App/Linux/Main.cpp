@@ -26,6 +26,43 @@ using namespace traktor;
 namespace
 {
 
+class LogStreamTarget : public ILogTarget
+{
+public:
+	LogStreamTarget(OutputStream* stream)
+	:	m_stream(stream)
+	{
+	}
+
+	virtual void log(int32_t level, const std::wstring& str)
+	{
+		(*m_stream) << str << Endl;
+	}
+
+private:
+	Ref< OutputStream > m_stream;
+};
+
+class LogDualTarget : public ILogTarget
+{
+public:
+	LogDualTarget(ILogTarget* target1, ILogTarget* target2)
+	:	m_target1(target1)
+	,	m_target2(target2)
+	{
+	}
+
+	virtual void log(int32_t level, const std::wstring& str)
+	{
+		m_target1->log(level, str);
+		m_target2->log(level, str);
+	}
+
+private:
+	Ref< ILogTarget > m_target1;
+	Ref< ILogTarget > m_target2;
+};
+
 Ref< PropertyGroup > loadSettings(const Path& settingsFile)
 {
 	Ref< PropertyGroup > settings;
@@ -77,16 +114,30 @@ void signalHandler(int sig)
 int main(int argc, const char** argv)
 {
 	// Install crash/exception signal handlers first of all things.
-	signal(SIGBUS, signalHandler);
-	signal(SIGFPE, signalHandler);
 	signal(SIGILL, signalHandler);
 	signal(SIGSEGV, signalHandler);
-	signal(SIGSYS, signalHandler);
 
 	CommandLine cmdLine(argc, argv);
 
 	std::wstring writablePath = OS::getInstance().getWritableFolderPath() + L"/Doctor Entertainment AB";
 	FileSystem::getInstance().makeAllDirectories(writablePath);
+
+#if !defined(_DEBUG)
+	Ref< IStream > logFile = FileSystem::getInstance().open(writablePath + L"/Application.log", File::FmWrite);
+	if (logFile)
+	{
+		Ref< FileOutputStream > logStream = new FileOutputStream(logFile, new Utf8Encoding());
+		Ref< LogStreamTarget > logTarget = new LogStreamTarget(logStream);
+
+		log::info   .setGlobalTarget(new LogDualTarget(logTarget, log::info   .getGlobalTarget()));
+		log::warning.setGlobalTarget(new LogDualTarget(logTarget, log::warning.getGlobalTarget()));
+		log::error  .setGlobalTarget(new LogDualTarget(logTarget, log::error  .getGlobalTarget()));
+
+		log::info << L"Log file \"Application.log\" created" << Endl;
+	}
+	else
+		log::error << L"Unable to create log file; logging only to std pipes" << Endl;
+#endif
 
 	Path settingsPath = L"Application.config";
 	if (cmdLine.getCount() >= 1)
@@ -164,7 +215,21 @@ int main(int argc, const char** argv)
 			}
 		}
 	}
+	else
+		traktor::log::error << L"Unable to create application" << Endl;
 
 	traktor::log::info << L"Bye" << Endl;
+
+#if !defined(_DEBUG)
+	if (logFile)
+	{
+		traktor::log::info   .setGlobalTarget(0);
+		traktor::log::warning.setGlobalTarget(0);
+		traktor::log::error  .setGlobalTarget(0);
+
+		logFile->close();
+		logFile = 0;
+	}
+#endif
 	return 0;
 }

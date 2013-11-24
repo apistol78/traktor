@@ -82,12 +82,12 @@ std::wstring OS::getUserHomePath() const
 
 std::wstring OS::getUserApplicationDataPath() const
 {
-	return getUserHomePath() + L"/Library";
+	return getUserHomePath() + L"/.traktor";
 }
 
 std::wstring OS::getWritableFolderPath() const
 {
-	return getUserHomePath() + L"/Library";
+	return getUserHomePath() + L"/.traktor";
 }
 
 bool OS::openFile(const std::wstring& file) const
