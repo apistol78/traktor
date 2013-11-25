@@ -5118,6 +5118,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Boids</name>
+					<items>
+						<item type="File">
+							<fileName>Boids/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">
@@ -10089,6 +10098,10 @@
 						</item>
 						<item type="File">
 							<fileName>../../../res/LogFilter.png</fileName>
+							<items/>
+						</item>
+						<item type="File">
+							<fileName>../../../res/Navigate.png</fileName>
 							<items/>
 						</item>
 					</items>

@@ -2015,6 +2015,15 @@
 						</item>
 					</items>
 				</item>
+				<item type="Filter">
+					<name>Boids</name>
+					<items>
+						<item type="File">
+							<fileName>Boids/*.*</fileName>
+							<items/>
+						</item>
+					</items>
+				</item>
 			</items>
 			<dependencies>
 				<item type="ProjectDependency" version="1">

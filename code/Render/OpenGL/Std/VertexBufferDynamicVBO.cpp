@@ -28,7 +28,7 @@ struct DeleteBufferCallback : public IContext::IDeleteCallback
 	}
 };
 
-#if defined(T_MATH_USE_SSE2)
+#if defined(T_MATH_USE_SSE2) && !defined(_DEBUG)
 void copyBuffer(uint8_t* dst, const uint8_t* src, uint32_t size)
 {
 	uint32_t i = 0;

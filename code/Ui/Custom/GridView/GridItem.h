@@ -32,13 +32,13 @@ class T_DLLCLASS GridItem : public GridCell
 public:
 	GridItem();
 
-	GridItem(const std::wstring& text);
+	explicit GridItem(const std::wstring& text);
 
-	GridItem(const std::wstring& text, Font* font);
+	explicit GridItem(const std::wstring& text, Font* font);
 
-	GridItem(const std::wstring& text, Bitmap* image);
+	explicit GridItem(const std::wstring& text, Bitmap* image);
 
-	GridItem(Bitmap* image);
+	explicit GridItem(Bitmap* image);
 
 	void setText(const std::wstring& text);
 

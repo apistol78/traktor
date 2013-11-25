@@ -1287,19 +1287,39 @@ bool emitSampler(GlslContext& cx, Sampler* node)
 	if (cx.inFragment())
 	{
 #if defined(T_OPENGL_STD)
-		switch (texture->getType())
+		if (!node->getIgnoreMips())
 		{
-		case GtTexture2D:
-			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
-			break;
+			switch (texture->getType())
+			{
+			case GtTexture2D:
+				assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat2) << L");" << Endl;
+				break;
 
-		case GtTexture3D:
-		case GtTextureCube:
-			assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
-			break;
+			case GtTexture3D:
+			case GtTextureCube:
+				assign(f, out) << L"texture(" << samplerName << L", " << texCoord->cast(GtFloat3) << L");" << Endl;
+				break;
                 
-        default:
-            return false;
+			default:
+				return false;
+			}
+		}
+		else
+		{
+			switch (texture->getType())
+			{
+			case GtTexture2D:
+				assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat2) << L", 0.0);" << Endl;
+				break;
+
+			case GtTexture3D:
+			case GtTextureCube:
+				assign(f, out) << L"textureLod(" << samplerName << L", " << texCoord->cast(GtFloat3) << L", 0.0);" << Endl;
+				break;
+                
+			default:
+				return false;
+			}
 		}
 #else
 		switch (texture->getType())
