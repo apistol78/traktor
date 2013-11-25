@@ -10,7 +10,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"game.BoidsEntityData", 0, BoidsEntityData, world::EntityData)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.animation.BoidsEntityData", 0, BoidsEntityData, world::EntityData)
 
 BoidsEntityData::BoidsEntityData()
 :	m_boidCount(0)
