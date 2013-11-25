@@ -1,5 +1,7 @@
 #include "Animation/AnimatedMeshEntityFactory.h"
 #include "Animation/Animation/AnimationFactory.h"
+#include "Animation/Boids/BoidsEntityFactory.h"
+#include "Animation/Boids/BoidsEntityRenderer.h"
 #include "Animation/Cloth/ClothEntityFactory.h"
 #include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/Editor/AnimationEditorProfile.h"
@@ -59,6 +61,7 @@ void AnimationEditorProfile::createEntityFactories(
 ) const
 {
 	outEntityFactories.push_back(new AnimatedMeshEntityFactory(context->getResourceManager(), context->getPhysicsManager()));
+	outEntityFactories.push_back(new BoidsEntityFactory());
 	outEntityFactories.push_back(new ClothEntityFactory(context->getResourceManager(), context->getRenderSystem()));
 	outEntityFactories.push_back(new PathEntityFactory());
 }
@@ -70,6 +73,7 @@ void AnimationEditorProfile::createEntityRenderers(
 	RefArray< world::IEntityRenderer >& outEntityRenderers
 ) const
 {
+	outEntityRenderers.push_back(new BoidsEntityRenderer());
 	outEntityRenderers.push_back(new ClothEntityRenderer());
 	outEntityRenderers.push_back(new PathEntityRenderer());
 }
