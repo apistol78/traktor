@@ -2,12 +2,16 @@
 #include "Core/Settings/PropertyString.h"
 #include "Editor/IEditor.h"
 #include "Editor/App/WebBrowserPage.h"
+#include "Ui/Bitmap.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/WebBrowser.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
 #include "Ui/Events/CommandEvent.h"
+
+// Resources
+#include "Resources/Navigate.h"
 
 namespace traktor
 {
@@ -30,10 +34,11 @@ bool WebBrowserPage::create(ui::Widget* parent)
 
 	Ref< ui::custom::ToolBar > toolbar = new ui::custom::ToolBar();
 	toolbar->create(this);
-	toolbar->addItem(new ui::custom::ToolBarButton(L"Home", ui::Command(L"Editor.WebBrowser.Home")));
-	toolbar->addItem(new ui::custom::ToolBarButton(L"Back", ui::Command(L"Editor.WebBrowser.Back")));
-	toolbar->addItem(new ui::custom::ToolBarButton(L"Forward", ui::Command(L"Editor.WebBrowser.Forward")));
-	toolbar->addItem(new ui::custom::ToolBarButton(L"Reload", ui::Command(L"Editor.WebBrowser.Reload")));
+	toolbar->addImage(ui::Bitmap::load(c_ResourceNavigate, sizeof(c_ResourceNavigate), L"png"), 4);
+	toolbar->addItem(new ui::custom::ToolBarButton(L"Home", 0, ui::Command(L"Editor.WebBrowser.Home")));
+	toolbar->addItem(new ui::custom::ToolBarButton(L"Back", 1, ui::Command(L"Editor.WebBrowser.Back")));
+	toolbar->addItem(new ui::custom::ToolBarButton(L"Forward", 2, ui::Command(L"Editor.WebBrowser.Forward")));
+	toolbar->addItem(new ui::custom::ToolBarButton(L"Reload", 3, ui::Command(L"Editor.WebBrowser.Reload")));
 	toolbar->addClickEventHandler(ui::createMethodHandler(this, &WebBrowserPage::eventToolClick));
 
 	m_browser = new ui::WebBrowser();

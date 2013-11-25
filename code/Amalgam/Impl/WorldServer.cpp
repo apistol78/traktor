@@ -6,6 +6,8 @@
 #include "Amalgam/Impl/ScriptServer.h"
 #include "Amalgam/Impl/WorldServer.h"
 #include "Animation/AnimatedMeshEntityFactory.h"
+#include "Animation/Boids/BoidsEntityFactory.h"
+#include "Animation/Boids/BoidsEntityRenderer.h"
 #include "Animation/Cloth/ClothEntityFactory.h"
 #include "Animation/Cloth/ClothEntityRenderer.h"
 #include "Animation/PathEntity/PathEntityFactory.h"
@@ -112,6 +114,7 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_entityRenderers->add(new mesh::MeshEntityRenderer());
 	m_entityRenderers->add(new mesh::InstanceMeshEntityRenderer());
 	m_entityRenderers->add(m_effectEntityRenderer);
+	m_entityRenderers->add(new animation::BoidsEntityRenderer());
 	m_entityRenderers->add(new animation::ClothEntityRenderer());
 	m_entityRenderers->add(new animation::PathEntityRenderer());
 	m_entityRenderers->add(new physics::EntityRenderer());
@@ -155,6 +158,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	resource::IResourceManager* resourceManager = environment->getResource()->getResourceManager();
 
 	m_entityBuilder->addFactory(new animation::AnimatedMeshEntityFactory(resourceManager, physicsManager));
+	m_entityBuilder->addFactory(new animation::BoidsEntityFactory());
 	m_entityBuilder->addFactory(new animation::ClothEntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new animation::PathEntityFactory());
 	m_entityBuilder->addFactory(new ai::NavMeshEntityFactory(resourceManager));
