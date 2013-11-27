@@ -33,7 +33,7 @@ class T_DLLCLASS ModifierData : public ISerializable
 	T_RTTI_CLASS;
 
 public:
-	virtual Ref< Modifier > createModifier(resource::IResourceManager* resourceManager) const = 0;
+	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const = 0;
 };
 
 	}

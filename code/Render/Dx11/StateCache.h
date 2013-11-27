@@ -28,6 +28,10 @@ public:
 
 	void setPixelShader(ID3D11PixelShader* d3dPixelShader);
 
+	void setVertexBuffer(ID3D11Buffer* d3dVertexBuffer, UINT d3dVertexStride);
+
+	void setIndexBuffer(ID3D11Buffer* d3dIndexBuffer, DXGI_FORMAT d3dIndexFormat);
+
 	void setTopology(D3D11_PRIMITIVE_TOPOLOGY d3dTopology);
 
 	void setInputLayout(uint32_t d3dVertexShaderHash, ID3DBlob* d3dVertexShaderBlob, uint32_t d3dInputElementsHash, const std::vector< D3D11_INPUT_ELEMENT_DESC >& d3dInputElements);
@@ -39,6 +43,8 @@ private:
 	ComRef< ID3D11BlendState > m_d3dBlendState;
 	ComRef< ID3D11VertexShader > m_d3dVertexShader;
 	ComRef< ID3D11PixelShader > m_d3dPixelShader;
+	ComRef< ID3D11Buffer > m_d3dVertexBuffer;
+	ComRef< ID3D11Buffer > m_d3dIndexBuffer;
 	SmallMap< uint64_t, ComRef< ID3D11InputLayout > > m_d3dInputLayouts;
 	D3D11_PRIMITIVE_TOPOLOGY m_d3dTopology;
 	uint64_t m_d3dSignatureHash;

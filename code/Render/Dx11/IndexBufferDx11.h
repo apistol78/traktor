@@ -11,6 +11,7 @@ namespace traktor
 	{
 
 class ContextDx11;
+class StateCache;
 
 /*!
  * \ingroup DX11
@@ -20,7 +21,7 @@ class IndexBufferDx11 : public IndexBuffer
 	T_RTTI_CLASS;
 
 public:
-	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext);
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache);
 
 	ID3D11Buffer* getD3D11Buffer() const { return m_d3dBuffer; }
 

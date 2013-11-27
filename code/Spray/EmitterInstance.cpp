@@ -238,6 +238,7 @@ void EmitterInstance::update(Context& context, const Transform& transform, bool 
 }
 
 void EmitterInstance::render(
+	render::handle_t technique,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	const Transform& transform,
@@ -261,7 +262,10 @@ void EmitterInstance::render(
 	if (m_renderPoints.empty())
 		return;
 
-	if (m_emitter->getShader())
+	if (
+		m_emitter->getShader() &&
+		m_emitter->getShader()->hasTechnique(technique)
+	)
 	{
 		pointRenderer->render(
 			m_emitter->getShader(),
@@ -273,7 +277,10 @@ void EmitterInstance::render(
 		);
 	}
 
-	if (m_emitter->getMesh() && distance < m_emitter->getCullMeshDistance())
+	if (
+		m_emitter->getMesh() &&
+		distance < m_emitter->getCullMeshDistance()
+	)
 	{
 		meshRenderer->render(
 			m_emitter->getMesh(),
@@ -311,17 +318,16 @@ void EmitterInstance::updateTask(float deltaTime)
 	Transform updateTransform = m_emitter->worldSpace() ? m_transform : Transform::identity();
 	Scalar deltaTimeScalar(deltaTime);
 
-	const RefArray< Modifier >& modifiers = m_emitter->getModifiers();
-	for (RefArray< Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
+	const RefArray< const Modifier >& modifiers = m_emitter->getModifiers();
+	for (RefArray< const Modifier >::const_iterator i = modifiers.begin(); i != modifiers.end(); ++i)
 	{
-		if (*i)
-			(*i)->update(
-				deltaTimeScalar,
-				updateTransform,
-				m_points,
-				0,
-				m_points.size()
-			);
+		(*i)->update(
+			deltaTimeScalar,
+			updateTransform,
+			m_points,
+			0,
+			m_points.size()
+		);
 	}
 
 	m_renderPoints.resize(0);

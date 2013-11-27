@@ -26,7 +26,7 @@ class T_DLLCLASS SphereSourceData : public SourceData
 public:
 	SphereSourceData();
 
-	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 

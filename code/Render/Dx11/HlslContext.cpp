@@ -65,7 +65,7 @@ HlslContext::HlslContext(const ShaderGraph* shaderGraph, IProgramHints* programH
 	m_d3dRasterizerDesc.SlopeScaledDepthBias = 0.0f;
 	m_d3dRasterizerDesc.DepthClipEnable = TRUE;
 	m_d3dRasterizerDesc.ScissorEnable = FALSE;
-	m_d3dRasterizerDesc.MultisampleEnable = TRUE;
+	m_d3dRasterizerDesc.MultisampleEnable = FALSE;
 	m_d3dRasterizerDesc.AntialiasedLineEnable = TRUE;
 
 	std::memset(&m_d3dDepthStencilDesc, 0, sizeof(m_d3dDepthStencilDesc));

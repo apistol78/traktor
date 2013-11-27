@@ -227,6 +227,22 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 
 	log::info << L"OpenGL " << mbstows((const char *)glGetString(GL_VERSION)) << L" renderer created." << Endl;
 
+	// Get GPU memory information; used to determine if or not to preload resources during startup.
+	// \fixme Currently only NV HW is supported.
+	GLint param = 0;
+
+	glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &param);
+	m_info.dedicatedMemoryTotal = param * 1024;
+
+	glGetIntegerv(GL_GPU_MEMORY_INFO_TOTAL_AVAILABLE_MEMORY_NVX, &param);
+	m_info.sharedMemoryTotal = param * 1024;
+	m_info.sharedMemoryAvailable = param * 1024;
+
+	glGetIntegerv(GL_GPU_MEMORY_INFO_CURRENT_AVAILABLE_VIDMEM_NVX, &param);
+	m_info.dedicatedMemoryAvailable = param * 1024;
+
+	glGetError();
+
 	m_resourceContext->leave();
 	m_maxAnisotrophy = (GLfloat)desc.maxAnisotropy;
 	return true;
@@ -273,6 +289,7 @@ bool RenderSystemOpenGL::reset(const RenderSystemDesc& desc)
 
 void RenderSystemOpenGL::getInformation(RenderSystemInformation& outInfo) const
 {
+	outInfo = m_info;
 }
 
 uint32_t RenderSystemOpenGL::getDisplayModeCount() const

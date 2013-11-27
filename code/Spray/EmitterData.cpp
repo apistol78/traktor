@@ -43,14 +43,14 @@ Ref< Emitter > EmitterData::createEmitter(resource::IResourceManager* resourceMa
 	)
 		return 0;
 
-	Ref< Source > source = m_source->createSource(resourceManager);
+	Ref< const Source > source = m_source->createSource(resourceManager);
 	if (!source)
 		return 0;
 
-	RefArray< Modifier > modifiers;
+	RefArray< const Modifier > modifiers;
 	for (RefArray< ModifierData >::const_iterator i = m_modifiers.begin(); i != m_modifiers.end(); ++i)
 	{
-		Ref< Modifier > modifier = (*i)->createModifier(resourceManager);
+		Ref< const Modifier > modifier = (*i)->createModifier(resourceManager);
 		if (modifier)
 			modifiers.push_back(modifier);
 	}

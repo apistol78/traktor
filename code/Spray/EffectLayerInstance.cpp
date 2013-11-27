@@ -103,6 +103,7 @@ void EffectLayerInstance::synchronize()
 }
 
 void EffectLayerInstance::render(
+	render::handle_t technique,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
@@ -113,9 +114,9 @@ void EffectLayerInstance::render(
 ) const
 {
 	if (m_emitterInstance && time >= m_start)
-		m_emitterInstance->render(pointRenderer, meshRenderer, transform, cameraPlane);
+		m_emitterInstance->render(technique, pointRenderer, meshRenderer, transform, cameraPlane);
 	if (m_trailInstance && time >= m_start)
-		m_trailInstance->render(trailRenderer, transform, cameraPosition, cameraPlane);
+		m_trailInstance->render(technique, trailRenderer, transform, cameraPosition, cameraPlane);
 }
 
 Aabb3 EffectLayerInstance::getBoundingBox() const

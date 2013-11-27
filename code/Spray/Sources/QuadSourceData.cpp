@@ -28,7 +28,7 @@ QuadSourceData::QuadSourceData()
 {
 }
 
-Ref< Source > QuadSourceData::createSource(resource::IResourceManager* resourceManager) const
+Ref< const Source > QuadSourceData::createSource(resource::IResourceManager* resourceManager) const
 {
 	return new QuadSource(
 		getConstantRate(),

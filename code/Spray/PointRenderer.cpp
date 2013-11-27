@@ -63,14 +63,15 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 :	m_lod1Distance(lod1Distance)
 ,	m_lod2Distance(lod2Distance)
 ,	m_count(0)
+,	m_vertexTop(0)
 ,	m_vertex(0)
-,	m_vertexOffset(0)
+,	m_pointOffset(0)
 {
 	std::vector< render::VertexElement > vertexElements;
 	vertexElements.push_back(render::VertexElement(render::DuPosition, render::DtFloat4, offsetof(EmitterVertex, positionAndOrientation), 0));
 	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, velocityAndRandom), 0));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, attrib1), 1));
-	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, attrib2), 2));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, extentAlphaAndSize), 1));
+	vertexElements.push_back(render::VertexElement(render::DuCustom, render::DtFloat4, offsetof(EmitterVertex, colorAndAge), 2));
 	T_ASSERT_M (render::getVertexSize(vertexElements) == sizeof(EmitterVertex), L"Incorrect size of vertex");
 
 	for (uint32_t i = 0; i < sizeof_array(m_vertexBuffers); ++i)
@@ -79,7 +80,7 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 		T_ASSERT_M (m_vertexBuffers[i], L"Unable to create vertex buffer");
 	}
 
-	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_pointCount * 3 * 2 * sizeof(uint16_t), false);
+	m_indexBuffer = renderSystem->createIndexBuffer(render::ItUInt16, c_pointCount * 6 * sizeof(uint16_t), false);
 	T_ASSERT_M (m_indexBuffer, L"Unable to create index buffer");
 
 	uint16_t* index = static_cast< uint16_t* >(m_indexBuffer->lock());
@@ -92,7 +93,6 @@ PointRenderer::PointRenderer(render::IRenderSystem* renderSystem, float lod1Dist
 		*index++ = i + 2;
 		*index++ = i + 3;
 	}
-
 	m_indexBuffer->unlock();
 
 #if defined(_PS3)
@@ -126,31 +126,35 @@ void PointRenderer::render(
 	float fadeNearRange
 )
 {
-	int32_t pointOffset = m_vertexOffset >> 2;
-
 	int32_t size = int32_t(points.size());
 	T_ASSERT (size > 0);
 
-	int32_t avail = c_pointCount - pointOffset;
-
-	size = std::min(size, avail);
-	if (size <= 0)
+	int32_t avail = c_pointCount - m_pointOffset;
+	if (avail <= 0)
 		return;
+
+	if (size > avail)
+		size = avail;
 
 	if (!m_vertex)
 	{
+		m_vertexTop =
 		m_vertex = static_cast< EmitterVertex* >(m_vertexBuffers[m_count]->lock());
 		if (!m_vertex)
 			return;
 	}
 
-	AlignedVector< Batch >& batches = m_batches;
+	if (m_batches.empty() || (m_batches.back().count > 0 && m_batches.back().shader != shader))
+	{
+		m_batches.push_back(Batch());
+		Batch& back = m_batches.back();
+		back.shader = shader;
+		back.offset = m_pointOffset * 3 * 2;
+		back.count = 0;
+		back.distance = std::numeric_limits< float >::max();
+	}
 
-	batches.push_back(Batch());
-	batches.back().shader = shader;
-	batches.back().offset = pointOffset * 3 * 2;
-	batches.back().count = 0;
-	batches.back().distance = std::numeric_limits< float >::max();
+	Batch& back = m_batches.back();
 
 #if defined(_PS3)
 
@@ -172,11 +176,11 @@ void PointRenderer::render(
 
 	m_jobQueue->push(&job);
 
-	m_vertexOffset += size * 4;
+	m_pointOffset += size;
 
 #else
 
-	const float c_extents[4][2] =
+	const static float c_extents[4][2] =
 	{
 		{ -1.0f, -1.0f },
 		{  1.0f, -1.0f },
@@ -187,6 +191,10 @@ void PointRenderer::render(
 	for (int32_t i = 0; i < size; ++i)
 	{
 		const Point& point = points[i];
+
+		// Skip very small particles.
+		if (point.size < FUZZY_EPSILON)
+			continue;
 
 		float distance = cameraPlane.distance(point.position);
 
@@ -205,25 +213,25 @@ void PointRenderer::render(
 		for (int j = 0; j < 4; ++j)
 		{
 			// \note We're assuming locked vertex buffer is 16-aligned.
-			point.position.storeAligned(m_vertex->positionAndOrientation.position);
-			point.velocity.storeAligned(m_vertex->velocityAndRandom.velocity);
-			point.color.storeAligned(m_vertex->attrib2.color);
+			point.position.storeAligned(m_vertex->positionAndOrientation);
+			point.velocity.storeAligned(m_vertex->velocityAndRandom);
+			point.color.storeAligned(m_vertex->colorAndAge);
 
-			m_vertex->positionAndOrientation.orientation = point.orientation;
-			m_vertex->velocityAndRandom.random = point.random;
-			m_vertex->attrib1.extent[0] = c_extents[j][0];
-			m_vertex->attrib1.extent[1] = c_extents[j][1];
-			m_vertex->attrib1.alpha = alpha;
-			m_vertex->attrib1.size = point.size;
-			m_vertex->attrib2.age = age;
+			m_vertex->positionAndOrientation[3] = point.orientation;
+			m_vertex->velocityAndRandom[3] = point.random;
+			m_vertex->extentAlphaAndSize[0] = c_extents[j][0];
+			m_vertex->extentAlphaAndSize[1] = c_extents[j][1];
+			m_vertex->extentAlphaAndSize[2] = alpha;
+			m_vertex->extentAlphaAndSize[3] = point.size;
+			m_vertex->colorAndAge[3] = age;
 
 			m_vertex++;
 		}
 
-		batches.back().distance = min(batches.back().distance, distance);
-		batches.back().count += 2;
+		back.distance = min(back.distance, distance);
+		back.count += 2;
 
-		m_vertexOffset += 4;
+		m_pointOffset++;
 	}
 
 #endif
@@ -234,7 +242,7 @@ void PointRenderer::flush(
 	world::IWorldRenderPass& worldRenderPass
 )
 {
-	if (m_vertexOffset > 0)
+	if (m_pointOffset > 0)
 	{
 #if defined(_PS3)
 		m_jobQueue->wait();
@@ -242,12 +250,11 @@ void PointRenderer::flush(
 
 		T_ASSERT (m_vertex);
 
-		m_vertex = 0;
-		m_vertexBuffers[m_count]->unlock();
-
-		for (AlignedVector< Batch >::iterator i = m_batches.begin(); i != m_batches.end(); ++i)
+		for (AlignedVector< Batch >::const_iterator i = m_batches.begin(); i != m_batches.end(); ++i)
 		{
-			if (!i->shader || !i->count)
+			T_ASSERT (i->shader);
+
+			if (!i->count)
 				continue;
 
 			worldRenderPass.setShaderTechnique(i->shader);
@@ -268,17 +275,26 @@ void PointRenderer::flush(
 			renderBlock->offset = i->offset;
 			renderBlock->count = i->count;
 			renderBlock->minIndex = 0;
-			renderBlock->maxIndex = m_vertexOffset;
+			renderBlock->maxIndex = m_pointOffset * 4;
 
 			renderBlock->programParams->beginParameters(renderContext);
 			worldRenderPass.setProgramParameters(renderBlock->programParams, i->shader->getCurrentPriority());
 			renderBlock->programParams->endParameters(renderContext);
 
 			renderContext->draw(i->shader->getCurrentPriority(), renderBlock);
+
+			m_vertex = 0;
 		}
 
-		m_vertexOffset = 0;
-		m_count = (m_count + 1) % sizeof_array(m_vertexBuffers);
+		m_pointOffset = 0;
+
+		if (!m_vertex)
+		{
+			m_vertexBuffers[m_count]->unlock();
+			m_count = (m_count + 1) % sizeof_array(m_vertexBuffers);
+		}
+		else
+			m_vertex = m_vertexTop;
 	}
 
 	m_batches.resize(0);

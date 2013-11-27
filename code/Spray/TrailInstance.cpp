@@ -100,18 +100,19 @@ void TrailInstance::update(Context& context, const Transform& transform, bool en
 		m_time += Vector4(0.0f, 0.0f, 0.0f, context.deltaTime);
 }
 
-void TrailInstance::render(TrailRenderer* trailRenderer, const Transform& transform, const Vector4& cameraPosition, const Plane& cameraPlane)
+void TrailInstance::render(render::handle_t technique, TrailRenderer* trailRenderer, const Transform& transform, const Vector4& cameraPosition, const Plane& cameraPlane)
 {
-	trailRenderer->render(
-		m_shader,
-		m_points,
-		cameraPosition,
-		cameraPlane,
-		m_width,
-		m_lengthThreshold,
-		m_time.w(),
-		m_age
-	);
+	if (m_shader->hasTechnique(technique))
+		trailRenderer->render(
+			m_shader,
+			m_points,
+			cameraPosition,
+			cameraPlane,
+			m_width,
+			m_lengthThreshold,
+			m_time.w(),
+			m_age
+		);
 }
 
 	}

@@ -26,7 +26,7 @@ BoxSourceData::BoxSourceData()
 {
 }
 
-Ref< Source > BoxSourceData::createSource(resource::IResourceManager* resourceManager) const
+Ref< const Source > BoxSourceData::createSource(resource::IResourceManager* resourceManager) const
 {
 	return new BoxSource(
 		getConstantRate(),

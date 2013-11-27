@@ -5,6 +5,7 @@
 #include "Core/Math/Transform.h"
 #include "Core/Math/Plane.h"
 #include "Core/Math/Aabb3.h"
+#include "Render/Types.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -54,6 +55,7 @@ public:
 	void synchronize();
 
 	void render(
+		render::handle_t technique,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		TrailRenderer* trailRenderer,

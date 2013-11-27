@@ -77,6 +77,7 @@ void EffectEntityRenderer::render(
 	Plane cameraPlane(viewInverse.axisZ(), viewInverse.translation());
 
 	effectEntity->render(
+		worldRenderPass.getTechnique(),
 		cameraPosition,
 		cameraPlane,
 		m_pointRenderer,

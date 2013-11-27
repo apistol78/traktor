@@ -37,6 +37,7 @@ EffectEntity::EffectEntity(const Transform& transform, const resource::Proxy< Ef
 }
 
 void EffectEntity::render(
+	render::handle_t technique,
 	const Vector4& cameraPosition,
 	const Plane& cameraPlane,
 	PointRenderer* pointRenderer,
@@ -46,6 +47,7 @@ void EffectEntity::render(
 {
 	if (m_effectInstance)
 		m_effectInstance->render(
+			technique,
 			pointRenderer,
 			meshRenderer,
 			trailRenderer,

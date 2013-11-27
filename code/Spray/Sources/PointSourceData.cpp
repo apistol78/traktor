@@ -24,7 +24,7 @@ PointSourceData::PointSourceData()
 {
 }
 
-Ref< Source > PointSourceData::createSource(resource::IResourceManager* resourceManager) const
+Ref< const Source > PointSourceData::createSource(resource::IResourceManager* resourceManager) const
 {
 	return new PointSource(
 		getConstantRate(),

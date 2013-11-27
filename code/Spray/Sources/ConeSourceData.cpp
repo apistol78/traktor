@@ -28,7 +28,7 @@ ConeSourceData::ConeSourceData()
 {
 }
 
-Ref< Source > ConeSourceData::createSource(resource::IResourceManager* resourceManager) const
+Ref< const Source > ConeSourceData::createSource(resource::IResourceManager* resourceManager) const
 {
 	return new ConeSource(
 		getConstantRate(),

@@ -35,7 +35,7 @@ class T_DLLCLASS SourceData : public ISerializable
 public:
 	SourceData();
 
-	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const = 0;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const = 0;
 
 	virtual void serialize(ISerializer& s);
 

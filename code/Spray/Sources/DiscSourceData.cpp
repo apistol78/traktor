@@ -27,7 +27,7 @@ DiscSourceData::DiscSourceData()
 {
 }
 
-Ref< Source > DiscSourceData::createSource(resource::IResourceManager* resourceManager) const
+Ref< const Source > DiscSourceData::createSource(resource::IResourceManager* resourceManager) const
 {
 	return new DiscSource(
 		getConstantRate(),

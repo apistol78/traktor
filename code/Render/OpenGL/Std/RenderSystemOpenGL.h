@@ -73,6 +73,8 @@ public:
 private:
 	friend class RenderViewOpenGL;
 
+	RenderSystemInformation m_info;
+
 #if defined(_WIN32)
 
 	Ref< Window > m_windowShared;

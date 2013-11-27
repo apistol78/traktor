@@ -16,7 +16,7 @@ DragModifierData::DragModifierData()
 {
 }
 
-Ref< Modifier > DragModifierData::createModifier(resource::IResourceManager* resourceManager) const
+Ref< const Modifier > DragModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
 	return new DragModifier(m_linearDrag, m_angularDrag);
 }

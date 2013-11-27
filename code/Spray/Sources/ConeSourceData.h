@@ -26,7 +26,7 @@ class T_DLLCLASS ConeSourceData : public SourceData
 public:
 	ConeSourceData();
 
-	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 

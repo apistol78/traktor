@@ -21,7 +21,7 @@ VortexModifierData::VortexModifierData()
 {
 }
 
-Ref< Modifier > VortexModifierData::createModifier(resource::IResourceManager* resourceManager) const
+Ref< const Modifier > VortexModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
 	return new VortexModifier(
 		m_axis,

@@ -26,7 +26,7 @@ SphereSourceData::SphereSourceData()
 {
 }
 
-Ref< Source > SphereSourceData::createSource(resource::IResourceManager* resourceManager) const
+Ref< const Source > SphereSourceData::createSource(resource::IResourceManager* resourceManager) const
 {
 	return new SphereSource(
 		getConstantRate(),

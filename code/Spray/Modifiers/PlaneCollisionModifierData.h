@@ -27,7 +27,7 @@ class T_DLLCLASS PlaneCollisionModifierData : public ModifierData
 public:
 	PlaneCollisionModifierData();
 
-	virtual Ref< Modifier > createModifier(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 

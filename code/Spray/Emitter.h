@@ -45,8 +45,8 @@ class T_DLLCLASS Emitter : public Object
 
 public:
 	Emitter(
-		Source* source,
-		const RefArray< Modifier >& modifiers,
+		const Source* source,
+		const RefArray< const Modifier >& modifiers,
 		const resource::Proxy< render::Shader >& shader,
 		const resource::Proxy< mesh::InstanceMesh >& mesh,
 		float middleAge,
@@ -63,7 +63,7 @@ public:
 
 	const Source* getSource() const { return m_source; }
 
-	const RefArray< Modifier >& getModifiers() const { return m_modifiers; }
+	const RefArray< const Modifier >& getModifiers() const { return m_modifiers; }
 
 	const resource::Proxy< render::Shader >& getShader() const { return m_shader; }
 
@@ -86,8 +86,8 @@ public:
 	bool meshOrientationFromVelocity() const { return m_meshOrientationFromVelocity; }
 
 private:
-	Ref< Source > m_source;
-	RefArray< Modifier > m_modifiers;
+	Ref< const Source > m_source;
+	RefArray< const Modifier > m_modifiers;
 	resource::Proxy< render::Shader > m_shader;
 	resource::Proxy< mesh::InstanceMesh > m_mesh;
 	float m_middleAge;

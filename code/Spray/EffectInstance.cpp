@@ -41,6 +41,7 @@ void EffectInstance::synchronize()
 }
 
 void EffectInstance::render(
+	render::handle_t technique,
 	PointRenderer* pointRenderer,
 	MeshRenderer* meshRenderer,
 	TrailRenderer* trailRenderer,
@@ -50,7 +51,7 @@ void EffectInstance::render(
 ) const
 {
 	for (RefArray< EffectLayerInstance >::const_iterator i = m_layerInstances.begin(); i != m_layerInstances.end(); ++i)
-		(*i)->render(pointRenderer, meshRenderer, trailRenderer, transform, cameraPosition, cameraPlane, m_time);
+		(*i)->render(technique, pointRenderer, meshRenderer, trailRenderer, transform, cameraPosition, cameraPlane, m_time);
 }
 
 	}

@@ -59,6 +59,7 @@ public:
 	EffectEntity(const Transform& transform, const resource::Proxy< Effect >& effect, world::IEntityEventManager* eventManager, sound::ISoundPlayer* soundPlayer);
 
 	void render(
+		render::handle_t technique,
 		const Vector4& cameraPosition,
 		const Plane& cameraPlane,
 		PointRenderer* pointRenderer,

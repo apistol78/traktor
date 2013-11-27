@@ -6,6 +6,7 @@
 #include "Core/Math/Plane.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Thread/Job.h"
+#include "Render/Types.h"
 #include "Spray/Types.h"
 #include "Spray/Modifier.h"
 #include "Spray/Point.h"
@@ -45,6 +46,7 @@ public:
 	void update(Context& context, const Transform& transform, bool emit, bool singleShot);
 
 	void render(
+		render::handle_t technique,
 		PointRenderer* pointRenderer,
 		MeshRenderer* meshRenderer,
 		const Transform& transform,

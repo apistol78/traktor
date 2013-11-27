@@ -9,34 +9,10 @@ namespace traktor
 #pragma pack(1)
 struct EmitterVertex
 {
-	struct PositionAndOrientation
-	{
-		float position[3];
-		float orientation;
-	}
-	positionAndOrientation;
-	
-	struct VelocityAndRandom
-	{
-		float velocity[3];
-		float random;
-	}
-	velocityAndRandom;
-
-	struct Attributes1
-	{
-		float extent[2];
-		float alpha;
-		float size;
-	}
-	attrib1;
-
-	struct Attributes2
-	{
-		float color[3];
-		float age;
-	}
-	attrib2;
+	float positionAndOrientation[4];
+	float velocityAndRandom[4];
+	float extentAlphaAndSize[4];
+	float colorAndAge[4];
 };
 #pragma pack()
 

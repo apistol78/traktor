@@ -26,7 +26,7 @@ class T_DLLCLASS BoxSourceData : public SourceData
 public:
 	BoxSourceData();
 
-	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 
