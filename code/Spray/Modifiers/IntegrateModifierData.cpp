@@ -17,7 +17,7 @@ IntegrateModifierData::IntegrateModifierData()
 {
 }
 
-Ref< Modifier > IntegrateModifierData::createModifier(resource::IResourceManager* resourceManager) const
+Ref< const Modifier > IntegrateModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
 	return new IntegrateModifier(m_timeScale, m_linear, m_angular);
 }

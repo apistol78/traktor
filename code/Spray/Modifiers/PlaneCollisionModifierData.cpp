@@ -58,7 +58,7 @@ PlaneCollisionModifierData::PlaneCollisionModifierData()
 {
 }
 
-Ref< Modifier > PlaneCollisionModifierData::createModifier(resource::IResourceManager* resourceManager) const
+Ref< const Modifier > PlaneCollisionModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
 	return new PlaneCollisionModifier(m_plane, m_radius, m_restitution);
 }

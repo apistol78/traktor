@@ -91,16 +91,25 @@ private:
 		float distance;
 		render::Shader* shader;
 		uint32_t offset;
+
+		Batch()
+		:	count(0)
+		,	distance(0.0f)
+		,	shader(0)
+		,	offset(0)
+		{
+		}
 	};
 #pragma pack()
 
-	Ref< render::VertexBuffer > m_vertexBuffers[12];
+	Ref< render::VertexBuffer > m_vertexBuffers[16];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	float m_lod1Distance;
 	float m_lod2Distance;
-	uint32_t m_count;
+	int32_t m_count;
+	EmitterVertex* m_vertexTop;
 	EmitterVertex* m_vertex;
-	uint32_t m_vertexOffset;
+	int32_t m_pointOffset;
 	AlignedVector< Batch > m_batches;
 
 #if defined(_PS3)

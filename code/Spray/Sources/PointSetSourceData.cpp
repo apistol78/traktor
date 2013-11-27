@@ -28,7 +28,7 @@ PointSetSourceData::PointSetSourceData()
 {
 }
 
-Ref< Source > PointSetSourceData::createSource(resource::IResourceManager* resourceManager) const
+Ref< const Source > PointSetSourceData::createSource(resource::IResourceManager* resourceManager) const
 {
 	resource::Proxy< PointSet > pointSet;
 	if (!resourceManager->bind(m_pointSet, pointSet))

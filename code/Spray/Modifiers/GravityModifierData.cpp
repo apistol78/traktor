@@ -17,7 +17,7 @@ GravityModifierData::GravityModifierData()
 {
 }
 
-Ref< Modifier > GravityModifierData::createModifier(resource::IResourceManager* resourceManager) const
+Ref< const Modifier > GravityModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
 	return new GravityModifier(m_gravity, m_world);
 }

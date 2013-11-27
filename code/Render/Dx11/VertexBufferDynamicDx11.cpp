@@ -76,6 +76,7 @@ Ref< VertexBufferDynamicDx11 > VertexBufferDynamicDx11::create(
 	dbd.BindFlags = D3D11_BIND_VERTEX_BUFFER;
 	dbd.CPUAccessFlags = D3D11_CPU_ACCESS_WRITE;
 	dbd.MiscFlags = 0;
+	dbd.StructureByteStride = 0;
 
 	hr = context->getD3DDevice()->CreateBuffer(&dbd, NULL, &d3dBuffer.getAssign());
 	if (FAILED(hr))
@@ -146,7 +147,7 @@ void VertexBufferDynamicDx11::unlock()
 	setContentValid(true);
 }
 
-void VertexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
+void VertexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache)
 {
 	if (m_dirty)
 	{
@@ -166,7 +167,7 @@ void VertexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
 		d3dDeviceContext->Unmap(m_d3dBuffer, 0);
 		m_dirty = false;
 	}
-	VertexBufferDx11::prepare(d3dDeviceContext);
+	VertexBufferDx11::prepare(d3dDeviceContext, stateCache);
 }
 
 VertexBufferDynamicDx11::VertexBufferDynamicDx11(uint32_t bufferSize)

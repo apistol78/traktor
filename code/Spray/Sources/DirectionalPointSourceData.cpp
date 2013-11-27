@@ -26,7 +26,7 @@ DirectionalPointSourceData::DirectionalPointSourceData()
 {
 }
 
-Ref< Source > DirectionalPointSourceData::createSource(resource::IResourceManager* resourceManager) const
+Ref< const Source > DirectionalPointSourceData::createSource(resource::IResourceManager* resourceManager) const
 {
 	return new DirectionalPointSource(
 		getConstantRate(),

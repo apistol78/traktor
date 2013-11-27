@@ -10,6 +10,8 @@ namespace traktor
 	namespace render
 	{
 
+class StateCache;
+
 /*!
  * \ingroup DX11
  */
@@ -18,7 +20,7 @@ class VertexBufferDx11 : public VertexBuffer
 	T_RTTI_CLASS;
 
 public:
-	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext);
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache);
 
 	ID3D11Buffer* getD3D11Buffer() const { return m_d3dBuffer; }
 

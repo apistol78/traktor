@@ -57,7 +57,7 @@ void IndexBufferStaticDx11::unlock()
 {
 }
 
-void IndexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
+void IndexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache)
 {
 	if (m_data.ptr())
 	{
@@ -71,7 +71,7 @@ void IndexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
 		);
 		m_data.release();
 	}
-	IndexBufferDx11::prepare(d3dDeviceContext);
+	IndexBufferDx11::prepare(d3dDeviceContext, stateCache);
 }
 
 IndexBufferStaticDx11::IndexBufferStaticDx11(IndexType indexType, uint32_t bufferSize)

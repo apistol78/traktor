@@ -15,24 +15,26 @@ namespace traktor
  * \ingroup Spray
  *
  * \note
- * 48 bytes
+ * 80 bytes
  */
 struct Point
 {
 	Vector4 position;
 	Vector4 velocity;
-	Vector4 color;
+	Vector4 color;		// 48
 	float orientation;
 	float angularVelocity;
 	float inverseMass;
 	float age;
 	float maxAge;
 	float size;
-	float random;
+	float random;		// 28
 
 	// Pad to ensure structure is a multiple of 16 bytes.
 	uint8_t pad[4];
 };
+
+// static_assert(sizeof(Point) == 80, "Size of Point struct must be 80 bytes");
 
 #pragma pack()
 

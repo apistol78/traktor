@@ -607,7 +607,7 @@ void RenderViewDx11::clear(uint32_t clearMask, const Color4f* colors, float dept
 			d3dClear |= D3D11_CLEAR_STENCIL;
 
 		if (rs.d3dDepthStencilView)
-			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, D3D11_CLEAR_DEPTH, depth, stencil);
+			m_context->getD3DDeviceContext()->ClearDepthStencilView(rs.d3dDepthStencilView, d3dClear, depth, stencil);
 	}
 }
 
@@ -627,9 +627,9 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	m_currentProgram = checked_type_cast< ProgramDx11* >(program);
 
 	// Prepare buffers.
-	m_currentVertexBuffer->prepare(m_context->getD3DDeviceContext());
+	m_currentVertexBuffer->prepare(m_context->getD3DDeviceContext(), m_stateCache);
 	if (m_currentIndexBuffer)
-		m_currentIndexBuffer->prepare(m_context->getD3DDeviceContext());
+		m_currentIndexBuffer->prepare(m_context->getD3DDeviceContext(), m_stateCache);
 
 	// Bind program with device, handle input mapping of vertex elements.
 	if (!m_currentProgram->bind(
@@ -696,9 +696,9 @@ void RenderViewDx11::draw(VertexBuffer* vertexBuffer, IndexBuffer* indexBuffer, 
 	m_currentProgram = checked_type_cast< ProgramDx11* >(program);
 
 	// Prepare buffers.
-	m_currentVertexBuffer->prepare(m_context->getD3DDeviceContext());
+	m_currentVertexBuffer->prepare(m_context->getD3DDeviceContext(), m_stateCache);
 	if (m_currentIndexBuffer)
-		m_currentIndexBuffer->prepare(m_context->getD3DDeviceContext());
+		m_currentIndexBuffer->prepare(m_context->getD3DDeviceContext(), m_stateCache);
 
 	// Bind program with device, handle input mapping of vertex elements.
 	if (!m_currentProgram->bind(

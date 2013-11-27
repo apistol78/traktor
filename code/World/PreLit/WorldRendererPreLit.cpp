@@ -140,8 +140,8 @@ bool WorldRendererPreLit::create(
 		render::RenderTargetSetCreateDesc desc;
 
 		desc.count = 1;
-		desc.width = width / 2;
-		desc.height = height / 2;
+		desc.width = width;
+		desc.height = height;
 		desc.multiSample = 0;
 		desc.createDepthStencil = false;
 		desc.usingPrimaryDepthStencil = false;
@@ -691,20 +691,13 @@ void WorldRendererPreLit::endBuild(WorldRenderView& worldRenderView, int frame)
 
 	// Build shadow contexts.
 	if (m_shadowsQuality > QuDisabled)
-	{
-		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			buildLightWithShadows(worldRenderView, *i, frame);
-	}
+		buildLightWithShadows(worldRenderView, frame);
 	else
-	{
-		for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-			buildLightWithNoShadows(worldRenderView, *i, frame);
-	}
+		buildLightWithNoShadows(worldRenderView, frame);
 
 	// Build visual context.
 	worldRenderView.resetLights();
-	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
-		buildVisual(worldRenderView, *i, frame);
+	buildVisual(worldRenderView, frame);
 
 	m_count++;
 }
@@ -1152,7 +1145,7 @@ void WorldRendererPreLit::getTargets(RefArray< render::ITexture >& outTargets) c
 	outTargets[3] = !m_shadowMaskFilterTargetSet.empty() ? m_shadowMaskFilterTargetSet[0]->getColorTexture(0) : 0;
 }
 
-void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
+void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -1223,7 +1216,8 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 					ms_techniqueShadow,
 					shadowRenderView
 				);
-				f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, entity);
+				for (RefArray< Entity >::const_iterator j = m_buildEntities.begin(); j != m_buildEntities.end(); ++j)
+					f.slice[slice].shadow[i]->build(shadowRenderView, shadowPass, *j);
 				f.slice[slice].shadow[i]->flush(shadowRenderView, shadowPass);
 				
 				f.slice[slice].viewToLightSpace[i] = shadowLightSquareProjection * shadowLightProjection * shadowLightView * viewInverse;
@@ -1236,7 +1230,7 @@ void WorldRendererPreLit::buildLightWithShadows(WorldRenderView& worldRenderView
 	}
 }
 
-void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderView, Entity* entity, int frame)
+void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 	f.lightCount = worldRenderView.getLightCount();
@@ -1247,7 +1241,7 @@ void WorldRendererPreLit::buildLightWithNoShadows(WorldRenderView& worldRenderVi
 	}
 }
 
-void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* entity, int frame)
+void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, int frame)
 {
 	Frame& f = m_frames[frame];
 
@@ -1268,7 +1262,8 @@ void WorldRendererPreLit::buildVisual(WorldRenderView& worldRenderView, Entity* 
 		m_gbufferTargetSet->getColorTexture(1),
 		m_lightMapTargetSet->getColorTexture(0)
 	);
-	f.visual->build(worldRenderView, defaultPreLitPass, entity);
+	for (RefArray< Entity >::const_iterator i = m_buildEntities.begin(); i != m_buildEntities.end(); ++i)
+		f.visual->build(worldRenderView, defaultPreLitPass, *i);
 	f.visual->flush(worldRenderView, defaultPreLitPass);
 
 	f.projection = worldRenderView.getProjection();

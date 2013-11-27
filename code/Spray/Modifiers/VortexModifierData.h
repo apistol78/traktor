@@ -26,7 +26,7 @@ class T_DLLCLASS VortexModifierData : public ModifierData
 public:
 	VortexModifierData();
 
-	virtual Ref< Modifier > createModifier(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 

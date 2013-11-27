@@ -12,8 +12,8 @@ namespace traktor
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.Emitter", Emitter, Object)
 
 Emitter::Emitter(
-	Source* source,
-	const RefArray< Modifier >& modifiers,
+	const Source* source,
+	const RefArray< const Modifier >& modifiers,
 	const resource::Proxy< render::Shader >& shader,
 	const resource::Proxy< mesh::InstanceMesh >& mesh,
 	float middleAge,

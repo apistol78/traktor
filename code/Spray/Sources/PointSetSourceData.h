@@ -31,7 +31,7 @@ class T_DLLCLASS PointSetSourceData : public SourceData
 public:
 	PointSetSourceData();
 
-	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 

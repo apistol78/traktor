@@ -26,6 +26,8 @@ void StateCache::reset()
 	m_d3dBlendState = 0;
 	m_d3dVertexShader = 0;
 	m_d3dPixelShader = 0;
+	m_d3dVertexBuffer = 0;
+	m_d3dIndexBuffer = 0;
 	m_d3dTopology = D3D11_PRIMITIVE_TOPOLOGY_UNDEFINED;
 	m_d3dSignatureHash = 0;
 	m_stencilReference = 0;
@@ -74,6 +76,25 @@ void StateCache::setPixelShader(ID3D11PixelShader* d3dPixelShader)
 	{
 		m_d3dDeviceContext->PSSetShader(d3dPixelShader, 0, 0);
 		m_d3dPixelShader = d3dPixelShader;
+	}
+}
+
+void StateCache::setVertexBuffer(ID3D11Buffer* d3dVertexBuffer, UINT d3dVertexStride)
+{
+	if (d3dVertexBuffer != m_d3dVertexBuffer)
+	{
+		UINT offset = 0;
+		m_d3dDeviceContext->IASetVertexBuffers(0, 1, &d3dVertexBuffer, &d3dVertexStride, &offset);
+		m_d3dVertexBuffer = d3dVertexBuffer;
+	}
+}
+
+void StateCache::setIndexBuffer(ID3D11Buffer* d3dIndexBuffer, DXGI_FORMAT d3dIndexFormat)
+{
+	if (d3dIndexBuffer != m_d3dIndexBuffer)
+	{
+		m_d3dDeviceContext->IASetIndexBuffer(d3dIndexBuffer, d3dIndexFormat, 0);
+		m_d3dIndexBuffer = d3dIndexBuffer;
 	}
 }
 

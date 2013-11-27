@@ -26,7 +26,7 @@ class T_DLLCLASS IntegrateModifierData : public ModifierData
 public:
 	IntegrateModifierData();
 
-	virtual Ref< Modifier > createModifier(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Modifier > createModifier(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 

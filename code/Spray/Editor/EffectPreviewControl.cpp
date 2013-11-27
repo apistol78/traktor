@@ -453,6 +453,7 @@ void EffectPreviewControl::eventPaint(ui::Event* event)
 		m_effectInstance->update(m_context, effectTransform, true);
 		m_effectInstance->synchronize();
 		m_effectInstance->render(
+			render::getParameterHandle(L"World_ForwardColor"),
 			m_pointRenderer,
 			m_meshRenderer,
 			m_trailRenderer,

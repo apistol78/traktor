@@ -74,7 +74,7 @@ private:
 		Vector4 timeAndAge;
 	};
 
-	Ref< render::VertexBuffer > m_vertexBuffers[64];
+	Ref< render::VertexBuffer > m_vertexBuffers[16];
 	Ref< render::IndexBuffer > m_indexBuffer;
 	uint32_t m_count;
 	TrailVertex* m_vertex;

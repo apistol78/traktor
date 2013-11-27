@@ -15,7 +15,7 @@ SizeModifierData::SizeModifierData()
 {
 }
 
-Ref< Modifier > SizeModifierData::createModifier(resource::IResourceManager* resourceManager) const
+Ref< const Modifier > SizeModifierData::createModifier(resource::IResourceManager* resourceManager) const
 {
 	return new SizeModifier(m_adjustRate);
 }

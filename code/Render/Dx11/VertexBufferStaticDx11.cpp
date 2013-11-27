@@ -95,7 +95,7 @@ void VertexBufferStaticDx11::unlock()
 	setContentValid(true);
 }
 
-void VertexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
+void VertexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache)
 {
 	if (m_data.ptr())
 	{
@@ -109,7 +109,7 @@ void VertexBufferStaticDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
 		);
 		m_data.release();
 	}
-	VertexBufferDx11::prepare(d3dDeviceContext);
+	VertexBufferDx11::prepare(d3dDeviceContext, stateCache);
 }
 
 VertexBufferStaticDx11::VertexBufferStaticDx11(uint32_t bufferSize)

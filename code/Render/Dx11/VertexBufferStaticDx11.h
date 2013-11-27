@@ -37,7 +37,7 @@ public:
 	
 	virtual void unlock();
 
-	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext);
+	virtual void prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache);
 
 private:
 	Ref< ContextDx11 > m_context;

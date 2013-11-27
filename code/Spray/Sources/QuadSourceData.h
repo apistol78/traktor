@@ -26,7 +26,7 @@ class T_DLLCLASS QuadSourceData : public SourceData
 public:
 	QuadSourceData();
 
-	virtual Ref< Source > createSource(resource::IResourceManager* resourceManager) const;
+	virtual Ref< const Source > createSource(resource::IResourceManager* resourceManager) const;
 
 	virtual void serialize(ISerializer& s);
 

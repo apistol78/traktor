@@ -5,6 +5,7 @@
 #include "Core/Containers/CircularVector.h"
 #include "Core/Math/Aabb3.h"
 #include "Core/Math/Plane.h"
+#include "Render/Types.h"
 #include "Resource/Proxy.h"
 #include "Spray/Types.h"
 
@@ -37,7 +38,7 @@ public:
 
 	void update(Context& context, const Transform& transform, bool enable);
 
-	void render(TrailRenderer* trailRenderer, const Transform& transform, const Vector4& cameraPosition, const Plane& cameraPlane);
+	void render(render::handle_t technique, TrailRenderer* trailRenderer, const Transform& transform, const Vector4& cameraPosition, const Plane& cameraPlane);
 
 	const Aabb3& getBoundingBox() const { return m_boundingBox; }
 

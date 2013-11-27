@@ -75,7 +75,7 @@ void IndexBufferDynamicDx11::unlock()
 	}
 }
 
-void IndexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
+void IndexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext, StateCache& stateCache)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	if (m_d3dPendingCommandList)
@@ -83,7 +83,7 @@ void IndexBufferDynamicDx11::prepare(ID3D11DeviceContext* d3dDeviceContext)
 		d3dDeviceContext->ExecuteCommandList(m_d3dPendingCommandList, TRUE);
 		m_d3dPendingCommandList.release();
 	}
-	IndexBufferDx11::prepare(d3dDeviceContext);
+	IndexBufferDx11::prepare(d3dDeviceContext, stateCache);
 }
 
 IndexBufferDynamicDx11::IndexBufferDynamicDx11(IndexType indexType, uint32_t bufferSize)
