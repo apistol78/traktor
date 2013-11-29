@@ -2,6 +2,7 @@
 #define traktor_scene_SceneAsset_H
 
 #include "Core/RefArray.h"
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 
@@ -15,6 +16,13 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class ITexture;
+
+	}
+
 	namespace world
 	{
 
@@ -44,6 +52,10 @@ public:
 
 	const resource::Id< world::PostProcessSettings >& getPostProcessSettings() const;
 
+	void setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams);
+
+	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getPostProcessParams() const;
+
 	void setLayers(const RefArray< world::LayerEntityData >& layers);
 
 	const RefArray< world::LayerEntityData >& getLayers() const;
@@ -57,6 +69,7 @@ public:
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	resource::Id< world::PostProcessSettings > m_postProcessSettings;
+	SmallMap< std::wstring, resource::Id< render::ITexture > > m_postProcessParams;
 	RefArray< world::LayerEntityData > m_layers;
 	Ref< ISceneControllerData > m_controllerData;
 };

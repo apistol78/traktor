@@ -1,6 +1,7 @@
 #ifndef traktor_scene_SceneResource_H
 #define traktor_scene_SceneResource_H
 
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
 #include "Resource/Id.h"
 #include "World/WorldRenderSettings.h"
@@ -26,6 +27,7 @@ class IResourceManager;
 	{
 
 class IRenderSystem;
+class ITexture;
 
 	}
 
@@ -69,6 +71,10 @@ public:
 
 	const resource::Id< world::PostProcessSettings >& getPostProcessSettings() const;
 
+	void setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams);
+
+	const SmallMap< std::wstring, resource::Id< render::ITexture > >& getPostProcessParams() const;
+
 	void setEntityData(world::EntityData* entityData);
 
 	Ref< world::EntityData > getEntityData() const;
@@ -82,6 +88,7 @@ public:
 private:
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
 	resource::Id< world::PostProcessSettings > m_postProcessSettings;
+	SmallMap< std::wstring, resource::Id< render::ITexture > > m_postProcessParams;
 	Ref< world::EntityData > m_entityData;
 	Ref< ISceneControllerData > m_controllerData;
 };

@@ -228,13 +228,15 @@ void PerspectiveRenderControl::updateWorldRenderer()
 
 	world::WorldCreateDesc wcd;
 	wcd.worldRenderSettings = &m_worldRenderSettings;
-	wcd.postProcessSettings = m_postProcessEnable ? sceneInstance->getPostProcessSettings() : 0;
 	wcd.entityRenderers = worldEntityRenderers;
 	wcd.shadowsQuality = m_shadowQuality;
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.multiSample = m_multiSample;
 	wcd.frameCount = 1;
+
+	if (m_postProcessEnable)
+		wcd.postProcessSettings = sceneInstance->getPostProcessSettings();
 
 	if (worldRenderer->create(
 		m_context->getResourceManager(),
@@ -545,10 +547,19 @@ void PerspectiveRenderControl::eventPaint(ui::Event* event)
 		Ref< scene::Scene > sceneInstance = m_context->getScene();
 		if (sceneInstance)
 		{
+			// Build frame from scene entities.
 			m_worldRenderer->beginBuild();
 			m_worldRenderer->build(sceneInstance->getRootEntity());
 			m_context->getEntityEventManager()->build(m_worldRenderer);
 			m_worldRenderer->endBuild(m_worldRenderView, 0);
+
+			// Set post process parameters from scene instance.
+			world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
+			if (postProcess)
+			{
+				for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = sceneInstance->getPostProcessParams().begin(); i != sceneInstance->getPostProcessParams().end(); ++i)
+					postProcess->setTextureParameter(i->first, i->second);
+			}
 		}
 
 		m_worldRenderer->beginRender(

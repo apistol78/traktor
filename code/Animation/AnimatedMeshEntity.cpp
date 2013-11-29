@@ -11,7 +11,7 @@
 #include "World/WorldContext.h"
 #include "World/WorldRenderView.h"
 
-//#define T_USE_UPDATE_JOBS
+#define T_USE_UPDATE_JOBS
 
 namespace traktor
 {
@@ -216,11 +216,11 @@ void AnimatedMeshEntity::setTransform(const Transform& transform)
 bool AnimatedMeshEntity::getJointTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
+	if (!m_skeleton->findJoint(jointName, index))
+		return false;
 
 	synchronize();
 
-	if (!m_skeleton->findJoint(jointName, index))
-		return false;
 	if (index >= m_jointTransforms.size())
 		return false;
 
@@ -231,11 +231,11 @@ bool AnimatedMeshEntity::getJointTransform(render::handle_t jointName, Transform
 bool AnimatedMeshEntity::getPoseTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
+	if (!m_skeleton->findJoint(jointName, index))
+		return false;
 
 	synchronize();
 
-	if (!m_skeleton->findJoint(jointName, index))
-		return false;
 	if (index >= m_poseTransforms.size())
 		return false;
 
@@ -246,11 +246,11 @@ bool AnimatedMeshEntity::getPoseTransform(render::handle_t jointName, Transform&
 bool AnimatedMeshEntity::getSkinTransform(render::handle_t jointName, Transform& outTransform) const
 {
 	uint32_t index;
+	if (!m_skeleton->findJoint(jointName, index))
+		return false;
 
 	synchronize();
 
-	if (!m_skeleton->findJoint(jointName, index))
-		return false;
 	if (index >= m_poseTransforms.size())
 		return false;
 
@@ -271,11 +271,10 @@ bool AnimatedMeshEntity::getSkinTransform(render::handle_t jointName, Transform&
 bool AnimatedMeshEntity::setPoseTransform(render::handle_t jointName, const Transform& transform, bool inclusive)
 {
 	uint32_t index;
-
-	synchronize();
-
 	if (!m_skeleton->findJoint(jointName, index))
 		return false;
+
+	synchronize();
 
 	if (index >= m_jointTransforms.size())
 		return false;

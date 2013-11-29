@@ -53,7 +53,7 @@ Ref< world::Entity > world_GroupEntity_getFirstEntityOf(world::GroupEntity* this
 
 void world_PostProcess_setParameter(world::PostProcess* this_, const std::wstring& name, float value)
 {
-	this_->setParameter(render::getParameterHandle(name), value);
+	this_->setFloatParameter(render::getParameterHandle(name), value);
 }
 
 void world_Entity_update(world::Entity* this_, float totalTime, float deltaTime)

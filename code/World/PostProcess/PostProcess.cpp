@@ -202,22 +202,28 @@ void PostProcess::swapTargets(render::handle_t id0, render::handle_t id1)
 	std::swap(m_targets[id0], m_targets[id1]);
 }
 
-void PostProcess::setParameter(render::handle_t handle, bool value)
+void PostProcess::setCombination(render::handle_t handle, bool value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_booleanParameters[handle] = value;
 }
 
-void PostProcess::setParameter(render::handle_t handle, float value)
+void PostProcess::setFloatParameter(render::handle_t handle, float value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_scalarParameters[handle] = value;
 }
 
-void PostProcess::setParameter(render::handle_t handle, const Vector4& value)
+void PostProcess::setVectorParameter(render::handle_t handle, const Vector4& value)
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
 	m_vectorParameters[handle] = value;
+}
+
+void PostProcess::setTextureParameter(render::handle_t handle, render::ITexture* value)
+{
+	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
+	m_textureParameters[handle] = value;
 }
 
 void PostProcess::prepareShader(render::Shader* shader) const
@@ -228,6 +234,8 @@ void PostProcess::prepareShader(render::Shader* shader) const
 		shader->setFloatParameter(i->first, i->second);
 	for (SmallMap< render::handle_t, Vector4 >::const_iterator i = m_vectorParameters.begin(); i != m_vectorParameters.end(); ++i)
 		shader->setVectorParameter(i->first, i->second);
+	for (SmallMap< render::handle_t, Ref< render::ITexture > >::const_iterator i = m_textureParameters.begin(); i != m_textureParameters.end(); ++i)
+		shader->setTextureParameter(i->first, i->second);
 }
 
 bool PostProcess::requireHighRange() const

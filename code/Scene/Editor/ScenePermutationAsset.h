@@ -2,7 +2,9 @@
 #define traktor_scene_ScenePermutationAsset_H
 
 #include <list>
+#include "Core/Containers/SmallMap.h"
 #include "Core/Serialization/ISerializable.h"
+#include "Resource/Id.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -39,6 +41,7 @@ private:
 	std::list< std::wstring > m_includeLayers;
 	Ref< world::WorldRenderSettings > m_overrideWorldRenderSettings;
 	resource::Id< world::PostProcessSettings > m_overridePostProcessSettings;
+	SmallMap< std::wstring, resource::Id< render::ITexture > > m_overridePostProcessParams;
 };
 
 	}

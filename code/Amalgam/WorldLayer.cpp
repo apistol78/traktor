@@ -196,7 +196,7 @@ void WorldLayer::build(const amalgam::IUpdateInfo& info, uint32_t frame)
 
 void WorldLayer::render(render::EyeType eye, uint32_t frame)
 {
-	if (!m_worldRenderer)
+	if (!m_scene || !m_worldRenderer)
 		return;
 
 	render::IRenderView* renderView = m_environment->getRender()->getRenderView();
@@ -204,12 +204,20 @@ void WorldLayer::render(render::EyeType eye, uint32_t frame)
 
 	if (m_worldRenderer->beginRender(frame, eye, c_clearColor))
 	{
+		world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
+		if (postProcess)
+		{
+			for (SmallMap< render::handle_t, resource::Proxy< render::ITexture > >::const_iterator i = m_scene->getPostProcessParams().begin(); i != m_scene->getPostProcessParams().end(); ++i)
+				postProcess->setTextureParameter(i->first, i->second);
+		}
+
 		m_worldRenderer->render(
 			world::WrfDepthMap | world::WrfNormalMap | world::WrfShadowMap | world::WrfLightMap |
 			world::WrfVisualOpaque | world::WrfVisualAlphaBlend,
 			frame,
 			eye
 		);
+
 		m_worldRenderer->endRender(frame, eye, m_deltaTime);
 	}
 }
@@ -414,7 +422,7 @@ void WorldLayer::feedbackValues(spray::FeedbackType type, const float* values, i
 		T_ASSERT (count >= 4);
 		world::PostProcess* postProcess = m_worldRenderer->getVisualPostProcess();
 		if (postProcess)
-			postProcess->setParameter(s_handleFeedback, Vector4::loadUnaligned(values));
+			postProcess->setVectorParameter(s_handleFeedback, Vector4::loadUnaligned(values));
 	}
 }
 
