@@ -2,6 +2,8 @@
 #include "Core/Serialization/MemberComposite.h"
 #include "Core/Serialization/MemberRef.h"
 #include "Core/Serialization/MemberRefArray.h"
+#include "Core/Serialization/MemberSmallMap.h"
+#include "Render/ITexture.h"
 #include "Resource/Member.h"
 #include "Scene/ISceneControllerData.h"
 #include "Scene/Scene.h"
@@ -15,7 +17,7 @@ namespace traktor
 	namespace scene
 	{
 
-T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 4, SceneAsset, ISerializable)
+T_IMPLEMENT_RTTI_EDIT_CLASS(L"traktor.scene.SceneAsset", 5, SceneAsset, ISerializable)
 
 SceneAsset::SceneAsset()
 :	m_worldRenderSettings(new world::WorldRenderSettings())
@@ -40,6 +42,16 @@ void SceneAsset::setPostProcessSettings(const resource::Id< world::PostProcessSe
 const resource::Id< world::PostProcessSettings >& SceneAsset::getPostProcessSettings() const
 {
 	return m_postProcessSettings;
+}
+
+void SceneAsset::setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams)
+{
+	m_postProcessParams = postProcessParams;
+}
+
+const SmallMap< std::wstring, resource::Id< render::ITexture > >& SceneAsset::getPostProcessParams() const
+{
+	return m_postProcessParams;
 }
 
 void SceneAsset::setLayers(const RefArray< world::LayerEntityData >& layers)
@@ -68,6 +80,11 @@ void SceneAsset::serialize(ISerializer& s)
 
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
+
+	if (s.getVersion() >= 5)
+	{
+		s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"postProcessParams", m_postProcessParams);
+	}
 
 	if (s.getVersion() >= 4)
 	{

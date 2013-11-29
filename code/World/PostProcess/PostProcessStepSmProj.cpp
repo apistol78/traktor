@@ -144,7 +144,7 @@ void PostProcessStepSmProj::InstanceSmProj::render(
 	if (!sourceShMap || !sourceDepth)
 		return;
 
-	postProcess->setParameter(m_handleLastSlice, bool(params.sliceIndex >= (params.sliceCount - 1)));
+	postProcess->setCombination(m_handleLastSlice, bool(params.sliceIndex >= (params.sliceCount - 1)));
 	postProcess->prepareShader(m_shader);
 
 	float shadowMapBias = params.shadowMapBias / params.shadowFarZ;

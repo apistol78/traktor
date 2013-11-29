@@ -2,6 +2,10 @@
 #define traktor_scene_Scene_H
 
 #include "Core/Object.h"
+#include "Core/Containers/SmallMap.h"
+#include "Render/Types.h"
+#include "Resource/Proxy.h"
+#include "World/PostProcess/PostProcessSettings.h"
 
 // import/export mechanism.
 #undef T_DLLCLASS
@@ -13,13 +17,19 @@
 
 namespace traktor
 {
+	namespace render
+	{
+
+class ITexture;
+
+	}
+
 	namespace world
 	{
 
 class Entity;
 class IEntitySchema;
 class IWorldRenderer;
-class PostProcessSettings;
 struct UpdateParams;
 class WorldRenderSettings;
 class WorldRenderView;
@@ -47,7 +57,8 @@ public:
 		world::IEntitySchema* entitySchema,
 		world::Entity* rootEntity,
 		world::WorldRenderSettings* worldRenderSettings,
-		world::PostProcessSettings* postProcessSettings
+		const resource::Proxy< world::PostProcessSettings >& postProcessSettings,
+		const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& postProcessParams
 	);
 
 	virtual ~Scene();
@@ -64,14 +75,17 @@ public:
 
 	world::WorldRenderSettings* getWorldRenderSettings() const;
 
-	world::PostProcessSettings* getPostProcessSettings() const;
+	const resource::Proxy< world::PostProcessSettings >& getPostProcessSettings() const;
+
+	const SmallMap< render::handle_t, resource::Proxy< render::ITexture > >& getPostProcessParams() const;
 
 private:
 	Ref< world::IEntitySchema > m_entitySchema;
 	Ref< world::Entity > m_rootEntity;
 	Ref< ISceneController > m_controller;
 	Ref< world::WorldRenderSettings > m_worldRenderSettings;
-	Ref< world::PostProcessSettings > m_postProcessSettings;
+	resource::Proxy< world::PostProcessSettings > m_postProcessSettings;
+	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > m_postProcessParams;
 };
 
 	}

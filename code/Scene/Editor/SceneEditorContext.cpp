@@ -4,6 +4,7 @@
 #include "Core/Math/Const.h"
 #include "Core/Serialization/DeepClone.h"
 #include "Core/Timer/Timer.h"
+#include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
 #include "Scene/ISceneController.h"
 #include "Scene/ISceneControllerData.h"
@@ -375,13 +376,23 @@ void SceneEditorContext::buildEntities()
 		resource::Proxy< world::PostProcessSettings > postProcessSettings;
 		m_resourceManager->bind(m_sceneAsset->getPostProcessSettings(), postProcessSettings);
 
+		// Bind post process parameters.
+		SmallMap< render::handle_t, resource::Proxy< render::ITexture > > postProcessParams;
+		const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParamsAsset = m_sceneAsset->getPostProcessParams();
+		for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = postProcessParamsAsset.begin(); i != postProcessParamsAsset.end(); ++i)
+		{
+			if (!m_resourceManager->bind(i->second, postProcessParams[render::getParameterHandle(i->first)]))
+				log::error << L"Unable to bind post processing parameter \"" << i->first << L"\"" << Endl;
+		}
+
 		// Create our scene.
 		m_scene = new Scene(
 			controller,
 			entitySchema,
 			rootGroupEntity,
 			m_sceneAsset->getWorldRenderSettings(),
-			postProcessSettings
+			postProcessSettings,
+			postProcessParams
 		);
 	}
 
@@ -430,7 +441,8 @@ void SceneEditorContext::buildController()
 		m_scene->getEntitySchema(),
 		m_scene->getRootEntity(),
 		m_scene->getWorldRenderSettings(),
-		m_scene->getPostProcessSettings()
+		m_scene->getPostProcessSettings(),
+		m_scene->getPostProcessParams()
 	);
 }
 

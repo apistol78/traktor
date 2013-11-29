@@ -1,6 +1,8 @@
 #include "Core/Log/Log.h"
 #include "Core/Serialization/ISerializer.h"
 #include "Core/Serialization/MemberRef.h"
+#include "Core/Serialization/MemberSmallMap.h"
+#include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
 #include "Resource/Member.h"
 #include "Scene/ISceneControllerData.h"
@@ -32,11 +34,18 @@ Ref< Scene > SceneResource::createScene(
 ) const
 {
 	resource::Proxy< world::PostProcessSettings > postProcessSettings;
+	SmallMap< render::handle_t, resource::Proxy< render::ITexture > > postProcessParams;
 
 	if (!m_postProcessSettings.isNull())
 	{
 		if (!resourceManager->bind(m_postProcessSettings, postProcessSettings))
 			log::error << L"Unable to bind post processing settings" << Endl;
+
+		for (SmallMap< std::wstring, resource::Id< render::ITexture > >::const_iterator i = m_postProcessParams.begin(); i != m_postProcessParams.end(); ++i)
+		{
+			if (!resourceManager->bind(i->second, postProcessParams[render::getParameterHandle(i->first)]))
+				log::error << L"Unable to bind post processing parameter \"" << i->first << L"\"" << Endl;
+		}
 	}
 
 	Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
@@ -63,7 +72,8 @@ Ref< Scene > SceneResource::createScene(
 		entitySchema,
 		rootEntity,
 		m_worldRenderSettings,
-		postProcessSettings
+		postProcessSettings,
+		postProcessParams
 	);
 }
 
@@ -85,6 +95,16 @@ void SceneResource::setPostProcessSettings(const resource::Id< world::PostProces
 const resource::Id< world::PostProcessSettings >& SceneResource::getPostProcessSettings() const
 {
 	return m_postProcessSettings;
+}
+
+void SceneResource::setPostProcessParams(const SmallMap< std::wstring, resource::Id< render::ITexture > >& postProcessParams)
+{
+	m_postProcessParams = postProcessParams;
+}
+
+const SmallMap< std::wstring, resource::Id< render::ITexture > >& SceneResource::getPostProcessParams() const
+{
+	return m_postProcessParams;
 }
 
 void SceneResource::setEntityData(world::EntityData* entityData)
@@ -111,6 +131,7 @@ void SceneResource::serialize(ISerializer& s)
 {
 	s >> MemberRef< world::WorldRenderSettings >(L"worldRenderSettings", m_worldRenderSettings);
 	s >> resource::Member< world::PostProcessSettings >(L"postProcessSettings", m_postProcessSettings);
+	s >> MemberSmallMap< std::wstring, resource::Id< render::ITexture >, Member< std::wstring >, resource::Member< render::ITexture > >(L"postProcessParams", m_postProcessParams);
 	s >> MemberRef< world::EntityData >(L"entityData", m_entityData);
 	s >> MemberRef< ISceneControllerData >(L"controllerData", m_controllerData);
 }

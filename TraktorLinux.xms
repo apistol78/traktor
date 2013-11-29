@@ -8717,6 +8717,10 @@
 											<linkWithProduct>true</linkWithProduct>
 											<project ref="/object/projects/item[15]/dependencies/item[1]/project"/>
 										</item>
+										<item type="ProjectDependency" version="1">
+											<linkWithProduct>true</linkWithProduct>
+											<project ref="/object/projects/item[15]/dependencies/item[1]/project/dependencies/item[1]/project"/>
+										</item>
 									</dependencies>
 								</project>
 							</item>
