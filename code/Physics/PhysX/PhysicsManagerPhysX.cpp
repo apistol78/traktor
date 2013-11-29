@@ -103,7 +103,7 @@ PhysicsManagerPhysX::~PhysicsManagerPhysX()
 	destroy();
 }
 
-bool PhysicsManagerPhysX::create(float simulationDeltaTime)
+bool PhysicsManagerPhysX::create(float simulationDeltaTime, float timeScale)
 {
 	physx::PxFoundation* foundation = PxCreateFoundation(PX_PHYSICS_VERSION, g_defaultAllocatorCallback, g_defaultErrorCallback);
 	if (!foundation) 

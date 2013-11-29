@@ -156,7 +156,7 @@ PhysicsManagerHavok::~PhysicsManagerHavok()
 	m_world = 0;
 }
 
-bool PhysicsManagerHavok::create(float simulationDeltaTime)
+bool PhysicsManagerHavok::create(float simulationDeltaTime, float timeScale)
 {
 	m_simulationDeltaTime = simulationDeltaTime;
 

@@ -118,6 +118,7 @@ FlashLayer::FlashLayer(
 ,	m_enableSound(enableSound)
 ,	m_visible(true)
 ,	m_offset(0.0f, 0.0f)
+,	m_scale(1.0f)
 ,	m_lastX(-1)
 ,	m_lastY(-1)
 ,	m_lastButton(0)
@@ -346,7 +347,8 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 				renderView,
 				frame,
 				eye,
-				m_offset
+				m_offset,
+				m_scale
 			);
 
 			renderView->end();
@@ -367,7 +369,8 @@ void FlashLayer::render(render::EyeType eye, uint32_t frame)
 			renderView,
 			frame,
 			eye,
-			m_offset
+			m_offset,
+			m_scale
 		);
 	}
 }
@@ -611,8 +614,9 @@ flash::ActionValue FlashLayer::dispatchExternalCall(const std::string& methodNam
 
 void FlashLayer::feedbackValues(spray::FeedbackType type, const float* values, int32_t count)
 {
-	T_ASSERT (count >= 2);
+	T_ASSERT (count >= 3);
 	m_offset = Vector2(values[0] * 0.01f, values[1] * 0.01f);
+	m_scale = values[2] * 0.01f + 1.0f;
 }
 
 	}

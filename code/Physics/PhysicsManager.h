@@ -119,8 +119,9 @@ public:
 	/*! \brief Create physics manager.
 	 *
 	 * \param simulationDeltaTime Fixed simulation delta time.
+	 * \param timeScale Scaling of simulation time.
 	 */
-	virtual bool create(float simulationDeltaTime) = 0;
+	virtual bool create(float simulationDeltaTime, float timeScale) = 0;
 
 	/*! \brief Destroy physics manager.
 	 *

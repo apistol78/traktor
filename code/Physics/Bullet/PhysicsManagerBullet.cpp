@@ -406,11 +406,12 @@ PhysicsManagerBullet::~PhysicsManagerBullet()
 	T_ASSERT (!m_dynamicsWorld);
 }
 
-bool PhysicsManagerBullet::create(float simulationDeltaTime)
+bool PhysicsManagerBullet::create(float simulationDeltaTime, float timeScale)
 {
 	btDefaultCollisionConstructionInfo info;
 
 	m_simulationDeltaTime = simulationDeltaTime;
+	m_timeScale = timeScale;
 	m_configuration = new btDefaultCollisionConfiguration(info);
 	
 #if !defined(T_BULLET_USE_SPURS)
@@ -644,6 +645,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			this,
 			m_dynamicsWorld,
 			m_simulationDeltaTime,
+			m_timeScale,
 			rigidBody,
 			shape,
 			centerOfGravity,
@@ -691,6 +693,7 @@ Ref< Body > PhysicsManagerBullet::createBody(resource::IResourceManager* resourc
 			this,
 			m_dynamicsWorld,
 			m_simulationDeltaTime,
+			m_timeScale,
 			rigidBody,
 			shape,
 			centerOfGravity,
@@ -959,7 +962,7 @@ void PhysicsManagerBullet::update(bool issueCollisionEvents)
 	T_ANONYMOUS_VAR(Save< PhysicsManagerBullet* >)(ms_this, this);
 
 	// Step simulation.
-	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime, 0);
+	m_dynamicsWorld->stepSimulation(m_simulationDeltaTime * m_timeScale, 0);
 
 	// Issue collision events.
 	if (issueCollisionEvents)

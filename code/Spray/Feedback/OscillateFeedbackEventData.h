@@ -27,6 +27,7 @@ public:
 		float duration;
 		int32_t frequency;
 		float magnitude;
+		float noise;
 
 		OscillatingValue();
 

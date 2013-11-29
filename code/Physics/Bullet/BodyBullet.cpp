@@ -32,6 +32,7 @@ BodyBullet::BodyBullet(
 	IWorldCallback* callback,
 	btDynamicsWorld* dynamicsWorld,
 	float simulationDeltaTime,
+	float timeScale,
 	btRigidBody* body,
 	btCollisionShape* shape,
 	const Vector4& centerOfGravity,
@@ -42,6 +43,7 @@ BodyBullet::BodyBullet(
 :	m_callback(callback)
 ,	m_dynamicsWorld(dynamicsWorld)
 ,	m_simulationDeltaTime(simulationDeltaTime)
+,	m_timeScale(timeScale)
 ,	m_body(body)
 ,	m_shape(shape)
 ,	m_centerOfGravity(centerOfGravity)
@@ -268,8 +270,8 @@ bool BodyBullet::solveStateConstraint(const BodyState& state)
 	if (linearError.length() < 10.0f && angularError.length() < PI)
 	{
 		const Scalar tau(0.75f);
-		setLinearVelocity(Scalar(1.0f / m_simulationDeltaTime) * linearError * tau + state.getLinearVelocity());
-		setAngularVelocity(Scalar(1.0f / m_simulationDeltaTime) * angularError * tau + state.getAngularVelocity());
+		setLinearVelocity(Scalar(1.0f / (m_simulationDeltaTime * m_timeScale)) * linearError * tau + state.getLinearVelocity());
+		setAngularVelocity(Scalar(1.0f / (m_simulationDeltaTime * m_timeScale)) * angularError * tau + state.getAngularVelocity());
 	}
 	else
 		setState(state);
@@ -298,8 +300,8 @@ void BodyBullet::integrate(float deltaTime)
 {
 	btTransform predictedTransform;
 	m_body->applyCentralForce(m_dynamicsWorld->getGravity());
-	m_body->integrateVelocities(deltaTime);
-	m_body->predictIntegratedTransform(deltaTime, predictedTransform);
+	m_body->integrateVelocities(deltaTime * m_timeScale);
+	m_body->predictIntegratedTransform(deltaTime * m_timeScale, predictedTransform);
 	m_body->setCenterOfMassTransform(predictedTransform);
 	m_body->clearForces();
 }

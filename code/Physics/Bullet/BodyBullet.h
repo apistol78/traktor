@@ -36,6 +36,7 @@ public:
 		IWorldCallback* callback,
 		btDynamicsWorld* dynamicsWorld,
 		float simulationDeltaTime,
+		float timeScale,
 		btRigidBody* body,
 		btCollisionShape* shape,
 		const Vector4& centerOfGravity,
@@ -124,6 +125,7 @@ private:
 	IWorldCallback* m_callback;
 	btDynamicsWorld* m_dynamicsWorld;
 	float m_simulationDeltaTime;
+	float m_timeScale;
 	btRigidBody* m_body;
 	btCollisionShape* m_shape;
 	Vector4 m_centerOfGravity;

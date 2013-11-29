@@ -10,7 +10,7 @@ namespace traktor
 	namespace spray
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.OscillateFeedbackEventData", 0, OscillateFeedbackEventData, world::IEntityEventData)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.spray.OscillateFeedbackEventData", 1, OscillateFeedbackEventData, world::IEntityEventData)
 
 OscillateFeedbackEventData::OscillateFeedbackEventData()
 :	m_type(FbtNone)
@@ -36,6 +36,7 @@ OscillateFeedbackEventData::OscillatingValue::OscillatingValue()
 :	duration(0.0f)
 ,	frequency(0)
 ,	magnitude(0.0f)
+,	noise(0.0f)
 {
 }
 
@@ -44,6 +45,8 @@ void OscillateFeedbackEventData::OscillatingValue::serialize(ISerializer& s)
 	s >> Member< float >(L"duration", duration, AttributeRange(0.0f));
 	s >> Member< int32_t >(L"frequency", frequency, AttributeRange(0));
 	s >> Member< float >(L"magnitude", magnitude, AttributeRange(0.0f));
+	if (s.getVersion() >= 1)
+		s >> Member< float >(L"noise", noise, AttributeRange(0.0f, 1.0f));
 }
 
 	}

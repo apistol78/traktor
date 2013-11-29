@@ -3,6 +3,7 @@
 #include "Amalgam/Impl/PhysicsServer.h"
 #include "Core/Log/Log.h"
 #include "Core/Misc/SafeDestroy.h"
+#include "Core/Settings/PropertyFloat.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyString.h"
 #include "Physics/MeshFactory.h"
@@ -15,18 +16,25 @@ namespace traktor
 {
 	namespace amalgam
 	{
+		namespace
+		{
+
+const float c_timeScale = 1.25f;	//< Make simulation 25% faster than normal; empirically measured to make simulation feel more natural.
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.amalgam.PhysicsServer", PhysicsServer, IPhysicsServer)
 
 bool PhysicsServer::create(const PropertyGroup* settings, float simulationDeltaTime)
 {
 	std::wstring physicsType = settings->getProperty< PropertyString >(L"Physics.Type");
+	float timeScale = settings->getProperty< PropertyFloat >(L"Physics.TimeScale", 1.0f);
 
 	Ref< physics::PhysicsManager > physicsManager = loadAndInstantiate< physics::PhysicsManager >(physicsType);
 	if (!physicsManager)
 		return false;
 
-	if (!physicsManager->create(simulationDeltaTime))
+	if (!physicsManager->create(simulationDeltaTime, timeScale * c_timeScale))
 	{
 		log::error << L"Physics server failed; unable to create physics manager" << Endl;
 		return false;
