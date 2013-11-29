@@ -1,4 +1,6 @@
 #include "Core/Math/Const.h"
+#include "Core/Math/Float.h"
+#include "Core/Math/Random.h"
 #include "Spray/Feedback/OscillateFeedbackEventData.h"
 #include "Spray/Feedback/OscillateFeedbackEventInstance.h"
 #include "Spray/Feedback/IFeedbackManager.h"
@@ -7,6 +9,12 @@ namespace traktor
 {
 	namespace spray
 	{
+		namespace
+		{
+
+Random s_random;
+
+		}
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.spray.OscillateFeedbackEventInstance", OscillateFeedbackEventInstance, world::IEntityEventInstance)
 
@@ -28,7 +36,9 @@ bool OscillateFeedbackEventInstance::update(const world::UpdateParams& update)
 		if (m_time < ov.duration)
 		{
 			float f = m_time / ov.duration;
-			float v = std::sin(ov.frequency * f * PI) * (1.0f - f * f * f) * ov.magnitude;
+			float m = (1.0f - f * f * f) * ov.magnitude;
+			float v = lerp(std::sin(ov.frequency * f * PI), s_random.nextFloat() * 2.0f - 1.0f, ov.noise) * m;
+
 			values[i] = v;
 			finished = false;
 		}

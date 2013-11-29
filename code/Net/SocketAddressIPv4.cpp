@@ -63,7 +63,11 @@ SocketAddressIPv4::SocketAddressIPv4(const uint8_t addr[4], uint16_t port)
 
 SocketAddressIPv4::SocketAddressIPv4(const std::wstring& host, uint16_t port)
 {
+#if !defined(__EMSCRIPTEN__)
 	uint32_t ia = INADDR_NONE;
+#else
+	uint32_t ia = 0;
+#endif
 
 	// Try to resolve address, first try string denoted IP number as it will
 	// probably fail faster than gethostbyname.

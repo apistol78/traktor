@@ -815,11 +815,10 @@ bool Application::update()
 			performance.memInUseScript = ss.memoryUsage;
 			performance.heapObjects = Object::getHeapObjectCount();
 			performance.build = float(buildTimeEnd - buildTimeStart);
-#	if !defined(_PS3)
-			performance.render = m_renderDuration;
-#	else
-			performance.render = float(rvs.duration);
-#	endif
+			if (rvs.duration > 0.0)
+				performance.render = float(rvs.duration);
+			else
+				performance.render = m_renderDuration;
 			performance.drawCalls = rvs.drawCalls;
 			performance.primitiveCount = rvs.primitiveCount;
 			performance.residentResourcesCount = rms.residentCount;

@@ -37,7 +37,7 @@ public:
 
 	virtual ~PhysicsManagerHavok();
 
-	virtual bool create(float simulationDeltaTime);
+	virtual bool create(float simulationDeltaTime, float timeScale);
 
 	virtual void destroy();
 

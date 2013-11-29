@@ -44,7 +44,7 @@ public:
 
 	virtual ~PhysicsManagerBullet();
 
-	virtual bool create(float simulationDeltaTime);
+	virtual bool create(float simulationDeltaTime, float timeScale);
 
 	virtual void destroy();
 
@@ -137,6 +137,7 @@ public:
 
 private:
 	float m_simulationDeltaTime;
+	float m_timeScale;
 	btCollisionConfiguration* m_configuration;
 	btCollisionDispatcher* m_dispatcher;
 	btBroadphaseInterface* m_broadphase;

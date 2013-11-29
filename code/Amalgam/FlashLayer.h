@@ -127,6 +127,7 @@ private:
 	bool m_enableSound;
 	bool m_visible;
 	Vector2 m_offset;
+	float m_scale;
 	int32_t m_lastX;
 	int32_t m_lastY;
 	int32_t m_lastButton;

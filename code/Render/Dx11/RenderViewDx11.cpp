@@ -285,6 +285,7 @@ bool RenderViewDx11::reset(const RenderViewDefaultDesc& desc)
 	m_window->setTitle(!desc.title.empty() ? desc.title.c_str() : L"Traktor - DirectX 11 Renderer");
 	m_window->addListener(this);
 
+	m_profiler.create(m_context->getD3DDevice());
 	return true;
 }
 
@@ -374,6 +375,7 @@ bool RenderViewDx11::reset(int32_t width, int32_t height)
 	m_targetSize[0] = width;
 	m_targetSize[1] = height;
 
+	m_profiler.create(m_context->getD3DDevice());
 	return true;
 }
 
@@ -496,6 +498,8 @@ bool RenderViewDx11::begin(EyeType eye)
 
 	if (!m_context->getLock().wait(1000))
 		return false;
+
+	m_profiler.begin(m_context->getD3DDeviceContext());
 
 	RenderState rs =
 	{
@@ -773,6 +777,8 @@ void RenderViewDx11::end()
 
 void RenderViewDx11::present()
 {
+	m_profiler.end(m_context->getD3DDeviceContext());
+
 	m_dxgiSwapChain->Present(m_waitVBlank ? 1 : 0, 0);
 
 	m_context->deleteResources();
@@ -794,7 +800,7 @@ void RenderViewDx11::getStatistics(RenderViewStatistics& outStatistics) const
 {
 	outStatistics.drawCalls = m_drawCalls;
 	outStatistics.primitiveCount = m_primitiveCount;
-	outStatistics.duration = 0.0;
+	outStatistics.duration = m_profiler.get() / 1e6;
 }
 
 bool RenderViewDx11::getBackBufferContent(void* buffer) const

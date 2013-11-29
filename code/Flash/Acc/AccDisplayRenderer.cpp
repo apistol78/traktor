@@ -238,18 +238,18 @@ void AccDisplayRenderer::build(render::RenderContext* renderContext, uint32_t fr
 		i->second.shape->preBuild();
 }
 
-void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye, const Vector2& offset)
+void AccDisplayRenderer::render(render::IRenderView* renderView, uint32_t frame, render::EyeType eye, const Vector2& offset, float scale)
 {
 	render::ProgramParameters programParams;
 	programParams.beginParameters(m_globalContext);
 
 	Vector4 screenOffset;
 	if (eye == render::EtCyclop)
-		screenOffset = Vector4(offset.x, offset.y, 0.0f, 0.0f);
+		screenOffset = Vector4(offset.x, offset.y, scale, scale);
 	else if (eye == render::EtLeft)
-		screenOffset = Vector4(offset.x - m_stereoscopicOffset, offset.y, 0.0f, 0.0f);
+		screenOffset = Vector4(offset.x - m_stereoscopicOffset, offset.y, scale, scale);
 	else if (eye == render::EtRight)
-		screenOffset = Vector4(offset.x + m_stereoscopicOffset, offset.y, 0.0f, 0.0f);
+		screenOffset = Vector4(offset.x + m_stereoscopicOffset, offset.y, scale, scale);
 
 	programParams.setVectorParameter(m_handleScreenOffset, screenOffset);
 	programParams.endParameters(m_globalContext);

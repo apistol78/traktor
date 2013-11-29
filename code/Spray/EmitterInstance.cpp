@@ -345,13 +345,15 @@ void EmitterInstance::updateTask(float deltaTime)
 	}
 
 	if (m_emitter->getSort() && !m_renderPoints.empty())
+	{
 #if defined(_WIN32)
 		qsort_s(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
 #elif defined(__LINUX__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), pointPredicate, &m_sortPlane);
-#else
+#elif !defined(__EMSCRIPTEN__)
 		qsort_r(m_renderPoints.ptr(), m_renderPoints.size(), sizeof(Point), &m_sortPlane, &pointPredicate);
 #endif
+	}
 
 	m_count++;
 }
