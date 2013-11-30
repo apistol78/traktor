@@ -51,6 +51,11 @@ Ref< world::Entity > world_GroupEntity_getFirstEntityOf(world::GroupEntity* this
 	return this_->getFirstEntityOf(entityType);
 }
 
+void world_PostProcess_setCombination(world::PostProcess* this_, const std::wstring& name, bool value)
+{
+	this_->setCombination(render::getParameterHandle(name), value);
+}
+
 void world_PostProcess_setParameter(world::PostProcess* this_, const std::wstring& name, float value)
 {
 	this_->setFloatParameter(render::getParameterHandle(name), value);
@@ -172,6 +177,7 @@ void registerWorldClasses(script::IScriptManager* scriptManager)
 	scriptManager->registerClass(classVolumeEntity);
 
 	Ref< script::AutoScriptClass< world::PostProcess > > classPostProcess = new script::AutoScriptClass< world::PostProcess >();
+	classPostProcess->addMethod("setCombination", &world_PostProcess_setCombination);
 	classPostProcess->addMethod("setParameter", &world_PostProcess_setParameter);
 	classPostProcess->addMethod("requireHighRange", &world::PostProcess::requireHighRange);
 	scriptManager->registerClass(classPostProcess);
