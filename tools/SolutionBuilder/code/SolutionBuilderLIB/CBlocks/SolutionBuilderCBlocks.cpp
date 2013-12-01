@@ -3,6 +3,7 @@
 #include <Core/Io/IStream.h>
 #include <Core/Io/Utf8Encoding.h>
 #include <Core/Log/Log.h>
+#include <Core/Misc/SafeDestroy.h>
 #include "SolutionBuilderLIB/Project.h"
 #include "SolutionBuilderLIB/ScriptProcessor.h"
 #include "SolutionBuilderLIB/Solution.h"
@@ -14,6 +15,11 @@ T_IMPLEMENT_RTTI_CLASS(L"SolutionBuilderCBlocks", SolutionBuilderCBlocks, Soluti
 
 SolutionBuilderCBlocks::SolutionBuilderCBlocks()
 {
+}
+
+SolutionBuilderCBlocks::~SolutionBuilderCBlocks()
+{
+	safeDestroy(m_scriptProcessor);
 }
 
 bool SolutionBuilderCBlocks::create(const traktor::CommandLine& cmdLine)

@@ -106,13 +106,15 @@ ScriptManagerLua::ScriptManagerLua()
 
 ScriptManagerLua::~ScriptManagerLua()
 {
-	destroy();
+	T_FATAL_ASSERT_M(!m_luaState, L"Must call destroy");
 }
 
 void ScriptManagerLua::destroy()
 {
 	if (!m_luaState)
 		return;
+
+	T_ANONYMOUS_VAR(Ref< ScriptManagerLua >)(this);
 
 	m_debugger = 0;
 
@@ -121,8 +123,6 @@ void ScriptManagerLua::destroy()
 
 	luaL_unref(m_luaState, LUA_REGISTRYINDEX, m_objectTableRef);
 	m_objectTableRef = LUA_NOREF;
-
-	lua_gc(m_luaState, LUA_GCCOLLECT, 0);
 
 	lua_close(m_luaState);
 	m_luaState = 0;
@@ -363,7 +363,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 	// Load script into environment.
 	std::string fileName = "@" + scriptResourceLua->m_fileName;
 	int32_t result;
-	
+
 	if (scriptResourceLua->m_precompiled)
 		result = lua_load(
 			m_luaState,
@@ -472,7 +472,7 @@ Ref< IScriptContext > ScriptManagerLua::createContext(const IScriptResource* scr
 Ref< IScriptDebugger > ScriptManagerLua::createDebugger()
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);
-	
+
 	if (!m_debugger)
 		m_debugger = new ScriptDebuggerLua(this, m_luaState);
 
@@ -517,7 +517,7 @@ void ScriptManagerLua::pushObject(Object* object)
 		lua_pushnil(m_luaState);
 		return;
 	}
-   
+
 	// If this is a wrapped LUA table or function then unwrap and push as is.
 	if (&type_of(object) == &type_of< TableContainerLua >())
 	{
