@@ -6273,7 +6273,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
@@ -6281,10 +6281,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/debug</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1-staticd</item>
+						<item>fbxsdk</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -6299,7 +6299,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_ANIMATION_EDITOR_EXPORT</item>
@@ -6307,10 +6307,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/release</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1-static</item>
+						<item>fbxsdk</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -6325,7 +6325,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6333,10 +6333,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/debug</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1-staticd</item>
+						<item>fbxsdk</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -6351,7 +6351,7 @@
 					<precompiledHeader/>
 					<includePaths>
 						<item>$(TRAKTOR_HOME)/code</item>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
 					</includePaths>
 					<definitions>
 						<item>T_STATIC</item>
@@ -6359,10 +6359,10 @@
 						<item>FBXSDK_NEW_API</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/release</item>
 					</libraryPaths>
 					<libraries>
-						<item>fbxsdk-2013.1-static</item>
+						<item>fbxsdk</item>
 						<item>CoreServices.framework</item>
 						<item>iconv</item>
 						<item>SystemConfiguration.framework</item>
@@ -8859,7 +8859,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -8867,10 +8867,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/debug</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1-staticd</item>
+												<item>fbxsdk</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -8886,7 +8886,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_MODEL_EXPORT</item>
@@ -8894,10 +8894,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/release</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1-static</item>
+												<item>fbxsdk</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -8913,7 +8913,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -8921,10 +8921,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/debug</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1-staticd</item>
+												<item>fbxsdk</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
@@ -8940,7 +8940,7 @@
 											<includePaths>
 												<item>$(TRAKTOR_HOME)/code</item>
 												<item>$(TRAKTOR_HOME)/3rdp/lwobject</item>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/include</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/include</item>
 											</includePaths>
 											<definitions>
 												<item>T_STATIC</item>
@@ -8948,10 +8948,10 @@
 												<item>FBXSDK_NEW_API</item>
 											</definitions>
 											<libraryPaths>
-												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/ub</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2014.2/lib/clang/ub/release</item>
 											</libraryPaths>
 											<libraries>
-												<item>fbxsdk-2013.1-static</item>
+												<item>fbxsdk</item>
 												<item>CoreServices.framework</item>
 												<item>iconv</item>
 												<item>SystemConfiguration.framework</item>
