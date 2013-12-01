@@ -228,7 +228,8 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	log::info << L"OpenGL " << mbstows((const char *)glGetString(GL_VERSION)) << L" renderer created." << Endl;
 
 	// Get GPU memory information; used to determine if or not to preload resources during startup.
-	// \fixme Currently only NV HW is supported.
+	// \fixme Currently only NV HW on Windows is supported.
+#if defined(_WIN32)
 	GLint param = 0;
 
 	glGetIntegerv(GL_GPU_MEMORY_INFO_DEDICATED_VIDMEM_NVX, &param);
@@ -242,6 +243,7 @@ bool RenderSystemOpenGL::create(const RenderSystemDesc& desc)
 	m_info.dedicatedMemoryAvailable = param * 1024;
 
 	glGetError();
+#endif
 
 	m_resourceContext->leave();
 	m_maxAnisotrophy = (GLfloat)desc.maxAnisotropy;
