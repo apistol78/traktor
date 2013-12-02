@@ -27,6 +27,8 @@ class T_DLLCLASS ScriptPipeline : public editor::DefaultPipeline
 	T_RTTI_CLASS;
 
 public:
+	virtual ~ScriptPipeline();
+
 	virtual bool create(const editor::IPipelineSettings* settings);
 
 	virtual TypeInfoSet getAssetTypes() const;

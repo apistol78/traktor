@@ -144,17 +144,13 @@ void PointRenderer::render(
 			return;
 	}
 
-	if (m_batches.empty() || (m_batches.back().count > 0 && m_batches.back().shader != shader))
-	{
-		m_batches.push_back(Batch());
-		Batch& back = m_batches.back();
-		back.shader = shader;
-		back.offset = m_pointOffset * 3 * 2;
-		back.count = 0;
-		back.distance = std::numeric_limits< float >::max();
-	}
+	m_batches.push_back(Batch());
 
 	Batch& back = m_batches.back();
+	back.shader = shader;
+	back.offset = m_pointOffset * 3 * 2;
+	back.count = 0;
+	back.distance = std::numeric_limits< float >::max();
 
 #if defined(_PS3)
 

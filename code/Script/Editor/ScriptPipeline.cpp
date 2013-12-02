@@ -4,6 +4,7 @@
 #include "Core/Io/StringOutputStream.h"
 #include "Core/Io/Utf8Encoding.h"
 #include "Core/Log/Log.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Misc/String.h"
 #include "Core/Misc/StringSplit.h"
 #include "Core/Settings/PropertyString.h"
@@ -80,6 +81,11 @@ struct ErrorCallback : public IErrorCallback
 		}
 
 T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.script.ScriptPipeline", 17, ScriptPipeline, editor::DefaultPipeline)
+
+ScriptPipeline::~ScriptPipeline()
+{
+	safeDestroy(m_scriptManager);
+}
 
 bool ScriptPipeline::create(const editor::IPipelineSettings* settings)
 {

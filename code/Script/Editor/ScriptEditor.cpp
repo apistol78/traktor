@@ -195,9 +195,9 @@ void ScriptEditor::destroy()
 		m_scriptDebuggerSessions = 0;
 	}
 
-	m_scriptManager = 0;
 	m_preprocessor = 0;
 
+	safeDestroy(m_scriptManager);
 	safeDestroy(m_splitter);
 }
 
