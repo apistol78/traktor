@@ -59,6 +59,7 @@ struct WorldCreateDesc
 	Quality ambientOcclusionQuality;
 	Quality antiAliasQuality;
 	uint32_t multiSample;
+	uint32_t superSample;
 	uint32_t frameCount;
 
 	WorldCreateDesc()
@@ -69,6 +70,7 @@ struct WorldCreateDesc
 	,	ambientOcclusionQuality(QuDisabled)
 	,	antiAliasQuality(QuDisabled)
 	,	multiSample(0)
+	,	superSample(0)
 	,	frameCount(0)
 	{
 	}

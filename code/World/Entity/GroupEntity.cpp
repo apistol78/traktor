@@ -17,7 +17,6 @@ GroupEntity::GroupEntity(const Transform& transform)
 
 GroupEntity::~GroupEntity()
 {
-	destroy();
 }
 
 void GroupEntity::destroy()

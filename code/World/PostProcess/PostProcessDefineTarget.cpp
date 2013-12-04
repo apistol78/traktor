@@ -38,6 +38,7 @@ bool PostProcessDefineTarget::define(PostProcess* postProcess, render::IRenderSy
 	desc.multiSample = m_multiSample;
 	desc.createDepthStencil = m_depthStencil;
 	desc.usingPrimaryDepthStencil = false;
+	desc.ignoreStencil = true;
 	desc.preferTiled = m_preferTiled;
 	desc.targets[0].format = m_format;
 

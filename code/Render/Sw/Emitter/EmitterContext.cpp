@@ -4,6 +4,7 @@
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 #include "Render/Sw/Emitter/EmitterContext.h"
 
 namespace traktor
@@ -341,6 +342,79 @@ bool EmitterContext::inVertex() const
 bool EmitterContext::inPixel() const
 {
 	return bool(m_currentState == &m_states[1]);
+}
+
+void EmitterContext::findCommonInputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const InputPin* >& outInputPins) const
+{
+	struct Collect1
+	{
+		std::set< const OutputPin* > outputs;
+
+		bool operator () (Node* node)
+		{
+			return true;
+		}
+
+		bool operator () (Edge* edge)
+		{
+			outputs.insert(edge->getSource());
+			return true;
+		}
+	};
+
+	struct Collect2
+	{
+		std::set< const OutputPin* >* candidates; 
+		std::set< const OutputPin* > common;
+
+		bool operator () (Node* node)
+		{
+			return true;
+		}
+
+		bool operator () (Edge* edge)
+		{
+			const OutputPin* outputPin = edge->getSource();
+			if (candidates->find(outputPin) != candidates->end())
+			{
+				common.insert(outputPin);
+				return false;
+			}
+			else
+				return true;
+		}
+	};
+
+	const OutputPin* outputPin1 = m_shaderGraph->findSourcePin(node->findInputPin(inputPin1));
+	const OutputPin* outputPin2 = m_shaderGraph->findSourcePin(node->findInputPin(inputPin2));
+
+	if (outputPin1 != outputPin2)
+	{
+		Collect1 visitor1;
+		ShaderGraphTraverse(m_shaderGraph, outputPin1->getNode()).preorder(visitor1);
+
+		Collect2 visitor2;
+		visitor2.candidates = &visitor1.outputs;
+		ShaderGraphTraverse(m_shaderGraph, outputPin2->getNode()).preorder(visitor2);
+
+		for (std::set< const OutputPin* >::const_iterator i = visitor2.common.begin(); i != visitor2.common.end(); ++i)
+		{
+			std::vector< const InputPin* > inputPins;
+			m_shaderGraph->findDestinationPins(*i, inputPins);
+
+			for (std::vector< const InputPin* >::const_iterator j = inputPins.begin(); j != inputPins.end(); ++j)
+			{
+				if (doesInputPropagateToNode(m_shaderGraph, *j, node))
+					outInputPins.push_back(*j);
+			}
+		}
+	}
+	else
+	{
+		// Apparently both inputs are connected to same output; thus
+		// no need to traverse in order to find the intersection.
+		m_shaderGraph->findDestinationPins(outputPin1, outInputPins);
+	}
 }
 
 Emitter& EmitterContext::getEmitter()

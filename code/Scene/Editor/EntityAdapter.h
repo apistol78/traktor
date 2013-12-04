@@ -54,6 +54,10 @@ public:
 
 	world::Entity* getEntity() const;
 
+	void setHash(uint32_t hash);
+
+	uint32_t getHash() const;
+
 	//@}
 
 	/*! \name Information accessors. */
@@ -123,9 +127,11 @@ public:
 
 	void link(EntityAdapter* child);
 
-	void unlink(EntityAdapter* child);
+	void unlinkChild(EntityAdapter* child);
 
-	void unlink();
+	void unlinkAllChildren();
+
+	void unlinkFromParent();
 
 	//@}
 
@@ -175,6 +181,7 @@ private:
 
 	Ref< world::EntityData > m_entityData;
 	Ref< world::Entity > m_entity;
+	uint32_t m_hash;
 	EntityAdapter* m_parent;
 	RefArray< EntityAdapter > m_children;
 	SmallMap< const world::Entity*, EntityAdapter* > m_childMap;

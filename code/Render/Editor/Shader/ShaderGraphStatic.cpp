@@ -5,12 +5,12 @@
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphStatic.h"
 #include "Render/Editor/Shader/ShaderGraphTypeEvaluator.h"
 #include "Render/Editor/Shader/ShaderGraphTypePropagation.h"
-#include "Render/Editor/Shader/ShaderGraphUtilities.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
 
 namespace traktor
@@ -86,7 +86,7 @@ struct ConstantFoldingVisitor
 			case PntScalar4:
 				node = new Vector(Vector4(it->second[0], it->second[1], it->second[2], it->second[3]));
 				break;
-				
+
 			default:
 				break;
 			}
@@ -250,7 +250,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getSwizzledPermutation() const
 	for (RefArray< Edge >::const_iterator i = edges.begin(); i != edges.end(); ++i)
 	{
 		const OutputPin* sourcePin = (*i)->getSource();
-		const InputPin* destinationPin = (*i)->getDestination(); 
+		const InputPin* destinationPin = (*i)->getDestination();
 
 		PinType sourceType = typePropagation.evaluate(sourcePin);
 		PinType destinationType = typePropagation.evaluate(destinationPin);
@@ -554,7 +554,7 @@ Ref< ShaderGraph > ShaderGraphStatic::getConstantFolded() const
 						if (swizzleNode)
 						{
 							Ref< Edge > edgeIn = new Edge(foldOutputPin, swizzleNode->getInputPin(0));
-							
+
 							shaderGraph->addEdge(edgeIn);
 							shaderGraph->addNode(swizzleNode);
 

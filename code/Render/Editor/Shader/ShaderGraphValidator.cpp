@@ -8,8 +8,8 @@
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/OutputPin.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/ShaderGraphValidator.h"
-#include "Render/Editor/Shader/ShaderGraphUtilities.h"
 
 namespace traktor
 {

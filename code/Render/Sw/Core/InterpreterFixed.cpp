@@ -73,6 +73,7 @@ bool InterpreterFixed::execute(
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
 	const Vector4& targetSize,
+	const Vector4& fragmentPosition,
 	const Ref< AbstractSampler >* inSamplers,
 	Vector4* outVaryings
 ) const
@@ -106,6 +107,10 @@ bool InterpreterFixed::execute(
 
 		case OpFetchTargetSize:
 			dest = toFixed(targetSize);
+			break;
+
+		case OpFetchFragmentPosition:
+			dest = toFixed(fragmentPosition);
 			break;
 
 		case OpFetchUniform:

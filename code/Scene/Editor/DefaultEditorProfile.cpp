@@ -14,6 +14,7 @@
 #include "World/PostProcess/PostProcessFactory.h"
 
 // Entity factories
+#include "Scene/Editor/LayerEntityFactory.h"
 #include "Weather/WeatherEntityFactory.h"
 #include "World/Entity/WorldEntityFactory.h"
 
@@ -79,6 +80,7 @@ void DefaultEditorProfile::createEntityFactories(
 {
 	outEntityFactories.push_back(new world::WorldEntityFactory(context->getResourceManager()));
 	outEntityFactories.push_back(new weather::WeatherEntityFactory(context->getResourceManager(), context->getRenderSystem()));
+	outEntityFactories.push_back(new LayerEntityFactory());
 }
 
 void DefaultEditorProfile::createEntityRenderers(

@@ -127,6 +127,7 @@ bool EditorPlugin::create(ui::Widget* parent, editor::IEditorPageSite* site)
 	m_toolTweaks->add(new ui::MenuItem(L"Audio \"Write Out\"", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Force VBlank Off", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Physics 2*dT", true, 0));
+	m_toolTweaks->add(new ui::MenuItem(L"Supersample *4", true, 0));
 	m_toolTweaks->add(new ui::MenuItem(L"Attach Script Debugger", true, 0));
 	m_toolBar->addItem(m_toolTweaks);
 
@@ -384,6 +385,8 @@ void EditorPlugin::eventTargetListPlay(ui::Event* event)
 			if (m_toolTweaks->get(3)->isChecked())
 				tweakSettings->setProperty< PropertyFloat >(L"Physics.TimeScale", 2.0f);
 			if (m_toolTweaks->get(4)->isChecked())
+				tweakSettings->setProperty< PropertyInteger >(L"World.SuperSample", 4);
+			if (m_toolTweaks->get(5)->isChecked())
 				tweakSettings->setProperty< PropertyBoolean >(L"Script.AttachDebugger", true);
 
 			// Add deploy and launch actions.

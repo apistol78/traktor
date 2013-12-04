@@ -1,3 +1,4 @@
+#include "Core/Misc/SafeDestroy.h"
 #include "Scene/ISceneController.h"
 #include "Scene/Scene.h"
 #include "World/Entity.h"
@@ -40,12 +41,7 @@ Scene::~Scene()
 
 void Scene::destroy()
 {
-	if (m_rootEntity)
-	{
-		m_rootEntity->destroy();
-		m_rootEntity = 0;
-	}
-
+	safeDestroy(m_rootEntity);
 	m_entitySchema = 0;
 	m_controller = 0;
 	m_worldRenderSettings = 0;

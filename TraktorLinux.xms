@@ -7096,6 +7096,7 @@
 					</definitions>
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
 					</libraryPaths>
 					<libraries>
 						<item>fbxsdk-2013.1-staticd</item>
@@ -7119,6 +7120,7 @@
 					</definitions>
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
 					</libraryPaths>
 					<libraries>
 						<item>fbxsdk-2013.1-static</item>
@@ -7142,6 +7144,7 @@
 					</definitions>
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
 					</libraryPaths>
 					<libraries>
 						<item>fbxsdk-2013.1-staticd</item>
@@ -7165,6 +7168,7 @@
 					</definitions>
 					<libraryPaths>
 						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
+						<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
 					</libraryPaths>
 					<libraries>
 						<item>fbxsdk-2013.1-static</item>
@@ -9766,6 +9770,7 @@
 											</definitions>
 											<libraryPaths>
 												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
 											</libraryPaths>
 											<libraries>
 												<item>fbxsdk-2013.1-staticd</item>
@@ -9790,6 +9795,7 @@
 											</definitions>
 											<libraryPaths>
 												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
 											</libraryPaths>
 											<libraries>
 												<item>fbxsdk-2013.1-static</item>
@@ -9814,6 +9820,7 @@
 											</definitions>
 											<libraryPaths>
 												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
 											</libraryPaths>
 											<libraries>
 												<item>fbxsdk-2013.1-staticd</item>
@@ -9838,6 +9845,7 @@
 											</definitions>
 											<libraryPaths>
 												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x86</item>
+												<item>$(TRAKTOR_HOME)/3rdp/FbxSdk/2013.1/lib/gcc4/x64</item>
 											</libraryPaths>
 											<libraries>
 												<item>fbxsdk-2013.1-static</item>

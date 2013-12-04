@@ -5,9 +5,7 @@
 #include "Render/Shader/Node.h"
 #include "Render/Shader/OutputPin.h"
 #include "Render/Shader/ShaderGraph.h"
-
-// \fixme
-#include "Render/Editor/Shader/ShaderGraphUtilities.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 
 namespace traktor
 {
@@ -54,34 +52,6 @@ struct Collect2
 			return true;
 	}
 };
-
-struct FindInputPin
-{
-	const InputPin* inputPin;
-	Node* targetNode;
-	bool found;
-
-	bool operator () (Node* node)
-	{
-		found |= bool(inputPin->getNode() == targetNode);
-		return !found;
-	}
-
-	bool operator () (Edge* edge)
-	{
-		return true;
-	}
-};
-
-bool doesInputPropagateToNode(const ShaderGraph* shaderGraph, const InputPin* inputPin, Node* targetNode)
-{
-	FindInputPin visitor;
-	visitor.inputPin = inputPin;
-	visitor.targetNode = targetNode;
-	visitor.found = false;
-	ShaderGraphTraverse(shaderGraph, targetNode).preorder(visitor);
-	return visitor.found;
-}
 
 		}
 

@@ -105,7 +105,7 @@ Ref< Model > ModelFormatObj::read(IStream* stream, uint32_t importFlags) const
 		}
 		else if ((importFlags & IfMaterials) != 0 && (startsWith< std::wstring >(str, L"usemtl ") || startsWith< std::wstring >(str, L"g ")))
 		{
-			materialId = ~0UL;
+			materialId = ~0U;
 
 			std::wstring materialName = str.substr(7);
 			const std::vector< Material >& materials = md->getMaterials();

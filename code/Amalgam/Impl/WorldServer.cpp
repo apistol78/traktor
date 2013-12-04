@@ -73,6 +73,7 @@ WorldServer::WorldServer()
 ,	m_antiAliasQuality(world::QuMedium)
 ,	m_particleQuality(world::QuMedium)
 ,	m_oceanQuality(world::QuMedium)
+,	m_superSample(0)
 {
 }
 
@@ -92,6 +93,7 @@ bool WorldServer::create(const PropertyGroup* settings, IRenderServer* renderSer
 	m_antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 	m_particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
 	m_oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
+	m_superSample = settings->getProperty< PropertyInteger >(L"World.SuperSample", 0);
 
 	m_renderServer = renderServer;
 	m_resourceServer = resourceServer;
@@ -176,6 +178,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	world::Quality antiAliasQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.AntiAliasQuality", world::QuMedium);
 	world::Quality particleQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.ParticleQuality", world::QuMedium);
 	world::Quality oceanQuality = (world::Quality)settings->getProperty< PropertyInteger >(L"World.OceanQuality", world::QuMedium);
+	int32_t superSample = settings->getProperty< PropertyInteger >(L"World.SuperSample", 0);
 
 	// Check if we need to be reconfigured.
 	if (
@@ -183,7 +186,8 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 		ambientOcclusionQuality == m_ambientOcclusionQuality &&
 		antiAliasQuality == m_antiAliasQuality &&
 		particleQuality == m_particleQuality &&
-		oceanQuality == m_oceanQuality
+		oceanQuality == m_oceanQuality &&
+		superSample == m_superSample
 	)
 		return CrUnaffected;
 
@@ -200,6 +204,7 @@ int32_t WorldServer::reconfigure(const PropertyGroup* settings)
 	m_ambientOcclusionQuality = ambientOcclusionQuality;
 	m_antiAliasQuality = antiAliasQuality;
 	m_oceanQuality = oceanQuality;
+	m_superSample = superSample;
 
 	return CrAccepted;
 }
@@ -258,6 +263,7 @@ Ref< world::IWorldRenderer > WorldServer::createWorldRenderer(
 	wcd.ambientOcclusionQuality = m_ambientOcclusionQuality;
 	wcd.antiAliasQuality = m_antiAliasQuality;
 	wcd.multiSample = m_renderServer->getMultiSample();
+	wcd.superSample = m_superSample;
 	wcd.frameCount = getFrameCount();
 
 	Ref< world::IWorldRenderer > worldRenderer = dynamic_type_cast< world::IWorldRenderer* >(m_worldType->createInstance());

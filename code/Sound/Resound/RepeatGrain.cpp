@@ -21,7 +21,7 @@ struct RepeatGrainCursor : public RefCountImpl< ISoundBufferCursor >
 
 	virtual void disableRepeat()
 	{
-		m_count = ~0UL;
+		m_count = ~0U;
 		if (m_cursor)
 			m_cursor->disableRepeat();
 	}

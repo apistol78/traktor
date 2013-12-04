@@ -28,7 +28,6 @@ RigidEntity::RigidEntity(
 
 RigidEntity::~RigidEntity()
 {
-	destroy();
 }
 
 void RigidEntity::destroy()

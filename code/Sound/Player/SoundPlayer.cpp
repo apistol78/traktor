@@ -45,7 +45,7 @@ bool SoundPlayer::create(SoundSystem* soundSystem, SurroundEnvironment* surround
 	{
 		Channel ch;
 		ch.soundChannel = m_soundSystem->getChannel(i);
-		ch.priority = ~0UL;
+		ch.priority = ~0U;
 		m_channels.push_back(ch);
 	}
 
@@ -251,7 +251,7 @@ Ref< ISoundHandle > SoundPlayer::play3d(const Sound* sound, const Vector4& posit
 				i->fadeOff = -1.0f;
 				i->handle = new SoundHandle(i->soundChannel, i->position, i->fadeOff);
 
-				return i->handle; 
+				return i->handle;
 			}
 			else if (i->time + c_recentTimeOffset >= time)
 			{

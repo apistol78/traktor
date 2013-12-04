@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Save.h"
@@ -18,6 +20,18 @@ namespace traktor
 	{
 		namespace
 		{
+
+void collectAllAdapters(EntityAdapter* entityAdapter, RefArray< EntityAdapter >& outEntityAdapters)
+{
+	if (!entityAdapter)
+		return;
+
+	outEntityAdapters.push_back(entityAdapter);
+
+	const RefArray< EntityAdapter >& childAdapters = entityAdapter->getChildren();
+	for (RefArray< EntityAdapter >::const_iterator i = childAdapters.begin(); i != childAdapters.end(); ++i)
+		collectAllAdapters(*i, outEntityAdapters);
+}
 
 Ref< IEntityEditor > createEntityEditor(
 	SceneEditorContext* context,
@@ -64,7 +78,8 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.scene.EntityAdapterBuilder", EntityAdapterBuild
 EntityAdapterBuilder::EntityAdapterBuilder(
 	SceneEditorContext* context,
 	world::IEntityBuilder* entityBuilder,
-	const RefArray< const IEntityEditorFactory >& entityEditorFactories
+	const RefArray< const IEntityEditorFactory >& entityEditorFactories,
+	EntityAdapter* currentEntityAdapter
 )
 :	m_context(context)
 ,	m_entityBuilder(entityBuilder)
@@ -72,11 +87,13 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 ,	m_adapterCount(0)
 {
 	RefArray< EntityAdapter > entityAdapters;
-	m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants);
+	collectAllAdapters(currentEntityAdapter, entityAdapters);
+	//m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants);
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
-		Ref< EntityAdapter > entityAdapter = *i;
+		EntityAdapter* entityAdapter = *i;
+		T_FATAL_ASSERT (entityAdapter);
 
 		// Get cache entry from type of entity data.
 		Cache* cache = 0;
@@ -86,36 +103,18 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 			cache = &m_cache[&entityDataType];
 		}
 
-		// Cache leaf entities; else just remove from adapter.
-		Ref< world::Entity > entity = entityAdapter->getEntity();
-		if (entity)
+		// Cache entity products.
+		if (cache)
 		{
-			if (
-				cache &&
-				entityAdapter->getChildren().empty()
-			)
+			world::Entity* entity = entityAdapter->getEntity();
+			if (entity)
 			{
-				const world::EntityData* entityData = entityAdapter->getEntityData();
-				T_FATAL_ASSERT (entityData);
-
-				uint32_t hash = DeepHash(entityData).get();
+				uint32_t hash = entityAdapter->getHash();
+				T_FATAL_ASSERT (hash != 0);
 				cache->leafEntities[hash].push_back(entity);
 			}
-
-			entityAdapter->setEntity(0);
-		}
-
-		// Unlink adapter from parent.
-		EntityAdapter* parent = entityAdapter->getParent();
-		if (parent)
-			parent->unlink(entityAdapter);
-
-		// Save adapter for easy re-use.
-		if (cache)
 			cache->adapters.push_back(entityAdapter);
-
-		// Release entity data reference.
-		entityAdapter->setEntityData(0);
+		}
 	}
 
 	m_adapterCount = 0;
@@ -162,6 +161,7 @@ const world::IEntityFactory* EntityAdapterBuilder::getFactory(const world::IEnti
 Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entityData) const
 {
 	Ref< EntityAdapter > entityAdapter;
+	Ref< world::Entity > entity;
 
 	if (!entityData)
 		return 0;
@@ -172,7 +172,9 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	if (!cache.adapters.empty())
 	{
 		entityAdapter = cache.adapters.front();
+		T_FATAL_ASSERT (entityAdapter != 0);
 		cache.adapters.pop_front();
+		T_FATAL_ASSERT (&type_of(entityAdapter->getEntityData()) == &type_of(entityData));
 	}
 	else
 		entityAdapter = new EntityAdapter();
@@ -181,7 +183,11 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	if (m_currentAdapter)
 		m_currentAdapter->link(entityAdapter);
 	else
+	{
+		T_FATAL_ASSERT (m_rootAdapter == 0);
 		m_rootAdapter = entityAdapter;
+		T_FATAL_ASSERT (m_rootAdapter->getParent() == 0);
+	}
 
 	// Find entity factory.
 	Ref< const world::IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityData);
@@ -191,52 +197,59 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		return 0;
 	}
 
-	Ref< world::Entity > entity;
+	// Calculate entity data hash, note this is recursive and
+	// include data hashes of all child entities.
+	uint32_t hash = DeepHash(entityData).get();
+
+	// See if we can find an entity in the leaf hash.
+	if (!cache.leafEntities.empty())
+	{
+		RefArray< world::Entity >& entities = cache.leafEntities[hash];
+		if (!entities.empty())
+		{
+			entity = entities.front();
+			entities.pop_front();
+		}
+	}
+
+	// If no leaf entity then we need to re-create the entity.
+	if (!entity)
 	{
 		T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
 
-		// See if we can find an entity in the leaf hash.
-		if (!cache.leafEntities.empty())
-		{
-			uint32_t hash = DeepHash(entityData).get();
-			RefArray< world::Entity >& entities = cache.leafEntities[hash];
-			if (!entities.empty())
-			{
-				entity = entities.front();
-				entities.pop_front();
-			}
-		}
+		// Unlink all children first.
+		entityAdapter->unlinkAllChildren();
+		T_FATAL_ASSERT (entityAdapter->getChildren().empty());
 
-		// If no leaf entity then we need to re-create the entity.
-		if (!entity)
-		{
-			if (m_buildTimeStack.empty())
-				m_timer.start();
+		if (m_buildTimeStack.empty())
+			m_timer.start();
 
-			m_buildTimeStack.push_back(m_timer.getElapsedTime());
+		m_buildTimeStack.push_back(m_timer.getElapsedTime());
 
-			entity = entityFactory->createEntity(this, *entityData);
-
-			double duration = m_timer.getElapsedTime() - m_buildTimeStack.back();
-			m_buildTimes[&type_of(entityData)].first++;
-			m_buildTimes[&type_of(entityData)].second += duration;
-			m_buildTimeStack.pop_back();
-
-			// Remove duration from parent build steps; not inclusive times.
-			for (std::vector< double >::iterator i = m_buildTimeStack.begin(); i != m_buildTimeStack.end(); ++i)
-				*i += duration;
-		}
+		entity = entityFactory->createEntity(this, *entityData);
 
 		// If still no entity then we create a null placeholder.
 		if (!entity)
 		{
-			log::warning << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using null entity as placeholder" << Endl;
+			log::debug << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using null entity as placeholder" << Endl;
 			entity = new world::NullEntity(entityData->getTransform());
 		}
+
+		double duration = m_timer.getElapsedTime() - m_buildTimeStack.back();
+		m_buildTimes[&type_of(entityData)].first++;
+		m_buildTimes[&type_of(entityData)].second += duration;
+		m_buildTimeStack.pop_back();
+
+		// Remove duration from parent build steps; not inclusive times.
+		for (std::vector< double >::iterator i = m_buildTimeStack.begin(); i != m_buildTimeStack.end(); ++i)
+			*i += duration;
 	}
+
+	T_FATAL_ASSERT (entity);
 
 	entityAdapter->setEntityData(const_cast< world::EntityData* >(entityData));
 	entityAdapter->setEntity(entity);
+	entityAdapter->setHash(hash);
 
 	if (!entityAdapter->getEntityEditor())
 	{

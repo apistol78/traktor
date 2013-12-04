@@ -87,19 +87,21 @@ bool WorldRendererPreLit::create(
 
 	m_settings = *desc.worldRenderSettings;
 	m_shadowSettings = m_settings.shadowSettings[desc.shadowsQuality];
-
 	m_shadowsQuality = desc.shadowsQuality;
 	m_ambientOcclusionQuality = desc.ambientOcclusionQuality;
 	m_antiAliasQuality = desc.antiAliasQuality;
-
 	m_frames.resize(desc.frameCount);
 
 	float fogColor[4];
 	m_settings.fogColor.getRGBA32F(fogColor);
 	m_fogColor = Vector4::loadUnaligned(fogColor);
 
-	int32_t width = renderView->getWidth();
-	int32_t height = renderView->getHeight();
+	// Calculate target render size.
+	int32_t superSample = int32_t(desc.superSample > 0 ? desc.superSample : 1);
+	int32_t frameWidth = renderView->getWidth();
+	int32_t frameHeight = renderView->getHeight();
+	int32_t width = frameWidth * superSample;
+	int32_t height = frameHeight * superSample;
 
 	// Create "gbuffer" targets.
 	{
@@ -115,6 +117,14 @@ bool WorldRendererPreLit::create(
 		desc.targets[0].format = render::TfR16F;		// Depth
 		desc.targets[1].format = render::TfR8G8B8A8;	// Normals
 
+		// Cannot use primary depth when supersampling.
+		if (superSample > 1)
+		{
+			desc.createDepthStencil = true;
+			desc.usingPrimaryDepthStencil = false;
+			desc.ignoreStencil = true;
+		}
+
 		m_gbufferTargetSet = renderSystem->createRenderTargetSet(desc);
 
 		if (!m_gbufferTargetSet && desc.multiSample > 0)
@@ -122,6 +132,7 @@ bool WorldRendererPreLit::create(
 			desc.multiSample = 0;
 			desc.createDepthStencil = true;
 			desc.usingPrimaryDepthStencil = false;
+			desc.ignoreStencil = true;
 
 			m_gbufferTargetSet = renderSystem->createRenderTargetSet(desc);
 			if (m_gbufferTargetSet)
@@ -177,6 +188,7 @@ bool WorldRendererPreLit::create(
 		desc.multiSample = 0;
 		desc.createDepthStencil = true;
 		desc.usingPrimaryDepthStencil = false;
+		desc.ignoreStencil = true;
 		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR16F;
 		m_shadowTargetSet = renderSystem->createRenderTargetSet(desc);
@@ -414,8 +426,8 @@ bool WorldRendererPreLit::create(
 				antiAlias,
 				resourceManager,
 				renderSystem,
-				width,
-				height
+				frameWidth,
+				frameHeight
 			))
 			{
 				log::warning << L"Unable to create antialias process; AA disabled" << Endl;
@@ -485,6 +497,14 @@ bool WorldRendererPreLit::create(
 		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR11G11B10F;
 
+		// Cannot use primary depth when supersampling.
+		if (superSample > 1)
+		{
+			desc.createDepthStencil = true;
+			desc.usingPrimaryDepthStencil = false;
+			desc.ignoreStencil = true;
+		}
+
 		m_visualTargetSet = renderSystem->createRenderTargetSet(desc);
 		if (!m_visualTargetSet)
 			return false;
@@ -506,6 +526,14 @@ bool WorldRendererPreLit::create(
 		desc.usingPrimaryDepthStencil = true;
 		desc.preferTiled = true;
 		desc.targets[0].format = render::TfR16G16B16A16F;
+
+		// Cannot use primary depth when supersampling.
+		if (superSample > 1)
+		{
+			desc.createDepthStencil = true;
+			desc.usingPrimaryDepthStencil = false;
+			desc.ignoreStencil = true;
+		}
 
 		m_lightMapTargetSet = renderSystem->createRenderTargetSet(desc);
 		if (!m_lightMapTargetSet)
@@ -632,7 +660,6 @@ void WorldRendererPreLit::createRenderView(const WorldViewOrtho& worldView, Worl
 
 bool WorldRendererPreLit::beginBuild()
 {
-	m_buildEntities.clear();
 	return true;
 }
 
@@ -699,6 +726,7 @@ void WorldRendererPreLit::endBuild(WorldRenderView& worldRenderView, int frame)
 	worldRenderView.resetLights();
 	buildVisual(worldRenderView, frame);
 
+	m_buildEntities.resize(0);
 	m_count++;
 }
 

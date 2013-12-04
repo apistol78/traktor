@@ -11,7 +11,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.Body", Body, Object)
 
 Body::Body()
 :	m_userObject(0)
-,	m_clusterId(~0UL)
+,	m_clusterId(~0U)
 {
 }
 

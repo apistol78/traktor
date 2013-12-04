@@ -10,7 +10,7 @@ namespace traktor
 	namespace
 	{
 
-const uint32_t c_broadcast = ~0UL;
+const uint32_t c_broadcast = ~0U;
 
 struct Internal
 {

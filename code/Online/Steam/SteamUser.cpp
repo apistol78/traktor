@@ -19,11 +19,7 @@ SteamUser::SteamUser()
 
 bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 {
-	CSteamID id(userHandle);
-	if (!id.IsValid())
-		return false;
-
-	const char* name = SteamFriends()->GetFriendPersonaName(id);
+	const char* name = SteamFriends()->GetFriendPersonaName(uint64(userHandle));
 	if (!name)
 		return false;
 
@@ -33,11 +29,7 @@ bool SteamUser::getName(uint64_t userHandle, std::wstring& outName)
 
 Ref< drawing::Image > SteamUser::getImage(uint64_t userHandle) const
 {
-	CSteamID id(userHandle);
-	if (!id.IsValid())
-		return 0;
-
-	int handle = SteamFriends()->GetMediumFriendAvatar(id);
+	int handle = SteamFriends()->GetMediumFriendAvatar(uint64(userHandle));
 	if (!handle)
 		return 0;
 
@@ -55,38 +47,22 @@ Ref< drawing::Image > SteamUser::getImage(uint64_t userHandle) const
 
 bool SteamUser::isFriend(uint64_t userHandle)
 {
-	CSteamID id(userHandle);
-	if (!id.IsValid())
-		return false;
-
-	return SteamFriends()->GetFriendRelationship(id) == k_EFriendRelationshipFriend;
+	return SteamFriends()->GetFriendRelationship(uint64(userHandle)) == k_EFriendRelationshipFriend;
 }
 
 bool SteamUser::invite(uint64_t userHandle)
 {
-	CSteamID id(userHandle);
-	if (!id.IsValid())
-		return false;
-
-	return SteamFriends()->InviteUserToGame(id, "");
+	return SteamFriends()->InviteUserToGame(uint64(userHandle), "");
 }
 
 bool SteamUser::setPresenceValue(uint64_t userHandle, const std::wstring& key, const std::wstring& value)
 {
-	CSteamID id(userHandle);
-	if (!id.IsValid())
-		return false;
-
 	return SteamFriends()->SetRichPresence(wstombs(key).c_str(), wstombs(Utf8Encoding(), value).c_str());
 }
 
 bool SteamUser::getPresenceValue(uint64_t userHandle, const std::wstring& key, std::wstring& outValue)
 {
-	CSteamID id(userHandle);
-	if (!id.IsValid())
-		return false;
-
-	const char* value = SteamFriends()->GetFriendRichPresence(id, wstombs(key).c_str());
+	const char* value = SteamFriends()->GetFriendRichPresence(uint64(userHandle), wstombs(key).c_str());
 	if (!value)
 		return false;
 
@@ -101,12 +77,8 @@ bool SteamUser::isP2PAllowed(uint64_t userHandle) const
 
 bool SteamUser::isP2PRelayed(uint64_t userHandle) const
 {
-	CSteamID id(userHandle);
-	if (!id.IsValid())
-		return false;
-
 	P2PSessionState_t ss;
-	if (!SteamNetworking()->GetP2PSessionState(id, &ss))
+	if (!SteamNetworking()->GetP2PSessionState(uint64(userHandle), &ss))
 		return false;
 
 	return ss.m_bUsingRelay;
@@ -114,11 +86,7 @@ bool SteamUser::isP2PRelayed(uint64_t userHandle) const
 
 bool SteamUser::sendP2PData(uint64_t userHandle, const void* data, size_t size)
 {
-	CSteamID id(userHandle);
-	if (!id.IsValid())
-		return false;
-
-	return SteamNetworking()->SendP2PPacket(id, data, uint32(size), k_EP2PSendUnreliableNoDelay);
+	return SteamNetworking()->SendP2PPacket(uint64(userHandle), data, uint32(size), k_EP2PSendUnreliableNoDelay);
 }
 
 void SteamUser::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PSessionConnectFail)
@@ -132,7 +100,7 @@ void SteamUser::OnP2PSessionConnectFail(P2PSessionConnectFail_t* pP2PSessionConn
 		L"k_EP2PSessionErrorTimeout"
 	};
 
-	uint64_t userHandle = uint64_t(pP2PSessionConnectFail->m_steamIDRemote.ConvertToUint64()); 
+	uint64_t userHandle = uint64_t(pP2PSessionConnectFail->m_steamIDRemote.ConvertToUint64());
 	const char* name = SteamFriends()->GetFriendPersonaName(pP2PSessionConnectFail->m_steamIDRemote);
 	if (name)
 	{

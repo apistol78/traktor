@@ -2,8 +2,8 @@
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/ShaderGraphTechniques.h"
-#include "Render/Editor/Shader/ShaderGraphUtilities.h"
 
 namespace traktor
 {
@@ -63,7 +63,7 @@ Ref< ShaderGraph > ShaderGraphTechniques::generate(const std::wstring& name) con
 
 	const RefArray< Node >& nodes = m_shaderGraph->getNodes();
 	bool foundNamedVertexOutput = false;
-	
+
 	// Find named output nodes.
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 	{

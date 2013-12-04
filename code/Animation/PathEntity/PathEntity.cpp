@@ -21,7 +21,6 @@ PathEntity::PathEntity(const Transform& transform, const TransformPath& path, Ti
 
 PathEntity::~PathEntity()
 {
-	destroy();
 }
 
 void PathEntity::destroy()

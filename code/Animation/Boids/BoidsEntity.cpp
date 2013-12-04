@@ -42,7 +42,6 @@ BoidsEntity::BoidsEntity(
 
 BoidsEntity::~BoidsEntity()
 {
-	destroy();
 }
 
 void BoidsEntity::destroy()
