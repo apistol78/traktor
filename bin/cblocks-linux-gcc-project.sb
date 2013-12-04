@@ -53,10 +53,8 @@
 
 					if configuration:getTargetProfile() == "Debug" then
 --?>
-					<Add option="-m32" />
-					<Add option="-march=pentium4" />
+					<Add option="-march=core2" />
 					<Add option="-g" />
-					<Add option="-m32" />
 					<Add option="-fPIC" />
 					<Add option="-DUNICODE" />
 					<Add option="-D_UNICODE" />
@@ -64,9 +62,7 @@
 					
 					else
 --?>
-					<Add option="-m32" />
-					<Add option="-march=pentium4" />
-					<Add option="-m32" />
+					<Add option="-march=core2" />
 					<Add option="-O3" />
 					<Add option="-fPIC" />
 					<Add option="-DUNICODE" />
@@ -241,15 +237,7 @@ end
 					<Add option="<?-- output:print(lib) --?>" /><?--
 						end
 					end
-
-					-- Always add search path for shared libraries in the same directory as
-					-- the executable.
-					if configuration:getTargetFormat() == "Executable" or configuration:getTargetFormat() == "ExecutableConsole" then
 --?>
-					<Add option="-Wl,-R\\$$ORIGIN" /><?--
-					end
---?>
-					<Add option="-m32" />
 				</Linker><?--
 				end
 --?>

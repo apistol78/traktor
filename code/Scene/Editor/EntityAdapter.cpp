@@ -1,3 +1,5 @@
+#pragma optimize( "", off )
+
 #include <algorithm>
 #include "Core/Math/Const.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -20,6 +22,7 @@ EntityAdapter::EntityAdapter()
 ,	m_expanded(false)
 ,	m_visible(true)
 ,	m_locked(false)
+,	m_hash(0)
 {
 }
 
@@ -41,6 +44,16 @@ void EntityAdapter::setEntity(world::Entity* entity)
 world::Entity* EntityAdapter::getEntity() const
 {
 	return m_entity;
+}
+
+void EntityAdapter::setHash(uint32_t hash)
+{
+	m_hash = hash;
+}
+
+uint32_t EntityAdapter::getHash() const
+{
+	return m_hash;
 }
 
 std::wstring EntityAdapter::getName() const
@@ -172,7 +185,7 @@ void EntityAdapter::addChild(EntityAdapter* child)
 void EntityAdapter::removeChild(EntityAdapter* child)
 {
 	if (m_entityEditor->removeChildEntity(child))
-		unlink(child);
+		unlinkChild(child);
 }
 
 const RefArray< EntityAdapter >& EntityAdapter::getChildren() const
@@ -194,7 +207,7 @@ void EntityAdapter::link(EntityAdapter* child)
 	m_childMap[child->getEntity()] = child;
 }
 
-void EntityAdapter::unlink(EntityAdapter* child)
+void EntityAdapter::unlinkChild(EntityAdapter* child)
 {
 	T_ASSERT (child);
 	T_ASSERT_M (child->m_parent == this, L"Entity adapter not child if this");
@@ -208,10 +221,17 @@ void EntityAdapter::unlink(EntityAdapter* child)
 	child->m_parent = 0;
 }
 
-void EntityAdapter::unlink()
+void EntityAdapter::unlinkAllChildren()
 {
 	while (!m_children.empty())
-		unlink(m_children.front());
+		unlinkChild(m_children.front());
+}
+
+void EntityAdapter::unlinkFromParent()
+{
+	if (m_parent)
+		m_parent->unlinkChild(this);
+	T_FATAL_ASSERT (m_parent == 0);
 }
 
 void EntityAdapter::setEntityEditor(IEntityEditor* entityEditor)

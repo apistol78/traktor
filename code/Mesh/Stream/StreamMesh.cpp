@@ -55,7 +55,7 @@ uint32_t StreamMesh::getFrameCount() const
 Ref< StreamMesh::Instance > StreamMesh::createInstance() const
 {
 	Ref< Instance > instance = new Instance();
-	instance->frame = ~0UL;
+	instance->frame = ~0U;
 	return instance;
 }
 

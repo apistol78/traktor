@@ -1,8 +1,11 @@
+#pragma optimize( "", off )
+
 #include <limits>
 #include <stack>
 #include "Core/Log/Log.h"
 #include "Core/Math/Const.h"
 #include "Core/Serialization/DeepClone.h"
+#include "Core/Serialization/DeepHash.h"
 #include "Core/Timer/Timer.h"
 #include "Render/ITexture.h"
 #include "Resource/IResourceManager.h"
@@ -268,13 +271,11 @@ void SceneEditorContext::setSceneAsset(SceneAsset* sceneAsset)
 
 void SceneEditorContext::buildEntities()
 {
-	double T[] = { 0.0, 0.0, 0.0, 0.0, 0.0 };
+	double T[] = { 0.0, 0.0, 0.0, 0.0, 0.0, 0.0 };
 
 	Timer timer;
 	timer.start();
 	T[0] = timer.getElapsedTime();
-
-	m_scene = 0;
 
 	if (m_sceneAsset)
 	{
@@ -286,17 +287,11 @@ void SceneEditorContext::buildEntities()
 		Ref< world::IEntitySchema > entitySchema = new world::EntitySchema();
 		Ref< world::EntityBuilder > entityBuilder = new world::EntityBuilder();
 		Ref< world::EntityBuilderWithSchema > entityBuilderSchema = new world::EntityBuilderWithSchema(entityBuilder, entitySchema);
-		Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilderSchema, entityEditorFactories);
 
 		// Create entity factories.
+		RefArray< const world::IEntityFactory > entityFactories;
 		for (RefArray< ISceneEditorProfile >::iterator i = m_editorProfiles.begin(); i != m_editorProfiles.end(); ++i)
-		{
-			RefArray< const world::IEntityFactory > entityFactories;
 			(*i)->createEntityFactories(this, entityFactories);
-
-			for (RefArray< const world::IEntityFactory >::iterator j = entityFactories.begin(); j != entityFactories.end(); ++j)
-				entityAdapterBuilder->addFactory(*j);
-		}
 
 		T[1] = timer.getElapsedTime();
 
@@ -314,39 +309,20 @@ void SceneEditorContext::buildEntities()
 			world::LayerEntityData* layerEntityData = layers[i];
 			T_ASSERT (layerEntityData);
 
-			// If possible reuse layer entity adapter.
-			if (!m_layerEntityAdapters[i])
-			{
-				m_layerEntityAdapters[i] = new EntityAdapter();
+			Ref< EntityAdapterBuilder > entityAdapterBuilder = new EntityAdapterBuilder(this, entityBuilderSchema, entityEditorFactories, m_layerEntityAdapters[i]);
+			for (RefArray< const world::IEntityFactory >::iterator k = entityFactories.begin(); k != entityFactories.end(); ++k)
+				entityAdapterBuilder->addFactory(*k);
 
-				// Copy initial state from data.
-				m_layerEntityAdapters[i]->setVisible(layerEntityData->isVisible());
-				m_layerEntityAdapters[i]->setLocked(layerEntityData->isLocked());
-			}
+			Ref< world::Entity > entity = entityAdapterBuilder->create(layerEntityData);
+			T_FATAL_ASSERT (entity != 0);
 
-			// Create a layer group entity.
-			Ref< world::GroupEntity > layerEntity = new world::GroupEntity();
-			m_layerEntityAdapters[i]->setEntityData(layerEntityData);
-			m_layerEntityAdapters[i]->setEntity(layerEntity);
-			m_layerEntityAdapters[i]->setEntityEditor(new LayerEntityEditor(layerEntityData));
-		
-			// Create layer's child entities.
-			const RefArray< world::EntityData >& layerChildEntityData = layerEntityData->getEntityData();
-			for (RefArray< world::EntityData >::const_iterator j = layerChildEntityData.begin(); j != layerChildEntityData.end(); ++j)
-			{
-				Ref< world::Entity > entity = entityAdapterBuilder->create(*j);
-				if (!entity)
-					continue;
+			m_layerEntityAdapters[i] = entityAdapterBuilder->getRootAdapter();
+			T_FATAL_ASSERT (m_layerEntityAdapters[i] != 0);
+			T_FATAL_ASSERT (m_layerEntityAdapters[i]->getEntityData() == layerEntityData);
+			T_FATAL_ASSERT (m_layerEntityAdapters[i]->getEntity() == entity);
+			T_FATAL_ASSERT (m_layerEntityAdapters[i]->getParent() == 0);
 
-				Ref< EntityAdapter > entityAdapter = entityAdapterBuilder->getRootAdapter();
-				T_ASSERT (entityAdapter->getEntity() == entity);
-
-				layerEntity->addEntity(entity);
-				m_layerEntityAdapters[i]->link(entityAdapter);
-			}
-
-			// Add layer to root entity.
-			rootGroupEntity->addEntity(layerEntity);
+			rootGroupEntity->addEntity(entity);
 		}
 
 		T[2] = timer.getElapsedTime();
@@ -367,8 +343,6 @@ void SceneEditorContext::buildEntities()
 
 			controller = m_sceneAsset->getControllerData()->createController(entityProducts);
 		}
-
-		T_DEBUG(entityAdapterBuilder->getAdapterCount() << L" entity adapter(s) built");
 
 		T[3] = timer.getElapsedTime();
 
@@ -395,6 +369,8 @@ void SceneEditorContext::buildEntities()
 			postProcessParams
 		);
 	}
+	else
+		m_scene = 0;
 
 	T[4] = timer.getElapsedTime();
 

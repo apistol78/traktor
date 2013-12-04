@@ -12,8 +12,8 @@ namespace traktor
 class BlockList
 {
 public:
-	enum { NotEnoughSpace = ~0UL };
-		
+	enum { NotEnoughSpace = ~0U };
+
 	BlockList(uint32_t size);
 
 	uint32_t alloc(uint32_t size, uint32_t alignment);
@@ -26,7 +26,7 @@ private:
 		uint32_t offset;
 		uint32_t size;
 	};
-	
+
 	uint32_t m_size;
 	std::list< Block > m_blocks;
 };

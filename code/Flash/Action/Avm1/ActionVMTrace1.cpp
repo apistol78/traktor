@@ -15,17 +15,17 @@ namespace traktor
 		namespace
 		{
 
-std::map< uint32_t, uint32_t > g_objectIds;
+std::map< intptr_t, uint32_t > g_objectIds;
 uint32_t g_nextObjectId = 1;
 
 uint32_t getObjectId(void* object)
 {
-	std::map< uint32_t, uint32_t >::const_iterator i = g_objectIds.find(uint32_t(object));
+	std::map< intptr_t, uint32_t >::const_iterator i = g_objectIds.find(intptr_t(object));
 	if (i != g_objectIds.end())
 		return i->second;
 
 	uint32_t id = g_nextObjectId++;
-	g_objectIds.insert(std::make_pair(uint32_t(object), id));
+	g_objectIds.insert(std::make_pair(intptr_t(object), id));
 
 	return id;
 }
@@ -61,7 +61,7 @@ std::wstring describeValue(const ActionValue& v)
 			IActionObjectRelay* relay = object->getRelay();
 			if (relay)
 				ss << L", relay @" << getObjectId(relay) << L" " << type_name(relay);
-			
+
 			ss << L")";
 		}
 		else

@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.physics.ShapeDesc", ShapeDesc, ISerializable)
 ShapeDesc::ShapeDesc()
 :	m_localTransform(Transform::identity())
 ,	m_collisionGroup(1)
-,	m_collisionMask(~0UL)
+,	m_collisionMask(~0U)
 ,	m_material(0)
 {
 }

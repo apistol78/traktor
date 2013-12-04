@@ -4,6 +4,7 @@
 #include <set>
 #include "Core/RefArray.h"
 #include "Render/Shader/Edge.h"
+#include "Render/Shader/InputPin.h"
 #include "Render/Shader/Node.h"
 #include "Render/Shader/ShaderGraph.h"
 
@@ -145,6 +146,28 @@ private:
 	}
 };
 
+struct FindInputPin
+{
+	const InputPin* inputPin;
+	bool found;
+
+	FindInputPin()
+	:	inputPin(0)
+	,	found(false)
+	{
+	}
+
+	bool operator () (Node* node)
+	{
+		found |= bool(inputPin->getNode() == node);
+		return !found;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		return true;
+	}
+};
 
 /*! \brief Traverse shader graph nodes through a root set.
  * \ingroup Render
@@ -156,46 +179,19 @@ private:
 template < typename VisitorType >
 void shaderGraphTraverse(const ShaderGraph* shaderGraph, const RefArray< Node >& roots, VisitorType& visitor)
 {
-	std::set< const Node* > nodeVisited;
-	RefArray< Node > nodeStack;
+	ShaderGraphTraverse(shaderGraph, roots).preorder(visitor);
+}
 
-	// Push root nodes.
-	nodeStack = roots;
-
-	// Traverse graph nodes.
-	while (!nodeStack.empty())
-	{
-		Node* node = nodeStack.back();
-		nodeStack.pop_back();
-
-		// Already visited this node?
-		if (nodeVisited.find(node) != nodeVisited.end())
-			continue;
-		nodeVisited.insert(node);
-		
-		// Invoke visitors with this node.
-		if (!visitor(node))
-			continue;
-
-		// Push all input nodes onto stack.
-		int32_t inputPinCount = node->getInputPinCount();
-		for (int32_t i = 0; i < inputPinCount; ++i)
-		{
-			const InputPin* inputPin = node->getInputPin(i);
-			T_ASSERT (inputPin);
-
-			Edge* edge = shaderGraph->findEdge(inputPin);
-			if (edge)
-			{
-				// Invoke visitor with this edge.
-				if (!visitor(edge))
-					continue;
-				
-				// Push node onto stack.
-				nodeStack.push_back(edge->getSource()->getNode());
-			}
-		}
-	}
+/*! \brief Check if an input propagate to a target node.
+ * \ingroup Render
+ */
+inline bool doesInputPropagateToNode(const ShaderGraph* shaderGraph, const InputPin* inputPin, Node* targetNode)
+{
+	FindInputPin visitor;
+	visitor.inputPin = inputPin;
+	visitor.found = false;
+	ShaderGraphTraverse(shaderGraph, targetNode).preorder(visitor);
+	return visitor.found;
 }
 
 	}

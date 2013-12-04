@@ -1,14 +1,12 @@
 #include <sstream>
 #include "Core/Misc/String.h"
+#include "Render/Dx9/HlslContext.h"
+#include "Render/Dx9/HlslShader.h"
 #include "Render/Shader/InputPin.h"
 #include "Render/Shader/Node.h"
 #include "Render/Shader/OutputPin.h"
 #include "Render/Shader/ShaderGraph.h"
-#include "Render/Dx9/HlslContext.h"
-#include "Render/Dx9/HlslShader.h"
-
-// \fixme
-#include "Render/Editor/Shader/ShaderGraphUtilities.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 
 namespace traktor
 {

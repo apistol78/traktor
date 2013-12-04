@@ -38,7 +38,7 @@ public:
 		IPipelineDependencySet* dependencySet,
 		IPipelineDb* pipelineDb,
 		IPipelineInstanceCache* instanceCache,
-		uint32_t recursionDepth = ~0UL
+		uint32_t recursionDepth = ~0U
 	);
 
 	virtual void addDependency(

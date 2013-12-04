@@ -186,7 +186,7 @@ bool SteamMatchMaking::joinLobby(uint64_t lobbyHandle)
 
 	m_joinResult = false;
 
-	SteamAPICall_t hSteamAPICall = SteamMatchmaking()->JoinLobby(lobbyHandle);
+	SteamAPICall_t hSteamAPICall = SteamMatchmaking()->JoinLobby(uint64(lobbyHandle));
 	m_callbackLobbyEnter.Set(hSteamAPICall, this, &SteamMatchMaking::OnLobbyEnter);
 
 	bool result = performCall(m_sessionManager, m_callbackLobbyEnter);
@@ -211,7 +211,7 @@ bool SteamMatchMaking::leaveLobby(uint64_t lobbyHandle)
 	if (m_joinedLobby != lobbyHandle)
 		return false;
 
-	SteamMatchmaking()->LeaveLobby(lobbyHandle);
+	SteamMatchmaking()->LeaveLobby(uint64(lobbyHandle));
 	SteamFriends()->SetRichPresence("InLobby", 0);
 
 	m_joinedLobby = 0;
@@ -223,7 +223,7 @@ bool SteamMatchMaking::setMetaValue(uint64_t lobbyHandle, const std::wstring& ke
 	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
 	return SteamMatchmaking()->SetLobbyData(
-		lobbyHandle,
+		uint64(lobbyHandle),
 		wstombs(key).c_str(),
 		wstombs(value).c_str()
 	);
@@ -231,7 +231,7 @@ bool SteamMatchMaking::setMetaValue(uint64_t lobbyHandle, const std::wstring& ke
 
 bool SteamMatchMaking::getMetaValue(uint64_t lobbyHandle, const std::wstring& key, std::wstring& outValue)
 {
-	const char* value = SteamMatchmaking()->GetLobbyData(lobbyHandle, wstombs(key).c_str());
+	const char* value = SteamMatchmaking()->GetLobbyData(uint64(lobbyHandle), wstombs(key).c_str());
 	if (!value)
 		return false;
 
@@ -244,7 +244,7 @@ bool SteamMatchMaking::setParticipantMetaValue(uint64_t lobbyHandle, const std::
 	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
 	SteamMatchmaking()->SetLobbyMemberData(
-		lobbyHandle,
+		uint64(lobbyHandle),
 		wstombs(key).c_str(),
 		wstombs(value).c_str()
 	);
@@ -256,7 +256,7 @@ bool SteamMatchMaking::getParticipantMetaValue(uint64_t lobbyHandle, uint64_t us
 	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
 
-	const char* value = SteamMatchmaking()->GetLobbyMemberData(lobbyHandle, userHandle, wstombs(key).c_str());
+	const char* value = SteamMatchmaking()->GetLobbyMemberData(uint64(lobbyHandle), uint64(userHandle), wstombs(key).c_str());
 	if (!value)
 		return false;
 
@@ -270,12 +270,12 @@ bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
 
 	CSteamID myId = ::SteamUser()->GetSteamID();
-	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(lobbyHandle);
+	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(uint64(lobbyHandle));
 
 	outUserHandles.reserve(memberCount);
 	for (int32_t i = 0; i < memberCount; ++i)
 	{
-		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(lobbyHandle, i);
+		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(uint64(lobbyHandle), i);
 		if (memberId != myId)
 			outUserHandles.push_back(memberId.ConvertToUint64());
 	}
@@ -285,13 +285,13 @@ bool SteamMatchMaking::getParticipants(uint64_t lobbyHandle, std::vector< uint64
 
 bool SteamMatchMaking::getParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
-	outCount = SteamMatchmaking()->GetNumLobbyMembers(lobbyHandle);
+	outCount = SteamMatchmaking()->GetNumLobbyMembers(uint64(lobbyHandle));
 	return true;
 }
 
 bool SteamMatchMaking::getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
-	outCount = SteamMatchmaking()->GetLobbyMemberLimit(lobbyHandle);
+	outCount = SteamMatchmaking()->GetLobbyMemberLimit(uint64(lobbyHandle));
 	return true;
 }
 
@@ -328,7 +328,7 @@ bool SteamMatchMaking::invite(uint64_t lobbyHandle, uint64_t userHandle)
 {
 	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
-	return SteamMatchmaking()->InviteUserToLobby(lobbyHandle, userHandle);
+	return SteamMatchmaking()->InviteUserToLobby(uint64(lobbyHandle), uint64(userHandle));
 }
 
 bool SteamMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
@@ -337,11 +337,11 @@ bool SteamMatchMaking::getIndex(uint64_t lobbyHandle, int32_t& outIndex) const
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
 
 	CSteamID myId = ::SteamUser()->GetSteamID();
-	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(lobbyHandle);
+	int32_t memberCount = SteamMatchmaking()->GetNumLobbyMembers(uint64(lobbyHandle));
 
 	for (int32_t i = 0; i < memberCount; ++i)
 	{
-		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(lobbyHandle, i);
+		CSteamID memberId = SteamMatchmaking()->GetLobbyMemberByIndex(uint64(lobbyHandle), i);
 		if (memberId == myId)
 		{
 			outIndex = i;
@@ -356,14 +356,14 @@ bool SteamMatchMaking::setOwner(uint64_t lobbyHandle, uint64_t userHandle) const
 {
 	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
-	return SteamMatchmaking()->SetLobbyOwner(lobbyHandle, userHandle);
+	return SteamMatchmaking()->SetLobbyOwner(uint64(lobbyHandle), uint64(userHandle));
 }
 
 bool SteamMatchMaking::getOwner(uint64_t lobbyHandle, uint64_t& outUserHandle) const
 {
 	T_ASSERT_M (m_joinedLobby != 0, L"Not in any lobby");
 	T_ASSERT_M (m_joinedLobby == lobbyHandle, L"Incorrect lobby");
-	outUserHandle = SteamMatchmaking()->GetLobbyOwner(lobbyHandle).ConvertToUint64();
+	outUserHandle = SteamMatchmaking()->GetLobbyOwner(uint64(lobbyHandle)).ConvertToUint64();
 	return true;
 }
 

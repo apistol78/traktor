@@ -39,7 +39,6 @@ ClothEntity::ClothEntity()
 
 ClothEntity::~ClothEntity()
 {
-	destroy();
 }
 
 bool ClothEntity::create(

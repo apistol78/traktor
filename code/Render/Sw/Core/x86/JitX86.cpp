@@ -23,15 +23,16 @@ const uint32_t c_trigResolution = 65536;
 #define R0 256
 #define R1 257
 
-#define REGISTERS					ecx
-#define CONTEXT						esi
-#define CONTEXT_OFFSET_CONSTANTS	0
-#define CONTEXT_OFFSET_INSTANCE		4
-#define CONTEXT_OFFSET_TARGETSIZE	8
-#define CONTEXT_OFFSET_UNIFORMS		12
-#define CONTEXT_OFFSET_VARYINGS		16
-#define CONTEXT_OFFSET_SAMPLERS		20
-#define CONTEXT_OFFSET_OUT			24
+#define REGISTERS						ecx
+#define CONTEXT							esi
+#define CONTEXT_OFFSET_CONSTANTS		0
+#define CONTEXT_OFFSET_INSTANCE			4
+#define CONTEXT_OFFSET_TARGETSIZE		8
+#define CONTEXT_OFFSET_FRAGMENTPOSITION	12
+#define CONTEXT_OFFSET_UNIFORMS			16
+#define CONTEXT_OFFSET_VARYINGS			20
+#define CONTEXT_OFFSET_SAMPLERS			24
+#define CONTEXT_OFFSET_OUT				28
 
 #pragma pack(1)
 struct ExecuteContext
@@ -39,6 +40,7 @@ struct ExecuteContext
 	void* constants;
 	void* instance;
 	void* targetSize;
+	void* fragmentPosition;
 	void* uniforms;
 	void* varyings;
 	void* samplers;
@@ -307,6 +309,11 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 
 		case OpFetchTargetSize:
 			a.lea(eax, CONTEXT, CONTEXT_OFFSET_TARGETSIZE);
+			a.movaps(xmmw(a, i.dest), eax, 0);
+			break;
+
+		case OpFetchFragmentPosition:
+			a.lea(eax, CONTEXT, CONTEXT_OFFSET_FRAGMENTPOSITION);
 			a.movaps(xmmw(a, i.dest), eax, 0);
 			break;
 
@@ -735,9 +742,13 @@ Processor::image_t JitX86::compile(const IntrProgram& program) const
 			break;
 
 		case OpTrunc:
+			// \fixme
+			a.movaps(xmmw(a, i.dest), xmmr(a, i.src[0]));
 			break;
 
 		case OpRound:
+			// \fixme
+			a.movaps(xmmw(a, i.dest), xmmr(a, i.src[0]));
 			break;
 
 		case OpLerp:
@@ -907,6 +918,7 @@ bool JitX86::execute(
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
 	const Vector4& targetSize,
+	const Vector4& fragmentPosition,
 	const Ref< AbstractSampler >* inSamplers,
 	Vector4* outVaryings
 ) const
@@ -926,6 +938,7 @@ bool JitX86::execute(
 	context.constants = (void*)i->constants;
 	context.instance = (void*)instance4f;
 	context.targetSize = (void*)&targetSize;
+	context.fragmentPosition = (void*)&fragmentPosition;
 	context.uniforms = (void*)inUniforms;
 	context.varyings = (void*)inVaryings;
 	context.samplers = (void*)inSamplers;

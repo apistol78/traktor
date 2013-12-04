@@ -9,7 +9,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.Entity", Entity, Object)
 
 Entity::~Entity()
 {
-	destroy();
 }
 
 void Entity::destroy()

@@ -467,6 +467,7 @@ void RenderViewSw::executeVertexShader(const varying_data_t& vertexVarying, vary
 		m_currentProgram->getParameters(),		// Uniforms
 		(const Vector4*)&vertexVarying,			// Vertex varyings
 		m_targetSize,							// Target size
+		Vector4::zero(),						// Fragment position
 		0,										// Samplers
 		(Vector4*)&outInterpolatorVarying		// Output, interpolates, varyings
 	);
@@ -920,6 +921,7 @@ void RenderViewSw::triangleShadeOpaque(const FragmentContext& context, int x1, i
 				parameters,
 				pixelVaryings,
 				m_targetSize,
+				Vector4(float(x), float(y), 0.0f, 0.0f),
 				samplers,
 				fragmentVaryings
 			);
@@ -1003,6 +1005,7 @@ void RenderViewSw::triangleShadeBlend(const FragmentContext& context, int x1, in
 				parameters,
 				pixelVaryings,
 				m_targetSize,
+				Vector4(float(x), float(y), 0.0f, 0.0f),
 				samplers,
 				fragmentVaryings
 			);

@@ -71,6 +71,7 @@ bool Interpreter::execute(
 	const Vector4* inUniforms,
 	const Vector4* inVaryings,
 	const Vector4& targetSize,
+	const Vector4& fragmentPosition,
 	const Ref< AbstractSampler >* inSamplers,
 	Vector4* outVaryings
 ) const
@@ -113,6 +114,11 @@ bool Interpreter::execute(
 
 		case OpFetchTargetSize:
 			dest = targetSize;
+			CHECK(dest);
+			break;
+
+		case OpFetchFragmentPosition:
+			dest = fragmentPosition;
 			CHECK(dest);
 			break;
 

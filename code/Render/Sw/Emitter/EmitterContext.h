@@ -109,6 +109,8 @@ public:
 
 	bool inPixel() const;
 
+	void findCommonInputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const InputPin* >& outInputPins) const;
+
 	Emitter& getEmitter();
 
 	IntrProgram& getVertexProgram();

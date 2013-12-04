@@ -24,7 +24,8 @@ public:
 	EntityAdapterBuilder(
 		SceneEditorContext* context,
 		world::IEntityBuilder* entityBuilder,
-		const RefArray< const IEntityEditorFactory >& entityEditorFactories
+		const RefArray< const IEntityEditorFactory >& entityEditorFactories,
+		EntityAdapter* currentEntityAdapter
 	);
 
 	virtual ~EntityAdapterBuilder();

@@ -4,10 +4,10 @@
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/ShaderGraphHash.h"
 #include "Render/Editor/Shader/ShaderGraphOptimizer.h"
 #include "Render/Editor/Shader/ShaderGraphOrderEvaluator.h"
-#include "Render/Editor/Shader/ShaderGraphUtilities.h"
 
 namespace traktor
 {
@@ -54,7 +54,7 @@ bool insideCycle(const ShaderGraph* shaderGraph, const OutputPin* outputPin)
 
 		const Node* node = scanOutputPin->getNode();
 		T_ASSERT (node);
-		
+
 		int32_t inputPinCount = node->getInputPinCount();
 		for (int32_t i = 0; i < inputPinCount; ++i)
 		{
@@ -270,7 +270,7 @@ Ref< ShaderGraph > ShaderGraphOptimizer::insertInterpolators(bool frequentUnifor
 	m_visited.clear();
 	for (RefArray< PixelOutput >::iterator i = pixelOutputNodes.begin(); i != pixelOutputNodes.end(); ++i)
 		insertInterpolators(shaderGraph, *i);
-	
+
 #if defined(_DEBUG)
 	T_DEBUG(L"Inserted " << m_insertedCount << L" interpolator(s)");
 	T_DEBUG(L"  " << int32_t(m_visited.size()) << L" visited node(s)");

@@ -7,47 +7,12 @@
 #include "Render/Shader/Node.h"
 #include "Render/Shader/InputPin.h"
 #include "Render/Shader/OutputPin.h"
-
-// \fixme
-#include "Render/Editor/Shader/ShaderGraphUtilities.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 
 namespace traktor
 {
 	namespace render
 	{
-		namespace
-		{
-
-bool doesInputPropagateToNode(const ShaderGraph* shaderGraph, const InputPin* inputPin, Node* targetNode)
-{
-	struct FindInputPin
-	{
-		const InputPin* inputPin;
-		Node* targetNode;
-		bool found;
-
-		bool operator () (Node* node)
-		{
-			found |= bool(inputPin->getNode() == targetNode);
-			return !found;
-		}
-
-		bool operator () (Edge* edge)
-		{
-			return true;
-		}
-	};
-
-	FindInputPin visitor;
-	visitor.inputPin = inputPin;
-	visitor.targetNode = targetNode;
-	visitor.found = false;
-	ShaderGraphTraverse(shaderGraph, targetNode).preorder(visitor);
-
-	return visitor.found;
-}
-
-		}
 
 HlslContext::HlslContext(const ShaderGraph* shaderGraph)
 :	m_shaderGraph(shaderGraph)

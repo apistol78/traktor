@@ -44,7 +44,7 @@ bool Video::create(render::IRenderSystem* renderSystem, IVideoDecoder* decoder)
 	m_format = info.format;
 	m_time = 0.0f;
 	m_rate = info.rate;
-	m_frame = ~0UL;
+	m_frame = ~0U;
 	m_current = 0;
 	m_playing = true;
 
@@ -89,7 +89,7 @@ bool Video::playing() const
 void Video::rewind()
 {
 	m_time = 0.0f;
-	m_frame = ~0UL;
+	m_frame = ~0U;
 	m_current = 0;
 	m_playing = true;
 }

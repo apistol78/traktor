@@ -1,9 +1,9 @@
 #include "Core/Log/Log.h"
 #include "Render/Shader/Nodes.h"
 #include "Render/Shader/ShaderGraph.h"
+#include "Render/Shader/ShaderGraphTraverse.h"
 #include "Render/Editor/Shader/INodeTraits.h"
 #include "Render/Editor/Shader/ShaderGraphTypePropagation.h"
-#include "Render/Editor/Shader/ShaderGraphUtilities.h"
 
 namespace traktor
 {
@@ -94,7 +94,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 	// Initial set of input nodes.
 	for (RefArray< Node >::const_iterator i = nodes.begin(); i != nodes.end(); ++i)
 		nodeSetInput.insert(*i);
-	
+
 	// Iteratively solve types until all types are stable.
 	uint32_t iterationCount = 0;
 	for (;;)
@@ -156,7 +156,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 					const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
 					if (sourceOutputPin)
 						nodeSetOutput.insert(sourceOutputPin->getNode());
-					
+
 					m_inputPinTypes[inputPin] = inputPinType;
 				}
 			}
@@ -201,7 +201,7 @@ ShaderGraphTypePropagation::ShaderGraphTypePropagation(const ShaderGraph* shader
 
 		++iterationCount;
 	}
-	
+
 	T_DEBUG(L"Type propagation solved in " << iterationCount << L" iteration(s)");
 }
 

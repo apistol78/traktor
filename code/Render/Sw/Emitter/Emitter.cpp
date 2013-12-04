@@ -116,6 +116,13 @@ void emitColor(EmitterContext& cx, Color* node)
 
 void emitConditional(EmitterContext& cx, Conditional* node)
 {
+	// Find common input pins from both sides of branch;
+	// emit those before condition in order to have them evaluated outside of conditional.
+	std::vector< const InputPin* > inputPins;
+	cx.findCommonInputs(node, L"CaseTrue", L"CaseFalse", inputPins);
+	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
+		cx.emitInput(*i);
+
 	Variable* in = cx.emitInput(node, L"Input");
 	Variable* ref = cx.emitInput(node, L"Reference");
 	T_ASSERT (in->type == ref->type);
@@ -314,10 +321,8 @@ void emitFraction(EmitterContext& cx, Fraction* node)
 
 void emitFragmentPosition(EmitterContext& cx, FragmentPosition* node)
 {
-	// @fixme
-	Variable* out = cx.emitOutput(node, L"Output", VtFloat2);
-	Instruction is0(OpSet, out->reg, 0, 1|2|4|8, 0, 0);
-	cx.emitInstruction(is0);
+	Variable* out = cx.emitOutput(node, L"Output", VtFloat4);
+	cx.emitInstruction(OpFetchFragmentPosition, out);
 }
 
 void emitInterpolator(EmitterContext& cx, Interpolator* node)

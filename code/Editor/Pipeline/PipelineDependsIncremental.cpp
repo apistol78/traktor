@@ -242,20 +242,18 @@ void PipelineDependsIncremental::addDependency(
 
 bool PipelineDependsIncremental::waitUntilFinished()
 {
-//#if defined(_DEBUG)
-	log::info << L"Pipeline performance" << Endl;
-	log::info << IncreaseIndent;
+	log::debug << L"Pipeline performance" << Endl;
+	log::debug << IncreaseIndent;
 
 	double totalTime = 0.0;
 	for (std::map< const TypeInfo*, std::pair< int32_t, double > >::const_iterator i = m_buildDepTimes.begin(); i != m_buildDepTimes.end(); ++i)
 	{
-		log::info << i->first->getName() << L" : " << int32_t(i->second.second * 1000.0) << L" ms in " << i->second.first << L" count(s)" << Endl;
+		log::debug << i->first->getName() << L" : " << int32_t(i->second.second * 1000.0) << L" ms in " << i->second.first << L" count(s)" << Endl;
 		totalTime += i->second.second;
 	}
 
-	log::info << L"Total : " << int32_t(totalTime * 1000.0) << L" ms" << Endl;
-	log::info << DecreaseIndent;
-//#endif
+	log::debug << L"Total : " << int32_t(totalTime * 1000.0) << L" ms" << Endl;
+	log::debug << DecreaseIndent;
 	return true;
 }
 

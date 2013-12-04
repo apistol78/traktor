@@ -23,9 +23,9 @@
 #endif
 
 #if defined(_WIN32) && !defined(WINCE) && !defined(_WIN64)
-#	include "Render/Sw/Core/x86/JitX86.h"
-typedef traktor::render::JitX86 ProcessorImpl;
-#elif !defined(WINCE)
+//#	include "Render/Sw/Core/x86/JitX86.h"
+//typedef traktor::render::JitX86 ProcessorImpl;
+//#elif !defined(WINCE)
 #	include "Render/Sw/Core/Interpreter.h"
 typedef traktor::render::Interpreter ProcessorImpl;
 #else

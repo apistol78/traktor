@@ -54,7 +54,6 @@ AnimatedMeshEntity::AnimatedMeshEntity(
 
 AnimatedMeshEntity::~AnimatedMeshEntity()
 {
-	destroy();
 }
 
 void AnimatedMeshEntity::destroy()

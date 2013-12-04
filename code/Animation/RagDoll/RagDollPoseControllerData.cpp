@@ -13,7 +13,7 @@ T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.RagDollPoseControllerData", 4
 
 RagDollPoseControllerData::RagDollPoseControllerData()
 :	m_collisionGroup(1)
-,	m_collisionMask(~0UL)
+,	m_collisionMask(~0U)
 ,	m_autoDeactivate(true)
 ,	m_enabled(true)
 ,	m_fixateBones(false)
@@ -53,7 +53,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		);
 		if (!trackPoseController)
 			return 0;
-			
+
 		trackPoseController->estimateVelocities(skeleton, velocities);
 	}
 
@@ -64,7 +64,7 @@ Ref< IPoseController > RagDollPoseControllerData::createInstance(
 		velocity.angular = Vector4(0.0f, 0.0f, 0.0f, 0.0f);
 		velocities.push_back(velocity);
 	}
-	
+
 	Ref< RagDollPoseController > poseController = new RagDollPoseController();
 	if (!poseController->create(
 		physicsManager,

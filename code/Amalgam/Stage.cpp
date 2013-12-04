@@ -163,6 +163,9 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
 			(*i)->prepare();
 
+		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
+			(*i)->update(control, info);
+
 		if (validateScriptContext())
 		{
 			script::Any argv[] =
@@ -172,9 +175,6 @@ bool Stage::update(amalgam::IStateManager* stateManager, amalgam::IUpdateControl
 			};
 			m_scriptContext->executeFunction("update", sizeof_array(argv), argv);
 		}
-
-		for (RefArray< Layer >::iterator i = m_layers.begin(); i != m_layers.end(); ++i)
-			(*i)->update(control, info);
 
 		m_fade = max(0.0f, m_fade - info.getSimulationDeltaTime());
 	}
