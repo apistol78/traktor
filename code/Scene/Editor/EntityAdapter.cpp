@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <algorithm>
 #include "Core/Math/Const.h"
 #include "Scene/Editor/EntityAdapter.h"
@@ -201,7 +199,8 @@ EntityAdapter* EntityAdapter::findChildAdapterFromEntity(const world::Entity* en
 
 void EntityAdapter::link(EntityAdapter* child)
 {
-	T_ASSERT_M (child->m_parent == 0, L"Child already linked to another parent");
+	T_FATAL_ASSERT_M (child->m_parent == 0, L"Child already linked to another parent");
+	T_FATAL_ASSERT_M (std::find(m_children.begin(), m_children.end(), child) == m_children.end(), L"Child already added");
 	child->m_parent = this;
 	m_children.push_back(child);
 	m_childMap[child->getEntity()] = child;
@@ -209,8 +208,8 @@ void EntityAdapter::link(EntityAdapter* child)
 
 void EntityAdapter::unlinkChild(EntityAdapter* child)
 {
-	T_ASSERT (child);
-	T_ASSERT_M (child->m_parent == this, L"Entity adapter not child if this");
+	T_FATAL_ASSERT (child);
+	T_FATAL_ASSERT_M (child->m_parent == this, L"Entity adapter not child if this");
 
 	RefArray< EntityAdapter >::iterator i = std::find(m_children.begin(), m_children.end(), child);
 	T_ASSERT (i != m_children.end());

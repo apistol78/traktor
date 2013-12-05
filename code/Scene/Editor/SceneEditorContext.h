@@ -274,6 +274,8 @@ public:
 
 	const RefArray< EntityAdapter > getLayerEntityAdapters() { return m_layerEntityAdapters; }
 
+	uint32_t getEntityCount() const { return m_entityCount; }
+
 	//@}
 
 	/*! \name Events. */
@@ -343,6 +345,8 @@ private:
 	bool m_playing;
 	float m_timeScale;
 	float m_time;
+	uint32_t m_buildCount;
+	uint32_t m_entityCount;
 	Ref< Camera > m_cameras[4];
 	Ref< SceneAsset > m_sceneAsset;
 	Ref< Scene > m_scene;

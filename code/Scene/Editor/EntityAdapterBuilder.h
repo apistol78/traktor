@@ -62,10 +62,10 @@ private:
 	mutable Ref< EntityAdapter > m_currentAdapter;
 	mutable Ref< EntityAdapter > m_rootAdapter;
 	mutable uint32_t m_adapterCount;
-
 	mutable Timer m_timer;
 	mutable std::vector< double > m_buildTimeStack;
 	mutable std::map< const TypeInfo*, std::pair< int32_t, double > > m_buildTimes;
+	mutable std::set< const world::Entity* > m_builtEntities;
 };
 
 	}

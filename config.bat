@@ -2,7 +2,7 @@
 
 set TRAKTOR_HOME=%~dp0
 
-set STEAMWORKS_SDK=%TRAKTOR_HOME%3rdp\steamworks-sdk-124
+set STEAMWORKS_SDK=%TRAKTOR_HOME%3rdp\steamworks-sdk-126a
 set FBX_SDK=%TRAKTOR_HOME%3rdp\FbxSdk\2013.1
 set BULLET_SDK=%TRAKTOR_HOME%3rdp\bullet-2.80-rev2531
 set PHYSX_SDK=%TRAKTOR_HOME%3rdp\PhysX-3.2.4
