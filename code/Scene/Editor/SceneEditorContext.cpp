@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <limits>
 #include <stack>
 #include "Core/Log/Log.h"
@@ -64,6 +62,8 @@ SceneEditorContext::SceneEditorContext(
 ,	m_playing(false)
 ,	m_timeScale(1.0f)
 ,	m_time(0.0f)
+,	m_buildCount(0)
+,	m_entityCount(0)
 {
 	for (int i = 0; i < sizeof_array(m_cameras); ++i)
 		m_cameras[i] = new Camera();
@@ -378,17 +378,30 @@ void SceneEditorContext::buildEntities()
 	RefArray< EntityAdapter > entityAdapters;
 	getEntities(entityAdapters);
 
+	std::set< const EntityAdapter* > checkAdapters;
+
 	m_entityAdapterMap.clear();
 	for (RefArray< EntityAdapter >::const_iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
+	{
+		T_FATAL_ASSERT (checkAdapters.find(*i) == checkAdapters.end());
+		checkAdapters.insert(*i);
+
+		SmallMap< const world::Entity*, EntityAdapter* >::const_iterator j = m_entityAdapterMap.find((*i)->getEntity());
+		T_FATAL_ASSERT (j == m_entityAdapterMap.end());
 		m_entityAdapterMap.insert((*i)->getEntity(), *i);
+	}
+
+	m_entityCount = entityAdapters.size();
 
 	raisePostBuild();
 
 	T[5] = timer.getElapsedTime();
 
-	log::debug << L"Scene build profile:" << Endl;
+	log::debug << L"Scene build profile (" << m_buildCount << L"):" << Endl;
 	for (int32_t i = 0; i < sizeof_array(T) - 1; ++i)
 		log::debug << L"  T " << i << L"_" << (i + 1) << L": " << int32_t((T[i + 1] - T[i]) * 1000.0) << L" ms" << Endl;
+
+	++m_buildCount;
 }
 
 void SceneEditorContext::buildController()

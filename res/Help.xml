@@ -1,6 +1,23 @@
 <?xml version="1.0" encoding="utf-8"?>
 <object type="traktor.i18n.Dictionary">
 	<map>
+        <item>
+            <first>HELP_TRAKTOR_WORLD_ENTITYDATA</first>
+            <second>
+            <![CDATA[
+Entity
+Base entity.
+            ]]>                
+            </second>
+        </item>
+        <item>
+            <first>HELP_TRAKTOR_WORLD_EXTERNALENTITYDATA</first>
+            <second>
+            <![CDATA[
+External entity
+Externally referenced in the database.
+            ]]>                
+            </second>
     	<item>
     		<first>HELP_TRAKTOR_WORLD_ENTITYDATA_NAME</first>
     		<second>

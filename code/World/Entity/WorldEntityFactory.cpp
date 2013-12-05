@@ -67,7 +67,11 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		resolvedEntityData->setName(externalEntityData->getName());
 		resolvedEntityData->setTransform(externalEntityData->getTransform());
 
-		return builder->create(resolvedEntityData);
+		const IEntityFactory* factory = builder->getFactory(resolvedEntityData);
+		if (factory)
+			return factory->createEntity(builder->getCompositeEntityBuilder(), *resolvedEntityData.getResource());
+		else
+			return 0;
 	}
 
 	if (const GodRayEntityData* godRayData = dynamic_type_cast< const GodRayEntityData* >(&entityData))

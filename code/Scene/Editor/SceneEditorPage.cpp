@@ -980,7 +980,8 @@ void SceneEditorPage::updateStatusBar()
 	StringOutputStream ss;
 	ss.setDecimals(2);
 	ss << position.x() << L", " << position.y() << L", " << position.z() << L"     ";
-	ss << rad2deg(angles.x()) << L"\176, " << rad2deg(angles.y()) << L"\176, " << rad2deg(angles.z()) << L"\176";
+	ss << rad2deg(angles.x()) << L", " << rad2deg(angles.y()) << L", " << rad2deg(angles.z()) << L" deg" << L"     ";
+	ss << m_context->getEntityCount() << L" entities";
 
 	m_statusBar->setText(ss.str());
 }
@@ -1156,6 +1157,7 @@ void SceneEditorPage::eventInstanceClick(ui::Event* event)
 void SceneEditorPage::eventContextPostBuild(ui::Event* event)
 {
 	createInstanceGrid();
+	updateStatusBar();
 }
 
 void SceneEditorPage::eventContextSelect(ui::Event* event)

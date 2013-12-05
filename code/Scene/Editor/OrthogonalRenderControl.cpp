@@ -1,5 +1,6 @@
 #include <limits>
 #include "Core/Math/Log2.h"
+#include "Core/Misc/SafeDestroy.h"
 #include "Core/Settings/PropertyColor.h"
 #include "Core/Settings/PropertyGroup.h"
 #include "Core/Settings/PropertyInteger.h"
@@ -187,11 +188,7 @@ void OrthogonalRenderControl::destroy()
 
 void OrthogonalRenderControl::updateWorldRenderer()
 {
-	if (m_worldRenderer)
-	{
-		m_worldRenderer->destroy();
-		m_worldRenderer = 0;
-	}
+	safeDestroy(m_worldRenderer);
 
 	Ref< scene::Scene > sceneInstance = m_context->getScene();
 	if (!sceneInstance)
@@ -446,7 +443,7 @@ void OrthogonalRenderControl::eventSize(ui::Event* event)
 	m_renderView->reset(sz.cx, sz.cy);
 	m_renderView->setViewport(render::Viewport(0, 0, sz.cx, sz.cy, 0, 1));
 
-	updateWorldRenderer();
+	safeDestroy(m_worldRenderer);
 
 	m_dirtySize = sz;
 }
@@ -456,8 +453,16 @@ void OrthogonalRenderControl::eventPaint(ui::Event* event)
 	float deltaTime = float(m_timer.getDeltaTime());
 	float scaledTime = m_context->getTime();
 
-	if (!m_renderView || !m_primitiveRenderer || !m_worldRenderer)
+	if (!m_renderView || !m_primitiveRenderer)
 		return;
+
+	// Lazy create world renderer.
+	if (!m_worldRenderer)
+	{
+		updateWorldRenderer();
+		if (!m_worldRenderer)
+			return;
+	}
 
 	// Render world.
 	if (m_renderView->begin(render::EtCyclop))

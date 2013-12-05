@@ -1,5 +1,3 @@
-#pragma optimize( "", off )
-
 #include <limits>
 #include "Core/Log/Log.h"
 #include "Core/Misc/Save.h"
@@ -11,6 +9,7 @@
 #include "World/Entity.h"
 #include "World/EntityData.h"
 #include "World/IEntityFactory.h"
+#include "World/Editor/LayerEntityData.h"
 #include "World/Entity/GroupEntity.h"
 #include "World/Entity/NullEntity.h"
 
@@ -88,7 +87,8 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 {
 	RefArray< EntityAdapter > entityAdapters;
 	collectAllAdapters(currentEntityAdapter, entityAdapters);
-	//m_context->getEntities(entityAdapters, SceneEditorContext::GfDescendants);
+
+	log::debug << L"Caching " << entityAdapters.size() << L" adapter(s)..." << Endl;
 
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
@@ -168,6 +168,8 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 
 	Cache& cache = m_cache[&type_of(entityData)];
 
+	bool entityAdapterCreated = false;
+
 	// Get adapter; reuse adapters containing same type of entity.
 	if (!cache.adapters.empty())
 	{
@@ -175,9 +177,22 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		T_FATAL_ASSERT (entityAdapter != 0);
 		cache.adapters.pop_front();
 		T_FATAL_ASSERT (&type_of(entityAdapter->getEntityData()) == &type_of(entityData));
+		entityAdapter->unlinkFromParent();
 	}
 	else
+	{
 		entityAdapter = new EntityAdapter();
+		entityAdapterCreated = true;
+
+		// Get visibility state from layer entity data, do this
+		// only when a new adapter is created as we want to keep
+		// editing session state.
+		if (const world::LayerEntityData* layerEntityData = dynamic_type_cast< const world::LayerEntityData* >(entityData))
+		{
+			entityAdapter->setVisible(layerEntityData->isVisible());
+			entityAdapter->setLocked(layerEntityData->isLocked());
+		}
+	}
 
 	// Setup relationship with parent.
 	if (m_currentAdapter)
@@ -187,14 +202,6 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 		T_FATAL_ASSERT (m_rootAdapter == 0);
 		m_rootAdapter = entityAdapter;
 		T_FATAL_ASSERT (m_rootAdapter->getParent() == 0);
-	}
-
-	// Find entity factory.
-	Ref< const world::IEntityFactory > entityFactory = m_entityBuilder->getFactory(entityData);
-	if (!entityFactory)
-	{
-		log::error << L"Unable to find entity factory for \"" << type_name(entityData) << L"\"" << Endl;
-		return 0;
 	}
 
 	// Calculate entity data hash, note this is recursive and
@@ -215,8 +222,6 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	// If no leaf entity then we need to re-create the entity.
 	if (!entity)
 	{
-		T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
-
 		// Unlink all children first.
 		entityAdapter->unlinkAllChildren();
 		T_FATAL_ASSERT (entityAdapter->getChildren().empty());
@@ -226,7 +231,13 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 
 		m_buildTimeStack.push_back(m_timer.getElapsedTime());
 
-		entity = entityFactory->createEntity(this, *entityData);
+		// Create the concrete entity.
+		{
+			T_ANONYMOUS_VAR(Save< Ref< EntityAdapter > >)(m_currentAdapter, entityAdapter);
+			const world::IEntityFactory* entityFactory = m_entityBuilder->getFactory(entityData);
+			T_FATAL_ASSERT (entityFactory);
+			entity = entityFactory->createEntity(this, *entityData);
+		}
 
 		// If still no entity then we create a null placeholder.
 		if (!entity)
@@ -234,6 +245,10 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 			log::debug << L"Unable to create entity from \"" << type_name(entityData) << L"\"; using null entity as placeholder" << Endl;
 			entity = new world::NullEntity(entityData->getTransform());
 		}
+
+		// As a contract the factory should NOT recursively return the same entity.
+		T_FATAL_ASSERT (m_builtEntities.find(entity) == m_builtEntities.end());
+		m_builtEntities.insert(entity);
 
 		double duration = m_timer.getElapsedTime() - m_buildTimeStack.back();
 		m_buildTimes[&type_of(entityData)].first++;
@@ -254,12 +269,7 @@ Ref< world::Entity > EntityAdapterBuilder::create(const world::EntityData* entit
 	if (!entityAdapter->getEntityEditor())
 	{
 		Ref< IEntityEditor > entityEditor = createEntityEditor(m_context, m_entityEditorFactories, entityAdapter);
-		if (!entityEditor)
-		{
-			log::error << L"Unable to create entity editor from \"" << type_name(entityData) << L"\"" << Endl;
-			return 0;
-		}
-
+		T_FATAL_ASSERT (entityEditor != 0);
 		entityAdapter->setEntityEditor(entityEditor);
 	}
 
