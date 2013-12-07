@@ -1,5 +1,5 @@
 #include <cassert>
-#include <sstream>
+#include "Core/Log/Log.h"
 #include "Render/Dx11/Platform.h"
 #include "Render/Dx11/HlslContext.h"
 #include "Render/Dx11/HlslShader.h"
@@ -66,6 +66,24 @@ Node* HlslContext::getInputNode(Node* node, const std::wstring& inputPinName)
 	return getInputNode(inputPin);
 }
 
+void HlslContext::emit(Node* node)
+{
+	int32_t outputPinCount = node->getOutputPinCount();
+	for (int32_t i = 0; i < outputPinCount; ++i)
+	{
+		HlslVariable* variable = m_currentShader->getVariable(node->getOutputPin(i));
+		if (!variable)
+		{
+			if (!m_emitter.emit(*this, node))
+			{
+				log::error << L"Failed to emit " << type_name(node) << Endl;
+				log::error << L"  " << type_name(node) << L"[" << node->getOutputPin(i)->getName() << L"] " << node->getInformation() << Endl;
+			}
+			break;
+		}
+	}
+}
+
 HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 {
 	const OutputPin* sourcePin = m_shaderGraph->findSourcePin(inputPin);
@@ -75,10 +93,17 @@ HlslVariable* HlslContext::emitInput(const InputPin* inputPin)
 	HlslVariable* variable = m_currentShader->getVariable(sourcePin);
 	if (!variable)
 	{
-		if (m_emitter.emit(*this, sourcePin->getNode()))
+		Node* node = sourcePin->getNode();
+		if (m_emitter.emit(*this, node))
 		{
 			variable = m_currentShader->getVariable(sourcePin);
 			T_ASSERT (variable);
+		}
+		else
+		{
+			log::error << L"Failed to emit " << type_name(node) << Endl;
+			log::error << L"  " << type_name(node) << L"[" << sourcePin->getName() << L"] " << node->getInformation() << L" -->" << Endl;
+			log::error << L"  " << type_name(inputPin->getNode()) << L"[" << inputPin->getName() << L"] " << inputPin->getNode()->getInformation() << Endl;
 		}
 	}
 
@@ -112,155 +137,17 @@ void HlslContext::emitOutput(Node* node, const std::wstring& outputPinName, Hlsl
 	m_currentShader->associateVariable(outputPin, variable);
 }
 
-bool HlslContext::isPinsConnected(const OutputPin* outputPin, const InputPin* inputPin) const
+void HlslContext::findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const OutputPin* >& outOutputPins) const
 {
-	const OutputPin* sourceOutputPin = m_shaderGraph->findSourcePin(inputPin);
-	if (!sourceOutputPin)
-		return false;
-
-	std::set< const OutputPin* > visitedOutputPins;
-	visitedOutputPins.insert(sourceOutputPin);
-
-	std::vector< const OutputPin* > outputPins;
-	outputPins.push_back(sourceOutputPin);
-
-	while (!outputPins.empty())
-	{
-		const OutputPin* sourceOutputPin = outputPins.back(); outputPins.pop_back();
-		T_ASSERT (sourceOutputPin);
-
-		if (sourceOutputPin == outputPin)
-			return true;
-
-		const Node* node = sourceOutputPin->getNode();
-		for (int32_t i = 0; i < node->getInputPinCount(); ++i)
-		{
-			const InputPin* nodeInputPin = node->getInputPin(i);
-			T_ASSERT (nodeInputPin);
-
-			const OutputPin* nodeSourceOutputPin = m_shaderGraph->findSourcePin(nodeInputPin);
-			if (
-				nodeSourceOutputPin &&
-				visitedOutputPins.find(nodeSourceOutputPin) == visitedOutputPins.end()
-			)
-			{
-				outputPins.push_back(nodeSourceOutputPin);
-				visitedOutputPins.insert(nodeSourceOutputPin);
-			}
-		}
-	}
-
-	return false;
+	getNonDependentOutputs(m_shaderGraph, node->findInputPin(inputPinName), dependentOutputPins, outOutputPins);
 }
 
-void HlslContext::findExternalInputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const InputPin* >& outInputPins) const
+void HlslContext::findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const OutputPin* >& outOutputPins) const
 {
-	std::set< const OutputPin* > visitedOutputPins;
-	visitedOutputPins.insert(dependentOutputPins.begin(), dependentOutputPins.end());
-
-	std::vector< const InputPin* > inputPins;
-	inputPins.push_back(node->findInputPin(inputPinName));
-
-	while (!inputPins.empty())
-	{
-		const InputPin* inputPin = inputPins.back(); inputPins.pop_back();
-		T_ASSERT (inputPin);
-
-		bool isConnected = false;
-		for (std::vector< const OutputPin* >::const_iterator i = dependentOutputPins.begin(); i != dependentOutputPins.end(); ++i)
-			isConnected |= isPinsConnected(*i, inputPin);
-
-		if (!isConnected)
-			outInputPins.push_back(inputPin);
-		else
-		{
-			const OutputPin* outputPin = m_shaderGraph->findSourcePin(inputPin);
-			if (
-				!outputPin ||
-				visitedOutputPins.find(outputPin) != visitedOutputPins.end()
-			)
-				continue;
-
-			visitedOutputPins.insert(outputPin);
-
-			const Node* node = outputPin->getNode();
-			for (int32_t i = 0; i < node->getInputPinCount(); ++i)
-				inputPins.push_back(node->getInputPin(i));
-		}
-	}
-}
-
-void HlslContext::findCommonInputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const InputPin* >& outInputPins) const
-{
-	struct Collect1
-	{
-		std::set< const OutputPin* > outputs;
-
-		bool operator () (Node* node)
-		{
-			return true;
-		}
-
-		bool operator () (Edge* edge)
-		{
-			outputs.insert(edge->getSource());
-			return true;
-		}
-	};
-
-	struct Collect2
-	{
-		std::set< const OutputPin* >* candidates; 
-		std::set< const OutputPin* > common;
-
-		bool operator () (Node* node)
-		{
-			return true;
-		}
-
-		bool operator () (Edge* edge)
-		{
-			const OutputPin* outputPin = edge->getSource();
-			if (candidates->find(outputPin) != candidates->end())
-			{
-				common.insert(outputPin);
-				return false;
-			}
-			else
-				return true;
-		}
-	};
-
-	const OutputPin* outputPin1 = m_shaderGraph->findSourcePin(node->findInputPin(inputPin1));
-	const OutputPin* outputPin2 = m_shaderGraph->findSourcePin(node->findInputPin(inputPin2));
-
-	if (outputPin1 != outputPin2)
-	{
-		Collect1 visitor1;
-		ShaderGraphTraverse(m_shaderGraph, outputPin1->getNode()).preorder(visitor1);
-
-		Collect2 visitor2;
-		visitor2.candidates = &visitor1.outputs;
-		ShaderGraphTraverse(m_shaderGraph, outputPin2->getNode()).preorder(visitor2);
-
-		for (std::set< const OutputPin* >::const_iterator i = visitor2.common.begin(); i != visitor2.common.end(); ++i)
-		{
-			std::vector< const InputPin* > inputPins;
-			m_shaderGraph->findDestinationPins(*i, inputPins);
-
-			for (std::vector< const InputPin* >::const_iterator j = inputPins.begin(); j != inputPins.end(); ++j)
-			{
-				if (doesInputPropagateToNode(m_shaderGraph, *j, node))
-					outInputPins.push_back(*j);
-			}
-		}
-	}
-	else
-	{
-		// Apparently both inputs are connected to same output; thus
-		// no need to traverse in order to find the intersection.
-		m_shaderGraph->findDestinationPins(outputPin1, outInputPins);
-	}
+	std::vector< const InputPin* > inputPins(2);
+	inputPins[0] = node->findInputPin(inputPin1);
+	inputPins[1] = node->findInputPin(inputPin2);
+	getMergingOutputs(m_shaderGraph, inputPins, outOutputPins); 
 }
 
 void HlslContext::enterVertex()
