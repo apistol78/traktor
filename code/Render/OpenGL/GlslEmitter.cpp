@@ -132,12 +132,12 @@ bool emitConditional(GlslContext& cx, Conditional* node)
 	GlslVariable caseTrue, caseFalse;
 	std::wstring caseTrueBranch, caseFalseBranch;
 
-	// Find common input pins from both sides of branch;
+	// Find common output pins from both sides of branch;
 	// emit those before condition in order to have them evaluated outside of conditional.
-	std::vector< const InputPin* > inputPins;
-	cx.findCommonInputs(node, L"CaseTrue", L"CaseFalse", inputPins);
-	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
-		cx.emitInput(*i);
+	std::vector< const OutputPin* > outputPins;
+	cx.findCommonOutputs(node, L"CaseTrue", L"CaseFalse", outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
 
 	// Emit true branch.
 	{
@@ -502,18 +502,16 @@ bool emitIterate(GlslContext& cx, Iterate* node)
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT (out);
 
-	// Find non-dependent, external, input pins from input branch;
+	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
 	std::vector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
-
-	std::vector< const InputPin* > inputPins;
-	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
-
-	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
-		cx.emitInput(*i);
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -584,19 +582,17 @@ bool emitIterate2d(GlslContext& cx, Iterate2d* node)
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT (out);
 
-	// Find non-dependent, external, input pins from input branch;
+	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
 	std::vector< const OutputPin* > dependentOutputPins(3);
 	dependentOutputPins[0] = node->findOutputPin(L"X");
 	dependentOutputPins[1] = node->findOutputPin(L"Y");
 	dependentOutputPins[2] = node->findOutputPin(L"Output");
-
-	std::vector< const InputPin* > inputPins;
-	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
-
-	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
-		cx.emitInput(*i);
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -1564,18 +1560,16 @@ bool emitSum(GlslContext& cx, Sum* node)
 	GlslVariable* out = cx.emitOutput(node, L"Output", GtVoid);
 	T_ASSERT (out);
 
-	// Find non-dependent, external, input pins from input branch;
+	// Find non-dependent, external, output pins from input branch;
 	// we emit those first in order to have them evaluated
 	// outside of iteration.
+	std::vector< const OutputPin* > outputPins;
 	std::vector< const OutputPin* > dependentOutputPins(2);
 	dependentOutputPins[0] = node->findOutputPin(L"N");
 	dependentOutputPins[1] = node->findOutputPin(L"Output");
-
-	std::vector< const InputPin* > inputPins;
-	cx.findExternalInputs(node, L"Input", dependentOutputPins, inputPins);
-
-	for (std::vector< const InputPin* >::const_iterator i = inputPins.begin(); i != inputPins.end(); ++i)
-		cx.emitInput(*i);
+	cx.findNonDependentOutputs(node, L"Input", dependentOutputPins, outputPins);
+	for (std::vector< const OutputPin* >::const_iterator i = outputPins.begin(); i != outputPins.end(); ++i)
+		cx.emit((*i)->getNode());
 
 	// Write input branch in a temporary output stream.
 	StringOutputStream fs;
@@ -2181,13 +2175,7 @@ bool GlslEmitter::emit(GlslContext& c, Node* node)
 
 	// Emit GLSL code.
 	T_ASSERT (i->second);
-	if (!i->second->emit(c, node))
-	{
-		log::error << L"Failed to emit " << type_name(node) << Endl;
-		return false;
-	}
-
-	return true;
+	return i->second->emit(c, node);
 }
 
 	}

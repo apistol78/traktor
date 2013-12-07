@@ -6,6 +6,7 @@
 #include "Render/Shader/Edge.h"
 #include "Render/Shader/InputPin.h"
 #include "Render/Shader/Node.h"
+#include "Render/Shader/OutputPin.h"
 #include "Render/Shader/ShaderGraph.h"
 
 namespace traktor
@@ -165,6 +166,67 @@ struct FindInputPin
 
 	bool operator () (Edge* edge)
 	{
+		return !found;
+	}
+};
+
+struct PinsConnected
+{
+	const InputPin* inputPin;
+	const OutputPin* outputPin;
+	bool connected;
+
+	PinsConnected()
+	:	inputPin(0)
+	,	outputPin(0)
+	,	connected(false)
+	{
+	}
+
+	bool operator () (Node* node)
+	{
+		return !connected;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		// Don't traverse paths from source node from wrong input pin.
+		if (
+			edge->getDestination()->getNode() == inputPin->getNode() &&
+			edge->getDestination() != inputPin
+		)
+			return false;
+
+		connected |= bool(outputPin == edge->getSource());
+		return true;
+	}
+};
+
+struct CollectOutputs
+{
+	const InputPin* inputPin;
+	std::vector< const OutputPin* > outputPins;
+
+	CollectOutputs()
+	:	inputPin(0)
+	{
+	}
+
+	bool operator () (Node* node)
+	{
+		return true;
+	}
+
+	bool operator () (Edge* edge)
+	{
+		// Don't traverse paths from source node from wrong input pin.
+		if (
+			edge->getDestination()->getNode() == inputPin->getNode() &&
+			edge->getDestination() != inputPin
+		)
+			return false;
+
+		outputPins.push_back(edge->getSource());
 		return true;
 	}
 };
@@ -192,6 +254,126 @@ inline bool doesInputPropagateToNode(const ShaderGraph* shaderGraph, const Input
 	visitor.found = false;
 	ShaderGraphTraverse(shaderGraph, targetNode).preorder(visitor);
 	return visitor.found;
+}
+
+/*! \brief Check if two pins are connected.
+ * \ingroup Render
+ */
+inline bool arePinsConnected(const ShaderGraph* shaderGraph, const OutputPin* outputPin, const InputPin* inputPin)
+{
+	PinsConnected visitor;
+	visitor.outputPin = outputPin;
+	visitor.inputPin = inputPin;
+	visitor.connected = false;
+	ShaderGraphTraverse(shaderGraph, inputPin->getNode()).preorder(visitor);
+	return visitor.connected;
+}
+
+/*! \brief Get merging, common, outputs from a set of input pins.
+ * \ingroup Render
+ */
+inline void getMergingOutputs(const ShaderGraph* shaderGraph, const std::vector< const InputPin* >& inputPins, std::vector< const OutputPin* >& outMergedOutputPins)
+{
+	T_ASSERT (inputPins.size() >= 2);
+
+	// Collect all reachable output pins.
+	std::vector< CollectOutputs > visitors(inputPins.size());
+	for (size_t i = 0; i < inputPins.size(); ++i)
+	{
+		visitors[i].inputPin = inputPins[i];
+		ShaderGraphTraverse(shaderGraph, inputPins[i]->getNode()).preorder(visitors[i]);
+	}
+
+	// Keep only output pins which are found from all inputs.
+	std::vector< const OutputPin* >& commonOutputPins = visitors[0].outputPins;
+	for (size_t i = 1; i < visitors.size(); ++i)
+	{
+		for (size_t j = 0; j < commonOutputPins.size(); )
+		{
+			if (std::find(visitors[i].outputPins.begin(), visitors[i].outputPins.end(), commonOutputPins[j]) == visitors[i].outputPins.end())
+				commonOutputPins.erase(commonOutputPins.begin() + j);
+			else
+				++j;
+		}
+	}
+
+	// Keep only "right most" output pins.
+	for (size_t i = 0; i < commonOutputPins.size(); ++i)
+	{
+		bool connected = false;
+
+		for (size_t j = 0; j < commonOutputPins.size() && !connected; ++j)
+		{
+			if (i == j)
+				continue;
+
+			Node* checkNode = commonOutputPins[j]->getNode();
+			int32_t checkInputPinCount = checkNode->getInputPinCount();
+			for (int32_t k = 0; k < checkInputPinCount && !connected; ++k)
+			{
+				const InputPin* checkInputPin = checkNode->getInputPin(k);
+				connected = arePinsConnected(shaderGraph, commonOutputPins[i], checkInputPin);
+			}
+		}
+
+		if (!connected)
+			outMergedOutputPins.push_back(commonOutputPins[i]);
+	}
+}
+
+/*! \brief Get non-dependent outputs from a an input and a set of dependent output pins.
+ * \ingroup Render
+ */
+inline void getNonDependentOutputs(const ShaderGraph* shaderGraph, const InputPin* inputPin, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const OutputPin* >& outOutputPins)
+{
+	CollectOutputs visitor;
+	visitor.inputPin = inputPin;
+	ShaderGraphTraverse(shaderGraph, inputPin->getNode()).preorder(visitor);
+
+	// Keep only output pins which are not dependent on input from dependentOutputPins.
+	std::vector< const OutputPin* > nonDependentOutputPins;
+	for (std::vector< const OutputPin* >::const_iterator i = visitor.outputPins.begin(); i != visitor.outputPins.end(); ++i)
+	{
+		bool outputNodeDependent = false;
+
+		Node* outputNode = (*i)->getNode();
+		int32_t outputNodeInputPinCount = outputNode->getInputPinCount();
+		for (int32_t j = 0; j < outputNodeInputPinCount && !outputNodeDependent; ++j)
+		{
+			const InputPin* outputNodeInputPin = outputNode->getInputPin(j);
+			for (std::vector< const OutputPin* >::const_iterator k = dependentOutputPins.begin(); k != dependentOutputPins.end() && !outputNodeDependent; ++k)
+			{
+				if (arePinsConnected(shaderGraph, *k, outputNodeInputPin))
+					outputNodeDependent = true;
+			}
+		}
+
+		if (!outputNodeDependent)
+			nonDependentOutputPins.push_back(*i);
+	}
+
+	// Keep only "right most" output pins.
+	for (size_t i = 0; i < nonDependentOutputPins.size(); ++i)
+	{
+		bool connected = false;
+
+		for (size_t j = 0; j < nonDependentOutputPins.size() && !connected; ++j)
+		{
+			if (i == j)
+				continue;
+
+			Node* checkNode = nonDependentOutputPins[j]->getNode();
+			int32_t checkInputPinCount = checkNode->getInputPinCount();
+			for (int32_t k = 0; k < checkInputPinCount && !connected; ++k)
+			{
+				const InputPin* checkInputPin = checkNode->getInputPin(k);
+				connected = arePinsConnected(shaderGraph, nonDependentOutputPins[i], checkInputPin);
+			}
+		}
+
+		if (!connected)
+			outOutputPins.push_back(nonDependentOutputPins[i]);
+	}
 }
 
 	}

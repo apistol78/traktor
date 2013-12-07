@@ -29,6 +29,8 @@ public:
 
 	Node* getInputNode(Node* node, const std::wstring& inputPinName);
 
+	void emit(Node* node);
+
 	GlslVariable* emitInput(const InputPin* inputPin);
 
 	GlslVariable* emitInput(Node* node, const std::wstring& inputPinName);
@@ -37,11 +39,9 @@ public:
 
 	void emitOutput(Node* node, const std::wstring& outputPinName, GlslVariable* variable);
 
-	bool isPinsConnected(const OutputPin* outputPin, const InputPin* inputPin) const;
+	void findNonDependentOutputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const OutputPin* >& outOutputPins) const;
 
-	void findExternalInputs(Node* node, const std::wstring& inputPinName, const std::vector< const OutputPin* >& dependentOutputPins, std::vector< const InputPin* >& outInputPins) const;
-
-	void findCommonInputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const InputPin* >& outInputPins) const;
+	void findCommonOutputs(Node* node, const std::wstring& inputPin1, const std::wstring& inputPin2, std::vector< const OutputPin* >& outOutputPins) const;
 
 	void enterVertex();
 
