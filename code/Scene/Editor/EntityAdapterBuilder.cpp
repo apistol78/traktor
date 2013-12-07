@@ -88,8 +88,6 @@ EntityAdapterBuilder::EntityAdapterBuilder(
 	RefArray< EntityAdapter > entityAdapters;
 	collectAllAdapters(currentEntityAdapter, entityAdapters);
 
-	log::debug << L"Caching " << entityAdapters.size() << L" adapter(s)..." << Endl;
-
 	for (RefArray< EntityAdapter >::iterator i = entityAdapters.begin(); i != entityAdapters.end(); ++i)
 	{
 		EntityAdapter* entityAdapter = *i;
