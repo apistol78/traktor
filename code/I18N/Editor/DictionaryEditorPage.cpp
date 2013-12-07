@@ -1,9 +1,15 @@
+#include "Core/Io/FileSystem.h"
+#include "Core/Io/IStream.h"
+#include "Core/Io/StringReader.h"
+#include "Core/Io/Utf8Encoding.h"
+#include "Core/Misc/Split.h"
 #include "Core/Misc/String.h"
 #include "Editor/IDocument.h"
 #include "I18N/Dictionary.h"
 #include "I18N/Editor/DictionaryEditorPage.h"
 #include "I18N/Editor/Translator.h"
 #include "Ui/Container.h"
+#include "Ui/FileDialog.h"
 #include "Ui/MethodHandler.h"
 #include "Ui/TableLayout.h"
 #include "Ui/Custom/InputDialog.h"
@@ -13,6 +19,7 @@
 #include "Ui/Custom/GridView/GridView.h"
 #include "Ui/Custom/ToolBar/ToolBar.h"
 #include "Ui/Custom/ToolBar/ToolBarButton.h"
+#include "Ui/Events/CommandEvent.h"
 
 namespace traktor
 {
@@ -118,6 +125,7 @@ bool DictionaryEditorPage::create(ui::Container* parent)
 
 	Ref< ui::custom::ToolBar > toolBar = new ui::custom::ToolBar();
 	toolBar->create(container);
+	toolBar->addItem(new ui::custom::ToolBarButton(L"Import...", ui::Command(L"I18N.Editor.Import")));
 	toolBar->addItem(new ui::custom::ToolBarButton(L"Translate...", ui::Command(L"I18N.Editor.Translate")));
 	toolBar->addClickEventHandler(ui::createMethodHandler(this, &DictionaryEditorPage::eventToolClick));
 
@@ -169,57 +177,113 @@ void DictionaryEditorPage::handleDatabaseEvent(const Guid& eventId)
 
 void DictionaryEditorPage::eventToolClick(ui::Event* event)
 {
-	ui::custom::InputDialog::Field fields[] =
+	const ui::CommandEvent* cmdEvent = checked_type_cast< const ui::CommandEvent*, false >(event);
+	const ui::Command& cmd = cmdEvent->getCommand();
+
+	if (cmd == L"I18N.Editor.Import")
 	{
+		std::wstring line;
+
+		ui::FileDialog fileDialog;
+		if (!fileDialog.create(m_gridDictionary, L"Import dictionary...", L"All files;*.*"))
+			return;
+
+		Path fileName;
+		if (fileDialog.showModal(fileName) != ui::DrOk)
 		{
-			L"From language",
-			L"",
-			0,
-			c_languages
-		},
-		{
-			L"To language",
-			L"",
-			0,
-			c_languages
+			fileDialog.destroy();
+			return;
 		}
-	};
+		fileDialog.destroy();
 
-	ui::custom::InputDialog inputDialog;
-	inputDialog.create(
-		m_gridDictionary,
-		L"Translate",
-		L"Automatic translate word(s)",
-		fields,
-		sizeof_array(fields)
-	);
-	if (inputDialog.showModal() == ui::DrOk)
-	{
-		m_document->push();
+		// Assume CSV format.
+		Ref< IStream > file = FileSystem::getInstance().open(fileName, File::FmRead);
+		if (!file)
+			return;
 
-		RefArray< ui::custom::GridRow > selectedRows;
-		m_gridDictionary->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
-
-		Translator translator(fields[0].value, fields[1].value);
-
-		for (RefArray< ui::custom::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+		StringReader sr(file, new Utf8Encoding());
+		while (sr.readLine(line) >= 0)
 		{
-			std::wstring source = checked_type_cast< ui::custom::GridItem*, false >((*i)->get(1))->getText();
-			std::wstring out;
-
-			if (translator.translate(source, out))
+			std::vector< std::wstring > columns;
+			Split< std::wstring >::any(line, L",", columns, true);
+			if (columns.size() >= 2 && !columns[0].empty())
 			{
 				m_dictionary->set(
-					checked_type_cast< ui::custom::GridItem*, false >((*i)->get(0))->getText(),
-					out
+					columns[0],
+					columns[1]
 				);
-				checked_type_cast< ui::custom::GridItem*, false >((*i)->get(1))->setText(out);
 			}
 		}
 
+		file->close();
+		file = 0;
+
+		m_gridDictionary->removeAllRows();
+
+		const std::map< std::wstring, std::wstring >& map = m_dictionary->get();
+		for (std::map< std::wstring, std::wstring >::const_iterator i = map.begin(); i != map.end(); ++i)
+		{
+			Ref< ui::custom::GridRow > row = new ui::custom::GridRow();
+			row->add(new ui::custom::GridItem(i->first));
+			row->add(new ui::custom::GridItem(i->second));
+			m_gridDictionary->addRow(row);
+		}
 		m_gridDictionary->update();
 	}
-	inputDialog.destroy();
+	else if (cmd == L"I18N.Editor.Translate")
+	{
+		ui::custom::InputDialog::Field fields[] =
+		{
+			{
+				L"From language",
+				L"",
+				0,
+				c_languages
+			},
+			{
+				L"To language",
+				L"",
+				0,
+				c_languages
+			}
+		};
+
+		ui::custom::InputDialog inputDialog;
+		inputDialog.create(
+			m_gridDictionary,
+			L"Translate",
+			L"Automatic translate word(s)",
+			fields,
+			sizeof_array(fields)
+		);
+		if (inputDialog.showModal() == ui::DrOk)
+		{
+			m_document->push();
+
+			RefArray< ui::custom::GridRow > selectedRows;
+			m_gridDictionary->getRows(selectedRows, ui::custom::GridView::GfSelectedOnly);
+
+			Translator translator(fields[0].value, fields[1].value);
+
+			for (RefArray< ui::custom::GridRow >::iterator i = selectedRows.begin(); i != selectedRows.end(); ++i)
+			{
+				std::wstring source = checked_type_cast< ui::custom::GridItem*, false >((*i)->get(1))->getText();
+				std::wstring out;
+
+				if (translator.translate(source, out))
+				{
+					m_dictionary->set(
+						checked_type_cast< ui::custom::GridItem*, false >((*i)->get(0))->getText(),
+						out
+					);
+					checked_type_cast< ui::custom::GridItem*, false >((*i)->get(1))->setText(out);
+				}
+			}
+
+			m_gridDictionary->update();
+		}
+		inputDialog.destroy();
+	}
 }
 
 void DictionaryEditorPage::eventGridDoubleClick(ui::Event* event)
