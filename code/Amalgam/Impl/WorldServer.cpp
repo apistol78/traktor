@@ -168,7 +168,7 @@ void WorldServer::createEntityFactories(IEnvironment* environment)
 	m_entityBuilder->addFactory(new spray::EffectEntityFactory(resourceManager, m_eventManager, soundPlayer, m_feedbackManager));
 	m_entityBuilder->addFactory(new terrain::EntityFactory(resourceManager, renderSystem));
 	m_entityBuilder->addFactory(new weather::WeatherEntityFactory(resourceManager, renderSystem));
-	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager));
+	m_entityBuilder->addFactory(new world::WorldEntityFactory(resourceManager, false));
 }
 
 int32_t WorldServer::reconfigure(const PropertyGroup* settings)

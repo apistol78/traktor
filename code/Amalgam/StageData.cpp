@@ -54,7 +54,7 @@ Ref< Stage > StageData::createInstance(amalgam::IEnvironment* environment, const
 	{
 		Ref< const i18n::Dictionary > dictionary = environment->getDatabase()->getObjectReadOnly< i18n::Dictionary >(m_localizationDictionary);
 		if (dictionary)
-			i18n::I18N::getInstance().appendDictionary(dictionary);
+			i18n::I18N::getInstance().appendDictionary(dictionary, true);
 	}
 
 	// Bind proxies to resource manager.

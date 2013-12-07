@@ -451,8 +451,13 @@ bool convertMesh(Model& outModel, FbxScene* scene, FbxNode* meshNode, const Matr
 				const FbxNode* jointNode = cluster->GetLink();
 				T_ASSERT (jointNode);
 				
-				const char* jointName = jointNode->GetName();
-				uint32_t jointIndex = outModel.addJoint(mbstows(jointName));
+				std::wstring jointName = mbstows(jointNode->GetName());
+				
+				size_t p = jointName.find(L':');
+				if (p != std::wstring::npos)
+					jointName = jointName.substr(p + 1);
+
+				uint32_t jointIndex = outModel.addJoint(jointName);
 
 				const double* weights = cluster->GetControlPointWeights();
 				const int32_t* indices = cluster->GetControlPointIndices();

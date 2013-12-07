@@ -119,10 +119,8 @@ FlashLayer::FlashLayer(
 ,	m_visible(true)
 ,	m_offset(0.0f, 0.0f)
 ,	m_scale(1.0f)
-,	m_lastX(-1)
-,	m_lastY(-1)
-,	m_lastButton(0)
-,	m_lastWheel(0)
+,	m_lastMouseX(-1)
+,	m_lastMouseY(-1)
 {
 	// Register ourself for UI shake.
 	spray::IFeedbackManager* feedbackManager = m_environment->getWorld()->getFeedbackManager();
@@ -236,70 +234,81 @@ void FlashLayer::update(amalgam::IUpdateControl& control, const amalgam::IUpdate
 		}
 
 		// Propagate mouse input to movie; don't send mouse events if mouse cursor isn't visible.
-		input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, 0, true);
-		if (mouseDevice && renderView->isCursorVisible())
+		if (renderView->isCursorVisible())
 		{
-			int32_t positionX, positionY;
-			mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);
-			mouseDevice->getDefaultControl(input::DtPositionY, true, positionY);
+			int32_t width = renderView->getWidth();
+			int32_t height = renderView->getHeight();
 
-			int32_t button1, button2;
-			mouseDevice->getDefaultControl(input::DtButton1, false, button1);
-			mouseDevice->getDefaultControl(input::DtButton2, false, button2);
+			float viewRatio = m_environment->getRender()->getViewAspectRatio();
+			float aspectRatio = m_environment->getRender()->getAspectRatio();
 
-			int32_t axisZ;
-			mouseDevice->getDefaultControl(input::DtAxisZ, true, axisZ);
+			width = int32_t(width * aspectRatio / viewRatio);
 
-			float minX, minY;
-			float maxX, maxY;
-			mouseDevice->getControlRange(positionX, minX, maxX);
-			mouseDevice->getControlRange(positionY, minY, maxY);
+			int32_t mouseDeviceCount = inputSystem->getDeviceCount(input::CtMouse, true);
+			if (mouseDeviceCount >= sizeof_array(m_lastMouse))
+				mouseDeviceCount = sizeof_array(m_lastMouse);
 
-			if (maxX > minX && maxY > minY)
+			for (int32_t i = 0; i < mouseDeviceCount; ++i)
 			{
-				float x = mouseDevice->getControlValue(positionX);
-				float y = mouseDevice->getControlValue(positionY);
+				input::IInputDevice* mouseDevice = inputSystem->getDevice(input::CtMouse, i, true);
+				T_ASSERT (mouseDevice);
 
-				x = (x - minX) / (maxX - minX);
-				y = (y - minY) / (maxY - minY);
+				LastMouseState& last = m_lastMouse[i];
 
-				int32_t width = renderView->getWidth();
-				int32_t height = renderView->getHeight();
+				int32_t positionX, positionY;
+				mouseDevice->getDefaultControl(input::DtPositionX, true, positionX);
+				mouseDevice->getDefaultControl(input::DtPositionY, true, positionY);
 
-				float viewRatio = m_environment->getRender()->getViewAspectRatio();
-				float aspectRatio = m_environment->getRender()->getAspectRatio();
+				int32_t button1, button2;
+				mouseDevice->getDefaultControl(input::DtButton1, false, button1);
+				mouseDevice->getDefaultControl(input::DtButton2, false, button2);
 
-				width = int32_t(width * aspectRatio / viewRatio);
+				int32_t axisZ;
+				mouseDevice->getDefaultControl(input::DtAxisZ, true, axisZ);
 
-				int32_t mx = int32_t(width * x);
-				int32_t my = int32_t(height * y);
+				float minX, minY;
+				float maxX, maxY;
+				mouseDevice->getControlRange(positionX, minX, maxX);
+				mouseDevice->getControlRange(positionY, minY, maxY);
 
-				int32_t mb =
-					(mouseDevice->getControlValue(button1) > 0.5f ? 1 : 0) |
-					(mouseDevice->getControlValue(button2) > 0.5f ? 2 : 0);
-
-				if (mx != m_lastX || my != m_lastY)
+				if (maxX > minX && maxY > minY)
 				{
-					m_moviePlayer->postMouseMove(mx, my, mb);
-					m_lastX = mx;
-					m_lastY = my;
-				}
+					float x = mouseDevice->getControlValue(positionX);
+					float y = mouseDevice->getControlValue(positionY);
 
-				if (mb != m_lastButton)
-				{
-					if (mb)
-						m_moviePlayer->postMouseDown(mx, my, mb);
-					else
-						m_moviePlayer->postMouseUp(mx, my, mb);
+					x = (x - minX) / (maxX - minX);
+					y = (y - minY) / (maxY - minY);
 
-					m_lastButton = mb;
-				}
+					int32_t mx = int32_t(width * x);
+					int32_t my = int32_t(height * y);
 
-				int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
-				if (wheel != m_lastWheel)
-				{
-					m_moviePlayer->postMouseWheel(mx, my, wheel);
-					m_lastWheel = wheel;
+					int32_t mb =
+						(mouseDevice->getControlValue(button1) > 0.5f ? 1 : 0) |
+						(mouseDevice->getControlValue(button2) > 0.5f ? 2 : 0);
+
+					if (mx != m_lastMouseX || my != m_lastMouseY)
+					{
+						m_moviePlayer->postMouseMove(mx, my, mb);
+						m_lastMouseX = mx;
+						m_lastMouseY = my;
+					}
+
+					if (mb != last.button)
+					{
+						if (mb)
+							m_moviePlayer->postMouseDown(mx, my, mb);
+						else
+							m_moviePlayer->postMouseUp(mx, my, mb);
+
+						last.button = mb;
+					}
+
+					int32_t wheel = int32_t(mouseDevice->getControlValue(axisZ) * 3.0f);
+					if (wheel != last.wheel)
+					{
+						m_moviePlayer->postMouseWheel(mx, my, wheel);
+						last.wheel = wheel;
+					}
 				}
 			}
 		}

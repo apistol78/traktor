@@ -18,7 +18,7 @@ namespace traktor
 	namespace animation
 	{
 
-T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonPipeline", 3, SkeletonPipeline, editor::IPipeline)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.animation.SkeletonPipeline", 4, SkeletonPipeline, editor::IPipeline)
 
 bool SkeletonPipeline::create(const editor::IPipelineSettings* settings)
 {

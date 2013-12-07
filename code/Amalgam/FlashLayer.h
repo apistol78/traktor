@@ -114,6 +114,18 @@ public:
 	bool isVisible() const { return m_visible; }
 
 private:
+	struct LastMouseState
+	{
+		int32_t button;
+		int32_t wheel;
+
+		LastMouseState()
+		:	button(0)
+		,	wheel(0)
+		{
+		}
+	};
+
 	Ref< amalgam::IEnvironment > m_environment;
 	resource::Proxy< flash::FlashMovie > m_movie;
 	std::map< std::wstring, resource::Id< flash::FlashMovie > > m_externalMovies;
@@ -128,10 +140,9 @@ private:
 	bool m_visible;
 	Vector2 m_offset;
 	float m_scale;
-	int32_t m_lastX;
-	int32_t m_lastY;
-	int32_t m_lastButton;
-	int32_t m_lastWheel;
+	LastMouseState m_lastMouse[8];
+	int32_t m_lastMouseX;
+	int32_t m_lastMouseY;
 
 	void createMoviePlayer();
 
