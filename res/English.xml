@@ -737,6 +737,14 @@
       <second>Type</second>
     </item>
     <item>
+      <first>IMPORT_DICTIONARY_WIZARDTOOL_DESCRIPTION</first>
+      <second>Import dictionary...</second>
+    </item>
+    <item>
+      <first>IMPORT_DICTIONARY_WIZARDTOOL_FILE_TITLE</first>
+      <second>Import dictionary...</second>
+    </item>      
+    <item>
       <first>IMPORT_FLASH_DESCRIPTION</first>
       <second>Flash...</second>
     </item>

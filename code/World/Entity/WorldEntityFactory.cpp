@@ -29,8 +29,9 @@ namespace traktor
 
 T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldEntityFactory", WorldEntityFactory, IEntityFactory)
 
-WorldEntityFactory::WorldEntityFactory(resource::IResourceManager* resourceManager)
+WorldEntityFactory::WorldEntityFactory(resource::IResourceManager* resourceManager, bool editor)
 :	m_resourceManager(resourceManager)
+,	m_editor(editor)
 {
 }
 
@@ -67,11 +68,18 @@ Ref< Entity > WorldEntityFactory::createEntity(const IEntityBuilder* builder, co
 		resolvedEntityData->setName(externalEntityData->getName());
 		resolvedEntityData->setTransform(externalEntityData->getTransform());
 
-		const IEntityFactory* factory = builder->getFactory(resolvedEntityData);
-		if (factory)
-			return factory->createEntity(builder->getCompositeEntityBuilder(), *resolvedEntityData.getResource());
+		if (m_editor)
+		{
+			// Due to scene editor collecting adapters we cannot continue to create
+			// using the aggregated builder thus we have to manually create child entities.
+			const IEntityFactory* factory = builder->getFactory(resolvedEntityData);
+			if (factory)
+				return factory->createEntity(builder->getCompositeEntityBuilder(), *resolvedEntityData.getResource());
+			else
+				return 0;
+		}
 		else
-			return 0;
+			return builder->create(resolvedEntityData.getResource());
 	}
 
 	if (const GodRayEntityData* godRayData = dynamic_type_cast< const GodRayEntityData* >(&entityData))

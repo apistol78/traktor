@@ -31,7 +31,7 @@ class T_DLLCLASS WorldEntityFactory : public IEntityFactory
 	T_RTTI_CLASS;
 	
 public:
-	WorldEntityFactory(resource::IResourceManager* resourceManager);
+	WorldEntityFactory(resource::IResourceManager* resourceManager, bool editor);
 
 	virtual const TypeInfoSet getEntityTypes() const;
 
@@ -43,6 +43,7 @@ public:
 
 private:
 	mutable Ref< resource::IResourceManager > m_resourceManager;
+	bool m_editor;
 };
 	
 	}

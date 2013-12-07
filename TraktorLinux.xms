@@ -16041,6 +16041,7 @@
 					</definitions>
 					<libraryPaths>
 						<item>$(STEAMWORKS_SDK)/redistributable_bin/linux32</item>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/linux64</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api</item>
@@ -16063,6 +16064,7 @@
 					</definitions>
 					<libraryPaths>
 						<item>$(STEAMWORKS_SDK)/redistributable_bin/linux32</item>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/linux64</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api</item>
@@ -16085,6 +16087,7 @@
 					</definitions>
 					<libraryPaths>
 						<item>$(STEAMWORKS_SDK)/redistributable_bin/linux32</item>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/linux64</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api</item>
@@ -16107,6 +16110,7 @@
 					</definitions>
 					<libraryPaths>
 						<item>$(STEAMWORKS_SDK)/redistributable_bin/linux32</item>
+						<item>$(STEAMWORKS_SDK)/redistributable_bin/linux64</item>
 					</libraryPaths>
 					<libraries>
 						<item>steam_api</item>
@@ -16157,7 +16161,8 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux32</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux64</item>
 					</libraryPaths>
 					<libraries>
 						<item>lj_vm</item>
@@ -16175,7 +16180,8 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux32</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux64</item>
 					</libraryPaths>
 					<libraries>
 						<item>lj_vm</item>
@@ -16193,7 +16199,8 @@
 						<item>_DEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux32</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux64</item>
 					</libraryPaths>
 					<libraries>
 						<item>lj_vm</item>
@@ -16211,7 +16218,8 @@
 						<item>NDEBUG</item>
 					</definitions>
 					<libraryPaths>
-						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux32</item>
+						<item>$(TRAKTOR_HOME)/3rdp/LuaJIT-2.0.0/linux64</item>
 					</libraryPaths>
 					<libraries>
 						<item>lj_vm</item>

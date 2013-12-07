@@ -8,7 +8,7 @@ namespace traktor
 	namespace render
 	{
 
-T_IMPLEMENT_RTTI_CLASS(L"traktor.render.SHCoeffs", SHCoeffs, Object)
+T_IMPLEMENT_RTTI_FACTORY_CLASS(L"traktor.render.SHCoeffs", 0, SHCoeffs, ISerializable)
 
 void SHCoeffs::resize(uint32_t coefficientCount)
 {

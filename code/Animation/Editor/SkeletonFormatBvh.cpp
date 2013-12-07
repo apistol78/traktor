@@ -20,15 +20,21 @@ void createJoints(
 	float radius
 )
 {
+	std::wstring jointName = bvhJoint->getName();
+
+	size_t p = jointName.find(L':');
+	if (p != std::wstring::npos)
+		jointName = jointName.substr(p + 1);
+
 	Ref< Joint > joint = new Joint();
 
 	joint->setParent(parent);
-	joint->setName(bvhJoint->getName());
+	joint->setName(jointName);
 	joint->setTransform(Transform(bvhJoint->getOffset() + offset));
 	joint->setRadius(radius);
 	joint->setEnableLimits(false);
 
-	if (bvhJoint->getName().empty() && parent >= 0)
+	if (jointName.empty() && parent >= 0)
 		joint->setName(skeleton->getJoint(parent)->getName() + L"_END");
 
 	int32_t jointIndex = skeleton->addJoint(joint);
