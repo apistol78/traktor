@@ -108,6 +108,9 @@ private:
 	struct Slice
 	{
 		Ref< WorldContext > shadow[MaxLightShadowCount];
+		Matrix44 shadowLightView[MaxLightShadowCount];
+		Matrix44 shadowLightProjection[MaxLightShadowCount];
+		Matrix44 shadowLightSquareProjection[MaxLightShadowCount];
 		Matrix44 viewToLightSpace[MaxLightShadowCount];
 	};
 
@@ -117,6 +120,7 @@ private:
 		Slice slice[MaxSliceCount];
 		Ref< WorldContext > gbuffer;
 		Ref< WorldContext > visual;
+		float time;
 		Matrix44 projection;
 		Matrix44 view;
 		Frustum viewFrustum;
@@ -127,8 +131,9 @@ private:
 		bool haveShadows[MaxLightCount];
 
 		Frame()
-		:	haveGBuffer(false)
+		:	time(0.0f)
 		,	lightCount(0)
+		,	haveGBuffer(false)
 		{
 			for (uint32_t i = 0; i < MaxLightCount; ++i)
 				haveShadows[i] = false;
@@ -139,8 +144,16 @@ private:
 	static render::handle_t ms_techniqueGBuffer;
 	static render::handle_t ms_techniqueShadow;
 	static render::handle_t ms_handleTime;
+	static render::handle_t ms_handleView;
 	static render::handle_t ms_handleProjection;
+	static render::handle_t ms_handleSquareProjection;
+	static render::handle_t ms_handleColorMap;
+	static render::handle_t ms_handleDepthMap;
+	static render::handle_t ms_handleLightMap;
+	static render::handle_t ms_handleNormalMap;
 	static render::handle_t ms_handleReflectionMap;
+	static render::handle_t ms_handleFogDistanceAndDensity;
+	static render::handle_t ms_handleFogColor;
 
 	WorldRenderSettings m_settings;
 	WorldRenderSettings::ShadowSettings m_shadowSettings;
@@ -173,6 +186,7 @@ private:
 	AlignedVector< Frame > m_frames;
 	float m_slicePositions[MaxSliceCount + 1];
 	uint32_t m_count;
+	Vector4 m_fogDistanceAndDensity;
 	Vector4 m_fogColor;
 
 	void buildLightWithShadows(WorldRenderView& worldRenderView, int frame);

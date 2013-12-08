@@ -195,13 +195,7 @@ bool SteamMatchMaking::joinLobby(uint64_t lobbyHandle)
 		result = false;
 
 	if (result)
-	{
 		m_joinedLobby = lobbyHandle;
-
-		// Expose my joined lobby to all my friends which is running the same game.
-		std::wstring id = toString(lobbyHandle);
-		SteamFriends()->SetRichPresence("InLobby", wstombs(id).c_str());
-	}
 
 	return result;
 }
@@ -212,8 +206,6 @@ bool SteamMatchMaking::leaveLobby(uint64_t lobbyHandle)
 		return false;
 
 	SteamMatchmaking()->LeaveLobby(uint64(lobbyHandle));
-	SteamFriends()->SetRichPresence("InLobby", 0);
-
 	m_joinedLobby = 0;
 	return true;
 }
@@ -297,30 +289,7 @@ bool SteamMatchMaking::getMaxParticipantCount(uint64_t lobbyHandle, uint32_t& ou
 
 bool SteamMatchMaking::getFriendsCount(uint64_t lobbyHandle, uint32_t& outCount) const
 {
-	outCount = 0;
-
-	if (!m_joinedLobby)
-		return true;
-
-	int friendCount = SteamFriends()->GetFriendCount(k_EFriendFlagImmediate);
-	if (friendCount < 0)
-		return false;
-
-	for (int i = 0; i < friendCount; ++i)
-	{
-		CSteamID id = SteamFriends()->GetFriendByIndex(i, k_EFriendFlagImmediate);
-		if (SteamFriends()->GetFriendPersonaState(id) != k_EPersonaStateOnline)
-			continue;
-
-		const char* inLobby = SteamFriends()->GetFriendRichPresence(id, "InLobby");
-		if (!inLobby)
-			continue;
-
-		uint64_t inLobbyId = parseString< uint64_t >(mbstows(inLobby));
-		if (m_joinedLobby == inLobbyId)
-			++outCount;
-	}
-
+	outCount = SteamFriends()->GetFriendCountFromSource(lobbyHandle);
 	return true;
 }
 

@@ -535,6 +535,10 @@ bool Application::update()
 			ActiveEvent activeEvent(renderViewActive);
 			currentState->take(&activeEvent);
 			m_renderViewActive = renderViewActive;
+
+			// If not active we can also throttle down process's priority which might
+			// help updating resources from editor if running on the same machine.
+			OS::getInstance().setOwnProcessPriorityBias(renderViewActive ? 0 : -1);
 		}
 
 		// Determine if input should be enabled.

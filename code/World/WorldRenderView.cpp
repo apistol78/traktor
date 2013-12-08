@@ -9,7 +9,6 @@ T_IMPLEMENT_RTTI_CLASS(L"traktor.world.WorldRenderView", WorldRenderView, Object
 
 WorldRenderView::WorldRenderView()
 :	m_projection(Matrix44::identity())
-,	m_squareProjection(Matrix44::identity())
 ,	m_view(Matrix44::identity())
 ,	m_viewSize(0.0f, 0.0f)
 ,	m_lightCount(0)
@@ -46,11 +45,6 @@ void WorldRenderView::setCullFrustum(const Frustum& cullFrustum)
 void WorldRenderView::setProjection(const Matrix44& projection)
 {
 	m_projection = projection;
-}
-
-void WorldRenderView::setSquareProjection(const Matrix44& squareProjection)
-{
-	m_squareProjection = squareProjection;
 }
 
 void WorldRenderView::setView(const Matrix44& view)

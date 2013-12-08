@@ -48,7 +48,9 @@ const resource::Id< PostProcessSettings > c_gammaCorrection(Guid(L"{AB0ABBA7-77B
 render::handle_t s_techniqueDefault = 0;
 render::handle_t s_techniqueDepth = 0;
 render::handle_t s_techniqueShadow = 0;
+render::handle_t s_handleTime = 0;
 render::handle_t s_handleProjection = 0;
+render::handle_t s_handleSquareProjection = 0;
 render::handle_t s_handleReflectionMap = 0;
 
 		}
@@ -67,7 +69,9 @@ WorldRendererForward::WorldRendererForward()
 	s_techniqueShadow = render::getParameterHandle(L"World_ShadowWrite");
 
 	// Global parameters.
+	s_handleTime = render::getParameterHandle(L"Time");
 	s_handleProjection = render::getParameterHandle(L"Projection");
+	s_handleSquareProjection = render::getParameterHandle(L"SquareProjection");
 	s_handleReflectionMap = render::getParameterHandle(L"ReflectionMap");
 }
 
@@ -558,6 +562,9 @@ void WorldRendererForward::endBuild(WorldRenderView& worldRenderView, int frame)
 	worldRenderView.setEyePosition(viewInverse.translation().xyz1());
 	worldRenderView.setEyeDirection(viewInverse.axisZ().xyz0());
 
+	// Store some global values.
+	f.time = worldRenderView.getTime();
+
 	if (m_settings.depthPassEnabled || m_shadowsQuality > QuDisabled)
 	{
 		WorldRenderView depthRenderView = worldRenderView;
@@ -631,11 +638,12 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 	}
 
 	// Prepare global program parameters.
-	render::ProgramParameters programParams;
-	programParams.beginParameters(m_globalContext);
-	programParams.setMatrixParameter(s_handleProjection, projection);
-	programParams.setTextureParameter(s_handleReflectionMap, m_reflectionMap);
-	programParams.endParameters(m_globalContext);
+	render::ProgramParameters defaultProgramParams;
+	defaultProgramParams.beginParameters(m_globalContext);
+	defaultProgramParams.setFloatParameter(s_handleTime, f.time);
+	defaultProgramParams.setMatrixParameter(s_handleProjection, projection);
+	defaultProgramParams.setTextureParameter(s_handleReflectionMap, m_reflectionMap);
+	defaultProgramParams.endParameters(m_globalContext);
 
 	// Render depth map; use as z-prepass if able to share depth buffer with primary.
 	if ((flags & WrfDepthMap) != 0 && f.haveDepth)
@@ -646,7 +654,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 			float farZ = m_settings.viewFarZ;
 			const Color4f depthColor(farZ, farZ, farZ, farZ);
 			m_renderView->clear(render::CfColor | render::CfDepth, &depthColor, 1.0f, 0);
-			f.depth->getRenderContext()->render(m_renderView, render::RpOpaque, &programParams);
+			f.depth->getRenderContext()->render(m_renderView, render::RpOpaque, &defaultProgramParams);
 			m_renderView->end();
 		}
 		T_RENDER_POP_MARKER(m_renderView);
@@ -665,12 +673,19 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 		{
 			for (int32_t i = 0; i < m_shadowSettings.cascadingSlices; ++i)
 			{
+				render::ProgramParameters shadowProgramParams;
+				shadowProgramParams.beginParameters(m_globalContext);
+				shadowProgramParams.setFloatParameter(s_handleTime, f.time);
+				shadowProgramParams.setMatrixParameter(s_handleProjection, f.slice[i].shadowLightProjection);
+				shadowProgramParams.setMatrixParameter(s_handleSquareProjection, f.slice[i].shadowLightSquareProjection);
+				shadowProgramParams.endParameters(m_globalContext);
+
 				T_RENDER_PUSH_MARKER(m_renderView, "World: Shadow map");
 				if (m_renderView->begin(m_shadowTargetSet, 0))
 				{
 					const Color4f shadowClear(1.0f, 1.0f, 1.0f, 1.0f);
 					m_renderView->clear(render::CfColor | render::CfDepth, &shadowClear, 1.0f, 0);
-					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpOpaque, 0);
+					f.slice[i].shadow->getRenderContext()->render(m_renderView, render::RpOpaque, &shadowProgramParams);
 					m_renderView->end();
 				}
 				T_RENDER_POP_MARKER(m_renderView);
@@ -747,7 +762,7 @@ void WorldRendererForward::render(uint32_t flags, int frame, render::EyeType eye
 			renderFlags |= render::RpAlphaBlend | render::RpPostAlphaBlend;
 
 		T_RENDER_PUSH_MARKER(m_renderView, "World: Visual");
-		f.visual->getRenderContext()->render(m_renderView, renderFlags, &programParams);
+		f.visual->getRenderContext()->render(m_renderView, renderFlags, &defaultProgramParams);
 		T_RENDER_POP_MARKER(m_renderView);
 	}
 
@@ -950,7 +965,6 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		WorldRenderView shadowRenderView;
 		shadowRenderView.resetLights();
 		shadowRenderView.setProjection(shadowLightProjection);
-		shadowRenderView.setSquareProjection(shadowLightSquareProjection);
 		shadowRenderView.setView(shadowLightView);
 		shadowRenderView.setViewFrustum(shadowFrustum);
 		shadowRenderView.setCullFrustum(shadowFrustum);
@@ -969,7 +983,9 @@ void WorldRendererForward::buildShadows(WorldRenderView& worldRenderView, Entity
 		);
 		f.slice[slice].shadow->build(shadowRenderView, shadowPass, entity);
 		f.slice[slice].shadow->flush(shadowRenderView, shadowPass);
-				
+		
+		f.slice[slice].shadowLightProjection = shadowLightProjection;
+		f.slice[slice].shadowLightSquareProjection = shadowLightSquareProjection;
 		f.slice[slice].viewToLightSpace = shadowLightSquareProjection * shadowLightProjection * shadowLightView * viewInverse;
 	}
 

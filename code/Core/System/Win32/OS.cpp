@@ -473,6 +473,26 @@ Ref< ISharedMemory > OS::createSharedMemory(const std::wstring& name, uint32_t s
 	return sharedMemory;
 }
 
+bool OS::setOwnProcessPriorityBias(int32_t priorityBias)
+{
+	bool result = false;
+	switch (priorityBias)
+	{
+	case -1:
+		result = bool(SetPriorityClass(GetCurrentProcess(), BELOW_NORMAL_PRIORITY_CLASS) == TRUE);
+		break;
+	case 0:
+		result = bool(SetPriorityClass(GetCurrentProcess(), NORMAL_PRIORITY_CLASS) == TRUE);
+		break;
+	case 1:
+		result = bool(SetPriorityClass(GetCurrentProcess(), ABOVE_NORMAL_PRIORITY_CLASS) == TRUE);
+		break;
+	default:
+		break;
+	}
+	return result;
+}
+
 OS::OS()
 {
 	CoInitializeEx(NULL, COINIT_MULTITHREADED);

@@ -276,9 +276,9 @@ struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallba
 {
 	uint32_t m_group;
 	uint32_t m_ignoreClusterId;
-	RefArray< Body >& m_outResult;
+	AlignedVector< QueryResult >& m_outResult;
 
-	ConvexExcludeResultCallback(uint32_t group, uint32_t ignoreClusterId, RefArray< Body >& outResult)
+	ConvexExcludeResultCallback(uint32_t group, uint32_t ignoreClusterId, AlignedVector< QueryResult >& outResult)
 	:	m_group(group)
 	,	m_ignoreClusterId(ignoreClusterId)
 	,	m_outResult(outResult)
@@ -296,7 +296,19 @@ struct ConvexExcludeResultCallback : public btCollisionWorld::ConvexResultCallba
 		if (m_ignoreClusterId != 0 && bodyBullet->getClusterId() == m_ignoreClusterId)
 			return 1.0f;
 
-		m_outResult.push_back(bodyBullet);
+		QueryResult result;
+		result.body = bodyBullet;
+		result.position = fromBtVector3(convexResult.m_hitPointLocal, 1.0f);
+
+		if (normalInWorldSpace)
+			result.normal = fromBtVector3(convexResult.m_hitNormalLocal, 0.0f);
+		else
+			result.normal = fromBtVector3(convexResult.m_hitCollisionObject->getWorldTransform().getBasis() * convexResult.m_hitNormalLocal, 0.0f);
+
+		result.fraction = convexResult.m_hitFraction;
+		result.material = 0;
+
+		m_outResult.push_back(result);
 		return 1.0f;
 	}
 };
@@ -1344,7 +1356,7 @@ void PhysicsManagerBullet::querySweep(
 	float radius,
 	uint32_t group,
 	uint32_t ignoreClusterId,
-	RefArray< Body >& outResult
+	AlignedVector< QueryResult >& outResult
 ) const
 {
 	T_ANONYMOUS_VAR(Acquire< Semaphore >)(m_lock);

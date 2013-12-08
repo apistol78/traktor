@@ -3,6 +3,7 @@
 
 #include "Core/Object.h"
 #include "Core/RefArray.h"
+#include "Core/Containers/AlignedVector.h"
 #include "Core/Math/Vector4.h"
 #include "Core/Math/Transform.h"
 
@@ -339,7 +340,7 @@ public:
 		float radius,
 		uint32_t group,
 		uint32_t ignoreClusterId,
-		RefArray< Body >& outResult
+		AlignedVector< QueryResult >& outResult
 	) const = 0;
 
 	/*! \brief Get overlapping bodies.

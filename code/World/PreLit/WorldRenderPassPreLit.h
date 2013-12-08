@@ -13,13 +13,6 @@
 
 namespace traktor
 {
-	namespace render
-	{
-
-class ISimpleTexture;
-
-	}
-
 	namespace world
 	{
 
@@ -37,15 +30,7 @@ public:
 		render::handle_t technique,
 		const WorldRenderView& worldRenderView,
 		bool fogEnabled,
-		float fogDistanceY,
-		float fogDistanceZ,
-		float fogDensityY,
-		float fogDensityZ,
-		const Vector4& fogColor,
-		render::ISimpleTexture* colorMap,
-		render::ISimpleTexture* depthMap,
-		render::ISimpleTexture* normalMap,
-		render::ISimpleTexture* lightMap
+		bool depthEnable
 	);
 
 	WorldRenderPassPreLit(
@@ -69,32 +54,11 @@ private:
 	render::handle_t m_technique;
 	const WorldRenderView& m_worldRenderView;
 	bool m_fogEnabled;
-	float m_fogDistanceY;
-	float m_fogDistanceZ;
-	float m_fogDensityY;
-	float m_fogDensityZ;
-	Vector4 m_fogColor;
-	render::ISimpleTexture* m_colorMap;
-	render::ISimpleTexture* m_depthMap;
-	render::ISimpleTexture* m_normalMap;
-	render::ISimpleTexture* m_shadowMask;
-	render::ISimpleTexture* m_lightMap;
+	bool m_depthEnable;
 
 	void setWorldProgramParameters(render::ProgramParameters* programParams, const Matrix44& world) const;
 
 	void setLightProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setColorMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setShadowMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setDepthMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setLightMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setNormalMapProgramParameters(render::ProgramParameters* programParams) const;
-
-	void setFogProgramParameters(render::ProgramParameters* programParams) const;
 };
 	
 	}
